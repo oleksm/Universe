@@ -1,6 +1,6 @@
 use universe_engine::glam::{DVec3, Vec2, Vec3Swizzles};
 use universe_engine::{text_size, Color, Context, Frame, GLYPH};
-use universe_sim::docking::{MAX_DOCK_SPEED, MAX_ROLL_ERROR, STATION_SIZE};
+use universe_sim::world::station::{MAX_DOCK_SPEED, MAX_ROLL_ERROR, STATION_SIZE};
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingStatus, ShipState};
 
 use crate::observer::Focus;
@@ -62,7 +62,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
 
     if let ShipState::Transit { to, remaining, .. } = &app.u.ship.state {
-        let name = universe_sim::names::star_name(app.u.galaxy.stars[*to].seed).to_uppercase();
+        let name = universe_sim::names::star_name(app.u.world.galaxy.stars[*to].seed).to_uppercase();
         let text = format!("GATE TRANSIT TO {name} - ARRIVING IN {remaining:.1} S");
         frame.text_boxed(((size - text_size(&text)) / 2.0).floor(), &text, AMBER, PANEL);
     }
@@ -83,9 +83,9 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
     } else {
         format!("TIME {}", fmt::warp(app.warp()))
     };
-    lines.push((format!("{mode}  {}  {warp}", fmt::clock(app.u.time)), HUD));
+    lines.push((format!("{mode}  {}  {warp}", fmt::clock(app.u.world.time)), HUD));
     let sys = &app.view.system;
-    let home = if app.view.origin == app.u.home_system { "  HOME" } else { "" };
+    let home = if app.view.origin == app.u.world.home_system { "  HOME" } else { "" };
     lines.push((
         format!("SYSTEM {} ({}) {} PLANETS{home}", sys.name.to_uppercase(), sys.class.letter(), sys.planet_count()),
         DIM,
@@ -117,7 +117,7 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
                 ShipState::Destroyed { .. } => "DESTROYED",
                 ShipState::Flying if c.ship.hyperdrive => "HYPERDRIVE",
                 ShipState::Flying if r.departing => "CLIMBING",
-                ShipState::Flying => match c.ship.clearance.map(|x| x.target) {
+                ShipState::Flying => match c.avionics.clearance.map(|x| x.target) {
                     Some(universe_sim::NavTarget::Station(_)) => "DOCKING",
                     Some(universe_sim::NavTarget::Spaceport(_)) => "LANDING",
                     Some(universe_sim::NavTarget::Gate(_)) => "GATE RUN",
@@ -150,8 +150,8 @@ fn ship_readout(app: &App, lines: &mut Vec<(String, Color)>) {
         let b = &app.view.system.bodies[r];
         let offset = app.view.ship_pos - app.view.positions[r];
         // Height above the ground actually under us (terrain, or sea level).
-        let altitude = offset.length() - b.surface_radius_at(app.view.positions[r], app.view.ship_pos, app.u.time);
-        let mut rel_vel = ship.velocity - app.view.system.velocity(r, app.u.time);
+        let altitude = offset.length() - b.surface_radius_at(app.view.positions[r], app.view.ship_pos, app.u.world.time);
+        let mut rel_vel = ship.velocity - app.view.system.velocity(r, app.u.world.time);
         // Close to the ground, speed relative to the rotating surface is what matters.
         let surface = altitude < 0.05 * b.rail.radius;
         if surface {
@@ -169,7 +169,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ship_readout(app, lines);
     let ship = &app.u.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
-    let hyper = match (ship.hyperdrive, ship.hyper_autopilot) {
+    let hyper = match (ship.hyperdrive, app.u.avionics.hyper_autopilot) {
         (true, true) => "HYPER AUTO",
         (true, false) => "HYPER ON",
         _ => "HYPER OFF",
@@ -182,9 +182,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     match &ship.state {
         ShipState::Landed { body, local_position, .. } => {
             let b = &app.view.system.bodies[*body];
-            let port = app.view.system.spaceports.iter().find(|p| {
-                p.body == *body && p.direction.angle_between(local_position.normalize()) * b.rail.radius < universe_sim::landing::PAD_RADIUS
-            });
+            let port = app.view.system.port_at(*body, local_position.normalize()).map(|p| &app.view.system.spaceports[p]);
             if let Some(p) = port {
                 lines.push((format!("LANDED AT {} ({})", p.name.to_uppercase(), b.name.to_uppercase()), AMBER));
                 lines.push(("SHIFT+E TO LIFT OFF".into(), DIM));
@@ -198,7 +196,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         ShipState::Destroyed { respawn_in } => lines.push((format!("DESTROYED  RESPAWN IN {respawn_in:.0}"), RED)),
         ShipState::Transit { to, remaining, .. } => {
-            let name = universe_sim::names::star_name(app.u.galaxy.stars[*to].seed).to_uppercase();
+            let name = universe_sim::names::star_name(app.u.world.galaxy.stars[*to].seed).to_uppercase();
             lines.push((format!("GATE TRANSIT TO {name}  {remaining:.1} S"), AMBER));
         }
         ShipState::Flying => {}
@@ -219,14 +217,14 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
     }
     let ship = &app.u.ship;
     let stage = if let Some(until) = r.dwell_until {
-        format!("AT STOP - LEAVING IN {}", fmt::countdown((until - app.u.time) / app.warp().max(1.0)))
+        format!("AT STOP - LEAVING IN {}", fmt::countdown((until - app.u.world.time) / app.warp().max(1.0)))
     } else if r.departing {
         "CLIMBING".into()
     } else if matches!(ship.state, ShipState::Transit { .. }) {
         "GATE TRANSIT".into()
     } else if ship.hyperdrive {
         "HYPERDRIVE".into()
-    } else if let Some(c) = ship.clearance {
+    } else if let Some(c) = app.u.avionics.clearance {
         match c.target {
             universe_sim::NavTarget::Station(_) => "DOCKING".into(),
             universe_sim::NavTarget::Spaceport(_) => "LANDING".into(),
@@ -244,7 +242,7 @@ fn approach_info(app: &App, lines: &mut Vec<(String, Color)>) {
         None => {
             if app.u.ship.is_flying() {
                 let hint = match &app.nav_marker {
-                    Some((name, _)) if app.u.ship.nav_target.is_some() => format!("NAV {name}  R REQUEST CLEARANCE"),
+                    Some((name, _)) if app.u.avionics.nav_target.is_some() => format!("NAV {name}  R REQUEST CLEARANCE"),
                     _ => "M NAV MAP   R REQUEST DOCKING".into(),
                 };
                 lines.push((hint, DIM));
@@ -302,7 +300,8 @@ fn docking_info(app: &App, station: usize, st: &DockingStatus, lines: &mut Vec<(
 }
 
 fn transit_info(app: &App, gate: usize, st: &universe_sim::GateStatus, lines: &mut Vec<(String, Color)>) {
-    use universe_sim::gate::{MAX_TRANSIT_SPEED, TRANSIT_SPEED};
+    use universe_sim::gate::TRANSIT_SPEED;
+    use universe_sim::world::gate::MAX_TRANSIT_SPEED;
     let name = app.view.system.bodies[gate].name.to_uppercase();
     lines.push((format!("TRANSIT {name}  {}", mode_label(st.autopilot, st.phase)), HUD));
     let too_fast = st.speed > MAX_TRANSIT_SPEED;
@@ -592,7 +591,7 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
 
     // Prograde / retrograde relative to the dominant body: the key to landing.
     let Some(r) = app.view.reference else { return };
-    let rel_vel = app.u.ship.velocity - app.view.system.velocity(r, app.u.time);
+    let rel_vel = app.u.ship.velocity - app.view.system.velocity(r, app.u.world.time);
     if rel_vel.length() > 0.5 && !app.u.ship.hyperdrive {
         let dir = rel_vel.normalize() * 1.0e3;
         if let Some(p) = frame.project(cam + dir) {

@@ -1,5 +1,6 @@
-//! Landing at planetary spaceports: pad geometry, guidance, trajectory
-//! prediction and the landing autopilot.
+//! Landing at planetary spaceports: the pad as guidance sees it, guidance,
+//! trajectory prediction and the landing autopilot. (The spaceport and the
+//! landing gear are the world's: `universe_world::spaceport`.)
 //!
 //! Guidance works in the planet's rotating frame, where the pad stands still.
 //! Far out, it routes over the curve of the planet (never through it) to an
@@ -8,20 +9,16 @@
 
 use glam::{DQuat, DVec3};
 use universe_physics::{leapfrog, pull, segment_distance};
+use universe_world::ship::{facing, upright};
+use universe_world::{Ship, StarSystem, Terrain};
 
+use crate::avionics::{Clearance, Phase};
 use crate::docking::{attitude, Command, Guidance};
-use crate::ship::{facing, upright, Clearance, Phase, Ship};
-use crate::system::StarSystem;
-use crate::terrain::Terrain;
 
-/// Touching down within this distance of the pad center counts as landing at the port (m).
-pub const PAD_RADIUS: f64 = 250.0;
 /// Height of the entry point above the pad, where the vertical descent starts (m).
 pub const ENTRY_ALTITUDE: f64 = 3000.0;
 /// Horizontal distance from the pad within which the descent phase applies (m).
 const DESCENT_RADIUS: f64 = 2500.0;
-/// Landing clearance is granted within this many planet radii of the pad.
-pub const CLEARANCE_RADII: f64 = 20.0;
 /// Top speed while routing around the planet (m/s).
 const ROUTE_SPEED: f64 = 3000.0;
 /// Lowest cruise altitude when routing around the planet, as a fraction of its radius.

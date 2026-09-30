@@ -1,5 +1,5 @@
 use universe_engine::Context;
-use universe_sim::{Event, ShipState};
+use universe_sim::{Event, ShipEvent, ShipState, TrafficEvent};
 
 use crate::{App, Mode};
 
@@ -30,39 +30,39 @@ pub fn chime(ctx: &Context) {
 pub fn event(ctx: &Context, event: &Event) {
     let Some(a) = ctx.audio() else { return };
     match event {
-        Event::Landed { .. } => {
+        Event::Ship(ShipEvent::Landed { .. }) => {
             a.tone(660.0, 660.0, 0.12, 0.25);
             a.tone(990.0, 990.0, 0.3, 0.18);
         }
-        Event::TookOff => a.tone(300.0, 500.0, 0.2, 0.25),
-        Event::Crashed { .. } => a.noise(1.8, 0.6),
-        Event::Respawned => a.tone(440.0, 880.0, 0.3, 0.25),
-        Event::EnteredSystem { .. } => a.tone(880.0, 880.0, 0.2, 0.25),
-        Event::HyperdriveEngaged => a.tone(150.0, 1400.0, 0.7, 0.3),
-        Event::HyperdriveDisengaged => a.tone(1400.0, 150.0, 0.6, 0.3),
+        Event::Ship(ShipEvent::TookOff) => a.tone(300.0, 500.0, 0.2, 0.25),
+        Event::Ship(ShipEvent::Crashed { .. }) => a.noise(1.8, 0.6),
+        Event::Ship(ShipEvent::Respawned) => a.tone(440.0, 880.0, 0.3, 0.25),
+        Event::Ship(ShipEvent::EnteredSystem { .. }) => a.tone(880.0, 880.0, 0.2, 0.25),
+        Event::Ship(ShipEvent::HyperdriveEngaged) => a.tone(150.0, 1400.0, 0.7, 0.3),
+        Event::Ship(ShipEvent::HyperdriveDisengaged) => a.tone(1400.0, 150.0, 0.6, 0.3),
         Event::HyperdriveArrived { .. } => a.tone(880.0, 1320.0, 0.25, 0.2),
-        Event::ClearanceGranted { .. } => {
+        Event::Traffic(TrafficEvent::ClearanceGranted { .. }) => {
             a.tone(880.0, 880.0, 0.1, 0.22);
             a.tone(1320.0, 1320.0, 0.25, 0.15);
         }
-        Event::ClearanceDenied { .. } => a.tone(180.0, 160.0, 0.35, 0.25),
-        Event::ClearanceCancelled => a.tone(600.0, 300.0, 0.3, 0.2),
+        Event::Traffic(TrafficEvent::ClearanceDenied { .. }) | Event::Refused { .. } => a.tone(180.0, 160.0, 0.35, 0.25),
+        Event::Traffic(TrafficEvent::ClearanceCancelled) => a.tone(600.0, 300.0, 0.3, 0.2),
         Event::Autopilot { on: true } => a.tone(500.0, 900.0, 0.2, 0.2),
         Event::Autopilot { on: false } => a.tone(900.0, 500.0, 0.2, 0.2),
         Event::NavTargetSet { .. } => a.tone(1000.0, 1300.0, 0.08, 0.15),
-        Event::LandedAtPort { .. } => {
+        Event::Ship(ShipEvent::LandedAtPort { .. }) => {
             a.tone(660.0, 660.0, 0.12, 0.25);
             a.tone(880.0, 880.0, 0.15, 0.2);
             a.tone(1320.0, 1320.0, 0.4, 0.15);
         }
-        Event::Bumped => a.noise(0.3, 0.35),
-        Event::Launched { .. } => a.tone(200.0, 800.0, 0.5, 0.25),
-        Event::GateEntered { .. } => {
+        Event::Ship(ShipEvent::Bumped) => a.noise(0.3, 0.35),
+        Event::Ship(ShipEvent::Launched { .. }) => a.tone(200.0, 800.0, 0.5, 0.25),
+        Event::Ship(ShipEvent::GateEntered { .. }) => {
             a.tone(120.0, 2400.0, 1.5, 0.25);
             a.noise(2.0, 0.25);
         }
-        Event::GateArrived { .. } => a.tone(2400.0, 300.0, 0.8, 0.22),
-        Event::GateTooFast { .. } => {}
+        Event::Ship(ShipEvent::GateArrived { .. }) => a.tone(2400.0, 300.0, 0.8, 0.22),
+        Event::Ship(ShipEvent::GateTooFast { .. }) => {}
         Event::RouteStop { .. } => a.tone(700.0, 1050.0, 0.25, 0.18),
         Event::RouteComplete => {
             a.tone(523.0, 523.0, 0.2, 0.2);

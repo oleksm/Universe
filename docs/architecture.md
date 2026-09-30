@@ -133,6 +133,51 @@ energy/momentum sanity, collider/trigger correctness.
 - **Events**: physical facts (contact, docked, landed, destroyed, transit) separate from
   service/UI events.
 
+### As built (Phase 2)
+
+`crates/world/src/` (package `universe-world`, depends on `universe-physics`, `glam`, `serde`):
+
+- Content: `units`, `rng`, `names`, `galaxy`, `terrain`, `system` (moved from sim), `network`
+  (home system choice, gate network, links). `World { galaxy, time, home_system, gate_links }`
+  owns the clock and caches: generated systems, each system's neighbouring stars, and the
+  per-system ephemeris shared by every ship stepping from the same moment.
+- Structures with their contact rules: `station` (`StationFrame`, `hull()`, the docking port:
+  `docks`/`bounces`, `contact` → dock or destroy, `launch`), `spaceport` (`PAD_RADIUS`,
+  `pad_position`, the landing gear: `touch_down`, `lift_off`), `gate` (`GateFrame`, `RING`, the
+  gate device: `enter` → transit state or too fast, `emerge` via the kernel's `Relative` op).
+  (`PadFrame` — the pad as guidance sees it, with its entry point — stays with the landing
+  guidance.)
+- `ship`: `Ship` = rigid-body state + device settings (`throttle`, `rcs`, `hyperdrive`), `state`,
+  fuel, cargo — **no navigation state**. `ShipCommands { throttle, rcs, turn: Option<Controls>,
+  hyperdrive: Option<HyperdriveCommand> }`; `HyperdriveCommand { engage, heading, steering,
+  frame_velocity, exit_velocity, destination }`. Engine + thrusters (`Ship::thrust`) and attitude
+  (`steer`, crate-private) are the flight devices; `Ship::holding()` gives commands that change
+  nothing, as a base for new ones.
+- `hyperdrive`: the device. Speed = `HYPER_RATE` × room (nearest surface, or the commanded
+  destination if nearer: the stop distance) × throttle, relative to the commanded frame (else the
+  dominant body's); along the commanded heading or the nose; drops out by itself short of an
+  obstacle dead ahead unless the heading is being steered; interlock: never into a body;
+  dropping out leaves the commanded exit velocity (else co-moving with the dominant body).
+- `damage` (destroy, `RESPAWN_TIME`), `World::respawn`, `World::ship_at` (spawn docked/landed).
+- `traffic`: traffic control — `Facility` (station/spaceport/gate), `request` (not in flight,
+  in hyperdrive, no target, not in this system, out of range → refused with a reason),
+  `lapsed` (beyond twice the range, or gone), `nearest_station`.
+- `events`: `ShipEvent` (physical: landed/docked, landed at a port, took off, launched, bumped,
+  crashed, respawned, entered system, hyperdrive on/off, gate entered/arrived/too fast) and
+  `TrafficEvent` (clearance granted/denied/cancelled).
+- The ship step: `World::command(ship, system, &ShipCommands)` (no time passes: settings, then
+  the hyperdrive switch) and `World::step_ship(ship, system, &ShipCommands, computer, real_dt,
+  warp)` — destroyed (respawn countdown), landed (weld; turn; launch / lift-off), transit
+  (countdown; emerge), hyperdrive, or free flight through the kernel, then the system hand-over.
+  It reads only the ship, the commands and kernel facts. A **flight computer** takes part
+  through the `FlightComputer` trait, again only with commands: `substep()` gives commands for
+  every integration substep (the autopilots are feedback controllers and have always run at
+  substep rate), `hyperdrive()` gives the frame's hyperdrive orders once the clock has moved on,
+  and `interval()` is the longest substep it can fly with.
+- Fine substeps come from proximity to structures (kernel: within 30 km of a polytope or
+  ring), the thrusters firing (device state), or the flight computer's interval — never from
+  clearance.
+
 ## Avionics (`universe-avionics`)
 
 Per-ship software, pure functions of (sensors, own state) → `ShipCommands`:
@@ -151,6 +196,13 @@ avionics (or the player's input) → `ShipCommands` → devices → kernel step 
 facts → device/world rules react → events. Owns the player's ship and the crafts (settlers),
 traffic statistics, save/load. The world time scale (default 2×) is ticks per real second.
 
+As of Phase 2 the navigation code still lives in `universe-sim` (moving to avionics in Phase 3):
+`avionics.rs` (per-ship `Avionics { nav_target, clearance, hyper_autopilot }`, which learns what
+happened from the world's `ShipEvent`s), `computer.rs` (the `FlightComputer`: the dock/land/gate
+autopilot per substep, hyperdrive navigation per frame), guidance in `docking`/`landing`/`gate`,
+the planner and routes. `Universe { world, ship, ship_system, avionics, route, crafts, … }`; its
+`Event` is the pilot's feed: `Ship(ShipEvent)`, `Traffic(TrafficEvent)` and the avionics' own.
+
 ## Where today's code maps (refactor starting point)
 
 | Before | After |
@@ -158,11 +210,13 @@ traffic statistics, save/load. The world time scale (default 2×) is ticks per r
 | `sim/orbit.rs`, ephemeris, gravity, `positions`/`velocity`/`dominant` in `system.rs` | physics: rails (done, Phase 1) |
 | integration in `Universe::flight_step` | physics: rigid-body step (done, Phase 1) |
 | terrain height function | world content, via physics `Surface` trait (done, Phase 1) |
-| `docking::contact` | physics polytope collider + world docking port (collider done, Phase 1) |
-| `gate::crossing` | physics ring collider/trigger + world gate device (relocate op) (collider + op done, Phase 1) |
-| `touch_down`, `crash`, `dock` | world landing gear / docking port / damage |
-| `hyperdrive_step` | world hyperdrive device + avionics hyperdrive autopilot |
+| `docking::contact` | physics polytope collider + world docking port (done, Phases 1–2) |
+| `gate::crossing` | physics ring collider/trigger + world gate device (relocate op) (done, Phases 1–2) |
+| `touch_down`, `crash`, `dock` | world landing gear / docking port / damage (done, Phase 2) |
+| `hyperdrive_step` | world hyperdrive device (done, Phase 2) + avionics hyperdrive autopilot (sim `computer.rs` for now) |
+| galaxy, names, rng, units, system generation, terrain, gate network | world content (done, Phase 2) |
 | `docking.rs`/`landing.rs`/`gate.rs` guidance + autopilots, `plan.rs`, `route.rs`, `route_step` | avionics |
-| clearance granting | world traffic-control service |
-| `Ship.{clearance, nav_target, hyper_autopilot}`, `Universe.route` | avionics state (per ship) |
+| clearance granting | world traffic-control service (done, Phase 2) |
+| `Ship.{clearance, nav_target, hyper_autopilot}` | avionics state per ship (off the ship: sim `Avionics`, Phase 2) |
+| `Universe.route` | avionics state (per ship) |
 | `Universe`, crafts, settlers, save/load | sim orchestration |

@@ -1,67 +1,21 @@
-//! Ring gates linking star systems.
+//! Gate run guidance and the transit autopilot. (The gate itself, its frame
+//! and the gate device are the world's: `universe_world::gate`.)
 //!
-//! A gate is a ring, inertially fixed, orbiting a planet. Flying through its
-//! opening (not too fast) sends the ship to the paired gate in the linked
-//! system, arriving with the same speed and heading relative to the gate.
-//! Hitting the ring structure is fatal.
+//! The run-in goes along the ring's axis, through the opening, at a steady
+//! speed well under the gate's limit.
 
-use glam::{DQuat, DVec3};
-use universe_physics::{Frame, Ring};
+use glam::DVec3;
+use universe_world::gate::{GATE_RADIUS, RING_TUBE};
+use universe_world::ship::facing;
+use universe_world::{GateFrame, Ship};
 
+use crate::avionics::{Clearance, Phase};
 use crate::docking::{attitude, Command, Guidance};
-use crate::ship::{facing, Clearance, Phase, Ship};
-use crate::system::StarSystem;
 
-/// Radius of the ring's centerline (m); the opening is a little smaller.
-pub const GATE_RADIUS: f64 = 1500.0;
-/// Half-thickness of the ring structure (m).
-pub const RING_TUBE: f64 = 60.0;
-/// Faster than this through a gate and the transit fails (m/s).
-pub const MAX_TRANSIT_SPEED: f64 = 300.0;
 /// Recommended speed through the ring (m/s).
 pub const TRANSIT_SPEED: f64 = 100.0;
 /// Where the run-in starts, along the axis from the ring (m).
 pub const APPROACH_DISTANCE: f64 = 4000.0;
-/// How long the transit between gates takes (real seconds).
-pub const TRANSIT_TIME: f64 = 5.0;
-/// Transit clearance is granted within this range (m).
-pub const CLEARANCE_RANGE: f64 = 50_000.0;
-/// The ring's shape, for the physics kernel; its opening is the trigger.
-pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
-
-/// A gate's pose and motion at one instant, in the system frame.
-#[derive(Clone, Copy, Debug)]
-pub struct GateFrame {
-    pub center: DVec3,
-    pub velocity: DVec3,
-    pub rotation: DQuat,
-}
-
-impl GateFrame {
-    pub fn new(sys: &StarSystem, gate: usize, t: f64, positions: &[DVec3]) -> Self {
-        Self { center: positions[gate], velocity: sys.velocity(gate, t), rotation: sys.bodies[gate].rotation(t) }
-    }
-
-    /// As a kernel frame (a gate doesn't spin), e.g. to relocate a ship between gates.
-    pub fn frame(&self) -> Frame {
-        Frame { center: self.center, velocity: self.velocity, rotation: self.rotation, angular_velocity: DVec3::ZERO }
-    }
-
-    /// The ring's axis (normal to the opening).
-    pub fn axis(&self) -> DVec3 {
-        self.rotation * DVec3::Y
-    }
-
-    pub fn local(&self, p: DVec3) -> DVec3 {
-        self.rotation.inverse() * (p - self.center)
-    }
-
-    /// Which side of the ring `p` is on (+1 or -1), and distance from the opening's plane.
-    fn side(&self, p: DVec3) -> (f64, f64) {
-        let h = (p - self.center).dot(self.axis());
-        (if h >= 0.0 { 1.0 } else { -1.0 }, h.abs())
-    }
-}
 
 /// Lined up on the axis, close enough for the run-in.
 pub fn in_final_zone(frame: &GateFrame, pos: DVec3) -> bool {

@@ -3,9 +3,11 @@ name = "universe-sim"
 edition.workspace = true
 version.workspace = true
 
-# The simulation core: no graphics, no windowing, no audio.
+# Orchestration (the tick loop, ships and their avionics, traffic, save/load)
+# over the world. No graphics, no windowing, no audio.
 [dependencies]
 universe-physics = { path = "../physics" }
+universe-world = { path = "../world" }
 glam.workspace = true
 serde.workspace = true
 

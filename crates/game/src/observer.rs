@@ -82,7 +82,7 @@ impl Observer {
         }
         if input.pressed(KeyCode::KeyN) || input.pressed(KeyCode::KeyB) {
             let (base, index) = self.star_cycle.unwrap_or((origin, usize::MAX));
-            let list = u.galaxy.nearest(base, 12);
+            let list = u.world.galaxy.nearest(base, 12);
             let index = match (input.pressed(KeyCode::KeyN), index) {
                 (true, usize::MAX) => 0,
                 (true, i) => (i + 1) % list.len(),
@@ -93,7 +93,7 @@ impl Observer {
             self.focus = Focus::Body { system: list[index], body: 0 };
         }
         if input.pressed(KeyCode::Home) {
-            self.focus = Focus::Body { system: u.home_system, body: 0 };
+            self.focus = Focus::Body { system: u.world.home_system, body: 0 };
             self.star_cycle = None;
         }
         if input.pressed(KeyCode::KeyT) && !u.crafts.is_empty() {

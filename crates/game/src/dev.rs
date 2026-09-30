@@ -3,7 +3,7 @@
 
 use universe_engine::glam::DVec3;
 use universe_sim::ship::SHIP_RADIUS;
-use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Phase, ShipState, StationFrame};
+use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Phase, ShipCommands, ShipEvent, ShipState, StationFrame};
 
 use crate::observer::Focus;
 use crate::{App, Mode};
@@ -11,9 +11,9 @@ use crate::{App, Mode};
 pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow";
 
 pub fn apply(app: &mut App, name: &str) {
-    let home = app.u.home_system;
+    let home = app.u.world.home_system;
     let sys = app.u.system(home);
-    let t = app.u.time;
+    let t = app.u.world.time;
     let mut positions = Vec::new();
     sys.positions(t, &mut positions);
     let observe = |app: &mut App, body: usize, distance: f64, pitch: f64| {
@@ -36,7 +36,7 @@ pub fn apply(app: &mut App, name: &str) {
         }
         "rings" => {
             // Nearest ringed planet in the neighbourhood.
-            for n in std::iter::once(home).chain(app.u.galaxy.nearest(home, 60)) {
+            for n in std::iter::once(home).chain(app.u.world.galaxy.nearest(home, 60)) {
                 let s = app.u.system(n);
                 if let Some(i) = s.bodies.iter().position(|b| b.rings.is_some()) {
                     app.mode = Mode::Observer;
@@ -57,13 +57,13 @@ pub fn apply(app: &mut App, name: &str) {
             // Aim at a nearby star on the open-sky side of the planet, and jump.
             app.mode = Mode::Pilot;
             let up = (app.u.ship.position - positions[planet]).normalize();
-            let dir_to = |n: usize| (app.u.galaxy.offset(home, n) - app.u.ship.position).normalize();
-            let candidates = app.u.galaxy.nearest(home, 12);
+            let dir_to = |n: usize| (app.u.world.galaxy.offset(home, n) - app.u.ship.position).normalize();
+            let candidates = app.u.world.galaxy.nearest(home, 12);
             let target = candidates.iter().copied().find(|&n| dir_to(n).dot(up) > 0.3).unwrap_or(candidates[0]);
             let dir = dir_to(target);
             app.u.ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, dir);
             app.u.toggle_hyperdrive();
-            app.u.ship.throttle = 1.0;
+            app.u.command(&ShipCommands { throttle: 1.0, ..app.u.ship.holding() });
             for _ in 0..4000 {
                 app.u.step(1.0 / 60.0, 1.0, &Controls::default());
                 if !app.u.ship.hyperdrive {
@@ -236,7 +236,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Observer;
             for _ in 0..60 * 60 * 5 {
                 app.u.step_world(1.0 / 60.0, 3.0, &Controls::default());
-                if let Some(i) = app.u.crafts.iter().position(|c| c.ship.is_flying() && !c.ship.hyperdrive && c.ship.clearance.is_some_and(|x| x.autopilot)) {
+                if let Some(i) = app.u.crafts.iter().position(|c| c.ship.is_flying() && !c.ship.hyperdrive && c.avionics.clearance.is_some_and(|x| x.autopilot)) {
                     app.observer.focus = Focus::Craft(i);
                     app.observer.distance = 300.0;
                     app.observer.pitch = 0.3;
@@ -265,7 +265,7 @@ pub fn apply(app: &mut App, name: &str) {
         other => log::warn!("unknown scenario {other:?}; try one of: {SCENARIOS}"),
     }
     app.messages.clear();
-    log::info!("scenario {name}: pending events {:?}, clearance {:?}", app.u.events, app.u.ship.clearance);
+    log::info!("scenario {name}: pending events {:?}, clearance {:?}", app.u.events, app.u.avionics.clearance);
 
     // Optional camera override: UNIVERSE_CAM=cockpit | map (observer watching the ship from afar).
     match std::env::var("UNIVERSE_CAM").as_deref() {
@@ -286,11 +286,11 @@ pub fn sound_test(ctx: &universe_engine::Context, t: f64, last_t: f64) -> bool {
     let Some(a) = ctx.audio() else { return false };
     let at = |x: f64| last_t < x && t >= x;
     let events = [
-        (0.5, Event::TookOff),
-        (1.0, Event::Landed { body: String::new(), station: false }),
-        (1.8, Event::HyperdriveEngaged),
-        (2.8, Event::HyperdriveDisengaged),
-        (3.8, Event::Crashed { body: String::new() }),
+        (0.5, Event::Ship(ShipEvent::TookOff)),
+        (1.0, Event::Ship(ShipEvent::Landed { body: String::new(), station: false })),
+        (1.8, Event::Ship(ShipEvent::HyperdriveEngaged)),
+        (2.8, Event::Ship(ShipEvent::HyperdriveDisengaged)),
+        (3.8, Event::Ship(ShipEvent::Crashed { body: String::new() })),
     ];
     for (time, event) in &events {
         if at(*time) {

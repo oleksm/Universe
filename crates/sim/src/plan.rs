@@ -10,12 +10,15 @@
 
 use glam::{DQuat, DVec3};
 use universe_physics::{Frame, RingCrossing};
+use universe_world::gate::RING;
+use universe_world::ship::{self, Ship};
+use universe_world::station::STATION_SIZE;
+use universe_world::{GateFrame, StarSystem, StationFrame};
 
-use crate::docking::{self, StationFrame, STATION_SIZE};
-use crate::gate::{self, GateFrame};
+use crate::avionics::{NavTarget, Phase};
+use crate::docking;
+use crate::gate;
 use crate::landing::{self, PadFrame};
-use crate::ship::{self, NavTarget, Phase, Ship};
-use crate::system::StarSystem;
 
 /// What the ship is doing at a point of the plan.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -209,7 +212,7 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, now:
         // A gate plan arrives when the ship passes through the ring.
         if let NavTarget::Gate(g) = target {
             let f = Frame::of(&sys.bodies, g, t, &positions);
-            match gate::RING.crossing(&f, prev, ship.position, dt, ship::SHIP_RADIUS) {
+            match RING.crossing(&f, prev, ship.position, dt, ship::SHIP_RADIUS) {
                 RingCrossing::Through => {
                     out.arrives = true;
                     break;

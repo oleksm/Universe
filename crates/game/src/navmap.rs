@@ -39,7 +39,7 @@ pub struct NavMap {
 /// Systems you can browse: the ship's first, then the gate network.
 fn browsable(app: &App) -> Vec<usize> {
     let mut v = vec![app.u.ship_system];
-    let mut net: Vec<usize> = app.u.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
+    let mut net: Vec<usize> = app.u.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
     net.sort();
     net.dedup();
     v.extend(net.into_iter().filter(|&s| s != app.u.ship_system));
@@ -53,7 +53,7 @@ impl NavMap {
         let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None };
         map.refresh(app);
         // Start on the current target if there is one.
-        if let Some(t) = app.u.ship.nav_target {
+        if let Some(t) = app.u.avionics.nav_target {
             map.selected = map.entries.iter().position(|e| e.target == t).unwrap_or(0);
         }
         map
@@ -65,7 +65,7 @@ impl NavMap {
 
     fn refresh(&mut self, app: &mut App) {
         self.system = app.u.system(self.view);
-        self.system.positions(app.u.time, &mut self.positions);
+        self.system.positions(app.u.world.time, &mut self.positions);
         let here = self.here(app);
         let ship = app.u.ship.position;
         self.ship_body = here.then(|| self.system.dominant(ship, &self.positions));
@@ -188,7 +188,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     }
     let route_has = |t: NavTarget| app.u.route.stops.iter().any(|s| s.system == map.view && s.target == t);
     for (i, e) in map.entries.iter().enumerate() {
-        let locked = map.here(app) && app.u.ship.nav_target == Some(e.target);
+        let locked = map.here(app) && app.u.avionics.nav_target == Some(e.target);
         let c = if i == map.selected { SELECT } else if locked { LOCKED } else { TEXT };
         let cursor = if i == map.selected { ">" } else { " " };
         let mark = if locked { "*" } else if route_has(e.target) { "+" } else { " " };

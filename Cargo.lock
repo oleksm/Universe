@@ -2272,6 +2272,16 @@ dependencies = [
  "serde",
  "serde_json",
  "universe-physics",
+ "universe-world",
+]
+
+[[package]]
+name = "universe-world"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "serde",
+ "universe-physics",
 ]
 
 [[package]]

@@ -153,3 +153,150 @@ relative motion, gravity/dominant (non-attracting bodies ignored), segment dista
   1.40 µs, gravity 0.06 µs, terrain 0.13 µs; planner 1.95 ms (landing) / 1.08 ms (docking) —
   all within noise of the baseline.
 - `cargo build --release`: ok (game builds against the new APIs).
+
+### Phase 2 — World layer (`crates/world`, `universe-world`)
+
+**What moved where**
+
+- New crate `crates/world` (package `universe-world`; depends on `universe-physics`, `glam`,
+  `serde`), in the workspace between physics and sim. `universe-sim` depends on it and
+  re-exports it as `universe_sim::world`, plus the old paths `universe_sim::{galaxy, names, rng,
+  ship, system, terrain, units}` and the common types at the crate root.
+  - Content, moved verbatim: `units`, `rng`, `names`, `galaxy`, `terrain` (with its test),
+    `system` (now with `on_pad`/`port_at`, the one pad-radius rule the landing gear, the route
+    and the HUD share). `network`: `find_home`, `build` (the gate network) and `links_of`, from
+    `Universe::{find_home, build_gate_network, gate_links_of}`.
+  - `World { galaxy, time, home_system, gate_links }` + caches (systems, neighbouring stars per
+    system, per-system ephemeris) — the clock and content that were fields of `Universe`.
+  - Structures and their contact rules: `station` (`StationFrame`, `hull()`, `bounces`, `docks`,
+    and the docking port's `contact` → `dock` or destroy, and `launch`, all from `docking.rs` /
+    `universe.rs`), `spaceport` (`PAD_RADIUS`, `LAND_SPEED`, `pad_position`, the landing gear's
+    `touch_down` and `lift_off`), `gate` (`GateFrame`, `RING`, `GATE_RADIUS`, `RING_TUBE`,
+    `MAX_TRANSIT_SPEED`, `TRANSIT_TIME`, the gate device's `enter` and `emerge`).
+  - `ship`: `Ship` (rigid-body state, device settings `throttle`/`rcs`/`hyperdrive`, `state`,
+    fuel, cargo), `ShipState`, `Controls`, the constants, `facing`/`upright`; **`ShipCommands`**
+    and `HyperdriveCommand`/`Destination`. Engine + thrusters (`thrust`) and attitude (`steer`,
+    now crate-private) are the flight devices.
+  - `hyperdrive`: the device (`switch`, `cruise`; `HYPER_RATE`, `PLANET_MARGIN`), from
+    `Universe::{toggle_hyperdrive, hyperdrive_step}`' physical half.
+  - `damage` (`destroy`, `RESPAWN_TIME`), `World::respawn`, `World::ship_at` (settler spawn).
+  - `traffic`: traffic control — `Facility`, `request`, `lapsed`, `nearest_station`, ranges
+    (`DOCK_RANGE`, `LAND_RANGE_RADII`, `TRANSIT_RANGE`, were `docking::CLEARANCE_RANGE`,
+    `landing::CLEARANCE_RADII`, `gate::CLEARANCE_RANGE`), from `Universe::{request_clearance,
+    check_clearance, clearance_range, target_position, target_name, nearest_station}`.
+  - `events`: `ShipEvent` (physical) and `TrafficEvent` (service), `ClearanceKind`.
+  - The ship step, `World::step_ship` (+ `World::command`), from `Universe::{step, landed_step,
+    hyperdrive_step, flight_step, react, enter_gate, arrive_through_gate, dock, crash, touch_down,
+    check_system_handover}`; the kernel `Driver` is now the world's `Devices`.
+- `universe-sim` keeps the navigation (Phase 3 moves it) and the orchestration:
+  - `avionics.rs` (was `ship.rs`): `Phase`, `Clearance`, `NavTarget` (= the world's `Facility`,
+    re-exported under the old name; same serialized form), and **`Avionics { nav_target,
+    clearance, hyper_autopilot }`** — the nav state that was on `Ship`. `Avionics::observe`
+    applies the world's physical events (landed/docked/crashed end a clearance; a gate or a
+    system hand-over also forgets the target; any hyperdrive switch hands steering back;
+    respawn clears everything) — what `crash`/`dock`/`enter_gate`/… used to do to the ship.
+  - `computer.rs` (new): the ship's `FlightComputer` — the dock/land/gate autopilot every
+    substep (was the `Pilot` driver), and hyperdrive navigation every frame (`hyper_aim`, arrival
+    drop-out, steering around bodies, exit velocity near the target; was in `hyperdrive_step` /
+    `toggle_hyperdrive`).
+  - `docking.rs`/`landing.rs`/`gate.rs`: guidance, status and autopilots only; the autopilots'
+    `Command` converts to `ShipCommands`. `PadFrame` stays in `landing.rs` (it is the pad as
+    guidance sees it: entry point, terrain clearance).
+  - `universe.rs`: `Universe { world, ship, ship_system, avionics, route, events, crafts, … }`;
+    `Craft` gains `avionics` and loses its `neighbours` cache (the world caches per system).
+    Every change to the engine/thrusters from sim code (route departure and launch, hyperjump,
+    autopilot off, clearance lost, …) goes through `Universe::command` / `set_controls`.
+    `Event` = `Ship(ShipEvent)` | `Traffic(TrafficEvent)` | the avionics' own (hyperdrive
+    arrived, route stop/complete/blocked, autopilot on/off, nav target set, `Refused`).
+- Game: `u.{galaxy, time, gate_links, home_system}` → `u.world.*`; `ship.{clearance, nav_target,
+  hyper_autopilot}` → `avionics.*`; events matched as `Event::Ship(ShipEvent::…)` /
+  `Event::Traffic(TrafficEvent::…)`; world constants imported from `universe_sim::world::…`;
+  the pilot's throttle/thruster keys go through `Universe::command` (a `ShipCommands`).
+
+**Decisions**
+
+- **The world step reads only commands and kernel facts.** `World::step_ship(ship, system,
+  &ShipCommands, computer, real_dt, warp)` never sees a nav target, clearance or route (the
+  types aren't even in the crate). Navigation code takes part through the `FlightComputer`
+  trait, again only by returning `ShipCommands`: `substep()` per integration substep (the
+  autopilots are feedback controllers that have always run at substep rate — moving them to
+  frame rate would change every trajectory), `hyperdrive()` per frame once the clock has moved
+  on (the hyperdrive's navigation needs the bodies where they will be), and `interval()`, the
+  longest substep the computer can fly with. The world hands the computer the star system and
+  rail positions (its sensors).
+- **Fine substeps without clearance**: the substep limit is now the kernel's proximity rule
+  (within 30 km of a polytope or ring), the thrusters firing (device state), or the flight
+  computer's `interval()` (0.05 s while an autopilot flies). `clearance.is_some()` is no longer
+  read.
+- **Hyperdrive split**: the device (world) holds the speed law (room to the nearest surface or
+  the commanded destination × throttle), the reference frame, the look-ahead drop-out (only
+  when flying along the nose, i.e. not `steering`), the interlock and drop-out with the exit
+  velocity; the navigation (sim) decides the destination, frame, exit velocity (the target's
+  within 1,000 km), the heading around bodies, and when it has arrived.
+- **Nav state off the ship now** (planned for Phase 3): a world `Ship` with navigation fields
+  would have meant world types holding avionics state. The sim's `Avionics` is per ship and is
+  swapped with the crafts like the rest of the per-ship state.
+- `World` owns the clock and content now (planned for Phase 4), since the ship step needs
+  them; `Universe` keeps thin delegates (`system`, `ship_system`, `gate_links_of`,
+  `distance_ly`).
+- Everything kept **bit-identical**: the Phase 1 fingerprint (20 settlers × 1 game h, autodock,
+  autoland, 1000× coast) gives the same hashes, times and states before and after this phase,
+  and the full sim test output (docking/landing/gate times, hyperdrive drop-out distances,
+  plan lengths) is unchanged apart from the event wrapper in printed event lists.
+
+**Deviations / notes for later phases**
+
+- Behaviour change (no test or run affected): a *manually* flown ship holding a clearance,
+  thrusters off, far from any station or gate, now takes coarse substeps. The frame is only
+  0.033 s at the default 2× time scale, below the 0.05 s fine step, so this shows only with
+  extra warp; the pilot's commands change per frame anyway.
+- Events: the hyperdrive autopilot's "lock a nav target first" refusal is now `Event::Refused`
+  (the avionics refusing), not a traffic-control denial; the game shows the same text and tone.
+  Event order within one frame can differ where a physical event and an avionics event happen
+  together (world events are recorded first).
+- Save format: `UniverseSave` gains `avionics` (`#[serde(default)]`); `Ship` no longer
+  serializes `clearance`/`nav_target`/`hyper_autopilot`. Older saves still load (unknown fields
+  are ignored) but come back without nav target or clearance.
+- Direct position/velocity writes now live only in world device rules: hyperdrive motion and
+  drop-out, the docking port's launch, the landing gear's lift-off, docking/landing (pose set
+  by the port/gear), respawn and `ship_at` (spawn). Gate transit uses the kernel's `Relative`
+  op, landed/docked ships the `Weld` op. The kernel has no explicit "unweld"/"launch impulse"
+  op yet; Phase 5's audit may want these expressed as kernel ops.
+- The attitude device (`Ship::steer`) still sets orientation itself; rotation is not yet
+  integrated by the kernel. `ShipCommands::turn: None` means no turn is commanded that span.
+- World caches: neighbouring stars are cached per system (was per ship); when more than 64
+  systems are cached, the gate network's systems are kept (was: the current ship's system).
+  Both only affect speed, not results.
+- The planner (`plan.rs`) still has its private integrator (Phase 3).
+- Tests moved to the world crate (unchanged assertions, driven through `World::step_ship` by a
+  test `Probe`): `home_system_has_station_and_planets`, `ship_keeps_orbit_under_warp`,
+  `heavier_ship_accelerates_less`, `gate_network_links_five_systems_with_one_to_three_gates_each`,
+  `fast_hull_contact_crashes_and_slow_bumps`, `launch_from_docked_leaves_along_axis`,
+  `clipping_the_ring_or_going_too_fast_is_fatal`, `hyperdrive_reaches_neighbour_and_drops_out_safely`,
+  `untargeted_hyperdrive_stops_well_short_of_a_planet`, and the terrain test. New: traffic
+  control grants/refuses/lapses; a flight computer's substep commands fly exactly like the
+  pilot's; the landing gear lands gently and breaks on a hard touchdown; the hyperdrive
+  interlock never enters a body; the speed law and the commanded exit velocity; the avionics'
+  reaction to physical events (sim); the save test also round-trips the nav target.
+- `docs/architecture.md`: "As built (Phase 2)" under World, an orchestration note, mapping rows.
+
+**Gates**
+
+- `cargo clippy --workspace --all-targets`: 0 warnings, 0 errors.
+- `cargo test --workspace --release`: physics 18 passed; world 15 passed (10 moved, 5 new);
+  sim 19 passed, 10 ignored (28 before: 9 moved to the world crate, 1 new; the terrain test moved too).
+- `cargo test --workspace --release -- --ignored`: 10/10 passed, identical to the baseline and
+  Phase 1: docking from spawn planned 149 s / actual 150 s; landing from orbit 384 s; gate from
+  30 km 259 s; 10-stop settler route complete in 3.5 game h; all 13 moon ports autoland
+  (264–285 s); 100 settlers × 10 game h: 1,868 stops, 1,999 transits, 156 routes, **0 crashes**,
+  0.26 ms/frame; 1,000 settlers: **0 crashes**, 2.22 ms/frame; landing ETA biggest jump 0.08 s.
+  Bench (µs/frame, in that run): coasting 2.12, warp 1000 4.57, near station 2.06, docking
+  autopilot 5.19, landing autopilot 3.43 (warp 100: 6.50), hyperdrive 1.93, near ground 2.25;
+  body positions 1.38 µs, gravity 0.06 µs, terrain 0.13 µs; planner 1.98 ms (landing) / 1.12 ms
+  (docking). Run alone, back to back with the pre-phase tree on the same machine, frame costs
+  are 2–6% higher and the targeted hyperdrive ~8% (1.88 vs 1.69–1.76 µs): an extra call layer
+  (commands, the computer callback, a per-system neighbour lookup). Two trims went in for it:
+  the world hands the computer its star system (no second system lookup per step), and the
+  hyperdrive navigation no longer clones the target's name every frame.
+- `cargo build --release`: ok. (Dev scenarios compile against the new API; not rendered in this
+  phase.)

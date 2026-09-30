@@ -14,7 +14,7 @@ use std::rc::Rc;
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
 use universe_engine::{run, Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
-use universe_sim::{Approach, ClearanceKind, Controls, Event, ShipState, StarSystem, StepResult, Universe};
+use universe_sim::{Approach, ClearanceKind, Controls, Event, ShipEvent, ShipState, StarSystem, StepResult, TrafficEvent, Universe};
 
 use models::Models;
 use observer::{Focus, Observer};
@@ -259,30 +259,31 @@ impl App {
             self.u.respawn();
         }
         // The autopilot has the stick.
-        if self.u.route.active || self.u.ship.clearance.is_some_and(|c| c.autopilot) {
+        if self.u.route.active || self.u.avionics.clearance.is_some_and(|c| c.autopilot) {
             return Controls::default();
         }
 
         // Shift turns W/S/A/D/Q/E into translation thrusters (RCS).
         let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
-        let ship = &mut self.u.ship;
+        let mut command = self.u.ship.holding();
         if shift {
-            ship.rcs = DVec3::new(
+            command.rcs = DVec3::new(
                 input.axis(KeyCode::KeyA, KeyCode::KeyD) as f64,
                 input.axis(KeyCode::KeyQ, KeyCode::KeyE) as f64,
                 input.axis(KeyCode::KeyW, KeyCode::KeyS) as f64,
             );
         } else {
-            ship.rcs = DVec3::ZERO;
-            ship.throttle += input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt;
+            command.rcs = DVec3::ZERO;
+            command.throttle += input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt;
         }
         if input.pressed(KeyCode::KeyZ) {
-            ship.throttle = 1.0;
+            command.throttle = 1.0;
         }
         if input.pressed(KeyCode::KeyX) {
-            ship.throttle = 0.0;
+            command.throttle = 0.0;
         }
-        ship.throttle = ship.throttle.clamp(0.0, 1.0);
+        command.throttle = command.throttle.clamp(0.0, 1.0);
+        self.u.command(&command);
 
         let keys: f32 = if shift { 0.0 } else { 1.0 };
         let mut c = Controls {
@@ -302,39 +303,39 @@ impl App {
         for event in std::mem::take(&mut self.u.events) {
             sound::event(ctx, &event);
             let text = match event {
-                Event::Landed { body, station: true } => format!("DOCKED AT {body}"),
-                Event::Landed { body, station: false } => format!("LANDED ON {body}"),
-                Event::TookOff => "LIFT OFF".into(),
-                Event::Crashed { body } => format!("SHIP DESTROYED - {body}"),
-                Event::Respawned => "NEW SHIP DELIVERED TO HOME STATION".into(),
-                Event::EnteredSystem { name } => format!("ENTERING {name} SYSTEM"),
-                Event::HyperdriveEngaged => "HYPERDRIVE ENGAGED".into(),
-                Event::HyperdriveDisengaged => "HYPERDRIVE OFF".into(),
+                Event::Ship(ShipEvent::Landed { body, station: true }) => format!("DOCKED AT {body}"),
+                Event::Ship(ShipEvent::Landed { body, station: false }) => format!("LANDED ON {body}"),
+                Event::Ship(ShipEvent::TookOff) => "LIFT OFF".into(),
+                Event::Ship(ShipEvent::Crashed { body }) => format!("SHIP DESTROYED - {body}"),
+                Event::Ship(ShipEvent::Respawned) => "NEW SHIP DELIVERED TO HOME STATION".into(),
+                Event::Ship(ShipEvent::EnteredSystem { name }) => format!("ENTERING {name} SYSTEM"),
+                Event::Ship(ShipEvent::HyperdriveEngaged) => "HYPERDRIVE ENGAGED".into(),
+                Event::Ship(ShipEvent::HyperdriveDisengaged) => "HYPERDRIVE OFF".into(),
                 Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\nR TO REQUEST CLEARANCE"),
-                Event::ClearanceGranted { target, kind: ClearanceKind::Dock } => {
+                Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Dock }) => {
                     format!("DOCKING GRANTED - {target}\nFOLLOW THE GATES, OR K FOR AUTO")
                 }
-                Event::ClearanceGranted { target, kind: ClearanceKind::Land } => {
+                Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Land }) => {
                     format!("LANDING GRANTED - {target}\nFOLLOW THE PATH, OR K FOR AUTO")
                 }
-                Event::ClearanceGranted { target, kind: ClearanceKind::Transit } => {
+                Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Transit }) => {
                     format!("TRANSIT GRANTED - {target}\nFLY THROUGH THE RING UNDER 300 M/S, OR K FOR AUTO")
                 }
-                Event::GateEntered { to } => format!("GATE TRANSIT TO {to}"),
-                Event::GateArrived { system } => format!("WELCOME TO THE {system} SYSTEM"),
-                Event::GateTooFast { speed } => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
-                Event::ClearanceDenied { reason } => format!("CLEARANCE DENIED - {reason}"),
-                Event::ClearanceCancelled => "CLEARANCE LOST".into(),
+                Event::Ship(ShipEvent::GateEntered { to }) => format!("GATE TRANSIT TO {to}"),
+                Event::Ship(ShipEvent::GateArrived { system }) => format!("WELCOME TO THE {system} SYSTEM"),
+                Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
+                Event::Traffic(TrafficEvent::ClearanceDenied { reason }) | Event::Refused { reason } => format!("CLEARANCE DENIED - {reason}"),
+                Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE LOST".into(),
                 Event::Autopilot { on: true } => "AUTOPILOT ON".into(),
                 Event::Autopilot { on: false } => "AUTOPILOT OFF".into(),
                 Event::NavTargetSet { name: Some(name) } => format!("NAV TARGET - {name}\nR TO REQUEST CLEARANCE"),
                 Event::NavTargetSet { name: None } => "NAV TARGET CLEARED".into(),
-                Event::LandedAtPort { port } => format!("TOUCHDOWN - WELCOME TO {port}"),
+                Event::Ship(ShipEvent::LandedAtPort { port }) => format!("TOUCHDOWN - WELCOME TO {port}"),
                 Event::RouteStop { number, name } => format!("ROUTE STOP {number} - {name}"),
                 Event::RouteComplete => "ROUTE COMPLETE".into(),
                 Event::RouteBlocked { reason } => format!("ROUTE STOPPED - {reason}"),
-                Event::Bumped => "HULL CONTACT!".into(),
-                Event::Launched { station } => format!("LAUNCHED FROM {station}"),
+                Event::Ship(ShipEvent::Bumped) => "HULL CONTACT!".into(),
+                Event::Ship(ShipEvent::Launched { station }) => format!("LAUNCHED FROM {station}"),
             };
             self.say(text.to_uppercase());
         }
@@ -353,7 +354,7 @@ impl App {
     }
 
     fn find_nav_marker(&mut self) -> Option<(String, DVec3)> {
-        if let Some(t) = self.u.ship.nav_target {
+        if let Some(t) = self.u.avionics.nav_target {
             let pos = self.u.target_position(t)?;
             let name = match t {
                 universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_) => self.u.target_name(t),
@@ -364,7 +365,7 @@ impl App {
         let sys = self.u.ship_system();
         let station = sys.station()?;
         let mut positions = Vec::new();
-        sys.positions(self.u.time, &mut positions);
+        sys.positions(self.u.world.time, &mut positions);
         Some((String::new(), positions[station]))
     }
 
@@ -375,8 +376,8 @@ impl App {
         };
         let system = self.u.system(origin);
         let mut positions = std::mem::take(&mut self.view.positions);
-        system.positions(self.u.time, &mut positions);
-        let ship_pos = self.u.ship.position + self.u.galaxy.offset(origin, self.u.ship_system);
+        system.positions(self.u.world.time, &mut positions);
+        let ship_pos = self.u.ship.position + self.u.world.galaxy.offset(origin, self.u.ship_system);
         let reference = (origin == self.u.ship_system).then(|| system.dominant(ship_pos, &positions));
         self.view = View { origin, system, positions, ship_pos, reference };
     }
@@ -395,7 +396,7 @@ impl App {
                 let focus = self.focus_position();
                 if let (true, Some((prev_origin, prev_pos))) = (focus_changed, self.prev_focus) {
                     // Glide from the old target: express it in the new frame first.
-                    let old = prev_pos + self.observer.transition + self.u.galaxy.offset(self.view.origin, prev_origin);
+                    let old = prev_pos + self.observer.transition + self.u.world.galaxy.offset(self.view.origin, prev_origin);
                     self.observer.transition = old - focus;
                 }
                 self.observer.transition *= (-4.0 * dt).exp();
@@ -452,7 +453,7 @@ impl Game for App {
         // The planner costs ~1-2 ms: rebuild it 10 times a second, or at once
         // when the clearance, target or autopilot phase changes.
         self.plan_age += ctx.dt;
-        let key = self.u.ship.clearance;
+        let key = self.u.avionics.clearance;
         let changed = key.map(|c| (c.target, c.autopilot, c.phase)) != self.plan_for.map(|c| (c.target, c.autopilot, c.phase));
         if changed || self.plan_age >= 0.1 || !self.u.ship.is_flying() {
             self.plan = self.u.plan();
@@ -460,7 +461,7 @@ impl Game for App {
             self.plan_for = key;
         }
         if let Some(p) = &self.plan {
-            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.time - p.start);
+            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.world.time - p.start);
             let count = left / self.frame_step;
             if !(6.0..=24.0).contains(&count) {
                 const STEPS: [f64; 14] = [2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0, 7200.0, 14400.0];
@@ -468,7 +469,7 @@ impl Game for App {
             }
         }
         let raw = self.plan.as_ref().filter(|p| p.arrives).map(|p| {
-            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.time - p.start);
+            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.world.time - p.start);
             left / self.warp().max(1.0)
         });
         self.eta_shown = match (raw, self.eta_shown) {

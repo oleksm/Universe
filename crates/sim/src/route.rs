@@ -4,7 +4,7 @@ use std::collections::VecDeque;
 
 use serde::{Deserialize, Serialize};
 
-use crate::ship::NavTarget;
+use crate::avionics::NavTarget;
 
 /// A place to visit: a station (dock) or spaceport (land) in some star system.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]

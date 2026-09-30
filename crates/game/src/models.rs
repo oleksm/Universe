@@ -45,7 +45,7 @@ fn coriolis() -> WireModel {
 /// A ring gate, in meters: a square-section ring in the XZ plane (axis +Y),
 /// with struts every few segments.
 fn gate_ring() -> WireModel {
-    use universe_sim::gate::{GATE_RADIUS, RING_TUBE};
+    use universe_sim::world::gate::{GATE_RADIUS, RING_TUBE};
     let (r, t) = (GATE_RADIUS as f32, RING_TUBE as f32);
     let n = 48u32;
     let section = [(-t, -t), (t, -t), (t, t), (-t, t)]; // (radial, axial) corners

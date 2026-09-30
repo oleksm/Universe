@@ -1,30 +1,31 @@
-//! Universe simulation core: a seeded galaxy, star systems on Keplerian rails,
-//! and a Newtonian ship. Deterministic and headless; knows nothing about rendering.
-//! The physics itself (rails, integration, contacts) is the kernel, `universe-physics`.
+//! Universe orchestration: the world (`universe-world`) with the player's
+//! ship and the settlers' crafts in it, each with its avionics — the
+//! navigation computer, guidance, autopilots and flight planner — which fly
+//! the ships through `ShipCommands`. Deterministic and headless; knows
+//! nothing about rendering. (The physics itself is the kernel,
+//! `universe-physics`; the avionics move to their own crate later.)
 
+pub mod avionics;
+mod computer;
 pub mod docking;
-pub mod galaxy;
 pub mod gate;
 pub mod landing;
-pub mod names;
 pub mod plan;
-pub mod rng;
 pub mod route;
-pub mod ship;
-pub mod system;
-pub mod terrain;
-pub mod units;
 pub mod universe;
 
-pub use docking::{DockingStatus, Guidance, StationFrame};
+pub use avionics::{Avionics, Clearance, NavTarget, Phase};
+pub use docking::{DockingStatus, Guidance};
 pub use landing::{LandingStatus, PadFrame};
-pub use galaxy::{Galaxy, GalaxyStar, StarClass};
-pub use gate::{GateFrame, GateStatus};
+pub use gate::GateStatus;
 pub use universe_physics as physics;
 pub use universe_physics::Orbit;
+pub use universe_world as world;
+pub use universe_world::{galaxy, names, rng, ship, system, terrain, units};
+pub use universe_world::{
+    Body, BodyKind, ClearanceKind, Controls, Galaxy, GalaxyStar, GateFrame, Ground, Ship, ShipCommands, ShipEvent, ShipState, Spaceport,
+    StarClass, StarSystem, StationFrame, StepResult, Terrain, TerrainKind, TrafficEvent,
+};
 pub use plan::{Action, Plan, PlanPoint};
 pub use route::{Route, Stop};
-pub use ship::{Clearance, Controls, NavTarget, Phase, Ship, ShipState};
-pub use system::{Body, BodyKind, Spaceport, StarSystem};
-pub use terrain::{Ground, Terrain, TerrainKind};
-pub use universe::{Approach, ClearanceKind, CrashReport, Craft, Event, StepResult, TrafficStats, Universe, UniverseSave};
+pub use universe::{Approach, CrashReport, Craft, Event, TrafficStats, Universe, UniverseSave};

@@ -35,7 +35,7 @@ impl BodyKind {
     }
 
     /// Can a ship touch down here (slowly) without being destroyed?
-    /// (Stations are docked with through their slot instead; see `docking`.)
+    /// (Stations are docked with through their slot instead; see `station`.)
     pub fn landable(self) -> bool {
         matches!(self, BodyKind::Rocky | BodyKind::Moon)
     }
@@ -49,7 +49,7 @@ impl BodyKind {
     /// slot, a gate's ring, or a (terrain) surface.
     fn collider(self) -> Collider {
         match self {
-            BodyKind::Station => Collider::Polytope(crate::docking::hull()),
+            BodyKind::Station => Collider::Polytope(crate::station::hull()),
             BodyKind::Gate => Collider::Ring(crate::gate::RING),
             _ => Collider::Surface,
         }
@@ -418,6 +418,18 @@ impl StarSystem {
 
     pub fn station(&self) -> Option<usize> {
         self.bodies.iter().position(|b| b.kind == BodyKind::Station)
+    }
+
+    /// Is a point on `body` (a body-frame direction) on spaceport `port`'s pad?
+    pub fn on_pad(&self, port: usize, body: usize, local_dir: DVec3) -> bool {
+        self.spaceports.get(port).is_some_and(|sp| {
+            sp.body == body && sp.direction.angle_between(local_dir) * self.bodies[body].rail.radius < crate::spaceport::PAD_RADIUS
+        })
+    }
+
+    /// The spaceport whose pad is at a point on `body` (a body-frame direction), if any.
+    pub fn port_at(&self, body: usize, local_dir: DVec3) -> Option<usize> {
+        (0..self.spaceports.len()).find(|&p| self.on_pad(p, body, local_dir))
     }
 
     pub fn planet_count(&self) -> usize {

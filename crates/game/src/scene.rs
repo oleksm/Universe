@@ -2,8 +2,10 @@ use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{text_size, Color, Frame, Transform, WireModel};
 use universe_sim::names::star_name;
 use universe_sim::units::LIGHT_YEAR;
-use universe_sim::docking::{corridor_half, APPROACH_HEIGHT, STATION_SIZE};
-use universe_sim::landing::{ENTRY_ALTITUDE, PAD_RADIUS};
+use universe_sim::docking::{corridor_half, APPROACH_HEIGHT};
+use universe_sim::landing::ENTRY_ALTITUDE;
+use universe_sim::world::spaceport::PAD_RADIUS;
+use universe_sim::world::station::STATION_SIZE;
 use universe_sim::gate::APPROACH_DISTANCE;
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, GateFrame, GateStatus, LandingStatus, Plan, ShipState, StationFrame};
 
@@ -44,7 +46,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
 /// Every star in the galaxy as a sky point, dimmed by distance.
 fn galaxy(frame: &mut Frame, app: &App) {
-    let g = &app.u.galaxy;
+    let g = &app.u.world.galaxy;
     let origin = g.stars[app.view.origin].position;
     let cam = frame.camera.position;
     for (i, s) in g.stars.iter().enumerate() {
@@ -61,7 +63,7 @@ fn galaxy(frame: &mut Frame, app: &App) {
     if app.mode == Mode::Observer && cam.length() > 1.0e15 {
         let amber = Color::hex(0xffc040);
         let mut nodes = Vec::new();
-        for &(a, b) in &app.u.gate_links {
+        for &(a, b) in &app.u.world.gate_links {
             let pa = (g.stars[a].position - origin) * LIGHT_YEAR;
             let pb = (g.stars[b].position - origin) * LIGHT_YEAR;
             frame.line(pa, pb, amber.scale(0.6));
@@ -84,7 +86,7 @@ fn transit_tunnel(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     let fwd = frame.camera.forward().as_dvec3();
     let spacing = 150.0;
-    let shift = (app.u.time * 900.0) % spacing;
+    let shift = (app.u.world.time * 900.0) % spacing;
     for k in 0..28 {
         let z = k as f64 * spacing - shift + 20.0;
         let fade = (1.0 - z / (28.0 * spacing)) as f32;
@@ -96,7 +98,7 @@ fn transit_tunnel(frame: &mut Frame, app: &App) {
 /// Transit guidance: the ring's axis through both sides, the run-in point on
 /// our side, our drift, and the flight plan tunnel.
 fn transit_guide(frame: &mut Frame, app: &App, gate: usize, st: &GateStatus) {
-    let f = GateFrame::new(&app.view.system, gate, app.u.time, &app.view.positions);
+    let f = GateFrame::new(&app.view.system, gate, app.u.world.time, &app.view.positions);
     let axis = f.axis();
     let c = if st.in_corridor { GUIDE_OK } else { GUIDE_OFF };
     frame.line(f.center - axis * APPROACH_DISTANCE, f.center + axis * APPROACH_DISTANCE, c.scale(0.4));
@@ -109,7 +111,7 @@ fn transit_guide(frame: &mut Frame, app: &App, gate: usize, st: &GateStatus) {
     if app.u.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, st.relative_velocity);
         if let Some(plan) = &app.plan {
-            plan_path(frame, app, plan, app.u.time, app.view.ship_pos);
+            plan_path(frame, app, plan, app.u.world.time, app.view.ship_pos);
         }
     }
 }
@@ -136,7 +138,7 @@ fn orbits(frame: &mut Frame, app: &App) {
 
 fn bodies(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
-    let t = app.u.time;
+    let t = app.u.world.time;
     let cam = frame.camera.position;
     for (i, b) in sys.bodies.iter().enumerate() {
         let center = app.view.positions[i];
@@ -249,7 +251,7 @@ pub const GUIDE_OFF: Color = Color::hex(0xffc040);
 
 /// The approach corridor: gates along the docking axis, shaped and rolled like the slot.
 fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingStatus) {
-    let f = StationFrame::new(&app.view.system, station, app.u.time, &app.view.positions);
+    let f = StationFrame::new(&app.view.system, station, app.u.world.time, &app.view.positions);
     let c = if status.in_corridor { GUIDE_OK } else { GUIDE_OFF };
     let (long, short) = (f.slot_long(), f.slot_short());
 
@@ -275,7 +277,7 @@ fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingS
     if app.u.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, status.relative_velocity);
         if let Some(plan) = &app.plan {
-            plan_path(frame, app, plan, app.u.time, app.view.ship_pos);
+            plan_path(frame, app, plan, app.u.world.time, app.view.ship_pos);
         }
     }
 }
@@ -313,7 +315,7 @@ pub fn action_color(a: Action) -> Color {
 /// nose tick), so the pilot sees ahead of time where to be and which way to face.
 /// Where the plan's reference (station, gate, or a port's planet) is now.
 pub fn plan_reference(app: &App) -> Option<DVec3> {
-    let target = app.u.ship.clearance?.target;
+    let target = app.u.avionics.clearance?.target;
     let i = match target {
         universe_sim::NavTarget::Station(s) | universe_sim::NavTarget::Gate(s) => s,
         universe_sim::NavTarget::Spaceport(p) => app.view.system.spaceports.get(p)?.body,
@@ -431,7 +433,7 @@ fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
         }
     }
     if let Some(plan) = &app.plan {
-        plan_path(frame, app, plan, app.u.time, app.view.ship_pos);
+        plan_path(frame, app, plan, app.u.world.time, app.view.ship_pos);
     }
 }
 
@@ -440,7 +442,7 @@ fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
 fn spaceports(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let cam = frame.camera.position;
-    let t = app.u.time;
+    let t = app.u.world.time;
     for (i, sp) in sys.spaceports.iter().enumerate() {
         let b = &sys.bodies[sp.body];
         let rot = b.rotation(t);
@@ -450,7 +452,7 @@ fn spaceports(frame: &mut Frame, app: &App) {
         if dist > 400_000.0 {
             continue;
         }
-        let targeted = app.u.ship.nav_target == Some(universe_sim::NavTarget::Spaceport(i));
+        let targeted = app.u.avionics.nav_target == Some(universe_sim::NavTarget::Spaceport(i));
         let e1 = rot * sp.direction.any_orthonormal_vector();
         let e2 = up.cross(e1);
         let center = app.view.positions[sp.body];
@@ -563,7 +565,7 @@ fn labels(frame: &mut Frame, app: &App) {
 
     // Neighbouring stars once we're far enough out to see them as a map.
     if cam.length() > 2.0e14 {
-        let g = &app.u.galaxy;
+        let g = &app.u.world.galaxy;
         for n in g.nearest(app.view.origin, 10) {
             let at = g.offset(app.view.origin, n);
             let name = star_name(g.stars[n].seed).to_uppercase();
