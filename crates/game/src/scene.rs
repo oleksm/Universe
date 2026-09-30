@@ -1,5 +1,5 @@
 use universe_engine::glam::{DVec3, Vec2};
-use universe_engine::{text_size, Color, Frame, Transform, WireModel};
+use universe_engine::{text_size, Color, Frame, Light, Transform, WireModel};
 use universe_sim::names::star_name;
 use universe_sim::units::LIGHT_YEAR;
 use universe_sim::docking::{corridor_half, APPROACH_HEIGHT};
@@ -19,7 +19,8 @@ pub fn color(c: [f32; 3]) -> Color {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    galaxy(frame, app);
+    let starlight = sky(frame, app);
+    galaxy(frame, app, starlight);
     if matches!(app.u.ship.state, ShipState::Transit { .. }) && app.mode == Mode::Pilot {
         transit_tunnel(frame, app);
         return;
@@ -27,8 +28,17 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.show_orbits {
         orbits(frame, app);
     }
-    // The system's star lights everything in it.
-    frame.light = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star).map(|i| app.view.positions[i]);
+    // The system's star lights everything in it: its colour, and its
+    // luminosity (1 at 1 AU from a sun-like star), fading with distance.
+    let class = app.view.system.class;
+    let tint = class.color();
+    let top = tint.iter().copied().fold(0.0, f32::max);
+    frame.light = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star).map(|i| Light {
+        position: app.view.positions[i],
+        color: tint.map(|c| c / top),
+        luminosity: class.luminosity(),
+        reference: universe_sim::units::AU,
+    });
     bodies(frame, app);
     spaceports(frame, app);
     if app.view.origin == app.u.ship_system {
@@ -52,8 +62,44 @@ pub fn draw(frame: &mut Frame, app: &App) {
     }
 }
 
+/// Top of a world's atmosphere, for the sky's colour (m).
+const ATMOSPHERE: f64 = 100_000.0;
+
+/// Day and night in the sky. Inside the atmosphere of a world with air
+/// (Terran), the sky takes the sun's light: blue by day, red and orange at
+/// twilight, black at night, fading out with altitude. The stars wash out by
+/// day. Airless worlds and space: a black sky, stars always. Returns how much
+/// of the starlight shows (0..1).
+fn sky(frame: &mut Frame, app: &App) -> f32 {
+    frame.clear = Color::BLACK;
+    let sys = &app.view.system;
+    let Some(star) = sys.bodies.iter().position(|b| b.kind == BodyKind::Star) else { return 1.0 };
+    let cam = frame.camera.position;
+    let sun = app.view.positions[star];
+    let t = app.u.world.time;
+    let air = sys.bodies.iter().enumerate().find_map(|(i, b)| {
+        let terran = b.terrain.as_ref().is_some_and(|tr| tr.kind == universe_sim::TerrainKind::Terran);
+        let center = app.view.positions[i];
+        let altitude = cam.distance(center) - b.surface_radius_at(center, cam, t);
+        (terran && altitude < ATMOSPHERE).then_some((center, altitude))
+    });
+    let Some((center, altitude)) = air else { return 1.0 };
+    let up = (cam - center).normalize();
+    let elevation = up.dot((sun - cam).normalize()) as f32; // sine of the sun's height
+    let thick = (1.0 - altitude / ATMOSPHERE).clamp(0.0, 1.0) as f32;
+    let day = ((elevation + 0.05) / 0.3).clamp(0.0, 1.0);
+    let twilight = (-(elevation / 0.08).powi(2)).exp();
+    let bright = Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU }.intensity_at(cam);
+    let tint = sys.class.color();
+    let blue = [0.22, 0.42, 0.85];
+    let dusk = [0.85, 0.38, 0.16];
+    let c = |j: usize| (blue[j] * day * bright * (0.6 + 0.4 * tint[j]) + dusk[j] * twilight * 0.35 * tint[j]) * thick;
+    frame.clear = Color([c(0), c(1), c(2), 1.0]);
+    1.0 - 0.97 * day * thick
+}
+
 /// Every star in the galaxy as a sky point, dimmed by distance.
-fn galaxy(frame: &mut Frame, app: &App) {
+fn galaxy(frame: &mut Frame, app: &App, starlight: f32) {
     let g = &app.u.world.galaxy;
     let origin = g.stars[app.view.origin].position;
     let cam = frame.camera.position;
@@ -65,7 +111,7 @@ fn galaxy(frame: &mut Frame, app: &App) {
         let d_ly = rel.length() / LIGHT_YEAR;
         let flux = s.class.luminosity() / (d_ly * d_ly).max(1e-9);
         let brightness = ((flux.log10() + 8.0) / 6.0).clamp(0.2, 1.0) as f32;
-        frame.sky_point(rel.normalize().as_vec3(), color(s.class.color()).scale(brightness));
+        frame.sky_point(rel.normalize().as_vec3(), color(s.class.color()).scale(brightness * starlight));
     }
     // The gate network, once we're zoomed out far enough to see it as a map.
     if app.mode == Mode::Observer && cam.length() > 1.0e15 {
@@ -198,7 +244,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             }
         } else {
             let (model, fill): (&WireModel, Color) = match b.kind {
-                BodyKind::Star => (&app.models.star, c.scale(0.3)),
+                BodyKind::Star => (&app.models.star, c),
                 BodyKind::Rocky => (&app.models.rocky, c.scale(0.4)),
                 BodyKind::GasGiant | BodyKind::IceGiant => (&app.models.giant, c.scale(0.45)),
                 _ => (&app.models.moon, c.scale(0.35)),

@@ -90,7 +90,8 @@ impl Universe {
             let role = crate::rng::mix(route_seed, 0x0917_27e5) % PIRATE_ONE_IN;
             let (pirate, trader) = (role == 0, role == 1);
             self.crafts.push(Craft {
-                name: format!("Settler {}", self.crafts.len() + 1),
+                // Named for what they do (the number stays each craft's own).
+                name: format!("{} {}", if pirate { "Pirate" } else if trader { "Trader" } else { "Settler" }, self.crafts.len() + 1),
                 ship,
                 system: first.system,
                 avionics: Avionics { route, pirate, ..Avionics::default() },

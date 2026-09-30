@@ -99,13 +99,15 @@ pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64, fine:
     // Sunlight: faces shaded by their true slope to the star (the terrain's
     // relief), lines dimmed on the night side.
     let light = frame.light;
-    let lambert = |p: DVec3, n: DVec3| light.map_or(1.0, |l| n.dot((l - p).normalize()).max(0.0) as f32);
+    // The star's brightness here (falls with distance; the eye adapts partly).
+    let bright = light.map_or(1.0, |l| l.intensity_at(center));
+    let lambert = |p: DVec3, n: DVec3| light.map_or(1.0, |l| n.dot((l.position - p).normalize()).max(0.0) as f32 * bright);
     let shade = |a: DVec3, b: DVec3, c: DVec3| {
         let mut n = (b - a).cross(c - a).normalize_or_zero();
         if n.dot(a - center) < 0.0 {
             n = -n;
         }
-        FILL * (0.25 + 2.25 * lambert((a + b + c) / 3.0, n))
+        FILL * (0.12 + 2.4 * lambert((a + b + c) / 3.0, n))
     };
     let pts: Vec<(DVec3, Color)> = pts
         .into_iter()

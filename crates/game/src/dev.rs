@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades noon dusk night";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.u.world.home_system;
@@ -171,6 +171,28 @@ pub fn apply(app: &mut App, name: &str) {
                     }
                 }
             }
+        }
+        "noon" | "dusk" | "night" => {
+            // 2 km over the home planet, level, looking along the ground: the
+            // sun overhead, on the horizon, or below it.
+            app.mode = Mode::Pilot;
+            let b = &sys.bodies[planet];
+            let sun = (positions[0] - positions[planet]).normalize();
+            let side = sun.any_orthonormal_vector();
+            let angle: f64 = match name {
+                "noon" => 0.35,
+                "dusk" => std::f64::consts::FRAC_PI_2 - 0.02,
+                _ => 2.4,
+            };
+            let up = (sun * angle.cos() + side * angle.sin()).normalize();
+            let center = positions[planet];
+            let ground = b.surface_radius_at(center, center + up, t);
+            app.u.ship.position = center + up * (ground + 2_000.0);
+            app.u.ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.u.ship.position - center);
+            // Look toward the sun's side along the horizon, a little down.
+            let ahead = (sun - up * sun.dot(up)).normalize_or(side);
+            let look = (ahead - up * 0.08).normalize();
+            app.u.ship.orientation = universe_sim::ship::facing(look, up);
         }
         "lowflight" => {
             // Skimming 6 km over the home planet, 800 km from the port, looking ahead.

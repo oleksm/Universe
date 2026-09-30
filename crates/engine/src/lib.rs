@@ -16,7 +16,7 @@ mod renderer;
 pub use app::{run, Config, Context, Game, Perf};
 pub use camera::Camera;
 pub use audio::Audio;
-pub use frame::{text_size, Color, Frame, GLYPH};
+pub use frame::{text_size, Color, Frame, Light, GLYPH};
 pub use glam;
 pub use input::{Input, KeyCode, MouseButton};
 pub use model::{Transform, WireModel};

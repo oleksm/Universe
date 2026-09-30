@@ -49,9 +49,9 @@ pub(crate) struct Vertex {
 pub struct Frame {
     pub camera: Camera,
     pub clear: Color,
-    /// Where the light comes from (world position, e.g. the star), for the
-    /// `*_shaded` draws. None: they draw unlit (full brightness).
-    pub light: Option<DVec3>,
+    /// The light (e.g. the star), for the `*_shaded` draws. None: they draw
+    /// unlit (full brightness).
+    pub light: Option<Light>,
     /// Low-res scene resolution.
     scene_size: Vec2,
     /// HUD layer resolution (a multiple of the scene's).
@@ -64,10 +64,36 @@ pub struct Frame {
     pub(crate) hud: Vec<Vertex>,
 }
 
+/// A light source: a star. How bright it looks falls with the square of the
+/// distance; the eye adapts part of the way (`EXPOSURE`), so a planet far out
+/// is dim but not black and one close in is bright but not blinding.
+#[derive(Clone, Copy, Debug)]
+pub struct Light {
+    /// World position.
+    pub position: DVec3,
+    /// Its colour (the brightest channel 1).
+    pub color: [f32; 3],
+    /// Luminosity, relative: brightness 1 at `reference` metres from it.
+    pub luminosity: f64,
+    pub reference: f64,
+}
+
+/// How much the eye adapts: perceived brightness goes as irradiance to this power.
+pub const EXPOSURE: f32 = 0.3;
+
+impl Light {
+    /// Perceived brightness of its light at `p` (world), after adaptation.
+    pub fn intensity_at(&self, p: DVec3) -> f32 {
+        let d = p.distance(self.position).max(1.0);
+        let irradiance = self.luminosity * (self.reference / d).powi(2);
+        (irradiance as f32).powf(EXPOSURE).clamp(0.1, 1.6)
+    }
+}
+
 /// Brightness of a face turned away from the light (see `Frame::model_shaded`).
-pub const SHADE_AMBIENT: f32 = 0.12;
+pub const SHADE_AMBIENT: f32 = 0.06;
 /// Brightness of an edge on the unlit side.
-pub const LINE_AMBIENT: f32 = 0.3;
+pub const LINE_AMBIENT: f32 = 0.25;
 
 /// Width and height of one character cell of the HUD font, in pixels.
 pub const GLYPH: f32 = 8.0;
@@ -200,8 +226,15 @@ impl Frame {
     /// (Lambert); 1 when there's no light.
     fn lambert(&self, at: Vec3, normal: Vec3) -> f32 {
         let Some(light) = self.light else { return 1.0 };
-        let to_light = ((light - self.camera.position).as_vec3() - at).normalize_or_zero();
+        let to_light = ((light.position - self.camera.position).as_vec3() - at).normalize_or_zero();
         normal.dot(to_light).max(0.0)
+    }
+
+    /// The light's colour times its brightness at `at` (camera-relative); white if none.
+    fn light_at(&self, at: Vec3) -> [f32; 3] {
+        let Some(light) = self.light else { return [1.0; 3] };
+        let k = light.intensity_at(self.camera.position + at.as_dvec3());
+        light.color.map(|c| c * k)
     }
 
     /// Faces lit by `light`, flat-shaded (one tone per face): `base` times
@@ -211,7 +244,12 @@ impl Frame {
     /// light on their ends (a vertex facing away from the center), down to
     /// `LINE_AMBIENT` of `line`.
     fn shaded(&mut self, pts: &[Vec3], center: Vec3, model: &WireModel, edges: f32, line: impl Fn(u32) -> [f32; 4], fill: impl Fn(u32) -> [f32; 4]) {
-        let tone = |c: [f32; 4], k: f32| [c[0] * k, c[1] * k, c[2] * k, c[3]];
+        // Ambient plus the star's light, in its colour and at its brightness here.
+        let lit = |c: [f32; 4], ambient: f32, k: f32, light: [f32; 3]| {
+            let ch = |j: usize| c[j] * (ambient + (1.0 - ambient) * k * light[j]);
+            [ch(0), ch(1), ch(2), c[3]]
+        };
+        let light = self.light_at(center);
         for f in &model.faces {
             let [a, b, c] = [f[0], f[1], f[2]].map(|i| pts[i as usize]);
             let mid = (a + b + c) / 3.0;
@@ -219,9 +257,9 @@ impl Frame {
             if n.dot(mid - center) < 0.0 {
                 n = -n;
             }
-            let k = SHADE_AMBIENT + (1.0 - SHADE_AMBIENT) * self.lambert(mid, n);
+            let k = self.lambert(mid, n);
             for &i in f {
-                self.solids.push(Vertex { pos: pts[i as usize].to_array(), color: tone(fill(i), k) });
+                self.solids.push(Vertex { pos: pts[i as usize].to_array(), color: lit(fill(i), SHADE_AMBIENT, k, light) });
             }
         }
         if edges <= 0.0 {
@@ -230,8 +268,9 @@ impl Frame {
         for e in &model.edges {
             for &i in e {
                 let p = pts[i as usize];
-                let k = edges * (LINE_AMBIENT + (1.0 - LINE_AMBIENT) * self.lambert(p, (p - center).normalize_or_zero()).sqrt());
-                self.lines.push(Vertex { pos: p.to_array(), color: tone(line(i), k) });
+                let k = self.lambert(p, (p - center).normalize_or_zero()).sqrt();
+                let [r, g, b, a] = lit(line(i), LINE_AMBIENT, k, light);
+                self.lines.push(Vertex { pos: p.to_array(), color: [r * edges, g * edges, b * edges, a] });
             }
         }
     }
