@@ -13,7 +13,7 @@ pub mod input;
 pub mod model;
 mod renderer;
 
-pub use app::{run, Config, Context, Game};
+pub use app::{run, Config, Context, Game, Perf};
 pub use camera::Camera;
 pub use audio::Audio;
 pub use frame::{text_size, Color, Frame, GLYPH};

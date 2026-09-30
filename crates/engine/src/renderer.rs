@@ -74,6 +74,8 @@ struct Target {
 }
 
 pub(crate) struct Renderer {
+    /// How long the last `render` waited for the next surface texture (vsync).
+    pub(crate) wait: std::time::Duration,
     low_height: u32,
     hud_scale: u32,
     /// Fixed framebuffer aspect ratio (for reproducible screenshots), else follow the window.
@@ -262,6 +264,7 @@ impl Renderer {
 
         let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler);
         Self {
+            wait: std::time::Duration::ZERO,
             low_height,
             hud_scale,
             forced_aspect,
@@ -365,7 +368,10 @@ impl Renderer {
         self.hud_tris.upload(gpu, &frame.hud_tris);
         self.hud.upload(gpu, &frame.hud);
 
-        let surface_texture = match gpu.surface.get_current_texture() {
+        let acquire = std::time::Instant::now();
+        let next = gpu.surface.get_current_texture();
+        self.wait = acquire.elapsed();
+        let surface_texture = match next {
             wgpu::CurrentSurfaceTexture::Success(t) | wgpu::CurrentSurfaceTexture::Suboptimal(t) => t,
             wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
                 gpu.surface.configure(&gpu.device, &gpu.config);

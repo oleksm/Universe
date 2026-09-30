@@ -48,8 +48,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
 
     let size = frame.size();
-    let fps = format!("{:.0} FPS", ctx.fps);
-    frame.text(Vec2::new(size.x - text_size(&fps).x - 4.0, top), &fps, DIM);
+    perf(frame, app, ctx, top);
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
     // Messages go below the status block so they never overlap it.
@@ -712,6 +711,31 @@ fn scanner(frame: &mut Frame, app: &App) {
         if locked == Some(contact.blip.id) {
             frame.hud_box(top - Vec2::splat(4.0), Vec2::splat(8.0), crate::scene::TRAFFIC);
         }
+    }
+}
+
+/// Performance, top right: the frame, the world tick, the planner, where the
+/// frame's time went and what it drew.
+fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) {
+    let p = &ctx.perf;
+    let ships = 1 + app.u.crafts.len();
+    let k = |n: u32| if n >= 10_000 { format!("{:.0}K", n as f32 / 1000.0) } else if n >= 1000 { format!("{:.1}K", n as f32 / 1000.0) } else { n.to_string() };
+    let mut lines = vec![
+        (format!("{:.0} FPS  {:.1} MS", ctx.fps, p.frame_ms), DIM),
+        (format!("SIM {:.2} MS  {ships} SHIPS  {:.1} US EACH", app.sim_ms, app.sim_ms * 1000.0 / ships as f32), DIM),
+    ];
+    if app.last_step.warp_limited {
+        lines.push(("SIM CAN'T KEEP UP".into(), RED));
+    }
+    if app.plan.is_some() {
+        let every = (app.plan_cost * 20.0).clamp(0.1, 1.0);
+        lines.push((format!("PLAN {:.1} MS EVERY {every:.1} S", app.plan_cost * 1000.0), DIM));
+    }
+    lines.push((format!("UPD {:.1} DRAW {:.1} GPU {:.1} IDLE {:.1}", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms), DIM));
+    lines.push((format!("{} LINES {} TRIS {} PTS", k(p.lines), k(p.triangles), k(p.points)), DIM));
+    let size = frame.size();
+    for (i, (text, c)) in lines.iter().enumerate() {
+        frame.text(Vec2::new(size.x - text_size(text).x - 4.0, top + i as f32 * LINE), text, *c);
     }
 }
 

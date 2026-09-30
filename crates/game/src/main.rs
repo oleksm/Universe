@@ -73,7 +73,9 @@ pub struct App {
     /// and how long building it took (real seconds).
     plan_age: f32,
     plan_for: Option<universe_sim::Clearance>,
-    plan_cost: f32,
+    pub plan_cost: f32,
+    /// Time the world tick took (ms, smoothed): every ship's turn.
+    pub sim_ms: f32,
     /// Game seconds between tunnel frames: a nice step giving ~12 frames over
     /// the remaining route, changed only when that drifts far (so frames stay put).
     pub frame_step: f64,
@@ -130,6 +132,7 @@ impl App {
             plan_age: 0.0,
             plan_for: None,
             plan_cost: 0.0,
+            sim_ms: 0.0,
             eta_shown: None,
             frame_step: 30.0,
             globes: std::collections::HashMap::new(),
@@ -457,7 +460,10 @@ impl Game for App {
         if focus_changed {
             sound::click(ctx, 1400.0);
         }
+        let tick = std::time::Instant::now();
         self.last_step = self.u.step_world(dt, self.warp(), &controls);
+        let ms = tick.elapsed().as_secs_f32() * 1000.0;
+        self.sim_ms = if self.sim_ms == 0.0 { ms } else { self.sim_ms + (ms - self.sim_ms) * 0.05 };
         self.handle_events(ctx);
         self.build_globes();
         if self.route_labels_for != self.u.avionics.route.stops {

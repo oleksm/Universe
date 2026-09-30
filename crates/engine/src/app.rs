@@ -33,6 +33,30 @@ impl Default for Config {
     }
 }
 
+/// Where the last frames' time went (ms, smoothed) and what they drew.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Perf {
+    /// Whole frame, start to start.
+    pub frame_ms: f32,
+    /// `Game::update` (the game's own tick, simulation included).
+    pub update_ms: f32,
+    /// `Game::draw`: building the draw lists.
+    pub draw_ms: f32,
+    /// Uploading and submitting to the GPU.
+    pub render_ms: f32,
+    /// Waiting for the next surface image (vsync): idle.
+    pub wait_ms: f32,
+    pub lines: u32,
+    pub triangles: u32,
+    pub points: u32,
+}
+
+impl Perf {
+    fn smooth(old: f32, new: f32) -> f32 {
+        if old == 0.0 { new } else { old + (new - old) * 0.05 }
+    }
+}
+
 /// What the game sees each frame: input, timing, and a few window controls.
 pub struct Context {
     pub input: Input,
@@ -41,6 +65,8 @@ pub struct Context {
     /// Seconds since start.
     pub time: f64,
     pub fps: f32,
+    /// Frame timing breakdown (see `Perf`).
+    pub perf: Perf,
     /// Size of the retro framebuffer in pixels.
     pub low_res: UVec2,
     window: Arc<Window>,
@@ -153,6 +179,7 @@ impl<G: Game> Runner<G> {
             s.ctx.screenshot = s.auto_screenshot.clone();
         }
 
+        let t0 = Instant::now();
         self.game.update(&mut s.ctx);
         s.ctx.input.end_frame();
         if s.ctx.exit {
@@ -160,10 +187,23 @@ impl<G: Game> Runner<G> {
             return;
         }
 
+        let t1 = Instant::now();
         let mut frame = Frame::new(self.game.camera(), s.renderer.low_res().as_vec2(), s.renderer.hud_size().as_vec2());
         self.game.draw(&mut frame, &s.ctx);
+        let t2 = Instant::now();
         let capture = s.ctx.screenshot.take();
         s.renderer.render(&mut s.gpu, &frame, capture.as_deref());
+        let t3 = Instant::now();
+
+        let ms = |d: std::time::Duration| d.as_secs_f32() * 1000.0;
+        let p = &mut s.ctx.perf;
+        let wait = ms(s.renderer.wait);
+        p.frame_ms = Perf::smooth(p.frame_ms, raw_dt * 1000.0);
+        p.update_ms = Perf::smooth(p.update_ms, ms(t1 - t0));
+        p.draw_ms = Perf::smooth(p.draw_ms, ms(t2 - t1));
+        p.render_ms = Perf::smooth(p.render_ms, ms(t3 - t2) - wait);
+        p.wait_ms = Perf::smooth(p.wait_ms, wait);
+        (p.lines, p.triangles, p.points) = frame.counts();
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();
             log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
@@ -196,6 +236,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             dt: 0.0,
             time: 0.0,
             fps: 0.0,
+            perf: Perf::default(),
             low_res: renderer.low_res(),
             window,
             // Automated screenshot runs stay silent.

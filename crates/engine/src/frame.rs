@@ -59,6 +59,12 @@ pub struct Frame {
 pub const GLYPH: f32 = 8.0;
 
 impl Frame {
+    /// Lines, triangles and points in the draw lists (scene and HUD).
+    pub(crate) fn counts(&self) -> (u32, u32, u32) {
+        let n = |v: &Vec<Vertex>| v.len() as u32;
+        (n(&self.lines) / 2 + n(&self.hud) / 2, n(&self.solids) / 3 + n(&self.hud_tris) / 3, n(&self.points) + n(&self.sky))
+    }
+
     pub(crate) fn new(camera: Camera, scene_size: Vec2, hud_size: Vec2) -> Self {
         Self {
             camera,
