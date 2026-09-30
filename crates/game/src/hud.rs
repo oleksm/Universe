@@ -522,10 +522,24 @@ fn target_marker(frame: &mut Frame, app: &App) {
     bracket(frame, app, name, *target, c);
 }
 
-/// The locked radar contact: a bracket on it, like the nav target's.
+/// Radar contacts in view: a small square on each ship, with its range when
+/// near; the locked one gets a bracket like the nav target's.
 fn contact_marker(frame: &mut Frame, app: &App) {
-    if let Some(c) = app.u.locked_contact_in(&app.contacts) {
-        bracket(frame, app, &c.name, c.blip.position, crate::scene::TRAFFIC);
+    let c = crate::scene::TRAFFIC;
+    let size = frame.size();
+    for contact in &app.contacts {
+        if app.u.avionics.contact == Some(contact.blip.id) {
+            continue;
+        }
+        let Some(p) = frame.project(contact.blip.position).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
+        frame.hud_box(p - Vec2::splat(4.0), Vec2::splat(8.0), c.scale(0.8));
+        if contact.blip.distance < 50_000.0 {
+            let range = fmt::distance(contact.blip.distance);
+            frame.text(p + Vec2::new(-text_size(&range).x / 2.0, 7.0), &range, c.scale(0.7));
+        }
+    }
+    if let Some(locked) = app.u.locked_contact_in(&app.contacts) {
+        bracket(frame, app, &locked.name, locked.blip.position, c);
     }
 }
 
