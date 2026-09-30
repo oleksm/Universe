@@ -4,6 +4,7 @@ mod hud;
 mod models;
 mod navmap;
 mod observer;
+mod onfoot;
 mod save;
 mod scene;
 mod sound;
@@ -14,7 +15,8 @@ use std::rc::Rc;
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
 use universe_engine::{run, Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
-use universe_sim::world::Triggers;
+use universe_sim::world::crew::Reach;
+use universe_sim::world::{CrewEvent, Triggers, WalkCommands};
 use universe_sim::{Approach, ClearanceKind, Controls, Event, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, TrafficEvent, Universe};
 
 use models::Models;
@@ -109,6 +111,8 @@ pub struct App {
     pub hit_age: f32,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
+    /// On foot: what's in reach to use.
+    pub reach: Option<Reach>,
     /// The weapon keys as last sent to the ship (commands go on a change).
     triggers_held: Triggers,
     /// Display names of the route's stops (refreshed when the route changes).
@@ -163,6 +167,7 @@ impl App {
             fire: None,
             hit_age: 99.0,
             sparks: Vec::new(),
+            reach: None,
             triggers_held: Triggers::default(),
             route_labels: Vec::new(),
             route_labels_for: Vec::new(),
@@ -268,6 +273,21 @@ impl App {
         }
         if ctx.input.pressed(KeyCode::Escape) {
             ctx.grab_cursor(false);
+        }
+        // On foot: walking, not flying (the ship flies on as last set).
+        if !self.u.crew.seated() {
+            let c = onfoot::commands(ctx);
+            self.u.walk(&c, ctx.dt as f64);
+            return Controls::default();
+        }
+        // F: out of the seat. Hands off the stick and the triggers.
+        if ctx.input.pressed(KeyCode::KeyF) {
+            if self.triggers_held != Triggers::default() {
+                self.triggers_held = Triggers::default();
+                self.u.command(&ShipCommands { weapons: Some(Triggers::default()), ..self.u.ship.holding() });
+            }
+            self.u.walk(&WalkCommands { interact: true, ..Default::default() }, ctx.dt as f64);
+            return Controls::default();
         }
         let input = &ctx.input;
         let dt = ctx.dt as f64;
@@ -406,6 +426,11 @@ impl App {
                 Event::Ship(ShipEvent::WeaponsArming) => "COMBAT MODE - WEAPONS ARMING".into(),
                 Event::Ship(ShipEvent::WeaponsHot) => "WEAPONS HOT".into(),
                 Event::Ship(ShipEvent::WeaponsSafe) => "WEAPONS SAFE".into(),
+                Event::Crew(CrewEvent::StoodUp) => "OUT OF THE SEAT - THE SHIP FLIES ON AS SET".into(),
+                Event::Crew(CrewEvent::SatDown) => "IN THE PILOT'S SEAT".into(),
+                Event::Crew(CrewEvent::SteppedOutside { body }) => format!("STEPPED OUT ONTO {body}"),
+                Event::Crew(CrewEvent::CameAboard) => "BACK ABOARD".into(),
+                Event::Crew(CrewEvent::HatchRefused { reason }) => format!("HATCH LOCKED - {reason}"),
             };
             self.say(text.to_uppercase());
         }
@@ -472,6 +497,11 @@ impl App {
                 self.observer.transition *= (-4.0 * dt).exp();
                 self.prev_focus = Some((self.view.origin, focus));
                 self.camera = self.observer.camera(focus);
+            }
+            Mode::Pilot if !self.u.crew.seated() => {
+                let (position, orientation) = self.u.pilot_eye(self.view.ship_pos);
+                self.camera = Camera { position, orientation: orientation.as_quat(), near: 0.05, ..Default::default() };
+                self.prev_focus = None;
             }
             Mode::Pilot => {
                 let ship = &self.u.ship;
@@ -578,6 +608,7 @@ impl Game for App {
             (raw, _) => raw,
         };
         self.nav_marker = self.find_nav_marker();
+        self.reach = self.u.pilot_reach();
         self.contacts = self.u.contacts();
         if self.u.avionics.contact.is_some() && self.u.locked_contact_in(&self.contacts).is_none() {
             self.u.avionics.contact = None;
@@ -614,7 +645,13 @@ impl Game for App {
 
 /// True when the ship is visible as a model rather than being the camera.
 pub fn ship_visible(app: &App) -> bool {
-    !matches!(app.u.ship.state, ShipState::Destroyed { .. } | ShipState::Transit { .. }) && (app.mode == Mode::Observer || app.chase_cam)
+    let view = match app.u.crew.place {
+        _ if app.mode == Mode::Observer => true,
+        universe_sim::world::Place::Seat => app.chase_cam,
+        universe_sim::world::Place::Aboard { .. } => false, // the interior instead
+        universe_sim::world::Place::Outside { .. } => true,
+    };
+    !matches!(app.u.ship.state, ShipState::Destroyed { .. } | ShipState::Transit { .. }) && view
 }
 
 fn main() {

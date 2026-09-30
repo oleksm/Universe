@@ -336,6 +336,7 @@ ship's pose directly, like tests do — then render.
 | Save/load | sim: `save` |
 | Whole-flight tests; benches and ETA accuracy | sim: `tests/flights.rs`, `tests/probe.rs` |
 | Projectiles (slugs) swept against moving spheres; rays | physics: `projectile` |
+| Crew on foot: seat / aboard (ship frame, magnetic boots) / outside (body frame, real gravity), interior layout, hatch rules | world: `crew` |
 | Radar (sweep, blips) | world: `radar` |
 | Gun, laser, hull damage; the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
 | Fire control: track on a contact, gun lead | avionics: `fire_control` |

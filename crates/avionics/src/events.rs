@@ -1,7 +1,7 @@
 //! What the avionics report to the pilot: the world's physical events and
 //! traffic control's, as they heard them, and their own.
 
-use universe_world::{ShipEvent, TrafficEvent};
+use universe_world::{ShipEvent, TrafficEvent, CrewEvent};
 
 #[derive(Clone, Debug)]
 pub enum Event {
@@ -9,6 +9,8 @@ pub enum Event {
     Ship(ShipEvent),
     /// Traffic control said something.
     Traffic(TrafficEvent),
+    /// The pilot, on foot.
+    Crew(CrewEvent),
     /// Dropped out of hyperdrive at the nav target.
     HyperdriveArrived { target: String },
     /// The route autopilot reached a stop (1-based number, name).

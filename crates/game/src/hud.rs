@@ -30,6 +30,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     status(app, &mut lines);
     match app.mode {
         Mode::Observer => observer_info(app, &mut lines),
+        Mode::Pilot if !app.u.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),
         Mode::Pilot => {
             pilot_info(app, &mut lines);
             approach_info(app, &mut lines);
@@ -43,7 +44,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     // Leave room for the phase banner across the top while docking/landing.
     let top = if app.mode == Mode::Pilot && app.approach.is_some() { 22.0 } else { 4.0 };
     let mut y = top;
-    if app.mode == Mode::Pilot {
+    if app.mode == Mode::Pilot && app.u.crew.seated() {
         y += action_grid(frame, app, Vec2::new(4.0, top)) + 4.0;
     }
     for (text, c) in &lines {
@@ -973,6 +974,11 @@ PILOT
  SPACE    GUN (FLY THE LEAD INTO THE RING)
  V        LASER (WATCH THE HEAT)
  C        COCKPIT / CHASE VIEW
+ F        LEAVE / TAKE THE PILOT'S SEAT
+ON FOOT
+ WASD     WALK (SHIFT RUN, SPACE JUMP)
+ MOUSE    LOOK (ARROWS TOO)
+ F        USE: SEAT, HATCH, RAMP
  BKSP     RESPAWN AT HOME";
     let size = frame.size();
     let box_size = text_size(text);

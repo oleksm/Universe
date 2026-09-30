@@ -40,6 +40,10 @@ pub fn draw(frame: &mut Frame, app: &App) {
         }
     }
     ship(frame, app);
+    if matches!(app.u.crew.place, universe_sim::world::Place::Aboard { .. }) && app.mode == Mode::Pilot {
+        crate::onfoot::interior(frame, app);
+    }
+    crate::onfoot::ramp(frame, app);
     crafts(frame, app);
     weapons_fire(frame, app);
     if app.show_labels {
@@ -179,7 +183,14 @@ fn bodies(frame: &mut Frame, app: &App) {
             let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
             frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, grid_detail(px), terrain_view::FILL * 2.5);
             if near {
-                terrain_view::surface_grid(frame, b, center, t);
+                terrain_view::surface_grid(frame, b, center, t, None);
+                // On foot here: a fine grid underfoot.
+                if let universe_sim::world::Place::Outside { body, .. } = app.u.crew.place
+                    && body == i
+                    && app.view.origin == app.u.ship_system
+                {
+                    terrain_view::surface_grid(frame, b, center, t, Some(4.0));
+                }
             }
             if frame.projected_radius(center, b.rail.radius) > 150.0 {
                 terrain_view::crater_rims(frame, b, center, t);
@@ -548,6 +559,21 @@ fn ship(frame: &mut Frame, app: &App) {
     }
     let t = Transform { position: pos, rotation: app.u.ship.orientation.as_quat(), scale: 1.0 };
     frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
+    // Landed on a body: the landing legs, down to the ground.
+    if let ShipState::Landed { body, .. } = app.u.ship.state
+        && app.view.system.bodies[body].kind != BodyKind::Station
+    {
+        let (b, center) = (&app.view.system.bodies[body], app.view.positions[body]);
+        let o = app.u.ship.orientation;
+        for leg in [DVec3::new(-7.0, -3.2, 8.0), DVec3::new(7.0, -3.2, 8.0), DVec3::new(0.0, -2.2, -12.0)] {
+            let top = pos + o * leg;
+            let dir = (top - center).normalize();
+            let foot = center + dir * b.surface_radius_at(center, top, app.u.world.time);
+            frame.line(top, foot, SHIP_COLOR.scale(0.7));
+            let side = o * DVec3::X * 1.5;
+            frame.line(foot - side, foot + side, SHIP_COLOR.scale(0.7));
+        }
+    }
     if app.u.ship.hyperdrive || app.u.ship.throttle > 0.0 {
         // Exhaust streak.
         let back = app.u.ship.orientation * DVec3::Z;

@@ -50,7 +50,8 @@ const N: i32 = 24;
 /// A grid on the ground around the camera, following the terrain. It is fixed
 /// to the planet (cells snap to a cube-sphere lattice), sized to reach roughly
 /// to the horizon, and fades toward its edges.
-pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
+/// With `fine` spacing (m), a small grid underfoot instead, for walking.
+pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64, fine: Option<f64>) {
     let Some(terrain) = &body.terrain else { return };
     let rot = body.rotation(t);
     let rel = rot.inverse() * (frame.camera.position - center);
@@ -65,7 +66,7 @@ pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
     // altitude, and wide enough that the grid reaches the horizon.
     let horizon = (2.0 * r * alt.max(50.0)).sqrt();
     let want = (alt * 0.5).max(horizon / N as f64);
-    let spacing = 2f64.powf(want.log2().ceil()).clamp(128.0, 4.0e5);
+    let spacing = fine.unwrap_or_else(|| 2f64.powf(want.log2().ceil()).clamp(128.0, 4.0e5));
 
     // Cube-sphere face under the camera, and grid coordinates on it.
     let a = dir.abs();

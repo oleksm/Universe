@@ -42,6 +42,12 @@ pub fn event(ctx: &Context, event: &Event) {
             a.tone(1320.0, 1320.0, 0.15, 0.2);
         }
         Event::Ship(ShipEvent::WeaponsSafe) => a.tone(600.0, 200.0, 0.4, 0.15),
+        Event::Crew(universe_sim::world::CrewEvent::HatchRefused { .. }) => a.tone(200.0, 150.0, 0.2, 0.2),
+        Event::Crew(universe_sim::world::CrewEvent::SteppedOutside { .. } | universe_sim::world::CrewEvent::CameAboard) => {
+            a.noise(0.5, 0.15);
+            a.tone(300.0, 180.0, 0.5, 0.12);
+        }
+        Event::Crew(_) => a.tone(500.0, 500.0, 0.05, 0.15),
         Event::Ship(ShipEvent::Hit { damage, .. }) => a.noise(0.15, (0.2 + *damage as f32 * 4.0).min(0.6)),
         Event::Ship(ShipEvent::Respawned) => a.tone(440.0, 880.0, 0.3, 0.25),
         Event::Ship(ShipEvent::EnteredSystem { .. }) => a.tone(880.0, 880.0, 0.2, 0.25),

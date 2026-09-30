@@ -9,6 +9,7 @@
 //! computer wants to go, only at what it commands the devices to do.
 //! Deterministic and headless; knows nothing about rendering.
 
+pub mod crew;
 pub mod damage;
 pub mod events;
 pub mod galaxy;
@@ -30,6 +31,7 @@ pub mod units;
 pub mod weapons;
 mod world;
 
+pub use crew::{CrewEvent, Person, Place, WalkCommands};
 pub use events::{ClearanceKind, ShipEvent, TrafficEvent};
 pub use galaxy::{Galaxy, GalaxyStar, StarClass};
 pub use radar::{Blip, RADAR_RANGE};

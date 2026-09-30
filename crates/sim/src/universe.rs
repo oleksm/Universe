@@ -8,7 +8,7 @@ use std::rc::Rc;
 use glam::{DQuat, DVec3};
 use universe_avionics::route::{self, Stop};
 use universe_avionics::{Approach, Avionics, Event, NavTarget, Plan};
-use universe_world::{Controls, Ship, ShipCommands, StarSystem, StepResult, World};
+use universe_world::{Controls, Person, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
 
 use crate::traffic::{CrashReport, Craft, TrafficStats};
 use crate::vessel::Vessel;
@@ -28,6 +28,8 @@ pub struct Universe {
     pub traffic: TrafficStats,
     /// Recent craft crashes (most recent last, capped).
     pub crash_log: Vec<CrashReport>,
+    /// The pilot: in the seat, or on foot.
+    pub crew: Person,
     positions: Vec<DVec3>,
 }
 
@@ -42,6 +44,7 @@ impl Universe {
             crafts: Vec::new(),
             traffic: TrafficStats::default(),
             crash_log: Vec::new(),
+            crew: Person::default(),
             positions: Vec::new(),
         };
         u.respawn();
@@ -98,6 +101,33 @@ impl Universe {
 
     // The pilot's requests, to the ship's avionics (or, for `command`,
     // straight to its devices), taking effect at once.
+
+    /// The pilot on foot (or getting up, sitting down) for `real_dt` real
+    /// seconds. A new ship puts the pilot back in its seat.
+    pub fn walk(&mut self, c: &WalkCommands, real_dt: f64) {
+        if self.events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) || !self.ship.is_flying() && !matches!(self.ship.state, ShipState::Landed { .. }) {
+            self.crew = Person::default();
+        }
+        let sys = self.ship_system();
+        sys.positions(self.world.time, &mut self.positions);
+        let mut events = Vec::new();
+        self.crew.step(&sys, &self.ship, self.world.time, &self.positions, c, real_dt, &mut events);
+        self.events.extend(events.into_iter().map(Event::Crew));
+    }
+
+    /// Where the pilot's eyes are and which way they look (seated: `seat_eye`).
+    pub fn pilot_eye(&mut self, seat_eye: DVec3) -> (DVec3, DQuat) {
+        let sys = self.ship_system();
+        sys.positions(self.world.time, &mut self.positions);
+        self.crew.eye(&sys, &self.ship, self.world.time, &self.positions, seat_eye)
+    }
+
+    /// What the pilot on foot could use now.
+    pub fn pilot_reach(&mut self) -> Option<universe_world::crew::Reach> {
+        let sys = self.ship_system();
+        sys.positions(self.world.time, &mut self.positions);
+        self.crew.reach(&sys, &self.ship, self.world.time, &self.positions)
+    }
 
     /// Give the ship's devices new commands now (see `World::command`).
     pub fn command(&mut self, c: &ShipCommands) {
