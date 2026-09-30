@@ -14,7 +14,8 @@ use std::rc::Rc;
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
 use universe_engine::{run, Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
-use universe_sim::{Approach, ClearanceKind, Controls, Event, ShipEvent, ShipState, StarSystem, StepResult, TrafficEvent, Universe};
+use universe_sim::world::Triggers;
+use universe_sim::{Approach, ClearanceKind, Controls, Event, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, TrafficEvent, Universe};
 
 use models::Models;
 use observer::{Focus, Observer};
@@ -90,6 +91,12 @@ pub struct App {
     pub nav_marker: Option<(String, DVec3)>,
     /// Ships on the radar, nearest first (refreshed every frame).
     pub contacts: Vec<universe_sim::Contact>,
+    /// Fire control on the locked contact: the track, and the gun's lead once it has one.
+    pub fire: Option<(universe_sim::avionics::Track, Option<universe_sim::avionics::Solution>)>,
+    /// Seconds since the ship was last hit (for the HUD's flash).
+    pub hit_age: f32,
+    /// The weapon keys as last sent to the ship (commands go on a change).
+    triggers_held: Triggers,
     /// Display names of the route's stops (refreshed when the route changes).
     pub route_labels: Vec<String>,
     route_labels_for: Vec<universe_sim::Stop>,
@@ -139,6 +146,9 @@ impl App {
             nav_map: None,
             nav_marker: None,
             contacts: Vec::new(),
+            fire: None,
+            hit_age: 99.0,
+            triggers_held: Triggers::default(),
             route_labels: Vec::new(),
             route_labels_for: Vec::new(),
             camera: Camera::default(),
@@ -267,6 +277,13 @@ impl App {
         if input.pressed(KeyCode::Backspace) {
             self.u.respawn();
         }
+        // Weapons: SPACE the gun, V the laser, while held (the autopilot
+        // doesn't hold them back).
+        let triggers = Triggers { gun: input.down(KeyCode::Space), laser: input.down(KeyCode::KeyV) };
+        if triggers != self.triggers_held {
+            self.triggers_held = triggers;
+            self.u.command(&ShipCommands { weapons: Some(triggers), ..self.u.ship.holding() });
+        }
         if input.pressed(KeyCode::KeyT) {
             match self.u.lock_next_contact() {
                 Some(c) => {
@@ -320,6 +337,11 @@ impl App {
     fn handle_events(&mut self, ctx: &Context) {
         for event in std::mem::take(&mut self.u.events) {
             sound::event(ctx, &event);
+            // Hits show on the HUD (hull, flash), not as messages: a burst would flood them.
+            if let Event::Ship(ShipEvent::Hit { .. }) = event {
+                self.hit_age = 0.0;
+                continue;
+            }
             let text = match event {
                 Event::Ship(ShipEvent::Landed { body, station: true }) => format!("DOCKED AT {body}"),
                 Event::Ship(ShipEvent::Landed { body, station: false }) => format!("LANDED ON {body}"),
@@ -354,6 +376,7 @@ impl App {
                 Event::RouteBlocked { reason } => format!("ROUTE STOPPED - {reason}"),
                 Event::Ship(ShipEvent::Bumped) => "HULL CONTACT!".into(),
                 Event::Ship(ShipEvent::Launched { station }) => format!("LAUNCHED FROM {station}"),
+                Event::Ship(ShipEvent::Hit { .. }) => continue,
             };
             self.say(text.to_uppercase());
         }
@@ -461,7 +484,11 @@ impl Game for App {
             sound::click(ctx, 1400.0);
         }
         let tick = std::time::Instant::now();
+        let ammo = self.u.ship.ammo;
         self.last_step = self.u.step_world(dt, self.warp(), &controls);
+        if self.u.ship.ammo < ammo {
+            sound::gunshot(ctx);
+        }
         let ms = tick.elapsed().as_secs_f32() * 1000.0;
         self.sim_ms = if self.sim_ms == 0.0 { ms } else { self.sim_ms + (ms - self.sim_ms) * 0.05 };
         self.handle_events(ctx);
@@ -511,6 +538,10 @@ impl Game for App {
             self.u.avionics.contact = None;
             self.say("RADAR CONTACT LOST".into());
         }
+        let contacts = std::mem::take(&mut self.contacts);
+        self.fire = self.u.fire_control(&contacts);
+        self.contacts = contacts;
+        self.hit_age += ctx.dt;
         self.build_view();
         self.update_camera(dt, focus_changed);
         if let Some(t) = self.sound_test {

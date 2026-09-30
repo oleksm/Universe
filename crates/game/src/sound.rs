@@ -36,6 +36,7 @@ pub fn event(ctx: &Context, event: &Event) {
         }
         Event::Ship(ShipEvent::TookOff) => a.tone(300.0, 500.0, 0.2, 0.25),
         Event::Ship(ShipEvent::Crashed { .. }) => a.noise(1.8, 0.6),
+        Event::Ship(ShipEvent::Hit { damage, .. }) => a.noise(0.15, (0.2 + *damage as f32 * 4.0).min(0.6)),
         Event::Ship(ShipEvent::Respawned) => a.tone(440.0, 880.0, 0.3, 0.25),
         Event::Ship(ShipEvent::EnteredSystem { .. }) => a.tone(880.0, 880.0, 0.2, 0.25),
         Event::Ship(ShipEvent::HyperdriveEngaged) => a.tone(150.0, 1400.0, 0.7, 0.3),
@@ -80,10 +81,21 @@ pub fn update(ctx: &Context, app: &App) {
     let flying = matches!(ship.state, ShipState::Flying) && !app.paused;
     let engine = if flying && app.mode == Mode::Pilot && !ship.hyperdrive { ship.throttle as f32 } else { 0.0 };
     a.set_engine(engine);
+    let lasing = app.u.world.beams.iter().any(|b| b.owner == universe_sim::PLAYER);
     if flying && ship.hyperdrive {
         let pitch = 40.0 + 9.0 * (ship.velocity.length().max(1.0).log10() as f32);
         a.set_drone(0.7, pitch);
+    } else if lasing {
+        a.set_drone(0.5, 180.0 + 120.0 * ship.laser_heat as f32);
     } else {
         a.set_drone(0.0, 60.0);
+    }
+}
+
+/// The gun fired (once or more this frame).
+pub fn gunshot(ctx: &Context) {
+    if let Some(a) = ctx.audio() {
+        a.tone(220.0, 70.0, 0.07, 0.22);
+        a.noise(0.05, 0.15);
     }
 }

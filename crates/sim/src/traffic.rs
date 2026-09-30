@@ -35,6 +35,8 @@ pub struct TrafficStats {
     pub transits: u64,
     pub crashes: u64,
     pub routes_completed: u64,
+    /// Crafts destroyed by weapons fire.
+    pub shot_down: u64,
 }
 
 /// What a ship was doing when it crashed (for diagnosing autopilots).

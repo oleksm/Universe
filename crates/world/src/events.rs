@@ -13,8 +13,11 @@ pub enum ShipEvent {
     Launched { station: String },
     /// Gentle scrape against a station hull.
     Bumped,
-    /// Destroyed, by hitting `body`.
+    /// Destroyed, by hitting `body` (or by weapons fire: "GUNFIRE", "LASER FIRE").
     Crashed { body: String },
+    /// Struck by a weapon of ship `by`: `damage` of the hull's strength taken,
+    /// `hull` left (fractions).
+    Hit { by: usize, damage: f64, hull: f64 },
     /// A new ship was delivered.
     Respawned,
     /// Crossed into another star system's neighbourhood.

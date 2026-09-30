@@ -43,6 +43,9 @@ pub struct Avionics {
     /// The radar contact locked on (the id the radar reports it by).
     #[serde(skip)]
     pub contact: Option<usize>,
+    /// Fire control's track on it.
+    #[serde(skip)]
+    pub track: Option<crate::fire_control::Track>,
 }
 
 /// Live guidance for the current clearance.
@@ -84,6 +87,8 @@ impl Avionics {
             ShipEvent::GateEntered { .. } | ShipEvent::EnteredSystem { .. } => {
                 self.clearance = None;
                 self.nav_target = None;
+                self.contact = None;
+                self.track = None;
             }
             ShipEvent::HyperdriveEngaged | ShipEvent::HyperdriveDisengaged => self.hyper_autopilot = false,
             ShipEvent::Respawned => {
@@ -94,7 +99,8 @@ impl Avionics {
             | ShipEvent::Launched { .. }
             | ShipEvent::Bumped
             | ShipEvent::GateArrived { .. }
-            | ShipEvent::GateTooFast { .. } => {}
+            | ShipEvent::GateTooFast { .. }
+            | ShipEvent::Hit { .. } => {}
         }
     }
 

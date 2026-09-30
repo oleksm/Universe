@@ -1,5 +1,6 @@
 //! Ships: a rigid body with devices (main engine, thrusters and lift,
-//! attitude control, hyperdrive), fuel and cargo.
+//! attitude control, hyperdrive, gun and laser), a hull, fuel, ammunition and
+//! cargo.
 //!
 //! Whatever flies a ship — a pilot's hands or a flight computer — does it
 //! through `ShipCommands`, and the devices turn those into forces within their
@@ -27,6 +28,14 @@ pub const SHIP_RADIUS: f64 = 12.0;
 
 fn full_tank() -> f64 {
     FUEL_CAPACITY
+}
+
+fn intact() -> f64 {
+    1.0
+}
+
+fn full_magazine() -> u32 {
+    crate::weapons::GUN_AMMO
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -71,6 +80,31 @@ pub struct Ship {
     /// Cargo on board (kg).
     #[serde(default)]
     pub cargo: f64,
+    /// Hull integrity, 1 (intact) .. 0 (destroyed): see `damage`.
+    #[serde(default = "intact")]
+    pub hull: f64,
+    /// Gun rounds left.
+    #[serde(default = "full_magazine")]
+    pub ammo: u32,
+    /// Laser heat, 0 (cold) .. 1 (too hot to fire).
+    #[serde(default)]
+    pub laser_heat: f64,
+    /// The laser overheated and is locked out until it has cooled (see `weapons::LASER_RESET`).
+    #[serde(default)]
+    pub laser_overheated: bool,
+    /// Weapon triggers, as last commanded.
+    #[serde(skip)]
+    pub triggers: Triggers,
+    /// Seconds until the gun can fire again.
+    #[serde(skip)]
+    pub gun_cooldown: f64,
+}
+
+/// Weapon triggers: held (true) or released.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Triggers {
+    pub gun: bool,
+    pub laser: bool,
 }
 
 /// Stick input for the attitude control, each axis -1..1 of the turn rate.
@@ -97,6 +131,8 @@ pub struct ShipCommands {
     /// Orders for the hyperdrive (engage, disengage, or how to fly while
     /// engaged). None: leave it as it is.
     pub hyperdrive: Option<HyperdriveCommand>,
+    /// Weapon triggers. None: leave them as they are.
+    pub weapons: Option<Triggers>,
 }
 
 /// Orders for the hyperdrive (see `hyperdrive`).
@@ -147,6 +183,12 @@ impl Ship {
             rcs: DVec3::ZERO,
             fuel: FUEL_CAPACITY,
             cargo: 0.0,
+            hull: 1.0,
+            ammo: crate::weapons::GUN_AMMO,
+            laser_heat: 0.0,
+            laser_overheated: false,
+            triggers: Triggers::default(),
+            gun_cooldown: 0.0,
         }
     }
 
@@ -212,13 +254,16 @@ impl Ship {
     /// Commands that keep the engine and thrusters as they are, turn nothing
     /// and leave the hyperdrive alone: a starting point for new commands.
     pub fn holding(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None }
     }
 
     /// The main engine and thrusters take their new settings.
     pub(crate) fn set_controls(&mut self, c: &ShipCommands) {
         self.throttle = c.throttle;
         self.rcs = c.rcs;
+        if let Some(t) = c.weapons {
+            self.triggers = t;
+        }
     }
 
     /// Acceleration from the main engine and thrusters as set (m/s^2): thrust / current mass.

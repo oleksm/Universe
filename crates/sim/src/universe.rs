@@ -92,6 +92,7 @@ impl Universe {
             self.fly_craft(i, real_dt, warp);
         }
         self.world.time = t1;
+        self.combat(t1 - t0);
         result
     }
 

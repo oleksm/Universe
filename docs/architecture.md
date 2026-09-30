@@ -330,10 +330,16 @@ ship's pose directly, like tests do — then render.
 | Routes and the route autopilot | avionics: `route` |
 | Flight planner | avionics: `plan` |
 | Pilot's event feed | avionics: `events` |
-| `Universe`: player ship + avionics, the tick order, pilot requests | sim: `universe` |
+| `Universe`: player ship + avionics, the tick order (every ship's turn, then the combat phase), pilot requests | sim: `universe` |
 | One ship's turn; the avionics' bus over the world | sim: `vessel` |
 | Settlers (crafts), traffic stats, crash log | sim: `traffic` |
 | Save/load | sim: `save` |
 | Whole-flight tests; benches and ETA accuracy | sim: `tests/flights.rs`, `tests/probe.rs` |
-| Rendering, windowing, input, audio | engine |
+| Projectiles (slugs) swept against moving spheres; rays | physics: `projectile` |
+| Radar (sweep, blips) | world: `radar` |
+| Gun, laser, hull damage; the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
+| Fire control: track on a contact, gun lead | avionics: `fire_control` |
+| Radar contacts + transponders, the lock | sim: `contacts` |
+| Combat phase in the tick (ship ids: player 0, craft i → i+1), fire control for the player | sim: `combat` |
+| Rendering, windowing, input, audio, frame timing (`Perf`) | engine |
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |

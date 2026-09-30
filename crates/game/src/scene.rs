@@ -39,6 +39,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     }
     ship(frame, app);
     crafts(frame, app);
+    weapons_fire(frame, app);
     if app.show_labels {
         labels(frame, app);
     }
@@ -242,6 +243,31 @@ fn crafts(frame: &mut Frame, app: &App) {
             && let Some(p) = frame.project(pos)
         {
             frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), TRAFFIC.scale(0.8));
+        }
+    }
+}
+
+/// Slugs in flight as short tracers (streaked along their motion relative to
+/// us), and this frame's laser beams.
+fn weapons_fire(frame: &mut Frame, app: &App) {
+    let own = app.u.ship.velocity;
+    for slug in &app.u.world.slugs {
+        if slug.system != app.view.origin {
+            continue;
+        }
+        let p = slug.projectile.position;
+        let rel = slug.projectile.velocity - own;
+        let streak = rel.normalize_or_zero() * (rel.length() * 0.02).clamp(4.0, 60.0);
+        frame.line(p - streak, p, Color::hex(0xffd060));
+        frame.point(p, Color::hex(0xffe080));
+    }
+    for beam in &app.u.world.beams {
+        if beam.system != app.view.origin {
+            continue;
+        }
+        frame.line(beam.from, beam.to, Color::hex(0xff4030));
+        if beam.hit {
+            frame.point(beam.to, Color::hex(0xffffa0));
         }
     }
 }

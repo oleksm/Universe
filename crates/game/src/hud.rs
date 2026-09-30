@@ -181,6 +181,10 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         format!("MASS {:.1} T  FUEL {:.1} T  MAX ACC {:.1} M/S2", ship.mass() / 1000.0, ship.fuel / 1000.0, ship.main_accel()),
         DIM,
     ));
+    let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
+    let heat = if ship.laser_overheated { " HOT".to_string() } else { String::new() };
+    let hull_c = if app.hit_age < 0.25 || ship.hull < 0.3 { RED } else { DIM };
+    lines.push((format!("HULL [{}] {:3.0}%  GUN {}  LASER [{}]{heat}", gauge(ship.hull), ship.hull * 100.0, ship.ammo, gauge(ship.laser_heat)), hull_c));
     match &ship.state {
         ShipState::Landed { body, local_position, .. } => {
             let b = &app.view.system.bodies[*body];
@@ -228,6 +232,13 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ));
     let bound = c.destination.as_ref().map(|d| format!(" -> {d}")).unwrap_or_default();
     lines.push((format!("     {}{bound}  T NEXT", c.activity), DIM));
+    // Fire control: tracking, then the gun's lead.
+    match &app.fire {
+        Some((track, _)) if !track.ready() => lines.push((format!("     FIRE CONTROL: TRACKING {:3.0}%", track.quality() * 100.0), AMBER)),
+        Some((_, Some(sol))) => lines.push((format!("     LEAD READY  SLUG FLIGHT {:.1} S  SPACE GUN  V LASER", sol.time), AMBER)),
+        Some((_, None)) => lines.push(("     NO FIRING SOLUTION - OUT OF GUN RANGE".into(), DIM)),
+        None => {}
+    }
 }
 
 /// The route: which stop we're on and what the route autopilot is doing.
@@ -539,6 +550,20 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     }
     if let Some(locked) = app.u.locked_contact_in(&app.contacts) {
         bracket(frame, app, &locked.name, locked.blip.position, c);
+        // The lead: put the nose on it and fire.
+        if let Some((_, Some(sol))) = &app.fire
+            && let Some(p) = frame.project(app.view.ship_pos + sol.offset)
+        {
+            frame.hud_ellipse(p, Vec2::splat(5.0), 12, AMBER);
+            frame.hud_line(p - Vec2::new(2.0, 0.0), p + Vec2::new(2.0, 0.0), AMBER);
+            frame.hud_line(p - Vec2::new(0.0, 2.0), p + Vec2::new(0.0, 2.0), AMBER);
+            if let Some(q) = frame.project(locked.blip.position) {
+                let d = q - p;
+                if d.length() > 12.0 {
+                    frame.hud_line(p + d.normalize() * 6.0, q - d.normalize() * 10.0, AMBER.scale(0.4));
+                }
+            }
+        }
     }
 }
 
@@ -768,6 +793,8 @@ PILOT
  K        AUTOPILOT: DOCK/LAND, OR IN
           HYPERDRIVE STEER TO TARGET
  T        RADAR: LOCK NEXT SHIP (NEAREST FIRST)
+ SPACE    GUN (AIM AT THE LEAD CIRCLE)
+ V        LASER (WATCH THE HEAT)
  C        COCKPIT / CHASE VIEW
  BKSP     RESPAWN AT HOME";
     let size = frame.size();

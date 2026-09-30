@@ -27,6 +27,7 @@ use crate::station::{self, DOCKED_HEIGHT, STATION_SIZE};
 use crate::system::{BodyKind, StarSystem};
 use crate::traffic::Facility;
 use crate::units::LIGHT_YEAR;
+use crate::weapons::{Beam, Slug};
 
 /// Neighbouring stars checked for hyperdrive obstacles and system hand-over.
 pub const NEIGHBOURS: usize = 24;
@@ -81,6 +82,10 @@ pub struct World {
     /// Body snapshots per system for the current moment, shared by every ship there.
     ephemerides: HashMap<usize, (f64, Rc<Ephemeris>)>,
     positions: Vec<DVec3>,
+    /// Slugs in flight (see `weapons`).
+    pub slugs: Vec<Slug>,
+    /// Laser beams fired in the last combat phase.
+    pub beams: Vec<Beam>,
 }
 
 impl World {
@@ -97,6 +102,8 @@ impl World {
             neighbours: HashMap::new(),
             ephemerides: HashMap::new(),
             positions: Vec::new(),
+            slugs: Vec::new(),
+            beams: Vec::new(),
         }
     }
 
