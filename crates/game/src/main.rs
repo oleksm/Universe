@@ -449,7 +449,6 @@ impl App {
                 Event::RouteBlocked { reason } => format!("ROUTE STOPPED - {reason}"),
                 Event::Ship(ShipEvent::Bumped) => "HULL CONTACT!".into(),
                 Event::Ship(ShipEvent::Launched { station }) => format!("LAUNCHED FROM {station}"),
-                Event::Ship(ShipEvent::Hit { .. }) => continue,
                 Event::Ship(ShipEvent::Collided { with, speed }) => format!("COLLISION WITH {} AT {speed:.1} M/S", self.u.ship_name(with)),
                 Event::Ship(ShipEvent::WeaponsArming) => "COMBAT MODE - WEAPONS ARMING".into(),
                 Event::Ship(ShipEvent::WeaponsHot) => "WEAPONS HOT".into(),
@@ -459,6 +458,8 @@ impl App {
                 Event::Crew(CrewEvent::SteppedOutside { body }) => format!("STEPPED OUT ONTO {body}"),
                 Event::Crew(CrewEvent::CameAboard) => "BACK ABOARD".into(),
                 Event::Crew(CrewEvent::HatchRefused { reason }) => format!("HATCH LOCKED - {reason}"),
+                // Anything else says nothing (add a line here for a new event that should).
+                _ => continue,
             };
             self.say(text.to_uppercase());
         }

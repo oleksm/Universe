@@ -13,6 +13,10 @@ use universe_world::{Controls, Facility, Person, Ship, ShipCommands, ShipEvent, 
 use crate::traffic::{CrashReport, Craft, TrafficStats};
 use crate::vessel::Vessel;
 
+/// A ship as traffic control sees it: id, system, position, on the ground,
+/// what it's cleared for.
+type ShipView = (usize, usize, DVec3, bool, Option<(universe_avionics::NavTarget, universe_avionics::nav::Phase)>);
+
 /// A ship on its final run this close to the station or gate lets the next one start (m).
 const CORRIDOR_RELEASE: f64 = 1_500.0;
 
@@ -50,6 +54,8 @@ pub struct Universe {
     pub kills: Vec<crate::combat::Kill>,
     /// The pilot's money (credits).
     pub credits: f64,
+    /// The flight recorder: every ship's last seconds, and the wrecks filed (see `recorder`).
+    pub recorder: crate::recorder::Recorder,
     /// Recent trades by settlers, most recent last.
     pub trade_log: Vec<crate::commerce::TradeRecord>,
     positions: Vec<DVec3>,
@@ -69,6 +75,7 @@ impl Universe {
             crew: Person::default(),
             kills: Vec::new(),
             credits: STARTING_CREDITS,
+            recorder: Default::default(),
             trade_log: Vec::new(),
             positions: Vec::new(),
         };
@@ -105,8 +112,20 @@ impl Universe {
     /// Advance the player's ship by `real_dt * warp` seconds (less if warp is
     /// limited), the pilot's stick at `controls`. The world clock moves with it.
     pub fn step(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
+        let before = self.events.len();
         let (world, mut player) = self.player();
-        player.tick(world, controls, real_dt, warp)
+        let result = player.tick(world, controls, real_dt, warp);
+        let fresh: Vec<Event> = self.events[before..].to_vec();
+        self.traffic_events(crate::combat::PLAYER, &fresh);
+        // Wrecked on something (collisions and weapons are filed by the combat phase).
+        let crashed = self.events.iter().find_map(|e| match e {
+            Event::Ship(ShipEvent::Crashed { body }) if !matches!(body.as_str(), "COLLISION" | "GUNFIRE" | "LASER FIRE") => Some(body.clone()),
+            _ => None,
+        });
+        if let Some(body) = crashed {
+            self.recorder.file(self.world.time, crate::combat::PLAYER, "YOU".into(), body, None);
+        }
+        result
     }
 
     /// Advance the whole world: the player's ship, then every craft, all from
@@ -121,84 +140,124 @@ impl Universe {
         }
         self.world.time = t1;
         self.combat(t1 - t0);
-        self.keep_pads();
+        self.traffic_presence();
+        self.record();
         result
     }
 
-    /// Traffic control's pad book keeps a pad while its ship is cleared for
-    /// it or standing on it; the rest are freed.
-    ///
-    /// Likewise the corridor book: a station's corridor or gate's run stays
-    /// held while its ship is on the final run, launching, or still close by
-    /// on its way out.
-    fn keep_pads(&mut self) {
-        use universe_avionics::nav::{PadSlot, Phase};
-        use universe_avionics::NavTarget;
-        let mut claims = std::collections::HashSet::new();
-        let mut corridors = std::collections::HashSet::new();
-        let mut rails_cache = std::collections::HashMap::new();
-        let ships = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
-            .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, &c.avionics)));
-        // Ships whose place needs looking up: on the ground, or low and slow near a port.
-        let mut where_ = Vec::new();
-        for (id, system, ship, avionics) in ships {
-            if let Some(c) = avionics.clearance {
-                match (c.target, c.pad, c.phase) {
-                    (NavTarget::Spaceport(p), PadSlot::Pad(k), _) => {
-                        claims.insert((system, p, k, id));
-                    }
-                    // Held until it's on the final run and close in (then the next may start).
-                    (NavTarget::Station(b) | NavTarget::Gate(b), _, phase) => {
-                        let close = rails_at(&mut rails_cache, &mut self.world, system).get(b).is_some_and(|p| p.distance(ship.position) < CORRIDOR_RELEASE);
-                        if !(phase == Phase::Final && close) {
-                            corridors.insert((system, b, id));
-                        }
-                    }
-                    _ => {}
-                }
-            }
-            match ship.state {
-                ShipState::Landed { .. } => where_.push((id, system, ship.position, true, ship.throttle > 0.0)),
-                ShipState::Flying if !ship.hyperdrive => where_.push((id, system, ship.position, false, false)),
-                _ => {}
-            }
+    /// Craft `i`'s avionics, connected to its ship, for a request (as its pilot would).
+    fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::vessel::Link, &mut Vec<Event>) -> R) -> R {
+        let c = &mut self.crafts[i];
+        let mut events = Vec::new();
+        let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };
+        vessel.run(&mut self.world, f)
+    }
+
+    /// Lock craft `i`'s nav target.
+    pub fn craft_set_nav_target(&mut self, i: usize, target: Option<NavTarget>) {
+        self.craft_run(i, |a, link, events| a.set_nav_target(link, target, events));
+    }
+
+    /// Craft `i` asks traffic control for clearance (to its nav target, else the nearest station).
+    pub fn craft_request_clearance(&mut self, i: usize) -> bool {
+        self.craft_run(i, |a, link, events| a.request_clearance(link, events))
+    }
+
+    /// Craft `i` engages (or releases) its autopilot.
+    pub fn craft_toggle_autopilot(&mut self, i: usize) {
+        self.craft_run(i, |a, link, events| a.toggle_autopilot(link, events));
+    }
+
+    /// The flight recorder's sample of every ship, when one is due.
+    fn record(&mut self) {
+        let now = self.world.time;
+        if !self.recorder.due(now) {
+            return;
         }
+        self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.avionics));
+        for (i, c) in self.crafts.iter().enumerate() {
+            self.recorder.record(crate::combat::craft_id(i), crate::recorder::Sample::of(now, c.system, &c.ship, &c.avionics));
+        }
+        self.recorder.sampled(now);
+    }
+
+    /// What traffic control needs to hear from a ship's events this tick:
+    /// its holds end when its clearance does, when it docks or goes through a
+    /// gate, and when it's wrecked, replaced or leaves the system.
+    pub(crate) fn traffic_events(&mut self, id: usize, events: &[Event]) {
+        let done = events.iter().any(|e| {
+            matches!(
+                e,
+                Event::Traffic(universe_world::TrafficEvent::ClearanceCancelled)
+                    | Event::Ship(
+                        ShipEvent::Crashed { .. }
+                            | ShipEvent::Respawned
+                            | ShipEvent::GateEntered { .. }
+                            | ShipEvent::EnteredSystem { .. }
+                            | ShipEvent::Landed { station: true, .. }
+                    )
+            )
+        });
+        if done {
+            self.world.traffic.release(id);
+        }
+    }
+
+    /// Traffic control's view of where every ship is, this frame: who stands
+    /// on a pad or is in the column over it (below 5 km, within 800 m), and
+    /// who is done with the corridor it holds (on its final run within
+    /// `CORRIDOR_RELEASE`, or not cleared for it and 3 km clear of it).
+    fn traffic_presence(&mut self) {
+        use universe_avionics::nav::Phase;
+        use universe_avionics::NavTarget;
+        let now = self.world.time;
+        let ships: Vec<ShipView> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
+            .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, &c.avionics)))
+            .filter(|(_, _, s, _)| matches!(s.state, ShipState::Landed { .. }) || (s.is_flying() && !s.hyperdrive))
+            .map(|(id, system, s, a)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), a.clearance.map(|c| (c.target, c.phase))))
+            .collect();
         let mut rails = std::collections::HashMap::new();
-        for (id, system, pos, landed, launching) in where_ {
+        let mut present = Vec::new();
+        for (id, system, pos, landed, clearance) in ships {
             let sys = self.world.system(system);
-            let positions = rails.entry(system).or_insert_with(|| {
-                let mut p = Vec::new();
-                sys.positions(self.world.time, &mut p);
-                p
-            });
-            let t = self.world.time;
-            // Stations: docked and launching, or just out and close by.
-            for (b, body) in sys.bodies.iter().enumerate() {
-                if body.kind == universe_world::BodyKind::Station && positions[b].distance(pos) < 3_000.0 && (!landed || launching) {
-                    corridors.insert((system, b, id));
-                }
-            }
-            // Spaceports: on a pad, or in the column above it (below 5 km).
-            for (p, sp) in sys.spaceports.iter().enumerate() {
+            let positions = rails_at(&mut rails, &mut self.world, system).clone();
+            let mut p = universe_world::pads::Presence { ship: id, system, ..Default::default() };
+            // Pads: on one, or in the column over it.
+            for (port, sp) in sys.spaceports.iter().enumerate() {
                 let center = positions[sp.body];
-                let local = sys.bodies[sp.body].rotation(t).inverse() * (pos - center);
+                let local = sys.bodies[sp.body].rotation(now).inverse() * (pos - center);
                 let dir = local.normalize();
                 let r = sys.bodies[sp.body].rail.radius;
                 if local.length() - r > 5_000.0 || dir.angle_between(sp.direction) * r > 800.0 {
                     continue;
                 }
-                let pad = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
-                    let pa = universe_world::spaceport::pad_direction(&sys, p, a).angle_between(dir);
-                    let pb = universe_world::spaceport::pad_direction(&sys, p, b).angle_between(dir);
-                    pa.total_cmp(&pb)
+                let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
+                    let d = |k| universe_world::spaceport::pad_direction(&sys, port, k).angle_between(dir);
+                    d(a).total_cmp(&d(b))
                 });
-                if let Some(k) = pad {
-                    claims.insert((system, p, k, id));
+                p.pad = nearest.map(|k| (port, k));
+            }
+            // Corridors it holds and is done with.
+            for (b, body) in sys.bodies.iter().enumerate() {
+                if !matches!(body.kind, universe_world::BodyKind::Station | universe_world::BodyKind::Gate) || self.world.traffic.corridor(system, b) != Some(id) {
+                    continue;
+                }
+                let d = positions[b].distance(pos);
+                let cleared_for = clearance.filter(|(t, _)| matches!(t, NavTarget::Station(x) | NavTarget::Gate(x) if *x == b));
+                let done = match cleared_for {
+                    Some((_, Phase::Final)) => d < CORRIDOR_RELEASE,
+                    Some(_) => false,
+                    None => !landed && d > 3_000.0,
+                };
+                if done {
+                    p.clear_of.push(b);
                 }
             }
+            if p.pad.is_some() || !p.clear_of.is_empty() {
+                present.push(p);
+            }
         }
-        self.world.pads.keep(&claims);
-        self.world.corridors.keep(&corridors);
+        self.world.traffic.presence(&present);
     }
 
     // The pilot's requests, to the ship's avionics (or, for `command`,

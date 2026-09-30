@@ -339,6 +339,9 @@ ship's pose directly, like tests do — then render.
 | Crew on foot: seat / aboard (ship frame, magnetic boots) / outside (body frame, real gravity), interior layout, hatch rules | world: `crew` |
 | Goods catalog (1,000 items from the seed) | world: `goods` |
 | Markets per station/spaceport (produces, wants, bans; prices by stock/demand, recovery), the hold | world: `market`, `World::{market, quotes, trade}` |
+| Traffic control: pads (booking, queue, occupancy) and corridors, explicit claim/release (`TrafficControl`, `Presence`) | world: `pads` |
+| Ship-to-ship collisions (kernel `pairs` sweep + world bounce/damage rules) | physics: `pairs`, world: `collisions` |
+| Flight recorder: every ship's last 15 s, incidents with traces | sim: `recorder` |
 | Radar (sweep, blips) | world: `radar` |
 | Gun, laser, hull damage; the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
 | Fire control: track on a contact, gun lead | avionics: `fire_control` |
@@ -347,3 +350,21 @@ ship's pose directly, like tests do — then render.
 | Combat phase in the tick (ship ids: player 0, craft i → i+1), fire control for the player | sim: `combat` |
 | Rendering, windowing, input, audio, frame timing (`Perf`) | engine |
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |
+
+
+## How changes are verified
+
+- **Unit tests** in each crate (kernel invariants, device rules, traffic control, markets…): the
+  whole suite runs in a few seconds.
+- **Interaction tests** (`crates/sim/tests/interactions.rs`): 2–10 ships placed in one situation
+  (two ships at a gate, full pads with one holding, a launch and a docking sharing a corridor, a
+  pirate and its prey, a head-on collision), run for a few game minutes at 1×, and checked for
+  the outcome. Together they take under a second. This is where traffic behaviour is developed.
+- **The flight recorder** (`sim::recorder`): every ship's last 15 s. Any wreck files an incident
+  with its trace, and the other ship's for a collision or kill (separation, closing speed, both
+  clearances), printed by the interaction tests on failure. Causes are read, not guessed.
+- **No long whole-traffic simulations** in the development loop: they're minutes each and, at
+  warp, unrepresentative. The ignored `settlers_fly` / `settlers_trade` runs remain only as
+  occasional benchmarks, on request.
+- **Rendering** is checked with dev scenarios and screenshots (`UNIVERSE_SCENARIO`,
+  `UNIVERSE_SCREENSHOT`).

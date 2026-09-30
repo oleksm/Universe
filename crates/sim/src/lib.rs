@@ -10,6 +10,7 @@
 mod combat;
 mod commerce;
 mod contacts;
+pub mod recorder;
 mod save;
 mod traffic;
 pub mod universe;

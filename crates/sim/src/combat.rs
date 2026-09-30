@@ -51,6 +51,7 @@ impl Universe {
             self.world.combat(&mut armed, dt);
             self.world.collide(&mut armed, dt);
         }
+        self.traffic_events(PLAYER, &player_events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
         if let Some(kill) = self.kill_in(PLAYER, self.ship_system, &player_events) {
             self.record_kill(kill);
         }
@@ -60,6 +61,7 @@ impl Universe {
             if events.is_empty() {
                 continue;
             }
+            self.traffic_events(craft_id(i), &events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
             if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
                 if kill.weapon == "COLLISION" {
                     self.traffic.collision_losses += 1;
@@ -92,6 +94,7 @@ impl Universe {
     }
 
     fn record_kill(&mut self, kill: Kill) {
+        self.recorder.file(kill.time, kill.victim, kill.victim_name.clone(), kill.weapon.clone(), Some((kill.killer, kill.killer_name.clone())));
         self.kills.push(kill);
         if self.kills.len() > KILL_LOG {
             self.kills.remove(0);

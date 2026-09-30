@@ -161,11 +161,13 @@ impl Universe {
         if c.avionics.hunting.is_some() && !was_hunting {
             self.traffic.hunts += 1;
         }
+        self.traffic_events(crate::combat::craft_id(i), &events);
         let crashed = events.iter().find_map(|e| match e {
             Event::Ship(ShipEvent::Crashed { body }) => Some(body.clone()),
             _ => None,
         });
         if let Some(body) = crashed {
+            self.recorder.file(self.world.time, crate::combat::craft_id(i), self.crafts[i].name.to_uppercase(), body.clone(), None);
             let system = self.crafts[i].system;
             let sys = self.system(system);
             let speed = sys.bodies.iter().position(|b| b.name == body).map_or(0.0, |b| (before.4 - sys.velocity(b, self.world.time)).length());

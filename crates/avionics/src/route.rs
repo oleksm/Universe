@@ -181,7 +181,10 @@ impl Avionics {
         };
         if self.nav_target != Some(hop) {
             self.nav_target = Some(hop);
-            self.clearance = None;
+            // Giving up a clearance: traffic control hears of it.
+            if self.clearance.take().is_some() {
+                events.push(Event::Traffic(universe_world::TrafficEvent::ClearanceCancelled));
+            }
         }
         let Some(at) = target_position(bus, hop) else {
             self.route.active = false;

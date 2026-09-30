@@ -17,11 +17,27 @@ use crate::nav::{Clearance, NavTarget, PadSlot, Phase};
 
 /// The dock/land/gate autopilot for `target` at `t`, from `phase`, for the
 /// next `h` seconds: what it commands, and the phase it has moved on to.
-/// `wait`: traffic control hasn't let it into the corridor (a station's or a
-/// gate's final run) yet: close by, it holds at its own place (this one) on a
-/// ring out beyond the corridor's entry, clear of the others waiting.
-#[allow(clippy::too_many_arguments)]
-pub fn autopilot(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, pad: PadSlot, wait: Option<usize>, t: f64, h: f64, positions: &[DVec3]) -> Command {
+/// What the autopilot knows for one step.
+#[derive(Clone, Copy)]
+pub struct AutopilotInput<'a> {
+    pub sys: &'a StarSystem,
+    pub ship: &'a Ship,
+    /// Where it's cleared for, in what phase, on which pad.
+    pub target: NavTarget,
+    pub phase: Phase,
+    pub pad: PadSlot,
+    /// Traffic control hasn't let it into the corridor (a station's or a
+    /// gate's final run) yet: close by, it holds at its own place (this one)
+    /// on a ring out beyond the corridor's entry, clear of the others waiting.
+    pub wait: Option<usize>,
+    /// Now, and how long its command holds (s); the bodies at `t`.
+    pub t: f64,
+    pub h: f64,
+    pub positions: &'a [DVec3],
+}
+
+pub fn autopilot(input: &AutopilotInput) -> Command {
+    let AutopilotInput { sys, ship, target, phase, pad, wait, t, h, positions } = *input;
     let may_enter = wait.is_none();
     if let Some(slot) = wait
         && matches!(phase, Phase::Approach | Phase::Align)
@@ -109,7 +125,7 @@ impl FlightComputer for Computer<'_> {
     fn substep(&mut self, sys: &StarSystem, ship: &Ship, t: f64, h: f64, positions: &[DVec3]) -> Option<ShipCommands> {
         let c = self.avionics.clearance.filter(|c| c.autopilot)?;
         let wait = self.avionics.corridor_denied.then_some(self.avionics.wait_place);
-        let cmd = autopilot(sys, ship, c.target, c.phase, c.pad, wait, t, h, positions);
+        let cmd = autopilot(&AutopilotInput { sys, ship, target: c.target, phase: c.phase, pad: c.pad, wait, t, h, positions });
         if cmd.phase != c.phase {
             self.avionics.clearance = Some(Clearance { phase: cmd.phase, ..c });
         }

@@ -78,7 +78,6 @@ pub fn event(ctx: &Context, event: &Event) {
             a.noise(2.0, 0.25);
         }
         Event::Ship(ShipEvent::GateArrived { .. }) => a.tone(2400.0, 300.0, 0.8, 0.22),
-        Event::Ship(ShipEvent::GateTooFast { .. }) => {}
         Event::RouteStop { .. } => a.tone(700.0, 1050.0, 0.25, 0.18),
         Event::RouteComplete => {
             a.tone(523.0, 523.0, 0.2, 0.2);
@@ -86,6 +85,8 @@ pub fn event(ctx: &Context, event: &Event) {
             a.tone(784.0, 784.0, 0.7, 0.12);
         }
         Event::RouteBlocked { .. } => a.tone(300.0, 150.0, 0.5, 0.25),
+        // Anything else is silent (add a sound here for a new event that should have one).
+        _ => {}
     }
 }
 

@@ -69,11 +69,11 @@ impl Bus for Link<'_> {
 
     fn request_pad(&mut self, port: usize) -> PadGrant {
         let now = self.world.time;
-        self.world.pads.request(self.system, port, self.id, now)
+        self.world.traffic.request_pad(self.system, port, self.id, now)
     }
 
     fn request_corridor(&mut self, body: usize) -> bool {
-        self.world.corridors.request(self.system, body, self.id)
+        self.world.traffic.request_corridor(self.system, body, self.id)
     }
 
     fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent> {

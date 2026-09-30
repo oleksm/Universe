@@ -609,7 +609,7 @@ fn spaceports(frame: &mut Frame, app: &App) {
             frame.line(corners[k], corners[(k + 1) % 4], c.scale(0.6));
         }
         // The pads: ours bright, taken ones amber, free ones in the port's colour.
-        let owners = app.u.world.pads.owners(app.view.origin, i);
+        let owners = app.u.world.traffic.owners(app.view.origin, i);
         let ours = match app.u.avionics.clearance {
             Some(cl) if cl.target == universe_sim::NavTarget::Spaceport(i) => match cl.pad {
                 universe_sim::avionics::nav::PadSlot::Pad(k) => Some(k),

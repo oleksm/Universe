@@ -129,7 +129,7 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, pad:
         // What the autopilot does here, how far it has to go, and how fast
         // it closes.
         let phase = avionics.clearance.map_or(phase, |c| c.phase);
-        let cmd = computer::autopilot(sys, &ship, target, phase, pad, None, t, FINE_STEP, &positions);
+        let cmd = computer::autopilot(&computer::AutopilotInput { sys, ship: &ship, target, phase, pad, wait: None, t, h: FINE_STEP, positions: &positions });
         let (left, rel_speed, center) = progress(sys, &ship, target, pad, t, &positions);
         let action = if cmd.throttle > 0.02 {
             Action::Burn(cmd.throttle)

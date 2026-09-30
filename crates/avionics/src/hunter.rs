@@ -165,7 +165,9 @@ impl Avionics {
             // Drop everything and go.
             self.hunting = Some(Hunt { target: prey.id, since: now, checked: f64::NEG_INFINITY, break_off: None });
             self.route.active = false;
-            self.clearance = None;
+            if self.clearance.take().is_some() {
+                events.push(Event::Traffic(universe_world::TrafficEvent::ClearanceCancelled));
+            }
             self.nav_target = None;
             self.hyper_autopilot = false;
             let c = ShipCommands { arm: Some(true), rcs: DVec3::ZERO, ..ship.holding() };

@@ -95,9 +95,8 @@ pub struct World {
     /// Markets met so far, and the state of those traded with (see `market`).
     markets: HashMap<(usize, Facility), Rc<Market>>,
     market_states: HashMap<(usize, Facility), MarketState>,
-    /// Traffic control's pad and corridor books (see `pads`).
-    pub pads: crate::pads::PadBook,
-    pub corridors: crate::pads::CorridorBook,
+    /// Traffic control: pads and corridors (see `pads`).
+    pub traffic: crate::pads::TrafficControl,
 }
 
 impl World {
@@ -120,8 +119,7 @@ impl World {
             goods: crate::goods::catalog(seed),
             markets: HashMap::new(),
             market_states: HashMap::new(),
-            pads: Default::default(),
-            corridors: Default::default(),
+            traffic: Default::default(),
         }
     }
 
