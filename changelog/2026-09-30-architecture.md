@@ -300,3 +300,121 @@ relative motion, gravity/dominant (non-attracting bodies ignored), segment dista
   hyperdrive navigation no longer clones the target's name every frame.
 - `cargo build --release`: ok. (Dev scenarios compile against the new API; not rendered in this
   phase.)
+
+### Phase 3 — Avionics (`crates/avionics`, `universe-avionics`)
+
+**What moved where**
+
+- New crate `crates/avionics` (package `universe-avionics`; depends on `universe-physics`,
+  `universe-world`, `glam`, `serde` only), in the workspace between world and sim. `universe-sim`
+  depends on it and re-exports it as `universe_sim::avionics`, the old module paths
+  `universe_sim::{docking, landing, gate, plan, route}`, and the common types at the crate root
+  (`Avionics`, `Approach`, `Event`, `NavTarget`, `Phase`, `Clearance`, `Plan`, `Route`, `Stop`, the
+  status types…). Modules:
+  - `nav` (from sim `avionics.rs`): `NavTarget`, `Phase`, `Clearance`.
+  - `avionics`: `Avionics { nav_target, clearance, hyper_autopilot, route, debug_way }` and its
+    `observe` (from sim `avionics.rs`), plus the per-frame programs and pilot requests that were
+    `Universe` methods: `prepare` (= `route_step` + `autopilot_hyperjump`), `conclude` (hyperdrive
+    arrival event + `check_clearance`), `set_nav_target`, `request_clearance`, `toggle_autopilot`,
+    `toggle_hyperdrive`, `toggle_route`, `command`/`record`; `approach()` and `plan()` for the HUD;
+    `Approach` (from `universe.rs`).
+  - `bus`: the new `Bus` trait — sensors (`ship()`, `system()`, `star_system()`, `time()`,
+    `gate_links()`, `positions()`), all read-only, and `command(&ShipCommands) -> Vec<ShipEvent>`.
+  - `computer` (from sim `computer.rs`): `Computer` (the `FlightComputer`) and
+    `computer::autopilot` (the dock/land/gate dispatch, shared with the planner).
+  - `hyperdrive` (from sim `computer.rs`): `aim`, `exit_velocity`, `navigate` (the hyperdrive
+    autopilot), `HYPER_ARRIVE_STATION`/`HYPER_ARRIVE_PORT`.
+  - `docking`, `landing`, `gate`: guidance, status types and autopilots (from sim, unchanged
+    apart from `h`, below).
+  - `route` (from sim `route.rs` + `Universe::{route_step, route_fly, leave, landed_at,
+    ground_altitude, hyperjump_limit, stop_name}`): `Route`, `Stop`, `DWELL`, `gate_path`,
+    `stop_name`, the route autopilot.
+  - `plan`: the flight planner, rewritten (below).
+  - `events`: `Event` (from `universe.rs`).
+- `universe-sim` is now only orchestration: `lib.rs` + `universe.rs` (`Universe`, `Craft`,
+  `TrafficStats`, `CrashReport`, `UniverseSave`, settlers, save/load, and a private `Link`: the
+  avionics' `Bus` over `World` + the ship being stepped). `Universe.route` and `Universe.debug_way`
+  moved into `Avionics`; `Craft.route` into `Craft.avionics.route`.
+- Kernel: `simulate` takes an optional `Ephemeris` (like `integrate`); its test also checks the
+  ephemeris path. World: `Devices` (the ship's devices as a kernel `Driver`) is public with
+  `Devices::new`, so a copy of a ship can be flown by the same devices.
+- Game: `u.route` → `u.avionics.route`, `craft.route` → `craft.avionics.route`; nothing else.
+
+**The planner**
+
+- The private integrator is deleted. `plan::plan` clones the ship and an `Avionics` with only
+  the clearance (autopilot on), and flies the copy chunk by chunk with
+  `universe_physics::simulate(&sys.bodies, ephemeris, &rigid, Span, &mut Devices::new(sys, &mut
+  copy, &mut avionics.computer(), …))` — the kernel's integrator and contacts, the world's
+  devices, the same `Computer` and autopilots as the real ship. A plan point (time, position and
+  attitude in the target's frame, the autopilot's aim, action, phase) is recorded at every chunk
+  start, spaced as before (≤ 0.5 s within 20 km of the goal, ≤ 60 s far out, short at first).
+- Arrival: when the kernel stops on a fact, the world's own rules judge the copy — the docking
+  port (`station::contact` → docked), the landing gear on the target's pad
+  (`spaceport::touch_down` + `port_at`), the gate device (`gate::enter` on the target gate's
+  trigger). Anything else (a hard hull hit, the ring, the ground elsewhere) ends the plan
+  without arriving, as before. Gentle station bumps bounce, as in flight. (Was: within 15 m of
+  a goal point, or the ring-crossing test.)
+- Substeps: within the autopilot's own range (`route::hyperjump_limit`: 200 km of a port, 30 km
+  of a station or gate — beyond it the real autopilot jumps by hyperdrive first) the copy
+  reacts every 0.05 s exactly like the ship, so the plan *is* the flight. Farther out it ramps
+  to 2 s substeps after the first few seconds; rail bodies come from an ephemeris snapshot per
+  5 s window (each point interval is flown in pieces of at most 5 s), as in flight. The hyperjump itself is still not planned (as before).
+- To keep long substeps stable, the autopilots take `h` (how long their command holds) and
+  cap their feedback gains at `1/h` (`docking::gain`: attitude 1.5/s, docking and gate velocity
+  1.2/s, landing 0.8/s). At the real autopilot's ≤ 0.05 s the cap never binds, so real flights
+  are bit-identical (fingerprint below).
+
+**Decisions / deviations**
+
+- **Route into `Avionics`** (per the plan's "per-ship avionics state: … route"). It is
+  `#[serde(skip)]` there and saved in `UniverseSave.route` as before, so the save format is
+  unchanged. A respawn resets the avionics but keeps the route (as before, when the route was
+  on `Universe`).
+- **The `Bus`**: the route autopilot and the pilot's requests issue several commands in a row
+  and read the ship between them (e.g. the hyperdrive switch zeroes the throttle, then the
+  route sets full throttle; `observe` must see the switch event before the autopilot flag is
+  set). So the avionics don't return one `ShipCommands` per frame; they send commands through
+  the bus, which applies each at once via `World::command` and hands back the physical events,
+  which the avionics observe and report in order. The avionics can only read the ship
+  (`&Ship`), never write it.
+- `Event` lives in avionics (the pilot's feed is what the ship's computer reports, including
+  the world and traffic-control events it heard); sim re-exports it.
+- `debug_way` (where the hyperdrive autopilot steers; debugging only) is per ship now, in
+  `Avionics`; before, the last craft stepped overwrote the player's.
+- Bench regression, explained: the planner now flies the real autopilot at its real rate
+  through the kernel, so it costs about 1 µs per 0.05 s of flight near the goal. See gates.
+- Tests: the avionics' observe test and `gate_paths` moved with their code; new
+  `plan::tests::the_plan_is_the_flight` (in the avionics crate, driving `World::step_ship` with
+  the avionics' `Computer` directly): docking from spawn planned 150.0 s / flown 150.0 s,
+  landing from 150 km planned 305.2 s / flown 305.3 s. The sim's integration tests stay in sim
+  (they test the orchestration); only paths changed (`u.route` → `u.avionics.route`,
+  `computer::HYPER_ARRIVE_PORT` → `hyperdrive::HYPER_ARRIVE_PORT`, `u.debug_way` →
+  `u.avionics.debug_way`). No assertion changed.
+- `docs/architecture.md`: "As built (Phase 3)" under Avionics, the orchestration paragraph,
+  kernel `simulate`, world `Devices`, mapping rows.
+
+**Gates**
+
+- `cargo clippy --workspace --all-targets`: 0 warnings, 0 errors.
+- `cargo test --workspace --release`: physics 18 passed; world 15 passed; avionics 3 passed (2
+  moved, 1 new); sim 17 passed, 10 ignored (19 before: the observe and `gate_paths` tests moved).
+- `cargo test --workspace --release -- --ignored`: 10/10 passed. Docking from spawn: planned
+  150 s, actual 150 s (was 149/150; every sample along the way also says 150 s); landing from
+  orbit 384 s (after the hyperjump the plan says 384 s throughout); gate from 30 km: planned
+  259 s, actual 259 s; 10-stop settler route complete in 3.5 game h; all 13 moon ports autoland
+  (264–285 s); 100 settlers × 10 game h: 1,868 stops, 1,999 transits, 156 routes, **0 crashes**,
+  0.27 ms/frame; 1,000 settlers: **0 crashes**, 2.27 ms/frame. ETA smoothness, biggest jump:
+  docking 0.04 s (baseline 0.41), gate 0.05 s (0.23), landing 0.02 s (0.08). Bench (µs/frame):
+  coasting 2.08, warp 1000 4.55, near station 2.06, docking autopilot 5.20, landing autopilot
+  3.47 (warp 100: 6.50), hyperdrive 1.95, near ground 2.27 — unchanged. **Planner: 11.3 ms
+  (landing from orbit, a 2.5 h plan; was 1.97) and 2.19 ms (docking; was 1.09)** — the
+  explained change: it now flies the real autopilot at its real rate through the kernel
+  (~1 µs per 0.05 s of flight within the autopilot's range). The game rebuilds the plan 10×/s,
+  so a held landing clearance from orbit costs ~11% of a core; Phase 4 may rebuild less often
+  (the countdown is now exact, so it would stay smooth) or off the frame.
+- `cargo build --release`: ok.
+- Bit-identity of real flights: the Phase 2 fingerprint (20 settlers × 1 game h, autodock,
+  autoland, 1000× coast) gives the same hashes, times and states after the move and after the
+  `h`-aware gains (`FP traffic 89dcbbf0e04ee5b0`, `dock 4e3bafb857af7993`, `land a10b2ac334b30908`).
+  Only plans changed.

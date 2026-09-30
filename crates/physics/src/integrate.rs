@@ -311,9 +311,16 @@ mod tests {
         let v = crate::rails::velocity(&bodies, 1, 0.0);
         let probe = RigidBody::new(p[1] + DVec3::Y * 9.0e6, v + DVec3::X * 6000.0, DQuat::IDENTITY, 12.0);
         let span = Span { t: 0.0, dt: 600.0, max_h: f64::INFINITY };
-        let (copy, sim) = simulate(&bodies, &probe, span, &mut Wander { accel: 3.0, turned: 0.0 });
+        let (copy, sim) = simulate(&bodies, None, &probe, span, &mut Wander { accel: 3.0, turned: 0.0 });
         let mut real = probe;
         let out = integrate(&bodies, None, &mut p, &mut real, span, &mut Wander { accel: 3.0, turned: 0.0 });
+        assert_eq!((copy.position, copy.velocity, sim.time), (real.position, real.velocity, out.time));
+        // And with the rail bodies extrapolated from a shared snapshot.
+        let short = Span { dt: 4.0, ..span };
+        let e = Ephemeris::new(&bodies, 0.0);
+        let (copy, sim) = simulate(&bodies, Some(&e), &probe, short, &mut Wander { accel: 3.0, turned: 0.0 });
+        let mut real = probe;
+        let out = integrate(&bodies, Some(&e), &mut p, &mut real, short, &mut Wander { accel: 3.0, turned: 0.0 });
         assert_eq!((copy.position, copy.velocity, sim.time), (real.position, real.velocity, out.time));
     }
 }

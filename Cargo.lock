@@ -2243,6 +2243,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe-avionics"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "serde",
+ "universe-physics",
+ "universe-world",
+]
+
+[[package]]
 name = "universe-engine"
 version = "0.1.0"
 dependencies = [
@@ -2271,6 +2281,7 @@ dependencies = [
  "glam",
  "serde",
  "serde_json",
+ "universe-avionics",
  "universe-physics",
  "universe-world",
 ]

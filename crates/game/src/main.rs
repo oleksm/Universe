@@ -249,7 +249,7 @@ impl App {
         }
         if input.pressed(KeyCode::KeyK) {
             // With a route set, K flies the whole route; otherwise the current clearance.
-            if self.u.route.stops.is_empty() {
+            if self.u.avionics.route.stops.is_empty() {
                 self.u.toggle_autopilot();
             } else {
                 self.u.toggle_route();
@@ -259,7 +259,7 @@ impl App {
             self.u.respawn();
         }
         // The autopilot has the stick.
-        if self.u.route.active || self.u.avionics.clearance.is_some_and(|c| c.autopilot) {
+        if self.u.avionics.route.active || self.u.avionics.clearance.is_some_and(|c| c.autopilot) {
             return Controls::default();
         }
 
@@ -445,8 +445,8 @@ impl Game for App {
         self.last_step = self.u.step_world(dt, self.warp(), &controls);
         self.handle_events(ctx);
         self.build_globes();
-        if self.route_labels_for != self.u.route.stops {
-            self.route_labels_for = self.u.route.stops.clone();
+        if self.route_labels_for != self.u.avionics.route.stops {
+            self.route_labels_for = self.u.avionics.route.stops.clone();
             self.route_labels = self.route_labels_for.clone().into_iter().map(|s| self.u.stop_name(s).to_uppercase()).collect();
         }
         self.approach = self.u.approach();

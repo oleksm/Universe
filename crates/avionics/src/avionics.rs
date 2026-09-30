@@ -1,0 +1,340 @@
+//! A ship's avionics: what its navigation computer remembers — the nav
+//! target, the clearance traffic control granted, the autopilots' state and
+//! the route — and the programs that act on it once a frame. None of it is
+//! physics or the world's business: the ship carries none of it, and the
+//! world never reads it. The avionics see the ship through a `Bus`, fly it
+//! only by sending `ShipCommands`, and learn what happened to it from the
+//! world's physical events (`Avionics::observe`).
+
+use glam::DVec3;
+use serde::{Deserialize, Serialize};
+use universe_world::{traffic, GateFrame, HyperdriveCommand, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StationFrame, TrafficEvent};
+
+use crate::bus::Bus;
+use crate::computer::Computer;
+use crate::docking::{self, DockingStatus};
+use crate::events::Event;
+use crate::gate::{self, GateStatus};
+use crate::hyperdrive;
+use crate::landing::{self, LandingStatus, PadFrame};
+use crate::nav::{Clearance, NavTarget, Phase};
+use crate::plan::{self, Plan};
+use crate::route::{self, Route};
+
+/// One ship's avionics state.
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct Avionics {
+    /// Target locked on the navigation map.
+    #[serde(default)]
+    pub nav_target: Option<NavTarget>,
+    /// Clearance to dock, land or transit (as granted by traffic control), and the autopilot's state.
+    #[serde(default)]
+    pub clearance: Option<Clearance>,
+    /// Hyperdrive autopilot: steer to the nav target (only when the pilot turns it on).
+    #[serde(default)]
+    pub hyper_autopilot: bool,
+    /// The multi-stop route, and the route autopilot's progress. (Saved on
+    /// its own, next to the rest.)
+    #[serde(skip)]
+    pub route: Route,
+    /// Where the hyperdrive autopilot is steering (for debugging).
+    #[serde(skip)]
+    pub debug_way: Option<DVec3>,
+}
+
+/// Live guidance for the current clearance.
+#[derive(Clone, Debug)]
+pub enum Approach {
+    Dock { station: usize, status: DockingStatus },
+    Land { port: usize, status: Box<LandingStatus> },
+    Transit { gate: usize, status: GateStatus },
+}
+
+impl Avionics {
+    /// The dock/land/gate autopilot is flying.
+    pub fn autopilot_engaged(&self) -> bool {
+        self.clearance.is_some_and(|c| c.autopilot)
+    }
+
+    /// A computer, rather than the pilot's stick, turns the ship this frame.
+    pub fn flies(&self, ship: &Ship) -> bool {
+        match ship.state {
+            ShipState::Flying if ship.hyperdrive => self.hyper_autopilot,
+            ShipState::Flying => self.autopilot_engaged(),
+            _ => false,
+        }
+    }
+
+    /// The flight computer, for the world's ship step.
+    pub fn computer(&mut self) -> Computer<'_> {
+        Computer::new(self)
+    }
+
+    /// What a physical event means for the navigation state: arriving,
+    /// being destroyed or leaving through a gate ends a clearance; leaving
+    /// the system forgets the target (it was in the old one); any change of
+    /// the hyperdrive hands its steering back to the pilot; a new ship starts
+    /// with nothing set.
+    pub fn observe(&mut self, event: &ShipEvent) {
+        match event {
+            ShipEvent::Landed { .. } | ShipEvent::LandedAtPort { .. } | ShipEvent::Crashed { .. } => self.clearance = None,
+            ShipEvent::GateEntered { .. } | ShipEvent::EnteredSystem { .. } => {
+                self.clearance = None;
+                self.nav_target = None;
+            }
+            ShipEvent::HyperdriveEngaged | ShipEvent::HyperdriveDisengaged => self.hyper_autopilot = false,
+            ShipEvent::Respawned => {
+                let route = std::mem::take(&mut self.route);
+                *self = Avionics { route, ..Avionics::default() };
+            }
+            ShipEvent::TookOff
+            | ShipEvent::Launched { .. }
+            | ShipEvent::Bumped
+            | ShipEvent::GateArrived { .. }
+            | ShipEvent::GateTooFast { .. } => {}
+        }
+    }
+
+    /// Pass the world's events for the ship on to the pilot, taking note of them.
+    pub fn record(&mut self, ship_events: Vec<ShipEvent>, events: &mut Vec<Event>) {
+        for e in ship_events {
+            self.observe(&e);
+            events.push(Event::Ship(e));
+        }
+    }
+
+    /// Give the ship's devices new commands now.
+    pub fn command(&mut self, bus: &mut impl Bus, c: &ShipCommands, events: &mut Vec<Event>) {
+        let happened = bus.command(c);
+        self.record(happened, events);
+    }
+
+    /// Change some of the engine and thruster settings, keeping the rest.
+    pub(crate) fn set_controls(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>, change: impl FnOnce(&mut ShipCommands)) {
+        let mut c = bus.ship().holding();
+        change(&mut c);
+        self.command(bus, &c, events);
+    }
+
+    /// Engage or disengage the hyperdrive. Dropping out, the ship is left
+    /// co-moving with the nav target if it's close, otherwise with whatever
+    /// dominates gravity there.
+    pub fn toggle_hyperdrive(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        if !bus.ship().is_flying() {
+            return;
+        }
+        let engage = !bus.ship().hyperdrive;
+        let exit_velocity = if engage {
+            None
+        } else {
+            let (sys, positions) = bus.positions();
+            let (t, p) = (bus.time(), bus.ship().position);
+            let aim = self.nav_target.and_then(|target| hyperdrive::aim(&sys, target, t, &positions, p));
+            hyperdrive::exit_velocity(aim.as_ref(), p)
+        };
+        let orders = HyperdriveCommand { engage, exit_velocity, ..Default::default() };
+        let c = ShipCommands { hyperdrive: Some(orders), ..bus.ship().holding() };
+        self.command(bus, &c, events);
+        // (Both ways, the drive starts from zero throttle, and the pilot has the stick.)
+        self.hyper_autopilot = false;
+    }
+
+    /// Before the ship moves this frame: the route autopilot, then (unless
+    /// it is flying a route) the dock/land/gate autopilot's hyperjump.
+    pub fn prepare(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        self.route_step(bus, events);
+        if !self.route.active {
+            self.hyperjump(bus, events);
+        }
+    }
+
+    /// After the ship moved: announce an arrival by hyperdrive (`arrived`,
+    /// from the flight computer), and let a clearance lapse.
+    pub fn conclude(&mut self, bus: &mut impl Bus, arrived: Option<String>, events: &mut Vec<Event>) {
+        if let Some(target) = arrived {
+            events.push(Event::HyperdriveArrived { target });
+        }
+        self.check_clearance(bus, events);
+    }
+
+    /// Lock (or clear) the navigation target.
+    pub fn set_nav_target(&mut self, bus: &mut impl Bus, target: Option<NavTarget>, events: &mut Vec<Event>) {
+        if self.clearance.is_some_and(|c| Some(c.target) != target) {
+            self.clearance = None;
+            self.set_controls(bus, events, |c| c.rcs = DVec3::ZERO);
+            events.push(Event::Traffic(TrafficEvent::ClearanceCancelled));
+        }
+        self.nav_target = target;
+        let name = target.map(|t| t.name(&bus.star_system()));
+        events.push(Event::NavTargetSet { name });
+    }
+
+    /// Ask traffic control for permission to dock/land at the locked nav
+    /// target (or the nearest station).
+    pub fn request_clearance(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) -> bool {
+        let (sys, positions) = bus.positions();
+        let t = bus.time();
+        let ship = bus.ship();
+        let target = self.nav_target.or_else(|| traffic::nearest_station(&sys, ship.position, &positions));
+        match traffic::request(&sys, ship, target, t, &positions) {
+            Ok(target) => {
+                self.clearance = Some(Clearance { target, autopilot: false, phase: Phase::Approach });
+                events.push(Event::Traffic(TrafficEvent::ClearanceGranted { target: target.name(&sys), kind: target.kind() }));
+                true
+            }
+            Err(reason) => {
+                events.push(Event::Traffic(TrafficEvent::ClearanceDenied { reason }));
+                false
+            }
+        }
+    }
+
+    /// Engage or release the autopilot. In hyperdrive it steers to the nav
+    /// target; otherwise it docks or lands (requesting clearance if needed).
+    pub fn toggle_autopilot(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        if bus.ship().hyperdrive {
+            if self.nav_target.is_none() && !self.hyper_autopilot {
+                events.push(Event::Refused { reason: "LOCK A NAV TARGET FIRST (M)".into() });
+                return;
+            }
+            self.hyper_autopilot = !self.hyper_autopilot;
+            events.push(Event::Autopilot { on: self.hyper_autopilot });
+            return;
+        }
+        if self.clearance.is_none() && !self.request_clearance(bus, events) {
+            return;
+        }
+        let Some(c) = &mut self.clearance else { return };
+        c.autopilot = !c.autopilot;
+        c.phase = Phase::Approach;
+        let on = c.autopilot;
+        if !on {
+            self.set_controls(bus, events, |c| {
+                c.rcs = DVec3::ZERO;
+                c.throttle = 0.0;
+            });
+        }
+        events.push(Event::Autopilot { on });
+    }
+
+    /// Start or stop the route autopilot.
+    pub fn toggle_route(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        if self.route.stops.is_empty() {
+            return;
+        }
+        self.route.active = !self.route.active;
+        if !self.route.active {
+            if let Some(c) = &mut self.clearance {
+                c.autopilot = false;
+            }
+            self.hyper_autopilot = false;
+            self.set_controls(bus, events, |c| {
+                c.rcs = DVec3::ZERO;
+                c.throttle = 0.0;
+            });
+        }
+        events.push(Event::Autopilot { on: self.route.active });
+    }
+
+    /// Clearance lapses if the ship wanders far away or the target vanishes
+    /// (traffic control's rule).
+    fn check_clearance(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        let Some(c) = self.clearance else { return };
+        if !bus.ship().is_flying() {
+            return;
+        }
+        let (sys, positions) = bus.positions();
+        if traffic::lapsed(&sys, bus.ship(), c.target, bus.time(), &positions) {
+            self.clearance = None;
+            self.set_controls(bus, events, |c| c.rcs = DVec3::ZERO);
+            events.push(Event::Traffic(TrafficEvent::ClearanceCancelled));
+        }
+    }
+
+    /// With the dock/land/gate autopilot on and the target far away, cover
+    /// the distance by hyperdrive first (its autopilot steers around planets),
+    /// then carry on: the clearance and autopilot stay on through the jump.
+    fn hyperjump(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        let Some(c) = self.clearance.filter(|c| c.autopilot) else { return };
+        if !bus.ship().is_flying() || bus.ship().hyperdrive {
+            return;
+        }
+        let Some(at) = target_position(bus, c.target) else { return };
+        if at.distance(bus.ship().position) > route::hyperjump_limit(c.target) {
+            self.nav_target = Some(c.target);
+            self.toggle_hyperdrive(bus, events);
+            self.hyper_autopilot = true;
+            self.set_controls(bus, events, |c| c.throttle = 1.0);
+        }
+    }
+
+    /// Guidance numbers for the HUD, if cleared to dock, land or transit (the
+    /// ship in `sys` at `t`, bodies at `positions`).
+    pub fn approach(&self, sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3]) -> Option<Approach> {
+        let c = self.clearance?;
+        Some(match c.target {
+            NavTarget::Station(station) => {
+                let frame = StationFrame::new(sys, station, t, positions);
+                Approach::Dock { station, status: docking::status(&frame, ship, &c) }
+            }
+            NavTarget::Spaceport(port) => {
+                let pad = PadFrame::new(sys, port, t, positions);
+                let terrain = sys.bodies[sys.spaceports[port].body].terrain.as_ref();
+                Approach::Land { port, status: Box::new(landing::status(&pad, ship, &c, terrain)) }
+            }
+            NavTarget::Gate(g) => {
+                let frame = GateFrame::new(sys, g, t, positions);
+                Approach::Transit { gate: g, status: gate::status(&frame, ship, &c) }
+            }
+        })
+    }
+
+    /// The flight plan to the cleared target: what to do from here, as the
+    /// autopilot would do it (see `plan`). None unless flying, and not in
+    /// hyperdrive.
+    pub fn plan(&self, sys: &StarSystem, ship: &Ship, t: f64) -> Option<Plan> {
+        let c = self.clearance?;
+        if !ship.is_flying() || ship.hyperdrive {
+            return None;
+        }
+        Some(plan::plan(sys, ship, c.target, c.phase, t))
+    }
+}
+
+/// Where `target` is now, if it's still there.
+pub(crate) fn target_position(bus: &mut impl Bus, target: NavTarget) -> Option<DVec3> {
+    let (sys, positions) = bus.positions();
+    target.position(&sys, bus.time(), &positions)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn physical_events_end_clearances_and_forget_targets() {
+        let target = NavTarget::Station(3);
+        let set = || Avionics {
+            nav_target: Some(target),
+            clearance: Some(Clearance { target, autopilot: true, phase: Phase::Final }),
+            hyper_autopilot: true,
+            ..Default::default()
+        };
+        let after = |e: ShipEvent| {
+            let mut a = set();
+            a.observe(&e);
+            a
+        };
+        let docked = after(ShipEvent::Landed { body: "Station".into(), station: true });
+        assert!(docked.clearance.is_none() && docked.nav_target == Some(target), "arrived: the clearance is used up");
+        let crashed = after(ShipEvent::Crashed { body: "Station".into() });
+        assert!(crashed.clearance.is_none());
+        let gone = after(ShipEvent::GateEntered { to: "Lave".into() });
+        assert!(gone.clearance.is_none() && gone.nav_target.is_none(), "the target was in the old system");
+        let dropped = after(ShipEvent::HyperdriveDisengaged);
+        assert!(!dropped.hyper_autopilot && dropped.autopilot_engaged());
+        assert!(after(ShipEvent::Bumped).autopilot_engaged(), "a bump changes nothing");
+        let new = after(ShipEvent::Respawned);
+        assert!(new.nav_target.is_none() && new.clearance.is_none() && !new.hyper_autopilot);
+    }
+}

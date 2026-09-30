@@ -1,0 +1,13 @@
+[package]
+name = "universe-avionics"
+edition.workspace = true
+version.workspace = true
+
+# Ship software: the navigation computer, guidance, autopilots and the flight
+# planner. Reads what a ship's sensors would (the ship, the world around it)
+# and flies only through `ShipCommands`.
+[dependencies]
+universe-physics = { path = "../physics" }
+universe-world = { path = "../world" }
+glam.workspace = true
+serde.workspace = true

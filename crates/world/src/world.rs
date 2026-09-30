@@ -307,7 +307,7 @@ impl World {
         let thrusters = if ship.rcs != DVec3::ZERO { FINE_STEP } else { f64::INFINITY };
         let span = Span { t: self.time, dt, max_h: thrusters.min(computer.interval()) };
         let mut rigid = ship.rigid();
-        let mut devices = Devices { sys, ship: &mut *ship, computer, events: &mut *events };
+        let mut devices = Devices::new(sys, &mut *ship, computer, &mut *events);
         let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut self.positions, &mut rigid, span, &mut devices);
         ship.set_rigid(&rigid);
         self.time = out.time;
@@ -450,11 +450,22 @@ impl World {
 /// The ship's devices during a flight step, as the kernel's force callback:
 /// the flight computer's commands (if any) set them each substep, and they
 /// push with the thrust they're set to. Contacts are judged by world rules.
-struct Devices<'a, C> {
+/// (The same devices fly a copy of the ship when a flight is simulated
+/// ahead, e.g. by a flight planner through `universe_physics::simulate`.)
+pub struct Devices<'a, C> {
     sys: &'a StarSystem,
     ship: &'a mut Ship,
     computer: &'a mut C,
     events: &'a mut Vec<ShipEvent>,
+}
+
+impl<'a, C: FlightComputer> Devices<'a, C> {
+    /// `ship`'s devices in `sys`, set each substep by `computer`; what they
+    /// do goes to `events`. The kernel's body stands for the ship's motion
+    /// (see `Ship::rigid`/`set_rigid`); the ship keeps the device settings.
+    pub fn new(sys: &'a StarSystem, ship: &'a mut Ship, computer: &'a mut C, events: &'a mut Vec<ShipEvent>) -> Self {
+        Self { sys, ship, computer, events }
+    }
 }
 
 impl<C: FlightComputer> Driver for Devices<'_, C> {

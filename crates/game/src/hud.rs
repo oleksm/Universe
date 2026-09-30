@@ -109,7 +109,7 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         Focus::Craft(i) => {
             let Some(c) = app.u.crafts.get(i) else { return };
-            let r = &c.route;
+            let r = &c.avionics.route;
             let stage = match &c.ship.state {
                 ShipState::Landed { .. } if r.dwell_until.is_some() => "AT A STOP",
                 ShipState::Landed { .. } => "DEPARTING",
@@ -205,7 +205,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
 
 /// The route: which stop we're on and what the route autopilot is doing.
 fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    let r = &app.u.route;
+    let r = &app.u.avionics.route;
     if r.stops.is_empty() {
         return;
     }

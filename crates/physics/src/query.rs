@@ -5,7 +5,7 @@ use glam::DVec3;
 
 use crate::body::RigidBody;
 use crate::integrate::{integrate, Driver, Outcome, Span};
-use crate::rails::OnRails;
+use crate::rails::{Ephemeris, OnRails};
 
 /// Acceleration toward a point mass with gravitational parameter `mu` that
 /// lies at offset `d` from here.
@@ -50,11 +50,12 @@ pub fn segment_distance(a: DVec3, b: DVec3, p: DVec3) -> f64 {
 
 /// What would happen: simulate a copy of `body` through `span` under
 /// `driver`, with the same integrator and contacts as the real thing, leaving
-/// the original untouched. Rail bodies are solved exactly at every substep.
-pub fn simulate<B: OnRails>(bodies: &[B], body: &RigidBody, span: Span, driver: &mut impl Driver) -> (RigidBody, Outcome) {
+/// the original untouched. Rail bodies are solved exactly at every substep,
+/// or extrapolated from an `ephemeris` valid around `span.t` (as `integrate`).
+pub fn simulate<B: OnRails>(bodies: &[B], ephemeris: Option<&Ephemeris>, body: &RigidBody, span: Span, driver: &mut impl Driver) -> (RigidBody, Outcome) {
     let mut copy = *body;
     let mut positions = Vec::with_capacity(bodies.len());
-    let outcome = integrate(bodies, None, &mut positions, &mut copy, span, driver);
+    let outcome = integrate(bodies, ephemeris, &mut positions, &mut copy, span, driver);
     (copy, outcome)
 }
 

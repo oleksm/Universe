@@ -2,48 +2,11 @@ use std::rc::Rc;
 
 use glam::{DQuat, DVec3};
 use serde::{Deserialize, Serialize};
-use universe_world::traffic;
-use universe_world::{
-    BodyKind, Controls, HyperdriveCommand, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, TrafficEvent, World,
-};
+use universe_avionics::route::{self, Route, Stop};
+use universe_avionics::{Approach, Avionics, Bus, Clearance, Event, NavTarget, Plan};
+use universe_world::{BodyKind, Controls, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, World};
 
-use crate::avionics::{Avionics, Clearance, NavTarget, Phase};
-use crate::computer::{self, Computer};
-use crate::docking::{self, DockingStatus};
-use crate::gate::{self, GateStatus};
-use crate::landing::{self, LandingStatus, PadFrame};
-use crate::route::{self, Route, Stop};
 use crate::rng::Rng;
-use crate::{GateFrame, StationFrame};
-
-/// What happened, for the pilot (and the traffic statistics): the world's
-/// physical events and traffic control's, and the avionics' own.
-#[derive(Clone, Debug)]
-pub enum Event {
-    /// Something physically happened to the ship.
-    Ship(ShipEvent),
-    /// Traffic control said something.
-    Traffic(TrafficEvent),
-    /// Dropped out of hyperdrive at the nav target.
-    HyperdriveArrived { target: String },
-    /// The route autopilot reached a stop (1-based number, name).
-    RouteStop { number: usize, name: String },
-    RouteComplete,
-    /// A route stop can't be reached (no gate path, or it no longer exists).
-    RouteBlocked { reason: String },
-    Autopilot { on: bool },
-    NavTargetSet { name: Option<String> },
-    /// The avionics can't do what was asked.
-    Refused { reason: String },
-}
-
-/// Live guidance for the current clearance.
-#[derive(Clone, Debug)]
-pub enum Approach {
-    Dock { station: usize, status: DockingStatus },
-    Land { port: usize, status: Box<LandingStatus> },
-    Transit { gate: usize, status: GateStatus },
-}
 
 /// Everything needed to restore a game. Star systems regenerate from the seed.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -64,10 +27,8 @@ pub struct Universe {
     pub ship: Ship,
     /// Galaxy index of the system the ship is in; ship coordinates are relative to its star.
     pub ship_system: usize,
-    /// The ship's navigation state: target, clearance, autopilots.
+    /// The ship's avionics: nav target, clearance, autopilots, route.
     pub avionics: Avionics,
-    /// The ship's multi-stop route, and the route autopilot's progress.
-    pub route: Route,
     pub events: Vec<Event>,
     /// Other ships (settlers), each flying its own route.
     pub crafts: Vec<Craft>,
@@ -75,8 +36,6 @@ pub struct Universe {
     /// Recent craft crashes (most recent last, capped).
     pub crash_log: Vec<CrashReport>,
     positions: Vec<DVec3>,
-    /// Where the hyperdrive autopilot is steering (for debugging).
-    pub debug_way: Option<DVec3>,
 }
 
 /// Another ship in the world, flown by the same code as the player's: its
@@ -86,8 +45,8 @@ pub struct Craft {
     pub ship: Ship,
     /// Galaxy index of the system it's in.
     pub system: usize,
+    /// Its avionics, flying its route.
     pub avionics: Avionics,
-    pub route: Route,
     /// Seed of its current route (a new one is made when it finishes).
     pub route_seed: u64,
     events: Vec<Event>,
@@ -116,6 +75,42 @@ pub struct CrashReport {
     pub speed: f64,
 }
 
+/// The avionics' bus to the ship being stepped: its sensors read the ship
+/// and the world, its commands go to the world's devices.
+struct Link<'a> {
+    world: &'a mut World,
+    ship: &'a mut Ship,
+    system: usize,
+}
+
+impl Bus for Link<'_> {
+    fn ship(&self) -> &Ship {
+        self.ship
+    }
+
+    fn system(&self) -> usize {
+        self.system
+    }
+
+    fn star_system(&mut self) -> Rc<StarSystem> {
+        self.world.system(self.system)
+    }
+
+    fn time(&self) -> f64 {
+        self.world.time
+    }
+
+    fn gate_links(&self) -> &[(usize, usize)] {
+        &self.world.gate_links
+    }
+
+    fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent> {
+        let mut events = Vec::new();
+        self.world.command(self.ship, self.system, c, &mut events);
+        events
+    }
+}
+
 impl Universe {
     pub fn new(seed: u64) -> Self {
         let mut u = Self {
@@ -123,12 +118,10 @@ impl Universe {
             ship: Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY),
             ship_system: 0,
             avionics: Avionics::default(),
-            route: Route::default(),
             events: Vec::new(),
             crafts: Vec::new(),
             traffic: TrafficStats::default(),
             crash_log: Vec::new(),
-            debug_way: None,
             positions: Vec::new(),
         };
         u.respawn();
@@ -150,78 +143,39 @@ impl Universe {
         self.world.system(self.ship_system)
     }
 
-    /// Report the world's events for the ship, and let its avionics take note.
-    fn record(&mut self, events: Vec<ShipEvent>) {
-        for e in events {
-            self.avionics.observe(&e);
-            self.events.push(Event::Ship(e));
-        }
+    /// Run `f` on the ship's avionics, connected to the ship.
+    fn with_avionics<R>(&mut self, f: impl FnOnce(&mut Avionics, &mut Link, &mut Vec<Event>) -> R) -> R {
+        let mut link = Link { world: &mut self.world, ship: &mut self.ship, system: self.ship_system };
+        f(&mut self.avionics, &mut link, &mut self.events)
     }
 
     /// Give the ship's devices new commands now (see `World::command`).
     pub fn command(&mut self, c: &ShipCommands) {
-        let mut events = Vec::new();
-        self.world.command(&mut self.ship, self.ship_system, c, &mut events);
-        self.record(events);
-    }
-
-    /// Change some of the engine and thruster settings, keeping the rest.
-    fn set_controls(&mut self, change: impl FnOnce(&mut ShipCommands)) {
-        let mut c = self.ship.holding();
-        change(&mut c);
-        self.command(&c);
+        self.with_avionics(|a, link, events| a.command(link, c, events));
     }
 
     /// Put a new ship next to the home station, matching its orbit.
     pub fn respawn(&mut self) {
         let mut events = Vec::new();
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
-        self.record(events);
+        self.avionics.record(events, &mut self.events);
     }
 
     pub fn toggle_hyperdrive(&mut self) {
-        if !self.ship.is_flying() {
-            return;
-        }
-        let engage = !self.ship.hyperdrive;
-        // Drop out co-moving with the nav target if it's close, otherwise
-        // with whatever dominates gravity here.
-        let exit_velocity = if engage {
-            None
-        } else {
-            let sys = self.ship_system();
-            sys.positions(self.world.time, &mut self.positions);
-            let aim = self.avionics.nav_target.and_then(|t| computer::hyper_aim(&sys, t, self.world.time, &self.positions, self.ship.position));
-            computer::exit_velocity(aim.as_ref(), self.ship.position)
-        };
-        let orders = HyperdriveCommand { engage, exit_velocity, ..Default::default() };
-        self.command(&ShipCommands { hyperdrive: Some(orders), ..self.ship.holding() });
-        // (Both ways, the drive starts from zero throttle, and the pilot has the stick.)
-        self.avionics.hyper_autopilot = false;
+        self.with_avionics(|a, link, events| a.toggle_hyperdrive(link, events));
     }
 
     /// Advance the universe by `real_dt * warp` seconds (less if warp is limited).
     pub fn step(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
-        self.route_step();
-        if !self.route.active {
-            self.autopilot_hyperjump();
-        }
+        self.with_avionics(|a, link, events| a.prepare(link, events));
         // The pilot's stick turns the ship, unless a computer is flying it.
-        let computer_flies = match self.ship.state {
-            ShipState::Flying if self.ship.hyperdrive => self.avionics.hyper_autopilot,
-            ShipState::Flying => self.avionics.autopilot_engaged(),
-            _ => false,
-        };
-        let commands = ShipCommands { turn: (!computer_flies).then_some(*controls), ..self.ship.holding() };
+        let commands = ShipCommands { turn: (!self.avionics.flies(&self.ship)).then_some(*controls), ..self.ship.holding() };
         let mut events = Vec::new();
-        let mut computer = Computer::new(&mut self.avionics, &mut self.debug_way);
+        let mut computer = self.avionics.computer();
         let result = self.world.step_ship(&mut self.ship, &mut self.ship_system, &commands, &mut computer, real_dt, warp, &mut events);
-        let arrived = computer.arrived;
-        self.record(events);
-        if let Some(target) = arrived {
-            self.events.push(Event::HyperdriveArrived { target });
-        }
-        self.check_clearance();
+        let arrived = computer.arrived.take();
+        self.avionics.record(events, &mut self.events);
+        self.with_avionics(|a, link, events| a.conclude(link, arrived, events));
         result
     }
 
@@ -239,78 +193,19 @@ impl Universe {
 
     /// Lock (or clear) the navigation target.
     pub fn set_nav_target(&mut self, target: Option<NavTarget>) {
-        if self.avionics.clearance.is_some_and(|c| Some(c.target) != target) {
-            self.avionics.clearance = None;
-            self.set_controls(|c| c.rcs = DVec3::ZERO);
-            self.events.push(Event::Traffic(TrafficEvent::ClearanceCancelled));
-        }
-        self.avionics.nav_target = target;
-        let name = target.map(|t| self.target_name(t));
-        self.events.push(Event::NavTargetSet { name });
+        self.with_avionics(|a, link, events| a.set_nav_target(link, target, events));
     }
 
     /// Ask traffic control for permission to dock/land at the locked nav
     /// target (or the nearest station).
     pub fn request_clearance(&mut self) -> bool {
-        let sys = self.ship_system();
-        let t = self.world.time;
-        sys.positions(t, &mut self.positions);
-        let target = self.avionics.nav_target.or_else(|| traffic::nearest_station(&sys, self.ship.position, &self.positions));
-        match traffic::request(&sys, &self.ship, target, t, &self.positions) {
-            Ok(target) => {
-                self.avionics.clearance = Some(Clearance { target, autopilot: false, phase: Phase::Approach });
-                self.events.push(Event::Traffic(TrafficEvent::ClearanceGranted { target: target.name(&sys), kind: target.kind() }));
-                true
-            }
-            Err(reason) => {
-                self.events.push(Event::Traffic(TrafficEvent::ClearanceDenied { reason }));
-                false
-            }
-        }
+        self.with_avionics(|a, link, events| a.request_clearance(link, events))
     }
 
     /// Engage or release the autopilot. In hyperdrive it steers to the nav
     /// target; otherwise it docks or lands (requesting clearance if needed).
     pub fn toggle_autopilot(&mut self) {
-        if self.ship.hyperdrive {
-            if self.avionics.nav_target.is_none() && !self.avionics.hyper_autopilot {
-                self.events.push(Event::Refused { reason: "LOCK A NAV TARGET FIRST (M)".into() });
-                return;
-            }
-            self.avionics.hyper_autopilot = !self.avionics.hyper_autopilot;
-            self.events.push(Event::Autopilot { on: self.avionics.hyper_autopilot });
-            return;
-        }
-        if self.avionics.clearance.is_none() && !self.request_clearance() {
-            return;
-        }
-        let Some(c) = &mut self.avionics.clearance else { return };
-        c.autopilot = !c.autopilot;
-        c.phase = Phase::Approach;
-        let on = c.autopilot;
-        if !on {
-            self.set_controls(|c| {
-                c.rcs = DVec3::ZERO;
-                c.throttle = 0.0;
-            });
-        }
-        self.events.push(Event::Autopilot { on });
-    }
-
-    /// Clearance lapses if the ship wanders far away or the target vanishes
-    /// (traffic control's rule).
-    fn check_clearance(&mut self) {
-        let Some(c) = self.avionics.clearance else { return };
-        if !self.ship.is_flying() {
-            return;
-        }
-        let sys = self.ship_system();
-        sys.positions(self.world.time, &mut self.positions);
-        if traffic::lapsed(&sys, &self.ship, c.target, self.world.time, &self.positions) {
-            self.avionics.clearance = None;
-            self.set_controls(|c| c.rcs = DVec3::ZERO);
-            self.events.push(Event::Traffic(TrafficEvent::ClearanceCancelled));
-        }
+        self.with_avionics(|a, link, events| a.toggle_autopilot(link, events));
     }
 
     /// Advance the whole world: the player's ship, then every craft, all from
@@ -322,7 +217,8 @@ impl Universe {
         for i in 0..self.crafts.len() {
             self.world.time = t0;
             self.swap_craft(i);
-            let before = (self.avionics.nav_target, self.avionics.clearance, self.ship.hyperdrive, self.route.departing, self.ship.velocity);
+            let a = &self.avionics;
+            let before = (a.nav_target, a.clearance, self.ship.hyperdrive, a.route.departing, self.ship.velocity);
             self.step(real_dt, warp, &Controls::default());
             let crashed = self.events.iter().find_map(|e| match e {
                 Event::Ship(ShipEvent::Crashed { body }) => Some(body.clone()),
@@ -359,7 +255,6 @@ impl Universe {
         std::mem::swap(&mut self.ship, &mut c.ship);
         std::mem::swap(&mut self.ship_system, &mut c.system);
         std::mem::swap(&mut self.avionics, &mut c.avionics);
-        std::mem::swap(&mut self.route, &mut c.route);
         std::mem::swap(&mut self.events, &mut c.events);
     }
 
@@ -376,7 +271,7 @@ impl Universe {
             }
         }
         let c = &self.crafts[i];
-        if !c.route.active && matches!(c.ship.state, ShipState::Landed { .. }) {
+        if !c.avionics.route.active && matches!(c.ship.state, ShipState::Landed { .. }) {
             let seed = crate::rng::mix(c.route_seed, 1);
             let mut stops = self.settler_route(seed, 10);
             // Start from where it is: skip a first stop that's right here.
@@ -384,7 +279,7 @@ impl Universe {
                 stops.rotate_left(1);
             }
             let c = &mut self.crafts[i];
-            c.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false };
+            c.avionics.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false };
             c.route_seed = seed;
         }
     }
@@ -404,8 +299,7 @@ impl Universe {
                 name: format!("Settler {}", self.crafts.len() + 1),
                 ship,
                 system: first.system,
-                avionics: Avionics::default(),
-                route,
+                avionics: Avionics { route, ..Avionics::default() },
                 route_seed,
                 events: Vec::new(),
             });
@@ -414,21 +308,7 @@ impl Universe {
 
     /// Start or stop the route autopilot.
     pub fn toggle_route(&mut self) {
-        if self.route.stops.is_empty() {
-            return;
-        }
-        self.route.active = !self.route.active;
-        if !self.route.active {
-            if let Some(c) = &mut self.avionics.clearance {
-                c.autopilot = false;
-            }
-            self.avionics.hyper_autopilot = false;
-            self.set_controls(|c| {
-                c.rcs = DVec3::ZERO;
-                c.throttle = 0.0;
-            });
-        }
-        self.events.push(Event::Autopilot { on: self.route.active });
+        self.with_avionics(|a, link, events| a.toggle_route(link, events));
     }
 
     /// A reproducible route of `count` stops (stations and spaceports) across
@@ -470,207 +350,25 @@ impl Universe {
 
     /// Name of a stop, with its system if it's elsewhere.
     pub fn stop_name(&mut self, stop: Stop) -> String {
-        let sys = self.system(stop.system);
-        let name = match stop.target {
-            NavTarget::Station(b) | NavTarget::Gate(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
-            NavTarget::Spaceport(p) => sys.spaceports.get(p).map_or_else(String::new, |p| p.name.clone()),
-        };
-        format!("{name} ({})", sys.name)
-    }
-
-    /// Is the ship, landed on `body` at `local_position`, at this target?
-    fn landed_at(&mut self, target: NavTarget, body: usize, local_position: DVec3) -> bool {
-        let sys = self.ship_system();
-        match target {
-            NavTarget::Station(s) => s == body,
-            NavTarget::Spaceport(p) => sys.on_pad(p, body, local_position.normalize()),
-            NavTarget::Gate(_) => false,
-        }
-    }
-
-    /// Height above the ground of the dominant body (m), if it has a surface.
-    fn ground_altitude(&mut self) -> f64 {
-        let sys = self.ship_system();
-        sys.positions(self.world.time, &mut self.positions);
-        let d = sys.dominant(self.ship.position, &self.positions);
-        let b = &sys.bodies[d];
-        self.ship.position.distance(self.positions[d]) - b.surface_radius_at(self.positions[d], self.ship.position, self.world.time)
-    }
-
-    /// The route autopilot: leave, cross systems through gates, travel by
-    /// hyperdrive, dock or land with the regular autopilots, wait, repeat.
-    fn route_step(&mut self) {
-        if !self.route.active {
-            return;
-        }
-        let Some(stop) = self.route.current() else {
-            self.route.active = false;
-            self.events.push(Event::RouteComplete);
-            return;
-        };
-        match self.ship.state.clone() {
-            ShipState::Destroyed { .. } | ShipState::Transit { .. } => {}
-            ShipState::Landed { body, local_position, .. } => {
-                if self.ship_system == stop.system && self.landed_at(stop.target, body, local_position) {
-                    match self.route.dwell_until {
-                        None => {
-                            self.route.dwell_until = Some(self.world.time + route::DWELL);
-                            let name = self.stop_name(stop);
-                            self.events.push(Event::RouteStop { number: self.route.next + 1, name });
-                        }
-                        Some(t) if self.world.time >= t => {
-                            self.route.dwell_until = None;
-                            self.route.next += 1;
-                            if self.route.next >= self.route.stops.len() {
-                                self.route.active = false;
-                                self.events.push(Event::RouteComplete);
-                                return;
-                            }
-                            self.leave(body);
-                        }
-                        Some(_) => {}
-                    }
-                } else {
-                    self.leave(body);
-                }
-            }
-            ShipState::Flying => self.route_fly(stop),
-        }
-    }
-
-    /// How close the hyperdrive gets before an autopilot takes over (m). The
-    /// hyperdrive drops out a little closer still (120 km / 20 km).
-    fn hyperjump_limit(target: NavTarget) -> f64 {
-        match target {
-            NavTarget::Spaceport(_) => 200_000.0,
-            NavTarget::Station(_) | NavTarget::Gate(_) => 30_000.0,
-        }
-    }
-
-    /// With the dock/land/gate autopilot on and the target far away, cover
-    /// the distance by hyperdrive first (its autopilot steers around planets),
-    /// then carry on: the clearance and autopilot stay on through the jump.
-    fn autopilot_hyperjump(&mut self) {
-        let Some(c) = self.avionics.clearance.filter(|c| c.autopilot) else { return };
-        if !self.ship.is_flying() || self.ship.hyperdrive {
-            return;
-        }
-        let Some(at) = self.target_position(c.target) else { return };
-        if at.distance(self.ship.position) > Self::hyperjump_limit(c.target) {
-            self.avionics.nav_target = Some(c.target);
-            self.toggle_hyperdrive();
-            self.avionics.hyper_autopilot = true;
-            self.set_controls(|c| c.throttle = 1.0);
-        }
-    }
-
-    /// Launch from a station, or lift off a surface and climb.
-    fn leave(&mut self, body: usize) {
-        let station = self.ship_system().bodies[body].kind == BodyKind::Station;
-        if station {
-            self.set_controls(|c| c.throttle = 0.2);
-        } else {
-            self.set_controls(|c| c.rcs = DVec3::Y);
-            self.route.departing = true;
-        }
-    }
-
-    fn route_fly(&mut self, stop: Stop) {
-        if self.ship.hyperdrive {
-            return; // the hyperdrive autopilot flies and drops out on arrival
-        }
-        if self.route.departing {
-            // Straight up on the lift thrusters until clear of the ground.
-            if self.ground_altitude() < 3000.0 {
-                self.set_controls(|c| {
-                    c.rcs = DVec3::Y;
-                    c.throttle = 0.0;
-                });
-                return;
-            }
-            self.route.departing = false;
-            self.set_controls(|c| c.rcs = DVec3::ZERO);
-        }
-        // Next hop: the stop itself, or the gate toward its system.
-        let hop = if self.ship_system == stop.system {
-            stop.target
-        } else {
-            let Some(next) = route::gate_path(&self.world.gate_links, self.ship_system, stop.system).and_then(|p| p.first().copied()) else {
-                self.route.active = false;
-                self.events.push(Event::RouteBlocked { reason: "NO GATE PATH".into() });
-                return;
-            };
-            let Some(g) = self.ship_system().gate_to(next) else {
-                self.route.active = false;
-                self.events.push(Event::RouteBlocked { reason: "GATE MISSING".into() });
-                return;
-            };
-            NavTarget::Gate(g)
-        };
-        if self.avionics.nav_target != Some(hop) {
-            self.avionics.nav_target = Some(hop);
-            self.avionics.clearance = None;
-        }
-        let Some(at) = self.target_position(hop) else {
-            self.route.active = false;
-            self.events.push(Event::RouteBlocked { reason: "STOP NOT FOUND".into() });
-            return;
-        };
-        // Hyperdrive (which steers around anything in the way) until close:
-        // the landing and docking approaches only mind their own target.
-        let far = at.distance(self.ship.position) > Self::hyperjump_limit(hop);
-        match self.avionics.clearance {
-            Some(c) if !c.autopilot => self.toggle_autopilot(),
-            Some(_) => {}
-            None if far => {
-                // Far: hyperdrive there, steered by its autopilot.
-                self.toggle_hyperdrive();
-                self.avionics.hyper_autopilot = true;
-                self.set_controls(|c| c.throttle = 1.0);
-            }
-            None => {
-                if self.request_clearance() {
-                    self.toggle_autopilot();
-                }
-            }
-        }
+        route::stop_name(&self.system(stop.system), stop)
     }
 
     /// Guidance numbers for the HUD, if cleared to dock or land.
     pub fn approach(&mut self) -> Option<Approach> {
-        let c = self.avionics.clearance?;
         let sys = self.ship_system();
         sys.positions(self.world.time, &mut self.positions);
-        Some(match c.target {
-            NavTarget::Station(station) => {
-                let frame = StationFrame::new(&sys, station, self.world.time, &self.positions);
-                Approach::Dock { station, status: docking::status(&frame, &self.ship, &c) }
-            }
-            NavTarget::Spaceport(port) => {
-                let pad = PadFrame::new(&sys, port, self.world.time, &self.positions);
-                let terrain = sys.bodies[sys.spaceports[port].body].terrain.as_ref();
-                Approach::Land { port, status: Box::new(landing::status(&pad, &self.ship, &c, terrain)) }
-            }
-            NavTarget::Gate(g) => {
-                let frame = GateFrame::new(&sys, g, self.world.time, &self.positions);
-                Approach::Transit { gate: g, status: gate::status(&frame, &self.ship, &c) }
-            }
-        })
+        self.avionics.approach(&sys, &self.ship, self.world.time, &self.positions)
     }
 
     /// The flight plan to the cleared target: what to do from here, as the
     /// autopilot would do it.
-    pub fn plan(&mut self) -> Option<crate::plan::Plan> {
-        let c = self.avionics.clearance?;
-        if !self.ship.is_flying() || self.ship.hyperdrive {
-            return None;
-        }
+    pub fn plan(&mut self) -> Option<Plan> {
         let sys = self.ship_system();
-        Some(crate::plan::plan(&sys, &self.ship, c.target, c.phase, self.world.time))
+        self.avionics.plan(&sys, &self.ship, self.world.time)
     }
 
     /// Docking guidance only (convenience for tests and tools).
-    pub fn docking_status(&mut self) -> Option<(usize, DockingStatus)> {
+    pub fn docking_status(&mut self) -> Option<(usize, universe_avionics::DockingStatus)> {
         match self.approach()? {
             Approach::Dock { station, status } => Some((station, status)),
             Approach::Land { .. } | Approach::Transit { .. } => None,
@@ -688,7 +386,7 @@ impl Universe {
             time: self.world.time,
             ship: self.ship.clone(),
             ship_system: self.ship_system,
-            route: self.route.clone(),
+            route: self.avionics.route.clone(),
             avionics: self.avionics.clone(),
         }
     }
@@ -700,8 +398,7 @@ impl Universe {
         self.world.time = save.time;
         self.ship = save.ship;
         self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
-        self.route = save.route;
-        self.avionics = save.avionics;
+        self.avionics = Avionics { route: save.route, ..save.avionics };
         self.events.clear();
     }
 }
@@ -709,6 +406,9 @@ impl Universe {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use universe_avionics::hyperdrive::HYPER_ARRIVE_PORT;
+    use universe_avionics::{PadFrame, Phase};
+    use universe_world::{GateFrame, StationFrame};
 
     /// Fly the docking computer from `setup`'s position; returns simulated seconds to dock.
     fn autodock(mut u: Universe) -> f64 {
@@ -915,7 +615,7 @@ mod tests {
         u.ship.throttle = 1.0;
         let dist = hyper_until_arrival(&mut u, port, true);
         eprintln!("manual: dropped out {:.0} km from the pad; events {:?}", dist / 1000.0, u.events);
-        assert!(dist < computer::HYPER_ARRIVE_PORT, "dropped out too far: {dist}");
+        assert!(dist < HYPER_ARRIVE_PORT, "dropped out too far: {dist}");
         assert!(u.events.iter().any(|e| matches!(e, Event::HyperdriveArrived { .. })));
         assert!(u.avionics.clearance.is_none(), "clearance is the pilot's call, not automatic");
     }
@@ -931,7 +631,7 @@ mod tests {
         u.ship.throttle = 1.0;
         let dist = hyper_until_arrival(&mut u, port, false);
         eprintln!("autopilot: dropped out {:.0} km from the pad", dist / 1000.0);
-        assert!(dist < computer::HYPER_ARRIVE_PORT);
+        assert!(dist < HYPER_ARRIVE_PORT);
     }
 
     #[test]
@@ -965,7 +665,7 @@ mod tests {
     }
 
     /// Position and roll-free "up" of a plan at absolute time `at`.
-    fn plan_at(plan: &crate::plan::Plan, start: f64, at: f64) -> (DVec3, DVec3) {
+    fn plan_at(plan: &Plan, start: f64, at: f64) -> (DVec3, DVec3) {
         let rel = at - start;
         let i = plan.points.iter().position(|p| p.time >= rel).unwrap_or(plan.points.len() - 1).max(1);
         let (a, b) = (plan.points[i - 1], plan.points[i]);
@@ -1166,8 +866,8 @@ mod tests {
     #[ignore]
     fn settler_route_flies_to_completion() {
         let mut u = Universe::new(1984);
-        u.route.stops = u.settler_route(7, 10);
-        let names: Vec<String> = u.route.stops.clone().into_iter().map(|s| u.stop_name(s)).collect();
+        u.avionics.route.stops = u.settler_route(7, 10);
+        let names: Vec<String> = u.avionics.route.stops.clone().into_iter().map(|s| u.stop_name(s)).collect();
         eprintln!("route: {names:#?}");
         let t0 = u.world.time;
         let (reached, done) = fly_route(&mut u, 20.0, 60 * 60 * 60 * 3);
@@ -1189,7 +889,7 @@ mod tests {
             .station()
             .map(|s| Stop { system: next, target: NavTarget::Station(s) })
             .unwrap_or(Stop { system: next, target: NavTarget::Spaceport(0) });
-        u.route.stops = vec![
+        u.avionics.route.stops = vec![
             Stop { system: home, target: NavTarget::Spaceport(port) },
             Stop { system: home, target: NavTarget::Station(station) },
             far,
@@ -1284,7 +984,7 @@ mod tests {
             for _ in 0..(60 * 60 * 2) {
                 u.step_world(1.0 / 60.0, 20.0, &Controls::default());
             }
-            (u.traffic.stops, u.traffic.crashes, u.crafts.iter().map(|c| (c.system, c.route.next)).collect::<Vec<_>>())
+            (u.traffic.stops, u.traffic.crashes, u.crafts.iter().map(|c| (c.system, c.avionics.route.next)).collect::<Vec<_>>())
         };
         let (a, b) = (run(), run());
         eprintln!("10 settlers, 0.7 game h: {} stops, {} crashes", a.0, a.1);
@@ -1315,6 +1015,8 @@ mod tests {
 #[cfg(test)]
 mod probe {
     use super::*;
+    use universe_avionics::{docking, PadFrame};
+    use universe_world::{GateFrame, StationFrame};
 
     /// `cargo test -p universe-sim --release bench_navigation -- --ignored --nocapture`
     #[test]
@@ -1541,7 +1243,7 @@ mod probe {
                 let c = pos[planet];
                 let r = sys.bodies[planet].rail.radius;
                 let alt = |x: DVec3| (x.distance(c) - r) / 1000.0;
-                let way = u.debug_way.unwrap_or(DVec3::ZERO);
+                let way = u.avionics.debug_way.unwrap_or(DVec3::ZERO);
                 let pad = PadFrame::new(&sys, port, u.world.time, &pos);
                 eprintln!("  {:>4}s alt {:>8.0} km  way alt {:>8.0} km  angle to pad {:>5.1} deg  speed {:>8.0} km/s", i / 60, alt(u.ship.position), alt(way), ((u.ship.position - c).angle_between(pad.up)).to_degrees(), u.ship.velocity.length() / 1000.0);
             }

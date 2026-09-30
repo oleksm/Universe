@@ -209,17 +209,17 @@ pub fn apply(app: &mut App, name: &str) {
         }
         "routemap" => {
             app.mode = Mode::Pilot;
-            app.u.route.stops = app.u.settler_route(7, 10);
+            app.u.avionics.route.stops = app.u.settler_route(7, 10);
             app.nav_map = Some(crate::navmap::NavMap::open(app));
         }
         "route" => {
             // A settler route, flown headless through its first stops, then shown mid-leg.
             app.mode = Mode::Pilot;
-            app.u.route.stops = app.u.settler_route(7, 10);
+            app.u.avionics.route.stops = app.u.settler_route(7, 10);
             app.u.toggle_route();
             for _ in 0..60 * 60 * 60 {
                 app.u.step(1.0 / 60.0, 20.0, &Controls::default());
-                if app.u.route.next >= 3 && app.u.ship.hyperdrive {
+                if app.u.avionics.route.next >= 3 && app.u.ship.hyperdrive {
                     break;
                 }
             }

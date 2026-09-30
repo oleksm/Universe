@@ -108,7 +108,8 @@ energy/momentum sanity, collider/trigger correctness.
   body, feature: Surface{liquid} | Hull | CutOut(k) | Ring, normal, local, surface_velocity,
   relative_velocity })`, `Fact::Trigger { body, relative_velocity }`.
 - Ops: `Weld` (capture/place), `Relative` + `relocate`, `bounce` (the contact response a driver
-  asks for). Queries: `gravity`, `pull`, `dominant`, `segment_distance`, `simulate` (a copy).
+  asks for). Queries: `gravity`, `pull`, `dominant`, `segment_distance`, `simulate` (a copy;
+  since Phase 3 it takes an optional ephemeris, like `integrate`).
 
 ## World (`universe-world`)
 
@@ -177,6 +178,10 @@ energy/momentum sanity, collider/trigger correctness.
 - Fine substeps come from proximity to structures (kernel: within 30 km of a polytope or
   ring), the thrusters firing (device state), or the flight computer's interval — never from
   clearance.
+- `Devices` (public since Phase 3) is the kernel `Driver` for a ship's devices: the flight
+  computer's commands set them each substep, they push with their thrust, station bounces are
+  judged by the world. The same driver flies a *copy* of a ship when a flight is simulated
+  ahead (the planner).
 
 ## Avionics (`universe-avionics`)
 
@@ -189,6 +194,44 @@ Per-ship software, pure functions of (sensors, own state) → `ShipCommands`:
   drop out), route (multi-stop, gates, dwell),
 - later: each is a module a ship has installed or not.
 
+### As built (Phase 3)
+
+`crates/avionics/src/` (package `universe-avionics`, depends on `universe-physics`,
+`universe-world`, `glam`, `serde` — nothing above it):
+
+- `nav`: `NavTarget` (the world's `Facility`), `Phase`, `Clearance`.
+- `avionics`: **`Avionics { nav_target, clearance, hyper_autopilot, route, debug_way }`** — all
+  per-ship navigation state (the route is serialized on its own, in `UniverseSave.route`). It
+  learns what happened from the world's `ShipEvent`s (`observe`), and its programs run once a
+  frame through a `Bus`: `prepare` (the route autopilot, then the dock/land/gate autopilot's
+  hyperjump), `conclude` (hyperdrive arrival, clearance lapse), and the pilot's requests
+  (`set_nav_target`, `request_clearance` via the traffic-control service, `toggle_autopilot`,
+  `toggle_hyperdrive`, `toggle_route`). `approach()` / `plan()` give the HUD its guidance and
+  flight plan. `Approach` (Dock/Land/Transit status) lives here.
+- `bus`: the `Bus` trait — the avionics' only link to their ship: read-only sensors (`ship()`,
+  `system()`, `star_system()`, `time()`, `gate_links()`, `positions()`) and `command(&ShipCommands)`,
+  which returns the physical events that followed. The orchestrator implements it over the world.
+- `computer`: `Computer`, the `FlightComputer` the world's ship step calls — the dock/land/gate
+  autopilot every substep (`computer::autopilot`), hyperdrive navigation every frame.
+- `hyperdrive`: the hyperdrive autopilot/navigation (`aim`, `exit_velocity`, `navigate`: steer
+  to the target and around bodies, drop out on arrival, frame/destination/exit velocity).
+- `docking`, `landing`, `gate`: guidance, HUD status (`DockingStatus`, `LandingStatus`,
+  `GateStatus`, `Guidance`) and the autopilots. The autopilots take `h`, how long their command
+  holds: feedback gains are capped at `1/h` (`docking::gain`) so a long substep can't
+  overshoot; at the real 0.05 s this changes nothing (bit-identical).
+- `route`: `Route`, `Stop`, `DWELL`, `gate_path`, `stop_name`, and the route autopilot.
+- `plan`: the flight planner. It clones the ship and flies the copy with the **kernel's
+  `simulate`** and the world's `Devices`, under the same `Computer`/autopilot, point by point;
+  it arrives when the world's rules (docking port, landing gear on the target pad, gate device)
+  would take the copy in. Within the autopilot's own range (the hyperjump limit: 200 km from a
+  port, 30 km from a station or gate) the copy reacts every 0.05 s exactly like the ship, so the
+  plan *is* the flight (docking: planned 150.0 s, flown 150.0 s); farther out it uses substeps
+  up to 2 s. The planner's private integrator is gone. The hyperjump itself is not planned
+  (as before).
+- `events`: `Event`, the pilot's feed — `Ship(ShipEvent)`, `Traffic(TrafficEvent)` and the
+  avionics' own (hyperdrive arrived, route stop/complete/blocked, autopilot on/off, nav target
+  set, refused).
+
 ## Orchestration (`universe-sim`)
 
 Each tick, deterministically and in a fixed order for every ship:
@@ -196,12 +239,13 @@ avionics (or the player's input) → `ShipCommands` → devices → kernel step 
 facts → device/world rules react → events. Owns the player's ship and the crafts (settlers),
 traffic statistics, save/load. The world time scale (default 2×) is ticks per real second.
 
-As of Phase 2 the navigation code still lives in `universe-sim` (moving to avionics in Phase 3):
-`avionics.rs` (per-ship `Avionics { nav_target, clearance, hyper_autopilot }`, which learns what
-happened from the world's `ShipEvent`s), `computer.rs` (the `FlightComputer`: the dock/land/gate
-autopilot per substep, hyperdrive navigation per frame), guidance in `docking`/`landing`/`gate`,
-the planner and routes. `Universe { world, ship, ship_system, avionics, route, crafts, … }`; its
-`Event` is the pilot's feed: `Ship(ShipEvent)`, `Traffic(TrafficEvent)` and the avionics' own.
+As of Phase 3 `universe-sim` is only the orchestration (`universe.rs`): `Universe { world, ship,
+ship_system, avionics, events, crafts, traffic, crash_log }`, a private `Link` (the avionics'
+`Bus` over the world and the ship being stepped), `step` = avionics `prepare` → the pilot's stick
+(unless a computer flies) → `World::step_ship` with the avionics' `Computer` → events recorded
+and observed → avionics `conclude`; `step_world` swaps each craft's ship and avionics in turn;
+settlers, traffic stats, crash log, save/load. The avionics modules are re-exported under their
+old paths (`universe_sim::{docking, landing, gate, plan, route}`, `universe_sim::avionics`).
 
 ## Where today's code maps (refactor starting point)
 
@@ -213,10 +257,10 @@ the planner and routes. `Universe { world, ship, ship_system, avionics, route, c
 | `docking::contact` | physics polytope collider + world docking port (done, Phases 1–2) |
 | `gate::crossing` | physics ring collider/trigger + world gate device (relocate op) (done, Phases 1–2) |
 | `touch_down`, `crash`, `dock` | world landing gear / docking port / damage (done, Phase 2) |
-| `hyperdrive_step` | world hyperdrive device (done, Phase 2) + avionics hyperdrive autopilot (sim `computer.rs` for now) |
+| `hyperdrive_step` | world hyperdrive device (done, Phase 2) + avionics hyperdrive autopilot (done, Phase 3) |
 | galaxy, names, rng, units, system generation, terrain, gate network | world content (done, Phase 2) |
-| `docking.rs`/`landing.rs`/`gate.rs` guidance + autopilots, `plan.rs`, `route.rs`, `route_step` | avionics |
+| `docking.rs`/`landing.rs`/`gate.rs` guidance + autopilots, `plan.rs`, `route.rs`, `route_step` | avionics (done, Phase 3; planner on kernel `simulate`) |
 | clearance granting | world traffic-control service (done, Phase 2) |
-| `Ship.{clearance, nav_target, hyper_autopilot}` | avionics state per ship (off the ship: sim `Avionics`, Phase 2) |
-| `Universe.route` | avionics state (per ship) |
+| `Ship.{clearance, nav_target, hyper_autopilot}` | avionics state per ship (off the ship in Phase 2; `universe_avionics::Avionics`, Phase 3) |
+| `Universe.route` | avionics state per ship (`Avionics.route`, done, Phase 3) |
 | `Universe`, crafts, settlers, save/load | sim orchestration |

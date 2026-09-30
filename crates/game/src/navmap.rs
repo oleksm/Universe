@@ -135,21 +135,21 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         && let Some(e) = map.entries.get(map.selected)
         && e.kind != "GATE"
     {
-        app.u.route.stops.push(universe_sim::Stop { system: map.view, target: e.target });
+        app.u.avionics.route.stops.push(universe_sim::Stop { system: map.view, target: e.target });
         crate::sound::click(ctx, 1500.0);
     }
-    if input.pressed(KeyCode::Backspace) && app.u.route.stops.pop().is_some() {
-        app.u.route.next = app.u.route.next.min(app.u.route.stops.len());
+    if input.pressed(KeyCode::Backspace) && app.u.avionics.route.stops.pop().is_some() {
+        app.u.avionics.route.next = app.u.avionics.route.next.min(app.u.avionics.route.stops.len());
         crate::sound::click(ctx, 700.0);
     }
     if input.pressed(KeyCode::KeyC) {
-        app.u.route.clear();
+        app.u.avionics.route.clear();
         crate::sound::click(ctx, 500.0);
     }
     if input.pressed(KeyCode::KeyG) {
         // A reproducible settler route: each press loads the next seed.
-        app.u.route.clear();
-        app.u.route.stops = app.u.settler_route(map.settler_seed, 10);
+        app.u.avionics.route.clear();
+        app.u.avionics.route.stops = app.u.settler_route(map.settler_seed, 10);
         map.settler_seed += 1;
         crate::sound::chime(ctx);
     }
@@ -186,7 +186,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     if map.entries.is_empty() {
         frame.text(Vec2::new(16.0, y), "NOTHING TO DOCK OR LAND AT HERE", DIM);
     }
-    let route_has = |t: NavTarget| app.u.route.stops.iter().any(|s| s.system == map.view && s.target == t);
+    let route_has = |t: NavTarget| app.u.avionics.route.stops.iter().any(|s| s.system == map.view && s.target == t);
     for (i, e) in map.entries.iter().enumerate() {
         let locked = map.here(app) && app.u.avionics.nav_target == Some(e.target);
         let c = if i == map.selected { SELECT } else if locked { LOCKED } else { TEXT };
@@ -200,7 +200,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
 
     // The route.
     y += line;
-    let r = &app.u.route;
+    let r = &app.u.avionics.route;
     let state = if r.active { "FLYING - K TO STOP" } else if r.stops.is_empty() { "EMPTY" } else { "K IN FLIGHT TO START" };
     frame.text(Vec2::new(16.0, y), &format!("ROUTE ({} STOPS) - {state}", r.stops.len()), TEXT);
     y += line;

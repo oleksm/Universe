@@ -12,8 +12,8 @@ use universe_physics::{leapfrog, pull, segment_distance};
 use universe_world::ship::{facing, upright};
 use universe_world::{Ship, StarSystem, Terrain};
 
-use crate::avionics::{Clearance, Phase};
-use crate::docking::{attitude, Command, Guidance};
+use crate::docking::{attitude, gain, Command, Guidance};
+use crate::nav::{Clearance, Phase};
 
 /// Height of the entry point above the pad, where the vertical descent starts (m).
 pub const ENTRY_ALTITUDE: f64 = 3000.0;
@@ -215,8 +215,9 @@ pub fn predict(pad: &PadFrame, ship: &Ship, terrain: Option<&Terrain>) -> (Vec<D
     (points, None)
 }
 
-/// The landing autopilot. `gravity` is the gravitational acceleration at the ship.
-pub fn autopilot(pad: &PadFrame, ship: &Ship, gravity: DVec3, phase: Phase) -> Command {
+/// The landing autopilot. `gravity` is the gravitational acceleration at the
+/// ship. Its command holds for `h` seconds.
+pub fn autopilot(pad: &PadFrame, ship: &Ship, gravity: DVec3, phase: Phase, h: f64) -> Command {
     let pos = ship.position;
     let v = ship.velocity - pad.frame_velocity(pos);
     let (_, horiz) = pad.split(pos);
@@ -228,13 +229,13 @@ pub fn autopilot(pad: &PadFrame, ship: &Ship, gravity: DVec3, phase: Phase) -> C
     };
     let g = guidance(pad, pos, phase == Phase::Descent, ship.main_accel());
     // Thrust needed: close the velocity error, and hold the ship up against gravity.
-    let accel = (g.desired_velocity - v) * 0.8 - gravity;
+    let accel = (g.desired_velocity - v) * gain(0.8, h) - gravity;
 
     if phase == Phase::Descent {
         // Belly down (lift thrusters toward the ground), keep the current heading.
         let up = (pos - pad.body_center).normalize();
         let target = upright(up, ship.forward());
-        let controls = attitude(ship, target, pad.angular_velocity);
+        let controls = attitude(ship, target, pad.angular_velocity, h);
         let rcs = ship.thruster_command(ship.orientation.inverse() * accel);
         return Command { controls, throttle: 0.0, rcs, phase, attitude: target };
     }
@@ -242,7 +243,7 @@ pub fn autopilot(pad: &PadFrame, ship: &Ship, gravity: DVec3, phase: Phase) -> C
     let dir = accel.try_normalize().unwrap_or_else(|| ship.forward());
     // Roll: keep the ship's top pointing away from the planet.
     let target = facing(dir, pos - pad.body_center);
-    let controls = attitude(ship, target, DVec3::ZERO);
+    let controls = attitude(ship, target, DVec3::ZERO, h);
     let aligned = ship.forward().dot(dir) > 0.97;
     let throttle = if aligned { (accel.length() / ship.main_accel()).min(1.0) } else { 0.0 };
     // Thrusters trim whatever the main engine isn't covering.

@@ -9,8 +9,8 @@ use universe_world::gate::{GATE_RADIUS, RING_TUBE};
 use universe_world::ship::facing;
 use universe_world::{GateFrame, Ship};
 
-use crate::avionics::{Clearance, Phase};
-use crate::docking::{attitude, Command, Guidance};
+use crate::docking::{attitude, gain, Command, Guidance};
+use crate::nav::{Clearance, Phase};
 
 /// Recommended speed through the ring (m/s).
 pub const TRANSIT_SPEED: f64 = 100.0;
@@ -91,8 +91,9 @@ pub fn status(frame: &GateFrame, ship: &Ship, clearance: &Clearance) -> GateStat
     }
 }
 
-/// The transit autopilot: thrusters only, nose pointed along the run.
-pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase) -> Command {
+/// The transit autopilot: thrusters only, nose pointed along the run. Its
+/// command holds for `h` seconds.
+pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase, h: f64) -> Command {
     let axis = frame.axis();
     let (side, _) = frame.side(ship.position);
     let inward = -axis * side;
@@ -107,7 +108,7 @@ pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase) -> Command {
         _ => Phase::Approach,
     };
     let g = guidance(frame, ship.position, phase == Phase::Final, ship.side_accel());
-    let accel = ((g.desired_velocity - v) * 1.2).clamp_length_max(ship.side_accel());
+    let accel = ((g.desired_velocity - v) * gain(1.2, h)).clamp_length_max(ship.side_accel());
     let rcs = ship.thruster_command(ship.orientation.inverse() * accel);
     // Nose: at the gate while travelling, then along the run-in (roll kept level
     // with the ring's own frame).
@@ -115,5 +116,5 @@ pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase) -> Command {
         Phase::Approach => facing(frame.center - ship.position, frame.rotation * DVec3::Z),
         _ => facing(inward, frame.rotation * DVec3::Z),
     };
-    Command { controls: attitude(ship, target, DVec3::ZERO), throttle: 0.0, rcs, phase, attitude: target }
+    Command { controls: attitude(ship, target, DVec3::ZERO, h), throttle: 0.0, rcs, phase, attitude: target }
 }

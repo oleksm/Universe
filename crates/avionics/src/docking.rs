@@ -12,7 +12,7 @@ use universe_world::ship::{facing, ROLL_RATE, TURN_RATE};
 use universe_world::station::{MAX_ROLL_ERROR, SLOT_HALF, STATION_SIZE};
 use universe_world::{Controls, Ship, ShipCommands, StationFrame};
 
-use crate::avionics::{Clearance, Phase};
+use crate::nav::{Clearance, Phase};
 
 /// Where the final approach starts, measured along the axis from the station center (m).
 pub const APPROACH_HEIGHT: f64 = 4000.0;
@@ -174,14 +174,22 @@ impl Command {
     }
 }
 
+/// A feedback gain `k` (1/s) for a controller whose command holds for `h`
+/// seconds: never more than closes the whole error within that time, or it
+/// overshoots and swings. (Flying, the autopilots react every 0.05 s and
+/// this is just `k`; a flight planner looking far ahead takes longer steps.)
+pub(crate) fn gain(k: f64, h: f64) -> f64 {
+    k.min(1.0 / h)
+}
+
 /// Stick commands that turn the ship toward `target`, also matching an angular
-/// velocity `spin` (world frame), e.g. a station's rotation.
-pub(crate) fn attitude(ship: &Ship, target: DQuat, spin: DVec3) -> Controls {
+/// velocity `spin` (world frame), e.g. a station's rotation, held for `h` seconds.
+pub(crate) fn attitude(ship: &Ship, target: DQuat, spin: DVec3, h: f64) -> Controls {
     let mut err = (ship.orientation.inverse() * target).normalize();
     if err.w < 0.0 {
         err = -err;
     }
-    let rate = err.to_scaled_axis() * 1.5 + ship.orientation.inverse() * spin;
+    let rate = err.to_scaled_axis() * gain(1.5, h) + ship.orientation.inverse() * spin;
     Controls {
         pitch: (rate.x / TURN_RATE).clamp(-1.0, 1.0),
         yaw: (rate.y / TURN_RATE).clamp(-1.0, 1.0),
@@ -190,8 +198,9 @@ pub(crate) fn attitude(ship: &Ship, target: DQuat, spin: DVec3) -> Controls {
 }
 
 /// The docking computer. Translates with RCS only (no flip-and-burn needed) and
-/// steers toward either the station or the docking orientation.
-pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase) -> Command {
+/// steers toward either the station or the docking orientation. Its command
+/// holds for `h` seconds, until it next reacts.
+pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase, h: f64) -> Command {
     let axis = frame.axis();
     let r = ship.position - frame.center;
     let v = ship.velocity - frame.velocity;
@@ -214,7 +223,7 @@ pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase) -> Command {
     };
 
     let v_des = guidance(frame, ship.position, phase == Phase::Final, ship.side_accel()).desired_velocity;
-    let accel = ((v_des - v) * 1.2).clamp_length_max(ship.side_accel());
+    let accel = ((v_des - v) * gain(1.2, h)).clamp_length_max(ship.side_accel());
     let rcs = ship.thruster_command(ship.orientation.inverse() * accel);
 
     // Attitude: look at the station while travelling, then line up with the slot.
@@ -226,6 +235,6 @@ pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase) -> Command {
         }
         _ => (frame.docking_orientation(ship.orientation), frame.angular_velocity),
     };
-    let controls = attitude(ship, target, spin);
+    let controls = attitude(ship, target, spin, h);
     Command { controls, throttle: 0.0, rcs, phase, attitude: target }
 }

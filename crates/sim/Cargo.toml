@@ -8,6 +8,7 @@ version.workspace = true
 [dependencies]
 universe-physics = { path = "../physics" }
 universe-world = { path = "../world" }
+universe-avionics = { path = "../avionics" }
 glam.workspace = true
 serde.workspace = true
 
