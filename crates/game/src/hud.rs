@@ -608,7 +608,7 @@ fn gunsight(frame: &mut Frame, app: &App) {
     let far = 1.0e5;
     let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
     if let Some(nose) = frame.project(from + ship.forward() * far) {
-        if app.chase_cam {
+        if app.chase_cam && crosshair_wanted(app) {
             let k = if ship.armed { 1.0 } else { 0.6 };
             for d in [Vec2::X, Vec2::NEG_X, Vec2::Y, Vec2::NEG_Y] {
                 frame.hud_line(nose + d * 3.0, nose + d * 7.0, col.scale(k));
@@ -650,6 +650,12 @@ fn gunsight(frame: &mut Frame, app: &App) {
     {
         frame.text(p + Vec2::new(12.0, -18.0), "HIT", RED);
     }
+}
+
+/// The nose crosshair is for fighting and for approaches (putting the nose
+/// on the plan's cue); in plain travel it stays out of the way.
+fn crosshair_wanted(app: &App) -> bool {
+    app.u.ship.armed || app.approach.is_some()
 }
 
 /// How long a hit's spark shows (s).
@@ -701,7 +707,7 @@ fn marker(frame: &mut Frame, at: Vec2, c: Color, cross: bool) {
 fn pilot_overlay(frame: &mut Frame, app: &App) {
     let size = frame.size();
     let c = (size / 2.0).floor();
-    if !app.chase_cam {
+    if !app.chase_cam && crosshair_wanted(app) {
         let ship = &app.u.ship;
         let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
         for (a, b) in [(Vec2::new(-14.0, 0.0), Vec2::new(-5.0, 0.0)), (Vec2::new(5.0, 0.0), Vec2::new(14.0, 0.0))] {

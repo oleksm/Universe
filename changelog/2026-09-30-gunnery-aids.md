@@ -39,3 +39,9 @@ Tests: `the_gimbal_lays_the_gun_within_its_cone_at_its_rate` (world),
 `the_gimbal_hits_with_the_nose_two_degrees_off` (sim: a pilot holding the nose 2° off the lead
 still shoots the settler down). The `gunnery` scenario now holds the nose 2° off, and the
 screenshot shows `GUN ON TARGET`.
+
+## Follow-up: no crosshair in travel
+
+User: "in travel mode I am not sure I need a crosshair". The nose crosshair (the cockpit cross,
+and the nose cross in the chase view) now shows only in combat mode or during an approach, where
+the HUD asks you to put the nose on the plan's cue. In plain travel it's hidden.
