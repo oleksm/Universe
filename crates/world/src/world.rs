@@ -147,6 +147,14 @@ impl World {
         m.quote_for(&mut state, now, &self.goods[item])
     }
 
+    /// The market's quotes for several items at once (None: not traded there).
+    pub fn quotes_for(&mut self, system: usize, f: Facility, items: &[usize]) -> Vec<Option<Quote>> {
+        let Some(m) = self.market(system, f) else { return vec![None; items.len()] };
+        let now = self.time;
+        let mut state = self.market_states.get(&(system, f)).cloned().unwrap_or(MarketState { updated: now, ..Default::default() });
+        items.iter().map(|&i| m.quote_for(&mut state, now, &self.goods[i])).collect()
+    }
+
     /// Trade at the market at `f` in `system` (see `Market::trade`): only
     /// for a ship docked or landed there.
     pub fn trade(&mut self, system: usize, f: Facility, item: usize, units: i64, ship: &mut Ship, credits: &mut f64) -> Result<f64, String> {

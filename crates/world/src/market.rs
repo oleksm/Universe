@@ -63,9 +63,14 @@ pub struct Market {
 }
 
 /// What a market pays for unlisted goods of a category it wants, over their worth.
-pub const GENERAL_PREMIUM: f64 = 1.1;
-/// Its usual demand for such goods (units).
-const GENERAL_DEMAND: f64 = 100.0;
+pub const GENERAL_PREMIUM: f64 = 1.05;
+/// Worth of a market's usual stock or demand of one line (credits).
+pub const LOT_VALUE: f64 = 8_000.0;
+
+/// Its usual demand for unlisted goods of a kind it wants (units): half a lot.
+fn general_demand(item: &Item) -> f64 {
+    (LOT_VALUE * 0.5 / item.price).clamp(2.0, 200.0).round()
+}
 
 /// An offer as it stands now.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -83,6 +88,9 @@ pub struct Quote {
 pub struct MarketState {
     pub levels: HashMap<usize, f64>,
     pub updated: f64,
+    /// Usual levels of unlisted lines traded (general demand).
+    #[serde(default)]
+    pub usual: HashMap<usize, f64>,
 }
 
 /// What the market trades, from what the place is.
@@ -157,10 +165,11 @@ pub fn market(seed: u64, system: usize, sys: &StarSystem, f: Facility, catalog: 
                 continue;
             }
             let item = &catalog[id];
-            let (lo, hi) = if side == Side::Sells { (0.55, 0.9) } else { (1.2, 1.9) };
+            let (lo, hi) = if side == Side::Sells { (0.75, 0.95) } else { (1.05, 1.35) };
             let base = item.price * rng.range(lo, hi);
-            // Heavier, cheaper goods trade in bigger lots.
-            let usual = (40_000.0 / item.mass.max(1.0)).clamp(5.0, 2000.0) * rng.range(0.5, 1.5);
+            // A market's appetite is about `LOT_VALUE` of each line: many
+            // units of cheap bulk, a few of luxuries.
+            let usual = (LOT_VALUE / item.price).clamp(3.0, 400.0) * rng.range(0.5, 1.5);
             offers.push(Offer { item: id, side, base, usual: usual.round() });
         }
     }
@@ -203,7 +212,7 @@ impl Market {
             return None;
         }
         self.offers.iter().find(|o| o.item == item.id).copied().or_else(|| {
-            self.wants.contains(&item.category).then_some(Offer { item: item.id, side: Side::Buys, base: item.price * GENERAL_PREMIUM, usual: GENERAL_DEMAND })
+            self.wants.contains(&item.category).then(|| Offer { item: item.id, side: Side::Buys, base: item.price * GENERAL_PREMIUM, usual: general_demand(item) })
         })
     }
 
@@ -221,7 +230,8 @@ impl Market {
         let dt = (now - state.updated).max(0.0);
         let k = 1.0 - (-dt / RECOVERY).exp();
         for (item, l) in state.levels.iter_mut() {
-            let usual = self.offers.iter().find(|o| o.item == *item).map_or(GENERAL_DEMAND, |o| o.usual);
+            // Unlisted lines (general demand) recover toward their own usual level, kept alongside.
+            let usual = self.offers.iter().find(|o| o.item == *item).map_or_else(|| state.usual.get(item).copied().unwrap_or(*l), |o| o.usual);
             *l += (usual - *l) * k;
         }
         state.updated = now;
@@ -236,6 +246,7 @@ impl Market {
             return Err(format!("{} IS ILLEGAL HERE", item.category.name()));
         }
         let Some(o) = self.offer_for(item) else { return Err("NOT TRADED HERE".into()) };
+        state.usual.entry(item.id).or_insert(o.usual);
         let level = state.levels.get(&item.id).copied().unwrap_or(o.usual);
         let (buy, sell) = prices(&o, level);
         if units > 0 {
@@ -325,7 +336,7 @@ mod tests {
         let o = *a.offers.iter().find(|o| o.side == Side::Sells).unwrap();
         let item = &goods[o.item];
         let before = a.quotes(&mut state, 0.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
-        let n = (5_000.0 / item.mass).floor().max(1.0) as i64;
+        let n = (before.level * 0.5).floor().min(5_000.0 / item.mass).floor().max(1.0) as i64;
         let paid = a.trade(&mut state, 0.0, item, n, &mut ship, &mut credits).unwrap();
         assert!((paid - before.buy.unwrap() * n as f64).abs() < 1e-6);
         assert_eq!(ship.hold[&o.item], n as u32);

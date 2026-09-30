@@ -1041,16 +1041,13 @@ fn trade_feed(frame: &mut Frame, app: &App, top: f32) {
     let size = frame.size();
     for (i, r) in recent.iter().enumerate() {
         let age = ((now - r.time) / shown) as f32;
-        let verb = if r.bought { "BOUGHT" } else { "SOLD" };
-        let text = format!(
-            "{} {verb} {} {} FOR {:.0} CR - CARGO {:.1} T, {:.0} CR",
-            r.trader,
-            r.units,
-            r.item,
-            r.amount,
-            r.cargo / 1000.0,
-            r.credits
-        );
+        let after = format!("CARGO {:.1} T, {:.0} CR", r.cargo / 1000.0, r.credits);
+        let text = match &r.deal {
+            universe_sim::Deal::Bought => format!("{} BOUGHT {} {} FOR {:.0} CR - {after}", r.trader, r.units, r.item, r.amount),
+            universe_sim::Deal::Sold => format!("{} SOLD {} {} FOR {:.0} CR - {after}", r.trader, r.units, r.item, r.amount),
+            universe_sim::Deal::Heading { to, expect } => format!("{} HEADS FOR {to} - EXPECTS +{expect:.0} CR", r.trader),
+            universe_sim::Deal::MovingOn { to } => format!("{} FINDS NOTHING HERE - MOVES ON TO {to}", r.trader),
+        };
         let base = if r.trader == "YOU" { HUD } else { Color::hex(0x60c0ff) };
         let c = base.scale(1.0 - 0.7 * age.max(0.0));
         frame.text(Vec2::new(size.x - text_size(&text).x - 4.0, top + i as f32 * LINE), &text, c);

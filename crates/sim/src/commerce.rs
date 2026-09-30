@@ -1,10 +1,15 @@
-//! Traders (a slice of the settlers): at each stop of its route, a trader sells
-//! what it carries where it pays — goods the market wants, or anything that
-//! makes a profit on what it paid — then buys what's going cheap here (well
-//! under its usual worth) to sell further on. Like the pilot, it sees only
-//! the market it's standing in. Every trade is recorded.
+//! Traders (a slice of the settlers) go where the profit is. At each stop a
+//! trader sells what pays here (goods the market wants, or anything that beats
+//! what it paid), then looks over every market in the system, as anyone in the
+//! system can: what its cargo would fetch at each, and what it could buy here
+//! to sell there (margin × units, within its credits, hold, the stock here and
+//! the demand there). It buys for the best of them and heads there; if none
+//! is worth `MIN_PROFIT`, it moves on through a gate to another system and
+//! looks again. Every trade and every choice is recorded.
 
-use universe_world::market::{docked_at, Side, HOLD_CAPACITY};
+use universe_avionics::route::Stop;
+use universe_world::market::{docked_at, facilities, Side, HOLD_CAPACITY};
+use universe_world::Facility;
 
 use crate::universe::Universe;
 
@@ -12,21 +17,38 @@ use crate::universe::Universe;
 pub const SETTLER_CREDITS: f64 = 3000.0;
 /// Trades kept in `Universe::trade_log`.
 const TRADE_LOG: usize = 100;
-/// Buy only what's selling at under this share of its usual worth.
-const BARGAIN: f64 = 0.85;
+/// A trip must promise at least this (credits), or the trader moves on to another system.
+pub const MIN_PROFIT: f64 = 300.0;
+/// Goods lines it buys for one trip.
+const LINES: usize = 3;
 /// Sell without demand only for at least this margin over what was paid.
 const MARGIN: f64 = 1.05;
 /// Past this share of the hold, sell what the market takes back, loss or not.
 const STUCK: f64 = 0.8;
 
-/// One trade: who bought or sold what, where, for how much, and how they
-/// stood after it.
+/// A planned trip: where to, what to buy for it (item, units), the profit expected.
+type Trip = (Facility, Vec<(usize, u32)>, f64);
+
+/// What a trade record is.
+#[derive(Clone, Debug, PartialEq)]
+pub enum Deal {
+    Bought,
+    Sold,
+    /// Heading for another market here, expecting this profit (credits).
+    Heading { to: String, expect: f64 },
+    /// Nothing worth it here: moving on to another system.
+    MovingOn { to: String },
+}
+
+/// One trade (or trading decision): who bought or sold what, where, for how
+/// much, and how they stood after it.
 #[derive(Clone, Debug)]
 pub struct TradeRecord {
     pub time: f64,
     pub system: usize,
     pub market: String,
     pub trader: String,
+    pub deal: Deal,
     pub bought: bool,
     pub item: String,
     pub units: u32,
@@ -44,7 +66,6 @@ impl Universe {
         let sys = self.system(system);
         let Some(f) = docked_at(&sys, &self.crafts[i].ship) else { return };
         let market = f.name(&sys);
-        let quotes = self.world.quotes(system, f);
         let mut records = Vec::new();
 
         // Sell.
@@ -71,36 +92,41 @@ impl Universe {
             }
         }
 
-        // Buy what's cheap here, a few lines of it.
-        // Goods flow from where they're made to where they're wanted: skip the
-        // kinds this market wants itself (they'd sell badly nearby).
-        let wants = self.world.market(system, f).map(|m| m.wants.clone()).unwrap_or_default();
-        let mut bargains: Vec<_> = quotes
-            .iter()
-            .filter(|q| !wants.contains(&self.world.goods[q.offer.item].category))
-            .filter_map(|q| {
-                let price = q.buy?;
-                let ratio = price / self.world.goods[q.offer.item].price;
-                (ratio < BARGAIN && q.level >= 1.0).then_some((ratio, q.offer.item, price, q.level))
-            })
-            .collect();
-        bargains.sort_by(|a, b| a.0.total_cmp(&b.0));
-        for (_, item, price, level) in bargains.into_iter().take(3) {
-            let c = &self.crafts[i];
-            let mass = self.world.goods[item].mass;
-            let room = ((HOLD_CAPACITY - c.ship.cargo) / mass).floor();
-            let afford = (c.credits * 0.3 / price).floor();
-            let units = room.min(afford).min((level * 0.5).floor());
-            if units < 1.0 {
-                continue;
+        // Look over the system's markets, buy for the best, and go.
+        let plan = self.plan_trip(i, system, f);
+        let mut decision = None;
+        match plan {
+            Some((to, buys, expect)) => {
+                for (item, units) in buys {
+                    let c = &mut self.crafts[i];
+                    let before = c.ship.hold.get(&item).copied().unwrap_or(0) as f64;
+                    if let Ok(cost) = self.world.trade(system, f, item, units as i64, &mut c.ship, &mut c.credits) {
+                        let avg = c.paid.get(&item).copied().unwrap_or(0.0);
+                        c.paid.insert(item, (avg * before + cost) / (before + units as f64));
+                        records.push((true, item, units, cost));
+                    }
+                }
+                decision = Some((Stop { system, target: to }, Deal::Heading { to: to.name(&sys).to_uppercase(), expect }));
             }
-            let c = &mut self.crafts[i];
-            let before = c.ship.hold.get(&item).copied().unwrap_or(0) as f64;
-            if let Ok(cost) = self.world.trade(system, f, item, units as i64, &mut c.ship, &mut c.credits) {
-                let avg = c.paid.get(&item).copied().unwrap_or(0.0);
-                c.paid.insert(item, (avg * before + cost) / (before + units));
-                records.push((true, item, units as u32, cost));
+            None => {
+                // Nothing worth it here: a neighbouring system (seeded, so reproducible), at one of its markets.
+                let links = self.world.gate_links_of(system);
+                let c = &self.crafts[i];
+                let pick = crate::rng::mix(c.route_seed, self.traffic.stops);
+                if let Some((next, name)) = links.get(pick as usize % links.len().max(1)).cloned() {
+                    let there = self.system(next);
+                    let markets = facilities(&there);
+                    if let Some(&target) = markets.get((pick >> 16) as usize % markets.len().max(1)) {
+                        decision = Some((Stop { system: next, target }, Deal::MovingOn { to: name.to_uppercase() }));
+                    }
+                }
             }
+        }
+        if let Some((stop, _)) = &decision {
+            // After the stop, on to there.
+            let r = &mut self.crafts[i].avionics.route;
+            r.stops.truncate(r.next + 1);
+            r.stops.push(*stop);
         }
 
         for (bought, item, units, amount) in records {
@@ -112,6 +138,7 @@ impl Universe {
                 system,
                 market: market.clone(),
                 trader: c.name.to_uppercase(),
+                deal: if bought { Deal::Bought } else { Deal::Sold },
                 bought,
                 item: self.world.goods[item].name.to_uppercase(),
                 units,
@@ -121,6 +148,81 @@ impl Universe {
             };
             self.log_trade(record);
         }
+        if let Some((_, deal)) = decision {
+            let c = &self.crafts[i];
+            let record = TradeRecord {
+                time: self.world.time,
+                system,
+                market: market.clone(),
+                trader: c.name.to_uppercase(),
+                deal,
+                bought: false,
+                item: String::new(),
+                units: 0,
+                amount: 0.0,
+                cargo: c.ship.cargo,
+                credits: c.credits,
+            };
+            self.log_trade(record);
+        }
+    }
+
+    /// The best trip from market `here` in `system` for trader `i`: where to,
+    /// what to buy here for it, and the profit expected (cargo sold there over
+    /// what it cost, plus the margin on what's bought for it). None if
+    /// nothing reaches `MIN_PROFIT`.
+    fn plan_trip(&mut self, i: usize, system: usize, here: Facility) -> Option<Trip> {
+        let sys = self.system(system);
+        let here_quotes: Vec<_> = self.world.quotes(system, here).into_iter().filter(|q| q.buy.is_some() && q.level >= 1.0).collect();
+        let held: Vec<(usize, u32)> = self.crafts[i].ship.hold.iter().map(|(k, v)| (*k, *v)).collect();
+        let (credits, cargo) = (self.crafts[i].credits, self.crafts[i].ship.cargo);
+        let mut best: Option<Trip> = None;
+        for there in facilities(&sys).into_iter().filter(|&m| m != here) {
+            // What the cargo would fetch there, over what it cost.
+            let held_ids: Vec<usize> = held.iter().map(|h| h.0).collect();
+            let sells = self.world.quotes_for(system, there, &held_ids);
+            let mut value = 0.0;
+            for ((item, n), q) in held.iter().zip(&sells) {
+                if let Some(q) = q {
+                    let units = if q.offer.side == Side::Buys { (*n as f64).min(q.level) } else { *n as f64 };
+                    let paid = self.crafts[i].paid.get(item).copied().unwrap_or(0.0);
+                    value += (q.sell - paid).max(0.0) * units;
+                }
+            }
+            // What to buy here for there: the best margins per kilo first.
+            let ids: Vec<usize> = here_quotes.iter().map(|q| q.offer.item).collect();
+            let there_q = self.world.quotes_for(system, there, &ids);
+            let mut margins: Vec<(f64, usize, f64, f64, f64)> = here_quotes
+                .iter()
+                .zip(&there_q)
+                .filter_map(|(h, t)| {
+                    let t = t.as_ref()?;
+                    let buy = h.buy?;
+                    let margin = t.sell - buy;
+                    let demand = if t.offer.side == Side::Buys { t.level } else { f64::INFINITY };
+                    let mass = self.world.goods[h.offer.item].mass;
+                    (margin > 0.0).then_some((margin / mass, h.offer.item, buy, margin, (h.level * 0.5).min(demand)))
+                })
+                .collect();
+            margins.sort_by(|a, b| b.0.total_cmp(&a.0));
+            let (mut room, mut money, mut gain, mut buys) = (HOLD_CAPACITY - cargo, credits, 0.0, Vec::new());
+            for (_, item, buy, margin, most) in margins.into_iter().take(LINES) {
+                let mass = self.world.goods[item].mass;
+                let units = (room / mass).min(money / buy).min(most).floor();
+                if units < 1.0 {
+                    continue;
+                }
+                room -= units * mass;
+                money -= units * buy;
+                gain += units * margin;
+                buys.push((item, units as u32));
+            }
+            let total = value + gain;
+            if total >= MIN_PROFIT && best.as_ref().is_none_or(|b| total > b.2) {
+                best = Some((there, buys, total));
+            }
+        }
+        best
     }
 
     /// Keep a trade in the log (the last `TRADE_LOG`).
@@ -145,19 +247,12 @@ mod tests {
         for _ in 0..60 * 60 * 9 {
             u.step_world(1.0 / 60.0, 20.0, &Controls::default());
         }
-        for r in u.trade_log.iter().rev().take(12) {
-            eprintln!(
-                "{} {} {} {} AT {} FOR {:.0} CR - CARGO {:.1} T, {:.0} CR",
-                r.trader,
-                if r.bought { "BOUGHT" } else { "SOLD" },
-                r.units,
-                r.item,
-                r.market,
-                r.amount,
-                r.cargo / 1000.0,
-                r.credits
-            );
+        for r in u.trade_log.iter().rev().take(14) {
+            eprintln!("{} AT {}: {:?} {} {} FOR {:.0} CR - CARGO {:.1} T, {:.0} CR", r.trader, r.market, r.deal, r.units, r.item, r.amount, r.cargo / 1000.0, r.credits);
         }
+        let heading = u.trade_log.iter().filter(|r| matches!(r.deal, super::Deal::Heading { .. })).count();
+        let moving = u.trade_log.iter().filter(|r| matches!(r.deal, super::Deal::MovingOn { .. })).count();
+        eprintln!("recent decisions: {heading} trips planned, {moving} moves on to another system");
         let traders: Vec<f64> = u.crafts.iter().filter(|c| c.trader).map(|c| c.credits).collect();
         eprintln!("{} traders, {} pirates of {}", traders.len(), u.crafts.iter().filter(|c| c.avionics.pirate).count(), u.crafts.len());
         let mean = traders.iter().sum::<f64>() / traders.len() as f64;

@@ -178,6 +178,7 @@ impl Universe {
                 system: self.ship_system,
                 market: f.name(&sys),
                 trader: "YOU".into(),
+                deal: if units > 0 { crate::commerce::Deal::Bought } else { crate::commerce::Deal::Sold },
                 bought: units > 0,
                 item: self.world.goods[item].name.to_uppercase(),
                 units: units.unsigned_abs() as u32,

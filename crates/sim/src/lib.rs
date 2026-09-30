@@ -30,7 +30,7 @@ pub use universe_world::{
     StarClass, StarSystem, StationFrame, StepResult, Terrain, TerrainKind, TrafficEvent,
 };
 pub use combat::{craft_id, Kill, PLAYER};
-pub use commerce::TradeRecord;
+pub use commerce::{Deal, TradeRecord};
 pub use contacts::{Contact, LOCK_BEAM};
 pub use save::UniverseSave;
 pub use traffic::{CrashReport, Craft, TrafficStats};
