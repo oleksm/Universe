@@ -22,7 +22,7 @@ use observer::{Focus, Observer};
 const SEED: u64 = 1984;
 const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
 /// Game seconds per real second, by default.
-const DEFAULT_TIME_SCALE: f64 = 2.0;
+const DEFAULT_TIME_SCALE: f64 = 1.0;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Mode {

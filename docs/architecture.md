@@ -270,7 +270,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   (star systems regenerate from the seed; saves from before the refactor still load, without a
   nav target or clearance; settlers aren't saved).
 
-The world time scale (default 2×) is game seconds per real second, chosen by the game; single
+The world time scale (default 1×) is game seconds per real second, chosen by the game; single
 player warp multiplies it (not in hyperdrive).
 
 Tests: unit tests next to the code (settlers, save/load); whole flights through the
@@ -286,7 +286,7 @@ printouts in `crates/sim/tests/probe.rs`. The long runs are `#[ignore]`d.
 - The settlers aren't saved with the game.
 - Every ship steps from the same moment, but a ship whose warp is limited more than the
   player's (fine substeps near a structure) simulates less than the clock advances that frame;
-  at the default 2× this never binds.
+  at the default 1× this never binds.
 
 ## Game (`universe`, `crates/game`)
 
