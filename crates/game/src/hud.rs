@@ -26,6 +26,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::navmap::draw(frame, app, map);
         return;
     }
+    if let Some(m) = &app.market {
+        crate::market::draw(frame, app, m);
+        return;
+    }
     let mut lines: Vec<(String, Color)> = Vec::new();
     status(app, &mut lines);
     match app.mode {
@@ -184,7 +188,14 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
     lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
     lines.push((
-        format!("MASS {:.1} T  FUEL {:.1} T  MAX ACC {:.1} M/S2", ship.mass() / 1000.0, ship.fuel / 1000.0, ship.main_accel()),
+        format!(
+            "MASS {:.1} T  FUEL {:.1} T  CARGO {:.1} T  MAX ACC {:.1} M/S2  {:.0} CR",
+            ship.mass() / 1000.0,
+            ship.fuel / 1000.0,
+            ship.cargo / 1000.0,
+            ship.main_accel(),
+            app.u.credits
+        ),
         DIM,
     ));
     let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
@@ -968,6 +979,7 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("T", "LOCK", lock),
         ("I", "COLLIDE", if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) }),
         ("M", "MAP", on(app.nav_map.is_some())),
+        ("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
         ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
         ("F1", "HELP", on(app.show_help)),
     ];
@@ -1081,6 +1093,7 @@ PILOT
  B        COMBAT MODE: ARM / SAFE WEAPONS
  SPACE    GUN (FLY THE LEAD INTO THE RING)
  V        LASER (WATCH THE HEAT)
+ G        MARKET (THIS SYSTEM; TRADE WHEN DOCKED)
  C        COCKPIT / CHASE VIEW
  F        LEAVE / TAKE THE PILOT'S SEAT
 ON FOOT

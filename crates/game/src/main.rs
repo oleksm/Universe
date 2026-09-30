@@ -1,6 +1,7 @@
 mod dev;
 mod fmt;
 mod hud;
+mod market;
 mod models;
 mod navmap;
 mod observer;
@@ -98,6 +99,9 @@ pub struct App {
     pub globes: std::collections::HashMap<(usize, usize), universe_engine::WireModel>,
     /// The navigation map, when open.
     pub nav_map: Option<navmap::NavMap>,
+    /// The market screen, when open; and whether we're docked at a market.
+    pub market: Option<market::MarketView>,
+    pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
     pub nav_marker: Option<(String, DVec3)>,
     /// Ships on the radar, nearest first (refreshed every frame).
@@ -166,6 +170,8 @@ impl App {
             eta_shown: None,
             globes: std::collections::HashMap::new(),
             nav_map: None,
+            market: None,
+            docked_market: false,
             nav_marker: None,
             contacts: Vec::new(),
             fire: None,
@@ -553,8 +559,16 @@ impl Game for App {
             self.nav_map = Some(navmap::NavMap::open(self));
             sound::click(ctx, 900.0);
         }
+        // So does the market (G, from the pilot's seat).
+        let market_was_open = self.market.is_some();
+        if market_was_open {
+            market::input(self, ctx);
+        } else if !map_was_open && self.nav_map.is_none() && self.mode == Mode::Pilot && self.u.crew.seated() && ctx.input.pressed(KeyCode::KeyG) {
+            self.market = Some(market::MarketView::open(self));
+            sound::click(ctx, 900.0);
+        }
         let (controls, focus_changed) = match self.mode {
-            _ if map_was_open || self.nav_map.is_some() => (Controls::default(), false),
+            _ if map_was_open || self.nav_map.is_some() || market_was_open || self.market.is_some() => (Controls::default(), false),
             Mode::Pilot => (self.pilot_input(ctx), false),
             Mode::Observer => (Controls::default(), self.observer.input(ctx, &mut self.u)),
         };
@@ -620,6 +634,7 @@ impl Game for App {
         };
         self.nav_marker = self.find_nav_marker();
         self.reach = self.u.pilot_reach();
+        self.docked_market = self.u.docked_market().is_some();
         self.contacts = self.u.contacts();
         if self.u.avionics.contact.is_some() && self.u.locked_contact_in(&self.contacts).is_none() {
             self.u.avionics.contact = None;

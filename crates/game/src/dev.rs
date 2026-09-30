@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.u.world.home_system;
@@ -362,6 +362,18 @@ pub fn apply(app: &mut App, name: &str) {
                     break;
                 }
             }
+        }
+        "market" => {
+            // Docked at the home station, the market open; bought ten of something.
+            apply(app, "docked");
+            app.market = Some(crate::market::MarketView::open(app));
+            if let (Some(f), Some(q)) = (app.u.docked_market(), app.market.as_ref().and_then(|m| m.rows.iter().find(|r| r.quote.is_some_and(|q| q.buy.is_some())).cloned())) {
+                let r = app.u.trade(f, q.item, 10);
+                log::info!("scenario market: bought 10 of {}: {r:?}", app.u.world.goods[q.item].name);
+            }
+            let mut m = app.market.take().unwrap();
+            m.refresh(app);
+            app.market = Some(m);
         }
         other => log::warn!("unknown scenario {other:?}; try one of: {SCENARIOS}"),
     }

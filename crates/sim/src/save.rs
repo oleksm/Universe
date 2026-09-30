@@ -21,6 +21,12 @@ pub struct UniverseSave {
     pub route: Route,
     #[serde(default)]
     pub avionics: Avionics,
+    #[serde(default = "starting_credits")]
+    pub credits: f64,
+}
+
+fn starting_credits() -> f64 {
+    crate::universe::STARTING_CREDITS
 }
 
 /// A save as stored. Saves from before the avionics had their own record kept
@@ -36,6 +42,8 @@ struct SaveRecord {
     route: Route,
     #[serde(default)]
     avionics: Option<Avionics>,
+    #[serde(default = "starting_credits")]
+    credits: f64,
 }
 
 #[derive(Deserialize)]
@@ -58,7 +66,7 @@ impl From<SaveRecord> for UniverseSave {
             hyper_autopilot: r.ship.hyper_autopilot,
             ..Avionics::default()
         });
-        UniverseSave { seed: r.seed, time: r.time, ship: r.ship.ship, ship_system: r.ship_system, route: r.route, avionics }
+        UniverseSave { seed: r.seed, time: r.time, ship: r.ship.ship, ship_system: r.ship_system, route: r.route, avionics, credits: r.credits }
     }
 }
 
@@ -71,6 +79,7 @@ impl Universe {
             ship_system: self.ship_system,
             route: self.avionics.route.clone(),
             avionics: self.avionics.clone(),
+            credits: self.credits,
         }
     }
 
@@ -82,6 +91,7 @@ impl Universe {
         self.ship = save.ship;
         self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
         self.avionics = Avionics { route: save.route, ..save.avionics };
+        self.credits = save.credits;
         self.events.clear();
     }
 }

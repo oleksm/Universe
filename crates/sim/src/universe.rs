@@ -8,10 +8,13 @@ use std::rc::Rc;
 use glam::{DQuat, DVec3};
 use universe_avionics::route::{self, Stop};
 use universe_avionics::{Approach, Avionics, Event, NavTarget, Plan};
-use universe_world::{Controls, Person, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
+use universe_world::{Controls, Facility, Person, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
 
 use crate::traffic::{CrashReport, Craft, TrafficStats};
 use crate::vessel::Vessel;
+
+/// What a new pilot starts with (credits).
+pub const STARTING_CREDITS: f64 = 1000.0;
 
 pub struct Universe {
     /// The galaxy, its gate network, the clock and the star systems.
@@ -32,6 +35,8 @@ pub struct Universe {
     pub crew: Person,
     /// Recent kills by weapons fire, most recent last.
     pub kills: Vec<crate::combat::Kill>,
+    /// The pilot's money (credits).
+    pub credits: f64,
     positions: Vec<DVec3>,
 }
 
@@ -48,6 +53,7 @@ impl Universe {
             crash_log: Vec::new(),
             crew: Person::default(),
             kills: Vec::new(),
+            credits: STARTING_CREDITS,
             positions: Vec::new(),
         };
         u.respawn();
@@ -130,6 +136,34 @@ impl Universe {
         let sys = self.ship_system();
         sys.positions(self.world.time, &mut self.positions);
         self.crew.reach(&sys, &self.ship, self.world.time, &self.positions)
+    }
+
+    /// The markets of the system we're in (visible from anywhere in it), with names.
+    pub fn markets(&mut self) -> Vec<(Facility, String)> {
+        let sys = self.ship_system();
+        universe_world::market::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect()
+    }
+
+    /// The market we're docked or landed at, if any.
+    pub fn docked_market(&mut self) -> Option<Facility> {
+        let sys = self.ship_system();
+        universe_world::market::docked_at(&sys, &self.ship)
+    }
+
+    /// A market in our system: its quotes, and what it bans.
+    pub fn market_quotes(&mut self, f: Facility) -> (Vec<universe_world::market::Quote>, Vec<universe_world::goods::Category>) {
+        let system = self.ship_system;
+        let banned = self.world.market(system, f).map(|m| m.banned.clone()).unwrap_or_default();
+        (self.world.quotes(system, f), banned)
+    }
+
+    /// Buy (`units` > 0) or sell (< 0) `item` at the market `f` we're docked
+    /// at: credits paid (negative: received), or why not.
+    pub fn trade(&mut self, f: Facility, item: usize, units: i64) -> Result<f64, String> {
+        let mut credits = self.credits;
+        let r = self.world.trade(self.ship_system, f, item, units, &mut self.ship, &mut credits);
+        self.credits = credits;
+        r
     }
 
     /// Give the ship's devices new commands now (see `World::command`).
