@@ -43,8 +43,9 @@ pub struct StepResult {
 /// devices commands while the ship moves. (The pilot's own commands come
 /// with each step; see `World::step_ship`.)
 pub trait FlightComputer {
-    /// The longest substep it can fly with (s): it can only change its
-    /// commands between substeps.
+    /// Its control rate: the longest substep it can fly with (s), since it can
+    /// only change its commands between substeps. It doesn't change the physics:
+    /// a powered ship already takes fine substeps whoever flies it.
     fn interval(&self) -> f64 {
         f64::INFINITY
     }
@@ -301,11 +302,15 @@ impl World {
         // For short frames, snapshot the bodies once and extrapolate for each
         // substep instead of re-solving every orbit (see `Ephemeris`).
         let ephemeris = (dt <= Ephemeris::SPAN).then(|| self.ephemeris(sys, self.time));
-        // Small steps while the thrusters fire, so control is precise, and no
-        // longer than the flight computer's own. (The kernel also takes small
-        // steps near any station or gate, for contact.)
-        let thrusters = if ship.rcs != DVec3::ZERO { FINE_STEP } else { f64::INFINITY };
-        let span = Span { t: self.time, dt, max_h: thrusters.min(computer.interval()) };
+        // Small steps while any device pushes (engine or thrusters), whoever
+        // is flying: a powered ship is integrated alike under a pilot or a
+        // computer. The kernel also takes small steps near any station or gate,
+        // for contact. Separately, a computer's commands can only change between
+        // substeps, so its control rate also bounds them, just as the pilot's
+        // commands change once per step.
+        let powered = ship.throttle > 0.0 || ship.rcs != DVec3::ZERO;
+        let physics = if powered { FINE_STEP } else { f64::INFINITY };
+        let span = Span { t: self.time, dt, max_h: physics.min(computer.interval()) };
         let mut rigid = ship.rigid();
         let mut devices = Devices::new(sys, &mut *ship, computer, &mut *events);
         let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut self.positions, &mut rigid, span, &mut devices);
@@ -560,10 +565,15 @@ mod tests {
         assert!((light / heavy - 2.0).abs() < 0.02);
     }
 
-    /// A flight computer burning at full throttle every substep.
+    /// A flight computer burning at full throttle every substep. Like the
+    /// real one, it declares the control rate it commands at.
     struct Burn;
 
     impl FlightComputer for Burn {
+        fn interval(&self) -> f64 {
+            FINE_STEP
+        }
+
         fn substep(&mut self, _: &StarSystem, ship: &Ship, _: f64, _: f64, _: &[DVec3]) -> Option<ShipCommands> {
             Some(ShipCommands { throttle: 1.0, ..ship.holding() })
         }

@@ -95,9 +95,10 @@ const HORIZON: f64 = 6.0 * 3600.0;
 const NEAR: f64 = 20_000.0;
 /// Beyond where the autopilot would fly itself (it jumps by hyperdrive from
 /// farther out: see `route::hyperjump_limit`), the copy looks ahead in longer
-/// substeps, up to this (s). The autopilot's gains stay within reach of such
-/// steps (see `docking::gain`).
-const FAR_STEP: f64 = 2.0;
+/// substeps, up to this (s; the kernel also keeps them short against the
+/// orbital time scale). The autopilot's gains stay within reach of such steps
+/// (see `docking::gain`).
+const FAR_STEP: f64 = 10.0;
 
 /// Plan from the ship's current state toward `target`, the autopilot being
 /// in `phase`, at world time `now`.
@@ -166,19 +167,23 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, now:
         // every fine step); from farther out, longer ones after the first
         // few seconds. (The kernel keeps them short near stations and gates.)
         let max_h = if left < route::hyperjump_limit(target) { FINE_STEP } else { (0.1 * (t - now)).clamp(FINE_STEP, FAR_STEP) };
-        // Fly to the next point, in pieces short enough for the rail bodies
-        // to come from a snapshot (as in flight: see `Ephemeris`).
+        // Fly to the next point. Where the autopilot flies, in pieces short
+        // enough for the rail bodies to come from a snapshot, as in flight
+        // (see `Ephemeris`); farther out, substeps outgrow a snapshot, so the
+        // kernel solves the rails exactly.
         let end = t + dt;
+        let far = max_h > FINE_STEP;
         while stopped.is_none() && end - t > 1e-9 {
-            let piece = (end - t).min(Ephemeris::SPAN);
-            if ephemeris.as_ref().is_none_or(|(t0, _)| t + piece > t0 + Ephemeris::SPAN) {
+            let piece = if far { end - t } else { (end - t).min(Ephemeris::SPAN) };
+            if !far && ephemeris.as_ref().is_none_or(|(t0, _)| t + piece > t0 + Ephemeris::SPAN) {
                 ephemeris = Some((t, sys.ephemeris(t)));
             }
             let rigid = ship.rigid();
             let mut computer = avionics.computer();
             events.clear();
             let mut devices = Devices::new(sys, &mut ship, &mut computer, &mut events);
-            let (copy, outcome) = simulate(&sys.bodies, ephemeris.as_ref().map(|(_, e)| e), &rigid, Span { t, dt: piece, max_h }, &mut devices);
+            let snapshot = if far { None } else { ephemeris.as_ref().map(|(_, e)| e) };
+            let (copy, outcome) = simulate(&sys.bodies, snapshot, &rigid, Span { t, dt: piece, max_h }, &mut devices);
             ship.set_rigid(&copy);
             t = outcome.time;
             stopped = outcome.fact;

@@ -541,3 +541,36 @@ Open findings:
 6. (low) Doc precision: the audited-ops list (spawn/unweld aren't implemented; bounce is missing),
    the `step_ship` signature, and the "within 30 km" rule (it is evaluated once per call).
 7. (low) Rename `HyperdriveCommand.steering` to a device term (e.g. `lookahead_dropout`).
+
+## Follow-up fixes (by hand, after the workflow was stopped)
+
+- **Fairness (finding 2, and it covers 3).** The substep rule is now physical. Substeps stay fine
+  (≤ 0.05 s) while any device pushes (throttle > 0 or thrusters), whoever flies, not only when a
+  computer flies. `FlightComputer::interval()` is now documented as the computer's *control rate*:
+  it adds break points where its commands may change, just as the pilot's input changes once per
+  step. It doesn't change the physics. The effect is that a manually flown ship burning its engine
+  now gets the same fine integration as an autopilot doing the same burn. This also fixes a manual
+  landing at warp above 3×. The test stand-in computer (`Burn`) now declares its control rate like
+  the real one, and a pilot and a computer giving the same commands still fly bit-identically.
+  Autopilot and traffic runs are unchanged.
+- **Old saves (finding 4).** `UniverseSave` deserializes through a `SaveRecord` shim. When a save
+  has no `avionics` record (made before the refactor), the nav target, clearance and hyperdrive
+  autopilot are read from the old fields inside `ship`. New test: `old_saves_keep_their_nav_state`.
+- **Planner cost (finding 1), partly fixed.** A profile of landing from orbit (11.2 ms) showed:
+  - 158 s flown at the 0.05 s fine step: 2.2 ms
+  - 8,400 s of look-ahead far out: ~7 ms, mostly rebuilding a rail snapshot every 5 s piece
+  - 588 plan points: 1 ms
+
+  Far out (beyond the hyperjump limit), the copy now flies whole point intervals with exact rail
+  positions and substeps up to 10 s, which the kernel still bounds by the orbital time scale. That
+  took it to 8.5 ms; docking is still 2.2 ms. Longer far steps didn't help, because the orbital
+  bound dominates. Coarser steps inside the hyperjump range were also tried and gave no
+  measurable gain, so the plan stays exact there (plan = flight).
+
+  Further gains need a different approach, such as reusing the previous plan while the autopilot
+  flies it, or building it on a worker thread.
+- **Checks**: clippy clean; 54 tests + 10 long runs pass. Traffic is identical
+  (1868 / 1999 / 156 / 0 crashes; 1000 settlers: 0 crashes), docking 150/150 s, gate 259/259 s,
+  all moon ports land, and the landing ETA's biggest jump is 0.02 s.
+
+Still open: findings 5–7 (narrowing `Driver::applied`, doc precision, renaming `steering`).

@@ -100,7 +100,8 @@ route}` and the common types at its root), so the game needs only the one depend
   there is exactly one physics implementation.
 
 Fairness rules: no special cases by object kind or owner; the same integrator, tick and
-contact rules for everything; all inputs are accelerations or audited ops. The kernel contains
+contact rules for everything (substep length comes from physical state — proximity and whether a
+device pushes — never from who or what is flying); all inputs are accelerations or audited ops. The kernel contains
 none of the game words (checked by grep).
 
 Invariant tests live with the kernel: determinism (`same_inputs_same_world`: a state hash after
@@ -172,9 +173,11 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   A **flight computer** takes part through the `FlightComputer` trait, again only with
   commands: `substep()` gives commands for every integration substep (the autopilots are
   feedback controllers and have always run at substep rate), `hyperdrive()` gives the frame's
-  hyperdrive orders once the clock has moved on, and `interval()` is the longest substep it can
-  fly with. Fine substeps come from proximity to structures (kernel), the thrusters firing
-  (device state), or the flight computer's interval — never from clearance.
+  hyperdrive orders once the clock has moved on, and `interval()` is its control rate (the
+  longest substep it can fly with). Fine substeps come from proximity to structures (kernel) or
+  any device pushing — engine or thrusters (device state), whoever flies — never from clearance
+  or from who is flying. A computer's control rate only adds break points where its commands may
+  change, as the pilot's input does once per step.
 - `Devices` (public) is the kernel `Driver` for a ship's devices: the flight computer's commands
   set them each substep, they push with their thrust, station bounces are judged by the world.
   The same driver flies a *copy* of a ship when a flight is simulated ahead (the planner).
