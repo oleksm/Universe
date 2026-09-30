@@ -508,3 +508,36 @@ capture, unchanged.
 - Bit-identity: the Phase 2/3 fingerprint (20 settlers × 1 game h, autodock, autoland, 1000×
   coast) gives the same hashes, times and states before and after (`FP traffic
   89dcbbf0e04ee5b0`, `dock 4e3bafb857af7993`, `land a10b2ac334b30908`).
+
+## Verification (after Phase 4)
+
+Four read-only verifiers ran in parallel. The user then stopped the workflow before the automated
+fix pass ("it takes lots of time and burns huge amount of tokens"). The findings are open, to be
+picked by hand.
+
+- **Regression**: 53 tests + 10 long runs all pass. Traffic is identical to the baseline
+  (100 settlers: 1868 stops / 1999 transits / 156 routes / 0 crashes; 1000 settlers: 0 crashes).
+  Docking is 150/150 s and landing 384 s, and frame costs are within ±4%. The one regression is
+  the planner: 11.2 ms from orbit (was 1.97) and 2.2 ms for docking (was 1.09), because it now
+  flies the real autopilot through the kernel.
+- **Architecture audit**: the dependency graph matches this document, and the kernel has no game
+  words. World code never reads avionics state.
+- **Game smoke test**: all 32 dev scenarios run cleanly. Their setup event sequences match the
+  pre-refactor build.
+- **Code review**: tick order, substeps and frame math are equivalent to the old code.
+
+Open findings:
+1. (medium) Planner cost, plus an 11 ms spike on the game's frame thread. Options: larger
+   substeps when far from the target, reusing the previous plan, or building on a worker thread.
+2. (medium) Fairness: substep length depends on `computer.interval()`, so an autopilot gets finer
+   substeps than a human in the same state. Either record it as an explicit exception or derive
+   it from device state.
+3. (low) A manual landing with clearance at warp above 3× now gets coarse substeps (the old rule
+   used clearance). A possible fix: the avionics' `interval()` goes fine while clearance is held.
+4. (low) Legacy saves made mid-route in hyperdrive lose `hyper_autopilot`/`nav_target`, and the
+   ship cruises with no destination. Fix: migrate the old ship fields on load.
+5. (low) `Driver::applied` gets `&mut RigidBody`. Narrow it so a driver can't write position or
+   velocity.
+6. (low) Doc precision: the audited-ops list (spawn/unweld aren't implemented; bounce is missing),
+   the `step_ship` signature, and the "within 30 km" rule (it is evaluated once per call).
+7. (low) Rename `HyperdriveCommand.steering` to a device term (e.g. `lookahead_dropout`).
