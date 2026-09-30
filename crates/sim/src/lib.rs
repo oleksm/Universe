@@ -8,6 +8,7 @@
 //! itself is the kernel, `universe-physics`.)
 
 mod combat;
+mod commerce;
 mod contacts;
 mod save;
 mod traffic;
@@ -29,6 +30,7 @@ pub use universe_world::{
     StarClass, StarSystem, StationFrame, StepResult, Terrain, TerrainKind, TrafficEvent,
 };
 pub use combat::{craft_id, Kill, PLAYER};
+pub use commerce::TradeRecord;
 pub use contacts::{Contact, LOCK_BEAM};
 pub use save::UniverseSave;
 pub use traffic::{CrashReport, Craft, TrafficStats};

@@ -60,6 +60,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     let size = frame.size();
     perf(frame, app, ctx, top);
     kill_feed(frame, app, top + 8.0 * LINE);
+    trade_feed(frame, app, top + 15.0 * LINE);
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
     // Messages go below the status block so they never overlap it.
@@ -109,7 +110,7 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
         let here = app.u.crafts.iter().filter(|c| c.system == app.view.origin).count();
         let t = &app.u.traffic;
         lines.push((
-            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}", app.u.crafts.len(), t.stops, t.transits, t.crashes),
+            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  TRADES {}  KILLS {}", app.u.crafts.len(), t.stops, t.transits, t.crashes, t.trades, t.shot_down),
             DIM,
         ));
     }
@@ -1028,6 +1029,36 @@ fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
         frame.text(Vec2::new(size.x - text_size(&text).x - 4.0, top + i as f32 * LINE), &text, c);
     }
 }
+
+/// Trades, right side below the kills: who bought or sold how many of what,
+/// where, for how much, and their cargo and credits after. Those in the
+/// system in view (and ours), each for `TRADE_SHOWN` real seconds.
+fn trade_feed(frame: &mut Frame, app: &App, top: f32) {
+    let now = app.u.world.time;
+    let shown = TRADE_SHOWN * app.warp().max(1.0);
+    let recent: Vec<&universe_sim::TradeRecord> =
+        app.u.trade_log.iter().filter(|r| now - r.time < shown && (r.system == app.view.origin || r.trader == "YOU")).rev().take(6).collect();
+    let size = frame.size();
+    for (i, r) in recent.iter().enumerate() {
+        let age = ((now - r.time) / shown) as f32;
+        let verb = if r.bought { "BOUGHT" } else { "SOLD" };
+        let text = format!(
+            "{} {verb} {} {} FOR {:.0} CR - CARGO {:.1} T, {:.0} CR",
+            r.trader,
+            r.units,
+            r.item,
+            r.amount,
+            r.cargo / 1000.0,
+            r.credits
+        );
+        let base = if r.trader == "YOU" { HUD } else { Color::hex(0x60c0ff) };
+        let c = base.scale(1.0 - 0.7 * age.max(0.0));
+        frame.text(Vec2::new(size.x - text_size(&text).x - 4.0, top + i as f32 * LINE), &text, c);
+    }
+}
+
+/// Real seconds a trade stays in the feed.
+const TRADE_SHOWN: f64 = 12.0;
 
 /// Real seconds a kill stays in the feed.
 const KILL_SHOWN: f64 = 15.0;

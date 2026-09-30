@@ -57,7 +57,15 @@ pub struct Market {
     pub offers: Vec<Offer>,
     /// Categories it won't trade.
     pub banned: Vec<Category>,
+    /// Categories it wants in general: anything of these it buys (listed
+    /// items at their own prices, the rest at `GENERAL_PREMIUM` over worth).
+    pub wants: Vec<Category>,
 }
+
+/// What a market pays for unlisted goods of a category it wants, over their worth.
+pub const GENERAL_PREMIUM: f64 = 1.1;
+/// Its usual demand for such goods (units).
+const GENERAL_DEMAND: f64 = 100.0;
 
 /// An offer as it stands now.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -157,7 +165,8 @@ pub fn market(seed: u64, system: usize, sys: &StarSystem, f: Facility, catalog: 
         }
     }
     offers.sort_by_key(|o| (o.side == Side::Buys, catalog[o.item].category, o.item));
-    Some(Market { offers, banned })
+    let wants = wants.iter().copied().filter(|c| !banned.contains(c)).collect();
+    Some(Market { offers, banned, wants })
 }
 
 /// The price of an offer at `level` (stock or demand left).
@@ -188,14 +197,32 @@ impl Market {
             .collect()
     }
 
+    /// How it trades `item`: its listed offer, or a general one if it wants the kind.
+    pub fn offer_for(&self, item: &Item) -> Option<Offer> {
+        if self.banned.contains(&item.category) {
+            return None;
+        }
+        self.offers.iter().find(|o| o.item == item.id).copied().or_else(|| {
+            self.wants.contains(&item.category).then(|| Offer { item: item.id, side: Side::Buys, base: item.price * GENERAL_PREMIUM, usual: GENERAL_DEMAND })
+        })
+    }
+
+    /// The quote for `item` now, if it trades it at all.
+    pub fn quote_for(&self, state: &mut MarketState, now: f64, item: &Item) -> Option<Quote> {
+        self.recover(state, now);
+        let o = self.offer_for(item)?;
+        let level = state.levels.get(&o.item).copied().unwrap_or(o.usual);
+        let (buy, sell) = prices(&o, level);
+        Some(Quote { offer: o, level, buy, sell })
+    }
+
     /// Stock and demand drift back toward the usual since `state.updated`.
     fn recover(&self, state: &mut MarketState, now: f64) {
         let dt = (now - state.updated).max(0.0);
         let k = 1.0 - (-dt / RECOVERY).exp();
-        for o in &self.offers {
-            if let Some(l) = state.levels.get_mut(&o.item) {
-                *l += (o.usual - *l) * k;
-            }
+        for (item, l) in state.levels.iter_mut() {
+            let usual = self.offers.iter().find(|o| o.item == *item).map_or(GENERAL_DEMAND, |o| o.usual);
+            *l += (usual - *l) * k;
         }
         state.updated = now;
     }
@@ -208,9 +235,9 @@ impl Market {
         if self.banned.contains(&item.category) {
             return Err(format!("{} IS ILLEGAL HERE", item.category.name()));
         }
-        let Some(o) = self.offers.iter().find(|o| o.item == item.id) else { return Err("NOT TRADED HERE".into()) };
+        let Some(o) = self.offer_for(item) else { return Err("NOT TRADED HERE".into()) };
         let level = state.levels.get(&item.id).copied().unwrap_or(o.usual);
-        let (buy, sell) = prices(o, level);
+        let (buy, sell) = prices(&o, level);
         if units > 0 {
             let Some(price) = buy else { return Err("NOT SOLD HERE - ONLY BOUGHT".into()) };
             let n = units as f64;

@@ -61,9 +61,12 @@ impl MarketView {
         let Some(f) = self.facility() else { return };
         let (quotes, banned) = app.u.market_quotes(f);
         let mut rows: Vec<Row> = quotes.into_iter().map(|q| Row { item: q.offer.item, quote: Some(q) }).collect();
-        for &item in app.u.ship.hold.keys() {
+        let held: Vec<usize> = app.u.ship.hold.keys().copied().collect();
+        for item in held {
             if !rows.iter().any(|r| r.item == item) {
-                rows.push(Row { item, quote: None });
+                // Not listed: it may still take it, being of a kind it wants.
+                let quote = app.u.quote_for(f, item);
+                rows.push(Row { item, quote });
             }
         }
         self.rows = rows;

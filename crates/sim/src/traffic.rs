@@ -29,6 +29,11 @@ pub struct Craft {
     pub avionics: Avionics,
     /// Seed of its current route (a new one is made when it finishes).
     pub route_seed: u64,
+    /// A trader (see `commerce`): buys and sells at its stops.
+    pub trader: bool,
+    /// Its money, and what it paid per unit for what it carries.
+    pub credits: f64,
+    pub paid: std::collections::BTreeMap<usize, f64>,
 }
 
 /// Totals across all crafts.
@@ -43,9 +48,12 @@ pub struct TrafficStats {
     /// Hunts by pirates: begun, and ended in a kill.
     pub hunts: u64,
     pub pirate_kills: u64,
+    /// Trades by settlers, and the credits that changed hands.
+    pub trades: u64,
+    pub turnover: f64,
 }
 
-/// About one settler in `PIRATE_ONE_IN` is a pirate.
+/// About one settler in `PIRATE_ONE_IN` is a pirate, and as many again traders.
 pub const PIRATE_ONE_IN: u64 = 10;
 
 /// What a ship was doing when it crashed (for diagnosing autopilots).
@@ -77,14 +85,19 @@ impl Universe {
             let Some(&first) = stops.first() else { continue };
             let ship = self.world.ship_at(first.system, first.target);
             let route = Route { stops, next: 0, active: true, dwell_until: Some(self.world.time + rng.range(0.0, 600.0)), departing: false };
-            // Pirates: chosen from the seed, so the same settlers every time.
-            let pirate = crate::rng::mix(route_seed, 0x0917_27e5).is_multiple_of(PIRATE_ONE_IN);
+            // Roles, from the seed (the same settlers every time): one slice
+            // pirates, another traders, the rest just travel.
+            let role = crate::rng::mix(route_seed, 0x0917_27e5) % PIRATE_ONE_IN;
+            let (pirate, trader) = (role == 0, role == 1);
             self.crafts.push(Craft {
                 name: format!("Settler {}", self.crafts.len() + 1),
                 ship,
                 system: first.system,
                 avionics: Avionics { route, pirate, ..Avionics::default() },
                 route_seed,
+                trader,
+                credits: crate::commerce::SETTLER_CREDITS,
+                paid: Default::default(),
             });
         }
     }
@@ -205,7 +218,12 @@ impl Universe {
     fn tally_craft(&mut self, i: usize, events: Vec<Event>) {
         for e in events {
             match e {
-                Event::RouteStop { .. } => self.traffic.stops += 1,
+                Event::RouteStop { .. } => {
+                    self.traffic.stops += 1;
+                    if self.crafts[i].trader {
+                        self.craft_trades(i);
+                    }
+                }
                 Event::Ship(ShipEvent::GateEntered { .. }) => self.traffic.transits += 1,
                 Event::Ship(ShipEvent::Crashed { .. }) => self.traffic.crashes += 1,
                 Event::RouteComplete => self.traffic.routes_completed += 1,

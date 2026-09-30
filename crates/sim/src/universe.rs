@@ -37,6 +37,8 @@ pub struct Universe {
     pub kills: Vec<crate::combat::Kill>,
     /// The pilot's money (credits).
     pub credits: f64,
+    /// Recent trades by settlers, most recent last.
+    pub trade_log: Vec<crate::commerce::TradeRecord>,
     positions: Vec<DVec3>,
 }
 
@@ -54,6 +56,7 @@ impl Universe {
             crew: Person::default(),
             kills: Vec::new(),
             credits: STARTING_CREDITS,
+            trade_log: Vec::new(),
             positions: Vec::new(),
         };
         u.respawn();
@@ -157,12 +160,33 @@ impl Universe {
         (self.world.quotes(system, f), banned)
     }
 
+    /// A market's quote for one item (listed, or of a kind it wants), if any.
+    pub fn quote_for(&mut self, f: Facility, item: usize) -> Option<universe_world::market::Quote> {
+        self.world.quote_for(self.ship_system, f, item)
+    }
+
     /// Buy (`units` > 0) or sell (< 0) `item` at the market `f` we're docked
     /// at: credits paid (negative: received), or why not.
     pub fn trade(&mut self, f: Facility, item: usize, units: i64) -> Result<f64, String> {
         let mut credits = self.credits;
         let r = self.world.trade(self.ship_system, f, item, units, &mut self.ship, &mut credits);
         self.credits = credits;
+        if let Ok(amount) = r {
+            let sys = self.ship_system();
+            let record = crate::commerce::TradeRecord {
+                time: self.world.time,
+                system: self.ship_system,
+                market: f.name(&sys),
+                trader: "YOU".into(),
+                bought: units > 0,
+                item: self.world.goods[item].name.to_uppercase(),
+                units: units.unsigned_abs() as u32,
+                amount: amount.abs(),
+                cargo: self.ship.cargo,
+                credits: self.credits,
+            };
+            self.log_trade(record);
+        }
         r
     }
 

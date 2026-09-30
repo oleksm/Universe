@@ -139,6 +139,14 @@ impl World {
         m.quotes(&mut state, now)
     }
 
+    /// The market's quote for one item, if it trades it (see `Market::quote_for`).
+    pub fn quote_for(&mut self, system: usize, f: Facility, item: usize) -> Option<Quote> {
+        let m = self.market(system, f)?;
+        let now = self.time;
+        let mut state = self.market_states.get(&(system, f)).cloned().unwrap_or(MarketState { updated: now, ..Default::default() });
+        m.quote_for(&mut state, now, &self.goods[item])
+    }
+
     /// Trade at the market at `f` in `system` (see `Market::trade`): only
     /// for a ship docked or landed there.
     pub fn trade(&mut self, system: usize, f: Facility, item: usize, units: i64, ship: &mut Ship, credits: &mut f64) -> Result<f64, String> {

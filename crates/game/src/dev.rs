@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.u.world.home_system;
@@ -362,6 +362,18 @@ pub fn apply(app: &mut App, name: &str) {
                     break;
                 }
             }
+        }
+        "trades" => {
+            // Traffic under way until traders trade here (the feed shows them).
+            app.mode = Mode::Pilot;
+            for _ in 0..60 * 60 * 60 {
+                app.u.step_world(1.0 / 60.0, 5.0, &Controls::default());
+                let n = app.u.trade_log.iter().rev().take_while(|r| app.u.world.time - r.time < 5.0).filter(|r| r.system == home).count();
+                if n >= 2 {
+                    break;
+                }
+            }
+            log::info!("scenario trades: {} trades so far, last {:?}", app.u.traffic.trades, app.u.trade_log.last().map(|r| (&r.trader, &r.item)));
         }
         "market" => {
             // Docked at the home station, the market open; bought ten of something.
