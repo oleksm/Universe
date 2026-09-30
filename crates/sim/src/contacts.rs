@@ -23,6 +23,8 @@ pub struct Contact {
     pub destination: Option<String>,
     /// Hull integrity 0..1, as a combat scan reads it (shown in combat mode).
     pub hull: f64,
+    /// Aggressed: fair game (it opened fire on someone).
+    pub aggressed: bool,
 }
 
 /// Half-angle of the lock beam around the nose (rad): 6°.
@@ -61,7 +63,7 @@ impl Universe {
                 let r = &craft.avionics.route;
                 let stop = r.stops.get(r.next).copied();
                 let destination = stop.map(|s| route::stop_name(&self.world.system(s.system), s).to_uppercase());
-                Contact { blip, name, activity, destination, hull: craft.ship.hull }
+                Contact { blip, name, activity, destination, hull: craft.ship.hull, aggressed: craft.ship.aggressed(self.world.time) }
             })
             .collect()
     }

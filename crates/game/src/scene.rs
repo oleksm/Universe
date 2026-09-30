@@ -294,6 +294,8 @@ fn grid_detail(px: f32) -> f32 {
 }
 
 pub const TRAFFIC: Color = Color::hex(0x50d8ff);
+/// Ships that are aggressed (fair game).
+pub const AGGRESSED: Color = Color::hex(0xff4040);
 /// Hull plating of ships and stations, as lit by the star.
 const HULL: Color = Color::hex(0x5a6068);
 
@@ -307,11 +309,13 @@ fn crafts(frame: &mut Frame, app: &App) {
         }
         let pos = c.ship.position;
         if frame.projected_radius(pos, 25.0) < 1.0 {
-            frame.point(pos, TRAFFIC.scale(0.8));
+            let tc = if c.ship.aggressed(app.u.world.time) { AGGRESSED } else { TRAFFIC };
+            frame.point(pos, tc.scale(0.8));
             continue;
         }
         let t = Transform { position: pos, rotation: c.ship.orientation.as_quat(), scale: 1.0 };
-        frame.model_shaded(&app.models.ship, &t, TRAFFIC, HULL);
+        let tc = if c.ship.aggressed(app.u.world.time) { AGGRESSED } else { TRAFFIC };
+        frame.model_shaded(&app.models.ship, &t, tc, HULL);
         if c.ship.throttle > 0.0 {
             let back = c.ship.orientation * DVec3::Z;
             frame.line(pos + back * 16.0, pos + back * (26.0 + 40.0 * c.ship.throttle), Color::hex(0xffa040));
@@ -319,7 +323,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         if pos.distance(cam) < 20_000.0
             && let Some(p) = frame.project(pos)
         {
-            frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), TRAFFIC.scale(0.8));
+            frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), tc.scale(0.8));
         }
     }
 }

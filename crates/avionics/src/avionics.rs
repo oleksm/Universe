@@ -122,6 +122,7 @@ impl Avionics {
             | ShipEvent::GateTooFast { .. }
             | ShipEvent::Hit { .. }
             | ShipEvent::Collided { .. }
+            | ShipEvent::Aggressed { .. }
             | ShipEvent::WeaponsArming
             | ShipEvent::WeaponsHot
             | ShipEvent::WeaponsSafe => {}

@@ -202,6 +202,11 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ));
     let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
     let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
+    let now = app.u.world.time;
+    if ship.aggressed(now) {
+        let left = (ship.aggressed_until - now) / app.warp().max(1.0);
+        lines.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
+    }
     if ship.armed {
         let heat = if ship.laser_overheated { " HOT".to_string() } else { String::new() };
         let c = if hurt { RED } else { AMBER };
@@ -267,7 +272,8 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let ship = &app.u.ship;
     let closing = c.blip.closing_speed(ship.position, ship.velocity);
     let trend = if closing >= 0.0 { "CLOSING" } else { "OPENING" };
-    lines.push((format!("LOCK {}  {}  {trend} {}", c.name, fmt::distance(c.blip.distance), fmt::speed(closing.abs())), crate::scene::TRAFFIC));
+    let (tag, col) = if c.aggressed { ("  AGGRESSED", RED) } else { ("", crate::scene::TRAFFIC) };
+    lines.push((format!("LOCK {}{tag}  {}  {trend} {}", c.name, fmt::distance(c.blip.distance), fmt::speed(closing.abs())), col));
     // How fast it crosses our view, and which way it's moving, relative to us
     // in our ship's frame (forward, right, up).
     let r = c.blip.position - ship.position;
@@ -612,12 +618,12 @@ fn target_marker(frame: &mut Frame, app: &App) {
 /// Radar contacts in view: a small square on each ship, with its range when
 /// near; the locked one gets a bracket like the nav target's.
 fn contact_marker(frame: &mut Frame, app: &App) {
-    let c = crate::scene::TRAFFIC;
     let size = frame.size();
     for contact in &app.contacts {
         if app.u.avionics.contact == Some(contact.blip.id) {
             continue;
         }
+        let c = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
         let Some(p) = frame.project(contact.blip.position).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
         frame.hud_box(p - Vec2::splat(4.0), Vec2::splat(8.0), c.scale(0.8));
         if contact.blip.distance < 50_000.0 {
@@ -626,6 +632,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
         }
     }
     if let Some(locked) = app.u.locked_contact_in(&app.contacts) {
+        let c = if locked.aggressed { RED } else { crate::scene::TRAFFIC };
         bracket(frame, app, &locked.name, locked.blip.position, c);
         // Which way it's moving across our view: an arrow off its bracket.
         let v = locked.blip.velocity - app.u.ship.velocity;
@@ -909,9 +916,10 @@ fn scanner(frame: &mut Frame, app: &App) {
         let dot = if b.kind == BodyKind::Star { 5.0 } else { 3.0 };
         frame.hud_rect(top - Vec2::splat(dot / 2.0).floor(), Vec2::splat(dot), c);
     }
-    // Other ships the radar sees, as small cyan blips; the locked one boxed.
+    // Other ships the radar sees, as small cyan blips (red: aggressed); the locked one boxed.
     let locked = app.u.avionics.contact;
     for contact in &app.contacts {
+        let tc = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
         let rel: DVec3 = inv * (contact.blip.position - app.view.ship_pos);
         let d = rel.length();
         if d < 1.0 {
@@ -921,10 +929,10 @@ fn scanner(frame: &mut Frame, app: &App) {
         let (x, y, z) = ((rel.x / d) as f32, (rel.y / d) as f32, (rel.z / d) as f32);
         let base = center + Vec2::new(x * radii.x * r, z * radii.y * r);
         let top = base - Vec2::new(0.0, y * 36.0 * r);
-        frame.hud_line(base, top, crate::scene::TRAFFIC.scale(0.5));
-        frame.hud_rect(top - Vec2::splat(1.0), Vec2::splat(2.0), crate::scene::TRAFFIC);
+        frame.hud_line(base, top, tc.scale(0.5));
+        frame.hud_rect(top - Vec2::splat(1.0), Vec2::splat(2.0), tc);
         if locked == Some(contact.blip.id) {
-            frame.hud_box(top - Vec2::splat(4.0), Vec2::splat(8.0), crate::scene::TRAFFIC);
+            frame.hud_box(top - Vec2::splat(4.0), Vec2::splat(8.0), tc);
         }
     }
 }
@@ -973,7 +981,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     let k = bright.min(1.6) / 1.6;
     // Halo, core.
     let halo = disc * 2.5 + 14.0 + 40.0 * k;
-    frame.hud_glow(p, halo, 32, tint(0.55), tint(0.0));
+    frame.hud_glow(p, halo, 32, tint(0.3), tint(0.0));
     frame.hud_glow(p, disc * 1.4 + 4.0, 24, Color([1.0, 1.0, 0.96, visible]), tint(0.6 * visible));
     // Rays: long spikes and shorter ones between, fading out.
     let long = disc * 2.0 + 40.0 + 180.0 * k;
@@ -981,7 +989,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
         let a = i as f32 * std::f32::consts::TAU / 12.0 + 0.2;
         let len = if i % 3 == 0 { long } else { long * 0.45 };
         let d = Vec2::new(a.cos(), a.sin());
-        frame.hud_line2(p + d * disc, p + d * len, tint(0.85), tint(0.0));
+        frame.hud_line2(p + d * disc, p + d * len, tint(0.35), tint(0.0));
     }
 }
 

@@ -116,6 +116,10 @@ pub struct Ship {
     /// None: along the nose.
     #[serde(skip)]
     pub gun_target: Option<DVec3>,
+    /// Aggressed (it opened fire on a ship it had no right to) until this
+    /// world time: see `weapons::AGGRESSION`.
+    #[serde(default)]
+    pub aggressed_until: f64,
 }
 
 fn boresight() -> DVec3 {
@@ -222,6 +226,7 @@ impl Ship {
             gun_cooldown: 0.0,
             gun_dir: DVec3::NEG_Z,
             gun_target: None,
+            aggressed_until: 0.0,
         }
     }
 
@@ -305,6 +310,11 @@ impl Ship {
     /// Where the gun points, in the world.
     pub fn gun_forward(&self) -> DVec3 {
         self.orientation * self.gun_dir
+    }
+
+    /// Aggressed at world time `now` (fair game: shooting it is no crime).
+    pub fn aggressed(&self, now: f64) -> bool {
+        now < self.aggressed_until
     }
 
     /// Weapons can fire: combat mode on, primed.

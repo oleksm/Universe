@@ -275,6 +275,8 @@ pub fn apply(app: &mut App, name: &str) {
             // A pirate goes after a trader near us; run until it's destroyed
             // (the kill feed shows it), watching from alongside.
             app.mode = Mode::Pilot;
+            // 30 km out from the station (out of its shelter), and we watch from there.
+            app.u.ship.position += DVec3::new(30_000.0, 0.0, 0.0);
             let (sysi, pos, vel) = (app.u.ship_system, app.u.ship.position, app.u.ship.velocity);
             app.u.spawn_settlers(2, 7);
             let n = app.u.crafts.len();
@@ -285,13 +287,16 @@ pub fn apply(app: &mut App, name: &str) {
                 c.ship.position = pos + DVec3::new(-2_000.0 + 5_000.0 * k as f64, 1_500.0, -3_000.0);
                 c.ship.velocity = vel;
                 c.avionics.pirate = k == 0;
+                c.trader = k == 1;
+                let number = c.name.split(' ').next_back().unwrap_or("").to_string();
+                c.name = format!("{} {number}", if k == 0 { "Pirate" } else { "Trader" });
                 c.avionics.route.active = false;
                 c.avionics.route.dwell_until = None;
             }
-            let kills = app.u.kills.len();
+            // Mid-fight: the pirate aggressed, the trader's hull going.
             for _ in 0..60 * 120 {
                 app.u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-                if app.u.kills.len() > kills {
+                if app.u.crafts[n - 1].ship.hull < 0.97 {
                     break;
                 }
             }

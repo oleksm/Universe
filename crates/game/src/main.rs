@@ -450,6 +450,7 @@ impl App {
                 Event::Ship(ShipEvent::Bumped) => "HULL CONTACT!".into(),
                 Event::Ship(ShipEvent::Launched { station }) => format!("LAUNCHED FROM {station}"),
                 Event::Ship(ShipEvent::Collided { with, speed }) => format!("COLLISION WITH {} AT {speed:.1} M/S", self.u.ship_name(with)),
+                Event::Ship(ShipEvent::Aggressed { .. }) => "AGGRESSION - YOU FIRED ON AN INNOCENT SHIP\nYOU ARE FAIR GAME FOR 10 MINUTES".into(),
                 Event::Ship(ShipEvent::WeaponsArming) => "COMBAT MODE - WEAPONS ARMING".into(),
                 Event::Ship(ShipEvent::WeaponsHot) => "WEAPONS HOT".into(),
                 Event::Ship(ShipEvent::WeaponsSafe) => "WEAPONS SAFE".into(),

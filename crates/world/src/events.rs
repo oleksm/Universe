@@ -15,6 +15,8 @@ pub enum ShipEvent {
     Bumped,
     /// Destroyed, by hitting `body` (or by weapons fire: "GUNFIRE", "LASER FIRE").
     Crashed { body: String },
+    /// Opened fire on a ship that wasn't fair game: aggressed until world time `until`.
+    Aggressed { until: f64 },
     /// Ran into ship `with`, closing at `speed` (m/s).
     Collided { with: usize, speed: f64 },
     /// Combat mode: the master arm went on (weapons priming), the weapons

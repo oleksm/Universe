@@ -88,6 +88,9 @@ pub struct Impact {
     pub laser: bool,
 }
 
+/// How long a ship stays aggressed after hitting one that wasn't (game s): 10 minutes.
+pub const AGGRESSION: f64 = 600.0;
+
 /// Seconds from the master arm going on to the weapons being hot.
 pub const ARM_TIME: f64 = 2.0;
 
@@ -279,10 +282,21 @@ impl World {
             self.beams.push(Beam { system, owner, from, to, hit });
         }
 
+        let now = self.time;
         for (id, joules, impulse, by, cause) in hits {
-            if let Some(&i) = index.get(&id) {
-                let a = &mut ships[i];
-                damage::hit(a.ship, joules, impulse, by, cause, a.events);
+            let Some(&i) = index.get(&id) else { continue };
+            // Opening fire on a ship that isn't fair game makes the shooter fair game.
+            let lawful = ships[i].ship.aggressed(now);
+            let a = &mut ships[i];
+            damage::hit(a.ship, joules, impulse, by, cause, a.events);
+            if !lawful
+                && let Some(&s) = index.get(&by)
+            {
+                let shooter = &mut ships[s];
+                if !shooter.ship.aggressed(now) {
+                    shooter.events.push(ShipEvent::Aggressed { until: now + AGGRESSION });
+                }
+                shooter.ship.aggressed_until = now + AGGRESSION;
             }
         }
     }
@@ -398,6 +412,25 @@ mod tests {
             frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 1.0 / 60.0);
         }
         assert!(eb.iter().any(|e| matches!(e, ShipEvent::Hit { .. })), "slugs left: {:?}", world.slugs.first().map(|s| s.projectile.position - b.position));
+    }
+
+    #[test]
+    fn opening_fire_aggresses_the_shooter_unless_the_target_is_fair_game() {
+        let (mut world, mut a, mut b, sys) = duel(1_000.0);
+        let (mut ea, mut eb) = (Vec::new(), Vec::new());
+        a.triggers.laser = true;
+        frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
+        assert!(a.aggressed(world.time) && !b.aggressed(world.time), "a opened fire on b");
+        assert!((a.aggressed_until - world.time - AGGRESSION).abs() < 0.2);
+        assert!(ea.iter().any(|e| matches!(e, ShipEvent::Aggressed { .. })));
+        // b fires back at a, who is fair game: b stays lawful.
+        a.triggers.laser = false;
+        b.armed = true;
+        b.orientation = DQuat::from_rotation_y(std::f64::consts::PI);
+        b.triggers.laser = true;
+        frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
+        assert!(!b.aggressed(world.time), "shooting the aggressor is no crime");
+        assert!(a.hull < 1.0);
     }
 
     #[test]
