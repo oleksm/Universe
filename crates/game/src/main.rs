@@ -102,8 +102,8 @@ pub struct App {
 impl App {
     fn new() -> Self {
         let mut u = Universe::new(SEED);
-        // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 50).
-        let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(50);
+        // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 10,000).
+        let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(10_000);
         u.spawn_settlers(settlers, SEED);
         let system = u.ship_system();
         let origin = u.ship_system;
