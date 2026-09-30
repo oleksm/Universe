@@ -3,20 +3,20 @@ use std::rc::Rc;
 
 use glam::{DQuat, DVec3};
 use serde::{Deserialize, Serialize};
+use universe_physics::integrate::FINE_STEP;
+use universe_physics::{integrate, segment_distance, Contact, Driver, Ephemeris, Fact, Feature, Relative, Response, RigidBody, Span, Weld};
 
-use crate::docking::{self, Contact, DockingStatus, StationFrame};
+use crate::docking::{self, DockingStatus, StationFrame};
 use crate::landing::{self, LandingStatus, PadFrame};
 use crate::galaxy::{Galaxy, StarClass, GALAXY_STARS};
-use crate::gate::{self, Crossing, GateFrame};
+use crate::gate::{self, GateFrame};
 use crate::names::star_name;
 use crate::route::{self, Route, Stop};
 use crate::rng::Rng;
 use crate::ship::{self, upright, Clearance, Controls, NavTarget, Phase, Ship, ShipState};
-use crate::system::{BodyKind, Ephemeris, StarSystem};
+use crate::system::{BodyKind, StarSystem};
 use crate::units::{SUN_RADIUS, LIGHT_YEAR};
 
-/// Upper bound on integration substeps per frame; beyond this, time warp is limited.
-const MAX_SUBSTEPS: u32 = 2000;
 /// Neighbouring stars checked for hyperdrive obstacles and system hand-over.
 const NEIGHBOURS: usize = 24;
 /// Hyperdrive drops out this close to a targeted station (m).
@@ -305,7 +305,7 @@ impl Universe {
         sys.positions(self.time, &mut self.positions);
         let pos = self.positions[station];
         let vel = sys.velocity(station, self.time);
-        let parent = sys.bodies[station].parent.unwrap_or(0);
+        let parent = sys.bodies[station].rail.parent.unwrap_or(0);
         let rel_vel = vel - sys.velocity(parent, self.time);
         let prograde = rel_vel.normalize();
         let radial = (pos - self.positions[parent]).normalize();
@@ -433,7 +433,7 @@ impl Universe {
             NavTarget::Station(_) => docking::CLEARANCE_RANGE,
             NavTarget::Spaceport(p) => {
                 let sys = self.ship_system();
-                sys.bodies[sys.spaceports[p].body].radius * landing::CLEARANCE_RADII
+                sys.bodies[sys.spaceports[p].body].rail.radius * landing::CLEARANCE_RADII
             }
             NavTarget::Gate(_) => gate::CLEARANCE_RANGE,
         }
@@ -670,10 +670,9 @@ impl Universe {
                 (sp.body, d * (b.surface_radius(d) + ship::SHIP_RADIUS), upright(d, d.any_orthonormal_vector()))
             }
         };
-        let rot = sys.bodies[body].rotation(self.time);
-        ship.position = self.positions[body] + rot * local_position;
-        ship.velocity = sys.velocity(body, self.time);
-        ship.orientation = rot * local_orientation;
+        let mut rigid = ship.rigid();
+        Weld { body, local_position, local_orientation }.place(&sys.bodies, self.time, &self.positions, &mut rigid);
+        ship.set_rigid(&rigid);
         ship.state = ShipState::Landed { body, local_position, local_orientation };
         ship
     }
@@ -748,7 +747,7 @@ impl Universe {
         match target {
             NavTarget::Station(s) => s == body,
             NavTarget::Spaceport(p) => sys.spaceports.get(p).is_some_and(|sp| {
-                sp.body == body && sp.direction.angle_between(local_position.normalize()) * sys.bodies[body].radius < landing::PAD_RADIUS
+                sp.body == body && sp.direction.angle_between(local_position.normalize()) * sys.bodies[body].rail.radius < landing::PAD_RADIUS
             }),
             NavTarget::Gate(_) => false,
         }
@@ -961,17 +960,16 @@ impl Universe {
         let b = &sys.bodies[body];
         let rot = b.rotation(self.time);
         sys.positions(self.time, &mut self.positions);
-        let center = self.positions[body];
 
+        // Welded to the body: carried round with its orbit and spin.
+        let mut rigid = self.ship.rigid();
+        Weld { body, local_position, local_orientation }.place(&sys.bodies, self.time, &self.positions, &mut rigid);
+        self.ship.set_rigid(&rigid);
         // Allow turning in place on the pad.
-        self.ship.orientation = rot * local_orientation;
         self.ship.steer(controls, real_dt);
         let local_orientation = rot.inverse() * self.ship.orientation;
-
-        let offset = rot * local_position;
-        self.ship.position = center + offset;
-        self.ship.velocity = sys.velocity(body, self.time) + b.angular_velocity().cross(offset);
         self.ship.state = ShipState::Landed { body, local_position, local_orientation };
+        let offset = rot * local_position;
 
         if b.kind == BodyKind::Station {
             if self.ship.throttle > 0.05 || self.ship.rcs.length() > 0.1 {
@@ -1010,7 +1008,7 @@ impl Universe {
                     target: at,
                     arrive: HYPER_ARRIVE_STATION,
                     aim: at,
-                    body: body.parent.unwrap_or(0),
+                    body: body.rail.parent.unwrap_or(0),
                     velocity: sys.velocity(b, self.time),
                     frame_velocity: sys.velocity(b, self.time),
                     name: body.name.clone(),
@@ -1023,7 +1021,7 @@ impl Universe {
                     target: at,
                     arrive: HYPER_ARRIVE_STATION,
                     aim: at,
-                    body: body.parent.unwrap_or(0),
+                    body: body.rail.parent.unwrap_or(0),
                     velocity: sys.velocity(b, self.time),
                     frame_velocity: sys.velocity(b, self.time),
                     name: body.name.clone(),
@@ -1071,9 +1069,9 @@ impl Universe {
         // Nearest surface: (clearance, radius, center, body index or None for other stars).
         let mut nearest = (f64::INFINITY, 0.0, DVec3::ZERO, None);
         for (i, (b, &bp)) in sys.bodies.iter().zip(&self.positions).enumerate() {
-            let d = bp.distance(p) - b.radius;
+            let d = bp.distance(p) - b.rail.radius;
             if !b.kind.artificial() && d < nearest.0 {
-                nearest = (d, b.radius, bp, Some(i));
+                nearest = (d, b.rail.radius, bp, Some(i));
             }
         }
         for &n in &self.neighbours {
@@ -1104,8 +1102,8 @@ impl Universe {
                             continue;
                         }
                         let c = self.positions[i];
-                        let margin = if i == a.body { 0.5 * HYPER_PORT_ALTITUDE } else { 0.1 * b.radius };
-                        if docking::segment_distance(p, to, c) < b.radius + margin {
+                        let margin = if i == a.body { 0.5 * HYPER_PORT_ALTITUDE } else { 0.1 * b.rail.radius };
+                        if segment_distance(p, to, c) < b.rail.radius + margin {
                             let along = ((c - p).dot(seg) / len2).clamp(0.0, 1.0);
                             if best.is_none_or(|(t, _)| along < t) {
                                 best = Some((along, i));
@@ -1121,7 +1119,7 @@ impl Universe {
                 let way_dir = match first_blocker(a.aim) {
                     None => (a.aim - p).normalize(),
                     Some(i) => {
-                        let (c, r) = (self.positions[i], sys.bodies[i].radius);
+                        let (c, r) = (self.positions[i], sys.bodies[i].rail.radius);
                         let from = (p - c).normalize();
                         let to = (a.aim - c).normalize();
                         let axis = from.cross(to).try_normalize().unwrap_or_else(|| from.any_orthonormal_vector());
@@ -1151,7 +1149,7 @@ impl Universe {
         let is_star = body.is_none_or(|i| sys.bodies[i].kind == BodyKind::Star);
         let margin = if is_star { 3.0 * radius } else { HYPER_PLANET_MARGIN.max(0.1 * radius) };
         let approach_clear = aim.as_ref().is_some_and(|a| {
-            Some(a.body) == body && docking::segment_distance(p, a.target + (a.target - center).normalize() * 1000.0, center) > radius
+            Some(a.body) == body && segment_distance(p, a.target + (a.target - center).normalize() * 1000.0, center) > radius
         });
         // (The hyperdrive autopilot steers around obstacles itself.)
         if !self.ship.hyper_autopilot && clearance < margin && along > 0.0 && miss < 1.5 * radius && !approach_clear {
@@ -1183,156 +1181,70 @@ impl Universe {
     }
 
     fn flight_step(&mut self, sys: &StarSystem, dt: f64) -> StepResult {
-        let mut t = self.time;
         // For short frames, snapshot the bodies once and extrapolate for each
         // substep instead of re-solving every orbit (see `Ephemeris`).
-        let ephemeris = (dt <= Ephemeris::SPAN).then(|| self.ephemeris(sys, t));
-        let place = |t: f64, out: &mut Vec<DVec3>| match &ephemeris {
-            Some(e) => e.positions(t, out),
-            None => sys.positions(t, out),
-        };
-        place(t, &mut self.positions);
-        let (mut pos, mut vel) = (self.ship.position, self.ship.velocity);
-        let mut remaining = dt;
-        let mut steps = 0;
-        let mut limited = false;
-        // Near a station (or docking), take small steps so contact and control are precise.
-        let near_station = sys.bodies.iter().zip(&self.positions).any(|(b, p)| b.kind.artificial() && p.distance(pos) < 30_000.0);
-        let fine = near_station || self.ship.clearance.is_some() || self.ship.rcs != DVec3::ZERO;
-
-        while remaining > 1e-9 {
-            if steps >= MAX_SUBSTEPS {
-                limited = true;
-                break;
-            }
-            let dom = sys.dominant(pos, &self.positions);
-            let r = pos.distance(self.positions[dom]);
-            let mut h = (0.01 * (r * r * r / sys.bodies[dom].mu).sqrt()).clamp(0.01, 3600.0);
-            if fine {
-                h = h.min(0.05);
-            }
-            let h = h.min(remaining);
-
-            if let Some(c) = self.ship.clearance.filter(|c| c.autopilot) {
-                self.ship.position = pos;
-                self.ship.velocity = vel;
-                let cmd = match c.target {
-                    NavTarget::Station(station) => {
-                        let frame = StationFrame::new(sys, station, t, &self.positions);
-                        docking::autopilot(&frame, &self.ship, c.phase)
-                    }
-                    NavTarget::Spaceport(port) => {
-                        let pad = PadFrame::new(sys, port, t, &self.positions);
-                        landing::autopilot(&pad, &self.ship, sys.gravity(pos, &self.positions), c.phase)
-                    }
-                    NavTarget::Gate(g) => {
-                        let frame = GateFrame::new(sys, g, t, &self.positions);
-                        gate::autopilot(&frame, &self.ship, c.phase)
-                    }
-                };
-                if cmd.phase != c.phase {
-                    self.ship.clearance = Some(Clearance { phase: cmd.phase, ..c });
-                }
-                self.ship.throttle = cmd.throttle;
-                self.ship.rcs = cmd.rcs;
-                self.ship.steer(&cmd.controls, h);
-            }
-            // Acceleration = thrust / current mass.
-            let thrust = self.ship.forward() * (self.ship.main_accel() * self.ship.throttle)
-                + self.ship.orientation * self.ship.thruster_accel(self.ship.rcs);
-
-            // Leapfrog (kick-drift-kick): stable for long orbits.
-            let prev = pos;
-            vel += (sys.gravity(pos, &self.positions) + thrust) * (h * 0.5);
-            pos += vel * h;
-            t += h;
-            place(t, &mut self.positions);
-            vel += (sys.gravity(pos, &self.positions) + thrust) * (h * 0.5);
-            remaining -= h;
-            steps += 1;
-
-            if let Some(true) = self.gate_crossing(sys, prev, pos, vel, t, h) {
-                return StepResult { simulated: dt - remaining, warp_limited: limited };
-            }
-            if let Some(hit) = self.collision(sys, pos, t) {
-                self.ship.position = pos;
-                self.ship.velocity = vel;
-                self.time = t;
-                if sys.bodies[hit].kind == BodyKind::Station {
-                    let frame = StationFrame::new(sys, hit, t, &self.positions);
-                    match docking::contact(&frame, pos, vel, self.ship.orientation) {
-                        Contact::Clear => continue,
-                        Contact::Bump(normal) => {
-                            // Bounce off gently and keep flying.
-                            let surface = frame.velocity_at(pos);
-                            let rel = vel - surface;
-                            let into = rel.dot(normal).min(0.0);
-                            vel = surface + rel - normal * (1.4 * into) + normal * 0.5;
-                            pos += normal * 2.0;
-                            self.events.push(Event::Bumped);
-                            continue;
-                        }
-                        Contact::Docked => self.dock(sys, hit, &frame),
-                        Contact::Crash => self.crash(&sys.bodies[hit].name),
-                    }
-                } else {
-                    self.touch_down(sys, hit, vel, t);
-                }
-                return StepResult { simulated: dt - remaining, warp_limited: limited };
-            }
+        let ephemeris = (dt <= Ephemeris::SPAN).then(|| self.ephemeris(sys, self.time));
+        // Cleared (or on the thrusters), take small steps so control is precise.
+        // (The kernel does the same near any station or gate, for contact.)
+        let fine = self.ship.clearance.is_some() || self.ship.rcs != DVec3::ZERO;
+        let span = Span { t: self.time, dt, max_h: if fine { FINE_STEP } else { f64::INFINITY } };
+        let mut rigid = self.ship.rigid();
+        let mut pilot = Pilot { sys, ship: &mut self.ship, events: &mut self.events };
+        let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut self.positions, &mut rigid, span, &mut pilot);
+        self.ship.set_rigid(&rigid);
+        self.time = out.time;
+        if let Some(fact) = out.fact {
+            self.react(sys, fact);
         }
-        self.ship.position = pos;
-        self.ship.velocity = vel;
-        self.time = t;
-        StepResult { simulated: dt - remaining, warp_limited: limited }
+        StepResult { simulated: out.simulated, warp_limited: out.limited }
     }
 
-    /// Check every nearby gate for a pass through its ring (start a transit)
-    /// or a hit on its structure (crash). Returns Some(true) if the flight step ends.
-    fn gate_crossing(&mut self, sys: &StarSystem, prev: DVec3, pos: DVec3, vel: DVec3, t: f64, h: f64) -> Option<bool> {
-        for (i, b) in sys.bodies.iter().enumerate() {
-            if b.kind != BodyKind::Gate || self.positions[i].distance(pos) > gate::GATE_RADIUS * 2.0 {
-                continue;
-            }
-            let frame = GateFrame::new(sys, i, t, &self.positions);
-            match gate::crossing(&frame, prev, pos, h) {
-                Crossing::None => continue,
-                Crossing::Hit => {
-                    self.ship.position = pos;
-                    self.time = t;
-                    self.crash(&b.name);
-                    return Some(true);
-                }
-                Crossing::Through => {
-                    self.ship.position = pos;
-                    self.time = t;
-                    let rel = vel - frame.velocity;
-                    if rel.length() > gate::MAX_TRANSIT_SPEED {
-                        self.events.push(Event::GateTooFast { speed: rel.length() });
-                        self.crash(&b.name);
-                        return Some(true);
+    /// A flight step stopped on a physical fact: what it means for the ship.
+    fn react(&mut self, sys: &StarSystem, fact: Fact) {
+        match fact {
+            Fact::Trigger { body, .. } => self.enter_gate(sys, body),
+            Fact::Contact(c) => match c.feature {
+                Feature::Surface { .. } => self.touch_down(sys, &c),
+                Feature::Hull | Feature::CutOut(_) => {
+                    // The station: its docking slot, or (too fast for a bump) its hull.
+                    let frame = StationFrame::new(sys, c.body, self.time, &self.positions);
+                    if docking::docks(&c, frame.roll_error(self.ship.orientation)) {
+                        self.dock(sys, c.body, &frame);
+                    } else {
+                        self.crash(&sys.bodies[c.body].name);
                     }
-                    let local = frame.local(pos);
-                    let to = b.link.unwrap_or(self.ship_system);
-                    self.ship.state = ShipState::Transit {
-                        to,
-                        from: self.ship_system,
-                        remaining: gate::TRANSIT_TIME,
-                        local_velocity: frame.rotation.inverse() * rel,
-                        local_offset: DVec3::new(local.x, 0.0, local.z),
-                        local_orientation: frame.rotation.inverse() * self.ship.orientation,
-                    };
-                    self.ship.velocity = vel;
-                    self.ship.clearance = None;
-                    self.ship.nav_target = None;
-                    self.ship.rcs = DVec3::ZERO;
-                    self.ship.throttle = 0.0;
-                    self.events.push(Event::GateEntered { to: star_name(self.galaxy.stars[to].seed) });
-                    return Some(true);
                 }
-            }
+                Feature::Ring => self.crash(&sys.bodies[c.body].name),
+            },
         }
-        None
+    }
+
+    /// Through a gate's opening: start the transit to the linked system,
+    /// keeping the motion relative to the gate, unless going too fast.
+    fn enter_gate(&mut self, sys: &StarSystem, gate: usize) {
+        let b = &sys.bodies[gate];
+        let frame = GateFrame::new(sys, gate, self.time, &self.positions);
+        let rel = self.ship.velocity - frame.velocity;
+        if rel.length() > gate::MAX_TRANSIT_SPEED {
+            self.events.push(Event::GateTooFast { speed: rel.length() });
+            self.crash(&b.name);
+            return;
+        }
+        let local = Relative::of(&frame.frame(), &self.ship.rigid());
+        let to = b.link.unwrap_or(self.ship_system);
+        self.ship.state = ShipState::Transit {
+            to,
+            from: self.ship_system,
+            remaining: gate::TRANSIT_TIME,
+            local_velocity: local.velocity,
+            local_offset: DVec3::new(local.position.x, 0.0, local.position.z),
+            local_orientation: local.orientation,
+        };
+        self.ship.clearance = None;
+        self.ship.nav_target = None;
+        self.ship.rcs = DVec3::ZERO;
+        self.ship.throttle = 0.0;
+        self.events.push(Event::GateEntered { to: star_name(self.galaxy.stars[to].seed) });
     }
 
     /// Come out of the gate in system `to` that leads back to `from`, with the
@@ -1350,28 +1262,14 @@ impl Universe {
         let frame = GateFrame::new(&sys, g, self.time, &self.positions);
         let out = if local_velocity.y >= 0.0 { 1.0 } else { -1.0 };
         let clear = gate::RING_TUBE + ship::SHIP_RADIUS + 50.0;
-        self.ship.position = frame.center + frame.rotation * (local_offset + DVec3::Y * out * clear);
-        self.ship.velocity = frame.velocity + frame.rotation * local_velocity;
-        self.ship.orientation = frame.rotation * local_orientation;
-        self.ship.angular_velocity = DVec3::ZERO;
+        // Relocated to this gate's frame, just clear of the ring on the far side.
+        let arrival = Relative { position: local_offset + DVec3::Y * out * clear, velocity: local_velocity, orientation: local_orientation };
+        let mut rigid = self.ship.rigid();
+        arrival.place(&frame.frame(), &mut rigid);
+        rigid.angular_velocity = DVec3::ZERO;
+        self.ship.set_rigid(&rigid);
         self.ship.state = ShipState::Flying;
         self.events.push(Event::GateArrived { system: sys.name.clone() });
-    }
-
-    /// Broad-phase: which body (if any) might the ship be touching?
-    fn collision(&self, sys: &StarSystem, pos: DVec3, t: f64) -> Option<usize> {
-        sys.bodies.iter().zip(&self.positions).position(|(b, &bp)| {
-            match b.kind {
-                BodyKind::Gate => false, // handled by gate_crossing
-                // Bounding sphere of the cuboctahedron; the exact test comes later.
-                BodyKind::Station => bp.distance(pos) < docking::STATION_SIZE * std::f64::consts::SQRT_2 + ship::SHIP_RADIUS,
-                // The terrain under us (cheap sphere test first).
-                _ => {
-                    let d = bp.distance(pos);
-                    d < b.max_radius() + ship::SHIP_RADIUS && d < b.surface_radius_at(bp, pos, t) + ship::SHIP_RADIUS
-                }
-            }
-        })
     }
 
     fn dock(&mut self, sys: &StarSystem, station: usize, frame: &StationFrame) {
@@ -1399,29 +1297,23 @@ impl Universe {
         self.events.push(Event::Crashed { body: body.to_string() });
     }
 
-    fn touch_down(&mut self, sys: &StarSystem, body: usize, vel: DVec3, t: f64) {
-        let b = &sys.bodies[body];
-        let center = self.positions[body];
-        let offset = self.ship.position - center;
-        let surface_vel = sys.velocity(body, t) + b.angular_velocity().cross(offset);
-        let impact = (vel - surface_vel).length();
-
-        let rot = b.rotation(t);
-        let normal = offset.normalize();
-        let local = rot.inverse() * normal;
-        let sea = b.terrain.as_ref().is_some_and(|tr| tr.is_ocean(local));
-        if sea {
+    /// Surface contact: land if it's slow enough on solid ground, else crash.
+    fn touch_down(&mut self, sys: &StarSystem, c: &Contact) {
+        let b = &sys.bodies[c.body];
+        if c.feature == (Feature::Surface { liquid: true }) {
             let name = format!("{} ocean", b.name);
             self.crash(&name);
             return;
         }
-        if b.kind.landable() && impact < ship::LAND_SPEED {
-            let orientation = upright(normal, self.ship.forward());
+        if b.kind.landable() && c.relative_velocity.length() < ship::LAND_SPEED {
+            let rot = b.rotation(self.time);
+            let local = c.local;
+            let orientation = upright(c.normal, self.ship.forward());
             self.ship.orientation = orientation;
             self.ship.throttle = 0.0;
             self.ship.angular_velocity = DVec3::ZERO;
             self.ship.state = ShipState::Landed {
-                body,
+                body: c.body,
                 local_position: local * (b.surface_radius(local) + ship::SHIP_RADIUS),
                 local_orientation: rot.inverse() * orientation,
             };
@@ -1430,7 +1322,7 @@ impl Universe {
             let port = sys
                 .spaceports
                 .iter()
-                .find(|p| p.body == body && p.direction.angle_between(local) * b.radius < landing::PAD_RADIUS);
+                .find(|p| p.body == c.body && p.direction.angle_between(local) * b.rail.radius < landing::PAD_RADIUS);
             match port {
                 Some(p) => self.events.push(Event::LandedAtPort { port: p.name.clone() }),
                 None => self.events.push(Event::Landed { body: b.name.clone(), station: false }),
@@ -1495,6 +1387,59 @@ impl Universe {
     }
 }
 
+/// Flies the ship through a flight step: its engines push (worked by the
+/// autopilot when it's on), and contacts are judged by the world's rules.
+struct Pilot<'a> {
+    sys: &'a StarSystem,
+    ship: &'a mut Ship,
+    events: &'a mut Vec<Event>,
+}
+
+impl Driver for Pilot<'_> {
+    fn applied(&mut self, body: &mut RigidBody, t: f64, h: f64, positions: &[DVec3]) -> DVec3 {
+        let (sys, ship) = (self.sys, &mut *self.ship);
+        if let Some(c) = ship.clearance.filter(|c| c.autopilot) {
+            ship.position = body.position;
+            ship.velocity = body.velocity;
+            let cmd = match c.target {
+                NavTarget::Station(station) => {
+                    let frame = StationFrame::new(sys, station, t, positions);
+                    docking::autopilot(&frame, ship, c.phase)
+                }
+                NavTarget::Spaceport(port) => {
+                    let pad = PadFrame::new(sys, port, t, positions);
+                    landing::autopilot(&pad, ship, sys.gravity(body.position, positions), c.phase)
+                }
+                NavTarget::Gate(g) => {
+                    let frame = GateFrame::new(sys, g, t, positions);
+                    gate::autopilot(&frame, ship, c.phase)
+                }
+            };
+            if cmd.phase != c.phase {
+                ship.clearance = Some(Clearance { phase: cmd.phase, ..c });
+            }
+            ship.throttle = cmd.throttle;
+            ship.rcs = cmd.rcs;
+            ship.steer(&cmd.controls, h);
+            body.orientation = ship.orientation;
+            body.angular_velocity = ship.angular_velocity;
+        }
+        // Acceleration = thrust / current mass.
+        ship.forward() * (ship.main_accel() * ship.throttle) + ship.orientation * ship.thruster_accel(ship.rcs)
+    }
+
+    fn respond(&mut self, fact: &Fact, _: &RigidBody) -> Response {
+        match fact {
+            // A gentle scrape on a station's hull: bounce off and keep flying.
+            Fact::Contact(c) if docking::bounces(c) => {
+                self.events.push(Event::Bumped);
+                Response::Bounce { restitution: 0.4, separation: 0.5, push: 2.0 }
+            }
+            _ => Response::Stop,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1506,7 +1451,7 @@ mod tests {
         assert!(sys.station().is_some());
         assert!(sys.planet_count() >= 4);
         for (i, b) in sys.bodies.iter().enumerate() {
-            if let Some(p) = b.parent {
+            if let Some(p) = b.rail.parent {
                 assert!(p < i, "parent must precede child");
             }
         }
@@ -1517,7 +1462,7 @@ mod tests {
         let mut u = Universe::new(42);
         let sys = u.ship_system();
         let station = sys.station().unwrap();
-        let planet = sys.bodies[station].parent.unwrap();
+        let planet = sys.bodies[station].rail.parent.unwrap();
         let mut pos = Vec::new();
         sys.positions(u.time, &mut pos);
         let r0 = u.ship.position.distance(pos[planet]);
@@ -1551,7 +1496,7 @@ mod tests {
         assert!(!u.ship.hyperdrive, "should have dropped out on arrival");
         assert_eq!(u.ship.throttle, 0.0, "dropping out resets the throttle");
         assert_eq!(u.ship_system, target);
-        let star_radius = u.ship_system().bodies[0].radius;
+        let star_radius = u.ship_system().bodies[0].rail.radius;
         assert!(u.ship.position.length() > 2.0 * star_radius, "dropped out too close to the star");
         assert!(u.ship.is_flying());
     }
@@ -1653,7 +1598,7 @@ mod tests {
     /// Autopilot to the home planet's spaceport; returns simulated seconds to touchdown.
     fn autoland(mut u: Universe, warp: f64) -> f64 {
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).expect("home planet has a spaceport");
         u.set_nav_target(Some(NavTarget::Spaceport(port)));
         u.toggle_autopilot();
@@ -1669,7 +1614,7 @@ mod tests {
                 let mut pos = Vec::new();
                 sys.positions(u.time, &mut pos);
                 let dom = sys.dominant(u.ship.position, &pos);
-                let alt = u.ship.position.distance(pos[dom]) - sys.bodies[dom].radius;
+                let alt = u.ship.position.distance(pos[dom]) - sys.bodies[dom].rail.radius;
                 let pad = PadFrame::new(&sys, port, u.time, &pos);
                 eprintln!("  t+{:>5.0}s {e:?}: near {} alt {:.0} km, pad {:.0} km", u.time - start, sys.bodies[dom].name, alt / 1000.0, pad.pad.distance(u.ship.position) / 1000.0);
             }
@@ -1726,7 +1671,7 @@ mod tests {
     fn autopilot_lands_from_far_side_of_planet() {
         let mut u = Universe::new(42);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         let mut pos = Vec::new();
         sys.positions(u.time, &mut pos);
@@ -1742,7 +1687,7 @@ mod tests {
     fn autopilot_lands_from_high_above() {
         let mut u = Universe::new(42);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         let mut pos = Vec::new();
         sys.positions(u.time, &mut pos);
@@ -1755,14 +1700,14 @@ mod tests {
     /// A spaceport on a different planet of the home system than the one we start at.
     fn far_port(u: &mut Universe) -> usize {
         let sys = u.ship_system();
-        let home_planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
-        sys.spaceports.iter().position(|p| p.body != home_planet && sys.bodies[p.body].parent == Some(0)).expect("another planet with a port")
+        let home_planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
+        sys.spaceports.iter().position(|p| p.body != home_planet && sys.bodies[p.body].rail.parent == Some(0)).expect("another planet with a port")
     }
 
     /// A port on another planet whose pad faces the ship (a straight line to it is clear).
     fn facing_port(u: &mut Universe) -> usize {
         let sys = u.ship_system();
-        let home_planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let home_planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let mut pos = Vec::new();
         sys.positions(u.time, &mut pos);
         (0..sys.spaceports.len())
@@ -1843,7 +1788,7 @@ mod tests {
         u.ship.throttle = 1.0;
         hyper_until_arrival(&mut u, port, false);
         sys.positions(u.time, &mut pos);
-        let alt = u.ship.position.distance(pos[body]) - sys.bodies[body].radius;
+        let alt = u.ship.position.distance(pos[body]) - sys.bodies[body].rail.radius;
         eprintln!("untargeted: dropped out at altitude {:.0} km", alt / 1000.0);
         assert!(alt > 0.5 * HYPER_PLANET_MARGIN && alt < 3.0 * HYPER_PLANET_MARGIN, "altitude {alt}");
     }
@@ -1853,7 +1798,7 @@ mod tests {
         // Landing from orbit.
         let mut u = Universe::new(42);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         u.set_nav_target(Some(NavTarget::Spaceport(port)));
         assert!(u.request_clearance());
@@ -1893,7 +1838,7 @@ mod tests {
             let mut u = Universe::new(1984);
             let sys = u.ship_system();
             let station = sys.station().unwrap();
-            let planet = sys.bodies[station].parent.unwrap();
+            let planet = sys.bodies[station].rail.parent.unwrap();
             // Plans are drawn relative to the target as it is when planned:
             // this is that reference body, and its spin (zero for stations).
             let (body, omega) = if label == "landing" {
@@ -2173,7 +2118,7 @@ mod tests {
         let home = u.home_system;
         let sys = u.ship_system();
         let station = sys.station().unwrap();
-        let planet = sys.bodies[station].parent.unwrap();
+        let planet = sys.bodies[station].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         let (next, _) = u.gate_links_of(home)[0].clone();
         let there = u.system(next);
@@ -2264,7 +2209,7 @@ mod tests {
                     u.events.clear();
                 }
                 let b = &sys.bodies[sp.body];
-                eprintln!("{} on {} (R {:.0} km, g {:.2}): {outcome}", sp.name, b.name, b.radius / 1000.0, b.mu / (b.radius * b.radius));
+                eprintln!("{} on {} (R {:.0} km, g {:.2}): {outcome}", sp.name, b.name, b.rail.radius / 1000.0, b.rail.mu / (b.rail.radius * b.rail.radius));
             }
         }
     }
@@ -2299,15 +2244,6 @@ mod tests {
         assert_eq!(restored.time, u.time);
         assert_eq!(restored.ship.position, u.ship.position);
         assert_eq!(restored.ship_system, u.ship_system);
-    }
-
-    #[test]
-    fn orbit_state_matches_numeric_derivative() {
-        let o = crate::Orbit::new(1.0e9, 0.3, 0.2, 1.0, 2.0, 0.5, 1.0e17);
-        let (p0, v) = o.state(1000.0);
-        let p1 = o.position(1000.001);
-        let numeric = (p1 - p0) / 0.001;
-        assert!((numeric - v).length() / v.length() < 1e-4);
     }
 }
 
@@ -2344,7 +2280,7 @@ mod probe {
         per("gravity sum at a point", 100_000, &mut || {
             black_box(sys.gravity(black_box(p), &pos));
         });
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let body = &sys.bodies[planet];
         let terrain = body.terrain.as_ref().unwrap();
         let mut d = DVec3::new(0.3, 0.4, 0.5).normalize();
@@ -2442,7 +2378,7 @@ mod probe {
 
         let mut u = Universe::new(1984);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         u.set_nav_target(Some(NavTarget::Spaceport(port)));
         run("landing from orbit", u, &landed);
@@ -2515,7 +2451,7 @@ mod probe {
     fn eta_counts_down_smoothly_landing() {
         let mut u = Universe::new(1984);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         u.set_nav_target(Some(NavTarget::Spaceport(port)));
         // Warp 20 to keep the run short; jumps are measured in real seconds at that rate.
@@ -2528,7 +2464,7 @@ mod probe {
     fn debug_hyper_path() {
         let mut u = Universe::new(42);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         u.set_nav_target(Some(NavTarget::Spaceport(port)));
         u.toggle_autopilot();
@@ -2538,7 +2474,7 @@ mod probe {
                 let mut pos = Vec::new();
                 sys.positions(u.time, &mut pos);
                 let c = pos[planet];
-                let r = sys.bodies[planet].radius;
+                let r = sys.bodies[planet].rail.radius;
                 let alt = |x: DVec3| (x.distance(c) - r) / 1000.0;
                 let way = u.debug_way.unwrap_or(DVec3::ZERO);
                 let pad = PadFrame::new(&sys, port, u.time, &pos);
@@ -2548,7 +2484,7 @@ mod probe {
                 break;
             }
         }
-        eprintln!("R = {:.0} km", sys.bodies[planet].radius / 1000.0);
+        eprintln!("R = {:.0} km", sys.bodies[planet].rail.radius / 1000.0);
     }
 
     #[test]
@@ -2556,7 +2492,7 @@ mod probe {
     fn debug_landing_start() {
         let mut u = Universe::new(1984);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         u.set_nav_target(Some(NavTarget::Spaceport(port)));
         let mut pos = Vec::new();
@@ -2583,7 +2519,7 @@ mod probe {
     fn print_game_landing_plan() {
         let mut u = Universe::new(1984);
         let sys = u.ship_system();
-        let planet = sys.bodies[sys.station().unwrap()].parent.unwrap();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
         let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
         u.set_nav_target(Some(NavTarget::Spaceport(port)));
         assert!(u.request_clearance());

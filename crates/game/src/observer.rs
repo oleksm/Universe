@@ -46,7 +46,7 @@ impl Observer {
 
     pub fn focus_radius(&self, u: &mut Universe) -> f64 {
         match self.focus {
-            Focus::Body { system, body } => u.system(system).bodies[body].radius,
+            Focus::Body { system, body } => u.system(system).bodies[body].rail.radius,
             Focus::Ship | Focus::Craft(_) => SHIP_SIZE,
         }
     }
@@ -77,7 +77,7 @@ impl Observer {
             let step = if input.pressed(KeyCode::BracketRight) { 1 } else { n - 1 };
             let body = (current_body + step) % n;
             self.focus = Focus::Body { system: origin, body };
-            self.distance = sys.bodies[body].radius * 5.0;
+            self.distance = sys.bodies[body].rail.radius * 5.0;
             self.star_cycle = None;
         }
         if input.pressed(KeyCode::KeyN) || input.pressed(KeyCode::KeyB) {

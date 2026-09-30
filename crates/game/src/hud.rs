@@ -131,9 +131,9 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
         Focus::Body { body, .. } => {
             let b = &app.view.system.bodies[body];
             lines.push((format!("FOCUS {}  {}", b.name.to_uppercase(), b.kind.label().to_uppercase()), HUD));
-            let dist = app.view.positions[body].distance(cam) - b.radius;
-            lines.push((format!("RADIUS {}  DIST {}", fmt::distance(b.radius), fmt::distance(dist)), DIM));
-            if let Some(o) = &b.orbit {
+            let dist = app.view.positions[body].distance(cam) - b.rail.radius;
+            lines.push((format!("RADIUS {}  DIST {}", fmt::distance(b.rail.radius), fmt::distance(dist)), DIM));
+            if let Some(o) = &b.rail.orbit {
                 lines.push((format!("ORBIT {}  PERIOD {}", fmt::distance(o.semi_major_axis), fmt::duration(o.period())), DIM));
             }
             if body == 0 && app.view.origin != app.u.ship_system {
@@ -153,7 +153,7 @@ fn ship_readout(app: &App, lines: &mut Vec<(String, Color)>) {
         let altitude = offset.length() - b.surface_radius_at(app.view.positions[r], app.view.ship_pos, app.u.time);
         let mut rel_vel = ship.velocity - app.view.system.velocity(r, app.u.time);
         // Close to the ground, speed relative to the rotating surface is what matters.
-        let surface = altitude < 0.05 * b.radius;
+        let surface = altitude < 0.05 * b.rail.radius;
         if surface {
             rel_vel -= b.angular_velocity().cross(offset);
         }
@@ -183,7 +183,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         ShipState::Landed { body, local_position, .. } => {
             let b = &app.view.system.bodies[*body];
             let port = app.view.system.spaceports.iter().find(|p| {
-                p.body == *body && p.direction.angle_between(local_position.normalize()) * b.radius < universe_sim::landing::PAD_RADIUS
+                p.body == *body && p.direction.angle_between(local_position.normalize()) * b.rail.radius < universe_sim::landing::PAD_RADIUS
             });
             if let Some(p) = port {
                 lines.push((format!("LANDED AT {} ({})", p.name.to_uppercase(), b.name.to_uppercase()), AMBER));

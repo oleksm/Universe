@@ -22,17 +22,17 @@ pub fn apply(app: &mut App, name: &str) {
         app.observer.distance = distance;
         app.observer.pitch = pitch;
     };
-    let outer = sys.bodies.iter().filter_map(|b| b.orbit.as_ref().filter(|_| b.parent == Some(0))).map(|o| o.apoapsis()).fold(0.0, f64::max);
+    let outer = sys.bodies.iter().filter_map(|b| b.rail.orbit.as_ref().filter(|_| b.rail.parent == Some(0))).map(|o| o.apoapsis()).fold(0.0, f64::max);
     let station = sys.station().unwrap_or(0);
-    let planet = sys.bodies[station].parent.unwrap_or(0);
+    let planet = sys.bodies[station].rail.parent.unwrap_or(0);
 
     match name {
         "system" => observe(app, 0, outer * 2.2, 0.6),
         "inner" => observe(app, 0, outer * 0.25, 0.45),
-        "planet" => observe(app, planet, sys.bodies[planet].radius * 6.0, 0.3),
+        "planet" => observe(app, planet, sys.bodies[planet].rail.radius * 6.0, 0.3),
         "giant" => {
             let giant = sys.bodies.iter().position(|b| b.rings.is_some()).or_else(|| sys.bodies.iter().position(|b| b.kind == BodyKind::GasGiant)).unwrap_or(0);
-            observe(app, giant, sys.bodies[giant].radius * 7.0, 0.35);
+            observe(app, giant, sys.bodies[giant].rail.radius * 7.0, 0.35);
         }
         "rings" => {
             // Nearest ringed planet in the neighbourhood.
@@ -41,7 +41,7 @@ pub fn apply(app: &mut App, name: &str) {
                 if let Some(i) = s.bodies.iter().position(|b| b.rings.is_some()) {
                     app.mode = Mode::Observer;
                     app.observer.focus = Focus::Body { system: n, body: i };
-                    app.observer.distance = s.bodies[i].radius * 6.0;
+                    app.observer.distance = s.bodies[i].rail.radius * 6.0;
                     app.observer.pitch = 0.3;
                     break;
                 }
@@ -76,7 +76,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             let b = &sys.bodies[planet];
             let normal = (app.u.ship.position - positions[planet]).normalize();
-            let offset = normal * (b.radius + SHIP_RADIUS + 3.0);
+            let offset = normal * (b.rail.radius + SHIP_RADIUS + 3.0);
             app.u.ship.position = positions[planet] + offset;
             app.u.ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(offset);
             app.u.ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, normal.any_orthonormal_vector());
@@ -205,7 +205,7 @@ pub fn apply(app: &mut App, name: &str) {
         }
         "moon" => {
             let moon = sys.bodies.iter().position(|b| b.kind == BodyKind::Moon && b.terrain.is_some()).unwrap_or(planet);
-            observe(app, moon, sys.bodies[moon].radius * 2.2, 0.4);
+            observe(app, moon, sys.bodies[moon].rail.radius * 2.2, 0.4);
         }
         "routemap" => {
             app.mode = Mode::Pilot;

@@ -26,7 +26,7 @@ pub enum TerrainKind {
 
 /// What the ground is like at a point, for drawing.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Surface {
+pub enum Ground {
     Ocean,
     Lowland,
     Highland,
@@ -157,22 +157,41 @@ impl Terrain {
     }
 
     /// What the ground is like here (for colors), and its height.
-    pub fn classify(&self, dir: DVec3) -> (Surface, f64) {
+    pub fn classify(&self, dir: DVec3) -> (Ground, f64) {
         let h = self.raw_height(dir);
         if self.kind == TerrainKind::Terran && h < 0.0 {
-            return (Surface::Ocean, 0.0);
+            return (Ground::Ocean, 0.0);
         }
         let (_, inside) = self.natural(dir);
         let kind = if inside > 0.25 {
-            Surface::Crater
+            Ground::Crater
         } else if h > 0.7 * self.amplitude {
-            Surface::Peak
+            Ground::Peak
         } else if h > 0.3 * self.amplitude {
-            Surface::Highland
+            Ground::Highland
         } else {
-            Surface::Lowland
+            Ground::Lowland
         };
         (kind, h)
+    }
+}
+
+/// The physics kernel collides with the same height function.
+impl universe_physics::Surface for Terrain {
+    fn height(&self, dir: DVec3) -> f64 {
+        self.raw_height(dir)
+    }
+
+    fn surface(&self, dir: DVec3) -> f64 {
+        Terrain::surface(self, dir)
+    }
+
+    fn max_height(&self) -> f64 {
+        Terrain::max_height(self)
+    }
+
+    fn liquid(&self, dir: DVec3) -> bool {
+        self.is_ocean(dir)
     }
 }
 

@@ -1,10 +1,10 @@
 use std::f64::consts::TAU;
 
 use glam::{DQuat, DVec3};
+use universe_physics::{Collider, Ephemeris, OnRails, Orbit, RailBody, Surface};
 
 use crate::galaxy::{GalaxyStar, StarClass};
 use crate::names;
-use crate::orbit::Orbit;
 use crate::rng::Rng;
 use crate::terrain::{Terrain, TerrainKind};
 use crate::units::*;
@@ -45,6 +45,16 @@ impl BodyKind {
         !matches!(self, BodyKind::Station | BodyKind::Gate)
     }
 
+    /// Its shape, for the physics kernel: a station's hull with its docking
+    /// slot, a gate's ring, or a (terrain) surface.
+    fn collider(self) -> Collider {
+        match self {
+            BodyKind::Station => Collider::Polytope(crate::docking::hull()),
+            BodyKind::Gate => Collider::Ring(crate::gate::RING),
+            _ => Collider::Surface,
+        }
+    }
+
     /// Artificial structures: not obstacles for the hyperdrive's surface clearance.
     pub fn artificial(self) -> bool {
         matches!(self, BodyKind::Station | BodyKind::Gate)
@@ -56,49 +66,49 @@ pub struct Body {
     pub name: String,
     pub kind: BodyKind,
     pub mass: f64,
-    pub radius: f64,
-    /// Gravitational parameter G * mass.
-    pub mu: f64,
     pub color: [f32; 3],
-    pub parent: Option<usize>,
-    pub orbit: Option<Orbit>,
-    /// Sidereal rotation period, seconds.
-    pub day: f64,
-    /// Orientation of the spin axis (the body's local +Y).
-    pub tilt: DQuat,
     /// Ring inner/outer radius, if any.
     pub rings: Option<(f64, f64)>,
     /// For gates: the galaxy index of the star system it leads to.
     pub link: Option<usize>,
     /// Surface heights, for rocky planets and moons.
     pub terrain: Option<crate::terrain::Terrain>,
+    /// How it moves (parent, orbit, spin), pulls and collides: the physics kernel's part.
+    pub rail: RailBody,
+}
+
+impl OnRails for Body {
+    fn rail(&self) -> &RailBody {
+        &self.rail
+    }
+
+    fn surface(&self) -> Option<&dyn Surface> {
+        self.terrain.as_ref().map(|t| t as &dyn Surface)
+    }
 }
 
 impl Body {
     pub fn rotation(&self, t: f64) -> DQuat {
-        self.tilt * DQuat::from_rotation_y((t / self.day).fract() * TAU)
+        self.rail.rotation(t)
     }
 
     pub fn angular_velocity(&self) -> DVec3 {
-        self.tilt * DVec3::Y * (TAU / self.day)
+        self.rail.angular_velocity()
     }
 
     /// Distance from the center to the surface in a body-frame direction (m).
     pub fn surface_radius(&self, local_dir: DVec3) -> f64 {
-        self.radius + self.terrain.as_ref().map_or(0.0, |t| t.surface(local_dir))
+        universe_physics::surface_radius(self, local_dir)
     }
 
     /// Surface radius under a world-space point at time `t` (`center` = body position).
     pub fn surface_radius_at(&self, center: DVec3, p: DVec3, t: f64) -> f64 {
-        match &self.terrain {
-            Some(_) => self.surface_radius(self.rotation(t).inverse() * (p - center).normalize()),
-            None => self.radius,
-        }
+        universe_physics::surface_radius_at(self, center, p, t)
     }
 
     /// Nothing on the surface reaches higher than this (m from the center).
     pub fn max_radius(&self) -> f64 {
-        self.radius + self.terrain.as_ref().map_or(0.0, |t| t.max_height())
+        universe_physics::max_radius(self)
     }
 }
 
@@ -109,27 +119,6 @@ pub struct Spaceport {
     pub body: usize,
     /// Unit vector to the pad in the body's rotating frame.
     pub direction: DVec3,
-}
-
-/// Body states at one moment, extrapolated to nearby times with
-/// p + v·τ + ½·a·τ². Over a few seconds the error is millimetres
-/// (it grows with the cube of τ), far cheaper than re-solving every orbit.
-pub struct Ephemeris {
-    t0: f64,
-    pos: Vec<DVec3>,
-    vel: Vec<DVec3>,
-    acc: Vec<DVec3>,
-}
-
-impl Ephemeris {
-    /// Longest span it's used for (s).
-    pub const SPAN: f64 = 5.0;
-
-    pub fn positions(&self, t: f64, out: &mut Vec<DVec3>) {
-        let tau = t - self.t0;
-        out.clear();
-        out.extend(self.pos.iter().zip(&self.vel).zip(&self.acc).map(|((p, v), a)| *p + *v * tau + *a * (0.5 * tau * tau)));
-    }
 }
 
 pub struct StarSystem {
@@ -166,16 +155,20 @@ impl StarSystem {
             name: name.clone(),
             kind: BodyKind::Star,
             mass: star_mass,
-            radius: star_radius,
-            mu: star_mu,
             color: class.color(),
-            parent: None,
-            orbit: None,
-            day: rng.range(20.0, 35.0) * DAY,
-            tilt: random_tilt(&mut rng, 7.0),
             rings: None,
             link: None,
-                terrain: None,
+            terrain: None,
+            rail: RailBody {
+                parent: None,
+                orbit: None,
+                mu: star_mu,
+                attracts: BodyKind::Star.massive(),
+                radius: star_radius,
+                day: rng.range(20.0, 35.0) * DAY,
+                tilt: random_tilt(&mut rng, 7.0),
+                collider: BodyKind::Star.collider(),
+            },
         }];
 
         let planet_count = match class {
@@ -220,16 +213,20 @@ impl StarSystem {
                 name: planet_name.clone(),
                 kind,
                 mass,
-                radius,
-                mu: G * mass,
                 color,
-                parent: Some(0),
-                orbit: Some(orbit),
-                day,
-                tilt: random_tilt(&mut rng, 30.0),
                 rings,
                 link: None,
                 terrain: None,
+                rail: RailBody {
+                    parent: Some(0),
+                    orbit: Some(orbit),
+                    mu: G * mass,
+                    attracts: kind.massive(),
+                    radius,
+                    day,
+                    tilt: random_tilt(&mut rng, 30.0),
+                    collider: kind.collider(),
+                },
             });
 
             // Moons, kept well inside the planet's Hill sphere.
@@ -264,16 +261,20 @@ impl StarSystem {
                     name: format!("{planet_name} {}", names::roman(m)),
                     kind: BodyKind::Moon,
                     mass: moon_mass,
-                    radius: moon_radius,
-                    mu: G * moon_mass,
                     color: *rng.pick(&MOON_COLORS),
-                    parent: Some(planet),
-                    day: orbit.period(), // tidally locked
-                    orbit: Some(orbit),
-                    tilt: DQuat::IDENTITY,
                     rings: None,
                     link: None,
-                terrain: None,
+                    terrain: None,
+                    rail: RailBody {
+                        parent: Some(planet),
+                        mu: G * moon_mass,
+                        attracts: BodyKind::Moon.massive(),
+                        radius: moon_radius,
+                        day: orbit.period(), // tidally locked
+                        orbit: Some(orbit),
+                        tilt: DQuat::IDENTITY,
+                        collider: BodyKind::Moon.collider(),
+                    },
                 });
                 moon_a *= rng.range(1.4, 2.0);
             }
@@ -303,7 +304,7 @@ impl StarSystem {
                 BodyKind::Moon => TerrainKind::Cratered,
                 _ => continue,
             };
-            b.terrain = Some(Terrain::new(kind, b.radius, crate::rng::mix(seed, 0x7465_7272 + i as u64)));
+            b.terrain = Some(Terrain::new(kind, b.rail.radius, crate::rng::mix(seed, 0x7465_7272 + i as u64)));
         }
     }
 
@@ -314,7 +315,7 @@ impl StarSystem {
         for (i, b) in self.bodies.iter().enumerate() {
             let wanted = match b.kind {
                 BodyKind::Rocky => true,
-                BodyKind::Moon => b.radius > 800_000.0 && rng.chance(0.5),
+                BodyKind::Moon => b.rail.radius > 800_000.0 && rng.chance(0.5),
                 _ => false,
             };
             if !wanted {
@@ -340,27 +341,31 @@ impl StarSystem {
     /// planet's moons so parents still precede children.
     fn add_station(&mut self, planet: usize, rng: &mut Rng) {
         let p = &self.bodies[planet];
-        let orbit = Orbit::new(p.radius * 1.6, 0.0, rng.range(0.0, 0.3), rng.range(0.0, TAU), 0.0, rng.range(0.0, TAU), p.mu);
+        let orbit = Orbit::new(p.rail.radius * 1.6, 0.0, rng.range(0.0, 0.3), rng.range(0.0, TAU), 0.0, rng.range(0.0, TAU), p.rail.mu);
         let station = Body {
             name: format!("{} Station", p.name),
             kind: BodyKind::Station,
             mass: 1.0e9,
-            radius: 600.0,
-            mu: G * 1.0e9,
             color: [1.0, 1.0, 1.0],
-            parent: Some(planet),
-            orbit: Some(orbit),
-            day: 60.0,
-            tilt: DQuat::IDENTITY,
             rings: None,
             link: None,
-                terrain: None,
+            terrain: None,
+            rail: RailBody {
+                parent: Some(planet),
+                orbit: Some(orbit),
+                mu: G * 1.0e9,
+                attracts: BodyKind::Station.massive(),
+                radius: 600.0,
+                day: 60.0,
+                tilt: DQuat::IDENTITY,
+                collider: BodyKind::Station.collider(),
+            },
         };
-        let at = (planet + 1..self.bodies.len()).find(|&i| self.bodies[i].parent != Some(planet)).unwrap_or(self.bodies.len());
+        let at = (planet + 1..self.bodies.len()).find(|&i| self.bodies[i].rail.parent != Some(planet)).unwrap_or(self.bodies.len());
         self.bodies.insert(at, station);
         // Fix up parent indices shifted by the insertion.
         for b in &mut self.bodies[at + 1..] {
-            if let Some(parent) = &mut b.parent
+            if let Some(parent) = &mut b.rail.parent
                 && *parent >= at
             {
                 *parent += 1;
@@ -373,11 +378,11 @@ impl StarSystem {
     pub fn add_gates(&mut self, links: &[(usize, String)], seed: u64) {
         let parent = self
             .station()
-            .and_then(|s| self.bodies[s].parent)
-            .or_else(|| self.bodies.iter().position(|b| b.parent == Some(0)))
+            .and_then(|s| self.bodies[s].rail.parent)
+            .or_else(|| self.bodies.iter().position(|b| b.rail.parent == Some(0)))
             .unwrap_or(0);
-        let p_radius = self.bodies[parent].radius;
-        let p_mu = self.bodies[parent].mu;
+        let p_radius = self.bodies[parent].rail.radius;
+        let p_mu = self.bodies[parent].rail.mu;
         for (k, (dest, dest_name)) in links.iter().enumerate() {
             let mut rng = Rng::new(crate::rng::mix(seed, 0x6761_7465 + *dest as u64));
             let a = if parent == 0 { AU * rng.range(0.6, 1.4) } else { p_radius * (4.0 + 1.5 * k as f64 + rng.range(0.0, 0.5)) };
@@ -388,16 +393,20 @@ impl StarSystem {
                 name: format!("Gate to {dest_name}"),
                 kind: BodyKind::Gate,
                 mass: 1.0e10,
-                radius: crate::gate::GATE_RADIUS + crate::gate::RING_TUBE,
-                mu: G * 1.0e10,
                 color: [1.0, 0.75, 0.3],
-                parent: Some(parent),
-                orbit: Some(orbit),
-                day: 1.0e15,
-                tilt,
                 rings: None,
                 link: Some(*dest),
                 terrain: None,
+                rail: RailBody {
+                    parent: Some(parent),
+                    orbit: Some(orbit),
+                    mu: G * 1.0e10,
+                    attracts: BodyKind::Gate.massive(),
+                    radius: crate::gate::GATE_RADIUS + crate::gate::RING_TUBE,
+                    day: 1.0e15,
+                    tilt,
+                    collider: BodyKind::Gate.collider(),
+                },
             });
         }
     }
@@ -412,76 +421,32 @@ impl StarSystem {
     }
 
     pub fn planet_count(&self) -> usize {
-        self.bodies.iter().filter(|b| b.parent == Some(0)).count()
+        self.bodies.iter().filter(|b| b.rail.parent == Some(0)).count()
     }
 
     /// Positions of all bodies relative to the star at time `t`.
     pub fn positions(&self, t: f64, out: &mut Vec<DVec3>) {
-        out.clear();
-        for b in &self.bodies {
-            let p = match (b.parent, &b.orbit) {
-                (Some(parent), Some(orbit)) => out[parent] + orbit.position(t),
-                _ => DVec3::ZERO,
-            };
-            out.push(p);
-        }
+        universe_physics::positions(&self.bodies, t, out);
     }
 
     /// Exact positions, velocities and accelerations of every body at `t`, for
     /// cheap extrapolation over short spans (a frame's worth of substeps).
     pub fn ephemeris(&self, t: f64) -> Ephemeris {
-        let n = self.bodies.len();
-        let (mut pos, mut vel, mut acc) = (Vec::with_capacity(n), Vec::with_capacity(n), Vec::with_capacity(n));
-        for b in &self.bodies {
-            let (p, v, a) = match (b.parent, &b.orbit) {
-                (Some(parent), Some(orbit)) => {
-                    let (rp, rv) = orbit.state(t);
-                    // On Keplerian rails: accelerated only by the parent's gravity.
-                    let ra = -rp * (orbit.mu / rp.length().powi(3));
-                    (pos[parent] + rp, vel[parent] + rv, acc[parent] + ra)
-                }
-                _ => (DVec3::ZERO, DVec3::ZERO, DVec3::ZERO),
-            };
-            pos.push(p);
-            vel.push(v);
-            acc.push(a);
-        }
-        Ephemeris { t0: t, pos, vel, acc }
+        Ephemeris::new(&self.bodies, t)
     }
 
     /// Velocity of body `i` relative to the star.
     pub fn velocity(&self, i: usize, t: f64) -> DVec3 {
-        let b = &self.bodies[i];
-        match (b.parent, &b.orbit) {
-            (Some(parent), Some(orbit)) => self.velocity(parent, t) + orbit.state(t).1,
-            _ => DVec3::ZERO,
-        }
+        universe_physics::velocity(&self.bodies, i, t)
     }
 
     /// Gravitational acceleration at `p` given body positions.
     pub fn gravity(&self, p: DVec3, positions: &[DVec3]) -> DVec3 {
-        let mut acc = DVec3::ZERO;
-        for (b, &bp) in self.bodies.iter().zip(positions) {
-            if b.kind.massive() {
-                let d = bp - p;
-                let r2 = d.length_squared().max(1.0);
-                acc += d * (b.mu / (r2 * r2.sqrt()));
-            }
-        }
-        acc
+        universe_physics::gravity(&self.bodies, p, positions)
     }
 
     /// The body whose gravity dominates at `p` (largest mu / r^2).
     pub fn dominant(&self, p: DVec3, positions: &[DVec3]) -> usize {
-        let mut best = (0, 0.0);
-        for (i, (b, &bp)) in self.bodies.iter().zip(positions).enumerate() {
-            if b.kind.massive() {
-                let g = b.mu / bp.distance_squared(p).max(1.0);
-                if g > best.1 {
-                    best = (i, g);
-                }
-            }
-        }
-        best.0
+        universe_physics::dominant(&self.bodies, p, positions)
     }
 }

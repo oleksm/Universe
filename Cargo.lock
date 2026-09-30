@@ -2258,12 +2258,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe-physics"
+version = "0.1.0"
+dependencies = [
+ "glam",
+]
+
+[[package]]
 name = "universe-sim"
 version = "0.1.0"
 dependencies = [
  "glam",
  "serde",
  "serde_json",
+ "universe-physics",
 ]
 
 [[package]]

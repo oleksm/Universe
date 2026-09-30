@@ -118,7 +118,7 @@ fn orbits(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let cam = frame.camera.position;
     for b in &sys.bodies {
-        let (Some(parent), Some(orbit)) = (b.parent, &b.orbit) else { continue };
+        let (Some(parent), Some(orbit)) = (b.rail.parent, &b.rail.orbit) else { continue };
         let center = app.view.positions[parent];
         // Moon and station orbits only when we're near their planet.
         if parent != 0 && center.distance(cam) > orbit.semi_major_axis * 40.0 {
@@ -141,11 +141,11 @@ fn bodies(frame: &mut Frame, app: &App) {
     for (i, b) in sys.bodies.iter().enumerate() {
         let center = app.view.positions[i];
         let c = color(b.color);
-        let px = frame.projected_radius(center, b.radius);
+        let px = frame.projected_radius(center, b.rail.radius);
         let rotation = b.rotation(t).as_quat();
 
         if b.kind == BodyKind::Gate {
-            if frame.projected_radius(center, b.radius) > 0.8 {
+            if frame.projected_radius(center, b.rail.radius) > 0.8 {
                 let t = Transform { position: center, rotation, scale: 1.0 };
                 frame.model(&app.models.gate, &t, c, Color::BLACK);
             } else {
@@ -170,13 +170,13 @@ fn bodies(frame: &mut Frame, app: &App) {
         if let Some(globe) = app.globes.get(&(app.view.origin, i)) {
             // Terrain world: colored globe; near the surface, a local grid on
             // the ground (the globe drops a hair so the grid sits on top).
-            let near = cam.distance(center) - b.radius < terrain_view::near_altitude(b);
-            let scale = if near { b.radius * 0.998 } else { b.radius };
+            let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
+            let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
             frame.model_colored(globe, &Transform { position: center, rotation, scale }, 1.0, terrain_view::FILL * 0.6);
             if near {
                 terrain_view::surface_grid(frame, b, center, t);
             }
-            if frame.projected_radius(center, b.radius) > 40.0 {
+            if frame.projected_radius(center, b.rail.radius) > 40.0 {
                 terrain_view::crater_rims(frame, b, center, t);
             }
         } else {
@@ -186,17 +186,17 @@ fn bodies(frame: &mut Frame, app: &App) {
                 BodyKind::GasGiant | BodyKind::IceGiant => (&app.models.giant, c.scale(0.06)),
                 _ => (&app.models.moon, c.scale(0.05)),
             };
-            frame.model(model, &Transform { position: center, rotation, scale: b.radius }, c, fill);
+            frame.model(model, &Transform { position: center, rotation, scale: b.rail.radius }, c, fill);
         }
 
         // True silhouette outline, plus a halo for stars.
         let to = center - cam;
         let d = to.length();
-        if d > b.radius {
+        if d > b.rail.radius {
             let dir = to / d;
             let rings: &[(f64, f32)] = if b.kind == BodyKind::Star { &[(1.0, 1.0), (1.12, 0.45), (1.3, 0.2)] } else { &[(1.0, 1.0)] };
             for &(k, brightness) in rings {
-                let r = b.radius * k;
+                let r = b.rail.radius * k;
                 if d > r {
                     let center_offset = center - dir * (r * r / d);
                     let radius = r * (1.0 - (r * r) / (d * d)).sqrt();
@@ -206,7 +206,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         }
 
         if let Some((inner, outer)) = b.rings {
-            let normal = b.tilt * DVec3::Y;
+            let normal = b.rail.tilt * DVec3::Y;
             for k in 0..4 {
                 let r = inner + (outer - inner) * k as f64 / 3.0;
                 frame.circle(center, normal, r, 96, c.scale(0.55 - 0.1 * k as f32));
@@ -445,7 +445,7 @@ fn spaceports(frame: &mut Frame, app: &App) {
         let b = &sys.bodies[sp.body];
         let rot = b.rotation(t);
         let up = rot * sp.direction;
-        let pad = app.view.positions[sp.body] + up * b.radius;
+        let pad = app.view.positions[sp.body] + up * b.rail.radius;
         let dist = pad.distance(cam);
         if dist > 400_000.0 {
             continue;
@@ -455,7 +455,7 @@ fn spaceports(frame: &mut Frame, app: &App) {
         let e2 = up.cross(e1);
         let center = app.view.positions[sp.body];
         // A point on the true surface, `x`/`y` meters from the pad along the ground.
-        let ground = |x: f64, y: f64| center + (up * b.radius + e1 * x + e2 * y).normalize() * (b.radius + 2.0);
+        let ground = |x: f64, y: f64| center + (up * b.rail.radius + e1 * x + e2 * y).normalize() * (b.rail.radius + 2.0);
 
         let c = if targeted { Color::hex(0x60e0ff) } else { Color::hex(0x4090b0) };
         let r = PAD_RADIUS;
@@ -544,19 +544,19 @@ fn labels(frame: &mut Frame, app: &App) {
         && app.mode == Mode::Observer
     {
         let b = &sys.bodies[body];
-        if frame.projected_radius(app.view.positions[body], b.radius) < 60.0 {
+        if frame.projected_radius(app.view.positions[body], b.rail.radius) < 60.0 {
             labels.add(frame, app.view.positions[body], &b.name.to_uppercase(), LABEL.scale(1.3));
         }
     }
     for (i, b) in sys.bodies.iter().enumerate() {
-        let near_parent = b.parent.is_some_and(|p| app.view.positions[p].distance(cam) < b.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis * 25.0));
+        let near_parent = b.rail.parent.is_some_and(|p| app.view.positions[p].distance(cam) < b.rail.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis * 25.0));
         let wanted = match b.kind {
             BodyKind::Star => true,
             BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant => true,
             BodyKind::Moon | BodyKind::Station | BodyKind::Gate => near_parent,
         };
         // Skip when the body fills the view; the label would sit on top of it.
-        if wanted && frame.projected_radius(app.view.positions[i], b.radius) < 60.0 {
+        if wanted && frame.projected_radius(app.view.positions[i], b.rail.radius) < 60.0 {
             labels.add(frame, app.view.positions[i], &b.name.to_uppercase(), LABEL);
         }
     }

@@ -4,25 +4,25 @@
 
 use universe_engine::glam::DVec3;
 use universe_engine::{Color, Frame, WireModel};
-use universe_sim::{Body, Surface, TerrainKind};
+use universe_sim::{Body, Ground, TerrainKind};
 
 use crate::scene::color;
 
 /// Color for a kind of ground on a body.
-pub fn surface_color(body: &Body, kind: TerrainKind, surface: Surface) -> Color {
+pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
     let base = color(body.color);
     let lighten = |c: Color, k: f32| {
         let [r, g, b, a] = c.0;
         Color([r + (1.0 - r) * k, g + (1.0 - g) * k, b + (1.0 - b) * k, a])
     };
     match (kind, surface) {
-        (_, Surface::Ocean) => Color::rgb(0.12, 0.35, 0.95),
-        (TerrainKind::Terran, Surface::Lowland) => Color::rgb(0.3, 0.75, 0.35),
-        (TerrainKind::Terran, Surface::Highland) => Color::rgb(0.6, 0.6, 0.3),
-        (_, Surface::Peak) => lighten(base, 0.7),
-        (_, Surface::Highland) => lighten(base, 0.2),
-        (_, Surface::Crater) => base.scale(0.35),
-        (_, Surface::Lowland) => base.scale(0.85),
+        (_, Ground::Ocean) => Color::rgb(0.12, 0.35, 0.95),
+        (TerrainKind::Terran, Ground::Lowland) => Color::rgb(0.3, 0.75, 0.35),
+        (TerrainKind::Terran, Ground::Highland) => Color::rgb(0.6, 0.6, 0.3),
+        (_, Ground::Peak) => lighten(base, 0.7),
+        (_, Ground::Highland) => lighten(base, 0.2),
+        (_, Ground::Crater) => base.scale(0.35),
+        (_, Ground::Lowland) => base.scale(0.85),
     }
 }
 
@@ -36,7 +36,7 @@ pub fn globe(body: &Body) -> Option<WireModel> {
         .iter()
         .map(|p| surface_color(body, terrain.kind, terrain.classify(p.as_dvec3()).0).0)
         .collect();
-    let r = body.radius;
+    let r = body.rail.radius;
     for p in &mut m.positions {
         let h = terrain.surface(p.as_dvec3());
         *p *= (1.0 + h / r) as f32;
@@ -56,7 +56,7 @@ pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
     let rel = rot.inverse() * (frame.camera.position - center);
     let dist = rel.length();
     let dir = rel / dist;
-    let r = body.radius;
+    let r = body.rail.radius;
     let alt = dist - body.surface_radius(dir);
     if !(-1000.0..near_altitude(body)).contains(&alt) {
         return;
@@ -121,7 +121,7 @@ pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
 
 /// Below this altitude, show the local surface grid (m).
 pub fn near_altitude(body: &Body) -> f64 {
-    (body.radius * 0.3).min(1.5e6)
+    (body.rail.radius * 0.3).min(1.5e6)
 }
 
 /// Crater rims as sketchy circles on the surface.
@@ -132,7 +132,7 @@ pub fn crater_rims(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
     for (dir, chord) in terrain.crater_rims() {
         let angle = 2.0 * (chord / 2.0).asin();
         let normal = rot * dir;
-        let r = body.radius;
+        let r = body.rail.radius;
         frame.circle(center + normal * (r * angle.cos() + 50.0), normal, r * angle.sin(), 24, c);
     }
 }

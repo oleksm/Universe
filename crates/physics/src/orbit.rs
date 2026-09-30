@@ -1,3 +1,5 @@
+//! Kepler orbits: the exact two-body motion that rail bodies follow.
+
 use std::f64::consts::TAU;
 
 use glam::{DMat3, DVec3};
@@ -86,5 +88,37 @@ impl Orbit {
     /// `n` points evenly spaced in eccentric anomaly, for drawing the path.
     pub fn path(&self, n: usize) -> impl Iterator<Item = DVec3> + '_ {
         (0..n).map(move |i| self.perifocal(i as f64 / n as f64 * TAU))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn orbit_state_matches_numeric_derivative() {
+        let o = Orbit::new(1.0e9, 0.3, 0.2, 1.0, 2.0, 0.5, 1.0e17);
+        let (p0, v) = o.state(1000.0);
+        let p1 = o.position(1000.001);
+        let numeric = (p1 - p0) / 0.001;
+        assert!((numeric - v).length() / v.length() < 1e-4);
+    }
+
+    #[test]
+    fn orbit_closes_and_keeps_its_energy() {
+        let o = Orbit::new(7.0e6, 0.2, 0.4, 0.3, 1.1, 0.7, 3.986e14);
+        let energy = |t: f64| {
+            let (p, v) = o.state(t);
+            0.5 * v.length_squared() - o.mu / p.length()
+        };
+        let e0 = energy(0.0);
+        for k in 1..=50 {
+            let t = k as f64 * o.period() * 0.37;
+            assert!(((energy(t) - e0) / e0).abs() < 1e-12, "vis-viva energy drifted at t = {t}");
+        }
+        // One whole period later the body is back where it started.
+        let (p0, p1) = (o.position(123.0), o.position(123.0 + o.period()));
+        assert!(p0.distance(p1) < 1e-6 * o.semi_major_axis);
+        assert!((p0.length() - o.periapsis()) >= -1e-6 && (p0.length() - o.apoapsis()) <= 1e-6);
     }
 }

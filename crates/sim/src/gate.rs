@@ -6,9 +6,10 @@
 //! Hitting the ring structure is fatal.
 
 use glam::{DQuat, DVec3};
+use universe_physics::{Frame, Ring};
 
 use crate::docking::{attitude, Command, Guidance};
-use crate::ship::{facing, Clearance, Phase, Ship, SHIP_RADIUS};
+use crate::ship::{facing, Clearance, Phase, Ship};
 use crate::system::StarSystem;
 
 /// Radius of the ring's centerline (m); the opening is a little smaller.
@@ -25,6 +26,8 @@ pub const APPROACH_DISTANCE: f64 = 4000.0;
 pub const TRANSIT_TIME: f64 = 5.0;
 /// Transit clearance is granted within this range (m).
 pub const CLEARANCE_RANGE: f64 = 50_000.0;
+/// The ring's shape, for the physics kernel; its opening is the trigger.
+pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
 
 /// A gate's pose and motion at one instant, in the system frame.
 #[derive(Clone, Copy, Debug)]
@@ -37,6 +40,11 @@ pub struct GateFrame {
 impl GateFrame {
     pub fn new(sys: &StarSystem, gate: usize, t: f64, positions: &[DVec3]) -> Self {
         Self { center: positions[gate], velocity: sys.velocity(gate, t), rotation: sys.bodies[gate].rotation(t) }
+    }
+
+    /// As a kernel frame (a gate doesn't spin), e.g. to relocate a ship between gates.
+    pub fn frame(&self) -> Frame {
+        Frame { center: self.center, velocity: self.velocity, rotation: self.rotation, angular_velocity: DVec3::ZERO }
     }
 
     /// The ring's axis (normal to the opening).
@@ -52,40 +60,6 @@ impl GateFrame {
     fn side(&self, p: DVec3) -> (f64, f64) {
         let h = (p - self.center).dot(self.axis());
         (if h >= 0.0 { 1.0 } else { -1.0 }, h.abs())
-    }
-}
-
-pub enum Crossing {
-    None,
-    /// Went through the opening.
-    Through,
-    /// Hit the ring structure.
-    Hit,
-}
-
-/// Did the ship, moving from `prev` to `pos` over `dt` seconds, pass through
-/// the ring or hit it? `frame` is the gate at the end of the step; the start
-/// is measured against where the gate was then (it moves km/s in its orbit).
-pub fn crossing(frame: &GateFrame, prev: DVec3, pos: DVec3, dt: f64) -> Crossing {
-    let (l0, l1) = (frame.local(prev + frame.velocity * dt), frame.local(pos));
-    let radial = |l: DVec3| (l.x * l.x + l.z * l.z).sqrt();
-    let reach = RING_TUBE + SHIP_RADIUS;
-    // Touching the ring tube itself.
-    let tube = |l: DVec3| ((radial(l) - GATE_RADIUS).powi(2) + l.y * l.y).sqrt();
-    if tube(l1) < reach {
-        return Crossing::Hit;
-    }
-    if l0.y.signum() == l1.y.signum() || l0.y == l1.y {
-        return Crossing::None;
-    }
-    let u = l0.y / (l0.y - l1.y);
-    let r = radial(l0.lerp(l1, u));
-    if r < GATE_RADIUS - reach {
-        Crossing::Through
-    } else if r < GATE_RADIUS + reach {
-        Crossing::Hit
-    } else {
-        Crossing::None
     }
 }
 

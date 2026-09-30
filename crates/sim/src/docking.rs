@@ -6,8 +6,9 @@
 //! the ship has to roll with it.
 
 use glam::{DMat3, DQuat, DVec3};
+use universe_physics::{segment_distance, Contact, CutOut, Feature, Frame, Polytope};
 
-use crate::ship::{facing, Clearance, Controls, Phase, Ship, ROLL_RATE, SHIP_RADIUS, TURN_RATE};
+use crate::ship::{facing, Clearance, Controls, Phase, Ship, ROLL_RATE, TURN_RATE};
 use crate::system::StarSystem;
 
 /// Distance from the station center to its square faces (m). Also the render scale.
@@ -42,13 +43,8 @@ pub struct StationFrame {
 
 impl StationFrame {
     pub fn new(sys: &StarSystem, station: usize, t: f64, positions: &[DVec3]) -> Self {
-        let b = &sys.bodies[station];
-        Self {
-            center: positions[station],
-            velocity: sys.velocity(station, t),
-            rotation: b.rotation(t),
-            angular_velocity: b.angular_velocity(),
-        }
+        let f = Frame::of(&sys.bodies, station, t, positions);
+        Self { center: f.center, velocity: f.velocity, rotation: f.rotation, angular_velocity: f.angular_velocity }
     }
 
     /// Docking axis: out of the slot, along the spin axis.
@@ -99,48 +95,24 @@ impl StationFrame {
     }
 }
 
-pub enum Contact {
-    Clear,
-    Docked,
-    /// Gentle hull contact: push out along this normal.
-    Bump(DVec3),
-    Crash,
+/// The station's real shape, for the physics kernel: a cuboctahedron (the
+/// intersection of a cube, |x|,|y|,|z| <= 1, and an octahedron,
+/// |x|+|y|+|z| <= 2), with the slot cut into its +Y face. Reaching the
+/// slot's floor is the docking port's contact; the mouth above it is open.
+pub fn hull() -> Polytope {
+    Polytope::cuboctahedron(STATION_SIZE).with_cut_out(CutOut { half_x: SLOT_HALF.0, half_z: SLOT_HALF.1, floor: DOCKED_DEPTH })
 }
 
-/// Collision test against the station's real shape: a cuboctahedron, which is the
-/// intersection of a cube (|x|,|y|,|z| <= 1) and an octahedron (|x|+|y|+|z| <= 2).
-pub fn contact(frame: &StationFrame, pos: DVec3, vel: DVec3, orientation: DQuat) -> Contact {
-    let local = frame.rotation.inverse() * (pos - frame.center) / STATION_SIZE;
-    let margin = SHIP_RADIUS / STATION_SIZE;
-    let a = local.abs();
-    let inside = a.max_element() <= 1.0 + margin && a.x + a.y + a.z <= 2.0 + margin;
-    if !inside {
-        return Contact::Clear;
-    }
-    let speed = (vel - frame.velocity_at(pos)).length();
-    let in_slot = local.y > 0.0 && a.x < SLOT_HALF.0 && a.z < SLOT_HALF.1;
-    if in_slot {
-        if local.y > DOCKED_DEPTH {
-            return Contact::Clear; // in the mouth of the slot
-        }
-        let fits = frame.roll_error(orientation) < MAX_ROLL_ERROR;
-        return if speed < MAX_DOCK_SPEED && fits { Contact::Docked } else { Contact::Crash };
-    }
-    if speed < BUMP_SPEED {
-        // Push out along the dominant face normal.
-        let n = if a.x + a.y + a.z > 1.9 {
-            local.signum()
-        } else if a.x >= a.y && a.x >= a.z {
-            DVec3::X * local.x.signum()
-        } else if a.y >= a.z {
-            DVec3::Y * local.y.signum()
-        } else {
-            DVec3::Z * local.z.signum()
-        };
-        Contact::Bump((frame.rotation * n).normalize())
-    } else {
-        Contact::Crash
-    }
+/// Hull contact gentle enough to bounce off instead of being destroyed.
+pub fn bounces(contact: &Contact) -> bool {
+    contact.feature == Feature::Hull && contact.relative_velocity.length() < BUMP_SPEED
+}
+
+/// The docking port: reaching the slot's floor slowly and lined up with the
+/// slot docks; anything else there is a crash. `roll_error` is the ship's
+/// (see `StationFrame::roll_error`).
+pub fn docks(contact: &Contact, roll_error: f64) -> bool {
+    matches!(contact.feature, Feature::CutOut(_)) && contact.relative_velocity.length() < MAX_DOCK_SPEED && roll_error < MAX_ROLL_ERROR
 }
 
 /// Numbers for the docking HUD.
@@ -265,13 +237,6 @@ pub fn guidance(frame: &StationFrame, pos: DVec3, final_run: bool, accel: f64) -
     let top = (2.0 * accel * 0.25 * dist).sqrt().min(250.0);
     let desired_velocity = if dist > 1.0 { d / dist * top.min(dist * 0.5) } else { DVec3::ZERO };
     Guidance { desired_velocity, waypoint, waypoint_dir, final_run: false }
-}
-
-/// Closest distance from point `p` to the segment `a`-`b`.
-pub(crate) fn segment_distance(a: DVec3, b: DVec3, p: DVec3) -> f64 {
-    let ab = b - a;
-    let t = ((p - a).dot(ab) / ab.length_squared().max(1e-9)).clamp(0.0, 1.0);
-    (a + ab * t).distance(p)
 }
 
 /// For a pilot flying by hand: are we already lined up in the corridor?

@@ -221,7 +221,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
 /// Top-down schematic: planets on evenly spaced rings at their true angles.
 fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
     let sys = &map.system;
-    let planets: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].parent == Some(0)).collect();
+    let planets: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0)).collect();
     let ring = max_r / planets.len().max(1) as f32;
     let angle_of = |v: DVec3| (v.z as f32).atan2(v.x as f32);
     let place = |i: usize| -> Vec2 {
@@ -231,7 +231,7 @@ fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
     };
     // Where a body sits on the chart: planets on their ring, moons and stations beside their planet.
     let chart_pos = |i: usize| -> Vec2 {
-        match sys.bodies[i].parent {
+        match sys.bodies[i].rail.parent {
             None => center,
             Some(0) => place(i),
             Some(p) => {

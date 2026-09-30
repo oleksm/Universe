@@ -1,5 +1,6 @@
 use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
+use universe_physics::RigidBody;
 
 /// Ship mass without fuel or cargo (kg).
 pub const DRY_MASS: f64 = 60_000.0;
@@ -193,6 +194,19 @@ impl Ship {
 
     pub fn is_flying(&self) -> bool {
         matches!(self.state, ShipState::Flying)
+    }
+
+    /// The ship as the physics kernel sees it.
+    pub fn rigid(&self) -> RigidBody {
+        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: SHIP_RADIUS }
+    }
+
+    /// Take the kernel's word for where the ship is and how it moves.
+    pub fn set_rigid(&mut self, body: &RigidBody) {
+        self.position = body.position;
+        self.velocity = body.velocity;
+        self.orientation = body.orientation;
+        self.angular_velocity = body.angular_velocity;
     }
 
     /// Rotate toward the commanded rates. Uses real time, never warped time.

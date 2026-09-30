@@ -4,11 +4,15 @@
 //! The result is what the pilot should do from here: where the ship goes,
 //! which way it faces along the way, and when it burns or coasts. The
 //! autopilot flies exactly this, so watching it teaches the procedure.
+//!
+//! (It still steps the ship with its own simplified integrator; the plan is to
+//! simulate a copy through the physics kernel instead, `universe_physics::simulate`.)
 
 use glam::{DQuat, DVec3};
+use universe_physics::{Frame, RingCrossing};
 
 use crate::docking::{self, StationFrame, STATION_SIZE};
-use crate::gate::{self, Crossing, GateFrame};
+use crate::gate::{self, GateFrame};
 use crate::landing::{self, PadFrame};
 use crate::ship::{self, NavTarget, Phase, Ship};
 use crate::system::StarSystem;
@@ -204,14 +208,14 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, now:
 
         // A gate plan arrives when the ship passes through the ring.
         if let NavTarget::Gate(g) = target {
-            let f = GateFrame::new(sys, g, t, &positions);
-            match gate::crossing(&f, prev, ship.position, dt) {
-                Crossing::Through => {
+            let f = Frame::of(&sys.bodies, g, t, &positions);
+            match gate::RING.crossing(&f, prev, ship.position, dt, ship::SHIP_RADIUS) {
+                RingCrossing::Through => {
                     out.arrives = true;
                     break;
                 }
-                Crossing::Hit => break,
-                Crossing::None => {}
+                RingCrossing::Hit => break,
+                RingCrossing::None => {}
             }
         }
 

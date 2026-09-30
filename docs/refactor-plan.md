@@ -15,9 +15,9 @@ workspace compiling, clippy-clean and with **every test passing**.
     moon landings, ETA smoothness, bench). Compare with the baseline below: 0 crashes in traffic
     runs; landing/docking times and bench numbers within ~20% unless the change is explained.
   - `cargo build --release` for the game.
-- **No git** in this repo (user's choice). Before starting, back up the working tree:
-  `tar --exclude=universe/target -czf <scratchpad>/backup-<phase>.tgz -C /home/alexm/git universe`.
-  Never run destructive commands on the tree beyond your own edits.
+- **Git**: the repo is on GitHub (`oleksm/Universe`, `main`). The orchestrator commits and pushes
+  after each phase passes its gates; phase agents don't run git commands themselves (a scratchpad
+  tar backup is optional). Never run destructive commands on the tree beyond your own edits.
 - **Determinism**: no wall-clock or unseeded randomness in simulation code.
 - Keep comments/code style like the surrounding code. Keep dev scenarios
   (`crates/game/src/dev.rs`, `UNIVERSE_SCENARIO=... UNIVERSE_SCREENSHOT=...`) working.

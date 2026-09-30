@@ -5,6 +5,7 @@ version.workspace = true
 
 # The simulation core: no graphics, no windowing, no audio.
 [dependencies]
+universe-physics = { path = "../physics" }
 glam.workspace = true
 serde.workspace = true
 

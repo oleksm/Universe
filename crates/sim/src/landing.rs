@@ -7,8 +7,9 @@
 //! belly-down and descends vertically on its lift thrusters.
 
 use glam::{DQuat, DVec3};
+use universe_physics::{leapfrog, pull, segment_distance};
 
-use crate::docking::{attitude, segment_distance, Command, Guidance};
+use crate::docking::{attitude, Command, Guidance};
 use crate::ship::{facing, upright, Clearance, Phase, Ship};
 use crate::system::StarSystem;
 use crate::terrain::Terrain;
@@ -53,13 +54,13 @@ impl PadFrame {
         Self {
             body_center,
             body_velocity: sys.velocity(sp.body, t),
-            body_radius: b.radius,
-            mu: b.mu,
+            body_radius: b.rail.radius,
+            mu: b.rail.mu,
             angular_velocity: b.angular_velocity(),
-            pad: body_center + up * b.radius,
+            pad: body_center + up * b.rail.radius,
             up,
             rotation: b.rotation(t),
-            terrain_top: b.max_radius() - b.radius,
+            terrain_top: b.max_radius() - b.rail.radius,
         }
     }
 
@@ -199,13 +200,10 @@ pub fn predict(pad: &PadFrame, ship: &Ship, terrain: Option<&Terrain>) -> (Vec<D
     let mut v = ship.velocity - pad.body_velocity;
     let altitude = r.length() - pad.body_radius;
     let dt = (altitude / 5000.0).clamp(0.25, 4.0);
-    let accel = |r: DVec3| -r * (pad.mu / r.length().powi(3));
     let mut points = vec![ship.position];
     let mut t = 0.0;
     for _ in 0..400 {
-        v += accel(r) * (dt * 0.5);
-        r += v * dt;
-        v += accel(r) * (dt * 0.5);
+        leapfrog(&mut r, &mut v, dt, |r, _| pull(pad.mu, -r));
         t += dt;
         let back = DQuat::from_scaled_axis(-pad.angular_velocity * t);
         // Ground under the predicted point, in the body's frame.

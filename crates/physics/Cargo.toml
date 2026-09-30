@@ -1,0 +1,8 @@
+[package]
+name = "universe-physics"
+edition.workspace = true
+version.workspace = true
+
+# The physics kernel: rails, rigid bodies, colliders, ops. Knows nothing about the game.
+[dependencies]
+glam.workspace = true
