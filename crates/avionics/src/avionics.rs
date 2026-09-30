@@ -40,6 +40,14 @@ pub struct Avionics {
     /// Where the hyperdrive autopilot is steering (for debugging).
     #[serde(skip)]
     pub debug_way: Option<DVec3>,
+    /// The pirate's program is installed (see `hunter`), and the hunt under way.
+    #[serde(default)]
+    pub pirate: bool,
+    #[serde(default)]
+    pub hunting: Option<crate::hunter::Hunt>,
+    /// A pirate rests until this world time after a hunt.
+    #[serde(default)]
+    pub rest_until: f64,
     /// The collision warning is switched on (see `collision`).
     #[serde(default)]
     pub collision_warning: bool,
@@ -95,8 +103,10 @@ impl Avionics {
             }
             ShipEvent::HyperdriveEngaged | ShipEvent::HyperdriveDisengaged => self.hyper_autopilot = false,
             ShipEvent::Respawned => {
-                let route = std::mem::take(&mut self.route);
-                *self = Avionics { route, ..Avionics::default() };
+                let mut route = std::mem::take(&mut self.route);
+                // A hunt that ended in the wreck: back to the route.
+                route.active |= self.hunting.is_some();
+                *self = Avionics { route, pirate: self.pirate, collision_warning: self.collision_warning, ..Avionics::default() };
             }
             ShipEvent::TookOff
             | ShipEvent::Launched { .. }
@@ -157,6 +167,10 @@ impl Avionics {
     /// Before the ship moves this frame: the route autopilot, then (unless
     /// it is flying a route) the dock/land/gate autopilot's hyperjump.
     pub fn prepare(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        // A hunt flies the ship itself (see `hunter`); the route waits.
+        if self.hunting.is_some() {
+            return;
+        }
         self.route_step(bus, events);
         if !self.route.active {
             self.hyperjump(bus, events);

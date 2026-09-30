@@ -184,7 +184,7 @@ pub(crate) fn gain(k: f64, h: f64) -> f64 {
 
 /// Stick commands that turn the ship toward `target`, also matching an angular
 /// velocity `spin` (world frame), e.g. a station's rotation, held for `h` seconds.
-pub(crate) fn attitude(ship: &Ship, target: DQuat, spin: DVec3, h: f64) -> Controls {
+pub fn attitude(ship: &Ship, target: DQuat, spin: DVec3, h: f64) -> Controls {
     let mut err = (ship.orientation.inverse() * target).normalize();
     if err.w < 0.0 {
         err = -err;

@@ -55,6 +55,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
 
     let size = frame.size();
     perf(frame, app, ctx, top);
+    kill_feed(frame, app, top + 8.0 * LINE);
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
     // Messages go below the status block so they never overlap it.
@@ -989,6 +990,35 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let rows = cells.len().div_ceil(COLS) as f32;
     rows * (cell.y + 2.0)
 }
+
+/// Kills by weapons fire, right side: who destroyed whom, with what (the
+/// last hit). Those in the system in view, and any involving us; each shows
+/// for `KILL_SHOWN` real seconds.
+fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
+    let now = app.u.world.time;
+    let shown = KILL_SHOWN * app.warp().max(1.0);
+    let lines: Vec<&universe_sim::Kill> = app
+        .u
+        .kills
+        .iter()
+        .filter(|k| now - k.time < shown)
+        .filter(|k| k.system == app.view.origin || k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER)
+        .rev()
+        .take(6)
+        .collect();
+    let size = frame.size();
+    for (i, k) in lines.iter().enumerate() {
+        let age = ((now - k.time) / shown) as f32;
+        let ours = k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER;
+        let base = if ours { RED } else { AMBER };
+        let text = format!("{} DESTROYED {} - {}", k.killer_name, k.victim_name, k.weapon);
+        let c = base.scale(1.0 - 0.7 * age.max(0.0));
+        frame.text(Vec2::new(size.x - text_size(&text).x - 4.0, top + i as f32 * LINE), &text, c);
+    }
+}
+
+/// Real seconds a kill stays in the feed.
+const KILL_SHOWN: f64 = 15.0;
 
 /// Performance, top right: the frame, the world tick, the planner, where the
 /// frame's time went and what it drew.

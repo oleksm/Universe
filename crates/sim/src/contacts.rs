@@ -31,6 +31,10 @@ pub const LOCK_BEAM: f64 = 6.0 * std::f64::consts::PI / 180.0;
 /// What a craft's transponder says it's doing.
 fn activity(craft: &Craft) -> &'static str {
     let a = &craft.avionics;
+    // Weapons hot is plain to see, whatever the transponder says.
+    if craft.ship.weapons_hot() {
+        return "WEAPONS HOT";
+    }
     match craft.ship.state {
         ShipState::Landed { .. } if a.route.dwell_until.is_some() => "AT STOP",
         ShipState::Landed { .. } => "PARKED",

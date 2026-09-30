@@ -18,6 +18,7 @@ pub mod docking;
 pub mod events;
 pub mod fire_control;
 pub mod gate;
+pub mod hunter;
 pub mod hyperdrive;
 pub mod landing;
 pub mod nav;

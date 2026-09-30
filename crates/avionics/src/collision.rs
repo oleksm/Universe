@@ -102,6 +102,11 @@ fn closest(a: DVec3, b: DVec3, dt: f64, q: DVec3, v: DVec3) -> (f64, f64) {
 /// Predict `ship`'s path in `sys` from time `t` (bodies at `positions`), with
 /// the `traffic` around it.
 pub fn predict(sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], traffic: &[Traffic]) -> Prediction {
+    predict_within(sys, ship, t, positions, traffic, RANGE, HORIZON)
+}
+
+/// `predict`, looking at most `range` metres or `horizon` seconds ahead.
+pub fn predict_within(sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], traffic: &[Traffic], range: f64, horizon: f64) -> Prediction {
     let reference = reference(sys, ship.position, positions);
     let mut out = Prediction { reference, ..Default::default() };
     let mut scratch = Vec::new();
@@ -172,7 +177,7 @@ pub fn predict(sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], traff
             out.collision = Some(Collision { time: ahead, offset, what, speed: c.relative_velocity.length() });
             return out;
         }
-        if offset.distance(start) > RANGE || ahead > HORIZON {
+        if offset.distance(start) > range || ahead > horizon {
             out.clear = true;
             return out;
         }

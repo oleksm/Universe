@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.u.world.home_system;
@@ -242,6 +242,35 @@ pub fn apply(app: &mut App, name: &str) {
             let look = (st - app.u.ship.position).normalize();
             app.u.ship.orientation = universe_sim::ship::facing(look + side * 0.25, side);
             app.u.avionics.collision_warning = true;
+        }
+        "pirates" => {
+            // A pirate goes after a trader near us; run until it's destroyed
+            // (the kill feed shows it), watching from alongside.
+            app.mode = Mode::Pilot;
+            let (sysi, pos, vel) = (app.u.ship_system, app.u.ship.position, app.u.ship.velocity);
+            app.u.spawn_settlers(2, 7);
+            let n = app.u.crafts.len();
+            for (k, c) in app.u.crafts[n - 2..].iter_mut().enumerate() {
+                c.system = sysi;
+                c.ship.state = ShipState::Flying;
+                c.ship.hyperdrive = false;
+                c.ship.position = pos + DVec3::new(-2_000.0 + 5_000.0 * k as f64, 1_500.0, -3_000.0);
+                c.ship.velocity = vel;
+                c.avionics.pirate = k == 0;
+                c.avionics.route.active = false;
+                c.avionics.route.dwell_until = None;
+            }
+            let kills = app.u.kills.len();
+            for _ in 0..60 * 120 {
+                app.u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                if app.u.kills.len() > kills {
+                    break;
+                }
+            }
+            let pirate = app.u.crafts[n - 2].ship.position;
+            let look = (pirate - app.u.ship.position).normalize();
+            app.u.ship.orientation = universe_sim::ship::facing(look, look.any_orthonormal_vector());
+            log::info!("scenario pirates: kills {:?}", app.u.kills.last());
         }
         "aboard" => {
             // Out of the seat, at the back of the cabin looking forward up the corridor.

@@ -16,6 +16,22 @@ use crate::universe::Universe;
 /// The player's ship's id in combat.
 pub const PLAYER: usize = 0;
 
+/// Kills kept in `Universe::kills`.
+const KILL_LOG: usize = 50;
+
+/// A ship destroyed by weapons fire: who fired the last hit, at whom, with
+/// what ("GUNFIRE", "LASER FIRE"), where and when.
+#[derive(Clone, Debug)]
+pub struct Kill {
+    pub time: f64,
+    pub system: usize,
+    pub killer: usize,
+    pub victim: usize,
+    pub killer_name: String,
+    pub victim_name: String,
+    pub weapon: String,
+}
+
 /// Combat id of craft `i`.
 pub fn craft_id(i: usize) -> usize {
     i + 1
@@ -34,17 +50,45 @@ impl Universe {
             }
             self.world.combat(&mut armed, dt);
         }
+        if let Some(kill) = self.kill_in(PLAYER, self.ship_system, &player_events) {
+            self.record_kill(kill);
+        }
         self.avionics.record(player_events, &mut self.events);
         let mut ignored = Vec::new();
         for (i, events) in craft_events.into_iter().enumerate() {
             if events.is_empty() {
                 continue;
             }
-            if events.iter().any(|e| matches!(e, ShipEvent::Crashed { .. })) {
+            if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
                 self.traffic.shot_down += 1;
+                if kill.killer != PLAYER && self.crafts.get(kill.killer - 1).is_some_and(|c| c.avionics.pirate) {
+                    self.traffic.pirate_kills += 1;
+                }
+                self.record_kill(kill);
             }
             self.crafts[i].avionics.record(events, &mut ignored);
             ignored.clear();
+        }
+    }
+
+    /// Did ship `victim`'s `events` end in its destruction by weapons fire?
+    /// Who fired the last hit, and with what.
+    fn kill_in(&self, victim: usize, system: usize, events: &[ShipEvent]) -> Option<Kill> {
+        let weapon = events.iter().find_map(|e| match e {
+            ShipEvent::Crashed { body } => Some(body.clone()),
+            _ => None,
+        })?;
+        let killer = events.iter().rev().find_map(|e| match e {
+            ShipEvent::Hit { by, .. } => Some(*by),
+            _ => None,
+        })?;
+        Some(Kill { time: self.world.time, system, killer, victim, killer_name: self.ship_name(killer), victim_name: self.ship_name(victim), weapon })
+    }
+
+    fn record_kill(&mut self, kill: Kill) {
+        self.kills.push(kill);
+        if self.kills.len() > KILL_LOG {
+            self.kills.remove(0);
         }
     }
 

@@ -30,6 +30,8 @@ pub struct Universe {
     pub crash_log: Vec<CrashReport>,
     /// The pilot: in the seat, or on foot.
     pub crew: Person,
+    /// Recent kills by weapons fire, most recent last.
+    pub kills: Vec<crate::combat::Kill>,
     positions: Vec<DVec3>,
 }
 
@@ -45,6 +47,7 @@ impl Universe {
             traffic: TrafficStats::default(),
             crash_log: Vec::new(),
             crew: Person::default(),
+            kills: Vec::new(),
             positions: Vec::new(),
         };
         u.respawn();
