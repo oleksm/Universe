@@ -1,7 +1,9 @@
 # Universe — Architecture
 
-Status: target architecture, adopted 2026-09-30 (see `changelog/2026-09-30-architecture.md`).
-This document is the reference; keep it in sync when the code's shape changes.
+Status: adopted 2026-09-30 and implemented by the refactor's Phases 1–4 (see
+`changelog/2026-09-30-architecture.md`). This document describes the code as it is, and marks
+what is still to come (**Not yet**). It is the reference; keep it in sync when the code's shape
+changes.
 
 ## Principles
 
@@ -50,217 +52,285 @@ This document is the reference; keep it in sync when the code's shape changes.
                         engine (universe-engine): rendering only, no sim deps
 ```
 
-Crate boundaries are enforced by Cargo: `universe-physics` cannot import world or avionics
-types, `universe-world` cannot import avionics, and so on.
+Crate boundaries are enforced by Cargo: `universe-physics` depends on `glam` only and cannot
+import world or avionics types; `universe-world` depends on the kernel (+ `glam`, `serde`) and
+cannot import avionics; `universe-avionics` depends on the kernel and the world; `universe-sim`
+on all three; the game on `universe-sim` and `universe-engine`. `universe-sim` re-exports the
+layers below it (`universe_sim::{physics, world, avionics}`, the old module paths
+`universe_sim::{galaxy, names, rng, ship, system, terrain, units, docking, landing, gate, plan,
+route}` and the common types at its root), so the game needs only the one dependency.
 
 ## Physics kernel (`universe-physics`)
 
-Knows only:
+`crates/physics/src/`: `orbit`, `rails`, `surface`, `body`, `collide`, `integrate`, `ops`,
+`query` (plus a test-only `testkit`). It knows only:
 
-- **Rail bodies**: celestial bodies moving on exact Kepler orbits around a parent (planets,
-  moons, and anything placed "on rails"), with radius, gravitational parameter, spin
-  (tilt + day), and an optional **surface** (a height function, e.g. terrain). Positions,
-  velocities, rotations at any time; per-frame **ephemeris** snapshots (p + v·τ + ½·a·τ²) for
-  cheap substeps; gravity sum; dominant body.
-- **Rigid bodies**: position, velocity, orientation, angular velocity, mass. Moved only by
-  integration of gravity + applied forces (leapfrog, adaptive substeps), or by kernel ops.
-- **Colliders**: surface (sphere + height function), convex polytope with optional cut-outs
-  (e.g. a slot), ring (torus) with an opening **trigger**. The kernel reports **facts**:
-  contact (which body/collider, point, normal, relative velocity), trigger crossing — never
-  what they *mean*.
-- **Ops** (explicit, audited): weld a body to a rail body at a local pose (and unweld),
-  relocate a body between two reference frames preserving relative motion, spawn/despawn.
-- **Queries**: gravity at a point, dominant body, ray/segment clearance, and **simulate a copy**
-  (the planner uses this, so there is exactly one physics implementation).
+- **Rail bodies**: celestial bodies on exact Kepler orbits around a parent (planets, moons,
+  stations, gates — anything placed "on rails"). `RailBody { parent, orbit, mu, attracts, radius,
+  tilt, day, collider }`: gravitational parameter, spin (tilt + day), its **collider**, and an
+  `attracts` flag (bodies too light to matter neither pull nor dominate). The **surface** is not
+  stored in it: owners implement `OnRails` (`rail()` + optional `surface() -> &dyn Surface`), so
+  the world keeps its own terrain type and hands the kernel the height function. Positions,
+  velocities, rotations at any time (`positions`, `velocity`, `Frame::of` / `local` /
+  `velocity_at`); per-frame **ephemeris** snapshots (p + v·τ + ½·a·τ²) for cheap substeps;
+  gravity sum; dominant body.
+- **Surface** trait: `height(dir)` (ground under any liquid), `surface(dir)` (what is touched),
+  `max_height()`, `liquid(dir)`; `surface_radius`, `surface_radius_at`, `max_radius`.
+- **Rigid bodies**: `RigidBody { position, velocity, orientation, angular_velocity, radius }`,
+  moved only by integration of gravity + applied acceleration, or by kernel ops. Mass stays
+  with the owner: drivers return an **acceleration** (force / mass).
+- **Integration**: `integrate(bodies, ephemeris, positions, body, Span { t, dt, max_h },
+  driver)` — leapfrog + adaptive substeps (1/100 of the dominant body's orbital time scale,
+  0.01–3600 s, ≤ 2000 per call), substeps ≤ 0.05 s (`FINE_STEP`) within 30 km of any small
+  collider (polytope/ring). The `Driver` trait is the force callback: `applied(body, t, h,
+  positions) -> acceleration` before every substep, `respond(fact) -> Continue | Stop |
+  Bounce{..}` after a substep that produced a fact.
+- **Colliders** `Collider::{None, Surface, Polytope, Ring}`: surface (sphere + height function,
+  liquids as a flat surface); convex polytope `w·|x| ≤ limit` (+ `cuboctahedron(scale)`) with
+  `CutOut` pockets open along local +Y, hull normals by least penetration; ring (torus) with an
+  opening **trigger**, measuring the start of a step against where the ring was then. The
+  kernel reports **facts**, never what they mean: `Fact::Contact(Contact { body, feature:
+  Surface{liquid} | Hull | CutOut(k) | Ring, normal, local, surface_velocity, relative_velocity
+  })`, `Fact::Trigger { body, relative_velocity }`.
+- **Ops** (explicit, audited): `Weld` (capture a body's pose in a rail body's frame, place it
+  there each step), `Relative` + `relocate` (between two reference frames, preserving relative
+  motion), `bounce` (the contact response a driver asks for).
+- **Queries**: `gravity`, `pull`, `dominant`, `segment_distance`, and `simulate` — run a *copy*
+  of a body forward under a driver (optionally from an ephemeris). The planner uses it, so
+  there is exactly one physics implementation.
 
 Fairness rules: no special cases by object kind or owner; the same integrator, tick and
-contact rules for everything; all inputs are forces/impulses or audited ops.
+contact rules for everything; all inputs are accelerations or audited ops. The kernel contains
+none of the game words (checked by grep).
 
-Invariant tests live with the kernel: determinism (state hash after N ticks), orbit stability,
-energy/momentum sanity, collider/trigger correctness.
+Invariant tests live with the kernel: determinism (`same_inputs_same_world`: a state hash after
+N steps), orbit stability and energy (`orbit_closes_and_keeps_its_energy`,
+`a_circular_orbit_stays_circular`), the orbit's numeric derivative, exact integration of an
+applied acceleration, colliders and triggers (polytope hull / cut-out / open pocket / spin,
+ring opening / tube / outside / a fast sweep, surface liquids, detection), ops (weld rides the
+spin, relocation keeps relative motion), stop/bounce, and `simulate` matching the real thing.
 
-### As built (Phase 1)
+**Not yet**
 
-`crates/physics/src/`: `orbit`, `rails`, `surface`, `body`, `collide`, `integrate`, `ops`,
-`query` (plus a test-only `testkit`). Concretely:
-
-- `RailBody { parent, orbit, mu, attracts, radius, tilt, day, collider }` — the rail
-  description also carries the body's **collider** and an `attracts` flag (bodies too light to
-  matter neither pull nor dominate). The **surface** is not stored in it: owners implement
-  `OnRails` (`rail()` + optional `surface() -> &dyn Surface`), so the world keeps its own
-  terrain type and hands the kernel the height function. Kernel functions (`positions`,
-  `velocity`, `Ephemeris::new`, `gravity`, `dominant`, `Frame::of`, …) take `&[B: OnRails]`.
-- `Surface` trait: `height(dir)` (ground under any liquid), `surface(dir)` (what is touched),
-  `max_height()`, `liquid(dir)`.
-- `RigidBody { position, velocity, orientation, angular_velocity, radius }`. Mass stays with
-  the owner: drivers return an **acceleration** (force / mass). Orientation is carried but not
-  yet integrated by the kernel — the ship's attitude model still sets it (from the driver
-  callback) until attitude becomes a device.
-- `integrate(bodies, ephemeris, positions, body, Span { t, dt, max_h }, driver)`: leapfrog +
-  adaptive substeps (1/100 of the dominant body's orbital time scale, 0.01–3600 s, ≤ 2000 per
-  call), substeps ≤ 0.05 s within 30 km of any small collider (polytope/ring). The `Driver`
-  trait is the force callback: `applied(body, t, h, positions) -> acceleration` before every
-  substep, `respond(fact) -> Continue | Stop | Bounce{..}` after a substep that produced a fact.
-- Colliders: `Collider::{None, Surface, Polytope, Ring}`. `Polytope` = symmetric faces
-  `w·|x| ≤ limit` (+ `cuboctahedron(scale)`) with `CutOut` pockets open along local +Y; hull
-  normals by least penetration. `Ring` = torus + opening trigger, including the "measure the
-  start of the step against where the ring was then" fix. Facts: `Fact::Contact(Contact {
-  body, feature: Surface{liquid} | Hull | CutOut(k) | Ring, normal, local, surface_velocity,
-  relative_velocity })`, `Fact::Trigger { body, relative_velocity }`.
-- Ops: `Weld` (capture/place), `Relative` + `relocate`, `bounce` (the contact response a driver
-  asks for). Queries: `gravity`, `pull`, `dominant`, `segment_distance`, `simulate` (a copy;
-  since Phase 3 it takes an optional ephemeris, like `integrate`).
+- Rotation: orientation and angular velocity are carried but not integrated by the kernel; the
+  ship's attitude device sets the orientation (see World). Integrate rotation (torques) once
+  attitude is a force-producing device.
+- Ops: there is no explicit unweld, launch-impulse, spawn or despawn op; the world's device
+  rules write those poses directly (see World, *Not yet*).
+- Mass and forces: drivers give accelerations; a kernel-side mass (and momentum bookkeeping
+  across bodies) comes with constructed, non-rail bodies.
+- Polytope faces are not normalised (the station's octahedron faces get radius/√3 of true
+  distance, copied from the old test) — a behaviour change for when that is allowed.
 
 ## World (`universe-world`)
 
-- **Content**: galaxy, star systems, bodies, terrain (implements the kernel's surface trait),
-  the gate network, spaceports.
-- **Structures**: a station = rail body (circular orbit) + polytope collider with a slot
-  cut-out + docking port; a spaceport = a pad on a body's surface + landing zone; a gate = rail
-  body + ring collider + opening trigger + link to its paired gate.
-- **Ships**: rigid body + parts/devices + fuel/cargo mass. **Devices** turn `ShipCommands` into
-  forces or ops within limits:
-  - engine (throttle → thrust ≤ max; fuel later), thrusters and lift, attitude (turn rates),
-  - **hyperdrive** (a fictional device with explicit rules): moves along a commanded heading at a
-    speed set by throttle and clearance from obstacles (and an optional commanded stop
-    distance), relative to a commanded reference frame; interlock: never enters a body;
-    disengaging leaves the ship co-moving with that frame,
-  - **docking port** (contact with a slot cut-out, slow and aligned → weld; else damage),
-  - **landing gear** (surface contact slow enough → weld; oceans and fast impacts → damage),
-  - **gate device** (opening trigger crossed below the speed limit → relocate to the paired gate;
-    ring contact → damage).
-- **Damage**: from contact facts (impact speed); destruction and respawn rules.
-- **Services**: traffic control grants/denies clearance (a world rule, not physics).
-- **Events**: physical facts (contact, docked, landed, destroyed, transit) separate from
-  service/UI events.
+`crates/world/src/`, the entities and their rules:
 
-### As built (Phase 2)
+- **Content**: `units`, `rng`, `names`, `galaxy`, `terrain` (implements the kernel's `Surface`),
+  `system` (star systems: bodies with a `rail`, kinds, colours, spaceports; `on_pad`,
+  `port_at`), `network` (home system choice, the gate network, links). `World { galaxy, time,
+  home_system, gate_links }` owns the clock and caches: generated systems (the gate network's
+  kept when evicting), each system's neighbouring stars, and the per-system ephemeris shared by
+  every ship stepping from the same moment.
+- **Structures** with their contact rules:
+  - `station`: a rail body (circular orbit) + polytope collider with a slot cut-out
+    (`StationFrame`, `hull()`); the **docking port** (`docks`/`bounces`, `contact` → dock (weld)
+    or destroy, `launch`).
+  - `spaceport`: a pad on a body's surface (`PAD_RADIUS`, `pad_position`); the **landing gear**
+    (`touch_down`: slow enough → weld, oceans and fast impacts → destroyed; `lift_off`).
+  - `gate`: a rail body + ring collider + opening trigger + link to its paired gate
+    (`GateFrame`, `RING`); the **gate device** (`enter`: trigger crossed below the speed limit →
+    transit, else destroyed; `emerge` via the kernel's `Relative` op; ring contact → destroyed).
+- **Ships** (`ship`): `Ship` = rigid-body state + device settings (`throttle`, `rcs`,
+  `hyperdrive`), `state` (flying, landed/docked, in transit, destroyed), fuel, cargo — **no
+  navigation state**. Commands: `ShipCommands { throttle, rcs, turn: Option<Controls>,
+  hyperdrive: Option<HyperdriveCommand> }`, `HyperdriveCommand { engage, heading, steering,
+  frame_velocity, exit_velocity, destination }`; `Ship::holding()` gives commands that change
+  nothing, as a base for new ones. Devices: engine + thrusters (`Ship::thrust`), attitude (turn
+  rates; `steer`, crate-private), and:
+- **Hyperdrive** (`hyperdrive`, a fictional device with explicit rules): speed = `HYPER_RATE` ×
+  room (nearest surface, or the commanded destination if nearer: the stop distance) × throttle,
+  relative to the commanded frame (else the dominant body's); along the commanded heading or the
+  nose; drops out by itself short of an obstacle dead ahead unless the heading is being steered;
+  interlock: never into a body; dropping out leaves the commanded exit velocity (else co-moving
+  with the dominant body).
+- **Damage** (`damage`): destroy, `RESPAWN_TIME`; `World::respawn`, `World::ship_at` (spawn
+  docked/landed).
+- **Services** (`traffic`): traffic control grants or refuses clearance — `Facility`
+  (station/spaceport/gate), `request` (not in flight, in hyperdrive, no target, not in this
+  system, out of range → refused with a reason), `lapsed` (beyond twice the range, or gone),
+  `nearest_station`.
+- **Events** (`events`): `ShipEvent` (physical: landed/docked, landed at a port, took off,
+  launched, bumped, crashed, respawned, entered system, hyperdrive on/off, gate entered /
+  arrived / too fast) separate from `TrafficEvent` (clearance granted / denied / cancelled).
+- **The ship step**: `World::command(ship, system, &ShipCommands)` (no time passes: settings,
+  then the hyperdrive switch) and `World::step_ship(ship, system, &ShipCommands, computer,
+  real_dt, warp)` — destroyed (respawn countdown), landed (weld; turn; launch / lift-off),
+  transit (countdown; emerge), hyperdrive, or free flight through the kernel with `Devices` as
+  the driver, then the reaction to the fact the kernel stopped on, then the system hand-over (a
+  floating origin at interstellar scale). It reads only the ship, the commands and kernel facts.
+  A **flight computer** takes part through the `FlightComputer` trait, again only with
+  commands: `substep()` gives commands for every integration substep (the autopilots are
+  feedback controllers and have always run at substep rate), `hyperdrive()` gives the frame's
+  hyperdrive orders once the clock has moved on, and `interval()` is the longest substep it can
+  fly with. Fine substeps come from proximity to structures (kernel), the thrusters firing
+  (device state), or the flight computer's interval — never from clearance.
+- `Devices` (public) is the kernel `Driver` for a ship's devices: the flight computer's commands
+  set them each substep, they push with their thrust, station bounces are judged by the world.
+  The same driver flies a *copy* of a ship when a flight is simulated ahead (the planner).
 
-`crates/world/src/` (package `universe-world`, depends on `universe-physics`, `glam`, `serde`):
+**Not yet**
 
-- Content: `units`, `rng`, `names`, `galaxy`, `terrain`, `system` (moved from sim), `network`
-  (home system choice, gate network, links). `World { galaxy, time, home_system, gate_links }`
-  owns the clock and caches: generated systems, each system's neighbouring stars, and the
-  per-system ephemeris shared by every ship stepping from the same moment.
-- Structures with their contact rules: `station` (`StationFrame`, `hull()`, the docking port:
-  `docks`/`bounces`, `contact` → dock or destroy, `launch`), `spaceport` (`PAD_RADIUS`,
-  `pad_position`, the landing gear: `touch_down`, `lift_off`), `gate` (`GateFrame`, `RING`, the
-  gate device: `enter` → transit state or too fast, `emerge` via the kernel's `Relative` op).
-  (`PadFrame` — the pad as guidance sees it, with its entry point — stays with the landing
-  guidance.)
-- `ship`: `Ship` = rigid-body state + device settings (`throttle`, `rcs`, `hyperdrive`), `state`,
-  fuel, cargo — **no navigation state**. `ShipCommands { throttle, rcs, turn: Option<Controls>,
-  hyperdrive: Option<HyperdriveCommand> }`; `HyperdriveCommand { engage, heading, steering,
-  frame_velocity, exit_velocity, destination }`. Engine + thrusters (`Ship::thrust`) and attitude
-  (`steer`, crate-private) are the flight devices; `Ship::holding()` gives commands that change
-  nothing, as a base for new ones.
-- `hyperdrive`: the device. Speed = `HYPER_RATE` × room (nearest surface, or the commanded
-  destination if nearer: the stop distance) × throttle, relative to the commanded frame (else the
-  dominant body's); along the commanded heading or the nose; drops out by itself short of an
-  obstacle dead ahead unless the heading is being steered; interlock: never into a body;
-  dropping out leaves the commanded exit velocity (else co-moving with the dominant body).
-- `damage` (destroy, `RESPAWN_TIME`), `World::respawn`, `World::ship_at` (spawn docked/landed).
-- `traffic`: traffic control — `Facility` (station/spaceport/gate), `request` (not in flight,
-  in hyperdrive, no target, not in this system, out of range → refused with a reason),
-  `lapsed` (beyond twice the range, or gone), `nearest_station`.
-- `events`: `ShipEvent` (physical: landed/docked, landed at a port, took off, launched, bumped,
-  crashed, respawned, entered system, hyperdrive on/off, gate entered/arrived/too fast) and
-  `TrafficEvent` (clearance granted/denied/cancelled).
-- The ship step: `World::command(ship, system, &ShipCommands)` (no time passes: settings, then
-  the hyperdrive switch) and `World::step_ship(ship, system, &ShipCommands, computer, real_dt,
-  warp)` — destroyed (respawn countdown), landed (weld; turn; launch / lift-off), transit
-  (countdown; emerge), hyperdrive, or free flight through the kernel, then the system hand-over.
-  It reads only the ship, the commands and kernel facts. A **flight computer** takes part
-  through the `FlightComputer` trait, again only with commands: `substep()` gives commands for
-  every integration substep (the autopilots are feedback controllers and have always run at
-  substep rate), `hyperdrive()` gives the frame's hyperdrive orders once the clock has moved on,
-  and `interval()` is the longest substep it can fly with.
-- Fine substeps come from proximity to structures (kernel: within 30 km of a polytope or
-  ring), the thrusters firing (device state), or the flight computer's interval — never from
-  clearance.
-- `Devices` (public since Phase 3) is the kernel `Driver` for a ship's devices: the flight
-  computer's commands set them each substep, they push with their thrust, station bounces are
-  judged by the world. The same driver flies a *copy* of a ship when a flight is simulated
-  ahead (the planner).
+- Direct pose writes remain in world device rules, outside kernel ops: the hyperdrive's motion
+  and drop-out velocity, the docking port's launch, the landing gear's lift-off nudge, the dock
+  and touch-down pose, respawn and `ship_at`, and the hand-over (a change of coordinates, not
+  physics). Candidates for explicit kernel ops (unweld, launch impulse, spawn).
+- `Ship`'s fields are `pub`, so "only through commands" is kept by review, not by the compiler.
+- Fuel is carried but not consumed; cargo has no mass effect yet; parts/modules are not
+  modelled (the devices are fixed per ship).
 
 ## Avionics (`universe-avionics`)
 
-Per-ship software, pure functions of (sensors, own state) → `ShipCommands`:
-
-- nav computer (nav target), clearance requests (via the traffic-control service),
-- guidance (docking corridor, landing profile, gate run) and the flight **planner** (simulates a
-  copy through the kernel with the same autopilot),
-- autopilots: dock, land, gate, hyperdrive (steer to target, route around bodies, decide when to
-  drop out), route (multi-stop, gates, dwell),
-- later: each is a module a ship has installed or not.
-
-### As built (Phase 3)
-
-`crates/avionics/src/` (package `universe-avionics`, depends on `universe-physics`,
-`universe-world`, `glam`, `serde` — nothing above it):
+`crates/avionics/src/`, per-ship software. It reads sensors and its own state and writes
+`ShipCommands`, nothing else:
 
 - `nav`: `NavTarget` (the world's `Facility`), `Phase`, `Clearance`.
 - `avionics`: **`Avionics { nav_target, clearance, hyper_autopilot, route, debug_way }`** — all
-  per-ship navigation state (the route is serialized on its own, in `UniverseSave.route`). It
-  learns what happened from the world's `ShipEvent`s (`observe`), and its programs run once a
-  frame through a `Bus`: `prepare` (the route autopilot, then the dock/land/gate autopilot's
-  hyperjump), `conclude` (hyperdrive arrival, clearance lapse), and the pilot's requests
-  (`set_nav_target`, `request_clearance` via the traffic-control service, `toggle_autopilot`,
-  `toggle_hyperdrive`, `toggle_route`). `approach()` / `plan()` give the HUD its guidance and
-  flight plan. `Approach` (Dock/Land/Transit status) lives here.
+  per-ship navigation state. It learns what happened from the world's `ShipEvent`s (`observe`:
+  arriving, crashing or leaving through a gate ends a clearance; leaving the system forgets the
+  target; a respawn starts afresh but keeps the route). Its programs run once a frame through a
+  `Bus`: `prepare` (the route autopilot, then the dock/land/gate autopilot's hyperjump),
+  `conclude` (hyperdrive arrival, clearance lapse), and the pilot's requests (`set_nav_target`,
+  `request_clearance` via the traffic-control service, `toggle_autopilot`, `toggle_hyperdrive`,
+  `toggle_route`). `approach()` / `plan()` give the HUD its guidance and flight plan; `Approach`
+  (Dock/Land/Transit status) lives here.
 - `bus`: the `Bus` trait — the avionics' only link to their ship: read-only sensors (`ship()`,
-  `system()`, `star_system()`, `time()`, `gate_links()`, `positions()`) and `command(&ShipCommands)`,
-  which returns the physical events that followed. The orchestrator implements it over the world.
+  `system()`, `star_system()`, `time()`, `gate_links()`, `positions()`) and
+  `command(&ShipCommands)`, which returns the physical events that followed. The orchestrator
+  implements it over the world.
 - `computer`: `Computer`, the `FlightComputer` the world's ship step calls — the dock/land/gate
   autopilot every substep (`computer::autopilot`), hyperdrive navigation every frame.
-- `hyperdrive`: the hyperdrive autopilot/navigation (`aim`, `exit_velocity`, `navigate`: steer
-  to the target and around bodies, drop out on arrival, frame/destination/exit velocity).
-- `docking`, `landing`, `gate`: guidance, HUD status (`DockingStatus`, `LandingStatus`,
-  `GateStatus`, `Guidance`) and the autopilots. The autopilots take `h`, how long their command
-  holds: feedback gains are capped at `1/h` (`docking::gain`) so a long substep can't
-  overshoot; at the real 0.05 s this changes nothing (bit-identical).
-- `route`: `Route`, `Stop`, `DWELL`, `gate_path`, `stop_name`, and the route autopilot.
-- `plan`: the flight planner. It clones the ship and flies the copy with the **kernel's
-  `simulate`** and the world's `Devices`, under the same `Computer`/autopilot, point by point;
-  it arrives when the world's rules (docking port, landing gear on the target pad, gate device)
+- `hyperdrive`: the hyperdrive autopilot (`aim`, `exit_velocity`, `navigate`: steer to the target
+  and around bodies, drop out on arrival, choose the frame/destination/exit velocity).
+- `docking`, `landing`, `gate`: guidance (docking corridor, landing profile and `PadFrame`, gate
+  run), HUD status (`DockingStatus`, `LandingStatus`, `GateStatus`, `Guidance`) and the
+  autopilots. The autopilots take `h`, how long their command holds: feedback gains are capped
+  at `1/h` (`docking::gain`) so a long substep can't overshoot; at the real 0.05 s this changes
+  nothing.
+- `route`: `Route` (with `pop`, keeping its progress valid), `Stop`, `DWELL`, `gate_path`,
+  `stop_name`, and the route autopilot (leave, cross systems through gates, hyperdrive, dock or
+  land, dwell, repeat).
+- `plan`: the flight **planner**. It clones the ship and flies the copy with the kernel's
+  `simulate` and the world's `Devices`, under the same `Computer`/autopilot, point by point; it
+  arrives when the world's rules (docking port, landing gear on the target pad, gate device)
   would take the copy in. Within the autopilot's own range (the hyperjump limit: 200 km from a
   port, 30 km from a station or gate) the copy reacts every 0.05 s exactly like the ship, so the
-  plan *is* the flight (docking: planned 150.0 s, flown 150.0 s); farther out it uses substeps
-  up to 2 s. The planner's private integrator is gone. The hyperjump itself is not planned
-  (as before).
+  plan *is* the flight; farther out it uses substeps up to 2 s.
 - `events`: `Event`, the pilot's feed — `Ship(ShipEvent)`, `Traffic(TrafficEvent)` and the
   avionics' own (hyperdrive arrived, route stop/complete/blocked, autopilot on/off, nav target
   set, refused).
 
+**Not yet**
+
+- Modules: every ship has every program; "installed or not" (and buying them) is future work.
+- The hyperjump itself is not planned: a plan starts where the hyperdrive drops out (no plan,
+  and no ETA, while the autopilot is in hyperdrive).
+- Sensors are perfect (the bus reads the true world); sensor ranges and noise come later.
+
 ## Orchestration (`universe-sim`)
 
-Each tick, deterministically and in a fixed order for every ship:
-avionics (or the player's input) → `ShipCommands` → devices → kernel step → contact/trigger
-facts → device/world rules react → events. Owns the player's ship and the crafts (settlers),
-traffic statistics, save/load. The world time scale (default 2×) is ticks per real second.
+`crates/sim/src/`: the only place the layers meet.
 
-As of Phase 3 `universe-sim` is only the orchestration (`universe.rs`): `Universe { world, ship,
-ship_system, avionics, events, crafts, traffic, crash_log }`, a private `Link` (the avionics'
-`Bus` over the world and the ship being stepped), `step` = avionics `prepare` → the pilot's stick
-(unless a computer flies) → `World::step_ship` with the avionics' `Computer` → events recorded
-and observed → avionics `conclude`; `step_world` swaps each craft's ship and avionics in turn;
-settlers, traffic stats, crash log, save/load. The avionics modules are re-exported under their
-old paths (`universe_sim::{docking, landing, gate, plan, route}`, `universe_sim::avionics`).
+- `universe`: **`Universe { world, ship, ship_system, avionics, events, crafts, traffic,
+  crash_log }`** — the world, the player's ship with its avionics and event feed, the crafts.
+  `step` gives the player's ship its turn; `step_world` gives every ship its turn in a fixed
+  order — the player's first, then each craft in order, all from the same moment — and moves
+  the clock once (as far as the player's ship went). The pilot's requests (`command`,
+  `toggle_hyperdrive`, `set_nav_target`, `request_clearance`, `toggle_autopilot`,
+  `toggle_route`, `respawn`) go to the player's avionics (or straight to the devices, for
+  `command`) and take effect at once; `approach`, `plan`, `target_position`, `stop_name`… are
+  what the HUD shows.
+- `vessel`: **one ship's turn**, the same code for the player's ship and every craft (a
+  `Vessel` borrows a ship, its system, its avionics and its event feed):
+  1. avionics `prepare` (route autopilot, hyperjump) → commands over the bus;
+  2. the pilot's stick → the frame's `ShipCommands` (unless a computer is flying the ship);
+  3. `World::step_ship` with the avionics' `Computer`: devices → kernel step → contact/trigger
+     facts → device/world rules;
+  4. the physical events → `Avionics::record` (observe, then the pilot's feed);
+  5. avionics `conclude` (hyperdrive arrival, clearance lapse).
 
-## Where today's code maps (refactor starting point)
+  A private `Link` is the avionics' `Bus` over the world and the ship being stepped.
+- `traffic`: `Craft { name, ship, system, avionics, route_seed }` — the settlers, each on its
+  own reproducible route (`spawn_settlers`, `settler_route`; a new route when one is done),
+  `TrafficStats` (stops, transits, crashes, routes completed) and the `CrashReport` log (last 50).
+- `save`: `UniverseSave { seed, time, ship, ship_system, route, avionics }` — `save`/`load`
+  (star systems regenerate from the seed; saves from before the refactor still load, without a
+  nav target or clearance; settlers aren't saved).
 
-| Before | After |
+The world time scale (default 2×) is game seconds per real second, chosen by the game; single
+player warp multiplies it (not in hyperdrive).
+
+Tests: unit tests next to the code (settlers, save/load); whole flights through the
+orchestrator in `crates/sim/tests/flights.rs` (autodock, autoland from orbit / the far side /
+high above, hyperdrive to a port and a moving gate, plans reaching the pad and slot and staying
+put, gate transit keeping motion, route autopilot), and benches, ETA accuracy and debugging
+printouts in `crates/sim/tests/probe.rs`. The long runs are `#[ignore]`d.
+
+**Not yet**
+
+- Multiplayer: one fixed world time scale, server authority and client prediction are what the
+  determinism is for; there is no networking.
+- The settlers aren't saved with the game.
+- Every ship steps from the same moment, but a ship whose warp is limited more than the
+  player's (fine substeps near a structure) simulates less than the clock advances that frame;
+  at the default 2× this never binds.
+
+## Game (`universe`, `crates/game`)
+
+Rendering, HUD, input, audio and dev scenarios over `universe-sim` and `universe-engine`. The
+pilot's keys become `Universe` requests (throttle and thrusters through `Universe::command`,
+the stick as the frame's `Controls`); the HUD reads the ship, `u.avionics`, `approach()` and
+`plan()`. The flight plan is rebuilt 10×/s, less often when building it is dear (keeping it to
+~5% of the time, at most 1 s apart), and at once when the clearance, target or autopilot phase
+changes; the ETA countdown eases between plans. Dev scenarios (`crates/game/src/dev.rs`,
+`UNIVERSE_SCENARIO=<name> UNIVERSE_SCREENSHOT=<png>`) set a situation up headless — writing the
+ship's pose directly, like tests do — then render.
+
+## Where things live
+
+| Concept | Crate: module |
 |---|---|
-| `sim/orbit.rs`, ephemeris, gravity, `positions`/`velocity`/`dominant` in `system.rs` | physics: rails (done, Phase 1) |
-| integration in `Universe::flight_step` | physics: rigid-body step (done, Phase 1) |
-| terrain height function | world content, via physics `Surface` trait (done, Phase 1) |
-| `docking::contact` | physics polytope collider + world docking port (done, Phases 1–2) |
-| `gate::crossing` | physics ring collider/trigger + world gate device (relocate op) (done, Phases 1–2) |
-| `touch_down`, `crash`, `dock` | world landing gear / docking port / damage (done, Phase 2) |
-| `hyperdrive_step` | world hyperdrive device (done, Phase 2) + avionics hyperdrive autopilot (done, Phase 3) |
-| galaxy, names, rng, units, system generation, terrain, gate network | world content (done, Phase 2) |
-| `docking.rs`/`landing.rs`/`gate.rs` guidance + autopilots, `plan.rs`, `route.rs`, `route_step` | avionics (done, Phase 3; planner on kernel `simulate`) |
-| clearance granting | world traffic-control service (done, Phase 2) |
-| `Ship.{clearance, nav_target, hyper_autopilot}` | avionics state per ship (off the ship in Phase 2; `universe_avionics::Avionics`, Phase 3) |
-| `Universe.route` | avionics state per ship (`Avionics.route`, done, Phase 3) |
-| `Universe`, crafts, settlers, save/load | sim orchestration |
+| Kepler orbits, rail bodies, positions/velocities/rotations, ephemeris, frames | physics: `orbit`, `rails` |
+| Surface (height function) trait, surface radius | physics: `surface` |
+| Rigid body; leapfrog + adaptive substeps, `Driver`, `Span` | physics: `body`, `integrate` |
+| Colliders (surface, polytope + cut-outs, ring + trigger), facts | physics: `collide` |
+| Weld, relocate, bounce | physics: `ops` |
+| Gravity, dominant body, segment distance, simulate a copy | physics: `query` |
+| Galaxy, star names, seeded rng, units | world: `galaxy`, `names`, `rng`, `units` |
+| Star systems, bodies, spaceports; terrain (implements `Surface`) | world: `system`, `terrain` |
+| Home system, gate network and links | world: `network` |
+| The clock, system caches, `command`/`step_ship`, `FlightComputer`, `Devices`, respawn/spawn, hand-over | world: `world` |
+| Ship, `ShipCommands`, `HyperdriveCommand`, engine/thrusters/attitude | world: `ship` |
+| Station structure + docking port (dock, bump, launch) | world: `station` |
+| Spaceport pad + landing gear (touch down, lift off) | world: `spaceport` |
+| Gate structure + gate device (enter, emerge) | world: `gate` |
+| Hyperdrive device (speed law, interlock, drop-out) | world: `hyperdrive` |
+| Damage, respawn time | world: `damage` |
+| Traffic control (clearance rules) | world: `traffic` |
+| Physical and service events | world: `events` |
+| Nav target, clearance, phases | avionics: `nav` |
+| Per-ship avionics state, observe, per-frame programs, pilot requests, HUD approach/plan | avionics: `avionics` |
+| Sensors + command bus | avionics: `bus` |
+| Flight computer (substep autopilot, hyperdrive navigation) | avionics: `computer` |
+| Hyperdrive autopilot | avionics: `hyperdrive` |
+| Docking / landing / gate guidance, status, autopilots | avionics: `docking`, `landing`, `gate` |
+| Routes and the route autopilot | avionics: `route` |
+| Flight planner | avionics: `plan` |
+| Pilot's event feed | avionics: `events` |
+| `Universe`: player ship + avionics, the tick order, pilot requests | sim: `universe` |
+| One ship's turn; the avionics' bus over the world | sim: `vessel` |
+| Settlers (crafts), traffic stats, crash log | sim: `traffic` |
+| Save/load | sim: `save` |
+| Whole-flight tests; benches and ETA accuracy | sim: `tests/flights.rs`, `tests/probe.rs` |
+| Rendering, windowing, input, audio | engine |
+| HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |

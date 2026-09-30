@@ -1,11 +1,16 @@
 //! Universe orchestration: the world (`universe-world`) with the player's
 //! ship and the settlers' crafts in it, each with its avionics
 //! (`universe-avionics`: the navigation computer, guidance, autopilots and
-//! flight planner), which fly the ships through `ShipCommands`. Deterministic
-//! and headless; knows nothing about rendering. (The physics itself is the
-//! kernel, `universe-physics`.)
+//! flight planner), which fly the ships through `ShipCommands`. Every tick,
+//! each ship takes its turn in a fixed order (`vessel`); traffic (the
+//! settlers, their totals and crash log) and save/load live here too.
+//! Deterministic and headless; knows nothing about rendering. (The physics
+//! itself is the kernel, `universe-physics`.)
 
+mod save;
+mod traffic;
 pub mod universe;
+mod vessel;
 
 pub use universe_avionics as avionics;
 pub use universe_avionics::{docking, gate, landing, plan, route};
@@ -21,4 +26,6 @@ pub use universe_world::{
     Body, BodyKind, ClearanceKind, Controls, Galaxy, GalaxyStar, GateFrame, Ground, Ship, ShipCommands, ShipEvent, ShipState, Spaceport,
     StarClass, StarSystem, StationFrame, StepResult, Terrain, TerrainKind, TrafficEvent,
 };
-pub use universe::{CrashReport, Craft, TrafficStats, Universe, UniverseSave};
+pub use save::UniverseSave;
+pub use traffic::{CrashReport, Craft, TrafficStats};
+pub use universe::Universe;

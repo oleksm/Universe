@@ -138,8 +138,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         app.u.avionics.route.stops.push(universe_sim::Stop { system: map.view, target: e.target });
         crate::sound::click(ctx, 1500.0);
     }
-    if input.pressed(KeyCode::Backspace) && app.u.avionics.route.stops.pop().is_some() {
-        app.u.avionics.route.next = app.u.avionics.route.next.min(app.u.avionics.route.stops.len());
+    if input.pressed(KeyCode::Backspace) && app.u.avionics.route.pop().is_some() {
         crate::sound::click(ctx, 700.0);
     }
     if input.pressed(KeyCode::KeyC) {

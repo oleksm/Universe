@@ -45,6 +45,13 @@ impl Route {
     pub fn clear(&mut self) {
         *self = Route::default();
     }
+
+    /// Take the last stop off the route (if any), keeping the progress within it.
+    pub fn pop(&mut self) -> Option<Stop> {
+        let stop = self.stops.pop()?;
+        self.next = self.next.min(self.stops.len());
+        Some(stop)
+    }
 }
 
 /// Name of a stop, with its system (`sys`, the stop's).

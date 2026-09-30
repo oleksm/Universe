@@ -418,3 +418,93 @@ relative motion, gravity/dominant (non-attracting bodies ignored), segment dista
   autoland, 1000× coast) gives the same hashes, times and states after the move and after the
   `h`-aware gains (`FP traffic 89dcbbf0e04ee5b0`, `dock 4e3bafb857af7993`, `land a10b2ac334b30908`).
   Only plans changed.
+
+### Phase 4 — Orchestration and game (`crates/sim`, `crates/game`)
+
+**What moved where**
+
+- `universe-sim` is split by job (it was one `universe.rs` of 1,343 lines, three quarters tests):
+  - `universe.rs`: `Universe { world, ship, ship_system, avionics, events, crafts, traffic,
+    crash_log }` — the tick order (`step`, `step_world`), the pilot's requests (`command`,
+    `respawn`, `toggle_hyperdrive`, `set_nav_target`, `request_clearance`, `toggle_autopilot`,
+    `toggle_route`) and what the HUD reads (`approach`, `plan`, `target_position`, `stop_name`,
+    …). Public API unchanged.
+  - `vessel.rs` (new): **one ship's turn**, the same code for the player's ship and every craft.
+    `Vessel { ship, system, avionics, events }` borrows a ship's per-ship state; `Vessel::tick`
+    = avionics `prepare` → the pilot's stick as the frame's `ShipCommands` (unless a computer
+    flies) → `World::step_ship` with the avionics' `Computer` (devices → kernel → facts →
+    device/world rules) → `Avionics::record` (observe, then the pilot's feed) → avionics
+    `conclude`. `Vessel::run` connects the avionics to the ship through `Link`, the `Bus` over the
+    world (moved here from `universe.rs`).
+  - `traffic.rs` (new): `Craft`, `TrafficStats`, `CrashReport`, `spawn_settlers`,
+    `settler_route`, and a craft's turn (`fly_craft`: its tick, the crash report, the tally and a
+    new route when one is done), with the settler tests.
+  - `save.rs` (new): `UniverseSave`, `save`/`load`, with the save round-trip test.
+  - Tests that fly whole flights through the orchestrator's public API moved to integration
+    tests: `crates/sim/tests/flights.rs` (autodock, autoland, hyperdrive, plans, gate, route) and
+    `crates/sim/tests/probe.rs` (bench, ETA accuracy/smoothness, debug printouts). No assertion
+    changed; only imports (`universe_sim::…` instead of `super::*`/`crate::…`).
+- **No more swapping.** `step_world` used to swap each craft's ship, system, avionics and event
+  list into the player's fields, step "the player", and swap back. Now every ship is stepped in
+  place by `Vessel::tick`; a craft's events are a local list, tallied and dropped (`Craft` lost
+  its private `events` field). Same order (player, then crafts in order), same moment (the clock
+  is reset to the frame's start for each craft, and set once to where the player's ship got).
+- Avionics: `Route::pop` (take the last stop off, keeping `next` in range) — the nav map's
+  route editing used to do that bookkeeping itself.
+- Game:
+  - The nav map's Backspace uses `Route::pop`.
+  - **Flight plan cadence.** Phase 3 made the planner fly the real autopilot (a landing plan
+    from orbit costs ~11 ms). The game rebuilt it 10×/s regardless, so holding a landing
+    clearance from orbit spent ~11% of a core, in 11 ms bursts inside a frame. Now it measures each
+    build and waits `20 × cost` (0.1–1 s) before the next: still 10×/s for docking and gate
+    plans (~2 ms) and near the pad, about 4×/s for a landing from orbit (keeping the planner
+    to ~5% of the time). It still rebuilds at once when the clearance, target or autopilot
+    phase changes, and the ETA countdown eases between plans as before. (The wall-clock
+    measurement is in the game, not the simulation.)
+  - Nothing else needed changing: the game already used only the public API. The fields it
+    reads (`u.ship`, `u.avionics`, `u.events`, `u.crafts`, `u.world`, …) stay put.
+- `docs/architecture.md` rewritten to describe the implemented state: per layer what exists and
+  what is **Not yet** (rotation integration, kernel ops for the remaining direct pose writes,
+  modules, planning the hyperjump, multiplayer, saving settlers…), a new Game section, and the
+  "Where today's code maps" table replaced by **"Where things live"** (concept → crate/module).
+  The per-phase "As built" sections are folded into the layer sections.
+
+**Decisions / deviations**
+
+- **Player fields stay flat on `Universe`** (`ship`, `ship_system`, `avionics`, `events`) rather
+  than becoming a `player: Craft`-like struct. The game and the tests use them in ~250 places;
+  the borrowed `Vessel` gives the player's ship and each craft the very same turn without that
+  churn.
+- The clock rule ("each craft steps from the frame's start; the clock ends where the player's
+  ship got") is kept as it was, and is now documented, including its one oddity: a craft whose
+  warp is limited more than the player's simulates less than the clock moves (never at 2×).
+- The flight tests became integration tests because they only use the public API; being
+  outside the crate keeps them honest about it.
+- Save format unchanged (`UniverseSave` is the same struct, moved).
+
+**Dev scenarios** (release build, `UNIVERSE_SCENARIO=<name> UNIVERSE_SCREENSHOT=…`), before and
+after this phase: cleared, autodock, landing, autoland, gate, transit, route, traffic all run,
+exit cleanly and render the same pictures (HUD text, phases, guidance, traffic counts; the only
+differences are live-frame jitter such as a 1 s ETA). Each scenario's logged set-up state
+(pending events, clearance) is identical before and after. ~6 ms/frame over the 120-frame
+capture, unchanged.
+
+**Gates**
+
+- `cargo clippy --workspace --all-targets`: 0 warnings, 0 errors.
+- `cargo test --workspace --release`: all pass — physics 18, world 15, avionics 3; sim 3 unit
+  tests (1 ignored), `tests/flights.rs` 13 (2 ignored), `tests/probe.rs` 1 (7 ignored). Sim total
+  17 passed + 10 ignored, as before.
+- `cargo test --workspace --release -- --ignored`: 10/10 passed, the same numbers as Phase 3:
+  docking from spawn planned 150 s, actual 150 s; landing from orbit 384 s; gate from 30 km
+  planned 259 s, actual 259 s; 10-stop settler route complete in 3.5 game h; all 13 moon ports
+  autoland (264–285 s); 100 settlers × 10 game h: 1,868 stops, 1,999 transits, 156 routes,
+  **0 crashes**, 0.27 ms/frame; 1,000 settlers: **0 crashes**, 2.27 ms/frame; landing ETA
+  biggest jump 0.02 s. Bench (run alone, µs/frame): coasting 2.09, warp 1000 4.51, near station
+  2.04, docking autopilot 5.20, landing autopilot 3.45 (warp 100: 6.42), hyperdrive 1.93, near
+  ground 2.22; body positions 1.35 µs; planner 11.2 ms (landing from orbit) / 2.2 ms (docking)
+  — unchanged from Phase 3.
+- `cargo build --release`: ok.
+- Bit-identity: the Phase 2/3 fingerprint (20 settlers × 1 game h, autodock, autoland, 1000×
+  coast) gives the same hashes, times and states before and after (`FP traffic
+  89dcbbf0e04ee5b0`, `dock 4e3bafb857af7993`, `land a10b2ac334b30908`).

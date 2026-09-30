@@ -69,9 +69,11 @@ pub struct App {
     pub approach: Option<Approach>,
     /// The flight plan to the cleared target: the path, attitudes and actions ahead.
     pub plan: Option<universe_sim::Plan>,
-    /// When the plan was last rebuilt (real seconds), and for which clearance.
+    /// When the plan was last rebuilt (real seconds), for which clearance,
+    /// and how long building it took (real seconds).
     plan_age: f32,
     plan_for: Option<universe_sim::Clearance>,
+    plan_cost: f32,
     /// Game seconds between tunnel frames: a nice step giving ~12 frames over
     /// the remaining route, changed only when that drifts far (so frames stay put).
     pub frame_step: f64,
@@ -125,6 +127,7 @@ impl App {
             plan: None,
             plan_age: 0.0,
             plan_for: None,
+            plan_cost: 0.0,
             eta_shown: None,
             frame_step: 30.0,
             globes: std::collections::HashMap::new(),
@@ -450,13 +453,18 @@ impl Game for App {
             self.route_labels = self.route_labels_for.clone().into_iter().map(|s| self.u.stop_name(s).to_uppercase()).collect();
         }
         self.approach = self.u.approach();
-        // The planner costs ~1-2 ms: rebuild it 10 times a second, or at once
+        // The planner flies the autopilot ahead through the physics, which
+        // takes 1-2 ms near the target and ~10 ms for a landing from orbit:
+        // rebuild it 10 times a second, less often when it's dearer (keeping
+        // it to ~5% of the time, the countdown easing in between), or at once
         // when the clearance, target or autopilot phase changes.
         self.plan_age += ctx.dt;
         let key = self.u.avionics.clearance;
         let changed = key.map(|c| (c.target, c.autopilot, c.phase)) != self.plan_for.map(|c| (c.target, c.autopilot, c.phase));
-        if changed || self.plan_age >= 0.1 || !self.u.ship.is_flying() {
+        if changed || self.plan_age >= (self.plan_cost * 20.0).clamp(0.1, 1.0) || !self.u.ship.is_flying() {
+            let start = std::time::Instant::now();
             self.plan = self.u.plan();
+            self.plan_cost = start.elapsed().as_secs_f32();
             self.plan_age = 0.0;
             self.plan_for = key;
         }
