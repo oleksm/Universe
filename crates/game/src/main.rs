@@ -86,6 +86,8 @@ pub struct App {
     pub nav_map: Option<navmap::NavMap>,
     /// What the target marker points at: the nav target, else the nearest station.
     pub nav_marker: Option<(String, DVec3)>,
+    /// Ships on the radar, nearest first (refreshed every frame).
+    pub contacts: Vec<universe_sim::Contact>,
     /// Display names of the route's stops (refreshed when the route changes).
     pub route_labels: Vec<String>,
     route_labels_for: Vec<universe_sim::Stop>,
@@ -133,6 +135,7 @@ impl App {
             globes: std::collections::HashMap::new(),
             nav_map: None,
             nav_marker: None,
+            contacts: Vec::new(),
             route_labels: Vec::new(),
             route_labels_for: Vec::new(),
             camera: Camera::default(),
@@ -260,6 +263,15 @@ impl App {
         }
         if input.pressed(KeyCode::Backspace) {
             self.u.respawn();
+        }
+        if input.pressed(KeyCode::KeyT) {
+            match self.u.lock_next_contact() {
+                Some(c) => {
+                    sound::click(ctx, 1200.0);
+                    self.say(format!("RADAR LOCK: {}", c.name));
+                }
+                None => self.say("RADAR LOCK RELEASED".into()),
+            }
         }
         // The autopilot has the stick.
         if self.u.avionics.route.active || self.u.avionics.clearance.is_some_and(|c| c.autopilot) {
@@ -488,6 +500,11 @@ impl Game for App {
             (raw, _) => raw,
         };
         self.nav_marker = self.find_nav_marker();
+        self.contacts = self.u.contacts();
+        if self.u.avionics.contact.is_some() && self.u.locked_contact_in(&self.contacts).is_none() {
+            self.u.avionics.contact = None;
+            self.say("RADAR CONTACT LOST".into());
+        }
         self.build_view();
         self.update_camera(dt, focus_changed);
         if let Some(t) = self.sound_test {

@@ -15,6 +15,7 @@ pub mod galaxy;
 pub mod gate;
 pub mod hyperdrive;
 pub mod names;
+pub mod radar;
 pub mod network;
 pub mod rng;
 pub mod ship;
@@ -30,6 +31,7 @@ mod world;
 
 pub use events::{ClearanceKind, ShipEvent, TrafficEvent};
 pub use galaxy::{Galaxy, GalaxyStar, StarClass};
+pub use radar::{Blip, RADAR_RANGE};
 pub use gate::GateFrame;
 pub use ship::{Controls, Destination, HyperdriveCommand, Ship, ShipCommands, ShipState};
 pub use station::StationFrame;

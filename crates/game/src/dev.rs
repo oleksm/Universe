@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.u.world.home_system;
@@ -230,6 +230,28 @@ pub fn apply(app: &mut App, name: &str) {
                 app.u.step_world(1.0 / 60.0, 3.0, &Controls::default());
             }
             observe(app, station, 25_000.0, 0.35);
+        }
+        "radar" => {
+            // Fly alongside a settler under way, 6 km behind and to the side
+            // of it, lock it on the radar and face it.
+            for _ in 0..60 * 60 * 2 {
+                app.u.step_world(1.0 / 60.0, 3.0, &Controls::default());
+            }
+            let (ship_system, pos) = (app.u.ship_system, app.u.ship.position);
+            let near = app.u.crafts.iter().filter(|c| c.system == ship_system && c.ship.is_flying() && !c.ship.hyperdrive).min_by(|a, b| {
+                a.ship.position.distance(pos).total_cmp(&b.ship.position.distance(pos))
+            });
+            if let Some(c) = near {
+                let (p, v) = (c.ship.position, c.ship.velocity);
+                let back = v.try_normalize().unwrap_or(DVec3::X);
+                app.u.ship.position = p - back * 5_000.0 + back.any_orthonormal_vector() * 3_000.0;
+                app.u.ship.velocity = v;
+            }
+            app.mode = Mode::Pilot;
+            if let Some(c) = app.u.lock_next_contact() {
+                let to = (c.blip.position - app.u.ship.position).normalize();
+                app.u.ship.orientation = universe_sim::ship::facing(to, to.any_orthonormal_vector());
+            }
         }
         "follow" => {
             // Follow a settler that's on an approach (docking, landing or a gate run).

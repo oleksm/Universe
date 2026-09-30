@@ -7,6 +7,7 @@
 //! Deterministic and headless; knows nothing about rendering. (The physics
 //! itself is the kernel, `universe-physics`.)
 
+mod contacts;
 mod save;
 mod traffic;
 pub mod universe;
@@ -26,6 +27,7 @@ pub use universe_world::{
     Body, BodyKind, ClearanceKind, Controls, Galaxy, GalaxyStar, GateFrame, Ground, Ship, ShipCommands, ShipEvent, ShipState, Spaceport,
     StarClass, StarSystem, StationFrame, StepResult, Terrain, TerrainKind, TrafficEvent,
 };
+pub use contacts::Contact;
 pub use save::UniverseSave;
 pub use traffic::{CrashReport, Craft, TrafficStats};
 pub use universe::Universe;

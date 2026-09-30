@@ -1,5 +1,6 @@
 use universe_engine::glam::{DVec3, Vec2, Vec3Swizzles};
 use universe_engine::{text_size, Color, Context, Frame, GLYPH};
+use universe_sim::world::radar::RADAR_RANGE;
 use universe_sim::world::station::{MAX_DOCK_SPEED, MAX_ROLL_ERROR, STATION_SIZE};
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingStatus, ShipState};
 
@@ -33,6 +34,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             approach_info(app, &mut lines);
             pilot_overlay(frame, app);
             target_marker(frame, app);
+            contact_marker(frame, app);
             phase_banner(frame, app);
             scanner(frame, app);
         }
@@ -167,6 +169,7 @@ fn ship_readout(app: &App, lines: &mut Vec<(String, Color)>) {
 fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     route_info(app, lines);
     ship_readout(app, lines);
+    radar_info(app, lines);
     let ship = &app.u.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
     let hyper = match (ship.hyperdrive, app.u.avionics.hyper_autopilot) {
@@ -201,6 +204,31 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         ShipState::Flying => {}
     }
+}
+
+/// The radar: how many ships it sees, and the locked one's range, closing
+/// speed and what its transponder says.
+fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
+    if !app.u.ship.is_flying() && app.contacts.is_empty() {
+        return;
+    }
+    let Some(c) = app.u.locked_contact_in(&app.contacts) else {
+        let n = app.contacts.len();
+        if n > 0 {
+            let s = if n == 1 { "" } else { "S" };
+            lines.push((format!("RADAR {n} CONTACT{s} IN {}  T TO LOCK", fmt::distance(RADAR_RANGE)), DIM));
+        }
+        return;
+    };
+    let closing = c.blip.closing_speed(app.u.ship.position, app.u.ship.velocity);
+    let rel = (c.blip.velocity - app.u.ship.velocity).length();
+    let trend = if closing >= 0.0 { "CLOSING" } else { "OPENING" };
+    lines.push((
+        format!("LOCK {}  {}  {trend} {}  REL {}", c.name, fmt::distance(c.blip.distance), fmt::speed(closing.abs()), fmt::speed(rel)),
+        crate::scene::TRAFFIC,
+    ));
+    let bound = c.destination.as_ref().map(|d| format!(" -> {d}")).unwrap_or_default();
+    lines.push((format!("     {}{bound}  T NEXT", c.activity), DIM));
 }
 
 /// The route: which stop we're on and what the route autopilot is doing.
@@ -490,10 +518,22 @@ fn target_marker(frame: &mut Frame, app: &App) {
     if matches!(app.u.ship.state, ShipState::Landed { .. }) {
         return;
     }
-    let target = *target;
+    let c = if app.approach.is_some() { HUD } else { Color::hex(0x60c0ff) };
+    bracket(frame, app, name, *target, c);
+}
+
+/// The locked radar contact: a bracket on it, like the nav target's.
+fn contact_marker(frame: &mut Frame, app: &App) {
+    if let Some(c) = app.u.locked_contact_in(&app.contacts) {
+        bracket(frame, app, &c.name, c.blip.position, crate::scene::TRAFFIC);
+    }
+}
+
+/// A diamond bracket around `target` with its name and range, or an arrow
+/// at the screen's edge pointing to it.
+fn bracket(frame: &mut Frame, app: &App, name: &str, target: DVec3, c: Color) {
     let range = fmt::distance(target.distance(app.view.ship_pos));
     let size = frame.size();
-    let c = if app.approach.is_some() { HUD } else { Color::hex(0x60c0ff) };
 
     if let Some(p) = frame.project(target).filter(|p| p.x > 8.0 && p.y > 8.0 && p.x < size.x - 8.0 && p.y < size.y - 8.0) {
         let k = 10.0;
@@ -641,14 +681,12 @@ fn scanner(frame: &mut Frame, app: &App) {
         let dot = if b.kind == BodyKind::Star { 5.0 } else { 3.0 };
         frame.hud_rect(top - Vec2::splat(dot / 2.0).floor(), Vec2::splat(dot), c);
     }
-    // Other ships nearby (within 500 km), as small cyan blips.
-    for craft in &app.u.crafts {
-        if craft.system != app.view.origin {
-            continue;
-        }
-        let rel: DVec3 = inv * (craft.ship.position - app.view.ship_pos);
+    // Other ships the radar sees, as small cyan blips; the locked one boxed.
+    let locked = app.u.avionics.contact;
+    for contact in &app.contacts {
+        let rel: DVec3 = inv * (contact.blip.position - app.view.ship_pos);
         let d = rel.length();
-        if !(1.0..500_000.0).contains(&d) {
+        if d < 1.0 {
             continue;
         }
         let r = ((d / 1.0e3).max(1.0).log10() / 9.0).min(1.0) as f32;
@@ -657,6 +695,9 @@ fn scanner(frame: &mut Frame, app: &App) {
         let top = base - Vec2::new(0.0, y * 36.0 * r);
         frame.hud_line(base, top, crate::scene::TRAFFIC.scale(0.5));
         frame.hud_rect(top - Vec2::splat(1.0), Vec2::splat(2.0), crate::scene::TRAFFIC);
+        if locked == Some(contact.blip.id) {
+            frame.hud_box(top - Vec2::splat(4.0), Vec2::splat(8.0), crate::scene::TRAFFIC);
+        }
     }
 }
 
@@ -688,6 +729,7 @@ PILOT
  R        REQUEST DOCKING / LANDING
  K        AUTOPILOT: DOCK/LAND, OR IN
           HYPERDRIVE STEER TO TARGET
+ T        RADAR: LOCK NEXT SHIP (NEAREST FIRST)
  C        COCKPIT / CHASE VIEW
  BKSP     RESPAWN AT HOME";
     let size = frame.size();

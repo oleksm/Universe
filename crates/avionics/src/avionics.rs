@@ -40,6 +40,9 @@ pub struct Avionics {
     /// Where the hyperdrive autopilot is steering (for debugging).
     #[serde(skip)]
     pub debug_way: Option<DVec3>,
+    /// The radar contact locked on (the id the radar reports it by).
+    #[serde(skip)]
+    pub contact: Option<usize>,
 }
 
 /// Live guidance for the current clearance.
