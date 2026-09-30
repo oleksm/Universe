@@ -21,3 +21,19 @@ again." D is roll, so this was read as R, the clearance key: pressing R again ca
 - **R toggles the clearance**: it requests one, or gives up the one held
   (`Avionics::cancel_clearance` / `Universe::cancel_clearance`). Cancelling also stops that
   clearance's autopilot and leaves the engines idle. The message is "CLEARANCE CANCELLED".
+
+## Follow-up: cells show the next action; duplicate text removed
+
+User: "should be R dock then R clear not the vice versa. Cleanup lines that were moved to the hud
+actions."
+
+- The R cell names what the key does next: `R DOCK` / `R LAND` / `R GATE` (for the nav target,
+  else the nearest station) before a clearance, then `R CLEAR` (lit) while holding one.
+- Removed from the text, since the grid shows them:
+  - `HYPER OFF/ON/AUTO` on the throttle line;
+  - `WEAPONS SAFE  B COMBAT MODE` on the hull line;
+  - the `T TO LOCK` / `T NEXT` hints;
+  - `K TO FLY` on the route line;
+  - the `M NAV MAP  R REQUEST DOCKING` / `R REQUEST CLEARANCE` / `B TO GO SAFE` hints, leaving
+    just `NAV <target>`;
+  - the top line's `- WEAPONS HOT` / `- ARMING`, leaving just `COMBAT` in red.

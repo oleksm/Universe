@@ -79,8 +79,7 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
     let ship = &app.u.ship;
     let mode = match app.mode {
         Mode::Observer => "OBSERVER",
-        Mode::Pilot if ship.weapons_hot() => "COMBAT - WEAPONS HOT",
-        Mode::Pilot if ship.armed => "COMBAT - ARMING",
+        Mode::Pilot if ship.armed => "COMBAT",
         Mode::Pilot => "PILOT",
     };
     let top = if app.mode == Mode::Pilot && ship.armed { RED } else { HUD };
@@ -178,12 +177,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     radar_info(app, lines);
     let ship = &app.u.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
-    let hyper = match (ship.hyperdrive, app.u.avionics.hyper_autopilot) {
-        (true, true) => "HYPER AUTO",
-        (true, false) => "HYPER ON",
-        _ => "HYPER OFF",
-    };
-    lines.push((format!("THR [{bar}] {:3.0}%  {hyper}", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
+    lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
     lines.push((
         format!("MASS {:.1} T  FUEL {:.1} T  MAX ACC {:.1} M/S2", ship.mass() / 1000.0, ship.fuel / 1000.0, ship.main_accel()),
         DIM,
@@ -199,7 +193,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
     } else {
         let c = if hurt { RED } else { DIM };
-        lines.push((format!("HULL [{}] {:3.0}%  WEAPONS SAFE  B COMBAT MODE", gauge(ship.hull), ship.hull * 100.0), c));
+        lines.push((format!("HULL [{}] {:3.0}%", gauge(ship.hull), ship.hull * 100.0), c));
     }
     match &ship.state {
         ShipState::Landed { body, local_position, .. } => {
@@ -235,7 +229,7 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         let n = app.contacts.len();
         if n > 0 {
             let s = if n == 1 { "" } else { "S" };
-            lines.push((format!("RADAR {n} CONTACT{s} IN {}  T TO LOCK", fmt::distance(RADAR_RANGE)), DIM));
+            lines.push((format!("RADAR {n} CONTACT{s} IN {}", fmt::distance(RADAR_RANGE)), DIM));
         }
         return;
     };
@@ -247,7 +241,7 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         crate::scene::TRAFFIC,
     ));
     let bound = c.destination.as_ref().map(|d| format!(" -> {d}")).unwrap_or_default();
-    lines.push((format!("     {}{bound}  T NEXT", c.activity), DIM));
+    lines.push((format!("     {}{bound}", c.activity), DIM));
     // Fire control (combat mode): tracking, then the gun's lead.
     if !app.u.ship.armed {
         return;
@@ -269,7 +263,7 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let n = r.next.min(r.stops.len() - 1);
     let name = app.route_labels.get(n).cloned().unwrap_or_default();
     if !r.active {
-        lines.push((format!("ROUTE {}/{} -> {name}  K TO FLY", n + 1, r.stops.len()), DIM));
+        lines.push((format!("ROUTE {}/{} -> {name}", n + 1, r.stops.len()), DIM));
         return;
     }
     let ship = &app.u.ship;
@@ -297,13 +291,11 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
 fn approach_info(app: &App, lines: &mut Vec<(String, Color)>) {
     match &app.approach {
         None => {
-            if app.u.ship.is_flying() {
-                let hint = match &app.nav_marker {
-                    _ if app.u.ship.armed => "WEAPONS ARMED - NO CLEARANCE  B TO GO SAFE".into(),
-                    Some((name, _)) if app.u.avionics.nav_target.is_some() => format!("NAV {name}  R REQUEST CLEARANCE"),
-                    _ => "M NAV MAP   R REQUEST DOCKING".into(),
-                };
-                lines.push((hint, DIM));
+            if app.u.ship.is_flying()
+                && app.u.avionics.nav_target.is_some()
+                && let Some((name, _)) = &app.nav_marker
+            {
+                lines.push((format!("NAV {name}"), DIM));
             }
         }
         Some(Approach::Dock { station, status }) => docking_info(app, *station, status, lines),
@@ -790,12 +782,17 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let (u, ship) = (&app.u, &app.u.ship);
     let flying = ship.is_flying();
     let a = &u.avionics;
-    let clearance = match a.clearance.map(|c| c.target) {
-        Some(universe_sim::NavTarget::Station(_)) => ("DOCK", Lamp::On),
-        Some(universe_sim::NavTarget::Spaceport(_)) => ("LAND", Lamp::On),
-        Some(universe_sim::NavTarget::Gate(_)) => ("GATE", Lamp::On),
-        None if !flying || ship.armed || ship.hyperdrive => ("CLEAR", Lamp::Unavailable),
-        None => ("CLEAR", Lamp::Off),
+    // R: what the key does next: request clearance for the target (or the
+    // nearest station), or, holding one, clear it.
+    let request = match a.nav_target {
+        Some(universe_sim::NavTarget::Spaceport(_)) => "LAND",
+        Some(universe_sim::NavTarget::Gate(_)) => "GATE",
+        _ => "DOCK",
+    };
+    let clearance = match a.clearance {
+        Some(_) => ("CLEAR", Lamp::On),
+        None if !flying || ship.armed || ship.hyperdrive => (request, Lamp::Unavailable),
+        None => (request, Lamp::Off),
     };
     let on = |b: bool| if b { Lamp::On } else { Lamp::Off };
     let auto = a.route.active || a.hyper_autopilot || a.clearance.is_some_and(|c| c.autopilot);
