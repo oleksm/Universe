@@ -340,6 +340,7 @@ ship's pose directly, like tests do — then render.
 | Radar (sweep, blips) | world: `radar` |
 | Gun, laser, hull damage; the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
 | Fire control: track on a contact, gun lead | avionics: `fire_control` |
+| Collision warning: predicted path through the kernel, first impact (bodies, stations, gates, ships) | avionics: `collision` |
 | Radar contacts + transponders, the lock | sim: `contacts` |
 | Combat phase in the tick (ship ids: player 0, craft i → i+1), fire control for the player | sim: `combat` |
 | Rendering, windowing, input, audio, frame timing (`Perf`) | engine |

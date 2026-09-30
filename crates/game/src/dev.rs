@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.u.world.home_system;
@@ -230,6 +230,18 @@ pub fn apply(app: &mut App, name: &str) {
                 app.u.step_world(1.0 / 60.0, 3.0, &Controls::default());
             }
             observe(app, station, 25_000.0, 0.35);
+        }
+        "collision" => {
+            // Collision warning on, 3 km from the station and closing at 80 m/s, a little off its center.
+            app.mode = Mode::Pilot;
+            let st = positions[station];
+            let toward = (st - app.u.ship.position).normalize();
+            let side = toward.any_orthonormal_vector();
+            app.u.ship.position = st - toward * 3_000.0 + side * 150.0;
+            app.u.ship.velocity = sys.velocity(station, t) + toward * 80.0;
+            let look = (st - app.u.ship.position).normalize();
+            app.u.ship.orientation = universe_sim::ship::facing(look + side * 0.25, side);
+            app.u.avionics.collision_warning = true;
         }
         "aboard" => {
             // Out of the seat, at the back of the cabin looking forward up the corridor.

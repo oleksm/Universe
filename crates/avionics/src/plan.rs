@@ -183,7 +183,7 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, now:
             events.clear();
             let mut devices = Devices::new(sys, &mut ship, &mut computer, &mut events);
             let snapshot = if far { None } else { ephemeris.as_ref().map(|(_, e)| e) };
-            let (copy, outcome) = simulate(&sys.bodies, snapshot, &rigid, Span { t, dt: piece, max_h }, &mut devices);
+            let (copy, outcome) = simulate(&sys.bodies, snapshot, &rigid, Span { t, dt: piece, max_h, contact_step: FINE_STEP }, &mut devices);
             ship.set_rigid(&copy);
             t = outcome.time;
             stopped = outcome.fact;

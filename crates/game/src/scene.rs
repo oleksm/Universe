@@ -39,6 +39,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
             None => {}
         }
     }
+    collision_path(frame, app);
     ship(frame, app);
     if matches!(app.u.crew.place, universe_sim::world::Place::Aboard { .. }) && app.mode == Mode::Pilot {
         crate::onfoot::interior(frame, app);
@@ -274,6 +275,31 @@ fn crafts(frame: &mut Frame, app: &App) {
         {
             frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), TRAFFIC.scale(0.8));
         }
+    }
+}
+
+/// The collision warning: the path ahead (drawn with its reference as it
+/// moves), cyan fading to red toward an impact, and a red cross where it hits.
+fn collision_path(frame: &mut Frame, app: &App) {
+    let Some(p) = &app.collision else { return };
+    if app.view.origin != app.u.ship_system || app.mode != Mode::Pilot {
+        return;
+    }
+    let anchor = app.view.positions[p.reference];
+    let hit = p.collision.as_ref();
+    let end = p.path.last().map_or(1.0, |x| x.0).max(1e-6);
+    for w in p.path.windows(2) {
+        let k = (w[1].0 / end) as f32;
+        let c = if hit.is_some() { Color::hex(0x40c0ff).lerp(Color::hex(0xff3030), k) } else { Color::hex(0x40c0ff).scale(1.0 - 0.6 * k) };
+        frame.line(anchor + w[0].1, anchor + w[1].1, c);
+    }
+    if let Some(c) = hit {
+        let at = anchor + c.offset;
+        let size = (at.distance(frame.camera.position) * 0.02).max(5.0);
+        let red = Color::hex(0xff3030);
+        let (u, v) = (frame.camera.orientation.as_dquat() * DVec3::X, frame.camera.orientation.as_dquat() * DVec3::Y);
+        frame.line(at - (u + v) * size, at + (u + v) * size, red);
+        frame.line(at - (u - v) * size, at + (u - v) * size, red);
     }
 }
 

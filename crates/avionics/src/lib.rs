@@ -12,6 +12,7 @@
 
 pub mod avionics;
 pub mod bus;
+pub mod collision;
 pub mod computer;
 pub mod docking;
 pub mod events;

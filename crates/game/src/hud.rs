@@ -37,6 +37,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             pilot_overlay(frame, app);
             target_marker(frame, app);
             contact_marker(frame, app);
+            impact_label(frame, app);
             phase_banner(frame, app);
             scanner(frame, app);
         }
@@ -177,6 +178,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     route_info(app, lines);
     ship_readout(app, lines);
     radar_info(app, lines);
+    collision_info(app, lines);
     let ship = &app.u.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
     lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
@@ -218,6 +220,19 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
             lines.push((format!("GATE TRANSIT TO {name}  {remaining:.1} S"), AMBER));
         }
         ShipState::Flying => {}
+    }
+}
+
+/// The collision warning: what the path hits and when, or how far it's clear.
+fn collision_info(app: &App, lines: &mut Vec<(String, Color)>) {
+    let Some(p) = &app.collision else { return };
+    match &p.collision {
+        Some(c) => {
+            let left = (c.time - (app.u.world.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
+            lines.push((format!("COLLISION {} IN {}  AT {}", c.what.to_uppercase(), fmt::countdown(left), fmt::speed(c.speed)), RED));
+        }
+        None if p.clear => lines.push((format!("PATH CLEAR {}", fmt::distance(universe_sim::avionics::collision::RANGE)), DIM)),
+        None => lines.push((format!("PATH CLEAR {} (LOOKED THAT FAR)", fmt::distance(p.reach)), DIM)),
     }
 }
 
@@ -659,6 +674,17 @@ fn crosshair_wanted(app: &App) -> bool {
     app.u.ship.armed || app.approach.is_some()
 }
 
+/// The collision warning's impact, labelled on screen (or an arrow to it
+/// from the edge).
+fn impact_label(frame: &mut Frame, app: &App) {
+    let Some(p) = &app.collision else { return };
+    let Some(c) = &p.collision else { return };
+    let at = app.view.positions[p.reference] + c.offset;
+    let left = (c.time - (app.u.world.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
+    let label = format!("IMPACT {}", fmt::countdown(left));
+    bracket(frame, app, &label, at, RED);
+}
+
 /// How long a hit's spark shows (s).
 pub const SPARK_TIME: f32 = 0.5;
 
@@ -892,11 +918,12 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
         ("B", "ARMS", arms),
         ("T", "LOCK", lock),
+        ("I", "COLLIDE", if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) }),
         ("M", "MAP", on(app.nav_map.is_some())),
         ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
         ("F1", "HELP", on(app.show_help)),
     ];
-    const COLS: usize = 4;
+    const COLS: usize = 5;
     let cell = Vec2::new(84.0, 14.0);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
         let pos = at + Vec2::new((i % COLS) as f32 * (cell.x + 2.0), (i / COLS) as f32 * (cell.y + 2.0));
@@ -932,6 +959,9 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) {
     if app.plan.is_some() {
         let every = (app.plan_cost * 20.0).clamp(0.1, 1.0);
         lines.push((format!("PLAN {:.1} MS EVERY {every:.1} S", app.plan_cost * 1000.0), DIM));
+    }
+    if app.collision.is_some() {
+        lines.push((format!("COLLIDE {:.1} MS EVERY 0.2 S", app.collision_cost * 1000.0), DIM));
     }
     lines.push((format!("UPD {:.1} DRAW {:.1} GPU {:.1} IDLE {:.1}", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms), DIM));
     lines.push((format!("{} LINES {} TRIS {} PTS", k(p.lines), k(p.triangles), k(p.points)), DIM));
@@ -970,6 +1000,7 @@ PILOT
  K        AUTOPILOT: DOCK/LAND, OR IN
           HYPERDRIVE STEER TO TARGET
  T        RADAR: LOCK NEXT SHIP (NEAREST FIRST)
+ I        COLLISION WARNING: PATH, IMPACT, TIME
  B        COMBAT MODE: ARM / SAFE WEAPONS
  SPACE    GUN (FLY THE LEAD INTO THE RING)
  V        LASER (WATCH THE HEAT)

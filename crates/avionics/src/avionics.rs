@@ -40,6 +40,9 @@ pub struct Avionics {
     /// Where the hyperdrive autopilot is steering (for debugging).
     #[serde(skip)]
     pub debug_way: Option<DVec3>,
+    /// The collision warning is switched on (see `collision`).
+    #[serde(default)]
+    pub collision_warning: bool,
     /// The radar contact locked on (the id the radar reports it by).
     #[serde(skip)]
     pub contact: Option<usize>,

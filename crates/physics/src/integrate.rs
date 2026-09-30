@@ -44,12 +44,16 @@ pub enum Response {
 }
 
 /// One call's worth of time: from `t`, for `dt` seconds, in substeps no longer
-/// than `max_h` (pass infinity for no limit beyond the kernel's own).
+/// than `max_h` (pass infinity for no limit beyond the kernel's own), and no
+/// longer than `contact_step` within `FINE_RANGE` of a small collider (flight
+/// uses `FINE_STEP`; a coarse look-ahead may pass more, trading contact
+/// precision for speed).
 #[derive(Clone, Copy, Debug)]
 pub struct Span {
     pub t: f64,
     pub dt: f64,
     pub max_h: f64,
+    pub contact_step: f64,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -93,7 +97,7 @@ pub fn integrate<B: OnRails>(
     place(t, positions);
     let mut max_h = span.max_h;
     if bodies.iter().zip(positions.iter()).any(|(b, p)| b.rail().collider.is_small() && p.distance(body.position) < FINE_RANGE) {
-        max_h = max_h.min(FINE_STEP);
+        max_h = max_h.min(span.contact_step);
     }
     let mut remaining = span.dt;
     let mut steps = 0;
@@ -221,7 +225,7 @@ mod tests {
             let dt = 20.0 / 60.0;
             let e = Ephemeris::new(&bodies, t);
             for (probe, d) in probes.iter_mut().zip(drivers.iter_mut()) {
-                let out = integrate(&bodies, Some(&e), &mut p, probe, Span { t, dt, max_h: f64::INFINITY }, d);
+                let out = integrate(&bodies, Some(&e), &mut p, probe, Span { t, dt, max_h: f64::INFINITY, contact_step: FINE_STEP }, d);
                 assert!(!out.limited && out.fact.is_none());
                 hash(&mut h, probe.position);
                 hash(&mut h, probe.velocity);
@@ -250,7 +254,7 @@ mod tests {
         let mut t = 0.0;
         let mut worst: f64 = 0.0;
         while t < 10.0 * period {
-            let out = integrate(&planet, None, &mut p, &mut probe, Span { t, dt: 60.0, max_h: f64::INFINITY }, &mut Coast);
+            let out = integrate(&planet, None, &mut p, &mut probe, Span { t, dt: 60.0, max_h: f64::INFINITY, contact_step: FINE_STEP }, &mut Coast);
             assert!(out.fact.is_none());
             t = out.time;
             worst = worst.max((probe.position.length() - r0).abs() / r0);
@@ -272,7 +276,7 @@ mod tests {
         }
         let mut probe = RigidBody::new(DVec3::X * 1.0e9, DVec3::ZERO, DQuat::IDENTITY, 12.0);
         let mut p = Vec::new();
-        let out = integrate(&empty, None, &mut p, &mut probe, Span { t: 0.0, dt: 10.0, max_h: 0.5 }, &mut Push);
+        let out = integrate(&empty, None, &mut p, &mut probe, Span { t: 0.0, dt: 10.0, max_h: 0.5, contact_step: FINE_STEP }, &mut Push);
         assert_eq!(out.simulated, 10.0);
         assert!((probe.velocity.y - 20.0).abs() < 1e-9);
         assert!((probe.position.y - 100.0).abs() < 1e-9);
@@ -290,7 +294,7 @@ mod tests {
 
         // Stopping: the call ends at the contact, reporting it.
         let mut probe = approach;
-        let out = integrate(&bodies, None, &mut p, &mut probe, Span { t: 0.0, dt: 60.0, max_h: f64::INFINITY }, &mut Coast);
+        let out = integrate(&bodies, None, &mut p, &mut probe, Span { t: 0.0, dt: 60.0, max_h: f64::INFINITY, contact_step: FINE_STEP }, &mut Coast);
         let Some(Fact::Contact(c)) = out.fact else { panic!("expected a contact, got {:?}", out.fact) };
         assert_eq!(c.feature, Feature::Hull);
         assert!(c.normal.distance(DVec3::X) < 1e-12);
@@ -298,7 +302,7 @@ mod tests {
 
         // Bouncing: back out the way it came, a little slower.
         let mut probe = approach;
-        let out = integrate(&bodies, None, &mut p, &mut probe, Span { t: 0.0, dt: 60.0, max_h: f64::INFINITY }, &mut Wander { accel: 0.0, turned: 0.0 });
+        let out = integrate(&bodies, None, &mut p, &mut probe, Span { t: 0.0, dt: 60.0, max_h: f64::INFINITY, contact_step: FINE_STEP }, &mut Wander { accel: 0.0, turned: 0.0 });
         assert!(out.fact.is_none() && (out.simulated - 60.0).abs() < 1e-6);
         assert!(probe.velocity.x > 0.0 && probe.velocity.x < 5.0, "velocity after bouncing {:?}", probe.velocity);
     }
@@ -310,7 +314,7 @@ mod tests {
         positions(&bodies, 0.0, &mut p);
         let v = crate::rails::velocity(&bodies, 1, 0.0);
         let probe = RigidBody::new(p[1] + DVec3::Y * 9.0e6, v + DVec3::X * 6000.0, DQuat::IDENTITY, 12.0);
-        let span = Span { t: 0.0, dt: 600.0, max_h: f64::INFINITY };
+        let span = Span { t: 0.0, dt: 600.0, max_h: f64::INFINITY, contact_step: FINE_STEP };
         let (copy, sim) = simulate(&bodies, None, &probe, span, &mut Wander { accel: 3.0, turned: 0.0 });
         let mut real = probe;
         let out = integrate(&bodies, None, &mut p, &mut real, span, &mut Wander { accel: 3.0, turned: 0.0 });

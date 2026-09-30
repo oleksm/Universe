@@ -24,6 +24,12 @@ impl Color {
         )
     }
 
+    /// Blend toward `other` by `k` (0..1).
+    pub fn lerp(self, other: Color, k: f32) -> Self {
+        let (a, b) = (self.0, other.0);
+        Color(std::array::from_fn(|i| a[i] + (b[i] - a[i]) * k))
+    }
+
     pub fn scale(self, k: f32) -> Self {
         let [r, g, b, a] = self.0;
         Color([r * k, g * k, b * k, a])

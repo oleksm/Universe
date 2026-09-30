@@ -67,6 +67,24 @@ impl Universe {
         next
     }
 
+    /// With the collision warning on, and flying in normal space: the path
+    /// ahead and what it would hit (radar contacts count, as they're moving).
+    pub fn collision_warning(&mut self, contacts: &[Contact]) -> Option<universe_avionics::collision::Prediction> {
+        use universe_avionics::collision::{predict, Traffic, RANGE};
+        if !self.avionics.collision_warning || !self.ship.is_flying() || self.ship.hyperdrive {
+            return None;
+        }
+        let traffic: Vec<Traffic> = contacts
+            .iter()
+            .filter(|c| c.blip.distance < RANGE)
+            .map(|c| Traffic { name: c.name.clone(), position: c.blip.position, velocity: c.blip.velocity })
+            .collect();
+        let sys = self.ship_system();
+        let mut positions = Vec::new();
+        sys.positions(self.world.time, &mut positions);
+        Some(predict(&sys, &self.ship, self.world.time, &positions, &traffic))
+    }
+
     /// The locked contact, if it's still on the radar.
     pub fn locked_contact_in<'a>(&self, contacts: &'a [Contact]) -> Option<&'a Contact> {
         let id = self.avionics.contact?;

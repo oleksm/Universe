@@ -113,6 +113,12 @@ pub struct App {
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
     pub reach: Option<Reach>,
+    /// The collision warning's prediction, when it's on (made at `collision_at`, world time).
+    pub collision: Option<universe_sim::avionics::collision::Prediction>,
+    pub collision_at: f64,
+    collision_age: f32,
+    /// What the last prediction cost (s of real time).
+    pub collision_cost: f32,
     /// The weapon keys as last sent to the ship (commands go on a change).
     triggers_held: Triggers,
     /// Display names of the route's stops (refreshed when the route changes).
@@ -168,6 +174,10 @@ impl App {
             hit_age: 99.0,
             sparks: Vec::new(),
             reach: None,
+            collision: None,
+            collision_at: 0.0,
+            collision_age: 99.0,
+            collision_cost: 0.0,
             triggers_held: Triggers::default(),
             route_labels: Vec::new(),
             route_labels_for: Vec::new(),
@@ -329,6 +339,12 @@ impl App {
         if triggers != self.triggers_held {
             self.triggers_held = triggers;
             self.u.command(&ShipCommands { weapons: Some(triggers), ..self.u.ship.holding() });
+        }
+        if input.pressed(KeyCode::KeyI) {
+            let on = !self.u.avionics.collision_warning;
+            self.u.avionics.collision_warning = on;
+            self.collision_age = 99.0;
+            self.say(if on { "COLLISION WARNING ON" } else { "COLLISION WARNING OFF" }.into());
         }
         if input.pressed(KeyCode::KeyT) {
             match self.u.lock_next_contact() {
@@ -616,6 +632,17 @@ impl Game for App {
         }
         let contacts = std::mem::take(&mut self.contacts);
         self.fire = self.u.fire_control(&contacts);
+        // The collision warning, five times a second.
+        self.collision_age += ctx.dt;
+        if !self.u.avionics.collision_warning {
+            self.collision = None;
+        } else if self.collision_age >= 0.2 {
+            self.collision_age = 0.0;
+            let start = std::time::Instant::now();
+            self.collision = self.u.collision_warning(&contacts);
+            self.collision_cost = start.elapsed().as_secs_f32();
+            self.collision_at = self.u.world.time;
+        }
         self.contacts = contacts;
         self.hit_age += ctx.dt;
         self.build_view();

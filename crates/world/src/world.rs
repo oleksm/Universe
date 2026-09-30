@@ -323,7 +323,7 @@ impl World {
         // commands change once per step.
         let powered = ship.throttle > 0.0 || ship.rcs != DVec3::ZERO;
         let physics = if powered { FINE_STEP } else { f64::INFINITY };
-        let span = Span { t: self.time, dt, max_h: physics.min(computer.interval()) };
+        let span = Span { t: self.time, dt, max_h: physics.min(computer.interval()), contact_step: FINE_STEP };
         let mut rigid = ship.rigid();
         let mut devices = Devices::new(sys, &mut *ship, computer, &mut *events);
         let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut self.positions, &mut rigid, span, &mut devices);
