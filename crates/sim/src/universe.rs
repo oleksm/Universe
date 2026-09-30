@@ -130,6 +130,12 @@ impl Universe {
         player.run(world, |a, link, events| a.request_clearance(link, events))
     }
 
+    /// Give the clearance up (stopping its autopilot).
+    pub fn cancel_clearance(&mut self) {
+        let (world, mut player) = self.player();
+        player.run(world, |a, link, events| a.cancel_clearance(link, events));
+    }
+
     /// Engage or release the autopilot. In hyperdrive it steers to the nav
     /// target; otherwise it docks or lands (requesting clearance if needed).
     pub fn toggle_autopilot(&mut self) {

@@ -264,7 +264,12 @@ impl App {
             self.u.toggle_hyperdrive();
         }
         if input.pressed(KeyCode::KeyR) {
-            self.u.request_clearance();
+            // R again gives the clearance up.
+            if self.u.avionics.clearance.is_some() {
+                self.u.cancel_clearance();
+            } else {
+                self.u.request_clearance();
+            }
         }
         if input.pressed(KeyCode::KeyK) {
             // With a route set, K flies the whole route; otherwise the current clearance.
@@ -371,7 +376,7 @@ impl App {
                 Event::Ship(ShipEvent::GateArrived { system }) => format!("WELCOME TO THE {system} SYSTEM"),
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) | Event::Refused { reason } => format!("CLEARANCE DENIED - {reason}"),
-                Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE LOST".into(),
+                Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE CANCELLED".into(),
                 Event::Autopilot { on: true } => "AUTOPILOT ON".into(),
                 Event::Autopilot { on: false } => "AUTOPILOT OFF".into(),
                 Event::NavTargetSet { name: Some(name) } => format!("NAV TARGET - {name}\nR TO REQUEST CLEARANCE"),

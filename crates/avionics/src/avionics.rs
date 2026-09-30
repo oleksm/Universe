@@ -201,6 +201,18 @@ impl Avionics {
         }
     }
 
+    /// Give the clearance up (and stop its autopilot, leaving the engines idle).
+    pub fn cancel_clearance(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        let Some(c) = self.clearance.take() else { return };
+        self.set_controls(bus, events, |cmd| {
+            cmd.rcs = DVec3::ZERO;
+            if c.autopilot {
+                cmd.throttle = 0.0;
+            }
+        });
+        events.push(Event::Traffic(TrafficEvent::ClearanceCancelled));
+    }
+
     /// Engage or release the autopilot. In hyperdrive it steers to the nav
     /// target; otherwise it docks or lands (requesting clearance if needed).
     pub fn toggle_autopilot(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {

@@ -42,6 +42,9 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     // Leave room for the phase banner across the top while docking/landing.
     let top = if app.mode == Mode::Pilot && app.approach.is_some() { 22.0 } else { 4.0 };
     let mut y = top;
+    if app.mode == Mode::Pilot {
+        y += action_grid(frame, app, Vec2::new(4.0, top)) + 4.0;
+    }
     for (text, c) in &lines {
         frame.text(Vec2::new(4.0, y), text, *c);
         y += LINE;
@@ -764,6 +767,80 @@ fn scanner(frame: &mut Frame, app: &App) {
             frame.hud_box(top - Vec2::splat(4.0), Vec2::splat(8.0), crate::scene::TRAFFIC);
         }
     }
+}
+
+/// How an action grid cell is lit.
+#[derive(Clone, Copy, PartialEq)]
+enum Lamp {
+    /// Available, not in use.
+    Off,
+    /// In use.
+    On,
+    /// In progress (e.g. weapons priming).
+    Busy,
+    /// Weapons hot.
+    Hot,
+    /// Not available right now.
+    Unavailable,
+}
+
+/// The pilot's actions as a grid of lit keys, top left: what each key does
+/// and whether it's in use. Returns the grid's height.
+fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
+    let (u, ship) = (&app.u, &app.u.ship);
+    let flying = ship.is_flying();
+    let a = &u.avionics;
+    let clearance = match a.clearance.map(|c| c.target) {
+        Some(universe_sim::NavTarget::Station(_)) => ("DOCK", Lamp::On),
+        Some(universe_sim::NavTarget::Spaceport(_)) => ("LAND", Lamp::On),
+        Some(universe_sim::NavTarget::Gate(_)) => ("GATE", Lamp::On),
+        None if !flying || ship.armed || ship.hyperdrive => ("CLEAR", Lamp::Unavailable),
+        None => ("CLEAR", Lamp::Off),
+    };
+    let on = |b: bool| if b { Lamp::On } else { Lamp::Off };
+    let auto = a.route.active || a.hyper_autopilot || a.clearance.is_some_and(|c| c.autopilot);
+    let arms = if ship.weapons_hot() {
+        Lamp::Hot
+    } else if ship.armed {
+        Lamp::Busy
+    } else {
+        Lamp::Off
+    };
+    let lock = if a.contact.is_some() {
+        Lamp::On
+    } else if app.contacts.is_empty() {
+        Lamp::Unavailable
+    } else {
+        Lamp::Off
+    };
+    let cells = [
+        ("R", clearance.0, clearance.1),
+        ("K", "AUTO", on(auto)),
+        ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
+        ("B", "ARMS", arms),
+        ("T", "LOCK", lock),
+        ("M", "MAP", on(app.nav_map.is_some())),
+        ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
+        ("F1", "HELP", on(app.show_help)),
+    ];
+    const COLS: usize = 4;
+    let cell = Vec2::new(84.0, 14.0);
+    for (i, (key, label, lamp)) in cells.iter().enumerate() {
+        let pos = at + Vec2::new((i % COLS) as f32 * (cell.x + 2.0), (i / COLS) as f32 * (cell.y + 2.0));
+        let (edge, fill, text) = match lamp {
+            Lamp::Off => (DIM, PANEL, HUD),
+            Lamp::On => (HUD, HUD.scale(0.3), HUD),
+            Lamp::Busy => (AMBER, AMBER.scale(0.3), AMBER),
+            Lamp::Hot => (RED, RED.scale(0.35), RED),
+            Lamp::Unavailable => (DIM.scale(0.5), PANEL, DIM.scale(0.7)),
+        };
+        frame.hud_rect(pos, cell, fill);
+        frame.hud_box(pos, cell, edge);
+        frame.text(pos + Vec2::new(3.0, 3.0), key, text.scale(0.8));
+        frame.text(pos + Vec2::new(3.0 + 8.0 * key.len() as f32 + 5.0, 3.0), label, text);
+    }
+    let rows = cells.len().div_ceil(COLS) as f32;
+    rows * (cell.y + 2.0)
 }
 
 /// Performance, top right: the frame, the world tick, the planner, where the

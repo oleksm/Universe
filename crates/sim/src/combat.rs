@@ -127,5 +127,9 @@ mod tests {
         assert!(!u.request_clearance(), "no clearance while armed");
         u.command(&ShipCommands { arm: Some(false), ..u.ship.holding() });
         assert!(u.request_clearance(), "safe again: cleared");
+        u.toggle_autopilot();
+        u.cancel_clearance();
+        assert!(u.avionics.clearance.is_none(), "given up");
+        assert_eq!(u.ship.throttle, 0.0, "its autopilot stopped, engines idle");
     }
 }
