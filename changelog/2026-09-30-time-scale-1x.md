@@ -11,3 +11,6 @@ User: "I asked for 10000". `UNIVERSE_SETTLERS` now defaults to 10,000, up from 5
 game over the first 120 frames, including spawning: 14.8 ms/frame, against 6.0 ms with 50. That is
 under the 16.7 ms budget for 60 fps, but with little headroom. `UNIVERSE_SETTLERS=50` restores
 the old default.
+
+Then: "ok lets do 1,000 for now". The default is 1,000, the size of the largest traffic test run
+(0 crashes).
