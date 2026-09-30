@@ -105,3 +105,10 @@ pub fn gunshot(ctx: &Context) {
         a.noise(0.05, 0.15);
     }
 }
+
+/// One of our rounds struck home.
+pub fn hit_confirmed(ctx: &Context) {
+    if let Some(a) = ctx.audio() {
+        a.tone(1600.0, 1600.0, 0.04, 0.18);
+    }
+}

@@ -8,7 +8,7 @@
 
 use universe_avionics::fire_control::{lead, Solution, Track};
 use universe_world::weapons::{Armed, GUN_MUZZLE, SLUG_LIFETIME};
-use universe_world::ShipEvent;
+use universe_world::{ShipCommands, ShipEvent};
 
 use crate::contacts::Contact;
 use crate::universe::Universe;
@@ -61,6 +61,9 @@ impl Universe {
     pub fn fire_control(&mut self, contacts: &[Contact]) -> Option<(Track, Option<Solution>)> {
         let Some(c) = self.locked_contact_in(contacts) else {
             self.avionics.track = None;
+            if self.ship.gun_target.is_some() {
+                self.command(&ShipCommands { gun_target: Some(None), ..self.ship.holding() });
+            }
             return None;
         };
         Track::update(&mut self.avionics.track, c.blip.id, c.blip.position, c.blip.velocity, self.world.time);
@@ -69,6 +72,12 @@ impl Universe {
             .ready()
             .then(|| lead(self.ship.position, self.ship.velocity, c.blip.position, c.blip.velocity, track.acceleration, GUN_MUZZLE, SLUG_LIFETIME))
             .flatten();
+        // In combat mode, fire control lays the gun on the lead (its gimbal
+        // reaches a few degrees off the nose).
+        let lay = solution.filter(|_| self.ship.armed).map(|s| s.aim);
+        if lay != self.ship.gun_target {
+            self.command(&ShipCommands { gun_target: Some(lay), ..self.ship.holding() });
+        }
         Some((track, solution))
     }
 }
@@ -76,7 +85,7 @@ impl Universe {
 
 #[cfg(test)]
 mod tests {
-    use glam::DVec3;
+    use glam::{DQuat, DVec3};
     use universe_world::{Controls, ShipCommands, ShipState, Triggers};
 
     use crate::universe::Universe;
@@ -115,6 +124,40 @@ mod tests {
         eprintln!("rounds fired {fired}, shot down {destroyed}");
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");
+    }
+
+    #[test]
+    fn the_gimbal_hits_with_the_nose_two_degrees_off() {
+        let mut u = Universe::new(1984);
+        u.spawn_settlers(1, 1);
+        let (sys, pos, vel) = (u.ship_system, u.ship.position, u.ship.velocity);
+        let c = &mut u.crafts[0];
+        c.system = sys;
+        c.ship.state = ShipState::Flying;
+        c.ship.hyperdrive = false;
+        c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
+        c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
+        c.avionics = Default::default();
+        u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
+        u.lock_next_contact();
+        let two = DQuat::from_rotation_z(2f64.to_radians());
+        for frame in 0..600 {
+            let contacts = u.contacts();
+            if let Some((_, Some(sol))) = u.fire_control(&contacts) {
+                // A pilot holding the nose 2° off the lead.
+                let off = two * sol.aim;
+                u.ship.orientation = universe_world::ship::facing(off, off.any_orthonormal_vector());
+                if frame % 60 == 0 {
+                    u.command(&ShipCommands { weapons: Some(Triggers { gun: true, laser: false }), ..u.ship.holding() });
+                }
+            }
+            u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            if u.traffic.shot_down > 0 {
+                break;
+            }
+        }
+        assert_eq!(u.traffic.shot_down, 1, "the gimbal lays the gun on the lead");
+        assert!(u.world.impacts.len() <= 1);
     }
 
     #[test]

@@ -35,7 +35,7 @@ pub use galaxy::{Galaxy, GalaxyStar, StarClass};
 pub use radar::{Blip, RADAR_RANGE};
 pub use gate::GateFrame;
 pub use ship::{Controls, Destination, HyperdriveCommand, Ship, ShipCommands, ShipState, Triggers};
-pub use weapons::{Armed, Beam, Slug};
+pub use weapons::{Armed, Beam, Impact, Slug};
 pub use station::StationFrame;
 pub use system::{Body, BodyKind, Spaceport, StarSystem};
 pub use terrain::{Ground, Terrain, TerrainKind};

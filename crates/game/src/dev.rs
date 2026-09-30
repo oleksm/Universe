@@ -262,8 +262,10 @@ pub fn apply(app: &mut App, name: &str) {
                     let contacts = app.u.contacts();
                     app.fire = app.u.fire_control(&contacts);
                 }
+                // The nose 2° off the lead: the gimbal lays the gun on it.
                 if let Some((_, Some(sol))) = app.fire {
-                    app.u.ship.orientation = universe_sim::ship::facing(sol.aim, sol.aim.any_orthonormal_vector());
+                    let off = universe_engine::glam::DQuat::from_rotation_z(2f64.to_radians()) * sol.aim;
+                    app.u.ship.orientation = universe_sim::ship::facing(off, sol.aim.any_orthonormal_vector());
                 }
                 app.u.command(&ShipCommands { arm: Some(true), ..app.u.ship.holding() });
                 app.u.ship.arming = 0.0;

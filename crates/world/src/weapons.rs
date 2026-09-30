@@ -15,7 +15,7 @@
 
 use std::collections::HashMap;
 
-use glam::DVec3;
+use glam::{DQuat, DVec3};
 use universe_physics::{ray, step_projectile, Hit, Projectile, Target};
 
 use crate::damage;
@@ -44,6 +44,49 @@ pub const LASER_BURN: f64 = 8.0;
 pub const LASER_COOL: f64 = 4.0;
 /// After overheating, the laser is locked out until it has cooled to this.
 pub const LASER_RESET: f64 = 0.3;
+
+/// How far the gun's gimbal swings off the nose (rad): 4°.
+pub const GIMBAL_LIMIT: f64 = 4.0 * std::f64::consts::PI / 180.0;
+/// How fast it swings (rad/s): 30°/s.
+pub const GIMBAL_RATE: f64 = 30.0 * std::f64::consts::PI / 180.0;
+/// The gun is on a direction when it points within this of it (rad): 0.05°.
+pub const ON_TARGET: f64 = 0.05 * std::f64::consts::PI / 180.0;
+
+/// Swing the gun toward where it's to be laid (its target, clamped to the
+/// gimbal's cone; the nose if none) at the gimbal's rate, over `dt` seconds.
+pub fn lay_gun(ship: &mut Ship, dt: f64) {
+    let want = ship.gun_target.map_or(DVec3::NEG_Z, |w| (ship.orientation.inverse() * w).normalize_or(DVec3::NEG_Z));
+    let off = want.angle_between(DVec3::NEG_Z);
+    let want = if off > GIMBAL_LIMIT { DQuat::from_rotation_arc(DVec3::NEG_Z, want).slerp(DQuat::IDENTITY, 1.0 - GIMBAL_LIMIT / off) * DVec3::NEG_Z } else { want };
+    let gap = ship.gun_dir.angle_between(want);
+    if gap <= GIMBAL_RATE * dt || gap < 1e-12 {
+        ship.gun_dir = want;
+    } else {
+        let turn = DQuat::from_rotation_arc(ship.gun_dir, want);
+        ship.gun_dir = (DQuat::IDENTITY.slerp(turn, GIMBAL_RATE * dt / gap) * ship.gun_dir).normalize();
+    }
+}
+
+/// Is the gun on `dir` (world, unit)?
+pub fn gun_on(ship: &Ship, dir: DVec3) -> bool {
+    ship.gun_forward().angle_between(dir) < ON_TARGET
+}
+
+/// Is `dir` (world) within the gimbal's reach?
+pub fn within_gimbal(ship: &Ship, dir: DVec3) -> bool {
+    ship.forward().angle_between(dir) <= GIMBAL_LIMIT
+}
+
+/// Where a round or beam struck a ship this frame (for the pilots to see).
+#[derive(Clone, Copy, Debug)]
+pub struct Impact {
+    pub system: usize,
+    pub point: DVec3,
+    /// Who fired, and who was hit (ship ids).
+    pub by: usize,
+    pub target: usize,
+    pub laser: bool,
+}
 
 /// Seconds from the master arm going on to the weapons being hot.
 pub const ARM_TIME: f64 = 2.0;
@@ -118,6 +161,7 @@ impl World {
     /// damage ships. Cheap when nobody is shooting.
     pub fn combat(&mut self, ships: &mut [Armed], dt: f64) {
         self.beams.clear();
+        self.impacts.clear();
         if dt <= 0.0 {
             return;
         }
@@ -134,6 +178,10 @@ impl World {
                 }
             }
             let armed = can_fire(ship);
+            // The gimbal lays the gun (parked on the nose when there's nothing to lay it on).
+            if ship.gun_target.is_some() || ship.gun_dir != DVec3::NEG_Z {
+                lay_gun(ship, dt);
+            }
             // The gun: rounds at its rate while the trigger is held, each
             // pushing the ship back.
             ship.gun_cooldown -= dt;
@@ -141,7 +189,7 @@ impl World {
                 ship.gun_cooldown = ship.gun_cooldown.max(0.0);
             }
             while armed && ship.triggers.gun && ship.gun_cooldown <= 0.0 && ship.ammo > 0 {
-                let nose = ship.forward();
+                let nose = ship.gun_forward();
                 // Fired this long before the end of the frame: it has since
                 // gained that much on the ship (which is already at the end).
                 let late = -ship.gun_cooldown;
@@ -156,7 +204,8 @@ impl World {
             if armed && ship.triggers.laser && !ship.laser_overheated {
                 ship.laser_heat = (ship.laser_heat + dt / LASER_BURN).min(1.0);
                 ship.laser_overheated = ship.laser_heat >= 1.0;
-                lasers.push((a.id, a.system, ship.position + ship.forward() * (SHIP_RADIUS + 1.0), ship.forward()));
+                let dir = ship.gun_forward(); // on the gun's gimbal
+                lasers.push((a.id, a.system, ship.position + dir * (SHIP_RADIUS + 1.0), dir));
             } else {
                 ship.laser_heat = (ship.laser_heat - dt / LASER_COOL).max(0.0);
                 ship.laser_overheated &= ship.laser_heat > LASER_RESET;
@@ -196,9 +245,10 @@ impl World {
             let step = dt.min(SLUG_LIFETIME - slug.age).max(0.0);
             slug.age += dt;
             match step_projectile(&sys.bodies, &positions, &mut slug.projectile, t - dt, step, &here) {
-                Some(Hit::Target { id, relative_velocity, .. }) => {
+                Some(Hit::Target { id, relative_velocity, point }) => {
                     let joules = 0.5 * SLUG_MASS * relative_velocity.length_squared();
                     hits.push((id, joules, relative_velocity * SLUG_MASS, slug.owner, "GUNFIRE"));
+                    self.impacts.push(Impact { system: slug.system, point, by: slug.owner, target: id, laser: false });
                     false
                 }
                 Some(Hit::Body { .. }) => false,
@@ -218,8 +268,9 @@ impl World {
             let here: Vec<Target> = all.iter().filter(|tg| tg.id != owner).copied().collect();
             let found = ray(&sys.bodies, &positions, from, dir, LASER_RANGE, t, &here);
             let (to, hit) = match found {
-                Some((Hit::Target { id, .. }, d)) => {
+                Some((Hit::Target { id, point, .. }, d)) => {
                     hits.push((id, laser_power(d) * dt, DVec3::ZERO, owner, "LASER FIRE"));
+                    self.impacts.push(Impact { system, point, by: owner, target: id, laser: true });
                     (from + dir * d, true)
                 }
                 Some((Hit::Body { .. }, d)) => (from + dir * d, true),
@@ -289,6 +340,24 @@ mod tests {
         assert!((damage - joules / damage::HULL_STRENGTH).abs() < 0.01, "{damage}");
         assert!(b.velocity.z < 0.0, "the hit pushes the target away");
         assert!(world.slugs.is_empty());
+    }
+
+    #[test]
+    fn the_gimbal_lays_the_gun_within_its_cone_at_its_rate() {
+        let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
+        let off = |deg: f64| DQuat::from_rotation_y(deg.to_radians()) * DVec3::NEG_Z;
+        ship.gun_target = Some(off(3.0));
+        lay_gun(&mut ship, 0.05); // 1.5° at 30°/s
+        assert!((ship.gun_forward().angle_between(DVec3::NEG_Z).to_degrees() - 1.5).abs() < 1e-6);
+        lay_gun(&mut ship, 0.1);
+        assert!(gun_on(&ship, off(3.0)));
+        ship.gun_target = Some(off(10.0)); // beyond the gimbal: as far as it goes
+        lay_gun(&mut ship, 1.0);
+        assert!((ship.gun_forward().angle_between(DVec3::NEG_Z) - GIMBAL_LIMIT).abs() < 1e-9);
+        assert!(!within_gimbal(&ship, off(10.0)));
+        ship.gun_target = None;
+        lay_gun(&mut ship, 1.0);
+        assert_eq!(ship.gun_dir, DVec3::NEG_Z, "parked on the nose");
     }
 
     #[test]

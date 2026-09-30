@@ -27,7 +27,7 @@ use crate::station::{self, DOCKED_HEIGHT, STATION_SIZE};
 use crate::system::{BodyKind, StarSystem};
 use crate::traffic::Facility;
 use crate::units::LIGHT_YEAR;
-use crate::weapons::{Beam, Slug};
+use crate::weapons::{Beam, Impact, Slug};
 
 /// Neighbouring stars checked for hyperdrive obstacles and system hand-over.
 pub const NEIGHBOURS: usize = 24;
@@ -86,6 +86,8 @@ pub struct World {
     pub slugs: Vec<Slug>,
     /// Laser beams fired in the last combat phase.
     pub beams: Vec<Beam>,
+    /// Hits in the last combat phase.
+    pub impacts: Vec<Impact>,
 }
 
 impl World {
@@ -104,6 +106,7 @@ impl World {
             positions: Vec::new(),
             slugs: Vec::new(),
             beams: Vec::new(),
+            impacts: Vec::new(),
         }
     }
 

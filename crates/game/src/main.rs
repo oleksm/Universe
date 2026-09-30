@@ -22,6 +22,18 @@ use observer::{Focus, Observer};
 
 const SEED: u64 = 1984;
 const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
+/// Where a hit landed, shown as a spark for a moment.
+pub struct Spark {
+    pub system: usize,
+    pub point: DVec3,
+    /// Seconds since.
+    pub age: f32,
+    pub laser: bool,
+    /// Our round or beam (and whose ship it struck).
+    pub ours: bool,
+    pub target: usize,
+}
+
 /// Game seconds per real second, by default.
 const DEFAULT_TIME_SCALE: f64 = 1.0;
 
@@ -95,6 +107,8 @@ pub struct App {
     pub fire: Option<(universe_sim::avionics::Track, Option<universe_sim::avionics::Solution>)>,
     /// Seconds since the ship was last hit (for the HUD's flash).
     pub hit_age: f32,
+    /// Recent hits, for their sparks.
+    pub sparks: Vec<Spark>,
     /// The weapon keys as last sent to the ship (commands go on a change).
     triggers_held: Triggers,
     /// Display names of the route's stops (refreshed when the route changes).
@@ -148,6 +162,7 @@ impl App {
             contacts: Vec::new(),
             fire: None,
             hit_age: 99.0,
+            sparks: Vec::new(),
             triggers_held: Triggers::default(),
             route_labels: Vec::new(),
             route_labels_for: Vec::new(),
@@ -502,6 +517,22 @@ impl Game for App {
         self.last_step = self.u.step_world(dt, self.warp(), &controls);
         if self.u.ship.ammo < ammo {
             sound::gunshot(ctx);
+        }
+        // Sparks where hits landed; a tick when ours do.
+        for s in &mut self.sparks {
+            s.age += ctx.dt;
+        }
+        self.sparks.retain(|s| s.age < hud::SPARK_TIME);
+        let mut ours = false;
+        for i in &self.u.world.impacts {
+            let mine = i.by == universe_sim::PLAYER;
+            ours |= mine && !i.laser;
+            if self.sparks.len() < 200 {
+                self.sparks.push(Spark { system: i.system, point: i.point, age: 0.0, laser: i.laser, ours: mine, target: i.target });
+            }
+        }
+        if ours {
+            sound::hit_confirmed(ctx);
         }
         let ms = tick.elapsed().as_secs_f32() * 1000.0;
         self.sim_ms = if self.sim_ms == 0.0 { ms } else { self.sim_ms + (ms - self.sim_ms) * 0.05 };

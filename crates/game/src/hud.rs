@@ -1,6 +1,7 @@
 use universe_engine::glam::{DVec3, Vec2, Vec3Swizzles};
 use universe_engine::{text_size, Color, Context, Frame, GLYPH};
 use universe_sim::world::radar::RADAR_RANGE;
+use universe_sim::world::weapons::{gun_on, within_gimbal, GIMBAL_LIMIT};
 use universe_sim::world::station::{MAX_DOCK_SPEED, MAX_ROLL_ERROR, STATION_SIZE};
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingStatus, ShipState};
 
@@ -248,7 +249,17 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
     }
     match &app.fire {
         Some((track, _)) if !track.ready() => lines.push((format!("     FIRE CONTROL: TRACKING {:3.0}%", track.quality() * 100.0), AMBER)),
-        Some((_, Some(sol))) => lines.push((format!("     LEAD READY  SLUG FLIGHT {:.1} S  SPACE GUN  V LASER", sol.time), AMBER)),
+        Some((_, Some(sol))) => {
+            let ship = &app.u.ship;
+            let state = if gun_on(ship, sol.aim) {
+                "GUN ON TARGET"
+            } else if within_gimbal(ship, sol.aim) {
+                "LAYING GUN"
+            } else {
+                "FLY THE LEAD INTO THE RING"
+            };
+            lines.push((format!("     {state}  SLUG FLIGHT {:.1} S", sol.time), AMBER));
+        }
         Some((_, None)) => lines.push(("     NO FIRING SOLUTION - OUT OF GUN RANGE".into(), DIM)),
         None => {}
     }
@@ -562,14 +573,21 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     }
     if let Some(locked) = app.u.locked_contact_in(&app.contacts) {
         bracket(frame, app, &locked.name, locked.blip.position, c);
-        // The lead (combat mode): put the nose on it and fire.
+        // The lead (combat mode): fly it into the gimbal ring; fire control
+        // lays the gun on it, and the circle doubles up when the gun is on.
         if app.u.ship.armed
             && let Some((_, Some(sol))) = &app.fire
             && let Some(p) = frame.project(app.view.ship_pos + sol.offset)
         {
-            frame.hud_ellipse(p, Vec2::splat(5.0), 12, AMBER);
-            frame.hud_line(p - Vec2::new(2.0, 0.0), p + Vec2::new(2.0, 0.0), AMBER);
-            frame.hud_line(p - Vec2::new(0.0, 2.0), p + Vec2::new(0.0, 2.0), AMBER);
+            let ship = &app.u.ship;
+            let c = if within_gimbal(ship, sol.aim) { AMBER } else { AMBER.scale(0.55) };
+            frame.hud_ellipse(p, Vec2::splat(5.0), 12, c);
+            if gun_on(ship, sol.aim) {
+                frame.hud_ellipse(p, Vec2::splat(8.0), 16, c);
+                frame.hud_ellipse(p, Vec2::splat(3.0), 8, c);
+            }
+            frame.hud_line(p - Vec2::new(2.0, 0.0), p + Vec2::new(2.0, 0.0), c);
+            frame.hud_line(p - Vec2::new(0.0, 2.0), p + Vec2::new(0.0, 2.0), c);
             if let Some(q) = frame.project(locked.blip.position) {
                 let d = q - p;
                 if d.length() > 12.0 {
@@ -579,6 +597,63 @@ fn contact_marker(frame: &mut Frame, app: &App) {
         }
     }
 }
+
+/// Where the nose and the gun point, in any view: a small cross on the nose
+/// (in the chase view; the cockpit has its crosshair); in combat mode the
+/// gimbal's reach as a ring around it, and the gun's pipper. Plus sparks
+/// where hits land, and HIT on the locked target when ours do.
+fn gunsight(frame: &mut Frame, app: &App) {
+    let ship = &app.u.ship;
+    let from = app.view.ship_pos;
+    let far = 1.0e5;
+    let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
+    if let Some(nose) = frame.project(from + ship.forward() * far) {
+        if app.chase_cam {
+            let k = if ship.armed { 1.0 } else { 0.6 };
+            for d in [Vec2::X, Vec2::NEG_X, Vec2::Y, Vec2::NEG_Y] {
+                frame.hud_line(nose + d * 3.0, nose + d * 7.0, col.scale(k));
+            }
+        }
+        if ship.armed {
+            // The gimbal's cone, projected: its radius on screen.
+            let side = ship.orientation * DVec3::X;
+            let edge = from + (ship.forward() * GIMBAL_LIMIT.cos() + side * GIMBAL_LIMIT.sin()) * far;
+            if let Some(e) = frame.project(edge) {
+                let r = e.distance(nose);
+                frame.hud_ellipse(nose, Vec2::splat(r), 32, col.scale(0.6));
+            }
+            if let Some(g) = frame.project(from + ship.gun_forward() * far) {
+                frame.hud_ellipse(g, Vec2::splat(3.0), 8, col);
+                frame.hud_rect(g - Vec2::splat(0.5), Vec2::ONE, col);
+            }
+        }
+    }
+    // Sparks where hits landed (in view), ours brighter.
+    for s in &app.sparks {
+        if s.system != app.view.origin {
+            continue;
+        }
+        let Some(p) = frame.project(s.point) else { continue };
+        let k = (1.0 - s.age / SPARK_TIME).max(0.0);
+        let c = if s.laser { Color::hex(0xff8060) } else { Color::hex(0xffe080) }.scale(k * if s.ours { 1.0 } else { 0.6 });
+        let r = 3.0 + 6.0 * (s.age / SPARK_TIME);
+        for i in 0..6 {
+            let a = i as f32 * std::f32::consts::TAU / 6.0 + s.age * 3.0;
+            let d = Vec2::new(a.cos(), a.sin());
+            frame.hud_line(p + d * r * 0.4, p + d * r, c);
+        }
+    }
+    // HIT on the locked target when one of ours lands.
+    if let Some(locked) = app.u.locked_contact_in(&app.contacts)
+        && app.sparks.iter().any(|s| s.ours && s.target == universe_sim::craft_id(locked.blip.id) && s.age < 0.6)
+        && let Some(p) = frame.project(locked.blip.position)
+    {
+        frame.text(p + Vec2::new(12.0, -18.0), "HIT", RED);
+    }
+}
+
+/// How long a hit's spark shows (s).
+pub const SPARK_TIME: f32 = 0.5;
 
 /// A diamond bracket around `target` with its name and range, or an arrow
 /// at the screen's edge pointing to it.
@@ -633,14 +708,8 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
             frame.hud_line(c + a, c + b, col);
             frame.hud_line(c + a.perp(), c + b.perp(), col);
         }
-        // Combat mode: a gunsight ring, and ticks where the guns converge.
-        if ship.armed {
-            frame.hud_ellipse(c, Vec2::splat(22.0), 24, col.scale(0.8));
-            for d in [Vec2::X, Vec2::NEG_X, Vec2::Y, Vec2::NEG_Y] {
-                frame.hud_line(c + d * 22.0, c + d * 28.0, col);
-            }
-        }
     }
+    gunsight(frame, app);
 
     let cam = frame.camera.position;
 
@@ -895,7 +964,7 @@ PILOT
           HYPERDRIVE STEER TO TARGET
  T        RADAR: LOCK NEXT SHIP (NEAREST FIRST)
  B        COMBAT MODE: ARM / SAFE WEAPONS
- SPACE    GUN (AIM AT THE LEAD CIRCLE)
+ SPACE    GUN (FLY THE LEAD INTO THE RING)
  V        LASER (WATCH THE HEAT)
  C        COCKPIT / CHASE VIEW
  BKSP     RESPAWN AT HOME";

@@ -105,6 +105,18 @@ pub struct Ship {
     /// Seconds until the gun can fire again.
     #[serde(skip)]
     pub gun_cooldown: f64,
+    /// Where the gun points, in the ship's frame (unit; -Z is the nose). Its
+    /// gimbal swings it a few degrees off the nose (see `weapons`).
+    #[serde(skip, default = "boresight")]
+    pub gun_dir: DVec3,
+    /// Where the gun is to be laid, in the world (unit), as last commanded.
+    /// None: along the nose.
+    #[serde(skip)]
+    pub gun_target: Option<DVec3>,
+}
+
+fn boresight() -> DVec3 {
+    DVec3::NEG_Z
 }
 
 /// Weapon triggers: held (true) or released.
@@ -143,6 +155,9 @@ pub struct ShipCommands {
     /// Master arm: combat mode on (weapons prime, then go hot) or off (safe).
     /// None: leave it as it is.
     pub arm: Option<bool>,
+    /// Lay the gun: Some(Some(direction)) toward a world direction (as far
+    /// as its gimbal reaches), Some(None) back along the nose. None: leave it.
+    pub gun_target: Option<Option<DVec3>>,
 }
 
 /// Orders for the hyperdrive (see `hyperdrive`).
@@ -201,6 +216,8 @@ impl Ship {
             arming: 0.0,
             triggers: Triggers::default(),
             gun_cooldown: 0.0,
+            gun_dir: DVec3::NEG_Z,
+            gun_target: None,
         }
     }
 
@@ -266,7 +283,7 @@ impl Ship {
     /// Commands that keep the engine and thrusters as they are, turn nothing
     /// and leave the hyperdrive alone: a starting point for new commands.
     pub fn holding(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None }
     }
 
     /// The main engine and thrusters take their new settings.
@@ -276,6 +293,14 @@ impl Ship {
         if let Some(t) = c.weapons {
             self.triggers = t;
         }
+        if let Some(g) = c.gun_target {
+            self.gun_target = g;
+        }
+    }
+
+    /// Where the gun points, in the world.
+    pub fn gun_forward(&self) -> DVec3 {
+        self.orientation * self.gun_dir
     }
 
     /// Weapons can fire: combat mode on, primed.
