@@ -21,7 +21,12 @@ pub struct Contact {
     pub activity: &'static str,
     /// Where it's bound, if it says.
     pub destination: Option<String>,
+    /// Hull integrity 0..1, as a combat scan reads it (shown in combat mode).
+    pub hull: f64,
 }
+
+/// Half-angle of the lock beam around the nose (rad): 6°.
+pub const LOCK_BEAM: f64 = 6.0 * std::f64::consts::PI / 180.0;
 
 /// What a craft's transponder says it's doing.
 fn activity(craft: &Craft) -> &'static str {
@@ -52,7 +57,7 @@ impl Universe {
                 let r = &craft.avionics.route;
                 let stop = r.stops.get(r.next).copied();
                 let destination = stop.map(|s| route::stop_name(&self.world.system(s.system), s).to_uppercase());
-                Contact { blip, name, activity, destination }
+                Contact { blip, name, activity, destination, hull: craft.ship.hull }
             })
             .collect()
     }
@@ -85,6 +90,24 @@ impl Universe {
         Some(predict(&sys, &self.ship, self.world.time, &positions, &traffic))
     }
 
+    /// Lock in the beam: of the contacts within `LOCK_BEAM` of the nose, the
+    /// one nearest the crosshair, or, if that's already locked, the next one
+    /// out from it. Nothing in the beam: the lock is released.
+    pub fn lock_in_beam(&mut self) -> Option<Contact> {
+        let nose = self.ship.forward();
+        let own = self.ship.position;
+        let off = |c: &Contact| (c.blip.position - own).angle_between(nose);
+        let mut beam: Vec<Contact> = self.contacts().into_iter().filter(|c| off(c) <= LOCK_BEAM).collect();
+        beam.sort_by(|a, b| off(a).total_cmp(&off(b)).then(a.blip.id.cmp(&b.blip.id)));
+        let next = match self.avionics.contact.and_then(|id| beam.iter().position(|c| c.blip.id == id)) {
+            Some(i) => beam.into_iter().cycle().nth(i + 1),
+            None => beam.into_iter().next(),
+        };
+        let next = next.filter(|c| Some(c.blip.id) != self.avionics.contact || self.avionics.contact.is_none());
+        self.avionics.contact = next.as_ref().map(|c| c.blip.id);
+        next
+    }
+
     /// The locked contact, if it's still on the radar.
     pub fn locked_contact_in<'a>(&self, contacts: &'a [Contact]) -> Option<&'a Contact> {
         let id = self.avionics.contact?;
@@ -97,6 +120,29 @@ mod tests {
     use glam::DVec3;
 
     use crate::universe::Universe;
+
+    #[test]
+    fn t_locks_what_is_in_the_beam_nearest_the_crosshair() {
+        let mut u = Universe::new(1984);
+        u.spawn_settlers(3, 1);
+        let (sys, pos, nose) = (u.ship_system, u.ship.position, u.ship.forward());
+        let side = nose.any_orthonormal_vector();
+        // Two ahead (1° and 3° off the nose), one 20° off.
+        let place = [(1.0f64, 5_000.0), (3.0, 2_000.0), (20.0, 1_000.0)];
+        for (c, (deg, d)) in u.crafts.iter_mut().zip(place) {
+            c.system = sys;
+            c.ship.state = universe_world::ShipState::Flying;
+            let dir = (nose + side * deg.to_radians().tan()).normalize();
+            c.ship.position = pos + dir * d;
+        }
+        assert_eq!(u.lock_in_beam().map(|c| c.blip.id), Some(0), "nearest the crosshair");
+        assert_eq!(u.lock_in_beam().map(|c| c.blip.id), Some(1), "next in the beam");
+        assert_eq!(u.lock_in_beam().map(|c| c.blip.id), Some(0), "round again");
+        // Turn away: nothing in the beam, the lock goes.
+        u.ship.orientation = universe_world::ship::facing(-nose, side);
+        assert!(u.lock_in_beam().is_none());
+        assert!(u.avionics.contact.is_none());
+    }
 
     #[test]
     fn radar_locks_contacts_nearest_first_and_loses_them_out_of_range() {

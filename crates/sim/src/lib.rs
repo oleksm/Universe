@@ -29,7 +29,7 @@ pub use universe_world::{
     StarClass, StarSystem, StationFrame, StepResult, Terrain, TerrainKind, TrafficEvent,
 };
 pub use combat::{craft_id, PLAYER};
-pub use contacts::Contact;
+pub use contacts::{Contact, LOCK_BEAM};
 pub use save::UniverseSave;
 pub use traffic::{CrashReport, Craft, TrafficStats};
 pub use universe::Universe;

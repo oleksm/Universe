@@ -113,6 +113,8 @@ pub struct App {
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
     pub reach: Option<Reach>,
+    /// Seconds left to show the lock beam's ring (after T, outside combat mode).
+    pub beam_shown: f32,
     /// The collision warning's prediction, when it's on (made at `collision_at`, world time).
     pub collision: Option<universe_sim::avionics::collision::Prediction>,
     pub collision_at: f64,
@@ -174,6 +176,7 @@ impl App {
             hit_age: 99.0,
             sparks: Vec::new(),
             reach: None,
+            beam_shown: 0.0,
             collision: None,
             collision_at: 0.0,
             collision_age: 99.0,
@@ -347,12 +350,16 @@ impl App {
             self.say(if on { "COLLISION WARNING ON" } else { "COLLISION WARNING OFF" }.into());
         }
         if input.pressed(KeyCode::KeyT) {
-            match self.u.lock_next_contact() {
+            // Lock what's in the beam around the crosshair (the ring shows it for a moment).
+            let had = self.u.avionics.contact.is_some();
+            self.beam_shown = 1.5;
+            match self.u.lock_in_beam() {
                 Some(c) => {
                     sound::click(ctx, 1200.0);
-                    self.say(format!("RADAR LOCK: {}", c.name));
+                    self.say(format!("LOCKED: {}", c.name));
                 }
-                None => self.say("RADAR LOCK RELEASED".into()),
+                None if had => self.say("LOCK RELEASED".into()),
+                None => self.say("NO TARGET IN THE BEAM - PUT IT IN THE RING".into()),
             }
         }
         // The autopilot has the stick.
@@ -645,6 +652,7 @@ impl Game for App {
         }
         self.contacts = contacts;
         self.hit_age += ctx.dt;
+        self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
         self.build_view();
         self.update_camera(dt, focus_changed);
         if let Some(t) = self.sound_test {

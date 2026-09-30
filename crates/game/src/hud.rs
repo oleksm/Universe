@@ -250,15 +250,34 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         return;
     };
-    let closing = c.blip.closing_speed(app.u.ship.position, app.u.ship.velocity);
-    let rel = (c.blip.velocity - app.u.ship.velocity).length();
+    let ship = &app.u.ship;
+    let closing = c.blip.closing_speed(ship.position, ship.velocity);
     let trend = if closing >= 0.0 { "CLOSING" } else { "OPENING" };
+    lines.push((format!("LOCK {}  {}  {trend} {}", c.name, fmt::distance(c.blip.distance), fmt::speed(closing.abs())), crate::scene::TRAFFIC));
+    // How fast it crosses our view, and which way it's moving, relative to us
+    // in our ship's frame (forward, right, up).
+    let r = c.blip.position - ship.position;
+    let v = c.blip.velocity - ship.velocity;
+    let angular = r.cross(v).length() / r.length_squared().max(1.0);
+    let local = ship.orientation.inverse() * v;
     lines.push((
-        format!("LOCK {}  {}  {trend} {}  REL {}", c.name, fmt::distance(c.blip.distance), fmt::speed(closing.abs()), fmt::speed(rel)),
-        crate::scene::TRAFFIC,
+        format!(
+            "     ANG {:.2} DEG/S  REL {}  FWD {:+.0} RGT {:+.0} UP {:+.0} M/S",
+            angular.to_degrees(),
+            fmt::speed(v.length()),
+            -local.z,
+            local.x,
+            local.y
+        ),
+        crate::scene::TRAFFIC.scale(0.8),
     ));
     let bound = c.destination.as_ref().map(|d| format!(" -> {d}")).unwrap_or_default();
     lines.push((format!("     {}{bound}", c.activity), DIM));
+    if ship.armed {
+        let col = if c.hull < 0.3 { RED } else { AMBER };
+        let bar: String = (0..10).map(|i| if (i as f64) < c.hull * 10.0 - 0.01 { '#' } else { '.' }).collect();
+        lines.push((format!("     TARGET HULL [{bar}] {:3.0}%", c.hull * 100.0), col));
+    }
     // Fire control (combat mode): tracking, then the gun's lead.
     if !app.u.ship.armed {
         return;
@@ -589,6 +608,17 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     }
     if let Some(locked) = app.u.locked_contact_in(&app.contacts) {
         bracket(frame, app, &locked.name, locked.blip.position, c);
+        // Which way it's moving across our view: an arrow off its bracket.
+        let v = locked.blip.velocity - app.u.ship.velocity;
+        if v.length() > 0.5
+            && let (Some(p), Some(q)) = (frame.project(locked.blip.position), frame.project(locked.blip.position + v * 2.0))
+            && let Some(dir) = (q - p).try_normalize()
+        {
+            let (a, b) = (p + dir * 14.0, p + dir * 30.0);
+            frame.hud_line(a, b, c);
+            frame.hud_line(b, b - dir * 5.0 + dir.perp() * 3.0, c);
+            frame.hud_line(b, b - dir * 5.0 - dir.perp() * 3.0, c);
+        }
         // The lead (combat mode): fly it into the gimbal ring; fire control
         // lays the gun on it, and the circle doubles up when the gun is on.
         if app.u.ship.armed
@@ -641,6 +671,23 @@ fn gunsight(frame: &mut Frame, app: &App) {
             if let Some(g) = frame.project(from + ship.gun_forward() * far) {
                 frame.hud_ellipse(g, Vec2::splat(3.0), 8, col);
                 frame.hud_rect(g - Vec2::splat(0.5), Vec2::ONE, col);
+            }
+        }
+    }
+    // The lock beam: a ring of `LOCK_BEAM` around the nose, in combat mode
+    // and for a moment after T.
+    if (ship.armed || app.beam_shown > 0.0)
+        && let Some(nose) = frame.project(from + ship.forward() * far)
+    {
+        let side = ship.orientation * DVec3::Y;
+        let beam = universe_sim::LOCK_BEAM;
+        if let Some(e) = frame.project(from + (ship.forward() * beam.cos() + side * beam.sin()) * far) {
+            let k = if ship.armed { 0.7 } else { (app.beam_shown / 1.5).min(1.0) };
+            let c = crate::scene::TRAFFIC.scale(k);
+            let r = e.distance(nose);
+            frame.hud_ellipse(nose, Vec2::splat(r), 48, c);
+            for d in [Vec2::X, Vec2::NEG_X, Vec2::Y, Vec2::NEG_Y] {
+                frame.hud_line(nose + d * (r - 4.0), nose + d * (r + 4.0), c);
             }
         }
     }
@@ -999,7 +1046,7 @@ PILOT
  R        REQUEST DOCKING / LANDING
  K        AUTOPILOT: DOCK/LAND, OR IN
           HYPERDRIVE STEER TO TARGET
- T        RADAR: LOCK NEXT SHIP (NEAREST FIRST)
+ T        LOCK THE SHIP IN THE BEAM RING (AGAIN: NEXT)
  I        COLLISION WARNING: PATH, IMPACT, TIME
  B        COMBAT MODE: ARM / SAFE WEAPONS
  SPACE    GUN (FLY THE LEAD INTO THE RING)
