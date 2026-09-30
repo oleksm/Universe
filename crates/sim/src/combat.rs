@@ -94,6 +94,7 @@ mod tests {
         c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
         c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
         c.avionics = Default::default();
+        u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
         u.lock_next_contact();
         let mut destroyed = false;
         for frame in 0..600 {
@@ -114,5 +115,17 @@ mod tests {
         eprintln!("rounds fired {fired}, shot down {destroyed}");
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");
+    }
+
+    #[test]
+    fn combat_mode_and_clearance_exclude_each_other() {
+        let mut u = Universe::new(1984);
+        assert!(u.request_clearance(), "cleared to dock");
+        u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        assert!(u.avionics.clearance.is_none(), "arming gives the clearance up");
+        assert!(!u.request_clearance(), "no clearance while armed");
+        u.command(&ShipCommands { arm: Some(false), ..u.ship.holding() });
+        assert!(u.request_clearance(), "safe again: cleared");
     }
 }

@@ -92,6 +92,13 @@ pub struct Ship {
     /// The laser overheated and is locked out until it has cooled (see `weapons::LASER_RESET`).
     #[serde(default)]
     pub laser_overheated: bool,
+    /// Combat mode: the master arm is on (see `weapons`). The weapons are
+    /// hot once `arming` has run down.
+    #[serde(default)]
+    pub armed: bool,
+    /// Seconds until the weapons are primed.
+    #[serde(default)]
+    pub arming: f64,
     /// Weapon triggers, as last commanded.
     #[serde(skip)]
     pub triggers: Triggers,
@@ -133,6 +140,9 @@ pub struct ShipCommands {
     pub hyperdrive: Option<HyperdriveCommand>,
     /// Weapon triggers. None: leave them as they are.
     pub weapons: Option<Triggers>,
+    /// Master arm: combat mode on (weapons prime, then go hot) or off (safe).
+    /// None: leave it as it is.
+    pub arm: Option<bool>,
 }
 
 /// Orders for the hyperdrive (see `hyperdrive`).
@@ -187,6 +197,8 @@ impl Ship {
             ammo: crate::weapons::GUN_AMMO,
             laser_heat: 0.0,
             laser_overheated: false,
+            armed: false,
+            arming: 0.0,
             triggers: Triggers::default(),
             gun_cooldown: 0.0,
         }
@@ -254,7 +266,7 @@ impl Ship {
     /// Commands that keep the engine and thrusters as they are, turn nothing
     /// and leave the hyperdrive alone: a starting point for new commands.
     pub fn holding(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None }
     }
 
     /// The main engine and thrusters take their new settings.
@@ -264,6 +276,11 @@ impl Ship {
         if let Some(t) = c.weapons {
             self.triggers = t;
         }
+    }
+
+    /// Weapons can fire: combat mode on, primed.
+    pub fn weapons_hot(&self) -> bool {
+        self.armed && self.arming <= 0.0
     }
 
     /// Acceleration from the main engine and thrusters as set (m/s^2): thrust / current mass.

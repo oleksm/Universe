@@ -90,6 +90,9 @@ pub fn request(sys: &StarSystem, ship: &Ship, target: Option<Facility>, t: f64, 
     if ship.hyperdrive {
         return Err("DISENGAGE HYPERDRIVE FIRST".into());
     }
+    if ship.armed {
+        return Err("WEAPONS ARMED - DISARM FIRST (B)".into());
+    }
     let Some(target) = target else {
         return Err("NO TARGET - PICK ONE ON THE MAP (M)".into());
     };
@@ -104,8 +107,11 @@ pub fn request(sys: &StarSystem, ship: &Ship, target: Option<Facility>, t: f64, 
 }
 
 /// A clearance for `target` lapses if the ship wanders more than twice the
-/// granting range away, or the target is gone.
+/// granting range away, the target is gone, or the ship arms its weapons.
 pub fn lapsed(sys: &StarSystem, ship: &Ship, target: Facility, t: f64, positions: &[DVec3]) -> bool {
+    if ship.armed {
+        return true;
+    }
     let range = target.clearance_range(sys);
     target.position(sys, t, positions).is_none_or(|p| p.distance(ship.position) > 2.0 * range)
 }

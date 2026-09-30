@@ -170,7 +170,7 @@ pub struct Command {
 impl Command {
     /// As commands for the ship's devices.
     pub fn commands(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: Some(self.controls), hyperdrive: None, weapons: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: Some(self.controls), hyperdrive: None, weapons: None, arm: None }
     }
 }
 

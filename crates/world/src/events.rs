@@ -15,6 +15,11 @@ pub enum ShipEvent {
     Bumped,
     /// Destroyed, by hitting `body` (or by weapons fire: "GUNFIRE", "LASER FIRE").
     Crashed { body: String },
+    /// Combat mode: the master arm went on (weapons priming), the weapons
+    /// are primed and hot, or the master arm went off (safe).
+    WeaponsArming,
+    WeaponsHot,
+    WeaponsSafe,
     /// Struck by a weapon of ship `by`: `damage` of the hull's strength taken,
     /// `hull` left (fractions).
     Hit { by: usize, damage: f64, hull: f64 },

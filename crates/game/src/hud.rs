@@ -73,10 +73,14 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
 }
 
 fn status(app: &App, lines: &mut Vec<(String, Color)>) {
+    let ship = &app.u.ship;
     let mode = match app.mode {
         Mode::Observer => "OBSERVER",
+        Mode::Pilot if ship.weapons_hot() => "COMBAT - WEAPONS HOT",
+        Mode::Pilot if ship.armed => "COMBAT - ARMING",
         Mode::Pilot => "PILOT",
     };
+    let top = if app.mode == Mode::Pilot && ship.armed { RED } else { HUD };
     let warp = if app.paused {
         "PAUSED".to_string()
     } else if app.last_step.warp_limited {
@@ -84,7 +88,7 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
     } else {
         format!("TIME {}", fmt::warp(app.warp()))
     };
-    lines.push((format!("{mode}  {}  {warp}", fmt::clock(app.u.world.time)), HUD));
+    lines.push((format!("{mode}  {}  {warp}", fmt::clock(app.u.world.time)), top));
     let sys = &app.view.system;
     let home = if app.view.origin == app.u.world.home_system { "  HOME" } else { "" };
     lines.push((
@@ -182,9 +186,18 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         DIM,
     ));
     let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
-    let heat = if ship.laser_overheated { " HOT".to_string() } else { String::new() };
-    let hull_c = if app.hit_age < 0.25 || ship.hull < 0.3 { RED } else { DIM };
-    lines.push((format!("HULL [{}] {:3.0}%  GUN {}  LASER [{}]{heat}", gauge(ship.hull), ship.hull * 100.0, ship.ammo, gauge(ship.laser_heat)), hull_c));
+    let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
+    if ship.armed {
+        let heat = if ship.laser_overheated { " HOT".to_string() } else { String::new() };
+        let c = if hurt { RED } else { AMBER };
+        lines.push((format!("HULL [{}] {:3.0}%  GUN {}  LASER [{}]{heat}", gauge(ship.hull), ship.hull * 100.0, ship.ammo, gauge(ship.laser_heat)), c));
+        if !ship.weapons_hot() {
+            lines.push((format!("WEAPONS PRIMING  {:.1} S", ship.arming), AMBER));
+        }
+    } else {
+        let c = if hurt { RED } else { DIM };
+        lines.push((format!("HULL [{}] {:3.0}%  WEAPONS SAFE  B COMBAT MODE", gauge(ship.hull), ship.hull * 100.0), c));
+    }
     match &ship.state {
         ShipState::Landed { body, local_position, .. } => {
             let b = &app.view.system.bodies[*body];
@@ -232,7 +245,10 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ));
     let bound = c.destination.as_ref().map(|d| format!(" -> {d}")).unwrap_or_default();
     lines.push((format!("     {}{bound}  T NEXT", c.activity), DIM));
-    // Fire control: tracking, then the gun's lead.
+    // Fire control (combat mode): tracking, then the gun's lead.
+    if !app.u.ship.armed {
+        return;
+    }
     match &app.fire {
         Some((track, _)) if !track.ready() => lines.push((format!("     FIRE CONTROL: TRACKING {:3.0}%", track.quality() * 100.0), AMBER)),
         Some((_, Some(sol))) => lines.push((format!("     LEAD READY  SLUG FLIGHT {:.1} S  SPACE GUN  V LASER", sol.time), AMBER)),
@@ -280,6 +296,7 @@ fn approach_info(app: &App, lines: &mut Vec<(String, Color)>) {
         None => {
             if app.u.ship.is_flying() {
                 let hint = match &app.nav_marker {
+                    _ if app.u.ship.armed => "WEAPONS ARMED - NO CLEARANCE  B TO GO SAFE".into(),
                     Some((name, _)) if app.u.avionics.nav_target.is_some() => format!("NAV {name}  R REQUEST CLEARANCE"),
                     _ => "M NAV MAP   R REQUEST DOCKING".into(),
                 };
@@ -550,8 +567,9 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     }
     if let Some(locked) = app.u.locked_contact_in(&app.contacts) {
         bracket(frame, app, &locked.name, locked.blip.position, c);
-        // The lead: put the nose on it and fire.
-        if let Some((_, Some(sol))) = &app.fire
+        // The lead (combat mode): put the nose on it and fire.
+        if app.u.ship.armed
+            && let Some((_, Some(sol))) = &app.fire
             && let Some(p) = frame.project(app.view.ship_pos + sol.offset)
         {
             frame.hud_ellipse(p, Vec2::splat(5.0), 12, AMBER);
@@ -614,9 +632,18 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
     let size = frame.size();
     let c = (size / 2.0).floor();
     if !app.chase_cam {
+        let ship = &app.u.ship;
+        let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
         for (a, b) in [(Vec2::new(-14.0, 0.0), Vec2::new(-5.0, 0.0)), (Vec2::new(5.0, 0.0), Vec2::new(14.0, 0.0))] {
-            frame.hud_line(c + a, c + b, HUD);
-            frame.hud_line(c + a.perp(), c + b.perp(), HUD);
+            frame.hud_line(c + a, c + b, col);
+            frame.hud_line(c + a.perp(), c + b.perp(), col);
+        }
+        // Combat mode: a gunsight ring, and ticks where the guns converge.
+        if ship.armed {
+            frame.hud_ellipse(c, Vec2::splat(22.0), 24, col.scale(0.8));
+            for d in [Vec2::X, Vec2::NEG_X, Vec2::Y, Vec2::NEG_Y] {
+                frame.hud_line(c + d * 22.0, c + d * 28.0, col);
+            }
         }
     }
 
@@ -793,6 +820,7 @@ PILOT
  K        AUTOPILOT: DOCK/LAND, OR IN
           HYPERDRIVE STEER TO TARGET
  T        RADAR: LOCK NEXT SHIP (NEAREST FIRST)
+ B        COMBAT MODE: ARM / SAFE WEAPONS
  SPACE    GUN (AIM AT THE LEAD CIRCLE)
  V        LASER (WATCH THE HEAT)
  C        COCKPIT / CHASE VIEW

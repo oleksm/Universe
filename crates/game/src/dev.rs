@@ -265,6 +265,8 @@ pub fn apply(app: &mut App, name: &str) {
                 if let Some((_, Some(sol))) = app.fire {
                     app.u.ship.orientation = universe_sim::ship::facing(sol.aim, sol.aim.any_orthonormal_vector());
                 }
+                app.u.command(&ShipCommands { arm: Some(true), ..app.u.ship.holding() });
+                app.u.ship.arming = 0.0;
                 app.u.ship.triggers = universe_sim::world::Triggers { gun: true, laser: true };
             }
         }

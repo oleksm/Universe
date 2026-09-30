@@ -279,6 +279,12 @@ impl App {
         }
         // Weapons: SPACE the gun, V the laser, while held (the autopilot
         // doesn't hold them back).
+        if input.pressed(KeyCode::KeyB) {
+            self.u.command(&ShipCommands { arm: Some(!self.u.ship.armed), ..self.u.ship.holding() });
+        }
+        if !self.u.ship.armed && (input.pressed(KeyCode::Space) || input.pressed(KeyCode::KeyV)) {
+            self.say("WEAPONS SAFE - B FOR COMBAT MODE".into());
+        }
         let triggers = Triggers { gun: input.down(KeyCode::Space), laser: input.down(KeyCode::KeyV) };
         if triggers != self.triggers_held {
             self.triggers_held = triggers;
@@ -377,6 +383,9 @@ impl App {
                 Event::Ship(ShipEvent::Bumped) => "HULL CONTACT!".into(),
                 Event::Ship(ShipEvent::Launched { station }) => format!("LAUNCHED FROM {station}"),
                 Event::Ship(ShipEvent::Hit { .. }) => continue,
+                Event::Ship(ShipEvent::WeaponsArming) => "COMBAT MODE - WEAPONS ARMING".into(),
+                Event::Ship(ShipEvent::WeaponsHot) => "WEAPONS HOT".into(),
+                Event::Ship(ShipEvent::WeaponsSafe) => "WEAPONS SAFE".into(),
             };
             self.say(text.to_uppercase());
         }

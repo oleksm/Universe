@@ -36,6 +36,12 @@ pub fn event(ctx: &Context, event: &Event) {
         }
         Event::Ship(ShipEvent::TookOff) => a.tone(300.0, 500.0, 0.2, 0.25),
         Event::Ship(ShipEvent::Crashed { .. }) => a.noise(1.8, 0.6),
+        Event::Ship(ShipEvent::WeaponsArming) => a.tone(150.0, 700.0, 2.0, 0.15),
+        Event::Ship(ShipEvent::WeaponsHot) => {
+            a.tone(880.0, 880.0, 0.08, 0.2);
+            a.tone(1320.0, 1320.0, 0.15, 0.2);
+        }
+        Event::Ship(ShipEvent::WeaponsSafe) => a.tone(600.0, 200.0, 0.4, 0.15),
         Event::Ship(ShipEvent::Hit { damage, .. }) => a.noise(0.15, (0.2 + *damage as f32 * 4.0).min(0.6)),
         Event::Ship(ShipEvent::Respawned) => a.tone(440.0, 880.0, 0.3, 0.25),
         Event::Ship(ShipEvent::EnteredSystem { .. }) => a.tone(880.0, 880.0, 0.2, 0.25),

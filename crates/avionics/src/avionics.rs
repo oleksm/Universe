@@ -100,7 +100,10 @@ impl Avionics {
             | ShipEvent::Bumped
             | ShipEvent::GateArrived { .. }
             | ShipEvent::GateTooFast { .. }
-            | ShipEvent::Hit { .. } => {}
+            | ShipEvent::Hit { .. }
+            | ShipEvent::WeaponsArming
+            | ShipEvent::WeaponsHot
+            | ShipEvent::WeaponsSafe => {}
         }
     }
 

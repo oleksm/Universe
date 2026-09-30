@@ -1,6 +1,10 @@
 //! Weapons: a ship's gun and laser, and the combat phase that runs once per
 //! frame after every ship has moved.
 //!
+//! Weapons fire only in combat mode: the master arm on (`master_arm`) and the
+//! weapons primed (`ARM_TIME`). Traffic control won't clear an armed ship,
+//! and a clearance lapses when the ship arms (see `traffic`).
+//!
 //! The gun fires real slugs (kernel projectiles): they leave the muzzle at
 //! the ship's own velocity plus `GUN_MUZZLE` along the nose, fall under
 //! gravity, and hit with their kinetic energy relative to the target
@@ -16,7 +20,7 @@ use universe_physics::{ray, step_projectile, Hit, Projectile, Target};
 
 use crate::damage;
 use crate::events::ShipEvent;
-use crate::ship::{Ship, ShipState, SHIP_RADIUS};
+use crate::ship::{Ship, ShipState, Triggers, SHIP_RADIUS};
 use crate::world::World;
 
 /// Slug speed from the muzzle, relative to the ship (m/s).
@@ -40,6 +44,26 @@ pub const LASER_BURN: f64 = 8.0;
 pub const LASER_COOL: f64 = 4.0;
 /// After overheating, the laser is locked out until it has cooled to this.
 pub const LASER_RESET: f64 = 0.3;
+
+/// Seconds from the master arm going on to the weapons being hot.
+pub const ARM_TIME: f64 = 2.0;
+
+/// Master arm on (combat mode: the weapons start priming) or off (safe: the
+/// triggers are released).
+pub fn master_arm(ship: &mut Ship, on: bool, events: &mut Vec<ShipEvent>) {
+    if on == ship.armed {
+        return;
+    }
+    ship.armed = on;
+    if on {
+        ship.arming = ARM_TIME;
+        events.push(ShipEvent::WeaponsArming);
+    } else {
+        ship.arming = 0.0;
+        ship.triggers = Triggers::default();
+        events.push(ShipEvent::WeaponsSafe);
+    }
+}
 
 /// A slug in flight.
 #[derive(Clone, Copy, Debug)]
@@ -73,9 +97,9 @@ pub struct Armed<'a> {
     pub events: &'a mut Vec<ShipEvent>,
 }
 
-/// Can this ship use its weapons (in normal flight)?
+/// Can this ship use its weapons (hot, in normal flight)?
 fn can_fire(ship: &Ship) -> bool {
-    matches!(ship.state, ShipState::Flying) && !ship.hyperdrive
+    ship.weapons_hot() && matches!(ship.state, ShipState::Flying) && !ship.hyperdrive
 }
 
 /// Can this ship be hit (physically present in its system)?
@@ -101,6 +125,14 @@ impl World {
         let mut fired = Vec::new();
         for a in ships.iter_mut() {
             let ship = &mut *a.ship;
+            // Priming.
+            if ship.armed && ship.arming > 0.0 {
+                ship.arming -= dt;
+                if ship.arming <= 0.0 {
+                    ship.arming = 0.0;
+                    a.events.push(ShipEvent::WeaponsHot);
+                }
+            }
             let armed = can_fire(ship);
             // The gun: rounds at its rate while the trigger is held, each
             // pushing the ship back.
@@ -217,7 +249,8 @@ mod tests {
     fn duel(gap: f64) -> (World, Ship, Ship, usize) {
         let p = Probe::new(42);
         let at = DVec3::new(0.0, 5.0 * AU, 0.0);
-        let shooter = Ship::new(at, DVec3::ZERO, DQuat::IDENTITY); // facing -Z
+        let mut shooter = Ship::new(at, DVec3::ZERO, DQuat::IDENTITY); // facing -Z
+        shooter.armed = true;
         let target = Ship::new(at + DVec3::NEG_Z * gap, DVec3::ZERO, DQuat::IDENTITY);
         (p.world, shooter, target, p.system)
     }
@@ -256,6 +289,29 @@ mod tests {
         assert!((damage - joules / damage::HULL_STRENGTH).abs() < 0.01, "{damage}");
         assert!(b.velocity.z < 0.0, "the hit pushes the target away");
         assert!(world.slugs.is_empty());
+    }
+
+    #[test]
+    fn weapons_fire_only_when_armed_and_primed() {
+        let (mut world, mut a, mut b, sys) = duel(3_000.0);
+        let (mut ea, mut eb) = (Vec::new(), Vec::new());
+        a.triggers.gun = true;
+        master_arm(&mut a, false, &mut ea);
+        assert_eq!(a.triggers, Triggers::default(), "going safe released the triggers");
+        a.triggers.gun = true;
+        frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
+        assert_eq!(a.ammo, GUN_AMMO, "safe: no shot");
+        master_arm(&mut a, true, &mut ea);
+        a.triggers.gun = true;
+        for _ in 0..18 {
+            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
+        }
+        assert_eq!(a.ammo, GUN_AMMO, "still priming");
+        for _ in 0..3 {
+            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
+        }
+        assert!(a.ammo < GUN_AMMO, "hot: firing");
+        assert!(ea.contains(&ShipEvent::WeaponsArming) && ea.contains(&ShipEvent::WeaponsHot) && ea.contains(&ShipEvent::WeaponsSafe));
     }
 
     #[test]

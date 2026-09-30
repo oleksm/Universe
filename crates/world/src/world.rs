@@ -165,6 +165,9 @@ impl World {
     /// disengages if told to. (Turning takes time: see `step_ship`.)
     pub fn command(&mut self, ship: &mut Ship, system: usize, c: &ShipCommands, events: &mut Vec<ShipEvent>) {
         ship.set_controls(c);
+        if let Some(on) = c.arm {
+            crate::weapons::master_arm(ship, on, events);
+        }
         if let Some(h) = &c.hyperdrive
             && h.engage != ship.hyperdrive
         {
