@@ -76,7 +76,8 @@ pub struct App {
     pub paused: bool,
     pub last_step: StepResult,
     pub show_help: bool,
-    pub show_orbits: bool,
+    /// Grid lines: orbit trajectories, planets' latitude/longitude grids, the ground grid's lines (O).
+    pub show_grid: bool,
     pub show_labels: bool,
     pub muted: bool,
     pub messages: Vec<Message>,
@@ -156,7 +157,7 @@ impl App {
             paused: false,
             last_step: StepResult::default(),
             show_help: false,
-            show_orbits: true,
+            show_grid: false,
             show_labels: true,
             muted: false,
             messages: Vec::new(),
@@ -251,7 +252,7 @@ impl App {
             self.show_help = !self.show_help;
         }
         if input.pressed(KeyCode::KeyO) {
-            self.show_orbits = !self.show_orbits;
+            self.show_grid = !self.show_grid;
         }
         if input.pressed(KeyCode::KeyL) {
             self.show_labels = !self.show_labels;

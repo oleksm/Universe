@@ -45,3 +45,18 @@ grid detalisation based on distance. Distant planets only need a outer round cir
 - Crater rims show from 150 px (was 40).
 - Engine: `model_shaded_faded`, and `model_colored_shaded`'s `line` is now the edge brightness
   (0 = faces only).
+
+## Follow-up: grid lines are a toggle, off by default
+
+User: "gridlines now a HUD action button, turn it off by default: trajectories, planet grids etc."
+
+- **O** (was orbits only) now toggles all grid lines (`App::show_grid`), off by default:
+  - orbit trajectories;
+  - planets' and moons' latitude/longitude grids (their edges drawn at 0);
+  - the ground grid's lines up close. Its shaded faces stay, so relief still shows.
+- The action grid has an `O GRID` cell, lit when on. Help: "O  L  GRID LINES (ORBITS, PLANET GRIDS) /
+  LABELS".
+- Not affected: crater rims, the flight guides and plan tunnel, pad markings, the collision path,
+  and the nav map.
+- With grids off, bodies read as solid lit shapes. Over open water there's then no visual cue for
+  speed or height, and O brings the ground grid back.

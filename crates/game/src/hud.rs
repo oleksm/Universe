@@ -1051,6 +1051,7 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("I", "COLLIDE", if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) }),
         ("M", "MAP", on(app.nav_map.is_some())),
         ("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
+        ("O", "GRID", on(app.show_grid)),
         ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
         ("F1", "HELP", on(app.show_help)),
     ];
@@ -1168,7 +1169,7 @@ GLOBAL
  TAB      OBSERVER / PILOT
  , .      TIME WARP DOWN / UP
  P        PAUSE
- O  L     ORBITS / LABELS
+ O  L     GRID LINES (ORBITS, PLANET GRIDS) / LABELS
  M        NAVIGATION MAP
  F8       MUTE
  F5  F9   QUICKSAVE / LOAD

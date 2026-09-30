@@ -25,7 +25,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         transit_tunnel(frame, app);
         return;
     }
-    if app.show_orbits {
+    if app.show_grid {
         orbits(frame, app);
     }
     // The system's star lights everything in it: its colour, and its
@@ -228,15 +228,15 @@ fn bodies(frame: &mut Frame, app: &App) {
             // the ground (the globe drops a hair so the grid sits on top).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
-            frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, grid_detail(px), terrain_view::FILL * 2.5);
+            frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, if app.show_grid { grid_detail(px) } else { 0.0 }, terrain_view::FILL * 2.5);
             if near {
-                terrain_view::surface_grid(frame, b, center, t, None);
+                terrain_view::surface_grid(frame, b, center, t, None, app.show_grid);
                 // On foot here: a fine grid underfoot.
                 if let universe_sim::world::Place::Outside { body, .. } = app.u.crew.place
                     && body == i
                     && app.view.origin == app.u.ship_system
                 {
-                    terrain_view::surface_grid(frame, b, center, t, Some(4.0));
+                    terrain_view::surface_grid(frame, b, center, t, Some(4.0), app.show_grid);
                 }
             }
             if frame.projected_radius(center, b.rail.radius) > 150.0 {
@@ -255,7 +255,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             if b.kind == BodyKind::Star {
                 frame.model(model, &at, c.scale(0.3 * grid_detail(px * 0.5)), fill);
             } else {
-                frame.model_shaded_faded(model, &at, c, fill, grid_detail(px));
+                frame.model_shaded_faded(model, &at, c, fill, if app.show_grid { grid_detail(px) } else { 0.0 });
             }
         }
 
