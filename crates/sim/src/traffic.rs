@@ -48,6 +48,9 @@ pub struct TrafficStats {
     /// Hunts by pirates: begun, and ended in a kill.
     pub hunts: u64,
     pub pirate_kills: u64,
+    /// Ship-to-ship collisions (each ship's side counted), and ships wrecked by them.
+    pub collisions: u64,
+    pub collision_losses: u64,
     /// Trades by settlers, and the credits that changed hands.
     pub trades: u64,
     pub turnover: f64,
@@ -83,7 +86,8 @@ impl Universe {
             let route_seed = crate::rng::mix(seed, i as u64);
             let stops = self.settler_route(route_seed, ROUTE_STOPS);
             let Some(&first) = stops.first() else { continue };
-            let ship = self.world.ship_at(first.system, first.target);
+            // Spread over the port's pads.
+            let ship = self.world.ship_on(first.system, first.target, (route_seed % 9) as usize);
             let route = Route { stops, next: 0, active: true, dwell_until: Some(self.world.time + rng.range(0.0, 600.0)), departing: false };
             // Roles, from the seed (the same settlers every time): one slice
             // pirates, another traders, the rest just travel.
@@ -150,7 +154,7 @@ impl Universe {
         let a = &c.avionics;
         let before = (a.nav_target, a.clearance, c.ship.hyperdrive, a.route.departing, c.ship.velocity, a.hunting.is_some(), a.route.active);
         let mut events = Vec::new();
-        let mut vessel = Vessel { ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };
+        let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };
         let was_hunting = vessel.avionics.hunting.is_some();
         let (stick, _) = vessel.run(&mut self.world, |a, link, ev| a.hunt(link, &sightings, ev));
         vessel.tick(&mut self.world, &stick.unwrap_or_default(), real_dt, warp);
@@ -306,7 +310,7 @@ mod tests {
             }
             eprintln!("  crash log: pirates {by_pirates}, traders {by_traders}");
             eprintln!(
-                "{count} settlers at {warp}x for {:.1} game h: {ms:.2} ms/frame; stops {}, transits {}, routes done {}, crashes {}; {flying} flying now; pirates {}: hunts {}, kills {} (shot down {})",
+                "{count} settlers at {warp}x for {:.1} game h: {ms:.2} ms/frame; stops {}, transits {}, routes done {}, crashes {}; {flying} flying now; pirates {}: hunts {}, kills {} (shot down {}); collisions {} (wrecked {})",
                 (u.world.time - t0) / 3600.0,
                 u.traffic.stops,
                 u.traffic.transits,
@@ -315,7 +319,9 @@ mod tests {
                 u.crafts.iter().filter(|c| c.avionics.pirate).count(),
                 u.traffic.hunts,
                 u.traffic.pirate_kills,
-                u.traffic.shot_down
+                u.traffic.shot_down,
+                u.traffic.collisions,
+                u.traffic.collision_losses
             );
         }
     }
@@ -339,7 +345,7 @@ mod pirate_tests {
             c.system = sys;
             c.ship.state = ShipState::Flying;
             c.ship.hyperdrive = false;
-            c.ship.position = pos + DVec3::new(8_000.0 * k as f64, 3_000.0, 0.0);
+            c.ship.position = pos + DVec3::new(8_000.0 * k as f64, 30_000.0, 0.0);
             c.ship.velocity = vel;
             c.avionics.pirate = k == 0;
             c.avionics.route.active = false; // both just drift, the pirate hunts
@@ -426,5 +432,49 @@ mod pirate_debug {
                 break;
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod collision_debug {
+    use universe_world::{Controls, ShipState};
+
+    use crate::universe::Universe;
+
+    /// Where collision wrecks happen: what both ships were doing a frame before.
+    #[test]
+    #[ignore]
+    fn debug_where_collisions_happen() {
+        let mut u = Universe::new(1984);
+        u.spawn_settlers(100, 99);
+        let mut seen = 0;
+        let mut before: Vec<String> = Vec::new();
+        for frame in 0..60 * 60 * 30 {
+            let snap: Vec<String> = u
+                .crafts
+                .iter()
+                .map(|c| {
+                    let state = match c.ship.state {
+                        ShipState::Flying => format!("flying {:.0} m/s", c.ship.velocity.length()),
+                        ShipState::Landed { .. } => "landed".into(),
+                        _ => "other".into(),
+                    };
+                    format!("{} {state} clearance {:?} route next {} dwell {:?}", c.name, c.avionics.clearance.map(|x| (x.target, x.phase, x.pad)), c.avionics.route.next, c.avionics.route.dwell_until.map(|d| d > 0.0))
+                })
+                .collect();
+            u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            let kills: Vec<_> = u.kills.iter().filter(|k| k.weapon == "COLLISION").cloned().collect();
+            for k in kills.iter().skip(seen) {
+                let v = before.get(k.victim - 1).cloned().unwrap_or_default();
+                let w = before.get(k.killer - 1).cloned().unwrap_or_default();
+                eprintln!("t {:.0}: {v}  <->  {w}", frame as f64 / 60.0);
+            }
+            seen = kills.len();
+            before = snap;
+            if seen > 12 {
+                break;
+            }
+        }
+        eprintln!("collision wrecks {}, collisions {}", u.traffic.collision_losses, u.traffic.collisions);
     }
 }

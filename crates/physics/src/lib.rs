@@ -12,6 +12,7 @@ pub mod collide;
 pub mod integrate;
 pub mod ops;
 pub mod orbit;
+pub mod pairs;
 pub mod projectile;
 pub mod query;
 pub mod rails;
@@ -24,6 +25,7 @@ pub use collide::{Collider, Contact, CutOut, Fact, Feature, Polytope, Ring, Ring
 pub use integrate::{integrate, leapfrog, Driver, Outcome, Response, Span};
 pub use ops::{bounce, relocate, Relative, Weld};
 pub use orbit::Orbit;
+pub use pairs::{bounce_pair, contacts, Mover, PairContact};
 pub use projectile::{ray, step_projectile, Hit, Projectile, Target};
 pub use query::{dominant, gravity, pull, segment_distance, simulate};
 pub use rails::{positions, velocity, Ephemeris, Frame, OnRails, RailBody};

@@ -200,7 +200,7 @@ pub fn attitude(ship: &Ship, target: DQuat, spin: DVec3, h: f64) -> Controls {
 /// The docking computer. Translates with RCS only (no flip-and-burn needed) and
 /// steers toward either the station or the docking orientation. Its command
 /// holds for `h` seconds, until it next reacts.
-pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase, h: f64) -> Command {
+pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase, may_enter: bool, h: f64) -> Command {
     let axis = frame.axis();
     let r = ship.position - frame.center;
     let v = ship.velocity - frame.velocity;
@@ -217,7 +217,7 @@ pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase, h: f64) -> Com
         && ship.angular_velocity.length() < 0.15;
     let phase = match phase {
         Phase::Approach if to_entry < 60.0 && v.length() < 5.0 => Phase::Align,
-        Phase::Align if to_entry < 60.0 && v.length() < 3.0 && aligned => Phase::Final,
+        Phase::Align if to_entry < 60.0 && v.length() < 3.0 && aligned && may_enter => Phase::Final,
         Phase::Final if height < 0.0 || lat_dist > 250.0 => Phase::Approach,
         p => p,
     };

@@ -95,6 +95,9 @@ pub struct World {
     /// Markets met so far, and the state of those traded with (see `market`).
     markets: HashMap<(usize, Facility), Rc<Market>>,
     market_states: HashMap<(usize, Facility), MarketState>,
+    /// Traffic control's pad and corridor books (see `pads`).
+    pub pads: crate::pads::PadBook,
+    pub corridors: crate::pads::CorridorBook,
 }
 
 impl World {
@@ -117,6 +120,8 @@ impl World {
             goods: crate::goods::catalog(seed),
             markets: HashMap::new(),
             market_states: HashMap::new(),
+            pads: Default::default(),
+            corridors: Default::default(),
         }
     }
 
@@ -500,6 +505,12 @@ impl World {
 
     /// A new ship docked at a station or landed at a spaceport in `system`.
     pub fn ship_at(&mut self, system: usize, at: Facility) -> Ship {
+        self.ship_on(system, at, crate::spaceport::CENTER_PAD)
+    }
+
+    /// A ship resting at `at` in `system`: docked in a station's slot, or on
+    /// pad `pad` of a spaceport.
+    pub fn ship_on(&mut self, system: usize, at: Facility, pad: usize) -> Ship {
         let sys = self.system(system);
         sys.positions(self.time, &mut self.positions);
         let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
@@ -510,9 +521,10 @@ impl World {
                 (s, DVec3::Y * STATION_SIZE * DOCKED_HEIGHT, docked)
             }
             Facility::Spaceport(p) | Facility::Gate(p) => {
-                let sp = &sys.spaceports[p.min(sys.spaceports.len().saturating_sub(1))];
+                let p = p.min(sys.spaceports.len().saturating_sub(1));
+                let sp = &sys.spaceports[p];
                 let b = &sys.bodies[sp.body];
-                let d = sp.direction;
+                let d = crate::spaceport::pad_direction(&sys, p, pad.min(crate::spaceport::PADS - 1));
                 (sp.body, d * (b.surface_radius(d) + SHIP_RADIUS), upright(d, d.any_orthonormal_vector()))
             }
         };

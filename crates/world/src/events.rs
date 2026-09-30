@@ -15,6 +15,8 @@ pub enum ShipEvent {
     Bumped,
     /// Destroyed, by hitting `body` (or by weapons fire: "GUNFIRE", "LASER FIRE").
     Crashed { body: String },
+    /// Ran into ship `with`, closing at `speed` (m/s).
+    Collided { with: usize, speed: f64 },
     /// Combat mode: the master arm went on (weapons priming), the weapons
     /// are primed and hot, or the master arm went off (safe).
     WeaponsArming,
@@ -44,6 +46,10 @@ pub enum TrafficEvent {
     ClearanceDenied { reason: String },
     /// A clearance lapsed, or was given up.
     ClearanceCancelled,
+    /// Cleared to land on this pad (0..9, row by row from the north-west).
+    PadAssigned { pad: usize },
+    /// Cleared to land, but all pads are taken: hold, with this many ahead.
+    Holding { ahead: usize },
 }
 
 /// What a clearance is for.

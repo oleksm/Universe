@@ -93,7 +93,7 @@ pub fn status(frame: &GateFrame, ship: &Ship, clearance: &Clearance) -> GateStat
 
 /// The transit autopilot: thrusters only, nose pointed along the run. Its
 /// command holds for `h` seconds.
-pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase, h: f64) -> Command {
+pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase, may_enter: bool, h: f64) -> Command {
     let axis = frame.axis();
     let (side, _) = frame.side(ship.position);
     let inward = -axis * side;
@@ -102,7 +102,7 @@ pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase, h: f64) -> Comman
     let aligned = ship.forward().dot(inward) > 0.995;
     let phase = match phase {
         Phase::Approach if to_approach < 100.0 && v.length() < 8.0 => Phase::Align,
-        Phase::Align if aligned => Phase::Final,
+        Phase::Align if aligned && may_enter => Phase::Final,
         Phase::Final if !in_final_zone(frame, ship.position) => Phase::Approach,
         p @ (Phase::Approach | Phase::Align | Phase::Final) => p,
         _ => Phase::Approach,

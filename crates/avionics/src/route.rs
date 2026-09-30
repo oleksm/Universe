@@ -111,6 +111,8 @@ impl Avionics {
                             self.route.dwell_until = Some(bus.time() + DWELL);
                             events.push(Event::RouteStop { number: self.route.next + 1, name: stop_name(&sys, stop) });
                         }
+                        // Launching waits for the corridor.
+                        Some(t) if bus.time() >= t && sys.bodies[body].kind == BodyKind::Station && !bus.request_corridor(body) => {}
                         Some(t) if bus.time() >= t => {
                             self.route.dwell_until = None;
                             self.route.next += 1;
@@ -134,6 +136,10 @@ impl Avionics {
     /// Launch from a station, or lift off a surface and climb.
     fn leave(&mut self, bus: &mut impl Bus, sys: &StarSystem, body: usize, events: &mut Vec<Event>) {
         if sys.bodies[body].kind == BodyKind::Station {
+            // Out through the corridor only when it's ours; else try again next frame.
+            if !bus.request_corridor(body) {
+                return;
+            }
             self.set_controls(bus, events, |c| c.throttle = 0.2);
         } else {
             self.set_controls(bus, events, |c| c.rcs = DVec3::Y);

@@ -17,7 +17,8 @@ use crate::events::Event;
 use crate::gate::{self, GateStatus};
 use crate::hyperdrive;
 use crate::landing::{self, LandingStatus, PadFrame};
-use crate::nav::{Clearance, NavTarget, Phase};
+use crate::nav::{Clearance, NavTarget, PadSlot, Phase};
+use universe_world::pads::PadGrant;
 use crate::plan::{self, Plan};
 use crate::route::{self, Route};
 
@@ -48,6 +49,12 @@ pub struct Avionics {
     /// A pirate rests until this world time after a hunt.
     #[serde(default)]
     pub rest_until: f64,
+    /// Traffic control keeps us out of the corridor (station or gate) for
+    /// now, and our place on the waiting ring meanwhile.
+    #[serde(skip)]
+    pub corridor_denied: bool,
+    #[serde(skip)]
+    pub wait_place: usize,
     /// The collision warning is switched on (see `collision`).
     #[serde(default)]
     pub collision_warning: bool,
@@ -114,6 +121,7 @@ impl Avionics {
             | ShipEvent::GateArrived { .. }
             | ShipEvent::GateTooFast { .. }
             | ShipEvent::Hit { .. }
+            | ShipEvent::Collided { .. }
             | ShipEvent::WeaponsArming
             | ShipEvent::WeaponsHot
             | ShipEvent::WeaponsSafe => {}
@@ -167,6 +175,17 @@ impl Avionics {
     /// Before the ship moves this frame: the route autopilot, then (unless
     /// it is flying a route) the dock/land/gate autopilot's hyperjump.
     pub fn prepare(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        // Close to a station's or gate's corridor: ask traffic control whether it's ours.
+        // Near it (approaching or lining up), ask; waiting ships keep their own place.
+        self.wait_place = bus.id();
+        self.corridor_denied = !match self.clearance {
+            Some(Clearance { target: NavTarget::Station(b) | NavTarget::Gate(b), phase: Phase::Approach | Phase::Align | Phase::Final, .. })
+                if target_position(bus, NavTarget::Gate(b)).or_else(|| target_position(bus, NavTarget::Station(b))).is_some_and(|p| p.distance(bus.ship().position) < 12_000.0) =>
+            {
+                bus.request_corridor(b)
+            }
+            _ => true,
+        };
         // A hunt flies the ship itself (see `hunter`); the route waits.
         if self.hunting.is_some() {
             return;
@@ -207,8 +226,22 @@ impl Avionics {
         let target = self.nav_target.or_else(|| traffic::nearest_station(&sys, ship.position, &positions));
         match traffic::request(&sys, ship, target, t, &positions) {
             Ok(target) => {
-                self.clearance = Some(Clearance { target, autopilot: false, phase: Phase::Approach });
+                // Landing: a pad of our own, or a place in the holding ring.
+                let pad = match target {
+                    NavTarget::Spaceport(p) => match bus.request_pad(p) {
+                        PadGrant::Pad(k) => PadSlot::Pad(k),
+                        PadGrant::Queued(n) => PadSlot::Hold(n),
+                    },
+                    _ => PadSlot::Center,
+                };
+                let phase = if matches!(pad, PadSlot::Hold(_)) { Phase::Hold } else { Phase::Approach };
+                self.clearance = Some(Clearance { target, autopilot: false, phase, pad });
                 events.push(Event::Traffic(TrafficEvent::ClearanceGranted { target: target.name(&sys), kind: target.kind() }));
+                match pad {
+                    PadSlot::Pad(k) => events.push(Event::Traffic(TrafficEvent::PadAssigned { pad: k })),
+                    PadSlot::Hold(n) => events.push(Event::Traffic(TrafficEvent::Holding { ahead: n })),
+                    PadSlot::Center => {}
+                }
                 true
             }
             Err(reason) => {
@@ -247,7 +280,7 @@ impl Avionics {
         }
         let Some(c) = &mut self.clearance else { return };
         c.autopilot = !c.autopilot;
-        c.phase = Phase::Approach;
+        c.phase = if matches!(c.pad, PadSlot::Hold(_)) { Phase::Hold } else { Phase::Approach };
         let on = c.autopilot;
         if !on {
             self.set_controls(bus, events, |c| {
@@ -280,9 +313,22 @@ impl Avionics {
     /// Clearance lapses if the ship wanders far away or the target vanishes
     /// (traffic control's rule).
     fn check_clearance(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
-        let Some(c) = self.clearance else { return };
+        let Some(mut c) = self.clearance else { return };
         if !bus.ship().is_flying() {
             return;
+        }
+        // Holding for a pad: ask again; our turn gives us one.
+        if let (NavTarget::Spaceport(p), PadSlot::Hold(was)) = (c.target, c.pad) {
+            match bus.request_pad(p) {
+                PadGrant::Pad(k) => {
+                    c.pad = PadSlot::Pad(k);
+                    c.phase = Phase::Approach;
+                    events.push(Event::Traffic(TrafficEvent::PadAssigned { pad: k }));
+                }
+                PadGrant::Queued(n) if n != was => c.pad = PadSlot::Hold(n),
+                PadGrant::Queued(_) => {}
+            }
+            self.clearance = Some(c);
         }
         let (sys, positions) = bus.positions();
         if traffic::lapsed(&sys, bus.ship(), c.target, bus.time(), &positions) {
@@ -319,7 +365,7 @@ impl Avionics {
                 Approach::Dock { station, status: docking::status(&frame, ship, &c) }
             }
             NavTarget::Spaceport(port) => {
-                let pad = PadFrame::new(sys, port, t, positions);
+                let pad = PadFrame::for_slot(sys, port, c.pad, t, positions);
                 let terrain = sys.bodies[sys.spaceports[port].body].terrain.as_ref();
                 Approach::Land { port, status: Box::new(landing::status(&pad, ship, &c, terrain)) }
             }
@@ -338,7 +384,7 @@ impl Avionics {
         if !ship.is_flying() || ship.hyperdrive {
             return None;
         }
-        Some(plan::plan(sys, ship, c.target, c.phase, t))
+        Some(plan::plan(sys, ship, c.target, c.phase, c.pad, t))
     }
 }
 
@@ -357,7 +403,7 @@ mod tests {
         let target = NavTarget::Station(3);
         let set = || Avionics {
             nav_target: Some(target),
-            clearance: Some(Clearance { target, autopilot: true, phase: Phase::Final }),
+            clearance: Some(Clearance { target, autopilot: true, phase: Phase::Final, pad: PadSlot::Center }),
             hyper_autopilot: true,
             ..Default::default()
         };

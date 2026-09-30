@@ -10,13 +10,18 @@
 use glam::{DQuat, DVec3};
 use universe_physics::{leapfrog, pull, segment_distance};
 use universe_world::ship::{facing, upright};
-use universe_world::{Ship, StarSystem, Terrain};
+use universe_world::{spaceport, Ship, StarSystem, Terrain};
 
 use crate::docking::{attitude, gain, Command, Guidance};
-use crate::nav::{Clearance, Phase};
+use crate::nav::{Clearance, PadSlot, Phase};
 
 /// Height of the entry point above the pad, where the vertical descent starts (m).
 pub const ENTRY_ALTITUDE: f64 = 3000.0;
+/// Ships waiting for a pad hold this high over the port (m), on a ring this
+/// wide (m), their places this far apart around it (rad).
+pub const HOLD_ALTITUDE: f64 = 6000.0;
+pub const HOLD_RING: f64 = 4000.0;
+const HOLD_SPACING: f64 = 0.7;
 /// Horizontal distance from the pad within which the descent phase applies (m).
 const DESCENT_RADIUS: f64 = 2500.0;
 /// Top speed while routing around the planet (m/s).
@@ -43,10 +48,34 @@ pub struct PadFrame {
 }
 
 impl PadFrame {
+    /// The port's middle pad.
     pub fn new(sys: &StarSystem, port: usize, t: f64, positions: &[DVec3]) -> Self {
+        Self::at(sys, port, sys.spaceports[port].direction, 0.0, t, positions)
+    }
+
+    /// The pad (or holding place) a clearance is for.
+    pub fn for_slot(sys: &StarSystem, port: usize, slot: PadSlot, t: f64, positions: &[DVec3]) -> Self {
+        match slot {
+            PadSlot::Center => Self::new(sys, port, t, positions),
+            PadSlot::Pad(k) => Self::at(sys, port, spaceport::pad_direction(sys, port, k), 0.0, t, positions),
+            PadSlot::Hold(n) => {
+                // A place on the holding ring, raised so that its entry point
+                // is where to wait.
+                let sp = &sys.spaceports[port];
+                let r = sys.bodies[sp.body].rail.radius;
+                let (north, east) = spaceport::tangent(sp.direction);
+                let a = n as f64 * HOLD_SPACING;
+                let dir = (sp.direction * r + (north * a.cos() + east * a.sin()) * HOLD_RING).normalize();
+                Self::at(sys, port, dir, HOLD_ALTITUDE - ENTRY_ALTITUDE, t, positions)
+            }
+        }
+    }
+
+    /// A pad in body-frame direction `dir` of port `port`'s body, `lift` metres up.
+    fn at(sys: &StarSystem, port: usize, dir: DVec3, lift: f64, t: f64, positions: &[DVec3]) -> Self {
         let sp = &sys.spaceports[port];
         let b = &sys.bodies[sp.body];
-        let up = b.rotation(t) * sp.direction;
+        let up = b.rotation(t) * dir;
         let body_center = positions[sp.body];
         Self {
             body_center,
@@ -54,7 +83,7 @@ impl PadFrame {
             body_radius: b.rail.radius,
             mu: b.rail.mu,
             angular_velocity: b.angular_velocity(),
-            pad: body_center + up * b.rail.radius,
+            pad: body_center + up * (b.rail.radius + lift),
             up,
             rotation: b.rotation(t),
             terrain_top: b.max_radius() - b.rail.radius,
@@ -222,6 +251,8 @@ pub fn autopilot(pad: &PadFrame, ship: &Ship, gravity: DVec3, phase: Phase, h: f
     let v = ship.velocity - pad.frame_velocity(pos);
     let (_, horiz) = pad.split(pos);
     let phase = match phase {
+        // Waiting for a pad: fly to the holding place and stay there.
+        Phase::Hold => Phase::Hold,
         Phase::Descent if !in_descent_zone(pad, pos) && horiz.length() > 2.0 * DESCENT_RADIUS => Phase::Approach,
         Phase::Descent => Phase::Descent,
         _ if in_descent_zone(pad, pos) && v.length() < 80.0 => Phase::Descent,

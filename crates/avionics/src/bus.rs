@@ -8,6 +8,7 @@
 use std::rc::Rc;
 
 use glam::DVec3;
+use universe_world::pads::PadGrant;
 use universe_world::{Ship, ShipCommands, ShipEvent, StarSystem};
 
 pub trait Bus {
@@ -25,6 +26,16 @@ pub trait Bus {
 
     /// Gate links between star systems (galaxy indices).
     fn gate_links(&self) -> &[(usize, usize)];
+
+    /// The ship's id, as traffic control knows it.
+    fn id(&self) -> usize;
+
+    /// Ask traffic control for a pad at spaceport `port` in the ship's system.
+    fn request_pad(&mut self, port: usize) -> PadGrant;
+
+    /// Ask traffic control for the corridor of station or gate `body` (one
+    /// ship at a time on its final run or launching): granted or not.
+    fn request_corridor(&mut self, body: usize) -> bool;
 
     /// Give the devices new commands now; the physical events that followed.
     fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent>;

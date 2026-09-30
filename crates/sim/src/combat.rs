@@ -49,6 +49,7 @@ impl Universe {
                 armed.push(Armed { id: craft_id(i), system: c.system, ship: &mut c.ship, events: e });
             }
             self.world.combat(&mut armed, dt);
+            self.world.collide(&mut armed, dt);
         }
         if let Some(kill) = self.kill_in(PLAYER, self.ship_system, &player_events) {
             self.record_kill(kill);
@@ -60,12 +61,17 @@ impl Universe {
                 continue;
             }
             if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
-                self.traffic.shot_down += 1;
-                if kill.killer != PLAYER && self.crafts.get(kill.killer - 1).is_some_and(|c| c.avionics.pirate) {
-                    self.traffic.pirate_kills += 1;
+                if kill.weapon == "COLLISION" {
+                    self.traffic.collision_losses += 1;
+                } else {
+                    self.traffic.shot_down += 1;
+                    if kill.killer != PLAYER && self.crafts.get(kill.killer - 1).is_some_and(|c| c.avionics.pirate) {
+                        self.traffic.pirate_kills += 1;
+                    }
                 }
                 self.record_kill(kill);
             }
+            self.traffic.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
             self.crafts[i].avionics.record(events, &mut ignored);
             ignored.clear();
         }

@@ -111,7 +111,7 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
         let here = app.u.crafts.iter().filter(|c| c.system == app.view.origin).count();
         let t = &app.u.traffic;
         lines.push((
-            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  TRADES {}  KILLS {}", app.u.crafts.len(), t.stops, t.transits, t.crashes, t.trades, t.shot_down),
+            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  COLLISIONS {}  TRADES {}  KILLS {}", app.u.crafts.len(), t.stops, t.transits, t.crashes, t.collision_losses, t.trades, t.shot_down),
             DIM,
         ));
     }
@@ -441,7 +441,12 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
     let sys = &app.view.system;
     let p = &sys.spaceports[port];
     let name = format!("{} ({})", p.name, sys.bodies[p.body].name).to_uppercase();
-    lines.push((format!("LAND {name}  {}", mode_label(st.autopilot, st.phase)), HUD));
+    let pad = match app.u.avionics.clearance.map(|c| c.pad) {
+        Some(universe_sim::avionics::nav::PadSlot::Pad(k)) => format!("  PAD {}", k + 1),
+        Some(universe_sim::avionics::nav::PadSlot::Hold(n)) => format!("  HOLDING ({n} AHEAD)"),
+        _ => String::new(),
+    };
+    lines.push((format!("LAND {name}{pad}  {}", mode_label(st.autopilot, st.phase)), HUD));
 
     let descent = st.guidance.final_run;
     let sink_target = -st.guidance.desired_velocity.dot(st.pad.up);
@@ -1081,7 +1086,11 @@ fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
         let age = ((now - k.time) / shown) as f32;
         let ours = k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER;
         let base = if ours { RED } else { AMBER };
-        let text = format!("{} DESTROYED {} - {}", k.killer_name, k.victim_name, k.weapon);
+        let text = if k.weapon == "COLLISION" {
+            format!("{} WRECKED IN A COLLISION WITH {}", k.victim_name, k.killer_name)
+        } else {
+            format!("{} DESTROYED {} - {}", k.killer_name, k.victim_name, k.weapon)
+        };
         let c = base.scale(1.0 - 0.7 * age.max(0.0));
         frame.text(Vec2::new(size.x - text_size(&text).x - 4.0, top + i as f32 * LINE), &text, c);
     }

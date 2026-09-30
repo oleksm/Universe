@@ -48,6 +48,9 @@ pub fn event(ctx: &Context, event: &Event) {
             a.tone(300.0, 180.0, 0.5, 0.12);
         }
         Event::Crew(_) => a.tone(500.0, 500.0, 0.05, 0.15),
+        Event::Traffic(TrafficEvent::PadAssigned { .. }) => a.tone(1100.0, 1100.0, 0.12, 0.2),
+        Event::Traffic(TrafficEvent::Holding { .. }) => a.tone(500.0, 400.0, 0.3, 0.2),
+        Event::Ship(ShipEvent::Collided { speed, .. }) => a.noise(0.4, (0.2 + *speed as f32 * 0.02).min(0.7)),
         Event::Ship(ShipEvent::Hit { damage, .. }) => a.noise(0.15, (0.2 + *damage as f32 * 4.0).min(0.6)),
         Event::Ship(ShipEvent::Respawned) => a.tone(440.0, 880.0, 0.3, 0.25),
         Event::Ship(ShipEvent::EnteredSystem { .. }) => a.tone(880.0, 880.0, 0.2, 0.25),

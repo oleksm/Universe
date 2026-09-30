@@ -9,6 +9,7 @@
 //! computer wants to go, only at what it commands the devices to do.
 //! Deterministic and headless; knows nothing about rendering.
 
+pub mod collisions;
 pub mod crew;
 pub mod damage;
 pub mod events;
@@ -18,6 +19,7 @@ pub mod gate;
 pub mod hyperdrive;
 pub mod market;
 pub mod names;
+pub mod pads;
 pub mod radar;
 pub mod network;
 pub mod rng;

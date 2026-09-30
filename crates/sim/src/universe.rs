@@ -13,6 +13,19 @@ use universe_world::{Controls, Facility, Person, Ship, ShipCommands, ShipEvent, 
 use crate::traffic::{CrashReport, Craft, TrafficStats};
 use crate::vessel::Vessel;
 
+/// A ship on its final run this close to the station or gate lets the next one start (m).
+const CORRIDOR_RELEASE: f64 = 1_500.0;
+
+/// Body positions in `system` now, computed once per system.
+fn rails_at<'a>(cache: &'a mut std::collections::HashMap<usize, Vec<DVec3>>, world: &mut World, system: usize) -> &'a Vec<DVec3> {
+    cache.entry(system).or_insert_with(|| {
+        let sys = world.system(system);
+        let mut p = Vec::new();
+        sys.positions(world.time, &mut p);
+        p
+    })
+}
+
 /// What a new pilot starts with (credits).
 pub const STARTING_CREDITS: f64 = 1000.0;
 
@@ -85,7 +98,7 @@ impl Universe {
 
     /// The player's ship and its avionics, and the world they're in.
     fn player(&mut self) -> (&mut World, Vessel<'_>) {
-        let vessel = Vessel { ship: &mut self.ship, system: &mut self.ship_system, avionics: &mut self.avionics, events: &mut self.events };
+        let vessel = Vessel { id: crate::combat::PLAYER, ship: &mut self.ship, system: &mut self.ship_system, avionics: &mut self.avionics, events: &mut self.events };
         (&mut self.world, vessel)
     }
 
@@ -108,7 +121,84 @@ impl Universe {
         }
         self.world.time = t1;
         self.combat(t1 - t0);
+        self.keep_pads();
         result
+    }
+
+    /// Traffic control's pad book keeps a pad while its ship is cleared for
+    /// it or standing on it; the rest are freed.
+    ///
+    /// Likewise the corridor book: a station's corridor or gate's run stays
+    /// held while its ship is on the final run, launching, or still close by
+    /// on its way out.
+    fn keep_pads(&mut self) {
+        use universe_avionics::nav::{PadSlot, Phase};
+        use universe_avionics::NavTarget;
+        let mut claims = std::collections::HashSet::new();
+        let mut corridors = std::collections::HashSet::new();
+        let mut rails_cache = std::collections::HashMap::new();
+        let ships = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
+            .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, &c.avionics)));
+        // Ships whose place needs looking up: on the ground, or low and slow near a port.
+        let mut where_ = Vec::new();
+        for (id, system, ship, avionics) in ships {
+            if let Some(c) = avionics.clearance {
+                match (c.target, c.pad, c.phase) {
+                    (NavTarget::Spaceport(p), PadSlot::Pad(k), _) => {
+                        claims.insert((system, p, k, id));
+                    }
+                    // Held until it's on the final run and close in (then the next may start).
+                    (NavTarget::Station(b) | NavTarget::Gate(b), _, phase) => {
+                        let close = rails_at(&mut rails_cache, &mut self.world, system).get(b).is_some_and(|p| p.distance(ship.position) < CORRIDOR_RELEASE);
+                        if !(phase == Phase::Final && close) {
+                            corridors.insert((system, b, id));
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            match ship.state {
+                ShipState::Landed { .. } => where_.push((id, system, ship.position, true, ship.throttle > 0.0)),
+                ShipState::Flying if !ship.hyperdrive => where_.push((id, system, ship.position, false, false)),
+                _ => {}
+            }
+        }
+        let mut rails = std::collections::HashMap::new();
+        for (id, system, pos, landed, launching) in where_ {
+            let sys = self.world.system(system);
+            let positions = rails.entry(system).or_insert_with(|| {
+                let mut p = Vec::new();
+                sys.positions(self.world.time, &mut p);
+                p
+            });
+            let t = self.world.time;
+            // Stations: docked and launching, or just out and close by.
+            for (b, body) in sys.bodies.iter().enumerate() {
+                if body.kind == universe_world::BodyKind::Station && positions[b].distance(pos) < 3_000.0 && (!landed || launching) {
+                    corridors.insert((system, b, id));
+                }
+            }
+            // Spaceports: on a pad, or in the column above it (below 5 km).
+            for (p, sp) in sys.spaceports.iter().enumerate() {
+                let center = positions[sp.body];
+                let local = sys.bodies[sp.body].rotation(t).inverse() * (pos - center);
+                let dir = local.normalize();
+                let r = sys.bodies[sp.body].rail.radius;
+                if local.length() - r > 5_000.0 || dir.angle_between(sp.direction) * r > 800.0 {
+                    continue;
+                }
+                let pad = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
+                    let pa = universe_world::spaceport::pad_direction(&sys, p, a).angle_between(dir);
+                    let pb = universe_world::spaceport::pad_direction(&sys, p, b).angle_between(dir);
+                    pa.total_cmp(&pb)
+                });
+                if let Some(k) = pad {
+                    claims.insert((system, p, k, id));
+                }
+            }
+        }
+        self.world.pads.keep(&claims);
+        self.world.corridors.keep(&corridors);
     }
 
     // The pilot's requests, to the ship's avionics (or, for `command`,

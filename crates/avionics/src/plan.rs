@@ -25,7 +25,7 @@ use universe_world::{Devices, GateFrame, StarSystem, StationFrame};
 use crate::avionics::Avionics;
 use crate::computer;
 use crate::landing::PadFrame;
-use crate::nav::{Clearance, NavTarget, Phase};
+use crate::nav::{Clearance, NavTarget, PadSlot, Phase};
 use crate::route;
 
 /// What the ship is doing at a point of the plan.
@@ -102,10 +102,10 @@ const FAR_STEP: f64 = 10.0;
 
 /// Plan from the ship's current state toward `target`, the autopilot being
 /// in `phase`, at world time `now`.
-pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, now: f64) -> Plan {
+pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, pad: PadSlot, now: f64) -> Plan {
     let mut ship = ship.clone();
     // The copy's avionics: only the autopilot, flying to the target.
-    let mut avionics = Avionics { clearance: Some(Clearance { target, autopilot: true, phase }), ..Avionics::default() };
+    let mut avionics = Avionics { clearance: Some(Clearance { target, autopilot: true, phase, pad }), ..Avionics::default() };
     let mut t = now;
     let mut positions = Vec::new();
     sys.positions(t, &mut positions);
@@ -129,8 +129,8 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, now:
         // What the autopilot does here, how far it has to go, and how fast
         // it closes.
         let phase = avionics.clearance.map_or(phase, |c| c.phase);
-        let cmd = computer::autopilot(sys, &ship, target, phase, t, FINE_STEP, &positions);
-        let (left, rel_speed, center) = progress(sys, &ship, target, t, &positions);
+        let cmd = computer::autopilot(sys, &ship, target, phase, pad, None, t, FINE_STEP, &positions);
+        let (left, rel_speed, center) = progress(sys, &ship, target, pad, t, &positions);
         let action = if cmd.throttle > 0.02 {
             Action::Burn(cmd.throttle)
         } else if cmd.rcs.length() > 0.05 {
@@ -195,7 +195,7 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, now:
 /// How far the ship has to go to reach `target` (m), its speed relative to
 /// it (m/s), and where the target's reference is (station or gate center,
 /// or the planet's center for a spaceport).
-fn progress(sys: &StarSystem, ship: &Ship, target: NavTarget, t: f64, positions: &[DVec3]) -> (f64, f64, DVec3) {
+fn progress(sys: &StarSystem, ship: &Ship, target: NavTarget, pad: PadSlot, t: f64, positions: &[DVec3]) -> (f64, f64, DVec3) {
     match target {
         NavTarget::Station(s) => {
             let f = StationFrame::new(sys, s, t, positions);
@@ -206,7 +206,7 @@ fn progress(sys: &StarSystem, ship: &Ship, target: NavTarget, t: f64, positions:
             (ship.position.distance(f.center), (ship.velocity - f.velocity).length(), f.center)
         }
         NavTarget::Spaceport(p) => {
-            let pad = PadFrame::new(sys, p, t, positions);
+            let pad = PadFrame::for_slot(sys, p, pad, t, positions);
             let rel = (ship.velocity - pad.frame_velocity(ship.position)).length();
             (ship.position.distance(pad.pad) - SHIP_RADIUS, rel, pad.body_center)
         }
@@ -254,7 +254,7 @@ mod tests {
         sys.positions(world.time, &mut positions);
         place(&sys, &mut ship, world.time, &positions);
         let target = target(&sys);
-        let mut avionics = Avionics { clearance: Some(Clearance { target, autopilot: true, phase: Phase::Approach }), ..Avionics::default() };
+        let mut avionics = Avionics { clearance: Some(Clearance { target, autopilot: true, phase: Phase::Approach, pad: PadSlot::Center }), ..Avionics::default() };
         let plan = avionics.plan(&sys, &ship, world.time).expect("flying, not in hyperdrive");
         let start = world.time;
         while ship.is_flying() && world.time - start < 3600.0 {

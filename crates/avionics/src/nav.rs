@@ -20,6 +20,8 @@ pub enum Phase {
     Final,
     /// Landing: belly down, descending vertically onto the pad.
     Descent,
+    /// Landing: all pads taken; waiting in the holding ring above the port.
+    Hold,
 }
 
 impl Phase {
@@ -29,6 +31,7 @@ impl Phase {
             Phase::Align => "ALIGN",
             Phase::Final => "FINAL",
             Phase::Descent => "DESCENT",
+            Phase::Hold => "HOLDING",
         }
     }
 }
@@ -39,4 +42,20 @@ pub struct Clearance {
     pub target: NavTarget,
     pub autopilot: bool,
     pub phase: Phase,
+    /// For a spaceport: the pad traffic control gave (or the place in the
+    /// holding ring, waiting for one).
+    #[serde(default)]
+    pub pad: PadSlot,
+}
+
+/// Where at a spaceport a clearance is for.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PadSlot {
+    /// The port's middle pad (no pad booked).
+    #[default]
+    Center,
+    /// This pad.
+    Pad(usize),
+    /// Waiting in the holding ring, this many ahead.
+    Hold(usize),
 }

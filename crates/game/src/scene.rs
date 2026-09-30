@@ -4,7 +4,7 @@ use universe_sim::names::star_name;
 use universe_sim::units::LIGHT_YEAR;
 use universe_sim::docking::{corridor_half, APPROACH_HEIGHT};
 use universe_sim::landing::ENTRY_ALTITUDE;
-use universe_sim::world::spaceport::PAD_RADIUS;
+use universe_sim::world::spaceport::{pad_direction, PADS, PAD_RADIUS};
 use universe_sim::world::station::STATION_SIZE;
 use universe_sim::gate::APPROACH_DISTANCE;
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, GateFrame, GateStatus, LandingStatus, Plan, ShipState, StationFrame};
@@ -606,12 +606,34 @@ fn spaceports(frame: &mut Frame, app: &App) {
         let r = PAD_RADIUS;
         let corners = [ground(-r, -r), ground(r, -r), ground(r, r), ground(-r, r)];
         for k in 0..4 {
-            frame.line(corners[k], corners[(k + 1) % 4], c);
+            frame.line(corners[k], corners[(k + 1) % 4], c.scale(0.6));
         }
-        // An "H".
-        frame.line(ground(-r * 0.4, -r * 0.5), ground(-r * 0.4, r * 0.5), c);
-        frame.line(ground(r * 0.4, -r * 0.5), ground(r * 0.4, r * 0.5), c);
-        frame.line(ground(-r * 0.4, 0.0), ground(r * 0.4, 0.0), c);
+        // The pads: ours bright, taken ones amber, free ones in the port's colour.
+        let owners = app.u.world.pads.owners(app.view.origin, i);
+        let ours = match app.u.avionics.clearance {
+            Some(cl) if cl.target == universe_sim::NavTarget::Spaceport(i) => match cl.pad {
+                universe_sim::avionics::nav::PadSlot::Pad(k) => Some(k),
+                _ => None,
+            },
+            _ => None,
+        };
+        let half = 35.0;
+        for (k, owner) in owners.iter().enumerate().take(PADS) {
+            let d = rot * pad_direction(sys, i, k);
+            let at = center + d * (b.rail.radius + 2.0);
+            let (u, v) = (e1 - d * e1.dot(d), e2 - d * e2.dot(d));
+            let (u, v) = (u.normalize() * half, v.normalize() * half);
+            let pc = if ours == Some(k) { Color::hex(0x60ff90) } else if owner.is_some() { Color::hex(0xffa040).scale(0.7) } else { c };
+            let sq = [at - u - v, at + u - v, at + u + v, at - u + v];
+            for j in 0..4 {
+                frame.line(sq[j], sq[(j + 1) % 4], pc);
+            }
+            if ours == Some(k) {
+                frame.line(at - u * 0.6, at + u * 0.6, pc);
+                frame.line(at - v * 0.6, at + v * 0.6, pc);
+                frame.line(at, at + d * 1500.0, pc.scale(0.8));
+            }
+        }
         // Beacon.
         frame.line(pad, pad + up * 3000.0, c.scale(if targeted { 0.9 } else { 0.4 }));
 

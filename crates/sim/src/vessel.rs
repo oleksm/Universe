@@ -18,10 +18,13 @@
 use std::rc::Rc;
 
 use universe_avionics::{Avionics, Bus, Event};
+use universe_world::pads::PadGrant;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, StarSystem, StepResult, World};
 
 /// A ship and the avionics flying it, borrowed for their turn.
 pub(crate) struct Vessel<'a> {
+    /// Its id (the player's ship 0, craft i: i + 1), as traffic control knows it.
+    pub id: usize,
     pub ship: &'a mut Ship,
     /// Galaxy index of the system it's in.
     pub system: &'a mut usize,
@@ -36,6 +39,7 @@ pub(crate) struct Link<'a> {
     world: &'a mut World,
     ship: &'a mut Ship,
     system: usize,
+    id: usize,
 }
 
 impl Bus for Link<'_> {
@@ -59,6 +63,19 @@ impl Bus for Link<'_> {
         &self.world.gate_links
     }
 
+    fn id(&self) -> usize {
+        self.id
+    }
+
+    fn request_pad(&mut self, port: usize) -> PadGrant {
+        let now = self.world.time;
+        self.world.pads.request(self.system, port, self.id, now)
+    }
+
+    fn request_corridor(&mut self, body: usize) -> bool {
+        self.world.corridors.request(self.system, body, self.id)
+    }
+
     fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent> {
         let mut events = Vec::new();
         self.world.command(self.ship, self.system, c, &mut events);
@@ -69,7 +86,7 @@ impl Bus for Link<'_> {
 impl Vessel<'_> {
     /// Run `f` on the avionics, connected to the ship by the bus.
     pub fn run<R>(&mut self, world: &mut World, f: impl FnOnce(&mut Avionics, &mut Link, &mut Vec<Event>) -> R) -> R {
-        let mut link = Link { world, ship: self.ship, system: *self.system };
+        let mut link = Link { world, ship: self.ship, system: *self.system, id: self.id };
         f(self.avionics, &mut link, self.events)
     }
 

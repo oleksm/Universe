@@ -25,7 +25,7 @@ use crate::events::Event;
 use crate::fire_control::lead;
 
 /// Within this of a station or gate, a ship is in shelter (m).
-pub const SHELTER: f64 = 6_000.0;
+pub const SHELTER: f64 = 9_000.0;
 /// A trader this close gets hunted (m).
 pub const HUNT_RANGE: f64 = 20_000.0;
 /// Farther than this, the prey got away (m).
@@ -44,6 +44,8 @@ const FLOOR: f64 = 3_000.0;
 const STANDOFF_STRUCTURE: f64 = 1_500.0;
 /// Time to turn the engine round to brake (s): about π at the turn rate.
 const TURN_AROUND: f64 = 3.2;
+/// It keeps at least this far from other ships (m).
+const SEPARATION: f64 = 400.0;
 /// Seconds of rest after a hunt before looking for the next.
 pub const REST: f64 = 60.0;
 
@@ -182,7 +184,7 @@ impl Avionics {
             // into (the chase may have left it fast and close), then back to
             // the route, resting a while before the next hunt.
             let (sys, positions) = bus.positions();
-            let push = self.keep_clear(&sys, &ship, &positions, now);
+            let push = self.keep_clear(&sys, &ship, &positions, now, sightings);
             if push.length() > 0.01 && ship.is_flying() {
                 let (throttle, rcs, nose) = thrust_for(&ship, push, push.normalize());
                 let c = ShipCommands { throttle, rcs, weapons: Some(Triggers::default()), arm: Some(false), gun_target: Some(None), ..ship.holding() };
@@ -207,15 +209,25 @@ impl Avionics {
             return (None, Some(end));
         }
         let prey = prey.expect("still hunted");
-        (Some(self.attack(bus, &ship, prey, events)), None)
+        (Some(self.attack(bus, &ship, prey, sightings, events)), None)
     }
 
     /// What it takes to keep clear of everything solid: `avoid`'s margins,
     /// and the collision warning a few times a second. If what the ship is
     /// doing now runs into something within `LOOK_AHEAD`, it breaks off away
     /// from it, hard, until the path is clear again.
-    fn keep_clear(&mut self, sys: &StarSystem, ship: &Ship, positions: &[DVec3], now: f64) -> DVec3 {
+    fn keep_clear(&mut self, sys: &StarSystem, ship: &Ship, positions: &[DVec3], now: f64, others: &[Sighting]) -> DVec3 {
         let mut evade = avoid(sys, ship, positions, now);
+        // Other ships: no closer than `SEPARATION`, pushed off the harder the closer.
+        for o in others.iter().filter(|o| !o.docked && !o.destroyed && !o.hyperdrive) {
+            let off = ship.position - o.position;
+            let d = off.length();
+            if d < SEPARATION && d > 0.0 {
+                let out = off / d;
+                let closing = -(ship.velocity - o.velocity).dot(out);
+                evade += out * (2.0 * ship.side_accel() * (1.0 - d / SEPARATION) + closing.max(0.0));
+            }
+        }
         if let Some(h) = &mut self.hunting
             && now - h.checked >= LOOK_EVERY
         {
@@ -234,7 +246,7 @@ impl Avionics {
     }
 
     /// Chase and attack `prey` for the frame: the devices' commands, and the stick.
-    fn attack(&mut self, bus: &mut impl Bus, ship: &Ship, prey: &Sighting, events: &mut Vec<Event>) -> Controls {
+    fn attack(&mut self, bus: &mut impl Bus, ship: &Ship, prey: &Sighting, others: &[Sighting], events: &mut Vec<Event>) -> Controls {
         let (sys, positions) = bus.positions();
         let now = bus.time();
         crate::fire_control::Track::update(&mut self.track, prey.id, prey.position, prey.velocity, now);
@@ -249,7 +261,7 @@ impl Avionics {
         let gap = d - STANDOFF;
         let closing = if gap > 0.0 { (2.0 * brake * gap).sqrt().min(MAX_CLOSING) } else { gap * 0.2 };
         let mut accel = (dir * closing - v_rel) * 0.6 + track.acceleration;
-        let evade = self.keep_clear(&sys, ship, &positions, now);
+        let evade = self.keep_clear(&sys, ship, &positions, now, others);
         accel += evade;
 
         let solution = lead(ship.position, ship.velocity, prey.position, prey.velocity, track.acceleration, GUN_MUZZLE, SLUG_LIFETIME);
