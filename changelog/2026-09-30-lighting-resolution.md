@@ -30,3 +30,18 @@ and gates, also to the ship itself."
 Honest limits: from orbit, mountains a few km high on a body thousands of km across barely show,
 so the terrain isn't exaggerated. Relief shows up close and at low sun angles. A body lit from
 directly behind the camera looks flat, as it would.
+
+## Follow-up: grid detail by distance
+
+User: "those grid lines over planets and stars are just too overly sticky and thick, maybe make
+grid detalisation based on distance. Distant planets only need a outer round circle."
+
+- A body's latitude/longitude grid now depends on its size on screen (`scene::grid_detail`):
+  - none below 80 px of radius: a lit disc and its outline circle only;
+  - fading in up to 500 px;
+  - never more than half brightness, since the shading carries the shape. Up close the grid
+    reads as fine etched lines.
+- Stars: outline and halo, with a faint grid only when one fills the view.
+- Crater rims show from 150 px (was 40).
+- Engine: `model_shaded_faded`, and `model_colored_shaded`'s `line` is now the edge brightness
+  (0 = faces only).

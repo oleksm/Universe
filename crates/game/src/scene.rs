@@ -177,11 +177,11 @@ fn bodies(frame: &mut Frame, app: &App) {
             // the ground (the globe drops a hair so the grid sits on top).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
-            frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, 1.0, terrain_view::FILL * 2.5);
+            frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, grid_detail(px), terrain_view::FILL * 2.5);
             if near {
                 terrain_view::surface_grid(frame, b, center, t);
             }
-            if frame.projected_radius(center, b.rail.radius) > 40.0 {
+            if frame.projected_radius(center, b.rail.radius) > 150.0 {
                 terrain_view::crater_rims(frame, b, center, t);
             }
         } else {
@@ -192,11 +192,12 @@ fn bodies(frame: &mut Frame, app: &App) {
                 _ => (&app.models.moon, c.scale(0.35)),
             };
             let at = Transform { position: center, rotation, scale: b.rail.radius };
-            // The star shines; everything else is lit by it.
+            // The star shines (a faint grid only when it fills the view);
+            // everything else is lit by it.
             if b.kind == BodyKind::Star {
-                frame.model(model, &at, c, fill);
+                frame.model(model, &at, c.scale(0.3 * grid_detail(px * 0.5)), fill);
             } else {
-                frame.model_shaded(model, &at, c, fill);
+                frame.model_shaded_faded(model, &at, c, fill, grid_detail(px));
             }
         }
 
@@ -224,6 +225,14 @@ fn bodies(frame: &mut Frame, app: &App) {
             }
         }
     }
+}
+
+/// How much of a body's latitude/longitude grid to show at `px` pixels of
+/// radius on screen: none when small (a lit disc and its outline circle are
+/// enough), fading in as it grows, and never more than a light touch (the
+/// shading carries the shape).
+fn grid_detail(px: f32) -> f32 {
+    0.5 * ((px - 80.0) / 420.0).clamp(0.0, 1.0)
 }
 
 pub const TRAFFIC: Color = Color::hex(0x50d8ff);

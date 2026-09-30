@@ -204,7 +204,7 @@ impl Frame {
     /// closed and roughly convex). Edges are dimmed on the far side by the
     /// light on their ends (a vertex facing away from the center), down to
     /// `LINE_AMBIENT` of `line`.
-    fn shaded(&mut self, pts: &[Vec3], center: Vec3, model: &WireModel, line: impl Fn(u32) -> [f32; 4], fill: impl Fn(u32) -> [f32; 4]) {
+    fn shaded(&mut self, pts: &[Vec3], center: Vec3, model: &WireModel, edges: f32, line: impl Fn(u32) -> [f32; 4], fill: impl Fn(u32) -> [f32; 4]) {
         let tone = |c: [f32; 4], k: f32| [c[0] * k, c[1] * k, c[2] * k, c[3]];
         for f in &model.faces {
             let [a, b, c] = [f[0], f[1], f[2]].map(|i| pts[i as usize]);
@@ -218,10 +218,13 @@ impl Frame {
                 self.solids.push(Vertex { pos: pts[i as usize].to_array(), color: tone(fill(i), k) });
             }
         }
+        if edges <= 0.0 {
+            return;
+        }
         for e in &model.edges {
             for &i in e {
                 let p = pts[i as usize];
-                let k = LINE_AMBIENT + (1.0 - LINE_AMBIENT) * self.lambert(p, (p - center).normalize_or_zero()).sqrt();
+                let k = edges * (LINE_AMBIENT + (1.0 - LINE_AMBIENT) * self.lambert(p, (p - center).normalize_or_zero()).sqrt());
                 self.lines.push(Vertex { pos: p.to_array(), color: tone(line(i), k) });
             }
         }
@@ -230,11 +233,19 @@ impl Frame {
     /// A model lit by `light` (see `shaded`): edges in `line`, faces in `fill`.
     pub fn model_shaded(&mut self, model: &WireModel, t: &Transform, line: Color, fill: Color) {
         let (pts, center) = self.place(model, t);
-        self.shaded(&pts, center, model, |_| line.0, |_| fill.0);
+        self.shaded(&pts, center, model, 1.0, |_| line.0, |_| fill.0);
+    }
+
+    /// Like `model_shaded`, with the edges at `edges` of their brightness
+    /// (0: faces only), for fading detail with distance.
+    pub fn model_shaded_faded(&mut self, model: &WireModel, t: &Transform, line: Color, fill: Color, edges: f32) {
+        let (pts, center) = self.place(model, t);
+        self.shaded(&pts, center, model, edges, |_| line.0, |_| fill.0);
     }
 
     /// A model in its own per-vertex colors, lit by `light`: edges at `line`
-    /// times the vertex color, faces at `fill` times it.
+    /// times the vertex color (0: faces only, for fading detail with
+    /// distance), faces at `fill` times it.
     pub fn model_colored_shaded(&mut self, model: &WireModel, t: &Transform, line: f32, fill: f32) {
         let (pts, center) = self.place(model, t);
         let tint = |k: f32| {
@@ -243,7 +254,7 @@ impl Frame {
                 [r * k, g * k, b * k, a]
             }
         };
-        self.shaded(&pts, center, model, tint(line), tint(fill));
+        self.shaded(&pts, center, model, line, tint(1.0), tint(fill));
     }
 
     /// Line with a color at each end (blended along it).
