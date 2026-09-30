@@ -96,3 +96,22 @@ as frames linked by a center line, relative to the ship.
     approach and you pass through them; distant ones keep a minimum on-screen size;
   - naturally denser where the route is slow (final approach) and sparser where it's fast.
 - The old "every fourth frame" thinning is gone (not needed with even spacing).
+
+## Follow-up (evening): fixed 5 s frames, square to the path, levelled
+
+User: "those guide lines flooding at the end of landing. Keep the step in time units, like 5
+seconds between frames. Frames should be fixed in space and direction, no spinning. Frames face
+the cockpit when we descend; they should be relative to the ship, which gets through the center
+entering perpendicularly."
+
+- **Fixed step**: frames sit at every 5 s of absolute time (`FRAME_STEP`), with the next 16
+  shown. The adaptive "about 12 over the route" step is gone (`App::frame_step`); near the end it
+  shrank to 2 s and piled frames up.
+- **No pile-up when slow**: where frames would be closer than 1.5 frame sizes, only every 2nd,
+  4th, … is kept, chosen by its absolute number, so the same frames stay as you fly through.
+- **Square to the path**: each frame's plane is perpendicular to the direction of travel at that
+  point, centred on the path, so the ship goes through the middle square on. Before, frames took
+  the ship's planned attitude, which faces the nose during a belly-down descent.
+- **No spinning**: frames are levelled against the reference (up away from the planet's or
+  station's center), not the ship's planned roll, so replans don't turn them. A short tick from
+  the center still shows where the nose will face there.

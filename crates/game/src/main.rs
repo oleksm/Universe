@@ -91,9 +91,6 @@ pub struct App {
     pub plan_cost: f32,
     /// Time the world tick took (ms, smoothed): every ship's turn.
     pub sim_ms: f32,
-    /// Game seconds between tunnel frames: a nice step giving ~12 frames over
-    /// the remaining route, changed only when that drifts far (so frames stay put).
-    pub frame_step: f64,
     /// The ETA shown on the HUD (real seconds): counts down each frame and
     /// eases toward each new plan's prediction instead of jumping.
     pub eta_shown: Option<f64>,
@@ -167,7 +164,6 @@ impl App {
             plan_cost: 0.0,
             sim_ms: 0.0,
             eta_shown: None,
-            frame_step: 30.0,
             globes: std::collections::HashMap::new(),
             nav_map: None,
             nav_marker: None,
@@ -610,14 +606,6 @@ impl Game for App {
             self.plan_cost = start.elapsed().as_secs_f32();
             self.plan_age = 0.0;
             self.plan_for = key;
-        }
-        if let Some(p) = &self.plan {
-            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.world.time - p.start);
-            let count = left / self.frame_step;
-            if !(6.0..=24.0).contains(&count) {
-                const STEPS: [f64; 14] = [2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0, 7200.0, 14400.0];
-                self.frame_step = STEPS.into_iter().min_by(|a, b| (left / a - 12.0).abs().total_cmp(&(left / b - 12.0).abs())).unwrap_or(30.0);
-            }
         }
         let raw = self.plan.as_ref().filter(|p| p.arrives).map(|p| {
             let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.world.time - p.start);

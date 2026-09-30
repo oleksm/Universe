@@ -427,20 +427,23 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
         }
     }
 
-    // Frames are gates placed along the route: at fixed moments of absolute
-    // time, evenly spaced (`app.frame_step`, about 12 over the route), so they
-    // stay put as the ship flies through them and nothing pops in between.
-    // Each has a real size in metres (a fifth of the gap to the next), so it
-    // grows as you approach, like an object you're flying toward.
+    // Frames are gates placed along the route at fixed moments of absolute
+    // time, `FRAME_STEP` apart (the next `MAX_FRAMES` of them), so they stay
+    // put as the ship flies through them. Each stands across the path, its
+    // center on it: the ship goes through the middle, square on. It is
+    // levelled against the reference (the planet's or station's center), so
+    // it doesn't turn with the ship. Its size is real metres (a share of
+    // the gap to the next), and one that would crowd the last is skipped,
+    // so a slow final descent doesn't pile them up.
     let duration = pts.last().unwrap().time;
     let cam = frame.camera.position;
     let made = plan.start;
-    let step = app.frame_step;
-    let mut k = (now / step).floor() + 1.0;
+    let mut k = (now / FRAME_STEP).floor() + 1.0;
     let mut j = 0;
     let mut first = true;
-    while k * step - made <= duration {
-        let at = k * step - made;
+    let mut drawn = 0;
+    while k * FRAME_STEP - made <= duration && drawn < MAX_FRAMES {
+        let at = k * FRAME_STEP - made;
         k += 1.0;
         while j + 1 < pts.len() && pts[j + 1].time < at {
             j += 1;
@@ -449,23 +452,31 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
         let span = b.time - a.time;
         let u = if span > 0.0 { ((at - a.time) / span).clamp(0.0, 1.0) } else { 0.0 };
         let position = place(a.position.lerp(b.position, u));
-        let orientation = turn * a.orientation.slerp(b.orientation, u);
-        // Local speed along the plan sets the gap to the next frame.
+        let Some(along) = (place(b.position) - place(a.position)).try_normalize() else { continue };
         let speed = if span > 0.0 { a.position.distance(b.position) / span } else { 0.0 };
-        let world = (speed * step * 0.2).clamp(40.0, 1.0e4);
+        let world = (speed * FRAME_STEP * 0.3).clamp(15.0, 1.0e4);
+        // Where the ship is slow, keep only every 2nd, 4th… frame (by its
+        // absolute number, so the same ones stay), a frame and a half apart.
+        let stride = (1.5 * world / (speed * FRAME_STEP).max(1e-3)).max(1.0).log2().ceil().exp2().min(64.0);
+        if (k - 1.0).rem_euclid(stride) != 0.0 {
+            continue;
+        }
+        drawn += 1;
         // Far away, keep a minimum on-screen size so the route stays readable.
         let size = world.max(position.distance(cam) * 0.01);
-        let right = orientation * DVec3::X;
-        let up = orientation * DVec3::Y;
-        let fwd = orientation * DVec3::NEG_Z;
+        let radial = (position - center_now).normalize_or(DVec3::Y);
+        let level = if along.dot(radial).abs() < 0.95 { radial } else { radial.any_orthonormal_vector() };
+        let right = along.cross(level).normalize();
+        let up = right.cross(along);
         let (w, h) = (right * size, up * size * 0.4);
         let c = action_color(a.action);
         let corners = [position - w - h, position + w - h, position + w + h, position - w + h];
         for i in 0..4 {
             frame.line(corners[i], corners[(i + 1) % 4], c);
         }
-        // Nose tick: which way the ship faces here.
-        frame.line(position, position + fwd * size * 0.8, c);
+        // Where the ship will face here: a tick from the center.
+        let fwd = turn * a.orientation.slerp(b.orientation, u) * DVec3::NEG_Z;
+        frame.line(position, position + fwd * size * 0.5, c.scale(0.6));
         // Label the next frame ahead with its distance.
         if first {
             first = false;
@@ -476,6 +487,10 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
         }
     }
 }
+
+/// Seconds of plan between guide frames, and how many ahead to show.
+const FRAME_STEP: f64 = 5.0;
+const MAX_FRAMES: usize = 16;
 
 /// Landing: the free-fall prediction (with impact point), the guidance path,
 /// and the descent column above the pad.
