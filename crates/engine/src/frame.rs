@@ -350,6 +350,27 @@ impl Frame {
         self.hud.push(Vertex { pos: [b.x, b.y, 0.0], color: color.0 });
     }
 
+    /// HUD line with a colour at each end (blended along it; alpha fades too).
+    pub fn hud_line2(&mut self, a: Vec2, b: Vec2, ca: Color, cb: Color) {
+        self.hud.push(Vertex { pos: [a.x, a.y, 0.0], color: ca.0 });
+        self.hud.push(Vertex { pos: [b.x, b.y, 0.0], color: cb.0 });
+    }
+
+    /// A filled disc that fades from `inner` at the center to `outer` at the
+    /// rim (a glow), in HUD pixel coordinates.
+    pub fn hud_glow(&mut self, center: Vec2, radius: f32, segments: u32, inner: Color, outer: Color) {
+        let at = |i: u32| {
+            let a = i as f32 / segments as f32 * std::f32::consts::TAU;
+            center + Vec2::new(a.cos(), a.sin()) * radius
+        };
+        for i in 0..segments {
+            let (p, q) = (at(i), at(i + 1));
+            for (v, c) in [(center, inner), (p, outer), (q, outer)] {
+                self.hud_tris.push(Vertex { pos: [v.x, v.y, 0.0], color: c.0 });
+            }
+        }
+    }
+
     /// Filled rectangle in HUD pixel coordinates.
     pub fn hud_rect(&mut self, pos: Vec2, size: Vec2, color: Color) {
         let (a, b) = (pos, pos + size);

@@ -30,6 +30,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::market::draw(frame, app, m);
         return;
     }
+    sun_glare(frame, app);
     let mut lines: Vec<(String, Color)> = Vec::new();
     status(app, &mut lines);
     match app.mode {
@@ -920,6 +921,62 @@ fn scanner(frame: &mut Frame, app: &App) {
         if locked == Some(contact.blip.id) {
             frame.hud_box(top - Vec2::splat(4.0), Vec2::splat(8.0), crate::scene::TRAFFIC);
         }
+    }
+}
+
+/// The sun's glare: a white-hot core, a halo, and rays in the star's colour,
+/// on screen so it reads at any distance. It grows with how bright the sun is
+/// here (see `Light`), and a body in the way hides it, fading in as the sun
+/// clears its limb. Not through the walls when we're aboard.
+fn sun_glare(frame: &mut Frame, app: &App) {
+    if app.mode == Mode::Pilot && matches!(app.u.crew.place, universe_sim::world::Place::Aboard { .. }) {
+        return;
+    }
+    let sys = &app.view.system;
+    let Some(star) = sys.bodies.iter().position(|b| b.kind == BodyKind::Star) else { return };
+    let sun = app.view.positions[star];
+    let cam = frame.camera.position;
+    let to_sun = sun - cam;
+    let dist = to_sun.length();
+    let dir = to_sun / dist;
+    // Hidden behind a body? A soft edge at its limb.
+    let mut visible = 1.0f32;
+    for (i, b) in sys.bodies.iter().enumerate() {
+        if i == star || b.kind.artificial() {
+            continue;
+        }
+        let rel = app.view.positions[i] - cam;
+        let along = rel.dot(dir);
+        if along <= 0.0 || along >= dist {
+            continue;
+        }
+        let miss = (rel - dir * along).length() - b.rail.radius;
+        visible = visible.min(((miss / (along * 0.004)) as f32).clamp(0.0, 1.0));
+    }
+    if visible <= 0.0 {
+        return;
+    }
+    let Some(p) = frame.project(sun) else { return };
+    let size = frame.size();
+    if p.x < -200.0 || p.y < -200.0 || p.x > size.x + 200.0 || p.y > size.y + 200.0 {
+        return;
+    }
+    let bright = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU }.intensity_at(cam);
+    let [r, g, b] = sys.class.color();
+    let tint = |a: f32| Color([r, g, b, a * visible]);
+    let disc = frame.projected_radius(sun, sys.bodies[star].rail.radius).max(2.0);
+    let k = bright.min(1.6) / 1.6;
+    // Halo, core.
+    let halo = disc * 2.5 + 14.0 + 40.0 * k;
+    frame.hud_glow(p, halo, 32, tint(0.55), tint(0.0));
+    frame.hud_glow(p, disc * 1.4 + 4.0, 24, Color([1.0, 1.0, 0.96, visible]), tint(0.6 * visible));
+    // Rays: long spikes and shorter ones between, fading out.
+    let long = disc * 2.0 + 40.0 + 180.0 * k;
+    for i in 0..12 {
+        let a = i as f32 * std::f32::consts::TAU / 12.0 + 0.2;
+        let len = if i % 3 == 0 { long } else { long * 0.45 };
+        let d = Vec2::new(a.cos(), a.sin());
+        frame.hud_line2(p + d * disc, p + d * len, tint(0.85), tint(0.0));
     }
 }
 
