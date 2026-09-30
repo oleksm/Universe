@@ -1,0 +1,13 @@
+[package]
+name = "universe"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+universe-engine = { path = "../engine" }
+glam.workspace = true
+log.workspace = true
+env_logger.workspace = true
+universe-sim = { path = "../sim" }
+serde.workspace = true
+serde_json.workspace = true

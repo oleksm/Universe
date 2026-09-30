@@ -1,0 +1,15 @@
+[package]
+name = "universe-engine"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+wgpu.workspace = true
+winit.workspace = true
+glam.workspace = true
+bytemuck.workspace = true
+pollster.workspace = true
+log.workspace = true
+png = "0.18"
+cpal = "0.18"
+font8x8 = "0.3"

@@ -1,0 +1,90 @@
+use std::f64::consts::TAU;
+
+use glam::{DMat3, DVec3};
+
+/// A Keplerian orbit around a parent with gravitational parameter `mu`.
+/// Positions are relative to the parent. The reference plane is XZ (Y is up).
+#[derive(Clone, Debug)]
+pub struct Orbit {
+    pub semi_major_axis: f64,
+    pub eccentricity: f64,
+    pub mu: f64,
+    /// Mean anomaly at t = 0.
+    pub mean_anomaly_epoch: f64,
+    /// Perifocal (periapsis direction, 90° ahead, normal) to world.
+    basis: DMat3,
+    mean_motion: f64,
+}
+
+impl Orbit {
+    pub fn new(a: f64, e: f64, inclination: f64, ascending_node: f64, periapsis_arg: f64, m0: f64, mu: f64) -> Self {
+        // Classic Z-up rotation, then swap to the engine's Y-up frame: (x, y, z) -> (x, z, -y).
+        let z_up = DMat3::from_rotation_z(ascending_node)
+            * DMat3::from_rotation_x(inclination)
+            * DMat3::from_rotation_z(periapsis_arg);
+        let y_up = DMat3::from_cols(DVec3::X, DVec3::NEG_Z, DVec3::Y);
+        Self {
+            semi_major_axis: a,
+            eccentricity: e,
+            mu,
+            mean_anomaly_epoch: m0,
+            basis: y_up * z_up,
+            mean_motion: (mu / (a * a * a)).sqrt(),
+        }
+    }
+
+    pub fn period(&self) -> f64 {
+        TAU / self.mean_motion
+    }
+
+    pub fn periapsis(&self) -> f64 {
+        self.semi_major_axis * (1.0 - self.eccentricity)
+    }
+
+    pub fn apoapsis(&self) -> f64 {
+        self.semi_major_axis * (1.0 + self.eccentricity)
+    }
+
+    fn eccentric_anomaly(&self, t: f64) -> f64 {
+        let m = (self.mean_anomaly_epoch + self.mean_motion * t).rem_euclid(TAU);
+        let e = self.eccentricity;
+        if e == 0.0 {
+            return m; // circular: nothing to solve
+        }
+        // A good first guess means Newton usually converges in 2-3 steps.
+        let mut ea = if e < 0.8 { m + e * m.sin() * (1.0 + e * m.cos()) } else { std::f64::consts::PI };
+        for _ in 0..12 {
+            let delta = (ea - e * ea.sin() - m) / (1.0 - e * ea.cos());
+            ea -= delta;
+            if delta.abs() < 1e-12 {
+                break;
+            }
+        }
+        ea
+    }
+
+    fn perifocal(&self, ea: f64) -> DVec3 {
+        let (a, e) = (self.semi_major_axis, self.eccentricity);
+        let b = a * (1.0 - e * e).sqrt();
+        self.basis * DVec3::new(a * (ea.cos() - e), b * ea.sin(), 0.0)
+    }
+
+    pub fn position(&self, t: f64) -> DVec3 {
+        self.perifocal(self.eccentric_anomaly(t))
+    }
+
+    /// Position and velocity relative to the parent at time `t`.
+    pub fn state(&self, t: f64) -> (DVec3, DVec3) {
+        let ea = self.eccentric_anomaly(t);
+        let (a, e) = (self.semi_major_axis, self.eccentricity);
+        let b = a * (1.0 - e * e).sqrt();
+        let rate = self.mean_motion / (1.0 - e * ea.cos());
+        let vel = self.basis * DVec3::new(-a * ea.sin() * rate, b * ea.cos() * rate, 0.0);
+        (self.perifocal(ea), vel)
+    }
+
+    /// `n` points evenly spaced in eccentric anomaly, for drawing the path.
+    pub fn path(&self, n: usize) -> impl Iterator<Item = DVec3> + '_ {
+        (0..n).map(move |i| self.perifocal(i as f64 / n as f64 * TAU))
+    }
+}

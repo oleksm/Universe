@@ -1,0 +1,267 @@
+use std::path::PathBuf;
+use std::sync::Arc;
+use std::time::Instant;
+
+use glam::{UVec2, Vec2};
+use winit::application::ApplicationHandler;
+use winit::dpi::LogicalSize;
+use winit::event::{DeviceEvent, DeviceId, ElementState, MouseScrollDelta, WindowEvent};
+use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
+use winit::keyboard::PhysicalKey;
+use winit::window::{CursorGrabMode, Window, WindowId};
+
+use crate::audio::Audio;
+use crate::camera::Camera;
+use crate::frame::Frame;
+use crate::gpu::Gpu;
+use crate::input::Input;
+use crate::renderer::Renderer;
+
+pub struct Config {
+    pub title: String,
+    pub window_size: (u32, u32),
+    /// Vertical resolution of the retro framebuffer; width follows the window aspect.
+    pub low_res_height: u32,
+    /// The HUD is drawn at this multiple of the scene resolution (smaller, crisper text).
+    pub hud_scale: u32,
+    pub vsync: bool,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self { title: "universe".into(), window_size: (1440, 810), low_res_height: 270, hud_scale: 2, vsync: true }
+    }
+}
+
+/// What the game sees each frame: input, timing, and a few window controls.
+pub struct Context {
+    pub input: Input,
+    /// Seconds since the last frame (clamped to avoid huge steps after stalls).
+    pub dt: f32,
+    /// Seconds since start.
+    pub time: f64,
+    pub fps: f32,
+    /// Size of the retro framebuffer in pixels.
+    pub low_res: UVec2,
+    window: Arc<Window>,
+    audio: Option<Audio>,
+    cursor_grabbed: bool,
+    screenshot: Option<PathBuf>,
+    exit: bool,
+}
+
+impl Context {
+    pub fn set_title(&self, title: &str) {
+        self.window.set_title(title);
+    }
+
+    /// Sound output, if an audio device is available.
+    pub fn audio(&self) -> Option<&Audio> {
+        self.audio.as_ref()
+    }
+
+    pub fn cursor_grabbed(&self) -> bool {
+        self.cursor_grabbed
+    }
+
+    /// Hide and lock the cursor for mouse-look, or release it.
+    pub fn grab_cursor(&mut self, grab: bool) {
+        if grab == self.cursor_grabbed {
+            return;
+        }
+        let result = if grab {
+            self.window
+                .set_cursor_grab(CursorGrabMode::Locked)
+                .or_else(|_| self.window.set_cursor_grab(CursorGrabMode::Confined))
+        } else {
+            self.window.set_cursor_grab(CursorGrabMode::None)
+        };
+        if let Err(e) = result {
+            log::warn!("cursor grab failed: {e}");
+        }
+        self.window.set_cursor_visible(!grab);
+        self.cursor_grabbed = grab;
+    }
+
+    /// Save the next rendered frame (at native low resolution) as a PNG.
+    pub fn screenshot(&mut self, path: impl Into<PathBuf>) {
+        self.screenshot = Some(path.into());
+    }
+
+    pub fn exit(&mut self) {
+        self.exit = true;
+    }
+}
+
+pub trait Game {
+    /// Advance game state. Called once per frame before drawing.
+    fn update(&mut self, ctx: &mut Context);
+    /// The camera to render from this frame.
+    fn camera(&self) -> Camera;
+    /// Fill the frame's draw lists.
+    fn draw(&self, frame: &mut Frame, ctx: &Context);
+}
+
+struct Running {
+    gpu: Gpu,
+    renderer: Renderer,
+    ctx: Context,
+    last_frame: Instant,
+    fps_timer: f32,
+    fps_frames: u32,
+    frame_count: u64,
+    /// `UNIVERSE_SCREENSHOT=path`: capture a frame shortly after startup, then exit.
+    auto_screenshot: Option<PathBuf>,
+}
+
+struct Runner<G> {
+    config: Config,
+    game: G,
+    state: Option<Running>,
+    start: Instant,
+}
+
+pub fn run<G: Game>(config: Config, game: G) {
+    let event_loop = EventLoop::new().expect("failed to create event loop");
+    event_loop.set_control_flow(ControlFlow::Poll);
+    let mut runner = Runner { config, game, state: None, start: Instant::now() };
+    event_loop.run_app(&mut runner).expect("event loop error");
+}
+
+impl<G: Game> Runner<G> {
+    fn frame(&mut self, event_loop: &ActiveEventLoop) {
+        let Some(s) = &mut self.state else { return };
+        let now = Instant::now();
+        let raw_dt = (now - s.last_frame).as_secs_f32();
+        s.last_frame = now;
+
+        s.fps_timer += raw_dt;
+        s.fps_frames += 1;
+        if s.fps_timer >= 0.5 {
+            s.ctx.fps = s.fps_frames as f32 / s.fps_timer;
+            s.fps_timer = 0.0;
+            s.fps_frames = 0;
+        }
+
+        s.ctx.dt = raw_dt.min(0.1);
+        s.ctx.time = (now - self.start).as_secs_f64();
+        s.ctx.low_res = s.renderer.low_res();
+
+        s.frame_count += 1;
+        let auto_capture = s.frame_count == 120 && s.auto_screenshot.is_some();
+        if auto_capture {
+            s.ctx.screenshot = s.auto_screenshot.clone();
+        }
+
+        self.game.update(&mut s.ctx);
+        s.ctx.input.end_frame();
+        if s.ctx.exit {
+            event_loop.exit();
+            return;
+        }
+
+        let mut frame = Frame::new(self.game.camera(), s.renderer.low_res().as_vec2(), s.renderer.hud_size().as_vec2());
+        self.game.draw(&mut frame, &s.ctx);
+        let capture = s.ctx.screenshot.take();
+        s.renderer.render(&mut s.gpu, &frame, capture.as_deref());
+        if auto_capture {
+            let elapsed = (now - self.start).as_secs_f64();
+            log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
+            event_loop.exit();
+        }
+    }
+}
+
+impl<G: Game> ApplicationHandler for Runner<G> {
+    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        if self.state.is_some() {
+            return;
+        }
+        let (w, h) = self.config.window_size;
+        let window = Arc::new(
+            event_loop
+                .create_window(
+                    Window::default_attributes()
+                        .with_title(&self.config.title)
+                        .with_inner_size(LogicalSize::new(w, h)),
+                )
+                .expect("failed to create window"),
+        );
+        let gpu = Gpu::new(window.clone(), event_loop.owned_display_handle(), self.config.vsync);
+        // Screenshot runs render 16:9 regardless of how the window manager sized us.
+        let screenshot_run = std::env::var_os("UNIVERSE_SCREENSHOT").is_some();
+        let renderer = Renderer::new(&gpu, self.config.low_res_height, self.config.hud_scale, screenshot_run.then_some(16.0 / 9.0));
+        let ctx = Context {
+            input: Input::default(),
+            dt: 0.0,
+            time: 0.0,
+            fps: 0.0,
+            low_res: renderer.low_res(),
+            window,
+            // Automated screenshot runs stay silent.
+            audio: if std::env::var_os("UNIVERSE_SCREENSHOT").is_some() { None } else { Audio::new() },
+            cursor_grabbed: false,
+            screenshot: None,
+            exit: false,
+        };
+        self.state = Some(Running {
+            gpu,
+            renderer,
+            ctx,
+            last_frame: Instant::now(),
+            fps_timer: 0.0,
+            fps_frames: 0,
+            frame_count: 0,
+            auto_screenshot: std::env::var_os("UNIVERSE_SCREENSHOT").map(PathBuf::from),
+        });
+    }
+
+    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        let Some(s) = &mut self.state else { return };
+        // Automated screenshot runs ignore the keyboard and mouse, so a stray
+        // keypress into the popped-up window can't change what gets captured.
+        let scripted = s.auto_screenshot.is_some();
+        match event {
+            WindowEvent::KeyboardInput { .. } | WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. } if scripted => {}
+            WindowEvent::CloseRequested => event_loop.exit(),
+            WindowEvent::Resized(size) => {
+                s.gpu.resize(size.width, size.height);
+                s.renderer.resize(&s.gpu);
+            }
+            WindowEvent::Focused(false) => {
+                s.ctx.input.release_all();
+                s.ctx.grab_cursor(false);
+            }
+            WindowEvent::KeyboardInput { event, .. } => {
+                if let PhysicalKey::Code(code) = event.physical_key {
+                    s.ctx.input.key(code, event.state == ElementState::Pressed);
+                }
+            }
+            WindowEvent::MouseInput { state, button, .. } => {
+                s.ctx.input.button(button, state == ElementState::Pressed);
+            }
+            WindowEvent::MouseWheel { delta, .. } => {
+                s.ctx.input.scroll += match delta {
+                    MouseScrollDelta::LineDelta(_, y) => y,
+                    MouseScrollDelta::PixelDelta(p) => p.y as f32 / 40.0,
+                };
+            }
+            WindowEvent::RedrawRequested => self.frame(event_loop),
+            _ => {}
+        }
+    }
+
+    fn device_event(&mut self, _: &ActiveEventLoop, _: DeviceId, event: DeviceEvent) {
+        if let (Some(s), DeviceEvent::MouseMotion { delta }) = (&mut self.state, event)
+            && s.auto_screenshot.is_none()
+        {
+            s.ctx.input.mouse_delta += Vec2::new(delta.0 as f32, delta.1 as f32);
+        }
+    }
+
+    fn about_to_wait(&mut self, _: &ActiveEventLoop) {
+        if let Some(s) = &self.state {
+            s.ctx.window.request_redraw();
+        }
+    }
+}

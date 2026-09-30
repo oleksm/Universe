@@ -1,0 +1,12 @@
+[package]
+name = "universe-sim"
+edition.workspace = true
+version.workspace = true
+
+# The simulation core: no graphics, no windowing, no audio.
+[dependencies]
+glam.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

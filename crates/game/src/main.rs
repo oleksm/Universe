@@ -1,0 +1,516 @@
+mod dev;
+mod fmt;
+mod hud;
+mod models;
+mod navmap;
+mod observer;
+mod save;
+mod scene;
+mod sound;
+mod terrain_view;
+
+use std::rc::Rc;
+
+use serde::{Deserialize, Serialize};
+use universe_engine::glam::DVec3;
+use universe_engine::{run, Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
+use universe_sim::{Approach, ClearanceKind, Controls, Event, ShipState, StarSystem, StepResult, Universe};
+
+use models::Models;
+use observer::{Focus, Observer};
+
+const SEED: u64 = 1984;
+const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
+/// Game seconds per real second, by default.
+const DEFAULT_TIME_SCALE: f64 = 2.0;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Mode {
+    Observer,
+    Pilot,
+}
+
+/// What is being rendered this frame: one star system, in its star's frame.
+pub struct View {
+    /// Galaxy index of the system at the origin.
+    pub origin: usize,
+    pub system: Rc<StarSystem>,
+    /// Body positions at the current time, relative to the origin star.
+    pub positions: Vec<DVec3>,
+    /// Ship position in the origin frame.
+    pub ship_pos: DVec3,
+    /// Dominant body near the ship, if the ship is in this system.
+    pub reference: Option<usize>,
+}
+
+pub struct Message {
+    pub text: String,
+    pub ttl: f32,
+}
+
+pub struct App {
+    pub u: Universe,
+    pub mode: Mode,
+    pub observer: Observer,
+    pub chase_cam: bool,
+    pub warp_index: usize,
+    /// The world's base time scale (game seconds per real second). The same
+    /// for everyone in a shared world; set with UNIVERSE_TIME_SCALE (1-100).
+    pub time_scale: f64,
+    pub paused: bool,
+    pub last_step: StepResult,
+    pub show_help: bool,
+    pub show_orbits: bool,
+    pub show_labels: bool,
+    pub muted: bool,
+    pub messages: Vec<Message>,
+    pub view: View,
+    /// Docking or landing guidance for the HUD, when cleared.
+    pub approach: Option<Approach>,
+    /// The flight plan to the cleared target: the path, attitudes and actions ahead.
+    pub plan: Option<universe_sim::Plan>,
+    /// When the plan was last rebuilt (real seconds), and for which clearance.
+    plan_age: f32,
+    plan_for: Option<universe_sim::Clearance>,
+    /// Game seconds between tunnel frames: a nice step giving ~12 frames over
+    /// the remaining route, changed only when that drifts far (so frames stay put).
+    pub frame_step: f64,
+    /// The ETA shown on the HUD (real seconds): counts down each frame and
+    /// eases toward each new plan's prediction instead of jumping.
+    pub eta_shown: Option<f64>,
+    /// Colored terrain globes, built once per (system, body).
+    pub globes: std::collections::HashMap<(usize, usize), universe_engine::WireModel>,
+    /// The navigation map, when open.
+    pub nav_map: Option<navmap::NavMap>,
+    /// What the target marker points at: the nav target, else the nearest station.
+    pub nav_marker: Option<(String, DVec3)>,
+    /// Display names of the route's stops (refreshed when the route changes).
+    pub route_labels: Vec<String>,
+    route_labels_for: Vec<universe_sim::Stop>,
+    pub camera: Camera,
+    pub models: Models,
+    prev_focus: Option<(usize, DVec3)>,
+    /// Seconds into `UNIVERSE_SOUND_TEST`, if running.
+    sound_test: Option<f64>,
+    launched: bool,
+}
+
+impl App {
+    fn new() -> Self {
+        let mut u = Universe::new(SEED);
+        // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 50).
+        let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(50);
+        u.spawn_settlers(settlers, SEED);
+        let system = u.ship_system();
+        let origin = u.ship_system;
+        let mut app = Self {
+            u,
+            mode: Mode::Pilot,
+            observer: Observer::new(),
+            chase_cam: true,
+            warp_index: 0,
+            time_scale: std::env::var("UNIVERSE_TIME_SCALE")
+                .ok()
+                .and_then(|v| v.parse::<f64>().ok())
+                .map_or(DEFAULT_TIME_SCALE, |v| v.clamp(1.0, 100.0)),
+            paused: false,
+            last_step: StepResult::default(),
+            show_help: false,
+            show_orbits: true,
+            show_labels: true,
+            muted: false,
+            messages: Vec::new(),
+            view: View { origin, system, positions: Vec::new(), ship_pos: DVec3::ZERO, reference: None },
+            approach: None,
+            plan: None,
+            plan_age: 0.0,
+            plan_for: None,
+            eta_shown: None,
+            frame_step: 30.0,
+            globes: std::collections::HashMap::new(),
+            nav_map: None,
+            nav_marker: None,
+            route_labels: Vec::new(),
+            route_labels_for: Vec::new(),
+            camera: Camera::default(),
+            models: Models::new(),
+            prev_focus: None,
+            sound_test: std::env::var_os("UNIVERSE_SOUND_TEST").map(|_| 0.0),
+            launched: false,
+        };
+        let name = app.view.system.bodies[app.view.system.station().unwrap_or(0)].name.clone();
+        app.say(format!("LAUNCHED FROM {}", name.to_uppercase()));
+        app.say("PRESS F1 FOR CONTROLS".into());
+        if let Ok(name) = std::env::var("UNIVERSE_SCENARIO") {
+            dev::apply(&mut app, &name);
+        }
+        app
+    }
+
+    pub fn say(&mut self, text: String) {
+        self.messages.push(Message { text, ttl: 4.0 });
+        if self.messages.len() > 4 {
+            self.messages.remove(0);
+        }
+    }
+
+    /// How fast game time runs relative to real time: the world's time scale,
+    /// times any single-player warp on top (no warp in hyperdrive).
+    pub fn warp(&self) -> f64 {
+        if self.paused {
+            0.0
+        } else if self.u.ship.hyperdrive {
+            self.time_scale
+        } else {
+            self.time_scale * WARPS[self.warp_index]
+        }
+    }
+
+    fn global_keys(&mut self, ctx: &mut Context) {
+        let input = &ctx.input;
+        if input.pressed(KeyCode::Tab) {
+            self.mode = match self.mode {
+                Mode::Observer => Mode::Pilot,
+                Mode::Pilot => {
+                    ctx.grab_cursor(false);
+                    self.observer.focus = Focus::Ship;
+                    self.observer.distance = 180.0;
+                    Mode::Observer
+                }
+            };
+            sound::click(ctx, 500.0);
+        }
+        let input = &ctx.input;
+        if input.pressed(KeyCode::Period) || input.pressed(KeyCode::Equal) {
+            self.warp_index = (self.warp_index + 1).min(WARPS.len() - 1);
+            sound::click(ctx, 600.0 + 150.0 * self.warp_index as f32);
+        }
+        if input.pressed(KeyCode::Comma) || input.pressed(KeyCode::Minus) {
+            self.warp_index = self.warp_index.saturating_sub(1);
+            sound::click(ctx, 600.0 + 150.0 * self.warp_index as f32);
+        }
+        if input.pressed(KeyCode::KeyP) {
+            self.paused = !self.paused;
+            sound::click(ctx, 400.0);
+        }
+        if input.pressed(KeyCode::F1) {
+            self.show_help = !self.show_help;
+        }
+        if input.pressed(KeyCode::KeyO) {
+            self.show_orbits = !self.show_orbits;
+        }
+        if input.pressed(KeyCode::KeyL) {
+            self.show_labels = !self.show_labels;
+        }
+        if input.pressed(KeyCode::F8) {
+            self.muted = !self.muted;
+            if let Some(a) = ctx.audio() {
+                a.set_master(if self.muted { 0.0 } else { sound::VOLUME });
+            }
+        }
+        if input.pressed(KeyCode::F5) {
+            match save::save(self) {
+                Ok(path) => self.say(format!("SAVED TO {}", path.display())),
+                Err(e) => self.say(format!("SAVE FAILED: {e}")),
+            }
+            sound::chime(ctx);
+        }
+        if ctx.input.pressed(KeyCode::F9) {
+            match save::load(self) {
+                Ok(()) => self.say("GAME LOADED".into()),
+                Err(e) => self.say(format!("LOAD FAILED: {e}")),
+            }
+            sound::chime(ctx);
+        }
+        if ctx.input.pressed(KeyCode::F12) {
+            let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default();
+            ctx.screenshot(format!("screenshots/{}.png", stamp.as_millis()));
+        }
+    }
+
+    fn pilot_input(&mut self, ctx: &mut Context) -> Controls {
+        if ctx.input.button_pressed(MouseButton::Left) {
+            ctx.grab_cursor(true);
+        }
+        if ctx.input.pressed(KeyCode::Escape) {
+            ctx.grab_cursor(false);
+        }
+        let input = &ctx.input;
+        let dt = ctx.dt as f64;
+
+        if input.pressed(KeyCode::KeyC) {
+            self.chase_cam = !self.chase_cam;
+        }
+        if input.pressed(KeyCode::KeyJ) {
+            self.u.toggle_hyperdrive();
+        }
+        if input.pressed(KeyCode::KeyR) {
+            self.u.request_clearance();
+        }
+        if input.pressed(KeyCode::KeyK) {
+            // With a route set, K flies the whole route; otherwise the current clearance.
+            if self.u.route.stops.is_empty() {
+                self.u.toggle_autopilot();
+            } else {
+                self.u.toggle_route();
+            }
+        }
+        if input.pressed(KeyCode::Backspace) {
+            self.u.respawn();
+        }
+        // The autopilot has the stick.
+        if self.u.route.active || self.u.ship.clearance.is_some_and(|c| c.autopilot) {
+            return Controls::default();
+        }
+
+        // Shift turns W/S/A/D/Q/E into translation thrusters (RCS).
+        let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+        let ship = &mut self.u.ship;
+        if shift {
+            ship.rcs = DVec3::new(
+                input.axis(KeyCode::KeyA, KeyCode::KeyD) as f64,
+                input.axis(KeyCode::KeyQ, KeyCode::KeyE) as f64,
+                input.axis(KeyCode::KeyW, KeyCode::KeyS) as f64,
+            );
+        } else {
+            ship.rcs = DVec3::ZERO;
+            ship.throttle += input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt;
+        }
+        if input.pressed(KeyCode::KeyZ) {
+            ship.throttle = 1.0;
+        }
+        if input.pressed(KeyCode::KeyX) {
+            ship.throttle = 0.0;
+        }
+        ship.throttle = ship.throttle.clamp(0.0, 1.0);
+
+        let keys: f32 = if shift { 0.0 } else { 1.0 };
+        let mut c = Controls {
+            pitch: input.axis(KeyCode::ArrowUp, KeyCode::ArrowDown) as f64,
+            yaw: (input.axis(KeyCode::KeyE, KeyCode::KeyQ) * keys) as f64,
+            roll: (input.axis(KeyCode::KeyD, KeyCode::KeyA) * keys + input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft))
+                .clamp(-1.0, 1.0) as f64,
+        };
+        if ctx.cursor_grabbed() {
+            c.pitch = (c.pitch - input.mouse_delta.y as f64 * 0.08).clamp(-1.0, 1.0);
+            c.yaw = (c.yaw - input.mouse_delta.x as f64 * 0.08).clamp(-1.0, 1.0);
+        }
+        c
+    }
+
+    fn handle_events(&mut self, ctx: &Context) {
+        for event in std::mem::take(&mut self.u.events) {
+            sound::event(ctx, &event);
+            let text = match event {
+                Event::Landed { body, station: true } => format!("DOCKED AT {body}"),
+                Event::Landed { body, station: false } => format!("LANDED ON {body}"),
+                Event::TookOff => "LIFT OFF".into(),
+                Event::Crashed { body } => format!("SHIP DESTROYED - {body}"),
+                Event::Respawned => "NEW SHIP DELIVERED TO HOME STATION".into(),
+                Event::EnteredSystem { name } => format!("ENTERING {name} SYSTEM"),
+                Event::HyperdriveEngaged => "HYPERDRIVE ENGAGED".into(),
+                Event::HyperdriveDisengaged => "HYPERDRIVE OFF".into(),
+                Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\nR TO REQUEST CLEARANCE"),
+                Event::ClearanceGranted { target, kind: ClearanceKind::Dock } => {
+                    format!("DOCKING GRANTED - {target}\nFOLLOW THE GATES, OR K FOR AUTO")
+                }
+                Event::ClearanceGranted { target, kind: ClearanceKind::Land } => {
+                    format!("LANDING GRANTED - {target}\nFOLLOW THE PATH, OR K FOR AUTO")
+                }
+                Event::ClearanceGranted { target, kind: ClearanceKind::Transit } => {
+                    format!("TRANSIT GRANTED - {target}\nFLY THROUGH THE RING UNDER 300 M/S, OR K FOR AUTO")
+                }
+                Event::GateEntered { to } => format!("GATE TRANSIT TO {to}"),
+                Event::GateArrived { system } => format!("WELCOME TO THE {system} SYSTEM"),
+                Event::GateTooFast { speed } => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
+                Event::ClearanceDenied { reason } => format!("CLEARANCE DENIED - {reason}"),
+                Event::ClearanceCancelled => "CLEARANCE LOST".into(),
+                Event::Autopilot { on: true } => "AUTOPILOT ON".into(),
+                Event::Autopilot { on: false } => "AUTOPILOT OFF".into(),
+                Event::NavTargetSet { name: Some(name) } => format!("NAV TARGET - {name}\nR TO REQUEST CLEARANCE"),
+                Event::NavTargetSet { name: None } => "NAV TARGET CLEARED".into(),
+                Event::LandedAtPort { port } => format!("TOUCHDOWN - WELCOME TO {port}"),
+                Event::RouteStop { number, name } => format!("ROUTE STOP {number} - {name}"),
+                Event::RouteComplete => "ROUTE COMPLETE".into(),
+                Event::RouteBlocked { reason } => format!("ROUTE STOPPED - {reason}"),
+                Event::Bumped => "HULL CONTACT!".into(),
+                Event::Launched { station } => format!("LAUNCHED FROM {station}"),
+            };
+            self.say(text.to_uppercase());
+        }
+    }
+
+    /// Terrain globes for the system in view (built once, on first sight).
+    fn build_globes(&mut self) {
+        let origin = self.view.origin;
+        for (i, b) in self.view.system.bodies.iter().enumerate() {
+            if !self.globes.contains_key(&(origin, i))
+                && let Some(g) = terrain_view::globe(b)
+            {
+                self.globes.insert((origin, i), g);
+            }
+        }
+    }
+
+    fn find_nav_marker(&mut self) -> Option<(String, DVec3)> {
+        if let Some(t) = self.u.ship.nav_target {
+            let pos = self.u.target_position(t)?;
+            let name = match t {
+                universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_) => self.u.target_name(t),
+                universe_sim::NavTarget::Spaceport(p) => self.u.ship_system().spaceports[p].name.clone(),
+            };
+            return Some((name.to_uppercase(), pos));
+        }
+        let sys = self.u.ship_system();
+        let station = sys.station()?;
+        let mut positions = Vec::new();
+        sys.positions(self.u.time, &mut positions);
+        Some((String::new(), positions[station]))
+    }
+
+    fn build_view(&mut self) {
+        let origin = match self.mode {
+            Mode::Pilot => self.u.ship_system,
+            Mode::Observer => self.observer.origin(&self.u),
+        };
+        let system = self.u.system(origin);
+        let mut positions = std::mem::take(&mut self.view.positions);
+        system.positions(self.u.time, &mut positions);
+        let ship_pos = self.u.ship.position + self.u.galaxy.offset(origin, self.u.ship_system);
+        let reference = (origin == self.u.ship_system).then(|| system.dominant(ship_pos, &positions));
+        self.view = View { origin, system, positions, ship_pos, reference };
+    }
+
+    fn focus_position(&self) -> DVec3 {
+        match self.observer.focus {
+            Focus::Body { body, .. } => self.view.positions[body],
+            Focus::Ship => self.view.ship_pos,
+            Focus::Craft(i) => self.u.crafts.get(i).map_or(DVec3::ZERO, |c| c.ship.position),
+        }
+    }
+
+    fn update_camera(&mut self, dt: f64, focus_changed: bool) {
+        match self.mode {
+            Mode::Observer => {
+                let focus = self.focus_position();
+                if let (true, Some((prev_origin, prev_pos))) = (focus_changed, self.prev_focus) {
+                    // Glide from the old target: express it in the new frame first.
+                    let old = prev_pos + self.observer.transition + self.u.galaxy.offset(self.view.origin, prev_origin);
+                    self.observer.transition = old - focus;
+                }
+                self.observer.transition *= (-4.0 * dt).exp();
+                self.prev_focus = Some((self.view.origin, focus));
+                self.camera = self.observer.camera(focus);
+            }
+            Mode::Pilot => {
+                let ship = &self.u.ship;
+                let orientation = ship.orientation.as_quat();
+                let docked = matches!(ship.state, ShipState::Landed { body, .. } if self.view.system.bodies[body].kind == universe_sim::BodyKind::Station);
+                // Docked: the ship is inside the slot, so back off far enough to see the station.
+                let chase = if docked { DVec3::new(0.0, 150.0, 1800.0) } else { DVec3::new(0.0, 20.0, 115.0) };
+                let offset = if self.chase_cam || docked { ship.orientation * chase } else { DVec3::ZERO };
+                self.camera = Camera { position: self.view.ship_pos + offset, orientation, near: 0.5, ..Default::default() };
+                self.prev_focus = None;
+            }
+        }
+    }
+}
+
+impl Game for App {
+    fn update(&mut self, ctx: &mut Context) {
+        let dt = ctx.dt as f64;
+        if !self.launched {
+            self.launched = true;
+            sound::launch(ctx);
+        }
+        self.global_keys(ctx);
+
+        // The navigation map takes the keyboard while it's open.
+        let map_was_open = self.nav_map.is_some();
+        if map_was_open {
+            navmap::input(self, ctx);
+        } else if ctx.input.pressed(KeyCode::KeyM) {
+            self.nav_map = Some(navmap::NavMap::open(self));
+            sound::click(ctx, 900.0);
+        }
+        let (controls, focus_changed) = match self.mode {
+            _ if map_was_open || self.nav_map.is_some() => (Controls::default(), false),
+            Mode::Pilot => (self.pilot_input(ctx), false),
+            Mode::Observer => (Controls::default(), self.observer.input(ctx, &mut self.u)),
+        };
+        if focus_changed {
+            sound::click(ctx, 1400.0);
+        }
+        self.last_step = self.u.step_world(dt, self.warp(), &controls);
+        self.handle_events(ctx);
+        self.build_globes();
+        if self.route_labels_for != self.u.route.stops {
+            self.route_labels_for = self.u.route.stops.clone();
+            self.route_labels = self.route_labels_for.clone().into_iter().map(|s| self.u.stop_name(s).to_uppercase()).collect();
+        }
+        self.approach = self.u.approach();
+        // The planner costs ~1-2 ms: rebuild it 10 times a second, or at once
+        // when the clearance, target or autopilot phase changes.
+        self.plan_age += ctx.dt;
+        let key = self.u.ship.clearance;
+        let changed = key.map(|c| (c.target, c.autopilot, c.phase)) != self.plan_for.map(|c| (c.target, c.autopilot, c.phase));
+        if changed || self.plan_age >= 0.1 || !self.u.ship.is_flying() {
+            self.plan = self.u.plan();
+            self.plan_age = 0.0;
+            self.plan_for = key;
+        }
+        if let Some(p) = &self.plan {
+            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.time - p.start);
+            let count = left / self.frame_step;
+            if !(6.0..=24.0).contains(&count) {
+                const STEPS: [f64; 14] = [2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0, 7200.0, 14400.0];
+                self.frame_step = STEPS.into_iter().min_by(|a, b| (left / a - 12.0).abs().total_cmp(&(left / b - 12.0).abs())).unwrap_or(30.0);
+            }
+        }
+        let raw = self.plan.as_ref().filter(|p| p.arrives).map(|p| {
+            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.time - p.start);
+            left / self.warp().max(1.0)
+        });
+        self.eta_shown = match (raw, self.eta_shown) {
+            (Some(raw), Some(shown)) if (raw - shown).abs() < 10.0 => {
+                let ticked = shown - ctx.dt as f64;
+                Some(ticked + (raw - ticked) * (ctx.dt as f64 * 2.0).min(1.0))
+            }
+            (raw, _) => raw,
+        };
+        self.nav_marker = self.find_nav_marker();
+        self.build_view();
+        self.update_camera(dt, focus_changed);
+        if let Some(t) = self.sound_test {
+            let next = t + dt;
+            self.sound_test = dev::sound_test(ctx, next, t).then_some(next);
+        } else {
+            sound::update(ctx, self);
+        }
+
+        for m in &mut self.messages {
+            m.ttl -= ctx.dt;
+        }
+        self.messages.retain(|m| m.ttl > 0.0);
+    }
+
+    fn camera(&self) -> Camera {
+        self.camera
+    }
+
+    fn draw(&self, frame: &mut Frame, ctx: &Context) {
+        scene::draw(frame, self);
+        hud::draw(frame, self, ctx);
+    }
+}
+
+/// True when the ship is visible as a model rather than being the camera.
+pub fn ship_visible(app: &App) -> bool {
+    !matches!(app.u.ship.state, ShipState::Destroyed { .. } | ShipState::Transit { .. }) && (app.mode == Mode::Observer || app.chase_cam)
+}
+
+fn main() {
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
+        .init();
+    run(Config { title: "universe".into(), ..Default::default() }, App::new());
+}
