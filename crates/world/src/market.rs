@@ -203,7 +203,7 @@ impl Market {
             return None;
         }
         self.offers.iter().find(|o| o.item == item.id).copied().or_else(|| {
-            self.wants.contains(&item.category).then(|| Offer { item: item.id, side: Side::Buys, base: item.price * GENERAL_PREMIUM, usual: GENERAL_DEMAND })
+            self.wants.contains(&item.category).then_some(Offer { item: item.id, side: Side::Buys, base: item.price * GENERAL_PREMIUM, usual: GENERAL_DEMAND })
         })
     }
 
