@@ -27,6 +27,8 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.show_orbits {
         orbits(frame, app);
     }
+    // The system's star lights everything in it.
+    frame.light = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star).map(|i| app.view.positions[i]);
     bodies(frame, app);
     spaceports(frame, app);
     if app.view.origin == app.u.ship_system {
@@ -150,7 +152,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         if b.kind == BodyKind::Gate {
             if frame.projected_radius(center, b.rail.radius) > 0.8 {
                 let t = Transform { position: center, rotation, scale: 1.0 };
-                frame.model(&app.models.gate, &t, c, Color::BLACK);
+                frame.model_shaded(&app.models.gate, &t, c, c.scale(0.45));
             } else {
                 frame.point(center, c);
             }
@@ -159,7 +161,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         if b.kind == BodyKind::Station {
             if px > 0.8 {
                 let t = Transform { position: center, rotation, scale: STATION_SIZE };
-                frame.model(&app.models.station, &t, Color::WHITE, Color::BLACK);
+                frame.model_shaded(&app.models.station, &t, Color::WHITE, HULL);
             } else {
                 frame.point(center, c.scale(0.8));
             }
@@ -175,7 +177,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             // the ground (the globe drops a hair so the grid sits on top).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
-            frame.model_colored(globe, &Transform { position: center, rotation, scale }, 1.0, terrain_view::FILL * 0.6);
+            frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, 1.0, terrain_view::FILL * 2.5);
             if near {
                 terrain_view::surface_grid(frame, b, center, t);
             }
@@ -185,11 +187,17 @@ fn bodies(frame: &mut Frame, app: &App) {
         } else {
             let (model, fill): (&WireModel, Color) = match b.kind {
                 BodyKind::Star => (&app.models.star, c.scale(0.3)),
-                BodyKind::Rocky => (&app.models.rocky, c.scale(0.06)),
-                BodyKind::GasGiant | BodyKind::IceGiant => (&app.models.giant, c.scale(0.06)),
-                _ => (&app.models.moon, c.scale(0.05)),
+                BodyKind::Rocky => (&app.models.rocky, c.scale(0.4)),
+                BodyKind::GasGiant | BodyKind::IceGiant => (&app.models.giant, c.scale(0.45)),
+                _ => (&app.models.moon, c.scale(0.35)),
             };
-            frame.model(model, &Transform { position: center, rotation, scale: b.rail.radius }, c, fill);
+            let at = Transform { position: center, rotation, scale: b.rail.radius };
+            // The star shines; everything else is lit by it.
+            if b.kind == BodyKind::Star {
+                frame.model(model, &at, c, fill);
+            } else {
+                frame.model_shaded(model, &at, c, fill);
+            }
         }
 
         // True silhouette outline, plus a halo for stars.
@@ -219,6 +227,8 @@ fn bodies(frame: &mut Frame, app: &App) {
 }
 
 pub const TRAFFIC: Color = Color::hex(0x50d8ff);
+/// Hull plating of ships and stations, as lit by the star.
+const HULL: Color = Color::hex(0x5a6068);
 
 /// Other ships in the system being viewed.
 fn crafts(frame: &mut Frame, app: &App) {
@@ -234,7 +244,7 @@ fn crafts(frame: &mut Frame, app: &App) {
             continue;
         }
         let t = Transform { position: pos, rotation: c.ship.orientation.as_quat(), scale: 1.0 };
-        frame.model(&app.models.ship, &t, TRAFFIC, Color::BLACK);
+        frame.model_shaded(&app.models.ship, &t, TRAFFIC, HULL);
         if c.ship.throttle > 0.0 {
             let back = c.ship.orientation * DVec3::Z;
             frame.line(pos + back * 16.0, pos + back * (26.0 + 40.0 * c.ship.throttle), Color::hex(0xffa040));
@@ -528,7 +538,7 @@ fn ship(frame: &mut Frame, app: &App) {
         return;
     }
     let t = Transform { position: pos, rotation: app.u.ship.orientation.as_quat(), scale: 1.0 };
-    frame.model(&app.models.ship, &t, SHIP_COLOR, Color::BLACK);
+    frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
     if app.u.ship.hyperdrive || app.u.ship.throttle > 0.0 {
         // Exhaust streak.
         let back = app.u.ship.orientation * DVec3::Z;

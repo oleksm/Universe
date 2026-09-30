@@ -29,7 +29,7 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Self { title: "universe".into(), window_size: (1440, 810), low_res_height: 270, hud_scale: 2, vsync: true }
+        Self { title: "universe".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true }
     }
 }
 

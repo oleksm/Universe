@@ -43,6 +43,9 @@ pub(crate) struct Vertex {
 pub struct Frame {
     pub camera: Camera,
     pub clear: Color,
+    /// Where the light comes from (world position, e.g. the star), for the
+    /// `*_shaded` draws. None: they draw unlit (full brightness).
+    pub light: Option<DVec3>,
     /// Low-res scene resolution.
     scene_size: Vec2,
     /// HUD layer resolution (a multiple of the scene's).
@@ -54,6 +57,11 @@ pub struct Frame {
     pub(crate) hud_tris: Vec<Vertex>,
     pub(crate) hud: Vec<Vertex>,
 }
+
+/// Brightness of a face turned away from the light (see `Frame::model_shaded`).
+pub const SHADE_AMBIENT: f32 = 0.12;
+/// Brightness of an edge on the unlit side.
+pub const LINE_AMBIENT: f32 = 0.3;
 
 /// Width and height of one character cell of the HUD font, in pixels.
 pub const GLYPH: f32 = 8.0;
@@ -69,6 +77,7 @@ impl Frame {
         Self {
             camera,
             clear: Color::BLACK,
+            light: None,
             scene_size,
             size: hud_size,
             sky: Vec::new(),
@@ -171,6 +180,70 @@ impl Frame {
                 self.lines.push(Vertex { pos: pts[i as usize], color: line.0 });
             }
         }
+    }
+
+    /// Transformed model points, relative to the camera, and the model's
+    /// center likewise.
+    fn place(&self, model: &WireModel, t: &Transform) -> (Vec<Vec3>, Vec3) {
+        let origin = t.position - self.camera.position;
+        let pts = model.positions.iter().map(|&v| (origin + (t.rotation * v).as_dvec3() * t.scale).as_vec3()).collect();
+        (pts, origin.as_vec3())
+    }
+
+    /// How lit a surface at `at` (camera-relative) facing `normal` is, 0..1
+    /// (Lambert); 1 when there's no light.
+    fn lambert(&self, at: Vec3, normal: Vec3) -> f32 {
+        let Some(light) = self.light else { return 1.0 };
+        let to_light = ((light - self.camera.position).as_vec3() - at).normalize_or_zero();
+        normal.dot(to_light).max(0.0)
+    }
+
+    /// Faces lit by `light`, flat-shaded (one tone per face): `base` times
+    /// `SHADE_AMBIENT` in the dark up to full in direct light. Each face's
+    /// normal is turned to face away from the model's center (the models are
+    /// closed and roughly convex). Edges are dimmed on the far side by the
+    /// light on their ends (a vertex facing away from the center), down to
+    /// `LINE_AMBIENT` of `line`.
+    fn shaded(&mut self, pts: &[Vec3], center: Vec3, model: &WireModel, line: impl Fn(u32) -> [f32; 4], fill: impl Fn(u32) -> [f32; 4]) {
+        let tone = |c: [f32; 4], k: f32| [c[0] * k, c[1] * k, c[2] * k, c[3]];
+        for f in &model.faces {
+            let [a, b, c] = [f[0], f[1], f[2]].map(|i| pts[i as usize]);
+            let mid = (a + b + c) / 3.0;
+            let mut n = (b - a).cross(c - a).normalize_or_zero();
+            if n.dot(mid - center) < 0.0 {
+                n = -n;
+            }
+            let k = SHADE_AMBIENT + (1.0 - SHADE_AMBIENT) * self.lambert(mid, n);
+            for &i in f {
+                self.solids.push(Vertex { pos: pts[i as usize].to_array(), color: tone(fill(i), k) });
+            }
+        }
+        for e in &model.edges {
+            for &i in e {
+                let p = pts[i as usize];
+                let k = LINE_AMBIENT + (1.0 - LINE_AMBIENT) * self.lambert(p, (p - center).normalize_or_zero()).sqrt();
+                self.lines.push(Vertex { pos: p.to_array(), color: tone(line(i), k) });
+            }
+        }
+    }
+
+    /// A model lit by `light` (see `shaded`): edges in `line`, faces in `fill`.
+    pub fn model_shaded(&mut self, model: &WireModel, t: &Transform, line: Color, fill: Color) {
+        let (pts, center) = self.place(model, t);
+        self.shaded(&pts, center, model, |_| line.0, |_| fill.0);
+    }
+
+    /// A model in its own per-vertex colors, lit by `light`: edges at `line`
+    /// times the vertex color, faces at `fill` times it.
+    pub fn model_colored_shaded(&mut self, model: &WireModel, t: &Transform, line: f32, fill: f32) {
+        let (pts, center) = self.place(model, t);
+        let tint = |k: f32| {
+            move |i: u32| {
+                let [r, g, b, a] = model.colors[i as usize];
+                [r * k, g * k, b * k, a]
+            }
+        };
+        self.shaded(&pts, center, model, tint(line), tint(fill));
     }
 
     /// Line with a color at each end (blended along it).

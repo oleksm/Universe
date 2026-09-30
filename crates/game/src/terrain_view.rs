@@ -95,6 +95,25 @@ pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
             pts.push((world, c));
         }
     }
+    // Sunlight: faces shaded by their true slope to the star (the terrain's
+    // relief), lines dimmed on the night side.
+    let light = frame.light;
+    let lambert = |p: DVec3, n: DVec3| light.map_or(1.0, |l| n.dot((l - p).normalize()).max(0.0) as f32);
+    let shade = |a: DVec3, b: DVec3, c: DVec3| {
+        let mut n = (b - a).cross(c - a).normalize_or_zero();
+        if n.dot(a - center) < 0.0 {
+            n = -n;
+        }
+        FILL * (0.25 + 2.25 * lambert((a + b + c) / 3.0, n))
+    };
+    let pts: Vec<(DVec3, Color)> = pts
+        .into_iter()
+        .map(|(p, c)| (p, c.scale(0.35 + 0.65 * lambert(p, (p - center).normalize()).sqrt())))
+        .collect();
+    // The fill sits a little below its grid lines (more with distance), so
+    // the lines stay on top of it even when seen at a grazing angle.
+    let eye = frame.camera.position;
+    let sink = |p: DVec3| p - (p - center).normalize() * (p.distance(eye) * 0.002);
     let at = |i: usize, j: usize| pts[j * side + i];
     for j in 0..side {
         for i in 0..side {
@@ -111,9 +130,10 @@ pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
                 let (q, cq) = at(i + 1, j);
                 let (w, cw) = at(i, j + 1);
                 let (z, cz) = at(i + 1, j + 1);
-                let k = FILL;
-                frame.triangle3([p, q, z], [c.scale(k), cq.scale(k), cz.scale(k)]);
-                frame.triangle3([p, z, w], [c.scale(k), cz.scale(k), cw.scale(k)]);
+                let (k1, k2) = (shade(p, q, z), shade(p, z, w));
+                let [p, q, w, z] = [p, q, w, z].map(sink);
+                frame.triangle3([p, q, z], [c.scale(k1), cq.scale(k1), cz.scale(k1)]);
+                frame.triangle3([p, z, w], [c.scale(k2), cz.scale(k2), cw.scale(k2)]);
             }
         }
     }
