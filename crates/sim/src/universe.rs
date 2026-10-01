@@ -18,6 +18,9 @@ pub const TICK: f64 = 1.0 / 60.0 + 1e-9;
 /// The most ticks a step may take (beyond it, under heavy warp, ticks stretch).
 pub const TICK_BUDGET: usize = 8;
 
+/// Traffic control's look at who's where, every this many ticks.
+const PRESENCE_EVERY: u64 = 6;
+
 /// A ship on its final run this close to the station or gate lets the next one start (m).
 const CORRIDOR_RELEASE: f64 = 1_500.0;
 
@@ -60,7 +63,10 @@ pub struct Universe {
     /// Every ship as it was at the start of the frame (by combat id), and
     /// when that was: what each sees of the others, so a ship stepped earlier
     /// in the frame isn't seen where it will be at its end.
-    pub(crate) snaps: Vec<crate::traffic::Snap>,
+    pub(crate) snaps: Arc<Vec<crate::traffic::Snap>>,
+    /// The tick the snapshot was last taken at (at a tick's end: it does for
+    /// the next tick's start).
+    pub(crate) snapped_at: u64,
     pub(crate) snap_time: f64,
     /// Ticks run so far.
     pub tick: u64,
@@ -111,7 +117,8 @@ impl Universe {
             recorder: Default::default(),
             records: Default::default(),
             aggressors: Vec::new(),
-            snaps: Vec::new(),
+            snaps: Default::default(),
+            snapped_at: u64::MAX,
             snap_time: f64::NAN,
             tick: 0,
             log: Vec::new(),
@@ -166,7 +173,7 @@ impl Universe {
         let mut happened = Vec::new();
         let t = self.world.time;
         let turn = self.player_inbox.deliver(&self.world, &mut self.ship, self.ship_system, t, self.tick, &mut happened);
-        let commands = ShipCommands { turn: turn.flatten(), ..self.ship.holding() };
+        let commands = ShipCommands { turn, ..self.ship.holding() };
         let result = universe_prof::time("sim/player/world step", || self.world.step_ship(&mut self.ship, &mut self.ship_system, &commands, real_dt, warp, &mut happened));
         let fresh: Vec<Event> = happened.iter().cloned().map(Event::Ship).collect();
         self.player_events(happened);
@@ -187,6 +194,14 @@ impl Universe {
     pub(crate) fn player_events(&mut self, happened: Vec<ShipEvent>) {
         self.events.extend(happened.iter().cloned().map(Event::Ship));
         self.player_feed.extend(happened);
+    }
+
+    /// A message for craft `i`'s pilot (it wakes it).
+    pub(crate) fn tell(&mut self, i: usize, msg: crate::pilots::Msg) {
+        if let Some(c) = self.crafts.get_mut(i) {
+            c.asleep_until = 0;
+        }
+        self.pool.send(i, msg);
     }
 
     /// Postings from a pilot apart (the client's cockpit): each takes effect
@@ -264,7 +279,9 @@ impl Universe {
         self.pending = later;
         universe_prof::time("sim/postings", || self.post(due));
         let t0 = self.world.time;
-        universe_prof::time("sim/snapshot", || self.snapshot());
+        if self.snapped_at.wrapping_add(1) != self.tick {
+            universe_prof::time("sim/snapshot", || self.snapshot());
+        }
         let result = universe_prof::time("sim/player", || self.step(real_dt, warp, controls));
         let t1 = self.world.time;
         {
@@ -274,9 +291,17 @@ impl Universe {
         }
         self.world.time = t1;
         universe_prof::time("sim/combat", || self.combat(t1 - t0));
-        universe_prof::time("sim/traffic presence", || self.traffic_presence());
+        // Traffic control looks around ten times a second (pads freed when
+        // their ships leave, corridors when they're through): plenty, at a
+        // sixth of the cost.
+        if self.tick.is_multiple_of(PRESENCE_EVERY) {
+            universe_prof::time("sim/traffic presence", || self.traffic_presence());
+        }
         universe_prof::time("sim/recorder", || self.record());
-        universe_prof::time("sim/dead man", || self.dead_man());
+        // (The dead-man rule counts in seconds: a look once a second.)
+        if self.tick.is_multiple_of(60) {
+            universe_prof::time("sim/dead man", || self.dead_man());
+        }
         // The pilots get the world as it now is.
         let view = Arc::new(universe_prof::time("sim/pilot view", || self.pilot_view(t1 - t0)));
         let thought = universe_prof::time("sim/pilots", || self.pool.view(view.clone()));
@@ -298,6 +323,7 @@ impl Universe {
     /// Craft `i`'s pilot does `f` now (dev tools and tests, as a pilot at
     /// the controls would): what it posts goes in at once.
     pub(crate) fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::pilots::PoolLink, &mut Vec<Event>) -> R) -> R {
+        self.crafts[i].asleep_until = 0;
         let view = self.pilot_view(TICK);
         let (r, posting) = self.pool.run(i, &view, f);
         self.post(vec![posting]);
@@ -329,17 +355,18 @@ impl Universe {
         self.craft_run(i, |a, link, events| a.toggle_autopilot(link, events));
     }
 
-    /// The flight recorder's sample of every ship, when one is due.
+    /// The flight recorder's samples: a slice of the ships each tick, so
+    /// every ship is sampled every `recorder::EVERY` (not all at once).
     fn record(&mut self) {
         let now = self.world.time;
-        if !self.recorder.due(now) {
-            return;
+        let slices = ((crate::recorder::EVERY / TICK).round() as u64).max(1);
+        let k = self.tick % slices;
+        if k == 0 {
+            self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.player_status));
         }
-        self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.player_status));
-        for (i, c) in self.crafts.iter().enumerate() {
+        for (i, c) in self.crafts.iter().enumerate().skip(((k + slices - 1) % slices) as usize).step_by(slices as usize) {
             self.recorder.record(crate::combat::craft_id(i), crate::recorder::Sample::of(now, c.system, &c.ship, &c.status));
         }
-        self.recorder.sampled(now);
     }
 
     /// What traffic control needs to hear from a ship's events this tick:

@@ -2366,6 +2366,7 @@ name = "universe-world"
 version = "0.1.0"
 dependencies = [
  "glam",
+ "rayon",
  "serde",
  "universe-physics",
  "universe-prof",

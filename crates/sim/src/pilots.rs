@@ -47,6 +47,9 @@ pub const LATE_HORIZON: u64 = 30;
 /// After this long with no posting from its pilot, a ship's engines are cut
 /// and its weapons made safe (s).
 pub const DEAD_MAN: f64 = 30.0;
+/// With nothing new to say, a pilot still posts this often (s): its binding
+/// stays alive (see `DEAD_MAN`).
+const KEEP_ALIVE: f64 = 1.0;
 /// The longest a pilot goes without thinking (s).
 const THINK_AT_LEAST: f64 = 5.0;
 /// Coasting with nothing to do, a pilot thinks this often (s).
@@ -55,7 +58,7 @@ const COAST_THINK: f64 = 0.5;
 /// What a pilot shows of itself: its transponder and flight plan, and what
 /// its operator and the services know of it (published with each posting;
 /// the world reads this, never the pilot itself).
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Status {
     /// Flies with the pirates (they see each other's transponders).
     pub pirate: bool,
@@ -129,11 +132,17 @@ pub struct Pilot {
     /// they'll leave it (as a ship's controls show what was set, not yet
     /// what the devices do), so it doesn't order again what's on its way.
     pub(crate) pending: Vec<(u64, ShipCommands)>,
+    /// What it last posted of its turn and status, and when it last posted
+    /// (it posts only what's new, and a keep-alive).
+    last_turn: Option<Option<Controls>>,
+    last_status: Option<Status>,
+    last_posted: f64,
+    last_sleep: u64,
 }
 
 impl Pilot {
     pub fn new(avionics: Avionics) -> Self {
-        Pilot { avionics, silent: false, feed: Vec::new(), orders: Vec::new(), next_think: 0, pending: Vec::new() }
+        Pilot { avionics, silent: false, feed: Vec::new(), orders: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0 }
     }
 }
 
@@ -144,10 +153,12 @@ pub struct PilotView {
     /// Game seconds a tick spans.
     pub dt: f64,
     pub charts: Arc<Charts>,
-    /// Every ship and the system it's in, by combat id (ours 0, craft i: i + 1).
-    pub ships: Vec<(usize, Ship)>,
+    /// The ships of the pilots awake this tick (and ours), with the system
+    /// each is in, by combat id (ours 0, craft i: i + 1). The rest are in
+    /// `snaps`: what anyone sees of anyone.
+    pub ships: HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash>,
     /// Every ship as others see it (by combat id), and who's aggressed and flying.
-    pub(crate) snaps: Vec<Snap>,
+    pub(crate) snaps: Arc<Vec<Snap>>,
     pub aggressors: Vec<(usize, DVec3)>,
     pub board: Board,
     /// Bodies' positions, and the defence turrets' (where and how they move),
@@ -175,6 +186,9 @@ pub struct Posting {
     /// A hunt begun, or ended, this think.
     pub hunt_begun: bool,
     pub hunt_end: Option<HuntEnd>,
+    /// Going to sleep: it needn't be in a view before this tick (unless a
+    /// message wakes it). None: it says nothing of it.
+    pub sleep_until: Option<u64>,
 }
 
 impl Posting {
@@ -368,7 +382,7 @@ fn obey(order: Order, a: &mut Avionics, link: &mut PoolLink, events: &mut Vec<Ev
 /// thinks every time, flies by the stick (unless a program has it), and
 /// hunts no one.
 pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Option<Controls>) -> Option<Posting> {
-    let (system, ref ship) = *view.ships.get(id)?;
+    let (system, ref ship) = *view.ships.get(&id)?;
     if human.is_none() && view.tick < pilot.next_think && pilot.feed.is_empty() && pilot.orders.is_empty() {
         return None;
     }
@@ -427,18 +441,24 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let PoolLink { devices, requests, .. } = link;
     // Its ship's events went to the services when they happened: the rest.
     events.retain(|e| !matches!(e, Event::Ship(_)));
-    Some(Posting {
-        id,
-        thought: view.tick,
-        seen: view.time,
-        devices,
-        turn: Some(turn),
-        requests,
-        events,
-        status: Status::of(&pilot.avionics),
-        hunt_begun: !was_hunting && pilot.avionics.hunting.is_some(),
-        hunt_end,
-    })
+    // Only what's new (the ship holds its turn, the world its status), and a keep-alive.
+    let status = Status::of(&pilot.avionics);
+    let hunt_begun = !was_hunting && pilot.avionics.hunting.is_some();
+    let new_turn = pilot.last_turn != Some(turn);
+    let new_status = pilot.last_status.as_ref() != Some(&status);
+    // Going to sleep (past the next tick), it says so: the world leaves its
+    // ship out of the views till then.
+    let sleep = (pilot.next_think > view.tick + 1 && pilot.next_think != pilot.last_sleep).then_some(pilot.next_think);
+    if devices.is_empty() && requests.is_empty() && events.is_empty() && !new_turn && !new_status && !hunt_begun && hunt_end.is_none() && sleep.is_none() && view.time - pilot.last_posted < KEEP_ALIVE {
+        return None;
+    }
+    pilot.last_turn = Some(turn);
+    pilot.last_status = Some(status.clone());
+    pilot.last_posted = view.time;
+    if let Some(t) = sleep {
+        pilot.last_sleep = t;
+    }
+    Some(Posting { id, thought: view.tick, seen: view.time, devices, turn: new_turn.then_some(turn), requests, events, status, hunt_begun, hunt_end, sleep_until: sleep })
 }
 
 /// Every pilot due thinks on `view`, side by side: their postings, in craft order.
@@ -604,7 +624,7 @@ impl Pool {
 /// player's requests), against `view`: what it posts.
 pub(crate) fn run<R>(pilot: &mut Pilot, id: usize, view: &PilotView, f: impl FnOnce(&mut Avionics, &mut PoolLink, &mut Vec<Event>) -> R) -> (R, Posting) {
     {
-        let (system, ref ship) = view.ships[id];
+        let (system, ref ship) = view.ships[&id];
         let sys = view.charts.system(system);
         let seen = seen(ship, &mut pilot.pending, view.tick);
         let mut link = PoolLink { view, sys, ship: seen, system, id, devices: Vec::new(), requests: Vec::new(), pending: &mut pilot.pending };
@@ -613,7 +633,7 @@ pub(crate) fn run<R>(pilot: &mut Pilot, id: usize, view: &PilotView, f: impl FnO
         let PoolLink { devices, requests, .. } = link;
         events.retain(|e| !matches!(e, Event::Ship(_)));
         pilot.next_think = view.tick;
-        let posting = Posting { id, thought: view.tick, seen: view.time, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), hunt_begun: false, hunt_end: None };
+        let posting = Posting { id, thought: view.tick, seen: view.time, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), hunt_begun: false, hunt_end: None, sleep_until: None };
         (r, posting)
     }
 }

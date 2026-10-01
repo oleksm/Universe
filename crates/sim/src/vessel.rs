@@ -33,6 +33,8 @@ impl Request {
 pub struct Inbox {
     /// Due tick, and when its pilot saw the world (world time), for each.
     pending: std::collections::VecDeque<(u64, f64, Pending)>,
+    /// The turn commanded, held until its pilot changes it.
+    turn: Option<Controls>,
 }
 
 #[derive(Clone, Debug)]
@@ -52,11 +54,10 @@ impl Inbox {
         }
     }
 
-    /// Hand the devices what's due by `tick`; the turn due, if one is. An
+    /// Hand the devices what's due by `tick`; the turn now held. An
     /// order given before the ship locked down (its pilot hadn't seen it
     /// land) doesn't touch its engine or thrusters.
-    pub(crate) fn deliver(&mut self, world: &World, ship: &mut Ship, system: usize, t: f64, tick: u64, events: &mut Vec<ShipEvent>) -> Option<Option<Controls>> {
-        let mut turn = None;
+    pub(crate) fn deliver(&mut self, world: &World, ship: &mut Ship, system: usize, t: f64, tick: u64, events: &mut Vec<ShipEvent>) -> Option<Controls> {
         while self.pending.front().is_some_and(|(due, _, _)| *due <= tick) {
             let (_, seen, item) = self.pending.pop_front().expect("due");
             match item {
@@ -66,9 +67,9 @@ impl Inbox {
                     }
                     world.command_at(ship, system, &c, t, events);
                 }
-                Pending::Turn(c) => turn = Some(c),
+                Pending::Turn(c) => self.turn = c,
             }
         }
-        turn
+        self.turn
     }
 }

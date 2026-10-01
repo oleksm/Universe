@@ -11,3 +11,4 @@ universe-prof = { path = "../prof" }
 universe-physics = { path = "../physics" }
 glam.workspace = true
 serde.workspace = true
+rayon.workspace = true

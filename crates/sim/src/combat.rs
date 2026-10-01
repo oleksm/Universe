@@ -76,7 +76,7 @@ impl Universe {
             }
             self.records.stats.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
             // And to its pilot, by its sensors.
-            self.pool.send(i, crate::pilots::Msg::Feed(events));
+            self.tell(i, crate::pilots::Msg::Feed(events));
         }
     }
 
@@ -219,7 +219,7 @@ impl Universe {
         if c.status.next_stop == Some(stop) && c.status.route_active {
             return;
         }
-        self.pool.send(i, crate::pilots::Msg::Order(crate::pilots::Order::Flee(stop)));
+        self.tell(i, crate::pilots::Msg::Order(crate::pilots::Order::Flee(stop)));
         let c = &mut self.crafts[i];
         c.status.next_stop = Some(stop);
         c.status.route_active = true;

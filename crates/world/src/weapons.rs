@@ -169,6 +169,11 @@ impl World {
         let mut fired = Vec::new();
         for a in ships.iter_mut() {
             let ship = &mut *a.ship;
+            // Nothing to do (most ships, most of the time): weapons safe, the
+            // gun parked and cooled down, the laser cold.
+            if !ship.armed && ship.gun_target.is_none() && ship.gun_dir == DVec3::NEG_Z && ship.gun_cooldown <= 0.0 && ship.laser_heat <= 0.0 {
+                continue;
+            }
             // Priming.
             if ship.armed && ship.arming > 0.0 {
                 ship.arming -= dt;

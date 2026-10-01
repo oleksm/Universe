@@ -37,7 +37,7 @@ impl Phase {
 }
 
 /// Permission to dock or land at a target, and the autopilot's state.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Clearance {
     pub target: NavTarget,
     pub autopilot: bool,

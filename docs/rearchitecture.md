@@ -1,6 +1,6 @@
 # Universe — Re-architecture plan: core, services, clients
 
-Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0–R7 done. `docs/architecture.md`
+Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0–R8 done. `docs/architecture.md`
 describes the code as it is; this describes where it goes and in what order. Once a phase
 lands, its part moves into `architecture.md`.
 
@@ -289,7 +289,7 @@ Dependencies point down only:
 | R5 ✓ | **Turrets as clients** | The defence service's gunner pool aims and fires through actuation | Turret tests green, turrets lag only themselves |
 | R6 ✓ | **Asynchronous NPC pools** | Pools on worker threads, the k-tick deadline, think-rate levels of detail, late-input handling, dead-man rule | Tick time independent of pool load. Determinism holds with on-time pools. Load test at 10k |
 | R7 ✓ | **The player as a client** | The player's computers (radar picture, fire control, plan, collision warning, follow) move to the client, with prediction from the shared kernel | The same contract for the player as for NPCs. Docking by autopilot works at 2-tick delay |
-| R8 | **Interest management and sharding** | Spatial index queries for sensors and subscriptions; per-system core shards; partition within a system | Tick time at 100k bodies within budget (short load test). No full-world copies on any path |
+| R8 ✓ (100k at ~25 ms, 1.5× budget; no per-system shards) | **Interest management and sharding** | Spatial index queries for sensors and subscriptions; per-system core shards; partition within a system | Tick time at 100k bodies within budget (short load test). No full-world copies on any path |
 | R9 | **Persistence and audit** | World save = core state + input-log checkpoint; service records; per-pilot saves; replay tool | Replay of a recorded session reproduces the state hash |
 
 Order rationale:

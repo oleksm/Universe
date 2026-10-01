@@ -36,13 +36,16 @@ pub struct PairContact {
     pub before_end: f64,
 }
 
-/// Grid cell size (m): larger than any body plus its motion in a step.
-const CELL: f64 = 2_000.0;
+/// Grid cell size (m): larger than two bodies' reach plus how far they can
+/// close in a step (at a 60th of a second, closing speeds up to ~13 km/s;
+/// ships in hyperdrive don't collide). Small enough that a crowded port
+/// isn't one cell everyone near it is tested against.
+const CELL: f64 = 250.0;
 
 /// Every pair of `movers` that touched during the last `dt` seconds.
 pub fn contacts(movers: &[Mover], dt: f64) -> Vec<PairContact> {
     let key = |p: DVec3| ((p.x / CELL).floor() as i64, (p.y / CELL).floor() as i64, (p.z / CELL).floor() as i64);
-    let mut grid: HashMap<(i64, i64, i64), Vec<usize>> = HashMap::new();
+    let mut grid: HashMap<(i64, i64, i64), Vec<usize>, CellHash> = HashMap::with_capacity_and_hasher(movers.len(), CellHash::default());
     for (i, m) in movers.iter().enumerate() {
         grid.entry(key(m.position)).or_default().push(i);
     }
@@ -73,6 +76,38 @@ pub fn contacts(movers: &[Mover], dt: f64) -> Vec<PairContact> {
     }
     out.sort_by_key(|p| (p.a, p.b));
     out
+}
+
+/// A quick hash for grid cells (the standard one is made to resist
+/// attackers, at several times the cost; cell coordinates need no such care).
+pub type CellHash = std::hash::BuildHasherDefault<FxHasher>;
+
+/// The multiply-rotate hash rustc uses for its own tables.
+#[derive(Default)]
+pub struct FxHasher(u64);
+
+impl std::hash::Hasher for FxHasher {
+    fn write(&mut self, bytes: &[u8]) {
+        for &b in bytes {
+            self.write_u64(b as u64);
+        }
+    }
+
+    fn write_u64(&mut self, x: u64) {
+        self.0 = (self.0.rotate_left(5) ^ x).wrapping_mul(0x51_7c_c1_b7_27_22_0a_95);
+    }
+
+    fn write_i64(&mut self, x: i64) {
+        self.write_u64(x as u64);
+    }
+
+    fn write_usize(&mut self, x: usize) {
+        self.write_u64(x as u64);
+    }
+
+    fn finish(&self) -> u64 {
+        self.0
+    }
 }
 
 /// The same contact seen from the other body.

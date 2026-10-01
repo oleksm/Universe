@@ -19,7 +19,7 @@ use universe_avionics::follow::{self, Anchor, Manoeuvre};
 use universe_avionics::route::Stop;
 use universe_avionics::fire_control::lead;
 use universe_avionics::{Avionics, Bus, Clearance, Event, NavTarget, Plan, Solution, Track};
-use universe_world::radar::{self, RADAR_RANGE};
+use universe_world::radar::RADAR_RANGE;
 use universe_world::rules::Rules;
 use universe_world::weapons::{GUN_MUZZLE, SLUG_LIFETIME};
 use universe_world::{Controls, ShipCommands, StarSystem};
@@ -42,8 +42,8 @@ pub struct Transponder {
 /// What the cockpit reads each tick.
 pub struct CockpitView {
     pub world: Arc<PilotView>,
-    /// By craft index.
-    pub transponders: Vec<Transponder>,
+    /// Of the crafts our radar could see, by craft index.
+    pub transponders: HashMap<usize, Transponder>,
 }
 
 /// The player's pilot and ship computers.
@@ -75,6 +75,8 @@ pub struct Cockpit {
     /// they make to where it is and how it's turned, at their due tick.
     world: Option<universe_world::World>,
     turns: Vec<(u64, Option<Controls>)>,
+    /// The turn held by the ship as of the view (the last posted that's due).
+    held: Option<Controls>,
     pub prediction: Option<(DVec3, glam::DQuat)>,
 }
 
@@ -111,6 +113,7 @@ impl Cockpit {
             collision_age: f64::INFINITY,
             world: None,
             turns: Vec::new(),
+            held: None,
             prediction: None,
         }
     }
@@ -202,8 +205,12 @@ impl Cockpit {
     fn predict(&mut self) -> Option<(DVec3, glam::DQuat)> {
         let view = self.view.clone()?;
         let w = &view.world;
+        // (The ship holds its turn until told otherwise.)
+        if let Some(&(_, t)) = self.turns.iter().rfind(|(due, _)| *due <= w.tick) {
+            self.held = t;
+        }
         self.turns.retain(|(due, _)| *due > w.tick);
-        let (system, ref ship) = w.ships[PLAYER];
+        let (system, ref ship) = w.ships[&PLAYER];
         if !ship.is_flying() || (self.turns.is_empty() && self.pilot.pending.is_empty()) {
             return None;
         }
@@ -212,13 +219,15 @@ impl Cockpit {
         let run = |world: &universe_world::World, with: bool| {
             let (mut ship, mut system, mut clock) = (ship.clone(), system, w.time);
             let mut events = Vec::new();
+            let mut turn = self.held;
             for tick in w.tick + 1..=last {
-                let mut turn = None;
                 if with {
                     for (_, c) in self.pilot.pending.iter().filter(|(due, _)| *due == tick) {
                         world.command_at(&mut ship, system, c, clock, &mut events);
                     }
-                    turn = self.turns.iter().rfind(|(due, _)| *due == tick).and_then(|(_, t)| *t);
+                    if let Some(&(_, t)) = self.turns.iter().rfind(|(due, _)| *due == tick) {
+                        turn = t;
+                    }
                 }
                 let commands = ShipCommands { turn, ..ship.holding() };
                 world.step_ship_at(&mut clock, &mut ship, &mut system, &commands, w.dt, 1.0, &mut events);
@@ -237,12 +246,12 @@ impl Cockpit {
 
     /// Our ship as the latest view has it.
     pub fn ship(&self) -> &universe_world::Ship {
-        &self.world().ships[PLAYER].1
+        &self.world().ships[&PLAYER].1
     }
 
     fn system(&self) -> (usize, Arc<StarSystem>, Arc<Vec<DVec3>>) {
         let w = self.world();
-        let s = w.ships[PLAYER].0;
+        let s = w.ships[&PLAYER].0;
         let sys = w.charts.system(s);
         let rails = w.rails.get(&s).cloned().unwrap_or_else(|| {
             let mut p = Vec::new();
@@ -419,7 +428,7 @@ impl Cockpit {
     fn anchor_position(&self, anchor: Anchor, sys: &StarSystem, rails: &[DVec3]) -> Option<DVec3> {
         let w = self.world();
         match anchor {
-            Anchor::Ship(id) => crate::follow::mark_in(&w.snaps, w.ships[PLAYER].0, self.ship().position, id).map(|m| m.0),
+            Anchor::Ship(id) => crate::follow::mark_in(&w.snaps, w.ships[&PLAYER].0, self.ship().position, id).map(|m| m.0),
             Anchor::Place(t) => t.position(sys, w.time, rails),
         }
     }
@@ -432,7 +441,7 @@ impl Cockpit {
         self.view.as_ref()?;
         let (_, sys, rails) = self.system();
         let name = match f.anchor {
-            Anchor::Ship(id) => self.view.as_ref()?.transponders.get(id.checked_sub(1)?).map(|t| t.name.to_uppercase())?,
+            Anchor::Ship(id) => self.view.as_ref()?.transponders.get(&id.checked_sub(1)?).map(|t| t.name.to_uppercase())?,
             Anchor::Place(t) => t.name(&sys).to_uppercase(),
         };
         let at = self.anchor_position(f.anchor, &sys, &rails)?;
@@ -538,17 +547,27 @@ fn same_kind(m: Manoeuvre, kind: FollowKind) -> bool {
     matches!((m, kind), (Manoeuvre::KeepAt(_), FollowKind::KeepAt) | (Manoeuvre::Orbit(_), FollowKind::Orbit))
 }
 
-/// What our radar sees, nearest first, with each one's transponder.
+/// What our radar sees, nearest first, with each one's transponder (from
+/// the snapshot: what anyone sees of anyone).
 fn contacts(view: &CockpitView) -> Vec<Contact> {
     let w = &view.world;
-    let (system, ref ship) = w.ships[PLAYER];
-    let crafts = w.ships.iter().enumerate().skip(1).map(|(id, (s, sh))| (id - 1, *s, sh));
-    radar::sweep(ship, system, crafts)
-        .into_iter()
-        .filter(|b| b.distance < RADAR_RANGE)
-        .filter_map(|blip| {
-            let t = view.transponders.get(blip.id)?;
+    let (system, ref ship) = w.ships[&PLAYER];
+    let mut out: Vec<Contact> = w
+        .snaps
+        .iter()
+        .enumerate()
+        .skip(1)
+        .filter(|(_, s)| s.system == system && (s.flying || s.landed))
+        .filter_map(|(id, s)| {
+            let distance = s.position.distance(ship.position);
+            if distance >= RADAR_RANGE {
+                return None;
+            }
+            let t = view.transponders.get(&(id - 1))?;
+            let blip = universe_world::radar::Blip { id: id - 1, position: s.position, velocity: s.velocity, distance };
             Some(Contact { blip, name: t.name.to_uppercase(), activity: t.activity, destination: t.destination.clone(), hull: t.hull, aggressed: t.aggressed })
         })
-        .collect()
+        .collect();
+    out.sort_by(|a, b| a.blip.distance.total_cmp(&b.blip.distance).then(a.blip.id.cmp(&b.blip.id)));
+    out
 }

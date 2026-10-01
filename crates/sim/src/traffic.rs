@@ -32,6 +32,9 @@ pub struct Craft {
     pub dead_man: bool,
     /// A new route has been ordered and not yet taken up.
     pub(crate) route_ordered: bool,
+    /// Its pilot sleeps till this tick (it's not in the views till then,
+    /// unless a message wakes it).
+    pub(crate) asleep_until: u64,
     /// Seed of its current route (a new one is made when it finishes).
     pub route_seed: u64,
     /// A trader (see `commerce`): buys and sells at its stops.
@@ -124,6 +127,7 @@ impl Universe {
                 last_posted: self.world.time,
                 dead_man: false,
                 route_ordered: false,
+                asleep_until: 0,
                 route_seed,
                 trader,
                 paid: Default::default(),
@@ -238,7 +242,7 @@ impl Universe {
             }
         }
         if !happened.is_empty() {
-            self.pool.send(i, crate::pilots::Msg::Feed(happened));
+            self.tell(i, crate::pilots::Msg::Feed(happened));
         }
         self.dispatch(i);
     }
@@ -270,15 +274,20 @@ impl Universe {
                 continue;
             }
             let i = p.id - 1;
+            let requests = universe_prof::scope("sim/postings/requests");
             for r in p.requests {
                 r.make(&mut self.atc);
             }
+            drop(requests);
             let c = &mut self.crafts[i];
             c.inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
             c.last_posted = self.world.time;
             c.dead_man = false;
             if p.status.route_active {
                 c.route_ordered = false;
+            }
+            if let Some(t) = p.sleep_until {
+                c.asleep_until = t;
             }
             c.status = p.status;
             if p.hunt_begun && let Some(h) = c.status.hunting {
@@ -292,6 +301,7 @@ impl Universe {
             if p.hunt_end.is_some() && !c.status.pirate && c.ship.hull < FLEE_HULL {
                 self.flee(i);
             }
+            let _events = universe_prof::scope("sim/postings/events");
             self.log_events(crate::combat::craft_id(i), &p.events);
             self.traffic_events(crate::combat::craft_id(i), &p.events);
             for e in p.events {
@@ -332,10 +342,11 @@ impl Universe {
     /// the crafts' transponders.
     pub(crate) fn cockpit_view(&mut self, world: Arc<crate::pilots::PilotView>) -> crate::cockpit::CockpitView {
         let now = self.world.time;
-        let mut transponders = Vec::with_capacity(self.crafts.len());
-        for (i, c) in self.crafts.iter().enumerate() {
+        let mut transponders = std::collections::HashMap::new();
+        let (system, at) = (self.ship_system, self.ship.position);
+        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::RADAR_RANGE) {
             let destination = c.status.next_stop.map(|s| universe_avionics::route::stop_name(&self.world.system(s.system), s).to_uppercase());
-            transponders.push(crate::cockpit::Transponder {
+            transponders.insert(i, crate::cockpit::Transponder {
                 name: c.name.clone(),
                 activity: crate::contacts::activity(c),
                 destination,
@@ -361,14 +372,22 @@ impl Universe {
             turrets.insert(s, Arc::new(crate::pilots::turret_motions(&charts, s, &sys, t, &positions)));
             rails.insert(s, positions);
         }
-        // Everyone as they are now (pilots read the newest).
+        // Everyone as they are now (pilots read the newest); full ships only
+        // of the pilots awake (and ours).
         self.snapshot();
+        self.snapped_at = self.tick;
+        let tick = self.tick;
+        let mut ships: std::collections::HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash> = Default::default();
+        ships.insert(crate::combat::PLAYER, (self.ship_system, self.ship.clone()));
+        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.asleep_until <= tick) {
+            ships.insert(crate::combat::craft_id(i), (c.system, c.ship.clone()));
+        }
         crate::pilots::PilotView {
             tick: self.tick,
             time: t,
             dt,
             charts,
-            ships: std::iter::once((self.ship_system, self.ship.clone())).chain(self.crafts.iter().map(|c| (c.system, c.ship.clone()))).collect(),
+            ships,
             snaps: self.snaps.clone(),
             aggressors: self.aggressors.clone(),
             board: self.atc.board(),
@@ -380,11 +399,13 @@ impl Universe {
     /// Take the frame's snapshot of every ship, and who's aggressed.
     pub(crate) fn snapshot(&mut self) {
         let now = self.world.time;
-        self.snaps.clear();
         let law = &self.law;
-        self.snaps.push(Snap::of(self.ship_system, &self.ship, false, law.aggressed(crate::combat::PLAYER, now)));
-        let crafts = self.crafts.iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, c.status.pirate, law.aggressed(crate::combat::craft_id(i), now)));
-        self.snaps.extend(crafts);
+        let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
+        snaps.push(Snap::of(self.ship_system, &self.ship, false, law.aggressed(crate::combat::PLAYER, now)));
+        use rayon::prelude::*;
+        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, c.status.pirate, law.aggressed(crate::combat::craft_id(i), now))).collect();
+        snaps.extend(crafts);
+        self.snaps = Arc::new(snaps);
         self.snap_time = now;
         self.aggressors = self.snaps.iter().filter(|s| s.aggressed && s.flying && !s.hyperdrive).map(|s| (s.system, s.position)).collect();
     }
@@ -405,7 +426,7 @@ impl Universe {
         c.route_seed = seed;
         c.route_ordered = true;
         let route = Route { stops, next: 0, active: true, dwell_until: None, departing: false };
-        self.pool.send(i, crate::pilots::Msg::Order(crate::pilots::Order::Route(route)));
+        self.tell(i, crate::pilots::Msg::Order(crate::pilots::Order::Route(route)));
     }
 }
 
@@ -414,7 +435,7 @@ fn step_craft(world: &universe_world::World, c: &mut Craft, t0: f64, real_dt: f6
     let velocity = c.ship.velocity;
     let mut happened = Vec::new();
     let turn = c.inbox.deliver(world, &mut c.ship, c.system, t0, tick, &mut happened);
-    let commands = ShipCommands { turn: turn.flatten(), ..c.ship.holding() };
+    let commands = ShipCommands { turn, ..c.ship.holding() };
     let mut clock = t0;
     universe_prof::time("sim/crafts/tick/world step", || world.step_ship_at(&mut clock, &mut c.ship, &mut c.system, &commands, real_dt, warp, &mut happened));
     (happened, velocity)

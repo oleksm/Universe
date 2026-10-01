@@ -31,12 +31,15 @@ impl World {
             return;
         }
         // Who takes part, by system.
-        let mut by_system: HashMap<usize, Vec<usize>> = HashMap::new();
+        let sort = universe_prof::scope("sim/combat/collisions/who");
+        let mut by_system: HashMap<usize, Vec<usize>, universe_physics::pairs::CellHash> = HashMap::default();
+        // (Each system looked up once.)
+        let mut seen: HashMap<usize, std::sync::Arc<crate::system::StarSystem>, universe_physics::pairs::CellHash> = HashMap::default();
         for (k, a) in ships.iter().enumerate() {
             let s = &a.ship;
             let takes_part = match s.state {
                 ShipState::Flying => !s.hyperdrive,
-                ShipState::Landed { body, .. } => self.system(a.system).bodies[body].kind != BodyKind::Station,
+                ShipState::Landed { body, .. } => seen.entry(a.system).or_insert_with(|| self.system(a.system)).bodies[body].kind != BodyKind::Station,
                 _ => false,
             };
             if takes_part {
@@ -45,16 +48,28 @@ impl World {
         }
         let mut systems: Vec<_> = by_system.into_iter().filter(|(_, v)| v.len() > 1).collect();
         systems.sort_by_key(|(s, _)| *s);
-        for (_, members) in systems {
-            let movers: Vec<Mover> = members
+        drop(sort);
+        // Each system's pairs found side by side; then put right in order.
+        let found: Vec<(Vec<Mover>, Vec<universe_physics::PairContact>)> = {
+            use rayon::prelude::*;
+            let movers: Vec<Vec<Mover>> = systems
                 .iter()
-                .map(|&k| {
-                    let s = &ships[k].ship;
-                    let fixed = matches!(s.state, ShipState::Landed { .. });
-                    Mover { id: k, position: s.position, velocity: s.velocity, radius: SHIP_RADIUS, mass: if fixed { f64::INFINITY } else { s.mass() } }
+                .map(|(_, members)| {
+                    members
+                        .iter()
+                        .map(|&k| {
+                            let s = &ships[k].ship;
+                            let fixed = matches!(s.state, ShipState::Landed { .. });
+                            Mover { id: k, position: s.position, velocity: s.velocity, radius: SHIP_RADIUS, mass: if fixed { f64::INFINITY } else { s.mass() } }
+                        })
+                        .collect()
                 })
                 .collect();
-            for c in contacts(&movers, dt) {
+            let _p = universe_prof::scope("sim/combat/collisions/pairs");
+            movers.into_par_iter().map(|m| { let c = contacts(&m, dt); (m, c) }).collect()
+        };
+        for (movers, found) in found {
+            for c in found {
                 let (ma, mb) = (movers[c.a], movers[c.b]);
                 let (dva, dvb, lost) = bounce_pair(c.normal, c.closing, ma.mass, mb.mass, RESTITUTION);
                 let (ia, ib) = (ma.id, mb.id);

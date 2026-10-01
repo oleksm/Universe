@@ -87,7 +87,7 @@ impl fmt::Display for Incident {
         if let Some((_, name, _)) = &self.other {
             writeln!(f, "  with {name}")?;
         }
-        for (i, s) in self.trace.iter().enumerate() {
+        for s in &self.trace {
             let ago = self.time - s.time;
             write!(
                 f,
@@ -109,11 +109,12 @@ impl fmt::Display for Incident {
             if let Some(h) = s.hunting {
                 write!(f, " hunting {h}")?;
             }
-            // Against the other ship, at the same moment.
+            // Against the other ship, at the same moment (its nearest sample,
+            // carried there: ships are sampled a slice at a time).
             if let Some((_, _, other)) = &self.other
-                && let Some(o) = other.get(i).filter(|o| (o.time - s.time).abs() < 1e-6 && o.system == s.system)
+                && let Some(o) = other.iter().filter(|o| o.system == s.system && (o.time - s.time).abs() <= EVERY).min_by(|a, b| (a.time - s.time).abs().total_cmp(&(b.time - s.time).abs()))
             {
-                let sep = s.position - o.position;
+                let sep = s.position - (o.position + o.velocity * (s.time - o.time));
                 let closing = -(s.velocity - o.velocity).dot(sep.normalize_or_zero());
                 write!(f, " | other {:<10} sep {:8.1} m closing {:+7.1} m/s clr {:?}", o.state, sep.length(), closing, o.clearance)?;
             }
@@ -127,15 +128,10 @@ impl fmt::Display for Incident {
 #[derive(Clone, Debug, Default)]
 pub struct Recorder {
     tracks: Vec<VecDeque<Sample>>,
-    last: Option<f64>,
     pub incidents: Vec<Incident>,
 }
 
 impl Recorder {
-    /// Time for a sample?
-    pub fn due(&self, now: f64) -> bool {
-        self.last.is_none_or(|t| now - t >= EVERY)
-    }
 
     /// Take a sample of ship `id`.
     pub fn record(&mut self, id: usize, sample: Sample) {
@@ -150,10 +146,6 @@ impl Recorder {
         }
     }
 
-    /// A round of samples is done at `now`.
-    pub fn sampled(&mut self, now: f64) {
-        self.last = Some(now);
-    }
 
     /// The trace kept for ship `id`.
     pub fn trace(&self, id: usize) -> Vec<Sample> {

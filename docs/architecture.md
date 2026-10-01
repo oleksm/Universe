@@ -458,6 +458,8 @@ ship's pose directly, like tests do — then render.
 - **The flight recorder** (`sim::recorder`): every ship's last 15 s. Any wreck files an incident
   with its trace, and the other ship's for a collision or kill (separation, closing speed, both
   clearances), printed by the interaction tests on failure. Causes are read, not guessed.
+- **Load** is measured by hand with `cargo run -p universe-sim --release --example load -- N
+  [apart] [stress]` (profiled), never in tests.
 - **No slow tests, at all.** Every test sets up its exact situation and runs a few game
   seconds; the whole suite runs in about 3 s. No long simulations, warp runs, ignored
   benchmarks or load tests: performance is measured with the profiler (F3,

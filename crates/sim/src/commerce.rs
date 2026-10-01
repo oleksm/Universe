@@ -125,7 +125,7 @@ impl Universe {
         }
         if let Some((stop, _)) = &decision {
             // After the stop, on to there.
-            self.pool.send(i, crate::pilots::Msg::Order(crate::pilots::Order::Then(*stop)));
+            self.tell(i, crate::pilots::Msg::Order(crate::pilots::Order::Then(*stop)));
         }
 
         for (bought, item, units, amount) in records {
