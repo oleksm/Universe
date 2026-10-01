@@ -69,7 +69,7 @@ impl NavMap {
         self.system = app.charts.system(self.view);
         self.system.positions(app.v.time, &mut self.positions);
         let here = self.here(app);
-        let ship = app.v.ship.position;
+        let ship = app.ship.position;
         self.ship_body = here.then(|| self.system.dominant(ship, &self.positions));
         self.defended = universe_sim::world::turrets::turrets(app.charts.seed, self.view, &self.system).into_iter().map(|t| t.facility).collect();
         let mut entries = Vec::new();

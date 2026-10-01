@@ -80,7 +80,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         }
     }
 
-    if let ShipState::Transit { to, remaining, .. } = &app.v.ship.state {
+    if let ShipState::Transit { to, remaining, .. } = &app.ship.state {
         let name = universe_sim::names::star_name(app.charts.galaxy.stars[*to].seed).to_uppercase();
         let text = format!("GATE TRANSIT TO {name} - ARRIVING IN {remaining:.1} S");
         frame.text_boxed(((size - text_size(&text)) / 2.0).floor(), &text, AMBER, PANEL);
@@ -91,7 +91,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
 }
 
 fn status(app: &App, lines: &mut Vec<(String, Color)>) {
-    let ship = &app.v.ship;
+    let ship = &app.ship;
     let mode = match app.mode {
         Mode::Observer => "OBSERVER",
         Mode::Pilot if ship.armed => "COMBAT",
@@ -153,7 +153,7 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
 }
 
 fn ship_readout(app: &App, lines: &mut Vec<(String, Color)>) {
-    let ship = &app.v.ship;
+    let ship = &app.ship;
     if let Some(r) = app.view.reference {
         let b = &app.view.system.bodies[r];
         let offset = app.view.ship_pos - app.view.positions[r];
@@ -177,7 +177,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ship_readout(app, lines);
     radar_info(app, lines);
     collision_info(app, lines);
-    let ship = &app.v.ship;
+    let ship = &app.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
     lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
     lines.push((
@@ -262,7 +262,7 @@ fn collision_info(app: &App, lines: &mut Vec<(String, Color)>) {
 /// The radar: how many ships it sees, and the locked one's range, closing
 /// speed and what its transponder says.
 fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    if !app.v.ship.is_flying() && app.contacts.is_empty() {
+    if !app.ship.is_flying() && app.contacts.is_empty() {
         return;
     }
     let Some(c) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) else {
@@ -273,7 +273,7 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         return;
     };
-    let ship = &app.v.ship;
+    let ship = &app.ship;
     let closing = c.blip.closing_speed(ship.position, ship.velocity);
     let trend = if closing >= 0.0 { "CLOSING" } else { "OPENING" };
     let (tag, col) = if c.aggressed { ("  AGGRESSED", RED) } else { ("", crate::scene::TRAFFIC) };
@@ -303,13 +303,13 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         lines.push((format!("     TARGET HULL [{bar}] {:3.0}%", c.hull * 100.0), col));
     }
     // Fire control (combat mode): tracking, then the gun's lead.
-    if !app.v.ship.armed {
+    if !app.ship.armed {
         return;
     }
     match &app.fire {
         Some((track, _)) if !track.ready() => lines.push((format!("     FIRE CONTROL: TRACKING {:3.0}%", track.quality() * 100.0), AMBER)),
         Some((_, Some(sol))) => {
-            let ship = &app.v.ship;
+            let ship = &app.ship;
             let state = if gun_on(ship, sol.aim) {
                 "GUN ON TARGET"
             } else if within_gimbal(ship, sol.aim) {
@@ -342,7 +342,7 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
         lines.push((format!("ROUTE {}/{} -> {name}", n + 1, r.stops.len()), DIM));
         return;
     }
-    let ship = &app.v.ship;
+    let ship = &app.ship;
     let stage = if let Some(until) = r.dwell_until {
         format!("AT STOP - LEAVING IN {}", fmt::countdown((until - app.v.time) / app.warp().max(1.0)))
     } else if r.departing {
@@ -367,7 +367,7 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
 fn approach_info(app: &App, lines: &mut Vec<(String, Color)>) {
     match &app.approach {
         None => {
-            if app.v.ship.is_flying()
+            if app.ship.is_flying()
                 && app.v.avionics.nav_target.is_some()
                 && let Some((name, _)) = &app.nav_marker
             {
@@ -598,7 +598,7 @@ fn phase_banner(frame: &mut Frame, app: &App) {
 fn action_lines(app: &App, relative_velocity: DVec3, g: &Guidance, lines: &mut Vec<(String, Color)>) {
     let Some(plan) = &app.plan else { return };
     let Some(first) = plan.points.first() else { return };
-    let turn = (app.v.ship.orientation.inverse() * first.aim).normalize();
+    let turn = (app.ship.orientation.inverse() * first.aim).normalize();
     let turn_deg = (2.0 * turn.w.abs().clamp(0.0, 1.0).acos()).to_degrees();
     let now = if turn_deg > 8.0 {
         format!("TURN: NOSE ON (+), MATCH THE FRAME  {turn_deg:.0} DEG")
@@ -620,7 +620,7 @@ fn thrust_hint(app: &App, relative_velocity: DVec3, g: &Guidance) -> String {
     if dv_world.length() > 150.0 {
         return format!("BURN {}: NOSE ON (+), THEN W", fmt::speed(dv_world.length()));
     }
-    let dv = app.v.ship.orientation.inverse() * dv_world;
+    let dv = app.ship.orientation.inverse() * dv_world;
     let mut parts = Vec::new();
     for (value, neg, pos) in [(dv.x, "A", "D"), (dv.y, "Q", "E"), (-dv.z, "S", "W")] {
         if value.abs() > 1.5 {
@@ -638,7 +638,7 @@ fn thrust_hint(app: &App, relative_velocity: DVec3, g: &Guidance) -> String {
 /// screen, or an arrow at the edge.
 fn target_marker(frame: &mut Frame, app: &App) {
     let Some((name, target)) = &app.nav_marker else { return };
-    if matches!(app.v.ship.state, ShipState::Landed { .. }) {
+    if matches!(app.ship.state, ShipState::Landed { .. }) {
         return;
     }
     let c = if app.approach.is_some() { HUD } else { Color::hex(0x60c0ff) };
@@ -670,7 +670,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
         frame.anchored(|frame| {
             bracket(frame, app, &locked.name, at, c);
             // Which way it's moving across our view: an arrow off its bracket.
-            let v = locked.blip.velocity - app.v.ship.velocity;
+            let v = locked.blip.velocity - app.ship.velocity;
             if v.length() > 0.5
                 && let (Some(p), Some(q)) = (frame.project(at), frame.project(at + v * 2.0))
                 && let Some(dir) = (q - p).try_normalize()
@@ -683,11 +683,11 @@ fn contact_marker(frame: &mut Frame, app: &App) {
         });
         // The lead (combat mode): fly it into the gimbal ring; fire control
         // lays the gun on it, and the circle doubles up when the gun is on.
-        if app.v.ship.armed
+        if app.ship.armed
             && let Some((_, Some(sol))) = &app.fire
             && let Some(p) = frame.project(app.view.ship_pos + sol.offset)
         {
-            let ship = &app.v.ship;
+            let ship = &app.ship;
             let c = if within_gimbal(ship, sol.aim) { AMBER } else { AMBER.scale(0.55) };
             frame.hud_ellipse(p, Vec2::splat(5.0), 12, c);
             if gun_on(ship, sol.aim) {
@@ -711,7 +711,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
 /// gimbal's reach as a ring around it, and the gun's pipper. Plus sparks
 /// where hits land, and HIT on the locked target when ours do.
 fn gunsight(frame: &mut Frame, app: &App) {
-    let ship = &app.v.ship;
+    let ship = &app.ship;
     let from = app.view.ship_pos;
     let far = 1.0e5;
     let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
@@ -780,7 +780,7 @@ fn gunsight(frame: &mut Frame, app: &App) {
 /// The nose crosshair is for fighting and for approaches (putting the nose
 /// on the plan's cue); in plain travel it stays out of the way.
 fn crosshair_wanted(app: &App) -> bool {
-    app.v.ship.armed || app.approach.is_some()
+    app.ship.armed || app.approach.is_some()
 }
 
 /// The collision warning's impact, labelled on screen (or an arrow to it
@@ -844,7 +844,7 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
     let size = frame.size();
     let c = (size / 2.0).floor();
     if !app.chase_cam && crosshair_wanted(app) {
-        let ship = &app.v.ship;
+        let ship = &app.ship;
         let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
         for (a, b) in [(Vec2::new(-14.0, 0.0), Vec2::new(-5.0, 0.0)), (Vec2::new(5.0, 0.0), Vec2::new(14.0, 0.0))] {
             frame.hud_line(c + a, c + b, col);
@@ -902,8 +902,8 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
 
     // Prograde / retrograde relative to the dominant body: the key to landing.
     let Some(r) = app.view.reference else { return };
-    let rel_vel = app.v.ship.velocity - app.view.system.velocity(r, app.v.time);
-    if rel_vel.length() > 0.5 && !app.v.ship.hyperdrive {
+    let rel_vel = app.ship.velocity - app.view.system.velocity(r, app.v.time);
+    if rel_vel.length() > 0.5 && !app.ship.hyperdrive {
         let dir = rel_vel.normalize() * 1.0e3;
         if let Some(p) = frame.project(cam + dir) {
             marker(frame, p, AMBER, false);
@@ -938,7 +938,7 @@ fn scanner(frame: &mut Frame, app: &App) {
     frame.hud_line(center - Vec2::new(radii.x, 0.0), center + Vec2::new(radii.x, 0.0), DIM);
     frame.hud_line(center - Vec2::new(0.0, radii.y), center + Vec2::new(0.0, radii.y), DIM);
 
-    let inv = app.v.ship.orientation.inverse();
+    let inv = app.ship.orientation.inverse();
     for (i, b) in app.view.system.bodies.iter().enumerate() {
         let rel: DVec3 = inv * (app.view.positions[i] - app.view.ship_pos);
         let d = rel.length();
@@ -1090,7 +1090,7 @@ enum Lamp {
 /// The pilot's actions as a grid of lit keys, top left: what each key does
 /// and whether it's in use. Returns the grid's height.
 fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
-    let (u, ship) = (&app.v, &app.v.ship);
+    let (u, ship) = (&app.v, &app.ship);
     let flying = ship.is_flying();
     let a = &u.avionics;
     // R: what the key does next: request clearance for the target (or the

@@ -81,6 +81,10 @@ pub struct App {
     /// and how far between, for this frame.
     pub prev: Arc<universe_sim::View>,
     alpha: f64,
+    /// Our ship as drawn this frame: the view's, at the moment drawn (see
+    /// `alpha`). Everything drawn of or from our ship (hull, camera, HUD)
+    /// reads this, never `v.ship`, so none of it slides against the rest.
+    pub ship: universe_sim::Ship,
     pub charts: Arc<Charts>,
     pub mode: Mode,
     pub observer: Observer,
@@ -181,6 +185,7 @@ impl App {
             engine,
             prev: v.clone(),
             alpha: 1.0,
+            ship: v.ship.clone(),
             v,
             charts,
             mode: Mode::Pilot,
@@ -280,6 +285,15 @@ impl App {
         let behind = std::time::Instant::now() - std::time::Duration::from_secs_f64(1.0 / universe_sim::engine::TICK_HZ);
         let into = behind.saturating_duration_since(self.prev.made).as_secs_f64();
         (into / span).clamp(0.0, 1.0)
+    }
+
+    /// Our ship at the moment drawn: position and turn as `place`, velocity
+    /// between the two views likewise.
+    fn drawn_ship(&self) -> universe_sim::Ship {
+        let (position, orientation) = self.place(Who::Me);
+        let same = self.prev.ship_system == self.v.ship_system && self.prev.ship.position.distance(self.v.ship.position) < 20_000.0;
+        let velocity = if same { self.prev.ship.velocity.lerp(self.v.ship.velocity, self.alpha) } else { self.v.ship.velocity };
+        universe_sim::Ship { position, orientation, velocity, ..self.v.ship.clone() }
     }
 
     /// World time to draw at.
@@ -624,9 +638,7 @@ impl App {
         if self.view.origin != self.v.ship_system {
             return None;
         }
-        let (position, orientation) = self.place(Who::Me);
-        let ship = universe_sim::Ship { position, orientation, ..self.v.ship.clone() };
-        self.v.avionics.approach(&self.view.system, &ship, self.now(), &self.view.positions)
+        self.v.avionics.approach(&self.view.system, &self.ship, self.now(), &self.view.positions)
     }
 
     /// A ship's name by its combat id.
@@ -674,7 +686,7 @@ impl App {
             }
             Mode::Pilot if !self.v.crew.seated() => {
                 let sys = self.charts.system(self.v.ship_system);
-                let (position, orientation) = self.v.crew.eye(&sys, &self.v.ship, self.v.time, &self.view.positions, self.view.ship_pos);
+                let (position, orientation) = self.v.crew.eye(&sys, &self.ship, self.now(), &self.view.positions, self.view.ship_pos);
                 self.camera = Camera { position, orientation: orientation.as_quat(), near: 0.05, ..Default::default() };
                 self.prev_focus = None;
             }
@@ -744,6 +756,7 @@ impl Game for App {
         }
         self.v = self.engine.view();
         self.alpha = self.alpha_now();
+        self.ship = self.drawn_ship();
         let v = self.v.clone();
         if fresh && v.ship.ammo < ammo {
             sound::gunshot(ctx);

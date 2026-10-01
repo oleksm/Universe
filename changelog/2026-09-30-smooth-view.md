@@ -96,3 +96,21 @@ then popped out all at once.
   - the nav target marker, turret markers, the impact marker, the reference body's bracket.
 - **Not anchored (instruments, always on top):** the gunsight and gimbal ring, the lead pip,
   the velocity / prograde / retrograde markers, the nose cue, and the status text.
+
+## Fourth pass: one ship as drawn
+
+User: "yellow direction cursor is till coming through" / "how was it working fine on before we
+started making multithreading changes, can you go back and review that?"
+
+- **Review.** I built two old versions (`82cdcf4`, fight or flight, and `f26ca25`, just before
+  Phase 1) and captured the collision scene. Both draw the HUD (text, the gunsight cross) over
+  the hull exactly as now: the HUD layer has never had depth.
+- **What the split did change** is motion. Before it, one ship state drove the hull, the camera
+  and the HUD, so the overlays sat still on the hull. Since then, the hull and camera come from
+  the blended ship, while 36 HUD and scene reads (the gunsight, lead, prograde, scanner, guidance)
+  read the latest tick (`app.v.ship`). That is a tick ahead, so they slid against the hull
+  whenever the ship turned or accelerated.
+- **Fix (as a class).** `App::ship` is our ship as drawn this frame: position, turn and velocity
+  at the moment drawn, everything else from the view. All drawing (hud, scene, on foot, nav map,
+  approach guidance, the eye on foot) reads it. Only commands still use the latest view, since
+  they go to the world.

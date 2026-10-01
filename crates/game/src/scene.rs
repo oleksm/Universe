@@ -21,7 +21,7 @@ pub fn color(c: [f32; 3]) -> Color {
 pub fn draw(frame: &mut Frame, app: &App) {
     let starlight = universe_prof::time("draw/scene/sky", || sky(frame, app));
     universe_prof::time("draw/scene/galaxy", || galaxy(frame, app, starlight));
-    if matches!(app.v.ship.state, ShipState::Transit { .. }) && app.mode == Mode::Pilot {
+    if matches!(app.ship.state, ShipState::Transit { .. }) && app.mode == Mode::Pilot {
         transit_tunnel(frame, app);
         return;
     }
@@ -208,7 +208,7 @@ fn transit_guide(frame: &mut Frame, app: &App, gate: usize, st: &GateStatus) {
     for d in [e1, e2, axis] {
         frame.line(p - d * 120.0, p + d * 120.0, c);
     }
-    if app.v.ship.is_flying() {
+    if app.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, st.relative_velocity);
         if let Some(plan) = &app.plan {
             plan_path(frame, app, plan, app.now(), app.view.ship_pos);
@@ -409,7 +409,7 @@ fn collision_path(frame: &mut Frame, app: &App) {
 /// Slugs in flight as short tracers (streaked along their motion relative to
 /// us), and this frame's laser beams.
 fn weapons_fire(frame: &mut Frame, app: &App) {
-    let own = app.v.ship.velocity;
+    let own = app.ship.velocity;
     // (Carried to the moment drawn by their own motion.)
     let back = app.now() - app.v.time;
     for &(system, p, velocity) in &app.v.slugs {
@@ -461,7 +461,7 @@ fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingS
         frame.line(p - d * arm, p + d * arm, c);
     }
 
-    if app.v.ship.is_flying() {
+    if app.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, status.relative_velocity);
         if let Some(plan) = &app.plan {
             plan_path(frame, app, plan, app.now(), app.view.ship_pos);
@@ -644,7 +644,7 @@ fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
     for d in [e1, e2] {
         frame.line(entry - d * 150.0, entry + d * 150.0, GUIDE_PATH);
     }
-    if !app.v.ship.is_flying() {
+    if !app.ship.is_flying() {
         return;
     }
 
@@ -756,7 +756,7 @@ fn ship(frame: &mut Frame, app: &App) {
     let t = Transform { position: pos, rotation: app.place(crate::Who::Me).1.as_quat(), scale: 1.0 };
     frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
     // Landed on a body: the landing legs, down to the ground.
-    if let ShipState::Landed { body, .. } = app.v.ship.state
+    if let ShipState::Landed { body, .. } = app.ship.state
         && app.view.system.bodies[body].kind != BodyKind::Station
     {
         let (b, center) = (&app.view.system.bodies[body], app.view.positions[body]);
@@ -770,10 +770,10 @@ fn ship(frame: &mut Frame, app: &App) {
             frame.line(foot - side, foot + side, SHIP_COLOR.scale(0.7));
         }
     }
-    if app.v.ship.hyperdrive || app.v.ship.throttle > 0.0 {
+    if app.ship.hyperdrive || app.ship.throttle > 0.0 {
         // Exhaust streak.
         let back = app.place(crate::Who::Me).1 * DVec3::Z;
-        let len = 10.0 + 40.0 * app.v.ship.throttle;
+        let len = 10.0 + 40.0 * app.ship.throttle;
         frame.line(pos + back * 16.0, pos + back * (16.0 + len), Color::hex(0xffa040));
     }
 }
