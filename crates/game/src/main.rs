@@ -467,7 +467,9 @@ impl App {
         }
         // Weapons: SPACE the gun, V the laser, while held (the autopilot
         // doesn't hold them back).
+        // B: combat mode (the master arm), or back to navigation. (One mode at a time.)
         if input.pressed(KeyCode::KeyB) {
+            self.mining.on = false;
             self.engine.send(Command::Ship(ShipCommands { arm: Some(!self.v.ship.armed), ..self.v.ship.holding() }));
         }
         if !self.v.ship.armed && (input.pressed(KeyCode::Space) || input.pressed(KeyCode::KeyV)) {

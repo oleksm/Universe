@@ -108,7 +108,11 @@ pub fn input(app: &mut App, ctx: &Context) {
     }
     if input.pressed(KeyCode::Digit1) {
         app.mining.on = !app.mining.on;
-        app.say(if app.mining.on { "MINING MODE - 2 PROSPECT, T LOCK, 3 APPROACH, Y ANCHOR, H DIG".into() } else { "MINING MODE OFF".into() });
+        // (One mode at a time: into mining, the weapons go safe.)
+        if app.mining.on && app.v.ship.armed {
+            app.engine.send(Command::Ship(universe_sim::ShipCommands { arm: Some(false), ..app.v.ship.holding() }));
+        }
+        app.say(if app.mining.on { "MINING MODE - 2 PROSPECT, T LOCK, 3 APPROACH, Y ANCHOR, H DIG".into() } else { "NAVIGATION MODE".into() });
     }
     if !app.mining.on {
         return;
