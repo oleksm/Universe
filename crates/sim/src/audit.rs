@@ -10,10 +10,9 @@
 //! the pilots back what they knew, and play goes on.
 
 use serde::{Deserialize, Serialize};
-use universe_avionics::Avionics;
 use universe_world::{Controls, Facility, WalkCommands};
 
-use crate::pilots::Posting;
+use crate::contract::Posting;
 use crate::universe::Universe;
 
 /// The world's inputs, tick by tick, from its seed.
@@ -43,18 +42,11 @@ pub enum Input {
 /// An operation on the world (not by posting).
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Op {
-    SpawnSettlers { count: usize, seed: u64 },
+    /// Ships registered by their operator.
+    Register(Vec<crate::contract::Registration>),
     Respawn,
     Trade { market: Facility, item: usize, units: i64 },
     Walk(WalkCommands, f64),
-}
-
-/// A game saved whole: the world's log, and each pilot's own state.
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct WorldSave {
-    pub log: InputLog,
-    pub pilots: Vec<Avionics>,
-    pub cockpit: Option<Avionics>,
 }
 
 impl Universe {
@@ -74,7 +66,7 @@ impl Universe {
     /// Carry out an operation (as recorded).
     pub fn op(&mut self, op: Op) {
         match op {
-            Op::SpawnSettlers { count, seed } => self.spawn_settlers(count, seed),
+            Op::Register(ships) => self.register(ships),
             Op::Respawn => self.respawn(),
             Op::Trade { market, item, units } => {
                 let _ = self.trade(market, item, units);
@@ -86,8 +78,7 @@ impl Universe {
     /// A world run from `log` alone: its seed, its operations and postings,
     /// tick by tick. (No pilots think: what they did is in the log.)
     pub fn replay(log: &InputLog) -> Universe {
-        let mut u = Universe::new(log.seed);
-        u.cockpit = None;
+        let mut u = Universe::bare(log.seed);
         u.replaying = true;
         for t in &log.ticks {
             for input in &t.before {
@@ -129,24 +120,4 @@ impl Universe {
         h.finish()
     }
 
-    /// The game saved whole (it must have recorded from its start).
-    pub fn world_save(&self) -> Option<WorldSave> {
-        Some(WorldSave {
-            log: self.input_log.clone()?,
-            pilots: self.pilots().iter().map(|p| p.avionics.clone()).collect(),
-            cockpit: self.cockpit.as_ref().map(|c| c.avionics().clone()),
-        })
-    }
-
-    /// A game saved whole, loaded: the world replayed, the pilots handed back
-    /// what they knew, and recording on, so it can be saved again.
-    pub fn world_load(save: &WorldSave) -> Universe {
-        let mut u = Universe::replay(&save.log);
-        for (p, a) in u.pilots().iter_mut().zip(&save.pilots) {
-            p.avionics = a.clone();
-        }
-        u.cockpit = Some(crate::cockpit::Cockpit::new(save.cockpit.clone().unwrap_or_default()));
-        u.input_log = Some(save.log.clone());
-        u
-    }
 }

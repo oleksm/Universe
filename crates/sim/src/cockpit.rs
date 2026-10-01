@@ -28,23 +28,7 @@ use crate::combat::{craft_id, PLAYER};
 use crate::contacts::{Contact, LOCK_BEAM};
 use crate::follow::FollowKind;
 use crate::pilots::{self, Pilot, PilotView, PoolLink, Posting};
-
-/// A craft's transponder, as the player's radar reads it alongside the blip.
-#[derive(Clone, Debug)]
-pub struct Transponder {
-    pub name: String,
-    pub activity: &'static str,
-    pub destination: Option<String>,
-    pub hull: f64,
-    pub aggressed: bool,
-}
-
-/// What the cockpit reads each tick.
-pub struct CockpitView {
-    pub world: Arc<PilotView>,
-    /// Of the crafts our radar could see, by craft index.
-    pub transponders: HashMap<usize, Transponder>,
-}
+pub use crate::contract::{CockpitView, Transponder};
 
 /// The player's pilot and ship computers.
 pub struct Cockpit {
@@ -570,4 +554,176 @@ fn contacts(view: &CockpitView) -> Vec<Contact> {
         .collect();
     out.sort_by(|a, b| a.blip.distance.total_cmp(&b.blip.distance).then(a.blip.id.cmp(&b.blip.id)));
     out
+}
+
+/// The player's cockpit, in step with the world (tests, and the engine
+/// before the client takes it): the player's requests go through it.
+impl crate::universe::Universe {
+    /// The cockpit, here (it isn't when the client has it).
+    pub fn cockpit(&mut self) -> &mut Cockpit {
+        self.player.as_mut().and_then(|p| p.as_any_mut().downcast_mut::<Cockpit>()).expect("the cockpit is with the client")
+    }
+
+    /// The player's avionics (in the cockpit, here).
+    pub fn avionics(&self) -> &Avionics {
+        self.player.as_ref().and_then(|p| p.as_any().downcast_ref::<Cockpit>()).expect("the cockpit is with the client").avionics()
+    }
+
+    pub fn avionics_mut(&mut self) -> &mut Avionics {
+        self.cockpit().avionics_mut()
+    }
+
+    /// The cockpit, looking at the world as it is now (to act at once).
+    pub fn cockpit_now(&mut self) -> &mut Cockpit {
+        let world = Arc::new(self.pilot_view(crate::universe::TICK));
+        let view = Arc::new(self.cockpit_view(world));
+        let c = self.cockpit();
+        c.look(view);
+        c
+    }
+
+    /// What the cockpit posted, in now (its devices' commands still at their due tick).
+    pub(crate) fn flush_cockpit(&mut self) {
+        if let Some(c) = self.player.as_mut().and_then(|p| p.as_any_mut().downcast_mut::<Cockpit>()) {
+            let postings = c.take_postings();
+            self.post_now(postings);
+        }
+    }
+
+    /// The cockpit does `f` now, against the world as it is: what it posts goes in.
+    pub(crate) fn in_cockpit<R>(&mut self, f: impl FnOnce(&mut Cockpit) -> R) -> R {
+        let r = f(self.cockpit_now());
+        self.flush_cockpit();
+        r
+    }
+
+    /// Give the ship's devices new commands (through the cockpit, as the pilot would).
+    pub fn command(&mut self, c: &ShipCommands) {
+        self.in_cockpit(|k| k.command(c));
+    }
+
+    pub fn throttle(&mut self, delta: f64, set: Option<f64>) {
+        self.in_cockpit(|k| k.throttle(delta, set));
+    }
+
+    pub fn thrusters(&mut self, rcs: DVec3) {
+        self.in_cockpit(|k| k.thrusters(rcs));
+    }
+
+    pub fn toggle_hyperdrive(&mut self) {
+        self.in_cockpit(|k| k.toggle_hyperdrive());
+    }
+
+    /// Lock (or clear) the navigation target.
+    pub fn set_nav_target(&mut self, target: Option<NavTarget>) {
+        self.in_cockpit(|k| k.set_nav_target(target));
+    }
+
+    /// Ask traffic control for permission to dock/land at the locked nav
+    /// target (or the nearest station).
+    pub fn request_clearance(&mut self) -> bool {
+        self.in_cockpit(|k| k.request_clearance())
+    }
+
+    /// Give the clearance up (stopping its autopilot).
+    pub fn cancel_clearance(&mut self) {
+        self.in_cockpit(|k| k.cancel_clearance());
+    }
+
+    /// Engage or release the autopilot. In hyperdrive it steers to the nav
+    /// target; otherwise it docks or lands (requesting clearance if needed).
+    pub fn toggle_autopilot(&mut self) {
+        self.in_cockpit(|k| k.toggle_autopilot());
+    }
+
+    /// Start or stop the route autopilot.
+    pub fn toggle_route(&mut self) {
+        self.in_cockpit(|k| k.toggle_route());
+    }
+
+    /// Guidance numbers for the HUD, if cleared to dock or land.
+    pub fn approach(&mut self) -> Option<Approach> {
+        self.cockpit_now().approach()
+    }
+
+    /// The flight plan to the cleared target: what to do from here, as the
+    /// autopilot would do it.
+    pub fn plan(&mut self) -> Option<Plan> {
+        self.cockpit_now().plan_now()
+    }
+
+    /// Docking guidance only (convenience for tests and tools).
+    pub fn docking_status(&mut self) -> Option<(usize, universe_avionics::DockingStatus)> {
+        match self.approach()? {
+            Approach::Dock { station, status } => Some((station, status)),
+            Approach::Land { .. } | Approach::Transit { .. } => None,
+        }
+    }
+
+    /// Keep at a range from, or orbit, the locked contact (else the nav
+    /// target, a station or gate): the cockpit's follow program.
+    pub fn follow(&mut self, kind: FollowKind) {
+        self.in_cockpit(|k| k.follow(kind));
+    }
+
+    /// What we're following, for the display: the manoeuvre, the anchor's
+    /// name, and how far it is now (m).
+    pub fn following_status(&mut self) -> Option<(Manoeuvre, String, f64)> {
+        self.cockpit_now().following_status()
+    }
+
+    /// Stop following.
+    pub fn stop_following(&mut self) {
+        self.in_cockpit(|k| k.stop_following());
+    }
+
+    /// Ships the radar sees, nearest first (the cockpit's radar, now).
+    pub fn contacts(&mut self) -> Vec<Contact> {
+        self.cockpit_now().scan()
+    }
+
+    /// Lock the next contact out from the one locked (the nearest, if none);
+    /// past the farthest, unlock. Returns the new lock.
+    pub fn lock_next_contact(&mut self) -> Option<Contact> {
+        self.in_cockpit(|k| k.lock_next_contact())
+    }
+
+    /// With the collision warning on, and flying in normal space: the path
+    /// ahead and what it would hit.
+    pub fn collision_warning(&mut self, contacts: &[Contact]) -> Option<universe_avionics::collision::Prediction> {
+        self.cockpit_now().collision_now(contacts)
+    }
+
+    /// Lock in the beam (see `Cockpit::lock_in_beam`).
+    pub fn lock_in_beam(&mut self) -> Option<Contact> {
+        self.in_cockpit(|k| k.lock_in_beam())
+    }
+
+    /// The locked contact, if it's still on the radar.
+    pub fn locked_contact_in<'a>(&self, contacts: &'a [Contact]) -> Option<&'a Contact> {
+        let id = self.avionics().contact?;
+        contacts.iter().find(|c| c.blip.id == id)
+    }
+}
+
+impl crate::contract::PlayerClient for Cockpit {
+    fn feed(&mut self, events: Vec<universe_world::ShipEvent>) {
+        Cockpit::feed(self, events);
+    }
+    fn stick(&mut self, c: Controls) {
+        Cockpit::stick(self, c);
+    }
+    fn view(&mut self, view: Arc<CockpitView>) -> Vec<Posting> {
+        Cockpit::view(self, view);
+        self.take_postings()
+    }
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+    fn into_any(self: Box<Self>) -> Box<dyn std::any::Any + Send> {
+        self
+    }
 }

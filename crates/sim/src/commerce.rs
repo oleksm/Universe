@@ -53,7 +53,7 @@ impl Universe {
                     return;
                 }
                 let answer = self.market_answer(id, system, market);
-                self.tell(id - 1, crate::pilots::Msg::Market(answer));
+                self.tell(id - 1, crate::contract::Msg::Market(answer));
             }
             Request::Trade { market, item, units } => {
                 if let Ok(amount) = self.pilot_trade(id, market, item, units) {
@@ -68,7 +68,7 @@ impl Universe {
 
     /// What the market service tells pilot `id` at `at`: every market's
     /// quotes in the system (as anyone there could see them), and its account.
-    fn market_answer(&mut self, id: usize, system: usize, at: Facility) -> crate::operator::MarketAnswer {
+    fn market_answer(&mut self, id: usize, system: usize, at: Facility) -> crate::contract::MarketAnswer {
         let sys = self.system(system);
         let now = self.world.time;
         let hold = self.ledger.hold(id);
@@ -79,7 +79,7 @@ impl Universe {
         items.extend(here.iter().filter(|q| q.buy.is_some()).map(|q| q.offer.item).filter(|i| !held.contains(i)));
         let there = facilities(&sys).into_iter().filter(|&f| f != at).map(|f| (f, self.markets.quotes_for(system, &sys, f, &items, now))).collect();
         let cargo = self.ship_by_id(id).map_or(0.0, |(_, _, s)| s.cargo);
-        crate::operator::MarketAnswer { system, at, here, here_held, items, there, credits: self.ledger.credits(Party::Pilot(id)), hold, cargo }
+        crate::contract::MarketAnswer { system, at, here, here_held, items, there, credits: self.ledger.credits(Party::Pilot(id)), hold, cargo }
     }
 
     /// A trade (or a plan) in the log, as pilot `id` made it at `market`.

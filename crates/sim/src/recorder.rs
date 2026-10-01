@@ -39,7 +39,7 @@ pub struct Sample {
 }
 
 impl Sample {
-    pub fn of(time: f64, system: usize, ship: &Ship, pilot: &crate::pilots::Status) -> Self {
+    pub fn of(time: f64, system: usize, ship: &Ship, pilot: &crate::contract::Status) -> Self {
         let state = match ship.state {
             ShipState::Flying if ship.hyperdrive => "hyperdrive",
             ShipState::Flying => "flying",

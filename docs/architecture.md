@@ -337,6 +337,25 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   and weapons made safe. The `Pool` runs pilots in lockstep (tests) or apart on its own thread
   (`run_pilots_apart`, the game's default); `Pool::slow_down` and `Pilot::silent` inject
   faults for tests.
+- **Engine and clients (the rule in §0 of `rearchitecture.md`).**
+  - Engine code: `universe` (the tick), `traffic` (bodies, postings, the dead-man rule, the
+    views), `combat`, `commerce` (the market service), `recorder`, `vessel` (inboxes,
+    requests), `audit` (input log, replay, state hash), `contacts`.
+  - `contract`: the contract both sides depend on: pilot and cockpit views, postings, declared
+    `Status`, messages to pilots (`Msg`: ship events, the market's answers), `Registration`,
+    the timing, and the traits by which the world reaches its clients (`Pilots`,
+    `PlayerClient`).
+  - Client code: `pilots` (the NPC pool, pilots thinking, gunners), `operator` (roles, names,
+    routes, trader decisions, world saves), `cockpit`.
+  - `setup` puts world and clients together (`Universe::new`; the engine's own is
+    `Universe::bare`, used by replay).
+  - `crates/sim/tests/boundary.rs` fails the build if engine code names a client module or
+    type, or an intention.
+- `operator`: **the NPC operator** (a client). It registers settlers with the world (names,
+  starting pads: `Universe::register`) and keeps their pilots. It gives each a new route when
+  one is done. A trader at a stop requests quotes (the market service answers by message),
+  decides what to sell and buy and where to go, and posts trades and its declared plan as
+  requests.
 - `cockpit` (R7): **the player's client**: its pilot (the NPC `think` with a human at the
   stick) and ship computers (radar picture from the snapshot and transponders in range, fire
   control, flight plan when shown, collision warning, follow, approach, nav marker), and

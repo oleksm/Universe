@@ -7,7 +7,6 @@ use universe_world::radar::Blip;
 use universe_world::ShipState;
 
 use crate::traffic::Craft;
-use crate::universe::Universe;
 
 /// A ship on the radar, with its transponder's answer.
 #[derive(Clone, Debug)]
@@ -50,35 +49,6 @@ pub(crate) fn activity(craft: &Craft) -> &'static str {
     }
 }
 
-impl Universe {
-    /// Ships the radar sees, nearest first (the cockpit's radar, now).
-    pub fn contacts(&mut self) -> Vec<Contact> {
-        self.cockpit_now().scan()
-    }
-
-    /// Lock the next contact out from the one locked (the nearest, if none);
-    /// past the farthest, unlock. Returns the new lock.
-    pub fn lock_next_contact(&mut self) -> Option<Contact> {
-        self.in_cockpit(|k| k.lock_next_contact())
-    }
-
-    /// With the collision warning on, and flying in normal space: the path
-    /// ahead and what it would hit.
-    pub fn collision_warning(&mut self, contacts: &[Contact]) -> Option<universe_avionics::collision::Prediction> {
-        self.cockpit_now().collision_now(contacts)
-    }
-
-    /// Lock in the beam (see `Cockpit::lock_in_beam`).
-    pub fn lock_in_beam(&mut self) -> Option<Contact> {
-        self.in_cockpit(|k| k.lock_in_beam())
-    }
-
-    /// The locked contact, if it's still on the radar.
-    pub fn locked_contact_in<'a>(&self, contacts: &'a [Contact]) -> Option<&'a Contact> {
-        let id = self.avionics().contact?;
-        contacts.iter().find(|c| c.blip.id == id)
-    }
-}
 
 #[cfg(test)]
 mod tests {

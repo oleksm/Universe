@@ -4,7 +4,7 @@
 //! The world is run again from its seed and the log alone; its state hash
 //! is printed, to compare.
 
-use universe_sim::audit::WorldSave;
+use universe_sim::operator::WorldSave;
 use universe_sim::Universe;
 
 fn main() {

@@ -184,7 +184,7 @@ impl Engine {
     pub fn new(mut universe: Universe) -> Self {
         let charts = Arc::new(universe.world.charts());
         // The HUD shows the flight plan; the cockpit has a first look.
-        if let Some(c) = &mut universe.cockpit {
+        if let Some(c) = universe.player.as_mut().and_then(|p| p.as_any_mut().downcast_mut::<crate::cockpit::Cockpit>()) {
             c.plan_wanted = true;
         }
         universe.cockpit_now();
@@ -297,15 +297,15 @@ impl Engine {
             ship: u.ship.clone(),
             ship_system: system,
             aggressed_until: u.law.until(crate::combat::PLAYER, now),
-            avionics: u.cockpit.as_ref().map(|c| c.avionics().clone()).unwrap_or_default(),
+            avionics: Default::default(),
             crew: u.crew,
             credits: u.credits(),
             hold: u.hold(),
             crafts: Arc::new(crafts),
             // (Hunts and posses: the NPC operator's own tally.)
             traffic: universe_services::records::TrafficStats {
-                hunts: u.pool.tally.hunts.load(std::sync::atomic::Ordering::Relaxed),
-                defences: u.pool.tally.defences.load(std::sync::atomic::Ordering::Relaxed),
+                hunts: u.npcs.tally().0,
+                defences: u.npcs.tally().1,
                 ..u.records.stats
             },
             kills: u.records.kills.clone(),
@@ -335,11 +335,11 @@ impl Engine {
             pads,
             last_step: self.last_step,
             sim_ms: self.sim_ms,
-            pilots: (u.pool.apart(), u.pool.late, u.pool.dropped),
+            pilots: (u.npcs.apart(), u.late, u.dropped),
             serial: self.serial,
             made: std::time::Instant::now(),
         }
-        .with_cockpit(self.universe.cockpit.as_ref())
+        .with_cockpit(self.universe.player.as_ref().and_then(|p| p.as_any().downcast_ref::<crate::cockpit::Cockpit>()))
     }
 }
 
@@ -440,9 +440,9 @@ impl EngineHandle {
         // The cockpit comes to the client (UNIVERSE_COCKPIT_IN_ENGINE=1: it stays).
         let (to_link, from_engine) = std::sync::mpsc::channel::<(Arc<crate::cockpit::CockpitView>, Vec<universe_world::ShipEvent>)>();
         if std::env::var_os("UNIVERSE_COCKPIT_IN_ENGINE").is_none()
-            && let Some(c) = engine.universe.cockpit.take()
+            && let Some(c) = engine.universe.player.take().and_then(|p| p.into_any().downcast::<crate::cockpit::Cockpit>().ok())
         {
-            let cockpit = Arc::new(std::sync::Mutex::new(c));
+            let cockpit = Arc::new(std::sync::Mutex::new(*c));
             let (k, back) = (cockpit.clone(), tx.clone());
             let link = std::thread::Builder::new()
                 .name("world link".into())

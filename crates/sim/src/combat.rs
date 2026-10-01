@@ -62,14 +62,14 @@ impl Universe {
                     if self.law.aggressed(craft_id(i), now) {
                         self.records.stats.aggressors_downed += 1;
                     } else if self.law.aggressed(kill.killer, now) {
-                        self.records.stats.pirate_kills += 1;
+                        self.records.stats.innocents_killed += 1;
                     }
                 }
                 self.record_kill(kill);
             }
             self.records.stats.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
             // And to its pilot, by its sensors.
-            self.tell(i, crate::pilots::Msg::Feed(events));
+            self.tell(i, crate::contract::Msg::Feed(events));
         }
     }
 

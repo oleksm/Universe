@@ -14,6 +14,7 @@
 
 use universe_avionics::route::{Route, Stop};
 use universe_avionics::{Avionics, NavTarget};
+use serde::{Deserialize, Serialize};
 use universe_services::market::{Quote, Side};
 use universe_services::records::Deal;
 use universe_world::charts::Charts;
@@ -21,6 +22,8 @@ use universe_world::ship::HOLD_CAPACITY;
 use universe_world::traffic::facilities;
 use universe_world::{BodyKind, Facility};
 
+use crate::contract::{MarketAnswer, Registration};
+use crate::universe::Universe;
 use crate::pilots::Pilot;
 use crate::rng::{mix, Rng};
 use crate::vessel::Request;
@@ -37,14 +40,6 @@ const LINES: usize = 3;
 const MARGIN: f64 = 1.05;
 /// Past this share of the hold, sell what the market takes back, loss or not.
 const STUCK: f64 = 0.8;
-
-/// A ship the operator puts in the world: its name, and where it starts.
-#[derive(Clone, Debug)]
-pub struct Registration {
-    pub name: String,
-    pub at: Stop,
-    pub pad: usize,
-}
 
 /// A reproducible route of `count` stops (stations and spaceports) across
 /// the gate network, from a seed: same seed, same route.
@@ -119,22 +114,8 @@ pub(crate) fn new_route(pilot: &mut Pilot, charts: &Charts, system: usize) {
     pilot.avionics.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false };
 }
 
-/// The market service's answer to a trader's request for quotes: at its
-/// market, at the others in the system, and its own account.
-#[derive(Clone, Debug)]
-pub struct MarketAnswer {
-    pub system: usize,
-    pub at: Facility,
-    /// Every quote here, and here for each item held.
-    pub here: Vec<Quote>,
-    pub here_held: Vec<Option<Quote>>,
-    /// The other markets, quoting `items` (held, then what's buyable here).
-    pub items: Vec<usize>,
-    pub there: Vec<(Facility, Vec<Option<Quote>>)>,
-    pub credits: f64,
-    pub hold: Vec<(usize, u32)>,
-    pub cargo: f64,
-}
+/// A trip: where to, what to buy for it (item, units, price), the profit expected.
+type Trip = (Facility, Vec<(usize, u32, f64)>, f64);
 
 /// A trader decides at its stop, from `ans`: what to sell and buy (its
 /// trade requests), where to go next (its route), and what it declares.
@@ -170,7 +151,7 @@ pub(crate) fn trade(pilot: &mut Pilot, charts: &Charts, ans: &MarketAnswer, requ
     // cost, plus the margin on what's bought for it.
     let quote = |list: &Vec<Option<Quote>>, item: usize| ans.items.iter().position(|&i| i == item).and_then(|k| list[k]);
     let buyable: Vec<&Quote> = ans.here.iter().filter(|q| q.buy.is_some() && q.level >= 1.0).collect();
-    let mut best: Option<(Facility, Vec<(usize, u32, f64)>, f64)> = None;
+    let mut best: Option<Trip> = None;
     for (there, list) in &ans.there {
         let mut value = 0.0;
         for &(item, n) in &hold {
@@ -234,5 +215,58 @@ pub(crate) fn trade(pilot: &mut Pilot, charts: &Charts, ans: &MarketAnswer, requ
         r.stops.truncate(r.next + 1);
         r.stops.push(stop);
         requests.push(Request::Declare { market: ans.at, deal });
+    }
+}
+
+/// The operator, as the world's tests and tools reach it: its settlers
+/// spawned (registered with the world, their pilots in the pool), and routes.
+impl crate::universe::Universe {
+    /// Settlers: `count` of them from `seed`, each on its own reproducible
+    /// route, starting at its first stop with staggered departures.
+    pub fn spawn_settlers(&mut self, count: usize, seed: u64) {
+        let charts = self.charts();
+        let (first, now) = (self.crafts.len(), self.world.time);
+        let made = settlers(&charts, seed, count, first, now);
+        let (ships, pilots): (Vec<_>, Vec<_>) = made.into_iter().unzip();
+        self.register(ships);
+        let pool = self.pool_mut();
+        for p in pilots {
+            pool.add(p);
+        }
+    }
+
+    /// A reproducible route of `count` stops from a seed (see `route`).
+    pub fn settler_route(&mut self, seed: u64, count: usize) -> Vec<Stop> {
+        route(&self.charts(), seed, count)
+    }
+}
+
+/// A game saved whole: the world's log, and each pilot's own state.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WorldSave {
+    pub log: crate::audit::InputLog,
+    pub pilots: Vec<Avionics>,
+    pub cockpit: Option<Avionics>,
+}
+
+impl crate::universe::Universe {
+    /// The game saved whole (it must have recorded from its start).
+    pub fn world_save(&self) -> Option<WorldSave> {
+        Some(WorldSave {
+            log: self.input_log.clone()?,
+            pilots: self.pilots().iter().map(|p| p.avionics.clone()).collect(),
+            cockpit: self.player.as_ref().and_then(|p| p.as_any().downcast_ref::<crate::cockpit::Cockpit>()).map(|c| c.avionics().clone()),
+        })
+    }
+    /// A game saved whole, loaded: the world replayed, the pilots handed back
+    /// what they knew, and recording on, so it can be saved again.
+    pub fn world_load(save: &WorldSave) -> Universe {
+        let mut u = Universe::replay(&save.log);
+        for a in &save.pilots {
+            u.pool_mut().add(Pilot::new(a.clone()));
+        }
+        u.player = Some(Box::new(crate::cockpit::Cockpit::new(save.cockpit.clone().unwrap_or_default())));
+        u.input_log = Some(save.log.clone());
+        u
     }
 }

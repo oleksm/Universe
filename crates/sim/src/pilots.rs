@@ -30,23 +30,16 @@ use std::sync::{mpsc, Arc, Condvar, Mutex, MutexGuard};
 use glam::DVec3;
 use universe_avionics::hunter::{may_defend, wants_sightings, Sighting, DEFEND_RANGE};
 use universe_avionics::route::Stop;
-use universe_avionics::{Avionics, Bus, Clearance, Event, NavTarget};
+use universe_avionics::{Avionics, Bus, Event, NavTarget};
 use universe_protocol::PadGrant;
-use universe_services::Board;
-use universe_world::charts::Charts;
 use universe_world::radar::RADAR_RANGE;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, ShipState, StarSystem};
 
-use crate::traffic::Snap;
 use crate::vessel::Request;
+pub use crate::contract::{Gun, Guns, PilotView, Posting, Status, COMMAND_DELAY, DEAD_MAN, LATE_HORIZON};
+pub(crate) use crate::contract::{turret_motions, Msg};
+use crate::traffic::Snap;
 
-/// Ticks from the snapshot a pilot read to its commands taking effect (k).
-pub const COMMAND_DELAY: u64 = 2;
-/// A posting this many ticks past due is dropped: too stale to act on.
-pub const LATE_HORIZON: u64 = 30;
-/// After this long with no posting from its pilot, a ship's engines are cut
-/// and its weapons made safe (s).
-pub const DEAD_MAN: f64 = 30.0;
 /// With nothing new to say, a pilot still posts this often (s): its binding
 /// stays alive (see `DEAD_MAN`).
 const KEEP_ALIVE: f64 = 1.0;
@@ -54,24 +47,6 @@ const KEEP_ALIVE: f64 = 1.0;
 const THINK_AT_LEAST: f64 = 5.0;
 /// Coasting with nothing to do, a pilot thinks this often (s).
 const COAST_THINK: f64 = 0.5;
-
-/// What a pilot shows of itself: its transponder and flight plan, and what
-/// its operator and the services know of it (published with each posting;
-/// the world reads this, never the pilot itself).
-#[derive(Clone, Debug, Default, PartialEq, serde::Serialize, serde::Deserialize)]
-pub struct Status {
-    pub nav_target: Option<NavTarget>,
-    pub clearance: Option<Clearance>,
-    pub corridor_denied: bool,
-    pub route_active: bool,
-    pub route_next: usize,
-    pub route_len: usize,
-    /// The stop it's bound for.
-    pub next_stop: Option<Stop>,
-    /// Parked at a stop until its time is up.
-    pub dwelling: bool,
-    pub departing: bool,
-}
 
 impl Status {
     pub fn of(a: &Avionics) -> Self {
@@ -88,15 +63,6 @@ impl Status {
             departing: r.departing,
         }
     }
-}
-
-/// A message for a pilot.
-#[derive(Clone, Debug)]
-pub(crate) enum Msg {
-    /// What happened to its ship (its sensors and the devices report it).
-    Feed(Vec<ShipEvent>),
-    /// The market service's answer to its request for quotes.
-    Market(crate::operator::MarketAnswer),
 }
 
 /// A pilot: its programs, what's waiting for it, and when it'll next think.
@@ -124,78 +90,12 @@ pub struct Pilot {
     pub(crate) paid: std::collections::BTreeMap<usize, f64>,
     pub(crate) route_seed: u64,
     pub(crate) stops_made: u64,
-    market: Option<crate::operator::MarketAnswer>,
+    market: Option<crate::contract::MarketAnswer>,
 }
 
 impl Pilot {
     pub fn new(avionics: Avionics) -> Self {
         Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
-    }
-}
-
-/// A defence turret, as the charts have it: where it is, how it moves, how
-/// far it reaches, and what it guards.
-#[derive(Clone, Copy, Debug)]
-pub struct Gun {
-    /// Its id (see `turrets::turret_id`), and where its gun points now (if
-    /// the world says).
-    pub id: usize,
-    pub aim: Option<DVec3>,
-    pub at: DVec3,
-    pub velocity: DVec3,
-    pub reach: f64,
-    pub guards: universe_world::Facility,
-}
-pub type Guns = Arc<Vec<Gun>>;
-
-/// What pilots read: the world as it stood at the end of a tick.
-pub struct PilotView {
-    pub tick: u64,
-    pub time: f64,
-    /// Game seconds a tick spans.
-    pub dt: f64,
-    pub charts: Arc<Charts>,
-    /// The ships of the pilots awake this tick (and ours), with the system
-    /// each is in, by combat id (ours 0, craft i: i + 1). The rest are in
-    /// `snaps`: what anyone sees of anyone.
-    pub ships: HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash>,
-    /// Every ship as others see it (by combat id), and who's aggressed and flying.
-    pub(crate) snaps: Arc<Vec<Snap>>,
-    pub aggressors: Vec<(usize, DVec3)>,
-    pub board: Board,
-    /// Bodies' positions, and the defence turrets' (where and how they move),
-    /// per system with crafts in it.
-    pub rails: HashMap<usize, Arc<Vec<DVec3>>>,
-    pub turrets: HashMap<usize, Guns>,
-}
-
-/// What a pilot posts after thinking.
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub struct Posting {
-    /// Whose: the ship's combat id (the player's 0, craft i: i + 1).
-    pub id: usize,
-    /// The tick of the snapshot it read (due `COMMAND_DELAY` after), and its world time.
-    pub thought: u64,
-    pub seen: f64,
-    /// For its devices, in order, and its turn at the due tick (None: it
-    /// says nothing of the turn; Some(None): none commanded).
-    pub devices: Vec<ShipCommands>,
-    pub turn: Option<Option<Controls>>,
-    /// To traffic control.
-    pub(crate) requests: Vec<Request>,
-    /// What its programs report (route stops, traffic): for the services.
-    pub events: Vec<Event>,
-    pub status: Status,
-    /// A turret gunner's orders for its gun (its id is the turret's).
-    pub gun: Option<universe_protocol::TurretCommand>,
-    /// Going to sleep: it needn't be in a view before this tick (unless a
-    /// message wakes it). None: it says nothing of it.
-    pub sleep_until: Option<u64>,
-}
-
-impl Posting {
-    pub fn due(&self) -> u64 {
-        self.thought + COMMAND_DELAY
     }
 }
 
@@ -322,18 +222,6 @@ fn seen(ship: &Ship, pending: &mut Vec<(u64, ShipCommands)>, tick: u64) -> Ship 
         expect(&mut seen, c);
     }
     seen
-}
-
-/// Where system `system`'s defence turrets are at `t`, and how they move.
-pub(crate) fn turret_motions(charts: &Charts, system: usize, sys: &StarSystem, t: f64, positions: &[DVec3]) -> Vec<Gun> {
-    universe_world::turrets::turrets(charts.seed, system, sys)
-        .iter()
-        .enumerate()
-        .map(|(k, tu)| {
-            let (at, velocity) = tu.motion(sys, t, positions);
-            Gun { id: universe_world::turrets::turret_id(system, k), aim: None, at, velocity, reach: tu.range(), guards: tu.facility }
-        })
-        .collect()
 }
 
 /// The guns of `system` as a pilot reads them from `view`.
@@ -582,9 +470,6 @@ pub struct Pool {
     pilots: Arc<Mutex<Vec<Pilot>>>,
     mail: Arc<Mutex<Vec<(usize, Msg)>>>,
     worker: Option<Worker>,
-    /// Postings that came past due (applied at once), and too stale (dropped).
-    pub late: u64,
-    pub dropped: u64,
     /// Fault injection: apart, the pool takes this much longer over each view (µs).
     slow: Arc<std::sync::atomic::AtomicU64>,
     /// The operator's own tally (see `Tally`).
@@ -751,5 +636,90 @@ impl Drop for Pool {
                 let _ = t.join();
             }
         }
+    }
+}
+
+/// The NPC pilots, in step with the world (tests, dev tools): reached
+/// through the world's link to them.
+impl crate::universe::Universe {
+    /// Craft `i`'s pilot does `f` now (dev tools and tests, as a pilot at
+    /// the controls would): what it posts goes in at once.
+    pub(crate) fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::pilots::PoolLink, &mut Vec<Event>) -> R) -> R {
+        self.crafts[i].asleep_until = 0;
+        let view = self.pilot_view(crate::universe::TICK);
+        let (r, posting) = self.pool().run(i, &view, f);
+        self.post_now(vec![posting]);
+        r
+    }
+
+    /// The crafts' pilots (waits while they're thinking, apart).
+    pub fn pilots(&self) -> std::sync::MutexGuard<'_, Vec<crate::pilots::Pilot>> {
+        self.pool().pilots()
+    }
+
+    /// From now on the pilots think apart from the world, on `threads` threads.
+    pub fn run_pilots_apart(&mut self, threads: usize) {
+        self.npcs.run_apart(threads);
+    }
+
+    /// Lock craft `i`'s nav target.
+    pub fn craft_set_nav_target(&mut self, i: usize, target: Option<NavTarget>) {
+        self.craft_run(i, |a, link, events| a.set_nav_target(link, target, events));
+    }
+
+    /// Craft `i` asks traffic control for clearance (to its nav target, else the nearest station).
+    pub fn craft_request_clearance(&mut self, i: usize) -> bool {
+        self.craft_run(i, |a, link, events| a.request_clearance(link, events))
+    }
+
+    /// Craft `i` engages (or releases) its autopilot.
+    pub fn craft_toggle_autopilot(&mut self, i: usize) {
+        self.craft_run(i, |a, link, events| a.toggle_autopilot(link, events));
+    }
+
+    /// Craft `i` follows `anchor`.
+    pub fn craft_follow(&mut self, i: usize, anchor: universe_avionics::follow::Anchor, manoeuvre: universe_avionics::follow::Manoeuvre) {
+        self.craft_run(i, |a, link, events| a.follow(link, anchor, manoeuvre, events));
+    }
+}
+
+impl crate::contract::Pilots for Pool {
+    fn view(&mut self, view: Arc<PilotView>) -> Vec<Posting> {
+        Pool::view(self, view)
+    }
+    fn collect(&mut self) -> Vec<Posting> {
+        Pool::collect(self)
+    }
+    fn tell(&mut self, craft: usize, msg: Msg) {
+        self.send(craft, msg);
+    }
+    fn run_apart(&mut self, threads: usize) {
+        Pool::run_apart(self, threads);
+    }
+    fn apart(&self) -> bool {
+        Pool::apart(self)
+    }
+    fn tally(&self) -> (u64, u64) {
+        (self.tally.hunts.load(Ordering::Relaxed), self.tally.defences.load(Ordering::Relaxed))
+    }
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+}
+
+impl crate::universe::Universe {
+    /// The NPC pilots' pool (when they're this world's, in this process).
+    pub fn pool(&self) -> &Pool {
+        self.npcs.as_any().downcast_ref::<Pool>().expect("no NPC pilots here")
+    }
+
+    pub fn pool_mut(&mut self) -> &mut Pool {
+        if self.npcs.as_any().downcast_ref::<Pool>().is_none() {
+            self.npcs = Box::new(Pool::default());
+        }
+        self.npcs.as_any_mut().downcast_mut::<Pool>().expect("a pool")
     }
 }

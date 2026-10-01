@@ -63,10 +63,12 @@ pub struct TrafficStats {
     pub routes_completed: u64,
     /// Crafts destroyed by weapons fire.
     pub shot_down: u64,
-    /// Hunts by pirates: begun, and ended in a kill.
+    /// Hunts begun by pirates (the NPC operator's tally), and ships shot
+    /// down that weren't fair game, by ships that were (the law's evidence).
     pub hunts: u64,
-    pub pirate_kills: u64,
-    /// Lawful ships taking on an aggressor (each ship counted), and aggressors they shot down.
+    pub innocents_killed: u64,
+    /// Lawful ships taking on an aggressor (the NPC operator's tally), and
+    /// ships shot down that were fair game (the law's evidence).
     pub defences: u64,
     pub aggressors_downed: u64,
     /// Ship-to-ship collisions (each ship's side counted), and ships wrecked by them.

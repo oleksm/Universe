@@ -4,7 +4,6 @@
 //! their crashes (for diagnosing autopilots).
 
 use glam::DVec3;
-use universe_avionics::route::Stop;
 use universe_avionics::{Clearance, Event, NavTarget};
 use std::sync::Arc;
 
@@ -23,7 +22,7 @@ pub struct Craft {
     /// Galaxy index of the system it's in.
     pub system: usize,
     /// What its pilot shows (posted with its commands).
-    pub status: crate::pilots::Status,
+    pub status: crate::contract::Status,
     /// When its pilot last posted (world time), and whether the dead-man rule has cut in since.
     pub last_posted: f64,
     pub dead_man: bool,
@@ -66,7 +65,6 @@ impl Snap {
     }
 }
 
-
 /// What a ship was doing when it crashed (for diagnosing autopilots).
 #[derive(Clone, Debug)]
 pub struct CrashReport {
@@ -84,37 +82,22 @@ pub struct CrashReport {
 }
 
 impl Universe {
-    /// Settlers: `count` of them, as their operator (a client: see
-    /// `operator`) registers them, each starting at its first stop; their
-    /// pilots join the pool. The world knows each by its name and its ship.
-    pub fn spawn_settlers(&mut self, count: usize, seed: u64) {
-        self.note(|| crate::audit::Input::Op(crate::audit::Op::SpawnSettlers { count, seed }));
-        let charts = self.charts();
+    /// Ships registered by their operator (a client: see `operator`): each
+    /// put on its pad at its first stop, with what a new settler starts with
+    /// from the world's account. The world knows each by its name and its
+    /// ship, and whatever its pilot later declares.
+    pub fn register(&mut self, ships: Vec<crate::contract::Registration>) {
+        let logged = ships.clone();
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Register(logged)));
         let now = self.world.time;
-        for (reg, pilot) in crate::operator::settlers(&charts, seed, count, self.crafts.len(), now) {
+        for reg in ships {
             let ship = self.world.ship_on(reg.at.system, reg.at.target, reg.pad);
-            self.crafts.push(Craft {
-                name: reg.name,
-                ship,
-                system: reg.at.system,
-                status: Default::default(),
-                last_posted: now,
-                dead_man: false,
-                asleep_until: 0,
-                inbox: Default::default(),
-            });
-            self.pool.add(pilot);
-            // What a new settler starts with, from the world's account.
+            self.crafts.push(Craft { name: reg.name, ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
             let me = universe_services::Party::Pilot(crate::combat::craft_id(self.crafts.len() - 1));
             self.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);
         }
     }
 
-    /// A reproducible route of `count` stops (stations and spaceports) across
-    /// the gate network, from a seed: same seed, same route.
-    pub fn settler_route(&mut self, seed: u64, count: usize) -> Vec<Stop> {
-        crate::operator::route(&self.charts(), seed, count)
-    }
 
     /// Every craft's step from `t0`, side by side on all cores: the
     /// commands its pilot posted that are due reach its devices, and the
@@ -180,23 +163,23 @@ impl Universe {
             }
         }
         if !happened.is_empty() {
-            self.tell(i, crate::pilots::Msg::Feed(happened));
+            self.tell(i, crate::contract::Msg::Feed(happened));
         }
     }
 
     /// Pilots' postings: each due tick's commands into its craft's inbox (a
     /// late one at once; a stale one dropped), its requests to traffic
     /// control, what it reports to the services, and what it shows.
-    pub(crate) fn post(&mut self, mut postings: Vec<crate::pilots::Posting>) {
+    pub(crate) fn post(&mut self, mut postings: Vec<crate::contract::Posting>) {
         postings.sort_by_key(|p| (p.thought, p.id));
         for p in postings {
             let due = p.due();
-            if due + crate::pilots::LATE_HORIZON < self.tick {
-                self.pool.dropped += 1;
+            if due + crate::contract::LATE_HORIZON < self.tick {
+                self.dropped += 1;
                 continue;
             }
             if due < self.tick {
-                self.pool.late += 1;
+                self.late += 1;
             }
             // A gunner's orders, for its turret's gun.
             if let Some(c) = p.gun {
@@ -249,7 +232,7 @@ impl Universe {
         let now = self.world.time;
         for i in 0..self.crafts.len() {
             let c = &mut self.crafts[i];
-            if c.dead_man || now - c.last_posted < crate::pilots::DEAD_MAN || !c.ship.is_flying() {
+            if c.dead_man || now - c.last_posted < crate::contract::DEAD_MAN || !c.ship.is_flying() {
                 continue;
             }
             c.dead_man = true;
@@ -263,13 +246,13 @@ impl Universe {
 
     /// The world as the player's cockpit reads it: the pilots' view, and
     /// the crafts' transponders.
-    pub(crate) fn cockpit_view(&mut self, world: Arc<crate::pilots::PilotView>) -> crate::cockpit::CockpitView {
+    pub(crate) fn cockpit_view(&mut self, world: Arc<crate::contract::PilotView>) -> crate::contract::CockpitView {
         let now = self.world.time;
         let mut transponders = std::collections::HashMap::new();
         let (system, at) = (self.ship_system, self.ship.position);
         for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::RADAR_RANGE) {
             let destination = c.status.next_stop.map(|s| universe_avionics::route::stop_name(&self.world.system(s.system), s).to_uppercase());
-            transponders.insert(i, crate::cockpit::Transponder {
+            transponders.insert(i, crate::contract::Transponder {
                 name: c.name.clone(),
                 activity: crate::contacts::activity(c),
                 destination,
@@ -277,11 +260,11 @@ impl Universe {
                 aggressed: self.law.aggressed(crate::combat::craft_id(i), now),
             });
         }
-        crate::cockpit::CockpitView { world, transponders }
+        crate::contract::CockpitView { world, transponders }
     }
 
     /// The world as pilots read it, now.
-    pub(crate) fn pilot_view(&mut self, dt: f64) -> crate::pilots::PilotView {
+    pub(crate) fn pilot_view(&mut self, dt: f64) -> crate::contract::PilotView {
         let t = self.world.time;
         let charts = self.charts.get_or_insert_with(|| Arc::new(self.world.charts())).clone();
         let mut systems: Vec<usize> = self.crafts.iter().map(|c| c.system).chain([self.ship_system]).collect();
@@ -292,7 +275,7 @@ impl Universe {
         for s in systems {
             let positions = self.world.rails_at(s, t);
             let sys = self.world.system(s);
-            let mut guns = crate::pilots::turret_motions(&charts, s, &sys, t, &positions);
+            let mut guns = crate::contract::turret_motions(&charts, s, &sys, t, &positions);
             for g in &mut guns {
                 g.aim = self.world.turret_gun(g.id).map(|gun| gun.aim);
             }
@@ -309,7 +292,7 @@ impl Universe {
         for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.asleep_until <= tick) {
             ships.insert(crate::combat::craft_id(i), (c.system, c.ship.clone()));
         }
-        crate::pilots::PilotView {
+        crate::contract::PilotView {
             tick: self.tick,
             time: t,
             dt,

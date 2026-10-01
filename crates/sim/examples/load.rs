@@ -34,6 +34,6 @@ fn main() {
         universe_prof::frame_end();
     }
     let per = start.elapsed() / 120;
-    println!("{n} settlers{}, pilots {}: {per:?} per tick; late {} dropped {}", if stress { " (all leaving)" } else { "" }, if apart { "apart" } else { "in lockstep" }, u.pool.late, u.pool.dropped);
+    println!("{n} settlers{}, pilots {}: {per:?} per tick; late {} dropped {}", if stress { " (all leaving)" } else { "" }, if apart { "apart" } else { "in lockstep" }, u.late, u.dropped);
     println!("{}", universe_prof::report_text());
 }
