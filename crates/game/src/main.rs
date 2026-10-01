@@ -20,6 +20,7 @@ mod scene;
 mod shipyard;
 mod sound;
 mod terrain_view;
+mod thrusterpanel;
 
 use std::sync::Arc;
 
@@ -180,6 +181,8 @@ pub struct App {
     pub beam_shown: f32,
     /// The cargo panel is open (4).
     pub show_cargo: bool,
+    /// The thrusters panel (F7).
+    pub show_thrusters: bool,
     /// Mining mode and the prospector's pulse; T's lock picker.
     pub mining: mining::Mining,
     pub picker: lock::Picker,
@@ -264,6 +267,7 @@ impl App {
             picker: Default::default(),
             orbit_pick: Default::default(),
             show_cargo: false,
+            show_thrusters: false,
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
             galaxy_map: None,
@@ -426,6 +430,9 @@ impl App {
         // F3: the profiler, and its panel.
         if input.pressed(KeyCode::F3) {
             universe_prof::enable(!universe_prof::enabled());
+        }
+        if input.pressed(KeyCode::F7) {
+            self.show_thrusters = !self.show_thrusters;
         }
         if input.pressed(KeyCode::F4) {
             self.show_grid = !self.show_grid;

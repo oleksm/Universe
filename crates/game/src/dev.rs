@@ -405,6 +405,13 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
+        "thrusters" => {
+            // The thrusters panel, the main drive at full and a turn under way.
+            app.mode = Mode::Pilot;
+            app.show_thrusters = true;
+            let u = app.engine.universe();
+            u.command(&ShipCommands { throttle: 1.0, rcs: DVec3::new(0.3, 0.0, 0.0), ..u.ship.holding() });
+        }
         "burn" | "burnside" => {
             // The main drive at full, seen from the chase view ("burnside":
             // a Drover beside us at full, seen side on).

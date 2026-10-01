@@ -44,6 +44,11 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::shipyard::draw(frame, app, y);
         return;
     }
+    // The thrusters panel: a screen of its own (in the pilot's seat).
+    if app.show_thrusters && app.mode == Mode::Pilot && app.v.crew.seated() {
+        crate::thrusterpanel::draw(frame, app);
+        return;
+    }
     universe_prof::time("draw/hud/sun glare", || sun_glare(frame, app));
     let mut lines: Vec<(String, Color)> = Vec::new();
     status(app, &mut lines);
