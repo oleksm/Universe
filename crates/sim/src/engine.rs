@@ -38,6 +38,13 @@ use crate::universe::Universe;
 pub enum Command {
     /// New settings for the ship's devices (engine, thrusters, weapons…).
     Ship(ShipCommands),
+    /// The throttle: changed by `delta`, or set to a value; and the
+    /// thrusters (from the ship's settings as they are, not a stale view).
+    Throttle { delta: f64, set: Option<f64> },
+    Thrusters(DVec3),
+    /// The pilot's stick, held until changed; the time warp.
+    Stick(Controls),
+    Warp(f64),
     /// On foot, for `dt` real seconds.
     Walk(WalkCommands, f64),
     ToggleHyperdrive,
@@ -162,7 +169,13 @@ pub struct Engine {
     serial: u64,
     contacts: Vec<Contact>,
     fire: Option<(Track, Option<Solution>)>,
+    /// The pilot's stick and the warp, as last set.
+    stick: Controls,
+    warp: f64,
 }
+
+/// World ticks per second when the engine runs on its own.
+pub const TICK_HZ: f64 = 60.0;
 
 impl Engine {
     pub fn new(universe: Universe) -> Self {
@@ -186,6 +199,8 @@ impl Engine {
             serial: 0,
             contacts: Vec::new(),
             fire: None,
+            stick: Controls::default(),
+            warp: 1.0,
         }
     }
 
@@ -198,6 +213,19 @@ impl Engine {
         let u = &mut self.universe;
         match c {
             Command::Ship(c) => u.command(&c),
+            Command::Throttle { delta, set } => {
+                let throttle = set.unwrap_or(u.ship.throttle + delta).clamp(0.0, 1.0);
+                if throttle != u.ship.throttle {
+                    u.command(&ShipCommands { throttle, ..u.ship.holding() });
+                }
+            }
+            Command::Thrusters(rcs) => {
+                if rcs != u.ship.rcs {
+                    u.command(&ShipCommands { rcs, ..u.ship.holding() });
+                }
+            }
+            Command::Stick(c) => self.stick = c,
+            Command::Warp(w) => self.warp = w,
             Command::Walk(c, dt) => u.walk(&c, dt),
             Command::ToggleHyperdrive => u.toggle_hyperdrive(),
             Command::SetNavTarget(t) => u.set_nav_target(t),
@@ -381,45 +409,168 @@ fn nav_marker(u: &mut Universe) -> Option<(String, DVec3)> {
     Some((String::new(), positions[station]))
 }
 
-/// The client's handle on the world engine: send commands, tick, read the
-/// latest view. (For now the engine runs here, in the client's thread.)
+/// What goes to the engine's thread.
+enum Msg {
+    Command(Command),
+    /// Run this on the engine, then reply.
+    Call(Box<dyn FnOnce(&mut Engine) + Send>),
+    Stop,
+}
+
+/// The latest view, waiting for the client. A view not taken before the
+/// next is published passes on what happened (events, hits) to the next.
+#[derive(Default)]
+struct Mailbox {
+    view: Option<View>,
+}
+
+fn post(mailbox: &std::sync::Mutex<Mailbox>, mut view: View) {
+    let mut m = mailbox.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some(old) = m.view.take() {
+        let mut events = old.events;
+        events.append(&mut view.events);
+        view.events = events;
+        let mut impacts = old.impacts;
+        impacts.append(&mut view.impacts);
+        view.impacts = impacts;
+    }
+    m.view = Some(view);
+}
+
+/// The client's handle on the world engine: send commands, read the latest
+/// view. It starts out holding the engine (to set the world up: scenarios,
+/// tests); `start` moves it to its own thread, ticking at `TICK_HZ`.
 pub struct EngineHandle {
-    engine: Engine,
+    local: Option<Engine>,
+    charts: Arc<Charts>,
     view: Arc<View>,
+    /// When the current view arrived (real time).
+    pub view_at: std::time::Instant,
+    tx: Option<std::sync::mpsc::Sender<Msg>>,
+    mailbox: Arc<std::sync::Mutex<Mailbox>>,
+    thread: Option<std::thread::JoinHandle<()>>,
 }
 
 impl EngineHandle {
     pub fn new(universe: Universe) -> Self {
         let mut engine = Engine::new(universe);
         let view = Arc::new(engine.view());
-        EngineHandle { engine, view }
+        let charts = engine.charts();
+        EngineHandle { local: Some(engine), charts, view, view_at: std::time::Instant::now(), tx: None, mailbox: Default::default(), thread: None }
     }
 
     pub fn charts(&self) -> Arc<Charts> {
-        self.engine.charts()
+        self.charts.clone()
+    }
+
+    /// Run the engine on its own thread from now on.
+    pub fn start(&mut self) {
+        let Some(mut engine) = self.local.take() else { return };
+        let (tx, rx) = std::sync::mpsc::channel::<Msg>();
+        let mailbox = self.mailbox.clone();
+        let thread = std::thread::Builder::new()
+            .name("world engine".into())
+            .spawn(move || {
+                let step = std::time::Duration::from_secs_f64(1.0 / TICK_HZ);
+                let mut next = std::time::Instant::now();
+                loop {
+                    while let Ok(m) = rx.try_recv() {
+                        match m {
+                            Msg::Command(c) => engine.apply(c),
+                            Msg::Call(f) => f(&mut engine),
+                            Msg::Stop => return,
+                        }
+                    }
+                    let (warp, stick) = (engine.warp, engine.stick);
+                    engine.tick(1.0 / TICK_HZ, warp, &stick);
+                    post(&mailbox, engine.view());
+                    // Keep time; fallen far behind, start afresh rather than race.
+                    next += step;
+                    let now = std::time::Instant::now();
+                    if next > now {
+                        std::thread::sleep(next - now);
+                    } else if now - next > step * 10 {
+                        next = now;
+                    }
+                }
+            })
+            .expect("world engine thread");
+        self.tx = Some(tx);
+        self.thread = Some(thread);
     }
 
     pub fn send(&mut self, c: Command) {
-        self.engine.apply(c);
+        match (&mut self.local, &self.tx) {
+            (Some(engine), _) => engine.apply(c),
+            (None, Some(tx)) => {
+                let _ = tx.send(Msg::Command(c));
+            }
+            (None, None) => {}
+        }
     }
 
-    /// Run the world for a frame and take the new view.
+    /// Run `f` on the engine and wait for its answer (save, load, tools).
+    pub fn call<R: Send + 'static>(&mut self, f: impl FnOnce(&mut Universe) -> R + Send + 'static) -> Option<R> {
+        if let Some(engine) = &mut self.local {
+            return Some(f(&mut engine.universe));
+        }
+        let (reply, answer) = std::sync::mpsc::channel();
+        self.tx.as_ref()?.send(Msg::Call(Box::new(move |e: &mut Engine| {
+            let _ = reply.send(f(&mut e.universe));
+        }))).ok()?;
+        answer.recv().ok()
+    }
+
+    /// Before `start`: run the world for a frame here.
     pub fn tick(&mut self, real_dt: f64, warp: f64, controls: &Controls) {
-        self.engine.tick(real_dt, warp, controls);
-        self.view = Arc::new(self.engine.view());
+        if let Some(engine) = &mut self.local {
+            engine.tick(real_dt, warp, controls);
+            self.view = Arc::new(engine.view());
+            self.view_at = std::time::Instant::now();
+        }
     }
 
-    /// Refresh the view without running the world (after setting things up).
+    /// Take the newest view, if there's one since the last; true if so.
+    pub fn poll(&mut self) -> bool {
+        let fresh = self.mailbox.lock().unwrap_or_else(|e| e.into_inner()).view.take();
+        match fresh {
+            Some(v) => {
+                self.view = Arc::new(v);
+                self.view_at = std::time::Instant::now();
+                true
+            }
+            None => false,
+        }
+    }
+
+    /// Before `start`: refresh the view without running the world.
     pub fn refresh(&mut self) {
-        self.view = Arc::new(self.engine.view());
+        if let Some(engine) = &mut self.local {
+            self.view = Arc::new(engine.view());
+        }
     }
 
     pub fn view(&self) -> Arc<View> {
         self.view.clone()
     }
 
-    /// The universe itself, for setting up (dev scenarios, save and load).
+    /// The universe itself, before `start` (setting up: scenarios). Panics after.
     pub fn universe(&mut self) -> &mut Universe {
-        &mut self.engine.universe
+        &mut self.local.as_mut().expect("the engine runs on its own thread now: use `call`").universe
+    }
+
+    pub fn running(&self) -> bool {
+        self.thread.is_some()
+    }
+}
+
+impl Drop for EngineHandle {
+    fn drop(&mut self) {
+        if let Some(tx) = &self.tx {
+            let _ = tx.send(Msg::Stop);
+        }
+        if let Some(t) = self.thread.take() {
+            let _ = t.join();
+        }
     }
 }

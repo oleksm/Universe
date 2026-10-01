@@ -227,6 +227,10 @@ impl App {
             app.engine.refresh();
             app.v = app.engine.view();
         }
+        // The world engine runs on its own thread (UNIVERSE_ENGINE_THREAD=0: here, for debugging).
+        if std::env::var("UNIVERSE_ENGINE_THREAD").as_deref() != Ok("0") {
+            app.engine.start();
+        }
         app
     }
 
@@ -235,6 +239,27 @@ impl App {
         if self.messages.len() > 4 {
             self.messages.remove(0);
         }
+    }
+
+    /// Game seconds since the view was made (as of now, real time), up to a
+    /// tenth of a second: what the client projects ahead by between ticks.
+    pub fn since_view(&self) -> f64 {
+        (self.engine.view_at.elapsed().as_secs_f64() * self.warp()).min(0.1)
+    }
+
+    /// World time to draw at: the view's, carried forward to now.
+    pub fn now(&self) -> f64 {
+        self.v.time + self.since_view()
+    }
+
+    /// Where a ship is to be drawn: carried forward from the view by its velocity.
+    pub fn ahead(&self, ship: &universe_sim::Ship) -> DVec3 {
+        ship.position + ship.velocity * self.since_view()
+    }
+
+    /// How a ship is to be drawn turned: carried forward by its spin.
+    pub fn turned(&self, ship: &universe_sim::Ship) -> universe_engine::glam::DQuat {
+        ship.orientation * universe_engine::glam::DQuat::from_scaled_axis(ship.angular_velocity * self.since_view())
     }
 
     /// How fast game time runs relative to real time: the world's time scale,
@@ -407,16 +432,20 @@ impl App {
             );
         } else {
             command.rcs = DVec3::ZERO;
-            command.throttle += input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt;
         }
-        if input.pressed(KeyCode::KeyZ) {
-            command.throttle = 1.0;
+        // The throttle as a change (the engine has the ship as it is now).
+        let delta = if shift { 0.0 } else { input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt };
+        let set = if input.pressed(KeyCode::KeyZ) {
+            Some(1.0)
+        } else if input.pressed(KeyCode::KeyX) {
+            Some(0.0)
+        } else {
+            None
+        };
+        if delta != 0.0 || set.is_some() {
+            self.engine.send(Command::Throttle { delta, set });
         }
-        if input.pressed(KeyCode::KeyX) {
-            command.throttle = 0.0;
-        }
-        command.throttle = command.throttle.clamp(0.0, 1.0);
-        self.engine.send(Command::Ship(command));
+        self.engine.send(Command::Thrusters(command.rcs));
 
         let keys: f32 = if shift { 0.0 } else { 1.0 };
         let mut c = Controls {
@@ -541,8 +570,8 @@ impl App {
         };
         let system = self.charts.system(origin);
         let mut positions = std::mem::take(&mut self.view.positions);
-        system.positions(self.v.time, &mut positions);
-        let ship_pos = self.v.ship.position + self.charts.galaxy.offset(origin, self.v.ship_system);
+        system.positions(self.now(), &mut positions);
+        let ship_pos = self.ahead(&self.v.ship) + self.charts.galaxy.offset(origin, self.v.ship_system);
         let reference = (origin == self.v.ship_system).then(|| system.dominant(ship_pos, &positions));
         self.view = View { origin, system, positions, ship_pos, reference };
     }
@@ -551,7 +580,7 @@ impl App {
         match self.observer.focus {
             Focus::Body { body, .. } => self.view.positions[body],
             Focus::Ship => self.view.ship_pos,
-            Focus::Craft(i) => self.v.crafts.get(i).map_or(DVec3::ZERO, |c| c.ship.position),
+            Focus::Craft(i) => self.v.crafts.get(i).map_or(DVec3::ZERO, |c| self.ahead(&c.ship)),
         }
     }
 
@@ -576,11 +605,13 @@ impl App {
             }
             Mode::Pilot => {
                 let ship = &self.v.ship;
-                let orientation = ship.orientation.as_quat();
+                // Turned on as it's turning since the view.
+                let turned = self.turned(ship);
+                let orientation = turned.as_quat();
                 let docked = matches!(ship.state, ShipState::Landed { body, .. } if self.view.system.bodies[body].kind == universe_sim::BodyKind::Station);
                 // Docked: the ship is inside the slot, so back off far enough to see the station.
                 let chase = if docked { DVec3::new(0.0, 150.0, 1800.0) } else { DVec3::new(0.0, 20.0, 115.0) };
-                let offset = if self.chase_cam || docked { ship.orientation * chase } else { DVec3::ZERO };
+                let offset = if self.chase_cam || docked { turned * chase } else { DVec3::ZERO };
                 self.camera = Camera { position: self.view.ship_pos + offset, orientation, near: 0.5, ..Default::default() };
                 self.prev_focus = None;
             }
@@ -621,12 +652,20 @@ impl Game for App {
         if focus_changed {
             sound::click(ctx, 1400.0);
         }
-        // The world: our commands are in; it runs a frame, and we take its view.
+        // The world: our commands are in. Running here, it runs a frame;
+        // on its own thread, it's ticking away: take its newest view.
         let ammo = self.v.ship.ammo;
-        universe_prof::time("update/sim (engine tick)", || self.engine.tick(dt, self.warp(), &controls));
+        let fresh = if self.engine.running() {
+            self.engine.send(Command::Stick(controls));
+            self.engine.send(Command::Warp(self.warp()));
+            self.engine.poll()
+        } else {
+            universe_prof::time("update/sim (engine tick)", || self.engine.tick(dt, self.warp(), &controls));
+            true
+        };
         self.v = self.engine.view();
         let v = self.v.clone();
-        if v.ship.ammo < ammo {
+        if fresh && v.ship.ammo < ammo {
             sound::gunshot(ctx);
         }
         // Sparks where hits landed; a tick when ours do.
@@ -635,7 +674,7 @@ impl Game for App {
         }
         self.sparks.retain(|s| s.age < hud::SPARK_TIME);
         let mut ours = false;
-        for i in &v.impacts {
+        for i in v.impacts.iter().filter(|_| fresh) {
             let mine = i.by == universe_sim::PLAYER;
             ours |= mine && !i.laser;
             if self.sparks.len() < 200 {
@@ -647,7 +686,9 @@ impl Game for App {
         }
         self.sim_ms = v.sim_ms;
         self.last_step = v.last_step;
-        universe_prof::time("update/events", || self.handle_events(ctx));
+        if fresh {
+            universe_prof::time("update/events", || self.handle_events(ctx));
+        }
         universe_prof::time("update/globes", || self.build_globes());
         if self.route_labels_for != v.avionics.route.stops {
             self.route_labels_for = v.avionics.route.stops.clone();

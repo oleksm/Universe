@@ -130,7 +130,7 @@ pub fn ramp(frame: &mut Frame, app: &App) {
     let b = &app.view.system.bodies[body];
     let center = app.view.positions[body];
     let at = |p: DVec3| app.view.ship_pos + ship.orientation * p;
-    let t = app.v.time;
+    let t = app.now();
     let ground = |p: DVec3| {
         let w = at(p);
         let dir = (w - center).normalize();
@@ -172,7 +172,7 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
             lines.push((format!("ON FOOT - {} SURFACE", b.name.to_uppercase()), HUD));
             lines.push((format!("GRAVITY {g:.2} M/S2 ({:.2} G)", g / 9.81), DIM));
             let ship_at = app.view.ship_pos;
-            let me = app.view.positions[body] + b.rotation(app.v.time) * position;
+            let me = app.view.positions[body] + b.rotation(app.now()) * position;
             lines.push((format!("SHIP {}", fmt::distance(me.distance(ship_at))), DIM));
             lines.push(("WASD WALK  SHIFT RUN  SPACE JUMP  F USE".into(), DIM));
         }

@@ -25,7 +25,7 @@ fn path() -> PathBuf {
 
 pub fn save(app: &mut App) -> Result<PathBuf, String> {
     let save = GameSave {
-        universe: app.engine.universe().save(),
+        universe: app.engine.call(|u| u.save()).ok_or("the world engine didn't answer")?,
         mode: app.mode,
         warp_index: app.warp_index,
         chase_cam: app.chase_cam,
@@ -41,9 +41,8 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
 pub fn load(app: &mut App) -> Result<(), String> {
     let json = std::fs::read_to_string(path()).map_err(|e| e.to_string())?;
     let save: GameSave = serde_json::from_str(&json).map_err(|e| e.to_string())?;
-    app.engine.universe().load(save.universe);
-    app.engine.refresh();
-    app.v = app.engine.view();
+    let universe = save.universe;
+    app.engine.call(move |u| u.load(universe)).ok_or("the world engine didn't answer")?;
     app.mode = save.mode;
     app.warp_index = save.warp_index.min(crate::WARPS.len() - 1);
     app.chase_cam = save.chase_cam;

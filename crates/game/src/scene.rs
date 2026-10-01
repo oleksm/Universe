@@ -103,7 +103,7 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let Some(star) = sys.bodies.iter().position(|b| b.kind == BodyKind::Star) else { return 1.0 };
     let cam = frame.camera.position;
     let sun = app.view.positions[star];
-    let t = app.v.time;
+    let t = app.now();
     let air = sys.bodies.iter().enumerate().find_map(|(i, b)| {
         let terran = b.terrain.as_ref().is_some_and(|tr| tr.kind == universe_sim::TerrainKind::Terran);
         let center = app.view.positions[i];
@@ -181,7 +181,7 @@ fn transit_tunnel(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     let fwd = frame.camera.forward().as_dvec3();
     let spacing = 150.0;
-    let shift = (app.v.time * 900.0) % spacing;
+    let shift = (app.now() * 900.0) % spacing;
     for k in 0..28 {
         let z = k as f64 * spacing - shift + 20.0;
         let fade = (1.0 - z / (28.0 * spacing)) as f32;
@@ -193,7 +193,7 @@ fn transit_tunnel(frame: &mut Frame, app: &App) {
 /// Transit guidance: the ring's axis through both sides, the run-in point on
 /// our side, our drift, and the flight plan tunnel.
 fn transit_guide(frame: &mut Frame, app: &App, gate: usize, st: &GateStatus) {
-    let f = GateFrame::new(&app.view.system, gate, app.v.time, &app.view.positions);
+    let f = GateFrame::new(&app.view.system, gate, app.now(), &app.view.positions);
     let axis = f.axis();
     let c = if st.in_corridor { GUIDE_OK } else { GUIDE_OFF };
     frame.line(f.center - axis * APPROACH_DISTANCE, f.center + axis * APPROACH_DISTANCE, c.scale(0.4));
@@ -206,7 +206,7 @@ fn transit_guide(frame: &mut Frame, app: &App, gate: usize, st: &GateStatus) {
     if app.v.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, st.relative_velocity);
         if let Some(plan) = &app.plan {
-            plan_path(frame, app, plan, app.v.time, app.view.ship_pos);
+            plan_path(frame, app, plan, app.now(), app.view.ship_pos);
         }
     }
 }
@@ -236,7 +236,7 @@ const GLOBE_FULL_PX: f32 = 90.0;
 
 fn bodies(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
-    let t = app.v.time;
+    let t = app.now();
     let cam = frame.camera.position;
     for (i, b) in sys.bodies.iter().enumerate() {
         let center = app.view.positions[i];
@@ -353,17 +353,17 @@ fn crafts(frame: &mut Frame, app: &App) {
         if c.system != app.view.origin || !visible {
             continue;
         }
-        let pos = c.ship.position;
+        let pos = app.ahead(&c.ship);
         if frame.projected_radius(pos, 25.0) < 1.0 {
-            let tc = if c.ship.aggressed(app.v.time) { AGGRESSED } else { TRAFFIC };
+            let tc = if c.ship.aggressed(app.now()) { AGGRESSED } else { TRAFFIC };
             frame.point(pos, tc.scale(0.8));
             continue;
         }
-        let t = Transform { position: pos, rotation: c.ship.orientation.as_quat(), scale: 1.0 };
-        let tc = if c.ship.aggressed(app.v.time) { AGGRESSED } else { TRAFFIC };
+        let t = Transform { position: pos, rotation: app.turned(&c.ship).as_quat(), scale: 1.0 };
+        let tc = if c.ship.aggressed(app.now()) { AGGRESSED } else { TRAFFIC };
         frame.model_shaded(&app.models.ship, &t, tc, HULL);
         if c.ship.throttle > 0.0 {
-            let back = c.ship.orientation * DVec3::Z;
+            let back = app.turned(&c.ship) * DVec3::Z;
             frame.line(pos + back * 16.0, pos + back * (26.0 + 40.0 * c.ship.throttle), Color::hex(0xffa040));
         }
         if pos.distance(cam) < 20_000.0
@@ -428,7 +428,7 @@ pub const GUIDE_OFF: Color = Color::hex(0xffc040);
 
 /// The approach corridor: gates along the docking axis, shaped and rolled like the slot.
 fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingStatus) {
-    let f = StationFrame::new(&app.view.system, station, app.v.time, &app.view.positions);
+    let f = StationFrame::new(&app.view.system, station, app.now(), &app.view.positions);
     let c = if status.in_corridor { GUIDE_OK } else { GUIDE_OFF };
     let (long, short) = (f.slot_long(), f.slot_short());
 
@@ -454,7 +454,7 @@ fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingS
     if app.v.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, status.relative_velocity);
         if let Some(plan) = &app.plan {
-            plan_path(frame, app, plan, app.v.time, app.view.ship_pos);
+            plan_path(frame, app, plan, app.now(), app.view.ship_pos);
         }
     }
 }
@@ -651,7 +651,7 @@ fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
         }
     }
     if let Some(plan) = &app.plan {
-        plan_path(frame, app, plan, app.v.time, app.view.ship_pos);
+        plan_path(frame, app, plan, app.now(), app.view.ship_pos);
     }
 }
 
@@ -660,7 +660,7 @@ fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
 fn spaceports(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let cam = frame.camera.position;
-    let t = app.v.time;
+    let t = app.now();
     for (i, sp) in sys.spaceports.iter().enumerate() {
         let b = &sys.bodies[sp.body];
         let rot = b.rotation(t);
@@ -741,18 +741,18 @@ fn ship(frame: &mut Frame, app: &App) {
         frame.point(pos, SHIP_COLOR);
         return;
     }
-    let t = Transform { position: pos, rotation: app.v.ship.orientation.as_quat(), scale: 1.0 };
+    let t = Transform { position: pos, rotation: app.turned(&app.v.ship).as_quat(), scale: 1.0 };
     frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
     // Landed on a body: the landing legs, down to the ground.
     if let ShipState::Landed { body, .. } = app.v.ship.state
         && app.view.system.bodies[body].kind != BodyKind::Station
     {
         let (b, center) = (&app.view.system.bodies[body], app.view.positions[body]);
-        let o = app.v.ship.orientation;
+        let o = app.turned(&app.v.ship);
         for leg in [DVec3::new(-7.0, -3.2, 8.0), DVec3::new(7.0, -3.2, 8.0), DVec3::new(0.0, -2.2, -12.0)] {
             let top = pos + o * leg;
             let dir = (top - center).normalize();
-            let foot = center + dir * b.surface_radius_at(center, top, app.v.time);
+            let foot = center + dir * b.surface_radius_at(center, top, app.now());
             frame.line(top, foot, SHIP_COLOR.scale(0.7));
             let side = o * DVec3::X * 1.5;
             frame.line(foot - side, foot + side, SHIP_COLOR.scale(0.7));
@@ -760,7 +760,7 @@ fn ship(frame: &mut Frame, app: &App) {
     }
     if app.v.ship.hyperdrive || app.v.ship.throttle > 0.0 {
         // Exhaust streak.
-        let back = app.v.ship.orientation * DVec3::Z;
+        let back = app.turned(&app.v.ship) * DVec3::Z;
         let len = 10.0 + 40.0 * app.v.ship.throttle;
         frame.line(pos + back * 16.0, pos + back * (16.0 + len), Color::hex(0xffa040));
     }
