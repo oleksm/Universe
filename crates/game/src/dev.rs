@@ -146,13 +146,16 @@ pub fn apply(app: &mut App, name: &str) {
         }
         "holding" => {
             // The port's nine pads taken (long stops), and we're queued: the
-            // holding circle 12 km over the port, two minutes in.
+            // holding circle 12 km over the port, two minutes in (traffic control
+            // knows the pads are taken: it hands them out, not the ships on them).
             app.mode = Mode::Pilot;
             let port = sys.spaceports.iter().position(|p| p.body == planet).expect("spaceport on the station's planet");
             let u = app.engine.universe();
             for k in 0..universe_sim::world::spaceport::PADS {
                 u.crafts[k].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), k);
                 u.crafts[k].system = home;
+                let now = u.world.time;
+                u.atc.request_pad(home, port, universe_sim::craft_id(k), now);
             }
             {
                 let mut pilots = u.pilots();
@@ -171,7 +174,7 @@ pub fn apply(app: &mut App, name: &str) {
             u.set_nav_target(Some(NavTarget::Spaceport(port)));
             u.request_clearance();
             u.toggle_autopilot();
-            for _ in 0..60 * 60 {
+            for _ in 0..60 * 120 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
         }

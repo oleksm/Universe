@@ -33,3 +33,14 @@ hadn't really run: the ship gets back the throttle and velocity it had (`Ship::h
 `FALSE_START`). Drop-outs its pilot orders, and those after a real run, are as before.
 
 **Test:** `a_drive_that_drops_straight_out_leaves_the_throttle_and_speed_alone`.
+
+## Guidance while holding
+
+- The plan (orange) ends where the ship joins its place on the circle
+  (within 400 m and 30 m/s of it): no more line looping back over the ship,
+  and no polygon from simulating laps of the circle. The HUD's ETA reads
+  HOLDING.
+- The circle itself is drawn exactly (180 segments, faint magenta), with a
+  marker on our place while joining (hidden once on it).
+- The `holding` dev scenario tells traffic control the pads are taken, so it
+  really holds.

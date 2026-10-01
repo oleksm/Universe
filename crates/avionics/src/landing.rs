@@ -256,15 +256,30 @@ fn hold_offset(dir: DVec3, n: usize, t: f64) -> (DVec3, DVec3) {
     ((north * a.cos() + east * a.sin()) * HOLD_RADIUS, east * a.cos() - north * a.sin())
 }
 
+/// Holding place `n` round port `pad` (its middle pad) at `t`: where it is,
+/// how it moves, and its direction of travel.
+pub fn hold_place(pad: &PadFrame, n: usize, t: f64) -> (DVec3, DVec3, DVec3) {
+    let dir = pad.rotation.inverse() * pad.up;
+    let (offset, along) = hold_offset(dir, n, t);
+    let (offset, along) = (pad.rotation * offset, pad.rotation * along);
+    let place = pad.pad + pad.up * HOLD_ALTITUDE + offset;
+    (place, pad.frame_velocity(place) + along * HOLD_SPEED, along)
+}
+
+/// The point at angle `a` (rad, from north) on port `pad`'s holding circle.
+pub fn hold_ring(pad: &PadFrame, a: f64) -> DVec3 {
+    let dir = pad.rotation.inverse() * pad.up;
+    let (north, east) = spaceport::tangent(dir);
+    pad.pad + pad.up * HOLD_ALTITUDE + pad.rotation * ((north * a.cos() + east * a.sin()) * HOLD_RADIUS)
+}
+
 /// Waiting for a pad (place `n`): fly the holding circle round the port at
 /// `pad` (its middle pad), level, belly to the ground, nose along the circle,
 /// lift thrusters holding the height. Farther than `HOLD_JOIN` from the
 /// place, fly there first.
 pub fn hold(pad: &PadFrame, n: usize, ship: &Ship, gravity: DVec3, t: f64, h: f64) -> Command {
-    let dir = pad.rotation.inverse() * pad.up;
-    let (offset, along) = hold_offset(dir, n, t);
-    let (offset, along) = (pad.rotation * offset, pad.rotation * along);
-    let place = pad.pad + pad.up * HOLD_ALTITUDE + offset;
+    let (place, place_velocity, along) = hold_place(pad, n, t);
+    let offset = place - (pad.pad + pad.up * HOLD_ALTITUDE);
     let gap = place - ship.position;
     if gap.length() > HOLD_JOIN {
         // On the way: as an approach, to a frame raised to the place.
@@ -274,7 +289,6 @@ pub fn hold(pad: &PadFrame, n: usize, ship: &Ship, gravity: DVec3, t: f64, h: f6
     }
     // Keep to the place as it goes round: its velocity, closing what's left,
     // the pull round the circle, and against gravity.
-    let place_velocity = pad.frame_velocity(place) + along * HOLD_SPEED;
     let desired = place_velocity + (gap * 0.05).clamp_length_max(60.0);
     let inward = -offset.normalize_or_zero() * (HOLD_SPEED * HOLD_SPEED / HOLD_RADIUS);
     let accel = (desired - ship.velocity) * gain(0.8, h) + inward - gravity;

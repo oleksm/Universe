@@ -24,7 +24,7 @@ use universe_world::{Devices, GateFrame, StarSystem, StationFrame};
 
 use crate::avionics::Avionics;
 use crate::computer;
-use crate::landing::PadFrame;
+use crate::landing::{self, PadFrame};
 use crate::nav::{Clearance, NavTarget, PadSlot, Phase};
 use crate::route;
 
@@ -64,6 +64,9 @@ pub struct Plan {
     pub points: Vec<PlanPoint>,
     /// The plan reaches the slot / pad within the horizon.
     pub arrives: bool,
+    /// Waiting for a pad: the plan ends where the ship joins its place on
+    /// the holding circle (laps round it would show nothing new).
+    pub holds: bool,
 }
 
 impl Plan {
@@ -99,6 +102,8 @@ const NEAR: f64 = 20_000.0;
 /// orbital time scale). The autopilot's gains stay within reach of such steps
 /// (see `docking::gain`).
 const FAR_STEP: f64 = 10.0;
+/// A holding ship this near its place on the circle has joined it (m).
+const JOINED: f64 = 400.0;
 
 /// Plan from the ship's current state toward `target`, the autopilot being
 /// in `phase`, at world time `now`.
@@ -157,6 +162,14 @@ pub fn plan(sys: &StarSystem, rules: &Rules, ship: &Ship, target: NavTarget, pha
         }
         if out.points.len() >= MAX_POINTS || t - now >= HORIZON {
             break;
+        }
+        // Holding: once at its place on the circle, and moving with it, that's it.
+        if let (NavTarget::Spaceport(p), PadSlot::Hold(n)) = (target, pad) {
+            let (place, v, _) = landing::hold_place(&PadFrame::new(sys, p, t, &positions), n, t);
+            if ship.position.distance(place) < JOINED && (ship.velocity - v).length() < 30.0 {
+                out.holds = true;
+                break;
+            }
         }
 
         // Points: close together near the goal, and at first (so the first

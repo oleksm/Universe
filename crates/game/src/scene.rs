@@ -45,7 +45,10 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.view.origin == app.v.ship_system {
         match &app.approach {
             Some(Approach::Dock { station, status }) => docking_guide(frame, app, *station, status),
-            Some(Approach::Land { status, .. }) => landing_guide(frame, app, status),
+            Some(Approach::Land { port, status }) => {
+                holding_circle(frame, app, *port);
+                landing_guide(frame, app, status)
+            }
             Some(Approach::Transit { gate, status }) => transit_guide(frame, app, *gate, status),
             None => {}
         }
@@ -688,6 +691,34 @@ impl Guide {
 
 /// Landing: the free-fall prediction (with impact point), the guidance path,
 /// and the descent column above the pad.
+/// Waiting for a pad: the holding circle over the port (a faint ring, drawn
+/// as it is), and our place on it.
+fn holding_circle(frame: &mut Frame, app: &App, port: usize) {
+    use universe_sim::landing::{hold_place, hold_ring};
+    let Some(universe_sim::avionics::nav::PadSlot::Hold(n)) = app.v.avionics.clearance.map(|c| c.pad) else { return };
+    let now = app.now();
+    let pad = universe_sim::PadFrame::new(&app.view.system, port, now, &app.view.positions);
+    let segments = 180;
+    let ring: Vec<DVec3> = (0..=segments).map(|k| hold_ring(&pad, k as f64 / segments as f64 * std::f64::consts::TAU)).collect();
+    for w in ring.windows(2) {
+        frame.line(w[0], w[1], GUIDE_PATH.scale(0.35));
+    }
+    // Our place, and which way it goes.
+    let (place, _, along) = hold_place(&pad, n, now);
+    // (Only while joining: once on it, it would sit round the camera.)
+    if place.distance(app.ship.position) < 2000.0 {
+        return;
+    }
+    let size = (place.distance(frame.camera.position) * 0.01).max(60.0);
+    let up = pad.up;
+    let side = along.cross(up).normalize_or_zero();
+    let corners = [place + side * size, place + up * size, place - side * size, place - up * size];
+    for i in 0..4 {
+        frame.line(corners[i], corners[(i + 1) % 4], GUIDE_PATH);
+    }
+    frame.line(place, place + along * size * 2.0, GUIDE_PATH.scale(0.7));
+}
+
 fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
     let pad = &st.pad;
     let entry = pad.entry();

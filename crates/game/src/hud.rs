@@ -565,6 +565,7 @@ fn phase_banner(frame: &mut Frame, app: &App) {
     let eta = match plan {
         // In real seconds, smoothed (see `App::eta_shown`).
         Some(p) if p.arrives => format!("ETA {}", fmt::countdown(app.eta_shown.unwrap_or(0.0))),
+        Some(p) if p.holds => "HOLDING".into(),
         Some(_) => "ETA > 6 H".into(),
         None => String::new(),
     };
