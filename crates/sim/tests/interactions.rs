@@ -394,3 +394,61 @@ fn pirates_hunt_the_player_too() {
     run(&mut u, 5.0, |_| false);
     assert_eq!(u.crafts[0].avionics.hunting.map(|h| h.target), Some(universe_sim::PLAYER));
 }
+
+/// A world with air in the home system: its index, and its centre and velocity now.
+fn airy_world(u: &mut Universe) -> (usize, DVec3, DVec3, f64) {
+    let (sys, pos) = positions(u);
+    let i = sys.bodies.iter().position(|b| b.rail.atmosphere.is_some()).expect("the home system has a world with air");
+    (i, pos[i], sys.velocity(i, u.world.time), sys.bodies[i].rail.radius)
+}
+
+#[test]
+fn a_steep_dive_into_the_air_burns_the_ship_up() {
+    let mut u = bench(1);
+    let (_, center, v, radius) = airy_world(&mut u);
+    let up = DVec3::Y;
+    // 120 km up, falling straight down at 7.5 km/s.
+    place(&mut u, 0, center + up * (radius + 120_000.0), v - up * 7_500.0, center);
+    let gone = run(&mut u, 60.0, |u| !u.crafts[0].ship.is_flying());
+    assert!(gone, "wrecked");
+    let i = u.recorder.incidents.last().expect("filed");
+    assert_eq!(i.cause, "RE-ENTRY HEAT", "burnt up before it hit the ground\n{i}");
+}
+
+#[test]
+fn the_air_slows_a_falling_ship_to_its_terminal_velocity() {
+    let mut u = bench(1);
+    let (body, center, v, _) = airy_world(&mut u);
+    let up = DVec3::Y;
+    // 6 km up over the ground (well clear of the hills), dropping at 400 m/s, engines off.
+    let (sys, _) = positions(&mut u);
+    let ground = sys.bodies[body].surface_radius(up);
+    let at = center + up * (ground + 6_000.0);
+    let air = v + sys.bodies[body].angular_velocity().cross(at - center);
+    place(&mut u, 0, at, air - up * 400.0, center);
+    run(&mut u, 15.0, |_| false);
+    let (sys, pos) = positions(&mut u);
+    let s = &u.crafts[0].ship;
+    let air = sys.velocity(body, u.world.time) + sys.bodies[body].angular_velocity().cross(s.position - pos[body]);
+    let speed = (s.velocity - air).length();
+    // (In vacuum it would be falling at ~550 m/s by now.)
+    assert!(s.is_flying() && speed < 300.0, "slowed from 400 to {speed:.0} m/s\n{}", incidents(&u));
+}
+
+#[test]
+fn ships_waiting_for_a_corridor_know_their_place_in_line() {
+    let mut u = bench(3);
+    let (sys, pos) = positions(&mut u);
+    let station = sys.station().unwrap();
+    let f = StationFrame::new(&sys, station, u.world.time, &pos);
+    let side = f.axis().any_orthonormal_vector();
+    for i in 0..3 {
+        let at = f.on_axis(7_000.0 + 1_500.0 * i as f64) + side * 300.0 * i as f64;
+        place(&mut u, i, at, f.velocity, f.center);
+        cleared(&mut u, i, NavTarget::Station(station));
+    }
+    run(&mut u, 1.0, |_| false);
+    let mut places: Vec<Option<usize>> = u.crafts.iter().map(|c| c.avionics.corridor_ahead).collect();
+    places.sort();
+    assert_eq!(places, vec![None, Some(1), Some(2)], "one in the corridor, then one and two ahead");
+}

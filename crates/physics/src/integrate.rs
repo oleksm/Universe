@@ -1,10 +1,12 @@
 //! The integrator: every free body moves by the same rule. Leapfrog
 //! (kick-drift-kick) under the rail bodies' gravity plus whatever acceleration
 //! its `Driver` applies, in adaptive substeps, with contacts checked after
-//! each substep and reported as facts.
+//! each substep and reported as facts. In an atmosphere, drag follows each
+//! substep (exactly, so any step is stable: see `atmosphere::drag`).
 
 use glam::DVec3;
 
+use crate::atmosphere::{air_at, drag};
 use crate::body::RigidBody;
 use crate::collide::{detect, Fact};
 use crate::ops::bounce;
@@ -121,6 +123,11 @@ pub fn integrate<B: OnRails>(
             }
             gravity(bodies, p, positions) + applied
         });
+        if body.ballistic > 0.0
+            && let Some((density, air)) = air_at(bodies, body.position, positions, end)
+        {
+            body.velocity = drag(body.velocity, air, density, body.ballistic, h);
+        }
         t = end;
         remaining -= h;
         steps += 1;

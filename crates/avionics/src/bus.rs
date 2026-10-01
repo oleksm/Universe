@@ -34,8 +34,9 @@ pub trait Bus {
     fn request_pad(&mut self, port: usize) -> PadGrant;
 
     /// Ask traffic control for the corridor of station or gate `body` (one
-    /// ship at a time on its final run or launching): granted or not.
-    fn request_corridor(&mut self, body: usize) -> bool;
+    /// ship at a time on its final run or launching): `None` if granted,
+    /// else how many are ahead in line.
+    fn request_corridor(&mut self, body: usize) -> Option<usize>;
 
     /// The defence turrets of the ship's system (charted): where they are and how they move.
     fn turrets(&mut self) -> Vec<(DVec3, DVec3)>;

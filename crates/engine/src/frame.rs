@@ -52,6 +52,9 @@ pub struct Frame {
     /// The light (e.g. the star), for the `*_shaded` draws. None: they draw
     /// unlit (full brightness).
     pub light: Option<Light>,
+    /// A body reflecting the light (the nearest planet's day side), filling
+    /// in the shade on the side facing it. None: no fill.
+    pub reflector: Option<Reflector>,
     /// Low-res scene resolution.
     scene_size: Vec2,
     /// HUD layer resolution (a multiple of the scene's).
@@ -76,6 +79,28 @@ pub struct Light {
     /// Luminosity, relative: brightness 1 at `reference` metres from it.
     pub luminosity: f64,
     pub reference: f64,
+}
+
+/// A sphere reflecting the light: a planet or moon. What it gives a point
+/// near it is the light falling on the ground beneath (by the sun's height
+/// there), times the share it reflects (`albedo`), times how much of the sky
+/// it fills ((R/d)²), coming from its direction, in its colour.
+#[derive(Clone, Copy, Debug)]
+pub struct Reflector {
+    pub center: DVec3,
+    pub radius: f64,
+    pub albedo: f32,
+    pub color: [f32; 3],
+}
+
+/// The share of a sphere's light a small face takes in: the sphere filling
+/// `s` = sin²α of the sky (α its angular radius), the face's normal at
+/// cosine `cos_b` to its direction. Far off it's a point (s·cos β); skimming
+/// its surface it's a plane below ((1 + cos β)/2, a wall seeing half of it).
+/// Blended smoothly between.
+pub fn view_factor(cos_b: f32, s: f32) -> f32 {
+    let c = 1.0 - (1.0 - s.min(1.0)).sqrt();
+    s.min(1.0) * ((cos_b + c) / (1.0 + c)).max(0.0)
 }
 
 /// How much the eye adapts: perceived brightness goes as irradiance to this power.
@@ -110,6 +135,7 @@ impl Frame {
             camera,
             clear: Color::BLACK,
             light: None,
+            reflector: None,
             scene_size,
             size: hud_size,
             sky: Vec::new(),
@@ -237,6 +263,25 @@ impl Frame {
         light.color.map(|c| c * k)
     }
 
+    /// The reflector's light at `at` (camera-relative): the direction to it,
+    /// how much of the sky it fills (sin² of its angular radius), and the
+    /// share of the sun's light its ground sends back, with its colour times
+    /// the sun's brightness here. None if there's none to speak of.
+    fn fill_at(&self, at: Vec3) -> Option<(Vec3, f32, (f32, [f32; 3]))> {
+        let (r, light) = (self.reflector?, self.light?);
+        let p = self.camera.position + at.as_dvec3();
+        let off = p - r.center;
+        let d = off.length().max(r.radius);
+        let up = off / off.length().max(1.0);
+        // The ground beneath, lit by the sun's height over it.
+        let day = up.dot((light.position - p).normalize_or_zero()).max(0.0) as f32;
+        let s = (r.radius / d).powi(2) as f32;
+        // The light off the ground (a share of the sun's), and its colour at the sun's brightness here.
+        let base = r.albedo * day;
+        let k = light.intensity_at(p);
+        (base * s > 0.001).then(|| ((-up).as_vec3(), s, (base, [0, 1, 2].map(|j| r.color[j] * light.color[j] * k))))
+    }
+
     /// Faces lit by `light`, flat-shaded (one tone per face): `base` times
     /// `SHADE_AMBIENT` in the dark up to full in direct light. Each face's
     /// normal is turned to face away from the model's center (the models are
@@ -244,12 +289,20 @@ impl Frame {
     /// light on their ends (a vertex facing away from the center), down to
     /// `LINE_AMBIENT` of `line`.
     fn shaded(&mut self, pts: &[Vec3], center: Vec3, model: &WireModel, edges: f32, line: impl Fn(u32) -> [f32; 4], fill: impl Fn(u32) -> [f32; 4]) {
-        // Ambient plus the star's light, in its colour and at its brightness here.
-        let lit = |c: [f32; 4], ambient: f32, k: f32, light: [f32; 3]| {
-            let ch = |j: usize| c[j] * (ambient + (1.0 - ambient) * k * light[j]);
+        // Ambient, plus the star's light (in its colour, at its brightness
+        // here), plus what the nearest planet reflects onto the side facing it.
+        let light = self.light_at(center);
+        // The planet's light: its direction and its strength here.
+        let planet = self.fill_at(center);
+        let lit = |c: [f32; 4], ambient: f32, k: f32, n: Vec3, light: [f32; 3]| {
+            // How much of the planet's disc the face sees (see `view_factor`).
+            // Through the eye's adaptation, as the star's light is (a tenth of
+            // the sun's light still looks about half as bright).
+            let k2 = planet.map_or(0.0, |(dir, s, (base, _))| ((base * view_factor(n.dot(dir), s)).powf(EXPOSURE) - 0.12).max(0.0) / 0.88);
+            let f = planet.map_or([0.0; 3], |(_, _, (_, f))| f);
+            let ch = |j: usize| c[j] * (ambient + (1.0 - ambient) * (k * light[j] + k2 * f[j]).min(1.6));
             [ch(0), ch(1), ch(2), c[3]]
         };
-        let light = self.light_at(center);
         for f in &model.faces {
             let [a, b, c] = [f[0], f[1], f[2]].map(|i| pts[i as usize]);
             let mid = (a + b + c) / 3.0;
@@ -259,7 +312,7 @@ impl Frame {
             }
             let k = self.lambert(mid, n);
             for &i in f {
-                self.solids.push(Vertex { pos: pts[i as usize].to_array(), color: lit(fill(i), SHADE_AMBIENT, k, light) });
+                self.solids.push(Vertex { pos: pts[i as usize].to_array(), color: lit(fill(i), SHADE_AMBIENT, k, n, light) });
             }
         }
         if edges <= 0.0 {
@@ -268,8 +321,9 @@ impl Frame {
         for e in &model.edges {
             for &i in e {
                 let p = pts[i as usize];
-                let k = self.lambert(p, (p - center).normalize_or_zero()).sqrt();
-                let [r, g, b, a] = lit(line(i), LINE_AMBIENT, k, light);
+                let n = (p - center).normalize_or_zero();
+                let k = self.lambert(p, n).sqrt();
+                let [r, g, b, a] = lit(line(i), LINE_AMBIENT, k, n, light);
                 self.lines.push(Vertex { pos: p.to_array(), color: [r * edges, g * edges, b * edges, a] });
             }
         }

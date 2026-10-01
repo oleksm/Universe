@@ -168,6 +168,7 @@ impl StarSystem {
                 day: rng.range(20.0, 35.0) * DAY,
                 tilt: random_tilt(&mut rng, 7.0),
                 collider: BodyKind::Star.collider(),
+                atmosphere: None,
             },
         }];
 
@@ -226,6 +227,7 @@ impl StarSystem {
                     day,
                     tilt: random_tilt(&mut rng, 30.0),
                     collider: kind.collider(),
+                    atmosphere: None,
                 },
             });
 
@@ -274,6 +276,7 @@ impl StarSystem {
                         orbit: Some(orbit),
                         tilt: DQuat::IDENTITY,
                         collider: BodyKind::Moon.collider(),
+                        atmosphere: None,
                     },
                 });
                 moon_a *= rng.range(1.4, 2.0);
@@ -305,6 +308,11 @@ impl StarSystem {
                 _ => continue,
             };
             b.terrain = Some(Terrain::new(kind, b.rail.radius, crate::rng::mix(seed, 0x7465_7272 + i as u64)));
+            // Temperate worlds have air like Earth's.
+            if kind == TerrainKind::Terran {
+                let g = b.rail.mu / (b.rail.radius * b.rail.radius);
+                b.rail.atmosphere = Some(universe_physics::Atmosphere::earthlike(g));
+            }
         }
     }
 
@@ -359,6 +367,7 @@ impl StarSystem {
                 day: 60.0,
                 tilt: DQuat::IDENTITY,
                 collider: BodyKind::Station.collider(),
+                atmosphere: None,
             },
         };
         let at = (planet + 1..self.bodies.len()).find(|&i| self.bodies[i].rail.parent != Some(planet)).unwrap_or(self.bodies.len());
@@ -406,6 +415,7 @@ impl StarSystem {
                     day: 1.0e15,
                     tilt,
                     collider: BodyKind::Gate.collider(),
+                    atmosphere: None,
                 },
             });
         }

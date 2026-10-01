@@ -25,6 +25,9 @@ pub const TURN_RATE: f64 = 1.0;
 pub const ROLL_RATE: f64 = 1.8;
 /// Collision radius (m).
 pub const SHIP_RADIUS: f64 = 12.0;
+/// Drag coefficient × frontal area (m²): a blunt 90 t ship falls at about
+/// 150 m/s through sea-level air.
+pub const DRAG_AREA: f64 = 60.0;
 
 fn full_tank() -> f64 {
     FUEL_CAPACITY
@@ -120,6 +123,9 @@ pub struct Ship {
     /// world time: see `weapons::AGGRESSION`.
     #[serde(default)]
     pub aggressed_until: f64,
+    /// The hull's skin temperature (K): see `heat`.
+    #[serde(default = "skin_ambient")]
+    pub skin_temp: f64,
     /// Seconds the hyperdrive stays jammed (hits disrupt it: see `damage::HYPER_JAM`).
     #[serde(skip)]
     pub hyper_jam: f64,
@@ -231,6 +237,7 @@ impl Ship {
             gun_target: None,
             aggressed_until: 0.0,
             hyper_jam: 0.0,
+            skin_temp: crate::heat::AMBIENT,
         }
     }
 
@@ -282,7 +289,9 @@ impl Ship {
 
     /// The ship as the physics kernel sees it.
     pub fn rigid(&self) -> RigidBody {
-        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: SHIP_RADIUS }
+        // Drag in air (none in the hyperdrive's field).
+        let ballistic = if self.hyperdrive { 0.0 } else { self.mass() / DRAG_AREA };
+        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: SHIP_RADIUS, ballistic }
     }
 
     /// Take the kernel's word for where the ship is and how it moves.
@@ -355,4 +364,8 @@ pub fn upright(normal: DVec3, forward: DVec3) -> DQuat {
     let tangent = (forward - normal * forward.dot(normal)).try_normalize().unwrap_or_else(|| normal.any_orthonormal_vector());
     let right = tangent.cross(normal);
     DQuat::from_mat3(&DMat3::from_cols(right, normal, -tangent))
+}
+
+fn skin_ambient() -> f64 {
+    crate::heat::AMBIENT
 }

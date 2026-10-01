@@ -112,7 +112,7 @@ impl Avionics {
                             events.push(Event::RouteStop { number: self.route.next + 1, name: stop_name(&sys, stop) });
                         }
                         // Launching waits for the corridor.
-                        Some(t) if bus.time() >= t && sys.bodies[body].kind == BodyKind::Station && !bus.request_corridor(body) => {}
+                        Some(t) if bus.time() >= t && sys.bodies[body].kind == BodyKind::Station && bus.request_corridor(body).is_some() => {}
                         Some(t) if bus.time() >= t => {
                             self.route.dwell_until = None;
                             self.route.next += 1;
@@ -137,7 +137,7 @@ impl Avionics {
     fn leave(&mut self, bus: &mut impl Bus, sys: &StarSystem, body: usize, events: &mut Vec<Event>) {
         if sys.bodies[body].kind == BodyKind::Station {
             // Out through the corridor only when it's ours; else try again next frame.
-            if !bus.request_corridor(body) {
+            if bus.request_corridor(body).is_some() {
                 return;
             }
             self.set_controls(bus, events, |c| c.throttle = 0.2);

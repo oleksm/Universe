@@ -53,6 +53,9 @@ pub struct Avionics {
     /// now, and our place on the waiting ring meanwhile.
     #[serde(skip)]
     pub corridor_denied: bool,
+    /// Ships ahead of us in line for the corridor, while waiting.
+    #[serde(skip)]
+    pub corridor_ahead: Option<usize>,
     #[serde(skip)]
     pub wait_place: usize,
     /// The collision warning is switched on (see `collision`).
@@ -191,14 +194,15 @@ impl Avionics {
         // Close to a station's or gate's corridor: ask traffic control whether it's ours.
         // Near it (approaching or lining up), ask; waiting ships keep their own place.
         self.wait_place = bus.id();
-        self.corridor_denied = !match self.clearance {
+        self.corridor_ahead = match self.clearance {
             Some(Clearance { target: NavTarget::Station(b) | NavTarget::Gate(b), phase: Phase::Approach | Phase::Align | Phase::Final, .. })
                 if target_position(bus, NavTarget::Gate(b)).or_else(|| target_position(bus, NavTarget::Station(b))).is_some_and(|p| p.distance(bus.ship().position) < 12_000.0) =>
             {
                 bus.request_corridor(b)
             }
-            _ => true,
+            _ => None,
         };
+        self.corridor_denied = self.corridor_ahead.is_some();
         // A hunt flies the ship itself (see `hunter`); the route waits.
         if self.hunting.is_some() {
             return;

@@ -39,6 +39,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         luminosity: class.luminosity(),
         reference: universe_sim::units::AU,
     });
+    frame.reflector = reflector(frame, app);
     bodies(frame, app);
     spaceports(frame, app);
     if app.view.origin == app.u.ship_system {
@@ -60,6 +61,32 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.show_labels {
         labels(frame, app);
     }
+}
+
+/// The planet or moon filling most of the sky from here: its day side lights
+/// the shaded side of anything near it (see `Reflector`).
+fn reflector(frame: &Frame, app: &App) -> Option<universe_engine::Reflector> {
+    let cam = frame.camera.position;
+    let sys = &app.view.system;
+    let (i, _) = sys
+        .bodies
+        .iter()
+        .enumerate()
+        .filter(|(_, b)| !b.kind.artificial() && b.kind != BodyKind::Star)
+        .map(|(i, b)| (i, (b.rail.radius / app.view.positions[i].distance(cam).max(1.0)).powi(2)))
+        .max_by(|a, b| a.1.total_cmp(&b.1))?;
+    let b = &sys.bodies[i];
+    // Share of the light it sends back: clouds and seas, bare rock, dust, cloud tops, ice.
+    let albedo = match (b.kind, b.terrain.as_ref().map(|t| t.kind)) {
+        (_, Some(universe_sim::TerrainKind::Terran)) => 0.30,
+        (BodyKind::GasGiant, _) => 0.50,
+        (BodyKind::IceGiant, _) => 0.45,
+        (BodyKind::Moon, _) => 0.12,
+        _ => 0.15,
+    };
+    let [r, g, bl] = b.color;
+    let top = r.max(g).max(bl).max(1e-3);
+    Some(universe_engine::Reflector { center: app.view.positions[i], radius: b.rail.radius, albedo, color: [r / top, g / top, bl / top] })
 }
 
 /// Top of a world's atmosphere, for the sky's colour (m).

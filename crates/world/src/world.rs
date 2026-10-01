@@ -315,6 +315,19 @@ impl World {
                 self.flight_step(&sys, ship, *system, computer, real_dt * warp, events)
             }
         };
+        // The skin in air (and cooling after).
+        if ship.is_flying() && !ship.hyperdrive {
+            let air = if sys.bodies.iter().any(|b| b.rail.atmosphere.is_some()) {
+                let mut positions = Vec::with_capacity(sys.bodies.len());
+                sys.positions(self.time, &mut positions);
+                universe_physics::air_at(&sys.bodies, ship.position, &positions, self.time)
+            } else {
+                None
+            };
+            crate::heat::heat(ship, air, real_dt * warp, events);
+        } else if ship.hyperdrive {
+            crate::heat::heat(ship, None, real_dt * warp, events);
+        }
         if ship.is_flying() {
             let neighbours = near.unwrap_or_else(|| self.neighbours(*system));
             self.handover(ship, system, &neighbours, events);

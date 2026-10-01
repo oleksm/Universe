@@ -16,6 +16,7 @@ pub mod events;
 pub mod galaxy;
 pub mod goods;
 pub mod gate;
+pub mod heat;
 pub mod hyperdrive;
 pub mod market;
 pub mod names;

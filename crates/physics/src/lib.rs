@@ -7,6 +7,7 @@
 //! whatever a contact *means* is decided by the caller from the `Fact`.
 //! Deterministic: no clocks, no randomness, a fixed order of evaluation.
 
+pub mod atmosphere;
 pub mod body;
 pub mod collide;
 pub mod integrate;
@@ -20,6 +21,7 @@ pub mod surface;
 #[cfg(test)]
 mod testkit;
 
+pub use atmosphere::{air_at, drag, heat_flux, Atmosphere};
 pub use body::RigidBody;
 pub use collide::{Collider, Contact, CutOut, Fact, Feature, Polytope, Ring, RingCrossing};
 pub use integrate::{integrate, leapfrog, Driver, Outcome, Response, Span};

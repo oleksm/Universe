@@ -72,8 +72,9 @@ impl Bus for Link<'_> {
         self.world.traffic.request_pad(self.system, port, self.id, now)
     }
 
-    fn request_corridor(&mut self, body: usize) -> bool {
-        self.world.traffic.request_corridor(self.system, body, self.id)
+    fn request_corridor(&mut self, body: usize) -> Option<usize> {
+        let now = self.world.time;
+        self.world.traffic.request_corridor(self.system, body, self.id, now)
     }
 
     fn turrets(&mut self) -> Vec<(glam::DVec3, glam::DVec3)> {

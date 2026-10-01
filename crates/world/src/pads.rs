@@ -61,6 +61,8 @@ pub struct Presence {
 pub struct TrafficControl {
     ports: HashMap<(usize, usize), Port>,
     corridors: HashMap<(usize, usize), usize>,
+    /// Ships waiting for each corridor, in order, with when each last asked.
+    corridor_queues: HashMap<(usize, usize), Vec<(usize, f64)>>,
 }
 
 impl TrafficControl {
@@ -90,10 +92,33 @@ impl TrafficControl {
         PadGrant::Queued(place)
     }
 
-    /// Ship `ship` asks to use the corridor of station or gate `body` in
-    /// `system`: yes if it's free (it's now this ship's) or already its.
-    pub fn request_corridor(&mut self, system: usize, body: usize, ship: usize) -> bool {
-        *self.corridors.entry((system, body)).or_insert(ship) == ship
+    /// Ship `ship` asks at `now` to use the corridor of station or gate
+    /// `body` in `system`: `None` if it's its (it was free and this ship's
+    /// turn, or already its), otherwise how many are ahead of it in line.
+    pub fn request_corridor(&mut self, system: usize, body: usize, ship: usize, now: f64) -> Option<usize> {
+        let key = (system, body);
+        if self.corridors.get(&key) == Some(&ship) {
+            return None;
+        }
+        let queue = self.corridor_queues.entry(key).or_default();
+        queue.retain(|(_, t)| now - *t < QUEUE_PATIENCE);
+        let place = match queue.iter().position(|(s, _)| *s == ship) {
+            Some(k) => {
+                queue[k].1 = now;
+                k
+            }
+            None => {
+                queue.push((ship, now));
+                queue.len() - 1
+            }
+        };
+        if place == 0 && !self.corridors.contains_key(&key) {
+            queue.remove(0);
+            self.corridors.insert(key, ship);
+            return None;
+        }
+        // Ahead: the one in the corridor, and those before it in line.
+        Some(place + usize::from(self.corridors.contains_key(&key)))
     }
 
     /// Ship `ship` is done with its corridor at `body` (it docked, went
@@ -117,6 +142,9 @@ impl TrafficControl {
             p.queue.retain(|(s, _)| *s != ship);
         }
         self.corridors.retain(|_, s| *s != ship);
+        for q in self.corridor_queues.values_mut() {
+            q.retain(|(s, _)| *s != ship);
+        }
     }
 
     /// This frame's physical facts: a pad's ship on it (or in its column)
@@ -213,11 +241,14 @@ mod tests {
     #[test]
     fn a_corridor_takes_one_ship_until_it_is_done() {
         let mut tc = TrafficControl::default();
-        assert!(tc.request_corridor(1, 5, 1));
-        assert!(!tc.request_corridor(1, 5, 2), "taken");
+        assert_eq!(tc.request_corridor(1, 5, 1, 0.0), None);
+        assert_eq!(tc.request_corridor(1, 5, 2, 0.0), Some(1), "taken: one ahead");
+        assert_eq!(tc.request_corridor(1, 5, 3, 0.0), Some(2), "and two for the next");
         tc.presence(&[Presence { ship: 1, system: 1, pad: None, clear_of: vec![5] }]);
-        assert!(tc.request_corridor(1, 5, 2), "free once it's through");
+        assert_eq!(tc.request_corridor(1, 5, 3, 1.0), Some(1), "not its turn yet: 2 was first");
+        assert_eq!(tc.request_corridor(1, 5, 2, 1.0), None, "free once it's through, and 2's turn");
         tc.release(2);
         assert_eq!(tc.corridor(1, 5), None);
+        assert_eq!(tc.request_corridor(1, 5, 3, 2.0), None);
     }
 }

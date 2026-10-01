@@ -28,6 +28,8 @@ pub struct RailBody {
     /// Sidereal rotation period (s).
     pub day: f64,
     pub collider: Collider,
+    /// Its air, if it has any.
+    pub atmosphere: Option<crate::atmosphere::Atmosphere>,
 }
 
 impl RailBody {

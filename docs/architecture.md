@@ -339,7 +339,10 @@ ship's pose directly, like tests do — then render.
 | Crew on foot: seat / aboard (ship frame, magnetic boots) / outside (body frame, real gravity), interior layout, hatch rules | world: `crew` |
 | Goods catalog (1,000 items from the seed) | world: `goods` |
 | Markets per station/spaceport (produces, wants, bans; prices by stock/demand, recovery), the hold | world: `market`, `World::{market, quotes, trade}` |
-| Traffic control: pads (booking, queue, occupancy) and corridors, explicit claim/release (`TrafficControl`, `Presence`) | world: `pads` |
+| Traffic control: pads (booking, queue, occupancy) and corridors (one at a time, queued), explicit claim/release (`TrafficControl`, `Presence`) | world: `pads` |
+| Atmospheres (exponential air on Terran worlds, turning with them), exact quadratic drag in the integrator, Sutton–Graves heating | physics: `atmosphere`, `integrate` |
+| Hull skin temperature: re-entry heating vs radiation, burning past the limit | world: `heat` |
+| Planetshine: the nearest planet's day side lights the shade (`Reflector`, view factor) | engine: `frame` |
 | Ship-to-ship collisions (kernel `pairs` sweep + world bounce/damage rules) | physics: `pairs`, world: `collisions` |
 | Flight recorder: every ship's last 15 s, incidents with traces | sim: `recorder` |
 | Radar (sweep, blips) | world: `radar` |

@@ -220,6 +220,19 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         let c = if hurt { RED } else { DIM };
         lines.push((format!("HULL [{}] {:3.0}%", gauge(ship.hull), ship.hull * 100.0), c));
     }
+    // The skin, once air (or the memory of it) has warmed it.
+    let skin = ship.skin_temp;
+    if skin > universe_sim::world::heat::AMBIENT + 30.0 {
+        use universe_sim::world::heat::SKIN_LIMIT;
+        let (note, c) = if skin >= SKIN_LIMIT - 1.0 {
+            ("  HULL BURNING - SLOW DOWN OR CLIMB", RED)
+        } else if skin > SKIN_LIMIT * 0.8 {
+            ("  NEAR THE LIMIT", RED)
+        } else {
+            ("", AMBER)
+        };
+        lines.push((format!("SKIN {skin:.0} K / {SKIN_LIMIT:.0} K{note}"), c));
+    }
     match &ship.state {
         ShipState::Landed { body, local_position, .. } => {
             let b = &app.view.system.bodies[*body];
@@ -375,6 +388,26 @@ fn approach_info(app: &App, lines: &mut Vec<(String, Color)>) {
         Some(Approach::Dock { station, status }) => docking_info(app, *station, status, lines),
         Some(Approach::Land { port, status }) => landing_info(app, *port, status, lines),
         Some(Approach::Transit { gate, status }) => transit_info(app, *gate, status, lines),
+    }
+    queue_info(app, lines);
+}
+
+/// Waiting our turn: for a pad (holding over the port), or for a station's
+/// or gate's corridor (one ship at a time), and how many pilots are ahead.
+fn queue_info(app: &App, lines: &mut Vec<(String, Color)>) {
+    let a = &app.u.avionics;
+    let Some(c) = a.clearance else { return };
+    let pilots = |n: usize| match n {
+        0 => "NEXT IN LINE".to_string(),
+        1 => "1 PILOT AHEAD".to_string(),
+        _ => format!("{n} PILOTS AHEAD"),
+    };
+    if let universe_sim::avionics::nav::PadSlot::Hold(n) = c.pad {
+        // (All pads taken: those ahead are the ones waiting before us.)
+        lines.push((format!("QUEUED FOR A PAD - {} - HOLD OVER THE PORT", pilots(n)), AMBER));
+    } else if let Some(n) = a.corridor_ahead {
+        let what = if matches!(c.target, universe_sim::NavTarget::Gate(_)) { "THE GATE RUN" } else { "THE DOCKING CORRIDOR" };
+        lines.push((format!("QUEUED FOR {what} - {} - HOLD CLEAR", pilots(n)), AMBER));
     }
 }
 

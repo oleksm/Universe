@@ -9,7 +9,7 @@ use crate::surface::Surface;
 
 /// A plain attracting body with a surface collider and a one-day spin.
 pub fn body(parent: Option<usize>, orbit: Option<Orbit>, mu: f64, radius: f64) -> RailBody {
-    RailBody { parent, orbit, mu, attracts: true, radius, tilt: DQuat::IDENTITY, day: 86_400.0, collider: Collider::Surface }
+    RailBody { parent, orbit, mu, attracts: true, radius, tilt: DQuat::IDENTITY, day: 86_400.0, collider: Collider::Surface, atmosphere: None }
 }
 
 /// Sea 500 m deep over the +X hemisphere, ground 1 km up elsewhere.
