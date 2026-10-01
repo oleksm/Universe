@@ -156,7 +156,9 @@ impl Shipyard {
         let h = c.handle::<ClassSpec>(hull)?;
         let s = c.get(h).slots.iter().find(|s| s.name == slot)?.clone();
         let fit = with(&c.get(h).fit, &s, c.handle::<Module>(module));
-        Some(Shipyard { hull: h, fit, ..Shipyard::new(app) })
+        let mut y = Shipyard { hull: h, fit, ..Shipyard::new(app) };
+        y.choice = y.current_choice(0);
+        Some(y)
     }
 
     /// (Dev scenarios: the design page, knob `knob` picked.)
@@ -356,6 +358,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             }
             let Some(slot) = y.spec().slots.get(y.slot).cloned() else { return true };
             let n = offers(&slot).len().max(1);
+            y.choice = y.choice.min(n - 1);
             if input.pressed(KeyCode::ArrowRight) {
                 y.choice = (y.choice + 1) % n;
             }
@@ -464,13 +467,11 @@ fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
         frame.text(Vec2::new(24.0, yy), &chunk.join(", "), DIM);
         yy += LINE;
     }
-    yy += LINE * 0.5;
-    frame.text(Vec2::new(12.0, yy), "ENTER: PLAN FROM THIS HULL   SHIFT+ENTER: COPY IT TO THE DESIGN BOARD", DIM);
     let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, 0.0), mounts: true, picked: None };
     let size = frame.size();
     let w = ((size.x - 36.0) / 2.0).min(260.0);
     let at = Vec2::new(12.0, yy + LINE);
-    let h = (size.y - at.y - 12.0 - 2.0 * LINE).max(80.0);
+    let h = (size.y - at.y - 12.0 - 4.5 * LINE).max(80.0);
     crate::thrusterpanel::turning(frame, &picture, at, Vec2::new(w, h), app.v.time * 0.4, "");
     crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
 }
@@ -492,8 +493,6 @@ fn draw_plans(frame: &mut Frame, app: &App, y: &Shipyard) {
         };
         frame.text(Vec2::new(12.0, top + (k + 2) as f32 * LINE), &format!("{}{text}", if here { ">" } else { " " }), if here { SELECT } else { DIM });
     }
-    let yy = top + (app.plans.len() + 3) as f32 * LINE;
-    frame.text(Vec2::new(12.0, yy), "ENTER: KEEP / LOAD   DELETE: DROP   (KEPT IN THE SAVE)", DIM);
 }
 
 /// The design page: the numbers a hull is drawn up from, its own numbers
@@ -512,7 +511,7 @@ fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
     }
     let last = KNOBS.len();
     let here = y.knob == last;
-    frame.text(Vec2::new(12.0, top + (last as f32 + 0.5) * LINE), &format!("{}COMMISSION IT (ENTER)", if here { ">" } else { " " }), if here { SELECT } else { BETTER });
+    frame.text(Vec2::new(12.0, top + (last as f32 + 0.5) * LINE), &format!("{}COMMISSION IT", if here { ">" } else { " " }), if here { SELECT } else { BETTER });
     // Its numbers, and what's wrong.
     let x = 12.0 + 30.0 * 7.5;
     match d.spec() {
@@ -540,7 +539,7 @@ fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
             }
             let at = Vec2::new(x + universe_engine::text_size(&format!("{:<11} {:>23}", "", "")).x + 16.0, top);
             let w = ((frame.size().x - at.x - 20.0) / 2.0).max(100.0);
-            let h = (frame.size().y - at.y - 12.0 - 2.0 * LINE).max(80.0);
+            let h = (frame.size().y - at.y - 12.0 - 4.5 * LINE).max(80.0);
             let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: None };
             crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
             crate::thrusterpanel::turning(frame, &picture, at + Vec2::new(w + 8.0, 0.0), Vec2::new(w, h), app.v.time * 0.4, "");
@@ -551,30 +550,59 @@ fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
     }
 }
 
+/// The page's actions, as a panel of cells along the bottom: each with its
+/// key and a lamp (lit when it would do something, dim when it can't).
+fn actions(frame: &mut Frame, app: &App, y: &Shipyard) {
+    use crate::hud::{draw_panel, Lamp};
+    let docked = station(app).is_some();
+    let can = |ok: bool| if ok { Lamp::Off } else { Lamp::Unavailable };
+    let cell = |k: &str, name: &str, lamp: Lamp| (k.to_string(), name.to_string(), lamp);
+    let close = cell(&key(Act::Shipyard), "CLOSE", Lamp::Off);
+    let (title, cells) = match y.page {
+        Page::Plan => {
+            let goes = y.planned().is_ok();
+            let build = if y.armed { cell("S+ENT", "AGAIN TO BUILD", Lamp::Busy) } else { cell("S+ENT", "BUILD HERE", can(docked && goes)) };
+            ("PLAN", vec![cell("UP DN", "SLOT", Lamp::Off), cell("LT RT", "MODULE", Lamp::Off), cell("ENTER", "PUT IN THE PLAN", Lamp::Off), build, cell("TAB", "HULLS", Lamp::Off), close])
+        }
+        Page::Hulls => ("HULLS", vec![cell("UP DN", "HULL", Lamp::Off), cell("ENTER", "PLAN FROM IT", Lamp::Off), cell("S+ENT", "COPY TO DESIGN", Lamp::Off), cell("TAB", "DESIGN", Lamp::Off), close]),
+        Page::Design => {
+            let on_commission = y.knob == universe_sim::world::design::KNOBS.len();
+            let goes = app.design.spec().is_ok();
+            (
+                "DESIGN",
+                vec![cell("UP DN", "NUMBER", Lamp::Off), cell("LT RT", "TURN IT", can(!on_commission)), cell("SHIFT", "TURN x5", can(!on_commission)), cell("ENTER", "COMMISSION", can(on_commission && goes)), cell("TAB", "PLANS", Lamp::Off), close],
+            )
+        }
+        Page::Plans => {
+            let keep = y.plan_pick == 0;
+            ("PLANS", vec![cell("UP DN", "PLAN", Lamp::Off), cell("ENTER", if keep { "KEEP THIS PLAN" } else { "LOAD IT" }, Lamp::Off), cell("DEL", "DROP IT", can(!keep)), cell("TAB", "PLAN", Lamp::Off), close])
+        }
+    };
+    draw_panel(frame, &format!("{title} - ACTIONS"), &cells, 3);
+}
+
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
-    // The keys, along the bottom.
-    let keys = match y.page {
-        Page::Plan => "UP/DOWN SLOT  LEFT/RIGHT MODULE  ENTER PUT IN THE PLAN  SHIFT+ENTER BUILD (DOCKED)  TAB HULLS",
-        Page::Hulls => "UP/DOWN HULL  ENTER PLAN FROM IT  SHIFT+ENTER COPY IT TO DESIGN YOUR OWN  TAB DESIGN",
-        Page::Design => "UP/DOWN NUMBER  LEFT/RIGHT TURN (SHIFT x5)  ENTER ON COMMISSION  TAB PLANS",
-        Page::Plans => "UP/DOWN PLAN  ENTER KEEP / LOAD  DELETE DROP  TAB PLAN",
-    };
-    frame.text(Vec2::new(12.0, size.y - LINE - 4.0), keys, DIM);
+    actions(frame, app, y);
     let c = content();
     let here = station(app);
-    let page = match y.page {
-        Page::Plan => if here.is_some() { "PLAN - ARROWS PICK, ENTER PUT IN, SHIFT+ENTER BUILD" } else { "PLAN - ARROWS PICK, ENTER PUT IN" },
-        Page::Hulls => "HULLS",
-        Page::Plans => "PLANS",
-        Page::Design => "DESIGN - UP/DOWN PICK, LEFT/RIGHT TURN (SHIFT: x5)",
-    };
     let title = match &here {
         Some(s) => format!("SHIPYARD - {s}"),
         None => "SHIP PLANNER".into(),
     };
-    frame.text(Vec2::new(12.0, 12.0), &format!("{title}  {:.0} CR  [TAB] {page}  ({} CLOSES)", app.v.credits, key(Act::Shipyard)), TEXT);
+    frame.text(Vec2::new(12.0, 12.0), &format!("{title}   {:.0} CR", app.v.credits), TEXT);
+    // The pages, as tabs (TAB moves on).
+    use crate::hud::{draw_cell, Lamp};
+    let tabs = [(Page::Plan, "PLAN"), (Page::Hulls, "HULLS"), (Page::Design, "DESIGN"), (Page::Plans, "PLANS")];
+    let tab = Vec2::new(86.0, 14.0);
+    let x0 = size.x - 4.0 * (tab.x + 2.0) - 8.0;
+    let now = tabs.iter().position(|(p, _)| *p == y.page).unwrap_or(0);
+    for (k, (page, name)) in tabs.iter().enumerate() {
+        // (TAB on the next one along.)
+        let key = if k == (now + 1) % tabs.len() { "TAB" } else { "" };
+        draw_cell(frame, Vec2::new(x0 + k as f32 * (tab.x + 2.0), 8.0), tab, key, name, if *page == y.page { Lamp::On } else { Lamp::Off });
+    }
     match y.page {
         Page::Hulls => return draw_hulls(frame, app, y),
         Page::Plans => return draw_plans(frame, app, y),
@@ -600,8 +628,10 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     frame.text(Vec2::new(x, top), &format!("FOR {} ({:?}, SIZE {})", slot.name.to_uppercase(), slot.kind, slot.size).to_uppercase(), TEXT);
     let now = in_slot(&y.fit, slot);
     let list = offers(slot);
+    // (The cursor within this slot's list, whatever it was left at.)
+    let choice = y.choice.min(list.len().saturating_sub(1));
     for (k, o) in list.iter().enumerate() {
-        let pick = k == y.choice;
+        let pick = k == choice;
         let mark = if pick { ">" } else if *o == now { "*" } else { " " };
         let (text, sold) = match o.map(|h| c.get(h)) {
             Some(m) => {
@@ -620,7 +650,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         let col = if pick { SELECT } else if *o == now { TEXT } else if sold { DIM } else { DIM.scale(0.6) };
         frame.text(Vec2::new(x, top + (2 + k) as f32 * LINE), &text, col);
     }
-    let pick = list.get(y.choice).copied().flatten();
+    let pick = list.get(choice).copied().flatten();
     if let Some(m) = pick.map(|h| c.get(h)) {
         let brand = content().handle::<universe_sim::world::modules::Brand>(&m.brand).map(|b| content().get(b));
         let (maker, note) = brand.map_or(("UNBRANDED".to_string(), "MADE ANYWHERE".to_string()), |b| (b.name.clone(), b.note.clone()));
@@ -654,7 +684,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         Ok(_) if here.is_some() => {
             let (cost, missing) = build_cost(app, y);
             let text = if missing.is_empty() {
-                format!("BUILT HERE: {} {:.0} CR{}", if cost >= 0.0 { "COSTS" } else { "PAYS" }, cost.abs(), if y.armed { " - SHIFT+ENTER AGAIN TO BUILD" } else { "  (SHIFT+ENTER TWICE)" })
+                format!("BUILT HERE: {} {:.0} CR", if cost >= 0.0 { "COSTS" } else { "PAYS" }, cost.abs())
             } else {
                 format!("NOT HERE: {} (THE REST {:.0} CR)", missing.join(", "), cost)
             };
@@ -668,7 +698,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     if let Ok(s) = &preview {
         let w = ((size.x - x - 24.0) / 2.0).floor();
         let at = Vec2::new(x, top + (list.len() + 8) as f32 * LINE);
-        let h = (size.y - at.y - 12.0 - 2.0 * LINE).max(60.0);
+        let h = (size.y - at.y - 12.0 - 4.5 * LINE).max(60.0);
         let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: Some(&slot.name) };
         crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
         crate::thrusterpanel::turning(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), app.v.time * 0.4, "");

@@ -1534,18 +1534,25 @@ fn observer_cells() -> Vec<(String, String, Lamp)> {
 /// The action grid, lower left: what the situation is, and each key's
 /// cell (lit in use, amber busy, red hot, dim unavailable).
 pub(crate) fn draw_grid(frame: &mut Frame, mode: &str, cells: &[(String, String, Lamp)]) {
-    const COLS: usize = 3;
+    draw_panel(frame, &format!("{mode} - INSTRUMENTS"), cells, 3);
+}
+
+/// A panel of action cells (key, name, lamp), `cols` across, bottom left,
+/// under `title`. Its height.
+pub(crate) fn draw_panel(frame: &mut Frame, title: &str, cells: &[(String, String, Lamp)], cols: usize) -> f32 {
+    let cols = cols.max(1);
     // As wide as the longest key and name need.
     let w = cells.iter().map(|(k, l, _)| 8.0 + text_size(k).x + text_size(l).x + 6.0).fold(96.0, f32::max);
     let cell = Vec2::new(w, 14.0);
-    let rows = cells.len().div_ceil(COLS) as f32;
+    let rows = cells.len().div_ceil(cols) as f32;
     let size = frame.size();
     let at = Vec2::new(4.0, size.y - rows * (cell.y + 2.0) - 4.0);
-    frame.text(at - Vec2::new(0.0, LINE), &format!("{mode} - INSTRUMENTS"), HUD);
+    frame.text(at - Vec2::new(0.0, LINE), title, HUD);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
-        let pos = at + Vec2::new((i % COLS) as f32 * (cell.x + 2.0), (i / COLS) as f32 * (cell.y + 2.0));
+        let pos = at + Vec2::new((i % cols) as f32 * (cell.x + 2.0), (i / cols) as f32 * (cell.y + 2.0));
         draw_cell(frame, pos, cell, key, label, *lamp);
     }
+    rows * (cell.y + 2.0) + LINE + 4.0
 }
 
 /// Kills by weapons fire, right side: who destroyed whom, with what (the
