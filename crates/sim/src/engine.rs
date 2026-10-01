@@ -396,6 +396,25 @@ impl View {
         self.nav_marker = c.nav_marker();
         self
     }
+
+    /// The cockpit's part as `before` had it (the cockpit busy just now).
+    pub fn with_cockpit_of(mut self, before: &View) -> View {
+        self.avionics = before.avionics.clone();
+        self.contacts = before.contacts.clone();
+        self.fire = before.fire;
+        self.approach = before.approach.clone();
+        self.plan = before.plan.clone();
+        self.plan_serial = before.plan_serial;
+        self.plan_cost = before.plan_cost;
+        self.plan_every = before.plan_every;
+        self.collision = before.collision.clone();
+        self.collision_at = before.collision_at;
+        self.collision_cost = before.collision_cost;
+        self.following = before.following.clone();
+        self.prediction = before.prediction;
+        self.nav_marker = before.nav_marker.clone();
+        self
+    }
 }
 
 
@@ -444,6 +463,9 @@ pub struct EngineHandle {
     tx: Option<std::sync::mpsc::Sender<Msg>>,
     mailbox: Arc<std::sync::Mutex<Mailbox>>,
     thread: Option<std::thread::JoinHandle<()>>,
+    /// Commands waiting for the cockpit (busy thinking on its own thread):
+    /// the client never waits on it — they go, in order, once it's free.
+    held: std::collections::VecDeque<Command>,
 }
 
 impl EngineHandle {
@@ -451,7 +473,7 @@ impl EngineHandle {
         let mut engine = Engine::new(universe);
         let view = Arc::new(engine.view());
         let charts = engine.charts();
-        EngineHandle { local: Some(engine), cockpit: None, link: None, charts, view, view_at: std::time::Instant::now(), tx: None, mailbox: Default::default(), thread: None }
+        EngineHandle { local: Some(engine), cockpit: None, link: None, charts, view, view_at: std::time::Instant::now(), tx: None, mailbox: Default::default(), thread: None, held: Default::default() }
     }
 
     pub fn charts(&self) -> Arc<Charts> {
@@ -540,14 +562,37 @@ impl EngineHandle {
     }
 
     pub fn send(&mut self, c: Command) {
-        // The cockpit's commands go to it, here.
-        let c = match &self.cockpit {
-            Some(k) => match self.cockpit_command(k.clone(), c) {
-                Some(c) => c,
-                None => return,
-            },
-            None => c,
-        };
+        self.held.push_back(c);
+        self.flush();
+    }
+
+    /// The commands held, in order, as far as the cockpit is free to take
+    /// them (never waiting on it: it may be busy thinking).
+    fn flush(&mut self) {
+        while let Some(c) = self.held.pop_front() {
+            // The cockpit's commands go to it, here; the rest on to the world.
+            let c = match self.cockpit.clone() {
+                Some(k) => {
+                    let mut cockpit = match k.try_lock() {
+                        Ok(g) => g,
+                        Err(std::sync::TryLockError::Poisoned(p)) => p.into_inner(),
+                        Err(std::sync::TryLockError::WouldBlock) => {
+                            self.held.push_front(c);
+                            return;
+                        }
+                    };
+                    match self.cockpit_command(&mut cockpit, c) {
+                        Some(c) => c,
+                        None => continue,
+                    }
+                }
+                None => c,
+            };
+            self.deliver(c);
+        }
+    }
+
+    fn deliver(&mut self, c: Command) {
         match (&mut self.local, &self.tx) {
             (Some(engine), _) => engine.apply(c),
             (None, Some(tx)) => {
@@ -559,13 +604,12 @@ impl EngineHandle {
 
     /// Carry out a command meant for the client's cockpit (None), or hand it
     /// back for the engine.
-    fn cockpit_command(&mut self, k: Arc<std::sync::Mutex<crate::cockpit::Cockpit>>, c: Command) -> Option<Command> {
+    fn cockpit_command(&mut self, k: &mut crate::cockpit::Cockpit, c: Command) -> Option<Command> {
         if let Command::RouteRandom { seed, stops } = c {
             let stops = self.call(move |u| u.settler_route(seed, stops))?;
-            k.lock().unwrap_or_else(|e| e.into_inner()).route_set(stops);
+            k.route_set(stops);
             return None;
         }
-        let mut k = k.lock().unwrap_or_else(|e| e.into_inner());
         match c {
             Command::Ship(c) => k.command(&c),
             Command::Throttle { delta, set } => k.throttle(delta, set),
@@ -639,11 +683,17 @@ impl EngineHandle {
 
     /// Take the newest view, if there's one since the last; true if so.
     pub fn poll(&mut self) -> bool {
+        self.flush();
         let fresh = self.mailbox.lock().unwrap_or_else(|e| e.into_inner()).view.take();
         match fresh {
             Some(v) => {
+                // (The cockpit busy thinking: its displays as they last were.)
                 let v = match &self.cockpit {
-                    Some(k) => v.with_cockpit(Some(&k.lock().unwrap_or_else(|e| e.into_inner()))),
+                    Some(k) => match k.try_lock() {
+                        Ok(c) => v.with_cockpit(Some(&c)),
+                        Err(std::sync::TryLockError::Poisoned(p)) => v.with_cockpit(Some(&p.into_inner())),
+                        Err(std::sync::TryLockError::WouldBlock) => v.with_cockpit_of(&self.view),
+                    },
                     None => v,
                 };
                 self.view = Arc::new(v);

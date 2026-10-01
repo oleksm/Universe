@@ -22,8 +22,9 @@ pub const STARTING_HULL: &str = "hull.cobra";
 pub struct ClassSpec {
     pub key: String,
     pub name: String,
-    /// Its shape (content key).
+    /// Its shape (content key), and the shape itself.
     pub shape: String,
+    pub shape_ref: crate::content::Handle<crate::shape::Shape>,
     /// Mass without fuel or cargo (kg).
     pub dry_mass: f64,
     /// Fuel tank (kg), and the most cargo the hold carries (kg).
@@ -109,7 +110,7 @@ impl HullDef {
     }
 
     /// The hull, on `shape`: each thruster at its nozzle, and what they add up to.
-    pub(crate) fn build(self, shape: &crate::shape::Shape) -> Result<ClassSpec, String> {
+    pub(crate) fn build(self, shape_ref: crate::content::Handle<crate::shape::Shape>, shape: &crate::shape::Shape) -> Result<ClassSpec, String> {
         let mut thrusters = Vec::new();
         for t in self.thrusters {
             let n = shape.node(&t.nozzle).filter(|n| n.role == crate::shape::Role::Nozzle).ok_or_else(|| format!("no nozzle '{}' on {}", t.nozzle, shape.key))?;
@@ -130,6 +131,7 @@ impl HullDef {
             key: self.key,
             name: self.name,
             shape: self.shape,
+            shape_ref,
             dry_mass: self.dry_mass,
             fuel_capacity: self.fuel_capacity,
             hold_capacity: self.hold_capacity,
@@ -150,8 +152,7 @@ impl HullDef {
 impl ClassSpec {
     /// Its shape.
     pub fn shape(&self) -> &'static crate::shape::Shape {
-        let c = crate::content::content();
-        c.get(c.handle(&self.shape).expect("every hull's shape is in the content (checked at load)"))
+        crate::content::content().get(self.shape_ref)
     }
 }
 
@@ -476,7 +477,7 @@ impl Ship {
     pub fn rigid(&self) -> RigidBody {
         // Drag in air (none in the hyperdrive's field).
         let ballistic = if self.hyperdrive { 0.0 } else { self.mass() / self.spec().drag_area };
-        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: self.spec().radius, ballistic }
+        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: self.spec().radius, parts: &self.spec().shape().spheres, ballistic }
     }
 
     /// Take the kernel's word for where the ship is and how it moves.

@@ -243,7 +243,8 @@ mod tests {
                 _ => None,
             });
             let (closing, damage) = struck.unwrap_or_else(|| panic!("{speed} m/s: no strike in {:?}", p.events));
-            assert!((closing - speed).abs() < 0.5, "struck at {closing}");
+            // (Its hull touches where it's nearest the rock, a little aslant.)
+            assert!((closing - speed).abs() < 0.1 * speed, "struck at {closing}");
             let expected = 0.5 * p.ship.mass() * speed * speed * (1.0 - RESTITUTION * RESTITUTION) / p.ship.spec().hull_strength;
             assert!((damage - expected).abs() < expected * 0.3, "{damage} vs {expected}");
             assert_eq!(!p.crashed(), survives, "{speed} m/s: {:?}", p.events);

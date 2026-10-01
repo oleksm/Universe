@@ -226,7 +226,28 @@ pub fn surface_contact<B: OnRails>(bodies: &[B], i: usize, t: f64, positions: &[
 /// The first fact for `body` after a substep of `h` from `prev`, ending at `t`
 /// with the rail bodies at `positions`: ring openings and tubes first, then
 /// solids, each in body order.
+/// A body with `parts` touches solids by each of its spheres, where each is
+/// now and as it moves (its spin included); passing a ring is decided by its
+/// centre's path.
 pub fn detect<B: OnRails>(bodies: &[B], t: f64, positions: &[DVec3], prev: DVec3, body: &RigidBody, h: f64) -> Option<Fact> {
+    if let Some(f) = rings(bodies, t, positions, prev, body, h) {
+        return Some(f);
+    }
+    if body.parts.is_empty() {
+        return solids(bodies, t, positions, body.position, body.velocity, body.radius);
+    }
+    // (Nothing within reach of the whole shape: nothing touched.)
+    let bound = body.parts.iter().map(|s| s.at.length() + s.radius).fold(0.0, f64::max);
+    solids(bodies, t, positions, body.position, body.velocity, bound)?;
+    let spin = body.orientation * body.angular_velocity;
+    body.parts.iter().find_map(|s| {
+        let off = body.orientation * s.at;
+        solids(bodies, t, positions, body.position + off, body.velocity + spin.cross(off), s.radius)
+    })
+}
+
+/// Ring openings and tubes, for the body's centre path.
+fn rings<B: OnRails>(bodies: &[B], t: f64, positions: &[DVec3], prev: DVec3, body: &RigidBody, h: f64) -> Option<Fact> {
     let (pos, vel) = (body.position, body.velocity);
     for (i, b) in bodies.iter().enumerate() {
         let Collider::Ring(ring) = &b.rail().collider else { continue };
@@ -239,18 +260,23 @@ pub fn detect<B: OnRails>(bodies: &[B], t: f64, positions: &[DVec3], prev: DVec3
             return Some(fact);
         }
     }
+    None
+}
+
+/// The solids a sphere of `radius` at `pos`, moving at `vel`, touches: the first, in body order.
+fn solids<B: OnRails>(bodies: &[B], t: f64, positions: &[DVec3], pos: DVec3, vel: DVec3, radius: f64) -> Option<Fact> {
     for (i, b) in bodies.iter().enumerate() {
         let contact = match &b.rail().collider {
             Collider::None | Collider::Ring(_) => None,
             Collider::Polytope(p) => {
                 // Bounding sphere first; the exact shape only when inside it.
-                if positions[i].distance(pos) < p.scale * p.bound + body.radius {
-                    p.contact(i, &Frame::of(bodies, i, t, positions), pos, vel, body.radius)
+                if positions[i].distance(pos) < p.scale * p.bound + radius {
+                    p.contact(i, &Frame::of(bodies, i, t, positions), pos, vel, radius)
                 } else {
                     None
                 }
             }
-            Collider::Surface => surface_contact(bodies, i, t, positions, pos, vel, body.radius),
+            Collider::Surface => surface_contact(bodies, i, t, positions, pos, vel, radius),
         };
         if let Some(c) = contact {
             return Some(Fact::Contact(c));

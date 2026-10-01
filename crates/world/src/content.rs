@@ -248,7 +248,7 @@ impl Content {
                 .map(|d| {
                     let key = d.key().to_string();
                     let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("hulls.ron '{key}': no shape '{}'", d_shape(&d)))?;
-                    d.build(shapes.get(shape)).map_err(|e| format!("hulls.ron '{key}': {e}"))
+                    d.build(shape, shapes.get(shape)).map_err(|e| format!("hulls.ron '{key}': {e}"))
                 })
                 .collect::<Result<_, String>>()?,
         )?;

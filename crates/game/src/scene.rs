@@ -690,11 +690,16 @@ impl Guide {
             from_end[i] = from_end[i + 1] + body[i].distance(body[i + 1]);
         }
         self.left = from_end[0];
+        // (A path that isn't a number — a planner gone wrong — guides nowhere.)
+        if !self.left.is_finite() || even.is_some_and(|g| !(g.is_finite() && g > 0.0)) {
+            self.clear();
+            return;
+        }
         if even.is_some() {
             self.frames.clear();
         }
         let mut i = n - 2;
-        for k in 0.. {
+        for k in 0..4096 {
             let (d, gap) = match even {
                 Some(g) => (k as f64 * g, g),
                 None => rung(k),

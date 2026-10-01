@@ -204,8 +204,11 @@ pub fn scan(app: &App) -> Option<Scan> {
         .or_else(|| rocks().filter(|&i| gap(i) < SCAN_RANGE).min_by(|&a, &b| gap(a).total_cmp(&gap(b))))?;
     let b = &bodies[i];
     let center = positions[i] + shift;
-    let surface = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(ship - center);
-    let gap = ship.distance(center) - b.surface_radius_at(center, ship, t) - universe_sim::world::ship::SHIP_RADIUS;
+    // Its surface under us, as it turns (the spin at the surface, not
+    // carried out to us: from afar, that would be absurd).
+    let ground = b.surface_radius_at(center, ship, t);
+    let surface = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross((ship - center).normalize_or_zero() * ground);
+    let gap = ship.distance(center) - ground - universe_sim::world::ship::SHIP_RADIUS;
     Some(Scan { rock: b.rock.clone()?, name: b.name.to_uppercase(), mass: b.mass, radius: b.rail.radius, day: b.rail.day, center, gap, drift: (app.ship.velocity - surface).length() })
 }
 

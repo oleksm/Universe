@@ -423,6 +423,41 @@ pub fn apply(app: &mut App, name: &str) {
                 app.observer.pitch = 0.9;
             }
         }
+        "hangrepro" | "hangrepro2" => {
+            // As reported: in Reat, 117 km over a starport and coming down,
+            // combat mode, a pirate near, a rock still locked from home.
+            app.mode = Mode::Pilot;
+            let u = app.engine.universe();
+            let reat = (0..u.world.galaxy.stars.len()).find(|&i| u.world.system(i).name == "Reat").expect("Reat");
+            let rsys = u.world.system(reat);
+            let port = rsys.spaceports.iter().position(|_| true).expect("a port");
+            u.avionics_mut().rock_lock = Some((0, sys.bodies.len() + 80));
+            let mut s = u.world.ship_on(reat, universe_sim::world::Facility::Spaceport(port), 0);
+            let rpos = u.world.rails_now(reat);
+            let pb = rsys.spaceports[port].body;
+            let up = (s.position - rpos[pb]).normalize();
+            s.state = ShipState::Flying;
+            s.position += up * 117_000.0;
+            s.velocity = rsys.velocity(pb, u.world.time) - up * 30.0;
+            u.ship = s;
+            u.ship_system = reat;
+            // A pirate 3 km off.
+            let mut p = u.ship.clone();
+            p.position += up.any_orthonormal_vector() * 3_000.0;
+            u.crafts[0].ship = p;
+            u.crafts[0].system = reat;
+            u.pilots()[0].avionics.pirate = true;
+            u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
+            for _ in 0..300 {
+                u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            }
+            if name == "hangrepro" {
+                u.cockpit().lock_contact(0);
+            } else {
+                u.avionics_mut().rock_lock = Some((0, rsys.bodies.len() + 80));
+            }
+            u.set_nav_target(Some(NavTarget::Spaceport(port)));
+        }
         "sunclose" => {
             // A tenth of an AU from the star, facing it.
             app.mode = Mode::Pilot;

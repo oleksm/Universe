@@ -57,6 +57,8 @@ pub struct Shape {
     pub nodes: Vec<Node>,
     /// Its solid, at a uniform density of 1.
     pub solid: MassProperties,
+    /// Its shape for contact: spheres covering it (empty: a body's own radius).
+    pub spheres: Vec<universe_physics::Sphere>,
 }
 
 impl Shape {
@@ -67,6 +69,59 @@ impl Shape {
     pub fn node(&self, name: &str) -> Option<&Node> {
         self.nodes.iter().find(|n| n.name == name)
     }
+}
+
+/// Fitted contact spheres stand this far apart across a shape's plan (m).
+pub const SPHERE_SPACING: f64 = 7.0;
+
+/// Spheres covering a convex `mesh`, for contact: on a grid `g` apart across
+/// its plan (x, z), one per column through it, centred in the column's
+/// height and big enough to take in its whole cell, top to bottom.
+pub fn fit_spheres(mesh: &Mesh, g: f64) -> Vec<universe_physics::Sphere> {
+    // The hull's faces as planes: n·p ≤ d inside.
+    let planes: Vec<(DVec3, f64)> = mesh
+        .faces
+        .iter()
+        .filter_map(|f| {
+            let (a, b, c) = (mesh.points[f[0] as usize], mesh.points[f[1] as usize], mesh.points[f[2] as usize]);
+            let n = (b - a).cross(c - a).try_normalize()?;
+            Some((n, n.dot(a)))
+        })
+        .collect();
+    // The hull's height along the vertical line at (x, z), if it meets it.
+    let column = |x: f64, z: f64| -> Option<(f64, f64)> {
+        let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
+        for &(n, d) in &planes {
+            let rest = d - n.x * x - n.z * z;
+            if n.y > 1e-9 {
+                hi = hi.min(rest / n.y);
+            } else if n.y < -1e-9 {
+                lo = lo.max(rest / n.y);
+            } else if rest < 0.0 {
+                return None;
+            }
+        }
+        (hi > lo).then_some((lo, hi))
+    };
+    let (min, max) = mesh.extent();
+    let reach = g * std::f64::consts::FRAC_1_SQRT_2;
+    let mut out = Vec::new();
+    let (nx, nz) = (((max.x - min.x) / g).ceil() as i64, ((max.z - min.z) / g).ceil() as i64);
+    for i in 0..nx {
+        for k in 0..nz {
+            let (x, z) = (min.x + (i as f64 + 0.5) * g, min.z + (k as f64 + 0.5) * g);
+            // The hull's height across the cell: at its centre and corners
+            // (with a margin for what's between).
+            let range = [(0.0, 0.0), (0.5, 0.5), (-0.5, 0.5), (0.5, -0.5), (-0.5, -0.5)]
+                .iter()
+                .filter_map(|&(dx, dz)| column(x + dx * g, z + dz * g))
+                .fold(None, |acc: Option<(f64, f64)>, (lo, hi)| Some(acc.map_or((lo, hi), |(a, b)| (a.min(lo), b.max(hi)))));
+            let Some((lo, hi)) = range else { continue };
+            let half = 0.5 * (hi - lo);
+            out.push(universe_physics::Sphere { at: DVec3::new(x, 0.5 * (lo + hi), z), radius: (half * half + reach * reach).sqrt() + 0.3 });
+        }
+    }
+    out
 }
 
 type Point = (f64, f64, f64);
@@ -92,6 +147,9 @@ pub(crate) struct ShapeDef {
     loops: Vec<Vec<Point>>,
     #[serde(default)]
     nodes: Vec<NodeDef>,
+    /// Spheres covering it, for contact: (centre, radius).
+    #[serde(default)]
+    spheres: Vec<(Point, f64)>,
 }
 
 fn unit() -> f64 {
@@ -140,7 +198,17 @@ impl ShapeDef {
             nodes.push(Node { name: n.name, role, at: point(n.at) * s - c, dir });
         }
         let loops = self.loops.into_iter().map(|l| l.into_iter().map(|p| point(p) * s - c).collect()).collect();
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid })
+        let mut spheres = Vec::new();
+        for (at, r) in self.spheres {
+            if !(r.is_finite() && r > 0.0) {
+                return Err(format!("a contact sphere's radius must be positive ({r})"));
+            }
+            spheres.push(universe_physics::Sphere { at: point(at) * s - c, radius: r * s });
+        }
+        if spheres.is_empty() {
+            spheres = fit_spheres(&mesh, SPHERE_SPACING);
+        }
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres })
     }
 }
 
@@ -163,6 +231,28 @@ mod tests {
         assert!(cobra.node("cockpit").is_some());
         // (Its collision is still the hull's 12 m sphere: the shape takes over in T1.)
         assert!(crate::ship::cobra().radius < cobra.mesh.bound());
+    }
+
+    #[test]
+    fn the_cobras_contact_spheres_cover_its_hull() {
+        let cobra = crate::ship::cobra().shape();
+        let s = &cobra.spheres;
+        // Its surface, sampled: corners, edge middles, and points across each face.
+        let mut samples: Vec<DVec3> = cobra.mesh.points.clone();
+        for e in &cobra.mesh.edges {
+            samples.push((cobra.mesh.points[e[0] as usize] + cobra.mesh.points[e[1] as usize]) * 0.5);
+        }
+        for f in &cobra.mesh.faces {
+            let (a, b, c) = (cobra.mesh.points[f[0] as usize], cobra.mesh.points[f[1] as usize], cobra.mesh.points[f[2] as usize]);
+            for (u, v) in [(1.0 / 3.0, 1.0 / 3.0), (0.6, 0.2), (0.2, 0.6), (0.2, 0.2)] {
+                samples.push(a + (b - a) * u + (c - a) * v);
+            }
+        }
+        let worst = samples.iter().map(|p| s.iter().map(|q| p.distance(q.at) - q.radius).fold(f64::INFINITY, f64::min)).fold(f64::NEG_INFINITY, f64::max);
+        let fattest = s.iter().map(|q| q.radius).fold(0.0, f64::max);
+        eprintln!("{} spheres, the largest {fattest:.1} m; the surface's worst point {worst:+.2} m from one", s.len());
+        assert!(worst <= 0.0, "a point of the hull outside every sphere by {worst:.2} m");
+        assert!(s.len() < 50, "{} spheres", s.len());
     }
 
     fn def(source: &str) -> ShapeDef {

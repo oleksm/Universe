@@ -86,7 +86,8 @@ fn standing(app: &App) -> Option<Standing> {
             let ground = b.surface_radius_at(at, ship, t);
             let spot = at + out * ground;
             let w = b.angular_velocity();
-            let surface_vel = vel + w.cross(ship - at);
+            // (The surface under us as it turns: the spin at the surface.)
+            let surface_vel = vel + w.cross(out * ground);
             let gap_now = ship.distance(at) - ground - SHIP_RADIUS;
             let drift = (app.ship.velocity - surface_vel).length();
             rock = Some((gap_now, drift, spot, out));
