@@ -21,10 +21,12 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::goods::{Category, GoodsKind, MarketRules, OreEntry, PlaceDef, Recipe};
+use crate::shape::Shape;
 use crate::ship::ClassSpec;
 
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
+    ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
     ("ores.ron", include_str!("../../../content/base/ores.ron")),
@@ -159,6 +161,7 @@ impl<T: Entry> Registry<T> {
 
 /// The loaded content.
 pub struct Content {
+    pub shapes: Registry<Shape>,
     pub hulls: Registry<ClassSpec>,
     pub goods: Registry<GoodsKind>,
     pub ores: Registry<OreEntry>,
@@ -235,7 +238,16 @@ impl Content {
             }
         }
         // Each kind in turn, resolving references to the kinds before it.
-        let hulls = Registry::build(Self::defs::<ClassSpec>(&packs, "hulls.ron")?)?;
+        let shapes = Registry::build(Self::defs::<crate::shape::ShapeDef>(&packs, "shapes.ron")?.into_iter().map(|d| {
+            let key = d.key.clone();
+            d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
+        }).collect::<Result<_, String>>()?)?;
+        let hulls: Registry<ClassSpec> = Registry::build(Self::defs::<ClassSpec>(&packs, "hulls.ron")?)?;
+        for (_, h) in hulls.iter() {
+            if resolve(&shapes, &aliases, &h.shape).is_none() {
+                return Err(format!("hulls.ron '{}': no shape '{}'", h.key, h.shape));
+            }
+        }
         let goods: Registry<GoodsKind> = Registry::build(Self::defs(&packs, "goods.ron")?)?;
         let kind = |key: &str, whose: &str| resolve(&goods, &aliases, key).ok_or_else(|| format!("{whose}: no kind of goods '{key}'"));
         let ores = Registry::build(
@@ -264,7 +276,7 @@ impl Content {
         let rules = Self::single::<crate::goods::MarketRulesDef>(&packs, "markets.ron")?;
         let markets = MarketRules { bans: rules.bans.iter().map(|(k, p)| Ok((kind(k, "markets.ron")?, *p))).collect::<Result<_, String>>()? };
         let fuel = kind("goods.fuel", "the tanks")?;
-        let c = Content { hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let c = Content { shapes, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -290,7 +302,7 @@ impl Content {
     /// What must hold across the content as a whole.
     fn check(&self) -> Result<(), String> {
         for (old, new) in &self.aliases {
-            let found = self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
+            let found = self.shapes.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
             if !found {
                 return Err(format!("alias '{old}' -> '{new}': no such entry"));
             }
@@ -388,6 +400,7 @@ entry!(GoodsKind, "goods.ron", goods, |k| {
     Ok(())
 });
 entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
+entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {
         positive("a rate", *t)?;
@@ -443,6 +456,10 @@ impl Entry for ClassSpec {
 mod tests {
     use super::*;
 
+    fn base(file: &str) -> &'static str {
+        BASE.iter().find(|(f, _)| *f == file).unwrap().1
+    }
+
     #[test]
     fn the_base_pack_loads_and_its_hulls_are_sound() {
         let c = Content::load(&[]).expect("the base pack loads");
@@ -456,7 +473,7 @@ mod tests {
     fn an_override_pack_replaces_by_key_adds_and_renames() {
         let dir = std::env::temp_dir().join(format!("universe-pack-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
-        let base = BASE[0].1;
+        let base = base("hulls.ron");
         // (The entry: from the parenthesis that opens it, before its key.)
         let open = base[..base.find("key:").unwrap()].rfind('(').unwrap();
         let entry = &base[open..=base.rfind(')').unwrap()];
@@ -479,7 +496,7 @@ mod tests {
     fn unsound_content_is_refused_with_the_reason() {
         let dir = std::env::temp_dir().join(format!("universe-bad-pack-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(dir.join("hulls.ron"), BASE[0].1.replacen("main_thrust: 2.7e6", "main_thrust: 0.0", 1)).unwrap();
+        std::fs::write(dir.join("hulls.ron"), base("hulls.ron").replacen("main_thrust: 2.7e6", "main_thrust: 0.0", 1)).unwrap();
         let err = Content::load(std::slice::from_ref(&dir)).err().expect("refused");
         let _ = std::fs::remove_dir_all(&dir);
         assert!(err.contains("hull.cobra") && err.contains("main drive"), "{err}");

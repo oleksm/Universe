@@ -77,3 +77,8 @@ thrusters that define how it handles, brands.
    into it; a slot for the glTF loader.
 
 Each step leaves the game as it was — same seed, same galaxy, same numbers — with the tests green.
+All five are done.
+
+**Known gap, closed in T1:** a ship's collision is still its hull's sphere (`radius`, 12 m for the
+Cobra), while its shape is 52 m across the wings. T1 makes the shape the collider and derives the
+mass properties from it.

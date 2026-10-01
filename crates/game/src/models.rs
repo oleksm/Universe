@@ -1,5 +1,7 @@
 use universe_engine::glam::Vec3;
 use universe_engine::{Mesh, WireModel};
+use universe_sim::world::content::content;
+use universe_sim::world::shape::Shape;
 
 pub struct Models {
     pub rocky: Mesh,
@@ -18,27 +20,26 @@ impl Models {
             giant: Mesh::new(WireModel::globe(8, 13, 3)), // many parallels read as cloud bands
             moon: Mesh::new(WireModel::globe(8, 5, 4)),
             star: Mesh::new(WireModel::globe(16, 9, 3)),
-            station: Mesh::new(coriolis()),
-            ship: Mesh::new(cobra()),
+            station: Mesh::new(wire(shape("shape.coriolis"))),
+            ship: Mesh::new(wire(universe_sim::world::ship::cobra().shape())),
             gate: Mesh::new(gate_ring()),
         }
     }
 }
 
-/// Coriolis station: a cuboctahedron (all permutations of (±1, ±1, 0)) with a
-/// docking slot. Unit size; scale to ~500 m.
-fn coriolis() -> WireModel {
-    let mut points = Vec::new();
-    for axis in 0..3 {
-        for (a, b) in [(1.0, 1.0), (1.0, -1.0), (-1.0, 1.0), (-1.0, -1.0)] {
-            let mut v = [0.0f32; 3];
-            v[(axis + 1) % 3] = a;
-            v[(axis + 2) % 3] = b;
-            points.push(Vec3::from_array(v));
-        }
+fn shape(key: &str) -> &'static Shape {
+    let c = content();
+    c.get(c.handle(key).unwrap_or_else(|| panic!("the content has no shape '{key}'")))
+}
+
+/// A shape as the renderer draws it: its mesh (faces hide what's behind,
+/// edges are drawn) and its detail lines.
+pub fn wire(s: &Shape) -> WireModel {
+    let v = |p: universe_engine::glam::DVec3| p.as_vec3();
+    let mut m = WireModel { positions: s.mesh.points.iter().map(|&p| v(p)).collect(), edges: s.mesh.edges.clone(), faces: s.mesh.faces.clone(), colors: Vec::new() };
+    for l in &s.loops {
+        m.add_loop(&l.iter().map(|&p| v(p)).collect::<Vec<Vec3>>());
     }
-    let mut m = WireModel::convex_hull(&points);
-    m.add_loop(&[Vec3::new(-0.3, 1.0, -0.08), Vec3::new(0.3, 1.0, -0.08), Vec3::new(0.3, 1.0, 0.08), Vec3::new(-0.3, 1.0, 0.08)]);
     m
 }
 
@@ -67,40 +68,6 @@ fn gate_ring() -> WireModel {
                 m.edges.push([v(k, s), v(k, s + 1)]);
             }
         }
-    }
-    m
-}
-
-/// A Cobra Mk III-style trader, in meters. Forward is -Z.
-fn cobra() -> WireModel {
-    let s = 20.0;
-    let points: Vec<Vec3> = [
-        [-0.35, 0.0, -1.0],
-        [0.35, 0.0, -1.0],
-        [-0.35, -0.12, -0.7],
-        [0.35, -0.12, -0.7],
-        [-0.45, 0.28, 0.8],
-        [0.45, 0.28, 0.8],
-        [-1.3, -0.02, 0.8],
-        [1.3, -0.02, 0.8],
-        [-0.5, -0.22, 0.8],
-        [0.5, -0.22, 0.8],
-        [-0.3, 0.2, 0.0],
-        [0.3, 0.2, 0.0],
-    ]
-    .iter()
-    .map(|&p| Vec3::from_array(p) * s)
-    .collect();
-    let mut m = WireModel::convex_hull(&points);
-    // Engine nozzles on the rear plate.
-    for x in [-1.0f32, 1.0] {
-        let (x0, x1) = (x * 0.1 * s, x * 0.35 * s);
-        m.add_loop(&[
-            Vec3::new(x0, -0.1 * s, 0.8 * s),
-            Vec3::new(x1, -0.1 * s, 0.8 * s),
-            Vec3::new(x1, 0.12 * s, 0.8 * s),
-            Vec3::new(x0, 0.12 * s, 0.8 * s),
-        ]);
     }
     m
 }

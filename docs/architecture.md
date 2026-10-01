@@ -496,7 +496,8 @@ ship's pose directly, like tests do — then render.
 | Flight recorder: every ship's last 15 s, incidents with traces | sim: `recorder` |
 | Radar (sweep, blips) | world: `radar` |
 | Gun, laser, hull damage (a hit jams the hyperdrive 15 s); the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
-| Content: packs (base built in, overrides from `UNIVERSE_CONTENT`), registry with typed handles, keys and aliases, validation at load, content hash (see `docs/content.md`): hulls, kinds of goods, ores, recipes, kinds of place, market rules | world: `content`; `content/base/` |
+| Content: packs (base built in, overrides from `UNIVERSE_CONTENT`), registry with typed handles, keys and aliases, validation at load, content hash (see `docs/content.md`): shapes, hulls, kinds of goods, ores, recipes, kinds of place, market rules; saves by key with a version and the content hash |
+| Shapes: one geometry for physics and rendering — mesh, convex hull, exact mass properties (volume, centre of mass, inertia), silhouette; named nodes (mounts, nozzles, gear, docks, cockpit) | physics: `mesh`; world: `shape` | world: `content`; `content/base/` |
 | SAM turrets (seeded per station/gate/spaceport, 6 km reach, fire on aggressors with a clear line), coverage | world: `turrets` |
 | SAM missiles: each turret's launcher (2 in the air, 10 s reload, 80 km), motor 6 g for 60 s, zero-effort-miss guidance, proximity fuse 40 m, 15 MJ blast; self-destruct on losing the target. The gunner names the target (`TurretCommand::launch`) | world: `missiles`, `weapons::fly_missiles`; sim: `pilots::aim_guns` |
 | Shelter: pirates keep out of turret reach, prey under fire runs for a defended place | avionics: `hunter`, sim: `combat::flee`, `traffic::sightings` |

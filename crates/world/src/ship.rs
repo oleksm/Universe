@@ -23,6 +23,8 @@ pub const STARTING_HULL: &str = "hull.cobra";
 pub struct ClassSpec {
     pub key: String,
     pub name: String,
+    /// Its shape (content key).
+    pub shape: String,
     /// Mass without fuel or cargo (kg).
     pub dry_mass: f64,
     /// Fuel tank (kg), and the most cargo the hold carries (kg).
@@ -42,6 +44,14 @@ pub struct ClassSpec {
     pub drag_area: f64,
     /// Energy that wrecks the hull (J): see `damage`.
     pub hull_strength: f64,
+}
+
+impl ClassSpec {
+    /// Its shape.
+    pub fn shape(&self) -> &'static crate::shape::Shape {
+        let c = crate::content::content();
+        c.get(c.handle(&self.shape).expect("every hull's shape is in the content (checked at load)"))
+    }
 }
 
 /// A hull of the loaded content.

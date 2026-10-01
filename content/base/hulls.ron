@@ -5,6 +5,7 @@
     (
         key: "hull.cobra",
         name: "COBRA MK III",
+        shape: "shape.cobra",
         // The multirole: a fair hold, lands anywhere, holds its own in a fight.
         // 30 m/s² (about 3 g) on the main engine at full load, 6 m/s² on the
         // thrusters, 25 m/s² of lift (enough to hover); a blunt 90 t ship that
