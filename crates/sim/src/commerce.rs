@@ -80,10 +80,11 @@ impl Universe {
     /// The player fills the tank where docked or landed (as its pilot would on arrival).
     pub fn refuel_player(&mut self) {
         let sys = self.world.system(self.ship_system);
-        let Some(market) = docked_at(&sys, &self.ship) else { return };
+        let Some(market) = docked_at(&sys, &self.ship) else {
+            return self.events.push(universe_avionics::Event::Refused { reason: "REFUEL: NOT AT A PORT OR STATION".into() });
+        };
         let e = match self.refuel(crate::combat::PLAYER, market) {
             Ok((tonnes, credits)) => universe_avionics::Event::Refuelled { tonnes, credits },
-            Err(reason) if reason == "TANK FULL" => return,
             Err(reason) => universe_avionics::Event::Refused { reason: format!("REFUEL: {reason}") },
         };
         self.events.push(e);
@@ -392,7 +393,6 @@ impl crate::universe::Universe {
     pub fn repair_player(&mut self) {
         let e = match self.repair(crate::combat::PLAYER) {
             Ok((credits, hull)) => universe_avionics::Event::Repaired { credits, hull },
-            Err(reason) if reason == "THE HULL IS SOUND" => return,
             Err(reason) => universe_avionics::Event::Refused { reason: format!("REPAIR: {reason}") },
         };
         self.events.push(e);

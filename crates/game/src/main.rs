@@ -491,9 +491,18 @@ impl App {
             self.chase_cam = !self.chase_cam;
         }
         // The hyperdrive is navigation's: nothing fights or digs in hyperspace.
-        // Flight systems: up to fly, down to park (landed).
-        if pressed(input, Act::Systems) && matches!(self.v.ship.state, ShipState::Landed { .. }) {
-            self.engine.send(Command::Ship(ShipCommands { power: Some(!self.v.ship.powered), ..self.v.ship.holding() }));
+        // Docked or landed: the pilot's own business — flight systems up (to
+        // fly) or down (to park), the tank filled, the hull mended.
+        if matches!(self.v.ship.state, ShipState::Landed { .. }) {
+            if pressed(input, Act::Systems) {
+                self.engine.send(Command::Ship(ShipCommands { power: Some(!self.v.ship.powered), ..self.v.ship.holding() }));
+            }
+            if pressed(input, Act::Refuel) {
+                self.engine.send(Command::Refuel);
+            }
+            if pressed(input, Act::Repair) {
+                self.engine.send(Command::Repair);
+            }
         }
         if pressed(input, Act::Hyperdrive) {
             if mode == ShipMode::Nav || self.v.ship.hyperdrive {
@@ -615,14 +624,6 @@ impl App {
             if let Event::Ship(ShipEvent::Hit { .. }) = event {
                 self.hit_age = 0.0;
                 continue;
-            }
-            // Docked or landed at a market: fill the tank (as any pilot does at a stop).
-            if matches!(event, Event::Ship(ShipEvent::Landed { station: true, .. } | ShipEvent::LandedAtPort { .. })) {
-                self.engine.send(Command::Refuel);
-                // And mend the hull, at a station.
-                if matches!(event, Event::Ship(ShipEvent::Landed { station: true, .. })) && self.v.ship.hull < 1.0 {
-                    self.engine.send(Command::Repair);
-                }
             }
             let text = match event {
                 Event::Ship(ShipEvent::Landed { body, station: true }) => format!("DOCKED AT {body}"),

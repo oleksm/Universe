@@ -1389,9 +1389,21 @@ fn action_grid(frame: &mut Frame, app: &App) {
             ],
         ),
         ShipState::Landed { .. } => (
-            "NAV - DOCKED",
+            // Set down: the pilot's own business — power, fuel, repairs.
+            if matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_))) { "DOCKED" } else { "LANDED" },
             vec![
                 b(Act::Systems, if ship.powered { "POWER DOWN" } else { "POWER UP" }, if ship.powered { Lamp::On } else { Lamp::Off }),
+                {
+                    let market = universe_sim::world::traffic::docked_at(&app.view.system, ship).is_some();
+                    let room = ship.spec().fuel_capacity - ship.fuel;
+                    let label = if room < 1.0 { "TANK FULL".to_string() } else if room < 1000.0 { format!("FUEL UP {room:.0} KG") } else { format!("FUEL UP {:.1} T", room / 1000.0) };
+                    b(Act::Refuel, &label, if market && room >= 1.0 { Lamp::Off } else { Lamp::Unavailable })
+                },
+                {
+                    let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
+                    let label = if ship.hull >= 1.0 { "HULL SOUND".to_string() } else { format!("MEND HULL {:.0}%", ship.hull * 100.0) };
+                    b(Act::Repair, &label, if station && ship.hull < 1.0 { Lamp::Off } else { Lamp::Unavailable })
+                },
                 c("S+E", "LIFT OFF", if ship.powered { Lamp::Off } else { Lamp::Unavailable }),
                 b(Act::Autopilot, "AUTOPILOT", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
                 b(Act::Foot, "FOOT", Lamp::Off),

@@ -21,6 +21,8 @@ pub enum Scope {
     Nav,
     Combat,
     Mining,
+    /// Set down: docked at a station or landed.
+    Docked,
     Map,
     Observer,
 }
@@ -30,7 +32,7 @@ impl Scope {
         match self {
             Scope::Global => None,
             Scope::Flight | Scope::Map | Scope::Observer => Some(Scope::Global),
-            Scope::Nav | Scope::Combat | Scope::Mining => Some(Scope::Flight),
+            Scope::Nav | Scope::Combat | Scope::Mining | Scope::Docked => Some(Scope::Flight),
         }
     }
 
@@ -41,6 +43,7 @@ impl Scope {
             Scope::Nav => "NAV MODE",
             Scope::Combat => "COMBAT MODE",
             Scope::Mining => "MINING MODE",
+            Scope::Docked => "DOCKED OR LANDED",
             Scope::Map => "NAVIGATION MAP",
             Scope::Observer => "OBSERVER",
         }
@@ -49,7 +52,7 @@ impl Scope {
     /// The letters it keeps for moving (flying, walking, browsing).
     fn reserved(self) -> &'static str {
         match self {
-            Scope::Flight | Scope::Nav | Scope::Combat | Scope::Mining => "WASDQE",
+            Scope::Flight | Scope::Nav | Scope::Combat | Scope::Mining | Scope::Docked => "WASDQE",
             Scope::Map | Scope::Observer => "WS",
             Scope::Global => "",
         }
@@ -70,7 +73,7 @@ impl Scope {
     }
 }
 
-const ALL_SCOPES: [Scope; 7] = [Scope::Global, Scope::Flight, Scope::Nav, Scope::Combat, Scope::Mining, Scope::Map, Scope::Observer];
+const ALL_SCOPES: [Scope; 8] = [Scope::Global, Scope::Flight, Scope::Nav, Scope::Combat, Scope::Mining, Scope::Docked, Scope::Map, Scope::Observer];
 
 /// The actions that take a letter.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -109,6 +112,8 @@ pub enum Act {
     Home,
     TrackSettler,
     Systems,
+    Refuel,
+    Repair,
 }
 
 /// The table, in the order letters are given out (what's used most first,
@@ -149,6 +154,8 @@ const TABLE: &[(Act, Scope, &str)] = &[
     // (Newer ones last: the keys already learnt stay as they were.)
     (Act::Shipyard, Scope::Global, "SHIPYARD"),
     (Act::Systems, Scope::Flight, "POWER"),
+    (Act::Refuel, Scope::Docked, "FUEL UP"),
+    (Act::Repair, Scope::Docked, "MEND HULL"),
 ];
 
 /// Actions whose key is set, not taken from the name (given out first).
