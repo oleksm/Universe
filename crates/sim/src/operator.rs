@@ -18,7 +18,6 @@ use serde::{Deserialize, Serialize};
 use universe_services::market::{Quote, Side};
 use universe_services::records::Deal;
 use universe_world::charts::Charts;
-use universe_world::ship::HOLD_CAPACITY;
 use universe_world::traffic::facilities;
 use universe_world::{BodyKind, Facility};
 
@@ -145,7 +144,7 @@ pub(crate) fn trade(pilot: &mut Pilot, charts: &Charts, ans: &MarketAnswer, requ
             Some(q) => match q.offer.side {
                 Side::Buys => have.min(q.level.floor().max(0.0) as u32),
                 // A hold nearly full with nothing selling: take the buy-back, at a loss if need be.
-                Side::Sells if q.sell >= paid * MARGIN || ans.cargo > HOLD_CAPACITY * STUCK => have,
+                Side::Sells if q.sell >= paid * MARGIN || ans.cargo > ans.capacity * STUCK => have,
                 Side::Sells => 0,
             },
             None => 0,
@@ -186,7 +185,7 @@ pub(crate) fn trade(pilot: &mut Pilot, charts: &Charts, ans: &MarketAnswer, requ
             })
             .collect();
         margins.sort_by(|a, b| b.0.total_cmp(&a.0));
-        let (mut room, mut money, mut gain, mut buys) = (HOLD_CAPACITY - cargo, credits, 0.0, Vec::new());
+        let (mut room, mut money, mut gain, mut buys) = (ans.capacity - cargo, credits, 0.0, Vec::new());
         for (_, item, buy, margin, most) in margins.into_iter().take(LINES) {
             let units = (room / mass(item)).min(money / buy).min(most).floor();
             if units < 1.0 {

@@ -6,9 +6,6 @@ use glam::DVec3;
 use crate::events::ShipEvent;
 use crate::ship::{Ship, ShipState};
 
-/// Energy the hull absorbs before it fails (J).
-pub const HULL_STRENGTH: f64 = 20.0e6;
-
 /// A hit jams the hyperdrive for this long (game s): under fire, a ship can't
 /// simply jump away.
 pub const HYPER_JAM: f64 = 15.0;
@@ -31,7 +28,7 @@ pub fn hit(ship: &mut Ship, joules: f64, impulse: DVec3, by: usize, cause: &str,
     if !matches!(ship.state, ShipState::Flying | ShipState::Landed { .. }) {
         return;
     }
-    let damage = joules / HULL_STRENGTH;
+    let damage = joules / ship.spec().hull_strength;
     ship.hull = (ship.hull - damage).max(0.0);
     if cause != "COLLISION" {
         ship.hyper_jam = HYPER_JAM;

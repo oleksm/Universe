@@ -10,35 +10,79 @@ use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
 
-/// Ship mass without fuel or cargo (kg).
-pub const DRY_MASS: f64 = 60_000.0;
-/// Fuel tank capacity (kg).
-pub const FUEL_CAPACITY: f64 = 30_000.0;
-/// Main engine thrust (N): 30 m/s^2 (about 3 g) at full load.
-pub const MAIN_THRUST: f64 = 2.7e6;
-/// Translation thrusters (RCS), per axis (N): 6 m/s^2 at full load.
-pub const RCS_THRUST: f64 = 5.4e5;
-/// Belly lift thrusters, pushing along the ship's +Y (N): 25 m/s^2 at full load, enough to hover.
-pub const LIFT_THRUST: f64 = 2.25e6;
-/// Pitch and yaw rate at full stick (rad/s).
-pub const TURN_RATE: f64 = 1.0;
-pub const ROLL_RATE: f64 = 1.8;
-/// Collision radius (m).
+/// A class of ship: what it is built as. Its numbers are its `spec`.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum Class {
+    /// The multirole: a fair hold, lands anywhere, holds its own in a fight.
+    #[default]
+    Cobra,
+}
+
+impl Class {
+    pub fn spec(self) -> &'static ClassSpec {
+        match self {
+            Class::Cobra => &COBRA,
+        }
+    }
+}
+
+/// What a class of ship is built with. Everything about how it flies
+/// follows from these and the physics: its accelerations are its thrusts
+/// over its mass as loaded, so a heavy ship is slow, and one whose lift
+/// can't carry its weight can't hover or land on a big world.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ClassSpec {
+    pub name: &'static str,
+    /// Mass without fuel or cargo (kg).
+    pub dry_mass: f64,
+    /// Fuel tank (kg), and the most cargo the hold carries (kg).
+    pub fuel_capacity: f64,
+    pub hold_capacity: f64,
+    /// Main engine thrust (N); the translation thrusters', per axis (N); the
+    /// belly lift thrusters', along the ship's +Y (N).
+    pub main_thrust: f64,
+    pub rcs_thrust: f64,
+    pub lift_thrust: f64,
+    /// Pitch and yaw rate, and roll rate, at full stick (rad/s).
+    pub turn_rate: f64,
+    pub roll_rate: f64,
+    /// Collision radius (m).
+    pub radius: f64,
+    /// Drag coefficient × frontal area (m²).
+    pub drag_area: f64,
+    /// Energy that wrecks the hull (J): see `damage`.
+    pub hull_strength: f64,
+}
+
+/// The Cobra: 30 m/s² (about 3 g) on the main engine at full load, 6 m/s²
+/// on the thrusters, 25 m/s² of lift (enough to hover); a blunt 90 t ship
+/// that falls at about 150 m/s through sea-level air.
+pub const COBRA: ClassSpec = ClassSpec {
+    name: "COBRA MK III",
+    dry_mass: 60_000.0,
+    fuel_capacity: 30_000.0,
+    hold_capacity: 20_000.0,
+    main_thrust: 2.7e6,
+    rcs_thrust: 5.4e5,
+    lift_thrust: 2.25e6,
+    turn_rate: 1.0,
+    roll_rate: 1.8,
+    radius: SHIP_RADIUS,
+    drag_area: 60.0,
+    hull_strength: 20.0e6,
+};
+
+/// A ship's size as traffic lays out room for it (pads, docking slots,
+/// corridors), and the Cobra's collision radius (m).
 pub const SHIP_RADIUS: f64 = 12.0;
-/// Most cargo the hold carries (kg).
-pub const HOLD_CAPACITY: f64 = 20_000.0;
 /// The drives' exhaust velocity (m/s): a torch drive (a few percent of
 /// light speed), so a tank lasts a day of burning. Each device burns its
 /// thrust / this, in kg/s. (The economy's knob: see `economy`.)
 pub const EXHAUST_VELOCITY: f64 = 1.0e7;
 /// The hyperdrive's draw at full throttle (kg/s), while engaged.
 pub const HYPER_FUEL_FLOW: f64 = 0.2;
-/// Drag coefficient × frontal area (m²): a blunt 90 t ship falls at about
-/// 150 m/s through sea-level air.
-pub const DRAG_AREA: f64 = 60.0;
-
 fn full_tank() -> f64 {
-    FUEL_CAPACITY
+    COBRA.fuel_capacity
 }
 
 fn intact() -> f64 {
@@ -94,6 +138,9 @@ pub struct Ship {
     /// Translation thruster setting, body frame, each axis -1..1 (x right, y up, z back), as last commanded.
     #[serde(default)]
     pub rcs: DVec3,
+    /// What it's built as (see `Class`).
+    #[serde(default)]
+    pub class: Class,
     /// Fuel on board (kg).
     #[serde(default = "full_tank")]
     pub fuel: f64,
@@ -177,7 +224,8 @@ impl Ship {
             hyperdrive: false,
             state: ShipState::Flying,
             rcs: DVec3::ZERO,
-            fuel: FUEL_CAPACITY,
+            fuel: COBRA.fuel_capacity,
+            class: Class::Cobra,
             cargo: 0.0,
             excavator: false,
             hopper: 0.0,
@@ -201,22 +249,32 @@ impl Ship {
 
     /// Total mass right now (kg).
     pub fn mass(&self) -> f64 {
-        DRY_MASS + self.fuel + self.cargo + self.hopper
+        self.spec().dry_mass + self.fuel + self.cargo + self.hopper
+    }
+
+    /// What its class is built with.
+    pub fn spec(&self) -> &'static ClassSpec {
+        self.class.spec()
+    }
+
+    /// Room left in the hold (kg).
+    pub fn hold_room(&self) -> f64 {
+        (self.spec().hold_capacity - self.cargo - self.hopper).max(0.0)
     }
 
     /// Main engine acceleration at full throttle (m/s^2): thrust / mass.
     pub fn main_accel(&self) -> f64 {
-        MAIN_THRUST / self.mass()
+        self.spec().main_thrust / self.mass()
     }
 
     /// Translation thruster acceleration, per axis (m/s^2).
     pub fn side_accel(&self) -> f64 {
-        RCS_THRUST / self.mass()
+        self.spec().rcs_thrust / self.mass()
     }
 
     /// Lift thruster acceleration (m/s^2).
     pub fn lift_accel(&self) -> f64 {
-        LIFT_THRUST / self.mass()
+        self.spec().lift_thrust / self.mass()
     }
 
     /// Body-frame acceleration from a thruster command (each axis -1..1).
@@ -248,8 +306,8 @@ impl Ship {
     /// The ship as the physics kernel sees it.
     pub fn rigid(&self) -> RigidBody {
         // Drag in air (none in the hyperdrive's field).
-        let ballistic = if self.hyperdrive { 0.0 } else { self.mass() / DRAG_AREA };
-        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: SHIP_RADIUS, ballistic }
+        let ballistic = if self.hyperdrive { 0.0 } else { self.mass() / self.spec().drag_area };
+        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: self.spec().radius, ballistic }
     }
 
     /// Take the kernel's word for where the ship is and how it moves.
@@ -301,8 +359,9 @@ impl Ship {
     /// the exhaust velocity.
     pub fn fuel_flow(&self) -> f64 {
         let c = self.rcs.clamp(DVec3::splat(-1.0), DVec3::ONE);
-        let lift = if c.y > 0.0 { LIFT_THRUST } else { RCS_THRUST };
-        (self.throttle.clamp(0.0, 1.0) * MAIN_THRUST + (c.x.abs() + c.z.abs()) * RCS_THRUST + c.y.abs() * lift) / EXHAUST_VELOCITY
+        let s = self.spec();
+        let lift = if c.y > 0.0 { s.lift_thrust } else { s.rcs_thrust };
+        (self.throttle.clamp(0.0, 1.0) * s.main_thrust + (c.x.abs() + c.z.abs()) * s.rcs_thrust + c.y.abs() * lift) / EXHAUST_VELOCITY
     }
 
     /// `dt` seconds of the drives as set: the fuel they burn.
@@ -312,7 +371,8 @@ impl Ship {
 
     /// Attitude control: rotate toward the commanded rates over `dt` seconds.
     pub fn steer(&mut self, c: &Controls, dt: f64) {
-        let target = DVec3::new(c.pitch * TURN_RATE, c.yaw * TURN_RATE, c.roll * ROLL_RATE);
+        let s = self.spec();
+        let target = DVec3::new(c.pitch * s.turn_rate, c.yaw * s.turn_rate, c.roll * s.roll_rate);
         let k = 1.0 - (-6.0 * dt).exp();
         self.angular_velocity += (target - self.angular_velocity) * k;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();

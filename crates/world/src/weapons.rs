@@ -388,7 +388,7 @@ mod tests {
         let (by, damage) = hit.expect("the slug hits");
         assert_eq!(by, 1);
         let joules = 0.5 * SLUG_MASS * GUN_MUZZLE * GUN_MUZZLE;
-        assert!((damage - joules / damage::HULL_STRENGTH).abs() < 0.01, "{damage}");
+        assert!((damage - joules / crate::ship::COBRA.hull_strength).abs() < 0.01, "{damage}");
         assert!(b.velocity.z < 0.0, "the hit pushes the target away");
         assert!(world.slugs.is_empty());
     }

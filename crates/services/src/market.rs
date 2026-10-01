@@ -27,7 +27,6 @@ use serde::{Deserialize, Serialize};
 use universe_protocol::{BodyId, Cause, Tick};
 use universe_world::goods::{Category, Item};
 use universe_world::rng::{mix, Rng};
-use universe_world::ship::HOLD_CAPACITY;
 use universe_world::system::StarSystem;
 use universe_world::terrain::TerrainKind;
 use universe_world::traffic::Facility;
@@ -302,11 +301,11 @@ impl Market {
     }
 
     /// Trade `units` of `item` (positive: buy from the market, negative: sell
-    /// to it) for `pilot`, whose cargo weighs `cargo` (kg): the credits moved
+    /// to it) for `pilot`, whose hold has `room` (kg) left: the credits moved
     /// (positive: paid by the pilot), or why not. Credits and goods move in
     /// the ledger (this market's account: `me`), for `cause`.
     #[allow(clippy::too_many_arguments)]
-    pub fn trade(&self, state: &mut MarketState, now: f64, item: &Item, units: i64, pilot: BodyId, cargo: f64, ledger: &mut Ledger, me: Party, tick: Tick, cause: Cause) -> Result<f64, String> {
+    pub fn trade(&self, state: &mut MarketState, now: f64, item: &Item, units: i64, pilot: BodyId, room: f64, ledger: &mut Ledger, me: Party, tick: Tick, cause: Cause) -> Result<f64, String> {
         self.recover(state, now);
         if self.banned.contains(&item.category) {
             return Err(format!("{} IS ILLEGAL HERE", item.category.name()));
@@ -326,7 +325,7 @@ impl Market {
             if ledger.credits(who) < cost {
                 return Err("NOT ENOUGH CREDITS".into());
             }
-            if cargo + item.mass * n > HOLD_CAPACITY {
+            if item.mass * n > room {
                 return Err("HOLD FULL".into());
             }
             ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
@@ -373,8 +372,8 @@ pub struct Order {
     pub market: Facility,
     /// Where the pilot's ship is docked or landed, as the core reports.
     pub docked_at: Option<Facility>,
-    /// What its cargo weighs now (kg).
-    pub cargo: f64,
+    /// Room left in its hold (kg), as the core reports.
+    pub room: f64,
     pub item: usize,
     pub units: i64,
 }
@@ -447,7 +446,7 @@ impl Markets {
             return self.trade_at_place(&m, ledger, o, tick, cause);
         }
         let state = self.states.entry((o.system, o.market)).or_insert_with(|| MarketState { updated: now, ..Default::default() });
-        m.trade(state, now, &self.goods[o.item], o.units, o.pilot, o.cargo, ledger, Party::Market(o.system, o.market), tick, cause)
+        m.trade(state, now, &self.goods[o.item], o.units, o.pilot, o.room, ledger, Party::Market(o.system, o.market), tick, cause)
     }
 
     /// A trade at a settled market: from (or into) its place's stock.
@@ -468,7 +467,7 @@ impl Markets {
             if ledger.credits(who) < cost {
                 return Err("NOT ENOUGH CREDITS".into());
             }
-            if o.cargo + item.mass * n > HOLD_CAPACITY {
+            if item.mass * n > o.room {
                 return Err("HOLD FULL".into());
             }
             ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
@@ -561,13 +560,13 @@ mod tests {
         let item = &goods[o.item];
         let before = a.quotes(&mut state, 0.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
         let n = (before.level * 0.5).floor().min(5_000.0 / item.mass).floor().max(1.0) as i64;
-        let paid = a.trade(&mut state, 0.0, item, n, 1, 0.0, &mut ledger, shop, 1, Cause::Rules).unwrap();
+        let paid = a.trade(&mut state, 0.0, item, n, 1, universe_world::ship::COBRA.hold_capacity, &mut ledger, shop, 1, Cause::Rules).unwrap();
         assert!((paid - before.buy.unwrap() * n as f64).abs() < 1e-6);
         assert_eq!(ledger.hold(1), vec![(o.item, n as u32)]);
         assert!((cargo_mass(&goods, &ledger.hold(1)) - item.mass * n as f64).abs() < 1e-6, "the hold weighs what's in it");
         let after = a.quotes(&mut state, 0.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
         assert!(after.buy.unwrap() > before.buy.unwrap(), "scarcer, dearer");
-        let got = -a.trade(&mut state, 0.0, item, -n, 1, item.mass * n as f64, &mut ledger, shop, 2, Cause::Rules).unwrap();
+        let got = -a.trade(&mut state, 0.0, item, -n, 1, universe_world::ship::COBRA.hold_capacity - item.mass * n as f64, &mut ledger, shop, 2, Cause::Rules).unwrap();
         assert!(got < paid, "bought back for less");
         assert!(ledger.hold(1).is_empty());
         assert!(ledger.balanced(), "nothing made or lost");
@@ -577,7 +576,7 @@ mod tests {
         // Banned goods don't trade.
         if let Some(c) = a.banned.first() {
             let banned = goods.iter().find(|i| i.category == *c).unwrap();
-            assert!(a.trade(&mut state, 0.0, banned, 1, 1, 0.0, &mut ledger, shop, 3, Cause::Rules).is_err());
+            assert!(a.trade(&mut state, 0.0, banned, 1, 1, universe_world::ship::COBRA.hold_capacity, &mut ledger, shop, 3, Cause::Rules).is_err());
         }
     }
 }

@@ -676,7 +676,7 @@ impl App {
                 Event::Ship(ShipEvent::Mined { item, .. }) => {
                     let name = self.charts.goods.get(item).map_or(String::new(), |g| g.name.clone());
                     let units = self.v.hold.iter().find(|h| h.0 == item).map_or(0, |h| h.1);
-                    format!("+1 T {name} TO THE HOLD ({units} T IN ALL, HOLD {:.0}/{:.0} T)", self.v.ship.cargo / 1000.0, universe_sim::world::ship::HOLD_CAPACITY / 1000.0)
+                    format!("+1 T {name} TO THE HOLD ({units} T IN ALL, HOLD {:.0}/{:.0} T)", self.v.ship.cargo / 1000.0, self.v.ship.spec().hold_capacity / 1000.0)
                 }
                 Event::Ship(ShipEvent::StruckRock { speed, .. }) => format!("ROCK STRIKE AT {speed:.1} M/S"),
                 // Anything else says nothing (add a line here for a new event that should).

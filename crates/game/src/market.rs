@@ -12,7 +12,6 @@ use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, KeyCode, GLYPH};
 use universe_sim::world::goods::Category;
 use universe_sim::services::market::{Quote, Side};
-use universe_sim::world::ship::HOLD_CAPACITY;
 use universe_sim::world::Facility;
 
 use crate::App;
@@ -149,7 +148,7 @@ pub fn draw(frame: &mut Frame, app: &App, v: &MarketView) {
     let banned = if v.banned.is_empty() { "NOTHING".to_string() } else { v.banned.iter().map(|c| c.name()).collect::<Vec<_>>().join(", ") };
     frame.text(
         Vec2::new(x, y),
-        &format!("CREDITS {:.0}   HOLD {:.1} / {:.1} T   BANNED HERE: {banned}", app.v.credits, ship.cargo / 1000.0, HOLD_CAPACITY / 1000.0),
+        &format!("CREDITS {:.0}   HOLD {:.1} / {:.1} T   BANNED HERE: {banned}", app.v.credits, ship.cargo / 1000.0, ship.spec().hold_capacity / 1000.0),
         TEXT,
     );
     y += line * 1.6;

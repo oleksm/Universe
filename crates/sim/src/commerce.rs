@@ -22,7 +22,7 @@ impl Universe {
     pub(crate) fn pilot_trade(&mut self, pilot: usize, f: Facility, item: usize, units: i64) -> Result<f64, String> {
         let (system, ship) = if pilot == crate::combat::PLAYER { (self.ship_system, &self.ship) } else { (self.crafts[pilot - 1].system, &self.crafts[pilot - 1].ship) };
         let sys = self.world.system(system);
-        let order = Order { pilot, system, market: f, docked_at: docked_at(&sys, ship), cargo: ship.cargo, item, units };
+        let order = Order { pilot, system, market: f, docked_at: docked_at(&sys, ship), room: ship.hold_room(), item, units };
         self.messages += 1;
         let cause = universe_protocol::Cause::Message { sender: pilot as u64, id: self.messages };
         let r = self.markets.trade(&mut self.ledger, &sys, order, self.world.time, self.tick, cause);
@@ -62,7 +62,7 @@ impl Universe {
     /// it can (the ledger books it), and the core's tank takes it.
     pub(crate) fn refuel(&mut self, id: usize, market: Facility) -> Result<(f64, f64), String> {
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
-        let want = universe_world::ship::FUEL_CAPACITY - ship.fuel;
+        let want = ship.spec().fuel_capacity - ship.fuel;
         if want < 0.01 {
             return Err("TANK FULL".into());
         }
@@ -133,8 +133,8 @@ impl Universe {
         let mut items = held.clone();
         items.extend(here.iter().filter(|q| q.buy.is_some()).map(|q| q.offer.item).filter(|i| !held.contains(i)));
         let there = facilities(&sys).into_iter().filter(|&f| f != at).map(|f| (f, self.markets.quotes_for(system, &sys, f, &items, now))).collect();
-        let cargo = self.ship_by_id(id).map_or(0.0, |(_, _, s)| s.cargo);
-        crate::contract::MarketAnswer { system, at, here, here_held, items, there, credits: self.ledger.credits(Party::Pilot(id)), hold, cargo }
+        let (cargo, capacity) = self.ship_by_id(id).map_or((0.0, 0.0), |(_, _, s)| (s.cargo, s.spec().hold_capacity));
+        crate::contract::MarketAnswer { system, at, here, here_held, items, there, credits: self.ledger.credits(Party::Pilot(id)), hold, cargo, capacity }
     }
 
     /// A trade (or a plan) in the log, as pilot `id` made it at `market`.

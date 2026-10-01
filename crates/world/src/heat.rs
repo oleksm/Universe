@@ -9,7 +9,7 @@
 
 use glam::DVec3;
 
-use crate::damage::{destroy, HULL_STRENGTH};
+use crate::damage::destroy;
 use crate::events::ShipEvent;
 use crate::ship::Ship;
 
@@ -62,7 +62,7 @@ pub fn heat(ship: &mut Ship, air: Option<(f64, DVec3)>, dt: f64, events: &mut Ve
         // What it can't hold at the limit burns into the hull.
         let excess = (temp - SKIN_LIMIT) * SKIN_CAPACITY;
         temp = SKIN_LIMIT;
-        ship.hull = (ship.hull - excess * ABLATION / HULL_STRENGTH).max(0.0);
+        ship.hull = (ship.hull - excess * ABLATION / ship.spec().hull_strength).max(0.0);
         if ship.hull <= 0.0 {
             destroy(ship, "RE-ENTRY HEAT", events);
         }

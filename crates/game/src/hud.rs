@@ -220,9 +220,9 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ));
     let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
     // Fuel, once it's running down.
-    let fuel = ship.fuel / universe_sim::world::ship::FUEL_CAPACITY;
+    let fuel = ship.fuel / ship.spec().fuel_capacity;
     if fuel < 0.25 {
-        let hours = ship.fuel / (universe_sim::world::ship::MAIN_THRUST / universe_sim::world::ship::EXHAUST_VELOCITY) / 3600.0;
+        let hours = ship.fuel / (ship.spec().main_thrust / universe_sim::world::ship::EXHAUST_VELOCITY) / 3600.0;
         lines.push((format!("FUEL [{}] {:3.0}%  {:.1} H OF FULL BURN LEFT - REFUEL AT A MARKET", gauge(fuel), fuel * 100.0, hours), if fuel < 0.1 { RED } else { AMBER }));
     }
     let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
@@ -349,7 +349,7 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
         let left = (s.mass - app.v.dug - app.ship.hopper).max(0.0);
         let hopper: String = (0..10).map(|i| if (i as f64) < app.ship.hopper / 100.0 - 0.01 { '#' } else { '.' }).collect();
         let state = if app.ship.excavator { "DIGGING".to_string() } else { format!("{} TO DIG", crate::keys::key(crate::keys::Act::Excavate)) };
-        lines.push((format!("{state}  HOPPER [{hopper}]  HOLD {:.1}/{:.0} T  ROCK LEFT {}", app.ship.cargo / 1000.0, universe_sim::world::ship::HOLD_CAPACITY / 1000.0, fmt::tonnes(left)), if app.ship.excavator { AMBER } else { HUD }));
+        lines.push((format!("{state}  HOPPER [{hopper}]  HOLD {:.1}/{:.0} T  ROCK LEFT {}", app.ship.cargo / 1000.0, app.ship.spec().hold_capacity / 1000.0, fmt::tonnes(left)), if app.ship.excavator { AMBER } else { HUD }));
         if app.ship.excavator {
             // The flow, and when the next tonne goes into the hold.
             let rate = mining::dig_rate(r);
@@ -366,9 +366,9 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
     if !app.show_cargo {
         return;
     }
-    use universe_sim::world::ship::HOLD_CAPACITY;
+    let capacity = app.ship.spec().hold_capacity;
     let goods = &app.charts.goods;
-    let mut lines: Vec<(String, Color)> = vec![(format!("CARGO HOLD - {:.0} T CAPACITY   (4 CLOSES)", HOLD_CAPACITY / 1000.0), HUD), (String::new(), HUD)];
+    let mut lines: Vec<(String, Color)> = vec![(format!("CARGO HOLD - {:.0} T CAPACITY   ({} CLOSES)", capacity / 1000.0, crate::keys::key(crate::keys::Act::Cargo)), HUD), (String::new(), HUD)];
     lines.push((format!("{:<26} {:<10} {:>5} {:>8} {:>8} {:>9}", "GOOD", "KIND", "UNITS", "MASS", "VOLUME", "WORTH"), DIM));
     let (mut mass, mut volume, mut worth) = (0.0, 0.0, 0.0);
     for &(item, units) in &app.v.hold {
@@ -386,10 +386,10 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
         lines.push((format!("{:<26} {:<10} {:>5} {:>8}", "LOOSE ORE IN THE HOPPER", "", "", fmt::tonnes(app.ship.hopper)), AMBER));
     }
     lines.push((String::new(), HUD));
-    let full = (mass + app.ship.hopper) / HOLD_CAPACITY;
+    let full = (mass + app.ship.hopper) / capacity;
     let bar: String = (0..20).map(|i| if (i as f64) < full * 20.0 - 0.01 { '#' } else { '.' }).collect();
-    lines.push((format!("LOADED [{bar}] {} OF {}  {:.1} M3  WORTH ABOUT {:.0} CR", fmt::tonnes(mass + app.ship.hopper), fmt::tonnes(HOLD_CAPACITY), volume, worth), if full > 0.95 { AMBER } else { HUD }));
-    lines.push((format!("SHIP {}  (DRY {}, FUEL {}, CARGO {})", fmt::tonnes(app.ship.mass()), fmt::tonnes(universe_sim::world::ship::DRY_MASS), fmt::tonnes(app.ship.fuel), fmt::tonnes(app.ship.cargo + app.ship.hopper)), DIM));
+    lines.push((format!("LOADED [{bar}] {} OF {}  {:.1} M3  WORTH ABOUT {:.0} CR", fmt::tonnes(mass + app.ship.hopper), fmt::tonnes(capacity), volume, worth), if full > 0.95 { AMBER } else { HUD }));
+    lines.push((format!("SHIP {}  (DRY {}, FUEL {}, CARGO {})", fmt::tonnes(app.ship.mass()), fmt::tonnes(app.ship.spec().dry_mass), fmt::tonnes(app.ship.fuel), fmt::tonnes(app.ship.cargo + app.ship.hopper)), DIM));
     let width = lines.iter().map(|l| text_size(&l.0).x).fold(0.0, f32::max);
     let size = frame.size();
     // (Left, under the status lines: the notices go across the middle.)

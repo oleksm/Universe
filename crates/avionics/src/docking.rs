@@ -8,7 +8,7 @@
 
 use glam::{DQuat, DVec3};
 use universe_physics::segment_distance;
-use universe_world::ship::{facing, ROLL_RATE, TURN_RATE};
+use universe_world::ship::facing;
 use universe_world::station::{MAX_ROLL_ERROR, SLOT_HALF, STATION_SIZE};
 use universe_world::{Controls, Ship, ShipCommands, StationFrame};
 
@@ -190,10 +190,11 @@ pub fn attitude(ship: &Ship, target: DQuat, spin: DVec3, h: f64) -> Controls {
         err = -err;
     }
     let rate = err.to_scaled_axis() * gain(1.5, h) + ship.orientation.inverse() * spin;
+    let s = ship.spec();
     Controls {
-        pitch: (rate.x / TURN_RATE).clamp(-1.0, 1.0),
-        yaw: (rate.y / TURN_RATE).clamp(-1.0, 1.0),
-        roll: (rate.z / ROLL_RATE).clamp(-1.0, 1.0),
+        pitch: (rate.x / s.turn_rate).clamp(-1.0, 1.0),
+        yaw: (rate.y / s.turn_rate).clamp(-1.0, 1.0),
+        roll: (rate.z / s.roll_rate).clamp(-1.0, 1.0),
     }
 }
 

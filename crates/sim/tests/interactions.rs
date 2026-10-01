@@ -483,7 +483,7 @@ fn a_miner_closes_on_a_rock_anchors_digs_and_when_full_goes_to_sell() {
     assert!(digging(&u), "{:?} {:?}", u.crafts[0].ship.state, u.recorder.incidents);
     assert!(u.crafts[0].ship.hull > 0.99, "it hit nothing on the way");
     // Nearly full: it fills up, lets go, and its route moves on to the market.
-    u.crafts[0].ship.cargo = universe_sim::world::ship::HOLD_CAPACITY - 300.0;
+    u.crafts[0].ship.cargo = u.crafts[0].ship.spec().hold_capacity - 300.0;
     for _ in 0..60 * 60 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
@@ -552,17 +552,17 @@ fn a_pilot_closes_on_a_rock_and_anchors() {
 
 #[test]
 fn a_pilot_refuels_at_a_station_from_its_stock_and_pays_its_price() {
-    use universe_sim::world::ship::FUEL_CAPACITY;
     let mut u = bench(0);
     let (sys, _) = positions(&mut u);
     let home = u.ship_system;
     let station = sys.station().unwrap();
     u.ship = u.world.ship_on(home, Facility::Station(station), 0);
-    u.ship.fuel = FUEL_CAPACITY - 4000.0;
+    let full = u.ship.spec().fuel_capacity;
+    u.ship.fuel = full - 4000.0;
     let stock = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::Fuel);
     let credits = u.credits();
     u.refuel_player();
-    assert!((u.ship.fuel - FUEL_CAPACITY).abs() < 1e-6, "full: {}", u.ship.fuel);
+    assert!((u.ship.fuel - full).abs() < 1e-6, "full: {}", u.ship.fuel);
     let paid = credits - u.credits();
     assert!((paid - 4.0 * universe_sim::services::market::FUEL_PRICE).abs() < 4.0 * 60.0 * 0.5, "paid {paid}");
     let left = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::Fuel);

@@ -16,7 +16,7 @@ use universe_services::market::Side;
 use universe_world::charts::Charts;
 use universe_world::goods::TONNE;
 use universe_world::mining::{self, ANCHOR_REACH, ANCHOR_SPEED};
-use universe_world::ship::{ShipCommands, HOLD_CAPACITY, SHIP_RADIUS};
+use universe_world::ship::{ShipCommands, SHIP_RADIUS};
 use universe_world::{Facility, ShipEvent, ShipState, StarSystem};
 
 use crate::contract::MarketAnswer;
@@ -80,7 +80,7 @@ pub(crate) fn work(a: &mut Avionics, dig: &mut Dig, charts: &Charts, seed: u64, 
         return;
     }
     let stopped = |why: &str| feed.iter().any(|e| matches!(e, ShipEvent::ExcavatorStopped { why: w } if w == why));
-    let full = stopped("HOLD FULL") || ship.cargo + ship.hopper > HOLD_CAPACITY - 1.0;
+    let full = stopped("HOLD FULL") || ship.hold_room() < 1.0;
     match ship.state {
         ShipState::Anchored { .. } if full => {
             // Done here: let go, and on to the market.

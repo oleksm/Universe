@@ -25,10 +25,10 @@ use glam::DVec3;
 use universe_physics::{Contact, RigidBody, Weld};
 
 use crate::belt::{Rock, RockClass, Structure};
-use crate::damage::{self, HULL_STRENGTH};
+use crate::damage;
 use crate::events::ShipEvent;
 use crate::goods::{Ore, TONNE};
-use crate::ship::{Ship, ShipState, HOLD_CAPACITY, SHIP_RADIUS};
+use crate::ship::{Ship, ShipState, SHIP_RADIUS};
 use crate::system::{Body, BodyKind, StarSystem};
 
 /// The excavator's power (W)...
@@ -85,7 +85,7 @@ pub fn strike(ship: &mut Ship, rock: &Body, c: &Contact, events: &mut Vec<ShipEv
         return true;
     }
     let joules = 0.5 * ship.mass() * closing * closing * (1.0 - RESTITUTION * RESTITUTION);
-    let damage = joules / HULL_STRENGTH;
+    let damage = joules / ship.spec().hull_strength;
     ship.hull = (ship.hull - damage).max(0.0);
     events.push(ShipEvent::StruckRock { body: rock.name.clone(), speed: closing, damage });
     if ship.hull <= 0.0 {
@@ -153,7 +153,7 @@ pub fn excavate(sys: &StarSystem, ship: &mut Ship, dug: f64, dt: f64, events: &m
         ship.excavator = false;
         events.push(ShipEvent::ExcavatorStopped { why: why.to_string() });
     };
-    let room = HOLD_CAPACITY - ship.cargo - ship.hopper;
+    let room = ship.hold_room();
     let left = b.mass - dug - ship.hopper;
     if room < 1.0 {
         return stop(ship, "HOLD FULL");
@@ -244,7 +244,7 @@ mod tests {
             });
             let (closing, damage) = struck.unwrap_or_else(|| panic!("{speed} m/s: no strike in {:?}", p.events));
             assert!((closing - speed).abs() < 0.5, "struck at {closing}");
-            let expected = 0.5 * p.ship.mass() * speed * speed * (1.0 - RESTITUTION * RESTITUTION) / HULL_STRENGTH;
+            let expected = 0.5 * p.ship.mass() * speed * speed * (1.0 - RESTITUTION * RESTITUTION) / p.ship.spec().hull_strength;
             assert!((damage - expected).abs() < expected * 0.3, "{damage} vs {expected}");
             assert_eq!(!p.crashed(), survives, "{speed} m/s: {:?}", p.events);
         }
@@ -307,7 +307,7 @@ mod tests {
         assert!((p.ship.mass() - mass - 2500.0).abs() < 1.0, "the ship weighs what it dug");
 
         // A full hold stops it; so does a worked-out rock.
-        p.ship.cargo = HOLD_CAPACITY - 600.0;
+        p.ship.cargo = p.ship.spec().hold_capacity - 600.0;
         for _ in 0..(200.0 / rate * 60.0) as usize {
             p.step(1.0 / 60.0, 1.0);
         }
