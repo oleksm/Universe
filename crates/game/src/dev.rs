@@ -128,6 +128,10 @@ pub fn apply(app: &mut App, name: &str) {
             }
             app.galaxy_map = Some(map);
         }
+        "help" => {
+            app.mode = Mode::Pilot;
+            app.show_help = true;
+        }
         "economy" => {
             app.mode = Mode::Pilot;
             app.economy_panel = Some(Default::default());

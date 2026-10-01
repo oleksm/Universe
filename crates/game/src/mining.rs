@@ -8,7 +8,7 @@
 //! anchors, H digs.
 
 use universe_engine::glam::{DVec3, Vec2};
-use universe_engine::{Color, Context, Frame, KeyCode};
+use universe_engine::{Color, Context, Frame};
 use universe_sim::world::mining;
 use universe_sim::Command;
 
@@ -117,24 +117,29 @@ pub fn input(app: &mut App, ctx: &Context) {
             p.age = age;
         }
     }
-    if input.pressed(KeyCode::Digit1) {
+    use crate::keys::{key, pressed, Act};
+    if pressed(input, Act::Mining) {
         app.mining.on = !app.mining.on;
         // (One mode at a time: into mining, the weapons go safe.)
         if app.mining.on && app.v.ship.armed {
             app.engine.send(Command::Ship(universe_sim::ShipCommands { arm: Some(false), ..app.v.ship.holding() }));
         }
-        app.say(if app.mining.on { "MINING MODE - 2 PROSPECT, T LOCK, 3 APPROACH, Y ANCHOR, H DIG".into() } else { "NAVIGATION MODE".into() });
+        app.say(if app.mining.on {
+            format!("MINING MODE - {} PROSPECT, {} LOCK, {} ZERO IN, {} ANCHOR, {} EXCAVATE", key(Act::Prospect), key(Act::Lock), key(Act::ZeroIn), key(Act::Anchor), key(Act::Excavate))
+        } else {
+            "NAVIGATION MODE".into()
+        });
     }
-    if !app.mining.on {
+    if crate::hud::active_mode(app) != crate::hud::ShipMode::Mining {
         return;
     }
-    if input.pressed(KeyCode::Digit2) {
+    if pressed(input, Act::Prospect) {
         prospect(app);
     }
-    if input.pressed(KeyCode::Digit3) {
+    if pressed(input, Act::ZeroIn) {
         match app.v.avionics.rock_lock {
             Some((field, body)) => app.engine.send(Command::CloseOn { field, body }),
-            None => app.say("APPROACH: LOCK A ROCK FIRST (T)".into()),
+            None => app.say(format!("ZERO IN: LOCK A ROCK FIRST ({})", key(Act::Lock))),
         }
     }
 }

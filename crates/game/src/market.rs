@@ -82,7 +82,7 @@ impl MarketView {
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let Some(mut v) = app.market.take() else { return false };
     let input = &ctx.input;
-    if input.pressed(KeyCode::Escape) || input.pressed(KeyCode::KeyG) {
+    if input.pressed(KeyCode::Escape) || crate::keys::pressed(input, crate::keys::Act::Market) {
         app.engine.send(Command::WatchMarket(None));
         return false;
     }

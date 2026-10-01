@@ -5,7 +5,7 @@
 //! U/M/ESC close.
 
 use universe_engine::glam::{DVec2, Vec2};
-use universe_engine::{text_size, Color, Context, Frame, KeyCode};
+use universe_engine::{Color, Context, Frame, KeyCode};
 use universe_sim::names::star_name;
 
 use crate::scene::color;
@@ -48,7 +48,7 @@ impl GalaxyMap {
 /// The map's keys. False when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let input = &ctx.input;
-    if input.pressed(KeyCode::KeyU) || input.pressed(KeyCode::KeyM) || input.pressed(KeyCode::Escape) {
+    if crate::keys::pressed(input, crate::keys::Act::Galaxy) || crate::keys::pressed(input, crate::keys::Act::Map) || input.pressed(KeyCode::Escape) {
         return false;
     }
     let size = ctx.low_res.as_vec2();
@@ -124,6 +124,16 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
         frame.hud_line(at + Vec2::new(x, -4.0), at + Vec2::new(x, 4.0), TEXT);
     }
     frame.text(at + Vec2::new(px + 8.0, -4.0), &format!("{round:.0} LY"), TEXT);
-    let help = "WHEEL / W S ZOOM   ARROWS PAN   HOME BACK TO YOU   U M ESC CLOSE";
-    frame.text(Vec2::new(size.x - text_size(help).x - 16.0, size.y - 20.0), help, DIM);
+    {
+        use crate::hud::Lamp;
+        use crate::keys::{key, Act};
+        let cells = vec![
+            ("WHL".to_string(), "ZOOM".to_string(), Lamp::Off),
+            ("ARR".to_string(), "PAN".to_string(), Lamp::Off),
+            ("HOME".to_string(), "YOU".to_string(), Lamp::Off),
+            (key(Act::Galaxy), "GALAXY".to_string(), Lamp::On),
+            (key(Act::Map), "MAP".to_string(), Lamp::Off),
+        ];
+        crate::hud::draw_grid(frame, "GALAXY", &cells);
+    }
 }

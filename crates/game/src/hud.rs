@@ -12,6 +12,8 @@ use crate::{fmt, App, Mode};
 const HUD: Color = Color::hex(0x30ff60);
 const DIM: Color = Color::hex(0x178a38);
 const AMBER: Color = Color::hex(0xffc040);
+/// The key's letter, lit in an action's name.
+const HOT: Color = Color::hex(0xffffa0);
 const RED: Color = Color::hex(0xff4040);
 /// Colors shared with the 3D guidance: predicted path (cyan) and guidance path (magenta).
 const PREDICT: Color = Color::hex(0x40c0ff);
@@ -1208,7 +1210,7 @@ fn turret_markers(frame: &mut Frame, app: &App) {
 
 /// How an action grid cell is lit.
 #[derive(Clone, Copy, PartialEq)]
-enum Lamp {
+pub(crate) enum Lamp {
     /// Available, not in use.
     Off,
     /// In use.
@@ -1282,64 +1284,61 @@ fn action_grid(frame: &mut Frame, app: &App) {
     let view = (if app.chase_cam { "CHASE" } else { "COCKPIT" }).to_string();
     let hyper = if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable };
     let let_go = if a.following.is_some() { Lamp::Off } else { Lamp::Unavailable };
+    use crate::keys::{key, Act};
     let c = |k: &str, l: &str, lamp: Lamp| (k.to_string(), l.to_string(), lamp);
+    let b = |act: Act, l: &str, lamp: Lamp| (key(act), l.to_string(), lamp);
     let (mode, cells): (&str, Vec<(String, String, Lamp)>) = match &ship.state {
         ShipState::Destroyed { .. } => ("DESTROYED", vec![c("BKSP", "RESPAWN", Lamp::Off)]),
-        ShipState::Transit { .. } => ("GATE TRANSIT", vec![c("C", &view, Lamp::Off)]),
+        ShipState::Transit { .. } => ("GATE TRANSIT", vec![b(Act::View, &view, Lamp::Off)]),
         _ if active_mode(app) == ShipMode::Mining => (
             "MINING",
             vec![
-                c("2", "PROSPECT", if crate::mining::pulsing(app) { Lamp::Busy } else if flying || anchored { Lamp::Off } else { Lamp::Unavailable }),
-                c("T", "LOCK", lock),
-                c("3", "APPROACH", approach),
-                if anchored { c("Y", "LET GO", Lamp::On) } else { c("Y", "ANCHOR", anchor_lamp) },
-                c("H", if ship.excavator { "STOP DIG" } else { "DIG" }, dig),
-                c("N", &keep.0, keep.1),
-                c("U", &orbit.0, orbit.1),
-                c("X", "LET GO", let_go),
-                c("J", "HYPER", hyper),
+                b(Act::Prospect, "PROSPECT", if crate::mining::pulsing(app) { Lamp::Busy } else if flying || anchored { Lamp::Off } else { Lamp::Unavailable }),
+                b(Act::Lock, "LOCK", lock),
+                b(Act::ZeroIn, "ZERO IN", approach),
+                if anchored { b(Act::Anchor, "UNANCHOR", Lamp::On) } else { b(Act::Anchor, "ANCHOR", anchor_lamp) },
+                b(Act::Excavate, if ship.excavator { "EXCAVATE OFF" } else { "EXCAVATE" }, dig),
+                b(Act::Keep, &keep.0, keep.1),
+                b(Act::Orbit, &orbit.0, orbit.1),
+                b(Act::LetGo, "LET GO", let_go),
+                b(Act::Hyperdrive, "HYPERDRIVE", hyper),
             ],
         ),
         _ if active_mode(app) == ShipMode::Combat => (
             "COMBAT",
             vec![
                 c("SPC", "GUN", if ship.weapons_hot() { Lamp::Hot } else { Lamp::Busy }),
-                c("V", "LASER", if ship.laser_overheated { Lamp::Unavailable } else if ship.weapons_hot() { Lamp::Hot } else { Lamp::Busy }),
-                c("T", "LOCK", lock),
-                c("N", &keep.0, keep.1),
-                c("U", &orbit.0, orbit.1),
-                c("X", "LET GO", let_go),
-                c("J", "HYPER", hyper),
-                c("I", "COLLIDE", collide),
-                c("C", &view, Lamp::Off),
+                b(Act::Laser, "PULSE LASER", if ship.laser_overheated { Lamp::Unavailable } else if ship.weapons_hot() { Lamp::Hot } else { Lamp::Busy }),
+                b(Act::Lock, "LOCK", lock),
+                b(Act::Keep, &keep.0, keep.1),
+                b(Act::Orbit, &orbit.0, orbit.1),
+                b(Act::LetGo, "LET GO", let_go),
+                b(Act::Hyperdrive, "HYPERDRIVE", hyper),
             ],
         ),
         ShipState::Landed { .. } => (
             "NAV - DOCKED",
             vec![
                 if docked { c("W", "LAUNCH", Lamp::Off) } else { c("S+E", "LIFT OFF", Lamp::Off) },
-                c("K", "FLY ROUTE", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
-                c("F", "LEAVE SEAT", Lamp::Off),
-                c("C", &view, Lamp::Off),
+                b(Act::Autopilot, "AUTOPILOT", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
+                b(Act::Foot, "FOOT", Lamp::Off),
             ],
         ),
         _ if ship.hyperdrive => (
             "NAV - HYPERDRIVE",
-            vec![c("J", "DROP OUT", Lamp::On), c("K", "AUTO STEER", on(a.hyper_autopilot)), c("W S", "SPEED", Lamp::Off), c("C", &view, Lamp::Off)],
+            vec![b(Act::Hyperdrive, "HYPERDRIVE OFF", Lamp::On), b(Act::Autopilot, "AUTOPILOT", on(a.hyper_autopilot)), c("W S", "SPEED", Lamp::Off)],
         ),
         _ => (
             "NAV",
             vec![
-                c("R", clearance.0, clearance.1),
-                c("K", "AUTO", on(auto)),
-                c("J", "HYPER", hyper),
-                c("T", "LOCK", lock),
-                c("N", &keep.0, keep.1),
-                c("U", &orbit.0, orbit.1),
-                c("X", "LET GO", let_go),
-                c("I", "COLLIDE", collide),
-                c("O", "GRID", on(app.show_grid)),
-                c("C", &view, Lamp::Off),
+                b(Act::Clearance, "CLEARANCE", clearance.1),
+                b(Act::Autopilot, "AUTOPILOT", on(auto)),
+                b(Act::Hyperdrive, "HYPERDRIVE", hyper),
+                b(Act::Lock, "LOCK", lock),
+                b(Act::Keep, &keep.0, keep.1),
+                b(Act::Orbit, &orbit.0, orbit.1),
+                b(Act::LetGo, "LET GO", let_go),
+                b(Act::Proximity, "PROXIMITY", collide),
             ],
         ),
     };
@@ -1377,20 +1376,19 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     } else {
         Lamp::Off
     };
-    let cells: Vec<(String, String, Lamp)> = [
-        ("", "NAV", lamp(m == ShipMode::Nav)),
-        ("B", "COMBAT", combat),
-        ("1", "MINING", lamp(m == ShipMode::Mining)),
-        ("G", "MARKET", lamp(app.market.is_some())),
-        ("4", "CARGO", lamp(app.show_cargo)),
-        ("5", "ECONOMY", lamp(app.economy_panel.is_some())),
-        ("M", "MAP", lamp(app.nav_map.is_some() || app.galaxy_map.is_some())),
-        ("TAB", "WATCH", Lamp::Off),
-        ("F1", "HELP", lamp(app.show_help)),
-    ]
-    .iter()
-    .map(|(k, l, s)| (k.to_string(), l.to_string(), *s))
-    .collect();
+    use crate::keys::{key, Act};
+    let cells: Vec<(String, String, Lamp)> = vec![
+        (String::new(), "NAV".into(), lamp(m == ShipMode::Nav)),
+        (key(Act::Combat), "COMBAT".into(), combat),
+        (key(Act::Mining), "MINING".into(), lamp(m == ShipMode::Mining)),
+        (key(Act::Map), "MAP".into(), lamp(app.nav_map.is_some() || app.galaxy_map.is_some())),
+        (key(Act::Market), "MARKET".into(), lamp(app.market.is_some())),
+        (key(Act::Cargo), "CARGO".into(), lamp(app.show_cargo)),
+        (key(Act::Economy), "ECONOMY".into(), lamp(app.economy_panel.is_some())),
+        (key(Act::View), "VIEW".into(), Lamp::Off),
+        ("TAB".into(), "WATCH".into(), Lamp::Off),
+        ("F1".into(), "HELP".into(), lamp(app.show_help)),
+    ];
     let cell = Vec2::new(76.0, 14.0);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
         let pos = at + Vec2::new(i as f32 * (cell.x + 2.0), 0.0);
@@ -1399,7 +1397,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     cell.y + 2.0
 }
 
-fn draw_cell(frame: &mut Frame, pos: Vec2, cell: Vec2, key: &str, label: &str, lamp: Lamp) {
+pub(crate) fn draw_cell(frame: &mut Frame, pos: Vec2, cell: Vec2, key: &str, label: &str, lamp: Lamp) {
     let (edge, fill, text) = match lamp {
         Lamp::Off => (DIM, PANEL, HUD),
         Lamp::On => (HUD, HUD.scale(0.3), HUD),
@@ -1411,7 +1409,19 @@ fn draw_cell(frame: &mut Frame, pos: Vec2, cell: Vec2, key: &str, label: &str, l
     frame.hud_box(pos, cell, edge);
     frame.text(pos + Vec2::new(3.0, 3.0), key, text.scale(0.8));
     let x = if key.is_empty() { 3.0 } else { 3.0 + 8.0 * key.len() as f32 + 5.0 };
-    frame.text(pos + Vec2::new(x, 3.0), label, text);
+    // The key's letter lit where it stands in the name.
+    let at = (key.len() == 1).then(|| label.find(key)).flatten();
+    match at {
+        Some(i) => {
+            let mut p = frame.text(pos + Vec2::new(x, 3.0), &label[..i], text);
+            p = frame.text(p, &label[i..i + 1], HOT);
+            frame.hud_line(Vec2::new(p.x - 8.0, pos.y + cell.y - 2.0), Vec2::new(p.x - 1.0, pos.y + cell.y - 2.0), HOT);
+            frame.text(p, &label[i + 1..], text);
+        }
+        None => {
+            frame.text(pos + Vec2::new(x, 3.0), label, text);
+        }
+    }
 }
 
 fn on_foot_cells() -> Vec<(String, String, Lamp)> {
@@ -1427,9 +1437,11 @@ fn observer_cells() -> Vec<(String, String, Lamp)> {
 
 /// The action grid, lower left: what the situation is, and each key's
 /// cell (lit in use, amber busy, red hot, dim unavailable).
-fn draw_grid(frame: &mut Frame, mode: &str, cells: &[(String, String, Lamp)]) {
+pub(crate) fn draw_grid(frame: &mut Frame, mode: &str, cells: &[(String, String, Lamp)]) {
     const COLS: usize = 3;
-    let cell = Vec2::new(104.0, 14.0);
+    // As wide as the longest key and name need.
+    let w = cells.iter().map(|(k, l, _)| 8.0 + text_size(k).x + text_size(l).x + 6.0).fold(96.0, f32::max);
+    let cell = Vec2::new(w, 14.0);
     let rows = cells.len().div_ceil(COLS) as f32;
     let size = frame.size();
     let at = Vec2::new(4.0, size.y - rows * (cell.y + 2.0) - 4.0);
@@ -1549,65 +1561,21 @@ fn profile_panel(frame: &mut Frame) {
 }
 
 fn help(frame: &mut Frame) {
-    let text = "\
-GLOBAL
- TAB      OBSERVER / PILOT
- , .      TIME WARP DOWN / UP
- P        PAUSE
- O  L     GRID LINES (ORBITS, PLANET GRIDS) / LABELS
- M        NAVIGATION MAP
- F8       MUTE
- F5  F9   QUICKSAVE / LOAD
- F12      SCREENSHOT
- F3       PROFILER: WHERE EACH FRAME'S TIME GOES
-OBSERVER
- DRAG     ROTATE (ARROWS TOO)
- WHEEL    ZOOM (W S TOO)
- [ ]      PREV / NEXT BODY
- N B      NEXT / PREV NEAR STAR
- H  HOME  FOCUS SHIP / HOME STAR
- T        FOLLOW NEXT SETTLER
-PILOT
- CLICK    MOUSE FLIGHT (ESC FREE)
- W S      THROTTLE  (Z FULL X CUT)
- A D  Q E ROLL / YAW
- ARROWS   PITCH AND ROLL
- SHIFT+WASDQE  THRUSTERS (E = LIFT)
- J        HYPERDRIVE (DROPS OUT AT NAV TARGET)
- R        REQUEST DOCKING / LANDING
- K        AUTOPILOT: DOCK/LAND, OR IN
-          HYPERDRIVE STEER TO TARGET
- T        LOCK THE SHIP IN THE BEAM RING (AGAIN: NEXT)
- N  U     KEEP AT RANGE / ORBIT THE LOCKED SHIP, OR
-          THE NAV TARGET STATION/GATE/ASTEROID (AGAIN:
-          NEXT RANGE OUT)  X LETS GO
- T (HOLD) LIST WHAT CAN BE LOCKED: MOUSE OR WHEEL TO
-          CHOOSE, LET GO OF T TO LOCK
- 1        MINING MODE (ITS OWN ACTION PANEL):
-  2       PROSPECT: A PULSE OUT TO 30 KM FINDS ROCKS
-  T       LOCK A FOUND ROCK (TAP: AHEAD; HOLD: LIST)
-  3       APPROACH THE LOCKED ROCK: 12 M OFF ITS
-          SURFACE, TURNING WITH IT
-  N  U    KEEP AT RANGE / ORBIT THE LOCKED ROCK
- Y        ANCHOR TO THE ROCK IN REACH (30 M; DRIFT
-          UNDER 0.5 M/S AGAINST ITS SURFACE) / LET GO
- H        EXCAVATOR ON / OFF (ANCHORED): ORE TO THE HOLD
- I        COLLISION WARNING: PATH, IMPACT, TIME
- B        COMBAT MODE: ARM / SAFE WEAPONS
- SPACE    GUN (FLY THE LEAD INTO THE RING)
- V        LASER (WATCH THE HEAT)
- G        MARKET (THIS SYSTEM; TRADE WHEN DOCKED)
- C        COCKPIT / CHASE VIEW
- F        LEAVE / TAKE THE PILOT'S SEAT
-ON FOOT
- WASD     WALK (SHIFT RUN, SPACE JUMP)
- MOUSE    LOOK (ARROWS TOO)
- F        USE: SEAT, HATCH, RAMP
- BKSP     RESPAWN AT HOME";
+    // The bindings as a tree of scopes (see `keys`): two columns, scopes kept whole.
+    let lines = crate::keys::tree();
+    let rows: Vec<String> = lines.iter().map(|(d, l)| format!("{}{l}", "  ".repeat(*d))).collect();
+    let half = lines.iter().enumerate().filter(|(_, (d, _))| *d == 1).map(|(i, _)| i).find(|&i| i >= rows.len() / 2).unwrap_or(rows.len());
+    let (left, right) = rows.split_at(half);
+    let (left, right) = (left.join("\n"), right.join("\n"));
+    let footer = "THE KEY'S LETTER IS LIT IN THE ACTION'S NAME. F1 CLOSES.";
+    let (a, b) = (text_size(&left), text_size(&right));
+    let gap = 3.0 * GLYPH;
+    let box_size = Vec2::new(a.x + gap + b.x, a.y.max(b.y) + 2.0 * LINE);
     let size = frame.size();
-    let box_size = text_size(text);
     let pos = ((size - box_size) / 2.0).floor();
-    frame.hud_rect(pos - 6.0, box_size + 12.0, Color([0.0, 0.02, 0.0, 0.92]));
+    frame.hud_rect(pos - 6.0, box_size + 12.0, Color([0.0, 0.02, 0.0, 0.94]));
     frame.hud_box(pos - 6.0, box_size + 12.0, HUD);
-    frame.text(pos, text, HUD);
+    frame.text(pos, &left, HUD);
+    frame.text(pos + Vec2::new(a.x + gap, 0.0), &right, HUD);
+    frame.text(pos + Vec2::new(0.0, box_size.y - LINE), footer, DIM);
 }

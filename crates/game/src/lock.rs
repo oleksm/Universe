@@ -7,7 +7,7 @@
 //! rocks the prospect found.
 
 use universe_engine::glam::{DVec3, Vec2};
-use universe_engine::{Color, Context, Frame, KeyCode};
+use universe_engine::{Color, Context, Frame};
 use universe_sim::Command;
 
 use crate::{fmt, App};
@@ -150,7 +150,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     if app.picker.shown_for_dev {
         return true;
     }
-    if input.down(KeyCode::KeyT) {
+    if crate::keys::down(input, crate::keys::Act::Lock) {
         if app.picker.held == 0.0 {
             // The cursor starts on what's locked, if it's listed.
             let now = locked(app);

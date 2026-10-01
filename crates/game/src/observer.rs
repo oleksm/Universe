@@ -81,10 +81,10 @@ impl Observer {
             self.distance = sys.bodies[body].rail.radius * 5.0;
             self.star_cycle = None;
         }
-        if input.pressed(KeyCode::KeyN) || input.pressed(KeyCode::KeyB) {
+        if crate::keys::pressed(input, crate::keys::Act::NextStar) || crate::keys::pressed(input, crate::keys::Act::PreviousStar) {
             let (base, index) = self.star_cycle.unwrap_or((origin, usize::MAX));
             let list = charts.galaxy.nearest(base, 12);
-            let index = match (input.pressed(KeyCode::KeyN), index) {
+            let index = match (crate::keys::pressed(input, crate::keys::Act::NextStar), index) {
                 (true, usize::MAX) => 0,
                 (true, i) => (i + 1) % list.len(),
                 (false, usize::MAX) => list.len() - 1,
@@ -97,7 +97,7 @@ impl Observer {
             self.focus = Focus::Body { system: charts.home_system, body: 0 };
             self.star_cycle = None;
         }
-        if input.pressed(KeyCode::KeyT) && !u.crafts.is_empty() {
+        if crate::keys::pressed(input, crate::keys::Act::TrackSettler) && !u.crafts.is_empty() {
             // Follow the next settler.
             let next = match self.focus {
                 Focus::Craft(i) => (i + 1) % u.crafts.len(),
@@ -107,7 +107,7 @@ impl Observer {
             self.distance = 250.0;
             self.star_cycle = None;
         }
-        if input.pressed(KeyCode::KeyH) {
+        if crate::keys::pressed(input, crate::keys::Act::Home) {
             self.focus = Focus::Ship;
             self.distance = 180.0;
             self.star_cycle = None;

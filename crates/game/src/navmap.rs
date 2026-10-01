@@ -158,33 +158,33 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         map.selected = if down { (map.selected + 1) % n } else { (map.selected + n - 1) % n };
         crate::sound::click(ctx, 1200.0);
     }
-    if input.pressed(KeyCode::Delete) {
+    if input.pressed(KeyCode::Delete) || crate::keys::pressed(input, crate::keys::Act::Untarget) {
         app.engine.send(universe_sim::Command::SetNavTarget(None));
     }
     // Route editing.
-    if input.pressed(KeyCode::KeyA)
+    if crate::keys::pressed(input, crate::keys::Act::AddStop)
         && let Some(e) = map.entries.get(map.selected)
         && !matches!(e.target, NavTarget::Gate(_) | NavTarget::Asteroid(_))
     {
         app.engine.send(universe_sim::Command::RoutePush(universe_sim::Stop { system: map.view, target: e.target }));
         crate::sound::click(ctx, 1500.0);
     }
-    if input.pressed(KeyCode::Backspace) && !app.v.avionics.route.stops.is_empty() {
+    if (input.pressed(KeyCode::Backspace) || crate::keys::pressed(input, crate::keys::Act::DropStop)) && !app.v.avionics.route.stops.is_empty() {
         app.engine.send(universe_sim::Command::RoutePop);
         crate::sound::click(ctx, 700.0);
     }
-    if input.pressed(KeyCode::KeyC) {
+    if crate::keys::pressed(input, crate::keys::Act::EmptyRoute) {
         app.engine.send(universe_sim::Command::RouteClear);
         crate::sound::click(ctx, 500.0);
     }
-    if input.pressed(KeyCode::KeyG) {
+    if crate::keys::pressed(input, crate::keys::Act::SettlerRoute) {
         // A reproducible settler route: each press loads the next seed.
         app.engine.send(universe_sim::Command::RouteRandom { seed: map.settler_seed, stops: 10 });
         map.settler_seed += 1;
         crate::sound::chime(ctx);
     }
     let input = &ctx.input;
-    if (input.pressed(KeyCode::Enter) || input.pressed(KeyCode::Space))
+    if (input.pressed(KeyCode::Enter) || crate::keys::pressed(input, crate::keys::Act::Target))
         && let Some(e) = map.entries.get(map.selected)
     {
         if map.here(app) {
@@ -193,11 +193,11 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         }
         app.say("LOCK TARGETS IN THIS SYSTEM - OR ADD TO THE ROUTE (A)".into());
     }
-    if input.pressed(KeyCode::KeyM) || input.pressed(KeyCode::Escape) {
+    if crate::keys::pressed(input, crate::keys::Act::Map) || input.pressed(KeyCode::Escape) {
         return false;
     }
     // U: out to the whole galaxy.
-    if input.pressed(KeyCode::KeyU) {
+    if crate::keys::pressed(input, crate::keys::Act::Galaxy) {
         app.galaxy_map = Some(crate::galaxymap::GalaxyMap::open(app, ctx.low_res.as_vec2()));
         return false;
     }
@@ -247,9 +247,25 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
         y += line;
     }
 
-    let help = "UP/DOWN SELECT  LEFT/RIGHT SYSTEM  ENTER LOCK TARGET  DEL CLEAR TARGET  M CLOSE\n\
-                A ADD TO ROUTE  BKSP REMOVE LAST  C CLEAR ROUTE  G LOAD A SETTLER ROUTE  U GALAXY MAP";
-    frame.text(Vec2::new(16.0, size.y - 2.0 * line - 8.0), help, DIM);
+    // The map's actions, as a grid like the flight's (see `keys`).
+    {
+        use crate::hud::Lamp;
+        use crate::keys::{key, Act};
+        let route = !app.v.avionics.route.stops.is_empty();
+        let off = |b: bool| if b { Lamp::Off } else { Lamp::Unavailable };
+        let cells = vec![
+            (key(Act::Target), "TARGET".to_string(), off(map.here(app))),
+            (key(Act::Untarget), "CLEAR TARGET".to_string(), off(app.v.avionics.nav_target.is_some())),
+            (key(Act::AddStop), "ADD STOP".to_string(), Lamp::Off),
+            (key(Act::DropStop), "DROP STOP".to_string(), off(route)),
+            (key(Act::EmptyRoute), "EMPTY ROUTE".to_string(), off(route)),
+            (key(Act::SettlerRoute), "SETTLER ROUTE".to_string(), Lamp::Off),
+            (key(Act::Galaxy), "GALAXY".to_string(), Lamp::Off),
+            (key(Act::Map), "MAP".to_string(), Lamp::On),
+            ("< >".to_string(), "SYSTEM".to_string(), Lamp::Off),
+        ];
+        crate::hud::draw_grid(frame, "MAP", &cells);
+    }
 
     chart(frame, map, Vec2::new(size.x * 0.76, size.y * 0.5), (size.x * 0.22).min(size.y * 0.42));
 }

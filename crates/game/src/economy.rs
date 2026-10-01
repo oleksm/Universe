@@ -38,7 +38,7 @@ fn shortest(p: &Place) -> Option<(Category, f64)> {
 /// Keys while open. False when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let input = &ctx.input;
-    if input.pressed(KeyCode::Digit5) || input.pressed(KeyCode::Escape) {
+    if crate::keys::pressed(input, crate::keys::Act::Economy) || input.pressed(KeyCode::Escape) {
         return false;
     }
     let n = app.v.economy.len().max(1);
@@ -66,7 +66,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     let short_places = places.iter().filter(|p| p.short.iter().any(|s| *s > 1e-6)).count();
     frame.text(
         Vec2::new(12.0, y),
-        &format!("ECONOMY - {} PLACES, {people:.0}K PEOPLE, {short_places} SHORT OF SOMETHING   (5 CLOSES, UP/DOWN PLACE)", places.len()),
+        &format!("ECONOMY - {} PLACES, {people:.0}K PEOPLE, {short_places} SHORT OF SOMETHING   ({} CLOSES, UP/DOWN PLACE)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
         TEXT,
     );
     y += line * 1.5;

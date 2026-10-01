@@ -8,6 +8,7 @@ mod market;
 mod models;
 mod navmap;
 mod observer;
+mod keys;
 mod lock;
 mod mining;
 mod onfoot;
@@ -399,7 +400,7 @@ impl App {
             self.warp_index = self.warp_index.saturating_sub(1);
             sound::click(ctx, 600.0 + 150.0 * self.warp_index as f32);
         }
-        if input.pressed(KeyCode::KeyP) {
+        if input.pressed(KeyCode::F6) {
             self.paused = !self.paused;
             sound::click(ctx, 400.0);
         }
@@ -410,10 +411,10 @@ impl App {
         if input.pressed(KeyCode::F3) {
             universe_prof::enable(!universe_prof::enabled());
         }
-        if input.pressed(KeyCode::KeyO) {
+        if input.pressed(KeyCode::F4) {
             self.show_grid = !self.show_grid;
         }
-        if input.pressed(KeyCode::KeyL) {
+        if input.pressed(KeyCode::F2) {
             self.show_labels = !self.show_labels;
         }
         if input.pressed(KeyCode::F8) {
@@ -455,8 +456,8 @@ impl App {
             self.engine.send(Command::Walk(c, ctx.dt as f64));
             return Controls::default();
         }
-        // F: out of the seat. Hands off the stick and the triggers.
-        if ctx.input.pressed(KeyCode::KeyF) {
+        // Out of the seat. Hands off the stick and the triggers.
+        if keys::pressed(&ctx.input, keys::Act::Foot) {
             if self.triggers_held != Triggers::default() {
                 self.triggers_held = Triggers::default();
                 self.engine.send(Command::Ship(ShipCommands { weapons: Some(Triggers::default()), ..self.v.ship.holding() }));
@@ -467,18 +468,21 @@ impl App {
         let input = &ctx.input;
         let dt = ctx.dt as f64;
 
-        if input.pressed(KeyCode::KeyC) {
+        use keys::{pressed, Act};
+        use hud::ShipMode;
+        let mode = hud::active_mode(self);
+        if pressed(input, Act::View) {
             self.chase_cam = !self.chase_cam;
         }
-        if input.pressed(KeyCode::KeyJ) {
+        if pressed(input, Act::Hyperdrive) {
             self.engine.send(Command::ToggleHyperdrive);
         }
-        if input.pressed(KeyCode::KeyR) {
-            // R again gives the clearance up.
+        if mode == ShipMode::Nav && pressed(input, Act::Clearance) {
+            // Again gives the clearance up.
             self.engine.send(if self.v.avionics.clearance.is_some() { Command::CancelClearance } else { Command::RequestClearance });
         }
-        if input.pressed(KeyCode::KeyK) {
-            // With a route set, K flies the whole route; otherwise the current clearance.
+        if pressed(input, Act::Autopilot) {
+            // With a route set, it flies the whole route; otherwise the current clearance.
             self.engine.send(if self.v.avionics.route.stops.is_empty() { Command::ToggleAutopilot } else { Command::ToggleRoute });
         }
         if input.pressed(KeyCode::Backspace) {
@@ -487,19 +491,20 @@ impl App {
         // Weapons: SPACE the gun, V the laser, while held (the autopilot
         // doesn't hold them back).
         // B: combat mode (the master arm), or back to navigation. (One mode at a time.)
-        if input.pressed(KeyCode::KeyB) {
+        if pressed(input, Act::Combat) {
             self.mining.on = false;
             self.engine.send(Command::Ship(ShipCommands { arm: Some(!self.v.ship.armed), ..self.v.ship.holding() }));
         }
-        if !self.v.ship.armed && (input.pressed(KeyCode::Space) || input.pressed(KeyCode::KeyV)) {
-            self.say("WEAPONS SAFE - B FOR COMBAT MODE".into());
+        let laser = mode == ShipMode::Combat && keys::down(input, Act::Laser);
+        if !self.v.ship.armed && input.pressed(KeyCode::Space) {
+            self.say(format!("WEAPONS SAFE - {} FOR COMBAT MODE", keys::key(Act::Combat)));
         }
-        let triggers = Triggers { gun: input.down(KeyCode::Space), laser: input.down(KeyCode::KeyV) };
+        let triggers = Triggers { gun: input.down(KeyCode::Space), laser };
         if triggers != self.triggers_held {
             self.triggers_held = triggers;
             self.engine.send(Command::Ship(ShipCommands { weapons: Some(triggers), ..self.v.ship.holding() }));
         }
-        if input.pressed(KeyCode::KeyI) {
+        if mode == ShipMode::Nav && pressed(input, Act::Proximity) {
             let on = !self.v.avionics.collision_warning;
             self.engine.send(Command::CollisionWarning(on));
             self.say(if on { "COLLISION WARNING ON" } else { "COLLISION WARNING OFF" }.into());
@@ -510,25 +515,25 @@ impl App {
         let input = &ctx.input;
         // N keeps at a range from the locked ship (or the nav target's
         // station or gate), U orbits it; again for the next range out. X lets go.
-        if input.pressed(KeyCode::KeyN) {
+        if pressed(input, Act::Keep) {
             self.engine.send(Command::Follow(FollowKind::KeepAt));
         }
-        if input.pressed(KeyCode::KeyU) {
+        if pressed(input, Act::Orbit) {
             self.engine.send(Command::Follow(FollowKind::Orbit));
         }
-        // 4: the cargo hold's contents.
-        if input.pressed(KeyCode::Digit4) {
+        // The cargo hold's contents.
+        if pressed(input, Act::Cargo) {
             self.show_cargo = !self.show_cargo;
         }
-        // Y fires the anchor or lets go; H runs the excavator (anchored).
-        if input.pressed(KeyCode::KeyY) {
+        // Mining: the anchor (fire, or let go), the excavator (anchored).
+        if mode == ShipMode::Mining && pressed(input, Act::Anchor) {
             let anchored = matches!(self.v.ship.state, ShipState::Anchored { .. });
             self.engine.send(Command::Ship(ShipCommands { anchor: Some(!anchored), ..self.v.ship.holding() }));
         }
-        if input.pressed(KeyCode::KeyH) {
+        if mode == ShipMode::Mining && pressed(input, Act::Excavate) {
             self.engine.send(Command::Ship(ShipCommands { excavate: Some(!self.v.ship.excavator), ..self.v.ship.holding() }));
         }
-        if input.pressed(KeyCode::KeyX) && self.v.avionics.following.is_some() {
+        if pressed(input, Act::LetGo) && self.v.avionics.following.is_some() {
             self.engine.send(Command::StopFollowing);
         }
         // The autopilot has the stick.
@@ -550,13 +555,7 @@ impl App {
         }
         // The throttle as a change (the engine has the ship as it is now).
         let delta = if shift { 0.0 } else { input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt };
-        let set = if input.pressed(KeyCode::KeyZ) {
-            Some(1.0)
-        } else if input.pressed(KeyCode::KeyX) {
-            Some(0.0)
-        } else {
-            None
-        };
+        let set = None;
         if delta != 0.0 || set.is_some() {
             self.engine.send(Command::Throttle { delta, set });
         }
@@ -821,7 +820,7 @@ impl Game for App {
             if !economy::input(self, ctx) {
                 self.economy_panel = None;
             }
-        } else if self.nav_map.is_none() && self.galaxy_map.is_none() && self.market.is_none() && ctx.input.pressed(KeyCode::Digit5) {
+        } else if self.nav_map.is_none() && self.galaxy_map.is_none() && self.market.is_none() && keys::pressed(&ctx.input, keys::Act::Economy) {
             self.economy_panel = Some(Default::default());
         }
         // Where we are is explored.
@@ -834,7 +833,7 @@ impl Game for App {
         let map_was_open = self.nav_map.is_some() || galaxy_was_open;
         if self.nav_map.is_some() && !galaxy_was_open {
             navmap::input(self, ctx);
-        } else if ctx.input.pressed(KeyCode::KeyM) {
+        } else if keys::pressed(&ctx.input, keys::Act::Map) {
             self.nav_map = Some(navmap::NavMap::open(self));
             sound::click(ctx, 900.0);
         }
@@ -842,7 +841,7 @@ impl Game for App {
         let market_was_open = self.market.is_some();
         if market_was_open {
             market::input(self, ctx);
-        } else if !map_was_open && self.nav_map.is_none() && self.mode == Mode::Pilot && self.v.crew.seated() && ctx.input.pressed(KeyCode::KeyG) {
+        } else if !map_was_open && self.nav_map.is_none() && self.mode == Mode::Pilot && self.v.crew.seated() && keys::pressed(&ctx.input, keys::Act::Market) {
             self.market = Some(market::MarketView::open(self));
             sound::click(ctx, 900.0);
         }
