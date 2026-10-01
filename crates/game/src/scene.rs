@@ -42,6 +42,11 @@ pub fn draw(frame: &mut Frame, app: &App) {
     frame.reflector = reflector(frame, app);
     universe_prof::time("draw/scene/bodies", || bodies(frame, app));
     universe_prof::time("draw/scene/asteroids", || crate::rocks::draw(frame, app));
+    if app.mode == Mode::Pilot
+        && let Some(s) = crate::rocks::scan(app)
+    {
+        crate::rocks::mark(frame, &s);
+    }
     universe_prof::time("draw/scene/spaceports", || spaceports(frame, app));
     if app.view.origin == app.v.ship_system {
         match &app.approach {

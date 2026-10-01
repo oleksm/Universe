@@ -117,6 +117,9 @@ impl Universe {
         format!("{:?}", self.records.stats).hash(&mut h);
         self.atc.journal.len().hash(&mut h);
         self.ledger.journal.len().hash(&mut h);
+        let mut mined: Vec<_> = self.world.mined.iter().map(|(&k, v)| (k, v.to_bits())).collect();
+        mined.sort_unstable();
+        mined.hash(&mut h);
         h.finish()
     }
 

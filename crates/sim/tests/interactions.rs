@@ -379,3 +379,53 @@ fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
     eprintln!("{name}: {mine:?} (stops {})", u.records.stats.stops);
     assert!(!mine.is_empty(), "the trader traded or declared where it's going");
 }
+
+#[test]
+fn a_miner_digs_ore_into_its_hold_the_rock_remembers_and_a_station_buys_it() {
+    use universe_sim::services::{Asset, Party};
+    use universe_sim::world::{mining, physics, ShipCommands};
+    let mut u = bench(0);
+    let (sys, _) = positions(&mut u);
+    let home = u.ship_system;
+    // A fragment the excavator digs at full speed (gravel), in some field.
+    let t = u.world.time;
+    let (f, bodies, i) = (0..sys.fields.len())
+        .find_map(|f| {
+            let bodies = sys.field_bodies(f);
+            let i = (sys.bodies.len()..bodies.len()).find(|&i| bodies[i].rock.as_ref().is_some_and(|r| mining::dig_rate(r) >= mining::EXCAVATOR_THROUGHPUT))?;
+            Some((f, bodies, i))
+        })
+        .expect("a rubble pile");
+    let mut pos = Vec::new();
+    physics::positions(&bodies[..], t, &mut pos);
+    let b = &bodies[i];
+    let up = DVec3::Y;
+    let at = pos[i] + up * (b.surface_radius(b.rotation(t).inverse() * up) + universe_sim::world::ship::SHIP_RADIUS + 10.0);
+    place_player(&mut u, at);
+    u.ship.velocity = physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(at - pos[i]);
+    u.ship.angular_velocity = DVec3::ZERO;
+    u.command(&ShipCommands { anchor: Some(true), ..u.ship.holding() });
+    for _ in 0..10 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!(matches!(u.ship.state, ShipState::Anchored { .. }), "{:?}", u.events);
+    u.command(&ShipCommands { excavate: Some(true), ..u.ship.holding() });
+    // A tonne at 10 kg/s.
+    for _ in 0..(105 * 60) {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    let item = mining::ore(b.rock.as_ref().unwrap()).item();
+    assert_eq!(u.hold(), vec![(item, 1)], "a tonne of {} in the hold", u.world.goods[item].name);
+    assert_eq!(u.world.dug(home, f, i), 1000.0, "the rock remembers");
+    let entry = u.ledger.journal.iter().rev().find(|e| e.asset == Asset::Goods(item)).unwrap();
+    assert!(entry.from == Party::World && matches!(entry.cause, universe_sim::protocol::Cause::Event { .. }), "{entry:?}");
+    assert!(u.ledger.balanced());
+
+    // Docked at the station, it sells.
+    let station = sys.station().unwrap();
+    let cargo = u.ship.cargo;
+    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    u.ship.cargo = cargo;
+    let paid = u.trade(Facility::Station(station), item, -1).expect("the station buys ore");
+    assert!(paid < 0.0 && u.hold().is_empty());
+}

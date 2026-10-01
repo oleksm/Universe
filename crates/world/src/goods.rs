@@ -110,8 +110,45 @@ pub struct Item {
     pub mass: f64,
 }
 
+/// Raw materials dug out of asteroids (see `mining`): what an excavator
+/// fills a hold with, by the tonne. In the catalog after its generated
+/// goods, the same in every galaxy.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Ore {
+    /// Icy bodies: water ice with frozen volatiles.
+    WaterIce,
+    /// C-types: clays with water bound in, carbon, organics.
+    Carbonaceous,
+    /// S-types: silicates with nickel-iron grains.
+    Stony,
+    /// M-types: nickel-iron.
+    NickelIron,
+    /// M-types rich in platinum-group metals.
+    Pgm,
+}
+
+/// (ore, name, category, price per tonne). Water is worth most where it's
+/// needed: in space, as propellant and air.
+const ORES: [(Ore, &str, Category, f64); 5] = [
+    (Ore::WaterIce, "Asteroid Water Ice", Category::Water, 30.0),
+    (Ore::Carbonaceous, "Carbonaceous Ore", Category::Ores, 20.0),
+    (Ore::Stony, "Stony Ore", Category::Ores, 8.0),
+    (Ore::NickelIron, "Nickel-Iron Ore", Category::Ores, 35.0),
+    (Ore::Pgm, "PGM-Rich Ore", Category::Ores, 400.0),
+];
+
+/// One unit of ore (kg).
+pub const TONNE: f64 = 1000.0;
+
+impl Ore {
+    /// Its goods item.
+    pub fn item(self) -> usize {
+        CATALOG_SIZE + self as usize
+    }
+}
+
 /// The catalog of goods for a galaxy `seed`: `CATALOG_SIZE` items, a
-/// `CATALOG_SIZE / 20` from each category, with distinct names.
+/// `CATALOG_SIZE / 20` from each category, with distinct names; then the ores.
 pub fn catalog(seed: u64) -> Vec<Item> {
     let per = CATALOG_SIZE / KINDS.len();
     let mut items = Vec::with_capacity(CATALOG_SIZE);
@@ -136,6 +173,9 @@ pub fn catalog(seed: u64) -> Vec<Item> {
                 mass: mass.round().max(1.0),
             });
         }
+    }
+    for (_, name, category, price) in ORES {
+        items.push(Item { id: items.len(), name: name.to_string(), category, price, mass: TONNE });
     }
     items
 }

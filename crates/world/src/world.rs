@@ -69,6 +69,9 @@ pub struct World {
     pub impacts: Vec<Impact>,
     /// The goods traded in this galaxy (see `goods`).
     pub goods: Vec<Item>,
+    /// Ore dug out of asteroids so far (kg), by (system, field, body among
+    /// the field's bodies): see `dug`.
+    pub mined: HashMap<(usize, usize, usize), f64>,
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
     pub(crate) turrets: Mutex<HashMap<usize, Arc<Vec<crate::turrets::Turret>>>>,
     pub(crate) turret_guns: HashMap<usize, crate::turrets::TurretGun>,
@@ -124,6 +127,7 @@ impl World {
             beams: Vec::new(),
             impacts: Vec::new(),
             goods: crate::goods::catalog(seed),
+            mined: HashMap::new(),
             turrets: Default::default(),
             turret_guns: HashMap::new(),
         }
@@ -191,6 +195,16 @@ impl World {
         }
     }
 
+    /// What's been dug out of rock `rock` among field `field`'s bodies in `system` (kg).
+    pub fn dug(&self, system: usize, field: usize, rock: usize) -> f64 {
+        self.mined.get(&(system, field, rock)).copied().unwrap_or(0.0)
+    }
+
+    /// A tonne dug out of that rock (see `ShipEvent::Mined`), to be remembered.
+    pub fn dig(&mut self, system: usize, field: usize, rock: usize) {
+        *self.mined.entry((system, field, rock)).or_default() += crate::goods::TONNE;
+    }
+
     /// `ephemeris` for field `f`'s bodies (see `StarSystem::field_bodies`).
     fn field_ephemeris(&self, sys: &StarSystem, f: usize, t: f64) -> Arc<Ephemeris> {
         let mut cache = lock(&self.field_ephemerides);
@@ -233,6 +247,12 @@ impl World {
             }
             Some(false) => crate::mining::release(ship, events),
             _ => {}
+        }
+        if let Some(on) = c.excavate {
+            ship.excavator = on && matches!(ship.state, ShipState::Anchored { .. });
+            if on && !ship.excavator {
+                events.push(ShipEvent::ExcavatorStopped { why: "NOT ANCHORED".into() });
+            }
         }
         match &c.hyperdrive {
             // (Off always; on only by the engage control.)
@@ -372,9 +392,10 @@ impl World {
                 let weld = Weld { body, local_position, local_orientation };
                 universe_prof::time("sim/crafts/tick/world step/landed", || self.landed_step(clock, &sys, *system, ship, weld, commands.turn, real_dt, warp, events))
             }
-            ShipState::Anchored { .. } => {
+            ShipState::Anchored { field, body, .. } => {
                 let result = advance(clock, real_dt * warp);
                 crate::mining::hold(&sys, ship, *clock);
+                crate::mining::excavate(&sys, ship, self.dug(*system, field, body), real_dt * warp, events);
                 result
             }
             ShipState::Transit { to, from, remaining, local_velocity, local_offset, local_orientation } => {

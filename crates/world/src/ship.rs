@@ -94,6 +94,12 @@ pub struct Ship {
     /// Cargo on board (kg): the mass of what's in the hold.
     #[serde(default)]
     pub cargo: f64,
+    /// The excavator is switched on (it digs while anchored: see `mining`).
+    #[serde(default)]
+    pub excavator: bool,
+    /// Ore dug but not yet a whole tonne in the hold (kg).
+    #[serde(default)]
+    pub hopper: f64,
     /// Hull integrity, 1 (intact) .. 0 (destroyed): see `damage`.
     #[serde(default = "intact")]
     pub hull: f64,
@@ -167,6 +173,8 @@ impl Ship {
             rcs: DVec3::ZERO,
             fuel: FUEL_CAPACITY,
             cargo: 0.0,
+            excavator: false,
+            hopper: 0.0,
             hull: 1.0,
             ammo: crate::weapons::GUN_AMMO,
             laser_heat: 0.0,
@@ -187,7 +195,7 @@ impl Ship {
 
     /// Total mass right now (kg).
     pub fn mass(&self) -> f64 {
-        DRY_MASS + self.fuel + self.cargo
+        DRY_MASS + self.fuel + self.cargo + self.hopper
     }
 
     /// Main engine acceleration at full throttle (m/s^2): thrust / mass.

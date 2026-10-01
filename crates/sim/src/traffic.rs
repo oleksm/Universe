@@ -128,6 +128,7 @@ impl Universe {
         let events: Vec<Event> = happened.iter().cloned().map(Event::Ship).collect();
         self.log_events(crate::combat::craft_id(i), &events);
         self.traffic_events(crate::combat::craft_id(i), &events);
+        self.book_mined(crate::combat::craft_id(i), &events);
         let crashed = happened.iter().find_map(|e| match e {
             ShipEvent::Crashed { body } => Some(body.clone()),
             _ => None,

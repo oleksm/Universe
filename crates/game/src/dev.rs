@@ -195,6 +195,42 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.orientation = universe_sim::ship::facing(-off.normalize(), DVec3::Y);
             u.set_nav_target(Some(NavTarget::Asteroid(rock)));
         }
+        "mining" | "prospect" => {
+            // By a rubble fragment of a home field, drifting with its
+            // surface: "prospect" 300 m off it; "mining" anchored 15 m off
+            // and digging for half a minute.
+            app.mode = Mode::Pilot;
+            let t = app.engine.universe().world.time;
+            let (bodies, i) = (0..sys.fields.len())
+                .find_map(|f| {
+                    let bodies = sys.field_bodies(f);
+                    let i = (sys.bodies.len()..bodies.len()).find(|&i| bodies[i].rail.radius > 20.0 && bodies[i].rock.as_ref().is_some_and(|r| universe_sim::world::mining::dig_rate(r) >= 10.0))?;
+                    Some((bodies, i))
+                })
+                .expect("a rubble fragment");
+            let mut pos = Vec::new();
+            universe_sim::world::physics::positions(&bodies[..], t, &mut pos);
+            let b = &bodies[i];
+            let sun = -pos[i].normalize();
+            let up = (sun + sun.any_orthonormal_vector() * 0.8).normalize();
+            let gap = if name == "mining" { 15.0 } else { 300.0 };
+            let at = pos[i] + up * (b.surface_radius(b.rotation(t).inverse() * up) + universe_sim::world::ship::SHIP_RADIUS + gap);
+            let u = app.engine.universe();
+            u.ship.position = at;
+            u.ship.velocity = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(at - pos[i]);
+            u.ship.angular_velocity = DVec3::ZERO;
+            u.ship.orientation = universe_sim::ship::facing(-up, up.any_orthonormal_vector());
+            if name == "mining" {
+                u.command(&ShipCommands { anchor: Some(true), ..u.ship.holding() });
+                for _ in 0..10 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+                u.command(&ShipCommands { excavate: Some(true), ..u.ship.holding() });
+                for _ in 0..60 * 30 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+            }
+        }
         "gate" | "gateauto" | "transit" | "gatearrive" => {
             // A gate out of the home system: cleared for transit, 8 km out, off to one side.
             app.mode = Mode::Pilot;

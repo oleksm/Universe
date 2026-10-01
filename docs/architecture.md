@@ -211,7 +211,13 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   lost into the hull, a wreck when it's used up), whoever's rules. The anchor (`ShipCommands::
   anchor`): fired within `ANCHOR_REACH` of a rock's surface while drifting with it (under
   `ANCHOR_SPEED`) → `ShipState::Anchored` (welded in the rock's frame, riding its orbit and spin);
-  let go → drifting with that surface. A remnant is a nav target (`Facility::Asteroid`: no
+  let go → drifting with that surface. The excavator (`ShipCommands::excavate`) digs while
+  anchored at `EXCAVATOR_POWER / specific_energy` (gravel 2 kJ/kg … nickel-iron 400 kJ/kg),
+  at most `EXCAVATOR_THROUGHPUT`: the rock's ore (`goods::Ore`, by class; PGM-rich M-types)
+  into the hopper, a tonne at a time into the hold (`ShipEvent::Mined`), until the hold is
+  full or the rock worked out. `World::mined` remembers what's been dug from each rock
+  (`dug`/`dig`; in the state hash and the quicksave); the sim books each tonne in the ledger
+  from the world's account, the `Mined` event as its cause (`Universe::book_mined`). A remnant is a nav target (`Facility::Asteroid`: no
   clearance, no market, not a route stop): the hyperdrive autopilot drops out just outside its
   swarm moving with it; keep-at/orbit work round it.
 - **Structures** with their contact rules:
@@ -440,7 +446,8 @@ ship's pose directly, like tests do — then render.
 | Galaxy, star names, seeded rng, units | world: `galaxy`, `names`, `rng`, `units` |
 | Star systems, bodies, spaceports; terrain (implements `Surface`) | world: `system`, `terrain` |
 | Asteroid fields (placement, remnants, swarms, classes, shapes, composition); `Orbit::from_state` | world: `belt`; physics: `orbit` |
-| Rock impacts, the anchor | world: `mining` |
+| Rock impacts, the anchor, the excavator, ore by class | world: `mining` |
+| Mined ore booked in the ledger; what's been dug, remembered | sim: `commerce`; world: `World::mined` |
 | Home system, gate network and links | world: `network` |
 | The clock, system caches, `command`/`step_ship`(`_at`), `Devices`, respawn/spawn, hand-over | world: `world` |
 | Ship, `ShipCommands`, `HyperdriveCommand`, engine/thrusters/attitude | world: `ship` |
@@ -468,7 +475,7 @@ ship's pose directly, like tests do — then render.
 | Whole-flight tests; benches and ETA accuracy | sim: `tests/flights.rs`, `tests/probe.rs` |
 | Projectiles (slugs) swept against moving spheres; rays | physics: `projectile` |
 | Crew on foot: seat / aboard (ship frame, magnetic boots) / outside (body frame, real gravity), interior layout, hatch rules | world: `crew` |
-| Goods catalog (1,000 items from the seed) | world: `goods` |
+| Goods catalog (1,000 items from the seed, then the five ores) | world: `goods` |
 | Atmospheres (exponential air on Terran worlds, turning with them), exact quadratic drag in the integrator, Sutton–Graves heating | physics: `atmosphere`, `integrate` |
 | Hull skin temperature: re-entry heating vs radiation, burning past the limit | world: `heat` |
 | Planetshine: the nearest planet's day side lights the shade (`Reflector`, view factor) | engine: `frame` |
@@ -495,7 +502,7 @@ ship's pose directly, like tests do — then render.
 | Render thread; GPU meshes and the mesh shader | engine: `render_thread`, `renderer`, `model::Mesh` |
 | Rendering, windowing, input, audio, frame timing (`Perf`) | engine |
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |
-| Asteroids on screen: a mesh per rock from its shape, sensor diamonds for small ones nearby | game: `rocks` |
+| Asteroids on screen: a mesh per rock from its shape, sensor diamonds for small ones nearby; the prospector (scan, survey, digging readout) | game: `rocks`, `hud` |
 
 
 ## How changes are verified

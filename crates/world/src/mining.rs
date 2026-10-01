@@ -1,4 +1,4 @@
-//! Working an asteroid: hitting one, anchoring to one.
+//! Working an asteroid: hitting one, anchoring to one, digging it.
 //!
 //! An asteroid a kilometre across pulls with a ten-thousandth of a g; you
 //! can't land on it, you hold on. The anchor is a harpoon on a tether: it
@@ -11,14 +11,60 @@
 //! Touching a rock is a collision like any other: a bounce, and the energy
 //! lost in it goes into the hull (the rock, a billion times heavier, doesn't
 //! notice).
+//!
+//! The excavator digs while anchored, at the rate its power buys against the
+//! energy it takes to break a kilogram of that rock loose — scooping a rubble
+//! pile's gravel is cheap, cutting a stone harder, cutting metal hardest —
+//! and no faster than it can carry spoil (`EXCAVATOR_POWER`,
+//! `EXCAVATOR_THROUGHPUT`, `specific_energy`). What it digs is the rock's
+//! ore (`ore`), into the hopper, and a tonne at a time into the hold. A rock
+//! holds what its mass holds: the world remembers what's been dug out of
+//! each (`World::dug`), and a rock worked out stays worked out.
 
 use glam::DVec3;
 use universe_physics::{Contact, RigidBody, Weld};
 
+use crate::belt::{Rock, RockClass, Structure};
 use crate::damage::{self, HULL_STRENGTH};
 use crate::events::ShipEvent;
-use crate::ship::{Ship, ShipState, SHIP_RADIUS};
+use crate::goods::{Ore, TONNE};
+use crate::ship::{Ship, ShipState, HOLD_CAPACITY, SHIP_RADIUS};
 use crate::system::{Body, BodyKind, StarSystem};
+
+/// The excavator's power (W)...
+pub const EXCAVATOR_POWER: f64 = 300_000.0;
+/// ...and the most spoil it can carry off (kg/s).
+pub const EXCAVATOR_THROUGHPUT: f64 = 10.0;
+/// An M-type this rich in platinum-group metals (ppm) yields PGM-rich ore.
+const PGM_RICH: f64 = 30.0;
+
+/// Energy to break a kilogram of `rock` loose (J/kg): gravel scoops up;
+/// solid ice cuts easily, stone harder, nickel-iron hardest.
+pub fn specific_energy(rock: &Rock) -> f64 {
+    match (rock.structure, rock.class) {
+        (Structure::Rubble, _) => 2_000.0,
+        (Structure::Monolith, RockClass::Icy) => 20_000.0,
+        (Structure::Monolith, RockClass::Carbonaceous) => 30_000.0,
+        (Structure::Monolith, RockClass::Stony) => 60_000.0,
+        (Structure::Monolith, RockClass::Metallic) => 400_000.0,
+    }
+}
+
+/// How fast the excavator digs `rock` (kg/s).
+pub fn dig_rate(rock: &Rock) -> f64 {
+    (EXCAVATOR_POWER / specific_energy(rock)).min(EXCAVATOR_THROUGHPUT)
+}
+
+/// What digging `rock` yields.
+pub fn ore(rock: &Rock) -> Ore {
+    match rock.class {
+        RockClass::Icy => Ore::WaterIce,
+        RockClass::Carbonaceous => Ore::Carbonaceous,
+        RockClass::Stony => Ore::Stony,
+        RockClass::Metallic if rock.composition.pgm_ppm >= PGM_RICH => Ore::Pgm,
+        RockClass::Metallic => Ore::NickelIron,
+    }
+}
 
 /// The anchor reaches this far from the hull (m)...
 pub const ANCHOR_REACH: f64 = 30.0;
@@ -81,11 +127,45 @@ pub fn anchor(sys: &StarSystem, field: Option<usize>, ship: &mut Ship, t: f64, e
     events.push(ShipEvent::Anchored { body: b.name.clone() });
 }
 
-/// Let go: drifting with the surface where the ship was held.
+/// Let go: drifting with the surface where the ship was held. The
+/// excavator stops; loose ore in the hopper drifts off.
 pub fn release(ship: &mut Ship, events: &mut Vec<ShipEvent>) {
     if matches!(ship.state, ShipState::Anchored { .. }) {
         ship.state = ShipState::Flying;
+        ship.excavator = false;
+        ship.hopper = 0.0;
         events.push(ShipEvent::AnchorReleased);
+    }
+}
+
+/// `dt` seconds of the excavator on an anchored ship, `dug` kilograms having
+/// been dug out of its rock already (before this ship's hopper).
+pub fn excavate(sys: &StarSystem, ship: &mut Ship, dug: f64, dt: f64, events: &mut Vec<ShipEvent>) {
+    let ShipState::Anchored { field, body, .. } = ship.state else { return };
+    if !ship.excavator {
+        return;
+    }
+    let bodies = sys.field_bodies(field);
+    let b = &bodies[body];
+    let Some(rock) = b.rock.as_ref() else { return };
+    let mut stop = |ship: &mut Ship, why: &str| {
+        ship.excavator = false;
+        events.push(ShipEvent::ExcavatorStopped { why: why.to_string() });
+    };
+    let room = HOLD_CAPACITY - ship.cargo - ship.hopper;
+    let left = b.mass - dug - ship.hopper;
+    if room < 1.0 {
+        return stop(ship, "HOLD FULL");
+    }
+    if left < 1.0 {
+        return stop(ship, "ROCK WORKED OUT");
+    }
+    ship.hopper += (dig_rate(rock) * dt).min(room).min(left);
+    let item = ore(rock).item();
+    while ship.hopper >= TONNE - 1e-9 {
+        ship.hopper = (ship.hopper - TONNE).max(0.0);
+        ship.cargo += TONNE;
+        events.push(ShipEvent::Mined { field, rock: body, item });
     }
 }
 
@@ -203,5 +283,70 @@ mod tests {
         universe_physics::positions(&bodies[..], t, &mut pos);
         let surface = universe_physics::velocity(&bodies[..], i, t) + bodies[i].angular_velocity().cross(p.ship.position - pos[i]);
         assert!(p.ship.velocity.distance(surface) < 1e-6);
+    }
+
+    #[test]
+    fn the_excavator_digs_what_its_power_buys_into_the_hold() {
+        let (mut p, i) = by_a_rock(10.0, 0.0);
+        anchor_cmd(&mut p, true);
+        p.command(&ShipCommands { excavate: Some(true), ..p.ship.holding() });
+        assert!(p.ship.excavator);
+        let sys = p.sys();
+        let bodies = sys.field_bodies(0);
+        let rock = bodies[i].rock.clone().unwrap();
+        let rate = dig_rate(&rock);
+        let mass = p.ship.mass();
+        let secs = 2500.0 / rate;
+        for _ in 0..(secs * 60.0).round() as usize {
+            p.step(1.0 / 60.0, 1.0);
+        }
+        let tonnes = p.events.iter().filter(|e| matches!(e, ShipEvent::Mined { item, .. } if *item == ore(&rock).item())).count();
+        assert_eq!(tonnes, 2, "{rate} kg/s for {secs} s");
+        assert!((p.ship.cargo - 2.0 * TONNE).abs() < 1e-6 && (p.ship.hopper - 500.0).abs() < 1.0, "hold {} hopper {}", p.ship.cargo, p.ship.hopper);
+        assert!((p.ship.mass() - mass - 2500.0).abs() < 1.0, "the ship weighs what it dug");
+
+        // A full hold stops it; so does a worked-out rock.
+        p.ship.cargo = HOLD_CAPACITY - 600.0;
+        for _ in 0..(200.0 / rate * 60.0) as usize {
+            p.step(1.0 / 60.0, 1.0);
+        }
+        assert!(!p.ship.excavator && matches!(p.events.last(), Some(ShipEvent::ExcavatorStopped { why }) if why == "HOLD FULL"), "{:?}", p.events.last());
+        p.ship.cargo = 0.0;
+        p.ship.excavator = true;
+        let mut events = Vec::new();
+        for _ in 0..1000 {
+            excavate(&sys, &mut p.ship, bodies[i].mass - 800.0, 1.0, &mut events);
+        }
+        assert!(matches!(events.last(), Some(ShipEvent::ExcavatorStopped { why }) if why == "ROCK WORKED OUT"));
+        assert!(p.ship.hopper <= 800.0 + 1e-6);
+
+        // Letting go stops it, and the loose ore drifts off.
+        p.ship.excavator = true;
+        anchor_cmd(&mut p, false);
+        assert!(!p.ship.excavator && p.ship.hopper == 0.0);
+    }
+
+    #[test]
+    fn harder_rock_digs_slower_and_each_class_yields_its_ore() {
+        let mut rng = crate::rng::Rng::new(7);
+        let dig = |class, d: f64, rng: &mut crate::rng::Rng| {
+            let r = crate::belt::rock_for_test(class, d, 0.5, rng);
+            (dig_rate(&r), ore(&r))
+        };
+        let (gravel, _) = dig(RockClass::Stony, 400.0, &mut rng);
+        let (stone, s) = dig(RockClass::Stony, 50.0, &mut rng);
+        let (ice, i) = dig(RockClass::Icy, 50.0, &mut rng);
+        let (c, cc) = dig(RockClass::Carbonaceous, 50.0, &mut rng);
+        assert_eq!((gravel, stone, ice), (EXCAVATOR_THROUGHPUT, 5.0, EXCAVATOR_THROUGHPUT));
+        assert_eq!((s, i, cc), (Ore::Stony, Ore::WaterIce, Ore::Carbonaceous));
+        assert!(c > stone);
+        // Solid nickel-iron is the hardest; rich in platinum metals, it's PGM ore.
+        let mut metal = crate::belt::rock_for_test(RockClass::Metallic, 50.0, 0.5, &mut rng);
+        metal.structure = Structure::Monolith;
+        assert!(dig_rate(&metal) < 1.0);
+        metal.composition.pgm_ppm = 10.0;
+        assert_eq!(ore(&metal), Ore::NickelIron);
+        metal.composition.pgm_ppm = 50.0;
+        assert_eq!(ore(&metal), Ore::Pgm);
     }
 }

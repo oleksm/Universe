@@ -238,6 +238,11 @@ fn rock(class: RockClass, diameter: f64, grade: f64, rng: &mut Rng) -> Rock {
     Rock { class, structure, composition: Composition::of(class, grade, rng), density: class.density(structure), shape: RockShape::new(diameter * 0.5, rng) }
 }
 
+#[cfg(test)]
+pub(crate) fn rock_for_test(class: RockClass, diameter: f64, grade: f64, rng: &mut Rng) -> Rock {
+    rock(class, diameter, grade, rng)
+}
+
 /// An asteroid body: `rock`, named `name`, orbiting `parent` on `orbit`.
 fn body(name: String, rock: Rock, parent: usize, orbit: Orbit, attracts: bool, rng: &mut Rng) -> Body {
     let mass = rock.density * rock.shape.volume();

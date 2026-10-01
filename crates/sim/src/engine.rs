@@ -143,6 +143,8 @@ pub struct View {
     pub nav_marker: Option<(String, DVec3)>,
     /// On foot: what's in reach.
     pub reach: Option<Reach>,
+    /// Anchored: what's been dug out of our rock so far (kg).
+    pub dug: f64,
     /// The market we're docked at; the markets of the system; the one watched.
     pub docked_market: Option<Facility>,
     pub markets: Vec<(Facility, String)>,
@@ -328,6 +330,10 @@ impl Engine {
             prediction: None,
             nav_marker: None,
             reach: u.pilot_reach(),
+            dug: match u.ship.state {
+                universe_world::ShipState::Anchored { field, body, .. } => u.world.dug(system, field, body),
+                _ => 0.0,
+            },
             docked_market: u.docked_market(),
             markets,
             market,

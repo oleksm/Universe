@@ -145,3 +145,67 @@ pub fn draw(frame: &mut Frame, app: &App) {
         rock(frame, app, f, i, &bodies[i], positions[i] + shift, t);
     }
 }
+
+/// Rocks are scanned out to this far (m)...
+pub const SCAN_RANGE: f64 = 50_000.0;
+/// ...and surveyed (composition) within this (m).
+pub const SURVEY_RANGE: f64 = 2_000.0;
+
+/// What the prospector reads: the rock we're anchored to, else the one under
+/// the crosshair, else the nearest in scan range, in the field we're among.
+pub struct Scan {
+    pub rock: std::sync::Arc<universe_sim::world::belt::Rock>,
+    pub name: String,
+    pub mass: f64,
+    pub radius: f64,
+    pub day: f64,
+    pub center: DVec3,
+    /// Hull to surface (m), and our drift against the surface under us (m/s).
+    pub gap: f64,
+    pub drift: f64,
+}
+
+pub fn scan(app: &App) -> Option<Scan> {
+    if app.view.origin != app.v.ship_system || app.view.positions.len() < app.view.system.bodies.len() {
+        return None;
+    }
+    let sys = &app.view.system;
+    let t = app.now();
+    let ship = app.view.ship_pos;
+    let (f, anchored) = match app.ship.state {
+        universe_sim::ShipState::Anchored { field, body, .. } => (field, Some(body)),
+        _ => (sys.fields.iter().position(|f| app.view.positions[f.body].distance(ship) < f.extent + SCAN_RANGE)?, None),
+    };
+    let bodies = sys.field_bodies(f);
+    let mut positions = Vec::with_capacity(bodies.len());
+    universe_sim::world::physics::positions(&bodies[..], t, &mut positions);
+    let shift = app.view.positions[sys.fields[f].body] - positions[sys.fields[f].body];
+    let rocks = || (0..bodies.len()).filter(|&i| bodies[i].kind == universe_sim::BodyKind::Asteroid);
+    let gap = |i: usize| (positions[i] + shift).distance(ship) - bodies[i].rail.radius - universe_sim::world::ship::SHIP_RADIUS;
+    let nose = app.ship.forward();
+    let off_nose = |i: usize| nose.angle_between(positions[i] + shift - ship);
+    let i = anchored
+        .or_else(|| rocks().filter(|&i| gap(i) < SCAN_RANGE && off_nose(i) < 0.05).min_by(|&a, &b| off_nose(a).total_cmp(&off_nose(b))))
+        .or_else(|| rocks().filter(|&i| gap(i) < SCAN_RANGE).min_by(|&a, &b| gap(a).total_cmp(&gap(b))))?;
+    let b = &bodies[i];
+    let center = positions[i] + shift;
+    let surface = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(ship - center);
+    let gap = ship.distance(center) - b.surface_radius_at(center, ship, t) - universe_sim::world::ship::SHIP_RADIUS;
+    Some(Scan { rock: b.rock.clone()?, name: b.name.to_uppercase(), mass: b.mass, radius: b.rail.radius, day: b.rail.day, center, gap, drift: (app.ship.velocity - surface).length() })
+}
+
+/// Brackets round the scanned rock.
+pub fn mark(frame: &mut Frame, s: &Scan) {
+    let cam = frame.camera.position;
+    let d = s.center.distance(cam);
+    let q = frame.camera.orientation.as_dquat();
+    let (u, v) = (q * DVec3::X, q * DVec3::Y);
+    let r = (s.radius * 1.4).max(d * 0.012);
+    let k = r * 0.35;
+    let c = universe_engine::Color::hex(0x60ffa0);
+    for (sx, sy) in [(-1.0, -1.0), (1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)] {
+        let corner = s.center + u * (sx * r) + v * (sy * r);
+        frame.line(corner, corner - u * (sx * k), c);
+        frame.line(corner, corner - v * (sy * k), c);
+    }
+}

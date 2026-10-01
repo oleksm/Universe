@@ -489,6 +489,14 @@ impl App {
         if input.pressed(KeyCode::KeyU) {
             self.engine.send(Command::Follow(FollowKind::Orbit));
         }
+        // Y fires the anchor or lets go; H runs the excavator (anchored).
+        if input.pressed(KeyCode::KeyY) {
+            let anchored = matches!(self.v.ship.state, ShipState::Anchored { .. });
+            self.engine.send(Command::Ship(ShipCommands { anchor: Some(!anchored), ..self.v.ship.holding() }));
+        }
+        if input.pressed(KeyCode::KeyH) {
+            self.engine.send(Command::Ship(ShipCommands { excavate: Some(!self.v.ship.excavator), ..self.v.ship.holding() }));
+        }
         if input.pressed(KeyCode::KeyX) && self.v.avionics.following.is_some() {
             self.engine.send(Command::StopFollowing);
         }
@@ -617,6 +625,11 @@ impl App {
                 Event::Crew(CrewEvent::SteppedOutside { body }) => format!("STEPPED OUT ONTO {body}"),
                 Event::Crew(CrewEvent::CameAboard) => "BACK ABOARD".into(),
                 Event::Crew(CrewEvent::HatchRefused { reason }) => format!("HATCH LOCKED - {reason}"),
+                Event::Ship(ShipEvent::Anchored { body }) => format!("ANCHORED TO {body}\nH TO DIG, Y TO LET GO"),
+                Event::Ship(ShipEvent::AnchorFailed { why }) => format!("ANCHOR - {why}"),
+                Event::Ship(ShipEvent::AnchorReleased) => "ANCHOR RELEASED".into(),
+                Event::Ship(ShipEvent::ExcavatorStopped { why }) => format!("EXCAVATOR STOPPED - {why}"),
+                Event::Ship(ShipEvent::StruckRock { speed, .. }) => format!("ROCK STRIKE AT {speed:.1} M/S"),
                 // Anything else says nothing (add a line here for a new event that should).
                 _ => continue,
             };
@@ -685,7 +698,10 @@ impl App {
         let mut positions = std::mem::take(&mut self.view.positions);
         system.positions(self.now(), &mut positions);
         let ship_pos = self.place(Who::Me).0 + self.charts.galaxy.offset(origin, self.v.ship_system);
-        let reference = (origin == self.v.ship_system).then(|| system.dominant(ship_pos, &positions));
+        // Speeds and prograde relative to what dominates gravity, or among
+        // an asteroid field, to its remnant (the star dominates out there).
+        let field = system.fields.iter().find(|f| positions[f.body].distance(ship_pos) < f.extent + rocks::SCAN_RANGE).map(|f| f.body);
+        let reference = (origin == self.v.ship_system).then(|| field.unwrap_or_else(|| system.dominant(ship_pos, &positions)));
         self.view = View { origin, system, positions, ship_pos, reference };
     }
 

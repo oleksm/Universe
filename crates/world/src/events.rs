@@ -23,8 +23,13 @@ pub enum ShipEvent {
     Anchored { body: String },
     /// The anchor couldn't hold: why.
     AnchorFailed { why: String },
-    /// The anchor let go.
+    /// The anchor let go (any loose ore in the hopper drifts away).
     AnchorReleased,
+    /// A tonne of `item` (an ore) dug out of rock `rock` among field `field`'s
+    /// bodies, and into the hold.
+    Mined { field: usize, rock: usize, item: usize },
+    /// The excavator stopped: why.
+    ExcavatorStopped { why: String },
     /// Destroyed, by hitting `body` (or by weapons fire: "GUNFIRE", "LASER FIRE").
     Crashed { body: String },
     /// Opened fire on a ship that wasn't fair game: aggressed until world time `until`.

@@ -129,6 +129,8 @@ impl Avionics {
             | ShipEvent::StruckRock { .. }
             | ShipEvent::AnchorFailed { .. }
             | ShipEvent::AnchorReleased
+            | ShipEvent::Mined { .. }
+            | ShipEvent::ExcavatorStopped { .. }
             | ShipEvent::GateArrived { .. }
             | ShipEvent::GateTooFast { .. }
             | ShipEvent::Hit { .. }

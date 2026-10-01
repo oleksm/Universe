@@ -36,4 +36,27 @@ drifts with that surface.
 - Fixed: the own ship (drawn over the HUD in chase view) no longer covers the nav map or
   the market screen.
 
-Next: digging, ore and markets.
+## Mining
+
+- **Prospecting.** Among a field, the prospector scans the rock under the crosshair (else the
+  nearest within 50 km), bracketed in green: its class, structure, size and spin, range to
+  its surface and your drift against it. Within 2 km, a close survey: its make-up (water,
+  organics, silicates, nickel-iron, volatiles, PGM ppm), the ore it yields and how fast it
+  digs. Near a field, speeds and prograde read against its remnant.
+- **Anchoring** (Y): within 30 m of the surface and drifting with it (under 0.5 m/s) the
+  anchor holds; Y again lets go.
+- **Digging** (H): the excavator's 300 kW against the energy to break the rock loose —
+  gravel off a rubble pile 2 kJ/kg, ice 20, carbonaceous stone 30, stone 60, solid
+  nickel-iron 400 — capped at 10 kg/s it can carry off. So a rubble pile fills the 20 t hold
+  in about half an hour; a solid metal rock takes 7.4 hours. Ore by class: water ice, carbonaceous
+  ore, stony ore, nickel-iron ore, PGM-rich ore (M-types over 30 ppm). Into the hopper, a
+  tonne at a time into the hold — the ship weighs it.
+- **Depletion.** Every rock holds what its mass holds; what's been dug from each is
+  remembered (saved, and in the replay hash), and a worked-out rock stays worked out.
+- **Selling.** The five ores are goods (after the catalog, the same in every galaxy):
+  stations buy water and ore; each mined tonne is booked in the ledger from the world's
+  account, caused by the dig.
+- Dev scenarios: `asteroid`, `swarm`, `prospect`, `mining`.
+
+Not yet: NPC miners (the same actions, by the operator), claims, refining, towing boulders,
+the excavator's power drawn from fuel.

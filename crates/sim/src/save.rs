@@ -26,6 +26,9 @@ pub struct UniverseSave {
     pub credits: f64,
     #[serde(default)]
     pub hold: Vec<(usize, u32)>,
+    /// What's been dug out of asteroids: ((system, field, rock), kg).
+    #[serde(default)]
+    pub mined: Vec<((usize, usize, usize), f64)>,
 }
 
 fn starting_credits() -> f64 {
@@ -69,7 +72,7 @@ impl From<SaveRecord> for UniverseSave {
             hyper_autopilot: r.ship.hyper_autopilot,
             ..Avionics::default()
         });
-        UniverseSave { seed: r.seed, time: r.time, ship: r.ship.ship, ship_system: r.ship_system, route: r.route, avionics, credits: r.credits, hold: Vec::new() }
+        UniverseSave { seed: r.seed, time: r.time, ship: r.ship.ship, ship_system: r.ship_system, route: r.route, avionics, credits: r.credits, hold: Vec::new(), mined: Vec::new() }
     }
 }
 
@@ -89,6 +92,11 @@ impl Universe {
             avionics,
             credits: self.credits(),
             hold: self.hold(),
+            mined: {
+                let mut m: Vec<_> = self.world.mined.iter().map(|(&k, &v)| (k, v)).collect();
+                m.sort_by_key(|e| e.0);
+                m
+            },
         }
     }
 
@@ -112,6 +120,7 @@ impl Universe {
             self.ledger.settle(me, Asset::Goods(*good), *units as f64, tick, cause);
         }
         self.ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
+        self.world.mined = save.mined.into_iter().collect();
         self.events.clear();
     }
 }

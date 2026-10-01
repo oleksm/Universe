@@ -177,6 +177,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ship_readout(app, lines);
     radar_info(app, lines);
     collision_info(app, lines);
+    prospect_info(app, lines);
     let ship = &app.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
     lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
@@ -247,6 +248,49 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
             lines.push((format!("ANCHORED TO {name}"), AMBER));
         }
         ShipState::Flying => {}
+    }
+}
+
+/// The prospector: the rock scanned (class, size, spin, range, our drift
+/// against it), its make-up up close, and digging it once anchored.
+fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
+    use universe_sim::world::mining;
+    let Some(s) = crate::rocks::scan(app) else { return };
+    let r = &s.rock;
+    let anchored = matches!(app.ship.state, ShipState::Anchored { .. });
+    lines.push((
+        format!("ROCK {}  {} {}  {} ACROSS  SPIN {}", s.name, r.class.letter(), r.structure.label(), fmt::distance(s.radius * 2.0), fmt::duration(s.day)),
+        HUD,
+    ));
+    if !anchored {
+        let ready = s.gap < mining::ANCHOR_REACH && s.drift < mining::ANCHOR_SPEED;
+        let c = if ready { HUD } else if s.gap < mining::ANCHOR_REACH { AMBER } else { DIM };
+        let hint = if ready { "  Y TO ANCHOR" } else if s.gap < mining::ANCHOR_REACH { "  MATCH ITS DRIFT" } else { "" };
+        lines.push((format!("RANGE {}  DRIFT {:.2} M/S{hint}", fmt::distance(s.gap.max(0.0)), s.drift), c));
+    }
+    if s.gap < crate::rocks::SURVEY_RANGE || anchored {
+        let k = &r.composition;
+        let pct = |x: f64| x * 100.0;
+        let mut parts = Vec::new();
+        for (name, x) in [("WATER", k.water), ("ORGANICS", k.organics), ("SILICATES", k.silicates), ("NI-FE", k.metal), ("VOLATILES", k.volatiles)] {
+            if x > 0.005 {
+                parts.push(format!("{name} {:.0}%", pct(x)));
+            }
+        }
+        if k.pgm_ppm > 0.0 {
+            parts.push(format!("PGM {:.0} PPM", k.pgm_ppm));
+        }
+        lines.push((parts.join("  "), DIM));
+        let ore = &app.charts.goods[mining::ore(r).item()];
+        lines.push((format!("ORE {}  DIG {:.1} KG/S  ({:.0} KJ/KG)", ore.name.to_uppercase(), mining::dig_rate(r), mining::specific_energy(r) / 1000.0), DIM));
+    } else {
+        lines.push((format!("SPECTRUM {}  (SURVEY WITHIN {})", r.class.label(), fmt::distance(crate::rocks::SURVEY_RANGE)), DIM));
+    }
+    if anchored {
+        let left = (s.mass - app.v.dug - app.ship.hopper).max(0.0);
+        let hopper: String = (0..10).map(|i| if (i as f64) < app.ship.hopper / 100.0 - 0.01 { '#' } else { '.' }).collect();
+        let state = if app.ship.excavator { "DIGGING" } else { "H TO DIG" };
+        lines.push((format!("{state}  HOPPER [{hopper}]  HOLD {:.1}/{:.0} T  ROCK LEFT {}", app.ship.cargo / 1000.0, universe_sim::world::ship::HOLD_CAPACITY / 1000.0, fmt::tonnes(left)), if app.ship.excavator { AMBER } else { HUD }));
     }
 }
 
@@ -1108,7 +1152,7 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let auto = a.route.active || a.hyper_autopilot || a.clearance.is_some_and(|c| c.autopilot);
     // N / U: keep at range, orbit, with the range when engaged; there's
     // something to follow with a lock or a station or gate as the nav target.
-    let anchor = a.contact.is_some() || matches!(a.nav_target, Some(universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_)));
+    let anchor = a.contact.is_some() || matches!(a.nav_target, Some(universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_) | universe_sim::NavTarget::Asteroid(_)));
     let follow_cell = |kind: &str, on: Option<f64>| match on {
         Some(r) => (format!("{kind} {:.0}K", r / 1000.0), Lamp::On),
         None if anchor && flying && !ship.hyperdrive => (kind.to_string(), Lamp::Off),
@@ -1131,7 +1175,18 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     } else {
         Lamp::Off
     };
-    let cells: [(&str, &str, Lamp); 13] = [
+    // Y / H: the anchor (a rock in reach) and the excavator (anchored).
+    let anchored = matches!(ship.state, ShipState::Anchored { .. });
+    let in_reach = || crate::rocks::scan(app).is_some_and(|s| s.gap < universe_sim::world::mining::ANCHOR_REACH);
+    let anchor_lamp = if anchored {
+        Lamp::On
+    } else if flying && !ship.hyperdrive && in_reach() {
+        Lamp::Off
+    } else {
+        Lamp::Unavailable
+    };
+    let dig = if ship.excavator { Lamp::Busy } else if anchored { Lamp::Off } else { Lamp::Unavailable };
+    let cells: [(&str, &str, Lamp); 15] = [
         ("R", clearance.0, clearance.1),
         ("K", "AUTO", on(auto)),
         ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
@@ -1145,6 +1200,8 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("O", "GRID", on(app.show_grid)),
         ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
         ("F1", "HELP", on(app.show_help)),
+        ("Y", "ANCHOR", anchor_lamp),
+        ("H", "DIG", dig),
     ];
     const COLS: usize = 5;
     let cell = Vec2::new(84.0, 14.0);
@@ -1305,8 +1362,11 @@ PILOT
           HYPERDRIVE STEER TO TARGET
  T        LOCK THE SHIP IN THE BEAM RING (AGAIN: NEXT)
  N  U     KEEP AT RANGE / ORBIT THE LOCKED SHIP, OR
-          THE NAV TARGET STATION/GATE (AGAIN: NEXT
-          RANGE OUT)  X LETS GO
+          THE NAV TARGET STATION/GATE/ASTEROID (AGAIN:
+          NEXT RANGE OUT)  X LETS GO
+ Y        ANCHOR TO THE ROCK IN REACH (30 M; DRIFT
+          UNDER 0.5 M/S AGAINST ITS SURFACE) / LET GO
+ H        EXCAVATOR ON / OFF (ANCHORED): ORE TO THE HOLD
  I        COLLISION WARNING: PATH, IMPACT, TIME
  B        COMBAT MODE: ARM / SAFE WEAPONS
  SPACE    GUN (FLY THE LEAD INTO THE RING)

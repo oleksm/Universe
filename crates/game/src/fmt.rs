@@ -15,6 +15,17 @@ pub fn distance(m: f64) -> String {
     }
 }
 
+/// A mass in tonnes, kilotonnes, megatonnes or gigatonnes.
+pub fn tonnes(kg: f64) -> String {
+    let t = kg / 1000.0;
+    match t {
+        t if t < 1.0e3 => format!("{t:.1} T"),
+        t if t < 1.0e6 => format!("{:.1} KT", t / 1.0e3),
+        t if t < 1.0e9 => format!("{:.1} MT", t / 1.0e6),
+        t => format!("{:.1} GT", t / 1.0e9),
+    }
+}
+
 pub fn speed(v: f64) -> String {
     let a = v.abs();
     if a < 1000.0 {

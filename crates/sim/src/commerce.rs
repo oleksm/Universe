@@ -37,6 +37,27 @@ impl Universe {
         r
     }
 
+    /// Ore ship `id` dug this tick (as its step logged it): the world
+    /// remembers it's gone from the rock, the ledger puts it in the hold
+    /// (from the world's account, because of the dig).
+    pub(crate) fn book_mined(&mut self, id: usize, events: &[crate::Event]) {
+        for (k, e) in events.iter().enumerate() {
+            let crate::Event::Ship(universe_world::ShipEvent::Mined { field, rock, item }) = e else { continue };
+            let Some((_, system, _)) = self.ship_by_id(id) else { return };
+            self.world.dig(system, *field, *rock);
+            // (The k-th of its mined tonnes this tick, as logged.)
+            let n = events[..=k].iter().filter(|e| matches!(e, crate::Event::Ship(universe_world::ShipEvent::Mined { .. }))).count();
+            let cause = self.mined_cause(id, n).unwrap_or(universe_protocol::Cause::Rules);
+            let _ = self.ledger.transfer(Party::World, Party::Pilot(id), universe_services::ledger::Asset::Goods(*item), 1.0, self.tick, cause);
+        }
+    }
+
+    /// The `n`-th of ship `id`'s `Mined` events in this tick's log, as a cause.
+    fn mined_cause(&self, id: usize, n: usize) -> Option<universe_protocol::Cause> {
+        let index = self.log.iter().enumerate().filter(|(_, (s, e))| *s == id && matches!(e, universe_world::ShipEvent::Mined { .. })).nth(n - 1)?.0;
+        Some(universe_protocol::Cause::Event { tick: self.tick, index: index as u32 })
+    }
+
     /// Craft `i`'s credits, as the ledger has them.
     pub fn craft_credits(&self, i: usize) -> f64 {
         self.ledger.credits(Party::Pilot(crate::combat::craft_id(i)))

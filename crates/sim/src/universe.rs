@@ -186,6 +186,7 @@ impl Universe {
         self.player_events(happened);
         self.log_events(crate::combat::PLAYER, &fresh);
         self.traffic_events(crate::combat::PLAYER, &fresh);
+        self.book_mined(crate::combat::PLAYER, &fresh);
         // Wrecked on something (collisions and weapons are filed by the combat phase).
         let crashed = fresh.iter().find_map(|e| match e {
             Event::Ship(ShipEvent::Crashed { body }) if !matches!(body.as_str(), "COLLISION" | "GUNFIRE" | "LASER FIRE") => Some(body.clone()),
