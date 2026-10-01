@@ -17,7 +17,11 @@ use crate::{fmt, App};
 /// The pulse reaches this far (m)...
 pub const PULSE_RANGE: f64 = 30_000.0;
 /// ...in this long (real s).
-const PULSE_SECS: f32 = 2.0;
+const PULSE_SECS: f32 = 3.0;
+/// The burst round the ship lasts this long (real s).
+const BURST: f32 = 0.5;
+/// A rock the shell reaches flashes this long (real s).
+const FLASH: f32 = 0.8;
 /// Rows of the results list shown (and numbers tagged in the view).
 const SHOWN: usize = 12;
 
@@ -36,15 +40,13 @@ pub struct Mining {
 pub struct Prospect {
     pub system: usize,
     pub age: f32,
-    /// Where it went out from (the view's coordinates).
-    pub origin: DVec3,
     pub found: Vec<(usize, usize, f64)>,
 }
 
 impl Prospect {
     /// How far the shell has reached (m).
     fn reach(&self) -> f64 {
-        PULSE_RANGE * (self.age / PULSE_SECS).min(1.0) as f64
+        PULSE_RANGE * (self.age / PULSE_SECS).clamp(0.0, 1.0) as f64
     }
 }
 
@@ -159,7 +161,7 @@ fn prospect(app: &mut App) {
         }
     }
     let n = found.len();
-    app.mining.prospect = Some(Prospect { system: app.v.ship_system, age: 0.0, origin: ship, found });
+    app.mining.prospect = Some(Prospect { system: app.v.ship_system, age: 0.0, found });
     app.say(if n == 0 { "PROSPECT - NOTHING WITHIN 30 KM".into() } else { format!("PROSPECT - {n} ROCKS WITHIN 30 KM") });
 }
 
@@ -169,14 +171,34 @@ pub fn draw_scene(frame: &mut Frame, app: &App) {
     if p.system != app.v.ship_system || app.view.origin != app.v.ship_system {
         return;
     }
-    if p.age < PULSE_SECS + 0.6 {
-        let r = p.reach();
-        let fade = 1.0 - ((p.age - PULSE_SECS).max(0.0) / 0.6);
-        let c = PULSE.scale(fade * 0.8);
-        let to_cam = (frame.camera.position - p.origin).normalize_or(DVec3::Y);
-        frame.circle(p.origin, to_cam, r, 96, c);
-        for n in [DVec3::Y, DVec3::X, DVec3::Z] {
-            frame.circle(p.origin, n, r, 96, c.scale(0.35));
+    if p.age < PULSE_SECS + FLASH {
+        // The burst: a ring round the ship, facing us, flying out past the
+        // edges of the view. (From inside a shell its lines don't move:
+        // what shows it going out is what it reaches.)
+        let at = app.view.ship_pos;
+        let to_cam = (frame.camera.position - at).normalize_or(DVec3::Y);
+        // (Timed to be seen: the real shell is past the view's edges in
+        // milliseconds. Two rings, a beat apart, out to past the edges.)
+        let eye = frame.camera.position.distance(at).max(10.0);
+        for lag in [0.0, 0.12] {
+            let k = ((p.age - lag) / BURST).clamp(0.0, 1.0);
+            if k > 0.0 && k < 1.0 {
+                frame.circle(at, to_cam, eye * 6.0 * (k * k) as f64, 96, PULSE.scale(1.0 - k));
+            }
+        }
+        // The sweep: each rock flashes as the shell reaches it.
+        let t = app.now();
+        let sys = &app.view.system;
+        for &(field, body, d) in &p.found {
+            let since = p.age - PULSE_SECS * (d / PULSE_RANGE) as f32;
+            if !(0.0..FLASH).contains(&since) {
+                continue;
+            }
+            let (c, _) = sys.field_body_state(field, body, t);
+            let k = since / FLASH;
+            let size = c.distance(frame.camera.position) * (0.02 + 0.06 * k as f64);
+            let n = (c - frame.camera.position).normalize_or(DVec3::Y);
+            frame.circle(c, n, size, 24, PULSE.scale(1.0 - k));
         }
     }
     if !app.mining.on {

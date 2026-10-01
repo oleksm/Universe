@@ -228,7 +228,7 @@ pub fn apply(app: &mut App, name: &str) {
                 // Mining mode, a little farther off: prospected (or mid-pulse), a rock locked, or T held.
                 u.ship.position = at + up * 2000.0;
                 app.mining.on = true;
-                let age = if name == "pulse" { 1.0 } else { 5.0 };
+                let age = if name == "pulse" { -0.45 } else { 5.0 };
                 crate::mining::prospect_for_show(app, age);
                 if name == "picklist" {
                     app.picker.hold_for_show();

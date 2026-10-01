@@ -92,3 +92,12 @@ drifts with that surface.
 
 Not yet: claims, refining, towing boulders,
 the excavator's power drawn from fuel.
+
+## The prospect pulse, seen from the ship
+
+- Fixed: the pulse was left where it was sent, in the star's frame — which the ship and the
+  field race through at tens of km/s — so it showed off to one side. It goes out round the
+  ship now.
+- From inside a shell its lines don't appear to move, so the pulse shows by what it does: a
+  burst of two rings opening round the ship out past the edges of the view, then each rock
+  flashing as the shell reaches it, near ones first, out to 30 km over 3 s.
