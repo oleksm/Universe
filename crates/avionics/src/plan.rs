@@ -100,8 +100,9 @@ const NEAR: f64 = 20_000.0;
 /// farther out: see `route::hyperjump_limit`), the copy looks ahead in longer
 /// substeps, up to this (s; the kernel also keeps them short against the
 /// orbital time scale). The autopilot's gains stay within reach of such steps
-/// (see `docking::gain`).
-const FAR_STEP: f64 = 10.0;
+/// (see `docking::gain`); short enough that the ship's turning — torque
+/// against inertia, as in flight — keeps up with what the autopilot asks.
+const FAR_STEP: f64 = 2.0;
 /// A holding ship this near its place on the circle has joined it (m).
 const JOINED: f64 = 400.0;
 
@@ -200,7 +201,7 @@ pub fn plan(sys: &StarSystem, rules: &Rules, ship: &Ship, target: NavTarget, pha
                 avionics.clearance = Some(Clearance { phase: cmd.phase, ..c });
                 ship.throttle = cmd.throttle;
                 ship.rcs = cmd.rcs;
-                ship.steer(&cmd.controls, step);
+                ship.drive(Some(&cmd.controls), step, true);
             }
             let rigid = ship.rigid();
             events.clear();

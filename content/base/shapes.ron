@@ -30,12 +30,14 @@
             (name: "nozzle_main_left", at: (-0.225, 0.01, 0.8), dir: (0.0, 0.0, 1.0)),
             (name: "nozzle_main_right", at: (0.225, 0.01, 0.8), dir: (0.0, 0.0, 1.0)),
             // Thruster quads at the four corners: one firing up, one outward,
-            // one ahead (the nose's) or astern (the tail's).
-            (name: "nozzle_nose_left_up", at: (-0.3, 0.12, -0.75), dir: (0.0, 1.0, 0.0)),
-            (name: "nozzle_nose_left_side", at: (-0.35, 0.0, -0.75), dir: (-1.0, 0.0, 0.0)),
+            // one ahead (the nose's) or astern (the tail's). The fore and aft
+            // pairs sit as far either side of the centre of mass (0.21 aft):
+            // pushing straight, they don't turn the ship.
+            (name: "nozzle_nose_left_up", at: (-0.3, 0.15, -0.34), dir: (0.0, 1.0, 0.0)),
+            (name: "nozzle_nose_left_side", at: (-0.55, 0.0, -0.34), dir: (-1.0, 0.0, 0.0)),
             (name: "nozzle_nose_left_fore", at: (-0.3, 0.0, -0.95), dir: (0.0, 0.0, -1.0)),
-            (name: "nozzle_nose_right_up", at: (0.3, 0.12, -0.75), dir: (0.0, 1.0, 0.0)),
-            (name: "nozzle_nose_right_side", at: (0.35, 0.0, -0.75), dir: (1.0, 0.0, 0.0)),
+            (name: "nozzle_nose_right_up", at: (0.3, 0.15, -0.34), dir: (0.0, 1.0, 0.0)),
+            (name: "nozzle_nose_right_side", at: (0.55, 0.0, -0.34), dir: (1.0, 0.0, 0.0)),
             (name: "nozzle_nose_right_fore", at: (0.3, 0.0, -0.95), dir: (0.0, 0.0, -1.0)),
             (name: "nozzle_tail_left_up", at: (-0.9, 0.1, 0.75), dir: (0.0, 1.0, 0.0)),
             (name: "nozzle_tail_left_side", at: (-1.25, 0.0, 0.75), dir: (-1.0, 0.0, 0.0)),
@@ -43,11 +45,11 @@
             (name: "nozzle_tail_right_up", at: (0.9, 0.1, 0.75), dir: (0.0, 1.0, 0.0)),
             (name: "nozzle_tail_right_side", at: (1.25, 0.0, 0.75), dir: (1.0, 0.0, 0.0)),
             (name: "nozzle_tail_right_aft", at: (0.9, 0.0, 0.8), dir: (0.0, 0.0, 1.0)),
-            // Belly lift, near the corners, firing down.
-            (name: "nozzle_lift_nose_left", at: (-0.3, -0.1, -0.6), dir: (0.0, -1.0, 0.0)),
-            (name: "nozzle_lift_nose_right", at: (0.3, -0.1, -0.6), dir: (0.0, -1.0, 0.0)),
-            (name: "nozzle_lift_tail_left", at: (-0.8, -0.15, 0.6), dir: (0.0, -1.0, 0.0)),
-            (name: "nozzle_lift_tail_right", at: (0.8, -0.15, 0.6), dir: (0.0, -1.0, 0.0)),
+            // Belly lift, firing down, around the centre of mass.
+            (name: "nozzle_lift_nose_left", at: (-0.3, -0.12, -0.3), dir: (0.0, -1.0, 0.0)),
+            (name: "nozzle_lift_nose_right", at: (0.3, -0.12, -0.3), dir: (0.0, -1.0, 0.0)),
+            (name: "nozzle_lift_tail_left", at: (-0.8, -0.15, 0.7), dir: (0.0, -1.0, 0.0)),
+            (name: "nozzle_lift_tail_right", at: (0.8, -0.15, 0.7), dir: (0.0, -1.0, 0.0)),
             (name: "cockpit", at: (0.0, 0.15, -0.5), dir: (0.0, 0.0, -1.0)),
         ],
     ),

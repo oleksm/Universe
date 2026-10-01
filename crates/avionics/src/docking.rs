@@ -189,7 +189,13 @@ pub fn attitude(ship: &Ship, target: DQuat, spin: DVec3, h: f64) -> Controls {
     if err.w < 0.0 {
         err = -err;
     }
-    let rate = err.to_scaled_axis() * gain(1.5, h) + ship.orientation.inverse() * spin;
+    // Toward the target at a rate the thrusters can still stop from in the
+    // angle left (√(2αθ), with a margin), each axis by its own envelope.
+    let e = err.to_scaled_axis();
+    let alpha = ship.turn_accel() * 0.6;
+    let k = gain(1.5, h);
+    let toward = |e: f64, a: f64| e.signum() * (e.abs() * k).min((2.0 * a * e.abs()).sqrt());
+    let rate = DVec3::new(toward(e.x, alpha.x), toward(e.y, alpha.y), toward(e.z, alpha.z)) + ship.orientation.inverse() * spin;
     let s = ship.spec();
     Controls {
         pitch: (rate.x / s.turn_rate).clamp(-1.0, 1.0),
@@ -238,4 +244,42 @@ pub fn autopilot(frame: &StationFrame, ship: &Ship, phase: Phase, may_enter: boo
     };
     let controls = attitude(ship, target, spin, h);
     Command { controls, throttle: 0.0, rcs, phase, attitude: target }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use universe_world::Ship;
+
+    /// A 180° turn about `axis`, at `throttle`: seconds until within 5°, and
+    /// the worst it strays after.
+    fn flip(throttle: f64, axis: DVec3) -> (f64, f64) {
+        let mut s = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
+        s.throttle = throttle;
+        let target = DQuat::from_axis_angle(axis, std::f64::consts::PI * 0.999);
+        let (h, mut t, mut worst, mut settled) = (1.0 / 60.0, 0.0, 0.0f64, None);
+        while t < 15.0 {
+            let c = attitude(&s, target, DVec3::ZERO, h);
+            s.drive(Some(&c), h, true);
+            t += h;
+            let off = (s.orientation * DVec3::NEG_Z).angle_between(target * DVec3::NEG_Z).to_degrees();
+            if settled.is_none() && off < 5.0 {
+                settled = Some(t);
+            }
+            if settled.is_some() {
+                worst = worst.max(off);
+            }
+        }
+        (settled.unwrap_or(f64::INFINITY), worst)
+    }
+
+    #[test]
+    fn a_flip_turns_round_in_seconds_on_the_thrusters_and_settles() {
+        for axis in [DVec3::Y, DVec3::X] {
+            for throttle in [0.0, 1.0] {
+                let (t, worst) = flip(throttle, axis);
+                assert!(t < 5.0 && worst < 6.0, "{axis} at throttle {throttle}: {t:.1} s, strays {worst:.1}°");
+            }
+        }
+    }
 }

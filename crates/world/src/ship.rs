@@ -37,7 +37,12 @@ pub struct ClassSpec {
     pub main_thrust: f64,
     pub rcs_thrust: f64,
     pub lift_thrust: f64,
-    /// Pitch and yaw rate, and roll rate, at full stick (rad/s).
+    /// How fast its thrusters turn it about each body axis (rad/s², pitch,
+    /// yaw, roll; the weaker way), loaded with a full tank and an empty hold:
+    /// a lighter ship turns faster in proportion (see `Ship::turn_accel`).
+    pub turn_accel: DVec3,
+    /// Pitch and yaw rate, and roll rate, at full stick (rad/s): the flight
+    /// computer's limits.
     pub turn_rate: f64,
     pub roll_rate: f64,
     /// Collision radius (m).
@@ -118,6 +123,9 @@ impl HullDef {
         let main_thrust = along(ThrusterRole::Main, DVec3::NEG_Z);
         let lift_thrust = along(ThrusterRole::Lift, DVec3::Y);
         let rcs_thrust = [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| along(ThrusterRole::Rcs, d)).fold(f64::INFINITY, f64::min);
+        let mass = self.dry_mass + self.fuel_capacity;
+        let inertia = shape.solid.inertia * (mass / shape.solid.volume);
+        let turn_accel = crate::thrusters::turn_envelope(&thrusters, shape.solid.centroid, mass, inertia);
         Ok(ClassSpec {
             key: self.key,
             name: self.name,
@@ -129,6 +137,7 @@ impl HullDef {
             main_thrust,
             rcs_thrust,
             lift_thrust,
+            turn_accel,
             turn_rate: self.turn_rate,
             roll_rate: self.roll_rate,
             radius: self.radius,
@@ -286,6 +295,13 @@ pub struct Ship {
     /// in the way) gives them back. (Not saved.)
     #[serde(skip)]
     pub hyper_engaged: Option<(f64, f64, DVec3)>,
+    /// How hard each thruster fires now (0..1, the hull's `thrusters` in
+    /// order): the flight computer's allocation (see `thrusters`). (Not saved.)
+    #[serde(skip)]
+    pub jets: Vec<f64>,
+    /// What they give (body frame): force (N) and torque about the centre of mass (N·m).
+    #[serde(skip)]
+    pub applied: (DVec3, DVec3),
     /// The hull's skin temperature (K): see `heat`.
     #[serde(default = "skin_ambient")]
     pub skin_temp: f64,
@@ -336,6 +352,8 @@ impl Ship {
             hyper_orders: HyperdriveCommand::CRUISE,
             locked_at: f64::NEG_INFINITY,
             hyper_engaged: None,
+            jets: Vec::new(),
+            applied: (DVec3::ZERO, DVec3::ZERO),
         }
     }
 
@@ -360,6 +378,52 @@ impl Ship {
     pub fn inertia(&self) -> glam::DMat3 {
         let solid = &self.spec().shape().solid;
         solid.inertia * (self.mass() / solid.volume)
+    }
+
+    /// How fast its thrusters turn it now (rad/s² about each body axis).
+    pub fn turn_accel(&self) -> DVec3 {
+        let s = self.spec();
+        s.turn_accel * ((s.dry_mass + s.fuel_capacity) / self.mass())
+    }
+
+    /// The flight computer, for a span of `dt` seconds: the push the engine
+    /// and thrusters are set to, and the turn wanted (rates, `turn`; None: no
+    /// turn worked), allocated to the thrusters; then the ship turns as their
+    /// torque turns it (Euler's equations, its inertia from its shape). Its
+    /// `applied` force is what `thrust` gives over the span.
+    /// (`push` false: the turn alone — in the hyperdrive, where the throttle
+    /// sets the drive's speed, or on the ground, where the landing gear's
+    /// rules decide lift-off.)
+    pub fn drive(&mut self, turn: Option<&Controls>, dt: f64, push: bool) {
+        let s = self.spec();
+        let inertia = self.inertia();
+        let w = self.angular_velocity;
+        // The push: the main drive along the nose, the thrusters as set.
+        let c = self.rcs.clamp(DVec3::splat(-1.0), DVec3::ONE);
+        let force = if push { DVec3::NEG_Z * (self.throttle.clamp(0.0, 1.0) * s.main_thrust) + DVec3::new(c.x * s.rcs_thrust, c.y * if c.y > 0.0 { s.lift_thrust } else { s.rcs_thrust }, c.z * s.rcs_thrust) } else { DVec3::ZERO };
+        // The turn: toward the rates asked, as fast as the span allows.
+        let want = turn.map(|t| DVec3::new(t.pitch.clamp(-1.0, 1.0) * s.turn_rate, t.yaw.clamp(-1.0, 1.0) * s.turn_rate, t.roll.clamp(-1.0, 1.0) * s.roll_rate));
+        let torque = want.map_or(DVec3::ZERO, |want| inertia * ((want - w) / dt.max(TURN_RESPONSE)));
+        if self.fuel <= 0.0 || (force == DVec3::ZERO && torque.length_squared() < 1e-6) {
+            // (Nothing asked, or nothing to burn: every jet off.)
+            self.jets.iter_mut().for_each(|j| *j = 0.0);
+            self.applied = (DVec3::ZERO, DVec3::ZERO);
+        } else {
+            self.applied = crate::thrusters::allocate(&s.thrusters, self.centre_of_mass(), self.mass(), inertia, force, torque, &mut self.jets);
+        }
+        // Turning: I ω̇ = τ. (The spin's own coupling, ω × Iω, is left out:
+        // the flight computer holds against it when it turns the ship, and a
+        // ship tumbling free keeps its spin about its own axes — near enough
+        // for a hull this close to symmetric, and steady over the long steps
+        // the planner takes.) Never past the rates asked in one span.
+        let accel = inertia.inverse() * self.applied.1;
+        let mut next = w + accel * dt;
+        if let Some(want) = want {
+            let toward = |w: f64, n: f64, t: f64| if (t - w) * (t - n) < 0.0 { t } else { n };
+            next = DVec3::new(toward(w.x, next.x, want.x), toward(w.y, next.y, want.y), toward(w.z, next.z, want.z));
+        }
+        self.angular_velocity = next;
+        self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
     }
 
     /// Room left in the hold (kg).
@@ -457,16 +521,13 @@ impl Ship {
         if self.fuel <= 0.0 {
             return DVec3::ZERO;
         }
-        self.forward() * (self.main_accel() * self.throttle) + self.orientation * self.thruster_accel(self.rcs)
+        self.orientation * self.applied.0 / self.mass()
     }
 
     /// What the engine and thrusters burn as set (kg/s): their thrust over
     /// the exhaust velocity.
     pub fn fuel_flow(&self) -> f64 {
-        let c = self.rcs.clamp(DVec3::splat(-1.0), DVec3::ONE);
-        let s = self.spec();
-        let lift = if c.y > 0.0 { s.lift_thrust } else { s.rcs_thrust };
-        (self.throttle.clamp(0.0, 1.0) * s.main_thrust + (c.x.abs() + c.z.abs()) * s.rcs_thrust + c.y.abs() * lift) / EXHAUST_VELOCITY
+        self.spec().thrusters.iter().zip(&self.jets).map(|(t, &u)| t.thrust * u).sum::<f64>() / EXHAUST_VELOCITY
     }
 
     /// `dt` seconds of the drives as set: the fuel they burn.
@@ -474,15 +535,11 @@ impl Ship {
         self.fuel = (self.fuel - self.fuel_flow() * dt).max(0.0);
     }
 
-    /// Attitude control: rotate toward the commanded rates over `dt` seconds.
-    pub fn steer(&mut self, c: &Controls, dt: f64) {
-        let s = self.spec();
-        let target = DVec3::new(c.pitch * s.turn_rate, c.yaw * s.turn_rate, c.roll * s.roll_rate);
-        let k = 1.0 - (-6.0 * dt).exp();
-        self.angular_velocity += (target - self.angular_velocity) * k;
-        self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
-    }
 }
+
+/// How quickly the flight computer brings the turn to the rates asked (s),
+/// as far as the thrusters allow.
+pub const TURN_RESPONSE: f64 = 0.12;
 
 /// Orientation with the nose exactly along `forward` and the ship's top as close
 /// as possible to `up_hint`. A fixed reference keeps the roll steady instead of

@@ -309,3 +309,4 @@ fn hyperdrive_autopilot_reaches_an_asteroid_field_and_drops_out_moving_with_it()
     assert!(d > field.extent && d < field.extent + 25_000.0, "outside the swarm, close by");
     assert!(v < 1.0, "moving with it");
 }
+

@@ -30,6 +30,7 @@ pub mod rng;
 pub mod shape;
 pub mod ship;
 pub mod spaceport;
+pub mod thrusters;
 pub mod rules;
 pub mod station;
 pub mod structures;

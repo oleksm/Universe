@@ -494,19 +494,16 @@ impl World {
                 result
             }
             ShipState::Flying if ship.hyperdrive => {
-                if let Some(turn) = &commands.turn {
-                    ship.steer(turn, real_dt);
-                }
+                ship.drive(commands.turn.as_ref(), real_dt, false);
                 let neighbours = self.neighbours(*system);
                 let result = universe_prof::time("sim/crafts/tick/world step/hyperdrive", || self.hyperdrive_step(clock, &sys, ship, *system, &neighbours, real_dt, warp, events));
                 near = Some(neighbours);
                 result
             }
             ShipState::Flying => {
-                // Turning is physics: over the game time the step covers.
-                if let Some(turn) = &commands.turn {
-                    ship.steer(turn, real_dt * warp);
-                }
+                // The flight computer: the push and the turn, through the
+                // thrusters, over the game time the step covers.
+                ship.drive(commands.turn.as_ref(), real_dt * warp, true);
                 universe_prof::time("sim/crafts/tick/world step/flight (physics)", || self.flight_step(clock, &sys, ship, *system, real_dt * warp, events))
             }
         };
@@ -561,8 +558,8 @@ impl World {
         weld.place(&sys.bodies, t, &positions, &mut rigid);
         ship.set_rigid(&rigid);
         // Allow turning in place on the pad.
-        if let Some(turn) = &turn {
-            ship.steer(turn, real_dt);
+        if turn.is_some() {
+            ship.drive(turn.as_ref(), real_dt, false);
         }
         let local_orientation = rot.inverse() * ship.orientation;
         ship.state = ShipState::Landed { body: weld.body, local_position: weld.local_position, local_orientation };
