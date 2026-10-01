@@ -12,6 +12,7 @@
 pub mod belt;
 pub mod charts;
 pub mod collisions;
+pub mod content;
 pub mod crew;
 pub mod damage;
 pub mod events;

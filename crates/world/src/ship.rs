@@ -10,29 +10,19 @@ use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
 
-/// A class of ship: what it is built as. Its numbers are its `spec`.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum Class {
-    /// The multirole: a fair hold, lands anywhere, holds its own in a fight.
-    #[default]
-    Cobra,
-}
+/// The hull a new ship is built as, unless it's told otherwise.
+pub const STARTING_HULL: &str = "hull.cobra";
 
-impl Class {
-    pub fn spec(self) -> &'static ClassSpec {
-        match self {
-            Class::Cobra => &COBRA,
-        }
-    }
-}
-
-/// What a class of ship is built with. Everything about how it flies
-/// follows from these and the physics: its accelerations are its thrusts
-/// over its mass as loaded, so a heavy ship is slow, and one whose lift
-/// can't carry its weight can't hover or land on a big world.
-#[derive(Clone, Copy, Debug, PartialEq)]
+/// What a hull is built with (content: `content/*/hulls.ron`). Everything
+/// about how a ship flies follows from these and the physics: its
+/// accelerations are its thrusts over its mass as loaded, so a heavy ship is
+/// slow, and one whose lift can't carry its weight can't hover or land on a
+/// big world.
+#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ClassSpec {
-    pub name: &'static str,
+    pub key: String,
+    pub name: String,
     /// Mass without fuel or cargo (kg).
     pub dry_mass: f64,
     /// Fuel tank (kg), and the most cargo the hold carries (kg).
@@ -54,23 +44,18 @@ pub struct ClassSpec {
     pub hull_strength: f64,
 }
 
-/// The Cobra: 30 m/s² (about 3 g) on the main engine at full load, 6 m/s²
-/// on the thrusters, 25 m/s² of lift (enough to hover); a blunt 90 t ship
-/// that falls at about 150 m/s through sea-level air.
-pub const COBRA: ClassSpec = ClassSpec {
-    name: "COBRA MK III",
-    dry_mass: 60_000.0,
-    fuel_capacity: 30_000.0,
-    hold_capacity: 20_000.0,
-    main_thrust: 2.7e6,
-    rcs_thrust: 5.4e5,
-    lift_thrust: 2.25e6,
-    turn_rate: 1.0,
-    roll_rate: 1.8,
-    radius: SHIP_RADIUS,
-    drag_area: 60.0,
-    hull_strength: 20.0e6,
-};
+/// A hull of the loaded content.
+pub type Hull = crate::content::Handle<ClassSpec>;
+
+/// The starting hull.
+pub fn starting_hull() -> Hull {
+    crate::content::content().handle(STARTING_HULL).expect("the content has the starting hull (checked at load)")
+}
+
+/// The Cobra's numbers (for tests and defaults).
+pub fn cobra() -> &'static ClassSpec {
+    crate::content::content().get(starting_hull())
+}
 
 /// A ship's size as traffic lays out room for it (pads, docking slots,
 /// corridors), and the Cobra's collision radius (m).
@@ -82,7 +67,7 @@ pub const EXHAUST_VELOCITY: f64 = 1.0e7;
 /// The hyperdrive's draw at full throttle (kg/s), while engaged.
 pub const HYPER_FUEL_FLOW: f64 = 0.2;
 fn full_tank() -> f64 {
-    COBRA.fuel_capacity
+    cobra().fuel_capacity
 }
 
 fn intact() -> f64 {
@@ -138,9 +123,9 @@ pub struct Ship {
     /// Translation thruster setting, body frame, each axis -1..1 (x right, y up, z back), as last commanded.
     #[serde(default)]
     pub rcs: DVec3,
-    /// What it's built as (see `Class`).
-    #[serde(default)]
-    pub class: Class,
+    /// The hull it's built as (stored by its content key).
+    #[serde(default = "starting_hull")]
+    pub class: Hull,
     /// Fuel on board (kg).
     #[serde(default = "full_tank")]
     pub fuel: f64,
@@ -224,8 +209,8 @@ impl Ship {
             hyperdrive: false,
             state: ShipState::Flying,
             rcs: DVec3::ZERO,
-            fuel: COBRA.fuel_capacity,
-            class: Class::Cobra,
+            fuel: cobra().fuel_capacity,
+            class: starting_hull(),
             cargo: 0.0,
             excavator: false,
             hopper: 0.0,
@@ -254,7 +239,7 @@ impl Ship {
 
     /// What its class is built with.
     pub fn spec(&self) -> &'static ClassSpec {
-        self.class.spec()
+        crate::content::content().get(self.class)
     }
 
     /// Room left in the hold (kg).

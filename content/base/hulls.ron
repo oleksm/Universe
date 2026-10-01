@@ -1,0 +1,24 @@
+// Hulls: what a ship is built as. Every number about how it flies follows
+// from these and the physics (accelerations are thrusts over the mass as
+// loaded). See docs/content.md.
+[
+    (
+        key: "hull.cobra",
+        name: "COBRA MK III",
+        // The multirole: a fair hold, lands anywhere, holds its own in a fight.
+        // 30 m/s² (about 3 g) on the main engine at full load, 6 m/s² on the
+        // thrusters, 25 m/s² of lift (enough to hover); a blunt 90 t ship that
+        // falls at about 150 m/s through sea-level air.
+        dry_mass: 60000.0,
+        fuel_capacity: 30000.0,
+        hold_capacity: 20000.0,
+        main_thrust: 2.7e6,
+        rcs_thrust: 5.4e5,
+        lift_thrust: 2.25e6,
+        turn_rate: 1.0,
+        roll_rate: 1.8,
+        radius: 12.0,
+        drag_area: 60.0,
+        hull_strength: 20.0e6,
+    ),
+]

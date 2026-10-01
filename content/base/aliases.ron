@@ -1,0 +1,3 @@
+// Renamed entries: old key -> new key, so saves and peers using the old
+// name still resolve. (Nothing renamed yet.)
+{}
