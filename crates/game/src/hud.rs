@@ -1430,6 +1430,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Orbit, &orbit.0, orbit.1),
                 b(Act::Cancel, "CANCEL", let_go),
                 b(Act::Proximity, "IMPACT WARNING", collide),
+                c("F7", "THRUSTERS", if app.show_thrusters { Lamp::On } else { Lamp::Off }),
             ],
         ),
     };

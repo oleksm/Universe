@@ -22,3 +22,4 @@ In the pilot's seat, **F7** opens a screen of the ship's thrusters:
 
 **Findable:** the mode bar has an **F7 THRUST** cell, lit while the panel is open. Before, it was
 only in the F1 help.
+The NAV instruments grid has an **F7 THRUSTERS** cell too, lit while the panel is open.
