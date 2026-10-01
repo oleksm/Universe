@@ -93,6 +93,61 @@ pub fn view(frame: &mut Frame, p: &Picture, at: Vec2, size: Vec2, across: DVec3,
     frame.hud_line(com - Vec2::new(0.0, 5.0), com + Vec2::new(0.0, 5.0), COM);
 }
 
+/// The ship turning in a box (its back faces hidden): `angle` round, seen
+/// from a little above; its thrusters and (in the planner) its mounts.
+pub fn turning(frame: &mut Frame, p: &Picture, at: Vec2, size: Vec2, angle: f64, title: &str) {
+    use universe_engine::glam::DQuat;
+    let s = p.spec;
+    let shape = s.shape();
+    let reach = shape.mesh.bound();
+    let scale = (size.x.min(size.y) as f64 * 0.45) / reach;
+    let center = at + size * 0.5;
+    // Turned about its vertical, tipped toward us; then looked at down −Z.
+    let turn = DQuat::from_rotation_x(0.45) * DQuat::from_rotation_y(angle);
+    let view = |q: DVec3| turn * q;
+    let to = |q: DVec3| {
+        let v = view(q);
+        center + Vec2::new((v.x * scale) as f32, -(v.y * scale) as f32)
+    };
+    frame.hud_box(at, size, DIM.scale(0.6));
+    frame.text(at + Vec2::new(6.0, 4.0), title, DIM);
+    // An edge shows if a face it bounds faces us.
+    let pts = &shape.mesh.points;
+    let mut facing = std::collections::HashSet::new();
+    for f in &shape.mesh.faces {
+        let (a, b, c) = (view(pts[f[0] as usize]), view(pts[f[1] as usize]), view(pts[f[2] as usize]));
+        if (b - a).cross(c - a).z > 0.0 {
+            for (i, j) in [(f[0], f[1]), (f[1], f[2]), (f[2], f[0])] {
+                facing.insert((i.min(j), i.max(j)));
+            }
+        }
+    }
+    for e in &shape.mesh.edges {
+        let front = facing.contains(&(e[0].min(e[1]), e[0].max(e[1])));
+        frame.hud_line(to(pts[e[0] as usize]), to(pts[e[1] as usize]), if front { TEXT.scale(0.85) } else { HULL.scale(0.5) });
+    }
+    for l in &shape.loops {
+        for k in 0..l.len() {
+            frame.hud_line(to(l[k]), to(l[(k + 1) % l.len()]), MAIN.scale(0.7));
+        }
+    }
+    for t in &s.thrusters {
+        let q = to(t.at);
+        frame.hud_rect(q - Vec2::splat(1.0), Vec2::splat(2.0), color(t.role).scale(0.7));
+    }
+    if p.mounts {
+        for slot in &s.slots {
+            let Some(n) = shape.node(&format!("mount_{}", slot.name)) else { continue };
+            let c = if p.picked == Some(slot.name.as_str()) { Color::hex(0xffc040) } else { DIM };
+            let q = to(n.at);
+            frame.hud_box(q - Vec2::splat(2.5), Vec2::splat(5.0), c);
+        }
+    }
+    let com = to(p.com);
+    frame.hud_line(com - Vec2::new(4.0, 0.0), com + Vec2::new(4.0, 0.0), COM);
+    frame.hud_line(com - Vec2::new(0.0, 4.0), com + Vec2::new(0.0, 4.0), COM);
+}
+
 pub fn draw(frame: &mut Frame, app: &App) {
     if !app.show_thrusters {
         return;

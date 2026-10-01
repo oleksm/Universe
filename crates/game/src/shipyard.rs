@@ -107,6 +107,11 @@ fn station(app: &App) -> Option<String> {
 /// (unless it's a base block) nothing.
 fn offers(slot: &Slot) -> Vec<Option<Handle<Module>>> {
     let mut out: Vec<Option<Handle<Module>>> = content().modules.iter().filter(|(_, m)| m.does.slot() == slot.kind && m.size <= slot.size).map(|(h, _)| Some(h)).collect();
+    // Smallest first, then cheapest.
+    out.sort_by(|a, b| {
+        let (a, b) = (content().get(a.expect("a module")), content().get(b.expect("a module")));
+        (a.size, a.price as i64).cmp(&(b.size, b.price as i64))
+    });
     if !BASE_BLOCKS.contains(&slot.kind) {
         out.push(None);
     }
@@ -427,9 +432,11 @@ fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
         let here = k == y.hull_pick;
         let loaded = s.dry_mass + s.fuel_capacity;
         let mark = if here { ">" } else if h == mine { "*" } else { " " };
+        // (Yours: designed and commissioned.)
+        let name = if s.key.starts_with("design.") { format!("{} (YOURS)", s.name) } else { s.name.clone() };
         let text = format!(
             "{mark}{:<17} {:>7} {:>7} {:>7} {:>8} {:>8} {:>15} {:>10}",
-            s.name,
+            name.chars().take(17).collect::<String>(),
             fmt::tonnes(s.dry_mass),
             fmt::tonnes(s.fuel_capacity),
             fmt::tonnes(s.hold_capacity),
@@ -455,9 +462,9 @@ fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
     let w = ((size.x - 36.0) / 2.0).min(260.0);
     let at = Vec2::new(12.0, yy + LINE);
-    let h = (size.y - at.y - 12.0).max(80.0);
-    crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
-    crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE");
+    let h = (size.y - at.y - 12.0 - 2.0 * LINE).max(80.0);
+    crate::thrusterpanel::turning(frame, &picture, at, Vec2::new(w, h), app.v.time * 0.4, "");
+    crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
 }
 
 /// The plans page: the plan kept as it is, or one kept before.
@@ -525,10 +532,10 @@ fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
             }
             let at = Vec2::new(x + universe_engine::text_size(&format!("{:<11} {:>23}", "", "")).x + 16.0, top);
             let w = ((frame.size().x - at.x - 20.0) / 2.0).max(100.0);
-            let h = (frame.size().y - at.y - 12.0).max(80.0);
+            let h = (frame.size().y - at.y - 12.0 - 2.0 * LINE).max(80.0);
             let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: None };
             crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
-            crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 8.0, 0.0), Vec2::new(w, h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE");
+            crate::thrusterpanel::turning(frame, &picture, at + Vec2::new(w + 8.0, 0.0), Vec2::new(w, h), app.v.time * 0.4, "");
         }
         Err(why) => {
             frame.text(Vec2::new(x, top), &format!("WON'T GO TOGETHER - {}", why.to_uppercase()), RED);
@@ -539,6 +546,14 @@ fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
+    // The keys, along the bottom.
+    let keys = match y.page {
+        Page::Plan => "UP/DOWN SLOT  LEFT/RIGHT MODULE  ENTER PUT IN THE PLAN  SHIFT+ENTER BUILD (DOCKED)  TAB HULLS",
+        Page::Hulls => "UP/DOWN HULL  ENTER PLAN FROM IT  TAB DESIGN",
+        Page::Design => "UP/DOWN NUMBER  LEFT/RIGHT TURN (SHIFT x5)  ENTER ON COMMISSION  TAB PLANS",
+        Page::Plans => "UP/DOWN PLAN  ENTER KEEP / LOAD  DELETE DROP  TAB PLAN",
+    };
+    frame.text(Vec2::new(12.0, size.y - LINE - 4.0), keys, DIM);
     let c = content();
     let here = station(app);
     let page = match y.page {
@@ -590,7 +605,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
                 } else {
                     (format!("{} CR", m.price as i64), true)
                 };
-                (format!("{mark}{:<20} {:>7} {:>8} {:>10}", m.name, fmt::tonnes(m.mass), format!("{:.2} MW", m.power / 1e6), price), sold)
+                (format!("{mark}{:<20} S{} {:>7} {:>8} {:>10}", m.name.chars().take(20).collect::<String>(), m.size, fmt::tonnes(m.mass), format!("{:.2} MW", m.power / 1e6), price), sold)
             }
             None => (format!("{mark}(EMPTY)"), true),
         };
@@ -645,9 +660,9 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     if let Ok(s) = &preview {
         let w = ((size.x - x - 24.0) / 2.0).floor();
         let at = Vec2::new(x, top + (list.len() + 8) as f32 * LINE);
-        let h = (size.y - at.y - 12.0).max(60.0);
+        let h = (size.y - at.y - 12.0 - 2.0 * LINE).max(60.0);
         let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: Some(&slot.name) };
         crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
-        crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE");
+        crate::thrusterpanel::turning(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), app.v.time * 0.4, "");
     }
 }
