@@ -881,8 +881,10 @@ mod tests {
             p.step(1.0 / 60.0, 1.0);
         }
         let burned = fuel - p.ship.fuel;
+        // The drive at full, and a little more: the thrusters holding off
+        // the turn its line makes, a few centimetres off the centre of mass.
         let expected = crate::ship::starter().main_thrust / crate::ship::EXHAUST_VELOCITY * 10.0;
-        assert!((burned - expected).abs() < expected * 0.01, "burned {burned} kg in 10 s, expected {expected}");
+        assert!(burned >= expected * 0.999 && burned < expected * 1.1, "burned {burned} kg in 10 s, expected {expected} and a little");
         // Dry: the engine gives nothing, the hyperdrive won't start.
         p.ship.fuel = 0.0;
         let v = p.ship.velocity;

@@ -255,7 +255,7 @@ impl ClassSpec {
         let straight = crate::thrusters::STRAIGHT * self.turn_accel.min_element();
         let push = |d: DVec3, full: f64| crate::thrusters::balanced(&self.thrusters, com, mass, inertia, d, full, straight);
         let a = Authority {
-            main: push(DVec3::NEG_Z, self.main_thrust),
+            main: crate::thrusters::balanced_with(&self.thrusters, com, mass, inertia, DVec3::NEG_Z, self.main_thrust, straight, true),
             lift: push(DVec3::Y, self.lift_thrust),
             side: [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| push(d, self.rcs_thrust)).fold(f64::INFINITY, f64::min),
         };
@@ -757,7 +757,10 @@ impl Ship {
             self.jets.iter_mut().for_each(|j| *j = 0.0);
             self.applied = (DVec3::ZERO, DVec3::ZERO);
         } else {
-            self.applied = crate::thrusters::allocate(&s.thrusters, self.centre_of_mass(), self.mass(), inertia, force, torque, &mut self.jets);
+            // The drive at the throttle (its nozzles together, as far as it
+            // goes straight); the thrusters and lift do the rest.
+            let level = if push { self.throttle.clamp(0.0, 1.0) * a.main / s.main_thrust.max(1.0) } else { 0.0 };
+            self.applied = crate::thrusters::allocate_with(&s.thrusters, self.centre_of_mass(), self.mass(), inertia, Some(level), force, torque, &mut self.jets);
         }
         // Turning: I ω̇ = τ. (The spin's own coupling, ω × Iω, is left out:
         // the flight computer holds against it when it turns the ship, and a

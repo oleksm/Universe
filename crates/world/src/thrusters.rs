@@ -19,6 +19,15 @@ use crate::ship::Thruster;
 const TURN_WEIGHT: f64 = 4.0;
 /// Sweeps of the solver.
 const SWEEPS: usize = 12;
+/// What firing costs, against missing what's wanted: a thruster's use
+/// counts this much of its own push squared. Small, so what's asked comes
+/// first; but of the settings that give the same, the one that burns the
+/// least wins — the drives evenly, no thrusters pushing against each
+/// other (many settings give the same push and turn: without it the solver
+/// keeps whichever it found, a pair fighting each other included).
+const FUEL_WEIGHT: f64 = 1.0e-3;
+/// In flight, the thrusters start each step from this share of their last settings.
+const FORGET: f64 = 0.8;
 
 /// One thruster's force and torque at full thrust (body frame, about `com`).
 fn column(t: &Thruster, com: DVec3) -> (DVec3, DVec3) {
@@ -30,8 +39,35 @@ fn column(t: &Thruster, com: DVec3) -> (DVec3, DVec3) {
 /// come closest to `force` (N) and `torque` (N·m), body frame, for a ship
 /// of `mass` with `inertia` about its centre of mass `com`. What they give.
 pub fn allocate(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMat3, force: DVec3, torque: DVec3, u: &mut Vec<f64>) -> (DVec3, DVec3) {
+    allocate_with(thrusters, com, mass, inertia, None, force, torque, u)
+}
+
+/// `allocate`, with the main drive's nozzles (if `drive` is given) held
+/// together at that level (0..1): the throttle, as a flight computer
+/// sets it. The rest — the thrusters and the lift — make up the push and
+/// the turn around it: what the drive turns the ship by, off its centre of
+/// mass, they hold off.
+#[allow(clippy::too_many_arguments)]
+pub fn allocate_with(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMat3, drive: Option<f64>, force: DVec3, torque: DVec3, u: &mut Vec<f64>) -> (DVec3, DVec3) {
     let n = thrusters.len();
     u.resize(n, 0.0);
+    let held = |i: usize| drive.is_some() && thrusters[i].role == crate::ship::ThrusterRole::Main;
+    if let Some(level) = drive {
+        for (i, t) in thrusters.iter().enumerate() {
+            if t.role == crate::ship::ThrusterRole::Main {
+                u[i] = level.clamp(0.0, 1.0);
+            } else {
+                // (What the thrusters were set to fades: what's still needed
+                // comes straight back, a pair pushing against each other
+                // dies away. Not the lift: it carries the ship, and from
+                // less each step a climb out loses its footing — its
+                // imbalances unwind by `FUEL_WEIGHT` alone.)
+                if t.role == crate::ship::ThrusterRole::Rcs {
+                    u[i] *= FORGET;
+                }
+            }
+        }
+    }
     // Rows in acceleration: force / mass, and the turn's angular acceleration
     // (per axis, by its moment of inertia) weighted.
     let rot = DVec3::new(inertia.x_axis.x, inertia.y_axis.y, inertia.z_axis.z).recip() * TURN_WEIGHT;
@@ -54,13 +90,15 @@ pub fn allocate(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMat3, f
     for k in 0..6 {
         r[k] -= want[k];
     }
+    // (Each thruster's own push, as an acceleration, squared: its fuel cost's scale.)
+    let costs: Vec<f64> = cols.iter().map(|c| FUEL_WEIGHT * (c[0] * c[0] + c[1] * c[1] + c[2] * c[2])).collect();
     for _ in 0..SWEEPS {
         for (i, c) in cols.iter().enumerate() {
-            let h: f64 = c.iter().map(|x| x * x).sum();
-            if h <= 0.0 {
+            let h: f64 = c.iter().map(|x| x * x).sum::<f64>() + costs[i];
+            if h <= 0.0 || held(i) {
                 continue;
             }
-            let g: f64 = c.iter().zip(&r).map(|(a, b)| a * b).sum();
+            let g: f64 = c.iter().zip(&r).map(|(a, b)| a * b).sum::<f64>() + costs[i] * u[i];
             let next = (u[i] - g / h).clamp(0.0, 1.0);
             let d = next - u[i];
             if d != 0.0 {
@@ -106,6 +144,13 @@ pub const STRAIGHT: f64 = 0.03;
 /// than `straight` (rad/s²): off balance, they give less (N).
 #[allow(clippy::too_many_arguments)]
 pub fn balanced(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMat3, d: DVec3, full: f64, straight: f64) -> f64 {
+    balanced_with(thrusters, com, mass, inertia, d, full, straight, false)
+}
+
+/// `balanced`, for the main drive (`drive`: its nozzles held together at
+/// the level tried, the rest holding the ship straight).
+#[allow(clippy::too_many_arguments)]
+pub fn balanced_with(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMat3, d: DVec3, full: f64, straight: f64, drive: bool) -> f64 {
     if full <= 0.0 {
         return 0.0;
     }
@@ -116,7 +161,7 @@ pub fn balanced(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMat3, d
         // starts from the last; this is worked out once a tonne of load.)
         let mut fq = (DVec3::ZERO, DVec3::ZERO);
         for _ in 0..12 {
-            fq = allocate(thrusters, com, mass, inertia, d * full * k, DVec3::ZERO, &mut u);
+            fq = allocate_with(thrusters, com, mass, inertia, drive.then_some(k), d * full * k, DVec3::ZERO, &mut u);
         }
         let (f, q) = fq;
         ((inverse * q).length() < straight).then_some(f.dot(d).max(0.0))
@@ -163,7 +208,12 @@ mod tests {
     fn full_throttle_is_both_main_engines_and_no_turn() {
         let (m, com, i) = starter_now();
         let mut u = Vec::new();
-        let (f, q) = settled(&starter().thrusters, com, m, i, DVec3::NEG_Z * starter().main_thrust, DVec3::ZERO, &mut u);
+        // (As in flight: the drive at the throttle, the rest holding it straight.)
+        let mut fq = (DVec3::ZERO, DVec3::ZERO);
+        for _ in 0..12 {
+            fq = allocate_with(&starter().thrusters, com, m, i, Some(1.0), DVec3::NEG_Z * starter().main_thrust, DVec3::ZERO, &mut u);
+        }
+        let (f, q) = fq;
         assert!((f.z + starter().main_thrust).abs() < 1e3, "{f}");
         assert!((i.inverse() * q).length() < 0.01, "no turn: {q}");
         let mains: Vec<f64> = starter().thrusters.iter().zip(&u).filter(|(t, _)| t.role == ThrusterRole::Main).map(|(_, &x)| x).collect();
@@ -197,6 +247,35 @@ mod tests {
             eprintln!("{d}: {:.0}% of {:.0} kN, turning {:.3} rad/s²", got * 100.0, full / 1000.0, (i.inverse() * q).length());
             assert!(got > 0.95, "{d}: only {:.0}%", got * 100.0);
         }
+    }
+
+    #[test]
+    fn going_straight_it_burns_the_least_no_thrusters_fighting() {
+        // As the pilot found it: the drives uneven, thrusters pushing against
+        // each other (left over from a turn), and now a straight push asked.
+        let (m, com, i) = starter_now();
+        let c = starter();
+        let mut u: Vec<f64> = c.thrusters.iter().map(|t| match (t.role, t.nozzle.as_str()) {
+            (ThrusterRole::Main, "nozzle_main_0") => 0.81,
+            (ThrusterRole::Main, _) => 0.17,
+            (ThrusterRole::Rcs, _) => 0.5,
+            _ => 0.2,
+        }).collect();
+        let want = DVec3::NEG_Z * 0.8 * c.main_thrust;
+        // Half a second of flight (each step from the last), the throttle at 80%.
+        let mut got = (DVec3::ZERO, DVec3::ZERO);
+        for _ in 0..30 {
+            got = allocate_with(&c.thrusters, com, m, i, Some(0.8), want, DVec3::ZERO, &mut u);
+        }
+        let mains: Vec<f64> = c.thrusters.iter().zip(&u).filter(|(t, _)| t.role == ThrusterRole::Main).map(|(_, &x)| x).collect();
+        let by = |role: ThrusterRole| c.thrusters.iter().zip(&u).filter(|(t, _)| t.role == role).map(|(t, &x)| t.thrust * x).sum::<f64>();
+        let lift_before: f64 = c.thrusters.iter().filter(|t| t.role == ThrusterRole::Lift).map(|t| t.thrust * 0.2).sum();
+        assert!((got.0 - want).length() < 0.01 * want.length(), "{:?}", got.0);
+        assert!((mains[0] - mains[1]).abs() < 0.02, "the drives evenly: {mains:?}");
+        // (A little stays: the couple that holds off the drive's turn, its line
+        // a few centimetres off the centre of mass — not always the cheapest.)
+        assert!(by(ThrusterRole::Rcs) < 0.02 * want.length(), "no thrusters pushing against each other: {:.0} kN", by(ThrusterRole::Rcs) / 1000.0);
+        assert!(by(ThrusterRole::Lift) < lift_before / 5.0, "the lift's imbalance unwinding: {:.0} kN of {:.0}", by(ThrusterRole::Lift) / 1000.0, lift_before / 1000.0);
     }
 
     #[test]
