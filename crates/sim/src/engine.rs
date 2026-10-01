@@ -69,6 +69,8 @@ pub enum Command {
     Trade { market: Facility, item: usize, units: i64 },
     /// Anything else, run on the universe (dev scenarios, tools).
     Run(Box<dyn FnOnce(&mut Universe) + Send>),
+    /// The client's cockpit's postings (see `cockpit`).
+    Post(Vec<crate::pilots::Posting>),
 }
 
 /// Another ship, as the client draws it.
@@ -249,6 +251,7 @@ impl Engine {
                 u.events.push(e);
             }
             Command::Run(f) => f(&mut self.universe),
+            Command::Post(postings) => self.universe.accept(postings),
         }
     }
 
@@ -300,7 +303,7 @@ impl Engine {
             ship: u.ship.clone(),
             ship_system: system,
             aggressed_until: u.law.until(crate::combat::PLAYER, now),
-            avionics: u.avionics().clone(),
+            avionics: u.cockpit.as_ref().map(|c| c.avionics().clone()).unwrap_or_default(),
             crew: u.crew,
             credits: u.credits(),
             hold: u.hold(),
@@ -312,18 +315,18 @@ impl Engine {
             slugs: u.world.slugs.iter().map(|s| (s.system, s.projectile.position, s.projectile.velocity)).collect(),
             beams: u.world.beams.clone(),
             impacts: u.world.impacts.clone(),
-            contacts: u.cockpit().contacts.clone(),
-            fire: u.cockpit().fire,
-            approach: u.cockpit().approach(),
-            plan: u.cockpit().plan.clone(),
-            plan_serial: u.cockpit().plan_serial,
-            plan_cost: u.cockpit().plan_cost,
-            plan_every: crate::cockpit::plan_every(u.cockpit().plan_cost),
-            collision: u.cockpit().collision.clone(),
-            collision_at: u.cockpit().collision_at,
-            collision_cost: u.cockpit().collision_cost,
-            following: u.cockpit().following_status(),
-            nav_marker: nav_marker(u),
+            contacts: Vec::new(),
+            fire: None,
+            approach: None,
+            plan: None,
+            plan_serial: 0,
+            plan_cost: 0.0,
+            plan_every: 0.0,
+            collision: None,
+            collision_at: 0.0,
+            collision_cost: 0.0,
+            following: None,
+            nav_marker: None,
             reach: u.pilot_reach(),
             docked_market: u.docked_market(),
             markets,
@@ -336,25 +339,32 @@ impl Engine {
             serial: self.serial,
             made: std::time::Instant::now(),
         }
+        .with_cockpit(self.universe.cockpit.as_ref())
     }
 }
 
-
-/// The nav target (its name and where it is), else the nearest station.
-fn nav_marker(u: &mut Universe) -> Option<(String, DVec3)> {
-    if let Some(t) = u.avionics().nav_target {
-        let pos = u.target_position(t)?;
-        let name = match t {
-            NavTarget::Station(_) | NavTarget::Gate(_) => u.target_name(t),
-            NavTarget::Spaceport(p) => u.ship_system().spaceports[p].name.clone(),
-        };
-        return Some((name.to_uppercase(), pos));
+impl View {
+    /// The view with the cockpit's displays filled in (the cockpit is the
+    /// client's, wherever it runs).
+    pub fn with_cockpit(mut self, c: Option<&crate::cockpit::Cockpit>) -> View {
+        let Some(c) = c else { return self };
+        self.avionics = c.avionics().clone();
+        self.contacts = c.contacts.clone();
+        self.fire = c.fire;
+        self.approach = c.approach();
+        self.plan = c.plan.clone();
+        self.plan_serial = c.plan_serial;
+        self.plan_cost = c.plan_cost;
+        self.plan_every = crate::cockpit::plan_every(c.plan_cost);
+        self.collision = c.collision.clone();
+        self.collision_at = c.collision_at;
+        self.collision_cost = c.collision_cost;
+        self.following = c.following_status();
+        self.nav_marker = c.nav_marker();
+        self
     }
-    let sys = u.ship_system();
-    let station = sys.station()?;
-    let positions = u.world.rails_now(u.ship_system);
-    Some((String::new(), positions[station]))
 }
+
 
 /// What goes to the engine's thread.
 enum Msg {
@@ -389,6 +399,11 @@ fn post(mailbox: &std::sync::Mutex<Mailbox>, mut view: View) {
 /// tests); `start` moves it to its own thread, ticking at `TICK_HZ`.
 pub struct EngineHandle {
     local: Option<Engine>,
+    /// The player's cockpit, on the client's side once the engine runs on
+    /// its own thread: it thinks on its own thread (the world link) on every
+    /// tick's view, and posts back.
+    cockpit: Option<Arc<std::sync::Mutex<crate::cockpit::Cockpit>>>,
+    link: Option<std::thread::JoinHandle<()>>,
     charts: Arc<Charts>,
     view: Arc<View>,
     /// When the current view arrived (real time).
@@ -403,7 +418,7 @@ impl EngineHandle {
         let mut engine = Engine::new(universe);
         let view = Arc::new(engine.view());
         let charts = engine.charts();
-        EngineHandle { local: Some(engine), charts, view, view_at: std::time::Instant::now(), tx: None, mailbox: Default::default(), thread: None }
+        EngineHandle { local: Some(engine), cockpit: None, link: None, charts, view, view_at: std::time::Instant::now(), tx: None, mailbox: Default::default(), thread: None }
     }
 
     pub fn charts(&self) -> Arc<Charts> {
@@ -415,6 +430,32 @@ impl EngineHandle {
         let Some(mut engine) = self.local.take() else { return };
         let (tx, rx) = std::sync::mpsc::channel::<Msg>();
         let mailbox = self.mailbox.clone();
+        // The cockpit comes to the client (UNIVERSE_COCKPIT_IN_ENGINE=1: it stays).
+        let (to_link, from_engine) = std::sync::mpsc::channel::<(Arc<crate::cockpit::CockpitView>, Vec<universe_world::ShipEvent>)>();
+        if std::env::var_os("UNIVERSE_COCKPIT_IN_ENGINE").is_none()
+            && let Some(c) = engine.universe.cockpit.take()
+        {
+            let cockpit = Arc::new(std::sync::Mutex::new(c));
+            let (k, back) = (cockpit.clone(), tx.clone());
+            let link = std::thread::Builder::new()
+                .name("world link".into())
+                .spawn(move || {
+                    while let Ok((view, feed)) = from_engine.recv() {
+                        let postings = {
+                            let mut c = k.lock().unwrap_or_else(|e| e.into_inner());
+                            c.feed(feed);
+                            c.view(view);
+                            c.take_postings()
+                        };
+                        if back.send(Msg::Command(Box::new(Command::Post(postings)))).is_err() {
+                            return;
+                        }
+                    }
+                })
+                .expect("world link thread");
+            self.cockpit = Some(cockpit);
+            self.link = Some(link);
+        }
         let thread = std::thread::Builder::new()
             .name("world engine".into())
             .spawn(move || {
@@ -430,6 +471,9 @@ impl EngineHandle {
                     }
                     let (warp, stick) = (engine.warp, engine.stick);
                     engine.tick(1.0 / TICK_HZ, warp, &stick);
+                    if let Some(out) = engine.universe.cockpit_out.take() {
+                        let _ = to_link.send(out);
+                    }
                     post(&mailbox, engine.view());
                     // Keep time; fallen far behind, start afresh rather than race.
                     next += step;
@@ -447,6 +491,14 @@ impl EngineHandle {
     }
 
     pub fn send(&mut self, c: Command) {
+        // The cockpit's commands go to it, here.
+        let c = match &self.cockpit {
+            Some(k) => match self.cockpit_command(k.clone(), c) {
+                Some(c) => c,
+                None => return,
+            },
+            None => c,
+        };
         match (&mut self.local, &self.tx) {
             (Some(engine), _) => engine.apply(c),
             (None, Some(tx)) => {
@@ -454,6 +506,62 @@ impl EngineHandle {
             }
             (None, None) => {}
         }
+    }
+
+    /// Carry out a command meant for the client's cockpit (None), or hand it
+    /// back for the engine.
+    fn cockpit_command(&mut self, k: Arc<std::sync::Mutex<crate::cockpit::Cockpit>>, c: Command) -> Option<Command> {
+        if let Command::RouteRandom { seed, stops } = c {
+            let stops = self.call(move |u| u.settler_route(seed, stops))?;
+            k.lock().unwrap_or_else(|e| e.into_inner()).route_set(stops);
+            return None;
+        }
+        let mut k = k.lock().unwrap_or_else(|e| e.into_inner());
+        match c {
+            Command::Ship(c) => k.command(&c),
+            Command::Throttle { delta, set } => k.throttle(delta, set),
+            Command::Thrusters(rcs) => k.thrusters(rcs),
+            Command::Stick(s) => k.stick(s),
+            Command::ToggleHyperdrive => k.toggle_hyperdrive(),
+            Command::SetNavTarget(t) => k.set_nav_target(t),
+            Command::RequestClearance => {
+                k.request_clearance();
+            }
+            Command::CancelClearance => k.cancel_clearance(),
+            Command::ToggleAutopilot => k.toggle_autopilot(),
+            Command::ToggleRoute => k.toggle_route(),
+            Command::Follow(kind) => k.follow(kind),
+            Command::StopFollowing => k.stop_following(),
+            Command::LockInBeam => {
+                k.lock_in_beam();
+            }
+            Command::CollisionWarning(on) => k.collision_warning(on),
+            Command::RoutePush(stop) => k.route_push(stop),
+            Command::RoutePop => k.route_pop(),
+            Command::RouteClear => k.route_set(Vec::new()),
+            other => return Some(other),
+        }
+        None
+    }
+
+    /// A save of the game (the world's, with the cockpit's avionics).
+    pub fn save(&mut self) -> Option<crate::save::UniverseSave> {
+        match &self.cockpit {
+            Some(k) => {
+                let avionics = k.lock().unwrap_or_else(|e| e.into_inner()).avionics().clone();
+                self.call(move |u| u.save_with(avionics))
+            }
+            None => self.call(|u| u.save()),
+        }
+    }
+
+    /// Load a save (the world's part there, the avionics into the cockpit).
+    pub fn load(&mut self, save: crate::save::UniverseSave) -> Option<()> {
+        if let Some(k) = &self.cockpit {
+            let mut k = k.lock().unwrap_or_else(|e| e.into_inner());
+            *k.avionics_mut() = universe_avionics::Avionics { route: save.route.clone(), ..save.avionics.clone() };
+        }
+        self.call(move |u| u.load(save))
     }
 
     /// Run `f` on the engine and wait for its answer (save, load, tools).
@@ -482,6 +590,10 @@ impl EngineHandle {
         let fresh = self.mailbox.lock().unwrap_or_else(|e| e.into_inner()).view.take();
         match fresh {
             Some(v) => {
+                let v = match &self.cockpit {
+                    Some(k) => v.with_cockpit(Some(&k.lock().unwrap_or_else(|e| e.into_inner()))),
+                    None => v,
+                };
                 self.view = Arc::new(v);
                 self.view_at = std::time::Instant::now();
                 true
@@ -517,6 +629,9 @@ impl Drop for EngineHandle {
             let _ = tx.send(Msg::Stop);
         }
         if let Some(t) = self.thread.take() {
+            let _ = t.join();
+        }
+        if let Some(t) = self.link.take() {
             let _ = t.join();
         }
     }

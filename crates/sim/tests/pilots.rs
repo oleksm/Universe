@@ -111,3 +111,27 @@ fn a_silent_pilot_holds_its_controls_then_the_dead_man_rule_cuts_in() {
     assert!(!c.ship.armed, "weapons safe");
 }
 
+
+#[test]
+fn the_cockpit_flies_the_ship_from_the_client_side() {
+    use universe_sim::engine::{Command, EngineHandle};
+    let mut u = Universe::new(1984);
+    u.ship.position += DVec3::new(0.0, 0.0, 1.0e6);
+    let station = u.ship_system().station().unwrap();
+    let mut e = EngineHandle::new(u);
+    e.start();
+    e.send(Command::Throttle { delta: 0.0, set: Some(0.5) });
+    e.send(Command::SetNavTarget(Some(universe_sim::NavTarget::Station(station))));
+    let start = Instant::now();
+    let mut ok = false;
+    while start.elapsed() < Duration::from_millis(500) {
+        e.poll();
+        let v = e.view();
+        if v.ship.throttle == 0.5 && v.avionics.nav_target.is_some() && v.nav_marker.is_some() {
+            ok = true;
+            break;
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    assert!(ok, "the throttle and nav target went from the client's cockpit to the ship");
+}

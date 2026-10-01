@@ -39,6 +39,9 @@ pub struct Universe {
     pub(crate) player_inbox: crate::vessel::Inbox,
     pub player_status: crate::pilots::Status,
     pub player_feed: Vec<ShipEvent>,
+    /// With the cockpit at the client: this tick's view for it, and what
+    /// happened to the ship, to send it.
+    pub cockpit_out: Option<(Arc<crate::cockpit::CockpitView>, Vec<ShipEvent>)>,
     /// What happened to the player's ship, for the pilot (the game takes them).
     pub events: Vec<Event>,
     /// Other ships (settlers), each flying its own route.
@@ -100,6 +103,7 @@ impl Universe {
             player_inbox: Default::default(),
             player_status: Default::default(),
             player_feed: Vec::new(),
+            cockpit_out: None,
             events: Vec::new(),
             crafts: Vec::new(),
             crash_log: Vec::new(),
@@ -183,6 +187,12 @@ impl Universe {
     pub(crate) fn player_events(&mut self, happened: Vec<ShipEvent>) {
         self.events.extend(happened.iter().cloned().map(Event::Ship));
         self.player_feed.extend(happened);
+    }
+
+    /// Postings from a pilot apart (the client's cockpit): each takes effect
+    /// at its due tick.
+    pub fn accept(&mut self, postings: Vec<crate::pilots::Posting>) {
+        self.pending.extend(postings);
     }
 
     /// The cockpit, here (it isn't when the client has it).
@@ -271,14 +281,16 @@ impl Universe {
         let view = Arc::new(universe_prof::time("sim/pilot view", || self.pilot_view(t1 - t0)));
         let thought = universe_prof::time("sim/pilots", || self.pool.view(view.clone()));
         self.pending.extend(thought);
-        if self.cockpit.is_some() {
-            let view = Arc::new(self.cockpit_view(view));
-            let feed = std::mem::take(&mut self.player_feed);
-            let c = self.cockpit();
-            c.feed(feed);
-            universe_prof::time("sim/cockpit", || c.view(view));
-            let postings = c.take_postings();
-            self.pending.extend(postings);
+        let view = Arc::new(self.cockpit_view(view));
+        let feed = std::mem::take(&mut self.player_feed);
+        match &mut self.cockpit {
+            Some(c) => {
+                c.feed(feed);
+                universe_prof::time("sim/cockpit", || c.view(view));
+                let postings = c.take_postings();
+                self.pending.extend(postings);
+            }
+            None => self.cockpit_out = Some((view, feed)),
         }
         result
     }

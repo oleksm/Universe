@@ -91,6 +91,12 @@ Threads:
      in craft order;
    - then combat, collisions, traffic presence and the dead-man rule;
    - finally the **pilot view** (the world as it now is) goes to the NPC pilots.
+5. **World link** (`EngineHandle`, client side): the player's `Cockpit` (its pilot and ship
+   computers: radar picture, fire control, flight plan, collision warning, follow, approach
+   guidance) thinks on every tick's `CockpitView` the engine sends it, and posts back
+   (`Command::Post`), under the NPCs' contract. The player's commands go to it on the client
+   side; the HUD reads its displays (merged into the view, `View::with_cockpit`).
+   `UNIVERSE_COCKPIT_IN_ENGINE=1` keeps it in the engine, in step with the world (as tests do).
 4. **NPC pilots** (`sim::pilots`, the `pilots` thread and its own worker pool, half the cores):
    think on the newest view, never holding the world up, and post commands due two ticks after
    the view they read. `UNIVERSE_LOCKSTEP=1` (and tests) think in step with the world instead.

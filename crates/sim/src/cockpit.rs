@@ -389,6 +389,23 @@ impl Cockpit {
         Some((f.manoeuvre, name, at.distance(self.ship().position)))
     }
 
+    /// What the target marker points at: the nav target (its name and where
+    /// it is), else the nearest station.
+    pub fn nav_marker(&self) -> Option<(String, DVec3)> {
+        self.view.as_ref()?;
+        let (_, sys, rails) = self.system();
+        let t = self.world().time;
+        if let Some(target) = self.pilot.avionics.nav_target {
+            let pos = target.position(&sys, t, &rails)?;
+            let name = match target {
+                NavTarget::Station(_) | NavTarget::Gate(_) => target.name(&sys),
+                NavTarget::Spaceport(p) => sys.spaceports[p].name.clone(),
+            };
+            return Some((name.to_uppercase(), pos));
+        }
+        Some((String::new(), rails[sys.station()?]))
+    }
+
     /// Guidance numbers for the HUD, if cleared to dock or land.
     pub fn approach(&self) -> Option<Approach> {
         self.view.as_ref()?;

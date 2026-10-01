@@ -75,13 +75,18 @@ impl From<SaveRecord> for UniverseSave {
 
 impl Universe {
     pub fn save(&self) -> UniverseSave {
+        self.save_with(self.avionics().clone())
+    }
+
+    /// A save, with the player's avionics as the client's cockpit has them.
+    pub fn save_with(&self, avionics: Avionics) -> UniverseSave {
         UniverseSave {
             seed: self.world.galaxy.seed,
             time: self.world.time,
             ship: self.ship.clone(),
             ship_system: self.ship_system,
-            route: self.avionics().route.clone(),
-            avionics: self.avionics().clone(),
+            route: avionics.route.clone(),
+            avionics,
             credits: self.credits(),
             hold: self.hold(),
         }
@@ -94,7 +99,9 @@ impl Universe {
         self.world.time = save.time;
         self.ship = save.ship;
         self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
-        *self.avionics_mut() = Avionics { route: save.route, ..save.avionics };
+        if let Some(c) = &mut self.cockpit {
+            *c.avionics_mut() = Avionics { route: save.route, ..save.avionics };
+        }
         // The ledger takes the save's word for our credits and hold.
         use universe_services::{Asset, Party};
         let me = Party::Pilot(crate::combat::PLAYER);
