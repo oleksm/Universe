@@ -6,8 +6,9 @@
 //! ("draw/scene/bodies") by convention, so the report reads as a tree.
 //!
 //! Scopes from any thread are counted (they add their time, so work spread
-//! over threads shows as its total CPU time, not wall time). Off unless
-//! `enable(true)`: then a scope costs a clock read and a lock.
+//! over threads shows as its total CPU time, not wall time; each thread
+//! keeps its own tally, gathered at `frame_end`). Off unless `enable(true)`:
+//! then a scope costs a clock read and an uncontended lock.
 
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -19,6 +20,18 @@ pub const WINDOW: usize = 120;
 
 static ON: AtomicBool = AtomicBool::new(false);
 static STATE: Mutex<Option<State>> = Mutex::new(None);
+/// Each thread's tally for the frame so far (its own lock, so threads don't
+/// contend), registered once; `frame_end` gathers them.
+type Tally = std::sync::Arc<Mutex<HashMap<&'static str, (f64, u32)>>>;
+static THREADS: Mutex<Vec<Tally>> = Mutex::new(Vec::new());
+
+thread_local! {
+    static MINE: Tally = {
+        let t: Tally = Default::default();
+        THREADS.lock().unwrap_or_else(|e| e.into_inner()).push(t.clone());
+        t
+    };
+}
 
 #[derive(Default)]
 struct State {
@@ -69,10 +82,12 @@ pub fn add(name: &'static str, seconds: f64) {
     if !enabled() {
         return;
     }
-    let mut g = STATE.lock().unwrap_or_else(|e| e.into_inner());
-    let e = g.get_or_insert_with(State::default).frame.entry(name).or_default();
-    e.0 += seconds;
-    e.1 += 1;
+    MINE.with(|t| {
+        let mut t = t.lock().unwrap_or_else(|e| e.into_inner());
+        let e = t.entry(name).or_default();
+        e.0 += seconds;
+        e.1 += 1;
+    });
 }
 
 /// The frame is over: fold its totals into the statistics.
@@ -82,6 +97,13 @@ pub fn frame_end() {
     }
     let mut g = STATE.lock().unwrap_or_else(|e| e.into_inner());
     let s = g.get_or_insert_with(State::default);
+    for t in THREADS.lock().unwrap_or_else(|e| e.into_inner()).iter() {
+        for (name, (secs, calls)) in t.lock().unwrap_or_else(|e| e.into_inner()).drain() {
+            let e = s.frame.entry(name).or_default();
+            e.0 += secs;
+            e.1 += calls;
+        }
+    }
     let slot = s.frames % WINDOW;
     let frame = std::mem::take(&mut s.frame);
     for (name, h) in s.history.iter_mut() {

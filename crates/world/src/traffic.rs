@@ -125,7 +125,7 @@ mod tests {
 
     #[test]
     fn clearance_is_granted_in_range_and_refused_otherwise() {
-        let mut w = World::new(42);
+        let w = World::new(42);
         let sys = w.system(w.home_system);
         let station = Facility::Station(sys.station().unwrap());
         let mut positions = Vec::new();

@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn gate_network_links_five_systems_with_one_to_three_gates_each() {
-        let mut w = World::new(1984);
+        let w = World::new(1984);
         let mut systems: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
         systems.sort();
         systems.dedup();

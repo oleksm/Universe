@@ -46,23 +46,25 @@ pub fn contacts(movers: &[Mover], dt: f64) -> Vec<PairContact> {
     for (i, m) in movers.iter().enumerate() {
         grid.entry(key(m.position)).or_default().push(i);
     }
+    // Only what moves can touch anything: each free body looks around it
+    // (two fixed ones, landed side by side, are never compared).
     let mut out = Vec::new();
-    for (i, a) in movers.iter().enumerate() {
+    for (i, a) in movers.iter().enumerate().filter(|(_, m)| m.mass.is_finite()) {
         let (x, y, z) = key(a.position);
         for dx in -1..=1 {
             for dy in -1..=1 {
                 for dz in -1..=1 {
                     let Some(cell) = grid.get(&(x + dx, y + dy, z + dz)) else { continue };
                     for &j in cell {
-                        if j <= i {
-                            continue;
-                        }
                         let b = &movers[j];
-                        if a.mass.is_infinite() && b.mass.is_infinite() {
+                        // Each free pair once (from the lower index); free–fixed from the free one.
+                        if j == i || (b.mass.is_finite() && j < i) {
                             continue;
                         }
                         if let Some(c) = touch(a, b, dt) {
-                            out.push(PairContact { a: i, b: j, ..c });
+                            let (lo, hi) = if i < j { (i, j) } else { (j, i) };
+                            let c = if lo == i { c } else { flip(c) };
+                            out.push(PairContact { a: lo, b: hi, ..c });
                         }
                     }
                 }
@@ -71,6 +73,11 @@ pub fn contacts(movers: &[Mover], dt: f64) -> Vec<PairContact> {
     }
     out.sort_by_key(|p| (p.a, p.b));
     out
+}
+
+/// The same contact seen from the other body.
+fn flip(c: PairContact) -> PairContact {
+    PairContact { normal: -c.normal, ..c }
 }
 
 /// Did `a` and `b` touch during the step? (Indices left for the caller.)

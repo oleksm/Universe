@@ -317,7 +317,7 @@ mod tests {
 
     #[test]
     fn markets_are_local_varied_and_prices_move_with_trade() {
-        let mut w = World::new(1984);
+        let w = World::new(1984);
         let sys = w.system(w.home_system);
         let goods = catalog(1984);
         let fs = facilities(&sys);

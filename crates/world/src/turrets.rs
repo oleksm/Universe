@@ -199,7 +199,10 @@ impl crate::world::World {
         }
     }
 
-    fn turrets_of(&self, system: usize) -> std::sync::Arc<Vec<Turret>> {
+    pub(crate) fn turrets_of(&self, system: usize) -> std::sync::Arc<Vec<Turret>> {
+        if let Some(t) = self.frozen_turrets(system) {
+            return t;
+        }
         if let Some(t) = self.turrets.lock().unwrap_or_else(|e| e.into_inner()).get(&system) {
             return t.clone();
         }
@@ -217,7 +220,7 @@ mod tests {
 
     #[test]
     fn some_places_are_defended_and_it_is_the_same_every_time() {
-        let mut w = World::new(1984);
+        let w = World::new(1984);
         let system = w.home_system;
         let sys = w.system(system);
         let t = turrets(1984, system, &sys);

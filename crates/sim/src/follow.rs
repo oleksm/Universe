@@ -24,10 +24,8 @@ impl Universe {
     /// (flying in normal space, in radar range).
     /// Within the frame, from its snapshot (see `snaps`).
     pub(crate) fn ship_mark(&self, system: usize, from: DVec3, id: usize) -> Option<(DVec3, DVec3)> {
-        if self.snap_time == self.world.time
-            && let Some(s) = self.snaps.get(id)
-        {
-            return (s.system == system && s.flying && !s.hyperdrive && s.position.distance(from) < RADAR_RANGE).then_some((s.position, s.velocity));
+        if self.snap_time == self.world.time {
+            return mark_in(&self.snaps, system, from, id);
         }
         let (s, ship): (usize, &Ship) = if id == PLAYER { (self.ship_system, &self.ship) } else { self.crafts.get(id - 1).map(|c| (c.system, &c.ship))? };
         (s == system && ship.is_flying() && !ship.hyperdrive && ship.position.distance(from) < RADAR_RANGE).then_some((ship.position, ship.velocity))
@@ -104,6 +102,12 @@ impl Universe {
     pub fn craft_follow(&mut self, i: usize, anchor: Anchor, manoeuvre: Manoeuvre) {
         self.craft_run(i, |a, link, events| a.follow(link, anchor, manoeuvre, events));
     }
+}
+
+/// Ship `id` as the frame's snapshot has it, seen from `from` in `system`.
+pub(crate) fn mark_in(snaps: &[crate::traffic::Snap], system: usize, from: DVec3, id: usize) -> Option<(DVec3, DVec3)> {
+    let s = snaps.get(id)?;
+    (s.system == system && s.flying && !s.hyperdrive && s.position.distance(from) < RADAR_RANGE).then_some((s.position, s.velocity))
 }
 
 fn same_kind(m: Manoeuvre, kind: FollowKind) -> bool {

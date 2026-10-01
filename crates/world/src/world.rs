@@ -87,6 +87,9 @@ pub struct World {
     ephemerides: Mutex<HashMap<usize, (f64, Arc<Ephemeris>)>>,
     /// Body positions per system at the last two moments asked for: see `rails_at`.
     rails: Mutex<HashMap<usize, [RailsAt; 2]>>,
+    /// While ships step side by side: what they'll look up, gathered first
+    /// and read without locks (see `freeze`).
+    frozen: Option<Frozen>,
     /// Slugs in flight (see `weapons`).
     pub slugs: Vec<Slug>,
     /// Laser beams fired in the last combat phase.
@@ -105,6 +108,17 @@ pub struct World {
     pub(crate) turret_cooldowns: HashMap<usize, f64>,
     /// Turret fire control's tracks on aggressors, by ship id.
     pub(crate) turret_tracks: HashMap<usize, crate::turrets::TurretTrack>,
+}
+
+/// What ships stepping side by side will look up, gathered before they
+/// start (see `World::freeze`): read by every thread without locks.
+#[derive(Default)]
+struct Frozen {
+    systems: HashMap<usize, Arc<StarSystem>>,
+    neighbours: HashMap<usize, Arc<[usize]>>,
+    rails: HashMap<(usize, u64), Arc<Vec<DVec3>>>,
+    ephemerides: HashMap<(usize, u64), Arc<Ephemeris>>,
+    turrets: HashMap<usize, Arc<Vec<crate::turrets::Turret>>>,
 }
 
 /// Lock a cache (a poisoned one is still good: caches hold no invariants).
@@ -135,6 +149,7 @@ impl World {
             neighbours: Default::default(),
             ephemerides: Default::default(),
             rails: Default::default(),
+            frozen: None,
             slugs: Vec::new(),
             beams: Vec::new(),
             impacts: Vec::new(),
@@ -209,6 +224,9 @@ impl World {
     }
 
     pub fn system(&self, i: usize) -> Arc<StarSystem> {
+        if let Some(s) = self.frozen.as_ref().and_then(|f| f.systems.get(&i)) {
+            return s.clone();
+        }
         let mut systems = lock(&self.systems);
         if systems.len() > 64 {
             // Keep the gate network's systems, where the traffic is.
@@ -229,6 +247,9 @@ impl World {
 
     /// The stars nearest to star `i`, nearest first (see `NEIGHBOURS`).
     pub fn neighbours(&self, i: usize) -> Arc<[usize]> {
+        if let Some(n) = self.frozen.as_ref().and_then(|f| f.neighbours.get(&i)) {
+            return n.clone();
+        }
         lock(&self.neighbours).entry(i).or_insert_with(|| self.galaxy.nearest(i, NEIGHBOURS).into()).clone()
     }
 
@@ -240,6 +261,9 @@ impl World {
     /// The body snapshot for `sys` at time `t`, computed once and shared by
     /// every ship stepping from that moment.
     fn ephemeris(&self, sys: &StarSystem, t: f64) -> Arc<Ephemeris> {
+        if let Some(e) = self.frozen.as_ref().and_then(|f| f.ephemerides.get(&(sys.index, t.to_bits()))) {
+            return e.clone();
+        }
         let mut cache = lock(&self.ephemerides);
         match cache.get(&sys.index) {
             Some((at, e)) if *at == t => e.clone(),
@@ -273,6 +297,35 @@ impl World {
         }
     }
 
+    /// Ships are about to step side by side from `t0` to `t1` in `systems`:
+    /// gather what they'll look up there (the systems and their neighbours,
+    /// the bodies at both moments, the snapshot for the integrator, the
+    /// turrets), to be read without locks until `thaw`.
+    pub fn freeze(&mut self, systems: &[usize], t0: f64, t1: f64) {
+        self.frozen = None;
+        let mut f = Frozen::default();
+        for &i in systems {
+            let sys = self.system(i);
+            f.neighbours.insert(i, self.neighbours(i));
+            for t in [t0, t1] {
+                f.rails.insert((i, t.to_bits()), self.rails_at(i, t));
+            }
+            f.ephemerides.insert((i, t0.to_bits()), self.ephemeris(&sys, t0));
+            f.turrets.insert(i, self.turrets_of(i));
+            f.systems.insert(i, sys);
+        }
+        self.frozen = Some(f);
+    }
+
+    /// Back to the locked caches (see `freeze`).
+    pub fn thaw(&mut self) {
+        self.frozen = None;
+    }
+
+    pub(crate) fn frozen_turrets(&self, system: usize) -> Option<Arc<Vec<crate::turrets::Turret>>> {
+        self.frozen.as_ref().and_then(|f| f.turrets.get(&system)).cloned()
+    }
+
     /// Where the bodies of `system` are now: solved once per moment and
     /// shared (a thousand ships in a system ask every frame).
     pub fn rails_now(&self, system: usize) -> Arc<Vec<DVec3>> {
@@ -283,6 +336,9 @@ impl World {
     /// moments asked for (each ship's turn runs from the frame's start to its
     /// end, so both are asked for, turn after turn).
     pub fn rails_at(&self, system: usize, t: f64) -> Arc<Vec<DVec3>> {
+        if let Some(p) = self.frozen.as_ref().and_then(|f| f.rails.get(&(system, t.to_bits()))) {
+            return p.clone();
+        }
         if let Some(slots) = lock(&self.rails).get(&system)
             && let Some((_, p)) = slots.iter().find(|(at, _)| *at == t)
         {
@@ -705,7 +761,7 @@ mod tests {
 
     #[test]
     fn home_system_has_station_and_planets() {
-        let mut w = World::new(42);
+        let w = World::new(42);
         let sys = w.system(w.home_system);
         assert!(sys.station().is_some());
         assert!(sys.planet_count() >= 4);

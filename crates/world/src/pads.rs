@@ -92,6 +92,29 @@ impl TrafficControl {
         PadGrant::Queued(place)
     }
 
+    /// What `request_pad` would answer now, changing nothing (a ship asking
+    /// while ships step side by side: its request is made after).
+    pub fn peek_pad(&self, system: usize, port: usize, ship: usize) -> PadGrant {
+        let Some(p) = self.ports.get(&(system, port)) else { return PadGrant::Queued(0) };
+        if let Some(k) = p.owners.iter().position(|o| o.is_some_and(|o| o.ship == ship)) {
+            return PadGrant::Pad(k);
+        }
+        PadGrant::Queued(p.queue.iter().position(|(s, _)| *s == ship).unwrap_or(p.queue.len()))
+    }
+
+    /// What `request_corridor` would answer now, changing nothing.
+    pub fn peek_corridor(&self, system: usize, body: usize, ship: usize) -> Option<usize> {
+        let key = (system, body);
+        match self.corridors.get(&key) {
+            Some(&s) if s == ship => None,
+            held => {
+                let queue = self.corridor_queues.get(&key);
+                let place = queue.and_then(|q| q.iter().position(|(s, _)| *s == ship)).unwrap_or_else(|| queue.map_or(0, |q| q.len()));
+                Some(place + usize::from(held.is_some()))
+            }
+        }
+    }
+
     /// Ship `ship` asks at `now` to use the corridor of station or gate
     /// `body` in `system`: `None` if it's its (it was free and this ship's
     /// turn, or already its), otherwise how many are ahead of it in line.

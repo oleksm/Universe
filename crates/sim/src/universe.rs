@@ -138,10 +138,8 @@ impl Universe {
         let t1 = self.world.time;
         {
             let _p = universe_prof::scope("sim/crafts");
-            for i in 0..self.crafts.len() {
-                self.world.time = t0;
-                self.fly_craft(i, real_dt, warp);
-            }
+            // (Each craft keeps its own clock from t0; the world's stays at t1.)
+            self.fly_crafts(t0, real_dt, warp);
         }
         self.world.time = t1;
         universe_prof::time("sim/combat", || self.combat(t1 - t0));
@@ -213,6 +211,7 @@ impl Universe {
     /// who is done with the corridor it holds (on its final run within
     /// `CORRIDOR_RELEASE`, or not cleared for it and 3 km clear of it).
     fn traffic_presence(&mut self) {
+        use rayon::prelude::*;
         use universe_avionics::nav::Phase;
         use universe_avionics::NavTarget;
         let now = self.world.time;
@@ -225,66 +224,72 @@ impl Universe {
             direction: DVec3,
         }
         type Seen = (Arc<StarSystem>, Arc<Vec<DVec3>>, Vec<Port>);
-        let mut systems: std::collections::HashMap<usize, Seen> = std::collections::HashMap::new();
         // Corridors held, by ship: (system, body).
         let mut held: std::collections::HashMap<usize, Vec<(usize, usize)>> = std::collections::HashMap::new();
         for (system, body, ship) in self.world.traffic.corridors_held() {
             held.entry(ship).or_default().push((system, body));
         }
-        let ships = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
+        // Who's where (on the ground, or flying in normal space).
+        type Where = (usize, usize, DVec3, bool, Option<(NavTarget, Phase)>);
+        let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
             .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, &c.avionics)))
-            .filter(|(_, _, s, _)| matches!(s.state, ShipState::Landed { .. }) || (s.is_flying() && !s.hyperdrive));
-        let mut present = Vec::new();
-        for (id, system, ship, a) in ships {
-            let (pos, landed, clearance) = (ship.position, matches!(ship.state, ShipState::Landed { .. }), a.clearance.map(|c| (c.target, c.phase)));
-            let world = &mut self.world;
-            let (sys, positions, ports) = &*systems.entry(system).or_insert_with(|| {
-                let sys = world.system(system);
-                let positions = world.rails_now(system);
+            .filter(|(_, _, s, _)| matches!(s.state, ShipState::Landed { .. }) || (s.is_flying() && !s.hyperdrive))
+            .map(|(id, system, s, a)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), a.clearance.map(|c| (c.target, c.phase))))
+            .collect();
+        let mut systems: std::collections::HashMap<usize, Seen> = std::collections::HashMap::new();
+        for &(_, system, ..) in &ships {
+            if let std::collections::hash_map::Entry::Vacant(e) = systems.entry(system) {
+                let sys = self.world.system(system);
+                let positions = self.world.rails_now(system);
                 let ports = sys
                     .spaceports
                     .iter()
                     .map(|sp| Port { center: positions[sp.body], unturn: sys.bodies[sp.body].rotation(now).inverse(), radius: sys.bodies[sp.body].rail.radius, direction: sp.direction })
                     .collect();
-                (sys, positions, ports)
-            });
-            let mut p = universe_world::pads::Presence { ship: id, system, ..Default::default() };
-            // Pads: on one, or in the column over it.
-            for (port, sp) in ports.iter().enumerate() {
-                let off = pos - sp.center;
-                if off.length() - sp.radius > 5_000.0 {
-                    continue;
-                }
-                let dir = (sp.unturn * off).normalize();
-                if dir.angle_between(sp.direction) * sp.radius > 800.0 {
-                    continue;
-                }
-                let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
-                    let d = |k| universe_world::spaceport::pad_direction(sys, port, k).angle_between(dir);
-                    d(a).total_cmp(&d(b))
-                });
-                p.pad = nearest.map(|k| (port, k));
-            }
-            // Corridors it holds and is done with.
-            for &(s, b) in held.get(&id).map_or(&[][..], |v| &v[..]) {
-                if s != system {
-                    continue;
-                }
-                let d = positions[b].distance(pos);
-                let cleared_for = clearance.filter(|(t, _)| matches!(t, NavTarget::Station(x) | NavTarget::Gate(x) if *x == b));
-                let done = match cleared_for {
-                    Some((_, Phase::Final)) => d < CORRIDOR_RELEASE,
-                    Some(_) => false,
-                    None => !landed && d > 3_000.0,
-                };
-                if done {
-                    p.clear_of.push(b);
-                }
-            }
-            if p.pad.is_some() || !p.clear_of.is_empty() {
-                present.push(p);
+                e.insert((sys, positions, ports));
             }
         }
+        // Each ship's facts, side by side.
+        let present: Vec<universe_world::pads::Presence> = ships
+            .par_iter()
+            .filter_map(|&(id, system, pos, landed, clearance)| {
+                let (sys, positions, ports) = &systems[&system];
+                let mut p = universe_world::pads::Presence { ship: id, system, ..Default::default() };
+                // Pads: on one, or in the column over it.
+                for (port, sp) in ports.iter().enumerate() {
+                    let off = pos - sp.center;
+                    if off.length() - sp.radius > 5_000.0 {
+                        continue;
+                    }
+                    let dir = (sp.unturn * off).normalize();
+                    if dir.angle_between(sp.direction) * sp.radius > 800.0 {
+                        continue;
+                    }
+                    let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
+                        let d = |k| universe_world::spaceport::pad_direction(sys, port, k).angle_between(dir);
+                        d(a).total_cmp(&d(b))
+                    });
+                    p.pad = nearest.map(|k| (port, k));
+                }
+                // Corridors it holds and is done with.
+                for &(s, b) in held.get(&id).map_or(&[][..], |v| &v[..]) {
+                    if s != system {
+                        continue;
+                    }
+                    let d = positions[b].distance(pos);
+                    let cleared_for = clearance.filter(|(t, _)| matches!(t, NavTarget::Station(x) | NavTarget::Gate(x) if *x == b));
+                    let done = match cleared_for {
+                        Some((_, Phase::Final)) => d < CORRIDOR_RELEASE,
+                        Some(_) => false,
+                        None => !landed && d > 3_000.0,
+                    };
+                    if done {
+                        p.clear_of.push(b);
+                    }
+                }
+                (p.pad.is_some() || !p.clear_of.is_empty()).then_some(p)
+            })
+            .collect();
         self.world.traffic.presence(&present);
     }
 

@@ -12,6 +12,7 @@ universe-world = { path = "../world" }
 universe-avionics = { path = "../avionics" }
 glam.workspace = true
 serde.workspace = true
+rayon.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true
