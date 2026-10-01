@@ -844,15 +844,11 @@ impl App {
                 // Turned on as it's turning since the view.
                 let turned = self.place(Who::Me).1;
                 let orientation = turned.as_quat();
-                let docked = matches!(ship.state, ShipState::Landed { body, .. } if self.view.system.bodies[body].kind == universe_sim::BodyKind::Station);
-                // Docked: the ship is inside the slot, so back off far enough to see the station.
                 // Spine to a rock (closing on it, or anchored): the chase view
                 // rolls over, so the rock is below and the ship over it.
                 let over_rock = matches!(ship.state, ShipState::Anchored { .. })
                     || self.v.avionics.following.is_some_and(|f| matches!(f.manoeuvre, universe_sim::avionics::follow::Manoeuvre::Surface(_)));
-                let (chase, orientation) = if docked {
-                    (DVec3::new(0.0, 150.0, 1800.0), orientation)
-                } else if over_rock && self.chase_cam {
+                let (chase, orientation) = if over_rock && self.chase_cam {
                     // Off to one side and a little behind, level with the gap
                     // between ship and rock, the rock below: the gear at work.
                     let at = DVec3::new(75.0, -12.0, 60.0);
@@ -861,7 +857,7 @@ impl App {
                 } else {
                     (DVec3::new(0.0, 20.0, 115.0), orientation)
                 };
-                let offset = if self.chase_cam || docked { turned * chase } else { DVec3::ZERO };
+                let offset = if self.chase_cam { turned * chase } else { DVec3::ZERO };
                 self.camera = Camera { position: self.view.ship_pos + offset, orientation, near: 0.5, ..Default::default() };
                 self.prev_focus = None;
             }

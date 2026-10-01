@@ -1025,15 +1025,13 @@ fn ship(frame: &mut Frame, app: &App) {
     }
     let t = Transform { position: pos, rotation: app.ship.orientation.as_quat(), scale: 1.0 };
     // Seen from just behind it (chase view), nothing is nearer the eye than
-    // our hull: it's drawn over everything, the HUD included. Docked, the
-    // eye is back past the station, so it's drawn in the scene like the rest.
-    let docked = matches!(app.ship.state, ShipState::Landed { body, .. } if app.view.system.bodies[body].kind == BodyKind::Station);
+    // our hull: it's drawn over everything, the HUD included.
     // (Not over a full-screen panel: the nav map or the market.)
     let panel = app.nav_map.is_some() || app.galaxy_map.is_some() || app.economy_panel.is_some() || app.market.is_some() || app.shipyard.is_some() || app.show_cargo || app.show_thrusters || app.picker.listing() || app.mining.on;
     // (Over a rock the camera stands off to the side: no need either.)
     let panel = panel || matches!(app.ship.state, ShipState::Anchored { .. });
     let turned = app.place(crate::Who::Me).1;
-    if app.mode == Mode::Pilot && app.chase_cam && !docked && !panel {
+    if app.mode == Mode::Pilot && app.chase_cam && !panel {
         // (Its jets too: drawn behind the hull, they'd be hidden by it.)
         frame.in_front(|frame| {
             frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL);
