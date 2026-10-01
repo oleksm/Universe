@@ -311,12 +311,18 @@ impl App {
                 (&c.ship, self.prev.crafts.get(i).filter(|p| p.system == c.system).map(|p| &p.ship))
             }
         };
-        match before.filter(|b| b.position.distance(now.position) < 20_000.0) {
+        let (position, orientation) = match before.filter(|b| b.position.distance(now.position) < 20_000.0) {
             Some(b) => {
                 let a = self.alpha();
                 (b.position.lerp(now.position, a), b.orientation.slerp(now.orientation, a))
             }
             None => (now.position, now.orientation),
+        };
+        // Our own ship: with what our orders on their way will do (the
+        // cockpit's prediction), so the stick shows at once.
+        match (who, self.v.prediction) {
+            (Who::Me, Some((moved, turned))) => (position + moved, (turned * orientation).normalize()),
+            _ => (position, orientation),
         }
     }
 

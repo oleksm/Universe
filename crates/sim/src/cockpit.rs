@@ -69,6 +69,13 @@ pub struct Cockpit {
     pub collision_at: f64,
     pub collision_cost: f32,
     collision_age: f64,
+    /// Prediction (see `predict`): its own copy of the world's rules (the
+    /// shared kernel, from the same seed), the turns it posted by due tick,
+    /// and what its orders on their way will do to the ship: the difference
+    /// they make to where it is and how it's turned, at their due tick.
+    world: Option<universe_world::World>,
+    turns: Vec<(u64, Option<Controls>)>,
+    pub prediction: Option<(DVec3, glam::DQuat)>,
 }
 
 impl Default for Cockpit {
@@ -102,6 +109,9 @@ impl Cockpit {
             collision_at: 0.0,
             collision_cost: 0.0,
             collision_age: f64::INFINITY,
+            world: None,
+            turns: Vec::new(),
+            prediction: None,
         }
     }
 
@@ -139,8 +149,12 @@ impl Cockpit {
         let dt = view.world.dt;
         self.view = Some(view.clone());
         if let Some(p) = pilots::think(&mut self.pilot, PLAYER, &view.world, Some(self.stick)) {
+            if let Some(turn) = p.turn {
+                self.turns.push((p.due(), turn));
+            }
             self.outbox.push(p);
         }
+        self.prediction = universe_prof::time("cockpit/prediction", || self.predict());
         // Radar, and the lock (lost if it's gone).
         self.contacts = contacts(&view);
         if let Some(id) = self.pilot.avionics.contact
@@ -179,6 +193,42 @@ impl Cockpit {
             self.collision_cost = start.elapsed().as_secs_f32();
             self.collision_at = view.world.time;
         }
+    }
+
+    /// What our orders on their way will do: the ship stepped through the
+    /// ticks until they're all due by the shared kernel, with them and
+    /// without; the difference in where it is and how it's turned. (Our
+    /// ship is drawn from the world's view plus this: input shows at once.)
+    fn predict(&mut self) -> Option<(DVec3, glam::DQuat)> {
+        let view = self.view.clone()?;
+        let w = &view.world;
+        self.turns.retain(|(due, _)| *due > w.tick);
+        let (system, ref ship) = w.ships[PLAYER];
+        if !ship.is_flying() || (self.turns.is_empty() && self.pilot.pending.is_empty()) {
+            return None;
+        }
+        let world = self.world.take().unwrap_or_else(|| universe_world::World::new(w.charts.seed));
+        let last = w.tick + pilots::COMMAND_DELAY;
+        let run = |world: &universe_world::World, with: bool| {
+            let (mut ship, mut system, mut clock) = (ship.clone(), system, w.time);
+            let mut events = Vec::new();
+            for tick in w.tick + 1..=last {
+                let mut turn = None;
+                if with {
+                    for (_, c) in self.pilot.pending.iter().filter(|(due, _)| *due == tick) {
+                        world.command_at(&mut ship, system, c, clock, &mut events);
+                    }
+                    turn = self.turns.iter().filter(|(due, _)| *due == tick).last().and_then(|(_, t)| *t);
+                }
+                let commands = ShipCommands { turn, ..ship.holding() };
+                world.step_ship_at(&mut clock, &mut ship, &mut system, &commands, w.dt, 1.0, &mut events);
+            }
+            (ship, system)
+        };
+        let (with, s1) = run(&world, true);
+        let (without, s2) = run(&world, false);
+        self.world = Some(world);
+        (s1 == s2 && with.is_flying() && without.is_flying()).then(|| (with.position - without.position, with.orientation * without.orientation.inverse()))
     }
 
     fn world(&self) -> &PilotView {

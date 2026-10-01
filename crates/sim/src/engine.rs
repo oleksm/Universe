@@ -138,6 +138,9 @@ pub struct View {
     pub collision_at: f64,
     pub collision_cost: f32,
     pub following: Option<(Manoeuvre, String, f64)>,
+    /// What our orders on their way will do to our ship (the cockpit's
+    /// prediction): add to where it is, and turn it by, to draw it.
+    pub prediction: Option<(DVec3, glam::DQuat)>,
     /// What the target marker points at (the nav target, else the nearest station).
     pub nav_marker: Option<(String, DVec3)>,
     /// On foot: what's in reach.
@@ -326,6 +329,7 @@ impl Engine {
             collision_at: 0.0,
             collision_cost: 0.0,
             following: None,
+            prediction: None,
             nav_marker: None,
             reach: u.pilot_reach(),
             docked_market: u.docked_market(),
@@ -360,6 +364,7 @@ impl View {
         self.collision_at = c.collision_at;
         self.collision_cost = c.collision_cost;
         self.following = c.following_status();
+        self.prediction = c.prediction;
         self.nav_marker = c.nav_marker();
         self
     }

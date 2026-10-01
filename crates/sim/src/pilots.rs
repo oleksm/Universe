@@ -128,7 +128,7 @@ pub struct Pilot {
     /// Its commands not yet due, and when they will be: it sees its ship as
     /// they'll leave it (as a ship's controls show what was set, not yet
     /// what the devices do), so it doesn't order again what's on its way.
-    pending: Vec<(u64, ShipCommands)>,
+    pub(crate) pending: Vec<(u64, ShipCommands)>,
 }
 
 impl Pilot {

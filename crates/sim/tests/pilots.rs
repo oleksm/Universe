@@ -135,3 +135,23 @@ fn the_cockpit_flies_the_ship_from_the_client_side() {
     }
     assert!(ok, "the throttle and nav target went from the client's cockpit to the ship");
 }
+
+#[test]
+fn the_cockpit_predicts_what_its_orders_will_do_to_the_tick() {
+    let mut u = Universe::new(1984);
+    u.ship.angular_velocity = DVec3::ZERO;
+    tick(&mut u);
+    let start = u.ship.orientation;
+    let stick = Controls { pitch: 1.0, yaw: 0.0, roll: 0.0 };
+    u.step_world(1.0 / 60.0, 1.0, &stick);
+    // The stick is pushed: the ship hasn't turned yet (the order is on its way), the prediction has.
+    let (_, turned) = u.cockpit().prediction.expect("a prediction");
+    assert!(u.ship.orientation.angle_between(start) < 1e-12, "not turned yet");
+    assert!(turned.angle_between(glam::DQuat::IDENTITY) > 1e-4, "the prediction turns");
+    let predicted = turned * u.ship.orientation;
+    // When the order lands, the ship is where the prediction said.
+    u.step_world(1.0 / 60.0, 1.0, &stick);
+    u.step_world(1.0 / 60.0, 1.0, &stick);
+    let off = u.ship.orientation.angle_between(predicted);
+    assert!(off < 1e-9, "predicted to within {off:e} rad");
+}
