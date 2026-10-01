@@ -143,8 +143,11 @@ fn hyperdrive_autopilot_steers_to_the_port() {
     u.toggle_hyperdrive();
     u.toggle_autopilot();
     assert!(u.avionics().hyper_autopilot);
-    // (Ordered after the drive's engaged: engaging zeroes the throttle.)
-    u.throttle(0.0, Some(1.0));
+    // The autopilot opens the throttle itself (engaging zeroes it).
+    for _ in 0..30 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!(u.ship.hyperdrive && u.ship.throttle == 1.0, "throttle {}", u.ship.throttle);
     let dist = hyper_until_arrival(&mut u, port, false);
     eprintln!("autopilot: dropped out {:.0} km from the pad", dist / 1000.0);
     assert!(dist < HYPER_ARRIVE_PORT);

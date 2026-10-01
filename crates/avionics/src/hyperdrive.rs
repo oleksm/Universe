@@ -208,6 +208,9 @@ pub fn navigate(
         // (Turned over a frame, well within the controller's reach.)
         commands.turn = Some(docking::attitude(ship, target, DVec3::ZERO, FINE_STEP));
         orders.heading = Some(dir);
+        // Full speed: the drive's speed follows the room ahead, and the
+        // destination counts in it, so it slows for the arrival itself.
+        commands.throttle = 1.0;
     }
     commands.hyperdrive = Some(orders);
     (commands, None)
