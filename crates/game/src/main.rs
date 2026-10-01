@@ -117,6 +117,8 @@ pub struct App {
     pub reach: Option<Reach>,
     /// Defence turrets of the system in view, where they are now.
     pub turrets: Vec<(universe_sim::world::turrets::Turret, DVec3)>,
+    /// The follow program: how, what, and how far it is now (m).
+    pub following: Option<(universe_sim::avionics::follow::Manoeuvre, String, f64)>,
     /// Seconds left to show the lock beam's ring (after T, outside combat mode).
     pub beam_shown: f32,
     /// The collision warning's prediction, when it's on (made at `collision_at`, world time).
@@ -182,6 +184,7 @@ impl App {
             sparks: Vec::new(),
             reach: None,
             turrets: Vec::new(),
+            following: None,
             beam_shown: 0.0,
             collision: None,
             collision_at: 0.0,
@@ -368,8 +371,19 @@ impl App {
                 None => self.say("NO TARGET IN THE BEAM - PUT IT IN THE RING".into()),
             }
         }
+        // N keeps at a range from the locked ship (or the nav target's
+        // station or gate), U orbits it; again for the next range out. X lets go.
+        if input.pressed(KeyCode::KeyN) {
+            self.u.follow(universe_sim::FollowKind::KeepAt);
+        }
+        if input.pressed(KeyCode::KeyU) {
+            self.u.follow(universe_sim::FollowKind::Orbit);
+        }
+        if input.pressed(KeyCode::KeyX) && self.u.avionics.following.is_some() {
+            self.u.stop_following();
+        }
         // The autopilot has the stick.
-        if self.u.avionics.route.active || self.u.avionics.clearance.is_some_and(|c| c.autopilot) {
+        if self.u.avionics.route.active || self.u.avionics.clearance.is_some_and(|c| c.autopilot) || self.u.avionics.following.is_some() {
             return Controls::default();
         }
 
@@ -440,7 +454,10 @@ impl App {
                 Event::Ship(ShipEvent::GateEntered { to }) => format!("GATE TRANSIT TO {to}"),
                 Event::Ship(ShipEvent::GateArrived { system }) => format!("WELCOME TO THE {system} SYSTEM"),
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
-                Event::Traffic(TrafficEvent::ClearanceDenied { reason }) | Event::Refused { reason } => format!("CLEARANCE DENIED - {reason}"),
+                Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),
+                Event::Refused { reason } => reason,
+                Event::Following { what: Some((how, range)) } => format!("{how} {:.0} KM - N/U AGAIN: NEXT RANGE, X: RELEASE", range / 1000.0),
+                Event::Following { what: None } => "FOLLOW OFF".into(),
                 Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE CANCELLED".into(),
                 Event::Traffic(TrafficEvent::PadAssigned { pad }) => format!("LAND ON PAD {}", pad + 1),
                 Event::Traffic(TrafficEvent::Holding { ahead }) => format!("ALL PADS TAKEN - HOLD OVER THE PORT ({ahead} AHEAD)"),
@@ -616,6 +633,7 @@ impl Game for App {
             self.route_labels = self.route_labels_for.clone().into_iter().map(|s| self.u.stop_name(s).to_uppercase()).collect();
         }
         self.approach = self.u.approach();
+        self.following = self.u.following_status();
         // The planner flies the autopilot ahead through the physics, which
         // takes 1-2 ms near the target and ~10 ms for a landing from orbit:
         // rebuild it 10 times a second, less often when it's dearer (keeping

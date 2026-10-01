@@ -38,6 +38,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         Mode::Pilot if !app.u.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),
         Mode::Pilot => {
             pilot_info(app, &mut lines);
+            follow_info(app, &mut lines);
             approach_info(app, &mut lines);
             pilot_overlay(frame, app);
             target_marker(frame, app);
@@ -319,6 +320,12 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         Some((_, None)) => lines.push(("     NO FIRING SOLUTION - OUT OF GUN RANGE".into(), DIM)),
         None => {}
     }
+}
+
+/// The follow program: what, how, and how well it's holding.
+fn follow_info(app: &App, lines: &mut Vec<(String, Color)>) {
+    let Some((m, name, d)) = &app.following else { return };
+    lines.push((format!("{} {:.0} KM - {name}  NOW {:.1} KM", m.label(), m.range() / 1000.0, d / 1000.0), AMBER));
 }
 
 /// The route: which stop we're on and what the route autopilot is doing.
@@ -1070,6 +1077,17 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     };
     let on = |b: bool| if b { Lamp::On } else { Lamp::Off };
     let auto = a.route.active || a.hyper_autopilot || a.clearance.is_some_and(|c| c.autopilot);
+    // N / U: keep at range, orbit, with the range when engaged; there's
+    // something to follow with a lock or a station or gate as the nav target.
+    let anchor = a.contact.is_some() || matches!(a.nav_target, Some(universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_)));
+    let follow_cell = |kind: &str, on: Option<f64>| match on {
+        Some(r) => (format!("{kind} {:.0}K", r / 1000.0), Lamp::On),
+        None if anchor && flying && !ship.hyperdrive => (kind.to_string(), Lamp::Off),
+        None => (kind.to_string(), Lamp::Unavailable),
+    };
+    use universe_sim::avionics::follow::Manoeuvre;
+    let keep = follow_cell("KEEP", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::KeepAt(r) => Some(r), _ => None }));
+    let orbit = follow_cell("ORBIT", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::Orbit(r) => Some(r), _ => None }));
     let arms = if ship.weapons_hot() {
         Lamp::Hot
     } else if ship.armed {
@@ -1084,12 +1102,14 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     } else {
         Lamp::Off
     };
-    let cells = [
+    let cells: [(&str, &str, Lamp); 13] = [
         ("R", clearance.0, clearance.1),
         ("K", "AUTO", on(auto)),
         ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
         ("B", "ARMS", arms),
         ("T", "LOCK", lock),
+        ("N", keep.0.as_str(), keep.1),
+        ("U", orbit.0.as_str(), orbit.1),
         ("I", "COLLIDE", if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) }),
         ("M", "MAP", on(app.nav_map.is_some())),
         ("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
@@ -1234,6 +1254,9 @@ PILOT
  K        AUTOPILOT: DOCK/LAND, OR IN
           HYPERDRIVE STEER TO TARGET
  T        LOCK THE SHIP IN THE BEAM RING (AGAIN: NEXT)
+ N  U     KEEP AT RANGE / ORBIT THE LOCKED SHIP, OR
+          THE NAV TARGET STATION/GATE (AGAIN: NEXT
+          RANGE OUT)  X LETS GO
  I        COLLISION WARNING: PATH, IMPACT, TIME
  B        COMBAT MODE: ARM / SAFE WEAPONS
  SPACE    GUN (FLY THE LEAD INTO THE RING)

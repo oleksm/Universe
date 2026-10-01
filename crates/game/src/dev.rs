@@ -183,6 +183,18 @@ pub fn apply(app: &mut App, name: &str) {
                 app.u.ship.aggressed_until = app.u.world.time + 600.0;
             }
         }
+        "orbit" => {
+            // 7 km off the home station, orbiting it at 5 km.
+            app.mode = Mode::Pilot;
+            let station = sys.station().expect("home station");
+            let f = StationFrame::new(&sys, station, app.u.world.time, &positions);
+            let side = f.axis().any_orthonormal_vector();
+            app.u.ship.position = f.center + side * 7_000.0;
+            app.u.ship.velocity = f.velocity;
+            app.u.ship.orientation = universe_sim::ship::facing(-side, f.axis());
+            app.u.set_nav_target(Some(NavTarget::Station(station)));
+            app.u.follow(universe_sim::FollowKind::Orbit);
+        }
         "sun" => {
             // Facing the star from the home orbit.
             app.mode = Mode::Pilot;

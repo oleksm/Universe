@@ -321,7 +321,7 @@ impl Avionics {
 /// How to get `accel`: point the engine along it (else `fallback`) and burn
 /// when lined up; the thrusters give the rest. Throttle, thrusters, and
 /// where the nose should go.
-fn thrust_for(ship: &Ship, accel: DVec3, fallback: DVec3) -> (f64, DVec3, DVec3) {
+pub(crate) fn thrust_for(ship: &Ship, accel: DVec3, fallback: DVec3) -> (f64, DVec3, DVec3) {
     let want = accel.normalize_or(fallback);
     let lined_up = ship.forward().angle_between(want) < 0.25;
     let throttle = if lined_up { (accel.length() / ship.main_accel()).min(1.0) } else { 0.0 };

@@ -238,3 +238,76 @@ fn the_recorder_files_a_head_on_collision_with_both_traces() {
     eprintln!("{}", u.recorder.incidents[0]);
 }
 
+
+#[test]
+fn a_ship_keeps_at_range_from_another_as_it_accelerates_away() {
+    use universe_sim::avionics::follow::{Anchor, Manoeuvre};
+    let mut u = bench(2);
+    let (_, at, v, side) = a_turret(&mut u);
+    // Well out from the place's body, in its gravity all the same.
+    let lead = at + side * 1_500_000.0;
+    let across = side.any_orthonormal_vector();
+    place(&mut u, 1, lead, v + across * 40.0, lead + across);
+    place(&mut u, 0, lead - side * 8_000.0, v, lead);
+    u.crafts[1].ship.throttle = 0.03;
+    u.craft_follow(0, Anchor::Ship(universe_sim::craft_id(1)), Manoeuvre::KeepAt(2_000.0));
+    run(&mut u, 120.0, |_| false);
+    let (a, b) = (&u.crafts[0].ship, &u.crafts[1].ship);
+    let d = a.position.distance(b.position);
+    let rel = (a.velocity - b.velocity).length();
+    assert!((d - 2_000.0).abs() < 150.0 && rel < 5.0, "at {d:.0} m, {rel:.1} m/s relative\n{}", incidents(&u));
+    assert!(u.crafts[0].avionics.following.is_some());
+    assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
+}
+
+#[test]
+fn a_ship_orbits_a_station_at_the_radius_asked() {
+    use universe_sim::avionics::follow::{orbit_speed, Anchor, Manoeuvre};
+    let mut u = bench(1);
+    let (sys, pos) = positions(&mut u);
+    let station = sys.station().unwrap();
+    let f = StationFrame::new(&sys, station, u.world.time, &pos);
+    let start = f.center + f.axis().any_orthonormal_vector() * 9_000.0;
+    place(&mut u, 0, start, f.velocity, f.center);
+    u.craft_follow(0, Anchor::Place(NavTarget::Station(station)), Manoeuvre::Orbit(5_000.0));
+    run(&mut u, 200.0, |_| false);
+    // Settled: on the circle, going round at the orbit speed, for the next minute.
+    let mut swept = 0.0;
+    let mut last: Option<DVec3> = None;
+    for _ in 0..60 {
+        run(&mut u, 1.0, |_| false);
+        let (sys, pos) = positions(&mut u);
+        let f = StationFrame::new(&sys, station, u.world.time, &pos);
+        let s = &u.crafts[0].ship;
+        let off = s.position - f.center;
+        assert!((off.length() - 5_000.0).abs() < 300.0, "{:.0} m out\n{}", off.length(), incidents(&u));
+        let rel = s.velocity - f.velocity;
+        let tangential = (rel - off.normalize() * rel.dot(off.normalize())).length();
+        assert!((tangential - orbit_speed(5_000.0, s.side_accel())).abs() < 15.0, "going round at {tangential:.0} m/s");
+        if let Some(l) = last {
+            swept += l.angle_between(off);
+        }
+        last = Some(off);
+    }
+    assert!(swept > 0.5, "went round ({swept:.2} rad in a minute)");
+    assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
+}
+
+#[test]
+fn a_ship_orbits_a_moving_ship() {
+    use universe_sim::avionics::follow::{Anchor, Manoeuvre};
+    let mut u = bench(2);
+    let (_, at, v, side) = a_turret(&mut u);
+    let centre = at + side * 1_500_000.0;
+    let across = side.any_orthonormal_vector();
+    place(&mut u, 1, centre, v + across * 60.0, centre + across);
+    place(&mut u, 0, centre + side * 3_000.0, v, centre);
+    u.craft_follow(0, Anchor::Ship(universe_sim::craft_id(1)), Manoeuvre::Orbit(2_000.0));
+    run(&mut u, 150.0, |_| false);
+    for _ in 0..30 {
+        run(&mut u, 1.0, |_| false);
+        let d = u.crafts[0].ship.position.distance(u.crafts[1].ship.position);
+        assert!((d - 2_000.0).abs() < 200.0, "{d:.0} m from it\n{}", incidents(&u));
+    }
+    assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
+}

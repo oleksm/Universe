@@ -10,6 +10,7 @@
 mod combat;
 mod commerce;
 mod contacts;
+mod follow;
 pub mod recorder;
 mod save;
 mod traffic;
@@ -33,6 +34,7 @@ pub use universe_world::{
 pub use combat::{craft_id, Kill, PLAYER};
 pub use commerce::{Deal, TradeRecord};
 pub use contacts::{Contact, LOCK_BEAM};
+pub use follow::FollowKind;
 pub use save::UniverseSave;
 pub use traffic::{CrashReport, Craft, TrafficStats};
 pub use universe::Universe;

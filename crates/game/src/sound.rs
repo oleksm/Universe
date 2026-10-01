@@ -63,7 +63,8 @@ pub fn event(ctx: &Context, event: &Event) {
         }
         Event::Traffic(TrafficEvent::ClearanceDenied { .. }) | Event::Refused { .. } => a.tone(180.0, 160.0, 0.35, 0.25),
         Event::Traffic(TrafficEvent::ClearanceCancelled) => a.tone(600.0, 300.0, 0.3, 0.2),
-        Event::Autopilot { on: true } => a.tone(500.0, 900.0, 0.2, 0.2),
+        Event::Autopilot { on: true } | Event::Following { what: Some(_) } => a.tone(500.0, 900.0, 0.2, 0.2),
+        Event::Following { what: None } => a.tone(900.0, 500.0, 0.2, 0.2),
         Event::Autopilot { on: false } => a.tone(900.0, 500.0, 0.2, 0.2),
         Event::NavTargetSet { .. } => a.tone(1000.0, 1300.0, 0.08, 0.15),
         Event::Ship(ShipEvent::LandedAtPort { .. }) => {

@@ -150,6 +150,11 @@ impl Universe {
         // A pirate looks around first (its radar and its friends' transponders).
         let c = &self.crafts[i];
         let sightings = if universe_avionics::hunter::wants_sightings(&c.avionics, &c.ship, self.world.time) { self.sightings(i) } else { Vec::new() };
+        let c = &self.crafts[i];
+        let mark = match c.avionics.following.map(|f| f.anchor) {
+            Some(universe_avionics::follow::Anchor::Ship(id)) => self.ship_mark(c.system, c.ship.position, id),
+            _ => None,
+        };
         let c = &mut self.crafts[i];
         let a = &c.avionics;
         let before = (a.nav_target, a.clearance, c.ship.hyperdrive, a.route.departing, c.ship.velocity, a.hunting.is_some(), a.route.active);
@@ -157,6 +162,7 @@ impl Universe {
         let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };
         let was_hunting = vessel.avionics.hunting.is_some();
         let (stick, _) = vessel.run(&mut self.world, |a, link, ev| a.hunt(link, &sightings, ev));
+        let stick = stick.or_else(|| vessel.run(&mut self.world, |a, link, ev| a.follow_step(link, mark, ev)));
         vessel.tick(&mut self.world, &stick.unwrap_or_default(), real_dt, warp);
         if c.avionics.hunting.is_some() && !was_hunting {
             self.traffic.hunts += 1;

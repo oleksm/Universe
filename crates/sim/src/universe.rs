@@ -104,7 +104,7 @@ impl Universe {
     }
 
     /// The player's ship and its avionics, and the world they're in.
-    fn player(&mut self) -> (&mut World, Vessel<'_>) {
+    pub(crate) fn player(&mut self) -> (&mut World, Vessel<'_>) {
         let vessel = Vessel { id: crate::combat::PLAYER, ship: &mut self.ship, system: &mut self.ship_system, avionics: &mut self.avionics, events: &mut self.events };
         (&mut self.world, vessel)
     }
@@ -113,6 +113,9 @@ impl Universe {
     /// limited), the pilot's stick at `controls`. The world clock moves with it.
     pub fn step(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
         let before = self.events.len();
+        // Following something: the program has the stick.
+        let stick = self.player_follow();
+        let controls = stick.as_ref().unwrap_or(controls);
         let (world, mut player) = self.player();
         let result = player.tick(world, controls, real_dt, warp);
         let fresh: Vec<Event> = self.events[before..].to_vec();
@@ -146,7 +149,7 @@ impl Universe {
     }
 
     /// Craft `i`'s avionics, connected to its ship, for a request (as its pilot would).
-    fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::vessel::Link, &mut Vec<Event>) -> R) -> R {
+    pub(crate) fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::vessel::Link, &mut Vec<Event>) -> R) -> R {
         let c = &mut self.crafts[i];
         let mut events = Vec::new();
         let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };

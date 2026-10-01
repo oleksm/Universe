@@ -20,6 +20,8 @@ pub enum Event {
     RouteBlocked { reason: String },
     Autopilot { on: bool },
     NavTargetSet { name: Option<String> },
+    /// The follow program: now keeping at / orbiting at this range (m), or off.
+    Following { what: Option<(&'static str, f64)> },
     /// The avionics can't do what was asked.
     Refused { reason: String },
 }

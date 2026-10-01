@@ -64,6 +64,9 @@ pub struct Avionics {
     /// Fire control's track on it.
     #[serde(skip)]
     pub track: Option<crate::fire_control::Track>,
+    /// The follow program (keep at range, orbit), if engaged (see `follow`).
+    #[serde(skip)]
+    pub following: Option<crate::follow::Follow>,
 }
 
 /// Live guidance for the current clearance.
@@ -101,14 +104,22 @@ impl Avionics {
     /// with nothing set.
     pub fn observe(&mut self, event: &ShipEvent) {
         match event {
-            ShipEvent::Landed { .. } | ShipEvent::LandedAtPort { .. } | ShipEvent::Crashed { .. } => self.clearance = None,
+            ShipEvent::Landed { .. } | ShipEvent::LandedAtPort { .. } | ShipEvent::Crashed { .. } => {
+                self.clearance = None;
+                self.following = None;
+            }
             ShipEvent::GateEntered { .. } | ShipEvent::EnteredSystem { .. } => {
                 self.clearance = None;
+                self.following = None;
                 self.nav_target = None;
                 self.contact = None;
                 self.track = None;
             }
-            ShipEvent::HyperdriveEngaged | ShipEvent::HyperdriveDisengaged => self.hyper_autopilot = false,
+            ShipEvent::HyperdriveEngaged => {
+                self.hyper_autopilot = false;
+                self.following = None;
+            }
+            ShipEvent::HyperdriveDisengaged => self.hyper_autopilot = false,
             ShipEvent::Respawned => {
                 let mut route = std::mem::take(&mut self.route);
                 // A hunt that ended in the wreck: back to the route.
@@ -282,6 +293,10 @@ impl Avionics {
         }
         let Some(c) = &mut self.clearance else { return };
         c.autopilot = !c.autopilot;
+        if c.autopilot && self.following.take().is_some() {
+            events.push(Event::Following { what: None });
+        }
+        let Some(c) = &mut self.clearance else { return };
         c.phase = if matches!(c.pad, PadSlot::Hold(_)) { Phase::Hold } else { Phase::Approach };
         let on = c.autopilot;
         if !on {
@@ -299,6 +314,9 @@ impl Avionics {
             return;
         }
         self.route.active = !self.route.active;
+        if self.route.active && self.following.take().is_some() {
+            events.push(Event::Following { what: None });
+        }
         if !self.route.active {
             if let Some(c) = &mut self.clearance {
                 c.autopilot = false;

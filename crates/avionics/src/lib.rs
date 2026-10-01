@@ -1,6 +1,6 @@
 //! Ship software (`universe-avionics`): the navigation computer (nav target,
 //! clearance requests), guidance for docking, landing and gate runs, the
-//! autopilots (dock, land, gate, hyperdrive, route) and the flight planner.
+//! autopilots (dock, land, gate, hyperdrive, route, follow) and the flight planner.
 //!
 //! Avionics are programs running on a ship. They read what its sensors
 //! would — the ship, and the world around it, read-only — and write
@@ -17,6 +17,7 @@ pub mod computer;
 pub mod docking;
 pub mod events;
 pub mod fire_control;
+pub mod follow;
 pub mod gate;
 pub mod hunter;
 pub mod hyperdrive;
