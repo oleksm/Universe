@@ -411,7 +411,7 @@ fn nav_marker(u: &mut Universe) -> Option<(String, DVec3)> {
 
 /// What goes to the engine's thread.
 enum Msg {
-    Command(Command),
+    Command(Box<Command>),
     /// Run this on the engine, then reply.
     Call(Box<dyn FnOnce(&mut Engine) + Send>),
     Stop,
@@ -476,7 +476,7 @@ impl EngineHandle {
                 loop {
                     while let Ok(m) = rx.try_recv() {
                         match m {
-                            Msg::Command(c) => engine.apply(c),
+                            Msg::Command(c) => engine.apply(*c),
                             Msg::Call(f) => f(&mut engine),
                             Msg::Stop => return,
                         }
@@ -503,7 +503,7 @@ impl EngineHandle {
         match (&mut self.local, &self.tx) {
             (Some(engine), _) => engine.apply(c),
             (None, Some(tx)) => {
-                let _ = tx.send(Msg::Command(c));
+                let _ = tx.send(Msg::Command(Box::new(c)));
             }
             (None, None) => {}
         }
