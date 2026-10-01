@@ -27,3 +27,12 @@ docking do:
 - The guidance banners sit below the mode bar.
 - Every message that names a key takes it from the bindings (and the engine's own messages no
   longer name keys at all: they're the client's).
+
+## One guide at a time
+
+- A follow program can run while a clearance stands (keeping station on a station you're
+  cleared to dock at). Both then drove the one set of guide frames: the follow program re-keyed
+  it every frame, the clearance's new plans keyed it back, and it was drawn twice, against two
+  centres. Now one guide shows: the follow program's while it flies the ship, else the
+  clearance's, which is rebuilt as soon as it takes the guide back.
+- Dev scenario `approachkeep` (cleared to dock and keeping station).

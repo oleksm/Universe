@@ -85,7 +85,7 @@ pub fn apply(app: &mut App, name: &str) {
                 app.engine.universe().step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
         }
-        "approach" | "lost" => {
+        "approach" | "lost" | "approachkeep" => {
             // Cleared to dock, flying manually. "approach": 2.5 km out, a little off the axis, facing in.
             // "lost": facing away from the station, to show the off-screen marker.
             app.mode = Mode::Pilot;
@@ -95,8 +95,17 @@ pub fn apply(app: &mut App, name: &str) {
             let facing = if name == "lost" { f.axis() } else { -f.axis() };
             let roll = universe_engine::glam::DQuat::from_axis_angle(facing, 0.35);
             app.engine.universe().ship.orientation = roll * universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, facing);
-            if name == "approach" {
+            if name != "lost" {
                 app.engine.universe().request_clearance();
+            }
+            // Cleared, and keeping station on the station meanwhile.
+            if name == "approachkeep" {
+                let u = app.engine.universe();
+                u.set_nav_target(Some(universe_sim::NavTarget::Station(station)));
+                u.follow(universe_sim::FollowKind::KeepAt);
+                for _ in 0..60 * 3 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
             }
         }
         "cleared" => {

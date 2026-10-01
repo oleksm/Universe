@@ -558,6 +558,10 @@ fn plan_sample(plan: &Plan, abs: f64) -> Option<DVec3> {
 fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
     // The plan may be a few frames old: carry it along with its reference.
     let Some(center_now) = plan_reference(app) else { return };
+    // (While a follow program has the guide, its own drawing shows it.)
+    if !matches!(app.guide.key(), Some(GuideKey::Clearance(_))) {
+        return;
+    }
     guided_path(frame, app, plan, center_now, app.plan_prev.as_deref().filter(|_| app.plan_blend < 1.0), now, ship);
 }
 
@@ -643,6 +647,11 @@ const MAX_FRAMES: usize = 16;
 impl Guide {
     pub fn clear(&mut self) {
         *self = Guide::default();
+    }
+
+    /// What its frames lead to.
+    pub fn key(&self) -> Option<GuideKey> {
+        self.target
     }
 
     /// A new plan for `target`.

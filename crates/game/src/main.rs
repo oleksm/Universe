@@ -917,9 +917,19 @@ impl Game for App {
             self.plan = v.plan.clone();
             self.plan_serial = v.plan_serial;
             self.plan_age = 0.0;
+        }
+        // One guide on screen at a time, on the one set of frames: a follow
+        // program's while one flies the ship (a clearance may stand meanwhile),
+        // else the clearance's — on each new plan, or at once when it takes
+        // the guide back.
+        if v.avionics.following.is_none() {
             match (&self.plan, v.avionics.clearance) {
-                (Some(plan), Some(c)) => self.guide.update(plan, scene::GuideKey::Clearance(c.target)),
-                _ if v.avionics.following.is_some() => {}
+                (Some(plan), Some(c)) => {
+                    let key = scene::GuideKey::Clearance(c.target);
+                    if self.plan_age == 0.0 || self.guide.key() != Some(key) {
+                        self.guide.update(plan, key);
+                    }
+                }
                 _ => self.guide.clear(),
             }
         }
