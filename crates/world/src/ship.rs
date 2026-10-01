@@ -66,6 +66,9 @@ pub struct ClassSpec {
     pub dry_inertia: DMat3,
     pub tank_at: DVec3,
     pub hold_at: DVec3,
+    /// Where each module sits, and what has no room (see `place`).
+    pub placed: Vec<Placed>,
+    pub crowded: Vec<String>,
     /// Collision radius (m).
     pub radius: f64,
     /// Drag coefficient × frontal area (m²).
@@ -223,7 +226,78 @@ pub struct HullFrame {
 /// A fit: a module in each of its slots (by name).
 pub type Fit = Vec<(String, crate::content::Handle<crate::modules::Module>)>;
 
+/// Modules placed in `shape`, each where it has room nearest where it's
+/// wanted (`wants`: slot, module, the module, its mount): the biggest
+/// first, each box wholly inside the hull and clear of those already in.
+/// One with no room anywhere stays at its mount, and is said.
+#[allow(clippy::type_complexity)]
+fn place(shape: &crate::shape::Shape, wants: &[(String, crate::content::Handle<crate::modules::Module>, &crate::modules::Module, DVec3)]) -> (Vec<Placed>, Vec<String>) {
+    let mut order: Vec<usize> = (0..wants.len()).collect();
+    order.sort_by(|&a, &b| wants[b].2.volume.total_cmp(&wants[a].2.volume));
+    let (lo, hi) = shape.mesh.extent();
+    let reach = (hi - lo).length() * 0.5;
+    let sign = |k: i32, bit: i32| if k & bit == 0 { -1.0 } else { 1.0 };
+    let inside = |at: DVec3, half: DVec3| (0..8).all(|k| shape.inside(at + DVec3::new(sign(k, 1), sign(k, 2), sign(k, 4)) * half, DVec3::ZERO).is_some());
+    let clear = |at: DVec3, half: DVec3, placed: &[Placed]| placed.iter().all(|p| ((at - p.at).abs() - (half + p.half)).max_element() >= 0.0);
+    let mut placed: Vec<Placed> = Vec::new();
+    let mut crowded = Vec::new();
+    for &i in &order {
+        let (slot, h, m, want) = &wants[i];
+        let half = m.dims() * 0.5;
+        // Offsets in widening shells round the mount, nearest first — along
+        // the ship before up or down, and sideways last (a layout kept
+        // symmetric keeps the ship's balance on its centreline).
+        let step = half.min_element().clamp(0.25, 1.0);
+        let n = (reach / step).ceil() as i32;
+        let around = |k: i32| (0..=2 * k).map(move |i| if i % 2 == 0 { -(i / 2) } else { (i + 1) / 2 });
+        let mut found = None;
+        'shells: for r in 0..=4 * n {
+            for dz in around(r) {
+                for dy in around(r / 2) {
+                    for dx in around(r / 4) {
+                        if dz.abs().max(2 * dy.abs()).max(4 * dx.abs()) != r {
+                            continue;
+                        }
+                        let at = *want + DVec3::new(dx as f64, dy as f64, dz as f64) * step;
+                        if clear(at, half, &placed) && inside(at, half) {
+                            found = Some(at);
+                            break 'shells;
+                        }
+                    }
+                }
+            }
+        }
+        if found.is_none() {
+            crowded.push(format!("NO ROOM FOR {} ({:.0} M3)", m.name, m.volume));
+        }
+        placed.push(Placed { slot: slot.clone(), module: *h, at: found.unwrap_or(*want), half });
+    }
+    // (Back in the fit's order.)
+    placed.sort_by_key(|p| wants.iter().position(|w| w.0 == p.slot));
+    (placed, crowded)
+}
+
+/// A module where it sits in a hull: its slot, the module, its box's centre
+/// and half-size (shape frame, axis-aligned).
+#[derive(Clone, Debug, PartialEq)]
+pub struct Placed {
+    pub slot: String,
+    pub module: crate::content::Handle<crate::modules::Module>,
+    pub at: DVec3,
+    pub half: DVec3,
+}
+
 impl ClassSpec {
+    /// Where each fitted module sits (see `place`).
+    pub fn layout(&self) -> &[Placed] {
+        &self.placed
+    }
+
+    /// What has no room (empty: all fits).
+    pub fn room(&self) -> &[String] {
+        &self.crowded
+    }
+
     /// Its centre of mass with `fuel` and `load` (kg) aboard (shape frame).
     pub fn centre_of_mass(&self, fuel: f64, load: f64) -> DVec3 {
         (self.dry_com * self.dry_mass + self.tank_at * fuel + self.hold_at * load) / (self.dry_mass + fuel + load)
@@ -343,7 +417,17 @@ impl ClassSpec {
         let lift_thrust = along(ThrusterRole::Lift, DVec3::Y);
         let rcs_thrust = [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| along(ThrusterRole::Rcs, d)).fold(f64::INFINITY, f64::min);
         // Where the mass is: the frame through the shape, the modules at their mounts.
-        let mount = |slot: &str| shape.node(&format!("mount_{slot}")).map_or(shape.solid.centroid, |n| n.at);
+        // Each module where it has room, nearest its mount; its mass there.
+        let wants: Vec<(String, crate::content::Handle<crate::modules::Module>, &crate::modules::Module, DVec3)> = fit
+            .iter()
+            .filter_map(|(slot, h)| fitted.iter().find(|(s, _)| &s.name == slot).map(|(s, m)| (slot.clone(), *h, *m, shape.node(&format!("mount_{}", s.name)).map_or(shape.solid.centroid, |n| n.at))))
+            .collect();
+        let (placed, crowded) = place(shape, &wants);
+        // (A module with no room anywhere in the hull: it won't go together.)
+        if !crowded.is_empty() {
+            return Err(crowded.join(", "));
+        }
+        let mount = |slot: &str| placed.iter().find(|p| p.slot == slot).map_or(shape.solid.centroid, |p| p.at);
         let parts: Vec<(f64, DVec3)> = std::iter::once((frame.frame_mass, shape.solid.centroid)).chain(fitted.iter().map(|(s, m)| (m.mass, mount(&s.name)))).collect();
         let dry_com = parts.iter().map(|(m, at)| *at * *m).sum::<DVec3>() / dry_mass;
         let dry_inertia = shape.solid.inertia * (frame.frame_mass / shape.solid.volume)
@@ -386,6 +470,8 @@ impl ClassSpec {
             dry_inertia,
             tank_at,
             hold_at,
+            placed,
+            crowded,
             radius: frame.radius,
             drag_area: frame.drag_area,
             hull_strength: frame.hull_strength,
@@ -1016,3 +1102,5 @@ mod balance {
         assert!(off < 0.85 * d.lift_thrust, "{:.0}%", 100.0 * off / d.lift_thrust);
     }
 }
+
+

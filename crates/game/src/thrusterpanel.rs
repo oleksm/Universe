@@ -40,8 +40,9 @@ pub struct Picture<'a> {
     pub spec: &'static universe_sim::world::ship::ClassSpec,
     pub jets: &'a [f64],
     pub com: DVec3,
+    /// Draw its modules (boxes where they sit), those in these slots bright.
     pub mounts: bool,
-    pub picked: Option<&'a str>,
+    pub picked: &'a [&'a str],
 }
 
 /// The ship drawn in a box at `at`, `size` across, looking along `view`
@@ -59,14 +60,11 @@ pub fn view(frame: &mut Frame, p: &Picture, at: Vec2, size: Vec2, across: DVec3,
     for e in &shape.mesh.edges {
         frame.hud_line(to(shape.mesh.points[e[0] as usize]), to(shape.mesh.points[e[1] as usize]), HULL);
     }
-    // Where the modules sit: each slot's mount (the picked one bright).
+    // Its modules: each a box where it sits (those picked bright).
     if p.mounts {
-        for slot in &s.slots {
-            let Some(n) = shape.node(&format!("mount_{}", slot.name)) else { continue };
-            let q = to(n.at);
-            let fitted = s.fit.iter().any(|(name, _)| *name == slot.name);
-            let c = if p.picked == Some(slot.name.as_str()) { Color::hex(0xffc040) } else if fitted { TEXT.scale(0.8) } else { DIM };
-            frame.hud_box(q - Vec2::splat(3.0), Vec2::splat(6.0), c);
+        for m in s.layout() {
+            let c = if p.picked.contains(&m.slot.as_str()) { Color::hex(0xffc040) } else { TEXT.scale(0.45) };
+            draw_box(frame, &to, m.at, m.half, c);
         }
     }
     // Each thruster: a mark where it sits, its plume out along its exhaust.
@@ -136,16 +134,22 @@ pub fn turning(frame: &mut Frame, p: &Picture, at: Vec2, size: Vec2, angle: f64,
         frame.hud_rect(q - Vec2::splat(1.0), Vec2::splat(2.0), color(t.role).scale(0.7));
     }
     if p.mounts {
-        for slot in &s.slots {
-            let Some(n) = shape.node(&format!("mount_{}", slot.name)) else { continue };
-            let c = if p.picked == Some(slot.name.as_str()) { Color::hex(0xffc040) } else { DIM };
-            let q = to(n.at);
-            frame.hud_box(q - Vec2::splat(2.5), Vec2::splat(5.0), c);
+        for m in s.layout() {
+            let c = if p.picked.contains(&m.slot.as_str()) { Color::hex(0xffc040) } else { TEXT.scale(0.35) };
+            draw_box(frame, &to, m.at, m.half, c);
         }
     }
     let com = to(p.com);
     frame.hud_line(com - Vec2::new(4.0, 0.0), com + Vec2::new(4.0, 0.0), COM);
     frame.hud_line(com - Vec2::new(0.0, 4.0), com + Vec2::new(0.0, 4.0), COM);
+}
+
+/// A box (centre `at`, half-size `half`, ship frame) drawn through `to`.
+fn draw_box(frame: &mut Frame, to: &dyn Fn(DVec3) -> Vec2, at: DVec3, half: DVec3, c: Color) {
+    let corner = |k: usize| to(at + DVec3::new(if k & 1 == 0 { -half.x } else { half.x }, if k & 2 == 0 { -half.y } else { half.y }, if k & 4 == 0 { -half.z } else { half.z }));
+    for (a, b) in [(0, 1), (2, 3), (4, 5), (6, 7), (0, 2), (1, 3), (4, 6), (5, 7), (0, 4), (1, 5), (2, 6), (3, 7)] {
+        frame.hud_line(corner(a), corner(b), c);
+    }
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
@@ -175,7 +179,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let box_w = ((size.x - left - 24.0) * 0.5).floor();
     let box_h = (size.y * 0.55).floor();
     let top = 12.0 + LINE * 2.0;
-    let picture = Picture { spec: s, jets: &ship.jets, com: ship.centre_of_mass(), mounts: false, picked: None };
+    let picture = Picture { spec: s, jets: &ship.jets, com: ship.centre_of_mass(), mounts: false, picked: &[] };
     view(frame, &picture, Vec2::new(left, top), Vec2::new(box_w, box_h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE (NOSE UP)");
     view(frame, &picture, Vec2::new(left + box_w + 12.0, top), Vec2::new(box_w, box_h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE (TOP RIGHT)");
 

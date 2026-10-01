@@ -574,3 +574,38 @@ mod tests {
         assert!(b < g - 0.15, "tail-heavy {b:.2} vs {g:.2}");
     }
 }
+
+#[cfg(test)]
+mod room {
+    use super::*;
+
+    #[test]
+    fn every_module_sits_inside_its_hull_and_none_overlaps() {
+        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.")) {
+            let shape = h.shape();
+            let placed = h.layout();
+            assert_eq!(placed.len(), h.fit.len(), "{}: every module placed", h.key);
+            for p in placed {
+                for k in 0..8 {
+                    let q = p.at + DVec3::new(if k & 1 == 0 { -1.0 } else { 1.0 }, if k & 2 == 0 { -1.0 } else { 1.0 }, if k & 4 == 0 { -1.0 } else { 1.0 }) * p.half;
+                    assert!(shape.inside(q, DVec3::ZERO).is_some(), "{}: {} sticks out at {q}", h.key, p.slot);
+                }
+            }
+            for (i, a) in placed.iter().enumerate() {
+                for b in &placed[i + 1..] {
+                    assert!(((a.at - b.at).abs() - (a.half + b.half)).max_element() >= -1e-9, "{}: {} and {} overlap", h.key, a.slot, b.slot);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn a_hull_too_small_for_its_modules_wont_go_together() {
+        // A 16 m sliver asked to carry the biggest of everything.
+        let d = Design { length: 16.0, width: 4.0, height: 3.0, class: 4, racks: 3, wing_span: 0.0, ..Design::default() };
+        match d.build() {
+            Ok(s) => panic!("{} went together", s.key),
+            Err(why) => assert!(why.contains("NO ROOM"), "{why}"),
+        }
+    }
+}

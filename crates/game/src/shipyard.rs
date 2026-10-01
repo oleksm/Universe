@@ -419,6 +419,24 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     true
 }
 
+/// The modules the design row `row` moves (or adds), to light on the drawings.
+fn design_picks(row: usize) -> Vec<&'static str> {
+    // (Rows: the name, then the knobs in order; see `KNOBS`.)
+    let knob = universe_sim::world::design::KNOBS.get(row.wrapping_sub(1)).map_or("", |k| k.label);
+    match knob {
+        "ENGINE ROOM AT" => vec!["power", "drive", "hyperdrive"],
+        "TANK AT" => vec!["tank"],
+        "HOLD AT" | "CARGO RACKS" => vec!["cargo", "cargo_2", "cargo_3"],
+        "BRIDGE AT" => vec!["computer", "transponder", "sensors", "life", "avionics"],
+        "THRUSTERS CENTRE" | "THRUSTER SPREAD" => vec!["thrusters"],
+        "LIFT CENTRE" => vec!["lift"],
+        "HARDPOINTS" => vec!["hardpoint_1", "hardpoint_2", "hardpoint_3"],
+        "UTILITY SLOTS" => vec!["utility", "utility_2"],
+        "SIZE CLASS" => vec!["power", "drive", "thrusters", "lift", "tank", "hyperdrive", "cargo", "cargo_2", "cargo_3"],
+        _ => Vec::new(),
+    }
+}
+
 /// `text` in lines of at most `width` characters, broken between words.
 fn wrap(text: &str, width: usize) -> Vec<String> {
     let mut lines: Vec<String> = Vec::new();
@@ -535,7 +553,7 @@ fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
         frame.text(Vec2::new(24.0, yy), &chunk.join(", "), DIM);
         yy += LINE;
     }
-    let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, 0.0), mounts: true, picked: None };
+    let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, 0.0), mounts: true, picked: &[] };
     let size = frame.size();
     let w = ((size.x - 36.0) / 2.0).min(260.0);
     let at = Vec2::new(12.0, yy + LINE);
@@ -632,7 +650,8 @@ fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
             let at = Vec2::new(x + universe_engine::text_size(&format!("{:<11} {:>23}", "", "")).x + 16.0, top);
             let w = ((frame.size().x - at.x - 20.0) / 2.0).max(100.0);
             let h = (frame.size().y - at.y - 12.0 - 4.5 * LINE).max(80.0);
-            let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: None };
+            let picked = design_picks(y.knob);
+            let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: &picked };
             crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
             crate::thrusterpanel::turning(frame, &picture, at + Vec2::new(w + 8.0, 0.0), Vec2::new(w, h), app.v.time * 0.4, "");
         }
@@ -811,7 +830,8 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         let w = ((size.x - x - 24.0) / 2.0).floor();
         let at = Vec2::new(x, top + (list.len() + 8) as f32 * LINE);
         let h = (size.y - at.y - 12.0 - 4.5 * LINE).max(60.0);
-        let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: Some(&slot.name) };
+        let picked = [slot.name.as_str()];
+        let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: &picked };
         crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
         crate::thrusterpanel::turning(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), app.v.time * 0.4, "");
     }

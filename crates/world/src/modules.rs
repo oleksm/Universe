@@ -151,6 +151,20 @@ pub struct Module {
 }
 
 impl Module {
+    /// Its box (m: across, up, along the ship): as much room as its volume,
+    /// proportioned by what it is — a drive long, a lift flat, racks broad.
+    pub fn dims(&self) -> glam::DVec3 {
+        let a = match self.does.slot() {
+            SlotKind::Drive | SlotKind::Hardpoint => glam::DVec3::new(1.0, 1.0, 2.2),
+            SlotKind::Lift => glam::DVec3::new(1.6, 0.5, 1.6),
+            SlotKind::Tank | SlotKind::Hyperdrive => glam::DVec3::new(1.0, 1.0, 1.5),
+            SlotKind::Cargo => glam::DVec3::new(1.4, 1.0, 1.8),
+            SlotKind::Utility => glam::DVec3::new(1.0, 0.6, 1.6),
+            _ => glam::DVec3::ONE,
+        };
+        a * (self.volume / (a.x * a.y * a.z)).cbrt()
+    }
+
     pub(crate) fn check(&self) -> Result<(), String> {
         for (what, v) in [("mass", self.mass), ("volume", self.volume), ("price", self.price)] {
             if !(v.is_finite() && v > 0.0) {
