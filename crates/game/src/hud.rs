@@ -65,15 +65,13 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             crate::orbitpick::draw(frame, app);
         }
     }
-    let top = 4.0;
+    // The guidance banner, if one's up, has the very top line; the mode bar
+    // goes under it.
+    let top = if banner_up(app) { banner_y(app) + GLYPH + 10.0 } else { 4.0 };
     // (Below the performance lines at the top right, which a long status line would run into.)
     let mut y = top + 4.0 * LINE;
     if app.mode == Mode::Pilot && app.v.crew.seated() {
         y = y.max(top + mode_bar(frame, app, Vec2::new(4.0, top)) + 4.0);
-    }
-    // And below a guidance banner, if one's up.
-    if app.approach.is_some() || app.v.avionics.following.is_some() {
-        y = y.max(banner_y(app) + GLYPH + 10.0);
     }
     match app.mode {
         Mode::Pilot if app.v.crew.seated() => action_grid(frame, app),
@@ -680,9 +678,14 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
 
 /// Top-center banner: the steps of the docking or landing procedure, the
 /// current one highlighted, and the time to arrival from the flight plan.
-/// Where a guidance banner goes: just below the mode bar.
-pub fn banner_y(app: &App) -> f32 {
-    if app.mode == Mode::Pilot && app.v.crew.seated() { 4.0 + 2.0 * 16.0 + 4.0 } else { 4.0 }
+/// Where a guidance banner goes: the very top line.
+pub fn banner_y(_app: &App) -> f32 {
+    4.0
+}
+
+/// A guidance banner is up: an approach's phases, or a follow program's.
+fn banner_up(app: &App) -> bool {
+    app.approach.is_some() || app.v.avionics.following.is_some()
 }
 
 fn phase_banner(frame: &mut Frame, app: &App) {
