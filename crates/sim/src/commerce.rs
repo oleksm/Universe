@@ -15,11 +15,10 @@ use universe_world::traffic::{docked_at, facilities};
 use universe_world::Facility;
 
 use crate::universe::Universe;
+use universe_services::records::{Deal, TradeRecord};
 
 /// What a new settler starts with (credits).
 pub const SETTLER_CREDITS: f64 = 3000.0;
-/// Trades kept in `Universe::trade_log`.
-const TRADE_LOG: usize = 100;
 /// A trip must promise at least this (credits), or the trader moves on to another system.
 pub const MIN_PROFIT: f64 = 300.0;
 /// Goods lines it buys for one trip.
@@ -32,35 +31,7 @@ const STUCK: f64 = 0.8;
 /// A planned trip: where to, what to buy for it (item, units), the profit expected.
 type Trip = (Facility, Vec<(usize, u32)>, f64);
 
-/// What a trade record is.
-#[derive(Clone, Debug, PartialEq)]
-pub enum Deal {
-    Bought,
-    Sold,
-    /// Heading for another market here, expecting this profit (credits).
-    Heading { to: String, expect: f64 },
-    /// Nothing worth it here: moving on to another system.
-    MovingOn { to: String },
-}
 
-/// One trade (or trading decision): who bought or sold what, where, for how
-/// much, and how they stood after it.
-#[derive(Clone, Debug)]
-pub struct TradeRecord {
-    pub time: f64,
-    pub system: usize,
-    pub market: String,
-    pub trader: String,
-    pub deal: Deal,
-    pub bought: bool,
-    pub item: String,
-    pub units: u32,
-    /// Credits paid (bought) or received (sold).
-    pub amount: f64,
-    /// Cargo aboard after it (kg), and credits.
-    pub cargo: f64,
-    pub credits: f64,
-}
 
 impl Universe {
     /// Pilot `pilot` (the player's 0, craft i: i + 1) asks the market at `f`
@@ -144,7 +115,7 @@ impl Universe {
                 // Nothing worth it here: a neighbouring system (seeded, so reproducible), at one of its markets.
                 let links = self.world.gate_links_of(system);
                 let c = &self.crafts[i];
-                let pick = crate::rng::mix(c.route_seed, self.traffic.stops);
+                let pick = crate::rng::mix(c.route_seed, self.records.stats.stops);
                 if let Some((next, name)) = links.get(pick as usize % links.len().max(1)).cloned() {
                     let there = self.system(next);
                     let markets = facilities(&there);
@@ -163,8 +134,8 @@ impl Universe {
 
         for (bought, item, units, amount) in records {
             let c = &self.crafts[i];
-            self.traffic.trades += 1;
-            self.traffic.turnover += amount;
+            self.records.stats.trades += 1;
+            self.records.stats.turnover += amount;
             let record = TradeRecord {
                 time: self.world.time,
                 system,
@@ -260,9 +231,7 @@ impl Universe {
 
     /// Keep a trade in the log (the last `TRADE_LOG`).
     pub(crate) fn log_trade(&mut self, record: TradeRecord) {
-        self.trade_log.push(record);
-        let excess = self.trade_log.len().saturating_sub(TRADE_LOG);
-        self.trade_log.drain(..excess);
+        self.records.trade(record);
     }
 }
 
@@ -280,11 +249,11 @@ mod tests {
         for _ in 0..60 * 60 * 9 {
             u.step_world(1.0 / 60.0, 20.0, &Controls::default());
         }
-        for r in u.trade_log.iter().rev().take(14) {
+        for r in u.records.trades.iter().rev().take(14) {
             eprintln!("{} AT {}: {:?} {} {} FOR {:.0} CR - CARGO {:.1} T, {:.0} CR", r.trader, r.market, r.deal, r.units, r.item, r.amount, r.cargo / 1000.0, r.credits);
         }
-        let heading = u.trade_log.iter().filter(|r| matches!(r.deal, super::Deal::Heading { .. })).count();
-        let moving = u.trade_log.iter().filter(|r| matches!(r.deal, super::Deal::MovingOn { .. })).count();
+        let heading = u.records.trades.iter().filter(|r| matches!(r.deal, super::Deal::Heading { .. })).count();
+        let moving = u.records.trades.iter().filter(|r| matches!(r.deal, super::Deal::MovingOn { .. })).count();
         eprintln!("recent decisions: {heading} trips planned, {moving} moves on to another system");
         let traders: Vec<f64> = (0..u.crafts.len()).filter(|&i| u.crafts[i].trader).map(|i| u.craft_credits(i)).collect();
         eprintln!("{} traders, {} pirates of {}", traders.len(), u.crafts.iter().filter(|c| c.avionics.pirate).count(), u.crafts.len());
@@ -294,11 +263,11 @@ mod tests {
         eprintln!(
             "{:.1} game h: stops {}, trades {}, turnover {:.0} CR; trader credits mean {mean:.0} (min {lo:.0}, max {hi:.0}), cargo mean {:.1} T",
             (u.world.time) / 3600.0,
-            u.traffic.stops,
-            u.traffic.trades,
-            u.traffic.turnover,
+            u.records.stats.stops,
+            u.records.stats.trades,
+            u.records.stats.turnover,
             cargo / 1000.0
         );
-        assert!(u.traffic.trades > 0);
+        assert!(u.records.stats.trades > 0);
     }
 }

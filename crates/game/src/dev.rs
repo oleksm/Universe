@@ -357,7 +357,7 @@ pub fn apply(app: &mut App, name: &str) {
             let pirate = app.engine.universe().crafts[n - 2].ship.position;
             let look = (pirate - app.engine.universe().ship.position).normalize();
             app.engine.universe().ship.orientation = universe_sim::ship::facing(look, look.any_orthonormal_vector());
-            log::info!("scenario pirates: kills {:?}", app.engine.universe().kills.last());
+            log::info!("scenario pirates: kills {:?}", app.engine.universe().records.kills.last());
         }
         "aboard" => {
             // Out of the seat, at the back of the cabin looking forward up the corridor.
@@ -458,13 +458,13 @@ pub fn apply(app: &mut App, name: &str) {
                 app.engine.universe().step_world(1.0 / 60.0, 5.0, &Controls::default());
                 let u = app.engine.universe();
                 let now = u.world.time;
-                let n = u.trade_log.iter().rev().take_while(|r| now - r.time < 5.0).filter(|r| r.system == home).count();
+                let n = u.records.trades.iter().rev().take_while(|r| now - r.time < 5.0).filter(|r| r.system == home).count();
                 if n >= 2 {
                     break;
                 }
             }
             let u = app.engine.universe();
-            log::info!("scenario trades: {} trades so far, last {:?}", u.traffic.trades, u.trade_log.last().map(|r| (&r.trader, &r.item)));
+            log::info!("scenario trades: {} trades so far, last {:?}", u.records.stats.trades, u.records.trades.last().map(|r| (&r.trader, &r.item)));
         }
         "market" => {
             // Docked at the home station, the market open; bought ten of something.

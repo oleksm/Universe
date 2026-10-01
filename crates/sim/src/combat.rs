@@ -11,26 +11,12 @@ use universe_world::weapons::{Armed, GUN_MUZZLE, SLUG_LIFETIME};
 use universe_world::{ShipCommands, ShipEvent};
 
 use crate::contacts::Contact;
+use universe_services::records::Kill;
 use crate::universe::Universe;
 
 /// The player's ship's id in combat.
 pub const PLAYER: usize = 0;
 
-/// Kills kept in `Universe::kills`.
-const KILL_LOG: usize = 50;
-
-/// A ship destroyed by weapons fire: who fired the last hit, at whom, with
-/// what ("GUNFIRE", "LASER FIRE"), where and when.
-#[derive(Clone, Debug)]
-pub struct Kill {
-    pub time: f64,
-    pub system: usize,
-    pub killer: usize,
-    pub victim: usize,
-    pub killer_name: String,
-    pub victim_name: String,
-    pub weapon: String,
-}
 
 /// Combat id of craft `i`.
 pub fn craft_id(i: usize) -> usize {
@@ -76,19 +62,19 @@ impl Universe {
             }
             if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
                 if kill.weapon == "COLLISION" {
-                    self.traffic.collision_losses += 1;
+                    self.records.stats.collision_losses += 1;
                 } else {
-                    self.traffic.shot_down += 1;
+                    self.records.stats.shot_down += 1;
                     let killer = if kill.killer == PLAYER { None } else { self.crafts.get(kill.killer - 1) };
                     if killer.is_some_and(|c| c.avionics.pirate) {
-                        self.traffic.pirate_kills += 1;
+                        self.records.stats.pirate_kills += 1;
                     } else if killer.is_some_and(|c| c.avionics.hunting.is_some_and(|h| h.lawful)) {
-                        self.traffic.aggressors_downed += 1;
+                        self.records.stats.aggressors_downed += 1;
                     }
                 }
                 self.record_kill(kill);
             }
-            self.traffic.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
+            self.records.stats.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
             self.crafts[i].avionics.record(events, &mut ignored);
             ignored.clear();
         }
@@ -138,15 +124,15 @@ impl Universe {
             ShipEvent::Hit { by, .. } => Some(*by),
             _ => None,
         })?;
-        Some(Kill { time: self.world.time, system, killer, victim, killer_name: self.ship_name(killer), victim_name: self.ship_name(victim), weapon })
+        // The wreck, as logged this tick.
+        let index = self.log.iter().rposition(|(id, e)| *id == victim && matches!(e, ShipEvent::Crashed { .. })).unwrap_or(0) as u32;
+        let cause = universe_protocol::Cause::Event { tick: self.tick, index };
+        Some(Kill { time: self.world.time, system, killer, victim, killer_name: self.ship_name(killer), victim_name: self.ship_name(victim), weapon, cause })
     }
 
     fn record_kill(&mut self, kill: Kill) {
         self.recorder.file(kill.time, kill.victim, kill.victim_name.clone(), kill.weapon.clone(), Some((kill.killer, kill.killer_name.clone())));
-        self.kills.push(kill);
-        if self.kills.len() > KILL_LOG {
-            self.kills.remove(0);
-        }
+        self.records.kill(kill);
     }
 
     /// Craft `i` is under fire: it heads for the nearest defended station or
@@ -178,7 +164,11 @@ impl Universe {
         r.dwell_until = None;
         r.departing = false;
         if c.avionics.clearance.take().is_some() {
+            // Its pilot gives the clearance up, running.
+            let cause = self.atc.request_from(craft_id(i));
+            self.atc.because(self.tick, cause);
             self.atc.release(craft_id(i));
+            self.atc.because(self.tick, universe_protocol::Cause::Rules);
         }
     }
 
@@ -263,7 +253,7 @@ mod tests {
                 }
             }
             u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-            if u.traffic.shot_down > 0 {
+            if u.records.stats.shot_down > 0 {
                 destroyed = true;
                 break;
             }
@@ -304,11 +294,11 @@ mod tests {
                 }
             }
             u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-            if u.traffic.shot_down > 0 {
+            if u.records.stats.shot_down > 0 {
                 break;
             }
         }
-        assert_eq!(u.traffic.shot_down, 1, "the gimbal lays the gun on the lead");
+        assert_eq!(u.records.stats.shot_down, 1, "the gimbal lays the gun on the lead");
         assert!(u.world.impacts.len() <= 1);
     }
 

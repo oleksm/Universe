@@ -128,6 +128,16 @@ fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
     let ShipState::Landed { local_position, .. } = u.crafts[9].ship.state else { unreachable!() };
     assert_eq!(pad_at(&sys, port, local_position.normalize()), Some(5), "on the freed pad");
     assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
+    // Traffic control's journal says why: the waiting ship's own requests
+    // (queued, then granted), and the pad freed by the rules as its ship left.
+    use universe_sim::protocol::Cause;
+    use universe_sim::services::atc::What;
+    let (waiter, leaver) = (universe_sim::craft_id(9), universe_sim::craft_id(5));
+    let j = &u.atc.journal;
+    let mine = |c: &Cause| matches!(c, Cause::Message { sender, .. } if *sender == waiter as u64);
+    assert!(j.iter().any(|c| c.ship == waiter && matches!(c.what, What::PadQueued { .. }) && mine(&c.cause)), "queued, at its request");
+    assert!(j.iter().any(|c| c.ship == waiter && c.what == What::PadGranted { system: home, port, pad: 5 } && mine(&c.cause)), "granted, at its request");
+    assert!(j.iter().any(|c| c.ship == leaver && c.what == What::PadFreed { system: home, port, pad: 5 } && c.cause == Cause::Rules), "freed as it left");
 }
 
 #[test]
@@ -201,7 +211,7 @@ fn turrets_shoot_the_aggressor_and_spare_the_innocent() {
     let down = run(&mut u, 60.0, |u| !u.crafts[0].ship.is_flying());
     assert!(down, "the aggressor is shot down (hull {:.2})", u.crafts[0].ship.hull);
     assert!(u.crafts[1].ship.hull > 0.99, "the innocent untouched ({:.2})", u.crafts[1].ship.hull);
-    let kill = u.kills.last().expect("a kill");
+    let kill = u.records.kills.last().expect("a kill");
     assert!(kill.killer_name.starts_with("SAM TURRET"), "{}", kill.killer_name);
 }
 
@@ -325,7 +335,7 @@ fn turrets_shoot_down_an_aggressed_player_burning_hard_at_the_edge_of_their_reac
     u.ship.orientation = universe_sim::ship::facing(side.any_orthonormal_vector(), side);
     u.ship.throttle = 1.0;
     { let now = u.world.time; u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules); }
-    let down = run(&mut u, 20.0, |u| u.kills.iter().any(|k| k.victim == universe_sim::PLAYER));
+    let down = run(&mut u, 20.0, |u| u.records.kills.iter().any(|k| k.victim == universe_sim::PLAYER));
     assert!(down, "shot down (hull {:.2})", u.ship.hull);
 }
 
@@ -360,10 +370,10 @@ fn settlers_gang_up_on_an_aggressor_and_shoot_it_down() {
     }
     let down = run(&mut u, 240.0, |u| !u.crafts[0].ship.is_flying());
     let defenders = u.crafts[1..].iter().filter(|c| c.avionics.hunting.is_some()).count();
-    assert!(down, "the aggressor is shot down (hull {:.2}, {} defending, {} defences)\n{}", u.crafts[0].ship.hull, defenders, u.traffic.defences, incidents(&u));
-    assert!(u.traffic.defences >= 2, "they went after it together ({})", u.traffic.defences);
+    assert!(down, "the aggressor is shot down (hull {:.2}, {} defending, {} defences)\n{}", u.crafts[0].ship.hull, defenders, u.records.stats.defences, incidents(&u));
+    assert!(u.records.stats.defences >= 2, "they went after it together ({})", u.records.stats.defences);
     assert!((1..u.crafts.len()).all(|i| !u.law.aggressed(universe_sim::craft_id(i), u.world.time)), "shooting the aggressor is no crime");
-    assert!(u.kills.iter().any(|k| k.victim == universe_sim::craft_id(0) && k.killer != universe_sim::PLAYER));
+    assert!(u.records.kills.iter().any(|k| k.victim == universe_sim::craft_id(0) && k.killer != universe_sim::PLAYER));
     // Standing down, they slow and keep clear of each other.
     run(&mut u, 30.0, |_| false);
     assert!(!u.recorder.incidents.iter().any(|i| i.cause == "COLLISION"), "no collisions after\n{}", incidents(&u));
@@ -382,7 +392,7 @@ fn an_aggressed_player_is_judged_like_anyone() {
         place(&mut u, k, p + dir * 4_000.0, v, p);
     }
     let hit = run(&mut u, 120.0, |u| u.ship.hull < 1.0);
-    assert!(hit, "the settlers turn on us ({} defences)\n{}", u.traffic.defences, incidents(&u));
+    assert!(hit, "the settlers turn on us ({} defences)\n{}", u.records.stats.defences, incidents(&u));
 }
 
 #[test]

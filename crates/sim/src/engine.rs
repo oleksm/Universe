@@ -27,11 +27,11 @@ use universe_world::turrets::Turret;
 use universe_world::weapons::{Beam, Impact};
 use universe_world::{Controls, Facility, Person, Ship, ShipCommands, StepResult, WalkCommands};
 
-use crate::combat::Kill;
-use crate::commerce::TradeRecord;
+use universe_services::records::Kill;
+use universe_services::records::TradeRecord;
 use crate::contacts::Contact;
 use crate::follow::FollowKind;
-use crate::traffic::TrafficStats;
+use universe_services::records::TrafficStats;
 use crate::universe::Universe;
 
 /// What the client asks of the world.
@@ -366,9 +366,9 @@ impl Engine {
             credits: u.credits(),
             hold: u.hold(),
             crafts: Arc::new(crafts),
-            traffic: u.traffic,
-            kills: u.kills.clone(),
-            trade_log: u.trade_log.clone(),
+            traffic: u.records.stats,
+            kills: u.records.kills.clone(),
+            trade_log: u.records.trades.clone(),
             events: std::mem::take(&mut self.events),
             slugs: u.world.slugs.iter().map(|s| (s.system, s.projectile.position, s.projectile.velocity)).collect(),
             beams: u.world.beams.clone(),

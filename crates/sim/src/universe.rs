@@ -10,7 +10,7 @@ use universe_avionics::route::{self, Stop};
 use universe_avionics::{Approach, Avionics, Event, NavTarget, Plan};
 use universe_world::{Controls, Facility, Person, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
 
-use crate::traffic::{CrashReport, Craft, TrafficStats};
+use crate::traffic::{CrashReport, Craft};
 use crate::vessel::Vessel;
 
 
@@ -38,17 +38,14 @@ pub struct Universe {
     pub events: Vec<Event>,
     /// Other ships (settlers), each flying its own route.
     pub crafts: Vec<Craft>,
-    pub traffic: TrafficStats,
     /// Recent craft crashes (most recent last, capped).
     pub crash_log: Vec<CrashReport>,
     /// The pilot: in the seat, or on foot.
     pub crew: Person,
-    /// Recent kills by weapons fire, most recent last.
-    pub kills: Vec<crate::combat::Kill>,
     /// The flight recorder: every ship's last seconds, and the wrecks filed (see `recorder`).
     pub recorder: crate::recorder::Recorder,
-    /// Recent trades by settlers, most recent last.
-    pub trade_log: Vec<crate::commerce::TradeRecord>,
+    /// What happened, kept: kills (with causes), trades, traffic totals.
+    pub records: universe_services::Records,
     positions: Vec<DVec3>,
     /// Aggressed ships flying this frame: system and position (who's worth judging).
     pub(crate) aggressors: Vec<(usize, DVec3)>,
@@ -88,12 +85,10 @@ impl Universe {
             avionics: Avionics::default(),
             events: Vec::new(),
             crafts: Vec::new(),
-            traffic: TrafficStats::default(),
             crash_log: Vec::new(),
             crew: Person::default(),
-            kills: Vec::new(),
             recorder: Default::default(),
-            trade_log: Vec::new(),
+            records: Default::default(),
             aggressors: Vec::new(),
             snaps: Vec::new(),
             snap_time: f64::NAN,
@@ -149,6 +144,7 @@ impl Universe {
         let (world, mut player) = self.player();
         let result = player.tick(world, controls, real_dt, warp);
         let fresh: Vec<Event> = self.events[before..].to_vec();
+        self.log_events(crate::combat::PLAYER, &fresh);
         self.traffic_events(crate::combat::PLAYER, &fresh);
         // Wrecked on something (collisions and weapons are filed by the combat phase).
         let crashed = self.events.iter().find_map(|e| match e {
@@ -183,6 +179,7 @@ impl Universe {
     fn tick(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
         self.tick += 1;
         self.log.clear();
+        self.atc.because(self.tick, universe_protocol::Cause::Rules);
         let t0 = self.world.time;
         universe_prof::time("sim/snapshot", || self.snapshot());
         let result = universe_prof::time("sim/player", || self.step(real_dt, warp, controls));
@@ -253,16 +250,34 @@ impl Universe {
             )
         });
         if done {
+            // Because of what ended its business (as logged), or its pilot's word.
+            let cause = self.logged(id, |e| matches!(e, ShipEvent::Crashed { .. } | ShipEvent::Respawned | ShipEvent::GateEntered { .. } | ShipEvent::EnteredSystem { .. } | ShipEvent::Landed { station: true, .. }));
+            let cause = cause.unwrap_or_else(|| self.atc.request_from(id));
+            self.atc.because(self.tick, cause);
             self.atc.release(id);
+            self.atc.because(self.tick, universe_protocol::Cause::Rules);
         }
         // A new ship: a clean record, and an empty hold (what was in the old
         // one went with it), because of the respawn, as logged.
-        if events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) {
+        if let Some(cause) = self.logged(id, |e| matches!(e, ShipEvent::Respawned)) {
             self.law.forget(id);
-            let index = self.log.len() as u32;
-            self.log.push((id, ShipEvent::Respawned));
-            self.ledger.write_off(id, self.tick, universe_protocol::Cause::Event { tick: self.tick, index });
+            self.ledger.write_off(id, self.tick, cause);
         }
+    }
+
+    /// Ship `id`'s events go into the tick's log.
+    pub(crate) fn log_events(&mut self, id: usize, events: &[Event]) {
+        for e in events {
+            if let Event::Ship(e) = e {
+                self.log.push((id, e.clone()));
+            }
+        }
+    }
+
+    /// The latest of ship `id`'s events in this tick's log matching `which`, as a cause.
+    pub(crate) fn logged(&self, id: usize, which: impl Fn(&ShipEvent) -> bool) -> Option<universe_protocol::Cause> {
+        let index = self.log.iter().rposition(|(s, e)| *s == id && which(e))?;
+        Some(universe_protocol::Cause::Event { tick: self.tick, index: index as u32 })
     }
 
     /// Traffic control's view of where every ship is, this frame: who stands
@@ -422,12 +437,12 @@ impl Universe {
         let r = self.pilot_trade(crate::combat::PLAYER, f, item, units);
         if let Ok(amount) = r {
             let sys = self.ship_system();
-            let record = crate::commerce::TradeRecord {
+            let record = universe_services::records::TradeRecord {
                 time: self.world.time,
                 system: self.ship_system,
                 market: f.name(&sys),
                 trader: "YOU".into(),
-                deal: if units > 0 { crate::commerce::Deal::Bought } else { crate::commerce::Deal::Sold },
+                deal: if units > 0 { universe_services::records::Deal::Bought } else { universe_services::records::Deal::Sold },
                 bought: units > 0,
                 item: self.world.goods[item].name.to_uppercase(),
                 units: units.unsigned_abs() as u32,

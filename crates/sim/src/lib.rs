@@ -34,11 +34,11 @@ pub use universe_world::{
     Body, BodyKind, ClearanceKind, Controls, Galaxy, GalaxyStar, GateFrame, Ground, Ship, ShipCommands, ShipEvent, ShipState, Spaceport,
     StarClass, StarSystem, StationFrame, StepResult, Terrain, TerrainKind, TrafficEvent,
 };
-pub use combat::{craft_id, Kill, PLAYER};
-pub use commerce::{Deal, TradeRecord};
+pub use combat::{craft_id, PLAYER};
+pub use universe_services::records::{Deal, Kill, TradeRecord, TrafficStats};
 pub use contacts::{Contact, LOCK_BEAM};
 pub use follow::FollowKind;
 pub use save::UniverseSave;
-pub use traffic::{CrashReport, Craft, TrafficStats};
+pub use traffic::{CrashReport, Craft};
 pub use engine::{Command, CraftView, EngineHandle, View};
 pub use universe::Universe;

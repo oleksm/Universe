@@ -21,6 +21,7 @@ use glam::DVec3;
 use universe_world::ship::Ship;
 use universe_world::spaceport::PADS;
 use universe_world::system::{BodyKind, StarSystem};
+use universe_protocol::{Cause, Tick};
 use universe_world::traffic::Facility;
 
 pub use universe_protocol::PadGrant;
@@ -61,11 +62,67 @@ pub struct TrafficControl {
     corridors: HashMap<(usize, usize), usize>,
     /// Ships waiting for each corridor, in order, with when each last asked.
     corridor_queues: HashMap<(usize, usize), Vec<(usize, f64)>>,
+    /// Every change, with its tick and cause (the last `JOURNAL`).
+    pub journal: Vec<Change>,
+    /// The tick now, why the next changes (other than requests) happen, and
+    /// how many requests so far (each a message).
+    tick: Tick,
+    cause: Option<Cause>,
+    requests: u64,
+}
+
+/// Journal entries kept.
+const JOURNAL: usize = 10_000;
+
+/// A change traffic control made, when, to whom, and why.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Change {
+    pub tick: Tick,
+    pub ship: usize,
+    pub what: What,
+    pub cause: Cause,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum What {
+    PadGranted { system: usize, port: usize, pad: usize },
+    /// Waiting for a pad: first in line at `place` (0: next).
+    PadQueued { system: usize, port: usize, place: usize },
+    /// Taken by a ship standing on it unasked.
+    PadOccupied { system: usize, port: usize, pad: usize },
+    PadFreed { system: usize, port: usize, pad: usize },
+    CorridorGranted { system: usize, body: usize },
+    CorridorFreed { system: usize, body: usize },
 }
 
 impl TrafficControl {
+    /// The tick now, and why the changes from here on (other than requests,
+    /// which are messages) happen: an event that's ended a ship's business
+    /// here, the rules at work on the facts observed…
+    pub fn because(&mut self, tick: Tick, cause: Cause) {
+        (self.tick, self.cause) = (tick, Some(cause));
+    }
+
+    fn note(&mut self, ship: usize, what: What, cause: Cause) {
+        self.journal.push(Change { tick: self.tick, ship, what, cause });
+        let excess = self.journal.len().saturating_sub(JOURNAL);
+        self.journal.drain(..excess);
+    }
+
+    fn noted(&mut self, ship: usize, what: What) {
+        let cause = self.cause.unwrap_or(Cause::Rules);
+        self.note(ship, what, cause);
+    }
+
+    /// A request from `ship`, as a message (sender, number).
+    pub fn request_from(&mut self, ship: usize) -> Cause {
+        self.requests += 1;
+        Cause::Message { sender: ship as u64, id: self.requests }
+    }
+
     /// Ship `ship` asks for a pad at `port` in `system` at time `now`.
     pub fn request_pad(&mut self, system: usize, port: usize, ship: usize, now: f64) -> PadGrant {
+        let cause = self.request_from(ship);
         let p = self.ports.entry((system, port)).or_default();
         if let Some(k) = p.owners.iter().position(|o| o.is_some_and(|o| o.ship == ship)) {
             return PadGrant::Pad(k);
@@ -80,12 +137,14 @@ impl TrafficControl {
             if place < p.queue.len() {
                 p.queue.remove(place);
             }
+            self.note(ship, What::PadGranted { system, port, pad: k }, cause);
             return PadGrant::Pad(k);
         }
         if place < p.queue.len() {
             p.queue[place].1 = now;
         } else {
             p.queue.push((ship, now));
+            self.note(ship, What::PadQueued { system, port, place }, cause);
         }
         PadGrant::Queued(place)
     }
@@ -136,6 +195,8 @@ impl TrafficControl {
         if place == 0 && !self.corridors.contains_key(&key) {
             queue.remove(0);
             self.corridors.insert(key, ship);
+            let cause = self.request_from(ship);
+            self.note(ship, What::CorridorGranted { system, body }, cause);
             return None;
         }
         // Ahead: the one in the corridor, and those before it in line.
@@ -147,6 +208,7 @@ impl TrafficControl {
     pub fn release_corridor(&mut self, system: usize, body: usize, ship: usize) {
         if self.corridors.get(&(system, body)) == Some(&ship) {
             self.corridors.remove(&(system, body));
+            self.noted(ship, What::CorridorFreed { system, body });
         }
     }
 
@@ -154,13 +216,22 @@ impl TrafficControl {
     /// ended, it was wrecked, it left the system). Where it physically stands
     /// is taken again by `presence`.
     pub fn release(&mut self, ship: usize) {
-        for p in self.ports.values_mut() {
-            for o in p.owners.iter_mut() {
+        let mut freed = Vec::new();
+        for (&(system, port), p) in self.ports.iter_mut() {
+            for (k, o) in p.owners.iter_mut().enumerate() {
                 if o.is_some_and(|o| o.ship == ship) {
                     *o = None;
+                    freed.push(What::PadFreed { system, port, pad: k });
                 }
             }
             p.queue.retain(|(s, _)| *s != ship);
+        }
+        for (&(system, body), _) in self.corridors.iter().filter(|(_, s)| **s == ship) {
+            freed.push(What::CorridorFreed { system, body });
+        }
+        freed.sort_by_key(|w| format!("{w:?}"));
+        for w in freed {
+            self.noted(ship, w);
         }
         self.corridors.retain(|_, s| *s != ship);
         for q in self.corridor_queues.values_mut() {
@@ -181,12 +252,14 @@ impl TrafficControl {
                 self.release_corridor(p.system, body, p.ship);
             }
         }
+        let mut changes = Vec::new();
         for ((system, port), p) in self.ports.iter_mut() {
             for (k, o) in p.owners.iter_mut().enumerate() {
                 if let Some(owner) = o {
                     if at.get(&owner.ship) == Some(&(*system, *port, k)) {
                         owner.arrived = true;
                     } else if owner.arrived {
+                        changes.push((owner.ship, What::PadFreed { system: *system, port: *port, pad: k }));
                         *o = None;
                     }
                 }
@@ -198,7 +271,12 @@ impl TrafficControl {
             let p = self.ports.entry((system, port)).or_default();
             if p.owners[k].is_none() && !p.owners.iter().any(|o| o.is_some_and(|o| o.ship == ship)) {
                 p.owners[k] = Some(Owner { ship, arrived: true });
+                changes.push((ship, What::PadOccupied { system, port, pad: k }));
             }
+        }
+        changes.sort_by_key(|(s, w)| (*s, format!("{w:?}")));
+        for (ship, w) in changes {
+            self.noted(ship, w);
         }
     }
 

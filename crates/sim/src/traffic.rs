@@ -37,28 +37,6 @@ pub struct Craft {
     pub inbox: crate::vessel::Inbox,
 }
 
-/// Totals across all crafts.
-#[derive(Clone, Copy, Debug, Default)]
-pub struct TrafficStats {
-    pub stops: u64,
-    pub transits: u64,
-    pub crashes: u64,
-    pub routes_completed: u64,
-    /// Crafts destroyed by weapons fire.
-    pub shot_down: u64,
-    /// Hunts by pirates: begun, and ended in a kill.
-    pub hunts: u64,
-    pub pirate_kills: u64,
-    /// Lawful ships taking on an aggressor (each ship counted), and aggressors they shot down.
-    pub defences: u64,
-    pub aggressors_downed: u64,
-    /// Ship-to-ship collisions (each ship's side counted), and ships wrecked by them.
-    pub collisions: u64,
-    pub collision_losses: u64,
-    /// Trades by settlers, and the credits that changed hands.
-    pub trades: u64,
-    pub turnover: f64,
-}
 
 /// A ship as it was at the start of the frame (see `Universe::snaps`).
 #[derive(Clone, Copy, Debug)]
@@ -219,9 +197,9 @@ impl Universe {
         let c = &self.crafts[i];
         if let Some(h) = c.avionics.hunting.filter(|_| !t.was_hunting) {
             if h.lawful {
-                self.traffic.defences += 1;
+                self.records.stats.defences += 1;
             } else {
-                self.traffic.hunts += 1;
+                self.records.stats.hunts += 1;
             }
         }
         // A defender that broke off hurt runs for the guns.
@@ -229,6 +207,7 @@ impl Universe {
             self.flee(i);
         }
         let events = t.events;
+        self.log_events(crate::combat::craft_id(i), &events);
         self.traffic_events(crate::combat::craft_id(i), &events);
         let crashed = events.iter().find_map(|e| match e {
             Event::Ship(ShipEvent::Crashed { body }) => Some(body.clone()),
@@ -278,14 +257,14 @@ impl Universe {
         for e in events {
             match e {
                 Event::RouteStop { .. } => {
-                    self.traffic.stops += 1;
+                    self.records.stats.stops += 1;
                     if self.crafts[i].trader {
                         self.craft_trades(i);
                     }
                 }
-                Event::Ship(ShipEvent::GateEntered { .. }) => self.traffic.transits += 1,
-                Event::Ship(ShipEvent::Crashed { .. }) => self.traffic.crashes += 1,
-                Event::RouteComplete => self.traffic.routes_completed += 1,
+                Event::Ship(ShipEvent::GateEntered { .. }) => self.records.stats.transits += 1,
+                Event::Ship(ShipEvent::Crashed { .. }) => self.records.stats.crashes += 1,
+                Event::RouteComplete => self.records.stats.routes_completed += 1,
                 _ => {}
             }
         }
@@ -405,7 +384,7 @@ mod tests {
             for _ in 0..(60 * 60 * 2) {
                 u.step_world(1.0 / 60.0, 20.0, &Controls::default());
             }
-            (u.traffic.stops, u.traffic.crashes, u.crafts.iter().map(|c| (c.system, c.avionics.route.next)).collect::<Vec<_>>())
+            (u.records.stats.stops, u.records.stats.crashes, u.crafts.iter().map(|c| (c.system, c.avionics.route.next)).collect::<Vec<_>>())
         };
         let (a, b) = (run(), run());
         eprintln!("10 settlers, 0.7 game h: {} stops, {} crashes", a.0, a.1);
@@ -439,16 +418,16 @@ mod tests {
             eprintln!(
                 "{count} settlers at {warp}x for {:.1} game h: {ms:.2} ms/frame; stops {}, transits {}, routes done {}, crashes {}; {flying} flying now; pirates {}: hunts {}, kills {} (shot down {}); collisions {} (wrecked {})",
                 (u.world.time - t0) / 3600.0,
-                u.traffic.stops,
-                u.traffic.transits,
-                u.traffic.routes_completed,
-                u.traffic.crashes,
+                u.records.stats.stops,
+                u.records.stats.transits,
+                u.records.stats.routes_completed,
+                u.records.stats.crashes,
                 u.crafts.iter().filter(|c| c.avionics.pirate).count(),
-                u.traffic.hunts,
-                u.traffic.pirate_kills,
-                u.traffic.shot_down,
-                u.traffic.collisions,
-                u.traffic.collision_losses
+                u.records.stats.hunts,
+                u.records.stats.pirate_kills,
+                u.records.stats.shot_down,
+                u.records.stats.collisions,
+                u.records.stats.collision_losses
             );
         }
     }
@@ -485,7 +464,7 @@ mod pirate_tests {
             if hunted_at.is_none() && u.crafts[0].avionics.hunting.is_some() {
                 hunted_at = Some(frame);
             }
-            if u.traffic.pirate_kills > 0 && u.crafts[0].avionics.hunting.is_none() {
+            if u.records.stats.pirate_kills > 0 && u.crafts[0].avionics.hunting.is_none() {
                 eprintln!("hunt began frame {hunted_at:?}, kill and stand-down by {:.0} s; pirate hull {:.2}", frame as f64 / 60.0, u.crafts[0].ship.hull);
                 assert!(!u.crafts[0].ship.armed, "stood down");
                 assert!(u.crafts[0].avionics.route.active, "back to its route");
@@ -495,8 +474,8 @@ mod pirate_tests {
         let p = &u.crafts[0].ship;
         panic!(
             "no kill: hunts {} kills {} pirate {:?} {:?} dist {:.0} ammo {} trader hull {:.2}",
-            u.traffic.hunts,
-            u.traffic.pirate_kills,
+            u.records.stats.hunts,
+            u.records.stats.pirate_kills,
             p.state,
             u.crafts[0].avionics.hunting,
             p.position.distance(u.crafts[1].ship.position),
@@ -591,7 +570,7 @@ mod collision_debug {
                 })
                 .collect();
             u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-            let kills: Vec<_> = u.kills.iter().filter(|k| k.weapon == "COLLISION").cloned().collect();
+            let kills: Vec<_> = u.records.kills.iter().filter(|k| k.weapon == "COLLISION").cloned().collect();
             for k in kills.iter().skip(seen) {
                 let v = before.get(k.victim - 1).cloned().unwrap_or_default();
                 let w = before.get(k.killer - 1).cloned().unwrap_or_default();
@@ -603,6 +582,6 @@ mod collision_debug {
                 break;
             }
         }
-        eprintln!("collision wrecks {}, collisions {}", u.traffic.collision_losses, u.traffic.collisions);
+        eprintln!("collision wrecks {}, collisions {}", u.records.stats.collision_losses, u.records.stats.collisions);
     }
 }
