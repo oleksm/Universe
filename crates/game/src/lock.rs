@@ -16,8 +16,9 @@ use crate::{fmt, App};
 const HOLD: f32 = 0.25;
 /// Mouse travel per row of the list (device units).
 const ROW_TRAVEL: f32 = 40.0;
-/// A tap in mining mode locks the rock within this of the nose (rad).
-const CONE: f64 = 0.17;
+/// A tap locks what's within this of the nose (rad): the lock beam, shown
+/// as a ring round the nose while T is down and a moment after.
+const CONE: f64 = universe_sim::LOCK_BEAM;
 
 /// What a lock is on.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -62,6 +63,13 @@ impl Picker {
     }
 }
 
+/// How far the sensors see a body of `radius` (m): a ship's size at
+/// `RADAR_RANGE`, farther for bigger ones — as the fourth root of its
+/// cross-section, as the radar equation has it.
+pub fn reach(radius: f64) -> f64 {
+    universe_sim::world::RADAR_RANGE * (radius / universe_sim::world::ship::SHIP_RADIUS).max(1.0).powf(0.25)
+}
+
 /// What T can lock now, nearest first.
 pub fn candidates(app: &App) -> Vec<Candidate> {
     use crate::hud::{active_mode, ShipMode};
@@ -87,29 +95,28 @@ pub fn candidates(app: &App) -> Vec<Candidate> {
     if mode == ShipMode::Nav && app.view.origin == app.v.ship_system && app.view.positions.len() >= app.view.system.bodies.len() {
         let sys = &app.view.system;
         let ship = app.view.ship_pos;
-        let reach = universe_sim::world::RADAR_RANGE;
         let t = app.now();
-        let mut place = |target: universe_sim::NavTarget, what: &str, at: DVec3| {
+        let mut place = |target: universe_sim::NavTarget, what: &str, at: DVec3, radius: f64| {
             let d = at.distance(ship);
-            if d < reach {
+            if d < reach(radius) {
                 list.push(Candidate { pick: Pick::Place(target), name: target.name(sys).to_uppercase(), detail: what.to_string(), distance: d, at });
             }
         };
         for (i, b) in sys.bodies.iter().enumerate() {
             match b.kind {
-                universe_sim::BodyKind::Station => place(universe_sim::NavTarget::Station(i), "STATION", app.view.positions[i]),
-                universe_sim::BodyKind::Gate => place(universe_sim::NavTarget::Gate(i), "GATE", app.view.positions[i]),
+                universe_sim::BodyKind::Station => place(universe_sim::NavTarget::Station(i), "STATION", app.view.positions[i], b.rail.radius),
+                universe_sim::BodyKind::Gate => place(universe_sim::NavTarget::Gate(i), "GATE", app.view.positions[i], b.rail.radius),
                 _ => {}
             }
         }
         for p in 0..sys.spaceports.len() {
             if let Some(at) = universe_sim::NavTarget::Spaceport(p).position(sys, t, &app.view.positions) {
-                place(universe_sim::NavTarget::Spaceport(p), "SPACEPORT", at);
+                place(universe_sim::NavTarget::Spaceport(p), "SPACEPORT", at, universe_sim::world::spaceport::PAD_RADIUS);
             }
         }
         // Asteroids: the remnants, and the swarms of fields in reach.
         for (f, field) in sys.fields.iter().enumerate() {
-            if app.view.positions[field.body].distance(ship) > field.extent + reach {
+            if app.view.positions[field.body].distance(ship) > field.extent + reach(sys.bodies[field.body].rail.radius) {
                 continue;
             }
             let bodies = sys.field_bodies(f);
@@ -117,7 +124,7 @@ pub fn candidates(app: &App) -> Vec<Candidate> {
                 let (at, _) = sys.field_body_state(f, i, t);
                 let b = &bodies[i];
                 let d = at.distance(ship) - b.rail.radius;
-                if d < reach
+                if d < reach(b.rail.radius)
                     && let Some(r) = &b.rock
                 {
                     let what = format!("ASTEROID {} {}", r.class.letter(), crate::fmt::distance(b.rail.radius * 2.0));
@@ -151,6 +158,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         return true;
     }
     if crate::keys::down(input, crate::keys::Act::Lock) {
+        app.beam_shown = 1.5;
         if app.picker.held == 0.0 {
             // The cursor starts on what's locked, if it's listed.
             let now = locked(app);
@@ -178,7 +186,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             lock(app, c.pick);
         }
     } else if crate::hud::active_mode(app) != crate::hud::ShipMode::Combat {
-        // What's nearest the nose, within the cone (in mining, of the prospected rocks).
+        // What's nearest the nose, within the beam (in mining, of the prospected rocks).
         let (ship, nose) = (app.view.ship_pos, app.ship.forward());
         let off = |c: &Candidate| nose.angle_between(c.at - ship);
         match candidates(app).into_iter().filter(|c| off(c) < CONE).min_by(|a, b| off(a).total_cmp(&off(b))) {
