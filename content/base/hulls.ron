@@ -10,33 +10,44 @@
         // 30 m/s² (about 3 g) on the main engine at full load, 6 m/s² on the
         // thrusters, 25 m/s² of lift (enough to hover); a blunt 90 t ship that
         // falls at about 150 m/s through sea-level air.
-        dry_mass: 60000.0,
-        fuel_capacity: 30000.0,
-        hold_capacity: 20000.0,
-        // Its thrusters, on its shape's nozzles (thrust in N, opposite the
-        // exhaust): the main drive, the translation thrusters, the belly lift.
-        thrusters: [
-            (nozzle: "nozzle_main_left", role: Main, thrust: 1.35e6),
-            (nozzle: "nozzle_main_right", role: Main, thrust: 1.35e6),
-            (nozzle: "nozzle_nose_left_up", role: Rcs, thrust: 1.35e5),
-            (nozzle: "nozzle_nose_right_up", role: Rcs, thrust: 1.35e5),
-            (nozzle: "nozzle_tail_left_up", role: Rcs, thrust: 1.35e5),
-            (nozzle: "nozzle_tail_right_up", role: Rcs, thrust: 1.35e5),
-            (nozzle: "nozzle_nose_left_side", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_nose_right_side", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_tail_left_side", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_tail_right_side", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_nose_left_fore", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_nose_right_fore", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_tail_left_aft", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_tail_right_aft", role: Rcs, thrust: 2.7e5),
-            (nozzle: "nozzle_lift_nose_left", role: Lift, thrust: 5.625e5),
-            (nozzle: "nozzle_lift_nose_right", role: Lift, thrust: 5.625e5),
-            (nozzle: "nozzle_lift_tail_left", role: Lift, thrust: 5.625e5),
-            (nozzle: "nozzle_lift_tail_right", role: Lift, thrust: 5.625e5),
+        // The frame alone (kg): what's fitted adds its own mass.
+        frame_mass: 32800.0,
+        // Its slots: (name, kind, size).
+        slots: [
+            ("power", Power, 2), ("drive", Drive, 2), ("thrusters", Thrusters, 2), ("lift", Lift, 2),
+            ("tank", Tank, 3), ("cargo", Cargo, 3), ("hyperdrive", Hyperdrive, 2), ("computer", Computer, 1),
+            ("transponder", Transponder, 1), ("sensors", Sensors, 1), ("life", LifeSupport, 2),
+            ("hardpoint_1", Hardpoint, 1), ("hardpoint_2", Hardpoint, 1), ("utility", Utility, 2), ("avionics", Avionics, 1),
         ],
-        turn_rate: 1.0,
-        roll_rate: 1.8,
+        // What it's sold with.
+        fit: [
+            ("power", "power.fusion.s2"), ("drive", "drive.torch.s2"), ("thrusters", "thrusters.quad.s2"), ("lift", "lift.belly.s2"),
+            ("tank", "tank.s3"), ("cargo", "rack.s3"), ("hyperdrive", "hyperdrive.s2"), ("computer", "computer.fbw.s1"),
+            ("transponder", "transponder.s1"), ("sensors", "sensors.radar.s1"), ("life", "life.s2"),
+            ("hardpoint_1", "gun.mass_driver.s1"), ("hardpoint_2", "laser.pulse.s1"), ("utility", "mining.rig.s2"), ("avionics", "nav.full.s1"),
+        ],
+        // Its nozzles, each driven by a slot's module at a share of its
+        // rating: the main drive, the translation thrusters, the belly lift.
+        thrusters: [
+            (nozzle: "nozzle_main_left", slot: "drive", share: 1.0),
+            (nozzle: "nozzle_main_right", slot: "drive", share: 1.0),
+            (nozzle: "nozzle_nose_left_up", slot: "thrusters", share: 0.5),
+            (nozzle: "nozzle_nose_right_up", slot: "thrusters", share: 0.5),
+            (nozzle: "nozzle_tail_left_up", slot: "thrusters", share: 0.5),
+            (nozzle: "nozzle_tail_right_up", slot: "thrusters", share: 0.5),
+            (nozzle: "nozzle_nose_left_side", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_nose_right_side", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_tail_left_side", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_tail_right_side", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_nose_left_fore", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_nose_right_fore", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_tail_left_aft", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_tail_right_aft", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_lift_nose_left", slot: "lift", share: 1.0),
+            (nozzle: "nozzle_lift_nose_right", slot: "lift", share: 1.0),
+            (nozzle: "nozzle_lift_tail_left", slot: "lift", share: 1.0),
+            (nozzle: "nozzle_lift_tail_right", slot: "lift", share: 1.0),
+        ],
         radius: 12.0,
         drag_area: 60.0,
         hull_strength: 20.0e6,

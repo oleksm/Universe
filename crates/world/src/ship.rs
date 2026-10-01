@@ -25,11 +25,20 @@ pub struct ClassSpec {
     /// Its shape (content key), and the shape itself.
     pub shape: String,
     pub shape_ref: crate::content::Handle<crate::shape::Shape>,
-    /// Mass without fuel or cargo (kg).
+    /// The frame alone (kg), its slots, and what's fitted in them.
+    pub frame_mass: f64,
+    pub slots: Vec<Slot>,
+    pub fit: Vec<(String, crate::content::Handle<crate::modules::Module>)>,
+    /// Mass without fuel or cargo (kg): the frame and its modules.
     pub dry_mass: f64,
     /// Fuel tank (kg), and the most cargo the hold carries (kg).
     pub fuel_capacity: f64,
     pub hold_capacity: f64,
+    /// The power its plant makes, and its modules draw at work (W).
+    pub power_output: f64,
+    pub power_draw: f64,
+    /// The autopilots its nav computers run.
+    pub features: Vec<crate::modules::Feature>,
     /// Its thrusters: where each sits on the shape, which way it pushes, how hard.
     pub thrusters: Vec<Thruster>,
     /// What they add up to (derived from `thrusters`): the main drive's push
@@ -56,7 +65,7 @@ pub struct ClassSpec {
 
 /// What a thruster is for: the main drive (the throttle), translation (the
 /// thruster controls), or the belly lift (translation up).
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ThrusterRole {
     Main,
     Rcs,
@@ -81,12 +90,12 @@ pub(crate) struct HullDef {
     key: String,
     name: String,
     shape: String,
-    dry_mass: f64,
-    fuel_capacity: f64,
-    hold_capacity: f64,
+    /// The frame alone (kg).
+    frame_mass: f64,
+    slots: Vec<(String, crate::modules::SlotKind, u8)>,
+    /// What it's sold with: (slot, module).
+    fit: Vec<(String, String)>,
     thrusters: Vec<ThrusterDef>,
-    turn_rate: f64,
-    roll_rate: f64,
     radius: f64,
     drag_area: f64,
     hull_strength: f64,
@@ -96,8 +105,16 @@ pub(crate) struct HullDef {
 #[serde(deny_unknown_fields)]
 struct ThrusterDef {
     nozzle: String,
-    role: ThrusterRole,
-    thrust: f64,
+    slot: String,
+    share: f64,
+}
+
+/// A slot of a hull: its name, its kind, its size class.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Slot {
+    pub name: String,
+    pub kind: crate::modules::SlotKind,
+    pub size: u8,
 }
 
 impl HullDef {
@@ -109,22 +126,85 @@ impl HullDef {
         &self.shape
     }
 
-    /// The hull, on `shape`: each thruster at its nozzle, and what they add up to.
-    pub(crate) fn build(self, shape_ref: crate::content::Handle<crate::shape::Shape>, shape: &crate::shape::Shape) -> Result<ClassSpec, String> {
+    /// The hull, on `shape`, with its stock fit (modules found by `module`):
+    /// every number from the frame and what's fitted — the mass, the tank
+    /// and hold, each thruster's thrust (its slot's module's rating × its
+    /// share), the turning limits (the flight computer's), the power
+    /// budget, the autopilots it runs; checked that each module fits its
+    /// slot, the base blocks are all there, and the plant carries the load.
+    pub(crate) fn build<'m>(
+        self,
+        shape_ref: crate::content::Handle<crate::shape::Shape>,
+        shape: &crate::shape::Shape,
+        module: impl Fn(&str) -> Option<(crate::content::Handle<crate::modules::Module>, &'m crate::modules::Module)>,
+    ) -> Result<ClassSpec, String> {
+        use crate::modules::{Does, SlotKind, BASE_BLOCKS};
+        if !(self.frame_mass.is_finite() && self.frame_mass > 0.0) {
+            return Err(format!("frame_mass must be positive ({})", self.frame_mass));
+        }
+        let slots: Vec<Slot> = self.slots.into_iter().map(|(name, kind, size)| Slot { name, kind, size }).collect();
+        // The fit, slot by slot.
+        let mut fit: Vec<(String, crate::content::Handle<crate::modules::Module>)> = Vec::new();
+        let mut fitted: Vec<(&Slot, &crate::modules::Module)> = Vec::new();
+        for (slot_name, key) in &self.fit {
+            let slot = slots.iter().find(|s| &s.name == slot_name).ok_or_else(|| format!("fit: no slot '{slot_name}'"))?;
+            let (h, m) = module(key).ok_or_else(|| format!("fit: no module '{key}'"))?;
+            if m.does.slot() != slot.kind {
+                return Err(format!("fit: {} ({:?}) doesn't go in slot '{}' ({:?})", m.key, m.does.slot(), slot.name, slot.kind));
+            }
+            if m.size > slot.size {
+                return Err(format!("fit: {} (size {}) is too big for slot '{}' (size {})", m.key, m.size, slot.name, slot.size));
+            }
+            if fit.iter().any(|(s, _)| s == slot_name) {
+                return Err(format!("fit: slot '{slot_name}' twice"));
+            }
+            fit.push((slot_name.clone(), h));
+            fitted.push((slot, m));
+        }
+        for base in BASE_BLOCKS {
+            if !fitted.iter().any(|(s, _)| s.kind == base) {
+                return Err(format!("no {base:?}: every ship must carry one"));
+            }
+        }
+        let modules = || fitted.iter().map(|(_, m)| *m);
+        let dry_mass = self.frame_mass + modules().map(|m| m.mass).sum::<f64>();
+        let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity } = m.does { Some(capacity) } else { None }).sum();
+        let hold_capacity: f64 = modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum();
+        let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output } = m.does { Some(output) } else { None }).sum();
+        let power_draw: f64 = modules().map(|m| m.power).sum();
+        if power_draw > power_output {
+            return Err(format!("its modules draw {:.1} MW, its plant makes {:.1} MW", power_draw / 1e6, power_output / 1e6));
+        }
+        let (turn_rate, roll_rate) = modules()
+            .find_map(|m| if let Does::FlightComputer { turn_rate, roll_rate } = m.does { Some((turn_rate, roll_rate)) } else { None })
+            .expect("a flight computer (a base block)");
+        let mut features: Vec<crate::modules::Feature> = modules().flat_map(|m| if let Does::NavComputer { features } = &m.does { features.clone() } else { Vec::new() }).collect();
+        features.sort();
+        features.dedup();
+        // The thrusters: each nozzle by its slot's module.
         let mut thrusters = Vec::new();
         for t in self.thrusters {
             let n = shape.node(&t.nozzle).filter(|n| n.role == crate::shape::Role::Nozzle).ok_or_else(|| format!("no nozzle '{}' on {}", t.nozzle, shape.key))?;
-            if !(t.thrust.is_finite() && t.thrust > 0.0) {
-                return Err(format!("thruster at {}: thrust must be positive ({})", t.nozzle, t.thrust));
+            if !(t.share.is_finite() && t.share > 0.0) {
+                return Err(format!("thruster at {}: share must be positive ({})", t.nozzle, t.share));
             }
-            thrusters.push(Thruster { nozzle: t.nozzle, role: t.role, at: n.at, push: -n.dir, thrust: t.thrust });
+            let slot = slots.iter().find(|s| s.name == t.slot).ok_or_else(|| format!("thruster at {}: no slot '{}'", t.nozzle, t.slot))?;
+            // (An empty slot: the nozzle's there, nothing drives it.)
+            let Some((_, m)) = fitted.iter().find(|(s, _)| s.name == slot.name) else { continue };
+            let (role, rating) = match (slot.kind, &m.does) {
+                (SlotKind::Drive, Does::Drive { thrust }) => (ThrusterRole::Main, *thrust),
+                (SlotKind::Thrusters, Does::Thrusters { thrust }) => (ThrusterRole::Rcs, *thrust),
+                (SlotKind::Lift, Does::Lift { thrust }) => (ThrusterRole::Lift, *thrust),
+                _ => return Err(format!("thruster at {}: slot '{}' doesn't drive nozzles", t.nozzle, t.slot)),
+            };
+            thrusters.push(Thruster { nozzle: t.nozzle, role, at: n.at, push: -n.dir, thrust: rating * t.share });
         }
         // Each role's push along a direction (only thrusters pushing that way count).
         let along = |role: ThrusterRole, d: DVec3| thrusters.iter().filter(|t| t.role == role).map(|t| t.thrust * t.push.dot(d).max(0.0)).sum::<f64>();
         let main_thrust = along(ThrusterRole::Main, DVec3::NEG_Z);
         let lift_thrust = along(ThrusterRole::Lift, DVec3::Y);
         let rcs_thrust = [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| along(ThrusterRole::Rcs, d)).fold(f64::INFINITY, f64::min);
-        let mass = self.dry_mass + self.fuel_capacity;
+        let mass = dry_mass + fuel_capacity;
         let inertia = shape.solid.inertia * (mass / shape.solid.volume);
         let turn_accel = crate::thrusters::turn_envelope(&thrusters, shape.solid.centroid, mass, inertia);
         Ok(ClassSpec {
@@ -132,16 +212,22 @@ impl HullDef {
             name: self.name,
             shape: self.shape,
             shape_ref,
-            dry_mass: self.dry_mass,
-            fuel_capacity: self.fuel_capacity,
-            hold_capacity: self.hold_capacity,
+            frame_mass: self.frame_mass,
+            slots,
+            fit,
+            dry_mass,
+            fuel_capacity,
+            hold_capacity,
+            power_output,
+            power_draw,
+            features,
             thrusters,
             main_thrust,
             rcs_thrust,
             lift_thrust,
             turn_accel,
-            turn_rate: self.turn_rate,
-            roll_rate: self.roll_rate,
+            turn_rate,
+            roll_rate,
             radius: self.radius,
             drag_area: self.drag_area,
             hull_strength: self.hull_strength,

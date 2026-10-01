@@ -27,6 +27,7 @@ use crate::ship::ClassSpec;
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
+    ("modules.ron", include_str!("../../../content/base/modules.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
     ("ores.ron", include_str!("../../../content/base/ores.ron")),
@@ -162,6 +163,7 @@ impl<T: Entry> Registry<T> {
 /// The loaded content.
 pub struct Content {
     pub shapes: Registry<Shape>,
+    pub modules: Registry<crate::modules::Module>,
     pub hulls: Registry<ClassSpec>,
     pub goods: Registry<GoodsKind>,
     pub ores: Registry<OreEntry>,
@@ -242,13 +244,15 @@ impl Content {
             let key = d.key.clone();
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
+        let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
+        let module = |key: &str| resolve(&modules, &aliases, key).map(|h| (h, modules.get(h)));
         let hulls: Registry<ClassSpec> = Registry::build(
             Self::defs::<crate::ship::HullDef>(&packs, "hulls.ron")?
                 .into_iter()
                 .map(|d| {
                     let key = d.key().to_string();
                     let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("hulls.ron '{key}': no shape '{}'", d_shape(&d)))?;
-                    d.build(shape, shapes.get(shape)).map_err(|e| format!("hulls.ron '{key}': {e}"))
+                    d.build(shape, shapes.get(shape), module).map_err(|e| format!("hulls.ron '{key}': {e}"))
                 })
                 .collect::<Result<_, String>>()?,
         )?;
@@ -280,7 +284,7 @@ impl Content {
         let rules = Self::single::<crate::goods::MarketRulesDef>(&packs, "markets.ron")?;
         let markets = MarketRules { bans: rules.bans.iter().map(|(k, p)| Ok((kind(k, "markets.ron")?, *p))).collect::<Result<_, String>>()? };
         let fuel = kind("goods.fuel", "the tanks")?;
-        let c = Content { shapes, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let c = Content { shapes, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -306,7 +310,7 @@ impl Content {
     /// What must hold across the content as a whole.
     fn check(&self) -> Result<(), String> {
         for (old, new) in &self.aliases {
-            let found = self.shapes.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
+            let found = self.shapes.find(new).is_some() || self.modules.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
             if !found {
                 return Err(format!("alias '{old}' -> '{new}': no such entry"));
             }
@@ -410,6 +414,7 @@ entry!(GoodsKind, "goods.ron", goods, |k| {
 });
 entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
+entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {
         positive("a rate", *t)?;
@@ -491,7 +496,7 @@ mod tests {
         let open = base[..base.find("key:").unwrap()].rfind('(').unwrap();
         let entry = &base[open..=base.rfind(')').unwrap()];
         // The Cobra replaced (heavier), and a Mk IV added.
-        let heavier = entry.replacen("dry_mass: 60000.0", "dry_mass: 70000.0", 1);
+        let heavier = entry.replacen("frame_mass: 32800.0", "frame_mass: 42800.0", 1);
         let another = entry.replacen("hull.cobra", "hull.cobra_mk4", 1);
         std::fs::write(dir.join("hulls.ron"), format!("[{heavier}, {another}]")).unwrap();
         std::fs::write(dir.join("aliases.ron"), r#"{"hull.cobra3": "hull.cobra"}"#).unwrap();
@@ -505,13 +510,41 @@ mod tests {
         assert_ne!(c.hash(), Content::load(&[]).unwrap().hash(), "other packs, another hash");
     }
 
-    #[test]
-    fn unsound_content_is_refused_with_the_reason() {
-        let dir = std::env::temp_dir().join(format!("universe-bad-pack-{}", std::process::id()));
+    /// The base pack with `hulls.ron` (and `modules.ron`) edited: why it's refused.
+    fn refused(hulls: impl Fn(&str) -> String, modules: impl Fn(&str) -> String, tag: &str) -> String {
+        let dir = std::env::temp_dir().join(format!("universe-bad-pack-{}-{tag}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(dir.join("hulls.ron"), base("hulls.ron").replace("role: Main", "role: Rcs")).unwrap();
+        std::fs::write(dir.join("hulls.ron"), hulls(base("hulls.ron"))).unwrap();
+        std::fs::write(dir.join("modules.ron"), modules(base("modules.ron"))).unwrap();
         let err = Content::load(std::slice::from_ref(&dir)).err().expect("refused");
         let _ = std::fs::remove_dir_all(&dir);
-        assert!(err.contains("hull.cobra") && err.contains("main drive"), "{err}");
+        err
+    }
+
+    #[test]
+    fn unsound_content_is_refused_with_the_reason() {
+        let same = |s: &str| s.to_string();
+        // No main drive fitted: a base block missing.
+        let e = refused(|s| s.replace(r#"("drive", "drive.torch.s2"), "#, ""), same, "nodrive");
+        assert!(e.contains("hull.cobra") && e.contains("Drive"), "{e}");
+        // A module too big for its slot.
+        let e = refused(same, |s| s.replace(r#"does: Gun, size: 1"#, r#"does: Gun, size: 3"#), "big");
+        assert!(e.contains("too big"), "{e}");
+        // More draw than the plant makes.
+        let e = refused(same, |s| s.replace("output: 8.0e6", "output: 2.0e6"), "power");
+        assert!(e.contains("MW"), "{e}");
+        // A module in the wrong kind of slot.
+        let e = refused(|s| s.replace(r#"("hardpoint_1", "gun.mass_driver.s1")"#, r#"("hardpoint_1", "tank.s3")"#), same, "slot");
+        assert!(e.contains("doesn't go in"), "{e}");
+    }
+
+    #[test]
+    fn the_cobra_is_its_frame_and_its_fit() {
+        let c = crate::ship::cobra();
+        assert_eq!((c.dry_mass, c.fuel_capacity, c.hold_capacity), (60_000.0, 30_000.0, 20_000.0));
+        assert_eq!(c.fit.len(), c.slots.len(), "every slot filled");
+        assert!(c.power_draw <= c.power_output, "{} of {} W", c.power_draw, c.power_output);
+        assert_eq!(c.features.len(), 6, "{:?}", c.features);
+        assert_eq!((c.turn_rate, c.roll_rate), (1.0, 1.8), "its flight computer's");
     }
 }
