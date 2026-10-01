@@ -385,6 +385,31 @@ impl StarSystem {
             .clone()
     }
 
+    /// Field `f`'s own rocks, as indices among its bodies (see
+    /// `field_bodies`): its remnant, and its swarm.
+    pub fn field_rocks(&self, f: usize) -> impl Iterator<Item = usize> {
+        let n = self.bodies.len();
+        std::iter::once(self.fields[f].body).chain(n..n + self.fields[f].count)
+    }
+
+    /// Where body `i` among field `f`'s bodies is at `t`, and how it moves
+    /// (solving only it and what it orbits, not the whole swarm).
+    pub fn field_body_state(&self, f: usize, i: usize, t: f64) -> (DVec3, DVec3) {
+        let bodies = self.field_bodies(f);
+        let (mut p, mut v) = (DVec3::ZERO, DVec3::ZERO);
+        let mut k = Some(i);
+        while let Some(j) = k {
+            let rail = &bodies[j].rail;
+            if let Some(o) = &rail.orbit {
+                let (dp, dv) = o.state(t);
+                p += dp;
+                v += dv;
+            }
+            k = rail.parent;
+        }
+        (p, v)
+    }
+
     /// The field whose swarm a point is among or near (`positions`: the
     /// system's bodies), if any.
     pub fn field_near(&self, p: DVec3, positions: &[DVec3]) -> Option<usize> {

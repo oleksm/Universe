@@ -54,6 +54,8 @@ pub enum Command {
     ToggleAutopilot,
     ToggleRoute,
     Follow(FollowKind),
+    /// Close on a rock (body `body` among field `field`'s), to anchor.
+    CloseOn { field: usize, body: usize },
     StopFollowing,
     /// Lock what's in the beam around the nose (again: the next).
     LockInBeam,
@@ -226,6 +228,7 @@ impl Engine {
             Command::ToggleAutopilot => u.toggle_autopilot(),
             Command::ToggleRoute => u.toggle_route(),
             Command::Follow(kind) => u.follow(kind),
+            Command::CloseOn { field, body } => u.close_on(field, body),
             Command::StopFollowing => u.stop_following(),
             Command::LockInBeam => {
                 u.lock_in_beam();
@@ -554,6 +557,7 @@ impl EngineHandle {
             Command::ToggleAutopilot => k.toggle_autopilot(),
             Command::ToggleRoute => k.toggle_route(),
             Command::Follow(kind) => k.follow(kind),
+            Command::CloseOn { field, body } => k.close_on(field, body),
             Command::StopFollowing => k.stop_following(),
             Command::LockInBeam => {
                 k.lock_in_beam();

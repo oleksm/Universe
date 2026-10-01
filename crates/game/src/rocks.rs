@@ -154,6 +154,9 @@ pub const SURVEY_RANGE: f64 = 2_000.0;
 /// What the prospector reads: the rock we're anchored to, else the one under
 /// the crosshair, else the nearest in scan range, in the field we're among.
 pub struct Scan {
+    /// Body `body` among field `field`'s bodies.
+    pub field: usize,
+    pub body: usize,
     pub rock: std::sync::Arc<universe_sim::world::belt::Rock>,
     pub name: String,
     pub mass: f64,
@@ -180,7 +183,7 @@ pub fn scan(app: &App) -> Option<Scan> {
     let mut positions = Vec::with_capacity(bodies.len());
     universe_sim::world::physics::positions(&bodies[..], t, &mut positions);
     let shift = app.view.positions[sys.fields[f].body] - positions[sys.fields[f].body];
-    let rocks = || (0..bodies.len()).filter(|&i| bodies[i].kind == universe_sim::BodyKind::Asteroid);
+    let rocks = || sys.field_rocks(f);
     let gap = |i: usize| (positions[i] + shift).distance(ship) - bodies[i].rail.radius - universe_sim::world::ship::SHIP_RADIUS;
     let nose = app.ship.forward();
     let off_nose = |i: usize| nose.angle_between(positions[i] + shift - ship);
@@ -191,7 +194,7 @@ pub fn scan(app: &App) -> Option<Scan> {
     let center = positions[i] + shift;
     let surface = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(ship - center);
     let gap = ship.distance(center) - b.surface_radius_at(center, ship, t) - universe_sim::world::ship::SHIP_RADIUS;
-    Some(Scan { rock: b.rock.clone()?, name: b.name.to_uppercase(), mass: b.mass, radius: b.rail.radius, day: b.rail.day, center, gap, drift: (app.ship.velocity - surface).length() })
+    Some(Scan { field: f, body: i, rock: b.rock.clone()?, name: b.name.to_uppercase(), mass: b.mass, radius: b.rail.radius, day: b.rail.day, center, gap, drift: (app.ship.velocity - surface).length() })
 }
 
 /// Brackets round the scanned rock.

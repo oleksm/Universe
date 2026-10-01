@@ -195,7 +195,7 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.orientation = universe_sim::ship::facing(-off.normalize(), DVec3::Y);
             u.set_nav_target(Some(NavTarget::Asteroid(rock)));
         }
-        "mining" | "prospect" => {
+        "mining" | "prospect" | "closing" => {
             // By a rubble fragment of a home field, drifting with its
             // surface: "prospect" 300 m off it; "mining" anchored 15 m off
             // and digging for half a minute.
@@ -213,13 +213,25 @@ pub fn apply(app: &mut App, name: &str) {
             let b = &bodies[i];
             let sun = -pos[i].normalize();
             let up = (sun + sun.any_orthonormal_vector() * 0.8).normalize();
-            let gap = if name == "mining" { 15.0 } else { 300.0 };
+            let gap = match name {
+                "mining" => 15.0,
+                "closing" => 800.0,
+                _ => 300.0,
+            };
             let at = pos[i] + up * (b.surface_radius(b.rotation(t).inverse() * up) + universe_sim::world::ship::SHIP_RADIUS + gap);
             let u = app.engine.universe();
             u.ship.position = at;
             u.ship.velocity = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(at - pos[i]);
             u.ship.angular_velocity = DVec3::ZERO;
             u.ship.orientation = universe_sim::ship::facing(-up, up.any_orthonormal_vector());
+            if name == "closing" {
+                // N on it, ninety seconds on.
+                let f = (0..sys.fields.len()).find(|&f| sys.field_bodies(f).len() == bodies.len() && sys.field_rocks(f).any(|j| j == i)).unwrap();
+                u.close_on(f, i);
+                for _ in 0..60 * 90 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+            }
             if name == "mining" {
                 u.command(&ShipCommands { anchor: Some(true), ..u.ship.holding() });
                 for _ in 0..10 {

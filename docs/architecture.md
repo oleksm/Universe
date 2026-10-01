@@ -219,7 +219,11 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   (`dug`/`dig`; in the state hash and the quicksave); the sim books each tonne in the ledger
   from the world's account, the `Mined` event as its cause (`Universe::book_mined`). A remnant is a nav target (`Facility::Asteroid`: no
   clearance, no market, not a route stop): the hyperdrive autopilot drops out just outside its
-  swarm moving with it; keep-at/orbit work round it.
+  swarm moving with it; keep-at/orbit work round it. An asteroid can be a route stop: a work
+  site, reached on dropping out by it, its dwell (`route::WORKING`) held until its worker moves
+  the route on. The follow program closes on a rock (`Anchor::Rock`, `Manoeuvre::Surface`):
+  12 m off the surface below, turning with it, braking on the thrusters, giving the field's
+  other rocks a berth and closing no faster than 20 s from the nearest.
 - **Structures** with their contact rules:
   - `station`: a rail body (circular orbit) + polytope collider with a slot cut-out
     (`StationFrame`, `hull()`); the **docking port** (`docks`/`bounces`, `contact` → dock (weld)
@@ -448,6 +452,7 @@ ship's pose directly, like tests do — then render.
 | Asteroid fields (placement, remnants, swarms, classes, shapes, composition); `Orbit::from_state` | world: `belt`; physics: `orbit` |
 | Rock impacts, the anchor, the excavator, ore by class | world: `mining` |
 | Mined ore booked in the ledger; what's been dug, remembered | sim: `commerce`; world: `World::mined` |
+| NPC miners (a slice of the settlers): route to a field and back to market, pick a rock, close, anchor, dig, sell | sim: `miner`, `operator::settlers` |
 | Home system, gate network and links | world: `network` |
 | The clock, system caches, `command`/`step_ship`(`_at`), `Devices`, respawn/spawn, hand-over | world: `world` |
 | Ship, `ShipCommands`, `HyperdriveCommand`, engine/thrusters/attitude | world: `ship` |

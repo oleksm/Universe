@@ -265,7 +265,16 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
     if !anchored {
         let ready = s.gap < mining::ANCHOR_REACH && s.drift < mining::ANCHOR_SPEED;
         let c = if ready { HUD } else if s.gap < mining::ANCHOR_REACH { AMBER } else { DIM };
-        let hint = if ready { "  Y TO ANCHOR" } else if s.gap < mining::ANCHOR_REACH { "  MATCH ITS DRIFT" } else { "" };
+        let closing = app.following.as_ref().is_some_and(|f| matches!(f.0, universe_sim::avionics::follow::Manoeuvre::Surface(_)));
+        let hint = if ready {
+            "  Y TO ANCHOR"
+        } else if closing {
+            "  CLOSING IN"
+        } else if s.gap < mining::ANCHOR_REACH {
+            "  MATCH ITS DRIFT"
+        } else {
+            "  N TO CLOSE ON IT"
+        };
         lines.push((format!("RANGE {}  DRIFT {:.2} M/S{hint}", fmt::distance(s.gap.max(0.0)), s.drift), c));
     }
     if s.gap < crate::rocks::SURVEY_RANGE || anchored {
@@ -375,7 +384,11 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
 /// The follow program: what, how, and how well it's holding.
 fn follow_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let Some((m, name, d)) = &app.following else { return };
-    lines.push((format!("{} {:.0} KM - {name}  NOW {:.1} KM", m.label(), m.range() / 1000.0, d / 1000.0), AMBER));
+    let line = match m {
+        universe_sim::avionics::follow::Manoeuvre::Surface(g) => format!("{} {name} - {} OFF THE SURFACE  X TO LET GO", m.label(), fmt::distance(*g)),
+        _ => format!("{} {:.0} KM - {name}  NOW {:.1} KM  X TO LET GO", m.label(), m.range() / 1000.0, d / 1000.0),
+    };
+    lines.push((line, AMBER));
 }
 
 /// The route: which stop we're on and what the route autopilot is doing.
@@ -1159,7 +1172,13 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         None => (kind.to_string(), Lamp::Unavailable),
     };
     use universe_sim::avionics::follow::Manoeuvre;
-    let keep = follow_cell("KEEP", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::KeepAt(r) => Some(r), _ => None }));
+    // (A rock scanned and no ship locked: N closes on it.)
+    let rock = a.contact.is_none() && flying && crate::rocks::scan(app).is_some();
+    let keep = match a.following.map(|f| f.manoeuvre) {
+        Some(Manoeuvre::Surface(_)) => ("CLOSE".to_string(), Lamp::On),
+        _ if rock && !ship.hyperdrive => ("CLOSE".to_string(), Lamp::Off),
+        _ => follow_cell("KEEP", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::KeepAt(r) => Some(r), _ => None })),
+    };
     let orbit = follow_cell("ORBIT", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::Orbit(r) => Some(r), _ => None }));
     let arms = if ship.weapons_hot() {
         Lamp::Hot
@@ -1364,6 +1383,8 @@ PILOT
  N  U     KEEP AT RANGE / ORBIT THE LOCKED SHIP, OR
           THE NAV TARGET STATION/GATE/ASTEROID (AGAIN:
           NEXT RANGE OUT)  X LETS GO
+ N        (A ROCK SCANNED, NO SHIP LOCKED) CLOSE ON IT:
+          HOLD 12 M OFF ITS SURFACE, TURNING WITH IT
  Y        ANCHOR TO THE ROCK IN REACH (30 M; DRIFT
           UNDER 0.5 M/S AGAINST ITS SURFACE) / LET GO
  H        EXCAVATOR ON / OFF (ANCHORED): ORE TO THE HOLD

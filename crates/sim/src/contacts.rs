@@ -38,6 +38,7 @@ pub(crate) fn activity(craft: &Craft) -> &'static str {
     match craft.ship.state {
         ShipState::Landed { .. } if a.dwelling => "AT STOP",
         ShipState::Landed { .. } => "PARKED",
+        ShipState::Anchored { .. } => "MINING",
         _ if a.departing => "DEPARTING",
         _ if craft.ship.hyperdrive => "HYPERDRIVE",
         _ => match a.clearance.map(|c| c.target) {

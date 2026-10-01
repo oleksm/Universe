@@ -87,6 +87,9 @@ pub struct Pilot {
     /// paid for what it carries, its route's seed, stops made so far, and
     /// the market service's answer, waiting.
     pub trader: bool,
+    /// A miner, and the rock it's working (see `miner`).
+    pub miner: bool,
+    pub(crate) dig: crate::miner::Dig,
     pub(crate) paid: std::collections::BTreeMap<usize, f64>,
     pub(crate) route_seed: u64,
     pub(crate) stops_made: u64,
@@ -95,7 +98,7 @@ pub struct Pilot {
 
 impl Pilot {
     pub fn new(avionics: Avionics) -> Self {
-        Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
+        Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, miner: false, dig: Default::default(), paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
     }
 }
 
@@ -291,10 +294,17 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let mut business = Vec::new();
     if human.is_none() {
         if !pilot.avionics.route.active && matches!(ship.state, ShipState::Landed { .. }) {
-            crate::operator::new_route(pilot, &view.charts, system);
+            let seed = crate::rng::mix(pilot.route_seed, pilot.stops_made);
+            if !(pilot.miner && crate::miner::new_route(&mut pilot.avionics, &mut pilot.dig, &view.charts, system, seed)) {
+                crate::operator::new_route(pilot, &view.charts, system);
+            }
         }
         if let Some(answer) = pilot.market.take() {
-            crate::operator::trade(pilot, &view.charts, &answer, &mut business);
+            if pilot.miner {
+                crate::miner::sell(&answer, &mut business);
+            } else {
+                crate::operator::trade(pilot, &view.charts, &answer, &mut business);
+            }
         }
     }
     let a = &mut pilot.avionics;
@@ -303,6 +313,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     // What happened to the ship since it last thought.
     let feed = std::mem::take(&mut pilot.feed);
     let hit = feed.iter().any(|e| matches!(e, ShipEvent::Hit { .. }));
+    let mined_feed = if pilot.miner { feed.clone() } else { Vec::new() };
     a.record(feed, &mut events);
     // Its ship, with its own commands on their way.
     let seen = seen(ship, &mut pilot.pending, view.tick);
@@ -325,7 +336,10 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
         Some(universe_avionics::follow::Anchor::Ship(id)) => crate::follow::mark_in(&view.snaps, system, pos, id),
         _ => None,
     };
-    let (stick, hunt_end) = if human.is_some() { (None, None) } else { a.hunt(&mut link, &sightings, &mut events) };
+    if human.is_none() && pilot.miner && a.hunting.is_none() {
+        crate::miner::work(a, &mut pilot.dig, &view.charts, pilot.route_seed, &mined_feed, &mut link, &mut events);
+    }
+    let (stick, hunt_end) = if human.is_none() { a.hunt(&mut link, &sightings, &mut events) } else { (None, None) };
     // A defender that broke off hurt runs for the guns.
     if hunt_end.is_some() && !a.pirate && link.ship.hull < FLEE_HULL {
         flee(a, &link.ship, system, &guns, &mut events);
@@ -361,7 +375,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let stopped = events.iter().any(|e| matches!(e, Event::RouteStop { .. }));
     if stopped {
         pilot.stops_made += 1;
-        if pilot.trader
+        if (pilot.trader || pilot.miner)
             && let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship)
         {
             requests.push(Request::Quotes { system, market });

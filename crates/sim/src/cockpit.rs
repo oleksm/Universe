@@ -400,6 +400,13 @@ impl Cockpit {
         self.run(|a, link, events| a.follow(link, anchor, manoeuvre, events));
     }
 
+    /// Close on a rock (body `body` among field `field`'s bodies) and hold
+    /// just off its surface, turning with it: where the anchor reaches.
+    pub fn close_on(&mut self, field: usize, body: usize) {
+        let anchor = Anchor::Rock { field, body };
+        self.run(|a, link, events| a.follow(link, anchor, Manoeuvre::Surface(universe_world::mining::CLOSE_STANDOFF), events));
+    }
+
     pub fn stop_following(&mut self) {
         self.run(|a, link, events| a.stop_following(link, events));
     }
@@ -414,6 +421,7 @@ impl Cockpit {
         match anchor {
             Anchor::Ship(id) => crate::follow::mark_in(&w.snaps, w.ships[&PLAYER].0, self.ship().position, id).map(|m| m.0),
             Anchor::Place(t) => t.position(sys, w.time, rails),
+            Anchor::Rock { field, body } => Some(sys.field_body_state(field, body, w.time).0),
         }
     }
 
@@ -427,6 +435,7 @@ impl Cockpit {
         let name = match f.anchor {
             Anchor::Ship(id) => self.view.as_ref()?.transponders.get(&id.checked_sub(1)?).map(|t| t.name.to_uppercase())?,
             Anchor::Place(t) => t.name(&sys).to_uppercase(),
+            Anchor::Rock { field, body } => sys.field_bodies(field)[body].name.to_uppercase(),
         };
         let at = self.anchor_position(f.anchor, &sys, &rails)?;
         Some((f.manoeuvre, name, at.distance(self.ship().position)))
@@ -664,6 +673,10 @@ impl crate::universe::Universe {
     /// target, a station or gate): the cockpit's follow program.
     pub fn follow(&mut self, kind: FollowKind) {
         self.in_cockpit(|k| k.follow(kind));
+    }
+
+    pub fn close_on(&mut self, field: usize, body: usize) {
+        self.in_cockpit(|k| k.close_on(field, body));
     }
 
     /// What we're following, for the display: the manoeuvre, the anchor's

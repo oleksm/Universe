@@ -58,5 +58,21 @@ drifts with that surface.
   account, caused by the dig.
 - Dev scenarios: `asteroid`, `swarm`, `prospect`, `mining`.
 
-Not yet: NPC miners (the same actions, by the operator), claims, refining, towing boulders,
+## Miners, and closing on a rock
+
+- **N closes on the rock you've scanned** (no ship locked): the follow program flies you to
+  12 m off its surface and turns with it as it spins, gently, on the thrusters, keeping clear
+  of the field's other rocks. When the prospector says Y TO ANCHOR, anchor; H digs. (Orbit and
+  keep-at hold a kilometre off: they could never bring you within the anchor's reach.) X lets
+  go of any follow program — the HUD says so now.
+- Fixed in the follow program: small corrections lined up with the nose were handed to the
+  main engine and then dropped, so it could stall short of its range.
+- **NPC miners**: another tenth of the settlers (where their home system has asteroids). Each
+  works the same way a player does: its route goes out to the field best worth working (an
+  asteroid is now a route stop: a work site, held till the worker is done) and back to its
+  home market; there it picks one of the best rocks by ore price × dig rate, closes, anchors,
+  digs until the hold is full, lets go, flies to market, asks for quotes and sells its ore,
+  then heads out again. Departures stagger like everyone else's. On radar they read MINING.
+
+Not yet: claims, refining, towing boulders,
 the excavator's power drawn from fuel.

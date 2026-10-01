@@ -64,6 +64,10 @@ pub fn stop_name(sys: &StarSystem, stop: Stop) -> String {
     format!("{name} ({})", sys.name)
 }
 
+/// The dwell at a work site (an asteroid): until its worker says it's done
+/// (by moving the route on).
+pub const WORKING: f64 = 1.0e18;
+
 /// How close the hyperdrive gets before an autopilot takes over (m). The
 /// hyperdrive drops out a little closer still (120 km / 20 km).
 pub(crate) fn hyperjump_limit(target: NavTarget) -> f64 {
@@ -137,7 +141,9 @@ impl Avionics {
                         }
                         Some(_) => {}
                     }
-                } else {
+                } else if self.route.dwell_until.is_none_or(|t| bus.time() >= t) {
+                    // (Elsewhere: off once its time here is up.)
+                    self.route.dwell_until = None;
                     self.leave(bus, &sys, body, events);
                 }
             }
@@ -206,6 +212,18 @@ impl Avionics {
         // Hyperdrive (which steers around anything in the way) until close:
         // the landing and docking approaches only mind their own target.
         let far = at.distance(bus.ship().position) > hyperjump_limit(hop);
+        // An asteroid is a work site: reached on dropping out by it, and the
+        // stop lasts till whoever works it moves the route on (see `WORKING`).
+        if let NavTarget::Asteroid(_) = hop
+            && !far
+        {
+            if self.route.dwell_until != Some(WORKING) {
+                self.route.dwell_until = Some(WORKING);
+                let sys = bus.star_system();
+                events.push(Event::RouteStop { number: self.route.next + 1, name: stop_name(&sys, stop) });
+            }
+            return;
+        }
         match self.clearance {
             Some(c) if !c.autopilot => self.toggle_autopilot(bus, events),
             Some(_) => {}

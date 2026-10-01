@@ -70,6 +70,8 @@ pub fn ore(rock: &Rock) -> Ore {
 pub const ANCHOR_REACH: f64 = 30.0;
 /// ...and holds if the ship drifts slower than this against the surface (m/s).
 pub const ANCHOR_SPEED: f64 = 0.5;
+/// Closing on a rock to anchor, a ship holds this far off its surface (m).
+pub const CLOSE_STANDOFF: f64 = 12.0;
 /// Share of the closing speed kept in a bounce off a rock.
 pub const RESTITUTION: f64 = 0.3;
 /// Slower than this, touching a rock just eases the ship off it (m/s).

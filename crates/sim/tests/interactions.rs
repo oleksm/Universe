@@ -429,3 +429,103 @@ fn a_miner_digs_ore_into_its_hold_the_rock_remembers_and_a_station_buys_it() {
     let paid = u.trade(Facility::Station(station), item, -1).expect("the station buys ore");
     assert!(paid < 0.0 && u.hold().is_empty());
 }
+
+/// One settler made a miner (its route: a field of the home system, then the
+/// station), flying among the field, 15 km from its remnant.
+fn miner_by_its_field() -> Universe {
+    let mut u = bench(1);
+    let home = u.ship_system;
+    let charts = u.world.charts();
+    let stops = universe_sim::miner::route(&charts, home, 7).expect("fields at home");
+    let NavTarget::Asteroid(remnant) = stops[0].target else { panic!() };
+    {
+        let mut p = u.pilots();
+        p[0].miner = true;
+        p[0].avionics.route = universe_sim::avionics::route::Route { stops, next: 0, active: true, dwell_until: None, departing: false };
+    }
+    let (sys, pos) = positions(&mut u);
+    let c = &mut u.crafts[0];
+    c.ship.state = ShipState::Flying;
+    c.ship.position = pos[remnant] + DVec3::X * (sys.bodies[remnant].max_radius() + 15_000.0);
+    c.ship.velocity = sys.velocity(remnant, u.world.time);
+    u
+}
+
+#[test]
+fn a_miner_closes_on_a_rock_anchors_digs_and_when_full_goes_to_sell() {
+    let mut u = miner_by_its_field();
+    let digging = |u: &Universe| matches!(u.crafts[0].ship.state, ShipState::Anchored { .. }) && u.crafts[0].ship.excavator;
+    let mut ticks = 0;
+    while !digging(&u) && ticks < 60 * 900 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        ticks += 1;
+    }
+    eprintln!("anchored and digging after {} s", ticks / 60);
+    assert!(digging(&u), "{:?} {:?}", u.crafts[0].ship.state, u.recorder.incidents);
+    assert!(u.crafts[0].ship.hull > 0.99, "it hit nothing on the way");
+    // Nearly full: it fills up, lets go, and its route moves on to the market.
+    u.crafts[0].ship.cargo = universe_sim::world::ship::HOLD_CAPACITY - 300.0;
+    for _ in 0..60 * 60 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    let route = u.pilots()[0].avionics.route.clone();
+    assert!(u.crafts[0].ship.is_flying() && route.active && route.next == 1, "{:?} {route:?}", u.crafts[0].ship.state);
+}
+
+#[test]
+fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
+    use universe_sim::services::{Asset, Party};
+    let mut u = miner_by_its_field();
+    let me = universe_sim::craft_id(0);
+    let home = u.ship_system;
+    let market = u.pilots()[0].avionics.route.stops[1].target;
+    let NavTarget::Station(station) = market else { panic!("a station market") };
+    // Docked at its market with ten tonnes of ore, the route at that stop.
+    u.crafts[0].ship = u.world.ship_on(home, Facility::Station(station), 0);
+    let ore = universe_sim::world::goods::Ore::Carbonaceous.item();
+    u.ledger.settle(Party::Pilot(me), Asset::Goods(ore), 10.0, u.tick, universe_sim::protocol::Cause::Rules);
+    u.crafts[0].ship.cargo = 10_000.0;
+    u.pilots()[0].avionics.route.next = 1;
+    let credits = u.craft_credits(0);
+    for _ in 0..60 * 30 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!(u.ledger.hold(me).is_empty(), "sold: {:?}", u.ledger.hold(me));
+    assert!(u.craft_credits(0) > credits + 100.0, "paid {}", u.craft_credits(0) - credits);
+    let route = u.pilots()[0].avionics.route.clone();
+    assert!(route.active && route.next == 0 && matches!(route.stops[0].target, NavTarget::Asteroid(_)), "a new trip: {route:?}");
+}
+
+#[test]
+fn a_pilot_closes_on_a_rock_and_anchors() {
+    use universe_sim::world::{mining, ShipCommands};
+    let mut u = bench(0);
+    let (sys, _) = positions(&mut u);
+    let f = 0;
+    let bodies = sys.field_bodies(f);
+    let i = sys.field_rocks(f).find(|&i| i != sys.fields[f].body && bodies[i].rail.radius > 20.0).expect("a rock");
+    let t = u.world.time;
+    let (c, v) = sys.field_body_state(f, i, t);
+    place_player(&mut u, c + DVec3::new(0.6, 0.3, 0.7).normalize() * 1200.0);
+    u.ship.velocity = v;
+    u.close_on(f, i);
+    let ready = |u: &Universe| {
+        let (c, v) = sys.field_body_state(f, i, u.world.time);
+        let b = &bodies[i];
+        let gap = u.ship.position.distance(c) - b.surface_radius_at(c, u.ship.position, u.world.time) - universe_sim::world::ship::SHIP_RADIUS;
+        let drift = (u.ship.velocity - v - b.angular_velocity().cross(u.ship.position - c)).length();
+        gap < mining::ANCHOR_REACH * 0.8 && drift < 0.6 * mining::ANCHOR_SPEED
+    };
+    let mut ticks = 0;
+    while !ready(&u) && ticks < 60 * 300 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        ticks += 1;
+    }
+    eprintln!("in reach after {} s", ticks / 60);
+    assert!(ready(&u) && u.ship.hull > 0.99, "{:?}", u.events);
+    u.command(&ShipCommands { anchor: Some(true), ..u.ship.holding() });
+    for _ in 0..5 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!(matches!(u.ship.state, ShipState::Anchored { .. }), "{:?}", u.events);
+}

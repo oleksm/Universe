@@ -483,8 +483,12 @@ impl App {
         }
         // N keeps at a range from the locked ship (or the nav target's
         // station or gate), U orbits it; again for the next range out. X lets go.
+        // (No ship locked and a rock scanned: N closes on it, to anchor.)
         if input.pressed(KeyCode::KeyN) {
-            self.engine.send(Command::Follow(FollowKind::KeepAt));
+            match rocks::scan(self).filter(|_| self.v.avionics.contact.is_none() && !matches!(self.v.ship.state, ShipState::Anchored { .. })) {
+                Some(s) => self.engine.send(Command::CloseOn { field: s.field, body: s.body }),
+                None => self.engine.send(Command::Follow(FollowKind::KeepAt)),
+            }
         }
         if input.pressed(KeyCode::KeyU) {
             self.engine.send(Command::Follow(FollowKind::Orbit));
@@ -585,6 +589,7 @@ impl App {
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),
                 Event::Refused { reason } => reason,
+                Event::Following { what: Some((how, range)) } if how == "CLOSE ON" => format!("CLOSING ON THE ROCK, {range:.0} M OFF ITS SURFACE\nY TO ANCHOR WHEN IN REACH, X TO LET GO"),
                 Event::Following { what: Some((how, range)) } => format!("{how} {:.0} KM - N/U AGAIN: NEXT RANGE, X: RELEASE", range / 1000.0),
                 Event::Following { what: None } => "FOLLOW OFF".into(),
                 Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE CANCELLED".into(),

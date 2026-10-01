@@ -14,6 +14,7 @@ pub mod engine;
 pub mod audit;
 pub mod cockpit;
 pub mod contract;
+pub mod miner;
 pub mod operator;
 pub mod pilots;
 pub mod setup;
