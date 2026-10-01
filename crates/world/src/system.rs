@@ -157,6 +157,10 @@ fn random_tilt(rng: &mut Rng, max_degrees: f64) -> DQuat {
     DQuat::from_rotation_y(rng.range(0.0, TAU)) * DQuat::from_rotation_x(rng.range(0.0, max_degrees).to_radians())
 }
 
+/// A gate's path keeps at least this clear of anything else orbiting with
+/// it (m): its run-in and the way out are open space.
+pub const GATE_CLEARANCE: f64 = 100_000.0;
+
 impl StarSystem {
     pub fn generate(index: usize, star: &GalaxyStar) -> Self {
         let mut rng = Rng::new(star.seed);
@@ -407,8 +411,11 @@ impl StarSystem {
     }
 
     /// Add one ring gate per link, orbiting the station's planet (or the first
-    /// planet, or the star). `links` are (destination system, destination name).
-    pub fn add_gates(&mut self, links: &[(usize, String)], seed: u64) {
+    /// planet, or the star). `links` are (destination system, destination
+    /// name, the way to it). Each gate faces its destination (its axis, the
+    /// way through, points at that star; the twin there faces back), and
+    /// orbits in a gap: no moon, station or asteroid field comes near its path.
+    pub fn add_gates(&mut self, links: &[(usize, String, DVec3)], seed: u64) {
         let parent = self
             .station()
             .and_then(|s| self.bodies[s].rail.parent)
@@ -416,12 +423,26 @@ impl StarSystem {
             .unwrap_or(0);
         let p_radius = self.bodies[parent].rail.radius;
         let p_mu = self.bodies[parent].rail.mu;
-        for (k, (dest, dest_name)) in links.iter().enumerate() {
+        // What else goes round the parent: the bands of orbit a gate keeps out of.
+        let mut taken: Vec<(f64, f64)> = Vec::new();
+        for (i, b) in self.bodies.iter().enumerate() {
+            let Some(o) = b.rail.orbit.as_ref().filter(|_| b.rail.parent == Some(parent)) else { continue };
+            let field = self.fields.iter().find(|f| f.body == i).map_or(0.0, |f| f.extent);
+            let reach = b.max_radius() + field + GATE_CLEARANCE;
+            taken.push((o.periapsis() - reach, o.apoapsis() + reach));
+        }
+        for (k, (dest, dest_name, toward)) in links.iter().enumerate() {
             let mut rng = Rng::new(crate::rng::mix(seed, 0x6761_7465 + *dest as u64));
-            let a = if parent == 0 { AU * rng.range(0.6, 1.4) } else { p_radius * (4.0 + 1.5 * k as f64 + rng.range(0.0, 0.5)) };
+            let mut a = if parent == 0 { AU * rng.range(0.6, 1.4) } else { p_radius * (4.0 + 1.5 * k as f64 + rng.range(0.0, 0.5)) };
+            // Out past anything in the way (the bands may overlap: again till clear).
+            while let Some(&(_, hi)) = taken.iter().find(|&&(lo, hi)| a > lo && a < hi) {
+                a = hi + GATE_CLEARANCE;
+            }
+            let ring = crate::gate::GATE_RADIUS + crate::gate::RING_TUBE;
+            taken.push((a - ring - GATE_CLEARANCE, a + ring + GATE_CLEARANCE));
             let orbit = Orbit::new(a, 0.0, rng.range(0.0, 0.1), rng.range(0.0, TAU), 0.0, rng.range(0.0, TAU), p_mu);
-            // Inertially fixed ring, its axis lying in the orbital plane.
-            let tilt = DQuat::from_rotation_y(rng.range(0.0, TAU)) * DQuat::from_rotation_x(std::f64::consts::FRAC_PI_2);
+            // Inertially fixed ring, facing its destination.
+            let tilt = DQuat::from_rotation_arc(DVec3::Y, toward.normalize());
             self.bodies.push(Body {
                 name: format!("Gate to {dest_name}"),
                 kind: BodyKind::Gate,
@@ -447,6 +468,7 @@ impl StarSystem {
     }
 
     /// The gate in this system leading to system `to`.
+    /// (See `GATE_CLEARANCE`.)
     pub fn gate_to(&self, to: usize) -> Option<usize> {
         self.bodies.iter().position(|b| b.kind == BodyKind::Gate && b.link == Some(to))
     }

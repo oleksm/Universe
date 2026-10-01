@@ -256,8 +256,8 @@ fn gate_flashes(frame: &mut Frame, app: &App) {
             // Out: the burst flaring and spreading, and a streak out through the ring.
             let bright = (1.0 - k) as f32;
             burst(frame, 150.0 + 650.0 * k, 50.0 + 800.0 * k, bright);
-            let side = if (app.view.ship_pos - f.center).dot(axis) >= 0.0 { -1.0 } else { 1.0 };
-            frame.line(at, at + axis * side * 4000.0 * (1.0 - k), Color::WHITE.scale(bright));
+            // (Through it, the way it leads.)
+            frame.line(at, at + axis * 4000.0 * (1.0 - k), Color::WHITE.scale(bright));
         } else {
             // In: light gathering to a point where it will come out.
             burst(frame, 150.0 + 650.0 * (1.0 - k), 50.0 + 800.0 * (1.0 - k), (k as f32).max(0.25));
@@ -272,9 +272,16 @@ fn transit_guide(frame: &mut Frame, app: &App, gate: usize, st: &GateStatus) {
     let axis = f.axis();
     let c = if st.in_corridor { GUIDE_OK } else { GUIDE_OFF };
     frame.line(f.center - axis * APPROACH_DISTANCE, f.center + axis * APPROACH_DISTANCE, c.scale(0.4));
-    let side = if (app.view.ship_pos - f.center).dot(axis) >= 0.0 { 1.0 } else { -1.0 };
-    let p = f.center + axis * side * APPROACH_DISTANCE;
+    // The run-in starts behind the ring (it's one way: along its axis).
+    let p = f.center - axis * APPROACH_DISTANCE;
+    // Arrowheads along the axis: the way through.
     let (e1, e2) = (f.rotation * DVec3::X, f.rotation * DVec3::Z);
+    for k in 1..4 {
+        let tip = f.center - axis * (APPROACH_DISTANCE * k as f64 / 4.0);
+        for d in [e1, -e1, e2, -e2] {
+            frame.line(tip, tip - axis * 200.0 + d * 150.0, c.scale(0.6));
+        }
+    }
     for d in [e1, e2, axis] {
         frame.line(p - d * 120.0, p + d * 120.0, c);
     }

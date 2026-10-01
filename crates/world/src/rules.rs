@@ -164,6 +164,12 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             }
         }
         Rule::Transit { name, max_speed, to, says, otherwise } => {
+            // One way: against the gate's axis, it's an empty ring.
+            let Fact::Trigger { relative_velocity, .. } = fact else { return };
+            if relative_velocity.dot(sys.bodies[body].rotation(t) * DVec3::Y) <= 0.0 {
+                fired(events, name, "the wrong way: through an empty ring");
+                return;
+            }
             if speed > *max_speed {
                 fired(events, name, "too fast: wrecked");
                 events.push(ShipEvent::GateTooFast { speed });

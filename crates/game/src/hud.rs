@@ -214,8 +214,9 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     {
         let (a, s) = (ship.authority(), ship.spec());
         let (lift, main) = (a.lift / s.lift_thrust.max(1.0), a.main / s.main_thrust.max(1.0));
-        if lift < 0.97 || main < 0.97 {
-            let c = if lift < 0.8 || main < 0.8 { RED } else { AMBER };
+        // (A stock ship keeps 92% and more, empty to full: under 90% it's off.)
+        if lift < 0.9 || main < 0.9 {
+            let c = if lift < 0.75 || main < 0.75 { RED } else { AMBER };
             lines.push((format!("OFF BALANCE - LIFT {:.0}%  DRIVE {:.0}%", lift * 100.0, main * 100.0), c));
         }
     }

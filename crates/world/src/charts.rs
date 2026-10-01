@@ -53,6 +53,8 @@ pub fn generate(galaxy: &Galaxy, gate_links: &[(usize, usize)], i: usize) -> Sta
     let mut sys = StarSystem::generate(i, star);
     let links = crate::network::links_of(gate_links, galaxy, i);
     if !links.is_empty() {
+        // Each gate faces the star it leads to.
+        let links: Vec<(usize, String, glam::DVec3)> = links.into_iter().map(|(d, n)| (d, n, galaxy.offset(i, d))).collect();
         sys.add_gates(&links, star.seed);
     }
     sys

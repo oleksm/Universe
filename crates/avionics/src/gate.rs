@@ -1,8 +1,10 @@
 //! Gate run guidance and the transit autopilot. (The gate itself, its frame
 //! and the gate device are the world's: `universe_world::gate`.)
 //!
-//! The run-in goes along the ring's axis, through the opening, at a steady
-//! speed well under the gate's limit.
+//! The run-in goes along the ring's axis — the one way through, toward the
+//! star it leads to — through the opening, at a steady speed well under the
+//! gate's limit. From the far side, the way round is back through the
+//! empty ring (against its axis it takes no one anywhere).
 
 use glam::DVec3;
 use universe_world::gate::{GATE_RADIUS, RING_TUBE};
@@ -17,22 +19,26 @@ pub const TRANSIT_SPEED: f64 = 100.0;
 /// Where the run-in starts, along the axis from the ring (m).
 pub const APPROACH_DISTANCE: f64 = 4000.0;
 
-/// Lined up on the axis, close enough for the run-in.
+/// Lined up on the axis on its entry side, close enough for the run-in.
 pub fn in_final_zone(frame: &GateFrame, pos: DVec3) -> bool {
-    let (_, h) = frame.side(pos);
+    let (side, h) = frame.side(pos);
     let lateral = ((pos - frame.center) - frame.axis() * (pos - frame.center).dot(frame.axis())).length();
-    h < APPROACH_DISTANCE + 500.0 && lateral < GATE_RADIUS * 0.5
+    side < 0.0 && h < APPROACH_DISTANCE + 500.0 && lateral < GATE_RADIUS * 0.5
 }
 
+/// The side a run-in starts from: behind the ring, going along its axis.
+const ENTRY: f64 = -1.0;
+
 /// Where to go, relative to the gate. The run-in goes through the ring from
-/// whichever side the ship is on.
+/// its entry side; from the far side, first back through the empty ring
+/// along the axis (not round the ring's tube).
 /// `accel` is the thruster acceleration available (m/s^2).
 pub fn guidance(frame: &GateFrame, pos: DVec3, final_run: bool, accel: f64) -> Guidance {
     let axis = frame.axis();
     let r = pos - frame.center;
-    let (side, _) = frame.side(pos);
+    let (side, h) = frame.side(pos);
     let lateral = r - axis * r.dot(axis);
-    let inward = -axis * side;
+    let inward = axis;
     if final_run {
         let correct = (-lateral * 0.2).clamp_length_max(20.0);
         return Guidance {
@@ -42,7 +48,9 @@ pub fn guidance(frame: &GateFrame, pos: DVec3, final_run: bool, accel: f64) -> G
             final_run: true,
         };
     }
-    let approach = frame.center + axis * side * APPROACH_DISTANCE;
+    let approach = frame.center + axis * ENTRY * APPROACH_DISTANCE;
+    // On the far side, off the axis: onto it first, then back through the middle.
+    let approach = if side != ENTRY && lateral.length() > GATE_RADIUS * 0.4 { frame.center + axis * h.max(1000.0) } else { approach };
     let d = approach - pos;
     let dist = d.length();
     let top = (2.0 * accel * 0.25 * dist).sqrt().min(250.0);
@@ -57,7 +65,8 @@ pub struct GateStatus {
     pub autopilot: bool,
     /// Distance to the ring's center (m).
     pub range: f64,
-    /// Distance from the opening's plane (m).
+    /// Distance before the opening's plane, on its entry side (m; negative:
+    /// past it, on the far side).
     pub distance: f64,
     /// Distance from the axis (m).
     pub offset: f64,
@@ -74,6 +83,7 @@ pub fn status(frame: &GateFrame, ship: &Ship, clearance: &Clearance) -> GateStat
     let axis = frame.axis();
     let r = ship.position - frame.center;
     let (side, h) = frame.side(ship.position);
+    let h = if side == ENTRY { h } else { -h };
     let v = ship.velocity - frame.velocity;
     let offset = (r - axis * r.dot(axis)).length();
     let final_run = if clearance.autopilot { clearance.phase == Phase::Final } else { in_final_zone(frame, ship.position) };
@@ -83,7 +93,7 @@ pub fn status(frame: &GateFrame, ship: &Ship, clearance: &Clearance) -> GateStat
         range: r.length(),
         distance: h,
         offset,
-        closing: -v.dot(axis * side),
+        closing: v.dot(axis),
         speed: v.length(),
         relative_velocity: v,
         in_corridor: offset < GATE_RADIUS - RING_TUBE - 200.0,
@@ -95,10 +105,9 @@ pub fn status(frame: &GateFrame, ship: &Ship, clearance: &Clearance) -> GateStat
 /// command holds for `h` seconds.
 pub fn autopilot(frame: &GateFrame, ship: &Ship, phase: Phase, may_enter: bool, h: f64) -> Command {
     let axis = frame.axis();
-    let (side, _) = frame.side(ship.position);
-    let inward = -axis * side;
+    let inward = axis;
     let v = ship.velocity - frame.velocity;
-    let to_approach = (frame.center + axis * side * APPROACH_DISTANCE).distance(ship.position);
+    let to_approach = (frame.center + axis * ENTRY * APPROACH_DISTANCE).distance(ship.position);
     let aligned = ship.forward().dot(inward) > 0.995;
     let phase = match phase {
         Phase::Approach if to_approach < 100.0 && v.length() < 8.0 => Phase::Align,

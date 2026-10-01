@@ -197,7 +197,8 @@ fn autopilot_flies_through_a_gate_and_keeps_its_motion() {
     let sys = u.ship_system();
     let (dest, _) = u.gate_links_of(home)[0].clone();
     let g = sys.gate_to(dest).unwrap();
-    // Start 30 km from the gate, co-moving with it.
+    // Start 30 km from the gate, on its far side (the autopilot goes back
+    // through the empty ring to its entry side), co-moving with it.
     let mut pos = Vec::new();
     sys.positions(u.world.time, &mut pos);
     let frame = GateFrame::new(&sys, g, u.world.time, &pos);
@@ -230,7 +231,10 @@ fn autopilot_flies_through_a_gate_and_keeps_its_motion() {
     let out = GateFrame::new(&sys, back, u.world.time, &pos);
     let exit_local = out.rotation.inverse() * (u.ship.velocity - out.velocity);
     eprintln!("entry {entry_local:.1?} exit {exit_local:.1?}; plan eta {:.0} s", plan_eta.points.last().unwrap().time);
-    assert!((exit_local - entry_local).length() < 1.0);
+    // The twins face each other: the same way on through space, so relative
+    // to the twin it's turned half round (about the ring's X).
+    let turned = DQuat::from_rotation_x(std::f64::consts::PI) * entry_local;
+    assert!((exit_local - turned).length() < 1.0, "{exit_local} vs {turned}");
     assert!(u.ship.position.distance(out.center) < GATE_RADIUS, "came out of the ring");
     assert!(u.events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::GateArrived { .. }))));
 }

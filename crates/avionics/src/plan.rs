@@ -212,6 +212,17 @@ pub fn plan(sys: &StarSystem, rules: &Rules, ship: &Ship, target: NavTarget, pha
             ship.set_rigid(&copy);
             t = outcome.time;
             stopped = outcome.fact;
+            // Through a trigger that takes it nowhere (a gate's ring the
+            // wrong way: one way only), it flies on, as it would.
+            if let Some(fact @ Fact::Trigger { .. }) = &stopped {
+                let mut probe = ship.clone();
+                let mut said = Vec::new();
+                sys.positions(t, &mut positions);
+                universe_world::rules::apply(rules, sys, sys.index, &mut probe, fact, t, &positions, &mut said);
+                if probe.is_flying() {
+                    stopped = None;
+                }
+            }
         }
     }
     out
