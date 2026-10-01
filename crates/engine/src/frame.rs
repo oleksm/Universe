@@ -67,6 +67,8 @@ pub struct Frame {
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
+    /// Solids that hide HUD labels anchored behind them (see `occluded`).
+    occluders: Vec<(Mesh, Transform)>,
 }
 
 /// One mesh draw: the mesh, and its instance data.
@@ -177,6 +179,7 @@ impl Frame {
             hud_tris: Vec::new(),
             hud: Vec::new(),
             meshes: Vec::new(),
+            occluders: Vec::new(),
         }
     }
 
@@ -205,6 +208,28 @@ impl Frame {
     }
 
     /// World position to HUD pixel coordinates (see `size`), or `None` if behind the camera.
+    /// Mark a drawn mesh as hiding the HUD labels of what's behind it (the
+    /// HUD has no depth: without this, text shows through it).
+    pub fn occluder(&mut self, mesh: &Mesh, t: &Transform) {
+        self.occluders.push((mesh.clone(), *t));
+    }
+
+    /// Whether `p` is hidden from the camera by an occluder. A point within
+    /// one (its own label) isn't.
+    pub fn occluded(&self, p: DVec3) -> bool {
+        let eye = self.camera.position;
+        let (to, dist) = ((p - eye).normalize_or_zero(), p.distance(eye));
+        self.occluders.iter().any(|(m, t)| {
+            let inv = t.rotation.inverse();
+            let local = |v: DVec3| inv * ((v - t.position) / t.scale).as_vec3();
+            let r = m.radius() as f64 * t.scale;
+            if p.distance(t.position) <= r {
+                return false;
+            }
+            m.ray_hit(local(eye), inv * to.as_vec3()).is_some_and(|h| (h as f64) * t.scale < dist)
+        })
+    }
+
     pub fn project(&self, p: DVec3) -> Option<Vec2> {
         let clip = self.camera.view_proj(self.size.x / self.size.y) * self.camera.relative(p).extend(1.0);
         if clip.w <= 0.0 {

@@ -654,9 +654,12 @@ fn contact_marker(frame: &mut Frame, app: &App) {
             continue;
         }
         let c = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
-        let Some(p) = frame.project(app.place(crate::Who::Craft(contact.blip.id)).0).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
-        frame.hud_box(p - Vec2::splat(4.0), Vec2::splat(8.0), c.scale(0.8));
-        if contact.blip.distance < 50_000.0 {
+        let at = app.place(crate::Who::Craft(contact.blip.id)).0;
+        let Some(p) = frame.project(at).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
+        // Behind our hull: a faint box, no text.
+        let hidden = frame.occluded(at);
+        frame.hud_box(p - Vec2::splat(4.0), Vec2::splat(8.0), c.scale(if hidden { 0.3 } else { 0.8 }));
+        if contact.blip.distance < 50_000.0 && !hidden {
             let range = fmt::distance(contact.blip.distance);
             frame.text(p + Vec2::new(-text_size(&range).x / 2.0, 7.0), &range, c.scale(0.7));
         }
@@ -798,13 +801,18 @@ fn bracket(frame: &mut Frame, app: &App, name: &str, target: DVec3, c: Color) {
     let size = frame.size();
 
     if let Some(p) = frame.project(target).filter(|p| p.x > 8.0 && p.y > 8.0 && p.x < size.x - 8.0 && p.y < size.y - 8.0) {
+        // Behind our hull: a faint bracket, no text.
+        let hidden = frame.occluded(target);
+        let c = if hidden { c.scale(0.35) } else { c };
         let k = 10.0;
         let pts = [p + Vec2::new(0.0, -k), p + Vec2::new(k, 0.0), p + Vec2::new(0.0, k), p + Vec2::new(-k, 0.0)];
         for j in 0..4 {
             frame.hud_line(pts[j], pts[(j + 1) % 4], c);
         }
-        let label = format!("{name} {range}");
-        frame.text(p + Vec2::new(-text_size(&label).x / 2.0, 14.0), &label, c);
+        if !hidden {
+            let label = format!("{name} {range}");
+            frame.text(p + Vec2::new(-text_size(&label).x / 2.0, 14.0), &label, c);
+        }
         return;
     }
     // Off screen: direction in camera space, pinned to an inset ellipse.

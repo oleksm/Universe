@@ -71,3 +71,18 @@ between 4105 and 4435 m frame to frame.
   the camera moved. So the planet randomly lit its own night side (up to ~60% brightness), frame
   to frame. Now planetshine is worked out from the object's true world position, and the
   reflector never lights itself (`Frame::fill_at`).
+
+## Third pass: labels showing through our hull
+
+User: "my ship is transparent so everything goes through it" / "not everything, just text is
+coming through but it looks wierd"
+
+The HUD (text, markers) is its own layer, drawn over the scene without depth. So a label
+anchored on something behind our ship was drawn over the hull.
+- **Our hull is now an occluder for labels.** `Frame::occluder` registers it, and
+  `Frame::occluded(p)` tests the line of sight from the camera to `p` against the hull's actual
+  triangles (`WireModel::ray_hit`). A point within the hull itself (its own label) isn't hidden.
+- **Behind the hull:**
+  - body, gate and craft names, and the guidance path's distance, are hidden;
+  - brackets and contact boxes are drawn faint, with no text, so a target behind us is still
+    shown.
