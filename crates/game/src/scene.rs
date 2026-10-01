@@ -64,7 +64,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     universe_prof::time("draw/scene/crafts", || crafts(frame, app));
     universe_prof::time("draw/scene/weapons fire", || weapons_fire(frame, app));
     if app.show_labels {
-        universe_prof::time("draw/scene/labels", || labels(frame, app));
+        universe_prof::time("draw/scene/labels", || frame.anchored(|frame| labels(frame, app)));
     }
 }
 
@@ -372,10 +372,11 @@ fn crafts(frame: &mut Frame, app: &App) {
             frame.line(pos + back * 16.0, pos + back * (26.0 + 40.0 * c.ship.throttle), Color::hex(0xffa040));
         }
         if pos.distance(cam) < 20_000.0
-            && !frame.occluded(pos)
             && let Some(p) = frame.project(pos)
         {
-            frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), tc.scale(0.8));
+            frame.anchored(|frame| {
+                frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), tc.scale(0.8));
+            });
         }
     }
 }
@@ -610,9 +611,11 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
         // Label the next frame ahead with its distance.
         if first {
             first = false;
-            if let Some(p) = frame.project(position + up * size * 0.4).filter(|_| !frame.occluded(position + up * size * 0.4)) {
+            if let Some(p) = frame.project(position + up * size * 0.4) {
                 let label = crate::fmt::distance(position.distance(ship));
-                frame.text(p + universe_engine::glam::Vec2::new(4.0, -12.0), &label, c);
+                frame.anchored(|frame| {
+                    frame.text(p + universe_engine::glam::Vec2::new(4.0, -12.0), &label, c);
+                });
             }
         }
     }
@@ -782,7 +785,7 @@ struct Labels {
 
 impl Labels {
     fn add(&mut self, frame: &mut Frame, at: DVec3, text: &str, c: Color) {
-        let Some(p) = frame.project(at).filter(|_| !frame.occluded(at)) else { return };
+        let Some(p) = frame.project(at) else { return };
         let size = frame.size();
         if p.x < -50.0 || p.y < 0.0 || p.x > size.x || p.y > size.y {
             return;

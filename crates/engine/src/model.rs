@@ -62,42 +62,6 @@ pub struct WireModel {
 }
 
 impl WireModel {
-    /// The nearest distance along a ray (model space; `dir` normalised) at
-    /// which it hits a face, if it does.
-    pub fn ray_hit(&self, origin: Vec3, dir: Vec3) -> Option<f32> {
-        let mut best: Option<f32> = None;
-        for f in &self.faces {
-            let [a, b, c] = f.map(|i| self.positions[i as usize]);
-            let (e1, e2) = (b - a, c - a);
-            let h = dir.cross(e2);
-            let det = e1.dot(h);
-            if det.abs() < 1e-9 {
-                continue;
-            }
-            let inv = 1.0 / det;
-            let s = origin - a;
-            let u = s.dot(h) * inv;
-            if !(0.0..=1.0).contains(&u) {
-                continue;
-            }
-            let q = s.cross(e1);
-            let v = dir.dot(q) * inv;
-            if v < 0.0 || u + v > 1.0 {
-                continue;
-            }
-            let t = e2.dot(q) * inv;
-            if t > 0.0 && best.is_none_or(|b| t < b) {
-                best = Some(t);
-            }
-        }
-        best
-    }
-
-    /// The radius of the sphere about the origin holding every vertex.
-    pub fn radius(&self) -> f32 {
-        self.positions.iter().map(|p| p.length()).fold(0.0, f32::max)
-    }
-
     /// Unit sphere with `meridians` longitude lines and `parallels` latitude lines
     /// (excluding the poles). `detail` subdivides each line so it stays round.
     pub fn globe(meridians: u32, parallels: u32, detail: u32) -> Self {
@@ -206,18 +170,3 @@ impl WireModel {
     }
 }
 
-#[cfg(test)]
-mod ray_tests {
-    use super::*;
-
-    #[test]
-    fn a_ray_hits_the_near_face_of_a_cube_and_misses_beside_it() {
-        let corners: Vec<Vec3> = (0..8).map(|i| Vec3::new(if i & 1 == 0 { -1.0 } else { 1.0 }, if i & 2 == 0 { -1.0 } else { 1.0 }, if i & 4 == 0 { -1.0 } else { 1.0 })).collect();
-        let cube = WireModel::convex_hull(&corners);
-        let hit = cube.ray_hit(Vec3::new(0.2, 0.3, 10.0), Vec3::NEG_Z).unwrap();
-        assert!((hit - 9.0).abs() < 1e-4, "{hit}");
-        assert!(cube.ray_hit(Vec3::new(1.5, 0.0, 10.0), Vec3::NEG_Z).is_none());
-        assert!(cube.ray_hit(Vec3::new(0.0, 0.0, 10.0), Vec3::Z).is_none());
-        assert!((cube.radius() - 3f32.sqrt()).abs() < 1e-5);
-    }
-}

@@ -72,17 +72,27 @@ between 4105 and 4435 m frame to frame.
   to frame. Now planetshine is worked out from the object's true world position, and the
   reflector never lights itself (`Frame::fill_at`).
 
-## Third pass: labels showing through our hull
+## Third pass: HUD showing through our hull
 
 User: "my ship is transparent so everything goes through it" / "not everything, just text is
-coming through but it looks wierd"
+coming through but it looks wierd". Then, after a first attempt: "stil wiered even worse - text
+kees overlapping to some level then hides. Target locks and guidance are still coming through."
 
-The HUD (text, markers) is its own layer, drawn over the scene without depth. So a label
-anchored on something behind our ship was drawn over the hull.
-- **Our hull is now an occluder for labels.** `Frame::occluder` registers it, and
-  `Frame::occluded(p)` tests the line of sight from the camera to `p` against the hull's actual
-  triangles (`WireModel::ray_hit`). A point within the hull itself (its own label) isn't hidden.
-- **Behind the hull:**
-  - body, gate and craft names, and the guidance path's distance, are hidden;
-  - brackets and contact boxes are drawn faint, with no text, so a target behind us is still
-    shown.
+The HUD (text, brackets, markers) is its own layer over the scene, without depth, so whatever it
+marks behind our ship was drawn over the hull. The first attempt (hiding a whole label when the
+point it marks was behind the hull, by a CPU ray test) was wrong: a label overhung the hull,
+then popped out all at once.
+
+**Fix: per-pixel hull mask.**
+- **Occluders:** `Frame::occluder` registers our ship (it's drawn as usual too). The renderer
+  draws it again into a low-res mask (`R8Unorm`), depth-tested against the scene's depth, which
+  is now stored for this. So the mask is where the hull is actually seen.
+- **Anchored HUD:** HUD drawn inside `Frame::anchored(...)` carries a flag in its vertices' z.
+  The HUD shader (`fs_hud`) discards those pixels wherever the mask is set: text, brackets and
+  boxes are cut along the hull's silhouette, as if behind it.
+- **Anchored:**
+  - labels (bodies, gates, stars), craft names, the guide path's distance;
+  - contact boxes and ranges, the locked target's bracket and motion arrow;
+  - the nav target marker, turret markers, the impact marker, the reference body's bracket.
+- **Not anchored (instruments, always on top):** the gunsight and gimbal ring, the lead pip,
+  the velocity / prograde / retrograde markers, the nose cue, and the status text.
