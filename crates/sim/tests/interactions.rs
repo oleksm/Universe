@@ -409,6 +409,11 @@ fn a_miner_digs_ore_into_its_hold_the_rock_remembers_and_a_station_buys_it() {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
     assert!(matches!(u.ship.state, ShipState::Anchored { .. }), "{:?}", u.events);
+    // Anchored, the pilot can get up and walk about the ship.
+    u.walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 1.0 / 60.0);
+    u.walk(&universe_sim::world::WalkCommands::default(), 1.0 / 60.0);
+    assert!(!u.crew.seated(), "up out of the seat");
+    u.walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 1.0 / 60.0);
     u.command(&ShipCommands { excavate: Some(true), ..u.ship.holding() });
     // A tonne at 10 kg/s.
     for _ in 0..(105 * 60) {

@@ -506,7 +506,7 @@ impl Universe {
     pub fn walk(&mut self, c: &WalkCommands, real_dt: f64) {
         let logged = *c;
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Walk(logged, real_dt)));
-        if self.events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) || !self.ship.is_flying() && !matches!(self.ship.state, ShipState::Landed { .. }) {
+        if self.events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) || !self.ship.is_flying() && !matches!(self.ship.state, ShipState::Landed { .. } | ShipState::Anchored { .. }) {
             self.crew = Person::default();
         }
         let sys = self.ship_system();
