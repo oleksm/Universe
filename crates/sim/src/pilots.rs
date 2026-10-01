@@ -146,6 +146,9 @@ impl Pilot {
     }
 }
 
+/// Defence turrets: where each is, how it moves, how far it reaches.
+pub type Guns = Arc<Vec<(DVec3, DVec3, f64)>>;
+
 /// What pilots read: the world as it stood at the end of a tick.
 pub struct PilotView {
     pub tick: u64,
@@ -164,7 +167,7 @@ pub struct PilotView {
     /// Bodies' positions, and the defence turrets' (where and how they move),
     /// per system with crafts in it.
     pub rails: HashMap<usize, Arc<Vec<DVec3>>>,
-    pub turrets: HashMap<usize, Arc<Vec<(DVec3, DVec3)>>>,
+    pub turrets: HashMap<usize, Guns>,
 }
 
 /// What a pilot posts after thinking.
@@ -260,7 +263,7 @@ impl Bus for PoolLink<'_> {
         self.view.board.peek_corridor(self.system, body, self.id)
     }
 
-    fn turrets(&mut self) -> Vec<(DVec3, DVec3)> {
+    fn turrets(&mut self) -> Vec<(DVec3, DVec3, f64)> {
         match self.view.turrets.get(&self.system) {
             Some(t) => (**t).clone(),
             None => turret_motions(&self.view.charts, self.system, &self.sys, self.view.time, &self.rails()),
@@ -324,14 +327,20 @@ fn seen(ship: &Ship, pending: &mut Vec<(u64, ShipCommands)>, tick: u64) -> Ship 
 }
 
 /// Where system `system`'s defence turrets are at `t`, and how they move.
-pub(crate) fn turret_motions(charts: &Charts, system: usize, sys: &StarSystem, t: f64, positions: &[DVec3]) -> Vec<(DVec3, DVec3)> {
-    universe_world::turrets::turrets(charts.seed, system, sys).iter().map(|tu| tu.motion(sys, t, positions)).collect()
+pub(crate) fn turret_motions(charts: &Charts, system: usize, sys: &StarSystem, t: f64, positions: &[DVec3]) -> Vec<(DVec3, DVec3, f64)> {
+    universe_world::turrets::turrets(charts.seed, system, sys)
+        .iter()
+        .map(|tu| {
+            let (p, v) = tu.motion(sys, t, positions);
+            (p, v, tu.range())
+        })
+        .collect()
 }
 
 /// What pilot `i` makes of the ships around it (radar, and the pirates'
 /// transponders): shelter is real (docked or landed, or under a turret's guns).
-fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[(DVec3, DVec3)]) -> Vec<Sighting> {
-    let sheltered = |s: &Snap| s.landed || guns.iter().any(|(p, _)| p.distance(s.position) < universe_world::turrets::TURRET_RANGE + universe_avionics::hunter::SHELTER_MARGIN);
+fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[(DVec3, DVec3, f64)]) -> Vec<Sighting> {
+    let sheltered = |s: &Snap| s.landed || guns.iter().any(|(p, _, reach)| p.distance(s.position) < reach + universe_avionics::hunter::SHELTER_MARGIN);
     view.snaps
         .iter()
         .enumerate()

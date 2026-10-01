@@ -1028,12 +1028,11 @@ fn sun_glare(frame: &mut Frame, app: &App) {
 /// Defence turrets: a small marker on each in view within 60 km (SAM by it
 /// when close), and, while we're aggressed, the reach of their guns as red rings.
 fn turret_markers(frame: &mut Frame, app: &App) {
-    use universe_sim::world::turrets::TURRET_RANGE;
     let me = app.view.ship_pos;
     let hunted = app.v.aggressed_until.is_some();
     let cam = frame.camera.position;
     let size = frame.size();
-    for (_, at) in &app.turrets {
+    for (turret, at) in &app.turrets {
         let d = at.distance(me);
         if d > 60_000.0 {
             continue;
@@ -1054,7 +1053,7 @@ fn turret_markers(frame: &mut Frame, app: &App) {
             let pts: Vec<Option<Vec2>> = (0..=32)
                 .map(|i| {
                     let a = i as f64 / 32.0 * std::f64::consts::TAU;
-                    frame.project(*at + (u * a.cos() + v * a.sin()) * TURRET_RANGE)
+                    frame.project(*at + (u * a.cos() + v * a.sin()) * turret.range())
                 })
                 .collect();
             for w in pts.windows(2) {

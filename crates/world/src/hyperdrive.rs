@@ -38,26 +38,38 @@ pub fn switch(sys: &StarSystem, ship: &mut Ship, c: &HyperdriveCommand, t: f64, 
         return;
     }
     if ship.hyperdrive {
-        drop_out(sys, ship, c.exit_velocity, t, positions, events);
+        drop_out(sys, ship, c.exit_velocity, t, positions, true, events);
     } else if ship.hyper_jam > 0.0 {
         // Hits disrupt the drive: it won't engage for a while.
         events.push(ShipEvent::HyperdriveJammed { seconds: ship.hyper_jam });
         return;
     } else {
+        ship.hyper_engaged = Some((t, ship.throttle, ship.velocity));
         ship.hyperdrive = true;
         events.push(ShipEvent::HyperdriveEngaged);
     }
     ship.throttle = 0.0;
 }
 
+/// A drive dropping out this soon after it was switched on hasn't really
+/// run (a planet in the way): the ship keeps the throttle and velocity it had (s).
+const FALSE_START: f64 = 1.0;
+
 /// Out of hyperdrive with `exit` velocity, or co-moving with the dominant body.
-fn drop_out(sys: &StarSystem, ship: &mut Ship, exit: Option<DVec3>, t: f64, positions: &[DVec3], events: &mut Vec<ShipEvent>) {
+/// (`ordered`: by its pilot, not on its own: it doesn't give back what it had.)
+fn drop_out(sys: &StarSystem, ship: &mut Ship, exit: Option<DVec3>, t: f64, positions: &[DVec3], ordered: bool, events: &mut Vec<ShipEvent>) {
     ship.velocity = match exit {
         Some(v) => v,
         None => sys.velocity(sys.dominant(ship.position, positions), t),
     };
     ship.hyperdrive = false;
     ship.throttle = 0.0;
+    if let Some((since, throttle, velocity)) = ship.hyper_engaged.take()
+        && !ordered
+        && t - since < FALSE_START
+    {
+        (ship.throttle, ship.velocity) = (throttle, velocity);
+    }
     events.push(ShipEvent::HyperdriveDisengaged);
 }
 
@@ -81,7 +93,7 @@ pub fn cruise(
         // (Carried along with the frame for the frame, as the bodies were.)
         let base = cmd.frame_velocity.unwrap_or_else(|| sys.velocity(sys.dominant(ship.position, positions), t));
         ship.position += base * (real_dt * warp);
-        drop_out(sys, ship, cmd.exit_velocity, t, positions, events);
+        drop_out(sys, ship, cmd.exit_velocity, t, positions, true, events);
         return;
     }
     let p = ship.position;
@@ -133,7 +145,7 @@ pub fn cruise(
     });
     if !cmd.steering && clearance < margin && along > 0.0 && miss < 1.5 * radius && !approach_clear {
         ship.position = carried;
-        drop_out(sys, ship, cmd.exit_velocity, t, positions, events);
+        drop_out(sys, ship, cmd.exit_velocity, t, positions, false, events);
         return;
     }
 
@@ -147,7 +159,7 @@ pub fn cruise(
     let inside = sys.bodies.iter().zip(positions).any(|(b, &c)| !b.kind.artificial() && c.distance(next) < b.max_radius() + INTERLOCK);
     if inside {
         ship.position = carried;
-        drop_out(sys, ship, cmd.exit_velocity, t, positions, events);
+        drop_out(sys, ship, cmd.exit_velocity, t, positions, false, events);
         return;
     }
     ship.position = next;
@@ -209,6 +221,37 @@ mod tests {
         let expect = b.rail.atmosphere.map_or(ground, |a| a.top.max(ground));
         eprintln!("dropped out at {:.0} km (air top {:?} km)", alt / 1000.0, b.rail.atmosphere.map(|a| a.top / 1000.0));
         assert!(alt > 0.8 * expect && alt < 1.2 * expect, "altitude {alt:.0}, expected about {expect:.0}");
+    }
+
+    #[test]
+    fn a_drive_that_drops_straight_out_leaves_the_throttle_and_speed_alone() {
+        let mut p = Probe::new(42);
+        let sys = p.sys();
+        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
+        // Nose down at it, engine full.
+        let pos = p.positions();
+        let up = (p.ship.position - pos[planet]).normalize();
+        let b = &sys.bodies[planet];
+        // (Half way down to where an untargeted drive drops out: it won't run.)
+        let ground = b.max_radius() - b.rail.radius + GROUND_MARGIN;
+        let margin = b.rail.atmosphere.map_or(ground, |a| a.top.max(ground));
+        p.ship.position = pos[planet] + up * (b.rail.radius + 0.5 * margin);
+        p.ship.velocity = sys.velocity(planet, p.world.time) + up * 30.0;
+        p.ship.orientation = glam::DQuat::from_rotation_arc(DVec3::NEG_Z, -up);
+        p.ship.state = crate::ship::ShipState::Flying;
+        p.ship.hyperdrive = false;
+        p.set_throttle(1.0);
+        let before = p.ship.velocity;
+        p.toggle_hyperdrive();
+        for _ in 0..30 {
+            p.step(1.0 / 60.0, 1.0);
+            if !p.ship.hyperdrive {
+                break;
+            }
+        }
+        assert!(!p.ship.hyperdrive, "the planet's in the way: it drops out");
+        assert_eq!(p.ship.throttle, 1.0, "the engine as it was");
+        assert!((p.ship.velocity - before).length() < 1.0, "the speed as it was");
     }
 
     #[test]

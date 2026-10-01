@@ -309,14 +309,14 @@ impl Avionics {
     /// and the collision warning a few times a second. If what the ship is
     /// doing now runs into something within `LOOK_AHEAD`, it breaks off away
     /// from it, hard, until the path is clear again.
-    fn keep_clear(&mut self, sys: &StarSystem, ship: &Ship, positions: &[DVec3], now: f64, others: &[Sighting], guns: &[(DVec3, DVec3)]) -> DVec3 {
+    fn keep_clear(&mut self, sys: &StarSystem, ship: &Ship, positions: &[DVec3], now: f64, others: &[Sighting], guns: &[(DVec3, DVec3, f64)]) -> DVec3 {
         let mut evade = avoid(sys, ship, positions, now);
         // Defence turrets: stay out of their reach, braking in time.
         let brake = 0.5 * ship.main_accel();
-        for &(at, velocity) in guns {
+        for &(at, velocity, reach) in guns {
             let off = ship.position - at;
             let dist = off.length();
-            let edge = universe_world::turrets::TURRET_RANGE + GUNS_MARGIN;
+            let edge = reach + GUNS_MARGIN;
             let out = off / dist.max(1.0);
             let closing = -(ship.velocity - velocity).dot(out);
             let allowed = 0.9 * (2.0 * brake * (dist - edge).max(0.0)).sqrt();

@@ -17,11 +17,17 @@ use crate::nav::{Clearance, PadSlot, Phase};
 
 /// Height of the entry point above the pad, where the vertical descent starts (m).
 pub const ENTRY_ALTITUDE: f64 = 3000.0;
-/// Ships waiting for a pad hold this high over the port (m), on a ring this
-/// wide (m), their places this far apart around it (rad).
-pub const HOLD_ALTITUDE: f64 = 6000.0;
-pub const HOLD_RING: f64 = 4000.0;
-const HOLD_SPACING: f64 = 0.7;
+/// Ships waiting for a pad fly a circle round the port, level, this high
+/// over it and this wide (m), at this speed (m/s), in places this many
+/// round (100 places: 630 m apart), the whole circle turning so each keeps
+/// to its own. (Under the port's defence turrets: see `PORT_TURRET_RANGE`.)
+pub const HOLD_ALTITUDE: f64 = 12_000.0;
+pub const HOLD_RADIUS: f64 = 10_000.0;
+pub const HOLD_SPEED: f64 = 120.0;
+pub const HOLD_PLACES: usize = 100;
+/// Within this of its place, a waiting ship flies the circle level; farther
+/// off, it flies there as on an approach (m).
+const HOLD_JOIN: f64 = 5_000.0;
 /// Horizontal distance from the pad within which the descent phase applies (m).
 const DESCENT_RADIUS: f64 = 2500.0;
 /// Top speed while routing around the planet (m/s).
@@ -59,14 +65,12 @@ impl PadFrame {
             PadSlot::Center => Self::new(sys, port, t, positions),
             PadSlot::Pad(k) => Self::at(sys, port, spaceport::pad_direction(sys, port, k), 0.0, t, positions),
             PadSlot::Hold(n) => {
-                // A place on the holding ring, raised so that its entry point
-                // is where to wait.
+                // Its place on the holding circle now, raised so that its
+                // entry point is the place.
                 let sp = &sys.spaceports[port];
                 let r = sys.bodies[sp.body].rail.radius;
-                let (north, east) = spaceport::tangent(sp.direction);
-                let a = n as f64 * HOLD_SPACING;
-                let dir = (sp.direction * r + (north * a.cos() + east * a.sin()) * HOLD_RING).normalize();
-                Self::at(sys, port, dir, HOLD_ALTITUDE - ENTRY_ALTITUDE, t, positions)
+                let place = sp.direction * (r + HOLD_ALTITUDE) + hold_offset(sp.direction, n, t).0;
+                Self::at(sys, port, place.normalize(), place.length() - r - ENTRY_ALTITUDE, t, positions)
             }
         }
     }
@@ -242,6 +246,49 @@ pub fn predict(pad: &PadFrame, ship: &Ship, terrain: Option<&Terrain>) -> (Vec<D
         points.push(c + back * r);
     }
     (points, None)
+}
+
+/// Holding place `n` on port direction `dir`'s circle at `t`: its offset from
+/// the circle's middle, and its direction of travel (body frame).
+fn hold_offset(dir: DVec3, n: usize, t: f64) -> (DVec3, DVec3) {
+    let (north, east) = spaceport::tangent(dir);
+    let a = n as f64 * std::f64::consts::TAU / HOLD_PLACES as f64 + HOLD_SPEED / HOLD_RADIUS * t;
+    ((north * a.cos() + east * a.sin()) * HOLD_RADIUS, east * a.cos() - north * a.sin())
+}
+
+/// Waiting for a pad (place `n`): fly the holding circle round the port at
+/// `pad` (its middle pad), level, belly to the ground, nose along the circle,
+/// lift thrusters holding the height. Farther than `HOLD_JOIN` from the
+/// place, fly there first.
+pub fn hold(pad: &PadFrame, n: usize, ship: &Ship, gravity: DVec3, t: f64, h: f64) -> Command {
+    let dir = pad.rotation.inverse() * pad.up;
+    let (offset, along) = hold_offset(dir, n, t);
+    let (offset, along) = (pad.rotation * offset, pad.rotation * along);
+    let place = pad.pad + pad.up * HOLD_ALTITUDE + offset;
+    let gap = place - ship.position;
+    if gap.length() > HOLD_JOIN {
+        // On the way: as an approach, to a frame raised to the place.
+        let mut joining = *pad;
+        joining.pad = place - pad.up * ENTRY_ALTITUDE;
+        return Command { phase: Phase::Hold, ..autopilot(&joining, ship, gravity, Phase::Approach, h) };
+    }
+    // Keep to the place as it goes round: its velocity, closing what's left,
+    // the pull round the circle, and against gravity.
+    let place_velocity = pad.frame_velocity(place) + along * HOLD_SPEED;
+    let desired = place_velocity + (gap * 0.05).clamp_length_max(60.0);
+    let inward = -offset.normalize_or_zero() * (HOLD_SPEED * HOLD_SPEED / HOLD_RADIUS);
+    let accel = (desired - ship.velocity) * gain(0.8, h) + inward - gravity;
+    // Level: belly to the ground, nose along the circle.
+    let up = (ship.position - pad.body_center).normalize();
+    let target = upright(up, along);
+    let controls = attitude(ship, target, pad.angular_velocity, h);
+    // The engine pushes along the nose (when it's along the circle); the
+    // thrusters do the rest.
+    let ahead = ship.forward().dot(accel);
+    let throttle = if ship.forward().dot(along) > 0.9 { (ahead / ship.main_accel()).clamp(0.0, 1.0) } else { 0.0 };
+    let residual = accel - ship.forward() * (throttle * ship.main_accel());
+    let rcs = ship.thruster_command(ship.orientation.inverse() * residual);
+    Command { controls, throttle, rcs, phase: Phase::Hold, attitude: target }
 }
 
 /// The landing autopilot. `gravity` is the gravitational acceleration at the

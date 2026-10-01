@@ -19,6 +19,9 @@ use crate::weapons::{Slug, GUN_MUZZLE};
 
 /// How far a turret reaches (m): twice a ship's gun range.
 pub const TURRET_RANGE: f64 = 6_000.0;
+/// A spaceport's turrets reach farther: SAMs covering the holding circle
+/// over the port (its rounds fly 30 km).
+pub const PORT_TURRET_RANGE: f64 = 20_000.0;
 /// Rounds per second.
 pub const TURRET_RATE: f64 = 5.0;
 /// Turrets' ids in combat start here (ships' are small numbers).
@@ -34,6 +37,14 @@ pub struct Turret {
 }
 
 impl Turret {
+    /// How far it reaches (m).
+    pub fn range(&self) -> f64 {
+        match self.facility {
+            Facility::Spaceport(_) => PORT_TURRET_RANGE,
+            _ => TURRET_RANGE,
+        }
+    }
+
     /// Where it is and how it moves at `t` (bodies at `positions`).
     pub fn motion(&self, sys: &StarSystem, t: f64, positions: &[DVec3]) -> (DVec3, DVec3) {
         let b = &sys.bodies[self.body];
@@ -125,7 +136,7 @@ impl crate::world::World {
     /// Is `point` in `system` covered by a turret (within its reach, and
     /// `margin` more)?
     pub fn covered(&self, system: usize, point: DVec3, margin: f64) -> bool {
-        self.turret_motions(system).iter().any(|(_, p, _)| p.distance(point) < TURRET_RANGE + margin)
+        self.turret_motions(system).iter().any(|(t, p, _)| p.distance(point) < t.range() + margin)
     }
 
     /// Give turret `id`'s gun its orders (they hold until changed).

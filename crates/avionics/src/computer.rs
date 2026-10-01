@@ -45,10 +45,14 @@ pub fn autopilot(input: &AutopilotInput) -> Command {
             let frame = StationFrame::new(sys, station, t, positions);
             docking::autopilot(&frame, ship, phase, may_enter, h)
         }
-        NavTarget::Spaceport(port) => {
-            let pad = PadFrame::for_slot(sys, port, pad, t, positions);
-            landing::autopilot(&pad, ship, sys.gravity(ship.position, positions), phase, h)
-        }
+        NavTarget::Spaceport(port) => match pad {
+            // Waiting for a pad: the holding circle.
+            crate::nav::PadSlot::Hold(n) => landing::hold(&PadFrame::new(sys, port, t, positions), n, ship, sys.gravity(ship.position, positions), t, h),
+            _ => {
+                let pad = PadFrame::for_slot(sys, port, pad, t, positions);
+                landing::autopilot(&pad, ship, sys.gravity(ship.position, positions), phase, h)
+            }
+        },
         NavTarget::Gate(g) => {
             let frame = GateFrame::new(sys, g, t, positions);
             gate::autopilot(&frame, ship, phase, may_enter, h)

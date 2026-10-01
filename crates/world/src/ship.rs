@@ -128,6 +128,11 @@ pub struct Ship {
     /// device setting).
     #[serde(skip, default = "cruise")]
     pub hyper_orders: HyperdriveCommand,
+    /// When the drive was last switched on (world time), and the throttle and
+    /// velocity the ship had then: a drive that drops straight out (a planet
+    /// in the way) gives them back. (Not saved.)
+    #[serde(skip)]
+    pub hyper_engaged: Option<(f64, f64, DVec3)>,
     /// The hull's skin temperature (K): see `heat`.
     #[serde(default = "skin_ambient")]
     pub skin_temp: f64,
@@ -173,6 +178,7 @@ impl Ship {
             skin_temp: crate::heat::AMBIENT,
             hyper_orders: HyperdriveCommand::CRUISE,
             locked_at: f64::NEG_INFINITY,
+            hyper_engaged: None,
         }
     }
 

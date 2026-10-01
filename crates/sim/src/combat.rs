@@ -113,7 +113,7 @@ impl Universe {
                 .filter(|(_, s)| s.system == system && s.aggressed && (s.flying || s.landed))
                 .map(|(id, s)| Quarry { id, position: s.position, velocity: s.velocity })
                 .collect();
-            for (k, (_, at, velocity)) in self.world.turret_motions_at(system, seen).into_iter().enumerate() {
+            for (k, (turret, at, velocity)) in self.world.turret_motions_at(system, seen).into_iter().enumerate() {
                 let id = universe_world::turrets::turret_id(system, k);
                 let gun = self.world.turret_gun(id).map_or_else(|| (quarry.first().map_or(at, |q| q.position) - at).normalize_or(DVec3::Y), |g| g.aim);
                 let clear = |p: DVec3| {
@@ -121,7 +121,7 @@ impl Universe {
                     universe_physics::ray(&sys.bodies, &positions, at + d.normalize() * 10.0, d.normalize(), d.length() - 30.0, seen, &[]).is_none()
                 };
                 let gravity = |p: DVec3| sys.gravity(p, &positions);
-                let c = self.gunners.entry(id).or_default().orders(seen, at, velocity, gun, &quarry, clear, gravity, latency);
+                let c = self.gunners.entry(id).or_default().orders(seen, at, velocity, gun, turret.range(), &quarry, clear, gravity, latency);
                 orders.push((id, c));
             }
         }

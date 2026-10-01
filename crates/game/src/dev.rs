@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.engine.universe().world.home_system;
@@ -142,6 +142,37 @@ pub fn apply(app: &mut App, name: &str) {
                         break;
                     }
                 }
+            }
+        }
+        "holding" => {
+            // The port's nine pads taken (long stops), and we're queued: the
+            // holding circle 12 km over the port, two minutes in.
+            app.mode = Mode::Pilot;
+            let port = sys.spaceports.iter().position(|p| p.body == planet).expect("spaceport on the station's planet");
+            let u = app.engine.universe();
+            for k in 0..universe_sim::world::spaceport::PADS {
+                u.crafts[k].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), k);
+                u.crafts[k].system = home;
+            }
+            {
+                let mut pilots = u.pilots();
+                for p in pilots.iter_mut().take(universe_sim::world::spaceport::PADS) {
+                    p.avionics.route.stops = vec![universe_sim::Stop { system: home, target: NavTarget::Spaceport(port) }];
+                    p.avionics.route.next = 0;
+                    p.avionics.route.active = true;
+                    p.avionics.route.dwell_until = Some(1.0e12);
+                    p.avionics.pirate = false;
+                }
+            }
+            let pad = PadFrame::new(&sys, port, t, &positions);
+            u.ship.position = pad.pad + pad.up * 20_000.0;
+            u.ship.velocity = pad.frame_velocity(u.ship.position);
+            u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            u.set_nav_target(Some(NavTarget::Spaceport(port)));
+            u.request_clearance();
+            u.toggle_autopilot();
+            for _ in 0..60 * 60 {
+                u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
         }
         "gate" | "gateauto" | "transit" | "gatearrive" => {

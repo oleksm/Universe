@@ -46,7 +46,8 @@ pub trait Bus {
     fn request_corridor(&mut self, body: usize) -> Option<usize>;
 
     /// The defence turrets of the ship's system (charted): where they are and how they move.
-    fn turrets(&mut self) -> Vec<(DVec3, DVec3)>;
+    /// (Where each is, how it moves, and how far it reaches.)
+    fn turrets(&mut self) -> Vec<(DVec3, DVec3, f64)>;
 
     /// Set the devices (they hold the settings until changed).
     fn actuate(&mut self, c: &ShipCommands);

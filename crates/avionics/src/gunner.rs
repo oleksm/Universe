@@ -9,7 +9,6 @@
 
 use glam::DVec3;
 use universe_protocol::TurretCommand;
-use universe_world::turrets::TURRET_RANGE;
 use universe_world::weapons::{GUN_MUZZLE, SLUG_LIFETIME};
 
 use crate::fire_control::{lead, Track};
@@ -43,6 +42,7 @@ impl Gunner {
         at: DVec3,
         velocity: DVec3,
         gun: DVec3,
+        reach: f64,
         quarry: &[Quarry],
         clear: impl Fn(DVec3) -> bool,
         gravity: impl Fn(DVec3) -> DVec3,
@@ -50,7 +50,7 @@ impl Gunner {
     ) -> TurretCommand {
         let target = quarry
             .iter()
-            .filter(|q| q.position.distance(at) < TURRET_RANGE && clear(q.position))
+            .filter(|q| q.position.distance(at) < reach && clear(q.position))
             .min_by(|a, b| a.position.distance(at).total_cmp(&b.position.distance(at)));
         let Some(q) = target else {
             self.track = None;

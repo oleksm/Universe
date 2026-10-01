@@ -98,8 +98,19 @@ fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
     run(&mut u, 120.0, |_| false);
     let c = u.pilots()[9].avionics.clearance.unwrap();
     assert_eq!(c.phase, Phase::Hold);
-    let alt = u.crafts[9].ship.position.distance(pad.body_center) - pad.body_radius;
-    assert!(alt > 3_000.0, "holding high ({alt:.0} m)\n{}", incidents(&u));
+    // On the holding circle round the port: 12 km up, 10 km out, level,
+    // flying round it.
+    use universe_sim::landing::{HOLD_ALTITUDE, HOLD_RADIUS, HOLD_SPEED};
+    let pad = PadFrame::new(&sys, port, u.world.time, &positions(&mut u).1);
+    let s = &u.crafts[9].ship;
+    let rel = s.position - pad.pad;
+    let (up, out) = (rel.dot(pad.up), (rel - pad.up * rel.dot(pad.up)).length());
+    let level = (s.orientation * DVec3::Y).dot((s.position - pad.body_center).normalize());
+    let speed = (s.velocity - pad.frame_velocity(s.position)).length();
+    eprintln!("holding: {up:.0} m up, {out:.0} m out, level {level:.3}, {speed:.0} m/s");
+    assert!((up - HOLD_ALTITUDE).abs() < 1_000.0 && (out - HOLD_RADIUS).abs() < 1_000.0, "on the circle: {up:.0} m up, {out:.0} m out\n{}", incidents(&u));
+    assert!(level > 0.95, "level, belly down ({level:.3})");
+    assert!((speed - HOLD_SPEED).abs() < 30.0, "flying round it ({speed:.0} m/s)");
     // Pad 5's ship leaves (to the far side of the planet): it's freed, and ours.
     let far = pad.body_center - pad.up * (pad.body_radius + 50_000.0);
     place(&mut u, 5, far, pad.frame_velocity(far), pad.body_center);
