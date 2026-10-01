@@ -242,12 +242,16 @@ impl Content {
             let key = d.key.clone();
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
-        let hulls: Registry<ClassSpec> = Registry::build(Self::defs::<ClassSpec>(&packs, "hulls.ron")?)?;
-        for (_, h) in hulls.iter() {
-            if resolve(&shapes, &aliases, &h.shape).is_none() {
-                return Err(format!("hulls.ron '{}': no shape '{}'", h.key, h.shape));
-            }
-        }
+        let hulls: Registry<ClassSpec> = Registry::build(
+            Self::defs::<crate::ship::HullDef>(&packs, "hulls.ron")?
+                .into_iter()
+                .map(|d| {
+                    let key = d.key().to_string();
+                    let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("hulls.ron '{key}': no shape '{}'", d_shape(&d)))?;
+                    d.build(shapes.get(shape)).map_err(|e| format!("hulls.ron '{key}': {e}"))
+                })
+                .collect::<Result<_, String>>()?,
+        )?;
         let goods: Registry<GoodsKind> = Registry::build(Self::defs(&packs, "goods.ron")?)?;
         let kind = |key: &str, whose: &str| resolve(&goods, &aliases, key).ok_or_else(|| format!("{whose}: no kind of goods '{key}'"));
         let ores = Registry::build(
@@ -341,6 +345,11 @@ impl Content {
     pub fn packs(&self) -> &[String] {
         &self.packs
     }
+}
+
+/// A hull definition's shape key.
+fn d_shape(d: &crate::ship::HullDef) -> String {
+    d.shape_key().to_string()
 }
 
 /// `key` in `r`, through the aliases (while loading).
@@ -444,6 +453,10 @@ impl Entry for ClassSpec {
         if self.main_thrust <= 0.0 {
             return Err("no main drive: every ship needs one".into());
         }
+        // (Until the thrust's handled nozzle by nozzle, every direction needs its thrusters.)
+        if self.rcs_thrust <= 0.0 || self.lift_thrust <= 0.0 {
+            return Err("translation thrusters missing in some direction".into());
+        }
         Ok(())
     }
 
@@ -496,7 +509,7 @@ mod tests {
     fn unsound_content_is_refused_with_the_reason() {
         let dir = std::env::temp_dir().join(format!("universe-bad-pack-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(dir.join("hulls.ron"), base("hulls.ron").replacen("main_thrust: 2.7e6", "main_thrust: 0.0", 1)).unwrap();
+        std::fs::write(dir.join("hulls.ron"), base("hulls.ron").replace("role: Main", "role: Rcs")).unwrap();
         let err = Content::load(std::slice::from_ref(&dir)).err().expect("refused");
         let _ = std::fs::remove_dir_all(&dir);
         assert!(err.contains("hull.cobra") && err.contains("main drive"), "{err}");

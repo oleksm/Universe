@@ -147,9 +147,10 @@ mod tests {
         let (lo, hi) = cobra.mesh.extent();
         assert!((hi.x - lo.x - 52.0).abs() < 1e-9, "52 m across the wings: {}", hi.x - lo.x);
         assert!(cobra.solid.volume > 1_000.0 && cobra.solid.volume < 20_000.0, "{} m³", cobra.solid.volume);
-        let nozzles: Vec<_> = cobra.nodes(Role::Nozzle).collect();
-        assert_eq!(nozzles.len(), 2);
-        assert!(nozzles.iter().all(|n| n.dir == DVec3::Z && (n.at.z - 16.0).abs() < 1e-9), "on the rear plate, firing aft");
+        let mains: Vec<_> = cobra.nodes(Role::Nozzle).filter(|n| n.name.starts_with("nozzle_main")).collect();
+        assert_eq!(mains.len(), 2);
+        assert!(mains.iter().all(|n| n.dir == DVec3::Z && (n.at.z - 16.0).abs() < 1e-9), "the main drive on the rear plate, firing aft");
+        assert_eq!(cobra.nodes(Role::Nozzle).count(), 18, "and the thruster quads and belly lift");
         assert!(cobra.node("cockpit").is_some());
         // (Its collision is still the hull's 12 m sphere: the shape takes over in T1.)
         assert!(crate::ship::cobra().radius < cobra.mesh.bound());

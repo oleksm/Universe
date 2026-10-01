@@ -18,8 +18,7 @@ pub const STARTING_HULL: &str = "hull.cobra";
 /// accelerations are its thrusts over its mass as loaded, so a heavy ship is
 /// slow, and one whose lift can't carry its weight can't hover or land on a
 /// big world.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ClassSpec {
     pub key: String,
     pub name: String,
@@ -30,8 +29,11 @@ pub struct ClassSpec {
     /// Fuel tank (kg), and the most cargo the hold carries (kg).
     pub fuel_capacity: f64,
     pub hold_capacity: f64,
-    /// Main engine thrust (N); the translation thrusters', per axis (N); the
-    /// belly lift thrusters', along the ship's +Y (N).
+    /// Its thrusters: where each sits on the shape, which way it pushes, how hard.
+    pub thrusters: Vec<Thruster>,
+    /// What they add up to (derived from `thrusters`): the main drive's push
+    /// along the nose (N); the translation thrusters', in the weakest of
+    /// their directions (N); the belly lift's, along the ship's +Y (N).
     pub main_thrust: f64,
     pub rcs_thrust: f64,
     pub lift_thrust: f64,
@@ -44,6 +46,96 @@ pub struct ClassSpec {
     pub drag_area: f64,
     /// Energy that wrecks the hull (J): see `damage`.
     pub hull_strength: f64,
+}
+
+/// What a thruster is for: the main drive (the throttle), translation (the
+/// thruster controls), or the belly lift (translation up).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+pub enum ThrusterRole {
+    Main,
+    Rcs,
+    Lift,
+}
+
+/// A thruster on a hull: at a nozzle of its shape (metres, shape frame),
+/// pushing along `push` (unit: opposite its exhaust) with up to `thrust` (N).
+#[derive(Clone, Debug, PartialEq)]
+pub struct Thruster {
+    pub nozzle: String,
+    pub role: ThrusterRole,
+    pub at: DVec3,
+    pub push: DVec3,
+    pub thrust: f64,
+}
+
+/// A hull as `hulls.ron` has it: its thrusters by nozzle name.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct HullDef {
+    key: String,
+    name: String,
+    shape: String,
+    dry_mass: f64,
+    fuel_capacity: f64,
+    hold_capacity: f64,
+    thrusters: Vec<ThrusterDef>,
+    turn_rate: f64,
+    roll_rate: f64,
+    radius: f64,
+    drag_area: f64,
+    hull_strength: f64,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ThrusterDef {
+    nozzle: String,
+    role: ThrusterRole,
+    thrust: f64,
+}
+
+impl HullDef {
+    pub(crate) fn key(&self) -> &str {
+        &self.key
+    }
+
+    pub(crate) fn shape_key(&self) -> &str {
+        &self.shape
+    }
+
+    /// The hull, on `shape`: each thruster at its nozzle, and what they add up to.
+    pub(crate) fn build(self, shape: &crate::shape::Shape) -> Result<ClassSpec, String> {
+        let mut thrusters = Vec::new();
+        for t in self.thrusters {
+            let n = shape.node(&t.nozzle).filter(|n| n.role == crate::shape::Role::Nozzle).ok_or_else(|| format!("no nozzle '{}' on {}", t.nozzle, shape.key))?;
+            if !(t.thrust.is_finite() && t.thrust > 0.0) {
+                return Err(format!("thruster at {}: thrust must be positive ({})", t.nozzle, t.thrust));
+            }
+            thrusters.push(Thruster { nozzle: t.nozzle, role: t.role, at: n.at, push: -n.dir, thrust: t.thrust });
+        }
+        // Each role's push along a direction (only thrusters pushing that way count).
+        let along = |role: ThrusterRole, d: DVec3| thrusters.iter().filter(|t| t.role == role).map(|t| t.thrust * t.push.dot(d).max(0.0)).sum::<f64>();
+        let main_thrust = along(ThrusterRole::Main, DVec3::NEG_Z);
+        let lift_thrust = along(ThrusterRole::Lift, DVec3::Y);
+        let rcs_thrust = [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| along(ThrusterRole::Rcs, d)).fold(f64::INFINITY, f64::min);
+        Ok(ClassSpec {
+            key: self.key,
+            name: self.name,
+            shape: self.shape,
+            dry_mass: self.dry_mass,
+            fuel_capacity: self.fuel_capacity,
+            hold_capacity: self.hold_capacity,
+            thrusters,
+            main_thrust,
+            rcs_thrust,
+            lift_thrust,
+            turn_rate: self.turn_rate,
+            roll_rate: self.roll_rate,
+            radius: self.radius,
+            drag_area: self.drag_area,
+            hull_strength: self.hull_strength,
+        })
+    }
 }
 
 impl ClassSpec {
@@ -257,6 +349,19 @@ impl Ship {
         crate::content::content().get(self.class)
     }
 
+    /// Its centre of mass (shape frame, m): its shape's, as a solid.
+    /// (Fuel and cargo are taken as spread like the hull, for now.)
+    pub fn centre_of_mass(&self) -> DVec3 {
+        self.spec().shape().solid.centroid
+    }
+
+    /// Its inertia tensor about its centre of mass (kg·m², body frame): its
+    /// shape's solid, as heavy as the ship is now.
+    pub fn inertia(&self) -> glam::DMat3 {
+        let solid = &self.spec().shape().solid;
+        solid.inertia * (self.mass() / solid.volume)
+    }
+
     /// Room left in the hold (kg).
     pub fn hold_room(&self) -> f64 {
         (self.spec().hold_capacity - self.cargo - self.hopper).max(0.0)
@@ -402,4 +507,34 @@ fn skin_ambient() -> f64 {
 
 fn cruise() -> HyperdriveCommand {
     HyperdriveCommand::CRUISE
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_cobras_thrusters_add_up_to_its_envelope() {
+        let c = cobra();
+        assert_eq!(c.thrusters.len(), 18);
+        assert!((c.main_thrust - 2.7e6).abs() < 1.0, "{}", c.main_thrust);
+        assert!((c.lift_thrust - 2.25e6).abs() < 1.0, "{}", c.lift_thrust);
+        // The same push every way the thrusters push (down, the sides, fore and aft).
+        for d in [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z] {
+            let sum: f64 = c.thrusters.iter().filter(|t| t.role == ThrusterRole::Rcs).map(|t| t.thrust * t.push.dot(d).max(0.0)).sum();
+            assert!((sum - 5.4e5).abs() < 1.0, "{d}: {sum}");
+        }
+        assert!((c.rcs_thrust - 5.4e5).abs() < 1.0);
+    }
+
+    #[test]
+    fn a_ships_inertia_follows_its_shape_and_its_load() {
+        let mut s = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
+        let full = s.inertia();
+        // Wider than it's long: hardest to roll? No — it's flat: yaw (about Y) is hardest.
+        let (pitch, yaw, roll) = (full.x_axis.x, full.y_axis.y, full.z_axis.z);
+        assert!(yaw > pitch && yaw > roll, "pitch {pitch:.3e} yaw {yaw:.3e} roll {roll:.3e}");
+        s.fuel = 0.0;
+        assert!((s.inertia().y_axis.y / yaw - (s.mass() / (s.mass() + s.spec().fuel_capacity))).abs() < 1e-9, "lighter, easier to turn");
+    }
 }
