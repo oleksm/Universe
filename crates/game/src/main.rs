@@ -110,6 +110,8 @@ pub struct App {
     /// to `plan`: each rebuild starts from where the ship is, so the guide
     /// would otherwise jump a little at every one.
     pub plan_prev: Option<Arc<universe_sim::Plan>>,
+    /// The guide frames, set in space along the plan (see `scene::Guide`).
+    pub guide: crate::scene::Guide,
     pub plan_blend: f32,
     /// Real seconds since the plan was rebuilt, its serial, and how long
     /// building it took (real seconds) and how often it's rebuilt.
@@ -215,6 +217,7 @@ impl App {
             plan_serial: 0,
             plan_every: 0.1,
             plan_prev: None,
+            guide: Default::default(),
             plan_blend: 1.0,
             plan_cost: 0.0,
             sim_ms: 0.0,
@@ -809,6 +812,10 @@ impl Game for App {
             self.plan = v.plan.clone();
             self.plan_serial = v.plan_serial;
             self.plan_age = 0.0;
+            match (&self.plan, v.avionics.clearance) {
+                (Some(plan), Some(c)) => self.guide.update(plan, c.target),
+                _ => self.guide.clear(),
+            }
         }
         self.plan_cost = v.plan_cost;
         self.plan_every = v.plan_every;

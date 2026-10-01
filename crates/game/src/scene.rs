@@ -537,8 +537,6 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
             None => now_pos,
         }
     };
-    let place = |p: DVec3| new_place(p);
-    let turn = plan.turn(now);
     let pts = &plan.points;
     if pts.len() < 2 {
         return;
@@ -551,70 +549,142 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
         }
     }
 
-    // Frames are gates placed along the route at fixed moments of absolute
-    // time, `FRAME_STEP` apart (the next `MAX_FRAMES` of them), so they stay
-    // put as the ship flies through them. Each stands across the path, its
-    // center on it: the ship goes through the middle, square on. It is
-    // levelled against the reference (the planet's or station's center), so
-    // it doesn't turn with the ship. Its size is real metres (a share of
-    // the gap to the next), and one that would crowd the last is skipped,
-    // so a slow final descent doesn't pile them up.
-    let duration = pts.last().unwrap().time;
-    let cam = frame.camera.position;
-    let made = plan.start;
-    let mut k = (now / FRAME_STEP).floor() + 1.0;
-    let mut j = 0;
-    let mut first = true;
-    let mut drawn = 0;
-    while k * FRAME_STEP - made <= duration && drawn < MAX_FRAMES {
-        let at = k * FRAME_STEP - made;
-        k += 1.0;
-        while j + 1 < pts.len() && pts[j + 1].time < at {
-            j += 1;
+    app.guide.draw(frame, center_now, now, ship);
+}
+
+/// The guide frames: gates set in space along the planned route, fixed in
+/// the target's own frame (they ride and turn with the station, gate or
+/// planet), at set distances back from the goal along the path: closer
+/// together near it. Where the ship is doesn't move them, so holding still
+/// they hold still, and flying on you go through them. A new plan moves a
+/// frame only if its spot moved by more than a quarter of its spacing.
+#[derive(Default)]
+pub struct Guide {
+    target: Option<universe_sim::NavTarget>,
+    spin: DVec3,
+    /// By rung on the ladder of distances from the goal.
+    frames: std::collections::BTreeMap<u32, GuideFrame>,
+    /// Distance from the goal along the latest plan to the ship.
+    left: f64,
+}
+
+#[derive(Clone, Copy)]
+struct GuideFrame {
+    /// Distance back from the goal along the path (m).
+    from_goal: f64,
+    /// In the target's frame: where, which way the path goes, which way the ship should face.
+    at: DVec3,
+    along: DVec3,
+    facing: DVec3,
+    size: f64,
+    action: Action,
+}
+
+/// The ladder: rung `k`'s distance from the goal, and the gap to the next.
+fn rung(k: u32) -> (f64, f64) {
+    let gap = |d: f64| (0.25 * d).clamp(60.0, 20_000.0);
+    let mut d = 60.0;
+    for _ in 0..k {
+        d += gap(d);
+    }
+    (d, gap(d))
+}
+
+/// Most frames ahead shown.
+const MAX_FRAMES: usize = 16;
+
+impl Guide {
+    pub fn clear(&mut self) {
+        *self = Guide::default();
+    }
+
+    /// A new plan for `target`.
+    pub fn update(&mut self, plan: &Plan, target: universe_sim::NavTarget) {
+        if self.target != Some(target) {
+            self.clear();
+            self.target = Some(target);
         }
-        let (a, b) = (pts[j], pts[(j + 1).min(pts.len() - 1)]);
-        let span = b.time - a.time;
-        let u = if span > 0.0 { ((at - a.time) / span).clamp(0.0, 1.0) } else { 0.0 };
-        let position = blend(a.position.lerp(b.position, u), made + at);
-        let Some(along) = (place(b.position) - place(a.position)).try_normalize() else { continue };
-        let speed = if span > 0.0 { a.position.distance(b.position) / span } else { 0.0 };
-        let world = (speed * FRAME_STEP * 0.3).clamp(15.0, 1.0e4);
-        // Where the ship is slow, keep only every 2nd, 4th… frame (by its
-        // absolute number, so the same ones stay), a frame and a half apart.
-        let stride = (1.5 * world / (speed * FRAME_STEP).max(1e-3)).max(1.0).log2().ceil().exp2().min(64.0);
-        if (k - 1.0).rem_euclid(stride) != 0.0 {
-            continue;
+        // A plan short of the goal has no ladder to measure from: keep what's set.
+        if !plan.arrives || plan.points.len() < 2 {
+            return;
         }
-        drawn += 1;
-        // Far away, keep a minimum on-screen size so the route stays readable.
-        let size = world.max(position.distance(cam) * 0.01);
-        let radial = (position - center_now).normalize_or(DVec3::Y);
-        let level = if along.dot(radial).abs() < 0.95 { radial } else { radial.any_orthonormal_vector() };
-        let right = along.cross(level).normalize();
-        let up = right.cross(along);
-        let (w, h) = (right * size, up * size * 0.4);
-        let c = action_color(a.action);
-        let corners = [position - w - h, position + w - h, position + w + h, position - w + h];
-        for i in 0..4 {
-            frame.line(corners[i], corners[(i + 1) % 4], c);
+        self.spin = plan.spin;
+        let to_frame = universe_engine::glam::DQuat::from_scaled_axis(-plan.spin * plan.start);
+        let body: Vec<DVec3> = plan.points.iter().map(|p| to_frame * (p.position - plan.center)).collect();
+        let n = body.len();
+        let mut from_end = vec![0.0; n];
+        for i in (0..n - 1).rev() {
+            from_end[i] = from_end[i + 1] + body[i].distance(body[i + 1]);
         }
-        // Where the ship will face here: a tick from the center.
-        let fwd = turn * a.orientation.slerp(b.orientation, u) * DVec3::NEG_Z;
-        frame.line(position, position + fwd * size * 0.5, c.scale(0.6));
-        // Label the next frame ahead with its distance.
-        if first {
-            first = false;
-            if let Some(p) = frame.project(position + up * size * 0.4) {
-                let label = crate::fmt::distance(position.distance(ship));
-                frame.text(p + universe_engine::glam::Vec2::new(4.0, -12.0), &label, c);
+        self.left = from_end[0];
+        let mut i = n - 2;
+        for k in 0.. {
+            let (d, gap) = rung(k);
+            if d >= self.left {
+                self.frames.retain(|&r, _| r < k);
+                break;
+            }
+            while i > 0 && from_end[i] < d {
+                i -= 1;
+            }
+            let span = from_end[i] - from_end[i + 1];
+            let u = if span > 0.0 { (from_end[i] - d) / span } else { 0.0 };
+            let at = body[i].lerp(body[i + 1], u);
+            let Some(along) = (body[i + 1] - body[i]).try_normalize() else { continue };
+            let (a, b) = (&plan.points[i], &plan.points[i + 1]);
+            let facing = to_frame * (a.orientation.slerp(b.orientation, u) * DVec3::NEG_Z);
+            let new = GuideFrame { from_goal: d, at, along, facing, size: (0.35 * gap).clamp(15.0, 1.0e4), action: a.action };
+            // A frame stays while the new path still goes through it (near
+            // its rung): rebuilt plans trace the same route, give or take.
+            let near = |p: DVec3| {
+                (0..n - 1)
+                    .filter(|&j| from_end[j + 1] <= d + 2.0 * gap && from_end[j] >= d - 2.0 * gap)
+                    .map(|j| universe_sim::physics::segment_distance(body[j], body[j + 1], p))
+                    .fold(f64::INFINITY, f64::min)
+            };
+            match self.frames.get_mut(&k) {
+                Some(old) if near(old.at) < 0.25 * gap => old.action = new.action,
+                _ => {
+                    self.frames.insert(k, new);
+                }
+            }
+        }
+    }
+
+    /// The frames still ahead of the ship, the target's center at `center`, at `now`.
+    fn draw(&self, frame: &mut Frame, center: DVec3, now: f64, ship: DVec3) {
+        let turn = universe_engine::glam::DQuat::from_scaled_axis(self.spin * now);
+        let cam = frame.camera.position;
+        let mut first = true;
+        let ahead = self.frames.values().rev().filter(|g| g.from_goal < self.left).filter(|g| (ship - (center + turn * g.at)).dot(turn * g.along) < 0.0);
+        for g in ahead.take(MAX_FRAMES) {
+            let position = center + turn * g.at;
+            let along = turn * g.along;
+            // Far away, keep a minimum on-screen size so the route stays readable.
+            let size = g.size.max(position.distance(cam) * 0.01);
+            let radial = (position - center).normalize_or(DVec3::Y);
+            let level = if along.dot(radial).abs() < 0.95 { radial } else { radial.any_orthonormal_vector() };
+            let right = along.cross(level).normalize();
+            let up = right.cross(along);
+            let (w, h) = (right * size, up * size * 0.4);
+            let c = action_color(g.action);
+            let corners = [position - w - h, position + w - h, position + w + h, position - w + h];
+            for i in 0..4 {
+                frame.line(corners[i], corners[(i + 1) % 4], c);
+            }
+            // Where the ship will face here: a tick from the center.
+            frame.line(position, position + turn * g.facing * size * 0.5, c.scale(0.6));
+            // Label the next frame ahead with its distance.
+            if first {
+                first = false;
+                if let Some(p) = frame.project(position + up * size * 0.4) {
+                    let label = crate::fmt::distance(position.distance(ship));
+                    frame.text(p + universe_engine::glam::Vec2::new(4.0, -12.0), &label, c);
+                }
             }
         }
     }
 }
-
-/// Seconds of plan between guide frames, and how many ahead to show.
-const FRAME_STEP: f64 = 5.0;
-const MAX_FRAMES: usize = 16;
 
 /// Landing: the free-fall prediction (with impact point), the guidance path,
 /// and the descent column above the pad.

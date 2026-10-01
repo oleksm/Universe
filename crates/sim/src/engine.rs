@@ -185,11 +185,6 @@ pub const TICK_HZ: f64 = 60.0;
 impl Engine {
     pub fn new(mut universe: Universe) -> Self {
         let charts = Arc::new(universe.world.charts());
-        // The NPC pilots think apart from the world (UNIVERSE_LOCKSTEP=1: in
-        // step with it), on half the cores.
-        if std::env::var_os("UNIVERSE_LOCKSTEP").is_none() {
-            universe.run_pilots_apart(std::thread::available_parallelism().map_or(2, |n| (n.get() / 2).max(1)));
-        }
         // The HUD shows the flight plan; the cockpit has a first look.
         if let Some(c) = &mut universe.cockpit {
             c.plan_wanted = true;
@@ -433,6 +428,12 @@ impl EngineHandle {
     /// Run the engine on its own thread from now on.
     pub fn start(&mut self) {
         let Some(mut engine) = self.local.take() else { return };
+        // The NPC pilots think apart from the world from now on, as it runs in
+        // real time (before, setting up, they keep in step with it, however
+        // fast it's run), on half the cores. UNIVERSE_LOCKSTEP=1: in step always.
+        if std::env::var_os("UNIVERSE_LOCKSTEP").is_none() {
+            engine.universe.run_pilots_apart(std::thread::available_parallelism().map_or(2, |n| (n.get() / 2).max(1)));
+        }
         let (tx, rx) = std::sync::mpsc::channel::<Msg>();
         let mailbox = self.mailbox.clone();
         // The cockpit comes to the client (UNIVERSE_COCKPIT_IN_ENGINE=1: it stays).
