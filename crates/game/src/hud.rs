@@ -53,9 +53,12 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
     // Leave room for the phase banner across the top while docking/landing.
     let top = if app.mode == Mode::Pilot && app.approach.is_some() { 22.0 } else { 4.0 };
-    let mut y = top;
-    if app.mode == Mode::Pilot && app.v.crew.seated() {
-        y += action_grid(frame, app, Vec2::new(4.0, top)) + 4.0;
+    // (Below the performance lines at the top right, which a long status line would run into.)
+    let mut y = top + 4.0 * LINE;
+    match app.mode {
+        Mode::Pilot if app.v.crew.seated() => action_grid(frame, app),
+        Mode::Pilot => draw_grid(frame, "ON FOOT", &on_foot_cells()),
+        Mode::Observer => draw_grid(frame, "OBSERVER", &observer_cells()),
     }
     for (text, c) in &lines {
         frame.text(Vec2::new(4.0, y), text, *c);
@@ -1150,7 +1153,7 @@ enum Lamp {
 
 /// The pilot's actions as a grid of lit keys, top left: what each key does
 /// and whether it's in use. Returns the grid's height.
-fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
+fn action_grid(frame: &mut Frame, app: &App) {
     let (u, ship) = (&app.v, &app.ship);
     let flying = ship.is_flying();
     let a = &u.avionics;
@@ -1209,45 +1212,127 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         Lamp::Unavailable
     };
     let dig = if ship.excavator { Lamp::Busy } else if anchored { Lamp::Off } else { Lamp::Unavailable };
-    let mining = app.mining.on;
-    let cells: Vec<(&str, &str, Lamp)> = if mining {
-        // Mining mode's action panel.
-        vec![
-            ("1", "MINING", Lamp::On),
-            ("2", "PROSPECT", if crate::mining::pulsing(app) { Lamp::Busy } else if flying { Lamp::Off } else { Lamp::Unavailable }),
-            ("T", "LOCK", lock),
-            ("3", "APPROACH", approach),
-            ("Y", "ANCHOR", anchor_lamp),
-            ("H", "DIG", dig),
-            ("N", keep.0.as_str(), keep.1),
-            ("U", orbit.0.as_str(), orbit.1),
-            ("X", "LET GO", if a.following.is_some() { Lamp::Off } else { Lamp::Unavailable }),
-            ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
-            ("M", "MAP", on(app.nav_map.is_some())),
-            ("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
-            ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
-            ("F1", "HELP", on(app.show_help)),
-        ]
-    } else {
-        vec![
-        ("R", clearance.0, clearance.1),
-        ("K", "AUTO", on(auto)),
-        ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
-        ("B", "ARMS", arms),
-        ("T", "LOCK", lock),
-        ("N", keep.0.as_str(), keep.1),
-        ("U", orbit.0.as_str(), orbit.1),
-        ("I", "COLLIDE", if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) }),
-        ("M", "MAP", on(app.nav_map.is_some())),
-        ("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
-        ("O", "GRID", on(app.show_grid)),
-        ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
-        ("F1", "HELP", on(app.show_help)),
-        ("1", "MINING", Lamp::Off),
-        ]
+    // What can be done now: the cells for the situation we're in.
+    let docked = matches!(ship.state, ShipState::Landed { body, .. } if app.view.system.bodies[body].kind == BodyKind::Station);
+    let collide = if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) };
+    let view = (if app.chase_cam { "CHASE" } else { "COCKPIT" }).to_string();
+    let hyper = if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable };
+    let c = |k: &str, l: &str, lamp: Lamp| (k.to_string(), l.to_string(), lamp);
+    let (mode, cells): (&str, Vec<(String, String, Lamp)>) = match &ship.state {
+        ShipState::Destroyed { .. } => ("DESTROYED", vec![c("BKSP", "RESPAWN", Lamp::Off), c("F1", "HELP", on(app.show_help))]),
+        ShipState::Transit { .. } => ("GATE TRANSIT", vec![c("M", "MAP", on(app.nav_map.is_some())), c("C", &view, Lamp::Off), c("F1", "HELP", on(app.show_help))]),
+        ShipState::Landed { .. } => (
+            if docked { "DOCKED" } else { "LANDED" },
+            vec![
+                if docked { c("W", "LAUNCH", Lamp::Off) } else { c("S+E", "LIFT OFF", Lamp::Off) },
+                c("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
+                c("M", "MAP / ROUTE", on(app.nav_map.is_some())),
+                c("K", "FLY ROUTE", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
+                c("F", "LEAVE SEAT", Lamp::Off),
+                c("C", &view, Lamp::Off),
+                c("F1", "HELP", on(app.show_help)),
+            ],
+        ),
+        ShipState::Anchored { .. } => (
+            "ANCHORED",
+            vec![
+                c("H", if ship.excavator { "STOP DIG" } else { "DIG" }, dig),
+                c("Y", "LET GO", Lamp::On),
+                c("1", "MINING", on(app.mining.on)),
+                c("2", "PROSPECT", if crate::mining::pulsing(app) { Lamp::Busy } else { Lamp::Off }),
+                c("T", "LOCK", lock),
+                c("M", "MAP", on(app.nav_map.is_some())),
+                c("C", &view, Lamp::Off),
+                c("F1", "HELP", on(app.show_help)),
+            ],
+        ),
+        _ if ship.hyperdrive => (
+            "HYPERDRIVE",
+            vec![
+                c("J", "DROP OUT", Lamp::On),
+                c("K", "AUTO STEER", on(a.hyper_autopilot)),
+                c("W S", "SPEED", Lamp::Off),
+                c("M", "MAP / TARGET", on(app.nav_map.is_some())),
+                c("C", &view, Lamp::Off),
+                c("F1", "HELP", on(app.show_help)),
+            ],
+        ),
+        _ if app.mining.on => (
+            "MINING",
+            vec![
+                c("2", "PROSPECT", if crate::mining::pulsing(app) { Lamp::Busy } else { Lamp::Off }),
+                c("T", "LOCK", lock),
+                c("3", "APPROACH", approach),
+                c("Y", "ANCHOR", anchor_lamp),
+                c("H", "DIG", dig),
+                c("N", &keep.0, keep.1),
+                c("U", &orbit.0, orbit.1),
+                c("X", "LET GO", if a.following.is_some() { Lamp::Off } else { Lamp::Unavailable }),
+                c("J", "HYPER", hyper),
+                c("M", "MAP", on(app.nav_map.is_some())),
+                c("1", "MINING OFF", Lamp::On),
+                c("F1", "HELP", on(app.show_help)),
+            ],
+        ),
+        _ if ship.armed => (
+            "COMBAT",
+            vec![
+                c("SPC", "GUN", if ship.weapons_hot() { Lamp::Hot } else { Lamp::Busy }),
+                c("V", "LASER", if ship.laser_overheated { Lamp::Unavailable } else if ship.weapons_hot() { Lamp::Hot } else { Lamp::Busy }),
+                c("T", "LOCK", lock),
+                c("N", &keep.0, keep.1),
+                c("U", &orbit.0, orbit.1),
+                c("X", "LET GO", if a.following.is_some() { Lamp::Off } else { Lamp::Unavailable }),
+                c("J", "HYPER", hyper),
+                c("I", "COLLIDE", collide),
+                c("B", "SAFE", arms),
+                c("F1", "HELP", on(app.show_help)),
+            ],
+        ),
+        _ => (
+            "FLIGHT",
+            vec![
+                c("R", clearance.0, clearance.1),
+                c("K", "AUTO", on(auto)),
+                c("J", "HYPER", hyper),
+                c("T", "LOCK", lock),
+                c("N", &keep.0, keep.1),
+                c("U", &orbit.0, orbit.1),
+                c("X", "LET GO", if a.following.is_some() { Lamp::Off } else { Lamp::Unavailable }),
+                c("I", "COLLIDE", collide),
+                c("B", "COMBAT", arms),
+                c("1", "MINING", Lamp::Off),
+                c("M", "MAP", on(app.nav_map.is_some())),
+                c("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
+                c("O", "GRID", on(app.show_grid)),
+                c("C", &view, Lamp::Off),
+                c("F1", "HELP", on(app.show_help)),
+            ],
+        ),
     };
-    const COLS: usize = 5;
-    let cell = Vec2::new(84.0, 14.0);
+    draw_grid(frame, mode, &cells);
+}
+
+fn on_foot_cells() -> Vec<(String, String, Lamp)> {
+    [("WASD", "WALK"), ("S+", "RUN"), ("SPC", "JUMP"), ("F", "USE"), ("BKSP", "RESPAWN"), ("F1", "HELP")].iter().map(|(k, l)| (k.to_string(), l.to_string(), Lamp::Off)).collect()
+}
+
+fn observer_cells() -> Vec<(String, String, Lamp)> {
+    [("TAB", "PILOT"), ("WHL", "ZOOM"), ("[ ]", "BODIES"), ("N B", "STARS"), ("H", "FOCUS SHIP"), ("T", "SETTLER"), ("F1", "HELP")]
+        .iter()
+        .map(|(k, l)| (k.to_string(), l.to_string(), Lamp::Off))
+        .collect()
+}
+
+/// The action grid, lower left: what the situation is, and each key's
+/// cell (lit in use, amber busy, red hot, dim unavailable).
+fn draw_grid(frame: &mut Frame, mode: &str, cells: &[(String, String, Lamp)]) {
+    const COLS: usize = 3;
+    let cell = Vec2::new(104.0, 14.0);
+    let rows = cells.len().div_ceil(COLS) as f32;
+    let size = frame.size();
+    let at = Vec2::new(4.0, size.y - rows * (cell.y + 2.0) - 4.0);
+    frame.text(at - Vec2::new(0.0, LINE), &format!("{mode} - ACTIONS"), HUD);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
         let pos = at + Vec2::new((i % COLS) as f32 * (cell.x + 2.0), (i / COLS) as f32 * (cell.y + 2.0));
         let (edge, fill, text) = match lamp {
@@ -1262,8 +1347,6 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         frame.text(pos + Vec2::new(3.0, 3.0), key, text.scale(0.8));
         frame.text(pos + Vec2::new(3.0 + 8.0 * key.len() as f32 + 5.0, 3.0), label, text);
     }
-    let rows = cells.len().div_ceil(COLS) as f32;
-    rows * (cell.y + 2.0)
 }
 
 /// Kills by weapons fire, right side: who destroyed whom, with what (the
