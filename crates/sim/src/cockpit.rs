@@ -218,7 +218,7 @@ impl Cockpit {
                     for (_, c) in self.pilot.pending.iter().filter(|(due, _)| *due == tick) {
                         world.command_at(&mut ship, system, c, clock, &mut events);
                     }
-                    turn = self.turns.iter().filter(|(due, _)| *due == tick).last().and_then(|(_, t)| *t);
+                    turn = self.turns.iter().rfind(|(due, _)| *due == tick).and_then(|(_, t)| *t);
                 }
                 let commands = ShipCommands { turn, ..ship.holding() };
                 world.step_ship_at(&mut clock, &mut ship, &mut system, &commands, w.dt, 1.0, &mut events);
