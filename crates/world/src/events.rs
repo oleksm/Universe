@@ -11,6 +11,11 @@ pub enum ShipEvent {
     Landed { body: String, station: bool },
     /// Came to rest on a spaceport's pad.
     LandedAtPort { port: String },
+    /// Moved off the pad into the port's hangar, or out of it onto pad `pad`.
+    EnteredHangar { port: String },
+    LeftHangar { port: String, pad: usize },
+    /// A hangar move that couldn't be made: why.
+    HangarRefused { why: String },
     /// A contact rule fired (see `rules`): whose, and what came of it.
     RuleFired { rule: String, outcome: String },
     TookOff,

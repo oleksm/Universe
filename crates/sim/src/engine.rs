@@ -35,6 +35,8 @@ use universe_services::records::TrafficStats;
 use crate::universe::Universe;
 
 /// What the client asks of the world.
+// (A command is a message passed once: its size doesn't matter.)
+#[allow(clippy::large_enum_variant)]
 pub enum Command {
     /// New settings for the ship's devices (engine, thrusters, weapons…).
     Ship(ShipCommands),

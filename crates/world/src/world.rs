@@ -286,6 +286,9 @@ impl World {
             Some(false) => crate::mining::release(ship, events),
             _ => {}
         }
+        if let Some(h) = c.hangar {
+            self.hangar_move(ship, system, h, t, events);
+        }
         if let Some(on) = c.excavate {
             ship.excavator = on && matches!(ship.state, ShipState::Anchored { .. });
             if on && !ship.excavator {
@@ -303,6 +306,49 @@ impl World {
             // Engaged: how to fly, held until changed.
             Some(h) if ship.hyperdrive => ship.hyper_orders = *h,
             _ => {}
+        }
+    }
+
+    /// A move between a spaceport's pads and its hangar: in from the pad
+    /// it's landed on, or out onto pad `pad` (traffic control's to give; the
+    /// world sees only that it's a pad of the port). The ship stays landed,
+    /// set down in its new place.
+    fn hangar_move(&self, ship: &mut Ship, system: usize, h: universe_protocol::HangarCommand, t: f64, events: &mut Vec<ShipEvent>) {
+        use crate::spaceport::{hangar_direction, pad_at, pad_direction, PADS};
+        use universe_protocol::HangarCommand;
+        let ShipState::Landed { body, local_position, .. } = ship.state.clone() else {
+            return events.push(ShipEvent::HangarRefused { why: "NOT LANDED".into() });
+        };
+        let sys = self.system(system);
+        let (port, dir) = match (h, ship.hangar) {
+            (HangarCommand::Enter, None) => {
+                let here = local_position.normalize_or_zero();
+                let Some(port) = (0..sys.spaceports.len()).find(|&p| sys.spaceports[p].body == body && pad_at(&sys, p, here).is_some()) else {
+                    return events.push(ShipEvent::HangarRefused { why: "NOT ON A SPACEPORT'S PAD".into() });
+                };
+                (port, hangar_direction(&sys, port))
+            }
+            (HangarCommand::Leave { pad }, Some(port)) if pad < PADS && port < sys.spaceports.len() => (port, pad_direction(&sys, port, pad)),
+            (HangarCommand::Enter, Some(_)) => return events.push(ShipEvent::HangarRefused { why: "IN THE HANGAR ALREADY".into() }),
+            _ => return events.push(ShipEvent::HangarRefused { why: "NOT IN A HANGAR".into() }),
+        };
+        let b = &sys.bodies[body];
+        let local_position = dir * (b.surface_radius(dir) + SHIP_RADIUS);
+        let local_orientation = upright(dir, dir.any_orthonormal_vector());
+        let mut rigid = ship.rigid();
+        Weld { body, local_position, local_orientation }.place(&sys.bodies, t, &self.rails_at(system, t), &mut rigid);
+        ship.set_rigid(&rigid);
+        ship.state = ShipState::Landed { body, local_position, local_orientation };
+        let name = crate::traffic::Facility::Spaceport(port).name(&sys).to_string();
+        match h {
+            HangarCommand::Enter => {
+                ship.hangar = Some(port);
+                events.push(ShipEvent::EnteredHangar { port: name });
+            }
+            HangarCommand::Leave { pad } => {
+                ship.hangar = None;
+                events.push(ShipEvent::LeftHangar { port: name, pad });
+            }
         }
     }
 

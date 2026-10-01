@@ -214,6 +214,10 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
 #[allow(clippy::too_many_arguments)]
 pub fn release(rules: &Rules, sys: &StarSystem, body: usize, local_position: DVec3, ship: &mut Ship, t: f64, positions: &[DVec3], events: &mut Vec<ShipEvent>) -> bool {
     let Some(release) = rules.release(body) else { return false };
+    // (Inside a hangar, nothing lifts off: out onto a pad first.)
+    if ship.hangar.is_some() {
+        return false;
+    }
     let b = &sys.bodies[body];
     let rot = b.rotation(t);
     match release {

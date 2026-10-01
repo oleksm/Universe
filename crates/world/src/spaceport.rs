@@ -5,16 +5,18 @@ use glam::DVec3;
 
 use crate::system::StarSystem;
 
-/// Touching down within this distance of the pad center counts as landing at the port (m).
-pub const PAD_RADIUS: f64 = 250.0;
+/// Touching down within this distance of the port's center counts as landing at the port (m):
+/// the whole pad grid, its corners included.
+pub const PAD_RADIUS: f64 = 400.0;
 /// Touching a surface slower than this lands instead of crashing (m/s).
 pub const LAND_SPEED: f64 = 30.0;
 
-/// Landing pads per spaceport, in a square grid (3 × 3), this far apart (m).
-pub const PADS: usize = 9;
+/// Landing pads per spaceport, in a square grid (`GRID` × `GRID`), this far apart (m).
+pub const GRID: usize = 4;
+pub const PADS: usize = GRID * GRID;
 pub const PAD_SPACING: f64 = 150.0;
-/// The pad in the middle of the grid.
-pub const CENTER_PAD: usize = 4;
+/// A pad next to the grid's middle (where a ship starts).
+pub const CENTER_PAD: usize = GRID + 1;
 /// A ship on the ground within this of a pad's center is on that pad (m).
 pub const PAD_SIZE: f64 = 45.0;
 
@@ -31,7 +33,8 @@ pub fn pad_direction(sys: &StarSystem, port: usize, pad: usize) -> DVec3 {
     let sp = &sys.spaceports[port];
     let r = sys.bodies[sp.body].rail.radius;
     let (north, east) = tangent(sp.direction);
-    let (row, col) = ((pad / 3) as f64 - 1.0, (pad % 3) as f64 - 1.0);
+    let half = (GRID as f64 - 1.0) / 2.0;
+    let (row, col) = ((pad / GRID) as f64 - half, (pad % GRID) as f64 - half);
     (sp.direction * r + north * (-row * PAD_SPACING) + east * (col * PAD_SPACING)).normalize()
 }
 
@@ -39,6 +42,15 @@ pub fn pad_direction(sys: &StarSystem, port: usize, pad: usize) -> DVec3 {
 pub fn pad_at(sys: &StarSystem, port: usize, local_dir: DVec3) -> Option<usize> {
     let r = sys.bodies[sys.spaceports[port].body].rail.radius;
     (0..PADS).find(|&k| pad_direction(sys, port, k).angle_between(local_dir) * r < PAD_SIZE)
+}
+
+/// Direction (body frame, unit) of spaceport `port`'s hangar: south of the
+/// pad grid, clear of it. Ships inside are parked there, out of sight.
+pub fn hangar_direction(sys: &StarSystem, port: usize) -> DVec3 {
+    let sp = &sys.spaceports[port];
+    let r = sys.bodies[sp.body].rail.radius;
+    let (north, _) = tangent(sp.direction);
+    (sp.direction * r - north * ((GRID as f64 / 2.0 + 1.0) * PAD_SPACING)).normalize()
 }
 
 /// Where spaceport `port`'s pad center is at `t` (`positions` at `t`).

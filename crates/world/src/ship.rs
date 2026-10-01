@@ -133,6 +133,10 @@ pub struct Ship {
     /// Translation thruster setting, body frame, each axis -1..1 (x right, y up, z back), as last commanded.
     #[serde(default)]
     pub rcs: DVec3,
+    /// In this spaceport's hangar (off the pads, out of sight; still
+    /// `Landed`, parked at the hangar): see `spaceport::hangar`.
+    #[serde(default)]
+    pub hangar: Option<usize>,
     /// The hull it's built as (stored by its content key).
     #[serde(default = "starting_hull")]
     pub class: Hull,
@@ -221,6 +225,7 @@ impl Ship {
             rcs: DVec3::ZERO,
             fuel: cobra().fuel_capacity,
             class: starting_hull(),
+            hangar: None,
             cargo: 0.0,
             excavator: false,
             hopper: 0.0,
@@ -316,7 +321,7 @@ impl Ship {
     /// Commands that keep the engine and thrusters as they are, turn nothing
     /// and leave the hyperdrive alone: a starting point for new commands.
     pub fn holding(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None, anchor: None, excavate: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None, anchor: None, excavate: None, hangar: None }
     }
 
     /// The main engine and thrusters take their new settings.

@@ -12,6 +12,8 @@ use crate::avionics::{target_position, Avionics};
 use crate::bus::Bus;
 use crate::events::Event;
 use crate::nav::NavTarget;
+use universe_protocol::{traffic::PadGrant, HangarCommand};
+use universe_world::ShipCommands;
 
 /// A place to visit: a station (dock) or spaceport (land) in some star system.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -23,6 +25,9 @@ pub struct Stop {
 
 /// How long the route autopilot waits at each stop (game seconds).
 pub const DWELL: f64 = 20.0;
+/// At a spaceport, a stay longer than this is spent in its hangar, after
+/// this long on the pad (time to trade): the pads are for coming and going.
+pub const TURNAROUND: f64 = 60.0;
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Route {
@@ -38,6 +43,10 @@ pub struct Route {
     /// How long it stays at each stop (game s); None: `DWELL`.
     #[serde(default)]
     pub stay: Option<f64>,
+    /// When it last ordered a hangar move (game s): an order takes a moment
+    /// to reach the ship, and isn't repeated meanwhile.
+    #[serde(default)]
+    pub hangar_ordered: f64,
 }
 
 impl Route {
@@ -124,6 +133,9 @@ impl Avionics {
             ShipState::Destroyed { .. } | ShipState::Transit { .. } | ShipState::Anchored { .. } => {}
             ShipState::Landed { body, local_position, .. } => {
                 let sys = bus.star_system();
+                if self.hangar_step(bus, stop, events) {
+                    return;
+                }
                 if bus.system() == stop.system && landed_at(&sys, stop.target, body, local_position) {
                     match self.route.dwell_until {
                         None => {
@@ -152,6 +164,36 @@ impl Avionics {
             }
             ShipState::Flying => self.route_fly(bus, stop, events),
         }
+    }
+
+    /// A spaceport's hangar, for a long stay: in after the turnaround on the
+    /// pad; out onto a pad traffic control gives when the stay is up (or
+    /// when it's time to go from wherever it is). True while that's what
+    /// it's doing (nothing else to do this frame).
+    fn hangar_step(&mut self, bus: &mut impl Bus, stop: Stop, events: &mut Vec<Event>) -> bool {
+        let ship = bus.ship().clone();
+        let now = bus.time();
+        let waited = now - self.route.hangar_ordered < 1.0;
+        if let Some(port) = ship.hangar {
+            // In the hangar: out when the stay is up.
+            if self.route.dwell_until.is_some_and(|t| now < t) {
+                return true;
+            }
+            if !waited && let PadGrant::Pad(pad) = bus.request_pad(port) {
+                self.route.hangar_ordered = now;
+                self.command(bus, &ShipCommands { hangar: Some(HangarCommand::Leave { pad }), ..ship.holding() }, events);
+            }
+            return true;
+        }
+        // On a pad of the stop's spaceport, its stay long: in after the turnaround.
+        let (NavTarget::Spaceport(_), Some(stay), Some(until)) = (stop.target, self.route.stay, self.route.dwell_until) else { return false };
+        let arrived = until - stay;
+        if stay > 2.0 * TURNAROUND && now - arrived >= TURNAROUND && until - now > TURNAROUND && !waited && bus.system() == stop.system {
+            self.route.hangar_ordered = now;
+            self.command(bus, &ShipCommands { hangar: Some(HangarCommand::Enter), ..ship.holding() }, events);
+            return true;
+        }
+        false
     }
 
     /// Launch from a station, or lift off a surface and climb.

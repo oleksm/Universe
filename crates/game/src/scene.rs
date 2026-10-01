@@ -368,7 +368,7 @@ const HULL: Color = Color::hex(0x5a6068);
 fn crafts(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     for (i, c) in app.v.crafts.iter().enumerate() {
-        let visible = c.ship.is_flying() || matches!(c.ship.state, ShipState::Landed { .. } | ShipState::Anchored { .. });
+        let visible = (c.ship.is_flying() || matches!(c.ship.state, ShipState::Landed { .. } | ShipState::Anchored { .. })) && c.ship.hangar.is_none();
         if c.system != app.view.origin || !visible {
             continue;
         }

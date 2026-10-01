@@ -70,12 +70,12 @@ fn positions(u: &mut Universe) -> (std::sync::Arc<universe_sim::StarSystem>, Vec
 
 #[test]
 fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
-    let mut u = bench(10);
+    let mut u = bench(PADS + 1);
     let (sys, pos) = positions(&mut u);
     let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
     let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
     let home = u.ship_system;
-    // Nine on the nine pads, staying there (a long stop).
+    // One on every pad, staying there (a long stop, on the pad).
     for k in 0..PADS {
         u.crafts[k].ship = u.world.ship_on(home, Facility::Spaceport(port), k);
         let mut pilots = u.pilots();
@@ -86,23 +86,23 @@ fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
         r.dwell_until = Some(1.0e12);
         drop(pilots);
     }
-    // The tenth, 20 km over the port.
+    // One more, 20 km over the port.
     let pad = PadFrame::new(&sys, port, u.world.time, &pos);
     let at = pad.pad + pad.up * 20_000.0;
-    place(&mut u, 9, at, pad.frame_velocity(at), pad.pad);
+    place(&mut u, PADS, at, pad.frame_velocity(at), pad.pad);
     run(&mut u, 0.1, |_| false); // traffic control sees the pads taken
-    cleared(&mut u, 9, NavTarget::Spaceport(port));
-    let slot = u.pilots()[9].avionics.clearance.unwrap().pad;
+    cleared(&mut u, PADS, NavTarget::Spaceport(port));
+    let slot = u.pilots()[PADS].avionics.clearance.unwrap().pad;
     assert!(matches!(slot, PadSlot::Hold(0)), "first in line: {slot:?}");
     // It holds, and doesn't come down.
     run(&mut u, 120.0, |_| false);
-    let c = u.pilots()[9].avionics.clearance.unwrap();
+    let c = u.pilots()[PADS].avionics.clearance.unwrap();
     assert_eq!(c.phase, Phase::Hold);
     // On the holding circle round the port: 12 km up, 10 km out, level,
     // flying round it.
     use universe_sim::landing::{HOLD_ALTITUDE, HOLD_RADIUS, HOLD_SPEED};
     let pad = PadFrame::new(&sys, port, u.world.time, &positions(&mut u).1);
-    let s = &u.crafts[9].ship;
+    let s = &u.crafts[PADS].ship;
     let rel = s.position - pad.pad;
     let (up, out) = (rel.dot(pad.up), (rel - pad.up * rel.dot(pad.up)).length());
     let level = (s.orientation * DVec3::Y).dot((s.position - pad.body_center).normalize());
@@ -114,16 +114,16 @@ fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
     // Pad 5's ship leaves (to the far side of the planet): it's freed, and ours.
     let far = pad.body_center - pad.up * (pad.body_radius + 50_000.0);
     place(&mut u, 5, far, pad.frame_velocity(far), pad.body_center);
-    let landed = run(&mut u, 600.0, |u| matches!(u.crafts[9].ship.state, ShipState::Landed { .. }));
+    let landed = run(&mut u, 600.0, |u| matches!(u.crafts[PADS].ship.state, ShipState::Landed { .. }));
     assert!(landed, "landed once a pad was free\n{}", incidents(&u));
-    let ShipState::Landed { local_position, .. } = u.crafts[9].ship.state else { unreachable!() };
+    let ShipState::Landed { local_position, .. } = u.crafts[PADS].ship.state else { unreachable!() };
     assert_eq!(pad_at(&sys, port, local_position.normalize()), Some(5), "on the freed pad");
     assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
     // Traffic control's journal says why: the waiting ship's own requests
     // (queued, then granted), and the pad freed by the rules as its ship left.
     use universe_sim::protocol::Cause;
     use universe_sim::services::atc::What;
-    let (waiter, leaver) = (universe_sim::craft_id(9), universe_sim::craft_id(5));
+    let (waiter, leaver) = (universe_sim::craft_id(PADS), universe_sim::craft_id(5));
     let j = &u.atc.journal;
     let mine = |c: &Cause| matches!(c, Cause::Message { sender, .. } if *sender == waiter as u64);
     assert!(j.iter().any(|c| c.ship == waiter && matches!(c.what, What::PadQueued { .. }) && mine(&c.cause)), "queued, at its request");
@@ -460,7 +460,7 @@ fn miner_by_its_field() -> Universe {
     {
         let mut p = u.pilots();
         p[0].miner = true;
-        p[0].avionics.route = universe_sim::avionics::route::Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay: None };
+        p[0].avionics.route = universe_sim::avionics::route::Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay: None, hangar_ordered: 0.0 };
     }
     let (sys, pos) = positions(&mut u);
     let c = &mut u.crafts[0];
@@ -582,4 +582,36 @@ fn orbit_at_a_chosen_range_no_closer_than_the_structure_allows() {
     u.follow(universe_sim::FollowKind::Orbit, Some(500.0));
     let r = u.avionics().following.map(|f| f.manoeuvre.range()).unwrap();
     assert!(r > 500.0 && r < 5_000.0, "{r}");
+}
+
+#[test]
+fn a_long_stay_at_a_spaceport_is_spent_in_its_hangar_and_the_pad_freed() {
+    use universe_sim::world::spaceport::PADS;
+    let mut u = bench(1);
+    let home = u.ship_system;
+    let port = 0;
+    u.crafts[0].ship = u.world.ship_on(home, Facility::Spaceport(port), 2);
+    let station = u.ship_system().station().unwrap();
+    {
+        let mut pilots = u.pilots();
+        let r = &mut pilots[0].avionics.route;
+        r.stops = vec![universe_sim::Stop { system: home, target: NavTarget::Spaceport(port) }, universe_sim::Stop { system: home, target: NavTarget::Station(station) }];
+        r.next = 0;
+        r.active = true;
+        r.dwell_until = None;
+        r.stay = Some(200.0);
+    }
+    let held = |u: &Universe| (0..PADS).filter(|&k| u.atc.owners(home, port)[k] == Some(universe_sim::craft_id(0))).count();
+    run(&mut u, 5.0, |_| false);
+    assert_eq!(held(&u), 1, "on its pad");
+    // After the turnaround (time to trade): in the hangar, out of sight, the pad free.
+    let inside = run(&mut u, 70.0, |u| u.crafts[0].ship.hangar.is_some());
+    assert!(inside, "into the hangar");
+    run(&mut u, 2.0, |_| false);
+    assert_eq!(held(&u), 0, "its pad freed for others");
+    assert!(matches!(u.crafts[0].ship.state, ShipState::Landed { .. }));
+    // Its stay up: out onto a pad traffic control gives, and off.
+    let gone = run(&mut u, 200.0, |u| u.crafts[0].ship.is_flying());
+    assert!(gone, "out of the hangar and away (hangar {:?})", u.crafts[0].ship.hangar);
+    assert!(u.crafts[0].ship.hangar.is_none());
 }

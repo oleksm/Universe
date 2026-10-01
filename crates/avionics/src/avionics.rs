@@ -145,7 +145,10 @@ impl Avionics {
             | ShipEvent::RuleFired { .. }
             | ShipEvent::WeaponsArming
             | ShipEvent::WeaponsHot
-            | ShipEvent::WeaponsSafe => {}
+            | ShipEvent::WeaponsSafe
+            | ShipEvent::EnteredHangar { .. }
+            | ShipEvent::LeftHangar { .. }
+            | ShipEvent::HangarRefused { .. } => {}
         }
     }
 

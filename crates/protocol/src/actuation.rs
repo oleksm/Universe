@@ -50,6 +50,18 @@ pub struct ShipCommands {
     /// The excavator: on (digging, while anchored) or off. None: leave it.
     #[serde(default)]
     pub excavate: Option<bool>,
+    /// A spaceport's hangar: in off the pad, or out onto pad `pad`. None: stay.
+    #[serde(default)]
+    pub hangar: Option<HangarCommand>,
+}
+
+/// Moving between a spaceport's pads and its hangar (see `ShipCommands::hangar`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum HangarCommand {
+    /// Off the pad it's landed on, into the port's hangar.
+    Enter,
+    /// Out of the hangar onto pad `pad` (one traffic control has given it).
+    Leave { pad: usize },
 }
 
 /// Orders for the hyperdrive (see `hyperdrive`).

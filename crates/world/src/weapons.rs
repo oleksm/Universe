@@ -145,9 +145,9 @@ fn can_fire(ship: &Ship) -> bool {
     ship.weapons_hot() && matches!(ship.state, ShipState::Flying) && !ship.hyperdrive
 }
 
-/// Can this ship be hit (physically present in its system)?
+/// Can this ship be hit (physically present in its system, not inside a hangar)?
 fn can_be_hit(ship: &Ship) -> bool {
-    matches!(ship.state, ShipState::Flying | ShipState::Landed { .. })
+    matches!(ship.state, ShipState::Flying | ShipState::Landed { .. }) && ship.hangar.is_none()
 }
 
 impl World {

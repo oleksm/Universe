@@ -39,6 +39,8 @@ impl World {
             let s = &a.ship;
             let takes_part = match s.state {
                 ShipState::Flying => !s.hyperdrive,
+                // (In a hangar: indoors, touching nothing outside.)
+                ShipState::Landed { .. } if s.hangar.is_some() => false,
                 ShipState::Landed { body, .. } => seen.entry(a.system).or_insert_with(|| self.system(a.system)).bodies[body].kind != BodyKind::Station,
                 _ => false,
             };

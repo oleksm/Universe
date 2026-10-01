@@ -88,7 +88,7 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
         let route_seed = mix(seed, i as u64);
         let stops = route(charts, route_seed, ROUTE_STOPS);
         let Some(&at) = stops.first() else { continue };
-        let mut route = Route { stops, next: 0, active: true, dwell_until: Some(now + rng.range(0.0, 600.0)), departing: false, stay: None };
+        let mut route = Route { stops, next: 0, active: true, dwell_until: Some(now + rng.range(0.0, 600.0)), departing: false, stay: None, hangar_ordered: 0.0 };
         // Roles, from the seed (the same settlers every time): one slice
         // pirates, another traders, another miners (where their home
         // system has asteroids to work), the rest just travel.
@@ -125,7 +125,7 @@ pub(crate) fn new_route(pilot: &mut Pilot, charts: &Charts, system: usize) {
     }
     pilot.route_seed = seed;
     let stay = pilot.avionics.route.stay;
-    pilot.avionics.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay };
+    pilot.avionics.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay, hangar_ordered: 0.0 };
 }
 
 /// A trip: where to, what to buy for it (item, units, price), the profit expected.

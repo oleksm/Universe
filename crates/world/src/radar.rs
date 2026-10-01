@@ -31,9 +31,9 @@ impl Blip {
     }
 }
 
-/// Whether a ship shows on radar at all.
+/// Whether a ship shows on radar at all (not inside a hangar).
 fn visible(ship: &Ship) -> bool {
-    matches!(ship.state, ShipState::Flying | ShipState::Landed { .. })
+    matches!(ship.state, ShipState::Flying | ShipState::Landed { .. }) && ship.hangar.is_none()
 }
 
 /// Sweep for `others` (id, star system, ship) from `own` in `system`: every

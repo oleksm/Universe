@@ -55,7 +55,7 @@ pub fn route(charts: &Charts, system: usize, seed: u64) -> Option<Vec<Stop>> {
 /// A miner parked with its route done: the next trip.
 pub(crate) fn new_route(a: &mut Avionics, dig: &mut Dig, charts: &Charts, system: usize, seed: u64) -> bool {
     let Some(stops) = route(charts, system, seed) else { return false };
-    a.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay: None };
+    a.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay: None, hangar_ordered: 0.0 };
     *dig = Dig::default();
     true
 }
