@@ -13,6 +13,7 @@ mod contacts;
 pub mod engine;
 pub mod audit;
 pub mod cockpit;
+pub mod operator;
 pub mod pilots;
 mod follow;
 pub mod recorder;

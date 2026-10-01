@@ -4,17 +4,14 @@
 //! their crashes (for diagnosing autopilots).
 
 use glam::DVec3;
-use universe_avionics::route::{Route, Stop};
-use universe_avionics::{Avionics, Clearance, Event, NavTarget};
+use universe_avionics::route::Stop;
+use universe_avionics::{Clearance, Event, NavTarget};
 use std::sync::Arc;
 
-use universe_world::{BodyKind, Ship, ShipCommands, ShipEvent, ShipState};
+use universe_world::{Ship, ShipCommands, ShipEvent, ShipState};
 
-use crate::rng::Rng;
 use crate::universe::Universe;
 
-/// Stops on a settler's route.
-const ROUTE_STOPS: usize = 10;
 /// Crash reports kept (the most recent).
 const CRASH_LOG: usize = 50;
 
@@ -30,18 +27,9 @@ pub struct Craft {
     /// When its pilot last posted (world time), and whether the dead-man rule has cut in since.
     pub last_posted: f64,
     pub dead_man: bool,
-    /// A new route has been ordered and not yet taken up.
-    pub(crate) route_ordered: bool,
     /// Its pilot sleeps till this tick (it's not in the views till then,
     /// unless a message wakes it).
     pub(crate) asleep_until: u64,
-    /// Seed of its current route (a new one is made when it finishes).
-    pub route_seed: u64,
-    /// A trader (see `commerce`): buys and sells at its stops.
-    pub trader: bool,
-    /// What it paid per unit for what it carries (its own reckoning; its
-    /// money and hold are in the ledger).
-    pub paid: std::collections::BTreeMap<usize, f64>,
     /// Its pilot's commands on their way to the devices.
     pub inbox: crate::vessel::Inbox,
 }
@@ -80,8 +68,6 @@ impl Snap {
     }
 }
 
-/// About one settler in `PIRATE_ONE_IN` is a pirate, and as many again traders.
-pub const PIRATE_ONE_IN: u64 = 10;
 
 /// What a ship was doing when it crashed (for diagnosing autopilots).
 #[derive(Clone, Debug)]
@@ -101,40 +87,26 @@ pub struct CrashReport {
 }
 
 impl Universe {
-    /// Settlers: `count` crafts, each on its own reproducible route (from
-    /// `seed`), starting docked or landed at its first stop with staggered
-    /// departures.
+    /// Settlers: `count` of them, as their operator (a client: see
+    /// `operator`) registers them, each starting at its first stop; their
+    /// pilots join the pool. The world knows each by its name and its ship.
     pub fn spawn_settlers(&mut self, count: usize, seed: u64) {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::SpawnSettlers { count, seed }));
-        let mut rng = Rng::new(seed);
-        for i in 0..count {
-            let route_seed = crate::rng::mix(seed, i as u64);
-            let stops = self.settler_route(route_seed, ROUTE_STOPS);
-            let Some(&first) = stops.first() else { continue };
-            // Spread over the port's pads.
-            let ship = self.world.ship_on(first.system, first.target, (route_seed % 9) as usize);
-            let route = Route { stops, next: 0, active: true, dwell_until: Some(self.world.time + rng.range(0.0, 600.0)), departing: false };
-            // Roles, from the seed (the same settlers every time): one slice
-            // pirates, another traders, the rest just travel.
-            let role = crate::rng::mix(route_seed, 0x0917_27e5) % PIRATE_ONE_IN;
-            let (pirate, trader) = (role == 0, role == 1);
-            let avionics = Avionics { route, pirate, ..Avionics::default() };
+        let charts = self.charts();
+        let now = self.world.time;
+        for (reg, pilot) in crate::operator::settlers(&charts, seed, count, self.crafts.len(), now) {
+            let ship = self.world.ship_on(reg.at.system, reg.at.target, reg.pad);
             self.crafts.push(Craft {
-                // Named for what they do (the number stays each craft's own).
-                name: format!("{} {}", if pirate { "Pirate" } else if trader { "Trader" } else { "Settler" }, self.crafts.len() + 1),
+                name: reg.name,
                 ship,
-                system: first.system,
-                status: crate::pilots::Status::of(&avionics),
-                last_posted: self.world.time,
+                system: reg.at.system,
+                status: Default::default(),
+                last_posted: now,
                 dead_man: false,
-                route_ordered: false,
                 asleep_until: 0,
-                route_seed,
-                trader,
-                paid: Default::default(),
                 inbox: Default::default(),
             });
-            self.pool.add(crate::pilots::Pilot::new(avionics));
+            self.pool.add(pilot);
             // What a new settler starts with, from the world's account.
             let me = universe_services::Party::Pilot(crate::combat::craft_id(self.crafts.len() - 1));
             self.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);
@@ -144,38 +116,7 @@ impl Universe {
     /// A reproducible route of `count` stops (stations and spaceports) across
     /// the gate network, from a seed: same seed, same route.
     pub fn settler_route(&mut self, seed: u64, count: usize) -> Vec<Stop> {
-        let mut systems: Vec<usize> = self.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        systems.sort();
-        systems.dedup();
-        let mut candidates = Vec::new();
-        for s in systems {
-            let sys = self.system(s);
-            for (i, b) in sys.bodies.iter().enumerate() {
-                if b.kind == BodyKind::Station {
-                    candidates.push(Stop { system: s, target: NavTarget::Station(i) });
-                }
-            }
-            for i in 0..sys.spaceports.len() {
-                candidates.push(Stop { system: s, target: NavTarget::Spaceport(i) });
-            }
-        }
-        // Shuffle (Fisher-Yates) and take the first `count`: no repeats while
-        // there are enough destinations, then cycle through again.
-        let mut rng = Rng::new(crate::rng::mix(self.world.galaxy.seed, seed));
-        for i in (1..candidates.len()).rev() {
-            let j = (rng.next_u64() % (i as u64 + 1)) as usize;
-            candidates.swap(i, j);
-        }
-        let mut stops: Vec<Stop> = Vec::new();
-        for pick in candidates.iter().cycle().take(count * 2) {
-            if stops.len() == count {
-                break;
-            }
-            if stops.last() != Some(pick) {
-                stops.push(*pick);
-            }
-        }
-        stops
+        crate::operator::route(&self.charts(), seed, count)
     }
 
     /// Every craft's step from `t0`, side by side on all cores: the
@@ -245,7 +186,6 @@ impl Universe {
         if !happened.is_empty() {
             self.tell(i, crate::pilots::Msg::Feed(happened));
         }
-        self.dispatch(i);
     }
 
     /// Pilots' postings: each due tick's commands into its craft's inbox (a
@@ -264,7 +204,7 @@ impl Universe {
             }
             if p.id == crate::combat::PLAYER {
                 for r in p.requests {
-                    r.make(&mut self.atc);
+                    self.request(p.id, r);
                 }
                 self.player_inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
                 self.player_status = p.status;
@@ -274,21 +214,19 @@ impl Universe {
                 continue;
             }
             let i = p.id - 1;
+            // Going to sleep first: an answer to its requests wakes it.
+            if let Some(t) = p.sleep_until {
+                self.crafts[i].asleep_until = t;
+            }
             let requests = universe_prof::scope("sim/postings/requests");
             for r in p.requests {
-                r.make(&mut self.atc);
+                self.request(p.id, r);
             }
             drop(requests);
             let c = &mut self.crafts[i];
             c.inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
             c.last_posted = self.world.time;
             c.dead_man = false;
-            if p.status.route_active {
-                c.route_ordered = false;
-            }
-            if let Some(t) = p.sleep_until {
-                c.asleep_until = t;
-            }
             c.status = p.status;
             if p.hunt_begun && let Some(h) = c.status.hunting {
                 if h.lawful {
@@ -302,12 +240,7 @@ impl Universe {
             self.traffic_events(crate::combat::craft_id(i), &p.events);
             for e in p.events {
                 match e {
-                    Event::RouteStop { .. } => {
-                        self.records.stats.stops += 1;
-                        if self.crafts[i].trader {
-                            self.craft_trades(i);
-                        }
-                    }
+                    Event::RouteStop { .. } => self.records.stats.stops += 1,
                     Event::RouteComplete => self.records.stats.routes_completed += 1,
                     _ => {}
                 }
@@ -406,24 +339,6 @@ impl Universe {
         self.aggressors = self.snaps.iter().filter(|s| s.aggressed && s.flying && !s.hyperdrive).map(|s| (s.system, s.position)).collect();
     }
 
-    /// Dispatch: craft `i`, parked with its route done, is given a new one.
-    fn dispatch(&mut self, i: usize) {
-        let c = &self.crafts[i];
-        if c.status.route_active || c.route_ordered || !matches!(c.ship.state, ShipState::Landed { .. }) {
-            return;
-        }
-        let seed = crate::rng::mix(c.route_seed, 1);
-        let mut stops = self.settler_route(seed, ROUTE_STOPS);
-        // Start from where it is: skip a first stop that's right here.
-        if stops.first().is_some_and(|s| s.system == self.crafts[i].system) {
-            stops.rotate_left(1);
-        }
-        let c = &mut self.crafts[i];
-        c.route_seed = seed;
-        c.route_ordered = true;
-        let route = Route { stops, next: 0, active: true, dwell_until: None, departing: false };
-        self.tell(i, crate::pilots::Msg::Order(crate::pilots::Order::Route(route)));
-    }
 }
 
 /// Craft `c`'s step (see `fly_crafts`): its events, and its velocity before.

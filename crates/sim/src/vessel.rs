@@ -2,29 +2,21 @@
 //! made in order once the tick's postings are in, and each ship's inbox of
 //! commands on their way to its devices (see `pilots`).
 
-use universe_services::TrafficControl;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, World};
 
 /// A traffic control request from a pilot: made in order with the tick's
 /// postings (so the outcome doesn't depend on thread timing). Meanwhile the
 /// pilot has the board's answer as it stood.
-#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub(crate) enum Request {
+    /// To traffic control: a pad at a port, a station's or gate's corridor.
     Pad { system: usize, port: usize, ship: usize, now: f64 },
     Corridor { system: usize, body: usize, ship: usize, now: f64 },
-}
-
-impl Request {
-    pub fn make(self, traffic: &mut TrafficControl) {
-        match self {
-            Request::Pad { system, port, ship, now } => {
-                traffic.request_pad(system, port, ship, now);
-            }
-            Request::Corridor { system, body, ship, now } => {
-                traffic.request_corridor(system, body, ship, now);
-            }
-        }
-    }
+    /// To the market service: the quotes in this system (and the asker's
+    /// account), from the market it's at; a trade there; a plan, declared.
+    Quotes { system: usize, market: universe_world::Facility },
+    Trade { market: universe_world::Facility, item: usize, units: i64 },
+    Declare { market: universe_world::Facility, deal: universe_services::records::Deal },
 }
 
 /// A ship's commands on their way to its devices: its pilot's postings,

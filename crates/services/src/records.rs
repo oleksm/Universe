@@ -25,7 +25,7 @@ pub struct Kill {
 }
 
 /// What a trade record is.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Deal {
     Bought,
     Sold,

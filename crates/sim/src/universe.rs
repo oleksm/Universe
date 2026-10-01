@@ -231,6 +231,34 @@ impl Universe {
         self.pending.extend(postings);
     }
 
+    /// A pilot's request (from its posting), to the service it's for.
+    pub(crate) fn request(&mut self, id: usize, r: crate::vessel::Request) {
+        use crate::vessel::Request;
+        match r {
+            Request::Pad { system, port, ship, now } => {
+                self.atc.request_pad(system, port, ship, now);
+            }
+            Request::Corridor { system, body, ship, now } => {
+                self.atc.request_corridor(system, body, ship, now);
+            }
+            market => self.market_request(id, market),
+        }
+    }
+
+    /// The charts (shared with clients).
+    pub(crate) fn charts(&mut self) -> Arc<universe_world::charts::Charts> {
+        self.charts.get_or_insert_with(|| Arc::new(self.world.charts())).clone()
+    }
+
+    /// Ship `id` (the player's 0, craft i: i + 1): its id, system and ship.
+    pub(crate) fn ship_by_id(&self, id: usize) -> Option<(usize, usize, &Ship)> {
+        if id == crate::combat::PLAYER {
+            Some((id, self.ship_system, &self.ship))
+        } else {
+            self.crafts.get(id - 1).map(|c| (id, c.system, &c.ship))
+        }
+    }
+
     /// The cockpit, here (it isn't when the client has it).
     pub fn cockpit(&mut self) -> &mut crate::cockpit::Cockpit {
         self.cockpit.as_mut().expect("the cockpit is with the client")

@@ -18,9 +18,9 @@ fn bench(n: usize) -> Universe {
     let home = u.ship_system;
     for c in &mut u.crafts {
         c.system = home;
-        c.trader = false;
     }
     for p in u.pilots().iter_mut() {
+        p.trader = false;
         p.avionics.pirate = false;
         p.avionics.route.active = false;
         p.avionics.route.dwell_until = None;
@@ -351,4 +351,30 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
 fn place_player(u: &mut Universe, at: DVec3) {
     u.ship.state = ShipState::Flying;
     u.ship.position = at;
+}
+
+#[test]
+fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
+    let mut u = bench(1);
+    let (sys, _) = positions(&mut u);
+    let home = u.ship_system;
+    let station = sys.station().unwrap();
+    // Docked at the station, its stop just begun: it asks the market, then
+    // sells, buys and picks where next, all its own decisions.
+    u.crafts[0].ship = u.world.ship_on(home, Facility::Station(station), 0);
+    {
+        let mut pilots = u.pilots();
+        let p = &mut pilots[0];
+        p.trader = true;
+        let r = &mut p.avionics.route;
+        r.stops = vec![universe_sim::Stop { system: home, target: NavTarget::Station(station) }];
+        r.next = 0;
+        r.active = true;
+        r.dwell_until = None;
+    }
+    let name = u.crafts[0].name.to_uppercase();
+    run(&mut u, 3.0, |u| u.records.trades.iter().any(|t| t.trader == name));
+    let mine: Vec<_> = u.records.trades.iter().filter(|t| t.trader == name).map(|t| format!("{:?} {} {}", t.deal, t.units, t.item)).collect();
+    eprintln!("{name}: {mine:?} (stops {})", u.records.stats.stops);
+    assert!(!mine.is_empty(), "the trader traded or declared where it's going");
 }

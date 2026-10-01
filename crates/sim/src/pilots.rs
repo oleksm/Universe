@@ -29,7 +29,7 @@ use std::sync::{mpsc, Arc, Condvar, Mutex, MutexGuard};
 
 use glam::DVec3;
 use universe_avionics::hunter::{may_defend, wants_sightings, Hunt, HuntEnd, Sighting, DEFEND_RANGE};
-use universe_avionics::route::{Route, Stop};
+use universe_avionics::route::Stop;
 use universe_avionics::{Avionics, Bus, Clearance, Event, NavTarget};
 use universe_protocol::PadGrant;
 use universe_services::Board;
@@ -95,26 +95,13 @@ impl Status {
     }
 }
 
-/// What a pilot's operator tells it (it acts on it when it next thinks).
-#[derive(Clone, Debug)]
-pub enum Order {
-    /// Fly this route (dispatch: a new one when the last is done).
-    Route(Route),
-    /// After the stop it's bound for, on to this one (a trader's next market).
-    Then(Stop),
-    /// Lock a nav target, ask for clearance, or switch the autopilot (dev
-    /// tools and tests, as a pilot at the controls would).
-    NavTarget(Option<NavTarget>),
-    RequestClearance,
-    ToggleAutopilot,
-}
-
 /// A message for a pilot.
 #[derive(Clone, Debug)]
 pub(crate) enum Msg {
     /// What happened to its ship (its sensors and the devices report it).
     Feed(Vec<ShipEvent>),
-    Order(Order),
+    /// The market service's answer to its request for quotes.
+    Market(crate::operator::MarketAnswer),
 }
 
 /// A pilot: its programs, what's waiting for it, and when it'll next think.
@@ -123,7 +110,6 @@ pub struct Pilot {
     /// Fault injection: it thinks, but posts nothing (a client gone quiet).
     pub silent: bool,
     pub(crate) feed: Vec<ShipEvent>,
-    orders: Vec<Order>,
     /// The tick it next wants to think at.
     next_think: u64,
     /// Its commands not yet due, and when they will be: it sees its ship as
@@ -136,11 +122,19 @@ pub struct Pilot {
     last_status: Option<Status>,
     last_posted: f64,
     last_sleep: u64,
+    /// Its operator's business (see `operator`): a trader or not, what it
+    /// paid for what it carries, its route's seed, stops made so far, and
+    /// the market service's answer, waiting.
+    pub trader: bool,
+    pub(crate) paid: std::collections::BTreeMap<usize, f64>,
+    pub(crate) route_seed: u64,
+    pub(crate) stops_made: u64,
+    market: Option<crate::operator::MarketAnswer>,
 }
 
 impl Pilot {
     pub fn new(avionics: Avionics) -> Self {
-        Pilot { avionics, silent: false, feed: Vec::new(), orders: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0 }
+        Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
     }
 }
 
@@ -396,31 +390,25 @@ fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[Gun
         .collect()
 }
 
-/// Pilot `pilot` (flying craft `i`) carries out an order.
-fn obey(order: Order, a: &mut Avionics, link: &mut PoolLink, events: &mut Vec<Event>) {
-    match order {
-        Order::Route(route) => a.route = route,
-        Order::Then(stop) => {
-            let r = &mut a.route;
-            r.stops.truncate(r.next + 1);
-            r.stops.push(stop);
-        }
-        Order::NavTarget(target) => a.set_nav_target(link, target, events),
-        Order::RequestClearance => {
-            a.request_clearance(link, events);
-        }
-        Order::ToggleAutopilot => a.toggle_autopilot(link, events),
-    }
-}
-
 /// The pilot of ship `id` thinks on `view`, if it's time to or something's
 /// waiting for it: what it posts. With a human at the stick (`human`), it
 /// thinks every time, flies by the stick (unless a program has it), and
 /// hunts no one.
 pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Option<Controls>) -> Option<Posting> {
     let (system, ref ship) = *view.ships.get(&id)?;
-    if human.is_none() && view.tick < pilot.next_think && pilot.feed.is_empty() && pilot.orders.is_empty() {
+    if human.is_none() && view.tick < pilot.next_think && pilot.feed.is_empty() && pilot.market.is_none() {
         return None;
+    }
+    // Its operator's business: a route done (parked), the next; the market's
+    // answer in, the trades.
+    let mut business = Vec::new();
+    if human.is_none() {
+        if !pilot.avionics.route.active && matches!(ship.state, ShipState::Landed { .. }) {
+            crate::operator::new_route(pilot, &view.charts, system);
+        }
+        if let Some(answer) = pilot.market.take() {
+            crate::operator::trade(pilot, &view.charts, &answer, &mut business);
+        }
     }
     let a = &mut pilot.avionics;
     let was_hunting = a.hunting.is_some();
@@ -433,9 +421,6 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let seen = seen(ship, &mut pilot.pending, view.tick);
     let sys = view.charts.system(system);
     let mut link = PoolLink { view, sys, ship: seen, system, id, devices: Vec::new(), requests: Vec::new(), pending: &mut pilot.pending };
-    for order in std::mem::take(&mut pilot.orders) {
-        obey(order, a, &mut link, &mut events);
-    }
     // The last step's outcome (an arrival, a lapsed clearance), then this one.
     a.conclude(&mut link, &mut events);
     let pos = link.ship.position;
@@ -460,6 +445,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     }
     let stick = stick.or_else(|| a.follow_step(&mut link, mark, &mut events)).or(human);
     let program = a.prepare(&mut link, view.dt, &mut events);
+
     let flown = a.flies(&link.ship);
     let turn = if flown { program } else { Some(stick.unwrap_or_default()) };
     // When it needs to think again.
@@ -483,7 +469,17 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
         _ => THINK_AT_LEAST,
     };
     pilot.next_think = view.tick + ((wait / view.dt).ceil() as u64).max(1);
-    let PoolLink { devices, requests, .. } = link;
+    let PoolLink { devices, mut requests, .. } = link;
+    requests.extend(business);
+    let stopped = events.iter().any(|e| matches!(e, Event::RouteStop { .. }));
+    if stopped {
+        pilot.stops_made += 1;
+        if pilot.trader
+            && let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship)
+        {
+            requests.push(Request::Quotes { system, market });
+        }
+    }
     // Its ship's events went to the services when they happened: the rest.
     events.retain(|e| !matches!(e, Event::Ship(_)));
     // Only what's new (the ship holds its turn, the world its status), and a keep-alive.
@@ -518,7 +514,7 @@ fn deliver(pilots: &mut [Pilot], mail: &mut Vec<(usize, Msg)>) {
         let Some(p) = pilots.get_mut(i) else { continue };
         match m {
             Msg::Feed(events) => p.feed.extend(events),
-            Msg::Order(o) => p.orders.push(o),
+            Msg::Market(a) => p.market = Some(a),
         }
     }
 }

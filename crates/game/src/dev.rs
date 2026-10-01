@@ -381,12 +381,12 @@ pub fn apply(app: &mut App, name: &str) {
                 c.ship.hyperdrive = false;
                 c.ship.position = pos + DVec3::new(-2_000.0 + 5_000.0 * k as f64, 1_500.0, -3_000.0);
                 c.ship.velocity = vel;
-                c.trader = k == 1;
                 let number = c.name.split(' ').next_back().unwrap_or("").to_string();
                 c.name = format!("{} {number}", if k == 0 { "Pirate" } else { "Trader" });
             }
             for (k, p) in app.engine.universe().pilots()[n - 2..].iter_mut().enumerate() {
                 p.avionics.pirate = k == 0;
+                p.trader = k == 1;
                 p.avionics.route.active = false;
                 p.avionics.route.dwell_until = None;
             }

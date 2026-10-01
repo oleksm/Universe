@@ -79,8 +79,6 @@ pub struct CraftView {
     pub name: String,
     pub system: usize,
     pub ship: Ship,
-    pub pirate: bool,
-    pub trader: bool,
     /// Its route: the stop it's on, how many, and what it's doing.
     pub route_next: usize,
     pub route_stops: usize,
@@ -279,8 +277,6 @@ impl Engine {
                 name: c.name.clone(),
                 system: c.system,
                 ship: c.ship.clone(),
-                pirate: c.status.pirate,
-                trader: c.trader,
                 route_next: c.status.route_next,
                 route_stops: c.status.route_len,
                 stage: crate::contacts::activity(c),
