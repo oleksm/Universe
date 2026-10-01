@@ -1,5 +1,8 @@
-//! Ships colliding with each other: the kernel finds the pairs that touched
-//! during the frame (`universe_physics::contacts`); here they bounce, with
+//! Ships colliding with each other: the kernel finds the pairs whose
+//! bounding spheres touched during the frame (`universe_physics::contacts`);
+//! then their shapes — each hull's contact spheres, where they were through
+//! the frame — say whether they really met, where, and which way (a wing
+//! clips another; a ship passes over another's back untouched). They bounce, with
 //! momentum conserved and `RESTITUTION` of the closing speed kept, and the
 //! energy lost goes into both hulls, half each (see `damage`). A nudge dents;
 //! a hard hit destroys them both. A ship resting on the ground stands firm
@@ -14,7 +17,7 @@ use universe_physics::{bounce_pair, contacts, Mover};
 
 use crate::damage;
 use crate::events::ShipEvent;
-use crate::ship::{ShipState, SHIP_RADIUS};
+use crate::ship::{Ship, ShipState};
 use crate::system::BodyKind;
 use crate::weapons::Armed;
 use crate::world::World;
@@ -23,6 +26,58 @@ use crate::world::World;
 pub const RESTITUTION: f64 = 0.3;
 /// Slower than this, touching ships just ease apart (m/s).
 const IMPACT: f64 = 0.5;
+/// Moments through the frame at which two ships' shapes are compared.
+const SAMPLES: usize = 6;
+
+/// Did ships `a` and `b`, whose bounding spheres met `before_end` seconds
+/// before the end of the frame, touch? Their hulls compared at moments from
+/// then to the end (each ship moving as it was, turned as it is now): a
+/// corner or edge of one inside a solid part of the other. At the first
+/// moment they do: which way (unit, from `b` to `a`: out of the face it went
+/// in by), how fast they closed along it, and how deep they overlap at the
+/// end (m).
+fn shapes_touch(a: &Ship, b: &Ship, before_end: f64) -> Option<(DVec3, f64, f64)> {
+    let (sa, sb) = (a.spec().shape(), b.spec().shape());
+    let (ra, rb) = (sa.mesh.bound(), sb.mesh.bound());
+    let v = a.velocity - b.velocity;
+    // The deepest a point of one is inside the other at time `t` (s, ≤ 0: before the end).
+    let deepest = |t: f64| -> Option<(f64, DVec3)> {
+        let (pa, pb) = (a.position + a.velocity * t, b.position + b.velocity * t);
+        let mut best: Option<(f64, DVec3)> = None;
+        // One's points in the other: (its pose, its shape; the other's pose and shape; which way round).
+        for (from, ofrom, shape_from, into, ointo, shape_into, reach, sign) in [(pa, a.orientation, sa, pb, b.orientation, sb, rb, 1.0), (pb, b.orientation, sb, pa, a.orientation, sa, ra, -1.0)] {
+            let back = ointo.inverse();
+            // (How the point moves against the other: a's against b, or b's against a.)
+            let moving = back * (v * sign);
+            for q in shape_from.probes() {
+                let w = from + ofrom * q;
+                if w.distance(into) > reach {
+                    continue;
+                }
+                if let Some((depth, n)) = shape_into.inside(back * (w - into), moving)
+                    && best.is_none_or(|(d, _)| depth > d)
+                {
+                    // (Out of the face it's in by: a's point in b, out toward a; b's in a, out toward b.)
+                    best = Some((depth, ointo * n * sign));
+                }
+            }
+        }
+        best
+    };
+    for k in 0..=SAMPLES {
+        let t = -before_end * (1.0 - k as f64 / SAMPLES as f64);
+        if let Some((_, normal)) = deepest(t) {
+            let closing = -v.dot(normal);
+            let depth = deepest(0.0).map_or(0.0, |(d, _)| d);
+            // Already overlapping but moving apart: nothing to do.
+            if closing <= 0.0 && k > 0 {
+                return None;
+            }
+            return Some((normal, closing.max(0.0), depth));
+        }
+    }
+    None
+}
 
 impl World {
     /// Collisions between ships over the last `dt` game seconds.
@@ -62,7 +117,8 @@ impl World {
                         .map(|&k| {
                             let s = &ships[k].ship;
                             let fixed = matches!(s.state, ShipState::Landed { .. });
-                            Mover { id: k, position: s.position, velocity: s.velocity, radius: SHIP_RADIUS, mass: if fixed { f64::INFINITY } else { s.mass() } }
+                            // (Its reach: the sphere round its shape; the shapes decide after.)
+                            Mover { id: k, position: s.position, velocity: s.velocity, radius: s.spec().shape().mesh.bound(), mass: if fixed { f64::INFINITY } else { s.mass() } }
                         })
                         .collect()
                 })
@@ -73,11 +129,13 @@ impl World {
         for (movers, found) in found {
             for c in found {
                 let (ma, mb) = (movers[c.a], movers[c.b]);
-                let (dva, dvb, lost) = bounce_pair(c.normal, c.closing, ma.mass, mb.mass, RESTITUTION);
                 let (ia, ib) = (ma.id, mb.id);
+                // Their shapes: did they really meet, and which way?
+                let Some((normal, closing, gap)) = shapes_touch(ships[ia].ship, ships[ib].ship, c.before_end) else { continue };
+                let c = universe_physics::PairContact { normal, closing, ..c };
+                let (dva, dvb, lost) = bounce_pair(c.normal, c.closing, ma.mass, mb.mass, RESTITUTION);
                 let (ida, idb) = (ships[ia].id, ships[ib].id);
                 // Push apart to touching, the lighter (or free) one the more.
-                let gap = 2.0 * SHIP_RADIUS - ships[ia].ship.position.distance(ships[ib].ship.position);
                 let (wa, wb) = (1.0 / ma.mass, 1.0 / mb.mass);
                 for (k, dv, w, other, sign) in [(ia, dva, wa, idb, 1.0), (ib, dvb, wb, ida, -1.0)] {
                     let a = &mut ships[k];
@@ -113,6 +171,35 @@ mod tests {
         let a = Ship::new(at + DVec3::X * (closing * 0.5 - 12.0), DVec3::X * closing * 0.5, DQuat::IDENTITY);
         let b = Ship::new(at - DVec3::X * (closing * 0.5 - 12.0), -DVec3::X * closing * 0.5, DQuat::IDENTITY);
         (a, b, Vec::new(), Vec::new())
+    }
+
+    /// Two of the starting hull, level and side by side, `apart` metres
+    /// between centres along `across` at the end of a 1 s frame, closing at
+    /// 2 m/s.
+    fn passing(apart: f64, across: DVec3) -> (Ship, Ship) {
+        let at = DVec3::new(0.0, 5.0 * AU, 0.0);
+        let a = Ship::new(at + across * (apart * 0.5), -across, DQuat::IDENTITY);
+        let b = Ship::new(at - across * (apart * 0.5), across, DQuat::IDENTITY);
+        (a, b)
+    }
+
+    #[test]
+    fn the_hulls_shapes_decide_who_touched() {
+        let p = Probe::new(42);
+        let mut world = p.world;
+        let sys = p.system;
+        let met = |world: &mut World, (mut a, mut b): (Ship, Ship)| {
+            let (mut ea, mut eb) = (Vec::new(), Vec::new());
+            let mut ships = [Armed { id: 1, system: sys, ship: &mut a, events: &mut ea }, Armed { id: 2, system: sys, ship: &mut b, events: &mut eb }];
+            world.collide(&mut ships, 1.0);
+            ea.iter().any(|e| matches!(e, ShipEvent::Collided { .. }))
+        };
+        // One passing 16 m over the other's back: clear (a 12 m ball each would have met).
+        assert!(!met(&mut world, passing(16.0, DVec3::Y)), "16 m apart, one over the other");
+        // Side by side, 34 m between centres: their wingtips (38 m across) clip.
+        assert!(met(&mut world, passing(34.0, DVec3::X)), "wingtips");
+        // 44 m apart side by side: clear.
+        assert!(!met(&mut world, passing(44.0, DVec3::X)), "past the wingtips");
     }
 
     #[test]

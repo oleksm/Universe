@@ -59,6 +59,9 @@ pub struct Shape {
     pub solid: MassProperties,
     /// Its shape for contact: spheres covering it (empty: a body's own radius).
     pub spheres: Vec<universe_physics::Sphere>,
+    /// Its convex parts as solids (body, wings…): each the planes of its
+    /// faces, `n·p ≤ d` inside (n unit, outward). For ship against ship.
+    pub solids: Vec<Vec<(DVec3, f64)>>,
 }
 
 impl Shape {
@@ -68,6 +71,39 @@ impl Shape {
 
     pub fn node(&self, name: &str) -> Option<&Node> {
         self.nodes.iter().find(|n| n.name == name)
+    }
+
+    /// Is point `p` (its own frame), moving at `v` (the same), inside it?
+    /// If so: how deep, and out which way — the face it came in by (of
+    /// those it's moving in through, the one it would back out of
+    /// soonest), or failing that the one it's least deep behind.
+    pub fn inside(&self, p: DVec3, v: DVec3) -> Option<(f64, DVec3)> {
+        let mut best: Option<(f64, DVec3)> = None;
+        for planes in &self.solids {
+            let out = planes.iter().map(|&(n, d)| n.dot(p) - d).fold(f64::NEG_INFINITY, f64::max);
+            if out >= 0.0 {
+                continue;
+            }
+            let came_in = planes
+                .iter()
+                .filter(|&&(n, _)| v.dot(n) < -1e-9)
+                .map(|&(n, d)| ((d - n.dot(p)) / -v.dot(n), d - n.dot(p), n))
+                .min_by(|a, b| a.0.total_cmp(&b.0))
+                .map(|(_, depth, n)| (depth, n));
+            let least = planes.iter().map(|&(n, d)| (d - n.dot(p), n)).min_by(|a, b| a.0.total_cmp(&b.0)).expect("a solid has faces");
+            let (depth, n) = came_in.unwrap_or(least);
+            if best.is_none_or(|(d, _)| depth > d) {
+                best = Some((depth, n));
+            }
+        }
+        best
+    }
+
+    /// Points of its surface to test against another solid: its corners and
+    /// the middles of its edges (its own frame).
+    pub fn probes(&self) -> impl Iterator<Item = DVec3> + '_ {
+        let p = &self.mesh.points;
+        p.iter().copied().chain(self.mesh.edges.iter().map(move |e| (p[e[0] as usize] + p[e[1] as usize]) * 0.5))
     }
 }
 
@@ -254,6 +290,20 @@ impl ShapeDef {
             }
             spheres.push(universe_physics::Sphere { at: point(at) * s - c, radius: r * s });
         }
+        // Each part as a solid: its faces' planes.
+        let solids = ranges
+            .iter()
+            .map(|&(_, _, f0, f1)| {
+                mesh.faces[f0..f1]
+                    .iter()
+                    .filter_map(|f| {
+                        let (a, b, c) = (mesh.points[f[0] as usize], mesh.points[f[1] as usize], mesh.points[f[2] as usize]);
+                        let n = (b - a).cross(c - a).try_normalize()?;
+                        Some((n, n.dot(a)))
+                    })
+                    .collect()
+            })
+            .collect();
         if spheres.is_empty() {
             // Fitted to each part (its own convex hull) in turn.
             for &(p0, p1, f0, f1) in &ranges {
@@ -261,7 +311,7 @@ impl ShapeDef {
                 spheres.extend(fit_spheres(&part, SPHERE_SPACING));
             }
         }
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres })
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids })
     }
 }
 
