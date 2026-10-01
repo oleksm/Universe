@@ -231,10 +231,12 @@ impl World {
             // The gun: rounds at its rate while the trigger is held, each
             // pushing the ship back.
             ship.gun_cooldown -= dt;
-            if !(armed && ship.triggers.gun) {
+            // (Each weapon fires only if it's fitted.)
+            let (gun, laser) = (ship.spec().has(crate::modules::Gear::Gun), ship.spec().has(crate::modules::Gear::Laser));
+            if !(armed && gun && ship.triggers.gun) {
                 ship.gun_cooldown = ship.gun_cooldown.max(0.0);
             }
-            while armed && ship.triggers.gun && ship.gun_cooldown <= 0.0 && ship.ammo > 0 {
+            while armed && gun && ship.triggers.gun && ship.gun_cooldown <= 0.0 && ship.ammo > 0 {
                 let nose = ship.gun_forward();
                 // Fired this long before the end of the frame: it has since
                 // gained that much on the ship (which is already at the end).
@@ -247,7 +249,7 @@ impl World {
                 ship.gun_cooldown += 1.0 / GUN_RATE;
             }
             // The laser heats while it fires and cools when it doesn't.
-            if armed && ship.triggers.laser && !ship.laser_overheated {
+            if armed && laser && ship.triggers.laser && !ship.laser_overheated {
                 ship.laser_heat = (ship.laser_heat + dt / LASER_BURN).min(1.0);
                 ship.laser_overheated = ship.laser_heat >= 1.0;
                 let dir = ship.gun_forward(); // on the gun's gimbal

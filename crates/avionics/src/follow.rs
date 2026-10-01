@@ -151,6 +151,9 @@ pub fn orbit_speed(r: f64, side_accel: f64) -> f64 {
 impl Avionics {
     /// Start following `anchor` (or change how): any other autopilot stops.
     pub fn follow(&mut self, bus: &mut impl Bus, anchor: Anchor, manoeuvre: Manoeuvre, events: &mut Vec<Event>) {
+        if !crate::avionics::runs(bus, universe_world::modules::Feature::Follow, events) {
+            return;
+        }
         if !bus.ship().is_flying() || bus.ship().hyperdrive {
             events.push(Event::Refused { reason: "FOLLOW: FLYING IN NORMAL SPACE ONLY".into() });
             return;

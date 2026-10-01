@@ -20,5 +20,11 @@
     (key: "gun.mass_driver.s1", name: "MASS DRIVER", does: Gun, size: 1, mass: 800.0, volume: 1.5, power: 5.0e4, price: 8000.0),
     (key: "laser.pulse.s1", name: "PULSE LASER", does: Laser, size: 1, mass: 1200.0, volume: 2.0, power: 2.5e6, price: 14000.0),
     (key: "mining.rig.s2", name: "MINING RIG", does: MiningRig, size: 2, mass: 2500.0, volume: 6.0, power: 5.0e5, price: 12000.0),
+    // Alternatives.
+    (key: "power.fusion.s3", name: "FUSION PLANT S3", does: PowerPlant(output: 14.0e6), size: 3, mass: 5000.0, volume: 10.0, price: 32000.0),
+    (key: "drive.torch.s1", name: "TORCH DRIVE S1", does: Drive(thrust: 0.9e6), size: 1, mass: 3500.0, volume: 8.0, power: 7.0e5, price: 24000.0),
+    (key: "tank.s2", name: "FUEL TANK 15 T", does: Tank(capacity: 15000.0), size: 2, mass: 1100.0, volume: 23.0, price: 2200.0),
+    (key: "rack.s2", name: "CARGO RACKS 10 T", does: Rack(capacity: 10000.0), size: 2, mass: 800.0, volume: 15.0, price: 1600.0),
+    (key: "nav.basic.s1", name: "NAV COMPUTER (BASIC)", does: NavComputer(features: [Docking, Landing]), size: 1, mass: 100.0, volume: 0.2, power: 1.0e4, price: 6000.0),
     (key: "nav.full.s1", name: "NAV COMPUTER", does: NavComputer(features: [Docking, Landing, Gate, Follow, Hyperdrive, Route]), size: 1, mass: 150.0, volume: 0.3, power: 2.0e4, price: 20000.0),
 ]

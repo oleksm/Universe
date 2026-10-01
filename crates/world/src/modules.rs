@@ -51,6 +51,15 @@ pub enum Feature {
     Route,
 }
 
+/// Gear a module brings that something checks for.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum Gear {
+    Gun,
+    Laser,
+    MiningRig,
+    Hyperdrive,
+}
+
 /// A kind of slot: what goes in it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize)]
 pub enum SlotKind {
@@ -74,6 +83,17 @@ pub enum SlotKind {
 }
 
 impl Does {
+    /// The gear it is, if anything checks for it.
+    pub fn gear(&self) -> Option<Gear> {
+        match self {
+            Does::Gun => Some(Gear::Gun),
+            Does::Laser => Some(Gear::Laser),
+            Does::MiningRig => Some(Gear::MiningRig),
+            Does::Hyperdrive => Some(Gear::Hyperdrive),
+            _ => None,
+        }
+    }
+
     /// The kind of slot it goes in.
     pub fn slot(&self) -> SlotKind {
         match self {

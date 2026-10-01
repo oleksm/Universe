@@ -149,6 +149,7 @@ impl Universe {
         }
         self.world.time = save.time;
         self.ship = save.ship;
+        self.ship.refresh();
         self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
         if let Some(c) = self.player.as_mut().and_then(|p| p.as_any_mut().downcast_mut::<crate::cockpit::Cockpit>()) {
             *c.avionics_mut() = Avionics { route: save.route, ..save.avionics };

@@ -276,7 +276,9 @@ impl World {
         if let Some(on) = c.arm {
             crate::weapons::master_arm(ship, on, events);
         }
+        use crate::modules::Gear;
         match c.anchor {
+            Some(true) if !ship.spec().has(Gear::MiningRig) => events.push(ShipEvent::NotFitted { what: "MINING RIG".into() }),
             Some(true) if !matches!(ship.state, ShipState::Anchored { .. }) => {
                 let sys = self.system(system);
                 let field = self.field_at(&sys, system, ship.position, t);
@@ -296,6 +298,7 @@ impl World {
             }
         }
         match &c.hyperdrive {
+            Some(h) if h.engage && h.start && !ship.hyperdrive && !ship.spec().has(Gear::Hyperdrive) => events.push(ShipEvent::NotFitted { what: "HYPERDRIVE".into() }),
             // (Off always; on only by the engage control.)
             Some(h) if h.engage != ship.hyperdrive && (h.start || !h.engage) => {
                 let sys = self.system(system);

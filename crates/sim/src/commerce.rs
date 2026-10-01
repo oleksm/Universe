@@ -169,3 +169,57 @@ impl Universe {
     }
 }
 
+/// A module taken out at a refit fetches this share of its price.
+pub const BUYBACK: f64 = 0.6;
+
+impl crate::universe::Universe {
+    /// Pilot `id` refits slot `slot` with `module` (None: empties it) at the
+    /// station it's docked at: the module's price paid to the station's
+    /// market, less what the one taken out fetches (`BUYBACK` of its price).
+    /// Refused, with the reason, if it isn't docked at a station, the fit
+    /// won't do (see `ClassSpec::assemble`), or it can't pay. The credits it cost.
+    pub fn refit_as(&mut self, id: usize, slot: &str, module: Option<universe_world::content::Handle<universe_world::modules::Module>>) -> Result<f64, String> {
+        use universe_services::{Asset, Party};
+        let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        let sys = self.world.system(system);
+        let Some(Facility::Station(station)) = universe_world::traffic::docked_at(&sys, ship) else { return Err("REFIT DOCKED AT A STATION".into()) };
+        let c = universe_world::content::content();
+        let mut fit = ship.fit.clone().unwrap_or_else(|| c.get(ship.class).fit.clone());
+        let old = fit.iter().position(|(s, _)| s == slot);
+        let taken = old.map(|i| fit[i].1);
+        if taken == module {
+            return Err("FITTED ALREADY".into());
+        }
+        match (old, module) {
+            (Some(i), Some(m)) => fit[i].1 = m,
+            (Some(i), None) => {
+                fit.remove(i);
+            }
+            (None, Some(m)) => fit.push((slot.to_string(), m)),
+            (None, None) => return Err("EMPTY ALREADY".into()),
+        }
+        let mut refitted = ship.clone();
+        refitted.refit(fit)?;
+        let cost = module.map_or(0.0, |m| c.get(m).price) - taken.map_or(0.0, |m| c.get(m).price * BUYBACK);
+        let (me, market) = (Party::Pilot(id), Party::Market(system, Facility::Station(station)));
+        let cause = universe_protocol::Cause::Rules;
+        self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, cause)?;
+        match id {
+            crate::combat::PLAYER => self.ship = refitted,
+            _ => self.crafts[id - 1].ship = refitted,
+        }
+        Ok(cost)
+    }
+
+    /// The player refits slot `slot` (see `refit_as`); the cockpit is told.
+    pub fn refit(&mut self, slot: &str, module: Option<universe_world::content::Handle<universe_world::modules::Module>>) -> Result<f64, String> {
+        let r = self.refit_as(crate::combat::PLAYER, slot, module);
+        let c = universe_world::content::content();
+        let e = match &r {
+            Ok(credits) => universe_avionics::Event::Refitted { slot: slot.to_string(), module: module.map(|m| c.get(m).name.clone()), credits: *credits },
+            Err(reason) => universe_avionics::Event::Refused { reason: format!("REFIT: {reason}") },
+        };
+        self.events.push(e);
+        r
+    }
+}

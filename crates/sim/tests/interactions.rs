@@ -618,3 +618,38 @@ fn a_long_stay_at_a_spaceport_is_spent_in_its_hangar_and_the_pad_freed() {
     assert!(gone, "out of the hangar and away (hangar {:?})", u.crafts[0].ship.hangar);
     assert!(u.crafts[0].ship.hangar.is_none());
 }
+
+#[test]
+fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
+    use universe_sim::world::content::content;
+    let mut u = bench(0);
+    let home = u.ship_system;
+    let station = u.ship_system().station().unwrap();
+    let m = |k: &str| content().handle::<universe_sim::world::modules::Module>(k).unwrap();
+    // Not docked: refused.
+    assert!(u.refit("cargo", Some(m("rack.s2"))).is_err());
+    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    let credits = u.credits();
+    // Smaller racks: lighter, a smaller hold, and the old racks sold back.
+    let cost = u.refit("cargo", Some(m("rack.s2"))).unwrap();
+    assert!((cost - (1600.0 - 0.6 * 3000.0)).abs() < 1e-6, "{cost}");
+    assert!((u.credits() - (credits - cost)).abs() < 1e-6);
+    assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
+    assert_eq!(u.ship.spec().dry_mass, 60_000.0 - 1500.0 + 800.0);
+    // The gun out: it doesn't fire.
+    u.refit("hardpoint_1", None).unwrap();
+    assert!(!u.ship.spec().has(universe_sim::world::modules::Gear::Gun));
+    // A base block can't go: the plant.
+    let e = u.refit("power", None).unwrap_err();
+    assert!(e.contains("Power"), "{e}");
+    // A basic nav computer: it docks and lands, but runs no route.
+    u.refit("avionics", Some(m("nav.basic.s1"))).unwrap();
+    assert!(u.ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.ship.spec().runs(universe_sim::world::modules::Feature::Route));
+    // Saved and loaded, the fit stays.
+    let json = serde_json::to_string(&u.save()).unwrap();
+    assert!(json.contains("nav.basic.s1"));
+    let mut back = bench(0);
+    back.load(serde_json::from_str(&json).unwrap());
+    assert_eq!(back.ship.spec().hold_capacity, 10_000.0);
+    assert!(!back.ship.spec().runs(universe_sim::world::modules::Feature::Route));
+}

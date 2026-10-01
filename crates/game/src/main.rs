@@ -342,7 +342,9 @@ impl App {
         let (position, orientation) = self.place(Who::Me);
         let same = self.prev.ship_system == self.v.ship_system && self.prev.ship.position.distance(self.v.ship.position) < 20_000.0;
         let velocity = if same { self.prev.ship.velocity.lerp(self.v.ship.velocity, self.alpha) } else { self.v.ship.velocity };
-        universe_sim::Ship { position, orientation, velocity, ..self.v.ship.clone() }
+        let mut ship = self.v.ship.clone();
+        (ship.position, ship.orientation, ship.velocity) = (position, orientation, velocity);
+        ship
     }
 
     /// World time to draw at.
@@ -674,6 +676,7 @@ impl App {
                 Event::Crew(CrewEvent::HatchRefused { reason }) => format!("HATCH LOCKED - {reason}"),
                 Event::Ship(ShipEvent::Anchored { body }) => format!("ANCHORED TO {body}\n{} TO DIG, {} TO UNANCHOR", crate::keys::key(crate::keys::Act::Excavate), crate::keys::key(crate::keys::Act::Anchor)),
                 Event::Ship(ShipEvent::AnchorFailed { why }) => format!("ANCHOR - {why}"),
+                Event::Ship(ShipEvent::NotFitted { what }) => format!("NO {what} FITTED"),
                 Event::Ship(ShipEvent::AnchorReleased) => "ANCHOR RELEASED".into(),
                 Event::Ship(ShipEvent::ExcavatorStopped { why }) => format!("EXCAVATOR STOPPED - {why}"),
                 Event::Ship(ShipEvent::Mined { item, .. }) => {

@@ -148,7 +148,8 @@ impl Avionics {
             | ShipEvent::WeaponsSafe
             | ShipEvent::EnteredHangar { .. }
             | ShipEvent::LeftHangar { .. }
-            | ShipEvent::HangarRefused { .. } => {}
+            | ShipEvent::HangarRefused { .. }
+            | ShipEvent::NotFitted { .. } => {}
         }
     }
 
@@ -319,7 +320,11 @@ impl Avionics {
     /// Engage or release the autopilot. In hyperdrive it steers to the nav
     /// target; otherwise it docks or lands (requesting clearance if needed).
     pub fn toggle_autopilot(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+        use universe_world::modules::Feature;
         if bus.ship().hyperdrive {
+            if !self.hyper_autopilot && !runs(bus, Feature::Hyperdrive, events) {
+                return;
+            }
             if self.nav_target.is_none() && !self.hyper_autopilot {
                 events.push(Event::Refused { reason: "LOCK A NAV TARGET FIRST".into() });
                 return;
@@ -330,6 +335,17 @@ impl Avionics {
         }
         if self.clearance.is_none() && !self.request_clearance(bus, events) {
             return;
+        }
+        let Some(c) = self.clearance else { return };
+        if !c.autopilot {
+            let needs = match c.target {
+                NavTarget::Station(_) | NavTarget::Asteroid(_) => Feature::Docking,
+                NavTarget::Spaceport(_) => Feature::Landing,
+                NavTarget::Gate(_) => Feature::Gate,
+            };
+            if !runs(bus, needs, events) {
+                return;
+            }
         }
         let Some(c) = &mut self.clearance else { return };
         c.autopilot = !c.autopilot;
@@ -351,6 +367,9 @@ impl Avionics {
     /// Start or stop the route autopilot.
     pub fn toggle_route(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
         if self.route.stops.is_empty() {
+            return;
+        }
+        if !self.route.active && !runs(bus, universe_world::modules::Feature::Route, events) {
             return;
         }
         self.route.active = !self.route.active;
@@ -485,4 +504,13 @@ mod tests {
         let new = after(ShipEvent::Respawned);
         assert!(new.nav_target.is_none() && new.clearance.is_none() && !new.hyper_autopilot);
     }
+}
+
+/// Does the ship's nav computer run this autopilot? If not, said so.
+pub(crate) fn runs(bus: &mut impl Bus, f: universe_world::modules::Feature, events: &mut Vec<Event>) -> bool {
+    let ok = bus.ship().spec().runs(f);
+    if !ok {
+        events.push(Event::Refused { reason: format!("NO {} AUTOPILOT IN THE NAV COMPUTER", format!("{f:?}").to_uppercase()) });
+    }
+    ok
 }

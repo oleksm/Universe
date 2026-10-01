@@ -16,6 +16,8 @@ pub enum ShipEvent {
     LeftHangar { port: String, pad: usize },
     /// A hangar move that couldn't be made: why.
     HangarRefused { why: String },
+    /// Asked of gear that isn't fitted (a gun, a laser, the mining rig, the hyperdrive).
+    NotFitted { what: String },
     /// A contact rule fired (see `rules`): whose, and what came of it.
     RuleFired { rule: String, outcome: String },
     TookOff,

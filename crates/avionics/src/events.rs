@@ -37,4 +37,7 @@ pub enum Event {
     Refused { reason: String },
     /// Fuel bought: tonnes, for credits.
     Refuelled { tonnes: f64, credits: f64 },
+    /// A slot refitted at a station: what went in (None: emptied), and the
+    /// credits it cost (less what the module taken out fetched).
+    Refitted { slot: String, module: Option<String>, credits: f64 },
 }
