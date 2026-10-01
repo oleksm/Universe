@@ -9,12 +9,20 @@ use glam::{DVec3, Quat, Vec3};
 pub struct Mesh {
     id: u64,
     model: std::sync::Arc<WireModel>,
+    /// How far its farthest point is from its origin.
+    radius: f32,
 }
 
 impl Mesh {
     pub fn new(model: WireModel) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
-        Mesh { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), model: std::sync::Arc::new(model) }
+        let radius = model.positions.iter().map(|p| p.length()).fold(0.0, f32::max);
+        Mesh { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), model: std::sync::Arc::new(model), radius }
+    }
+
+    /// How far its farthest point is from its origin (unscaled).
+    pub fn radius(&self) -> f32 {
+        self.radius
     }
 
     pub fn id(&self) -> u64 {
@@ -83,8 +91,9 @@ impl WireModel {
             for col in 0..lon_seg {
                 let (a, b) = (idx(row, col), idx(row, col + 1));
                 let (c, d) = (idx(row + 1, col), idx(row + 1, col + 1));
-                m.faces.push([a, c, b]);
-                m.faces.push([b, c, d]);
+                // (Wound counter-clockwise seen from outside, as every face.)
+                m.faces.push([a, b, c]);
+                m.faces.push([b, d, c]);
                 if col % detail == 0 {
                     m.edges.push([a, c]); // meridian
                 }
@@ -167,5 +176,31 @@ impl WireModel {
         for i in 0..n {
             self.edges.push([base + i, base + (i + 1) % n]);
         }
+    }
+}
+
+#[cfg(test)]
+mod winding {
+    use super::*;
+
+    /// Every face of a mesh convex about `centre` faces away from it.
+    fn outward_about(m: &WireModel, centre: impl Fn(Vec3) -> Vec3) {
+        for f in &m.faces {
+            let [a, b, c] = f.map(|i| m.positions[i as usize]);
+            let n = (b - a).cross(c - a);
+            let mid = (a + b + c) / 3.0;
+            // (A pole's slivers have no area: nothing to light.)
+            if n.length() < 1e-5 {
+                continue;
+            }
+            assert!(n.dot(mid - centre(mid)) > 0.0, "a face wound inward at {mid}");
+        }
+    }
+
+    #[test]
+    fn globes_and_hulls_wind_their_faces_outward() {
+        outward_about(&WireModel::globe(8, 5, 4), |_| Vec3::ZERO);
+        let cube: Vec<Vec3> = (0..8).map(|k| Vec3::new((k & 1) as f32, (k >> 1 & 1) as f32, (k >> 2 & 1) as f32) + 3.0).collect();
+        outward_about(&WireModel::convex_hull(&cube), |_| Vec3::splat(3.5));
     }
 }

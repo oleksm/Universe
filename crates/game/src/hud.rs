@@ -1216,28 +1216,29 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     let to_sun = sun - cam;
     let dist = to_sun.length();
     let dir = to_sun / dist;
-    // Hidden behind a body? A soft edge at its limb.
-    let mut visible = 1.0f32;
+    // How much of the sun's disc is in sight: what planets and moons leave
+    // of it (exactly), times what's left past the structures near by (the
+    // disc sampled: a ray to each of its points, against their blocks).
+    let radius = sys.bodies[star].rail.radius;
+    let mut visible = frame.sun_visible(cam) as f32;
+    let (u, v) = (dir.any_orthonormal_vector(), dir.cross(dir.any_orthonormal_vector()));
+    let disc: Vec<DVec3> = std::iter::once(sun)
+        .chain((0..6).map(|k| sun + (u * (k as f64 / 6.0 * std::f64::consts::TAU).cos() + v * (k as f64 / 6.0 * std::f64::consts::TAU).sin()) * radius * 0.5))
+        .chain((0..12).map(|k| sun + (u * (k as f64 / 12.0 * std::f64::consts::TAU).cos() + v * (k as f64 / 12.0 * std::f64::consts::TAU).sin()) * radius * 0.9))
+        .collect();
     for (i, b) in sys.bodies.iter().enumerate() {
-        // A structure built of blocks (a station): behind any of them, no sun.
-        if let universe_sim::world::physics::Collider::Blocks(blocks) = &b.rail.collider {
-            let back = b.rotation(app.now()).inverse();
-            let (from, way) = (back * (cam - app.view.positions[i]), back * dir);
-            if blocks.boxes.iter().any(|&(lo, hi)| ray_hits_box(from, way, lo, hi, dist)) {
-                return;
-            }
+        let universe_sim::world::physics::Collider::Blocks(blocks) = &b.rail.collider else { continue };
+        let centre = app.view.positions[i];
+        if centre.distance(cam) > 20_000.0 {
             continue;
         }
-        if i == star || b.kind.artificial() {
-            continue;
-        }
-        let rel = app.view.positions[i] - cam;
-        let along = rel.dot(dir);
-        if along <= 0.0 || along >= dist {
-            continue;
-        }
-        let miss = (rel - dir * along).length() - b.rail.radius;
-        visible = visible.min(((miss / (along * 0.004)) as f32).clamp(0.0, 1.0));
+        let back = b.rotation(app.now()).inverse();
+        let from = back * (cam - centre);
+        let hidden = disc.iter().filter(|&&p| {
+            let way = back * (p - cam).normalize();
+            blocks.boxes.iter().any(|&(lo, hi)| ray_hits_box(from, way, lo, hi, dist))
+        }).count();
+        visible *= 1.0 - hidden as f32 / disc.len() as f32;
     }
     if visible <= 0.0 {
         return;
@@ -1250,7 +1251,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     // The glare goes with the light itself: the square root of the
     // irradiance (1 at 1 AU from a sun-like star), unadapted — a hundred
     // times the light close in is ten times the glare.
-    let irradiance = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU }.irradiance_at(cam);
+    let irradiance = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU, radius: 0.0 }.irradiance_at(cam);
     let [r, g, b] = sys.class.color();
     let tint = |a: f32| Color([r, g, b, (a * visible).min(1.0)]);
     let disc = frame.projected_radius(sun, sys.bodies[star].rail.radius).max(2.0);

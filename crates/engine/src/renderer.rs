@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use glam::camera::rh::proj::directx::orthographic;
-use glam::UVec2;
+use glam::{UVec2, Vec3};
 
 use std::collections::HashMap;
 
@@ -17,6 +17,55 @@ const DEPTH_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 struct Globals {
     view_proj: [[f32; 4]; 4],
     hud_proj: [[f32; 4]; 4],
+    /// Camera-relative world → each shadow cascade (see `Shadows`).
+    shadow_near: [[f32; 4]; 4],
+    shadow_far: [[f32; 4]; 4],
+    /// A texel of each cascade (metres); shadows on (1) or not.
+    shadow: [f32; 4],
+}
+
+/// The shadow map's side (texels), each of its two cascades.
+const SHADOW_SIZE: u32 = 2048;
+/// How far toward the light (and away) a shadow box reaches from the eye
+/// (m): what casts from up to this far sunward of it.
+const SHADOW_DEPTH: f64 = 8_000.0;
+
+/// The light's view of what's near the eye, for shadows: two cascades
+/// (the near one an eighth the size, finer), each an orthographic box
+/// along the light, depth only.
+struct Shadows {
+    /// Each cascade's layer of the map, to draw into.
+    layers: [wgpu::TextureView; 2],
+    /// Each cascade's matrix (uniform), for the pass drawing it.
+    lights: [wgpu::Buffer; 2],
+    light_binds: [wgpu::BindGroup; 2],
+    /// The map and its comparing sampler, for the mesh shaders.
+    bind: wgpu::BindGroup,
+    pipe: wgpu::RenderPipeline,
+    /// The casters this frame: (mesh, first instance, count).
+    runs: Vec<(u64, u32, u32)>,
+}
+
+/// Camera-relative world → a shadow cascade's clip space: a box `half`
+/// metres each way across the light and `SHADOW_DEPTH` along it, round the
+/// eye at `eye` (world), its centre held to whole texels (so edges don't
+/// crawl as the eye moves); depth 0 at the sunward end.
+fn shadow_matrix(eye: glam::DVec3, sun: glam::DVec3, half: f64) -> glam::Mat4 {
+    use glam::{DVec3, DVec4};
+    let w = sun;
+    let u = w.cross(if w.y.abs() < 0.9 { DVec3::Y } else { DVec3::X }).normalize();
+    let v = w.cross(u);
+    let texel = 2.0 * half / SHADOW_SIZE as f64;
+    let snap = |a: f64| (a / texel).round() * texel - a;
+    let c = u * snap(eye.dot(u)) + v * snap(eye.dot(v));
+    let d = SHADOW_DEPTH;
+    let rows = [
+        DVec4::new(u.x / half, u.y / half, u.z / half, -c.dot(u) / half),
+        DVec4::new(v.x / half, v.y / half, v.z / half, -c.dot(v) / half),
+        DVec4::new(-w.x / (2.0 * d), -w.y / (2.0 * d), -w.z / (2.0 * d), 0.5 + c.dot(w) / (2.0 * d)),
+        DVec4::W,
+    ];
+    glam::DMat4::from_cols(rows[0], rows[1], rows[2], rows[3]).transpose().as_mat4()
 }
 
 /// Growable GPU vertex buffer, re-filled every frame.
@@ -94,20 +143,19 @@ impl GpuMesh {
         let mut faces = Vec::with_capacity(mesh.faces.len() * 3);
         for f in &mesh.faces {
             let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
-            let mut n = (b - a).cross(c - a).normalize_or_zero();
-            // Turned to face away from the center (the models are closed and roughly convex).
-            if n.dot((a + b + c) / 3.0) < 0.0 {
-                n = -n;
-            }
+            // Faces are wound counter-clockwise seen from outside: that's their normal.
+            // (Not "away from the centre": a station or a winged hull isn't convex about it.)
+            let n = (b - a).cross(c - a).normalize_or_zero();
             for &i in f {
                 faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i) });
             }
         }
         let mut edges = Vec::with_capacity(mesh.edges.len() * 2);
-        for e in &mesh.edges {
+        let normals = edge_normals(mesh);
+        for (e, n) in mesh.edges.iter().zip(normals) {
             for &i in e {
                 let p = mesh.positions[i as usize];
-                edges.push(MeshVertex { pos: p.to_array(), normal: p.normalize_or_zero().to_array(), color: color(i) });
+                edges.push(MeshVertex { pos: p.to_array(), normal: n.to_array(), color: color(i) });
             }
         }
         let buffer = |label, data: &[MeshVertex]| {
@@ -120,6 +168,49 @@ impl GpuMesh {
         };
         GpuMesh { faces: buffer("mesh faces", &faces), face_vertices: faces.len() as u32, edges: buffer("mesh edges", &edges), edge_vertices: edges.len() as u32, used: 0 }
     }
+}
+
+/// Each edge's normal, to light it by: the faces it bounds, averaged (a
+/// crease lit as either side is); a detail line (on a face, not bounding
+/// one), the face nearest its middle; a bare line, the way out from the centre.
+fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
+    let face_n: Vec<Vec3> = mesh.faces.iter().map(|f| {
+        let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
+        (b - a).cross(c - a).normalize_or_zero()
+    }).collect();
+    let mut by_edge: HashMap<(u32, u32), Vec3> = HashMap::new();
+    for (f, &n) in mesh.faces.iter().zip(&face_n) {
+        for (a, b) in [(f[0], f[1]), (f[1], f[2]), (f[2], f[0])] {
+            *by_edge.entry((a.min(b), a.max(b))).or_default() += n;
+        }
+    }
+    mesh.edges.iter().map(|e| {
+        let (a, b) = (e[0].min(e[1]), e[0].max(e[1]));
+        if let Some(n) = by_edge.get(&(a, b)).and_then(|n| n.try_normalize()) {
+            return n;
+        }
+        let mid = (mesh.positions[a as usize] + mesh.positions[b as usize]) / 2.0;
+        let nearest = mesh.faces.iter().zip(&face_n).filter(|(_, n)| **n != Vec3::ZERO).map(|(f, n)| {
+            let [p, q, r] = f.map(|i| mesh.positions[i as usize]);
+            (distance_to_triangle(mid, p, q, r), *n)
+        }).min_by(|x, y| x.0.total_cmp(&y.0));
+        nearest.map_or(mid.normalize_or_zero(), |(_, n)| n)
+    }).collect()
+}
+
+/// How far `p` is from the triangle `a b c`.
+fn distance_to_triangle(p: Vec3, a: Vec3, b: Vec3, c: Vec3) -> f32 {
+    let n = (b - a).cross(c - a).normalize_or_zero();
+    let q = p - n * n.dot(p - a);
+    let inside = [(a, b), (b, c), (c, a)].iter().all(|&(u, v)| (v - u).cross(q - u).dot(n) >= 0.0);
+    if inside {
+        return (p - q).length();
+    }
+    let seg = |u: Vec3, v: Vec3| {
+        let t = ((p - u).dot(v - u) / (v - u).length_squared().max(1e-12)).clamp(0.0, 1.0);
+        (p - (u + (v - u) * t)).length()
+    };
+    seg(a, b).min(seg(b, c)).min(seg(c, a))
 }
 
 /// Frames a mesh may go undrawn before it's dropped from the GPU.
@@ -163,6 +254,7 @@ pub(crate) struct Renderer {
     sky: DynBuffer,
     mesh_pipe: wgpu::RenderPipeline,
     mesh_line_pipe: wgpu::RenderPipeline,
+    shadows: Shadows,
     meshes: HashMap<u64, GpuMesh>,
     /// This frame's mesh instances: faces, then edges; and the runs to draw
     /// (mesh, first instance, count) for each.
@@ -195,7 +287,7 @@ impl Renderer {
             label: Some("globals"),
             entries: &[wgpu::BindGroupLayoutEntry {
                 binding: 0,
-                visibility: wgpu::ShaderStages::VERTEX,
+                visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
                 ty: wgpu::BindingType::Buffer {
                     ty: wgpu::BufferBindingType::Uniform,
                     has_dynamic_offset: false,
@@ -288,10 +380,88 @@ impl Renderer {
                 ],
             }),
         ];
+        // The shadow map: its texture (a layer each cascade), the mesh
+        // shaders' view of it, and the pass that draws it.
+        let shadow_texture = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("shadow map"),
+            size: wgpu::Extent3d { width: SHADOW_SIZE, height: SHADOW_SIZE, depth_or_array_layers: 2 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: DEPTH_FORMAT,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        });
+        let shadow_sample = shadow_texture.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::D2Array), ..Default::default() });
+        let shadow_layer = |k: u32| {
+            shadow_texture.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::D2), base_array_layer: k, array_layer_count: Some(1), ..Default::default() })
+        };
+        let shadow_cmp = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("shadow compare"),
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            compare: Some(wgpu::CompareFunction::LessEqual),
+            ..Default::default()
+        });
+        let shadow_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("shadow map"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Depth, view_dimension: wgpu::TextureViewDimension::D2Array, multisampled: false },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry { binding: 1, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison), count: None },
+            ],
+        });
+        let shadow_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("shadow map"),
+            layout: &shadow_layout,
+            entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&shadow_sample) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&shadow_cmp) }],
+        });
+        let light_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("shadow light"),
+            entries: &[wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::VERTEX,
+                ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None },
+                count: None,
+            }],
+        });
+        let light_buffer = || device.create_buffer(&wgpu::BufferDescriptor { label: Some("shadow light"), size: 64, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
+        let lights = [light_buffer(), light_buffer()];
+        let light_bind = |b: &wgpu::Buffer| device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("shadow light"), layout: &light_layout, entries: &[wgpu::BindGroupEntry { binding: 0, resource: b.as_entire_binding() }] });
+        let light_binds = [light_bind(&lights[0]), light_bind(&lights[1])];
+        let shadow_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/shadow.wgsl"));
+        let shadow_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("shadow casters"),
+            layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("shadow"), bind_group_layouts: &[Some(&light_layout)], immediate_size: 0 })),
+            vertex: wgpu::VertexState { module: &shadow_shader, entry_point: Some("vs_shadow"), compilation_options: Default::default(), buffers: &mesh_layouts },
+            primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
+            depth_stencil: Some(wgpu::DepthStencilState {
+                format: DEPTH_FORMAT,
+                depth_write_enabled: Some(true),
+                depth_compare: Some(wgpu::CompareFunction::LessEqual),
+                stencil: Default::default(),
+                // (Pushed back a little, more on slopes: no speckle on lit faces.)
+                bias: wgpu::DepthBiasState { constant: 2, slope_scale: 2.0, clamp: 0.0 },
+            }),
+            multisample: Default::default(),
+            fragment: None,
+            multiview_mask: None,
+            cache: None,
+        });
+        let shadows = Shadows { layers: [shadow_layer(0), shadow_layer(1)], lights, light_binds, bind: shadow_bind, pipe: shadow_pipe, runs: Vec::new() };
+        let mesh_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("meshes"),
+            bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout)],
+            immediate_size: 0,
+        });
         let mesh_pipeline = |label: &str, vs: &str, topology: wgpu::PrimitiveTopology, write: bool, compare: wgpu::CompareFunction| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some(label),
-                layout: Some(&scene_layout),
+                layout: Some(&mesh_layout),
                 vertex: wgpu::VertexState { module: &scene, entry_point: Some(vs), compilation_options: Default::default(), buffers: &mesh_layouts },
                 primitive: wgpu::PrimitiveState { topology, ..Default::default() },
                 depth_stencil: Some(wgpu::DepthStencilState {
@@ -304,7 +474,7 @@ impl Renderer {
                 multisample: Default::default(),
                 fragment: Some(wgpu::FragmentState {
                     module: &scene,
-                    entry_point: Some("fs_color"),
+                    entry_point: Some("fs_mesh"),
                     compilation_options: Default::default(),
                     targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
                 }),
@@ -412,6 +582,7 @@ impl Renderer {
             edge_runs: Vec::new(),
             front_face_runs: Vec::new(),
             front_edge_runs: Vec::new(),
+            shadows,
             frames: 0,
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
@@ -490,10 +661,23 @@ impl Renderer {
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
         let size = self.target.size.as_vec2();
         let hud = self.target.hud_size.as_vec2();
+        // The shadow cascades: along the light from the eye, if there's a
+        // light and shadows are wanted.
+        let sun = frame.light.filter(|_| frame.shadow_reach > 0.0).and_then(|l| (l.position - frame.camera.position).try_normalize());
+        let (near, far) = (frame.shadow_reach / 8.0, frame.shadow_reach);
+        let cascade = |half: f64| sun.map_or(glam::Mat4::IDENTITY, |s| shadow_matrix(frame.camera.position, s, half));
+        let (shadow_near, shadow_far) = (cascade(near), cascade(far));
+        let texel = |half: f64| (2.0 * half / SHADOW_SIZE as f64) as f32;
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
+            shadow_near: shadow_near.to_cols_array_2d(),
+            shadow_far: shadow_far.to_cols_array_2d(),
+            // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
+            shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
         };
+        gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
+        gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));
         let upload = universe_prof::scope("render/upload vertices");
         gpu.queue.write_buffer(&self.globals, 0, bytemuck::bytes_of(&globals));
         self.sky.upload(gpu, &frame.sky);
@@ -520,6 +704,25 @@ impl Renderer {
         let surface_view = surface_texture.texture.create_view(&Default::default());
 
         let mut encoder = gpu.device.create_command_encoder(&Default::default());
+        // The shadow map: each cascade, the casters seen from the light.
+        for k in 0..2 {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("shadow map"),
+                color_attachments: &[],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.shadows.layers[k],
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(1.0), store: wgpu::StoreOp::Store }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            if sun.is_some() {
+                pass.set_bind_group(0, &self.shadows.light_binds[k], &[]);
+                self.draw_meshes(&mut pass, &self.shadows.runs, &self.shadows.pipe, |m| (&m.faces, m.face_vertices));
+            }
+        }
         {
             let [r, g, b, a] = frame.clear.0.map(f64::from);
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -546,6 +749,7 @@ impl Renderer {
                 multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
+            pass.set_bind_group(1, &self.shadows.bind, &[]);
             self.sky.draw(&mut pass, &self.sky_pipe);
             self.solids.draw(&mut pass, &self.solid_pipe);
             self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
@@ -573,6 +777,7 @@ impl Renderer {
                 multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
+            pass.set_bind_group(1, &self.shadows.bind, &[]);
             self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.front_lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
@@ -643,6 +848,10 @@ impl Renderer {
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
         (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);
+        // The casters: those within reach of the shadow boxes.
+        let reach = frame.shadow_reach as f32 * 1.5;
+        let casting: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().chain(&frame.front).filter(|d| d.casts && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).collect();
+        self.shadows.runs = casters(&casting, &mut data);
         self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
     }
 
@@ -736,6 +945,22 @@ impl Renderer {
 /// Mesh draws as instances (appended to `data`), sorted by mesh: the runs
 /// (mesh, first instance, count) for their faces, and for their edges.
 type Runs = Vec<(u64, u32, u32)>;
+/// The casters' instances, grouped by mesh into runs.
+fn casters(draws: &[&crate::frame::MeshDraw], data: &mut Vec<Instance>) -> Runs {
+    let mut order: Vec<usize> = (0..draws.len()).collect();
+    order.sort_by_key(|&i| draws[i].mesh.id());
+    let mut runs: Runs = Vec::new();
+    for i in order {
+        let id = draws[i].mesh.id();
+        match runs.last_mut() {
+            Some(r) if r.0 == id => r.2 += 1,
+            _ => runs.push((id, data.len() as u32, 1)),
+        }
+        data.push(draws[i].instance);
+    }
+    runs
+}
+
 fn batch(draws: &[crate::frame::MeshDraw], data: &mut Vec<Instance>) -> (Runs, Runs) {
     let mut order: Vec<usize> = (0..draws.len()).collect();
     order.sort_by_key(|&i| draws[i].mesh.id());

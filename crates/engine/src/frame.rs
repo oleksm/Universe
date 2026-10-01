@@ -55,6 +55,13 @@ pub struct Frame {
     /// A body reflecting the light (the nearest planet's day side), filling
     /// in the shade on the side facing it. None: no fill.
     pub reflector: Option<Reflector>,
+    /// Spheres that can come between the light and what it lights (planets,
+    /// moons: centre, radius), each hiding the share of its disc it covers.
+    pub eclipsers: Vec<(DVec3, f64)>,
+    /// Shadows cast by meshes on meshes, out to this far from the eye
+    /// (metres; 0: none). See `no_shadow`.
+    pub shadow_reach: f64,
+    casts: bool,
     /// Low-res scene resolution.
     scene_size: Vec2,
     /// HUD layer resolution (a multiple of the scene's).
@@ -80,6 +87,10 @@ pub(crate) struct MeshDraw {
     pub instance: Instance,
     /// Draw its edges too.
     pub edges: bool,
+    /// It casts shadows (see `Frame::no_shadow`); how far it reaches from its
+    /// origin (metres, scaled).
+    pub casts: bool,
+    pub reach: f32,
 }
 
 /// Per-draw data for the mesh shader: the model's rotation × scale (columns)
@@ -114,6 +125,8 @@ pub struct Light {
     /// Luminosity, relative: brightness 1 at `reference` metres from it.
     pub luminosity: f64,
     pub reference: f64,
+    /// Its radius (metres): the disc a body can cover part of.
+    pub radius: f64,
 }
 
 /// A sphere reflecting the light: a planet or moon. What it gives a point
@@ -158,6 +171,25 @@ impl Light {
     }
 }
 
+/// The share of a disc of (angular) radius `a` that a disc of radius `b`,
+/// `d` from it centre to centre, covers: none apart, all within, the lens
+/// between.
+pub fn disc_covered(a: f64, b: f64, d: f64) -> f64 {
+    if d >= a + b {
+        return 0.0;
+    }
+    if d <= b - a {
+        return 1.0;
+    }
+    if d <= a - b {
+        return (b / a).powi(2);
+    }
+    let lens = a * a * ((d * d + a * a - b * b) / (2.0 * d * a)).clamp(-1.0, 1.0).acos()
+        + b * b * ((d * d + b * b - a * a) / (2.0 * d * b)).clamp(-1.0, 1.0).acos()
+        - 0.5 * ((-d + a + b) * (d + a - b) * (d - a + b) * (d + a + b)).max(0.0).sqrt();
+    (lens / (std::f64::consts::PI * a * a)).clamp(0.0, 1.0)
+}
+
 /// Brightness of a face turned away from the light (see `Frame::model_shaded`).
 pub const SHADE_AMBIENT: f32 = 0.06;
 /// Brightness of an edge on the unlit side.
@@ -181,6 +213,9 @@ impl Frame {
             clear: Color::BLACK,
             light: None,
             reflector: None,
+            eclipsers: Vec::new(),
+            shadow_reach: 0.0,
+            casts: true,
             scene_size,
             size: hud_size,
             sky: Vec::new(),
@@ -228,6 +263,39 @@ impl Frame {
         let before = std::mem::replace(&mut self.in_front, true);
         f(self);
         self.in_front = before;
+    }
+
+    /// Meshes drawn in `f` cast no shadows (a planet's globe: its night is
+    /// its own shading, and its eclipses are `eclipsers`).
+    pub fn no_shadow(&mut self, f: impl FnOnce(&mut Frame)) {
+        let before = std::mem::replace(&mut self.casts, false);
+        f(self);
+        self.casts = before;
+    }
+
+    /// How much of the light's disc is in sight from `at` (world), 0..1:
+    /// what the eclipsers leave of it. (A sphere holding `at` doesn't count:
+    /// its own night is its shading.)
+    pub fn sun_visible(&self, at: DVec3) -> f64 {
+        let Some(light) = self.light else { return 1.0 };
+        let to_sun = light.position - at;
+        let ds = to_sun.length();
+        if ds <= light.radius {
+            return 1.0;
+        }
+        let a = (light.radius / ds).asin();
+        let mut seen = 1.0;
+        for &(c, r) in &self.eclipsers {
+            let to = c - at;
+            let d = to.length();
+            if d <= r || d >= ds || to.dot(to_sun) <= 0.0 {
+                continue;
+            }
+            let b = (r / d).asin();
+            let sep = to.angle_between(to_sun);
+            seen *= 1.0 - disc_covered(a, b, sep);
+        }
+        seen
     }
 
     pub fn project(&self, p: DVec3) -> Option<Vec2> {
@@ -355,7 +423,9 @@ impl Frame {
         };
         if lit && let Some(light) = self.light {
             let dir = (light.position - t.position).normalize_or_zero().as_vec3();
-            let c = self.light_at(at);
+            // (What a planet or moon leaves of the sun here.)
+            let seen = self.sun_visible(t.position) as f32;
+            let c = self.light_at(at).map(|c| c * seen);
             inst.light_dir = dir.extend(SHADE_AMBIENT).to_array();
             inst.light_color = [c[0], c[1], c[2], LINE_AMBIENT];
             if let Some((d, s, (base, c))) = self.fill_at(t.position) {
@@ -363,7 +433,7 @@ impl Frame {
                 inst.refl_color = [c[0], c[1], c[2], base];
             }
         }
-        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges };
+        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32 };
         if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
     }
 

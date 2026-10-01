@@ -37,7 +37,12 @@ pub fn draw(frame: &mut Frame, app: &App) {
         color: tint.map(|c| c / top),
         luminosity: class.luminosity(),
         reference: universe_sim::units::AU,
+        radius: app.view.system.bodies[i].rail.radius,
     });
+    // Planets and moons hide the sun from what's behind them.
+    frame.eclipsers = app.view.system.bodies.iter().enumerate().filter(|(_, b)| !b.kind.artificial() && b.kind != BodyKind::Star).map(|(i, b)| (app.view.positions[i], b.rail.radius)).collect();
+    // Ships, stations, gates and rocks shadow each other near the eye.
+    frame.shadow_reach = SHADOW_REACH;
     frame.reflector = reflector(frame, app);
     universe_prof::time("draw/scene/bodies", || bodies(frame, app));
     universe_prof::time("draw/scene/asteroids", || crate::rocks::draw(frame, app));
@@ -107,6 +112,9 @@ fn reflector(frame: &Frame, app: &App) -> Option<universe_engine::Reflector> {
 /// Top of a world's atmosphere, for the sky's colour (m).
 const ATMOSPHERE: f64 = 100_000.0;
 
+/// How far from the eye ships, stations, gates and rocks cast shadows (m).
+const SHADOW_REACH: f64 = 2_500.0;
+
 /// Day and night in the sky. Inside the atmosphere of a world with air
 /// (Terran), the sky takes the sun's light: blue by day, red and orange at
 /// twilight, black at night, fading out with altitude. The stars wash out by
@@ -131,7 +139,7 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let thick = (1.0 - altitude / ATMOSPHERE).clamp(0.0, 1.0) as f32;
     let day = ((elevation + 0.05) / 0.3).clamp(0.0, 1.0);
     let twilight = (-(elevation / 0.08).powi(2)).exp();
-    let bright = Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU }.intensity_at(cam);
+    let bright = Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU, radius: 0.0 }.intensity_at(cam);
     let tint = sys.class.color();
     let blue = [0.22, 0.42, 0.85];
     let dusk = [0.85, 0.38, 0.16];
@@ -360,7 +368,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             // the ground (the globe drops a hair so the grid sits on top).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
-            universe_prof::time("draw/scene/bodies/globe mesh", || frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, if app.show_grid { grid_detail(px) } else { 0.0 }, terrain_view::FILL * 2.5));
+            universe_prof::time("draw/scene/bodies/globe mesh", || frame.no_shadow(|frame| frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, if app.show_grid { grid_detail(px) } else { 0.0 }, terrain_view::FILL * 2.5)));
             if near {
                 universe_prof::time("draw/scene/bodies/surface grid", || terrain_view::surface_grid(frame, b, center, t, None, app.show_grid));
                 // On foot here: a fine grid underfoot.
@@ -384,11 +392,13 @@ fn bodies(frame: &mut Frame, app: &App) {
             let at = Transform { position: center, rotation, scale: b.rail.radius };
             // The star shines (a faint grid only when it fills the view);
             // everything else is lit by it.
-            if b.kind == BodyKind::Star {
-                frame.model(model, &at, c.scale(0.3 * grid_detail(px * 0.5)), fill);
-            } else {
-                frame.model_shaded_faded(model, &at, c, fill, if app.show_grid { grid_detail(px) } else { 0.0 });
-            }
+            frame.no_shadow(|frame| {
+                if b.kind == BodyKind::Star {
+                    frame.model(model, &at, c.scale(0.3 * grid_detail(px * 0.5)), fill);
+                } else {
+                    frame.model_shaded_faded(model, &at, c, fill, if app.show_grid { grid_detail(px) } else { 0.0 });
+                }
+            });
         }
 
         // True silhouette outline, plus a halo for stars.

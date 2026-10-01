@@ -3,9 +3,17 @@ struct Globals {
     view_proj: mat4x4<f32>,
     // Low-res pixel coords -> clip.
     hud_proj: mat4x4<f32>,
+    // Camera-relative world -> the shadow map's two cascades (near, far).
+    shadow_near: mat4x4<f32>,
+    shadow_far: mat4x4<f32>,
+    // x, y: a texel of each cascade (metres); z: shadows on (1) or not;
+    // w: tint what's in shadow red (checking them).
+    shadow: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
+@group(1) @binding(0) var shadow_map: texture_depth_2d_array;
+@group(1) @binding(1) var shadow_cmp: sampler_comparison;
 
 struct VertexIn {
     @location(0) pos: vec3<f32>,
@@ -79,14 +87,55 @@ fn view_factor(cos_b: f32, s_in: f32) -> f32 {
     return s * max((cos_b + c) / (1.0 + c), 0.0);
 }
 
-// Brightness per channel: ambient plus the star's (k) and the planet's light.
-fn lit(v: MeshIn, n: vec3<f32>, k: f32, ambient: f32) -> vec3<f32> {
+// The planet's light (k2) on a surface facing `n`.
+fn fill(v: MeshIn, n: vec3<f32>) -> vec3<f32> {
     var k2 = 0.0;
     if (v.refl_dir.w > 0.0) {
         k2 = max(pow(v.refl_color.w * view_factor(dot(n, v.refl_dir.xyz), v.refl_dir.w), EXPOSURE) - 0.12, 0.0) / 0.88;
     }
-    let light = min(k * v.light_color.rgb + k2 * v.refl_color.rgb, vec3<f32>(4.0));
-    return vec3<f32>(ambient) + (1.0 - ambient) * light;
+    return k2 * v.refl_color.rgb;
+}
+
+// What the shadow map says of the sun at `p` (camera-relative), on a
+// surface facing `n`: 1 lit, 0 in shadow (2x2 filtered at the edge).
+// Looked up a texel and a half off the surface, so it doesn't shadow itself.
+fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
+    if (g.shadow.z == 0.0) {
+        return 1.0;
+    }
+    let near = g.shadow_near * vec4<f32>(p + n * g.shadow.x * 1.5, 1.0);
+    let a = vec2<f32>(near.x * 0.5 + 0.5, 0.5 - near.y * 0.5);
+    if (all(a > vec2<f32>(0.01)) && all(a < vec2<f32>(0.99)) && near.z > 0.0 && near.z < 1.0) {
+        return textureSampleCompareLevel(shadow_map, shadow_cmp, a, 0, near.z);
+    }
+    let far = g.shadow_far * vec4<f32>(p + n * g.shadow.y * 1.5, 1.0);
+    let b = vec2<f32>(far.x * 0.5 + 0.5, 0.5 - far.y * 0.5);
+    if (all(b > vec2<f32>(0.0)) && all(b < vec2<f32>(1.0)) && far.z > 0.0 && far.z < 1.0) {
+        return textureSampleCompareLevel(shadow_map, shadow_cmp, b, 1, far.z);
+    }
+    return 1.0;
+}
+
+// A mesh's face or edge, lit per pixel: its colour, the sun's light on it
+// (before shadow) and the planet's, the ambient; where it is and faces.
+struct MeshOut {
+    @builtin(position) clip: vec4<f32>,
+    @location(0) color: vec4<f32>,
+    @location(1) sun: vec3<f32>,
+    @location(2) fill: vec3<f32>,
+    @location(3) ambient: f32,
+    @location(4) at: vec3<f32>,
+    @location(5) normal: vec3<f32>,
+};
+
+@fragment
+fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
+    let seen = sunlit(in.at, normalize(in.normal));
+    let light = min(in.sun * seen + in.fill, vec3<f32>(4.0));
+    if (g.shadow.w > 0.0 && seen < 0.5 && max(in.sun.r, max(in.sun.g, in.sun.b)) > 0.0) {
+        return vec4<f32>(0.8, 0.0, 0.0, in.color.a);
+    }
+    return vec4<f32>(in.color.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light), in.color.a);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {
@@ -98,19 +147,19 @@ fn turn(v: MeshIn, d: vec3<f32>) -> vec3<f32> {
 }
 
 @vertex
-fn vs_mesh(v: MeshIn) -> VertexOut {
+fn vs_mesh(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
-    let c = v.color * v.fill_tint;
-    return VertexOut(g.view_proj * vec4<f32>(place(v), 1.0), vec4<f32>(c.rgb * lit(v, n, k, v.light_dir.w), c.a));
+    let p = place(v);
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n);
 }
 
 @vertex
-fn vs_mesh_line(v: MeshIn) -> VertexOut {
+fn vs_mesh_line(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = sqrt(max(dot(n, v.light_dir.xyz), 0.0));
-    let c = v.color * v.line_tint;
-    var clip = g.view_proj * vec4<f32>(place(v), 1.0);
+    let p = place(v);
+    var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
-    return VertexOut(clip, vec4<f32>(c.rgb * lit(v, n, k, v.light_color.w), c.a));
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n);
 }

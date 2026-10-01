@@ -490,6 +490,42 @@ pub fn apply(app: &mut App, name: &str) {
                 u.pilots()[k].avionics.route.active = false;
             }
         }
+        "deckshadowside" | "deckshadowfront" | "deckshadowface" => {
+            // The home station's deck from above, at a moment in its turn
+            // when the sun is round to the side of the structure (its shadow
+            // across part of the deck) or in front of it (the ships' shadows
+            // long across the deck).
+            let station = sys.station().expect("home station");
+            let b = &sys.bodies[station];
+            let star = sys.bodies.iter().position(|b| b.kind == universe_sim::BodyKind::Star).expect("a star");
+            let want = if name == "deckshadowside" { 1.2f64 } else { 0.4 };
+            // ("deckshadowface": low over the deck, looking at the structure's sunlit face.)
+            let (eye, look) = if name == "deckshadowface" { (DVec3::new(120.0, -50.0, 380.0), DVec3::new(-60.0, -100.0, -250.0)) } else { (DVec3::new(-500.0, 420.0, 700.0), DVec3::new(0.0, 0.0, 100.0)) };
+            let t0 = app.engine.universe().world.time;
+            let mut pos = Vec::new();
+            let (mut best, mut at_t) = (f64::INFINITY, t0);
+            for k in 0..720 {
+                let t = t0 + b.rail.day * k as f64 / 720.0;
+                sys.positions(t, &mut pos);
+                let sun = b.rotation(t).inverse() * (pos[star] - pos[station]).normalize();
+                let miss = (sun.x.atan2(sun.z) - want).abs();
+                if miss < best {
+                    (best, at_t) = (miss, t);
+                }
+            }
+            app.engine.universe().world.time = at_t;
+            sys.positions(at_t, &mut pos);
+            log::info!("scenario {name}: sun in the station's frame {:.2}", b.rotation(at_t).inverse() * (pos[star] - pos[station]).normalize());
+            let f = StationFrame::new(&sys, station, at_t, &pos);
+            let at = f.world(eye);
+            app.mode = Mode::Pilot;
+            let u = app.engine.universe();
+            u.ship.state = ShipState::Flying;
+            u.ship.position = at;
+            u.ship.velocity = f.velocity_at(at);
+            u.ship.orientation = universe_sim::ship::facing(f.world(look) - at, f.up());
+            app.chase_cam = false;
+        }
         "platform" | "platformdeck" => {
             // The home station from off its corner, a little above its deck
             // (or, "platformdeck", from just above the deck), looking at it.

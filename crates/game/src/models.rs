@@ -115,3 +115,43 @@ fn gate_ring() -> WireModel {
     }
     m
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Every face of `m` faces out of the convex piece holding it (the
+    /// piece found by `piece`, the centre of the face's own solid).
+    fn outward(m: &WireModel, what: &str, centre: impl Fn(Vec3) -> Vec3) {
+        for f in &m.faces {
+            let [a, b, c] = f.map(|i| m.positions[i as usize]);
+            let mid = (a + b + c) / 3.0;
+            assert!((b - a).cross(c - a).dot(mid - centre(mid)) > 0.0, "{what}: a face wound inward at {mid}");
+        }
+    }
+
+    #[test]
+    fn every_model_winds_its_faces_outward() {
+        // The station: each face out of its own box.
+        let boxes = universe_sim::world::station::hull().boxes;
+        outward(&platform(), "station", |p| {
+            let (lo, hi) = boxes.iter().map(|&(lo, hi)| (lo.as_vec3(), hi.as_vec3())).find(|(lo, hi)| p.cmpge(*lo - 0.01).all() && p.cmple(*hi + 0.01).all()).expect("on a box");
+            (lo + hi) / 2.0
+        });
+        // The gate: out of its tube.
+        let r = universe_sim::world::gate::GATE_RADIUS as f32;
+        outward(&gate_ring(), "gate", |p| Vec3::new(p.x, 0.0, p.z).normalize() * r);
+        // Every hull: each face out of its own part.
+        for (_, h) in content().hulls.iter() {
+            let s = h.shape();
+            for f in &s.mesh.faces {
+                let [a, b, c] = f.map(|i| s.mesh.points[i as usize]);
+                let n = (b - a).cross(c - a);
+                // Its part: the solid whose plane it lies in.
+                let plane = s.solids.iter().flatten().find(|(pn, d)| (pn.dot(a) - d).abs() < 1e-3 && (pn.dot(b) - d).abs() < 1e-3 && (pn.dot(c) - d).abs() < 1e-3);
+                let (pn, _) = plane.unwrap_or_else(|| panic!("{}: a face on no part's plane", h.key));
+                assert!(n.dot(*pn) > 0.0, "{}: a face wound inward", h.key);
+            }
+        }
+    }
+}
