@@ -142,6 +142,12 @@ impl Universe {
             charts: None,
             positions: Vec::new(),
         };
+        // The settled systems' economy (the gate network's).
+        let mut settled: Vec<usize> = u.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
+        settled.sort_unstable();
+        settled.dedup();
+        let systems: Vec<(usize, Arc<StarSystem>)> = settled.into_iter().map(|i| (i, u.world.system(i))).collect();
+        u.markets.economy = universe_services::economy::Economy::new(systems.iter().map(|(i, s)| (*i, &**s)), u.world.time);
         u.respawn();
         u.events.clear();
         u.player_feed.clear();
@@ -315,6 +321,7 @@ impl Universe {
             universe_prof::time("sim/traffic presence", || self.traffic_presence());
         }
         universe_prof::time("sim/recorder", || self.record());
+        universe_prof::time("sim/economy", || self.markets.economy.step_to(self.world.time));
         // (The dead-man rule counts in seconds: a look once a second.)
         if self.tick.is_multiple_of(60) {
             universe_prof::time("sim/dead man", || self.dead_man());

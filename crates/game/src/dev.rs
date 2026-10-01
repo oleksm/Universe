@@ -128,6 +128,10 @@ pub fn apply(app: &mut App, name: &str) {
             }
             app.galaxy_map = Some(map);
         }
+        "economy" => {
+            app.mode = Mode::Pilot;
+            app.economy_panel = Some(Default::default());
+        }
         "navmap" => {
             app.mode = Mode::Pilot;
             app.nav_map = Some(crate::navmap::NavMap::open(app));

@@ -13,6 +13,12 @@
 //! market's state is kept only once it has been traded with. One currency,
 //! credits, booked in the ledger. You trade only while docked or landed at
 //! the market (a physical fact the core reports).
+//!
+//! In the settled systems a market is its place's economy (see `economy`):
+//! it sells what the place makes, from the place's real stock, and buys
+//! what it uses, as far as it has room; its prices follow that stock; and
+//! every trade puts tonnes in or takes them out. Nothing comes or goes
+//! but by ship.
 
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -131,6 +137,49 @@ fn key(f: Facility) -> u64 {
     }
 }
 
+/// Varieties of each kind of goods a settled market lists.
+const VARIETIES: usize = 3;
+
+/// The market of a settled place: for each kind of goods it makes or uses,
+/// a few varieties (the raw ores always, where it trades ore or water),
+/// sold where it makes more than it uses, else bought. It wants any variety
+/// of what it uses.
+fn place_market(seed: u64, place: &crate::economy::Place, catalog: &[Item]) -> Market {
+    let mut rng = Rng::new(mix(mix(seed, 0x3a4c_e701 + place.system as u64), key(place.facility)));
+    let mut offers = Vec::new();
+    for c in Category::all().filter(|&c| place.trades(c)) {
+        let side = if place.sells(c) { Side::Sells } else { Side::Buys };
+        let mut pool: Vec<usize> = catalog.iter().filter(|i| i.category == c && i.id < universe_world::goods::CATALOG_SIZE).map(|i| i.id).collect();
+        let mut picked: Vec<usize> = catalog.iter().filter(|i| i.category == c && i.id >= universe_world::goods::CATALOG_SIZE).map(|i| i.id).collect();
+        for _ in 0..VARIETIES {
+            if pool.is_empty() {
+                break;
+            }
+            let j = (rng.range(0.0, pool.len() as f64) as usize).min(pool.len() - 1);
+            picked.push(pool.swap_remove(j));
+        }
+        for id in picked {
+            let usual = (place.target(c) * 1000.0 / catalog[id].mass).round().max(1.0);
+            offers.push(Offer { item: id, side, base: catalog[id].price, usual });
+        }
+    }
+    offers.sort_by_key(|o| (o.side == Side::Buys, catalog[o.item].category, o.item));
+    let wants = Category::all().filter(|&c| place.trades(c) && !place.sells(c)).collect();
+    Market { offers, banned: Vec::new(), wants }
+}
+
+/// A settled market's quote for `o`, from its place's stock now: selling,
+/// what's in stock; buying, the room it has. Prices follow the stock (see
+/// `Place::factor`).
+fn place_quote(place: &crate::economy::Place, o: &Offer, item: &Item) -> Quote {
+    let c = item.category;
+    let p = item.price * place.factor(c).unwrap_or(1.0);
+    match o.side {
+        Side::Sells => Quote { offer: *o, level: (place.stock_of(c) * 1000.0 / item.mass).floor(), buy: Some(p * 1.1), sell: p * 0.9 },
+        Side::Buys => Quote { offer: *o, level: (place.room(c) * 1000.0 / item.mass).floor(), buy: None, sell: p },
+    }
+}
+
 /// The market at facility `f` in system `system` (`sys`), for the galaxy
 /// `seed`'s `catalog`. Gates have none.
 pub fn market(seed: u64, system: usize, sys: &StarSystem, f: Facility, catalog: &[Item]) -> Option<Market> {
@@ -178,6 +227,15 @@ pub fn market(seed: u64, system: usize, sys: &StarSystem, f: Facility, catalog: 
     offers.sort_by_key(|o| (o.side == Side::Buys, catalog[o.item].category, o.item));
     let wants = wants.iter().copied().filter(|c| !banned.contains(c)).collect();
     Some(Market { offers, banned, wants })
+}
+
+/// How a settled market trades `item`: its listed offer, else as it trades
+/// that kind (any variety of what it makes or uses).
+fn place_offer(m: &Market, place: &crate::economy::Place, item: &Item) -> Option<Offer> {
+    m.offers.iter().find(|o| o.item == item.id).copied().or_else(|| {
+        let c = item.category;
+        place.trades(c).then(|| Offer { item: item.id, side: if place.sells(c) { Side::Sells } else { Side::Buys }, base: item.price, usual: (place.target(c) * 1000.0 / item.mass).round().max(1.0) })
+    })
 }
 
 /// The price of an offer at `level` (stock or demand left).
@@ -299,6 +357,8 @@ pub struct Markets {
     goods: Arc<Vec<Item>>,
     markets: HashMap<(usize, Facility), Arc<Market>>,
     states: HashMap<(usize, Facility), MarketState>,
+    /// The settled systems' economy: their markets trade from it.
+    pub economy: crate::economy::Economy,
 }
 
 /// A request to trade: who, where (and where it physically is), what.
@@ -317,7 +377,7 @@ pub struct Order {
 
 impl Markets {
     pub fn new(seed: u64, goods: Arc<Vec<Item>>) -> Self {
-        Markets { seed, goods, markets: HashMap::new(), states: HashMap::new() }
+        Markets { seed, goods, markets: HashMap::new(), states: HashMap::new(), economy: Default::default() }
     }
 
     pub fn goods(&self) -> &[Item] {
@@ -329,7 +389,10 @@ impl Markets {
         if let Some(m) = self.markets.get(&(system, f)) {
             return Some(m.clone());
         }
-        let m = Arc::new(market(self.seed, system, sys, f, &self.goods)?);
+        let m = Arc::new(match self.economy.place(system, f) {
+            Some(place) => place_market(self.seed, place, &self.goods),
+            None => market(self.seed, system, sys, f, &self.goods)?,
+        });
         self.markets.insert((system, f), m.clone());
         Some(m)
     }
@@ -341,6 +404,9 @@ impl Markets {
     /// The market's quotes now.
     pub fn quotes(&mut self, system: usize, sys: &StarSystem, f: Facility, now: f64) -> Vec<Quote> {
         let Some(m) = self.market(system, sys, f) else { return Vec::new() };
+        if let Some(place) = self.economy.place(system, f) {
+            return m.offers.iter().map(|o| place_quote(place, o, &self.goods[o.item])).collect();
+        }
         let mut state = self.state(system, f, now);
         m.quotes(&mut state, now)
     }
@@ -348,6 +414,9 @@ impl Markets {
     /// Its quote for one item, if it trades it (listed, or of a kind it wants).
     pub fn quote_for(&mut self, system: usize, sys: &StarSystem, f: Facility, item: usize, now: f64) -> Option<Quote> {
         let m = self.market(system, sys, f)?;
+        if let Some(place) = self.economy.place(system, f) {
+            return place_offer(&m, place, &self.goods[item]).map(|o| place_quote(place, &o, &self.goods[item]));
+        }
         let mut state = self.state(system, f, now);
         m.quote_for(&mut state, now, &self.goods[item])
     }
@@ -355,6 +424,9 @@ impl Markets {
     /// Its quotes for several items at once (None: not traded there).
     pub fn quotes_for(&mut self, system: usize, sys: &StarSystem, f: Facility, items: &[usize], now: f64) -> Vec<Option<Quote>> {
         let Some(m) = self.market(system, sys, f) else { return vec![None; items.len()] };
+        if let Some(place) = self.economy.place(system, f) {
+            return items.iter().map(|&i| place_offer(&m, place, &self.goods[i]).map(|o| place_quote(place, &o, &self.goods[i]))).collect();
+        }
         let mut state = self.state(system, f, now);
         items.iter().map(|&i| m.quote_for(&mut state, now, &self.goods[i])).collect()
     }
@@ -367,8 +439,52 @@ impl Markets {
             return Err("DOCK OR LAND THERE TO TRADE".into());
         }
         let m = self.market(o.system, sys, o.market).ok_or("NO MARKET")?;
+        if self.economy.place(o.system, o.market).is_some() {
+            return self.trade_at_place(&m, ledger, o, tick, cause);
+        }
         let state = self.states.entry((o.system, o.market)).or_insert_with(|| MarketState { updated: now, ..Default::default() });
         m.trade(state, now, &self.goods[o.item], o.units, o.pilot, o.cargo, ledger, Party::Market(o.system, o.market), tick, cause)
+    }
+
+    /// A trade at a settled market: from (or into) its place's stock.
+    fn trade_at_place(&mut self, m: &Market, ledger: &mut Ledger, o: Order, tick: Tick, cause: Cause) -> Result<f64, String> {
+        let item = &self.goods[o.item];
+        let place = self.economy.place_mut(o.system, o.market).ok_or("NO MARKET")?;
+        let offer = place_offer(m, place, item).ok_or("NOT TRADED HERE")?;
+        let q = place_quote(place, &offer, item);
+        let (who, me) = (Party::Pilot(o.pilot), Party::Market(o.system, o.market));
+        let t = item.mass * o.units.unsigned_abs() as f64 / 1000.0;
+        if o.units > 0 {
+            let n = o.units as f64;
+            let Some(price) = q.buy else { return Err("NOT SOLD HERE - ONLY BOUGHT".into()) };
+            if q.level < n {
+                return Err(format!("ONLY {:.0} IN STOCK", q.level));
+            }
+            let cost = price * n;
+            if ledger.credits(who) < cost {
+                return Err("NOT ENOUGH CREDITS".into());
+            }
+            if o.cargo + item.mass * n > HOLD_CAPACITY {
+                return Err("HOLD FULL".into());
+            }
+            ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
+            ledger.transfer(me, who, Asset::Goods(item.id), n, tick, cause)?;
+            place.take(item.category, t);
+            Ok(cost)
+        } else {
+            let n = (-o.units) as f64;
+            if ledger.balance(who, Asset::Goods(item.id)) + 1e-6 < n {
+                return Err("NOT IN THE HOLD".into());
+            }
+            if q.offer.side == Side::Buys && q.level < n {
+                return Err(format!("THEY ONLY HAVE ROOM FOR {:.0} MORE", q.level));
+            }
+            let paid = q.sell * n;
+            ledger.transfer(who, me, Asset::Goods(item.id), n, tick, cause)?;
+            ledger.transfer(me, who, Asset::Credits, paid, tick, cause)?;
+            place.put(item.category, t);
+            Ok(-paid)
+        }
     }
 
     /// The states of the markets traded with (to save).

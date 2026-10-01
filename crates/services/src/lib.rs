@@ -4,6 +4,7 @@
 //! (see `docs/rearchitecture.md` §5).
 
 pub mod atc;
+pub mod economy;
 pub mod law;
 pub mod ledger;
 pub mod market;

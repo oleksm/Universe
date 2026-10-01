@@ -151,6 +151,8 @@ pub struct View {
     pub reach: Option<Reach>,
     /// Anchored: what's been dug out of our rock so far (kg).
     pub dug: f64,
+    /// The settled economy's places, as of the last change.
+    pub economy: Arc<Vec<universe_services::economy::Place>>,
     /// What's been dug out of the rocks of our system: ((field, body), kg).
     pub mined: Vec<((usize, usize), f64)>,
     /// The market we're docked at; the markets of the system; the one watched.
@@ -341,6 +343,7 @@ impl Engine {
             prediction: None,
             nav_marker: None,
             reach: u.pilot_reach(),
+            economy: u.markets.economy.snapshot(),
             mined: u.world.mined.iter().filter(|((s, _, _), _)| *s == system).map(|(&(_, f, b), &kg)| ((f, b), kg)).collect(),
             dug: match u.ship.state {
                 universe_world::ShipState::Anchored { field, body, .. } => u.world.dug(system, field, body),

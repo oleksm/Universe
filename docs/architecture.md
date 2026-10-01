@@ -452,6 +452,9 @@ ship's pose directly, like tests do — then render.
 | Asteroid fields (placement, remnants, swarms, classes, shapes, composition); `Orbit::from_state` | world: `belt`; physics: `orbit` |
 | Rock impacts, the anchor, the excavator, ore by class | world: `mining` |
 | Mined ore booked in the ledger; what's been dug, remembered | sim: `commerce`; world: `World::mined` |
+| The economy, coarse: settled places (kind from what they're on), people, works (recipes), stock by kind of goods, stepped every 10 game min; prices from stock cover | services: `economy` |
+| Settled markets trade from their place's stock: sell what it makes, buy what it uses, prices with stock; frontier markets as generated | services: `market` (`place_market`, `place_quote`, `trade_at_place`) |
+| Economy tool (balance table; no ships; ideal hauling); economy panel (5) | sim: `examples/economy.rs`; game: `economy` |
 | NPC miners (a slice of the settlers): route to a field and back to market, pick a rock, close, anchor, dig, sell | sim: `miner`, `operator::settlers` |
 | Home system, gate network and links | world: `network` |
 | The clock, system caches, `command`/`step_ship`(`_at`), `Devices`, respawn/spawn, hand-over | world: `world` |
