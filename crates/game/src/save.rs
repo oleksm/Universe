@@ -18,12 +18,20 @@ struct GameSave {
     explored: Vec<usize>,
 }
 
-fn path() -> PathBuf {
-    let base = std::env::var_os("XDG_DATA_HOME")
+fn data_dir() -> PathBuf {
+    std::env::var_os("XDG_DATA_HOME")
         .map(PathBuf::from)
         .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/share")))
-        .unwrap_or_else(|| PathBuf::from("."));
-    base.join("universe").join("quicksave.json")
+        .unwrap_or_else(|| PathBuf::from("."))
+}
+
+fn path() -> PathBuf {
+    data_dir().join("freefall").join("quicksave.json")
+}
+
+/// Where saves went before the game had its name (read if there's no newer one).
+fn old_path() -> PathBuf {
+    data_dir().join("universe").join("quicksave.json")
 }
 
 pub fn save(app: &mut App) -> Result<PathBuf, String> {
@@ -43,7 +51,7 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
 }
 
 pub fn load(app: &mut App) -> Result<(), String> {
-    let json = std::fs::read_to_string(path()).map_err(|e| e.to_string())?;
+    let json = std::fs::read_to_string(path()).or_else(|_| std::fs::read_to_string(old_path())).map_err(|e| e.to_string())?;
     let mut value: serde_json::Value = serde_json::from_str(&json).map_err(|e| e.to_string())?;
     if let Some(u) = value.get_mut("universe") {
         universe_sim::save::forget_missing(u);

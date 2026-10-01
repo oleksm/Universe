@@ -27,6 +27,26 @@ pub fn apply(app: &mut App, name: &str) {
     let planet = sys.bodies[station].rail.parent.unwrap_or(0);
 
     match name {
+        look if look.starts_with("look_") => {
+            // One hull ("look_drover"…) in front of us, turned three-quarters on, sunlit.
+            app.mode = Mode::Pilot;
+            app.chase_cam = false;
+            let key = format!("hull.{}", &look[5..]);
+            let u = app.engine.universe();
+            let Some(hull) = universe_sim::world::content::content().handle::<universe_sim::world::ship::ClassSpec>(&key) else { return };
+            let (at, v, o) = (u.ship.position, u.ship.velocity, u.ship.orientation);
+            let size = universe_sim::world::content::content().get(hull).shape().mesh.bound();
+            let c = &mut u.crafts[0];
+            c.ship.class = hull;
+            c.ship.state = ShipState::Flying;
+            // (Low and to the left: clear of the home station's crowd ahead.)
+            c.ship.position = at + o * DVec3::new(-0.9, -0.55, -3.6) * size;
+            c.ship.velocity = v;
+            // Nose to the left and a little toward us, its top tilted our way.
+            c.ship.orientation = universe_sim::ship::facing(o * DVec3::new(-1.0, 0.25, 0.2).normalize(), o * DVec3::new(0.0, 0.45, 1.0).normalize());
+            c.system = home;
+            u.pilots()[0].avionics.route.active = false;
+        }
         "system" => observe(app, 0, outer * 2.2, 0.6),
         "inner" => observe(app, 0, outer * 0.25, 0.45),
         "planet" => observe(app, planet, sys.bodies[planet].rail.radius * 6.0, 0.3),

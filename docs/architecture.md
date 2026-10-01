@@ -1,4 +1,4 @@
-# Universe — Architecture
+# Freefall — Architecture
 
 Status: adopted 2026-09-30 and implemented by the refactor's Phases 1–4 (see
 `changelog/2026-09-30-architecture.md`). This document describes the code as it is, and marks
@@ -330,7 +330,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   arrives when the world's rules (a station's deck, landing gear on the target pad, gate device)
   would take the copy in. Within the autopilot's own range (the hyperjump limit: 200 km from a
   port, 30 km from a station or gate) the copy reacts every 0.05 s exactly like the ship, so the
-  plan *is* the flight; farther out it uses substeps up to 2 s.
+  plan *is* the flight; farther out it uses substeps up to 1 s.
 - `events`: `Event`, the pilot's feed — `Ship(ShipEvent)`, `Traffic(TrafficEvent)` and the
   avionics' own (hyperdrive arrived, route stop/complete/blocked, autopilot on/off, nav target
   set, refused).
@@ -501,7 +501,7 @@ ship's pose directly, like tests do — then render.
 | Radar (sweep, blips) | world: `radar` |
 | Gun, laser, hull damage (a hit jams the hyperdrive 15 s); the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
 | Content: packs (base built in, overrides from `UNIVERSE_CONTENT`), registry with typed handles, keys and aliases, validation at load, content hash (see `docs/content.md`): shapes, hulls, kinds of goods, ores, recipes, kinds of place, market rules; saves by key with a version and the content hash |
-| Shapes: one geometry for physics and rendering — mesh, convex hull, exact mass properties (volume, centre of mass, inertia), silhouette; named nodes (mounts, nozzles, gear, docks, cockpit) | physics: `mesh`; world: `shape` | world: `content`; `content/base/` |
+| Shapes: one geometry for physics and rendering — mesh of one or more convex parts (a body, wings, fins), exact mass properties (volume, centre of mass, inertia), silhouette; named nodes (mounts, nozzles, gear, docks, cockpit) | physics: `mesh`; world: `shape` | world: `content`; `content/base/` |
 | Modules and hulls: the module catalogue (`Does`, size, mass, volume, power, price, brand), slots and base blocks; a hull is a shape, a frame (mass, price, slots, nozzle links) and a stock fit; five hulls (Drover, courier, hauler, prospector, interceptor), NPCs flying one for their role | world: `modules`, `ship` (`HullDef`, `ClassSpec`, `fitted`); sim: `operator::registrations` | `content/base/modules.ron`, `hulls.ron`, `brands.ron` |
 | Outfitting, ships, repairs, insurance: what a station carries and at what price (brand homes, hops, markup), materials from the station's stock; refits, buying a hull (trade-in at `BUYBACK`), repairs (credits and metals), insurance excess on loss; the shipyard panel (OUTFIT and HULLS pages) | services: `outfitter`; sim: `commerce` (`refit_as`, `buy_hull_as`, `repair`, `Universe::insure`); game: `shipyard` |
 | Spaceports: 4×4 pads, a hangar (long stays off the pads: `ShipCommands::hangar`, out of sight, the pad freed; the route autopilot goes in after a turnaround and out onto a granted pad) | world: `spaceport`, `World::hangar_move`; avionics: `route::hangar_step` |

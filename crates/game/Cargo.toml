@@ -3,6 +3,11 @@ name = "universe"
 edition.workspace = true
 version.workspace = true
 
+# The game: Freefall (by Plurence).
+[[bin]]
+name = "freefall"
+path = "src/main.rs"
+
 [dependencies]
 universe-prof = { path = "../prof" }
 universe-engine = { path = "../engine" }

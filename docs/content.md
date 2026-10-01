@@ -48,7 +48,7 @@ Blender exporter converts), nodes named by role:
 | In the shape | Used for |
 |---|---|
 | render mesh | the wireframe (edges by crease angle: the vector look stays) |
-| `col_*` meshes (default: the convex hull) | collision, as polytopes |
+| `col_*` meshes (default: the convex hull) | collision, as convex parts |
 | parts with a mass or a material density | mass, centre of mass, inertia tensor |
 | `mount_<slot>` empties | where modules attach (position, orientation, size), and their visuals |
 | `nozzle_*` empties | thrusters built into the hull: direction and lever arm |

@@ -1,4 +1,4 @@
-# Universe — Re-architecture plan: core, services, clients
+# Freefall — Re-architecture plan: core, services, clients
 
 Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0–R9 done. `docs/architecture.md`
 describes the code as it is; this describes where it goes and in what order. Once a phase

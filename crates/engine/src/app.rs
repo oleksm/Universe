@@ -33,7 +33,7 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Self { title: "universe".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 240.0 }
+        Self { title: "Freefall".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 240.0 }
     }
 }
 

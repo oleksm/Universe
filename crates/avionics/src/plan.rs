@@ -101,7 +101,9 @@ const NEAR: f64 = 20_000.0;
 /// orbital time scale). The autopilot's gains stay within reach of such steps
 /// (see `docking::gain`); short enough that the ship's turning — torque
 /// against inertia, as in flight — keeps up with what the autopilot asks.
-const FAR_STEP: f64 = 2.0;
+/// (2 s was too coarse for the winged Drover's slower roll: its copy came
+/// down short of the pad, into the sea, while the real flight landed.)
+const FAR_STEP: f64 = 1.0;
 /// A holding ship this near its place on the circle has joined it (m).
 const JOINED: f64 = 400.0;
 

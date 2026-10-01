@@ -137,9 +137,14 @@ pub(crate) struct ShapeDef {
     pub key: String,
     #[serde(default = "unit")]
     scale: f64,
-    /// Built as the convex hull of these.
+    /// Built as the convex hull of these…
     #[serde(default)]
     hull: Vec<Point>,
+    /// …and of each of these: more convex parts (wings, pods), joined to
+    /// the first. (Where parts overlap, their solid counts twice: keep
+    /// overlaps small.)
+    #[serde(default)]
+    parts: Vec<Vec<Point>>,
     /// Or from a glTF export (`.glb`; empty: none).
     #[serde(default)]
     gltf: String,
@@ -176,11 +181,32 @@ impl ShapeDef {
         if !(s.is_finite() && s > 0.0) {
             return Err(format!("scale must be positive ({s})"));
         }
+        // Each part's (points, faces) in the joined mesh.
+        let mut ranges = Vec::new();
         let mesh = match (self.gltf.as_str(), self.hull.len()) {
             (file, _) if !file.is_empty() => return Err(format!("glTF shapes ({file}) arrive with the first model from Blender: give it hull points for now")),
             (_, 0..=3) => return Err("needs at least four hull points".into()),
-            _ => Mesh::convex_hull(&self.hull.iter().map(|&p| point(p) * s).collect::<Vec<_>>()),
+            _ => {
+                let mut mesh = Mesh::convex_hull(&self.hull.iter().map(|&p| point(p) * s).collect::<Vec<_>>());
+                ranges.push((0, mesh.points.len(), 0, mesh.faces.len()));
+                for (k, part) in self.parts.iter().enumerate() {
+                    if part.len() < 4 {
+                        return Err(format!("part {} needs at least four points", k + 1));
+                    }
+                    let m = Mesh::convex_hull(&part.iter().map(|&p| point(p) * s).collect::<Vec<_>>());
+                    if m.mass_properties().volume <= 0.0 {
+                        return Err(format!("part {} has no volume (its points are flat)", k + 1));
+                    }
+                    let base = mesh.points.len() as u32;
+                    ranges.push((mesh.points.len(), mesh.points.len() + m.points.len(), mesh.faces.len(), mesh.faces.len() + m.faces.len()));
+                    mesh.points.extend(m.points);
+                    mesh.faces.extend(m.faces.iter().map(|f| f.map(|i| i + base)));
+                    mesh.edges.extend(m.edges.iter().map(|e| e.map(|i| i + base)));
+                }
+                mesh
+            }
         };
+        // (Each part closed, the mesh's solid is theirs together.)
         let mut solid = mesh.mass_properties();
         if solid.volume <= 0.0 {
             return Err("its hull has no volume (the points are flat)".into());
@@ -211,7 +237,11 @@ impl ShapeDef {
             spheres.push(universe_physics::Sphere { at: point(at) * s - c, radius: r * s });
         }
         if spheres.is_empty() {
-            spheres = fit_spheres(&mesh, SPHERE_SPACING);
+            // Fitted to each part (its own convex hull) in turn.
+            for &(p0, p1, f0, f1) in &ranges {
+                let part = Mesh { points: mesh.points[p0..p1].to_vec(), faces: mesh.faces[f0..f1].iter().map(|f| f.map(|i| i - p0 as u32)).collect(), edges: Vec::new() };
+                spheres.extend(fit_spheres(&part, SPHERE_SPACING));
+            }
         }
         Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres })
     }
@@ -226,13 +256,14 @@ mod tests {
     fn the_starter_is_a_solid_with_its_nozzles_and_cockpit() {
         let hull = crate::ship::starter().shape();
         let (lo, hi) = hull.mesh.extent();
-        assert!((hi.x - lo.x - 20.0).abs() < 1e-3 && (hi.z - lo.z - 40.0).abs() < 1e-3, "20 m wide, 40 m long: {lo} {hi}");
+        assert!((hi.x - lo.x - 38.0).abs() < 1e-3 && (hi.z - lo.z - 42.0).abs() < 1e-3, "38 m across the wings, 42 m long: {lo} {hi}");
         assert!(hull.solid.volume > 1_000.0 && hull.solid.volume < 20_000.0, "{} m³", hull.solid.volume);
         let mains: Vec<_> = hull.nodes(Role::Nozzle).filter(|n| n.name.starts_with("nozzle_main")).collect();
         assert_eq!(mains.len(), 2);
         assert!(mains.iter().all(|n| n.dir == DVec3::Z && (n.at.z - hi.z).abs() < 1e-3), "the main drive on the rear plate, firing aft");
         assert!(hull.solid.centroid.length() < 1e-9 && hull.mesh.mass_properties().centroid.length() < 1e-6, "centred on its centre of mass");
         assert!(hull.mesh.points.iter().all(|p| p.length() < 30.0), "its points given about its centre of mass already");
+        assert!(hull.spheres.iter().any(|s| s.at.x.abs() > 15.0), "its wings have contact spheres too");
         assert_eq!(hull.nodes(Role::Nozzle).count(), 18, "and the thruster quads and belly lift");
         assert!(hull.node("cockpit").is_some());
         assert!(crate::ship::starter().radius < hull.mesh.bound());
