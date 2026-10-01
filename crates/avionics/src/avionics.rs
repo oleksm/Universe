@@ -474,6 +474,15 @@ pub(crate) fn target_position(bus: &mut impl Bus, target: NavTarget) -> Option<D
     target.position(&sys, bus.time(), &positions)
 }
 
+/// Does the ship's nav computer run this autopilot? If not, said so.
+pub(crate) fn runs(bus: &mut impl Bus, f: universe_world::modules::Feature, events: &mut Vec<Event>) -> bool {
+    let ok = bus.ship().spec().runs(f);
+    if !ok {
+        events.push(Event::Refused { reason: format!("NO {} AUTOPILOT IN THE NAV COMPUTER", format!("{f:?}").to_uppercase()) });
+    }
+    ok
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -506,11 +515,3 @@ mod tests {
     }
 }
 
-/// Does the ship's nav computer run this autopilot? If not, said so.
-pub(crate) fn runs(bus: &mut impl Bus, f: universe_world::modules::Feature, events: &mut Vec<Event>) -> bool {
-    let ok = bus.ship().spec().runs(f);
-    if !ok {
-        events.push(Event::Refused { reason: format!("NO {} AUTOPILOT IN THE NAV COMPUTER", format!("{f:?}").to_uppercase()) });
-    }
-    ok
-}
