@@ -22,7 +22,7 @@ lines removed, at 270 lines of resolution upscaled with sharp pixels.
 
 - Galaxy: 40,000 stars in a two-armed spiral with a bulge; spectral classes O to M.
 - Star systems generated from each star's seed: rocky planets inside the frost line, gas/ice giants
-  beyond it, rings, moons within each planet's Hill sphere, and a Coriolis station around the most
+  beyond it, rings, moons within each planet's Hill sphere, and a station around the most
   habitable rocky world. Names from letter pairs.
 - Kepler orbits (analytic position and velocity), so time warp up to 10,000,000x stays stable.
 - Ship physics: leapfrog integration under gravity from all bodies, adaptive substeps, warp limiter.
