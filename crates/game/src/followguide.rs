@@ -141,12 +141,14 @@ pub fn plan(app: &App) -> Option<(universe_sim::Plan, Option<f64>)> {
                 o.dot(e2).atan2(o.dot(e1))
             };
             let point = |a: f64| s.at + (e1 * a.cos() + e2 * a.sin()) * r;
-            // From the next mark on the grid ahead of us.
-            let first = (angle(ship) / ORBIT_STEP).floor() * ORBIT_STEP + ORBIT_STEP;
+            // From the mark on the grid just behind us (the path's start has
+            // no frame of its own): the next one ahead is ours to fly
+            // through, and it goes once we're through it.
+            let first = (angle(ship) / ORBIT_STEP).floor() * ORBIT_STEP;
             if joining {
                 path.push(ship);
             }
-            let marks = (ORBIT_AHEAD / ORBIT_STEP).round() as usize;
+            let marks = (ORBIT_AHEAD / ORBIT_STEP).round() as usize + 1;
             for k in 0..=marks {
                 // (Between the marks, enough points for the curve.)
                 for j in 0..4 {

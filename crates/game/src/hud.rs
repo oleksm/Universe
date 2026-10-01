@@ -62,6 +62,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             crate::mining::draw_hud(frame, app);
             cargo_panel(frame, app);
             crate::lock::draw(frame, app);
+            crate::orbitpick::draw(frame, app);
         }
     }
     let top = 4.0;
@@ -1293,7 +1294,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
     // something to follow with a lock or a station or gate as the nav target.
     let anchor = a.contact.is_some() || a.rock_lock.is_some() || matches!(a.nav_target, Some(universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_) | universe_sim::NavTarget::Asteroid(_)));
     let follow_cell = |kind: &str, on: Option<f64>| match on {
-        Some(r) => (format!("{kind} {:.0}K", r / 1000.0), Lamp::On),
+        Some(r) => (format!("{kind} {}", crate::orbitpick::label(r)), Lamp::On),
         None if anchor && flying && !ship.hyperdrive => (kind.to_string(), Lamp::Off),
         None => (kind.to_string(), Lamp::Unavailable),
     };

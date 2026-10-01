@@ -12,6 +12,7 @@ mod keys;
 mod lock;
 mod mining;
 mod onfoot;
+mod orbitpick;
 mod rig;
 mod rocks;
 mod save;
@@ -177,6 +178,8 @@ pub struct App {
     /// Mining mode and the prospector's pulse; T's lock picker.
     pub mining: mining::Mining,
     pub picker: lock::Picker,
+    /// The orbit key's list, and the range chosen last.
+    pub orbit_pick: orbitpick::OrbitPick,
     /// The collision warning's prediction, when it's on (made at `collision_at`, world time).
     pub collision: Option<universe_sim::avionics::collision::Prediction>,
     pub collision_at: f64,
@@ -253,6 +256,7 @@ impl App {
             rigs: Default::default(),
             mining: Default::default(),
             picker: Default::default(),
+            orbit_pick: Default::default(),
             show_cargo: false,
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
@@ -513,16 +517,14 @@ impl App {
             self.say(if on { "COLLISION WARNING ON" } else { "COLLISION WARNING OFF" }.into());
         }
         // T: lock on (tap: what's ahead; hold: choose from the list).
-        let listing = lock::input(self, ctx);
+        let listing = lock::input(self, ctx) | orbitpick::input(self, ctx);
         mining::input(self, ctx);
         let input = &ctx.input;
-        // N keeps at a range from the locked ship (or the nav target's
-        // station or gate), U orbits it; again for the next range out. X lets go.
+        // Keep at a range from the locked ship (or the nav target's station
+        // or gate), again for the next range out; the orbit key (tap, or
+        // hold to choose the range) is `orbitpick`'s. X cancels.
         if pressed(input, Act::Keep) {
-            self.engine.send(Command::Follow(FollowKind::KeepAt));
-        }
-        if pressed(input, Act::Orbit) {
-            self.engine.send(Command::Follow(FollowKind::Orbit));
+            self.engine.send(Command::Follow(FollowKind::KeepAt, None));
         }
         // The cargo hold's contents.
         if pressed(input, Act::Cargo) {
@@ -626,7 +628,8 @@ impl App {
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),
                 Event::Refused { reason } => reason,
                 Event::Following { what: Some((how, range)) } if how == "CLOSE ON" => format!("CLOSING ON THE ROCK, {range:.0} M OFF ITS SURFACE\n{} TO ANCHOR WHEN IN REACH, {} TO CANCEL", crate::keys::key(crate::keys::Act::Anchor), crate::keys::key(crate::keys::Act::Cancel)),
-                Event::Following { what: Some((how, range)) } => format!("{how} {:.0} KM - {}/{} AGAIN: NEXT RANGE, {} TO CANCEL", range / 1000.0, crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Orbit), crate::keys::key(crate::keys::Act::Cancel)),
+                Event::Following { what: Some((how, range)) } if how == "ORBIT" => format!("ORBIT AT {} - HOLD {} TO CHOOSE THE RANGE, {} TO CANCEL", orbitpick::label(range), crate::keys::key(crate::keys::Act::Orbit), crate::keys::key(crate::keys::Act::Cancel)),
+                Event::Following { what: Some((how, range)) } => format!("{how} {} - {} AGAIN: NEXT RANGE, {} TO CANCEL", orbitpick::label(range), crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Cancel)),
                 Event::Following { what: None } => "FOLLOW OFF".into(),
                 Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE CANCELLED".into(),
                 Event::Traffic(TrafficEvent::PadAssigned { pad }) => format!("LAND ON PAD {}", pad + 1),

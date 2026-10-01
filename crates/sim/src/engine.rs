@@ -53,7 +53,10 @@ pub enum Command {
     CancelClearance,
     ToggleAutopilot,
     ToggleRoute,
-    Follow(FollowKind),
+    /// Keep at a range from, or orbit, the locked contact or nav target:
+    /// at `range` (m) if given, else the preset nearest how far it is (again
+    /// for the same: the next one out).
+    Follow(FollowKind, Option<f64>),
     /// Close on a rock (body `body` among field `field`'s), to anchor.
     CloseOn { field: usize, body: usize },
     /// Lock on a rock (field, body among its bodies), or let the lock go.
@@ -239,7 +242,7 @@ impl Engine {
             Command::CancelClearance => u.cancel_clearance(),
             Command::ToggleAutopilot => u.toggle_autopilot(),
             Command::ToggleRoute => u.toggle_route(),
-            Command::Follow(kind) => u.follow(kind),
+            Command::Follow(kind, range) => u.follow(kind, range),
             Command::CloseOn { field, body } => u.close_on(field, body),
             Command::LockRock(rock) => u.cockpit().lock_rock(rock),
             Command::LockContact(id) => u.cockpit().lock_contact(id),
@@ -574,7 +577,7 @@ impl EngineHandle {
             Command::CancelClearance => k.cancel_clearance(),
             Command::ToggleAutopilot => k.toggle_autopilot(),
             Command::ToggleRoute => k.toggle_route(),
-            Command::Follow(kind) => k.follow(kind),
+            Command::Follow(kind, range) => k.follow(kind, range),
             Command::CloseOn { field, body } => k.close_on(field, body),
             Command::LockRock(rock) => k.lock_rock(rock),
             Command::LockContact(id) => k.lock_contact(id),

@@ -569,3 +569,17 @@ fn a_pilot_refuels_at_a_station_from_its_stock_and_pays_its_price() {
     assert!((stock - left - 4.0).abs() < 1e-6, "four tonnes from the station's stock");
     assert!(u.ledger.balanced());
 }
+
+#[test]
+fn orbit_at_a_chosen_range_no_closer_than_the_structure_allows() {
+    use universe_sim::avionics::follow::Manoeuvre;
+    let mut u = bench(0);
+    let place = universe_sim::NavTarget::Station(u.ship_system().station().expect("a station at home"));
+    u.set_nav_target(Some(place));
+    u.follow(universe_sim::FollowKind::Orbit, Some(30_000.0));
+    assert!(matches!(u.avionics().following.map(|f| f.manoeuvre), Some(Manoeuvre::Orbit(r)) if r == 30_000.0));
+    // Closer than a station allows: as close as it does.
+    u.follow(universe_sim::FollowKind::Orbit, Some(500.0));
+    let r = u.avionics().following.map(|f| f.manoeuvre.range()).unwrap();
+    assert!(r > 500.0 && r < 5_000.0, "{r}");
+}

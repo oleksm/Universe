@@ -397,7 +397,7 @@ impl Cockpit {
     /// Keep at a range from, or orbit, the locked contact (else the nav
     /// target, a station or gate). Asked again for the same kind: the next
     /// range out. The first range is the preset nearest where we are.
-    pub fn follow(&mut self, kind: FollowKind) {
+    pub fn follow(&mut self, kind: FollowKind, range: Option<f64>) {
         let a = &self.pilot.avionics;
         let anchor = match (a.contact, a.nav_target) {
             (Some(c), _) => Anchor::Ship(craft_id(c)),
@@ -413,8 +413,9 @@ impl Cockpit {
         };
         let (_, sys, rails) = self.system();
         let min = follow::min_range(&sys, anchor);
-        let range = match self.pilot.avionics.following {
-            Some(f) if f.anchor == anchor && same_kind(f.manoeuvre, kind) => follow::next_range(f.manoeuvre.range(), min),
+        let range = match (range, self.pilot.avionics.following) {
+            (Some(r), _) => r.max(min),
+            (None, Some(f)) if f.anchor == anchor && same_kind(f.manoeuvre, kind) => follow::next_range(f.manoeuvre.range(), min),
             _ => {
                 let Some(at) = self.anchor_position(anchor, &sys, &rails) else {
                     self.refuse("FOLLOW: TARGET NOT IN SIGHT");
@@ -701,8 +702,8 @@ impl crate::universe::Universe {
 
     /// Keep at a range from, or orbit, the locked contact (else the nav
     /// target, a station or gate): the cockpit's follow program.
-    pub fn follow(&mut self, kind: FollowKind) {
-        self.in_cockpit(|k| k.follow(kind));
+    pub fn follow(&mut self, kind: FollowKind, range: Option<f64>) {
+        self.in_cockpit(|k| k.follow(kind, range));
     }
 
     pub fn close_on(&mut self, field: usize, body: usize) {

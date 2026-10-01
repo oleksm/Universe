@@ -1,6 +1,6 @@
-//! Locking on: T. A tap locks what's nearest the crosshair; held, it lists
+//! Locking on: the lock key. A tap locks what's nearest the crosshair; held, it lists
 //! what can be locked, nearest first: the mouse (or the wheel) moves the
-//! cursor, and letting go of T locks the one under it. What can be locked
+//! cursor, and letting go locks the one under it. What can be locked
 //! is the mode's: in navigation everything within the sensors' reach
 //! (ships, asteroids big and small, stations, gates, spaceports — a place
 //! locked becomes the nav target); in combat the ships; in mining the

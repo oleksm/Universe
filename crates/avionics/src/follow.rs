@@ -30,7 +30,7 @@ use crate::hunter::{avoid, thrust_for};
 use crate::nav::NavTarget;
 
 /// The ranges the pilot picks from (m).
-pub const RANGES: [f64; 6] = [1_000.0, 2_000.0, 3_000.0, 5_000.0, 10_000.0, 20_000.0];
+pub const RANGES: [f64; 8] = [500.0, 1_000.0, 2_000.0, 3_000.0, 5_000.0, 10_000.0, 20_000.0, 30_000.0];
 /// No closer than this to another ship (m).
 const MIN_SHIP_RANGE: f64 = 500.0;
 /// And this far beyond a station's or gate's structure (m).

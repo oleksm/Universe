@@ -57,3 +57,17 @@ docking do:
   still, you fly through them, and one more appears at the far end as you pass one. Keeping at
   range spaces its frames evenly too; closing on a rock keeps the landing ladder.
 - An orbit round a rock no longer turns its frames with the rock (only its surface turns).
+
+## Orbit range: hold to choose
+
+- The orbit key: a tap orbits at the range chosen last (before any is chosen, the preset
+  nearest how far the anchor is; again, the next one out). Held, it lists the ranges — 500 m,
+  1, 2, 3, 5, 10, 20, 30 km — the mouse or wheel moves the cursor, and letting go orbits at the
+  one under it, which becomes the default (`orbitpick`). The engine takes the range with the
+  command (`Command::Follow(kind, Some(range))`), no closer than the anchor allows.
+- Ranges now run 500 m to 30 km (were 1 to 20 km), for keeping at range too.
+- Ranges read 500 M, 1 KM … 30 KM on the button, the list and the messages.
+- An orbit's guide now includes the frame you're about to fly through: its path starts at the
+  grid mark behind the ship (the path's own start has no frame), so the next mark always has
+  one, and it goes once you're through it. (It started a step ahead, ~500 m at 3 km.)
+- Dev scenario `orbitpick` (the list up).

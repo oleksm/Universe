@@ -102,7 +102,7 @@ pub fn apply(app: &mut App, name: &str) {
             if name == "approachkeep" {
                 let u = app.engine.universe();
                 u.set_nav_target(Some(universe_sim::NavTarget::Station(station)));
-                u.follow(universe_sim::FollowKind::KeepAt);
+                u.follow(universe_sim::FollowKind::KeepAt, None);
                 for _ in 0..60 * 3 {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 }
@@ -231,7 +231,7 @@ pub fn apply(app: &mut App, name: &str) {
             if name == "orbitrock" {
                 // Orbiting the remnant, a minute on.
                 let u = app.engine.universe();
-                u.follow(universe_sim::FollowKind::Orbit);
+                u.follow(universe_sim::FollowKind::Orbit, None);
                 for _ in 0..60 * 60 {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 }
@@ -308,7 +308,7 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
-        "gate" | "gateauto" | "transit" | "gatearrive" | "gateorbit" | "gateorbit60" | "gateorbitwatch" => {
+        "gate" | "gateauto" | "transit" | "gatearrive" | "gateorbit" | "gateorbit60" | "gateorbitwatch" | "orbitpick" => {
             // A gate out of the home system: cleared for transit, 8 km out, off to one side.
             app.mode = Mode::Pilot;
             let (dest, _) = app.engine.universe().gate_links_of(home)[0].clone();
@@ -319,12 +319,15 @@ pub fn apply(app: &mut App, name: &str) {
             let look = (f.center - app.engine.universe().ship.position).normalize();
             app.engine.universe().ship.orientation = universe_sim::ship::facing(look, f.rotation * DVec3::Z);
             app.engine.universe().set_nav_target(Some(NavTarget::Gate(g)));
-            if name.starts_with("gateorbit") {
+            if name.starts_with("gateorbit") || name == "orbitpick" {
                 // Arrived at the gate, and orbiting it (no clearance).
                 let u = app.engine.universe();
-                u.follow(universe_sim::FollowKind::Orbit);
+                u.follow(universe_sim::FollowKind::Orbit, None);
                 for _ in 0..60 * if name == "gateorbit" { 15 } else { 60 } {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+                if name == "orbitpick" {
+                    app.orbit_pick.hold_for_show();
                 }
                 if name == "gateorbitwatch" {
                     app.mode = Mode::Observer;
@@ -381,7 +384,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().ship.velocity = f.velocity;
             app.engine.universe().ship.orientation = universe_sim::ship::facing(-side, f.axis());
             app.engine.universe().set_nav_target(Some(NavTarget::Station(station)));
-            app.engine.universe().follow(universe_sim::FollowKind::Orbit);
+            app.engine.universe().follow(universe_sim::FollowKind::Orbit, None);
         }
         "sunclose" => {
             // A tenth of an AU from the star, facing it.
