@@ -93,7 +93,10 @@ impl App {
 
 /// One rock, body `i` of field `f`'s bodies, at `center`.
 fn rock(frame: &mut Frame, app: &App, f: usize, i: usize, b: &Body, center: DVec3, t: f64) {
-    let c = color(b.color);
+    // As bright as it reflects (against a stony rock's 0.22; the square
+    // root, as the eye takes it).
+    let albedo = b.rock.as_ref().map_or(1.0, |r| (r.class.albedo() / 0.22).sqrt().min(1.5));
+    let c = color(b.color).scale(albedo);
     let px = frame.projected_radius(center, b.rail.radius);
     if px < 3.0 {
         // Too small to make out: the sensors mark it (a diamond a few

@@ -85,7 +85,7 @@ fn lit(v: MeshIn, n: vec3<f32>, k: f32, ambient: f32) -> vec3<f32> {
     if (v.refl_dir.w > 0.0) {
         k2 = max(pow(v.refl_color.w * view_factor(dot(n, v.refl_dir.xyz), v.refl_dir.w), EXPOSURE) - 0.12, 0.0) / 0.88;
     }
-    let light = min(k * v.light_color.rgb + k2 * v.refl_color.rgb, vec3<f32>(1.6));
+    let light = min(k * v.light_color.rgb + k2 * v.refl_color.rgb, vec3<f32>(4.0));
     return vec3<f32>(ambient) + (1.0 - ambient) * light;
 }
 

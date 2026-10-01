@@ -1143,15 +1143,27 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     if p.x < -200.0 || p.y < -200.0 || p.x > size.x + 200.0 || p.y > size.y + 200.0 {
         return;
     }
-    let bright = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU }.intensity_at(cam);
+    // The glare goes with the light itself: the square root of the
+    // irradiance (1 at 1 AU from a sun-like star), unadapted — a hundred
+    // times the light close in is ten times the glare.
+    let irradiance = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU }.irradiance_at(cam);
     let [r, g, b] = sys.class.color();
-    let tint = |a: f32| Color([r, g, b, a * visible]);
+    let tint = |a: f32| Color([r, g, b, (a * visible).min(1.0)]);
     let disc = frame.projected_radius(sun, sys.bodies[star].rail.radius).max(2.0);
-    let k = bright.min(1.6) / 1.6;
+    let k = (irradiance.sqrt() as f32).min(12.0);
+    // Looking toward it, the view washes out: a veil over everything, the
+    // nearer the star and the more squarely we face it.
+    let facing = frame.camera.orientation.as_dquat() * DVec3::NEG_Z;
+    let toward = facing.dot(dir).max(0.0).powi(6) as f32;
+    let veil = (0.06 * k * toward).min(0.9);
+    if veil > 0.005 {
+        frame.hud_rect(Vec2::ZERO, size, Color([r.max(0.9), g.max(0.85), b.max(0.8), veil * visible]));
+    }
+    let k = k / 1.6;
     // Halo, core.
     let halo = disc * 2.5 + 14.0 + 40.0 * k;
-    frame.hud_glow(p, halo, 32, tint(0.3), tint(0.0));
-    frame.hud_glow(p, disc * 1.4 + 4.0, 24, Color([1.0, 1.0, 0.96, visible]), tint(0.6 * visible));
+    frame.hud_glow(p, halo, 32, tint(0.3 + 0.05 * k), tint(0.0));
+    frame.hud_glow(p, disc * 1.4 + 4.0 + 6.0 * k, 24, Color([1.0, 1.0, 0.96, visible]), tint(0.6 * visible));
     // Rays: long spikes and shorter ones between, fading out.
     let long = disc * 2.0 + 40.0 + 180.0 * k;
     for i in 0..12 {

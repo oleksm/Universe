@@ -88,6 +88,16 @@ impl RockClass {
         }
     }
 
+    /// The share of light it reflects: C-types are coal-dark, ice bright.
+    pub fn albedo(self) -> f32 {
+        match self {
+            RockClass::Carbonaceous => 0.05,
+            RockClass::Stony => 0.22,
+            RockClass::Metallic => 0.15,
+            RockClass::Icy => 0.6,
+        }
+    }
+
     fn color(self) -> [f32; 3] {
         match self {
             RockClass::Carbonaceous => [0.42, 0.4, 0.38],

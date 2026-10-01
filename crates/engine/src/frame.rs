@@ -101,8 +101,8 @@ pub(crate) struct Instance {
 }
 
 /// A light source: a star. How bright it looks falls with the square of the
-/// distance; the eye adapts part of the way (`EXPOSURE`), so a planet far out
-/// is dim but not black and one close in is bright but not blinding.
+/// distance; the eye adapts only part of the way (`EXPOSURE`), so a planet
+/// far out is dark and one close in is bright — near the star, blown out.
 #[derive(Clone, Copy, Debug)]
 pub struct Light {
     /// World position.
@@ -136,15 +136,23 @@ pub fn view_factor(cos_b: f32, s: f32) -> f32 {
     s.min(1.0) * ((cos_b + c) / (1.0 + c)).max(0.0)
 }
 
-/// How much the eye adapts: perceived brightness goes as irradiance to this power.
-pub const EXPOSURE: f32 = 0.3;
+/// How much the eye adapts: perceived brightness goes as irradiance to this
+/// power (1: not at all; 0: completely).
+pub const EXPOSURE: f32 = 0.45;
+/// The brightest light a face takes (several times the light at 1 AU from
+/// a sun-like star: near a star, colours wash out to white).
+pub const MAX_LIGHT: f32 = 4.0;
 
 impl Light {
     /// Perceived brightness of its light at `p` (world), after adaptation.
     pub fn intensity_at(&self, p: DVec3) -> f32 {
+        (self.irradiance_at(p) as f32).powf(EXPOSURE).clamp(0.02, MAX_LIGHT)
+    }
+
+    /// Irradiance at `p` (world), against `reference` metres from a sun-like star (1).
+    pub fn irradiance_at(&self, p: DVec3) -> f64 {
         let d = p.distance(self.position).max(1.0);
-        let irradiance = self.luminosity * (self.reference / d).powi(2);
-        (irradiance as f32).powf(EXPOSURE).clamp(0.1, 1.6)
+        self.luminosity * (self.reference / d).powi(2)
     }
 }
 

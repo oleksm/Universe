@@ -335,6 +335,15 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().set_nav_target(Some(NavTarget::Station(station)));
             app.engine.universe().follow(universe_sim::FollowKind::Orbit);
         }
+        "sunclose" => {
+            // A tenth of an AU from the star, facing it.
+            app.mode = Mode::Pilot;
+            let u = app.engine.universe();
+            let out = u.ship.position.normalize();
+            u.ship.position = out * 0.1 * universe_sim::units::AU;
+            let look = -out;
+            u.ship.orientation = universe_sim::ship::facing((look + look.any_orthonormal_vector() * 0.15).normalize(), look.any_orthonormal_vector());
+        }
         "sun" => {
             // Facing the star from the home orbit.
             app.mode = Mode::Pilot;
