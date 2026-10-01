@@ -195,7 +195,7 @@ mod tests {
 
     use super::*;
 
-    fn home() -> (World, std::rc::Rc<StarSystem>, Vec<DVec3>, Ship) {
+    fn home() -> (World, std::sync::Arc<StarSystem>, Vec<DVec3>, Ship) {
         let mut world = World::new(1984);
         let (mut ship, mut system, mut events) = (Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY), 0, Vec::new());
         world.respawn(&mut ship, &mut system, &mut events);

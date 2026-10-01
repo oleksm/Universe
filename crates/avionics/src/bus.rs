@@ -5,7 +5,7 @@
 //! `ShipCommands` to the devices; nothing else. What the devices then did is
 //! reported back as the world's physical events.
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use glam::DVec3;
 use universe_world::pads::PadGrant;
@@ -19,7 +19,7 @@ pub trait Bus {
     fn system(&self) -> usize;
 
     /// The star system the ship is in (its charts).
-    fn star_system(&mut self) -> Rc<StarSystem>;
+    fn star_system(&mut self) -> Arc<StarSystem>;
 
     /// World time now (s).
     fn time(&self) -> f64;
@@ -45,7 +45,7 @@ pub trait Bus {
     fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent>;
 
     /// Where the ship's star system's bodies are now.
-    fn positions(&mut self) -> (Rc<StarSystem>, Vec<DVec3>) {
+    fn positions(&mut self) -> (Arc<StarSystem>, Vec<DVec3>) {
         let sys = self.star_system();
         let mut positions = Vec::with_capacity(sys.bodies.len());
         sys.positions(self.time(), &mut positions);

@@ -3,7 +3,7 @@
 //! time in a fixed order — the player's ship first, then every craft, each
 //! from the same moment (see `vessel` for what a ship's turn is).
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use glam::{DQuat, DVec3};
 use universe_avionics::route::{self, Stop};
@@ -88,11 +88,11 @@ impl Universe {
     }
 
     /// Get (generating and caching if needed) the star system at galaxy index `i`.
-    pub fn system(&mut self, i: usize) -> Rc<StarSystem> {
+    pub fn system(&mut self, i: usize) -> Arc<StarSystem> {
         self.world.system(i)
     }
 
-    pub fn ship_system(&mut self) -> Rc<StarSystem> {
+    pub fn ship_system(&mut self) -> Arc<StarSystem> {
         self.world.system(self.ship_system)
     }
 
@@ -224,7 +224,7 @@ impl Universe {
             radius: f64,
             direction: DVec3,
         }
-        type Seen = (Rc<StarSystem>, Rc<Vec<DVec3>>, Vec<Port>);
+        type Seen = (Arc<StarSystem>, Arc<Vec<DVec3>>, Vec<Port>);
         let mut systems: std::collections::HashMap<usize, Seen> = std::collections::HashMap::new();
         // Corridors held, by ship: (system, body).
         let mut held: std::collections::HashMap<usize, Vec<(usize, usize)>> = std::collections::HashMap::new();
@@ -458,4 +458,11 @@ impl Universe {
             Approach::Land { .. } | Approach::Transit { .. } => None,
         }
     }
+}
+
+/// The universe can move to its own thread (the world engine runs apart from the client).
+#[allow(dead_code)]
+fn universe_is_send() {
+    fn send<T: Send>() {}
+    send::<Universe>();
 }

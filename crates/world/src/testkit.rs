@@ -1,6 +1,6 @@
 //! Test helpers: one ship in a world, flown by hand.
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use glam::{DQuat, DVec3};
 
@@ -25,7 +25,7 @@ impl Probe {
         p
     }
 
-    pub fn sys(&mut self) -> Rc<StarSystem> {
+    pub fn sys(&mut self) -> Arc<StarSystem> {
         self.world.system(self.system)
     }
 

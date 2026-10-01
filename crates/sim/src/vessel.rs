@@ -15,7 +15,7 @@
 //! 5. the avionics conclude the frame (a hyperdrive arrival, a clearance
 //!    that has lapsed).
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use universe_avionics::{Avionics, Bus, Event};
 use universe_world::pads::PadGrant;
@@ -51,7 +51,7 @@ impl Bus for Link<'_> {
         self.system
     }
 
-    fn star_system(&mut self) -> Rc<StarSystem> {
+    fn star_system(&mut self) -> Arc<StarSystem> {
         self.world.system(self.system)
     }
 
@@ -81,7 +81,7 @@ impl Bus for Link<'_> {
         self.world.turret_motions(self.system).into_iter().map(|(_, p, v)| (p, v)).collect()
     }
 
-    fn positions(&mut self) -> (Rc<StarSystem>, Vec<glam::DVec3>) {
+    fn positions(&mut self) -> (Arc<StarSystem>, Vec<glam::DVec3>) {
         let sys = self.world.system(self.system);
         (sys, (*self.world.rails_now(self.system)).clone())
     }

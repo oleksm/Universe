@@ -195,12 +195,12 @@ impl crate::world::World {
         }
     }
 
-    fn turrets_of(&mut self, system: usize) -> std::rc::Rc<Vec<Turret>> {
+    fn turrets_of(&mut self, system: usize) -> std::sync::Arc<Vec<Turret>> {
         if let Some(t) = self.turrets.get(&system) {
             return t.clone();
         }
         let sys = self.system(system);
-        let t = std::rc::Rc::new(turrets(self.galaxy.seed, system, &sys));
+        let t = std::sync::Arc::new(turrets(self.galaxy.seed, system, &sys));
         self.turrets.insert(system, t.clone());
         t
     }

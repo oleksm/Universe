@@ -2,7 +2,7 @@
 //! places to dock or land. Pick one to lock it as the nav target.
 
 use std::f32::consts::TAU;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{text_size, Color, Context, Frame, KeyCode, GLYPH};
@@ -30,7 +30,7 @@ pub struct NavMap {
     /// Seed for the next settler route loaded with G.
     settler_seed: u64,
     entries: Vec<Entry>,
-    system: Rc<StarSystem>,
+    system: Arc<StarSystem>,
     positions: Vec<DVec3>,
     /// The body the ship is near, if we're browsing the ship's own system.
     ship_body: Option<usize>,

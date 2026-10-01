@@ -8,7 +8,7 @@
 //! commands.
 
 use std::collections::HashMap;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use glam::{DQuat, DVec3};
 use universe_physics::integrate::FINE_STEP;
@@ -78,11 +78,11 @@ pub struct World {
     pub home_system: usize,
     /// Gate links between star systems (galaxy indices).
     pub gate_links: Vec<(usize, usize)>,
-    systems: HashMap<usize, Rc<StarSystem>>,
+    systems: HashMap<usize, Arc<StarSystem>>,
     /// Nearest stars of each system visited (see `NEIGHBOURS`).
-    neighbours: HashMap<usize, Rc<[usize]>>,
+    neighbours: HashMap<usize, Arc<[usize]>>,
     /// Body snapshots per system for the current moment, shared by every ship there.
-    ephemerides: HashMap<usize, (f64, Rc<Ephemeris>)>,
+    ephemerides: HashMap<usize, (f64, Arc<Ephemeris>)>,
     /// Body positions per system at one moment (the last asked for), shared
     /// by everyone there: see `rails_now`.
     rails: HashMap<usize, [RailsAt; 2]>,
@@ -96,19 +96,19 @@ pub struct World {
     /// The goods traded in this galaxy (see `goods`).
     pub goods: Vec<Item>,
     /// Markets met so far, and the state of those traded with (see `market`).
-    markets: HashMap<(usize, Facility), Rc<Market>>,
+    markets: HashMap<(usize, Facility), Arc<Market>>,
     market_states: HashMap<(usize, Facility), MarketState>,
     /// Traffic control: pads and corridors (see `pads`).
     pub traffic: crate::pads::TrafficControl,
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
-    pub(crate) turrets: HashMap<usize, Rc<Vec<crate::turrets::Turret>>>,
+    pub(crate) turrets: HashMap<usize, Arc<Vec<crate::turrets::Turret>>>,
     pub(crate) turret_cooldowns: HashMap<usize, f64>,
     /// Turret fire control's tracks on aggressors, by ship id.
     pub(crate) turret_tracks: HashMap<usize, crate::turrets::TurretTrack>,
 }
 
 /// Body positions at a moment (see `World::rails_now`).
-type RailsAt = (f64, Rc<Vec<DVec3>>);
+type RailsAt = (f64, Arc<Vec<DVec3>>);
 
 impl World {
     pub fn new(seed: u64) -> Self {
@@ -139,12 +139,12 @@ impl World {
     }
 
     /// The market at facility `f` in `system` (None for gates).
-    pub fn market(&mut self, system: usize, f: Facility) -> Option<Rc<Market>> {
+    pub fn market(&mut self, system: usize, f: Facility) -> Option<Arc<Market>> {
         if let Some(m) = self.markets.get(&(system, f)) {
             return Some(m.clone());
         }
         let sys = self.system(system);
-        let m = Rc::new(crate::market::market(self.galaxy.seed, system, &sys, f, &self.goods)?);
+        let m = Arc::new(crate::market::market(self.galaxy.seed, system, &sys, f, &self.goods)?);
         self.markets.insert((system, f), m.clone());
         Some(m)
     }
@@ -194,11 +194,11 @@ impl World {
 
     /// Get (generating and caching if needed) the star system at galaxy index `i`.
     /// A star system already generated, if it is (no generating from `&self`).
-    pub fn system_if_known(&self, i: usize) -> Option<Rc<StarSystem>> {
+    pub fn system_if_known(&self, i: usize) -> Option<Arc<StarSystem>> {
         self.systems.get(&i).cloned()
     }
 
-    pub fn system(&mut self, i: usize) -> Rc<StarSystem> {
+    pub fn system(&mut self, i: usize) -> Arc<StarSystem> {
         if self.systems.len() > 64 {
             // Keep the gate network's systems, where the traffic is.
             self.systems.retain(|&k, _| self.gate_links.iter().any(|&(a, b)| a == k || b == k));
@@ -212,13 +212,13 @@ impl World {
         if !links.is_empty() {
             sys.add_gates(&links, star.seed);
         }
-        let sys = Rc::new(sys);
+        let sys = Arc::new(sys);
         self.systems.insert(i, sys.clone());
         sys
     }
 
     /// The stars nearest to star `i`, nearest first (see `NEIGHBOURS`).
-    pub fn neighbours(&mut self, i: usize) -> Rc<[usize]> {
+    pub fn neighbours(&mut self, i: usize) -> Arc<[usize]> {
         self.neighbours.entry(i).or_insert_with(|| self.galaxy.nearest(i, NEIGHBOURS).into()).clone()
     }
 
@@ -229,11 +229,11 @@ impl World {
 
     /// The body snapshot for `sys` at time `t`, computed once and shared by
     /// every ship stepping from that moment.
-    fn ephemeris(&mut self, sys: &StarSystem, t: f64) -> Rc<Ephemeris> {
+    fn ephemeris(&mut self, sys: &StarSystem, t: f64) -> Arc<Ephemeris> {
         match self.ephemerides.get(&sys.index) {
             Some((at, e)) if *at == t => e.clone(),
             _ => {
-                let e = Rc::new(sys.ephemeris(t));
+                let e = Arc::new(sys.ephemeris(t));
                 self.ephemerides.insert(sys.index, (t, e.clone()));
                 e
             }
@@ -264,7 +264,7 @@ impl World {
 
     /// Where the bodies of `system` are now: solved once per moment and
     /// shared (a thousand ships in a system ask every frame).
-    pub fn rails_now(&mut self, system: usize) -> Rc<Vec<DVec3>> {
+    pub fn rails_now(&mut self, system: usize) -> Arc<Vec<DVec3>> {
         // The last two moments: each ship's turn runs from the frame's start
         // to its end, so both are asked for, turn after turn.
         let t = self.time;
@@ -276,7 +276,7 @@ impl World {
         let sys = self.system(system);
         let mut p = Vec::with_capacity(sys.bodies.len());
         sys.positions(t, &mut p);
-        let p = Rc::new(p);
+        let p = Arc::new(p);
         let slots = self.rails.entry(system).or_insert_with(|| [(f64::NAN, p.clone()), (f64::NAN, p.clone())]);
         slots[1] = std::mem::replace(&mut slots[0], (t, p.clone()));
         p

@@ -11,7 +11,7 @@ mod scene;
 mod sound;
 mod terrain_view;
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
@@ -50,7 +50,7 @@ pub enum Mode {
 pub struct View {
     /// Galaxy index of the system at the origin.
     pub origin: usize,
-    pub system: Rc<StarSystem>,
+    pub system: Arc<StarSystem>,
     /// Body positions at the current time, relative to the origin star.
     pub positions: Vec<DVec3>,
     /// Ship position in the origin frame.

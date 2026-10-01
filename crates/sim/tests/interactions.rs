@@ -59,7 +59,7 @@ fn incidents(u: &Universe) -> String {
     u.recorder.incidents.iter().map(|i| i.to_string()).collect::<Vec<_>>().join("\n")
 }
 
-fn positions(u: &mut Universe) -> (std::rc::Rc<universe_sim::StarSystem>, Vec<DVec3>) {
+fn positions(u: &mut Universe) -> (std::sync::Arc<universe_sim::StarSystem>, Vec<DVec3>) {
     let sys = u.ship_system();
     let mut p = Vec::new();
     sys.positions(u.world.time, &mut p);
