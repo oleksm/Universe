@@ -1,6 +1,6 @@
 # Universe — Re-architecture plan: core, services, clients
 
-Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0, R1, R2 done. `docs/architecture.md`
+Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0–R3 done. `docs/architecture.md`
 describes the code as it is; this describes where it goes and in what order. Once a phase
 lands, its part moves into `architecture.md`.
 
@@ -284,7 +284,7 @@ Dependencies point down only:
 | R0 ✓ | **Contracts** | `protocol` crate: actuation, operations, events, sensor returns, messages, ids, causes. No behaviour change | Types reviewed; the current code compiles against them where it already fits |
 | R1 ✓ | **Autopilot out of the integrator** | Remove `FlightComputer::substep` and the hyperdrive callback. Actuation changes only at tick boundaries. Retune docking, landing, gate and hyperdrive guidance for 60 Hz plus k-tick delay | All interaction tests pass with commands held per tick and an artificial 2-tick delay |
 | R2 ✓ | **Contact rules as data** | Docking port, pads and gate become registered rules. The core keeps no station or spaceport logic | Docking, landing and gate tests pass. Rule firings appear in the event log |
-| R3 | **Pilot interface** | Avionics behind sensor-packet-in, actuation-and-requests-out, run synchronously (lockstep). Pilots lose direct world access | No avionics module imports world internals. Tests green in lockstep |
+| R3 ✓ | **Pilot interface** | Avionics behind sensor-packet-in, actuation-and-requests-out, run synchronously (lockstep). Pilots lose direct world access | No avionics module imports world internals. Tests green in lockstep |
 | R4 | **Services out of the world** | ATC, market, ledger (credits and hold contents), law (aggression from hit events), records; the message bus with causes. Weapons code stops assigning aggression | Every authoritative change has a cause record. Ledger balances. Tests green |
 | R5 | **Turrets as clients** | The defence service's gunner pool aims and fires through actuation | Turret tests green, turrets lag only themselves |
 | R6 | **Asynchronous NPC pools** | Pools on worker threads, the k-tick deadline, think-rate levels of detail, late-input handling, dead-man rule | Tick time independent of pool load. Determinism holds with on-time pools. Load test at 10k |

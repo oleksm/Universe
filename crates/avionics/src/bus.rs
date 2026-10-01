@@ -1,14 +1,21 @@
-//! The avionics' connection to their ship: sensors in, device commands out.
+//! The pilot interface: everything a pilot (the avionics) has to do with the
+//! world goes through it — see `docs/rearchitecture.md`.
 //!
-//! Whoever runs the ship (the orchestration) provides the bus. Through it the
-//! avionics see the ship and the world around it, read-only, and send
-//! `ShipCommands` to the devices; nothing else. What the devices then did is
-//! reported back as the world's physical events.
+//! - **Sensors**: its own ship's instruments, its star system (the charts, and
+//!   where the bodies are), the time, the defence turrets it can see.
+//! - **The feed**: the physical events since it last looked.
+//! - **Actuation**: device settings (`ShipCommands`), nothing returned.
+//! - **Traffic control**: requests and their replies (clearance, a pad, a
+//!   corridor). Traffic control decides; the pilot only asks.
+//!
+//! Whoever runs the ship (the orchestration) provides the bus. A pilot never
+//! sees the world itself.
 
 use std::sync::Arc;
 
 use glam::DVec3;
-use universe_world::pads::PadGrant;
+use universe_protocol::PadGrant;
+use crate::nav::NavTarget;
 use universe_world::{Ship, ShipCommands, ShipEvent, StarSystem};
 
 pub trait Bus {
@@ -41,8 +48,18 @@ pub trait Bus {
     /// The defence turrets of the ship's system (charted): where they are and how they move.
     fn turrets(&mut self) -> Vec<(DVec3, DVec3)>;
 
-    /// Give the devices new commands now; the physical events that followed.
-    fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent>;
+    /// Set the devices (they hold the settings until changed).
+    fn actuate(&mut self, c: &ShipCommands);
+
+    /// The physical events since the feed was last read.
+    fn feed(&mut self) -> Vec<ShipEvent>;
+
+    /// Ask traffic control for clearance to use `target` (None: the nearest
+    /// station): granted (for what), or refused with the reason.
+    fn request_clearance(&mut self, target: Option<NavTarget>) -> Result<NavTarget, String>;
+
+    /// Does traffic control still stand by a clearance for `target`?
+    fn clearance_holds(&mut self, target: NavTarget) -> bool;
 
     /// Where the ship's star system's bodies are now.
     fn positions(&mut self) -> (Arc<StarSystem>, Vec<DVec3>) {

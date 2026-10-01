@@ -228,8 +228,7 @@ impl Avionics {
             thrust_for(&ship, accel, dir)
         };
         let c = ShipCommands { throttle, rcs, ..ship.holding() };
-        let happened = bus.command(&c);
-        self.record(happened, events);
+        self.command(bus, &c, events);
         Some(attitude(&ship, facing(nose, ship.orientation * DVec3::Y), DVec3::ZERO, 1.0 / 60.0))
     }
 }

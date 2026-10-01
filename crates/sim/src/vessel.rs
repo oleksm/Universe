@@ -18,7 +18,7 @@
 use std::sync::Arc;
 
 use universe_avionics::{Avionics, Bus, Event};
-use universe_world::pads::PadGrant;
+use universe_protocol::PadGrant;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, StarSystem, StepResult, World};
 
 /// A ship and the avionics flying it, borrowed for their turn.
@@ -40,6 +40,8 @@ pub(crate) struct Link<'a> {
     ship: &'a mut Ship,
     system: usize,
     id: usize,
+    /// What the devices did, for the feed.
+    happened: Vec<ShipEvent>,
 }
 
 impl Bus for Link<'_> {
@@ -86,17 +88,43 @@ impl Bus for Link<'_> {
         (sys, (*self.world.rails_now(self.system)).clone())
     }
 
-    fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent> {
-        let mut events = Vec::new();
-        self.world.command(self.ship, self.system, c, &mut events);
-        events
+    fn actuate(&mut self, c: &ShipCommands) {
+        self.world.command(self.ship, self.system, c, &mut self.happened);
     }
+
+    fn feed(&mut self) -> Vec<ShipEvent> {
+        std::mem::take(&mut self.happened)
+    }
+
+    fn request_clearance(&mut self, target: Option<universe_avionics::NavTarget>) -> Result<universe_avionics::NavTarget, String> {
+        clearance(self.world, self.ship, self.system, target, self.world.time)
+    }
+
+    fn clearance_holds(&mut self, target: universe_avionics::NavTarget) -> bool {
+        holds(self.world, self.ship, self.system, target, self.world.time)
+    }
+}
+
+/// Traffic control on a clearance request from `ship` in `system` at `t`
+/// (no target: the nearest station). (Its rules; see `world::traffic`.)
+fn clearance(world: &World, ship: &Ship, system: usize, target: Option<universe_avionics::NavTarget>, t: f64) -> Result<universe_avionics::NavTarget, String> {
+    let sys = world.system(system);
+    let positions = world.rails_at(system, t);
+    let target = target.or_else(|| universe_world::traffic::nearest_station(&sys, ship.position, &positions));
+    universe_world::traffic::request(&sys, ship, target, t, &positions)
+}
+
+/// Does traffic control still stand by `ship`'s clearance for `target`?
+fn holds(world: &World, ship: &Ship, system: usize, target: universe_avionics::NavTarget, t: f64) -> bool {
+    let sys = world.system(system);
+    let positions = world.rails_at(system, t);
+    !universe_world::traffic::lapsed(&sys, ship, target, t, &positions)
 }
 
 impl Vessel<'_> {
     /// Run `f` on the avionics, connected to the ship by the bus.
     pub fn run<R>(&mut self, world: &mut World, f: impl FnOnce(&mut Avionics, &mut Link, &mut Vec<Event>) -> R) -> R {
-        let mut link = Link { world, ship: self.ship, system: *self.system, id: self.id };
+        let mut link = Link { world, ship: self.ship, system: *self.system, id: self.id, happened: Vec::new() };
         f(self.avionics, &mut link, self.events)
     }
 
@@ -187,6 +215,8 @@ pub(crate) struct FrameLink<'a> {
     pub delay: Option<(&'a mut Inbox, u64, u64)>,
     /// The ship as its pilot sees it, with its own last settings (while delayed).
     pub seen: Option<Ship>,
+    /// What the devices did, for the feed.
+    pub happened: Vec<ShipEvent>,
 }
 
 impl FrameLink<'_> {
@@ -238,17 +268,27 @@ impl Bus for FrameLink<'_> {
         (self.world.system(self.system), (*self.world.rails_at(self.system, self.time)).clone())
     }
 
-    fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent> {
-        let mut events = Vec::new();
+    fn actuate(&mut self, c: &ShipCommands) {
         match &mut self.delay {
             Some((inbox, tick, k)) => {
                 inbox.pending.push_back((*tick + *k, Pending::Devices(Box::new(*c))));
                 inbox.intent = Some((c.throttle, c.rcs));
                 self.refresh_seen();
             }
-            None => self.world.command_at(self.ship, self.system, c, self.time, &mut events),
+            None => self.world.command_at(self.ship, self.system, c, self.time, &mut self.happened),
         }
-        events
+    }
+
+    fn feed(&mut self) -> Vec<ShipEvent> {
+        std::mem::take(&mut self.happened)
+    }
+
+    fn request_clearance(&mut self, target: Option<universe_avionics::NavTarget>) -> Result<universe_avionics::NavTarget, String> {
+        clearance(self.world, self.ship, self.system, target, self.time)
+    }
+
+    fn clearance_holds(&mut self, target: universe_avionics::NavTarget) -> bool {
+        holds(self.world, self.ship, self.system, target, self.time)
     }
 }
 
@@ -285,7 +325,7 @@ pub(crate) fn turn(
     let delayed = delay.is_some();
     let (stick, program) = {
         let lent = delay.as_mut().map(|(inbox, tick, k)| (&mut **inbox, *tick, *k));
-        let mut l = FrameLink { world, ship: &mut *ship, system: *system, id, time: t0, requests: &mut *requests, delay: lent, seen: None };
+        let mut l = FrameLink { world, ship: &mut *ship, system: *system, id, time: t0, requests: &mut *requests, delay: lent, seen: None, happened: Vec::new() };
         l.refresh_seen();
         let c = stick(avionics, &mut l, events);
         let p = universe_prof::time("sim/crafts/tick/avionics prepare", || avionics.prepare(&mut l, real_dt * warp, events));
@@ -306,6 +346,6 @@ pub(crate) fn turn(
     let mut clock = t0;
     universe_prof::time("sim/crafts/tick/world step", || world.step_ship_at(&mut clock, ship, system, &commands, real_dt, warp, &mut happened));
     avionics.record(happened, events);
-    let mut l = FrameLink { world, ship, system: *system, id, time: clock, requests, delay: None, seen: None };
+    let mut l = FrameLink { world, ship, system: *system, id, time: clock, requests, delay: None, seen: None, happened: Vec::new() };
     universe_prof::time("sim/crafts/tick/avionics conclude", || avionics.conclude(&mut l, events));
 }

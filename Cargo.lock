@@ -2296,6 +2296,7 @@ dependencies = [
  "serde",
  "universe-physics",
  "universe-prof",
+ "universe-protocol",
  "universe-world",
 ]
 
@@ -2345,6 +2346,7 @@ dependencies = [
  "universe-avionics",
  "universe-physics",
  "universe-prof",
+ "universe-protocol",
  "universe-world",
 ]
 

@@ -251,10 +251,17 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   `request_clearance` via the traffic-control service, `toggle_autopilot`, `toggle_hyperdrive`,
   `toggle_route`). `approach()` / `plan()` give the HUD its guidance and flight plan; `Approach`
   (Dock/Land/Transit status) lives here.
-- `bus`: the `Bus` trait — the avionics' only link to their ship: read-only sensors (`ship()`,
-  `system()`, `star_system()`, `time()`, `gate_links()`, `positions()`) and
-  `command(&ShipCommands)`, which returns the physical events that followed. The orchestrator
-  implements it over the world.
+- `bus`: the `Bus` trait — **the pilot interface**, the avionics' only link to the world:
+  - sensors: `ship()`, `system()`, `time()`, the charts (`star_system()`, `gate_links()`,
+    `positions()`), visible `turrets()`;
+  - the feed: `feed()`, the physical events since it was last read;
+  - actuation: `actuate(&ShipCommands)`, nothing returned;
+  - traffic control: `request_clearance`, `clearance_holds`, `request_pad`,
+    `request_corridor`. Traffic control's rules decide on the world's side.
+
+  The orchestrator implements it: `Link` for the player and requests, and `FrameLink` for crafts
+  stepping side by side. **Enforced** by `avionics/tests/boundary.rs`: no world internals in
+  avionics code.
 - `computer`: the dock/land/gate autopilot (`computer::autopilot`) — what it commands for the
   next tick from where the ship is. `Avionics::fly` runs it once a tick, before the world steps
   the ship (and, in hyperdrive, the navigation: `hyperdrive::navigate`).
@@ -368,7 +375,7 @@ ship's pose directly, like tests do — then render.
 | Physical and service events | world: `events` |
 | Nav target, clearance, phases | avionics: `nav` |
 | Per-ship avionics state, observe, per-frame programs, pilot requests, HUD approach/plan | avionics: `avionics` |
-| Sensors + command bus | avionics: `bus` |
+| The pilot interface (sensors, feed, actuation, traffic control requests); boundary test | avionics: `bus`, `tests/boundary.rs` |
 | The autopilots' per-tick say (dock/land/gate autopilot, hyperdrive navigation): `Avionics::fly` | avionics: `computer`, `avionics` |
 | Ticks of at most 1/60 game s (warp: more ticks, up to a budget); crafts' command delay (tests: 2 ticks) | sim: `universe::step_world`, `vessel::Inbox` |
 | Hyperdrive autopilot | avionics: `hyperdrive` |

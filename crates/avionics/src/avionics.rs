@@ -8,7 +8,7 @@
 
 use glam::DVec3;
 use serde::{Deserialize, Serialize};
-use universe_world::{traffic, Controls, GateFrame, HyperdriveCommand, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StationFrame, TrafficEvent};
+use universe_world::{Controls, GateFrame, HyperdriveCommand, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StationFrame, TrafficEvent};
 
 use crate::bus::Bus;
 use crate::docking::{self, DockingStatus};
@@ -17,7 +17,7 @@ use crate::gate::{self, GateStatus};
 use crate::hyperdrive;
 use crate::landing::{self, LandingStatus, PadFrame};
 use crate::nav::{Clearance, NavTarget, PadSlot, Phase};
-use universe_world::pads::PadGrant;
+use universe_protocol::PadGrant;
 use crate::plan::{self, Plan};
 use crate::route::{self, Route};
 
@@ -148,9 +148,10 @@ impl Avionics {
         }
     }
 
-    /// Give the ship's devices new commands now.
+    /// Set the ship's devices, and take note of what the feed reports.
     pub fn command(&mut self, bus: &mut impl Bus, c: &ShipCommands, events: &mut Vec<Event>) {
-        let happened = bus.command(c);
+        bus.actuate(c);
+        let happened = bus.feed();
         self.record(happened, events);
     }
 
@@ -261,11 +262,8 @@ impl Avionics {
     /// Ask traffic control for permission to dock/land at the locked nav
     /// target (or the nearest station).
     pub fn request_clearance(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) -> bool {
-        let (sys, positions) = bus.positions();
-        let t = bus.time();
-        let ship = bus.ship();
-        let target = self.nav_target.or_else(|| traffic::nearest_station(&sys, ship.position, &positions));
-        match traffic::request(&sys, ship, target, t, &positions) {
+        let sys = bus.star_system();
+        match bus.request_clearance(self.nav_target) {
             Ok(target) => {
                 // Landing: a pad of our own, or a place in the holding ring.
                 let pad = match target {
@@ -378,8 +376,7 @@ impl Avionics {
             }
             self.clearance = Some(c);
         }
-        let (sys, positions) = bus.positions();
-        if traffic::lapsed(&sys, bus.ship(), c.target, bus.time(), &positions) {
+        if !bus.clearance_holds(c.target) {
             self.clearance = None;
             self.set_controls(bus, events, |c| c.rcs = DVec3::ZERO);
             events.push(Event::Traffic(TrafficEvent::ClearanceCancelled));

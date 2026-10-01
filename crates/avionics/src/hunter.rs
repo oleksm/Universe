@@ -249,8 +249,7 @@ impl Avionics {
             self.nav_target = None;
             self.hyper_autopilot = false;
             let c = ShipCommands { arm: Some(true), rcs: DVec3::ZERO, ..ship.holding() };
-            let happened = bus.command(&c);
-            self.record(happened, events);
+            self.command(bus, &c, events);
         }
         let hunt = self.hunting.expect("hunting");
         let prey = sightings.iter().find(|s| s.id == hunt.target);
@@ -282,8 +281,7 @@ impl Avionics {
             if push.length() > 0.01 && ship.is_flying() {
                 let (throttle, rcs, nose) = thrust_for(&ship, push, push.normalize());
                 let c = ShipCommands { throttle, rcs, weapons: Some(Triggers::default()), arm: Some(false), gun_target: Some(None), ..ship.holding() };
-                let happened = bus.command(&c);
-                self.record(happened, events);
+                self.command(bus, &c, events);
                 return (Some(attitude(&ship, facing(nose, ship.orientation * DVec3::Y), DVec3::ZERO, 1.0 / 60.0)), None);
             }
             self.hunting = None;
@@ -299,8 +297,7 @@ impl Avionics {
                 gun_target: Some(None),
                 ..ship.holding()
             };
-            let happened = bus.command(&c);
-            self.record(happened, events);
+            self.command(bus, &c, events);
             self.route.active = !hunt.lawful || hunt.resume;
             return (None, Some(end));
         }
@@ -407,8 +404,7 @@ impl Avionics {
             gun_target: Some(solution.filter(|_| hot).map(|s| s.aim)),
             ..ship.holding()
         };
-        let happened = bus.command(&c);
-        self.record(happened, events);
+        self.command(bus, &c, events);
 
         let up_hint = ship.orientation * DVec3::Y;
         let target: DQuat = facing(nose, up_hint);

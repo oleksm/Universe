@@ -18,14 +18,7 @@ use std::collections::HashMap;
 
 use crate::spaceport::PADS;
 
-/// What traffic control says to a request for a pad.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum PadGrant {
-    /// This pad is yours.
-    Pad(usize),
-    /// None free: you're waiting, with this many ahead of you.
-    Queued(usize),
-}
+pub use universe_protocol::PadGrant;
 
 /// A waiting ship is forgotten if it hasn't asked for this long (s).
 const QUEUE_PATIENCE: f64 = 60.0;
