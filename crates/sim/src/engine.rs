@@ -302,7 +302,12 @@ impl Engine {
             credits: u.credits(),
             hold: u.hold(),
             crafts: Arc::new(crafts),
-            traffic: u.records.stats,
+            // (Hunts and posses: the NPC operator's own tally.)
+            traffic: universe_services::records::TrafficStats {
+                hunts: u.pool.tally.hunts.load(std::sync::atomic::Ordering::Relaxed),
+                defences: u.pool.tally.defences.load(std::sync::atomic::Ordering::Relaxed),
+                ..u.records.stats
+            },
             kills: u.records.kills.clone(),
             trade_log: u.records.trades.clone(),
             events: std::mem::take(&mut self.events),

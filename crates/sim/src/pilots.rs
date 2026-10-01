@@ -28,7 +28,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{mpsc, Arc, Condvar, Mutex, MutexGuard};
 
 use glam::DVec3;
-use universe_avionics::hunter::{may_defend, wants_sightings, Hunt, HuntEnd, Sighting, DEFEND_RANGE};
+use universe_avionics::hunter::{may_defend, wants_sightings, Sighting, DEFEND_RANGE};
 use universe_avionics::route::Stop;
 use universe_avionics::{Avionics, Bus, Clearance, Event, NavTarget};
 use universe_protocol::PadGrant;
@@ -60,9 +60,6 @@ const COAST_THINK: f64 = 0.5;
 /// the world reads this, never the pilot itself).
 #[derive(Clone, Debug, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Status {
-    /// Flies with the pirates (they see each other's transponders).
-    pub pirate: bool,
-    pub hunting: Option<Hunt>,
     pub nav_target: Option<NavTarget>,
     pub clearance: Option<Clearance>,
     pub corridor_denied: bool,
@@ -80,8 +77,6 @@ impl Status {
     pub fn of(a: &Avionics) -> Self {
         let r = &a.route;
         Status {
-            pirate: a.pirate,
-            hunting: a.hunting,
             nav_target: a.nav_target,
             clearance: a.clearance,
             corridor_denied: a.corridor_denied,
@@ -187,9 +182,6 @@ pub struct Posting {
     /// What its programs report (route stops, traffic): for the services.
     pub events: Vec<Event>,
     pub status: Status,
-    /// A hunt begun, or ended, this think.
-    pub hunt_begun: bool,
-    pub hunt_end: Option<HuntEnd>,
     /// Going to sleep: it needn't be in a view before this tick (unless a
     /// message wakes it). None: it says nothing of it.
     pub sleep_until: Option<u64>,
@@ -369,7 +361,7 @@ fn flee(a: &mut Avionics, ship: &Ship, system: usize, guns: &[Gun], events: &mut
 
 /// What pilot `i` makes of the ships around it (radar, and the pirates'
 /// transponders): shelter is real (docked or landed, or under a turret's guns).
-fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[Gun]) -> Vec<Sighting> {
+fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[Gun], crew: &Crew) -> Vec<Sighting> {
     let sheltered = |s: &Snap| s.landed || guns.iter().any(|g| g.at.distance(s.position) < g.reach + universe_avionics::hunter::SHELTER_MARGIN);
     view.snaps
         .iter()
@@ -379,7 +371,7 @@ fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[Gun
             id,
             position: s.position,
             velocity: s.velocity,
-            pirate: s.pirate,
+            pirate: crew.pirates.get(id.wrapping_sub(1)).copied().unwrap_or(false),
             docked: sheltered(s),
             destroyed: s.destroyed,
             hyperdrive: s.hyperdrive,
@@ -394,7 +386,7 @@ fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[Gun
 /// waiting for it: what it posts. With a human at the stick (`human`), it
 /// thinks every time, flies by the stick (unless a program has it), and
 /// hunts no one.
-pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Option<Controls>) -> Option<Posting> {
+pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Option<Controls>, crew: &Crew, tally: &Tally) -> Option<Posting> {
     let (system, ref ship) = *view.ships.get(&id)?;
     if human.is_none() && view.tick < pilot.next_think && pilot.feed.is_empty() && pilot.market.is_none() {
         return None;
@@ -426,7 +418,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let pos = link.ship.position;
     let threat = human.is_none() && may_defend(a, &link.ship) && view.aggressors.iter().any(|&(s, p)| s == system && p.distance(pos) < DEFEND_RANGE);
     let guns = guns_of(view, system, &link.sys);
-    let sightings = if threat || (human.is_none() && wants_sightings(a, &link.ship, view.time)) { sightings(view, id, system, pos, &guns) } else { Vec::new() };
+    let sightings = if threat || (human.is_none() && wants_sightings(a, &link.ship, view.time)) { sightings(view, id, system, pos, &guns, crew) } else { Vec::new() };
     // Fired on (and not a hunter itself, nor standing to fight with hull to
     // spare): run for the guns. (A human decides that for themselves.)
     use universe_avionics::hunter::FLEE_HULL;
@@ -484,13 +476,17 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     events.retain(|e| !matches!(e, Event::Ship(_)));
     // Only what's new (the ship holds its turn, the world its status), and a keep-alive.
     let status = Status::of(&pilot.avionics);
-    let hunt_begun = !was_hunting && pilot.avionics.hunting.is_some();
+    // (A hunt or a posse begun: the operator's own tally.)
+    if !was_hunting && let Some(h) = pilot.avionics.hunting {
+        let n = if h.lawful { &tally.defences } else { &tally.hunts };
+        n.fetch_add(1, Ordering::Relaxed);
+    }
     let new_turn = pilot.last_turn != Some(turn);
     let new_status = pilot.last_status.as_ref() != Some(&status);
     // Going to sleep (past the next tick), it says so: the world leaves its
     // ship out of the views till then.
     let sleep = (pilot.next_think > view.tick + 1 && pilot.next_think != pilot.last_sleep).then_some(pilot.next_think);
-    if devices.is_empty() && requests.is_empty() && events.is_empty() && !new_turn && !new_status && !hunt_begun && hunt_end.is_none() && sleep.is_none() && view.time - pilot.last_posted < KEEP_ALIVE {
+    if devices.is_empty() && requests.is_empty() && events.is_empty() && !new_turn && !new_status && sleep.is_none() && view.time - pilot.last_posted < KEEP_ALIVE {
         return None;
     }
     pilot.last_turn = Some(turn);
@@ -499,13 +495,29 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     if let Some(t) = sleep {
         pilot.last_sleep = t;
     }
-    Some(Posting { id, thought: view.tick, seen: view.time, devices, turn: new_turn.then_some(turn), requests, events, status, hunt_begun, hunt_end, sleep_until: sleep })
+    Some(Posting { id, thought: view.tick, seen: view.time, devices, turn: new_turn.then_some(turn), requests, events, status, sleep_until: sleep })
 }
 
 /// Every pilot due thinks on `view`, side by side: their postings, in craft order.
-fn think_all(pilots: &mut [Pilot], view: &PilotView) -> Vec<Posting> {
+fn think_all(pilots: &mut [Pilot], view: &PilotView, tally: &Tally) -> Vec<Posting> {
     use rayon::prelude::*;
-    pilots.par_iter_mut().enumerate().filter_map(|(i, p)| think(p, crate::combat::craft_id(i), view, None).filter(|_| !p.silent)).collect()
+    // (The pirates' own network: who flies with them, as they know it.)
+    let crew = Crew { pirates: pilots.iter().map(|p| p.avionics.pirate).collect() };
+    pilots.par_iter_mut().enumerate().filter_map(|(i, p)| think(p, crate::combat::craft_id(i), view, None, &crew, tally).filter(|_| !p.silent)).collect()
+}
+
+/// What the operator's pilots know of each other: who flies with the
+/// pirates (they see each other's transponders), by craft. (Not the world's.)
+#[derive(Default)]
+pub struct Crew {
+    pub pirates: Vec<bool>,
+}
+
+/// The operator's own tally: hunts begun, and posses formed against aggressors.
+#[derive(Default, Debug)]
+pub struct Tally {
+    pub hunts: std::sync::atomic::AtomicU64,
+    pub defences: std::sync::atomic::AtomicU64,
 }
 
 /// Messages to pilots, delivered before they next think.
@@ -531,6 +543,8 @@ pub struct Pool {
     pub dropped: u64,
     /// Fault injection: apart, the pool takes this much longer over each view (µs).
     slow: Arc<std::sync::atomic::AtomicU64>,
+    /// The operator's own tally (see `Tally`).
+    pub tally: Arc<Tally>,
 }
 
 /// The pool's own thread: thinks on the newest view whenever there's one,
@@ -580,7 +594,7 @@ impl Pool {
         let stop = Arc::new(AtomicBool::new(false));
         let (tx, rx) = mpsc::channel();
         let done = Arc::new(std::sync::atomic::AtomicU64::new(0));
-        let (pilots, mail, s, st, slow, d) = (self.pilots.clone(), self.mail.clone(), slot.clone(), stop.clone(), self.slow.clone(), done.clone());
+        let (pilots, mail, s, st, slow, d, tally) = (self.pilots.clone(), self.mail.clone(), slot.clone(), stop.clone(), self.slow.clone(), done.clone(), self.tally.clone());
         let thread = std::thread::Builder::new()
             .name("pilots".into())
             .spawn(move || {
@@ -601,7 +615,7 @@ impl Pool {
                     let mut guard = Self::lock(&pilots);
                     deliver(&mut guard, &mut Self::lock(&mail));
                     let list: &mut [Pilot] = &mut guard;
-                    let postings = workers.install(|| think_all(list, &view));
+                    let postings = workers.install(|| think_all(list, &view, &tally));
                     drop(guard);
                     let extra = slow.load(Ordering::Relaxed);
                     if extra > 0 {
@@ -624,7 +638,7 @@ impl Pool {
             None => {
                 let mut pilots = Self::lock(&self.pilots);
                 deliver(&mut pilots, &mut Self::lock(&self.mail));
-                think_all(&mut pilots, &view)
+                think_all(&mut pilots, &view, &self.tally)
             }
             Some(w) => {
                 let (lock, ready) = &*w.slot;
@@ -674,7 +688,7 @@ pub(crate) fn run<R>(pilot: &mut Pilot, id: usize, view: &PilotView, f: impl FnO
         let PoolLink { devices, requests, .. } = link;
         events.retain(|e| !matches!(e, Event::Ship(_)));
         pilot.next_think = view.tick;
-        let posting = Posting { id, thought: view.tick, seen: view.time, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), hunt_begun: false, hunt_end: None, sleep_until: None };
+        let posting = Posting { id, thought: view.tick, seen: view.time, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), sleep_until: None };
         (r, posting)
     }
 }

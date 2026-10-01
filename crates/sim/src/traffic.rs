@@ -47,11 +47,10 @@ pub(crate) struct Snap {
     pub hyperdrive: bool,
     pub hull: f64,
     pub aggressed: bool,
-    pub pirate: bool,
 }
 
 impl Snap {
-    fn of(system: usize, ship: &Ship, pirate: bool, aggressed: bool) -> Self {
+    fn of(system: usize, ship: &Ship, aggressed: bool) -> Self {
         Snap {
             system,
             position: ship.position,
@@ -63,7 +62,6 @@ impl Snap {
             hyperdrive: ship.hyperdrive,
             hull: ship.hull,
             aggressed,
-            pirate,
         }
     }
 }
@@ -81,8 +79,7 @@ pub struct CrashReport {
     pub hyperdrive: bool,
     pub departing: bool,
     pub speed: f64,
-    /// A pirate on a hunt (or standing down from one), and whether its route was flying.
-    pub hunting: bool,
+    /// Whether its route was flying.
     pub route_active: bool,
 }
 
@@ -169,7 +166,6 @@ impl Universe {
                 hyperdrive: c.ship.hyperdrive,
                 departing: st.departing,
                 speed,
-                hunting: st.hunting.is_some(),
                 route_active: st.route_active,
             });
             if self.crash_log.len() > CRASH_LOG {
@@ -228,13 +224,6 @@ impl Universe {
             c.last_posted = self.world.time;
             c.dead_man = false;
             c.status = p.status;
-            if p.hunt_begun && let Some(h) = c.status.hunting {
-                if h.lawful {
-                    self.records.stats.defences += 1;
-                } else {
-                    self.records.stats.hunts += 1;
-                }
-            }
             let _events = universe_prof::scope("sim/postings/events");
             self.log_events(crate::combat::craft_id(i), &p.events);
             self.traffic_events(crate::combat::craft_id(i), &p.events);
@@ -330,9 +319,9 @@ impl Universe {
         let now = self.world.time;
         let law = &self.law;
         let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
-        snaps.push(Snap::of(self.ship_system, &self.ship, false, law.aggressed(crate::combat::PLAYER, now)));
+        snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now)));
         use rayon::prelude::*;
-        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, c.status.pirate, law.aggressed(crate::combat::craft_id(i), now))).collect();
+        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, law.aggressed(crate::combat::craft_id(i), now))).collect();
         snaps.extend(crafts);
         self.snaps = Arc::new(snaps);
         self.snap_time = now;

@@ -284,9 +284,10 @@ fn settlers_gang_up_on_an_aggressor_and_shoot_it_down() {
         place(&mut u, k, p + dir * 4_000.0, v, p);
     }
     let down = run(&mut u, 240.0, |u| !u.crafts[0].ship.is_flying());
-    let defenders = u.crafts[1..].iter().filter(|c| c.status.hunting.is_some()).count();
-    assert!(down, "the aggressor is shot down (hull {:.2}, {} defending, {} defences)\n{}", u.crafts[0].ship.hull, defenders, u.records.stats.defences, incidents(&u));
-    assert!(u.records.stats.defences >= 2, "they went after it together ({})", u.records.stats.defences);
+    let defenders = u.pilots()[1..].iter().filter(|p| p.avionics.hunting.is_some()).count();
+    assert!(down, "the aggressor is shot down (hull {:.2}, {} defending, {} defences)\n{}", u.crafts[0].ship.hull, defenders, u.pool.tally.defences.load(std::sync::atomic::Ordering::Relaxed), incidents(&u));
+    let posses = u.pool.tally.defences.load(std::sync::atomic::Ordering::Relaxed);
+    assert!(posses >= 2, "they went after it together ({posses})");
     assert!((1..u.crafts.len()).all(|i| !u.law.aggressed(universe_sim::craft_id(i), u.world.time)), "shooting the aggressor is no crime");
     assert!(u.records.kills.iter().any(|k| k.victim == universe_sim::craft_id(0) && k.killer != universe_sim::PLAYER));
     // Standing down, they slow and keep clear of each other.

@@ -35,7 +35,6 @@ pub struct Sample {
     pub clearance: Option<(NavTarget, Phase, PadSlot)>,
     pub route_next: usize,
     pub departing: bool,
-    pub hunting: Option<usize>,
     pub corridor_denied: bool,
 }
 
@@ -62,7 +61,6 @@ impl Sample {
             clearance: pilot.clearance.map(|c| (c.target, c.phase, c.pad)),
             route_next: pilot.route_next,
             departing: pilot.departing,
-            hunting: pilot.hunting.map(|h| h.target),
             corridor_denied: pilot.corridor_denied,
         }
     }
@@ -106,9 +104,6 @@ impl fmt::Display for Incident {
                 if s.departing { " departing" } else { "" },
                 if s.corridor_denied { " waiting-corridor" } else { "" },
             )?;
-            if let Some(h) = s.hunting {
-                write!(f, " hunting {h}")?;
-            }
             // Against the other ship, at the same moment (its nearest sample,
             // carried there: ships are sampled a slice at a time).
             if let Some((_, _, other)) = &self.other

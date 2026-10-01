@@ -151,7 +151,7 @@ impl Cockpit {
     pub fn view(&mut self, view: Arc<CockpitView>) {
         let dt = view.world.dt;
         self.view = Some(view.clone());
-        if let Some(p) = pilots::think(&mut self.pilot, PLAYER, &view.world, Some(self.stick)) {
+        if let Some(p) = pilots::think(&mut self.pilot, PLAYER, &view.world, Some(self.stick), &Default::default(), &Default::default()) {
             if let Some(turn) = p.turn {
                 self.turns.push((p.due(), turn));
             }

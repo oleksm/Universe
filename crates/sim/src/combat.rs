@@ -58,11 +58,12 @@ impl Universe {
                     self.records.stats.collision_losses += 1;
                 } else {
                     self.records.stats.shot_down += 1;
-                    let killer = if kill.killer == PLAYER { None } else { self.crafts.get(kill.killer - 1) };
-                    if killer.is_some_and(|c| c.status.pirate) {
-                        self.records.stats.pirate_kills += 1;
-                    } else if killer.is_some_and(|c| c.status.hunting.is_some_and(|h| h.lawful)) {
+                    // By the law's evidence: the downed was fair game, or the
+                    // killer was (an innocent killed by an aggressor).
+                    if self.law.aggressed(craft_id(i), now) {
                         self.records.stats.aggressors_downed += 1;
+                    } else if self.law.aggressed(kill.killer, now) {
+                        self.records.stats.pirate_kills += 1;
                     }
                 }
                 self.record_kill(kill);
