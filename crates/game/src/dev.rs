@@ -196,7 +196,7 @@ pub fn apply(app: &mut App, name: &str) {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
         }
-        "asteroid" | "swarm" | "navlock" => {
+        "asteroid" | "swarm" | "navlock" | "orbitrock" => {
             // By the first field's remnant (sun behind), or among its swarm,
             // moving with it, facing it; it's the nav target.
             app.mode = Mode::Pilot;
@@ -215,8 +215,16 @@ pub fn apply(app: &mut App, name: &str) {
             if name == "navlock" {
                 app.picker.hold_for_show();
             }
+            if name == "orbitrock" {
+                // Orbiting the remnant, a minute on.
+                let u = app.engine.universe();
+                u.follow(universe_sim::FollowKind::Orbit);
+                for _ in 0..60 * 60 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+            }
         }
-        "mining" | "cargo" | "prospect" | "closing" | "minemode" | "pulse" | "picklist" => {
+        "mining" | "cargo" | "prospect" | "closing" | "closing10" | "minemode" | "pulse" | "picklist" => {
             // By a rubble fragment of a home field, drifting with its
             // surface: "prospect" 300 m off it; "mining" anchored 15 m off
             // and digging for half a minute.
@@ -236,7 +244,7 @@ pub fn apply(app: &mut App, name: &str) {
             let up = (sun + sun.any_orthonormal_vector() * 0.8).normalize();
             let gap = match name {
                 "mining" | "cargo" => 15.0,
-                "closing" => 800.0,
+                "closing" | "closing10" => 800.0,
                 _ => 300.0,
             };
             let at = pos[i] + up * (b.surface_radius(b.rotation(t).inverse() * up) + universe_sim::world::ship::SHIP_RADIUS + gap);
@@ -262,11 +270,11 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
             let u = app.engine.universe();
-            if name == "closing" {
-                // N on it, ninety seconds on.
+            if name == "closing" || name == "closing10" {
+                // Closing on it, ninety (or ten) seconds on.
                 let f = (0..sys.fields.len()).find(|&f| sys.field_bodies(f).len() == bodies.len() && sys.field_rocks(f).any(|j| j == i)).unwrap();
                 u.close_on(f, i);
-                for _ in 0..60 * 90 {
+                for _ in 0..60 * if name == "closing" { 90 } else { 10 } {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 }
             }

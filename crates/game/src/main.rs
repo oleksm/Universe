@@ -1,6 +1,7 @@
 mod dev;
 mod economy;
 mod fmt;
+mod followguide;
 mod galaxymap;
 mod hud;
 mod market;

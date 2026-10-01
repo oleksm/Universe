@@ -46,7 +46,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         Mode::Pilot if !app.v.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),
         Mode::Pilot => {
             pilot_info(app, &mut lines);
-            follow_info(app, &mut lines);
+            crate::followguide::lines(app, &mut lines);
             approach_info(app, &mut lines);
             universe_prof::time("draw/hud/pilot overlay", || pilot_overlay(frame, app));
             target_marker(frame, app);
@@ -54,6 +54,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             universe_prof::time("draw/hud/turret markers", || turret_markers(frame, app));
             impact_label(frame, app);
             phase_banner(frame, app);
+            crate::followguide::banner(frame, app);
             universe_prof::time("draw/hud/scanner", || scanner(frame, app));
             crate::mining::draw_hud(frame, app);
             cargo_panel(frame, app);
@@ -455,15 +456,6 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
     }
 }
 
-/// The follow program: what, how, and how well it's holding.
-fn follow_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    let Some((m, name, d)) = &app.following else { return };
-    let line = match m {
-        universe_sim::avionics::follow::Manoeuvre::Surface(g) => format!("{} {name} - {} OFF THE SURFACE  X TO LET GO", m.label(), fmt::distance(*g)),
-        _ => format!("{} {:.0} KM - {name}  NOW {:.1} KM  X TO LET GO", m.label(), m.range() / 1000.0, d / 1000.0),
-    };
-    lines.push((line, AMBER));
-}
 
 /// The route: which stop we're on and what the route autopilot is doing.
 fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
