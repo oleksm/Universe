@@ -1,0 +1,10 @@
+// Raw materials dug out of asteroids (see `mining`), by the tonne: after the
+// generated goods in the catalogue, the same in every galaxy. Water is worth
+// most where it's needed: in space, as propellant and air.
+[
+    (key: "ore.water_ice", name: "Asteroid Water Ice", kind: "goods.water", price: 30.0),
+    (key: "ore.carbonaceous", name: "Carbonaceous Ore", kind: "goods.ores", price: 20.0),
+    (key: "ore.stony", name: "Stony Ore", kind: "goods.ores", price: 8.0),
+    (key: "ore.nickel_iron", name: "Nickel-Iron Ore", kind: "goods.ores", price: 35.0),
+    (key: "ore.pgm", name: "PGM-Rich Ore", kind: "goods.ores", price: 400.0),
+]

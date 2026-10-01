@@ -1,0 +1,15 @@
+// Works: what they take and what they make, in tonnes a day. (An Earth-like
+// world's own rain waters its fields.)
+[
+    (key: "recipe.mine", name: "MINE", takes: [], makes: [("goods.ores", 40.0), ("goods.minerals", 4.0)]),
+    (key: "recipe.ice", name: "ICE WORKS", takes: [], makes: [("goods.water", 300.0)]),
+    (key: "recipe.farm", name: "FARMS", takes: [("goods.chemicals", 2.0)], makes: [("goods.food", 30.0), ("goods.biologics", 0.6), ("goods.textiles", 1.2)]),
+    (key: "recipe.artisans", name: "ARTISANS", takes: [("goods.textiles", 1.0), ("goods.minerals", 0.5)], makes: [("goods.luxuries", 1.5), ("goods.art", 0.3)]),
+    (key: "recipe.refinery", name: "REFINERY", takes: [("goods.ores", 30.0)], makes: [("goods.metals", 20.0), ("goods.minerals", 2.0)]),
+    (key: "recipe.smelter", name: "SMELTER", takes: [("goods.ores", 10.0)], makes: [("goods.metals", 6.0)]),
+    (key: "recipe.chemicals", name: "CHEMICAL PLANT", takes: [("goods.ores", 8.0), ("goods.water", 10.0)], makes: [("goods.chemicals", 24.0)]),
+    (key: "recipe.fuel_plant", name: "FUEL PLANT", takes: [("goods.water", 20.0)], makes: [("goods.fuel", 18.0)]),
+    (key: "recipe.factory", name: "FACTORY", takes: [("goods.metals", 10.0), ("goods.chemicals", 3.0), ("goods.electronics", 1.0)], makes: [("goods.machinery", 6.0), ("goods.tools", 4.0), ("goods.robots", 1.0), ("goods.weapons", 1.0)]),
+    (key: "recipe.fab", name: "ELECTRONICS FAB", takes: [("goods.metals", 1.0), ("goods.minerals", 2.0), ("goods.chemicals", 2.0)], makes: [("goods.electronics", 3.0), ("goods.computers", 1.0)]),
+    (key: "recipe.pharma", name: "PHARMA PLANT", takes: [("goods.chemicals", 2.0), ("goods.biologics", 2.0)], makes: [("goods.medicine", 4.0)]),
+]

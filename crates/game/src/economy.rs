@@ -6,7 +6,7 @@
 
 use universe_engine::glam::Vec2;
 use universe_engine::{text_size, Color, Context, Frame, KeyCode};
-use universe_sim::services::economy::{Place, COVER_DAYS, LINES};
+use universe_sim::services::economy::{lines, Place, COVER_DAYS};
 use universe_sim::world::goods::Category;
 
 use crate::App;
@@ -71,7 +71,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     );
     y += line * 1.5;
     // Across all places, per kind.
-    let mut totals = [(0.0f64, 0.0f64, 0.0f64); LINES];
+    let mut totals = vec![(0.0f64, 0.0f64, 0.0f64); lines()];
     for p in places.iter() {
         for (i, t) in totals.iter_mut().enumerate() {
             t.0 += p.made[i];
@@ -82,7 +82,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     let (made, used, short): (f64, f64, f64) = totals.iter().fold((0.0, 0.0, 0.0), |a, t| (a.0 + t.0, a.1 + t.1, a.2 + t.2));
     frame.text(Vec2::new(12.0, y), &format!("MADE {made:.0} T/DAY   USED {used:.0} T/DAY   SHORT {short:.1} T/DAY"), if short > 0.05 * used.max(1.0) { WARN } else { DIM });
     y += line;
-    let shorts: Vec<String> = Category::all().filter(|&c| totals[c as usize].2 > 0.05).map(|c| format!("{} {:.0}", c.name(), totals[c as usize].2)).collect();
+    let shorts: Vec<String> = Category::all().filter(|&c| totals[c.index()].2 > 0.05).map(|c| format!("{} {:.0}", c.name(), totals[c.index()].2)).collect();
     if !shorts.is_empty() {
         frame.text(Vec2::new(12.0, y), &format!("SHORT: {}", shorts.join("  ")), WARN);
     }
@@ -122,7 +122,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     frame.text(Vec2::new(x, y), &format!("{:<11} {:>4} {:>6} {:>5} {:>5} {:>6} {:>6} {:>5}", "KIND", "", "STOCK", "COVER", "PRICE", "MADE", "USED", "SHORT"), DIM);
     y += line;
     for c in Category::all().filter(|&c| p.trades(c)) {
-        let i = c as usize;
+        let i = c.index();
         let d = cover(p, c);
         let col = if p.short[i] > 1e-6 { BAD } else if d < COVER_DAYS * 0.5 && p.needs(c) > 0.0 { WARN } else { TEXT };
         let text = format!(

@@ -559,13 +559,13 @@ fn a_pilot_refuels_at_a_station_from_its_stock_and_pays_its_price() {
     u.ship = u.world.ship_on(home, Facility::Station(station), 0);
     let full = u.ship.spec().fuel_capacity;
     u.ship.fuel = full - 4000.0;
-    let stock = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::Fuel);
+    let stock = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::fuel());
     let credits = u.credits();
     u.refuel_player();
     assert!((u.ship.fuel - full).abs() < 1e-6, "full: {}", u.ship.fuel);
     let paid = credits - u.credits();
     assert!((paid - 4.0 * universe_sim::services::market::FUEL_PRICE).abs() < 4.0 * 60.0 * 0.5, "paid {paid}");
-    let left = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::Fuel);
+    let left = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::fuel());
     assert!((stock - left - 4.0).abs() < 1e-6, "four tonnes from the station's stock");
     assert!(u.ledger.balanced());
 }

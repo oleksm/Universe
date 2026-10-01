@@ -1,6 +1,6 @@
-//! Content: what the world is made of — hulls now; recipes, kinds of
-//! place, kinds of goods, modules, brands and shapes as they move in — as
-//! data, not code (see `docs/content.md`).
+//! Content: what the world is made of — hulls, kinds of goods, ores,
+//! recipes, kinds of place, how markets are made up; modules, brands and
+//! shapes as they move in — as data, not code (see `docs/content.md`).
 //!
 //! Content comes in **packs**: folders of RON files. The base pack
 //! (`content/base/`) is built into the binary; override packs, the folders
@@ -20,17 +20,23 @@ use std::sync::OnceLock;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
+use crate::goods::{Category, GoodsKind, MarketRules, OreEntry, PlaceDef, Recipe};
 use crate::ship::ClassSpec;
 
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
+    ("goods.ron", include_str!("../../../content/base/goods.ron")),
+    ("ores.ron", include_str!("../../../content/base/ores.ron")),
+    ("recipes.ron", include_str!("../../../content/base/recipes.ron")),
+    ("places.ron", include_str!("../../../content/base/places.ron")),
+    ("markets.ron", include_str!("../../../content/base/markets.ron")),
     ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether
 /// it makes sense, and where the registry keeps it.
-pub trait Entry: DeserializeOwned + Sized + 'static {
+pub trait Entry: Sized + 'static {
     /// The pack file entries of this kind are in.
     const FILE: &'static str;
     fn key(&self) -> &str;
@@ -49,6 +55,23 @@ pub struct Handle<T> {
 impl<T> Handle<T> {
     fn new(index: usize) -> Self {
         Handle { index: index as u32, _kind: PhantomData }
+    }
+
+    /// Its place among its kind's entries (for tables sized to them; not
+    /// to be stored: keys are).
+    pub fn index(self) -> usize {
+        self.index as usize
+    }
+}
+
+impl<T> PartialOrd for Handle<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl<T> Ord for Handle<T> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.index.cmp(&other.index)
     }
 }
 
@@ -137,6 +160,13 @@ impl<T: Entry> Registry<T> {
 /// The loaded content.
 pub struct Content {
     pub hulls: Registry<ClassSpec>,
+    pub goods: Registry<GoodsKind>,
+    pub ores: Registry<OreEntry>,
+    pub recipes: Registry<Recipe>,
+    pub places: Registry<PlaceDef>,
+    pub markets: MarketRules,
+    /// Ship fuel: what tanks are filled with (the code's one kind of goods by name).
+    pub fuel: Category,
     aliases: HashMap<String, String>,
     hash: u64,
     packs: Vec<String>,
@@ -204,29 +234,70 @@ impl Content {
                 aliases.extend(more);
             }
         }
-        let hulls = Registry::build(Self::entries::<ClassSpec>(&packs)?)?;
-        let c = Content { hulls, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        // Each kind in turn, resolving references to the kinds before it.
+        let hulls = Registry::build(Self::defs::<ClassSpec>(&packs, "hulls.ron")?)?;
+        let goods: Registry<GoodsKind> = Registry::build(Self::defs(&packs, "goods.ron")?)?;
+        let kind = |key: &str, whose: &str| resolve(&goods, &aliases, key).ok_or_else(|| format!("{whose}: no kind of goods '{key}'"));
+        let ores = Registry::build(
+            Self::defs::<crate::goods::OreDef>(&packs, "ores.ron")?
+                .into_iter()
+                .map(|d| Ok(OreEntry { kind: kind(&d.kind, &d.key)?, key: d.key, name: d.name, price: d.price }))
+                .collect::<Result<_, String>>()?,
+        )?;
+        let pairs = |list: &[(String, f64)], whose: &str| list.iter().map(|(k, t)| Ok((kind(k, whose)?, *t))).collect::<Result<Vec<_>, String>>();
+        let recipes: Registry<Recipe> = Registry::build(
+            Self::defs::<crate::goods::RecipeDef>(&packs, "recipes.ron")?
+                .into_iter()
+                .map(|d| Ok(Recipe { takes: pairs(&d.takes, &d.key)?, makes: pairs(&d.makes, &d.key)?, key: d.key, name: d.name }))
+                .collect::<Result<_, String>>()?,
+        )?;
+        let kinds = |list: &[String], whose: &str| list.iter().map(|k| kind(k, whose)).collect::<Result<Vec<_>, String>>();
+        let places = Registry::build(
+            Self::defs::<crate::goods::PlaceDefSource>(&packs, "places.ron")?
+                .into_iter()
+                .map(|d| {
+                    let works = d.works.iter().map(|(r, n)| resolve(&recipes, &aliases, r).map(|h| (h, *n)).ok_or_else(|| format!("{}: no recipe '{r}'", d.key))).collect::<Result<_, String>>()?;
+                    Ok(PlaceDef { works, sells: kinds(&d.sells, &d.key)?, wants: kinds(&d.wants, &d.key)?, key: d.key, label: d.label, population: d.population, ship_fuel: d.ship_fuel })
+                })
+                .collect::<Result<_, String>>()?,
+        )?;
+        let rules = Self::single::<crate::goods::MarketRulesDef>(&packs, "markets.ron")?;
+        let markets = MarketRules { bans: rules.bans.iter().map(|(k, p)| Ok((kind(k, "markets.ron")?, *p))).collect::<Result<_, String>>()? };
+        let fuel = kind("goods.fuel", "the tanks")?;
+        let c = Content { hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
 
-    /// The entries of one kind across the packs, in order.
-    fn entries<T: Entry>(packs: &[Pack]) -> Result<Vec<T>, String> {
+    /// The entries in one file across the packs, in order.
+    fn defs<D: DeserializeOwned>(packs: &[Pack], file: &str) -> Result<Vec<D>, String> {
         let mut all = Vec::new();
         for p in packs {
-            if let Some(s) = p.source(T::FILE) {
-                let mut defs: Vec<T> = ron::from_str(s).map_err(|e| format!("{} {}: {e}", p.name, T::FILE))?;
+            if let Some(s) = p.source(file) {
+                let mut defs: Vec<D> = ron::from_str(s).map_err(|e| format!("{} {file}: {e}", p.name))?;
                 all.append(&mut defs);
             }
         }
         Ok(all)
     }
 
+    /// A file that's one record: the last pack's that has it.
+    fn single<D: DeserializeOwned>(packs: &[Pack], file: &str) -> Result<D, String> {
+        let (p, s) = packs.iter().rev().find_map(|p| p.source(file).map(|s| (p, s))).ok_or_else(|| format!("no pack has {file}"))?;
+        ron::from_str(s).map_err(|e| format!("{} {file}: {e}", p.name))
+    }
+
     /// What must hold across the content as a whole.
     fn check(&self) -> Result<(), String> {
         for (old, new) in &self.aliases {
-            if self.hulls.find(new).is_none() {
+            let found = self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
+            if !found {
                 return Err(format!("alias '{old}' -> '{new}': no such entry"));
+            }
+        }
+        for ore in crate::goods::Ore::ALL {
+            if self.ores.find(ore.key()).is_none() {
+                return Err(format!("no ore '{}' (asteroids are made of it)", ore.key()));
             }
         }
         if self.hulls.find(crate::ship::STARTING_HULL).is_none() {
@@ -260,6 +331,11 @@ impl Content {
     }
 }
 
+/// `key` in `r`, through the aliases (while loading).
+fn resolve<T: Entry>(r: &Registry<T>, aliases: &HashMap<String, String>, key: &str) -> Option<Handle<T>> {
+    r.find(aliases.get(key).map_or(key, String::as_str))
+}
+
 static CONTENT: OnceLock<Content> = OnceLock::new();
 
 /// The content: the base pack and the override packs `UNIVERSE_CONTENT`
@@ -271,6 +347,66 @@ pub fn content() -> &'static Content {
         Content::load(&overrides).unwrap_or_else(|e| panic!("content: {e}"))
     })
 }
+
+/// The content entries kept by key alone (they reference others only as
+/// resolved handles, so need no checks of their own beyond their numbers).
+macro_rules! entry {
+    ($t:ty, $file:literal, $field:ident, |$e:ident| $check:expr) => {
+        impl Entry for $t {
+            const FILE: &'static str = $file;
+            fn key(&self) -> &str {
+                &self.key
+            }
+            fn validate(&self) -> Result<(), String> {
+                let $e = self;
+                $check
+            }
+            fn registry(c: &Content) -> &Registry<Self> {
+                &c.$field
+            }
+        }
+    };
+}
+
+fn positive(what: &str, v: f64) -> Result<(), String> {
+    if v.is_finite() && v > 0.0 { Ok(()) } else { Err(format!("{what} must be positive ({v})")) }
+}
+
+entry!(GoodsKind, "goods.ron", goods, |k| {
+    positive("mass", k.mass)?;
+    positive("bulk_density", k.bulk_density)?;
+    positive("the lower price", k.price.0)?;
+    if k.price.1 < k.price.0 {
+        return Err("price range upside down".into());
+    }
+    if k.basket < 0.0 {
+        return Err("basket can't be negative".into());
+    }
+    if k.adjectives.is_empty() || k.nouns.is_empty() || k.adjectives.len() * k.nouns.len() < crate::goods::PER_KIND {
+        return Err(format!("too few names: {} adjectives × {} nouns for {} goods", k.adjectives.len(), k.nouns.len(), crate::goods::PER_KIND));
+    }
+    Ok(())
+});
+entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
+entry!(Recipe, "recipes.ron", recipes, |r| {
+    for (_, t) in r.takes.iter().chain(&r.makes) {
+        positive("a rate", *t)?;
+    }
+    if r.makes.is_empty() {
+        return Err("makes nothing".into());
+    }
+    Ok(())
+});
+entry!(PlaceDef, "places.ron", places, |p| {
+    positive("population", p.population)?;
+    if p.ship_fuel < 0.0 {
+        return Err("ship_fuel can't be negative".into());
+    }
+    for (_, n) in &p.works {
+        positive("a works count", *n)?;
+    }
+    Ok(())
+});
 
 impl Entry for ClassSpec {
     const FILE: &'static str = "hulls.ron";

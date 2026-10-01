@@ -99,31 +99,21 @@ pub struct MarketState {
     pub usual: HashMap<usize, f64>,
 }
 
-/// What the market trades, from what the place is.
+/// What the market trades, from what the place is (where there's no
+/// economy behind it): the leanings of its kind of place.
 fn leanings(sys: &StarSystem, f: Facility) -> (&'static [Category], &'static [Category]) {
-    use Category::*;
-    const STATION: (&[Category], &[Category]) = (
-        &[Machinery, Electronics, Computers, Robots, Tools, Medicine, Fuel, Chemicals],
-        &[Food, Water, Ores, Metals, Luxuries, Textiles, Biologics, Art],
-    );
-    const FARM: (&[Category], &[Category]) = (
-        &[Food, Water, Textiles, Biologics, Luxuries, Art],
-        &[Machinery, Electronics, Computers, Medicine, Tools, Robots, Fuel],
-    );
-    const MINE: (&[Category], &[Category]) = (
-        &[Ores, Metals, Minerals, Chemicals, Fuel, Artifacts],
-        &[Food, Water, Machinery, Tools, Medicine, Robots, Luxuries],
-    );
-    match f {
+    let kind = match f {
         Facility::Spaceport(p) => {
             let body = &sys.bodies[sys.spaceports[p].body];
             match body.terrain.as_ref().map(|t| t.kind) {
-                Some(TerrainKind::Terran) => FARM,
-                _ => MINE,
+                Some(TerrainKind::Terran) => crate::economy::PlaceKind::Farm,
+                _ => crate::economy::PlaceKind::Mine,
             }
         }
-        _ => STATION,
-    }
+        _ => crate::economy::PlaceKind::Station,
+    };
+    let def = kind.def();
+    (&def.sells, &def.wants)
 }
 
 /// Its index for seeding.
@@ -152,8 +142,8 @@ fn place_market(seed: u64, place: &crate::economy::Place, catalog: &[Item]) -> M
     let mut offers = Vec::new();
     for c in Category::all().filter(|&c| place.trades(c)) {
         let side = if place.sells(c) { Side::Sells } else { Side::Buys };
-        let mut pool: Vec<usize> = catalog.iter().filter(|i| i.category == c && i.id < universe_world::goods::CATALOG_SIZE).map(|i| i.id).collect();
-        let mut picked: Vec<usize> = catalog.iter().filter(|i| i.category == c && i.id >= universe_world::goods::CATALOG_SIZE).map(|i| i.id).collect();
+        let mut pool: Vec<usize> = catalog.iter().filter(|i| i.category == c && i.id < universe_world::goods::catalog_size()).map(|i| i.id).collect();
+        let mut picked: Vec<usize> = catalog.iter().filter(|i| i.category == c && i.id >= universe_world::goods::catalog_size()).map(|i| i.id).collect();
         for _ in 0..VARIETIES {
             if pool.is_empty() {
                 break;
@@ -191,10 +181,7 @@ pub fn market(seed: u64, system: usize, sys: &StarSystem, f: Facility, catalog: 
     }
     let mut rng = Rng::new(mix(mix(seed, 0x3a4c_e700 + system as u64), key(f)));
     // Bans: vice first.
-    let banned: Vec<Category> = [(Category::Narcotics, 0.7), (Category::Weapons, 0.4), (Category::Artifacts, 0.25), (Category::Biologics, 0.1), (Category::Robots, 0.1)]
-        .into_iter()
-        .filter_map(|(c, p)| (rng.range(0.0, 1.0) < p).then_some(c))
-        .collect();
+    let banned: Vec<Category> = universe_world::content::content().markets.bans.iter().filter_map(|&(c, p)| (rng.range(0.0, 1.0) < p).then_some(c)).collect();
     let (makes, wants) = leanings(sys, f);
     let pick = |from: &[Category], count: usize, rng: &mut Rng| -> Vec<usize> {
         let pool: Vec<usize> = catalog.iter().filter(|i| from.contains(&i.category) && !banned.contains(&i.category)).map(|i| i.id).collect();
@@ -504,7 +491,7 @@ impl Markets {
         }
         let who = Party::Pilot(pilot);
         let (price, stock) = match self.economy.place(system, market) {
-            Some(place) => (FUEL_PRICE * place.factor(Category::Fuel).unwrap_or(1.0), place.stock_of(Category::Fuel)),
+            Some(place) => (FUEL_PRICE * place.factor(Category::fuel()).unwrap_or(1.0), place.stock_of(Category::fuel())),
             None => (FUEL_PRICE * FRONTIER, f64::INFINITY),
         };
         let t = want.min(stock).min(ledger.credits(who) / price).max(0.0);
@@ -514,7 +501,7 @@ impl Markets {
         let cost = t * price;
         ledger.transfer(who, Party::Market(system, market), Asset::Credits, cost, tick, cause)?;
         if let Some(place) = self.economy.place_mut(system, market) {
-            place.take(Category::Fuel, t);
+            place.take(Category::fuel(), t);
         }
         Ok((t, cost))
     }

@@ -1,126 +1,167 @@
-//! Goods: the catalog of everything that's bought and sold, generated from
-//! the galaxy's seed (`CATALOG_SIZE` items in `CATEGORIES`, each with a name,
-//! a base price and a mass per unit). Same seed, same goods.
+//! Goods: the catalogue of everything that's bought and sold, generated from
+//! the galaxy's seed from the kinds of goods in the content (`goods.ron`):
+//! `PER_KIND` of each, with a name, a base price and a mass per unit; then
+//! the ores dug out of asteroids (`ores.ron`). Same seed and content, same
+//! goods. Also the economy's other content: recipes, kinds of place, and
+//! how markets are made up.
 
+use serde::Deserialize;
+
+use crate::content::{content, Handle};
 use crate::rng::{mix, Rng};
 
-/// How many goods there are.
-pub const CATALOG_SIZE: usize = 1000;
+/// Goods of each kind in the catalogue.
+pub const PER_KIND: usize = 50;
 
-/// A kind of goods.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum Category {
-    Food,
-    Water,
-    Ores,
-    Metals,
-    Minerals,
-    Chemicals,
-    Fuel,
-    Textiles,
-    Machinery,
-    Electronics,
-    Computers,
-    Medicine,
-    Biologics,
-    Luxuries,
-    Art,
-    Weapons,
-    Narcotics,
-    Artifacts,
-    Robots,
-    Tools,
-}
-
-/// What goes into a category's names, what its goods are worth, and how heavy.
-struct Kind {
-    category: Category,
-    adjectives: &'static [&'static str],
-    nouns: &'static [&'static str],
-    /// Base price range per unit (credits).
-    price: (f64, f64),
-    /// Mass per unit (kg).
-    mass: f64,
-}
-
-const KINDS: [Kind; 20] = [
-    Kind { category: Category::Food, adjectives: &["Hydroponic", "Freeze-Dried", "Synthetic", "Orbital", "Tinned", "Smoked", "Organic", "Vat-Grown", "Pickled"], nouns: &["Kelp", "Protein Bars", "Grain", "Fruit", "Fungi", "Algae Cakes", "Tubers", "Beans", "Cheese"], price: (4.0, 30.0), mass: 500.0 },
-    Kind { category: Category::Water, adjectives: &["Distilled", "Glacial", "Comet", "Mineral", "Heavy", "Recycled", "Sterile", "Polar", "Spring"], nouns: &["Water", "Ice", "Brine", "Slush", "Condensate", "Snowpack", "Meltwater", "Vapour Cells"], price: (1.0, 12.0), mass: 1000.0 },
-    Kind { category: Category::Ores, adjectives: &["Raw", "Crushed", "Magnetic", "Banded", "Rich", "Lean", "Oxidised", "Sulphide", "Placer"], nouns: &["Iron Ore", "Copper Ore", "Bauxite", "Nickel Ore", "Cobalt Ore", "Tin Ore", "Zinc Ore", "Lead Ore", "Chromite"], price: (6.0, 40.0), mass: 1000.0 },
-    Kind { category: Category::Metals, adjectives: &["Refined", "Cast", "Rolled", "Forged", "Sintered", "Alloyed", "Vacuum-Cast", "Drawn", "Plated"], nouns: &["Titanium", "Aluminium", "Steel", "Copper", "Nickel", "Tungsten", "Magnesium", "Iridium", "Chromium"], price: (30.0, 200.0), mass: 800.0 },
-    Kind { category: Category::Minerals, adjectives: &["Cut", "Rough", "Polished", "Industrial", "Clear", "Flawed", "Star", "Deep", "Asteroid"], nouns: &["Quartz", "Diamonds", "Beryl", "Corundum", "Garnets", "Opal", "Jade", "Spinel", "Topaz"], price: (50.0, 900.0), mass: 20.0 },
-    Kind { category: Category::Chemicals, adjectives: &["Industrial", "Reagent", "Bulk", "Stabilised", "Chilled", "Pressurised", "Catalytic", "Pure", "Crude"], nouns: &["Solvents", "Acids", "Polymers", "Resins", "Salts", "Catalysts", "Reagents", "Monomers", "Lubricants"], price: (15.0, 120.0), mass: 600.0 },
-    Kind { category: Category::Fuel, adjectives: &["Liquid", "Slush", "Enriched", "Cracked", "Compressed", "Cryo", "Refined", "Blended", "Metallic"], nouns: &["Hydrogen", "Methane", "Deuterium", "Helium-3", "Oxygen", "Hydrazine", "Kerosene", "Ammonia", "Xenon"], price: (10.0, 150.0), mass: 700.0 },
-    Kind { category: Category::Textiles, adjectives: &["Woven", "Spun", "Synthetic", "Fine", "Bulk", "Insulated", "Dyed", "Printed", "Smart"], nouns: &["Cotton", "Silk", "Canvas", "Fibre", "Nanoweave", "Wool", "Linen", "Mesh", "Felt"], price: (10.0, 90.0), mass: 200.0 },
-    Kind { category: Category::Machinery, adjectives: &["Heavy", "Mining", "Farm", "Precision", "Surplus", "Rebuilt", "Modular", "Hydraulic", "Autonomous"], nouns: &["Drills", "Pumps", "Presses", "Turbines", "Excavators", "Harvesters", "Compressors", "Lathes", "Cranes"], price: (80.0, 600.0), mass: 900.0 },
-    Kind { category: Category::Electronics, adjectives: &["Consumer", "Hardened", "Surplus", "Salvaged", "Precision", "Optical", "Quantum", "Flexible", "Military-Spec"], nouns: &["Circuits", "Sensors", "Displays", "Batteries", "Transceivers", "Capacitors", "Emitters", "Relays", "Lasers"], price: (60.0, 500.0), mass: 50.0 },
-    Kind { category: Category::Computers, adjectives: &["Personal", "Navigation", "Neural", "Rack", "Embedded", "Rugged", "Archive", "Tactical", "Cold"], nouns: &["Terminals", "Processors", "Cores", "Memory Cubes", "Nav Units", "Servers", "Tablets", "Controllers", "Logic Arrays"], price: (150.0, 1200.0), mass: 30.0 },
-    Kind { category: Category::Medicine, adjectives: &["Generic", "Sterile", "Antiviral", "Trauma", "Radiation", "Gene", "Field", "Cryo", "Pediatric"], nouns: &["Antibiotics", "Vaccines", "Kits", "Serum", "Bandages", "Stims", "Therapies", "Plasma", "Implants"], price: (40.0, 400.0), mass: 20.0 },
-    Kind { category: Category::Biologics, adjectives: &["Live", "Frozen", "Seed", "Engineered", "Wild", "Cloned", "Dormant", "Heritage", "Marine"], nouns: &["Embryos", "Cultures", "Seeds", "Spores", "Cattle", "Bees", "Coral", "Enzymes", "Yeasts"], price: (30.0, 350.0), mass: 100.0 },
-    Kind { category: Category::Luxuries, adjectives: &["Vintage", "Imported", "Handmade", "Gilded", "Rare", "Designer", "Aged", "Perfumed", "Exotic"], nouns: &["Wines", "Spirits", "Furs", "Perfume", "Chocolate", "Coffee", "Tea", "Tobacco", "Jewellery"], price: (150.0, 2000.0), mass: 10.0 },
-    Kind { category: Category::Art, adjectives: &["Old-Earth", "Holographic", "Carved", "Painted", "Sculpted", "Colonial", "Abstract", "Antique", "Signed"], nouns: &["Canvases", "Statues", "Tapestries", "Prints", "Ceramics", "Masks", "Mosaics", "Scrolls", "Figurines"], price: (300.0, 5000.0), mass: 15.0 },
-    Kind { category: Category::Weapons, adjectives: &["Small", "Heavy", "Surplus", "Hand", "Automatic", "Pulse", "Ceremonial", "Military", "Hunting"], nouns: &["Arms", "Rifles", "Pistols", "Charges", "Grenades", "Blades", "Ammunition", "Launchers", "Mines"], price: (100.0, 900.0), mass: 60.0 },
-    Kind { category: Category::Narcotics, adjectives: &["Refined", "Raw", "Synthetic", "Street", "Pure", "Cut", "Designer", "Liquid", "Pressed"], nouns: &["Dust", "Spice", "Resin", "Crystals", "Tabs", "Leaf", "Powder", "Drops", "Smoke"], price: (200.0, 3000.0), mass: 5.0 },
-    Kind { category: Category::Artifacts, adjectives: &["Alien", "Ancient", "Precursor", "Relic", "Unknown", "Fossil", "Buried", "Glowing", "Broken"], nouns: &["Shards", "Tablets", "Idols", "Devices", "Bones", "Spheres", "Keys", "Glyphs", "Engines"], price: (500.0, 9000.0), mass: 25.0 },
-    Kind { category: Category::Robots, adjectives: &["Service", "Mining", "Cargo", "Medical", "Farm", "Security", "Repair", "Survey", "Companion"], nouns: &["Drones", "Walkers", "Arms", "Units", "Crawlers", "Androids", "Swarms", "Rovers", "Frames"], price: (300.0, 2500.0), mass: 250.0 },
-    Kind { category: Category::Tools, adjectives: &["Hand", "Power", "Welding", "Cutting", "Survey", "Vacuum", "Diagnostic", "Precision", "Utility"], nouns: &["Tools", "Torches", "Saws", "Kits", "Gauges", "Scanners", "Wrenches", "Meters", "Rigs"], price: (20.0, 250.0), mass: 40.0 },
-];
-
-impl Category {
-    pub fn name(self) -> &'static str {
-        match self {
-            Category::Food => "FOOD",
-            Category::Water => "WATER",
-            Category::Ores => "ORES",
-            Category::Metals => "METALS",
-            Category::Minerals => "MINERALS",
-            Category::Chemicals => "CHEMICALS",
-            Category::Fuel => "FUEL",
-            Category::Textiles => "TEXTILES",
-            Category::Machinery => "MACHINERY",
-            Category::Electronics => "ELECTRONICS",
-            Category::Computers => "COMPUTERS",
-            Category::Medicine => "MEDICINE",
-            Category::Biologics => "BIOLOGICS",
-            Category::Luxuries => "LUXURIES",
-            Category::Art => "ART",
-            Category::Weapons => "WEAPONS",
-            Category::Narcotics => "NARCOTICS",
-            Category::Artifacts => "ARTIFACTS",
-            Category::Robots => "ROBOTS",
-            Category::Tools => "TOOLS",
-        }
-    }
-
+/// A kind of goods (content: `goods.ron`).
+#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GoodsKind {
+    pub key: String,
+    pub name: String,
+    /// Base price range per unit (credits): its goods spread log-uniformly across it.
+    pub price: (f64, f64),
+    /// Mass per unit (kg), about.
+    pub mass: f64,
     /// Bulk density as stowed in a hold (t/m³): crated, sacked or loose.
-    pub fn bulk_density(self) -> f64 {
-        match self {
-            Category::Food => 0.6,
-            Category::Water => 0.95,
-            Category::Ores => 2.2,
-            Category::Metals => 3.5,
-            Category::Minerals => 2.0,
-            Category::Chemicals => 1.0,
-            Category::Fuel => 0.8,
-            Category::Textiles => 0.35,
-            Category::Machinery => 1.2,
-            Category::Electronics => 0.5,
-            Category::Computers => 0.4,
-            Category::Medicine => 0.5,
-            Category::Biologics => 0.7,
-            Category::Luxuries => 0.5,
-            Category::Art => 0.3,
-            Category::Weapons => 0.9,
-            Category::Narcotics => 0.6,
-            Category::Artifacts => 1.0,
-            Category::Robots => 0.7,
-            Category::Tools => 1.1,
-        }
+    pub bulk_density: f64,
+    /// What a thousand people use in a day (t).
+    #[serde(default)]
+    pub basket: f64,
+    /// What goes into its goods' names.
+    pub adjectives: Vec<String>,
+    pub nouns: Vec<String>,
+}
+
+/// A kind of goods of the loaded content.
+pub type Category = Handle<GoodsKind>;
+
+impl Handle<GoodsKind> {
+    fn kind(self) -> &'static GoodsKind {
+        content().get(self)
     }
 
-    pub fn all() -> impl Iterator<Item = Category> {
-        KINDS.iter().map(|k| k.category)
+    pub fn name(self) -> &'static str {
+        &self.kind().name
     }
+
+    /// Bulk density as stowed in a hold (t/m³).
+    pub fn bulk_density(self) -> f64 {
+        self.kind().bulk_density
+    }
+
+    /// What a thousand people use in a day (t).
+    pub fn basket(self) -> f64 {
+        self.kind().basket
+    }
+
+    /// Every kind, in order.
+    pub fn all() -> impl Iterator<Item = Category> {
+        content().goods.iter().map(|(h, _)| h)
+    }
+
+    /// Ship fuel.
+    pub fn fuel() -> Category {
+        content().fuel
+    }
+
+    /// The kind `key` names.
+    pub fn of(key: &str) -> Option<Category> {
+        content().handle(key)
+    }
+}
+
+/// How many kinds of goods there are.
+pub fn kinds() -> usize {
+    content().goods.len()
+}
+
+/// How many goods are generated (the ores come after).
+pub fn catalog_size() -> usize {
+    kinds() * PER_KIND
+}
+
+/// An ore as `ores.ron` has it: its kind of goods by key.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct OreDef {
+    pub key: String,
+    pub name: String,
+    pub kind: String,
+    pub price: f64,
+}
+
+/// An ore of the loaded content: the goods an excavator fills a hold
+/// with, by the tonne (price per tonne).
+#[derive(Clone, Debug, PartialEq)]
+pub struct OreEntry {
+    pub key: String,
+    pub name: String,
+    pub kind: Category,
+    pub price: f64,
+}
+
+/// A recipe as `recipes.ron` has it.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct RecipeDef {
+    pub key: String,
+    pub name: String,
+    pub takes: Vec<(String, f64)>,
+    pub makes: Vec<(String, f64)>,
+}
+
+/// A works: what it takes and what it makes, in tonnes a day.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Recipe {
+    pub key: String,
+    pub name: String,
+    pub takes: Vec<(Category, f64)>,
+    pub makes: Vec<(Category, f64)>,
+}
+
+/// A kind of place as `places.ron` has it.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct PlaceDefSource {
+    pub key: String,
+    pub label: String,
+    pub population: f64,
+    pub ship_fuel: f64,
+    pub works: Vec<(String, f64)>,
+    pub sells: Vec<String>,
+    pub wants: Vec<String>,
+}
+
+/// A kind of place in the economy.
+#[derive(Clone, Debug, PartialEq)]
+pub struct PlaceDef {
+    pub key: String,
+    pub label: String,
+    /// People (thousands).
+    pub population: f64,
+    /// Fuel it keeps for the ships that call (t/day).
+    pub ship_fuel: f64,
+    /// Its works: (recipe, how many).
+    pub works: Vec<(Handle<Recipe>, f64)>,
+    /// What its market leans to selling and wanting where there's no
+    /// economy behind it (beyond the gate network).
+    pub sells: Vec<Category>,
+    pub wants: Vec<Category>,
+}
+
+/// How markets are made up, as `markets.ron` has it.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct MarketRulesDef {
+    pub bans: Vec<(String, f64)>,
+}
+
+/// How markets are made up.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MarketRules {
+    /// What a market may refuse to trade, and how likely it is to (rolled in this order).
+    pub bans: Vec<(Category, f64)>,
 }
 
 /// One kind of goods.
@@ -137,8 +178,9 @@ pub struct Item {
 }
 
 /// Raw materials dug out of asteroids (see `mining`): what an excavator
-/// fills a hold with, by the tonne. In the catalog after its generated
-/// goods, the same in every galaxy.
+/// fills a hold with, by the tonne. In the catalogue after its generated
+/// goods, the same in every galaxy; their names and prices are content
+/// (`ores.ron`, by key).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Ore {
     /// Icy bodies: water ice with frozen volatiles.
@@ -153,32 +195,37 @@ pub enum Ore {
     Pgm,
 }
 
-/// (ore, name, category, price per tonne). Water is worth most where it's
-/// needed: in space, as propellant and air.
-const ORES: [(Ore, &str, Category, f64); 5] = [
-    (Ore::WaterIce, "Asteroid Water Ice", Category::Water, 30.0),
-    (Ore::Carbonaceous, "Carbonaceous Ore", Category::Ores, 20.0),
-    (Ore::Stony, "Stony Ore", Category::Ores, 8.0),
-    (Ore::NickelIron, "Nickel-Iron Ore", Category::Ores, 35.0),
-    (Ore::Pgm, "PGM-Rich Ore", Category::Ores, 400.0),
-];
-
 /// One unit of ore (kg).
 pub const TONNE: f64 = 1000.0;
 
 impl Ore {
-    /// Its goods item.
+    pub const ALL: [Ore; 5] = [Ore::WaterIce, Ore::Carbonaceous, Ore::Stony, Ore::NickelIron, Ore::Pgm];
+
+    /// Its content key.
+    pub fn key(self) -> &'static str {
+        match self {
+            Ore::WaterIce => "ore.water_ice",
+            Ore::Carbonaceous => "ore.carbonaceous",
+            Ore::Stony => "ore.stony",
+            Ore::NickelIron => "ore.nickel_iron",
+            Ore::Pgm => "ore.pgm",
+        }
+    }
+
+    /// Its goods item: after the generated goods, in `ores.ron`'s order.
     pub fn item(self) -> usize {
-        CATALOG_SIZE + self as usize
+        let h: Handle<OreEntry> = content().handle(self.key()).expect("every ore is in the content (checked at load)");
+        catalog_size() + h.index()
     }
 }
 
-/// The catalog of goods for a galaxy `seed`: `CATALOG_SIZE` items, a
-/// `CATALOG_SIZE / 20` from each category, with distinct names; then the ores.
+/// The catalog of goods for a galaxy `seed`: `PER_KIND` of each kind of
+/// goods, with distinct names; then the ores. (A kind's goods are drawn by
+/// its place in the content: new kinds go after the existing ones.)
 pub fn catalog(seed: u64) -> Vec<Item> {
-    let per = CATALOG_SIZE / KINDS.len();
-    let mut items = Vec::with_capacity(CATALOG_SIZE);
-    for (k, kind) in KINDS.iter().enumerate() {
+    let per = PER_KIND;
+    let mut items = Vec::with_capacity(catalog_size() + content().ores.len());
+    for (k, (category, kind)) in content().goods.iter().enumerate() {
         let mut rng = Rng::new(mix(seed, 0x6000_d500 + k as u64));
         // Every adjective–noun pair, shuffled; the first `per` of them.
         let mut names: Vec<(usize, usize)> = (0..kind.adjectives.len()).flat_map(|a| (0..kind.nouns.len()).map(move |n| (a, n))).collect();
@@ -194,14 +241,14 @@ pub fn catalog(seed: u64) -> Vec<Item> {
             items.push(Item {
                 id: items.len(),
                 name: format!("{} {}", kind.adjectives[a], kind.nouns[n]),
-                category: kind.category,
+                category,
                 price: (price * 10.0).round() / 10.0,
                 mass: mass.round().max(1.0),
             });
         }
     }
-    for (_, name, category, price) in ORES {
-        items.push(Item { id: items.len(), name: name.to_string(), category, price, mass: TONNE });
+    for (_, o) in content().ores.iter() {
+        items.push(Item { id: items.len(), name: o.name.clone(), category: o.kind, price: o.price, mass: TONNE });
     }
     items
 }

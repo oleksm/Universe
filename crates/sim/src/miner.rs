@@ -143,7 +143,7 @@ fn order(a: &mut Avionics, bus: &mut impl Bus, events: &mut Vec<Event>, change: 
 /// will take of it).
 pub(crate) fn sell(ans: &MarketAnswer, requests: &mut Vec<Request>) {
     for (&(item, have), q) in ans.hold.iter().zip(&ans.here_held) {
-        let ore = item >= universe_world::goods::CATALOG_SIZE;
+        let ore = item >= universe_world::goods::catalog_size();
         let Some(q) = q.filter(|_| ore && have > 0) else { continue };
         let units = match q.offer.side {
             Side::Buys => have.min(q.level.floor().max(0.0) as u32),

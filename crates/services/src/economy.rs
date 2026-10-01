@@ -14,13 +14,16 @@
 
 use std::collections::HashMap;
 
-use universe_world::goods::Category;
+use universe_world::content::content;
+use universe_world::goods::{Category, PlaceDef, Recipe};
 use universe_world::system::{BodyKind, StarSystem};
 use universe_world::terrain::TerrainKind;
 use universe_world::traffic::{facilities, Facility};
 
-/// Kinds of goods (the categories), in order.
-pub const LINES: usize = 20;
+/// Kinds of goods there are (the lines a place keeps stock in).
+pub fn lines() -> usize {
+    universe_world::goods::kinds()
+}
 /// The economy steps this often (game s).
 pub const STEP: f64 = 600.0;
 /// Stock a place aims to hold: this many days of what it uses or makes.
@@ -30,7 +33,7 @@ const STORAGE: f64 = 3.0;
 const DAY: f64 = 86_400.0;
 
 fn line(c: Category) -> usize {
-    c as usize
+    c.index()
 }
 
 /// What a place is.
@@ -48,94 +51,42 @@ pub enum PlaceKind {
 
 impl PlaceKind {
     pub fn label(self) -> &'static str {
+        &self.def().label
+    }
+
+    /// People (thousands).
+    /// Its content key.
+    pub fn key(self) -> &'static str {
         match self {
-            PlaceKind::Station => "STATION",
-            PlaceKind::Farm => "FARM WORLD",
-            PlaceKind::Mine => "MINING WORLD",
-            PlaceKind::Outpost => "OUTPOST",
+            PlaceKind::Station => "place.station",
+            PlaceKind::Farm => "place.farm",
+            PlaceKind::Mine => "place.mine",
+            PlaceKind::Outpost => "place.outpost",
         }
+    }
+
+    /// What the content says it is.
+    pub fn def(self) -> &'static PlaceDef {
+        let c = content();
+        c.get(c.handle::<PlaceDef>(self.key()).expect("every kind of place is in the content (checked at load)"))
     }
 
     /// People (thousands).
     fn population(self) -> f64 {
-        match self {
-            PlaceKind::Station => 25.0,
-            PlaceKind::Farm => 60.0,
-            PlaceKind::Mine => 20.0,
-            PlaceKind::Outpost => 3.0,
-        }
+        self.def().population
     }
 
     /// Fuel it keeps for the ships that call (t/day): sold to them (see
     /// `Markets::refuel`), not used by the place itself.
     pub fn ship_fuel(self) -> f64 {
-        match self {
-            PlaceKind::Station => 200.0,
-            PlaceKind::Farm => 60.0,
-            PlaceKind::Mine => 60.0,
-            PlaceKind::Outpost => 20.0,
-        }
+        self.def().ship_fuel
     }
 
     /// Its works: (recipe, how many).
-    fn works(self) -> &'static [(&'static Recipe, f64)] {
-        match self {
-            PlaceKind::Station => &STATION_WORKS,
-            PlaceKind::Farm => &FARM_WORKS,
-            PlaceKind::Mine => &MINE_WORKS,
-            PlaceKind::Outpost => &OUTPOST_WORKS,
-        }
+    fn works(self) -> impl Iterator<Item = (&'static Recipe, f64)> {
+        self.def().works.iter().map(|&(r, n)| (content().get(r), n))
     }
 }
-
-/// A works: what it takes and what it makes, in tonnes a day.
-pub struct Recipe {
-    pub name: &'static str,
-    pub takes: &'static [(Category, f64)],
-    pub makes: &'static [(Category, f64)],
-}
-
-use Category::*;
-static MINE: Recipe = Recipe { name: "MINE", takes: &[], makes: &[(Ores, 40.0), (Minerals, 4.0)] };
-static ICE: Recipe = Recipe { name: "ICE WORKS", takes: &[], makes: &[(Water, 300.0)] };
-// (An Earth-like world's own rain waters its fields.)
-static FARM: Recipe = Recipe { name: "FARMS", takes: &[(Chemicals, 2.0)], makes: &[(Food, 30.0), (Biologics, 0.6), (Textiles, 1.2)] };
-static ARTISANS: Recipe = Recipe { name: "ARTISANS", takes: &[(Textiles, 1.0), (Minerals, 0.5)], makes: &[(Luxuries, 1.5), (Art, 0.3)] };
-static REFINERY: Recipe = Recipe { name: "REFINERY", takes: &[(Ores, 30.0)], makes: &[(Metals, 20.0), (Minerals, 2.0)] };
-static SMELTER: Recipe = Recipe { name: "SMELTER", takes: &[(Ores, 10.0)], makes: &[(Metals, 6.0)] };
-static CHEMICALS: Recipe = Recipe { name: "CHEMICAL PLANT", takes: &[(Ores, 8.0), (Water, 10.0)], makes: &[(Chemicals, 24.0)] };
-static FUEL_PLANT: Recipe = Recipe { name: "FUEL PLANT", takes: &[(Water, 20.0)], makes: &[(Fuel, 18.0)] };
-static FACTORY: Recipe = Recipe {
-    name: "FACTORY",
-    takes: &[(Metals, 10.0), (Chemicals, 3.0), (Electronics, 1.0)],
-    makes: &[(Machinery, 6.0), (Tools, 4.0), (Robots, 1.0), (Weapons, 1.0)],
-};
-static FAB: Recipe = Recipe { name: "ELECTRONICS FAB", takes: &[(Metals, 1.0), (Minerals, 2.0), (Chemicals, 2.0)], makes: &[(Electronics, 3.0), (Computers, 1.0)] };
-static PHARMA: Recipe = Recipe { name: "PHARMA PLANT", takes: &[(Chemicals, 2.0), (Biologics, 2.0)], makes: &[(Medicine, 4.0)] };
-
-static STATION_WORKS: [(&Recipe, f64); 5] = [(&FACTORY, 2.0), (&FAB, 2.0), (&FUEL_PLANT, 32.0), (&PHARMA, 1.0), (&SMELTER, 1.0)];
-static FARM_WORKS: [(&Recipe, f64); 2] = [(&FARM, 8.0), (&ARTISANS, 2.0)];
-static MINE_WORKS: [(&Recipe, f64); 3] = [(&MINE, 2.0), (&REFINERY, 1.0), (&CHEMICALS, 1.0)];
-static OUTPOST_WORKS: [(&Recipe, f64); 2] = [(&MINE, 0.5), (&ICE, 1.0)];
-
-/// What a thousand people use in a day (tonnes).
-const BASKET: &[(Category, f64)] = &[
-    (Food, 1.5),
-    (Water, 0.2),
-    (Fuel, 0.1),
-    (Medicine, 0.02),
-    (Textiles, 0.05),
-    (Luxuries, 0.02),
-    (Electronics, 0.02),
-    (Computers, 0.005),
-    (Tools, 0.02),
-    (Machinery, 0.05),
-    (Robots, 0.003),
-    (Weapons, 0.005),
-    (Biologics, 0.01),
-    (Chemicals, 0.1),
-    (Art, 0.002),
-];
 
 /// A settled market's economy.
 #[derive(Clone, Debug)]
@@ -146,17 +97,17 @@ pub struct Place {
     /// People (thousands).
     pub population: f64,
     /// Stock by kind of goods (tonnes).
-    pub stock: [f64; LINES],
+    pub stock: Vec<f64>,
     /// Over the last step, per day (tonnes): made, used (by works and
     /// people), and wanted but not there.
-    pub made: [f64; LINES],
-    pub used: [f64; LINES],
-    pub short: [f64; LINES],
+    pub made: Vec<f64>,
+    pub used: Vec<f64>,
+    pub short: Vec<f64>,
 }
 
 impl Place {
     fn new(system: usize, facility: Facility, kind: PlaceKind) -> Self {
-        let mut p = Place { system, facility, kind, population: kind.population(), stock: [0.0; LINES], made: [0.0; LINES], used: [0.0; LINES], short: [0.0; LINES] };
+        let mut p = Place { system, facility, kind, population: kind.population(), stock: vec![0.0; lines()], made: vec![0.0; lines()], used: vec![0.0; lines()], short: vec![0.0; lines()] };
         // Starting at the stock it aims for.
         for c in Category::all() {
             p.stock[line(c)] = p.target(c);
@@ -166,14 +117,14 @@ impl Place {
 
     /// What it uses of kind `c` in a day, at full work (tonnes).
     pub fn needs(&self, c: Category) -> f64 {
-        let works: f64 = self.kind.works().iter().flat_map(|(r, n)| r.takes.iter().filter(|t| t.0 == c).map(move |t| t.1 * n)).sum();
-        let ships = if c == Fuel { self.kind.ship_fuel() } else { 0.0 };
-        works + ships + BASKET.iter().filter(|b| b.0 == c).map(|b| b.1 * self.population).sum::<f64>()
+        let works: f64 = self.kind.works().flat_map(|(r, n)| r.takes.iter().filter(|t| t.0 == c).map(move |t| t.1 * n)).sum();
+        let ships = if c == Category::fuel() { self.kind.ship_fuel() } else { 0.0 };
+        works + ships + c.basket() * self.population
     }
 
     /// What it makes of kind `c` in a day, at full work (tonnes).
     pub fn makes(&self, c: Category) -> f64 {
-        self.kind.works().iter().flat_map(|(r, n)| r.makes.iter().filter(|m| m.0 == c).map(move |m| m.1 * n)).sum()
+        self.kind.works().flat_map(|(r, n)| r.makes.iter().filter(|m| m.0 == c).map(move |m| m.1 * n)).sum()
     }
 
     /// The stock it aims to hold of kind `c` (tonnes); zero if it neither uses nor makes it.
@@ -217,21 +168,21 @@ impl Place {
 
     /// `days` of work and life.
     fn step(&mut self, days: f64) {
-        let (mut made, mut used, mut short) = ([0.0; LINES], [0.0; LINES], [0.0; LINES]);
+        let (mut made, mut used, mut short) = (vec![0.0; lines()], vec![0.0; lines()], vec![0.0; lines()]);
         let full: Vec<bool> = Category::all().map(|c| self.stock[line(c)] >= self.target(c) * STORAGE).collect();
         for (r, n) in self.kind.works() {
             // As much as its inputs allow; none while its outputs have nowhere to go.
             let mut k: f64 = if r.makes.iter().all(|m| full[line(m.0)]) { 0.0 } else { 1.0 };
-            for &(c, rate) in r.takes {
+            for &(c, rate) in &r.takes {
                 k = k.min(self.stock[line(c)] / (rate * n * days));
             }
-            for &(c, rate) in r.takes {
+            for &(c, rate) in &r.takes {
                 let t = rate * n * days * k;
                 self.stock[line(c)] -= t;
                 used[line(c)] += t;
                 short[line(c)] += rate * n * days * (1.0 - k);
             }
-            for &(c, rate) in r.makes {
+            for &(c, rate) in &r.makes {
                 let t = rate * n * days * k;
                 // (What there's no room for is dumped.)
                 let room = (self.target(c) * STORAGE - self.stock[line(c)]).max(0.0);
@@ -239,14 +190,17 @@ impl Place {
                 made[line(c)] += t;
             }
         }
-        for &(c, rate) in BASKET {
-            let want = rate * self.population * days;
+        for c in Category::all() {
+            let want = c.basket() * self.population * days;
+            if want <= 0.0 {
+                continue;
+            }
             let got = want.min(self.stock[line(c)]);
             self.stock[line(c)] -= got;
             used[line(c)] += got;
             short[line(c)] += want - got;
         }
-        for i in 0..LINES {
+        for i in 0..lines() {
             self.made[i] = made[i] / days;
             self.used[i] = used[i] / days;
             self.short[i] = short[i] / days;
@@ -323,8 +277,8 @@ impl Economy {
 
     /// Across all places, per kind of goods: stock (t), and made, used and
     /// short per day (t) — for the instruments.
-    pub fn totals(&self) -> [(f64, f64, f64, f64); LINES] {
-        let mut t = [(0.0, 0.0, 0.0, 0.0); LINES];
+    pub fn totals(&self) -> Vec<(f64, f64, f64, f64)> {
+        let mut t = vec![(0.0, 0.0, 0.0, 0.0); lines()];
         for p in &self.places {
             for (i, t) in t.iter_mut().enumerate() {
                 t.0 += p.stock[i];
@@ -369,6 +323,10 @@ mod tests {
     use super::*;
     use universe_world::World;
 
+    fn kind(key: &str) -> Category {
+        Category::of(key).unwrap()
+    }
+
     fn economy() -> (World, Economy) {
         let w = World::new(1984);
         let mut s: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
@@ -388,10 +346,10 @@ mod tests {
         // none), and its factories stop when the metal runs out.
         e.step_to(30.0 * DAY);
         let p = &e.places[station];
-        assert_eq!(p.stock_of(Food), 0.0);
-        assert!(p.short[line(Food)] > 0.0, "people go hungry");
-        assert!(p.factor(Food).unwrap() > 2.0, "and food is dear there");
-        assert_eq!(p.made[line(Machinery)], 0.0, "no metal, no machines");
+        assert_eq!(p.stock_of(kind("goods.food")), 0.0);
+        assert!(p.short[line(kind("goods.food"))] > 0.0, "people go hungry");
+        assert!(p.factor(kind("goods.food")).unwrap() > 2.0, "and food is dear there");
+        assert_eq!(p.made[line(kind("goods.machinery"))], 0.0, "no metal, no machines");
         // Nothing runs away: every stock stays within its storage.
         for p in &e.places {
             for c in Category::all() {

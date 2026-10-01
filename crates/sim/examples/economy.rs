@@ -41,20 +41,20 @@ fn main() {
     // No ship calling.
     let mut e = start.clone();
     println!("\nNO SHIPS, {days:.0} DAYS: when each kind first runs short somewhere, and how many places are short of it at the end");
-    let mut first: Vec<Option<f64>> = vec![None; 20];
+    let mut first: Vec<Option<f64>> = vec![None; universe_sim::world::goods::kinds()];
     let mut t = 0.0;
     while t < days * DAY {
         t += STEP;
         e.step_to(e.stepped_to + STEP);
         for c in Category::all() {
-            if first[c as usize].is_none() && e.places.iter().any(|p| p.short[c as usize] > 1e-9) {
-                first[c as usize] = Some(t / DAY);
+            if first[c.index()].is_none() && e.places.iter().any(|p| p.short[c.index()] > 1e-9) {
+                first[c.index()] = Some(t / DAY);
             }
         }
     }
     for c in Category::all() {
-        if let Some(d) = first[c as usize] {
-            let n = e.places.iter().filter(|p| p.short[c as usize] > 1e-9).count();
+        if let Some(d) = first[c.index()] {
+            let n = e.places.iter().filter(|p| p.short[c.index()] > 1e-9).count();
             println!("  {:<12} from day {d:>5.1}   {n} places short", c.name());
         }
     }
@@ -72,7 +72,7 @@ fn main() {
     let short: f64 = totals.iter().map(|l| l.3).sum();
     let made: f64 = totals.iter().map(|l| l.1).sum();
     println!("\nIDEAL HAULING, {days:.0} DAYS: {:.0} t/day carried ({:.0} holds of 20 t a day); made {made:.0} t/day; short {short:.1} t/day", hauled / days, hauled / days / 20.0);
-    let mut lines: Vec<(Category, f64)> = Category::all().map(|c| (c, totals[c as usize].3)).filter(|l| l.1 > 1e-6).collect();
+    let mut lines: Vec<(Category, f64)> = Category::all().map(|c| (c, totals[c.index()].3)).filter(|l| l.1 > 1e-6).collect();
     lines.sort_by(|a, b| b.1.total_cmp(&a.1));
     for (c, s) in lines {
         println!("  short {:<12} {s:.2} t/day", c.name());
