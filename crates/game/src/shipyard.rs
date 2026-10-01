@@ -3,7 +3,8 @@
 //! it — mass, power, thrust, tank and hold, how it turns, the autopilots it
 //! runs — before it's bought. The first piece of the ship planner.
 //!
-//! Keys: ↑/↓ slot, ←/→ module, ENTER fit it, the shipyard key or ESC close.
+//! Two pages (TAB): OUTFIT — ↑/↓ slot, ←/→ module, ENTER fit it; HULLS — ↑/↓
+//! hull, ENTER twice buy it (the ship traded in). The shipyard key or ESC close.
 
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, KeyCode};
@@ -28,6 +29,10 @@ pub struct Shipyard {
     slot: usize,
     choice: usize,
     held: f32,
+    /// On the hulls page: which, and whether ENTER's been pressed once (to buy it).
+    hulls: bool,
+    hull: usize,
+    armed: bool,
 }
 
 /// How this station stands to module `m`: carried, at what price, and
@@ -71,7 +76,12 @@ fn in_slot(fit: &Fit, slot: &Slot) -> Option<Handle<Module>> {
 impl Shipyard {
     /// (Dev scenarios: open on slot `slot`, module `choice` picked.)
     pub fn showing(slot: usize, choice: usize) -> Self {
-        Shipyard { slot, choice, held: 0.0 }
+        Shipyard { slot, choice, ..Default::default() }
+    }
+
+    /// (Dev scenarios: the hulls page, hull `hull` picked.)
+    pub fn showing_hulls(hull: usize) -> Self {
+        Shipyard { hulls: true, hull, ..Default::default() }
     }
 }
 
@@ -101,6 +111,32 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     let spec = app.ship.spec();
     let slots = spec.slots.len().max(1);
     let Some(y) = &mut app.shipyard else { return false };
+    if input.pressed(KeyCode::Tab) {
+        y.hulls = !y.hulls;
+        y.armed = false;
+        return true;
+    }
+    if y.hulls {
+        let n = content().hulls.len().max(1);
+        if input.pressed(KeyCode::ArrowDown) {
+            y.hull = (y.hull + 1) % n;
+            y.armed = false;
+        }
+        if input.pressed(KeyCode::ArrowUp) {
+            y.hull = (y.hull + n - 1) % n;
+            y.armed = false;
+        }
+        if input.pressed(KeyCode::Enter) {
+            if y.armed {
+                let key = content().hulls.iter().nth(y.hull).map(|(_, h)| h.key.clone()).unwrap_or_default();
+                y.armed = false;
+                app.engine.send(Command::BuyHull { hull: key });
+            } else {
+                y.armed = true;
+            }
+        }
+        return true;
+    }
     let (down, up) = (input.down(KeyCode::ArrowDown), input.down(KeyCode::ArrowUp));
     let steps = crate::navmap::repeat(&mut y.held, down || up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::ArrowUp), ctx.dt);
     let mut moved = false;
@@ -172,6 +208,68 @@ fn numbers(s: &ClassSpec) -> Vec<(&'static str, String)> {
     ]
 }
 
+/// A hull's price here (frame and stock fit at this station's prices), and
+/// what the ship flown now fetches in trade.
+fn hull_price(app: &App, h: &ClassSpec) -> (f64, f64) {
+    let c = content();
+    let price = h.frame.price + h.fit.iter().map(|(_, m)| local(app, c.get(*m)).0.price).sum::<f64>();
+    let old = app.ship.spec();
+    let trade = universe_sim::BUYBACK * (old.frame.price + old.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>());
+    (price, trade)
+}
+
+/// The hulls page: each hull's numbers and price, the one picked in full.
+fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
+    let line = 12.0;
+    let top = 12.0 + line * 2.0;
+    frame.text(Vec2::new(12.0, top), &format!("{:<18} {:>7} {:>7} {:>7} {:>8} {:>8} {:>15} {:>10}", "HULL", "DRY", "TANK", "HOLD", "MAIN", "LIFT", "TURNS", "PRICE"), DIM);
+    let mine = app.ship.class;
+    for (k, (h, s)) in content().hulls.iter().enumerate() {
+        let here = k == y.hull;
+        let loaded = s.dry_mass + s.fuel_capacity;
+        let (price, _) = hull_price(app, s);
+        let mark = if here { ">" } else if h == mine { "*" } else { " " };
+        let text = format!(
+            "{mark}{:<17} {:>7} {:>7} {:>7} {:>8} {:>8} {:>15} {:>10}",
+            s.name,
+            fmt::tonnes(s.dry_mass),
+            fmt::tonnes(s.fuel_capacity),
+            fmt::tonnes(s.hold_capacity),
+            format!("{:.0} M/S2", s.main_thrust / loaded),
+            format!("{:.0} M/S2", s.lift_thrust / loaded),
+            format!("{:.1}/{:.1}/{:.1}", s.turn_accel.x, s.turn_accel.y, s.turn_accel.z),
+            format!("{:.0} CR", price)
+        );
+        frame.text(Vec2::new(12.0, top + (2 + k) as f32 * line), &text, if here { SELECT } else if h == mine { TEXT } else { DIM });
+    }
+    let Some((h, s)) = content().hulls.iter().nth(y.hull) else { return };
+    let mut yy = top + (3 + content().hulls.len()) as f32 * line;
+    let (price, trade) = hull_price(app, s);
+    let loaded_full = s.dry_mass + s.fuel_capacity + s.hold_capacity;
+    frame.text(Vec2::new(12.0, yy), &format!("{} - {} SLOTS. STOCK FIT:", s.name, s.slots.len()), TEXT);
+    yy += line;
+    let names: Vec<String> = s.fit.iter().map(|(_, m)| content().get(*m).name.clone()).collect();
+    for chunk in names.chunks(5) {
+        frame.text(Vec2::new(24.0, yy), &chunk.join(", "), DIM);
+        yy += line;
+    }
+    frame.text(Vec2::new(12.0, yy), &format!("FULL HOLD: LIFT {:.0} M/S2 (1 G IS 9.8)  AUTOPILOTS {}", s.lift_thrust / loaded_full, s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(4).collect::<String>()).collect::<Vec<_>>().join(" ")), DIM);
+    yy += line * 1.5;
+    if h == app.ship.class {
+        frame.text(Vec2::new(12.0, yy), "THE SHIP YOU FLY", DIM);
+        return;
+    }
+    let cost = price - trade;
+    let text = format!("{price:.0} CR, LESS {trade:.0} FOR YOUR SHIP: {} {:.0} CR", if cost >= 0.0 { "COSTS" } else { "PAYS" }, cost.abs());
+    frame.text(Vec2::new(12.0, yy), &text, if cost <= app.v.credits { SELECT } else { RED });
+    yy += line;
+    if y.armed {
+        frame.text(Vec2::new(12.0, yy), "ENTER AGAIN TO BUY IT", SELECT);
+    } else {
+        frame.text(Vec2::new(12.0, yy), "ENTER TWICE TO BUY IT", DIM);
+    }
+}
+
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
@@ -181,9 +279,19 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let c = content();
     frame.text(
         Vec2::new(12.0, 12.0),
-        &format!("SHIPYARD - {} - {}   CREDITS {:.0}   ({} CLOSES, UP/DOWN SLOT, LEFT/RIGHT MODULE, ENTER FIT)", station(app).unwrap_or_default(), spec.name, app.v.credits, key(Act::Shipyard)),
+        &format!(
+            "SHIPYARD - {} - {}   CREDITS {:.0}   [TAB] {}   ({} CLOSES)",
+            station(app).unwrap_or_default(),
+            spec.name,
+            app.v.credits,
+            if y.hulls { "HULLS: UP/DOWN, ENTER TWICE BUY" } else { "OUTFIT: UP/DOWN SLOT, LEFT/RIGHT MODULE, ENTER FIT" },
+            key(Act::Shipyard)
+        ),
         TEXT,
     );
+    if y.hulls {
+        return draw_hulls(frame, app, y);
+    }
     // The slots.
     let top = 12.0 + line * 2.0;
     for (k, slot) in spec.slots.iter().enumerate() {

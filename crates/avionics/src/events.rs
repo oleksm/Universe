@@ -40,4 +40,6 @@ pub enum Event {
     /// A slot refitted at a station: what went in (None: emptied), and the
     /// credits it cost (less what the module taken out fetched).
     Refitted { slot: String, module: Option<String>, credits: f64 },
+    /// A new ship bought at a shipyard, the old one traded in: what it cost.
+    BoughtShip { name: String, credits: f64 },
 }

@@ -256,3 +256,87 @@ impl crate::universe::Universe {
         r
     }
 }
+
+impl crate::universe::Universe {
+    /// What hull `hull` costs pilot `id` at the station it's docked at, and
+    /// what its ship fetches in trade: the frame and its stock fit at this
+    /// station's prices; the old ship's frame and modules at `BUYBACK`.
+    pub fn hull_offer(&self, id: usize, hull: universe_world::ship::Hull) -> Result<(f64, f64), String> {
+        use universe_services::outfitter;
+        let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        let sys = self.world.system(system);
+        let Some(here @ Facility::Station(_)) = universe_world::traffic::docked_at(&sys, ship) else { return Err("BUY A SHIP DOCKED AT A STATION".into()) };
+        let c = universe_world::content::content();
+        let settled = outfitter::settled(&self.markets.economy.places);
+        let spec = c.get(hull);
+        let price = spec.frame.price + spec.fit.iter().map(|(_, m)| outfitter::offer(self.world.galaxy.seed, &self.world.gate_links, &settled, system, here, c.get(*m)).price).sum::<f64>();
+        let old = ship.spec();
+        let trade_in = BUYBACK * (old.frame.price + old.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>());
+        Ok((price, trade_in))
+    }
+
+    /// Pilot `id` buys hull `hull` (with its stock fit), trading in its ship,
+    /// at the station it's docked at: built from the place's metals (the
+    /// frame) and its modules' own materials; its cargo moves over (if the
+    /// new hold takes it) and its fuel (up to the new tank). The credits it cost.
+    pub fn buy_hull_as(&mut self, id: usize, hull: universe_world::ship::Hull) -> Result<f64, String> {
+        use universe_services::{outfitter, Asset, Party};
+        let (price, trade_in) = self.hull_offer(id, hull)?;
+        let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        if ship.class == hull && ship.fit.is_none() {
+            return Err("THAT'S THE SHIP YOU HAVE".into());
+        }
+        let sys = self.world.system(system);
+        let here = universe_world::traffic::docked_at(&sys, ship).expect("docked (checked)");
+        let c = universe_world::content::content();
+        let spec = c.get(hull);
+        if ship.cargo + ship.hopper > spec.hold_capacity + 1e-6 {
+            return Err(format!("ITS HOLD TAKES {:.0} T, THERE'S {:.1} T IN YOURS", spec.hold_capacity / 1000.0, (ship.cargo + ship.hopper) / 1000.0));
+        }
+        // What building it takes from the station's stock.
+        let metals = universe_world::goods::Category::of("goods.metals").expect("metals are a kind of goods");
+        let mut needs: Vec<(universe_world::goods::Category, f64)> = vec![(metals, spec.frame.frame_mass / 1000.0)];
+        needs.extend(spec.fit.iter().map(|(_, m)| outfitter::materials(c.get(*m))));
+        if let Some(place) = self.markets.economy.place(system, here) {
+            for k in universe_world::goods::Category::all() {
+                let want: f64 = needs.iter().filter(|(c, _)| *c == k).map(|(_, t)| t).sum();
+                if want > 0.0 && place.stock_of(k) < want {
+                    return Err(format!("NOT ENOUGH {} TO BUILD IT ({:.0} OF {:.0} T)", k.name(), place.stock_of(k), want));
+                }
+            }
+        }
+        let cost = price - trade_in;
+        let (me, market) = (Party::Pilot(id), Party::Market(system, here));
+        self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
+        if let Some(place) = self.markets.economy.place_mut(system, here) {
+            for (k, t) in needs {
+                place.take(k, t);
+            }
+        }
+        // The new ship where the old one stood, with its cargo and fuel.
+        let old = self.ship_by_id(id).expect("there").2.clone();
+        let mut new = old.clone();
+        new.class = hull;
+        new.fit = None;
+        new.refresh();
+        new.fuel = old.fuel.min(spec.fuel_capacity);
+        new.hull = 1.0;
+        new.jets.clear();
+        match id {
+            crate::combat::PLAYER => self.ship = new,
+            _ => self.crafts[id - 1].ship = new,
+        }
+        Ok(cost)
+    }
+
+    /// The player buys a hull (see `buy_hull_as`); the cockpit is told.
+    pub fn buy_hull(&mut self, hull: universe_world::ship::Hull) -> Result<f64, String> {
+        let r = self.buy_hull_as(crate::combat::PLAYER, hull);
+        let name = universe_world::content::content().get(hull).name.clone();
+        self.events.push(match &r {
+            Ok(credits) => universe_avionics::Event::BoughtShip { name, credits: *credits },
+            Err(reason) => universe_avionics::Event::Refused { reason: format!("SHIPYARD: {reason}") },
+        });
+        r
+    }
+}

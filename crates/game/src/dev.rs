@@ -108,7 +108,7 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
-        "shipyard" | "shipyarddrive" => {
+        "shipyard" | "shipyarddrive" | "shipyardhulls" => {
             // Docked at the home station, the shipyard open on the cargo
             // slot with the smaller racks picked.
             app.mode = Mode::Pilot;
@@ -116,7 +116,7 @@ pub fn apply(app: &mut App, name: &str) {
             let u = app.engine.universe();
             u.ship = u.world.ship_on(home, universe_sim::world::Facility::Station(station), 0);
             let k = u.ship.spec().slots.iter().position(|s| s.name == if name == "shipyard" { "cargo" } else { "drive" }).unwrap();
-            app.shipyard = Some(crate::shipyard::Shipyard::showing(k, 1));
+            app.shipyard = Some(if name == "shipyardhulls" { crate::shipyard::Shipyard::showing_hulls(2) } else { crate::shipyard::Shipyard::showing(k, 1) });
         }
         "cleared" => {
             // The spawn point, with docking clearance granted.

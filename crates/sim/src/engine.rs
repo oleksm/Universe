@@ -82,6 +82,8 @@ pub enum Command {
     Trade { market: Facility, item: usize, units: i64 },
     /// Refit slot `slot` with module `module` (content key; None: empty it), docked at a station.
     Refit { slot: String, module: Option<String> },
+    /// Buy hull `hull` (content key), trading in the ship, docked at a station.
+    BuyHull { hull: String },
     /// Anything else, run on the universe (dev scenarios, tools).
     Run(Box<dyn FnOnce(&mut Universe) + Send>),
     /// The client's cockpit's postings (see `cockpit`).
@@ -265,6 +267,11 @@ impl Engine {
                 u.cockpit().route_set(stops);
             }
             Command::WatchMarket(m) => self.watched = m,
+            Command::BuyHull { hull } => {
+                if let Some(h) = universe_world::content::content().handle(&hull) {
+                    let _ = u.buy_hull(h);
+                }
+            }
             Command::Refit { slot, module } => {
                 let m = module.and_then(|k| universe_world::content::content().handle(&k));
                 let _ = u.refit(&slot, m);
