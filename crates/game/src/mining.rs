@@ -18,6 +18,9 @@ use crate::{fmt, App};
 pub const PULSE_RANGE: f64 = 30_000.0;
 /// ...in this long (real s).
 const PULSE_SECS: f32 = 3.0;
+/// What it found shows this long after the pulse (real s), fading over the last `FADE`.
+const RESULTS_SHOWN: f32 = 20.0;
+const FADE: f32 = 5.0;
 /// The burst round the ship lasts this long (real s).
 const BURST: f32 = 0.5;
 /// A rock the shell reaches flashes this long (real s).
@@ -44,6 +47,12 @@ pub struct Prospect {
 }
 
 impl Prospect {
+    /// How bright its results show now (1 .. 0, faded out): like any
+    /// notice, they go after a while (T still lists them).
+    fn shown(&self) -> f32 {
+        ((RESULTS_SHOWN - (self.age - PULSE_SECS).max(0.0)) / FADE).clamp(0.0, 1.0)
+    }
+
     /// How far the shell has reached (m).
     fn reach(&self) -> f64 {
         PULSE_RANGE * (self.age / PULSE_SECS).clamp(0.0, 1.0) as f64
@@ -204,9 +213,13 @@ pub fn draw_scene(frame: &mut Frame, app: &App) {
     if !app.mining.on {
         return;
     }
+    let shown = p.shown();
+    if shown <= 0.0 {
+        return;
+    }
     for (k, row) in rows(app).iter().enumerate().take(SHOWN) {
         if let Some(at) = frame.project(row.at) {
-            let c = crate::scene::color(row.color);
+            let c = crate::scene::color(row.color).scale(shown);
             frame.text(at + Vec2::new(6.0, -4.0), &format!("{}", k + 1), c);
         }
     }
@@ -226,6 +239,10 @@ pub fn draw_hud(frame: &mut Frame, app: &App) {
     let line = 12.0;
     let list = rows(app);
     let lock = app.v.avionics.rock_lock;
+    let shown = app.mining.prospect.as_ref().map_or(1.0, |p| p.shown());
+    if shown <= 0.0 {
+        return;
+    }
     let title = match &app.mining.prospect {
         None => "MINING - 2 TO PROSPECT".to_string(),
         Some(p) if p.age < PULSE_SECS => format!("PROSPECTING... {}", fmt::distance(p.reach())),
@@ -238,13 +255,13 @@ pub fn draw_hud(frame: &mut Frame, app: &App) {
         .map(|(k, r)| {
             let locked = lock == Some((r.field, r.body));
             let c = crate::scene::color(r.color);
-            (format!("{}{:>2} {:<12} {} {:>7}", if locked { "*" } else { " " }, k + 1, r.name.chars().take(12).collect::<String>(), r.detail, fmt::distance(r.distance.max(0.0))), if locked { c } else { c.scale(0.7) })
+            (format!("{}{:>2} {:<12} {} {:>7}", if locked { "*" } else { " " }, k + 1, r.name.chars().take(12).collect::<String>(), r.detail, fmt::distance(r.distance.max(0.0))), if locked { c } else { c.scale(0.7) }.scale(shown))
         })
         .collect();
     let width = lines.iter().map(|l| universe_engine::text_size(&l.0).x).fold(universe_engine::text_size(&title).x, f32::max);
     let pos = Vec2::new(size.x - width - 12.0, 230.0);
-    frame.hud_rect(pos - 6.0, Vec2::new(width, (lines.len() as f32 + 1.5) * line) + 12.0, Color([0.0, 0.02, 0.03, 0.7]));
-    frame.text(pos, &title, PULSE);
+    frame.hud_rect(pos - 6.0, Vec2::new(width, (lines.len() as f32 + 1.5) * line) + 12.0, Color([0.0, 0.02, 0.03, 0.7 * shown]));
+    frame.text(pos, &title, PULSE.scale(shown));
     for (k, (text, c)) in lines.iter().enumerate() {
         frame.text(Vec2::new(pos.x, pos.y + (k as f32 + 1.5) * line), text, *c);
     }

@@ -101,3 +101,5 @@ the excavator's power drawn from fuel.
 - From inside a shell its lines don't appear to move, so the pulse shows by what it does: a
   burst of two rings opening round the ship out past the edges of the view, then each rock
   flashing as the shell reaches it, near ones first, out to 30 km over 3 s.
+- A prospect's results (the list and the numbers on the rocks) show for 20 s after the pulse,
+  then fade out over 5 s, like any notice. Holding T still lists what was found.
