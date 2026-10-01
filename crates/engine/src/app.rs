@@ -26,11 +26,14 @@ pub struct Config {
     /// The HUD is drawn at this multiple of the scene resolution (smaller, crisper text).
     pub hud_scale: u32,
     pub vsync: bool,
+    /// The most frames a second (0: as many as the display takes);
+    /// `UNIVERSE_MAX_FPS` overrides it.
+    pub max_fps: f32,
 }
 
 impl Default for Config {
     fn default() -> Self {
-        Self { title: "universe".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true }
+        Self { title: "universe".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 240.0 }
     }
 }
 
@@ -325,9 +328,18 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         }
     }
 
-    fn about_to_wait(&mut self, _: &ActiveEventLoop) {
-        if let Some(s) = &self.state {
-            s.ctx.window.request_redraw();
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        let Some(s) = &self.state else { return };
+        // At most `max_fps`: early, wait (events still come in) till the next frame's due.
+        let max_fps = std::env::var("UNIVERSE_MAX_FPS").ok().and_then(|v| v.parse().ok()).unwrap_or(self.config.max_fps);
+        if max_fps > 0.0 {
+            let due = s.last_frame + std::time::Duration::from_secs_f32(1.0 / max_fps);
+            if Instant::now() < due {
+                event_loop.set_control_flow(ControlFlow::WaitUntil(due));
+                return;
+            }
         }
+        event_loop.set_control_flow(ControlFlow::Poll);
+        s.ctx.window.request_redraw();
     }
 }

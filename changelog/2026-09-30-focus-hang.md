@@ -23,3 +23,14 @@ a frame is still waiting, the main thread waits for the render thread to take it
 (`render_thread::PATIENCE`). Normally it's paced by vsync again (about 166 FPS here). With the
 window hidden and the surface stalled, it carries on after 50 ms and keeps answering the
 compositor.
+
+## Frame cap
+
+User: "lets maybe limit to 240 fps, my monitor supports that"
+
+- **At most 240 FPS** by default (`Config::max_fps`; `UNIVERSE_MAX_FPS=n` to change, 0 for no
+  cap). A frame that would come early waits in the event loop (`ControlFlow::WaitUntil`), so
+  input and window events are still handled meanwhile. Vsync still paces presenting: on a
+  240 Hz monitor the two agree.
+- **Checked:** capped at 60, 120 frames took 2.19 s. At the default, this machine's 166 Hz
+  display set the pace.
