@@ -174,6 +174,24 @@ struct NodeDef {
 }
 
 impl ShapeDef {
+    /// One made in code (a design's): its body's points, more convex
+    /// parts, detail lines, and named nodes (name, at, dir), all in the
+    /// frame of its points (metres).
+    pub(crate) fn made(key: String, body: Vec<DVec3>, parts: Vec<Vec<DVec3>>, loops: Vec<Vec<DVec3>>, nodes: Vec<(String, DVec3, DVec3)>) -> Self {
+        let p = |v: DVec3| (v.x, v.y, v.z);
+        ShapeDef {
+            key,
+            scale: 1.0,
+            hull: body.into_iter().map(p).collect(),
+            parts: parts.into_iter().map(|q| q.into_iter().map(p).collect()).collect(),
+            gltf: String::new(),
+            loops: loops.into_iter().map(|q| q.into_iter().map(p).collect()).collect(),
+            nodes: nodes.into_iter().map(|(name, at, dir)| NodeDef { name, at: p(at), dir: p(dir) }).collect(),
+            spheres: Vec::new(),
+            about_centre: false,
+        }
+    }
+
     /// The shape it describes, checked: a real solid, its nodes named for
     /// their roles and pointing somewhere.
     pub fn build(self) -> Result<Shape, String> {

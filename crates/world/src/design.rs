@@ -1,0 +1,475 @@
+//! Designed hulls. A design is a hull drawn up from a few numbers: the body
+//! (how long, wide and high, how it tapers to the nose and the tail), wings
+//! and fins, its size class and how many cargo racks, hardpoints and
+//! utility slots it has, how many drive nozzles, and where things go along
+//! it — the thruster quads and the belly lift, the engine room, the tank,
+//! the hold and the bridge. From those, its shape (body, wings, fins: convex
+//! parts), its nodes (nozzles, mounts, gear, cockpit), its frame's mass and
+//! strength (from its size) and price, and a stock fit (the cheapest module
+//! that fits each slot, a plant big enough for them): a hull like any other.
+//!
+//! Nothing is balanced for you: where the masses sit and where the
+//! thrusters push from are the designer's, and the physics says what it
+//! costs (see `ClassSpec::authority`). Commissioned, a design joins the
+//! hulls (`content().hulls`) for good, by a key its numbers make, so a ship
+//! built to it is the same hull wherever it's loaded.
+
+use glam::DVec3;
+use serde::{Deserialize, Serialize};
+
+use crate::content::content;
+use crate::modules::{Does, Module, SlotKind};
+use crate::ship::{ClassSpec, Hull};
+
+/// The frame's mass per square metre of its size (V^⅔: its skin, roughly), kg.
+const FRAME_PER_AREA: f64 = 108.0;
+/// What a kilogram of frame costs, and a size of slot (credits).
+const PRICE_PER_KG: f64 = 3.0;
+const PRICE_PER_SLOT_SIZE: f64 = 2000.0;
+/// The energy that wrecks the hull per kilogram of frame (J).
+const STRENGTH_PER_KG: f64 = 600.0;
+
+/// A hull as designed (metres; positions along the body as shares of its
+/// length from its middle, + aft).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Design {
+    pub name: String,
+    pub length: f64,
+    pub width: f64,
+    pub height: f64,
+    /// The nose's and the tail's section, as a share of the body's.
+    pub nose: f64,
+    pub tail: f64,
+    /// Each wing's reach out past the body (0: none), and how far aft its tip sweeps.
+    pub wing_span: f64,
+    pub wing_sweep: f64,
+    pub fins: bool,
+    /// Its size class (1..4): how big its slots are.
+    pub class: u8,
+    pub racks: u8,
+    pub hardpoints: u8,
+    pub utility: u8,
+    /// Drive nozzles across its tail (1..4).
+    pub mains: u8,
+    /// The thruster quads: how far apart fore and aft (share of the length),
+    /// and their middle (share, + aft).
+    pub quads_spread: f64,
+    pub quads_at: f64,
+    /// The belly lift's middle (share, + aft).
+    pub lift_at: f64,
+    /// Where the engine room (plant, drive, hyperdrive), the tank, the hold
+    /// and the bridge (computers, life support) sit (shares, + aft).
+    pub engines_at: f64,
+    pub tank_at: f64,
+    pub hold_at: f64,
+    pub bridge_at: f64,
+}
+
+impl Default for Design {
+    fn default() -> Self {
+        Design {
+            name: "DESIGN".into(),
+            length: 40.0,
+            width: 16.0,
+            height: 9.0,
+            nose: 0.35,
+            tail: 0.85,
+            wing_span: 8.0,
+            wing_sweep: 6.0,
+            fins: false,
+            class: 2,
+            racks: 1,
+            hardpoints: 1,
+            utility: 1,
+            mains: 2,
+            quads_spread: 0.32,
+            quads_at: 0.05,
+            lift_at: 0.05,
+            engines_at: 0.35,
+            tank_at: 0.1,
+            hold_at: -0.15,
+            bridge_at: -0.38,
+        }
+    }
+}
+
+/// A design's number: what it's called, its least and most, its step.
+pub struct Knob {
+    pub label: &'static str,
+    pub min: f64,
+    pub max: f64,
+    pub step: f64,
+}
+
+/// The numbers a designer turns, in order (see `Design::knob`).
+pub const KNOBS: &[Knob] = &[
+    Knob { label: "LENGTH M", min: 16.0, max: 120.0, step: 2.0 },
+    Knob { label: "WIDTH M", min: 4.0, max: 40.0, step: 1.0 },
+    Knob { label: "HEIGHT M", min: 3.0, max: 30.0, step: 1.0 },
+    Knob { label: "NOSE TAPER", min: 0.15, max: 1.0, step: 0.05 },
+    Knob { label: "TAIL TAPER", min: 0.4, max: 1.2, step: 0.05 },
+    Knob { label: "WING SPAN M", min: 0.0, max: 40.0, step: 1.0 },
+    Knob { label: "WING SWEEP M", min: 0.0, max: 30.0, step: 1.0 },
+    Knob { label: "FINS", min: 0.0, max: 1.0, step: 1.0 },
+    Knob { label: "SIZE CLASS", min: 1.0, max: 4.0, step: 1.0 },
+    Knob { label: "CARGO RACKS", min: 0.0, max: 3.0, step: 1.0 },
+    Knob { label: "HARDPOINTS", min: 0.0, max: 3.0, step: 1.0 },
+    Knob { label: "UTILITY SLOTS", min: 0.0, max: 2.0, step: 1.0 },
+    Knob { label: "DRIVE NOZZLES", min: 1.0, max: 4.0, step: 1.0 },
+    Knob { label: "QUADS APART", min: 0.1, max: 0.48, step: 0.02 },
+    Knob { label: "QUADS AT", min: -0.4, max: 0.4, step: 0.01 },
+    Knob { label: "LIFT AT", min: -0.4, max: 0.4, step: 0.01 },
+    Knob { label: "ENGINE ROOM AT", min: -0.48, max: 0.48, step: 0.02 },
+    Knob { label: "TANK AT", min: -0.48, max: 0.48, step: 0.02 },
+    Knob { label: "HOLD AT", min: -0.48, max: 0.48, step: 0.02 },
+    Knob { label: "BRIDGE AT", min: -0.48, max: 0.48, step: 0.02 },
+];
+
+impl Design {
+    /// Number `k` of `KNOBS`, as it stands.
+    pub fn knob(&self, k: usize) -> f64 {
+        match k {
+            0 => self.length,
+            1 => self.width,
+            2 => self.height,
+            3 => self.nose,
+            4 => self.tail,
+            5 => self.wing_span,
+            6 => self.wing_sweep,
+            7 => f64::from(u8::from(self.fins)),
+            8 => f64::from(self.class),
+            9 => f64::from(self.racks),
+            10 => f64::from(self.hardpoints),
+            11 => f64::from(self.utility),
+            12 => f64::from(self.mains),
+            13 => self.quads_spread,
+            14 => self.quads_at,
+            15 => self.lift_at,
+            16 => self.engines_at,
+            17 => self.tank_at,
+            18 => self.hold_at,
+            _ => self.bridge_at,
+        }
+    }
+
+    /// Turn number `k` by `steps` of its step (kept within its bounds).
+    pub fn turn(&mut self, k: usize, steps: f64) {
+        let Some(knob) = KNOBS.get(k) else { return };
+        let v = ((self.knob(k) + steps * knob.step) / knob.step).round() * knob.step;
+        let v = v.clamp(knob.min, knob.max);
+        let n = v.round() as u8;
+        match k {
+            0 => self.length = v,
+            1 => self.width = v,
+            2 => self.height = v,
+            3 => self.nose = v,
+            4 => self.tail = v,
+            5 => self.wing_span = v,
+            6 => self.wing_sweep = v,
+            7 => self.fins = n > 0,
+            8 => self.class = n,
+            9 => self.racks = n,
+            10 => self.hardpoints = n,
+            11 => self.utility = n,
+            12 => self.mains = n,
+            13 => self.quads_spread = v,
+            14 => self.quads_at = v,
+            15 => self.lift_at = v,
+            16 => self.engines_at = v,
+            17 => self.tank_at = v,
+            18 => self.hold_at = v,
+            _ => self.bridge_at = v,
+        }
+    }
+
+    /// The key its numbers make (the same design, the same hull).
+    pub fn key(&self) -> String {
+        let text = ron::to_string(self).unwrap_or_default();
+        let hash = text.bytes().fold(0xcbf2_9ce4_8422_2325u64, |h, b| (h ^ b as u64).wrapping_mul(0x100_0000_01b3));
+        format!("design.{hash:016x}")
+    }
+
+    /// Its slots: (name, kind, size).
+    fn slots(&self) -> Vec<(String, SlotKind, u8)> {
+        let c = self.class.clamp(1, 4);
+        let big = (c + 1).min(4);
+        let mut s = vec![
+            ("power".to_string(), SlotKind::Power, c),
+            ("drive".into(), SlotKind::Drive, c),
+            ("thrusters".into(), SlotKind::Thrusters, c),
+            ("lift".into(), SlotKind::Lift, c),
+            ("tank".into(), SlotKind::Tank, big),
+            ("hyperdrive".into(), SlotKind::Hyperdrive, c),
+            ("computer".into(), SlotKind::Computer, 1),
+            ("transponder".into(), SlotKind::Transponder, 1),
+            ("sensors".into(), SlotKind::Sensors, 1),
+            ("life".into(), SlotKind::LifeSupport, c.min(2)),
+            ("avionics".into(), SlotKind::Avionics, 1),
+        ];
+        for k in 0..self.racks {
+            s.push((if k == 0 { "cargo".to_string() } else { format!("cargo_{}", k + 1) }, SlotKind::Cargo, big));
+        }
+        for k in 0..self.hardpoints {
+            s.push((format!("hardpoint_{}", k + 1), SlotKind::Hardpoint, 1));
+        }
+        for k in 0..self.utility {
+            s.push((if k == 0 { "utility".to_string() } else { format!("utility_{}", k + 1) }, SlotKind::Utility, c.min(2)));
+        }
+        s
+    }
+
+    /// The body's half-width and half-height at `z` (it tapers to the nose
+    /// and the tail).
+    fn section(&self, z: f64) -> (f64, f64) {
+        let (l, w, h) = (self.length, self.width * 0.5, self.height * 0.5);
+        let f = if z < -l / 6.0 {
+            let t = (z + l / 2.0) / (l / 3.0);
+            self.nose + (1.0 - self.nose) * t.clamp(0.0, 1.0)
+        } else if z > l / 3.0 {
+            let t = (z - l / 3.0) / (l / 6.0);
+            1.0 + (self.tail - 1.0) * t.clamp(0.0, 1.0)
+        } else {
+            1.0
+        };
+        (w * f, h * f)
+    }
+
+    /// Its shape and hull, built (not commissioned: see `commission`).
+    pub fn build(&self) -> Result<ClassSpec, String> {
+        let (l, half_h) = (self.length, self.height * 0.5);
+        if !(self.length > 0.0 && self.width > 0.0 && self.height > 0.0) {
+            return Err("it needs a size".into());
+        }
+        // The body: hexagonal sections at the nose, forward, aft and the tail.
+        let mut body = Vec::new();
+        for z in [-l / 2.0, -l / 6.0, l / 3.0, l / 2.0] {
+            let (w, h) = self.section(z);
+            for (x, y) in [(w, 0.0), (-w, 0.0), (w * 0.55, h), (-w * 0.55, h), (w * 0.55, -h), (-w * 0.55, -h)] {
+                body.push(DVec3::new(x, y, z));
+            }
+        }
+        let mut parts = Vec::new();
+        let (wing_fore, wing_aft) = (-l * 0.1, l * 0.42);
+        let wing_y = -half_h * 0.2;
+        if self.wing_span > 0.5 {
+            let thick = (self.height * 0.06).max(0.3);
+            for side in [-1.0, 1.0] {
+                let (root_fore, root_aft) = (self.section(wing_fore).0 * 0.9, self.section(wing_aft).0 * 0.9);
+                let tip = self.section(0.0).0 + self.wing_span;
+                let tip_fore = (wing_fore + self.wing_sweep).min(wing_aft - 1.0);
+                let tip_aft = (wing_aft).min(l / 2.0);
+                let mut w = Vec::new();
+                for (x, z, t) in [(root_fore, wing_fore, thick), (root_aft, wing_aft, thick), (tip, tip_fore, thick * 0.5), (tip, tip_aft, thick * 0.5)] {
+                    w.push(DVec3::new(side * x, wing_y + t, z));
+                    w.push(DVec3::new(side * x, wing_y - t, z));
+                }
+                parts.push(w);
+            }
+        }
+        if self.fins {
+            let (z0, z1) = (l * 0.22, l * 0.5);
+            let top = self.section(z1).1;
+            let fin_h = self.height * 0.6;
+            parts.push(vec![
+                DVec3::new(0.15, top * 0.8, z0),
+                DVec3::new(-0.15, top * 0.8, z0),
+                DVec3::new(0.15, top * 0.8, z1),
+                DVec3::new(-0.15, top * 0.8, z1),
+                DVec3::new(0.15, top + fin_h, z1 - 0.15 * l * 0.3),
+                DVec3::new(-0.15, top + fin_h, z1 - 0.15 * l * 0.3),
+                DVec3::new(0.15, top + fin_h, z1),
+                DVec3::new(-0.15, top + fin_h, z1),
+            ]);
+        }
+        // The nodes: the drive across the tail, the quads and the lift, the
+        // gear, the cockpit, a mount for each slot.
+        let mut nodes = Vec::new();
+        let mut thrusters = Vec::new();
+        let (tail_w, _) = self.section(l / 2.0);
+        let n = self.mains.clamp(1, 4) as usize;
+        let mut loops = Vec::new();
+        let r = (tail_w * 1.1 / n as f64).min(self.section(l / 2.0).1 * 0.8) * 0.8;
+        for k in 0..n {
+            let x = if n == 1 { 0.0 } else { -tail_w * 0.55 + tail_w * 1.1 * k as f64 / (n - 1) as f64 };
+            let at = DVec3::new(x, 0.0, l / 2.0);
+            nodes.push((format!("nozzle_main_{k}"), at, DVec3::Z));
+            thrusters.push((format!("nozzle_main_{k}"), "drive".to_string(), 1.0));
+            loops.push((0..16).map(|i| at + DVec3::new((i as f64 * std::f64::consts::TAU / 16.0).cos() * r, (i as f64 * std::f64::consts::TAU / 16.0).sin() * r, 0.0)).collect());
+        }
+        let at = |share: f64| (share * l).clamp(-l / 2.0, l / 2.0);
+        let spread = self.quads_spread * l;
+        for (end, z, along) in [("nose", at(self.quads_at) - spread, -1.0), ("tail", at(self.quads_at) + spread, 1.0)] {
+            let z = z.clamp(-l / 2.0, l / 2.0);
+            let (w, h) = self.section(z);
+            for (sx, side) in [(-1.0, "left"), (1.0, "right")] {
+                let x = sx * w * 0.6;
+                nodes.push((format!("nozzle_{end}_{side}_up"), DVec3::new(x, h, z), DVec3::Y));
+                nodes.push((format!("nozzle_{end}_{side}_side"), DVec3::new(sx * w, 0.0, z), DVec3::new(sx, 0.0, 0.0)));
+                let along_name = if along < 0.0 { "fore" } else { "aft" };
+                nodes.push((format!("nozzle_{end}_{side}_{along_name}"), DVec3::new(x, 0.0, z + along), DVec3::new(0.0, 0.0, along)));
+                thrusters.push((format!("nozzle_{end}_{side}_up"), "thrusters".to_string(), 0.5));
+                thrusters.push((format!("nozzle_{end}_{side}_side"), "thrusters".to_string(), 1.0));
+                thrusters.push((format!("nozzle_{end}_{side}_{along_name}"), "thrusters".to_string(), 1.0));
+            }
+        }
+        let lift_spread = 0.25 * l;
+        for (end, z) in [("nose", at(self.lift_at) - lift_spread), ("tail", at(self.lift_at) + lift_spread)] {
+            let z = z.clamp(-l / 2.0, l / 2.0);
+            let (w, h) = self.section(z);
+            for (sx, side) in [(-1.0, "left"), (1.0, "right")] {
+                nodes.push((format!("nozzle_lift_{end}_{side}"), DVec3::new(sx * w * 0.5, -h, z), DVec3::NEG_Y));
+                thrusters.push((format!("nozzle_lift_{end}_{side}"), "lift".to_string(), 1.0));
+            }
+        }
+        let (gw, gh) = self.section(l * 0.25);
+        nodes.push(("gear_0".into(), DVec3::new(-gw * 0.5, -gh, l * 0.25), DVec3::NEG_Y));
+        nodes.push(("gear_1".into(), DVec3::new(gw * 0.5, -gh, l * 0.25), DVec3::NEG_Y));
+        nodes.push(("gear_2".into(), DVec3::new(0.0, -self.section(-l * 0.3).1, -l * 0.3), DVec3::NEG_Y));
+        nodes.push(("cockpit".into(), DVec3::new(0.0, self.section(-l * 0.35).1 * 0.6, -l * 0.35), DVec3::NEG_Z));
+        let slots = self.slots();
+        for (name, kind, _) in &slots {
+            let z = match kind {
+                SlotKind::Power | SlotKind::Hyperdrive => at(self.engines_at),
+                SlotKind::Drive => at(self.engines_at + 0.05),
+                SlotKind::Tank => at(self.tank_at),
+                SlotKind::Cargo => at(self.hold_at),
+                SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Avionics | SlotKind::LifeSupport => at(self.bridge_at),
+                SlotKind::Thrusters => at(self.quads_at),
+                SlotKind::Lift => at(self.lift_at),
+                SlotKind::Hardpoint => at(-0.42),
+                SlotKind::Utility => 0.0,
+            };
+            let y = match kind {
+                SlotKind::Lift | SlotKind::Hardpoint => -self.section(z).1 * 0.7,
+                SlotKind::Utility => self.section(z).1 * 0.9,
+                _ => 0.0,
+            };
+            nodes.push((format!("mount_{name}"), DVec3::new(0.0, y, z), DVec3::NEG_Z));
+        }
+        let key = self.key();
+        let shape = crate::shape::ShapeDef::made(format!("shape.{key}"), body, parts, loops, nodes).build()?;
+        // The frame: its mass from its size, its strength and price from that.
+        let frame_mass = FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0);
+        let price = PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>();
+        let fit = stock_fit(&slots)?;
+        let radius = 0.3 * self.length.max(self.width + 2.0 * self.wing_span) * 0.5 + 6.0;
+        let drag = self.width * self.height * 0.6;
+        let def = crate::ship::HullDef::made(key, self.name.to_uppercase(), shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, STRENGTH_PER_KG * frame_mass);
+        let shape: &'static crate::shape::Shape = Box::leak(Box::new(shape));
+        let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
+        let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
+        let mut spec = def.build(any, shape, module)?;
+        spec.shape_own = Some(shape);
+        Ok(spec)
+    }
+
+    /// Built, kept (per set of numbers: turning a knob back finds it again).
+    pub fn spec(&self) -> Result<&'static ClassSpec, String> {
+        use std::collections::HashMap;
+        use std::sync::{Mutex, OnceLock};
+        static BUILT: OnceLock<Mutex<HashMap<String, Result<&'static ClassSpec, String>>>> = OnceLock::new();
+        let key = self.key();
+        let cache = BUILT.get_or_init(Default::default);
+        if let Some(r) = cache.lock().unwrap_or_else(|e| e.into_inner()).get(&key) {
+            return r.clone();
+        }
+        let built = self.build().map(|s| &*Box::leak(Box::new(s)));
+        cache.lock().unwrap_or_else(|e| e.into_inner()).insert(key, built.clone());
+        built
+    }
+
+    /// Commissioned: a hull among the others for good (the same numbers,
+    /// the same hull).
+    pub fn commission(&self) -> Result<Hull, String> {
+        let spec = self.build()?;
+        content().hulls.add(spec)
+    }
+}
+
+/// The cheapest module of each kind that fits each slot (a base block, the
+/// lift, a hold, a hyperdrive: what a ship flies on; guns and gear left
+/// empty), with a plant big enough for the lot.
+fn stock_fit(slots: &[(String, SlotKind, u8)]) -> Result<Vec<(String, String)>, String> {
+    let c = content();
+    let cheapest = |kind: SlotKind, size: u8| c.modules.iter().map(|(_, m)| m).filter(|m| m.does.slot() == kind && m.size <= size).min_by(|a, b| a.price.total_cmp(&b.price));
+    let mut fit = Vec::new();
+    let mut draw = 0.0;
+    for (name, kind, size) in slots {
+        if matches!(kind, SlotKind::Power | SlotKind::Hardpoint | SlotKind::Utility) {
+            continue;
+        }
+        let m = cheapest(*kind, *size).ok_or_else(|| format!("no module fits its {} slot", name))?;
+        draw += m.power;
+        fit.push((name.clone(), m.key.clone()));
+    }
+    let (power, size) = slots.iter().find(|s| s.1 == SlotKind::Power).map(|s| (s.0.clone(), s.2)).ok_or("no power slot")?;
+    let plant = c
+        .modules
+        .iter()
+        .map(|(_, m)| m)
+        .filter(|m| m.size <= size && matches!(m.does, Does::PowerPlant { output } if output >= draw))
+        .min_by(|a, b| a.price.total_cmp(&b.price))
+        .ok_or_else(|| format!("no plant that fits makes the {:.1} MW its modules draw", draw / 1e6))?;
+    fit.push((power, plant.key.clone()));
+    Ok(fit)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_design_builds_a_hull_that_flies_and_commissions_once() {
+        let d = Design::default();
+        let s = d.spec().expect("the default design goes together");
+        let loaded = s.dry_mass + s.fuel_capacity;
+        eprintln!(
+            "{}: frame {:.1} t, dry {:.1} t, tank {:.0} t, hold {:.0} t, main {:.1} m/s², lift {:.1} m/s², price {:.0}",
+            s.key, s.frame.frame_mass / 1e3, s.dry_mass / 1e3, s.fuel_capacity / 1e3, s.hold_capacity / 1e3, s.main_thrust / loaded, s.lift_thrust / loaded, s.frame.price
+        );
+        assert!(s.main_thrust > 0.0 && s.lift_thrust > 0.0 && s.rcs_thrust > 0.0);
+        let a = s.authority(s.fuel_capacity, 0.0);
+        assert!(a.lift > 0.0 && a.main > 0.0);
+        // Commissioned: a hull among the others, found by its key; again, the same one.
+        let h = d.commission().unwrap();
+        assert_eq!(content().get(h).key, d.key());
+        assert_eq!(d.commission().unwrap(), h);
+        assert_eq!(content().handle::<ClassSpec>(&d.key()), Some(h));
+        // A ship built to it flies it.
+        let mut ship = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        ship.class = h;
+        ship.refresh();
+        ship.fuel = content().get(h).fuel_capacity;
+        ship.throttle = 1.0;
+        ship.drive(None, 1.0 / 60.0, true);
+        assert!(ship.applied.0.z < -0.9 * content().get(h).main_thrust * 0.5, "{:?}", ship.applied);
+    }
+
+    #[test]
+    fn a_ship_built_to_a_design_saves_by_its_key_and_loads_as_it() {
+        let d = Design { length: 52.0, racks: 2, ..Design::default() };
+        let h = d.commission().unwrap();
+        let mut ship = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        ship.class = h;
+        ship.refresh();
+        let json = ron::to_string(&ship).unwrap();
+        assert!(json.contains(&d.key()), "by its key");
+        let back: crate::ship::Ship = ron::from_str(&json).unwrap();
+        assert_eq!(back.class, h);
+        assert_eq!(back.spec().hold_capacity, content().get(h).hold_capacity);
+    }
+
+    #[test]
+    fn where_the_masses_sit_is_the_designers_to_balance() {
+        // Everything heavy in the tail, the thrusters forward: off balance.
+        let bad = Design { engines_at: 0.46, tank_at: 0.46, hold_at: 0.46, bridge_at: 0.3, quads_at: -0.3, lift_at: -0.3, ..Design::default() };
+        let good = Design::default();
+        let lift = |d: &Design| {
+            let s = d.spec().unwrap();
+            s.authority(s.fuel_capacity, s.hold_capacity / 2.0).lift / s.lift_thrust
+        };
+        let (b, g) = (lift(&bad), lift(&good));
+        eprintln!("lift kept: balanced {:.0}%, tail-heavy {:.0}%", g * 100.0, b * 100.0);
+        assert!(b < g - 0.15, "tail-heavy {b:.2} vs {g:.2}");
+    }
+}

@@ -25,6 +25,8 @@ pub struct ClassSpec {
     /// Its shape (content key), and the shape itself.
     pub shape: String,
     pub shape_ref: crate::content::Handle<crate::shape::Shape>,
+    /// A designed hull's own shape (not in the content: see `design`).
+    pub shape_own: Option<&'static crate::shape::Shape>,
     /// The frame alone (kg), its slots, and what's fitted in them.
     pub frame_mass: f64,
     pub slots: Vec<Slot>,
@@ -143,6 +145,13 @@ pub struct Slot {
 }
 
 impl HullDef {
+    /// One made in code (a design's).
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn made(key: String, name: String, shape: String, frame_mass: f64, price: f64, slots: Vec<(String, crate::modules::SlotKind, u8)>, fit: Vec<(String, String)>, thrusters: Vec<(String, String, f64)>, radius: f64, drag_area: f64, hull_strength: f64) -> Self {
+        let thrusters = thrusters.into_iter().map(|(nozzle, slot, share)| ThrusterDef { nozzle, slot, share }).collect();
+        HullDef { key, name, shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength }
+    }
+
     pub(crate) fn key(&self) -> &str {
         &self.key
     }
@@ -355,6 +364,7 @@ impl ClassSpec {
             name,
             shape: shape_key,
             shape_ref,
+            shape_own: None,
             frame_mass: frame.frame_mass,
             slots: frame.slots.clone(),
             fit,
@@ -386,7 +396,9 @@ impl ClassSpec {
     /// This hull with another fit (refused, with the reason, if it won't do).
     pub fn refit(&self, fit: Fit) -> Result<ClassSpec, String> {
         let c = crate::content::content();
-        ClassSpec::assemble(self.key.clone(), self.name.clone(), self.shape.clone(), self.shape_ref, self.shape(), self.frame.clone(), fit, |h| c.get(h))
+        let mut s = ClassSpec::assemble(self.key.clone(), self.name.clone(), self.shape.clone(), self.shape_ref, self.shape(), self.frame.clone(), fit, |h| c.get(h))?;
+        s.shape_own = self.shape_own;
+        Ok(s)
     }
 
     /// Has it this gear fitted?
@@ -403,7 +415,7 @@ impl ClassSpec {
 impl ClassSpec {
     /// Its shape.
     pub fn shape(&self) -> &'static crate::shape::Shape {
-        crate::content::content().get(self.shape_ref)
+        self.shape_own.unwrap_or_else(|| crate::content::content().get(self.shape_ref))
     }
 }
 
@@ -956,7 +968,7 @@ mod classes {
 
     #[test]
     fn every_hull_is_balanced_and_sized_for_its_job() {
-        for (_, h) in content().hulls.iter() {
+        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.")) {
             let h: &'static ClassSpec = h;
             // Every way it pushes, nearly all of it without turning (at the
             // load it's balanced for: a full tank, the hold half full).
@@ -981,7 +993,7 @@ mod balance {
 
     #[test]
     fn loading_moves_the_centre_of_mass_and_off_balance_costs_authority() {
-        for (_, h) in content().hulls.iter() {
+        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.")) {
             let h: &'static ClassSpec = h;
             // Built balanced about its usual load: empty to full, it keeps nearly all its push.
             let (empty, full) = (h.authority(h.fuel_capacity, 0.0), h.authority(h.fuel_capacity, h.hold_capacity));

@@ -15,6 +15,7 @@ pub mod collisions;
 pub mod content;
 pub mod crew;
 pub mod damage;
+pub mod design;
 pub mod events;
 pub mod galaxy;
 pub mod goods;

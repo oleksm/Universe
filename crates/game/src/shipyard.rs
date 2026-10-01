@@ -62,6 +62,7 @@ enum Page {
     Plan,
     Hulls,
     Plans,
+    Design,
 }
 
 /// The panel: the plan being worked on, and the cursors.
@@ -77,6 +78,9 @@ pub struct Shipyard {
     plan_pick: usize,
     /// SHIFT+ENTER pressed once: again builds it.
     armed: bool,
+    /// The design page's cursor: a knob, or (past them) commissioning.
+    knob: usize,
+    held_side: f32,
 }
 
 /// How this station stands to module `m`: carried, at what price, and
@@ -129,7 +133,7 @@ fn with(fit: &Fit, slot: &Slot, module: Option<Handle<Module>>) -> Fit {
 impl Shipyard {
     /// The plan: the ship flown now.
     fn new(app: &App) -> Self {
-        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false };
+        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false, knob: 0, held_side: 0.0 };
         y.choice = y.current_choice(0);
         y
     }
@@ -148,6 +152,11 @@ impl Shipyard {
         let s = c.get(h).slots.iter().find(|s| s.name == slot)?.clone();
         let fit = with(&c.get(h).fit, &s, c.handle::<Module>(module));
         Some(Shipyard { hull: h, fit, ..Shipyard::new(app) })
+    }
+
+    /// (Dev scenarios: the design page, knob `knob` picked.)
+    pub fn designing(app: &App, knob: usize) -> Self {
+        Shipyard { page: Page::Design, knob, ..Shipyard::new(app) }
     }
 
     /// (Dev scenarios: the hulls page, hull `hull` picked.)
@@ -248,7 +257,8 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     if input.pressed(KeyCode::Tab) {
         y.page = match y.page {
             Page::Plan => Page::Hulls,
-            Page::Hulls => Page::Plans,
+            Page::Hulls => Page::Design,
+            Page::Design => Page::Plans,
             Page::Plans => Page::Plan,
         };
         y.armed = false;
@@ -263,6 +273,35 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         }
     };
     match y.page {
+        Page::Design => {
+            use universe_sim::world::design::KNOBS;
+            step(&mut y.knob, KNOBS.len() + 1);
+            let (right, left) = (input.down(KeyCode::ArrowRight), input.down(KeyCode::ArrowLeft));
+            let turns = crate::navmap::repeat(&mut y.held_side, right || left, input.pressed(KeyCode::ArrowRight) || input.pressed(KeyCode::ArrowLeft), ctx.dt);
+            let k = y.knob;
+            if turns > 0 && k < KNOBS.len() {
+                let by = if right { 1.0 } else { -1.0 } * turns as f64 * if shift { 5.0 } else { 1.0 };
+                app.design.turn(k, by);
+            }
+            if input.pressed(KeyCode::Enter) && k == KNOBS.len() {
+                // Commissioned: a hull for good (numbered among yours), planned from at once.
+                let mut d = app.design.clone();
+                d.name = format!("DESIGN {}", app.designs.len() + 1);
+                match d.commission() {
+                    Ok(h) => {
+                        if !app.designs.contains(&d) {
+                            app.designs.push(d);
+                        }
+                        app.say(format!("{} COMMISSIONED - PLAN IT, BUILD IT AT A SHIPYARD", content().get(h).name));
+                        if let Some(y) = &mut app.shipyard {
+                            (y.hull, y.fit, y.slot, y.page) = (h, content().get(h).fit.clone(), 0, Page::Plan);
+                            y.choice = y.current_choice(0);
+                        }
+                    }
+                    Err(why) => app.say(format!("WON'T GO TOGETHER - {}", why.to_uppercase())),
+                }
+            }
+        }
         Page::Hulls => {
             step(&mut y.hull_pick, content().hulls.len());
             if input.pressed(KeyCode::Enter)
@@ -442,6 +481,61 @@ fn draw_plans(frame: &mut Frame, app: &App, y: &Shipyard) {
     frame.text(Vec2::new(12.0, yy), "ENTER: KEEP / LOAD   DELETE: DROP   (KEPT IN THE SAVE)", DIM);
 }
 
+/// The design page: the numbers a hull is drawn up from, its own numbers
+/// (and what's wrong with it), and it drawn; commissioning it at the end.
+fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
+    use universe_sim::world::design::KNOBS;
+    let top = 12.0 + LINE * 2.0;
+    let d = &app.design;
+    frame.text(Vec2::new(12.0, top - LINE), "A HULL OF YOUR OWN: WHERE THE MASS SITS AND WHERE THE THRUSTERS PUSH ARE YOURS TO BALANCE", DIM);
+    for (k, knob) in KNOBS.iter().enumerate() {
+        let here = k == y.knob;
+        let v = d.knob(k);
+        let value = if knob.step >= 1.0 { format!("{v:.0}") } else { format!("{v:+.2}") };
+        let value = if knob.label == "FINS" { if v > 0.5 { "YES".into() } else { "NO".into() } } else { value };
+        frame.text(Vec2::new(12.0, top + k as f32 * LINE), &format!("{}{:<16} {:>8}", if here { ">" } else { " " }, knob.label, value), if here { SELECT } else { TEXT });
+    }
+    let last = KNOBS.len();
+    let here = y.knob == last;
+    frame.text(Vec2::new(12.0, top + (last as f32 + 0.5) * LINE), &format!("{}COMMISSION IT (ENTER)", if here { ">" } else { " " }), if here { SELECT } else { BETTER });
+    // Its numbers, and what's wrong.
+    let x = 12.0 + 30.0 * 7.5;
+    match d.spec() {
+        Ok(s) => {
+            let mut yy = top;
+            for (label, value) in numbers(s) {
+                frame.text(Vec2::new(x, yy), &format!("{label:<11} {value:>23}"), TEXT);
+                yy += LINE;
+            }
+            frame.text(Vec2::new(x, yy), &format!("{:<11} {:>23}", "FRAME", format!("{} {:.0} CR", fmt::tonnes(s.frame.frame_mass), s.frame.price)), DIM);
+            yy += LINE * 1.5;
+            let loaded = s.dry_mass + s.fuel_capacity;
+            let (a, full) = (s.authority(s.fuel_capacity, s.hold_capacity / 2.0), s.authority(s.fuel_capacity, s.hold_capacity));
+            let mut warn = |t: String| {
+                frame.text(Vec2::new(x, yy), &t, RED);
+                yy += LINE;
+            };
+            if full.lift / (loaded + s.hold_capacity) < G {
+                warn("CAN'T HOVER AT 1 G LOADED (SPACE ONLY)".into());
+            }
+            for (what, got, rated) in [("LIFT", a.lift, s.lift_thrust), ("DRIVE", a.main, s.main_thrust), ("THRUSTERS", a.side, s.rcs_thrust)] {
+                if got < 0.85 * rated {
+                    warn(format!("OFF BALANCE: {what} KEEPS {:.0}%", 100.0 * got / rated.max(1.0)));
+                }
+            }
+            let at = Vec2::new(x + universe_engine::text_size(&format!("{:<11} {:>23}", "", "")).x + 16.0, top);
+            let w = ((frame.size().x - at.x - 20.0) / 2.0).max(100.0);
+            let h = (frame.size().y - at.y - 12.0).max(80.0);
+            let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: None };
+            crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
+            crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 8.0, 0.0), Vec2::new(w, h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE");
+        }
+        Err(why) => {
+            frame.text(Vec2::new(x, top), &format!("WON'T GO TOGETHER - {}", why.to_uppercase()), RED);
+        }
+    }
+}
+
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
@@ -451,6 +545,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         Page::Plan => if here.is_some() { "PLAN - ARROWS PICK, ENTER PUT IN, SHIFT+ENTER BUILD" } else { "PLAN - ARROWS PICK, ENTER PUT IN" },
         Page::Hulls => "HULLS",
         Page::Plans => "PLANS",
+        Page::Design => "DESIGN - UP/DOWN PICK, LEFT/RIGHT TURN (SHIFT: x5)",
     };
     let title = match &here {
         Some(s) => format!("SHIPYARD - {s}"),
@@ -460,6 +555,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     match y.page {
         Page::Hulls => return draw_hulls(frame, app, y),
         Page::Plans => return draw_plans(frame, app, y),
+        Page::Design => return draw_design(frame, app, y),
         Page::Plan => {}
     }
     let spec = y.spec();

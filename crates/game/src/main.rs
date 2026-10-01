@@ -162,6 +162,9 @@ pub struct App {
     pub shipyard: Option<shipyard::Shipyard>,
     /// Ship plans kept (in the save).
     pub plans: Vec<shipyard::SavedPlan>,
+    /// The hull being designed, and those commissioned (in the save).
+    pub design: universe_sim::world::design::Design,
+    pub designs: Vec<universe_sim::world::design::Design>,
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
     pub nav_marker: Option<(String, DVec3)>,
@@ -278,6 +281,8 @@ impl App {
             market: None,
             shipyard: None,
             plans: Vec::new(),
+            design: Default::default(),
+            designs: Vec::new(),
             docked_market: false,
             nav_marker: None,
             contacts: Vec::new(),

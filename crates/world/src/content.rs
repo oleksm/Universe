@@ -117,16 +117,24 @@ impl<'de, T: Entry> Deserialize<'de> for Handle<T> {
 }
 
 /// The entries of one kind, in load order.
-pub struct Registry<T> {
+pub struct Registry<T: 'static> {
     entries: Vec<T>,
     index: HashMap<String, u32>,
+    /// Entries added as the game runs (designed hulls): after the loaded
+    /// ones, in the order added, each fixed once set.
+    extra: Box<[OnceLock<&'static T>]>,
+    extra_index: std::sync::RwLock<HashMap<String, u32>>,
+    extra_len: std::sync::atomic::AtomicUsize,
 }
+
+/// How many entries of a kind can be added as the game runs.
+pub const EXTRA: usize = 256;
 
 impl<T: Entry> Registry<T> {
     /// From the packs' entries in order: a key seen again replaces the
     /// entry where it stands.
     fn build(defs: Vec<T>) -> Result<Self, String> {
-        let mut r = Registry { entries: Vec::new(), index: HashMap::new() };
+        let mut r = Registry { entries: Vec::new(), index: HashMap::new(), extra: (0..EXTRA).map(|_| OnceLock::new()).collect(), extra_index: Default::default(), extra_len: Default::default() };
         for d in defs {
             d.validate().map_err(|e| format!("{} '{}': {e}", T::FILE, d.key()))?;
             match r.index.get(d.key()) {
@@ -141,23 +149,54 @@ impl<T: Entry> Registry<T> {
     }
 
     pub fn get(&self, h: Handle<T>) -> &T {
-        &self.entries[h.index as usize]
+        let i = h.index as usize;
+        match self.entries.get(i) {
+            Some(e) => e,
+            None => self.extra[i - self.entries.len()].get().expect("a handle to an entry added"),
+        }
     }
 
+    /// How many: the loaded ones and those added since.
     pub fn len(&self) -> usize {
-        self.entries.len()
+        self.entries.len() + self.extra_len.load(std::sync::atomic::Ordering::Acquire)
     }
 
     pub fn is_empty(&self) -> bool {
-        self.entries.is_empty()
+        self.len() == 0
     }
 
     pub fn iter(&self) -> impl Iterator<Item = (Handle<T>, &T)> {
-        self.entries.iter().enumerate().map(|(i, e)| (Handle::new(i), e))
+        let base = self.entries.len();
+        let added = self.extra_len.load(std::sync::atomic::Ordering::Acquire);
+        self.entries.iter().enumerate().map(|(i, e)| (Handle::new(i), e)).chain((0..added).filter_map(move |k| self.extra[k].get().map(|e| (Handle::new(base + k), *e))))
     }
 
     fn find(&self, key: &str) -> Option<Handle<T>> {
-        self.index.get(key).map(|&i| Handle::new(i as usize))
+        self.index.get(key).map(|&i| Handle::new(i as usize)).or_else(|| self.extra_index.read().unwrap_or_else(|e| e.into_inner()).get(key).map(|&i| Handle::new(i as usize)))
+    }
+
+    /// Add an entry as the game runs (it stays for good). One with the
+    /// same key already there is kept, and its handle given.
+    pub fn add(&self, entry: T) -> Result<Handle<T>, String> {
+        if let Some(h) = self.find(entry.key()) {
+            return Ok(h);
+        }
+        entry.validate()?;
+        let mut index = self.extra_index.write().unwrap_or_else(|e| e.into_inner());
+        if let Some(&i) = index.get(entry.key()) {
+            return Ok(Handle::new(i as usize));
+        }
+        let k = self.extra_len.load(std::sync::atomic::Ordering::Acquire);
+        if k >= EXTRA {
+            return Err(format!("no room for more than {EXTRA} added {}", T::FILE));
+        }
+        let key = entry.key().to_string();
+        let leaked: &'static T = Box::leak(Box::new(entry));
+        let _ = self.extra[k].set(leaked);
+        let i = self.entries.len() + k;
+        index.insert(key, i as u32);
+        self.extra_len.store(k + 1, std::sync::atomic::Ordering::Release);
+        Ok(Handle::new(i))
     }
 }
 
