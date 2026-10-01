@@ -94,11 +94,11 @@ pub fn event(ctx: &Context, event: &Event) {
 /// Continuous layers follow the ship state every frame.
 pub fn update(ctx: &Context, app: &App) {
     let Some(a) = ctx.audio() else { return };
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let flying = matches!(ship.state, ShipState::Flying) && !app.paused;
     let engine = if flying && app.mode == Mode::Pilot && !ship.hyperdrive { ship.throttle as f32 } else { 0.0 };
     a.set_engine(engine);
-    let lasing = app.u.world.beams.iter().any(|b| b.owner == universe_sim::PLAYER);
+    let lasing = app.v.beams.iter().any(|b| b.owner == universe_sim::PLAYER);
     if flying && ship.hyperdrive {
         let pitch = 40.0 + 9.0 * (ship.velocity.length().max(1.0).log10() as f32);
         a.set_drone(0.7, pitch);

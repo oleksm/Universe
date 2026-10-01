@@ -18,7 +18,8 @@ use universe_engine::glam::DVec3;
 use universe_engine::{run, Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
 use universe_sim::world::crew::Reach;
 use universe_sim::world::{CrewEvent, Triggers, WalkCommands};
-use universe_sim::{Approach, ClearanceKind, Controls, Event, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, TrafficEvent, Universe};
+use universe_sim::world::charts::Charts;
+use universe_sim::{Approach, ClearanceKind, Command, Controls, EngineHandle, Event, FollowKind, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, TrafficEvent, Universe};
 
 use models::Models;
 use observer::{Focus, Observer};
@@ -65,7 +66,11 @@ pub struct Message {
 }
 
 pub struct App {
-    pub u: Universe,
+    /// The world engine (the client sends it commands), its latest view of
+    /// the world, and the galaxy's charts.
+    pub engine: EngineHandle,
+    pub v: Arc<universe_sim::View>,
+    pub charts: Arc<Charts>,
     pub mode: Mode,
     pub observer: Observer,
     pub chase_cam: bool,
@@ -85,17 +90,18 @@ pub struct App {
     /// Docking or landing guidance for the HUD, when cleared.
     pub approach: Option<Approach>,
     /// The flight plan to the cleared target: the path, attitudes and actions ahead.
-    pub plan: Option<universe_sim::Plan>,
+    pub plan: Option<Arc<universe_sim::Plan>>,
     /// The plan before it, and how far (0..1) the display has eased from it
     /// to `plan`: each rebuild starts from where the ship is, so the guide
     /// would otherwise jump a little at every one.
-    pub plan_prev: Option<universe_sim::Plan>,
+    pub plan_prev: Option<Arc<universe_sim::Plan>>,
     pub plan_blend: f32,
-    /// When the plan was last rebuilt (real seconds), for which clearance,
-    /// and how long building it took (real seconds).
+    /// Real seconds since the plan was rebuilt, its serial, and how long
+    /// building it took (real seconds) and how often it's rebuilt.
     plan_age: f32,
-    plan_for: Option<universe_sim::Clearance>,
+    plan_serial: u64,
     pub plan_cost: f32,
+    pub plan_every: f32,
     /// Time the world tick took (ms, smoothed): every ship's turn.
     pub sim_ms: f32,
     /// The ETA shown on the HUD (real seconds): counts down each frame and
@@ -132,7 +138,6 @@ pub struct App {
     /// The collision warning's prediction, when it's on (made at `collision_at`, world time).
     pub collision: Option<universe_sim::avionics::collision::Prediction>,
     pub collision_at: f64,
-    collision_age: f32,
     /// What the last prediction cost (s of real time).
     pub collision_cost: f32,
     /// The weapon keys as last sent to the ship (commands go on a change).
@@ -154,10 +159,14 @@ impl App {
         // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 1,000).
         let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(1_000);
         u.spawn_settlers(settlers, SEED);
-        let system = u.ship_system();
-        let origin = u.ship_system;
+        let engine = EngineHandle::new(u);
+        let (v, charts) = (engine.view(), engine.charts());
+        let origin = v.ship_system;
+        let system = charts.system(origin);
         let mut app = Self {
-            u,
+            engine,
+            v,
+            charts,
             mode: Mode::Pilot,
             observer: Observer::new(),
             chase_cam: true,
@@ -177,7 +186,8 @@ impl App {
             approach: None,
             plan: None,
             plan_age: 0.0,
-            plan_for: None,
+            plan_serial: 0,
+            plan_every: 0.1,
             plan_prev: None,
             plan_blend: 1.0,
             plan_cost: 0.0,
@@ -199,7 +209,6 @@ impl App {
             beam_shown: 0.0,
             collision: None,
             collision_at: 0.0,
-            collision_age: 99.0,
             collision_cost: 0.0,
             triggers_held: Triggers::default(),
             route_labels: Vec::new(),
@@ -215,6 +224,8 @@ impl App {
         app.say("PRESS F1 FOR CONTROLS".into());
         if let Ok(name) = std::env::var("UNIVERSE_SCENARIO") {
             dev::apply(&mut app, &name);
+            app.engine.refresh();
+            app.v = app.engine.view();
         }
         app
     }
@@ -231,7 +242,7 @@ impl App {
     pub fn warp(&self) -> f64 {
         if self.paused {
             0.0
-        } else if self.u.ship.hyperdrive {
+        } else if self.v.ship.hyperdrive {
             self.time_scale
         } else {
             self.time_scale * WARPS[self.warp_index]
@@ -312,18 +323,18 @@ impl App {
             ctx.grab_cursor(false);
         }
         // On foot: walking, not flying (the ship flies on as last set).
-        if !self.u.crew.seated() {
+        if !self.v.crew.seated() {
             let c = onfoot::commands(ctx);
-            self.u.walk(&c, ctx.dt as f64);
+            self.engine.send(Command::Walk(c, ctx.dt as f64));
             return Controls::default();
         }
         // F: out of the seat. Hands off the stick and the triggers.
         if ctx.input.pressed(KeyCode::KeyF) {
             if self.triggers_held != Triggers::default() {
                 self.triggers_held = Triggers::default();
-                self.u.command(&ShipCommands { weapons: Some(Triggers::default()), ..self.u.ship.holding() });
+                self.engine.send(Command::Ship(ShipCommands { weapons: Some(Triggers::default()), ..self.v.ship.holding() }));
             }
-            self.u.walk(&WalkCommands { interact: true, ..Default::default() }, ctx.dt as f64);
+            self.engine.send(Command::Walk(WalkCommands { interact: true, ..Default::default() }, ctx.dt as f64));
             return Controls::default();
         }
         let input = &ctx.input;
@@ -333,78 +344,61 @@ impl App {
             self.chase_cam = !self.chase_cam;
         }
         if input.pressed(KeyCode::KeyJ) {
-            self.u.toggle_hyperdrive();
+            self.engine.send(Command::ToggleHyperdrive);
         }
         if input.pressed(KeyCode::KeyR) {
             // R again gives the clearance up.
-            if self.u.avionics.clearance.is_some() {
-                self.u.cancel_clearance();
-            } else {
-                self.u.request_clearance();
-            }
+            self.engine.send(if self.v.avionics.clearance.is_some() { Command::CancelClearance } else { Command::RequestClearance });
         }
         if input.pressed(KeyCode::KeyK) {
             // With a route set, K flies the whole route; otherwise the current clearance.
-            if self.u.avionics.route.stops.is_empty() {
-                self.u.toggle_autopilot();
-            } else {
-                self.u.toggle_route();
-            }
+            self.engine.send(if self.v.avionics.route.stops.is_empty() { Command::ToggleAutopilot } else { Command::ToggleRoute });
         }
         if input.pressed(KeyCode::Backspace) {
-            self.u.respawn();
+            self.engine.send(Command::Respawn);
         }
         // Weapons: SPACE the gun, V the laser, while held (the autopilot
         // doesn't hold them back).
         if input.pressed(KeyCode::KeyB) {
-            self.u.command(&ShipCommands { arm: Some(!self.u.ship.armed), ..self.u.ship.holding() });
+            self.engine.send(Command::Ship(ShipCommands { arm: Some(!self.v.ship.armed), ..self.v.ship.holding() }));
         }
-        if !self.u.ship.armed && (input.pressed(KeyCode::Space) || input.pressed(KeyCode::KeyV)) {
+        if !self.v.ship.armed && (input.pressed(KeyCode::Space) || input.pressed(KeyCode::KeyV)) {
             self.say("WEAPONS SAFE - B FOR COMBAT MODE".into());
         }
         let triggers = Triggers { gun: input.down(KeyCode::Space), laser: input.down(KeyCode::KeyV) };
         if triggers != self.triggers_held {
             self.triggers_held = triggers;
-            self.u.command(&ShipCommands { weapons: Some(triggers), ..self.u.ship.holding() });
+            self.engine.send(Command::Ship(ShipCommands { weapons: Some(triggers), ..self.v.ship.holding() }));
         }
         if input.pressed(KeyCode::KeyI) {
-            let on = !self.u.avionics.collision_warning;
-            self.u.avionics.collision_warning = on;
-            self.collision_age = 99.0;
+            let on = !self.v.avionics.collision_warning;
+            self.engine.send(Command::CollisionWarning(on));
             self.say(if on { "COLLISION WARNING ON" } else { "COLLISION WARNING OFF" }.into());
         }
         if input.pressed(KeyCode::KeyT) {
             // Lock what's in the beam around the crosshair (the ring shows it for a moment).
-            let had = self.u.avionics.contact.is_some();
             self.beam_shown = 1.5;
-            match self.u.lock_in_beam() {
-                Some(c) => {
-                    sound::click(ctx, 1200.0);
-                    self.say(format!("LOCKED: {}", c.name));
-                }
-                None if had => self.say("LOCK RELEASED".into()),
-                None => self.say("NO TARGET IN THE BEAM - PUT IT IN THE RING".into()),
-            }
+            self.engine.send(Command::LockInBeam);
         }
         // N keeps at a range from the locked ship (or the nav target's
         // station or gate), U orbits it; again for the next range out. X lets go.
         if input.pressed(KeyCode::KeyN) {
-            self.u.follow(universe_sim::FollowKind::KeepAt);
+            self.engine.send(Command::Follow(FollowKind::KeepAt));
         }
         if input.pressed(KeyCode::KeyU) {
-            self.u.follow(universe_sim::FollowKind::Orbit);
+            self.engine.send(Command::Follow(FollowKind::Orbit));
         }
-        if input.pressed(KeyCode::KeyX) && self.u.avionics.following.is_some() {
-            self.u.stop_following();
+        if input.pressed(KeyCode::KeyX) && self.v.avionics.following.is_some() {
+            self.engine.send(Command::StopFollowing);
         }
         // The autopilot has the stick.
-        if self.u.avionics.route.active || self.u.avionics.clearance.is_some_and(|c| c.autopilot) || self.u.avionics.following.is_some() {
+        if self.v.avionics.route.active || self.v.avionics.clearance.is_some_and(|c| c.autopilot) || self.v.avionics.following.is_some() {
             return Controls::default();
         }
 
         // Shift turns W/S/A/D/Q/E into translation thrusters (RCS).
         let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
-        let mut command = self.u.ship.holding();
+        let mut command = self.v.ship.holding();
         if shift {
             command.rcs = DVec3::new(
                 input.axis(KeyCode::KeyA, KeyCode::KeyD) as f64,
@@ -422,7 +416,7 @@ impl App {
             command.throttle = 0.0;
         }
         command.throttle = command.throttle.clamp(0.0, 1.0);
-        self.u.command(&command);
+        self.engine.send(Command::Ship(command));
 
         let keys: f32 = if shift { 0.0 } else { 1.0 };
         let mut c = Controls {
@@ -439,7 +433,8 @@ impl App {
     }
 
     fn handle_events(&mut self, ctx: &Context) {
-        for event in std::mem::take(&mut self.u.events) {
+        let view = self.v.clone();
+        for event in view.events.iter().cloned() {
             sound::event(ctx, &event);
             // Hits show on the HUD (hull, flash), not as messages: a burst would flood them.
             if let Event::Ship(ShipEvent::Hit { .. }) = event {
@@ -486,7 +481,22 @@ impl App {
                 Event::RouteBlocked { reason } => format!("ROUTE STOPPED - {reason}"),
                 Event::Ship(ShipEvent::Bumped) => "HULL CONTACT!".into(),
                 Event::Ship(ShipEvent::Launched { station }) => format!("LAUNCHED FROM {station}"),
-                Event::Ship(ShipEvent::Collided { with, speed }) => format!("COLLISION WITH {} AT {speed:.1} M/S", self.u.ship_name(with)),
+                Event::Ship(ShipEvent::Collided { with, speed }) => format!("COLLISION WITH {} AT {speed:.1} M/S", self.ship_name(with)),
+                Event::Lock { name: Some(name) } => {
+                    sound::click(ctx, 1200.0);
+                    format!("LOCKED: {name}")
+                }
+                Event::Lock { name: None } => "LOCK RELEASED".into(),
+                Event::NothingInBeam => "NO TARGET IN THE BEAM - PUT IT IN THE RING".into(),
+                Event::ContactLost => "RADAR CONTACT LOST".into(),
+                Event::Traded { item, units, credits } if units > 0 => {
+                    sound::click(ctx, 1500.0);
+                    format!("BOUGHT {units} {item} FOR {credits:.0} CR")
+                }
+                Event::Traded { item, units, credits } => {
+                    sound::click(ctx, 1500.0);
+                    format!("SOLD {} {item} FOR {:.0} CR", -units, -credits)
+                }
                 Event::Ship(ShipEvent::Aggressed { .. }) => "AGGRESSION - YOU FIRED ON AN INNOCENT SHIP\nYOU ARE FAIR GAME FOR 10 MINUTES".into(),
                 Event::Ship(ShipEvent::WeaponsArming) => "COMBAT MODE - WEAPONS ARMING".into(),
                 Event::Ship(ShipEvent::WeaponsHot) => "WEAPONS HOT".into(),
@@ -515,32 +525,25 @@ impl App {
         }
     }
 
-    fn find_nav_marker(&mut self) -> Option<(String, DVec3)> {
-        if let Some(t) = self.u.avionics.nav_target {
-            let pos = self.u.target_position(t)?;
-            let name = match t {
-                universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_) => self.u.target_name(t),
-                universe_sim::NavTarget::Spaceport(p) => self.u.ship_system().spaceports[p].name.clone(),
-            };
-            return Some((name.to_uppercase(), pos));
+    /// A ship's name by its combat id.
+    fn ship_name(&self, id: usize) -> String {
+        match id {
+            universe_sim::PLAYER => "YOU".into(),
+            _ if universe_sim::world::turrets::turret_of(id).is_some() => "SAM TURRET".into(),
+            _ => self.v.crafts.get(id - 1).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
         }
-        let sys = self.u.ship_system();
-        let station = sys.station()?;
-        let mut positions = Vec::new();
-        sys.positions(self.u.world.time, &mut positions);
-        Some((String::new(), positions[station]))
     }
 
     fn build_view(&mut self) {
         let origin = match self.mode {
-            Mode::Pilot => self.u.ship_system,
-            Mode::Observer => self.observer.origin(&self.u),
+            Mode::Pilot => self.v.ship_system,
+            Mode::Observer => self.observer.origin(&self.v),
         };
-        let system = self.u.system(origin);
+        let system = self.charts.system(origin);
         let mut positions = std::mem::take(&mut self.view.positions);
-        system.positions(self.u.world.time, &mut positions);
-        let ship_pos = self.u.ship.position + self.u.world.galaxy.offset(origin, self.u.ship_system);
-        let reference = (origin == self.u.ship_system).then(|| system.dominant(ship_pos, &positions));
+        system.positions(self.v.time, &mut positions);
+        let ship_pos = self.v.ship.position + self.charts.galaxy.offset(origin, self.v.ship_system);
+        let reference = (origin == self.v.ship_system).then(|| system.dominant(ship_pos, &positions));
         self.view = View { origin, system, positions, ship_pos, reference };
     }
 
@@ -548,7 +551,7 @@ impl App {
         match self.observer.focus {
             Focus::Body { body, .. } => self.view.positions[body],
             Focus::Ship => self.view.ship_pos,
-            Focus::Craft(i) => self.u.crafts.get(i).map_or(DVec3::ZERO, |c| c.ship.position),
+            Focus::Craft(i) => self.v.crafts.get(i).map_or(DVec3::ZERO, |c| c.ship.position),
         }
     }
 
@@ -558,20 +561,21 @@ impl App {
                 let focus = self.focus_position();
                 if let (true, Some((prev_origin, prev_pos))) = (focus_changed, self.prev_focus) {
                     // Glide from the old target: express it in the new frame first.
-                    let old = prev_pos + self.observer.transition + self.u.world.galaxy.offset(self.view.origin, prev_origin);
+                    let old = prev_pos + self.observer.transition + self.charts.galaxy.offset(self.view.origin, prev_origin);
                     self.observer.transition = old - focus;
                 }
                 self.observer.transition *= (-4.0 * dt).exp();
                 self.prev_focus = Some((self.view.origin, focus));
                 self.camera = self.observer.camera(focus);
             }
-            Mode::Pilot if !self.u.crew.seated() => {
-                let (position, orientation) = self.u.pilot_eye(self.view.ship_pos);
+            Mode::Pilot if !self.v.crew.seated() => {
+                let sys = self.charts.system(self.v.ship_system);
+                let (position, orientation) = self.v.crew.eye(&sys, &self.v.ship, self.v.time, &self.view.positions, self.view.ship_pos);
                 self.camera = Camera { position, orientation: orientation.as_quat(), near: 0.05, ..Default::default() };
                 self.prev_focus = None;
             }
             Mode::Pilot => {
-                let ship = &self.u.ship;
+                let ship = &self.v.ship;
                 let orientation = ship.orientation.as_quat();
                 let docked = matches!(ship.state, ShipState::Landed { body, .. } if self.view.system.bodies[body].kind == universe_sim::BodyKind::Station);
                 // Docked: the ship is inside the slot, so back off far enough to see the station.
@@ -605,22 +609,24 @@ impl Game for App {
         let market_was_open = self.market.is_some();
         if market_was_open {
             market::input(self, ctx);
-        } else if !map_was_open && self.nav_map.is_none() && self.mode == Mode::Pilot && self.u.crew.seated() && ctx.input.pressed(KeyCode::KeyG) {
+        } else if !map_was_open && self.nav_map.is_none() && self.mode == Mode::Pilot && self.v.crew.seated() && ctx.input.pressed(KeyCode::KeyG) {
             self.market = Some(market::MarketView::open(self));
             sound::click(ctx, 900.0);
         }
         let (controls, focus_changed) = match self.mode {
             _ if map_was_open || self.nav_map.is_some() || market_was_open || self.market.is_some() => (Controls::default(), false),
             Mode::Pilot => (self.pilot_input(ctx), false),
-            Mode::Observer => (Controls::default(), self.observer.input(ctx, &mut self.u)),
+            Mode::Observer => (Controls::default(), self.observer.input(ctx, &self.v, &self.charts)),
         };
         if focus_changed {
             sound::click(ctx, 1400.0);
         }
-        let tick = std::time::Instant::now();
-        let ammo = self.u.ship.ammo;
-        self.last_step = universe_prof::time("update/sim (step_world)", || self.u.step_world(dt, self.warp(), &controls));
-        if self.u.ship.ammo < ammo {
+        // The world: our commands are in; it runs a frame, and we take its view.
+        let ammo = self.v.ship.ammo;
+        universe_prof::time("update/sim (engine tick)", || self.engine.tick(dt, self.warp(), &controls));
+        self.v = self.engine.view();
+        let v = self.v.clone();
+        if v.ship.ammo < ammo {
             sound::gunshot(ctx);
         }
         // Sparks where hits landed; a tick when ours do.
@@ -629,7 +635,7 @@ impl Game for App {
         }
         self.sparks.retain(|s| s.age < hud::SPARK_TIME);
         let mut ours = false;
-        for i in &self.u.world.impacts {
+        for i in &v.impacts {
             let mine = i.by == universe_sim::PLAYER;
             ours |= mine && !i.laser;
             if self.sparks.len() < 200 {
@@ -639,40 +645,32 @@ impl Game for App {
         if ours {
             sound::hit_confirmed(ctx);
         }
-        let ms = tick.elapsed().as_secs_f32() * 1000.0;
-        self.sim_ms = if self.sim_ms == 0.0 { ms } else { self.sim_ms + (ms - self.sim_ms) * 0.05 };
+        self.sim_ms = v.sim_ms;
+        self.last_step = v.last_step;
         universe_prof::time("update/events", || self.handle_events(ctx));
         universe_prof::time("update/globes", || self.build_globes());
-        if self.route_labels_for != self.u.avionics.route.stops {
-            self.route_labels_for = self.u.avionics.route.stops.clone();
-            self.route_labels = self.route_labels_for.clone().into_iter().map(|s| self.u.stop_name(s).to_uppercase()).collect();
+        if self.route_labels_for != v.avionics.route.stops {
+            self.route_labels_for = v.avionics.route.stops.clone();
+            self.route_labels = self.route_labels_for.iter().map(|&s| universe_sim::route::stop_name(&self.charts.system(s.system), s).to_uppercase()).collect();
         }
-        self.approach = universe_prof::time("update/approach", || self.u.approach());
-        self.following = self.u.following_status();
-        // The planner flies the autopilot ahead through the physics, which
-        // takes 1-2 ms near the target and ~10 ms for a landing from orbit:
-        // rebuild it 10 times a second, less often when it's dearer (keeping
-        // it to ~5% of the time, the countdown easing in between), or at once
-        // when the clearance, target or autopilot phase changes.
+        // What the ship's computers make of things (they run in the engine).
+        self.approach = v.approach.clone();
+        self.following = v.following.clone();
         self.plan_age += ctx.dt;
-        let key = self.u.avionics.clearance;
-        let changed = key.map(|c| (c.target, c.autopilot, c.phase)) != self.plan_for.map(|c| (c.target, c.autopilot, c.phase));
-        let every = (self.plan_cost * 20.0).clamp(0.1, 1.0);
-        if changed || self.plan_age >= every || !self.u.ship.is_flying() {
-            let start = std::time::Instant::now();
-            let new = universe_prof::time("update/flight plan", || self.u.plan());
-            let same_target = key.map(|c| c.target) == self.plan_for.map(|c| c.target);
-            // Ease from what's on screen now (itself maybe part-way from the one before).
-            self.plan_prev = if same_target && new.is_some() { self.plan.take() } else { None };
-            self.plan = new;
-            self.plan_cost = start.elapsed().as_secs_f32();
+        if v.plan_serial != self.plan_serial {
+            // A new plan: ease from what's on screen now (itself maybe part-way
+            // from the one before), if it's for the same target.
+            let same_target = v.plan.as_ref().zip(self.plan.as_ref()).is_some_and(|(a, b)| a.center.distance(b.center) < 1.0);
+            self.plan_prev = if same_target { self.plan.take() } else { None };
+            self.plan = v.plan.clone();
+            self.plan_serial = v.plan_serial;
             self.plan_age = 0.0;
-            self.plan_for = key;
         }
-        let every = (self.plan_cost * 20.0).clamp(0.1, 1.0);
-        self.plan_blend = (self.plan_age / every).min(1.0);
+        self.plan_cost = v.plan_cost;
+        self.plan_every = v.plan_every;
+        self.plan_blend = (self.plan_age / self.plan_every).min(1.0);
         let raw = self.plan.as_ref().filter(|p| p.arrives).map(|p| {
-            let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.world.time - p.start);
+            let left = p.points.last().map_or(0.0, |x| x.time) - (v.time - p.start);
             left / self.warp().max(1.0)
         });
         self.eta_shown = match (raw, self.eta_shown) {
@@ -682,29 +680,15 @@ impl Game for App {
             }
             (raw, _) => raw,
         };
-        self.nav_marker = universe_prof::time("update/nav marker", || self.find_nav_marker());
-        self.reach = self.u.pilot_reach();
-        self.turrets = universe_prof::time("update/turrets", || self.u.world.turret_motions(self.view.origin).into_iter().map(|(t, p, _)| (t, p)).collect());
-        self.docked_market = self.u.docked_market().is_some();
-        self.contacts = universe_prof::time("update/radar contacts", || self.u.contacts());
-        if self.u.avionics.contact.is_some() && self.u.locked_contact_in(&self.contacts).is_none() {
-            self.u.avionics.contact = None;
-            self.say("RADAR CONTACT LOST".into());
-        }
-        let contacts = std::mem::take(&mut self.contacts);
-        self.fire = universe_prof::time("update/fire control", || self.u.fire_control(&contacts));
-        // The collision warning, five times a second.
-        self.collision_age += ctx.dt;
-        if !self.u.avionics.collision_warning {
-            self.collision = None;
-        } else if self.collision_age >= 0.2 {
-            self.collision_age = 0.0;
-            let start = std::time::Instant::now();
-            self.collision = universe_prof::time("update/collision warning", || self.u.collision_warning(&contacts));
-            self.collision_cost = start.elapsed().as_secs_f32();
-            self.collision_at = self.u.world.time;
-        }
-        self.contacts = contacts;
+        self.nav_marker = v.nav_marker.clone();
+        self.reach = v.reach;
+        self.turrets = if self.view.origin == v.ship_system { v.turrets.clone() } else { Vec::new() };
+        self.docked_market = v.docked_market.is_some();
+        self.contacts = v.contacts.clone();
+        self.fire = v.fire;
+        self.collision = v.collision.clone();
+        self.collision_cost = v.collision_cost;
+        self.collision_at = v.collision_at;
         self.hit_age += ctx.dt;
         self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
         universe_prof::time("update/build view", || self.build_view());
@@ -734,13 +718,13 @@ impl Game for App {
 
 /// True when the ship is visible as a model rather than being the camera.
 pub fn ship_visible(app: &App) -> bool {
-    let view = match app.u.crew.place {
+    let view = match app.v.crew.place {
         _ if app.mode == Mode::Observer => true,
         universe_sim::world::Place::Seat => app.chase_cam,
         universe_sim::world::Place::Aboard { .. } => false, // the interior instead
         universe_sim::world::Place::Outside { .. } => true,
     };
-    !matches!(app.u.ship.state, ShipState::Destroyed { .. } | ShipState::Transit { .. }) && view
+    !matches!(app.v.ship.state, ShipState::Destroyed { .. } | ShipState::Transit { .. }) && view
 }
 
 /// The galaxy's stars seen from a system: the system, and each star's direction and colour.

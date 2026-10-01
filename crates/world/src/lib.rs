@@ -9,6 +9,7 @@
 //! computer wants to go, only at what it commands the devices to do.
 //! Deterministic and headless; knows nothing about rendering.
 
+pub mod charts;
 pub mod collisions;
 pub mod crew;
 pub mod damage;

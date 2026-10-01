@@ -82,6 +82,7 @@ pub struct GalaxyStar {
     pub seed: u64,
 }
 
+#[derive(Clone)]
 pub struct Galaxy {
     pub seed: u64,
     pub stars: Vec<GalaxyStar>,

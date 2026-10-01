@@ -10,6 +10,7 @@
 mod combat;
 mod commerce;
 mod contacts;
+pub mod engine;
 mod follow;
 pub mod recorder;
 mod save;
@@ -37,4 +38,5 @@ pub use contacts::{Contact, LOCK_BEAM};
 pub use follow::FollowKind;
 pub use save::UniverseSave;
 pub use traffic::{CrashReport, Craft, TrafficStats};
+pub use engine::{Command, CraftView, EngineHandle, View};
 pub use universe::Universe;

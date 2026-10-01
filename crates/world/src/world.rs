@@ -206,15 +206,14 @@ impl World {
         if let Some(sys) = self.systems.get(&i) {
             return sys.clone();
         }
-        let star = &self.galaxy.stars[i];
-        let mut sys = StarSystem::generate(i, star);
-        let links = self.gate_links_of(i);
-        if !links.is_empty() {
-            sys.add_gates(&links, star.seed);
-        }
-        let sys = Arc::new(sys);
+        let sys = Arc::new(crate::charts::generate(&self.galaxy, &self.gate_links, i));
         self.systems.insert(i, sys.clone());
         sys
+    }
+
+    /// The charts of this galaxy, to share (with the client).
+    pub fn charts(&self) -> crate::charts::Charts {
+        crate::charts::Charts::new(self.galaxy.seed, self.galaxy.clone(), self.gate_links.clone(), self.goods.clone(), self.home_system)
     }
 
     /// The stars nearest to star `i`, nearest first (see `NEIGHBOURS`).

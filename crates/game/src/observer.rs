@@ -3,13 +3,14 @@ use std::f64::consts::FRAC_PI_2;
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::{DVec3, Vec3};
 use universe_engine::{Camera, Context, KeyCode, MouseButton};
-use universe_sim::Universe;
+use universe_sim::world::charts::Charts;
+use universe_sim::View;
 
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Focus {
     Body { system: usize, body: usize },
     Ship,
-    /// One of the other ships (index into `Universe::crafts`).
+    /// One of the other ships (index into the view's crafts).
     Craft(usize),
 }
 
@@ -36,7 +37,7 @@ impl Observer {
     }
 
     /// The galaxy index of the system this camera is looking at.
-    pub fn origin(&self, u: &Universe) -> usize {
+    pub fn origin(&self, u: &View) -> usize {
         match self.focus {
             Focus::Body { system, .. } => system,
             Focus::Ship => u.ship_system,
@@ -44,15 +45,15 @@ impl Observer {
         }
     }
 
-    pub fn focus_radius(&self, u: &mut Universe) -> f64 {
+    pub fn focus_radius(&self, charts: &Charts) -> f64 {
         match self.focus {
-            Focus::Body { system, body } => u.system(system).bodies[body].rail.radius,
+            Focus::Body { system, body } => charts.system(system).bodies[body].rail.radius,
             Focus::Ship | Focus::Craft(_) => SHIP_SIZE,
         }
     }
 
     /// Handle observer input. Returns true if the focus target changed.
-    pub fn input(&mut self, ctx: &Context, u: &mut Universe) -> bool {
+    pub fn input(&mut self, ctx: &Context, u: &View, charts: &Charts) -> bool {
         let input = &ctx.input;
         if input.button_down(MouseButton::Left) || input.button_down(MouseButton::Right) {
             self.yaw -= input.mouse_delta.x as f64 * 0.006;
@@ -67,7 +68,7 @@ impl Observer {
 
         let old = self.focus;
         let origin = self.origin(u);
-        let sys = u.system(origin);
+        let sys = charts.system(origin);
         let current_body = match self.focus {
             Focus::Body { body, .. } => body,
             Focus::Ship | Focus::Craft(_) => 0,
@@ -82,7 +83,7 @@ impl Observer {
         }
         if input.pressed(KeyCode::KeyN) || input.pressed(KeyCode::KeyB) {
             let (base, index) = self.star_cycle.unwrap_or((origin, usize::MAX));
-            let list = u.world.galaxy.nearest(base, 12);
+            let list = charts.galaxy.nearest(base, 12);
             let index = match (input.pressed(KeyCode::KeyN), index) {
                 (true, usize::MAX) => 0,
                 (true, i) => (i + 1) % list.len(),
@@ -93,7 +94,7 @@ impl Observer {
             self.focus = Focus::Body { system: list[index], body: 0 };
         }
         if input.pressed(KeyCode::Home) {
-            self.focus = Focus::Body { system: u.world.home_system, body: 0 };
+            self.focus = Focus::Body { system: charts.home_system, body: 0 };
             self.star_cycle = None;
         }
         if input.pressed(KeyCode::KeyT) && !u.crafts.is_empty() {
@@ -112,7 +113,7 @@ impl Observer {
             self.star_cycle = None;
         }
 
-        let min = self.focus_radius(u) * 1.2;
+        let min = self.focus_radius(charts) * 1.2;
         self.distance = self.distance.clamp(min, MAX_DISTANCE);
         self.focus != old
     }

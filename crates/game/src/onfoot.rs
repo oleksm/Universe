@@ -45,7 +45,7 @@ const SEAT_C: Color = Color::hex(0x60ff90);
 /// their edges, doorways between the rooms, the cockpit's windows (open to
 /// space), the pilot's seat and console, and the hatch.
 pub fn interior(frame: &mut Frame, app: &App) {
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let at = |p: DVec3| app.view.ship_pos + ship.orientation * p;
     let top = DECK + HEADROOM;
     let quad = |frame: &mut Frame, a: DVec3, b: DVec3, c: DVec3, d: DVec3, fill: Option<Color>| {
@@ -125,12 +125,12 @@ pub fn interior(frame: &mut Frame, app: &App) {
 
 /// The ramp down from the hatch to the ground, while the pilot is outside.
 pub fn ramp(frame: &mut Frame, app: &App) {
-    let Place::Outside { body, .. } = app.u.crew.place else { return };
-    let ship = &app.u.ship;
+    let Place::Outside { body, .. } = app.v.crew.place else { return };
+    let ship = &app.v.ship;
     let b = &app.view.system.bodies[body];
     let center = app.view.positions[body];
     let at = |p: DVec3| app.view.ship_pos + ship.orientation * p;
-    let t = app.u.world.time;
+    let t = app.v.time;
     let ground = |p: DVec3| {
         let w = at(p);
         let dir = (w - center).normalize();
@@ -150,7 +150,7 @@ pub fn ramp(frame: &mut Frame, app: &App) {
 pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach: Option<Reach>) {
     const HUD: Color = Color::hex(0x30ff60);
     const DIM: Color = Color::hex(0x178a38);
-    match app.u.crew.place {
+    match app.v.crew.place {
         Place::Seat => {}
         Place::Aboard { position, .. } => {
             let room = ["COCKPIT", "CORRIDOR", "CABIN"]
@@ -159,7 +159,7 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
                 .find(|(_, r)| position.x >= r.x0 && position.x <= r.x1 && position.z >= r.z0 && position.z <= r.z1)
                 .map_or("ABOARD", |(n, _)| n);
             lines.push((format!("ON FOOT - {room}"), HUD));
-            let ship = &app.u.ship;
+            let ship = &app.v.ship;
             let state = if ship.is_flying() { format!("SHIP FLYING  {}", fmt::speed(ship.velocity.length())) } else { "SHIP RESTING".into() };
             lines.push((state, DIM));
             lines.push(("WASD WALK  MOUSE/ARROWS LOOK  F USE".into(), DIM));
@@ -172,7 +172,7 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
             lines.push((format!("ON FOOT - {} SURFACE", b.name.to_uppercase()), HUD));
             lines.push((format!("GRAVITY {g:.2} M/S2 ({:.2} G)", g / 9.81), DIM));
             let ship_at = app.view.ship_pos;
-            let me = app.view.positions[body] + b.rotation(app.u.world.time) * position;
+            let me = app.view.positions[body] + b.rotation(app.v.time) * position;
             lines.push((format!("SHIP {}", fmt::distance(me.distance(ship_at))), DIM));
             lines.push(("WASD WALK  SHIFT RUN  SPACE JUMP  F USE".into(), DIM));
         }

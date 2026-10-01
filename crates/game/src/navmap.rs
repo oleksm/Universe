@@ -40,38 +40,38 @@ pub struct NavMap {
 
 /// Systems you can browse: the ship's first, then the gate network.
 fn browsable(app: &App) -> Vec<usize> {
-    let mut v = vec![app.u.ship_system];
-    let mut net: Vec<usize> = app.u.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
+    let mut v = vec![app.v.ship_system];
+    let mut net: Vec<usize> = app.charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
     net.sort();
     net.dedup();
-    v.extend(net.into_iter().filter(|&s| s != app.u.ship_system));
+    v.extend(net.into_iter().filter(|&s| s != app.v.ship_system));
     v
 }
 
 impl NavMap {
     pub fn open(app: &mut App) -> Self {
-        let system = app.u.ship_system();
-        let view = app.u.ship_system;
+        let system = app.charts.system(app.v.ship_system);
+        let view = app.v.ship_system;
         let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None, defended: Vec::new() };
         map.refresh(app);
         // Start on the current target if there is one.
-        if let Some(t) = app.u.avionics.nav_target {
+        if let Some(t) = app.v.avionics.nav_target {
             map.selected = map.entries.iter().position(|e| e.target == t).unwrap_or(0);
         }
         map
     }
 
     fn here(&self, app: &App) -> bool {
-        self.view == app.u.ship_system
+        self.view == app.v.ship_system
     }
 
     fn refresh(&mut self, app: &mut App) {
-        self.system = app.u.system(self.view);
-        self.system.positions(app.u.world.time, &mut self.positions);
+        self.system = app.charts.system(self.view);
+        self.system.positions(app.v.time, &mut self.positions);
         let here = self.here(app);
-        let ship = app.u.ship.position;
+        let ship = app.v.ship.position;
         self.ship_body = here.then(|| self.system.dominant(ship, &self.positions));
-        self.defended = app.u.world.turret_motions(self.view).into_iter().map(|(t, _, _)| t.facility).collect();
+        self.defended = universe_sim::world::turrets::turrets(app.charts.seed, self.view, &self.system).into_iter().map(|t| t.facility).collect();
         let mut entries = Vec::new();
         for (i, b) in self.system.bodies.iter().enumerate() {
             if b.kind == BodyKind::Station {
@@ -87,14 +87,14 @@ impl NavMap {
             let on = &self.system.bodies[p.body].name;
             entries.push((NavTarget::Spaceport(i), format!("{} ({on})", p.name), "SPACEPORT"));
         }
-        let away = (!here).then(|| app.u.distance_ly(app.u.ship_system, self.view));
+        let away = (!here).then(|| app.charts.distance_ly(app.v.ship_system, self.view));
         self.entries = entries
             .into_iter()
             .map(|(target, name, kind)| {
                 // Elsewhere, everything is "that many light years away".
                 let distance = match away {
                     Some(_) => f64::INFINITY,
-                    None => app.u.target_position(target).map_or(f64::INFINITY, |p| p.distance(ship)),
+                    None => target.position(&self.system, app.v.time, &self.positions).map_or(f64::INFINITY, |p| p.distance(ship)),
                 };
                 Entry { target, name: name.to_uppercase(), kind, distance }
             })
@@ -131,27 +131,27 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         crate::sound::click(ctx, 1200.0);
     }
     if input.pressed(KeyCode::Delete) {
-        app.u.set_nav_target(None);
+        app.engine.send(universe_sim::Command::SetNavTarget(None));
     }
     // Route editing.
     if input.pressed(KeyCode::KeyA)
         && let Some(e) = map.entries.get(map.selected)
         && e.kind != "GATE"
     {
-        app.u.avionics.route.stops.push(universe_sim::Stop { system: map.view, target: e.target });
+        app.engine.send(universe_sim::Command::RoutePush(universe_sim::Stop { system: map.view, target: e.target }));
         crate::sound::click(ctx, 1500.0);
     }
-    if input.pressed(KeyCode::Backspace) && app.u.avionics.route.pop().is_some() {
+    if input.pressed(KeyCode::Backspace) && !app.v.avionics.route.stops.is_empty() {
+        app.engine.send(universe_sim::Command::RoutePop);
         crate::sound::click(ctx, 700.0);
     }
     if input.pressed(KeyCode::KeyC) {
-        app.u.avionics.route.clear();
+        app.engine.send(universe_sim::Command::RouteClear);
         crate::sound::click(ctx, 500.0);
     }
     if input.pressed(KeyCode::KeyG) {
         // A reproducible settler route: each press loads the next seed.
-        app.u.avionics.route.clear();
-        app.u.avionics.route.stops = app.u.settler_route(map.settler_seed, 10);
+        app.engine.send(universe_sim::Command::RouteRandom { seed: map.settler_seed, stops: 10 });
         map.settler_seed += 1;
         crate::sound::chime(ctx);
     }
@@ -160,7 +160,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         && let Some(e) = map.entries.get(map.selected)
     {
         if map.here(app) {
-            app.u.set_nav_target(Some(e.target));
+            app.engine.send(universe_sim::Command::SetNavTarget(Some(e.target)));
             return false;
         }
         app.say("LOCK TARGETS IN THIS SYSTEM - OR ADD TO THE ROUTE (A)".into());
@@ -181,16 +181,16 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     let mut y = 16.0;
     let systems = browsable(app);
     let k = systems.iter().position(|&s| s == map.view).unwrap_or(0) + 1;
-    let whose = if map.here(app) { "  (YOU ARE HERE)".to_string() } else { format!("  {:.1} LY AWAY", app.u.distance_ly(app.u.ship_system, map.view)) };
+    let whose = if map.here(app) { "  (YOU ARE HERE)".to_string() } else { format!("  {:.1} LY AWAY", app.charts.distance_ly(app.v.ship_system, map.view)) };
     let title = format!("NAVIGATION - {} SYSTEM{whose}   < {k}/{} >", map.system.name.to_uppercase(), systems.len());
     frame.text(Vec2::new(16.0, y), &title, TEXT);
     y += line * 2.0;
     if map.entries.is_empty() {
         frame.text(Vec2::new(16.0, y), "NOTHING TO DOCK OR LAND AT HERE", DIM);
     }
-    let route_has = |t: NavTarget| app.u.avionics.route.stops.iter().any(|s| s.system == map.view && s.target == t);
+    let route_has = |t: NavTarget| app.v.avionics.route.stops.iter().any(|s| s.system == map.view && s.target == t);
     for (i, e) in map.entries.iter().enumerate() {
-        let locked = map.here(app) && app.u.avionics.nav_target == Some(e.target);
+        let locked = map.here(app) && app.v.avionics.nav_target == Some(e.target);
         let c = if i == map.selected { SELECT } else if locked { LOCKED } else { TEXT };
         let cursor = if i == map.selected { ">" } else { " " };
         let mark = if locked { "*" } else if route_has(e.target) { "+" } else { " " };
@@ -203,7 +203,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
 
     // The route.
     y += line;
-    let r = &app.u.avionics.route;
+    let r = &app.v.avionics.route;
     let state = if r.active { "FLYING - K TO STOP" } else if r.stops.is_empty() { "EMPTY" } else { "K IN FLIGHT TO START" };
     frame.text(Vec2::new(16.0, y), &format!("ROUTE ({} STOPS) - {state}", r.stops.len()), TEXT);
     y += line;

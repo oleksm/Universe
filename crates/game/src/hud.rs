@@ -35,7 +35,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     status(app, &mut lines);
     match app.mode {
         Mode::Observer => observer_info(app, &mut lines),
-        Mode::Pilot if !app.u.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),
+        Mode::Pilot if !app.v.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),
         Mode::Pilot => {
             pilot_info(app, &mut lines);
             follow_info(app, &mut lines);
@@ -52,7 +52,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     // Leave room for the phase banner across the top while docking/landing.
     let top = if app.mode == Mode::Pilot && app.approach.is_some() { 22.0 } else { 4.0 };
     let mut y = top;
-    if app.mode == Mode::Pilot && app.u.crew.seated() {
+    if app.mode == Mode::Pilot && app.v.crew.seated() {
         y += action_grid(frame, app, Vec2::new(4.0, top)) + 4.0;
     }
     for (text, c) in &lines {
@@ -80,8 +80,8 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         }
     }
 
-    if let ShipState::Transit { to, remaining, .. } = &app.u.ship.state {
-        let name = universe_sim::names::star_name(app.u.world.galaxy.stars[*to].seed).to_uppercase();
+    if let ShipState::Transit { to, remaining, .. } = &app.v.ship.state {
+        let name = universe_sim::names::star_name(app.charts.galaxy.stars[*to].seed).to_uppercase();
         let text = format!("GATE TRANSIT TO {name} - ARRIVING IN {remaining:.1} S");
         frame.text_boxed(((size - text_size(&text)) / 2.0).floor(), &text, AMBER, PANEL);
     }
@@ -91,7 +91,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
 }
 
 fn status(app: &App, lines: &mut Vec<(String, Color)>) {
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let mode = match app.mode {
         Mode::Observer => "OBSERVER",
         Mode::Pilot if ship.armed => "COMBAT",
@@ -105,18 +105,18 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
     } else {
         format!("TIME {}", fmt::warp(app.warp()))
     };
-    lines.push((format!("{mode}  {}  {warp}", fmt::clock(app.u.world.time)), top));
+    lines.push((format!("{mode}  {}  {warp}", fmt::clock(app.v.time)), top));
     let sys = &app.view.system;
-    let home = if app.view.origin == app.u.world.home_system { "  HOME" } else { "" };
+    let home = if app.view.origin == app.charts.home_system { "  HOME" } else { "" };
     lines.push((
         format!("SYSTEM {} ({}) {} PLANETS{home}", sys.name.to_uppercase(), sys.class.letter(), sys.planet_count()),
         DIM,
     ));
-    if !app.u.crafts.is_empty() {
-        let here = app.u.crafts.iter().filter(|c| c.system == app.view.origin).count();
-        let t = &app.u.traffic;
+    if !app.v.crafts.is_empty() {
+        let here = app.v.crafts.iter().filter(|c| c.system == app.view.origin).count();
+        let t = &app.v.traffic;
         lines.push((
-            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  COLLISIONS {}  TRADES {}  KILLS {}  POSSES {}/{}", app.u.crafts.len(), t.stops, t.transits, t.crashes, t.collision_losses, t.trades, t.shot_down, t.defences, t.aggressors_downed),
+            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  COLLISIONS {}  TRADES {}  KILLS {}  POSSES {}/{}", app.v.crafts.len(), t.stops, t.transits, t.crashes, t.collision_losses, t.trades, t.shot_down, t.defences, t.aggressors_downed),
             DIM,
         ));
     }
@@ -130,24 +130,10 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
             ship_readout(app, lines);
         }
         Focus::Craft(i) => {
-            let Some(c) = app.u.crafts.get(i) else { return };
-            let r = &c.avionics.route;
-            let stage = match &c.ship.state {
-                ShipState::Landed { .. } if r.dwell_until.is_some() => "AT A STOP",
-                ShipState::Landed { .. } => "DEPARTING",
-                ShipState::Transit { .. } => "GATE TRANSIT",
-                ShipState::Destroyed { .. } => "DESTROYED",
-                ShipState::Flying if c.ship.hyperdrive => "HYPERDRIVE",
-                ShipState::Flying if r.departing => "CLIMBING",
-                ShipState::Flying => match c.avionics.clearance.map(|x| x.target) {
-                    Some(universe_sim::NavTarget::Station(_)) => "DOCKING",
-                    Some(universe_sim::NavTarget::Spaceport(_)) => "LANDING",
-                    Some(universe_sim::NavTarget::Gate(_)) => "GATE RUN",
-                    None => "UNDERWAY",
-                },
-            };
-            lines.push((format!("FOCUS {}  ({}/{})  T NEXT", c.name.to_uppercase(), i + 1, app.u.crafts.len()), HUD));
-            lines.push((format!("ROUTE STOP {}/{}  {stage}", r.next + 1, r.stops.len()), DIM));
+            let Some(c) = app.v.crafts.get(i) else { return };
+            let stage = c.stage;
+            lines.push((format!("FOCUS {}  ({}/{})  T NEXT", c.name.to_uppercase(), i + 1, app.v.crafts.len()), HUD));
+            lines.push((format!("ROUTE STOP {}/{}  {stage}", c.route_next + 1, c.route_stops), DIM));
             lines.push((format!("SPEED {}", fmt::speed(c.ship.velocity.length())), DIM));
         }
         Focus::Body { body, .. } => {
@@ -158,8 +144,8 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
             if let Some(o) = &b.rail.orbit {
                 lines.push((format!("ORBIT {}  PERIOD {}", fmt::distance(o.semi_major_axis), fmt::duration(o.period())), DIM));
             }
-            if body == 0 && app.view.origin != app.u.ship_system {
-                let ly = app.u.distance_ly(app.u.ship_system, app.view.origin);
+            if body == 0 && app.view.origin != app.v.ship_system {
+                let ly = app.charts.distance_ly(app.v.ship_system, app.view.origin);
                 lines.push((format!("{ly:.1} LY FROM SHIP"), DIM));
             }
         }
@@ -167,13 +153,13 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
 }
 
 fn ship_readout(app: &App, lines: &mut Vec<(String, Color)>) {
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     if let Some(r) = app.view.reference {
         let b = &app.view.system.bodies[r];
         let offset = app.view.ship_pos - app.view.positions[r];
         // Height above the ground actually under us (terrain, or sea level).
-        let altitude = offset.length() - b.surface_radius_at(app.view.positions[r], app.view.ship_pos, app.u.world.time);
-        let mut rel_vel = ship.velocity - app.view.system.velocity(r, app.u.world.time);
+        let altitude = offset.length() - b.surface_radius_at(app.view.positions[r], app.view.ship_pos, app.v.time);
+        let mut rel_vel = ship.velocity - app.view.system.velocity(r, app.v.time);
         // Close to the ground, speed relative to the rotating surface is what matters.
         let surface = altitude < 0.05 * b.rail.radius;
         if surface {
@@ -191,7 +177,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     ship_readout(app, lines);
     radar_info(app, lines);
     collision_info(app, lines);
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
     lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
     lines.push((
@@ -201,13 +187,13 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
             ship.fuel / 1000.0,
             ship.cargo / 1000.0,
             ship.main_accel(),
-            app.u.credits
+            app.v.credits
         ),
         DIM,
     ));
     let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
     let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
-    let now = app.u.world.time;
+    let now = app.v.time;
     if ship.aggressed(now) {
         let left = (ship.aggressed_until - now) / app.warp().max(1.0);
         lines.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
@@ -253,7 +239,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         ShipState::Destroyed { respawn_in } => lines.push((format!("DESTROYED  RESPAWN IN {respawn_in:.0}"), RED)),
         ShipState::Transit { to, remaining, .. } => {
-            let name = universe_sim::names::star_name(app.u.world.galaxy.stars[*to].seed).to_uppercase();
+            let name = universe_sim::names::star_name(app.charts.galaxy.stars[*to].seed).to_uppercase();
             lines.push((format!("GATE TRANSIT TO {name}  {remaining:.1} S"), AMBER));
         }
         ShipState::Flying => {}
@@ -265,7 +251,7 @@ fn collision_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let Some(p) = &app.collision else { return };
     match &p.collision {
         Some(c) => {
-            let left = (c.time - (app.u.world.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
+            let left = (c.time - (app.v.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
             lines.push((format!("COLLISION {} IN {}  AT {}", c.what.to_uppercase(), fmt::countdown(left), fmt::speed(c.speed)), RED));
         }
         None if p.clear => lines.push((format!("PATH CLEAR {}", fmt::distance(universe_sim::avionics::collision::RANGE)), DIM)),
@@ -276,10 +262,10 @@ fn collision_info(app: &App, lines: &mut Vec<(String, Color)>) {
 /// The radar: how many ships it sees, and the locked one's range, closing
 /// speed and what its transponder says.
 fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    if !app.u.ship.is_flying() && app.contacts.is_empty() {
+    if !app.v.ship.is_flying() && app.contacts.is_empty() {
         return;
     }
-    let Some(c) = app.u.locked_contact_in(&app.contacts) else {
+    let Some(c) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) else {
         let n = app.contacts.len();
         if n > 0 {
             let s = if n == 1 { "" } else { "S" };
@@ -287,7 +273,7 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         return;
     };
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let closing = c.blip.closing_speed(ship.position, ship.velocity);
     let trend = if closing >= 0.0 { "CLOSING" } else { "OPENING" };
     let (tag, col) = if c.aggressed { ("  AGGRESSED", RED) } else { ("", crate::scene::TRAFFIC) };
@@ -317,13 +303,13 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
         lines.push((format!("     TARGET HULL [{bar}] {:3.0}%", c.hull * 100.0), col));
     }
     // Fire control (combat mode): tracking, then the gun's lead.
-    if !app.u.ship.armed {
+    if !app.v.ship.armed {
         return;
     }
     match &app.fire {
         Some((track, _)) if !track.ready() => lines.push((format!("     FIRE CONTROL: TRACKING {:3.0}%", track.quality() * 100.0), AMBER)),
         Some((_, Some(sol))) => {
-            let ship = &app.u.ship;
+            let ship = &app.v.ship;
             let state = if gun_on(ship, sol.aim) {
                 "GUN ON TARGET"
             } else if within_gimbal(ship, sol.aim) {
@@ -346,7 +332,7 @@ fn follow_info(app: &App, lines: &mut Vec<(String, Color)>) {
 
 /// The route: which stop we're on and what the route autopilot is doing.
 fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    let r = &app.u.avionics.route;
+    let r = &app.v.avionics.route;
     if r.stops.is_empty() {
         return;
     }
@@ -356,16 +342,16 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
         lines.push((format!("ROUTE {}/{} -> {name}", n + 1, r.stops.len()), DIM));
         return;
     }
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let stage = if let Some(until) = r.dwell_until {
-        format!("AT STOP - LEAVING IN {}", fmt::countdown((until - app.u.world.time) / app.warp().max(1.0)))
+        format!("AT STOP - LEAVING IN {}", fmt::countdown((until - app.v.time) / app.warp().max(1.0)))
     } else if r.departing {
         "CLIMBING".into()
     } else if matches!(ship.state, ShipState::Transit { .. }) {
         "GATE TRANSIT".into()
     } else if ship.hyperdrive {
         "HYPERDRIVE".into()
-    } else if let Some(c) = app.u.avionics.clearance {
+    } else if let Some(c) = app.v.avionics.clearance {
         match c.target {
             universe_sim::NavTarget::Station(_) => "DOCKING".into(),
             universe_sim::NavTarget::Spaceport(_) => "LANDING".into(),
@@ -381,8 +367,8 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
 fn approach_info(app: &App, lines: &mut Vec<(String, Color)>) {
     match &app.approach {
         None => {
-            if app.u.ship.is_flying()
-                && app.u.avionics.nav_target.is_some()
+            if app.v.ship.is_flying()
+                && app.v.avionics.nav_target.is_some()
                 && let Some((name, _)) = &app.nav_marker
             {
                 lines.push((format!("NAV {name}"), DIM));
@@ -398,7 +384,7 @@ fn approach_info(app: &App, lines: &mut Vec<(String, Color)>) {
 /// Waiting our turn: for a pad (holding over the port), or for a station's
 /// or gate's corridor (one ship at a time), and how many pilots are ahead.
 fn queue_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    let a = &app.u.avionics;
+    let a = &app.v.avionics;
     let Some(c) = a.clearance else { return };
     let pilots = |n: usize| match n {
         0 => "NEXT IN LINE".to_string(),
@@ -491,7 +477,7 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
     let sys = &app.view.system;
     let p = &sys.spaceports[port];
     let name = format!("{} ({})", p.name, sys.bodies[p.body].name).to_uppercase();
-    let pad = match app.u.avionics.clearance.map(|c| c.pad) {
+    let pad = match app.v.avionics.clearance.map(|c| c.pad) {
         Some(universe_sim::avionics::nav::PadSlot::Pad(k)) => format!("  PAD {}", k + 1),
         Some(universe_sim::avionics::nav::PadSlot::Hold(n)) => format!("  HOLDING ({n} AHEAD)"),
         _ => String::new(),
@@ -612,7 +598,7 @@ fn phase_banner(frame: &mut Frame, app: &App) {
 fn action_lines(app: &App, relative_velocity: DVec3, g: &Guidance, lines: &mut Vec<(String, Color)>) {
     let Some(plan) = &app.plan else { return };
     let Some(first) = plan.points.first() else { return };
-    let turn = (app.u.ship.orientation.inverse() * first.aim).normalize();
+    let turn = (app.v.ship.orientation.inverse() * first.aim).normalize();
     let turn_deg = (2.0 * turn.w.abs().clamp(0.0, 1.0).acos()).to_degrees();
     let now = if turn_deg > 8.0 {
         format!("TURN: NOSE ON (+), MATCH THE FRAME  {turn_deg:.0} DEG")
@@ -634,7 +620,7 @@ fn thrust_hint(app: &App, relative_velocity: DVec3, g: &Guidance) -> String {
     if dv_world.length() > 150.0 {
         return format!("BURN {}: NOSE ON (+), THEN W", fmt::speed(dv_world.length()));
     }
-    let dv = app.u.ship.orientation.inverse() * dv_world;
+    let dv = app.v.ship.orientation.inverse() * dv_world;
     let mut parts = Vec::new();
     for (value, neg, pos) in [(dv.x, "A", "D"), (dv.y, "Q", "E"), (-dv.z, "S", "W")] {
         if value.abs() > 1.5 {
@@ -652,7 +638,7 @@ fn thrust_hint(app: &App, relative_velocity: DVec3, g: &Guidance) -> String {
 /// screen, or an arrow at the edge.
 fn target_marker(frame: &mut Frame, app: &App) {
     let Some((name, target)) = &app.nav_marker else { return };
-    if matches!(app.u.ship.state, ShipState::Landed { .. }) {
+    if matches!(app.v.ship.state, ShipState::Landed { .. }) {
         return;
     }
     let c = if app.approach.is_some() { HUD } else { Color::hex(0x60c0ff) };
@@ -664,7 +650,7 @@ fn target_marker(frame: &mut Frame, app: &App) {
 fn contact_marker(frame: &mut Frame, app: &App) {
     let size = frame.size();
     for contact in &app.contacts {
-        if app.u.avionics.contact == Some(contact.blip.id) {
+        if app.v.avionics.contact == Some(contact.blip.id) {
             continue;
         }
         let c = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
@@ -675,11 +661,11 @@ fn contact_marker(frame: &mut Frame, app: &App) {
             frame.text(p + Vec2::new(-text_size(&range).x / 2.0, 7.0), &range, c.scale(0.7));
         }
     }
-    if let Some(locked) = app.u.locked_contact_in(&app.contacts) {
+    if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) {
         let c = if locked.aggressed { RED } else { crate::scene::TRAFFIC };
         bracket(frame, app, &locked.name, locked.blip.position, c);
         // Which way it's moving across our view: an arrow off its bracket.
-        let v = locked.blip.velocity - app.u.ship.velocity;
+        let v = locked.blip.velocity - app.v.ship.velocity;
         if v.length() > 0.5
             && let (Some(p), Some(q)) = (frame.project(locked.blip.position), frame.project(locked.blip.position + v * 2.0))
             && let Some(dir) = (q - p).try_normalize()
@@ -691,11 +677,11 @@ fn contact_marker(frame: &mut Frame, app: &App) {
         }
         // The lead (combat mode): fly it into the gimbal ring; fire control
         // lays the gun on it, and the circle doubles up when the gun is on.
-        if app.u.ship.armed
+        if app.v.ship.armed
             && let Some((_, Some(sol))) = &app.fire
             && let Some(p) = frame.project(app.view.ship_pos + sol.offset)
         {
-            let ship = &app.u.ship;
+            let ship = &app.v.ship;
             let c = if within_gimbal(ship, sol.aim) { AMBER } else { AMBER.scale(0.55) };
             frame.hud_ellipse(p, Vec2::splat(5.0), 12, c);
             if gun_on(ship, sol.aim) {
@@ -719,7 +705,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
 /// gimbal's reach as a ring around it, and the gun's pipper. Plus sparks
 /// where hits land, and HIT on the locked target when ours do.
 fn gunsight(frame: &mut Frame, app: &App) {
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let from = app.view.ship_pos;
     let far = 1.0e5;
     let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
@@ -777,7 +763,7 @@ fn gunsight(frame: &mut Frame, app: &App) {
         }
     }
     // HIT on the locked target when one of ours lands.
-    if let Some(locked) = app.u.locked_contact_in(&app.contacts)
+    if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact)
         && app.sparks.iter().any(|s| s.ours && s.target == universe_sim::craft_id(locked.blip.id) && s.age < 0.6)
         && let Some(p) = frame.project(locked.blip.position)
     {
@@ -788,7 +774,7 @@ fn gunsight(frame: &mut Frame, app: &App) {
 /// The nose crosshair is for fighting and for approaches (putting the nose
 /// on the plan's cue); in plain travel it stays out of the way.
 fn crosshair_wanted(app: &App) -> bool {
-    app.u.ship.armed || app.approach.is_some()
+    app.v.ship.armed || app.approach.is_some()
 }
 
 /// The collision warning's impact, labelled on screen (or an arrow to it
@@ -797,7 +783,7 @@ fn impact_label(frame: &mut Frame, app: &App) {
     let Some(p) = &app.collision else { return };
     let Some(c) = &p.collision else { return };
     let at = app.view.positions[p.reference] + c.offset;
-    let left = (c.time - (app.u.world.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
+    let left = (c.time - (app.v.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
     let label = format!("IMPACT {}", fmt::countdown(left));
     bracket(frame, app, &label, at, RED);
 }
@@ -852,7 +838,7 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
     let size = frame.size();
     let c = (size / 2.0).floor();
     if !app.chase_cam && crosshair_wanted(app) {
-        let ship = &app.u.ship;
+        let ship = &app.v.ship;
         let col = if ship.weapons_hot() { RED } else if ship.armed { AMBER } else { HUD };
         for (a, b) in [(Vec2::new(-14.0, 0.0), Vec2::new(-5.0, 0.0)), (Vec2::new(5.0, 0.0), Vec2::new(14.0, 0.0))] {
             frame.hud_line(c + a, c + b, col);
@@ -881,7 +867,7 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
         }
         // Nose cue: where the plan wants the nose now. Put the crosshair on it.
         if let Some(first) = app.plan.as_ref().and_then(|p| p.points.first()) {
-            let path_len = app.plan.as_ref().map_or(0.0, crate::scene::path_length);
+            let path_len = app.plan.as_deref().map_or(0.0, crate::scene::path_length);
             let nose = first.aim * DVec3::NEG_Z;
             let c = crate::scene::action_color(first.action).scale(1.2);
             let size = frame.size();
@@ -910,8 +896,8 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
 
     // Prograde / retrograde relative to the dominant body: the key to landing.
     let Some(r) = app.view.reference else { return };
-    let rel_vel = app.u.ship.velocity - app.view.system.velocity(r, app.u.world.time);
-    if rel_vel.length() > 0.5 && !app.u.ship.hyperdrive {
+    let rel_vel = app.v.ship.velocity - app.view.system.velocity(r, app.v.time);
+    if rel_vel.length() > 0.5 && !app.v.ship.hyperdrive {
         let dir = rel_vel.normalize() * 1.0e3;
         if let Some(p) = frame.project(cam + dir) {
             marker(frame, p, AMBER, false);
@@ -944,7 +930,7 @@ fn scanner(frame: &mut Frame, app: &App) {
     frame.hud_line(center - Vec2::new(radii.x, 0.0), center + Vec2::new(radii.x, 0.0), DIM);
     frame.hud_line(center - Vec2::new(0.0, radii.y), center + Vec2::new(0.0, radii.y), DIM);
 
-    let inv = app.u.ship.orientation.inverse();
+    let inv = app.v.ship.orientation.inverse();
     for (i, b) in app.view.system.bodies.iter().enumerate() {
         let rel: DVec3 = inv * (app.view.positions[i] - app.view.ship_pos);
         let d = rel.length();
@@ -961,7 +947,7 @@ fn scanner(frame: &mut Frame, app: &App) {
         frame.hud_rect(top - Vec2::splat(dot / 2.0).floor(), Vec2::splat(dot), c);
     }
     // Other ships the radar sees, as small cyan blips (red: aggressed); the locked one boxed.
-    let locked = app.u.avionics.contact;
+    let locked = app.v.avionics.contact;
     for contact in &app.contacts {
         let tc = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
         let rel: DVec3 = inv * (contact.blip.position - app.view.ship_pos);
@@ -986,7 +972,7 @@ fn scanner(frame: &mut Frame, app: &App) {
 /// here (see `Light`), and a body in the way hides it, fading in as the sun
 /// clears its limb. Not through the walls when we're aboard.
 fn sun_glare(frame: &mut Frame, app: &App) {
-    if app.mode == Mode::Pilot && matches!(app.u.crew.place, universe_sim::world::Place::Aboard { .. }) {
+    if app.mode == Mode::Pilot && matches!(app.v.crew.place, universe_sim::world::Place::Aboard { .. }) {
         return;
     }
     let sys = &app.view.system;
@@ -1042,7 +1028,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
 fn turret_markers(frame: &mut Frame, app: &App) {
     use universe_sim::world::turrets::TURRET_RANGE;
     let me = app.view.ship_pos;
-    let hunted = app.u.ship.aggressed(app.u.world.time);
+    let hunted = app.v.ship.aggressed(app.v.time);
     let cam = frame.camera.position;
     let size = frame.size();
     for (_, at) in &app.turrets {
@@ -1096,7 +1082,7 @@ enum Lamp {
 /// The pilot's actions as a grid of lit keys, top left: what each key does
 /// and whether it's in use. Returns the grid's height.
 fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
-    let (u, ship) = (&app.u, &app.u.ship);
+    let (u, ship) = (&app.v, &app.v.ship);
     let flying = ship.is_flying();
     let a = &u.avionics;
     // R: what the key does next: request clearance for the target (or the
@@ -1177,11 +1163,9 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
 /// last hit). Those in the system in view, and any involving us; each shows
 /// for `KILL_SHOWN` real seconds.
 fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
-    let now = app.u.world.time;
+    let now = app.v.time;
     let shown = KILL_SHOWN * app.warp().max(1.0);
-    let lines: Vec<&universe_sim::Kill> = app
-        .u
-        .kills
+    let lines: Vec<&universe_sim::Kill> = app.v.kills
         .iter()
         .filter(|k| now - k.time < shown)
         .filter(|k| k.system == app.view.origin || k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER)
@@ -1207,10 +1191,10 @@ fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
 /// where, for how much, and their cargo and credits after. Those in the
 /// system in view (and ours), each for `TRADE_SHOWN` real seconds.
 fn trade_feed(frame: &mut Frame, app: &App, top: f32) {
-    let now = app.u.world.time;
+    let now = app.v.time;
     let shown = TRADE_SHOWN * app.warp().max(1.0);
     let recent: Vec<&universe_sim::TradeRecord> =
-        app.u.trade_log.iter().filter(|r| now - r.time < shown && (r.system == app.view.origin || r.trader == "YOU")).rev().take(6).collect();
+        app.v.trade_log.iter().filter(|r| now - r.time < shown && (r.system == app.view.origin || r.trader == "YOU")).rev().take(6).collect();
     let size = frame.size();
     for (i, r) in recent.iter().enumerate() {
         let age = ((now - r.time) / shown) as f32;
@@ -1237,7 +1221,7 @@ const KILL_SHOWN: f64 = 15.0;
 /// frame's time went and what it drew.
 fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) {
     let p = &ctx.perf;
-    let ships = 1 + app.u.crafts.len();
+    let ships = 1 + app.v.crafts.len();
     let k = |n: u32| if n >= 10_000 { format!("{:.0}K", n as f32 / 1000.0) } else if n >= 1000 { format!("{:.1}K", n as f32 / 1000.0) } else { n.to_string() };
     let mut lines = vec![
         (format!("{:.0} FPS  {:.1} MS", ctx.fps, p.frame_ms), DIM),

@@ -7,6 +7,7 @@
 //! Keys: ←/→ market, ↑/↓ item (PgUp/PgDn), + or ENTER buy, - or DEL sell
 //! (SHIFT: 10 at a time), G or ESC close.
 
+use universe_sim::Command;
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, KeyCode, GLYPH};
 use universe_sim::world::goods::Category;
@@ -43,8 +44,8 @@ pub struct MarketView {
 impl MarketView {
     /// Open on the market we're docked at, else the first in the system.
     pub fn open(app: &mut App) -> Self {
-        let markets = app.u.markets();
-        let docked = app.u.docked_market();
+        let markets = app.v.markets.clone();
+        let docked = app.v.docked_market;
         let shown = docked.and_then(|d| markets.iter().position(|(f, _)| *f == d)).unwrap_or(0);
         let mut v = MarketView { markets, shown, selected: 0, scroll: 0, rows: Vec::new(), banned: Vec::new(), docked };
         v.refresh(app);
@@ -55,22 +56,21 @@ impl MarketView {
         self.markets.get(self.shown).map(|(f, _)| *f)
     }
 
-    /// Quotes and the hold, as they are now.
+    /// Quotes and the hold, as the engine last saw them; and ask it to keep
+    /// watching the market shown.
     pub fn refresh(&mut self, app: &mut App) {
-        self.docked = app.u.docked_market();
+        self.docked = app.v.docked_market;
         let Some(f) = self.facility() else { return };
-        let (quotes, banned) = app.u.market_quotes(f);
-        let mut rows: Vec<Row> = quotes.into_iter().map(|q| Row { item: q.offer.item, quote: Some(q) }).collect();
-        let held: Vec<usize> = app.u.ship.hold.keys().copied().collect();
-        for item in held {
-            if !rows.iter().any(|r| r.item == item) {
-                // Not listed: it may still take it, being of a kind it wants.
-                let quote = app.u.quote_for(f, item);
-                rows.push(Row { item, quote });
-            }
+        if app.v.market.as_ref().map(|m| m.market) != Some(f) {
+            app.engine.send(Command::WatchMarket(Some(f)));
+            return;
         }
+        let m = app.v.market.as_ref().expect("watched");
+        let mut rows: Vec<Row> = m.quotes.iter().map(|q| Row { item: q.offer.item, quote: Some(*q) }).collect();
+        // Not listed: it may still take it, being of a kind it wants.
+        rows.extend(m.held.iter().map(|&(item, quote)| Row { item, quote }));
         self.rows = rows;
-        self.banned = banned;
+        self.banned = m.banned.clone();
         self.selected = self.selected.min(self.rows.len().saturating_sub(1));
     }
 }
@@ -80,6 +80,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     let Some(mut v) = app.market.take() else { return false };
     let input = &ctx.input;
     if input.pressed(KeyCode::Escape) || input.pressed(KeyCode::KeyG) {
+        app.engine.send(Command::WatchMarket(None));
         return false;
     }
     let n = v.markets.len().max(1);
@@ -112,21 +113,8 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         && let (Some(f), Some(row)) = (v.facility(), v.rows.get(v.selected))
     {
         let units = if buy { lots } else { -lots };
-        let name = app.u.world.goods[row.item].name.to_uppercase();
-        match app.u.trade(f, row.item, units) {
-            Ok(credits) if credits > 0.0 => {
-                app.say(format!("BOUGHT {lots} {name} FOR {credits:.0} CR"));
-                crate::sound::click(ctx, 1500.0);
-            }
-            Ok(credits) => {
-                app.say(format!("SOLD {lots} {name} FOR {:.0} CR", -credits));
-                crate::sound::click(ctx, 1500.0);
-            }
-            Err(why) => {
-                app.say(why);
-                crate::sound::click(ctx, 300.0);
-            }
-        }
+        // (What came of it comes back as an event.)
+        app.engine.send(Command::Trade { market: f, item: row.item, units });
         v.refresh(app);
     }
     app.market = Some(v);
@@ -151,11 +139,11 @@ pub fn draw(frame: &mut Frame, app: &App, v: &MarketView) {
     let status = if here { "DOCKED HERE - TRADING OPEN".to_string() } else { "VIEW ONLY - DOCK OR LAND HERE TO TRADE".to_string() };
     frame.text(Vec2::new(x, y), &status, if here { SELECT } else { DIM });
     y += line;
-    let ship = &app.u.ship;
+    let ship = &app.v.ship;
     let banned = if v.banned.is_empty() { "NOTHING".to_string() } else { v.banned.iter().map(|c| c.name()).collect::<Vec<_>>().join(", ") };
     frame.text(
         Vec2::new(x, y),
-        &format!("CREDITS {:.0}   HOLD {:.1} / {:.1} T   BANNED HERE: {banned}", app.u.credits, ship.cargo / 1000.0, HOLD_CAPACITY / 1000.0),
+        &format!("CREDITS {:.0}   HOLD {:.1} / {:.1} T   BANNED HERE: {banned}", app.v.credits, ship.cargo / 1000.0, HOLD_CAPACITY / 1000.0),
         TEXT,
     );
     y += line * 1.6;
@@ -163,7 +151,7 @@ pub fn draw(frame: &mut Frame, app: &App, v: &MarketView) {
     frame.text(Vec2::new(x, y), &header, DIM);
     y += line;
     for (i, row) in v.rows.iter().enumerate().skip(v.scroll).take(ROWS) {
-        let item = &app.u.world.goods[row.item];
+        let item = &app.charts.goods[row.item];
         let held = ship.hold.get(&row.item).copied().unwrap_or(0);
         let banned = v.banned.contains(&item.category);
         let (side, buy, sell, level) = match &row.quote {

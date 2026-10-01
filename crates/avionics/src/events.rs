@@ -22,6 +22,15 @@ pub enum Event {
     NavTargetSet { name: Option<String> },
     /// The follow program: now keeping at / orbiting at this range (m), or off.
     Following { what: Option<(&'static str, f64)> },
+    /// The radar lock: on a contact (its name), or released.
+    Lock { name: Option<String> },
+    /// Asked to lock, with nothing in the beam.
+    NothingInBeam,
+    /// The locked contact went off the radar.
+    ContactLost,
+    /// A trade at a market: units (negative: sold) of an item, for credits
+    /// (negative: received).
+    Traded { item: String, units: i64, credits: f64 },
     /// The avionics can't do what was asked.
     Refused { reason: String },
 }
