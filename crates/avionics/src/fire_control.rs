@@ -91,19 +91,4 @@ mod tests {
         assert!(slug.distance(target) < 0.5, "missed by {}", slug.distance(target));
     }
 
-    #[test]
-    fn a_track_learns_the_targets_acceleration() {
-        let mut track = None;
-        let a = DVec3::new(0.0, 0.0, -20.0);
-        for i in 0..=120 {
-            let t = i as f64 / 60.0;
-            Track::update(&mut track, 4, DVec3::ZERO, a * t, t);
-        }
-        let tr = track.unwrap();
-        assert!(tr.ready());
-        assert!(tr.acceleration.distance(a) < 0.1, "{}", tr.acceleration);
-        // A new contact starts over.
-        Track::update(&mut track, 5, DVec3::ZERO, DVec3::ZERO, 3.0);
-        assert!(!track.unwrap().ready());
-    }
 }

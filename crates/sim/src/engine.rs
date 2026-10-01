@@ -151,6 +151,9 @@ pub struct View {
     /// The last tick: what it did, and what it took (ms).
     pub last_step: StepResult,
     pub sim_ms: f32,
+    /// The NPC pilots: apart from the world (or in lockstep), and how many
+    /// of their postings came late, and too late (dropped), so far.
+    pub pilots: (bool, u64, u64),
     pub serial: u64,
     /// When the engine made it (real time): clients draw between views by it.
     pub made: std::time::Instant,
@@ -186,8 +189,13 @@ pub struct Engine {
 pub const TICK_HZ: f64 = 60.0;
 
 impl Engine {
-    pub fn new(universe: Universe) -> Self {
+    pub fn new(mut universe: Universe) -> Self {
         let charts = Arc::new(universe.world.charts());
+        // The NPC pilots think apart from the world (UNIVERSE_LOCKSTEP=1: in
+        // step with it), on half the cores.
+        if std::env::var_os("UNIVERSE_LOCKSTEP").is_none() {
+            universe.run_pilots_apart(std::thread::available_parallelism().map_or(2, |n| (n.get() / 2).max(1)));
+        }
         Engine {
             universe,
             charts,
@@ -341,10 +349,10 @@ impl Engine {
                 name: c.name.clone(),
                 system: c.system,
                 ship: c.ship.clone(),
-                pirate: c.avionics.pirate,
+                pirate: c.status.pirate,
                 trader: c.trader,
-                route_next: c.avionics.route.next,
-                route_stops: c.avionics.route.stops.len(),
+                route_next: c.status.route_next,
+                route_stops: c.status.route_len,
                 stage: crate::contacts::activity(c),
                 aggressed: u.law.aggressed(crate::combat::craft_id(i), now),
             })
@@ -395,6 +403,7 @@ impl Engine {
             pads,
             last_step: self.last_step,
             sim_ms: self.sim_ms,
+            pilots: (u.pool.apart(), u.pool.late, u.pool.dropped),
             serial: self.serial,
             made: std::time::Instant::now(),
         }

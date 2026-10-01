@@ -9,7 +9,7 @@ pub mod ledger;
 pub mod market;
 pub mod records;
 
-pub use atc::{PadGrant, Presence, TrafficControl};
+pub use atc::{Board, PadGrant, Presence, TrafficControl};
 pub use law::{Law, Ruling, AGGRESSION};
 pub use ledger::{Asset, Ledger, Party};
 pub use market::{Markets, Order};

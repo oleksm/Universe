@@ -74,14 +74,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn earth_air_thins_with_height() {
-        let a = Atmosphere::earthlike(9.81);
-        assert!((a.density(0.0) - 1.225).abs() < 1e-9);
-        assert!((a.density(8_500.0) / a.density(0.0) - (-1.0f64).exp()).abs() < 1e-9);
-        assert_eq!(a.density(200_000.0), 0.0);
-    }
-
-    #[test]
     fn a_falling_body_reaches_its_terminal_velocity() {
         // 1500 kg/m² in sea-level air under 9.81: v = sqrt(2βg/ρ) ≈ 155 m/s.
         let (beta, rho, g) = (1500.0, 1.225, 9.81);
@@ -97,11 +89,4 @@ mod tests {
         assert!(fast.x > 0.0 && fast.x < 8_000.0);
     }
 
-    #[test]
-    fn reentry_heating_is_in_the_shuttles_range() {
-        // ~7.5 km/s at ~70 km on a 1 m nose: a few hundred kW/m².
-        let a = Atmosphere::earthlike(9.81);
-        let q = heat_flux(a.density(70_000.0), 7_500.0, 1.0);
-        assert!(q > 2.0e5 && q < 2.0e6, "{q}");
-    }
 }

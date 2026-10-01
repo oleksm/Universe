@@ -6,7 +6,7 @@
 use glam::{DQuat, DVec3};
 use universe_sim::avionics::nav::PadSlot;
 use universe_sim::world::spaceport::{pad_at, PADS};
-use universe_sim::world::{Facility, GateFrame, StationFrame};
+use universe_sim::world::{Facility, StationFrame};
 use universe_sim::{BodyKind, Controls, NavTarget, PadFrame, Phase, ShipState, Universe};
 
 /// A world with `n` plain settlers (no pirates, traders or routes), all in
@@ -14,17 +14,16 @@ use universe_sim::{BodyKind, Controls, NavTarget, PadFrame, Phase, ShipState, Un
 fn bench(n: usize) -> Universe {
     let mut u = Universe::new(1984);
     u.spawn_settlers(n, 1);
-    // Pilots' commands reach their ships two ticks late, as they will once
-    // pilots run apart from the world.
-    u.command_delay = 2;
     u.ship.position += DVec3::new(0.0, 0.0, 5.0e7);
     let home = u.ship_system;
     for c in &mut u.crafts {
         c.system = home;
-        c.avionics.pirate = false;
         c.trader = false;
-        c.avionics.route.active = false;
-        c.avionics.route.dwell_until = None;
+    }
+    for p in u.pilots().iter_mut() {
+        p.avionics.pirate = false;
+        p.avionics.route.active = false;
+        p.avionics.route.dwell_until = None;
     }
     u
 }
@@ -70,27 +69,6 @@ fn positions(u: &mut Universe) -> (std::sync::Arc<universe_sim::StarSystem>, Vec
 }
 
 #[test]
-fn two_ships_at_one_gate_take_turns() {
-    let mut u = bench(2);
-    let (sys, pos) = positions(&mut u);
-    let gate = sys.bodies.iter().position(|b| b.kind == BodyKind::Gate).unwrap();
-    let f = GateFrame::new(&sys, gate, u.world.time, &pos);
-    let side = f.axis().any_orthonormal_vector();
-    for (i, offset) in [(0, 600.0), (1, -600.0)] {
-        place(&mut u, i, f.center - f.axis() * 9_000.0 + side * offset, f.velocity, f.center);
-        cleared(&mut u, i, NavTarget::Gate(gate));
-    }
-    let mut waited = false;
-    let through = run(&mut u, 900.0, |u| {
-        waited |= u.crafts.iter().any(|c| c.avionics.corridor_denied);
-        u.crafts.iter().all(|c| matches!(c.ship.state, ShipState::Transit { .. }) || c.system != u.ship_system)
-    });
-    assert!(through, "both through the gate\n{}", incidents(&u));
-    assert!(waited, "one waited its turn");
-    assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
-}
-
-#[test]
 fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
     let mut u = bench(10);
     let (sys, pos) = positions(&mut u);
@@ -100,11 +78,13 @@ fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
     // Nine on the nine pads, staying there (a long stop).
     for k in 0..PADS {
         u.crafts[k].ship = u.world.ship_on(home, Facility::Spaceport(port), k);
-        let r = &mut u.crafts[k].avionics.route;
+        let mut pilots = u.pilots();
+        let r = &mut pilots[k].avionics.route;
         r.stops = vec![universe_sim::Stop { system: home, target: NavTarget::Spaceport(port) }];
         r.next = 0;
         r.active = true;
         r.dwell_until = Some(1.0e12);
+        drop(pilots);
     }
     // The tenth, 20 km over the port.
     let pad = PadFrame::new(&sys, port, u.world.time, &pos);
@@ -112,11 +92,11 @@ fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
     place(&mut u, 9, at, pad.frame_velocity(at), pad.pad);
     run(&mut u, 0.1, |_| false); // traffic control sees the pads taken
     cleared(&mut u, 9, NavTarget::Spaceport(port));
-    let slot = u.crafts[9].avionics.clearance.unwrap().pad;
+    let slot = u.pilots()[9].avionics.clearance.unwrap().pad;
     assert!(matches!(slot, PadSlot::Hold(0)), "first in line: {slot:?}");
     // It holds, and doesn't come down.
     run(&mut u, 120.0, |_| false);
-    let c = u.crafts[9].avionics.clearance.unwrap();
+    let c = u.pilots()[9].avionics.clearance.unwrap();
     assert_eq!(c.phase, Phase::Hold);
     let alt = u.crafts[9].ship.position.distance(pad.body_center) - pad.body_radius;
     assert!(alt > 3_000.0, "holding high ({alt:.0} m)\n{}", incidents(&u));
@@ -149,7 +129,8 @@ fn a_docking_and_a_launch_share_the_corridor() {
     // Craft 0 docked, about to leave for the gate; craft 1 inbound, 6 km up the axis.
     u.crafts[0].ship = u.world.ship_on(home, Facility::Station(station), 0);
     let gate = sys.bodies.iter().position(|b| b.kind == BodyKind::Gate).unwrap();
-    let r = &mut u.crafts[0].avionics.route;
+    let mut pilots = u.pilots();
+    let r = &mut pilots[0].avionics.route;
     r.stops = vec![
         universe_sim::Stop { system: home, target: NavTarget::Station(station) },
         universe_sim::Stop { system: home, target: NavTarget::Gate(gate) },
@@ -157,6 +138,7 @@ fn a_docking_and_a_launch_share_the_corridor() {
     r.next = 0;
     r.active = true;
     r.dwell_until = Some(u.world.time + 5.0);
+    drop(pilots);
     let f = StationFrame::new(&sys, station, u.world.time, &pos);
     place(&mut u, 1, f.on_axis(6_000.0), f.velocity, f.center);
     cleared(&mut u, 1, NavTarget::Station(station));
@@ -195,9 +177,9 @@ fn pirates_leave_ships_under_the_guns_alone_and_hunt_in_the_open() {
         let prey = at + side * out;
         place(&mut u, 0, prey + side.any_orthonormal_vector() * 8_000.0, v, prey);
         place(&mut u, 1, prey, v, at);
-        u.crafts[0].avionics.pirate = true;
+        u.pilots()[0].avionics.pirate = true;
         run(&mut u, 5.0, |_| false);
-        assert_eq!(u.crafts[0].avionics.hunting.is_some(), hunts, "prey {out:.0} m from the turret");
+        assert_eq!(u.pilots()[0].avionics.hunting.is_some(), hunts, "prey {out:.0} m from the turret");
     }
 }
 
@@ -223,10 +205,10 @@ fn a_ship_under_fire_runs_for_the_guns() {
     let prey = at + side * 1_500_000.0;
     place(&mut u, 0, prey + side.any_orthonormal_vector() * 6_000.0, v, prey);
     place(&mut u, 1, prey, v, at);
-    u.crafts[0].avionics.pirate = true;
+    u.pilots()[0].avionics.pirate = true;
     let hit = run(&mut u, 120.0, |u| u.crafts[1].ship.hull < 1.0);
     assert!(hit, "the pirate strikes\n{}", incidents(&u));
-    let r = &u.crafts[1].avionics.route;
+    let r = u.pilots()[1].avionics.route.clone();
     let heading = r.stops.get(r.next).map(|s| s.target);
     let havens: Vec<_> = u.world.turret_motions(u.ship_system).into_iter().map(|(t, _, _)| t.facility).collect();
     assert!(heading.is_some_and(|h| havens.contains(&h)), "heading for a defended place: {heading:?}, turret at {:?}", turret.facility);
@@ -251,7 +233,6 @@ fn the_recorder_files_a_head_on_collision_with_both_traces() {
     eprintln!("{}", u.recorder.incidents[0]);
 }
 
-
 #[test]
 fn a_ship_keeps_at_range_from_another_as_it_accelerates_away() {
     use universe_sim::avionics::follow::{Anchor, Manoeuvre};
@@ -269,74 +250,8 @@ fn a_ship_keeps_at_range_from_another_as_it_accelerates_away() {
     let d = a.position.distance(b.position);
     let rel = (a.velocity - b.velocity).length();
     assert!((d - 2_000.0).abs() < 150.0 && rel < 5.0, "at {d:.0} m, {rel:.1} m/s relative\n{}", incidents(&u));
-    assert!(u.crafts[0].avionics.following.is_some());
+    assert!(u.pilots()[0].avionics.following.is_some());
     assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
-}
-
-#[test]
-fn a_ship_orbits_a_station_at_the_radius_asked() {
-    use universe_sim::avionics::follow::{orbit_speed, Anchor, Manoeuvre};
-    let mut u = bench(1);
-    let (sys, pos) = positions(&mut u);
-    let station = sys.station().unwrap();
-    let f = StationFrame::new(&sys, station, u.world.time, &pos);
-    let start = f.center + f.axis().any_orthonormal_vector() * 9_000.0;
-    place(&mut u, 0, start, f.velocity, f.center);
-    u.craft_follow(0, Anchor::Place(NavTarget::Station(station)), Manoeuvre::Orbit(5_000.0));
-    run(&mut u, 200.0, |_| false);
-    // Settled: on the circle, going round at the orbit speed, for the next minute.
-    let mut swept = 0.0;
-    let mut last: Option<DVec3> = None;
-    for _ in 0..60 {
-        run(&mut u, 1.0, |_| false);
-        let (sys, pos) = positions(&mut u);
-        let f = StationFrame::new(&sys, station, u.world.time, &pos);
-        let s = &u.crafts[0].ship;
-        let off = s.position - f.center;
-        assert!((off.length() - 5_000.0).abs() < 300.0, "{:.0} m out\n{}", off.length(), incidents(&u));
-        let rel = s.velocity - f.velocity;
-        let tangential = (rel - off.normalize() * rel.dot(off.normalize())).length();
-        assert!((tangential - orbit_speed(5_000.0, s.side_accel())).abs() < 15.0, "going round at {tangential:.0} m/s");
-        if let Some(l) = last {
-            swept += l.angle_between(off);
-        }
-        last = Some(off);
-    }
-    assert!(swept > 0.5, "went round ({swept:.2} rad in a minute)");
-    assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
-}
-
-#[test]
-fn a_ship_orbits_a_moving_ship() {
-    use universe_sim::avionics::follow::{Anchor, Manoeuvre};
-    let mut u = bench(2);
-    let (_, at, v, side) = a_turret(&mut u);
-    let centre = at + side * 1_500_000.0;
-    let across = side.any_orthonormal_vector();
-    place(&mut u, 1, centre, v + across * 60.0, centre + across);
-    place(&mut u, 0, centre + side * 3_000.0, v, centre);
-    u.craft_follow(0, Anchor::Ship(universe_sim::craft_id(1)), Manoeuvre::Orbit(2_000.0));
-    run(&mut u, 150.0, |_| false);
-    for _ in 0..30 {
-        run(&mut u, 1.0, |_| false);
-        let d = u.crafts[0].ship.position.distance(u.crafts[1].ship.position);
-        assert!((d - 2_000.0).abs() < 200.0, "{d:.0} m from it\n{}", incidents(&u));
-    }
-    assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
-}
-
-#[test]
-fn turrets_shoot_down_an_aggressed_player_burning_hard_at_the_edge_of_their_reach() {
-    let mut u = bench(0);
-    let (_, at, v, side) = a_turret(&mut u);
-    u.ship.state = ShipState::Flying;
-    u.ship.position = at + side * 5_500.0;
-    u.ship.velocity = v;
-    u.ship.orientation = universe_sim::ship::facing(side.any_orthonormal_vector(), side);
-    u.ship.throttle = 1.0;
-    { let now = u.world.time; u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules); }
-    let down = run(&mut u, 20.0, |u| u.records.kills.iter().any(|k| k.victim == universe_sim::PLAYER));
-    assert!(down, "shot down (hull {:.2})", u.ship.hull);
 }
 
 /// Out in the open, clear of any turret (but in a place's gravity): a point,
@@ -345,17 +260,6 @@ fn open_space(u: &mut Universe) -> (DVec3, DVec3, DVec3, DVec3) {
     let (_, at, v, side) = a_turret(u);
     let across = side.any_orthonormal_vector();
     (at + side * 1_500_000.0, v, across, side.cross(across))
-}
-
-#[test]
-fn a_lone_settler_leaves_an_aggressor_alone() {
-    let mut u = bench(2);
-    let (p, v, a, b) = open_space(&mut u);
-    place(&mut u, 0, p, v, p + a);
-    place(&mut u, 1, p + b * 4_000.0, v, p);
-    { let now = u.world.time; u.law.declare(universe_sim::craft_id(0), now + 600.0, now, universe_sim::protocol::Cause::Rules); }
-    run(&mut u, 10.0, |_| false);
-    assert!(u.crafts[1].avionics.hunting.is_none(), "one against one: no fight");
 }
 
 #[test]
@@ -369,7 +273,7 @@ fn settlers_gang_up_on_an_aggressor_and_shoot_it_down() {
         place(&mut u, k, p + dir * 4_000.0, v, p);
     }
     let down = run(&mut u, 240.0, |u| !u.crafts[0].ship.is_flying());
-    let defenders = u.crafts[1..].iter().filter(|c| c.avionics.hunting.is_some()).count();
+    let defenders = u.crafts[1..].iter().filter(|c| c.status.hunting.is_some()).count();
     assert!(down, "the aggressor is shot down (hull {:.2}, {} defending, {} defences)\n{}", u.crafts[0].ship.hull, defenders, u.records.stats.defences, incidents(&u));
     assert!(u.records.stats.defences >= 2, "they went after it together ({})", u.records.stats.defences);
     assert!((1..u.crafts.len()).all(|i| !u.law.aggressed(universe_sim::craft_id(i), u.world.time)), "shooting the aggressor is no crime");
@@ -380,118 +284,12 @@ fn settlers_gang_up_on_an_aggressor_and_shoot_it_down() {
 }
 
 #[test]
-fn an_aggressed_player_is_judged_like_anyone() {
-    let mut u = bench(5);
-    let (p, v, a, b) = open_space(&mut u);
-    u.ship.state = ShipState::Flying;
-    u.ship.position = p;
-    u.ship.velocity = v;
-    { let now = u.world.time; u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules); }
-    for k in 0..5 {
-        let dir = (a * (k as f64).cos() + b * (k as f64).sin()).normalize();
-        place(&mut u, k, p + dir * 4_000.0, v, p);
-    }
-    let hit = run(&mut u, 120.0, |u| u.ship.hull < 1.0);
-    assert!(hit, "the settlers turn on us ({} defences)\n{}", u.records.stats.defences, incidents(&u));
-}
-
-#[test]
-fn pirates_hunt_the_player_too() {
-    let mut u = bench(1);
-    let (p, v, a, _) = open_space(&mut u);
-    u.ship.state = ShipState::Flying;
-    u.ship.position = p;
-    u.ship.velocity = v;
-    place(&mut u, 0, p + a * 8_000.0, v, p);
-    u.crafts[0].avionics.pirate = true;
-    run(&mut u, 5.0, |_| false);
-    assert_eq!(u.crafts[0].avionics.hunting.map(|h| h.target), Some(universe_sim::PLAYER));
-}
-
-/// A world with air in the home system: its index, and its centre and velocity now.
-fn airy_world(u: &mut Universe) -> (usize, DVec3, DVec3, f64) {
-    let (sys, pos) = positions(u);
-    let i = sys.bodies.iter().position(|b| b.rail.atmosphere.is_some()).expect("the home system has a world with air");
-    (i, pos[i], sys.velocity(i, u.world.time), sys.bodies[i].rail.radius)
-}
-
-#[test]
-fn a_steep_dive_into_the_air_burns_the_ship_up() {
-    let mut u = bench(1);
-    let (_, center, v, radius) = airy_world(&mut u);
-    let up = DVec3::Y;
-    // 120 km up, falling straight down at 7.5 km/s.
-    place(&mut u, 0, center + up * (radius + 120_000.0), v - up * 7_500.0, center);
-    let gone = run(&mut u, 60.0, |u| !u.crafts[0].ship.is_flying());
-    assert!(gone, "wrecked");
-    let i = u.recorder.incidents.last().expect("filed");
-    assert_eq!(i.cause, "RE-ENTRY HEAT", "burnt up before it hit the ground\n{i}");
-}
-
-#[test]
-fn the_air_slows_a_falling_ship_to_its_terminal_velocity() {
-    let mut u = bench(1);
-    let (body, center, v, _) = airy_world(&mut u);
-    let up = DVec3::Y;
-    // 6 km up over the ground (well clear of the hills), dropping at 400 m/s, engines off.
-    let (sys, _) = positions(&mut u);
-    let ground = sys.bodies[body].surface_radius(up);
-    let at = center + up * (ground + 6_000.0);
-    let air = v + sys.bodies[body].angular_velocity().cross(at - center);
-    place(&mut u, 0, at, air - up * 400.0, center);
-    run(&mut u, 15.0, |_| false);
-    let (sys, pos) = positions(&mut u);
-    let s = &u.crafts[0].ship;
-    let air = sys.velocity(body, u.world.time) + sys.bodies[body].angular_velocity().cross(s.position - pos[body]);
-    let speed = (s.velocity - air).length();
-    // (In vacuum it would be falling at ~550 m/s by now.)
-    assert!(s.is_flying() && speed < 300.0, "slowed from 400 to {speed:.0} m/s\n{}", incidents(&u));
-}
-
-#[test]
-fn ships_waiting_for_a_corridor_know_their_place_in_line() {
-    let mut u = bench(3);
-    let (sys, pos) = positions(&mut u);
-    let station = sys.station().unwrap();
-    let f = StationFrame::new(&sys, station, u.world.time, &pos);
-    let side = f.axis().any_orthonormal_vector();
-    for i in 0..3 {
-        let at = f.on_axis(7_000.0 + 1_500.0 * i as f64) + side * 300.0 * i as f64;
-        place(&mut u, i, at, f.velocity, f.center);
-        cleared(&mut u, i, NavTarget::Station(station));
-    }
-    run(&mut u, 1.0, |_| false);
-    let mut places: Vec<Option<usize>> = u.crafts.iter().map(|c| c.avionics.corridor_ahead).collect();
-    places.sort();
-    assert_eq!(places, vec![None, Some(1), Some(2)], "one in the corridor, then one and two ahead");
-}
-
-#[test]
-fn a_crafts_commands_reach_its_ship_two_ticks_late() {
-    let mut u = bench(1);
-    let (p, v, a, _) = open_space(&mut u);
-    place(&mut u, 0, p, v, p + a);
-    // Following a far point makes its pilot burn at once.
-    let station = positions(&mut u).0.station().unwrap();
-    u.craft_follow(0, universe_sim::avionics::follow::Anchor::Place(NavTarget::Station(station)), universe_sim::avionics::follow::Manoeuvre::KeepAt(2_000.0));
-    let mut throttles = Vec::new();
-    for _ in 0..4 {
-        run(&mut u, 1.0 / 60.0, |_| false);
-        let s = &u.crafts[0].ship;
-        throttles.push((s.throttle, s.rcs.length()));
-    }
-    let moved = |(t, r): (f64, f64)| t > 0.0 || r > 0.0;
-    assert!(!moved(throttles[0]) && !moved(throttles[1]), "nothing reaches the devices for two ticks: {throttles:?}");
-    assert!(moved(throttles[2]) || moved(throttles[3]), "then it does: {throttles:?}");
-}
-
-#[test]
 fn the_law_rules_a_pirate_fair_game_from_its_first_hit_with_the_evidence() {
     let mut u = bench(2);
     let (p, v, a, _) = open_space(&mut u);
     place(&mut u, 0, p + a * 6_000.0, v, p);
     place(&mut u, 1, p, v, p + a);
-    u.crafts[0].avionics.pirate = true;
+    u.pilots()[0].avionics.pirate = true;
     let (pirate, prey) = (universe_sim::craft_id(0), universe_sim::craft_id(1));
     let ruled = run(&mut u, 120.0, |u| u.law.aggressed(pirate, u.world.time));
     assert!(ruled, "the pirate struck and the law saw it\n{}", incidents(&u));

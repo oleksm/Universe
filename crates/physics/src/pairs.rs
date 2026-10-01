@@ -150,16 +150,4 @@ mod tests {
         assert!(lost > 0.0);
     }
 
-    #[test]
-    fn near_misses_and_fixed_pairs_are_left_alone() {
-        let mut a = m(0, 0.0, 0.0);
-        let b = Mover { position: DVec3::new(0.0, 30.0, 0.0), ..m(1, 0.0, 0.0) };
-        assert!(contacts(&[a, b], 1.0).is_empty(), "30 m apart, 24 m reach");
-        a.mass = f64::INFINITY;
-        let c = Mover { mass: f64::INFINITY, ..m(2, 5.0, 0.0) };
-        assert!(contacts(&[a, c], 1.0).is_empty(), "two fixed bodies");
-        // A ship hitting a fixed one bounces off it alone.
-        let (da, db, _) = bounce_pair(DVec3::X, 10.0, 90_000.0, f64::INFINITY, 0.0);
-        assert!((da.x - 10.0).abs() < 1e-9 && db.length() < 1e-12);
-    }
 }

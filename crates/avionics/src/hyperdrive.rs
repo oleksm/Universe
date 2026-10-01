@@ -39,6 +39,10 @@ pub struct HyperAim {
     frame_velocity: DVec3,
 }
 
+/// Within this many radii of a body, and short of the target, the drive
+/// moves in the body's frame (see `navigate`).
+const LOCAL_FRAME_RADII: f64 = 10.0;
+
 /// What a hyperdrive arrival at `target` is announced as.
 fn arrival_name(sys: &StarSystem, target: NavTarget) -> String {
     match target {
@@ -121,12 +125,19 @@ pub fn navigate(
         return (commands, Some(arrival_name(sys, target)));
     }
 
+    // Close to a body (just left, or passing) and not yet to the target, the
+    // drive keeps the body's frame: in the target's, the body would sweep
+    // into the ship at the difference of their speeds (a gate's orbital
+    // speed round its own planet is enough).
+    let local = sys.dominant(p, positions);
+    let near_other = aim.as_ref().is_some_and(|a| a.target.distance(p) > HYPER_NEAR_TARGET && p.distance(positions[local]) < LOCAL_FRAME_RADII * sys.bodies[local].rail.radius);
     let mut orders = HyperdriveCommand {
         engage: true,
+        start: false,
         heading: None,
         // (The hyperdrive autopilot steers around obstacles itself.)
         steering: autopilot,
-        frame_velocity: aim.as_ref().map(|a| a.frame_velocity),
+        frame_velocity: aim.as_ref().filter(|_| !near_other).map(|a| a.frame_velocity),
         exit_velocity: exit_velocity(aim.as_ref(), p),
         destination: aim.as_ref().map(|a| Destination { point: a.target, body: a.body }),
     };

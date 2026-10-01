@@ -10,7 +10,7 @@ use std::fmt;
 
 use glam::DVec3;
 use universe_avionics::nav::PadSlot;
-use universe_avionics::{Avionics, NavTarget, Phase};
+use universe_avionics::{NavTarget, Phase};
 use universe_world::{Ship, ShipState};
 
 /// Seconds between samples, and seconds of samples kept.
@@ -40,7 +40,7 @@ pub struct Sample {
 }
 
 impl Sample {
-    pub fn of(time: f64, system: usize, ship: &Ship, avionics: &Avionics) -> Self {
+    pub fn of(time: f64, system: usize, ship: &Ship, pilot: &crate::pilots::Status) -> Self {
         let state = match ship.state {
             ShipState::Flying if ship.hyperdrive => "hyperdrive",
             ShipState::Flying => "flying",
@@ -59,11 +59,11 @@ impl Sample {
             hyperdrive: ship.hyperdrive,
             armed: ship.armed,
             hull: ship.hull,
-            clearance: avionics.clearance.map(|c| (c.target, c.phase, c.pad)),
-            route_next: avionics.route.next,
-            departing: avionics.route.departing,
-            hunting: avionics.hunting.map(|h| h.target),
-            corridor_denied: avionics.corridor_denied,
+            clearance: pilot.clearance.map(|c| (c.target, c.phase, c.pad)),
+            route_next: pilot.route_next,
+            departing: pilot.departing,
+            hunting: pilot.hunting.map(|h| h.target),
+            corridor_denied: pilot.corridor_denied,
         }
     }
 }

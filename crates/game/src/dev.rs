@@ -298,16 +298,24 @@ pub fn apply(app: &mut App, name: &str) {
                 rng = rng.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
                 ((rng >> 11) as f64 / (1u64 << 53) as f64) * 2.0 - 1.0
             };
-            for c in app.engine.universe().crafts.iter_mut().filter(|c| c.system == home).take(300) {
+            let u = app.engine.universe();
+            let picked: Vec<usize> = (0..u.crafts.len()).filter(|&i| u.crafts[i].system == home).take(300).collect();
+            for &i in &picked {
+                let c = &mut u.crafts[i];
                 let off = DVec3::new(next(), next(), next()).normalize_or(DVec3::X) * (5_000.0 + 35_000.0 * next().abs());
                 c.ship.state = ShipState::Flying;
                 c.ship.hyperdrive = false;
                 c.ship.position = st + off;
                 c.ship.velocity = v + DVec3::new(next(), next(), next()) * 30.0;
-                c.avionics.route.active = !c.avionics.route.stops.is_empty();
-                c.avionics.route.dwell_until = None;
-                c.avionics.route.departing = false;
             }
+            let mut pilots = u.pilots();
+            for &i in &picked {
+                let r = &mut pilots[i].avionics.route;
+                r.active = !r.stops.is_empty();
+                r.dwell_until = None;
+                r.departing = false;
+            }
+            drop(pilots);
             let side = (app.engine.universe().ship.position - st).normalize_or(DVec3::X);
             app.engine.universe().ship.position = st + side * 8_000.0;
             app.engine.universe().ship.velocity = v;
@@ -340,12 +348,14 @@ pub fn apply(app: &mut App, name: &str) {
                 c.ship.hyperdrive = false;
                 c.ship.position = pos + DVec3::new(-2_000.0 + 5_000.0 * k as f64, 1_500.0, -3_000.0);
                 c.ship.velocity = vel;
-                c.avionics.pirate = k == 0;
                 c.trader = k == 1;
                 let number = c.name.split(' ').next_back().unwrap_or("").to_string();
                 c.name = format!("{} {number}", if k == 0 { "Pirate" } else { "Trader" });
-                c.avionics.route.active = false;
-                c.avionics.route.dwell_until = None;
+            }
+            for (k, p) in app.engine.universe().pilots()[n - 2..].iter_mut().enumerate() {
+                p.avionics.pirate = k == 0;
+                p.avionics.route.active = false;
+                p.avionics.route.dwell_until = None;
             }
             // Mid-fight: the pirate aggressed, the trader's hull going.
             for _ in 0..60 * 120 {
@@ -425,7 +435,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Observer;
             for _ in 0..60 * 60 * 5 {
                 app.engine.universe().step_world(1.0 / 60.0, 3.0, &Controls::default());
-                if let Some(i) = app.engine.universe().crafts.iter().position(|c| c.ship.is_flying() && !c.ship.hyperdrive && c.avionics.clearance.is_some_and(|x| x.autopilot)) {
+                if let Some(i) = app.engine.universe().crafts.iter().position(|c| c.ship.is_flying() && !c.ship.hyperdrive && c.status.clearance.is_some_and(|x| x.autopilot)) {
                     app.observer.focus = Focus::Craft(i);
                     app.observer.distance = 300.0;
                     app.observer.pitch = 0.3;

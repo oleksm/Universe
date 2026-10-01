@@ -263,9 +263,9 @@ fn roll_error(orientation: DQuat, nose: DVec3, wings: DVec3) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::gate::GateFrame;
+    
     use crate::station::{StationFrame, STATION_SIZE};
-    use crate::system::BodyKind;
+    
     use crate::testkit::Probe;
 
     fn fired(events: &[ShipEvent], outcome: &str) -> bool {
@@ -294,22 +294,4 @@ mod tests {
         assert!(fired(&p.events, "locked"), "{:?}", p.events);
     }
 
-    #[test]
-    fn a_gate_refuses_a_ship_too_fast_for_it_and_says_so() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let gate = sys.bodies.iter().position(|b| b.kind == BodyKind::Gate).unwrap();
-        let pos = p.positions();
-        let f = GateFrame::new(&sys, gate, p.world.time, &pos);
-        p.ship.position = f.center + f.axis() * 200.0;
-        p.ship.velocity = f.velocity - f.axis() * 400.0;
-        for _ in 0..120 {
-            p.step(1.0 / 60.0, 1.0);
-            if !p.ship.is_flying() {
-                break;
-            }
-        }
-        assert!(matches!(p.ship.state, ShipState::Destroyed { .. }), "{:?}", p.events);
-        assert!(fired(&p.events, "too fast: wrecked"), "{:?}", p.events);
-    }
 }

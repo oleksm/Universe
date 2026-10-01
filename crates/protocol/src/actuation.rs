@@ -49,6 +49,10 @@ pub struct ShipCommands {
 pub struct HyperdriveCommand {
     /// On (engage, or stay engaged) or off (disengage).
     pub engage: bool,
+    /// Switch the drive on if it's off: the pilot's engage control. Orders
+    /// without it only fly a drive that's engaged, so one arriving late,
+    /// after the drive has dropped out, doesn't start it again.
+    pub start: bool,
     /// Direction of travel. None: wherever the nose points.
     pub heading: Option<DVec3>,
     /// The heading is being steered around obstacles (by whoever commands
@@ -76,7 +80,7 @@ pub struct Destination {
 
 impl HyperdriveCommand {
     /// Stay engaged, flying along the nose, with nothing commanded.
-    pub const CRUISE: Self = Self { engage: true, heading: None, steering: false, frame_velocity: None, exit_velocity: None, destination: None };
+    pub const CRUISE: Self = Self { engage: true, start: false, heading: None, steering: false, frame_velocity: None, exit_velocity: None, destination: None };
 }
 
 /// What a gunner (a client) tells a turret's gun: where to lay it (a world

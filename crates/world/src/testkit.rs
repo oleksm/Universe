@@ -52,7 +52,7 @@ impl Probe {
 
     /// Engage or disengage the hyperdrive (dropping out with the dominant body).
     pub fn toggle_hyperdrive(&mut self) {
-        let orders = HyperdriveCommand { engage: !self.ship.hyperdrive, ..Default::default() };
+        let orders = HyperdriveCommand { engage: !self.ship.hyperdrive, start: !self.ship.hyperdrive, ..Default::default() };
         self.command(&ShipCommands { hyperdrive: Some(orders), ..self.ship.holding() });
     }
 

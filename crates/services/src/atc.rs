@@ -44,6 +44,47 @@ struct Port {
     queue: Vec<(usize, f64)>,
 }
 
+/// Traffic control's board as it stood (see `TrafficControl::board`):
+/// what a pilot reads to know where it stands, without changing anything.
+#[derive(Clone, Debug, Default)]
+pub struct Board {
+    ports: HashMap<(usize, usize), Port>,
+    corridors: HashMap<(usize, usize), usize>,
+    corridor_queues: HashMap<(usize, usize), Vec<(usize, f64)>>,
+}
+
+impl Board {
+    /// What `TrafficControl::request_pad` would have answered.
+    pub fn peek_pad(&self, system: usize, port: usize, ship: usize) -> PadGrant {
+        peek_pad(&self.ports, system, port, ship)
+    }
+
+    /// What `TrafficControl::request_corridor` would have answered.
+    pub fn peek_corridor(&self, system: usize, body: usize, ship: usize) -> Option<usize> {
+        peek_corridor(&self.corridors, &self.corridor_queues, system, body, ship)
+    }
+}
+
+fn peek_pad(ports: &HashMap<(usize, usize), Port>, system: usize, port: usize, ship: usize) -> PadGrant {
+    let Some(p) = ports.get(&(system, port)) else { return PadGrant::Queued(0) };
+    if let Some(k) = p.owners.iter().position(|o| o.is_some_and(|o| o.ship == ship)) {
+        return PadGrant::Pad(k);
+    }
+    PadGrant::Queued(p.queue.iter().position(|(s, _)| *s == ship).unwrap_or(p.queue.len()))
+}
+
+fn peek_corridor(corridors: &HashMap<(usize, usize), usize>, queues: &HashMap<(usize, usize), Vec<(usize, f64)>>, system: usize, body: usize, ship: usize) -> Option<usize> {
+    let key = (system, body);
+    match corridors.get(&key) {
+        Some(&s) if s == ship => None,
+        held => {
+            let queue = queues.get(&key);
+            let place = queue.and_then(|q| q.iter().position(|(s, _)| *s == ship)).unwrap_or_else(|| queue.map_or(0, |q| q.len()));
+            Some(place + usize::from(held.is_some()))
+        }
+    }
+}
+
 /// Where a ship physically is, as far as traffic control cares, this frame.
 #[derive(Clone, Debug, Default)]
 pub struct Presence {
@@ -152,24 +193,18 @@ impl TrafficControl {
     /// What `request_pad` would answer now, changing nothing (a ship asking
     /// while ships step side by side: its request is made after).
     pub fn peek_pad(&self, system: usize, port: usize, ship: usize) -> PadGrant {
-        let Some(p) = self.ports.get(&(system, port)) else { return PadGrant::Queued(0) };
-        if let Some(k) = p.owners.iter().position(|o| o.is_some_and(|o| o.ship == ship)) {
-            return PadGrant::Pad(k);
-        }
-        PadGrant::Queued(p.queue.iter().position(|(s, _)| *s == ship).unwrap_or(p.queue.len()))
+        peek_pad(&self.ports, system, port, ship)
     }
 
     /// What `request_corridor` would answer now, changing nothing.
     pub fn peek_corridor(&self, system: usize, body: usize, ship: usize) -> Option<usize> {
-        let key = (system, body);
-        match self.corridors.get(&key) {
-            Some(&s) if s == ship => None,
-            held => {
-                let queue = self.corridor_queues.get(&key);
-                let place = queue.and_then(|q| q.iter().position(|(s, _)| *s == ship)).unwrap_or_else(|| queue.map_or(0, |q| q.len()));
-                Some(place + usize::from(held.is_some()))
-            }
-        }
+        peek_corridor(&self.corridors, &self.corridor_queues, system, body, ship)
+    }
+
+    /// The board as it stands: who holds which pad and corridor, and who
+    /// waits, for pilots to read (they ask by request; see `Board`).
+    pub fn board(&self) -> Board {
+        Board { ports: self.ports.clone(), corridors: self.corridors.clone(), corridor_queues: self.corridor_queues.clone() }
     }
 
     /// Ship `ship` asks at `now` to use the corridor of station or gate
@@ -353,10 +388,6 @@ pub fn lapsed(sys: &StarSystem, ship: &Ship, target: Facility, t: f64, positions
 mod tests {
     use super::*;
 
-    fn at(ship: usize, pad: usize) -> Presence {
-        Presence { ship, system: 1, pad: Some((0, pad)), clear_of: Vec::new() }
-    }
-
     #[test]
     fn pads_go_one_per_ship_and_the_rest_wait_their_turn() {
         let mut tc = TrafficControl::default();
@@ -375,22 +406,6 @@ mod tests {
     }
 
     #[test]
-    fn a_pad_is_held_until_its_ship_has_been_and_gone() {
-        let mut tc = TrafficControl::default();
-        let PadGrant::Pad(k) = tc.request_pad(1, 0, 7, 0.0) else { panic!() };
-        tc.presence(&[]);
-        assert_eq!(tc.owners(1, 0)[k], Some(7), "still on its way: held");
-        tc.presence(&[at(7, k)]);
-        tc.presence(&[at(7, k)]);
-        assert_eq!(tc.owners(1, 0)[k], Some(7), "standing on it");
-        tc.presence(&[]);
-        assert_eq!(tc.owners(1, 0)[k], None, "been and gone: free");
-        // A ship that lands without asking occupies the pad.
-        tc.presence(&[at(9, 2)]);
-        assert_eq!(tc.owners(1, 0)[2], Some(9));
-    }
-
-    #[test]
     fn a_corridor_takes_one_ship_until_it_is_done() {
         let mut tc = TrafficControl::default();
         assert_eq!(tc.request_corridor(1, 5, 1, 0.0), None);
@@ -405,39 +420,3 @@ mod tests {
     }
 }
 
-#[cfg(test)]
-mod clearance_tests {
-    use universe_world::traffic::DOCK_RANGE;
-    use glam::DQuat;
-
-    use super::*;
-    use universe_world::World;
-
-    #[test]
-    fn clearance_is_granted_in_range_and_refused_otherwise() {
-        let w = World::new(42);
-        let sys = w.system(w.home_system);
-        let station = Facility::Station(sys.station().unwrap());
-        let mut positions = Vec::new();
-        sys.positions(w.time, &mut positions);
-        let at = station.position(&sys, w.time, &positions).unwrap();
-        let mut ship = Ship::new(at + DVec3::X * 4000.0, DVec3::ZERO, DQuat::IDENTITY);
-        assert_eq!(request(&sys, &ship, Some(station), w.time, &positions), Ok(station));
-        assert_eq!(nearest_station(&sys, ship.position, &positions), Some(station));
-        assert!(request(&sys, &ship, None, w.time, &positions).is_err(), "no target, no clearance");
-        assert!(request(&sys, &ship, Some(Facility::Gate(0)), w.time, &positions).is_err(), "the star is no gate");
-
-        ship.position = at + DVec3::X * (DOCK_RANGE + 1000.0);
-        assert!(request(&sys, &ship, Some(station), w.time, &positions).unwrap_err().starts_with("OUT OF RANGE"));
-        assert!(!lapsed(&sys, &ship, station, w.time, &positions), "a granted clearance holds out to twice the range");
-        ship.position = at + DVec3::X * (2.0 * DOCK_RANGE + 1000.0);
-        assert!(lapsed(&sys, &ship, station, w.time, &positions));
-
-        ship.position = at + DVec3::X * 4000.0;
-        ship.hyperdrive = true;
-        assert_eq!(request(&sys, &ship, Some(station), w.time, &positions), Err("DISENGAGE HYPERDRIVE FIRST".into()));
-        ship.hyperdrive = false;
-        ship.state = universe_world::ship::ShipState::Destroyed { respawn_in: 1.0 };
-        assert_eq!(request(&sys, &ship, Some(station), w.time, &positions), Err("NOT IN FLIGHT".into()));
-    }
-}

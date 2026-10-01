@@ -90,6 +90,16 @@ fn ground_altitude(bus: &mut impl Bus) -> f64 {
     p.distance(positions[d]) - b.surface_radius_at(positions[d], p, t)
 }
 
+/// Climbing out: clear of the ground, and of the hyperdrive's interlock
+/// (with room to spare), so the drive will run.
+fn clear_to_jump(bus: &mut impl Bus) -> bool {
+    let (sys, positions) = bus.positions();
+    let p = bus.ship().position;
+    let d = sys.dominant(p, &positions);
+    let above_highest = p.distance(positions[d]) - sys.bodies[d].max_radius();
+    ground_altitude(bus) >= 3000.0 && above_highest > 2.0 * universe_world::hyperdrive::INTERLOCK
+}
+
 impl Avionics {
     /// The route autopilot, once a frame.
     pub(crate) fn route_step(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
@@ -153,7 +163,7 @@ impl Avionics {
         }
         if self.route.departing {
             // Straight up on the lift thrusters until clear of the ground.
-            if ground_altitude(bus) < 3000.0 {
+            if !clear_to_jump(bus) {
                 self.set_controls(bus, events, |c| {
                     c.rcs = DVec3::Y;
                     c.throttle = 0.0;

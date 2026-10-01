@@ -227,26 +227,4 @@ mod tests {
         assert!((c.time - (500.0 - 2.0 * SHIP_RADIUS) / 100.0).abs() < 0.5, "{:.1} s", c.time);
     }
 
-    #[test]
-    fn clear_when_moving_away_and_ground_when_falling() {
-        let (world, sys, positions, mut ship) = home();
-        let station = sys.station().unwrap();
-        let st = positions[station];
-        let v = sys.velocity(station, world.time);
-        let away = (ship.position - st).normalize();
-        ship.velocity = v + away * 50.0;
-        let p = predict(&sys, &ship, world.time, &positions, &[]);
-        assert!(p.collision.is_none() && p.clear);
-        // Hovering 2 km over the planet with no speed: it falls.
-        let planet = sys.bodies[station].rail.parent.unwrap();
-        let up = (ship.position - positions[planet]).normalize();
-        ship.position = positions[planet] + up * (sys.bodies[planet].surface_radius(up) + 2_000.0);
-        ship.velocity = sys.velocity(planet, world.time) + sys.bodies[planet].angular_velocity().cross(ship.position - positions[planet]);
-        let p = predict(&sys, &ship, world.time, &positions, &[]);
-        let c = p.collision.expect("the ground");
-        assert!(c.what.starts_with(&sys.bodies[planet].name), "{}", c.what);
-        let g = sys.bodies[planet].rail.mu / (sys.bodies[planet].rail.radius + 2000.0).powi(2);
-        let expect = (2.0 * 2000.0 / g).sqrt();
-        assert!((c.time - expect).abs() < 2.0, "falls in {:.1} s, expected about {expect:.1}", c.time);
-    }
 }

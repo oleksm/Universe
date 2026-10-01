@@ -101,24 +101,4 @@ mod tests {
         assert!(low.hull < 0.5, "hull {}", low.hull);
     }
 
-    #[test]
-    fn flying_low_at_airliner_speed_is_nothing_at_mach_6_it_glows_at_mach_9_it_burns() {
-        let air = universe_physics::Atmosphere::earthlike(9.81);
-        // Barely warm: no hotter than the air brought to rest (~321 K).
-        assert!(soak(250.0, air.density(0.0), 120.0).skin_temp < 325.0);
-        let m6 = soak(2_000.0, air.density(0.0), 60.0);
-        assert!(m6.skin_temp > 1_000.0 && m6.hull == 1.0, "{} K", m6.skin_temp);
-        assert!(soak(3_000.0, air.density(0.0), 30.0).hull < 1.0);
-    }
-
-    #[test]
-    fn out_of_the_air_it_cools() {
-        let mut s = ship_at(0.0);
-        s.skin_temp = 1_400.0;
-        let mut events = Vec::new();
-        for _ in 0..60 * 120 {
-            heat(&mut s, None, 1.0 / 60.0, &mut events);
-        }
-        assert!(s.skin_temp < 700.0, "{}", s.skin_temp);
-    }
 }

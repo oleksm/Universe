@@ -170,16 +170,11 @@ impl Request {
     }
 }
 
-/// A craft's commands on their way to its devices: with a delay of k ticks
-/// (to test pilots against the lag they'll have once they run apart from
-/// the world), each takes effect k ticks after it was given. Meanwhile the
-/// pilot sees its own last settings (as a ship's controls show what was
-/// set, not yet what the devices do).
+/// A craft's commands on their way to its devices: its pilot's postings,
+/// each taking effect at its due tick (see `pilots`).
 #[derive(Clone, Debug, Default)]
 pub struct Inbox {
     pending: std::collections::VecDeque<(u64, Pending)>,
-    /// The pilot's last settings: engine, thrusters.
-    intent: Option<(f64, glam::DVec3)>,
 }
 
 #[derive(Clone, Debug)]
@@ -189,8 +184,17 @@ enum Pending {
 }
 
 impl Inbox {
+    /// Commands for the devices, and maybe the turn, due at `due`.
+    pub(crate) fn post(&mut self, due: u64, devices: Vec<ShipCommands>, turn: Option<Option<Controls>>) {
+        let at = self.pending.iter().position(|(d, _)| *d > due).unwrap_or(self.pending.len());
+        let items = devices.into_iter().map(|c| Pending::Devices(Box::new(c))).chain(turn.map(Pending::Turn));
+        for (k, item) in items.enumerate() {
+            self.pending.insert(at + k, (due, item));
+        }
+    }
+
     /// Hand the devices what's due by `tick`; the turn due, if one is.
-    fn deliver(&mut self, world: &World, ship: &mut Ship, system: usize, t: f64, tick: u64, events: &mut Vec<ShipEvent>) -> Option<Option<Controls>> {
+    pub(crate) fn deliver(&mut self, world: &World, ship: &mut Ship, system: usize, t: f64, tick: u64, events: &mut Vec<ShipEvent>) -> Option<Option<Controls>> {
         let mut turn = None;
         while self.pending.front().is_some_and(|(due, _)| *due <= tick) {
             match self.pending.pop_front().expect("due").1 {
@@ -198,161 +202,6 @@ impl Inbox {
                 Pending::Turn(c) => turn = Some(c),
             }
         }
-        if self.pending.is_empty() {
-            self.intent = None;
-        }
         turn
     }
-}
-
-/// The bus while ships step side by side: the world shared and read-only,
-/// the ship's own clock, traffic control's answers as of the last tick (the
-/// requests go in `requests`).
-pub(crate) struct FrameLink<'a> {
-    pub world: &'a World,
-    /// Traffic control as it stood at the tick's start (requests are made after).
-    pub atc: &'a TrafficControl,
-    pub ship: &'a mut Ship,
-    pub system: usize,
-    pub id: usize,
-    pub time: f64,
-    pub requests: &'a mut Vec<Request>,
-    /// Commands delayed (see `Inbox`): the inbox, the tick now and the delay.
-    pub delay: Option<(&'a mut Inbox, u64, u64)>,
-    /// The ship as its pilot sees it, with its own last settings (while delayed).
-    pub seen: Option<Ship>,
-    /// What the devices did, for the feed.
-    pub happened: Vec<ShipEvent>,
-}
-
-impl FrameLink<'_> {
-    fn refresh_seen(&mut self) {
-        self.seen = self.delay.as_ref().and_then(|(inbox, _, _)| inbox.intent).map(|(throttle, rcs)| Ship { throttle, rcs, ..self.ship.clone() });
-    }
-}
-
-impl Bus for FrameLink<'_> {
-    fn ship(&self) -> &Ship {
-        self.seen.as_ref().unwrap_or(self.ship)
-    }
-
-    fn system(&self) -> usize {
-        self.system
-    }
-
-    fn star_system(&mut self) -> Arc<StarSystem> {
-        self.world.system(self.system)
-    }
-
-    fn time(&self) -> f64 {
-        self.time
-    }
-
-    fn gate_links(&self) -> &[(usize, usize)] {
-        &self.world.gate_links
-    }
-
-    fn id(&self) -> usize {
-        self.id
-    }
-
-    fn request_pad(&mut self, port: usize) -> PadGrant {
-        self.requests.push(Request::Pad { system: self.system, port, ship: self.id, now: self.time });
-        self.atc.peek_pad(self.system, port, self.id)
-    }
-
-    fn request_corridor(&mut self, body: usize) -> Option<usize> {
-        self.requests.push(Request::Corridor { system: self.system, body, ship: self.id, now: self.time });
-        self.atc.peek_corridor(self.system, body, self.id)
-    }
-
-    fn turrets(&mut self) -> Vec<(glam::DVec3, glam::DVec3)> {
-        self.world.turret_motions_at(self.system, self.time).into_iter().map(|(_, p, v)| (p, v)).collect()
-    }
-
-    fn positions(&mut self) -> (Arc<StarSystem>, Vec<glam::DVec3>) {
-        (self.world.system(self.system), (*self.world.rails_at(self.system, self.time)).clone())
-    }
-
-    fn actuate(&mut self, c: &ShipCommands) {
-        match &mut self.delay {
-            Some((inbox, tick, k)) => {
-                inbox.pending.push_back((*tick + *k, Pending::Devices(Box::new(*c))));
-                inbox.intent = Some((c.throttle, c.rcs));
-                self.refresh_seen();
-            }
-            None => self.world.command_at(self.ship, self.system, c, self.time, &mut self.happened),
-        }
-    }
-
-    fn feed(&mut self) -> Vec<ShipEvent> {
-        std::mem::take(&mut self.happened)
-    }
-
-    fn request_clearance(&mut self, target: Option<universe_avionics::NavTarget>) -> Result<universe_avionics::NavTarget, String> {
-        clearance(self.world, self.ship, self.system, target, self.time)
-    }
-
-    fn clearance_holds(&mut self, target: universe_avionics::NavTarget) -> bool {
-        holds(self.world, self.ship, self.system, target, self.time)
-    }
-}
-
-/// A ship's turn while ships step side by side (see `Vessel::tick` for the
-/// order): from `t0` for `real_dt` at `warp`, its pilot (a program) having
-/// first said what the stick does (`stick`: given the bus, it returns it).
-/// What happened goes to `events`, traffic requests to `requests`.
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn turn(
-    world: &World,
-    atc: &TrafficControl,
-    id: usize,
-    ship: &mut Ship,
-    system: &mut usize,
-    avionics: &mut Avionics,
-    t0: f64,
-    real_dt: f64,
-    warp: f64,
-    events: &mut Vec<Event>,
-    requests: &mut Vec<Request>,
-    delay: Option<(&mut Inbox, u64, u64)>,
-    stick: impl FnOnce(&mut Avionics, &mut FrameLink, &mut Vec<Event>) -> Option<Controls>,
-) {
-    // Delayed commands now due reach the devices first.
-    let mut delay = delay;
-    let due_turn = match &mut delay {
-        Some((inbox, tick, _)) => {
-            let mut happened = Vec::new();
-            let turn = inbox.deliver(world, ship, *system, t0, *tick, &mut happened);
-            avionics.record(happened, events);
-            turn
-        }
-        None => None,
-    };
-    let delayed = delay.is_some();
-    let (stick, program) = {
-        let lent = delay.as_mut().map(|(inbox, tick, k)| (&mut **inbox, *tick, *k));
-        let mut l = FrameLink { world, atc, ship: &mut *ship, system: *system, id, time: t0, requests: &mut *requests, delay: lent, seen: None, happened: Vec::new() };
-        l.refresh_seen();
-        let c = stick(avionics, &mut l, events);
-        let p = universe_prof::time("sim/crafts/tick/avionics prepare", || avionics.prepare(&mut l, real_dt * warp, events));
-        (c, p)
-    };
-    let turn = if avionics.flies(ship) { program } else { Some(stick.unwrap_or_default()) };
-    // Delayed, the stick goes in the inbox too, and the one due now turns the ship.
-    let turn = match delay {
-        Some((inbox, tick, k)) => {
-            inbox.pending.push_back((tick + k, Pending::Turn(turn)));
-            due_turn.flatten()
-        }
-        None if delayed => None,
-        None => turn,
-    };
-    let commands = ShipCommands { turn, ..ship.holding() };
-    let mut happened = Vec::new();
-    let mut clock = t0;
-    universe_prof::time("sim/crafts/tick/world step", || world.step_ship_at(&mut clock, ship, system, &commands, real_dt, warp, &mut happened));
-    avionics.record(happened, events);
-    let mut l = FrameLink { world, atc, ship, system: *system, id, time: clock, requests, delay: None, seen: None, happened: Vec::new() };
-    universe_prof::time("sim/crafts/tick/avionics conclude", || avionics.conclude(&mut l, events));
 }

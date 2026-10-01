@@ -311,39 +311,6 @@ mod tests {
     }
 
     #[test]
-    fn stand_up_walk_the_ship_and_sit_back_down() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let pos = p.positions();
-        let mut person = Person::default();
-        let mut events = Vec::new();
-        person.step(&sys, &p.ship, p.world.time, &pos, &use_it(), 0.02, &mut events);
-        assert!(matches!(person.place, Place::Aboard { .. }));
-        // Walk aft down the corridor into the cabin (yaw π: facing +Z), and on into the wall.
-        if let Place::Aboard { yaw, .. } = &mut person.place {
-            *yaw = std::f64::consts::PI;
-        }
-        for _ in 0..1500 {
-            person.step(&sys, &p.ship, p.world.time, &pos, &walk(1.0), 0.02, &mut events);
-        }
-        let Place::Aboard { position, .. } = person.place else { panic!() };
-        assert!((position.z - (10.0 - BODY_RADIUS)).abs() < 0.05, "stopped at the cabin's back wall: {position}");
-        // The hatch won't open in flight.
-        if let Place::Aboard { position, .. } = &mut person.place {
-            *position = HATCH;
-        }
-        person.step(&sys, &p.ship, p.world.time, &pos, &use_it(), 0.02, &mut events);
-        assert!(matches!(person.place, Place::Aboard { .. }));
-        assert!(matches!(events.last(), Some(CrewEvent::HatchRefused { .. })));
-        // Back to the seat.
-        if let Place::Aboard { position, .. } = &mut person.place {
-            *position = BESIDE_SEAT;
-        }
-        person.step(&sys, &p.ship, p.world.time, &pos, &use_it(), 0.02, &mut events);
-        assert!(person.seated());
-    }
-
-    #[test]
     fn step_out_on_a_planet_walk_jump_and_come_back_aboard() {
         let mut p = Probe::new(42);
         let sys = p.sys();

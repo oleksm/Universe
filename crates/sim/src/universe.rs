@@ -72,10 +72,15 @@ pub struct Universe {
     pub markets: universe_services::Markets,
     /// Messages sent to services so far (each one's id, for causes).
     pub(crate) messages: u64,
-    /// Crafts' commands reach their devices this many ticks after they're
-    /// given (0: at once). Tests set it to the lag pilots will have once they
-    /// run apart from the world.
+    /// Turret gunners' orders reach their guns this many ticks after they're
+    /// given (0: at once). (Crafts' pilots: `pilots::COMMAND_DELAY`.)
     pub command_delay: usize,
+    /// The crafts' pilots (see `pilots`), and their postings not yet due
+    /// (each takes effect whole at its due tick, however early it came).
+    pub pool: crate::pilots::Pool,
+    pending: Vec<crate::pilots::Posting>,
+    /// The charts, shared with the pilots.
+    pub(crate) charts: Option<Arc<universe_world::charts::Charts>>,
 }
 
 impl Universe {
@@ -105,7 +110,10 @@ impl Universe {
             ledger: Default::default(),
             markets: universe_services::Markets::new(seed, goods),
             messages: 0,
-            command_delay: 0,
+            command_delay: crate::pilots::COMMAND_DELAY as usize,
+            pool: Default::default(),
+            pending: Vec::new(),
+            charts: None,
             positions: Vec::new(),
         };
         u.respawn();
@@ -186,6 +194,13 @@ impl Universe {
         self.tick += 1;
         self.log.clear();
         self.atc.because(self.tick, universe_protocol::Cause::Rules);
+        // What the pilots posted that's due (or late) now.
+        let came = self.pool.collect();
+        self.pending.extend(came);
+        let tick = self.tick;
+        let (due, later): (Vec<_>, Vec<_>) = std::mem::take(&mut self.pending).into_iter().partition(|p| p.due() <= tick);
+        self.pending = later;
+        universe_prof::time("sim/postings", || self.post(due));
         let t0 = self.world.time;
         universe_prof::time("sim/snapshot", || self.snapshot());
         let result = universe_prof::time("sim/player", || self.step(real_dt, warp, controls));
@@ -199,15 +214,31 @@ impl Universe {
         universe_prof::time("sim/combat", || self.combat(t1 - t0));
         universe_prof::time("sim/traffic presence", || self.traffic_presence());
         universe_prof::time("sim/recorder", || self.record());
+        universe_prof::time("sim/dead man", || self.dead_man());
+        // The pilots get the world as it now is.
+        let view = universe_prof::time("sim/pilot view", || self.pilot_view(t1 - t0));
+        let thought = universe_prof::time("sim/pilots", || self.pool.view(view));
+        self.pending.extend(thought);
         result
     }
 
-    /// Craft `i`'s avionics, connected to its ship, for a request (as its pilot would).
-    pub(crate) fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::vessel::Link, &mut Vec<Event>) -> R) -> R {
-        let c = &mut self.crafts[i];
-        let mut events = Vec::new();
-        let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events, atc: &mut self.atc };
-        vessel.run(&mut self.world, f)
+    /// Craft `i`'s pilot does `f` now (dev tools and tests, as a pilot at
+    /// the controls would): what it posts goes in at once.
+    pub(crate) fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::pilots::PoolLink, &mut Vec<Event>) -> R) -> R {
+        let view = self.pilot_view(TICK);
+        let (r, posting) = self.pool.run(i, &view, f);
+        self.post(vec![posting]);
+        r
+    }
+
+    /// The crafts' pilots (waits while they're thinking, apart).
+    pub fn pilots(&self) -> std::sync::MutexGuard<'_, Vec<crate::pilots::Pilot>> {
+        self.pool.pilots()
+    }
+
+    /// From now on the pilots think apart from the world, on `threads` threads.
+    pub fn run_pilots_apart(&mut self, threads: usize) {
+        self.pool.run_apart(threads);
     }
 
     /// Lock craft `i`'s nav target.
@@ -231,9 +262,9 @@ impl Universe {
         if !self.recorder.due(now) {
             return;
         }
-        self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.avionics));
+        self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &crate::pilots::Status::of(&self.avionics)));
         for (i, c) in self.crafts.iter().enumerate() {
-            self.recorder.record(crate::combat::craft_id(i), crate::recorder::Sample::of(now, c.system, &c.ship, &c.avionics));
+            self.recorder.record(crate::combat::craft_id(i), crate::recorder::Sample::of(now, c.system, &c.ship, &c.status));
         }
         self.recorder.sampled(now);
     }
@@ -311,10 +342,10 @@ impl Universe {
         }
         // Who's where (on the ground, or flying in normal space).
         type Where = (usize, usize, DVec3, bool, Option<(NavTarget, Phase)>);
-        let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
-            .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, &c.avionics)))
+        let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, self.avionics.clearance))
+            .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, c.status.clearance)))
             .filter(|(_, _, s, _)| matches!(s.state, ShipState::Landed { .. }) || (s.is_flying() && !s.hyperdrive))
-            .map(|(id, system, s, a)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), a.clearance.map(|c| (c.target, c.phase))))
+            .map(|(id, system, s, clearance)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), clearance.map(|c| (c.target, c.phase))))
             .collect();
         let mut systems: std::collections::HashMap<usize, Seen> = std::collections::HashMap::new();
         for &(_, system, ..) in &ships {

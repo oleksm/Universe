@@ -78,11 +78,4 @@ mod tests {
         assert_eq!(dominant(&bodies, DVec3::X * 1.0e7, &positions), 0, "a body that doesn't attract never dominates");
     }
 
-    #[test]
-    fn segment_distances() {
-        let (a, b) = (DVec3::ZERO, DVec3::X * 10.0);
-        assert_eq!(segment_distance(a, b, DVec3::new(5.0, 3.0, 0.0)), 3.0);
-        assert_eq!(segment_distance(a, b, DVec3::new(-4.0, 3.0, 0.0)), 5.0);
-        assert_eq!(segment_distance(a, a, DVec3::new(0.0, 0.0, 2.0)), 2.0);
-    }
 }

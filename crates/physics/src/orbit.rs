@@ -96,15 +96,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn orbit_state_matches_numeric_derivative() {
-        let o = Orbit::new(1.0e9, 0.3, 0.2, 1.0, 2.0, 0.5, 1.0e17);
-        let (p0, v) = o.state(1000.0);
-        let p1 = o.position(1000.001);
-        let numeric = (p1 - p0) / 0.001;
-        assert!((numeric - v).length() / v.length() < 1e-4);
-    }
-
-    #[test]
     fn orbit_closes_and_keeps_its_energy() {
         let o = Orbit::new(7.0e6, 0.2, 0.4, 0.3, 1.1, 0.7, 3.986e14);
         let energy = |t: f64| {

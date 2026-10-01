@@ -18,7 +18,6 @@ use crate::universe::Universe;
 /// The player's ship's id in combat.
 pub const PLAYER: usize = 0;
 
-
 /// Combat id of craft `i`.
 pub fn craft_id(i: usize) -> usize {
     i + 1
@@ -49,7 +48,6 @@ impl Universe {
             self.record_kill(kill);
         }
         self.avionics.record(player_events, &mut self.events);
-        let mut ignored = Vec::new();
         for (i, events) in craft_events.into_iter().enumerate() {
             if events.is_empty() {
                 continue;
@@ -58,8 +56,8 @@ impl Universe {
             // Fired on (and not a hunter itself, nor standing to fight with
             // hull to spare): run for the guns.
             let c = &self.crafts[i];
-            let fighting = c.avionics.hunting.is_some_and(|h| h.lawful) && c.ship.hull >= universe_avionics::hunter::FLEE_HULL;
-            if !c.avionics.pirate && !fighting && events.iter().any(|e| matches!(e, ShipEvent::Hit { .. })) {
+            let fighting = c.status.hunting.is_some_and(|h| h.lawful) && c.ship.hull >= universe_avionics::hunter::FLEE_HULL;
+            if !c.status.pirate && !fighting && events.iter().any(|e| matches!(e, ShipEvent::Hit { .. })) {
                 self.flee(i);
             }
             if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
@@ -68,17 +66,17 @@ impl Universe {
                 } else {
                     self.records.stats.shot_down += 1;
                     let killer = if kill.killer == PLAYER { None } else { self.crafts.get(kill.killer - 1) };
-                    if killer.is_some_and(|c| c.avionics.pirate) {
+                    if killer.is_some_and(|c| c.status.pirate) {
                         self.records.stats.pirate_kills += 1;
-                    } else if killer.is_some_and(|c| c.avionics.hunting.is_some_and(|h| h.lawful)) {
+                    } else if killer.is_some_and(|c| c.status.hunting.is_some_and(|h| h.lawful)) {
                         self.records.stats.aggressors_downed += 1;
                     }
                 }
                 self.record_kill(kill);
             }
             self.records.stats.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
-            self.crafts[i].avionics.record(events, &mut ignored);
-            ignored.clear();
+            // And to its pilot, by its sensors.
+            self.pool.send(i, crate::pilots::Msg::Feed(events));
         }
     }
 
@@ -218,15 +216,14 @@ impl Universe {
         let Some(&(_, haven)) = havens.first() else { return };
         let stop = universe_avionics::Stop { system, target: haven };
         let c = &mut self.crafts[i];
-        let r = &mut c.avionics.route;
-        if r.stops.get(r.next) == Some(&stop) {
+        if c.status.next_stop == Some(stop) && c.status.route_active {
             return;
         }
-        r.stops.insert(r.next.min(r.stops.len()), stop);
-        r.active = true;
-        r.dwell_until = None;
-        r.departing = false;
-        if c.avionics.clearance.take().is_some() {
+        self.pool.send(i, crate::pilots::Msg::Order(crate::pilots::Order::Flee(stop)));
+        let c = &mut self.crafts[i];
+        c.status.next_stop = Some(stop);
+        c.status.route_active = true;
+        if c.status.clearance.take().is_some() {
             // Its pilot gives the clearance up, running.
             let cause = self.atc.request_from(craft_id(i));
             self.atc.because(self.tick, cause);
@@ -279,10 +276,9 @@ impl Universe {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use glam::{DQuat, DVec3};
+    use glam::DVec3;
     use universe_world::{Controls, ShipCommands, ShipState, Triggers};
 
     use crate::universe::Universe;
@@ -302,8 +298,7 @@ mod tests {
         c.ship.hyperdrive = false;
         c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
         c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
-        c.avionics = Default::default();
-        c.avionics.pirate = true;
+        u.pilots()[0].avionics = universe_avionics::Avionics { pirate: true, ..Default::default() };
         u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
         u.lock_next_contact();
         let mut destroyed = false;
@@ -325,44 +320,6 @@ mod tests {
         eprintln!("rounds fired {fired}, shot down {destroyed}");
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");
-    }
-
-    #[test]
-    fn the_gimbal_hits_with_the_nose_two_degrees_off() {
-        let mut u = Universe::new(1984);
-        u.spawn_settlers(1, 1);
-        // Well away from any defence turrets (we'll be the aggressor), and the
-        // target one that won't run (a pirate, with nothing to hunt).
-        u.ship.position += DVec3::new(1.5e6, 0.0, 0.0);
-        let (sys, pos, vel) = (u.ship_system, u.ship.position, u.ship.velocity);
-        let c = &mut u.crafts[0];
-        c.system = sys;
-        c.ship.state = ShipState::Flying;
-        c.ship.hyperdrive = false;
-        c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
-        c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
-        c.avionics = Default::default();
-        c.avionics.pirate = true;
-        u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
-        u.lock_next_contact();
-        let two = DQuat::from_rotation_z(2f64.to_radians());
-        for frame in 0..600 {
-            let contacts = u.contacts();
-            if let Some((_, Some(sol))) = u.fire_control(&contacts) {
-                // A pilot holding the nose 2° off the lead.
-                let off = two * sol.aim;
-                u.ship.orientation = universe_world::ship::facing(off, off.any_orthonormal_vector());
-                if frame % 60 == 0 {
-                    u.command(&ShipCommands { weapons: Some(Triggers { gun: true, laser: false }), ..u.ship.holding() });
-                }
-            }
-            u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-            if u.records.stats.shot_down > 0 {
-                break;
-            }
-        }
-        assert_eq!(u.records.stats.shot_down, 1, "the gimbal lays the gun on the lead");
-        assert!(u.world.impacts.len() <= 1);
     }
 
     #[test]

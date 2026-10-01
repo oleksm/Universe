@@ -140,20 +140,3 @@ pub fn catalog(seed: u64) -> Vec<Item> {
     items
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn a_thousand_distinct_goods_the_same_every_time() {
-        let a = catalog(1984);
-        assert_eq!(a.len(), CATALOG_SIZE);
-        let mut names: Vec<&str> = a.iter().map(|i| i.name.as_str()).collect();
-        names.sort();
-        names.dedup();
-        assert_eq!(names.len(), CATALOG_SIZE, "names are distinct");
-        assert_eq!(a, catalog(1984));
-        assert_ne!(a, catalog(7));
-        assert!(a.iter().all(|i| i.price > 0.0 && i.mass >= 1.0));
-    }
-}

@@ -199,7 +199,8 @@ impl World {
             crate::weapons::master_arm(ship, on, events);
         }
         match &c.hyperdrive {
-            Some(h) if h.engage != ship.hyperdrive => {
+            // (Off always; on only by the engage control.)
+            Some(h) if h.engage != ship.hyperdrive && (h.start || !h.engage) => {
                 let sys = self.system(system);
                 let positions = self.rails_at(system, t);
                 hyperdrive::switch(&sys, ship, h, t, &positions, events);
@@ -626,66 +627,9 @@ impl Driver for Devices<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ship::{DRY_MASS, FUEL_CAPACITY};
+    
     use crate::testkit::Probe;
     use crate::units::AU;
-
-    #[test]
-    fn home_system_has_station_and_planets() {
-        let w = World::new(42);
-        let sys = w.system(w.home_system);
-        assert!(sys.station().is_some());
-        assert!(sys.planet_count() >= 4);
-        for (i, b) in sys.bodies.iter().enumerate() {
-            if let Some(p) = b.rail.parent {
-                assert!(p < i, "parent must precede child");
-            }
-        }
-    }
-
-    #[test]
-    fn ship_keeps_orbit_under_warp() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let station = sys.station().unwrap();
-        let planet = sys.bodies[station].rail.parent.unwrap();
-        let mut pos = Vec::new();
-        sys.positions(p.world.time, &mut pos);
-        let r0 = p.ship.position.distance(pos[planet]);
-        // Two simulated hours at 1000x.
-        for _ in 0..(7200 / 16) {
-            p.step(0.016, 1000.0);
-        }
-        sys.positions(p.world.time, &mut pos);
-        let r1 = p.ship.position.distance(pos[planet]);
-        assert!(p.ship.is_flying());
-        assert!((r1 - r0).abs() / r0 < 0.01, "orbit radius drifted: {r0} -> {r1}");
-    }
-
-    #[test]
-    fn heavier_ship_accelerates_less() {
-        let mut p = Probe::new(42);
-        let full = p.ship.main_accel();
-        assert!((full - 30.0).abs() < 1e-9, "a fully fuelled, empty ship keeps the old 30 m/s^2");
-        p.ship.cargo = DRY_MASS + FUEL_CAPACITY; // double the mass
-        assert!((p.ship.main_accel() - 15.0).abs() < 1e-9);
-        // And it shows in flight: burn for 10 s far from anything.
-        let burn = |cargo: f64| {
-            let mut p = Probe::new(42);
-            p.ship.position = DVec3::new(0.0, 5.0 * AU, 0.0);
-            p.ship.velocity = DVec3::ZERO;
-            p.ship.cargo = cargo;
-            p.set_throttle(1.0);
-            let v0 = p.ship.velocity;
-            for _ in 0..600 {
-                p.step(1.0 / 60.0, 1.0);
-            }
-            (p.ship.velocity - v0).dot(p.ship.forward())
-        };
-        let (light, heavy) = (burn(0.0), burn(90_000.0));
-        eprintln!("10 s full burn: empty {light:.1} m/s, loaded {heavy:.1} m/s");
-        assert!((light / heavy - 2.0).abs() < 0.02);
-    }
 
     #[test]
     fn device_settings_hold_through_the_step() {

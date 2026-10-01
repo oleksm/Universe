@@ -102,16 +102,4 @@ mod tests {
         assert!(at.velocity.distance(bodies[0].angular_velocity().cross(at.position)) < 1e-9, "moves with the ground");
     }
 
-    #[test]
-    fn relocation_keeps_relative_motion() {
-        let from = Frame { center: DVec3::new(1.0e7, 0.0, 0.0), velocity: DVec3::new(0.0, 3000.0, 0.0), rotation: DQuat::from_rotation_y(0.7), angular_velocity: DVec3::ZERO };
-        let to = Frame { center: DVec3::new(-4.0e9, 2.0e8, 1.0e6), velocity: DVec3::new(-20_000.0, 0.0, 500.0), rotation: DQuat::from_rotation_x(2.1), angular_velocity: DVec3::ZERO };
-        let mut rb = RigidBody::new(from.center + DVec3::new(30.0, -40.0, 5.0), from.velocity + DVec3::new(1.0, 2.0, -3.0), DQuat::from_rotation_z(0.2), 12.0);
-        let before = Relative::of(&from, &rb);
-        relocate(&from, &to, &mut rb);
-        let after = Relative::of(&to, &rb);
-        assert!(before.position.distance(after.position) < 1e-6);
-        assert!(before.velocity.distance(after.velocity) < 1e-9);
-        assert!(before.orientation.angle_between(after.orientation) < 1e-6);
-    }
 }

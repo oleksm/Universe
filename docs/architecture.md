@@ -79,21 +79,28 @@ boundary, `universe_sim::engine`:
 Threads:
 
 1. **World engine** (`EngineHandle::start`): ticks at `TICK_HZ` (60), applying commands,
-   then publishing the view. Within a tick, after the player:
-   - **crafts step side by side** on all cores (`rayon`), each against the world frozen at
-     the tick's start (`World::freeze`: systems, body positions at both ends of the tick, the
-     integrator's snapshot, turrets, read without locks) and the others as the frame's
-     snapshot has them (`Universe::snaps`);
-   - their traffic control requests (pads, corridors) are answered from the last tick's state
-     and made after, in craft order, so the outcome doesn't depend on thread timing;
-   - what came of each turn (events, hunts, crashes, trades) is applied in craft order;
-   - then combat, collisions and traffic presence (presence worked out in parallel).
+   then publishing the view. Within a tick:
+   - **NPC pilots' postings due this tick** take effect (see `pilots`): their commands into
+     each craft's inbox, their traffic requests, what they report and show;
+   - the player's ship steps;
+   - **crafts step side by side** on all cores (`rayon`): physics only, from the commands due,
+     each against the world frozen at the tick's start (`World::freeze`: systems, body
+     positions at both ends of the tick, the integrator's snapshot, turrets, read without
+     locks);
+   - what came of each step (events, crashes, records, the pilot's feed, dispatch) is applied
+     in craft order;
+   - then combat, collisions, traffic presence and the dead-man rule;
+   - finally the **pilot view** (the world as it now is) goes to the NPC pilots.
+4. **NPC pilots** (`sim::pilots`, the `pilots` thread and its own worker pool, half the cores):
+   think on the newest view, never holding the world up, and post commands due two ticks after
+   the view they read. `UNIVERSE_LOCKSTEP=1` (and tests) think in step with the world instead.
 
    Dev scenarios set the universe up before the thread starts. `UNIVERSE_ENGINE_THREAD=0` runs
    it in the client's thread, for debugging.
 2. **Client main thread**: window and input, turning input into commands, taking the newest
-   view and building the frame. Between ticks it carries motion forward (`App::ahead`,
-   `turned`, `now`) so a fast display doesn't judder on 60 Hz ticks.
+   view and building the frame. It draws one tick behind, between the last two views
+   (`App::alpha`, `now`, `place`, and one drawn ship, `App::ship`), so a fast display doesn't
+   judder on 60 Hz ticks and everything in a frame is drawn at the same moment.
 3. **Render thread** (`engine::render_thread`): owns the GPU. It takes finished frames (one
    may wait), uploads, submits and presents, and reports sizes and timings back. Meshes live on
    the GPU (`Mesh`: uploaded once, instanced by mesh, transformed and lit in the shader).
@@ -305,8 +312,22 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   `toggle_route`, `respawn`) go to the player's avionics (or straight to the devices, for
   `command`) and take effect at once; `approach`, `plan`, `target_position`, `stop_name`… are
   what the HUD shows.
-- `vessel`: **one ship's turn**, the same code for the player's ship and every craft (a
-  `Vessel` borrows a ship, its system, its avionics and its event feed):
+- `pilots` (R6): **the NPC pilots, apart from the world.** A `Pilot` (its avionics, its feed
+  and orders, when it next thinks, its commands not yet due) reads a `PilotView` (its ship,
+  the charts, the others as snapshots, traffic control's `Board`, body and turret positions)
+  through `PoolLink`, its `Bus`, and posts a `Posting`: commands for its devices and turn due
+  `COMMAND_DELAY` (2) ticks after the view, traffic requests, its programs' events, and its
+  `Status` (transponder and flight plan: the world reads this, never the pilot). A posting
+  takes effect whole at its due tick, however early it came; a late one at once (counted), a
+  stale one (past `LATE_HORIZON`) dropped. Pilots think every tick while flying or busy, every
+  0.5 s coasting, and parked until their stop is up (at least every 5 s). Its operator's
+  orders (dispatch, the trader's next market, a run for the guns) and its ship's events reach
+  it as messages. A ship whose pilot posts nothing for `DEAD_MAN` (30 s) has its engine cut
+  and weapons made safe. The `Pool` runs pilots in lockstep (tests) or apart on its own thread
+  (`run_pilots_apart`, the game's default); `Pool::slow_down` and `Pilot::silent` inject
+  faults for tests.
+- `vessel`: **the player's ship's turn** (a `Vessel` borrows a ship, its system, its avionics
+  and its event feed), and each craft's `Inbox` of postings by due tick:
   1. avionics `prepare` (route autopilot, hyperjump) → commands over the bus;
   2. the pilot's stick → the frame's `ShipCommands` (unless a computer is flying the ship);
   3. `World::step_ship` with the avionics' `Computer`: devices → kernel step → contact/trigger
@@ -315,9 +336,10 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   5. avionics `conclude` (hyperdrive arrival, clearance lapse).
 
   A private `Link` is the avionics' `Bus` over the world and the ship being stepped.
-- `traffic`: `Craft { name, ship, system, avionics, route_seed }` — the settlers, each on its
-  own reproducible route (`spawn_settlers`, `settler_route`; a new route when one is done),
-  `TrafficStats` (stops, transits, crashes, routes completed) and the `CrashReport` log (last 50).
+- `traffic`: `Craft { name, ship, system, status, inbox, route_seed, … }` — the settlers'
+  bodies (their pilots are in `pilots`), each on its own reproducible route (`spawn_settlers`,
+  `settler_route`; dispatch orders a new route when one is done), the craft step, postings,
+  the dead-man rule, the pilot view, and the `CrashReport` log (last 50).
 - `save`: `UniverseSave { seed, time, ship, ship_system, route, avionics }` — `save`/`load`
   (star systems regenerate from the seed; saves from before the refactor still load, without a
   nav target or clearance; settlers aren't saved).
@@ -325,11 +347,11 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 The world time scale (default 1×) is game seconds per real second, chosen by the game; single
 player warp multiplies it (not in hyperdrive).
 
-Tests: unit tests next to the code (settlers, save/load); whole flights through the
-orchestrator in `crates/sim/tests/flights.rs` (autodock, autoland from orbit / the far side /
-high above, hyperdrive to a port and a moving gate, plans reaching the pad and slot and staying
-put, gate transit keeping motion, route autopilot), and benches, ETA accuracy and debugging
-printouts in `crates/sim/tests/probe.rs`. The long runs are `#[ignore]`d.
+Tests: unit tests next to the code; whole flights through the orchestrator in
+`crates/sim/tests/flights.rs` (autodock, autoland from orbit, hyperdrive to a port, the plan
+reaching pad and slot, gate transit keeping motion, the route autopilot); NPC pilots apart in
+`crates/sim/tests/pilots.rs` (on time = lockstep to the bit, a slow pool never slows the tick,
+the dead-man rule).
 
 **Not yet**
 
@@ -430,8 +452,9 @@ ship's pose directly, like tests do — then render.
 - **The flight recorder** (`sim::recorder`): every ship's last 15 s. Any wreck files an incident
   with its trace, and the other ship's for a collision or kill (separation, closing speed, both
   clearances), printed by the interaction tests on failure. Causes are read, not guessed.
-- **No long whole-traffic simulations** in the development loop: they're minutes each and, at
-  warp, unrepresentative. The ignored `settlers_fly` / `settlers_trade` runs remain only as
-  occasional benchmarks, on request.
+- **No slow tests, at all.** Every test sets up its exact situation and runs a few game
+  seconds; the whole suite runs in about 3 s. No long simulations, warp runs, ignored
+  benchmarks or load tests: performance is measured with the profiler (F3,
+  `UNIVERSE_PROFILE=1`) in dev scenarios.
 - **Rendering** is checked with dev scenarios and screenshots (`UNIVERSE_SCENARIO`,
   `UNIVERSE_SCREENSHOT`).

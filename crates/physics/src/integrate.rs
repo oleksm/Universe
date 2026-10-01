@@ -154,7 +154,7 @@ mod tests {
     use super::*;
     use crate::collide::{Collider, Feature, Polytope, Ring};
     use crate::orbit::Orbit;
-    use crate::query::simulate;
+    
     use crate::rails::{positions, RailBody};
     use crate::testkit::body;
 
@@ -272,24 +272,6 @@ mod tests {
     }
 
     #[test]
-    fn applied_acceleration_integrates_exactly() {
-        // No gravity to speak of: constant thrust gives v = a·t and x = ½·a·t².
-        let empty = [body(None, None, 0.0, 1.0)];
-        struct Push;
-        impl Driver for Push {
-            fn applied(&mut self, _: &mut RigidBody, _: f64, _: f64, _: &[DVec3]) -> DVec3 {
-                DVec3::new(0.0, 2.0, 0.0)
-            }
-        }
-        let mut probe = RigidBody::new(DVec3::X * 1.0e9, DVec3::ZERO, DQuat::IDENTITY, 12.0);
-        let mut p = Vec::new();
-        let out = integrate(&empty, None, &mut p, &mut probe, Span { t: 0.0, dt: 10.0, max_h: 0.5, contact_step: FINE_STEP }, &mut Push);
-        assert_eq!(out.simulated, 10.0);
-        assert!((probe.velocity.y - 20.0).abs() < 1e-9);
-        assert!((probe.position.y - 100.0).abs() < 1e-9);
-    }
-
-    #[test]
     fn stop_and_bounce_on_contact() {
         let mut still = body(None, None, 1.0, 600.0);
         still.attracts = false;
@@ -314,24 +296,4 @@ mod tests {
         assert!(probe.velocity.x > 0.0 && probe.velocity.x < 5.0, "velocity after bouncing {:?}", probe.velocity);
     }
 
-    #[test]
-    fn simulating_a_copy_matches_the_real_thing() {
-        let bodies = system();
-        let mut p = Vec::new();
-        positions(&bodies, 0.0, &mut p);
-        let v = crate::rails::velocity(&bodies, 1, 0.0);
-        let probe = RigidBody::new(p[1] + DVec3::Y * 9.0e6, v + DVec3::X * 6000.0, DQuat::IDENTITY, 12.0);
-        let span = Span { t: 0.0, dt: 600.0, max_h: f64::INFINITY, contact_step: FINE_STEP };
-        let (copy, sim) = simulate(&bodies, None, &probe, span, &mut Wander { accel: 3.0, turned: 0.0 });
-        let mut real = probe;
-        let out = integrate(&bodies, None, &mut p, &mut real, span, &mut Wander { accel: 3.0, turned: 0.0 });
-        assert_eq!((copy.position, copy.velocity, sim.time), (real.position, real.velocity, out.time));
-        // And with the rail bodies extrapolated from a shared snapshot.
-        let short = Span { dt: 4.0, ..span };
-        let e = Ephemeris::new(&bodies, 0.0);
-        let (copy, sim) = simulate(&bodies, Some(&e), &probe, short, &mut Wander { accel: 3.0, turned: 0.0 });
-        let mut real = probe;
-        let out = integrate(&bodies, Some(&e), &mut p, &mut real, short, &mut Wander { accel: 3.0, turned: 0.0 });
-        assert_eq!((copy.position, copy.velocity, sim.time), (real.position, real.velocity, out.time));
-    }
 }

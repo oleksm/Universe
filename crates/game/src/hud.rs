@@ -1229,6 +1229,8 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) {
         (format!("{:.0} FPS  {:.1} MS", ctx.fps, p.frame_ms), DIM),
         (format!("SIM {:.2} MS  {ships} SHIPS  {:.1} US EACH", app.sim_ms, app.sim_ms * 1000.0 / ships as f32), DIM),
     ];
+    let (apart, late, dropped) = app.v.pilots;
+    lines.push((format!("PILOTS {}  LATE {late}  DROPPED {dropped}", if apart { "APART" } else { "LOCKSTEP" }), if dropped > 0 { AMBER } else { DIM }));
     if app.last_step.warp_limited {
         lines.push(("SIM CAN'T KEEP UP".into(), RED));
     }

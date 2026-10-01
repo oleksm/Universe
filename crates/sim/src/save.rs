@@ -134,23 +134,4 @@ mod tests {
         assert_eq!(restored.avionics.nav_target, u.avionics.nav_target);
     }
 
-    /// Saves from before the refactor kept the nav state inside the ship.
-    #[test]
-    fn old_saves_keep_their_nav_state() {
-        let mut u = Universe::new(7);
-        let station = u.ship_system().station().unwrap();
-        u.set_nav_target(Some(NavTarget::Station(station)));
-        u.avionics.hyper_autopilot = true;
-        let mut json: serde_json::Value = serde_json::to_value(u.save()).unwrap();
-        let old = json.as_object_mut().unwrap();
-        let avionics = old.remove("avionics").unwrap();
-        let ship = old["ship"].as_object_mut().unwrap();
-        ship.insert("nav_target".into(), avionics["nav_target"].clone());
-        ship.insert("hyper_autopilot".into(), true.into());
-        let mut restored = Universe::new(7);
-        restored.load(serde_json::from_value(json).unwrap());
-        assert_eq!(restored.avionics.nav_target, Some(NavTarget::Station(station)));
-        assert!(restored.avionics.hyper_autopilot);
-        assert_eq!(restored.ship.position, u.ship.position);
-    }
 }

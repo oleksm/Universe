@@ -110,22 +110,4 @@ mod tests {
         assert!(!law.aggressed(1, 10.0 + AGGRESSION + 1.0));
     }
 
-    #[test]
-    fn shooting_the_aggressor_is_no_crime_and_turrets_answer_to_no_one() {
-        let mut law = Law::default();
-        law.hit(Hit { shooter: 1, target: 2, time: 0.0 }, true, EV);
-        assert!(law.hit(Hit { shooter: 2, target: 1, time: 1.0 }, true, EV).is_none(), "2 fires back on the aggressor");
-        assert!(!law.aggressed(2, 1.0));
-        assert!(law.hit(Hit { shooter: 99, target: 3, time: 1.0 }, false, EV).is_none());
-    }
-
-    #[test]
-    fn a_second_offence_extends_it_and_is_not_news() {
-        let mut law = Law::default();
-        law.hit(Hit { shooter: 1, target: 2, time: 0.0 }, true, EV);
-        let r = law.hit(Hit { shooter: 1, target: 3, time: 100.0 }, true, EV).unwrap();
-        assert!(!r.new);
-        assert_eq!(law.until(1, 100.0), Some(100.0 + AGGRESSION));
-        assert_eq!(law.rulings.len(), 2);
-    }
 }

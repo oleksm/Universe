@@ -31,8 +31,6 @@ const STUCK: f64 = 0.8;
 /// A planned trip: where to, what to buy for it (item, units), the profit expected.
 type Trip = (Facility, Vec<(usize, u32)>, f64);
 
-
-
 impl Universe {
     /// Pilot `pilot` (the player's 0, craft i: i + 1) asks the market at `f`
     /// to trade `units` of `item`: the market service decides, the ledger
@@ -127,9 +125,7 @@ impl Universe {
         }
         if let Some((stop, _)) = &decision {
             // After the stop, on to there.
-            let r = &mut self.crafts[i].avionics.route;
-            r.stops.truncate(r.next + 1);
-            r.stops.push(*stop);
+            self.pool.send(i, crate::pilots::Msg::Order(crate::pilots::Order::Then(*stop)));
         }
 
         for (bought, item, units, amount) in records {
@@ -235,39 +231,3 @@ impl Universe {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use universe_world::Controls;
-
-    use crate::universe::Universe;
-
-    #[test]
-    #[ignore]
-    fn settlers_trade() {
-        let mut u = Universe::new(1984);
-        u.spawn_settlers(100, 99);
-        for _ in 0..60 * 60 * 9 {
-            u.step_world(1.0 / 60.0, 20.0, &Controls::default());
-        }
-        for r in u.records.trades.iter().rev().take(14) {
-            eprintln!("{} AT {}: {:?} {} {} FOR {:.0} CR - CARGO {:.1} T, {:.0} CR", r.trader, r.market, r.deal, r.units, r.item, r.amount, r.cargo / 1000.0, r.credits);
-        }
-        let heading = u.records.trades.iter().filter(|r| matches!(r.deal, super::Deal::Heading { .. })).count();
-        let moving = u.records.trades.iter().filter(|r| matches!(r.deal, super::Deal::MovingOn { .. })).count();
-        eprintln!("recent decisions: {heading} trips planned, {moving} moves on to another system");
-        let traders: Vec<f64> = (0..u.crafts.len()).filter(|&i| u.crafts[i].trader).map(|i| u.craft_credits(i)).collect();
-        eprintln!("{} traders, {} pirates of {}", traders.len(), u.crafts.iter().filter(|c| c.avionics.pirate).count(), u.crafts.len());
-        let mean = traders.iter().sum::<f64>() / traders.len() as f64;
-        let (lo, hi) = traders.iter().fold((f64::MAX, f64::MIN), |(a, b), &x| (a.min(x), b.max(x)));
-        let cargo: f64 = u.crafts.iter().filter(|c| c.trader).map(|c| c.ship.cargo).sum::<f64>() / traders.len() as f64;
-        eprintln!(
-            "{:.1} game h: stops {}, trades {}, turnover {:.0} CR; trader credits mean {mean:.0} (min {lo:.0}, max {hi:.0}), cargo mean {:.1} T",
-            (u.world.time) / 3600.0,
-            u.records.stats.stops,
-            u.records.stats.trades,
-            u.records.stats.turnover,
-            cargo / 1000.0
-        );
-        assert!(u.records.stats.trades > 0);
-    }
-}

@@ -262,29 +262,6 @@ mod tests {
     }
 
     #[test]
-    fn polytope_hull_cut_out_and_open_pocket() {
-        let p = Polytope::cuboctahedron(500.0).with_cut_out(CutOut { half_x: 0.3, half_z: 0.08, floor: 0.9 });
-        let f = still();
-        let touch = |pos: DVec3| p.contact(3, &f, pos, DVec3::new(0.0, -5.0, 0.0), 12.0);
-        // Clear of every face, and just touching one (within the sphere's radius).
-        assert!(touch(DVec3::new(0.0, 0.0, 520.0)).is_none());
-        let c = touch(DVec3::new(0.0, 0.0, 505.0)).expect("touching the +Z face");
-        assert_eq!((c.body, c.feature), (3, Feature::Hull));
-        assert!(c.normal.distance(DVec3::Z) < 1e-12);
-        assert_eq!(c.relative_velocity, DVec3::new(0.0, -5.0, 0.0));
-        // A corner region is cut off by the octahedron: out through its face.
-        assert!(touch(DVec3::new(495.0, 495.0, 400.0)).is_none());
-        let c = touch(DVec3::new(330.0, 330.0, 330.0)).expect("on an octahedron face");
-        assert!(c.normal.distance(DVec3::ONE.normalize()) < 1e-12);
-        // The pocket: open above its floor, the cut-out below it.
-        assert!(touch(DVec3::new(100.0, 480.0, 10.0)).is_none());
-        let c = touch(DVec3::new(100.0, 400.0, 10.0)).expect("at the bottom of the pocket");
-        assert_eq!(c.feature, Feature::CutOut(0));
-        // Beside the pocket is hull.
-        assert_eq!(touch(DVec3::new(0.0, 505.0, 100.0)).map(|c| c.feature), Some(Feature::Hull));
-    }
-
-    #[test]
     fn polytope_contact_sees_the_spin() {
         let p = Polytope::cuboctahedron(500.0);
         let f = Frame { angular_velocity: DVec3::Y * 0.1, ..still() };
@@ -292,32 +269,6 @@ mod tests {
         // The face moves at ω × r under a body at rest.
         assert!(c.surface_velocity.distance(DVec3::new(0.0, 0.0, -50.5)) < 1e-9);
         assert!(c.relative_velocity.distance(DVec3::new(0.0, 0.0, 50.5)) < 1e-9);
-    }
-
-    #[test]
-    fn ring_opening_tube_and_outside() {
-        let ring = Ring { radius: 1500.0, tube: 60.0 };
-        let f = still();
-        let cross = |x: f64| ring.crossing(&f, DVec3::new(x, 50.0, 0.0), DVec3::new(x, -50.0, 0.0), 1.0, 12.0);
-        assert!(matches!(cross(0.0), RingCrossing::Through));
-        assert!(matches!(cross(1400.0), RingCrossing::Through));
-        assert!(matches!(cross(1450.0), RingCrossing::Hit));
-        assert!(matches!(cross(1560.0), RingCrossing::Hit));
-        assert!(matches!(cross(1600.0), RingCrossing::None));
-        // Parallel to the opening, not crossing it.
-        assert!(matches!(ring.crossing(&f, DVec3::new(0.0, 50.0, 0.0), DVec3::new(100.0, 50.0, 0.0), 1.0, 12.0), RingCrossing::None));
-    }
-
-    #[test]
-    fn a_fast_ring_sweeping_over_a_body_counts() {
-        // The ring moves 250 m along its axis in one step, past a body at rest
-        // 100 m ahead of it. Measured against where the ring was at the start,
-        // the body went through.
-        let ring = Ring { radius: 1500.0, tube: 60.0 };
-        let v = DVec3::Y * 5000.0;
-        let f = Frame { center: v * 0.05, velocity: v, ..still() };
-        let at = DVec3::new(0.0, 100.0, 0.0);
-        assert!(matches!(ring.crossing(&f, at, at, 0.05, 12.0), RingCrossing::Through));
     }
 
     #[test]

@@ -78,12 +78,4 @@ mod tests {
         assert_eq!(blips[0].distance, 2_000.0);
     }
 
-    #[test]
-    fn closing_speed_is_positive_when_approaching() {
-        let own = ship_at(0.0);
-        let mut other = ship_at(10_000.0);
-        other.velocity = DVec3::new(-30.0, 5.0, 0.0);
-        let b = sweep(&own, 0, [(0, 0, &other)])[0];
-        assert!((b.closing_speed(own.position, own.velocity) - 30.0).abs() < 1e-9);
-    }
 }

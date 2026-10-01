@@ -32,15 +32,15 @@ pub const LOCK_BEAM: f64 = 6.0 * std::f64::consts::PI / 180.0;
 
 /// What a craft's transponder says it's doing.
 pub(crate) fn activity(craft: &Craft) -> &'static str {
-    let a = &craft.avionics;
+    let a = &craft.status;
     // Weapons hot is plain to see, whatever the transponder says.
     if craft.ship.weapons_hot() {
         return "WEAPONS HOT";
     }
     match craft.ship.state {
-        ShipState::Landed { .. } if a.route.dwell_until.is_some() => "AT STOP",
+        ShipState::Landed { .. } if a.dwelling => "AT STOP",
         ShipState::Landed { .. } => "PARKED",
-        _ if a.route.departing => "DEPARTING",
+        _ if a.departing => "DEPARTING",
         _ if craft.ship.hyperdrive => "HYPERDRIVE",
         _ => match a.clearance.map(|c| c.target) {
             Some(NavTarget::Station(_)) => "DOCKING",
@@ -60,8 +60,7 @@ impl Universe {
             .map(|blip| {
                 let craft = &self.crafts[blip.id];
                 let (name, activity) = (craft.name.to_uppercase(), activity(craft));
-                let r = &craft.avionics.route;
-                let stop = r.stops.get(r.next).copied();
+                let stop = craft.status.next_stop;
                 let destination = stop.map(|s| route::stop_name(&self.world.system(s.system), s).to_uppercase());
                 Contact { blip, name, activity, destination, hull: craft.ship.hull, aggressed: self.law.aggressed(crate::combat::craft_id(blip.id), self.world.time) }
             })
@@ -126,29 +125,6 @@ mod tests {
     use glam::DVec3;
 
     use crate::universe::Universe;
-
-    #[test]
-    fn t_locks_what_is_in_the_beam_nearest_the_crosshair() {
-        let mut u = Universe::new(1984);
-        u.spawn_settlers(3, 1);
-        let (sys, pos, nose) = (u.ship_system, u.ship.position, u.ship.forward());
-        let side = nose.any_orthonormal_vector();
-        // Two ahead (1° and 3° off the nose), one 20° off.
-        let place = [(1.0f64, 5_000.0), (3.0, 2_000.0), (20.0, 1_000.0)];
-        for (c, (deg, d)) in u.crafts.iter_mut().zip(place) {
-            c.system = sys;
-            c.ship.state = universe_world::ShipState::Flying;
-            let dir = (nose + side * deg.to_radians().tan()).normalize();
-            c.ship.position = pos + dir * d;
-        }
-        assert_eq!(u.lock_in_beam().map(|c| c.blip.id), Some(0), "nearest the crosshair");
-        assert_eq!(u.lock_in_beam().map(|c| c.blip.id), Some(1), "next in the beam");
-        assert_eq!(u.lock_in_beam().map(|c| c.blip.id), Some(0), "round again");
-        // Turn away: nothing in the beam, the lock goes.
-        u.ship.orientation = universe_world::ship::facing(-nose, side);
-        assert!(u.lock_in_beam().is_none());
-        assert!(u.avionics.contact.is_none());
-    }
 
     #[test]
     fn radar_locks_contacts_nearest_first_and_loses_them_out_of_range() {

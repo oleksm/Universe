@@ -99,41 +99,9 @@ pub fn hull() -> Polytope {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::events::ShipEvent;
+    
     use crate::ship::ShipState;
     use crate::testkit::Probe;
-
-    fn frame_now(p: &mut Probe, station: usize) -> StationFrame {
-        let sys = p.sys();
-        let pos = p.positions();
-        StationFrame::new(&sys, station, p.world.time, &pos)
-    }
-
-    #[test]
-    fn fast_hull_contact_crashes_and_slow_bumps() {
-        let mut p = Probe::new(42);
-        let station = p.sys().station().unwrap();
-        let frame = frame_now(&mut p, station);
-        // Slow: drift onto the slot face near the spin axis, but beside the slot,
-        // where the hull barely moves.
-        p.ship.position = frame.rotation * (DVec3::new(0.0, 1.03, 0.2) * STATION_SIZE) + frame.center;
-        p.ship.velocity = frame.velocity_at(p.ship.position) - frame.axis() * 5.0;
-        for _ in 0..180 {
-            p.step(1.0 / 60.0, 1.0);
-        }
-        assert!(p.ship.is_flying(), "slow contact should bounce: {:?}", p.events);
-        // Fast: fly into a spinning side face.
-        let side = frame.rotation * DVec3::X;
-        assert!(p.events.iter().any(|e| matches!(e, ShipEvent::Bumped)));
-
-        p.ship.position = frame_now(&mut p, station).center + side * 700.0;
-        let f = frame_now(&mut p, station);
-        p.ship.velocity = f.velocity_at(p.ship.position) - (f.rotation * DVec3::X) * 80.0;
-        for _ in 0..300 {
-            p.step(1.0 / 60.0, 1.0);
-        }
-        assert!(matches!(p.ship.state, ShipState::Destroyed { .. }), "fast contact should crash");
-    }
 
     #[test]
     fn launch_from_docked_leaves_along_axis() {

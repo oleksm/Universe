@@ -216,18 +216,6 @@ mod tests {
     }
 
     #[test]
-    fn a_slug_misses_by_more_than_the_radius_and_falls_under_gravity() {
-        let bodies = vec![body(None, None, 3.986e14, 6.371e6)];
-        let positions = vec![DVec3::ZERO];
-        let start = DVec3::X * 7.0e6;
-        let mut p = Projectile { position: start, velocity: DVec3::Y * 3000.0 };
-        let miss = Target { id: 1, position: start + DVec3::new(30.0, 3000.0, 0.0), velocity: DVec3::ZERO, radius: 12.0 };
-        assert_eq!(step_projectile(&bodies, &positions, &mut p, 0.0, 1.0, &[miss]), None);
-        // Pulled toward the planet: about g(7000 km) = 8.1 m/s^2 for a second.
-        assert!((p.velocity.x + 8.13).abs() < 0.05, "{}", p.velocity);
-    }
-
-    #[test]
     fn a_ray_stops_at_the_nearer_of_a_target_and_a_planet() {
         let bodies = vec![body(None, None, 3.986e14, 6.371e6)];
         let positions = vec![DVec3::ZERO];

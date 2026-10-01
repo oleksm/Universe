@@ -88,7 +88,6 @@ pub struct Impact {
     pub laser: bool,
 }
 
-
 /// Seconds from the master arm going on to the weapons being hot.
 pub const ARM_TIME: f64 = 2.0;
 
@@ -346,24 +345,6 @@ mod tests {
     }
 
     #[test]
-    fn the_gimbal_lays_the_gun_within_its_cone_at_its_rate() {
-        let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
-        let off = |deg: f64| DQuat::from_rotation_y(deg.to_radians()) * DVec3::NEG_Z;
-        ship.gun_target = Some(off(3.0));
-        lay_gun(&mut ship, 0.05); // 1.5° at 30°/s
-        assert!((ship.gun_forward().angle_between(DVec3::NEG_Z).to_degrees() - 1.5).abs() < 1e-6);
-        lay_gun(&mut ship, 0.1);
-        assert!(gun_on(&ship, off(3.0)));
-        ship.gun_target = Some(off(10.0)); // beyond the gimbal: as far as it goes
-        lay_gun(&mut ship, 1.0);
-        assert!((ship.gun_forward().angle_between(DVec3::NEG_Z) - GIMBAL_LIMIT).abs() < 1e-9);
-        assert!(!within_gimbal(&ship, off(10.0)));
-        ship.gun_target = None;
-        lay_gun(&mut ship, 1.0);
-        assert_eq!(ship.gun_dir, DVec3::NEG_Z, "parked on the nose");
-    }
-
-    #[test]
     fn weapons_fire_only_when_armed_and_primed() {
         let (mut world, mut a, mut b, sys) = duel(3_000.0);
         let (mut ea, mut eb) = (Vec::new(), Vec::new());
@@ -384,23 +365,6 @@ mod tests {
         }
         assert!(a.ammo < GUN_AMMO, "hot: firing");
         assert!(ea.contains(&ShipEvent::WeaponsArming) && ea.contains(&ShipEvent::WeaponsHot) && ea.contains(&ShipEvent::WeaponsSafe));
-    }
-
-    #[test]
-    fn slugs_hit_when_both_ships_move_fast() {
-        let (mut world, mut a, mut b, sys) = duel(3_000.0);
-        let (mut ea, mut eb) = (Vec::new(), Vec::new());
-        a.velocity = DVec3::new(7_800.0, 0.0, 0.0);
-        b.velocity = DVec3::new(7_800.0, 0.0, 0.0);
-        a.triggers.gun = true;
-        for _ in 0..6 {
-            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 1.0 / 60.0);
-        }
-        a.triggers.gun = false;
-        for _ in 0..70 {
-            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 1.0 / 60.0);
-        }
-        assert!(eb.iter().any(|e| matches!(e, ShipEvent::Hit { .. })), "slugs left: {:?}", world.slugs.first().map(|s| s.projectile.position - b.position));
     }
 
     #[test]

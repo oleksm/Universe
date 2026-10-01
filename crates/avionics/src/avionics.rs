@@ -113,10 +113,9 @@ impl Avionics {
                 self.contact = None;
                 self.track = None;
             }
-            ShipEvent::HyperdriveEngaged => {
-                self.hyper_autopilot = false;
-                self.following = None;
-            }
+            // (Switching the drive on hands the pilot the stick when it's
+            // ordered: see `toggle_hyperdrive`. The news comes later.)
+            ShipEvent::HyperdriveEngaged => self.following = None,
             ShipEvent::HyperdriveDisengaged => self.hyper_autopilot = false,
             ShipEvent::Respawned => {
                 let mut route = std::mem::take(&mut self.route);
@@ -178,7 +177,7 @@ impl Avionics {
             let aim = self.nav_target.and_then(|target| hyperdrive::aim(&sys, target, t, &positions, p));
             hyperdrive::exit_velocity(aim.as_ref(), p)
         };
-        let orders = HyperdriveCommand { engage, exit_velocity, ..Default::default() };
+        let orders = HyperdriveCommand { engage, start: engage, exit_velocity, ..Default::default() };
         let c = ShipCommands { hyperdrive: Some(orders), ..bus.ship().holding() };
         self.command(bus, &c, events);
         // (Both ways, the drive starts from zero throttle, and the pilot has the stick.)
