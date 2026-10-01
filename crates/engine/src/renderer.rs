@@ -3,7 +3,10 @@ use std::path::Path;
 use glam::camera::rh::proj::directx::orthographic;
 use glam::UVec2;
 
-use crate::frame::{Frame, Vertex};
+use std::collections::HashMap;
+
+use crate::frame::{Frame, Instance, Vertex};
+use crate::model::Mesh;
 use crate::gpu::Gpu;
 
 const COLOR_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
@@ -40,7 +43,10 @@ impl DynBuffer {
     }
 
     fn upload(&mut self, gpu: &Gpu, data: &[Vertex]) {
-        let bytes: &[u8] = bytemuck::cast_slice(data);
+        self.upload_bytes(gpu, bytemuck::cast_slice(data), data.len() as u32);
+    }
+
+    fn upload_bytes(&mut self, gpu: &Gpu, bytes: &[u8], count: u32) {
         if bytes.len() as u64 > self.capacity {
             self.capacity = (bytes.len() as u64).next_power_of_two();
             self.buffer = Self::alloc(&gpu.device, self.label, self.capacity);
@@ -48,7 +54,7 @@ impl DynBuffer {
         if !bytes.is_empty() {
             gpu.queue.write_buffer(&self.buffer, 0, bytes);
         }
-        self.count = data.len() as u32;
+        self.count = count;
     }
 
     fn draw(&self, pass: &mut wgpu::RenderPass<'_>, pipeline: &wgpu::RenderPipeline) {
@@ -60,6 +66,64 @@ impl DynBuffer {
         pass.draw(0..self.count, 0..1);
     }
 }
+
+/// A mesh vertex: where it is in the model, the normal it's lit by (a
+/// face's own for faces; the direction from the center for edges), its colour.
+#[repr(C)]
+#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+struct MeshVertex {
+    pos: [f32; 3],
+    normal: [f32; 3],
+    color: [f32; 4],
+}
+
+/// A mesh on the GPU: its faces (three vertices each) and edges (two each),
+/// and the last frame it was drawn (unused ones are dropped).
+struct GpuMesh {
+    faces: wgpu::Buffer,
+    face_vertices: u32,
+    edges: wgpu::Buffer,
+    edge_vertices: u32,
+    used: u64,
+}
+
+impl GpuMesh {
+    fn new(device: &wgpu::Device, mesh: &Mesh) -> Self {
+        use wgpu::util::DeviceExt;
+        let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
+        let mut faces = Vec::with_capacity(mesh.faces.len() * 3);
+        for f in &mesh.faces {
+            let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
+            let mut n = (b - a).cross(c - a).normalize_or_zero();
+            // Turned to face away from the center (the models are closed and roughly convex).
+            if n.dot((a + b + c) / 3.0) < 0.0 {
+                n = -n;
+            }
+            for &i in f {
+                faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i) });
+            }
+        }
+        let mut edges = Vec::with_capacity(mesh.edges.len() * 2);
+        for e in &mesh.edges {
+            for &i in e {
+                let p = mesh.positions[i as usize];
+                edges.push(MeshVertex { pos: p.to_array(), normal: p.normalize_or_zero().to_array(), color: color(i) });
+            }
+        }
+        let buffer = |label, data: &[MeshVertex]| {
+            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some(label),
+                // (wgpu wants a non-empty buffer.)
+                contents: if data.is_empty() { &[0u8; 40] } else { bytemuck::cast_slice(data) },
+                usage: wgpu::BufferUsages::VERTEX,
+            })
+        };
+        GpuMesh { faces: buffer("mesh faces", &faces), face_vertices: faces.len() as u32, edges: buffer("mesh edges", &edges), edge_vertices: edges.len() as u32, used: 0 }
+    }
+}
+
+/// Frames a mesh may go undrawn before it's dropped from the GPU.
+const MESH_KEEP: u64 = 600;
 
 /// Offscreen targets: the low-res scene, the HUD layer at `hud_scale` times that
 /// resolution, and a composite of both (used for screenshots).
@@ -95,6 +159,15 @@ pub(crate) struct Renderer {
     /// Same as `blit_pipe`, but into the RGBA composite texture for screenshots.
     capture_pipe: wgpu::RenderPipeline,
     sky: DynBuffer,
+    mesh_pipe: wgpu::RenderPipeline,
+    mesh_line_pipe: wgpu::RenderPipeline,
+    meshes: HashMap<u64, GpuMesh>,
+    /// This frame's mesh instances: faces, then edges; and the runs to draw
+    /// (mesh, first instance, count) for each.
+    instances: DynBuffer,
+    face_runs: Vec<(u64, u32, u32)>,
+    edge_runs: Vec<(u64, u32, u32)>,
+    frames: u64,
     solids: DynBuffer,
     lines: DynBuffer,
     points: DynBuffer,
@@ -193,6 +266,48 @@ impl Renderer {
             },
             alpha: wgpu::BlendComponent::OVER,
         };
+        // Meshes: their vertices, and one instance record per draw.
+        let mesh_layouts = [
+            Some(wgpu::VertexBufferLayout {
+                array_stride: size_of::<MeshVertex>() as u64,
+                step_mode: wgpu::VertexStepMode::Vertex,
+                attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x3, 2 => Float32x4],
+            }),
+            Some(wgpu::VertexBufferLayout {
+                array_stride: size_of::<Instance>() as u64,
+                step_mode: wgpu::VertexStepMode::Instance,
+                attributes: &wgpu::vertex_attr_array![
+                    3 => Float32x4, 4 => Float32x4, 5 => Float32x4, 6 => Float32x4, 7 => Float32x4,
+                    8 => Float32x4, 9 => Float32x4, 10 => Float32x4, 11 => Float32x4, 12 => Float32x4
+                ],
+            }),
+        ];
+        let mesh_pipeline = |label: &str, vs: &str, topology: wgpu::PrimitiveTopology, write: bool, compare: wgpu::CompareFunction| {
+            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: Some(label),
+                layout: Some(&scene_layout),
+                vertex: wgpu::VertexState { module: &scene, entry_point: Some(vs), compilation_options: Default::default(), buffers: &mesh_layouts },
+                primitive: wgpu::PrimitiveState { topology, ..Default::default() },
+                depth_stencil: Some(wgpu::DepthStencilState {
+                    format: DEPTH_FORMAT,
+                    depth_write_enabled: Some(write),
+                    depth_compare: Some(compare),
+                    stencil: Default::default(),
+                    bias: Default::default(),
+                }),
+                multisample: Default::default(),
+                fragment: Some(wgpu::FragmentState {
+                    module: &scene,
+                    entry_point: Some("fs_color"),
+                    compilation_options: Default::default(),
+                    targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
+                }),
+                multiview_mask: None,
+                cache: None,
+            })
+        };
+        let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        let mesh_line_pipe = mesh_pipeline("mesh edges", "vs_mesh_line", wgpu::PrimitiveTopology::LineList, false, wgpu::CompareFunction::GreaterEqual);
         let sky_pipe = scene_pipeline("sky", "vs_sky", Topo::PointList, Some((false, Cmp::Always)), additive);
         let solid_pipe = scene_pipeline("solids", "vs_world", Topo::TriangleList, Some((true, Cmp::Greater)), alpha);
         let line_pipe = scene_pipeline("lines", "vs_line", Topo::LineList, Some((false, Cmp::GreaterEqual)), alpha);
@@ -282,6 +397,13 @@ impl Renderer {
             blit_pipe,
             capture_pipe,
             sky: DynBuffer::new(device, "sky"),
+            mesh_pipe,
+            mesh_line_pipe,
+            meshes: HashMap::new(),
+            instances: DynBuffer::new(device, "mesh instances"),
+            face_runs: Vec::new(),
+            edge_runs: Vec::new(),
+            frames: 0,
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
             points: DynBuffer::new(device, "points"),
@@ -368,6 +490,7 @@ impl Renderer {
         self.points.upload(gpu, &frame.points);
         self.hud_tris.upload(gpu, &frame.hud_tris);
         self.hud.upload(gpu, &frame.hud);
+        self.upload_meshes(gpu, frame);
         drop(upload);
 
         let acquire = std::time::Instant::now();
@@ -412,7 +535,9 @@ impl Renderer {
             pass.set_bind_group(0, &self.globals_bind, &[]);
             self.sky.draw(&mut pass, &self.sky_pipe);
             self.solids.draw(&mut pass, &self.solid_pipe);
+            self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.lines.draw(&mut pass, &self.line_pipe);
+            self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
             self.points.draw(&mut pass, &self.point_pipe);
         }
         {
@@ -466,6 +591,52 @@ impl Renderer {
                 Ok(()) => log::info!("screenshot saved to {}", path.display()),
                 Err(e) => log::error!("screenshot failed: {e}"),
             }
+        }
+    }
+
+    /// Meshes for this frame: new ones uploaded, unused ones dropped; the
+    /// instances grouped by mesh (faces, then edges) into one buffer.
+    fn upload_meshes(&mut self, gpu: &Gpu, frame: &Frame) {
+        self.frames += 1;
+        let now = self.frames;
+        for d in &frame.meshes {
+            self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(&gpu.device, &d.mesh)).used = now;
+        }
+        self.meshes.retain(|_, m| now - m.used < MESH_KEEP);
+        let mut order: Vec<usize> = (0..frame.meshes.len()).collect();
+        order.sort_by_key(|&i| frame.meshes[i].mesh.id());
+        let mut data: Vec<Instance> = Vec::with_capacity(frame.meshes.len() * 2);
+        let runs = |data: &mut Vec<Instance>, pick: &dyn Fn(usize) -> bool| {
+            let mut runs: Vec<(u64, u32, u32)> = Vec::new();
+            for &i in order.iter().filter(|&&i| pick(i)) {
+                let id = frame.meshes[i].mesh.id();
+                match runs.last_mut() {
+                    Some(r) if r.0 == id => r.2 += 1,
+                    _ => runs.push((id, data.len() as u32, 1)),
+                }
+                data.push(frame.meshes[i].instance);
+            }
+            runs
+        };
+        self.face_runs = runs(&mut data, &|_| true);
+        self.edge_runs = runs(&mut data, &|i| frame.meshes[i].edges);
+        self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
+    }
+
+    fn draw_meshes(&self, pass: &mut wgpu::RenderPass<'_>, runs: &[(u64, u32, u32)], pipeline: &wgpu::RenderPipeline, part: impl Fn(&GpuMesh) -> (&wgpu::Buffer, u32)) {
+        if runs.is_empty() {
+            return;
+        }
+        pass.set_pipeline(pipeline);
+        pass.set_vertex_buffer(1, self.instances.buffer.slice(..));
+        for &(id, first, count) in runs {
+            let Some(m) = self.meshes.get(&id) else { continue };
+            let (buffer, vertices) = part(m);
+            if vertices == 0 {
+                continue;
+            }
+            pass.set_vertex_buffer(0, buffer.slice(..));
+            pass.draw(0..vertices, first..first + count);
         }
     }
 

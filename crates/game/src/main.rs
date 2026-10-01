@@ -103,7 +103,7 @@ pub struct App {
     pub eta_shown: Option<f64>,
     /// Colored terrain globes, built once per (system, body): the full mesh,
     /// and a coarse one for when it's small on screen.
-    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::WireModel, universe_engine::WireModel)>,
+    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh)>,
     /// The galaxy's stars as seen from a system: (system, direction and colour of each).
     pub sky_cache: std::cell::RefCell<Option<SkyCache>>,
     /// The navigation map, when open.
@@ -510,7 +510,7 @@ impl App {
             if !self.globes.contains_key(&(origin, i))
                 && let (Some(full), Some(coarse)) = (terrain_view::globe(b, 4), terrain_view::globe(b, 1))
             {
-                self.globes.insert((origin, i), (full, coarse));
+                self.globes.insert((origin, i), (full.into(), coarse.into()));
             }
         }
     }

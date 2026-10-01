@@ -1,5 +1,5 @@
 use universe_engine::glam::{DVec3, Vec2};
-use universe_engine::{text_size, Color, Frame, Light, Transform, WireModel};
+use universe_engine::{text_size, Color, Frame, Light, Transform};
 use universe_sim::names::star_name;
 use universe_sim::units::LIGHT_YEAR;
 use universe_sim::docking::{corridor_half, APPROACH_HEIGHT};
@@ -289,7 +289,7 @@ fn bodies(frame: &mut Frame, app: &App) {
                 universe_prof::time("draw/scene/bodies/crater rims", || terrain_view::crater_rims(frame, b, center, t));
             }
         } else {
-            let (model, fill): (&WireModel, Color) = match b.kind {
+            let (model, fill): (&universe_engine::Mesh, Color) = match b.kind {
                 BodyKind::Star => (&app.models.star, c),
                 BodyKind::Rocky => (&app.models.rocky, c.scale(0.4)),
                 BodyKind::GasGiant | BodyKind::IceGiant => (&app.models.giant, c.scale(0.45)),

@@ -3,6 +3,38 @@ use std::f32::consts::{PI, TAU};
 
 use glam::{DVec3, Quat, Vec3};
 
+/// A model to draw, kept on the GPU: uploaded the first time it's drawn
+/// and reused every frame after, by its id. Cheap to clone (shared).
+#[derive(Clone, Debug)]
+pub struct Mesh {
+    id: u64,
+    model: std::sync::Arc<WireModel>,
+}
+
+impl Mesh {
+    pub fn new(model: WireModel) -> Self {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        Mesh { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), model: std::sync::Arc::new(model) }
+    }
+
+    pub fn id(&self) -> u64 {
+        self.id
+    }
+}
+
+impl std::ops::Deref for Mesh {
+    type Target = WireModel;
+    fn deref(&self) -> &WireModel {
+        &self.model
+    }
+}
+
+impl From<WireModel> for Mesh {
+    fn from(m: WireModel) -> Self {
+        Mesh::new(m)
+    }
+}
+
 /// Placement of a model in the world.
 #[derive(Clone, Copy, Debug)]
 pub struct Transform {

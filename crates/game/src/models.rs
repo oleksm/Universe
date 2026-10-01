@@ -1,26 +1,26 @@
 use universe_engine::glam::Vec3;
-use universe_engine::WireModel;
+use universe_engine::{Mesh, WireModel};
 
 pub struct Models {
-    pub rocky: WireModel,
-    pub giant: WireModel,
-    pub moon: WireModel,
-    pub star: WireModel,
-    pub station: WireModel,
-    pub ship: WireModel,
-    pub gate: WireModel,
+    pub rocky: Mesh,
+    pub giant: Mesh,
+    pub moon: Mesh,
+    pub star: Mesh,
+    pub station: Mesh,
+    pub ship: Mesh,
+    pub gate: Mesh,
 }
 
 impl Models {
     pub fn new() -> Self {
         Self {
-            rocky: WireModel::globe(12, 7, 4),
-            giant: WireModel::globe(8, 13, 3), // many parallels read as cloud bands
-            moon: WireModel::globe(8, 5, 4),
-            star: WireModel::globe(16, 9, 3),
-            station: coriolis(),
-            ship: cobra(),
-            gate: gate_ring(),
+            rocky: Mesh::new(WireModel::globe(12, 7, 4)),
+            giant: Mesh::new(WireModel::globe(8, 13, 3)), // many parallels read as cloud bands
+            moon: Mesh::new(WireModel::globe(8, 5, 4)),
+            star: Mesh::new(WireModel::globe(16, 9, 3)),
+            station: Mesh::new(coriolis()),
+            ship: Mesh::new(cobra()),
+            gate: Mesh::new(gate_ring()),
         }
     }
 }
