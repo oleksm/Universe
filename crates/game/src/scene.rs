@@ -656,6 +656,14 @@ impl Guide {
 
     /// A new plan for `target`.
     pub fn update(&mut self, plan: &Plan, target: GuideKey) {
+        self.update_spaced(plan, target, None);
+    }
+
+    /// A new plan for `target`, with frames `even` apart along it (None:
+    /// the ladder, closer together near the goal). Evenly spaced frames sit
+    /// exactly where the plan puts them: a plan that holds its ground (an
+    /// orbit's, on a fixed grid of angles) holds them still.
+    pub fn update_spaced(&mut self, plan: &Plan, target: GuideKey, even: Option<f64>) {
         if self.target != Some(target) {
             self.clear();
             self.target = Some(target);
@@ -673,9 +681,15 @@ impl Guide {
             from_end[i] = from_end[i + 1] + body[i].distance(body[i + 1]);
         }
         self.left = from_end[0];
+        if even.is_some() {
+            self.frames.clear();
+        }
         let mut i = n - 2;
         for k in 0.. {
-            let (d, gap) = rung(k);
+            let (d, gap) = match even {
+                Some(g) => (k as f64 * g, g),
+                None => rung(k),
+            };
             if d >= self.left {
                 self.frames.retain(|&r, _| r < k);
                 break;
@@ -689,7 +703,9 @@ impl Guide {
             let Some(along) = (body[i + 1] - body[i]).try_normalize() else { continue };
             let (a, b) = (&plan.points[i], &plan.points[i + 1]);
             let facing = to_frame * (a.orientation.slerp(b.orientation, u) * DVec3::NEG_Z);
-            let new = GuideFrame { from_goal: d, at, along, facing, size: (0.35 * gap).clamp(15.0, 1.0e4), action: a.action };
+            // (Evenly spaced, smaller: a row of them, not a funnel.)
+            let size = if even.is_some() { 0.18 * gap } else { 0.35 * gap };
+            let new = GuideFrame { from_goal: d, at, along, facing, size: size.clamp(15.0, 1.0e4), action: a.action };
             // A frame stays while the new path still goes through it (near
             // its rung): rebuilt plans trace the same route, give or take.
             let near = |p: DVec3| {

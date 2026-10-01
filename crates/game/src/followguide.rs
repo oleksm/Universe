@@ -107,36 +107,72 @@ fn standing(app: &App) -> Option<Standing> {
     Some(Standing { follow, name, at, goal, to_go, closing, rock, step })
 }
 
+/// An orbit's frames: one every this much of the way round.
+const ORBIT_STEP: f64 = std::f64::consts::TAU / 36.0;
+/// How far round the orbit the way ahead is shown.
+const ORBIT_AHEAD: f64 = std::f64::consts::TAU * 5.0 / 12.0;
+
 /// The way the program takes us, as a plan (from now, relative to the
-/// anchor as it is now): straight to the goal, and for an orbit on round
-/// the circle. On a rock it turns with the rock, so its frames stay over
-/// the same ground.
-pub fn plan(app: &App) -> Option<universe_sim::Plan> {
+/// anchor as it is now), and how far apart its frames go (None: closer
+/// together near the goal, as a landing's). Straight to the goal while
+/// there's a way to go; an orbit's way round is on a fixed grid of angles
+/// round the anchor, so its frames hold still and we fly through them. Over
+/// a rock it turns with the rock, so its frames stay over the same ground.
+pub fn plan(app: &App) -> Option<(universe_sim::Plan, Option<f64>)> {
     use universe_engine::glam::DQuat;
     use universe_sim::avionics::plan::{Action, PlanPoint};
     let s = standing(app)?;
     let ship = app.view.ship_pos;
+    let range = s.follow.manoeuvre.range();
     // The way in, while there's a way to go: on station, the program holds
     // within a metre or so either side of its goal, and a join that short
     // would turn the frames about every frame.
-    let joining = s.to_go > (0.02 * s.follow.manoeuvre.range()).max(50.0);
-    let mut path = vec![if joining { ship } else { s.goal }];
-    if joining {
-        let n = 24;
-        for k in 1..=n {
-            path.push(ship.lerp(s.goal, k as f64 / n as f64));
+    let joining = s.to_go > (0.02 * range).max(50.0);
+    let mut path = Vec::new();
+    let mut even = None;
+    match s.follow.manoeuvre {
+        Manoeuvre::Orbit(r) => {
+            let axis = s.follow.axis.unwrap_or(DVec3::Y);
+            // Angles round the axis, from a fixed reference across it.
+            let e1 = axis.any_orthonormal_vector();
+            let e2 = axis.cross(e1);
+            let angle = |p: DVec3| {
+                let o = p - s.at;
+                o.dot(e2).atan2(o.dot(e1))
+            };
+            let point = |a: f64| s.at + (e1 * a.cos() + e2 * a.sin()) * r;
+            // From the next mark on the grid ahead of us.
+            let first = (angle(ship) / ORBIT_STEP).floor() * ORBIT_STEP + ORBIT_STEP;
+            if joining {
+                path.push(ship);
+            }
+            let marks = (ORBIT_AHEAD / ORBIT_STEP).round() as usize;
+            for k in 0..=marks {
+                // (Between the marks, enough points for the curve.)
+                for j in 0..4 {
+                    if k == marks && j > 0 {
+                        break;
+                    }
+                    path.push(point(first + (k as f64 + j as f64 / 4.0) * ORBIT_STEP));
+                }
+            }
+            even = Some(r * ORBIT_STEP);
+        }
+        _ => {
+            if joining {
+                let n = 24;
+                for k in 0..=n {
+                    path.push(ship.lerp(s.goal, k as f64 / n as f64));
+                }
+            }
+            if let Manoeuvre::KeepAt(r) = s.follow.manoeuvre {
+                even = Some((r / 6.0).max(100.0));
+            }
         }
     }
-    if let Manoeuvre::Orbit(r) = s.follow.manoeuvre {
-        // A third of the way round, the way it goes.
-        let axis = s.follow.axis.unwrap_or(DVec3::Y);
-        let out = (s.goal - s.at).normalize_or(axis.any_orthonormal_vector());
-        for k in 1..=48 {
-            path.push(s.at + DQuat::from_axis_angle(axis, k as f64 / 48.0 * std::f64::consts::TAU / 3.0) * out * r);
-        }
-    }
-    let spin = match s.follow.anchor {
-        Anchor::Rock { field, body } => app.view.system.field_bodies(field).get(body).map_or(DVec3::ZERO, |b| b.angular_velocity()),
+    // Only a rock's surface turns under us; an orbit round it doesn't.
+    let spin = match (s.follow.anchor, s.follow.manoeuvre) {
+        (Anchor::Rock { field, body }, Manoeuvre::Surface(_)) => app.view.system.field_bodies(field).get(body).map_or(DVec3::ZERO, |b| b.angular_velocity()),
         _ => DVec3::ZERO,
     };
     let speed = s.closing.abs().max(5.0);
@@ -151,7 +187,7 @@ pub fn plan(app: &App) -> Option<universe_sim::Plan> {
         let facing = DQuat::from_rotation_arc(DVec3::NEG_Z, dir);
         points.push(PlanPoint { time: along / speed, position: p, orientation: facing, aim: facing, action: Action::Thrusters, phase: universe_sim::Phase::Approach });
     }
-    (points.len() >= 2).then(|| universe_sim::Plan { start: app.now(), center: s.at, spin, points, arrives: true, holds: false })
+    (points.len() >= 2).then(|| (universe_sim::Plan { start: app.now(), center: s.at, spin, points, arrives: true, holds: false }, even))
 }
 
 fn steps(m: Manoeuvre) -> &'static [&'static str] {
@@ -211,7 +247,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let ship = app.view.ship_pos;
     let cam = frame.camera.position;
     // The path and its frames, as every guide draws them.
-    if let Some(plan) = &app.follow_plan {
+    if let Some((plan, _)) = &app.follow_plan {
         crate::scene::guided_path(frame, app, plan, s.at, None, app.now(), ship);
     }
     // The goal: a diamond, a few pixels whatever the distance.

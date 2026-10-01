@@ -247,6 +247,8 @@ impl Avionics {
             desired = desired.clamp_length_max((nearest / ROCK_NOTICE).clamp(SWARM_CLOSING, MAX_CLOSING));
             accel += push;
         }
+        // In orbit, the way it goes (the nose along it).
+        let mut prograde = None;
         if let Manoeuvre::Orbit(_) = f.manoeuvre {
             // The plane: as it's moving now, if it is, else any.
             let axis = *f.axis.get_or_insert_with(|| {
@@ -258,6 +260,7 @@ impl Avionics {
             let tangent = axis.cross(out).normalize_or(dir.any_orthonormal_vector());
             let speed = orbit_speed(range, ship.side_accel());
             desired += tangent * speed - axis * closing_speed(height, brake);
+            prograde = Some(tangent);
             // Centripetal: what turns the path round the anchor.
             accel += dir * (speed * speed / d);
         }
@@ -268,13 +271,14 @@ impl Avionics {
         }
         self.following = Some(f);
 
-        // Small corrections on the thrusters, nose on the anchor; more, and it turns to burn.
+        // Small corrections on the thrusters, nose on the anchor (in orbit,
+        // along the way it goes); more, and it turns to burn.
         let (throttle, rcs, nose) = if accel.length() < 0.9 * ship.side_accel() {
             // (All of it: lined up or not, the engine isn't lit for this.)
             let rcs = (ship.orientation.inverse() * accel / ship.side_accel()).clamp(DVec3::splat(-1.0), DVec3::ONE);
-            (0.0, rcs, dir)
+            (0.0, rcs, prograde.unwrap_or(dir))
         } else {
-            thrust_for(&ship, accel, dir)
+            thrust_for(&ship, accel, prograde.unwrap_or(dir))
         };
         let c = ShipCommands { throttle, rcs, ..ship.holding() };
         self.command(bus, &c, events);
@@ -285,6 +289,12 @@ impl Avionics {
             let up = dir;
             let along = (ship.forward() - up * ship.forward().dot(up)).normalize_or(up.any_orthonormal_vector());
             return Some(attitude(&ship, facing(along, up), DVec3::ZERO, 1.0 / 60.0));
+        }
+        // In orbit, banked into the turn as an aircraft is: the top to the
+        // anchor, so what holds us on the circle pushes up, through the
+        // thrusters' one axis.
+        if prograde.is_some() && throttle == 0.0 {
+            return Some(attitude(&ship, facing(nose, dir), DVec3::ZERO, 1.0 / 60.0));
         }
         Some(attitude(&ship, facing(nose, ship.orientation * DVec3::Y), DVec3::ZERO, 1.0 / 60.0))
     }

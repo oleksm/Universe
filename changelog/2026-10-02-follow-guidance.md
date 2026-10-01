@@ -46,3 +46,14 @@ docking do:
   (`keys::PINNED`), given out before the first-letter assignment. EXCAVATE, which had X, is
   now **DIG** (G).
 - Dev scenarios `gateorbit`, `gateorbit60`, `gateorbitwatch` (orbiting a gate, from above).
+
+## Orbit: nose along the way, frames on a grid
+
+- In orbit the ship flies nose first along the circle, banked into the turn as an aircraft
+  is (its top to the anchor): what holds it on the circle pushes up, through one axis of the
+  thrusters, and trims along the way can go on the main engine. (It was nose on the anchor.)
+- The guide can space its frames evenly (`Guide::update_spaced`). An orbit's frames sit on a
+  fixed grid of angles round the anchor, one every 10°, over the next 150° of the way: they hold
+  still, you fly through them, and one more appears at the far end as you pass one. Keeping at
+  range spaces its frames evenly too; closing on a rock keeps the landing ladder.
+- An orbit round a rock no longer turns its frames with the rock (only its surface turns).

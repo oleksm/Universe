@@ -121,7 +121,7 @@ pub struct App {
     /// The guide frames, set in space along the plan (see `scene::Guide`).
     pub guide: crate::scene::Guide,
     /// A follow program's way, as a plan (see `followguide`), rebuilt every frame.
-    pub follow_plan: Option<universe_sim::Plan>,
+    pub follow_plan: Option<(universe_sim::Plan, Option<f64>)>,
     pub plan_blend: f32,
     /// Real seconds since the plan was rebuilt, its serial, and how long
     /// building it took (real seconds) and how often it's rebuilt.
@@ -964,8 +964,8 @@ impl Game for App {
         self.approach = self.approach_now();
         // A follow program's way, and its frames on the same guide.
         self.follow_plan = followguide::plan(self);
-        if let (Some(p), Some(f)) = (&self.follow_plan, self.v.avionics.following) {
-            self.guide.update(p, scene::GuideKey::Follow(f.anchor));
+        if let (Some((p, even)), Some(f)) = (&self.follow_plan, self.v.avionics.following) {
+            self.guide.update_spaced(p, scene::GuideKey::Follow(f.anchor), *even);
         }
         // The turrets in view, where they are at the moment drawn (from the charts).
         let (origin, t) = (self.view.origin, self.now());
