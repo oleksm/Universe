@@ -120,8 +120,18 @@ fn rock(frame: &mut Frame, app: &App, f: usize, i: usize, b: &Body, center: DVec
         return;
     };
     let edges = ((px - 2.0) / 30.0).clamp(0.0, 1.0);
-    let at = Transform { position: center, rotation: b.rotation(t).as_quat(), scale: b.rail.radius };
+    let at = Transform { position: center, rotation: b.rotation(t).as_quat(), scale: b.rail.radius * remaining(app, f, i, b) };
     frame.model_shaded_faded(mesh, &at, c.scale(0.8), c.scale(0.3), edges);
+}
+
+/// How big rock `i` of field `f` still is, as a share of its size: what's
+/// been dug out of it is gone (its volume goes with its mass).
+pub fn remaining(app: &App, f: usize, i: usize, b: &Body) -> f64 {
+    if app.view.origin != app.v.ship_system {
+        return 1.0;
+    }
+    let dug = app.v.mined.iter().find(|(k, _)| *k == (f, i)).map_or(0.0, |(_, kg)| *kg);
+    ((b.mass - dug).max(0.0) / b.mass).cbrt()
 }
 
 /// The remnants of the system in view, and the swarm in sight.

@@ -278,6 +278,14 @@ impl Avionics {
         };
         let c = ShipCommands { throttle, rcs, ..ship.holding() };
         self.command(bus, &c, events);
+        // Over a rock, spine to it: the nose along its surface (as it
+        // points now, turned flat), the top facing it — where the mining
+        // gear works.
+        if matches!(f.manoeuvre, Manoeuvre::Surface(_)) && throttle == 0.0 {
+            let up = dir;
+            let along = (ship.forward() - up * ship.forward().dot(up)).normalize_or(up.any_orthonormal_vector());
+            return Some(attitude(&ship, facing(along, up), DVec3::ZERO, 1.0 / 60.0));
+        }
         Some(attitude(&ship, facing(nose, ship.orientation * DVec3::Y), DVec3::ZERO, 1.0 / 60.0))
     }
 }

@@ -92,6 +92,32 @@ impl Category {
         }
     }
 
+    /// Bulk density as stowed in a hold (t/m³): crated, sacked or loose.
+    pub fn bulk_density(self) -> f64 {
+        match self {
+            Category::Food => 0.6,
+            Category::Water => 0.95,
+            Category::Ores => 2.2,
+            Category::Metals => 3.5,
+            Category::Minerals => 2.0,
+            Category::Chemicals => 1.0,
+            Category::Fuel => 0.8,
+            Category::Textiles => 0.35,
+            Category::Machinery => 1.2,
+            Category::Electronics => 0.5,
+            Category::Computers => 0.4,
+            Category::Medicine => 0.5,
+            Category::Biologics => 0.7,
+            Category::Luxuries => 0.5,
+            Category::Art => 0.3,
+            Category::Weapons => 0.9,
+            Category::Narcotics => 0.6,
+            Category::Artifacts => 1.0,
+            Category::Robots => 0.7,
+            Category::Tools => 1.1,
+        }
+    }
+
     pub fn all() -> impl Iterator<Item = Category> {
         KINDS.iter().map(|k| k.category)
     }

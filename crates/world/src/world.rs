@@ -54,6 +54,9 @@ pub struct World {
     ephemerides: Mutex<HashMap<usize, (f64, Arc<Ephemeris>)>>,
     /// The same for an asteroid field's bodies, by (system, field).
     field_ephemerides: Mutex<HashMap<(usize, usize), EphemerisAt>>,
+    /// Fields' bodies with what's been dug out of their rocks gone, by
+    /// (system, field), with the total dug they were made for (see `field_bodies_now`).
+    depleted: Mutex<HashMap<(usize, usize), (f64, FieldBodies)>>,
     /// Body positions per system at the last two moments asked for: see `rails_at`.
     rails: Mutex<HashMap<usize, [RailsAt; 2]>>,
     /// Each system's contact rules, as their owners registered them (see `rules`).
@@ -100,6 +103,9 @@ fn advance(clock: &mut f64, dt: f64) -> StepResult {
     StepResult { simulated: dt, warp_limited: false }
 }
 
+/// A field's bodies.
+type FieldBodies = Arc<Vec<crate::system::Body>>;
+
 /// A body snapshot and its moment.
 type EphemerisAt = (f64, Arc<Ephemeris>);
 
@@ -120,6 +126,7 @@ impl World {
             neighbours: Default::default(),
             ephemerides: Default::default(),
             field_ephemerides: Default::default(),
+            depleted: Default::default(),
             rails: Default::default(),
             rules: Default::default(),
             frozen: None,
@@ -218,6 +225,33 @@ impl World {
         }
     }
 
+    /// Field `f`'s bodies as they are now: rocks dug into are the smaller
+    /// for it (what's seen is what's touched).
+    pub fn field_bodies_now(&self, sys: &StarSystem, f: usize) -> Arc<Vec<crate::system::Body>> {
+        let bodies = sys.field_bodies(f);
+        let dug: Vec<(usize, f64)> = self.mined.iter().filter(|((s, field, _), _)| *s == sys.index && *field == f).map(|(&(_, _, b), &kg)| (b, kg)).collect();
+        if dug.is_empty() {
+            return bodies;
+        }
+        // (Digging only ever adds: the total says whether it's changed.)
+        let total: f64 = dug.iter().map(|d| d.1).sum();
+        let mut cache = lock(&self.depleted);
+        if let Some((at, b)) = cache.get(&(sys.index, f))
+            && *at == total
+        {
+            return b.clone();
+        }
+        let mut now = (*bodies).clone();
+        for (i, kg) in dug {
+            if let Some(b) = now.get_mut(i) {
+                crate::belt::shrink(b, kg);
+            }
+        }
+        let now = Arc::new(now);
+        cache.insert((sys.index, f), (total, now.clone()));
+        now
+    }
+
     /// The asteroid field ship `p` is among or near in `system` at `t`, if any.
     pub fn field_at(&self, sys: &StarSystem, system: usize, p: DVec3, t: f64) -> Option<usize> {
         if sys.fields.is_empty() {
@@ -243,7 +277,8 @@ impl World {
             Some(true) if !matches!(ship.state, ShipState::Anchored { .. }) => {
                 let sys = self.system(system);
                 let field = self.field_at(&sys, system, ship.position, t);
-                crate::mining::anchor(&sys, field, ship, t, events);
+                let bodies = field.map(|f| (f, self.field_bodies_now(&sys, f)));
+                crate::mining::anchor(bodies, ship, t, events);
             }
             Some(false) => crate::mining::release(ship, events),
             _ => {}
@@ -515,7 +550,7 @@ impl World {
     fn flight_step(&self, clock: &mut f64, sys: &StarSystem, ship: &mut Ship, system: usize, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
         // Among an asteroid field, its swarm's bodies too.
         let field = self.field_at(sys, system, ship.position, *clock);
-        let local = field.map(|f| sys.field_bodies(f));
+        let local = field.map(|f| self.field_bodies_now(sys, f));
         let bodies = local.as_deref().map_or(&sys.bodies[..], |b| &b[..]);
         // For short frames, snapshot the bodies once and extrapolate for each
         // substep instead of re-solving every orbit (see `Ephemeris`).

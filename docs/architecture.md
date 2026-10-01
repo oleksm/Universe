@@ -509,6 +509,8 @@ ship's pose directly, like tests do — then render.
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |
 | Locking (T: tap locks what's ahead; hold lists, mouse/wheel picks, release locks) for contacts and rocks; the rock lock (`Avionics::rock_lock`, `Command::LockRock`/`LockContact`) | game: `lock`; sim: `cockpit` |
 | Mining mode (1): action panel, prospect pulse (2, 30 km), numbered results, approach (3) | game: `mining` |
+| The mining rig as seen (emitters, spine hatch, beams, extract stream), any ship's; the cargo panel (4) | game: `rig`, `hud` |
+| Rocks dug into are smaller (volume with mass) for contact and anchoring | world: `World::field_bodies_now`, `belt::shrink` |
 | Asteroids on screen: a mesh per rock from its shape, sensor diamonds for small ones nearby; the prospector (scan, survey, digging readout) | game: `rocks`, `hud` |
 
 

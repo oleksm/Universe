@@ -370,6 +370,21 @@ pub fn add_fields(sys: &mut StarSystem, frost: f64, seed: u64) {
     }
 }
 
+/// Rock `b` with `kg` dug out of it: smaller by what's gone (its volume
+/// goes with its mass), its shape kept.
+pub fn shrink(b: &mut Body, kg: f64) {
+    let left = (b.mass - kg).max(0.0);
+    let s = (left / b.mass).cbrt();
+    b.rail.radius *= s;
+    if let Some(r) = &mut b.rock {
+        let r = Arc::make_mut(r);
+        r.shape.radius *= s;
+        r.shape.lumps *= s;
+    }
+    b.mass = left;
+    b.rail.mu = G * left;
+}
+
 impl StarSystem {
     /// The system's bodies followed by field `f`'s swarm: what a ship near
     /// it moves among (the swarm's bodies are generated on first look).

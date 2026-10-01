@@ -48,6 +48,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             phase_banner(frame, app);
             universe_prof::time("draw/hud/scanner", || scanner(frame, app));
             crate::mining::draw_hud(frame, app);
+            cargo_panel(frame, app);
             crate::lock::draw(frame, app);
         }
     }
@@ -311,6 +312,54 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
         let hopper: String = (0..10).map(|i| if (i as f64) < app.ship.hopper / 100.0 - 0.01 { '#' } else { '.' }).collect();
         let state = if app.ship.excavator { "DIGGING" } else { "H TO DIG" };
         lines.push((format!("{state}  HOPPER [{hopper}]  HOLD {:.1}/{:.0} T  ROCK LEFT {}", app.ship.cargo / 1000.0, universe_sim::world::ship::HOLD_CAPACITY / 1000.0, fmt::tonnes(left)), if app.ship.excavator { AMBER } else { HUD }));
+        if app.ship.excavator {
+            // The flow, and when the next tonne goes into the hold.
+            let rate = mining::dig_rate(r);
+            let next = (universe_sim::world::goods::TONNE - app.ship.hopper) / rate;
+            let ore = &app.charts.goods[mining::ore(r).item()];
+            lines.push((format!("EXTRACTING {} {rate:.1} KG/S ({:.0} T/H)  NEXT TONNE IN {}", ore.name.to_uppercase(), rate * 3.6, fmt::countdown(next)), AMBER));
+        }
+    }
+}
+
+/// The hold (4): what's in it — each good's units, mass, volume as stowed
+/// and worth — the loose ore in the hopper, and the totals against capacity.
+fn cargo_panel(frame: &mut Frame, app: &App) {
+    if !app.show_cargo {
+        return;
+    }
+    use universe_sim::world::ship::HOLD_CAPACITY;
+    let goods = &app.charts.goods;
+    let mut lines: Vec<(String, Color)> = vec![(format!("CARGO HOLD - {:.0} T CAPACITY   (4 CLOSES)", HOLD_CAPACITY / 1000.0), HUD), (String::new(), HUD)];
+    lines.push((format!("{:<26} {:<10} {:>5} {:>8} {:>8} {:>9}", "GOOD", "KIND", "UNITS", "MASS", "VOLUME", "WORTH"), DIM));
+    let (mut mass, mut volume, mut worth) = (0.0, 0.0, 0.0);
+    for &(item, units) in &app.v.hold {
+        let Some(g) = goods.get(item) else { continue };
+        let m = g.mass * units as f64;
+        let v = m / 1000.0 / g.category.bulk_density();
+        let w = g.price * units as f64;
+        (mass, volume, worth) = (mass + m, volume + v, worth + w);
+        lines.push((format!("{:<26} {:<10} {:>5} {:>8} {:>6.1}M3 {:>6.0} CR", g.name.to_uppercase().chars().take(26).collect::<String>(), g.category.name(), units, fmt::tonnes(m), v, w), HUD));
+    }
+    if app.v.hold.is_empty() {
+        lines.push(("(EMPTY)".into(), DIM));
+    }
+    if app.ship.hopper > 0.5 {
+        lines.push((format!("{:<26} {:<10} {:>5} {:>8}", "LOOSE ORE IN THE HOPPER", "", "", fmt::tonnes(app.ship.hopper)), AMBER));
+    }
+    lines.push((String::new(), HUD));
+    let full = (mass + app.ship.hopper) / HOLD_CAPACITY;
+    let bar: String = (0..20).map(|i| if (i as f64) < full * 20.0 - 0.01 { '#' } else { '.' }).collect();
+    lines.push((format!("LOADED [{bar}] {} OF {}  {:.1} M3  WORTH ABOUT {:.0} CR", fmt::tonnes(mass + app.ship.hopper), fmt::tonnes(HOLD_CAPACITY), volume, worth), if full > 0.95 { AMBER } else { HUD }));
+    lines.push((format!("SHIP {}  (DRY {}, FUEL {}, CARGO {})", fmt::tonnes(app.ship.mass()), fmt::tonnes(universe_sim::world::ship::DRY_MASS), fmt::tonnes(app.ship.fuel), fmt::tonnes(app.ship.cargo + app.ship.hopper)), DIM));
+    let width = lines.iter().map(|l| text_size(&l.0).x).fold(0.0, f32::max);
+    let size = frame.size();
+    // (Left, under the status lines: the notices go across the middle.)
+    let pos = Vec2::new(12.0, (size.y * 0.42).floor());
+    frame.hud_rect(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, Color([0.0, 0.02, 0.0, 0.9]));
+    frame.hud_box(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, HUD.scale(0.6));
+    for (k, (text, c)) in lines.iter().enumerate() {
+        frame.text(pos + Vec2::new(0.0, k as f32 * LINE), text, *c);
     }
 }
 
@@ -1315,6 +1364,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("B", "COMBAT", combat),
         ("1", "MINING", lamp(m == ShipMode::Mining)),
         ("G", "MARKET", lamp(app.market.is_some())),
+        ("4", "CARGO", lamp(app.show_cargo)),
         ("M", "MAP", lamp(app.nav_map.is_some())),
         ("TAB", "WATCH", Lamp::Off),
         ("F1", "HELP", lamp(app.show_help)),
@@ -1322,7 +1372,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     .iter()
     .map(|(k, l, s)| (k.to_string(), l.to_string(), *s))
     .collect();
-    let cell = Vec2::new(84.0, 14.0);
+    let cell = Vec2::new(76.0, 14.0);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
         let pos = at + Vec2::new(i as f32 * (cell.x + 2.0), 0.0);
         draw_cell(frame, pos, cell, key, label, *lamp);

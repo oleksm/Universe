@@ -102,13 +102,12 @@ pub fn clearance(bodies: &[Body], i: usize, t: f64, positions: &[DVec3], p: DVec
 }
 
 /// Fire the anchor at the nearest asteroid among field `field`'s bodies, at `t`.
-pub fn anchor(sys: &StarSystem, field: Option<usize>, ship: &mut Ship, t: f64, events: &mut Vec<ShipEvent>) {
+pub fn anchor(field: Option<(usize, std::sync::Arc<Vec<Body>>)>, ship: &mut Ship, t: f64, events: &mut Vec<ShipEvent>) {
     let fail = |events: &mut Vec<ShipEvent>, why: &str| events.push(ShipEvent::AnchorFailed { why: why.to_string() });
     if !matches!(ship.state, ShipState::Flying) || ship.hyperdrive {
         return fail(events, "NOT IN FREE FLIGHT");
     }
-    let Some(f) = field else { return fail(events, "NOTHING IN REACH") };
-    let bodies = sys.field_bodies(f);
+    let Some((f, bodies)) = field else { return fail(events, "NOTHING IN REACH") };
     let mut positions = Vec::with_capacity(bodies.len());
     universe_physics::positions(&bodies[..], t, &mut positions);
     let nearest = (0..bodies.len())
@@ -350,5 +349,27 @@ mod tests {
         assert_eq!(ore(&metal), Ore::NickelIron);
         metal.composition.pgm_ppm = 50.0;
         assert_eq!(ore(&metal), Ore::Pgm);
+    }
+
+    #[test]
+    fn a_rock_dug_into_is_the_smaller_for_it() {
+        let (mut p, i) = by_a_rock(5.0, 0.0);
+        let sys = p.sys();
+        let whole = sys.field_bodies(0)[i].clone();
+        // Seven eighths of it dug out: half as wide.
+        p.world.mined.insert((sys.index, 0, i), whole.mass * 7.0 / 8.0);
+        let now = p.world.field_bodies_now(&sys, 0);
+        assert!((now[i].rail.radius / whole.rail.radius - 0.5).abs() < 1e-9);
+        assert!((now[i].mass - whole.mass / 8.0).abs() < 1.0);
+        // Where its surface was, there's nothing to touch.
+        for _ in 0..60 {
+            p.step(1.0 / 60.0, 1.0);
+        }
+        assert!(!p.events.iter().any(|e| matches!(e, ShipEvent::StruckRock { .. })));
+        // The gap to its surface grew by what its radius lost.
+        let mut pos = Vec::new();
+        universe_physics::positions(&now[..], p.world.time, &mut pos);
+        let gap = clearance(&now, i, p.world.time, &pos, p.ship.position);
+        assert!((gap - (5.0 + whole.rail.radius * 0.5)).abs() < whole.rail.radius * 0.3 + 1.0, "gap {gap}");
     }
 }

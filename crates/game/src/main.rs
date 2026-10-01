@@ -8,6 +8,7 @@ mod observer;
 mod lock;
 mod mining;
 mod onfoot;
+mod rig;
 mod rocks;
 mod save;
 mod scene;
@@ -132,6 +133,8 @@ pub struct App {
     pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh)>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
     pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
+    /// Mining rigs: how far each ship's gear is out (see `rig`).
+    pub rigs: rig::Rigs,
     /// The galaxy's stars as seen from a system: (system, direction and colour of each).
     pub sky_cache: std::cell::RefCell<Option<SkyCache>>,
     /// The navigation map, when open.
@@ -157,6 +160,8 @@ pub struct App {
     pub following: Option<(universe_sim::avionics::follow::Manoeuvre, String, f64)>,
     /// Seconds left to show the lock beam's ring (after T, outside combat mode).
     pub beam_shown: f32,
+    /// The cargo panel is open (4).
+    pub show_cargo: bool,
     /// Mining mode and the prospector's pulse; T's lock picker.
     pub mining: mining::Mining,
     pub picker: lock::Picker,
@@ -232,8 +237,10 @@ impl App {
             eta_shown: None,
             globes: std::collections::HashMap::new(),
             rocks: std::collections::HashMap::new(),
+            rigs: Default::default(),
             mining: Default::default(),
             picker: Default::default(),
+            show_cargo: false,
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
             market: None,
@@ -497,6 +504,10 @@ impl App {
         if input.pressed(KeyCode::KeyU) {
             self.engine.send(Command::Follow(FollowKind::Orbit));
         }
+        // 4: the cargo hold's contents.
+        if input.pressed(KeyCode::Digit4) {
+            self.show_cargo = !self.show_cargo;
+        }
         // Y fires the anchor or lets go; H runs the excavator (anchored).
         if input.pressed(KeyCode::KeyY) {
             let anchored = matches!(self.v.ship.state, ShipState::Anchored { .. });
@@ -639,6 +650,11 @@ impl App {
                 Event::Ship(ShipEvent::AnchorFailed { why }) => format!("ANCHOR - {why}"),
                 Event::Ship(ShipEvent::AnchorReleased) => "ANCHOR RELEASED".into(),
                 Event::Ship(ShipEvent::ExcavatorStopped { why }) => format!("EXCAVATOR STOPPED - {why}"),
+                Event::Ship(ShipEvent::Mined { item, .. }) => {
+                    let name = self.charts.goods.get(item).map_or(String::new(), |g| g.name.clone());
+                    let units = self.v.hold.iter().find(|h| h.0 == item).map_or(0, |h| h.1);
+                    format!("+1 T {name} TO THE HOLD ({units} T IN ALL, HOLD {:.0}/{:.0} T)", self.v.ship.cargo / 1000.0, universe_sim::world::ship::HOLD_CAPACITY / 1000.0)
+                }
                 Event::Ship(ShipEvent::StruckRock { speed, .. }) => format!("ROCK STRIKE AT {speed:.1} M/S"),
                 // Anything else says nothing (add a line here for a new event that should).
                 _ => continue,
@@ -749,7 +765,21 @@ impl App {
                 let orientation = turned.as_quat();
                 let docked = matches!(ship.state, ShipState::Landed { body, .. } if self.view.system.bodies[body].kind == universe_sim::BodyKind::Station);
                 // Docked: the ship is inside the slot, so back off far enough to see the station.
-                let chase = if docked { DVec3::new(0.0, 150.0, 1800.0) } else { DVec3::new(0.0, 20.0, 115.0) };
+                // Spine to a rock (closing on it, or anchored): the chase view
+                // rolls over, so the rock is below and the ship over it.
+                let over_rock = matches!(ship.state, ShipState::Anchored { .. })
+                    || self.v.avionics.following.is_some_and(|f| matches!(f.manoeuvre, universe_sim::avionics::follow::Manoeuvre::Surface(_)));
+                let (chase, orientation) = if docked {
+                    (DVec3::new(0.0, 150.0, 1800.0), orientation)
+                } else if over_rock && self.chase_cam {
+                    // Off to one side and a little behind, level with the gap
+                    // between ship and rock, the rock below: the gear at work.
+                    let at = DVec3::new(75.0, -12.0, 60.0);
+                    let look = universe_sim::ship::facing(-(turned * at).normalize(), turned * DVec3::NEG_Y);
+                    (at, look.as_quat())
+                } else {
+                    (DVec3::new(0.0, 20.0, 115.0), orientation)
+                };
                 let offset = if self.chase_cam || docked { turned * chase } else { DVec3::ZERO };
                 self.camera = Camera { position: self.view.ship_pos + offset, orientation, near: 0.5, ..Default::default() };
                 self.prev_focus = None;
@@ -836,6 +866,7 @@ impl Game for App {
         }
         universe_prof::time("update/globes", || self.build_globes());
         universe_prof::time("update/rocks", || self.build_rocks());
+        self.update_rigs(ctx.dt);
         if self.route_labels_for != v.avionics.route.stops {
             self.route_labels_for = v.avionics.route.stops.clone();
             self.route_labels = self.route_labels_for.iter().map(|&s| universe_sim::route::stop_name(&self.charts.system(s.system), s).to_uppercase()).collect();

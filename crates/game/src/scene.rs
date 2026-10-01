@@ -50,6 +50,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.mode == Mode::Pilot {
         crate::mining::draw_scene(frame, app);
     }
+    universe_prof::time("draw/scene/rigs", || crate::rig::draw(frame, app));
     universe_prof::time("draw/scene/spaceports", || spaceports(frame, app));
     if app.view.origin == app.v.ship_system {
         match &app.approach {
@@ -365,7 +366,7 @@ const HULL: Color = Color::hex(0x5a6068);
 fn crafts(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     for (i, c) in app.v.crafts.iter().enumerate() {
-        let visible = c.ship.is_flying() || matches!(c.ship.state, ShipState::Landed { .. });
+        let visible = c.ship.is_flying() || matches!(c.ship.state, ShipState::Landed { .. } | ShipState::Anchored { .. });
         if c.system != app.view.origin || !visible {
             continue;
         }
@@ -864,7 +865,9 @@ fn ship(frame: &mut Frame, app: &App) {
     // eye is back past the station, so it's drawn in the scene like the rest.
     let docked = matches!(app.ship.state, ShipState::Landed { body, .. } if app.view.system.bodies[body].kind == BodyKind::Station);
     // (Not over a full-screen panel: the nav map or the market.)
-    let panel = app.nav_map.is_some() || app.market.is_some();
+    let panel = app.nav_map.is_some() || app.market.is_some() || app.show_cargo || app.picker.listing() || app.mining.on;
+    // (Over a rock the camera stands off to the side: no need either.)
+    let panel = panel || matches!(app.ship.state, ShipState::Anchored { .. });
     if app.mode == Mode::Pilot && app.chase_cam && !docked && !panel {
         frame.in_front(|frame| frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL));
     } else {
