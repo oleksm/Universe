@@ -114,3 +114,16 @@ started making multithreading changes, can you go back and review that?"
   at the moment drawn, everything else from the view. All drawing (hud, scene, on foot, nav map,
   approach guidance, the eye on foot) reads it. Only commands still use the latest view, since
   they go to the world.
+
+## Fifth pass: back to the simple HUD
+
+User: "It was so much simpler and worked consistently. If possible lets go there and remove all
+that pixel by pixel masks which I think will eventually backfire"
+
+- **Removed** the hull mask (the occluder pass, the anchored HUD flag, the HUD shader's discard)
+  and the earlier per-label ray test. The engine files are as they were at `116fe6f`.
+- **The HUD is again a flat layer on top**, as it was before the threading split. What keeps it
+  consistent now is the fourth pass: everything drawn comes from one ship as drawn (`App::ship`)
+  at one moment (`App::now`), so the overlays sit still against the hull as they used to.
+- **Checked:** the collision scene captured from `f26ca25` (before Phase 1) and from now match,
+  apart from the live range numbers.

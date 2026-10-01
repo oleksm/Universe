@@ -41,10 +41,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             follow_info(app, &mut lines);
             approach_info(app, &mut lines);
             universe_prof::time("draw/hud/pilot overlay", || pilot_overlay(frame, app));
-            frame.anchored(|frame| target_marker(frame, app));
+            target_marker(frame, app);
             universe_prof::time("draw/hud/contact marker", || contact_marker(frame, app));
-            universe_prof::time("draw/hud/turret markers", || frame.anchored(|frame| turret_markers(frame, app)));
-            frame.anchored(|frame| impact_label(frame, app));
+            universe_prof::time("draw/hud/turret markers", || turret_markers(frame, app));
+            impact_label(frame, app);
             phase_banner(frame, app);
             universe_prof::time("draw/hud/scanner", || scanner(frame, app));
         }
@@ -656,31 +656,27 @@ fn contact_marker(frame: &mut Frame, app: &App) {
         let c = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
         let at = app.place(crate::Who::Craft(contact.blip.id)).0;
         let Some(p) = frame.project(at).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
-        frame.anchored(|frame| {
-            frame.hud_box(p - Vec2::splat(4.0), Vec2::splat(8.0), c.scale(0.8));
-            if contact.blip.distance < 50_000.0 {
-                let range = fmt::distance(contact.blip.distance);
-                frame.text(p + Vec2::new(-text_size(&range).x / 2.0, 7.0), &range, c.scale(0.7));
-            }
-        });
+        frame.hud_box(p - Vec2::splat(4.0), Vec2::splat(8.0), c.scale(0.8));
+        if contact.blip.distance < 50_000.0 {
+            let range = fmt::distance(contact.blip.distance);
+            frame.text(p + Vec2::new(-text_size(&range).x / 2.0, 7.0), &range, c.scale(0.7));
+        }
     }
     if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) {
         let c = if locked.aggressed { RED } else { crate::scene::TRAFFIC };
         let at = app.place(crate::Who::Craft(locked.blip.id)).0;
-        frame.anchored(|frame| {
-            bracket(frame, app, &locked.name, at, c);
-            // Which way it's moving across our view: an arrow off its bracket.
-            let v = locked.blip.velocity - app.ship.velocity;
-            if v.length() > 0.5
-                && let (Some(p), Some(q)) = (frame.project(at), frame.project(at + v * 2.0))
-                && let Some(dir) = (q - p).try_normalize()
-            {
-                let (a, b) = (p + dir * 14.0, p + dir * 30.0);
-                frame.hud_line(a, b, c);
-                frame.hud_line(b, b - dir * 5.0 + dir.perp() * 3.0, c);
-                frame.hud_line(b, b - dir * 5.0 - dir.perp() * 3.0, c);
-            }
-        });
+        bracket(frame, app, &locked.name, at, c);
+        // Which way it's moving across our view: an arrow off its bracket.
+        let v = locked.blip.velocity - app.ship.velocity;
+        if v.length() > 0.5
+            && let (Some(p), Some(q)) = (frame.project(at), frame.project(at + v * 2.0))
+            && let Some(dir) = (q - p).try_normalize()
+        {
+            let (a, b) = (p + dir * 14.0, p + dir * 30.0);
+            frame.hud_line(a, b, c);
+            frame.hud_line(b, b - dir * 5.0 + dir.perp() * 3.0, c);
+            frame.hud_line(b, b - dir * 5.0 - dir.perp() * 3.0, c);
+        }
         // The lead (combat mode): fly it into the gimbal ring; fire control
         // lays the gun on it, and the circle doubles up when the gun is on.
         if app.ship.armed
@@ -915,14 +911,12 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
 
     // Bracket the reference body.
     if let Some(p) = frame.project(app.view.positions[r]) {
-        frame.anchored(|frame| {
-            let k = 10.0;
-            for (sx, sy) in [(-1.0, -1.0), (1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)] {
-                let corner = p + Vec2::new(sx * k, sy * k);
-                frame.hud_line(corner, corner - Vec2::new(sx * 5.0, 0.0), DIM);
-                frame.hud_line(corner, corner - Vec2::new(0.0, sy * 5.0), DIM);
-            }
-        });
+        let k = 10.0;
+        for (sx, sy) in [(-1.0, -1.0), (1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)] {
+            let corner = p + Vec2::new(sx * k, sy * k);
+            frame.hud_line(corner, corner - Vec2::new(sx * 5.0, 0.0), DIM);
+            frame.hud_line(corner, corner - Vec2::new(0.0, sy * 5.0), DIM);
+        }
     }
 }
 

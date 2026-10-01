@@ -25,11 +25,6 @@ pub fn draw(frame: &mut Frame, app: &App) {
         transit_tunnel(frame, app);
         return;
     }
-    // Our hull hides the labels of what's behind it (registered before any are placed).
-    if ship_visible(app) {
-        let t = Transform { position: app.view.ship_pos, rotation: app.place(crate::Who::Me).1.as_quat(), scale: 1.0 };
-        frame.occluder(&app.models.ship, &t);
-    }
     if app.show_grid {
         universe_prof::time("draw/scene/orbits", || orbits(frame, app));
     }
@@ -64,7 +59,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     universe_prof::time("draw/scene/crafts", || crafts(frame, app));
     universe_prof::time("draw/scene/weapons fire", || weapons_fire(frame, app));
     if app.show_labels {
-        universe_prof::time("draw/scene/labels", || frame.anchored(|frame| labels(frame, app)));
+        universe_prof::time("draw/scene/labels", || labels(frame, app));
     }
 }
 
@@ -374,9 +369,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         if pos.distance(cam) < 20_000.0
             && let Some(p) = frame.project(pos)
         {
-            frame.anchored(|frame| {
-                frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), tc.scale(0.8));
-            });
+            frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), tc.scale(0.8));
         }
     }
 }
@@ -613,9 +606,7 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
             first = false;
             if let Some(p) = frame.project(position + up * size * 0.4) {
                 let label = crate::fmt::distance(position.distance(ship));
-                frame.anchored(|frame| {
-                    frame.text(p + universe_engine::glam::Vec2::new(4.0, -12.0), &label, c);
-                });
+                frame.text(p + universe_engine::glam::Vec2::new(4.0, -12.0), &label, c);
             }
         }
     }

@@ -10,8 +10,6 @@ use crate::model::Mesh;
 use crate::gpu::Gpu;
 
 const COLOR_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
-/// The hull mask's format (see `fs_mask`).
-const MASK_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::R8Unorm;
 const DEPTH_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 
 #[repr(C)]
@@ -19,8 +17,6 @@ const DEPTH_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 struct Globals {
     view_proj: [[f32; 4]; 4],
     hud_proj: [[f32; 4]; 4],
-    /// x: HUD pixels per scene pixel.
-    params: [f32; 4],
 }
 
 /// Growable GPU vertex buffer, re-filled every frame.
@@ -139,9 +135,6 @@ struct Target {
     hud: wgpu::TextureView,
     composite: wgpu::TextureView,
     blit: wgpu::BindGroup,
-    /// Where occluders (our hull) are seen, for cutting anchored HUD.
-    mask: wgpu::TextureView,
-    mask_bind: wgpu::BindGroup,
 }
 
 pub(crate) struct Renderer {
@@ -155,10 +148,6 @@ pub(crate) struct Renderer {
     globals: wgpu::Buffer,
     globals_bind: wgpu::BindGroup,
     blit_layout: wgpu::BindGroupLayout,
-    mask_layout: wgpu::BindGroupLayout,
-    mask_pipe: wgpu::RenderPipeline,
-    /// This frame's occluder instances (after the meshes' in `instances`).
-    mask_runs: Vec<(u64, u32, u32)>,
     sampler: wgpu::Sampler,
     sky_pipe: wgpu::RenderPipeline,
     solid_pipe: wgpu::RenderPipeline,
@@ -216,24 +205,6 @@ impl Renderer {
         });
 
         let scene = device.create_shader_module(wgpu::include_wgsl!("shaders/scene.wgsl"));
-        let mask_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("hull mask"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::FRAGMENT,
-                ty: wgpu::BindingType::Texture {
-                    sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                    view_dimension: wgpu::TextureViewDimension::D2,
-                    multisampled: false,
-                },
-                count: None,
-            }],
-        });
-        let hud_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("hud"),
-            bind_group_layouts: &[Some(&globals_layout), Some(&mask_layout)],
-            immediate_size: 0,
-        });
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),
             bind_group_layouts: &[Some(&globals_layout)],
@@ -311,47 +282,6 @@ impl Renderer {
                 ],
             }),
         ];
-        // The hull mask: occluders drawn again where they won the depth test.
-        let mask_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("hull mask"),
-            layout: Some(&scene_layout),
-            vertex: wgpu::VertexState { module: &scene, entry_point: Some("vs_mesh"), compilation_options: Default::default(), buffers: &mesh_layouts },
-            primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
-            depth_stencil: Some(wgpu::DepthStencilState {
-                format: DEPTH_FORMAT,
-                depth_write_enabled: Some(false),
-                depth_compare: Some(wgpu::CompareFunction::GreaterEqual),
-                stencil: Default::default(),
-                bias: Default::default(),
-            }),
-            multisample: Default::default(),
-            fragment: Some(wgpu::FragmentState {
-                module: &scene,
-                entry_point: Some("fs_mask"),
-                compilation_options: Default::default(),
-                targets: &[Some(wgpu::ColorTargetState { format: MASK_FORMAT, blend: None, write_mask: wgpu::ColorWrites::ALL })],
-            }),
-            multiview_mask: None,
-            cache: None,
-        });
-        let hud_pipeline = |label: &str, topology: wgpu::PrimitiveTopology| {
-            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: Some(label),
-                layout: Some(&hud_layout),
-                vertex: wgpu::VertexState { module: &scene, entry_point: Some("vs_hud"), compilation_options: Default::default(), buffers: &[Some(vertex_layout.clone())] },
-                primitive: wgpu::PrimitiveState { topology, ..Default::default() },
-                depth_stencil: None,
-                multisample: Default::default(),
-                fragment: Some(wgpu::FragmentState {
-                    module: &scene,
-                    entry_point: Some("fs_hud"),
-                    compilation_options: Default::default(),
-                    targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
-                }),
-                multiview_mask: None,
-                cache: None,
-            })
-        };
         let mesh_pipeline = |label: &str, vs: &str, topology: wgpu::PrimitiveTopology, write: bool, compare: wgpu::CompareFunction| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some(label),
@@ -383,8 +313,8 @@ impl Renderer {
         let line_pipe = scene_pipeline("lines", "vs_line", Topo::LineList, Some((false, Cmp::GreaterEqual)), alpha);
         let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha);
         // The HUD has its own layer without depth.
-        let hud_tri_pipe = hud_pipeline("hud tris", Topo::TriangleList);
-        let hud_pipe = hud_pipeline("hud", Topo::LineList);
+        let hud_tri_pipe = scene_pipeline("hud tris", "vs_hud", Topo::TriangleList, None, alpha);
+        let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha);
 
         let texture_entry = |binding| wgpu::BindGroupLayoutEntry {
             binding,
@@ -447,7 +377,7 @@ impl Renderer {
             ..Default::default()
         });
 
-        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &mask_layout, &sampler);
+        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler);
         Self {
             wait: std::time::Duration::ZERO,
             low_height,
@@ -457,9 +387,6 @@ impl Renderer {
             globals,
             globals_bind,
             blit_layout,
-            mask_layout,
-            mask_pipe,
-            mask_runs: Vec::new(),
             sampler,
             sky_pipe,
             solid_pipe,
@@ -497,7 +424,6 @@ impl Renderer {
         hud_scale: u32,
         forced_aspect: Option<f32>,
         layout: &wgpu::BindGroupLayout,
-        mask_layout: &wgpu::BindGroupLayout,
         sampler: &wgpu::Sampler,
     ) -> Target {
         let size = Self::low_res_size(gpu, low_height, forced_aspect);
@@ -519,12 +445,6 @@ impl Renderer {
         use wgpu::TextureUsages as U;
         let color = texture("low-res color", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let depth = texture("low-res depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT);
-        let mask = texture("hull mask", size, MASK_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
-        let mask_bind = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("hull mask"),
-            layout: mask_layout,
-            entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&mask) }],
-        });
         let hud = texture("hud", hud_size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let composite = texture("composite", hud_size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
         let blit = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -536,13 +456,13 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::Sampler(sampler) },
             ],
         });
-        Target { size, hud_size, color, depth, hud, composite, blit, mask, mask_bind }
+        Target { size, hud_size, color, depth, hud, composite, blit }
     }
 
     pub fn resize(&mut self, gpu: &Gpu) {
         if Self::low_res_size(gpu, self.low_height, self.forced_aspect) != self.target.size {
             self.target =
-                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.mask_layout, &self.sampler);
+                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler);
         }
     }
 
@@ -561,7 +481,6 @@ impl Renderer {
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
-            params: [self.hud_scale as f32, 0.0, 0.0, 0.0],
         };
         let upload = universe_prof::scope("render/upload vertices");
         gpu.queue.write_buffer(&self.globals, 0, bytemuck::bytes_of(&globals));
@@ -605,8 +524,7 @@ impl Renderer {
                     view: &self.target.depth,
                     depth_ops: Some(wgpu::Operations {
                         load: wgpu::LoadOp::Clear(0.0),
-                        // Kept for the hull mask.
-                        store: wgpu::StoreOp::Store,
+                        store: wgpu::StoreOp::Discard,
                     }),
                     stencil_ops: None,
                 }),
@@ -623,28 +541,6 @@ impl Renderer {
             self.points.draw(&mut pass, &self.point_pipe);
         }
         {
-            // The hull mask: occluders where they're seen (against the scene's depth).
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("hull mask"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &self.target.mask,
-                    depth_slice: None,
-                    resolve_target: None,
-                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
-                })],
-                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-                    view: &self.target.depth,
-                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Discard }),
-                    stencil_ops: None,
-                }),
-                timestamp_writes: None,
-                occlusion_query_set: None,
-                multiview_mask: None,
-            });
-            pass.set_bind_group(0, &self.globals_bind, &[]);
-            self.draw_meshes(&mut pass, &self.mask_runs, &self.mask_pipe, |m| (&m.faces, m.face_vertices));
-        }
-        {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("hud"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -659,7 +555,6 @@ impl Renderer {
                 multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
-            pass.set_bind_group(1, &self.target.mask_bind, &[]);
             self.hud_tris.draw(&mut pass, &self.hud_tri_pipe);
             self.hud.draw(&mut pass, &self.hud_pipe);
         }
@@ -704,7 +599,7 @@ impl Renderer {
     fn upload_meshes(&mut self, gpu: &Gpu, frame: &Frame) {
         self.frames += 1;
         let now = self.frames;
-        for d in frame.meshes.iter().chain(&frame.occluders) {
+        for d in &frame.meshes {
             self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(&gpu.device, &d.mesh)).used = now;
         }
         self.meshes.retain(|_, m| now - m.used < MESH_KEEP);
@@ -725,11 +620,6 @@ impl Renderer {
         };
         self.face_runs = runs(&mut data, &|_| true);
         self.edge_runs = runs(&mut data, &|i| frame.meshes[i].edges);
-        self.mask_runs.clear();
-        for d in &frame.occluders {
-            self.mask_runs.push((d.mesh.id(), data.len() as u32, 1));
-            data.push(d.instance);
-        }
         self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
     }
 

@@ -67,10 +67,6 @@ pub struct Frame {
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
-    /// Meshes that hide anchored HUD (see `occluder`).
-    pub(crate) occluders: Vec<MeshDraw>,
-    /// 1 while drawing anchored HUD (carried in the HUD vertices' z).
-    hud_z: f32,
 }
 
 /// One mesh draw: the mesh, and its instance data.
@@ -181,8 +177,6 @@ impl Frame {
             hud_tris: Vec::new(),
             hud: Vec::new(),
             meshes: Vec::new(),
-            occluders: Vec::new(),
-            hud_z: 0.0,
         }
     }
 
@@ -211,26 +205,6 @@ impl Frame {
     }
 
     /// World position to HUD pixel coordinates (see `size`), or `None` if behind the camera.
-    /// Mark a mesh (drawn as usual too) as hiding what the HUD marks behind
-    /// it: HUD drawn inside `anchored` is cut out wherever it covers it.
-    pub fn occluder(&mut self, mesh: &Mesh, t: &Transform) {
-        self.mesh(mesh, t, [1.0; 4], [1.0; 4], false, false);
-        if let Some(d) = self.meshes.pop() {
-            self.occluders.push(d);
-        }
-    }
-
-    /// HUD drawn in `f` marks things in the world (labels, brackets, contact
-    /// boxes): an occluder in front of the camera (our hull) hides it, pixel
-    /// by pixel, as it would hide what it marks. Instruments (gunsight,
-    /// flight path) stay on top.
-    pub fn anchored(&mut self, f: impl FnOnce(&mut Frame)) {
-        let before = self.hud_z;
-        self.hud_z = 1.0;
-        f(self);
-        self.hud_z = before;
-    }
-
     pub fn project(&self, p: DVec3) -> Option<Vec2> {
         let clip = self.camera.view_proj(self.size.x / self.size.y) * self.camera.relative(p).extend(1.0);
         if clip.w <= 0.0 {
@@ -388,14 +362,14 @@ impl Frame {
     /// Endpoints are snapped to pixel centers so lines stay crisp.
     pub fn hud_line(&mut self, a: Vec2, b: Vec2, color: Color) {
         let (a, b) = (a.floor() + 0.5, b.floor() + 0.5);
-        self.hud.push(Vertex { pos: [a.x, a.y, self.hud_z], color: color.0 });
-        self.hud.push(Vertex { pos: [b.x, b.y, self.hud_z], color: color.0 });
+        self.hud.push(Vertex { pos: [a.x, a.y, 0.0], color: color.0 });
+        self.hud.push(Vertex { pos: [b.x, b.y, 0.0], color: color.0 });
     }
 
     /// HUD line with a colour at each end (blended along it; alpha fades too).
     pub fn hud_line2(&mut self, a: Vec2, b: Vec2, ca: Color, cb: Color) {
-        self.hud.push(Vertex { pos: [a.x, a.y, self.hud_z], color: ca.0 });
-        self.hud.push(Vertex { pos: [b.x, b.y, self.hud_z], color: cb.0 });
+        self.hud.push(Vertex { pos: [a.x, a.y, 0.0], color: ca.0 });
+        self.hud.push(Vertex { pos: [b.x, b.y, 0.0], color: cb.0 });
     }
 
     /// A filled disc that fades from `inner` at the center to `outer` at the
@@ -408,7 +382,7 @@ impl Frame {
         for i in 0..segments {
             let (p, q) = (at(i), at(i + 1));
             for (v, c) in [(center, inner), (p, outer), (q, outer)] {
-                self.hud_tris.push(Vertex { pos: [v.x, v.y, self.hud_z], color: c.0 });
+                self.hud_tris.push(Vertex { pos: [v.x, v.y, 0.0], color: c.0 });
             }
         }
     }
@@ -417,7 +391,7 @@ impl Frame {
     pub fn hud_rect(&mut self, pos: Vec2, size: Vec2, color: Color) {
         let (a, b) = (pos, pos + size);
         for [x, y] in [[a.x, a.y], [b.x, a.y], [b.x, b.y], [a.x, a.y], [b.x, b.y], [a.x, b.y]] {
-            self.hud_tris.push(Vertex { pos: [x, y, self.hud_z], color: color.0 });
+            self.hud_tris.push(Vertex { pos: [x, y, 0.0], color: color.0 });
         }
     }
 

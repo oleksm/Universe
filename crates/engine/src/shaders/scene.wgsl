@@ -3,8 +3,6 @@ struct Globals {
     view_proj: mat4x4<f32>,
     // Low-res pixel coords -> clip.
     hud_proj: mat4x4<f32>,
-    // x: HUD pixels per scene pixel.
-    params: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -41,39 +39,9 @@ fn vs_sky(v: VertexIn) -> VertexOut {
     return VertexOut(clip, v.color);
 }
 
-// The HUD. Anchored parts (z = 1: labels, brackets, markers of things in
-// the world) are cut out where the hull mask is set: our hull in front of
-// them hides them, pixel by pixel.
-struct HudOut {
-    @builtin(position) clip: vec4<f32>,
-    @location(0) color: vec4<f32>,
-    // Where in the mask (scene pixels), and whether anchored.
-    @location(1) at: vec3<f32>,
-};
-
-@group(1) @binding(0) var hull_mask: texture_2d<f32>;
-
 @vertex
-fn vs_hud(v: VertexIn) -> HudOut {
-    return HudOut(g.hud_proj * vec4<f32>(v.pos.xy, 0.0, 1.0), v.color, vec3<f32>(v.pos.xy / g.params.x, v.pos.z));
-}
-
-@fragment
-fn fs_hud(in: HudOut) -> @location(0) vec4<f32> {
-    if in.at.z > 0.5 {
-        let size = vec2<i32>(textureDimensions(hull_mask));
-        let p = clamp(vec2<i32>(floor(in.at.xy)), vec2<i32>(0), size - 1);
-        if textureLoad(hull_mask, p, 0).r > 0.5 {
-            discard;
-        }
-    }
-    return in.color;
-}
-
-// The hull mask: occluders where they're seen.
-@fragment
-fn fs_mask(in: VertexOut) -> @location(0) vec4<f32> {
-    return vec4<f32>(1.0);
+fn vs_hud(v: VertexIn) -> VertexOut {
+    return VertexOut(g.hud_proj * vec4<f32>(v.pos.xy, 0.0, 1.0), v.color);
 }
 
 @fragment
