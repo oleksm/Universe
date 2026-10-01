@@ -305,6 +305,11 @@ impl<G: Game> ApplicationHandler for Runner<G> {
                 if let PhysicalKey::Code(code) = event.physical_key {
                     s.ctx.input.key(code, event.state == ElementState::Pressed);
                 }
+                if event.state == ElementState::Pressed
+                    && let Some(text) = &event.text
+                {
+                    s.ctx.input.typed.extend(text.chars().filter(|c| !c.is_control()));
+                }
             }
             WindowEvent::MouseInput { state, button, .. } => {
                 s.ctx.input.button(button, state == ElementState::Pressed);

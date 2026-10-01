@@ -99,30 +99,34 @@ pub struct Knob {
     pub min: f64,
     pub max: f64,
     pub step: f64,
+    /// What it is; what turning it up does for the ship and costs it; turning it down.
+    pub about: &'static str,
+    pub more: &'static str,
+    pub less: &'static str,
 }
 
 /// The numbers a designer turns, in order (see `Design::knob`).
 pub const KNOBS: &[Knob] = &[
-    Knob { label: "LENGTH M", min: 16.0, max: 120.0, step: 2.0 },
-    Knob { label: "WIDTH M", min: 4.0, max: 40.0, step: 1.0 },
-    Knob { label: "HEIGHT M", min: 3.0, max: 30.0, step: 1.0 },
-    Knob { label: "NOSE TAPER", min: 0.15, max: 1.0, step: 0.05 },
-    Knob { label: "TAIL TAPER", min: 0.4, max: 1.2, step: 0.05 },
-    Knob { label: "WING SPAN M", min: 0.0, max: 40.0, step: 1.0 },
-    Knob { label: "WING SWEEP M", min: 0.0, max: 30.0, step: 1.0 },
-    Knob { label: "FINS", min: 0.0, max: 1.0, step: 1.0 },
-    Knob { label: "SIZE CLASS", min: 1.0, max: 4.0, step: 1.0 },
-    Knob { label: "CARGO RACKS", min: 0.0, max: 3.0, step: 1.0 },
-    Knob { label: "HARDPOINTS", min: 0.0, max: 3.0, step: 1.0 },
-    Knob { label: "UTILITY SLOTS", min: 0.0, max: 2.0, step: 1.0 },
-    Knob { label: "DRIVE NOZZLES", min: 1.0, max: 4.0, step: 1.0 },
-    Knob { label: "QUADS APART", min: 0.1, max: 0.48, step: 0.02 },
-    Knob { label: "QUADS AT", min: -0.4, max: 0.4, step: 0.01 },
-    Knob { label: "LIFT AT", min: -0.4, max: 0.4, step: 0.01 },
-    Knob { label: "ENGINE ROOM AT", min: -0.48, max: 0.48, step: 0.02 },
-    Knob { label: "TANK AT", min: -0.48, max: 0.48, step: 0.02 },
-    Knob { label: "HOLD AT", min: -0.48, max: 0.48, step: 0.02 },
-    Knob { label: "BRIDGE AT", min: -0.48, max: 0.48, step: 0.02 },
+    Knob { label: "LENGTH M", min: 16.0, max: 120.0, step: 2.0, about: "THE BODY'S LENGTH, NOSE TO TAIL.", more: "THRUSTERS AND LIFT SIT FARTHER APART: MORE LEVER TO TURN AND TRIM. BUT A HEAVIER, DEARER FRAME, AND MORE MASS TO SWING.", less: "A LIGHT, CHEAP FRAME, QUICK TO SWING ROUND. BUT SHORT LEVERS: LESS TURN FROM THE SAME THRUSTERS, TOUCHIER BALANCE." },
+    Knob { label: "WIDTH M", min: 4.0, max: 40.0, step: 1.0, about: "THE BODY'S WIDTH.", more: "THE TOP THRUSTERS SIT WIDER: MORE ROLL. BUT A HEAVIER FRAME, MORE DRAG IN AIR (FRONTAL AREA).", less: "LESS DRAG, A LIGHTER FRAME. BUT WEAKER ROLL." },
+    Knob { label: "HEIGHT M", min: 3.0, max: 30.0, step: 1.0, about: "THE BODY'S HEIGHT.", more: "A HEAVIER FRAME WITH MORE DRAG IN AIR, FOR LITTLE BACK (NO EXTRA ROOM IS COUNTED YET).", less: "A FLATTER HULL: LIGHTER, LESS DRAG. NOTHING LOST." },
+    Knob { label: "NOSE TAPER", min: 0.15, max: 1.0, step: 0.05, about: "HOW THE BODY NARROWS TO THE NOSE (1: NOT AT ALL).", more: "A BLUNT NOSE: MORE FRAME FORWARD, THE CENTRE OF MASS MOVES FORWARD.", less: "A POINTED NOSE: LESS FRAME FORWARD, THE CENTRE OF MASS MOVES AFT." },
+    Knob { label: "TAIL TAPER", min: 0.4, max: 1.2, step: 0.05, about: "HOW THE BODY NARROWS (UNDER 1) OR FLARES (OVER 1) AT THE TAIL.", more: "A BROAD TAIL: MORE FRAME AFT (THE CENTRE OF MASS AFT), ROOM FOR BIGGER DRIVE NOZZLES.", less: "A SLIM TAIL: LESS FRAME AFT (THE CENTRE OF MASS FORWARD)." },
+    Knob { label: "WING SPAN M", min: 0.0, max: 40.0, step: 1.0, about: "HOW FAR EACH WING REACHES PAST THE BODY (0: NONE).", more: "LOOKS; NO LIFT IN AIR YET. COSTS FRAME MASS FAR OUT (SLOWER ROLL) AND A WIDER HULL TO CLIP OTHERS.", less: "A COMPACT, LIGHTER HULL THAT ROLLS FASTER AND FITS TIGHT PLACES." },
+    Knob { label: "WING SWEEP M", min: 0.0, max: 30.0, step: 1.0, about: "HOW FAR AFT THE WINGTIPS SIT.", more: "THE WINGS' MASS MOVES AFT (THE CENTRE OF MASS WITH IT A LITTLE).", less: "STRAIGHTER WINGS: THEIR MASS FURTHER FORWARD." },
+    Knob { label: "FINS", min: 0.0, max: 1.0, step: 1.0, about: "A TAIL FIN ON TOP.", more: "LOOKS; A LITTLE FRAME MASS HIGH AND AFT.", less: "NONE: A LITTLE LIGHTER." },
+    Knob { label: "SIZE CLASS", min: 1.0, max: 4.0, step: 1.0, about: "HOW BIG A MODULE ITS SLOTS TAKE (1-4).", more: "BIGGER DRIVES, PLANTS, TANKS AND RACKS FIT: MORE PUSH, RANGE AND HOLD. THE FRAME COSTS MORE (PRICED BY SLOT SIZE).", less: "A CHEAPER FRAME. BUT ONLY SMALL MODULES FIT." },
+    Knob { label: "CARGO RACKS", min: 0.0, max: 3.0, step: 1.0, about: "HOW MANY CARGO SLOTS (0-3).", more: "MORE HOLD (WITH RACKS FITTED): MORE TO HAUL. EACH SLOT ADDS TO THE PRICE; A FULL HOLD IS MASS TO PUSH AND TO BALANCE.", less: "A LIGHTER, CHEAPER SHIP THAT CARRIES LITTLE OR NOTHING." },
+    Knob { label: "HARDPOINTS", min: 0.0, max: 3.0, step: 1.0, about: "HOW MANY GUN SLOTS (0-3), UNDER THE NOSE.", more: "MORE GUNS TO FIT. EACH ADDS TO THE PRICE, AND GUNS ARE MASS AT THE NOSE.", less: "CHEAPER; NOTHING TO FIGHT WITH (THE SAMS AND YOUR SPEED ARE ALL)." },
+    Knob { label: "UTILITY SLOTS", min: 0.0, max: 2.0, step: 1.0, about: "HOW MANY SLOTS FOR GEAR LIKE A MINING RIG (0-2), ON THE SPINE.", more: "ROOM FOR GEAR: A MINING RIG TO DIG. EACH ADDS TO THE PRICE.", less: "CHEAPER; NO GEAR (NO MINING)." },
+    Knob { label: "DRIVE NOZZLES", min: 1.0, max: 4.0, step: 1.0, about: "HOW MANY NOZZLES THE MAIN DRIVE FIRES THROUGH, ACROSS THE TAIL.", more: "THE SAME PUSH SHARED WIDER: SMALLER NOZZLES ACROSS THE TAIL. LOOKS, FOR NOW.", less: "THE SAME PUSH THROUGH FEWER, BIGGER NOZZLES." },
+    Knob { label: "THRUSTER SPREAD", min: 0.1, max: 0.48, step: 0.02, about: "HOW FAR THE FRONT AND BACK THRUSTER SETS SIT FROM THEIR CENTRE (SHARE OF THE LENGTH).", more: "A LONGER LEVER: FASTER PITCH AND YAW FROM THE SAME THRUSTERS. TOO FAR AND THEY CROWD THE NOSE AND TAIL.", less: "SLUGGISH TURNING: THE SETS PUSH AGAINST EACH OTHER WITH LITTLE LEVER." },
+    Knob { label: "THRUSTERS CENTRE", min: -0.4, max: 0.4, step: 0.01, about: "WHERE THE MIDDLE OF THE THRUSTER SETS SITS (+: AFT). PUT IT ON THE CENTRE OF MASS (+).", more: "AFT OF THE CENTRE OF MASS: SHOVES UP OR SIDEWAYS TURN THE SHIP, SO THE FRONT SET WORKS HARDER AND YOU LOSE PUSH.", less: "FORWARD OF IT: THE SAME, THE OTHER WAY. ON IT: FULL PUSH, NO TURN." },
+    Knob { label: "LIFT CENTRE", min: -0.4, max: 0.4, step: 0.01, about: "WHERE THE BELLY LIFT'S MIDDLE SITS (+: AFT). PUT IT ON THE CENTRE OF MASS TO HOVER LEVEL.", more: "AFT OF THE CENTRE OF MASS: THE NOSE DIPS UNDER LIFT; TRIMMING IT LEVEL COSTS LIFT (HOVERING, LANDING).", less: "FORWARD OF IT: THE TAIL DIPS. ON IT: ALL THE LIFT, LEVEL." },
+    Knob { label: "ENGINE ROOM AT", min: -0.48, max: 0.48, step: 0.02, about: "WHERE THE PLANT, DRIVE AND HYPERDRIVE SIT (+: AFT). THE HEAVIEST THINGS ABOARD.", more: "FURTHER AFT: THE CENTRE OF MASS MOVES AFT. MOVE THE THRUSTERS AND LIFT AFT WITH IT.", less: "FURTHER FORWARD: THE CENTRE OF MASS MOVES FORWARD." },
+    Knob { label: "TANK AT", min: -0.48, max: 0.48, step: 0.02, about: "WHERE THE FUEL SITS (+: AFT). ITS MASS GOES AS YOU BURN IT.", more: "OFF THE CENTRE OF MASS (EITHER WAY) THE BALANCE SHIFTS AS THE TANK EMPTIES. KEEP IT NEAR THE CENTRE.", less: "(THE SAME: CLOSE TO THE CENTRE OF MASS, BURNING FUEL BARELY MOVES IT.)" },
+    Knob { label: "HOLD AT", min: -0.48, max: 0.48, step: 0.02, about: "WHERE THE CARGO SITS (+: AFT). FULL OR EMPTY, A BIG MASS THAT COMES AND GOES.", more: "OFF THE CENTRE OF MASS (EITHER WAY) THE SHIP FLIES DIFFERENTLY LOADED AND EMPTY. KEEP IT NEAR THE CENTRE.", less: "(THE SAME: NEAR THE CENTRE, LOADED OR EMPTY IT KEEPS ITS BALANCE.)" },
+    Knob { label: "BRIDGE AT", min: -0.48, max: 0.48, step: 0.02, about: "WHERE THE COMPUTERS, SENSORS AND LIFE SUPPORT SIT (+: AFT). LIGHT: A FINE TRIM.", more: "AFT: A LITTLE MASS AFT.", less: "FORWARD: A LITTLE MASS FORWARD (THE CLASSIC PLACE, UP FRONT)." },
 ];
 
 impl Design {
@@ -366,7 +370,9 @@ impl Design {
             let x = if n == 1 { 0.0 } else { -tail_w * 0.55 + tail_w * 1.1 * k as f64 / (n - 1) as f64 };
             let at = DVec3::new(x, 0.0, l / 2.0);
             nodes.push((format!("nozzle_main_{k}"), at, DVec3::Z));
-            thrusters.push((format!("nozzle_main_{k}"), "drive".to_string(), 1.0));
+            // (The drive's push shared between its nozzles: two nozzles' worth
+            // however many, as a stock hull's two.)
+            thrusters.push((format!("nozzle_main_{k}"), "drive".to_string(), 2.0 / n as f64));
             loops.push((0..16).map(|i| at + DVec3::new((i as f64 * std::f64::consts::TAU / 16.0).cos() * r, (i as f64 * std::f64::consts::TAU / 16.0).sin() * r, 0.0)).collect());
         }
         let at = |share: f64| (share * l).clamp(-l / 2.0, l / 2.0);
@@ -543,6 +549,14 @@ mod tests {
             eprintln!("{:<16} length {la:.0} -> {lb:.0} m, span {wa:.0} -> {wb:.0} m, slots {} -> {}, drives {} -> {}", h.name, h.slots.len(), s.slots.len(), h.thrusters.iter().filter(|t| t.role == crate::ship::ThrusterRole::Main).count(), d.mains);
             assert!((lb / la - 1.0).abs() < 0.15 && (wb / wa - 1.0).abs() < 0.25, "{}: its size", h.key);
             assert_eq!(s.slots.iter().filter(|x| x.kind == SlotKind::Cargo).count(), h.slots.iter().filter(|x| x.kind == SlotKind::Cargo).count(), "{}: its racks", h.key);
+        }
+    }
+
+    #[test]
+    fn more_drive_nozzles_share_the_drive_they_dont_add_to_it() {
+        let push = |n: u8| Design { mains: n, ..Design::default() }.spec().unwrap().main_thrust;
+        for n in 1..=4 {
+            assert!((push(n) - push(2)).abs() < 1.0, "{n} nozzles: {} vs {}", push(n), push(2));
         }
     }
 

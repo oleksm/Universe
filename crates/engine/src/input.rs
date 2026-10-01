@@ -15,6 +15,8 @@ pub struct Input {
     pub mouse_delta: Vec2,
     /// Scroll wheel accumulated this frame, in "lines".
     pub scroll: f32,
+    /// Text typed this frame (printable characters, as the keyboard makes them).
+    pub typed: String,
 }
 
 impl Input {
@@ -69,5 +71,6 @@ impl Input {
         self.buttons_pressed.clear();
         self.mouse_delta = Vec2::ZERO;
         self.scroll = 0.0;
+        self.typed.clear();
     }
 }

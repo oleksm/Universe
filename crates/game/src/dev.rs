@@ -169,7 +169,7 @@ pub fn apply(app: &mut App, name: &str) {
             if name == "designerbad" {
                 app.design = universe_sim::world::design::Design { engines_at: 0.46, tank_at: 0.46, hold_at: 0.46, quads_at: -0.3, lift_at: -0.3, ..Default::default() };
             }
-            let y = crate::shipyard::Shipyard::designing(app, 16);
+            let y = crate::shipyard::Shipyard::designing(app, 15);
             app.shipyard = Some(y);
         }
         "planner" => {

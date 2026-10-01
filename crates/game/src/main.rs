@@ -406,8 +406,14 @@ impl App {
     }
 
     fn global_keys(&mut self, ctx: &mut Context) {
+        // Typing a name: the keys are letters, nothing else.
+        if self.shipyard.as_ref().is_some_and(|y| y.naming()) {
+            return;
+        }
         let input = &ctx.input;
-        if input.pressed(KeyCode::Tab) {
+        // (TAB turns a panel's pages while one's open.)
+        let panel = self.shipyard.is_some() || self.market.is_some() || self.economy_panel.is_some();
+        if input.pressed(KeyCode::Tab) && !panel {
             self.mode = match self.mode {
                 Mode::Observer => Mode::Pilot,
                 Mode::Pilot => {

@@ -78,8 +78,10 @@ pub struct Shipyard {
     plan_pick: usize,
     /// SHIFT+ENTER pressed once: again builds it.
     armed: bool,
-    /// The design page's cursor: a knob, or (past them) commissioning.
+    /// The design page's cursor: the name (0), a knob (1..), commissioning (last).
     knob: usize,
+    /// Typing the design's name.
+    naming: bool,
     held_side: f32,
 }
 
@@ -138,7 +140,7 @@ fn with(fit: &Fit, slot: &Slot, module: Option<Handle<Module>>) -> Fit {
 impl Shipyard {
     /// The plan: the ship flown now.
     fn new(app: &App) -> Self {
-        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false, knob: 0, held_side: 0.0 };
+        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false, knob: 0, naming: false, held_side: 0.0 };
         y.choice = y.current_choice(0);
         y
     }
@@ -173,6 +175,11 @@ impl Shipyard {
 
     fn spec(&self) -> &'static ClassSpec {
         content().get(self.hull)
+    }
+
+    /// Typing a name (the keyboard is the name's).
+    pub fn naming(&self) -> bool {
+        self.naming
     }
 
     /// Where the module the plan has in slot `k` stands among its offers.
@@ -254,6 +261,21 @@ pub fn build(app: &mut App) {
 /// Keys while open. False when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let input = &ctx.input;
+    // Naming the design: letters, digits, spaces and dashes; BACKSPACE; ENTER or ESC done.
+    if let Some(y) = app.shipyard.as_mut().filter(|y| y.naming) {
+        if input.pressed(KeyCode::Enter) || input.pressed(KeyCode::Escape) {
+            y.naming = false;
+        } else if input.pressed(KeyCode::Backspace) {
+            app.design.name.pop();
+        } else {
+            for c in input.typed.chars().filter(|c| c.is_ascii_alphanumeric() || *c == ' ' || *c == '-') {
+                if app.design.name.len() < 20 {
+                    app.design.name.push(c.to_ascii_uppercase());
+                }
+            }
+        }
+        return true;
+    }
     if crate::keys::pressed(input, Act::Shipyard) || input.pressed(KeyCode::Escape) {
         return false;
     }
@@ -282,18 +304,28 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     match y.page {
         Page::Design => {
             use universe_sim::world::design::KNOBS;
-            step(&mut y.knob, KNOBS.len() + 1);
+            // Rows: the name, the knobs, commissioning.
+            step(&mut y.knob, KNOBS.len() + 2);
             let (right, left) = (input.down(KeyCode::ArrowRight), input.down(KeyCode::ArrowLeft));
             let turns = crate::navmap::repeat(&mut y.held_side, right || left, input.pressed(KeyCode::ArrowRight) || input.pressed(KeyCode::ArrowLeft), ctx.dt);
-            let k = y.knob;
-            if turns > 0 && k < KNOBS.len() {
+            let row = y.knob;
+            if turns > 0 && (1..=KNOBS.len()).contains(&row) {
                 let by = if right { 1.0 } else { -1.0 } * turns as f64 * if shift { 5.0 } else { 1.0 };
-                app.design.turn(k, by);
+                app.design.turn(row - 1, by);
             }
-            if input.pressed(KeyCode::Enter) && k == KNOBS.len() {
-                // Commissioned: a hull for good (numbered among yours), planned from at once.
+            if input.pressed(KeyCode::Enter) && row == 0 {
+                y.naming = true;
+            }
+            if input.pressed(KeyCode::Enter) && row == KNOBS.len() + 1 {
+                // Commissioned: a hull for good, by its name (or numbered among yours), planned from at once.
                 let mut d = app.design.clone();
-                d.name = format!("DESIGN {}", app.designs.len() + 1);
+                let n = app.designs.len() + 1;
+                if d.name.trim().is_empty() || d.name == "DESIGN" {
+                    d.name = format!("DESIGN {n}");
+                }
+                if app.designs.iter().any(|x| x.name == d.name && x != &d) {
+                    d.name = format!("{} {n}", d.name);
+                }
                 match d.commission() {
                     Ok(h) => {
                         if !app.designs.contains(&d) {
@@ -385,6 +417,42 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         }
     }
     true
+}
+
+/// `text` in lines of at most `width` characters, broken between words.
+fn wrap(text: &str, width: usize) -> Vec<String> {
+    let mut lines: Vec<String> = Vec::new();
+    for word in text.split_whitespace() {
+        match lines.last_mut() {
+            Some(l) if l.len() + 1 + word.len() <= width => {
+                l.push(' ');
+                l.push_str(word);
+            }
+            _ => lines.push(word.to_string()),
+        }
+    }
+    lines
+}
+
+/// What a kind of slot is for, and what a bigger or a smaller module in it trades.
+fn slot_help(kind: universe_sim::world::modules::SlotKind) -> (&'static str, &'static str, &'static str) {
+    use universe_sim::world::modules::SlotKind::*;
+    match kind {
+        Power => ("THE PLANT: POWER FOR EVERYTHING THAT DRAWS IT.", "ROOM FOR MORE THAT DRAWS POWER. HEAVIER, DEARER.", "LIGHTER, CHEAPER; MUST STILL COVER THE DRAW."),
+        Drive => ("THE MAIN DRIVE: THE PUSH ALONG THE NOSE.", "MORE PUSH: QUICKER OUT OF A GRAVITY WELL, A HEAVIER LOAD MOVED. HEAVIER, BURNS MORE AT FULL.", "LIGHTER, SIPS FUEL; SLOWER TO GET MOVING."),
+        Thrusters => ("THE THRUSTER QUADS: SHOVES EVERY WAY AND MOST OF THE TURNING.", "FASTER TURNS AND SHOVES; HEAVIER, DRAW MORE.", "LIGHTER; SLUGGISH TO TURN AND TO DOCK."),
+        Lift => ("THE BELLY LIFT: HOLDING THE SHIP UP OVER A WORLD.", "HOVER AND LAND LOADED ON HEAVIER WORLDS. HEAVIER, DRAWS MORE.", "LIGHTER; TOO LITTLE AND IT CAN'T HOVER LOADED."),
+        Tank => ("THE FUEL TANK.", "LONGER BETWEEN FILLS. HEAVIER WHEN FULL.", "LIGHTER; SHORTER RANGE."),
+        Cargo => ("CARGO RACKS: THE HOLD.", "MORE TO HAUL. A FULL HOLD IS MASS TO PUSH, LIFT AND BALANCE.", "LIGHTER, NIMBLER; LESS TO SELL."),
+        Hyperdrive => ("THE HYPERDRIVE: ACROSS A SYSTEM FAST.", "A BIGGER SHIP'S DRIVE. HEAVIER, DRAWS MORE.", "LIGHTER; (EMPTY: NO HYPERDRIVE AT ALL)."),
+        Computer => ("THE FLIGHT COMPUTER: HOW FAST IT LETS THE SHIP TURN.", "QUICKER TURN RATES ALLOWED.", "GENTLER LIMITS."),
+        Transponder => ("THE TRANSPONDER: WHO YOU ARE TO TRAFFIC CONTROL.", "", ""),
+        Sensors => ("THE SENSORS: HOW FAR YOU SEE SHIPS.", "SEE FURTHER.", "LIGHTER; SEE LESS."),
+        LifeSupport => ("LIFE SUPPORT.", "", ""),
+        Hardpoint => ("A GUN MOUNT.", "MORE FIREPOWER. MASS AT THE NOSE.", "(EMPTY: LIGHTER, NOTHING TO FIGHT WITH.)"),
+        Utility => ("A GEAR SLOT: THE MINING RIG.", "THE RIG: DIG ASTEROIDS. MASS ON THE SPINE.", "(EMPTY: LIGHTER, NO DIGGING.)"),
+        Avionics => ("THE NAV COMPUTER: WHICH AUTOPILOTS YOU HAVE.", "MORE AUTOPILOTS (DOCK, LAND, GATE, FOLLOW, HYPERDRIVE, ROUTE).", "FEWER: MORE BY HAND."),
+    }
 }
 
 fn what(m: &Module) -> String {
@@ -502,16 +570,40 @@ fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
     let top = 12.0 + LINE * 2.0;
     let d = &app.design;
     frame.text(Vec2::new(12.0, top - LINE), "A HULL OF YOUR OWN: WHERE THE MASS SITS AND WHERE THE THRUSTERS PUSH ARE YOURS TO BALANCE", DIM);
+    // Its name.
+    {
+        let here = y.knob == 0;
+        let cursor = if y.naming && (app.v.time * 2.0).fract() < 0.5 { "_" } else { "" };
+        let shown = if y.naming { format!("{}{cursor}", d.name) } else { d.name.clone() };
+        frame.text(Vec2::new(12.0, top), &format!("{}{:<16} {:>12}", if here { ">" } else { " " }, "NAME", shown), if y.naming { BETTER } else if here { SELECT } else { TEXT });
+    }
+    let top = top + LINE * 1.5;
     for (k, knob) in KNOBS.iter().enumerate() {
-        let here = k == y.knob;
+        let here = k + 1 == y.knob;
         let v = d.knob(k);
         let value = if knob.step >= 1.0 { format!("{v:.0}") } else { format!("{v:+.2}") };
         let value = if knob.label == "FINS" { if v > 0.5 { "YES".into() } else { "NO".into() } } else { value };
         frame.text(Vec2::new(12.0, top + k as f32 * LINE), &format!("{}{:<16} {:>8}", if here { ">" } else { " " }, knob.label, value), if here { SELECT } else { TEXT });
     }
     let last = KNOBS.len();
-    let here = y.knob == last;
+    let here = y.knob == last + 1;
     frame.text(Vec2::new(12.0, top + (last as f32 + 0.5) * LINE), &format!("{}COMMISSION IT", if here { ">" } else { " " }), if here { SELECT } else { BETTER });
+    // What the row picked is, and what turning it either way does.
+    let (about, more, less) = match y.knob {
+        0 => ("ITS NAME, AS THE HULL LIST AND YOUR SHIPS WILL CARRY IT.", "ENTER TO TYPE IT, ENTER AGAIN WHEN DONE.", ""),
+        k if k <= last => (KNOBS[k - 1].about, KNOBS[k - 1].more, KNOBS[k - 1].less),
+        _ => ("MAKE IT A HULL FOR GOOD: ON THE HULLS LIST, BUILT AT ANY STATION'S SHIPYARD.", "", ""),
+    };
+    let mut yy = top + (last as f32 + 2.0) * LINE;
+    for (head, text, col) in [("", about, TEXT), ("UP: ", more, BETTER), ("DOWN: ", less, BETTER)] {
+        if text.is_empty() {
+            continue;
+        }
+        for line in wrap(&format!("{head}{text}"), 64) {
+            frame.text(Vec2::new(12.0, yy), &line, col);
+            yy += LINE;
+        }
+    }
     // Its numbers, and what's wrong.
     let x = 12.0 + 30.0 * 7.5;
     match d.spec() {
@@ -566,11 +658,19 @@ fn actions(frame: &mut Frame, app: &App, y: &Shipyard) {
         }
         Page::Hulls => ("HULLS", vec![cell("UP DN", "HULL", Lamp::Off), cell("ENTER", "PLAN FROM IT", Lamp::Off), cell("S+ENT", "COPY TO DESIGN", Lamp::Off), cell("TAB", "DESIGN", Lamp::Off), close]),
         Page::Design => {
-            let on_commission = y.knob == universe_sim::world::design::KNOBS.len();
+            let on_commission = y.knob == universe_sim::world::design::KNOBS.len() + 1;
+            let on_name = y.knob == 0;
             let goes = app.design.spec().is_ok();
             (
                 "DESIGN",
-                vec![cell("UP DN", "NUMBER", Lamp::Off), cell("LT RT", "TURN IT", can(!on_commission)), cell("SHIFT", "TURN x5", can(!on_commission)), cell("ENTER", "COMMISSION", can(on_commission && goes)), cell("TAB", "PLANS", Lamp::Off), close],
+                vec![
+                    cell("UP DN", "PICK", Lamp::Off),
+                    cell("LT RT", "TURN IT", can(!on_commission && !on_name)),
+                    cell("SHIFT", "TURN x5", can(!on_commission && !on_name)),
+                    if y.naming { cell("ENTER", "DONE NAMING", Lamp::Busy) } else if on_name { cell("ENTER", "NAME IT", Lamp::Off) } else { cell("ENTER", "COMMISSION", can(on_commission && goes)) },
+                    cell("TAB", "PLANS", Lamp::Off),
+                    close,
+                ],
             )
         }
         Page::Plans => {
@@ -692,6 +792,18 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         }
         Ok(_) => {
             frame.text(Vec2::new(12.0, yy), "DOCK AT A STATION'S SHIPYARD TO BUILD IT", DIM);
+        }
+    }
+    // What the slot's for, and bigger or smaller.
+    let (about, more, less) = slot_help(slot.kind);
+    let mut hy = yy + LINE * 1.5;
+    for (head, text, col) in [("", about, TEXT), ("BIGGER: ", more, BETTER), ("SMALLER: ", less, BETTER)] {
+        if text.is_empty() {
+            continue;
+        }
+        for line in wrap(&format!("{head}{text}"), 60) {
+            frame.text(Vec2::new(12.0, hy), &line, col);
+            hy += LINE;
         }
     }
     // Where it all sits.

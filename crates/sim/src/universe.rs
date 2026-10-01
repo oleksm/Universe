@@ -24,7 +24,9 @@ const PRESENCE_EVERY: u64 = 6;
 const CORRIDOR_RELEASE: f64 = 1_500.0;
 
 /// What a new pilot starts with (credits).
-pub const STARTING_CREDITS: f64 = 1000.0;
+/// (For now, while ships are being built and tried: enough to buy any.
+/// The economy's balance pass sets it for real.)
+pub const STARTING_CREDITS: f64 = 1_000_000.0;
 
 pub struct Universe {
     /// The galaxy, its gate network, the clock and the star systems.
