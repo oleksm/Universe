@@ -959,7 +959,7 @@ fn ship(frame: &mut Frame, app: &App) {
     // eye is back past the station, so it's drawn in the scene like the rest.
     let docked = matches!(app.ship.state, ShipState::Landed { body, .. } if app.view.system.bodies[body].kind == BodyKind::Station);
     // (Not over a full-screen panel: the nav map or the market.)
-    let panel = app.nav_map.is_some() || app.galaxy_map.is_some() || app.economy_panel.is_some() || app.market.is_some() || app.show_cargo || app.picker.listing() || app.mining.on;
+    let panel = app.nav_map.is_some() || app.galaxy_map.is_some() || app.economy_panel.is_some() || app.market.is_some() || app.shipyard.is_some() || app.show_cargo || app.picker.listing() || app.mining.on;
     // (Over a rock the camera stands off to the side: no need either.)
     let panel = panel || matches!(app.ship.state, ShipState::Anchored { .. });
     if app.mode == Mode::Pilot && app.chase_cam && !docked && !panel {

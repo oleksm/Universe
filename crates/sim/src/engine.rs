@@ -80,6 +80,8 @@ pub enum Command {
     /// Show this market's quotes in the view (None: none).
     WatchMarket(Option<Facility>),
     Trade { market: Facility, item: usize, units: i64 },
+    /// Refit slot `slot` with module `module` (content key; None: empty it), docked at a station.
+    Refit { slot: String, module: Option<String> },
     /// Anything else, run on the universe (dev scenarios, tools).
     Run(Box<dyn FnOnce(&mut Universe) + Send>),
     /// The client's cockpit's postings (see `cockpit`).
@@ -263,6 +265,10 @@ impl Engine {
                 u.cockpit().route_set(stops);
             }
             Command::WatchMarket(m) => self.watched = m,
+            Command::Refit { slot, module } => {
+                let m = module.and_then(|k| universe_world::content::content().handle(&k));
+                let _ = u.refit(&slot, m);
+            }
             Command::Trade { market, item, units } => {
                 let name = u.world.goods[item].name.to_uppercase();
                 let e = match u.trade(market, item, units) {

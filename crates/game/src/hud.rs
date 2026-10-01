@@ -40,6 +40,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::market::draw(frame, app, m);
         return;
     }
+    if let Some(y) = &app.shipyard {
+        crate::shipyard::draw(frame, app, y);
+        return;
+    }
     universe_prof::time("draw/hud/sun glare", || sun_glare(frame, app));
     let mut lines: Vec<(String, Color)> = Vec::new();
     status(app, &mut lines);
@@ -1441,6 +1445,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         (key(Act::Market), "MARKET".into(), lamp(app.market.is_some())),
         (key(Act::Cargo), "CARGO".into(), lamp(app.show_cargo)),
         (key(Act::Economy), "ECONOMY".into(), lamp(app.economy_panel.is_some())),
+        (key(Act::Shipyard), "SHIPYARD".into(), lamp(app.shipyard.is_some())),
         (key(Act::View), "VIEW".into(), Lamp::Off),
         ("TAB".into(), "WATCH".into(), Lamp::Off),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),

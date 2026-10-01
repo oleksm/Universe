@@ -83,6 +83,7 @@ pub enum Act {
     Mining,
     View,
     Foot,
+    Shipyard,
     Lock,
     Hyperdrive,
     Autopilot,
@@ -144,6 +145,8 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::PreviousStar, Scope::Observer, "PREVIOUS STAR"),
     (Act::Home, Scope::Observer, "HOME SHIP"),
     (Act::TrackSettler, Scope::Observer, "TRACK SETTLER"),
+    // (Newer ones last: the keys already learnt stay as they were.)
+    (Act::Shipyard, Scope::Global, "SHIPYARD"),
 ];
 
 /// Actions whose key is set, not taken from the name (given out first).

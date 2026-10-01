@@ -17,6 +17,7 @@ mod rig;
 mod rocks;
 mod save;
 mod scene;
+mod shipyard;
 mod sound;
 mod terrain_view;
 
@@ -156,6 +157,8 @@ pub struct App {
     pub explored: std::collections::BTreeSet<usize>,
     /// The market screen, when open; and whether we're docked at a market.
     pub market: Option<market::MarketView>,
+    /// The shipyard panel, while open (docked at a station).
+    pub shipyard: Option<shipyard::Shipyard>,
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
     pub nav_marker: Option<(String, DVec3)>,
@@ -267,6 +270,7 @@ impl App {
             economy_panel: None,
             explored: Default::default(),
             market: None,
+            shipyard: None,
             docked_market: false,
             nav_marker: None,
             contacts: Vec::new(),
@@ -857,8 +861,18 @@ impl Game for App {
             self.market = Some(market::MarketView::open(self));
             sound::click(ctx, 900.0);
         }
+        // And the shipyard (docked at a station).
+        let yard_was_open = self.shipyard.is_some();
+        if yard_was_open {
+            if !shipyard::input(self, ctx) {
+                self.shipyard = None;
+            }
+        } else if !map_was_open && self.nav_map.is_none() && !market_was_open && self.market.is_none() && self.mode == Mode::Pilot && self.v.crew.seated() && keys::pressed(&ctx.input, keys::Act::Shipyard) {
+            self.shipyard = shipyard::open(self);
+            sound::click(ctx, 900.0);
+        }
         let (controls, focus_changed) = match self.mode {
-            _ if map_was_open || self.nav_map.is_some() || self.galaxy_map.is_some() || market_was_open || self.market.is_some() || economy_was_open || self.economy_panel.is_some() => (Controls::default(), false),
+            _ if map_was_open || self.nav_map.is_some() || self.galaxy_map.is_some() || market_was_open || self.market.is_some() || economy_was_open || self.economy_panel.is_some() || yard_was_open || self.shipyard.is_some() => (Controls::default(), false),
             Mode::Pilot => (self.pilot_input(ctx), false),
             Mode::Observer => (Controls::default(), self.observer.input(ctx, &self.v, &self.charts)),
         };
