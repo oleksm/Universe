@@ -81,9 +81,7 @@ pub struct Universe {
     pub log: Vec<(usize, ShipEvent)>,
     /// The law: who's fair game, since when, and why (see `universe_services::law`).
     pub law: universe_services::Law,
-    /// The defence service's gunners (one per turret in action), and their
-    /// orders on the way to the guns (due tick, turret, orders).
-    pub(crate) gunners: std::collections::HashMap<usize, universe_avionics::gunner::Gunner>,
+    /// Turret gunners' orders on the way to the guns (due tick, turret, orders).
     pub(crate) turret_orders: std::collections::VecDeque<(u64, usize, universe_protocol::TurretCommand)>,
     /// Traffic control (clearance, pads, corridors): a service.
     pub atc: universe_services::TrafficControl,
@@ -92,9 +90,6 @@ pub struct Universe {
     pub markets: universe_services::Markets,
     /// Messages sent to services so far (each one's id, for causes).
     pub(crate) messages: u64,
-    /// Turret gunners' orders reach their guns this many ticks after they're
-    /// given (0: at once). (Crafts' pilots: `pilots::COMMAND_DELAY`.)
-    pub command_delay: usize,
     /// The crafts' pilots (see `pilots`), and their postings not yet due
     /// (each takes effect whole at its due tick, however early it came).
     pub pool: crate::pilots::Pool,
@@ -133,13 +128,11 @@ impl Universe {
             tick: 0,
             log: Vec::new(),
             law: Default::default(),
-            gunners: Default::default(),
             turret_orders: Default::default(),
             atc: Default::default(),
             ledger: Default::default(),
             markets: universe_services::Markets::new(seed, goods),
             messages: 0,
-            command_delay: crate::pilots::COMMAND_DELAY as usize,
             pool: Default::default(),
             pending: Vec::new(),
             charts: None,

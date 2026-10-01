@@ -198,6 +198,11 @@ impl Universe {
             if due < self.tick {
                 self.pool.late += 1;
             }
+            // A gunner's orders, for its turret's gun.
+            if let Some(c) = p.gun {
+                self.turret_orders.push_back((due.max(self.tick), p.id, c));
+                continue;
+            }
             if p.id == crate::combat::PLAYER {
                 for r in p.requests {
                     self.request(p.id, r);
@@ -287,7 +292,11 @@ impl Universe {
         for s in systems {
             let positions = self.world.rails_at(s, t);
             let sys = self.world.system(s);
-            turrets.insert(s, Arc::new(crate::pilots::turret_motions(&charts, s, &sys, t, &positions)));
+            let mut guns = crate::pilots::turret_motions(&charts, s, &sys, t, &positions);
+            for g in &mut guns {
+                g.aim = self.world.turret_gun(g.id).map(|gun| gun.aim);
+            }
+            turrets.insert(s, Arc::new(guns));
             rails.insert(s, positions);
         }
         // Everyone as they are now (pilots read the newest); full ships only

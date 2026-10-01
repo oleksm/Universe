@@ -137,6 +137,10 @@ impl Pilot {
 /// far it reaches, and what it guards.
 #[derive(Clone, Copy, Debug)]
 pub struct Gun {
+    /// Its id (see `turrets::turret_id`), and where its gun points now (if
+    /// the world says).
+    pub id: usize,
+    pub aim: Option<DVec3>,
     pub at: DVec3,
     pub velocity: DVec3,
     pub reach: f64,
@@ -182,6 +186,8 @@ pub struct Posting {
     /// What its programs report (route stops, traffic): for the services.
     pub events: Vec<Event>,
     pub status: Status,
+    /// A turret gunner's orders for its gun (its id is the turret's).
+    pub gun: Option<universe_protocol::TurretCommand>,
     /// Going to sleep: it needn't be in a view before this tick (unless a
     /// message wakes it). None: it says nothing of it.
     pub sleep_until: Option<u64>,
@@ -322,9 +328,10 @@ fn seen(ship: &Ship, pending: &mut Vec<(u64, ShipCommands)>, tick: u64) -> Ship 
 pub(crate) fn turret_motions(charts: &Charts, system: usize, sys: &StarSystem, t: f64, positions: &[DVec3]) -> Vec<Gun> {
     universe_world::turrets::turrets(charts.seed, system, sys)
         .iter()
-        .map(|tu| {
+        .enumerate()
+        .map(|(k, tu)| {
             let (at, velocity) = tu.motion(sys, t, positions);
-            Gun { at, velocity, reach: tu.range(), guards: tu.facility }
+            Gun { id: universe_world::turrets::turret_id(system, k), aim: None, at, velocity, reach: tu.range(), guards: tu.facility }
         })
         .collect()
 }
@@ -495,10 +502,47 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     if let Some(t) = sleep {
         pilot.last_sleep = t;
     }
-    Some(Posting { id, thought: view.tick, seen: view.time, devices, turn: new_turn.then_some(turn), requests, events, status, sleep_until: sleep })
+    Some(Posting { id, thought: view.tick, seen: view.time, devices, turn: new_turn.then_some(turn), requests, events, status, gun: None, sleep_until: sleep })
 }
 
 /// Every pilot due thinks on `view`, side by side: their postings, in craft order.
+/// The defence service's gunners (clients, in the pool): in every system
+/// with someone fair game in it, each turret's gunner orders its gun (see
+/// `gunner`); where no one is any more, they stand down.
+fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, view: &PilotView) -> Vec<Posting> {
+    use universe_avionics::gunner::Quarry;
+    use universe_protocol::TurretCommand;
+    let mut systems: Vec<usize> = view.snaps.iter().filter(|s| s.aggressed && (s.flying || s.landed)).map(|s| s.system).collect();
+    systems.sort_unstable();
+    systems.dedup();
+    let latency = view.dt * (COMMAND_DELAY + 1) as f64;
+    let order = |id: usize, c: TurretCommand| Posting { id, thought: view.tick, seen: view.time, devices: Vec::new(), turn: None, requests: Vec::new(), events: Vec::new(), status: Status::default(), gun: Some(c), sleep_until: None };
+    let mut out = Vec::new();
+    for &system in &systems {
+        let sys = view.charts.system(system);
+        let Some(positions) = view.rails.get(&system) else { continue };
+        let guns = guns_of(view, system, &sys);
+        let quarry: Vec<Quarry> = view.snaps.iter().enumerate().filter(|(_, s)| s.system == system && s.aggressed && (s.flying || s.landed)).map(|(id, s)| Quarry { id, position: s.position, velocity: s.velocity }).collect();
+        for g in guns.iter() {
+            let gun = g.aim.unwrap_or_else(|| (quarry.first().map_or(g.at, |q| q.position) - g.at).normalize_or(DVec3::Y));
+            let clear = |p: DVec3| {
+                let d = p - g.at;
+                universe_physics::ray(&sys.bodies, positions, g.at + d.normalize() * 10.0, d.normalize(), d.length() - 30.0, view.time, &[]).is_none()
+            };
+            let gravity = |p: DVec3| sys.gravity(p, positions);
+            let c = gunners.entry(g.id).or_default().orders(view.time, g.at, g.velocity, gun, g.reach, &quarry, clear, gravity, latency);
+            out.push(order(g.id, c));
+        }
+    }
+    let idle: Vec<usize> = gunners.keys().copied().filter(|id| universe_world::turrets::turret_of(*id).is_some_and(|(s, _)| !systems.contains(&s))).collect();
+    for id in idle {
+        gunners.remove(&id);
+        out.push(order(id, TurretCommand { aim: None, fire: false }));
+    }
+    out.sort_by_key(|p| p.id);
+    out
+}
+
 fn think_all(pilots: &mut [Pilot], view: &PilotView, tally: &Tally) -> Vec<Posting> {
     use rayon::prelude::*;
     // (The pirates' own network: who flies with them, as they know it.)
@@ -545,6 +589,8 @@ pub struct Pool {
     slow: Arc<std::sync::atomic::AtomicU64>,
     /// The operator's own tally (see `Tally`).
     pub tally: Arc<Tally>,
+    /// The defence service's gunners (see `aim_guns`).
+    gunners: Arc<Mutex<HashMap<usize, universe_avionics::gunner::Gunner>>>,
 }
 
 /// The pool's own thread: thinks on the newest view whenever there's one,
@@ -594,7 +640,7 @@ impl Pool {
         let stop = Arc::new(AtomicBool::new(false));
         let (tx, rx) = mpsc::channel();
         let done = Arc::new(std::sync::atomic::AtomicU64::new(0));
-        let (pilots, mail, s, st, slow, d, tally) = (self.pilots.clone(), self.mail.clone(), slot.clone(), stop.clone(), self.slow.clone(), done.clone(), self.tally.clone());
+        let (pilots, mail, s, st, slow, d, tally, gunners) = (self.pilots.clone(), self.mail.clone(), slot.clone(), stop.clone(), self.slow.clone(), done.clone(), self.tally.clone(), self.gunners.clone());
         let thread = std::thread::Builder::new()
             .name("pilots".into())
             .spawn(move || {
@@ -615,7 +661,8 @@ impl Pool {
                     let mut guard = Self::lock(&pilots);
                     deliver(&mut guard, &mut Self::lock(&mail));
                     let list: &mut [Pilot] = &mut guard;
-                    let postings = workers.install(|| think_all(list, &view, &tally));
+                    let mut postings = workers.install(|| think_all(list, &view, &tally));
+                    postings.extend(aim_guns(&mut Self::lock(&gunners), &view));
                     drop(guard);
                     let extra = slow.load(Ordering::Relaxed);
                     if extra > 0 {
@@ -638,7 +685,9 @@ impl Pool {
             None => {
                 let mut pilots = Self::lock(&self.pilots);
                 deliver(&mut pilots, &mut Self::lock(&self.mail));
-                think_all(&mut pilots, &view, &self.tally)
+                let mut postings = think_all(&mut pilots, &view, &self.tally);
+                postings.extend(aim_guns(&mut Self::lock(&self.gunners), &view));
+                postings
             }
             Some(w) => {
                 let (lock, ready) = &*w.slot;
@@ -688,7 +737,7 @@ pub(crate) fn run<R>(pilot: &mut Pilot, id: usize, view: &PilotView, f: impl FnO
         let PoolLink { devices, requests, .. } = link;
         events.retain(|e| !matches!(e, Event::Ship(_)));
         pilot.next_think = view.tick;
-        let posting = Posting { id, thought: view.tick, seen: view.time, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), sleep_until: None };
+        let posting = Posting { id, thought: view.tick, seen: view.time, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), gun: None, sleep_until: None };
         (r, posting)
     }
 }
