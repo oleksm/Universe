@@ -360,6 +360,7 @@ fn route_info(app: &App, lines: &mut Vec<(String, Color)>) {
             universe_sim::NavTarget::Station(_) => "DOCKING".into(),
             universe_sim::NavTarget::Spaceport(_) => "LANDING".into(),
             universe_sim::NavTarget::Gate(_) => "GATE RUN".into(),
+            universe_sim::NavTarget::Asteroid(_) => "UNDERWAY".into(),
         }
     } else {
         "UNDERWAY".into()

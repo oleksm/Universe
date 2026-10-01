@@ -96,6 +96,7 @@ pub fn min_range(sys: &StarSystem, anchor: Anchor) -> f64 {
                     Collider::Ring(r) => r.radius + r.tube,
                     _ => 0.0,
                 },
+                NavTarget::Asteroid(b) => sys.bodies[b].max_radius(),
                 NavTarget::Spaceport(_) => 0.0,
             };
             size + MIN_STRUCTURE_GAP
@@ -236,8 +237,8 @@ impl Avionics {
 /// The body of a station or gate.
 fn place_body(t: NavTarget) -> usize {
     match t {
-        NavTarget::Station(b) | NavTarget::Gate(b) => b,
-        NavTarget::Spaceport(_) => unreachable!("follow anchors are stations and gates"),
+        NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Asteroid(b) => b,
+        NavTarget::Spaceport(_) => unreachable!("follow anchors are stations, gates and asteroids"),
     }
 }
 

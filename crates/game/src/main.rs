@@ -6,6 +6,7 @@ mod models;
 mod navmap;
 mod observer;
 mod onfoot;
+mod rocks;
 mod save;
 mod scene;
 mod sound;
@@ -127,6 +128,8 @@ pub struct App {
     /// Colored terrain globes, built once per (system, body): the full mesh,
     /// and a coarse one for when it's small on screen.
     pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh)>,
+    /// Asteroid meshes, built once per (system, field, body among the field's bodies).
+    pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
     /// The galaxy's stars as seen from a system: (system, direction and colour of each).
     pub sky_cache: std::cell::RefCell<Option<SkyCache>>,
     /// The navigation map, when open.
@@ -223,6 +226,7 @@ impl App {
             sim_ms: 0.0,
             eta_shown: None,
             globes: std::collections::HashMap::new(),
+            rocks: std::collections::HashMap::new(),
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
             market: None,
@@ -558,7 +562,7 @@ impl App {
                 Event::Ship(ShipEvent::HyperdriveEngaged) => "HYPERDRIVE ENGAGED".into(),
                 Event::Ship(ShipEvent::HyperdriveDisengaged) => "HYPERDRIVE OFF".into(),
                 Event::Ship(ShipEvent::HyperdriveJammed { seconds }) => format!("HYPERDRIVE JAMMED BY HITS - {seconds:.0} S"),
-                Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\nR TO REQUEST CLEARANCE"),
+                Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\n{}", self.target_hint()),
                 Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Dock }) => {
                     format!("DOCKING GRANTED - {target}\nFOLLOW THE GATES, OR K FOR AUTO")
                 }
@@ -580,7 +584,7 @@ impl App {
                 Event::Traffic(TrafficEvent::Holding { ahead }) => format!("ALL PADS TAKEN - HOLD OVER THE PORT ({ahead} AHEAD)"),
                 Event::Autopilot { on: true } => "AUTOPILOT ON".into(),
                 Event::Autopilot { on: false } => "AUTOPILOT OFF".into(),
-                Event::NavTargetSet { name: Some(name) } => format!("NAV TARGET - {name}\nR TO REQUEST CLEARANCE"),
+                Event::NavTargetSet { name: Some(name) } => format!("NAV TARGET - {name}\n{}", self.target_hint()),
                 Event::NavTargetSet { name: None } => "NAV TARGET CLEARED".into(),
                 Event::Ship(ShipEvent::LandedAtPort { port }) => format!("TOUCHDOWN - WELCOME TO {port}"),
                 Event::RouteStop { number, name } => format!("ROUTE STOP {number} - {name}"),
@@ -617,6 +621,14 @@ impl App {
                 _ => continue,
             };
             self.say(text.to_uppercase());
+        }
+    }
+
+    /// What to do about the nav target.
+    fn target_hint(&self) -> &'static str {
+        match self.v.avionics.nav_target {
+            Some(universe_sim::NavTarget::Asteroid(_)) => "N TO KEEP STATION, U TO ORBIT",
+            _ => "R TO REQUEST CLEARANCE",
         }
     }
 
@@ -797,6 +809,7 @@ impl Game for App {
             universe_prof::time("update/events", || self.handle_events(ctx));
         }
         universe_prof::time("update/globes", || self.build_globes());
+        universe_prof::time("update/rocks", || self.build_rocks());
         if self.route_labels_for != v.avionics.route.stops {
             self.route_labels_for = v.avionics.route.stops.clone();
             self.route_labels = self.route_labels_for.iter().map(|&s| universe_sim::route::stop_name(&self.charts.system(s.system), s).to_uppercase()).collect();

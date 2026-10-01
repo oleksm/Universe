@@ -23,4 +23,17 @@ wrecks the ship). The **anchor** holds a ship to a rock within 30 m of its hull 
 with the surface there (under 0.5 m/s): it then rides the rock's orbit and spin; let go, it
 drifts with that surface.
 
-Next: seeing the rocks, getting there, digging, ore and markets.
+## Seeing them, getting there
+
+- Every rock is drawn with its own faceted mesh built from its shape — the same surface it
+  collides with. Remnants show from across the system; a field's swarm within 300 km of it.
+  Rocks too small to make out are marked by small diamonds in their colour, fading out to
+  60 km, so the swarm reads at a glance.
+- Fields are nav targets: listed on the nav map by class (S-TYPE, M-TYPE, ICY…) with their
+  distance, and marked on its chart between the planets' rings. The hyperdrive autopilot
+  takes you there and drops out just outside the swarm, moving with it (13 s from the home
+  station to a family 1.3 AU out). Keep-at and orbit (N, U) work round a remnant.
+- Fixed: the own ship (drawn over the HUD in chase view) no longer covers the nav map or
+  the market screen.
+
+Next: digging, ore and markets.

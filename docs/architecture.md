@@ -211,7 +211,9 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   lost into the hull, a wreck when it's used up), whoever's rules. The anchor (`ShipCommands::
   anchor`): fired within `ANCHOR_REACH` of a rock's surface while drifting with it (under
   `ANCHOR_SPEED`) → `ShipState::Anchored` (welded in the rock's frame, riding its orbit and spin);
-  let go → drifting with that surface.
+  let go → drifting with that surface. A remnant is a nav target (`Facility::Asteroid`: no
+  clearance, no market, not a route stop): the hyperdrive autopilot drops out just outside its
+  swarm moving with it; keep-at/orbit work round it.
 - **Structures** with their contact rules:
   - `station`: a rail body (circular orbit) + polytope collider with a slot cut-out
     (`StationFrame`, `hull()`); the **docking port** (`docks`/`bounces`, `contact` → dock (weld)
@@ -493,6 +495,7 @@ ship's pose directly, like tests do — then render.
 | Render thread; GPU meshes and the mesh shader | engine: `render_thread`, `renderer`, `model::Mesh` |
 | Rendering, windowing, input, audio, frame timing (`Perf`) | engine |
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |
+| Asteroids on screen: a mesh per rock from its shape, sensor diamonds for small ones nearby | game: `rocks` |
 
 
 ## How changes are verified

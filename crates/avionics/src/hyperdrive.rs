@@ -48,6 +48,7 @@ fn arrival_name(sys: &StarSystem, target: NavTarget) -> String {
     match target {
         NavTarget::Station(b) | NavTarget::Gate(b) => sys.bodies[b].name.clone(),
         NavTarget::Spaceport(p) => sys.spaceports[p].name.clone(),
+        NavTarget::Asteroid(_) => target.name(sys),
     }
 }
 
@@ -74,6 +75,21 @@ pub fn aim(sys: &StarSystem, target: NavTarget, t: f64, positions: &[DVec3], shi
                 arrive: HYPER_ARRIVE_STATION,
                 aim: at,
                 body: body.rail.parent.unwrap_or(0),
+                velocity: sys.velocity(b, t),
+                frame_velocity: sys.velocity(b, t),
+            })
+        }
+        NavTarget::Asteroid(b) => {
+            // Out of its swarm on our side, moving with it. (Headed for
+            // that point, not the rock itself, which would be in the way.)
+            let field = sys.fields.iter().find(|f| f.body == b)?;
+            let at = positions[b];
+            let arrive = field.extent + HYPER_ARRIVE_STATION;
+            Some(HyperAim {
+                target: at,
+                arrive,
+                aim: at + (ship_pos - at).normalize_or(DVec3::Y) * arrive * 0.5,
+                body: sys.bodies[b].rail.parent.unwrap_or(0),
                 velocity: sys.velocity(b, t),
                 frame_velocity: sys.velocity(b, t),
             })

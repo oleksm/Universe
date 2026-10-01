@@ -64,6 +64,16 @@ impl RockClass {
         }
     }
 
+    /// Its kind, for lists (nine characters at most).
+    pub fn letter(self) -> &'static str {
+        match self {
+            RockClass::Carbonaceous => "C-TYPE",
+            RockClass::Stony => "S-TYPE",
+            RockClass::Metallic => "M-TYPE",
+            RockClass::Icy => "ICY",
+        }
+    }
+
     /// Bulk density (kg/m³): a rubble pile is a third or more empty space.
     pub fn density(self, structure: Structure) -> f64 {
         match (self, structure) {

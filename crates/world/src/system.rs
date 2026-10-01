@@ -37,6 +37,11 @@ impl BodyKind {
         }
     }
 
+    /// A planet (not a moon, a structure or an asteroid).
+    pub fn is_planet(self) -> bool {
+        matches!(self, BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant)
+    }
+
     /// Can a ship touch down here (slowly) without being destroyed?
     /// (Stations are docked with through their slot instead; see `station`.)
     pub fn landable(self) -> bool {
@@ -404,7 +409,7 @@ impl StarSystem {
         let parent = self
             .station()
             .and_then(|s| self.bodies[s].rail.parent)
-            .or_else(|| self.bodies.iter().position(|b| b.rail.parent == Some(0)))
+            .or_else(|| self.bodies.iter().position(|b| b.rail.parent == Some(0) && b.kind.is_planet()))
             .unwrap_or(0);
         let p_radius = self.bodies[parent].rail.radius;
         let p_mu = self.bodies[parent].rail.mu;
@@ -460,7 +465,7 @@ impl StarSystem {
     }
 
     pub fn planet_count(&self) -> usize {
-        self.bodies.iter().filter(|b| b.rail.parent == Some(0)).count()
+        self.bodies.iter().filter(|b| b.rail.parent == Some(0) && b.kind.is_planet()).count()
     }
 
     /// Positions of all bodies relative to the star at time `t`.

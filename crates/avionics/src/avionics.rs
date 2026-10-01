@@ -277,7 +277,9 @@ impl Avionics {
                 };
                 let phase = if matches!(pad, PadSlot::Hold(_)) { Phase::Hold } else { Phase::Approach };
                 self.clearance = Some(Clearance { target, autopilot: false, phase, pad });
-                events.push(Event::Traffic(TrafficEvent::ClearanceGranted { target: target.name(&sys), kind: target.kind() }));
+                if let Some(kind) = target.kind() {
+                    events.push(Event::Traffic(TrafficEvent::ClearanceGranted { target: target.name(&sys), kind }));
+                }
                 match pad {
                     PadSlot::Pad(k) => events.push(Event::Traffic(TrafficEvent::PadAssigned { pad: k })),
                     PadSlot::Hold(n) => events.push(Event::Traffic(TrafficEvent::Holding { ahead: n })),
@@ -420,6 +422,8 @@ impl Avionics {
                 let frame = GateFrame::new(sys, g, t, positions);
                 Approach::Transit { gate: g, status: gate::status(&frame, ship, &c) }
             }
+            // (No one clears a ship for an asteroid.)
+            NavTarget::Asteroid(_) => return None,
         })
     }
 

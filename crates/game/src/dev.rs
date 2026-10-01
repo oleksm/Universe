@@ -22,7 +22,7 @@ pub fn apply(app: &mut App, name: &str) {
         app.observer.distance = distance;
         app.observer.pitch = pitch;
     };
-    let outer = sys.bodies.iter().filter_map(|b| b.rail.orbit.as_ref().filter(|_| b.rail.parent == Some(0))).map(|o| o.apoapsis()).fold(0.0, f64::max);
+    let outer = sys.bodies.iter().filter_map(|b| b.rail.orbit.as_ref().filter(|_| b.rail.parent == Some(0) && b.kind.is_planet())).map(|o| o.apoapsis()).fold(0.0, f64::max);
     let station = sys.station().unwrap_or(0);
     let planet = sys.bodies[station].rail.parent.unwrap_or(0);
 
@@ -177,6 +177,23 @@ pub fn apply(app: &mut App, name: &str) {
             for _ in 0..60 * 120 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
+        }
+        "asteroid" | "swarm" => {
+            // By the first field's remnant (sun behind), or among its swarm,
+            // moving with it, facing it; it's the nav target.
+            app.mode = Mode::Pilot;
+            let f = &sys.fields[0];
+            let rock = f.body;
+            let (at, v) = (positions[rock], sys.velocity(rock, t));
+            let sun = -at.normalize();
+            let side = sun.cross(DVec3::Y).normalize();
+            let off = if name == "swarm" { (sun * 0.6 + side).normalize() * (sys.bodies[rock].rail.radius + 15_000.0) } else { (sun + side * 0.3).normalize() * (sys.bodies[rock].rail.radius + 3000.0) };
+            let u = app.engine.universe();
+            u.ship.position = at + off;
+            u.ship.velocity = v;
+            u.ship.angular_velocity = DVec3::ZERO;
+            u.ship.orientation = universe_sim::ship::facing(-off.normalize(), DVec3::Y);
+            u.set_nav_target(Some(NavTarget::Asteroid(rock)));
         }
         "gate" | "gateauto" | "transit" | "gatearrive" => {
             // A gate out of the home system: cleared for transit, 8 km out, off to one side.

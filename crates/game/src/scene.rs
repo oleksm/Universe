@@ -41,6 +41,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     });
     frame.reflector = reflector(frame, app);
     universe_prof::time("draw/scene/bodies", || bodies(frame, app));
+    universe_prof::time("draw/scene/asteroids", || crate::rocks::draw(frame, app));
     universe_prof::time("draw/scene/spaceports", || spaceports(frame, app));
     if app.view.origin == app.v.ship_system {
         match &app.approach {
@@ -242,6 +243,10 @@ fn bodies(frame: &mut Frame, app: &App) {
     let t = app.now();
     let cam = frame.camera.position;
     for (i, b) in sys.bodies.iter().enumerate() {
+        // (Asteroids: see `rocks`.)
+        if b.kind == BodyKind::Asteroid {
+            continue;
+        }
         let center = app.view.positions[i];
         let c = color(b.color);
         let px = frame.projected_radius(center, b.rail.radius);
@@ -500,7 +505,7 @@ pub fn action_color(a: Action) -> Color {
 pub fn plan_reference(app: &App) -> Option<DVec3> {
     let target = app.v.avionics.clearance?.target;
     let i = match target {
-        universe_sim::NavTarget::Station(s) | universe_sim::NavTarget::Gate(s) => s,
+        universe_sim::NavTarget::Station(s) | universe_sim::NavTarget::Gate(s) | universe_sim::NavTarget::Asteroid(s) => s,
         universe_sim::NavTarget::Spaceport(p) => app.view.system.spaceports.get(p)?.body,
     };
     app.view.positions.get(i).copied()
@@ -850,7 +855,9 @@ fn ship(frame: &mut Frame, app: &App) {
     // our hull: it's drawn over everything, the HUD included. Docked, the
     // eye is back past the station, so it's drawn in the scene like the rest.
     let docked = matches!(app.ship.state, ShipState::Landed { body, .. } if app.view.system.bodies[body].kind == BodyKind::Station);
-    if app.mode == Mode::Pilot && app.chase_cam && !docked {
+    // (Not over a full-screen panel: the nav map or the market.)
+    let panel = app.nav_map.is_some() || app.market.is_some();
+    if app.mode == Mode::Pilot && app.chase_cam && !docked && !panel {
         frame.in_front(|frame| frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL));
     } else {
         frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);

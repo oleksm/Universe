@@ -127,13 +127,14 @@ fn key(f: Facility) -> u64 {
         Facility::Station(i) => i as u64,
         Facility::Spaceport(i) => 1000 + i as u64,
         Facility::Gate(i) => 2000 + i as u64,
+        Facility::Asteroid(i) => 3000 + i as u64,
     }
 }
 
 /// The market at facility `f` in system `system` (`sys`), for the galaxy
 /// `seed`'s `catalog`. Gates have none.
 pub fn market(seed: u64, system: usize, sys: &StarSystem, f: Facility, catalog: &[Item]) -> Option<Market> {
-    if matches!(f, Facility::Gate(_)) {
+    if matches!(f, Facility::Gate(_) | Facility::Asteroid(_)) {
         return None;
     }
     let mut rng = Rng::new(mix(mix(seed, 0x3a4c_e700 + system as u64), key(f)));

@@ -617,7 +617,7 @@ impl World {
                 let docked = DQuat::from_mat3(&glam::DMat3::from_cols(DVec3::X, DVec3::NEG_Z, DVec3::Y));
                 (s, DVec3::Y * STATION_SIZE * DOCKED_HEIGHT, docked)
             }
-            Facility::Spaceport(p) | Facility::Gate(p) => {
+            Facility::Spaceport(p) | Facility::Gate(p) | Facility::Asteroid(p) => {
                 let p = p.min(sys.spaceports.len().saturating_sub(1));
                 let sp = &sys.spaceports[p];
                 let b = &sys.bodies[sp.body];

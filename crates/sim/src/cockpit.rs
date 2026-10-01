@@ -375,9 +375,9 @@ impl Cockpit {
         let a = &self.pilot.avionics;
         let anchor = match (a.contact, a.nav_target) {
             (Some(c), _) => Anchor::Ship(craft_id(c)),
-            (None, Some(t @ (NavTarget::Station(_) | NavTarget::Gate(_)))) => Anchor::Place(t),
+            (None, Some(t @ (NavTarget::Station(_) | NavTarget::Gate(_) | NavTarget::Asteroid(_)))) => Anchor::Place(t),
             _ => {
-                self.refuse("FOLLOW: LOCK A SHIP (T), OR A STATION OR GATE (M)");
+                self.refuse("FOLLOW: LOCK A SHIP (T), OR A STATION, GATE OR ASTEROID (M)");
                 return;
             }
         };
@@ -441,7 +441,7 @@ impl Cockpit {
         if let Some(target) = self.pilot.avionics.nav_target {
             let pos = target.position(&sys, t, &rails)?;
             let name = match target {
-                NavTarget::Station(_) | NavTarget::Gate(_) => target.name(&sys),
+                NavTarget::Station(_) | NavTarget::Gate(_) | NavTarget::Asteroid(_) => target.name(&sys),
                 NavTarget::Spaceport(p) => sys.spaceports[p].name.clone(),
             };
             return Some((name.to_uppercase(), pos));

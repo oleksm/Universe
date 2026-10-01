@@ -87,6 +87,10 @@ impl NavMap {
             let on = &self.system.bodies[p.body].name;
             entries.push((NavTarget::Spaceport(i), format!("{} ({on})", p.name), "SPACEPORT"));
         }
+        for f in &self.system.fields {
+            let class = self.system.bodies[f.body].rock.as_ref().map_or("", |r| r.class.letter());
+            entries.push((NavTarget::Asteroid(f.body), f.name.clone(), class));
+        }
         let away = (!here).then(|| app.charts.distance_ly(app.v.ship_system, self.view));
         self.entries = entries
             .into_iter()
@@ -136,7 +140,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     // Route editing.
     if input.pressed(KeyCode::KeyA)
         && let Some(e) = map.entries.get(map.selected)
-        && e.kind != "GATE"
+        && !matches!(e.target, NavTarget::Gate(_) | NavTarget::Asteroid(_))
     {
         app.engine.send(universe_sim::Command::RoutePush(universe_sim::Stop { system: map.view, target: e.target }));
         crate::sound::click(ctx, 1500.0);
@@ -224,11 +228,21 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
 /// Top-down schematic: planets on evenly spaced rings at their true angles.
 fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
     let sys = &map.system;
-    let planets: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0)).collect();
+    let planets: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0) && sys.bodies[i].kind.is_planet()).collect();
+    let semi_major = |i: usize| sys.bodies[i].rail.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis);
     let ring = max_r / planets.len().max(1) as f32;
     let angle_of = |v: DVec3| (v.z as f32).atan2(v.x as f32);
     let place = |i: usize| -> Vec2 {
-        let k = planets.iter().position(|&p| p == i).unwrap_or(0) as f32 + 1.0;
+        // An asteroid: between the rings of the planets inside and outside it.
+        let k = match planets.iter().position(|&p| p == i) {
+            Some(k) => k as f32 + 1.0,
+            None => {
+                let a = semi_major(i);
+                let inside = planets.iter().filter(|&&p| semi_major(p) < a).count();
+                let (lo, hi) = (inside.checked_sub(1).map_or(0.0, |k| semi_major(planets[k])), planets.get(inside).map_or(a * 1.3, |&p| semi_major(p)));
+                inside as f32 + ((a - lo) / (hi - lo).max(1.0)) as f32
+            }
+        };
         let a = angle_of(map.positions[i]);
         center + Vec2::new(a.cos(), a.sin()) * ring * k
     };
@@ -260,12 +274,21 @@ fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
             frame.hud_rect(chart_pos(i) - 1.0, Vec2::splat(3.0), color(b.color).scale(0.8));
         }
     }
+    // Asteroid fields: a scatter of dots.
+    for f in &sys.fields {
+        let at = chart_pos(f.body);
+        let c = color(sys.bodies[f.body].color).scale(0.8);
+        for (dx, dy) in [(0.0, 0.0), (-3.0, 2.0), (3.0, 1.0), (1.0, -3.0), (-2.0, -2.0)] {
+            frame.hud_rect(at + Vec2::new(dx, dy), Vec2::splat(1.0), c);
+        }
+    }
 
     // Targets: stations as squares, spaceports as triangles.
     for (i, e) in map.entries.iter().enumerate() {
         let (at, c) = match e.target {
             NavTarget::Station(b) => (chart_pos(b), Color::WHITE),
             NavTarget::Gate(b) => (chart_pos(b), Color::hex(0xffc040)),
+            NavTarget::Asteroid(b) => (chart_pos(b), color(sys.bodies[b].color)),
             NavTarget::Spaceport(p) => {
                 let body = sys.spaceports[p].body;
                 (chart_pos(body) + Vec2::new(0.0, -8.0), Color::hex(0x60c0ff))
@@ -274,6 +297,7 @@ fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
         match e.target {
             NavTarget::Station(_) => frame.hud_box(at + Vec2::new(8.0, -3.0), Vec2::splat(6.0), c),
             NavTarget::Gate(_) => frame.hud_ellipse(at, Vec2::splat(5.0), 10, c),
+            NavTarget::Asteroid(_) => frame.hud_ellipse(at, Vec2::splat(6.0), 6, c),
             NavTarget::Spaceport(_) => {
                 frame.hud_line(at + Vec2::new(-3.0, 0.0), at + Vec2::new(3.0, 0.0), c);
                 frame.hud_line(at + Vec2::new(-3.0, 0.0), at + Vec2::new(0.0, -5.0), c);

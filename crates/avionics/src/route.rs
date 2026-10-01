@@ -59,6 +59,7 @@ pub fn stop_name(sys: &StarSystem, stop: Stop) -> String {
     let name = match stop.target {
         NavTarget::Station(b) | NavTarget::Gate(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
         NavTarget::Spaceport(p) => sys.spaceports.get(p).map_or_else(String::new, |p| p.name.clone()),
+        NavTarget::Asteroid(_) => stop.target.name(sys),
     };
     format!("{name} ({})", sys.name)
 }
@@ -69,6 +70,7 @@ pub(crate) fn hyperjump_limit(target: NavTarget) -> f64 {
     match target {
         NavTarget::Spaceport(_) => 200_000.0,
         NavTarget::Station(_) | NavTarget::Gate(_) => 30_000.0,
+        NavTarget::Asteroid(_) => 100_000.0,
     }
 }
 
@@ -77,7 +79,7 @@ fn landed_at(sys: &StarSystem, target: NavTarget, body: usize, local_position: D
     match target {
         NavTarget::Station(s) => s == body,
         NavTarget::Spaceport(p) => sys.on_pad(p, body, local_position.normalize()),
-        NavTarget::Gate(_) => false,
+        NavTarget::Gate(_) | NavTarget::Asteroid(_) => false,
     }
 }
 

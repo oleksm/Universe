@@ -117,7 +117,7 @@ pub fn plan(sys: &StarSystem, rules: &Rules, ship: &Ship, target: NavTarget, pha
 
     // The frame we draw in: the target as it is now.
     let (now_center, now_omega) = match target {
-        NavTarget::Station(s) | NavTarget::Gate(s) => (positions[s], DVec3::ZERO),
+        NavTarget::Station(s) | NavTarget::Gate(s) | NavTarget::Asteroid(s) => (positions[s], DVec3::ZERO),
         NavTarget::Spaceport(p) => {
             let pad = PadFrame::new(sys, p, t, &positions);
             (pad.body_center, pad.angular_velocity)
@@ -228,6 +228,7 @@ fn progress(sys: &StarSystem, ship: &Ship, target: NavTarget, pad: PadSlot, t: f
             let f = GateFrame::new(sys, g, t, positions);
             (ship.position.distance(f.center), (ship.velocity - f.velocity).length(), f.center)
         }
+        NavTarget::Asteroid(b) => (ship.position.distance(positions[b]), (ship.velocity - sys.velocity(b, t)).length(), positions[b]),
         NavTarget::Spaceport(p) => {
             let pad = PadFrame::for_slot(sys, p, pad, t, positions);
             let rel = (ship.velocity - pad.frame_velocity(ship.position)).length();
@@ -248,6 +249,7 @@ fn arrived(sys: &StarSystem, rules: &Rules, ship: &mut Ship, target: NavTarget, 
     let ours = match target {
         NavTarget::Station(s) | NavTarget::Gate(s) => body == s,
         NavTarget::Spaceport(p) => body == sys.spaceports[p].body,
+        NavTarget::Asteroid(_) => false,
     };
     if !ours {
         return false;

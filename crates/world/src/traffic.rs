@@ -27,15 +27,19 @@ pub enum Facility {
     Spaceport(usize),
     /// Index into the system's bodies (a ring gate).
     Gate(usize),
+    /// Index into the system's bodies (an asteroid field's remnant): no one
+    /// controls traffic there.
+    Asteroid(usize),
 }
 
 impl Facility {
-    /// What a clearance for it is for.
-    pub fn kind(self) -> ClearanceKind {
+    /// What a clearance for it is for (none at an asteroid).
+    pub fn kind(self) -> Option<ClearanceKind> {
         match self {
-            Facility::Station(_) => ClearanceKind::Dock,
-            Facility::Spaceport(_) => ClearanceKind::Land,
-            Facility::Gate(_) => ClearanceKind::Transit,
+            Facility::Station(_) => Some(ClearanceKind::Dock),
+            Facility::Spaceport(_) => Some(ClearanceKind::Land),
+            Facility::Gate(_) => Some(ClearanceKind::Transit),
+            Facility::Asteroid(_) => None,
         }
     }
 
@@ -45,6 +49,7 @@ impl Facility {
             Facility::Station(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
             Facility::Spaceport(p) => sys.spaceports.get(p).map_or_else(String::new, |p| format!("{} ({})", p.name, sys.bodies[p.body].name)),
             Facility::Gate(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
+            Facility::Asteroid(b) => sys.fields.iter().find(|f| f.body == b).map_or_else(String::new, |f| f.name.clone()),
         }
     }
 
@@ -57,6 +62,7 @@ impl Facility {
                 Some(spaceport::pad_position(sys, p, t, positions))
             }
             Facility::Gate(b) => (sys.bodies.get(b)?.kind == BodyKind::Gate).then(|| positions[b]),
+            Facility::Asteroid(b) => (sys.bodies.get(b)?.kind == BodyKind::Asteroid).then(|| positions[b]),
         }
     }
 
@@ -66,6 +72,7 @@ impl Facility {
             Facility::Station(_) => DOCK_RANGE,
             Facility::Spaceport(p) => sys.bodies[sys.spaceports[p].body].rail.radius * LAND_RANGE_RADII,
             Facility::Gate(_) => TRANSIT_RANGE,
+            Facility::Asteroid(_) => 0.0,
         }
     }
 }

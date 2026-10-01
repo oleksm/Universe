@@ -279,3 +279,30 @@ fn route_autopilot_lands_docks_and_crosses_a_gate() {
     assert_eq!(u.ship_system, next);
 }
 
+
+#[test]
+fn hyperdrive_autopilot_reaches_an_asteroid_field_and_drops_out_moving_with_it() {
+    let mut u = Universe::new(42);
+    let sys = u.ship_system();
+    let field = &sys.fields[0];
+    let rock = field.body;
+    u.set_nav_target(Some(NavTarget::Asteroid(rock)));
+    u.toggle_hyperdrive();
+    u.toggle_autopilot();
+    u.throttle(0.0, Some(1.0));
+    let mut engaged = false;
+    let mut ticks = 0;
+    while ticks < 60 * 600 && !(engaged && !u.ship.hyperdrive) {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        engaged |= u.ship.hyperdrive;
+        ticks += 1;
+    }
+    let mut pos = Vec::new();
+    sys.positions(u.world.time, &mut pos);
+    assert!(engaged && !u.ship.hyperdrive && u.ship.is_flying(), "{:?}", u.events);
+    let d = u.ship.position.distance(pos[rock]);
+    let v = (u.ship.velocity - sys.velocity(rock, u.world.time)).length();
+    eprintln!("{} s: dropped out {:.0} km from {} (swarm reaches {:.0} km), {v:.1} m/s off its motion", ticks / 60, d / 1000.0, field.name, field.extent / 1000.0);
+    assert!(d > field.extent && d < field.extent + 25_000.0, "outside the swarm, close by");
+    assert!(v < 1.0, "moving with it");
+}
