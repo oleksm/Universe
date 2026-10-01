@@ -77,7 +77,7 @@ pub(crate) struct Snap {
 }
 
 impl Snap {
-    fn of(system: usize, ship: &Ship, pirate: bool, now: f64) -> Self {
+    fn of(system: usize, ship: &Ship, pirate: bool, aggressed: bool) -> Self {
         Snap {
             system,
             position: ship.position,
@@ -88,7 +88,7 @@ impl Snap {
             transit: matches!(ship.state, ShipState::Transit { .. }),
             hyperdrive: ship.hyperdrive,
             hull: ship.hull,
-            aggressed: ship.aggressed(now),
+            aggressed,
             pirate,
         }
     }
@@ -263,8 +263,9 @@ impl Universe {
     pub(crate) fn snapshot(&mut self) {
         let now = self.world.time;
         self.snaps.clear();
-        self.snaps.push(Snap::of(self.ship_system, &self.ship, false, now));
-        let crafts = self.crafts.iter().map(|c| Snap::of(c.system, &c.ship, c.avionics.pirate, now));
+        let law = &self.law;
+        self.snaps.push(Snap::of(self.ship_system, &self.ship, false, law.aggressed(crate::combat::PLAYER, now)));
+        let crafts = self.crafts.iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, c.avionics.pirate, law.aggressed(crate::combat::craft_id(i), now)));
         self.snaps.extend(crafts);
         self.snap_time = now;
         self.aggressors = self.snaps.iter().filter(|s| s.aggressed && s.flying && !s.hyperdrive).map(|s| (s.system, s.position)).collect();

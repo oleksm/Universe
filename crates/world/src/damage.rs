@@ -39,7 +39,7 @@ pub fn hit(ship: &mut Ship, joules: f64, impulse: DVec3, by: usize, cause: &str,
     if matches!(ship.state, ShipState::Flying) {
         ship.velocity += impulse / ship.mass();
     }
-    events.push(ShipEvent::Hit { by, damage, hull: ship.hull });
+    events.push(ShipEvent::Hit { by, damage, hull: ship.hull, weapon: cause != "COLLISION" });
     if ship.hull <= 0.0 {
         destroy(ship, cause, events);
     }

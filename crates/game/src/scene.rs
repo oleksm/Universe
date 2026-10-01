@@ -355,12 +355,12 @@ fn crafts(frame: &mut Frame, app: &App) {
         }
         let pos = app.ahead(&c.ship);
         if frame.projected_radius(pos, 25.0) < 1.0 {
-            let tc = if c.ship.aggressed(app.now()) { AGGRESSED } else { TRAFFIC };
+            let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
             frame.point(pos, tc.scale(0.8));
             continue;
         }
         let t = Transform { position: pos, rotation: app.turned(&c.ship).as_quat(), scale: 1.0 };
-        let tc = if c.ship.aggressed(app.now()) { AGGRESSED } else { TRAFFIC };
+        let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
         frame.model_shaded(&app.models.ship, &t, tc, HULL);
         if c.ship.throttle > 0.0 {
             let back = app.turned(&c.ship) * DVec3::Z;

@@ -25,6 +25,8 @@ pub use universe_avionics::{
     Stop,
 };
 pub use universe_physics as physics;
+pub use universe_protocol as protocol;
+pub use universe_services as services;
 pub use universe_physics::Orbit;
 pub use universe_world as world;
 pub use universe_world::{galaxy, names, rng, ship, system, terrain, units};

@@ -42,15 +42,20 @@ impl Universe {
     pub(crate) fn combat(&mut self, dt: f64) {
         let mut player_events = Vec::new();
         let mut craft_events: Vec<Vec<ShipEvent>> = (0..self.crafts.len()).map(|_| Vec::new()).collect();
+        let now = self.world.time;
         {
+            let law = &self.law;
             let mut armed = Vec::with_capacity(self.crafts.len() + 1);
-            armed.push(Armed { id: PLAYER, system: self.ship_system, ship: &mut self.ship, events: &mut player_events });
+            armed.push(Armed { id: PLAYER, system: self.ship_system, ship: &mut self.ship, events: &mut player_events, aggressed: law.aggressed(PLAYER, now) });
             for (i, (c, e)) in self.crafts.iter_mut().zip(craft_events.iter_mut()).enumerate() {
-                armed.push(Armed { id: craft_id(i), system: c.system, ship: &mut c.ship, events: e });
+                armed.push(Armed { id: craft_id(i), system: c.system, ship: &mut c.ship, events: e, aggressed: law.aggressed(craft_id(i), now) });
             }
             universe_prof::time("sim/combat/weapons", || self.world.combat(&mut armed, dt));
             universe_prof::time("sim/combat/collisions", || self.world.collide(&mut armed, dt));
         }
+        // The law rules on the hits, as logged: firing on a ship that isn't
+        // fair game makes the shooter fair game, and it's told so.
+        universe_prof::time("sim/combat/law", || self.rule_on_hits(now, &mut player_events, &mut craft_events));
         self.traffic_events(PLAYER, &player_events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
         if let Some(kill) = self.kill_in(PLAYER, self.ship_system, &player_events) {
             self.record_kill(kill);
@@ -86,6 +91,39 @@ impl Universe {
             self.traffic.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
             self.crafts[i].avionics.record(events, &mut ignored);
             ignored.clear();
+        }
+    }
+
+    /// The combat phase's events go into the tick's log; the law rules on
+    /// each weapon hit there, in order (so a ship made fair game is fair game
+    /// for the hits after), and a ruling that's news goes to the shooter.
+    fn rule_on_hits(&mut self, now: f64, player: &mut Vec<ShipEvent>, crafts: &mut [Vec<ShipEvent>]) {
+        let tick = self.tick;
+        let mut notices: Vec<(usize, ShipEvent)> = Vec::new();
+        for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {
+            for e in events {
+                let index = self.log.len() as u32;
+                self.log.push((id, e.clone()));
+                if let ShipEvent::Hit { by, weapon: true, .. } = *e {
+                    let answers = universe_world::turrets::turret_of(by).is_none();
+                    let hit = universe_services::law::Hit { shooter: by, target: id, time: now };
+                    if let Some(r) = self.law.hit(hit, answers, universe_protocol::Cause::Event { tick, index })
+                        && r.new
+                    {
+                        notices.push((r.ship, ShipEvent::Aggressed { until: r.until }));
+                    }
+                }
+            }
+        }
+        for (ship, notice) in notices {
+            match ship {
+                PLAYER => player.push(notice),
+                id => {
+                    if let Some(e) = crafts.get_mut(id - 1) {
+                        e.push(notice);
+                    }
+                }
+            }
         }
     }
 

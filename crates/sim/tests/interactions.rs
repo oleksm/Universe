@@ -197,7 +197,7 @@ fn turrets_shoot_the_aggressor_and_spare_the_innocent() {
     let (_, at, v, side) = a_turret(&mut u);
     place(&mut u, 0, at + side * 2_500.0, v, at);
     place(&mut u, 1, at + side * 2_600.0 + side.any_orthonormal_vector() * 60.0, v, at);
-    u.crafts[0].ship.aggressed_until = u.world.time + 600.0;
+    { let now = u.world.time; u.law.declare(universe_sim::craft_id(0), now + 600.0, now, universe_sim::protocol::Cause::Rules); }
     let down = run(&mut u, 60.0, |u| !u.crafts[0].ship.is_flying());
     assert!(down, "the aggressor is shot down (hull {:.2})", u.crafts[0].ship.hull);
     assert!(u.crafts[1].ship.hull > 0.99, "the innocent untouched ({:.2})", u.crafts[1].ship.hull);
@@ -324,7 +324,7 @@ fn turrets_shoot_down_an_aggressed_player_burning_hard_at_the_edge_of_their_reac
     u.ship.velocity = v;
     u.ship.orientation = universe_sim::ship::facing(side.any_orthonormal_vector(), side);
     u.ship.throttle = 1.0;
-    u.ship.aggressed_until = u.world.time + 600.0;
+    { let now = u.world.time; u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules); }
     let down = run(&mut u, 20.0, |u| u.kills.iter().any(|k| k.victim == universe_sim::PLAYER));
     assert!(down, "shot down (hull {:.2})", u.ship.hull);
 }
@@ -343,7 +343,7 @@ fn a_lone_settler_leaves_an_aggressor_alone() {
     let (p, v, a, b) = open_space(&mut u);
     place(&mut u, 0, p, v, p + a);
     place(&mut u, 1, p + b * 4_000.0, v, p);
-    u.crafts[0].ship.aggressed_until = u.world.time + 600.0;
+    { let now = u.world.time; u.law.declare(universe_sim::craft_id(0), now + 600.0, now, universe_sim::protocol::Cause::Rules); }
     run(&mut u, 10.0, |_| false);
     assert!(u.crafts[1].avionics.hunting.is_none(), "one against one: no fight");
 }
@@ -353,7 +353,7 @@ fn settlers_gang_up_on_an_aggressor_and_shoot_it_down() {
     let mut u = bench(6);
     let (p, v, a, b) = open_space(&mut u);
     place(&mut u, 0, p, v, p + a);
-    u.crafts[0].ship.aggressed_until = u.world.time + 600.0;
+    { let now = u.world.time; u.law.declare(universe_sim::craft_id(0), now + 600.0, now, universe_sim::protocol::Cause::Rules); }
     for k in 1..6 {
         let dir = (a * (k as f64).cos() + b * (k as f64).sin()).normalize();
         place(&mut u, k, p + dir * 4_000.0, v, p);
@@ -362,7 +362,7 @@ fn settlers_gang_up_on_an_aggressor_and_shoot_it_down() {
     let defenders = u.crafts[1..].iter().filter(|c| c.avionics.hunting.is_some()).count();
     assert!(down, "the aggressor is shot down (hull {:.2}, {} defending, {} defences)\n{}", u.crafts[0].ship.hull, defenders, u.traffic.defences, incidents(&u));
     assert!(u.traffic.defences >= 2, "they went after it together ({})", u.traffic.defences);
-    assert!(u.crafts[1..].iter().all(|c| !c.ship.aggressed(u.world.time)), "shooting the aggressor is no crime");
+    assert!((1..u.crafts.len()).all(|i| !u.law.aggressed(universe_sim::craft_id(i), u.world.time)), "shooting the aggressor is no crime");
     assert!(u.kills.iter().any(|k| k.victim == universe_sim::craft_id(0) && k.killer != universe_sim::PLAYER));
     // Standing down, they slow and keep clear of each other.
     run(&mut u, 30.0, |_| false);
@@ -376,7 +376,7 @@ fn an_aggressed_player_is_judged_like_anyone() {
     u.ship.state = ShipState::Flying;
     u.ship.position = p;
     u.ship.velocity = v;
-    u.ship.aggressed_until = u.world.time + 600.0;
+    { let now = u.world.time; u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules); }
     for k in 0..5 {
         let dir = (a * (k as f64).cos() + b * (k as f64).sin()).normalize();
         place(&mut u, k, p + dir * 4_000.0, v, p);
@@ -473,4 +473,29 @@ fn a_crafts_commands_reach_its_ship_two_ticks_late() {
     let moved = |(t, r): (f64, f64)| t > 0.0 || r > 0.0;
     assert!(!moved(throttles[0]) && !moved(throttles[1]), "nothing reaches the devices for two ticks: {throttles:?}");
     assert!(moved(throttles[2]) || moved(throttles[3]), "then it does: {throttles:?}");
+}
+
+#[test]
+fn the_law_rules_a_pirate_fair_game_from_its_first_hit_with_the_evidence() {
+    let mut u = bench(2);
+    let (p, v, a, _) = open_space(&mut u);
+    place(&mut u, 0, p + a * 6_000.0, v, p);
+    place(&mut u, 1, p, v, p + a);
+    u.crafts[0].avionics.pirate = true;
+    let (pirate, prey) = (universe_sim::craft_id(0), universe_sim::craft_id(1));
+    let ruled = run(&mut u, 120.0, |u| u.law.aggressed(pirate, u.world.time));
+    assert!(ruled, "the pirate struck and the law saw it\n{}", incidents(&u));
+    let now = u.world.time;
+    let r = *u.law.standing(pirate, now).expect("on record");
+    assert_eq!((r.evidence.shooter, r.evidence.target), (pirate, prey), "the hit is the evidence");
+    match r.cause {
+        universe_sim::protocol::Cause::Event { tick, index } => {
+            assert_eq!(tick, u.tick, "ruled the tick of the hit");
+            let (struck, e) = &u.log[index as usize];
+            assert_eq!(*struck, prey);
+            assert!(matches!(e, universe_sim::world::ShipEvent::Hit { by, weapon: true, .. } if *by == pirate), "{e:?}");
+        }
+        other => panic!("caused by {other:?}"),
+    }
+    assert!(!u.law.aggressed(prey, now), "the victim is innocent");
 }

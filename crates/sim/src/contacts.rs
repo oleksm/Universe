@@ -63,7 +63,7 @@ impl Universe {
                 let r = &craft.avionics.route;
                 let stop = r.stops.get(r.next).copied();
                 let destination = stop.map(|s| route::stop_name(&self.world.system(s.system), s).to_uppercase());
-                Contact { blip, name, activity, destination, hull: craft.ship.hull, aggressed: craft.ship.aggressed(self.world.time) }
+                Contact { blip, name, activity, destination, hull: craft.ship.hull, aggressed: self.law.aggressed(crate::combat::craft_id(blip.id), self.world.time) }
             })
             .collect()
     }

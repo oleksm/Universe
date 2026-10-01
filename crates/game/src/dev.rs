@@ -181,7 +181,9 @@ pub fn apply(app: &mut App, name: &str) {
                 app.engine.universe().ship.position = at + out * 9_000.0;
                 app.engine.universe().ship.velocity = v;
                 app.engine.universe().ship.orientation = universe_sim::ship::facing(-out, out.any_orthonormal_vector());
-                app.engine.universe().ship.aggressed_until = app.engine.universe().world.time + 600.0;
+                let u = app.engine.universe();
+                let now = u.world.time;
+                u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules);
             }
         }
         "orbit" => {

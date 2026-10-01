@@ -194,8 +194,8 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
     let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
     let now = app.v.time;
-    if ship.aggressed(now) {
-        let left = (ship.aggressed_until - now) / app.warp().max(1.0);
+    if let Some(until) = app.v.aggressed_until {
+        let left = (until - now) / app.warp().max(1.0);
         lines.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
     }
     if ship.armed {
@@ -1028,7 +1028,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
 fn turret_markers(frame: &mut Frame, app: &App) {
     use universe_sim::world::turrets::TURRET_RANGE;
     let me = app.view.ship_pos;
-    let hunted = app.v.ship.aggressed(app.v.time);
+    let hunted = app.v.aggressed_until.is_some();
     let cam = frame.camera.position;
     let size = frame.size();
     for (_, at) in &app.turrets {

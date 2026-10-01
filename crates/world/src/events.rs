@@ -28,7 +28,8 @@ pub enum ShipEvent {
     WeaponsSafe,
     /// Struck by a weapon of ship `by`: `damage` of the hull's strength taken,
     /// `hull` left (fractions).
-    Hit { by: usize, damage: f64, hull: f64 },
+    /// `weapon`: fired on (gun or laser), not a collision.
+    Hit { by: usize, damage: f64, hull: f64, weapon: bool },
     /// A new ship was delivered.
     Respawned,
     /// Crossed into another star system's neighbourhood.

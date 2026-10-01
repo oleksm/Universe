@@ -2336,6 +2336,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe-services"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "universe-protocol",
+]
+
+[[package]]
 name = "universe-sim"
 version = "0.1.0"
 dependencies = [
@@ -2347,6 +2355,7 @@ dependencies = [
  "universe-physics",
  "universe-prof",
  "universe-protocol",
+ "universe-services",
  "universe-world",
 ]
 

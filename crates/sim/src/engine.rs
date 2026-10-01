@@ -83,6 +83,8 @@ pub struct CraftView {
     pub route_next: usize,
     pub route_stops: usize,
     pub stage: &'static str,
+    /// Fair game, as the law has it.
+    pub aggressed: bool,
 }
 
 /// A market's quotes, for the market screen.
@@ -101,6 +103,8 @@ pub struct View {
     pub time: f64,
     pub ship: Ship,
     pub ship_system: usize,
+    /// Until when we're fair game, as the law has it (None: we're not).
+    pub aggressed_until: Option<f64>,
     pub avionics: Avionics,
     pub crew: Person,
     pub credits: f64,
@@ -328,7 +332,8 @@ impl Engine {
         let crafts = u
             .crafts
             .iter()
-            .map(|c| CraftView {
+            .enumerate()
+            .map(|(i, c)| CraftView {
                 name: c.name.clone(),
                 system: c.system,
                 ship: c.ship.clone(),
@@ -337,6 +342,7 @@ impl Engine {
                 route_next: c.avionics.route.next,
                 route_stops: c.avionics.route.stops.len(),
                 stage: crate::contacts::activity(c),
+                aggressed: u.law.aggressed(crate::combat::craft_id(i), now),
             })
             .collect();
         let markets = universe_world::market::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect();
@@ -352,6 +358,7 @@ impl Engine {
             time: now,
             ship: u.ship.clone(),
             ship_system: system,
+            aggressed_until: u.law.until(crate::combat::PLAYER, now),
             avionics: u.avionics.clone(),
             crew: u.crew,
             credits: u.credits,

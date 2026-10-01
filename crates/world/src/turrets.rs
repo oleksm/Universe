@@ -9,7 +9,7 @@ use glam::{DQuat, DVec3};
 
 use crate::gate::{GATE_RADIUS, RING_TUBE};
 use crate::rng::{mix, Rng};
-use crate::ship::{Ship, ShipState};
+use crate::ship::ShipState;
 use crate::station::STATION_SIZE;
 use crate::system::{BodyKind, StarSystem};
 use crate::traffic::Facility;
@@ -122,8 +122,8 @@ impl TurretTrack {
 }
 
 /// Is a ship worth a turret's round: aggressed, and there to be hit?
-fn fair_game(ship: &Ship, now: f64) -> bool {
-    ship.aggressed(now) && matches!(ship.state, ShipState::Flying | ShipState::Landed { .. })
+fn fair_game(a: &Armed) -> bool {
+    a.aggressed && matches!(a.ship.state, ShipState::Flying | ShipState::Landed { .. })
 }
 
 impl crate::world::World {
@@ -154,12 +154,12 @@ impl crate::world::World {
     pub(crate) fn turrets_fire(&mut self, ships: &[Armed], dt: f64, fired: &mut Vec<Slug>) {
         let now = self.time;
         // Track every aggressor (for its acceleration); forget the rest.
-        self.turret_tracks.retain(|id, _| ships.iter().any(|a| a.id == *id && fair_game(a.ship, now)));
-        for a in ships.iter().filter(|a| fair_game(a.ship, now)) {
+        self.turret_tracks.retain(|id, _| ships.iter().any(|a| a.id == *id && fair_game(a)));
+        for a in ships.iter().filter(|a| fair_game(a)) {
             let tr = TurretTrack::update(self.turret_tracks.get(&a.id).copied(), a.ship.velocity, now);
             self.turret_tracks.insert(a.id, tr);
         }
-        let mut systems: Vec<usize> = ships.iter().filter(|a| fair_game(a.ship, now)).map(|a| a.system).collect();
+        let mut systems: Vec<usize> = ships.iter().filter(|a| fair_game(a)).map(|a| a.system).collect();
         systems.sort();
         systems.dedup();
         for system in systems {
@@ -181,7 +181,7 @@ impl crate::world::World {
                 };
                 let target = ships
                     .iter()
-                    .filter(|a| a.system == system && fair_game(a.ship, now) && a.ship.position.distance(at) < TURRET_RANGE && clear(a.ship.position))
+                    .filter(|a| a.system == system && fair_game(a) && a.ship.position.distance(at) < TURRET_RANGE && clear(a.ship.position))
                     .min_by(|a, b| a.ship.position.distance(at).total_cmp(&b.ship.position.distance(at)));
                 let Some(target) = target else {
                     *cooldown = 0.0;

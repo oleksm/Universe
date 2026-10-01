@@ -61,6 +61,11 @@ pub struct Universe {
     pub(crate) snap_time: f64,
     /// Ticks run so far.
     pub tick: u64,
+    /// This tick's event log: (ship, event), in order — what services' causes
+    /// point into (`Cause::Event { tick, index }`).
+    pub log: Vec<(usize, ShipEvent)>,
+    /// The law: who's fair game, since when, and why (see `universe_services::law`).
+    pub law: universe_services::Law,
     /// Crafts' commands reach their devices this many ticks after they're
     /// given (0: at once). Tests set it to the lag pilots will have once they
     /// run apart from the world.
@@ -87,6 +92,8 @@ impl Universe {
             snaps: Vec::new(),
             snap_time: f64::NAN,
             tick: 0,
+            log: Vec::new(),
+            law: Default::default(),
             command_delay: 0,
             positions: Vec::new(),
         };
@@ -163,6 +170,7 @@ impl Universe {
     /// moment; the clock moves once (as far as the player's ship went).
     fn tick(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
         self.tick += 1;
+        self.log.clear();
         let t0 = self.world.time;
         universe_prof::time("sim/snapshot", || self.snapshot());
         let result = universe_prof::time("sim/player", || self.step(real_dt, warp, controls));
@@ -234,6 +242,10 @@ impl Universe {
         });
         if done {
             self.world.traffic.release(id);
+        }
+        // A new ship: a clean record.
+        if events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) {
+            self.law.forget(id);
         }
     }
 
