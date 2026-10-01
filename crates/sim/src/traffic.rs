@@ -196,13 +196,12 @@ impl Universe {
     /// docked or wrecked.
     fn sightings(&mut self, i: usize) -> Vec<Sighting> {
         let (system, pos) = (self.crafts[i].system, self.crafts[i].ship.position);
-        let sys = self.system(system);
-        let mut rails = Vec::new();
-        sys.positions(self.world.time, &mut rails);
-        let structures: Vec<DVec3> = sys.bodies.iter().zip(&rails).filter(|(b, _)| b.rail.collider.is_small()).map(|(_, p)| *p).collect();
+        let _ = self.system(system);
+        // Shelter is real: docked or landed, or under a defence turret's guns.
+        let guns: Vec<DVec3> = self.world.turret_motions(system).into_iter().map(|(_, p, _)| p).collect();
         let sheltered = |s: &Ship| match s.state {
             ShipState::Landed { .. } => true,
-            _ => structures.iter().any(|p| p.distance(s.position) < universe_avionics::hunter::SHELTER),
+            _ => guns.iter().any(|p| p.distance(s.position) < universe_world::turrets::TURRET_RANGE + universe_avionics::hunter::SHELTER_MARGIN),
         };
         self.crafts
             .iter()
@@ -340,7 +339,8 @@ mod pirate_tests {
     fn a_pirate_hunts_down_a_trader_and_goes_back_to_its_route() {
         let mut u = Universe::new(1984);
         u.spawn_settlers(2, 1);
-        let (sys, pos, vel) = (u.ship_system, u.ship.position, u.ship.velocity);
+        // Far from any haven, so the trader can't run for the guns.
+        let (sys, pos, vel) = (u.ship_system, u.ship.position + DVec3::new(1.5e6, 0.0, 0.0), u.ship.velocity);
         // Park our own ship far off, out of the way.
         u.ship.position += DVec3::new(0.0, 0.0, 2.0e6);
         for (k, c) in u.crafts.iter_mut().enumerate() {

@@ -42,6 +42,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             pilot_overlay(frame, app);
             target_marker(frame, app);
             contact_marker(frame, app);
+            turret_markers(frame, app);
             impact_label(frame, app);
             phase_banner(frame, app);
             scanner(frame, app);
@@ -990,6 +991,47 @@ fn sun_glare(frame: &mut Frame, app: &App) {
         let len = if i % 3 == 0 { long } else { long * 0.45 };
         let d = Vec2::new(a.cos(), a.sin());
         frame.hud_line2(p + d * disc, p + d * len, tint(0.35), tint(0.0));
+    }
+}
+
+/// Defence turrets: a small marker on each in view within 60 km (SAM by it
+/// when close), and, while we're aggressed, the reach of their guns as red rings.
+fn turret_markers(frame: &mut Frame, app: &App) {
+    use universe_sim::world::turrets::TURRET_RANGE;
+    let me = app.view.ship_pos;
+    let hunted = app.u.ship.aggressed(app.u.world.time);
+    let cam = frame.camera.position;
+    let size = frame.size();
+    for (_, at) in &app.turrets {
+        let d = at.distance(me);
+        if d > 60_000.0 {
+            continue;
+        }
+        let c = if hunted { RED } else { Color::hex(0xff9040) };
+        if let Some(p) = frame.project(*at).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) {
+            frame.hud_line(p + Vec2::new(-4.0, 3.0), p + Vec2::new(4.0, 3.0), c);
+            frame.hud_line(p + Vec2::new(4.0, 3.0), p + Vec2::new(0.0, -4.0), c);
+            frame.hud_line(p + Vec2::new(0.0, -4.0), p + Vec2::new(-4.0, 3.0), c);
+            if d < 15_000.0 {
+                frame.text(p + Vec2::new(6.0, -4.0), "SAM", c.scale(0.8));
+            }
+        }
+        if hunted {
+            // The reach, as a ring seen face on.
+            let to = (*at - cam).normalize();
+            let (u, v) = (to.any_orthonormal_vector(), to.cross(to.any_orthonormal_vector()));
+            let pts: Vec<Option<Vec2>> = (0..=32)
+                .map(|i| {
+                    let a = i as f64 / 32.0 * std::f64::consts::TAU;
+                    frame.project(*at + (u * a.cos() + v * a.sin()) * TURRET_RANGE)
+                })
+                .collect();
+            for w in pts.windows(2) {
+                if let (Some(a), Some(b)) = (w[0], w[1]) {
+                    frame.hud_line(a, b, RED.scale(0.5));
+                }
+            }
+        }
     }
 }
 

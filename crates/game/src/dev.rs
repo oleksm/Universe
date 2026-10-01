@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades noon dusk night sun";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     let home = app.u.world.home_system;
@@ -170,6 +170,17 @@ pub fn apply(app: &mut App, name: &str) {
                         break;
                     }
                 }
+            }
+        }
+        "sam" => {
+            // Aggressed, 9 km out from a defended station or port, looking at its turrets.
+            app.mode = Mode::Pilot;
+            if let Some((t, at, v)) = app.u.world.turret_motions(home).into_iter().find(|(t, _, _)| !matches!(t.facility, universe_sim::world::Facility::Gate(_))) {
+                let out = (at - positions[t.body]).normalize();
+                app.u.ship.position = at + out * 9_000.0;
+                app.u.ship.velocity = v;
+                app.u.ship.orientation = universe_sim::ship::facing(-out, out.any_orthonormal_vector());
+                app.u.ship.aggressed_until = app.u.world.time + 600.0;
             }
         }
         "sun" => {

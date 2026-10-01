@@ -76,6 +76,10 @@ impl Bus for Link<'_> {
         self.world.traffic.request_corridor(self.system, body, self.id)
     }
 
+    fn turrets(&mut self) -> Vec<(glam::DVec3, glam::DVec3)> {
+        self.world.turret_motions(self.system).into_iter().map(|(_, p, v)| (p, v)).collect()
+    }
+
     fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent> {
         let mut events = Vec::new();
         self.world.command(self.ship, self.system, c, &mut events);

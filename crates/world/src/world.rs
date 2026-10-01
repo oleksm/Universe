@@ -97,6 +97,9 @@ pub struct World {
     market_states: HashMap<(usize, Facility), MarketState>,
     /// Traffic control: pads and corridors (see `pads`).
     pub traffic: crate::pads::TrafficControl,
+    /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
+    pub(crate) turrets: HashMap<usize, Rc<Vec<crate::turrets::Turret>>>,
+    pub(crate) turret_cooldowns: HashMap<usize, f64>,
 }
 
 impl World {
@@ -120,6 +123,8 @@ impl World {
             markets: HashMap::new(),
             market_states: HashMap::new(),
             traffic: Default::default(),
+            turrets: HashMap::new(),
+            turret_cooldowns: HashMap::new(),
         }
     }
 
@@ -178,6 +183,11 @@ impl World {
     }
 
     /// Get (generating and caching if needed) the star system at galaxy index `i`.
+    /// A star system already generated, if it is (no generating from `&self`).
+    pub fn system_if_known(&self, i: usize) -> Option<Rc<StarSystem>> {
+        self.systems.get(&i).cloned()
+    }
+
     pub fn system(&mut self, i: usize) -> Rc<StarSystem> {
         if self.systems.len() > 64 {
             // Keep the gate network's systems, where the traffic is.
@@ -257,6 +267,7 @@ impl World {
         warp: f64,
         events: &mut Vec<ShipEvent>,
     ) -> StepResult {
+        ship.hyper_jam = (ship.hyper_jam - real_dt * warp).max(0.0);
         self.command(ship, *system, commands, events);
         let sys = self.system(*system);
         // Nearby stars, when already looked up for this system.

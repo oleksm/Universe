@@ -9,6 +9,10 @@ use crate::ship::{Ship, ShipState};
 /// Energy the hull absorbs before it fails (J).
 pub const HULL_STRENGTH: f64 = 20.0e6;
 
+/// A hit jams the hyperdrive for this long (game s): under fire, a ship can't
+/// simply jump away.
+pub const HYPER_JAM: f64 = 15.0;
+
 /// Real seconds from destruction to the replacement ship.
 pub const RESPAWN_TIME: f64 = 3.0;
 
@@ -29,6 +33,9 @@ pub fn hit(ship: &mut Ship, joules: f64, impulse: DVec3, by: usize, cause: &str,
     }
     let damage = joules / HULL_STRENGTH;
     ship.hull = (ship.hull - damage).max(0.0);
+    if cause != "COLLISION" {
+        ship.hyper_jam = HYPER_JAM;
+    }
     if matches!(ship.state, ShipState::Flying) {
         ship.velocity += impulse / ship.mass();
     }

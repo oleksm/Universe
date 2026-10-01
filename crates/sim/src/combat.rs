@@ -62,6 +62,10 @@ impl Universe {
                 continue;
             }
             self.traffic_events(craft_id(i), &events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
+            // Fired on (and not a hunter itself): run for the guns.
+            if !self.crafts[i].avionics.pirate && events.iter().any(|e| matches!(e, ShipEvent::Hit { .. })) {
+                self.flee(i);
+            }
             if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
                 if kill.weapon == "COLLISION" {
                     self.traffic.collision_losses += 1;
@@ -101,8 +105,46 @@ impl Universe {
         }
     }
 
+    /// Craft `i` is under fire: it heads for the nearest defended station or
+    /// spaceport in its system (next on its route), to dock or land under the
+    /// turrets' guns. Already heading there, or nowhere defended: as it was.
+    pub(crate) fn flee(&mut self, i: usize) {
+        let c = &self.crafts[i];
+        if !c.ship.is_flying() || c.ship.hyperdrive {
+            return;
+        }
+        let (system, pos) = (c.system, c.ship.position);
+        let mut havens: Vec<(f64, universe_world::Facility)> = self
+            .world
+            .turret_motions(system)
+            .into_iter()
+            .filter(|(t, _, _)| !matches!(t.facility, universe_world::Facility::Gate(_)))
+            .map(|(t, p, _)| (p.distance(pos), t.facility))
+            .collect();
+        havens.sort_by(|a, b| a.0.total_cmp(&b.0));
+        let Some(&(_, haven)) = havens.first() else { return };
+        let stop = universe_avionics::Stop { system, target: haven };
+        let c = &mut self.crafts[i];
+        let r = &mut c.avionics.route;
+        if r.stops.get(r.next) == Some(&stop) {
+            return;
+        }
+        r.stops.insert(r.next.min(r.stops.len()), stop);
+        r.active = true;
+        r.dwell_until = None;
+        r.departing = false;
+        if c.avionics.clearance.take().is_some() {
+            self.world.traffic.release(craft_id(i));
+        }
+    }
+
     /// Name of the ship with combat id `id`.
     pub fn ship_name(&self, id: usize) -> String {
+        if let Some((system, k)) = universe_world::turrets::turret_of(id) {
+            let sys = self.world.system_if_known(system);
+            let place = sys.and_then(|sys| universe_world::turrets::turrets(self.world.galaxy.seed, system, &sys).get(k).map(|t| t.facility.name(&sys)));
+            return format!("SAM TURRET ({})", place.unwrap_or_default().to_uppercase());
+        }
         match id {
             PLAYER => "YOU".into(),
             _ => self.crafts.get(id - 1).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
@@ -148,6 +190,9 @@ mod tests {
         let mut u = Universe::new(1984);
         u.spawn_settlers(1, 1);
         // A settler 3 km ahead, crossing at 40 m/s; we're drifting with it.
+        // Well away from any defence turrets (we'll be the aggressor), and the
+        // target one that won't run (a pirate, with nothing to hunt).
+        u.ship.position += DVec3::new(1.5e6, 0.0, 0.0);
         let (sys, pos, vel) = (u.ship_system, u.ship.position, u.ship.velocity);
         let c = &mut u.crafts[0];
         c.system = sys;
@@ -156,6 +201,7 @@ mod tests {
         c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
         c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
         c.avionics = Default::default();
+        c.avionics.pirate = true;
         u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
         u.lock_next_contact();
         let mut destroyed = false;
@@ -183,6 +229,9 @@ mod tests {
     fn the_gimbal_hits_with_the_nose_two_degrees_off() {
         let mut u = Universe::new(1984);
         u.spawn_settlers(1, 1);
+        // Well away from any defence turrets (we'll be the aggressor), and the
+        // target one that won't run (a pirate, with nothing to hunt).
+        u.ship.position += DVec3::new(1.5e6, 0.0, 0.0);
         let (sys, pos, vel) = (u.ship_system, u.ship.position, u.ship.velocity);
         let c = &mut u.crafts[0];
         c.system = sys;
@@ -191,6 +240,7 @@ mod tests {
         c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
         c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
         c.avionics = Default::default();
+        c.avionics.pirate = true;
         u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
         u.lock_next_contact();
         let two = DQuat::from_rotation_z(2f64.to_radians());

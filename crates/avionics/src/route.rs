@@ -197,6 +197,8 @@ impl Avionics {
         match self.clearance {
             Some(c) if !c.autopilot => self.toggle_autopilot(bus, events),
             Some(_) => {}
+            // Far, but the drive's jammed by hits: wait it out.
+            None if far && bus.ship().hyper_jam > 0.0 => {}
             None if far => {
                 // Far: hyperdrive there, steered by its autopilot.
                 self.toggle_hyperdrive(bus, events);

@@ -38,6 +38,31 @@ pub enum Hit {
     Body { body: usize, point: DVec3 },
 }
 
+/// Where to aim a projectile leaving at `muzzle` m/s relative to a shooter
+/// at `own_position` moving at `own_velocity`, to meet a body at `position`
+/// moving at `velocity` and accelerating at `acceleration` (gravity, shared
+/// by both over a short flight, cancels). The unit aim, the meeting point
+/// relative to the shooter now, and the flight time; None if it can't be
+/// caught within `max_time` seconds.
+pub fn intercept(own_position: DVec3, own_velocity: DVec3, position: DVec3, velocity: DVec3, acceleration: DVec3, muzzle: f64, max_time: f64) -> Option<(DVec3, DVec3, f64)> {
+    let r0 = position - own_position;
+    let v = velocity - own_velocity;
+    let at = |t: f64| r0 + v * t + acceleration * (0.5 * t * t);
+    let mut t = r0.length() / muzzle;
+    for _ in 0..30 {
+        let next = at(t).length() / muzzle;
+        if (next - t).abs() < 1e-4 {
+            let offset = at(next);
+            return (next <= max_time).then(|| (offset.normalize_or_zero(), offset, next));
+        }
+        t = next;
+        if t > max_time * 2.0 {
+            return None;
+        }
+    }
+    None
+}
+
 /// Longest substep for a projectile (s).
 pub const PROJECTILE_STEP: f64 = 0.05;
 

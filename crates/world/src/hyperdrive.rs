@@ -35,6 +35,10 @@ pub fn switch(sys: &StarSystem, ship: &mut Ship, c: &HyperdriveCommand, t: f64, 
     }
     if ship.hyperdrive {
         drop_out(sys, ship, c.exit_velocity, t, positions, events);
+    } else if ship.hyper_jam > 0.0 {
+        // Hits disrupt the drive: it won't engage for a while.
+        events.push(ShipEvent::HyperdriveJammed { seconds: ship.hyper_jam });
+        return;
     } else {
         ship.hyperdrive = true;
         events.push(ShipEvent::HyperdriveEngaged);

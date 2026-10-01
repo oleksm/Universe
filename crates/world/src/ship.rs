@@ -120,6 +120,9 @@ pub struct Ship {
     /// world time: see `weapons::AGGRESSION`.
     #[serde(default)]
     pub aggressed_until: f64,
+    /// Seconds the hyperdrive stays jammed (hits disrupt it: see `damage::HYPER_JAM`).
+    #[serde(skip)]
+    pub hyper_jam: f64,
 }
 
 fn boresight() -> DVec3 {
@@ -227,6 +230,7 @@ impl Ship {
             gun_dir: DVec3::NEG_Z,
             gun_target: None,
             aggressed_until: 0.0,
+            hyper_jam: 0.0,
         }
     }
 

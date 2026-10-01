@@ -32,6 +32,8 @@ pub enum ShipEvent {
     /// Crossed into another star system's neighbourhood.
     EnteredSystem { name: String },
     HyperdriveEngaged,
+    /// The hyperdrive wouldn't engage: jammed by hits, for this many more seconds.
+    HyperdriveJammed { seconds: f64 },
     HyperdriveDisengaged,
     /// Entered a gate, heading for another system.
     GateEntered { to: String },

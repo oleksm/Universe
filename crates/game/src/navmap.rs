@@ -34,6 +34,8 @@ pub struct NavMap {
     positions: Vec<DVec3>,
     /// The body the ship is near, if we're browsing the ship's own system.
     ship_body: Option<usize>,
+    /// Places with defence turrets.
+    defended: Vec<NavTarget>,
 }
 
 /// Systems you can browse: the ship's first, then the gate network.
@@ -50,7 +52,7 @@ impl NavMap {
     pub fn open(app: &mut App) -> Self {
         let system = app.u.ship_system();
         let view = app.u.ship_system;
-        let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None };
+        let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None, defended: Vec::new() };
         map.refresh(app);
         // Start on the current target if there is one.
         if let Some(t) = app.u.avionics.nav_target {
@@ -69,6 +71,7 @@ impl NavMap {
         let here = self.here(app);
         let ship = app.u.ship.position;
         self.ship_body = here.then(|| self.system.dominant(ship, &self.positions));
+        self.defended = app.u.world.turret_motions(self.view).into_iter().map(|(t, _, _)| t.facility).collect();
         let mut entries = Vec::new();
         for (i, b) in self.system.bodies.iter().enumerate() {
             if b.kind == BodyKind::Station {
@@ -192,7 +195,8 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
         let cursor = if i == map.selected { ">" } else { " " };
         let mark = if locked { "*" } else if route_has(e.target) { "+" } else { " " };
         let dist = if e.distance.is_finite() { fmt::distance(e.distance) } else { String::new() };
-        let row = format!("{cursor}{mark} {:<34} {:<9} {:>10}", e.name, e.kind, dist);
+        let sam = if map.defended.contains(&e.target) { "SAM" } else { "" };
+        let row = format!("{cursor}{mark} {:<34} {:<9} {:<3} {:>10}", e.name, e.kind, sam, dist);
         frame.text(Vec2::new(16.0, y), &row, c);
         y += line;
     }

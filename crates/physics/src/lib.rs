@@ -26,7 +26,7 @@ pub use integrate::{integrate, leapfrog, Driver, Outcome, Response, Span};
 pub use ops::{bounce, relocate, Relative, Weld};
 pub use orbit::Orbit;
 pub use pairs::{bounce_pair, contacts, Mover, PairContact};
-pub use projectile::{ray, step_projectile, Hit, Projectile, Target};
+pub use projectile::{intercept, ray, step_projectile, Hit, Projectile, Target};
 pub use query::{dominant, gravity, pull, segment_distance, simulate};
 pub use rails::{positions, velocity, Ephemeris, Frame, OnRails, RailBody};
 pub use surface::{max_radius, surface_radius, surface_radius_at, Surface};

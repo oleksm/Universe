@@ -214,6 +214,8 @@ impl World {
                 ship.laser_overheated &= ship.laser_heat > LASER_RESET;
             }
         }
+        // The defence turrets have their say.
+        self.turrets_fire(ships, dt, &mut fired);
         if self.slugs.is_empty() && lasers.is_empty() {
             self.slugs = fired;
             return;

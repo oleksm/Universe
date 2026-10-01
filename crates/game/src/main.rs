@@ -115,6 +115,8 @@ pub struct App {
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
     pub reach: Option<Reach>,
+    /// Defence turrets of the system in view, where they are now.
+    pub turrets: Vec<(universe_sim::world::turrets::Turret, DVec3)>,
     /// Seconds left to show the lock beam's ring (after T, outside combat mode).
     pub beam_shown: f32,
     /// The collision warning's prediction, when it's on (made at `collision_at`, world time).
@@ -179,6 +181,7 @@ impl App {
             hit_age: 99.0,
             sparks: Vec::new(),
             reach: None,
+            turrets: Vec::new(),
             beam_shown: 0.0,
             collision: None,
             collision_at: 0.0,
@@ -423,6 +426,7 @@ impl App {
                 Event::Ship(ShipEvent::EnteredSystem { name }) => format!("ENTERING {name} SYSTEM"),
                 Event::Ship(ShipEvent::HyperdriveEngaged) => "HYPERDRIVE ENGAGED".into(),
                 Event::Ship(ShipEvent::HyperdriveDisengaged) => "HYPERDRIVE OFF".into(),
+                Event::Ship(ShipEvent::HyperdriveJammed { seconds }) => format!("HYPERDRIVE JAMMED BY HITS - {seconds:.0} S"),
                 Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\nR TO REQUEST CLEARANCE"),
                 Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Dock }) => {
                     format!("DOCKING GRANTED - {target}\nFOLLOW THE GATES, OR K FOR AUTO")
@@ -640,6 +644,7 @@ impl Game for App {
         };
         self.nav_marker = self.find_nav_marker();
         self.reach = self.u.pilot_reach();
+        self.turrets = self.u.world.turret_motions(self.view.origin).into_iter().map(|(t, p, _)| (t, p)).collect();
         self.docked_market = self.u.docked_market().is_some();
         self.contacts = self.u.contacts();
         if self.u.avionics.contact.is_some() && self.u.locked_contact_in(&self.contacts).is_none() {

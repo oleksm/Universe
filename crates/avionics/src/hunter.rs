@@ -5,8 +5,9 @@
 //! one ship, sticking to it until it's destroyed, docks at a station, leaves
 //! the system, gets away beyond `LOSE_RANGE`, or `GIVE_UP` passes. Then it
 //! goes safe and carries on with its route. Ships in shelter (docked,
-//! landed, or close under a station or gate: `SHELTER`) are left alone, and
-//! prey that reaches shelter has escaped.
+//! landed, or under a defence turret's guns) are left alone, prey that
+//! reaches shelter has escaped, and the hunter itself keeps out of the
+//! turrets' reach (it's aggressed once it strikes: they'd shoot it).
 //!
 //! It flies by the same rules as anyone: `ShipCommands` to its engine,
 //! thrusters and weapons, fire control's lead for the gun, and the stick
@@ -24,8 +25,11 @@ use crate::docking::attitude;
 use crate::events::Event;
 use crate::fire_control::lead;
 
-/// Within this of a station or gate, a ship is in shelter (m).
-pub const SHELTER: f64 = 9_000.0;
+/// A ship this close to a defence turret's reach counts as sheltered: the
+/// hunter won't go after it (m, beyond the turret's range).
+pub const SHELTER_MARGIN: f64 = 2_000.0;
+/// And it keeps this far outside the turrets' reach itself (m).
+const GUNS_MARGIN: f64 = 1_500.0;
 /// A trader this close gets hunted (m).
 pub const HUNT_RANGE: f64 = 20_000.0;
 /// Farther than this, the prey got away (m).
@@ -186,7 +190,8 @@ impl Avionics {
             // into (the chase may have left it fast and close), then back to
             // the route, resting a while before the next hunt.
             let (sys, positions) = bus.positions();
-            let push = self.keep_clear(&sys, &ship, &positions, now, sightings);
+            let guns = bus.turrets();
+            let push = self.keep_clear(&sys, &ship, &positions, now, sightings, &guns);
             if push.length() > 0.01 && ship.is_flying() {
                 let (throttle, rcs, nose) = thrust_for(&ship, push, push.normalize());
                 let c = ShipCommands { throttle, rcs, weapons: Some(Triggers::default()), arm: Some(false), gun_target: Some(None), ..ship.holding() };
@@ -218,8 +223,24 @@ impl Avionics {
     /// and the collision warning a few times a second. If what the ship is
     /// doing now runs into something within `LOOK_AHEAD`, it breaks off away
     /// from it, hard, until the path is clear again.
-    fn keep_clear(&mut self, sys: &StarSystem, ship: &Ship, positions: &[DVec3], now: f64, others: &[Sighting]) -> DVec3 {
+    fn keep_clear(&mut self, sys: &StarSystem, ship: &Ship, positions: &[DVec3], now: f64, others: &[Sighting], guns: &[(DVec3, DVec3)]) -> DVec3 {
         let mut evade = avoid(sys, ship, positions, now);
+        // Defence turrets: stay out of their reach, braking in time.
+        let brake = 0.5 * ship.main_accel();
+        for &(at, velocity) in guns {
+            let off = ship.position - at;
+            let dist = off.length();
+            let edge = universe_world::turrets::TURRET_RANGE + GUNS_MARGIN;
+            let out = off / dist.max(1.0);
+            let closing = -(ship.velocity - velocity).dot(out);
+            let allowed = 0.9 * (2.0 * brake * (dist - edge).max(0.0)).sqrt();
+            if closing > allowed {
+                evade += out * ((closing - allowed) * 1.5);
+            }
+            if dist < edge {
+                evade += out * (2.0 * ship.side_accel() * ((edge - dist) / 3_000.0).min(1.0));
+            }
+        }
         // Other ships: no closer than `SEPARATION`, pushed off the harder the closer.
         for o in others.iter().filter(|o| !o.docked && !o.destroyed && !o.hyperdrive) {
             let off = ship.position - o.position;
@@ -263,7 +284,8 @@ impl Avionics {
         let gap = d - STANDOFF;
         let closing = if gap > 0.0 { (2.0 * brake * gap).sqrt().min(MAX_CLOSING) } else { gap * 0.2 };
         let mut accel = (dir * closing - v_rel) * 0.6 + track.acceleration;
-        let evade = self.keep_clear(&sys, ship, &positions, now, others);
+        let guns = bus.turrets();
+        let evade = self.keep_clear(&sys, ship, &positions, now, others, &guns);
         accel += evade;
 
         let solution = lead(ship.position, ship.velocity, prey.position, prey.velocity, track.acceleration, GUN_MUZZLE, SLUG_LIFETIME);

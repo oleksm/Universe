@@ -73,23 +73,7 @@ pub struct Solution {
 /// moving at `velocity` and accelerating at `acceleration`. None when the
 /// slug can't catch it within `max_time` seconds.
 pub fn lead(own_position: DVec3, own_velocity: DVec3, position: DVec3, velocity: DVec3, acceleration: DVec3, muzzle: f64, max_time: f64) -> Option<Solution> {
-    let r0 = position - own_position;
-    let v = velocity - own_velocity;
-    let at = |t: f64| r0 + v * t + acceleration * (0.5 * t * t);
-    let mut t = r0.length() / muzzle;
-    for _ in 0..30 {
-        let next = at(t).length() / muzzle;
-        if (next - t).abs() < 1e-4 {
-            t = next;
-            let offset = at(t);
-            return (t <= max_time).then(|| Solution { aim: offset.normalize_or_zero(), offset, time: t });
-        }
-        t = next;
-        if t > max_time * 2.0 {
-            return None;
-        }
-    }
-    None
+    universe_physics::intercept(own_position, own_velocity, position, velocity, acceleration, muzzle, max_time).map(|(aim, offset, time)| Solution { aim, offset, time })
 }
 
 #[cfg(test)]

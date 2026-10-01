@@ -343,7 +343,9 @@ ship's pose directly, like tests do — then render.
 | Ship-to-ship collisions (kernel `pairs` sweep + world bounce/damage rules) | physics: `pairs`, world: `collisions` |
 | Flight recorder: every ship's last 15 s, incidents with traces | sim: `recorder` |
 | Radar (sweep, blips) | world: `radar` |
-| Gun, laser, hull damage; the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
+| Gun, laser, hull damage (a hit jams the hyperdrive 15 s); the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
+| SAM turrets (seeded per station/gate/spaceport, 6 km reach, fire on aggressors with a clear line), coverage | world: `turrets` |
+| Shelter: pirates keep out of turret reach, prey under fire runs for a defended place | avionics: `hunter`, sim: `combat::flee`, `traffic::sightings` |
 | Fire control: track on a contact, gun lead | avionics: `fire_control` |
 | Collision warning: predicted path through the kernel, first impact (bodies, stations, gates, ships) | avionics: `collision` |
 | Radar contacts + transponders, the lock | sim: `contacts` |

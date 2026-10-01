@@ -123,6 +123,7 @@ impl Avionics {
             | ShipEvent::Hit { .. }
             | ShipEvent::Collided { .. }
             | ShipEvent::Aggressed { .. }
+            | ShipEvent::HyperdriveJammed { .. }
             | ShipEvent::WeaponsArming
             | ShipEvent::WeaponsHot
             | ShipEvent::WeaponsSafe => {}
@@ -344,7 +345,7 @@ impl Avionics {
     /// then carry on: the clearance and autopilot stay on through the jump.
     fn hyperjump(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
         let Some(c) = self.clearance.filter(|c| c.autopilot) else { return };
-        if !bus.ship().is_flying() || bus.ship().hyperdrive {
+        if !bus.ship().is_flying() || bus.ship().hyperdrive || bus.ship().hyper_jam > 0.0 {
             return;
         }
         let Some(at) = target_position(bus, c.target) else { return };

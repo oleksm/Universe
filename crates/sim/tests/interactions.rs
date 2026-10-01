@@ -156,21 +156,68 @@ fn a_docking_and_a_launch_share_the_corridor() {
     assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
 }
 
+/// A defended place in the home system (a station's or spaceport's turret,
+/// not a gate's: a ship there could drift through the ring): the turret,
+/// where it is and how it moves, and the way out from its body.
+fn a_turret(u: &mut Universe) -> (universe_sim::world::turrets::Turret, DVec3, DVec3, DVec3) {
+    let home = u.ship_system;
+    let (sys, pos) = positions(u);
+    let (t, at, v) = u
+        .world
+        .turret_motions(home)
+        .into_iter()
+        .find(|(t, _, _)| !matches!(t.facility, Facility::Gate(_)))
+        .expect("the home system has a defended station or port");
+    let _ = sys;
+    let out = (at - pos[t.body]).normalize();
+    (t, at, v, out)
+}
+
 #[test]
-fn pirates_leave_sheltered_ships_alone_and_hunt_in_the_open() {
-    for (out, hunts) in [(4_000.0, false), (30_000.0, true)] {
+fn pirates_leave_ships_under_the_guns_alone_and_hunt_in_the_open() {
+    use universe_sim::world::turrets::TURRET_RANGE;
+    for (out, hunts) in [(TURRET_RANGE * 0.5, false), (TURRET_RANGE + 25_000.0, true)] {
         let mut u = bench(2);
-        let (sys, pos) = positions(&mut u);
-        let station = sys.station().unwrap();
-        let f = StationFrame::new(&sys, station, u.world.time, &pos);
-        let side = f.axis().any_orthonormal_vector();
-        let prey = f.center + side * out;
-        place(&mut u, 0, prey + f.axis() * 8_000.0, f.velocity, prey);
-        place(&mut u, 1, prey, f.velocity, f.center);
+        let (_, at, v, side) = a_turret(&mut u);
+        let prey = at + side * out;
+        place(&mut u, 0, prey + side.any_orthonormal_vector() * 8_000.0, v, prey);
+        place(&mut u, 1, prey, v, at);
         u.crafts[0].avionics.pirate = true;
         run(&mut u, 5.0, |_| false);
-        assert_eq!(u.crafts[0].avionics.hunting.is_some(), hunts, "prey {out} m from the station");
+        assert_eq!(u.crafts[0].avionics.hunting.is_some(), hunts, "prey {out:.0} m from the turret");
     }
+}
+
+#[test]
+fn turrets_shoot_the_aggressor_and_spare_the_innocent() {
+    let mut u = bench(2);
+    let (_, at, v, side) = a_turret(&mut u);
+    place(&mut u, 0, at + side * 2_500.0, v, at);
+    place(&mut u, 1, at + side * 2_600.0 + side.any_orthonormal_vector() * 60.0, v, at);
+    u.crafts[0].ship.aggressed_until = u.world.time + 600.0;
+    let down = run(&mut u, 60.0, |u| !u.crafts[0].ship.is_flying());
+    assert!(down, "the aggressor is shot down (hull {:.2})", u.crafts[0].ship.hull);
+    assert!(u.crafts[1].ship.hull > 0.99, "the innocent untouched ({:.2})", u.crafts[1].ship.hull);
+    let kill = u.kills.last().expect("a kill");
+    assert!(kill.killer_name.starts_with("SAM TURRET"), "{}", kill.killer_name);
+}
+
+#[test]
+fn a_ship_under_fire_runs_for_the_guns() {
+    let mut u = bench(2);
+    // Well clear of the place's body (a ground port's planet would pull them down).
+    let (turret, at, v, side) = a_turret(&mut u);
+    let prey = at + side * 1_500_000.0;
+    place(&mut u, 0, prey + side.any_orthonormal_vector() * 6_000.0, v, prey);
+    place(&mut u, 1, prey, v, at);
+    u.crafts[0].avionics.pirate = true;
+    let hit = run(&mut u, 120.0, |u| u.crafts[1].ship.hull < 1.0);
+    assert!(hit, "the pirate strikes\n{}", incidents(&u));
+    let r = &u.crafts[1].avionics.route;
+    let heading = r.stops.get(r.next).map(|s| s.target);
+    let havens: Vec<_> = u.world.turret_motions(u.ship_system).into_iter().map(|(t, _, _)| t.facility).collect();
+    assert!(heading.is_some_and(|h| havens.contains(&h)), "heading for a defended place: {heading:?}, turret at {:?}", turret.facility);
+    assert!(r.active);
 }
 
 #[test]
@@ -190,3 +237,4 @@ fn the_recorder_files_a_head_on_collision_with_both_traces() {
     assert!(text.contains("COLLISION") && text.contains("closing"), "{text}");
     eprintln!("{}", u.recorder.incidents[0]);
 }
+

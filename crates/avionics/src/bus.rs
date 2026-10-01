@@ -37,6 +37,9 @@ pub trait Bus {
     /// ship at a time on its final run or launching): granted or not.
     fn request_corridor(&mut self, body: usize) -> bool;
 
+    /// The defence turrets of the ship's system (charted): where they are and how they move.
+    fn turrets(&mut self) -> Vec<(DVec3, DVec3)>;
+
     /// Give the devices new commands now; the physical events that followed.
     fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent>;
 
