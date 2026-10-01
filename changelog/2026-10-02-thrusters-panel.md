@@ -19,3 +19,6 @@ In the pilot's seat, **F7** opens a screen of the ship's thrusters:
 - Dev scenario `thrusters`.
 - The F-key help lists F7, and the throttle's help no longer says W launches (you lift off a
   deck now).
+
+**Findable:** the mode bar has an **F7 THRUST** cell, lit while the panel is open. Before, it was
+only in the F1 help.

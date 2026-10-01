@@ -1479,6 +1479,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         (key(Act::Shipyard), "SHIPYARD".into(), lamp(app.shipyard.is_some())),
         (key(Act::View), "VIEW".into(), Lamp::Off),
         ("TAB".into(), "WATCH".into(), Lamp::Off),
+        ("F7".into(), "THRUST".into(), lamp(app.show_thrusters)),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
     ];
     // Six to a row, more rows as it grows.
