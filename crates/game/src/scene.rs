@@ -569,6 +569,12 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
 /// guidance (landing, docking, gates, the follow programs): the plan, its
 /// reference's center now, the plan before (to ease from).
 pub fn guided_path(frame: &mut Frame, app: &App, plan: &Plan, center_now: DVec3, prev: Option<&Plan>, now: f64, ship: DVec3) {
+    guided_path_with(frame, app, plan, center_now, prev, now, ship, true);
+}
+
+/// `guided_path`, with its frames or (`frames` false) the line alone.
+#[allow(clippy::too_many_arguments)]
+pub fn guided_path_with(frame: &mut Frame, app: &App, plan: &Plan, center_now: DVec3, prev: Option<&Plan>, now: f64, ship: DVec3, frames: bool) {
     let new_place = plan.anchor(center_now, now);
     // Eased from the plan before, at the same moment of absolute time (so
     // rebuilds glide rather than jump).
@@ -592,7 +598,9 @@ pub fn guided_path(frame: &mut Frame, app: &App, plan: &Plan, center_now: DVec3,
         }
     }
 
-    app.guide.draw(frame, center_now, now, ship);
+    if frames {
+        app.guide.draw(frame, center_now, now, ship);
+    }
 }
 
 /// The guide frames: gates set in space along the planned route, fixed in

@@ -26,6 +26,7 @@ struct Standing {
     name: String,
     /// The anchor: where it is and how it moves.
     at: DVec3,
+    vel: DVec3,
     /// Where the program is taking us now.
     goal: DVec3,
     /// To go (m), and our closing speed toward the goal (m/s).
@@ -108,7 +109,7 @@ fn standing(app: &App) -> Option<Standing> {
         (Manoeuvre::Orbit(_), _) => usize::from(to_go < range * 0.15),
         _ => usize::from(to_go < range * 0.1 && rel.length() < 2.0),
     };
-    Some(Standing { follow, name, at, goal, to_go, closing, rock, step })
+    Some(Standing { follow, name, at, vel, goal, to_go, closing, rock, step })
 }
 
 /// An orbit's frames: one every this much of the way round.
@@ -196,6 +197,63 @@ pub fn plan(app: &App) -> Option<(universe_sim::Plan, Option<f64>)> {
     (points.len() >= 2).then(|| (universe_sim::Plan { start: app.now(), center: s.at, spin, points, arrives: true, holds: false }, even))
 }
 
+/// A target accelerating harder than this (m/s², beyond gravity) is too
+/// lively for a path to hold: the guide drops its frames and draws the line
+/// alone, each rebuild's line fading out behind the new one. Back to frames
+/// below `CALM`.
+const LIVELY: f64 = 1.0;
+const CALM: f64 = 0.5;
+/// How often a line is kept to fade (s), and how long it takes to go (s).
+const TRAIL_EVERY: f64 = 0.2;
+const TRAIL_FADE: f64 = 1.5;
+
+/// How lively the target is, and the fading lines (relative to the target,
+/// so they ride with it): kept across frames.
+#[derive(Default)]
+pub struct Liveliness {
+    /// The last velocity seen, and when (world time).
+    last: Option<(f64, DVec3)>,
+    /// Its acceleration beyond gravity (m/s²), smoothed.
+    pub accel: f64,
+    pub lively: bool,
+    trail: std::collections::VecDeque<(f64, Vec<DVec3>)>,
+}
+
+/// Once a frame (after `plan`): how lively the target is, and the line kept to fade.
+pub fn watch(app: &mut App) {
+    let Some(s) = standing(app) else {
+        app.liveliness = Liveliness::default();
+        return;
+    };
+    let (t, now) = (app.v.time, app.now());
+    let gravity = app.view.system.gravity(s.at, &app.view.positions);
+    let line: Option<Vec<DVec3>> = app.follow_plan.as_ref().map(|(plan, _)| plan.points.iter().map(|p| p.position - s.at).collect());
+    let l = &mut app.liveliness;
+    match l.last {
+        // (Velocities are the world's, a tick at a time.)
+        Some((t0, v0)) if t > t0 => {
+            let dt = t - t0;
+            let a = ((s.vel - v0) / dt - gravity).length();
+            let k = 1.0 - (-dt / 0.5).exp();
+            l.accel += (a - l.accel) * k;
+            l.last = Some((t, s.vel));
+        }
+        Some(_) => {}
+        None => l.last = Some((t, s.vel)),
+    }
+    l.lively = if l.lively { l.accel > CALM } else { l.accel > LIVELY };
+    l.trail.retain(|(born, _)| now - born < TRAIL_FADE);
+    if l.lively
+        && l.trail.back().is_none_or(|(born, _)| now - born >= TRAIL_EVERY)
+        && let Some(line) = line
+    {
+        l.trail.push_back((now, line));
+    }
+    if !l.lively {
+        l.trail.clear();
+    }
+}
+
 fn steps(m: Manoeuvre) -> &'static [&'static str] {
     match m {
         Manoeuvre::Surface(_) => &["CLOSE IN", "MATCH DRIFT", "ANCHOR"],
@@ -235,6 +293,9 @@ pub fn banner(frame: &mut Frame, app: &App) {
 pub fn lines(app: &App, lines: &mut Vec<(String, Color)>) {
     let Some(s) = standing(app) else { return };
     let label = s.follow.manoeuvre.label();
+    if app.liveliness.lively {
+        lines.push((format!("{} MANOEUVRING ({:.1} M/S2) - PATH ONLY", s.name, app.liveliness.accel), AMBER));
+    }
     lines.push((format!("{label} {} - {} TO GO, CLOSING {}  {} TO CANCEL", s.name, fmt::distance(s.to_go), fmt::speed(s.closing), crate::keys::key(crate::keys::Act::Cancel)), AMBER));
     if let Some((gap, drift, _, _)) = s.rock {
         let ready = gap < ANCHOR_REACH && drift < ANCHOR_SPEED;
@@ -252,9 +313,20 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let Some(s) = standing(app) else { return };
     let ship = app.view.ship_pos;
     let cam = frame.camera.position;
-    // The path and its frames, as every guide draws them.
+    // The path and its frames, as every guide draws them; a lively
+    // target's line alone, the lines before it fading out.
+    let lively = app.liveliness.lively;
     if let Some((plan, _)) = &app.follow_plan {
-        crate::scene::guided_path(frame, app, plan, s.at, None, app.now(), ship);
+        crate::scene::guided_path_with(frame, app, plan, s.at, None, app.now(), ship, !lively);
+    }
+    if lively {
+        let now = app.now();
+        for (born, line) in &app.liveliness.trail {
+            let fade = (1.0 - (now - born) / TRAIL_FADE).clamp(0.0, 1.0) as f32;
+            for w in line.windows(2) {
+                frame.line(s.at + w[0], s.at + w[1], PATH.scale(0.6 * fade));
+            }
+        }
     }
     // The goal: a diamond, a few pixels whatever the distance.
     let size = s.goal.distance(cam) * 0.012;

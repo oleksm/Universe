@@ -386,7 +386,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().set_nav_target(Some(NavTarget::Station(station)));
             app.engine.universe().follow(universe_sim::FollowKind::Orbit, None);
         }
-        "orbitship" | "orbitshipwatch" => {
+        "orbitship" | "orbitshipwatch" | "orbitshiplively" => {
             // 3 km off a settler cruising past the home station (its route
             // stopped, its engine on low), orbiting it at 1 km.
             app.mode = Mode::Pilot;
@@ -403,7 +403,8 @@ pub fn apply(app: &mut App, name: &str) {
             c.position = at + side * 3_000.0;
             c.velocity = f.velocity + f.axis() * 20.0;
             c.orientation = universe_sim::ship::facing(f.axis(), side);
-            c.throttle = 0.01;
+            // (Lively: burning hard, 3 m/s².)
+            c.throttle = if name == "orbitshiplively" { 0.1 } else { 0.01 };
             u.crafts[0].ship = c;
             u.crafts[0].system = home;
             u.pilots()[0].avionics.route.active = false;
