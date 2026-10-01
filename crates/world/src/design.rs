@@ -182,6 +182,79 @@ impl Design {
         }
     }
 
+    /// A design after hull `s` (a copy to change): its body's size and
+    /// tapers, its wings and fins, its slots, its drive nozzles, and where
+    /// its thrusters and masses sit — read off its shape, nodes and slots.
+    /// Close, not the same: this draws every body the one way.
+    pub fn after(s: &ClassSpec) -> Design {
+        use crate::ship::ThrusterRole;
+        let shape = s.shape();
+        let pts = &shape.mesh.points;
+        let body: Vec<DVec3> = shape.part_points.first().map_or_else(|| pts.clone(), |r| pts[r.clone()].to_vec());
+        let (lo, hi) = body.iter().fold((DVec3::splat(f64::INFINITY), DVec3::splat(f64::NEG_INFINITY)), |(a, b), p| (a.min(*p), b.max(*p)));
+        let (length, width, height) = ((hi.z - lo.z).max(4.0), (hi.x - lo.x).max(2.0), (hi.y - lo.y).max(2.0));
+        let mid = 0.5 * (lo.z + hi.z);
+        // How wide the body is near its nose and its tail, against its widest.
+        let width_near = |z: f64| body.iter().filter(|p| (p.z - z).abs() < length * 0.08).map(|p| p.x.abs()).fold(0.0, f64::max) * 2.0;
+        let share = |z: f64| ((z - mid) / length).clamp(-0.48, 0.48);
+        // Its other parts: wide and flat, wings; thin and tall, a fin.
+        let (mut wing_span, mut wing_sweep, mut fins) = (0.0f64, 0.0f64, false);
+        for r in shape.part_points.iter().skip(1) {
+            let part = &pts[r.clone()];
+            let (plo, phi) = part.iter().fold((DVec3::splat(f64::INFINITY), DVec3::splat(f64::NEG_INFINITY)), |(a, b), p| (a.min(*p), b.max(*p)));
+            if phi.x - plo.x < 1.0 {
+                fins = true;
+            } else {
+                wing_span = wing_span.max(phi.x.max(-plo.x) - width * 0.5);
+                let tip = part.iter().map(|p| p.x.abs()).fold(0.0, f64::max);
+                let tip_fore = part.iter().filter(|p| p.x.abs() > tip - 0.5).map(|p| p.z).fold(f64::INFINITY, f64::min);
+                let root_fore = part.iter().filter(|p| p.x.abs() < tip * 0.6).map(|p| p.z).fold(f64::INFINITY, f64::min);
+                if tip_fore.is_finite() && root_fore.is_finite() {
+                    wing_sweep = wing_sweep.max(tip_fore - root_fore);
+                }
+            }
+        }
+        let count = |k: SlotKind| s.slots.iter().filter(|sl| sl.kind == k).count() as u8;
+        let size = |k: SlotKind| s.slots.iter().filter(|sl| sl.kind == k).map(|sl| sl.size).max().unwrap_or(1);
+        let mount = |slot: &str| shape.node(&format!("mount_{slot}")).map(|n| share(n.at.z));
+        let mean = |k: SlotKind| {
+            let z: Vec<f64> = s.slots.iter().filter(|sl| sl.kind == k).filter_map(|sl| mount(&sl.name)).collect();
+            (!z.is_empty()).then(|| z.iter().sum::<f64>() / z.len() as f64)
+        };
+        let rcs: Vec<f64> = s.thrusters.iter().filter(|t| t.role == ThrusterRole::Rcs).map(|t| t.at.z).collect();
+        let lift: Vec<f64> = s.thrusters.iter().filter(|t| t.role == ThrusterRole::Lift).map(|t| t.at.z).collect();
+        let (fore, aft) = (rcs.iter().copied().fold(f64::INFINITY, f64::min), rcs.iter().copied().fold(f64::NEG_INFINITY, f64::max));
+        let d = Design::default();
+        let mut out = Design {
+            name: format!("COPY OF {}", s.name),
+            length,
+            width,
+            height,
+            nose: (width_near(lo.z) / width).clamp(0.15, 1.0),
+            tail: (width_near(hi.z) / width).clamp(0.4, 1.2),
+            wing_span: wing_span.clamp(0.0, 40.0),
+            wing_sweep: wing_sweep.clamp(0.0, 30.0),
+            fins,
+            class: size(SlotKind::Drive).clamp(1, 4),
+            racks: count(SlotKind::Cargo).min(3),
+            hardpoints: count(SlotKind::Hardpoint).min(3),
+            utility: count(SlotKind::Utility).min(2),
+            mains: (s.thrusters.iter().filter(|t| t.role == ThrusterRole::Main).count() as u8).clamp(1, 4),
+            quads_spread: if rcs.is_empty() { d.quads_spread } else { ((aft - fore) / 2.0 / length).clamp(0.1, 0.48) },
+            quads_at: if rcs.is_empty() { d.quads_at } else { share(0.5 * (fore + aft)) },
+            lift_at: if lift.is_empty() { d.lift_at } else { share(lift.iter().sum::<f64>() / lift.len() as f64) },
+            engines_at: mount("power").unwrap_or(d.engines_at),
+            tank_at: mean(SlotKind::Tank).unwrap_or(d.tank_at),
+            hold_at: mean(SlotKind::Cargo).unwrap_or(d.hold_at),
+            bridge_at: mount("computer").unwrap_or(d.bridge_at),
+        };
+        // (On the knobs' steps, within their bounds.)
+        for k in 0..KNOBS.len() {
+            out.turn(k, 0.0);
+        }
+        out
+    }
+
     /// The key its numbers make (the same design, the same hull).
     pub fn key(&self) -> String {
         let text = ron::to_string(self).unwrap_or_default();
@@ -457,6 +530,20 @@ mod tests {
         let back: crate::ship::Ship = ron::from_str(&json).unwrap();
         assert_eq!(back.class, h);
         assert_eq!(back.spec().hold_capacity, content().get(h).hold_capacity);
+    }
+
+    #[test]
+    fn a_copy_of_each_hull_comes_out_close_to_it() {
+        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.")) {
+            let d = Design::after(h);
+            let s = d.spec().unwrap_or_else(|e| panic!("{}: {e}", h.key));
+            let (a, b) = (h.shape().mesh.extent(), s.shape().mesh.extent());
+            let (la, lb) = (a.1.z - a.0.z, b.1.z - b.0.z);
+            let (wa, wb) = (a.1.x - a.0.x, b.1.x - b.0.x);
+            eprintln!("{:<16} length {la:.0} -> {lb:.0} m, span {wa:.0} -> {wb:.0} m, slots {} -> {}, drives {} -> {}", h.name, h.slots.len(), s.slots.len(), h.thrusters.iter().filter(|t| t.role == crate::ship::ThrusterRole::Main).count(), d.mains);
+            assert!((lb / la - 1.0).abs() < 0.15 && (wb / wa - 1.0).abs() < 0.25, "{}: its size", h.key);
+            assert_eq!(s.slots.iter().filter(|x| x.kind == SlotKind::Cargo).count(), h.slots.iter().filter(|x| x.kind == SlotKind::Cargo).count(), "{}: its racks", h.key);
+        }
     }
 
     #[test]

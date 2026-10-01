@@ -62,6 +62,8 @@ pub struct Shape {
     /// Its convex parts as solids (body, wings…): each the planes of its
     /// faces, `n·p ≤ d` inside (n unit, outward). For ship against ship.
     pub solids: Vec<Vec<(DVec3, f64)>>,
+    /// Each convex part's points in `mesh.points` (the body first).
+    pub part_points: Vec<std::ops::Range<usize>>,
 }
 
 impl Shape {
@@ -311,7 +313,8 @@ impl ShapeDef {
                 spheres.extend(fit_spheres(&part, SPHERE_SPACING));
             }
         }
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids })
+        let part_points = ranges.iter().map(|&(p0, p1, _, _)| p0..p1).collect();
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points })
     }
 }
 

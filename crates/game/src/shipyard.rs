@@ -310,6 +310,14 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         Page::Hulls => {
             step(&mut y.hull_pick, content().hulls.len());
             if input.pressed(KeyCode::Enter)
+                && shift
+                && let Some((_, s)) = content().hulls.iter().nth(y.hull_pick)
+            {
+                // A copy to change, on the design board.
+                y.page = Page::Design;
+                app.design = universe_sim::world::design::Design::after(s);
+                app.say(format!("{} ON THE DESIGN BOARD - CHANGE IT, THEN COMMISSION IT", app.design.name));
+            } else if input.pressed(KeyCode::Enter)
                 && let Some((h, s)) = content().hulls.iter().nth(y.hull_pick)
             {
                 // A plan from that hull, as it's sold.
@@ -457,7 +465,7 @@ fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
         yy += LINE;
     }
     yy += LINE * 0.5;
-    frame.text(Vec2::new(12.0, yy), "ENTER: PLAN FROM THIS HULL (BUILD IT FROM THE PLAN PAGE, DOCKED)", DIM);
+    frame.text(Vec2::new(12.0, yy), "ENTER: PLAN FROM THIS HULL   SHIFT+ENTER: COPY IT TO THE DESIGN BOARD", DIM);
     let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, 0.0), mounts: true, picked: None };
     let size = frame.size();
     let w = ((size.x - 36.0) / 2.0).min(260.0);
@@ -549,7 +557,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     // The keys, along the bottom.
     let keys = match y.page {
         Page::Plan => "UP/DOWN SLOT  LEFT/RIGHT MODULE  ENTER PUT IN THE PLAN  SHIFT+ENTER BUILD (DOCKED)  TAB HULLS",
-        Page::Hulls => "UP/DOWN HULL  ENTER PLAN FROM IT  TAB DESIGN",
+        Page::Hulls => "UP/DOWN HULL  ENTER PLAN FROM IT  SHIFT+ENTER COPY IT TO DESIGN YOUR OWN  TAB DESIGN",
         Page::Design => "UP/DOWN NUMBER  LEFT/RIGHT TURN (SHIFT x5)  ENTER ON COMMISSION  TAB PLANS",
         Page::Plans => "UP/DOWN PLAN  ENTER KEEP / LOAD  DELETE DROP  TAB PLAN",
     };

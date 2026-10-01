@@ -156,6 +156,13 @@ pub fn apply(app: &mut App, name: &str) {
             app.shipyard = crate::shipyard::Shipyard::planning(app, "hull.sprint", "tank", "tank.s1");
             crate::shipyard::build(app);
         }
+        "designcopy" => {
+            // The starting hull copied onto the design board.
+            app.mode = Mode::Pilot;
+            app.design = universe_sim::world::design::Design::after(universe_sim::world::ship::starter());
+            let y = crate::shipyard::Shipyard::designing(app, 0);
+            app.shipyard = Some(y);
+        }
         "designer" | "designerbad" => {
             // The design page ("designerbad": the heavy things all aft, the thrusters forward).
             app.mode = Mode::Pilot;
