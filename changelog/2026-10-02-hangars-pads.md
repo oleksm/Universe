@@ -23,3 +23,21 @@ ships (the player too) were left holding.
   still within their start-up wait.
 - Test: a long stay goes to the hangar after the turnaround, its pad is freed, and when the stay
   is up it gets a pad, comes out and leaves.
+
+## Taxiing; the hangar seen
+
+Ships used to vanish from their pads: the move into the hangar was instant, and the hangar
+couldn't be seen.
+
+- **Entering:** a ship taxis along the ground from its pad to the hangar at `TAXI_SPEED`
+  (15 m/s, half a minute or so), nose the way it goes, and is out of sight once inside.
+- **Leaving:** it rolls out of the hangar door, taxis to the pad traffic control gave it, and
+  lifts off from there (`Ship::taxi`, `World::taxi_step`).
+- **While taxiing:** it can't lift off, and traffic control leaves it out of the pads' count, so
+  the pad it left frees at once and the one it's heading for waits for it. The route autopilot
+  waits for the taxi to finish.
+- **The hangar is drawn** beside the pad grid: an 80 × 60 × 25 m frame with its door outlined on
+  the side facing the pads.
+- Test: the ship taxis off after its turnaround, its pad frees at once, it ends up inside; when
+  its stay is up it comes out and leaves. Dev scenario `taxiwatch` (looking down on a port from
+  1.2 km, settlers taxiing to its hangar).

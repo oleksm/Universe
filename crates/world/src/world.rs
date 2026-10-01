@@ -19,7 +19,7 @@ use crate::galaxy::{Galaxy, GALAXY_STARS};
 use crate::gate::{self, GateFrame};
 use crate::hyperdrive;
 use crate::network;
-use crate::ship::{upright, Controls, HyperdriveCommand, Ship, ShipCommands, ShipState, SHIP_RADIUS};
+use crate::ship::{upright, Controls, HyperdriveCommand, Ship, ShipCommands, ShipState, SHIP_RADIUS, TAXI_SPEED};
 use crate::station::{DOCKED_HEIGHT, STATION_SIZE};
 use crate::system::StarSystem;
 use crate::traffic::Facility;
@@ -309,45 +309,80 @@ impl World {
         }
     }
 
-    /// A move between a spaceport's pads and its hangar: in from the pad
-    /// it's landed on, or out onto pad `pad` (traffic control's to give; the
-    /// world sees only that it's a pad of the port). The ship stays landed,
-    /// set down in its new place.
+    /// A move between a spaceport's pads and its hangar: from the pad it's
+    /// landed on, it taxis into the hangar (and is in it, out of sight, once
+    /// there); from the hangar it rolls out of the door and taxis to pad
+    /// `pad` (traffic control's to give; the world sees only that it's a pad
+    /// of the port). See `taxi_step`.
     fn hangar_move(&self, ship: &mut Ship, system: usize, h: universe_protocol::HangarCommand, t: f64, events: &mut Vec<ShipEvent>) {
-        use crate::spaceport::{hangar_direction, pad_at, pad_direction, PADS};
+        use crate::spaceport::{hangar_direction, pad_at, PADS};
         use universe_protocol::HangarCommand;
         let ShipState::Landed { body, local_position, .. } = ship.state.clone() else {
             return events.push(ShipEvent::HangarRefused { why: "NOT LANDED".into() });
         };
+        if ship.taxi.is_some() {
+            return events.push(ShipEvent::HangarRefused { why: "TAXIING".into() });
+        }
         let sys = self.system(system);
-        let (port, dir) = match (h, ship.hangar) {
+        match (h, ship.hangar) {
             (HangarCommand::Enter, None) => {
                 let here = local_position.normalize_or_zero();
                 let Some(port) = (0..sys.spaceports.len()).find(|&p| sys.spaceports[p].body == body && pad_at(&sys, p, here).is_some()) else {
                     return events.push(ShipEvent::HangarRefused { why: "NOT ON A SPACEPORT'S PAD".into() });
                 };
-                (port, hangar_direction(&sys, port))
+                ship.taxi = Some(crate::ship::Taxi { port, pad: None });
             }
-            (HangarCommand::Leave { pad }, Some(port)) if pad < PADS && port < sys.spaceports.len() => (port, pad_direction(&sys, port, pad)),
-            (HangarCommand::Enter, Some(_)) => return events.push(ShipEvent::HangarRefused { why: "IN THE HANGAR ALREADY".into() }),
-            _ => return events.push(ShipEvent::HangarRefused { why: "NOT IN A HANGAR".into() }),
+            (HangarCommand::Leave { pad }, Some(port)) if pad < PADS && port < sys.spaceports.len() => {
+                // Out of the door, in sight again, and taxiing.
+                let dir = hangar_direction(&sys, port);
+                let b = &sys.bodies[body];
+                let local_position = dir * (b.surface_radius(dir) + SHIP_RADIUS);
+                let local_orientation = upright(dir, dir.any_orthonormal_vector());
+                let mut rigid = ship.rigid();
+                Weld { body, local_position, local_orientation }.place(&sys.bodies, t, &self.rails_at(system, t), &mut rigid);
+                ship.set_rigid(&rigid);
+                ship.state = ShipState::Landed { body, local_position, local_orientation };
+                ship.hangar = None;
+                ship.taxi = Some(crate::ship::Taxi { port, pad: Some(pad) });
+            }
+            (HangarCommand::Enter, Some(_)) => events.push(ShipEvent::HangarRefused { why: "IN THE HANGAR ALREADY".into() }),
+            _ => events.push(ShipEvent::HangarRefused { why: "NOT IN A HANGAR".into() }),
+        }
+    }
+
+    /// A taxiing ship, `dt` seconds on: along the ground toward the hangar
+    /// or its pad at `TAXI_SPEED`, nose the way it goes; there, into the
+    /// hangar (out of sight) or on the pad (ready to lift off).
+    fn taxi_step(&self, sys: &StarSystem, ship: &mut Ship, dt: f64, events: &mut Vec<ShipEvent>) {
+        use crate::spaceport::{hangar_direction, pad_direction};
+        let (Some(taxi), ShipState::Landed { body, local_position, local_orientation }) = (ship.taxi, ship.state.clone()) else { return };
+        let to = match taxi.pad {
+            Some(pad) => pad_direction(sys, taxi.port, pad),
+            None => hangar_direction(sys, taxi.port),
         };
         let b = &sys.bodies[body];
+        let here = local_position.normalize();
+        let left = here.angle_between(to);
+        let step = TAXI_SPEED * dt / b.rail.radius;
+        let name = crate::traffic::Facility::Spaceport(taxi.port).name(sys).to_string();
+        let (dir, arrived) = if left <= step {
+            (to, true)
+        } else {
+            let axis = here.cross(to).normalize_or(here.any_orthonormal_vector());
+            (DQuat::from_axis_angle(axis, step) * here, false)
+        };
+        let heading = (to - here).normalize_or(local_orientation * DVec3::NEG_Z);
+        let local_orientation = if arrived { local_orientation } else { upright(dir, heading) };
         let local_position = dir * (b.surface_radius(dir) + SHIP_RADIUS);
-        let local_orientation = upright(dir, dir.any_orthonormal_vector());
-        let mut rigid = ship.rigid();
-        Weld { body, local_position, local_orientation }.place(&sys.bodies, t, &self.rails_at(system, t), &mut rigid);
-        ship.set_rigid(&rigid);
         ship.state = ShipState::Landed { body, local_position, local_orientation };
-        let name = crate::traffic::Facility::Spaceport(port).name(&sys).to_string();
-        match h {
-            HangarCommand::Enter => {
-                ship.hangar = Some(port);
-                events.push(ShipEvent::EnteredHangar { port: name });
-            }
-            HangarCommand::Leave { pad } => {
-                ship.hangar = None;
-                events.push(ShipEvent::LeftHangar { port: name, pad });
+        if arrived {
+            ship.taxi = None;
+            match taxi.pad {
+                None => {
+                    ship.hangar = Some(taxi.port);
+                    events.push(ShipEvent::EnteredHangar { port: name });
+                }
+                Some(pad) => events.push(ShipEvent::LeftHangar { port: name, pad }),
             }
         }
     }
@@ -553,6 +588,12 @@ impl World {
         let b = &sys.bodies[weld.body];
         let rot = b.rotation(t);
         let positions = self.rails_at(system, t);
+        // Taxiing: on along the ground, then placed where it's got to.
+        self.taxi_step(sys, ship, real_dt * warp, events);
+        let weld = match ship.state {
+            ShipState::Landed { body, local_position, local_orientation } => Weld { body, local_position, local_orientation },
+            _ => weld,
+        };
 
         let mut rigid = ship.rigid();
         weld.place(&sys.bodies, t, &positions, &mut rigid);

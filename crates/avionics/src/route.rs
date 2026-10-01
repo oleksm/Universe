@@ -173,6 +173,10 @@ impl Avionics {
     fn hangar_step(&mut self, bus: &mut impl Bus, stop: Stop, events: &mut Vec<Event>) -> bool {
         let ship = bus.ship().clone();
         let now = bus.time();
+        // Taxiing (in or out): nothing to do but let it.
+        if ship.taxi.is_some() {
+            return true;
+        }
         let waited = now - self.route.hangar_ordered < 1.0;
         if let Some(port) = ship.hangar {
             // In the hangar: out when the stay is up.

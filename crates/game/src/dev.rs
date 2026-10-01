@@ -458,6 +458,44 @@ pub fn apply(app: &mut App, name: &str) {
             }
             u.set_nav_target(Some(NavTarget::Spaceport(port)));
         }
+        "taxiwatch" => {
+            // Landed at a port; a settler on the next pad over, a long stay
+            // begun: past its turnaround it taxis to the hangar. Seen from above.
+            let u = app.engine.universe();
+            let home = u.ship_system;
+            let port = sys.spaceports.iter().position(|p| p.body == planet).expect("spaceport on the station's planet");
+            u.ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 5);
+            // Facing the hangar.
+            if let ShipState::Landed { body, local_position, .. } = u.ship.state {
+                let here = local_position.normalize();
+                let hangar = universe_sim::world::spaceport::hangar_direction(&sys, port);
+                u.ship.state = ShipState::Landed { body, local_position, local_orientation: universe_sim::ship::upright(here, hangar - here) };
+            }
+            u.crafts[0].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 13);
+            u.crafts[0].system = home;
+            let station = sys.station().unwrap();
+            {
+                let mut pilots = u.pilots();
+                let r = &mut pilots[0].avionics.route;
+                r.stops = vec![universe_sim::avionics::route::Stop { system: home, target: NavTarget::Spaceport(port) }, universe_sim::avionics::route::Stop { system: home, target: NavTarget::Station(station) }];
+                r.next = 0;
+                r.active = true;
+                r.dwell_until = None;
+                r.stay = Some(400.0);
+            }
+            for _ in 0..60 * 80 {
+                u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            }
+            // Our ship 1.2 km over the port, nose down at the pads and the hangar.
+            let t = u.world.time;
+            let pos = u.world.rails_now(home);
+            let pad = PadFrame::new(&sys, port, t, &pos);
+            u.ship.state = ShipState::Flying;
+            u.ship.position = pad.pad + pad.up * 1_200.0;
+            u.ship.velocity = pad.frame_velocity(u.ship.position);
+            u.ship.orientation = universe_sim::ship::facing(-pad.up, pad.up.any_orthonormal_vector());
+            app.mode = Mode::Pilot;
+        }
         "sunclose" => {
             // A tenth of an AU from the star, facing it.
             app.mode = Mode::Pilot;

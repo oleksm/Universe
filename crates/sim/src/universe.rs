@@ -439,7 +439,7 @@ impl Universe {
         let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, self.player_status.clearance))
             .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, c.status.clearance)))
             // (In a hangar: on no pad, in no column.)
-            .filter(|(_, _, s, _)| (matches!(s.state, ShipState::Landed { .. }) && s.hangar.is_none()) || (s.is_flying() && !s.hyperdrive))
+            .filter(|(_, _, s, _)| (matches!(s.state, ShipState::Landed { .. }) && s.hangar.is_none() && s.taxi.is_none()) || (s.is_flying() && !s.hyperdrive))
             .map(|(id, system, s, clearance)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), clearance.map(|c| (c.target, c.phase))))
             .collect();
         let mut systems: std::collections::HashMap<usize, Seen> = std::collections::HashMap::new();

@@ -604,11 +604,14 @@ fn a_long_stay_at_a_spaceport_is_spent_in_its_hangar_and_the_pad_freed() {
     let held = |u: &Universe| (0..PADS).filter(|&k| u.atc.owners(home, port)[k] == Some(universe_sim::craft_id(0))).count();
     run(&mut u, 5.0, |_| false);
     assert_eq!(held(&u), 1, "on its pad");
-    // After the turnaround (time to trade): in the hangar, out of sight, the pad free.
-    let inside = run(&mut u, 70.0, |u| u.crafts[0].ship.hangar.is_some());
-    assert!(inside, "into the hangar");
+    // After the turnaround (time to trade): it taxis off, the pad freed at
+    // once; then in the hangar, out of sight.
+    let taxiing = run(&mut u, 70.0, |u| u.crafts[0].ship.taxi.is_some());
+    assert!(taxiing, "taxiing to the hangar");
     run(&mut u, 2.0, |_| false);
     assert_eq!(held(&u), 0, "its pad freed for others");
+    let inside = run(&mut u, 90.0, |u| u.crafts[0].ship.hangar.is_some());
+    assert!(inside, "into the hangar");
     assert!(matches!(u.crafts[0].ship.state, ShipState::Landed { .. }));
     // Its stay up: out onto a pad traffic control gives, and off.
     let gone = run(&mut u, 200.0, |u| u.crafts[0].ship.is_flying());

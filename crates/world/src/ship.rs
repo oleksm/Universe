@@ -325,6 +325,10 @@ pub struct Ship {
     /// `Landed`, parked at the hangar): see `spaceport::hangar`.
     #[serde(default)]
     pub hangar: Option<usize>,
+    /// Taxiing on the ground between a pad and a spaceport's hangar (see
+    /// `World::hangar_move`): out of the pads' count while it does.
+    #[serde(default)]
+    pub taxi: Option<Taxi>,
     /// The hull it's built as (stored by its content key).
     #[serde(default = "starting_hull")]
     pub class: Hull,
@@ -421,6 +425,7 @@ impl Ship {
             fuel: cobra().fuel_capacity,
             class: starting_hull(),
             hangar: None,
+            taxi: None,
             cargo: 0.0,
             excavator: false,
             hopper: 0.0,
@@ -623,6 +628,17 @@ impl Ship {
     }
 
 }
+
+/// A taxi on a spaceport's ground: into `port`'s hangar, or out to pad `pad`.
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Taxi {
+    pub port: usize,
+    /// None: into the hangar.
+    pub pad: Option<usize>,
+}
+
+/// How fast a ship taxis on the ground (m/s).
+pub const TAXI_SPEED: f64 = 15.0;
 
 /// How quickly the flight computer brings the turn to the rates asked (s),
 /// as far as the thrusters allow.

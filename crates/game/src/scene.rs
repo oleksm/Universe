@@ -871,6 +871,30 @@ fn spaceports(frame: &mut Frame, app: &App) {
         for k in 0..4 {
             frame.line(corners[k], corners[(k + 1) % 4], c.scale(0.6));
         }
+        // The hangar, beside the pads, its door toward them.
+        {
+            let d = rot * universe_sim::world::spaceport::hangar_direction(sys, i);
+            let base = center + d * (b.rail.radius + 2.0);
+            let toward = (up - d * up.dot(d)).normalize_or(e1);
+            let side = d.cross(toward).normalize();
+            let (w, depth, h) = (40.0, 30.0, 25.0);
+            let at = |x: f64, z: f64, y: f64| base + side * x + toward * z + d * y;
+            let hc = c.scale(0.8);
+            for &(y0, y1) in &[(0.0, 0.0), (h, h)] {
+                let ring = [at(-w, -depth, y0), at(w, -depth, y0), at(w, depth, y1), at(-w, depth, y1)];
+                for k in 0..4 {
+                    frame.line(ring[k], ring[(k + 1) % 4], hc);
+                }
+            }
+            for &(x, z) in &[(-w, -depth), (w, -depth), (w, depth), (-w, depth)] {
+                frame.line(at(x, z, 0.0), at(x, z, h), hc);
+            }
+            // The door, on the side facing the pads.
+            let door = [at(-22.0, depth, 0.0), at(-22.0, depth, 16.0), at(22.0, depth, 16.0), at(22.0, depth, 0.0)];
+            for k in 0..3 {
+                frame.line(door[k], door[k + 1], c);
+            }
+        }
         // The pads: ours bright, taken ones amber, free ones in the port's colour.
         let owners = if app.view.origin == app.v.ship_system { app.v.pads.get(i).copied().unwrap_or_default() } else { Default::default() };
         let ours = match app.v.avionics.clearance {
