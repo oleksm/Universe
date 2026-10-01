@@ -1019,7 +1019,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
         let a = i as f32 * std::f32::consts::TAU / 12.0 + 0.2;
         let len = if i % 3 == 0 { long } else { long * 0.45 };
         let d = Vec2::new(a.cos(), a.sin());
-        frame.hud_line2(p + d * disc, p + d * len, tint(0.12), tint(0.0));
+        frame.hud_line2(p + d * disc, p + d * len, tint(0.05), tint(0.0));
     }
 }
 
