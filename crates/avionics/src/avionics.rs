@@ -318,7 +318,7 @@ impl Avionics {
     pub fn toggle_autopilot(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
         if bus.ship().hyperdrive {
             if self.nav_target.is_none() && !self.hyper_autopilot {
-                events.push(Event::Refused { reason: "LOCK A NAV TARGET FIRST (M)".into() });
+                events.push(Event::Refused { reason: "LOCK A NAV TARGET FIRST".into() });
                 return;
             }
             self.hyper_autopilot = !self.hyper_autopilot;

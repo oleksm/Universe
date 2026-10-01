@@ -63,12 +63,15 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             crate::lock::draw(frame, app);
         }
     }
-    // Leave room for the phase banner across the top while docking/landing.
-    let top = if app.mode == Mode::Pilot && app.approach.is_some() { 22.0 } else { 4.0 };
+    let top = 4.0;
     // (Below the performance lines at the top right, which a long status line would run into.)
     let mut y = top + 4.0 * LINE;
     if app.mode == Mode::Pilot && app.v.crew.seated() {
         y = y.max(top + mode_bar(frame, app, Vec2::new(4.0, top)) + 4.0);
+    }
+    // And below a guidance banner, if one's up.
+    if app.approach.is_some() || app.v.avionics.following.is_some() {
+        y = y.max(banner_y(app) + GLYPH + 10.0);
     }
     match app.mode {
         Mode::Pilot if app.v.crew.seated() => action_grid(frame, app),
@@ -294,15 +297,15 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
         let c = if ready { HUD } else if s.gap < mining::ANCHOR_REACH { AMBER } else { DIM };
         let closing = app.following.as_ref().is_some_and(|f| matches!(f.0, universe_sim::avionics::follow::Manoeuvre::Surface(_)));
         let hint = if ready {
-            "  Y TO ANCHOR"
+            format!("  {} TO ANCHOR (MINING)", crate::keys::key(crate::keys::Act::Anchor))
         } else if closing {
-            "  CLOSING IN"
+            "  CLOSING IN".into()
         } else if s.gap < mining::ANCHOR_REACH {
-            "  MATCH ITS DRIFT"
+            "  MATCH ITS DRIFT".into()
         } else if app.v.avionics.rock_lock.is_some() {
-            "  3 TO APPROACH"
+            format!("  {} TO ZERO IN (MINING)", crate::keys::key(crate::keys::Act::ZeroIn))
         } else {
-            "  T TO LOCK (MINING MODE: 1)"
+            format!("  {} TO LOCK", crate::keys::key(crate::keys::Act::Lock))
         };
         lines.push((format!("RANGE {}  DRIFT {:.2} M/S{hint}", fmt::distance(s.gap.max(0.0)), s.drift), c));
     }
@@ -327,7 +330,7 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
     if anchored {
         let left = (s.mass - app.v.dug - app.ship.hopper).max(0.0);
         let hopper: String = (0..10).map(|i| if (i as f64) < app.ship.hopper / 100.0 - 0.01 { '#' } else { '.' }).collect();
-        let state = if app.ship.excavator { "DIGGING" } else { "H TO DIG" };
+        let state = if app.ship.excavator { "DIGGING".to_string() } else { format!("{} TO EXCAVATE", crate::keys::key(crate::keys::Act::Excavate)) };
         lines.push((format!("{state}  HOPPER [{hopper}]  HOLD {:.1}/{:.0} T  ROCK LEFT {}", app.ship.cargo / 1000.0, universe_sim::world::ship::HOLD_CAPACITY / 1000.0, fmt::tonnes(left)), if app.ship.excavator { AMBER } else { HUD }));
         if app.ship.excavator {
             // The flow, and when the next tonne goes into the hold.
@@ -659,6 +662,11 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
 
 /// Top-center banner: the steps of the docking or landing procedure, the
 /// current one highlighted, and the time to arrival from the flight plan.
+/// Where a guidance banner goes: just below the mode bar.
+pub fn banner_y(app: &App) -> f32 {
+    if app.mode == Mode::Pilot && app.v.crew.seated() { 4.0 + 2.0 * 16.0 + 4.0 } else { 4.0 }
+}
+
 fn phase_banner(frame: &mut Frame, app: &App) {
     use universe_sim::Phase;
     let Some(approach) = &app.approach else { return };
@@ -705,7 +713,7 @@ fn phase_banner(frame: &mut Frame, app: &App) {
     let full = format!("{}      {eta}", parts.join(sep));
     let size = frame.size();
     let mut x = ((size.x - text_size(&full).x) / 2.0).floor();
-    let y = 4.0;
+    let y = banner_y(app);
     frame.hud_rect(Vec2::new(x - 6.0, y - 3.0), Vec2::new(text_size(&full).x + 12.0, GLYPH + 6.0), PANEL);
     for (i, part) in parts.iter().enumerate() {
         let c = match i.cmp(&current) {

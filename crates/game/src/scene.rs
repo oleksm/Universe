@@ -51,9 +51,8 @@ pub fn draw(frame: &mut Frame, app: &App) {
         crate::mining::draw_scene(frame, app);
     }
     universe_prof::time("draw/scene/rigs", || crate::rig::draw(frame, app));
-    if app.mode == Mode::Pilot {
-        crate::followguide::draw(frame, app);
-    }
+    // (In the observer's view too: guidance shows wherever it's on.)
+    crate::followguide::draw(frame, app);
     universe_prof::time("draw/scene/spaceports", || spaceports(frame, app));
     if app.view.origin == app.v.ship_system {
         match &app.approach {
@@ -545,10 +544,16 @@ fn plan_sample(plan: &Plan, abs: f64) -> Option<DVec3> {
 fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
     // The plan may be a few frames old: carry it along with its reference.
     let Some(center_now) = plan_reference(app) else { return };
+    guided_path(frame, app, plan, center_now, app.plan_prev.as_deref().filter(|_| app.plan_blend < 1.0), now, ship);
+}
+
+/// A planned path and its guide frames, drawn the one way for every kind of
+/// guidance (landing, docking, gates, the follow programs): the plan, its
+/// reference's center now, the plan before (to ease from).
+pub fn guided_path(frame: &mut Frame, app: &App, plan: &Plan, center_now: DVec3, prev: Option<&Plan>, now: f64, ship: DVec3) {
     let new_place = plan.anchor(center_now, now);
     // Eased from the plan before, at the same moment of absolute time (so
     // rebuilds glide rather than jump).
-    let prev = app.plan_prev.as_ref().filter(|_| app.plan_blend < 1.0);
     let w = app.plan_blend as f64;
     let blend = |p: DVec3, abs: f64| -> DVec3 {
         let now_pos = new_place(p);
@@ -578,9 +583,17 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
 /// together near it. Where the ship is doesn't move them, so holding still
 /// they hold still, and flying on you go through them. A new plan moves a
 /// frame only if its spot moved by more than a quarter of its spacing.
+/// What a guide's frames lead to: a clearance's target, or what a follow
+/// program follows (the same frames, one way of drawing guidance).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum GuideKey {
+    Clearance(universe_sim::NavTarget),
+    Follow(universe_sim::avionics::follow::Anchor),
+}
+
 #[derive(Default)]
 pub struct Guide {
-    target: Option<universe_sim::NavTarget>,
+    target: Option<GuideKey>,
     spin: DVec3,
     /// By rung on the ladder of distances from the goal.
     frames: std::collections::BTreeMap<u32, GuideFrame>,
@@ -619,7 +632,7 @@ impl Guide {
     }
 
     /// A new plan for `target`.
-    pub fn update(&mut self, plan: &Plan, target: universe_sim::NavTarget) {
+    pub fn update(&mut self, plan: &Plan, target: GuideKey) {
         if self.target != Some(target) {
             self.clear();
             self.target = Some(target);

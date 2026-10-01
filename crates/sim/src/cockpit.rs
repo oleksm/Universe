@@ -407,7 +407,7 @@ impl Cockpit {
             }
             (None, Some(t @ (NavTarget::Station(_) | NavTarget::Gate(_) | NavTarget::Asteroid(_)))) => Anchor::Place(t),
             _ => {
-                self.refuse("FOLLOW: LOCK A SHIP (T), OR A STATION, GATE OR ASTEROID (M)");
+                self.refuse("FOLLOW: LOCK A SHIP, OR A STATION, GATE OR ASTEROID, FIRST");
                 return;
             }
         };

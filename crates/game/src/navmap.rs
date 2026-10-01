@@ -191,7 +191,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             app.engine.send(universe_sim::Command::SetNavTarget(Some(e.target)));
             return false;
         }
-        app.say("LOCK TARGETS IN THIS SYSTEM - OR ADD TO THE ROUTE (A)".into());
+        app.say(format!("LOCK TARGETS IN THIS SYSTEM - OR ADD TO THE ROUTE ({})", crate::keys::key(crate::keys::Act::AddStop)));
     }
     if crate::keys::pressed(input, crate::keys::Act::Map) || input.pressed(KeyCode::Escape) {
         return false;
@@ -237,7 +237,8 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     // The route.
     y += line;
     let r = &app.v.avionics.route;
-    let state = if r.active { "FLYING - K TO STOP" } else if r.stops.is_empty() { "EMPTY" } else { "K IN FLIGHT TO START" };
+    let auto = crate::keys::key(crate::keys::Act::Autopilot);
+    let state = if r.active { format!("FLYING - {auto} TO STOP") } else if r.stops.is_empty() { "EMPTY".into() } else { format!("{auto} IN FLIGHT TO START") };
     frame.text(Vec2::new(16.0, y), &format!("ROUTE ({} STOPS) - {state}", r.stops.len()), TEXT);
     y += line;
     for i in 0..r.stops.len() {

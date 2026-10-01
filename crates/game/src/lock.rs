@@ -10,6 +10,7 @@ use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{Color, Context, Frame};
 use universe_sim::Command;
 
+use crate::keys::{key, Act};
 use crate::{fmt, App};
 
 /// Held longer than this (s), T lists instead of locking what's ahead.
@@ -191,8 +192,11 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         let off = |c: &Candidate| nose.angle_between(c.at - ship);
         match candidates(app).into_iter().filter(|c| off(c) < CONE).min_by(|a, b| off(a).total_cmp(&off(b))) {
             Some(c) => lock(app, c.pick),
-            None if app.mining.on => app.say(if app.mining.prospect.is_some() { "NO PROSPECTED ROCK AHEAD - HOLD T FOR THE LIST".into() } else { "PROSPECT FIRST (2)".into() }),
-            None => app.say("NOTHING AHEAD - HOLD T FOR THE LIST".into()),
+            None if app.mining.on => {
+                let text = if app.mining.prospect.is_some() { format!("NO PROSPECTED ROCK AHEAD - HOLD {} FOR THE LIST", key(Act::Lock)) } else { format!("PROSPECT FIRST ({})", key(Act::Prospect)) };
+                app.say(text)
+            }
+            None => app.say(format!("NOTHING AHEAD - HOLD {} FOR THE LIST", key(Act::Lock))),
         }
     } else {
         // Lock what's in the beam around the crosshair (the ring shows it for a moment).
@@ -226,9 +230,9 @@ pub fn draw(frame: &mut Frame, app: &App) {
         crate::hud::ShipMode::Combat => "SHIPS",
         crate::hud::ShipMode::Nav => "IN REACH",
     };
-    frame.text(pos, &format!("LOCK {what} - MOUSE/WHEEL, LET GO OF T"), LIST);
+    frame.text(pos, &format!("LOCK {what} - MOUSE/WHEEL, LET GO OF {}", key(Act::Lock)), LIST);
     if list.is_empty() {
-        frame.text(pos + Vec2::new(0.0, 2.0 * line), if app.mining.on { "NOTHING PROSPECTED - 2 TO PROSPECT" } else { "NOTHING IN REACH" }, LIST.scale(0.6));
+        frame.text(pos + Vec2::new(0.0, 2.0 * line), &if app.mining.on { format!("NOTHING PROSPECTED - {} TO PROSPECT", key(Act::Prospect)) } else { "NOTHING IN REACH".into() }, LIST.scale(0.6));
         return;
     }
     let now = locked(app);

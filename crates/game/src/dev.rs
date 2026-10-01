@@ -228,7 +228,7 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
-        "mining" | "cargo" | "prospect" | "closing" | "closing10" | "minemode" | "pulse" | "picklist" => {
+        "mining" | "cargo" | "prospect" | "closing" | "closing10" | "closingwatch" | "minemode" | "pulse" | "picklist" => {
             // By a rubble fragment of a home field, drifting with its
             // surface: "prospect" 300 m off it; "mining" anchored 15 m off
             // and digging for half a minute.
@@ -248,7 +248,7 @@ pub fn apply(app: &mut App, name: &str) {
             let up = (sun + sun.any_orthonormal_vector() * 0.8).normalize();
             let gap = match name {
                 "mining" | "cargo" => 15.0,
-                "closing" | "closing10" => 800.0,
+                "closing" | "closing10" | "closingwatch" => 800.0,
                 _ => 300.0,
             };
             let at = pos[i] + up * (b.surface_radius(b.rotation(t).inverse() * up) + universe_sim::world::ship::SHIP_RADIUS + gap);
@@ -274,12 +274,18 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
             let u = app.engine.universe();
-            if name == "closing" || name == "closing10" {
+            if matches!(name, "closing" | "closing10" | "closingwatch") {
                 // Closing on it, ninety (or ten) seconds on.
                 let f = (0..sys.fields.len()).find(|&f| sys.field_bodies(f).len() == bodies.len() && sys.field_rocks(f).any(|j| j == i)).unwrap();
                 u.close_on(f, i);
                 for _ in 0..60 * if name == "closing" { 90 } else { 10 } {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+                if name == "closingwatch" {
+                    app.mode = Mode::Observer;
+                    app.observer.focus = Focus::Ship;
+                    app.observer.distance = 400.0;
+                    app.observer.pitch = 0.4;
                 }
             }
             if matches!(name, "mining" | "cargo") {

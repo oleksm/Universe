@@ -120,6 +120,8 @@ pub struct App {
     pub plan_prev: Option<Arc<universe_sim::Plan>>,
     /// The guide frames, set in space along the plan (see `scene::Guide`).
     pub guide: crate::scene::Guide,
+    /// A follow program's way, as a plan (see `followguide`), rebuilt every frame.
+    pub follow_plan: Option<universe_sim::Plan>,
     pub plan_blend: f32,
     /// Real seconds since the plan was rebuilt, its serial, and how long
     /// building it took (real seconds) and how often it's rebuilt.
@@ -241,6 +243,7 @@ impl App {
             plan_every: 0.1,
             plan_prev: None,
             guide: Default::default(),
+            follow_plan: None,
             plan_blend: 1.0,
             plan_cost: 0.0,
             sim_ms: 0.0,
@@ -609,21 +612,21 @@ impl App {
                 Event::Ship(ShipEvent::HyperdriveJammed { seconds }) => format!("HYPERDRIVE JAMMED BY HITS - {seconds:.0} S"),
                 Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\n{}", self.target_hint()),
                 Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Dock }) => {
-                    format!("DOCKING GRANTED - {target}\nFOLLOW THE GATES, OR K FOR AUTO")
+                    format!("DOCKING GRANTED - {target}\nFOLLOW THE GATES, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
                 }
                 Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Land }) => {
-                    format!("LANDING GRANTED - {target}\nFOLLOW THE PATH, OR K FOR AUTO")
+                    format!("LANDING GRANTED - {target}\nFOLLOW THE PATH, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
                 }
                 Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Transit }) => {
-                    format!("TRANSIT GRANTED - {target}\nFLY THROUGH THE RING UNDER 300 M/S, OR K FOR AUTO")
+                    format!("TRANSIT GRANTED - {target}\nFLY THROUGH THE RING UNDER 300 M/S, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
                 }
                 Event::Ship(ShipEvent::GateEntered { to }) => format!("GATE TRANSIT TO {to}"),
                 Event::Ship(ShipEvent::GateArrived { system }) => format!("WELCOME TO THE {system} SYSTEM"),
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),
                 Event::Refused { reason } => reason,
-                Event::Following { what: Some((how, range)) } if how == "CLOSE ON" => format!("CLOSING ON THE ROCK, {range:.0} M OFF ITS SURFACE\nY TO ANCHOR WHEN IN REACH, X TO LET GO"),
-                Event::Following { what: Some((how, range)) } => format!("{how} {:.0} KM - N/U AGAIN: NEXT RANGE, X: RELEASE", range / 1000.0),
+                Event::Following { what: Some((how, range)) } if how == "CLOSE ON" => format!("CLOSING ON THE ROCK, {range:.0} M OFF ITS SURFACE\n{} TO ANCHOR WHEN IN REACH, {} TO LET GO", crate::keys::key(crate::keys::Act::Anchor), crate::keys::key(crate::keys::Act::LetGo)),
+                Event::Following { what: Some((how, range)) } => format!("{how} {:.0} KM - {}/{} AGAIN: NEXT RANGE, {}: LET GO", range / 1000.0, crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Orbit), crate::keys::key(crate::keys::Act::LetGo)),
                 Event::Following { what: None } => "FOLLOW OFF".into(),
                 Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE CANCELLED".into(),
                 Event::Traffic(TrafficEvent::PadAssigned { pad }) => format!("LAND ON PAD {}", pad + 1),
@@ -663,7 +666,7 @@ impl App {
                 Event::Crew(CrewEvent::SteppedOutside { body }) => format!("STEPPED OUT ONTO {body}"),
                 Event::Crew(CrewEvent::CameAboard) => "BACK ABOARD".into(),
                 Event::Crew(CrewEvent::HatchRefused { reason }) => format!("HATCH LOCKED - {reason}"),
-                Event::Ship(ShipEvent::Anchored { body }) => format!("ANCHORED TO {body}\nH TO DIG, Y TO LET GO"),
+                Event::Ship(ShipEvent::Anchored { body }) => format!("ANCHORED TO {body}\n{} TO EXCAVATE, {} TO UNANCHOR", crate::keys::key(crate::keys::Act::Excavate), crate::keys::key(crate::keys::Act::Anchor)),
                 Event::Ship(ShipEvent::AnchorFailed { why }) => format!("ANCHOR - {why}"),
                 Event::Ship(ShipEvent::AnchorReleased) => "ANCHOR RELEASED".into(),
                 Event::Ship(ShipEvent::ExcavatorStopped { why }) => format!("EXCAVATOR STOPPED - {why}"),
@@ -681,10 +684,10 @@ impl App {
     }
 
     /// What to do about the nav target.
-    fn target_hint(&self) -> &'static str {
+    fn target_hint(&self) -> String {
         match self.v.avionics.nav_target {
-            Some(universe_sim::NavTarget::Asteroid(_)) => "N TO KEEP STATION, U TO ORBIT",
-            _ => "R TO REQUEST CLEARANCE",
+            Some(universe_sim::NavTarget::Asteroid(_)) => format!("{} TO KEEP STATION, {} TO ORBIT", crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Orbit)),
+            _ => format!("{} FOR CLEARANCE", crate::keys::key(crate::keys::Act::Clearance)),
         }
     }
 
@@ -915,7 +918,8 @@ impl Game for App {
             self.plan_serial = v.plan_serial;
             self.plan_age = 0.0;
             match (&self.plan, v.avionics.clearance) {
-                (Some(plan), Some(c)) => self.guide.update(plan, c.target),
+                (Some(plan), Some(c)) => self.guide.update(plan, scene::GuideKey::Clearance(c.target)),
+                _ if v.avionics.following.is_some() => {}
                 _ => self.guide.clear(),
             }
         }
@@ -948,6 +952,11 @@ impl Game for App {
         // view's are a tick off it).
         self.nav_marker = self.nav_marker_now();
         self.approach = self.approach_now();
+        // A follow program's way, and its frames on the same guide.
+        self.follow_plan = followguide::plan(self);
+        if let (Some(p), Some(f)) = (&self.follow_plan, self.v.avionics.following) {
+            self.guide.update(p, scene::GuideKey::Follow(f.anchor));
+        }
         // The turrets in view, where they are at the moment drawn (from the charts).
         let (origin, t) = (self.view.origin, self.now());
         let sys = self.view.system.clone();

@@ -249,9 +249,9 @@ pub fn draw_hud(frame: &mut Frame, app: &App) {
         return;
     }
     let title = match &app.mining.prospect {
-        None => "MINING - 2 TO PROSPECT".to_string(),
+        None => format!("MINING - {} TO PROSPECT", crate::keys::key(crate::keys::Act::Prospect)),
         Some(p) if p.age < PULSE_SECS => format!("PROSPECTING... {}", fmt::distance(p.reach())),
-        Some(_) => format!("PROSPECT: {} ROCKS - T LOCKS (HOLD: LIST)", list.len()),
+        Some(_) => format!("PROSPECT: {} ROCKS - {} LOCKS (HOLD: LIST)", list.len(), crate::keys::key(crate::keys::Act::Lock)),
     };
     let lines: Vec<(String, Color)> = list
         .iter()

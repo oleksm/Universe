@@ -1,8 +1,9 @@
 //! Guidance for the follow programs (keep at range, orbit, close on a rock),
-//! like the landing and docking guides: a phase banner with what's to go,
-//! the numbers, and in the view the path to where the program is taking us
-//! — the hold point and the range shell, the orbit's circle, or the spot on
-//! the rock where the anchor will reach.
+//! drawn the way the landing and docking guides are: the path the program
+//! takes as a plan, with the same guide frames along it (see
+//! `scene::Guide`, `scene::guided_path`); a phase banner with what's to go;
+//! the numbers; and what's particular to each — the range shell, the
+//! orbit's circle, the anchor's reach on the rock.
 
 use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{text_size, Color, Frame, GLYPH};
@@ -106,9 +107,50 @@ fn standing(app: &App) -> Option<Standing> {
     Some(Standing { follow, name, at, goal, to_go, closing, rock, step })
 }
 
+/// The way the program takes us, as a plan (from now, relative to the
+/// anchor as it is now): straight to the goal, and for an orbit on round
+/// the circle. On a rock it turns with the rock, so its frames stay over
+/// the same ground.
+pub fn plan(app: &App) -> Option<universe_sim::Plan> {
+    use universe_engine::glam::DQuat;
+    use universe_sim::avionics::plan::{Action, PlanPoint};
+    let s = standing(app)?;
+    let ship = app.view.ship_pos;
+    let mut path = vec![ship];
+    let n = 24;
+    for k in 1..=n {
+        path.push(ship.lerp(s.goal, k as f64 / n as f64));
+    }
+    if let Manoeuvre::Orbit(r) = s.follow.manoeuvre {
+        // A third of the way round, the way it goes.
+        let axis = s.follow.axis.unwrap_or(DVec3::Y);
+        let out = (s.goal - s.at).normalize_or(axis.any_orthonormal_vector());
+        for k in 1..=48 {
+            path.push(s.at + DQuat::from_axis_angle(axis, k as f64 / 48.0 * std::f64::consts::TAU / 3.0) * out * r);
+        }
+    }
+    let spin = match s.follow.anchor {
+        Anchor::Rock { field, body } => app.view.system.field_bodies(field).get(body).map_or(DVec3::ZERO, |b| b.angular_velocity()),
+        _ => DVec3::ZERO,
+    };
+    let speed = s.closing.abs().max(5.0);
+    let mut along = 0.0;
+    let mut points = Vec::with_capacity(path.len());
+    for (i, &p) in path.iter().enumerate() {
+        if i > 0 {
+            along += path[i - 1].distance(p);
+        }
+        let next = path.get(i + 1).copied().unwrap_or(p + (p - path[i.saturating_sub(1)]));
+        let dir = (next - p).normalize_or(DVec3::NEG_Z);
+        let facing = DQuat::from_rotation_arc(DVec3::NEG_Z, dir);
+        points.push(PlanPoint { time: along / speed, position: p, orientation: facing, aim: facing, action: Action::Thrusters, phase: universe_sim::Phase::Approach });
+    }
+    Some(universe_sim::Plan { start: app.now(), center: s.at, spin, points, arrives: true, holds: false })
+}
+
 fn steps(m: Manoeuvre) -> &'static [&'static str] {
     match m {
-        Manoeuvre::Surface(_) => &["CLOSE IN", "MATCH DRIFT", "ANCHOR (Y)"],
+        Manoeuvre::Surface(_) => &["CLOSE IN", "MATCH DRIFT", "ANCHOR"],
         Manoeuvre::Orbit(_) => &["JOIN ORBIT", "ORBIT"],
         Manoeuvre::KeepAt(_) => &["CLOSE TO RANGE", "HOLD"],
     }
@@ -125,7 +167,7 @@ pub fn banner(frame: &mut Frame, app: &App) {
     let full = format!("{}: {}      {} TO GO  {eta}", s.name, parts.join("  >  "), fmt::distance(s.to_go));
     let size = frame.size();
     let mut x = ((size.x - text_size(&full).x) / 2.0).floor();
-    let y = 22.0;
+    let y = crate::hud::banner_y(app);
     frame.hud_rect(Vec2::new(x - 6.0, y - 3.0), Vec2::new(text_size(&full).x + 12.0, GLYPH + 6.0), PANEL);
     x = frame.text(Vec2::new(x, y), &format!("{}: ", s.name), DIM.scale(1.6)).x;
     for (i, part) in parts.iter().enumerate() {
@@ -145,12 +187,12 @@ pub fn banner(frame: &mut Frame, app: &App) {
 pub fn lines(app: &App, lines: &mut Vec<(String, Color)>) {
     let Some(s) = standing(app) else { return };
     let label = s.follow.manoeuvre.label();
-    lines.push((format!("{label} {} - {} TO GO, CLOSING {}  X TO LET GO", s.name, fmt::distance(s.to_go), fmt::speed(s.closing)), AMBER));
+    lines.push((format!("{label} {} - {} TO GO, CLOSING {}  {} TO LET GO", s.name, fmt::distance(s.to_go), fmt::speed(s.closing), crate::keys::key(crate::keys::Act::LetGo)), AMBER));
     if let Some((gap, drift, _, _)) = s.rock {
         let ready = gap < ANCHOR_REACH && drift < ANCHOR_SPEED;
         let c = if ready { OK } else { AMBER };
         lines.push((
-            format!("SURFACE {}  DRIFT {drift:.2} M/S (ANCHOR: WITHIN {:.0} M, UNDER {:.1} M/S){}", fmt::distance(gap.max(0.0)), ANCHOR_REACH, ANCHOR_SPEED, if ready { "  Y TO ANCHOR" } else { "" }),
+            format!("SURFACE {}  DRIFT {drift:.2} M/S (ANCHOR: WITHIN {:.0} M, UNDER {:.1} M/S){}", fmt::distance(gap.max(0.0)), ANCHOR_REACH, ANCHOR_SPEED, if ready { format!("  {} TO ANCHOR", crate::keys::key(crate::keys::Act::Anchor)) } else { String::new() }),
             c,
         ));
     }
@@ -162,11 +204,9 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let Some(s) = standing(app) else { return };
     let ship = app.view.ship_pos;
     let cam = frame.camera.position;
-    // The path: dashes from us to the goal.
-    let n = 24;
-    for k in (0..n).step_by(2) {
-        let (a, b) = (ship.lerp(s.goal, k as f64 / n as f64), ship.lerp(s.goal, (k + 1) as f64 / n as f64));
-        frame.line(a, b, PATH.scale(0.8));
+    // The path and its frames, as every guide draws them.
+    if let Some(plan) = &app.follow_plan {
+        crate::scene::guided_path(frame, app, plan, s.at, None, app.now(), ship);
     }
     // The goal: a diamond, a few pixels whatever the distance.
     let size = s.goal.distance(cam) * 0.012;
