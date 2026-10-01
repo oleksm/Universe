@@ -12,19 +12,16 @@ use std::sync::{Arc, Mutex};
 
 use glam::{DQuat, DVec3};
 use universe_physics::integrate::FINE_STEP;
-use universe_physics::{integrate, Driver, Ephemeris, Fact, Feature, Response, RigidBody, Span, Weld};
+use universe_physics::{integrate, Driver, Ephemeris, Fact, Response, RigidBody, Span, Weld};
 
-use crate::damage;
 use crate::events::ShipEvent;
 use crate::galaxy::{Galaxy, GALAXY_STARS};
 use crate::gate::{self, GateFrame};
 use crate::hyperdrive;
-use crate::names::star_name;
 use crate::network;
 use crate::ship::{upright, Controls, HyperdriveCommand, Ship, ShipCommands, ShipState, SHIP_RADIUS};
-use crate::spaceport;
-use crate::station::{self, DOCKED_HEIGHT, STATION_SIZE};
-use crate::system::{BodyKind, StarSystem};
+use crate::station::{DOCKED_HEIGHT, STATION_SIZE};
+use crate::system::StarSystem;
 use crate::traffic::Facility;
 use crate::units::LIGHT_YEAR;
 use crate::goods::Item;
@@ -58,6 +55,8 @@ pub struct World {
     ephemerides: Mutex<HashMap<usize, (f64, Arc<Ephemeris>)>>,
     /// Body positions per system at the last two moments asked for: see `rails_at`.
     rails: Mutex<HashMap<usize, [RailsAt; 2]>>,
+    /// Each system's contact rules, as their owners registered them (see `rules`).
+    rules: Mutex<HashMap<usize, Arc<crate::rules::Rules>>>,
     /// While ships step side by side: what they'll look up, gathered first
     /// and read without locks (see `freeze`).
     frozen: Option<Frozen>,
@@ -90,6 +89,7 @@ struct Frozen {
     rails: HashMap<(usize, u64), Arc<Vec<DVec3>>>,
     ephemerides: HashMap<(usize, u64), Arc<Ephemeris>>,
     turrets: HashMap<usize, Arc<Vec<crate::turrets::Turret>>>,
+    rules: HashMap<usize, Arc<crate::rules::Rules>>,
 }
 
 /// Lock a cache (a poisoned one is still good: caches hold no invariants).
@@ -120,6 +120,7 @@ impl World {
             neighbours: Default::default(),
             ephemerides: Default::default(),
             rails: Default::default(),
+            rules: Default::default(),
             frozen: None,
             slugs: Vec::new(),
             beams: Vec::new(),
@@ -287,9 +288,23 @@ impl World {
             }
             f.ephemerides.insert((i, t0.to_bits()), self.ephemeris(&sys, t0));
             f.turrets.insert(i, self.turrets_of(i));
+            f.rules.insert(i, self.rules_of(i));
             f.systems.insert(i, sys);
         }
         self.frozen = Some(f);
+    }
+
+    /// The contact rules of `system` (see `rules`), registered on first look.
+    pub fn rules_of(&self, system: usize) -> Arc<crate::rules::Rules> {
+        if let Some(r) = self.frozen.as_ref().and_then(|f| f.rules.get(&system)) {
+            return r.clone();
+        }
+        if let Some(r) = lock(&self.rules).get(&system) {
+            return r.clone();
+        }
+        let r = Arc::new(crate::structures::rules(&self.galaxy, &self.system(system)));
+        lock(&self.rules).insert(system, r.clone());
+        r
     }
 
     /// Back to the locked caches (see `freeze`).
@@ -466,13 +481,9 @@ impl World {
         }
         let local_orientation = rot.inverse() * ship.orientation;
         ship.state = ShipState::Landed { body: weld.body, local_position: weld.local_position, local_orientation };
-        let offset = rot * weld.local_position;
-
-        if b.kind == BodyKind::Station {
-            station::launch(sys, ship, weld.body, t, &positions, events);
-            return result;
-        }
-        spaceport::lift_off(ship, offset.normalize(), events);
+        // Let go, if the structure's release says so (its owner's rule).
+        let rules = self.rules_of(system);
+        crate::rules::release(&rules, sys, weld.body, weld.local_position, ship, t, &positions, events);
         result
     }
 
@@ -511,50 +522,17 @@ impl World {
         let physics = if powered { FINE_STEP } else { f64::INFINITY };
         let span = Span { t: *clock, dt, max_h: physics, contact_step: FINE_STEP };
         let mut rigid = ship.rigid();
-        let mut devices = Devices::new(&mut *ship, &mut *events);
+        let rules = self.rules_of(system);
+        let mut devices = Devices::new(&mut *ship, &rules, &mut *events);
         let mut positions = Vec::with_capacity(sys.bodies.len());
         let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
         ship.set_rigid(&rigid);
         *clock = out.time;
         if let Some(fact) = out.fact {
-            self.react(out.time, &positions, sys, ship, system, fact, events);
+            // What it touched decides, by its owner's rule.
+            crate::rules::apply(&rules, sys, system, ship, &fact, out.time, &positions, events);
         }
         StepResult { simulated: out.simulated, warp_limited: out.limited }
-    }
-
-    /// A flight step stopped on a physical fact: what it means for the ship.
-    #[allow(clippy::too_many_arguments)]
-    fn react(&self, t: f64, positions: &[DVec3], sys: &StarSystem, ship: &mut Ship, system: usize, fact: Fact, events: &mut Vec<ShipEvent>) {
-        match fact {
-            Fact::Trigger { body, .. } => self.enter_gate(t, positions, sys, ship, system, body, events),
-            Fact::Contact(c) => match c.feature {
-                Feature::Surface { .. } => spaceport::touch_down(sys, ship, &c, t, events),
-                // The station: its docking slot, or (too fast for a bump) its hull.
-                Feature::Hull | Feature::CutOut(_) => station::contact(sys, ship, &c, t, positions, events),
-                Feature::Ring => damage::destroy(ship, &sys.bodies[c.body].name, events),
-            },
-        }
-    }
-
-    /// Through a gate's opening: the gate device starts the transit to the
-    /// linked system, unless the ship is going too fast for it.
-    #[allow(clippy::too_many_arguments)]
-    fn enter_gate(&self, t: f64, positions: &[DVec3], sys: &StarSystem, ship: &mut Ship, system: usize, gate: usize, events: &mut Vec<ShipEvent>) {
-        let b = &sys.bodies[gate];
-        let frame = GateFrame::new(sys, gate, t, positions);
-        let to = b.link.unwrap_or(system);
-        match gate::enter(&frame, ship, to, system) {
-            Err(speed) => {
-                events.push(ShipEvent::GateTooFast { speed });
-                damage::destroy(ship, &b.name, events);
-            }
-            Ok(transit) => {
-                ship.state = transit;
-                ship.rcs = DVec3::ZERO;
-                ship.throttle = 0.0;
-                events.push(ShipEvent::GateEntered { to: star_name(self.galaxy.stars[to].seed) });
-            }
-        }
     }
 
     /// Come out of the gate in system `to` that leads back to `from`, with the
@@ -674,15 +652,16 @@ impl World {
 /// `universe_physics::simulate`.)
 pub struct Devices<'a> {
     ship: &'a mut Ship,
+    rules: &'a crate::rules::Rules,
     events: &'a mut Vec<ShipEvent>,
 }
 
 impl<'a> Devices<'a> {
-    /// `ship`'s devices; what they do goes to `events`. The kernel's body
-    /// stands for the ship's motion (see `Ship::rigid`/`set_rigid`); the
-    /// ship keeps the device settings.
-    pub fn new(ship: &'a mut Ship, events: &'a mut Vec<ShipEvent>) -> Self {
-        Self { ship, events }
+    /// `ship`'s devices, among parts with `rules`; what they do goes to
+    /// `events`. The kernel's body stands for the ship's motion (see
+    /// `Ship::rigid`/`set_rigid`); the ship keeps the device settings.
+    pub fn new(ship: &'a mut Ship, rules: &'a crate::rules::Rules, events: &'a mut Vec<ShipEvent>) -> Self {
+        Self { ship, rules, events }
     }
 }
 
@@ -696,8 +675,8 @@ impl Driver for Devices<'_> {
 
     fn respond(&mut self, fact: &Fact, _: &RigidBody) -> Response {
         match fact {
-            // A gentle scrape on a station's hull: bounce off and keep flying.
-            Fact::Contact(c) if station::bounces(c) => {
+            // A part that bounces gentle contact (its rule): off it, and keep flying.
+            Fact::Contact(c) if self.rules.bounces(c.body, crate::rules::Part::of(c.feature), c.relative_velocity.length()) => {
                 self.events.push(ShipEvent::Bumped);
                 Response::Bounce { restitution: 0.4, separation: 0.5, push: 2.0 }
             }

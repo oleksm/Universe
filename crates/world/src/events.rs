@@ -9,6 +9,8 @@ pub enum ShipEvent {
     Landed { body: String, station: bool },
     /// Came to rest on a spaceport's pad.
     LandedAtPort { port: String },
+    /// A contact rule fired (see `rules`): whose, and what came of it.
+    RuleFired { rule: String, outcome: String },
     TookOff,
     Launched { station: String },
     /// Gentle scrape against a station hull.

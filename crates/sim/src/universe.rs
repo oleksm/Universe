@@ -484,7 +484,8 @@ impl Universe {
     /// autopilot would do it.
     pub fn plan(&mut self) -> Option<Plan> {
         let sys = self.ship_system();
-        self.avionics.plan(&sys, &self.ship, self.world.time)
+        let rules = self.world.rules_of(self.ship_system);
+        self.avionics.plan(&sys, &rules, &self.ship, self.world.time)
     }
 
     /// Docking guidance only (convenience for tests and tools).

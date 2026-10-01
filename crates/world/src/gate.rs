@@ -8,7 +8,7 @@
 use glam::{DQuat, DVec3};
 use universe_physics::{Frame, Relative, RigidBody, Ring};
 
-use crate::ship::{Ship, ShipState, SHIP_RADIUS};
+use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
 
 /// Radius of the ring's centerline (m); the opening is a little smaller.
@@ -54,25 +54,6 @@ impl GateFrame {
         let h = (p - self.center).dot(self.axis());
         (if h >= 0.0 { 1.0 } else { -1.0 }, h.abs())
     }
-}
-
-/// The gate device, on passing through the opening of the gate at `frame`
-/// (which leads from system `from` to `to`): the transit state carrying the
-/// ship's motion relative to the gate, or the speed that was too fast for it.
-pub fn enter(frame: &GateFrame, ship: &Ship, to: usize, from: usize) -> Result<ShipState, f64> {
-    let rel = ship.velocity - frame.velocity;
-    if rel.length() > MAX_TRANSIT_SPEED {
-        return Err(rel.length());
-    }
-    let local = Relative::of(&frame.frame(), &ship.rigid());
-    Ok(ShipState::Transit {
-        to,
-        from,
-        remaining: TRANSIT_TIME,
-        local_velocity: local.velocity,
-        local_offset: DVec3::new(local.position.x, 0.0, local.position.z),
-        local_orientation: local.orientation,
-    })
 }
 
 /// Out of the paired gate at `frame`: relocated to its frame with the motion

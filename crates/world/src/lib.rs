@@ -27,7 +27,9 @@ pub mod network;
 pub mod rng;
 pub mod ship;
 pub mod spaceport;
+pub mod rules;
 pub mod station;
+pub mod structures;
 pub mod system;
 pub mod terrain;
 #[cfg(test)]

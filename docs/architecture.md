@@ -389,6 +389,8 @@ ship's pose directly, like tests do — then render.
 | Atmospheres (exponential air on Terran worlds, turning with them), exact quadratic drag in the integrator, Sutton–Graves heating | physics: `atmosphere`, `integrate` |
 | Hull skin temperature: re-entry heating vs radiation, burning past the limit | world: `heat` |
 | Planetshine: the nearest planet's day side lights the shade (`Reflector`, view factor) | engine: `frame` |
+| Contact rules as data: lock (slot / ground, with what it says by zone), transit, bounce, wreck; releases (eject, lift-off); every firing told (`RuleFired`) | world: `rules` |
+| The rules each structure's owner registers (stations, worlds and their ports, gates) — to move into the services (R4) | world: `structures` |
 | Ship-to-ship collisions (kernel `pairs` sweep + world bounce/damage rules) | physics: `pairs`, world: `collisions` |
 | Flight recorder: every ship's last 15 s, incidents with traces | sim: `recorder` |
 | Radar (sweep, blips) | world: `radar` |

@@ -6,11 +6,8 @@
 //! a ship has to roll with it.
 
 use glam::{DMat3, DQuat, DVec3};
-use universe_physics::{Contact, CutOut, Feature, Frame, Polytope};
+use universe_physics::{CutOut, Frame, Polytope};
 
-use crate::damage;
-use crate::events::ShipEvent;
-use crate::ship::{Ship, ShipState};
 use crate::system::StarSystem;
 
 /// Distance from the station center to its square faces (m). Also the render scale.
@@ -99,67 +96,11 @@ pub fn hull() -> Polytope {
     Polytope::cuboctahedron(STATION_SIZE).with_cut_out(CutOut { half_x: SLOT_HALF.0, half_z: SLOT_HALF.1, floor: DOCKED_DEPTH })
 }
 
-/// Hull contact gentle enough to bounce off instead of being destroyed.
-pub fn bounces(contact: &Contact) -> bool {
-    contact.feature == Feature::Hull && contact.relative_velocity.length() < BUMP_SPEED
-}
-
-/// The docking port: reaching the slot's floor slowly and lined up with the
-/// slot docks; anything else there is a crash. `roll_error` is the ship's
-/// (see `StationFrame::roll_error`).
-pub fn docks(contact: &Contact, roll_error: f64) -> bool {
-    matches!(contact.feature, Feature::CutOut(_)) && contact.relative_velocity.length() < MAX_DOCK_SPEED && roll_error < MAX_ROLL_ERROR
-}
-
-/// The docking port, on reaching the station's slot or hull: docks if the
-/// port takes the ship (see `docks`), else the ship is destroyed.
-pub fn contact(sys: &StarSystem, ship: &mut Ship, c: &Contact, t: f64, positions: &[DVec3], events: &mut Vec<ShipEvent>) {
-    let frame = StationFrame::new(sys, c.body, t, positions);
-    if docks(c, frame.roll_error(ship.orientation)) {
-        dock(sys, ship, c.body, &frame, events);
-    } else {
-        damage::destroy(ship, &sys.bodies[c.body].name, events);
-    }
-}
-
-/// Held in the slot, lined up with it, engines off.
-fn dock(sys: &StarSystem, ship: &mut Ship, station: usize, frame: &StationFrame, events: &mut Vec<ShipEvent>) {
-    let rot = frame.rotation;
-    let orientation = frame.docking_orientation(ship.orientation);
-    ship.orientation = orientation;
-    ship.throttle = 0.0;
-    ship.rcs = DVec3::ZERO;
-    ship.angular_velocity = DVec3::ZERO;
-    ship.state = ShipState::Landed {
-        body: station,
-        local_position: DVec3::Y * STATION_SIZE * DOCKED_HEIGHT,
-        local_orientation: rot.inverse() * orientation,
-    };
-    events.push(ShipEvent::Landed { body: sys.bodies[station].name.clone(), station: true });
-}
-
-/// The docking port's launch, for a docked ship whose engine or thrusters
-/// are commanded on: released from the slot and shot out along the axis,
-/// nose first, at 40 m/s relative to the station. Returns whether it launched.
-pub fn launch(sys: &StarSystem, ship: &mut Ship, station: usize, t: f64, positions: &[DVec3], events: &mut Vec<ShipEvent>) -> bool {
-    if ship.throttle <= 0.05 && ship.rcs.length() <= 0.1 {
-        return false;
-    }
-    let frame = StationFrame::new(sys, station, t, positions);
-    let axis = frame.axis();
-    let out = frame.docking_orientation(ship.orientation) * DQuat::from_rotation_y(std::f64::consts::PI);
-    ship.orientation = out;
-    ship.position = frame.on_axis(STATION_SIZE + 150.0);
-    ship.velocity = frame.velocity + axis * 40.0;
-    ship.angular_velocity = DVec3::ZERO;
-    ship.state = ShipState::Flying;
-    events.push(ShipEvent::Launched { station: sys.bodies[station].name.clone() });
-    true
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::events::ShipEvent;
+    use crate::ship::ShipState;
     use crate::testkit::Probe;
 
     fn frame_now(p: &mut Probe, station: usize) -> StationFrame {

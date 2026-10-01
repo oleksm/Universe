@@ -133,6 +133,7 @@ impl Avionics {
             | ShipEvent::Collided { .. }
             | ShipEvent::Aggressed { .. }
             | ShipEvent::HyperdriveJammed { .. }
+            | ShipEvent::RuleFired { .. }
             | ShipEvent::WeaponsArming
             | ShipEvent::WeaponsHot
             | ShipEvent::WeaponsSafe => {}
@@ -426,12 +427,12 @@ impl Avionics {
     /// The flight plan to the cleared target: what to do from here, as the
     /// autopilot would do it (see `plan`). None unless flying, and not in
     /// hyperdrive.
-    pub fn plan(&self, sys: &StarSystem, ship: &Ship, t: f64) -> Option<Plan> {
+    pub fn plan(&self, sys: &StarSystem, rules: &universe_world::rules::Rules, ship: &Ship, t: f64) -> Option<Plan> {
         let c = self.clearance?;
         if !ship.is_flying() || ship.hyperdrive {
             return None;
         }
-        Some(plan::plan(sys, ship, c.target, c.phase, c.pad, t))
+        Some(plan::plan(sys, rules, ship, c.target, c.phase, c.pad, t))
     }
 }
 

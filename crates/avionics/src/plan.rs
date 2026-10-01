@@ -19,7 +19,7 @@ use universe_physics::integrate::FINE_STEP;
 use universe_physics::{simulate, Ephemeris, Fact, Span};
 use universe_world::ship::{Ship, ShipState, SHIP_RADIUS};
 use universe_world::station::STATION_SIZE;
-use universe_world::{gate as gate_device, spaceport, station};
+use universe_world::rules::Rules;
 use universe_world::{Devices, GateFrame, StarSystem, StationFrame};
 
 use crate::avionics::Avionics;
@@ -102,7 +102,7 @@ const FAR_STEP: f64 = 10.0;
 
 /// Plan from the ship's current state toward `target`, the autopilot being
 /// in `phase`, at world time `now`.
-pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, pad: PadSlot, now: f64) -> Plan {
+pub fn plan(sys: &StarSystem, rules: &Rules, ship: &Ship, target: NavTarget, phase: Phase, pad: PadSlot, now: f64) -> Plan {
     let mut ship = ship.clone();
     // The copy's avionics: only the autopilot, flying to the target.
     let mut avionics = Avionics { clearance: Some(Clearance { target, autopilot: true, phase, pad }), ..Avionics::default() };
@@ -152,7 +152,7 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, pad:
         if let Some(fact) = stopped {
             // The copy touched something: arrived, or (it shouldn't, but show
             // it honestly) hit it.
-            out.arrives = arrived(sys, &mut ship, target, &fact, t, &positions);
+            out.arrives = arrived(sys, rules, &mut ship, target, &fact, t, &positions);
             break;
         }
         if out.points.len() >= MAX_POINTS || t - now >= HORIZON {
@@ -191,7 +191,7 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, pad:
             }
             let rigid = ship.rigid();
             events.clear();
-            let mut devices = Devices::new(&mut ship, &mut events);
+            let mut devices = Devices::new(&mut ship, rules, &mut events);
             let snapshot = if far { None } else { ephemeris.as_ref().map(|(_, e)| e) };
             let (copy, outcome) = simulate(&sys.bodies, snapshot, &rigid, Span { t, dt: step, max_h, contact_step: FINE_STEP }, &mut devices);
             ship.set_rigid(&copy);
@@ -224,24 +224,26 @@ fn progress(sys: &StarSystem, ship: &Ship, target: NavTarget, pad: PadSlot, t: f
 }
 
 /// Whether the world would take the copy in at the target on `fact` (at
-/// `t`, bodies at `positions`): docked by the station's port, landed on the
-/// pad, or let through by the gate. The copy is left as the world leaves it.
-fn arrived(sys: &StarSystem, ship: &mut Ship, target: NavTarget, fact: &Fact, t: f64, positions: &[DVec3]) -> bool {
+/// `t`, bodies at `positions`), by the target's own rule: docked, landed on
+/// the pad, or let through the gate. The copy is left as the world leaves it.
+fn arrived(sys: &StarSystem, rules: &Rules, ship: &mut Ship, target: NavTarget, fact: &Fact, t: f64, positions: &[DVec3]) -> bool {
     let mut events = Vec::new();
+    let body = match fact {
+        Fact::Contact(c) => c.body,
+        Fact::Trigger { body, .. } => *body,
+    };
+    let ours = match target {
+        NavTarget::Station(s) | NavTarget::Gate(s) => body == s,
+        NavTarget::Spaceport(p) => body == sys.spaceports[p].body,
+    };
+    if !ours {
+        return false;
+    }
+    universe_world::rules::apply(rules, sys, sys.index, ship, fact, t, positions, &mut events);
     match (target, fact) {
-        (NavTarget::Station(s), Fact::Contact(c)) if c.body == s => {
-            station::contact(sys, ship, c, t, positions, &mut events);
-            matches!(ship.state, ShipState::Landed { .. })
-        }
-        (NavTarget::Spaceport(p), Fact::Contact(c)) if c.body == sys.spaceports[p].body => {
-            spaceport::touch_down(sys, ship, c, t, &mut events);
-            matches!(ship.state, ShipState::Landed { .. }) && sys.port_at(c.body, c.local) == Some(p)
-        }
-        (NavTarget::Gate(g), Fact::Trigger { body, .. }) if *body == g => {
-            let frame = GateFrame::new(sys, g, t, positions);
-            gate_device::enter(&frame, ship, sys.index, sys.index).is_ok()
-        }
-        _ => false,
+        (NavTarget::Spaceport(p), Fact::Contact(c)) => matches!(ship.state, ShipState::Landed { .. }) && sys.port_at(c.body, c.local) == Some(p),
+        (NavTarget::Gate(_), _) => matches!(ship.state, ShipState::Transit { .. }),
+        _ => matches!(ship.state, ShipState::Landed { .. }),
     }
 }
 
@@ -265,7 +267,7 @@ mod tests {
         place(&sys, &mut ship, world.time, &positions);
         let target = target(&sys);
         let mut avionics = Avionics { clearance: Some(Clearance { target, autopilot: true, phase: Phase::Approach, pad: PadSlot::Center }), ..Avionics::default() };
-        let plan = avionics.plan(&sys, &ship, world.time).expect("flying, not in hyperdrive");
+        let plan = avionics.plan(&sys, &world.rules_of(system), &ship, world.time).expect("flying, not in hyperdrive");
         let start = world.time;
         // As the avionics fly it: the autopilot's say once a tick (here 0.05 s,
         // the planner's control step), held through the world's step.
