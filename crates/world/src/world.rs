@@ -871,6 +871,51 @@ mod tests {
     }
 
     #[test]
+    fn what_the_jets_show_is_what_moves_the_ship() {
+        // Deep space (gravity a ten-thousandth of the pushes here), flying.
+        let mut p = Probe::new(42);
+        p.ship.position = DVec3::new(0.0, 5.0 * AU, 0.0);
+        p.ship.velocity = DVec3::ZERO;
+        let dt = 1.0 / 60.0;
+        let mut checked = 0;
+        // A strafe, the lift, the drive at full with a turn under way.
+        for (throttle, rcs, turn) in [(0.0, DVec3::X, Controls::default()), (0.0, DVec3::Y, Controls::default()), (1.0, DVec3::ZERO, Controls { yaw: 0.5, ..Default::default() })] {
+            for _ in 0..30 {
+                // (The centre of mass as the step began: the drives set then.)
+                let (v0, w0, fuel0, com) = (p.ship.velocity, p.ship.angular_velocity, p.ship.fuel, p.ship.centre_of_mass());
+                let c = ShipCommands { throttle, rcs, turn: Some(turn), ..p.ship.holding() };
+                p.world.step_ship(&mut p.ship, &mut p.system, &c, dt, 1.0, &mut p.events);
+                let s = p.ship.spec();
+                // What the jets show, nozzle by nozzle, adds up to the push and turn applied…
+                let (mut force, mut torque) = (DVec3::ZERO, DVec3::ZERO);
+                for (t, &u) in s.thrusters.iter().zip(&p.ship.jets) {
+                    let f = t.push * t.thrust * u;
+                    force += f;
+                    torque += (t.at - com).cross(f);
+                }
+                let (f, q) = p.ship.applied;
+                assert!((force - f).length() <= 1e-6 * f.length().max(1.0), "{force} vs {f}");
+                assert!((torque - q).length() <= 1e-6 * q.length().max(1.0), "{torque} vs {q}");
+                assert!(p.ship.jets.iter().any(|&u| u > 0.02), "something fires");
+                // …the ship's velocity changes by that push over its mass…
+                let dv = p.ship.velocity - v0;
+                let expected = p.ship.orientation * force / p.ship.mass() * dt;
+                assert!((dv - expected).length() < 0.02 * expected.length() + 1e-6, "dv {dv} vs {expected}");
+                // …its spin by that turn against its inertia (no faster than the turn asked)…
+                let dw = p.ship.angular_velocity - w0;
+                let alpha = p.ship.inertia().inverse() * torque * dt;
+                assert!(dw.length() <= alpha.length() * 1.02 + 1e-9, "spun {dw} on a turn of {alpha}");
+                // …and it burns the fuel they show.
+                let burned = fuel0 - p.ship.fuel;
+                let shown: f64 = s.thrusters.iter().zip(&p.ship.jets).map(|(t, &u)| t.thrust * u).sum::<f64>() / crate::ship::EXHAUST_VELOCITY * dt;
+                assert!((burned - shown).abs() < 0.02 * shown + 1e-9, "burned {burned} kg, shown {shown}");
+                checked += 1;
+            }
+        }
+        assert_eq!(checked, 90);
+    }
+
+    #[test]
     fn the_drives_burn_fuel_and_a_dry_tank_gives_no_thrust() {
         let mut p = Probe::new(42);
         p.ship.position = DVec3::new(0.0, 5.0 * AU, 0.0);

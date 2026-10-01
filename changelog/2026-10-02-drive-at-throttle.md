@@ -36,3 +36,15 @@ Tests:
   translation thrusters under 2% of the push, the lift's leftover under a fifth;
 - full throttle: both drives at full, no turn;
 - the fuel burned: the drive's and a little more (under 10%).
+
+**What shows is what pushes** (test `what_the_jets_show_is_what_moves_the_ship`):
+- A ship in deep space is flown through a strafe, the lift and full throttle with a turn under
+  way, 90 steps.
+- Every step, each nozzle's level (what the F7 panel and the plumes show), times its rated
+  thrust along its push, at its place, adds up exactly to the force and torque applied.
+- The ship's velocity changes by that force over its mass (within 2%).
+- Its spin changes by no more than that torque against its inertia.
+- The fuel burned is what those levels burn.
+- One path all the way: the allocator writes the levels (`Ship::jets`) and their sum
+  (`Ship::applied`) together; the kernel moves the ship by `applied` every substep
+  (`Ship::thrust`); the fuel burns by the levels; the panel and the plumes draw the levels.
