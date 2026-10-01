@@ -128,20 +128,24 @@ fn fair_game(ship: &Ship, now: f64) -> bool {
 
 impl crate::world::World {
     /// The turrets of `system`, and where they are and how they move now.
-    pub fn turret_motions(&mut self, system: usize) -> Vec<(Turret, DVec3, DVec3)> {
+    pub fn turret_motions(&self, system: usize) -> Vec<(Turret, DVec3, DVec3)> {
+        self.turret_motions_at(system, self.time)
+    }
+
+    /// The turrets of `system` at time `t`.
+    pub fn turret_motions_at(&self, system: usize, t: f64) -> Vec<(Turret, DVec3, DVec3)> {
         let sys = self.system(system);
         let list = self.turrets_of(system);
-        let mut positions = Vec::new();
-        sys.positions(self.time, &mut positions);
-        list.iter().map(|t| {
-            let (p, v) = t.motion(&sys, self.time, &positions);
-            (t.clone(), p, v)
+        let positions = self.rails_at(system, t);
+        list.iter().map(|tu| {
+            let (p, v) = tu.motion(&sys, t, &positions);
+            (tu.clone(), p, v)
         }).collect()
     }
 
     /// Is `point` in `system` covered by a turret (within its reach, and
     /// `margin` more)?
-    pub fn covered(&mut self, system: usize, point: DVec3, margin: f64) -> bool {
+    pub fn covered(&self, system: usize, point: DVec3, margin: f64) -> bool {
         self.turret_motions(system).iter().any(|(_, p, _)| p.distance(point) < TURRET_RANGE + margin)
     }
 
@@ -195,13 +199,13 @@ impl crate::world::World {
         }
     }
 
-    fn turrets_of(&mut self, system: usize) -> std::sync::Arc<Vec<Turret>> {
-        if let Some(t) = self.turrets.get(&system) {
+    fn turrets_of(&self, system: usize) -> std::sync::Arc<Vec<Turret>> {
+        if let Some(t) = self.turrets.lock().unwrap_or_else(|e| e.into_inner()).get(&system) {
             return t.clone();
         }
         let sys = self.system(system);
         let t = std::sync::Arc::new(turrets(self.galaxy.seed, system, &sys));
-        self.turrets.insert(system, t.clone());
+        self.turrets.lock().unwrap_or_else(|e| e.into_inner()).insert(system, t.clone());
         t
     }
 }

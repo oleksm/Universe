@@ -8,7 +8,7 @@
 //! commands.
 
 use std::collections::HashMap;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use glam::{DQuat, DVec3};
 use universe_physics::integrate::FINE_STEP;
@@ -78,15 +78,15 @@ pub struct World {
     pub home_system: usize,
     /// Gate links between star systems (galaxy indices).
     pub gate_links: Vec<(usize, usize)>,
-    systems: HashMap<usize, Arc<StarSystem>>,
+    // Caches, filled on first use, shared by every ship (behind locks, so
+    // ships can step side by side on several threads):
+    systems: Mutex<HashMap<usize, Arc<StarSystem>>>,
     /// Nearest stars of each system visited (see `NEIGHBOURS`).
-    neighbours: HashMap<usize, Arc<[usize]>>,
+    neighbours: Mutex<HashMap<usize, Arc<[usize]>>>,
     /// Body snapshots per system for the current moment, shared by every ship there.
-    ephemerides: HashMap<usize, (f64, Arc<Ephemeris>)>,
-    /// Body positions per system at one moment (the last asked for), shared
-    /// by everyone there: see `rails_now`.
-    rails: HashMap<usize, [RailsAt; 2]>,
-    positions: Vec<DVec3>,
+    ephemerides: Mutex<HashMap<usize, (f64, Arc<Ephemeris>)>>,
+    /// Body positions per system at the last two moments asked for: see `rails_at`.
+    rails: Mutex<HashMap<usize, [RailsAt; 2]>>,
     /// Slugs in flight (see `weapons`).
     pub slugs: Vec<Slug>,
     /// Laser beams fired in the last combat phase.
@@ -101,10 +101,21 @@ pub struct World {
     /// Traffic control: pads and corridors (see `pads`).
     pub traffic: crate::pads::TrafficControl,
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
-    pub(crate) turrets: HashMap<usize, Arc<Vec<crate::turrets::Turret>>>,
+    pub(crate) turrets: Mutex<HashMap<usize, Arc<Vec<crate::turrets::Turret>>>>,
     pub(crate) turret_cooldowns: HashMap<usize, f64>,
     /// Turret fire control's tracks on aggressors, by ship id.
     pub(crate) turret_tracks: HashMap<usize, crate::turrets::TurretTrack>,
+}
+
+/// Lock a cache (a poisoned one is still good: caches hold no invariants).
+fn lock<T>(m: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
+    m.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+/// A ship step's clock moved on by `dt`.
+fn advance(clock: &mut f64, dt: f64) -> StepResult {
+    *clock += dt;
+    StepResult { simulated: dt, warp_limited: false }
 }
 
 /// Body positions at a moment (see `World::rails_now`).
@@ -120,11 +131,10 @@ impl World {
             time: 0.0,
             home_system,
             gate_links,
-            systems: HashMap::new(),
-            neighbours: HashMap::new(),
-            ephemerides: HashMap::new(),
-            rails: HashMap::new(),
-            positions: Vec::new(),
+            systems: Default::default(),
+            neighbours: Default::default(),
+            ephemerides: Default::default(),
+            rails: Default::default(),
             slugs: Vec::new(),
             beams: Vec::new(),
             impacts: Vec::new(),
@@ -132,7 +142,7 @@ impl World {
             markets: HashMap::new(),
             market_states: HashMap::new(),
             traffic: Default::default(),
-            turrets: HashMap::new(),
+            turrets: Default::default(),
             turret_cooldowns: HashMap::new(),
             turret_tracks: HashMap::new(),
         }
@@ -195,19 +205,20 @@ impl World {
     /// Get (generating and caching if needed) the star system at galaxy index `i`.
     /// A star system already generated, if it is (no generating from `&self`).
     pub fn system_if_known(&self, i: usize) -> Option<Arc<StarSystem>> {
-        self.systems.get(&i).cloned()
+        lock(&self.systems).get(&i).cloned()
     }
 
-    pub fn system(&mut self, i: usize) -> Arc<StarSystem> {
-        if self.systems.len() > 64 {
+    pub fn system(&self, i: usize) -> Arc<StarSystem> {
+        let mut systems = lock(&self.systems);
+        if systems.len() > 64 {
             // Keep the gate network's systems, where the traffic is.
-            self.systems.retain(|&k, _| self.gate_links.iter().any(|&(a, b)| a == k || b == k));
+            systems.retain(|&k, _| self.gate_links.iter().any(|&(a, b)| a == k || b == k));
         }
-        if let Some(sys) = self.systems.get(&i) {
+        if let Some(sys) = systems.get(&i) {
             return sys.clone();
         }
         let sys = Arc::new(crate::charts::generate(&self.galaxy, &self.gate_links, i));
-        self.systems.insert(i, sys.clone());
+        systems.insert(i, sys.clone());
         sys
     }
 
@@ -217,8 +228,8 @@ impl World {
     }
 
     /// The stars nearest to star `i`, nearest first (see `NEIGHBOURS`).
-    pub fn neighbours(&mut self, i: usize) -> Arc<[usize]> {
-        self.neighbours.entry(i).or_insert_with(|| self.galaxy.nearest(i, NEIGHBOURS).into()).clone()
+    pub fn neighbours(&self, i: usize) -> Arc<[usize]> {
+        lock(&self.neighbours).entry(i).or_insert_with(|| self.galaxy.nearest(i, NEIGHBOURS).into()).clone()
     }
 
     /// Distance in light years between two stars.
@@ -228,26 +239,27 @@ impl World {
 
     /// The body snapshot for `sys` at time `t`, computed once and shared by
     /// every ship stepping from that moment.
-    fn ephemeris(&mut self, sys: &StarSystem, t: f64) -> Arc<Ephemeris> {
-        match self.ephemerides.get(&sys.index) {
+    fn ephemeris(&self, sys: &StarSystem, t: f64) -> Arc<Ephemeris> {
+        let mut cache = lock(&self.ephemerides);
+        match cache.get(&sys.index) {
             Some((at, e)) if *at == t => e.clone(),
             _ => {
                 let e = Arc::new(sys.ephemeris(t));
-                self.ephemerides.insert(sys.index, (t, e.clone()));
+                cache.insert(sys.index, (t, e.clone()));
                 e
             }
         }
-    }
-
-    fn advance_clock(&mut self, dt: f64) -> StepResult {
-        self.time += dt;
-        StepResult { simulated: dt, warp_limited: false }
     }
 
     /// Hand the ship's devices new commands, with no time passing: the engine
     /// and thrusters take their settings, then the hyperdrive engages or
     /// disengages if told to. (Turning takes time: see `step_ship`.)
     pub fn command(&mut self, ship: &mut Ship, system: usize, c: &ShipCommands, events: &mut Vec<ShipEvent>) {
+        self.command_at(ship, system, c, self.time, events);
+    }
+
+    /// `command` at time `t`.
+    pub fn command_at(&self, ship: &mut Ship, system: usize, c: &ShipCommands, t: f64, events: &mut Vec<ShipEvent>) {
         ship.set_controls(c);
         if let Some(on) = c.arm {
             crate::weapons::master_arm(ship, on, events);
@@ -256,18 +268,22 @@ impl World {
             && h.engage != ship.hyperdrive
         {
             let sys = self.system(system);
-            let positions = self.rails_now(system);
-            hyperdrive::switch(&sys, ship, h, self.time, &positions, events);
+            let positions = self.rails_at(system, t);
+            hyperdrive::switch(&sys, ship, h, t, &positions, events);
         }
     }
 
     /// Where the bodies of `system` are now: solved once per moment and
     /// shared (a thousand ships in a system ask every frame).
-    pub fn rails_now(&mut self, system: usize) -> Arc<Vec<DVec3>> {
-        // The last two moments: each ship's turn runs from the frame's start
-        // to its end, so both are asked for, turn after turn.
-        let t = self.time;
-        if let Some(slots) = self.rails.get(&system)
+    pub fn rails_now(&self, system: usize) -> Arc<Vec<DVec3>> {
+        self.rails_at(system, self.time)
+    }
+
+    /// Where the bodies of `system` are at `t`: kept for the last two
+    /// moments asked for (each ship's turn runs from the frame's start to its
+    /// end, so both are asked for, turn after turn).
+    pub fn rails_at(&self, system: usize, t: f64) -> Arc<Vec<DVec3>> {
+        if let Some(slots) = lock(&self.rails).get(&system)
             && let Some((_, p)) = slots.iter().find(|(at, _)| *at == t)
         {
             return p.clone();
@@ -276,8 +292,11 @@ impl World {
         let mut p = Vec::with_capacity(sys.bodies.len());
         sys.positions(t, &mut p);
         let p = Arc::new(p);
-        let slots = self.rails.entry(system).or_insert_with(|| [(f64::NAN, p.clone()), (f64::NAN, p.clone())]);
-        slots[1] = std::mem::replace(&mut slots[0], (t, p.clone()));
+        let mut rails = lock(&self.rails);
+        let slots = rails.entry(system).or_insert_with(|| [(f64::NAN, p.clone()), (f64::NAN, p.clone())]);
+        if !slots.iter().any(|(at, _)| *at == t) {
+            slots[1] = std::mem::replace(&mut slots[0], (t, p.clone()));
+        }
         p
     }
 
@@ -296,8 +315,28 @@ impl World {
         warp: f64,
         events: &mut Vec<ShipEvent>,
     ) -> StepResult {
+        let mut clock = self.time;
+        let r = self.step_ship_at(&mut clock, ship, system, commands, computer, real_dt, warp, events);
+        self.time = clock;
+        r
+    }
+
+    /// `step_ship` from time `clock`, which it moves on (the world's own
+    /// clock untouched: ships can step side by side).
+    #[allow(clippy::too_many_arguments)]
+    pub fn step_ship_at(
+        &self,
+        clock: &mut f64,
+        ship: &mut Ship,
+        system: &mut usize,
+        commands: &ShipCommands,
+        computer: &mut impl FlightComputer,
+        real_dt: f64,
+        warp: f64,
+        events: &mut Vec<ShipEvent>,
+    ) -> StepResult {
         ship.hyper_jam = (ship.hyper_jam - real_dt * warp).max(0.0);
-        self.command(ship, *system, commands, events);
+        self.command_at(ship, *system, commands, *clock, events);
         let sys = self.system(*system);
         // Nearby stars, when already looked up for this system.
         let mut near = None;
@@ -306,22 +345,22 @@ impl World {
                 let left = respawn_in - real_dt;
                 ship.state = ShipState::Destroyed { respawn_in: left };
                 if left <= 0.0 {
-                    self.respawn(ship, system, events);
+                    self.respawn_at(ship, system, *clock, events);
                 }
-                self.advance_clock(real_dt * warp)
+                advance(clock, real_dt * warp)
             }
             ShipState::Landed { body, local_position, local_orientation } => {
                 let weld = Weld { body, local_position, local_orientation };
-                universe_prof::time("sim/crafts/tick/world step/landed", || self.landed_step(&sys, *system, ship, weld, commands.turn, real_dt, warp, events))
+                universe_prof::time("sim/crafts/tick/world step/landed", || self.landed_step(clock, &sys, *system, ship, weld, commands.turn, real_dt, warp, events))
             }
             ShipState::Transit { to, from, remaining, local_velocity, local_offset, local_orientation } => {
                 // The transit takes a few real seconds; the world clock keeps its pace.
-                let result = self.advance_clock(real_dt * warp);
+                let result = advance(clock, real_dt * warp);
                 let left = remaining - real_dt;
                 if left > 0.0 {
                     ship.state = ShipState::Transit { to, from, remaining: left, local_velocity, local_offset, local_orientation };
                 } else {
-                    self.arrive_through_gate(ship, system, to, from, local_velocity, local_offset, local_orientation, events);
+                    self.arrive_through_gate(*clock, ship, system, to, from, local_velocity, local_offset, local_orientation, events);
                 }
                 result
             }
@@ -330,7 +369,7 @@ impl World {
                     ship.steer(turn, real_dt);
                 }
                 let neighbours = self.neighbours(*system);
-                let result = universe_prof::time("sim/crafts/tick/world step/hyperdrive", || self.hyperdrive_step(&sys, ship, *system, &neighbours, computer, real_dt, warp, events));
+                let result = universe_prof::time("sim/crafts/tick/world step/hyperdrive", || self.hyperdrive_step(clock, &sys, ship, *system, &neighbours, computer, real_dt, warp, events));
                 near = Some(neighbours);
                 result
             }
@@ -338,15 +377,15 @@ impl World {
                 if let Some(turn) = &commands.turn {
                     ship.steer(turn, real_dt);
                 }
-                universe_prof::time("sim/crafts/tick/world step/flight (physics)", || self.flight_step(&sys, ship, *system, computer, real_dt * warp, events))
+                universe_prof::time("sim/crafts/tick/world step/flight (physics)", || self.flight_step(clock, &sys, ship, *system, computer, real_dt * warp, events))
             }
         };
         // The skin in air (and cooling after).
         if ship.is_flying() && !ship.hyperdrive {
             let _air = universe_prof::scope("sim/crafts/tick/world step/air lookup");
             let air = if sys.bodies.iter().any(|b| b.rail.atmosphere.is_some()) {
-                let positions = self.rails_now(*system);
-                universe_physics::air_at(&sys.bodies, ship.position, &positions, self.time)
+                let positions = self.rails_at(*system, *clock);
+                universe_physics::air_at(&sys.bodies, ship.position, &positions, *clock)
             } else {
                 None
             };
@@ -362,11 +401,17 @@ impl World {
         result
     }
 
+    /// The world clock, moved on by a ship step (see `step_ship_at`).
+    pub fn set_time(&mut self, t: f64) {
+        self.time = t;
+    }
+
     /// Welded to the body: carried round with its orbit and spin, turning in
     /// place if commanded; the docking port launches, the landing gear lifts off.
     #[allow(clippy::too_many_arguments)]
     fn landed_step(
-        &mut self,
+        &self,
+        clock: &mut f64,
         sys: &StarSystem,
         system: usize,
         ship: &mut Ship,
@@ -376,14 +421,14 @@ impl World {
         warp: f64,
         events: &mut Vec<ShipEvent>,
     ) -> StepResult {
-        let result = self.advance_clock(real_dt * warp);
+        let result = advance(clock, real_dt * warp);
+        let t = *clock;
         let b = &sys.bodies[weld.body];
-        let rot = b.rotation(self.time);
-        let rails = self.rails_now(system);
-        self.positions.clone_from(&rails);
+        let rot = b.rotation(t);
+        let positions = self.rails_at(system, t);
 
         let mut rigid = ship.rigid();
-        weld.place(&sys.bodies, self.time, &self.positions, &mut rigid);
+        weld.place(&sys.bodies, t, &positions, &mut rigid);
         ship.set_rigid(&rigid);
         // Allow turning in place on the pad.
         if let Some(turn) = &turn {
@@ -394,7 +439,7 @@ impl World {
         let offset = rot * weld.local_position;
 
         if b.kind == BodyKind::Station {
-            station::launch(sys, ship, weld.body, self.time, &self.positions, events);
+            station::launch(sys, ship, weld.body, t, &positions, events);
             return result;
         }
         spaceport::lift_off(ship, offset.normalize(), events);
@@ -405,7 +450,8 @@ impl World {
     /// clock has moved on, then the drive carries the ship.
     #[allow(clippy::too_many_arguments)]
     fn hyperdrive_step(
-        &mut self,
+        &self,
+        clock: &mut f64,
         sys: &StarSystem,
         ship: &mut Ship,
         system: usize,
@@ -415,25 +461,26 @@ impl World {
         warp: f64,
         events: &mut Vec<ShipEvent>,
     ) -> StepResult {
-        let result = self.advance_clock(real_dt * warp);
-        let rails = self.rails_now(system);
-        self.positions.clone_from(&rails);
-        let c = computer.hyperdrive(sys, ship, self.time, &self.positions);
+        let result = advance(clock, real_dt * warp);
+        let t = *clock;
+        let positions = self.rails_at(system, t);
+        let c = computer.hyperdrive(sys, ship, t, &positions);
         ship.set_controls(&c);
         if let Some(turn) = &c.turn {
             ship.steer(turn, real_dt);
         }
         let orders = c.hyperdrive.unwrap_or(HyperdriveCommand::CRUISE);
-        hyperdrive::cruise(&self.galaxy, neighbours, system, sys, ship, &orders, self.time, &self.positions, real_dt, warp, events);
+        hyperdrive::cruise(&self.galaxy, neighbours, system, sys, ship, &orders, t, &positions, real_dt, warp, events);
         result
     }
 
     /// Free flight: the physics kernel moves the ship under gravity and the
     /// thrust of its devices, then the world's rules judge whatever it touched.
-    fn flight_step(&mut self, sys: &StarSystem, ship: &mut Ship, system: usize, computer: &mut impl FlightComputer, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
+    #[allow(clippy::too_many_arguments)]
+    fn flight_step(&self, clock: &mut f64, sys: &StarSystem, ship: &mut Ship, system: usize, computer: &mut impl FlightComputer, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
         // For short frames, snapshot the bodies once and extrapolate for each
         // substep instead of re-solving every orbit (see `Ephemeris`).
-        let ephemeris = (dt <= Ephemeris::SPAN).then(|| self.ephemeris(sys, self.time));
+        let ephemeris = (dt <= Ephemeris::SPAN).then(|| self.ephemeris(sys, *clock));
         // Small steps while any device pushes (engine or thrusters), whoever
         // is flying: a powered ship is integrated alike under a pilot or a
         // computer. The kernel also takes small steps near any station or gate,
@@ -442,26 +489,28 @@ impl World {
         // commands change once per step.
         let powered = ship.throttle > 0.0 || ship.rcs != DVec3::ZERO;
         let physics = if powered { FINE_STEP } else { f64::INFINITY };
-        let span = Span { t: self.time, dt, max_h: physics.min(computer.interval()), contact_step: FINE_STEP };
+        let span = Span { t: *clock, dt, max_h: physics.min(computer.interval()), contact_step: FINE_STEP };
         let mut rigid = ship.rigid();
         let mut devices = Devices::new(sys, &mut *ship, computer, &mut *events);
-        let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut self.positions, &mut rigid, span, &mut devices);
+        let mut positions = Vec::with_capacity(sys.bodies.len());
+        let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
         ship.set_rigid(&rigid);
-        self.time = out.time;
+        *clock = out.time;
         if let Some(fact) = out.fact {
-            self.react(sys, ship, system, fact, events);
+            self.react(out.time, &positions, sys, ship, system, fact, events);
         }
         StepResult { simulated: out.simulated, warp_limited: out.limited }
     }
 
     /// A flight step stopped on a physical fact: what it means for the ship.
-    fn react(&mut self, sys: &StarSystem, ship: &mut Ship, system: usize, fact: Fact, events: &mut Vec<ShipEvent>) {
+    #[allow(clippy::too_many_arguments)]
+    fn react(&self, t: f64, positions: &[DVec3], sys: &StarSystem, ship: &mut Ship, system: usize, fact: Fact, events: &mut Vec<ShipEvent>) {
         match fact {
-            Fact::Trigger { body, .. } => self.enter_gate(sys, ship, system, body, events),
+            Fact::Trigger { body, .. } => self.enter_gate(t, positions, sys, ship, system, body, events),
             Fact::Contact(c) => match c.feature {
-                Feature::Surface { .. } => spaceport::touch_down(sys, ship, &c, self.time, events),
+                Feature::Surface { .. } => spaceport::touch_down(sys, ship, &c, t, events),
                 // The station: its docking slot, or (too fast for a bump) its hull.
-                Feature::Hull | Feature::CutOut(_) => station::contact(sys, ship, &c, self.time, &self.positions, events),
+                Feature::Hull | Feature::CutOut(_) => station::contact(sys, ship, &c, t, positions, events),
                 Feature::Ring => damage::destroy(ship, &sys.bodies[c.body].name, events),
             },
         }
@@ -469,9 +518,10 @@ impl World {
 
     /// Through a gate's opening: the gate device starts the transit to the
     /// linked system, unless the ship is going too fast for it.
-    fn enter_gate(&mut self, sys: &StarSystem, ship: &mut Ship, system: usize, gate: usize, events: &mut Vec<ShipEvent>) {
+    #[allow(clippy::too_many_arguments)]
+    fn enter_gate(&self, t: f64, positions: &[DVec3], sys: &StarSystem, ship: &mut Ship, system: usize, gate: usize, events: &mut Vec<ShipEvent>) {
         let b = &sys.bodies[gate];
-        let frame = GateFrame::new(sys, gate, self.time, &self.positions);
+        let frame = GateFrame::new(sys, gate, t, positions);
         let to = b.link.unwrap_or(system);
         match gate::enter(&frame, ship, to, system) {
             Err(speed) => {
@@ -491,7 +541,8 @@ impl World {
     /// same motion relative to it as we had going into the other one.
     #[allow(clippy::too_many_arguments)]
     fn arrive_through_gate(
-        &mut self,
+        &self,
+        t: f64,
         ship: &mut Ship,
         system: &mut usize,
         to: usize,
@@ -503,13 +554,13 @@ impl World {
     ) {
         *system = to;
         let sys = self.system(to);
-        sys.positions(self.time, &mut self.positions);
+        let positions = self.rails_at(to, t);
         let Some(g) = sys.gate_to(from) else {
             // No return gate (shouldn't happen): a new ship at home instead.
-            self.respawn(ship, system, events);
+            self.respawn_at(ship, system, t, events);
             return;
         };
-        let frame = GateFrame::new(&sys, g, self.time, &self.positions);
+        let frame = GateFrame::new(&sys, g, t, &positions);
         let mut rigid = ship.rigid();
         gate::emerge(&frame, local_velocity, local_offset, local_orientation, &mut rigid);
         ship.set_rigid(&rigid);
@@ -520,7 +571,7 @@ impl World {
     /// When a flying ship is closer to one of its system's `neighbours` than
     /// to its own star, move it into that star's frame (a floating origin at
     /// interstellar scale).
-    fn handover(&mut self, ship: &mut Ship, system: &mut usize, neighbours: &[usize], events: &mut Vec<ShipEvent>) {
+    fn handover(&self, ship: &mut Ship, system: &mut usize, neighbours: &[usize], events: &mut Vec<ShipEvent>) {
         let p = ship.position;
         let mut best = (*system, p.length());
         for &n in neighbours {
@@ -540,16 +591,21 @@ impl World {
 
     /// A new ship next to the home station, matching its orbit.
     pub fn respawn(&mut self, ship: &mut Ship, system: &mut usize, events: &mut Vec<ShipEvent>) {
+        self.respawn_at(ship, system, self.time, events);
+    }
+
+    /// `respawn` at time `t`.
+    pub fn respawn_at(&self, ship: &mut Ship, system: &mut usize, t: f64, events: &mut Vec<ShipEvent>) {
         *system = self.home_system;
         let sys = self.system(*system);
         let station = sys.station().unwrap_or(0);
-        sys.positions(self.time, &mut self.positions);
-        let pos = self.positions[station];
-        let vel = sys.velocity(station, self.time);
+        let positions = self.rails_at(*system, t);
+        let pos = positions[station];
+        let vel = sys.velocity(station, t);
         let parent = sys.bodies[station].rail.parent.unwrap_or(0);
-        let rel_vel = vel - sys.velocity(parent, self.time);
+        let rel_vel = vel - sys.velocity(parent, t);
         let prograde = rel_vel.normalize();
-        let radial = (pos - self.positions[parent]).normalize();
+        let radial = (pos - positions[parent]).normalize();
 
         // 4 km behind the station on the same orbit, nose pointing at it.
         let ship_pos = pos - prograde * 4000.0;
@@ -567,7 +623,7 @@ impl World {
     /// pad `pad` of a spaceport.
     pub fn ship_on(&mut self, system: usize, at: Facility, pad: usize) -> Ship {
         let sys = self.system(system);
-        sys.positions(self.time, &mut self.positions);
+        let positions = self.rails_now(system);
         let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
         let (body, local_position, local_orientation) = match at {
             Facility::Station(s) => {
@@ -584,7 +640,7 @@ impl World {
             }
         };
         let mut rigid = ship.rigid();
-        Weld { body, local_position, local_orientation }.place(&sys.bodies, self.time, &self.positions, &mut rigid);
+        Weld { body, local_position, local_orientation }.place(&sys.bodies, self.time, &positions, &mut rigid);
         ship.set_rigid(&rigid);
         ship.state = ShipState::Landed { body, local_position, local_orientation };
         ship
