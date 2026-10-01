@@ -944,8 +944,8 @@ fn ship(frame: &mut Frame, app: &App) {
     {
         let (b, center) = (&app.view.system.bodies[body], app.view.positions[body]);
         let o = app.place(crate::Who::Me).1;
-        for leg in [DVec3::new(-7.0, -3.2, 8.0), DVec3::new(7.0, -3.2, 8.0), DVec3::new(0.0, -2.2, -12.0)] {
-            let top = pos + o * leg;
+        for leg in app.ship.spec().shape().nodes(universe_sim::world::shape::Role::Gear) {
+            let top = pos + o * leg.at;
             let dir = (top - center).normalize();
             let foot = center + dir * b.surface_radius_at(center, top, app.now());
             frame.line(top, foot, SHIP_COLOR.scale(0.7));

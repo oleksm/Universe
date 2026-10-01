@@ -51,6 +51,10 @@
             (name: "nozzle_lift_tail_left", at: (-0.8, -0.15, 0.7), dir: (0.0, -1.0, 0.0)),
             (name: "nozzle_lift_tail_right", at: (0.8, -0.15, 0.7), dir: (0.0, -1.0, 0.0)),
             (name: "cockpit", at: (0.0, 0.15, -0.5), dir: (0.0, 0.0, -1.0)),
+            // The landing gear: two legs aft, one under the nose.
+            (name: "gear_left", at: (-0.35, -0.16, 0.4), dir: (0.0, -1.0, 0.0)),
+            (name: "gear_right", at: (0.35, -0.16, 0.4), dir: (0.0, -1.0, 0.0)),
+            (name: "gear_nose", at: (0.0, -0.11, -0.6), dir: (0.0, -1.0, 0.0)),
         ],
     ),
     (

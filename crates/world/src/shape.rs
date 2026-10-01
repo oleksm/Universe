@@ -7,7 +7,8 @@
 //!
 //! A shape is built from points (their convex hull), or — when the first
 //! model arrives from Blender — from a glTF export, into the same `Shape`.
-//! Metres; −Z forward, +Y up.
+//! Metres; −Z forward, +Y up; centred on its centre of mass as loaded (what
+//! it's built with is moved to match), so a body turns about it.
 
 use glam::DVec3;
 use serde::Deserialize;
@@ -118,10 +119,17 @@ impl ShapeDef {
             (_, 0..=3) => return Err("needs at least four hull points".into()),
             _ => Mesh::convex_hull(&self.hull.iter().map(|&p| point(p) * s).collect::<Vec<_>>()),
         };
-        let solid = mesh.mass_properties();
+        let mut solid = mesh.mass_properties();
         if solid.volume <= 0.0 {
             return Err("its hull has no volume (the points are flat)".into());
         }
+        // Centred on its centre of mass: what moves it turns about it.
+        let c = solid.centroid;
+        let mut mesh = mesh;
+        for p in &mut mesh.points {
+            *p -= c;
+        }
+        solid.centroid = DVec3::ZERO;
         let mut nodes = Vec::new();
         for n in self.nodes {
             let role = Role::of(&n.name).ok_or_else(|| format!("node '{}': name it mount_*, nozzle_*, gear_*, dock_* or cockpit", n.name))?;
@@ -129,9 +137,9 @@ impl ShapeDef {
             if nodes.iter().any(|m: &Node| m.name == n.name) {
                 return Err(format!("node '{}' twice", n.name));
             }
-            nodes.push(Node { name: n.name, role, at: point(n.at) * s, dir });
+            nodes.push(Node { name: n.name, role, at: point(n.at) * s - c, dir });
         }
-        let loops = self.loops.into_iter().map(|l| l.into_iter().map(|p| point(p) * s).collect()).collect();
+        let loops = self.loops.into_iter().map(|l| l.into_iter().map(|p| point(p) * s - c).collect()).collect();
         Ok(Shape { key: self.key, mesh, loops, nodes, solid })
     }
 }
@@ -149,7 +157,8 @@ mod tests {
         assert!(cobra.solid.volume > 1_000.0 && cobra.solid.volume < 20_000.0, "{} m³", cobra.solid.volume);
         let mains: Vec<_> = cobra.nodes(Role::Nozzle).filter(|n| n.name.starts_with("nozzle_main")).collect();
         assert_eq!(mains.len(), 2);
-        assert!(mains.iter().all(|n| n.dir == DVec3::Z && (n.at.z - 16.0).abs() < 1e-9), "the main drive on the rear plate, firing aft");
+        assert!(mains.iter().all(|n| n.dir == DVec3::Z && (n.at.z - hi.z).abs() < 1e-9), "the main drive on the rear plate, firing aft");
+        assert!(cobra.solid.centroid.length() < 1e-9 && cobra.mesh.mass_properties().centroid.length() < 1e-6, "centred on its centre of mass");
         assert_eq!(cobra.nodes(Role::Nozzle).count(), 18, "and the thruster quads and belly lift");
         assert!(cobra.node("cockpit").is_some());
         // (Its collision is still the hull's 12 m sphere: the shape takes over in T1.)
