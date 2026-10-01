@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 pub mod actuation;
 pub mod traffic;
 
-pub use actuation::{Controls, Destination, HyperdriveCommand, ShipCommands, Triggers};
+pub use actuation::{Controls, Destination, HyperdriveCommand, ShipCommands, Triggers, TurretCommand};
 pub use traffic::PadGrant;
 
 /// A core tick's number. The core advances world time only in whole ticks.

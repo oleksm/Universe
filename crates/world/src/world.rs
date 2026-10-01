@@ -69,9 +69,7 @@ pub struct World {
     pub goods: Vec<Item>,
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
     pub(crate) turrets: Mutex<HashMap<usize, Arc<Vec<crate::turrets::Turret>>>>,
-    pub(crate) turret_cooldowns: HashMap<usize, f64>,
-    /// Turret fire control's tracks on aggressors, by ship id.
-    pub(crate) turret_tracks: HashMap<usize, crate::turrets::TurretTrack>,
+    pub(crate) turret_guns: HashMap<usize, crate::turrets::TurretGun>,
 }
 
 /// What ships stepping side by side will look up, gathered before they
@@ -121,8 +119,7 @@ impl World {
             impacts: Vec::new(),
             goods: crate::goods::catalog(seed),
             turrets: Default::default(),
-            turret_cooldowns: HashMap::new(),
-            turret_tracks: HashMap::new(),
+            turret_guns: HashMap::new(),
         }
     }
 

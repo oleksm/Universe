@@ -6,6 +6,7 @@
 //! Ships are known to weapons by id: the player's ship is `PLAYER`, craft
 //! `i` is `i + 1`.
 
+use glam::DVec3;
 use universe_avionics::fire_control::{lead, Solution, Track};
 use universe_world::weapons::{Armed, GUN_MUZZLE, SLUG_LIFETIME};
 use universe_world::{ShipCommands, ShipEvent};
@@ -26,15 +27,16 @@ pub fn craft_id(i: usize) -> usize {
 impl Universe {
     /// Weapons for every ship, over the `dt` game seconds the frame covered.
     pub(crate) fn combat(&mut self, dt: f64) {
+        // The turrets' gunners have their say (the defence service's pool).
+        universe_prof::time("sim/combat/gunners", || self.gunners(dt));
         let mut player_events = Vec::new();
         let mut craft_events: Vec<Vec<ShipEvent>> = (0..self.crafts.len()).map(|_| Vec::new()).collect();
         let now = self.world.time;
         {
-            let law = &self.law;
             let mut armed = Vec::with_capacity(self.crafts.len() + 1);
-            armed.push(Armed { id: PLAYER, system: self.ship_system, ship: &mut self.ship, events: &mut player_events, aggressed: law.aggressed(PLAYER, now) });
+            armed.push(Armed { id: PLAYER, system: self.ship_system, ship: &mut self.ship, events: &mut player_events });
             for (i, (c, e)) in self.crafts.iter_mut().zip(craft_events.iter_mut()).enumerate() {
-                armed.push(Armed { id: craft_id(i), system: c.system, ship: &mut c.ship, events: e, aggressed: law.aggressed(craft_id(i), now) });
+                armed.push(Armed { id: craft_id(i), system: c.system, ship: &mut c.ship, events: e });
             }
             universe_prof::time("sim/combat/weapons", || self.world.combat(&mut armed, dt));
             universe_prof::time("sim/combat/collisions", || self.world.collide(&mut armed, dt));
@@ -77,6 +79,67 @@ impl Universe {
             self.records.stats.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
             self.crafts[i].avionics.record(events, &mut ignored);
             ignored.clear();
+        }
+    }
+
+    /// The defence service's gunners, for the tick just run (`dt` game s):
+    /// in every system with someone fair game in it, each turret's gunner
+    /// looks (the frame's snapshot, the law's standings, its gun as its
+    /// sensors read it) and orders its gun. Orders reach the guns after the
+    /// command delay, like a pilot's; where no one's fair game any more, the
+    /// gunners stand down.
+    fn gunners(&mut self, dt: f64) {
+        use universe_avionics::gunner::{Gunner, Quarry};
+        use universe_protocol::TurretCommand;
+        let delay = self.command_delay as u64;
+        // Orders due now reach the guns.
+        while self.turret_orders.front().is_some_and(|(due, _, _)| *due <= self.tick) {
+            let (_, id, c) = self.turret_orders.pop_front().expect("due");
+            self.world.command_turret(id, c);
+        }
+        let mut systems: Vec<usize> = self.snaps.iter().filter(|s| s.aggressed && (s.flying || s.landed)).map(|s| s.system).collect();
+        systems.sort_unstable();
+        systems.dedup();
+        // What they see is the frame's snapshot (the turret too, at that
+        // moment: one picture), a tick old; their orders land `delay` ticks on.
+        let seen = self.snap_time;
+        let latency = dt * (delay + 1) as f64;
+        let mut orders = Vec::new();
+        for &system in &systems {
+            let sys = self.world.system(system);
+            let positions = self.world.rails_at(system, seen);
+            let quarry: Vec<Quarry> = self
+                .snaps
+                .iter()
+                .enumerate()
+                .filter(|(_, s)| s.system == system && s.aggressed && (s.flying || s.landed))
+                .map(|(id, s)| Quarry { id, position: s.position, velocity: s.velocity })
+                .collect();
+            for (k, (_, at, velocity)) in self.world.turret_motions_at(system, seen).into_iter().enumerate() {
+                let id = universe_world::turrets::turret_id(system, k);
+                let gun = self.world.turret_gun(id).map_or_else(|| (quarry.first().map_or(at, |q| q.position) - at).normalize_or(DVec3::Y), |g| g.aim);
+                let clear = |p: DVec3| {
+                    let d = p - at;
+                    universe_physics::ray(&sys.bodies, &positions, at + d.normalize() * 10.0, d.normalize(), d.length() - 30.0, seen, &[]).is_none()
+                };
+                let gravity = |p: DVec3| sys.gravity(p, &positions);
+                let c = self.gunners.entry(id).or_default().orders(seen, at, velocity, gun, &quarry, clear, gravity, latency);
+                orders.push((id, c));
+            }
+        }
+        // Gunners with no one left to shoot at stand down.
+        let idle: Vec<usize> = self.gunners.keys().copied().filter(|id| universe_world::turrets::turret_of(*id).is_some_and(|(s, _)| !systems.contains(&s))).collect();
+        for id in idle {
+            self.gunners.remove(&id);
+            orders.push((id, TurretCommand { aim: None, fire: false }));
+        }
+        orders.sort_by_key(|o| o.0);
+        for (id, c) in orders {
+            if delay == 0 {
+                self.world.command_turret(id, c);
+            } else {
+                self.turret_orders.push_back((self.tick + delay, id, c));
+            }
         }
     }
 

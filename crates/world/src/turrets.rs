@@ -1,19 +1,21 @@
 //! Defence turrets: fixed guns around stations, on gate rings, and on the
 //! ground around spaceports, generated from the seed (not every place has
-//! them: see `turrets`). Each has its own radar and fire control, and fires
-//! on any aggressed ship within `TURRET_RANGE` (twice a ship's gun range),
-//! with the same slugs a ship's gun fires — never on the innocent. Their
-//! coverage is traffic control's real shelter.
+//! them: see `turrets`). In the core a turret is hardware: a gun that slews
+//! toward where it's told to aim (at `TURRET_SLEW`), fires the same slugs a
+//! ship's gun does at `TURRET_RATE` while its trigger is held, along wherever
+//! it actually points. Who it shoots at is its gunner's business — a client,
+//! run by the defence service — and the law's (who's fair game).
 
 use glam::{DQuat, DVec3};
 
 use crate::gate::{GATE_RADIUS, RING_TUBE};
 use crate::rng::{mix, Rng};
-use crate::ship::ShipState;
 use crate::station::STATION_SIZE;
 use crate::system::{BodyKind, StarSystem};
 use crate::traffic::Facility;
-use crate::weapons::{Armed, Slug, GUN_MUZZLE, SLUG_LIFETIME};
+use universe_protocol::TurretCommand;
+
+use crate::weapons::{Slug, GUN_MUZZLE};
 
 /// How far a turret reaches (m): twice a ship's gun range.
 pub const TURRET_RANGE: f64 = 6_000.0;
@@ -91,39 +93,16 @@ pub fn turrets(seed: u64, system: usize, sys: &StarSystem) -> Vec<Turret> {
     out
 }
 
-/// Smoothing of a track's acceleration estimate (per second of returns).
-const ACCEL_RATE: f64 = 3.0;
+/// How fast a turret's gun turns to its aim (rad/s).
+pub const TURRET_SLEW: f64 = 4.0;
 
-/// Turret fire control's track on a ship: its velocity at the last look,
-/// and its acceleration as estimated from how that changes (the radar
-/// measures motion, not intentions), so a burning ship is led, not just a
-/// coasting one.
+/// A turret gun's state: where it points (a world direction), and its
+/// orders and cooldown.
 #[derive(Clone, Copy, Debug)]
-pub struct TurretTrack {
-    time: f64,
-    velocity: DVec3,
-    acceleration: DVec3,
-}
-
-impl TurretTrack {
-    fn update(track: Option<TurretTrack>, velocity: DVec3, now: f64) -> TurretTrack {
-        match track {
-            // A stale track starts over.
-            Some(tr) if now > tr.time && now - tr.time < 1.0 => {
-                let dt = now - tr.time;
-                let k = 1.0 - (-ACCEL_RATE * dt).exp();
-                let acceleration = tr.acceleration + ((velocity - tr.velocity) / dt - tr.acceleration) * k;
-                TurretTrack { time: now, velocity, acceleration }
-            }
-            Some(tr) if now <= tr.time => tr,
-            _ => TurretTrack { time: now, velocity, acceleration: DVec3::ZERO },
-        }
-    }
-}
-
-/// Is a ship worth a turret's round: aggressed, and there to be hit?
-fn fair_game(a: &Armed) -> bool {
-    a.aggressed && matches!(a.ship.state, ShipState::Flying | ShipState::Landed { .. })
+pub struct TurretGun {
+    pub aim: DVec3,
+    pub orders: TurretCommand,
+    pub cooldown: f64,
 }
 
 impl crate::world::World {
@@ -149,52 +128,47 @@ impl crate::world::World {
         self.turret_motions(system).iter().any(|(_, p, _)| p.distance(point) < TURRET_RANGE + margin)
     }
 
-    /// Turrets fire on aggressed ships in reach, over the `dt` seconds just
-    /// run: rounds go into `fired`.
-    pub(crate) fn turrets_fire(&mut self, ships: &[Armed], dt: f64, fired: &mut Vec<Slug>) {
-        let now = self.time;
-        // Track every aggressor (for its acceleration); forget the rest.
-        self.turret_tracks.retain(|id, _| ships.iter().any(|a| a.id == *id && fair_game(a)));
-        for a in ships.iter().filter(|a| fair_game(a)) {
-            let tr = TurretTrack::update(self.turret_tracks.get(&a.id).copied(), a.ship.velocity, now);
-            self.turret_tracks.insert(a.id, tr);
-        }
-        let mut systems: Vec<usize> = ships.iter().filter(|a| fair_game(a)).map(|a| a.system).collect();
-        systems.sort();
-        systems.dedup();
-        for system in systems {
-            let sys = self.system(system);
-            let mut positions = Vec::new();
-            sys.positions(now, &mut positions);
-            for (k, (_, at, velocity)) in self.turret_motions(system).into_iter().enumerate() {
-                let id = turret_id(system, k);
-                let cooldown = self.turret_cooldowns.entry(id).or_insert(0.0);
-                *cooldown -= dt;
-                if *cooldown > 0.0 {
-                    continue;
+    /// Give turret `id`'s gun its orders (they hold until changed).
+    pub fn command_turret(&mut self, id: usize, c: TurretCommand) {
+        let gun = self.turret_guns.entry(id).or_insert(TurretGun { aim: c.aim.unwrap_or(DVec3::Y), orders: c, cooldown: 0.0 });
+        gun.orders = c;
+    }
+
+    /// Turret `id`'s gun, as its gunner's sensors read it (None: never commanded).
+    pub fn turret_gun(&self, id: usize) -> Option<TurretGun> {
+        self.turret_guns.get(&id).copied()
+    }
+
+    /// The turrets' guns over the `dt` seconds just run: each slews toward
+    /// its aim, and fires along where it points while its trigger is held.
+    /// Rounds go into `fired`.
+    pub(crate) fn turrets_fire(&mut self, dt: f64, fired: &mut Vec<Slug>) {
+        let mut ids: Vec<usize> = self.turret_guns.keys().copied().collect();
+        ids.sort_unstable();
+        let mut motions: std::collections::HashMap<usize, Vec<(Turret, DVec3, DVec3)>> = std::collections::HashMap::new();
+        for id in ids {
+            let Some((system, k)) = turret_of(id) else { continue };
+            let gun = self.turret_guns.get_mut(&id).expect("listed");
+            if let Some(want) = gun.orders.aim.and_then(|a| a.try_normalize()) {
+                let angle = gun.aim.angle_between(want);
+                let step = (TURRET_SLEW * dt).min(angle);
+                if angle > 1e-9 {
+                    let axis = gun.aim.cross(want).try_normalize().unwrap_or_else(|| gun.aim.any_orthonormal_vector());
+                    gun.aim = (DQuat::from_axis_angle(axis, step) * gun.aim).normalize();
                 }
-                // The nearest aggressor in reach with a clear line of fire
-                // (not through its own station, the ground, anything).
-                let clear = |p: DVec3| {
-                    let d = p - at;
-                    universe_physics::ray(&sys.bodies, &positions, at + d.normalize() * 10.0, d.normalize(), d.length() - 30.0, now, &[]).is_none()
-                };
-                let target = ships
-                    .iter()
-                    .filter(|a| a.system == system && fair_game(a) && a.ship.position.distance(at) < TURRET_RANGE && clear(a.ship.position))
-                    .min_by(|a, b| a.ship.position.distance(at).total_cmp(&b.ship.position.distance(at)));
-                let Some(target) = target else {
-                    *cooldown = 0.0;
-                    continue;
-                };
-                // Lead on its acceleration less gravity's (which pulls the round alike).
-                let accel = self.turret_tracks.get(&target.id).map_or(DVec3::ZERO, |t| t.acceleration) - sys.gravity(target.ship.position, &positions);
-                let lead = universe_physics::intercept(at, velocity, target.ship.position, target.ship.velocity, accel, GUN_MUZZLE, SLUG_LIFETIME);
-                if let Some((aim, _, _)) = lead {
-                    let projectile = universe_physics::Projectile { position: at + aim * 8.0, velocity: velocity + aim * GUN_MUZZLE };
-                    fired.push(Slug { system, owner: id, projectile, age: 0.0 });
-                    *cooldown += 1.0 / TURRET_RATE;
-                }
+            }
+            gun.cooldown = (gun.cooldown - dt).max(if gun.orders.fire { f64::NEG_INFINITY } else { 0.0 });
+            if !gun.orders.fire || gun.cooldown > 0.0 {
+                continue;
+            }
+            let (aim, now) = (gun.aim, self.time);
+            let here = motions.entry(system).or_insert_with(|| self.turret_motions_at(system, now));
+            let Some(&(_, at, velocity)) = here.get(k) else { continue };
+            let gun = self.turret_guns.get_mut(&id).expect("listed");
+            while gun.cooldown <= 0.0 {
+                let projectile = universe_physics::Projectile { position: at + aim * 8.0, velocity: velocity + aim * GUN_MUZZLE };
+                fired.push(Slug { system, owner: id, projectile, age: 0.0 });
+                gun.cooldown += 1.0 / TURRET_RATE;
             }
         }
     }

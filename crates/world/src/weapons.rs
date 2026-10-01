@@ -139,8 +139,6 @@ pub struct Armed<'a> {
     pub system: usize,
     pub ship: &'a mut Ship,
     pub events: &'a mut Vec<ShipEvent>,
-    /// Fair game, as the law has it (the turrets fire on it).
-    pub aggressed: bool,
 }
 
 /// Can this ship use its weapons (hot, in normal flight)?
@@ -214,8 +212,8 @@ impl World {
                 ship.laser_overheated &= ship.laser_heat > LASER_RESET;
             }
         }
-        // The defence turrets have their say.
-        self.turrets_fire(ships, dt, &mut fired);
+        // The defence turrets' guns, as their gunners have set them.
+        self.turrets_fire(dt, &mut fired);
         if self.slugs.is_empty() && lasers.is_empty() {
             self.slugs = fired;
             return;
@@ -316,7 +314,7 @@ mod tests {
         for s in [&mut *a, &mut *b] {
             s.position += s.velocity * dt;
         }
-        let mut ships = [Armed { id: 1, system, ship: a, events: ea, aggressed: false }, Armed { id: 2, system, ship: b, events: eb, aggressed: false }];
+        let mut ships = [Armed { id: 1, system, ship: a, events: ea }, Armed { id: 2, system, ship: b, events: eb }];
         world.combat(&mut ships, dt);
     }
 

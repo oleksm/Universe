@@ -106,7 +106,7 @@ mod tests {
         // 4 m/s: a bounce, momentum kept, a small dent each.
         let (mut a, mut b, mut ea, mut eb) = pair(4.0);
         let momentum = a.velocity * a.mass() + b.velocity * b.mass();
-        let mut ships = [Armed { id: 1, system: sys, ship: &mut a, events: &mut ea, aggressed: false }, Armed { id: 2, system: sys, ship: &mut b, events: &mut eb, aggressed: false }];
+        let mut ships = [Armed { id: 1, system: sys, ship: &mut a, events: &mut ea }, Armed { id: 2, system: sys, ship: &mut b, events: &mut eb }];
         world.collide(&mut ships, 1.0);
         assert!((a.velocity * a.mass() + b.velocity * b.mass() - momentum).length() < 1e-6);
         assert!((a.velocity.x + 0.6).abs() < 1e-6 && (b.velocity.x - 0.6).abs() < 1e-6, "bounced at 0.3 of 2 m/s each");
@@ -114,7 +114,7 @@ mod tests {
         assert!(ea.iter().any(|e| matches!(e, ShipEvent::Collided { with: 2, .. })));
         // 60 m/s: both wrecked.
         let (mut a, mut b, mut ea, mut eb) = pair(60.0);
-        let mut ships = [Armed { id: 1, system: sys, ship: &mut a, events: &mut ea, aggressed: false }, Armed { id: 2, system: sys, ship: &mut b, events: &mut eb, aggressed: false }];
+        let mut ships = [Armed { id: 1, system: sys, ship: &mut a, events: &mut ea }, Armed { id: 2, system: sys, ship: &mut b, events: &mut eb }];
         world.collide(&mut ships, 1.0);
         assert!(matches!(a.state, ShipState::Destroyed { .. }) && matches!(b.state, ShipState::Destroyed { .. }));
         assert!(ea.iter().any(|e| matches!(e, ShipEvent::Crashed { body } if body == "COLLISION")));

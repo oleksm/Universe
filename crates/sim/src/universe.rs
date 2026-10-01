@@ -61,6 +61,10 @@ pub struct Universe {
     pub log: Vec<(usize, ShipEvent)>,
     /// The law: who's fair game, since when, and why (see `universe_services::law`).
     pub law: universe_services::Law,
+    /// The defence service's gunners (one per turret in action), and their
+    /// orders on the way to the guns (due tick, turret, orders).
+    pub(crate) gunners: std::collections::HashMap<usize, universe_avionics::gunner::Gunner>,
+    pub(crate) turret_orders: std::collections::VecDeque<(u64, usize, universe_protocol::TurretCommand)>,
     /// Traffic control (clearance, pads, corridors): a service.
     pub atc: universe_services::TrafficControl,
     /// The ledger (credits, and what's in each hold) and the market service.
@@ -95,6 +99,8 @@ impl Universe {
             tick: 0,
             log: Vec::new(),
             law: Default::default(),
+            gunners: Default::default(),
+            turret_orders: Default::default(),
             atc: Default::default(),
             ledger: Default::default(),
             markets: universe_services::Markets::new(seed, goods),

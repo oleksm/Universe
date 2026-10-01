@@ -78,3 +78,13 @@ impl HyperdriveCommand {
     /// Stay engaged, flying along the nose, with nothing commanded.
     pub const CRUISE: Self = Self { engage: true, heading: None, steering: false, frame_velocity: None, exit_velocity: None, destination: None };
 }
+
+/// What a gunner (a client) tells a turret's gun: where to lay it (a world
+/// direction; None: hold where it is) and whether the trigger is held. The
+/// gun slews toward its aim at its hardware's rate and fires along wherever
+/// it actually points.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct TurretCommand {
+    pub aim: Option<DVec3>,
+    pub fire: bool,
+}
