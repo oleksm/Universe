@@ -86,6 +86,11 @@ pub struct App {
     pub approach: Option<Approach>,
     /// The flight plan to the cleared target: the path, attitudes and actions ahead.
     pub plan: Option<universe_sim::Plan>,
+    /// The plan before it, and how far (0..1) the display has eased from it
+    /// to `plan`: each rebuild starts from where the ship is, so the guide
+    /// would otherwise jump a little at every one.
+    pub plan_prev: Option<universe_sim::Plan>,
+    pub plan_blend: f32,
     /// When the plan was last rebuilt (real seconds), for which clearance,
     /// and how long building it took (real seconds).
     plan_age: f32,
@@ -170,6 +175,8 @@ impl App {
             plan: None,
             plan_age: 0.0,
             plan_for: None,
+            plan_prev: None,
+            plan_blend: 1.0,
             plan_cost: 0.0,
             sim_ms: 0.0,
             eta_shown: None,
@@ -642,13 +649,20 @@ impl Game for App {
         self.plan_age += ctx.dt;
         let key = self.u.avionics.clearance;
         let changed = key.map(|c| (c.target, c.autopilot, c.phase)) != self.plan_for.map(|c| (c.target, c.autopilot, c.phase));
-        if changed || self.plan_age >= (self.plan_cost * 20.0).clamp(0.1, 1.0) || !self.u.ship.is_flying() {
+        let every = (self.plan_cost * 20.0).clamp(0.1, 1.0);
+        if changed || self.plan_age >= every || !self.u.ship.is_flying() {
             let start = std::time::Instant::now();
-            self.plan = self.u.plan();
+            let new = self.u.plan();
+            let same_target = key.map(|c| c.target) == self.plan_for.map(|c| c.target);
+            // Ease from what's on screen now (itself maybe part-way from the one before).
+            self.plan_prev = if same_target && new.is_some() { self.plan.take() } else { None };
+            self.plan = new;
             self.plan_cost = start.elapsed().as_secs_f32();
             self.plan_age = 0.0;
             self.plan_for = key;
         }
+        let every = (self.plan_cost * 20.0).clamp(0.1, 1.0);
+        self.plan_blend = (self.plan_age / every).min(1.0);
         let raw = self.plan.as_ref().filter(|p| p.arrives).map(|p| {
             let left = p.points.last().map_or(0.0, |x| x.time) - (self.u.world.time - p.start);
             left / self.warp().max(1.0)

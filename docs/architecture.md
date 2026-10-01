@@ -346,6 +346,7 @@ ship's pose directly, like tests do — then render.
 | Gun, laser, hull damage (a hit jams the hyperdrive 15 s); the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
 | SAM turrets (seeded per station/gate/spaceport, 6 km reach, fire on aggressors with a clear line), coverage | world: `turrets` |
 | Shelter: pirates keep out of turret reach, prey under fire runs for a defended place | avionics: `hunter`, sim: `combat::flee`, `traffic::sightings` |
+| Fight or flight: lawful ships judge aggressors (`hunter::judge`) and gang up on them; frame-start ship snapshot for what ships see (`Universe::snaps`) | avionics: `hunter`, sim: `traffic` |
 | Fire control: track on a contact, gun lead | avionics: `fire_control` |
 | Follow: keep at range / orbit a ship, station or gate (thrusters + engine, anchor-acceleration feedforward) | avionics: `follow`, sim: `follow` |
 | Collision warning: predicted path through the kernel, first impact (bodies, stations, gates, ships) | avionics: `collision` |

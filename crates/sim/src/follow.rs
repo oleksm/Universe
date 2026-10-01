@@ -22,7 +22,13 @@ impl Universe {
     /// Ship `id` (the player's 0, craft i: i + 1), as seen from `from` in
     /// `system`: where it is and how it moves, if it's there to be seen
     /// (flying in normal space, in radar range).
+    /// Within the frame, from its snapshot (see `snaps`).
     pub(crate) fn ship_mark(&self, system: usize, from: DVec3, id: usize) -> Option<(DVec3, DVec3)> {
+        if self.snap_time == self.world.time
+            && let Some(s) = self.snaps.get(id)
+        {
+            return (s.system == system && s.flying && !s.hyperdrive && s.position.distance(from) < RADAR_RANGE).then_some((s.position, s.velocity));
+        }
         let (s, ship): (usize, &Ship) = if id == PLAYER { (self.ship_system, &self.ship) } else { self.crafts.get(id - 1).map(|c| (c.system, &c.ship))? };
         (s == system && ship.is_flying() && !ship.hyperdrive && ship.position.distance(from) < RADAR_RANGE).then_some((ship.position, ship.velocity))
     }

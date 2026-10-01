@@ -100,6 +100,8 @@ pub struct World {
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
     pub(crate) turrets: HashMap<usize, Rc<Vec<crate::turrets::Turret>>>,
     pub(crate) turret_cooldowns: HashMap<usize, f64>,
+    /// Turret fire control's tracks on aggressors, by ship id.
+    pub(crate) turret_tracks: HashMap<usize, crate::turrets::TurretTrack>,
 }
 
 impl World {
@@ -125,6 +127,7 @@ impl World {
             traffic: Default::default(),
             turrets: HashMap::new(),
             turret_cooldowns: HashMap::new(),
+            turret_tracks: HashMap::new(),
         }
     }
 

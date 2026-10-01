@@ -113,7 +113,7 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
         let here = app.u.crafts.iter().filter(|c| c.system == app.view.origin).count();
         let t = &app.u.traffic;
         lines.push((
-            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  COLLISIONS {}  TRADES {}  KILLS {}", app.u.crafts.len(), t.stops, t.transits, t.crashes, t.collision_losses, t.trades, t.shot_down),
+            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  COLLISIONS {}  TRADES {}  KILLS {}  POSSES {}/{}", app.u.crafts.len(), t.stops, t.transits, t.crashes, t.collision_losses, t.trades, t.shot_down, t.defences, t.aggressors_downed),
             DIM,
         ));
     }
@@ -997,7 +997,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
         let a = i as f32 * std::f32::consts::TAU / 12.0 + 0.2;
         let len = if i % 3 == 0 { long } else { long * 0.45 };
         let d = Vec2::new(a.cos(), a.sin());
-        frame.hud_line2(p + d * disc, p + d * len, tint(0.35), tint(0.0));
+        frame.hud_line2(p + d * disc, p + d * len, tint(0.12), tint(0.0));
     }
 }
 

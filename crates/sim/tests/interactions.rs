@@ -311,3 +311,86 @@ fn a_ship_orbits_a_moving_ship() {
     }
     assert!(u.recorder.incidents.is_empty(), "no wrecks\n{}", incidents(&u));
 }
+
+#[test]
+fn turrets_shoot_down_an_aggressed_player_burning_hard_at_the_edge_of_their_reach() {
+    let mut u = bench(0);
+    let (_, at, v, side) = a_turret(&mut u);
+    u.ship.state = ShipState::Flying;
+    u.ship.position = at + side * 5_500.0;
+    u.ship.velocity = v;
+    u.ship.orientation = universe_sim::ship::facing(side.any_orthonormal_vector(), side);
+    u.ship.throttle = 1.0;
+    u.ship.aggressed_until = u.world.time + 600.0;
+    let down = run(&mut u, 20.0, |u| u.kills.iter().any(|k| k.victim == universe_sim::PLAYER));
+    assert!(down, "shot down (hull {:.2})", u.ship.hull);
+}
+
+/// Out in the open, clear of any turret (but in a place's gravity): a point,
+/// how the place moves, and two directions across.
+fn open_space(u: &mut Universe) -> (DVec3, DVec3, DVec3, DVec3) {
+    let (_, at, v, side) = a_turret(u);
+    let across = side.any_orthonormal_vector();
+    (at + side * 1_500_000.0, v, across, side.cross(across))
+}
+
+#[test]
+fn a_lone_settler_leaves_an_aggressor_alone() {
+    let mut u = bench(2);
+    let (p, v, a, b) = open_space(&mut u);
+    place(&mut u, 0, p, v, p + a);
+    place(&mut u, 1, p + b * 4_000.0, v, p);
+    u.crafts[0].ship.aggressed_until = u.world.time + 600.0;
+    run(&mut u, 10.0, |_| false);
+    assert!(u.crafts[1].avionics.hunting.is_none(), "one against one: no fight");
+}
+
+#[test]
+fn settlers_gang_up_on_an_aggressor_and_shoot_it_down() {
+    let mut u = bench(6);
+    let (p, v, a, b) = open_space(&mut u);
+    place(&mut u, 0, p, v, p + a);
+    u.crafts[0].ship.aggressed_until = u.world.time + 600.0;
+    for k in 1..6 {
+        let dir = (a * (k as f64).cos() + b * (k as f64).sin()).normalize();
+        place(&mut u, k, p + dir * 4_000.0, v, p);
+    }
+    let down = run(&mut u, 240.0, |u| !u.crafts[0].ship.is_flying());
+    let defenders = u.crafts[1..].iter().filter(|c| c.avionics.hunting.is_some()).count();
+    assert!(down, "the aggressor is shot down (hull {:.2}, {} defending, {} defences)\n{}", u.crafts[0].ship.hull, defenders, u.traffic.defences, incidents(&u));
+    assert!(u.traffic.defences >= 2, "they went after it together ({})", u.traffic.defences);
+    assert!(u.crafts[1..].iter().all(|c| !c.ship.aggressed(u.world.time)), "shooting the aggressor is no crime");
+    assert!(u.kills.iter().any(|k| k.victim == universe_sim::craft_id(0) && k.killer != universe_sim::PLAYER));
+    // Standing down, they slow and keep clear of each other.
+    run(&mut u, 30.0, |_| false);
+    assert!(!u.recorder.incidents.iter().any(|i| i.cause == "COLLISION"), "no collisions after\n{}", incidents(&u));
+}
+
+#[test]
+fn an_aggressed_player_is_judged_like_anyone() {
+    let mut u = bench(5);
+    let (p, v, a, b) = open_space(&mut u);
+    u.ship.state = ShipState::Flying;
+    u.ship.position = p;
+    u.ship.velocity = v;
+    u.ship.aggressed_until = u.world.time + 600.0;
+    for k in 0..5 {
+        let dir = (a * (k as f64).cos() + b * (k as f64).sin()).normalize();
+        place(&mut u, k, p + dir * 4_000.0, v, p);
+    }
+    let hit = run(&mut u, 120.0, |u| u.ship.hull < 1.0);
+    assert!(hit, "the settlers turn on us ({} defences)\n{}", u.traffic.defences, incidents(&u));
+}
+
+#[test]
+fn pirates_hunt_the_player_too() {
+    let mut u = bench(1);
+    let (p, v, a, _) = open_space(&mut u);
+    u.ship.state = ShipState::Flying;
+    u.ship.position = p;
+    u.ship.velocity = v;
+    place(&mut u, 0, p + a * 8_000.0, v, p);
+    u.crafts[0].avionics.pirate = true;
+    run(&mut u, 5.0, |_| false);
+    assert_eq!(u.crafts[0].avionics.hunting.map(|h| h.target), Some(universe_sim::PLAYER));
+}

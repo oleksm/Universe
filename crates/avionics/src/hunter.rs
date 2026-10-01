@@ -9,6 +9,14 @@
 //! reaches shelter has escaped, and the hunter itself keeps out of the
 //! turrets' reach (it's aggressed once it strikes: they'd shoot it).
 //!
+//! The same program flies a lawful ship's defence: anyone who isn't a pirate
+//! judges an aggressor that comes near (fight or flight, see `judge`), and
+//! when the odds are on its side — friends close by, its hull sound, its
+//! nerve good — it goes after the aggressor with the others (shooting the
+//! aggressed is no crime), breaking off when the aggressor is no longer fair
+//! game, gets away, or its own hull runs low. The player is one of the ships
+//! like any other: hunted by pirates, judged by everyone when aggressed.
+//!
 //! It flies by the same rules as anyone: `ShipCommands` to its engine,
 //! thrusters and weapons, fire control's lead for the gun, and the stick
 //! (attitude) it returns for the frame.
@@ -48,10 +56,25 @@ const FLOOR: f64 = 3_000.0;
 const STANDOFF_STRUCTURE: f64 = 1_500.0;
 /// Time to turn the engine round to brake (s): about π at the turn rate.
 const TURN_AROUND: f64 = 3.2;
-/// It keeps at least this far from other ships (m).
+/// It keeps at least this far from other ships (m), looking this far ahead (s).
 const SEPARATION: f64 = 400.0;
+const SEPARATION_LOOK: f64 = 10.0;
+/// Standing down, it first slows to within this of the local traffic (m/s).
+const SETTLED: f64 = 5.0;
 /// Seconds of rest after a hunt before looking for the next.
 pub const REST: f64 = 60.0;
+/// A lawful ship judges an aggressor this close (m).
+pub const DEFEND_RANGE: f64 = 12_000.0;
+/// Friends (and the aggressor's friends) count within this of the aggressor (m).
+const POSSE_RANGE: f64 = 10_000.0;
+/// Its side must be this many times stronger (hull for hull, by its nerve) to fight.
+const ODDS: f64 = 2.0;
+/// It won't start a fight on less hull than this, and breaks off below `FLEE_HULL`.
+const FIGHT_HULL: f64 = 0.5;
+pub const FLEE_HULL: f64 = 0.35;
+/// A defence ends when the aggressor gets this far away (m), or after this long (s).
+const DEFEND_LOSE: f64 = 30_000.0;
+const DEFEND_GIVE_UP: f64 = 300.0;
 
 /// Another ship, as the hunter's radar and transponder see it.
 #[derive(Clone, Copy, Debug)]
@@ -68,6 +91,12 @@ pub struct Sighting {
     pub destroyed: bool,
     /// In hyperdrive (out of reach).
     pub hyperdrive: bool,
+    /// Physically down: docked or landed.
+    pub landed: bool,
+    /// Aggressed: fair game.
+    pub aggressed: bool,
+    /// Hull integrity 0..1 (a combat scan reads it).
+    pub hull: f64,
 }
 
 /// The hunt under way.
@@ -83,15 +112,49 @@ pub struct Hunt {
     pub checked: f64,
     #[serde(default)]
     pub break_off: Option<DVec3>,
+    /// A lawful defence against an aggressor (not a pirate's hunt), and
+    /// whether the route was flying when it began (it goes back to that).
+    #[serde(default)]
+    pub lawful: bool,
+    #[serde(default)]
+    pub resume: bool,
 }
 
 /// How far ahead a hunter's collision warning looks (s), and how often (s).
 const LOOK_AHEAD: f64 = 25.0;
 const LOOK_EVERY: f64 = 0.25;
 
-/// Does a pirate in this state want its radar picture this frame?
+/// Does a pirate in this state want its radar picture this frame? (A
+/// lawful ship wants it while defending, or with an aggressor near: see
+/// `may_defend`.)
 pub fn wants_sightings(a: &Avionics, ship: &Ship, now: f64) -> bool {
-    a.pirate && (a.hunting.is_some() || (ship.is_flying() && !ship.hyperdrive && !a.route.departing && now >= a.rest_until))
+    a.hunting.is_some() || (a.pirate && ship.is_flying() && !ship.hyperdrive && !a.route.departing && now >= a.rest_until)
+}
+
+/// Could a lawful ship in this state take on an aggressor?
+pub fn may_defend(a: &Avionics, ship: &Ship) -> bool {
+    !a.pirate && a.hunting.is_none() && ship.is_flying() && !ship.hyperdrive && ship.hull >= FIGHT_HULL
+}
+
+/// Fight or flight: should ship `me` (hull `hull`, carrying `cargo` t, at
+/// `position`) take on `aggressor`, given everyone it sees? Its side is its
+/// own hull and that of every other lawful ship near the aggressor (who'll
+/// be judging the same); the aggressor's is its hull and its fellow pirates'
+/// near it. Its nerve (a temperament of its own, steadier with nothing in
+/// the hold) must make its side `ODDS` times the stronger.
+pub fn judge(me: usize, hull: f64, cargo: f64, aggressor: &Sighting, sightings: &[Sighting]) -> bool {
+    if hull < FIGHT_HULL {
+        return false;
+    }
+    let near = |s: &&Sighting| s.id != aggressor.id && !s.landed && !s.destroyed && !s.hyperdrive && s.position.distance(aggressor.position) < POSSE_RANGE;
+    let friends: f64 = sightings.iter().filter(near).filter(|s| !s.pirate && !s.aggressed).map(|s| s.hull).sum();
+    let foes: f64 = aggressor.hull + sightings.iter().filter(near).filter(|s| s.pirate || s.aggressed).map(|s| s.hull).sum::<f64>();
+    // 0.6–1.4, the same for this ship against this aggressor every time.
+    let h = (me as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ (aggressor.id as u64).wrapping_mul(0xc2b2_ae3d_27d4_eb4f);
+    let h = (h ^ (h >> 31)).wrapping_mul(0x94d0_49bb_1331_11eb);
+    let nerve = 0.6 + 0.8 * ((h >> 11) as f64 / (1u64 << 53) as f64);
+    let nerve = if cargo > 0.0 { nerve * 0.7 } else { nerve };
+    (hull + friends) * nerve >= ODDS * foes
 }
 
 /// How a hunt ended.
@@ -150,24 +213,35 @@ impl Avionics {
     /// frame is returned (and the route waits); otherwise None. How a hunt
     /// ended, if it did.
     pub fn hunt(&mut self, bus: &mut impl Bus, sightings: &[Sighting], events: &mut Vec<Event>) -> (Option<Controls>, Option<HuntEnd>) {
-        if !self.pirate {
-            return (None, None);
-        }
         let ship = bus.ship().clone();
         let now = bus.time();
-        // Looking for prey: only while flying in normal space, not on a
-        // departure climb.
+        let near = |s: &&Sighting| s.position.distance(ship.position);
         if self.hunting.is_none() {
-            if !wants_sightings(self, &ship, now) {
-                return (None, None);
-            }
-            let prey = sightings
-                .iter()
-                .filter(|s| !s.pirate && !s.docked && !s.destroyed && !s.hyperdrive && s.position.distance(ship.position) < HUNT_RANGE)
-                .min_by(|a, b| a.position.distance(ship.position).total_cmp(&b.position.distance(ship.position)));
-            let Some(prey) = prey else { return (None, None) };
+            let target = if self.pirate {
+                // Looking for prey: only while flying in normal space, not on
+                // a departure climb.
+                if !wants_sightings(self, &ship, now) {
+                    return (None, None);
+                }
+                sightings
+                    .iter()
+                    .filter(|s| !s.pirate && !s.docked && !s.destroyed && !s.hyperdrive && s.position.distance(ship.position) < HUNT_RANGE)
+                    .min_by(|a, b| near(a).total_cmp(&near(b)))
+            } else {
+                // An aggressor near: fight, if the odds say so.
+                if !may_defend(self, &ship) {
+                    return (None, None);
+                }
+                sightings
+                    .iter()
+                    .filter(|s| s.aggressed && !s.landed && !s.destroyed && !s.hyperdrive && s.position.distance(ship.position) < DEFEND_RANGE)
+                    .min_by(|a, b| near(a).total_cmp(&near(b)))
+                    .filter(|a| judge(bus.id(), ship.hull, ship.cargo, a, sightings))
+            };
+            let Some(prey) = target else { return (None, None) };
             // Drop everything and go.
-            self.hunting = Some(Hunt { target: prey.id, since: now, checked: f64::NEG_INFINITY, break_off: None });
+            let lawful = !self.pirate;
+            self.hunting = Some(Hunt { target: prey.id, since: now, checked: f64::NEG_INFINITY, break_off: None, lawful, resume: self.route.active });
             self.route.active = false;
             if self.clearance.take().is_some() {
                 events.push(Event::Traffic(universe_world::TrafficEvent::ClearanceCancelled));
@@ -180,9 +254,14 @@ impl Avionics {
         }
         let hunt = self.hunting.expect("hunting");
         let prey = sightings.iter().find(|s| s.id == hunt.target);
+        // A pirate's prey escapes into shelter; an aggressor only by landing
+        // (the turrets will see to it), or by no longer being fair game. A
+        // defender with its hull running low breaks off.
+        let (lose, give_up) = if hunt.lawful { (DEFEND_LOSE, DEFEND_GIVE_UP) } else { (LOSE_RANGE, GIVE_UP) };
         let end = match prey {
             Some(p) if p.destroyed => Some(HuntEnd::Killed),
-            Some(p) if !p.docked && !p.hyperdrive && p.position.distance(ship.position) < LOSE_RANGE && now - hunt.since < GIVE_UP && ship.is_flying() => None,
+            Some(p) if hunt.lawful && (!p.aggressed || p.landed || ship.hull < FLEE_HULL) => Some(HuntEnd::Escaped),
+            Some(p) if (hunt.lawful || !p.docked) && !p.hyperdrive && p.position.distance(ship.position) < lose && now - hunt.since < give_up && ship.is_flying() => None,
             _ => Some(HuntEnd::Escaped),
         };
         if let Some(end) = end {
@@ -190,8 +269,16 @@ impl Avionics {
             // into (the chase may have left it fast and close), then back to
             // the route, resting a while before the next hunt.
             let (sys, positions) = bus.positions();
-            let guns = bus.turrets();
-            let push = self.keep_clear(&sys, &ship, &positions, now, sightings, &guns);
+            let guns = if hunt.lawful { Vec::new() } else { bus.turrets() };
+            let mut push = self.keep_clear(&sys, &ship, &positions, now, sightings, &guns);
+            // And slowed to the local traffic (the prey's last known motion),
+            // so it doesn't coast on at a charge's speed into the others.
+            // (That falls as everything does since it was last seen.)
+            let g = sys.gravity(ship.position, &positions);
+            let settle = self.track.map_or(DVec3::ZERO, |t| t.velocity + g * (now - t.last) - ship.velocity);
+            if settle.length() > SETTLED {
+                push += (settle * 0.5).clamp_length_max(ship.main_accel());
+            }
             if push.length() > 0.01 && ship.is_flying() {
                 let (throttle, rcs, nose) = thrust_for(&ship, push, push.normalize());
                 let c = ShipCommands { throttle, rcs, weapons: Some(Triggers::default()), arm: Some(false), gun_target: Some(None), ..ship.holding() };
@@ -201,7 +288,9 @@ impl Avionics {
             }
             self.hunting = None;
             self.track = None;
-            self.rest_until = now + REST;
+            if !hunt.lawful {
+                self.rest_until = now + REST;
+            }
             let c = ShipCommands {
                 throttle: 0.0,
                 rcs: DVec3::ZERO,
@@ -212,7 +301,7 @@ impl Avionics {
             };
             let happened = bus.command(&c);
             self.record(happened, events);
-            self.route.active = true;
+            self.route.active = !hunt.lawful || hunt.resume;
             return (None, Some(end));
         }
         let prey = prey.expect("still hunted");
@@ -241,14 +330,20 @@ impl Avionics {
                 evade += out * (2.0 * ship.side_accel() * ((edge - dist) / 3_000.0).min(1.0));
             }
         }
-        // Other ships: no closer than `SEPARATION`, pushed off the harder the closer.
-        for o in others.iter().filter(|o| !o.docked && !o.destroyed && !o.hyperdrive) {
+        // Other ships: no closer than `SEPARATION`, now or at the closest
+        // approach of the next `SEPARATION_LOOK` seconds as things are going;
+        // pushed off the closest-approach line, the harder the sooner.
+        for o in others.iter().filter(|o| !o.landed && !o.destroyed && !o.hyperdrive) {
             let off = ship.position - o.position;
-            let d = off.length();
-            if d < SEPARATION && d > 0.0 {
-                let out = off / d;
-                let closing = -(ship.velocity - o.velocity).dot(out);
-                evade += out * (2.0 * ship.side_accel() * (1.0 - d / SEPARATION) + closing.max(0.0));
+            let v = ship.velocity - o.velocity;
+            let t = if v.length_squared() > 1e-6 { (-off.dot(v) / v.length_squared()).clamp(0.0, SEPARATION_LOOK) } else { 0.0 };
+            let miss = off + v * t;
+            let d = miss.length();
+            if d < SEPARATION {
+                let out = miss.try_normalize().unwrap_or_else(|| v.any_orthonormal_vector());
+                let urgency = 1.0 - t / SEPARATION_LOOK;
+                let closing = (-v.dot(off.normalize_or_zero())).max(0.0);
+                evade += out * (2.0 * ship.side_accel() * (1.0 - d / SEPARATION) * urgency + closing * urgency);
             }
         }
         if let Some(h) = &mut self.hunting
@@ -284,11 +379,14 @@ impl Avionics {
         let gap = d - STANDOFF;
         let closing = if gap > 0.0 { (2.0 * brake * gap).sqrt().min(MAX_CLOSING) } else { gap * 0.2 };
         let mut accel = (dir * closing - v_rel) * 0.6 + track.acceleration;
-        let guns = bus.turrets();
+        // The lawful have nothing to fear from the turrets.
+        let guns = if self.hunting.is_some_and(|h| h.lawful) { Vec::new() } else { bus.turrets() };
         let evade = self.keep_clear(&sys, ship, &positions, now, others, &guns);
         accel += evade;
 
-        let solution = lead(ship.position, ship.velocity, prey.position, prey.velocity, track.acceleration, GUN_MUZZLE, SLUG_LIFETIME);
+        // Gravity pulls the round as it does the prey: lead on the rest of its acceleration.
+        let accel_own = track.acceleration - sys.gravity(prey.position, &positions);
+        let solution = lead(ship.position, ship.velocity, prey.position, prey.velocity, accel_own, GUN_MUZZLE, SLUG_LIFETIME);
         // Keeping clear comes first: then it flies with the engine, not the guns.
         let attacking = d < GUN_RANGE * 1.3 && evade.length() < 0.1 && accel.length() < 2.0 * ship.side_accel();
         let (throttle, rcs, nose) = if attacking {

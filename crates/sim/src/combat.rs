@@ -62,8 +62,11 @@ impl Universe {
                 continue;
             }
             self.traffic_events(craft_id(i), &events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
-            // Fired on (and not a hunter itself): run for the guns.
-            if !self.crafts[i].avionics.pirate && events.iter().any(|e| matches!(e, ShipEvent::Hit { .. })) {
+            // Fired on (and not a hunter itself, nor standing to fight with
+            // hull to spare): run for the guns.
+            let c = &self.crafts[i];
+            let fighting = c.avionics.hunting.is_some_and(|h| h.lawful) && c.ship.hull >= universe_avionics::hunter::FLEE_HULL;
+            if !c.avionics.pirate && !fighting && events.iter().any(|e| matches!(e, ShipEvent::Hit { .. })) {
                 self.flee(i);
             }
             if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
@@ -71,8 +74,11 @@ impl Universe {
                     self.traffic.collision_losses += 1;
                 } else {
                     self.traffic.shot_down += 1;
-                    if kill.killer != PLAYER && self.crafts.get(kill.killer - 1).is_some_and(|c| c.avionics.pirate) {
+                    let killer = if kill.killer == PLAYER { None } else { self.crafts.get(kill.killer - 1) };
+                    if killer.is_some_and(|c| c.avionics.pirate) {
                         self.traffic.pirate_kills += 1;
+                    } else if killer.is_some_and(|c| c.avionics.hunting.is_some_and(|h| h.lawful)) {
+                        self.traffic.aggressors_downed += 1;
                     }
                 }
                 self.record_kill(kill);
@@ -163,9 +169,14 @@ impl Universe {
         };
         Track::update(&mut self.avionics.track, c.blip.id, c.blip.position, c.blip.velocity, self.world.time);
         let track = self.avionics.track?;
+        // Gravity pulls the round as it does the target: lead on the rest of its acceleration.
+        let sys = self.ship_system();
+        let mut positions = Vec::new();
+        sys.positions(self.world.time, &mut positions);
+        let accel = track.acceleration - sys.gravity(c.blip.position, &positions);
         let solution = track
             .ready()
-            .then(|| lead(self.ship.position, self.ship.velocity, c.blip.position, c.blip.velocity, track.acceleration, GUN_MUZZLE, SLUG_LIFETIME))
+            .then(|| lead(self.ship.position, self.ship.velocity, c.blip.position, c.blip.velocity, accel, GUN_MUZZLE, SLUG_LIFETIME))
             .flatten();
         // In combat mode, fire control lays the gun on the lead (its gimbal
         // reaches a few degrees off the nose).

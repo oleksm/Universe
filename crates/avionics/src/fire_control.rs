@@ -7,7 +7,8 @@
 //! shooter's frame: a slug leaves at the ship's velocity plus the muzzle
 //! speed along the aim, and gravity pulls slug and target alike over a short
 //! flight, so what's left is the target's relative motion (with its
-//! acceleration) against the muzzle speed.
+//! acceleration less gravity's: the caller takes that off the track's
+//! measured acceleration) against the muzzle speed.
 
 use glam::DVec3;
 

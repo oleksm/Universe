@@ -460,10 +460,36 @@ pub fn path_length(plan: &Plan) -> f64 {
     plan.points.windows(2).map(|w| w[0].position.distance(w[1].position)).sum()
 }
 
+/// Where `plan` has the ship at absolute time `abs` (in the plan's own frame), if it reaches then.
+fn plan_sample(plan: &Plan, abs: f64) -> Option<DVec3> {
+    let at = abs - plan.start;
+    let pts = &plan.points;
+    if pts.is_empty() || at < 0.0 || at > pts.last()?.time {
+        return None;
+    }
+    let j = pts.iter().rposition(|p| p.time <= at)?;
+    let (a, b) = (pts[j], pts[(j + 1).min(pts.len() - 1)]);
+    let span = b.time - a.time;
+    let u = if span > 0.0 { ((at - a.time) / span).clamp(0.0, 1.0) } else { 0.0 };
+    Some(a.position.lerp(b.position, u))
+}
+
 fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
     // The plan may be a few frames old: carry it along with its reference.
     let Some(center_now) = plan_reference(app) else { return };
-    let place = plan.anchor(center_now, now);
+    let new_place = plan.anchor(center_now, now);
+    // Eased from the plan before, at the same moment of absolute time (so
+    // rebuilds glide rather than jump).
+    let prev = app.plan_prev.as_ref().filter(|_| app.plan_blend < 1.0);
+    let w = app.plan_blend as f64;
+    let blend = |p: DVec3, abs: f64| -> DVec3 {
+        let now_pos = new_place(p);
+        match prev.and_then(|old| plan_sample(old, abs).map(|q| old.anchor(center_now, now)(q))) {
+            Some(old) => old.lerp(now_pos, w),
+            None => now_pos,
+        }
+    };
+    let place = |p: DVec3| new_place(p);
     let turn = plan.turn(now);
     let pts = &plan.points;
     if pts.len() < 2 {
@@ -473,7 +499,7 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
     for (i, w) in pts.windows(2).enumerate() {
         let c = action_color(w[0].action);
         if !(w[0].action == Action::Coast && i % 2 == 1) {
-            frame.line(place(w[0].position), place(w[1].position), c);
+            frame.line(blend(w[0].position, plan.start + w[0].time), blend(w[1].position, plan.start + w[1].time), c);
         }
     }
 
@@ -501,7 +527,7 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
         let (a, b) = (pts[j], pts[(j + 1).min(pts.len() - 1)]);
         let span = b.time - a.time;
         let u = if span > 0.0 { ((at - a.time) / span).clamp(0.0, 1.0) } else { 0.0 };
-        let position = place(a.position.lerp(b.position, u));
+        let position = blend(a.position.lerp(b.position, u), made + at);
         let Some(along) = (place(b.position) - place(a.position)).try_normalize() else { continue };
         let speed = if span > 0.0 { a.position.distance(b.position) / span } else { 0.0 };
         let world = (speed * FRAME_STEP * 0.3).clamp(15.0, 1.0e4);

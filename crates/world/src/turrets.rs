@@ -91,6 +91,36 @@ pub fn turrets(seed: u64, system: usize, sys: &StarSystem) -> Vec<Turret> {
     out
 }
 
+/// Smoothing of a track's acceleration estimate (per second of returns).
+const ACCEL_RATE: f64 = 3.0;
+
+/// Turret fire control's track on a ship: its velocity at the last look,
+/// and its acceleration as estimated from how that changes (the radar
+/// measures motion, not intentions), so a burning ship is led, not just a
+/// coasting one.
+#[derive(Clone, Copy, Debug)]
+pub struct TurretTrack {
+    time: f64,
+    velocity: DVec3,
+    acceleration: DVec3,
+}
+
+impl TurretTrack {
+    fn update(track: Option<TurretTrack>, velocity: DVec3, now: f64) -> TurretTrack {
+        match track {
+            // A stale track starts over.
+            Some(tr) if now > tr.time && now - tr.time < 1.0 => {
+                let dt = now - tr.time;
+                let k = 1.0 - (-ACCEL_RATE * dt).exp();
+                let acceleration = tr.acceleration + ((velocity - tr.velocity) / dt - tr.acceleration) * k;
+                TurretTrack { time: now, velocity, acceleration }
+            }
+            Some(tr) if now <= tr.time => tr,
+            _ => TurretTrack { time: now, velocity, acceleration: DVec3::ZERO },
+        }
+    }
+}
+
 /// Is a ship worth a turret's round: aggressed, and there to be hit?
 fn fair_game(ship: &Ship, now: f64) -> bool {
     ship.aggressed(now) && matches!(ship.state, ShipState::Flying | ShipState::Landed { .. })
@@ -119,6 +149,12 @@ impl crate::world::World {
     /// run: rounds go into `fired`.
     pub(crate) fn turrets_fire(&mut self, ships: &[Armed], dt: f64, fired: &mut Vec<Slug>) {
         let now = self.time;
+        // Track every aggressor (for its acceleration); forget the rest.
+        self.turret_tracks.retain(|id, _| ships.iter().any(|a| a.id == *id && fair_game(a.ship, now)));
+        for a in ships.iter().filter(|a| fair_game(a.ship, now)) {
+            let tr = TurretTrack::update(self.turret_tracks.get(&a.id).copied(), a.ship.velocity, now);
+            self.turret_tracks.insert(a.id, tr);
+        }
         let mut systems: Vec<usize> = ships.iter().filter(|a| fair_game(a.ship, now)).map(|a| a.system).collect();
         systems.sort();
         systems.dedup();
@@ -147,7 +183,9 @@ impl crate::world::World {
                     *cooldown = 0.0;
                     continue;
                 };
-                let lead = universe_physics::intercept(at, velocity, target.ship.position, target.ship.velocity, DVec3::ZERO, GUN_MUZZLE, SLUG_LIFETIME);
+                // Lead on its acceleration less gravity's (which pulls the round alike).
+                let accel = self.turret_tracks.get(&target.id).map_or(DVec3::ZERO, |t| t.acceleration) - sys.gravity(target.ship.position, &positions);
+                let lead = universe_physics::intercept(at, velocity, target.ship.position, target.ship.velocity, accel, GUN_MUZZLE, SLUG_LIFETIME);
                 if let Some((aim, _, _)) = lead {
                     let projectile = universe_physics::Projectile { position: at + aim * 8.0, velocity: velocity + aim * GUN_MUZZLE };
                     fired.push(Slug { system, owner: id, projectile, age: 0.0 });

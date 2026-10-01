@@ -59,6 +59,13 @@ pub struct Universe {
     /// Recent trades by settlers, most recent last.
     pub trade_log: Vec<crate::commerce::TradeRecord>,
     positions: Vec<DVec3>,
+    /// Aggressed ships flying this frame: system and position (who's worth judging).
+    pub(crate) aggressors: Vec<(usize, DVec3)>,
+    /// Every ship as it was at the start of the frame (by combat id), and
+    /// when that was: what each sees of the others, so a ship stepped earlier
+    /// in the frame isn't seen where it will be at its end.
+    pub(crate) snaps: Vec<crate::traffic::Snap>,
+    pub(crate) snap_time: f64,
 }
 
 impl Universe {
@@ -77,6 +84,9 @@ impl Universe {
             credits: STARTING_CREDITS,
             recorder: Default::default(),
             trade_log: Vec::new(),
+            aggressors: Vec::new(),
+            snaps: Vec::new(),
+            snap_time: f64::NAN,
             positions: Vec::new(),
         };
         u.respawn();
@@ -135,6 +145,7 @@ impl Universe {
     /// the same moment; the clock moves once (as far as the player's ship went).
     pub fn step_world(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
         let t0 = self.world.time;
+        self.snapshot();
         let result = self.step(real_dt, warp, controls);
         let t1 = self.world.time;
         for i in 0..self.crafts.len() {

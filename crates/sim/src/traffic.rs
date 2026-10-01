@@ -48,12 +48,49 @@ pub struct TrafficStats {
     /// Hunts by pirates: begun, and ended in a kill.
     pub hunts: u64,
     pub pirate_kills: u64,
+    /// Lawful ships taking on an aggressor (each ship counted), and aggressors they shot down.
+    pub defences: u64,
+    pub aggressors_downed: u64,
     /// Ship-to-ship collisions (each ship's side counted), and ships wrecked by them.
     pub collisions: u64,
     pub collision_losses: u64,
     /// Trades by settlers, and the credits that changed hands.
     pub trades: u64,
     pub turnover: f64,
+}
+
+/// A ship as it was at the start of the frame (see `Universe::snaps`).
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Snap {
+    pub system: usize,
+    pub position: DVec3,
+    pub velocity: DVec3,
+    pub flying: bool,
+    pub landed: bool,
+    pub destroyed: bool,
+    pub transit: bool,
+    pub hyperdrive: bool,
+    pub hull: f64,
+    pub aggressed: bool,
+    pub pirate: bool,
+}
+
+impl Snap {
+    fn of(system: usize, ship: &Ship, pirate: bool, now: f64) -> Self {
+        Snap {
+            system,
+            position: ship.position,
+            velocity: ship.velocity,
+            flying: ship.is_flying(),
+            landed: matches!(ship.state, ShipState::Landed { .. }),
+            destroyed: matches!(ship.state, ShipState::Destroyed { .. }),
+            transit: matches!(ship.state, ShipState::Transit { .. }),
+            hyperdrive: ship.hyperdrive,
+            hull: ship.hull,
+            aggressed: ship.aggressed(now),
+            pirate,
+        }
+    }
 }
 
 /// About one settler in `PIRATE_ONE_IN` is a pirate, and as many again traders.
@@ -147,9 +184,12 @@ impl Universe {
     /// Craft `i`'s turn (no pilot at the stick): step it, log a crash, count
     /// what happened.
     pub(crate) fn fly_craft(&mut self, i: usize, real_dt: f64, warp: f64) {
-        // A pirate looks around first (its radar and its friends' transponders).
+        // A pirate looks around first (its radar and its friends' transponders),
+        // as does anyone with an aggressor near.
+        use universe_avionics::hunter::{may_defend, wants_sightings, DEFEND_RANGE, FLEE_HULL};
         let c = &self.crafts[i];
-        let sightings = if universe_avionics::hunter::wants_sightings(&c.avionics, &c.ship, self.world.time) { self.sightings(i) } else { Vec::new() };
+        let threat = may_defend(&c.avionics, &c.ship) && self.aggressors.iter().any(|&(s, p)| s == c.system && p.distance(c.ship.position) < DEFEND_RANGE);
+        let sightings = if threat || wants_sightings(&c.avionics, &c.ship, self.world.time) { self.sightings(i) } else { Vec::new() };
         let c = &self.crafts[i];
         let mark = match c.avionics.following.map(|f| f.anchor) {
             Some(universe_avionics::follow::Anchor::Ship(id)) => self.ship_mark(c.system, c.ship.position, id),
@@ -161,11 +201,19 @@ impl Universe {
         let mut events = Vec::new();
         let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };
         let was_hunting = vessel.avionics.hunting.is_some();
-        let (stick, _) = vessel.run(&mut self.world, |a, link, ev| a.hunt(link, &sightings, ev));
+        let (stick, end) = vessel.run(&mut self.world, |a, link, ev| a.hunt(link, &sightings, ev));
         let stick = stick.or_else(|| vessel.run(&mut self.world, |a, link, ev| a.follow_step(link, mark, ev)));
         vessel.tick(&mut self.world, &stick.unwrap_or_default(), real_dt, warp);
-        if c.avionics.hunting.is_some() && !was_hunting {
-            self.traffic.hunts += 1;
+        if let Some(h) = c.avionics.hunting.filter(|_| !was_hunting) {
+            if h.lawful {
+                self.traffic.defences += 1;
+            } else {
+                self.traffic.hunts += 1;
+            }
+        }
+        // A defender that broke off hurt runs for the guns.
+        if end.is_some() && !c.avionics.pirate && c.ship.hull < FLEE_HULL {
+            self.flee(i);
         }
         self.traffic_events(crate::combat::craft_id(i), &events);
         let crashed = events.iter().find_map(|e| match e {
@@ -202,28 +250,41 @@ impl Universe {
     /// docked or wrecked.
     fn sightings(&mut self, i: usize) -> Vec<Sighting> {
         let (system, pos) = (self.crafts[i].system, self.crafts[i].ship.position);
+        let me = crate::combat::craft_id(i);
         let _ = self.system(system);
         // Shelter is real: docked or landed, or under a defence turret's guns.
         let guns: Vec<DVec3> = self.world.turret_motions(system).into_iter().map(|(_, p, _)| p).collect();
-        let sheltered = |s: &Ship| match s.state {
-            ShipState::Landed { .. } => true,
-            _ => guns.iter().any(|p| p.distance(s.position) < universe_world::turrets::TURRET_RANGE + universe_avionics::hunter::SHELTER_MARGIN),
-        };
-        self.crafts
+        let sheltered = |s: &Snap| s.landed || guns.iter().any(|p| p.distance(s.position) < universe_world::turrets::TURRET_RANGE + universe_avionics::hunter::SHELTER_MARGIN);
+        // Everyone in the system, the player too (by combat id), as the radar
+        // saw them at the start of the frame (where this craft still is).
+        self.snaps
             .iter()
             .enumerate()
-            .filter(|(j, c)| *j != i && c.system == system && c.ship.position.distance(pos) < RADAR_RANGE)
-            .filter(|(_, c)| !matches!(c.ship.state, ShipState::Transit { .. }))
-            .map(|(j, c)| Sighting {
-                id: j,
-                position: c.ship.position,
-                velocity: c.ship.velocity,
-                pirate: c.avionics.pirate,
-                docked: sheltered(&c.ship),
-                destroyed: matches!(c.ship.state, ShipState::Destroyed { .. }),
-                hyperdrive: c.ship.hyperdrive,
+            .filter(|&(id, s)| id != me && s.system == system && !s.transit && s.position.distance(pos) < RADAR_RANGE)
+            .map(|(id, s)| Sighting {
+                id,
+                position: s.position,
+                velocity: s.velocity,
+                pirate: s.pirate,
+                docked: sheltered(s),
+                destroyed: s.destroyed,
+                hyperdrive: s.hyperdrive,
+                landed: s.landed,
+                aggressed: s.aggressed,
+                hull: s.hull,
             })
             .collect()
+    }
+
+    /// Take the frame's snapshot of every ship, and who's aggressed.
+    pub(crate) fn snapshot(&mut self) {
+        let now = self.world.time;
+        self.snaps.clear();
+        self.snaps.push(Snap::of(self.ship_system, &self.ship, false, now));
+        let crafts = self.crafts.iter().map(|c| Snap::of(c.system, &c.ship, c.avionics.pirate, now));
+        self.snaps.extend(crafts);
+        self.snap_time = now;
+        self.aggressors = self.snaps.iter().filter(|s| s.aggressed && s.flying && !s.hyperdrive).map(|s| (s.system, s.position)).collect();
     }
 
     /// Count what happened to craft `i`, and give it a new route when done.
