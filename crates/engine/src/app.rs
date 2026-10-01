@@ -176,9 +176,20 @@ impl<G: Game> Runner<G> {
         s.ctx.low_res = rs.low_res;
 
         s.frame_count += 1;
-        let auto_capture = s.frame_count == 120 && s.auto_screenshot.is_some();
-        if auto_capture {
-            s.ctx.screenshot = s.auto_screenshot.clone();
+        // UNIVERSE_SCREENSHOT_FRAMES=n: also the n frames after it (name_1.png…),
+        // to compare frame to frame.
+        let extra: u64 = std::env::var("UNIVERSE_SCREENSHOT_FRAMES").ok().and_then(|v| v.parse().ok()).unwrap_or(0);
+        let shot = s.frame_count >= 120 && s.frame_count <= 120 + extra && s.auto_screenshot.is_some();
+        let auto_capture = s.frame_count == 120 + extra && s.auto_screenshot.is_some();
+        if shot {
+            let k = s.frame_count - 120;
+            s.ctx.screenshot = s.auto_screenshot.clone().map(|p| {
+                if k == 0 {
+                    p
+                } else {
+                    p.with_file_name(format!("{}_{k}.png", p.file_stem().unwrap_or_default().to_string_lossy()))
+                }
+            });
         }
 
         let t0 = Instant::now();

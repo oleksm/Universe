@@ -89,7 +89,7 @@ impl Universe {
     /// command delay, like a pilot's; where no one's fair game any more, the
     /// gunners stand down.
     fn gunners(&mut self, dt: f64) {
-        use universe_avionics::gunner::{Gunner, Quarry};
+        use universe_avionics::gunner::Quarry;
         use universe_protocol::TurretCommand;
         let delay = self.command_delay as u64;
         // Orders due now reach the guns.

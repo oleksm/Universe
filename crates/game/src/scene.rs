@@ -348,22 +348,22 @@ const HULL: Color = Color::hex(0x5a6068);
 /// Other ships in the system being viewed.
 fn crafts(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
-    for c in app.v.crafts.iter() {
+    for (i, c) in app.v.crafts.iter().enumerate() {
         let visible = c.ship.is_flying() || matches!(c.ship.state, ShipState::Landed { .. });
         if c.system != app.view.origin || !visible {
             continue;
         }
-        let pos = app.ahead(&c.ship);
+        let (pos, turned) = app.place(crate::Who::Craft(i));
         if frame.projected_radius(pos, 25.0) < 1.0 {
             let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
             frame.point(pos, tc.scale(0.8));
             continue;
         }
-        let t = Transform { position: pos, rotation: app.turned(&c.ship).as_quat(), scale: 1.0 };
+        let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
         frame.model_shaded(&app.models.ship, &t, tc, HULL);
         if c.ship.throttle > 0.0 {
-            let back = app.turned(&c.ship) * DVec3::Z;
+            let back = turned * DVec3::Z;
             frame.line(pos + back * 16.0, pos + back * (26.0 + 40.0 * c.ship.throttle), Color::hex(0xffa040));
         }
         if pos.distance(cam) < 20_000.0
@@ -403,10 +403,13 @@ fn collision_path(frame: &mut Frame, app: &App) {
 /// us), and this frame's laser beams.
 fn weapons_fire(frame: &mut Frame, app: &App) {
     let own = app.v.ship.velocity;
+    // (Carried to the moment drawn by their own motion.)
+    let back = app.now() - app.v.time;
     for &(system, p, velocity) in &app.v.slugs {
         if system != app.view.origin {
             continue;
         }
+        let p = p + velocity * back;
         let rel = velocity - own;
         let streak = rel.normalize_or_zero() * (rel.length() * 0.02).clamp(4.0, 60.0);
         frame.line(p - streak, p, Color::hex(0xffd060));
@@ -741,14 +744,14 @@ fn ship(frame: &mut Frame, app: &App) {
         frame.point(pos, SHIP_COLOR);
         return;
     }
-    let t = Transform { position: pos, rotation: app.turned(&app.v.ship).as_quat(), scale: 1.0 };
+    let t = Transform { position: pos, rotation: app.place(crate::Who::Me).1.as_quat(), scale: 1.0 };
     frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
     // Landed on a body: the landing legs, down to the ground.
     if let ShipState::Landed { body, .. } = app.v.ship.state
         && app.view.system.bodies[body].kind != BodyKind::Station
     {
         let (b, center) = (&app.view.system.bodies[body], app.view.positions[body]);
-        let o = app.turned(&app.v.ship);
+        let o = app.place(crate::Who::Me).1;
         for leg in [DVec3::new(-7.0, -3.2, 8.0), DVec3::new(7.0, -3.2, 8.0), DVec3::new(0.0, -2.2, -12.0)] {
             let top = pos + o * leg;
             let dir = (top - center).normalize();
@@ -760,7 +763,7 @@ fn ship(frame: &mut Frame, app: &App) {
     }
     if app.v.ship.hyperdrive || app.v.ship.throttle > 0.0 {
         // Exhaust streak.
-        let back = app.turned(&app.v.ship) * DVec3::Z;
+        let back = app.place(crate::Who::Me).1 * DVec3::Z;
         let len = 10.0 + 40.0 * app.v.ship.throttle;
         frame.line(pos + back * 16.0, pos + back * (16.0 + len), Color::hex(0xffa040));
     }

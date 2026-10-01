@@ -60,6 +60,13 @@ pub struct View {
     pub reference: Option<usize>,
 }
 
+/// Whose motion to draw: ours, or craft `i`'s.
+#[derive(Clone, Copy, Debug)]
+pub enum Who {
+    Me,
+    Craft(usize),
+}
+
 pub struct Message {
     pub text: String,
     pub ttl: f32,
@@ -70,6 +77,10 @@ pub struct App {
     /// the world, and the galaxy's charts.
     pub engine: EngineHandle,
     pub v: Arc<universe_sim::View>,
+    /// The view before it: the client draws between the two (see `alpha`),
+    /// and how far between, for this frame.
+    pub prev: Arc<universe_sim::View>,
+    alpha: f64,
     pub charts: Arc<Charts>,
     pub mode: Mode,
     pub observer: Observer,
@@ -168,6 +179,8 @@ impl App {
         let system = charts.system(origin);
         let mut app = Self {
             engine,
+            prev: v.clone(),
+            alpha: 1.0,
             v,
             charts,
             mode: Mode::Pilot,
@@ -245,25 +258,52 @@ impl App {
         }
     }
 
-    /// Game seconds since the view was made (as of now, real time), up to a
-    /// tenth of a second: what the client projects ahead by between ticks.
-    pub fn since_view(&self) -> f64 {
-        (self.engine.view_at.elapsed().as_secs_f64() * self.warp()).min(0.1)
+    /// How far between the previous view and the latest to draw (0..1). The
+    /// client draws one tick behind real time, between the two views made
+    /// around then (by when the engine made them), so motion is smooth
+    /// whatever the display's rate and however late a view is picked up. A
+    /// view late in coming holds at the latest rather than guess ahead.
+    pub fn alpha(&self) -> f64 {
+        self.alpha
     }
 
-    /// World time to draw at: the view's, carried forward to now.
+    /// `alpha` as of now (taken once a frame: everything drawn that frame is
+    /// drawn at the same moment).
+    fn alpha_now(&self) -> f64 {
+        if !self.engine.running() {
+            return 1.0;
+        }
+        let span = self.v.made.saturating_duration_since(self.prev.made).as_secs_f64();
+        if span <= 0.0 {
+            return 1.0;
+        }
+        let behind = std::time::Instant::now() - std::time::Duration::from_secs_f64(1.0 / universe_sim::engine::TICK_HZ);
+        let into = behind.saturating_duration_since(self.prev.made).as_secs_f64();
+        (into / span).clamp(0.0, 1.0)
+    }
+
+    /// World time to draw at.
     pub fn now(&self) -> f64 {
-        self.v.time + self.since_view()
+        self.prev.time + (self.v.time - self.prev.time) * self.alpha()
     }
 
-    /// Where a ship is to be drawn: carried forward from the view by its velocity.
-    pub fn ahead(&self, ship: &universe_sim::Ship) -> DVec3 {
-        ship.position + ship.velocity * self.since_view()
-    }
-
-    /// How a ship is to be drawn turned: carried forward by its spin.
-    pub fn turned(&self, ship: &universe_sim::Ship) -> universe_engine::glam::DQuat {
-        ship.orientation * universe_engine::glam::DQuat::from_scaled_axis(ship.angular_velocity * self.since_view())
+    /// Where a ship is to be drawn, and how it's turned: between the two
+    /// views (unless it jumped between them: a new ship, a gate, another star).
+    pub fn place(&self, who: Who) -> (DVec3, universe_engine::glam::DQuat) {
+        let (now, before) = match who {
+            Who::Me => (&self.v.ship, (self.prev.ship_system == self.v.ship_system).then_some(&self.prev.ship)),
+            Who::Craft(i) => {
+                let Some(c) = self.v.crafts.get(i) else { return (DVec3::ZERO, universe_engine::glam::DQuat::IDENTITY) };
+                (&c.ship, self.prev.crafts.get(i).filter(|p| p.system == c.system).map(|p| &p.ship))
+            }
+        };
+        match before.filter(|b| b.position.distance(now.position) < 20_000.0) {
+            Some(b) => {
+                let a = self.alpha();
+                (b.position.lerp(now.position, a), b.orientation.slerp(now.orientation, a))
+            }
+            None => (now.position, now.orientation),
+        }
     }
 
     /// How fast game time runs relative to real time: the world's time scale,
@@ -581,7 +621,7 @@ impl App {
         let system = self.charts.system(origin);
         let mut positions = std::mem::take(&mut self.view.positions);
         system.positions(self.now(), &mut positions);
-        let ship_pos = self.ahead(&self.v.ship) + self.charts.galaxy.offset(origin, self.v.ship_system);
+        let ship_pos = self.place(Who::Me).0 + self.charts.galaxy.offset(origin, self.v.ship_system);
         let reference = (origin == self.v.ship_system).then(|| system.dominant(ship_pos, &positions));
         self.view = View { origin, system, positions, ship_pos, reference };
     }
@@ -590,7 +630,7 @@ impl App {
         match self.observer.focus {
             Focus::Body { body, .. } => self.view.positions[body],
             Focus::Ship => self.view.ship_pos,
-            Focus::Craft(i) => self.v.crafts.get(i).map_or(DVec3::ZERO, |c| self.ahead(&c.ship)),
+            Focus::Craft(i) => self.place(Who::Craft(i)).0,
         }
     }
 
@@ -616,7 +656,7 @@ impl App {
             Mode::Pilot => {
                 let ship = &self.v.ship;
                 // Turned on as it's turning since the view.
-                let turned = self.turned(ship);
+                let turned = self.place(Who::Me).1;
                 let orientation = turned.as_quat();
                 let docked = matches!(ship.state, ShipState::Landed { body, .. } if self.view.system.bodies[body].kind == universe_sim::BodyKind::Station);
                 // Docked: the ship is inside the slot, so back off far enough to see the station.
@@ -675,8 +715,10 @@ impl Game for App {
         };
         if fresh {
             self.mouse_since_tick = universe_engine::glam::Vec2::ZERO;
+            self.prev = self.v.clone();
         }
         self.v = self.engine.view();
+        self.alpha = self.alpha_now();
         let v = self.v.clone();
         if fresh && v.ship.ammo < ammo {
             sound::gunshot(ctx);
@@ -736,7 +778,6 @@ impl Game for App {
         };
         self.nav_marker = v.nav_marker.clone();
         self.reach = v.reach;
-        self.turrets = if self.view.origin == v.ship_system { v.turrets.clone() } else { Vec::new() };
         self.docked_market = v.docked_market.is_some();
         self.contacts = v.contacts.clone();
         self.fire = v.fire;
@@ -746,7 +787,30 @@ impl Game for App {
         self.hit_age += ctx.dt;
         self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
         universe_prof::time("update/build view", || self.build_view());
+        // The turrets in view, where they are at the moment drawn (from the charts).
+        let (origin, t) = (self.view.origin, self.now());
+        let sys = self.view.system.clone();
+        self.turrets = universe_sim::world::turrets::turrets(self.charts.seed, origin, &sys)
+            .into_iter()
+            .map(|tu| {
+                let (p, _) = tu.motion(&sys, t, &self.view.positions);
+                (tu, p)
+            })
+            .collect();
         self.update_camera(dt, focus_changed);
+        if std::env::var_os("UNIVERSE_DEBUG_MOTION").is_some() {
+            // Where the nearest craft (chosen once) is drawn relative to the camera, and the world time drawn.
+            static PICK: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+            let cam = self.camera.position;
+            let i = *PICK.get_or_init(|| {
+                (0..self.v.crafts.len())
+                    .filter(|&i| self.v.crafts[i].system == self.view.origin && self.v.crafts[i].ship.is_flying() && !self.v.crafts[i].ship.hyperdrive)
+                    .min_by(|&a, &b| self.v.crafts[a].ship.position.distance(cam).total_cmp(&self.v.crafts[b].ship.position.distance(cam)))
+                    .unwrap_or(0)
+            });
+            let rel = self.place(Who::Craft(i)).0 - cam;
+            eprintln!("MOTION t {:.5} rel {:.3} {:.3} {:.3} alpha {:.2}", self.now(), rel.x, rel.y, rel.z, self.alpha());
+        }
         if let Some(t) = self.sound_test {
             let next = t + dt;
             self.sound_test = dev::sound_test(ctx, next, t).then_some(next);

@@ -152,6 +152,8 @@ pub struct View {
     pub last_step: StepResult,
     pub sim_ms: f32,
     pub serial: u64,
+    /// When the engine made it (real time): clients draw between views by it.
+    pub made: std::time::Instant,
 }
 
 /// The world engine: the universe, and the player's ship's computers that
@@ -394,6 +396,7 @@ impl Engine {
             last_step: self.last_step,
             sim_ms: self.sim_ms,
             serial: self.serial,
+            made: std::time::Instant::now(),
         }
     }
 }
