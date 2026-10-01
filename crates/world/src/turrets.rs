@@ -19,8 +19,8 @@ use crate::weapons::{Slug, GUN_MUZZLE};
 
 /// How far a turret reaches (m): twice a ship's gun range.
 pub const TURRET_RANGE: f64 = 6_000.0;
-/// A spaceport's turrets reach farther: SAMs covering the holding circle
-/// over the port (its rounds fly 30 km).
+/// A spaceport's or a station's turrets reach farther: SAMs covering the
+/// approach and the holding circle (their rounds fly 30 km).
 pub const PORT_TURRET_RANGE: f64 = 20_000.0;
 /// Rounds per second.
 pub const TURRET_RATE: f64 = 5.0;
@@ -40,7 +40,7 @@ impl Turret {
     /// How far it reaches (m).
     pub fn range(&self) -> f64 {
         match self.facility {
-            Facility::Spaceport(_) => PORT_TURRET_RANGE,
+            Facility::Spaceport(_) | Facility::Station(_) => PORT_TURRET_RANGE,
             _ => TURRET_RANGE,
         }
     }
@@ -70,16 +70,16 @@ fn ring(axis: DVec3, radius: f64, n: usize, phase: f64) -> impl Iterator<Item = 
 }
 
 /// The turrets of star system `system` (`sys`), for the galaxy `seed`:
-/// most stations have 2–4, half the gates 2–3 on the ring, half the
-/// spaceports 3–4 on the ground around the pads.
+/// every station 3–4 SAMs round its platform, half the gates 2–3 on the
+/// ring, half the spaceports 3–4 on the ground around the pads.
 pub fn turrets(seed: u64, system: usize, sys: &StarSystem) -> Vec<Turret> {
     let mut rng = Rng::new(mix(seed, 0x5a4_7000 + system as u64));
     let mut out = Vec::new();
     for (i, b) in sys.bodies.iter().enumerate() {
         match b.kind {
-            BodyKind::Station if rng.range(0.0, 1.0) < 0.7 => {
-                let n = 2 + rng.range(0.0, 3.0) as usize;
-                // Around its middle, clear of the hull (its spin axis is local +Y).
+            BodyKind::Station => {
+                let n = 3 + rng.range(0.0, 2.0) as usize;
+                // Round the platform in its deck's plane, clear of it.
                 out.extend(ring(DVec3::Y, STATION_SIZE * 1.6, n, rng.range(0.0, 1.0)).map(|p| Turret { facility: Facility::Station(i), body: i, local: p }));
             }
             BodyKind::Gate if rng.range(0.0, 1.0) < 0.5 => {
@@ -233,5 +233,30 @@ mod tests {
         facilities.dedup();
         let defended = facilities.len();
         assert!(defended > 0 && defended < places, "{defended} of {places} places defended");
+    }
+}
+
+#[cfg(test)]
+mod stations {
+    use super::*;
+
+    #[test]
+    fn every_station_has_sams_covering_its_approach() {
+        let w = crate::World::new(1984);
+        let mut systems: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
+        systems.sort_unstable();
+        systems.dedup();
+        let mut stations = 0;
+        for &s in &systems {
+            let sys = w.system(s);
+            let t = turrets(w.galaxy.seed, s, &sys);
+            for (i, b) in sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == BodyKind::Station) {
+                let mine: Vec<_> = t.iter().filter(|t| t.facility == Facility::Station(i)).collect();
+                assert!(mine.len() >= 3, "{}: {} turrets", b.name, mine.len());
+                assert!(mine.iter().all(|t| t.range() >= 20_000.0));
+                stations += 1;
+            }
+        }
+        assert!(stations > 0);
     }
 }
