@@ -420,8 +420,7 @@ pub(crate) fn thrust_for(ship: &Ship, accel: DVec3, fallback: DVec3) -> (f64, DV
     let lined_up = ship.forward().angle_between(want) < 0.25;
     let throttle = if lined_up { (accel.length() / ship.main_accel()).min(1.0) } else { 0.0 };
     let rest = accel - ship.forward() * (throttle * ship.main_accel());
-    let local = ship.orientation.inverse() * rest / ship.side_accel();
-    (throttle, local.clamp(DVec3::splat(-1.0), DVec3::ONE), want)
+    (throttle, ship.thruster_command(ship.orientation.inverse() * rest), want)
 }
 
 /// The ship's velocity relative to the nearest body (the thing it's likely to hit).

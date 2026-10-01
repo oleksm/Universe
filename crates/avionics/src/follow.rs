@@ -275,7 +275,8 @@ impl Avionics {
         // along the way it goes); more, and it turns to burn.
         let (throttle, rcs, nose) = if accel.length() < 0.9 * ship.side_accel() {
             // (All of it: lined up or not, the engine isn't lit for this.)
-            let rcs = (ship.orientation.inverse() * accel / ship.side_accel()).clamp(DVec3::splat(-1.0), DVec3::ONE);
+            // (Per axis: the lift thrusters push up harder than the rest.)
+            let rcs = ship.thruster_command(ship.orientation.inverse() * accel);
             (0.0, rcs, prograde.unwrap_or(dir))
         } else {
             thrust_for(&ship, accel, prograde.unwrap_or(dir))

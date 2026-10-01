@@ -71,3 +71,13 @@ docking do:
   grid mark behind the ship (the path's own start has no frame), so the next mark always has
   one, and it goes once you're through it. (It started a step ahead, ~500 m at 3 km.)
 - Dev scenario `orbitpick` (the list up).
+
+## Thrusters commanded per axis
+
+- The follow program (and the hunter's `thrust_for`) turned a wanted acceleration into a
+  thruster command dividing by the side thrusters' push on every axis; the lift thrusters
+  push up about four times harder, so an upward command came out ~4× too strong. Banked in
+  orbit (the push to the anchor is up) feedback hid it on average, at four times the loop gain
+  and 10 m inside the range. They use `Ship::thruster_command` now (per axis).
+- Measured: orbiting at 3 km, a 90 t ship holds itself on the circle with ~216 kN up, 0.022 kg/s
+  of fuel (thrust over the exhaust velocity): about 80 kg an hour, the main engine off.
