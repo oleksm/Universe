@@ -506,6 +506,25 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.orientation = universe_sim::ship::facing(-pad.up, pad.up.any_orthonormal_vector());
             app.mode = Mode::Pilot;
         }
+        "fleet" => {
+            // Each hull beside us in a row, 150 m apart, as we fly.
+            app.mode = Mode::Pilot;
+            let u = app.engine.universe();
+            let (at, v, o) = (u.ship.position, u.ship.velocity, u.ship.orientation);
+            let right = o * DVec3::X;
+            let ahead = o * DVec3::NEG_Z;
+            let home = u.ship_system;
+            for (k, key) in ["hull.sprint", "hull.interceptor", "hull.prospector", "hull.hauler"].iter().enumerate() {
+                let c = &mut u.crafts[k];
+                c.ship.class = universe_sim::world::content::content().handle(key).unwrap();
+                c.ship.state = ShipState::Flying;
+                c.ship.position = at + ahead * 220.0 + right * ((k as f64 - 1.5) * 150.0);
+                c.ship.velocity = v;
+                c.ship.orientation = o;
+                c.system = home;
+                u.pilots()[k].avionics.route.active = false;
+            }
+        }
         "sunclose" => {
             // A tenth of an AU from the star, facing it.
             app.mode = Mode::Pilot;

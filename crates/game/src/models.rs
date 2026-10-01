@@ -9,7 +9,8 @@ pub struct Models {
     pub moon: Mesh,
     pub star: Mesh,
     pub station: Mesh,
-    pub ship: Mesh,
+    /// Each hull's, in the content's order (see `hull`).
+    pub hulls: Vec<Mesh>,
     pub gate: Mesh,
 }
 
@@ -21,9 +22,16 @@ impl Models {
             moon: Mesh::new(WireModel::globe(8, 5, 4)),
             star: Mesh::new(WireModel::globe(16, 9, 3)),
             station: Mesh::new(wire(shape("shape.coriolis"))),
-            ship: Mesh::new(wire(universe_sim::world::ship::cobra().shape())),
+            hulls: content().hulls.iter().map(|(_, h)| Mesh::new(wire(h.shape()))).collect(),
             gate: Mesh::new(gate_ring()),
         }
+    }
+}
+
+impl Models {
+    /// A ship's model: its hull's.
+    pub fn hull(&self, ship: &universe_sim::world::Ship) -> &Mesh {
+        &self.hulls[ship.class.index()]
     }
 }
 

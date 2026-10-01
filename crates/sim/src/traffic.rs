@@ -91,7 +91,11 @@ impl Universe {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Register(logged)));
         let now = self.world.time;
         for reg in ships {
-            let ship = self.world.ship_on(reg.at.system, reg.at.target, reg.pad);
+            let mut ship = self.world.ship_on(reg.at.system, reg.at.target, reg.pad);
+            if let Some(h) = universe_world::content::content().handle(&reg.hull) {
+                ship.class = h;
+                ship.fuel = ship.spec().fuel_capacity;
+            }
             self.crafts.push(Craft { name: reg.name, ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
             let me = universe_services::Party::Pilot(crate::combat::craft_id(self.crafts.len() - 1));
             self.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);

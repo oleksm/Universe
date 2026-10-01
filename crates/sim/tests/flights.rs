@@ -310,3 +310,21 @@ fn hyperdrive_autopilot_reaches_an_asteroid_field_and_drops_out_moving_with_it()
     assert!(v < 1.0, "moving with it");
 }
 
+
+/// A universe whose player flies hull `key`, its tank full.
+fn in_hull(key: &str) -> Universe {
+    let mut u = Universe::new(42);
+    u.ship.class = universe_sim::world::content::content().handle(key).unwrap();
+    u.ship.fuel = u.ship.spec().fuel_capacity;
+    u
+}
+
+#[test]
+fn the_heaviest_and_the_nimblest_hull_land_and_dock_on_the_autopilots() {
+    // (The extremes: the others lie between.)
+    for key in ["hull.hauler", "hull.interceptor"] {
+        let land = autoland(in_hull(key), 20.0);
+        let dock = autodock(in_hull(key));
+        eprintln!("{key}: landed after {land:.0} s, docked after {dock:.0} s");
+    }
+}

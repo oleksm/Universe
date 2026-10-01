@@ -380,7 +380,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         }
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
-        frame.model_shaded(&app.models.ship, &t, tc, HULL);
+        frame.model_shaded(app.models.hull(&c.ship), &t, tc, HULL);
         jets(frame, &c.ship, pos, turned, app.now(), i);
         if pos.distance(cam) < 20_000.0
             && let Some(p) = frame.project(pos)
@@ -963,9 +963,9 @@ fn ship(frame: &mut Frame, app: &App) {
     // (Over a rock the camera stands off to the side: no need either.)
     let panel = panel || matches!(app.ship.state, ShipState::Anchored { .. });
     if app.mode == Mode::Pilot && app.chase_cam && !docked && !panel {
-        frame.in_front(|frame| frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL));
+        frame.in_front(|frame| frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL));
     } else {
-        frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
+        frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL);
     }
     // Landed on a body: the landing legs, down to the ground.
     if let ShipState::Landed { body, .. } = app.ship.state

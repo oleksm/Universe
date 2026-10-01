@@ -150,6 +150,10 @@ pub(crate) struct ShapeDef {
     /// Spheres covering it, for contact: (centre, radius).
     #[serde(default)]
     spheres: Vec<(Point, f64)>,
+    /// Its nodes are given about its centre of mass (laid out balanced
+    /// about it, as thrusters must be), not in the frame of its points.
+    #[serde(default)]
+    about_centre: bool,
 }
 
 fn unit() -> f64 {
@@ -195,7 +199,8 @@ impl ShapeDef {
             if nodes.iter().any(|m: &Node| m.name == n.name) {
                 return Err(format!("node '{}' twice", n.name));
             }
-            nodes.push(Node { name: n.name, role, at: point(n.at) * s - c, dir });
+            let shift = if self.about_centre { DVec3::ZERO } else { c };
+            nodes.push(Node { name: n.name, role, at: point(n.at) * s - shift, dir });
         }
         let loops = self.loops.into_iter().map(|l| l.into_iter().map(|p| point(p) * s - c).collect()).collect();
         let mut spheres = Vec::new();

@@ -93,8 +93,9 @@ pub(crate) struct HullDef {
     key: String,
     name: String,
     shape: String,
-    /// The frame alone (kg).
+    /// The frame alone (kg), and its price (credits).
     frame_mass: f64,
+    price: f64,
     slots: Vec<(String, crate::modules::SlotKind, u8)>,
     /// What it's sold with: (slot, module).
     fit: Vec<(String, String)>,
@@ -160,7 +161,7 @@ impl HullDef {
             found.insert(h, m);
             fit.push((slot.clone(), h));
         }
-        let frame = HullFrame { frame_mass: self.frame_mass, slots, nozzles, radius: self.radius, drag_area: self.drag_area, hull_strength: self.hull_strength };
+        let frame = HullFrame { frame_mass: self.frame_mass, price: self.price, slots, nozzles, radius: self.radius, drag_area: self.drag_area, hull_strength: self.hull_strength };
         ClassSpec::assemble(self.key, self.name, self.shape, shape_ref, shape, frame, fit, |h| found[&h])
     }
 }
@@ -180,6 +181,8 @@ pub struct NozzleLink {
 #[derive(Clone, Debug, PartialEq)]
 pub struct HullFrame {
     pub frame_mass: f64,
+    /// The frame's price (credits): what's fitted is priced on top.
+    pub price: f64,
     pub slots: Vec<Slot>,
     pub nozzles: Vec<NozzleLink>,
     pub radius: f64,
@@ -829,5 +832,31 @@ mod tests {
         assert!(yaw > pitch && yaw > roll, "pitch {pitch:.3e} yaw {yaw:.3e} roll {roll:.3e}");
         s.fuel = 0.0;
         assert!((s.inertia().y_axis.y / yaw - (s.mass() / (s.mass() + s.spec().fuel_capacity))).abs() < 1e-9, "lighter, easier to turn");
+    }
+}
+
+#[cfg(test)]
+mod classes {
+    use super::*;
+    use crate::content::content;
+
+    #[test]
+    fn every_hull_is_balanced_and_sized_for_its_job() {
+        for (_, h) in content().hulls.iter() {
+            let s = Ship { class: content().handle(&h.key).unwrap(), ..Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY) };
+            let (m, com, i) = (s.mass(), s.centre_of_mass(), s.inertia());
+            // Every way it pushes, nearly all of it without turning the ship.
+            for (d, full) in [(DVec3::X, h.rcs_thrust), (DVec3::NEG_X, h.rcs_thrust), (DVec3::NEG_Y, h.rcs_thrust), (DVec3::Z, h.rcs_thrust), (DVec3::NEG_Z, h.rcs_thrust), (DVec3::Y, h.lift_thrust), (DVec3::NEG_Z, h.main_thrust)] {
+                let mut u = Vec::new();
+                let (f, _) = crate::thrusters::allocate(&h.thrusters, com, m, i, d * full, DVec3::ZERO, &mut u);
+                assert!(f.dot(d) / full > 0.9, "{}: {d} only {:.0}%", h.key, 100.0 * f.dot(d) / full);
+            }
+            let loaded = h.dry_mass + h.fuel_capacity;
+            eprintln!(
+                "{:<16} dry {:>5.1} t  tank {:>4.0} t  hold {:>5.0} t  main {:>4.1} m/s²  lift {:>4.1} m/s² (full hold {:>4.1})  turns {:.1}/{:.1}/{:.1}  {:.0} CR",
+                h.name, h.dry_mass / 1e3, h.fuel_capacity / 1e3, h.hold_capacity / 1e3, h.main_thrust / loaded, h.lift_thrust / loaded, h.lift_thrust / (loaded + h.hold_capacity), h.turn_accel.x, h.turn_accel.y, h.turn_accel.z, h.frame.price
+            );
+            assert!(h.lift_thrust / loaded > 9.81 * 1.1, "{}: can't hover at 1 g with an empty hold", h.key);
+        }
     }
 }

@@ -464,6 +464,8 @@ fn miner_by_its_field() -> Universe {
     }
     let (sys, pos) = positions(&mut u);
     let c = &mut u.crafts[0];
+    // (A miner flies a ship with a mining rig.)
+    c.ship.class = universe_sim::world::content::content().handle("hull.prospector").unwrap();
     c.ship.state = ShipState::Flying;
     c.ship.position = pos[remnant] + DVec3::X * (sys.bodies[remnant].max_radius() + 15_000.0);
     c.ship.velocity = sys.velocity(remnant, u.world.time);

@@ -511,7 +511,7 @@ mod tests {
         std::fs::write(dir.join("aliases.ron"), r#"{"hull.cobra3": "hull.cobra"}"#).unwrap();
         let c = Content::load(std::slice::from_ref(&dir)).expect("the override loads");
         let _ = std::fs::remove_dir_all(&dir);
-        assert_eq!(c.hulls.len(), 2);
+        assert_eq!(c.hulls.len(), Content::load(&[]).unwrap().hulls.len() + 1);
         let cobra = c.handle::<ClassSpec>("hull.cobra").unwrap();
         assert_eq!(c.get(cobra).dry_mass, 70_000.0, "replaced where it stands");
         assert!(c.handle::<ClassSpec>("hull.cobra_mk4").is_some(), "added");

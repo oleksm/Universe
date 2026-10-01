@@ -180,6 +180,8 @@ pub struct Registration {
     pub name: String,
     pub at: Stop,
     pub pad: usize,
+    /// The hull it's built as (content key; empty: the starting hull).
+    pub hull: String,
 }
 
 /// The world's NPC clients, as the world sees them: it hands them each
