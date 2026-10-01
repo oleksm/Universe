@@ -278,7 +278,8 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   and touch-down pose, respawn and `ship_at`, and the hand-over (a change of coordinates, not
   physics). Candidates for explicit kernel ops (unweld, launch impulse, spawn).
 - `Ship`'s fields are `pub`, so "only through commands" is kept by review, not by the compiler.
-- Parts/modules are not modelled (the devices are fixed per ship). Fuel is burned by the drives
+- A ship's numbers come from its hull's frame and the modules in its slots (`ClassSpec::assemble`,
+  cached per fit by `ship::fitted`), never set by hand; see the modules row below. Fuel is burned by the drives
   (thrust / `EXHAUST_VELOCITY`, a torch drive) and the hyperdrive (`HYPER_FUEL_FLOW`); a dry tank
   gives no thrust and no hyperdrive; ships buy fuel at markets (`Markets::refuel`).
 
@@ -498,6 +499,8 @@ ship's pose directly, like tests do — then render.
 | Gun, laser, hull damage (a hit jams the hyperdrive 15 s); the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
 | Content: packs (base built in, overrides from `UNIVERSE_CONTENT`), registry with typed handles, keys and aliases, validation at load, content hash (see `docs/content.md`): shapes, hulls, kinds of goods, ores, recipes, kinds of place, market rules; saves by key with a version and the content hash |
 | Shapes: one geometry for physics and rendering — mesh, convex hull, exact mass properties (volume, centre of mass, inertia), silhouette; named nodes (mounts, nozzles, gear, docks, cockpit) | physics: `mesh`; world: `shape` | world: `content`; `content/base/` |
+| Modules and hulls: the module catalogue (`Does`, size, mass, volume, power, price, brand), slots and base blocks; a hull is a shape, a frame (mass, price, slots, nozzle links) and a stock fit; five hulls (Cobra, courier, hauler, prospector, interceptor), NPCs flying one for their role | world: `modules`, `ship` (`HullDef`, `ClassSpec`, `fitted`); sim: `operator::registrations` | `content/base/modules.ron`, `hulls.ron`, `brands.ron` |
+| Outfitting, ships, repairs, insurance: what a station carries and at what price (brand homes, hops, markup), materials from the station's stock; refits, buying a hull (trade-in at `BUYBACK`), repairs (credits and metals), insurance excess on loss; the shipyard panel (OUTFIT and HULLS pages) | services: `outfitter`; sim: `commerce` (`refit_as`, `buy_hull_as`, `repair`, `Universe::insure`); game: `shipyard` |
 | Spaceports: 4×4 pads, a hangar (long stays off the pads: `ShipCommands::hangar`, out of sight, the pad freed; the route autopilot goes in after a turnaround and out onto a granted pad) | world: `spaceport`, `World::hangar_move`; avionics: `route::hangar_step` |
 | Thrusters and the flight computer: thrusters placed on the hull's shape; per-step allocation of push and turn to the nozzles (bounded least squares, push weighted over turn); turning by torque against the shape's inertia; fuel by nozzle; the turning envelope per hull; attitude control within it (√(2αθ)) | world: `thrusters`, `ship::Ship::drive`; avionics: `docking::attitude` |
 | SAM turrets (seeded per station/gate/spaceport, 6 km reach, fire on aggressors with a clear line), coverage | world: `turrets` |
