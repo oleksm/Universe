@@ -1185,6 +1185,26 @@ fn scanner(frame: &mut Frame, app: &App) {
 /// on screen so it reads at any distance. It grows with how bright the sun is
 /// here (see `Light`), and a body in the way hides it, fading in as the sun
 /// clears its limb. Not through the walls when we're aboard.
+/// Does a ray from `from` along unit `way` meet the box `lo`..`hi` within `reach`?
+fn ray_hits_box(from: universe_engine::glam::DVec3, way: universe_engine::glam::DVec3, lo: universe_engine::glam::DVec3, hi: universe_engine::glam::DVec3, reach: f64) -> bool {
+    let (mut t0, mut t1) = (0.0f64, reach);
+    for k in 0..3 {
+        if way[k].abs() < 1e-12 {
+            if from[k] < lo[k] || from[k] > hi[k] {
+                return false;
+            }
+        } else {
+            let (a, b) = ((lo[k] - from[k]) / way[k], (hi[k] - from[k]) / way[k]);
+            t0 = t0.max(a.min(b));
+            t1 = t1.min(a.max(b));
+            if t0 > t1 {
+                return false;
+            }
+        }
+    }
+    true
+}
+
 fn sun_glare(frame: &mut Frame, app: &App) {
     if app.mode == Mode::Pilot && matches!(app.v.crew.place, universe_sim::world::Place::Aboard { .. }) {
         return;
@@ -1199,6 +1219,15 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     // Hidden behind a body? A soft edge at its limb.
     let mut visible = 1.0f32;
     for (i, b) in sys.bodies.iter().enumerate() {
+        // A structure built of blocks (a station): behind any of them, no sun.
+        if let universe_sim::world::physics::Collider::Blocks(blocks) = &b.rail.collider {
+            let back = b.rotation(app.now()).inverse();
+            let (from, way) = (back * (cam - app.view.positions[i]), back * dir);
+            if blocks.boxes.iter().any(|&(lo, hi)| ray_hits_box(from, way, lo, hi, dist)) {
+                return;
+            }
+            continue;
+        }
         if i == star || b.kind.artificial() {
             continue;
         }
