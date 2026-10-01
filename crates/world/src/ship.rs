@@ -569,6 +569,14 @@ impl Ship {
         }
     }
 
+    /// Back to its hull's stock fit, with a full tank (a basic ship).
+    pub fn refresh_stock(&mut self) {
+        self.fit = None;
+        self.spec_ref = None;
+        self.fuel = self.spec().fuel_capacity;
+        self.cargo = self.cargo.min(self.spec().hold_capacity);
+    }
+
     /// Its numbers to hand again (after loading).
     pub fn refresh(&mut self) {
         self.spec_ref = self.fit.as_ref().and_then(|f| fitted(self.class, f).ok());

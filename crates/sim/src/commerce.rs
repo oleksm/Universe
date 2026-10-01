@@ -117,6 +117,9 @@ impl Universe {
             Request::Refuel { market } => {
                 let _ = self.refuel(id, market);
             }
+            Request::Repair { .. } => {
+                let _ = self.repair(id);
+            }
             _ => {}
         }
     }
@@ -338,5 +341,67 @@ impl crate::universe::Universe {
             Err(reason) => universe_avionics::Event::Refused { reason: format!("SHIPYARD: {reason}") },
         });
         r
+    }
+}
+
+/// A whole hull's repair costs this share of its frame's price, and takes
+/// this share of its frame's mass in metals.
+pub const REPAIR_PRICE: f64 = 0.3;
+pub const REPAIR_METALS: f64 = 0.05;
+/// A ship lost is replaced, the same hull and fit, for this share of its value.
+pub const INSURANCE_EXCESS: f64 = 0.1;
+
+impl crate::universe::Universe {
+    /// Pilot `id`'s hull mended at the station it's docked at, as far as its
+    /// credits (and the station's metals) go: `REPAIR_PRICE` of the frame's
+    /// price for a whole hull, from `REPAIR_METALS` of its mass in metals.
+    /// What it cost, and how far it's mended now.
+    pub fn repair(&mut self, id: usize) -> Result<(f64, f64), String> {
+        use universe_services::{Asset, Party};
+        let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        let sys = self.world.system(system);
+        let Some(here @ Facility::Station(_)) = universe_world::traffic::docked_at(&sys, ship) else { return Err("REPAIRS DOCKED AT A STATION".into()) };
+        let missing = 1.0 - ship.hull;
+        if missing <= 1e-9 {
+            return Err("THE HULL IS SOUND".into());
+        }
+        let spec = ship.spec();
+        let (full_price, full_metals) = (spec.frame.price * REPAIR_PRICE, spec.frame.frame_mass / 1000.0 * REPAIR_METALS);
+        let metals = universe_world::goods::Category::of("goods.metals").expect("metals are a kind of goods");
+        // As much as the credits, and the station's metals, allow.
+        let credits = self.ledger.credits(Party::Pilot(id)).max(0.0);
+        let stock = self.markets.economy.place(system, here).map_or(f64::INFINITY, |p| p.stock_of(metals));
+        let part = missing.min(credits / full_price).min(stock / full_metals);
+        if part <= 1e-6 {
+            return Err(if credits < 1.0 { "NO CREDITS FOR REPAIRS".into() } else { "NO METALS FOR REPAIRS".into() });
+        }
+        let cost = part * full_price;
+        self.ledger.transfer(Party::Pilot(id), Party::Market(system, here), Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
+        if let Some(p) = self.markets.economy.place_mut(system, here) {
+            p.take(metals, part * full_metals);
+        }
+        let hull = match id {
+            crate::combat::PLAYER => &mut self.ship,
+            _ => &mut self.crafts[id - 1].ship,
+        };
+        hull.hull = (hull.hull + part).min(1.0);
+        Ok((cost, hull.hull))
+    }
+
+    /// The player's hull mended (see `repair`); the cockpit is told.
+    pub fn repair_player(&mut self) {
+        let e = match self.repair(crate::combat::PLAYER) {
+            Ok((credits, hull)) => universe_avionics::Event::Repaired { credits, hull },
+            Err(reason) if reason == "THE HULL IS SOUND" => return,
+            Err(reason) => universe_avionics::Event::Refused { reason: format!("REPAIR: {reason}") },
+        };
+        self.events.push(e);
+    }
+
+    /// A ship's value: its frame and what's fitted, at list prices.
+    pub fn ship_value(ship: &universe_world::Ship) -> f64 {
+        let c = universe_world::content::content();
+        let s = ship.spec();
+        s.frame.price + s.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>()
     }
 }

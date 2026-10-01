@@ -42,4 +42,9 @@ pub enum Event {
     Refitted { slot: String, module: Option<String>, credits: f64 },
     /// A new ship bought at a shipyard, the old one traded in: what it cost.
     BoughtShip { name: String, credits: f64 },
+    /// The hull mended at a station: what it cost, and how sound it is now (0..1).
+    Repaired { credits: f64, hull: f64 },
+    /// A ship lost, replaced by the insurer: what the excess cost (None: it
+    /// couldn't be paid, and the replacement is the basic ship).
+    Insured { excess: Option<f64> },
 }

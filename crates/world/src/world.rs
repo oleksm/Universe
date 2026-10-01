@@ -739,10 +739,18 @@ impl World {
         let prograde = rel_vel.normalize();
         let radial = (pos - positions[parent]).normalize();
 
-        // 4 km behind the station on the same orbit, nose pointing at it.
+        // 4 km behind the station on the same orbit, nose pointing at it:
+        // the same hull and fit as the one lost (its insurer's; whether the
+        // excess is paid is the ledger's business), a full tank.
         let ship_pos = pos - prograde * 4000.0;
         let orientation = upright(radial, prograde);
+        let (class, fit) = (ship.class, ship.fit.clone());
         *ship = Ship::new(ship_pos, vel, orientation);
+        ship.class = class;
+        if let Some(fit) = fit {
+            let _ = ship.refit(fit);
+        }
+        ship.fuel = ship.spec().fuel_capacity;
         events.push(ShipEvent::Respawned);
     }
 

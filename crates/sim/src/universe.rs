@@ -393,6 +393,9 @@ impl Universe {
         if let Some(cause) = self.logged(id, |e| matches!(e, ShipEvent::Respawned)) {
             self.law.forget(id);
             self.ledger.write_off(id, self.tick, cause);
+            if id == crate::combat::PLAYER {
+                self.insure(cause);
+            }
         }
     }
 
@@ -596,6 +599,21 @@ impl Universe {
         let mut events = Vec::new();
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
         self.player_events(events);
+        self.insure(universe_protocol::Cause::Rules);
+    }
+
+    /// The player's ship lost and replaced: the excess paid on the same hull
+    /// and fit, or, unable to pay, the basic ship instead. (NPCs' operator
+    /// stands its own losses.)
+    fn insure(&mut self, cause: universe_protocol::Cause) {
+        use universe_services::{Asset, Party};
+        let excess = crate::commerce::INSURANCE_EXCESS * Universe::ship_value(&self.ship);
+        let paid = self.ledger.transfer(Party::Pilot(crate::combat::PLAYER), Party::World, Asset::Credits, excess, self.tick, cause).is_ok();
+        if !paid {
+            self.ship.class = universe_world::ship::starting_hull();
+            self.ship.refresh_stock();
+        }
+        self.events.push(Event::Insured { excess: paid.then_some(excess) });
     }
 
     // What the avionics show the pilot.

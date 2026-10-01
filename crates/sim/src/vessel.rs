@@ -19,6 +19,8 @@ pub(crate) enum Request {
     Declare { market: universe_world::Facility, deal: universe_services::records::Deal },
     /// Fill the tank at the market it's at.
     Refuel { market: universe_world::Facility },
+    /// Have the hull repaired (at a station).
+    Repair { market: universe_world::Facility },
 }
 
 /// A ship's commands on their way to its devices: its pilot's postings,

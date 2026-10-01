@@ -67,6 +67,8 @@ pub enum Command {
     LockContact(usize),
     /// Fill the tank where docked or landed.
     Refuel,
+    /// Have the hull mended (docked at a station).
+    Repair,
     StopFollowing,
     /// Lock what's in the beam around the nose (again: the next).
     LockInBeam,
@@ -259,6 +261,7 @@ impl Engine {
             Command::CollisionWarning(on) => u.cockpit().collision_warning(on),
             Command::Respawn => u.respawn(),
             Command::Refuel => u.refuel_player(),
+            Command::Repair => u.repair_player(),
             Command::RoutePush(stop) => u.cockpit().route_push(stop),
             Command::RoutePop => u.cockpit().route_pop(),
             Command::RouteClear => u.cockpit().route_set(Vec::new()),

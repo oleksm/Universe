@@ -689,3 +689,38 @@ fn a_ship_is_bought_at_a_station_trading_in_the_old_one() {
     assert!((before - metals(&u) - 118.0).abs() < 1e-6, "its frame built from the station's metals");
     assert!(u.buy_hull(hauler).is_err(), "that's the ship we have");
 }
+
+#[test]
+fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
+    use universe_sim::services::{Asset, Party};
+    use universe_sim::world::content::content;
+    let mut u = bench(0);
+    let home = u.ship_system;
+    let station = u.ship_system().station().unwrap();
+    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    let me = Party::Pilot(universe_sim::PLAYER);
+    let cause = universe_sim::protocol::Cause::Rules;
+    // Half a hull, and the credits for a fifth of it: mended a fifth.
+    u.ship.hull = 0.5;
+    let full = u.ship.spec().frame.price * 0.3;
+    u.ledger.settle(me, Asset::Credits, full * 0.2, u.tick, cause);
+    let (cost, hull) = u.repair(universe_sim::PLAYER).unwrap();
+    assert!((cost - full * 0.2).abs() < 1e-6 && (hull - 0.7).abs() < 1e-9, "{cost} {hull}");
+    // Rich: mended whole.
+    u.ledger.settle(me, Asset::Credits, 1e6, u.tick, cause);
+    assert_eq!(u.repair(universe_sim::PLAYER).unwrap().1, 1.0);
+    // An interceptor lost: the same again, for the excess.
+    let interceptor = content().handle("hull.interceptor").unwrap();
+    u.ship.class = interceptor;
+    let value = Universe::ship_value(&u.ship);
+    let before = u.credits();
+    u.respawn();
+    run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);
+    assert_eq!(u.ship.class, interceptor);
+    assert!((u.credits() - (before - 0.1 * value)).abs() < 1.0, "paid the excess: {} of {before}", u.credits());
+    // Broke, lost again: a basic ship.
+    u.ledger.settle(me, Asset::Credits, 0.0, u.tick, cause);
+    u.respawn();
+    run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);
+    assert_eq!(u.ship.class, universe_sim::world::ship::starting_hull());
+}

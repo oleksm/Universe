@@ -378,6 +378,10 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
         // Every pilot fills its tank at a stop with a market.
         if let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship) {
             requests.push(Request::Refuel { market });
+            // And mends its hull, at a station.
+            if ship.hull < 1.0 && matches!(market, universe_world::Facility::Station(_)) {
+                requests.push(Request::Repair { market });
+            }
         }
         if (pilot.trader || pilot.miner)
             && let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship)

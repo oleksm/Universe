@@ -608,10 +608,19 @@ impl App {
             // Docked or landed at a market: fill the tank (as any pilot does at a stop).
             if matches!(event, Event::Ship(ShipEvent::Landed { station: true, .. } | ShipEvent::LandedAtPort { .. })) {
                 self.engine.send(Command::Refuel);
+                // And mend the hull, at a station.
+                if matches!(event, Event::Ship(ShipEvent::Landed { station: true, .. })) && self.v.ship.hull < 1.0 {
+                    self.engine.send(Command::Repair);
+                }
             }
             let text = match event {
                 Event::Ship(ShipEvent::Landed { body, station: true }) => format!("DOCKED AT {body}"),
                 Event::Refuelled { tonnes, credits } => format!("REFUELLED {tonnes:.1} T FOR {credits:.0} CR"),
+                Event::Repaired { credits, hull } => format!("HULL REPAIRED TO {:.0}% FOR {credits:.0} CR", hull * 100.0),
+                Event::Refitted { slot, module, credits } => format!("{} FITTED IN {} - {} {:.0} CR", module.unwrap_or_else(|| "NOTHING".into()), slot.to_uppercase(), if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
+                Event::BoughtShip { name, credits } => format!("NEW SHIP: {name} - {} {:.0} CR WITH YOUR OLD ONE TRADED IN", if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
+                Event::Insured { excess: Some(x) } => format!("INSURED: THE SAME SHIP AGAIN, FOR AN EXCESS OF {x:.0} CR"),
+                Event::Insured { excess: None } => "INSURED: COULDN'T PAY THE EXCESS - A BASIC SHIP INSTEAD".into(),
                 Event::Ship(ShipEvent::OutOfFuel) => "OUT OF FUEL - NO THRUST, NO HYPERDRIVE".into(),
                 Event::Ship(ShipEvent::Landed { body, station: false }) => format!("LANDED ON {body}"),
                 Event::Ship(ShipEvent::TookOff) => "LIFT OFF".into(),
