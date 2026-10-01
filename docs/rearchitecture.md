@@ -1,6 +1,6 @@
 # Universe — Re-architecture plan: core, services, clients
 
-Status: **proposed** (2026-09-30), for review before any code moves. `docs/architecture.md`
+Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0 done. `docs/architecture.md`
 describes the code as it is; this describes where it goes and in what order. Once a phase
 lands, its part moves into `architecture.md`.
 
@@ -281,7 +281,7 @@ Dependencies point down only:
 
 | # | Phase | What moves | Exit criteria |
 |---|---|---|---|
-| R0 | **Contracts** | `protocol` crate: actuation, operations, events, sensor returns, messages, ids, causes. No behaviour change | Types reviewed; the current code compiles against them where it already fits |
+| R0 ✓ | **Contracts** | `protocol` crate: actuation, operations, events, sensor returns, messages, ids, causes. No behaviour change | Types reviewed; the current code compiles against them where it already fits |
 | R1 | **Autopilot out of the integrator** | Remove `FlightComputer::substep` and the hyperdrive callback. Actuation changes only at tick boundaries. Retune docking, landing, gate and hyperdrive guidance for 60 Hz plus k-tick delay | All interaction tests pass with commands held per tick and an artificial 2-tick delay |
 | R2 | **Contact rules as data** | Docking port, pads and gate become registered rules. The core keeps no station or spaceport logic | Docking, landing and gate tests pass. Rule firings appear in the event log |
 | R3 | **Pilot interface** | Avionics behind sensor-packet-in, actuation-and-requests-out, run synchronously (lockstep). Pilots lose direct world access | No avionics module imports world internals. Tests green in lockstep |
@@ -301,7 +301,7 @@ Order rationale:
 
 ---
 
-## 10. Decisions needed
+## 10. Decisions (accepted as proposed, 2026-09-30)
 
 1. **Input deadline k** (proposal 2 ticks = 33 ms at 60 Hz), and the late-input horizon.
 2. **Dead-man rule:** on or off, and T (proposal: 30 s).
@@ -313,3 +313,8 @@ Order rationale:
 5. **Walking crew:** a full core body (proposed), or client-side and validated.
 6. **Message bus scope now:** in-process only, with the network as a later transport behind
    the same interface (proposed).
+
+Also decided while starting R1: **a tick is a fixed slice of game time** (1/60 s at the
+world's time scale). Single-player warp (a dev tool) runs more ticks per frame, up to a
+budget; beyond it, ticks stretch and the sim reports it can't keep up. Control rates
+therefore stay in game time whatever the warp.

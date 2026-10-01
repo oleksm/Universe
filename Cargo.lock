@@ -2327,6 +2327,14 @@ name = "universe-prof"
 version = "0.1.0"
 
 [[package]]
+name = "universe-protocol"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "serde",
+]
+
+[[package]]
 name = "universe-sim"
 version = "0.1.0"
 dependencies = [
@@ -2348,6 +2356,7 @@ dependencies = [
  "serde",
  "universe-physics",
  "universe-prof",
+ "universe-protocol",
 ]
 
 [[package]]

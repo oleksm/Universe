@@ -1,0 +1,11 @@
+[package]
+name = "universe-protocol"
+edition.workspace = true
+version.workspace = true
+
+# The contracts between the core (physics and hardware), the services (the
+# world's institutions) and the clients (pilots): what crosses between them.
+# Depends on nothing of ours.
+[dependencies]
+glam.workspace = true
+serde.workspace = true
