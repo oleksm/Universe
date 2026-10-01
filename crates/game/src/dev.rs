@@ -786,6 +786,12 @@ pub fn apply(app: &mut App, name: &str) {
             use universe_sim::world::crew::DECK;
             app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: DVec3::new(0.0, DECK, 8.5), yaw: 0.0, pitch: 0.05 };
         }
+        "boarded" => {
+            // Just in through the hatch (as boarding leaves you: facing into the cabin).
+            apply(app, "touchdown");
+            use universe_sim::world::crew::HATCH;
+            app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: HATCH, yaw: -std::f64::consts::FRAC_PI_2, pitch: 0.0 };
+        }
         "outside" => {
             // Land on the pad, step out, turn round to look at the ship.
             apply(app, "touchdown");

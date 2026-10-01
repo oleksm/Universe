@@ -290,7 +290,8 @@ impl Person {
                 *velocity = v_side - up2 * v_side.dot(up2) + up2 * v_up;
                 *position = next;
                 if c.interact && reach == Some(Reach::Ramp) {
-                    self.place = Place::Aboard { position: HATCH, yaw: std::f64::consts::FRAC_PI_2, pitch: 0.0 };
+                    // In through the port hatch, facing into the cabin (+X), not back at it.
+                    self.place = Place::Aboard { position: HATCH, yaw: -std::f64::consts::FRAC_PI_2, pitch: 0.0 };
                     events.push(CrewEvent::CameAboard);
                 }
             }
