@@ -209,7 +209,7 @@ pub fn apply(app: &mut App, name: &str) {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
         }
-        "asteroid" | "swarm" | "navlock" | "orbitrock" => {
+        "asteroid" | "swarm" | "navlock" | "orbitrock" | "orbitrock1k" => {
             // By the first field's remnant (sun behind), or among its swarm,
             // moving with it, facing it; it's the nav target.
             app.mode = Mode::Pilot;
@@ -228,10 +228,10 @@ pub fn apply(app: &mut App, name: &str) {
             if name == "navlock" {
                 app.picker.hold_for_show();
             }
-            if name == "orbitrock" {
-                // Orbiting the remnant, a minute on.
+            if name.starts_with("orbitrock") {
+                // Orbiting the remnant, a minute on (1k: as close as it allows, from 1 km).
                 let u = app.engine.universe();
-                u.follow(universe_sim::FollowKind::Orbit, None);
+                u.follow(universe_sim::FollowKind::Orbit, (name == "orbitrock1k").then_some(1_000.0));
                 for _ in 0..60 * 60 {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 }

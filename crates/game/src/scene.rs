@@ -601,6 +601,10 @@ pub fn guided_path(frame: &mut Frame, app: &App, plan: &Plan, center_now: DVec3,
 /// together near it. Where the ship is doesn't move them, so holding still
 /// they hold still, and flying on you go through them. A new plan moves a
 /// frame only if its spot moved by more than a quarter of its spacing.
+/// An evenly spaced frame's half-width (m): an arch the ship flies through
+/// with room to spare (its height is 0.4 of that).
+const ARCH: f64 = 3.5 * universe_sim::world::ship::SHIP_RADIUS;
+
 /// What a guide's frames lead to: a clearance's target, or what a follow
 /// program follows (the same frames, one way of drawing guidance).
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -703,8 +707,9 @@ impl Guide {
             let Some(along) = (body[i + 1] - body[i]).try_normalize() else { continue };
             let (a, b) = (&plan.points[i], &plan.points[i + 1]);
             let facing = to_frame * (a.orientation.slerp(b.orientation, u) * DVec3::NEG_Z);
-            // (Evenly spaced, smaller: a row of them, not a funnel.)
-            let size = if even.is_some() { 0.18 * gap } else { 0.35 * gap };
+            // (Evenly spaced: a row of arches the ship's size, whatever the
+            // range, to fly through; the ladder's narrow toward the goal.)
+            let size = if even.is_some() { ARCH } else { 0.35 * gap };
             let new = GuideFrame { from_goal: d, at, along, facing, size: size.clamp(15.0, 1.0e4), action: a.action };
             // A frame stays while the new path still goes through it (near
             // its rung): rebuilt plans trace the same route, give or take.

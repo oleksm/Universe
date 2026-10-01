@@ -81,3 +81,12 @@ docking do:
   and 10 m inside the range. They use `Ship::thruster_command` now (per axis).
 - Measured: orbiting at 3 km, a 90 t ship holds itself on the circle with ~216 kN up, 0.022 kg/s
   of fuel (thrust over the exhaust velocity): about 80 kg an hour, the main engine off.
+
+## Arches the ship's size
+
+- Evenly spaced guide frames (orbit, keep at range) were sized from their spacing (10° of the
+  orbit), so they grew with the range: ~600 m wide at 10 km round a gate, smaller than the ship
+  at 500 m round a rock. They're now arches of the ship's size at any range (3.5 ship radii
+  half-width, 0.4 of that tall: ~84 × 34 m), wide along the wings of a ship banked into the
+  turn. The landing/docking ladder keeps its sizes.
+- Dev scenario `orbitrock1k`.
