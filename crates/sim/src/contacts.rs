@@ -2,9 +2,8 @@
 //! device), who each is (the crafts' transponders: name, what it's doing,
 //! where it's bound), and the lock its avionics hold on one of them.
 
-use universe_avionics::route;
 use universe_avionics::NavTarget;
-use universe_world::radar::{self, Blip};
+use universe_world::radar::Blip;
 use universe_world::ShipState;
 
 use crate::traffic::Craft;
@@ -52,70 +51,31 @@ pub(crate) fn activity(craft: &Craft) -> &'static str {
 }
 
 impl Universe {
-    /// Ships the radar sees, nearest first.
+    /// Ships the radar sees, nearest first (the cockpit's radar, now).
     pub fn contacts(&mut self) -> Vec<Contact> {
-        let blips = radar::sweep(&self.ship, self.ship_system, self.crafts.iter().enumerate().map(|(i, c)| (i, c.system, &c.ship)));
-        blips
-            .into_iter()
-            .map(|blip| {
-                let craft = &self.crafts[blip.id];
-                let (name, activity) = (craft.name.to_uppercase(), activity(craft));
-                let stop = craft.status.next_stop;
-                let destination = stop.map(|s| route::stop_name(&self.world.system(s.system), s).to_uppercase());
-                Contact { blip, name, activity, destination, hull: craft.ship.hull, aggressed: self.law.aggressed(crate::combat::craft_id(blip.id), self.world.time) }
-            })
-            .collect()
+        self.cockpit_now().scan()
     }
 
     /// Lock the next contact out from the one locked (the nearest, if none);
     /// past the farthest, unlock. Returns the new lock.
     pub fn lock_next_contact(&mut self) -> Option<Contact> {
-        let contacts = self.contacts();
-        let from = self.locked_contact_in(&contacts).map(|c| (c.blip.distance, c.blip.id));
-        let next = contacts.into_iter().find(|c| from.is_none_or(|(d, id)| (c.blip.distance, c.blip.id) > (d, id)));
-        self.avionics.contact = next.as_ref().map(|c| c.blip.id);
-        next
+        self.in_cockpit(|k| k.lock_next_contact())
     }
 
     /// With the collision warning on, and flying in normal space: the path
-    /// ahead and what it would hit (radar contacts count, as they're moving).
+    /// ahead and what it would hit.
     pub fn collision_warning(&mut self, contacts: &[Contact]) -> Option<universe_avionics::collision::Prediction> {
-        use universe_avionics::collision::{predict, Traffic, RANGE};
-        if !self.avionics.collision_warning || !self.ship.is_flying() || self.ship.hyperdrive {
-            return None;
-        }
-        let traffic: Vec<Traffic> = contacts
-            .iter()
-            .filter(|c| c.blip.distance < RANGE)
-            .map(|c| Traffic { name: c.name.clone(), position: c.blip.position, velocity: c.blip.velocity })
-            .collect();
-        let sys = self.ship_system();
-        let mut positions = Vec::new();
-        sys.positions(self.world.time, &mut positions);
-        Some(predict(&sys, &self.ship, self.world.time, &positions, &traffic))
+        self.cockpit_now().collision_now(contacts)
     }
 
-    /// Lock in the beam: of the contacts within `LOCK_BEAM` of the nose, the
-    /// one nearest the crosshair, or, if that's already locked, the next one
-    /// out from it. Nothing in the beam: the lock is released.
+    /// Lock in the beam (see `Cockpit::lock_in_beam`).
     pub fn lock_in_beam(&mut self) -> Option<Contact> {
-        let nose = self.ship.forward();
-        let own = self.ship.position;
-        let off = |c: &Contact| (c.blip.position - own).angle_between(nose);
-        let mut beam: Vec<Contact> = self.contacts().into_iter().filter(|c| off(c) <= LOCK_BEAM).collect();
-        beam.sort_by(|a, b| off(a).total_cmp(&off(b)).then(a.blip.id.cmp(&b.blip.id)));
-        let next = match self.avionics.contact.and_then(|id| beam.iter().position(|c| c.blip.id == id)) {
-            Some(i) => beam.into_iter().cycle().nth(i + 1),
-            None => beam.into_iter().next(),
-        };
-        let next = next.filter(|c| Some(c.blip.id) != self.avionics.contact || self.avionics.contact.is_none());
-        self.avionics.contact = next.as_ref().map(|c| c.blip.id);
-        next
+        self.in_cockpit(|k| k.lock_in_beam())
     }
 
     /// The locked contact, if it's still on the radar.
     pub fn locked_contact_in<'a>(&self, contacts: &'a [Contact]) -> Option<&'a Contact> {
-        let id = self.avionics.contact?;
+        let id = self.avionics().contact?;
         contacts.iter().find(|c| c.blip.id == id)
     }
 }

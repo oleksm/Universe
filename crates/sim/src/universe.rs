@@ -11,7 +11,6 @@ use universe_avionics::{Approach, Avionics, Event, NavTarget, Plan};
 use universe_world::{Controls, Facility, Person, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
 
 use crate::traffic::{CrashReport, Craft};
-use crate::vessel::Vessel;
 
 
 /// The longest tick (game seconds): pilots act once a tick.
@@ -32,8 +31,14 @@ pub struct Universe {
     pub ship: Ship,
     /// Galaxy index of the system the ship is in; ship coordinates are relative to its star.
     pub ship_system: usize,
-    /// The ship's avionics: nav target, clearance, autopilots, route.
-    pub avionics: Avionics,
+    /// The player's cockpit (its pilot and ship computers, see `cockpit`):
+    /// here, thinking in step with the world, unless the client has taken it.
+    pub cockpit: Option<crate::cockpit::Cockpit>,
+    /// The player's ship's commands on their way to its devices, what its
+    /// pilot shows, and what happened to it since its pilot last looked.
+    pub(crate) player_inbox: crate::vessel::Inbox,
+    pub player_status: crate::pilots::Status,
+    pub player_feed: Vec<ShipEvent>,
     /// What happened to the player's ship, for the pilot (the game takes them).
     pub events: Vec<Event>,
     /// Other ships (settlers), each flying its own route.
@@ -91,7 +96,10 @@ impl Universe {
             world,
             ship: Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY),
             ship_system: 0,
-            avionics: Avionics::default(),
+            cockpit: Some(Default::default()),
+            player_inbox: Default::default(),
+            player_status: Default::default(),
+            player_feed: Vec::new(),
             events: Vec::new(),
             crafts: Vec::new(),
             crash_log: Vec::new(),
@@ -118,6 +126,7 @@ impl Universe {
         };
         u.respawn();
         u.events.clear();
+        u.player_feed.clear();
         // What a new pilot starts with, from the world's account.
         u.ledger.settle(universe_services::Party::Pilot(crate::combat::PLAYER), universe_services::Asset::Credits, STARTING_CREDITS, 0, universe_protocol::Cause::Rules);
         u
@@ -142,26 +151,25 @@ impl Universe {
         self.world.distance_ly(a, b)
     }
 
-    /// The player's ship and its avionics, and the world they're in.
-    pub(crate) fn player(&mut self) -> (&mut World, Vessel<'_>) {
-        let vessel = Vessel { id: crate::combat::PLAYER, ship: &mut self.ship, system: &mut self.ship_system, avionics: &mut self.avionics, events: &mut self.events, atc: &mut self.atc };
-        (&mut self.world, vessel)
-    }
-
     /// Advance the player's ship by `real_dt * warp` seconds (less if warp is
-    /// limited), the pilot's stick at `controls`. The world clock moves with it.
-    pub fn step(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
-        let before = self.events.len();
-        // Following something: the program has the stick.
-        let stick = self.player_follow();
-        let controls = stick.as_ref().unwrap_or(controls);
-        let (world, mut player) = self.player();
-        let result = player.tick(world, controls, real_dt, warp);
-        let fresh: Vec<Event> = self.events[before..].to_vec();
+    /// limited): the commands its pilot posted that are due reach its
+    /// devices, and the world steps it. The world clock moves with it. (The
+    /// pilot's stick, `controls`, goes to the cockpit if it's here.)
+    pub(crate) fn step(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
+        if let Some(c) = &mut self.cockpit {
+            c.stick(*controls);
+        }
+        let mut happened = Vec::new();
+        let t = self.world.time;
+        let turn = self.player_inbox.deliver(&self.world, &mut self.ship, self.ship_system, t, self.tick, &mut happened);
+        let commands = ShipCommands { turn: turn.flatten(), ..self.ship.holding() };
+        let result = universe_prof::time("sim/player/world step", || self.world.step_ship(&mut self.ship, &mut self.ship_system, &commands, real_dt, warp, &mut happened));
+        let fresh: Vec<Event> = happened.iter().cloned().map(Event::Ship).collect();
+        self.player_events(happened);
         self.log_events(crate::combat::PLAYER, &fresh);
         self.traffic_events(crate::combat::PLAYER, &fresh);
         // Wrecked on something (collisions and weapons are filed by the combat phase).
-        let crashed = self.events.iter().find_map(|e| match e {
+        let crashed = fresh.iter().find_map(|e| match e {
             Event::Ship(ShipEvent::Crashed { body }) if !matches!(body.as_str(), "COLLISION" | "GUNFIRE" | "LASER FIRE") => Some(body.clone()),
             _ => None,
         });
@@ -169,6 +177,50 @@ impl Universe {
             self.recorder.file(self.world.time, crate::combat::PLAYER, "YOU".into(), body, None);
         }
         result
+    }
+
+    /// What happened to the player's ship: for the HUD, and its pilot.
+    pub(crate) fn player_events(&mut self, happened: Vec<ShipEvent>) {
+        self.events.extend(happened.iter().cloned().map(Event::Ship));
+        self.player_feed.extend(happened);
+    }
+
+    /// The cockpit, here (it isn't when the client has it).
+    pub fn cockpit(&mut self) -> &mut crate::cockpit::Cockpit {
+        self.cockpit.as_mut().expect("the cockpit is with the client")
+    }
+
+    /// The player's avionics (in the cockpit, here).
+    pub fn avionics(&self) -> &Avionics {
+        self.cockpit.as_ref().expect("the cockpit is with the client").avionics()
+    }
+
+    pub fn avionics_mut(&mut self) -> &mut Avionics {
+        self.cockpit().avionics_mut()
+    }
+
+    /// The cockpit, looking at the world as it is now (to act at once).
+    pub fn cockpit_now(&mut self) -> &mut crate::cockpit::Cockpit {
+        let world = Arc::new(self.pilot_view(TICK));
+        let view = Arc::new(self.cockpit_view(world));
+        let c = self.cockpit();
+        c.look(view);
+        c
+    }
+
+    /// What the cockpit posted, in now (its devices' commands still at their due tick).
+    pub(crate) fn flush_cockpit(&mut self) {
+        if let Some(c) = &mut self.cockpit {
+            let postings = c.take_postings();
+            self.post(postings);
+        }
+    }
+
+    /// The cockpit does `f` now, against the world as it is: what it posts goes in.
+    pub(crate) fn in_cockpit<R>(&mut self, f: impl FnOnce(&mut crate::cockpit::Cockpit) -> R) -> R {
+        let r = f(self.cockpit_now());
+        self.flush_cockpit();
+        r
     }
 
     /// Advance the whole world by `real_dt` real seconds at `warp`, in ticks
@@ -216,9 +268,18 @@ impl Universe {
         universe_prof::time("sim/recorder", || self.record());
         universe_prof::time("sim/dead man", || self.dead_man());
         // The pilots get the world as it now is.
-        let view = universe_prof::time("sim/pilot view", || self.pilot_view(t1 - t0));
-        let thought = universe_prof::time("sim/pilots", || self.pool.view(view));
+        let view = Arc::new(universe_prof::time("sim/pilot view", || self.pilot_view(t1 - t0)));
+        let thought = universe_prof::time("sim/pilots", || self.pool.view(view.clone()));
         self.pending.extend(thought);
+        if self.cockpit.is_some() {
+            let view = Arc::new(self.cockpit_view(view));
+            let feed = std::mem::take(&mut self.player_feed);
+            let c = self.cockpit();
+            c.feed(feed);
+            universe_prof::time("sim/cockpit", || c.view(view));
+            let postings = c.take_postings();
+            self.pending.extend(postings);
+        }
         result
     }
 
@@ -262,7 +323,7 @@ impl Universe {
         if !self.recorder.due(now) {
             return;
         }
-        self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &crate::pilots::Status::of(&self.avionics)));
+        self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.player_status));
         for (i, c) in self.crafts.iter().enumerate() {
             self.recorder.record(crate::combat::craft_id(i), crate::recorder::Sample::of(now, c.system, &c.ship, &c.status));
         }
@@ -342,7 +403,7 @@ impl Universe {
         }
         // Who's where (on the ground, or flying in normal space).
         type Where = (usize, usize, DVec3, bool, Option<(NavTarget, Phase)>);
-        let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, self.avionics.clearance))
+        let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, self.player_status.clearance))
             .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, c.status.clearance)))
             .filter(|(_, _, s, _)| matches!(s.state, ShipState::Landed { .. }) || (s.is_flying() && !s.hyperdrive))
             .map(|(id, system, s, clearance)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), clearance.map(|c| (c.target, c.phase))))
@@ -492,54 +553,55 @@ impl Universe {
         r
     }
 
-    /// Give the ship's devices new commands now (see `World::command`).
+    /// Give the ship's devices new commands (through the cockpit, as the pilot would).
     pub fn command(&mut self, c: &ShipCommands) {
-        let (world, mut player) = self.player();
-        player.run(world, |a, link, events| a.command(link, c, events));
+        self.in_cockpit(|k| k.command(c));
+    }
+
+    pub fn throttle(&mut self, delta: f64, set: Option<f64>) {
+        self.in_cockpit(|k| k.throttle(delta, set));
+    }
+
+    pub fn thrusters(&mut self, rcs: DVec3) {
+        self.in_cockpit(|k| k.thrusters(rcs));
     }
 
     /// Put a new ship next to the home station, matching its orbit.
     pub fn respawn(&mut self) {
         let mut events = Vec::new();
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
-        self.avionics.record(events, &mut self.events);
+        self.player_events(events);
     }
 
     pub fn toggle_hyperdrive(&mut self) {
-        let (world, mut player) = self.player();
-        player.run(world, |a, link, events| a.toggle_hyperdrive(link, events));
+        self.in_cockpit(|k| k.toggle_hyperdrive());
     }
 
     /// Lock (or clear) the navigation target.
     pub fn set_nav_target(&mut self, target: Option<NavTarget>) {
-        let (world, mut player) = self.player();
-        player.run(world, |a, link, events| a.set_nav_target(link, target, events));
+        self.in_cockpit(|k| k.set_nav_target(target));
     }
 
     /// Ask traffic control for permission to dock/land at the locked nav
     /// target (or the nearest station).
     pub fn request_clearance(&mut self) -> bool {
-        let (world, mut player) = self.player();
-        player.run(world, |a, link, events| a.request_clearance(link, events))
+        self.in_cockpit(|k| k.request_clearance())
     }
 
     /// Give the clearance up (stopping its autopilot).
     pub fn cancel_clearance(&mut self) {
-        let (world, mut player) = self.player();
-        player.run(world, |a, link, events| a.cancel_clearance(link, events));
+        self.in_cockpit(|k| k.cancel_clearance());
     }
 
     /// Engage or release the autopilot. In hyperdrive it steers to the nav
     /// target; otherwise it docks or lands (requesting clearance if needed).
     pub fn toggle_autopilot(&mut self) {
-        let (world, mut player) = self.player();
-        player.run(world, |a, link, events| a.toggle_autopilot(link, events));
+        self.in_cockpit(|k| k.toggle_autopilot());
     }
 
     /// Start or stop the route autopilot.
     pub fn toggle_route(&mut self) {
-        let (world, mut player) = self.player();
-        player.run(world, |a, link, events| a.toggle_route(link, events));
+        self.in_cockpit(|k| k.toggle_route());
     }
 
     // What the avionics show the pilot.
@@ -563,17 +625,13 @@ impl Universe {
 
     /// Guidance numbers for the HUD, if cleared to dock or land.
     pub fn approach(&mut self) -> Option<Approach> {
-        let sys = self.ship_system();
-        sys.positions(self.world.time, &mut self.positions);
-        self.avionics.approach(&sys, &self.ship, self.world.time, &self.positions)
+        self.cockpit_now().approach()
     }
 
     /// The flight plan to the cleared target: what to do from here, as the
     /// autopilot would do it.
     pub fn plan(&mut self) -> Option<Plan> {
-        let sys = self.ship_system();
-        let rules = self.world.rules_of(self.ship_system);
-        self.avionics.plan(&sys, &rules, &self.ship, self.world.time)
+        self.cockpit_now().plan_now()
     }
 
     /// Docking guidance only (convenience for tests and tools).

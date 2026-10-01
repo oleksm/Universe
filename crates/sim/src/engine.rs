@@ -164,22 +164,11 @@ pub struct View {
 pub struct Engine {
     pub universe: Universe,
     charts: Arc<Charts>,
-    plan: Option<Arc<Plan>>,
-    plan_serial: u64,
-    plan_age: f64,
-    plan_cost: f32,
-    plan_for: Option<universe_avionics::Clearance>,
-    collision: Option<Prediction>,
-    collision_age: f64,
-    collision_at: f64,
-    collision_cost: f32,
     watched: Option<Facility>,
     events: Vec<Event>,
     last_step: StepResult,
     sim_ms: f32,
     serial: u64,
-    contacts: Vec<Contact>,
-    fire: Option<(Track, Option<Solution>)>,
     /// The pilot's stick and the warp, as last set.
     stick: Controls,
     warp: f64,
@@ -196,25 +185,19 @@ impl Engine {
         if std::env::var_os("UNIVERSE_LOCKSTEP").is_none() {
             universe.run_pilots_apart(std::thread::available_parallelism().map_or(2, |n| (n.get() / 2).max(1)));
         }
+        // The HUD shows the flight plan; the cockpit has a first look.
+        if let Some(c) = &mut universe.cockpit {
+            c.plan_wanted = true;
+        }
+        universe.cockpit_now();
         Engine {
             universe,
             charts,
-            plan: None,
-            plan_serial: 0,
-            plan_age: f64::INFINITY,
-            plan_cost: 0.0,
-            plan_for: None,
-            collision: None,
-            collision_age: f64::INFINITY,
-            collision_at: 0.0,
-            collision_cost: 0.0,
             watched: None,
             events: Vec::new(),
             last_step: StepResult::default(),
             sim_ms: 0.0,
             serial: 0,
-            contacts: Vec::new(),
-            fire: None,
             stick: Controls::default(),
             warp: 1.0,
         }
@@ -229,17 +212,8 @@ impl Engine {
         let u = &mut self.universe;
         match c {
             Command::Ship(c) => u.command(&c),
-            Command::Throttle { delta, set } => {
-                let throttle = set.unwrap_or(u.ship.throttle + delta).clamp(0.0, 1.0);
-                if throttle != u.ship.throttle {
-                    u.command(&ShipCommands { throttle, ..u.ship.holding() });
-                }
-            }
-            Command::Thrusters(rcs) => {
-                if rcs != u.ship.rcs {
-                    u.command(&ShipCommands { rcs, ..u.ship.holding() });
-                }
-            }
+            Command::Throttle { delta, set } => u.throttle(delta, set),
+            Command::Thrusters(rcs) => u.thrusters(rcs),
             Command::Stick(c) => self.stick = c,
             Command::Warp(w) => self.warp = w,
             Command::Walk(c, dt) => u.walk(&c, dt),
@@ -254,27 +228,16 @@ impl Engine {
             Command::Follow(kind) => u.follow(kind),
             Command::StopFollowing => u.stop_following(),
             Command::LockInBeam => {
-                let had = u.avionics.contact.is_some();
-                let e = match u.lock_in_beam() {
-                    Some(c) => Event::Lock { name: Some(c.name) },
-                    None if had => Event::Lock { name: None },
-                    None => Event::NothingInBeam,
-                };
-                u.events.push(e);
+                u.lock_in_beam();
             }
-            Command::CollisionWarning(on) => {
-                u.avionics.collision_warning = on;
-                self.collision_age = f64::INFINITY;
-            }
+            Command::CollisionWarning(on) => u.cockpit().collision_warning(on),
             Command::Respawn => u.respawn(),
-            Command::RoutePush(stop) => u.avionics.route.stops.push(stop),
-            Command::RoutePop => {
-                u.avionics.route.pop();
-            }
-            Command::RouteClear => u.avionics.route.clear(),
+            Command::RoutePush(stop) => u.cockpit().route_push(stop),
+            Command::RoutePop => u.cockpit().route_pop(),
+            Command::RouteClear => u.cockpit().route_set(Vec::new()),
             Command::RouteRandom { seed, stops } => {
-                u.avionics.route.clear();
-                u.avionics.route.stops = u.settler_route(seed, stops);
+                let stops = u.settler_route(seed, stops);
+                u.cockpit().route_set(stops);
             }
             Command::WatchMarket(m) => self.watched = m,
             Command::Trade { market, item, units } => {
@@ -296,41 +259,7 @@ impl Engine {
         self.last_step = self.universe.step_world(real_dt, warp, controls);
         let ms = start.elapsed().as_secs_f32() * 1000.0;
         self.sim_ms = if self.sim_ms == 0.0 { ms } else { self.sim_ms + (ms - self.sim_ms) * 0.05 };
-        let _p = universe_prof::scope("sim/ship computers");
         let u = &mut self.universe;
-        // Radar and fire control, every tick.
-        self.contacts = universe_prof::time("sim/ship computers/radar", || u.contacts());
-        if u.avionics.contact.is_some() && u.locked_contact_in(&self.contacts).is_none() {
-            u.avionics.contact = None;
-            u.events.push(Event::ContactLost);
-        }
-        self.fire = u.fire_control(&self.contacts);
-        // The flight plan flies the autopilot ahead through the physics (1-10
-        // ms): rebuilt ten times a second, less often when it's dearer (about
-        // 5% of the time), or at once when the clearance or phase changes.
-        self.plan_age += real_dt;
-        let key = u.avionics.clearance;
-        let changed = key.map(|c| (c.target, c.autopilot, c.phase)) != self.plan_for.map(|c| (c.target, c.autopilot, c.phase));
-        if changed || self.plan_age >= plan_every(self.plan_cost) as f64 || !u.ship.is_flying() {
-            let start = std::time::Instant::now();
-            let plan = universe_prof::time("sim/ship computers/flight plan", || u.plan());
-            self.plan_cost = start.elapsed().as_secs_f32();
-            self.plan = plan.map(Arc::new);
-            self.plan_serial += 1;
-            self.plan_age = 0.0;
-            self.plan_for = key;
-        }
-        // The collision warning, five times a second.
-        self.collision_age += real_dt;
-        if !u.avionics.collision_warning {
-            self.collision = None;
-        } else if self.collision_age >= 0.2 {
-            self.collision_age = 0.0;
-            let start = std::time::Instant::now();
-            self.collision = universe_prof::time("sim/ship computers/collision warning", || u.collision_warning(&self.contacts));
-            self.collision_cost = start.elapsed().as_secs_f32();
-            self.collision_at = u.world.time;
-        }
         self.events.append(&mut u.events);
     }
 
@@ -371,7 +300,7 @@ impl Engine {
             ship: u.ship.clone(),
             ship_system: system,
             aggressed_until: u.law.until(crate::combat::PLAYER, now),
-            avionics: u.avionics.clone(),
+            avionics: u.avionics().clone(),
             crew: u.crew,
             credits: u.credits(),
             hold: u.hold(),
@@ -383,17 +312,17 @@ impl Engine {
             slugs: u.world.slugs.iter().map(|s| (s.system, s.projectile.position, s.projectile.velocity)).collect(),
             beams: u.world.beams.clone(),
             impacts: u.world.impacts.clone(),
-            contacts: self.contacts.clone(),
-            fire: self.fire,
-            approach: u.approach(),
-            plan: self.plan.clone(),
-            plan_serial: self.plan_serial,
-            plan_cost: self.plan_cost,
-            plan_every: plan_every(self.plan_cost),
-            collision: self.collision.clone(),
-            collision_at: self.collision_at,
-            collision_cost: self.collision_cost,
-            following: u.following_status(),
+            contacts: u.cockpit().contacts.clone(),
+            fire: u.cockpit().fire,
+            approach: u.cockpit().approach(),
+            plan: u.cockpit().plan.clone(),
+            plan_serial: u.cockpit().plan_serial,
+            plan_cost: u.cockpit().plan_cost,
+            plan_every: crate::cockpit::plan_every(u.cockpit().plan_cost),
+            collision: u.cockpit().collision.clone(),
+            collision_at: u.cockpit().collision_at,
+            collision_cost: u.cockpit().collision_cost,
+            following: u.cockpit().following_status(),
             nav_marker: nav_marker(u),
             reach: u.pilot_reach(),
             docked_market: u.docked_market(),
@@ -410,14 +339,10 @@ impl Engine {
     }
 }
 
-/// How often the flight plan is rebuilt, for what it costs (s).
-fn plan_every(cost: f32) -> f32 {
-    (cost * 20.0).clamp(0.1, 1.0)
-}
 
 /// The nav target (its name and where it is), else the nearest station.
 fn nav_marker(u: &mut Universe) -> Option<(String, DVec3)> {
-    if let Some(t) = u.avionics.nav_target {
+    if let Some(t) = u.avionics().nav_target {
         let pos = u.target_position(t)?;
         let name = match t {
             NavTarget::Station(_) | NavTarget::Gate(_) => u.target_name(t),

@@ -66,7 +66,7 @@ pub fn apply(app: &mut App, name: &str) {
             u.toggle_hyperdrive();
             u.command(&ShipCommands { throttle: 1.0, ..u.ship.holding() });
             for _ in 0..4000 {
-                u.step(1.0 / 60.0, 1.0, &Controls::default());
+                u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 if !u.ship.hyperdrive {
                     break;
                 }
@@ -82,7 +82,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(offset);
             app.engine.universe().ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, normal.any_orthonormal_vector());
             for _ in 0..120 {
-                app.engine.universe().step(1.0 / 60.0, 1.0, &Controls::default());
+                app.engine.universe().step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
         }
         "approach" | "lost" => {
@@ -135,7 +135,7 @@ pub fn apply(app: &mut App, name: &str) {
             if name == "autoland" || name == "touchdown" {
                 app.engine.universe().toggle_autopilot();
                 for _ in 0..60 * 60 * 30 {
-                    app.engine.universe().step(1.0 / 60.0, 20.0, &Controls::default());
+                    app.engine.universe().step_world(1.0 / 60.0, 20.0, &Controls::default());
                     let low = matches!(app.engine.universe().approach(), Some(universe_sim::Approach::Land { ref status, .. })
                         if status.phase == Phase::Descent && status.altitude < 1500.0);
                     if (name == "autoland" && low) || !app.engine.universe().ship.is_flying() {
@@ -159,7 +159,7 @@ pub fn apply(app: &mut App, name: &str) {
             if name != "gate" {
                 app.engine.universe().toggle_autopilot();
                 for _ in 0..60 * 60 * 10 {
-                    app.engine.universe().step(1.0 / 60.0, 10.0, &Controls::default());
+                    app.engine.universe().step_world(1.0 / 60.0, 10.0, &Controls::default());
                     let running = matches!(app.engine.universe().approach(), Some(universe_sim::Approach::Transit { ref status, .. })
                         if status.phase == Phase::Final && status.distance < 1500.0);
                     let stop = match name {
@@ -263,17 +263,19 @@ pub fn apply(app: &mut App, name: &str) {
         }
         "routemap" => {
             app.mode = Mode::Pilot;
-            app.engine.universe().avionics.route.stops = app.engine.universe().settler_route(7, 10);
+            let stops = app.engine.universe().settler_route(7, 10);
+            app.engine.universe().cockpit().route_set(stops);
             app.nav_map = Some(crate::navmap::NavMap::open(app));
         }
         "route" => {
             // A settler route, flown headless through its first stops, then shown mid-leg.
             app.mode = Mode::Pilot;
-            app.engine.universe().avionics.route.stops = app.engine.universe().settler_route(7, 10);
+            let stops = app.engine.universe().settler_route(7, 10);
+            app.engine.universe().cockpit().route_set(stops);
             app.engine.universe().toggle_route();
             for _ in 0..60 * 60 * 60 {
-                app.engine.universe().step(1.0 / 60.0, 20.0, &Controls::default());
-                if app.engine.universe().avionics.route.next >= 3 && app.engine.universe().ship.hyperdrive {
+                app.engine.universe().step_world(1.0 / 60.0, 20.0, &Controls::default());
+                if app.engine.universe().avionics().route.next >= 3 && app.engine.universe().ship.hyperdrive {
                     break;
                 }
             }
@@ -331,7 +333,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().ship.velocity = sys.velocity(station, t) + toward * 80.0;
             let look = (st - app.engine.universe().ship.position).normalize();
             app.engine.universe().ship.orientation = universe_sim::ship::facing(look + side * 0.25, side);
-            app.engine.universe().avionics.collision_warning = true;
+            app.engine.universe().cockpit().collision_warning(true);
         }
         "pirates" => {
             // A pirate goes after a trader near us; run until it's destroyed
@@ -454,7 +456,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             app.engine.universe().toggle_autopilot();
             for _ in 0..60 * 60 * 3 {
-                app.engine.universe().step(1.0 / 60.0, 10.0, &Controls::default());
+                app.engine.universe().step_world(1.0 / 60.0, 10.0, &Controls::default());
                 let final_run = app.engine.universe().docking_status().is_some_and(|(_, s)| s.phase == universe_sim::Phase::Final && s.height < 2200.0);
                 if (name == "autodock" && final_run) || matches!(app.engine.universe().ship.state, ShipState::Landed { .. }) {
                     break;
@@ -497,7 +499,7 @@ pub fn apply(app: &mut App, name: &str) {
     }
     app.messages.clear();
     let u = app.engine.universe();
-    log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics.clearance);
+    log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
 
     // Optional camera override: UNIVERSE_CAM=cockpit | map (observer watching the ship from afar).
     match std::env::var("UNIVERSE_CAM").as_deref() {

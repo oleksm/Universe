@@ -162,6 +162,7 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
                     ship.rcs = DVec3::ZERO;
                     ship.angular_velocity = DVec3::ZERO;
                     ship.state = ShipState::Landed { body, local_position, local_orientation: rot.inverse() * orientation };
+                    ship.locked_at = t;
                     fired(events, name, "locked");
                     events.push(match says {
                         Says::Always(e) => e.clone(),

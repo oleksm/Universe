@@ -121,7 +121,7 @@ pub struct Pilot {
     pub avionics: Avionics,
     /// Fault injection: it thinks, but posts nothing (a client gone quiet).
     pub silent: bool,
-    feed: Vec<ShipEvent>,
+    pub(crate) feed: Vec<ShipEvent>,
     orders: Vec<Order>,
     /// The tick it next wants to think at.
     next_think: u64,
@@ -144,7 +144,7 @@ pub struct PilotView {
     /// Game seconds a tick spans.
     pub dt: f64,
     pub charts: Arc<Charts>,
-    /// Each craft's ship, and the system it's in.
+    /// Every ship and the system it's in, by combat id (ours 0, craft i: i + 1).
     pub ships: Vec<(usize, Ship)>,
     /// Every ship as others see it (by combat id), and who's aggressed and flying.
     pub(crate) snaps: Vec<Snap>,
@@ -158,9 +158,11 @@ pub struct PilotView {
 
 /// What a pilot posts after thinking.
 pub struct Posting {
-    pub craft: usize,
-    /// The tick of the snapshot it read: due `COMMAND_DELAY` after.
+    /// Whose: the ship's combat id (the player's 0, craft i: i + 1).
+    pub id: usize,
+    /// The tick of the snapshot it read (due `COMMAND_DELAY` after), and its world time.
     pub thought: u64,
+    pub seen: f64,
     /// For its devices, in order, and its turn at the due tick (None: it
     /// says nothing of the turn; Some(None): none commanded).
     pub devices: Vec<ShipCommands>,
@@ -313,8 +315,7 @@ pub(crate) fn turret_motions(charts: &Charts, system: usize, sys: &StarSystem, t
 
 /// What pilot `i` makes of the ships around it (radar, and the pirates'
 /// transponders): shelter is real (docked or landed, or under a turret's guns).
-fn sightings(view: &PilotView, i: usize, system: usize, pos: DVec3, guns: &[(DVec3, DVec3)]) -> Vec<Sighting> {
-    let me = crate::combat::craft_id(i);
+fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[(DVec3, DVec3)]) -> Vec<Sighting> {
     let sheltered = |s: &Snap| s.landed || guns.iter().any(|(p, _)| p.distance(s.position) < universe_world::turrets::TURRET_RANGE + universe_avionics::hunter::SHELTER_MARGIN);
     view.snaps
         .iter()
@@ -362,11 +363,13 @@ fn obey(order: Order, a: &mut Avionics, link: &mut PoolLink, events: &mut Vec<Ev
     }
 }
 
-/// Pilot `i` thinks on `view`, if it's time to or something's waiting for
-/// it: what it posts.
-fn think(pilot: &mut Pilot, i: usize, view: &PilotView) -> Option<Posting> {
-    let (system, ref ship) = *view.ships.get(i)?;
-    if view.tick < pilot.next_think && pilot.feed.is_empty() && pilot.orders.is_empty() {
+/// The pilot of ship `id` thinks on `view`, if it's time to or something's
+/// waiting for it: what it posts. With a human at the stick (`human`), it
+/// thinks every time, flies by the stick (unless a program has it), and
+/// hunts no one.
+pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Option<Controls>) -> Option<Posting> {
+    let (system, ref ship) = *view.ships.get(id)?;
+    if human.is_none() && view.tick < pilot.next_think && pilot.feed.is_empty() && pilot.orders.is_empty() {
         return None;
     }
     let a = &mut pilot.avionics;
@@ -377,17 +380,17 @@ fn think(pilot: &mut Pilot, i: usize, view: &PilotView) -> Option<Posting> {
     // Its ship, with its own commands on their way.
     let seen = seen(ship, &mut pilot.pending, view.tick);
     let sys = view.charts.system(system);
-    let mut link = PoolLink { view, sys, ship: seen, system, id: crate::combat::craft_id(i), devices: Vec::new(), requests: Vec::new(), pending: &mut pilot.pending };
+    let mut link = PoolLink { view, sys, ship: seen, system, id, devices: Vec::new(), requests: Vec::new(), pending: &mut pilot.pending };
     for order in std::mem::take(&mut pilot.orders) {
         obey(order, a, &mut link, &mut events);
     }
     // The last step's outcome (an arrival, a lapsed clearance), then this one.
     a.conclude(&mut link, &mut events);
     let pos = link.ship.position;
-    let threat = may_defend(a, &link.ship) && view.aggressors.iter().any(|&(s, p)| s == system && p.distance(pos) < DEFEND_RANGE);
-    let sightings = if threat || wants_sightings(a, &link.ship, view.time) {
+    let threat = human.is_none() && may_defend(a, &link.ship) && view.aggressors.iter().any(|&(s, p)| s == system && p.distance(pos) < DEFEND_RANGE);
+    let sightings = if threat || (human.is_none() && wants_sightings(a, &link.ship, view.time)) {
         let guns = link.turrets();
-        sightings(view, i, system, pos, &guns)
+        sightings(view, id, system, pos, &guns)
     } else {
         Vec::new()
     };
@@ -395,8 +398,8 @@ fn think(pilot: &mut Pilot, i: usize, view: &PilotView) -> Option<Posting> {
         Some(universe_avionics::follow::Anchor::Ship(id)) => crate::follow::mark_in(&view.snaps, system, pos, id),
         _ => None,
     };
-    let (stick, hunt_end) = a.hunt(&mut link, &sightings, &mut events);
-    let stick = stick.or_else(|| a.follow_step(&mut link, mark, &mut events));
+    let (stick, hunt_end) = if human.is_some() { (None, None) } else { a.hunt(&mut link, &sightings, &mut events) };
+    let stick = stick.or_else(|| a.follow_step(&mut link, mark, &mut events)).or(human);
     let program = a.prepare(&mut link, view.dt, &mut events);
     let flown = a.flies(&link.ship);
     let turn = if flown { program } else { Some(stick.unwrap_or_default()) };
@@ -425,8 +428,9 @@ fn think(pilot: &mut Pilot, i: usize, view: &PilotView) -> Option<Posting> {
     // Its ship's events went to the services when they happened: the rest.
     events.retain(|e| !matches!(e, Event::Ship(_)));
     Some(Posting {
-        craft: i,
+        id,
         thought: view.tick,
+        seen: view.time,
         devices,
         turn: Some(turn),
         requests,
@@ -440,7 +444,7 @@ fn think(pilot: &mut Pilot, i: usize, view: &PilotView) -> Option<Posting> {
 /// Every pilot due thinks on `view`, side by side: their postings, in craft order.
 fn think_all(pilots: &mut [Pilot], view: &PilotView) -> Vec<Posting> {
     use rayon::prelude::*;
-    pilots.par_iter_mut().enumerate().filter_map(|(i, p)| think(p, i, view).filter(|_| !p.silent)).collect()
+    pilots.par_iter_mut().enumerate().filter_map(|(i, p)| think(p, crate::combat::craft_id(i), view, None).filter(|_| !p.silent)).collect()
 }
 
 /// Messages to pilots, delivered before they next think.
@@ -554,7 +558,7 @@ impl Pool {
 
     /// The world has a new view: in lockstep, the pilots think on it now
     /// (their postings returned); apart, it's theirs to take when they can.
-    pub(crate) fn view(&mut self, view: PilotView) -> Vec<Posting> {
+    pub(crate) fn view(&mut self, view: Arc<PilotView>) -> Vec<Posting> {
         match &self.worker {
             None => {
                 let mut pilots = Self::lock(&self.pilots);
@@ -563,7 +567,7 @@ impl Pool {
             }
             Some(w) => {
                 let (lock, ready) = &*w.slot;
-                *Self::lock(lock) = Some(Arc::new(view));
+                *Self::lock(lock) = Some(view);
                 ready.notify_one();
                 Vec::new()
             }
@@ -592,17 +596,24 @@ impl Pool {
     /// what it posts.
     pub(crate) fn run<R>(&self, i: usize, view: &PilotView, f: impl FnOnce(&mut Avionics, &mut PoolLink, &mut Vec<Event>) -> R) -> (R, Posting) {
         let mut pilots = self.pilots();
-        let pilot = &mut pilots[i];
-        let (system, ref ship) = view.ships[i];
+        run(&mut pilots[i], crate::combat::craft_id(i), view, f)
+    }
+}
+
+/// Run `f` on the pilot of ship `id` at once (dev tools, tests, and the
+/// player's requests), against `view`: what it posts.
+pub(crate) fn run<R>(pilot: &mut Pilot, id: usize, view: &PilotView, f: impl FnOnce(&mut Avionics, &mut PoolLink, &mut Vec<Event>) -> R) -> (R, Posting) {
+    {
+        let (system, ref ship) = view.ships[id];
         let sys = view.charts.system(system);
         let seen = seen(ship, &mut pilot.pending, view.tick);
-        let mut link = PoolLink { view, sys, ship: seen, system, id: crate::combat::craft_id(i), devices: Vec::new(), requests: Vec::new(), pending: &mut pilot.pending };
+        let mut link = PoolLink { view, sys, ship: seen, system, id, devices: Vec::new(), requests: Vec::new(), pending: &mut pilot.pending };
         let mut events = Vec::new();
         let r = f(&mut pilot.avionics, &mut link, &mut events);
         let PoolLink { devices, requests, .. } = link;
         events.retain(|e| !matches!(e, Event::Ship(_)));
         pilot.next_think = view.tick;
-        let posting = Posting { craft: i, thought: view.tick, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), hunt_begun: false, hunt_end: None };
+        let posting = Posting { id, thought: view.tick, seen: view.time, devices, turn: None, requests, events, status: Status::of(&pilot.avionics), hunt_begun: false, hunt_end: None };
         (r, posting)
     }
 }

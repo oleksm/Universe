@@ -248,7 +248,7 @@ impl Universe {
     /// control, what it reports to the services, and what it shows.
     pub(crate) fn post(&mut self, mut postings: Vec<crate::pilots::Posting>) {
         use universe_avionics::hunter::FLEE_HULL;
-        postings.sort_by_key(|p| (p.thought, p.craft));
+        postings.sort_by_key(|p| (p.thought, p.id));
         for p in postings {
             let due = p.due();
             if due + crate::pilots::LATE_HORIZON < self.tick {
@@ -258,12 +258,23 @@ impl Universe {
             if due < self.tick {
                 self.pool.late += 1;
             }
-            let i = p.craft;
+            if p.id == crate::combat::PLAYER {
+                for r in p.requests {
+                    r.make(&mut self.atc);
+                }
+                self.player_inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
+                self.player_status = p.status;
+                self.log_events(crate::combat::PLAYER, &p.events);
+                self.traffic_events(crate::combat::PLAYER, &p.events);
+                self.events.extend(p.events);
+                continue;
+            }
+            let i = p.id - 1;
             for r in p.requests {
                 r.make(&mut self.atc);
             }
             let c = &mut self.crafts[i];
-            c.inbox.post(due.max(self.tick), p.devices, p.turn);
+            c.inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
             c.last_posted = self.world.time;
             c.dead_man = false;
             if p.status.route_active {
@@ -317,11 +328,29 @@ impl Universe {
         }
     }
 
+    /// The world as the player's cockpit reads it: the pilots' view, and
+    /// the crafts' transponders.
+    pub(crate) fn cockpit_view(&mut self, world: Arc<crate::pilots::PilotView>) -> crate::cockpit::CockpitView {
+        let now = self.world.time;
+        let mut transponders = Vec::with_capacity(self.crafts.len());
+        for (i, c) in self.crafts.iter().enumerate() {
+            let destination = c.status.next_stop.map(|s| universe_avionics::route::stop_name(&self.world.system(s.system), s).to_uppercase());
+            transponders.push(crate::cockpit::Transponder {
+                name: c.name.clone(),
+                activity: crate::contacts::activity(c),
+                destination,
+                hull: c.ship.hull,
+                aggressed: self.law.aggressed(crate::combat::craft_id(i), now),
+            });
+        }
+        crate::cockpit::CockpitView { world, transponders }
+    }
+
     /// The world as pilots read it, now.
     pub(crate) fn pilot_view(&mut self, dt: f64) -> crate::pilots::PilotView {
         let t = self.world.time;
         let charts = self.charts.get_or_insert_with(|| Arc::new(self.world.charts())).clone();
-        let mut systems: Vec<usize> = self.crafts.iter().map(|c| c.system).collect();
+        let mut systems: Vec<usize> = self.crafts.iter().map(|c| c.system).chain([self.ship_system]).collect();
         systems.sort_unstable();
         systems.dedup();
         let mut rails = std::collections::HashMap::new();
@@ -339,7 +368,7 @@ impl Universe {
             time: t,
             dt,
             charts,
-            ships: self.crafts.iter().map(|c| (c.system, c.ship.clone())).collect(),
+            ships: std::iter::once((self.ship_system, self.ship.clone())).chain(self.crafts.iter().map(|c| (c.system, c.ship.clone()))).collect(),
             snaps: self.snaps.clone(),
             aggressors: self.aggressors.clone(),
             board: self.atc.board(),

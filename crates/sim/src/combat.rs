@@ -7,9 +7,9 @@
 //! `i` is `i + 1`.
 
 use glam::DVec3;
-use universe_avionics::fire_control::{lead, Solution, Track};
-use universe_world::weapons::{Armed, GUN_MUZZLE, SLUG_LIFETIME};
-use universe_world::{ShipCommands, ShipEvent};
+use universe_avionics::fire_control::{Solution, Track};
+use universe_world::weapons::Armed;
+use universe_world::ShipEvent;
 
 use crate::contacts::Contact;
 use universe_services::records::Kill;
@@ -47,7 +47,7 @@ impl Universe {
         if let Some(kill) = self.kill_in(PLAYER, self.ship_system, &player_events) {
             self.record_kill(kill);
         }
-        self.avionics.record(player_events, &mut self.events);
+        self.player_events(player_events);
         for (i, events) in craft_events.into_iter().enumerate() {
             if events.is_empty() {
                 continue;
@@ -245,34 +245,9 @@ impl Universe {
         }
     }
 
-    /// Fire control on the locked radar contact: keep the track going from
-    /// this frame's `contacts`, and once it's settled, the gun's lead.
+    /// Fire control on the locked radar contact (the cockpit's, now).
     pub fn fire_control(&mut self, contacts: &[Contact]) -> Option<(Track, Option<Solution>)> {
-        let Some(c) = self.locked_contact_in(contacts) else {
-            self.avionics.track = None;
-            if self.ship.gun_target.is_some() {
-                self.command(&ShipCommands { gun_target: Some(None), ..self.ship.holding() });
-            }
-            return None;
-        };
-        Track::update(&mut self.avionics.track, c.blip.id, c.blip.position, c.blip.velocity, self.world.time);
-        let track = self.avionics.track?;
-        // Gravity pulls the round as it does the target: lead on the rest of its acceleration.
-        let sys = self.ship_system();
-        let mut positions = Vec::new();
-        sys.positions(self.world.time, &mut positions);
-        let accel = track.acceleration - sys.gravity(c.blip.position, &positions);
-        let solution = track
-            .ready()
-            .then(|| lead(self.ship.position, self.ship.velocity, c.blip.position, c.blip.velocity, accel, GUN_MUZZLE, SLUG_LIFETIME))
-            .flatten();
-        // In combat mode, fire control lays the gun on the lead (its gimbal
-        // reaches a few degrees off the nose).
-        let lay = solution.filter(|_| self.ship.armed).map(|s| s.aim);
-        if lay != self.ship.gun_target {
-            self.command(&ShipCommands { gun_target: Some(lay), ..self.ship.holding() });
-        }
-        Some((track, solution))
+        self.in_cockpit(|k| k.fire_control_on(contacts))
     }
 }
 
@@ -328,13 +303,13 @@ mod tests {
         assert!(u.request_clearance(), "cleared to dock");
         u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-        assert!(u.avionics.clearance.is_none(), "arming gives the clearance up");
+        assert!(u.avionics().clearance.is_none(), "arming gives the clearance up");
         assert!(!u.request_clearance(), "no clearance while armed");
         u.command(&ShipCommands { arm: Some(false), ..u.ship.holding() });
         assert!(u.request_clearance(), "safe again: cleared");
         u.toggle_autopilot();
         u.cancel_clearance();
-        assert!(u.avionics.clearance.is_none(), "given up");
+        assert!(u.avionics().clearance.is_none(), "given up");
         assert_eq!(u.ship.throttle, 0.0, "its autopilot stopped, engines idle");
     }
 }

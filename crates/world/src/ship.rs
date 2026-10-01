@@ -76,6 +76,12 @@ pub struct Ship {
     /// The hyperdrive is engaged.
     pub hyperdrive: bool,
     pub state: ShipState,
+    /// When it last locked to a structure or the ground (world time): orders
+    /// given before then don't touch its engine or thrusters (see
+    /// `sim::vessel::Inbox`), as their pilot hadn't seen it land. (Not saved:
+    /// it matters only for the ticks an order is on its way.)
+    #[serde(skip, default = "never")]
+    pub locked_at: f64,
     /// Translation thruster setting, body frame, each axis -1..1 (x right, y up, z back), as last commanded.
     #[serde(default)]
     pub rcs: DVec3,
@@ -136,6 +142,10 @@ fn boresight() -> DVec3 {
 
 pub use universe_protocol::{Controls, Destination, HyperdriveCommand, ShipCommands, Triggers};
 
+fn never() -> f64 {
+    f64::NEG_INFINITY
+}
+
 impl Ship {
     pub fn new(position: DVec3, velocity: DVec3, orientation: DQuat) -> Self {
         Self {
@@ -162,6 +172,7 @@ impl Ship {
             hyper_jam: 0.0,
             skin_temp: crate::heat::AMBIENT,
             hyper_orders: HyperdriveCommand::CRUISE,
+            locked_at: f64::NEG_INFINITY,
         }
     }
 

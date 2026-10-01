@@ -80,8 +80,8 @@ impl Universe {
             time: self.world.time,
             ship: self.ship.clone(),
             ship_system: self.ship_system,
-            route: self.avionics.route.clone(),
-            avionics: self.avionics.clone(),
+            route: self.avionics().route.clone(),
+            avionics: self.avionics().clone(),
             credits: self.credits(),
             hold: self.hold(),
         }
@@ -94,7 +94,7 @@ impl Universe {
         self.world.time = save.time;
         self.ship = save.ship;
         self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
-        self.avionics = Avionics { route: save.route, ..save.avionics };
+        *self.avionics_mut() = Avionics { route: save.route, ..save.avionics };
         // The ledger takes the save's word for our credits and hold.
         use universe_services::{Asset, Party};
         let me = Party::Pilot(crate::combat::PLAYER);
@@ -123,7 +123,7 @@ mod tests {
         let station = u.ship_system().station().unwrap();
         u.set_nav_target(Some(NavTarget::Station(station)));
         for _ in 0..60 {
-            u.step(1.0 / 60.0, 100.0, &Controls::default());
+            u.step_world(1.0 / 60.0, 100.0, &Controls::default());
         }
         let json = serde_json::to_string(&u.save()).unwrap();
         let mut restored = Universe::new(7);
@@ -131,7 +131,7 @@ mod tests {
         assert_eq!(restored.world.time, u.world.time);
         assert_eq!(restored.ship.position, u.ship.position);
         assert_eq!(restored.ship_system, u.ship_system);
-        assert_eq!(restored.avionics.nav_target, u.avionics.nav_target);
+        assert_eq!(restored.avionics().nav_target, u.avionics().nav_target);
     }
 
 }

@@ -11,6 +11,7 @@ mod combat;
 mod commerce;
 mod contacts;
 pub mod engine;
+pub mod cockpit;
 pub mod pilots;
 mod follow;
 pub mod recorder;

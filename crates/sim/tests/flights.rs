@@ -11,12 +11,12 @@ use universe_sim::{Approach, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 /// Fly the docking computer from `setup`'s position; returns simulated seconds to dock.
 fn autodock(mut u: Universe) -> f64 {
     u.toggle_autopilot();
-    assert!(u.avionics.clearance.is_some_and(|d| d.autopilot), "clearance should be granted: {:?}", u.events);
+    assert!(u.avionics().clearance.is_some_and(|d| d.autopilot), "clearance should be granted: {:?}", u.events);
     let start = u.world.time;
     let mut phase = Phase::Approach;
     for _ in 0..(60 * 60 * 3) {
-        u.step(1.0 / 60.0, 10.0, &Controls::default());
-        if let Some(d) = u.avionics.clearance
+        u.step_world(1.0 / 60.0, 10.0, &Controls::default());
+        if let Some(d) = u.avionics().clearance
             && d.phase != phase
         {
             phase = d.phase;
@@ -44,12 +44,12 @@ fn autoland(mut u: Universe, warp: f64) -> f64 {
     let port = sys.spaceports.iter().position(|p| p.body == planet).expect("home planet has a spaceport");
     u.set_nav_target(Some(NavTarget::Spaceport(port)));
     u.toggle_autopilot();
-    assert!(u.avionics.clearance.is_some_and(|c| c.autopilot), "landing clearance: {:?}", u.events);
+    assert!(u.avionics().clearance.is_some_and(|c| c.autopilot), "landing clearance: {:?}", u.events);
     let start = u.world.time;
     let mut phase = Phase::Approach;
     let mut next_report = 0.0;
     for _ in 0..(60 * 60 * 20) {
-        u.step(1.0 / 60.0, warp, &Controls::default());
+        u.step_world(1.0 / 60.0, warp, &Controls::default());
         let hd_events: Vec<Event> = u.events.iter().filter(|e| matches!(e, Event::Ship(ShipEvent::HyperdriveEngaged) | Event::Ship(ShipEvent::HyperdriveDisengaged) | Event::HyperdriveArrived { .. })).cloned().collect();
         for e in hd_events {
             let sys = u.ship_system();
@@ -114,13 +114,16 @@ fn far_port(u: &mut Universe) -> usize {
 /// With `pilot_aims`, the nose is re-pointed at the pad every frame, like a
 /// pilot keeping the target marker on the crosshair.
 fn hyper_until_arrival(u: &mut Universe, port: usize, pilot_aims: bool) -> f64 {
+    // (The drive engages when the order reaches it, a couple of ticks on.)
+    let mut engaged = false;
     for _ in 0..(60 * 600) {
         if pilot_aims && u.ship.hyperdrive {
             let at = u.target_position(NavTarget::Spaceport(port)).unwrap();
             u.ship.orientation = DQuat::from_rotation_arc(DVec3::NEG_Z, (at - u.ship.position).normalize());
         }
-        u.step(1.0 / 60.0, 1.0, &Controls::default());
-        if !u.ship.hyperdrive {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        engaged |= u.ship.hyperdrive;
+        if engaged && !u.ship.hyperdrive {
             break;
         }
     }
@@ -139,8 +142,9 @@ fn hyperdrive_autopilot_steers_to_the_port() {
     u.set_nav_target(Some(NavTarget::Spaceport(port)));
     u.toggle_hyperdrive();
     u.toggle_autopilot();
-    assert!(u.avionics.hyper_autopilot);
-    u.ship.throttle = 1.0;
+    assert!(u.avionics().hyper_autopilot);
+    // (Ordered after the drive's engaged: engaging zeroes the throttle.)
+    u.throttle(0.0, Some(1.0));
     let dist = hyper_until_arrival(&mut u, port, false);
     eprintln!("autopilot: dropped out {:.0} km from the pad", dist / 1000.0);
     assert!(dist < HYPER_ARRIVE_PORT);
@@ -155,6 +159,10 @@ fn plan_reaches_the_pad_and_the_slot() {
     let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
     u.set_nav_target(Some(NavTarget::Spaceport(port)));
     assert!(u.request_clearance());
+    // (Traffic control assigns the pad as the request comes in, a few ticks on.)
+    for _ in 0..5 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
     let start = std::time::Instant::now();
     let plan = u.plan().unwrap();
     eprintln!(
@@ -191,12 +199,12 @@ fn autopilot_flies_through_a_gate_and_keeps_its_motion() {
     u.ship.velocity = frame.velocity;
     u.set_nav_target(Some(NavTarget::Gate(g)));
     u.toggle_autopilot();
-    assert!(u.avionics.clearance.is_some_and(|c| c.autopilot), "{:?}", u.events);
+    assert!(u.avionics().clearance.is_some_and(|c| c.autopilot), "{:?}", u.events);
     let plan_eta = u.plan().unwrap();
     assert!(plan_eta.arrives, "the plan should reach the gate");
     let mut entered = None;
     for _ in 0..(60 * 60 * 20) {
-        u.step(1.0 / 60.0, 10.0, &Controls::default());
+        u.step_world(1.0 / 60.0, 10.0, &Controls::default());
         if let ShipState::Transit { local_velocity, .. } = u.ship.state
             && entered.is_none()
         {
@@ -226,7 +234,7 @@ fn fly_route(u: &mut Universe, warp: f64, max_frames: usize) -> (usize, bool) {
     u.toggle_route();
     let (mut reached, mut done) = (0, false);
     for frame in 0..max_frames {
-        u.step(1.0 / 60.0, warp, &Controls::default());
+        u.step_world(1.0 / 60.0, warp, &Controls::default());
         for e in std::mem::take(&mut u.events) {
             match &e {
                 Event::RouteStop { .. } => reached += 1,
@@ -260,7 +268,7 @@ fn route_autopilot_lands_docks_and_crosses_a_gate() {
         .station()
         .map(|s| Stop { system: next, target: NavTarget::Station(s) })
         .unwrap_or(Stop { system: next, target: NavTarget::Spaceport(0) });
-    u.avionics.route.stops = vec![
+    u.avionics_mut().route.stops = vec![
         Stop { system: home, target: NavTarget::Spaceport(port) },
         Stop { system: home, target: NavTarget::Station(station) },
         far,
