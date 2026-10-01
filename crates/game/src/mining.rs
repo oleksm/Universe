@@ -118,7 +118,9 @@ pub fn input(app: &mut App, ctx: &Context) {
         }
     }
     use crate::keys::{key, pressed, Act};
-    if pressed(input, Act::Mining) {
+    if pressed(input, Act::Mining) && app.v.ship.hyperdrive && !app.mining.on {
+        app.say("NO MINING IN HYPERSPACE".into());
+    } else if pressed(input, Act::Mining) {
         app.mining.on = !app.mining.on;
         // (One mode at a time: into mining, the weapons go safe.)
         if app.mining.on && app.v.ship.armed {

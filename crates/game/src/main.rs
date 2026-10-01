@@ -490,8 +490,13 @@ impl App {
         if pressed(input, Act::View) {
             self.chase_cam = !self.chase_cam;
         }
+        // The hyperdrive is navigation's: nothing fights or digs in hyperspace.
         if pressed(input, Act::Hyperdrive) {
-            self.engine.send(Command::ToggleHyperdrive);
+            if mode == ShipMode::Nav || self.v.ship.hyperdrive {
+                self.engine.send(Command::ToggleHyperdrive);
+            } else {
+                self.say(format!("HYPERDRIVE IN NAV MODE - {} OR {} TO LEAVE THIS ONE", keys::key(Act::Combat), keys::key(Act::Mining)));
+            }
         }
         if mode == ShipMode::Nav && pressed(input, Act::Clearance) {
             // Again gives the clearance up.
@@ -507,7 +512,9 @@ impl App {
         // Weapons: SPACE the gun, V the laser, while held (the autopilot
         // doesn't hold them back).
         // B: combat mode (the master arm), or back to navigation. (One mode at a time.)
-        if pressed(input, Act::Combat) {
+        if pressed(input, Act::Combat) && self.v.ship.hyperdrive {
+            self.say("NO COMBAT IN HYPERSPACE".into());
+        } else if pressed(input, Act::Combat) {
             self.mining.on = false;
             self.engine.send(Command::Ship(ShipCommands { arm: Some(!self.v.ship.armed), ..self.v.ship.holding() }));
         }

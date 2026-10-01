@@ -1361,7 +1361,6 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
                 b(Act::Cancel, "CANCEL", let_go),
-                b(Act::Hyperdrive, "HYPERDRIVE", hyper),
             ],
         ),
         _ if active_mode(app) == ShipMode::Combat => (
@@ -1373,7 +1372,6 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
                 b(Act::Cancel, "CANCEL", let_go),
-                b(Act::Hyperdrive, "HYPERDRIVE", hyper),
             ],
         ),
         ShipState::Landed { .. } => (
