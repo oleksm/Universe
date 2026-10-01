@@ -82,7 +82,7 @@ pub struct Person {
 }
 
 /// What the person does this frame.
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct WalkCommands {
     /// -1..1: back/forward and left/right.
     pub forward: f64,
@@ -97,7 +97,7 @@ pub struct WalkCommands {
 }
 
 /// What happened to a person.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum CrewEvent {
     StoodUp,
     SatDown,

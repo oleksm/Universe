@@ -8,7 +8,7 @@ use universe_world::{Controls, Ship, ShipCommands, ShipEvent, World};
 /// A traffic control request from a pilot: made in order with the tick's
 /// postings (so the outcome doesn't depend on thread timing). Meanwhile the
 /// pilot has the board's answer as it stood.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
 pub(crate) enum Request {
     Pad { system: usize, port: usize, ship: usize, now: f64 },
     Corridor { system: usize, body: usize, ship: usize, now: f64 },

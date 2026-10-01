@@ -158,7 +158,7 @@ pub fn judge(me: usize, hull: f64, cargo: f64, aggressor: &Sighting, sightings: 
 }
 
 /// How a hunt ended.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub enum HuntEnd {
     Killed,
     Escaped,

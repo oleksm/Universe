@@ -1,10 +1,11 @@
 //! Actuation: what a pilot (any client) tells a ship's devices. The only
 //! way anything flies a ship; the core clamps it to the hardware.
 
+use serde::{Deserialize, Serialize};
 use glam::DVec3;
 
 /// Weapon triggers: held (true) or released.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Triggers {
     pub gun: bool,
     pub laser: bool,
@@ -12,7 +13,7 @@ pub struct Triggers {
 
 /// Stick input for the attitude control, each axis -1..1 of the turn rate.
 /// Positive pitch raises the nose, positive yaw turns left, positive roll banks left.
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct Controls {
     pub pitch: f64,
     pub yaw: f64,
@@ -22,7 +23,7 @@ pub struct Controls {
 /// What a ship's devices are told to do: the only way anything flies a ship.
 /// Engine and thruster settings hold until commanded otherwise (see
 /// `Ship::holding` for commands that change nothing).
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct ShipCommands {
     /// Main engine, 0..1.
     pub throttle: f64,
@@ -45,7 +46,7 @@ pub struct ShipCommands {
 }
 
 /// Orders for the hyperdrive (see `hyperdrive`).
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct HyperdriveCommand {
     /// On (engage, or stay engaged) or off (disengage).
     pub engage: bool,
@@ -71,7 +72,7 @@ pub struct HyperdriveCommand {
 }
 
 /// A commanded hyperdrive destination.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Destination {
     pub point: DVec3,
     /// The body it is on or orbits.
@@ -87,7 +88,7 @@ impl HyperdriveCommand {
 /// direction; None: hold where it is) and whether the trigger is held. The
 /// gun slews toward its aim at its hardware's rate and fires along wherever
 /// it actually points.
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct TurretCommand {
     pub aim: Option<DVec3>,
     pub fire: bool,

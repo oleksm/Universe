@@ -1,9 +1,11 @@
 //! What the avionics report to the pilot: the world's physical events and
 //! traffic control's, as they heard them, and their own.
 
+use serde::{Deserialize, Serialize};
+
 use universe_world::{ShipEvent, TrafficEvent, CrewEvent};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Event {
     /// Something physically happened to the ship.
     Ship(ShipEvent),
@@ -21,7 +23,7 @@ pub enum Event {
     Autopilot { on: bool },
     NavTargetSet { name: Option<String> },
     /// The follow program: now keeping at / orbiting at this range (m), or off.
-    Following { what: Option<(&'static str, f64)> },
+    Following { what: Option<(String, f64)> },
     /// The radar lock: on a contact (its name), or released.
     Lock { name: Option<String> },
     /// Asked to lock, with nothing in the beam.

@@ -1,0 +1,152 @@
+//! Persistence and audit (re-architecture R9). The world is a function of
+//! its seed and its inputs: the pilots' postings (applied at their ticks) and
+//! a few operations on it (settlers spawned, a respawn, trades, walking). The
+//! `InputLog` records them tick by tick; `Universe::replay` runs a world from
+//! the seed and the log alone, no pilots at all, and `Universe::state_hash`
+//! says whether two worlds are the same.
+//!
+//! A `WorldSave` is that log (the checkpoint is the seed) and each pilot's
+//! own state, the cockpit's included: loading replays the world, then hands
+//! the pilots back what they knew, and play goes on.
+
+use serde::{Deserialize, Serialize};
+use universe_avionics::Avionics;
+use universe_world::{Controls, Facility, WalkCommands};
+
+use crate::pilots::Posting;
+use crate::universe::Universe;
+
+/// The world's inputs, tick by tick, from its seed.
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct InputLog {
+    pub seed: u64,
+    pub ticks: Vec<TickInputs>,
+}
+
+/// One tick's inputs: what came in since the last (postings applied at once,
+/// operations), the tick's step, and the postings due at it.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct TickInputs {
+    pub tick: u64,
+    pub before: Vec<Input>,
+    pub real_dt: f64,
+    pub warp: f64,
+    pub due: Vec<Posting>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub enum Input {
+    Post(Vec<Posting>),
+    Op(Op),
+}
+
+/// An operation on the world (not by posting).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub enum Op {
+    SpawnSettlers { count: usize, seed: u64 },
+    Respawn,
+    Trade { market: Facility, item: usize, units: i64 },
+    Walk(WalkCommands, f64),
+}
+
+/// A game saved whole: the world's log, and each pilot's own state.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WorldSave {
+    pub log: InputLog,
+    pub pilots: Vec<Avionics>,
+    pub cockpit: Option<Avionics>,
+}
+
+impl Universe {
+    /// Record the world's inputs from now on (from its start, for a replay
+    /// or save to hold).
+    pub fn record_inputs(&mut self) {
+        self.input_log = Some(InputLog { seed: self.world.galaxy.seed, ticks: Vec::new() });
+    }
+
+    /// Note an input that came in between ticks (if recording).
+    pub(crate) fn note(&mut self, input: impl FnOnce() -> Input) {
+        if self.input_log.is_some() {
+            self.between.push(input());
+        }
+    }
+
+    /// Carry out an operation (as recorded).
+    pub fn op(&mut self, op: Op) {
+        match op {
+            Op::SpawnSettlers { count, seed } => self.spawn_settlers(count, seed),
+            Op::Respawn => self.respawn(),
+            Op::Trade { market, item, units } => {
+                let _ = self.trade(market, item, units);
+            }
+            Op::Walk(c, dt) => self.walk(&c, dt),
+        }
+    }
+
+    /// A world run from `log` alone: its seed, its operations and postings,
+    /// tick by tick. (No pilots think: what they did is in the log.)
+    pub fn replay(log: &InputLog) -> Universe {
+        let mut u = Universe::new(log.seed);
+        u.cockpit = None;
+        u.replaying = true;
+        for t in &log.ticks {
+            for input in &t.before {
+                match input {
+                    Input::Post(p) => u.post(p.clone()),
+                    Input::Op(o) => u.op(o.clone()),
+                }
+            }
+            u.replay_due = t.due.clone();
+            u.tick(t.real_dt, t.warp, &Controls::default());
+        }
+        u.replaying = false;
+        u
+    }
+
+    /// What the world is, as a number: every ship (where, how fast, which
+    /// way, its state, hull and settings), the clock, and the services'
+    /// records.
+    pub fn state_hash(&self) -> u64 {
+        use std::hash::{Hash, Hasher};
+        let mut h = std::collections::hash_map::DefaultHasher::new();
+        let mut ship = |system: usize, s: &universe_world::Ship| {
+            system.hash(&mut h);
+            for v in [s.position, s.velocity] {
+                v.to_array().map(f64::to_bits).hash(&mut h);
+            }
+            s.orientation.to_array().map(f64::to_bits).hash(&mut h);
+            format!("{:?}", s.state).hash(&mut h);
+            (s.hull.to_bits(), s.throttle.to_bits(), s.rcs.to_array().map(f64::to_bits), s.armed, s.hyperdrive, s.ammo).hash(&mut h);
+        };
+        ship(self.ship_system, &self.ship);
+        for c in &self.crafts {
+            ship(c.system, &c.ship);
+        }
+        (self.tick, self.world.time.to_bits()).hash(&mut h);
+        format!("{:?}", self.records.stats).hash(&mut h);
+        self.atc.journal.len().hash(&mut h);
+        self.ledger.journal.len().hash(&mut h);
+        h.finish()
+    }
+
+    /// The game saved whole (it must have recorded from its start).
+    pub fn world_save(&self) -> Option<WorldSave> {
+        Some(WorldSave {
+            log: self.input_log.clone()?,
+            pilots: self.pilots().iter().map(|p| p.avionics.clone()).collect(),
+            cockpit: self.cockpit.as_ref().map(|c| c.avionics().clone()),
+        })
+    }
+
+    /// A game saved whole, loaded: the world replayed, the pilots handed back
+    /// what they knew, and recording on, so it can be saved again.
+    pub fn world_load(save: &WorldSave) -> Universe {
+        let mut u = Universe::replay(&save.log);
+        for (p, a) in u.pilots().iter_mut().zip(&save.pilots) {
+            p.avionics = a.clone();
+        }
+        u.cockpit = Some(crate::cockpit::Cockpit::new(save.cockpit.clone().unwrap_or_default()));
+        u.input_log = Some(save.log.clone());
+        u
+    }
+}

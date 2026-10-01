@@ -471,7 +471,17 @@ impl EngineHandle {
                         match m {
                             Msg::Command(c) => engine.apply(*c),
                             Msg::Call(f) => f(&mut engine),
-                            Msg::Stop => return,
+                            Msg::Stop => {
+                                // A recorded session is saved on the way out.
+                                if let Some(path) = std::env::var_os("UNIVERSE_RECORD")
+                                    && let Some(save) = engine.universe.world_save()
+                                    && let Ok(json) = serde_json::to_string(&save)
+                                {
+                                    let _ = std::fs::write(&path, json);
+                                    eprintln!("session recorded to {}: {} ticks, state hash {:x}", path.to_string_lossy(), save.log.ticks.len(), engine.universe.state_hash());
+                                }
+                                return;
+                            }
                         }
                     }
                     let (warp, stick) = (engine.warp, engine.stick);

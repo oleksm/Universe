@@ -150,7 +150,7 @@ impl Avionics {
         let (axis, track) = if same { self.following.map_or((None, None), |f| (f.axis, f.track)) } else { (None, None) };
         let axis = if matches!(manoeuvre, Manoeuvre::Orbit(_)) { axis } else { None };
         self.following = Some(Follow { anchor, manoeuvre, axis, track });
-        events.push(Event::Following { what: Some((manoeuvre.label(), manoeuvre.range())) });
+        events.push(Event::Following { what: Some((manoeuvre.label().to_string(), manoeuvre.range())) });
     }
 
     /// Stop following (the engines idle).

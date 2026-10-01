@@ -155,3 +155,31 @@ fn the_cockpit_predicts_what_its_orders_will_do_to_the_tick() {
     let off = u.ship.orientation.angle_between(predicted);
     assert!(off < 1e-9, "predicted to within {off:e} rad");
 }
+
+#[test]
+fn a_recorded_session_replays_to_the_same_world() {
+    // A busy session, recorded from the start: settlers leaving, the player's cockpit at work.
+    let mut u = Universe::new(1984);
+    u.record_inputs();
+    u.spawn_settlers(24, 3);
+    let now = u.world.time;
+    for p in u.pilots().iter_mut() {
+        p.avionics.route.dwell_until = Some(now);
+    }
+    let station = u.ship_system().station().unwrap();
+    u.set_nav_target(Some(universe_sim::NavTarget::Station(station)));
+    u.toggle_autopilot();
+    for _ in 0..600 {
+        tick(&mut u);
+    }
+    let log = u.input_log.clone().unwrap();
+    let replayed = Universe::replay(&log);
+    eprintln!("{} ticks, {} postings; hash {:x}", log.ticks.len(), log.ticks.iter().map(|t| t.due.len()).sum::<usize>(), u.state_hash());
+    assert!(!u.atc.journal.is_empty(), "traffic control was busy");
+    assert_eq!(replayed.state_hash(), u.state_hash(), "the replay is the same world");
+    // And through a save file.
+    let json = serde_json::to_string(&u.world_save().unwrap()).unwrap();
+    let loaded = Universe::world_load(&serde_json::from_str(&json).unwrap());
+    assert_eq!(loaded.state_hash(), u.state_hash(), "loaded, the same world");
+    assert_eq!(loaded.pilots().len(), 24);
+}

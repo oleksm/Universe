@@ -2,8 +2,10 @@
 //! destroyed, went through a gate…), separate from what world services say
 //! (traffic control granting or refusing clearance).
 
+use serde::{Deserialize, Serialize};
+
 /// Something that physically happened to a ship.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum ShipEvent {
     /// Came to rest on a body: docked in a station's slot (`station`), or on the ground.
     Landed { body: String, station: bool },
@@ -47,7 +49,7 @@ pub enum ShipEvent {
 }
 
 /// What traffic control says.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TrafficEvent {
     ClearanceGranted { target: String, kind: ClearanceKind },
     ClearanceDenied { reason: String },
@@ -60,7 +62,7 @@ pub enum TrafficEvent {
 }
 
 /// What a clearance is for.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ClearanceKind {
     Dock,
     Land,

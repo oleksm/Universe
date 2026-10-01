@@ -45,6 +45,12 @@ pub struct Universe {
     /// With the cockpit at the client: this tick's view for it, and what
     /// happened to the ship, to send it.
     pub cockpit_out: Option<(Arc<crate::cockpit::CockpitView>, Vec<ShipEvent>)>,
+    /// The input log, if recording (see `audit`), what's come in since the
+    /// last tick, and when replaying, the postings due this tick.
+    pub input_log: Option<crate::audit::InputLog>,
+    pub(crate) between: Vec<crate::audit::Input>,
+    pub(crate) replaying: bool,
+    pub(crate) replay_due: Vec<crate::pilots::Posting>,
     /// What happened to the player's ship, for the pilot (the game takes them).
     pub events: Vec<Event>,
     /// Other ships (settlers), each flying its own route.
@@ -110,6 +116,10 @@ impl Universe {
             player_status: Default::default(),
             player_feed: Vec::new(),
             cockpit_out: None,
+            input_log: None,
+            between: Vec::new(),
+            replaying: false,
+            replay_due: Vec::new(),
             events: Vec::new(),
             crafts: Vec::new(),
             crash_log: Vec::new(),
@@ -204,6 +214,17 @@ impl Universe {
         self.pool.send(i, msg);
     }
 
+    /// Postings to take effect at once (their devices' commands still at
+    /// their due tick): noted in the input log.
+    pub(crate) fn post_now(&mut self, postings: Vec<crate::pilots::Posting>) {
+        if postings.is_empty() {
+            return;
+        }
+        let logged = postings.clone();
+        self.note(|| crate::audit::Input::Post(logged));
+        self.post(postings);
+    }
+
     /// Postings from a pilot apart (the client's cockpit): each takes effect
     /// at its due tick.
     pub fn accept(&mut self, postings: Vec<crate::pilots::Posting>) {
@@ -237,7 +258,7 @@ impl Universe {
     pub(crate) fn flush_cockpit(&mut self) {
         if let Some(c) = &mut self.cockpit {
             let postings = c.take_postings();
-            self.post(postings);
+            self.post_now(postings);
         }
     }
 
@@ -267,16 +288,24 @@ impl Universe {
 
     /// One tick: the player's ship, then every craft, all from the same
     /// moment; the clock moves once (as far as the player's ship went).
-    fn tick(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
+    pub(crate) fn tick(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
         self.tick += 1;
         self.log.clear();
         self.atc.because(self.tick, universe_protocol::Cause::Rules);
-        // What the pilots posted that's due (or late) now.
-        let came = self.pool.collect();
-        self.pending.extend(came);
-        let tick = self.tick;
-        let (due, later): (Vec<_>, Vec<_>) = std::mem::take(&mut self.pending).into_iter().partition(|p| p.due() <= tick);
-        self.pending = later;
+        // What the pilots posted that's due (or late) now (replaying: as logged).
+        let due = if self.replaying {
+            std::mem::take(&mut self.replay_due)
+        } else {
+            let came = self.pool.collect();
+            self.pending.extend(came);
+            let tick = self.tick;
+            let (due, later): (Vec<_>, Vec<_>) = std::mem::take(&mut self.pending).into_iter().partition(|p| p.due() <= tick);
+            self.pending = later;
+            due
+        };
+        if let Some(log) = &mut self.input_log {
+            log.ticks.push(crate::audit::TickInputs { tick: self.tick, before: std::mem::take(&mut self.between), real_dt, warp, due: due.clone() });
+        }
         universe_prof::time("sim/postings", || self.post(due));
         let t0 = self.world.time;
         if self.snapped_at.wrapping_add(1) != self.tick {
@@ -302,7 +331,13 @@ impl Universe {
         if self.tick.is_multiple_of(60) {
             universe_prof::time("sim/dead man", || self.dead_man());
         }
-        // The pilots get the world as it now is.
+        // The pilots get the world as it now is (replaying, what they did is logged).
+        if self.replaying {
+            // (The snapshot is taken here, as it was, for the next tick's start.)
+            self.snapshot();
+            self.snapped_at = self.tick;
+            return result;
+        }
         let view = Arc::new(universe_prof::time("sim/pilot view", || self.pilot_view(t1 - t0)));
         let thought = universe_prof::time("sim/pilots", || self.pool.view(view.clone()));
         self.pending.extend(thought);
@@ -326,7 +361,7 @@ impl Universe {
         self.crafts[i].asleep_until = 0;
         let view = self.pilot_view(TICK);
         let (r, posting) = self.pool.run(i, &view, f);
-        self.post(vec![posting]);
+        self.post_now(vec![posting]);
         r
     }
 
@@ -510,6 +545,8 @@ impl Universe {
     /// The pilot on foot (or getting up, sitting down) for `real_dt` real
     /// seconds. A new ship puts the pilot back in its seat.
     pub fn walk(&mut self, c: &WalkCommands, real_dt: f64) {
+        let logged = *c;
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Walk(logged, real_dt)));
         if self.events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) || !self.ship.is_flying() && !matches!(self.ship.state, ShipState::Landed { .. }) {
             self.crew = Person::default();
         }
@@ -571,6 +608,7 @@ impl Universe {
     /// Buy (`units` > 0) or sell (< 0) `item` at the market `f` we're docked
     /// at: credits paid (negative: received), or why not.
     pub fn trade(&mut self, f: Facility, item: usize, units: i64) -> Result<f64, String> {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Trade { market: f, item, units }));
         let r = self.pilot_trade(crate::combat::PLAYER, f, item, units);
         if let Ok(amount) = r {
             let sys = self.ship_system();
@@ -607,6 +645,7 @@ impl Universe {
 
     /// Put a new ship next to the home station, matching its orbit.
     pub fn respawn(&mut self) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Respawn));
         let mut events = Vec::new();
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
         self.player_events(events);

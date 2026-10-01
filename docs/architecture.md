@@ -332,6 +332,13 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   and weapons made safe. The `Pool` runs pilots in lockstep (tests) or apart on its own thread
   (`run_pilots_apart`, the game's default); `Pool::slow_down` and `Pilot::silent` inject
   faults for tests.
+- `cockpit` (R7): **the player's client**: its pilot (the NPC `think` with a human at the
+  stick) and ship computers (radar picture from the snapshot and transponders in range, fire
+  control, flight plan when shown, collision warning, follow, approach, nav marker), and
+  prediction of what its orders on their way will do (the shared kernel, with and without
+  them). In the universe for tests; on the client's world-link thread in the game.
+- `audit` (R9): the input log, `Universe::replay`, `state_hash`, and `WorldSave` (the log plus
+  each pilot's own state).
 - `vessel`: **the player's ship's turn** (a `Vessel` borrows a ship, its system, its avionics
   and its event feed), and each craft's `Inbox` of postings by due tick:
   1. avionics `prepare` (route autopilot, hyperjump) → commands over the bus;

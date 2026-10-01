@@ -105,6 +105,7 @@ impl Universe {
     /// `seed`), starting docked or landed at its first stop with staggered
     /// departures.
     pub fn spawn_settlers(&mut self, count: usize, seed: u64) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::SpawnSettlers { count, seed }));
         let mut rng = Rng::new(seed);
         for i in 0..count {
             let route_seed = crate::rng::mix(seed, i as u64);

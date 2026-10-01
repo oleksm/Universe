@@ -174,6 +174,11 @@ pub struct App {
 impl App {
     fn new() -> Self {
         let mut u = Universe::new(SEED);
+        // UNIVERSE_RECORD=path: record the session from its start, saved there
+        // on exit (replay it: `cargo run -p universe-sim --release --example replay -- path`).
+        if std::env::var_os("UNIVERSE_RECORD").is_some() {
+            u.record_inputs();
+        }
         // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 1,000).
         let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(1_000);
         u.spawn_settlers(settlers, SEED);

@@ -58,7 +58,7 @@ const COAST_THINK: f64 = 0.5;
 /// What a pilot shows of itself: its transponder and flight plan, and what
 /// its operator and the services know of it (published with each posting;
 /// the world reads this, never the pilot itself).
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Status {
     /// Flies with the pirates (they see each other's transponders).
     pub pirate: bool,
@@ -168,6 +168,7 @@ pub struct PilotView {
 }
 
 /// What a pilot posts after thinking.
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Posting {
     /// Whose: the ship's combat id (the player's 0, craft i: i + 1).
     pub id: usize,
