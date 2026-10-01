@@ -52,3 +52,22 @@ I compared consecutive frames (planet from orbit, noon, dusk, night, low flight,
 approach) after the fix and found no flicker: at most a few hundred pixels changing during a
 landing approach, which is real motion. The jitter above moved bodies and their rotation too,
 and is the likely cause. If it persists, it needs the exact situation to reproduce.
+
+## Second pass (user: "The flicker and blue target multi jitter did not go away"; "THe issue first noticed when we first make multithreading split")
+
+The first pass measured a craft's position, which was fixed, but not what was actually seen.
+Consecutive captured frames showed the light-blue nav target marker on the station jumping
+between 4105 and 4435 m frame to frame.
+
+- **Nav target marker and approach guidance.** Both still came from the view, at the tick.
+  Drawn a tick earlier than that (between views), a station orbiting at ~50 km/s is ~835 m off.
+  This is why it began with the threading split: before it, the world and the drawing were the
+  same moment. Now the client works both out at the drawn moment from the charts and the shared
+  code: `App::nav_marker_now`, and `App::approach_now` (avionics `approach` for our ship as
+  drawn). Same six frames after: 4000 m, steady.
+- **The dark sides of planets.** The planet light (planetshine) for an object was worked out
+  from its camera-relative position in single precision. For the reflecting planet itself, near
+  it, that came out as up to a metre from its own centre, in a random direction that changed as
+  the camera moved. So the planet randomly lit its own night side (up to ~60% brightness), frame
+  to frame. Now planetshine is worked out from the object's true world position, and the
+  reflector never lights itself (`Frame::fill_at`).

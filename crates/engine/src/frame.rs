@@ -264,10 +264,13 @@ impl Frame {
     /// how much of the sky it fills (sin² of its angular radius), and the
     /// share of the sun's light its ground sends back, with its colour times
     /// the sun's brightness here. None if there's none to speak of.
-    fn fill_at(&self, at: Vec3) -> Option<(Vec3, f32, (f32, [f32; 3]))> {
+    fn fill_at(&self, p: DVec3) -> Option<(Vec3, f32, (f32, [f32; 3]))> {
         let (r, light) = (self.reflector?, self.light?);
-        let p = self.camera.position + at.as_dvec3();
         let off = p - r.center;
+        // The reflector itself (or anything at its heart) isn't lit by it.
+        if off.length() < r.radius * 0.5 {
+            return None;
+        }
         let d = off.length().max(r.radius);
         let up = off / off.length().max(1.0);
         // The ground beneath, lit by the sun's height over it.
@@ -332,7 +335,7 @@ impl Frame {
             let c = self.light_at(at);
             inst.light_dir = dir.extend(SHADE_AMBIENT).to_array();
             inst.light_color = [c[0], c[1], c[2], LINE_AMBIENT];
-            if let Some((d, s, (base, c))) = self.fill_at(at) {
+            if let Some((d, s, (base, c))) = self.fill_at(t.position) {
                 inst.refl_dir = d.extend(s).to_array();
                 inst.refl_color = [c[0], c[1], c[2], base];
             }

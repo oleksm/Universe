@@ -604,6 +604,31 @@ impl App {
         }
     }
 
+    /// The nav target (or else the nearest station), where it is at the moment drawn.
+    fn nav_marker_now(&self) -> Option<(String, DVec3)> {
+        let (name, _) = self.v.nav_marker.clone()?;
+        if self.view.origin != self.v.ship_system {
+            return None;
+        }
+        let (sys, t) = (&self.view.system, self.now());
+        let at = match self.v.avionics.nav_target {
+            Some(target) => target.position(sys, t, &self.view.positions)?,
+            None => self.view.positions[sys.station()?],
+        };
+        Some((name, at))
+    }
+
+    /// The approach guidance (docking, landing, gate run) for our ship as
+    /// drawn, at the moment drawn.
+    fn approach_now(&self) -> Option<Approach> {
+        if self.view.origin != self.v.ship_system {
+            return None;
+        }
+        let (position, orientation) = self.place(Who::Me);
+        let ship = universe_sim::Ship { position, orientation, ..self.v.ship.clone() };
+        self.v.avionics.approach(&self.view.system, &ship, self.now(), &self.view.positions)
+    }
+
     /// A ship's name by its combat id.
     fn ship_name(&self, id: usize) -> String {
         match id {
@@ -750,7 +775,6 @@ impl Game for App {
             self.route_labels = self.route_labels_for.iter().map(|&s| universe_sim::route::stop_name(&self.charts.system(s.system), s).to_uppercase()).collect();
         }
         // What the ship's computers make of things (they run in the engine).
-        self.approach = v.approach.clone();
         self.following = v.following.clone();
         self.plan_age += ctx.dt;
         if v.plan_serial != self.plan_serial {
@@ -776,7 +800,6 @@ impl Game for App {
             }
             (raw, _) => raw,
         };
-        self.nav_marker = v.nav_marker.clone();
         self.reach = v.reach;
         self.docked_market = v.docked_market.is_some();
         self.contacts = v.contacts.clone();
@@ -787,6 +810,11 @@ impl Game for App {
         self.hit_age += ctx.dt;
         self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
         universe_prof::time("update/build view", || self.build_view());
+        // Where things are drawn is the moment drawn: the nav target and the
+        // approach guidance are worked out here, at it, from the charts (the
+        // view's are a tick off it).
+        self.nav_marker = self.nav_marker_now();
+        self.approach = self.approach_now();
         // The turrets in view, where they are at the moment drawn (from the charts).
         let (origin, t) = (self.view.origin, self.now());
         let sys = self.view.system.clone();
