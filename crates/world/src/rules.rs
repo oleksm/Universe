@@ -8,7 +8,7 @@
 
 use std::collections::HashMap;
 
-use glam::{DMat3, DQuat, DVec3};
+use glam::DVec3;
 use universe_physics::{Fact, Feature, Frame, Relative};
 
 use crate::damage;
@@ -22,9 +22,9 @@ pub enum Part {
     /// Solid ground, and liquid (a sea).
     Ground,
     Sea,
-    /// A polytope's outer faces, and its cut-out (a slot).
+    /// A structure's outer faces, and its deck (landing pads).
     Hull,
-    Slot,
+    Deck,
     /// A ring's tube, and the opening it encloses (passed through, not touched).
     Ring,
     Opening,
@@ -36,7 +36,7 @@ impl Part {
             Feature::Surface { liquid: false } => Part::Ground,
             Feature::Surface { liquid: true } => Part::Sea,
             Feature::Hull => Part::Hull,
-            Feature::CutOut(_) => Part::Slot,
+            Feature::Deck(_) => Part::Deck,
             Feature::Ring => Part::Ring,
         }
     }
@@ -45,9 +45,8 @@ impl Part {
 /// What a part does to a body that touches it.
 #[derive(Clone, Debug)]
 pub enum Rule {
-    /// Lock the body to the structure if it arrives slower than `max_speed`
-    /// (and lined up, for a slot): held there, devices idle. Else it's
-    /// wrecked by `otherwise`.
+    /// Lock the body to the structure if it arrives slower than `max_speed`:
+    /// held there, devices idle. Else it's wrecked by `otherwise`.
     Lock { name: String, max_speed: f64, pose: Pose, says: Says, otherwise: String },
     /// Pass the body through to the structure's twin in system `to`, if
     /// slower than `max_speed` (its motion relative to this one kept for the
@@ -63,9 +62,8 @@ pub enum Rule {
 /// Where a locked body is held.
 #[derive(Clone, Copy, Debug)]
 pub enum Pose {
-    /// At a point of the structure (its own frame), nose along `nose` and
-    /// wings along `wings` either way, accepted within `max_roll` (rad) of it.
-    Slot { position: DVec3, nose: DVec3, wings: DVec3, max_roll: f64 },
+    /// Where it touched a structure's deck, belly down, heading as it was.
+    Deck,
     /// Where it touched the ground, belly down.
     Ground,
 }
@@ -83,13 +81,10 @@ pub enum Says {
 /// devices are commanded on.
 #[derive(Clone, Debug)]
 pub enum Release {
-    /// Engine or thrusters on: shot out along `axis` (the structure's own
-    /// frame) from `distance` out at `speed`, nose out and wings along
-    /// `wings` either way.
-    Eject { axis: DVec3, wings: DVec3, distance: f64, speed: f64, says: ShipEvent },
     /// A burn with the nose up, or the lift thrusters with the belly down:
-    /// lifted `lift` metres clear along the local vertical at `speed`.
-    LiftOff { speed: f64, lift: f64, says: ShipEvent },
+    /// lifted `lift` metres clear at `speed`, along `up` (the structure's own
+    /// frame: a deck's), or the local vertical (None: a world's ground).
+    LiftOff { speed: f64, lift: f64, up: Option<DVec3>, says: ShipEvent },
 }
 
 /// The rules of a star system's parts, by (body, part), and how each
@@ -142,17 +137,7 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             let b = &sys.bodies[body];
             let rot = b.rotation(t);
             let held = match *pose {
-                Pose::Slot { position, nose, wings, max_roll } => {
-                    let (nose, wings) = (rot * nose, rot * wings);
-                    (speed < *max_speed && roll_error(ship.orientation, nose, wings) < max_roll).then(|| {
-                        let mut right = wings;
-                        if (ship.orientation * DVec3::X).dot(right) < 0.0 {
-                            right = -right;
-                        }
-                        let up = right.cross(nose);
-                        (position, DQuat::from_mat3(&DMat3::from_cols(right, up, -nose)))
-                    })
-                }
+                Pose::Deck => (speed < *max_speed).then(|| (crate::station::rest(c.local), upright(rot * DVec3::Y, ship.forward()))),
                 Pose::Ground => (speed < *max_speed).then(|| (c.local * (b.surface_radius(c.local) + SHIP_RADIUS), upright(c.normal, ship.forward()))),
             };
             match held {
@@ -212,7 +197,7 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
 /// A body locked to `body` (at `local_position` in its frame) with its
 /// devices as set: let go, if its release says so. Returns whether it did.
 #[allow(clippy::too_many_arguments)]
-pub fn release(rules: &Rules, sys: &StarSystem, body: usize, local_position: DVec3, ship: &mut Ship, t: f64, positions: &[DVec3], events: &mut Vec<ShipEvent>) -> bool {
+pub fn release(rules: &Rules, sys: &StarSystem, body: usize, local_position: DVec3, ship: &mut Ship, t: f64, events: &mut Vec<ShipEvent>) -> bool {
     let Some(release) = rules.release(body) else { return false };
     // (Inside a hangar, or taxiing, nothing lifts off: out onto a pad first.)
     if ship.hangar.is_some() || ship.taxi.is_some() {
@@ -221,26 +206,8 @@ pub fn release(rules: &Rules, sys: &StarSystem, body: usize, local_position: DVe
     let b = &sys.bodies[body];
     let rot = b.rotation(t);
     match release {
-        Release::Eject { axis, wings, distance, speed, says } => {
-            if ship.throttle <= 0.05 && ship.rcs.length() <= 0.1 {
-                return false;
-            }
-            let (nose, wings) = (rot * *axis, rot * *wings);
-            let mut right = wings;
-            if (ship.orientation * DVec3::X).dot(right) < 0.0 {
-                right = -right;
-            }
-            let up = right.cross(nose);
-            ship.orientation = DQuat::from_mat3(&DMat3::from_cols(right, up, -nose));
-            ship.position = positions[body] + nose * *distance;
-            ship.velocity = sys.velocity(body, t) + nose * *speed;
-            ship.angular_velocity = DVec3::ZERO;
-            ship.state = ShipState::Flying;
-            events.push(says.clone());
-            true
-        }
-        Release::LiftOff { speed, lift, says } => {
-            let normal = (rot * local_position).normalize();
+        Release::LiftOff { speed, lift, up, says } => {
+            let normal = up.map_or_else(|| (rot * local_position).normalize(), |u| rot * u);
             let nose_up_burn = ship.throttle > 0.05 && ship.forward().dot(normal) > 0.2;
             let lifting = ship.rcs.y > 0.1 && (ship.orientation * DVec3::Y).dot(normal) > 0.5;
             if !(nose_up_burn || lifting) {
@@ -255,21 +222,11 @@ pub fn release(rules: &Rules, sys: &StarSystem, body: usize, local_position: DVe
     }
 }
 
-/// Angle between the ship's wings and `wings` (0..90°, rad), looking along `nose`.
-fn roll_error(orientation: DQuat, nose: DVec3, wings: DVec3) -> f64 {
-    let right = orientation * DVec3::X;
-    let flat = right - nose * right.dot(nose);
-    match flat.try_normalize() {
-        Some(flat) => flat.dot(wings).abs().clamp(0.0, 1.0).acos(),
-        None => std::f64::consts::FRAC_PI_2,
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     
-    use crate::station::{StationFrame, STATION_SIZE};
+    use crate::station::StationFrame;
     
     use crate::testkit::Probe;
 
@@ -278,25 +235,42 @@ mod tests {
     }
 
     #[test]
-    fn the_docking_port_locks_a_gentle_arrival_and_says_so() {
+    fn the_deck_takes_a_gentle_touchdown_on_a_pad_and_says_so() {
         let mut p = Probe::new(42);
         let sys = p.sys();
         let station = sys.station().unwrap();
         let pos = p.positions();
         let f = StationFrame::new(&sys, station, p.world.time, &pos);
-        // Just above the slot's floor, lined up, sinking in gently (quickly
-        // enough that the station's spin doesn't turn the slot away first).
-        p.ship.position = f.on_axis(STATION_SIZE * 0.9);
-        p.ship.velocity = f.velocity_at(p.ship.position) - f.axis() * 10.0;
-        p.ship.orientation = f.docking_orientation(p.ship.orientation);
+        // Just above pad 5, upright, sinking gently.
+        p.ship.position = f.pad(5) + f.up() * 8.0;
+        p.ship.velocity = f.velocity_at(p.ship.position) - f.up() * 3.0;
+        p.ship.orientation = f.landing_orientation();
         for _ in 0..600 {
             p.step(1.0 / 60.0, 1.0);
             if !p.ship.is_flying() {
                 break;
             }
         }
-        assert!(matches!(p.ship.state, ShipState::Landed { body, .. } if body == station), "{:?}", p.events);
+        let ShipState::Landed { body, local_position, .. } = p.ship.state else { panic!("{:?}", p.events) };
+        assert_eq!(body, station);
+        assert_eq!(crate::station::pad_at(local_position), Some(5));
         assert!(fired(&p.events, "locked"), "{:?}", p.events);
+        assert!(p.events.iter().any(|e| matches!(e, ShipEvent::Landed { station: true, .. })));
+    }
+
+    #[test]
+    fn the_deck_wrecks_a_hard_arrival() {
+        let mut p = Probe::new(42);
+        let sys = p.sys();
+        let station = sys.station().unwrap();
+        let pos = p.positions();
+        let f = StationFrame::new(&sys, station, p.world.time, &pos);
+        p.ship.position = f.pad(5) + f.up() * 40.0;
+        p.ship.velocity = f.velocity_at(p.ship.position) - f.up() * 30.0;
+        for _ in 0..600 {
+            p.step(1.0 / 60.0, 1.0);
+        }
+        assert!(p.events.iter().any(|e| matches!(e, ShipEvent::Crashed { .. })), "{:?}", p.events);
     }
 
 }

@@ -1,29 +1,84 @@
-//! Stations: a Coriolis station's shape, its frame, and its docking port.
+//! Stations: a platform in orbit. A square deck of landing pads (a 4 × 4
+//! grid, like a spaceport's) with the station's main structure standing
+//! along one edge of it, its hangar inside. Ships land on the pads (gently:
+//! no gravity here, only the station's slow turn), taxi into the hangar for
+//! a long stay, and lift off the deck to leave.
 //!
-//! A Coriolis station is a cuboctahedron spinning about its local +Y axis. The
-//! docking slot sits in the +Y face, so the approach corridor runs along the
-//! spin axis: it never moves sideways, but the slot rolls with the station and
-//! a ship has to roll with it.
+//! In the station's own frame: the deck faces +Y, the main structure stands
+//! at its −Z edge (its door facing the pads), metres from the station's
+//! centre. The station turns once an orbit about the deck's normal (the
+//! orbit's), keeping the same side to its planet.
 
-use glam::{DMat3, DQuat, DVec3};
-use universe_physics::{CutOut, Frame, Polytope};
+use glam::{DQuat, DVec3};
+use universe_physics::{Blocks, Frame};
 
+use crate::ship::SHIP_RADIUS;
+use crate::spaceport::{GRID, PAD_SIZE, PAD_SPACING};
 use crate::system::StarSystem;
 
-/// Distance from the station center to its square faces (m). Also the render scale.
+/// The deck's half-width across (local X) (m).
+pub const DECK_HALF: f64 = 300.0;
+/// The deck's top, and the station's bottom, along local Y (m).
+pub const DECK_TOP: f64 = -100.0;
+const BOTTOM: f64 = -150.0;
+/// The pad area along local Z (m): from the main structure's face out.
+pub const DECK_FROM: f64 = -225.0;
+pub const DECK_TO: f64 = 375.0;
+/// The main structure: from the far edge to the deck, and how high (m).
+const STRUCTURE_FROM: f64 = -375.0;
+const STRUCTURE_TOP: f64 = 150.0;
+/// About the station's size: its bounding radius, rounded (m).
 pub const STATION_SIZE: f64 = 500.0;
-/// Slot half-extents in station units: long axis (local X) and short axis (local Z).
-pub const SLOT_HALF: (f64, f64) = (0.3, 0.08);
-/// Depth into the slot (station units from center) at which a ship counts as docked.
-const DOCKED_DEPTH: f64 = 0.9;
-/// Where a docked ship rests: in the slot, this far out along the axis (station units).
-pub const DOCKED_HEIGHT: f64 = 0.85;
-/// Fastest safe speed through the slot (m/s).
-pub const MAX_DOCK_SPEED: f64 = 25.0;
-/// Largest roll mismatch with the slot that still fits (radians).
-pub const MAX_ROLL_ERROR: f64 = 0.52; // 30 degrees
+/// Touching the deck slower than this lands (m/s); faster wrecks.
+pub const DECK_SPEED: f64 = 10.0;
 /// Hull contact slower than this bounces instead of destroying the ship (m/s).
 pub const BUMP_SPEED: f64 = 15.0;
+
+/// The station's real shape: the deck (a slab) and the main structure.
+pub fn hull() -> Blocks {
+    Blocks::new(
+        vec![
+            (DVec3::new(-DECK_HALF, BOTTOM, DECK_FROM), DVec3::new(DECK_HALF, DECK_TOP, DECK_TO)),
+            (DVec3::new(-DECK_HALF, BOTTOM, STRUCTURE_FROM), DVec3::new(DECK_HALF, STRUCTURE_TOP, DECK_FROM)),
+        ],
+        vec![0],
+    )
+}
+
+/// Where a ship rests on the deck above local point `at` (station frame).
+pub fn rest(at: DVec3) -> DVec3 {
+    DVec3::new(at.x, DECK_TOP + SHIP_RADIUS, at.z)
+}
+
+/// Where a ship rests on pad `pad` (0..`PADS`, row by row from the main
+/// structure), in the station's frame.
+pub fn pad_local(pad: usize) -> DVec3 {
+    let half = (GRID as f64 - 1.0) / 2.0;
+    let (row, col) = ((pad / GRID) as f64 - half, (pad % GRID) as f64 - half);
+    rest(DVec3::new(col * PAD_SPACING, 0.0, (DECK_FROM + DECK_TO) / 2.0 + row * PAD_SPACING))
+}
+
+/// The pad a ship resting at `local` (station frame) is on, if any.
+pub fn pad_at(local: DVec3) -> Option<usize> {
+    let flat = |p: DVec3| DVec3::new(p.x, 0.0, p.z);
+    (local.y < DECK_TOP + 3.0 * SHIP_RADIUS).then(|| (0..crate::spaceport::PADS).find(|&k| flat(pad_local(k)).distance(flat(local)) < PAD_SIZE)).flatten()
+}
+
+/// The hangar inside the main structure (where ships in it rest, out of
+/// sight), and its door onto the deck.
+pub fn hangar_local() -> DVec3 {
+    rest(DVec3::new(0.0, 0.0, (STRUCTURE_FROM + DECK_FROM) / 2.0))
+}
+
+pub fn door_local() -> DVec3 {
+    rest(DVec3::new(0.0, 0.0, DECK_FROM))
+}
+
+/// Upright on the deck, the nose toward the main structure.
+pub fn parked() -> DQuat {
+    // (The ship's own axes are the station's: nose −Z, top +Y.)
+    DQuat::IDENTITY
+}
 
 /// A station's pose and motion at one instant, in the system frame.
 #[derive(Clone, Copy, Debug)]
@@ -40,80 +95,61 @@ impl StationFrame {
         Self { center: f.center, velocity: f.velocity, rotation: f.rotation, angular_velocity: f.angular_velocity }
     }
 
-    /// Docking axis: out of the slot, along the spin axis.
-    pub fn axis(&self) -> DVec3 {
+    /// Up from the deck.
+    pub fn up(&self) -> DVec3 {
         self.rotation * DVec3::Y
     }
 
-    /// The slot's long direction.
-    pub fn slot_long(&self) -> DVec3 {
-        self.rotation * DVec3::X
+    /// A point of the station's frame, in the system's.
+    pub fn world(&self, local: DVec3) -> DVec3 {
+        self.center + self.rotation * local
     }
 
-    pub fn slot_short(&self) -> DVec3 {
-        self.rotation * DVec3::Z
+    /// Where a ship rests on pad `pad` (system frame).
+    pub fn pad(&self, pad: usize) -> DVec3 {
+        self.world(pad_local(pad))
     }
 
-    /// Point `height` meters out along the axis.
-    pub fn on_axis(&self, height: f64) -> DVec3 {
-        self.center + self.axis() * height
-    }
-
-    /// Velocity of the station's material at world point `p` (includes spin).
+    /// Velocity of the station's material at world point `p` (includes its turn).
     pub fn velocity_at(&self, p: DVec3) -> DVec3 {
         self.velocity + self.angular_velocity.cross(p - self.center)
     }
 
-    /// Ship orientation that points into the slot with wings along the slot,
-    /// choosing whichever of the two fitting rolls is closer to `current`.
-    pub fn docking_orientation(&self, current: DQuat) -> DQuat {
-        let forward = -self.axis();
-        let mut right = self.slot_long();
-        if (current * DVec3::X).dot(right) < 0.0 {
-            right = -right;
-        }
-        let up = right.cross(forward);
-        DQuat::from_mat3(&DMat3::from_cols(right, up, -forward))
+    /// Upright on the deck, the nose toward the main structure: how a ship
+    /// sets down on a pad.
+    pub fn landing_orientation(&self) -> DQuat {
+        self.rotation * parked()
     }
-
-    /// Angle between the ship's wings and the slot's long axis, 0..90 degrees (radians).
-    pub fn roll_error(&self, orientation: DQuat) -> f64 {
-        let axis = self.axis();
-        let right = orientation * DVec3::X;
-        let flat = right - axis * right.dot(axis);
-        match flat.try_normalize() {
-            Some(flat) => flat.dot(self.slot_long()).abs().clamp(0.0, 1.0).acos(),
-            None => std::f64::consts::FRAC_PI_2,
-        }
-    }
-}
-
-/// The station's real shape, for the physics kernel: a cuboctahedron (the
-/// intersection of a cube, |x|,|y|,|z| <= 1, and an octahedron,
-/// |x|+|y|+|z| <= 2), with the slot cut into its +Y face. Reaching the
-/// slot's floor is the docking port's contact; the mouth above it is open.
-pub fn hull() -> Polytope {
-    Polytope::cuboctahedron(STATION_SIZE).with_cut_out(CutOut { half_x: SLOT_HALF.0, half_z: SLOT_HALF.1, floor: DOCKED_DEPTH })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
     use crate::ship::ShipState;
     use crate::testkit::Probe;
 
     #[test]
-    fn launch_from_docked_leaves_along_axis() {
+    fn pads_lie_on_the_deck_clear_of_the_structure() {
+        for k in 0..crate::spaceport::PADS {
+            let p = pad_local(k);
+            assert_eq!(pad_at(p), Some(k));
+            assert!(p.x.abs() + PAD_SIZE <= DECK_HALF && p.z - PAD_SIZE >= DECK_FROM && p.z + PAD_SIZE <= DECK_TO, "pad {k} at {p}");
+        }
+        assert!(hull().contact(0, &Frame { center: DVec3::ZERO, velocity: DVec3::ZERO, rotation: DQuat::IDENTITY, angular_velocity: DVec3::ZERO }, pad_local(5), DVec3::ZERO, SHIP_RADIUS + 0.1).is_some());
+    }
+
+    #[test]
+    fn lifting_off_a_pad_clears_the_station() {
         let mut p = Probe::new(42);
         let station = p.sys().station().unwrap();
-        p.ship.state = ShipState::Landed { body: station, local_position: DVec3::Y * 425.0, local_orientation: DQuat::IDENTITY };
-        p.set_throttle(0.2);
+        p.ship.state = ShipState::Landed { body: station, local_position: pad_local(5), local_orientation: parked() };
+        p.ship.rcs = DVec3::Y;
         p.step(1.0 / 60.0, 1.0);
-        assert!(p.ship.is_flying());
-        for _ in 0..300 {
+        assert!(p.ship.is_flying(), "{:?}", p.events);
+        for _ in 0..600 {
+            p.ship.rcs = DVec3::Y;
             p.step(1.0 / 60.0, 1.0);
         }
-        assert!(p.ship.is_flying(), "launch should not hit the station: {:?}", p.events);
+        assert!(p.ship.is_flying(), "lifting off should not hit the station: {:?}", p.events);
     }
 }

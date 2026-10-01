@@ -127,8 +127,8 @@ fn a_ship_holds_while_the_pads_are_full_then_lands_on_the_one_freed() {
     let j = &u.atc.journal;
     let mine = |c: &Cause| matches!(c, Cause::Message { sender, .. } if *sender == waiter as u64);
     assert!(j.iter().any(|c| c.ship == waiter && matches!(c.what, What::PadQueued { .. }) && mine(&c.cause)), "queued, at its request");
-    assert!(j.iter().any(|c| c.ship == waiter && c.what == What::PadGranted { system: home, port, pad: 5 } && mine(&c.cause)), "granted, at its request");
-    assert!(j.iter().any(|c| c.ship == leaver && c.what == What::PadFreed { system: home, port, pad: 5 } && c.cause == Cause::Rules), "freed as it left");
+    assert!(j.iter().any(|c| c.ship == waiter && c.what == What::PadGranted { system: home, port: Facility::Spaceport(port), pad: 5 } && mine(&c.cause)), "granted, at its request");
+    assert!(j.iter().any(|c| c.ship == leaver && c.what == What::PadFreed { system: home, port: Facility::Spaceport(port), pad: 5 } && c.cause == Cause::Rules), "freed as it left");
 }
 
 #[test]
@@ -137,7 +137,7 @@ fn a_docking_and_a_launch_share_the_corridor() {
     let (sys, pos) = positions(&mut u);
     let station = sys.station().unwrap();
     let home = u.ship_system;
-    // Craft 0 docked, about to leave for the gate; craft 1 inbound, 6 km up the axis.
+    // Craft 0 docked, about to leave for the gate; craft 1 inbound, 6 km above the deck.
     u.crafts[0].ship = u.world.ship_on(home, Facility::Station(station), 0);
     let gate = sys.bodies.iter().position(|b| b.kind == BodyKind::Gate).unwrap();
     let mut pilots = u.pilots();
@@ -151,7 +151,7 @@ fn a_docking_and_a_launch_share_the_corridor() {
     r.dwell_until = Some(u.world.time + 5.0);
     drop(pilots);
     let f = StationFrame::new(&sys, station, u.world.time, &pos);
-    place(&mut u, 1, f.on_axis(6_000.0), f.velocity, f.center);
+    place(&mut u, 1, f.center + f.up() * 6_000.0, f.velocity, f.center);
     cleared(&mut u, 1, NavTarget::Station(station));
     let done = run(&mut u, 900.0, |u| {
         let docked = matches!(u.crafts[1].ship.state, ShipState::Landed { .. });
@@ -587,38 +587,40 @@ fn orbit_at_a_chosen_range_no_closer_than_the_structure_allows() {
 }
 
 #[test]
-fn a_long_stay_at_a_spaceport_is_spent_in_its_hangar_and_the_pad_freed() {
+fn a_long_stay_at_a_port_or_station_is_spent_in_its_hangar_and_the_pad_freed() {
     use universe_sim::world::spaceport::PADS;
-    let mut u = bench(1);
-    let home = u.ship_system;
-    let port = 0;
-    u.crafts[0].ship = u.world.ship_on(home, Facility::Spaceport(port), 2);
-    let station = u.ship_system().station().unwrap();
-    {
-        let mut pilots = u.pilots();
-        let r = &mut pilots[0].avionics.route;
-        r.stops = vec![universe_sim::Stop { system: home, target: NavTarget::Spaceport(port) }, universe_sim::Stop { system: home, target: NavTarget::Station(station) }];
-        r.next = 0;
-        r.active = true;
-        r.dwell_until = None;
-        r.stay = Some(200.0);
+    let station = bench(1).ship_system().station().unwrap();
+    for (port, then) in [(Facility::Spaceport(0), NavTarget::Station(station)), (Facility::Station(station), NavTarget::Spaceport(0))] {
+        let mut u = bench(1);
+        let home = u.ship_system;
+        u.crafts[0].ship = u.world.ship_on(home, port, 2);
+        {
+            let mut pilots = u.pilots();
+            let r = &mut pilots[0].avionics.route;
+            r.stops = vec![universe_sim::Stop { system: home, target: port }, universe_sim::Stop { system: home, target: then }];
+            r.next = 0;
+            r.active = true;
+            r.dwell_until = None;
+            r.stay = Some(200.0);
+        }
+        let held = |u: &Universe| (0..PADS).filter(|&k| u.atc.owners(home, port)[k] == Some(universe_sim::craft_id(0))).count();
+        run(&mut u, 5.0, |_| false);
+        assert_eq!(held(&u), 1, "{port:?}: on its pad");
+        // After the turnaround (time to trade): it taxis off, the pad freed at
+        // once; then in the hangar, out of sight.
+        let taxiing = run(&mut u, 70.0, |u| u.crafts[0].ship.taxi.is_some());
+        assert!(taxiing, "{port:?}: taxiing to the hangar");
+        run(&mut u, 2.0, |_| false);
+        assert_eq!(held(&u), 0, "{port:?}: its pad freed for others");
+        let inside = run(&mut u, 90.0, |u| u.crafts[0].ship.hangar.is_some());
+        assert!(inside, "{port:?}: into the hangar");
+        assert!(matches!(u.crafts[0].ship.state, ShipState::Landed { .. }));
+        // Its stay up: out onto a pad traffic control gives, and off.
+        let gone = run(&mut u, 200.0, |u| u.crafts[0].ship.is_flying());
+        assert!(gone, "{port:?}: out of the hangar and away (hangar {:?})", u.crafts[0].ship.hangar);
+        assert!(u.crafts[0].ship.hangar.is_none());
+        assert!(u.recorder.incidents.is_empty(), "{port:?}: no wrecks\n{}", incidents(&u));
     }
-    let held = |u: &Universe| (0..PADS).filter(|&k| u.atc.owners(home, port)[k] == Some(universe_sim::craft_id(0))).count();
-    run(&mut u, 5.0, |_| false);
-    assert_eq!(held(&u), 1, "on its pad");
-    // After the turnaround (time to trade): it taxis off, the pad freed at
-    // once; then in the hangar, out of sight.
-    let taxiing = run(&mut u, 70.0, |u| u.crafts[0].ship.taxi.is_some());
-    assert!(taxiing, "taxiing to the hangar");
-    run(&mut u, 2.0, |_| false);
-    assert_eq!(held(&u), 0, "its pad freed for others");
-    let inside = run(&mut u, 90.0, |u| u.crafts[0].ship.hangar.is_some());
-    assert!(inside, "into the hangar");
-    assert!(matches!(u.crafts[0].ship.state, ShipState::Landed { .. }));
-    // Its stay up: out onto a pad traffic control gives, and off.
-    let gone = run(&mut u, 200.0, |u| u.crafts[0].ship.is_flying());
-    assert!(gone, "out of the hangar and away (hangar {:?})", u.crafts[0].ship.hangar);
-    assert!(u.crafts[0].ship.hangar.is_none());
 }
 
 #[test]

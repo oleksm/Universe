@@ -19,8 +19,7 @@ use crate::galaxy::{Galaxy, GALAXY_STARS};
 use crate::gate::{self, GateFrame};
 use crate::hyperdrive;
 use crate::network;
-use crate::ship::{upright, Controls, HyperdriveCommand, Ship, ShipCommands, ShipState, SHIP_RADIUS, TAXI_SPEED};
-use crate::station::{DOCKED_HEIGHT, STATION_SIZE};
+use crate::ship::{upright, Controls, HyperdriveCommand, Ship, ShipCommands, ShipState, TAXI_SPEED};
 use crate::system::StarSystem;
 use crate::traffic::Facility;
 use crate::units::LIGHT_YEAR;
@@ -318,7 +317,7 @@ impl World {
     /// `pad` (traffic control's to give; the world sees only that it's a pad
     /// of the port). See `taxi_step`.
     fn hangar_move(&self, ship: &mut Ship, system: usize, h: universe_protocol::HangarCommand, t: f64, events: &mut Vec<ShipEvent>) {
-        use crate::spaceport::{hangar_direction, pad_at, PADS};
+        use crate::spaceport::PADS;
         use universe_protocol::HangarCommand;
         let ShipState::Landed { body, local_position, .. } = ship.state.clone() else {
             return events.push(ShipEvent::HangarRefused { why: "NOT LANDED".into() });
@@ -329,18 +328,15 @@ impl World {
         let sys = self.system(system);
         match (h, ship.hangar) {
             (HangarCommand::Enter, None) => {
-                let here = local_position.normalize_or_zero();
-                let Some(port) = (0..sys.spaceports.len()).find(|&p| sys.spaceports[p].body == body && pad_at(&sys, p, here).is_some()) else {
-                    return events.push(ShipEvent::HangarRefused { why: "NOT ON A SPACEPORT'S PAD".into() });
+                let Some(port) = crate::port::at(&sys, body, local_position).filter(|&p| crate::port::pad_at(&sys, p, local_position).is_some()) else {
+                    return events.push(ShipEvent::HangarRefused { why: "NOT ON A PAD".into() });
                 };
                 ship.taxi = Some(crate::ship::Taxi { port, pad: None });
             }
-            (HangarCommand::Leave { pad }, Some(port)) if pad < PADS && port < sys.spaceports.len() => {
+            (HangarCommand::Leave { pad }, Some(port)) if pad < PADS && crate::port::body(&sys, port) == Some(body) => {
                 // Out of the door, in sight again, and taxiing.
-                let dir = hangar_direction(&sys, port);
-                let b = &sys.bodies[body];
-                let local_position = dir * (b.surface_radius(dir) + SHIP_RADIUS);
-                let local_orientation = upright(dir, dir.any_orthonormal_vector());
+                let local_position = crate::port::hangar(&sys, port);
+                let local_orientation = crate::port::resting(port, local_position, crate::port::pad(&sys, port, pad) - local_position);
                 let mut rigid = ship.rigid();
                 Weld { body, local_position, local_orientation }.place(&sys.bodies, t, &self.rails_at(system, t), &mut rigid);
                 ship.set_rigid(&rigid);
@@ -353,30 +349,20 @@ impl World {
         }
     }
 
-    /// A taxiing ship, `dt` seconds on: along the ground toward the hangar
-    /// or its pad at `TAXI_SPEED`, nose the way it goes; there, into the
-    /// hangar (out of sight) or on the pad (ready to lift off).
+    /// A taxiing ship, `dt` seconds on: along the ground (or deck) toward
+    /// the hangar or its pad at `TAXI_SPEED`, nose the way it goes; there,
+    /// into the hangar (out of sight) or on the pad (ready to lift off).
     fn taxi_step(&self, sys: &StarSystem, ship: &mut Ship, dt: f64, events: &mut Vec<ShipEvent>) {
-        use crate::spaceport::{hangar_direction, pad_direction};
         let (Some(taxi), ShipState::Landed { body, local_position, local_orientation }) = (ship.taxi, ship.state.clone()) else { return };
         let to = match taxi.pad {
-            Some(pad) => pad_direction(sys, taxi.port, pad),
-            None => hangar_direction(sys, taxi.port),
+            Some(pad) => crate::port::pad(sys, taxi.port, pad),
+            None => crate::port::hangar(sys, taxi.port),
         };
-        let b = &sys.bodies[body];
-        let here = local_position.normalize();
-        let left = here.angle_between(to);
-        let step = TAXI_SPEED * dt / b.rail.radius;
-        let name = crate::traffic::Facility::Spaceport(taxi.port).name(sys).to_string();
-        let (dir, arrived) = if left <= step {
-            (to, true)
-        } else {
-            let axis = here.cross(to).normalize_or(here.any_orthonormal_vector());
-            (DQuat::from_axis_angle(axis, step) * here, false)
-        };
-        let heading = (to - here).normalize_or(local_orientation * DVec3::NEG_Z);
-        let local_orientation = if arrived { local_orientation } else { upright(dir, heading) };
-        let local_position = dir * (b.surface_radius(dir) + SHIP_RADIUS);
+        let step = TAXI_SPEED * dt;
+        let name = taxi.port.name(sys);
+        let arrived = local_position.distance(to) <= step;
+        let local_position = if arrived { to } else { crate::port::settle(sys, taxi.port, local_position + (to - local_position).normalize() * step) };
+        let local_orientation = if arrived { local_orientation } else { crate::port::resting(taxi.port, local_position, to - local_position) };
         ship.state = ShipState::Landed { body, local_position, local_orientation };
         if arrived {
             ship.taxi = None;
@@ -609,7 +595,7 @@ impl World {
         ship.state = ShipState::Landed { body: weld.body, local_position: weld.local_position, local_orientation };
         // Let go, if the structure's release says so (its owner's rule).
         let rules = self.rules_of(system);
-        crate::rules::release(&rules, sys, weld.body, weld.local_position, ship, t, &positions, events);
+        crate::rules::release(&rules, sys, weld.body, weld.local_position, ship, t, events);
         result
     }
 
@@ -759,25 +745,21 @@ impl World {
         self.ship_on(system, at, crate::spaceport::CENTER_PAD)
     }
 
-    /// A ship resting at `at` in `system`: docked in a station's slot, or on
-    /// pad `pad` of a spaceport.
+    /// A ship resting at `at` in `system`: on pad `pad` of a station's deck
+    /// or a spaceport.
     pub fn ship_on(&mut self, system: usize, at: Facility, pad: usize) -> Ship {
         let sys = self.system(system);
         let positions = self.rails_now(system);
         let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
-        let (body, local_position, local_orientation) = match at {
-            Facility::Station(s) => {
-                // In the slot, nose in (the station's local frame: axis +Y, slot along X).
-                let docked = DQuat::from_mat3(&glam::DMat3::from_cols(DVec3::X, DVec3::NEG_Z, DVec3::Y));
-                (s, DVec3::Y * STATION_SIZE * DOCKED_HEIGHT, docked)
-            }
-            Facility::Spaceport(p) | Facility::Gate(p) | Facility::Asteroid(p) => {
-                let p = p.min(sys.spaceports.len().saturating_sub(1));
-                let sp = &sys.spaceports[p];
-                let b = &sys.bodies[sp.body];
-                let d = crate::spaceport::pad_direction(&sys, p, pad.min(crate::spaceport::PADS - 1));
-                (sp.body, d * (b.surface_radius(d) + SHIP_RADIUS), upright(d, d.any_orthonormal_vector()))
-            }
+        let at = match at {
+            Facility::Station(_) | Facility::Spaceport(_) if crate::port::body(&sys, at).is_some() => at,
+            _ => Facility::Spaceport(0),
+        };
+        let body = crate::port::body(&sys, at).expect("a port");
+        let local_position = crate::port::pad(&sys, at, pad);
+        let local_orientation = match at {
+            Facility::Station(_) => crate::station::parked(),
+            _ => crate::port::resting(at, local_position, local_position.any_orthonormal_vector()),
         };
         let mut rigid = ship.rigid();
         Weld { body, local_position, local_orientation }.place(&sys.bodies, self.time, &positions, &mut rigid);
@@ -906,7 +888,7 @@ mod tests {
             let (b, t) = (&sys.bodies[planet], p.world.time);
             let up = b.rotation(t) * sys.spaceports[port].direction;
             // Just above the pad, moving with the ground and sinking.
-            p.ship.position = pos[planet] + up * (b.rail.radius + SHIP_RADIUS + 3.0);
+            p.ship.position = pos[planet] + up * (b.rail.radius + crate::ship::SHIP_RADIUS + 3.0);
             p.ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(p.ship.position - pos[planet]) - up * sink;
             p.ship.orientation = upright(up, up.any_orthonormal_vector());
             for _ in 0..120 {

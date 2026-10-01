@@ -201,12 +201,12 @@ impl Avionics {
     /// Before the ship moves this frame: the route autopilot, then (unless
     /// it is flying a route) the dock/land/gate autopilot's hyperjump.
     pub fn prepare(&mut self, bus: &mut impl Bus, dt: f64, events: &mut Vec<Event>) -> Option<Controls> {
-        // Close to a station's or gate's corridor: ask traffic control whether it's ours.
+        // Close to a gate's corridor: ask traffic control whether it's ours.
         // Near it (approaching or lining up), ask; waiting ships keep their own place.
         self.wait_place = bus.id();
         self.corridor_ahead = match self.clearance {
-            Some(Clearance { target: NavTarget::Station(b) | NavTarget::Gate(b), phase: Phase::Approach | Phase::Align | Phase::Final, .. })
-                if target_position(bus, NavTarget::Gate(b)).or_else(|| target_position(bus, NavTarget::Station(b))).is_some_and(|p| p.distance(bus.ship().position) < 12_000.0) =>
+            Some(Clearance { target: NavTarget::Gate(b), phase: Phase::Approach | Phase::Align | Phase::Final, .. })
+                if target_position(bus, NavTarget::Gate(b)).is_some_and(|p| p.distance(bus.ship().position) < 12_000.0) =>
             {
                 bus.request_corridor(b)
             }
@@ -278,9 +278,9 @@ impl Avionics {
         let sys = bus.star_system();
         match bus.request_clearance(self.nav_target) {
             Ok(target) => {
-                // Landing: a pad of our own, or a place in the holding ring.
+                // Landing or docking: a pad of our own, or a place in the holding ring.
                 let pad = match target {
-                    NavTarget::Spaceport(p) => match bus.request_pad(p) {
+                    NavTarget::Spaceport(_) | NavTarget::Station(_) => match bus.request_pad(target) {
                         PadGrant::Pad(k) => PadSlot::Pad(k),
                         PadGrant::Queued(n) => PadSlot::Hold(n),
                     },
@@ -397,8 +397,8 @@ impl Avionics {
             return;
         }
         // Holding for a pad: ask again; our turn gives us one.
-        if let (NavTarget::Spaceport(p), PadSlot::Hold(was)) = (c.target, c.pad) {
-            match bus.request_pad(p) {
+        if let (NavTarget::Spaceport(_) | NavTarget::Station(_), PadSlot::Hold(was)) = (c.target, c.pad) {
+            match bus.request_pad(c.target) {
                 PadGrant::Pad(k) => {
                     c.pad = PadSlot::Pad(k);
                     c.phase = Phase::Approach;

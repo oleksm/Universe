@@ -152,7 +152,7 @@ mod tests {
     use glam::DQuat;
 
     use super::*;
-    use crate::collide::{Collider, Feature, Polytope, Ring};
+    use crate::collide::{Blocks, Collider, Feature, Ring};
     use crate::orbit::Orbit;
     
     use crate::rails::{positions, RailBody};
@@ -196,7 +196,7 @@ mod tests {
         let mut cube = body(Some(1), Some(Orbit::new(1.0e7, 0.0, 0.2, 0.0, 0.0, 1.0, 4.0e14)), 1.0, 600.0);
         cube.attracts = false;
         cube.day = 60.0;
-        cube.collider = Collider::Polytope(Polytope::cuboctahedron(500.0));
+        cube.collider = Collider::Blocks(Blocks::new(vec![(DVec3::splat(-500.0), DVec3::splat(500.0))], vec![]));
         let mut hoop = body(Some(1), Some(Orbit::new(2.0e7, 0.0, 0.1, 1.0, 0.0, 2.0, 4.0e14)), 1.0, 1560.0);
         hoop.attracts = false;
         hoop.collider = Collider::Ring(Ring { radius: 1500.0, tube: 60.0 });
@@ -276,7 +276,7 @@ mod tests {
         let mut still = body(None, None, 1.0, 600.0);
         still.attracts = false;
         still.day = 1.0e15;
-        still.collider = Collider::Polytope(Polytope::cuboctahedron(500.0));
+        still.collider = Collider::Blocks(Blocks::new(vec![(DVec3::splat(-500.0), DVec3::splat(500.0))], vec![]));
         let bodies = [still];
         let approach = RigidBody::new(DVec3::X * 600.0, DVec3::NEG_X * 5.0, DQuat::IDENTITY, 12.0);
         let mut p = Vec::new();

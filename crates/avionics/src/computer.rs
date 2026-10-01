@@ -21,8 +21,7 @@ pub struct AutopilotInput<'a> {
     pub target: NavTarget,
     pub phase: Phase,
     pub pad: PadSlot,
-    /// Traffic control hasn't let it into the corridor (a station's or a
-    /// gate's final run) yet: close by, it holds at its own place (this one)
+    /// Traffic control hasn't let it into the corridor (a gate's run) yet: close by, it holds at its own place (this one)
     /// on a ring out beyond the corridor's entry, clear of the others waiting.
     pub wait: Option<usize>,
     /// Now, and how long its command holds (s); the bodies at `t`.
@@ -43,7 +42,11 @@ pub fn autopilot(input: &AutopilotInput) -> Command {
     match target {
         NavTarget::Station(station) => {
             let frame = StationFrame::new(sys, station, t, positions);
-            docking::autopilot(&frame, ship, phase, may_enter, h)
+            match pad {
+                // Waiting for a pad: the holding ring above the deck.
+                PadSlot::Hold(n) => docking::hold(&frame, n, ship, h),
+                _ => docking::autopilot(&frame, ship, phase, docking::pad_of(pad), h),
+            }
         }
         NavTarget::Spaceport(port) => match pad {
             // Waiting for a pad: the holding circle.
@@ -73,16 +76,12 @@ const WAIT_ZONE: f64 = 8000.0;
 /// Hold at waiting place `slot` of `target`'s corridor, if close by.
 fn hold_for_corridor(sys: &StarSystem, ship: &Ship, target: NavTarget, slot: usize, t: f64, h: f64, positions: &[DVec3]) -> Option<Command> {
     let (center, axis, velocity, entry) = match target {
-        NavTarget::Station(s) => {
-            let f = StationFrame::new(sys, s, t, positions);
-            (f.center, f.axis(), f.velocity, docking::APPROACH_HEIGHT)
-        }
         NavTarget::Gate(g) => {
             let f = GateFrame::new(sys, g, t, positions);
             let (side, _) = f.side(ship.position);
             (f.center, f.axis() * side, f.velocity, gate::APPROACH_DISTANCE)
         }
-        NavTarget::Spaceport(_) | NavTarget::Asteroid(_) => return None,
+        NavTarget::Station(_) | NavTarget::Spaceport(_) | NavTarget::Asteroid(_) => return None,
     };
     let across = axis.any_orthonormal_vector();
     // Two rings of twelve, the outer one a little further out.

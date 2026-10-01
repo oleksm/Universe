@@ -27,6 +27,7 @@ pub mod modules;
 pub mod names;
 pub mod radar;
 pub mod network;
+pub mod port;
 pub mod rng;
 pub mod shape;
 pub mod ship;

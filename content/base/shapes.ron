@@ -46,23 +46,6 @@
         ],
     ),
     (
-        key: "shape.coriolis",
-        // A Coriolis station: a cuboctahedron (every permutation of (±1, ±1, 0)),
-        // unit size (drawn scaled to the station), its docking slot on +Y.
-        scale: 1.0,
-        hull: [
-            (0.0, 1.0, 1.0), (0.0, 1.0, -1.0), (0.0, -1.0, 1.0), (0.0, -1.0, -1.0),
-            (1.0, 0.0, 1.0), (-1.0, 0.0, 1.0), (1.0, 0.0, -1.0), (-1.0, 0.0, -1.0),
-            (1.0, 1.0, 0.0), (1.0, -1.0, 0.0), (-1.0, 1.0, 0.0), (-1.0, -1.0, 0.0),
-        ],
-        loops: [
-            [(-0.3, 1.0, -0.08), (0.3, 1.0, -0.08), (0.3, 1.0, 0.08), (-0.3, 1.0, 0.08)],
-        ],
-        nodes: [
-            (name: "dock_slot", at: (0.0, 1.0, 0.0), dir: (0.0, 1.0, 0.0)),
-        ],
-    ),
-    (
         key: "shape.sprint",
         // SPRINT COURIER: Small, light and fast: a courier's and a settler's ship.
         // Points about its centre of mass, and its nodes (thrusters balanced about it).

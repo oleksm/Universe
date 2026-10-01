@@ -108,11 +108,14 @@ fn ground_altitude(bus: &mut impl Bus) -> f64 {
     p.distance(positions[d]) - b.surface_radius_at(positions[d], p, t)
 }
 
-/// Climbing out: clear of the ground, and of the hyperdrive's interlock
-/// (with room to spare), so the drive will run.
+/// Climbing out: clear of the ground, of any station (well above its deck),
+/// and of the hyperdrive's interlock (with room to spare), so the drive will run.
 fn clear_to_jump(bus: &mut impl Bus) -> bool {
     let (sys, positions) = bus.positions();
     let p = bus.ship().position;
+    if sys.bodies.iter().enumerate().any(|(i, b)| b.kind == BodyKind::Station && positions[i].distance(p) < 1500.0) {
+        return false;
+    }
     let d = sys.dominant(p, &positions);
     let above_highest = p.distance(positions[d]) - sys.bodies[d].max_radius();
     ground_altitude(bus) >= 3000.0 && above_highest > 2.0 * universe_world::hyperdrive::INTERLOCK
@@ -142,8 +145,6 @@ impl Avionics {
                             self.route.dwell_until = Some(bus.time() + self.route.stay.unwrap_or(DWELL));
                             events.push(Event::RouteStop { number: self.route.next + 1, name: stop_name(&sys, stop) });
                         }
-                        // Launching waits for the corridor.
-                        Some(t) if bus.time() >= t && sys.bodies[body].kind == BodyKind::Station && bus.request_corridor(body).is_some() => {}
                         Some(t) if bus.time() >= t => {
                             self.route.dwell_until = None;
                             self.route.next += 1;
@@ -166,7 +167,7 @@ impl Avionics {
         }
     }
 
-    /// A spaceport's hangar, for a long stay: in after the turnaround on the
+    /// A port's hangar (a spaceport's, or a station's), for a long stay: in after the turnaround on the
     /// pad; out onto a pad traffic control gives when the stay is up (or
     /// when it's time to go from wherever it is). True while that's what
     /// it's doing (nothing else to do this frame).
@@ -189,8 +190,9 @@ impl Avionics {
             }
             return true;
         }
-        // On a pad of the stop's spaceport, its stay long: in after the turnaround.
-        let (NavTarget::Spaceport(_), Some(stay), Some(until)) = (stop.target, self.route.stay, self.route.dwell_until) else { return false };
+        // On a pad of the stop's port (a spaceport, or a station's deck), its
+        // stay long: in after the turnaround.
+        let (NavTarget::Spaceport(_) | NavTarget::Station(_), Some(stay), Some(until)) = (stop.target, self.route.stay, self.route.dwell_until) else { return false };
         let arrived = until - stay;
         if stay > 2.0 * TURNAROUND && now - arrived >= TURNAROUND && until - now > TURNAROUND && !waited && bus.system() == stop.system {
             self.route.hangar_ordered = now;
@@ -200,18 +202,10 @@ impl Avionics {
         false
     }
 
-    /// Launch from a station, or lift off a surface and climb.
-    fn leave(&mut self, bus: &mut impl Bus, sys: &StarSystem, body: usize, events: &mut Vec<Event>) {
-        if sys.bodies[body].kind == BodyKind::Station {
-            // Out through the corridor only when it's ours; else try again next frame.
-            if bus.request_corridor(body).is_some() {
-                return;
-            }
-            self.set_controls(bus, events, |c| c.throttle = 0.2);
-        } else {
-            self.set_controls(bus, events, |c| c.rcs = DVec3::Y);
-            self.route.departing = true;
-        }
+    /// Lift off a station's deck or a world's ground, and climb clear.
+    fn leave(&mut self, bus: &mut impl Bus, _sys: &StarSystem, _body: usize, events: &mut Vec<Event>) {
+        self.set_controls(bus, events, |c| c.rcs = DVec3::Y);
+        self.route.departing = true;
     }
 
     fn route_fly(&mut self, bus: &mut impl Bus, stop: Stop, events: &mut Vec<Event>) {

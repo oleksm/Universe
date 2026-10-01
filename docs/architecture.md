@@ -146,15 +146,16 @@ route}` and the common types at its root), so the game needs only the one depend
 - **Integration**: `integrate(bodies, ephemeris, positions, body, Span { t, dt, max_h },
   driver)` — leapfrog + adaptive substeps (1/100 of the dominant body's orbital time scale,
   0.01–3600 s, ≤ 2000 per call), substeps ≤ 0.05 s (`FINE_STEP`) within 30 km of any small
-  collider (polytope/ring). The `Driver` trait is the force callback: `applied(body, t, h,
+  collider (blocks/ring). The `Driver` trait is the force callback: `applied(body, t, h,
   positions) -> acceleration` before every substep, `respond(fact) -> Continue | Stop |
   Bounce{..}` after a substep that produced a fact.
-- **Colliders** `Collider::{None, Surface, Polytope, Ring}`: surface (sphere + height function,
-  liquids as a flat surface); convex polytope `w·|x| ≤ limit` (+ `cuboctahedron(scale)`) with
-  `CutOut` pockets open along local +Y, hull normals by least penetration; ring (torus) with an
+- **Colliders** `Collider::{None, Surface, Blocks, Ring}`: surface (sphere + height function,
+  liquids as a flat surface); **blocks**, a structure built of boxes axis-aligned in its own
+  frame (metres), contact with the nearest box (normal from the closest point, or the face it's
+  least deep behind), some boxes' tops marked as **decks**; ring (torus) with an
   opening **trigger**, measuring the start of a step against where the ring was then. The
   kernel reports **facts**, never what they mean: `Fact::Contact(Contact { body, feature:
-  Surface{liquid} | Hull | CutOut(k) | Ring, normal, local, surface_velocity, relative_velocity
+  Surface{liquid} | Hull | Deck(k) | Ring, normal, local, surface_velocity, relative_velocity
   })`, `Fact::Trigger { body, relative_velocity }`.
 - **Ops** (explicit, audited): `Weld` (capture a body's pose in a rail body's frame, place it
   there each step), `Relative` + `relocate` (between two reference frames, preserving relative
@@ -171,7 +172,7 @@ none of the game words (checked by grep).
 Invariant tests live with the kernel: determinism (`same_inputs_same_world`: a state hash after
 N steps), orbit stability and energy (`orbit_closes_and_keeps_its_energy`,
 `a_circular_orbit_stays_circular`), the orbit's numeric derivative, exact integration of an
-applied acceleration, colliders and triggers (polytope hull / cut-out / open pocket / spin,
+applied acceleration, colliders and triggers (a structure's hull / deck / open air past its edge / spin,
 ring opening / tube / outside / a fast sweep, surface liquids, detection), ops (weld rides the
 spin, relocation keeps relative motion), stop/bounce, and `simulate` matching the real thing.
 
@@ -184,8 +185,6 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   rules write those poses directly (see World, *Not yet*).
 - Mass and forces: drivers give accelerations; a kernel-side mass (and momentum bookkeeping
   across bodies) comes with constructed, non-rail bodies.
-- Polytope faces are not normalised (the station's octahedron faces get radius/√3 of true
-  distance, copied from the old test) — a behaviour change for when that is allowed.
 
 ## World (`universe-world`)
 
@@ -225,9 +224,13 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   12 m off the surface below, turning with it, braking on the thrusters, giving the field's
   other rocks a berth and closing no faster than 20 s from the nearest.
 - **Structures** with their contact rules:
-  - `station`: a rail body (circular orbit) + polytope collider with a slot cut-out
-    (`StationFrame`, `hull()`); the **docking port** (`docks`/`bounces`, `contact` → dock (weld)
-    or destroy, `launch`).
+  - `station`: a platform in a circular orbit, turning once an orbit about its deck's normal
+    (the orbit's): a deck of 4×4 pads with the main structure (its hangar inside) along one
+    edge, as `Blocks` (`hull()`, `StationFrame`, `pad_local`, `pad_at`, `hangar_local`). The
+    **deck** takes a gentle touchdown anywhere (`DECK_SPEED`, held belly down where it touched:
+    `Pose::Deck`), the hull bounces a slow bump, and a ship lifts off along the deck's normal.
+  - `port`: a spaceport's pads or a station's deck, by `Facility` — pads, hangar, where a ship
+    rests, which pad it's on; hangar moves and taxiing use it for both.
   - `spaceport`: a pad on a body's surface (`PAD_RADIUS`, `pad_position`); the **landing gear**
     (`touch_down`: slow enough → weld, oceans and fast impacts → destroyed; `lift_off`).
   - `gate`: a rail body + ring collider + opening trigger + link to its paired gate
@@ -274,8 +277,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 **Not yet**
 
 - Direct pose writes remain in world device rules, outside kernel ops: the hyperdrive's motion
-  and drop-out velocity, the docking port's launch, the landing gear's lift-off nudge, the dock
-  and touch-down pose, respawn and `ship_at`, and the hand-over (a change of coordinates, not
+  and drop-out velocity, the lift-off nudge (deck or ground), the touch-down pose, respawn and `ship_at`, and the hand-over (a change of coordinates, not
   physics). Candidates for explicit kernel ops (unweld, launch impulse, spawn).
 - `Ship`'s fields are `pub`, so "only through commands" is kept by review, not by the compiler.
 - A ship's numbers come from its hull's frame and the modules in its slots (`ClassSpec::assemble`,
@@ -303,8 +305,8 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
     `positions()`), visible `turrets()`;
   - the feed: `feed()`, the physical events since it was last read;
   - actuation: `actuate(&ShipCommands)`, nothing returned;
-  - traffic control: `request_clearance`, `clearance_holds`, `request_pad`,
-    `request_corridor`. Traffic control's rules decide on the world's side.
+  - traffic control: `request_clearance`, `clearance_holds`, `request_pad` (a port: a
+    spaceport or a station's deck), `request_corridor` (a gate's run). Traffic control's rules decide on the world's side.
 
   The orchestrator implements it: `Link` for the player and requests, and `FrameLink` for crafts
   stepping side by side. **Enforced** by `avionics/tests/boundary.rs`: no world internals in
@@ -314,8 +316,9 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   the ship (and, in hyperdrive, the navigation: `hyperdrive::navigate`).
 - `hyperdrive`: the hyperdrive autopilot (`aim`, `exit_velocity`, `navigate`: steer to the target
   and around bodies, drop out on arrival, choose the frame/destination/exit velocity).
-- `docking`, `landing`, `gate`: guidance (docking corridor, landing profile and `PadFrame`, gate
-  run), HUD status (`DockingStatus`, `LandingStatus`, `GateStatus`, `Guidance`) and the
+- `docking`, `landing`, `gate`: guidance (docking: to the point above the ship's pad on the
+  deck, around the station if need be, upright, then a slow descent — no gravity there;
+  landing profile and `PadFrame`; gate run), HUD status (`DockingStatus`, `LandingStatus`, `GateStatus`, `Guidance`) and the
   autopilots. The autopilots take `h`, how long their command holds: feedback gains are capped
   at `1/h` (`docking::gain`) so a long substep can't overshoot; at the real 0.05 s this changes
   nothing.
@@ -324,7 +327,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   land, dwell, repeat).
 - `plan`: the flight **planner**. It clones the ship and flies the copy with the kernel's
   `simulate` and the world's `Devices`, under the same `Computer`/autopilot, point by point; it
-  arrives when the world's rules (docking port, landing gear on the target pad, gate device)
+  arrives when the world's rules (a station's deck, landing gear on the target pad, gate device)
   would take the copy in. Within the autopilot's own range (the hyperjump limit: 200 km from a
   port, 30 km from a station or gate) the copy reacts every 0.05 s exactly like the ship, so the
   plan *is* the flight; farther out it uses substeps up to 2 s.
@@ -415,7 +418,7 @@ player warp multiplies it (not in hyperdrive).
 
 Tests: unit tests next to the code; whole flights through the orchestrator in
 `crates/sim/tests/flights.rs` (autodock, autoland from orbit, hyperdrive to a port, the plan
-reaching pad and slot, gate transit keeping motion, the route autopilot); NPC pilots apart in
+reaching the pads, gate transit keeping motion, the route autopilot); NPC pilots apart in
 `crates/sim/tests/pilots.rs` (on time = lockstep to the bit, a slow pool never slows the tick,
 the dead-man rule).
 
@@ -446,7 +449,7 @@ ship's pose directly, like tests do — then render.
 | Kepler orbits, rail bodies, positions/velocities/rotations, ephemeris, frames | physics: `orbit`, `rails` |
 | Surface (height function) trait, surface radius | physics: `surface` |
 | Rigid body; leapfrog + adaptive substeps, `Driver`, `Span` | physics: `body`, `integrate` |
-| Colliders (surface, polytope + cut-outs, ring + trigger), facts | physics: `collide` |
+| Colliders (surface, blocks with decks, ring + trigger), facts | physics: `collide` |
 | Weld, relocate, bounce | physics: `ops` |
 | Gravity, dominant body, segment distance, simulate a copy | physics: `query` |
 | Galaxy, star names, seeded rng, units | world: `galaxy`, `names`, `rng`, `units` |
@@ -461,7 +464,7 @@ ship's pose directly, like tests do — then render.
 | Home system, gate network and links | world: `network` |
 | The clock, system caches, `command`/`step_ship`(`_at`), `Devices`, respawn/spawn, hand-over | world: `world` |
 | Ship, `ShipCommands`, `HyperdriveCommand`, engine/thrusters/attitude | world: `ship` |
-| Station structure + docking port (dock, bump, launch) | world: `station` |
+| Station: the platform (deck of pads, main structure with the hangar), its deck rule (touch down, bump, lift off) | world: `station`, `port` |
 | Spaceport pad + landing gear (touch down, lift off) | world: `spaceport` |
 | Gate structure + gate device (enter, emerge) | world: `gate` |
 | Hyperdrive device (speed law, interlock, drop-out) | world: `hyperdrive` |
@@ -489,9 +492,9 @@ ship's pose directly, like tests do — then render.
 | Atmospheres (exponential air on Terran worlds, turning with them), exact quadratic drag in the integrator, Sutton–Graves heating | physics: `atmosphere`, `integrate` |
 | Hull skin temperature: re-entry heating vs radiation, burning past the limit | world: `heat` |
 | Planetshine: the nearest planet's day side lights the shade (`Reflector`, view factor) | engine: `frame` |
-| **Services** (`universe-services`): law (aggression from logged hits, with evidence), ledger (double entry, causes, balanced), markets (moved from the world), traffic control (pads, corridors, queues, clearance; journal with causes), records (kills with causes, trades, totals); boundary test | services: `law`, `ledger`, `market`, `atc`, `records`, `tests/boundary.rs` |
+| **Services** (`universe-services`): law (aggression from logged hits, with evidence), ledger (double entry, causes, balanced), markets (moved from the world), traffic control (pads at ports and station decks, gate corridors, queues, clearance; journal with causes), records (kills with causes, trades, totals); boundary test | services: `law`, `ledger`, `market`, `atc`, `records`, `tests/boundary.rs` |
 | The tick's event log (`Universe::log`): every ship event in order — what causes point into | sim: `universe` |
-| Contact rules as data: lock (slot / ground, with what it says by zone), transit, bounce, wreck; releases (eject, lift-off); every firing told (`RuleFired`) | world: `rules` |
+| Contact rules as data: lock (deck / ground, with what it says by zone), transit, bounce, wreck; release (lift-off, along a deck's normal or the local vertical); every firing told (`RuleFired`) | world: `rules` |
 | The rules each structure's owner registers (stations, worlds and their ports, gates) — to move into the services (R4) | world: `structures` |
 | Ship-to-ship collisions (kernel `pairs` sweep + world bounce/damage rules) | physics: `pairs`, world: `collisions` |
 | Flight recorder: every ship's last 15 s, incidents with traces | sim: `recorder` |
@@ -531,7 +534,7 @@ ship's pose directly, like tests do — then render.
 - **Unit tests** in each crate (kernel invariants, device rules, traffic control, markets…): the
   whole suite runs in a few seconds.
 - **Interaction tests** (`crates/sim/tests/interactions.rs`): 2–10 ships placed in one situation
-  (two ships at a gate, full pads with one holding, a launch and a docking sharing a corridor, a
+  (two ships at a gate, full pads with one holding, one leaving a station as another docks, a
   pirate and its prey, a head-on collision), run for a few game minutes at 1×, and checked for
   the outcome. Together they take under a second. This is where traffic behaviour is developed.
 - **The flight recorder** (`sim::recorder`): every ship's last 15 s. Any wreck files an incident

@@ -61,6 +61,11 @@ impl Orbit {
         }
     }
 
+    /// The orbit's normal (unit): the way its angular momentum points.
+    pub fn normal(&self) -> DVec3 {
+        (self.basis * DVec3::Z).normalize()
+    }
+
     pub fn period(&self) -> f64 {
         TAU / self.mean_motion
     }

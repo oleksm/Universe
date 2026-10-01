@@ -2,10 +2,9 @@ use universe_engine::glam::{DQuat, DVec3, Vec2};
 use universe_engine::{text_size, Color, Frame, Light, Transform};
 use universe_sim::names::star_name;
 use universe_sim::units::LIGHT_YEAR;
-use universe_sim::docking::{corridor_half, APPROACH_HEIGHT};
+use universe_sim::docking::APPROACH_HEIGHT;
 use universe_sim::landing::ENTRY_ALTITUDE;
 use universe_sim::world::spaceport::{pad_direction, PADS, PAD_RADIUS};
-use universe_sim::world::station::STATION_SIZE;
 use universe_sim::gate::APPROACH_DISTANCE;
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, GateFrame, GateStatus, LandingStatus, Plan, ShipState, StationFrame};
 
@@ -274,7 +273,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         }
         if b.kind == BodyKind::Station {
             if px > 0.8 {
-                let t = Transform { position: center, rotation, scale: STATION_SIZE };
+                let t = Transform { position: center, rotation, scale: 1.0 };
                 frame.model_shaded(&app.models.station, &t, Color::WHITE, HULL);
             } else {
                 frame.point(center, c.scale(0.8));
@@ -459,29 +458,32 @@ fn weapons_fire(frame: &mut Frame, app: &App) {
 pub const GUIDE_OK: Color = Color::hex(0x30ff60);
 pub const GUIDE_OFF: Color = Color::hex(0xffc040);
 
-/// The approach corridor: gates along the docking axis, shaped and rolled like the slot.
+/// The approach to our pad: its square on the deck, squares to come down
+/// through along its vertical, the point where the descent begins; our
+/// drift and the flight plan.
 fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingStatus) {
     let f = StationFrame::new(&app.view.system, station, app.now(), &app.view.positions);
-    let c = if status.in_corridor { GUIDE_OK } else { GUIDE_OFF };
-    let (long, short) = (f.slot_long(), f.slot_short());
-
-    frame.line(f.on_axis(STATION_SIZE), f.on_axis(APPROACH_HEIGHT), c.scale(0.35));
-    for h in [650.0, 900.0, 1250.0, 1700.0, 2250.0, 3000.0, APPROACH_HEIGHT] {
-        let (hl, hs) = corridor_half(h);
-        let center = f.on_axis(h);
-        let corners = [(-1.0, -1.0), (1.0, -1.0), (1.0, 1.0), (-1.0, 1.0)].map(|(a, b)| center + long * (a * hl) + short * (b * hs));
-        // The gate the ship is heading for next is brightest.
-        let next = h < status.height && h > status.height - 700.0;
-        let k = if next { 1.0 } else { 0.55 };
+    let c = if status.lined_up { GUIDE_OK } else { GUIDE_OFF };
+    let (e1, e2, up) = (f.rotation * DVec3::X, f.rotation * DVec3::Z, f.up());
+    let pad = f.pad(status.pad);
+    let deck = pad - up * (universe_sim::world::ship::SHIP_RADIUS - 1.0);
+    let square = |frame: &mut Frame, at: DVec3, half: f64, color: Color| {
+        let corners = [(-1.0, -1.0), (1.0, -1.0), (1.0, 1.0), (-1.0, 1.0)].map(|(a, b)| at + e1 * (a * half) + e2 * (b * half));
         for i in 0..4 {
-            frame.line(corners[i], corners[(i + 1) % 4], c.scale(k));
+            frame.line(corners[i], corners[(i + 1) % 4], color);
         }
+    };
+    square(frame, deck, 40.0, Color::hex(0x60ff90));
+    frame.line(deck, pad + up * APPROACH_HEIGHT, c.scale(0.35));
+    for h in [60.0, 150.0, 300.0, 600.0, 1000.0, 1500.0, APPROACH_HEIGHT] {
+        // The square the ship comes down through next is brightest.
+        let next = h < status.height && h > status.height - 400.0;
+        square(frame, pad + up * h, 30.0 + h * 0.03, c.scale(if next { 1.0 } else { 0.55 }));
     }
-    // Approach point marker: a 3D cross where the final run begins.
-    let p = f.on_axis(APPROACH_HEIGHT);
-    let arm = 120.0;
-    for d in [long, short, f.axis()] {
-        frame.line(p - d * arm, p + d * arm, c);
+    // Where the descent begins: a 3D cross.
+    let p = pad + up * APPROACH_HEIGHT;
+    for d in [e1, e2, up] {
+        frame.line(p - d * 120.0, p + d * 120.0, c);
     }
 
     if app.ship.is_flying() {

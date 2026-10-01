@@ -109,7 +109,7 @@ pub fn min_range(sys: &StarSystem, anchor: Anchor) -> f64 {
         Anchor::Place(t) => {
             let size = match t {
                 NavTarget::Station(b) | NavTarget::Gate(b) => match &sys.bodies[b].rail.collider {
-                    Collider::Polytope(p) => p.bound * p.scale,
+                    Collider::Blocks(b) => b.bound,
                     Collider::Ring(r) => r.radius + r.tube,
                     _ => 0.0,
                 },

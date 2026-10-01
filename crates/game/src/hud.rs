@@ -2,7 +2,7 @@ use universe_engine::glam::{DVec3, Vec2, Vec3Swizzles};
 use universe_engine::{text_size, Color, Context, Frame, GLYPH};
 use universe_sim::world::radar::RADAR_RANGE;
 use universe_sim::world::weapons::{gun_on, within_gimbal, GIMBAL_LIMIT};
-use universe_sim::world::station::{MAX_DOCK_SPEED, MAX_ROLL_ERROR, STATION_SIZE};
+use universe_sim::world::station::DECK_SPEED;
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingStatus, ShipState};
 
 use crate::observer::Focus;
@@ -281,8 +281,9 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
                 lines.push((format!("LANDED AT {} ({})", p.name.to_uppercase(), b.name.to_uppercase()), AMBER));
                 lines.push(("SHIFT+E TO LIFT OFF".into(), DIM));
             } else if b.kind == BodyKind::Station {
-                lines.push((format!("DOCKED AT {}", b.name.to_uppercase()), AMBER));
-                lines.push(("W TO LAUNCH".into(), DIM));
+                let pad = universe_sim::world::station::pad_at(*local_position).map_or_else(String::new, |k| format!(" - PAD {}", k + 1));
+                lines.push((format!("DOCKED AT {}{pad}", b.name.to_uppercase()), AMBER));
+                lines.push(("SHIFT+E TO LIFT OFF".into(), DIM));
             } else {
                 lines.push((format!("LANDED ON {}", b.name.to_uppercase()), AMBER));
                 lines.push(("SHIFT+E TO LIFT OFF".into(), DIM));
@@ -546,10 +547,9 @@ fn queue_info(app: &App, lines: &mut Vec<(String, Color)>) {
     };
     if let universe_sim::avionics::nav::PadSlot::Hold(n) = c.pad {
         // (All pads taken: those ahead are the ones waiting before us.)
-        lines.push((format!("QUEUED FOR A PAD - {} - HOLD OVER THE PORT", pilots(n)), AMBER));
+        lines.push((format!("QUEUED FOR A PAD - {} - HOLD CLEAR", pilots(n)), AMBER));
     } else if let Some(n) = a.corridor_ahead {
-        let what = if matches!(c.target, universe_sim::NavTarget::Gate(_)) { "THE GATE RUN" } else { "THE DOCKING CORRIDOR" };
-        lines.push((format!("QUEUED FOR {what} - {} - HOLD CLEAR", pilots(n)), AMBER));
+        lines.push((format!("QUEUED FOR THE GATE RUN - {} - HOLD CLEAR", pilots(n)), AMBER));
     }
 }
 
@@ -559,25 +559,27 @@ fn mode_label(autopilot: bool, phase: universe_sim::Phase) -> String {
 
 fn docking_info(app: &App, station: usize, st: &DockingStatus, lines: &mut Vec<(String, Color)>) {
     let name = app.view.system.bodies[station].name.to_uppercase();
-    lines.push((format!("DOCK {name}  {}", mode_label(st.autopilot, st.phase)), HUD));
+    let pad = match app.v.avionics.clearance.map(|c| c.pad) {
+        Some(universe_sim::avionics::nav::PadSlot::Hold(n)) => format!("  HOLDING ({n} AHEAD)"),
+        _ => format!("  PAD {}", st.pad + 1),
+    };
+    lines.push((format!("DOCK {name}{pad}  {}", mode_label(st.autopilot, st.phase)), HUD));
 
-    // The speed limit only applies in the corridor; elsewhere show the guidance speed.
+    // The speed limit only applies coming down; elsewhere show the guidance speed.
     let in_final = st.guidance.final_run;
-    let too_fast = in_final && (st.closing > st.speed_limit * 1.1 || (st.height < STATION_SIZE + 300.0 && st.speed > MAX_DOCK_SPEED));
+    let too_fast = in_final && (st.closing > st.speed_limit * 1.1 || (st.height < 100.0 && st.speed > DECK_SPEED));
     let target = if in_final {
         format!("LIMIT {}", fmt::speed(st.speed_limit))
     } else {
         format!("GO {}", fmt::speed(st.guidance.desired_velocity.length()))
     };
     lines.push((
-        format!("RANGE {}  CLOSING {}  {target}", fmt::distance(st.range), fmt::speed(st.closing)),
+        format!("RANGE {}  DESCENT {}  {target}", fmt::distance(st.range), fmt::speed(st.closing)),
         if too_fast { RED } else { HUD },
     ));
-    let roll_deg = st.roll_error.to_degrees();
-    let roll_bad = st.roll_error > MAX_ROLL_ERROR;
     lines.push((
-        format!("AXIS OFFSET {}  ROLL {roll_deg:.0} DEG", fmt::distance(st.offset)),
-        if st.in_corridor { HUD } else if roll_bad { RED } else { AMBER },
+        format!("ABOVE PAD {}  OFF ITS LINE {}", fmt::distance(st.height), fmt::distance(st.offset)),
+        if st.lined_up { HUD } else { AMBER },
     ));
     lines.push((format!("REL SPEED {}", fmt::speed(st.speed)), PREDICT));
     action_lines(app, st.relative_velocity, &st.guidance, lines);
@@ -585,15 +587,13 @@ fn docking_info(app: &App, station: usize, st: &DockingStatus, lines: &mut Vec<(
         return;
     }
     let hint = if st.height < 0.0 {
-        "BEHIND THE STATION - GO AROUND"
-    } else if !st.in_corridor && roll_bad {
-        "ROLL TO LINE WINGS UP WITH THE SLOT"
-    } else if !st.in_corridor {
-        "FLY INTO THE GATES (SHIFT+WASDQE)"
+        "BELOW THE DECK - GO AROUND AND ABOVE IT"
+    } else if !st.lined_up {
+        "OVER THE PAD, BELLY TO THE DECK (SHIFT+WASDQE)"
     } else if too_fast {
         "SLOW DOWN"
     } else {
-        "ON COURSE - GATES GREEN"
+        "ON COURSE - COME DOWN THROUGH THE SQUARES"
     };
     lines.push((hint.into(), DIM));
 }
@@ -705,7 +705,7 @@ fn phase_banner(frame: &mut Frame, app: &App) {
                 Phase::Align => 1,
                 _ => 2,
             };
-            (&["APPROACH CORRIDOR", "ALIGN WITH SLOT", "FINAL RUN"], step)
+            (&["APPROACH", "OVER THE PAD", "SET DOWN"], step)
         }
         Approach::Land { status, .. } => {
             let step = match phase(status.phase, status.autopilot) {
@@ -1338,7 +1338,6 @@ fn action_grid(frame: &mut Frame, app: &App) {
     };
     let dig = if ship.excavator { Lamp::Busy } else if anchored { Lamp::Off } else { Lamp::Unavailable };
     // The active mode's instruments (the mode bar at the top picks it).
-    let docked = matches!(ship.state, ShipState::Landed { body, .. } if app.view.system.bodies[body].kind == BodyKind::Station);
     let anchored = matches!(ship.state, ShipState::Anchored { .. });
     let collide = if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) };
     let view = (if app.chase_cam { "CHASE" } else { "COCKPIT" }).to_string();
@@ -1377,7 +1376,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
         ShipState::Landed { .. } => (
             "NAV - DOCKED",
             vec![
-                if docked { c("W", "LAUNCH", Lamp::Off) } else { c("S+E", "LIFT OFF", Lamp::Off) },
+                c("S+E", "LIFT OFF", Lamp::Off),
                 b(Act::Autopilot, "AUTOPILOT", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
                 b(Act::Foot, "FOOT", Lamp::Off),
             ],

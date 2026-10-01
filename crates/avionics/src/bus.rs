@@ -38,7 +38,7 @@ pub trait Bus {
     fn id(&self) -> usize;
 
     /// Ask traffic control for a pad at spaceport `port` in the ship's system.
-    fn request_pad(&mut self, port: usize) -> PadGrant;
+    fn request_pad(&mut self, port: universe_world::traffic::Facility) -> PadGrant;
 
     /// Ask traffic control for the corridor of station or gate `body` (one
     /// ship at a time on its final run or launching): `None` if granted,

@@ -175,7 +175,7 @@ pub fn avoid(sys: &StarSystem, ship: &Ship, positions: &[DVec3], now: f64) -> DV
     for (i, b) in sys.bodies.iter().enumerate() {
         let inner = match &b.rail.collider {
             Collider::Surface => universe_physics::max_radius(b) + FLOOR,
-            Collider::Polytope(p) => p.bound * p.scale + STANDOFF_STRUCTURE,
+            Collider::Blocks(b) => b.bound + STANDOFF_STRUCTURE,
             Collider::Ring(r) => r.radius + r.tube + STANDOFF_STRUCTURE,
             Collider::None => continue,
         };

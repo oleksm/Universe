@@ -19,7 +19,7 @@ pub const LAND_RANGE_RADII: f64 = 20.0;
 pub const TRANSIT_RANGE: f64 = 50_000.0;
 
 /// A place a ship can be cleared for, in its current star system.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Facility {
     /// Index into the system's bodies.
     Station(usize),

@@ -15,7 +15,7 @@ pub enum Collider {
     None,
     /// A sphere of the body's radius, raised by its surface's height function if it has one.
     Surface,
-    Polytope(Polytope),
+    Blocks(Blocks),
     Ring(Ring),
 }
 
@@ -28,79 +28,61 @@ impl Collider {
     /// right over them.
     pub fn is_small(&self, radius: f64) -> bool {
         match self {
-            Collider::Polytope(_) | Collider::Ring(_) => true,
+            Collider::Blocks(_) | Collider::Ring(_) => true,
             Collider::Surface => radius < SMALL_BODY,
             Collider::None => false,
         }
     }
 }
 
-/// A convex solid, symmetric about its local axis planes, with optional
-/// pockets cut into it.
+/// A solid built of boxes, each axis-aligned in the body's own frame
+/// (metres), some of whose tops are decks: a structure. Touching a deck's
+/// top is reported as touching that deck; anything else, the hull.
 #[derive(Clone, Debug)]
-pub struct Polytope {
-    /// Meters per unit of the face coordinates.
-    pub scale: f64,
-    /// Faces as limits on the absolute local coordinates, `weights · |x| <= limit`;
-    /// each stands for itself and its mirror images. A touching sphere's radius is
-    /// added to the limit as it is (so faces with longer weights get a thinner margin).
-    pub faces: Vec<(DVec3, f64)>,
-    /// Radius (units) of a sphere around the center enclosing the solid.
+pub struct Blocks {
+    /// Each box's (min, max) corners.
+    pub boxes: Vec<(DVec3, DVec3)>,
+    /// The boxes whose tops are decks (`Feature::Deck(k)`: the k-th of these).
+    pub decks: Vec<usize>,
+    /// Radius (m) of a sphere around the body's centre enclosing them all.
     pub bound: f64,
-    pub cut_outs: Vec<CutOut>,
 }
 
-/// A rectangular pocket cut into a polytope along its local +Y axis:
-/// `half_x` by `half_z` across (units), open space above `floor`. A contact
-/// in its footprint below the floor (above the center plane) is reported as
-/// touching the cut-out rather than the hull.
-#[derive(Clone, Copy, Debug)]
-pub struct CutOut {
-    pub half_x: f64,
-    pub half_z: f64,
-    pub floor: f64,
-}
-
-impl Polytope {
-    /// A cuboctahedron: the cube |x|, |y|, |z| <= 1 cut by the octahedron |x| + |y| + |z| <= 2.
-    pub fn cuboctahedron(scale: f64) -> Self {
-        let faces = vec![(DVec3::X, 1.0), (DVec3::Y, 1.0), (DVec3::Z, 1.0), (DVec3::ONE, 2.0)];
-        Self { scale, faces, bound: std::f64::consts::SQRT_2, cut_outs: Vec::new() }
-    }
-
-    pub fn with_cut_out(mut self, cut_out: CutOut) -> Self {
-        self.cut_outs.push(cut_out);
-        self
+impl Blocks {
+    pub fn new(boxes: Vec<(DVec3, DVec3)>, decks: Vec<usize>) -> Self {
+        let bound = boxes.iter().flat_map(|&(lo, hi)| [lo.abs(), hi.abs()]).fold(DVec3::ZERO, |m, c| m.max(c)).length();
+        Self { boxes, decks, bound }
     }
 
     /// Contact of a sphere of `radius` at `pos`, moving at `vel`, with this
-    /// solid as body `body` posed at `frame`.
+    /// solid as body `body` posed at `frame`: with the box it's nearest, if
+    /// within `radius` of it.
     pub fn contact(&self, body: usize, frame: &Frame, pos: DVec3, vel: DVec3, radius: f64) -> Option<Contact> {
-        let local = frame.local(pos) / self.scale;
-        let margin = radius / self.scale;
-        let a = local.abs();
-        if self.faces.iter().any(|&(w, limit)| w.dot(a) > limit + margin) {
-            return None;
+        let local = frame.local(pos);
+        // (distance from the box, negative inside: how deep; the box; local outward normal)
+        let mut best: Option<(f64, usize, DVec3)> = None;
+        for (k, &(lo, hi)) in self.boxes.iter().enumerate() {
+            let q = local.clamp(lo, hi);
+            let (d, n) = if q != local {
+                let off = local - q;
+                (off.length(), off / off.length())
+            } else {
+                // Inside: out through the face it's least deep behind.
+                let faces = [(local.x - lo.x, DVec3::NEG_X), (hi.x - local.x, DVec3::X), (local.y - lo.y, DVec3::NEG_Y), (hi.y - local.y, DVec3::Y), (local.z - lo.z, DVec3::NEG_Z), (hi.z - local.z, DVec3::Z)];
+                let (depth, n) = faces.into_iter().min_by(|a, b| a.0.total_cmp(&b.0)).expect("six faces");
+                (-depth, n)
+            };
+            if d < radius && best.is_none_or(|b| d < b.0) {
+                best = Some((d, k, n));
+            }
         }
+        let (_, k, n) = best?;
+        let feature = match self.decks.iter().position(|&d| d == k) {
+            Some(deck) if n.y > 0.7 => Feature::Deck(deck),
+            _ => Feature::Hull,
+        };
         let surface_velocity = frame.velocity_at(pos);
-        let touch = |feature, normal| Contact { body, feature, normal, local, surface_velocity, relative_velocity: vel - surface_velocity };
-        for (k, c) in self.cut_outs.iter().enumerate() {
-            if local.y > 0.0 && a.x < c.half_x && a.z < c.half_z {
-                if local.y > c.floor {
-                    return None; // in the open pocket
-                }
-                return Some(touch(Feature::CutOut(k), frame.rotation * DVec3::Y));
-            }
-        }
-        // Out through the face it is least deep behind.
-        let mut face = (DVec3::Y, f64::NEG_INFINITY);
-        for &(w, limit) in &self.faces {
-            let excess = w.dot(a) - limit;
-            if excess > face.1 {
-                face = (w, excess);
-            }
-        }
-        Some(touch(Feature::Hull, (frame.rotation * (face.0 * local.signum())).normalize()))
+        Some(Contact { body, feature, normal: frame.rotation * n, local, surface_velocity, relative_velocity: vel - surface_velocity })
     }
 }
 
@@ -172,10 +154,10 @@ impl Ring {
 pub enum Feature {
     /// A body's surface; `liquid` if what was touched there is liquid.
     Surface { liquid: bool },
-    /// A polytope's outer faces.
+    /// A structure's outer faces.
     Hull,
-    /// A polytope's cut-out (by index).
-    CutOut(usize),
+    /// A structure's deck (by index): its top.
+    Deck(usize),
     /// A ring's tube.
     Ring,
 }
@@ -189,7 +171,7 @@ pub struct Contact {
     /// Unit normal (world), pointing out of the collider.
     pub normal: DVec3,
     /// Where the moving body is in the collider's frame: the unit direction in
-    /// the body's frame for a surface, polytope units for a polytope, meters for a ring.
+    /// the body's frame for a surface, meters for a structure or a ring.
     pub local: DVec3,
     /// Velocity of the collider's material at the contact.
     pub surface_velocity: DVec3,
@@ -268,9 +250,9 @@ fn solids<B: OnRails>(bodies: &[B], t: f64, positions: &[DVec3], pos: DVec3, vel
     for (i, b) in bodies.iter().enumerate() {
         let contact = match &b.rail().collider {
             Collider::None | Collider::Ring(_) => None,
-            Collider::Polytope(p) => {
+            Collider::Blocks(p) => {
                 // Bounding sphere first; the exact shape only when inside it.
-                if positions[i].distance(pos) < p.scale * p.bound + radius {
+                if positions[i].distance(pos) < p.bound + radius {
                     p.contact(i, &Frame::of(bodies, i, t, positions), pos, vel, radius)
                 } else {
                     None
@@ -297,8 +279,8 @@ mod tests {
     }
 
     #[test]
-    fn polytope_contact_sees_the_spin() {
-        let p = Polytope::cuboctahedron(500.0);
+    fn structure_contact_sees_the_spin() {
+        let p = Blocks::new(vec![(DVec3::splat(-500.0), DVec3::splat(500.0))], vec![]);
         let f = Frame { angular_velocity: DVec3::Y * 0.1, ..still() };
         let c = p.contact(0, &f, DVec3::new(505.0, 0.0, 0.0), DVec3::ZERO, 12.0).unwrap();
         // The face moves at ω × r under a body at rest.
@@ -324,6 +306,23 @@ mod tests {
         // A body at rest on a spinning planet moves relative to its ground.
         let spin = TAU_OVER_DAY * (6.4e6 + 1005.0);
         assert!((c.relative_velocity.length() - spin).abs() < 1e-6);
+    }
+
+    #[test]
+    fn a_deck_is_its_top_and_the_rest_is_hull() {
+        // A slab with a block standing at one end.
+        let p = Blocks::new(vec![(DVec3::new(-300.0, -150.0, -225.0), DVec3::new(300.0, -100.0, 375.0)), (DVec3::new(-300.0, -150.0, -375.0), DVec3::new(300.0, 150.0, -225.0))], vec![0]);
+        let at = |x: f64, y: f64, z: f64| p.contact(0, &still(), DVec3::new(x, y, z), DVec3::ZERO, 12.0);
+        let c = at(0.0, -90.0, 100.0).expect("on the deck");
+        assert_eq!(c.feature, Feature::Deck(0));
+        assert!(c.normal.distance(DVec3::Y) < 1e-12);
+        assert!(at(0.0, -80.0, 100.0).is_none(), "above it");
+        assert!(at(310.0, -50.0, 100.0).is_none(), "past its edge, above it: open");
+        let wall = at(0.0, 0.0, -215.0).expect("against the block's face");
+        assert_eq!(wall.feature, Feature::Hull);
+        assert!(wall.normal.distance(DVec3::Z) < 1e-12);
+        assert_eq!(at(0.0, -160.0, 100.0).unwrap().feature, Feature::Hull, "under the deck");
+        assert!(at(0.0, 0.0, 600.0).is_none());
     }
 
     const TAU_OVER_DAY: f64 = std::f64::consts::TAU / 1.0e4;

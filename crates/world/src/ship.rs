@@ -418,10 +418,10 @@ pub struct Ship {
     /// Translation thruster setting, body frame, each axis -1..1 (x right, y up, z back), as last commanded.
     #[serde(default)]
     pub rcs: DVec3,
-    /// In this spaceport's hangar (off the pads, out of sight; still
-    /// `Landed`, parked at the hangar): see `spaceport::hangar`.
+    /// In this port's hangar (a spaceport's or a station's: off the pads,
+    /// out of sight; still `Landed`, parked at the hangar): see `port`.
     #[serde(default)]
-    pub hangar: Option<usize>,
+    pub hangar: Option<crate::traffic::Facility>,
     /// Taxiing on the ground between a pad and a spaceport's hangar (see
     /// `World::hangar_move`): out of the pads' count while it does.
     #[serde(default)]
@@ -773,10 +773,10 @@ impl Ship {
 
 }
 
-/// A taxi on a spaceport's ground: into `port`'s hangar, or out to pad `pad`.
+/// A taxi on a port's ground (or deck): into `port`'s hangar, or out to pad `pad`.
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Taxi {
-    pub port: usize,
+    pub port: crate::traffic::Facility,
     /// None: into the hangar.
     pub pad: Option<usize>,
 }

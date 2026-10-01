@@ -426,10 +426,11 @@ impl Universe {
         // Each system's ports, worked out once: where each is now and how
         // its planet is turned.
         struct Port {
+            port: universe_world::Facility,
             center: DVec3,
             unturn: DQuat,
-            radius: f64,
-            direction: DVec3,
+            /// A world's radius and the port's direction on it; None: a station's deck.
+            ground: Option<(f64, DVec3)>,
         }
         type Seen = (Arc<StarSystem>, Arc<Vec<DVec3>>, Vec<Port>);
         // Corridors held, by ship: (system, body).
@@ -450,11 +451,19 @@ impl Universe {
             if let std::collections::hash_map::Entry::Vacant(e) = systems.entry(system) {
                 let sys = self.world.system(system);
                 let positions = self.world.rails_now(system);
-                let ports = sys
-                    .spaceports
-                    .iter()
-                    .map(|sp| Port { center: positions[sp.body], unturn: sys.bodies[sp.body].rotation(now).inverse(), radius: sys.bodies[sp.body].rail.radius, direction: sp.direction })
-                    .collect();
+                let grounds = sys.spaceports.iter().enumerate().map(|(i, sp)| Port {
+                    port: universe_world::Facility::Spaceport(i),
+                    center: positions[sp.body],
+                    unturn: sys.bodies[sp.body].rotation(now).inverse(),
+                    ground: Some((sys.bodies[sp.body].rail.radius, sp.direction)),
+                });
+                let decks = sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == universe_world::BodyKind::Station).map(|(i, b)| Port {
+                    port: universe_world::Facility::Station(i),
+                    center: positions[i],
+                    unturn: b.rotation(now).inverse(),
+                    ground: None,
+                });
+                let ports = grounds.chain(decks).collect();
                 e.insert((sys, positions, ports));
             }
         }
@@ -465,20 +474,27 @@ impl Universe {
                 let (sys, positions, ports) = &systems[&system];
                 let mut p = universe_services::Presence { ship: id, system, ..Default::default() };
                 // Pads: on one, or in the column over it.
-                for (port, sp) in ports.iter().enumerate() {
+                for sp in ports {
                     let off = pos - sp.center;
-                    if off.length() - sp.radius > 5_000.0 {
+                    let local = sp.unturn * off;
+                    let near = match sp.ground {
+                        Some((radius, direction)) => off.length() - radius <= 5_000.0 && local.normalize().angle_between(direction) * radius <= 800.0,
+                        // Over the deck, up to a few km above it.
+                        None => local.x.abs() < 400.0 && local.z > -300.0 && local.z < 450.0 && local.y > -150.0 && local.y < 3_000.0,
+                    };
+                    if !near {
                         continue;
                     }
-                    let dir = (sp.unturn * off).normalize();
-                    if dir.angle_between(sp.direction) * sp.radius > 800.0 {
-                        continue;
-                    }
+                    let flat = |v: DVec3, up: DVec3| v - up * v.dot(up);
                     let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
-                        let d = |k| universe_world::spaceport::pad_direction(sys, port, k).angle_between(dir);
+                        let d = |k| {
+                            let pad = universe_world::port::pad(sys, sp.port, k);
+                            let up = universe_world::port::up(sp.port, pad);
+                            flat(local - pad, up).length()
+                        };
                         d(a).total_cmp(&d(b))
                     });
-                    p.pad = nearest.map(|k| (port, k));
+                    p.pad = nearest.map(|k| (sp.port, k));
                 }
                 // Corridors it holds and is done with.
                 for &(s, b) in held.get(&id).map_or(&[][..], |v| &v[..]) {

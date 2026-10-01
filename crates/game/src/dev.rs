@@ -86,13 +86,14 @@ pub fn apply(app: &mut App, name: &str) {
             }
         }
         "approach" | "lost" | "approachkeep" => {
-            // Cleared to dock, flying manually. "approach": 2.5 km out, a little off the axis, facing in.
+            // Cleared to dock, flying manually. "approach": 2.5 km above the deck, a little off, facing in.
             // "lost": facing away from the station, to show the off-screen marker.
             app.mode = Mode::Pilot;
             let f = StationFrame::new(&sys, station, t, &positions);
-            app.engine.universe().ship.position = f.on_axis(2500.0) + f.slot_long() * 180.0 + f.slot_short() * 60.0;
-            app.engine.universe().ship.velocity = f.velocity - f.axis() * 30.0;
-            let facing = if name == "lost" { f.axis() } else { -f.axis() };
+            let side = f.rotation * DVec3::X;
+            app.engine.universe().ship.position = f.pad(universe_sim::world::spaceport::CENTER_PAD) + f.up() * 2500.0 + side * 180.0;
+            app.engine.universe().ship.velocity = f.velocity - f.up() * 30.0;
+            let facing = if name == "lost" { f.up() } else { -f.up() };
             let roll = universe_engine::glam::DQuat::from_axis_angle(facing, 0.35);
             app.engine.universe().ship.orientation = roll * universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, facing);
             if name != "lost" {
@@ -127,8 +128,8 @@ pub fn apply(app: &mut App, name: &str) {
             // Cleared, but 6 km off to the side and drifting sideways at 40 m/s.
             app.mode = Mode::Pilot;
             let f = StationFrame::new(&sys, station, t, &positions);
-            app.engine.universe().ship.position = f.on_axis(2000.0) + f.slot_long() * 6000.0;
-            app.engine.universe().ship.velocity = f.velocity + f.slot_short() * 40.0;
+            app.engine.universe().ship.position = f.center + f.up() * 2000.0 + f.rotation * DVec3::X * 6000.0;
+            app.engine.universe().ship.velocity = f.velocity + f.rotation * DVec3::Z * 40.0;
             let look = (f.center - app.engine.universe().ship.position).normalize();
             app.engine.universe().ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, look);
             app.engine.universe().request_clearance();
@@ -196,7 +197,7 @@ pub fn apply(app: &mut App, name: &str) {
                 u.crafts[k].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), k);
                 u.crafts[k].system = home;
                 let now = u.world.time;
-                u.atc.request_pad(home, port, universe_sim::craft_id(k), now);
+                u.atc.request_pad(home, universe_sim::world::Facility::Spaceport(port), universe_sim::craft_id(k), now);
             }
             {
                 let mut pilots = u.pilots();
@@ -384,15 +385,29 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
+        "platform" | "platformdeck" => {
+            // The home station from off its corner, a little above its deck
+            // (or, "platformdeck", from just above the deck), looking at it.
+            app.mode = Mode::Pilot;
+            let station = sys.station().expect("home station");
+            let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+            let at = if name == "platform" { f.world(DVec3::new(900.0, 450.0, 1100.0)) } else { f.world(DVec3::new(250.0, -40.0, 520.0)) };
+            let u = app.engine.universe();
+            u.ship.state = ShipState::Flying;
+            u.ship.position = at;
+            u.ship.velocity = f.velocity_at(at);
+            u.ship.orientation = universe_sim::ship::facing(f.center - at, f.up());
+            app.chase_cam = false;
+        }
         "orbit" => {
             // 7 km off the home station, orbiting it at 5 km.
             app.mode = Mode::Pilot;
             let station = sys.station().expect("home station");
             let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
-            let side = f.axis().any_orthonormal_vector();
+            let side = f.up().any_orthonormal_vector();
             app.engine.universe().ship.position = f.center + side * 7_000.0;
             app.engine.universe().ship.velocity = f.velocity;
-            app.engine.universe().ship.orientation = universe_sim::ship::facing(-side, f.axis());
+            app.engine.universe().ship.orientation = universe_sim::ship::facing(-side, f.up());
             app.engine.universe().set_nav_target(Some(NavTarget::Station(station)));
             app.engine.universe().follow(universe_sim::FollowKind::Orbit, None);
         }
@@ -402,17 +417,17 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             let station = sys.station().expect("home station");
             let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
-            let side = f.axis().any_orthonormal_vector();
+            let side = f.up().any_orthonormal_vector();
             let u = app.engine.universe();
             let at = f.center + side * 40_000.0;
             u.ship.position = at;
             u.ship.velocity = f.velocity;
-            u.ship.orientation = universe_sim::ship::facing(-side, f.axis());
+            u.ship.orientation = universe_sim::ship::facing(-side, f.up());
             let (mut c, home) = (u.crafts[0].ship.clone(), u.ship_system);
             c.state = ShipState::Flying;
             c.position = at + side * 3_000.0;
-            c.velocity = f.velocity + f.axis() * 20.0;
-            c.orientation = universe_sim::ship::facing(f.axis(), side);
+            c.velocity = f.velocity + f.up() * 20.0;
+            c.orientation = universe_sim::ship::facing(f.up(), side);
             // (Lively: burning hard, 3 m/s².)
             c.throttle = if name == "orbitshiplively" { 0.1 } else { 0.01 };
             u.crafts[0].ship = c;

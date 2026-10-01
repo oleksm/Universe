@@ -154,7 +154,7 @@ fn hyperdrive_autopilot_steers_to_the_port() {
 }
 
 #[test]
-fn plan_reaches_the_pad_and_the_slot() {
+fn plan_reaches_the_pads() {
     // Landing from orbit.
     let mut u = Universe::new(42);
     let sys = u.ship_system();
@@ -182,9 +182,12 @@ fn plan_reaches_the_pad_and_the_slot() {
     let mut u = Universe::new(42);
     u.set_nav_target(None);
     assert!(u.request_clearance());
+    for _ in 0..5 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
     let plan = u.plan().unwrap();
     eprintln!("docking plan: {} points, {:.0} s, arrives {}", plan.points.len(), plan.points.last().unwrap().time, plan.arrives);
-    assert!(plan.arrives, "docking plan should reach the slot");
+    assert!(plan.arrives, "docking plan should reach the pad");
 }
 
 #[test]

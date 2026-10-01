@@ -10,7 +10,7 @@ use crate::galaxy::Galaxy;
 use crate::names::star_name;
 use crate::rules::{Part, Pose, Release, Rule, Rules, Says};
 use crate::spaceport::{LAND_SPEED, PAD_RADIUS};
-use crate::station::{BUMP_SPEED, DOCKED_HEIGHT, MAX_DOCK_SPEED, MAX_ROLL_ERROR, STATION_SIZE};
+use crate::station::{BUMP_SPEED, DECK_SPEED};
 use crate::system::{BodyKind, StarSystem};
 
 /// The rules of every part of `sys`: stations' docking ports and hulls,
@@ -22,23 +22,22 @@ pub fn rules(galaxy: &Galaxy, sys: &StarSystem) -> Rules {
         let name = b.name.clone();
         match b.kind {
             BodyKind::Station => {
-                // The docking port: slowly, lined up with the slot (nose into
-                // it, wings along it), held in the slot.
-                let port = format!("{name} docking port");
+                // The deck: a gentle touchdown anywhere on it lands (its pads
+                // are traffic control's); the rest bounces a slow bump.
                 r.set(
                     i,
-                    Part::Slot,
+                    Part::Deck,
                     Rule::Lock {
-                        name: port,
-                        max_speed: MAX_DOCK_SPEED,
-                        pose: Pose::Slot { position: DVec3::Y * STATION_SIZE * DOCKED_HEIGHT, nose: DVec3::NEG_Y, wings: DVec3::X, max_roll: MAX_ROLL_ERROR },
+                        name: format!("{name} deck"),
+                        max_speed: DECK_SPEED,
+                        pose: Pose::Deck,
                         says: Says::Always(ShipEvent::Landed { body: name.clone(), station: true }),
                         otherwise: name.clone(),
                     },
                 );
                 r.set(i, Part::Hull, Rule::Bounce { name: format!("{name} hull"), max_speed: BUMP_SPEED, otherwise: name.clone() });
-                // Launch: out along the axis, nose first, at 40 m/s.
-                r.set_release(i, Release::Eject { axis: DVec3::Y, wings: DVec3::X, distance: STATION_SIZE + 150.0, speed: 40.0, says: ShipEvent::Launched { station: name.clone() } });
+                // Lift off the deck along its normal.
+                r.set_release(i, Release::LiftOff { speed: 3.0, lift: 2.0, up: Some(DVec3::Y), says: ShipEvent::Launched { station: name.clone() } });
             }
             BodyKind::Gate => {
                 let to = b.link.unwrap_or(sys.index);
@@ -66,7 +65,7 @@ pub fn rules(galaxy: &Galaxy, sys: &StarSystem) -> Rules {
                         otherwise: name.clone(),
                     },
                 );
-                r.set_release(i, Release::LiftOff { speed: 3.0, lift: 2.0, says: ShipEvent::TookOff });
+                r.set_release(i, Release::LiftOff { speed: 3.0, lift: 2.0, up: None, says: ShipEvent::TookOff });
                 r.set(i, Part::Sea, Rule::Wreck { name: format!("{name} sea"), cause: format!("{name} ocean") });
             }
             _ => {}

@@ -622,6 +622,7 @@ impl App {
             }
             let text = match event {
                 Event::Ship(ShipEvent::Landed { body, station: true }) => format!("DOCKED AT {body}"),
+                Event::Refuelled { tonnes, credits } if tonnes < 1.0 => format!("REFUELLED {:.0} KG FOR {credits:.0} CR", tonnes * 1000.0),
                 Event::Refuelled { tonnes, credits } => format!("REFUELLED {tonnes:.1} T FOR {credits:.0} CR"),
                 Event::Repaired { credits, hull } => format!("HULL REPAIRED TO {:.0}% FOR {credits:.0} CR", hull * 100.0),
                 Event::Refitted { slot, module, credits } => format!("{} FITTED IN {} - {} {:.0} CR", module.unwrap_or_else(|| "NOTHING".into()), slot.to_uppercase(), if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
@@ -639,7 +640,7 @@ impl App {
                 Event::Ship(ShipEvent::HyperdriveJammed { seconds }) => format!("HYPERDRIVE JAMMED BY HITS - {seconds:.0} S"),
                 Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\n{}", self.target_hint()),
                 Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Dock }) => {
-                    format!("DOCKING GRANTED - {target}\nFOLLOW THE GATES, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
+                    format!("DOCKING GRANTED - {target}\nCOME DOWN THROUGH THE SQUARES TO YOUR PAD, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
                 }
                 Event::Traffic(TrafficEvent::ClearanceGranted { target, kind: ClearanceKind::Land }) => {
                     format!("LANDING GRANTED - {target}\nFOLLOW THE PATH, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
@@ -658,7 +659,9 @@ impl App {
                 Event::Following { what: None } => "FOLLOW OFF".into(),
                 Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE CANCELLED".into(),
                 Event::Traffic(TrafficEvent::PadAssigned { pad }) => format!("LAND ON PAD {}", pad + 1),
-                Event::Traffic(TrafficEvent::Holding { ahead }) => format!("ALL PADS TAKEN - HOLD OVER THE PORT ({ahead} AHEAD)"),
+                // (Nobody ahead: the request is on its way; a pad most likely follows.)
+                Event::Traffic(TrafficEvent::Holding { ahead: 0 }) => "PAD REQUESTED - STAND BY".into(),
+                Event::Traffic(TrafficEvent::Holding { ahead }) => format!("ALL PADS TAKEN - HOLD ({ahead} AHEAD)"),
                 Event::Autopilot { on: true } => "AUTOPILOT ON".into(),
                 Event::Autopilot { on: false } => "AUTOPILOT OFF".into(),
                 Event::NavTargetSet { name: Some(name) } => format!("NAV TARGET - {name}\n{}", self.target_hint()),

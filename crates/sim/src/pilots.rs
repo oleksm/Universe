@@ -154,7 +154,7 @@ impl Bus for PoolLink<'_> {
         self.id
     }
 
-    fn request_pad(&mut self, port: usize) -> PadGrant {
+    fn request_pad(&mut self, port: universe_world::Facility) -> PadGrant {
         self.requests.push(Request::Pad { system: self.system, port, ship: self.id, now: self.view.time });
         self.view.board.peek_pad(self.system, port, self.id)
     }

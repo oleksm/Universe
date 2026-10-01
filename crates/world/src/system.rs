@@ -57,7 +57,7 @@ impl BodyKind {
     /// slot, a gate's ring, or a (terrain) surface.
     fn collider(self) -> Collider {
         match self {
-            BodyKind::Station => Collider::Polytope(crate::station::hull()),
+            BodyKind::Station => Collider::Blocks(crate::station::hull()),
             BodyKind::Gate => Collider::Ring(crate::gate::RING),
             _ => Collider::Surface,
         }
@@ -365,11 +365,14 @@ impl StarSystem {
         }
     }
 
-    /// A Coriolis station in a low circular orbit. Inserted right after the
+    /// A platform station in a low circular orbit, turning once an orbit
+    /// about the orbit's normal (its deck facing along it, the same side to
+    /// the planet). Inserted right after the
     /// planet's moons so parents still precede children.
     fn add_station(&mut self, planet: usize, rng: &mut Rng) {
         let p = &self.bodies[planet];
         let orbit = Orbit::new(p.rail.radius * 1.6, 0.0, rng.range(0.0, 0.3), rng.range(0.0, TAU), 0.0, rng.range(0.0, TAU), p.rail.mu);
+        let (day, tilt) = (orbit.period(), DQuat::from_rotation_arc(DVec3::Y, orbit.normal()));
         let station = Body {
             name: format!("{} Station", p.name),
             kind: BodyKind::Station,
@@ -384,8 +387,8 @@ impl StarSystem {
                 mu: G * 1.0e9,
                 attracts: BodyKind::Station.massive(),
                 radius: 600.0,
-                day: 60.0,
-                tilt: DQuat::IDENTITY,
+                day,
+                tilt,
                 collider: BodyKind::Station.collider(),
                 atmosphere: None,
             },

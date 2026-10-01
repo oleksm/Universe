@@ -10,7 +10,7 @@ use universe_world::{Controls, Ship, ShipCommands, ShipEvent, World};
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub(crate) enum Request {
     /// To traffic control: a pad at a port, a station's or gate's corridor.
-    Pad { system: usize, port: usize, ship: usize, now: f64 },
+    Pad { system: usize, port: universe_world::Facility, ship: usize, now: f64 },
     Corridor { system: usize, body: usize, ship: usize, now: f64 },
     /// To the market service: the quotes in this system (and the asker's
     /// account), from the market it's at; a trade there; a plan, declared.

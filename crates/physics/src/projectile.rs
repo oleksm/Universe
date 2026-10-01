@@ -90,7 +90,7 @@ fn sweep(rel: DVec3, d: DVec3, radius: f64) -> Option<f64> {
 fn inside<B: OnRails>(b: &B, center: DVec3, p: DVec3, t: f64) -> bool {
     match &b.rail().collider {
         Collider::Surface => p.distance(center) < surface_radius_at(b, center, p, t),
-        Collider::Polytope(poly) => p.distance(center) < poly.bound * poly.scale,
+        Collider::Blocks(b) => p.distance(center) < b.bound,
         Collider::Ring(_) | Collider::None => false,
     }
 }
@@ -155,7 +155,7 @@ pub fn ray<B: OnRails>(bodies: &[B], positions: &[DVec3], from: DVec3, dir: DVec
         let rail = b.rail();
         let outer = match &rail.collider {
             Collider::Surface => crate::surface::max_radius(b),
-            Collider::Polytope(poly) => poly.bound * poly.scale,
+            Collider::Blocks(b) => b.bound,
             _ => continue,
         };
         let Some(f) = sweep(from - positions[i], dir * limit, outer) else { continue };

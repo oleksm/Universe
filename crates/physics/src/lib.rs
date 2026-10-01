@@ -24,7 +24,7 @@ mod testkit;
 
 pub use atmosphere::{air_at, drag, heat_flux, Atmosphere};
 pub use body::{RigidBody, Sphere};
-pub use collide::{Collider, Contact, CutOut, Fact, Feature, Polytope, Ring, RingCrossing};
+pub use collide::{Blocks, Collider, Contact, Fact, Feature, Ring, RingCrossing};
 pub use mesh::{MassProperties, Mesh};
 pub use integrate::{integrate, leapfrog, Driver, Outcome, Response, Span};
 pub use ops::{bounce, relocate, Relative, Weld};

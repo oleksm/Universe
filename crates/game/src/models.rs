@@ -21,7 +21,7 @@ impl Models {
             giant: Mesh::new(WireModel::globe(8, 13, 3)), // many parallels read as cloud bands
             moon: Mesh::new(WireModel::globe(8, 5, 4)),
             star: Mesh::new(WireModel::globe(16, 9, 3)),
-            station: Mesh::new(wire(shape("shape.coriolis"))),
+            station: Mesh::new(platform()),
             hulls: content().hulls.iter().map(|(_, h)| Mesh::new(wire(h.shape()))).collect(),
             gate: Mesh::new(gate_ring()),
         }
@@ -35,11 +35,6 @@ impl Models {
     }
 }
 
-fn shape(key: &str) -> &'static Shape {
-    let c = content();
-    c.get(c.handle(key).unwrap_or_else(|| panic!("the content has no shape '{key}'")))
-}
-
 /// A shape as the renderer draws it: its mesh (faces hide what's behind,
 /// edges are drawn) and its detail lines.
 pub fn wire(s: &Shape) -> WireModel {
@@ -48,6 +43,47 @@ pub fn wire(s: &Shape) -> WireModel {
     for l in &s.loops {
         m.add_loop(&l.iter().map(|&p| v(p)).collect::<Vec<Vec3>>());
     }
+    m
+}
+
+/// The platform station, in metres (its own frame, see `world::station`):
+/// the deck and the main structure as boxes (their faces hide what's
+/// behind), the pads marked on the deck, the hangar door and a band of
+/// windows on the structure's face.
+fn platform() -> WireModel {
+    use universe_sim::world::station::{hull, pad_local, DECK_FROM, DECK_HALF, DECK_TOP};
+    let mut m = WireModel::default();
+    for &(lo, hi) in &hull().boxes {
+        let (lo, hi) = (lo.as_vec3(), hi.as_vec3());
+        let base = m.positions.len() as u32;
+        for k in 0..8 {
+            m.positions.push(Vec3::new(if k & 1 == 0 { lo.x } else { hi.x }, if k & 2 == 0 { lo.y } else { hi.y }, if k & 4 == 0 { lo.z } else { hi.z }));
+        }
+        // Each face: the corners with that coordinate at its limit.
+        for (axis, bit) in [(0usize, 1u32), (1, 2), (2, 4)] {
+            for high in [false, true] {
+                let corners: Vec<u32> = (0..8u32).filter(|k| (k & bit != 0) == high).map(|k| base + k).collect();
+                let mut normal = Vec3::ZERO;
+                normal[axis] = if high { 1.0 } else { -1.0 };
+                let ring = m.add_polygon(&corners, normal);
+                for w in 0..4 {
+                    m.edges.push([ring[w], ring[(w + 1) % 4]]);
+                }
+            }
+        }
+    }
+    let deck = DECK_TOP as f32 + 0.5;
+    for k in 0..universe_sim::world::spaceport::PADS {
+        let c = pad_local(k).as_vec3();
+        let h = 35.0;
+        m.add_loop(&[Vec3::new(c.x - h, deck, c.z - h), Vec3::new(c.x + h, deck, c.z - h), Vec3::new(c.x + h, deck, c.z + h), Vec3::new(c.x - h, deck, c.z + h)]);
+    }
+    // The hangar door, and a band of windows above it, on the face over the deck.
+    let face = DECK_FROM as f32 + 0.5;
+    let top = DECK_TOP as f32;
+    m.add_loop(&[Vec3::new(-90.0, top, face), Vec3::new(90.0, top, face), Vec3::new(90.0, top + 60.0, face), Vec3::new(-90.0, top + 60.0, face)]);
+    let w = DECK_HALF as f32 - 30.0;
+    m.add_loop(&[Vec3::new(-w, top + 150.0, face), Vec3::new(w, top + 150.0, face), Vec3::new(w, top + 175.0, face), Vec3::new(-w, top + 175.0, face)]);
     m
 }
 

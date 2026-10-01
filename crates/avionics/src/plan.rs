@@ -18,7 +18,6 @@ use glam::{DQuat, DVec3};
 use universe_physics::integrate::FINE_STEP;
 use universe_physics::{simulate, Ephemeris, Fact, Span};
 use universe_world::ship::{Ship, ShipState, SHIP_RADIUS};
-use universe_world::station::STATION_SIZE;
 use universe_world::rules::Rules;
 use universe_world::{Devices, GateFrame, StarSystem, StationFrame};
 
@@ -223,7 +222,8 @@ fn progress(sys: &StarSystem, ship: &Ship, target: NavTarget, pad: PadSlot, t: f
     match target {
         NavTarget::Station(s) => {
             let f = StationFrame::new(sys, s, t, positions);
-            (ship.position.distance(f.on_axis(STATION_SIZE * 0.9)), (ship.velocity - f.velocity).length(), f.center)
+            let k = crate::docking::pad_of(pad);
+            (ship.position.distance(f.pad(k)), (ship.velocity - f.velocity_at(ship.position)).length(), f.center)
         }
         NavTarget::Gate(g) => {
             let f = GateFrame::new(sys, g, t, positions);

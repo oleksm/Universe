@@ -179,6 +179,16 @@ impl Universe {
         self.ship = save.ship;
         self.ship.refresh();
         self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
+        // Docked at a station but off its pads (saved when stations were
+        // otherwise): onto its middle pad.
+        if let universe_world::ShipState::Landed { body, local_position, .. } = self.ship.state
+            && self.world.system(self.ship_system).bodies.get(body).is_some_and(|b| b.kind == universe_world::BodyKind::Station)
+            && self.ship.hangar.is_none()
+            && universe_world::station::pad_at(local_position).is_none()
+        {
+            let placed = self.world.ship_on(self.ship_system, universe_world::Facility::Station(body), universe_world::spaceport::CENTER_PAD);
+            (self.ship.position, self.ship.velocity, self.ship.orientation, self.ship.state) = (placed.position, placed.velocity, placed.orientation, placed.state);
+        }
         if let Some(c) = self.player.as_mut().and_then(|p| p.as_any_mut().downcast_mut::<crate::cockpit::Cockpit>()) {
             *c.avionics_mut() = Avionics { route: save.route, ..save.avionics };
         }
