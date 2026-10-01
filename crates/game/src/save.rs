@@ -16,6 +16,9 @@ struct GameSave {
     /// The star systems we've been to.
     #[serde(default)]
     explored: Vec<usize>,
+    /// Ship plans kept.
+    #[serde(default)]
+    plans: Vec<crate::shipyard::SavedPlan>,
 }
 
 fn data_dir() -> PathBuf {
@@ -42,6 +45,7 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
         chase_cam: app.chase_cam,
         observer: app.observer.clone(),
         explored: app.explored.iter().copied().collect(),
+        plans: app.plans.clone(),
     };
     let path = path();
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
@@ -70,5 +74,6 @@ pub fn load(app: &mut App) -> Result<(), String> {
     app.chase_cam = save.chase_cam;
     app.observer = save.observer;
     app.explored.extend(save.explored);
+    app.plans = save.plans;
     Ok(())
 }

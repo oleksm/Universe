@@ -158,8 +158,10 @@ pub struct App {
     pub explored: std::collections::BTreeSet<usize>,
     /// The market screen, when open; and whether we're docked at a market.
     pub market: Option<market::MarketView>,
-    /// The shipyard panel, while open (docked at a station).
+    /// The ship planner (the shipyard, docked at a station), while open.
     pub shipyard: Option<shipyard::Shipyard>,
+    /// Ship plans kept (in the save).
+    pub plans: Vec<shipyard::SavedPlan>,
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
     pub nav_marker: Option<(String, DVec3)>,
@@ -275,6 +277,7 @@ impl App {
             explored: Default::default(),
             market: None,
             shipyard: None,
+            plans: Vec::new(),
             docked_market: false,
             nav_marker: None,
             contacts: Vec::new(),

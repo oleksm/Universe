@@ -1,16 +1,24 @@
-//! The shipyard (docked at a station): the ship's slots and what's fitted,
-//! what else would go in the slot picked, and what the ship would be with
-//! it — mass, power, thrust, tank and hold, how it turns, the autopilots it
-//! runs — before it's bought. The first piece of the ship planner.
+//! The ship planner, and the shipyard. Open anywhere (the shipyard key):
+//! a plan — a hull, and a module in each of its slots, from the whole
+//! catalogue — set against the ship flown now, number by number (mass,
+//! power, the pushes as accelerations, lift against a g full and empty,
+//! the turn, the balance, how long the tank lasts at full drive and
+//! hovering, the price), and drawn: where its modules sit, its thrusters,
+//! its centre of mass. Plans are kept (in the save). Docked at a station,
+//! it's the shipyard: what's carried here and at what price, and the plan
+//! built here — the hull bought if it's another, then each slot refitted.
 //!
-//! Two pages (TAB): OUTFIT — ↑/↓ slot, ←/→ module, ENTER fit it; HULLS — ↑/↓
-//! hull, ENTER twice buy it (the ship traded in). The shipyard key or ESC close.
+//! Pages (TAB): PLAN — ↑/↓ slot, ←/→ module, ENTER put it in the plan,
+//! SHIFT+ENTER (docked, twice) build the plan here; HULLS — ↑/↓, ENTER plan
+//! from that hull; PLANS — ↑/↓, ENTER load, DELETE drop, the first row
+//! keeps the plan as it is. The shipyard key or ESC close.
 
-use universe_engine::glam::Vec2;
+use serde::{Deserialize, Serialize};
+use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{Color, Context, Frame, KeyCode};
 use universe_sim::world::content::{content, Handle};
 use universe_sim::world::modules::{Does, Module, BASE_BLOCKS};
-use universe_sim::world::ship::{fitted, ClassSpec, Fit, Slot};
+use universe_sim::world::ship::{fitted, ClassSpec, Fit, Hull, Slot, EXHAUST_VELOCITY};
 use universe_sim::world::Facility;
 use universe_sim::Command;
 
@@ -22,21 +30,57 @@ const DIM: Color = Color::hex(0x178a38);
 const SELECT: Color = Color::hex(0xffc040);
 const RED: Color = Color::hex(0xff4040);
 const BETTER: Color = Color::hex(0x60ffd0);
+const LINE: f32 = 12.0;
+/// A standard g (m/s²), to set lift against.
+const G: f64 = 9.81;
 
-/// The panel's cursor: the slot, and the module offered for it.
-#[derive(Default)]
+/// A plan as kept: its hull and what's in each slot, by content key (so it
+/// keeps across content changes, as far as its parts do).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct SavedPlan {
+    pub hull: String,
+    pub fit: Vec<(String, String)>,
+}
+
+impl SavedPlan {
+    fn of(hull: Hull, fit: &Fit) -> Self {
+        let c = content();
+        SavedPlan { hull: c.get(hull).key.clone(), fit: fit.iter().map(|(s, m)| (s.clone(), c.get(*m).key.clone())).collect() }
+    }
+
+    /// As a plan again (None: its hull is gone; parts gone are left out).
+    fn load(&self) -> Option<(Hull, Fit)> {
+        let c = content();
+        let hull = c.handle::<ClassSpec>(&self.hull)?;
+        Some((hull, self.fit.iter().filter_map(|(s, m)| c.handle::<Module>(m).map(|h| (s.clone(), h))).collect()))
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+enum Page {
+    #[default]
+    Plan,
+    Hulls,
+    Plans,
+}
+
+/// The panel: the plan being worked on, and the cursors.
 pub struct Shipyard {
+    page: Page,
+    hull: Hull,
+    fit: Fit,
     slot: usize,
     choice: usize,
     held: f32,
-    /// On the hulls page: which, and whether ENTER's been pressed once (to buy it).
-    hulls: bool,
-    hull: usize,
+    /// Hulls page, plans page cursors.
+    hull_pick: usize,
+    plan_pick: usize,
+    /// SHIFT+ENTER pressed once: again builds it.
     armed: bool,
 }
 
 /// How this station stands to module `m`: carried, at what price, and
-/// whether there's stock to build it (None: not carried here).
+/// whether there's stock to build it.
 fn local(app: &App, m: &Module) -> (universe_sim::services::outfitter::Offer, bool) {
     use universe_sim::services::outfitter;
     let here = app.v.docked_market.unwrap_or(Facility::Station(0));
@@ -47,10 +91,10 @@ fn local(app: &App, m: &Module) -> (universe_sim::services::outfitter::Offer, bo
     (o, stocked)
 }
 
-/// Docked at a station: its name.
+/// Docked at a station: its name (it's a shipyard then).
 fn station(app: &App) -> Option<String> {
     match app.v.docked_market {
-        Some(f @ Facility::Station(_)) => Some(f.name(&app.view.system).to_uppercase()),
+        Some(f @ Facility::Station(_)) if matches!(app.v.ship.state, universe_sim::ShipState::Landed { .. }) => Some(f.name(&app.view.system).to_uppercase()),
         _ => None,
     }
 }
@@ -73,104 +117,6 @@ fn in_slot(fit: &Fit, slot: &Slot) -> Option<Handle<Module>> {
     fit.iter().find(|(s, _)| *s == slot.name).map(|(_, m)| *m)
 }
 
-impl Shipyard {
-    /// (Dev scenarios: open on slot `slot`, module `choice` picked.)
-    pub fn showing(slot: usize, choice: usize) -> Self {
-        Shipyard { slot, choice, ..Default::default() }
-    }
-
-    /// (Dev scenarios: the hulls page, hull `hull` picked.)
-    pub fn showing_hulls(hull: usize) -> Self {
-        Shipyard { hulls: true, hull, ..Default::default() }
-    }
-}
-
-/// Open it (docked at a station), on the first slot.
-pub fn open(app: &mut App) -> Option<Shipyard> {
-    if station(app).is_none() {
-        app.say("SHIPYARD - DOCK AT A STATION".into());
-        return None;
-    }
-    Some(Shipyard { choice: current_choice(app, 0), ..Default::default() })
-}
-
-/// Where the module now in slot `k` stands among its offers.
-fn current_choice(app: &App, k: usize) -> usize {
-    let spec = app.ship.spec();
-    let Some(slot) = spec.slots.get(k) else { return 0 };
-    let now = in_slot(&fit_of(app), slot);
-    offers(slot).iter().position(|o| *o == now).unwrap_or(0)
-}
-
-/// Keys while open. False when it should close.
-pub fn input(app: &mut App, ctx: &Context) -> bool {
-    let input = &ctx.input;
-    if crate::keys::pressed(input, Act::Shipyard) || input.pressed(KeyCode::Escape) || station(app).is_none() {
-        return false;
-    }
-    let spec = app.ship.spec();
-    let slots = spec.slots.len().max(1);
-    let Some(y) = &mut app.shipyard else { return false };
-    if input.pressed(KeyCode::Tab) {
-        y.hulls = !y.hulls;
-        y.armed = false;
-        return true;
-    }
-    if y.hulls {
-        let n = content().hulls.len().max(1);
-        if input.pressed(KeyCode::ArrowDown) {
-            y.hull = (y.hull + 1) % n;
-            y.armed = false;
-        }
-        if input.pressed(KeyCode::ArrowUp) {
-            y.hull = (y.hull + n - 1) % n;
-            y.armed = false;
-        }
-        if input.pressed(KeyCode::Enter) {
-            if y.armed {
-                let key = content().hulls.iter().nth(y.hull).map(|(_, h)| h.key.clone()).unwrap_or_default();
-                y.armed = false;
-                app.engine.send(Command::BuyHull { hull: key });
-            } else {
-                y.armed = true;
-            }
-        }
-        return true;
-    }
-    let (down, up) = (input.down(KeyCode::ArrowDown), input.down(KeyCode::ArrowUp));
-    let steps = crate::navmap::repeat(&mut y.held, down || up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::ArrowUp), ctx.dt);
-    let mut moved = false;
-    for _ in 0..steps {
-        y.slot = if down { (y.slot + 1) % slots } else { (y.slot + slots - 1) % slots };
-        moved = true;
-    }
-    if moved {
-        let k = y.slot;
-        let c = current_choice(app, k);
-        if let Some(y) = &mut app.shipyard {
-            y.choice = c;
-        }
-        return true;
-    }
-    let Some(slot) = spec.slots.get(y.slot) else { return true };
-    let n = offers(slot).len().max(1);
-    if input.pressed(KeyCode::ArrowRight) {
-        y.choice = (y.choice + 1) % n;
-    }
-    if input.pressed(KeyCode::ArrowLeft) {
-        y.choice = (y.choice + n - 1) % n;
-    }
-    if input.pressed(KeyCode::Enter) {
-        let pick = offers(slot).get(y.choice).copied().flatten();
-        match pick.map(|h| (h, local(app, content().get(h)))) {
-            Some((_, (o, _))) if !o.carried => app.say("NOT CARRIED HERE".into()),
-            Some((_, (_, false))) => app.say("OUT OF STOCK TO BUILD IT".into()),
-            _ => app.engine.send(Command::Refit { slot: slot.name.clone(), module: pick.map(|h| content().get(h).key.clone()) }),
-        }
-    }
-    true
-}
-
 /// The fit with `module` in `slot`.
 fn with(fit: &Fit, slot: &Slot, module: Option<Handle<Module>>) -> Fit {
     let mut f: Fit = fit.iter().filter(|(s, _)| *s != slot.name).cloned().collect();
@@ -178,6 +124,212 @@ fn with(fit: &Fit, slot: &Slot, module: Option<Handle<Module>>) -> Fit {
         f.push((slot.name.clone(), m));
     }
     f
+}
+
+impl Shipyard {
+    /// The plan: the ship flown now.
+    fn new(app: &App) -> Self {
+        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false };
+        y.choice = y.current_choice(0);
+        y
+    }
+
+    /// (Dev scenarios: open on slot `slot`, module `choice` picked.)
+    pub fn showing(app: &App, slot: usize, choice: usize) -> Self {
+        let y = Shipyard::new(app);
+        let n = y.spec().slots.get(slot).map_or(1, |s| offers(s).len());
+        Shipyard { slot, choice: choice.min(n.saturating_sub(1)), ..y }
+    }
+
+    /// (Dev scenarios: a plan of hull `hull` as sold, slot `slot` swapped for module `module`.)
+    pub fn planning(app: &App, hull: &str, slot: &str, module: &str) -> Option<Self> {
+        let c = content();
+        let h = c.handle::<ClassSpec>(hull)?;
+        let s = c.get(h).slots.iter().find(|s| s.name == slot)?.clone();
+        let fit = with(&c.get(h).fit, &s, c.handle::<Module>(module));
+        Some(Shipyard { hull: h, fit, ..Shipyard::new(app) })
+    }
+
+    /// (Dev scenarios: the hulls page, hull `hull` picked.)
+    pub fn showing_hulls(app: &App, hull: usize) -> Self {
+        Shipyard { page: Page::Hulls, hull_pick: hull, ..Shipyard::new(app) }
+    }
+
+    fn spec(&self) -> &'static ClassSpec {
+        content().get(self.hull)
+    }
+
+    /// Where the module the plan has in slot `k` stands among its offers.
+    fn current_choice(&self, k: usize) -> usize {
+        let Some(slot) = self.spec().slots.get(k) else { return 0 };
+        let now = in_slot(&self.fit, slot);
+        offers(slot).iter().position(|o| *o == now).unwrap_or(0)
+    }
+
+    /// The plan, as a ship: its numbers (Err: it won't go together, why).
+    fn planned(&self) -> Result<&'static ClassSpec, String> {
+        fitted(self.hull, &self.fit)
+    }
+}
+
+/// Open it: the plan starts as the ship flown now.
+pub fn open(app: &mut App) -> Option<Shipyard> {
+    Some(Shipyard::new(app))
+}
+
+/// What building the plan here takes: the credits (the hull bought, less
+/// the ship traded in, if it's another; each module that's different, less
+/// what the one taken out fetches), and the parts this station can't
+/// supply.
+fn build_cost(app: &App, y: &Shipyard) -> (f64, Vec<String>) {
+    let c = content();
+    let mut cost = 0.0;
+    let mut missing = Vec::new();
+    // (Another hull: bought with its stock fit, the ship traded in; the plan refits from there.)
+    let (from, start): (Hull, Fit) = if y.hull != app.ship.class {
+        let s = y.spec();
+        let old = app.ship.spec();
+        cost += s.frame.price + s.fit.iter().map(|(_, m)| local(app, c.get(*m)).0.price).sum::<f64>();
+        cost -= universe_sim::BUYBACK * (old.frame.price + old.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>());
+        (y.hull, s.fit.clone())
+    } else {
+        (app.ship.class, fit_of(app))
+    };
+    for slot in &c.get(from).slots {
+        let (was, want) = (in_slot(&start, slot), in_slot(&y.fit, slot));
+        if was == want {
+            continue;
+        }
+        if let Some(m) = want.map(|h| c.get(h)) {
+            let (offer, stocked) = local(app, m);
+            if !offer.carried || !stocked {
+                missing.push(m.name.clone());
+                continue;
+            }
+            cost += offer.price;
+        }
+        if let Some(m) = was.map(|h| c.get(h)) {
+            cost -= m.price * universe_sim::BUYBACK;
+        }
+    }
+    (cost, missing)
+}
+
+/// Build the plan here: the hull bought (if it's another), then each slot
+/// refitted to it (in order: the engine takes them as sent).
+pub fn build(app: &mut App) {
+    let Some(y) = &app.shipyard else { return };
+    let c = content();
+    let (hull, fit) = (y.hull, y.fit.clone());
+    let start = if hull != app.ship.class {
+        app.engine.send(Command::BuyHull { hull: c.get(hull).key.clone() });
+        c.get(hull).fit.clone()
+    } else {
+        fit_of(app)
+    };
+    for slot in &c.get(hull).slots {
+        let want = in_slot(&fit, slot);
+        if in_slot(&start, slot) != want {
+            app.engine.send(Command::Refit { slot: slot.name.clone(), module: want.map(|h| c.get(h).key.clone()) });
+        }
+    }
+}
+
+/// Keys while open. False when it should close.
+pub fn input(app: &mut App, ctx: &Context) -> bool {
+    let input = &ctx.input;
+    if crate::keys::pressed(input, Act::Shipyard) || input.pressed(KeyCode::Escape) {
+        return false;
+    }
+    let docked = station(app).is_some();
+    let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+    let plans = app.plans.len();
+    let Some(y) = &mut app.shipyard else { return false };
+    if input.pressed(KeyCode::Tab) {
+        y.page = match y.page {
+            Page::Plan => Page::Hulls,
+            Page::Hulls => Page::Plans,
+            Page::Plans => Page::Plan,
+        };
+        y.armed = false;
+        return true;
+    }
+    let (down, up) = (input.down(KeyCode::ArrowDown), input.down(KeyCode::ArrowUp));
+    let steps = crate::navmap::repeat(&mut y.held, down || up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::ArrowUp), ctx.dt);
+    let step = |k: &mut usize, n: usize| {
+        let n = n.max(1);
+        for _ in 0..steps {
+            *k = if down { (*k + 1) % n } else { (*k + n - 1) % n };
+        }
+    };
+    match y.page {
+        Page::Hulls => {
+            step(&mut y.hull_pick, content().hulls.len());
+            if input.pressed(KeyCode::Enter)
+                && let Some((h, s)) = content().hulls.iter().nth(y.hull_pick)
+            {
+                // A plan from that hull, as it's sold.
+                (y.hull, y.fit, y.slot, y.page) = (h, s.fit.clone(), 0, Page::Plan);
+                y.choice = y.current_choice(0);
+            }
+        }
+        Page::Plans => {
+            step(&mut y.plan_pick, plans + 1);
+            let pick = y.plan_pick;
+            if input.pressed(KeyCode::Enter) {
+                if pick == 0 {
+                    let kept = SavedPlan::of(y.hull, &y.fit);
+                    app.plans.push(kept);
+                    app.say(format!("PLAN {} KEPT", app.plans.len()));
+                } else if let Some((h, f)) = app.plans.get(pick - 1).and_then(|p| p.load()) {
+                    let Some(y) = &mut app.shipyard else { return false };
+                    (y.hull, y.fit, y.slot, y.page) = (h, f, 0, Page::Plan);
+                    y.choice = y.current_choice(0);
+                }
+            } else if input.pressed(KeyCode::Delete) && pick > 0 && pick <= plans {
+                app.plans.remove(pick - 1);
+                if let Some(y) = &mut app.shipyard {
+                    y.plan_pick -= 1;
+                }
+            }
+        }
+        Page::Plan => {
+            let slots = y.spec().slots.len();
+            let was = y.slot;
+            step(&mut y.slot, slots);
+            if y.slot != was {
+                y.choice = y.current_choice(y.slot);
+                y.armed = false;
+                return true;
+            }
+            let Some(slot) = y.spec().slots.get(y.slot).cloned() else { return true };
+            let n = offers(&slot).len().max(1);
+            if input.pressed(KeyCode::ArrowRight) {
+                y.choice = (y.choice + 1) % n;
+            }
+            if input.pressed(KeyCode::ArrowLeft) {
+                y.choice = (y.choice + n - 1) % n;
+            }
+            if input.pressed(KeyCode::Enter) && shift {
+                // Build it here: docked at a station, twice to be sure.
+                if !docked {
+                    app.say("BUILD A PLAN DOCKED AT A STATION".into());
+                } else if y.planned().is_err() {
+                    app.say("THE PLAN WON'T GO TOGETHER".into());
+                } else if !y.armed {
+                    y.armed = true;
+                } else {
+                    y.armed = false;
+                    build(app);
+                }
+            } else if input.pressed(KeyCode::Enter) {
+                let pick = offers(&slot).get(y.choice).copied().flatten();
+                y.fit = with(&y.fit, &slot, pick);
+                y.armed = false;
+            }
+        }
+    }
+    true
 }
 
 fn what(m: &Module) -> String {
@@ -192,48 +344,49 @@ fn what(m: &Module) -> String {
     }
 }
 
-/// The ship's numbers, a line each: (label, value).
+/// A ship's numbers, a line each: (label, value).
 fn numbers(s: &'static ClassSpec) -> Vec<(&'static str, String)> {
+    let c = content();
     let loaded = s.dry_mass + s.fuel_capacity;
-    // How it holds its balance: what its lift and drive give without turning
-    // it, a full tank aboard, with the hold empty and full.
-    let (empty, full) = (s.authority(s.fuel_capacity, 0.0), s.authority(s.fuel_capacity, s.hold_capacity));
+    let full = loaded + s.hold_capacity;
+    // What its lift and drive give without turning it, a full tank aboard, with the hold empty and full.
+    let (a_empty, a_full) = (s.authority(s.fuel_capacity, 0.0), s.authority(s.fuel_capacity, s.hold_capacity));
     let share = |a: f64, b: f64| if b > 0.0 { format!("{:.0}", 100.0 * a / b) } else { "-".into() };
+    // How long the tank lasts: the drive at full, and hovering at a g (loaded).
+    let hours = |flow: f64| if flow > 0.0 { fmt::duration(s.fuel_capacity / flow) } else { "-".into() };
+    let price = s.frame.price + s.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>();
     vec![
+        ("HULL", s.name.clone()),
         ("DRY MASS", fmt::tonnes(s.dry_mass)),
-        ("TANK", fmt::tonnes(s.fuel_capacity)),
-        ("HOLD", fmt::tonnes(s.hold_capacity)),
+        ("TANK / HOLD", format!("{} / {}", fmt::tonnes(s.fuel_capacity), fmt::tonnes(s.hold_capacity))),
         ("POWER", format!("{:.1} OF {:.1} MW", s.power_draw / 1e6, s.power_output / 1e6)),
-        ("MAIN DRIVE", format!("{:.1} M/S2", s.main_thrust / loaded)),
-        ("THRUSTERS", format!("{:.1} M/S2", s.rcs_thrust / loaded)),
-        ("LIFT", format!("{:.1} M/S2", s.lift_thrust / loaded)),
+        ("MAIN DRIVE", format!("{:.1} M/S2", a_empty.main / loaded)),
+        ("THRUSTERS", format!("{:.1} M/S2", a_empty.side / loaded)),
+        ("LIFT", format!("{:.1} G / {:.1} G FULL", a_empty.lift / loaded / G, a_full.lift / full / G)),
         ("TURNS", format!("{:.1} {:.1} {:.1} RAD/S2", s.turn_accel.x, s.turn_accel.y, s.turn_accel.z)),
-        // (Empty hold / full hold.)
-        ("BALANCE", format!("LIFT {}/{}%  DRIVE {}/{}%", share(empty.lift, s.lift_thrust), share(full.lift, s.lift_thrust), share(empty.main, s.main_thrust), share(full.main, s.main_thrust))),
-        ("AUTOPILOTS", if s.features.is_empty() { "NONE".into() } else { s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(4).collect::<String>()).collect::<Vec<_>>().join(" ") }),
+        // (Lift, then drive: empty hold / full hold.)
+        ("BALANCE", format!("L {}/{}% D {}/{}%", share(a_empty.lift, s.lift_thrust), share(a_full.lift, s.lift_thrust), share(a_empty.main, s.main_thrust), share(a_full.main, s.main_thrust))),
+        ("FULL DRIVE", format!("{} A TANK", hours(s.main_thrust / EXHAUST_VELOCITY))),
+        ("HOVER 1 G", format!("{} A TANK", hours(loaded * G / EXHAUST_VELOCITY))),
+        ("AUTOPILOTS", if s.features.is_empty() { "NONE".into() } else { s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(3).collect::<String>()).collect::<Vec<_>>().join(" ") }),
+        ("LIST PRICE", format!("{price:.0} CR")),
     ]
 }
 
-/// A hull's price here (frame and stock fit at this station's prices), and
-/// what the ship flown now fetches in trade.
-fn hull_price(app: &App, h: &ClassSpec) -> (f64, f64) {
+/// A hull's price here (frame and stock fit at this station's prices).
+fn hull_price(app: &App, h: &ClassSpec) -> f64 {
     let c = content();
-    let price = h.frame.price + h.fit.iter().map(|(_, m)| local(app, c.get(*m)).0.price).sum::<f64>();
-    let old = app.ship.spec();
-    let trade = universe_sim::BUYBACK * (old.frame.price + old.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>());
-    (price, trade)
+    h.frame.price + h.fit.iter().map(|(_, m)| local(app, c.get(*m)).0.price).sum::<f64>()
 }
 
-/// The hulls page: each hull's numbers and price, the one picked in full.
+/// The hulls page: each hull's numbers and price; ENTER plans from it.
 fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
-    let line = 12.0;
-    let top = 12.0 + line * 2.0;
+    let top = 12.0 + LINE * 2.0;
     frame.text(Vec2::new(12.0, top), &format!("{:<18} {:>7} {:>7} {:>7} {:>8} {:>8} {:>15} {:>10}", "HULL", "DRY", "TANK", "HOLD", "MAIN", "LIFT", "TURNS", "PRICE"), DIM);
     let mine = app.ship.class;
     for (k, (h, s)) in content().hulls.iter().enumerate() {
-        let here = k == y.hull;
+        let here = k == y.hull_pick;
         let loaded = s.dry_mass + s.fuel_capacity;
-        let (price, _) = hull_price(app, s);
         let mark = if here { ">" } else if h == mine { "*" } else { " " };
         let text = format!(
             "{mark}{:<17} {:>7} {:>7} {:>7} {:>8} {:>8} {:>15} {:>10}",
@@ -242,120 +395,163 @@ fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
             fmt::tonnes(s.fuel_capacity),
             fmt::tonnes(s.hold_capacity),
             format!("{:.0} M/S2", s.main_thrust / loaded),
-            format!("{:.0} M/S2", s.lift_thrust / loaded),
+            format!("{:.1} G", s.lift_thrust / loaded / G),
             format!("{:.1}/{:.1}/{:.1}", s.turn_accel.x, s.turn_accel.y, s.turn_accel.z),
-            format!("{:.0} CR", price)
+            format!("{:.0} CR", hull_price(app, s))
         );
-        frame.text(Vec2::new(12.0, top + (2 + k) as f32 * line), &text, if here { SELECT } else if h == mine { TEXT } else { DIM });
+        frame.text(Vec2::new(12.0, top + (2 + k) as f32 * LINE), &text, if here { SELECT } else if h == mine { TEXT } else { DIM });
     }
-    let Some((h, s)) = content().hulls.iter().nth(y.hull) else { return };
-    let mut yy = top + (3 + content().hulls.len()) as f32 * line;
-    let (price, trade) = hull_price(app, s);
-    let loaded_full = s.dry_mass + s.fuel_capacity + s.hold_capacity;
-    frame.text(Vec2::new(12.0, yy), &format!("{} - {} SLOTS. STOCK FIT:", s.name, s.slots.len()), TEXT);
-    yy += line;
+    let Some((_, s)) = content().hulls.iter().nth(y.hull_pick) else { return };
+    let mut yy = top + (3 + content().hulls.len()) as f32 * LINE;
+    frame.text(Vec2::new(12.0, yy), &format!("{} - {} SLOTS. AS SOLD:", s.name, s.slots.len()), TEXT);
+    yy += LINE;
     let names: Vec<String> = s.fit.iter().map(|(_, m)| content().get(*m).name.clone()).collect();
     for chunk in names.chunks(5) {
         frame.text(Vec2::new(24.0, yy), &chunk.join(", "), DIM);
-        yy += line;
+        yy += LINE;
     }
-    frame.text(Vec2::new(12.0, yy), &format!("FULL HOLD: LIFT {:.0} M/S2 (1 G IS 9.8)  AUTOPILOTS {}", s.lift_thrust / loaded_full, s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(4).collect::<String>()).collect::<Vec<_>>().join(" ")), DIM);
-    yy += line * 1.5;
-    if h == app.ship.class {
-        frame.text(Vec2::new(12.0, yy), "THE SHIP YOU FLY", DIM);
-        return;
+    yy += LINE * 0.5;
+    frame.text(Vec2::new(12.0, yy), "ENTER: PLAN FROM THIS HULL (BUILD IT FROM THE PLAN PAGE, DOCKED)", DIM);
+    let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, 0.0), mounts: true, picked: None };
+    let size = frame.size();
+    let w = ((size.x - 36.0) / 2.0).min(260.0);
+    let at = Vec2::new(12.0, yy + LINE);
+    let h = (size.y - at.y - 12.0).max(80.0);
+    crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
+    crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE");
+}
+
+/// The plans page: the plan kept as it is, or one kept before.
+fn draw_plans(frame: &mut Frame, app: &App, y: &Shipyard) {
+    let top = 12.0 + LINE * 2.0;
+    let c = content();
+    let first = format!("+ KEEP THIS PLAN ({})", y.spec().name);
+    frame.text(Vec2::new(12.0, top), &format!("{}{first}", if y.plan_pick == 0 { ">" } else { " " }), if y.plan_pick == 0 { SELECT } else { TEXT });
+    for (k, p) in app.plans.iter().enumerate() {
+        let here = y.plan_pick == k + 1;
+        let text = match p.load().and_then(|(h, f)| fitted(h, &f).ok().map(|s| (c.get(h), s))) {
+            Some((hull, s)) => {
+                let loaded = s.dry_mass + s.fuel_capacity;
+                format!("PLAN {:<3} {:<16} DRY {:>7}  HOLD {:>7}  MAIN {:>5.1} M/S2  LIFT {:.1} G", k + 1, hull.name, fmt::tonnes(s.dry_mass), fmt::tonnes(s.hold_capacity), s.main_thrust / loaded, s.lift_thrust / loaded / G)
+            }
+            None => format!("PLAN {:<3} {} (WON'T GO TOGETHER NOW)", k + 1, p.hull.to_uppercase()),
+        };
+        frame.text(Vec2::new(12.0, top + (k + 2) as f32 * LINE), &format!("{}{text}", if here { ">" } else { " " }), if here { SELECT } else { DIM });
     }
-    let cost = price - trade;
-    let text = format!("{price:.0} CR, LESS {trade:.0} FOR YOUR SHIP: {} {:.0} CR", if cost >= 0.0 { "COSTS" } else { "PAYS" }, cost.abs());
-    frame.text(Vec2::new(12.0, yy), &text, if cost <= app.v.credits { SELECT } else { RED });
-    yy += line;
-    if y.armed {
-        frame.text(Vec2::new(12.0, yy), "ENTER AGAIN TO BUY IT", SELECT);
-    } else {
-        frame.text(Vec2::new(12.0, yy), "ENTER TWICE TO BUY IT", DIM);
-    }
+    let yy = top + (app.plans.len() + 3) as f32 * LINE;
+    frame.text(Vec2::new(12.0, yy), "ENTER: KEEP / LOAD   DELETE: DROP   (KEPT IN THE SAVE)", DIM);
 }
 
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
-    let line = 12.0;
-    let spec = app.ship.spec();
-    let fit = fit_of(app);
     let c = content();
-    frame.text(
-        Vec2::new(12.0, 12.0),
-        &format!(
-            "SHIPYARD - {} - {}   CREDITS {:.0}   [TAB] {}   ({} CLOSES)",
-            station(app).unwrap_or_default(),
-            spec.name,
-            app.v.credits,
-            if y.hulls { "HULLS: UP/DOWN, ENTER TWICE BUY" } else { "OUTFIT: UP/DOWN SLOT, LEFT/RIGHT MODULE, ENTER FIT" },
-            key(Act::Shipyard)
-        ),
-        TEXT,
-    );
-    if y.hulls {
-        return draw_hulls(frame, app, y);
+    let here = station(app);
+    let page = match y.page {
+        Page::Plan => if here.is_some() { "PLAN - ARROWS PICK, ENTER PUT IN, SHIFT+ENTER BUILD" } else { "PLAN - ARROWS PICK, ENTER PUT IN" },
+        Page::Hulls => "HULLS",
+        Page::Plans => "PLANS",
+    };
+    let title = match &here {
+        Some(s) => format!("SHIPYARD - {s}"),
+        None => "SHIP PLANNER".into(),
+    };
+    frame.text(Vec2::new(12.0, 12.0), &format!("{title}  {:.0} CR  [TAB] {page}  ({} CLOSES)", app.v.credits, key(Act::Shipyard)), TEXT);
+    match y.page {
+        Page::Hulls => return draw_hulls(frame, app, y),
+        Page::Plans => return draw_plans(frame, app, y),
+        Page::Plan => {}
     }
-    // The slots.
-    let top = 12.0 + line * 2.0;
+    let spec = y.spec();
+    // The plan's slots.
+    let top = 12.0 + LINE * 2.0;
+    frame.text(Vec2::new(12.0, top - LINE), &format!("THE PLAN: {}", spec.name), DIM);
+    let flown = fit_of(app);
     for (k, slot) in spec.slots.iter().enumerate() {
-        let here = k == y.slot;
-        let m = in_slot(&fit, slot).map(|h| c.get(h));
-        let text = format!("{}{:<12} {:<11} S{}  {}", if here { ">" } else { " " }, slot.name.to_uppercase(), format!("{:?}", slot.kind).to_uppercase(), slot.size, m.map_or("(EMPTY)".to_string(), |m| m.name.clone()));
-        frame.text(Vec2::new(12.0, top + k as f32 * line), &text, if here { SELECT } else { TEXT });
+        let pick = k == y.slot;
+        let m = in_slot(&y.fit, slot);
+        // (Different from the ship flown now: marked.)
+        let changed = y.hull != app.ship.class || in_slot(&flown, slot) != m;
+        let text = format!("{}{:<12} {:<11} S{}  {}{}", if pick { ">" } else { " " }, slot.name.to_uppercase(), format!("{:?}", slot.kind).to_uppercase(), slot.size, m.map_or("(EMPTY)".to_string(), |m| c.get(m).name.clone()), if changed { " *" } else { "" });
+        frame.text(Vec2::new(12.0, top + k as f32 * LINE), &text, if pick { SELECT } else if changed { BETTER } else { TEXT });
     }
     // What would go in the slot picked.
     let Some(slot) = spec.slots.get(y.slot) else { return };
     let x = (size.x * 0.52).floor();
     frame.text(Vec2::new(x, top), &format!("FOR {} ({:?}, SIZE {})", slot.name.to_uppercase(), slot.kind, slot.size).to_uppercase(), TEXT);
-    let now = in_slot(&fit, slot);
+    let now = in_slot(&y.fit, slot);
     let list = offers(slot);
     for (k, o) in list.iter().enumerate() {
-        let here = k == y.choice;
-        let mark = if here { ">" } else if *o == now { "*" } else { " " };
+        let pick = k == y.choice;
+        let mark = if pick { ">" } else if *o == now { "*" } else { " " };
         let (text, sold) = match o.map(|h| c.get(h)) {
             Some(m) => {
-                let (offer, stocked) = local(app, m);
-                let price = if !offer.carried { "-".to_string() } else if !stocked { "NO STOCK".to_string() } else { format!("{} CR", offer.price as i64) };
-                (format!("{mark}{:<20} {:>7} {:>8} {:>10}", m.name, fmt::tonnes(m.mass), format!("{:.2} MW", m.power / 1e6), price), (offer.carried && stocked) || *o == now)
+                // Docked: this station's price, if it carries it; elsewhere, the list price.
+                let (price, sold) = if here.is_some() {
+                    let (offer, stocked) = local(app, m);
+                    let p = if !offer.carried { "NOT HERE".to_string() } else if !stocked { "NO STOCK".to_string() } else { format!("{} CR", offer.price as i64) };
+                    (p, offer.carried && stocked)
+                } else {
+                    (format!("{} CR", m.price as i64), true)
+                };
+                (format!("{mark}{:<20} {:>7} {:>8} {:>10}", m.name, fmt::tonnes(m.mass), format!("{:.2} MW", m.power / 1e6), price), sold)
             }
             None => (format!("{mark}(EMPTY)"), true),
         };
-        let col = if here { SELECT } else if *o == now { TEXT } else if sold { DIM } else { DIM.scale(0.6) };
-        frame.text(Vec2::new(x, top + (2 + k) as f32 * line), &text, col);
+        let col = if pick { SELECT } else if *o == now { TEXT } else if sold { DIM } else { DIM.scale(0.6) };
+        frame.text(Vec2::new(x, top + (2 + k) as f32 * LINE), &text, col);
     }
-    // The module picked: who makes it, what it does, whether it's sold here.
     let pick = list.get(y.choice).copied().flatten();
     if let Some(m) = pick.map(|h| c.get(h)) {
-        let (offer, stocked) = local(app, m);
         let brand = content().handle::<universe_sim::world::modules::Brand>(&m.brand).map(|b| content().get(b));
         let (maker, note) = brand.map_or(("UNBRANDED".to_string(), "MADE ANYWHERE".to_string()), |b| (b.name.clone(), b.note.clone()));
-        let state = if !offer.carried { "NOT CARRIED HERE".to_string() } else if !stocked { "OUT OF STOCK TO BUILD IT".to_string() } else if offer.hops > 0 { format!("{} GATES FROM ITS MAKER'S HOME (+{:.0}%)", offer.hops, offer.hops as f64 * universe_sim::services::outfitter::MARKUP_PER_HOP * 100.0) } else { "MADE HERE".into() };
-        let yy = top + (3 + list.len()) as f32 * line;
+        let yy = top + (3 + list.len()) as f32 * LINE;
         frame.text(Vec2::new(x, yy), &maker, TEXT);
-        frame.text(Vec2::new(x, yy + line), &note, DIM);
-        frame.text(Vec2::new(x, yy + 2.0 * line), &what(m), TEXT);
-        frame.text(Vec2::new(x, yy + 3.0 * line), &state, if offer.carried && stocked { DIM } else { RED });
+        frame.text(Vec2::new(x, yy + LINE), &note, DIM);
+        frame.text(Vec2::new(x, yy + 2.0 * LINE), &what(m), TEXT);
+        if here.is_some() {
+            let (offer, stocked) = local(app, m);
+            let state = if !offer.carried { "NOT CARRIED HERE".to_string() } else if !stocked { "OUT OF STOCK TO BUILD IT".to_string() } else if offer.hops > 0 { format!("{} GATES FROM ITS MAKER'S HOME (+{:.0}%)", offer.hops, offer.hops as f64 * universe_sim::services::outfitter::MARKUP_PER_HOP * 100.0) } else { "MADE HERE".into() };
+            frame.text(Vec2::new(x, yy + 3.0 * LINE), &state, if offer.carried && stocked { DIM } else { RED });
+        }
     }
-    // The ship as it is, and as it would be.
-    let preview = fitted(app.ship.class, &with(&fit, slot, pick));
-    let cost = pick.map_or(0.0, |h| local(app, c.get(h)).0.price) - now.map_or(0.0, |h| c.get(h).price * universe_sim::BUYBACK);
-    let mut yy = top + (spec.slots.len().max(list.len() + 6) + 2) as f32 * line;
-    frame.text(Vec2::new(12.0, yy), &format!("{:<12} {:>30} {:>30}", "", "NOW", "WITH IT"), DIM);
-    yy += line;
+    // The ship flown now, and the plan (with the module picked in it).
+    let preview = fitted(y.hull, &with(&y.fit, slot, pick));
+    let mut yy = top + (spec.slots.len().max(list.len() + 6) + 1) as f32 * LINE;
+    frame.text(Vec2::new(12.0, yy), &format!("{:<11} {:>23} {:>23}", "", "YOUR SHIP", "THE PLAN"), DIM);
+    yy += LINE;
     let after = preview.as_ref().ok().map(|s| numbers(s));
-    for (i, (label, value)) in numbers(spec).into_iter().enumerate() {
+    for (i, (label, value)) in numbers(app.ship.spec()).into_iter().enumerate() {
         let next = after.as_ref().map(|a| a[i].1.clone()).unwrap_or_default();
         let col = if next.is_empty() || next == value { TEXT } else { BETTER };
-        frame.text(Vec2::new(12.0, yy), &format!("{label:<12} {value:>30} {next:>30}"), col);
-        yy += line;
+        frame.text(Vec2::new(12.0, yy), &format!("{label:<11} {value:>23} {next:>23}"), col);
+        yy += LINE;
     }
-    yy += line * 0.5;
+    yy += LINE * 0.5;
     match &preview {
-        _ if pick == now => frame.text(Vec2::new(12.0, yy), "FITTED NOW", DIM),
-        Ok(_) => frame.text(Vec2::new(12.0, yy), &format!("{} {:.0} CR (THE ONE TAKEN OUT FETCHES {:.0}%)", if cost >= 0.0 { "COSTS" } else { "PAYS" }, cost.abs(), universe_sim::BUYBACK * 100.0), if cost <= app.v.credits { SELECT } else { RED }),
-        Err(why) => frame.text(Vec2::new(12.0, yy), &format!("WON'T DO - {}", why.to_uppercase()), RED),
-    };
+        Err(why) => {
+            frame.text(Vec2::new(12.0, yy), &format!("WON'T GO TOGETHER - {}", why.to_uppercase()), RED);
+        }
+        Ok(_) if here.is_some() => {
+            let (cost, missing) = build_cost(app, y);
+            let text = if missing.is_empty() {
+                format!("BUILT HERE: {} {:.0} CR{}", if cost >= 0.0 { "COSTS" } else { "PAYS" }, cost.abs(), if y.armed { " - SHIFT+ENTER AGAIN TO BUILD" } else { "  (SHIFT+ENTER TWICE)" })
+            } else {
+                format!("NOT HERE: {} (THE REST {:.0} CR)", missing.join(", "), cost)
+            };
+            frame.text(Vec2::new(12.0, yy), &text, if missing.is_empty() && cost <= app.v.credits { SELECT } else { RED });
+        }
+        Ok(_) => {
+            frame.text(Vec2::new(12.0, yy), "DOCK AT A STATION'S SHIPYARD TO BUILD IT", DIM);
+        }
+    }
+    // Where it all sits.
+    if let Ok(s) = &preview {
+        let w = ((size.x - x - 24.0) / 2.0).floor();
+        let at = Vec2::new(x, top + (list.len() + 8) as f32 * LINE);
+        let h = (size.y - at.y - 12.0).max(60.0);
+        let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: Some(&slot.name) };
+        crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE");
+        crate::thrusterpanel::view(frame, &picture, at + Vec2::new(w + 12.0, 0.0), Vec2::new(w, h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE");
+    }
 }

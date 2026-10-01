@@ -137,7 +137,31 @@ pub fn apply(app: &mut App, name: &str) {
             let u = app.engine.universe();
             u.ship = u.world.ship_on(home, universe_sim::world::Facility::Station(station), 0);
             let k = u.ship.spec().slots.iter().position(|s| s.name == if name == "shipyard" { "cargo" } else { "drive" }).unwrap();
-            app.shipyard = Some(if name == "shipyardhulls" { crate::shipyard::Shipyard::showing_hulls(2) } else { crate::shipyard::Shipyard::showing(k, 1) });
+            let y = if name == "shipyardhulls" { crate::shipyard::Shipyard::showing_hulls(app, 2) } else { crate::shipyard::Shipyard::showing(app, k, 1) };
+            app.shipyard = Some(y);
+        }
+        "shipyardbuild" => {
+            // Docked at the home station with credits to spare: a plan for a
+            // courier with the smaller tank, built.
+            app.mode = Mode::Pilot;
+            let station = sys.station().unwrap();
+            {
+                let u = app.engine.universe();
+                u.ship = u.world.ship_on(home, universe_sim::world::Facility::Station(station), 0);
+                let me = universe_sim::services::Party::Pilot(universe_sim::PLAYER);
+                let tick = u.tick;
+                u.ledger.settle(me, universe_sim::services::Asset::Credits, 2_000_000.0, tick, universe_sim::protocol::Cause::Rules);
+            }
+            // (The commands reach the engine with the next frame.)
+            app.shipyard = crate::shipyard::Shipyard::planning(app, "hull.sprint", "tank", "tank.s1");
+            crate::shipyard::build(app);
+        }
+        "planner" => {
+            // In flight: the ship planner, on the drive slot with another drive picked.
+            app.mode = Mode::Pilot;
+            let k = app.ship.spec().slots.iter().position(|s| s.name == "drive").unwrap_or(0);
+            let y = crate::shipyard::Shipyard::showing(app, k, 0);
+            app.shipyard = Some(y);
         }
         "cleared" => {
             // The spawn point, with docking clearance granted.

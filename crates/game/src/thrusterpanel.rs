@@ -33,42 +33,62 @@ fn label(nozzle: &str) -> String {
     nozzle.trim_start_matches("nozzle_").replace('_', " ").to_uppercase()
 }
 
+/// What a view shows: a hull as fitted, its thrusters' levels (empty:
+/// idle), where its centre of mass is, and (in the planner) its module
+/// mounts, one of them picked.
+pub struct Picture<'a> {
+    pub spec: &'static universe_sim::world::ship::ClassSpec,
+    pub jets: &'a [f64],
+    pub com: DVec3,
+    pub mounts: bool,
+    pub picked: Option<&'a str>,
+}
+
 /// The ship drawn in a box at `at`, `size` across, looking along `view`
 /// (`across` to the right, `up` up the box), every thruster on it.
-#[allow(clippy::too_many_arguments)]
-fn view(frame: &mut Frame, app: &App, at: Vec2, size: Vec2, across: DVec3, up: DVec3, title: &str) {
-    let ship = &app.ship;
-    let s = ship.spec();
+pub fn view(frame: &mut Frame, p: &Picture, at: Vec2, size: Vec2, across: DVec3, up: DVec3, title: &str) {
+    let s = p.spec;
     let shape = s.shape();
     let (lo, hi) = shape.mesh.extent();
     let reach = (hi - lo).length() * 0.5;
     let scale = (size.x.min(size.y) as f64 * 0.42) / reach;
     let center = at + size * 0.5;
-    let to = |p: DVec3| center + Vec2::new((p.dot(across) * scale) as f32, -(p.dot(up) * scale) as f32);
+    let to = |q: DVec3| center + Vec2::new((q.dot(across) * scale) as f32, -(q.dot(up) * scale) as f32);
     frame.hud_box(at, size, DIM.scale(0.6));
     frame.text(at + Vec2::new(6.0, 4.0), title, DIM);
     for e in &shape.mesh.edges {
         frame.hud_line(to(shape.mesh.points[e[0] as usize]), to(shape.mesh.points[e[1] as usize]), HULL);
     }
+    // Where the modules sit: each slot's mount (the picked one bright).
+    if p.mounts {
+        for slot in &s.slots {
+            let Some(n) = shape.node(&format!("mount_{}", slot.name)) else { continue };
+            let q = to(n.at);
+            let fitted = s.fit.iter().any(|(name, _)| *name == slot.name);
+            let c = if p.picked == Some(slot.name.as_str()) { Color::hex(0xffc040) } else if fitted { TEXT.scale(0.8) } else { DIM };
+            frame.hud_box(q - Vec2::splat(3.0), Vec2::splat(6.0), c);
+        }
+    }
     // Each thruster: a mark where it sits, its plume out along its exhaust.
-    for (t, &u) in s.thrusters.iter().zip(&ship.jets) {
-        let p = to(t.at);
+    for (k, t) in s.thrusters.iter().enumerate() {
+        let u = p.jets.get(k).copied().unwrap_or(0.0);
+        let q = to(t.at);
         let c = color(t.role);
-        frame.hud_rect(p - Vec2::splat(1.5), Vec2::splat(3.0), c.scale(if u > 0.02 { 1.0 } else { 0.45 }));
+        frame.hud_rect(q - Vec2::splat(1.5), Vec2::splat(3.0), c.scale(if u > 0.02 { 1.0 } else { 0.45 }));
         if u > 0.02 {
             let out = -t.push;
             let dir = Vec2::new(out.dot(across) as f32, -out.dot(up) as f32);
             let len = (8.0 + 40.0 * u) as f32 * if t.role == ThrusterRole::Rcs { 0.5 } else { 1.0 };
             // (Along the line of sight, a plume is a dot: drawn as a ring.)
             if dir.length() < 0.2 {
-                frame.hud_ellipse(p, Vec2::splat(2.0 + 5.0 * u as f32), 12, c);
+                frame.hud_ellipse(q, Vec2::splat(2.0 + 5.0 * u as f32), 12, c);
             } else {
-                frame.hud_line(p, p + dir.normalize() * len, c);
+                frame.hud_line(q, q + dir.normalize() * len, c);
             }
         }
     }
-    // The centre of mass, now.
-    let com = to(ship.centre_of_mass());
+    // The centre of mass.
+    let com = to(p.com);
     frame.hud_line(com - Vec2::new(5.0, 0.0), com + Vec2::new(5.0, 0.0), COM);
     frame.hud_line(com - Vec2::new(0.0, 5.0), com + Vec2::new(0.0, 5.0), COM);
 }
@@ -100,8 +120,9 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let box_w = ((size.x - left - 24.0) * 0.5).floor();
     let box_h = (size.y * 0.55).floor();
     let top = 12.0 + LINE * 2.0;
-    view(frame, app, Vec2::new(left, top), Vec2::new(box_w, box_h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE (NOSE UP)");
-    view(frame, app, Vec2::new(left + box_w + 12.0, top), Vec2::new(box_w, box_h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE (TOP RIGHT)");
+    let picture = Picture { spec: s, jets: &ship.jets, com: ship.centre_of_mass(), mounts: false, picked: None };
+    view(frame, &picture, Vec2::new(left, top), Vec2::new(box_w, box_h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE (NOSE UP)");
+    view(frame, &picture, Vec2::new(left + box_w + 12.0, top), Vec2::new(box_w, box_h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE (TOP RIGHT)");
 
     // Under them: the fuel, the burn, the balance.
     let flow = ship.fuel_flow() + if ship.hyperdrive { HYPER_FUEL_FLOW * ship.throttle.clamp(0.0, 1.0) } else { 0.0 };
