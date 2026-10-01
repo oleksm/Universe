@@ -196,7 +196,7 @@ pub fn apply(app: &mut App, name: &str) {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
         }
-        "asteroid" | "swarm" => {
+        "asteroid" | "swarm" | "navlock" => {
             // By the first field's remnant (sun behind), or among its swarm,
             // moving with it, facing it; it's the nav target.
             app.mode = Mode::Pilot;
@@ -212,6 +212,9 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.angular_velocity = DVec3::ZERO;
             u.ship.orientation = universe_sim::ship::facing(-off.normalize(), DVec3::Y);
             u.set_nav_target(Some(NavTarget::Asteroid(rock)));
+            if name == "navlock" {
+                app.picker.hold_for_show();
+            }
         }
         "mining" | "cargo" | "prospect" | "closing" | "minemode" | "pulse" | "picklist" => {
             // By a rubble fragment of a home field, drifting with its

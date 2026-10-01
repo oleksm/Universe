@@ -1,8 +1,10 @@
-//! Locking on: T. A tap locks what's nearest the crosshair (a ship in the
-//! beam; in mining mode, a prospected rock in the cone). Held, it lists what
-//! can be locked — the radar's contacts, or in mining mode the rocks the
-//! prospect found — nearest first: the mouse (or the wheel) moves the
-//! cursor, and letting go of T locks the one under it.
+//! Locking on: T. A tap locks what's nearest the crosshair; held, it lists
+//! what can be locked, nearest first: the mouse (or the wheel) moves the
+//! cursor, and letting go of T locks the one under it. What can be locked
+//! is the mode's: in navigation everything within the sensors' reach
+//! (ships, asteroids big and small, stations, gates, spaceports — a place
+//! locked becomes the nav target); in combat the ships; in mining the
+//! rocks the prospect found.
 
 use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{Color, Context, Frame, KeyCode};
@@ -24,6 +26,8 @@ pub enum Pick {
     Ship(usize),
     /// A rock: body among a field's bodies.
     Rock(usize, usize),
+    /// A station, gate or spaceport (locked: the nav target).
+    Place(universe_sim::NavTarget),
 }
 
 /// One line of the list.
@@ -60,34 +64,83 @@ impl Picker {
 
 /// What T can lock now, nearest first.
 pub fn candidates(app: &App) -> Vec<Candidate> {
-    if app.mining.on {
+    use crate::hud::{active_mode, ShipMode};
+    let mode = active_mode(app);
+    if mode == ShipMode::Mining {
         return crate::mining::rows(app)
             .into_iter()
             .map(|r| Candidate { pick: Pick::Rock(r.field, r.body), name: r.name, detail: r.detail, distance: r.distance, at: r.at })
             .collect();
     }
-    app.contacts
+    let mut list: Vec<Candidate> = app
+        .contacts
         .iter()
         .map(|c| Candidate {
             pick: Pick::Ship(c.blip.id),
             name: c.name.to_uppercase(),
-            detail: c.activity.to_string(),
+            detail: format!("SHIP  {}", c.activity),
             distance: c.blip.distance,
             at: c.blip.position,
         })
-        .collect()
+        .collect();
+    // Navigation: everything else within the sensors' reach too.
+    if mode == ShipMode::Nav && app.view.origin == app.v.ship_system && app.view.positions.len() >= app.view.system.bodies.len() {
+        let sys = &app.view.system;
+        let ship = app.view.ship_pos;
+        let reach = universe_sim::world::RADAR_RANGE;
+        let t = app.now();
+        let mut place = |target: universe_sim::NavTarget, what: &str, at: DVec3| {
+            let d = at.distance(ship);
+            if d < reach {
+                list.push(Candidate { pick: Pick::Place(target), name: target.name(sys).to_uppercase(), detail: what.to_string(), distance: d, at });
+            }
+        };
+        for (i, b) in sys.bodies.iter().enumerate() {
+            match b.kind {
+                universe_sim::BodyKind::Station => place(universe_sim::NavTarget::Station(i), "STATION", app.view.positions[i]),
+                universe_sim::BodyKind::Gate => place(universe_sim::NavTarget::Gate(i), "GATE", app.view.positions[i]),
+                _ => {}
+            }
+        }
+        for p in 0..sys.spaceports.len() {
+            if let Some(at) = universe_sim::NavTarget::Spaceport(p).position(sys, t, &app.view.positions) {
+                place(universe_sim::NavTarget::Spaceport(p), "SPACEPORT", at);
+            }
+        }
+        // Asteroids: the remnants, and the swarms of fields in reach.
+        for (f, field) in sys.fields.iter().enumerate() {
+            if app.view.positions[field.body].distance(ship) > field.extent + reach {
+                continue;
+            }
+            let bodies = sys.field_bodies(f);
+            for i in sys.field_rocks(f) {
+                let (at, _) = sys.field_body_state(f, i, t);
+                let b = &bodies[i];
+                let d = at.distance(ship) - b.rail.radius;
+                if d < reach
+                    && let Some(r) = &b.rock
+                {
+                    let what = format!("ASTEROID {} {}", r.class.letter(), crate::fmt::distance(b.rail.radius * 2.0));
+                    list.push(Candidate { pick: Pick::Rock(f, i), name: b.name.to_uppercase(), detail: what, distance: d.max(0.0), at });
+                }
+            }
+        }
+    }
+    list.sort_by(|a, b| a.distance.total_cmp(&b.distance));
+    list
 }
 
 /// What's locked now.
 pub fn locked(app: &App) -> Option<Pick> {
     let a = &app.v.avionics;
-    a.contact.map(Pick::Ship).or(a.rock_lock.map(|(f, b)| Pick::Rock(f, b)))
+    a.contact.map(Pick::Ship).or(a.rock_lock.map(|(f, b)| Pick::Rock(f, b))).or(a.nav_target.map(Pick::Place))
 }
 
 fn lock(app: &mut App, pick: Pick) {
     app.engine.send(match pick {
         Pick::Ship(id) => Command::LockContact(id),
         Pick::Rock(f, b) => Command::LockRock(Some((f, b))),
+        Pick::Place(t) => Command::SetNavTarget(Some(t)),
     });
 }
 
@@ -124,13 +177,14 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         if let Some(c) = candidates(app).into_iter().nth(app.picker.index) {
             lock(app, c.pick);
         }
-    } else if app.mining.on {
-        // The prospected rock nearest the nose, within the cone.
+    } else if crate::hud::active_mode(app) != crate::hud::ShipMode::Combat {
+        // What's nearest the nose, within the cone (in mining, of the prospected rocks).
         let (ship, nose) = (app.view.ship_pos, app.ship.forward());
         let off = |c: &Candidate| nose.angle_between(c.at - ship);
         match candidates(app).into_iter().filter(|c| off(c) < CONE).min_by(|a, b| off(a).total_cmp(&off(b))) {
             Some(c) => lock(app, c.pick),
-            None => app.say(if app.mining.prospect.is_some() { "NO PROSPECTED ROCK AHEAD - HOLD T FOR THE LIST".into() } else { "PROSPECT FIRST (2)".into() }),
+            None if app.mining.on => app.say(if app.mining.prospect.is_some() { "NO PROSPECTED ROCK AHEAD - HOLD T FOR THE LIST".into() } else { "PROSPECT FIRST (2)".into() }),
+            None => app.say("NOTHING AHEAD - HOLD T FOR THE LIST".into()),
         }
     } else {
         // Lock what's in the beam around the crosshair (the ring shows it for a moment).
@@ -159,10 +213,14 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let rows = list.len().clamp(1, shown) as f32;
     frame.hud_rect(pos - 6.0, Vec2::new(width, (rows + 2.0) * line) + 12.0, Color([0.0, 0.03, 0.0, 0.85]));
     frame.hud_box(pos - 6.0, Vec2::new(width, (rows + 2.0) * line) + 12.0, LIST.scale(0.6));
-    let what = if app.mining.on { "ROCKS" } else { "CONTACTS" };
-    frame.text(pos, &format!("LOCK {what} - MOUSE OR WHEEL, LET GO OF T"), LIST);
+    let what = match crate::hud::active_mode(app) {
+        crate::hud::ShipMode::Mining => "ROCKS",
+        crate::hud::ShipMode::Combat => "SHIPS",
+        crate::hud::ShipMode::Nav => "IN REACH",
+    };
+    frame.text(pos, &format!("LOCK {what} - MOUSE/WHEEL, LET GO OF T"), LIST);
     if list.is_empty() {
-        frame.text(pos + Vec2::new(0.0, 2.0 * line), if app.mining.on { "NOTHING PROSPECTED - 2 TO PROSPECT" } else { "NOTHING ON RADAR" }, LIST.scale(0.6));
+        frame.text(pos + Vec2::new(0.0, 2.0 * line), if app.mining.on { "NOTHING PROSPECTED - 2 TO PROSPECT" } else { "NOTHING IN REACH" }, LIST.scale(0.6));
         return;
     }
     let now = locked(app);
