@@ -375,6 +375,10 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let stopped = events.iter().any(|e| matches!(e, Event::RouteStop { .. }));
     if stopped {
         pilot.stops_made += 1;
+        // Every pilot fills its tank at a stop with a market.
+        if let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship) {
+            requests.push(Request::Refuel { market });
+        }
         if (pilot.trader || pilot.miner)
             && let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship)
         {

@@ -278,8 +278,9 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   and touch-down pose, respawn and `ship_at`, and the hand-over (a change of coordinates, not
   physics). Candidates for explicit kernel ops (unweld, launch impulse, spawn).
 - `Ship`'s fields are `pub`, so "only through commands" is kept by review, not by the compiler.
-- Fuel is carried but not consumed; cargo has no mass effect yet; parts/modules are not
-  modelled (the devices are fixed per ship).
+- Parts/modules are not modelled (the devices are fixed per ship). Fuel is burned by the drives
+  (thrust / `EXHAUST_VELOCITY`, a torch drive) and the hyperdrive (`HYPER_FUEL_FLOW`); a dry tank
+  gives no thrust and no hyperdrive; ships buy fuel at markets (`Markets::refuel`).
 
 ## Avionics (`universe-avionics`)
 

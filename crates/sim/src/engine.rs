@@ -60,6 +60,8 @@ pub enum Command {
     LockRock(Option<(usize, usize)>),
     /// Lock on the radar contact with this id (a pick from the list).
     LockContact(usize),
+    /// Fill the tank where docked or landed.
+    Refuel,
     StopFollowing,
     /// Lock what's in the beam around the nose (again: the next).
     LockInBeam,
@@ -245,6 +247,7 @@ impl Engine {
             }
             Command::CollisionWarning(on) => u.cockpit().collision_warning(on),
             Command::Respawn => u.respawn(),
+            Command::Refuel => u.refuel_player(),
             Command::RoutePush(stop) => u.cockpit().route_push(stop),
             Command::RoutePop => u.cockpit().route_pop(),
             Command::RouteClear => u.cockpit().route_set(Vec::new()),

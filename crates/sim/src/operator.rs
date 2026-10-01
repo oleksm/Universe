@@ -89,7 +89,7 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
         let route_seed = mix(seed, i as u64);
         let stops = route(charts, route_seed, ROUTE_STOPS);
         let Some(&at) = stops.first() else { continue };
-        let mut route = Route { stops, next: 0, active: true, dwell_until: Some(now + rng.range(0.0, 600.0)), departing: false };
+        let mut route = Route { stops, next: 0, active: true, dwell_until: Some(now + rng.range(0.0, 600.0)), departing: false, stay: None };
         // Roles, from the seed (the same settlers every time): one slice
         // pirates, another traders, another miners (where their home
         // system has asteroids to work), the rest just travel.
@@ -100,6 +100,11 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
         if let Some(stops) = mining {
             // Out to the field first (from home, its market).
             route.stops = stops;
+        }
+        // Settlers are passengers: hours at each stop (traders, miners and
+        // pirates have business, and keep moving).
+        if !pirate && !trader && !miner {
+            route.stay = Some(rng.range(1.0, 4.0) * 3600.0);
         }
         // Named for what they do (the number stays each craft's own).
         let name = format!("{} {}", if pirate { "Pirate" } else if trader { "Trader" } else if miner { "Miner" } else { "Settler" }, first + out.len() + 1);
@@ -120,7 +125,8 @@ pub(crate) fn new_route(pilot: &mut Pilot, charts: &Charts, system: usize) {
         stops.rotate_left(1);
     }
     pilot.route_seed = seed;
-    pilot.avionics.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false };
+    let stay = pilot.avionics.route.stay;
+    pilot.avionics.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay };
 }
 
 /// A trip: where to, what to buy for it (item, units, price), the profit expected.

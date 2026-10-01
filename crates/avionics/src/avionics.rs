@@ -134,6 +134,7 @@ impl Avionics {
             | ShipEvent::AnchorFailed { .. }
             | ShipEvent::AnchorReleased
             | ShipEvent::Mined { .. }
+            | ShipEvent::OutOfFuel
             | ShipEvent::ExcavatorStopped { .. }
             | ShipEvent::GateArrived { .. }
             | ShipEvent::GateTooFast { .. }

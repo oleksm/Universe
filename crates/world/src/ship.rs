@@ -27,6 +27,12 @@ pub const ROLL_RATE: f64 = 1.8;
 pub const SHIP_RADIUS: f64 = 12.0;
 /// Most cargo the hold carries (kg).
 pub const HOLD_CAPACITY: f64 = 20_000.0;
+/// The drives' exhaust velocity (m/s): a torch drive (a few percent of
+/// light speed), so a tank lasts a day of burning. Each device burns its
+/// thrust / this, in kg/s. (The economy's knob: see `economy`.)
+pub const EXHAUST_VELOCITY: f64 = 1.0e7;
+/// The hyperdrive's draw at full throttle (kg/s), while engaged.
+pub const HYPER_FUEL_FLOW: f64 = 0.2;
 /// Drag coefficient × frontal area (m²): a blunt 90 t ship falls at about
 /// 150 m/s through sea-level air.
 pub const DRAG_AREA: f64 = 60.0;
@@ -284,7 +290,24 @@ impl Ship {
 
     /// Acceleration from the main engine and thrusters as set (m/s^2): thrust / current mass.
     pub fn thrust(&self) -> DVec3 {
+        // (No fuel, no thrust.)
+        if self.fuel <= 0.0 {
+            return DVec3::ZERO;
+        }
         self.forward() * (self.main_accel() * self.throttle) + self.orientation * self.thruster_accel(self.rcs)
+    }
+
+    /// What the engine and thrusters burn as set (kg/s): their thrust over
+    /// the exhaust velocity.
+    pub fn fuel_flow(&self) -> f64 {
+        let c = self.rcs.clamp(DVec3::splat(-1.0), DVec3::ONE);
+        let lift = if c.y > 0.0 { LIFT_THRUST } else { RCS_THRUST };
+        (self.throttle.clamp(0.0, 1.0) * MAIN_THRUST + (c.x.abs() + c.z.abs()) * RCS_THRUST + c.y.abs() * lift) / EXHAUST_VELOCITY
+    }
+
+    /// `dt` seconds of the drives as set: the fuel they burn.
+    pub fn burn(&mut self, dt: f64) {
+        self.fuel = (self.fuel - self.fuel_flow() * dt).max(0.0);
     }
 
     /// Attitude control: rotate toward the commanded rates over `dt` seconds.

@@ -718,11 +718,13 @@ impl<'a> Devices<'a> {
 }
 
 impl Driver for Devices<'_> {
-    fn applied(&mut self, body: &mut RigidBody, _t: f64, _h: f64, _positions: &[DVec3]) -> DVec3 {
+    fn applied(&mut self, body: &mut RigidBody, _t: f64, h: f64, _positions: &[DVec3]) -> DVec3 {
         let ship = &mut *self.ship;
         ship.position = body.position;
         ship.velocity = body.velocity;
-        ship.thrust()
+        let thrust = ship.thrust();
+        ship.burn(h);
+        thrust
     }
 
     fn respond(&mut self, fact: &Fact, _: &RigidBody) -> Response {
@@ -768,6 +770,31 @@ mod tests {
         let (each, once) = (run(true), run(false));
         assert_eq!(each, once);
         assert_eq!(once.2, 1.0, "the engine keeps its last setting");
+    }
+
+    #[test]
+    fn the_drives_burn_fuel_and_a_dry_tank_gives_no_thrust() {
+        let mut p = Probe::new(42);
+        p.ship.position = DVec3::new(0.0, 5.0 * AU, 0.0);
+        p.ship.velocity = DVec3::ZERO;
+        let fuel = p.ship.fuel;
+        p.set_throttle(1.0);
+        for _ in 0..600 {
+            p.step(1.0 / 60.0, 1.0);
+        }
+        let burned = fuel - p.ship.fuel;
+        let expected = crate::ship::MAIN_THRUST / crate::ship::EXHAUST_VELOCITY * 10.0;
+        assert!((burned - expected).abs() < expected * 0.01, "burned {burned} kg in 10 s, expected {expected}");
+        // Dry: the engine gives nothing, the hyperdrive won't start.
+        p.ship.fuel = 0.0;
+        let v = p.ship.velocity;
+        for _ in 0..60 {
+            p.step(1.0 / 60.0, 1.0);
+        }
+        assert!((p.ship.velocity - v).length() < 1e-3, "no thrust");
+        p.set_throttle(0.0);
+        p.toggle_hyperdrive();
+        assert!(!p.ship.hyperdrive && p.events.iter().any(|e| matches!(e, ShipEvent::OutOfFuel)));
     }
 
     #[test]

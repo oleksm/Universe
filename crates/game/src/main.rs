@@ -591,8 +591,14 @@ impl App {
                 self.hit_age = 0.0;
                 continue;
             }
+            // Docked or landed at a market: fill the tank (as any pilot does at a stop).
+            if matches!(event, Event::Ship(ShipEvent::Landed { station: true, .. } | ShipEvent::LandedAtPort { .. })) {
+                self.engine.send(Command::Refuel);
+            }
             let text = match event {
                 Event::Ship(ShipEvent::Landed { body, station: true }) => format!("DOCKED AT {body}"),
+                Event::Refuelled { tonnes, credits } => format!("REFUELLED {tonnes:.1} T FOR {credits:.0} CR"),
+                Event::Ship(ShipEvent::OutOfFuel) => "OUT OF FUEL - NO THRUST, NO HYPERDRIVE".into(),
                 Event::Ship(ShipEvent::Landed { body, station: false }) => format!("LANDED ON {body}"),
                 Event::Ship(ShipEvent::TookOff) => "LIFT OFF".into(),
                 Event::Ship(ShipEvent::Crashed { body }) => format!("SHIP DESTROYED - {body}"),

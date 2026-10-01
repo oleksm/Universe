@@ -66,6 +66,17 @@ impl PlaceKind {
         }
     }
 
+    /// Fuel it keeps for the ships that call (t/day): sold to them (see
+    /// `Markets::refuel`), not used by the place itself.
+    pub fn ship_fuel(self) -> f64 {
+        match self {
+            PlaceKind::Station => 200.0,
+            PlaceKind::Farm => 60.0,
+            PlaceKind::Mine => 60.0,
+            PlaceKind::Outpost => 20.0,
+        }
+    }
+
     /// Its works: (recipe, how many).
     fn works(self) -> &'static [(&'static Recipe, f64)] {
         match self {
@@ -86,7 +97,7 @@ pub struct Recipe {
 
 use Category::*;
 static MINE: Recipe = Recipe { name: "MINE", takes: &[], makes: &[(Ores, 40.0), (Minerals, 4.0)] };
-static ICE: Recipe = Recipe { name: "ICE WORKS", takes: &[], makes: &[(Water, 45.0)] };
+static ICE: Recipe = Recipe { name: "ICE WORKS", takes: &[], makes: &[(Water, 300.0)] };
 // (An Earth-like world's own rain waters its fields.)
 static FARM: Recipe = Recipe { name: "FARMS", takes: &[(Chemicals, 2.0)], makes: &[(Food, 30.0), (Biologics, 0.6), (Textiles, 1.2)] };
 static ARTISANS: Recipe = Recipe { name: "ARTISANS", takes: &[(Textiles, 1.0), (Minerals, 0.5)], makes: &[(Luxuries, 1.5), (Art, 0.3)] };
@@ -102,7 +113,7 @@ static FACTORY: Recipe = Recipe {
 static FAB: Recipe = Recipe { name: "ELECTRONICS FAB", takes: &[(Metals, 1.0), (Minerals, 2.0), (Chemicals, 2.0)], makes: &[(Electronics, 3.0), (Computers, 1.0)] };
 static PHARMA: Recipe = Recipe { name: "PHARMA PLANT", takes: &[(Chemicals, 2.0), (Biologics, 2.0)], makes: &[(Medicine, 4.0)] };
 
-static STATION_WORKS: [(&Recipe, f64); 5] = [(&FACTORY, 2.0), (&FAB, 2.0), (&FUEL_PLANT, 2.0), (&PHARMA, 1.0), (&SMELTER, 1.0)];
+static STATION_WORKS: [(&Recipe, f64); 5] = [(&FACTORY, 2.0), (&FAB, 2.0), (&FUEL_PLANT, 32.0), (&PHARMA, 1.0), (&SMELTER, 1.0)];
 static FARM_WORKS: [(&Recipe, f64); 2] = [(&FARM, 8.0), (&ARTISANS, 2.0)];
 static MINE_WORKS: [(&Recipe, f64); 3] = [(&MINE, 2.0), (&REFINERY, 1.0), (&CHEMICALS, 1.0)];
 static OUTPOST_WORKS: [(&Recipe, f64); 2] = [(&MINE, 0.5), (&ICE, 1.0)];
@@ -156,7 +167,8 @@ impl Place {
     /// What it uses of kind `c` in a day, at full work (tonnes).
     pub fn needs(&self, c: Category) -> f64 {
         let works: f64 = self.kind.works().iter().flat_map(|(r, n)| r.takes.iter().filter(|t| t.0 == c).map(move |t| t.1 * n)).sum();
-        works + BASKET.iter().filter(|b| b.0 == c).map(|b| b.1 * self.population).sum::<f64>()
+        let ships = if c == Fuel { self.kind.ship_fuel() } else { 0.0 };
+        works + ships + BASKET.iter().filter(|b| b.0 == c).map(|b| b.1 * self.population).sum::<f64>()
     }
 
     /// What it makes of kind `c` in a day, at full work (tonnes).

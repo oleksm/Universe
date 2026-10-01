@@ -137,6 +137,10 @@ fn key(f: Facility) -> u64 {
     }
 }
 
+/// Ship fuel's usual price (credits a tonne), and what the frontier asks over it.
+pub const FUEL_PRICE: f64 = 60.0;
+const FRONTIER: f64 = 2.0;
+
 /// Varieties of each kind of goods a settled market lists.
 const VARIETIES: usize = 3;
 
@@ -485,6 +489,35 @@ impl Markets {
             place.put(item.category, t);
             Ok(-paid)
         }
+    }
+
+    /// Fill a tank at `market` (where the pilot is docked or landed): up to
+    /// `want` tonnes of fuel, as far as the place has it (a settled place,
+    /// from its stock; out on the frontier, at a frontier price) and the
+    /// pilot's credits go. The tonnes and the credits paid, or why not.
+    #[allow(clippy::too_many_arguments)]
+    pub fn refuel(&mut self, ledger: &mut Ledger, system: usize, market: Facility, docked_at: Option<Facility>, pilot: BodyId, want: f64, tick: Tick, cause: Cause) -> Result<(f64, f64), String> {
+        if docked_at != Some(market) {
+            return Err("DOCK OR LAND THERE TO REFUEL".into());
+        }
+        if matches!(market, Facility::Gate(_) | Facility::Asteroid(_)) {
+            return Err("NO FUEL HERE".into());
+        }
+        let who = Party::Pilot(pilot);
+        let (price, stock) = match self.economy.place(system, market) {
+            Some(place) => (FUEL_PRICE * place.factor(Category::Fuel).unwrap_or(1.0), place.stock_of(Category::Fuel)),
+            None => (FUEL_PRICE * FRONTIER, f64::INFINITY),
+        };
+        let t = want.min(stock).min(ledger.credits(who) / price).max(0.0);
+        if t < 0.01 {
+            return Err(if stock < 0.01 { "NO FUEL IN STOCK".into() } else { "NOT ENOUGH CREDITS".into() });
+        }
+        let cost = t * price;
+        ledger.transfer(who, Party::Market(system, market), Asset::Credits, cost, tick, cause)?;
+        if let Some(place) = self.economy.place_mut(system, market) {
+            place.take(Category::Fuel, t);
+        }
+        Ok((t, cost))
     }
 
     /// The states of the markets traded with (to save).

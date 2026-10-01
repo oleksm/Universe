@@ -58,6 +58,37 @@ impl Universe {
         Some(universe_protocol::Cause::Event { tick: self.tick, index: index as u32 })
     }
 
+    /// Pilot `id` fills its tank at `market`: the market service sells what
+    /// it can (the ledger books it), and the core's tank takes it.
+    pub(crate) fn refuel(&mut self, id: usize, market: Facility) -> Result<(f64, f64), String> {
+        let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        let want = universe_world::ship::FUEL_CAPACITY - ship.fuel;
+        if want < 0.01 {
+            return Err("TANK FULL".into());
+        }
+        let docked = docked_at(&self.world.system(system), ship);
+        self.messages += 1;
+        let cause = universe_protocol::Cause::Message { sender: id as u64, id: self.messages };
+        let (tonnes, cost) = self.markets.refuel(&mut self.ledger, system, market, docked, id, want / 1000.0, self.tick, cause)?;
+        match id {
+            crate::combat::PLAYER => self.ship.fuel += tonnes * 1000.0,
+            i => self.crafts[i - 1].ship.fuel += tonnes * 1000.0,
+        }
+        Ok((tonnes, cost))
+    }
+
+    /// The player fills the tank where docked or landed (as its pilot would on arrival).
+    pub fn refuel_player(&mut self) {
+        let sys = self.world.system(self.ship_system);
+        let Some(market) = docked_at(&sys, &self.ship) else { return };
+        let e = match self.refuel(crate::combat::PLAYER, market) {
+            Ok((tonnes, credits)) => universe_avionics::Event::Refuelled { tonnes, credits },
+            Err(reason) if reason == "TANK FULL" => return,
+            Err(reason) => universe_avionics::Event::Refused { reason: format!("REFUEL: {reason}") },
+        };
+        self.events.push(e);
+    }
+
     /// Craft `i`'s credits, as the ledger has them.
     pub fn craft_credits(&self, i: usize) -> f64 {
         self.ledger.credits(Party::Pilot(crate::combat::craft_id(i)))
@@ -83,6 +114,9 @@ impl Universe {
                 }
             }
             Request::Declare { market, deal } => self.record_trade(id, market, deal, None, 0, 0.0),
+            Request::Refuel { market } => {
+                let _ = self.refuel(id, market);
+            }
             _ => {}
         }
     }

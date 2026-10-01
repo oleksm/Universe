@@ -211,6 +211,12 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         DIM,
     ));
     let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
+    // Fuel, once it's running down.
+    let fuel = ship.fuel / universe_sim::world::ship::FUEL_CAPACITY;
+    if fuel < 0.25 {
+        let hours = ship.fuel / (universe_sim::world::ship::MAIN_THRUST / universe_sim::world::ship::EXHAUST_VELOCITY) / 3600.0;
+        lines.push((format!("FUEL [{}] {:3.0}%  {:.1} H OF FULL BURN LEFT - REFUEL AT A MARKET", gauge(fuel), fuel * 100.0, hours), if fuel < 0.1 { RED } else { AMBER }));
+    }
     let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
     let now = app.v.time;
     if let Some(until) = app.v.aggressed_until {

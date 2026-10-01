@@ -35,4 +35,6 @@ pub enum Event {
     Traded { item: String, units: i64, credits: f64 },
     /// The avionics can't do what was asked.
     Refused { reason: String },
+    /// Fuel bought: tonnes, for credits.
+    Refuelled { tonnes: f64, credits: f64 },
 }

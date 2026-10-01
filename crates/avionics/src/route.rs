@@ -35,6 +35,9 @@ pub struct Route {
     pub dwell_until: Option<f64>,
     /// Just lifted off a surface: climbing before anything else.
     pub departing: bool,
+    /// How long it stays at each stop (game s); None: `DWELL`.
+    #[serde(default)]
+    pub stay: Option<f64>,
 }
 
 impl Route {
@@ -124,7 +127,7 @@ impl Avionics {
                 if bus.system() == stop.system && landed_at(&sys, stop.target, body, local_position) {
                     match self.route.dwell_until {
                         None => {
-                            self.route.dwell_until = Some(bus.time() + DWELL);
+                            self.route.dwell_until = Some(bus.time() + self.route.stay.unwrap_or(DWELL));
                             events.push(Event::RouteStop { number: self.route.next + 1, name: stop_name(&sys, stop) });
                         }
                         // Launching waits for the corridor.

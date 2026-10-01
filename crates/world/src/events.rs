@@ -23,6 +23,8 @@ pub enum ShipEvent {
     Anchored { body: String },
     /// The anchor couldn't hold: why.
     AnchorFailed { why: String },
+    /// The tank is dry: no thrust, no hyperdrive.
+    OutOfFuel,
     /// The anchor let go (any loose ore in the hopper drifts away).
     AnchorReleased,
     /// A tonne of `item` (an ore) dug out of rock `rock` among field `field`'s

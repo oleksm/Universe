@@ -17,6 +17,8 @@ pub(crate) enum Request {
     Quotes { system: usize, market: universe_world::Facility },
     Trade { market: universe_world::Facility, item: usize, units: i64 },
     Declare { market: universe_world::Facility, deal: universe_services::records::Deal },
+    /// Fill the tank at the market it's at.
+    Refuel { market: universe_world::Facility },
 }
 
 /// A ship's commands on their way to its devices: its pilot's postings,

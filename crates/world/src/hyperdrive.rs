@@ -39,6 +39,9 @@ pub fn switch(sys: &StarSystem, ship: &mut Ship, c: &HyperdriveCommand, t: f64, 
     }
     if ship.hyperdrive {
         drop_out(sys, ship, c.exit_velocity, t, positions, true, events);
+    } else if ship.fuel <= 0.0 {
+        events.push(ShipEvent::OutOfFuel);
+        return;
     } else if ship.hyper_jam > 0.0 {
         // Hits disrupt the drive: it won't engage for a while.
         events.push(ShipEvent::HyperdriveJammed { seconds: ship.hyper_jam });
@@ -94,6 +97,15 @@ pub fn cruise(
         let base = cmd.frame_velocity.unwrap_or_else(|| sys.velocity(sys.dominant(ship.position, positions), t));
         ship.position += base * (real_dt * warp);
         drop_out(sys, ship, cmd.exit_velocity, t, positions, true, events);
+        return;
+    }
+    // The drive draws fuel; dry, it drops out.
+    ship.fuel = (ship.fuel - crate::ship::HYPER_FUEL_FLOW * ship.throttle.max(0.02) * real_dt).max(0.0);
+    if ship.fuel <= 0.0 {
+        events.push(ShipEvent::OutOfFuel);
+        let base = sys.velocity(sys.dominant(ship.position, positions), t);
+        ship.position += base * (real_dt * warp);
+        drop_out(sys, ship, cmd.exit_velocity, t, positions, false, events);
         return;
     }
     let p = ship.position;
