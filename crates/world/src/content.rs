@@ -27,6 +27,7 @@ use crate::ship::ClassSpec;
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
+    ("brands.ron", include_str!("../../../content/base/brands.ron")),
     ("modules.ron", include_str!("../../../content/base/modules.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
@@ -163,6 +164,7 @@ impl<T: Entry> Registry<T> {
 /// The loaded content.
 pub struct Content {
     pub shapes: Registry<Shape>,
+    pub brands: Registry<crate::modules::Brand>,
     pub modules: Registry<crate::modules::Module>,
     pub hulls: Registry<ClassSpec>,
     pub goods: Registry<GoodsKind>,
@@ -244,7 +246,13 @@ impl Content {
             let key = d.key.clone();
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
+        let brands: Registry<crate::modules::Brand> = Registry::build(Self::defs(&packs, "brands.ron")?)?;
         let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
+        for (_, m) in modules.iter() {
+            if !m.brand.is_empty() && resolve(&brands, &aliases, &m.brand).is_none() {
+                return Err(format!("modules.ron '{}': no brand '{}'", m.key, m.brand));
+            }
+        }
         let module = |key: &str| resolve(&modules, &aliases, key).map(|h| (h, modules.get(h)));
         let hulls: Registry<ClassSpec> = Registry::build(
             Self::defs::<crate::ship::HullDef>(&packs, "hulls.ron")?
@@ -284,7 +292,7 @@ impl Content {
         let rules = Self::single::<crate::goods::MarketRulesDef>(&packs, "markets.ron")?;
         let markets = MarketRules { bans: rules.bans.iter().map(|(k, p)| Ok((kind(k, "markets.ron")?, *p))).collect::<Result<_, String>>()? };
         let fuel = kind("goods.fuel", "the tanks")?;
-        let c = Content { shapes, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let c = Content { shapes, brands, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -310,7 +318,7 @@ impl Content {
     /// What must hold across the content as a whole.
     fn check(&self) -> Result<(), String> {
         for (old, new) in &self.aliases {
-            let found = self.shapes.find(new).is_some() || self.modules.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
+            let found = self.shapes.find(new).is_some() || self.brands.find(new).is_some() || self.modules.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
             if !found {
                 return Err(format!("alias '{old}' -> '{new}': no such entry"));
             }
@@ -415,6 +423,7 @@ entry!(GoodsKind, "goods.ron", goods, |k| {
 entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
+entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {
         positive("a rate", *t)?;

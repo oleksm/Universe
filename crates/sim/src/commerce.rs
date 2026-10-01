@@ -200,10 +200,43 @@ impl crate::universe::Universe {
         }
         let mut refitted = ship.clone();
         refitted.refit(fit)?;
-        let cost = module.map_or(0.0, |m| c.get(m).price) - taken.map_or(0.0, |m| c.get(m).price * BUYBACK);
-        let (me, market) = (Party::Pilot(id), Party::Market(system, Facility::Station(station)));
+        // What this station's shipyard asks for it (if it carries it), and
+        // what building it takes from the place's stock.
+        use universe_services::outfitter;
+        let settled = outfitter::settled(&self.markets.economy.places);
+        let here = Facility::Station(station);
+        let price = match module {
+            Some(m) => {
+                let o = outfitter::offer(self.world.galaxy.seed, &self.world.gate_links, &settled, system, here, c.get(m));
+                if !o.carried {
+                    return Err("NOT CARRIED HERE".into());
+                }
+                o.price
+            }
+            None => 0.0,
+        };
+        if let Some(place) = self.markets.economy.place(system, here)
+            && let Some(m) = module
+        {
+            let (kind, tonnes) = outfitter::materials(c.get(m));
+            if place.stock_of(kind) < tonnes {
+                return Err(format!("OUT OF {} TO BUILD IT", kind.name()));
+            }
+        }
+        let cost = price - taken.map_or(0.0, |m| c.get(m).price * BUYBACK);
+        let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         let cause = universe_protocol::Cause::Rules;
         self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, cause)?;
+        if let Some(place) = self.markets.economy.place_mut(system, here) {
+            if let Some(m) = module {
+                let (kind, tonnes) = outfitter::materials(c.get(m));
+                place.take(kind, tonnes);
+            }
+            if let Some(m) = taken {
+                let (kind, tonnes) = outfitter::materials(c.get(m));
+                place.put(kind, tonnes * 0.5);
+            }
+        }
         match id {
             crate::combat::PLAYER => self.ship = refitted,
             _ => self.crafts[id - 1].ship = refitted,

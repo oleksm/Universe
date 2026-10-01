@@ -630,9 +630,18 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     assert!(u.refit("cargo", Some(m("rack.s2"))).is_err());
     u.ship = u.world.ship_on(home, Facility::Station(station), 0);
     let credits = u.credits();
-    // Smaller racks: lighter, a smaller hold, and the old racks sold back.
+    // Smaller racks: lighter, a smaller hold, and the old racks sold back;
+    // at this station's price (its maker's home is some gates off), built
+    // from the station's machinery.
+    use universe_sim::services::outfitter;
+    let here = Facility::Station(station);
+    let settled = outfitter::settled(&u.markets.economy.places);
+    let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, &settled, home, here, content().get(m("rack.s2")));
+    let machinery = |u: &Universe| u.markets.economy.place(home, here).unwrap().stock_of(universe_sim::world::goods::Category::of("goods.machinery").unwrap());
+    let before = machinery(&u);
     let cost = u.refit("cargo", Some(m("rack.s2"))).unwrap();
-    assert!((cost - (1600.0 - 0.6 * 3000.0)).abs() < 1e-6, "{cost}");
+    assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
+    assert!((machinery(&u) - (before - 0.8 + 0.75)).abs() < 1e-6, "0.8 t built, half the old 1.5 t back");
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
     assert_eq!(u.ship.spec().dry_mass, 60_000.0 - 1500.0 + 800.0);

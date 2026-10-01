@@ -8,6 +8,7 @@ pub mod economy;
 pub mod law;
 pub mod ledger;
 pub mod market;
+pub mod outfitter;
 pub mod records;
 
 pub use atc::{Board, PadGrant, Presence, TrafficControl};

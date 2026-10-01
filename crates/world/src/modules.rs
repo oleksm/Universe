@@ -118,6 +118,16 @@ impl Does {
 /// The slots every ship must have filled to fly: the base blocks.
 pub const BASE_BLOCKS: [SlotKind; 8] = [SlotKind::Power, SlotKind::Drive, SlotKind::Thrusters, SlotKind::Tank, SlotKind::Computer, SlotKind::Transponder, SlotKind::Sensors, SlotKind::LifeSupport];
 
+/// A maker of modules (content: `brands.ron`).
+#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Brand {
+    pub key: String,
+    pub name: String,
+    /// What it's known for.
+    pub note: String,
+}
+
 /// A module of the loaded content.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]

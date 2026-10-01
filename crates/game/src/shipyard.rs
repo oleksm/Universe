@@ -30,6 +30,18 @@ pub struct Shipyard {
     held: f32,
 }
 
+/// How this station stands to module `m`: carried, at what price, and
+/// whether there's stock to build it (None: not carried here).
+fn local(app: &App, m: &Module) -> (universe_sim::services::outfitter::Offer, bool) {
+    use universe_sim::services::outfitter;
+    let here = app.v.docked_market.unwrap_or(Facility::Station(0));
+    let settled = outfitter::settled(&app.v.economy);
+    let o = outfitter::offer(app.charts.seed, &app.charts.gate_links, &settled, app.v.ship_system, here, m);
+    let (kind, tonnes) = outfitter::materials(m);
+    let stocked = app.v.economy.iter().find(|p| p.system == app.v.ship_system && p.facility == here).is_none_or(|p| p.stock_of(kind) >= tonnes);
+    (o, stocked)
+}
+
 /// Docked at a station: its name.
 fn station(app: &App) -> Option<String> {
     match app.v.docked_market {
@@ -113,8 +125,12 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         y.choice = (y.choice + n - 1) % n;
     }
     if input.pressed(KeyCode::Enter) {
-        let module = offers(slot).get(y.choice).copied().flatten().map(|h| content().get(h).key.clone());
-        app.engine.send(Command::Refit { slot: slot.name.clone(), module });
+        let pick = offers(slot).get(y.choice).copied().flatten();
+        match pick.map(|h| (h, local(app, content().get(h)))) {
+            Some((_, (o, _))) if !o.carried => app.say("NOT CARRIED HERE".into()),
+            Some((_, (_, false))) => app.say("OUT OF STOCK TO BUILD IT".into()),
+            _ => app.engine.send(Command::Refit { slot: slot.name.clone(), module: pick.map(|h| content().get(h).key.clone()) }),
+        }
     }
     true
 }
@@ -152,7 +168,7 @@ fn numbers(s: &ClassSpec) -> Vec<(&'static str, String)> {
         ("THRUSTERS", format!("{:.1} M/S2", s.rcs_thrust / loaded)),
         ("LIFT", format!("{:.1} M/S2", s.lift_thrust / loaded)),
         ("TURNS", format!("{:.1} {:.1} {:.1} RAD/S2", s.turn_accel.x, s.turn_accel.y, s.turn_accel.z)),
-        ("AUTOPILOTS", if s.features.is_empty() { "NONE".into() } else { s.features.iter().map(|f| format!("{f:?}").to_uppercase()).collect::<Vec<_>>().join(" ") }),
+        ("AUTOPILOTS", if s.features.is_empty() { "NONE".into() } else { s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(4).collect::<String>()).collect::<Vec<_>>().join(" ") }),
     ]
 }
 
@@ -185,24 +201,41 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     for (k, o) in list.iter().enumerate() {
         let here = k == y.choice;
         let mark = if here { ">" } else if *o == now { "*" } else { " " };
-        let text = match o.map(|h| c.get(h)) {
-            Some(m) => format!("{mark}{:<20} {:>8} {:>8} {:>7} CR  {}", m.name, fmt::tonnes(m.mass), format!("{:.2} MW", m.power / 1e6), m.price as i64, what(m)),
-            None => format!("{mark}(EMPTY)"),
+        let (text, sold) = match o.map(|h| c.get(h)) {
+            Some(m) => {
+                let (offer, stocked) = local(app, m);
+                let price = if !offer.carried { "-".to_string() } else if !stocked { "NO STOCK".to_string() } else { format!("{} CR", offer.price as i64) };
+                (format!("{mark}{:<20} {:>7} {:>8} {:>10}", m.name, fmt::tonnes(m.mass), format!("{:.2} MW", m.power / 1e6), price), (offer.carried && stocked) || *o == now)
+            }
+            None => (format!("{mark}(EMPTY)"), true),
         };
-        frame.text(Vec2::new(x, top + (2 + k) as f32 * line), &text, if here { SELECT } else if *o == now { TEXT } else { DIM });
+        let col = if here { SELECT } else if *o == now { TEXT } else if sold { DIM } else { DIM.scale(0.6) };
+        frame.text(Vec2::new(x, top + (2 + k) as f32 * line), &text, col);
+    }
+    // The module picked: who makes it, what it does, whether it's sold here.
+    let pick = list.get(y.choice).copied().flatten();
+    if let Some(m) = pick.map(|h| c.get(h)) {
+        let (offer, stocked) = local(app, m);
+        let brand = content().handle::<universe_sim::world::modules::Brand>(&m.brand).map(|b| content().get(b));
+        let (maker, note) = brand.map_or(("UNBRANDED".to_string(), "MADE ANYWHERE".to_string()), |b| (b.name.clone(), b.note.clone()));
+        let state = if !offer.carried { "NOT CARRIED HERE".to_string() } else if !stocked { "OUT OF STOCK TO BUILD IT".to_string() } else if offer.hops > 0 { format!("{} GATES FROM ITS MAKER'S HOME (+{:.0}%)", offer.hops, offer.hops as f64 * universe_sim::services::outfitter::MARKUP_PER_HOP * 100.0) } else { "MADE HERE".into() };
+        let yy = top + (3 + list.len()) as f32 * line;
+        frame.text(Vec2::new(x, yy), &maker, TEXT);
+        frame.text(Vec2::new(x, yy + line), &note, DIM);
+        frame.text(Vec2::new(x, yy + 2.0 * line), &what(m), TEXT);
+        frame.text(Vec2::new(x, yy + 3.0 * line), &state, if offer.carried && stocked { DIM } else { RED });
     }
     // The ship as it is, and as it would be.
-    let pick = list.get(y.choice).copied().flatten();
     let preview = fitted(app.ship.class, &with(&fit, slot, pick));
-    let cost = pick.map_or(0.0, |h| c.get(h).price) - now.map_or(0.0, |h| c.get(h).price * universe_sim::BUYBACK);
-    let mut yy = top + (spec.slots.len().max(list.len() + 2) + 2) as f32 * line;
-    frame.text(Vec2::new(12.0, yy), &format!("{:<12} {:>22} {:>22}", "", "NOW", "WITH IT"), DIM);
+    let cost = pick.map_or(0.0, |h| local(app, c.get(h)).0.price) - now.map_or(0.0, |h| c.get(h).price * universe_sim::BUYBACK);
+    let mut yy = top + (spec.slots.len().max(list.len() + 6) + 2) as f32 * line;
+    frame.text(Vec2::new(12.0, yy), &format!("{:<12} {:>30} {:>30}", "", "NOW", "WITH IT"), DIM);
     yy += line;
     let after = preview.as_ref().ok().map(|s| numbers(s));
     for (i, (label, value)) in numbers(spec).into_iter().enumerate() {
         let next = after.as_ref().map(|a| a[i].1.clone()).unwrap_or_default();
         let col = if next.is_empty() || next == value { TEXT } else { BETTER };
-        frame.text(Vec2::new(12.0, yy), &format!("{label:<12} {value:>22} {next:>22}"), col);
+        frame.text(Vec2::new(12.0, yy), &format!("{label:<12} {value:>30} {next:>30}"), col);
         yy += line;
     }
     yy += line * 0.5;

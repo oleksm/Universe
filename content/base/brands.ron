@@ -1,0 +1,9 @@
+// Makers of modules. Each has a home (a settled system, picked from the
+// galaxy's seed) where all its range is sold; farther off, less of it is
+// carried and it costs more (shipping). See docs/content.md.
+[
+    (key: "brand.kestrel", name: "KESTREL DRIVEWORKS", note: "DRIVES AND THRUSTERS: LIGHT, STRONG, DEAR"),
+    (key: "brand.hadley", name: "HADLEY HEAVY INDUSTRIES", note: "PLANTS, TANKS AND RACKS: RUGGED AND CHEAP"),
+    (key: "brand.orbital", name: "ORBITAL SYSTEMS", note: "COMPUTERS, SENSORS, NAVIGATION"),
+    (key: "brand.cormorant", name: "CORMORANT MINING", note: "MINING GEAR"),
+]
