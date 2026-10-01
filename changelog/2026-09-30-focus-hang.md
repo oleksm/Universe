@@ -12,3 +12,14 @@ chance to be able to get back?"
 - **Fix.** The handover never waits (`render_thread`): a finished frame goes in a one-frame
   slot, replacing one not yet taken, and the render thread draws the newest. A frame carrying
   a screenshot is never replaced (screenshot runs wait for it instead).
+
+## Follow-up: 5000 FPS
+
+User: "5000 FPS is an interesting twist"
+
+The never-waiting handover let the main thread build frames as fast as it could (about 5,000 a
+second, counted as FPS), though only one per refresh was shown, and it burned a core. Now, while
+a frame is still waiting, the main thread waits for the render thread to take it, at most 50 ms
+(`render_thread::PATIENCE`). Normally it's paced by vsync again (about 166 FPS here). With the
+window hidden and the surface stalled, it carries on after 50 ms and keeps answering the
+compositor.

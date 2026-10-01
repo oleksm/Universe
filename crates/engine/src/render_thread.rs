@@ -3,11 +3,12 @@
 //! and presents them, so the main thread (window, input, the game's update
 //! and drawing) goes on to the next frame meanwhile.
 //!
-//! The main thread never waits on it: a finished frame goes in a one-frame
-//! slot, replacing one not yet taken, and the render thread draws whatever
-//! is newest. (While the window is hidden or unfocused the compositor may
-//! stop handing out surfaces for as long as it likes; the main thread must
-//! keep answering it meanwhile, or it's judged hung.)
+//! A finished frame goes in a one-frame slot. While one is still there, the
+//! main thread waits for the render thread to take it, so it builds frames
+//! at the pace they're shown, but only for so long (`PATIENCE`): while the
+//! window is hidden or unfocused the compositor may stop handing out
+//! surfaces for as long as it likes, and the main thread must keep answering
+//! it meanwhile, or it's judged hung. Then the newer frame replaces the old.
 
 use std::path::PathBuf;
 use std::sync::{Arc, Condvar, Mutex};
@@ -37,6 +38,9 @@ pub(crate) struct RenderState {
     pub wait_ms: f32,
 }
 
+/// The longest the main thread waits for the render thread to take a frame.
+const PATIENCE: std::time::Duration = std::time::Duration::from_millis(50);
+
 pub(crate) struct RenderThread {
     slot: Arc<(Mutex<Slot>, Condvar)>,
     state: Arc<Mutex<RenderState>>,
@@ -64,7 +68,10 @@ impl RenderThread {
                     if s.frame.is_none() && s.resize.is_none() {
                         return;
                     }
-                    (s.resize.take(), s.frame.take())
+                    let taken = (s.resize.take(), s.frame.take());
+                    // (The main thread may be waiting for the slot.)
+                    ready.notify_all();
+                    taken
                 };
                 if let Some((w, h)) = resize {
                     gpu.resize(w, h);
@@ -93,11 +100,17 @@ impl RenderThread {
     pub fn frame(&self, frame: Frame, capture: Option<PathBuf>) {
         let (m, ready) = &*self.slot;
         let mut s = lock(m);
-        // (A screenshot run: a frame to be saved is never replaced.)
-        while capture.is_some() && s.frame.as_ref().is_some_and(|(_, c)| c.is_some()) {
-            drop(s);
-            std::thread::sleep(std::time::Duration::from_millis(1));
-            s = lock(m);
+        // Paced by the render thread: wait for the last frame to be taken,
+        // within patience (a frame to be saved is never replaced, though).
+        let start = std::time::Instant::now();
+        while let Some((_, c)) = &s.frame {
+            let saving = c.is_some() && capture.is_some();
+            let left = PATIENCE.saturating_sub(start.elapsed());
+            if left.is_zero() && !saving {
+                break;
+            }
+            let wait = if saving { std::time::Duration::from_millis(5) } else { left };
+            s = ready.wait_timeout(s, wait).unwrap_or_else(|e| e.into_inner()).0;
         }
         let capture = capture.or_else(|| s.frame.take().and_then(|(_, c)| c));
         s.frame = Some((Box::new(frame), capture));
