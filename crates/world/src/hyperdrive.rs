@@ -26,8 +26,9 @@ pub const HYPER_RATE: f64 = 2.0;
 /// The interlock: the drive never takes a ship within this of a planet's,
 /// moon's or star's highest ground (m), and won't run there.
 pub const INTERLOCK: f64 = 1_000.0;
-/// Flying along the nose, the drive drops out at least this far above a planet or moon ahead (m).
-pub const PLANET_MARGIN: f64 = 1_000_000.0;
+/// Flying along the nose at a planet or moon, the drive drops out this far
+/// above its highest ground, or at the top of its air if that's higher (m).
+pub const GROUND_MARGIN: f64 = 20_000.0;
 
 /// Engage or disengage as commanded (only in flight). Both ways the engine
 /// is set back to zero: hyperdrive speed follows the throttle, so carrying
@@ -112,15 +113,21 @@ pub fn cruise(
     let carried = p + base * (real_dt * warp);
 
     // Obstacle dead ahead: drop out at a safe distance instead of crawling
-    // toward its surface. Stars get a wide margin, planets and moons a
-    // fixed one. Near misses fly on past, and so does heading for a
+    // toward its surface. Stars get a wide margin; planets and moons drop
+    // you at the top of their air (or just above their highest ground). Near misses fly on past, and so does heading for a
     // destination whose line of approach is clear. (Not when the heading is
     // being steered around obstacles already.)
     let to = center - p;
     let along = to.dot(dir);
     let miss = (to - dir * along).length();
     let is_star = body.is_none_or(|i| sys.bodies[i].kind == BodyKind::Star);
-    let margin = if is_star { 3.0 * radius } else { PLANET_MARGIN.max(0.1 * radius) };
+    let margin = match body.map(|i| &sys.bodies[i]) {
+        Some(b) if !is_star => {
+            let ground = b.max_radius() - b.rail.radius + GROUND_MARGIN;
+            b.rail.atmosphere.map_or(ground, |a| a.top.max(ground))
+        }
+        _ => 3.0 * radius,
+    };
     let approach_clear = cmd.destination.is_some_and(|d| {
         Some(d.body) == body && segment_distance(p, d.point + (d.point - center).normalize() * 1000.0, center) > radius
     });
@@ -176,6 +183,32 @@ mod tests {
         let positions = p.positions();
         let c = orders.commands(&p.ship, &positions);
         p.world.step_ship(&mut p.ship, &mut p.system, &c, 1.0 / 60.0, 1.0, &mut p.events);
+    }
+
+    #[test]
+    fn untargeted_the_drive_drops_out_at_the_top_of_the_air() {
+        let mut p = Probe::new(42);
+        let sys = p.sys();
+        let pos = p.positions();
+        // The nearest planet with air (or any planet), dead ahead.
+        let body = (1..sys.bodies.len()).filter(|&i| matches!(sys.bodies[i].kind, BodyKind::Rocky)).min_by_key(|&i| (sys.bodies[i].rail.atmosphere.is_none(), pos[i].distance(p.ship.position) as u64)).expect("a planet");
+        let b = &sys.bodies[body];
+        p.ship.orientation = glam::DQuat::from_rotation_arc(DVec3::NEG_Z, (pos[body] - p.ship.position).normalize());
+        p.toggle_hyperdrive();
+        p.set_throttle(1.0);
+        for _ in 0..(60 * 60) {
+            p.step(1.0 / 60.0, 1.0);
+            if !p.ship.hyperdrive {
+                break;
+            }
+        }
+        assert!(!p.ship.hyperdrive && p.ship.is_flying(), "{:?}", p.events);
+        let pos = p.positions();
+        let alt = p.ship.position.distance(pos[body]) - b.rail.radius;
+        let ground = b.max_radius() - b.rail.radius + GROUND_MARGIN;
+        let expect = b.rail.atmosphere.map_or(ground, |a| a.top.max(ground));
+        eprintln!("dropped out at {:.0} km (air top {:?} km)", alt / 1000.0, b.rail.atmosphere.map(|a| a.top / 1000.0));
+        assert!(alt > 0.8 * expect && alt < 1.2 * expect, "altitude {alt:.0}, expected about {expect:.0}");
     }
 
     #[test]
