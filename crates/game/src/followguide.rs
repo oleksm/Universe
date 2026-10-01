@@ -116,10 +116,16 @@ pub fn plan(app: &App) -> Option<universe_sim::Plan> {
     use universe_sim::avionics::plan::{Action, PlanPoint};
     let s = standing(app)?;
     let ship = app.view.ship_pos;
-    let mut path = vec![ship];
-    let n = 24;
-    for k in 1..=n {
-        path.push(ship.lerp(s.goal, k as f64 / n as f64));
+    // The way in, while there's a way to go: on station, the program holds
+    // within a metre or so either side of its goal, and a join that short
+    // would turn the frames about every frame.
+    let joining = s.to_go > (0.02 * s.follow.manoeuvre.range()).max(50.0);
+    let mut path = vec![if joining { ship } else { s.goal }];
+    if joining {
+        let n = 24;
+        for k in 1..=n {
+            path.push(ship.lerp(s.goal, k as f64 / n as f64));
+        }
     }
     if let Manoeuvre::Orbit(r) = s.follow.manoeuvre {
         // A third of the way round, the way it goes.
@@ -145,7 +151,7 @@ pub fn plan(app: &App) -> Option<universe_sim::Plan> {
         let facing = DQuat::from_rotation_arc(DVec3::NEG_Z, dir);
         points.push(PlanPoint { time: along / speed, position: p, orientation: facing, aim: facing, action: Action::Thrusters, phase: universe_sim::Phase::Approach });
     }
-    Some(universe_sim::Plan { start: app.now(), center: s.at, spin, points, arrives: true, holds: false })
+    (points.len() >= 2).then(|| universe_sim::Plan { start: app.now(), center: s.at, spin, points, arrives: true, holds: false })
 }
 
 fn steps(m: Manoeuvre) -> &'static [&'static str] {
@@ -187,7 +193,7 @@ pub fn banner(frame: &mut Frame, app: &App) {
 pub fn lines(app: &App, lines: &mut Vec<(String, Color)>) {
     let Some(s) = standing(app) else { return };
     let label = s.follow.manoeuvre.label();
-    lines.push((format!("{label} {} - {} TO GO, CLOSING {}  {} TO LET GO", s.name, fmt::distance(s.to_go), fmt::speed(s.closing), crate::keys::key(crate::keys::Act::LetGo)), AMBER));
+    lines.push((format!("{label} {} - {} TO GO, CLOSING {}  {} TO CANCEL", s.name, fmt::distance(s.to_go), fmt::speed(s.closing), crate::keys::key(crate::keys::Act::Cancel)), AMBER));
     if let Some((gap, drift, _, _)) = s.rock {
         let ready = gap < ANCHOR_REACH && drift < ANCHOR_SPEED;
         let c = if ready { OK } else { AMBER };

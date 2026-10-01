@@ -125,7 +125,7 @@ pub fn input(app: &mut App, ctx: &Context) {
             app.engine.send(Command::Ship(universe_sim::ShipCommands { arm: Some(false), ..app.v.ship.holding() }));
         }
         app.say(if app.mining.on {
-            format!("MINING MODE - {} PROSPECT, {} LOCK, {} ZERO IN, {} ANCHOR, {} EXCAVATE", key(Act::Prospect), key(Act::Lock), key(Act::ZeroIn), key(Act::Anchor), key(Act::Excavate))
+            format!("MINING MODE - {} PROSPECT, {} LOCK, {} ZERO IN, {} ANCHOR, {} DIG", key(Act::Prospect), key(Act::Lock), key(Act::ZeroIn), key(Act::Anchor), key(Act::Excavate))
         } else {
             "NAVIGATION MODE".into()
         });

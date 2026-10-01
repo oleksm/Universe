@@ -36,3 +36,13 @@ docking do:
   centres. Now one guide shows: the follow program's while it flies the ship, else the
   clearance's, which is rebuilt as soon as it takes the guide back.
 - Dev scenario `approachkeep` (cleared to dock and keeping station).
+
+## Orbit guide on station; Cancel on X
+
+- On station, the follow program holds within a metre or so either side of its goal. The
+  plan no longer includes a join that short (one that would turn the first frames about every
+  frame): the path starts on the orbit, and a keep-at-range hold has no path, only its shell.
+- The follow program's "LET GO" is now **CANCEL**, on **X**: a key can be pinned
+  (`keys::PINNED`), given out before the first-letter assignment. EXCAVATE, which had X, is
+  now **DIG** (G).
+- Dev scenarios `gateorbit`, `gateorbit60`, `gateorbitwatch` (orbiting a gate, from above).

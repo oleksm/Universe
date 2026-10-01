@@ -536,7 +536,7 @@ impl App {
         if mode == ShipMode::Mining && pressed(input, Act::Excavate) {
             self.engine.send(Command::Ship(ShipCommands { excavate: Some(!self.v.ship.excavator), ..self.v.ship.holding() }));
         }
-        if pressed(input, Act::LetGo) && self.v.avionics.following.is_some() {
+        if pressed(input, Act::Cancel) && self.v.avionics.following.is_some() {
             self.engine.send(Command::StopFollowing);
         }
         // The autopilot has the stick.
@@ -625,8 +625,8 @@ impl App {
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),
                 Event::Refused { reason } => reason,
-                Event::Following { what: Some((how, range)) } if how == "CLOSE ON" => format!("CLOSING ON THE ROCK, {range:.0} M OFF ITS SURFACE\n{} TO ANCHOR WHEN IN REACH, {} TO LET GO", crate::keys::key(crate::keys::Act::Anchor), crate::keys::key(crate::keys::Act::LetGo)),
-                Event::Following { what: Some((how, range)) } => format!("{how} {:.0} KM - {}/{} AGAIN: NEXT RANGE, {}: LET GO", range / 1000.0, crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Orbit), crate::keys::key(crate::keys::Act::LetGo)),
+                Event::Following { what: Some((how, range)) } if how == "CLOSE ON" => format!("CLOSING ON THE ROCK, {range:.0} M OFF ITS SURFACE\n{} TO ANCHOR WHEN IN REACH, {} TO CANCEL", crate::keys::key(crate::keys::Act::Anchor), crate::keys::key(crate::keys::Act::Cancel)),
+                Event::Following { what: Some((how, range)) } => format!("{how} {:.0} KM - {}/{} AGAIN: NEXT RANGE, {} TO CANCEL", range / 1000.0, crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Orbit), crate::keys::key(crate::keys::Act::Cancel)),
                 Event::Following { what: None } => "FOLLOW OFF".into(),
                 Event::Traffic(TrafficEvent::ClearanceCancelled) => "CLEARANCE CANCELLED".into(),
                 Event::Traffic(TrafficEvent::PadAssigned { pad }) => format!("LAND ON PAD {}", pad + 1),
@@ -666,7 +666,7 @@ impl App {
                 Event::Crew(CrewEvent::SteppedOutside { body }) => format!("STEPPED OUT ONTO {body}"),
                 Event::Crew(CrewEvent::CameAboard) => "BACK ABOARD".into(),
                 Event::Crew(CrewEvent::HatchRefused { reason }) => format!("HATCH LOCKED - {reason}"),
-                Event::Ship(ShipEvent::Anchored { body }) => format!("ANCHORED TO {body}\n{} TO EXCAVATE, {} TO UNANCHOR", crate::keys::key(crate::keys::Act::Excavate), crate::keys::key(crate::keys::Act::Anchor)),
+                Event::Ship(ShipEvent::Anchored { body }) => format!("ANCHORED TO {body}\n{} TO DIG, {} TO UNANCHOR", crate::keys::key(crate::keys::Act::Excavate), crate::keys::key(crate::keys::Act::Anchor)),
                 Event::Ship(ShipEvent::AnchorFailed { why }) => format!("ANCHOR - {why}"),
                 Event::Ship(ShipEvent::AnchorReleased) => "ANCHOR RELEASED".into(),
                 Event::Ship(ShipEvent::ExcavatorStopped { why }) => format!("EXCAVATOR STOPPED - {why}"),

@@ -6,7 +6,8 @@
 //! one of the keys the scope keeps for flying or walking); failing that,
 //! the next letter along its name. The letter is lit where it stands in
 //! the name. A few keys are fixed (F1 help, TAB watch, SPACE gun, the
-//! F-keys for the system's switches, the flight and walking keys).
+//! F-keys for the system's switches, the flight and walking keys), and a
+//! few actions are pinned to a key of their own (`PINNED`: X cancels).
 
 use std::sync::OnceLock;
 
@@ -87,7 +88,7 @@ pub enum Act {
     Autopilot,
     Keep,
     Orbit,
-    LetGo,
+    Cancel,
     Clearance,
     Proximity,
     Laser,
@@ -124,14 +125,14 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Autopilot, Scope::Flight, "AUTOPILOT"),
     (Act::Keep, Scope::Flight, "KEEP"),
     (Act::Orbit, Scope::Flight, "ORBIT"),
-    (Act::LetGo, Scope::Flight, "LET GO"),
+    (Act::Cancel, Scope::Flight, "CANCEL"),
     (Act::Clearance, Scope::Nav, "CLEARANCE"),
     (Act::Proximity, Scope::Nav, "PROXIMITY"),
     (Act::Laser, Scope::Combat, "PULSE LASER"),
     (Act::Prospect, Scope::Mining, "PROSPECT"),
     (Act::ZeroIn, Scope::Mining, "ZERO IN"),
     (Act::Anchor, Scope::Mining, "ANCHOR"),
-    (Act::Excavate, Scope::Mining, "EXCAVATE"),
+    (Act::Excavate, Scope::Mining, "DIG"),
     (Act::Target, Scope::Map, "TARGET"),
     (Act::Untarget, Scope::Map, "CLEAR TARGET"),
     (Act::AddStop, Scope::Map, "ADD STOP"),
@@ -144,6 +145,9 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Home, Scope::Observer, "HOME SHIP"),
     (Act::TrackSettler, Scope::Observer, "TRACK SETTLER"),
 ];
+
+/// Actions whose key is set, not taken from the name (given out first).
+const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X')];
 
 /// An action's binding: its letter, and where it stands in the name (None:
 /// not in it — given the first free letter instead).
@@ -160,7 +164,11 @@ pub struct Binding {
 
 fn assign() -> Vec<Binding> {
     let mut out: Vec<Binding> = Vec::new();
-    for &(act, scope, name) in TABLE {
+    for &(act, letter) in PINNED {
+        let &(_, scope, name) = TABLE.iter().find(|t| t.0 == act).expect("pinned actions are in the table");
+        out.push(Binding { act, scope, name, letter, at: name.find(letter) });
+    }
+    for &(act, scope, name) in TABLE.iter().filter(|t| !PINNED.iter().any(|p| p.0 == t.0)) {
         // Taken: the letters kept for moving in it or anything nested in it,
         // and those given to its own scope, the enclosing ones, the nested ones.
         let within = scope.within();
@@ -269,7 +277,7 @@ mod tests {
                 }
             }
         }
-        let off: Vec<_> = b.iter().filter(|x| x.at.is_none()).map(|x| x.name).collect();
+        let off: Vec<_> = b.iter().filter(|x| x.at.is_none() && !PINNED.iter().any(|p| p.0 == x.act)).map(|x| x.name).collect();
         assert!(off.is_empty(), "letters from outside the name: {off:?}");
         for (d, l) in tree() {
             eprintln!("{}{l}", "  ".repeat(d));

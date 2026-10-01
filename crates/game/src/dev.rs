@@ -308,7 +308,7 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
-        "gate" | "gateauto" | "transit" | "gatearrive" => {
+        "gate" | "gateauto" | "transit" | "gatearrive" | "gateorbit" | "gateorbit60" | "gateorbitwatch" => {
             // A gate out of the home system: cleared for transit, 8 km out, off to one side.
             app.mode = Mode::Pilot;
             let (dest, _) = app.engine.universe().gate_links_of(home)[0].clone();
@@ -319,6 +319,21 @@ pub fn apply(app: &mut App, name: &str) {
             let look = (f.center - app.engine.universe().ship.position).normalize();
             app.engine.universe().ship.orientation = universe_sim::ship::facing(look, f.rotation * DVec3::Z);
             app.engine.universe().set_nav_target(Some(NavTarget::Gate(g)));
+            if name.starts_with("gateorbit") {
+                // Arrived at the gate, and orbiting it (no clearance).
+                let u = app.engine.universe();
+                u.follow(universe_sim::FollowKind::Orbit);
+                for _ in 0..60 * if name == "gateorbit" { 15 } else { 60 } {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+                if name == "gateorbitwatch" {
+                    app.mode = Mode::Observer;
+                    app.observer.focus = Focus::Ship;
+                    app.observer.distance = 30_000.0;
+                    app.observer.pitch = 1.4;
+                }
+                return;
+            }
             app.engine.universe().request_clearance();
             if name != "gate" {
                 app.engine.universe().toggle_autopilot();

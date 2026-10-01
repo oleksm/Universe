@@ -347,7 +347,7 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
     if anchored {
         let left = (s.mass - app.v.dug - app.ship.hopper).max(0.0);
         let hopper: String = (0..10).map(|i| if (i as f64) < app.ship.hopper / 100.0 - 0.01 { '#' } else { '.' }).collect();
-        let state = if app.ship.excavator { "DIGGING".to_string() } else { format!("{} TO EXCAVATE", crate::keys::key(crate::keys::Act::Excavate)) };
+        let state = if app.ship.excavator { "DIGGING".to_string() } else { format!("{} TO DIG", crate::keys::key(crate::keys::Act::Excavate)) };
         lines.push((format!("{state}  HOPPER [{hopper}]  HOLD {:.1}/{:.0} T  ROCK LEFT {}", app.ship.cargo / 1000.0, universe_sim::world::ship::HOLD_CAPACITY / 1000.0, fmt::tonnes(left)), if app.ship.excavator { AMBER } else { HUD }));
         if app.ship.excavator {
             // The flow, and when the next tonne goes into the hold.
@@ -1343,10 +1343,10 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Lock, "LOCK", lock),
                 b(Act::ZeroIn, "ZERO IN", approach),
                 if anchored { b(Act::Anchor, "UNANCHOR", Lamp::On) } else { b(Act::Anchor, "ANCHOR", anchor_lamp) },
-                b(Act::Excavate, if ship.excavator { "EXCAVATE OFF" } else { "EXCAVATE" }, dig),
+                b(Act::Excavate, if ship.excavator { "DIG OFF" } else { "DIG" }, dig),
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
-                b(Act::LetGo, "LET GO", let_go),
+                b(Act::Cancel, "CANCEL", let_go),
                 b(Act::Hyperdrive, "HYPERDRIVE", hyper),
             ],
         ),
@@ -1358,7 +1358,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Lock, "LOCK", lock),
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
-                b(Act::LetGo, "LET GO", let_go),
+                b(Act::Cancel, "CANCEL", let_go),
                 b(Act::Hyperdrive, "HYPERDRIVE", hyper),
             ],
         ),
@@ -1383,7 +1383,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Lock, "LOCK", lock),
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
-                b(Act::LetGo, "LET GO", let_go),
+                b(Act::Cancel, "CANCEL", let_go),
                 b(Act::Proximity, "PROXIMITY", collide),
             ],
         ),
