@@ -1,12 +1,16 @@
 //! The render thread: it owns the GPU (device, surface, renderer), takes
 //! finished frames — the draw lists the game built — and uploads, submits
 //! and presents them, so the main thread (window, input, the game's update
-//! and drawing) goes on to the next frame meanwhile. One frame can wait in
-//! between; a second blocks the sender until the first is taken.
+//! and drawing) goes on to the next frame meanwhile.
+//!
+//! The main thread never waits on it: a finished frame goes in a one-frame
+//! slot, replacing one not yet taken, and the render thread draws whatever
+//! is newest. (While the window is hidden or unfocused the compositor may
+//! stop handing out surfaces for as long as it likes; the main thread must
+//! keep answering it meanwhile, or it's judged hung.)
 
 use std::path::PathBuf;
-use std::sync::mpsc::{sync_channel, SyncSender};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Condvar, Mutex};
 
 use glam::UVec2;
 
@@ -14,10 +18,13 @@ use crate::frame::Frame;
 use crate::gpu::Gpu;
 use crate::renderer::Renderer;
 
-enum ToRender {
-    /// A frame to show (and save as a screenshot, if a path is given).
-    Frame(Box<Frame>, Option<PathBuf>),
-    Resize(u32, u32),
+/// What's waiting for the render thread: the newest frame (and a screenshot
+/// to save from it), a resize, and whether to stop once it's done.
+#[derive(Default)]
+struct Slot {
+    frame: Option<(Box<Frame>, Option<PathBuf>)>,
+    resize: Option<(u32, u32)>,
+    stop: bool,
 }
 
 /// What the render thread tells the main thread: the framebuffer sizes
@@ -31,67 +38,89 @@ pub(crate) struct RenderState {
 }
 
 pub(crate) struct RenderThread {
-    tx: Option<SyncSender<ToRender>>,
+    slot: Arc<(Mutex<Slot>, Condvar)>,
     state: Arc<Mutex<RenderState>>,
     thread: Option<std::thread::JoinHandle<()>>,
+}
+
+fn lock<T>(m: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
+    m.lock().unwrap_or_else(|e| e.into_inner())
 }
 
 impl RenderThread {
     pub fn start(mut gpu: Gpu, mut renderer: Renderer) -> Self {
         let state = Arc::new(Mutex::new(RenderState { low_res: renderer.low_res(), hud_size: renderer.hud_size(), ..Default::default() }));
-        let (tx, rx) = sync_channel::<ToRender>(1);
-        let shared = state.clone();
+        let slot: Arc<(Mutex<Slot>, Condvar)> = Default::default();
+        let (shared, waiting) = (state.clone(), slot.clone());
         let thread = std::thread::Builder::new()
             .name("render".into())
-            .spawn(move || {
-                while let Ok(m) = rx.recv() {
-                    match m {
-                        ToRender::Frame(frame, capture) => {
-                            let start = std::time::Instant::now();
-                            {
-                                let _p = universe_prof::scope("render");
-                                renderer.render(&mut gpu, &frame, capture.as_deref());
-                            }
-                            universe_prof::add("render/wait for the surface (vsync)", renderer.wait.as_secs_f64());
-                            let mut s = shared.lock().unwrap_or_else(|e| e.into_inner());
-                            s.wait_ms = renderer.wait.as_secs_f32() * 1000.0;
-                            s.render_ms = start.elapsed().as_secs_f32() * 1000.0 - s.wait_ms;
-                        }
-                        ToRender::Resize(w, h) => {
-                            gpu.resize(w, h);
-                            renderer.resize(&gpu);
-                            let mut s = shared.lock().unwrap_or_else(|e| e.into_inner());
-                            (s.low_res, s.hud_size) = (renderer.low_res(), renderer.hud_size());
-                        }
+            .spawn(move || loop {
+                let (resize, frame) = {
+                    let (m, ready) = &*waiting;
+                    let mut s = lock(m);
+                    while s.frame.is_none() && s.resize.is_none() && !s.stop {
+                        s = ready.wait(s).unwrap_or_else(|e| e.into_inner());
                     }
+                    if s.frame.is_none() && s.resize.is_none() {
+                        return;
+                    }
+                    (s.resize.take(), s.frame.take())
+                };
+                if let Some((w, h)) = resize {
+                    gpu.resize(w, h);
+                    renderer.resize(&gpu);
+                    let mut s = lock(&shared);
+                    (s.low_res, s.hud_size) = (renderer.low_res(), renderer.hud_size());
+                }
+                if let Some((frame, capture)) = frame {
+                    let start = std::time::Instant::now();
+                    {
+                        let _p = universe_prof::scope("render");
+                        renderer.render(&mut gpu, &frame, capture.as_deref());
+                    }
+                    universe_prof::add("render/wait for the surface (vsync)", renderer.wait.as_secs_f64());
+                    let mut s = lock(&shared);
+                    s.wait_ms = renderer.wait.as_secs_f32() * 1000.0;
+                    s.render_ms = start.elapsed().as_secs_f32() * 1000.0 - s.wait_ms;
                 }
             })
             .expect("render thread");
-        RenderThread { tx: Some(tx), state, thread: Some(thread) }
+        RenderThread { slot, state, thread: Some(thread) }
     }
 
-    /// Hand over a finished frame (waits while one is still queued).
+    /// Hand over a finished frame, replacing one not yet taken (its
+    /// screenshot, if it had one, goes with the new frame). Never waits.
     pub fn frame(&self, frame: Frame, capture: Option<PathBuf>) {
-        if let Some(tx) = &self.tx {
-            let _ = tx.send(ToRender::Frame(Box::new(frame), capture));
+        let (m, ready) = &*self.slot;
+        let mut s = lock(m);
+        // (A screenshot run: a frame to be saved is never replaced.)
+        while capture.is_some() && s.frame.as_ref().is_some_and(|(_, c)| c.is_some()) {
+            drop(s);
+            std::thread::sleep(std::time::Duration::from_millis(1));
+            s = lock(m);
         }
+        let capture = capture.or_else(|| s.frame.take().and_then(|(_, c)| c));
+        s.frame = Some((Box::new(frame), capture));
+        ready.notify_one();
     }
 
     pub fn resize(&self, width: u32, height: u32) {
-        if let Some(tx) = &self.tx {
-            let _ = tx.send(ToRender::Resize(width, height));
-        }
+        let (m, ready) = &*self.slot;
+        lock(m).resize = Some((width, height));
+        ready.notify_one();
     }
 
     pub fn state(&self) -> RenderState {
-        *self.state.lock().unwrap_or_else(|e| e.into_inner())
+        *lock(&self.state)
     }
 }
 
 impl Drop for RenderThread {
-    /// Finish what's queued (a screenshot, say), then stop.
+    /// Finish what's waiting (a screenshot, say), then stop.
     fn drop(&mut self) {
-        self.tx = None;
+        let (m, ready) = &*self.slot;
+        lock(m).stop = true;
+        ready.notify_one();
         if let Some(t) = self.thread.take() {
             let _ = t.join();
         }
