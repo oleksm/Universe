@@ -1389,12 +1389,14 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("TAB".into(), "WATCH".into(), Lamp::Off),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
     ];
+    // Six to a row, more rows as it grows.
+    const PER_ROW: usize = 6;
     let cell = Vec2::new(76.0, 14.0);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
-        let pos = at + Vec2::new(i as f32 * (cell.x + 2.0), 0.0);
+        let pos = at + Vec2::new((i % PER_ROW) as f32 * (cell.x + 2.0), (i / PER_ROW) as f32 * (cell.y + 2.0));
         draw_cell(frame, pos, cell, key, label, *lamp);
     }
-    cell.y + 2.0
+    cells.len().div_ceil(PER_ROW) as f32 * (cell.y + 2.0)
 }
 
 pub(crate) fn draw_cell(frame: &mut Frame, pos: Vec2, cell: Vec2, key: &str, label: &str, lamp: Lamp) {
