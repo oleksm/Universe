@@ -14,12 +14,12 @@ Ships now fly on their thrusters as placed.
 
   Nozzles do what their places allow: the main engines throttle apart to yaw, the belly lift
   pitches, couples turn without pushing. A hull without side thrusters couldn't strafe.
-- **Turning envelope** per hull, derived at load: the Cobra turns at about 2.0 rad/s² in pitch,
+- **Turning envelope** per hull, derived at load: the Drover turns at about 2.0 rad/s² in pitch,
   1.3 in yaw and 2.0 in roll (a lighter ship faster). A 180° flip takes about 3.9 s (it was
   3.1 s with the old fixed-rate turning) and settles cleanly, with the main engine on or off.
 - **Autopilot attitude control** (`docking::attitude`) asks, on each axis, for no faster a turn
   than it can still stop from in the angle left (√(2αθ), with a margin).
-- **The Cobra's layout:** the thruster quads and belly lift are placed about its centre of mass
+- **The Drover's layout:** the thruster quads and belly lift are placed about its centre of mass
   (4 m aft: its wings are at the back). The first layout had the lift 16 m ahead of it and 8 m
   behind, which cost a quarter of the usable lift (the nose lifts had to throttle back to keep
   the ship from pitching) and crashed the landing autopilot. Every translation direction now

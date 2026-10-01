@@ -1041,7 +1041,7 @@ fn labels(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     let mut labels = Labels { placed: Vec::new() };
     if app.mode == Mode::Observer && ship_visible(app) {
-        labels.add(frame, app.view.ship_pos, "COBRA", SHIP_COLOR.scale(0.8));
+        labels.add(frame, app.view.ship_pos, &app.ship.spec().name, SHIP_COLOR.scale(0.8));
     }
     if let crate::observer::Focus::Body { body, system } = app.observer.focus
         && system == app.view.origin

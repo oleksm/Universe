@@ -223,32 +223,32 @@ mod tests {
     use crate::content::content;
 
     #[test]
-    fn the_cobra_is_a_solid_with_its_nozzles_and_cockpit() {
-        let cobra = crate::ship::cobra().shape();
-        let (lo, hi) = cobra.mesh.extent();
-        assert!((hi.x - lo.x - 52.0).abs() < 1e-9, "52 m across the wings: {}", hi.x - lo.x);
-        assert!(cobra.solid.volume > 1_000.0 && cobra.solid.volume < 20_000.0, "{} m³", cobra.solid.volume);
-        let mains: Vec<_> = cobra.nodes(Role::Nozzle).filter(|n| n.name.starts_with("nozzle_main")).collect();
+    fn the_starter_is_a_solid_with_its_nozzles_and_cockpit() {
+        let hull = crate::ship::starter().shape();
+        let (lo, hi) = hull.mesh.extent();
+        assert!((hi.x - lo.x - 20.0).abs() < 1e-3 && (hi.z - lo.z - 40.0).abs() < 1e-3, "20 m wide, 40 m long: {lo} {hi}");
+        assert!(hull.solid.volume > 1_000.0 && hull.solid.volume < 20_000.0, "{} m³", hull.solid.volume);
+        let mains: Vec<_> = hull.nodes(Role::Nozzle).filter(|n| n.name.starts_with("nozzle_main")).collect();
         assert_eq!(mains.len(), 2);
-        assert!(mains.iter().all(|n| n.dir == DVec3::Z && (n.at.z - hi.z).abs() < 1e-9), "the main drive on the rear plate, firing aft");
-        assert!(cobra.solid.centroid.length() < 1e-9 && cobra.mesh.mass_properties().centroid.length() < 1e-6, "centred on its centre of mass");
-        assert_eq!(cobra.nodes(Role::Nozzle).count(), 18, "and the thruster quads and belly lift");
-        assert!(cobra.node("cockpit").is_some());
-        // (Its collision is still the hull's 12 m sphere: the shape takes over in T1.)
-        assert!(crate::ship::cobra().radius < cobra.mesh.bound());
+        assert!(mains.iter().all(|n| n.dir == DVec3::Z && (n.at.z - hi.z).abs() < 1e-3), "the main drive on the rear plate, firing aft");
+        assert!(hull.solid.centroid.length() < 1e-9 && hull.mesh.mass_properties().centroid.length() < 1e-6, "centred on its centre of mass");
+        assert!(hull.mesh.points.iter().all(|p| p.length() < 30.0), "its points given about its centre of mass already");
+        assert_eq!(hull.nodes(Role::Nozzle).count(), 18, "and the thruster quads and belly lift");
+        assert!(hull.node("cockpit").is_some());
+        assert!(crate::ship::starter().radius < hull.mesh.bound());
     }
 
     #[test]
-    fn the_cobras_contact_spheres_cover_its_hull() {
-        let cobra = crate::ship::cobra().shape();
-        let s = &cobra.spheres;
+    fn the_starters_contact_spheres_cover_its_hull() {
+        let hull = crate::ship::starter().shape();
+        let s = &hull.spheres;
         // Its surface, sampled: corners, edge middles, and points across each face.
-        let mut samples: Vec<DVec3> = cobra.mesh.points.clone();
-        for e in &cobra.mesh.edges {
-            samples.push((cobra.mesh.points[e[0] as usize] + cobra.mesh.points[e[1] as usize]) * 0.5);
+        let mut samples: Vec<DVec3> = hull.mesh.points.clone();
+        for e in &hull.mesh.edges {
+            samples.push((hull.mesh.points[e[0] as usize] + hull.mesh.points[e[1] as usize]) * 0.5);
         }
-        for f in &cobra.mesh.faces {
-            let (a, b, c) = (cobra.mesh.points[f[0] as usize], cobra.mesh.points[f[1] as usize], cobra.mesh.points[f[2] as usize]);
+        for f in &hull.mesh.faces {
+            let (a, b, c) = (hull.mesh.points[f[0] as usize], hull.mesh.points[f[1] as usize], hull.mesh.points[f[2] as usize]);
             for (u, v) in [(1.0 / 3.0, 1.0 / 3.0), (0.6, 0.2), (0.2, 0.6), (0.2, 0.2)] {
                 samples.push(a + (b - a) * u + (c - a) * v);
             }

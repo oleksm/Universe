@@ -117,6 +117,34 @@ impl From<SaveRecord> for UniverseSave {
     }
 }
 
+/// A save's ship whose hull (or a fitted module) is gone from the content
+/// loads as the starting hull, stock fit: what's gone is lost, the rest kept.
+pub fn forget_missing(save: &mut serde_json::Value) {
+    let c = universe_world::content::content();
+    let Some(ship) = save.get_mut("ship").and_then(|s| s.as_object_mut()) else { return };
+    let hull_gone = ship.get("class").and_then(|k| k.as_str()).is_some_and(|k| c.handle::<universe_world::ship::ClassSpec>(k).is_none());
+    let fit_gone = ship.get("fit").is_some_and(|f| {
+        let mut keys = Vec::new();
+        strings(f, &mut keys);
+        keys.iter().any(|k| k.contains('.') && c.handle::<universe_world::modules::Module>(k).is_none() && !k.starts_with("slot"))
+    });
+    if hull_gone {
+        ship.remove("class");
+    }
+    if hull_gone || fit_gone {
+        ship.remove("fit");
+    }
+}
+
+fn strings(v: &serde_json::Value, out: &mut Vec<String>) {
+    match v {
+        serde_json::Value::String(s) => out.push(s.clone()),
+        serde_json::Value::Array(a) => a.iter().for_each(|x| strings(x, out)),
+        serde_json::Value::Object(o) => o.values().for_each(|x| strings(x, out)),
+        _ => {}
+    }
+}
+
 impl Universe {
     pub fn save(&self) -> UniverseSave {
         self.save_with(self.avionics().clone())
@@ -200,7 +228,7 @@ mod tests {
         let save = u.save();
         assert_eq!((save.version, save.content), (SAVE_VERSION, universe_world::content::content().hash()));
         let json = serde_json::to_string(&save).unwrap();
-        assert!(json.contains("\"ore.stony\"") && json.contains("\"hull.cobra\""), "content by key: {json}");
+        assert!(json.contains("\"ore.stony\"") && json.contains("\"hull.drover\""), "content by key: {json}");
         let mut restored = Universe::new(7);
         restored.load(serde_json::from_str(&json).unwrap());
         assert_eq!(restored.world.time, u.world.time);
@@ -228,6 +256,17 @@ mod tests {
         restored.load(save);
         assert_eq!(restored.hold(), vec![(ore, 2)]);
         assert_eq!(restored.ship.class, universe_world::ship::starting_hull());
+    }
+
+    #[test]
+    fn a_hull_gone_from_the_content_loads_as_the_starting_hull() {
+        let u = Universe::new(42);
+        let mut json = serde_json::to_value(u.save()).unwrap();
+        json["ship"]["class"] = "hull.long_gone".into();
+        assert!(serde_json::from_value::<UniverseSave>(json.clone()).is_err());
+        forget_missing(&mut json);
+        let save: UniverseSave = serde_json::from_value(json).unwrap();
+        assert_eq!(save.ship.class, universe_world::ship::starting_hull());
     }
 
 }

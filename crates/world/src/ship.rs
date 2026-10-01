@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
 
 /// The hull a new ship is built as, unless it's told otherwise.
-pub const STARTING_HULL: &str = "hull.cobra";
+pub const STARTING_HULL: &str = "hull.drover";
 
 /// What a hull is built with (content: `content/*/hulls.ron`). Everything
 /// about how a ship flies follows from these and the physics: its
@@ -347,13 +347,13 @@ pub fn starting_hull() -> Hull {
     crate::content::content().handle(STARTING_HULL).expect("the content has the starting hull (checked at load)")
 }
 
-/// The Cobra's numbers (for tests and defaults).
-pub fn cobra() -> &'static ClassSpec {
+/// The starting hull's numbers (for tests and defaults).
+pub fn starter() -> &'static ClassSpec {
     crate::content::content().get(starting_hull())
 }
 
 /// A ship's size as traffic lays out room for it (pads, docking slots,
-/// corridors), and the Cobra's collision radius (m).
+/// corridors), and the starting hull's collision radius (m).
 pub const SHIP_RADIUS: f64 = 12.0;
 /// The drives' exhaust velocity (m/s): a torch drive (a few percent of
 /// light speed), so a tank lasts a day of burning. Each device burns its
@@ -362,7 +362,7 @@ pub const EXHAUST_VELOCITY: f64 = 1.0e7;
 /// The hyperdrive's draw at full throttle (kg/s), while engaged.
 pub const HYPER_FUEL_FLOW: f64 = 0.2;
 fn full_tank() -> f64 {
-    cobra().fuel_capacity
+    starter().fuel_capacity
 }
 
 fn intact() -> f64 {
@@ -525,7 +525,7 @@ impl Ship {
             hyperdrive: false,
             state: ShipState::Flying,
             rcs: DVec3::ZERO,
-            fuel: cobra().fuel_capacity,
+            fuel: starter().fuel_capacity,
             class: starting_hull(),
             fit: None,
             spec_ref: None,
@@ -818,8 +818,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn the_cobras_thrusters_add_up_to_its_envelope() {
-        let c = cobra();
+    fn the_starters_thrusters_add_up_to_its_envelope() {
+        let c = starter();
         assert_eq!(c.thrusters.len(), 18);
         assert!((c.main_thrust - 2.7e6).abs() < 1.0, "{}", c.main_thrust);
         assert!((c.lift_thrust - 2.25e6).abs() < 1.0, "{}", c.lift_thrust);

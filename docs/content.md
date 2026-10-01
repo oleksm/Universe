@@ -15,7 +15,7 @@ hulls and brands, from files (and later from Blender), without the engine changi
 - Loaded once at start into the **registry** (`world::content::Content`), immutable and shared
   (`Arc`) by the core, the services and the clients alike. Hot loops never see strings: entries
   are reached by **handles** (a typed index), resolved from keys at load.
-- Every entry has a **key**, readable and stable: `hull.cobra`, `goods.fuel`, `recipe.refinery`,
+- Every entry has a **key**, readable and stable: `hull.drover`, `goods.fuel`, `recipe.refinery`,
   `drive.kestrel.k2`. Keys are what's stored and sent — in saves, the ledger and the protocol —
   never list positions, so adding or reordering content breaks nothing. Renamed entries keep
   working through an **alias** table in the pack.
@@ -69,7 +69,7 @@ thrusters that define how it handles, brands.
 
 ## The order (C0)
 
-1. The registry: packs, keys, handles, validation, hash. The Cobra's hull into it.
+1. The registry: packs, keys, handles, validation, hash. The starting hull into it.
 2. Recipes and kinds of place into data.
 3. Kinds of goods into data; the generator reads its tables from content; goods keyed.
 4. Saves: version, content hash, keys for goods and hulls.
@@ -80,5 +80,5 @@ Each step leaves the game as it was — same seed, same galaxy, same numbers —
 All five are done.
 
 **Known gap, closed in T1:** a ship's collision is still its hull's sphere (`radius`, 12 m for the
-Cobra), while its shape is 52 m across the wings. T1 makes the shape the collider and derives the
+Drover), while its shape is larger (now 20 m wide, 40 m long). T1 makes the shape the collider and derives the
 mass properties from it.

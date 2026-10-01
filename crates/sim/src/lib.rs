@@ -21,7 +21,7 @@ pub mod pilots;
 pub mod setup;
 mod follow;
 pub mod recorder;
-mod save;
+pub mod save;
 mod traffic;
 pub mod universe;
 mod vessel;

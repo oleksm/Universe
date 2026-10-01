@@ -7,7 +7,7 @@
 //! named in `UNIVERSE_CONTENT` (`:`-separated, in order), add entries or
 //! replace them by key. It's loaded once, validated, and shared read-only:
 //! [`content()`]. Entries are reached by typed [`Handle`]s; what's stored and
-//! sent is their **key** (`hull.cobra`), never a position in a list, and
+//! sent is their **key** (`hull.drover`), never a position in a list, and
 //! renamed keys resolve through the packs' aliases. The loaded content has
 //! one [`Content::hash`], for saves and peers to compare.
 
@@ -490,9 +490,9 @@ mod tests {
     #[test]
     fn the_base_pack_loads_and_its_hulls_are_sound() {
         let c = Content::load(&[]).expect("the base pack loads");
-        let cobra = c.handle::<ClassSpec>("hull.cobra").expect("the Cobra");
-        assert_eq!(c.get(cobra).name, "COBRA MK III");
-        assert_eq!(c.key_of(cobra), "hull.cobra");
+        let hull = c.handle::<ClassSpec>("hull.drover").expect("the Drover");
+        assert_eq!(c.get(hull).name, "DROVER");
+        assert_eq!(c.key_of(hull), "hull.drover");
         assert_eq!(c.hash(), Content::load(&[]).unwrap().hash(), "same packs, same hash");
     }
 
@@ -504,18 +504,18 @@ mod tests {
         // (The entry: from the parenthesis that opens it, before its key.)
         let open = base[..base.find("key:").unwrap()].rfind('(').unwrap();
         let entry = &base[open..=base.rfind(')').unwrap()];
-        // The Cobra replaced (heavier), and a Mk IV added.
+        // The Drover replaced (heavier), and a Mk 2 added.
         let heavier = entry.replacen("frame_mass: 32800.0", "frame_mass: 42800.0", 1);
-        let another = entry.replacen("hull.cobra", "hull.cobra_mk4", 1);
+        let another = entry.replacen("hull.drover", "hull.drover_mk2", 1);
         std::fs::write(dir.join("hulls.ron"), format!("[{heavier}, {another}]")).unwrap();
-        std::fs::write(dir.join("aliases.ron"), r#"{"hull.cobra3": "hull.cobra"}"#).unwrap();
+        std::fs::write(dir.join("aliases.ron"), r#"{"hull.drover_old": "hull.drover"}"#).unwrap();
         let c = Content::load(std::slice::from_ref(&dir)).expect("the override loads");
         let _ = std::fs::remove_dir_all(&dir);
         assert_eq!(c.hulls.len(), Content::load(&[]).unwrap().hulls.len() + 1);
-        let cobra = c.handle::<ClassSpec>("hull.cobra").unwrap();
-        assert_eq!(c.get(cobra).dry_mass, 70_000.0, "replaced where it stands");
-        assert!(c.handle::<ClassSpec>("hull.cobra_mk4").is_some(), "added");
-        assert_eq!(c.handle::<ClassSpec>("hull.cobra3"), Some(cobra), "the old name resolves");
+        let hull = c.handle::<ClassSpec>("hull.drover").unwrap();
+        assert_eq!(c.get(hull).dry_mass, 70_000.0, "replaced where it stands");
+        assert!(c.handle::<ClassSpec>("hull.drover_mk2").is_some(), "added");
+        assert_eq!(c.handle::<ClassSpec>("hull.drover_old"), Some(hull), "the old name resolves");
         assert_ne!(c.hash(), Content::load(&[]).unwrap().hash(), "other packs, another hash");
     }
 
@@ -535,7 +535,7 @@ mod tests {
         let same = |s: &str| s.to_string();
         // No main drive fitted: a base block missing.
         let e = refused(|s| s.replace(r#"("drive", "drive.torch.s2"), "#, ""), same, "nodrive");
-        assert!(e.contains("hull.cobra") && e.contains("Drive"), "{e}");
+        assert!(e.contains("hull.drover") && e.contains("Drive"), "{e}");
         // A module too big for its slot.
         let e = refused(same, |s| s.replace(r#"does: Gun, size: 1"#, r#"does: Gun, size: 3"#), "big");
         assert!(e.contains("too big"), "{e}");
@@ -548,8 +548,8 @@ mod tests {
     }
 
     #[test]
-    fn the_cobra_is_its_frame_and_its_fit() {
-        let c = crate::ship::cobra();
+    fn the_starter_is_its_frame_and_its_fit() {
+        let c = crate::ship::starter();
         assert_eq!((c.dry_mass, c.fuel_capacity, c.hold_capacity), (60_000.0, 30_000.0, 20_000.0));
         assert_eq!(c.fit.len(), c.slots.len(), "every slot filled");
         assert!(c.power_draw <= c.power_output, "{} of {} W", c.power_draw, c.power_output);

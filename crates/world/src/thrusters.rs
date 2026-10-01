@@ -99,34 +99,34 @@ pub fn turn_envelope(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMa
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ship::{cobra, ThrusterRole};
+    use crate::ship::{starter, ThrusterRole};
 
-    fn cobra_now() -> (f64, DVec3, DMat3) {
+    fn starter_now() -> (f64, DVec3, DMat3) {
         let s = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
         (s.mass(), s.centre_of_mass(), s.inertia())
     }
 
     #[test]
     fn full_throttle_is_both_main_engines_and_no_turn() {
-        let (m, com, i) = cobra_now();
+        let (m, com, i) = starter_now();
         let mut u = Vec::new();
-        let (f, q) = allocate(&cobra().thrusters, com, m, i, DVec3::NEG_Z * cobra().main_thrust, DVec3::ZERO, &mut u);
-        assert!((f.z + cobra().main_thrust).abs() < 1e3, "{f}");
+        let (f, q) = allocate(&starter().thrusters, com, m, i, DVec3::NEG_Z * starter().main_thrust, DVec3::ZERO, &mut u);
+        assert!((f.z + starter().main_thrust).abs() < 1e3, "{f}");
         assert!(q.length() < 1e3, "no turn: {q}");
-        let mains: Vec<f64> = cobra().thrusters.iter().zip(&u).filter(|(t, _)| t.role == ThrusterRole::Main).map(|(_, &x)| x).collect();
+        let mains: Vec<f64> = starter().thrusters.iter().zip(&u).filter(|(t, _)| t.role == ThrusterRole::Main).map(|(_, &x)| x).collect();
         assert!(mains.iter().all(|&x| x > 0.99), "{mains:?}");
     }
 
     #[test]
     fn a_pure_turn_fires_couples_and_pushes_nowhere() {
-        let (m, com, i) = cobra_now();
-        let env = turn_envelope(&cobra().thrusters, com, m, i);
+        let (m, com, i) = starter_now();
+        let env = turn_envelope(&starter().thrusters, com, m, i);
         eprintln!("turning envelope (rad/s²): pitch {:.2}, yaw {:.2}, roll {:.2}", env.x, env.y, env.z);
         assert!(env.x > 0.5 && env.y > 0.3 && env.z > 0.5, "it can turn every way: {env}");
         // A modest yaw: done, with next to no push.
         let want = DVec3::Y * 0.3 * i.y_axis.y;
         let mut u = Vec::new();
-        let (f, q) = allocate(&cobra().thrusters, com, m, i, DVec3::ZERO, want, &mut u);
+        let (f, q) = allocate(&starter().thrusters, com, m, i, DVec3::ZERO, want, &mut u);
         assert!((q - want).length() < 0.05 * want.length(), "{q} vs {want}");
         assert!(f.length() / m < 0.05, "pushes nowhere: {} m/s²", f.length() / m);
     }
@@ -135,8 +135,8 @@ mod tests {
     fn every_way_it_pushes_it_can_push_nearly_full_without_turning() {
         // (A layout that balances about the centre of mass: thrusters placed
         // badly would have to throttle back to keep the ship from turning.)
-        let (m, com, i) = cobra_now();
-        let c = cobra();
+        let (m, com, i) = starter_now();
+        let c = starter();
         for (d, full) in [(DVec3::X, c.rcs_thrust), (DVec3::NEG_X, c.rcs_thrust), (DVec3::NEG_Y, c.rcs_thrust), (DVec3::Z, c.rcs_thrust), (DVec3::NEG_Z, c.rcs_thrust), (DVec3::Y, c.lift_thrust)] {
             let mut u = Vec::new();
             let (f, q) = allocate(&c.thrusters, com, m, i, d * full, DVec3::ZERO, &mut u);
@@ -148,10 +148,10 @@ mod tests {
 
     #[test]
     fn strafing_is_balanced_so_it_does_not_turn_the_ship() {
-        let (m, com, i) = cobra_now();
+        let (m, com, i) = starter_now();
         let mut u = Vec::new();
-        let want = DVec3::X * 0.5 * cobra().rcs_thrust;
-        let (f, q) = allocate(&cobra().thrusters, com, m, i, want, DVec3::ZERO, &mut u);
+        let want = DVec3::X * 0.5 * starter().rcs_thrust;
+        let (f, q) = allocate(&starter().thrusters, com, m, i, want, DVec3::ZERO, &mut u);
         assert!((f - want).length() < 0.05 * want.length(), "{f}");
         assert!(q.y.abs() / i.y_axis.y < 0.02, "no yaw from it: {:.3} rad/s²", q.y / i.y_axis.y);
     }

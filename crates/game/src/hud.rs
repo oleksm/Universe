@@ -154,7 +154,7 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let cam = app.camera.position;
     match app.observer.focus {
         Focus::Ship => {
-            lines.push(("FOCUS COBRA MK III".into(), HUD));
+            lines.push((format!("FOCUS {}", app.ship.spec().name), HUD));
             ship_readout(app, lines);
         }
         Focus::Craft(i) => {
@@ -1111,7 +1111,7 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
     }
 }
 
-/// Elite's 3D scanner: an ellipse seen in perspective, with height sticks.
+/// The 3D scanner: an ellipse seen in perspective, with height sticks.
 /// Range is logarithmic from 1 km (center) to 10^12 m (rim).
 fn scanner(frame: &mut Frame, app: &App) {
     let size = frame.size();

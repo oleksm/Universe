@@ -547,13 +547,13 @@ mod tests {
         let item = &goods[o.item];
         let before = a.quotes(&mut state, 0.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
         let n = (before.level * 0.5).floor().min(5_000.0 / item.mass).floor().max(1.0) as i64;
-        let paid = a.trade(&mut state, 0.0, item, n, 1, universe_world::ship::cobra().hold_capacity, &mut ledger, shop, 1, Cause::Rules).unwrap();
+        let paid = a.trade(&mut state, 0.0, item, n, 1, universe_world::ship::starter().hold_capacity, &mut ledger, shop, 1, Cause::Rules).unwrap();
         assert!((paid - before.buy.unwrap() * n as f64).abs() < 1e-6);
         assert_eq!(ledger.hold(1), vec![(o.item, n as u32)]);
         assert!((cargo_mass(&goods, &ledger.hold(1)) - item.mass * n as f64).abs() < 1e-6, "the hold weighs what's in it");
         let after = a.quotes(&mut state, 0.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
         assert!(after.buy.unwrap() > before.buy.unwrap(), "scarcer, dearer");
-        let got = -a.trade(&mut state, 0.0, item, -n, 1, universe_world::ship::cobra().hold_capacity - item.mass * n as f64, &mut ledger, shop, 2, Cause::Rules).unwrap();
+        let got = -a.trade(&mut state, 0.0, item, -n, 1, universe_world::ship::starter().hold_capacity - item.mass * n as f64, &mut ledger, shop, 2, Cause::Rules).unwrap();
         assert!(got < paid, "bought back for less");
         assert!(ledger.hold(1).is_empty());
         assert!(ledger.balanced(), "nothing made or lost");
@@ -563,7 +563,7 @@ mod tests {
         // Banned goods don't trade.
         if let Some(c) = a.banned.first() {
             let banned = goods.iter().find(|i| i.category == *c).unwrap();
-            assert!(a.trade(&mut state, 0.0, banned, 1, 1, universe_world::ship::cobra().hold_capacity, &mut ledger, shop, 3, Cause::Rules).is_err());
+            assert!(a.trade(&mut state, 0.0, banned, 1, 1, universe_world::ship::starter().hold_capacity, &mut ledger, shop, 3, Cause::Rules).is_err());
         }
     }
 }

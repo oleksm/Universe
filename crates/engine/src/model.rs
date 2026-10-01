@@ -96,7 +96,7 @@ impl WireModel {
         m
     }
 
-    /// Convex hull of `points`, Elite style: every hull face becomes an occluder
+    /// Convex hull of `points`, solid-wireframe style: every hull face becomes an occluder
     /// and its outline becomes edges. Coplanar points merge into one polygon.
     pub fn convex_hull(points: &[Vec3]) -> Self {
         let mut m = WireModel { positions: points.to_vec(), ..Default::default() };

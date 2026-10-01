@@ -44,7 +44,11 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
 
 pub fn load(app: &mut App) -> Result<(), String> {
     let json = std::fs::read_to_string(path()).map_err(|e| e.to_string())?;
-    let save: GameSave = serde_json::from_str(&json).map_err(|e| e.to_string())?;
+    let mut value: serde_json::Value = serde_json::from_str(&json).map_err(|e| e.to_string())?;
+    if let Some(u) = value.get_mut("universe") {
+        universe_sim::save::forget_missing(u);
+    }
+    let save: GameSave = serde_json::from_value(value).map_err(|e| e.to_string())?;
     let universe = save.universe;
     // Made with other content (other packs, or another build's): keys keep
     // most of it, but say so.

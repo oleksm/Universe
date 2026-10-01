@@ -112,18 +112,18 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
         pilot.miner = miner;
         pilot.route_seed = route_seed;
         // Each flies a hull for its work: pirates interceptors, miners
-        // prospectors, traders haulers or Cobras, settlers couriers or Cobras.
+        // prospectors, traders haulers or Drovers, settlers couriers or Drovers.
         let either = mix(route_seed, 0x5b1f_0a7c).is_multiple_of(2);
         let hull = if pirate {
             "hull.interceptor"
         } else if miner {
             "hull.prospector"
         } else if trader {
-            if either { "hull.hauler" } else { "hull.cobra" }
+            if either { "hull.hauler" } else { "hull.drover" }
         } else if either {
             "hull.sprint"
         } else {
-            "hull.cobra"
+            "hull.drover"
         };
         out.push((Registration { name, at, pad: (route_seed % universe_world::spaceport::PADS as u64) as usize, hull: hull.into() }, pilot));
     }

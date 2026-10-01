@@ -505,7 +505,7 @@ mod tests {
         assert!(docked.clearance.is_none() && docked.nav_target == Some(target), "arrived: the clearance is used up");
         let crashed = after(ShipEvent::Crashed { body: "Station".into() });
         assert!(crashed.clearance.is_none());
-        let gone = after(ShipEvent::GateEntered { to: "Lave".into() });
+        let gone = after(ShipEvent::GateEntered { to: "Thabro".into() });
         assert!(gone.clearance.is_none() && gone.nav_target.is_none(), "the target was in the old system");
         let dropped = after(ShipEvent::HyperdriveDisengaged);
         assert!(!dropped.hyper_autopilot && dropped.autopilot_engaged());

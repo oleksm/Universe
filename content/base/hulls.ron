@@ -3,9 +3,9 @@
 // loaded). See docs/content.md.
 [
     (
-        key: "hull.cobra",
-        name: "COBRA MK III",
-        shape: "shape.cobra",
+        key: "hull.drover",
+        name: "DROVER",
+        shape: "shape.drover",
         // The multirole: a fair hold, lands anywhere, holds its own in a fight.
         // 30 m/s² (about 3 g) on the main engine at full load, 6 m/s² on the
         // thrusters, 25 m/s² of lift (enough to hover); a blunt 90 t ship that
@@ -31,19 +31,19 @@
         // Its nozzles, each driven by a slot's module at a share of its
         // rating: the main drive, the translation thrusters, the belly lift.
         thrusters: [
-            (nozzle: "nozzle_main_left", slot: "drive", share: 1.0),
-            (nozzle: "nozzle_main_right", slot: "drive", share: 1.0),
+            (nozzle: "nozzle_main_0", slot: "drive", share: 1.0),
+            (nozzle: "nozzle_main_1", slot: "drive", share: 1.0),
             (nozzle: "nozzle_nose_left_up", slot: "thrusters", share: 0.5),
-            (nozzle: "nozzle_nose_right_up", slot: "thrusters", share: 0.5),
-            (nozzle: "nozzle_tail_left_up", slot: "thrusters", share: 0.5),
-            (nozzle: "nozzle_tail_right_up", slot: "thrusters", share: 0.5),
             (nozzle: "nozzle_nose_left_side", slot: "thrusters", share: 1.0),
-            (nozzle: "nozzle_nose_right_side", slot: "thrusters", share: 1.0),
-            (nozzle: "nozzle_tail_left_side", slot: "thrusters", share: 1.0),
-            (nozzle: "nozzle_tail_right_side", slot: "thrusters", share: 1.0),
             (nozzle: "nozzle_nose_left_fore", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_nose_right_up", slot: "thrusters", share: 0.5),
+            (nozzle: "nozzle_nose_right_side", slot: "thrusters", share: 1.0),
             (nozzle: "nozzle_nose_right_fore", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_tail_left_up", slot: "thrusters", share: 0.5),
+            (nozzle: "nozzle_tail_left_side", slot: "thrusters", share: 1.0),
             (nozzle: "nozzle_tail_left_aft", slot: "thrusters", share: 1.0),
+            (nozzle: "nozzle_tail_right_up", slot: "thrusters", share: 0.5),
+            (nozzle: "nozzle_tail_right_side", slot: "thrusters", share: 1.0),
             (nozzle: "nozzle_tail_right_aft", slot: "thrusters", share: 1.0),
             (nozzle: "nozzle_lift_nose_left", slot: "lift", share: 1.0),
             (nozzle: "nozzle_lift_nose_right", slot: "lift", share: 1.0),
