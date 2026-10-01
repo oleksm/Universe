@@ -252,7 +252,6 @@ impl Universe {
     /// late one at once; a stale one dropped), its requests to traffic
     /// control, what it reports to the services, and what it shows.
     pub(crate) fn post(&mut self, mut postings: Vec<crate::pilots::Posting>) {
-        use universe_avionics::hunter::FLEE_HULL;
         postings.sort_by_key(|p| (p.thought, p.id));
         for p in postings {
             let due = p.due();
@@ -297,10 +296,6 @@ impl Universe {
                 } else {
                     self.records.stats.hunts += 1;
                 }
-            }
-            // A defender that broke off hurt runs for the guns.
-            if p.hunt_end.is_some() && !c.status.pirate && c.ship.hull < FLEE_HULL {
-                self.flee(i);
             }
             let _events = universe_prof::scope("sim/postings/events");
             self.log_events(crate::combat::craft_id(i), &p.events);

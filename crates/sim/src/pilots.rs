@@ -102,8 +102,6 @@ pub enum Order {
     Route(Route),
     /// After the stop it's bound for, on to this one (a trader's next market).
     Then(Stop),
-    /// Run for this haven now, giving up any clearance.
-    Flee(Stop),
     /// Lock a nav target, ask for clearance, or switch the autopilot (dev
     /// tools and tests, as a pilot at the controls would).
     NavTarget(Option<NavTarget>),
@@ -146,8 +144,16 @@ impl Pilot {
     }
 }
 
-/// Defence turrets: where each is, how it moves, how far it reaches.
-pub type Guns = Arc<Vec<(DVec3, DVec3, f64)>>;
+/// A defence turret, as the charts have it: where it is, how it moves, how
+/// far it reaches, and what it guards.
+#[derive(Clone, Copy, Debug)]
+pub struct Gun {
+    pub at: DVec3,
+    pub velocity: DVec3,
+    pub reach: f64,
+    pub guards: universe_world::Facility,
+}
+pub type Guns = Arc<Vec<Gun>>;
 
 /// What pilots read: the world as it stood at the end of a tick.
 pub struct PilotView {
@@ -265,8 +271,8 @@ impl Bus for PoolLink<'_> {
 
     fn turrets(&mut self) -> Vec<(DVec3, DVec3, f64)> {
         match self.view.turrets.get(&self.system) {
-            Some(t) => (**t).clone(),
-            None => turret_motions(&self.view.charts, self.system, &self.sys, self.view.time, &self.rails()),
+            Some(t) => t.iter().map(|g| (g.at, g.velocity, g.reach)).collect(),
+            None => turret_motions(&self.view.charts, self.system, &self.sys, self.view.time, &self.rails()).iter().map(|g| (g.at, g.velocity, g.reach)).collect(),
         }
     }
 
@@ -327,20 +333,50 @@ fn seen(ship: &Ship, pending: &mut Vec<(u64, ShipCommands)>, tick: u64) -> Ship 
 }
 
 /// Where system `system`'s defence turrets are at `t`, and how they move.
-pub(crate) fn turret_motions(charts: &Charts, system: usize, sys: &StarSystem, t: f64, positions: &[DVec3]) -> Vec<(DVec3, DVec3, f64)> {
+pub(crate) fn turret_motions(charts: &Charts, system: usize, sys: &StarSystem, t: f64, positions: &[DVec3]) -> Vec<Gun> {
     universe_world::turrets::turrets(charts.seed, system, sys)
         .iter()
         .map(|tu| {
-            let (p, v) = tu.motion(sys, t, positions);
-            (p, v, tu.range())
+            let (at, velocity) = tu.motion(sys, t, positions);
+            Gun { at, velocity, reach: tu.range(), guards: tu.facility }
         })
         .collect()
 }
 
+/// The guns of `system` as a pilot reads them from `view`.
+fn guns_of(view: &PilotView, system: usize, sys: &StarSystem) -> Guns {
+    view.turrets.get(&system).cloned().unwrap_or_else(|| {
+        let mut rails = Vec::new();
+        sys.positions(view.time, &mut rails);
+        Arc::new(turret_motions(&view.charts, system, sys, view.time, &rails))
+    })
+}
+
+/// Fight or flight, the flight: run for the nearest defended place (not a
+/// gate), giving up any clearance (traffic control hears of it).
+fn flee(a: &mut Avionics, ship: &Ship, system: usize, guns: &[Gun], events: &mut Vec<Event>) {
+    if !ship.is_flying() || ship.hyperdrive {
+        return;
+    }
+    let Some(haven) = guns.iter().filter(|g| !matches!(g.guards, universe_world::Facility::Gate(_))).min_by(|x, y| x.at.distance(ship.position).total_cmp(&y.at.distance(ship.position))) else { return };
+    let stop = Stop { system, target: haven.guards };
+    let r = &mut a.route;
+    if r.stops.get(r.next) == Some(&stop) && r.active {
+        return;
+    }
+    r.stops.insert(r.next.min(r.stops.len()), stop);
+    r.active = true;
+    r.dwell_until = None;
+    r.departing = false;
+    if a.clearance.take().is_some() {
+        events.push(Event::Traffic(universe_world::TrafficEvent::ClearanceCancelled));
+    }
+}
+
 /// What pilot `i` makes of the ships around it (radar, and the pirates'
 /// transponders): shelter is real (docked or landed, or under a turret's guns).
-fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[(DVec3, DVec3, f64)]) -> Vec<Sighting> {
-    let sheltered = |s: &Snap| s.landed || guns.iter().any(|(p, _, reach)| p.distance(s.position) < reach + universe_avionics::hunter::SHELTER_MARGIN);
+fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[Gun]) -> Vec<Sighting> {
+    let sheltered = |s: &Snap| s.landed || guns.iter().any(|g| g.at.distance(s.position) < g.reach + universe_avionics::hunter::SHELTER_MARGIN);
     view.snaps
         .iter()
         .enumerate()
@@ -369,16 +405,6 @@ fn obey(order: Order, a: &mut Avionics, link: &mut PoolLink, events: &mut Vec<Ev
             r.stops.truncate(r.next + 1);
             r.stops.push(stop);
         }
-        Order::Flee(stop) => {
-            let r = &mut a.route;
-            if r.stops.get(r.next) != Some(&stop) {
-                r.stops.insert(r.next.min(r.stops.len()), stop);
-            }
-            r.active = true;
-            r.dwell_until = None;
-            r.departing = false;
-            a.clearance = None;
-        }
         Order::NavTarget(target) => a.set_nav_target(link, target, events),
         Order::RequestClearance => {
             a.request_clearance(link, events);
@@ -400,7 +426,9 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let was_hunting = a.hunting.is_some();
     let mut events = Vec::new();
     // What happened to the ship since it last thought.
-    a.record(std::mem::take(&mut pilot.feed), &mut events);
+    let feed = std::mem::take(&mut pilot.feed);
+    let hit = feed.iter().any(|e| matches!(e, ShipEvent::Hit { .. }));
+    a.record(feed, &mut events);
     // Its ship, with its own commands on their way.
     let seen = seen(ship, &mut pilot.pending, view.tick);
     let sys = view.charts.system(system);
@@ -412,17 +440,24 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     a.conclude(&mut link, &mut events);
     let pos = link.ship.position;
     let threat = human.is_none() && may_defend(a, &link.ship) && view.aggressors.iter().any(|&(s, p)| s == system && p.distance(pos) < DEFEND_RANGE);
-    let sightings = if threat || (human.is_none() && wants_sightings(a, &link.ship, view.time)) {
-        let guns = link.turrets();
-        sightings(view, id, system, pos, &guns)
-    } else {
-        Vec::new()
-    };
+    let guns = guns_of(view, system, &link.sys);
+    let sightings = if threat || (human.is_none() && wants_sightings(a, &link.ship, view.time)) { sightings(view, id, system, pos, &guns) } else { Vec::new() };
+    // Fired on (and not a hunter itself, nor standing to fight with hull to
+    // spare): run for the guns. (A human decides that for themselves.)
+    use universe_avionics::hunter::FLEE_HULL;
+    let fighting = a.hunting.is_some_and(|h| h.lawful) && link.ship.hull >= FLEE_HULL;
+    if human.is_none() && hit && !a.pirate && !fighting {
+        flee(a, &link.ship, system, &guns, &mut events);
+    }
     let mark = match a.following.map(|f| f.anchor) {
         Some(universe_avionics::follow::Anchor::Ship(id)) => crate::follow::mark_in(&view.snaps, system, pos, id),
         _ => None,
     };
     let (stick, hunt_end) = if human.is_some() { (None, None) } else { a.hunt(&mut link, &sightings, &mut events) };
+    // A defender that broke off hurt runs for the guns.
+    if hunt_end.is_some() && !a.pirate && link.ship.hull < FLEE_HULL {
+        flee(a, &link.ship, system, &guns, &mut events);
+    }
     let stick = stick.or_else(|| a.follow_step(&mut link, mark, &mut events)).or(human);
     let program = a.prepare(&mut link, view.dt, &mut events);
     let flown = a.flies(&link.ship);

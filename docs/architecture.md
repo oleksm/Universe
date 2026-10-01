@@ -10,6 +10,11 @@ changes.
 
 ## Principles
 
+- **The engine knows no intentions and makes no client decisions** (the rule set in stone: see
+  `rearchitecture.md` §0). It knows bodies, physics, hardware, declared status and evidence. Roles,
+  routes, fight or flight, trade choices, guidance and plans are the clients' (the player's
+  cockpit; NPC pilots and their operator).
+
 1. **The physics engine is ruthlessly stable and fair.** It is the same for every object in
    the world — the player's ship, a settler, a half-built station — and it never changes its
    rules because of what is built or run on top of it.

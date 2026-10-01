@@ -53,13 +53,6 @@ impl Universe {
                 continue;
             }
             self.traffic_events(craft_id(i), &events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
-            // Fired on (and not a hunter itself, nor standing to fight with
-            // hull to spare): run for the guns.
-            let c = &self.crafts[i];
-            let fighting = c.status.hunting.is_some_and(|h| h.lawful) && c.ship.hull >= universe_avionics::hunter::FLEE_HULL;
-            if !c.status.pirate && !fighting && events.iter().any(|e| matches!(e, ShipEvent::Hit { .. })) {
-                self.flee(i);
-            }
             if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
                 if kill.weapon == "COLLISION" {
                     self.records.stats.collision_losses += 1;
@@ -196,41 +189,6 @@ impl Universe {
         self.records.kill(kill);
     }
 
-    /// Craft `i` is under fire: it heads for the nearest defended station or
-    /// spaceport in its system (next on its route), to dock or land under the
-    /// turrets' guns. Already heading there, or nowhere defended: as it was.
-    pub(crate) fn flee(&mut self, i: usize) {
-        let c = &self.crafts[i];
-        if !c.ship.is_flying() || c.ship.hyperdrive {
-            return;
-        }
-        let (system, pos) = (c.system, c.ship.position);
-        let mut havens: Vec<(f64, universe_world::Facility)> = self
-            .world
-            .turret_motions(system)
-            .into_iter()
-            .filter(|(t, _, _)| !matches!(t.facility, universe_world::Facility::Gate(_)))
-            .map(|(t, p, _)| (p.distance(pos), t.facility))
-            .collect();
-        havens.sort_by(|a, b| a.0.total_cmp(&b.0));
-        let Some(&(_, haven)) = havens.first() else { return };
-        let stop = universe_avionics::Stop { system, target: haven };
-        let c = &mut self.crafts[i];
-        if c.status.next_stop == Some(stop) && c.status.route_active {
-            return;
-        }
-        self.tell(i, crate::pilots::Msg::Order(crate::pilots::Order::Flee(stop)));
-        let c = &mut self.crafts[i];
-        c.status.next_stop = Some(stop);
-        c.status.route_active = true;
-        if c.status.clearance.take().is_some() {
-            // Its pilot gives the clearance up, running.
-            let cause = self.atc.request_from(craft_id(i));
-            self.atc.because(self.tick, cause);
-            self.atc.release(craft_id(i));
-            self.atc.because(self.tick, universe_protocol::Cause::Rules);
-        }
-    }
 
     /// Name of the ship with combat id `id`.
     pub fn ship_name(&self, id: usize) -> String {

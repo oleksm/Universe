@@ -10,11 +10,33 @@ untrusted participants (multiplayer).
 
 ---
 
+## 0. The rule (set in stone)
+
+**The engine knows no intentions and makes no client decisions.**
+
+The engine (the core and the services) knows bodies, physics, hardware state, what clients
+*declare* (transponder, flight plan, requests), and evidence (events: hits, contacts, landings).
+It never holds or decides what a client means to do:
+- who's a pirate or a trader;
+- where a ship goes next, when it flees or fights, what it buys;
+- which guidance or autopilot it flies, or its plan.
+
+Those live in clients (the player's cockpit; NPC pilots and their operator) and reach the world
+only as actuation and requests. Services decide only their own domain (grants, prices,
+transfers, legal status) from declarations and evidence.
+
+Why: the engine must stay a dumb, trusted, scalable body (to be split across a cluster later),
+and clients untrusted. Anything a client decides that the engine does instead can't be
+clustered, audited or replaced by a remote player. A boundary test keeps engine code from
+reaching into client state (`crates/sim/tests/boundary.rs`).
+
+---
+
 ## 1. The three roles
 
 | | **Core** (the body and the physics) | **Services** (the institutions) | **Clients** (the minds) |
 |---|---|---|---|
-| Is | The physical world: bodies, mass, motion, forces, contacts, the hardware of ships | The world's social machinery: traffic control, markets, the ledger, aggression and law, defence, dispatch, records | Pilots: the player's client, and pooled NPC pilots; turret gunners too |
+| Is | The physical world: bodies, mass, motion, forces, contacts, the hardware of ships | The world's social machinery: traffic control, markets, the ledger, aggression and law, defence, records | Pilots: the player's client, and pooled NPC pilots with their operator (roles, routes, trade choices); turret gunners too |
 | Knows | Objects, positions, velocities, orientations, masses, hardware state and limits | Their own domain's state, and what the core and messages tell them | Only what their sensors return and what messages they receive |
 | Decides | Nothing. It integrates inputs under fixed rules | Their own domain: grants, prices, transfers, legal status | Everything a pilot decides: where to go, what program flies, fight or flight, trade or not |
 | Changes | Physical state only | Their own authoritative records, and core state through audited operations | Nothing authoritative. They only request |
