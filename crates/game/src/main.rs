@@ -142,6 +142,9 @@ pub struct App {
     pub collision_cost: f32,
     /// The weapon keys as last sent to the ship (commands go on a change).
     triggers_held: Triggers,
+    /// Mouse movement since the world's last tick (the stick it gives holds
+    /// for the whole tick, so the frames in between add up).
+    mouse_since_tick: universe_engine::glam::Vec2,
     /// Display names of the route's stops (refreshed when the route changes).
     pub route_labels: Vec<String>,
     route_labels_for: Vec<universe_sim::Stop>,
@@ -211,6 +214,7 @@ impl App {
             collision_at: 0.0,
             collision_cost: 0.0,
             triggers_held: Triggers::default(),
+            mouse_since_tick: universe_engine::glam::Vec2::ZERO,
             route_labels: Vec::new(),
             route_labels_for: Vec::new(),
             camera: Camera::default(),
@@ -455,8 +459,14 @@ impl App {
                 .clamp(-1.0, 1.0) as f64,
         };
         if ctx.cursor_grabbed() {
-            c.pitch = (c.pitch - input.mouse_delta.y as f64 * 0.08).clamp(-1.0, 1.0);
-            c.yaw = (c.yaw - input.mouse_delta.x as f64 * 0.08).clamp(-1.0, 1.0);
+            let m = if self.engine.running() {
+                self.mouse_since_tick += input.mouse_delta;
+                self.mouse_since_tick
+            } else {
+                input.mouse_delta
+            };
+            c.pitch = (c.pitch - m.y as f64 * 0.08).clamp(-1.0, 1.0);
+            c.yaw = (c.yaw - m.x as f64 * 0.08).clamp(-1.0, 1.0);
         }
         c
     }
@@ -663,6 +673,9 @@ impl Game for App {
             universe_prof::time("update/sim (engine tick)", || self.engine.tick(dt, self.warp(), &controls));
             true
         };
+        if fresh {
+            self.mouse_since_tick = universe_engine::glam::Vec2::ZERO;
+        }
         self.v = self.engine.view();
         let v = self.v.clone();
         if fresh && v.ship.ammo < ammo {
