@@ -67,6 +67,9 @@ pub struct Frame {
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
+    /// Meshes drawn over everything, the HUD included (see `in_front`).
+    pub(crate) front: Vec<MeshDraw>,
+    in_front: bool,
 }
 
 /// One mesh draw: the mesh, and its instance data.
@@ -177,6 +180,8 @@ impl Frame {
             hud_tris: Vec::new(),
             hud: Vec::new(),
             meshes: Vec::new(),
+            front: Vec::new(),
+            in_front: false,
         }
     }
 
@@ -205,6 +210,15 @@ impl Frame {
     }
 
     /// World position to HUD pixel coordinates (see `size`), or `None` if behind the camera.
+    /// Meshes drawn in `f` go on top of everything: the scene and the HUD
+    /// (with their own depth among themselves). For what's nearest the eye,
+    /// like our own ship seen from just behind it: nothing shows through it.
+    pub fn in_front(&mut self, f: impl FnOnce(&mut Frame)) {
+        let before = std::mem::replace(&mut self.in_front, true);
+        f(self);
+        self.in_front = before;
+    }
+
     pub fn project(&self, p: DVec3) -> Option<Vec2> {
         let clip = self.camera.view_proj(self.size.x / self.size.y) * self.camera.relative(p).extend(1.0);
         if clip.w <= 0.0 {
@@ -340,7 +354,8 @@ impl Frame {
                 inst.refl_color = [c[0], c[1], c[2], base];
             }
         }
-        self.meshes.push(MeshDraw { mesh: mesh.clone(), instance: inst, edges });
+        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges };
+        if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
     }
 
     /// Line with a color at each end (blended along it).

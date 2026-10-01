@@ -1,7 +1,9 @@
-// Composites the low-res scene and the (higher-res) HUD layer, upscaled with nearest filtering.
+// Composites the low-res scene, the (higher-res) HUD layer over it, and the
+// front layer (what's nearest the eye) over both, upscaled with nearest filtering.
 @group(0) @binding(0) var scene_tex: texture_2d<f32>;
 @group(0) @binding(1) var hud_tex: texture_2d<f32>;
 @group(0) @binding(2) var nearest: sampler;
+@group(0) @binding(3) var front_tex: texture_2d<f32>;
 
 struct VertexOut {
     @builtin(position) clip: vec4<f32>,
@@ -20,5 +22,8 @@ fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {
     let scene = textureSample(scene_tex, nearest, in.uv);
     // The HUD layer holds premultiplied color (alpha-blended onto transparent black).
     let hud = textureSample(hud_tex, nearest, in.uv);
-    return vec4<f32>(scene.rgb * (1.0 - hud.a) + hud.rgb, 1.0);
+    // So does the front layer.
+    let front = textureSample(front_tex, nearest, in.uv);
+    let under = scene.rgb * (1.0 - hud.a) + hud.rgb;
+    return vec4<f32>(under * (1.0 - front.a) + front.rgb, 1.0);
 }

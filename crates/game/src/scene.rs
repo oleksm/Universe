@@ -744,8 +744,16 @@ fn ship(frame: &mut Frame, app: &App) {
         frame.point(pos, SHIP_COLOR);
         return;
     }
-    let t = Transform { position: pos, rotation: app.place(crate::Who::Me).1.as_quat(), scale: 1.0 };
-    frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
+    let t = Transform { position: pos, rotation: app.ship.orientation.as_quat(), scale: 1.0 };
+    // Seen from just behind it (chase view), nothing is nearer the eye than
+    // our hull: it's drawn over everything, the HUD included. Docked, the
+    // eye is back past the station, so it's drawn in the scene like the rest.
+    let docked = matches!(app.ship.state, ShipState::Landed { body, .. } if app.view.system.bodies[body].kind == BodyKind::Station);
+    if app.mode == Mode::Pilot && app.chase_cam && !docked {
+        frame.in_front(|frame| frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL));
+    } else {
+        frame.model_shaded(&app.models.ship, &t, SHIP_COLOR, HULL);
+    }
     // Landed on a body: the landing legs, down to the ground.
     if let ShipState::Landed { body, .. } = app.ship.state
         && app.view.system.bodies[body].kind != BodyKind::Station

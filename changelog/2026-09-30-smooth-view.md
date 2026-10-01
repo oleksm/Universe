@@ -127,3 +127,19 @@ that pixel by pixel masks which I think will eventually backfire"
   at one moment (`App::now`), so the overlays sit still against the hull as they used to.
 - **Checked:** the collision scene captured from `f26ca25` (before Phase 1) and from now match,
   apart from the live range numbers.
+
+## Sixth pass: our hull in front of everything
+
+User, after checking out older builds: "Ok I have to admit that was me. Lets get back on latest
+and make ship non-transparent for anything - texts, targets, sun. I mean anything"
+
+(The older builds confirmed it: the HUD has always been drawn over the hull.)
+
+- **A front layer.** Frame layers are now scene, then HUD, then front. Meshes drawn inside
+  `Frame::in_front(...)` go to the front layer: its own pass, with fresh depth among themselves,
+  composited over the HUD in the blit (`blit.wgsl`).
+- **Our ship in chase view goes there,** so nothing shows through the hull: text, target
+  brackets, markers, the gunsight, the sun glare. Docked, the eye is back past the station, so
+  the ship is drawn in the scene as before. In the observer view, the ship is in the scene too.
+- **Simple by design:** a layer order, no masks and no per-element rules. It's right because,
+  seen from just behind it, nothing is nearer the eye than our own hull.

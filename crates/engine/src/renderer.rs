@@ -133,6 +133,8 @@ struct Target {
     color: wgpu::TextureView,
     depth: wgpu::TextureView,
     hud: wgpu::TextureView,
+    /// The front layer (see `Frame::in_front`).
+    front: wgpu::TextureView,
     composite: wgpu::TextureView,
     blit: wgpu::BindGroup,
 }
@@ -167,6 +169,9 @@ pub(crate) struct Renderer {
     instances: DynBuffer,
     face_runs: Vec<(u64, u32, u32)>,
     edge_runs: Vec<(u64, u32, u32)>,
+    /// The same for the front layer's meshes.
+    front_face_runs: Vec<(u64, u32, u32)>,
+    front_edge_runs: Vec<(u64, u32, u32)>,
     frames: u64,
     solids: DynBuffer,
     lines: DynBuffer,
@@ -337,6 +342,7 @@ impl Renderer {
                     ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
                     count: None,
                 },
+                texture_entry(3),
             ],
         });
         let blit = device.create_shader_module(wgpu::include_wgsl!("shaders/blit.wgsl"));
@@ -403,6 +409,8 @@ impl Renderer {
             instances: DynBuffer::new(device, "mesh instances"),
             face_runs: Vec::new(),
             edge_runs: Vec::new(),
+            front_face_runs: Vec::new(),
+            front_edge_runs: Vec::new(),
             frames: 0,
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
@@ -446,6 +454,7 @@ impl Renderer {
         let color = texture("low-res color", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let depth = texture("low-res depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT);
         let hud = texture("hud", hud_size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
+        let front = texture("front", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let composite = texture("composite", hud_size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
         let blit = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("blit"),
@@ -454,9 +463,10 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&color) },
                 wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(&hud) },
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::Sampler(sampler) },
+                wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&front) },
             ],
         });
-        Target { size, hud_size, color, depth, hud, composite, blit }
+        Target { size, hud_size, color, depth, hud, front, composite, blit }
     }
 
     pub fn resize(&mut self, gpu: &Gpu) {
@@ -541,6 +551,29 @@ impl Renderer {
             self.points.draw(&mut pass, &self.point_pipe);
         }
         {
+            // The front layer: its meshes alone, with a fresh depth.
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("front"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &self.target.front,
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.target.depth,
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: wgpu::StoreOp::Discard }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            pass.set_bind_group(0, &self.globals_bind, &[]);
+            self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+            self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+        }
+        {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("hud"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -599,27 +632,13 @@ impl Renderer {
     fn upload_meshes(&mut self, gpu: &Gpu, frame: &Frame) {
         self.frames += 1;
         let now = self.frames;
-        for d in &frame.meshes {
+        for d in frame.meshes.iter().chain(&frame.front) {
             self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(&gpu.device, &d.mesh)).used = now;
         }
         self.meshes.retain(|_, m| now - m.used < MESH_KEEP);
-        let mut order: Vec<usize> = (0..frame.meshes.len()).collect();
-        order.sort_by_key(|&i| frame.meshes[i].mesh.id());
-        let mut data: Vec<Instance> = Vec::with_capacity(frame.meshes.len() * 2);
-        let runs = |data: &mut Vec<Instance>, pick: &dyn Fn(usize) -> bool| {
-            let mut runs: Vec<(u64, u32, u32)> = Vec::new();
-            for &i in order.iter().filter(|&&i| pick(i)) {
-                let id = frame.meshes[i].mesh.id();
-                match runs.last_mut() {
-                    Some(r) if r.0 == id => r.2 += 1,
-                    _ => runs.push((id, data.len() as u32, 1)),
-                }
-                data.push(frame.meshes[i].instance);
-            }
-            runs
-        };
-        self.face_runs = runs(&mut data, &|_| true);
-        self.edge_runs = runs(&mut data, &|i| frame.meshes[i].edges);
+        let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
+        (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
+        (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);
         self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
     }
 
@@ -708,4 +727,27 @@ impl Renderer {
         let mut writer = encoder.write_header().map_err(|e| e.to_string())?;
         writer.write_image_data(&pixels).map_err(|e| e.to_string())
     }
+}
+
+/// Mesh draws as instances (appended to `data`), sorted by mesh: the runs
+/// (mesh, first instance, count) for their faces, and for their edges.
+type Runs = Vec<(u64, u32, u32)>;
+fn batch(draws: &[crate::frame::MeshDraw], data: &mut Vec<Instance>) -> (Runs, Runs) {
+    let mut order: Vec<usize> = (0..draws.len()).collect();
+    order.sort_by_key(|&i| draws[i].mesh.id());
+    let mut runs = |pick: &dyn Fn(usize) -> bool| {
+        let mut runs: Runs = Vec::new();
+        for &i in order.iter().filter(|&&i| pick(i)) {
+            let id = draws[i].mesh.id();
+            match runs.last_mut() {
+                Some(r) if r.0 == id => r.2 += 1,
+                _ => runs.push((id, data.len() as u32, 1)),
+            }
+            data.push(draws[i].instance);
+        }
+        runs
+    };
+    let faces = runs(&|_| true);
+    let edges = runs(&|i| draws[i].edges);
+    (faces, edges)
 }
