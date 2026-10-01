@@ -1,5 +1,6 @@
 mod dev;
 mod fmt;
+mod galaxymap;
 mod hud;
 mod market;
 mod models;
@@ -139,6 +140,10 @@ pub struct App {
     pub sky_cache: std::cell::RefCell<Option<SkyCache>>,
     /// The navigation map, when open.
     pub nav_map: Option<navmap::NavMap>,
+    /// The galaxy map, when open (U from the navigation map).
+    pub galaxy_map: Option<galaxymap::GalaxyMap>,
+    /// The star systems we've been to (kept in the save).
+    pub explored: std::collections::BTreeSet<usize>,
     /// The market screen, when open; and whether we're docked at a market.
     pub market: Option<market::MarketView>,
     pub docked_market: bool,
@@ -243,6 +248,8 @@ impl App {
             show_cargo: false,
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
+            galaxy_map: None,
+            explored: Default::default(),
             market: None,
             docked_market: false,
             nav_marker: None,
@@ -797,9 +804,15 @@ impl Game for App {
         }
         self.global_keys(ctx);
 
-        // The navigation map takes the keyboard while it's open.
-        let map_was_open = self.nav_map.is_some();
-        if map_was_open {
+        // Where we are is explored.
+        self.explored.insert(self.v.ship_system);
+        // The galaxy map, then the navigation map, take the keyboard while open.
+        let galaxy_was_open = self.galaxy_map.is_some();
+        if galaxy_was_open && !galaxymap::input(self, ctx) {
+            self.galaxy_map = None;
+        }
+        let map_was_open = self.nav_map.is_some() || galaxy_was_open;
+        if self.nav_map.is_some() && !galaxy_was_open {
             navmap::input(self, ctx);
         } else if ctx.input.pressed(KeyCode::KeyM) {
             self.nav_map = Some(navmap::NavMap::open(self));
@@ -814,7 +827,7 @@ impl Game for App {
             sound::click(ctx, 900.0);
         }
         let (controls, focus_changed) = match self.mode {
-            _ if map_was_open || self.nav_map.is_some() || market_was_open || self.market.is_some() => (Controls::default(), false),
+            _ if map_was_open || self.nav_map.is_some() || self.galaxy_map.is_some() || market_was_open || self.market.is_some() => (Controls::default(), false),
             Mode::Pilot => (self.pilot_input(ctx), false),
             Mode::Observer => (Controls::default(), self.observer.input(ctx, &self.v, &self.charts)),
         };

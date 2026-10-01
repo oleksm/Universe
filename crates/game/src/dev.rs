@@ -114,6 +114,20 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, look);
             app.engine.universe().request_clearance();
         }
+        "galaxymap" | "galaxyzoom" => {
+            // The galaxy map, having been to the gate network's systems.
+            app.mode = Mode::Pilot;
+            let links = app.engine.universe().world.gate_links.clone();
+            for (a, b) in links {
+                app.explored.insert(a);
+                app.explored.insert(b);
+            }
+            let mut map = crate::galaxymap::GalaxyMap::open(app, universe_engine::glam::Vec2::new(960.0, 540.0));
+            if name == "galaxyzoom" {
+                map.zoom(400.0);
+            }
+            app.galaxy_map = Some(map);
+        }
         "navmap" => {
             app.mode = Mode::Pilot;
             app.nav_map = Some(crate::navmap::NavMap::open(app));

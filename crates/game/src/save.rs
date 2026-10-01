@@ -13,6 +13,9 @@ struct GameSave {
     warp_index: usize,
     chase_cam: bool,
     observer: Observer,
+    /// The star systems we've been to.
+    #[serde(default)]
+    explored: Vec<usize>,
 }
 
 fn path() -> PathBuf {
@@ -30,6 +33,7 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
         warp_index: app.warp_index,
         chase_cam: app.chase_cam,
         observer: app.observer.clone(),
+        explored: app.explored.iter().copied().collect(),
     };
     let path = path();
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
@@ -47,5 +51,6 @@ pub fn load(app: &mut App) -> Result<(), String> {
     app.warp_index = save.warp_index.min(crate::WARPS.len() - 1);
     app.chase_cam = save.chase_cam;
     app.observer = save.observer;
+    app.explored.extend(save.explored);
     Ok(())
 }

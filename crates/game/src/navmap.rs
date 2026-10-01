@@ -36,6 +36,8 @@ pub struct NavMap {
     ship_body: Option<usize>,
     /// Places with defence turrets.
     defended: Vec<NavTarget>,
+    /// Up or down held this long (s): the cursor repeats (see `repeat`).
+    held: f32,
 }
 
 /// Systems you can browse: the ship's first, then the gate network.
@@ -52,7 +54,7 @@ impl NavMap {
     pub fn open(app: &mut App) -> Self {
         let system = app.charts.system(app.v.ship_system);
         let view = app.v.ship_system;
-        let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None, defended: Vec::new() };
+        let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None, defended: Vec::new(), held: 0.0 };
         map.refresh(app);
         // Start on the current target if there is one.
         if let Some(t) = app.v.avionics.nav_target {
@@ -110,6 +112,28 @@ impl NavMap {
     }
 }
 
+/// Held this long (s), a key starts repeating...
+const REPEAT_AFTER: f32 = 0.35;
+/// ...this often (s).
+const REPEAT_EVERY: f32 = 0.065;
+
+/// How many steps a held key makes this frame: one when pressed, then
+/// (after `REPEAT_AFTER`) one every `REPEAT_EVERY`. `held` keeps the time.
+pub fn repeat(held: &mut f32, down: bool, pressed: bool, dt: f32) -> u32 {
+    if !down {
+        *held = 0.0;
+        return 0;
+    }
+    if pressed {
+        *held = 0.0;
+        return 1;
+    }
+    let before = ((*held - REPEAT_AFTER) / REPEAT_EVERY).floor().max(-1.0);
+    *held += dt;
+    let after = ((*held - REPEAT_AFTER) / REPEAT_EVERY).floor().max(-1.0);
+    (after - before).max(0.0) as u32
+}
+
 /// Handle map keys. Returns false when the map should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let Some(mut map) = app.nav_map.take() else { return false };
@@ -126,12 +150,12 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     map.refresh(app);
     let input = &ctx.input;
     let n = map.entries.len().max(1);
-    if input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::KeyS) {
-        map.selected = (map.selected + 1) % n;
-        crate::sound::click(ctx, 1200.0);
-    }
-    if input.pressed(KeyCode::ArrowUp) || input.pressed(KeyCode::KeyW) {
-        map.selected = (map.selected + n - 1) % n;
+    // Up and down step the cursor; held, they repeat.
+    let down = input.down(KeyCode::ArrowDown) || input.down(KeyCode::KeyS);
+    let up = input.down(KeyCode::ArrowUp) || input.down(KeyCode::KeyW);
+    let steps = repeat(&mut map.held, down || up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::KeyS) || input.pressed(KeyCode::ArrowUp) || input.pressed(KeyCode::KeyW), ctx.dt);
+    for _ in 0..steps {
+        map.selected = if down { (map.selected + 1) % n } else { (map.selected + n - 1) % n };
         crate::sound::click(ctx, 1200.0);
     }
     if input.pressed(KeyCode::Delete) {
@@ -170,6 +194,11 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         app.say("LOCK TARGETS IN THIS SYSTEM - OR ADD TO THE ROUTE (A)".into());
     }
     if input.pressed(KeyCode::KeyM) || input.pressed(KeyCode::Escape) {
+        return false;
+    }
+    // U: out to the whole galaxy.
+    if input.pressed(KeyCode::KeyU) {
+        app.galaxy_map = Some(crate::galaxymap::GalaxyMap::open(app, ctx.low_res.as_vec2()));
         return false;
     }
     app.nav_map = Some(map);
@@ -219,7 +248,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     }
 
     let help = "UP/DOWN SELECT  LEFT/RIGHT SYSTEM  ENTER LOCK TARGET  DEL CLEAR TARGET  M CLOSE\n\
-                A ADD TO ROUTE  BKSP REMOVE LAST  C CLEAR ROUTE  G LOAD A SETTLER ROUTE";
+                A ADD TO ROUTE  BKSP REMOVE LAST  C CLEAR ROUTE  G LOAD A SETTLER ROUTE  U GALAXY MAP";
     frame.text(Vec2::new(16.0, size.y - 2.0 * line - 8.0), help, DIM);
 
     chart(frame, map, Vec2::new(size.x * 0.76, size.y * 0.5), (size.x * 0.22).min(size.y * 0.42));
@@ -325,4 +354,21 @@ fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
         frame.hud_line(you + Vec2::new(a.cos(), a.sin()) * 5.0, you + Vec2::new(b.cos(), b.sin()) * 5.0, TEXT);
     }
     frame.text(you + Vec2::new(-28.0, -4.0), "YOU", TEXT);
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn a_held_key_steps_once_then_repeats() {
+        let mut held = 0.0;
+        assert_eq!(super::repeat(&mut held, true, true, 0.016), 1);
+        // Held: nothing until the delay, then a step every interval.
+        let mut steps = 0;
+        for _ in 0..60 {
+            steps += super::repeat(&mut held, true, false, 1.0 / 60.0);
+        }
+        let expected = ((1.0 - super::REPEAT_AFTER) / super::REPEAT_EVERY) as u32;
+        assert!((expected..=expected + 1).contains(&steps), "a second held: {steps}");
+        assert_eq!(super::repeat(&mut held, false, false, 0.016), 0);
+    }
 }

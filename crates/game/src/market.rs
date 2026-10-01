@@ -40,6 +40,8 @@ pub struct MarketView {
     pub rows: Vec<Row>,
     pub banned: Vec<Category>,
     pub docked: Option<Facility>,
+    /// Up or down held this long (s): the cursor repeats.
+    held: f32,
 }
 
 impl MarketView {
@@ -48,7 +50,7 @@ impl MarketView {
         let markets = app.v.markets.clone();
         let docked = app.v.docked_market;
         let shown = docked.and_then(|d| markets.iter().position(|(f, _)| *f == d)).unwrap_or(0);
-        let mut v = MarketView { markets, shown, selected: 0, scroll: 0, rows: Vec::new(), banned: Vec::new(), docked };
+        let mut v = MarketView { markets, shown, selected: 0, scroll: 0, rows: Vec::new(), banned: Vec::new(), docked, held: 0.0 };
         v.refresh(app);
         v
     }
@@ -94,8 +96,11 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     v.refresh(app);
     let rows = v.rows.len().max(1);
     let step = |k: KeyCode, d: usize| if input.pressed(k) { d } else { 0 };
-    let down = step(KeyCode::ArrowDown, 1) + step(KeyCode::PageDown, ROWS);
-    let up = step(KeyCode::ArrowUp, 1) + step(KeyCode::PageUp, ROWS);
+    // (Up and down, held, repeat.)
+    let (held_down, held_up) = (input.down(KeyCode::ArrowDown), input.down(KeyCode::ArrowUp));
+    let arrows = crate::navmap::repeat(&mut v.held, held_down || held_up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::ArrowUp), ctx.dt) as usize;
+    let down = if held_down { arrows } else { 0 } + step(KeyCode::PageDown, ROWS);
+    let up = if held_up && !held_down { arrows } else { 0 } + step(KeyCode::PageUp, ROWS);
     if down > 0 {
         v.selected = (v.selected + down).min(rows - 1);
     }

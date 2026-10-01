@@ -22,6 +22,10 @@ const LINE: f32 = GLYPH + 2.0;
 pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     // The map covers the screen. (HUD fills are drawn before HUD lines, so
     // anything else drawn now would show through it.)
+    if let Some(map) = &app.galaxy_map {
+        crate::galaxymap::draw(frame, app, map);
+        return;
+    }
     if let Some(map) = &app.nav_map {
         crate::navmap::draw(frame, app, map);
         return;
@@ -1365,7 +1369,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("1", "MINING", lamp(m == ShipMode::Mining)),
         ("G", "MARKET", lamp(app.market.is_some())),
         ("4", "CARGO", lamp(app.show_cargo)),
-        ("M", "MAP", lamp(app.nav_map.is_some())),
+        ("M", "MAP", lamp(app.nav_map.is_some() || app.galaxy_map.is_some())),
         ("TAB", "WATCH", Lamp::Off),
         ("F1", "HELP", lamp(app.show_help)),
     ]
