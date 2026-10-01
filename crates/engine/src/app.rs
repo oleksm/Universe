@@ -15,6 +15,7 @@ use crate::camera::Camera;
 use crate::frame::Frame;
 use crate::gpu::Gpu;
 use crate::input::Input;
+use crate::render_thread::RenderThread;
 use crate::renderer::Renderer;
 
 pub struct Config {
@@ -129,8 +130,8 @@ pub trait Game {
 }
 
 struct Running {
-    gpu: Gpu,
-    renderer: Renderer,
+    /// The GPU's own thread (see `render_thread`).
+    render: RenderThread,
     ctx: Context,
     last_frame: Instant,
     fps_timer: f32,
@@ -171,7 +172,8 @@ impl<G: Game> Runner<G> {
 
         s.ctx.dt = raw_dt.min(0.1);
         s.ctx.time = (now - self.start).as_secs_f64();
-        s.ctx.low_res = s.renderer.low_res();
+        let rs = s.render.state();
+        s.ctx.low_res = rs.low_res;
 
         s.frame_count += 1;
         let auto_capture = s.frame_count == 120 && s.auto_screenshot.is_some();
@@ -190,30 +192,29 @@ impl<G: Game> Runner<G> {
         }
 
         let t1 = Instant::now();
-        let mut frame = Frame::new(self.game.camera(), s.renderer.low_res().as_vec2(), s.renderer.hud_size().as_vec2());
+        let mut frame = Frame::new(self.game.camera(), rs.low_res.as_vec2(), rs.hud_size.as_vec2());
         {
             let _p = universe_prof::scope("draw");
             self.game.draw(&mut frame, &s.ctx);
         }
         let t2 = Instant::now();
         let capture = s.ctx.screenshot.take();
+        let counts = frame.counts();
+        // Off to the render thread (waiting only if the last is still queued).
         {
-            let _p = universe_prof::scope("render");
-            s.renderer.render(&mut s.gpu, &frame, capture.as_deref());
+            let _p = universe_prof::scope("hand over to the render thread");
+            s.render.frame(frame, capture);
         }
-        let t3 = Instant::now();
-        universe_prof::add("render/wait for the surface (vsync)", s.renderer.wait.as_secs_f64());
         universe_prof::frame_end();
 
         let ms = |d: std::time::Duration| d.as_secs_f32() * 1000.0;
         let p = &mut s.ctx.perf;
-        let wait = ms(s.renderer.wait);
         p.frame_ms = Perf::smooth(p.frame_ms, raw_dt * 1000.0);
         p.update_ms = Perf::smooth(p.update_ms, ms(t1 - t0));
         p.draw_ms = Perf::smooth(p.draw_ms, ms(t2 - t1));
-        p.render_ms = Perf::smooth(p.render_ms, ms(t3 - t2) - wait);
-        p.wait_ms = Perf::smooth(p.wait_ms, wait);
-        (p.lines, p.triangles, p.points) = frame.counts();
+        p.render_ms = Perf::smooth(p.render_ms, rs.render_ms);
+        p.wait_ms = Perf::smooth(p.wait_ms, rs.wait_ms);
+        (p.lines, p.triangles, p.points) = counts;
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();
             log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
@@ -263,8 +264,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             exit: false,
         };
         self.state = Some(Running {
-            gpu,
-            renderer,
+            render: RenderThread::start(gpu, renderer),
             ctx,
             last_frame: Instant::now(),
             fps_timer: 0.0,
@@ -282,10 +282,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         match event {
             WindowEvent::KeyboardInput { .. } | WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. } if scripted => {}
             WindowEvent::CloseRequested => event_loop.exit(),
-            WindowEvent::Resized(size) => {
-                s.gpu.resize(size.width, size.height);
-                s.renderer.resize(&s.gpu);
-            }
+            WindowEvent::Resized(size) => s.render.resize(size.width, size.height),
             WindowEvent::Focused(false) => {
                 s.ctx.input.release_all();
                 s.ctx.grab_cursor(false);

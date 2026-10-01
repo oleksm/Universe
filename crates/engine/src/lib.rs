@@ -11,6 +11,7 @@ pub mod frame;
 pub mod gpu;
 pub mod input;
 pub mod model;
+mod render_thread;
 mod renderer;
 
 pub use app::{run, Config, Context, Game, Perf};

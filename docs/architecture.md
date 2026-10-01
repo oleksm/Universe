@@ -52,6 +52,49 @@ changes.
                         engine (universe-engine): rendering only, no sim deps
 ```
 
+## Threads: the world engine and the client
+
+The world engine (`sim` and everything below it) and the client (`game` + `engine`) meet at one
+boundary, `universe_sim::engine`:
+
+- **Commands in.** Everything the client does to the world is a `Command` (ship settings,
+  throttle changes, clearance, autopilot, follow, lock, route edits, trades…), applied in
+  order before the next tick. Requests with an answer (a lock, a trade) answer with events.
+- **Views out.** After each tick the engine publishes a `View`:
+  - the player's ship, avionics and crew;
+  - the other ships as drawn (`CraftView`);
+  - weapons fire, kills and trades;
+  - the events since the last view;
+  - what the player's ship computers make of things (radar contacts, fire control, approach
+    guidance, the flight plan, the collision warning, follow status, the nav marker);
+  - the turrets and pad owners of the player's system.
+
+  A view the client didn't take passes its events and hits on to the next.
+- **Charts shared.** What's fixed about the galaxy (stars, gates, goods, the star systems as
+  generated) is `world::charts::Charts`, shared read-only by both sides.
+
+Threads:
+
+1. **World engine** (`EngineHandle::start`): ticks at `TICK_HZ` (60), applying commands,
+   then publishing the view. Within a tick, after the player:
+   - **crafts step side by side** on all cores (`rayon`), each against the world frozen at
+     the tick's start (`World::freeze`: systems, body positions at both ends of the tick, the
+     integrator's snapshot, turrets, read without locks) and the others as the frame's
+     snapshot has them (`Universe::snaps`);
+   - their traffic control requests (pads, corridors) are answered from the last tick's state
+     and made after, in craft order, so the outcome doesn't depend on thread timing;
+   - what came of each turn (events, hunts, crashes, trades) is applied in craft order;
+   - then combat, collisions and traffic presence (presence worked out in parallel).
+
+   Dev scenarios set the universe up before the thread starts. `UNIVERSE_ENGINE_THREAD=0` runs
+   it in the client's thread, for debugging.
+2. **Client main thread**: window and input, turning input into commands, taking the newest
+   view and building the frame. Between ticks it carries motion forward (`App::ahead`,
+   `turned`, `now`) so a fast display doesn't judder on 60 Hz ticks.
+3. **Render thread** (`engine::render_thread`): owns the GPU. It takes finished frames (one
+   may wait), uploads, submits and presents, and reports sizes and timings back. Meshes live on
+   the GPU (`Mesh`: uploaded once, instanced by mesh, transformed and lit in the shader).
+
 Crate boundaries are enforced by Cargo: `universe-physics` depends on `glam` only and cannot
 import world or avionics types; `universe-world` depends on the kernel (+ `glam`, `serde`) and
 cannot import avionics; `universe-avionics` depends on the kernel and the world; `universe-sim`
@@ -355,7 +398,11 @@ ship's pose directly, like tests do — then render.
 | Collision warning: predicted path through the kernel, first impact (bodies, stations, gates, ships) | avionics: `collision` |
 | Radar contacts + transponders, the lock | sim: `contacts` |
 | Combat phase in the tick (ship ids: player 0, craft i → i+1), fire control for the player | sim: `combat` |
-| Frame profiler: named scopes per frame, mean/worst over 120 frames (F3 panel, `UNIVERSE_PROFILE=1`) | prof |
+| Frame profiler: named scopes per frame (per-thread tallies), mean/worst over 120 frames (F3 panel, `UNIVERSE_PROFILE=1`) | prof |
+| The world engine's boundary: `Command`, `View`, `Engine`, `EngineHandle` (thread, mailbox) | sim: `engine` |
+| Crafts side by side: `FrameLink` (bus over a shared world), deferred traffic `Request`s | sim: `vessel`, `traffic::fly_crafts` |
+| Shared charts: galaxy, gates, goods, star systems | world: `charts` |
+| Render thread; GPU meshes and the mesh shader | engine: `render_thread`, `renderer`, `model::Mesh` |
 | Rendering, windowing, input, audio, frame timing (`Perf`) | engine |
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |
 
