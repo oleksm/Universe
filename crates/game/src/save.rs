@@ -46,7 +46,13 @@ pub fn load(app: &mut App) -> Result<(), String> {
     let json = std::fs::read_to_string(path()).map_err(|e| e.to_string())?;
     let save: GameSave = serde_json::from_str(&json).map_err(|e| e.to_string())?;
     let universe = save.universe;
+    // Made with other content (other packs, or another build's): keys keep
+    // most of it, but say so.
+    let other = universe.content != 0 && universe.content != universe_sim::world::content::content().hash();
     app.engine.load(universe).ok_or("the world engine didn't answer")?;
+    if other {
+        app.say("SAVED WITH OTHER CONTENT - WHAT'S GONE FROM IT IS LOST".into());
+    }
     app.mode = save.mode;
     app.warp_index = save.warp_index.min(crate::WARPS.len() - 1);
     app.chase_cam = save.chase_cam;

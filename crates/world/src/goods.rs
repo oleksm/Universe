@@ -168,6 +168,9 @@ pub struct MarketRules {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Item {
     pub id: usize,
+    /// Its stable key: a generated good's is its kind's and its number among
+    /// them (`goods.food/17`), an ore's its own (`ore.stony`).
+    pub key: String,
     pub name: String,
     pub category: Category,
     /// Base price per unit (credits): what it's worth where it's neither
@@ -233,13 +236,14 @@ pub fn catalog(seed: u64) -> Vec<Item> {
             let j = rng.range(0.0, (i + 1) as f64) as usize;
             names.swap(i, j.min(i));
         }
-        for (a, n) in names.into_iter().take(per) {
+        for (number, (a, n)) in names.into_iter().take(per).enumerate() {
             let (lo, hi) = kind.price;
             // Prices spread log-uniformly across the category's range.
             let price = (lo.ln() + rng.range(0.0, 1.0) * (hi.ln() - lo.ln())).exp();
             let mass = kind.mass * rng.range(0.6, 1.4);
             items.push(Item {
                 id: items.len(),
+                key: format!("{}/{number}", kind.key),
                 name: format!("{} {}", kind.adjectives[a], kind.nouns[n]),
                 category,
                 price: (price * 10.0).round() / 10.0,
@@ -248,7 +252,7 @@ pub fn catalog(seed: u64) -> Vec<Item> {
         }
     }
     for (_, o) in content().ores.iter() {
-        items.push(Item { id: items.len(), name: o.name.clone(), category: o.kind, price: o.price, mass: TONNE });
+        items.push(Item { id: items.len(), key: o.key.clone(), name: o.name.clone(), category: o.kind, price: o.price, mass: TONNE });
     }
     items
 }

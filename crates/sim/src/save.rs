@@ -1,6 +1,12 @@
-//! Saving and restoring a game: the player's ship and its avionics, and the
-//! clock. Star systems regenerate from the seed. The settlers aren't saved:
-//! loading keeps the crafts already flying (none, if the seed changes).
+//! Saving and restoring a game: the player's ship and its avionics, the
+//! clock, the player's credits and hold, and what's been dug out of
+//! asteroids. Star systems regenerate from the seed. The settlers aren't
+//! saved: loading keeps the crafts already flying (none, if the seed changes).
+//!
+//! A save records its `version` and the content it was made with (its
+//! hash). Content is stored by key (goods, hulls), so saves survive content
+//! growing; older saves are read through `SaveRecord`, which takes every
+//! earlier form.
 
 use serde::{Deserialize, Serialize};
 use universe_avionics::route::Route;
@@ -13,6 +19,10 @@ use crate::universe::Universe;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(from = "SaveRecord")]
 pub struct UniverseSave {
+    /// The save format's version (`SAVE_VERSION` when written).
+    pub version: u32,
+    /// The hash of the content it was made with (0: not recorded).
+    pub content: u64,
     pub seed: u64,
     pub time: f64,
     pub ship: Ship,
@@ -25,10 +35,21 @@ pub struct UniverseSave {
     #[serde(default = "starting_credits")]
     pub credits: f64,
     #[serde(default)]
-    pub hold: Vec<(usize, u32)>,
+    pub hold: Vec<(GoodsRef, u32)>,
     /// What's been dug out of asteroids: ((system, field, rock), kg).
     #[serde(default)]
     pub mined: Vec<((usize, usize, usize), f64)>,
+}
+
+/// The save format's version: 1, content by key (0: goods by catalogue position).
+pub const SAVE_VERSION: u32 = 1;
+
+/// A good in a save: by key; saves before keys had its place in the catalogue.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum GoodsRef {
+    Key(String),
+    Index(usize),
 }
 
 fn starting_credits() -> f64 {
@@ -40,6 +61,10 @@ fn starting_credits() -> f64 {
 /// resumes with its target, clearance and hyperdrive autopilot.
 #[derive(Deserialize)]
 struct SaveRecord {
+    #[serde(default)]
+    version: u32,
+    #[serde(default)]
+    content: u64,
     seed: u64,
     time: f64,
     ship: ShipRecord,
@@ -50,6 +75,10 @@ struct SaveRecord {
     avionics: Option<Avionics>,
     #[serde(default = "starting_credits")]
     credits: f64,
+    #[serde(default)]
+    hold: Vec<(GoodsRef, u32)>,
+    #[serde(default)]
+    mined: Vec<((usize, usize, usize), f64)>,
 }
 
 #[derive(Deserialize)]
@@ -72,7 +101,19 @@ impl From<SaveRecord> for UniverseSave {
             hyper_autopilot: r.ship.hyper_autopilot,
             ..Avionics::default()
         });
-        UniverseSave { seed: r.seed, time: r.time, ship: r.ship.ship, ship_system: r.ship_system, route: r.route, avionics, credits: r.credits, hold: Vec::new(), mined: Vec::new() }
+        UniverseSave {
+            version: r.version,
+            content: r.content,
+            seed: r.seed,
+            time: r.time,
+            ship: r.ship.ship,
+            ship_system: r.ship_system,
+            route: r.route,
+            avionics,
+            credits: r.credits,
+            hold: r.hold,
+            mined: r.mined,
+        }
     }
 }
 
@@ -84,6 +125,8 @@ impl Universe {
     /// A save, with the player's avionics as the client's cockpit has them.
     pub fn save_with(&self, avionics: Avionics) -> UniverseSave {
         UniverseSave {
+            version: SAVE_VERSION,
+            content: universe_world::content::content().hash(),
             seed: self.world.galaxy.seed,
             time: self.world.time,
             ship: self.ship.clone(),
@@ -91,7 +134,7 @@ impl Universe {
             route: avionics.route.clone(),
             avionics,
             credits: self.credits(),
-            hold: self.hold(),
+            hold: self.hold().into_iter().map(|(good, units)| (GoodsRef::Key(self.world.goods[good].key.clone()), units)).collect(),
             mined: {
                 let mut m: Vec<_> = self.world.mined.iter().map(|(&k, &v)| (k, v)).collect();
                 m.sort_by_key(|e| e.0);
@@ -116,8 +159,15 @@ impl Universe {
         let (tick, cause) = (self.tick, universe_protocol::Cause::Rules);
         self.ledger.settle(me, Asset::Credits, save.credits, tick, cause);
         self.ledger.write_off(crate::combat::PLAYER, tick, cause);
+        // (Goods the content no longer has are lost with it.)
         for (good, units) in &save.hold {
-            self.ledger.settle(me, Asset::Goods(*good), *units as f64, tick, cause);
+            let id = match good {
+                GoodsRef::Key(k) => self.world.goods.iter().position(|i| &i.key == k),
+                GoodsRef::Index(i) => (*i < self.world.goods.len()).then_some(*i),
+            };
+            if let Some(id) = id {
+                self.ledger.settle(me, Asset::Goods(id), *units as f64, tick, cause);
+            }
         }
         self.ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
         self.world.mined = save.mined.into_iter().collect();
@@ -141,13 +191,42 @@ mod tests {
         for _ in 0..60 {
             u.step_world(1.0 / 60.0, 100.0, &Controls::default());
         }
-        let json = serde_json::to_string(&u.save()).unwrap();
+        // Something in the hold, and a rock dug into.
+        use universe_services::{Asset, Party};
+        let ore = universe_world::goods::Ore::Stony.item();
+        u.ledger.settle(Party::Pilot(crate::combat::PLAYER), Asset::Goods(ore), 3.0, u.tick, universe_protocol::Cause::Rules);
+        u.world.mined.insert((u.ship_system, 0, 1), 1500.0);
+        let save = u.save();
+        assert_eq!((save.version, save.content), (SAVE_VERSION, universe_world::content::content().hash()));
+        let json = serde_json::to_string(&save).unwrap();
+        assert!(json.contains("\"ore.stony\"") && json.contains("\"hull.cobra\""), "content by key: {json}");
         let mut restored = Universe::new(7);
         restored.load(serde_json::from_str(&json).unwrap());
         assert_eq!(restored.world.time, u.world.time);
         assert_eq!(restored.ship.position, u.ship.position);
         assert_eq!(restored.ship_system, u.ship_system);
         assert_eq!(restored.avionics().nav_target, u.avionics().nav_target);
+        assert_eq!(restored.hold(), vec![(ore, 3)], "the hold comes back");
+        assert_eq!(restored.world.mined.get(&(u.ship_system, 0, 1)), Some(&1500.0), "and the dug rock");
+    }
+
+    #[test]
+    fn a_save_from_before_keys_still_loads() {
+        let u = Universe::new(7);
+        let mut json: serde_json::Value = serde_json::to_value(u.save()).unwrap();
+        // As written before: no version or content, goods by catalogue position, no hull.
+        let o = json.as_object_mut().unwrap();
+        o.remove("version");
+        o.remove("content");
+        o["ship"].as_object_mut().unwrap().remove("class");
+        let ore = universe_world::goods::Ore::Pgm.item();
+        o.insert("hold".into(), serde_json::json!([[ore, 2]]));
+        let save: UniverseSave = serde_json::from_value(json).unwrap();
+        assert_eq!(save.version, 0);
+        let mut restored = Universe::new(7);
+        restored.load(save);
+        assert_eq!(restored.hold(), vec![(ore, 2)]);
+        assert_eq!(restored.ship.class, universe_world::ship::starting_hull());
     }
 
 }
