@@ -308,7 +308,7 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
-        "gate" | "gateauto" | "transit" | "gatearrive" | "gateorbit" | "gateorbit60" | "gateorbitwatch" | "orbitpick" => {
+        "gate" | "gateauto" | "transit" | "gatearrive" | "gateorbit" | "gateorbit60" | "gateorbitwatch" | "orbitpick" | "gateorbitjets" => {
             // A gate out of the home system: cleared for transit, 8 km out, off to one side.
             app.mode = Mode::Pilot;
             let (dest, _) = app.engine.universe().gate_links_of(home)[0].clone();
@@ -319,7 +319,7 @@ pub fn apply(app: &mut App, name: &str) {
             let look = (f.center - app.engine.universe().ship.position).normalize();
             app.engine.universe().ship.orientation = universe_sim::ship::facing(look, f.rotation * DVec3::Z);
             app.engine.universe().set_nav_target(Some(NavTarget::Gate(g)));
-            if name.starts_with("gateorbit") || name == "orbitpick" {
+            if name.starts_with("gateorbit") || name == "orbitpick" || name == "gateorbitjets" {
                 // Arrived at the gate, and orbiting it (no clearance).
                 let u = app.engine.universe();
                 u.follow(universe_sim::FollowKind::Orbit, None);
@@ -329,11 +329,11 @@ pub fn apply(app: &mut App, name: &str) {
                 if name == "orbitpick" {
                     app.orbit_pick.hold_for_show();
                 }
-                if name == "gateorbitwatch" {
+                if name == "gateorbitwatch" || name == "gateorbitjets" {
                     app.mode = Mode::Observer;
                     app.observer.focus = Focus::Ship;
-                    app.observer.distance = 30_000.0;
-                    app.observer.pitch = 1.4;
+                    app.observer.distance = if name == "gateorbitjets" { 150.0 } else { 30_000.0 };
+                    app.observer.pitch = if name == "gateorbitjets" { -0.35 } else { 1.4 };
                 }
                 return;
             }

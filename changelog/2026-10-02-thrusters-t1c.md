@@ -34,3 +34,11 @@ Ships now fly on their thrusters as placed.
 - Tests: full throttle is both engines with no turn; a pure turn pushes nowhere; strafing doesn't
   yaw; every direction gets full thrust; the envelope; a 180° flip in under 5 s that settles.
   The docking, landing, gate and route autopilot tests pass on real thrusters.
+
+## Jets
+
+Every ship's thrusters show as they fire: from each nozzle along its exhaust, a flickering plume
+as long as it's firing hard (the main drive's up to ~40 m, the lift's ~16, the thrusters' a few
+metres), for your ship and every craft near enough to see. The single exhaust streak is gone
+(the hyperdrive keeps a short wake). Dev scenario `gateorbitjets` (your ship from 150 m as it
+orbits a gate on its belly lift and thrusters).

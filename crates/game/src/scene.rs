@@ -1,4 +1,4 @@
-use universe_engine::glam::{DVec3, Vec2};
+use universe_engine::glam::{DQuat, DVec3, Vec2};
 use universe_engine::{text_size, Color, Frame, Light, Transform};
 use universe_sim::names::star_name;
 use universe_sim::units::LIGHT_YEAR;
@@ -381,10 +381,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
         frame.model_shaded(&app.models.ship, &t, tc, HULL);
-        if c.ship.throttle > 0.0 {
-            let back = turned * DVec3::Z;
-            frame.line(pos + back * 16.0, pos + back * (26.0 + 40.0 * c.ship.throttle), Color::hex(0xffa040));
-        }
+        jets(frame, &c.ship, pos, turned, app.now(), i);
         if pos.distance(cam) < 20_000.0
             && let Some(p) = frame.project(pos)
         {
@@ -956,11 +953,34 @@ fn ship(frame: &mut Frame, app: &App) {
             frame.line(foot - side, foot + side, SHIP_COLOR.scale(0.7));
         }
     }
-    if app.ship.hyperdrive || app.ship.throttle > 0.0 {
-        // Exhaust streak.
-        let back = app.place(crate::Who::Me).1 * DVec3::Z;
-        let len = 10.0 + 40.0 * app.ship.throttle;
-        frame.line(pos + back * 16.0, pos + back * (16.0 + len), Color::hex(0xffa040));
+    let turned = app.place(crate::Who::Me).1;
+    jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
+    if app.ship.hyperdrive {
+        // The drive's wake (it has no jets).
+        let back = turned * DVec3::Z;
+        frame.line(pos + back * 16.0, pos + back * 26.0, Color::hex(0xffa040));
+    }
+}
+
+/// A ship's thrusters firing: from each nozzle along its exhaust, a plume as
+/// long as it's firing hard (the main drive's long, the thrusters' short),
+/// flickering. `seed` sets the flicker apart ship from ship.
+fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned: DQuat, now: f64, seed: usize) {
+    use universe_sim::world::ship::ThrusterRole;
+    for (k, (t, &u)) in ship.spec().thrusters.iter().zip(&ship.jets).enumerate() {
+        if u < 0.02 {
+            continue;
+        }
+        let reach = match t.role {
+            ThrusterRole::Main => 8.0 + 34.0 * u,
+            ThrusterRole::Lift => 4.0 + 12.0 * u,
+            ThrusterRole::Rcs => 2.0 + 6.0 * u,
+        };
+        let flicker = 0.8 + 0.2 * ((now * 31.0 + k as f64 * 1.7 + seed as f64 * 0.37).sin());
+        let from = pos + turned * t.at;
+        let out = turned * -t.push;
+        frame.line(from, from + out * reach * flicker, Color::hex(0xffb050).scale((0.6 + 0.4 * u) as f32));
+        frame.point(from, Color::hex(0xfff0c0));
     }
 }
 
