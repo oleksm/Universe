@@ -45,8 +45,6 @@ pub struct Universe {
     pub crew: Person,
     /// Recent kills by weapons fire, most recent last.
     pub kills: Vec<crate::combat::Kill>,
-    /// The pilot's money (credits).
-    pub credits: f64,
     /// The flight recorder: every ship's last seconds, and the wrecks filed (see `recorder`).
     pub recorder: crate::recorder::Recorder,
     /// Recent trades by settlers, most recent last.
@@ -66,6 +64,11 @@ pub struct Universe {
     pub log: Vec<(usize, ShipEvent)>,
     /// The law: who's fair game, since when, and why (see `universe_services::law`).
     pub law: universe_services::Law,
+    /// The ledger (credits, and what's in each hold) and the market service.
+    pub ledger: universe_services::Ledger,
+    pub markets: universe_services::Markets,
+    /// Messages sent to services so far (each one's id, for causes).
+    pub(crate) messages: u64,
     /// Crafts' commands reach their devices this many ticks after they're
     /// given (0: at once). Tests set it to the lag pilots will have once they
     /// run apart from the world.
@@ -74,8 +77,10 @@ pub struct Universe {
 
 impl Universe {
     pub fn new(seed: u64) -> Self {
+        let world = World::new(seed);
+        let goods = std::sync::Arc::new(world.goods.clone());
         let mut u = Self {
-            world: World::new(seed),
+            world,
             ship: Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY),
             ship_system: 0,
             avionics: Avionics::default(),
@@ -85,7 +90,6 @@ impl Universe {
             crash_log: Vec::new(),
             crew: Person::default(),
             kills: Vec::new(),
-            credits: STARTING_CREDITS,
             recorder: Default::default(),
             trade_log: Vec::new(),
             aggressors: Vec::new(),
@@ -94,11 +98,16 @@ impl Universe {
             tick: 0,
             log: Vec::new(),
             law: Default::default(),
+            ledger: Default::default(),
+            markets: universe_services::Markets::new(seed, goods),
+            messages: 0,
             command_delay: 0,
             positions: Vec::new(),
         };
         u.respawn();
         u.events.clear();
+        // What a new pilot starts with, from the world's account.
+        u.ledger.settle(universe_services::Party::Pilot(crate::combat::PLAYER), universe_services::Asset::Credits, STARTING_CREDITS, 0, universe_protocol::Cause::Rules);
         u
     }
 
@@ -243,9 +252,13 @@ impl Universe {
         if done {
             self.world.traffic.release(id);
         }
-        // A new ship: a clean record.
+        // A new ship: a clean record, and an empty hold (what was in the old
+        // one went with it), because of the respawn, as logged.
         if events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) {
             self.law.forget(id);
+            let index = self.log.len() as u32;
+            self.log.push((id, ShipEvent::Respawned));
+            self.ledger.write_off(id, self.tick, universe_protocol::Cause::Event { tick: self.tick, index });
         }
     }
 
@@ -369,33 +382,41 @@ impl Universe {
     /// The markets of the system we're in (visible from anywhere in it), with names.
     pub fn markets(&mut self) -> Vec<(Facility, String)> {
         let sys = self.ship_system();
-        universe_world::market::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect()
+        universe_world::traffic::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect()
     }
 
     /// The market we're docked or landed at, if any.
     pub fn docked_market(&mut self) -> Option<Facility> {
         let sys = self.ship_system();
-        universe_world::market::docked_at(&sys, &self.ship)
+        universe_world::traffic::docked_at(&sys, &self.ship)
     }
 
     /// A market in our system: its quotes, and what it bans.
-    pub fn market_quotes(&mut self, f: Facility) -> (Vec<universe_world::market::Quote>, Vec<universe_world::goods::Category>) {
-        let system = self.ship_system;
-        let banned = self.world.market(system, f).map(|m| m.banned.clone()).unwrap_or_default();
-        (self.world.quotes(system, f), banned)
+    pub fn market_quotes(&mut self, f: Facility) -> (Vec<universe_services::market::Quote>, Vec<universe_world::goods::Category>) {
+        let (system, sys, now) = (self.ship_system, self.ship_system(), self.world.time);
+        let banned = self.markets.market(system, &sys, f).map(|m| m.banned.clone()).unwrap_or_default();
+        (self.markets.quotes(system, &sys, f, now), banned)
     }
 
     /// A market's quote for one item (listed, or of a kind it wants), if any.
-    pub fn quote_for(&mut self, f: Facility, item: usize) -> Option<universe_world::market::Quote> {
-        self.world.quote_for(self.ship_system, f, item)
+    pub fn quote_for(&mut self, f: Facility, item: usize) -> Option<universe_services::market::Quote> {
+        let (system, sys, now) = (self.ship_system, self.ship_system(), self.world.time);
+        self.markets.quote_for(system, &sys, f, item, now)
+    }
+
+    /// Our credits, and what's in our hold, as the ledger has them.
+    pub fn credits(&self) -> f64 {
+        self.ledger.credits(universe_services::Party::Pilot(crate::combat::PLAYER))
+    }
+
+    pub fn hold(&self) -> Vec<(usize, u32)> {
+        self.ledger.hold(crate::combat::PLAYER)
     }
 
     /// Buy (`units` > 0) or sell (< 0) `item` at the market `f` we're docked
     /// at: credits paid (negative: received), or why not.
     pub fn trade(&mut self, f: Facility, item: usize, units: i64) -> Result<f64, String> {
-        let mut credits = self.credits;
-        let r = self.world.trade(self.ship_system, f, item, units, &mut self.ship, &mut credits);
-        self.credits = credits;
+        let r = self.pilot_trade(crate::combat::PLAYER, f, item, units);
         if let Ok(amount) = r {
             let sys = self.ship_system();
             let record = crate::commerce::TradeRecord {
@@ -409,7 +430,7 @@ impl Universe {
                 units: units.unsigned_abs() as u32,
                 amount: amount.abs(),
                 cargo: self.ship.cargo,
-                credits: self.credits,
+                credits: self.credits(),
             };
             self.log_trade(record);
         }

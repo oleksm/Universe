@@ -2341,6 +2341,7 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "universe-protocol",
+ "universe-world",
 ]
 
 [[package]]

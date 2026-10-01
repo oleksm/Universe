@@ -22,7 +22,7 @@ use universe_avionics::{Avionics, Event, NavTarget, Plan, Solution, Track};
 use universe_world::charts::Charts;
 use universe_world::crew::Reach;
 use universe_world::goods::Category;
-use universe_world::market::Quote;
+use universe_services::market::Quote;
 use universe_world::turrets::Turret;
 use universe_world::weapons::{Beam, Impact};
 use universe_world::{Controls, Facility, Person, Ship, ShipCommands, StepResult, WalkCommands};
@@ -107,7 +107,9 @@ pub struct View {
     pub aggressed_until: Option<f64>,
     pub avionics: Avionics,
     pub crew: Person,
+    /// Our credits, and what's in our hold (good, units), as the ledger has them.
     pub credits: f64,
+    pub hold: Vec<(usize, u32)>,
     pub crafts: Arc<Vec<CraftView>>,
     pub traffic: TrafficStats,
     pub kills: Vec<Kill>,
@@ -345,10 +347,10 @@ impl Engine {
                 aggressed: u.law.aggressed(crate::combat::craft_id(i), now),
             })
             .collect();
-        let markets = universe_world::market::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect();
+        let markets = universe_world::traffic::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect();
         let market = self.watched.map(|f| {
             let (quotes, banned) = u.market_quotes(f);
-            let held = u.ship.hold.keys().copied().filter(|i| !quotes.iter().any(|q| q.offer.item == *i)).collect::<Vec<_>>();
+            let held = u.hold().into_iter().map(|(i, _)| i).filter(|i| !quotes.iter().any(|q| q.offer.item == *i)).collect::<Vec<_>>();
             let held = held.into_iter().map(|i| (i, u.quote_for(f, i))).collect();
             MarketView { market: f, quotes, banned, held }
         });
@@ -361,7 +363,8 @@ impl Engine {
             aggressed_until: u.law.until(crate::combat::PLAYER, now),
             avionics: u.avionics.clone(),
             crew: u.crew,
-            credits: u.credits,
+            credits: u.credits(),
+            hold: u.hold(),
             crafts: Arc::new(crafts),
             traffic: u.traffic,
             kills: u.kills.clone(),

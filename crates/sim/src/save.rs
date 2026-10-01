@@ -21,8 +21,11 @@ pub struct UniverseSave {
     pub route: Route,
     #[serde(default)]
     pub avionics: Avionics,
+    /// The player's money, and what's in the hold (good, units).
     #[serde(default = "starting_credits")]
     pub credits: f64,
+    #[serde(default)]
+    pub hold: Vec<(usize, u32)>,
 }
 
 fn starting_credits() -> f64 {
@@ -66,7 +69,7 @@ impl From<SaveRecord> for UniverseSave {
             hyper_autopilot: r.ship.hyper_autopilot,
             ..Avionics::default()
         });
-        UniverseSave { seed: r.seed, time: r.time, ship: r.ship.ship, ship_system: r.ship_system, route: r.route, avionics, credits: r.credits }
+        UniverseSave { seed: r.seed, time: r.time, ship: r.ship.ship, ship_system: r.ship_system, route: r.route, avionics, credits: r.credits, hold: Vec::new() }
     }
 }
 
@@ -79,7 +82,8 @@ impl Universe {
             ship_system: self.ship_system,
             route: self.avionics.route.clone(),
             avionics: self.avionics.clone(),
-            credits: self.credits,
+            credits: self.credits(),
+            hold: self.hold(),
         }
     }
 
@@ -91,7 +95,16 @@ impl Universe {
         self.ship = save.ship;
         self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
         self.avionics = Avionics { route: save.route, ..save.avionics };
-        self.credits = save.credits;
+        // The ledger takes the save's word for our credits and hold.
+        use universe_services::{Asset, Party};
+        let me = Party::Pilot(crate::combat::PLAYER);
+        let (tick, cause) = (self.tick, universe_protocol::Cause::Rules);
+        self.ledger.settle(me, Asset::Credits, save.credits, tick, cause);
+        self.ledger.write_off(crate::combat::PLAYER, tick, cause);
+        for (good, units) in &save.hold {
+            self.ledger.settle(me, Asset::Goods(*good), *units as f64, tick, cause);
+        }
+        self.ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
         self.events.clear();
     }
 }

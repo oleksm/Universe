@@ -11,21 +11,22 @@
 //!
 //! Stock and demand recover toward their usual levels over `RECOVERY`. A
 //! market's state is kept only once it has been traded with. One currency,
-//! credits. You trade only while docked or landed at the market.
+//! credits, booked in the ledger. You trade only while docked or landed at
+//! the market (a physical fact the core reports).
 
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
+use universe_protocol::{BodyId, Cause, Tick};
+use universe_world::goods::{Category, Item};
+use universe_world::rng::{mix, Rng};
+use universe_world::ship::HOLD_CAPACITY;
+use universe_world::system::StarSystem;
+use universe_world::terrain::TerrainKind;
+use universe_world::traffic::Facility;
 
-use crate::goods::{Category, Item};
-use crate::rng::{mix, Rng};
-use crate::ship::{Ship, ShipState};
-use crate::system::{BodyKind, StarSystem};
-use crate::terrain::TerrainKind;
-use crate::traffic::Facility;
-
-/// Most cargo a ship can carry (kg).
-pub const HOLD_CAPACITY: f64 = 20_000.0;
+use crate::ledger::{Asset, Ledger, Party};
 /// Time for stock and demand to get most of the way back (game s).
 pub const RECOVERY: f64 = 6.0 * 3600.0;
 /// A market buys back what it produces at this share of its selling price.
@@ -238,9 +239,11 @@ impl Market {
     }
 
     /// Trade `units` of `item` (positive: buy from the market, negative: sell
-    /// to it) for a ship with `credits`: the credits moved (positive: paid by
-    /// the ship), or why not. The ship's hold and mass change with it.
-    pub fn trade(&self, state: &mut MarketState, now: f64, item: &Item, units: i64, ship: &mut Ship, credits: &mut f64) -> Result<f64, String> {
+    /// to it) for `pilot`, whose cargo weighs `cargo` (kg): the credits moved
+    /// (positive: paid by the pilot), or why not. Credits and goods move in
+    /// the ledger (this market's account: `me`), for `cause`.
+    #[allow(clippy::too_many_arguments)]
+    pub fn trade(&self, state: &mut MarketState, now: f64, item: &Item, units: i64, pilot: BodyId, cargo: f64, ledger: &mut Ledger, me: Party, tick: Tick, cause: Cause) -> Result<f64, String> {
         self.recover(state, now);
         if self.banned.contains(&item.category) {
             return Err(format!("{} IS ILLEGAL HERE", item.category.name()));
@@ -249,6 +252,7 @@ impl Market {
         state.usual.entry(item.id).or_insert(o.usual);
         let level = state.levels.get(&item.id).copied().unwrap_or(o.usual);
         let (buy, sell) = prices(&o, level);
+        let who = Party::Pilot(pilot);
         if units > 0 {
             let Some(price) = buy else { return Err("NOT SOLD HERE - ONLY BOUGHT".into()) };
             let n = units as f64;
@@ -256,64 +260,133 @@ impl Market {
                 return Err(format!("ONLY {level:.0} IN STOCK"));
             }
             let cost = price * n;
-            if *credits < cost {
+            if ledger.credits(who) < cost {
                 return Err("NOT ENOUGH CREDITS".into());
             }
-            if ship.cargo + item.mass * n > HOLD_CAPACITY {
+            if cargo + item.mass * n > HOLD_CAPACITY {
                 return Err("HOLD FULL".into());
             }
-            *credits -= cost;
+            ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
+            ledger.transfer(me, who, Asset::Goods(item.id), n, tick, cause)?;
             state.levels.insert(item.id, level - n);
-            *ship.hold.entry(item.id).or_default() += units as u32;
-            ship.cargo += item.mass * n;
             Ok(cost)
         } else {
-            let n = (-units) as u32;
-            let have = ship.hold.get(&item.id).copied().unwrap_or(0);
-            if have < n {
+            let n = (-units) as f64;
+            if ledger.balance(who, Asset::Goods(item.id)) + 1e-6 < n {
                 return Err("NOT IN THE HOLD".into());
             }
-            if o.side == Side::Buys && level < n as f64 {
+            if o.side == Side::Buys && level < n {
                 return Err(format!("THEY ONLY WANT {level:.0} MORE"));
             }
-            let paid = sell * n as f64;
-            *credits += paid;
+            let paid = sell * n;
+            ledger.transfer(who, me, Asset::Goods(item.id), n, tick, cause)?;
+            ledger.transfer(me, who, Asset::Credits, paid, tick, cause)?;
             // Selling back raises their stock; meeting demand lowers what's left of it.
-            let next = if o.side == Side::Sells { level + n as f64 } else { level - n as f64 };
+            let next = if o.side == Side::Sells { level + n } else { level - n };
             state.levels.insert(item.id, next);
-            if have == n {
-                ship.hold.remove(&item.id);
-            } else {
-                ship.hold.insert(item.id, have - n);
-            }
-            ship.cargo = (ship.cargo - item.mass * n as f64).max(0.0);
             Ok(-paid)
         }
     }
 }
 
-/// The market a ship is docked or landed at, if any.
-pub fn docked_at(sys: &StarSystem, ship: &Ship) -> Option<Facility> {
-    let ShipState::Landed { body, local_position, .. } = ship.state else { return None };
-    if sys.bodies[body].kind == BodyKind::Station {
-        return Some(Facility::Station(body));
-    }
-    sys.port_at(body, local_position.normalize()).map(Facility::Spaceport)
+/// The market service: every market met so far (generated from the seed on
+/// first look), the state of those traded with, and the trades — booked in
+/// the ledger.
+#[derive(Clone, Debug)]
+pub struct Markets {
+    seed: u64,
+    goods: Arc<Vec<Item>>,
+    markets: HashMap<(usize, Facility), Arc<Market>>,
+    states: HashMap<(usize, Facility), MarketState>,
 }
 
-/// Every market in a star system: its stations and spaceports.
-pub fn facilities(sys: &StarSystem) -> Vec<Facility> {
-    let stations = sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == BodyKind::Station).map(|(i, _)| Facility::Station(i));
-    stations.chain((0..sys.spaceports.len()).map(Facility::Spaceport)).collect()
+/// A request to trade: who, where (and where it physically is), what.
+#[derive(Clone, Copy, Debug)]
+pub struct Order {
+    pub pilot: BodyId,
+    pub system: usize,
+    pub market: Facility,
+    /// Where the pilot's ship is docked or landed, as the core reports.
+    pub docked_at: Option<Facility>,
+    /// What its cargo weighs now (kg).
+    pub cargo: f64,
+    pub item: usize,
+    pub units: i64,
+}
+
+impl Markets {
+    pub fn new(seed: u64, goods: Arc<Vec<Item>>) -> Self {
+        Markets { seed, goods, markets: HashMap::new(), states: HashMap::new() }
+    }
+
+    pub fn goods(&self) -> &[Item] {
+        &self.goods
+    }
+
+    /// The market at `f` in `system` (`sys`), if there is one.
+    pub fn market(&mut self, system: usize, sys: &StarSystem, f: Facility) -> Option<Arc<Market>> {
+        if let Some(m) = self.markets.get(&(system, f)) {
+            return Some(m.clone());
+        }
+        let m = Arc::new(market(self.seed, system, sys, f, &self.goods)?);
+        self.markets.insert((system, f), m.clone());
+        Some(m)
+    }
+
+    fn state(&self, system: usize, f: Facility, now: f64) -> MarketState {
+        self.states.get(&(system, f)).cloned().unwrap_or(MarketState { updated: now, ..Default::default() })
+    }
+
+    /// The market's quotes now.
+    pub fn quotes(&mut self, system: usize, sys: &StarSystem, f: Facility, now: f64) -> Vec<Quote> {
+        let Some(m) = self.market(system, sys, f) else { return Vec::new() };
+        let mut state = self.state(system, f, now);
+        m.quotes(&mut state, now)
+    }
+
+    /// Its quote for one item, if it trades it (listed, or of a kind it wants).
+    pub fn quote_for(&mut self, system: usize, sys: &StarSystem, f: Facility, item: usize, now: f64) -> Option<Quote> {
+        let m = self.market(system, sys, f)?;
+        let mut state = self.state(system, f, now);
+        m.quote_for(&mut state, now, &self.goods[item])
+    }
+
+    /// Its quotes for several items at once (None: not traded there).
+    pub fn quotes_for(&mut self, system: usize, sys: &StarSystem, f: Facility, items: &[usize], now: f64) -> Vec<Option<Quote>> {
+        let Some(m) = self.market(system, sys, f) else { return vec![None; items.len()] };
+        let mut state = self.state(system, f, now);
+        items.iter().map(|&i| m.quote_for(&mut state, now, &self.goods[i])).collect()
+    }
+
+    /// Carry out an order at `now` (tick `tick`, because of `cause`): the
+    /// credits moved (positive: paid by the pilot), or why not. Only while
+    /// docked or landed at that market.
+    pub fn trade(&mut self, ledger: &mut Ledger, sys: &StarSystem, o: Order, now: f64, tick: Tick, cause: Cause) -> Result<f64, String> {
+        if o.docked_at != Some(o.market) {
+            return Err("DOCK OR LAND THERE TO TRADE".into());
+        }
+        let m = self.market(o.system, sys, o.market).ok_or("NO MARKET")?;
+        let state = self.states.entry((o.system, o.market)).or_insert_with(|| MarketState { updated: now, ..Default::default() });
+        m.trade(state, now, &self.goods[o.item], o.units, o.pilot, o.cargo, ledger, Party::Market(o.system, o.market), tick, cause)
+    }
+
+    /// The states of the markets traded with (to save).
+    pub fn states(&self) -> &HashMap<(usize, Facility), MarketState> {
+        &self.states
+    }
+}
+
+/// What the goods in a hold weigh (kg).
+pub fn cargo_mass(goods: &[Item], hold: &[(usize, u32)]) -> f64 {
+    hold.iter().map(|&(g, n)| goods[g].mass * n as f64).sum()
 }
 
 #[cfg(test)]
 mod tests {
-    use glam::{DQuat, DVec3};
-
     use super::*;
-    use crate::goods::catalog;
-    use crate::World;
+    use universe_world::goods::catalog;
+    use universe_world::traffic::facilities;
+    use universe_world::World;
 
     #[test]
     fn markets_are_local_varied_and_prices_move_with_trade() {
@@ -331,28 +404,30 @@ mod tests {
 
         // Buy the first thing it sells: its price rises; sell it back for less.
         let mut state = MarketState::default();
-        let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
-        let mut credits = 1.0e6;
+        let mut ledger = Ledger::default();
+        let (me, shop) = (Party::Pilot(1), Party::Market(w.home_system, fs[0]));
+        ledger.settle(me, Asset::Credits, 1.0e6, 0, Cause::Rules);
         let o = *a.offers.iter().find(|o| o.side == Side::Sells).unwrap();
         let item = &goods[o.item];
         let before = a.quotes(&mut state, 0.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
         let n = (before.level * 0.5).floor().min(5_000.0 / item.mass).floor().max(1.0) as i64;
-        let paid = a.trade(&mut state, 0.0, item, n, &mut ship, &mut credits).unwrap();
+        let paid = a.trade(&mut state, 0.0, item, n, 1, 0.0, &mut ledger, shop, 1, Cause::Rules).unwrap();
         assert!((paid - before.buy.unwrap() * n as f64).abs() < 1e-6);
-        assert_eq!(ship.hold[&o.item], n as u32);
-        assert!((ship.cargo - item.mass * n as f64).abs() < 1e-6, "the hold weighs on the ship");
+        assert_eq!(ledger.hold(1), vec![(o.item, n as u32)]);
+        assert!((cargo_mass(&goods, &ledger.hold(1)) - item.mass * n as f64).abs() < 1e-6, "the hold weighs what's in it");
         let after = a.quotes(&mut state, 0.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
         assert!(after.buy.unwrap() > before.buy.unwrap(), "scarcer, dearer");
-        let got = -a.trade(&mut state, 0.0, item, -n, &mut ship, &mut credits).unwrap();
+        let got = -a.trade(&mut state, 0.0, item, -n, 1, item.mass * n as f64, &mut ledger, shop, 2, Cause::Rules).unwrap();
         assert!(got < paid, "bought back for less");
-        assert!(ship.hold.is_empty() && ship.cargo.abs() < 1e-6);
+        assert!(ledger.hold(1).is_empty());
+        assert!(ledger.balanced(), "nothing made or lost");
         // A day later the stock is back.
         let later = a.quotes(&mut state, 24.0 * 3600.0).into_iter().find(|q| q.offer.item == o.item).unwrap();
         assert!((later.level - o.usual).abs() < o.usual * 0.05);
         // Banned goods don't trade.
         if let Some(c) = a.banned.first() {
             let banned = goods.iter().find(|i| i.category == *c).unwrap();
-            assert!(a.trade(&mut state, 0.0, banned, 1, &mut ship, &mut credits).is_err());
+            assert!(a.trade(&mut state, 0.0, banned, 1, 1, 0.0, &mut ledger, shop, 3, Cause::Rules).is_err());
         }
     }
 }

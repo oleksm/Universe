@@ -19,7 +19,6 @@ pub mod goods;
 pub mod gate;
 pub mod heat;
 pub mod hyperdrive;
-pub mod market;
 pub mod names;
 pub mod pads;
 pub mod radar;

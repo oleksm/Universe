@@ -7,5 +7,6 @@ version.workspace = true
 # traffic control, markets, the ledger, records. They read what the core
 # reports and decide their own domain; every decision carries its cause.
 [dependencies]
+universe-world = { path = "../world" }
 universe-protocol = { path = "../protocol" }
 serde.workspace = true

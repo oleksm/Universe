@@ -25,7 +25,6 @@ use crate::system::StarSystem;
 use crate::traffic::Facility;
 use crate::units::LIGHT_YEAR;
 use crate::goods::Item;
-use crate::market::{Market, MarketState, Quote};
 use crate::weapons::{Beam, Impact, Slug};
 
 /// Neighbouring stars checked for hyperdrive obstacles and system hand-over.
@@ -68,9 +67,6 @@ pub struct World {
     pub impacts: Vec<Impact>,
     /// The goods traded in this galaxy (see `goods`).
     pub goods: Vec<Item>,
-    /// Markets met so far, and the state of those traded with (see `market`).
-    markets: HashMap<(usize, Facility), Arc<Market>>,
-    market_states: HashMap<(usize, Facility), MarketState>,
     /// Traffic control: pads and corridors (see `pads`).
     pub traffic: crate::pads::TrafficControl,
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
@@ -126,8 +122,6 @@ impl World {
             beams: Vec::new(),
             impacts: Vec::new(),
             goods: crate::goods::catalog(seed),
-            markets: HashMap::new(),
-            market_states: HashMap::new(),
             traffic: Default::default(),
             turrets: Default::default(),
             turret_cooldowns: HashMap::new(),
@@ -135,56 +129,6 @@ impl World {
         }
     }
 
-    /// The market at facility `f` in `system` (None for gates).
-    pub fn market(&mut self, system: usize, f: Facility) -> Option<Arc<Market>> {
-        if let Some(m) = self.markets.get(&(system, f)) {
-            return Some(m.clone());
-        }
-        let sys = self.system(system);
-        let m = Arc::new(crate::market::market(self.galaxy.seed, system, &sys, f, &self.goods)?);
-        self.markets.insert((system, f), m.clone());
-        Some(m)
-    }
-
-    /// The market's quotes now.
-    pub fn quotes(&mut self, system: usize, f: Facility) -> Vec<Quote> {
-        let Some(m) = self.market(system, f) else { return Vec::new() };
-        let now = self.time;
-        let mut state = self.market_states.get(&(system, f)).cloned().unwrap_or(MarketState { updated: now, ..Default::default() });
-        m.quotes(&mut state, now)
-    }
-
-    /// The market's quote for one item, if it trades it (see `Market::quote_for`).
-    pub fn quote_for(&mut self, system: usize, f: Facility, item: usize) -> Option<Quote> {
-        let m = self.market(system, f)?;
-        let now = self.time;
-        let mut state = self.market_states.get(&(system, f)).cloned().unwrap_or(MarketState { updated: now, ..Default::default() });
-        m.quote_for(&mut state, now, &self.goods[item])
-    }
-
-    /// The market's quotes for several items at once (None: not traded there).
-    pub fn quotes_for(&mut self, system: usize, f: Facility, items: &[usize]) -> Vec<Option<Quote>> {
-        let Some(m) = self.market(system, f) else { return vec![None; items.len()] };
-        let now = self.time;
-        let mut state = self.market_states.get(&(system, f)).cloned().unwrap_or(MarketState { updated: now, ..Default::default() });
-        items.iter().map(|&i| m.quote_for(&mut state, now, &self.goods[i])).collect()
-    }
-
-    /// Trade at the market at `f` in `system` (see `Market::trade`): only
-    /// for a ship docked or landed there.
-    pub fn trade(&mut self, system: usize, f: Facility, item: usize, units: i64, ship: &mut Ship, credits: &mut f64) -> Result<f64, String> {
-        let sys = self.system(system);
-        if crate::market::docked_at(&sys, ship) != Some(f) {
-            return Err("DOCK OR LAND HERE TO TRADE".into());
-        }
-        let m = self.market(system, f).ok_or("NO MARKET")?;
-        let now = self.time;
-        let state = self.market_states.entry((system, f)).or_insert_with(|| MarketState { updated: now, ..Default::default() });
-        let goods = &self.goods;
-        m.trade(state, now, &goods[item], units, ship, credits)
-    }
-
-    /// Systems linked to `i` by gates, with their names.
     pub fn gate_links_of(&self, i: usize) -> Vec<(usize, String)> {
         network::links_of(&self.gate_links, &self.galaxy, i)
     }

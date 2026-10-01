@@ -30,8 +30,8 @@ pub struct Craft {
     pub route_seed: u64,
     /// A trader (see `commerce`): buys and sells at its stops.
     pub trader: bool,
-    /// Its money, and what it paid per unit for what it carries.
-    pub credits: f64,
+    /// What it paid per unit for what it carries (its own reckoning; its
+    /// money and hold are in the ledger).
     pub paid: std::collections::BTreeMap<usize, f64>,
     /// Its commands on their way to the devices (see `Universe::command_delay`).
     pub inbox: crate::vessel::Inbox,
@@ -139,10 +139,12 @@ impl Universe {
                 avionics: Avionics { route, pirate, ..Avionics::default() },
                 route_seed,
                 trader,
-                credits: crate::commerce::SETTLER_CREDITS,
                 paid: Default::default(),
                 inbox: Default::default(),
             });
+            // What a new settler starts with, from the world's account.
+            let me = universe_services::Party::Pilot(crate::combat::craft_id(self.crafts.len() - 1));
+            self.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);
         }
     }
 

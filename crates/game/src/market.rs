@@ -11,7 +11,8 @@ use universe_sim::Command;
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, KeyCode, GLYPH};
 use universe_sim::world::goods::Category;
-use universe_sim::world::market::{Quote, Side, HOLD_CAPACITY};
+use universe_sim::services::market::{Quote, Side};
+use universe_sim::world::ship::HOLD_CAPACITY;
 use universe_sim::world::Facility;
 
 use crate::App;
@@ -152,7 +153,7 @@ pub fn draw(frame: &mut Frame, app: &App, v: &MarketView) {
     y += line;
     for (i, row) in v.rows.iter().enumerate().skip(v.scroll).take(ROWS) {
         let item = &app.charts.goods[row.item];
-        let held = ship.hold.get(&row.item).copied().unwrap_or(0);
+        let held = app.v.hold.iter().find(|h| h.0 == row.item).map_or(0, |h| h.1);
         let banned = v.banned.contains(&item.category);
         let (side, buy, sell, level) = match &row.quote {
             Some(q) => (

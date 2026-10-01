@@ -116,6 +116,22 @@ pub fn lapsed(sys: &StarSystem, ship: &Ship, target: Facility, t: f64, positions
     target.position(sys, t, positions).is_none_or(|p| p.distance(ship.position) > 2.0 * range)
 }
 
+/// The facility a ship is docked or landed at (a station's slot, a port's
+/// pads), if any: a physical fact.
+pub fn docked_at(sys: &StarSystem, ship: &Ship) -> Option<Facility> {
+    let crate::ship::ShipState::Landed { body, local_position, .. } = ship.state else { return None };
+    if sys.bodies[body].kind == BodyKind::Station {
+        return Some(Facility::Station(body));
+    }
+    sys.port_at(body, local_position.normalize()).map(Facility::Spaceport)
+}
+
+/// Every market place in a star system: its stations and spaceports.
+pub fn facilities(sys: &StarSystem) -> Vec<Facility> {
+    let stations = sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == BodyKind::Station).map(|(i, _)| Facility::Station(i));
+    stations.chain((0..sys.spaceports.len()).map(Facility::Spaceport)).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use glam::DQuat;

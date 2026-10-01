@@ -8,7 +8,10 @@
 //! looks again. Every trade and every choice is recorded.
 
 use universe_avionics::route::Stop;
-use universe_world::market::{docked_at, facilities, Side, HOLD_CAPACITY};
+use universe_services::market::{cargo_mass, Order, Side};
+use universe_services::{Asset, Party};
+use universe_world::ship::HOLD_CAPACITY;
+use universe_world::traffic::{docked_at, facilities};
 use universe_world::Facility;
 
 use crate::universe::Universe;
@@ -60,6 +63,34 @@ pub struct TradeRecord {
 }
 
 impl Universe {
+    /// Pilot `pilot` (the player's 0, craft i: i + 1) asks the market at `f`
+    /// to trade `units` of `item`: the market service decides, the ledger
+    /// books it (the request's cause on every entry), and the ship's cargo
+    /// mass follows what's in its hold. Credits paid (negative: received),
+    /// or why not.
+    pub(crate) fn pilot_trade(&mut self, pilot: usize, f: Facility, item: usize, units: i64) -> Result<f64, String> {
+        let (system, ship) = if pilot == crate::combat::PLAYER { (self.ship_system, &self.ship) } else { (self.crafts[pilot - 1].system, &self.crafts[pilot - 1].ship) };
+        let sys = self.world.system(system);
+        let order = Order { pilot, system, market: f, docked_at: docked_at(&sys, ship), cargo: ship.cargo, item, units };
+        self.messages += 1;
+        let cause = universe_protocol::Cause::Message { sender: pilot as u64, id: self.messages };
+        let r = self.markets.trade(&mut self.ledger, &sys, order, self.world.time, self.tick, cause);
+        if r.is_ok() {
+            // The core: the hold weighs what's in it.
+            let mass = cargo_mass(&self.world.goods, &self.ledger.hold(pilot));
+            match pilot {
+                crate::combat::PLAYER => self.ship.cargo = mass,
+                id => self.crafts[id - 1].ship.cargo = mass,
+            }
+        }
+        r
+    }
+
+    /// Craft `i`'s credits, as the ledger has them.
+    pub fn craft_credits(&self, i: usize) -> f64 {
+        self.ledger.credits(Party::Pilot(crate::combat::craft_id(i)))
+    }
+
     /// Craft `i` trades at the market it has just arrived at.
     pub(crate) fn craft_trades(&mut self, i: usize) {
         let system = self.crafts[i].system;
@@ -69,9 +100,11 @@ impl Universe {
         let mut records = Vec::new();
 
         // Sell.
-        let held: Vec<(usize, u32)> = self.crafts[i].ship.hold.iter().map(|(k, v)| (*k, *v)).collect();
+        let me = crate::combat::craft_id(i);
+        let now = self.world.time;
+        let held: Vec<(usize, u32)> = self.ledger.hold(me);
         for (item, have) in held {
-            let Some(q) = self.world.quote_for(system, f, item) else { continue };
+            let Some(q) = self.markets.quote_for(system, &sys, f, item, now) else { continue };
             let paid = self.crafts[i].paid.get(&item).copied().unwrap_or(0.0);
             // A hold nearly full with nothing selling: take the buy-back, at a loss if need be.
             let stuck = self.crafts[i].ship.cargo > HOLD_CAPACITY * STUCK;
@@ -83,10 +116,9 @@ impl Universe {
             if units == 0 {
                 continue;
             }
-            let c = &mut self.crafts[i];
-            if let Ok(moved) = self.world.trade(system, f, item, -(units as i64), &mut c.ship, &mut c.credits) {
-                if !c.ship.hold.contains_key(&item) {
-                    c.paid.remove(&item);
+            if let Ok(moved) = self.pilot_trade(me, f, item, -(units as i64)) {
+                if self.ledger.balance(Party::Pilot(me), Asset::Goods(item)) < 0.5 {
+                    self.crafts[i].paid.remove(&item);
                 }
                 records.push((false, item, units, -moved));
             }
@@ -98,9 +130,9 @@ impl Universe {
         match plan {
             Some((to, buys, expect)) => {
                 for (item, units) in buys {
-                    let c = &mut self.crafts[i];
-                    let before = c.ship.hold.get(&item).copied().unwrap_or(0) as f64;
-                    if let Ok(cost) = self.world.trade(system, f, item, units as i64, &mut c.ship, &mut c.credits) {
+                    let before = self.ledger.balance(Party::Pilot(me), Asset::Goods(item));
+                    if let Ok(cost) = self.pilot_trade(me, f, item, units as i64) {
+                        let c = &mut self.crafts[i];
                         let avg = c.paid.get(&item).copied().unwrap_or(0.0);
                         c.paid.insert(item, (avg * before + cost) / (before + units as f64));
                         records.push((true, item, units, cost));
@@ -144,7 +176,7 @@ impl Universe {
                 units,
                 amount,
                 cargo: c.ship.cargo,
-                credits: c.credits,
+                credits: self.craft_credits(i),
             };
             self.log_trade(record);
         }
@@ -161,7 +193,7 @@ impl Universe {
                 units: 0,
                 amount: 0.0,
                 cargo: c.ship.cargo,
-                credits: c.credits,
+                credits: self.craft_credits(i),
             };
             self.log_trade(record);
         }
@@ -173,14 +205,15 @@ impl Universe {
     /// nothing reaches `MIN_PROFIT`.
     fn plan_trip(&mut self, i: usize, system: usize, here: Facility) -> Option<Trip> {
         let sys = self.system(system);
-        let here_quotes: Vec<_> = self.world.quotes(system, here).into_iter().filter(|q| q.buy.is_some() && q.level >= 1.0).collect();
-        let held: Vec<(usize, u32)> = self.crafts[i].ship.hold.iter().map(|(k, v)| (*k, *v)).collect();
-        let (credits, cargo) = (self.crafts[i].credits, self.crafts[i].ship.cargo);
+        let now = self.world.time;
+        let here_quotes: Vec<_> = self.markets.quotes(system, &sys, here, now).into_iter().filter(|q| q.buy.is_some() && q.level >= 1.0).collect();
+        let held: Vec<(usize, u32)> = self.ledger.hold(crate::combat::craft_id(i));
+        let (credits, cargo) = (self.craft_credits(i), self.crafts[i].ship.cargo);
         let mut best: Option<Trip> = None;
         for there in facilities(&sys).into_iter().filter(|&m| m != here) {
             // What the cargo would fetch there, over what it cost.
             let held_ids: Vec<usize> = held.iter().map(|h| h.0).collect();
-            let sells = self.world.quotes_for(system, there, &held_ids);
+            let sells = self.markets.quotes_for(system, &sys, there, &held_ids, now);
             let mut value = 0.0;
             for ((item, n), q) in held.iter().zip(&sells) {
                 if let Some(q) = q {
@@ -191,7 +224,7 @@ impl Universe {
             }
             // What to buy here for there: the best margins per kilo first.
             let ids: Vec<usize> = here_quotes.iter().map(|q| q.offer.item).collect();
-            let there_q = self.world.quotes_for(system, there, &ids);
+            let there_q = self.markets.quotes_for(system, &sys, there, &ids, now);
             let mut margins: Vec<(f64, usize, f64, f64, f64)> = here_quotes
                 .iter()
                 .zip(&there_q)
@@ -253,7 +286,7 @@ mod tests {
         let heading = u.trade_log.iter().filter(|r| matches!(r.deal, super::Deal::Heading { .. })).count();
         let moving = u.trade_log.iter().filter(|r| matches!(r.deal, super::Deal::MovingOn { .. })).count();
         eprintln!("recent decisions: {heading} trips planned, {moving} moves on to another system");
-        let traders: Vec<f64> = u.crafts.iter().filter(|c| c.trader).map(|c| c.credits).collect();
+        let traders: Vec<f64> = (0..u.crafts.len()).filter(|&i| u.crafts[i].trader).map(|i| u.craft_credits(i)).collect();
         eprintln!("{} traders, {} pirates of {}", traders.len(), u.crafts.iter().filter(|c| c.avionics.pirate).count(), u.crafts.len());
         let mean = traders.iter().sum::<f64>() / traders.len() as f64;
         let (lo, hi) = traders.iter().fold((f64::MAX, f64::MIN), |(a, b), &x| (a.min(x), b.max(x)));

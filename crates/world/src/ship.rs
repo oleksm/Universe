@@ -25,6 +25,8 @@ pub const TURN_RATE: f64 = 1.0;
 pub const ROLL_RATE: f64 = 1.8;
 /// Collision radius (m).
 pub const SHIP_RADIUS: f64 = 12.0;
+/// Most cargo the hold carries (kg).
+pub const HOLD_CAPACITY: f64 = 20_000.0;
 /// Drag coefficient × frontal area (m²): a blunt 90 t ship falls at about
 /// 150 m/s through sea-level air.
 pub const DRAG_AREA: f64 = 60.0;
@@ -83,9 +85,6 @@ pub struct Ship {
     /// Cargo on board (kg): the mass of what's in the hold.
     #[serde(default)]
     pub cargo: f64,
-    /// The hold: units of each item (by catalog id; see `market`).
-    #[serde(default)]
-    pub hold: std::collections::BTreeMap<usize, u32>,
     /// Hull integrity, 1 (intact) .. 0 (destroyed): see `damage`.
     #[serde(default = "intact")]
     pub hull: f64,
@@ -150,7 +149,6 @@ impl Ship {
             rcs: DVec3::ZERO,
             fuel: FUEL_CAPACITY,
             cargo: 0.0,
-            hold: Default::default(),
             hull: 1.0,
             ammo: crate::weapons::GUN_AMMO,
             laser_heat: 0.0,

@@ -499,3 +499,37 @@ fn the_law_rules_a_pirate_fair_game_from_its_first_hit_with_the_evidence() {
     }
     assert!(!u.law.aggressed(prey, now), "the victim is innocent");
 }
+
+#[test]
+fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs_its_hold() {
+    use universe_sim::services::{Asset, Party};
+    let mut u = bench(0);
+    let (sys, _) = positions(&mut u);
+    let station = sys.station().unwrap();
+    let home = u.ship_system;
+    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    let f = Facility::Station(station);
+    let before = u.credits();
+    let (quotes, _) = u.market_quotes(f);
+    let q = quotes.iter().find(|q| q.buy.is_some() && q.level >= 3.0).expect("something to buy");
+    let item = q.offer.item;
+    let paid = u.trade(f, item, 3).expect("bought");
+    assert!((u.credits() - (before - paid)).abs() < 1e-6);
+    assert_eq!(u.hold(), vec![(item, 3)]);
+    assert!((u.ship.cargo - 3.0 * u.world.goods[item].mass).abs() < 1e-6, "the core's mass follows the hold");
+    // Both legs journalled, caused by our request.
+    let legs: Vec<_> = u.ledger.journal.iter().rev().take(2).collect();
+    assert!(legs.iter().all(|e| matches!(e.cause, universe_sim::protocol::Cause::Message { sender: 0, .. })), "{legs:?}");
+    assert!(legs.iter().any(|e| e.asset == Asset::Credits && e.from == Party::Pilot(0)));
+    assert!(legs.iter().any(|e| e.asset == Asset::Goods(item) && e.to == Party::Pilot(0)));
+    assert!(u.ledger.balanced(), "nothing made or lost");
+    // Undocked, the market won't trade.
+    let far = u.ship.position + DVec3::X * 50_000.0;
+    place_player(&mut u, far);
+    assert!(u.trade(f, item, -1).is_err());
+}
+
+fn place_player(u: &mut Universe, at: DVec3) {
+    u.ship.state = ShipState::Flying;
+    u.ship.position = at;
+}
