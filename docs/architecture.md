@@ -5,6 +5,9 @@ Status: adopted 2026-09-30 and implemented by the refactor's Phases 1–4 (see
 what is still to come (**Not yet**). It is the reference; keep it in sync when the code's shape
 changes.
 
+**Next:** the core / services / clients re-architecture is planned in `docs/rearchitecture.md`
+(proposed, under review).
+
 ## Principles
 
 1. **The physics engine is ruthlessly stable and fair.** It is the same for every object in
