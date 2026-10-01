@@ -175,6 +175,7 @@ pub(crate) struct Renderer {
     frames: u64,
     solids: DynBuffer,
     lines: DynBuffer,
+    front_lines: DynBuffer,
     points: DynBuffer,
     hud_tris: DynBuffer,
     hud: DynBuffer,
@@ -414,6 +415,7 @@ impl Renderer {
             frames: 0,
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
+            front_lines: DynBuffer::new(device, "front lines"),
             points: DynBuffer::new(device, "points"),
             hud_tris: DynBuffer::new(device, "hud tris"),
             hud: DynBuffer::new(device, "hud"),
@@ -497,6 +499,7 @@ impl Renderer {
         self.sky.upload(gpu, &frame.sky);
         self.solids.upload(gpu, &frame.solids);
         self.lines.upload(gpu, &frame.lines);
+        self.front_lines.upload(gpu, &frame.front_lines);
         self.points.upload(gpu, &frame.points);
         self.hud_tris.upload(gpu, &frame.hud_tris);
         self.hud.upload(gpu, &frame.hud);
@@ -551,7 +554,7 @@ impl Renderer {
             self.points.draw(&mut pass, &self.point_pipe);
         }
         {
-            // The front layer: its meshes alone, with a fresh depth.
+            // The front layer: its meshes (and lines), with a fresh depth.
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("front"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -571,6 +574,7 @@ impl Renderer {
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
             self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+            self.front_lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
         }
         {

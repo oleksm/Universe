@@ -71,6 +71,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     }
     crate::onfoot::ramp(frame, app);
     universe_prof::time("draw/scene/crafts", || crafts(frame, app));
+    gate_flashes(frame, app);
     universe_prof::time("draw/scene/weapons fire", || weapons_fire(frame, app));
     if app.show_labels {
         universe_prof::time("draw/scene/labels", || labels(frame, app));
@@ -201,6 +202,66 @@ fn transit_tunnel(frame: &mut Frame, app: &App) {
         let fade = (1.0 - z / (28.0 * spacing)) as f32;
         let c = if k % 2 == 0 { Color::hex(0xffc040) } else { Color::hex(0x40c0ff) };
         frame.circle(cam + fwd * z, fwd, 260.0, 40, c.scale(fade.max(0.1)));
+    }
+}
+
+/// How long a gate flashes as a ship goes through it, and before one comes
+/// out of it (s).
+const GATE_FLASH: f64 = 2.5;
+
+/// Other ships going through the gates here: a flash where one crosses the
+/// ring and is gone (a burst in the ring's plane, a streak out along its
+/// axis), and one where another is about to come through (the ring's light
+/// gathering to a point).
+fn gate_flashes(frame: &mut Frame, app: &App) {
+    use universe_sim::world::gate::TRANSIT_TIME;
+    let sys = &app.view.system;
+    let here = app.view.origin;
+    for c in app.v.crafts.iter() {
+        let ShipState::Transit { to, from, remaining, local_offset, .. } = c.ship.state else { continue };
+        // (Leaving here: the gate to where it's going; coming here: the gate from where it was.)
+        let (gate, since, leaving) = if from == here {
+            (sys.gate_to(to), TRANSIT_TIME - remaining, true)
+        } else if to == here {
+            (sys.gate_to(from), GATE_FLASH - remaining, false)
+        } else {
+            continue;
+        };
+        let Some(g) = gate else { continue };
+        if !(0.0..GATE_FLASH).contains(&since) {
+            continue;
+        }
+        let f = GateFrame::new(sys, g, app.now(), &app.view.positions);
+        let axis = f.axis();
+        let at = f.center + f.rotation * local_offset;
+        if frame.projected_radius(at, 400.0) < 0.5 {
+            continue;
+        }
+        let k = since / GATE_FLASH;
+        // A starburst in the ring's plane, white at its heart.
+        let u = f.rotation * DVec3::X;
+        let v = axis.cross(u);
+        let burst = |frame: &mut Frame, length: f64, ring: f64, bright: f32| {
+            for i in 0..12 {
+                let a = i as f64 * std::f64::consts::TAU / 12.0;
+                let d = u * a.cos() + v * a.sin();
+                let reach = if i % 2 == 0 { length } else { length * 0.55 };
+                frame.line(at + d * 15.0, at + d * reach, Color::WHITE.scale(bright));
+            }
+            frame.circle(at, axis, ring, 40, Color::hex(0x80e0ff).scale(bright));
+            frame.circle(at, axis, ring * 0.6, 32, Color::hex(0xffd080).scale(bright * 0.8));
+            frame.point(at, Color::WHITE.scale(bright));
+        };
+        if leaving {
+            // Out: the burst flaring and spreading, and a streak out through the ring.
+            let bright = (1.0 - k) as f32;
+            burst(frame, 150.0 + 650.0 * k, 50.0 + 800.0 * k, bright);
+            let side = if (app.view.ship_pos - f.center).dot(axis) >= 0.0 { -1.0 } else { 1.0 };
+            frame.line(at, at + axis * side * 4000.0 * (1.0 - k), Color::WHITE.scale(bright));
+        } else {
+            // In: light gathering to a point where it will come out.
+            burst(frame, 150.0 + 650.0 * (1.0 - k), 50.0 + 800.0 * (1.0 - k), (k as f32).max(0.25));
+        }
     }
 }
 
@@ -964,10 +1025,16 @@ fn ship(frame: &mut Frame, app: &App) {
     let panel = app.nav_map.is_some() || app.galaxy_map.is_some() || app.economy_panel.is_some() || app.market.is_some() || app.shipyard.is_some() || app.show_cargo || app.picker.listing() || app.mining.on;
     // (Over a rock the camera stands off to the side: no need either.)
     let panel = panel || matches!(app.ship.state, ShipState::Anchored { .. });
+    let turned = app.place(crate::Who::Me).1;
     if app.mode == Mode::Pilot && app.chase_cam && !docked && !panel {
-        frame.in_front(|frame| frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL));
+        // (Its jets too: drawn behind the hull, they'd be hidden by it.)
+        frame.in_front(|frame| {
+            frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL);
+            jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
+        });
     } else {
         frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL);
+        jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
     }
     // Landed on a body: the landing legs, down to the ground.
     if let ShipState::Landed { body, .. } = app.ship.state
@@ -984,8 +1051,6 @@ fn ship(frame: &mut Frame, app: &App) {
             frame.line(foot - side, foot + side, SHIP_COLOR.scale(0.7));
         }
     }
-    let turned = app.place(crate::Who::Me).1;
-    jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
     if app.ship.hyperdrive {
         // The drive's wake (it has no jets).
         let back = turned * DVec3::Z;
@@ -993,8 +1058,16 @@ fn ship(frame: &mut Frame, app: &App) {
     }
 }
 
-/// A ship's thrusters firing: from each nozzle along its exhaust, a plume as
-/// long as it's firing hard (the main drive's long, the thrusters' short),
+/// Plume length per √newton of thrust (m): a full Drover drive nozzle
+/// (1.3 MN) about 40 m, a thruster quad's (60 kN) about 8 m.
+const PLUME: f64 = 0.035;
+/// The glow at a nozzle's mouth, radius per √newton (m): what's seen of a
+/// drive from behind.
+const GLOW: f64 = 0.0016;
+
+/// A ship's thrusters firing: from each nozzle along its exhaust, a plume
+/// as long as its thrust makes it (√ of the force it's giving: the main
+/// drive's long, the thrusters' short), and a glow at its mouth;
 /// flickering. `seed` sets the flicker apart ship from ship.
 fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned: DQuat, now: f64, seed: usize) {
     use universe_sim::world::ship::ThrusterRole;
@@ -1002,15 +1075,27 @@ fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned:
         if u < 0.02 {
             continue;
         }
-        let reach = match t.role {
-            ThrusterRole::Main => 8.0 + 34.0 * u,
-            ThrusterRole::Lift => 4.0 + 12.0 * u,
-            ThrusterRole::Rcs => 2.0 + 6.0 * u,
-        };
+        let force = t.thrust * u;
         let flicker = 0.8 + 0.2 * ((now * 31.0 + k as f64 * 1.7 + seed as f64 * 0.37).sin());
         let from = pos + turned * t.at;
         let out = turned * -t.push;
-        frame.line(from, from + out * reach * flicker, Color::hex(0xffb050).scale((0.6 + 0.4 * u) as f32));
+        let hot = Color::hex(0xffb050).scale((0.6 + 0.4 * u) as f32);
+        // The plume: a fan of lines from the mouth's rim to a point downstream.
+        let reach = PLUME * force.sqrt() * flicker;
+        let mouth = GLOW * t.thrust.sqrt();
+        let across = out.any_orthonormal_vector();
+        let spokes = if t.role == ThrusterRole::Rcs { 1 } else { 6 };
+        for i in 0..spokes {
+            let a = i as f64 * std::f64::consts::TAU / spokes as f64;
+            let rim = if spokes == 1 { from } else { from + (DQuat::from_axis_angle(out, a) * across) * mouth * 0.8 };
+            frame.line(rim, from + out * reach, hot);
+        }
+        // The mouth glowing: seen from behind, the drive lit.
+        if t.role != ThrusterRole::Rcs {
+            let glow = Color::hex(0xfff0c0).scale((0.4 + 0.6 * u) as f32);
+            frame.circle(from + out * 0.3, out, mouth * (0.5 + 0.5 * u), 16, glow);
+            frame.circle(from + out * 0.3, out, mouth * 0.35 * (0.5 + 0.5 * u), 12, glow);
+        }
         frame.point(from, Color::hex(0xfff0c0));
     }
 }

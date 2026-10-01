@@ -18,7 +18,7 @@ pub const RING_TUBE: f64 = 60.0;
 /// Faster than this through a gate and the transit fails (m/s).
 pub const MAX_TRANSIT_SPEED: f64 = 300.0;
 /// How long the transit between gates takes (real seconds).
-pub const TRANSIT_TIME: f64 = 5.0;
+pub const TRANSIT_TIME: f64 = 10.0;
 /// The ring's shape, for the physics kernel; its opening is the trigger.
 pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
 

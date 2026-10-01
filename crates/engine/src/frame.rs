@@ -62,6 +62,8 @@ pub struct Frame {
     pub(crate) sky: Vec<Vertex>,
     pub(crate) solids: Vec<Vertex>,
     pub(crate) lines: Vec<Vertex>,
+    /// Lines drawn with the front layer's meshes (see `in_front`).
+    pub(crate) front_lines: Vec<Vertex>,
     pub(crate) points: Vec<Vertex>,
     pub(crate) hud_tris: Vec<Vertex>,
     pub(crate) hud: Vec<Vertex>,
@@ -184,6 +186,7 @@ impl Frame {
             sky: Vec::new(),
             solids: Vec::new(),
             lines: Vec::new(),
+            front_lines: Vec::new(),
             points: Vec::new(),
             hud_tris: Vec::new(),
             hud: Vec::new(),
@@ -248,9 +251,7 @@ impl Frame {
     }
 
     pub fn line(&mut self, a: DVec3, b: DVec3, color: Color) {
-        let (a, b) = (self.rel(a), self.rel(b));
-        self.lines.push(Vertex { pos: a, color: color.0 });
-        self.lines.push(Vertex { pos: b, color: color.0 });
+        self.line2(a, b, color, color);
     }
 
     /// Solid triangle. Writes depth, so it hides lines behind it.
@@ -369,8 +370,9 @@ impl Frame {
     /// Line with a color at each end (blended along it).
     pub fn line2(&mut self, a: DVec3, b: DVec3, ca: Color, cb: Color) {
         let (a, b) = (self.rel(a), self.rel(b));
-        self.lines.push(Vertex { pos: a, color: ca.0 });
-        self.lines.push(Vertex { pos: b, color: cb.0 });
+        let lines = if self.in_front { &mut self.front_lines } else { &mut self.lines };
+        lines.push(Vertex { pos: a, color: ca.0 });
+        lines.push(Vertex { pos: b, color: cb.0 });
     }
 
     /// Solid triangle with a color per corner.

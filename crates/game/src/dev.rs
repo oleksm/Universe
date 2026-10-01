@@ -405,6 +405,44 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
+        "burn" | "burnside" => {
+            // The main drive at full, seen from the chase view ("burnside":
+            // a Drover beside us at full, seen side on).
+            app.mode = Mode::Pilot;
+            let u = app.engine.universe();
+            u.command(&ShipCommands { throttle: 1.0, ..u.ship.holding() });
+            if name == "burnside" {
+                let (at, v, o) = (u.ship.position, u.ship.velocity, u.ship.orientation);
+                let c = &mut u.crafts[0];
+                c.ship.class = universe_sim::world::ship::starting_hull();
+                c.ship.state = ShipState::Flying;
+                c.ship.position = at + o * DVec3::new(-70.0, -10.0, -120.0);
+                c.ship.velocity = v;
+                c.ship.orientation = o * universe_engine::glam::DQuat::from_rotation_y(-1.3);
+                c.ship.throttle = 1.0;
+                u.pilots()[0].avionics.route.active = false;
+            }
+        }
+        "gateflash" => {
+            // 9 km off the home system's first gate, facing it: one ship just
+            // gone through it (0.4 s ago), another about to come out (in 0.5 s).
+            app.mode = Mode::Pilot;
+            let g = sys.bodies.iter().position(|b| b.kind == BodyKind::Gate).expect("a gate");
+            let dest = sys.bodies[g].link.expect("linked");
+            let f = GateFrame::new(&sys, g, t, &positions);
+            let u = app.engine.universe();
+            u.ship.state = ShipState::Flying;
+            u.ship.position = f.center + f.axis() * 9_000.0 + f.rotation * DVec3::X * 2_500.0;
+            u.ship.velocity = f.velocity;
+            u.ship.orientation = universe_sim::ship::facing(f.center - u.ship.position, f.rotation * DVec3::Z);
+            use universe_sim::world::gate::TRANSIT_TIME;
+            for (k, (from, to, remaining, at)) in [(home, dest, TRANSIT_TIME - 0.4, DVec3::new(400.0, 0.0, 250.0)), (dest, home, 0.5, DVec3::new(-500.0, 0.0, -300.0))].into_iter().enumerate() {
+                let c = &mut u.crafts[k];
+                c.system = from;
+                c.ship.state = ShipState::Transit { to, from, remaining, local_velocity: DVec3::Y * 80.0, local_offset: at, local_orientation: universe_engine::glam::DQuat::IDENTITY };
+                u.pilots()[k].avionics.route.active = false;
+            }
+        }
         "platform" | "platformdeck" => {
             // The home station from off its corner, a little above its deck
             // (or, "platformdeck", from just above the deck), looking at it.
