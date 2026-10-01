@@ -514,7 +514,7 @@ impl App {
         if mode == ShipMode::Nav && pressed(input, Act::Proximity) {
             let on = !self.v.avionics.collision_warning;
             self.engine.send(Command::CollisionWarning(on));
-            self.say(if on { "COLLISION WARNING ON" } else { "COLLISION WARNING OFF" }.into());
+            self.say(if on { "IMPACT WARNING ON" } else { "IMPACT WARNING OFF" }.into());
         }
         // T: lock on (tap: what's ahead; hold: choose from the list).
         let listing = lock::input(self, ctx) | orbitpick::input(self, ctx);

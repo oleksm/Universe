@@ -396,7 +396,7 @@ fn crafts(frame: &mut Frame, app: &App) {
 /// The collision warning: the path ahead (drawn with its reference as it
 /// moves), cyan fading to red toward an impact, and a red cross where it hits.
 fn collision_path(frame: &mut Frame, app: &App) {
-    let Some(p) = &app.collision else { return };
+    let Some(p) = app.collision.as_ref().filter(|_| crate::hud::impact_shown(app)) else { return };
     if app.view.origin != app.v.ship_system || app.mode != Mode::Pilot {
         return;
     }

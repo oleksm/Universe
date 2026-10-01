@@ -386,6 +386,42 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().set_nav_target(Some(NavTarget::Station(station)));
             app.engine.universe().follow(universe_sim::FollowKind::Orbit, None);
         }
+        "orbitship" | "orbitshipwatch" => {
+            // 3 km off a settler cruising past the home station (its route
+            // stopped, its engine on low), orbiting it at 1 km.
+            app.mode = Mode::Pilot;
+            let station = sys.station().expect("home station");
+            let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+            let side = f.axis().any_orthonormal_vector();
+            let u = app.engine.universe();
+            let at = f.center + side * 40_000.0;
+            u.ship.position = at;
+            u.ship.velocity = f.velocity;
+            u.ship.orientation = universe_sim::ship::facing(-side, f.axis());
+            let (mut c, home) = (u.crafts[0].ship.clone(), u.ship_system);
+            c.state = ShipState::Flying;
+            c.position = at + side * 3_000.0;
+            c.velocity = f.velocity + f.axis() * 20.0;
+            c.orientation = universe_sim::ship::facing(f.axis(), side);
+            c.throttle = 0.01;
+            u.crafts[0].ship = c;
+            u.crafts[0].system = home;
+            u.pilots()[0].avionics.route.active = false;
+            for _ in 0..30 {
+                u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            }
+            u.cockpit().lock_contact(0);
+            u.follow(universe_sim::FollowKind::Orbit, Some(1_000.0));
+            for _ in 0..60 * 40 {
+                u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            }
+            if name == "orbitshipwatch" {
+                app.mode = Mode::Observer;
+                app.observer.focus = Focus::Ship;
+                app.observer.distance = 6_000.0;
+                app.observer.pitch = 0.9;
+            }
+        }
         "sunclose" => {
             // A tenth of an AU from the star, facing it.
             app.mode = Mode::Pilot;

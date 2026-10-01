@@ -403,7 +403,7 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
 
 /// The collision warning: what the path hits and when, or how far it's clear.
 fn collision_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    let Some(p) = &app.collision else { return };
+    let Some(p) = app.collision.as_ref().filter(|_| impact_shown(app)) else { return };
     match &p.collision {
         Some(c) => {
             let left = (c.time - (app.v.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
@@ -957,10 +957,16 @@ fn crosshair_wanted(app: &App) -> bool {
     app.ship.armed || app.approach.is_some()
 }
 
+/// The impact warning is navigation's: it shows in Nav mode, where its
+/// switch is (it keeps watching in the others, quietly).
+pub fn impact_shown(app: &App) -> bool {
+    active_mode(app) == ShipMode::Nav
+}
+
 /// The collision warning's impact, labelled on screen (or an arrow to it
 /// from the edge).
 fn impact_label(frame: &mut Frame, app: &App) {
-    let Some(p) = &app.collision else { return };
+    let Some(p) = app.collision.as_ref().filter(|_| impact_shown(app)) else { return };
     let Some(c) = &p.collision else { return };
     let at = app.view.positions[p.reference] + c.offset;
     let left = (c.time - (app.v.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
@@ -1385,7 +1391,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
                 b(Act::Cancel, "CANCEL", let_go),
-                b(Act::Proximity, "PROXIMITY", collide),
+                b(Act::Proximity, "IMPACT WARNING", collide),
             ],
         ),
     };

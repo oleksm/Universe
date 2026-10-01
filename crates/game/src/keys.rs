@@ -127,7 +127,7 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Orbit, Scope::Flight, "ORBIT"),
     (Act::Cancel, Scope::Flight, "CANCEL"),
     (Act::Clearance, Scope::Nav, "CLEARANCE"),
-    (Act::Proximity, Scope::Nav, "PROXIMITY"),
+    (Act::Proximity, Scope::Nav, "IMPACT WARNING"),
     (Act::Laser, Scope::Combat, "PULSE LASER"),
     (Act::Prospect, Scope::Mining, "PROSPECT"),
     (Act::ZeroIn, Scope::Mining, "ZERO IN"),
