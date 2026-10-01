@@ -96,23 +96,76 @@ pub fn turn_envelope(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMa
     DVec3::new(axis(DVec3::X), axis(DVec3::Y), axis(DVec3::Z))
 }
 
+/// Turning left over that counts, as a share of what the ship can turn by
+/// (its weakest axis): less, and its flight computer holds it straight
+/// without noticing.
+pub const STRAIGHT: f64 = 0.03;
+
+/// How hard `thrusters` can push a ship of `mass` and `inertia` (its centre
+/// of mass at `com`) along unit `d`, up to `full` (N), turning it by no more
+/// than `straight` (rad/s²): off balance, they give less (N).
+#[allow(clippy::too_many_arguments)]
+pub fn balanced(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMat3, d: DVec3, full: f64, straight: f64) -> f64 {
+    if full <= 0.0 {
+        return 0.0;
+    }
+    let inverse = inertia.inverse();
+    let mut u = Vec::new();
+    let mut try_at = |k: f64| {
+        // (From cold, the solver needs more sweeps than a frame's, where it
+        // starts from the last; this is worked out once a tonne of load.)
+        let mut fq = (DVec3::ZERO, DVec3::ZERO);
+        for _ in 0..12 {
+            fq = allocate(thrusters, com, mass, inertia, d * full * k, DVec3::ZERO, &mut u);
+        }
+        let (f, q) = fq;
+        ((inverse * q).length() < straight).then_some(f.dot(d).max(0.0))
+    };
+    if let Some(f) = try_at(1.0) {
+        return f;
+    }
+    // The most it can ask for and still go straight.
+    let (mut lo, mut hi, mut best) = (0.0, 1.0, 0.0);
+    for _ in 0..10 {
+        let mid = 0.5 * (lo + hi);
+        match try_at(mid) {
+            Some(f) => {
+                (lo, best) = (mid, f);
+            }
+            None => hi = mid,
+        }
+    }
+    best
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::ship::{starter, ThrusterRole};
 
+    /// The starter at the load it's balanced for: a full tank, its hold half full.
     fn starter_now() -> (f64, DVec3, DMat3) {
-        let s = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        let mut s = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
+        s.cargo = s.spec().hold_capacity / 2.0;
         (s.mass(), s.centre_of_mass(), s.inertia())
+    }
+
+    /// `allocate` run to convergence from cold (in flight it starts from the last frame's).
+    fn settled(thrusters: &[Thruster], com: DVec3, m: f64, i: DMat3, force: DVec3, torque: DVec3, u: &mut Vec<f64>) -> (DVec3, DVec3) {
+        let mut out = (DVec3::ZERO, DVec3::ZERO);
+        for _ in 0..12 {
+            out = allocate(thrusters, com, m, i, force, torque, u);
+        }
+        out
     }
 
     #[test]
     fn full_throttle_is_both_main_engines_and_no_turn() {
         let (m, com, i) = starter_now();
         let mut u = Vec::new();
-        let (f, q) = allocate(&starter().thrusters, com, m, i, DVec3::NEG_Z * starter().main_thrust, DVec3::ZERO, &mut u);
+        let (f, q) = settled(&starter().thrusters, com, m, i, DVec3::NEG_Z * starter().main_thrust, DVec3::ZERO, &mut u);
         assert!((f.z + starter().main_thrust).abs() < 1e3, "{f}");
-        assert!(q.length() < 1e3, "no turn: {q}");
+        assert!((i.inverse() * q).length() < 0.01, "no turn: {q}");
         let mains: Vec<f64> = starter().thrusters.iter().zip(&u).filter(|(t, _)| t.role == ThrusterRole::Main).map(|(_, &x)| x).collect();
         assert!(mains.iter().all(|&x| x > 0.99), "{mains:?}");
     }
@@ -139,7 +192,7 @@ mod tests {
         let c = starter();
         for (d, full) in [(DVec3::X, c.rcs_thrust), (DVec3::NEG_X, c.rcs_thrust), (DVec3::NEG_Y, c.rcs_thrust), (DVec3::Z, c.rcs_thrust), (DVec3::NEG_Z, c.rcs_thrust), (DVec3::Y, c.lift_thrust)] {
             let mut u = Vec::new();
-            let (f, q) = allocate(&c.thrusters, com, m, i, d * full, DVec3::ZERO, &mut u);
+            let (f, q) = settled(&c.thrusters, com, m, i, d * full, DVec3::ZERO, &mut u);
             let got = f.dot(d) / full;
             eprintln!("{d}: {:.0}% of {:.0} kN, turning {:.3} rad/s²", got * 100.0, full / 1000.0, (i.inverse() * q).length());
             assert!(got > 0.95, "{d}: only {:.0}%", got * 100.0);

@@ -56,6 +56,14 @@ pub struct ClassSpec {
     /// computer's limits.
     pub turn_rate: f64,
     pub roll_rate: f64,
+    /// Where its mass is (shape frame): the frame spread through the shape,
+    /// each module at its mount (`mount_<slot>`; the shape's centre if it
+    /// has none). Dry: the centre of mass and the inertia about it (kg·m²).
+    /// Fuel sits at the tanks, cargo in the holds (capacity-weighted).
+    pub dry_com: DVec3,
+    pub dry_inertia: DMat3,
+    pub tank_at: DVec3,
+    pub hold_at: DVec3,
     /// Collision radius (m).
     pub radius: f64,
     /// Drag coefficient × frontal area (m²).
@@ -64,6 +72,19 @@ pub struct ClassSpec {
     pub hull_strength: f64,
     /// Its frame (to fit anew from).
     pub frame: HullFrame,
+}
+
+/// What a ship's thrusters can give without turning it (N): see `Ship::authority`.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Authority {
+    pub main: f64,
+    pub lift: f64,
+    pub side: f64,
+}
+
+/// The inertia (kg·m²) of a mass `m` at `r` from the axis point.
+fn point_inertia(m: f64, r: DVec3) -> DMat3 {
+    (DMat3::IDENTITY * r.length_squared() - DMat3::from_cols(r * r.x, r * r.y, r * r.z)) * m
 }
 
 /// What a thruster is for: the main drive (the throttle), translation (the
@@ -194,6 +215,51 @@ pub struct HullFrame {
 pub type Fit = Vec<(String, crate::content::Handle<crate::modules::Module>)>;
 
 impl ClassSpec {
+    /// Its centre of mass with `fuel` and `load` (kg) aboard (shape frame).
+    pub fn centre_of_mass(&self, fuel: f64, load: f64) -> DVec3 {
+        (self.dry_com * self.dry_mass + self.tank_at * fuel + self.hold_at * load) / (self.dry_mass + fuel + load)
+    }
+
+    /// Its inertia about its centre of mass with `fuel` and `load` aboard (kg·m²).
+    pub fn inertia(&self, fuel: f64, load: f64) -> DMat3 {
+        let com = self.centre_of_mass(fuel, load);
+        self.dry_inertia + point_inertia(self.dry_mass, self.dry_com - com) + point_inertia(fuel, self.tank_at - com) + point_inertia(load, self.hold_at - com)
+    }
+
+    /// What its thrusters can give without turning it with `fuel` and
+    /// `load` aboard (about its centre of mass then): the main drive along
+    /// the nose, the belly lift up, the thrusters in their weakest direction
+    /// (N). Off balance, less than they're rated. Worked out per tonne of
+    /// fuel and load (a tonne either way changes little).
+    pub fn authority(&'static self, fuel: f64, load: f64) -> Authority {
+        let key = (self as *const ClassSpec as usize, (fuel / 1000.0).round() as i64, (load / 1000.0).round() as i64);
+        thread_local! {
+            static CACHE: std::cell::RefCell<std::collections::HashMap<(usize, i64, i64), Authority>> = Default::default();
+        }
+        if let Some(a) = CACHE.with(|c| c.borrow().get(&key).copied()) {
+            return a;
+        }
+        // (At the tonne the key stands for, so it's the same answer whoever
+        // asks first: the world stays the same to the bit.)
+        let (fuel, load) = (key.1 as f64 * 1000.0, key.2 as f64 * 1000.0);
+        let (com, mass, inertia) = (self.centre_of_mass(fuel, load), self.dry_mass + fuel + load, self.inertia(fuel, load));
+        let straight = crate::thrusters::STRAIGHT * self.turn_accel.min_element();
+        let push = |d: DVec3, full: f64| crate::thrusters::balanced(&self.thrusters, com, mass, inertia, d, full, straight);
+        let a = Authority {
+            main: push(DVec3::NEG_Z, self.main_thrust),
+            lift: push(DVec3::Y, self.lift_thrust),
+            side: [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| push(d, self.rcs_thrust)).fold(f64::INFINITY, f64::min),
+        };
+        CACHE.with(|c| {
+            let mut c = c.borrow_mut();
+            if c.len() > 4096 {
+                c.clear();
+            }
+            c.insert(key, a);
+        });
+        a
+    }
+
     /// A hull's numbers from its frame and `fit` (modules looked up by
     /// `get`): the mass, tank and hold, each thruster's thrust (its slot's
     /// module's rating × its share), the turning limits (the flight
@@ -267,9 +333,23 @@ impl ClassSpec {
         let main_thrust = along(ThrusterRole::Main, DVec3::NEG_Z);
         let lift_thrust = along(ThrusterRole::Lift, DVec3::Y);
         let rcs_thrust = [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| along(ThrusterRole::Rcs, d)).fold(f64::INFINITY, f64::min);
+        // Where the mass is: the frame through the shape, the modules at their mounts.
+        let mount = |slot: &str| shape.node(&format!("mount_{slot}")).map_or(shape.solid.centroid, |n| n.at);
+        let parts: Vec<(f64, DVec3)> = std::iter::once((frame.frame_mass, shape.solid.centroid)).chain(fitted.iter().map(|(s, m)| (m.mass, mount(&s.name)))).collect();
+        let dry_com = parts.iter().map(|(m, at)| *at * *m).sum::<DVec3>() / dry_mass;
+        let dry_inertia = shape.solid.inertia * (frame.frame_mass / shape.solid.volume)
+            + parts.iter().map(|&(m, at)| point_inertia(m, at - dry_com)).fold(DMat3::ZERO, |a, b| a + b);
+        let weighted = |kind: SlotKind, cap: fn(&Does) -> f64| {
+            let w: Vec<(f64, DVec3)> = fitted.iter().filter(|(s, _)| s.kind == kind).map(|(s, m)| (cap(&m.does), mount(&s.name))).collect();
+            let total: f64 = w.iter().map(|x| x.0).sum();
+            if total > 0.0 { w.iter().map(|(c, at)| *at * *c).sum::<DVec3>() / total } else { dry_com }
+        };
+        let tank_at = weighted(SlotKind::Tank, |d| if let Does::Tank { capacity } = d { *capacity } else { 0.0 });
+        let hold_at = weighted(SlotKind::Cargo, |d| if let Does::Rack { capacity } = d { *capacity } else { 0.0 });
         let mass = dry_mass + fuel_capacity;
-        let inertia = shape.solid.inertia * (mass / shape.solid.volume);
-        let turn_accel = crate::thrusters::turn_envelope(&thrusters, shape.solid.centroid, mass, inertia);
+        let com = (dry_com * dry_mass + tank_at * fuel_capacity) / mass;
+        let inertia = dry_inertia + point_inertia(dry_mass, dry_com - com) + point_inertia(fuel_capacity, tank_at - com);
+        let turn_accel = crate::thrusters::turn_envelope(&thrusters, com, mass, inertia);
         Ok(ClassSpec {
             key,
             name,
@@ -292,6 +372,10 @@ impl ClassSpec {
             turn_accel,
             turn_rate,
             roll_rate,
+            dry_com,
+            dry_inertia,
+            tank_at,
+            hold_at,
             radius: frame.radius,
             drag_area: frame.drag_area,
             hull_strength: frame.hull_strength,
@@ -615,14 +699,18 @@ impl Ship {
     /// Its centre of mass (shape frame, m): its shape's, as a solid.
     /// (Fuel and cargo are taken as spread like the hull, for now.)
     pub fn centre_of_mass(&self) -> DVec3 {
-        self.spec().shape().solid.centroid
+        self.spec().centre_of_mass(self.fuel, self.cargo + self.hopper)
     }
 
-    /// Its inertia tensor about its centre of mass (kg·m², body frame): its
-    /// shape's solid, as heavy as the ship is now.
+    /// Its inertia tensor about its centre of mass (kg·m², body frame).
     pub fn inertia(&self) -> glam::DMat3 {
-        let solid = &self.spec().shape().solid;
-        solid.inertia * (self.mass() / solid.volume)
+        self.spec().inertia(self.fuel, self.cargo + self.hopper)
+    }
+
+    /// What its thrusters can give without turning it, loaded as it is (see
+    /// `ClassSpec::authority`).
+    pub fn authority(&self) -> Authority {
+        self.spec().authority(self.fuel, self.cargo + self.hopper)
     }
 
     /// How fast its thrusters turn it now (rad/s² about each body axis).
@@ -643,9 +731,12 @@ impl Ship {
         let s = self.spec();
         let inertia = self.inertia();
         let w = self.angular_velocity;
-        // The push: the main drive along the nose, the thrusters as set.
+        // The push: the main drive along the nose, the thrusters as set — as
+        // much as they give without turning the ship (off balance, less: the
+        // flight computer keeps it straight first).
         let c = self.rcs.clamp(DVec3::splat(-1.0), DVec3::ONE);
-        let force = if push { DVec3::NEG_Z * (self.throttle.clamp(0.0, 1.0) * s.main_thrust) + DVec3::new(c.x * s.rcs_thrust, c.y * if c.y > 0.0 { s.lift_thrust } else { s.rcs_thrust }, c.z * s.rcs_thrust) } else { DVec3::ZERO };
+        let a = if push { self.authority() } else { Authority { main: 0.0, lift: 0.0, side: 0.0 } };
+        let force = if push { DVec3::NEG_Z * (self.throttle.clamp(0.0, 1.0) * a.main) + DVec3::new(c.x * a.side, c.y * if c.y > 0.0 { a.lift } else { a.side }, c.z * a.side) } else { DVec3::ZERO };
         // The turn: toward the rates asked, as fast as the span allows.
         let want = turn.map(|t| DVec3::new(t.pitch.clamp(-1.0, 1.0) * s.turn_rate, t.yaw.clamp(-1.0, 1.0) * s.turn_rate, t.roll.clamp(-1.0, 1.0) * s.roll_rate));
         let torque = want.map_or(DVec3::ZERO, |want| inertia * ((want - w) / dt.max(TURN_RESPONSE)));
@@ -676,19 +767,19 @@ impl Ship {
         (self.spec().hold_capacity - self.cargo - self.hopper).max(0.0)
     }
 
-    /// Main engine acceleration at full throttle (m/s^2): thrust / mass.
+    /// Main engine acceleration at full throttle without turning the ship (m/s^2).
     pub fn main_accel(&self) -> f64 {
-        self.spec().main_thrust / self.mass()
+        self.authority().main / self.mass()
     }
 
-    /// Translation thruster acceleration, per axis (m/s^2).
+    /// Translation thruster acceleration, per axis, without turning it (m/s^2).
     pub fn side_accel(&self) -> f64 {
-        self.spec().rcs_thrust / self.mass()
+        self.authority().side / self.mass()
     }
 
-    /// Lift thruster acceleration (m/s^2).
+    /// Lift thruster acceleration without turning it (m/s^2).
     pub fn lift_accel(&self) -> f64 {
-        self.spec().lift_thrust / self.mass()
+        self.authority().lift / self.mass()
     }
 
     /// Body-frame acceleration from a thruster command (each axis -1..1).
@@ -854,7 +945,7 @@ mod tests {
         let (pitch, yaw, roll) = (full.x_axis.x, full.y_axis.y, full.z_axis.z);
         assert!(yaw > pitch && yaw > roll, "pitch {pitch:.3e} yaw {yaw:.3e} roll {roll:.3e}");
         s.fuel = 0.0;
-        assert!((s.inertia().y_axis.y / yaw - (s.mass() / (s.mass() + s.spec().fuel_capacity))).abs() < 1e-9, "lighter, easier to turn");
+        assert!(s.inertia().y_axis.y < yaw && s.inertia().x_axis.x < pitch, "lighter, easier to turn");
     }
 }
 
@@ -866,13 +957,12 @@ mod classes {
     #[test]
     fn every_hull_is_balanced_and_sized_for_its_job() {
         for (_, h) in content().hulls.iter() {
-            let s = Ship { class: content().handle(&h.key).unwrap(), ..Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY) };
-            let (m, com, i) = (s.mass(), s.centre_of_mass(), s.inertia());
-            // Every way it pushes, nearly all of it without turning the ship.
-            for (d, full) in [(DVec3::X, h.rcs_thrust), (DVec3::NEG_X, h.rcs_thrust), (DVec3::NEG_Y, h.rcs_thrust), (DVec3::Z, h.rcs_thrust), (DVec3::NEG_Z, h.rcs_thrust), (DVec3::Y, h.lift_thrust), (DVec3::NEG_Z, h.main_thrust)] {
-                let mut u = Vec::new();
-                let (f, _) = crate::thrusters::allocate(&h.thrusters, com, m, i, d * full, DVec3::ZERO, &mut u);
-                assert!(f.dot(d) / full > 0.9, "{}: {d} only {:.0}%", h.key, 100.0 * f.dot(d) / full);
+            let h: &'static ClassSpec = h;
+            // Every way it pushes, nearly all of it without turning (at the
+            // load it's balanced for: a full tank, the hold half full).
+            let a = h.authority(h.fuel_capacity, h.hold_capacity / 2.0);
+            for (what, got, full) in [("drive", a.main, h.main_thrust), ("lift", a.lift, h.lift_thrust), ("thrusters", a.side, h.rcs_thrust)] {
+                assert!(got > 0.9 * full, "{}: {what} only {:.0}%", h.key, 100.0 * got / full);
             }
             let loaded = h.dry_mass + h.fuel_capacity;
             eprintln!(
@@ -881,5 +971,33 @@ mod classes {
             );
             assert!(h.lift_thrust / loaded > 9.81 * 1.1, "{}: can't hover at 1 g with an empty hold", h.key);
         }
+    }
+}
+
+#[cfg(test)]
+mod balance {
+    use super::*;
+    use crate::content::content;
+
+    #[test]
+    fn loading_moves_the_centre_of_mass_and_off_balance_costs_authority() {
+        for (_, h) in content().hulls.iter() {
+            let h: &'static ClassSpec = h;
+            // Built balanced about its usual load: empty to full, it keeps nearly all its push.
+            let (empty, full) = (h.authority(h.fuel_capacity, 0.0), h.authority(h.fuel_capacity, h.hold_capacity));
+            for (what, a) in [("empty", empty), ("full", full)] {
+                assert!(a.lift > 0.9 * h.lift_thrust && a.main > 0.9 * h.main_thrust && a.side > 0.85 * h.rcs_thrust, "{} {what}: {a:?}", h.key);
+            }
+        }
+        // The Drover's hold is forward: loading it moves its centre of mass forward.
+        let d = starter();
+        let (empty, full) = (d.centre_of_mass(d.fuel_capacity, 0.0), d.centre_of_mass(d.fuel_capacity, d.hold_capacity));
+        assert!(empty.z - full.z > 1.5, "{empty} -> {full}");
+        // 3 m off its balance, the lift can't push straight with all it has.
+        let (com, m) = (d.centre_of_mass(d.fuel_capacity, 0.0), d.dry_mass + d.fuel_capacity);
+        let i = d.inertia(d.fuel_capacity, 0.0);
+        let straight = crate::thrusters::STRAIGHT * d.turn_accel.min_element();
+        let off = crate::thrusters::balanced(&d.thrusters, com + DVec3::Z * 3.0, m, i, DVec3::Y, d.lift_thrust, straight);
+        assert!(off < 0.85 * d.lift_thrust, "{:.0}%", 100.0 * off / d.lift_thrust);
     }
 }

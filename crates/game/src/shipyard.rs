@@ -193,8 +193,12 @@ fn what(m: &Module) -> String {
 }
 
 /// The ship's numbers, a line each: (label, value).
-fn numbers(s: &ClassSpec) -> Vec<(&'static str, String)> {
+fn numbers(s: &'static ClassSpec) -> Vec<(&'static str, String)> {
     let loaded = s.dry_mass + s.fuel_capacity;
+    // How it holds its balance: what its lift and drive give without turning
+    // it, a full tank aboard, with the hold empty and full.
+    let (empty, full) = (s.authority(s.fuel_capacity, 0.0), s.authority(s.fuel_capacity, s.hold_capacity));
+    let share = |a: f64, b: f64| if b > 0.0 { format!("{:.0}", 100.0 * a / b) } else { "-".into() };
     vec![
         ("DRY MASS", fmt::tonnes(s.dry_mass)),
         ("TANK", fmt::tonnes(s.fuel_capacity)),
@@ -204,6 +208,8 @@ fn numbers(s: &ClassSpec) -> Vec<(&'static str, String)> {
         ("THRUSTERS", format!("{:.1} M/S2", s.rcs_thrust / loaded)),
         ("LIFT", format!("{:.1} M/S2", s.lift_thrust / loaded)),
         ("TURNS", format!("{:.1} {:.1} {:.1} RAD/S2", s.turn_accel.x, s.turn_accel.y, s.turn_accel.z)),
+        // (Empty hold / full hold.)
+        ("BALANCE", format!("LIFT {}/{}%  DRIVE {}/{}%", share(empty.lift, s.lift_thrust), share(full.lift, s.lift_thrust), share(empty.main, s.main_thrust), share(full.main, s.main_thrust))),
         ("AUTOPILOTS", if s.features.is_empty() { "NONE".into() } else { s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(4).collect::<String>()).collect::<Vec<_>>().join(" ") }),
     ]
 }

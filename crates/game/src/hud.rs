@@ -209,6 +209,16 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     let ship = &app.ship;
     let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
     lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
+    // Off balance (its load, or what's fitted, off the thrusters' centre):
+    // what its lift and drive still give without turning it.
+    {
+        let (a, s) = (ship.authority(), ship.spec());
+        let (lift, main) = (a.lift / s.lift_thrust.max(1.0), a.main / s.main_thrust.max(1.0));
+        if lift < 0.97 || main < 0.97 {
+            let c = if lift < 0.8 || main < 0.8 { RED } else { AMBER };
+            lines.push((format!("OFF BALANCE - LIFT {:.0}%  DRIVE {:.0}%", lift * 100.0, main * 100.0), c));
+        }
+    }
     lines.push((
         format!(
             "MASS {:.1} T  FUEL {:.1} T  CARGO {:.1} T  MAX ACC {:.1} M/S2  {:.0} CR",
