@@ -99,4 +99,7 @@ impl HyperdriveCommand {
 pub struct TurretCommand {
     pub aim: Option<DVec3>,
     pub fire: bool,
+    /// Launch missiles at this ship (by id) as the launcher reloads; None: hold fire.
+    #[serde(default)]
+    pub launch: Option<usize>,
 }

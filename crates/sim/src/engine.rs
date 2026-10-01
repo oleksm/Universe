@@ -126,6 +126,8 @@ pub struct View {
     pub events: Vec<Event>,
     /// Weapons fire: slugs in flight (system, where, how fast), beams, hits.
     pub slugs: Vec<(usize, DVec3, DVec3)>,
+    /// Missiles in flight: (system, position, velocity, motor burning, after us).
+    pub missiles: Vec<(usize, DVec3, DVec3, bool, bool)>,
     pub beams: Vec<Beam>,
     pub impacts: Vec<Impact>,
     /// The ship's computers: radar contacts (nearest first), fire control on
@@ -330,6 +332,7 @@ impl Engine {
             trade_log: u.records.trades.clone(),
             events: std::mem::take(&mut self.events),
             slugs: u.world.slugs.iter().map(|s| (s.system, s.projectile.position, s.projectile.velocity)).collect(),
+            missiles: u.world.missiles.iter().map(|m| (m.system, m.position, m.velocity, m.age < universe_world::missiles::MISSILE_BURN, m.target == crate::combat::PLAYER)).collect(),
             beams: u.world.beams.clone(),
             impacts: u.world.impacts.clone(),
             contacts: Vec::new(),

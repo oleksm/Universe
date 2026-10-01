@@ -209,6 +209,20 @@ fn turrets_shoot_the_aggressor_and_spare_the_innocent() {
 }
 
 #[test]
+fn sams_reach_the_aggressor_far_beyond_the_guns() {
+    let mut u = bench(1);
+    let (_, at, v, side) = a_turret(&mut u);
+    // 40 km out: well beyond any gun, in the missiles' reach.
+    let far = at + side * 40_000.0;
+    place(&mut u, 0, far, v, far + side.any_orthonormal_vector());
+    { let now = u.world.time; u.law.declare(universe_sim::craft_id(0), now + 600.0, now, universe_sim::protocol::Cause::Rules); }
+    let down = run(&mut u, 60.0, |u| !u.crafts[0].ship.is_flying());
+    assert!(down, "the missiles bring it down (hull {:.2}, {} in the air)", u.crafts[0].ship.hull, u.world.missiles.len());
+    let kill = u.records.kills.last().expect("a kill");
+    assert_eq!(kill.weapon, "MISSILE");
+}
+
+#[test]
 fn a_ship_under_fire_runs_for_the_guns() {
     let mut u = bench(2);
     // Well clear of the place's body (a ground port's planet would pull them down).

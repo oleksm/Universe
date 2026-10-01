@@ -150,6 +150,47 @@ fn can_be_hit(ship: &Ship) -> bool {
     matches!(ship.state, ShipState::Flying | ShipState::Landed { .. })
 }
 
+impl World {
+    /// The missiles in flight over `dt`: each homes on its target (where it
+    /// is now, if it's still in normal space in the missile's system) and
+    /// bursts on passing within its fuse. The blasts go into `hits`.
+    fn fly_missiles(&mut self, ships: &[Armed], dt: f64, hits: &mut Vec<(usize, f64, DVec3, usize, &'static str)>) {
+        if self.missiles.is_empty() {
+            return;
+        }
+        let t = self.time;
+        let mut missiles = std::mem::take(&mut self.missiles);
+        let mut positions = Vec::new();
+        let mut positioned = usize::MAX;
+        missiles.retain_mut(|m| {
+            let sys = self.system(m.system);
+            if positioned != m.system {
+                sys.positions(t, &mut positions);
+                positioned = m.system;
+            }
+            let mark = ships
+                .iter()
+                .find(|a| a.id == m.target && a.system == m.system && can_be_hit(a.ship) && !a.ship.hyperdrive)
+                .map(|a| crate::missiles::Mark { position: a.ship.position, velocity: a.ship.velocity });
+            // (The ships are at the frame's end already, the missile at its
+            // start: it steers on where its target was then.)
+            let then = mark.as_ref().map(|mk| crate::missiles::Mark { position: mk.position - mk.velocity * dt, velocity: mk.velocity });
+            let alive = m.fly(&sys, &positions, then.as_ref(), t, dt);
+            if let Some(mk) = &mark
+                && m.fuse(mk, dt)
+            {
+                let push = (mk.position - m.position).normalize_or(DVec3::Y) * 2.0e4;
+                hits.push((m.target, crate::missiles::MISSILE_BLAST, push, m.owner, "MISSILE"));
+                self.impacts.push(Impact { system: m.system, point: m.position, by: m.owner, target: m.target, laser: false });
+                return false;
+            }
+            // (Its target lost, it destroys itself.)
+            alive && mark.is_some() && m.age < crate::missiles::MISSILE_LIFETIME
+        });
+        self.missiles = missiles;
+    }
+}
+
 /// Beam power on target at `range` (W).
 pub fn laser_power(range: f64) -> f64 {
     if range <= LASER_FOCUS { LASER_POWER } else { LASER_POWER * (LASER_FOCUS / range).powi(2) }
@@ -216,9 +257,13 @@ impl World {
                 ship.laser_overheated &= ship.laser_heat > LASER_RESET;
             }
         }
-        // The defence turrets' guns, as their gunners have set them.
+        // The missiles in the air fly the frame; then the defence turrets'
+        // guns and launchers, as their gunners have set them (what they
+        // launch is where it is at the frame's end already: it flies from the next).
+        let mut hits: Vec<(usize, f64, DVec3, usize, &'static str)> = Vec::new(); // (ship id, joules, impulse, by, cause)
+        self.fly_missiles(ships, dt, &mut hits);
         self.turrets_fire(dt, &mut fired);
-        if self.slugs.is_empty() && lasers.is_empty() {
+        if self.slugs.is_empty() && lasers.is_empty() && hits.is_empty() {
             self.slugs = fired;
             return;
         }
@@ -231,7 +276,6 @@ impl World {
             }
         }
         let index: HashMap<usize, usize> = ships.iter().enumerate().map(|(i, a)| (a.id, i)).collect();
-        let mut hits: Vec<(usize, f64, DVec3, usize, &'static str)> = Vec::new(); // (ship id, joules, impulse, by, cause)
 
         // Slugs.
         let t = self.time;

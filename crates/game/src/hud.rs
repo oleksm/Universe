@@ -53,6 +53,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             universe_prof::time("draw/hud/pilot overlay", || pilot_overlay(frame, app));
             target_marker(frame, app);
             universe_prof::time("draw/hud/contact marker", || contact_marker(frame, app));
+            missile_markers(frame, app);
             universe_prof::time("draw/hud/turret markers", || turret_markers(frame, app));
             impact_label(frame, app);
             phase_banner(frame, app);
@@ -228,6 +229,22 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     if let Some(until) = app.v.aggressed_until {
         let left = (until - now) / app.warp().max(1.0);
         lines.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
+    }
+    // Missiles after us: how many, and the nearest's time to reach us.
+    let inbound: Vec<(f64, f64)> = app
+        .v
+        .missiles
+        .iter()
+        .filter(|m| m.4 && m.0 == app.v.ship_system)
+        .map(|m| {
+            let r = app.view.ship_pos - m.1;
+            (r.length(), (m.2 - ship.velocity).dot(r.normalize_or_zero()))
+        })
+        .collect();
+    if let Some(&(d, closing)) = inbound.iter().min_by(|a, b| a.0.total_cmp(&b.0)) {
+        let eta = if closing > 1.0 { format!(", IMPACT IN {}", fmt::countdown(d / closing)) } else { String::new() };
+        let blink = (app.now() * 4.0).fract() < 0.6;
+        lines.push((format!("MISSILE LOCK - {} INBOUND, NEAREST {}{eta}", inbound.len(), fmt::distance(d)), if blink { RED } else { RED.scale(0.5) }));
     }
     if ship.armed {
         let heat = if ship.laser_overheated { " HOT".to_string() } else { String::new() };
@@ -782,6 +799,27 @@ fn target_marker(frame: &mut Frame, app: &App) {
     }
     let c = if app.approach.is_some() { HUD } else { Color::hex(0x60c0ff) };
     bracket(frame, app, name, *target, c);
+}
+
+/// Missiles after us, in view: a red diamond on each, with its range (seen
+/// far off, where the missile itself is a speck).
+fn missile_markers(frame: &mut Frame, app: &App) {
+    let size = frame.size();
+    let back = app.now() - app.v.time;
+    let ours: Vec<DVec3> = app.v.missiles.iter().filter(|m| m.4 && m.0 == app.view.origin).map(|m| m.1 + m.2 * back).collect();
+    let nearest = ours.iter().copied().min_by(|a, b| a.distance(app.view.ship_pos).total_cmp(&b.distance(app.view.ship_pos)));
+    for &at in &ours {
+        let Some(s) = frame.project(at).filter(|s| s.x > 0.0 && s.y > 0.0 && s.x < size.x && s.y < size.y) else { continue };
+        let d = [Vec2::new(0.0, -6.0), Vec2::new(6.0, 0.0), Vec2::new(0.0, 6.0), Vec2::new(-6.0, 0.0)];
+        for i in 0..4 {
+            frame.hud_line(s + d[i], s + d[(i + 1) % 4], RED);
+        }
+        // (The range on the nearest only: a salvo comes in close together.)
+        if Some(at) == nearest {
+            let range = fmt::distance(at.distance(app.view.ship_pos));
+            frame.text(s + Vec2::new(-text_size(&range).x / 2.0, 8.0), &range, RED.scale(0.8));
+        }
+    }
 }
 
 /// Radar contacts in view: a small square on each ship, with its range when

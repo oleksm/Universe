@@ -66,6 +66,8 @@ pub struct World {
     frozen: Option<Frozen>,
     /// Slugs in flight (see `weapons`).
     pub slugs: Vec<Slug>,
+    /// Missiles in flight (see `missiles`).
+    pub missiles: Vec<crate::missiles::Missile>,
     /// Laser beams fired in the last combat phase.
     pub beams: Vec<Beam>,
     /// Hits in the last combat phase.
@@ -131,6 +133,7 @@ impl World {
             rules: Default::default(),
             frozen: None,
             slugs: Vec::new(),
+            missiles: Vec::new(),
             beams: Vec::new(),
             impacts: Vec::new(),
             goods: crate::goods::catalog(seed),

@@ -114,6 +114,8 @@ pub struct TurretGun {
     pub aim: DVec3,
     pub orders: TurretCommand,
     pub cooldown: f64,
+    /// Until the missile launcher is ready again (s).
+    pub reload: f64,
 }
 
 impl crate::world::World {
@@ -141,7 +143,7 @@ impl crate::world::World {
 
     /// Give turret `id`'s gun its orders (they hold until changed).
     pub fn command_turret(&mut self, id: usize, c: TurretCommand) {
-        let gun = self.turret_guns.entry(id).or_insert(TurretGun { aim: c.aim.unwrap_or(DVec3::Y), orders: c, cooldown: 0.0 });
+        let gun = self.turret_guns.entry(id).or_insert(TurretGun { aim: c.aim.unwrap_or(DVec3::Y), orders: c, cooldown: 0.0, reload: 0.0 });
         gun.orders = c;
     }
 
@@ -169,6 +171,22 @@ impl crate::world::World {
                 }
             }
             gun.cooldown = (gun.cooldown - dt).max(if gun.orders.fire { f64::NEG_INFINITY } else { 0.0 });
+            gun.reload = (gun.reload - dt).max(0.0);
+            // The launcher: a missile at the named ship as it reloads, so
+            // many in the air at once.
+            if let Some(target) = gun.orders.launch
+                && gun.reload <= 0.0
+                && self.missiles.iter().filter(|m| m.owner == id).count() < crate::missiles::IN_FLIGHT
+            {
+                gun.reload = crate::missiles::LAUNCH_RELOAD;
+                let now = self.time;
+                let here = motions.entry(system).or_insert_with(|| self.turret_motions_at(system, now));
+                if let Some(&(_, at, velocity)) = here.get(k) {
+                    let up = (at - self.rails_at(system, now)[self.turrets_of(system)[k].body]).normalize_or(DVec3::Y);
+                    self.missiles.push(crate::missiles::Missile { system, owner: id, target, position: at + up * 15.0, velocity: velocity + up * 60.0, age: 0.0 });
+                }
+            }
+            let gun = self.turret_guns.get_mut(&id).expect("listed");
             if !gun.orders.fire || gun.cooldown > 0.0 {
                 continue;
             }

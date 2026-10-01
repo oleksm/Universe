@@ -436,14 +436,21 @@ fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, vie
                 universe_physics::ray(&sys.bodies, positions, g.at + d.normalize() * 10.0, d.normalize(), d.length() - 30.0, view.time, &[]).is_none()
             };
             let gravity = |p: DVec3| sys.gravity(p, positions);
-            let c = gunners.entry(g.id).or_default().orders(view.time, g.at, g.velocity, gun, g.reach, &quarry, clear, gravity, latency);
+            let mut c = gunners.entry(g.id).or_default().orders(view.time, g.at, g.velocity, gun, g.reach, &quarry, clear, gravity, latency);
+            // Missiles at the nearest fair game within the launcher's reach,
+            // on a clear line: the guns reach a few kilometres, these a hundred.
+            c.launch = quarry
+                .iter()
+                .filter(|q| q.position.distance(g.at) < universe_world::missiles::MISSILE_RANGE && clear(q.position))
+                .min_by(|a, b| a.position.distance(g.at).total_cmp(&b.position.distance(g.at)))
+                .map(|q| q.id);
             out.push(order(g.id, c));
         }
     }
     let idle: Vec<usize> = gunners.keys().copied().filter(|id| universe_world::turrets::turret_of(*id).is_some_and(|(s, _)| !systems.contains(&s))).collect();
     for id in idle {
         gunners.remove(&id);
-        out.push(order(id, TurretCommand { aim: None, fire: false }));
+        out.push(order(id, TurretCommand { aim: None, fire: false, launch: None }));
     }
     out.sort_by_key(|p| p.id);
     out

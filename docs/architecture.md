@@ -497,6 +497,7 @@ ship's pose directly, like tests do — then render.
 | Radar (sweep, blips) | world: `radar` |
 | Gun, laser, hull damage (a hit jams the hyperdrive 15 s); the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
 | SAM turrets (seeded per station/gate/spaceport, 6 km reach, fire on aggressors with a clear line), coverage | world: `turrets` |
+| SAM missiles: each turret's launcher (2 in the air, 10 s reload, 80 km), motor 6 g for 60 s, zero-effort-miss guidance, proximity fuse 40 m, 15 MJ blast; self-destruct on losing the target. The gunner names the target (`TurretCommand::launch`) | world: `missiles`, `weapons::fly_missiles`; sim: `pilots::aim_guns` |
 | Shelter: pirates keep out of turret reach, prey under fire runs for a defended place | avionics: `hunter`, sim: `combat::flee`, `traffic::sightings` |
 | Fight or flight: lawful ships judge aggressors (`hunter::judge`) and gang up on them; frame-start ship snapshot for what ships see (`Universe::snaps`) | avionics: `hunter`, sim: `traffic` |
 | Fire control: track on a contact, gun lead | avionics: `fire_control` |

@@ -54,7 +54,7 @@ impl Gunner {
             .min_by(|a, b| a.position.distance(at).total_cmp(&b.position.distance(at)));
         let Some(q) = target else {
             self.track = None;
-            return TurretCommand { aim: None, fire: false };
+            return TurretCommand { aim: None, fire: false, launch: None };
         };
         Track::update(&mut self.track, q.id, q.position, q.velocity, t);
         let track = self.track.expect("tracking");
@@ -65,8 +65,8 @@ impl Gunner {
         let (tp, tv) = ahead(q.position, q.velocity, track.acceleration);
         let (mp, _) = ahead(at, velocity, DVec3::ZERO);
         let Some(s) = lead(mp, velocity, tp, tv, accel, GUN_MUZZLE, SLUG_LIFETIME) else {
-            return TurretCommand { aim: Some((q.position - at).normalize()), fire: false };
+            return TurretCommand { aim: Some((q.position - at).normalize()), fire: false, launch: None };
         };
-        TurretCommand { aim: Some(s.aim), fire: gun.angle_between(s.aim) < ON_TARGET }
+        TurretCommand { aim: Some(s.aim), fire: gun.angle_between(s.aim) < ON_TARGET, launch: None }
     }
 }

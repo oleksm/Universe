@@ -21,6 +21,7 @@ pub mod gate;
 pub mod heat;
 pub mod hyperdrive;
 pub mod mining;
+pub mod missiles;
 pub mod names;
 pub mod radar;
 pub mod network;

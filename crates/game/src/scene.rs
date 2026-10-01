@@ -434,6 +434,20 @@ fn weapons_fire(frame: &mut Frame, app: &App) {
         frame.line(p - streak, p, Color::hex(0xffd060));
         frame.point(p, Color::hex(0xffe080));
     }
+    // Missiles: a dart along their flight, and while the motor burns, its plume.
+    for &(system, p, velocity, burning, _) in &app.v.missiles {
+        if system != app.view.origin {
+            continue;
+        }
+        let p = p + velocity * back;
+        let along = velocity.normalize_or(DVec3::Y);
+        frame.line(p - along * 6.0, p + along * 2.0, Color::hex(0xe0e0e0));
+        if burning {
+            let flicker = 0.7 + 0.3 * ((app.now() * 37.0).sin() * 0.5 + 0.5);
+            frame.line(p - along * 6.0, p - along * 40.0, Color::hex(0xffa040).scale(flicker as f32));
+        }
+        frame.point(p, if burning { Color::hex(0xffd080) } else { Color::hex(0xa0a0a0) });
+    }
     for beam in &app.v.beams {
         if beam.system != app.view.origin {
             continue;

@@ -328,17 +328,23 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
-        "sam" => {
-            // Aggressed, 9 km out from a defended station or port, looking at its turrets.
+        "sam" | "samfar" => {
+            // Aggressed, 9 km out from a defended station or port, looking at
+            // its turrets (far: 40 km out, the missiles on their way up).
             app.mode = Mode::Pilot;
             if let Some((t, at, v)) = app.engine.universe().world.turret_motions(home).into_iter().find(|(t, _, _)| !matches!(t.facility, universe_sim::world::Facility::Gate(_))) {
                 let out = (at - positions[t.body]).normalize();
-                app.engine.universe().ship.position = at + out * 9_000.0;
+                app.engine.universe().ship.position = at + out * if name == "samfar" { 40_000.0 } else { 9_000.0 };
                 app.engine.universe().ship.velocity = v;
                 app.engine.universe().ship.orientation = universe_sim::ship::facing(-out, out.any_orthonormal_vector());
                 let u = app.engine.universe();
                 let now = u.world.time;
                 u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules);
+                if name == "samfar" {
+                    for _ in 0..60 * 26 {
+                        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                    }
+                }
             }
         }
         "orbit" => {
