@@ -5,6 +5,8 @@ mod market;
 mod models;
 mod navmap;
 mod observer;
+mod lock;
+mod mining;
 mod onfoot;
 mod rocks;
 mod save;
@@ -155,6 +157,9 @@ pub struct App {
     pub following: Option<(universe_sim::avionics::follow::Manoeuvre, String, f64)>,
     /// Seconds left to show the lock beam's ring (after T, outside combat mode).
     pub beam_shown: f32,
+    /// Mining mode and the prospector's pulse; T's lock picker.
+    pub mining: mining::Mining,
+    pub picker: lock::Picker,
     /// The collision warning's prediction, when it's on (made at `collision_at`, world time).
     pub collision: Option<universe_sim::avionics::collision::Prediction>,
     pub collision_at: f64,
@@ -227,6 +232,8 @@ impl App {
             eta_shown: None,
             globes: std::collections::HashMap::new(),
             rocks: std::collections::HashMap::new(),
+            mining: Default::default(),
+            picker: Default::default(),
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
             market: None,
@@ -476,19 +483,14 @@ impl App {
             self.engine.send(Command::CollisionWarning(on));
             self.say(if on { "COLLISION WARNING ON" } else { "COLLISION WARNING OFF" }.into());
         }
-        if input.pressed(KeyCode::KeyT) {
-            // Lock what's in the beam around the crosshair (the ring shows it for a moment).
-            self.beam_shown = 1.5;
-            self.engine.send(Command::LockInBeam);
-        }
+        // T: lock on (tap: what's ahead; hold: choose from the list).
+        let listing = lock::input(self, ctx);
+        mining::input(self, ctx);
+        let input = &ctx.input;
         // N keeps at a range from the locked ship (or the nav target's
         // station or gate), U orbits it; again for the next range out. X lets go.
-        // (No ship locked and a rock scanned: N closes on it, to anchor.)
         if input.pressed(KeyCode::KeyN) {
-            match rocks::scan(self).filter(|_| self.v.avionics.contact.is_none() && !matches!(self.v.ship.state, ShipState::Anchored { .. })) {
-                Some(s) => self.engine.send(Command::CloseOn { field: s.field, body: s.body }),
-                None => self.engine.send(Command::Follow(FollowKind::KeepAt)),
-            }
+            self.engine.send(Command::Follow(FollowKind::KeepAt));
         }
         if input.pressed(KeyCode::KeyU) {
             self.engine.send(Command::Follow(FollowKind::Orbit));
@@ -542,7 +544,8 @@ impl App {
             roll: (input.axis(KeyCode::KeyD, KeyCode::KeyA) * keys + input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft))
                 .clamp(-1.0, 1.0) as f64,
         };
-        if ctx.cursor_grabbed() {
+        // (Not while T's list has the mouse.)
+        if ctx.cursor_grabbed() && !listing {
             let m = if self.engine.running() {
                 self.mouse_since_tick += input.mouse_delta;
                 self.mouse_since_tick

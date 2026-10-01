@@ -56,6 +56,10 @@ pub enum Command {
     Follow(FollowKind),
     /// Close on a rock (body `body` among field `field`'s), to anchor.
     CloseOn { field: usize, body: usize },
+    /// Lock on a rock (field, body among its bodies), or let the lock go.
+    LockRock(Option<(usize, usize)>),
+    /// Lock on the radar contact with this id (a pick from the list).
+    LockContact(usize),
     StopFollowing,
     /// Lock what's in the beam around the nose (again: the next).
     LockInBeam,
@@ -229,6 +233,8 @@ impl Engine {
             Command::ToggleRoute => u.toggle_route(),
             Command::Follow(kind) => u.follow(kind),
             Command::CloseOn { field, body } => u.close_on(field, body),
+            Command::LockRock(rock) => u.cockpit().lock_rock(rock),
+            Command::LockContact(id) => u.cockpit().lock_contact(id),
             Command::StopFollowing => u.stop_following(),
             Command::LockInBeam => {
                 u.lock_in_beam();
@@ -558,6 +564,8 @@ impl EngineHandle {
             Command::ToggleRoute => k.toggle_route(),
             Command::Follow(kind) => k.follow(kind),
             Command::CloseOn { field, body } => k.close_on(field, body),
+            Command::LockRock(rock) => k.lock_rock(rock),
+            Command::LockContact(id) => k.lock_contact(id),
             Command::StopFollowing => k.stop_following(),
             Command::LockInBeam => {
                 k.lock_in_beam();

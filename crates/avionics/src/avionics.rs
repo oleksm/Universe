@@ -63,6 +63,9 @@ pub struct Avionics {
     /// The radar contact locked on (the id the radar reports it by).
     #[serde(skip)]
     pub contact: Option<usize>,
+    /// The rock locked on (in mining): body `.1` among field `.0`'s bodies.
+    #[serde(default)]
+    pub rock_lock: Option<(usize, usize)>,
     /// Fire control's track on it.
     #[serde(skip)]
     pub track: Option<crate::fire_control::Track>,
@@ -111,6 +114,7 @@ impl Avionics {
                 self.following = None;
                 self.nav_target = None;
                 self.contact = None;
+                self.rock_lock = None;
                 self.track = None;
             }
             // (Switching the drive on hands the pilot the stick when it's

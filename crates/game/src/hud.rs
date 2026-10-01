@@ -47,6 +47,8 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             impact_label(frame, app);
             phase_banner(frame, app);
             universe_prof::time("draw/hud/scanner", || scanner(frame, app));
+            crate::mining::draw_hud(frame, app);
+            crate::lock::draw(frame, app);
         }
     }
     // Leave room for the phase banner across the top while docking/landing.
@@ -95,6 +97,7 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
     let mode = match app.mode {
         Mode::Observer => "OBSERVER",
         Mode::Pilot if ship.armed => "COMBAT",
+        Mode::Pilot if app.mining.on => "MINING",
         Mode::Pilot => "PILOT",
     };
     let top = if app.mode == Mode::Pilot && ship.armed { RED } else { HUD };
@@ -272,8 +275,10 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
             "  CLOSING IN"
         } else if s.gap < mining::ANCHOR_REACH {
             "  MATCH ITS DRIFT"
+        } else if app.v.avionics.rock_lock.is_some() {
+            "  3 TO APPROACH"
         } else {
-            "  N TO CLOSE ON IT"
+            "  T TO LOCK (MINING MODE: 1)"
         };
         lines.push((format!("RANGE {}  DRIFT {:.2} M/S{hint}", fmt::distance(s.gap.max(0.0)), s.drift), c));
     }
@@ -1165,19 +1170,18 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let auto = a.route.active || a.hyper_autopilot || a.clearance.is_some_and(|c| c.autopilot);
     // N / U: keep at range, orbit, with the range when engaged; there's
     // something to follow with a lock or a station or gate as the nav target.
-    let anchor = a.contact.is_some() || matches!(a.nav_target, Some(universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_) | universe_sim::NavTarget::Asteroid(_)));
+    let anchor = a.contact.is_some() || a.rock_lock.is_some() || matches!(a.nav_target, Some(universe_sim::NavTarget::Station(_) | universe_sim::NavTarget::Gate(_) | universe_sim::NavTarget::Asteroid(_)));
     let follow_cell = |kind: &str, on: Option<f64>| match on {
         Some(r) => (format!("{kind} {:.0}K", r / 1000.0), Lamp::On),
         None if anchor && flying && !ship.hyperdrive => (kind.to_string(), Lamp::Off),
         None => (kind.to_string(), Lamp::Unavailable),
     };
     use universe_sim::avionics::follow::Manoeuvre;
-    // (A rock scanned and no ship locked: N closes on it.)
-    let rock = a.contact.is_none() && flying && crate::rocks::scan(app).is_some();
-    let keep = match a.following.map(|f| f.manoeuvre) {
-        Some(Manoeuvre::Surface(_)) => ("CLOSE".to_string(), Lamp::On),
-        _ if rock && !ship.hyperdrive => ("CLOSE".to_string(), Lamp::Off),
-        _ => follow_cell("KEEP", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::KeepAt(r) => Some(r), _ => None })),
+    let keep = follow_cell("KEEP", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::KeepAt(r) => Some(r), _ => None }));
+    let approach = match a.following.map(|f| f.manoeuvre) {
+        Some(Manoeuvre::Surface(_)) => Lamp::On,
+        _ if a.rock_lock.is_some() && flying && !ship.hyperdrive => Lamp::Off,
+        _ => Lamp::Unavailable,
     };
     let orbit = follow_cell("ORBIT", a.following.and_then(|f| match f.manoeuvre { Manoeuvre::Orbit(r) => Some(r), _ => None }));
     let arms = if ship.weapons_hot() {
@@ -1187,7 +1191,7 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     } else {
         Lamp::Off
     };
-    let lock = if a.contact.is_some() {
+    let lock = if a.contact.is_some() || a.rock_lock.is_some() {
         Lamp::On
     } else if app.contacts.is_empty() {
         Lamp::Unavailable
@@ -1205,7 +1209,27 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         Lamp::Unavailable
     };
     let dig = if ship.excavator { Lamp::Busy } else if anchored { Lamp::Off } else { Lamp::Unavailable };
-    let cells: [(&str, &str, Lamp); 15] = [
+    let mining = app.mining.on;
+    let cells: Vec<(&str, &str, Lamp)> = if mining {
+        // Mining mode's action panel.
+        vec![
+            ("1", "MINING", Lamp::On),
+            ("2", "PROSPECT", if crate::mining::pulsing(app) { Lamp::Busy } else if flying { Lamp::Off } else { Lamp::Unavailable }),
+            ("T", "LOCK", lock),
+            ("3", "APPROACH", approach),
+            ("Y", "ANCHOR", anchor_lamp),
+            ("H", "DIG", dig),
+            ("N", keep.0.as_str(), keep.1),
+            ("U", orbit.0.as_str(), orbit.1),
+            ("X", "LET GO", if a.following.is_some() { Lamp::Off } else { Lamp::Unavailable }),
+            ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
+            ("M", "MAP", on(app.nav_map.is_some())),
+            ("G", "MARKET", if app.docked_market { Lamp::On } else { Lamp::Off }),
+            ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
+            ("F1", "HELP", on(app.show_help)),
+        ]
+    } else {
+        vec![
         ("R", clearance.0, clearance.1),
         ("K", "AUTO", on(auto)),
         ("J", "HYPER", if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable }),
@@ -1219,9 +1243,9 @@ fn action_grid(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("O", "GRID", on(app.show_grid)),
         ("C", if app.chase_cam { "CHASE" } else { "COCKPIT" }, Lamp::Off),
         ("F1", "HELP", on(app.show_help)),
-        ("Y", "ANCHOR", anchor_lamp),
-        ("H", "DIG", dig),
-    ];
+        ("1", "MINING", Lamp::Off),
+        ]
+    };
     const COLS: usize = 5;
     let cell = Vec2::new(84.0, 14.0);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
@@ -1383,8 +1407,14 @@ PILOT
  N  U     KEEP AT RANGE / ORBIT THE LOCKED SHIP, OR
           THE NAV TARGET STATION/GATE/ASTEROID (AGAIN:
           NEXT RANGE OUT)  X LETS GO
- N        (A ROCK SCANNED, NO SHIP LOCKED) CLOSE ON IT:
-          HOLD 12 M OFF ITS SURFACE, TURNING WITH IT
+ T (HOLD) LIST WHAT CAN BE LOCKED: MOUSE OR WHEEL TO
+          CHOOSE, LET GO OF T TO LOCK
+ 1        MINING MODE (ITS OWN ACTION PANEL):
+  2       PROSPECT: A PULSE OUT TO 30 KM FINDS ROCKS
+  T       LOCK A FOUND ROCK (TAP: AHEAD; HOLD: LIST)
+  3       APPROACH THE LOCKED ROCK: 12 M OFF ITS
+          SURFACE, TURNING WITH IT
+  N  U    KEEP AT RANGE / ORBIT THE LOCKED ROCK
  Y        ANCHOR TO THE ROCK IN REACH (30 M; DRIFT
           UNDER 0.5 M/S AGAINST ITS SURFACE) / LET GO
  H        EXCAVATOR ON / OFF (ANCHORED): ORE TO THE HOLD

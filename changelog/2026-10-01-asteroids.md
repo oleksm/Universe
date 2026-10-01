@@ -74,5 +74,21 @@ drifts with that surface.
   digs until the hold is full, lets go, flies to market, asks for quotes and sells its ore,
   then heads out again. Departures stagger like everyone else's. On radar they read MINING.
 
+## Mining mode, and locking by list
+
+- **Locking, everywhere: T.** A tap locks what's ahead (a ship in the beam; in mining mode,
+  the prospected rock nearest the nose, within 10°). Held, T lists what can be locked —
+  radar contacts, or in mining mode the rocks found — nearest first, with the one under the
+  cursor bracketed in the view; move the mouse (or the wheel) to choose and let go of T to
+  lock it. The mouse doesn't steer while the list is up. One lock at a time: ship or rock.
+- **Mining mode (1)**: its own action panel — 2 PROSPECT, T LOCK, 3 APPROACH, Y ANCHOR,
+  H DIG, N KEEP, U ORBIT, X LET GO.
+- **Prospect (2)**: a pulse goes out to 30 km, a shell you see grow round the ship; every
+  rock it passes is found: listed (numbered, nearest first: class, size, rubble or solid,
+  ore, dig rate, range) and tagged with its number in the view.
+- With a rock locked: N keeps at a range from it, U orbits it, 3 approaches it (12 m off its
+  surface, turning with it), then Y anchors and H digs. The prospector reads the locked rock.
+  (N no longer closes on the scanned rock by itself: 3 does, on the one you locked.)
+
 Not yet: claims, refining, towing boulders,
 the excavator's power drawn from fuel.

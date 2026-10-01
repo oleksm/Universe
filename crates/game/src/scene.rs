@@ -47,6 +47,9 @@ pub fn draw(frame: &mut Frame, app: &App) {
     {
         crate::rocks::mark(frame, &s);
     }
+    if app.mode == Mode::Pilot {
+        crate::mining::draw_scene(frame, app);
+    }
     universe_prof::time("draw/scene/spaceports", || spaceports(frame, app));
     if app.view.origin == app.v.ship_system {
         match &app.approach {

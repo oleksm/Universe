@@ -331,6 +331,9 @@ impl Cockpit {
         let from = self.locked_contact().map(|c| (c.blip.distance, c.blip.id));
         let next = self.contacts.iter().find(|c| from.is_none_or(|(d, id)| (c.blip.distance, c.blip.id) > (d, id))).cloned();
         self.pilot.avionics.contact = next.as_ref().map(|c| c.blip.id);
+        if next.is_some() {
+            self.pilot.avionics.rock_lock = None;
+        }
         next
     }
 
@@ -362,6 +365,29 @@ impl Cockpit {
         next
     }
 
+    /// Lock on radar contact `id` (picked from the list), if it's on the radar.
+    pub fn lock_contact(&mut self, id: usize) {
+        let view = self.view.clone().expect("a view");
+        self.contacts = contacts(&view);
+        let Some(c) = self.contacts.iter().find(|c| c.blip.id == id).cloned() else { return };
+        self.pilot.avionics.contact = Some(id);
+        self.pilot.avionics.rock_lock = None;
+        self.run(|_, _, events| events.push(Event::Lock { name: Some(c.name) }));
+    }
+
+    /// Lock on a rock (field, body among its bodies), or let go of the lock:
+    /// one lock at a time, so a ship's goes.
+    pub fn lock_rock(&mut self, rock: Option<(usize, usize)>) {
+        let (_, sys, _) = self.system();
+        let name = rock.and_then(|(f, b)| sys.fields.get(f).and_then(|_| sys.field_bodies(f).get(b).map(|b| b.name.clone())));
+        let rock = rock.filter(|_| name.is_some());
+        self.pilot.avionics.rock_lock = rock;
+        if rock.is_some() {
+            self.pilot.avionics.contact = None;
+        }
+        self.run(|_, _, events| events.push(Event::Lock { name }));
+    }
+
     /// The locked contact, if it's still on the radar.
     pub fn locked_contact(&self) -> Option<&Contact> {
         let id = self.pilot.avionics.contact?;
@@ -375,6 +401,10 @@ impl Cockpit {
         let a = &self.pilot.avionics;
         let anchor = match (a.contact, a.nav_target) {
             (Some(c), _) => Anchor::Ship(craft_id(c)),
+            (None, _) if self.pilot.avionics.rock_lock.is_some() => {
+                let (field, body) = self.pilot.avionics.rock_lock.unwrap_or_default();
+                Anchor::Rock { field, body }
+            }
             (None, Some(t @ (NavTarget::Station(_) | NavTarget::Gate(_) | NavTarget::Asteroid(_)))) => Anchor::Place(t),
             _ => {
                 self.refuse("FOLLOW: LOCK A SHIP (T), OR A STATION, GATE OR ASTEROID (M)");

@@ -195,7 +195,7 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.orientation = universe_sim::ship::facing(-off.normalize(), DVec3::Y);
             u.set_nav_target(Some(NavTarget::Asteroid(rock)));
         }
-        "mining" | "prospect" | "closing" => {
+        "mining" | "prospect" | "closing" | "minemode" | "pulse" | "picklist" => {
             // By a rubble fragment of a home field, drifting with its
             // surface: "prospect" 300 m off it; "mining" anchored 15 m off
             // and digging for half a minute.
@@ -224,6 +224,19 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.velocity = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(at - pos[i]);
             u.ship.angular_velocity = DVec3::ZERO;
             u.ship.orientation = universe_sim::ship::facing(-up, up.any_orthonormal_vector());
+            if matches!(name, "minemode" | "pulse" | "picklist") {
+                // Mining mode, a little farther off: prospected (or mid-pulse), a rock locked, or T held.
+                u.ship.position = at + up * 2000.0;
+                app.mining.on = true;
+                let age = if name == "pulse" { 1.0 } else { 5.0 };
+                crate::mining::prospect_for_show(app, age);
+                if name == "picklist" {
+                    app.picker.hold_for_show();
+                } else if let Some(f) = (0..sys.fields.len()).find(|&f| sys.field_rocks(f).any(|j| j == i) && sys.field_bodies(f).len() == bodies.len()) {
+                    app.engine.universe().cockpit().lock_rock(Some((f, i)));
+                }
+            }
+            let u = app.engine.universe();
             if name == "closing" {
                 // N on it, ninety seconds on.
                 let f = (0..sys.fields.len()).find(|&f| sys.field_bodies(f).len() == bodies.len() && sys.field_rocks(f).any(|j| j == i)).unwrap();

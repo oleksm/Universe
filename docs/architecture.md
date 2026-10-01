@@ -507,6 +507,8 @@ ship's pose directly, like tests do — then render.
 | Render thread; GPU meshes and the mesh shader | engine: `render_thread`, `renderer`, `model::Mesh` |
 | Rendering, windowing, input, audio, frame timing (`Perf`) | engine |
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |
+| Locking (T: tap locks what's ahead; hold lists, mouse/wheel picks, release locks) for contacts and rocks; the rock lock (`Avionics::rock_lock`, `Command::LockRock`/`LockContact`) | game: `lock`; sim: `cockpit` |
+| Mining mode (1): action panel, prospect pulse (2, 30 km), numbered results, approach (3) | game: `mining` |
 | Asteroids on screen: a mesh per rock from its shape, sensor diamonds for small ones nearby; the prospector (scan, survey, digging readout) | game: `rocks`, `hud` |
 
 
