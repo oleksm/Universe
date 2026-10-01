@@ -123,6 +123,10 @@ pub struct Ship {
     /// world time: see `weapons::AGGRESSION`.
     #[serde(default)]
     pub aggressed_until: f64,
+    /// How the hyperdrive flies while engaged, as last ordered (held like any
+    /// device setting).
+    #[serde(skip, default = "cruise")]
+    pub hyper_orders: HyperdriveCommand,
     /// The hull's skin temperature (K): see `heat`.
     #[serde(default = "skin_ambient")]
     pub skin_temp: f64,
@@ -164,6 +168,7 @@ impl Ship {
             aggressed_until: 0.0,
             hyper_jam: 0.0,
             skin_temp: crate::heat::AMBIENT,
+            hyper_orders: HyperdriveCommand::CRUISE,
         }
     }
 
@@ -267,7 +272,7 @@ impl Ship {
     }
 
     /// Attitude control: rotate toward the commanded rates over `dt` seconds.
-    pub(crate) fn steer(&mut self, c: &Controls, dt: f64) {
+    pub fn steer(&mut self, c: &Controls, dt: f64) {
         let target = DVec3::new(c.pitch * TURN_RATE, c.yaw * TURN_RATE, c.roll * ROLL_RATE);
         let k = 1.0 - (-6.0 * dt).exp();
         self.angular_velocity += (target - self.angular_velocity) * k;
@@ -294,4 +299,8 @@ pub fn upright(normal: DVec3, forward: DVec3) -> DQuat {
 
 fn skin_ambient() -> f64 {
     crate::heat::AMBIENT
+}
+
+fn cruise() -> HyperdriveCommand {
+    HyperdriveCommand::CRUISE
 }

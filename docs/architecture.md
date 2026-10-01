@@ -216,17 +216,15 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   transit (countdown; emerge), hyperdrive, or free flight through the kernel with `Devices` as
   the driver, then the reaction to the fact the kernel stopped on, then the system hand-over (a
   floating origin at interstellar scale). It reads only the ship, the commands and kernel facts.
-  A **flight computer** takes part through the `FlightComputer` trait, again only with
-  commands: `substep()` gives commands for every integration substep (the autopilots are
-  feedback controllers and have always run at substep rate), `hyperdrive()` gives the frame's
-  hyperdrive orders once the clock has moved on, and `interval()` is its control rate (the
-  longest substep it can fly with). Fine substeps come from proximity to structures (kernel) or
-  any device pushing — engine or thrusters (device state), whoever flies — never from clearance
-  or from who is flying. A computer's control rate only adds break points where its commands may
-  change, as the pilot's input does once per step.
-- `Devices` (public) is the kernel `Driver` for a ship's devices: the flight computer's commands
-  set them each substep, they push with their thrust, station bounces are judged by the world.
-  The same driver flies a *copy* of a ship when a flight is simulated ahead (the planner).
+  **Nothing runs inside the step but physics:** whatever flies the ship (a pilot, a program)
+  has had its say before it, as device settings that hold through it (hyperdrive orders too,
+  `Ship::hyper_orders`). Turning is physics, over the game time the step covers (in hyperdrive,
+  over real time). Fine substeps come from proximity to structures (kernel) or any device
+  pushing — engine or thrusters (device state), whoever flies — never from who is flying.
+  `step_ship_at` steps from an explicit clock, so ships can step side by side.
+- `Devices` (public) is the kernel `Driver` for a ship's devices: they push with the thrust
+  they're set to, station bounces are judged by the world. The same driver flies a *copy* of a
+  ship when a flight is simulated ahead (the planner).
 
 **Not yet**
 
@@ -257,8 +255,9 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   `system()`, `star_system()`, `time()`, `gate_links()`, `positions()`) and
   `command(&ShipCommands)`, which returns the physical events that followed. The orchestrator
   implements it over the world.
-- `computer`: `Computer`, the `FlightComputer` the world's ship step calls — the dock/land/gate
-  autopilot every substep (`computer::autopilot`), hyperdrive navigation every frame.
+- `computer`: the dock/land/gate autopilot (`computer::autopilot`) — what it commands for the
+  next tick from where the ship is. `Avionics::fly` runs it once a tick, before the world steps
+  the ship (and, in hyperdrive, the navigation: `hyperdrive::navigate`).
 - `hyperdrive`: the hyperdrive autopilot (`aim`, `exit_velocity`, `navigate`: steer to the target
   and around bodies, drop out on arrival, choose the frame/destination/exit velocity).
 - `docking`, `landing`, `gate`: guidance (docking corridor, landing profile and `PadFrame`, gate
@@ -358,7 +357,7 @@ ship's pose directly, like tests do — then render.
 | Galaxy, star names, seeded rng, units | world: `galaxy`, `names`, `rng`, `units` |
 | Star systems, bodies, spaceports; terrain (implements `Surface`) | world: `system`, `terrain` |
 | Home system, gate network and links | world: `network` |
-| The clock, system caches, `command`/`step_ship`, `FlightComputer`, `Devices`, respawn/spawn, hand-over | world: `world` |
+| The clock, system caches, `command`/`step_ship`(`_at`), `Devices`, respawn/spawn, hand-over | world: `world` |
 | Ship, `ShipCommands`, `HyperdriveCommand`, engine/thrusters/attitude | world: `ship` |
 | Station structure + docking port (dock, bump, launch) | world: `station` |
 | Spaceport pad + landing gear (touch down, lift off) | world: `spaceport` |
@@ -370,7 +369,8 @@ ship's pose directly, like tests do — then render.
 | Nav target, clearance, phases | avionics: `nav` |
 | Per-ship avionics state, observe, per-frame programs, pilot requests, HUD approach/plan | avionics: `avionics` |
 | Sensors + command bus | avionics: `bus` |
-| Flight computer (substep autopilot, hyperdrive navigation) | avionics: `computer` |
+| The autopilots' per-tick say (dock/land/gate autopilot, hyperdrive navigation): `Avionics::fly` | avionics: `computer`, `avionics` |
+| Ticks of at most 1/60 game s (warp: more ticks, up to a budget); crafts' command delay (tests: 2 ticks) | sim: `universe::step_world`, `vessel::Inbox` |
 | Hyperdrive autopilot | avionics: `hyperdrive` |
 | Docking / landing / gate guidance, status, autopilots | avionics: `docking`, `landing`, `gate` |
 | Routes and the route autopilot | avionics: `route` |

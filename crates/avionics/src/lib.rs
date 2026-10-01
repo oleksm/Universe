@@ -5,7 +5,7 @@
 //! Avionics are programs running on a ship. They read what its sensors
 //! would — the ship, and the world around it, read-only — and write
 //! `ShipCommands` to its devices, nothing else (see `Bus` and the world's
-//! `FlightComputer`). They can't cheat: an autopilot is exactly as limited as
+//! a ship's device settings, held through the world's step). They can't cheat: an autopilot is exactly as limited as
 //! a pilot. The flight planner predicts a flight by simulating a copy of the
 //! ship through the physics kernel under the same autopilot.
 //! Deterministic and headless.
@@ -28,7 +28,6 @@ pub mod route;
 
 pub use avionics::{Approach, Avionics};
 pub use bus::Bus;
-pub use computer::Computer;
 pub use docking::{Command, DockingStatus, Guidance};
 pub use events::Event;
 pub use fire_control::{Solution, Track};

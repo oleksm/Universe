@@ -1,6 +1,6 @@
 # Universe — Re-architecture plan: core, services, clients
 
-Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0 done. `docs/architecture.md`
+Status: **adopted** (2026-09-30); decisions in §10 accepted as proposed. R0, R1 done. `docs/architecture.md`
 describes the code as it is; this describes where it goes and in what order. Once a phase
 lands, its part moves into `architecture.md`.
 
@@ -282,7 +282,7 @@ Dependencies point down only:
 | # | Phase | What moves | Exit criteria |
 |---|---|---|---|
 | R0 ✓ | **Contracts** | `protocol` crate: actuation, operations, events, sensor returns, messages, ids, causes. No behaviour change | Types reviewed; the current code compiles against them where it already fits |
-| R1 | **Autopilot out of the integrator** | Remove `FlightComputer::substep` and the hyperdrive callback. Actuation changes only at tick boundaries. Retune docking, landing, gate and hyperdrive guidance for 60 Hz plus k-tick delay | All interaction tests pass with commands held per tick and an artificial 2-tick delay |
+| R1 ✓ | **Autopilot out of the integrator** | Remove `FlightComputer::substep` and the hyperdrive callback. Actuation changes only at tick boundaries. Retune docking, landing, gate and hyperdrive guidance for 60 Hz plus k-tick delay | All interaction tests pass with commands held per tick and an artificial 2-tick delay |
 | R2 | **Contact rules as data** | Docking port, pads and gate become registered rules. The core keeps no station or spaceport logic | Docking, landing and gate tests pass. Rule firings appear in the event log |
 | R3 | **Pilot interface** | Avionics behind sensor-packet-in, actuation-and-requests-out, run synchronously (lockstep). Pilots lose direct world access | No avionics module imports world internals. Tests green in lockstep |
 | R4 | **Services out of the world** | ATC, market, ledger (credits and hold contents), law (aggression from hit events), records; the message bus with causes. Weapons code stops assigning aggression | Every authoritative change has a cause record. Ledger balances. Tests green |

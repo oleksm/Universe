@@ -14,6 +14,11 @@ use crate::traffic::{CrashReport, Craft, TrafficStats};
 use crate::vessel::Vessel;
 
 
+/// The longest tick (game seconds): pilots act once a tick.
+pub const TICK: f64 = 1.0 / 60.0 + 1e-9;
+/// The most ticks a step may take (beyond it, under heavy warp, ticks stretch).
+pub const TICK_BUDGET: usize = 8;
+
 /// A ship on its final run this close to the station or gate lets the next one start (m).
 const CORRIDOR_RELEASE: f64 = 1_500.0;
 
@@ -54,6 +59,12 @@ pub struct Universe {
     /// in the frame isn't seen where it will be at its end.
     pub(crate) snaps: Vec<crate::traffic::Snap>,
     pub(crate) snap_time: f64,
+    /// Ticks run so far.
+    pub tick: u64,
+    /// Crafts' commands reach their devices this many ticks after they're
+    /// given (0: at once). Tests set it to the lag pilots will have once they
+    /// run apart from the world.
+    pub command_delay: usize,
 }
 
 impl Universe {
@@ -75,6 +86,8 @@ impl Universe {
             aggressors: Vec::new(),
             snaps: Vec::new(),
             snap_time: f64::NAN,
+            tick: 0,
+            command_delay: 0,
             positions: Vec::new(),
         };
         u.respawn();
@@ -129,9 +142,27 @@ impl Universe {
         result
     }
 
-    /// Advance the whole world: the player's ship, then every craft, all from
-    /// the same moment; the clock moves once (as far as the player's ship went).
+    /// Advance the whole world by `real_dt` real seconds at `warp`, in ticks
+    /// of at most `TICK` game seconds (pilots act once a tick, so their
+    /// control rate stays in game time whatever the warp), up to
+    /// `TICK_BUDGET` ticks; past that, ticks stretch and the step says so.
     pub fn step_world(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
+        let wanted = (real_dt * warp / TICK).ceil().max(1.0);
+        let n = wanted.min(TICK_BUDGET as f64) as usize;
+        let mut result = StepResult::default();
+        for _ in 0..n {
+            let r = self.tick(real_dt / n as f64, warp, controls);
+            result.simulated += r.simulated;
+            result.warp_limited |= r.warp_limited;
+        }
+        result.warp_limited |= wanted > TICK_BUDGET as f64;
+        result
+    }
+
+    /// One tick: the player's ship, then every craft, all from the same
+    /// moment; the clock moves once (as far as the player's ship went).
+    fn tick(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
+        self.tick += 1;
         let t0 = self.world.time;
         universe_prof::time("sim/snapshot", || self.snapshot());
         let result = universe_prof::time("sim/player", || self.step(real_dt, warp, controls));

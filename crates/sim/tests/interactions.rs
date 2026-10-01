@@ -14,6 +14,9 @@ use universe_sim::{BodyKind, Controls, NavTarget, PadFrame, Phase, ShipState, Un
 fn bench(n: usize) -> Universe {
     let mut u = Universe::new(1984);
     u.spawn_settlers(n, 1);
+    // Pilots' commands reach their ships two ticks late, as they will once
+    // pilots run apart from the world.
+    u.command_delay = 2;
     u.ship.position += DVec3::new(0.0, 0.0, 5.0e7);
     let home = u.ship_system;
     for c in &mut u.crafts {
@@ -451,4 +454,23 @@ fn ships_waiting_for_a_corridor_know_their_place_in_line() {
     let mut places: Vec<Option<usize>> = u.crafts.iter().map(|c| c.avionics.corridor_ahead).collect();
     places.sort();
     assert_eq!(places, vec![None, Some(1), Some(2)], "one in the corridor, then one and two ahead");
+}
+
+#[test]
+fn a_crafts_commands_reach_its_ship_two_ticks_late() {
+    let mut u = bench(1);
+    let (p, v, a, _) = open_space(&mut u);
+    place(&mut u, 0, p, v, p + a);
+    // Following a far point makes its pilot burn at once.
+    let station = positions(&mut u).0.station().unwrap();
+    u.craft_follow(0, universe_sim::avionics::follow::Anchor::Place(NavTarget::Station(station)), universe_sim::avionics::follow::Manoeuvre::KeepAt(2_000.0));
+    let mut throttles = Vec::new();
+    for _ in 0..4 {
+        run(&mut u, 1.0 / 60.0, |_| false);
+        let s = &u.crafts[0].ship;
+        throttles.push((s.throttle, s.rcs.length()));
+    }
+    let moved = |(t, r): (f64, f64)| t > 0.0 || r > 0.0;
+    assert!(!moved(throttles[0]) && !moved(throttles[1]), "nothing reaches the devices for two ticks: {throttles:?}");
+    assert!(moved(throttles[2]) || moved(throttles[3]), "then it does: {throttles:?}");
 }

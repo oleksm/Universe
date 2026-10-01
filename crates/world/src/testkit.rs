@@ -7,7 +7,7 @@ use glam::{DQuat, DVec3};
 use crate::events::ShipEvent;
 use crate::ship::{Controls, HyperdriveCommand, Ship, ShipCommands};
 use crate::system::StarSystem;
-use crate::world::{Manual, StepResult, World};
+use crate::world::{StepResult, World};
 
 /// A ship in a world, respawned at the home station.
 pub struct Probe {
@@ -39,7 +39,7 @@ impl Probe {
     /// One frame with the stick centred and no flight computer.
     pub fn step(&mut self, real_dt: f64, warp: f64) -> StepResult {
         let c = ShipCommands { turn: Some(Controls::default()), ..self.ship.holding() };
-        self.world.step_ship(&mut self.ship, &mut self.system, &c, &mut Manual, real_dt, warp, &mut self.events)
+        self.world.step_ship(&mut self.ship, &mut self.system, &c, real_dt, warp, &mut self.events)
     }
 
     pub fn command(&mut self, c: &ShipCommands) {

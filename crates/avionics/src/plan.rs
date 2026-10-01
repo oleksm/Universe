@@ -174,16 +174,26 @@ pub fn plan(sys: &StarSystem, ship: &Ship, target: NavTarget, phase: Phase, pad:
         let end = t + dt;
         let far = max_h > FINE_STEP;
         while stopped.is_none() && end - t > 1e-9 {
-            let piece = if far { end - t } else { (end - t).min(Ephemeris::SPAN) };
-            if !far && ephemeris.as_ref().is_none_or(|(t0, _)| t + piece > t0 + Ephemeris::SPAN) {
+            // The autopilot's say, held for its control step (as in flight,
+            // where it speaks once a tick; out far, a coarser step will do),
+            // then the copy flies it.
+            let step = if far { max_h.min(end - t) } else { FINE_STEP.min(end - t) };
+            if !far && ephemeris.as_ref().is_none_or(|(t0, _)| t + step > t0 + Ephemeris::SPAN) {
                 ephemeris = Some((t, sys.ephemeris(t)));
             }
+            sys.positions(t, &mut positions);
+            if let Some(c) = avionics.clearance {
+                let cmd = computer::autopilot(&computer::AutopilotInput { sys, ship: &ship, target, phase: c.phase, pad, wait: None, t, h: step, positions: &positions });
+                avionics.clearance = Some(Clearance { phase: cmd.phase, ..c });
+                ship.throttle = cmd.throttle;
+                ship.rcs = cmd.rcs;
+                ship.steer(&cmd.controls, step);
+            }
             let rigid = ship.rigid();
-            let mut computer = avionics.computer();
             events.clear();
-            let mut devices = Devices::new(sys, &mut ship, &mut computer, &mut events);
+            let mut devices = Devices::new(&mut ship, &mut events);
             let snapshot = if far { None } else { ephemeris.as_ref().map(|(_, e)| e) };
-            let (copy, outcome) = simulate(&sys.bodies, snapshot, &rigid, Span { t, dt: piece, max_h, contact_step: FINE_STEP }, &mut devices);
+            let (copy, outcome) = simulate(&sys.bodies, snapshot, &rigid, Span { t, dt: step, max_h, contact_step: FINE_STEP }, &mut devices);
             ship.set_rigid(&copy);
             t = outcome.time;
             stopped = outcome.fact;
@@ -257,10 +267,15 @@ mod tests {
         let mut avionics = Avionics { clearance: Some(Clearance { target, autopilot: true, phase: Phase::Approach, pad: PadSlot::Center }), ..Avionics::default() };
         let plan = avionics.plan(&sys, &ship, world.time).expect("flying, not in hyperdrive");
         let start = world.time;
+        // As the avionics fly it: the autopilot's say once a tick (here 0.05 s,
+        // the planner's control step), held through the world's step.
+        let (real_dt, warp) = (1.0 / 60.0, 3.0);
         while ship.is_flying() && world.time - start < 3600.0 {
-            let commands = ship.holding();
-            let mut computer = avionics.computer();
-            world.step_ship(&mut ship, &mut system, &commands, &mut computer, 1.0 / 60.0, 5.0, &mut events);
+            let c = avionics.clearance.expect("cleared");
+            sys.positions(world.time, &mut positions);
+            let cmd = computer::autopilot(&computer::AutopilotInput { sys: &sys, ship: &ship, target, phase: c.phase, pad: c.pad, wait: None, t: world.time, h: real_dt * warp, positions: &positions });
+            avionics.clearance = Some(Clearance { phase: cmd.phase, ..c });
+            world.step_ship(&mut ship, &mut system, &cmd.commands(), real_dt, warp, &mut events);
         }
         assert!(matches!(ship.state, ShipState::Landed { .. }), "the autopilot should get there: {events:?}");
         (plan, world.time - start)

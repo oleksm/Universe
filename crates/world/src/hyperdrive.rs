@@ -142,7 +142,6 @@ mod tests {
     use super::*;
     use crate::ship::{Destination, ShipCommands};
     use crate::testkit::Probe;
-    use crate::FlightComputer;
 
     #[test]
     fn hyperdrive_reaches_neighbour_and_drops_out_safely() {
@@ -202,8 +201,8 @@ mod tests {
         at: Option<usize>,
     }
 
-    impl FlightComputer for Orders {
-        fn hyperdrive(&mut self, _: &StarSystem, ship: &Ship, _: f64, positions: &[DVec3]) -> ShipCommands {
+    impl Orders {
+        fn commands(&self, ship: &Ship, positions: &[DVec3]) -> ShipCommands {
             let mut orders = self.orders;
             if let Some(at) = self.at {
                 orders.heading = Some((positions[at] - ship.position).normalize());
@@ -212,9 +211,11 @@ mod tests {
         }
     }
 
+    /// A frame: the orders given (as a pilot would, before the step), then the step.
     fn frame(p: &mut Probe, orders: &mut Orders) {
-        let c = p.ship.holding();
-        p.world.step_ship(&mut p.ship, &mut p.system, &c, orders, 1.0 / 60.0, 1.0, &mut p.events);
+        let positions = p.positions();
+        let c = orders.commands(&p.ship, &positions);
+        p.world.step_ship(&mut p.ship, &mut p.system, &c, 1.0 / 60.0, 1.0, &mut p.events);
     }
 
     #[test]
@@ -259,9 +260,11 @@ mod tests {
         // (The destination is placed ~1e11 m from the star: allow for rounding there.)
         assert!((p.ship.velocity - frame_velocity).distance(expected) < 1e-6 * expected.length(), "relative velocity {:?}", p.ship.velocity - frame_velocity);
 
+        // Dropping out happens when ordered (before the next step flies on).
         let exit = DVec3::new(-30.0, 40.0, 7.0);
-        let mut o = Orders { orders: HyperdriveCommand { engage: false, exit_velocity: Some(exit), ..Default::default() }, at: None };
-        frame(&mut p, &mut o);
+        let c = ShipCommands { hyperdrive: Some(HyperdriveCommand { engage: false, exit_velocity: Some(exit), ..Default::default() }), ..p.ship.holding() };
+        let system = p.system;
+        p.world.command(&mut p.ship, system, &c, &mut p.events);
         assert!(!p.ship.hyperdrive && p.ship.throttle == 0.0);
         assert_eq!(p.ship.velocity, exit);
         assert!(p.events.contains(&ShipEvent::HyperdriveDisengaged));

@@ -50,4 +50,4 @@ pub use system::{Body, BodyKind, Spaceport, StarSystem};
 pub use terrain::{Ground, Terrain, TerrainKind};
 pub use traffic::Facility;
 pub use universe_physics as physics;
-pub use world::{Devices, FlightComputer, Manual, StepResult, World, NEIGHBOURS};
+pub use world::{Devices, StepResult, World, NEIGHBOURS};

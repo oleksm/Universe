@@ -8,10 +8,9 @@
 
 use glam::DVec3;
 use serde::{Deserialize, Serialize};
-use universe_world::{traffic, GateFrame, HyperdriveCommand, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StationFrame, TrafficEvent};
+use universe_world::{traffic, Controls, GateFrame, HyperdriveCommand, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StationFrame, TrafficEvent};
 
 use crate::bus::Bus;
-use crate::computer::Computer;
 use crate::docking::{self, DockingStatus};
 use crate::events::Event;
 use crate::gate::{self, GateStatus};
@@ -95,10 +94,6 @@ impl Avionics {
         }
     }
 
-    /// The flight computer, for the world's ship step.
-    pub fn computer(&mut self) -> Computer<'_> {
-        Computer::new(self)
-    }
 
     /// What a physical event means for the navigation state: arriving,
     /// being destroyed or leaving through a gate ends a clearance; leaving
@@ -190,7 +185,7 @@ impl Avionics {
 
     /// Before the ship moves this frame: the route autopilot, then (unless
     /// it is flying a route) the dock/land/gate autopilot's hyperjump.
-    pub fn prepare(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
+    pub fn prepare(&mut self, bus: &mut impl Bus, dt: f64, events: &mut Vec<Event>) -> Option<Controls> {
         // Close to a station's or gate's corridor: ask traffic control whether it's ours.
         // Near it (approaching or lining up), ask; waiting ships keep their own place.
         self.wait_place = bus.id();
@@ -205,20 +200,48 @@ impl Avionics {
         self.corridor_denied = self.corridor_ahead.is_some();
         // A hunt flies the ship itself (see `hunter`); the route waits.
         if self.hunting.is_some() {
-            return;
+            return None;
         }
         self.route_step(bus, events);
         if !self.route.active {
             self.hyperjump(bus, events);
         }
+        self.fly(bus, dt, events)
     }
 
-    /// After the ship moved: announce an arrival by hyperdrive (`arrived`,
-    /// from the flight computer), and let a clearance lapse.
-    pub fn conclude(&mut self, bus: &mut impl Bus, arrived: Option<String>, events: &mut Vec<Event>) {
-        if let Some(target) = arrived {
-            events.push(Event::HyperdriveArrived { target });
+    /// The autopilots' say for the next `dt` seconds (a tick), before the
+    /// world steps the ship: in hyperdrive, its navigation (the drive's
+    /// orders, and the stick if the hyperdrive autopilot steers); otherwise
+    /// the dock/land/gate autopilot, if it's flying. They set the devices,
+    /// which hold through the step; the stick (if they hold it) is returned.
+    pub fn fly(&mut self, bus: &mut impl Bus, dt: f64, events: &mut Vec<Event>) -> Option<Controls> {
+        let ship = bus.ship().clone();
+        if !ship.is_flying() {
+            return None;
         }
+        let (sys, positions) = bus.positions();
+        let t = bus.time();
+        if ship.hyperdrive {
+            let (commands, arrived) = hyperdrive::navigate(&sys, &ship, t, &positions, self.nav_target, self.hyper_autopilot, &mut self.debug_way);
+            let turn = commands.turn;
+            self.command(bus, &ShipCommands { turn: None, ..commands }, events);
+            if let Some(target) = arrived {
+                events.push(Event::HyperdriveArrived { target });
+            }
+            return turn.filter(|_| self.hyper_autopilot);
+        }
+        let c = self.clearance.filter(|c| c.autopilot)?;
+        let wait = self.corridor_denied.then_some(self.wait_place);
+        let cmd = crate::computer::autopilot(&crate::computer::AutopilotInput { sys: &sys, ship: &ship, target: c.target, phase: c.phase, pad: c.pad, wait, t, h: dt, positions: &positions });
+        if cmd.phase != c.phase {
+            self.clearance = Some(Clearance { phase: cmd.phase, ..c });
+        }
+        self.command(bus, &ShipCommands { turn: None, ..cmd.commands() }, events);
+        Some(cmd.controls)
+    }
+
+    /// After the ship moved: let a clearance lapse.
+    pub fn conclude(&mut self, bus: &mut impl Bus, events: &mut Vec<Event>) {
         self.check_clearance(bus, events);
     }
 

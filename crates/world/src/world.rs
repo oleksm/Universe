@@ -3,9 +3,9 @@
 //! the devices, the physics kernel and the world's contact rules.
 //!
 //! The ship step reads the ship and its commands, and whatever the kernel
-//! reports; nothing about where the ship is trying to go. A flight computer
-//! can take part while the ship moves (`FlightComputer`), but only by giving
-//! commands.
+//! reports; nothing about where the ship is trying to go. Whatever flies it
+//! (a pilot, a program) has had its say before the step, as device settings
+//! that hold through it: the physics integrates, nothing else runs inside.
 
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -41,35 +41,6 @@ pub struct StepResult {
     /// True if the requested warp could not be reached.
     pub warp_limited: bool,
 }
-
-/// A ship's flight computer, as the world sees it: something that gives the
-/// devices commands while the ship moves. (The pilot's own commands come
-/// with each step; see `World::step_ship`.)
-pub trait FlightComputer {
-    /// Its control rate: the longest substep it can fly with (s), since it can
-    /// only change its commands between substeps. It doesn't change the physics:
-    /// a powered ship already takes fine substeps whoever flies it.
-    fn interval(&self) -> f64 {
-        f64::INFINITY
-    }
-
-    /// Commands for the substep of `h` seconds from `t` (the ship in `sys`,
-    /// rail bodies at `positions`), or None to leave the devices as they are.
-    fn substep(&mut self, _sys: &StarSystem, _ship: &Ship, _t: f64, _h: f64, _positions: &[DVec3]) -> Option<ShipCommands> {
-        None
-    }
-
-    /// In hyperdrive, this frame's commands, the world having moved on to
-    /// `t` (rail bodies at `positions`). By default: carry on as set.
-    fn hyperdrive(&mut self, _sys: &StarSystem, ship: &Ship, _t: f64, _positions: &[DVec3]) -> ShipCommands {
-        ShipCommands { hyperdrive: Some(HyperdriveCommand::CRUISE), ..ship.holding() }
-    }
-}
-
-/// No flight computer: the pilot's commands stand.
-pub struct Manual;
-
-impl FlightComputer for Manual {}
 
 pub struct World {
     pub galaxy: Galaxy,
@@ -288,12 +259,16 @@ impl World {
         if let Some(on) = c.arm {
             crate::weapons::master_arm(ship, on, events);
         }
-        if let Some(h) = &c.hyperdrive
-            && h.engage != ship.hyperdrive
-        {
-            let sys = self.system(system);
-            let positions = self.rails_at(system, t);
-            hyperdrive::switch(&sys, ship, h, t, &positions, events);
+        match &c.hyperdrive {
+            Some(h) if h.engage != ship.hyperdrive => {
+                let sys = self.system(system);
+                let positions = self.rails_at(system, t);
+                hyperdrive::switch(&sys, ship, h, t, &positions, events);
+                ship.hyper_orders = HyperdriveCommand::CRUISE;
+            }
+            // Engaged: how to fly, held until changed.
+            Some(h) if ship.hyperdrive => ship.hyper_orders = *h,
+            _ => {}
         }
     }
 
@@ -366,13 +341,12 @@ impl World {
         ship: &mut Ship,
         system: &mut usize,
         commands: &ShipCommands,
-        computer: &mut impl FlightComputer,
         real_dt: f64,
         warp: f64,
         events: &mut Vec<ShipEvent>,
     ) -> StepResult {
         let mut clock = self.time;
-        let r = self.step_ship_at(&mut clock, ship, system, commands, computer, real_dt, warp, events);
+        let r = self.step_ship_at(&mut clock, ship, system, commands, real_dt, warp, events);
         self.time = clock;
         r
     }
@@ -386,7 +360,6 @@ impl World {
         ship: &mut Ship,
         system: &mut usize,
         commands: &ShipCommands,
-        computer: &mut impl FlightComputer,
         real_dt: f64,
         warp: f64,
         events: &mut Vec<ShipEvent>,
@@ -425,15 +398,16 @@ impl World {
                     ship.steer(turn, real_dt);
                 }
                 let neighbours = self.neighbours(*system);
-                let result = universe_prof::time("sim/crafts/tick/world step/hyperdrive", || self.hyperdrive_step(clock, &sys, ship, *system, &neighbours, computer, real_dt, warp, events));
+                let result = universe_prof::time("sim/crafts/tick/world step/hyperdrive", || self.hyperdrive_step(clock, &sys, ship, *system, &neighbours, real_dt, warp, events));
                 near = Some(neighbours);
                 result
             }
             ShipState::Flying => {
+                // Turning is physics: over the game time the step covers.
                 if let Some(turn) = &commands.turn {
-                    ship.steer(turn, real_dt);
+                    ship.steer(turn, real_dt * warp);
                 }
-                universe_prof::time("sim/crafts/tick/world step/flight (physics)", || self.flight_step(clock, &sys, ship, *system, computer, real_dt * warp, events))
+                universe_prof::time("sim/crafts/tick/world step/flight (physics)", || self.flight_step(clock, &sys, ship, *system, real_dt * warp, events))
             }
         };
         // The skin in air (and cooling after).
@@ -502,8 +476,7 @@ impl World {
         result
     }
 
-    /// Under hyperdrive: the flight computer (if any) has its say once the
-    /// clock has moved on, then the drive carries the ship.
+    /// Under hyperdrive: the drive carries the ship as last ordered.
     #[allow(clippy::too_many_arguments)]
     fn hyperdrive_step(
         &self,
@@ -512,7 +485,6 @@ impl World {
         ship: &mut Ship,
         system: usize,
         neighbours: &[usize],
-        computer: &mut impl FlightComputer,
         real_dt: f64,
         warp: f64,
         events: &mut Vec<ShipEvent>,
@@ -520,12 +492,7 @@ impl World {
         let result = advance(clock, real_dt * warp);
         let t = *clock;
         let positions = self.rails_at(system, t);
-        let c = computer.hyperdrive(sys, ship, t, &positions);
-        ship.set_controls(&c);
-        if let Some(turn) = &c.turn {
-            ship.steer(turn, real_dt);
-        }
-        let orders = c.hyperdrive.unwrap_or(HyperdriveCommand::CRUISE);
+        let orders = ship.hyper_orders;
         hyperdrive::cruise(&self.galaxy, neighbours, system, sys, ship, &orders, t, &positions, real_dt, warp, events);
         result
     }
@@ -533,21 +500,18 @@ impl World {
     /// Free flight: the physics kernel moves the ship under gravity and the
     /// thrust of its devices, then the world's rules judge whatever it touched.
     #[allow(clippy::too_many_arguments)]
-    fn flight_step(&self, clock: &mut f64, sys: &StarSystem, ship: &mut Ship, system: usize, computer: &mut impl FlightComputer, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
+    fn flight_step(&self, clock: &mut f64, sys: &StarSystem, ship: &mut Ship, system: usize, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
         // For short frames, snapshot the bodies once and extrapolate for each
         // substep instead of re-solving every orbit (see `Ephemeris`).
         let ephemeris = (dt <= Ephemeris::SPAN).then(|| self.ephemeris(sys, *clock));
         // Small steps while any device pushes (engine or thrusters), whoever
-        // is flying: a powered ship is integrated alike under a pilot or a
-        // computer. The kernel also takes small steps near any station or gate,
-        // for contact. Separately, a computer's commands can only change between
-        // substeps, so its control rate also bounds them, just as the pilot's
-        // commands change once per step.
+        // is flying. The kernel also takes small steps near any station or
+        // gate, for contact.
         let powered = ship.throttle > 0.0 || ship.rcs != DVec3::ZERO;
         let physics = if powered { FINE_STEP } else { f64::INFINITY };
-        let span = Span { t: *clock, dt, max_h: physics.min(computer.interval()), contact_step: FINE_STEP };
+        let span = Span { t: *clock, dt, max_h: physics, contact_step: FINE_STEP };
         let mut rigid = ship.rigid();
-        let mut devices = Devices::new(sys, &mut *ship, computer, &mut *events);
+        let mut devices = Devices::new(&mut *ship, &mut *events);
         let mut positions = Vec::with_capacity(sys.bodies.len());
         let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
         ship.set_rigid(&rigid);
@@ -704,39 +668,29 @@ impl World {
 }
 
 /// The ship's devices during a flight step, as the kernel's force callback:
-/// the flight computer's commands (if any) set them each substep, and they
-/// push with the thrust they're set to. Contacts are judged by world rules.
-/// (The same devices fly a copy of the ship when a flight is simulated
-/// ahead, e.g. by a flight planner through `universe_physics::simulate`.)
-pub struct Devices<'a, C> {
-    sys: &'a StarSystem,
+/// they push with the thrust they're set to (held through the step).
+/// Contacts are judged by world rules. (The same devices fly a copy of the
+/// ship when a flight is simulated ahead, e.g. by a flight planner through
+/// `universe_physics::simulate`.)
+pub struct Devices<'a> {
     ship: &'a mut Ship,
-    computer: &'a mut C,
     events: &'a mut Vec<ShipEvent>,
 }
 
-impl<'a, C: FlightComputer> Devices<'a, C> {
-    /// `ship`'s devices in `sys`, set each substep by `computer`; what they
-    /// do goes to `events`. The kernel's body stands for the ship's motion
-    /// (see `Ship::rigid`/`set_rigid`); the ship keeps the device settings.
-    pub fn new(sys: &'a StarSystem, ship: &'a mut Ship, computer: &'a mut C, events: &'a mut Vec<ShipEvent>) -> Self {
-        Self { sys, ship, computer, events }
+impl<'a> Devices<'a> {
+    /// `ship`'s devices; what they do goes to `events`. The kernel's body
+    /// stands for the ship's motion (see `Ship::rigid`/`set_rigid`); the
+    /// ship keeps the device settings.
+    pub fn new(ship: &'a mut Ship, events: &'a mut Vec<ShipEvent>) -> Self {
+        Self { ship, events }
     }
 }
 
-impl<C: FlightComputer> Driver for Devices<'_, C> {
-    fn applied(&mut self, body: &mut RigidBody, t: f64, h: f64, positions: &[DVec3]) -> DVec3 {
+impl Driver for Devices<'_> {
+    fn applied(&mut self, body: &mut RigidBody, _t: f64, _h: f64, _positions: &[DVec3]) -> DVec3 {
         let ship = &mut *self.ship;
         ship.position = body.position;
         ship.velocity = body.velocity;
-        if let Some(c) = self.computer.substep(self.sys, ship, t, h, positions) {
-            ship.set_controls(&c);
-            if let Some(turn) = &c.turn {
-                ship.steer(turn, h);
-            }
-            body.orientation = ship.orientation;
-            body.angular_velocity = ship.angular_velocity;
-        }
         ship.thrust()
     }
 
@@ -816,44 +770,23 @@ mod tests {
         assert!((light / heavy - 2.0).abs() < 0.02);
     }
 
-    /// A flight computer burning at full throttle every substep. Like the
-    /// real one, it declares the control rate it commands at.
-    struct Burn;
-
-    impl FlightComputer for Burn {
-        fn interval(&self) -> f64 {
-            FINE_STEP
-        }
-
-        fn substep(&mut self, _: &StarSystem, ship: &Ship, _: f64, _: f64, _: &[DVec3]) -> Option<ShipCommands> {
-            Some(ShipCommands { throttle: 1.0, ..ship.holding() })
-        }
-    }
-
     #[test]
-    fn a_flight_computer_flies_only_through_commands() {
-        // The same commands from a computer (every substep) or from the pilot
-        // (once, beforehand) fly the ship exactly the same.
-        let run = |by_computer: bool| {
+    fn device_settings_hold_through_the_step() {
+        // Commanded once, or again before every tick: the ship flies exactly the same.
+        let run = |every_tick: bool| {
             let mut p = Probe::new(42);
             p.ship.position = DVec3::new(0.0, 5.0 * AU, 0.0);
             p.ship.velocity = DVec3::ZERO;
-            if !by_computer {
-                p.set_throttle(1.0);
-            }
-            for _ in 0..600 {
-                let c = ShipCommands { turn: Some(Controls::default()), ..p.ship.holding() };
-                if by_computer {
-                    p.world.step_ship(&mut p.ship, &mut p.system, &c, &mut Burn, 1.0 / 60.0, 5.0, &mut p.events);
-                } else {
-                    p.world.step_ship(&mut p.ship, &mut p.system, &c, &mut Manual, 1.0 / 60.0, 5.0, &mut p.events);
-                }
+            for k in 0..600 {
+                let throttle = if every_tick || k == 0 { 1.0 } else { p.ship.throttle };
+                let c = ShipCommands { throttle, turn: Some(Controls::default()), ..p.ship.holding() };
+                p.world.step_ship(&mut p.ship, &mut p.system, &c, 1.0 / 60.0, 5.0, &mut p.events);
             }
             (p.ship.position, p.ship.velocity, p.ship.throttle, p.world.time)
         };
-        let (computer, pilot) = (run(true), run(false));
-        assert_eq!(computer, pilot);
-        assert_eq!(computer.2, 1.0, "the engine keeps the computer's last setting");
+        let (each, once) = (run(true), run(false));
+        assert_eq!(each, once);
+        assert_eq!(once.2, 1.0, "the engine keeps its last setting");
     }
 
     #[test]
