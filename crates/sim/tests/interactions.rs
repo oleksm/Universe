@@ -726,3 +726,29 @@ fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
     run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);
     assert_eq!(u.ship.class, universe_sim::world::ship::starting_hull());
 }
+
+#[test]
+fn a_cola_from_the_vending_machine_between_the_pads() {
+    use universe_sim::world::crew::Reach;
+    let mut u = bench(0);
+    let home = u.ship_system;
+    let port = 0;
+    u.ship = u.world.ship_on(home, Facility::Spaceport(port), 5);
+    let sys = u.ship_system();
+    let body = sys.spaceports[port].body;
+    let d = universe_sim::world::spaceport::vending_direction(&sys, port);
+    let (north, _) = universe_sim::world::spaceport::tangent(d);
+    // Away from it: no machine to hand.
+    let far = (d * sys.bodies[body].rail.radius + north * 60.0).normalize();
+    u.crew.place = universe_sim::world::Place::Outside { body, position: far * sys.bodies[body].surface_radius(far), velocity: DVec3::ZERO, yaw: 0.0, pitch: 0.0 };
+    let before = u.credits();
+    u.vend(0);
+    assert_eq!(u.credits(), before, "nothing bought out of reach");
+    // By it: a cola, paid to the port's market.
+    let near = (d * sys.bodies[body].rail.radius + north * 2.0).normalize();
+    u.crew.place = universe_sim::world::Place::Outside { body, position: near * sys.bodies[body].surface_radius(near), velocity: DVec3::ZERO, yaw: 0.0, pitch: 0.0 };
+    assert_eq!(u.pilot_reach(), Some(Reach::Vending(port)));
+    u.vend(0);
+    assert!((before - u.credits() - 2.0).abs() < 1e-9, "a cola for 2 CR");
+    assert!(u.events.iter().any(|e| matches!(e, universe_sim::avionics::Event::Vended { what, .. } if what == "COLA")));
+}

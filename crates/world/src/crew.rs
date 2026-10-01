@@ -113,6 +113,8 @@ pub enum Reach {
     Seat,
     Hatch,
     Ramp,
+    /// The vending machine at spaceport `0`'s pads.
+    Vending(usize),
 }
 
 /// Inside the interior, keeping `BODY_RADIUS` from the walls?
@@ -174,7 +176,14 @@ impl Person {
             }
             Place::Outside { body, position, .. } => {
                 let foot = ramp_foot(sys, ship, body, t, positions[body]);
-                (hatch_body(sys, ship) == Ok(body) && position.distance(foot) < REACH * 2.0).then_some(Reach::Ramp)
+                if hatch_body(sys, ship) == Ok(body) && position.distance(foot) < REACH * 2.0 {
+                    return Some(Reach::Ramp);
+                }
+                // A spaceport's vending machine, in the middle of its pads.
+                (0..sys.spaceports.len()).filter(|&p| sys.spaceports[p].body == body).find(|&p| {
+                    let d = crate::spaceport::vending_direction(sys, p);
+                    position.distance(d * sys.bodies[body].surface_radius(d)) < REACH * 1.5
+                }).map(Reach::Vending)
             }
         }
     }

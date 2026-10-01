@@ -61,3 +61,18 @@ pub fn pad_position(sys: &StarSystem, port: usize, t: f64, positions: &[DVec3]) 
     positions[sp.body] + up * b.rail.radius
 }
 
+
+/// Where spaceport `port`'s vending machine stands (body frame, unit): on
+/// the ground in the middle of the pads, between the four middle ones.
+pub fn vending_direction(sys: &StarSystem, port: usize) -> DVec3 {
+    sys.spaceports[port].direction
+}
+
+/// What its vending machine sells: (name, price in credits, how it is).
+pub const VENDING: &[(&str, f64, &str)] = &[
+    ("COLA", 2.0, "ICE COLD. THE CAN HISSES OPEN."),
+    ("SPARKLING WATER", 1.0, "COLD AND FIZZY."),
+    ("SALTED CRISPS", 3.0, "A CRUNCHY HANDFUL."),
+    ("CHOCOLATE BAR", 3.0, "HALF MELTED IN THE SUN. STILL GOOD."),
+    ("PROTEIN BAR", 4.0, "TASTES OF CARDBOARD AND VIRTUE."),
+];

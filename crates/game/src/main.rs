@@ -160,6 +160,8 @@ pub struct App {
     pub market: Option<market::MarketView>,
     /// The ship planner (the shipyard, docked at a station), while open.
     pub shipyard: Option<shipyard::Shipyard>,
+    /// At a vending machine, its panel open: the item picked.
+    pub vending: Option<usize>,
     /// Ship plans kept (in the save).
     pub plans: Vec<shipyard::SavedPlan>,
     /// The hull being designed, and those commissioned (in the save).
@@ -281,6 +283,7 @@ impl App {
             market: None,
             shipyard: None,
             plans: Vec::new(),
+            vending: None,
             design: Default::default(),
             designs: Vec::new(),
             docked_market: false,
@@ -489,6 +492,28 @@ impl App {
         }
         // On foot: walking, not flying (the ship flies on as last set).
         if !self.v.crew.seated() {
+            // At a vending machine: F opens it; its panel takes the keys while open.
+            let at_machine = matches!(self.reach, Some(universe_sim::world::crew::Reach::Vending(_)));
+            // (Open, it holds you there: it closes with F or ESC. Buying is
+            // the machine's to check: within reach.)
+            if let Some(pick) = self.vending {
+                let input = &ctx.input;
+                let n = universe_sim::world::spaceport::VENDING.len();
+                if input.pressed(KeyCode::ArrowDown) {
+                    self.vending = Some((pick + 1) % n);
+                } else if input.pressed(KeyCode::ArrowUp) {
+                    self.vending = Some((pick + n - 1) % n);
+                } else if input.pressed(KeyCode::Enter) {
+                    self.engine.send(Command::Vend(pick));
+                } else if input.pressed(KeyCode::KeyF) || input.pressed(KeyCode::Escape) {
+                    self.vending = None;
+                }
+                return Controls::default();
+            }
+            if at_machine && ctx.input.pressed(KeyCode::KeyF) {
+                self.vending = Some(0);
+                return Controls::default();
+            }
             let c = onfoot::commands(ctx);
             self.engine.send(Command::Walk(c, ctx.dt as f64));
             return Controls::default();
@@ -651,6 +676,7 @@ impl App {
                 Event::Refuelled { tonnes, credits } if tonnes < 1.0 => format!("REFUELLED {:.0} KG FOR {credits:.0} CR", tonnes * 1000.0),
                 Event::Refuelled { tonnes, credits } => format!("REFUELLED {tonnes:.1} T FOR {credits:.0} CR"),
                 Event::Repaired { credits, hull } => format!("HULL REPAIRED TO {:.0}% FOR {credits:.0} CR", hull * 100.0),
+                Event::Vended { what, credits, note } => format!("{what} - {credits:.0} CR. {note}"),
                 Event::Refitted { slot, module, credits } => format!("{} FITTED IN {} - {} {:.0} CR", module.unwrap_or_else(|| "NOTHING".into()), slot.to_uppercase(), if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
                 Event::BoughtShip { name, credits } => format!("NEW SHIP: {name} - {} {:.0} CR WITH YOUR OLD ONE TRADED IN", if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
                 Event::Insured { excess: Some(x) } => format!("INSURED: THE SAME SHIP AGAIN, FOR AN EXCESS OF {x:.0} CR"),

@@ -69,6 +69,8 @@ pub enum Command {
     Refuel,
     /// Have the hull mended (docked at a station).
     Repair,
+    /// Buy item `0` of the vending machine within reach (on foot at a spaceport).
+    Vend(usize),
     StopFollowing,
     /// Lock what's in the beam around the nose (again: the next).
     LockInBeam,
@@ -262,6 +264,7 @@ impl Engine {
             Command::Respawn => u.respawn(),
             Command::Refuel => u.refuel_player(),
             Command::Repair => u.repair_player(),
+            Command::Vend(item) => u.vend(item),
             Command::RoutePush(stop) => u.cockpit().route_push(stop),
             Command::RoutePop => u.cockpit().route_pop(),
             Command::RouteClear => u.cockpit().route_set(Vec::new()),

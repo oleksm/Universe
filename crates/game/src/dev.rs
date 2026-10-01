@@ -839,6 +839,25 @@ pub fn apply(app: &mut App, name: &str) {
             use universe_sim::world::crew::HATCH;
             app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: HATCH, yaw: -std::f64::consts::FRAC_PI_2, pitch: 0.0 };
         }
+        "vending" | "vendingopen" => {
+            // Landed at the port, on foot by its vending machine, facing it
+            // ("vendingopen": its panel open).
+            apply(app, "touchdown");
+            let u = app.engine.universe();
+            let sys = u.ship_system();
+            let ShipState::Landed { body, local_position, .. } = u.ship.state else { return };
+            let port = (0..sys.spaceports.len()).find(|&p| sys.spaceports[p].body == body && sys.on_pad(p, body, local_position.normalize())).unwrap_or(0);
+            let d = universe_sim::world::spaceport::vending_direction(&sys, port);
+            let (north, _) = universe_sim::world::spaceport::tangent(d);
+            let b = &sys.bodies[body];
+            let at = d * b.rail.radius + north * 1.8;
+            let dir = at.normalize();
+            u.crew.place = universe_sim::world::Place::Outside { body, position: dir * b.surface_radius(dir), velocity: DVec3::ZERO, yaw: std::f64::consts::PI, pitch: -0.1 };
+            app.chase_cam = false;
+            if name == "vendingopen" {
+                app.vending = Some(0);
+            }
+        }
         "outside" => {
             // Land on the pad, step out, turn round to look at the ship.
             apply(app, "touchdown");

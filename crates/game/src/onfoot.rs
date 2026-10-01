@@ -181,9 +181,33 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
         Some(Reach::Seat) => "F  SIT DOWN",
         Some(Reach::Hatch) => "F  OPEN HATCH",
         Some(Reach::Ramp) => "F  BOARD SHIP",
+        _ if app.vending.is_some() => return vending_panel(frame, app),
+        Some(Reach::Vending(_)) => "F  USE VENDING MACHINE",
         None => return,
     };
     let size = frame.size();
     let p = Vec2::new(((size.x - text_size(prompt).x) / 2.0).floor(), (size.y * 0.62).floor());
     frame.text_boxed(p, prompt, Color::hex(0xffc040), Color([0.0, 0.03, 0.01, 0.85]));
+}
+
+/// The vending machine's panel: what it sells, the pick, and how to buy.
+fn vending_panel(frame: &mut Frame, app: &App) {
+    use universe_sim::world::spaceport::VENDING;
+    let pick = app.vending.unwrap_or(0);
+    let mut lines = vec![("VENDING MACHINE".to_string(), Color::hex(0xff5050)), (String::new(), Color::hex(0x30ff60))];
+    for (k, (what, price, _)) in VENDING.iter().enumerate() {
+        let here = k == pick;
+        lines.push((format!("{}{:<18} {:>3.0} CR", if here { ">" } else { " " }, what, price), if here { Color::hex(0xffc040) } else { Color::hex(0x30ff60) }));
+    }
+    lines.push((String::new(), Color::hex(0x30ff60)));
+    lines.push(("UP/DOWN PICK  ENTER BUY  F DONE".into(), Color::hex(0x178a38)));
+    let w = lines.iter().map(|l| text_size(&l.0).x).fold(0.0, f32::max);
+    let size = frame.size();
+    let at = Vec2::new(((size.x - w) / 2.0).floor(), (size.y * 0.35).floor());
+    let h = lines.len() as f32 * 12.0;
+    frame.hud_rect(at - 8.0, Vec2::new(w, h) + 16.0, Color([0.05, 0.0, 0.0, 0.92]));
+    frame.hud_box(at - 8.0, Vec2::new(w, h) + 16.0, Color::hex(0xff5050));
+    for (k, (t, c)) in lines.iter().enumerate() {
+        frame.text(at + Vec2::new(0.0, k as f32 * 12.0), t, *c);
+    }
 }

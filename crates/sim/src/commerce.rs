@@ -405,3 +405,22 @@ impl crate::universe::Universe {
         s.frame.price + s.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>()
     }
 }
+
+impl crate::universe::Universe {
+    /// The player, on foot by a spaceport's vending machine, buys item
+    /// `item` of it (`spaceport::VENDING`): paid to the port's market.
+    pub fn vend(&mut self, item: usize) {
+        use universe_services::{Asset, Party};
+        let e = match (self.pilot_reach(), universe_world::spaceport::VENDING.get(item)) {
+            (Some(universe_world::crew::Reach::Vending(port)), Some(&(what, price, note))) => {
+                let market = Party::Market(self.ship_system, Facility::Spaceport(port));
+                match self.ledger.transfer(Party::Pilot(crate::combat::PLAYER), market, Asset::Credits, price, self.tick, universe_protocol::Cause::Rules) {
+                    Ok(_) => universe_avionics::Event::Vended { what: what.into(), credits: price, note: note.into() },
+                    Err(_) => universe_avionics::Event::Refused { reason: "THE MACHINE WANTS CREDITS YOU HAVEN'T GOT".into() },
+                }
+            }
+            _ => universe_avionics::Event::Refused { reason: "NO VENDING MACHINE WITHIN REACH".into() },
+        };
+        self.events.push(e);
+    }
+}

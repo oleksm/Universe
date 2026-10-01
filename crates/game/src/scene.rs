@@ -993,6 +993,40 @@ fn spaceports(frame: &mut Frame, app: &App) {
         }
         // Beacon.
         frame.line(pad, pad + up * 3000.0, c.scale(if targeted { 0.9 } else { 0.4 }));
+        // The vending machine, between the middle pads: a solid red box,
+        // its lit front to the north (the way the pads' rows run).
+        if dist < 3_000.0 {
+            let local = universe_sim::world::spaceport::vending_direction(sys, i);
+            let (north, east) = universe_sim::world::spaceport::tangent(local);
+            let (d, n, e) = (rot * local, rot * north, rot * east);
+            let base = center + d * b.surface_radius_at(center, center + d * b.rail.radius, t);
+            // (Half a metre wide each way, 0.4 deep, 2 m tall.)
+            let corner = |x: f64, h: f64, y: f64| base + e * (x * 0.5) + n * (y * 0.4) + d * h;
+            let (side, edge, glow) = (Color::hex(0x7a1010), Color::hex(0xff4040), Color::hex(0xfff0f0));
+            let q = |a: [f64; 3], b: [f64; 3], c: [f64; 3], dd: [f64; 3]| [corner(a[0], a[1], a[2]), corner(b[0], b[1], b[2]), corner(c[0], c[1], c[2]), corner(dd[0], dd[1], dd[2])];
+            let faces = [
+                q([-1.0, 0.0, 1.0], [1.0, 0.0, 1.0], [1.0, 2.0, 1.0], [-1.0, 2.0, 1.0]),
+                q([-1.0, 0.0, -1.0], [1.0, 0.0, -1.0], [1.0, 2.0, -1.0], [-1.0, 2.0, -1.0]),
+                q([-1.0, 0.0, -1.0], [-1.0, 0.0, 1.0], [-1.0, 2.0, 1.0], [-1.0, 2.0, -1.0]),
+                q([1.0, 0.0, -1.0], [1.0, 0.0, 1.0], [1.0, 2.0, 1.0], [1.0, 2.0, -1.0]),
+                q([-1.0, 2.0, -1.0], [1.0, 2.0, -1.0], [1.0, 2.0, 1.0], [-1.0, 2.0, 1.0]),
+            ];
+            for f in &faces {
+                frame.triangle(f[0], f[1], f[2], side);
+                frame.triangle(f[0], f[2], f[3], side);
+                for k in 0..4 {
+                    frame.line(f[k], f[(k + 1) % 4], edge);
+                }
+            }
+            // Its lit front (just proud of the face), and the slot.
+            let front = [corner(-0.8, 0.9, 1.02), corner(0.8, 0.9, 1.02), corner(0.8, 1.8, 1.02), corner(-0.8, 1.8, 1.02)];
+            frame.triangle(front[0], front[1], front[2], Color::hex(0xd0d8e0));
+            frame.triangle(front[0], front[2], front[3], Color::hex(0xd0d8e0));
+            for k in 0..4 {
+                frame.line(front[k], front[(k + 1) % 4], glow);
+            }
+            frame.line(corner(-0.5, 0.3, 1.02), corner(0.5, 0.3, 1.02), glow.scale(0.6));
+        }
 
         // Ground grid, 1 km spacing, out to 10 km.
         if dist < 150_000.0 {
