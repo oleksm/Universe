@@ -148,6 +148,9 @@ impl Avionics {
             | ShipEvent::WeaponsSafe
             | ShipEvent::EnteredHangar { .. }
             | ShipEvent::LeftHangar { .. }
+            | ShipEvent::SystemsOn
+            | ShipEvent::SystemsOff
+            | ShipEvent::SystemsRefused { .. }
             | ShipEvent::HangarRefused { .. }
             | ShipEvent::NotFitted { .. } => {}
         }

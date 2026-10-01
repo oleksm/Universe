@@ -108,6 +108,7 @@ pub enum Act {
     PreviousStar,
     Home,
     TrackSettler,
+    Systems,
 }
 
 /// The table, in the order letters are given out (what's used most first,
@@ -147,10 +148,12 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::TrackSettler, Scope::Observer, "TRACK SETTLER"),
     // (Newer ones last: the keys already learnt stay as they were.)
     (Act::Shipyard, Scope::Global, "SHIPYARD"),
+    (Act::Systems, Scope::Flight, "POWER"),
 ];
 
 /// Actions whose key is set, not taken from the name (given out first).
-const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X')];
+// (POWER: every letter of its name is taken in flight; J is the one free.)
+const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J')];
 
 /// An action's binding: its letter, and where it stands in the name (None:
 /// not in it — given the first free letter instead).

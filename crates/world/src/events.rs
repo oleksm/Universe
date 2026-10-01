@@ -13,6 +13,10 @@ pub enum ShipEvent {
     LandedAtPort { port: String },
     /// Moved off the pad into the port's hangar, or out of it onto pad `pad`.
     EnteredHangar { port: String },
+    /// Flight systems powered up or down; or a power-down refused, why.
+    SystemsOn,
+    SystemsOff,
+    SystemsRefused { why: String },
     LeftHangar { port: String, pad: usize },
     /// A hangar move that couldn't be made: why.
     HangarRefused { why: String },

@@ -53,6 +53,10 @@ pub struct ShipCommands {
     /// A spaceport's hangar: in off the pad, or out onto pad `pad`. None: stay.
     #[serde(default)]
     pub hangar: Option<HangarCommand>,
+    /// Flight systems on (drives, thrusters and the turn answer) or off
+    /// (powered down, parked: only while landed). None: leave them.
+    #[serde(default)]
+    pub power: Option<bool>,
 }
 
 /// Moving between a spaceport's pads and its hangar (see `ShipCommands::hangar`).

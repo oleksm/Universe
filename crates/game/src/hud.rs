@@ -279,14 +279,14 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
             let port = app.view.system.port_at(*body, local_position.normalize()).map(|p| &app.view.system.spaceports[p]);
             if let Some(p) = port {
                 lines.push((format!("LANDED AT {} ({})", p.name.to_uppercase(), b.name.to_uppercase()), AMBER));
-                lines.push(("SHIFT+E TO LIFT OFF".into(), DIM));
+                lines.push((lift_off_hint(ship), DIM));
             } else if b.kind == BodyKind::Station {
                 let pad = universe_sim::world::station::pad_at(*local_position).map_or_else(String::new, |k| format!(" - PAD {}", k + 1));
                 lines.push((format!("DOCKED AT {}{pad}", b.name.to_uppercase()), AMBER));
-                lines.push(("SHIFT+E TO LIFT OFF".into(), DIM));
+                lines.push((lift_off_hint(ship), DIM));
             } else {
                 lines.push((format!("LANDED ON {}", b.name.to_uppercase()), AMBER));
-                lines.push(("SHIFT+E TO LIFT OFF".into(), DIM));
+                lines.push((lift_off_hint(ship), DIM));
             }
         }
         ShipState::Destroyed { respawn_in } => lines.push((format!("DESTROYED  RESPAWN IN {respawn_in:.0}"), RED)),
@@ -555,6 +555,11 @@ fn queue_info(app: &App, lines: &mut Vec<(String, Color)>) {
 
 fn mode_label(autopilot: bool, phase: universe_sim::Phase) -> String {
     if autopilot { format!("AUTO {}", phase.label()) } else { "MANUAL  K=AUTO".into() }
+}
+
+/// What it takes to lift off: powering up first, if the ship's parked.
+fn lift_off_hint(ship: &universe_sim::world::Ship) -> String {
+    if ship.powered { "SHIFT+E TO LIFT OFF".into() } else { format!("FLIGHT SYSTEMS DOWN - {} TO POWER UP", crate::keys::key(crate::keys::Act::Systems)) }
 }
 
 fn docking_info(app: &App, station: usize, st: &DockingStatus, lines: &mut Vec<(String, Color)>) {
@@ -1376,7 +1381,8 @@ fn action_grid(frame: &mut Frame, app: &App) {
         ShipState::Landed { .. } => (
             "NAV - DOCKED",
             vec![
-                c("S+E", "LIFT OFF", Lamp::Off),
+                b(Act::Systems, if ship.powered { "POWER DOWN" } else { "POWER UP" }, if ship.powered { Lamp::On } else { Lamp::Off }),
+                c("S+E", "LIFT OFF", if ship.powered { Lamp::Off } else { Lamp::Unavailable }),
                 b(Act::Autopilot, "AUTOPILOT", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
                 b(Act::Foot, "FOOT", Lamp::Off),
             ],

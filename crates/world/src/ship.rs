@@ -365,6 +365,10 @@ fn full_tank() -> f64 {
     starter().fuel_capacity
 }
 
+fn powered() -> bool {
+    true
+}
+
 fn intact() -> f64 {
     1.0
 }
@@ -422,6 +426,10 @@ pub struct Ship {
     /// out of sight; still `Landed`, parked at the hangar): see `port`.
     #[serde(default)]
     pub hangar: Option<crate::traffic::Facility>,
+    /// Flight systems on: the drives, thrusters and turn answer. A ship
+    /// that sets down powers down (parked); its pilot powers it up to fly.
+    #[serde(default = "powered")]
+    pub powered: bool,
     /// Taxiing on the ground between a pad and a spaceport's hangar (see
     /// `World::hangar_move`): out of the pads' count while it does.
     #[serde(default)]
@@ -530,6 +538,7 @@ impl Ship {
             fit: None,
             spec_ref: None,
             hangar: None,
+            powered: true,
             taxi: None,
             cargo: 0.0,
             excavator: false,
@@ -726,13 +735,19 @@ impl Ship {
     /// Commands that keep the engine and thrusters as they are, turn nothing
     /// and leave the hyperdrive alone: a starting point for new commands.
     pub fn holding(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None, anchor: None, excavate: None, hangar: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None, anchor: None, excavate: None, hangar: None, power: None }
     }
 
     /// The main engine and thrusters take their new settings.
     pub(crate) fn set_controls(&mut self, c: &ShipCommands) {
-        self.throttle = c.throttle;
-        self.rcs = c.rcs;
+        // (Powered down, nothing answers; that's for a ship set down:
+        // anything off the ground is flying, its systems on.)
+        if !matches!(self.state, ShipState::Landed { .. }) {
+            self.powered = true;
+        }
+        let on = self.powered || c.power == Some(true);
+        self.throttle = if on { c.throttle } else { 0.0 };
+        self.rcs = if on { c.rcs } else { DVec3::ZERO };
         if let Some(t) = c.weapons {
             self.triggers = t;
         }

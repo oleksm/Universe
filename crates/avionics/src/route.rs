@@ -202,9 +202,12 @@ impl Avionics {
         false
     }
 
-    /// Lift off a station's deck or a world's ground, and climb clear.
+    /// Power up, lift off a station's deck or a world's ground, and climb clear.
     fn leave(&mut self, bus: &mut impl Bus, _sys: &StarSystem, _body: usize, events: &mut Vec<Event>) {
-        self.set_controls(bus, events, |c| c.rcs = DVec3::Y);
+        self.set_controls(bus, events, |c| {
+            c.power = Some(true);
+            c.rcs = DVec3::Y;
+        });
         self.route.departing = true;
     }
 

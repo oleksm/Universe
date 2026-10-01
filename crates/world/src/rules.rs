@@ -148,6 +148,9 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
                     ship.angular_velocity = DVec3::ZERO;
                     ship.state = ShipState::Landed { body, local_position, local_orientation: rot.inverse() * orientation };
                     ship.locked_at = t;
+                    // Set down: the flight systems power down (the pilot powers up to leave).
+                    ship.powered = false;
+                    events.push(ShipEvent::SystemsOff);
                     fired(events, name, "locked");
                     events.push(match says {
                         Says::Always(e) => e.clone(),
@@ -256,6 +259,22 @@ mod tests {
         assert_eq!(crate::station::pad_at(local_position), Some(5));
         assert!(fired(&p.events, "locked"), "{:?}", p.events);
         assert!(p.events.iter().any(|e| matches!(e, ShipEvent::Landed { station: true, .. })));
+        // Set down, it's parked: powered down, its thrusters and turn don't answer.
+        assert!(!p.ship.powered);
+        let parked = p.ship.orientation;
+        for _ in 0..60 {
+            p.ship.rcs = DVec3::Y;
+            p.step(1.0 / 60.0, 1.0);
+        }
+        assert!(matches!(p.ship.state, ShipState::Landed { .. }) && p.ship.jets.is_empty(), "nothing fires powered down");
+        assert!(p.ship.orientation.angle_between(parked) < 0.05);
+        // Powered up, the lift thrusters take it off the deck.
+        p.ship.powered = true;
+        for _ in 0..60 {
+            p.ship.rcs = DVec3::Y;
+            p.step(1.0 / 60.0, 1.0);
+        }
+        assert!(p.ship.is_flying(), "{:?}", p.events);
     }
 
     #[test]

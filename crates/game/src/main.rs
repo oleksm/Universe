@@ -491,6 +491,10 @@ impl App {
             self.chase_cam = !self.chase_cam;
         }
         // The hyperdrive is navigation's: nothing fights or digs in hyperspace.
+        // Flight systems: up to fly, down to park (landed).
+        if pressed(input, Act::Systems) && matches!(self.v.ship.state, ShipState::Landed { .. }) {
+            self.engine.send(Command::Ship(ShipCommands { power: Some(!self.v.ship.powered), ..self.v.ship.holding() }));
+        }
         if pressed(input, Act::Hyperdrive) {
             if mode == ShipMode::Nav || self.v.ship.hyperdrive {
                 self.engine.send(Command::ToggleHyperdrive);
@@ -636,6 +640,9 @@ impl App {
                 Event::Ship(ShipEvent::Respawned) => "NEW SHIP DELIVERED TO HOME STATION".into(),
                 Event::Ship(ShipEvent::EnteredSystem { name }) => format!("ENTERING {name} SYSTEM"),
                 Event::Ship(ShipEvent::HyperdriveEngaged) => "HYPERDRIVE ENGAGED".into(),
+                Event::Ship(ShipEvent::SystemsOn) => "FLIGHT SYSTEMS ON".into(),
+                Event::Ship(ShipEvent::SystemsOff) => format!("FLIGHT SYSTEMS DOWN - {} TO POWER UP", keys::key(keys::Act::Systems)),
+                Event::Ship(ShipEvent::SystemsRefused { why }) => format!("CAN'T POWER DOWN - {why}"),
                 Event::Ship(ShipEvent::HyperdriveDisengaged) => "HYPERDRIVE OFF".into(),
                 Event::Ship(ShipEvent::HyperdriveJammed { seconds }) => format!("HYPERDRIVE JAMMED BY HITS - {seconds:.0} S"),
                 Event::HyperdriveArrived { target } => format!("ARRIVED AT {target}\n{}", self.target_hint()),

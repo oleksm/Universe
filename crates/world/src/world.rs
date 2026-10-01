@@ -271,6 +271,19 @@ impl World {
 
     /// `command` at time `t`.
     pub fn command_at(&self, ship: &mut Ship, system: usize, c: &ShipCommands, t: f64, events: &mut Vec<ShipEvent>) {
+        match c.power {
+            Some(true) if !ship.powered => {
+                ship.powered = true;
+                events.push(ShipEvent::SystemsOn);
+            }
+            // Powering down is for a parked ship only.
+            Some(false) if ship.powered && matches!(ship.state, ShipState::Landed { .. }) => {
+                ship.powered = false;
+                events.push(ShipEvent::SystemsOff);
+            }
+            Some(false) if ship.powered => events.push(ShipEvent::SystemsRefused { why: "NOT WHILE FLYING".into() }),
+            _ => {}
+        }
         ship.set_controls(c);
         if let Some(on) = c.arm {
             crate::weapons::master_arm(ship, on, events);
@@ -587,8 +600,11 @@ impl World {
         let mut rigid = ship.rigid();
         weld.place(&sys.bodies, t, &positions, &mut rigid);
         ship.set_rigid(&rigid);
-        // Allow turning in place on the pad.
-        if turn.is_some() {
+        // Turning in place on the pad, powered up; powered down, nothing fires.
+        if !ship.powered {
+            (ship.throttle, ship.rcs) = (0.0, DVec3::ZERO);
+            ship.jets.clear();
+        } else if turn.is_some() {
             ship.drive(turn.as_ref(), real_dt, false);
         }
         let local_orientation = rot.inverse() * ship.orientation;
@@ -765,6 +781,8 @@ impl World {
         Weld { body, local_position, local_orientation }.place(&sys.bodies, self.time, &positions, &mut rigid);
         ship.set_rigid(&rigid);
         ship.state = ShipState::Landed { body, local_position, local_orientation };
+        // (Parked: powered down.)
+        ship.powered = false;
         ship
     }
 }
