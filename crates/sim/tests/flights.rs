@@ -25,7 +25,7 @@ fn autodock(mut u: Universe) -> f64 {
         match u.ship.state {
             ShipState::Landed { .. } => return u.world.time - start,
             ShipState::Destroyed { .. } => panic!("crashed: {:?}", u.events),
-            ShipState::Flying | ShipState::Transit { .. } => {}
+            ShipState::Flying | ShipState::Transit { .. } | ShipState::Anchored { .. } => {}
         }
     }
     panic!("did not dock within 30 min; status {:?}", u.docking_status());
@@ -91,7 +91,7 @@ fn autoland(mut u: Universe, warp: f64) -> f64 {
                 return u.world.time - start;
             }
             ShipState::Destroyed { .. } => panic!("crashed: {:?}", u.events),
-            ShipState::Flying | ShipState::Transit { .. } => {}
+            ShipState::Flying | ShipState::Transit { .. } | ShipState::Anchored { .. } => {}
         }
     }
     panic!("did not land; approach {:?}", u.approach());

@@ -112,7 +112,7 @@ impl Avionics {
             return;
         };
         match bus.ship().state.clone() {
-            ShipState::Destroyed { .. } | ShipState::Transit { .. } => {}
+            ShipState::Destroyed { .. } | ShipState::Transit { .. } | ShipState::Anchored { .. } => {}
             ShipState::Landed { body, local_position, .. } => {
                 let sys = bus.star_system();
                 if bus.system() == stop.system && landed_at(&sys, stop.target, body, local_position) {

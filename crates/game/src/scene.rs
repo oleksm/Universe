@@ -923,6 +923,8 @@ fn labels(frame: &mut Frame, app: &App) {
             BodyKind::Star => true,
             BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant => true,
             BodyKind::Moon | BodyKind::Station | BodyKind::Gate => near_parent,
+            // A field's remnant: from within a few million km.
+            BodyKind::Asteroid => app.view.positions[i].distance(cam) < 5.0e9,
         };
         // Skip when the body fills the view; the label would sit on top of it.
         if wanted && frame.projected_radius(app.view.positions[i], b.rail.radius) < 60.0 {

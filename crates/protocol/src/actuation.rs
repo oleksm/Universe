@@ -43,6 +43,13 @@ pub struct ShipCommands {
     /// Lay the gun: Some(Some(direction)) toward a world direction (as far
     /// as its gimbal reaches), Some(None) back along the nose. None: leave it.
     pub gun_target: Option<Option<DVec3>>,
+    /// The anchor: fire it (hold to the asteroid within its reach) or let
+    /// go. None: leave it as it is.
+    #[serde(default)]
+    pub anchor: Option<bool>,
+    /// The excavator: on (digging, while anchored) or off. None: leave it.
+    #[serde(default)]
+    pub excavate: Option<bool>,
 }
 
 /// Orders for the hyperdrive (see `hyperdrive`).

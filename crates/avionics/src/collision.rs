@@ -83,7 +83,7 @@ fn reference(sys: &StarSystem, p: DVec3, positions: &[DVec3]) -> usize {
     sys.bodies
         .iter()
         .enumerate()
-        .filter(|(i, b)| b.rail.collider.is_small() && positions[*i].distance(p) < RANGE)
+        .filter(|(i, b)| b.rail.collider.is_small(b.rail.radius) && positions[*i].distance(p) < RANGE)
         .min_by(|(i, _), (j, _)| positions[*i].distance(p).total_cmp(&positions[*j].distance(p)))
         .map(|(i, _)| i)
         .unwrap_or_else(|| sys.dominant(p, positions))

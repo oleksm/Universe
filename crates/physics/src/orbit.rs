@@ -35,6 +35,32 @@ impl Orbit {
         }
     }
 
+    /// The orbit through position `r` with velocity `v` (relative to the
+    /// parent) at time `t`. Elliptic orbits only (`v` below escape speed).
+    pub fn from_state(r: DVec3, v: DVec3, mu: f64, t: f64) -> Self {
+        let h = r.cross(v);
+        let e_vec = v.cross(h) / mu - r.normalize();
+        let e = e_vec.length();
+        let a = 1.0 / (2.0 / r.length() - v.length_squared() / mu);
+        let w = h.normalize();
+        // Periapsis direction (any in-plane direction for a circle: then
+        // the eccentric anomaly is measured from `r` itself).
+        let circular = e < 1e-12;
+        let p = if circular { r.normalize() } else { e_vec / e };
+        let q = w.cross(p);
+        let ea = if circular { 0.0 } else { (r.dot(v) / (e * (mu * a).sqrt())).atan2((1.0 - r.length() / a) / e) };
+        let mean_motion = (mu / (a * a * a)).sqrt();
+        let m = ea - e * ea.sin();
+        Self {
+            semi_major_axis: a,
+            eccentricity: if circular { 0.0 } else { e },
+            mu,
+            mean_anomaly_epoch: (m - mean_motion * t).rem_euclid(TAU),
+            basis: DMat3::from_cols(p, q, w),
+            mean_motion,
+        }
+    }
+
     pub fn period(&self) -> f64 {
         TAU / self.mean_motion
     }
@@ -111,5 +137,20 @@ mod tests {
         let (p0, p1) = (o.position(123.0), o.position(123.0 + o.period()));
         assert!(p0.distance(p1) < 1e-6 * o.semi_major_axis);
         assert!((p0.length() - o.periapsis()) >= -1e-6 && (p0.length() - o.apoapsis()) <= 1e-6);
+    }
+
+    #[test]
+    fn an_orbit_from_its_state_is_the_same_orbit() {
+        let o = Orbit::new(4.0e11, 0.12, 0.2, 1.3, 2.1, 0.4, 1.3e20);
+        let (r, v) = o.state(5.0e6);
+        let back = Orbit::from_state(r, v, o.mu, 5.0e6);
+        for t in [5.0e6, 1.0e7, 3.3e8] {
+            assert!(back.position(t).distance(o.position(t)) < 1.0, "off at t = {t}");
+        }
+        // And a circle.
+        let c = Orbit::new(2.0e4, 0.0, 0.7, 0.2, 0.0, 1.0, 50.0);
+        let (r, v) = c.state(100.0);
+        let back = Orbit::from_state(r, v, 50.0, 100.0);
+        assert!(back.position(9.0e5).distance(c.position(9.0e5)) < 1e-3);
     }
 }

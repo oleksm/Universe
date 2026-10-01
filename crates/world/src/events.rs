@@ -17,6 +17,14 @@ pub enum ShipEvent {
     Launched { station: String },
     /// Gentle scrape against a station hull.
     Bumped,
+    /// Struck an asteroid (`body`) at `speed` (m/s), losing `damage` of the hull.
+    StruckRock { body: String, speed: f64, damage: f64 },
+    /// The anchor holds the ship to asteroid `body`.
+    Anchored { body: String },
+    /// The anchor couldn't hold: why.
+    AnchorFailed { why: String },
+    /// The anchor let go.
+    AnchorReleased,
     /// Destroyed, by hitting `body` (or by weapons fire: "GUNFIRE", "LASER FIRE").
     Crashed { body: String },
     /// Opened fire on a ship that wasn't fair game: aggressed until world time `until`.

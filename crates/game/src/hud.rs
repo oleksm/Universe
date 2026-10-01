@@ -242,6 +242,10 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
             let name = universe_sim::names::star_name(app.charts.galaxy.stars[*to].seed).to_uppercase();
             lines.push((format!("GATE TRANSIT TO {name}  {remaining:.1} S"), AMBER));
         }
+        ShipState::Anchored { field, body, .. } => {
+            let name = app.view.system.field_bodies(*field)[*body].name.to_uppercase();
+            lines.push((format!("ANCHORED TO {name}"), AMBER));
+        }
         ShipState::Flying => {}
     }
 }

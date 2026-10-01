@@ -19,10 +19,19 @@ pub enum Collider {
     Ring(Ring),
 }
 
+/// A surface body smaller than this (m) is small: see `Collider::is_small`.
+pub const SMALL_BODY: f64 = 50_000.0;
+
 impl Collider {
-    /// Small shapes need short substeps nearby, or a body steps right over them.
-    pub fn is_small(&self) -> bool {
-        matches!(self, Collider::Polytope(_) | Collider::Ring(_))
+    /// Small shapes (structures, and surface bodies of `radius` under
+    /// `SMALL_BODY`: asteroids) need short substeps nearby, or a body steps
+    /// right over them.
+    pub fn is_small(&self, radius: f64) -> bool {
+        match self {
+            Collider::Polytope(_) | Collider::Ring(_) => true,
+            Collider::Surface => radius < SMALL_BODY,
+            Collider::None => false,
+        }
     }
 }
 

@@ -204,7 +204,7 @@ pub fn plan(sys: &StarSystem, rules: &Rules, ship: &Ship, target: NavTarget, pha
             }
             let rigid = ship.rigid();
             events.clear();
-            let mut devices = Devices::new(&mut ship, rules, &mut events);
+            let mut devices = Devices::new(&mut ship, rules, &mut events).among(&sys.bodies);
             let snapshot = if far { None } else { ephemeris.as_ref().map(|(_, e)| e) };
             let (copy, outcome) = simulate(&sys.bodies, snapshot, &rigid, Span { t, dt: step, max_h, contact_step: FINE_STEP }, &mut devices);
             ship.set_rigid(&copy);

@@ -197,6 +197,21 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   home_system, gate_links }` owns the clock and caches: generated systems (the gate network's
   kept when evicting), each system's neighbouring stars, and the per-system ephemeris shared by
   every ship stepping from the same moment.
+- **Asteroids** (`belt`): fields placed by physics — main-belt families between the first
+  giant's 4:1 and 2:1 resonances (Kirkwood gaps empty; a belt at the frost line with no giant),
+  Trojan groups at giants' L4/L5, icy families past the outermost giant's 3:2. A field is a
+  family's remnant (a system body, `BodyKind::Asteroid`, pulling faintly) and a swarm of
+  fragments on Kepler orbits around it, inside its Hill sphere; one class per family (C, S, M,
+  icy), power-law sizes, rubble piles and monoliths, composition, an ellipsoid-with-lumps shape
+  (`RockShape`, the kernel's `Surface`). The swarm is generated on first approach:
+  `StarSystem::field_bodies(f)` = the system's bodies + the swarm, which a ship near the field
+  flies among (`World::field_at`; its own ephemeris cache). Surface bodies under `SMALL_BODY`
+  get fine substeps like structures.
+- **Working a rock** (`mining`): touching an asteroid is a collision (`strike`: bounce, the energy
+  lost into the hull, a wreck when it's used up), whoever's rules. The anchor (`ShipCommands::
+  anchor`): fired within `ANCHOR_REACH` of a rock's surface while drifting with it (under
+  `ANCHOR_SPEED`) → `ShipState::Anchored` (welded in the rock's frame, riding its orbit and spin);
+  let go → drifting with that surface.
 - **Structures** with their contact rules:
   - `station`: a rail body (circular orbit) + polytope collider with a slot cut-out
     (`StationFrame`, `hull()`); the **docking port** (`docks`/`bounces`, `contact` → dock (weld)
@@ -422,6 +437,8 @@ ship's pose directly, like tests do — then render.
 | Gravity, dominant body, segment distance, simulate a copy | physics: `query` |
 | Galaxy, star names, seeded rng, units | world: `galaxy`, `names`, `rng`, `units` |
 | Star systems, bodies, spaceports; terrain (implements `Surface`) | world: `system`, `terrain` |
+| Asteroid fields (placement, remnants, swarms, classes, shapes, composition); `Orbit::from_state` | world: `belt`; physics: `orbit` |
+| Rock impacts, the anchor | world: `mining` |
 | Home system, gate network and links | world: `network` |
 | The clock, system caches, `command`/`step_ship`(`_at`), `Devices`, respawn/spawn, hand-over | world: `world` |
 | Ship, `ShipCommands`, `HyperdriveCommand`, engine/thrusters/attitude | world: `ship` |

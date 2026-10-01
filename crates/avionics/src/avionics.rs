@@ -102,7 +102,7 @@ impl Avionics {
     /// with nothing set.
     pub fn observe(&mut self, event: &ShipEvent) {
         match event {
-            ShipEvent::Landed { .. } | ShipEvent::LandedAtPort { .. } | ShipEvent::Crashed { .. } => {
+            ShipEvent::Landed { .. } | ShipEvent::LandedAtPort { .. } | ShipEvent::Crashed { .. } | ShipEvent::Anchored { .. } => {
                 self.clearance = None;
                 self.following = None;
             }
@@ -126,6 +126,9 @@ impl Avionics {
             ShipEvent::TookOff
             | ShipEvent::Launched { .. }
             | ShipEvent::Bumped
+            | ShipEvent::StruckRock { .. }
+            | ShipEvent::AnchorFailed { .. }
+            | ShipEvent::AnchorReleased
             | ShipEvent::GateArrived { .. }
             | ShipEvent::GateTooFast { .. }
             | ShipEvent::Hit { .. }

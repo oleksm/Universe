@@ -44,6 +44,7 @@ impl Sample {
             ShipState::Flying if ship.hyperdrive => "hyperdrive",
             ShipState::Flying => "flying",
             ShipState::Landed { .. } => "landed",
+            ShipState::Anchored { .. } => "anchored",
             ShipState::Destroyed { .. } => "wrecked",
             ShipState::Transit { .. } => "transit",
         };

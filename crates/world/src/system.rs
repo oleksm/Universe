@@ -19,6 +19,8 @@ pub enum BodyKind {
     Station,
     /// A ring gate linked to a gate in another star system.
     Gate,
+    /// An asteroid: a field's remnant, or a fragment of its swarm (see `belt`).
+    Asteroid,
 }
 
 impl BodyKind {
@@ -31,6 +33,7 @@ impl BodyKind {
             BodyKind::Moon => "moon",
             BodyKind::Station => "station",
             BodyKind::Gate => "gate",
+            BodyKind::Asteroid => "asteroid",
         }
     }
 
@@ -75,6 +78,8 @@ pub struct Body {
     pub terrain: Option<crate::terrain::Terrain>,
     /// How it moves (parent, orbit, spin), pulls and collides: the physics kernel's part.
     pub rail: RailBody,
+    /// For asteroids: what it is, and its shape.
+    pub rock: Option<std::sync::Arc<crate::belt::Rock>>,
 }
 
 impl OnRails for Body {
@@ -83,7 +88,11 @@ impl OnRails for Body {
     }
 
     fn surface(&self) -> Option<&dyn Surface> {
-        self.terrain.as_ref().map(|t| t as &dyn Surface)
+        match (&self.terrain, &self.rock) {
+            (Some(t), _) => Some(t as &dyn Surface),
+            (_, Some(r)) => Some(&r.shape as &dyn Surface),
+            _ => None,
+        }
     }
 }
 
@@ -129,6 +138,8 @@ pub struct StarSystem {
     /// Parents always come before their children; body 0 is the star.
     pub bodies: Vec<Body>,
     pub spaceports: Vec<Spaceport>,
+    /// Asteroid fields (see `belt`).
+    pub fields: Vec<crate::belt::Field>,
 }
 
 const ROCKY_COLORS: [[f32; 3]; 4] = [[0.8, 0.5, 0.3], [0.65, 0.65, 0.65], [0.85, 0.75, 0.5], [0.75, 0.4, 0.35]];
@@ -170,6 +181,7 @@ impl StarSystem {
                 collider: BodyKind::Star.collider(),
                 atmosphere: None,
             },
+            rock: None,
         }];
 
         let planet_count = match class {
@@ -229,6 +241,7 @@ impl StarSystem {
                     collider: kind.collider(),
                     atmosphere: None,
                 },
+                rock: None,
             });
 
             // Moons, kept well inside the planet's Hill sphere.
@@ -278,6 +291,7 @@ impl StarSystem {
                         collider: BodyKind::Moon.collider(),
                         atmosphere: None,
                     },
+                    rock: None,
                 });
                 moon_a *= rng.range(1.4, 2.0);
             }
@@ -289,12 +303,13 @@ impl StarSystem {
             a *= rng.range(1.5, 2.1);
         }
 
-        let mut system = Self { index, name, class, bodies, spaceports: Vec::new() };
+        let mut system = Self { index, name, class, bodies, spaceports: Vec::new(), fields: Vec::new() };
         if let Some((planet, _)) = station_parent {
             system.add_station(planet, &mut rng);
         }
         system.add_terrain(star.seed);
         system.add_spaceports(star.seed);
+        crate::belt::add_fields(&mut system, frost_line, star.seed);
         system
     }
 
@@ -369,6 +384,7 @@ impl StarSystem {
                 collider: BodyKind::Station.collider(),
                 atmosphere: None,
             },
+            rock: None,
         };
         let at = (planet + 1..self.bodies.len()).find(|&i| self.bodies[i].rail.parent != Some(planet)).unwrap_or(self.bodies.len());
         self.bodies.insert(at, station);
@@ -417,6 +433,7 @@ impl StarSystem {
                     collider: BodyKind::Gate.collider(),
                     atmosphere: None,
                 },
+                rock: None,
             });
         }
     }

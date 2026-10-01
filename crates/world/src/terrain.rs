@@ -196,7 +196,7 @@ impl universe_physics::Surface for Terrain {
 }
 
 /// Smooth 3D value noise in -1..1.
-fn value_noise(seed: u64, p: DVec3) -> f64 {
+pub(crate) fn value_noise(seed: u64, p: DVec3) -> f64 {
     let f = p.floor();
     let t = p - f;
     let s = t * t * (DVec3::splat(3.0) - t * 2.0);

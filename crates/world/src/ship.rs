@@ -49,6 +49,9 @@ pub enum ShipState {
     /// Resting on a body, stored in that body's rotating frame.
     Landed { body: usize, local_position: DVec3, local_orientation: DQuat },
     Destroyed { respawn_in: f64 },
+    /// Held to an asteroid by the anchor: body `body` among field `field`'s
+    /// (see `StarSystem::field_bodies`), stored in its rotating frame.
+    Anchored { field: usize, body: usize, local_position: DVec3, local_orientation: DQuat },
     /// Between gates. The ship's motion relative to the entry gate is kept and
     /// reapplied at the paired gate on arrival.
     Transit {
@@ -246,7 +249,7 @@ impl Ship {
     /// Commands that keep the engine and thrusters as they are, turn nothing
     /// and leave the hyperdrive alone: a starting point for new commands.
     pub fn holding(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None, anchor: None, excavate: None }
     }
 
     /// The main engine and thrusters take their new settings.

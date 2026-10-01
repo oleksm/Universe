@@ -98,7 +98,7 @@ pub fn integrate<B: OnRails>(
     let mut t = span.t;
     place(t, positions);
     let mut max_h = span.max_h;
-    if bodies.iter().zip(positions.iter()).any(|(b, p)| b.rail().collider.is_small() && p.distance(body.position) < FINE_RANGE) {
+    if bodies.iter().zip(positions.iter()).any(|(b, p)| b.rail().collider.is_small(b.rail().radius) && p.distance(body.position) < FINE_RANGE) {
         max_h = max_h.min(span.contact_step);
     }
     let mut remaining = span.dt;

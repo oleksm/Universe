@@ -52,6 +52,8 @@ pub struct World {
     neighbours: Mutex<HashMap<usize, Arc<[usize]>>>,
     /// Body snapshots per system for the current moment, shared by every ship there.
     ephemerides: Mutex<HashMap<usize, (f64, Arc<Ephemeris>)>>,
+    /// The same for an asteroid field's bodies, by (system, field).
+    field_ephemerides: Mutex<HashMap<(usize, usize), EphemerisAt>>,
     /// Body positions per system at the last two moments asked for: see `rails_at`.
     rails: Mutex<HashMap<usize, [RailsAt; 2]>>,
     /// Each system's contact rules, as their owners registered them (see `rules`).
@@ -95,6 +97,9 @@ fn advance(clock: &mut f64, dt: f64) -> StepResult {
     StepResult { simulated: dt, warp_limited: false }
 }
 
+/// A body snapshot and its moment.
+type EphemerisAt = (f64, Arc<Ephemeris>);
+
 /// Body positions at a moment (see `World::rails_now`).
 type RailsAt = (f64, Arc<Vec<DVec3>>);
 
@@ -111,6 +116,7 @@ impl World {
             systems: Default::default(),
             neighbours: Default::default(),
             ephemerides: Default::default(),
+            field_ephemerides: Default::default(),
             rails: Default::default(),
             rules: Default::default(),
             frozen: None,
@@ -185,6 +191,27 @@ impl World {
         }
     }
 
+    /// `ephemeris` for field `f`'s bodies (see `StarSystem::field_bodies`).
+    fn field_ephemeris(&self, sys: &StarSystem, f: usize, t: f64) -> Arc<Ephemeris> {
+        let mut cache = lock(&self.field_ephemerides);
+        match cache.get(&(sys.index, f)) {
+            Some((at, e)) if *at == t => e.clone(),
+            _ => {
+                let e = Arc::new(Ephemeris::new(&sys.field_bodies(f)[..], t));
+                cache.insert((sys.index, f), (t, e.clone()));
+                e
+            }
+        }
+    }
+
+    /// The asteroid field ship `p` is among or near in `system` at `t`, if any.
+    pub fn field_at(&self, sys: &StarSystem, system: usize, p: DVec3, t: f64) -> Option<usize> {
+        if sys.fields.is_empty() {
+            return None;
+        }
+        sys.field_near(p, &self.rails_at(system, t))
+    }
+
     /// Hand the ship's devices new commands, with no time passing: the engine
     /// and thrusters take their settings, then the hyperdrive engages or
     /// disengages if told to. (Turning takes time: see `step_ship`.)
@@ -197,6 +224,15 @@ impl World {
         ship.set_controls(c);
         if let Some(on) = c.arm {
             crate::weapons::master_arm(ship, on, events);
+        }
+        match c.anchor {
+            Some(true) if !matches!(ship.state, ShipState::Anchored { .. }) => {
+                let sys = self.system(system);
+                let field = self.field_at(&sys, system, ship.position, t);
+                crate::mining::anchor(&sys, field, ship, t, events);
+            }
+            Some(false) => crate::mining::release(ship, events),
+            _ => {}
         }
         match &c.hyperdrive {
             // (Off always; on only by the engage control.)
@@ -336,6 +372,11 @@ impl World {
                 let weld = Weld { body, local_position, local_orientation };
                 universe_prof::time("sim/crafts/tick/world step/landed", || self.landed_step(clock, &sys, *system, ship, weld, commands.turn, real_dt, warp, events))
             }
+            ShipState::Anchored { .. } => {
+                let result = advance(clock, real_dt * warp);
+                crate::mining::hold(&sys, ship, *clock);
+                result
+            }
             ShipState::Transit { to, from, remaining, local_velocity, local_offset, local_orientation } => {
                 // The transit takes a few real seconds; the world clock keeps its pace.
                 let result = advance(clock, real_dt * warp);
@@ -451,9 +492,16 @@ impl World {
     /// thrust of its devices, then the world's rules judge whatever it touched.
     #[allow(clippy::too_many_arguments)]
     fn flight_step(&self, clock: &mut f64, sys: &StarSystem, ship: &mut Ship, system: usize, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
+        // Among an asteroid field, its swarm's bodies too.
+        let field = self.field_at(sys, system, ship.position, *clock);
+        let local = field.map(|f| sys.field_bodies(f));
+        let bodies = local.as_deref().map_or(&sys.bodies[..], |b| &b[..]);
         // For short frames, snapshot the bodies once and extrapolate for each
         // substep instead of re-solving every orbit (see `Ephemeris`).
-        let ephemeris = (dt <= Ephemeris::SPAN).then(|| self.ephemeris(sys, *clock));
+        let ephemeris = (dt <= Ephemeris::SPAN).then(|| match field {
+            Some(f) => self.field_ephemeris(sys, f, *clock),
+            None => self.ephemeris(sys, *clock),
+        });
         // Small steps while any device pushes (engine or thrusters), whoever
         // is flying. The kernel also takes small steps near any station or
         // gate, for contact.
@@ -462,12 +510,13 @@ impl World {
         let span = Span { t: *clock, dt, max_h: physics, contact_step: FINE_STEP };
         let mut rigid = ship.rigid();
         let rules = self.rules_of(system);
-        let mut devices = Devices::new(&mut *ship, &rules, &mut *events);
-        let mut positions = Vec::with_capacity(sys.bodies.len());
-        let out = integrate(&sys.bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
+        let mut devices = Devices::new(&mut *ship, &rules, &mut *events).among(bodies);
+        let mut positions = Vec::with_capacity(bodies.len());
+        let out = integrate(bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
         ship.set_rigid(&rigid);
         *clock = out.time;
-        if let Some(fact) = out.fact {
+        let rock = |f: &Fact| matches!(f, Fact::Contact(c) if bodies[c.body].kind == crate::system::BodyKind::Asteroid);
+        if let Some(fact) = out.fact.filter(|f| !rock(f)) {
             // What it touched decides, by its owner's rule.
             crate::rules::apply(&rules, sys, system, ship, &fact, out.time, &positions, events);
         }
@@ -593,6 +642,8 @@ pub struct Devices<'a> {
     ship: &'a mut Ship,
     rules: &'a crate::rules::Rules,
     events: &'a mut Vec<ShipEvent>,
+    /// The bodies flown among (for what an asteroid is: see `among`).
+    bodies: &'a [crate::system::Body],
 }
 
 impl<'a> Devices<'a> {
@@ -600,7 +651,13 @@ impl<'a> Devices<'a> {
     /// `events`. The kernel's body stands for the ship's motion (see
     /// `Ship::rigid`/`set_rigid`); the ship keeps the device settings.
     pub fn new(ship: &'a mut Ship, rules: &'a crate::rules::Rules, events: &'a mut Vec<ShipEvent>) -> Self {
-        Self { ship, rules, events }
+        Self { ship, rules, events, bodies: &[] }
+    }
+
+    /// Flying among `bodies`: touching an asteroid among them is a
+    /// collision (see `mining::strike`), whoever's rules.
+    pub fn among(self, bodies: &'a [crate::system::Body]) -> Self {
+        Self { bodies, ..self }
     }
 }
 
@@ -614,6 +671,13 @@ impl Driver for Devices<'_> {
 
     fn respond(&mut self, fact: &Fact, _: &RigidBody) -> Response {
         match fact {
+            Fact::Contact(c) if self.bodies.get(c.body).is_some_and(|b| b.kind == crate::system::BodyKind::Asteroid) => {
+                if crate::mining::strike(self.ship, &self.bodies[c.body], c, self.events) {
+                    Response::Bounce { restitution: crate::mining::RESTITUTION, separation: 0.1, push: 0.2 }
+                } else {
+                    Response::Stop
+                }
+            }
             // A part that bounces gentle contact (its rule): off it, and keep flying.
             Fact::Contact(c) if self.rules.bounces(c.body, crate::rules::Part::of(c.feature), c.relative_velocity.length()) => {
                 self.events.push(ShipEvent::Bumped);
