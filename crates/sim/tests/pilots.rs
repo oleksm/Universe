@@ -116,6 +116,9 @@ fn a_silent_pilot_holds_its_controls_then_the_dead_man_rule_cuts_in() {
 fn the_cockpit_flies_the_ship_from_the_client_side() {
     use universe_sim::engine::{Command, EngineHandle};
     let mut u = Universe::new(1984);
+    // (In flight, not parked on the home station's deck; the respawn settled.)
+    u.respawn();
+    tick(&mut u);
     u.ship.position += DVec3::new(0.0, 0.0, 1.0e6);
     let station = u.ship_system().station().unwrap();
     let mut e = EngineHandle::new(u);
@@ -139,6 +142,7 @@ fn the_cockpit_flies_the_ship_from_the_client_side() {
 #[test]
 fn the_cockpit_predicts_what_its_orders_will_do_to_the_tick() {
     let mut u = Universe::new(1984);
+    u.respawn();
     u.ship.angular_velocity = DVec3::ZERO;
     tick(&mut u);
     let start = u.ship.orientation;

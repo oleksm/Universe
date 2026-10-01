@@ -526,6 +526,26 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.orientation = universe_sim::ship::facing(f.world(look) - at, f.up());
             app.chase_cam = false;
         }
+        "sunedge0" | "sunedge1" | "sunedge2" => {
+            // On the deck, looking at the sun just over the structure's top
+            // edge (500 m off): the line to it 4 m under the edge (hidden),
+            // on it (half the disc), 4 m over (clear).
+            app.mode = Mode::Pilot;
+            let station = sys.station().expect("home station");
+            let star = sys.bodies.iter().position(|b| b.kind == universe_sim::BodyKind::Star).expect("a star");
+            let t = app.engine.universe().world.time;
+            let f = StationFrame::new(&sys, station, t, &positions);
+            let sun = f.rotation.inverse() * (positions[star] - f.center).normalize();
+            let off = match name { "sunedge0" => -4.0, "sunedge1" => 0.0, _ => 4.0 };
+            let edge = DVec3::new(0.0, 150.0 + off, universe_sim::world::station::DECK_FROM);
+            let at = f.world(edge - sun * 500.0);
+            let u = app.engine.universe();
+            u.ship.state = ShipState::Flying;
+            u.ship.position = at;
+            u.ship.velocity = f.velocity_at(at);
+            u.ship.orientation = universe_sim::ship::facing(positions[star] - at, f.up());
+            app.chase_cam = false;
+        }
         "platform" | "platformdeck" => {
             // The home station from off its corner, a little above its deck
             // (or, "platformdeck", from just above the deck), looking at it.

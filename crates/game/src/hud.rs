@@ -1268,7 +1268,21 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     // Halo, core.
     let halo = disc * 2.5 + 14.0 + 40.0 * k;
     frame.hud_glow(p, halo, 32, tint(0.3 + 0.05 * k), tint(0.0));
-    frame.hud_glow(p, disc * 1.4 + 4.0 + 6.0 * k, 24, Color([1.0, 1.0, 0.96, visible]), tint(0.6 * visible));
+    // The core: in the scene, just this side of the star, so what stands in
+    // front of it (a station's structure, a ship) hides it pixel by pixel.
+    let core = disc * 1.4 + 4.0 + 6.0 * k;
+    let radius = sys.bodies[star].rail.radius;
+    let centre = sun - dir * radius * 1.05;
+    let world = core as f64 * radius / disc as f64 * (dist - radius * 1.05) / dist;
+    let (u, v) = (dir.any_orthonormal_vector(), dir.cross(dir.any_orthonormal_vector()));
+    let rim = |i: usize| {
+        let a = i as f64 * std::f64::consts::TAU / 24.0;
+        centre + (u * a.cos() + v * a.sin()) * world
+    };
+    let (white, edge) = (Color([1.0, 1.0, 0.96, 1.0]), Color([r, g, b, 0.0]));
+    for i in 0..24 {
+        frame.triangle3([centre, rim(i), rim(i + 1)], [white, edge, edge]);
+    }
     // Rays: long spikes and shorter ones between, fading out.
     let long = disc * 2.0 + 40.0 + 180.0 * k;
     for i in 0..12 {

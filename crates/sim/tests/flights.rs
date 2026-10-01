@@ -9,6 +9,16 @@ use universe_sim::world::gate::GATE_RADIUS;
 use universe_sim::{Approach, Controls, Event, GateFrame, NavTarget, PadFrame, Phase, ShipEvent, ShipState, Stop, Universe};
 
 /// Fly the docking computer from `setup`'s position; returns simulated seconds to dock.
+/// A new universe with the player in flight by the home station (4 km
+/// behind it on its orbit), not parked on its deck: where these flights start.
+fn flying(seed: u64) -> Universe {
+    let mut u = Universe::new(seed);
+    u.respawn();
+    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    u.events.clear();
+    u
+}
+
 fn autodock(mut u: Universe) -> f64 {
     u.toggle_autopilot();
     assert!(u.avionics().clearance.is_some_and(|d| d.autopilot), "clearance should be granted: {:?}", u.events);
@@ -33,7 +43,7 @@ fn autodock(mut u: Universe) -> f64 {
 
 #[test]
 fn docking_computer_docks_from_spawn() {
-    let secs = autodock(Universe::new(42));
+    let secs = autodock(flying(42));
     eprintln!("docked after {secs:.0} s");
 }
 
@@ -99,7 +109,7 @@ fn autoland(mut u: Universe, warp: f64) -> f64 {
 
 #[test]
 fn autopilot_lands_from_orbit() {
-    let secs = autoland(Universe::new(42), 20.0);
+    let secs = autoland(flying(42), 20.0);
     eprintln!("landed after {secs:.0} s");
 }
 
@@ -137,7 +147,7 @@ fn hyper_until_arrival(u: &mut Universe, port: usize, pilot_aims: bool) -> f64 {
 
 #[test]
 fn hyperdrive_autopilot_steers_to_the_port() {
-    let mut u = Universe::new(42);
+    let mut u = flying(42);
     let port = far_port(&mut u);
     u.set_nav_target(Some(NavTarget::Spaceport(port)));
     u.toggle_hyperdrive();
@@ -156,7 +166,7 @@ fn hyperdrive_autopilot_steers_to_the_port() {
 #[test]
 fn plan_reaches_the_pads() {
     // Landing from orbit.
-    let mut u = Universe::new(42);
+    let mut u = flying(42);
     let sys = u.ship_system();
     let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
     let port = sys.spaceports.iter().position(|p| p.body == planet).unwrap();
@@ -179,7 +189,7 @@ fn plan_reaches_the_pads() {
     assert!(plan.arrives, "landing plan should reach the pad");
 
     // Docking from the spawn point.
-    let mut u = Universe::new(42);
+    let mut u = flying(42);
     u.set_nav_target(None);
     assert!(u.request_clearance());
     for _ in 0..5 {
@@ -192,7 +202,7 @@ fn plan_reaches_the_pads() {
 
 #[test]
 fn autopilot_flies_through_a_gate_and_keeps_its_motion() {
-    let mut u = Universe::new(1984);
+    let mut u = flying(1984);
     let home = u.world.home_system;
     let sys = u.ship_system();
     let (dest, _) = u.gate_links_of(home)[0].clone();
@@ -292,7 +302,7 @@ fn route_autopilot_lands_docks_and_crosses_a_gate() {
 
 #[test]
 fn hyperdrive_autopilot_reaches_an_asteroid_field_and_drops_out_moving_with_it() {
-    let mut u = Universe::new(42);
+    let mut u = flying(42);
     let sys = u.ship_system();
     let field = &sys.fields[0];
     let rock = field.body;
@@ -320,7 +330,7 @@ fn hyperdrive_autopilot_reaches_an_asteroid_field_and_drops_out_moving_with_it()
 
 /// A universe whose player flies hull `key`, its tank full.
 fn in_hull(key: &str) -> Universe {
-    let mut u = Universe::new(42);
+    let mut u = flying(42);
     u.ship.class = universe_sim::world::content::content().handle(key).unwrap();
     u.ship.fuel = u.ship.spec().fuel_capacity;
     u

@@ -13,6 +13,10 @@ use universe_sim::{BodyKind, Controls, NavTarget, PadFrame, Phase, ShipState, Un
 /// the home system, and our own ship parked out of the way.
 fn bench(n: usize) -> Universe {
     let mut u = Universe::new(1984);
+    // (In flight, not parked on the home station's deck.)
+    u.respawn();
+    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    u.events.clear();
     u.spawn_settlers(n, 1);
     u.ship.position += DVec3::new(0.0, 0.0, 5.0e7);
     let home = u.ship_system;

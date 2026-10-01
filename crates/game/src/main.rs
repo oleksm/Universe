@@ -310,8 +310,8 @@ impl App {
             launched: false,
         };
         let name = app.view.system.bodies[app.view.system.station().unwrap_or(0)].name.clone();
-        app.say(format!("LAUNCHED FROM {}", name.to_uppercase()));
-        app.say("PRESS F1 FOR CONTROLS".into());
+        app.say(format!("WELCOME TO {}", name.to_uppercase()));
+        app.say("J POWERS UP, SHIFT+E LIFTS OFF - F1 FOR CONTROLS".into());
         if let Ok(name) = std::env::var("UNIVERSE_SCENARIO") {
             dev::apply(&mut app, &name);
             app.engine.refresh();

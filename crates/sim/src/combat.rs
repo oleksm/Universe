@@ -177,6 +177,10 @@ mod tests {
     #[test]
     fn the_player_shoots_down_a_settler_on_the_lead() {
         let mut u = Universe::new(1984);
+        // (In flight by the home station, not parked on its deck; the respawn
+        // settled, a step on, before the lock is taken.)
+        u.respawn();
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
         u.spawn_settlers(1, 1);
         // A settler 3 km ahead, crossing at 40 m/s; we're drifting with it.
         // Well away from any defence turrets (we'll be the aggressor), and the
@@ -195,7 +199,8 @@ mod tests {
         let mut destroyed = false;
         for frame in 0..600 {
             let contacts = u.contacts();
-            if let Some((_, Some(sol))) = u.fire_control(&contacts) {
+            let fc = u.fire_control(&contacts);
+            if let Some((_, Some(sol))) = fc {
                 u.ship.orientation = universe_world::ship::facing(sol.aim, sol.aim.any_orthonormal_vector());
                 if frame % 60 == 0 {
                     u.command(&ShipCommands { weapons: Some(Triggers { gun: true, laser: false }), ..u.ship.holding() });
@@ -216,6 +221,7 @@ mod tests {
     #[test]
     fn combat_mode_and_clearance_exclude_each_other() {
         let mut u = Universe::new(1984);
+        u.respawn();
         assert!(u.request_clearance(), "cleared to dock");
         u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());

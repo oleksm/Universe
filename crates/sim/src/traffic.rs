@@ -91,7 +91,11 @@ impl Universe {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Register(logged)));
         let now = self.world.time;
         for reg in ships {
-            let mut ship = self.world.ship_on(reg.at.system, reg.at.target, reg.pad);
+            // (Not on a pad someone holds: the player's, starting there.)
+            let owners = self.atc.owners(reg.at.system, reg.at.target);
+            let n = universe_world::spaceport::PADS;
+            let pad = (0..n).map(|k| (reg.pad + k) % n).find(|&k| owners[k].is_none()).unwrap_or(reg.pad);
+            let mut ship = self.world.ship_on(reg.at.system, reg.at.target, pad);
             if let Some(h) = universe_world::content::content().handle(&reg.hull) {
                 ship.class = h;
                 ship.fuel = ship.spec().fuel_capacity;

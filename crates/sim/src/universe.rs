@@ -150,7 +150,7 @@ impl Universe {
         settled.dedup();
         let systems: Vec<(usize, Arc<StarSystem>)> = settled.into_iter().map(|i| (i, u.world.system(i))).collect();
         u.markets.economy = universe_services::economy::Economy::new(systems.iter().map(|(i, s)| (*i, &**s)), u.world.time);
-        u.respawn();
+        u.start_docked();
         u.events.clear();
         u.player_feed.clear();
         // What a new pilot starts with, from the world's account.
@@ -611,10 +611,29 @@ impl Universe {
         r
     }
 
+    /// A new pilot's first ship: parked, powered down, on a pad of the home
+    /// station's deck that traffic control gives it (held for it as any).
+    fn start_docked(&mut self) {
+        let home = self.world.home_system;
+        let sys = self.world.system(home);
+        let Some(station) = sys.station() else { return self.respawn() };
+        let port = universe_world::Facility::Station(station);
+        let pad = match self.atc.request_pad(home, port, crate::combat::PLAYER, self.world.time) {
+            universe_services::PadGrant::Pad(k) => k,
+            universe_services::PadGrant::Queued(_) => universe_world::spaceport::CENTER_PAD,
+        };
+        self.ship = self.world.ship_on(home, port, pad);
+        self.ship.fuel = self.ship.spec().fuel_capacity;
+        self.ship_system = home;
+    }
+
     /// Put a new ship next to the home station, matching its orbit.
     pub fn respawn(&mut self) {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Respawn));
         let mut events = Vec::new();
+        // (A new ship somewhere else: whatever traffic control held for the old one goes.)
+        self.atc.because(self.tick, universe_protocol::Cause::Rules);
+        self.atc.release(crate::combat::PLAYER);
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
         self.player_events(events);
         self.insure(universe_protocol::Cause::Rules);
