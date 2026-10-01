@@ -355,6 +355,7 @@ ship's pose directly, like tests do — then render.
 | Collision warning: predicted path through the kernel, first impact (bodies, stations, gates, ships) | avionics: `collision` |
 | Radar contacts + transponders, the lock | sim: `contacts` |
 | Combat phase in the tick (ship ids: player 0, craft i → i+1), fire control for the player | sim: `combat` |
+| Frame profiler: named scopes per frame, mean/worst over 120 frames (F3 panel, `UNIVERSE_PROFILE=1`) | prof |
 | Rendering, windowing, input, audio, frame timing (`Perf`) | engine |
 | HUD, scene, nav map, observer, sounds, save file, dev scenarios | game |
 

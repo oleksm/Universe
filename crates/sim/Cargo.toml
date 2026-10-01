@@ -6,6 +6,7 @@ version.workspace = true
 # Orchestration (the tick loop, ships and their avionics, traffic, save/load)
 # over the world. No graphics, no windowing, no audio.
 [dependencies]
+universe-prof = { path = "../prof" }
 universe-physics = { path = "../physics" }
 universe-world = { path = "../world" }
 universe-avionics = { path = "../avionics" }

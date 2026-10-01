@@ -4,6 +4,7 @@ edition.workspace = true
 version.workspace = true
 
 [dependencies]
+universe-prof = { path = "../prof" }
 universe-engine = { path = "../engine" }
 glam.workspace = true
 log.workspace = true

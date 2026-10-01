@@ -48,8 +48,8 @@ impl Universe {
             for (i, (c, e)) in self.crafts.iter_mut().zip(craft_events.iter_mut()).enumerate() {
                 armed.push(Armed { id: craft_id(i), system: c.system, ship: &mut c.ship, events: e });
             }
-            self.world.combat(&mut armed, dt);
-            self.world.collide(&mut armed, dt);
+            universe_prof::time("sim/combat/weapons", || self.world.combat(&mut armed, dt));
+            universe_prof::time("sim/combat/collisions", || self.world.collide(&mut armed, dt));
         }
         self.traffic_events(PLAYER, &player_events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
         if let Some(kill) = self.kill_in(PLAYER, self.ship_system, &player_events) {

@@ -360,6 +360,7 @@ impl Renderer {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
         };
+        let upload = universe_prof::scope("render/upload vertices");
         gpu.queue.write_buffer(&self.globals, 0, bytemuck::bytes_of(&globals));
         self.sky.upload(gpu, &frame.sky);
         self.solids.upload(gpu, &frame.solids);
@@ -367,6 +368,7 @@ impl Renderer {
         self.points.upload(gpu, &frame.points);
         self.hud_tris.upload(gpu, &frame.hud_tris);
         self.hud.upload(gpu, &frame.hud);
+        drop(upload);
 
         let acquire = std::time::Instant::now();
         let next = gpu.surface.get_current_texture();

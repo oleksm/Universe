@@ -1,0 +1,7 @@
+[package]
+name = "universe-prof"
+edition.workspace = true
+version.workspace = true
+
+# A tiny frame profiler: named scopes timed per frame, for any layer.
+[dependencies]

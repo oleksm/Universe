@@ -19,14 +19,14 @@ pub fn color(c: [f32; 3]) -> Color {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    let starlight = sky(frame, app);
-    galaxy(frame, app, starlight);
+    let starlight = universe_prof::time("draw/scene/sky", || sky(frame, app));
+    universe_prof::time("draw/scene/galaxy", || galaxy(frame, app, starlight));
     if matches!(app.u.ship.state, ShipState::Transit { .. }) && app.mode == Mode::Pilot {
         transit_tunnel(frame, app);
         return;
     }
     if app.show_grid {
-        orbits(frame, app);
+        universe_prof::time("draw/scene/orbits", || orbits(frame, app));
     }
     // The system's star lights everything in it: its colour, and its
     // luminosity (1 at 1 AU from a sun-like star), fading with distance.
@@ -40,8 +40,8 @@ pub fn draw(frame: &mut Frame, app: &App) {
         reference: universe_sim::units::AU,
     });
     frame.reflector = reflector(frame, app);
-    bodies(frame, app);
-    spaceports(frame, app);
+    universe_prof::time("draw/scene/bodies", || bodies(frame, app));
+    universe_prof::time("draw/scene/spaceports", || spaceports(frame, app));
     if app.view.origin == app.u.ship_system {
         match &app.approach {
             Some(Approach::Dock { station, status }) => docking_guide(frame, app, *station, status),
@@ -50,16 +50,16 @@ pub fn draw(frame: &mut Frame, app: &App) {
             None => {}
         }
     }
-    collision_path(frame, app);
-    ship(frame, app);
+    universe_prof::time("draw/scene/collision path", || collision_path(frame, app));
+    universe_prof::time("draw/scene/ship", || ship(frame, app));
     if matches!(app.u.crew.place, universe_sim::world::Place::Aboard { .. }) && app.mode == Mode::Pilot {
         crate::onfoot::interior(frame, app);
     }
     crate::onfoot::ramp(frame, app);
-    crafts(frame, app);
-    weapons_fire(frame, app);
+    universe_prof::time("draw/scene/crafts", || crafts(frame, app));
+    universe_prof::time("draw/scene/weapons fire", || weapons_fire(frame, app));
     if app.show_labels {
-        labels(frame, app);
+        universe_prof::time("draw/scene/labels", || labels(frame, app));
     }
 }
 
@@ -130,15 +130,29 @@ fn galaxy(frame: &mut Frame, app: &App, starlight: f32) {
     let g = &app.u.world.galaxy;
     let origin = g.stars[app.view.origin].position;
     let cam = frame.camera.position;
-    for (i, s) in g.stars.iter().enumerate() {
-        if i == app.view.origin {
-            continue; // drawn as a body
-        }
+    let star = |s: &universe_sim::galaxy::GalaxyStar| {
         let rel = (s.position - origin) * LIGHT_YEAR - cam;
         let d_ly = rel.length() / LIGHT_YEAR;
         let flux = s.class.luminosity() / (d_ly * d_ly).max(1e-9);
         let brightness = ((flux.log10() + 8.0) / 6.0).clamp(0.2, 1.0) as f32;
-        frame.sky_point(rel.normalize().as_vec3(), color(s.class.color()).scale(brightness * starlight));
+        (rel.normalize().as_vec3(), color(s.class.color()).scale(brightness))
+    };
+    let others = || g.stars.iter().enumerate().filter(|(i, _)| *i != app.view.origin).map(|(_, s)| s); // ours is drawn as a body
+    if cam.length() > 1.0e14 {
+        // Zoomed out toward the galaxy's scale: the stars shift as we move.
+        for s in others() {
+            let (dir, c) = star(s);
+            frame.sky_point(dir, c.scale(starlight));
+        }
+    } else {
+        // Within a system they don't: worked out once per system.
+        let mut cache = app.sky_cache.borrow_mut();
+        if cache.as_ref().is_none_or(|(o, _)| *o != app.view.origin) {
+            *cache = Some((app.view.origin, others().map(star).collect()));
+        }
+        for &(dir, c) in &cache.as_ref().expect("filled").1 {
+            frame.sky_point(dir, c.scale(starlight));
+        }
     }
     // The gate network, once we're zoomed out far enough to see it as a map.
     if app.mode == Mode::Observer && cam.length() > 1.0e15 {
@@ -217,6 +231,9 @@ fn orbits(frame: &mut Frame, app: &App) {
     }
 }
 
+/// A terrain globe bigger than this on screen (radius, px) gets its full mesh.
+const GLOBE_FULL_PX: f32 = 90.0;
+
 fn bodies(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let t = app.u.world.time;
@@ -250,14 +267,16 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
-        if let Some(globe) = app.globes.get(&(app.view.origin, i)) {
+        if let Some((full, coarse)) = app.globes.get(&(app.view.origin, i)) {
+            // Small on screen: the coarse mesh does (a sixteenth of the triangles).
+            let globe = if px > GLOBE_FULL_PX { full } else { coarse };
             // Terrain world: colored globe; near the surface, a local grid on
             // the ground (the globe drops a hair so the grid sits on top).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
-            frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, if app.show_grid { grid_detail(px) } else { 0.0 }, terrain_view::FILL * 2.5);
+            universe_prof::time("draw/scene/bodies/globe mesh", || frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, if app.show_grid { grid_detail(px) } else { 0.0 }, terrain_view::FILL * 2.5));
             if near {
-                terrain_view::surface_grid(frame, b, center, t, None, app.show_grid);
+                universe_prof::time("draw/scene/bodies/surface grid", || terrain_view::surface_grid(frame, b, center, t, None, app.show_grid));
                 // On foot here: a fine grid underfoot.
                 if let universe_sim::world::Place::Outside { body, .. } = app.u.crew.place
                     && body == i
@@ -267,7 +286,7 @@ fn bodies(frame: &mut Frame, app: &App) {
                 }
             }
             if frame.projected_radius(center, b.rail.radius) > 150.0 {
-                terrain_view::crater_rims(frame, b, center, t);
+                universe_prof::time("draw/scene/bodies/crater rims", || terrain_view::crater_rims(frame, b, center, t));
             }
         } else {
             let (model, fill): (&WireModel, Color) = match b.kind {

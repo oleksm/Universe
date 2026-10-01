@@ -4,6 +4,7 @@ edition.workspace = true
 version.workspace = true
 
 [dependencies]
+universe-prof = { path = "../prof" }
 wgpu.workspace = true
 winit.workspace = true
 glam.workspace = true

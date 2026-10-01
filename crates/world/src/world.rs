@@ -83,6 +83,9 @@ pub struct World {
     neighbours: HashMap<usize, Rc<[usize]>>,
     /// Body snapshots per system for the current moment, shared by every ship there.
     ephemerides: HashMap<usize, (f64, Rc<Ephemeris>)>,
+    /// Body positions per system at one moment (the last asked for), shared
+    /// by everyone there: see `rails_now`.
+    rails: HashMap<usize, [RailsAt; 2]>,
     positions: Vec<DVec3>,
     /// Slugs in flight (see `weapons`).
     pub slugs: Vec<Slug>,
@@ -104,6 +107,9 @@ pub struct World {
     pub(crate) turret_tracks: HashMap<usize, crate::turrets::TurretTrack>,
 }
 
+/// Body positions at a moment (see `World::rails_now`).
+type RailsAt = (f64, Rc<Vec<DVec3>>);
+
 impl World {
     pub fn new(seed: u64) -> Self {
         let galaxy = Galaxy::generate(seed, GALAXY_STARS);
@@ -117,6 +123,7 @@ impl World {
             systems: HashMap::new(),
             neighbours: HashMap::new(),
             ephemerides: HashMap::new(),
+            rails: HashMap::new(),
             positions: Vec::new(),
             slugs: Vec::new(),
             beams: Vec::new(),
@@ -250,9 +257,29 @@ impl World {
             && h.engage != ship.hyperdrive
         {
             let sys = self.system(system);
-            sys.positions(self.time, &mut self.positions);
-            hyperdrive::switch(&sys, ship, h, self.time, &self.positions, events);
+            let positions = self.rails_now(system);
+            hyperdrive::switch(&sys, ship, h, self.time, &positions, events);
         }
+    }
+
+    /// Where the bodies of `system` are now: solved once per moment and
+    /// shared (a thousand ships in a system ask every frame).
+    pub fn rails_now(&mut self, system: usize) -> Rc<Vec<DVec3>> {
+        // The last two moments: each ship's turn runs from the frame's start
+        // to its end, so both are asked for, turn after turn.
+        let t = self.time;
+        if let Some(slots) = self.rails.get(&system)
+            && let Some((_, p)) = slots.iter().find(|(at, _)| *at == t)
+        {
+            return p.clone();
+        }
+        let sys = self.system(system);
+        let mut p = Vec::with_capacity(sys.bodies.len());
+        sys.positions(t, &mut p);
+        let p = Rc::new(p);
+        let slots = self.rails.entry(system).or_insert_with(|| [(f64::NAN, p.clone()), (f64::NAN, p.clone())]);
+        slots[1] = std::mem::replace(&mut slots[0], (t, p.clone()));
+        p
     }
 
     /// Advance one ship in `system` by `real_dt` real seconds, the world
@@ -286,7 +313,7 @@ impl World {
             }
             ShipState::Landed { body, local_position, local_orientation } => {
                 let weld = Weld { body, local_position, local_orientation };
-                self.landed_step(&sys, ship, weld, commands.turn, real_dt, warp, events)
+                universe_prof::time("sim/crafts/tick/world step/landed", || self.landed_step(&sys, *system, ship, weld, commands.turn, real_dt, warp, events))
             }
             ShipState::Transit { to, from, remaining, local_velocity, local_offset, local_orientation } => {
                 // The transit takes a few real seconds; the world clock keeps its pace.
@@ -304,7 +331,7 @@ impl World {
                     ship.steer(turn, real_dt);
                 }
                 let neighbours = self.neighbours(*system);
-                let result = self.hyperdrive_step(&sys, ship, *system, &neighbours, computer, real_dt, warp, events);
+                let result = universe_prof::time("sim/crafts/tick/world step/hyperdrive", || self.hyperdrive_step(&sys, ship, *system, &neighbours, computer, real_dt, warp, events));
                 near = Some(neighbours);
                 result
             }
@@ -312,23 +339,24 @@ impl World {
                 if let Some(turn) = &commands.turn {
                     ship.steer(turn, real_dt);
                 }
-                self.flight_step(&sys, ship, *system, computer, real_dt * warp, events)
+                universe_prof::time("sim/crafts/tick/world step/flight (physics)", || self.flight_step(&sys, ship, *system, computer, real_dt * warp, events))
             }
         };
         // The skin in air (and cooling after).
         if ship.is_flying() && !ship.hyperdrive {
+            let _air = universe_prof::scope("sim/crafts/tick/world step/air lookup");
             let air = if sys.bodies.iter().any(|b| b.rail.atmosphere.is_some()) {
-                let mut positions = Vec::with_capacity(sys.bodies.len());
-                sys.positions(self.time, &mut positions);
+                let positions = self.rails_now(*system);
                 universe_physics::air_at(&sys.bodies, ship.position, &positions, self.time)
             } else {
                 None
             };
-            crate::heat::heat(ship, air, real_dt * warp, events);
+            universe_prof::time("sim/crafts/tick/world step/heat", || crate::heat::heat(ship, air, real_dt * warp, events));
         } else if ship.hyperdrive {
             crate::heat::heat(ship, None, real_dt * warp, events);
         }
         if ship.is_flying() {
+            let _p = universe_prof::scope("sim/crafts/tick/world step/handover");
             let neighbours = near.unwrap_or_else(|| self.neighbours(*system));
             self.handover(ship, system, &neighbours, events);
         }
@@ -341,6 +369,7 @@ impl World {
     fn landed_step(
         &mut self,
         sys: &StarSystem,
+        system: usize,
         ship: &mut Ship,
         weld: Weld,
         turn: Option<Controls>,
@@ -351,7 +380,8 @@ impl World {
         let result = self.advance_clock(real_dt * warp);
         let b = &sys.bodies[weld.body];
         let rot = b.rotation(self.time);
-        sys.positions(self.time, &mut self.positions);
+        let rails = self.rails_now(system);
+        self.positions.clone_from(&rails);
 
         let mut rigid = ship.rigid();
         weld.place(&sys.bodies, self.time, &self.positions, &mut rigid);
@@ -387,7 +417,8 @@ impl World {
         events: &mut Vec<ShipEvent>,
     ) -> StepResult {
         let result = self.advance_clock(real_dt * warp);
-        sys.positions(self.time, &mut self.positions);
+        let rails = self.rails_now(system);
+        self.positions.clone_from(&rails);
         let c = computer.hyperdrive(sys, ship, self.time, &self.positions);
         ship.set_controls(&c);
         if let Some(turn) = &c.turn {

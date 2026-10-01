@@ -2239,6 +2239,7 @@ dependencies = [
  "serde",
  "serde_json",
  "universe-engine",
+ "universe-prof",
  "universe-sim",
 ]
 
@@ -2249,6 +2250,7 @@ dependencies = [
  "glam",
  "serde",
  "universe-physics",
+ "universe-prof",
  "universe-world",
 ]
 
@@ -2263,6 +2265,7 @@ dependencies = [
  "log",
  "png",
  "pollster",
+ "universe-prof",
  "wgpu",
  "winit",
 ]
@@ -2275,6 +2278,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe-prof"
+version = "0.1.0"
+
+[[package]]
 name = "universe-sim"
 version = "0.1.0"
 dependencies = [
@@ -2283,6 +2290,7 @@ dependencies = [
  "serde_json",
  "universe-avionics",
  "universe-physics",
+ "universe-prof",
  "universe-world",
 ]
 
@@ -2293,6 +2301,7 @@ dependencies = [
  "glam",
  "serde",
  "universe-physics",
+ "universe-prof",
 ]
 
 [[package]]

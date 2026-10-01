@@ -180,7 +180,9 @@ impl<G: Game> Runner<G> {
         }
 
         let t0 = Instant::now();
+        let update = universe_prof::scope("update");
         self.game.update(&mut s.ctx);
+        drop(update);
         s.ctx.input.end_frame();
         if s.ctx.exit {
             event_loop.exit();
@@ -189,11 +191,19 @@ impl<G: Game> Runner<G> {
 
         let t1 = Instant::now();
         let mut frame = Frame::new(self.game.camera(), s.renderer.low_res().as_vec2(), s.renderer.hud_size().as_vec2());
-        self.game.draw(&mut frame, &s.ctx);
+        {
+            let _p = universe_prof::scope("draw");
+            self.game.draw(&mut frame, &s.ctx);
+        }
         let t2 = Instant::now();
         let capture = s.ctx.screenshot.take();
-        s.renderer.render(&mut s.gpu, &frame, capture.as_deref());
+        {
+            let _p = universe_prof::scope("render");
+            s.renderer.render(&mut s.gpu, &frame, capture.as_deref());
+        }
         let t3 = Instant::now();
+        universe_prof::add("render/wait for the surface (vsync)", s.renderer.wait.as_secs_f64());
+        universe_prof::frame_end();
 
         let ms = |d: std::time::Duration| d.as_secs_f32() * 1000.0;
         let p = &mut s.ctx.perf;
@@ -207,6 +217,9 @@ impl<G: Game> Runner<G> {
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();
             log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
+            if universe_prof::enabled() {
+                log::info!("profile (last {} frames):\n{}", universe_prof::WINDOW, universe_prof::report_text());
+            }
             event_loop.exit();
         }
     }
@@ -230,6 +243,10 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         let gpu = Gpu::new(window.clone(), event_loop.owned_display_handle(), self.config.vsync);
         // Screenshot runs render 16:9 regardless of how the window manager sized us.
         let screenshot_run = std::env::var_os("UNIVERSE_SCREENSHOT").is_some();
+        // UNIVERSE_PROFILE=1: profile from the start (F3 in the game toggles it too).
+        if std::env::var_os("UNIVERSE_PROFILE").is_some() {
+            universe_prof::enable(true);
+        }
         let renderer = Renderer::new(&gpu, self.config.low_res_height, self.config.hud_scale, screenshot_run.then_some(16.0 / 9.0));
         let ctx = Context {
             input: Input::default(),

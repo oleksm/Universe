@@ -28,9 +28,9 @@ pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
 
 /// A unit globe (latitude/longitude lines) displaced by the terrain and
 /// colored by what's under each point. Built once per body.
-pub fn globe(body: &Body) -> Option<WireModel> {
+pub fn globe(body: &Body, detail: u32) -> Option<WireModel> {
     let terrain = body.terrain.as_ref()?;
-    let mut m = WireModel::globe(24, 14, 4);
+    let mut m = WireModel::globe(24, 14, detail);
     m.colors = m
         .positions
         .iter()

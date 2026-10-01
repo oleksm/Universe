@@ -282,6 +282,34 @@ pub fn apply(app: &mut App, name: &str) {
             }
             observe(app, station, 25_000.0, 0.35);
         }
+        "crowd" => {
+            // A crowded place without the wait: 300 of the home system's
+            // crafts flying their routes within 40 km of the station, and us
+            // 8 km out looking at it (for profiling).
+            app.mode = Mode::Pilot;
+            let st = positions[station];
+            let v = sys.velocity(station, t);
+            let home = app.u.ship_system;
+            let mut rng = 7u64;
+            let mut next = || {
+                rng = rng.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+                ((rng >> 11) as f64 / (1u64 << 53) as f64) * 2.0 - 1.0
+            };
+            for c in app.u.crafts.iter_mut().filter(|c| c.system == home).take(300) {
+                let off = DVec3::new(next(), next(), next()).normalize_or(DVec3::X) * (5_000.0 + 35_000.0 * next().abs());
+                c.ship.state = ShipState::Flying;
+                c.ship.hyperdrive = false;
+                c.ship.position = st + off;
+                c.ship.velocity = v + DVec3::new(next(), next(), next()) * 30.0;
+                c.avionics.route.active = !c.avionics.route.stops.is_empty();
+                c.avionics.route.dwell_until = None;
+                c.avionics.route.departing = false;
+            }
+            let side = (app.u.ship.position - st).normalize_or(DVec3::X);
+            app.u.ship.position = st + side * 8_000.0;
+            app.u.ship.velocity = v;
+            app.u.ship.orientation = universe_sim::ship::facing(-side, side.any_orthonormal_vector());
+        }
         "collision" => {
             // Collision warning on, 3 km from the station and closing at 80 m/s, a little off its center.
             app.mode = Mode::Pilot;

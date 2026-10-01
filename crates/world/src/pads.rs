@@ -186,6 +186,11 @@ impl TrafficControl {
         self.ports.get(&(system, port)).map_or([None; PADS], |p| p.owners.map(|o| o.map(|o| o.ship)))
     }
 
+    /// Every corridor held: (system, body, ship).
+    pub fn corridors_held(&self) -> impl Iterator<Item = (usize, usize, usize)> + '_ {
+        self.corridors.iter().map(|(&(system, body), &ship)| (system, body, ship))
+    }
+
     /// Who holds the corridor of `body` in `system`.
     pub fn corridor(&self, system: usize, body: usize) -> Option<usize> {
         self.corridors.get(&(system, body)).copied()

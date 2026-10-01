@@ -189,7 +189,7 @@ impl Universe {
         use universe_avionics::hunter::{may_defend, wants_sightings, DEFEND_RANGE, FLEE_HULL};
         let c = &self.crafts[i];
         let threat = may_defend(&c.avionics, &c.ship) && self.aggressors.iter().any(|&(s, p)| s == c.system && p.distance(c.ship.position) < DEFEND_RANGE);
-        let sightings = if threat || wants_sightings(&c.avionics, &c.ship, self.world.time) { self.sightings(i) } else { Vec::new() };
+        let sightings = if threat || wants_sightings(&c.avionics, &c.ship, self.world.time) { universe_prof::time("sim/crafts/sightings", || self.sightings(i)) } else { Vec::new() };
         let c = &self.crafts[i];
         let mark = match c.avionics.following.map(|f| f.anchor) {
             Some(universe_avionics::follow::Anchor::Ship(id)) => self.ship_mark(c.system, c.ship.position, id),
@@ -201,9 +201,9 @@ impl Universe {
         let mut events = Vec::new();
         let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };
         let was_hunting = vessel.avionics.hunting.is_some();
-        let (stick, end) = vessel.run(&mut self.world, |a, link, ev| a.hunt(link, &sightings, ev));
+        let (stick, end) = universe_prof::time("sim/crafts/hunt", || vessel.run(&mut self.world, |a, link, ev| a.hunt(link, &sightings, ev)));
         let stick = stick.or_else(|| vessel.run(&mut self.world, |a, link, ev| a.follow_step(link, mark, ev)));
-        vessel.tick(&mut self.world, &stick.unwrap_or_default(), real_dt, warp);
+        universe_prof::time("sim/crafts/tick", || vessel.tick(&mut self.world, &stick.unwrap_or_default(), real_dt, warp));
         if let Some(h) = c.avionics.hunting.filter(|_| !was_hunting) {
             if h.lawful {
                 self.traffic.defences += 1;
@@ -215,7 +215,7 @@ impl Universe {
         if end.is_some() && !c.avionics.pirate && c.ship.hull < FLEE_HULL {
             self.flee(i);
         }
-        self.traffic_events(crate::combat::craft_id(i), &events);
+        universe_prof::time("sim/crafts/traffic events", || self.traffic_events(crate::combat::craft_id(i), &events));
         let crashed = events.iter().find_map(|e| match e {
             Event::Ship(ShipEvent::Crashed { body }) => Some(body.clone()),
             _ => None,
@@ -242,7 +242,7 @@ impl Universe {
                 self.crash_log.remove(0);
             }
         }
-        self.tally_craft(i, events);
+        universe_prof::time("sim/crafts/tally", || self.tally_craft(i, events));
     }
 
     /// What craft `i`'s radar sees of the other crafts in its system (within

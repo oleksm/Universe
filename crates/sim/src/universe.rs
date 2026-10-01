@@ -13,22 +13,10 @@ use universe_world::{Controls, Facility, Person, Ship, ShipCommands, ShipEvent, 
 use crate::traffic::{CrashReport, Craft, TrafficStats};
 use crate::vessel::Vessel;
 
-/// A ship as traffic control sees it: id, system, position, on the ground,
-/// what it's cleared for.
-type ShipView = (usize, usize, DVec3, bool, Option<(universe_avionics::NavTarget, universe_avionics::nav::Phase)>);
 
 /// A ship on its final run this close to the station or gate lets the next one start (m).
 const CORRIDOR_RELEASE: f64 = 1_500.0;
 
-/// Body positions in `system` now, computed once per system.
-fn rails_at<'a>(cache: &'a mut std::collections::HashMap<usize, Vec<DVec3>>, world: &mut World, system: usize) -> &'a Vec<DVec3> {
-    cache.entry(system).or_insert_with(|| {
-        let sys = world.system(system);
-        let mut p = Vec::new();
-        sys.positions(world.time, &mut p);
-        p
-    })
-}
 
 /// What a new pilot starts with (credits).
 pub const STARTING_CREDITS: f64 = 1000.0;
@@ -145,17 +133,20 @@ impl Universe {
     /// the same moment; the clock moves once (as far as the player's ship went).
     pub fn step_world(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
         let t0 = self.world.time;
-        self.snapshot();
-        let result = self.step(real_dt, warp, controls);
+        universe_prof::time("sim/snapshot", || self.snapshot());
+        let result = universe_prof::time("sim/player", || self.step(real_dt, warp, controls));
         let t1 = self.world.time;
-        for i in 0..self.crafts.len() {
-            self.world.time = t0;
-            self.fly_craft(i, real_dt, warp);
+        {
+            let _p = universe_prof::scope("sim/crafts");
+            for i in 0..self.crafts.len() {
+                self.world.time = t0;
+                self.fly_craft(i, real_dt, warp);
+            }
         }
         self.world.time = t1;
-        self.combat(t1 - t0);
-        self.traffic_presence();
-        self.record();
+        universe_prof::time("sim/combat", || self.combat(t1 - t0));
+        universe_prof::time("sim/traffic presence", || self.traffic_presence());
+        universe_prof::time("sim/recorder", || self.record());
         result
     }
 
@@ -225,35 +216,58 @@ impl Universe {
         use universe_avionics::nav::Phase;
         use universe_avionics::NavTarget;
         let now = self.world.time;
-        let ships: Vec<ShipView> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
+        // Each system's ports, worked out once: where each is now and how
+        // its planet is turned.
+        struct Port {
+            center: DVec3,
+            unturn: DQuat,
+            radius: f64,
+            direction: DVec3,
+        }
+        type Seen = (Rc<StarSystem>, Rc<Vec<DVec3>>, Vec<Port>);
+        let mut systems: std::collections::HashMap<usize, Seen> = std::collections::HashMap::new();
+        // Corridors held, by ship: (system, body).
+        let mut held: std::collections::HashMap<usize, Vec<(usize, usize)>> = std::collections::HashMap::new();
+        for (system, body, ship) in self.world.traffic.corridors_held() {
+            held.entry(ship).or_default().push((system, body));
+        }
+        let ships = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, &self.avionics))
             .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, &c.avionics)))
-            .filter(|(_, _, s, _)| matches!(s.state, ShipState::Landed { .. }) || (s.is_flying() && !s.hyperdrive))
-            .map(|(id, system, s, a)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), a.clearance.map(|c| (c.target, c.phase))))
-            .collect();
-        let mut rails = std::collections::HashMap::new();
+            .filter(|(_, _, s, _)| matches!(s.state, ShipState::Landed { .. }) || (s.is_flying() && !s.hyperdrive));
         let mut present = Vec::new();
-        for (id, system, pos, landed, clearance) in ships {
-            let sys = self.world.system(system);
-            let positions = rails_at(&mut rails, &mut self.world, system).clone();
+        for (id, system, ship, a) in ships {
+            let (pos, landed, clearance) = (ship.position, matches!(ship.state, ShipState::Landed { .. }), a.clearance.map(|c| (c.target, c.phase)));
+            let world = &mut self.world;
+            let (sys, positions, ports) = &*systems.entry(system).or_insert_with(|| {
+                let sys = world.system(system);
+                let positions = world.rails_now(system);
+                let ports = sys
+                    .spaceports
+                    .iter()
+                    .map(|sp| Port { center: positions[sp.body], unturn: sys.bodies[sp.body].rotation(now).inverse(), radius: sys.bodies[sp.body].rail.radius, direction: sp.direction })
+                    .collect();
+                (sys, positions, ports)
+            });
             let mut p = universe_world::pads::Presence { ship: id, system, ..Default::default() };
             // Pads: on one, or in the column over it.
-            for (port, sp) in sys.spaceports.iter().enumerate() {
-                let center = positions[sp.body];
-                let local = sys.bodies[sp.body].rotation(now).inverse() * (pos - center);
-                let dir = local.normalize();
-                let r = sys.bodies[sp.body].rail.radius;
-                if local.length() - r > 5_000.0 || dir.angle_between(sp.direction) * r > 800.0 {
+            for (port, sp) in ports.iter().enumerate() {
+                let off = pos - sp.center;
+                if off.length() - sp.radius > 5_000.0 {
+                    continue;
+                }
+                let dir = (sp.unturn * off).normalize();
+                if dir.angle_between(sp.direction) * sp.radius > 800.0 {
                     continue;
                 }
                 let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
-                    let d = |k| universe_world::spaceport::pad_direction(&sys, port, k).angle_between(dir);
+                    let d = |k| universe_world::spaceport::pad_direction(sys, port, k).angle_between(dir);
                     d(a).total_cmp(&d(b))
                 });
                 p.pad = nearest.map(|k| (port, k));
             }
             // Corridors it holds and is done with.
-            for (b, body) in sys.bodies.iter().enumerate() {
-                if !matches!(body.kind, universe_world::BodyKind::Station | universe_world::BodyKind::Gate) || self.world.traffic.corridor(system, b) != Some(id) {
+            for &(s, b) in held.get(&id).map_or(&[][..], |v| &v[..]) {
+                if s != system {
                     continue;
                 }
                 let d = positions[b].distance(pos);

@@ -101,8 +101,11 @@ pub struct App {
     /// The ETA shown on the HUD (real seconds): counts down each frame and
     /// eases toward each new plan's prediction instead of jumping.
     pub eta_shown: Option<f64>,
-    /// Colored terrain globes, built once per (system, body).
-    pub globes: std::collections::HashMap<(usize, usize), universe_engine::WireModel>,
+    /// Colored terrain globes, built once per (system, body): the full mesh,
+    /// and a coarse one for when it's small on screen.
+    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::WireModel, universe_engine::WireModel)>,
+    /// The galaxy's stars as seen from a system: (system, direction and colour of each).
+    pub sky_cache: std::cell::RefCell<Option<SkyCache>>,
     /// The navigation map, when open.
     pub nav_map: Option<navmap::NavMap>,
     /// The market screen, when open; and whether we're docked at a market.
@@ -181,6 +184,7 @@ impl App {
             sim_ms: 0.0,
             eta_shown: None,
             globes: std::collections::HashMap::new(),
+            sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
             market: None,
             docked_market: false,
@@ -263,6 +267,10 @@ impl App {
         }
         if input.pressed(KeyCode::F1) {
             self.show_help = !self.show_help;
+        }
+        // F3: the profiler, and its panel.
+        if input.pressed(KeyCode::F3) {
+            universe_prof::enable(!universe_prof::enabled());
         }
         if input.pressed(KeyCode::KeyO) {
             self.show_grid = !self.show_grid;
@@ -500,9 +508,9 @@ impl App {
         let origin = self.view.origin;
         for (i, b) in self.view.system.bodies.iter().enumerate() {
             if !self.globes.contains_key(&(origin, i))
-                && let Some(g) = terrain_view::globe(b)
+                && let (Some(full), Some(coarse)) = (terrain_view::globe(b, 4), terrain_view::globe(b, 1))
             {
-                self.globes.insert((origin, i), g);
+                self.globes.insert((origin, i), (full, coarse));
             }
         }
     }
@@ -611,7 +619,7 @@ impl Game for App {
         }
         let tick = std::time::Instant::now();
         let ammo = self.u.ship.ammo;
-        self.last_step = self.u.step_world(dt, self.warp(), &controls);
+        self.last_step = universe_prof::time("update/sim (step_world)", || self.u.step_world(dt, self.warp(), &controls));
         if self.u.ship.ammo < ammo {
             sound::gunshot(ctx);
         }
@@ -633,13 +641,13 @@ impl Game for App {
         }
         let ms = tick.elapsed().as_secs_f32() * 1000.0;
         self.sim_ms = if self.sim_ms == 0.0 { ms } else { self.sim_ms + (ms - self.sim_ms) * 0.05 };
-        self.handle_events(ctx);
-        self.build_globes();
+        universe_prof::time("update/events", || self.handle_events(ctx));
+        universe_prof::time("update/globes", || self.build_globes());
         if self.route_labels_for != self.u.avionics.route.stops {
             self.route_labels_for = self.u.avionics.route.stops.clone();
             self.route_labels = self.route_labels_for.clone().into_iter().map(|s| self.u.stop_name(s).to_uppercase()).collect();
         }
-        self.approach = self.u.approach();
+        self.approach = universe_prof::time("update/approach", || self.u.approach());
         self.following = self.u.following_status();
         // The planner flies the autopilot ahead through the physics, which
         // takes 1-2 ms near the target and ~10 ms for a landing from orbit:
@@ -652,7 +660,7 @@ impl Game for App {
         let every = (self.plan_cost * 20.0).clamp(0.1, 1.0);
         if changed || self.plan_age >= every || !self.u.ship.is_flying() {
             let start = std::time::Instant::now();
-            let new = self.u.plan();
+            let new = universe_prof::time("update/flight plan", || self.u.plan());
             let same_target = key.map(|c| c.target) == self.plan_for.map(|c| c.target);
             // Ease from what's on screen now (itself maybe part-way from the one before).
             self.plan_prev = if same_target && new.is_some() { self.plan.take() } else { None };
@@ -674,17 +682,17 @@ impl Game for App {
             }
             (raw, _) => raw,
         };
-        self.nav_marker = self.find_nav_marker();
+        self.nav_marker = universe_prof::time("update/nav marker", || self.find_nav_marker());
         self.reach = self.u.pilot_reach();
-        self.turrets = self.u.world.turret_motions(self.view.origin).into_iter().map(|(t, p, _)| (t, p)).collect();
+        self.turrets = universe_prof::time("update/turrets", || self.u.world.turret_motions(self.view.origin).into_iter().map(|(t, p, _)| (t, p)).collect());
         self.docked_market = self.u.docked_market().is_some();
-        self.contacts = self.u.contacts();
+        self.contacts = universe_prof::time("update/radar contacts", || self.u.contacts());
         if self.u.avionics.contact.is_some() && self.u.locked_contact_in(&self.contacts).is_none() {
             self.u.avionics.contact = None;
             self.say("RADAR CONTACT LOST".into());
         }
         let contacts = std::mem::take(&mut self.contacts);
-        self.fire = self.u.fire_control(&contacts);
+        self.fire = universe_prof::time("update/fire control", || self.u.fire_control(&contacts));
         // The collision warning, five times a second.
         self.collision_age += ctx.dt;
         if !self.u.avionics.collision_warning {
@@ -692,20 +700,20 @@ impl Game for App {
         } else if self.collision_age >= 0.2 {
             self.collision_age = 0.0;
             let start = std::time::Instant::now();
-            self.collision = self.u.collision_warning(&contacts);
+            self.collision = universe_prof::time("update/collision warning", || self.u.collision_warning(&contacts));
             self.collision_cost = start.elapsed().as_secs_f32();
             self.collision_at = self.u.world.time;
         }
         self.contacts = contacts;
         self.hit_age += ctx.dt;
         self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
-        self.build_view();
+        universe_prof::time("update/build view", || self.build_view());
         self.update_camera(dt, focus_changed);
         if let Some(t) = self.sound_test {
             let next = t + dt;
             self.sound_test = dev::sound_test(ctx, next, t).then_some(next);
         } else {
-            sound::update(ctx, self);
+            universe_prof::time("update/sound", || sound::update(ctx, self));
         }
 
         for m in &mut self.messages {
@@ -719,8 +727,8 @@ impl Game for App {
     }
 
     fn draw(&self, frame: &mut Frame, ctx: &Context) {
-        scene::draw(frame, self);
-        hud::draw(frame, self, ctx);
+        universe_prof::time("draw/scene", || scene::draw(frame, self));
+        universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));
     }
 }
 
@@ -734,6 +742,9 @@ pub fn ship_visible(app: &App) -> bool {
     };
     !matches!(app.u.ship.state, ShipState::Destroyed { .. } | ShipState::Transit { .. }) && view
 }
+
+/// The galaxy's stars seen from a system: the system, and each star's direction and colour.
+pub type SkyCache = (usize, Vec<(universe_engine::glam::Vec3, universe_engine::Color)>);
 
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))

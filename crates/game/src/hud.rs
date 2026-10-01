@@ -30,7 +30,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::market::draw(frame, app, m);
         return;
     }
-    sun_glare(frame, app);
+    universe_prof::time("draw/hud/sun glare", || sun_glare(frame, app));
     let mut lines: Vec<(String, Color)> = Vec::new();
     status(app, &mut lines);
     match app.mode {
@@ -40,13 +40,13 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             pilot_info(app, &mut lines);
             follow_info(app, &mut lines);
             approach_info(app, &mut lines);
-            pilot_overlay(frame, app);
+            universe_prof::time("draw/hud/pilot overlay", || pilot_overlay(frame, app));
             target_marker(frame, app);
-            contact_marker(frame, app);
-            turret_markers(frame, app);
+            universe_prof::time("draw/hud/contact marker", || contact_marker(frame, app));
+            universe_prof::time("draw/hud/turret markers", || turret_markers(frame, app));
             impact_label(frame, app);
             phase_banner(frame, app);
-            scanner(frame, app);
+            universe_prof::time("draw/hud/scanner", || scanner(frame, app));
         }
     }
     // Leave room for the phase banner across the top while docking/landing.
@@ -62,7 +62,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
 
     let size = frame.size();
     perf(frame, app, ctx, top);
-    kill_feed(frame, app, top + 8.0 * LINE);
+    if universe_prof::enabled() {
+        profile_panel(frame);
+    }
+    universe_prof::time("draw/hud/kill feed", || kill_feed(frame, app, top + 8.0 * LINE));
     trade_feed(frame, app, top + 15.0 * LINE);
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
@@ -1258,6 +1261,26 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) {
     }
 }
 
+/// The profiler's report (F3): every scope taking real time, as a tree, with
+/// its mean and worst time per frame over the last couple of seconds.
+fn profile_panel(frame: &mut Frame) {
+    let rows: Vec<universe_prof::Stat> = universe_prof::report().into_iter().filter(|s| s.mean_ms >= 0.02 || s.max_ms >= 1.0).collect();
+    let mut text = String::from("PROFILE (F3)            MEAN    MAX  CALLS\n");
+    for st in rows.iter().take(48) {
+        let depth = st.name.matches('/').count();
+        let leaf = st.name.rsplit('/').next().unwrap_or(st.name).to_uppercase();
+        let label: String = format!("{}{leaf}", " ".repeat(depth)).chars().take(22).collect();
+        let calls = if st.calls >= 1.5 { format!("{:.0}", st.calls) } else { String::new() };
+        text += &format!("{label:<22} {:>6.2} {:>6.2} {calls:>6}\n", st.mean_ms, st.max_ms);
+    }
+    let size = frame.size();
+    let box_size = text_size(&text);
+    let pos = Vec2::new(size.x - box_size.x - 8.0, size.y * 0.25).floor();
+    frame.hud_rect(pos - 4.0, box_size + 8.0, Color([0.0, 0.02, 0.0, 0.85]));
+    frame.hud_box(pos - 4.0, box_size + 8.0, DIM);
+    frame.text(pos, &text, HUD);
+}
+
 fn help(frame: &mut Frame) {
     let text = "\
 GLOBAL
@@ -1269,6 +1292,7 @@ GLOBAL
  F8       MUTE
  F5  F9   QUICKSAVE / LOAD
  F12      SCREENSHOT
+ F3       PROFILER: WHERE EACH FRAME'S TIME GOES
 OBSERVER
  DRAG     ROTATE (ARROWS TOO)
  WHEEL    ZOOM (W S TOO)

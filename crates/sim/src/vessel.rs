@@ -81,6 +81,11 @@ impl Bus for Link<'_> {
         self.world.turret_motions(self.system).into_iter().map(|(_, p, v)| (p, v)).collect()
     }
 
+    fn positions(&mut self) -> (Rc<StarSystem>, Vec<glam::DVec3>) {
+        let sys = self.world.system(self.system);
+        (sys, (*self.world.rails_now(self.system)).clone())
+    }
+
     fn command(&mut self, c: &ShipCommands) -> Vec<ShipEvent> {
         let mut events = Vec::new();
         self.world.command(self.ship, self.system, c, &mut events);
@@ -98,15 +103,15 @@ impl Vessel<'_> {
     /// The ship's turn: `real_dt` real seconds at `warp`, with the pilot's
     /// `controls` (see the module docs for the order).
     pub fn tick(&mut self, world: &mut World, controls: &Controls, real_dt: f64, warp: f64) -> StepResult {
-        self.run(world, |a, link, events| a.prepare(link, events));
+        universe_prof::time("sim/crafts/tick/avionics prepare", || self.run(world, |a, link, events| a.prepare(link, events)));
         // The pilot's stick turns the ship, unless a computer is flying it.
         let commands = ShipCommands { turn: (!self.avionics.flies(self.ship)).then_some(*controls), ..self.ship.holding() };
         let mut happened = Vec::new();
         let mut computer = self.avionics.computer();
-        let result = world.step_ship(self.ship, self.system, &commands, &mut computer, real_dt, warp, &mut happened);
+        let result = universe_prof::time("sim/crafts/tick/world step", || world.step_ship(self.ship, self.system, &commands, &mut computer, real_dt, warp, &mut happened));
         let arrived = computer.arrived.take();
         self.avionics.record(happened, self.events);
-        self.run(world, |a, link, events| a.conclude(link, arrived, events));
+        universe_prof::time("sim/crafts/tick/avionics conclude", || self.run(world, |a, link, events| a.conclude(link, arrived, events)));
         result
     }
 }
