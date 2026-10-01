@@ -354,7 +354,7 @@ impl Engine {
             let held = held.into_iter().map(|i| (i, u.quote_for(f, i))).collect();
             MarketView { market: f, quotes, banned, held }
         });
-        let pads = (0..sys.spaceports.len()).map(|p| u.world.traffic.owners(system, p)).collect();
+        let pads = (0..sys.spaceports.len()).map(|p| u.atc.owners(system, p)).collect();
         self.serial += 1;
         View {
             time: now,

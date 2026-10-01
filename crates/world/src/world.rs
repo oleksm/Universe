@@ -67,8 +67,6 @@ pub struct World {
     pub impacts: Vec<Impact>,
     /// The goods traded in this galaxy (see `goods`).
     pub goods: Vec<Item>,
-    /// Traffic control: pads and corridors (see `pads`).
-    pub traffic: crate::pads::TrafficControl,
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
     pub(crate) turrets: Mutex<HashMap<usize, Arc<Vec<crate::turrets::Turret>>>>,
     pub(crate) turret_cooldowns: HashMap<usize, f64>,
@@ -122,7 +120,6 @@ impl World {
             beams: Vec::new(),
             impacts: Vec::new(),
             goods: crate::goods::catalog(seed),
-            traffic: Default::default(),
             turrets: Default::default(),
             turret_cooldowns: HashMap::new(),
             turret_tracks: HashMap::new(),

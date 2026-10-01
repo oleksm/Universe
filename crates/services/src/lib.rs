@@ -3,10 +3,12 @@
 //! domain, and record why — every authoritative change carries its `Cause`
 //! (see `docs/rearchitecture.md` §5).
 
+pub mod atc;
 pub mod law;
 pub mod ledger;
 pub mod market;
 
+pub use atc::{PadGrant, Presence, TrafficControl};
 pub use law::{Law, Ruling, AGGRESSION};
 pub use ledger::{Asset, Ledger, Party};
 pub use market::{Markets, Order};

@@ -1,5 +1,6 @@
-//! Traffic control: who may use which landing pad and which corridor, as one
-//! service with explicit claims and releases.
+//! Traffic control (a service): who may use which station, port or gate
+//! (clearance), which landing pad and which corridor, with explicit claims
+//! and releases.
 //!
 //! - **Pads**: a ship cleared to land is given a pad of its own
 //!   (`request_pad`); when they're all taken it's queued (it holds, see
@@ -16,7 +17,11 @@
 
 use std::collections::HashMap;
 
-use crate::spaceport::PADS;
+use glam::DVec3;
+use universe_world::ship::Ship;
+use universe_world::spaceport::PADS;
+use universe_world::system::{BodyKind, StarSystem};
+use universe_world::traffic::Facility;
 
 pub use universe_protocol::PadGrant;
 
@@ -218,6 +223,54 @@ impl TrafficControl {
     }
 }
 
+// Clearance: traffic control's rules on who may use a station, a port or a gate.
+
+/// The station nearest to `p`, if the system has one.
+pub fn nearest_station(sys: &StarSystem, p: DVec3, positions: &[DVec3]) -> Option<Facility> {
+    sys.bodies
+        .iter()
+        .enumerate()
+        .filter(|(_, b)| b.kind == BodyKind::Station)
+        .map(|(i, _)| (i, positions[i].distance(p)))
+        .min_by(|a, b| a.1.total_cmp(&b.1))
+        .map(|(i, _)| Facility::Station(i))
+}
+
+/// A ship asks for clearance to use `target` (if it names one) at `t`
+/// (`positions` at `t`): granted, or refused with the reason.
+pub fn request(sys: &StarSystem, ship: &Ship, target: Option<Facility>, t: f64, positions: &[DVec3]) -> Result<Facility, String> {
+    if !ship.is_flying() {
+        return Err("NOT IN FLIGHT".into());
+    }
+    if ship.hyperdrive {
+        return Err("DISENGAGE HYPERDRIVE FIRST".into());
+    }
+    if ship.armed {
+        return Err("WEAPONS ARMED - DISARM FIRST (B)".into());
+    }
+    let Some(target) = target else {
+        return Err("NO TARGET - PICK ONE ON THE MAP (M)".into());
+    };
+    let Some(at) = target.position(sys, t, positions) else {
+        return Err("TARGET NOT IN THIS SYSTEM".into());
+    };
+    let range = target.clearance_range(sys);
+    if at.distance(ship.position) > range {
+        return Err(format!("OUT OF RANGE - CLOSE TO {:.0} KM", range / 1000.0));
+    }
+    Ok(target)
+}
+
+/// A clearance for `target` lapses if the ship wanders more than twice the
+/// granting range away, the target is gone, or the ship arms its weapons.
+pub fn lapsed(sys: &StarSystem, ship: &Ship, target: Facility, t: f64, positions: &[DVec3]) -> bool {
+    if ship.armed {
+        return true;
+    }
+    let range = target.clearance_range(sys);
+    target.position(sys, t, positions).is_none_or(|p| p.distance(ship.position) > 2.0 * range)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -271,5 +324,42 @@ mod tests {
         tc.release(2);
         assert_eq!(tc.corridor(1, 5), None);
         assert_eq!(tc.request_corridor(1, 5, 3, 2.0), None);
+    }
+}
+
+#[cfg(test)]
+mod clearance_tests {
+    use universe_world::traffic::DOCK_RANGE;
+    use glam::DQuat;
+
+    use super::*;
+    use universe_world::World;
+
+    #[test]
+    fn clearance_is_granted_in_range_and_refused_otherwise() {
+        let w = World::new(42);
+        let sys = w.system(w.home_system);
+        let station = Facility::Station(sys.station().unwrap());
+        let mut positions = Vec::new();
+        sys.positions(w.time, &mut positions);
+        let at = station.position(&sys, w.time, &positions).unwrap();
+        let mut ship = Ship::new(at + DVec3::X * 4000.0, DVec3::ZERO, DQuat::IDENTITY);
+        assert_eq!(request(&sys, &ship, Some(station), w.time, &positions), Ok(station));
+        assert_eq!(nearest_station(&sys, ship.position, &positions), Some(station));
+        assert!(request(&sys, &ship, None, w.time, &positions).is_err(), "no target, no clearance");
+        assert!(request(&sys, &ship, Some(Facility::Gate(0)), w.time, &positions).is_err(), "the star is no gate");
+
+        ship.position = at + DVec3::X * (DOCK_RANGE + 1000.0);
+        assert!(request(&sys, &ship, Some(station), w.time, &positions).unwrap_err().starts_with("OUT OF RANGE"));
+        assert!(!lapsed(&sys, &ship, station, w.time, &positions), "a granted clearance holds out to twice the range");
+        ship.position = at + DVec3::X * (2.0 * DOCK_RANGE + 1000.0);
+        assert!(lapsed(&sys, &ship, station, w.time, &positions));
+
+        ship.position = at + DVec3::X * 4000.0;
+        ship.hyperdrive = true;
+        assert_eq!(request(&sys, &ship, Some(station), w.time, &positions), Err("DISENGAGE HYPERDRIVE FIRST".into()));
+        ship.hyperdrive = false;
+        ship.state = universe_world::ship::ShipState::Destroyed { respawn_in: 1.0 };
+        assert_eq!(request(&sys, &ship, Some(station), w.time, &positions), Err("NOT IN FLIGHT".into()));
     }
 }

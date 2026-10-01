@@ -197,17 +197,17 @@ impl Universe {
         systems.sort_unstable();
         systems.dedup();
         universe_prof::time("sim/crafts/freeze", || self.world.freeze(&systems, t0, t0 + real_dt * warp));
-        let (world, snaps, aggressors) = (&self.world, &self.snaps, &self.aggressors);
+        let (world, atc, snaps, aggressors) = (&self.world, &self.atc, &self.snaps, &self.aggressors);
         let delay = (self.command_delay > 0).then_some((self.tick, self.command_delay as u64));
         let turns: Vec<Turn> = {
             let _p = universe_prof::scope("sim/crafts/side by side");
-            self.crafts.par_iter_mut().enumerate().map(|(i, c)| craft_turn(world, snaps, aggressors, i, c, t0, real_dt, warp, delay)).collect()
+            self.crafts.par_iter_mut().enumerate().map(|(i, c)| craft_turn(world, atc, snaps, aggressors, i, c, t0, real_dt, warp, delay)).collect()
         };
         self.world.thaw();
         let _p = universe_prof::scope("sim/crafts/in order");
         for (i, t) in turns.into_iter().enumerate() {
             for r in &t.requests {
-                r.make(&mut self.world.traffic);
+                r.make(&mut self.atc);
             }
             self.after_turn(i, t);
         }
@@ -326,7 +326,7 @@ struct Before {
 
 /// Craft `i`'s turn against the world as it is (see `fly_crafts`).
 #[allow(clippy::too_many_arguments)]
-fn craft_turn(world: &universe_world::World, snaps: &[Snap], aggressors: &[(usize, DVec3)], i: usize, c: &mut Craft, t0: f64, real_dt: f64, warp: f64, delay: Option<(u64, u64)>) -> Turn {
+fn craft_turn(world: &universe_world::World, atc: &universe_services::TrafficControl, snaps: &[Snap], aggressors: &[(usize, DVec3)], i: usize, c: &mut Craft, t0: f64, real_dt: f64, warp: f64, delay: Option<(u64, u64)>) -> Turn {
     use universe_avionics::hunter::{may_defend, wants_sightings, DEFEND_RANGE};
     // A pirate looks around first (its radar and its friends' transponders),
     // as does anyone with an aggressor near.
@@ -342,7 +342,7 @@ fn craft_turn(world: &universe_world::World, snaps: &[Snap], aggressors: &[(usiz
     let (mut events, mut requests) = (Vec::new(), Vec::new());
     let mut end = None;
     let delay = delay.map(|(tick, k)| (&mut c.inbox, tick, k));
-    crate::vessel::turn(world, crate::combat::craft_id(i), &mut c.ship, &mut c.system, &mut c.avionics, t0, real_dt, warp, &mut events, &mut requests, delay, |a, link, ev| {
+    crate::vessel::turn(world, atc, crate::combat::craft_id(i), &mut c.ship, &mut c.system, &mut c.avionics, t0, real_dt, warp, &mut events, &mut requests, delay, |a, link, ev| {
         let (stick, e) = universe_prof::time("sim/crafts/hunt", || a.hunt(link, &sightings, ev));
         end = e;
         stick.or_else(|| a.follow_step(link, mark, ev))

@@ -20,7 +20,6 @@ pub mod gate;
 pub mod heat;
 pub mod hyperdrive;
 pub mod names;
-pub mod pads;
 pub mod radar;
 pub mod network;
 pub mod rng;

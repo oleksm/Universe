@@ -19,6 +19,7 @@ use std::sync::Arc;
 
 use universe_avionics::{Avionics, Bus, Event};
 use universe_protocol::PadGrant;
+use universe_services::TrafficControl;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, StarSystem, StepResult, World};
 
 /// A ship and the avionics flying it, borrowed for their turn.
@@ -31,6 +32,8 @@ pub(crate) struct Vessel<'a> {
     pub avionics: &'a mut Avionics,
     /// The pilot's feed: what happened, as the avionics report it.
     pub events: &'a mut Vec<Event>,
+    /// Traffic control, for the pilot's requests.
+    pub atc: &'a mut TrafficControl,
 }
 
 /// The avionics' bus to the ship being stepped: its sensors read the ship
@@ -40,6 +43,7 @@ pub(crate) struct Link<'a> {
     ship: &'a mut Ship,
     system: usize,
     id: usize,
+    atc: &'a mut TrafficControl,
     /// What the devices did, for the feed.
     happened: Vec<ShipEvent>,
 }
@@ -71,12 +75,12 @@ impl Bus for Link<'_> {
 
     fn request_pad(&mut self, port: usize) -> PadGrant {
         let now = self.world.time;
-        self.world.traffic.request_pad(self.system, port, self.id, now)
+        self.atc.request_pad(self.system, port, self.id, now)
     }
 
     fn request_corridor(&mut self, body: usize) -> Option<usize> {
         let now = self.world.time;
-        self.world.traffic.request_corridor(self.system, body, self.id, now)
+        self.atc.request_corridor(self.system, body, self.id, now)
     }
 
     fn turrets(&mut self) -> Vec<(glam::DVec3, glam::DVec3)> {
@@ -110,21 +114,21 @@ impl Bus for Link<'_> {
 fn clearance(world: &World, ship: &Ship, system: usize, target: Option<universe_avionics::NavTarget>, t: f64) -> Result<universe_avionics::NavTarget, String> {
     let sys = world.system(system);
     let positions = world.rails_at(system, t);
-    let target = target.or_else(|| universe_world::traffic::nearest_station(&sys, ship.position, &positions));
-    universe_world::traffic::request(&sys, ship, target, t, &positions)
+    let target = target.or_else(|| universe_services::atc::nearest_station(&sys, ship.position, &positions));
+    universe_services::atc::request(&sys, ship, target, t, &positions)
 }
 
 /// Does traffic control still stand by `ship`'s clearance for `target`?
 fn holds(world: &World, ship: &Ship, system: usize, target: universe_avionics::NavTarget, t: f64) -> bool {
     let sys = world.system(system);
     let positions = world.rails_at(system, t);
-    !universe_world::traffic::lapsed(&sys, ship, target, t, &positions)
+    !universe_services::atc::lapsed(&sys, ship, target, t, &positions)
 }
 
 impl Vessel<'_> {
     /// Run `f` on the avionics, connected to the ship by the bus.
     pub fn run<R>(&mut self, world: &mut World, f: impl FnOnce(&mut Avionics, &mut Link, &mut Vec<Event>) -> R) -> R {
-        let mut link = Link { world, ship: self.ship, system: *self.system, id: self.id, happened: Vec::new() };
+        let mut link = Link { world, ship: self.ship, system: *self.system, id: self.id, atc: &mut *self.atc, happened: Vec::new() };
         f(self.avionics, &mut link, self.events)
     }
 
@@ -154,7 +158,7 @@ pub(crate) enum Request {
 }
 
 impl Request {
-    pub fn make(self, traffic: &mut universe_world::pads::TrafficControl) {
+    pub fn make(self, traffic: &mut TrafficControl) {
         match self {
             Request::Pad { system, port, ship, now } => {
                 traffic.request_pad(system, port, ship, now);
@@ -206,6 +210,8 @@ impl Inbox {
 /// requests go in `requests`).
 pub(crate) struct FrameLink<'a> {
     pub world: &'a World,
+    /// Traffic control as it stood at the tick's start (requests are made after).
+    pub atc: &'a TrafficControl,
     pub ship: &'a mut Ship,
     pub system: usize,
     pub id: usize,
@@ -252,12 +258,12 @@ impl Bus for FrameLink<'_> {
 
     fn request_pad(&mut self, port: usize) -> PadGrant {
         self.requests.push(Request::Pad { system: self.system, port, ship: self.id, now: self.time });
-        self.world.traffic.peek_pad(self.system, port, self.id)
+        self.atc.peek_pad(self.system, port, self.id)
     }
 
     fn request_corridor(&mut self, body: usize) -> Option<usize> {
         self.requests.push(Request::Corridor { system: self.system, body, ship: self.id, now: self.time });
-        self.world.traffic.peek_corridor(self.system, body, self.id)
+        self.atc.peek_corridor(self.system, body, self.id)
     }
 
     fn turrets(&mut self) -> Vec<(glam::DVec3, glam::DVec3)> {
@@ -299,6 +305,7 @@ impl Bus for FrameLink<'_> {
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn turn(
     world: &World,
+    atc: &TrafficControl,
     id: usize,
     ship: &mut Ship,
     system: &mut usize,
@@ -325,7 +332,7 @@ pub(crate) fn turn(
     let delayed = delay.is_some();
     let (stick, program) = {
         let lent = delay.as_mut().map(|(inbox, tick, k)| (&mut **inbox, *tick, *k));
-        let mut l = FrameLink { world, ship: &mut *ship, system: *system, id, time: t0, requests: &mut *requests, delay: lent, seen: None, happened: Vec::new() };
+        let mut l = FrameLink { world, atc, ship: &mut *ship, system: *system, id, time: t0, requests: &mut *requests, delay: lent, seen: None, happened: Vec::new() };
         l.refresh_seen();
         let c = stick(avionics, &mut l, events);
         let p = universe_prof::time("sim/crafts/tick/avionics prepare", || avionics.prepare(&mut l, real_dt * warp, events));
@@ -346,6 +353,6 @@ pub(crate) fn turn(
     let mut clock = t0;
     universe_prof::time("sim/crafts/tick/world step", || world.step_ship_at(&mut clock, ship, system, &commands, real_dt, warp, &mut happened));
     avionics.record(happened, events);
-    let mut l = FrameLink { world, ship, system: *system, id, time: clock, requests, delay: None, seen: None, happened: Vec::new() };
+    let mut l = FrameLink { world, atc, ship, system: *system, id, time: clock, requests, delay: None, seen: None, happened: Vec::new() };
     universe_prof::time("sim/crafts/tick/avionics conclude", || avionics.conclude(&mut l, events));
 }

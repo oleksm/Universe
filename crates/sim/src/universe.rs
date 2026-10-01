@@ -64,6 +64,8 @@ pub struct Universe {
     pub log: Vec<(usize, ShipEvent)>,
     /// The law: who's fair game, since when, and why (see `universe_services::law`).
     pub law: universe_services::Law,
+    /// Traffic control (clearance, pads, corridors): a service.
+    pub atc: universe_services::TrafficControl,
     /// The ledger (credits, and what's in each hold) and the market service.
     pub ledger: universe_services::Ledger,
     pub markets: universe_services::Markets,
@@ -98,6 +100,7 @@ impl Universe {
             tick: 0,
             log: Vec::new(),
             law: Default::default(),
+            atc: Default::default(),
             ledger: Default::default(),
             markets: universe_services::Markets::new(seed, goods),
             messages: 0,
@@ -132,7 +135,7 @@ impl Universe {
 
     /// The player's ship and its avionics, and the world they're in.
     pub(crate) fn player(&mut self) -> (&mut World, Vessel<'_>) {
-        let vessel = Vessel { id: crate::combat::PLAYER, ship: &mut self.ship, system: &mut self.ship_system, avionics: &mut self.avionics, events: &mut self.events };
+        let vessel = Vessel { id: crate::combat::PLAYER, ship: &mut self.ship, system: &mut self.ship_system, avionics: &mut self.avionics, events: &mut self.events, atc: &mut self.atc };
         (&mut self.world, vessel)
     }
 
@@ -200,7 +203,7 @@ impl Universe {
     pub(crate) fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::vessel::Link, &mut Vec<Event>) -> R) -> R {
         let c = &mut self.crafts[i];
         let mut events = Vec::new();
-        let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events };
+        let mut vessel = Vessel { id: crate::combat::craft_id(i), ship: &mut c.ship, system: &mut c.system, avionics: &mut c.avionics, events: &mut events, atc: &mut self.atc };
         vessel.run(&mut self.world, f)
     }
 
@@ -250,7 +253,7 @@ impl Universe {
             )
         });
         if done {
-            self.world.traffic.release(id);
+            self.atc.release(id);
         }
         // A new ship: a clean record, and an empty hold (what was in the old
         // one went with it), because of the respawn, as logged.
@@ -282,7 +285,7 @@ impl Universe {
         type Seen = (Arc<StarSystem>, Arc<Vec<DVec3>>, Vec<Port>);
         // Corridors held, by ship: (system, body).
         let mut held: std::collections::HashMap<usize, Vec<(usize, usize)>> = std::collections::HashMap::new();
-        for (system, body, ship) in self.world.traffic.corridors_held() {
+        for (system, body, ship) in self.atc.corridors_held() {
             held.entry(ship).or_default().push((system, body));
         }
         // Who's where (on the ground, or flying in normal space).
@@ -306,11 +309,11 @@ impl Universe {
             }
         }
         // Each ship's facts, side by side.
-        let present: Vec<universe_world::pads::Presence> = ships
+        let present: Vec<universe_services::Presence> = ships
             .par_iter()
             .filter_map(|&(id, system, pos, landed, clearance)| {
                 let (sys, positions, ports) = &systems[&system];
-                let mut p = universe_world::pads::Presence { ship: id, system, ..Default::default() };
+                let mut p = universe_services::Presence { ship: id, system, ..Default::default() };
                 // Pads: on one, or in the column over it.
                 for (port, sp) in ports.iter().enumerate() {
                     let off = pos - sp.center;
@@ -346,7 +349,7 @@ impl Universe {
                 (p.pad.is_some() || !p.clear_of.is_empty()).then_some(p)
             })
             .collect();
-        self.world.traffic.presence(&present);
+        self.atc.presence(&present);
     }
 
     // The pilot's requests, to the ship's avionics (or, for `command`,

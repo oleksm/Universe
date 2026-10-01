@@ -178,7 +178,7 @@ impl Universe {
         r.dwell_until = None;
         r.departing = false;
         if c.avionics.clearance.take().is_some() {
-            self.world.traffic.release(craft_id(i));
+            self.atc.release(craft_id(i));
         }
     }
 

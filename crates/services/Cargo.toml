@@ -10,3 +10,4 @@ version.workspace = true
 universe-world = { path = "../world" }
 universe-protocol = { path = "../protocol" }
 serde.workspace = true
+glam.workspace = true

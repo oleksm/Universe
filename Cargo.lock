@@ -2339,6 +2339,7 @@ dependencies = [
 name = "universe-services"
 version = "0.1.0"
 dependencies = [
+ "glam",
  "serde",
  "universe-protocol",
  "universe-world",
