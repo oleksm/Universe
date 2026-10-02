@@ -456,17 +456,15 @@ const HULL: Color = Color::hex(0x6c7278);
 /// Metal: a hull's glint in the sun (strength, sharpness).
 const METAL: (f32, f32) = (0.35, 36.0);
 
-/// A ship's livery: neutral plating with a faint tint by its trade (the
-/// player's a clean light grey-blue).
-fn livery(name: &str) -> Color {
+/// A ship's paint scheme by its trade (see `models::SCHEMES`; ours the first).
+fn livery(name: &str) -> usize {
     match name.split(' ').next().unwrap_or("") {
-        "Trader" => Color::hex(0x9c9488),
-        "Pirate" => Color::hex(0x5e5658),
-        "Miner" => Color::hex(0x928c72),
-        "Shuttle" => Color::hex(0xa8b0b8),
-        "Settler" => Color::hex(0x868d94),
-        "" => Color::hex(0xa4adb6),
-        _ => HULL,
+        "" => 0,
+        "Trader" => 1,
+        "Pirate" => 2,
+        "Miner" => 3,
+        "Shuttle" => 4,
+        _ => 5,
     }
 }
 
@@ -667,22 +665,24 @@ fn gate_lights(frame: &mut Frame, center: DVec3, rot: DQuat, now: f64) {
     }
 }
 
-/// A ship's navigation lights: red to port, green to starboard (steady),
-/// a white strobe at its top rear flashing on its own beat (`seed`).
+/// A ship's lights: white strobes on its wing tips, a quick double flash
+/// together, and its tail strobe between them, each ship on its own beat (`seed`).
 fn nav_lights(frame: &mut Frame, lights: [DVec3; 3], pos: DVec3, turned: DQuat, now: f64, seed: usize) {
     let at = |p: DVec3| pos + turned * p;
-    frame.glow(at(lights[0]), 0.9, [5.0, 0.2, 0.12], 2.0);
-    frame.glow(at(lights[1]), 0.9, [0.15, 4.2, 0.8], 2.0);
     let beat = (now * 0.8 + seed as f64 * 0.137).fract();
-    if beat < 0.06 {
-        frame.glow(at(lights[2]), 1.4, [12.0, 12.0, 12.0], 3.0);
+    let white = [11.0, 11.0, 12.0];
+    if beat < 0.04 || (0.1..0.14).contains(&beat) {
+        frame.glow(at(lights[0]), 1.1, white, 2.4);
+        frame.glow(at(lights[1]), 1.1, white, 2.4);
+    }
+    if (0.5..0.54).contains(&beat) {
+        frame.glow(at(lights[2]), 1.3, white, 2.8);
     }
 }
 
-/// A hull drawn solid: its plating in `fill`, its panel lines a little
-/// darker (no outline), metal glinting in the sun.
-fn hull_model(frame: &mut Frame, mesh: &universe_engine::Mesh, t: &Transform, fill: Color) {
-    frame.with_surface(METAL.0, METAL.1, 0.0, |frame| frame.model_shaded(mesh, t, fill.scale(0.72), fill));
+/// A hull drawn solid in its paint (colours in the mesh), metal glinting in the sun.
+fn hull_model(frame: &mut Frame, mesh: &universe_engine::Mesh, t: &Transform) {
+    frame.with_surface(METAL.0, METAL.1, 0.0, |frame| frame.model_colored_shaded(mesh, t, 0.55, 0.62));
 }
 
 /// A ship's detail: its engine bells (dark, heat-stained metal) and its
@@ -712,7 +712,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         }
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
-        hull_model(frame, app.models.hull(&c.ship), &t, livery(&c.name));
+        hull_model(frame, app.models.painted(&c.ship, livery(&c.name)), &t);
         hull_detail(frame, app.models.detail(&c.ship), &t);
         nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i);
         jets(frame, &c.ship, pos, turned, app.now(), i);
@@ -1339,13 +1339,13 @@ fn ship(frame: &mut Frame, app: &App) {
     if app.mode == Mode::Pilot && app.chase_cam && !panel {
         // (Its jets too: drawn behind the hull, they'd be hidden by it.)
         frame.in_front(|frame| {
-            hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
+            hull_model(frame, app.models.painted(&app.ship, 0), &t);
             hull_detail(frame, app.models.detail(&app.ship), &t);
             jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
         });
         nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
     } else {
-        hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
+        hull_model(frame, app.models.painted(&app.ship, 0), &t);
         hull_detail(frame, app.models.detail(&app.ship), &t);
         nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
         jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);

@@ -11,6 +11,8 @@ pub struct Models {
     pub station: Mesh,
     /// Each hull's, in the content's order (see `hull`).
     pub hulls: Vec<Mesh>,
+    /// Each hull in each paint scheme (`SCHEMES`), [hull][scheme].
+    pub painted: Vec<Vec<Mesh>>,
     /// Each hull's detail: its engine bells (dark metal), its canopy (glass).
     pub hull_bells: Vec<Mesh>,
     pub hull_glass: Vec<Mesh>,
@@ -28,6 +30,7 @@ impl Models {
             star: Mesh::new(WireModel::globe(16, 9, 3)),
             station: Mesh::new(platform()),
             hulls: content().hulls.iter().map(|(_, h)| Mesh::new(bevelled(h.shape()))).collect(),
+            painted: content().hulls.iter().map(|(_, h)| SCHEMES.iter().map(|s| Mesh::new(painted(h.shape(), s))).collect()).collect(),
             hull_lights: content().hulls.iter().map(|(_, h)| nav_lights(h.shape())).collect(),
             hull_bells: content().hulls.iter().map(|(_, h)| Mesh::new(bells(h))).collect(),
             hull_glass: content().hulls.iter().map(|(_, h)| Mesh::new(canopy(h.shape()))).collect(),
@@ -37,6 +40,12 @@ impl Models {
 }
 
 impl Models {
+    /// A ship's model in paint scheme `scheme` (see `SCHEMES`).
+    pub fn painted(&self, ship: &universe_sim::world::Ship, scheme: usize) -> &Mesh {
+        let k = ship.class.index().min(self.painted.len() - 1);
+        &self.painted[k][scheme.min(SCHEMES.len() - 1)]
+    }
+
     /// A ship's model: its hull's.
     pub fn hull(&self, ship: &universe_sim::world::Ship) -> &Mesh {
         &self.hulls[ship.class.index()]
@@ -59,9 +68,12 @@ impl Models {
 fn bells(h: &universe_sim::world::ship::ClassSpec) -> WireModel {
     use universe_sim::world::ship::ThrusterRole;
     let mut m = WireModel::default();
-    for t in h.thrusters.iter().filter(|t| t.role == ThrusterRole::Main) {
+    let mains: Vec<&universe_sim::world::ship::Thruster> = h.thrusters.iter().filter(|t| t.role == ThrusterRole::Main).collect();
+    // (No bell wider than leaves a gap to the next one.)
+    let room = mains.iter().flat_map(|a| mains.iter().filter(move |b| !std::ptr::eq(*a, **b)).map(move |b| a.at.distance(b.at))).fold(f64::INFINITY, f64::min);
+    for t in mains {
         let out = (-t.push).normalize().as_vec3();
-        let mouth = (0.0026 * t.thrust.sqrt()) as f32;
+        let mouth = (0.0026 * t.thrust.sqrt()).min(room * 0.44) as f32;
         let (throat, length) = (mouth * 0.55, mouth * 1.4);
         let a = out.any_orthonormal_vector();
         let b = out.cross(a);
@@ -102,13 +114,45 @@ fn canopy(s: &Shape) -> WireModel {
     if !top.is_finite() || half <= 0.0 {
         return WireModel::default();
     }
+    let _ = top;
+    // The hull's top at (x, z): the highest any part reaches there.
+    let surface = |x: f32, z: f32| -> Option<f32> {
+        s.solids
+            .iter()
+            .filter_map(|planes| {
+                let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
+                for &(n, d) in planes {
+                    let rest = d - n.x * x as f64 - n.z * z as f64;
+                    if n.y > 1e-9 {
+                        hi = hi.min(rest / n.y);
+                    } else if n.y < -1e-9 {
+                        lo = lo.max(rest / n.y);
+                    } else if rest < 0.0 {
+                        return None;
+                    }
+                }
+                (hi >= lo).then_some(hi as f32)
+            })
+            .fold(None, |a: Option<f32>, b| Some(a.map_or(b, |a| a.max(b))))
+    };
+    // As wide as the top there lets it sit (each corner on the hull), narrowing till it does.
+    let mut half = half;
+    let corners = |half: f32| [(-half * 0.5, z0), (half * 0.5, z0), (half, z1), (-half, z1)].map(|(x, z)| surface(x, z));
+    while corners(half).iter().any(|c| c.is_none()) && half > 0.05 {
+        half *= 0.8;
+    }
+    let ys = corners(half).map(|c| c.unwrap_or(0.0));
+    let floor = ys.iter().copied().fold(f32::INFINITY, f32::min);
     let h = (half * 0.55).min(len * 0.04);
-    let y = top - h * 0.15;
+    // (Sunk a little into the plating, its ridge over the highest of them.)
+    let y = |k: usize| ys[k] - h * 0.25;
+    let ridge = ys.iter().copied().fold(f32::NEG_INFINITY, f32::max) + h * 0.75;
+    let _ = floor;
     let mut m = WireModel::default();
     // Base corners (front pair narrower), the ridge.
     let p = [
-        Vec3::new(-half * 0.5, y, z0), Vec3::new(half * 0.5, y, z0), Vec3::new(half, y, z1), Vec3::new(-half, y, z1),
-        Vec3::new(-half * 0.35, y + h, z0 + 0.4 * (z1 - z0)), Vec3::new(half * 0.35, y + h, z0 + 0.4 * (z1 - z0)), Vec3::new(half * 0.6, y + h * 0.9, z1), Vec3::new(-half * 0.6, y + h * 0.9, z1),
+        Vec3::new(-half * 0.5, y(0), z0), Vec3::new(half * 0.5, y(1), z0), Vec3::new(half, y(2), z1), Vec3::new(-half, y(3), z1),
+        Vec3::new(-half * 0.35, ridge, z0 + 0.4 * (z1 - z0)), Vec3::new(half * 0.35, ridge, z0 + 0.4 * (z1 - z0)), Vec3::new(half * 0.6, ridge - h * 0.1, z1), Vec3::new(-half * 0.6, ridge - h * 0.1, z1),
     ];
     m.positions.extend_from_slice(&p);
     for (quad, n) in [([0, 1, 5, 4], Vec3::new(0.0, 0.6, -1.0)), ([1, 2, 6, 5], Vec3::X), ([3, 0, 4, 7], Vec3::NEG_X), ([4, 5, 6, 7], Vec3::Y), ([2, 3, 7, 6], Vec3::Z)] {
@@ -176,6 +220,72 @@ fn chamfered(planes: &[(DVec3, f64)], bevel: f64) -> Vec<Vec3> {
         }
     }
     corners(&all).into_iter().map(|p| p.as_vec3()).collect()
+}
+
+/// A paint scheme: the plating's colour, the accent's (a band round the
+/// fuselage, the wing tips), where along the ship the band runs (shares of
+/// its length from the nose).
+pub struct Scheme {
+    pub base: [f32; 3],
+    pub accent: [f32; 3],
+    pub band: (f32, f32),
+}
+
+/// The schemes, by who flies them: ours, traders, pirates, miners, shuttles, settlers.
+pub const SCHEMES: [Scheme; 6] = [
+    Scheme { base: [0.86, 0.88, 0.9], accent: [0.12, 0.22, 0.5], band: (0.30, 0.36) },
+    Scheme { base: [0.8, 0.76, 0.68], accent: [0.85, 0.42, 0.1], band: (0.22, 0.27) },
+    Scheme { base: [0.26, 0.27, 0.29], accent: [0.62, 0.08, 0.06], band: (0.18, 0.26) },
+    Scheme { base: [0.78, 0.62, 0.18], accent: [0.08, 0.08, 0.09], band: (0.12, 0.2) },
+    Scheme { base: [0.9, 0.91, 0.92], accent: [0.15, 0.4, 0.75], band: (0.4, 0.46) },
+    Scheme { base: [0.66, 0.69, 0.72], accent: [0.1, 0.45, 0.45], band: (0.33, 0.38) },
+];
+
+/// A shape painted: its bevelled solid (see `bevelled`) with each panel its
+/// own shade of the plating (fitted plate by plate), the bevel strips darker
+/// (the gaps), the accent in a band round it and on its outermost tips, and
+/// the engine end sooted toward the nozzles. Colours in its vertices (draw
+/// it with a white fill).
+pub fn painted(s: &Shape, scheme: &Scheme) -> WireModel {
+    let solid = bevelled(s);
+    let (lo, hi) = s.mesh.extent();
+    let (z0, len, wide) = (lo.z as f32, (hi.z - lo.z).max(1e-3) as f32, (hi.x.abs().max(lo.x.abs())) as f32);
+    let planes: Vec<Vec3> = s.solids.iter().flatten().map(|(n, _)| n.as_vec3()).collect();
+    let mut m = WireModel::default();
+    for f in &solid.faces {
+        let [a, b, c] = f.map(|i| solid.positions[i as usize]);
+        let n = (b - a).cross(c - a).normalize_or_zero();
+        let mid = (a + b + c) / 3.0;
+        let along = (mid.z - z0) / len;
+        // (A panel: on one of the part's own planes; else a bevel strip.)
+        let panel = planes.iter().any(|p| p.dot(n) > 0.999);
+        let shade = {
+            let q = (n * 7.0).round();
+            let h = ((q.x * 73.0 + q.y * 151.0 + q.z * 269.0 + (mid.z * 0.25).floor() * 37.0) as i32).rem_euclid(97) as f32 / 97.0;
+            0.93 + 0.1 * h
+        };
+        let accent = (along >= scheme.band.0 && along <= scheme.band.1) || mid.x.abs() > wide * 0.88;
+        let mut col = if accent { scheme.accent } else { scheme.base };
+        let k = if panel { shade } else { 0.72 };
+        // (Soot toward the nozzles: the last fifth darkening.)
+        let soot = if along > 0.8 { 1.0 - (along - 0.8) / 0.2 * 0.45 } else { 1.0 };
+        for c in &mut col {
+            *c *= k * soot;
+        }
+        let base = m.positions.len() as u32;
+        m.positions.extend_from_slice(&[a, b, c]);
+        m.colors.extend([[col[0], col[1], col[2], 1.0]; 3]);
+        m.faces.push([base, base + 1, base + 2]);
+    }
+    // The panel lines, the detail loops: dark.
+    for e in &solid.edges {
+        let base = m.positions.len() as u32;
+        m.positions.push(solid.positions[e[0] as usize]);
+        m.positions.push(solid.positions[e[1] as usize]);
+        m.colors.extend([[0.6, 0.6, 0.62, 1.0]; 2]);
+        m.edges.push([base, base + 1]);
+    }
+    m
 }
 
 /// A shape as the renderer draws it, its edges bevelled: each part's solid
