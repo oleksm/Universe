@@ -209,6 +209,7 @@ impl Universe {
             }
         }
         self.ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
+        self.ship.cargo_volume = universe_services::market::cargo_volume(&self.world.goods, &self.hold());
         self.world.mined = save.mined.into_iter().collect();
         self.events.clear();
     }

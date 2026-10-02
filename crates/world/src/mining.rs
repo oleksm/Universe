@@ -153,7 +153,9 @@ pub fn excavate(sys: &StarSystem, ship: &mut Ship, dug: f64, dt: f64, events: &m
         ship.excavator = false;
         events.push(ShipEvent::ExcavatorStopped { why: why.to_string() });
     };
-    let room = ship.hold_room();
+    // (As much as the hold's weight and its space allow, for this ore.)
+    let density = ore(rock).bulk_density();
+    let room = ship.takes(density);
     let left = b.mass - dug - ship.hopper;
     if room < 1.0 {
         return stop(ship, "HOLD FULL");
@@ -166,6 +168,7 @@ pub fn excavate(sys: &StarSystem, ship: &mut Ship, dug: f64, dt: f64, events: &m
     while ship.hopper >= TONNE - 1e-9 {
         ship.hopper = (ship.hopper - TONNE).max(0.0);
         ship.cargo += TONNE;
+        ship.cargo_volume += TONNE / 1000.0 / density;
         events.push(ShipEvent::Mined { field, rock: body, item });
     }
 }

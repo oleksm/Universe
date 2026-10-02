@@ -205,13 +205,17 @@ pub(crate) fn trade(pilot: &mut Pilot, charts: &Charts, ans: &MarketAnswer, requ
             })
             .collect();
         margins.sort_by(|a, b| b.0.total_cmp(&a.0));
-        let (mut room, mut money, mut gain, mut buys) = (ans.capacity - cargo, credits, 0.0, Vec::new());
+        // (As much as the hold's weight and its space allow.)
+        let volume = |item: usize| mass(item) / 1000.0 / charts.goods[item].bulk_density;
+        let sold_space: f64 = ans.hold.iter().map(|&(i, n)| volume(i) * n as f64).sum::<f64>() - hold.iter().map(|&(i, n)| volume(i) * n as f64).sum::<f64>();
+        let (mut room, mut space, mut money, mut gain, mut buys) = (ans.capacity - cargo, ans.space + sold_space, credits, 0.0, Vec::new());
         for (_, item, buy, margin, most) in margins.into_iter().take(LINES) {
-            let units = (room / mass(item)).min(money / buy).min(most).floor();
+            let units = (room / mass(item)).min(space / volume(item)).min(money / buy).min(most).floor();
             if units < 1.0 {
                 continue;
             }
             room -= units * mass(item);
+            space -= units * volume(item);
             money -= units * buy;
             gain += units * margin;
             buys.push((item, units as u32, buy));
@@ -358,7 +362,7 @@ mod ferry_tests {
     use crate::commerce::Booking;
 
     fn answer(system: usize, at: Facility) -> MarketAnswer {
-        MarketAnswer { system, at, here: Vec::new(), here_held: Vec::new(), items: Vec::new(), there: Vec::new(), credits: 0.0, hold: Vec::new(), cargo: 0.0, capacity: 0.0, bookings: Vec::new(), waiting: Vec::new(), passengers: 0, bound_for: None, seats: 30 }
+        MarketAnswer { system, at, here: Vec::new(), here_held: Vec::new(), items: Vec::new(), there: Vec::new(), credits: 0.0, hold: Vec::new(), cargo: 0.0, capacity: 0.0, space: 0.0, bookings: Vec::new(), waiting: Vec::new(), passengers: 0, bound_for: None, seats: 30 }
     }
 
     #[test]

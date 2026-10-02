@@ -555,10 +555,14 @@ fn numbers(s: &'static ClassSpec) -> Vec<(&'static str, String)> {
     // How long the tank lasts: the drive at full, and hovering at a g (loaded).
     let hours = |flow: f64| if flow > 0.0 { fmt::duration(s.fuel_capacity / flow) } else { "-".into() };
     let price = s.frame.price + s.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>();
+    // The hull's room inside, and what its modules take of it.
+    let inside = s.shape().solid.volume;
+    let taken: f64 = s.fit.iter().map(|(_, m)| c.get(*m).volume).sum();
     vec![
         ("HULL", s.name.clone()),
         ("DRY MASS", fmt::tonnes(s.dry_mass)),
-        ("TANK / HOLD", format!("{} / {}", fmt::tonnes(s.fuel_capacity), fmt::tonnes(s.hold_capacity))),
+        ("SPACE", format!("{taken:.0} OF {inside:.0} M3 USED")),
+        ("TANK / HOLD", format!("{} / {} {:.0} M3", fmt::tonnes(s.fuel_capacity), fmt::tonnes(s.hold_capacity), s.hold_volume)),
         ("POWER", format!("{:.1} OF {:.1} MW", s.power_draw / 1e6, s.power_output / 1e6)),
         ("MAIN DRIVE", format!("{:.1} M/S2", a_empty.main / loaded)),
         ("THRUSTERS", format!("{:.1} M/S2", a_empty.side / loaded)),
@@ -569,6 +573,7 @@ fn numbers(s: &'static ClassSpec) -> Vec<(&'static str, String)> {
         ("FULL DRIVE", format!("{} A TANK", hours(s.main_thrust / EXHAUST_VELOCITY))),
         ("HOVER 1 G", format!("{} A TANK", hours(loaded * G / EXHAUST_VELOCITY))),
         ("AUTOPILOTS", if s.features.is_empty() { "NONE".into() } else { s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(3).collect::<String>()).collect::<Vec<_>>().join(" ") }),
+        ("SEATS", if s.seats > 0 { format!("{} PASSENGERS", s.seats) } else { "NONE".into() }),
         ("LIST PRICE", format!("{price:.0} CR")),
     ]
 }

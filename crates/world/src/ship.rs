@@ -33,9 +33,11 @@ pub struct ClassSpec {
     pub fit: Vec<(String, crate::content::Handle<crate::modules::Module>)>,
     /// Mass without fuel or cargo (kg): the frame and its modules.
     pub dry_mass: f64,
-    /// Fuel tank (kg), and the most cargo the hold carries (kg).
+    /// Fuel tank (kg), and the most cargo the hold carries (kg) and the
+    /// room in it (m³: its racks').
     pub fuel_capacity: f64,
     pub hold_capacity: f64,
+    pub hold_volume: f64,
     /// Passenger seats (its cabins').
     pub seats: u32,
     /// The power its plant makes, and its modules draw at work (W).
@@ -399,6 +401,7 @@ impl ClassSpec {
         let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity } = m.does { Some(capacity) } else { None }).sum();
         let hold_capacity: f64 = modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum();
         let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
+        let hold_volume: f64 = modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum();
         let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output } = m.does { Some(output) } else { None }).sum();
         let power_draw: f64 = modules().map(|m| m.power).sum();
         if power_draw > power_output {
@@ -469,6 +472,7 @@ impl ClassSpec {
             dry_mass,
             fuel_capacity,
             hold_capacity,
+            hold_volume,
             seats,
             power_output,
             power_draw,
@@ -654,9 +658,12 @@ pub struct Ship {
     /// Fuel on board (kg).
     #[serde(default = "full_tank")]
     pub fuel: f64,
-    /// Cargo on board (kg): the mass of what's in the hold.
+    /// Cargo on board (kg): the mass of what's in the hold; and the room it
+    /// takes (m³).
     #[serde(default)]
     pub cargo: f64,
+    #[serde(default)]
+    pub cargo_volume: f64,
     /// Passengers aboard (each `PASSENGER_MASS`, in a cabin's seat), and
     /// where they've booked passage to (system, market) for what fare each.
     #[serde(default)]
@@ -762,6 +769,7 @@ impl Ship {
             passengers: 0,
             bound_for: None,
             fare: 0.0,
+            cargo_volume: 0.0,
             cargo: 0.0,
             excavator: false,
             hopper: 0.0,
@@ -818,6 +826,9 @@ impl Ship {
     /// what it holds.
     pub fn refit(&mut self, fit: Fit) -> Result<(), String> {
         let spec = fitted(self.class, &fit)?;
+        if self.cargo_volume > spec.hold_volume + 1e-6 {
+            return Err(format!("THE HOLD WOULD HOLD {:.0} M3, THERE'S {:.1} M3 IN IT", spec.hold_volume, self.cargo_volume));
+        }
         if self.cargo + self.hopper > spec.hold_capacity + 1e-6 {
             return Err(format!("THE HOLD WOULD TAKE {:.0} T, THERE'S {:.1} T IN IT", spec.hold_capacity / 1000.0, (self.cargo + self.hopper) / 1000.0));
         }
@@ -933,6 +944,17 @@ impl Ship {
     /// Room left in the hold (kg).
     pub fn hold_room(&self) -> f64 {
         (self.spec().hold_capacity - self.cargo - self.hopper).max(0.0)
+    }
+
+    /// Space left in the hold (m³).
+    pub fn hold_space(&self) -> f64 {
+        (self.spec().hold_volume - self.cargo_volume).max(0.0)
+    }
+
+    /// How much of something this dense (t/m³) still goes in (kg): what the
+    /// hold's weight and its space each allow, the less.
+    pub fn takes(&self, density: f64) -> f64 {
+        self.hold_room().min(self.hold_space() * density * 1000.0)
     }
 
     /// What's aboard besides fuel (kg): cargo, ore, passengers.

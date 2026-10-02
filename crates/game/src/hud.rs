@@ -418,8 +418,11 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
     }
     lines.push((String::new(), HUD));
     let full = (mass + app.ship.hopper) / capacity;
+    // (Full by weight or by space, whichever first.)
+    let room = app.ship.spec().hold_volume;
+    let full = full.max(if room > 0.0 { app.ship.cargo_volume / room } else { 0.0 });
     let bar: String = (0..20).map(|i| if (i as f64) < full * 20.0 - 0.01 { '#' } else { '.' }).collect();
-    lines.push((format!("LOADED [{bar}] {} OF {}  {:.1} M3  WORTH ABOUT {:.0} CR", fmt::tonnes(mass + app.ship.hopper), fmt::tonnes(capacity), volume, worth), if full > 0.95 { AMBER } else { HUD }));
+    lines.push((format!("LOADED [{bar}] {} OF {}  {:.1} OF {:.0} M3  WORTH ABOUT {:.0} CR", fmt::tonnes(mass + app.ship.hopper), fmt::tonnes(capacity), volume, room, worth), if full > 0.95 { AMBER } else { HUD }));
     lines.push((format!("SHIP {}  (DRY {}, FUEL {}, CARGO {})", fmt::tonnes(app.ship.mass()), fmt::tonnes(app.ship.spec().dry_mass), fmt::tonnes(app.ship.fuel), fmt::tonnes(app.ship.cargo + app.ship.hopper)), DIM));
     let width = lines.iter().map(|l| text_size(&l.0).x).fold(0.0, f32::max);
     let size = frame.size();

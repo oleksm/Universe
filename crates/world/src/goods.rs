@@ -222,6 +222,12 @@ impl Ore {
         }
     }
 
+    /// As stowed, broken, in a hold (t/m³).
+    pub fn bulk_density(self) -> f64 {
+        let c = content();
+        c.get(c.handle::<OreEntry>(self.key()).expect("every ore is in the content (checked at load)")).bulk_density
+    }
+
     /// Its goods item: after the generated goods, in `ores.ron`'s order.
     pub fn item(self) -> usize {
         let h: Handle<OreEntry> = content().handle(self.key()).expect("every ore is in the content (checked at load)");

@@ -150,9 +150,11 @@ pub struct MarketAnswer {
     pub there: Vec<(Facility, Vec<Option<Quote>>)>,
     pub credits: f64,
     pub hold: Vec<(usize, u32)>,
-    /// What its cargo weighs (kg), and the most its hold takes (kg).
+    /// What its cargo weighs (kg), and the most its hold takes (kg); the
+    /// space left in it (m³).
     pub cargo: f64,
     pub capacity: f64,
+    pub space: f64,
     /// Passage booked from here; the people waiting to leave each market in
     /// the system (thousands); its passengers aboard, where they're bound,
     /// and its free seats.

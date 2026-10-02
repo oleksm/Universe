@@ -308,7 +308,7 @@ impl Market {
     /// (positive: paid by the pilot), or why not. Credits and goods move in
     /// the ledger (this market's account: `me`), for `cause`.
     #[allow(clippy::too_many_arguments)]
-    pub fn trade(&self, state: &mut MarketState, now: f64, item: &Item, units: i64, pilot: BodyId, room: f64, ledger: &mut Ledger, me: Party, tick: Tick, cause: Cause) -> Result<f64, String> {
+    pub fn trade(&self, state: &mut MarketState, now: f64, item: &Item, units: i64, pilot: BodyId, (room, space): (f64, f64), ledger: &mut Ledger, me: Party, tick: Tick, cause: Cause) -> Result<f64, String> {
         self.recover(state, now);
         if self.banned.contains(&item.category) {
             return Err(format!("{} IS ILLEGAL HERE", item.category.name()));
@@ -330,6 +330,9 @@ impl Market {
             }
             if item.mass * n > room {
                 return Err("HOLD FULL".into());
+            }
+            if item.mass * n / 1000.0 / item.bulk_density > space + 1e-9 {
+                return Err("NO SPACE IN THE HOLD".into());
             }
             ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
             ledger.transfer(me, who, Asset::Goods(item.id), n, tick, cause)?;
@@ -375,8 +378,9 @@ pub struct Order {
     pub market: Facility,
     /// Where the pilot's ship is docked or landed, as the core reports.
     pub docked_at: Option<Facility>,
-    /// Room left in its hold (kg), as the core reports.
+    /// Room left in its hold (kg) and space (m³), as the core reports.
     pub room: f64,
+    pub space: f64,
     pub item: usize,
     pub units: i64,
 }
@@ -449,7 +453,7 @@ impl Markets {
             return self.trade_at_place(&m, ledger, o, tick, cause);
         }
         let state = self.states.entry((o.system, o.market)).or_insert_with(|| MarketState { updated: now, ..Default::default() });
-        m.trade(state, now, &self.goods[o.item], o.units, o.pilot, o.room, ledger, Party::Market(o.system, o.market), tick, cause)
+        m.trade(state, now, &self.goods[o.item], o.units, o.pilot, (o.room, o.space), ledger, Party::Market(o.system, o.market), tick, cause)
     }
 
     /// A trade at a settled market: from (or into) its place's stock.
@@ -472,6 +476,9 @@ impl Markets {
             }
             if item.mass * n > o.room {
                 return Err("HOLD FULL".into());
+            }
+            if item.mass * n / 1000.0 / item.bulk_density > o.space + 1e-9 {
+                return Err("NO SPACE IN THE HOLD".into());
             }
             ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
             ledger.transfer(me, who, Asset::Goods(item.id), n, tick, cause)?;
@@ -531,6 +538,11 @@ impl Markets {
 /// What the goods in a hold weigh (kg).
 pub fn cargo_mass(goods: &[Item], hold: &[(usize, u32)]) -> f64 {
     hold.iter().map(|&(g, n)| goods[g].mass * n as f64).sum()
+}
+
+/// The room what's in the hold takes (m³).
+pub fn cargo_volume(goods: &[Item], hold: &[(usize, u32)]) -> f64 {
+    hold.iter().map(|&(g, n)| goods[g].mass * n as f64 / 1000.0 / goods[g].bulk_density).sum()
 }
 
 #[cfg(test)]
