@@ -2327,6 +2327,7 @@ dependencies = [
 name = "universe-engine"
 version = "0.1.0"
 dependencies = [
+ "ab_glyph",
  "bytemuck",
  "cpal",
  "font8x8",

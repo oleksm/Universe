@@ -30,7 +30,7 @@ fn film(x: vec3<f32>) -> vec3<f32> {
 fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {
     let scene = textureSample(scene_tex, soft, in.uv);
     // The HUD layer holds premultiplied color (alpha-blended onto transparent black).
-    let hud = textureSample(hud_tex, nearest, in.uv);
+    let hud = textureSample(hud_tex, soft, in.uv);
     // So does the front layer (in light, before the curve).
     let front = textureSample(front_tex, soft, in.uv);
     let fa = max(front.a, 1e-4);

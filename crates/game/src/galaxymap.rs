@@ -11,8 +11,8 @@ use universe_sim::names::star_name;
 use crate::scene::color;
 use crate::App;
 
-const TEXT: Color = Color::hex(0x40ff80);
-const DIM: Color = Color::hex(0x208040);
+const TEXT: Color = Color::hex(0xdcebf2);
+const DIM: Color = Color::hex(0x7d93a0);
 const GATE: Color = Color::hex(0xffc040);
 const YOU: Color = Color::hex(0x60ffff);
 

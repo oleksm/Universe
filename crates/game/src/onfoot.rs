@@ -39,7 +39,7 @@ const FLOOR: Color = Color::hex(0x1c2026);
 const CEILING: Color = Color::hex(0x23282f);
 const EDGE: Color = Color::hex(0x7fa0b0);
 const HATCH_C: Color = Color::hex(0xffc040);
-const SEAT_C: Color = Color::hex(0x60ff90);
+const SEAT_C: Color = Color::hex(0xdcebf2);
 
 /// The ship's interior, seen from inside: shaded walls, deck and ceiling with
 /// their edges, doorways between the rooms, the cockpit's windows (open to
@@ -148,8 +148,8 @@ pub fn ramp(frame: &mut Frame, app: &App) {
 
 /// Status lines on foot, and the prompt for what's in reach.
 pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach: Option<Reach>) {
-    const HUD: Color = Color::hex(0x30ff60);
-    const DIM: Color = Color::hex(0x178a38);
+    const HUD: Color = Color::hex(0xdcebf2);
+    const DIM: Color = Color::hex(0x7d93a0);
     match app.v.crew.place {
         Place::Seat => {}
         Place::Aboard { position, .. } => {
@@ -187,20 +187,20 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
     };
     let size = frame.size();
     let p = Vec2::new(((size.x - text_size(prompt).x) / 2.0).floor(), (size.y * 0.62).floor());
-    frame.text_boxed(p, prompt, Color::hex(0xffc040), Color([0.0, 0.03, 0.01, 0.85]));
+    frame.text_boxed(p, prompt, Color::hex(0xffc040), Color([0.012, 0.018, 0.026, 0.85]));
 }
 
 /// The vending machine's panel: what it sells, the pick, and how to buy.
 fn vending_panel(frame: &mut Frame, app: &App) {
     use universe_sim::world::spaceport::VENDING;
     let pick = app.vending.unwrap_or(0);
-    let mut lines = vec![("VENDING MACHINE".to_string(), Color::hex(0xff5050)), (String::new(), Color::hex(0x30ff60))];
+    let mut lines = vec![("VENDING MACHINE".to_string(), Color::hex(0xff5050)), (String::new(), Color::hex(0xdcebf2))];
     for (k, (what, price, _)) in VENDING.iter().enumerate() {
         let here = k == pick;
-        lines.push((format!("{}{:<18} {:>3.0} CR", if here { ">" } else { " " }, what, price), if here { Color::hex(0xffc040) } else { Color::hex(0x30ff60) }));
+        lines.push((format!("{}{:<18} {:>3.0} CR", if here { ">" } else { " " }, what, price), if here { Color::hex(0xffc040) } else { Color::hex(0xdcebf2) }));
     }
-    lines.push((String::new(), Color::hex(0x30ff60)));
-    lines.push(("UP/DOWN PICK  ENTER BUY  F DONE".into(), Color::hex(0x178a38)));
+    lines.push((String::new(), Color::hex(0xdcebf2)));
+    lines.push(("UP/DOWN PICK  ENTER BUY  F DONE".into(), Color::hex(0x7d93a0)));
     let w = lines.iter().map(|l| text_size(&l.0).x).fold(0.0, f32::max);
     let size = frame.size();
     let at = Vec2::new(((size.x - w) / 2.0).floor(), (size.y * 0.35).floor());

@@ -9,8 +9,8 @@ use crate::observer::Focus;
 use crate::scene::color;
 use crate::{fmt, App, Mode};
 
-const HUD: Color = Color::hex(0x30ff60);
-const DIM: Color = Color::hex(0x178a38);
+const HUD: Color = Color::hex(0xdcebf2);
+const DIM: Color = Color::hex(0x7d93a0);
 const AMBER: Color = Color::hex(0xffc040);
 /// The key's letter, lit in an action's name.
 const HOT: Color = Color::hex(0xffffa0);
@@ -18,7 +18,7 @@ const RED: Color = Color::hex(0xff4040);
 /// Colors shared with the 3D guidance: predicted path (cyan) and guidance path (magenta).
 const PREDICT: Color = Color::hex(0x40c0ff);
 const GUIDE_PATH: Color = Color::hex(0xff60ff);
-const PANEL: Color = Color([0.0, 0.03, 0.01, 0.85]);
+const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 const LINE: f32 = GLYPH + 2.0;
 
 pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
@@ -428,7 +428,7 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
     let size = frame.size();
     // (Left, under the status lines: the notices go across the middle.)
     let pos = Vec2::new(12.0, (size.y * 0.42).floor());
-    frame.hud_rect(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, Color([0.0, 0.02, 0.0, 0.9]));
+    frame.hud_rect(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, Color([0.012, 0.018, 0.026, 0.9]));
     frame.hud_box(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, HUD.scale(0.6));
     for (k, (text, c)) in lines.iter().enumerate() {
         frame.text(pos + Vec2::new(0.0, k as f32 * LINE), text, *c);
@@ -1722,7 +1722,7 @@ fn profile_panel(frame: &mut Frame) {
     let size = frame.size();
     let box_size = text_size(&text);
     let pos = Vec2::new(size.x - box_size.x - 8.0, size.y * 0.25).floor();
-    frame.hud_rect(pos - 4.0, box_size + 8.0, Color([0.0, 0.02, 0.0, 0.85]));
+    frame.hud_rect(pos - 4.0, box_size + 8.0, Color([0.012, 0.018, 0.026, 0.85]));
     frame.hud_box(pos - 4.0, box_size + 8.0, DIM);
     frame.text(pos, &text, HUD);
 }
@@ -1740,7 +1740,7 @@ fn help(frame: &mut Frame) {
     let box_size = Vec2::new(a.x + gap + b.x, a.y.max(b.y) + 2.0 * LINE);
     let size = frame.size();
     let pos = ((size - box_size) / 2.0).floor();
-    frame.hud_rect(pos - 6.0, box_size + 12.0, Color([0.0, 0.02, 0.0, 0.94]));
+    frame.hud_rect(pos - 6.0, box_size + 12.0, Color([0.012, 0.018, 0.026, 0.94]));
     frame.hud_box(pos - 6.0, box_size + 12.0, HUD);
     frame.text(pos, &left, HUD);
     frame.text(pos + Vec2::new(a.x + gap, 0.0), &right, HUD);

@@ -43,6 +43,16 @@ pub(crate) struct Vertex {
     pub color: [f32; 4],
 }
 
+/// A HUD triangle's corner: where (layout pixels), what of the font atlas
+/// (a glyph's coverage, or its solid patch for plain fills), what colour.
+#[repr(C)]
+#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+pub(crate) struct HudVertex {
+    pub pos: [f32; 2],
+    pub uv: [f32; 2],
+    pub color: [f32; 4],
+}
+
 /// Immediate-mode draw list for one frame.
 ///
 /// World-space input is `f64`; it is converted to camera-relative `f32` on submission.
@@ -76,7 +86,7 @@ pub struct Frame {
     pub(crate) points: Vec<Vertex>,
     /// Lights' glows: discs facing the eye, adding light (see `glow`).
     pub(crate) glows: Vec<Vertex>,
-    pub(crate) hud_tris: Vec<Vertex>,
+    pub(crate) hud_tris: Vec<HudVertex>,
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
@@ -211,7 +221,7 @@ impl Frame {
         let n = |v: &Vec<Vertex>| v.len() as u32;
         let mesh_lines: usize = self.meshes.iter().filter(|m| m.edges).map(|m| m.mesh.edges.len()).sum();
         let mesh_tris: usize = self.meshes.iter().map(|m| m.mesh.faces.len()).sum();
-        (n(&self.lines) / 2 + n(&self.hud) / 2 + mesh_lines as u32, n(&self.solids) / 3 + n(&self.hud_tris) / 3 + mesh_tris as u32, n(&self.points) + n(&self.sky))
+        (n(&self.lines) / 2 + n(&self.hud) / 2 + mesh_lines as u32, n(&self.solids) / 3 + self.hud_tris.len() as u32 / 3 + mesh_tris as u32, n(&self.points) + n(&self.sky))
     }
 
     pub(crate) fn new(camera: Camera, scene_size: Vec2, hud_size: Vec2) -> Self {
@@ -520,7 +530,7 @@ impl Frame {
         for i in 0..segments {
             let (p, q) = (at(i), at(i + 1));
             for (v, c) in [(center, inner), (p, outer), (q, outer)] {
-                self.hud_tris.push(Vertex { pos: [v.x, v.y, 0.0], color: c.0 });
+                self.hud_tris.push(HudVertex { pos: [v.x, v.y], uv: crate::font::atlas().solid, color: c.0 });
             }
         }
     }
@@ -529,7 +539,7 @@ impl Frame {
     pub fn hud_rect(&mut self, pos: Vec2, size: Vec2, color: Color) {
         let (a, b) = (pos, pos + size);
         for [x, y] in [[a.x, a.y], [b.x, a.y], [b.x, b.y], [a.x, a.y], [b.x, b.y], [a.x, b.y]] {
-            self.hud_tris.push(Vertex { pos: [x, y, 0.0], color: color.0 });
+            self.hud_tris.push(HudVertex { pos: [x, y], uv: crate::font::atlas().solid, color: color.0 });
         }
     }
 
@@ -554,31 +564,27 @@ impl Frame {
         }
     }
 
-    /// Draw text with the 8x8 bitmap font; `\n` starts a new line. Returns the end position.
+    /// Draw text (the HUD typeface, on its monospaced grid); `\n` starts a
+    /// new line. Returns the end position.
     pub fn text(&mut self, pos: Vec2, text: &str, color: Color) -> Vec2 {
-        let origin = pos.floor();
+        let atlas = crate::font::atlas();
+        let origin = pos;
         let mut cursor = origin;
+        // (Each glyph centred in its cell of the grid.)
+        let inset = (GLYPH - atlas.advance) * 0.5;
         for ch in text.chars() {
             if ch == '\n' {
                 cursor = Vec2::new(origin.x, cursor.y + GLYPH + 2.0);
                 continue;
             }
-            let glyph = font8x8::legacy::BASIC_LEGACY.get(ch as usize).unwrap_or(&font8x8::legacy::BASIC_LEGACY[b'?' as usize]);
-            for (row, bits) in glyph.iter().enumerate() {
-                // Merge horizontal runs of set bits into single quads.
-                let mut col = 0;
-                while col < 8 {
-                    if bits & (1 << col) == 0 {
-                        col += 1;
-                        continue;
-                    }
-                    let start = col;
-                    while col < 8 && bits & (1 << col) != 0 {
-                        col += 1;
-                    }
-                    let p = cursor + Vec2::new(start as f32, row as f32);
-                    self.hud_rect(p, Vec2::new((col - start) as f32, 1.0), color);
-                }
+            let k = (ch as usize).wrapping_sub(32);
+            let g = atlas.glyphs.get(k).copied().unwrap_or(atlas.glyphs[(b'?' - 32) as usize]);
+            if g.at[2] > 0.0 {
+                let p = cursor + Vec2::new(inset + g.at[0], crate::font::BASELINE + g.at[1]);
+                let (a, b) = (p, p + Vec2::new(g.at[2], g.at[3]));
+                let (u0, v0, u1, v1) = (g.uv[0], g.uv[1], g.uv[2], g.uv[3]);
+                let v = |x: f32, y: f32, u: f32, w: f32| HudVertex { pos: [x, y], uv: [u, w], color: color.0 };
+                self.hud_tris.extend([v(a.x, a.y, u0, v0), v(b.x, a.y, u1, v0), v(b.x, b.y, u1, v1), v(a.x, a.y, u0, v0), v(b.x, b.y, u1, v1), v(a.x, b.y, u0, v1)]);
             }
             cursor.x += GLYPH;
         }

@@ -221,7 +221,7 @@ pub fn mark(frame: &mut Frame, s: &Scan) {
     let (u, v) = (q * DVec3::X, q * DVec3::Y);
     let r = (s.radius * 1.4).max(d * 0.012);
     let k = r * 0.35;
-    let c = universe_engine::Color::hex(0x60ffa0);
+    let c = universe_engine::Color::hex(0xcfe3ec);
     for (sx, sy) in [(-1.0, -1.0), (1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)] {
         let corner = s.center + u * (sx * r) + v * (sy * r);
         frame.line(corner, corner - u * (sx * k), c);

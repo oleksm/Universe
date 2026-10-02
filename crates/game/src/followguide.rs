@@ -14,10 +14,10 @@ use universe_sim::world::ship::SHIP_RADIUS;
 use crate::{fmt, App};
 
 const PATH: Color = Color::hex(0xff60ff);
-const OK: Color = Color::hex(0x30ff60);
+const OK: Color = Color::hex(0xdcebf2);
 const AMBER: Color = Color::hex(0xffb030);
-const DIM: Color = Color::hex(0x208040);
-const PANEL: Color = Color([0.0, 0.05, 0.0, 0.85]);
+const DIM: Color = Color::hex(0x7d93a0);
+const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 
 /// Where a follow program stands: what it follows, where it's taking us,
 /// and how we're doing.

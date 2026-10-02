@@ -9,8 +9,8 @@ use universe_sim::Command;
 
 use crate::App;
 
-const TEXT: Color = Color::hex(0x40ff70);
-const DIM: Color = Color::hex(0x208838);
+const TEXT: Color = Color::hex(0xdcebf2);
+const DIM: Color = Color::hex(0x7d93a0);
 const SELECT: Color = Color::hex(0xffc040);
 
 /// Its rows: landing those aboard (if they're bound here), then each booking.
@@ -83,7 +83,7 @@ pub fn draw(frame: &mut Frame, app: &App, pick: usize) {
     lines.push((format!("UP/DOWN PICK  ENTER {}  {} CLOSE", if lands_here(app) && pick == 0 { "LAND" } else { "BOARD" }, crate::keys::key(crate::keys::Act::Passengers)), DIM));
     // A screen of its own (as the market's).
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     for (k, (t, c)) in lines.iter().enumerate() {
         frame.text(Vec2::new(12.0, 12.0 + k as f32 * 12.0), t, *c);
     }

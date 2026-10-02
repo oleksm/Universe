@@ -11,9 +11,9 @@ use universe_sim::world::ship::{ThrusterRole, EXHAUST_VELOCITY, HYPER_FUEL_FLOW}
 use crate::fmt;
 use crate::App;
 
-const TEXT: Color = Color::hex(0x40ff70);
-const DIM: Color = Color::hex(0x208838);
-const HULL: Color = Color::hex(0x2a6a40);
+const TEXT: Color = Color::hex(0xdcebf2);
+const DIM: Color = Color::hex(0x7d93a0);
+const HULL: Color = Color::hex(0x4a5a66);
 const MAIN: Color = Color::hex(0xffb050);
 const LIFT: Color = Color::hex(0x60d0ff);
 const RCS: Color = Color::hex(0xf0f0f0);
@@ -175,7 +175,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let ship = &app.ship;
     let s = ship.spec();
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     frame.text(Vec2::new(12.0, 12.0), &format!("THRUSTERS - {}   (F7 CLOSES)", s.name), TEXT);
 
     // Left: every thruster, its level, thrust and fuel flow.

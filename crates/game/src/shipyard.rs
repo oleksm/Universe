@@ -30,11 +30,11 @@ use universe_sim::Command;
 use crate::keys::{key, Act};
 use crate::{fmt, App};
 
-const TEXT: Color = Color::hex(0x30ff60);
-const DIM: Color = Color::hex(0x178a38);
+const TEXT: Color = Color::hex(0xdcebf2);
+const DIM: Color = Color::hex(0x7d93a0);
 const SELECT: Color = Color::hex(0xffc040);
 const RED: Color = Color::hex(0xff4040);
-const BETTER: Color = Color::hex(0x60ffd0);
+const BETTER: Color = Color::hex(0x7fe6ff);
 const LINE: f32 = 12.0;
 /// A standard g (m/s²), to set lift against.
 const G: f64 = 9.81;
@@ -879,7 +879,7 @@ fn actions(frame: &mut Frame, app: &App, y: &Shipyard) {
 
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     actions(frame, app, y);
     let c = content();
     let here = station(app);

@@ -88,7 +88,7 @@ pub fn label(r: f64) -> String {
     if r < 1000.0 { format!("{r:.0} M") } else { format!("{:.0} KM", r / 1000.0) }
 }
 
-const LIST: Color = Color::hex(0x60ffa0);
+const LIST: Color = Color::hex(0xcfe3ec);
 
 /// The list, while the key is held: on the right, the cursor's line bright.
 pub fn draw(frame: &mut Frame, app: &App) {
@@ -103,7 +103,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let pos = Vec2::new(size.x - width - 12.0, 230.0);
     let rows = RANGES.len() as f32;
     let back = Vec2::new(width, (rows + 2.0) * line) + 12.0;
-    frame.hud_rect(pos - 6.0, back, Color([0.0, 0.03, 0.0, 0.85]));
+    frame.hud_rect(pos - 6.0, back, Color([0.012, 0.018, 0.026, 0.85]));
     frame.hud_box(pos - 6.0, back, LIST.scale(0.6));
     frame.text(pos, &title, LIST);
     for (k, &r) in RANGES.iter().enumerate() {

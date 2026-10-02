@@ -282,6 +282,7 @@ pub(crate) struct Renderer {
     glows: DynBuffer,
     glow_pipe: wgpu::RenderPipeline,
     hud_tris: DynBuffer,
+    atlas_bind: wgpu::BindGroup,
     hud: DynBuffer,
 }
 
@@ -505,7 +506,71 @@ impl Renderer {
         // Lights' glows add up, behind what's solid, hiding nothing.
         let glow_pipe = scene_pipeline("glows", "vs_line", Topo::TriangleList, Some((false, Cmp::GreaterEqual)), additive, world);
         // The HUD has its own layer without depth (or antialiasing, or HDR).
-        let hud_tri_pipe = scene_pipeline("hud tris", "vs_hud", Topo::TriangleList, None, alpha, (COLOR_FORMAT, 1));
+        // HUD triangles (panels and text): their own shader, the font's atlas.
+        let atlas_data = crate::font::atlas();
+        let atlas_texture = {
+            use wgpu::util::DeviceExt;
+            gpu.device.create_texture_with_data(
+                &gpu.queue,
+                &wgpu::TextureDescriptor {
+                    label: Some("font atlas"),
+                    size: wgpu::Extent3d { width: atlas_data.width, height: atlas_data.height, depth_or_array_layers: 1 },
+                    mip_level_count: 1,
+                    sample_count: 1,
+                    dimension: wgpu::TextureDimension::D2,
+                    format: wgpu::TextureFormat::R8Unorm,
+                    usage: wgpu::TextureUsages::TEXTURE_BINDING,
+                    view_formats: &[],
+                },
+                wgpu::util::TextureDataOrder::LayerMajor,
+                &atlas_data.pixels,
+            )
+        };
+        let atlas_view = atlas_texture.create_view(&Default::default());
+        let atlas_sampler = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("font atlas"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
+        let atlas_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("font atlas"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::D2, multisampled: false },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry { binding: 1, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+            ],
+        });
+        let atlas_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("font atlas"),
+            layout: &atlas_layout,
+            entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&atlas_sampler) }],
+        });
+        let hud_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/hud.wgsl"));
+        let hud_tri_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("hud tris"),
+            layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(&globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
+            vertex: wgpu::VertexState {
+                module: &hud_shader,
+                entry_point: Some("vs_hud"),
+                compilation_options: Default::default(),
+                buffers: &[Some(wgpu::VertexBufferLayout {
+                    array_stride: size_of::<crate::frame::HudVertex>() as u64,
+                    step_mode: wgpu::VertexStepMode::Vertex,
+                    attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4],
+                })],
+            },
+            primitive: wgpu::PrimitiveState { topology: Topo::TriangleList, ..Default::default() },
+            depth_stencil: None,
+            multisample: Default::default(),
+            fragment: Some(wgpu::FragmentState {
+                module: &hud_shader,
+                entry_point: Some("fs_hud"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(alpha), write_mask: wgpu::ColorWrites::ALL })],
+            }),
+            multiview_mask: None,
+            cache: None,
+        });
         let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha, (COLOR_FORMAT, 1));
 
         let texture_entry = |binding| wgpu::BindGroupLayoutEntry {
@@ -620,6 +685,7 @@ impl Renderer {
             glows: DynBuffer::new(device, "glows"),
             glow_pipe,
             hud_tris: DynBuffer::new(device, "hud tris"),
+            atlas_bind,
             hud: DynBuffer::new(device, "hud"),
         }
     }
@@ -665,7 +731,8 @@ impl Renderer {
         let color_msaa = texture_n("scene (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let color = texture("scene", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
-        let hud = texture("hud", hud_size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
+        // (The HUD's layout is `hud_size` pixels; drawn at the screen's full resolution.)
+        let hud = texture("hud", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let front_msaa = texture_n("front (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let front = texture("front", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let composite = texture("composite", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
@@ -727,7 +794,7 @@ impl Renderer {
         self.front_lines.upload(gpu, &frame.front_lines);
         self.points.upload(gpu, &frame.points);
         self.glows.upload(gpu, &frame.glows);
-        self.hud_tris.upload(gpu, &frame.hud_tris);
+        self.hud_tris.upload_bytes(gpu, bytemuck::cast_slice(&frame.hud_tris), frame.hud_tris.len() as u32);
         self.hud.upload(gpu, &frame.hud);
         self.upload_meshes(gpu, frame);
         drop(upload);
@@ -840,6 +907,7 @@ impl Renderer {
                 multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
+            pass.set_bind_group(1, &self.atlas_bind, &[]);
             self.hud_tris.draw(&mut pass, &self.hud_tri_pipe);
             self.hud.draw(&mut pass, &self.hud_pipe);
         }

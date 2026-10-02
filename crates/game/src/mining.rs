@@ -267,7 +267,7 @@ pub fn draw_hud(frame: &mut Frame, app: &App) {
         .collect();
     let width = lines.iter().map(|l| universe_engine::text_size(&l.0).x).fold(universe_engine::text_size(&title).x, f32::max);
     let pos = Vec2::new(size.x - width - 12.0, 230.0);
-    frame.hud_rect(pos - 6.0, Vec2::new(width, (lines.len() as f32 + 1.5) * line) + 12.0, Color([0.0, 0.02, 0.03, 0.7 * shown]));
+    frame.hud_rect(pos - 6.0, Vec2::new(width, (lines.len() as f32 + 1.5) * line) + 12.0, Color([0.012, 0.018, 0.026, 0.7 * shown]));
     frame.text(pos, &title, PULSE.scale(shown));
     for (k, (text, c)) in lines.iter().enumerate() {
         frame.text(Vec2::new(pos.x, pos.y + (k as f32 + 1.5) * line), text, *c);

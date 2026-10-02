@@ -11,7 +11,7 @@ use universe_sim::{Action, Approach, BodyKind, DockingStatus, GateFrame, GateSta
 use crate::{ship_visible, terrain_view, App, Mode};
 
 pub const LABEL: Color = Color::hex(0x7a8a9a);
-pub const SHIP_COLOR: Color = Color::hex(0x60ff90);
+pub const SHIP_COLOR: Color = Color::hex(0xdcebf2);
 
 pub fn color(c: [f32; 3]) -> Color {
     Color::rgb(c[0], c[1], c[2])
@@ -488,7 +488,7 @@ fn dust(frame: &mut Frame, app: &App) {
     let speed = v.length();
     // (Nearly still against them: a mote, not a streak.)
     let along = if speed > 0.3 { -v / speed } else { DVec3::Y };
-    let streak = (speed * 0.05).clamp(1.2, 22.0);
+    let streak = if speed > 3.0 { (speed * 0.05).clamp(0.4, 22.0) } else { 0.12 };
     let local = cam - origin;
     let c0 = (local / CELL).floor();
     let n = (REACH / CELL).ceil() as i64;
@@ -691,7 +691,7 @@ fn weapons_fire(frame: &mut Frame, app: &App) {
     }
 }
 
-pub const GUIDE_OK: Color = Color::hex(0x30ff60);
+pub const GUIDE_OK: Color = Color::hex(0xdcebf2);
 pub const GUIDE_OFF: Color = Color::hex(0xffc040);
 
 /// The approach to our pad: its square on the deck, squares to come down
@@ -709,7 +709,7 @@ fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingS
             frame.line(corners[i], corners[(i + 1) % 4], color);
         }
     };
-    square(frame, deck, 40.0, Color::hex(0x60ff90));
+    square(frame, deck, 40.0, Color::hex(0xdcebf2));
     frame.line(deck, pad + up * APPROACH_HEIGHT, c.scale(0.35));
     for h in [60.0, 150.0, 300.0, 600.0, 1000.0, 1500.0, APPROACH_HEIGHT] {
         // The square the ship comes down through next is brightest.
@@ -1148,7 +1148,7 @@ fn spaceports(frame: &mut Frame, app: &App) {
             let at = center + d * (b.rail.radius + 2.0);
             let (u, v) = (e1 - d * e1.dot(d), e2 - d * e2.dot(d));
             let (u, v) = (u.normalize() * half, v.normalize() * half);
-            let pc = if ours == Some(k) { Color::hex(0x60ff90) } else if owner.is_some() { Color::hex(0xffa040).scale(0.7) } else { c };
+            let pc = if ours == Some(k) { Color::hex(0xdcebf2) } else if owner.is_some() { Color::hex(0xffa040).scale(0.7) } else { c };
             let sq = [at - u - v, at + u - v, at + u + v, at - u + v];
             for j in 0..4 {
                 frame.line(sq[j], sq[(j + 1) % 4], pc);
@@ -1212,7 +1212,7 @@ fn spaceports(frame: &mut Frame, app: &App) {
     }
 }
 
-const GRID: Color = Color::hex(0x1d5a30);
+const GRID: Color = Color::hex(0x3a4a56);
 const PREDICT: Color = Color::hex(0x40c0ff);
 const GUIDE_PATH: Color = Color::hex(0xff60ff);
 

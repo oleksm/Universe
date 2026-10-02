@@ -11,8 +11,8 @@ use universe_sim::world::goods::Category;
 
 use crate::App;
 
-const TEXT: Color = Color::hex(0x40ff80);
-const DIM: Color = Color::hex(0x208040);
+const TEXT: Color = Color::hex(0xdcebf2);
+const DIM: Color = Color::hex(0x7d93a0);
 const WARN: Color = Color::hex(0xffb030);
 const BAD: Color = Color::hex(0xff5040);
 
@@ -58,7 +58,7 @@ fn place_name(app: &App, p: &Place) -> String {
 
 pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.015, 0.01, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     let line = 11.0;
     let places = &app.v.economy;
     let mut y = 12.0;

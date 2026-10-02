@@ -11,8 +11,8 @@ use universe_sim::{BodyKind, NavTarget, StarSystem};
 use crate::scene::color;
 use crate::{fmt, App};
 
-const TEXT: Color = Color::hex(0x30ff60);
-const DIM: Color = Color::hex(0x178a38);
+const TEXT: Color = Color::hex(0xdcebf2);
+const DIM: Color = Color::hex(0x7d93a0);
 const SELECT: Color = Color::hex(0xffc040);
 const LOCKED: Color = Color::hex(0xff60ff);
 
@@ -207,7 +207,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
 
 pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.02, 0.01, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     let line = GLYPH + 4.0;
 
     // Target list.
