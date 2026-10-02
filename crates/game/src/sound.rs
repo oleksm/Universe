@@ -398,10 +398,26 @@ fn chatter(a: &universe_engine::Audio, app: &App) {
     c.0 = Some(now + Duration::from_secs_f32(14.0 + 30.0 * unit(20)));
 }
 
-/// Walking: where the last step fell, and how far since.
-static STEPS: Mutex<Option<(DVec3, f64)>> = Mutex::new(None);
-/// A step every this many metres.
-const STRIDE: f64 = 0.75;
+/// Walking: where the last step fell, how far since, and which foot is next.
+static STEPS: Mutex<Option<(DVec3, f64, bool)>> = Mutex::new(None);
+/// A step every this many metres, walking; running, a longer stride.
+const STRIDE: f64 = 0.9;
+const STRIDE_RUNNING: f64 = 1.6;
+/// Faster than this (m/s), running.
+const RUNNING: f64 = 2.8;
+
+/// A footstep: a soft, muffled thump and a scuff; aboard, a light tap of
+/// the deck plating. Each foot a little to its side, a little different.
+fn footstep(a: &universe_engine::Audio, inside: bool, left: bool, running: bool) {
+    let pan = if left { -0.15 } else { 0.15 };
+    let k = if running { 1.4 } else { 1.0 };
+    let pitch = if left { 1.0 } else { 1.06 };
+    a.thud(85.0 * pitch, 0.2 * k, pan);
+    a.hiss(0.07, 0.07 * k, 0.15, pan);
+    if inside {
+        a.thud(260.0 * pitch, 0.07 * k, pan);
+    }
+}
 
 /// Continuous layers follow the ship state every frame.
 pub fn update(ctx: &Context, app: &App) {
@@ -461,20 +477,17 @@ pub fn update(ctx: &Context, app: &App) {
     let Ok(mut steps) = STEPS.lock() else { return };
     match at {
         Some((p, inside)) if piloting => {
-            let (last, walked) = steps.get_or_insert((p, 0.0));
+            let (last, walked, left) = steps.get_or_insert((p, 0.0, false));
             let moved = p.distance(*last);
             // (A jump in place, a respawn: start over.)
             *walked = if moved > 5.0 { 0.0 } else { *walked + moved };
             *last = p;
-            if *walked >= STRIDE {
-                *walked -= STRIDE;
-                if inside {
-                    a.thud(150.0, 0.22, 0.0);
-                    a.impact(0.05, 2.5, 0.0);
-                } else {
-                    a.thud(90.0, 0.16, 0.0);
-                    a.hiss(0.08, 0.05, 0.2, 0.0);
-                }
+            let running = moved / (ctx.dt as f64).max(1e-3) > RUNNING;
+            let stride = if running { STRIDE_RUNNING } else { STRIDE };
+            if *walked >= stride {
+                *walked = 0.0;
+                *left = !*left;
+                footstep(a, inside, *left, running);
             }
         }
         _ => *steps = None,
@@ -560,6 +573,12 @@ mod tests {
             ("far engine", Box::new(|a, t| a.set_distant(if t < 2.0 { 0.6 } else { 0.0 }, 0.0)), 2.5),
             ("music calm", Box::new(|a, _| a.set_music(0.6, 0.0)), 32.0),
             ("music tense", Box::new(|a, _| a.set_music(0.6, 1.0)), 20.0),
+            ("steps", Box::new(|a, t| {
+                let f = (t * 60.0).round() as i32;
+                if f % 33 == 0 && f < 200 {
+                    footstep(a, true, f % 66 == 0, false);
+                }
+            }), 3.5),
             ("klaxon", Box::new(|a, t| if t == 0.0 {
                 a.alarm(500.0, 1000.0, 0.5, 0.2);
                 a.alarm_after(0.6, 500.0, 1000.0, 0.5, 0.2);
