@@ -66,84 +66,83 @@ field, a signal) under a local limit:
 - **In open space there's no speed limit.** The only limit is energy (below).
 - The **interlock**: nothing moves in it within 1 km of a body's highest ground.
 
-### Hyperdrive: speed is bought with energy
+### Energy: fuel, reactors, capacitors, consumers
 
-A ship of mass `m` held in the field at speed `v` draws power
+Everything runs on energy, accounted in joules and watts, through one chain:
 
-    P(v) = m · q · (1/3) · (2 + (v / v*)³)
+    fuel  →  reactor (or engine)  →  capacitor bank  →  consumers (hyperdrive, shields, systems)
+                    ↘ waste heat → radiators
 
-- The first part is the field's upkeep (holding the ship in the medium at all). The second is pushing
-  through it, which grows like drag: power with the cube of speed.
-- Over a distance `L` the energy is `E = m · L · ε* · f(v/v*)`, where `ε* = q / v*` is the cost per kg
-  per metre at the best speed `v*`, and
+**Fuels** are real substances, at their real densities and energies:
 
-      f(k) = (2/k + k²) / 3       (f(1) = 1, the least)
+| Fuel | Energy | Density | Burnt in | Made from |
+|---|---|---|---|---|
+| Kerolox (kerosene + O₂) | about 1×10⁷ J/kg (exhaust 3.0–3.4 km/s) | about 1,030 kg/m³ | chemical engines | carbon-rich worlds |
+| Methalox (methane + O₂) | about 1×10⁷ J/kg (exhaust 3.3–3.7 km/s) | about 830 kg/m³ | chemical engines | ice and CO₂: almost anywhere |
+| Hydrolox (H₂ + O₂) | about 1.3×10⁷ J/kg (exhaust 4.4–4.5 km/s) | about 320 kg/m³ | chemical engines | water, by electrolysis (energy) |
+| Hydrogen (nuclear thermal) | exhaust about 9 km/s | 71 kg/m³ | nuclear thermal engines | water, gas giants |
+| Uranium-235 | 8.2×10¹³ J/kg | 19,000 kg/m³ | fission reactors | uranium ores (enrichment: energy and plant) |
+| Deuterium–tritium | 3.4×10¹⁴ J/kg | about 200 kg/m³ | fusion reactors (wearing: neutrons) | D from water (1 in 6,400 of H: separation); T bred from lithium |
+| Deuterium–helium-3 | 3.5×10¹⁴ J/kg | about 100 kg/m³ | fusion reactors, fusion torches | He-3 from gas giants and some regolith: rare |
 
-| Speed | Energy per distance | 40 ly takes |
+- **Engines** burn their own fuel: chemical engines at their exhaust velocity; the fusion torch
+  (today's main drive, exhaust up to 10,000 km/s) turns its D–He3 into jet power at an efficiency,
+  the rest heat.
+- **Reactors** turn fuel into power: a rate (W), an efficiency, a fuel burn (g/s), mass. Their key
+  figure is **power per kg** (today's best: 2.8 kW/kg, before radiators).
+- **Capacitor banks** store energy: capacity (J), charge and discharge rates (W). They give bursts,
+  charged slowly by a reactor or a station's grid and spent fast. Optimistic storage holds 10⁶–10⁷
+  J/kg, so bursts, never long hauls.
+- **Radiators** shed the waste heat at σ·ε·area·T⁴. Their area and mass are what really cap a ship's
+  power (see Heat).
+- **Prices come from production:** what it takes to extract, separate, enrich and haul each fuel.
+
+### Hyperdrive: energy is the wall
+
+A ship of mass `m` (everything aboard: hull, payload, crew, supplies, fuel) held in the field
+at speed `v` draws power
+
+    P = m · ( p_floor · s(d) + p_push · (v / v*)³ ) / η_field
+    s(d) = min(1, (K · d / v_open)²)
+
+- **`s(d)`, the slack:** the medium is stiff near masses and slack far from them. In a system
+  `s ≈ 0` (at 1 AU, 10⁻⁶): the hyperdrive is as cheap as today. Between stars `s = 1`.
+- **`p_floor` = 10 kW/kg:** holding the field at all in open space, per kg aboard.
+- **`p_push` = 5 kW/kg at `v*` = 1,000 c:** pushing through, growing with the cube of speed (energy
+  per distance with its square). No speed cap: speed is bought.
+- **`η_field`** (0.5–0.8 by brand and wear): the field's practical efficiency; the rest is heat.
+- `K = 2 /s`, `v_open = 10⁶ c` (the slack begins a few hundred AU out).
+
+And three hard rules:
+
+1. **The field forms only where the medium is stiff** (inside a system: `s` below 0.01). Between
+   stars it must be held the whole way.
+2. **If its power fails in open space, it collapses**, and the ship is stranded in deep space,
+   beyond help but a rescue expedition's.
+3. **Capacitors can't carry a crossing:** 10 kW/kg for days is 10⁹–10¹⁰ J per kg of ship, a
+   thousand times what storage holds. The ship's own reactors must hold the field all the way.
+
+So the wall is **power per kg, sustained**:
+
+| Ship | Power per kg aboard | Between stars |
 |---|---|---|
-| ½ v* | 1.4× | 70 h |
-| v* = 10⁴ c | 1× (the least) | 35 h |
-| 2 v* | 1.7× | 18 h |
-| 3 v* | 3.2× | 12 h |
-| 10 v* | 33× | 3.5 h |
-| 100 v* | 3,300× | 21 min |
+| Today's best (a Sprint, 14 MW in about 30 t) | about 0.5 kW/kg | impossible: below the floor |
+| A ship that's all reactor (today's best plant) | 2.8 kW/kg | impossible |
+| A future explorer (next-generation reactors, 30 kW/kg aboard) | 30 kW/kg | 1.6 v*: 5 ly in about 1 day; 40 ly in about 9 days, held without a fault |
 
-Energy comes from fuel (energy density `e`, times the drive's efficiency `η`, by brand). The fuel
-burnt is mass carried, so like a rocket the range is exponential:
+- **No ship today can cross even to a star 5 ly away.** Explorers come later, built around rare,
+  costly reactors and huge radiators, mostly power plant with a sliver of payload. 40 ly is an epic:
+  days of holding the field, where a reactor trip or a radiator leak means stranding.
+- **Fuel quantity is not the wall** (fusion fuel is dense: an explorer burns kilograms on the way);
+  **power density and heat are.** Fuel's rarity (He-3) and its production decide who can build and
+  run such ships, and power the gates.
+- **Time costs too:** crew eat, breathe and need power the whole way.
 
-    L_max = (Λ / f(v/v*)) · ln(m_full / m_empty),    Λ = η · e / ε*
+### Shields (to come: a rule to write)
 
-`Λ` is the drive's **range scale** at the best speed: each `Λ` travelled costs a factor e (2.72) in
-mass. Going `k` times faster shrinks it by `f(k)`.
-
-**The mass `m` is everything in the field:** the empty ship, its payload (cargo, passengers, a
-mobile outpost), crew and supplies, and the fuel still aboard. The payload isn't burnt, so it sits
-in the empty mass:
-
-    L_max = (Λ / f(k)) · ln( (m_ship + m_payload + m_fuel) / (m_ship + m_payload) )
-
-and the fuel to carry a payload a distance `L` is
-
-    m_fuel = (m_ship + m_payload) · (e^(f(k)·L/Λ) − 1)
-
-So each tonne delivered costs `e^(f·L/Λ) − 1` tonnes of fuel: 6.4 t across 40 ly at the best speed,
-147 t across 100 ly. That's why freight between the stars goes by gate (whose transit energy is the
-gate's, linear in mass, not the ship's), and hyperdrive carries only what must go where no gate does.
-
-| Constant | Value | Meaning |
-|---|---|---|
-| `e` | 1×10¹³ J/kg | usable energy in fuel (fusion) |
-| `η` | 0.6–1.2 | a drive's efficiency, by brand and grade |
-| `v*` | 10⁴ c | best speed |
-| `Λ` | 20 ly (at η = 1) | range scale at the best speed |
-| `ε*` | 5.3×10⁻⁵ J/(kg·m) | energy per kg per metre at `v*` |
-| `q` | 1.6×10⁸ W/kg | the field's upkeep (`ε* · v*`) |
-
-What it means:
-
-- **Within a system:** the well holds you well under `v*`; the upkeep per e-fold of distance is
-  `(2/3) q / K`, about 0.5 kg of fuel per e-fold for a 90 t ship, 3–6 kg planet to planet. Quick
-  and cheap, as today.
-- **To the nearest stars (about 40 ly):** at `v*` it takes 35 hours and needs `m_full/m_empty = e²`,
-  about 7.4. A ship must be 86% fuel to get there, with none to come back.
-
-| Ship | Empty | Fuel | Range at v* (one way) |
-|---|---|---|---|
-| A Drover (stock) | 60 t | 30 t | 8 ly: can't reach a neighbour |
-| An expedition ship | 200 t | 1,300 t | 40 ly: there, not back |
-| The same, to 100 ly | 200 t | 29,500 t | not practical: needs depots |
-
-- **Speed is logistics.** Going faster is always possible, but each step costs steeply more fuel. Over a
-  long way the mass ratio runs away (exponential in `f(k) · L / Λ`), so speed comes only from
-  refuelling often: a lane with depots every few light years can be run fast; a lone crossing must
-  creep at `v*`. **So where fuel is made and stocked decides where travel and the hypernet are
-  fast.** Fuel-rich systems (gas giants, ice) and the depot chains between them become the
-  galaxy's arteries.
-- **Expeditions** go one way at the best speed, carrying a mobile outpost that makes fuel from local
-  matter to get home, or settle. If it fails, they're stranded. Going farther takes depots laid stage by
-  stage.
-- **Time costs too:** crew eat, breathe and need power the whole way (life support per person per
-  day). Creeping slower than `v*` saves nothing and costs supplies.
+Not yet. When they come, the proposal: a deflector on the same medium, a thin shell of field that
+resists matter passing through. Its draw grows with the energy it stops, so it drains capacitors
+under fire.
 
 ### Gates: justified, and limited
 
@@ -157,14 +156,15 @@ distance `S` between its rings.
 
   10 ly: 1 GW; 25 ly: 16 GW; 50 ly: 125 GW. Lost power closes the lane, and the
   powerplant is infrastructure that wears and breaks (maintenance).
-- **A ring's class sets its greatest span** (its throat's strength): class I 25 ly, II 50 ly,
-  III 100 ly (rarer, dearer, hungrier). Nothing bridges farther.
+- **A ring's class sets its greatest span** (its throat's strength): class I 10 ly, II 25 ly,
+  III 50 ly (rarer, dearer, hungrier). Nothing bridges farther. Some stars may never be worth
+  bridging: the power grows with the cube of the span (5 ly: 125 MW; 40 ly: 64 GW; 100 ly: 1 TW).
 - **A transit costs** `E = τ · m · S`, with `τ` 2.6×10⁻⁹ J/(kg·m): 1,000 t across 40 ly costs about
   10¹⁵ J, roughly 100 kg of fuel. That's 20,000 times cheaper than hyperdrive. That's why lanes carry
   trade, and why the gate's owner charges fees.
 - **Laying a lane:** the pair is built together at one place. One ring (thousands of tonnes) is then
-  hauled to the far end through the medium, under the range law above: depots on the way, an
-  expedition's worth of fuel. It's a corporation's or faction's project, not a pilot's afternoon.
+  hauled to the far end through the medium by an explorer's power, under the rules above: an
+  expedition in itself. It's a corporation's or faction's project, not a pilot's afternoon.
 - So the galaxy is open (anything's reachable by expedition) but **lanes are earned**. Bridging far
   takes chains of rings and their power, each one built, fuelled and defended.
 
@@ -189,7 +189,9 @@ distance `S` between its rings.
 
 ## To tune (playtest)
 
-- `Λ`, `v*`, the push's exponent (3), `P₀`, `τ` and ring classes: the numbers above are a first cut,
-  chosen so the stock ships stay local, the nearest stars need an expedition, and speed is
-  fuel logistics.
+- `p_floor`, `p_push`, `v*`, `v_open`, the push's exponent (3), `P₀`, `τ` and ring classes: a first
+  cut, chosen so no ship today crosses even 5 ly, a future explorer makes 40 ly an epic, and gates
+  are justified and limited.
+- **The galaxy's density:** ours has 40,000 stars across 19,000 ly (median neighbour 41 ly; the Sun's
+  are about 4–5 ly). A real-density galaxy, generated by region, is on the roadmap.
 - How expensive life support is per crew-day (food, water, air, power).
