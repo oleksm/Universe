@@ -245,7 +245,7 @@ pub struct Scheme {
 
 /// The schemes, by who flies them: ours, traders, pirates, miners, shuttles, settlers.
 pub const SCHEMES: [Scheme; 6] = [
-    Scheme { base: [0.86, 0.88, 0.9], wings: [0.2, 0.22, 0.25], accent: [0.12, 0.22, 0.5], band: (0.30, 0.36) },
+    Scheme { base: [0.95, 0.96, 0.97], wings: [0.2, 0.22, 0.25], accent: [0.12, 0.22, 0.5], band: (0.30, 0.36) },
     Scheme { base: [0.8, 0.76, 0.68], wings: [0.42, 0.39, 0.35], accent: [0.85, 0.42, 0.1], band: (0.22, 0.27) },
     Scheme { base: [0.26, 0.27, 0.29], wings: [0.5, 0.12, 0.09], accent: [0.62, 0.08, 0.06], band: (0.18, 0.26) },
     Scheme { base: [0.78, 0.62, 0.18], wings: [0.24, 0.24, 0.26], accent: [0.08, 0.08, 0.09], band: (0.12, 0.2) },
@@ -401,14 +401,18 @@ fn station_boxes() -> Vec<(Vec3, Vec3)> {
     boxes.push(bx(185.0, top + 70.0, front - 70.0, 275.0, top + 82.0, front - 14.0));
     // Roof machinery: a long low tier and plant boxes.
     boxes.push(bx(-260.0, top, back + 20.0, 120.0, top + 22.0, front - 30.0));
-    for k in 0..4 {
-        let x = -240.0 + k as f32 * 90.0;
-        boxes.push(bx(x, top + 22.0, back + 40.0, x + 50.0, top + 40.0, back + 80.0));
+    // Plant of different sizes, not in a row: a big low unit, a pair of tall
+    // tanks, a long pipe rack, small boxes.
+    for (x0, z0, w, d, h) in [(-250.0, back + 30.0, 80.0, 60.0, 14.0), (-150.0, back + 45.0, 22.0, 22.0, 46.0), (-118.0, back + 50.0, 22.0, 22.0, 38.0), (-60.0, back + 30.0, 150.0, 12.0, 10.0), (20.0, back + 70.0, 34.0, 26.0, 20.0), (70.0, back + 36.0, 18.0, 30.0, 12.0)] {
+        boxes.push(bx(x0, top + 22.0, z0, x0 + w, top + 22.0 + h, z0 + d));
     }
-    // Masts, and their cross-arms.
+    // Masts: a slim pole on a footing, a small platform partway up, a thinner
+    // tip above (its beacon is a light; see `station_lights`).
     for (x, z, h) in [(-200.0, back + 110.0, 150.0), (60.0, back + 120.0, 110.0), (230.0, front - 40.0, 70.0)] {
-        boxes.push(bx(x - 2.0, top + 22.0, z - 2.0, x + 2.0, top + 22.0 + h, z + 2.0));
-        boxes.push(bx(x - 18.0, top + 10.0 + h, z - 1.0, x + 18.0, top + 13.0 + h, z + 1.0));
+        boxes.push(bx(x - 6.0, top + 22.0, z - 6.0, x + 6.0, top + 30.0, z + 6.0));
+        boxes.push(bx(x - 2.0, top + 30.0, z - 2.0, x + 2.0, top + 22.0 + h * 0.8, z + 2.0));
+        boxes.push(bx(x - 7.0, top + 22.0 + h * 0.6, z - 7.0, x + 7.0, top + 24.0 + h * 0.6, z + 7.0));
+        boxes.push(bx(x - 1.0, top + 22.0 + h * 0.8, z - 1.0, x + 1.0, top + 22.0 + h, z + 1.0));
     }
     // Radiator fins out from each end.
     for side in [-1.0f32, 1.0] {

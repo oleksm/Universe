@@ -176,15 +176,19 @@ fn globe_detail(dir: vec3<f32>, footprint: f32) -> vec3<f32> {
     var amp = 0.5;
     var f = 40.0;
     for (var o = 0; o < 11; o++) {
-        let fade = clamp(1.0 / (f * footprint * 3.0) - 1.0, 0.0, 1.0);
+        // (Slopes from octaves a few pixels across and up; colours, which
+        // are cut into patches by thresholds, only from wider ones: no
+        // pixel-sized edges to flicker as the eye moves.)
+        let fade = clamp(1.0 / (f * footprint * 6.0) - 1.0, 0.0, 1.0);
         if (fade <= 0.0) {
             break;
         }
+        let fade_color = clamp(1.0 / (f * footprint * 12.0) - 1.0, 0.0, 1.0);
         let v = vnoise(dir * f) * 2.0 - 1.0;
         // (Half ridged: sharp crests, like eroded ground.)
         let r = mix(v, 0.6 - abs(v) * 1.6, 0.5);
         let w = vnoise(dir * f + vec3<f32>(31.7, 11.3, 5.9)) * 2.0 - 1.0;
-        sum += fade * vec3<f32>(amp * r, r / f, amp * w);
+        sum += vec3<f32>(fade_color * amp * r, fade * r / f, fade_color * amp * w);
         amp *= 0.55;
         f *= 2.13;
     }

@@ -471,7 +471,9 @@ impl Frame {
         // The light off the ground (a share of the sun's), and its colour at the sun's brightness here.
         let base = r.albedo * day;
         let k = light.intensity_at(p);
-        (base * s > 0.001).then(|| ((-up).as_vec3(), s, (base, [0, 1, 2].map(|j| r.color[j] * light.color[j] * k))))
+        // (Its colour half washed out: ground of many colours, and air, between.)
+        let grey = (r.color[0] + r.color[1] + r.color[2]) / 3.0;
+        (base * s > 0.001).then(|| ((-up).as_vec3(), s, (base, [0, 1, 2].map(|j| (0.5 * r.color[j] + 0.5 * grey) * light.color[j] * k))))
     }
 
     /// A mesh, lit (flat faces, edges dimmed on the far side, see the mesh

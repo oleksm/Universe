@@ -68,12 +68,14 @@ pub fn aim(sys: &StarSystem, target: NavTarget, t: f64, positions: &[DVec3], shi
             })
         }
         NavTarget::Gate(b) => {
+            // Dropping out on its entry side, back along its axis from the
+            // run-in's start: lined up the right way from the first.
             let body = sys.bodies.get(b).filter(|body| body.kind == BodyKind::Gate)?;
-            let at = positions[b];
+            let behind = positions[b] - body.rotation(t) * DVec3::Y * (HYPER_ARRIVE_STATION + crate::gate::APPROACH_DISTANCE);
             Some(HyperAim {
-                target: at,
+                target: behind,
                 arrive: HYPER_ARRIVE_STATION,
-                aim: at,
+                aim: behind,
                 body: body.rail.parent.unwrap_or(0),
                 velocity: sys.velocity(b, t),
                 frame_velocity: sys.velocity(b, t),

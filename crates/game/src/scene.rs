@@ -30,7 +30,11 @@ pub fn draw(frame: &mut Frame, app: &App) {
     // The system's star lights everything in it: its colour, and its
     // luminosity (1 at 1 AU from a sun-like star), fading with distance.
     let class = app.view.system.class;
-    let tint = class.color();
+    // The eye adapts its white to the light it's under, most of the way (as
+    // it adapts to brightness): a white hull looks white under any star,
+    // warmer under a red one, cooler under a blue. (The star's own disc and
+    // glare keep its true colour.)
+    let tint = class.color().map(|c| 0.2 * c + 0.8);
     let top = tint.iter().copied().fold(0.0, f32::max);
     frame.light = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star).map(|i| Light {
         position: app.view.positions[i],

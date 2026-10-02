@@ -85,7 +85,9 @@ pub const WORKING: f64 = 1.0e18;
 pub(crate) fn hyperjump_limit(target: NavTarget) -> f64 {
     match target {
         NavTarget::Spaceport(_) => 200_000.0,
-        NavTarget::Station(_) | NavTarget::Gate(_) => 30_000.0,
+        NavTarget::Station(_) => 30_000.0,
+        // (The hyperdrive drops out well back along a gate's entry side: see its aim.)
+        NavTarget::Gate(_) => crate::hyperdrive::HYPER_ARRIVE_STATION + crate::gate::APPROACH_DISTANCE + 20_000.0,
         NavTarget::Asteroid(_) => 100_000.0,
     }
 }

@@ -49,8 +49,19 @@ pub fn guidance(frame: &GateFrame, pos: DVec3, final_run: bool, accel: f64) -> G
         };
     }
     let approach = frame.center + axis * ENTRY * APPROACH_DISTANCE;
-    // On the far side, off the axis: onto it first, then back through the middle.
-    let approach = if side != ENTRY && lateral.length() > GATE_RADIUS * 0.4 { frame.center + axis * h.max(1000.0) } else { approach };
+    // On the far side: round the outside of the ring to the entry side (never
+    // back through it) — out wide first, then past its plane, then in.
+    let approach = if side != ENTRY {
+        let out = lateral.try_normalize().unwrap_or_else(|| frame.rotation * DVec3::X);
+        let wide = GATE_RADIUS * 2.5;
+        if lateral.length() < wide * 0.9 {
+            frame.center + out * wide + axis * h.max(1000.0)
+        } else {
+            frame.center + out * wide + axis * ENTRY * (APPROACH_DISTANCE * 0.5)
+        }
+    } else {
+        approach
+    };
     let d = approach - pos;
     let dist = d.length();
     let top = (2.0 * accel * 0.25 * dist).sqrt().min(250.0);
