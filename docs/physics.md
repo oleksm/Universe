@@ -102,11 +102,15 @@ Everything runs on energy, accounted in joules and watts, through one chain:
 - **Radiators** shed the waste heat at σ·ε·area·T⁴. Their area and mass are what really cap a ship's
   power (see Heat).
 - **Prices come from production:** what it takes to extract, separate, enrich and haul each fuel.
-- **Ships burn deuterium today** (catalysed D–D fusion, 3.45×10¹⁴ J/kg, liquid at 163 kg/m³). It's made
-  where there's water: a tonne in about 31,000 t of sea or ice, processed where it stands (Earth-like
-  worlds' seas, outposts' ice). Stations import it. Helium-3 is too rare to run traffic on (gas giants'
-  air holds about 1e-5 of it, regolith about 1e-8): it's the premium fuel, from gas giant skimmers,
-  when players build them.
+- **Physics, not production, is dogma.** This page fixes what matter and energy are (a fuel's energy,
+  density and abundance; what a device can do). Who makes what, where, and with which machines is
+  not dogma: the seeded world is one reasonable starting state, and anyone (a player, a corporation,
+  a faction) can collect any matter, build any plant, reactor or engine the physics allows, and run
+  it however they want.
+- **The seeded world, for now:** ships burn deuterium (catalysed D–D fusion, 3.45×10¹⁴ J/kg, liquid
+  at 163 kg/m³). It's made where there's water (a tonne in about 31,000 t of sea or ice), and stations
+  buy it in. Helium-3 is rare (gas giants' air holds about 1e-5 of it, regolith about 1e-8), but
+  nothing stops anyone skimming it and building engines and generators to burn it.
 
 ### Hyperdrive: energy is the wall
 
