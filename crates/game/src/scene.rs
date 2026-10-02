@@ -797,7 +797,8 @@ fn crafts(frame: &mut Frame, app: &App) {
         hull_detail(frame, app.models.detail(&c.ship), &t);
         nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i);
         jets(frame, &c.ship, pos, turned, app.now(), i);
-        if pos.distance(cam) < 5_000.0 {
+        // (In the pilot's seat the radar tags them: see `hud::contact_marker`.)
+        if pos.distance(cam) < 5_000.0 && app.mode != Mode::Pilot {
             names.push((pos.distance(cam), pos, c.name.to_uppercase(), tc.scale(0.8)));
         }
     }

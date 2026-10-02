@@ -925,20 +925,48 @@ fn missile_markers(frame: &mut Frame, app: &App) {
 
 /// Radar contacts in view: a small square on each ship, with its range when
 /// near; the locked one gets a bracket like the nav target's.
+/// Most tags on the radar's contacts at once (the nearest have them).
+const TAGS: usize = 6;
+
 fn contact_marker(frame: &mut Frame, app: &App) {
     let size = frame.size();
-    for contact in &app.contacts {
-        if app.v.avionics.contact == Some(contact.blip.id) {
-            continue;
-        }
+    // Each contact a small mark; the nearest few a tag beside it (its name
+    // close in, its range) where it stands clear of the others' — a crowd
+    // shows its nearest, not a heap of text.
+    let mut near: Vec<_> = app.contacts.iter().filter(|c| app.v.avionics.contact != Some(c.blip.id)).collect();
+    near.sort_by(|a, b| a.blip.distance.total_cmp(&b.blip.distance));
+    let mut placed: Vec<(Vec2, Vec2)> = Vec::new();
+    // (The nav target's bracket and label keep their place: see `bracket`.)
+    if let Some((name, target)) = &app.nav_marker
+        && let Some(p) = frame.project(*target)
+    {
+        let label = format!("{name} {}", fmt::distance(target.distance(app.view.ship_pos)));
+        let w = text_size(&label).x;
+        placed.push((p - Vec2::splat(12.0), Vec2::splat(24.0)));
+        placed.push((p + Vec2::new(-w / 2.0 - 2.0, 12.0), Vec2::new(w + 4.0, GLYPH + 4.0)));
+    }
+    let mut tags = 0;
+    for contact in near {
         let c = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
         let at = app.place(crate::Who::Craft(contact.blip.id)).0;
         let Some(p) = frame.project(at).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
-        frame.hud_box(p - Vec2::splat(4.0), Vec2::splat(8.0), c.scale(0.8));
-        if contact.blip.distance < 50_000.0 {
-            let range = fmt::distance(contact.blip.distance);
-            frame.text(p + Vec2::new(-text_size(&range).x / 2.0, 7.0), &range, c.scale(0.7));
+        // (Fainter the farther.)
+        let k = (1.0f32 - (contact.blip.distance / 60_000.0) as f32).clamp(0.45, 1.0);
+        frame.hud_box(p - Vec2::splat(3.0), Vec2::splat(6.0), c.scale(0.8 * k));
+        if tags >= TAGS || contact.blip.distance > 50_000.0 {
+            continue;
         }
+        let range = fmt::distance(contact.blip.distance);
+        let text = if contact.blip.distance < 5_000.0 { format!("{}  {range}", contact.name.to_uppercase()) } else { range };
+        let pos = p + Vec2::new(6.0, -4.0);
+        let extent = text_size(&text) + Vec2::new(6.0, 5.0);
+        let overlaps = |&(q, e): &(Vec2, Vec2)| pos.x < q.x + e.x && q.x < pos.x + extent.x && pos.y < q.y + e.y && q.y < pos.y + extent.y;
+        if placed.iter().any(overlaps) {
+            continue;
+        }
+        placed.push((pos, extent));
+        tags += 1;
+        frame.text(pos, &text, c.scale(0.75 * k));
     }
     if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) {
         let c = if locked.aggressed { RED } else { crate::scene::TRAFFIC };
