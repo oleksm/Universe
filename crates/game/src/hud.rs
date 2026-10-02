@@ -112,6 +112,9 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     let under_strip = y;
     let credits = format!("{:.0} CR", app.v.credits);
     frame.text_boxed(Vec2::new(size.x - text_size(&credits).x - 6.0, top + 2.0), &credits, HUD, SOFT_PANEL);
+    if app.mode == Mode::Pilot {
+        net_badge(frame, app, Vec2::new(size.x - text_size(&credits).x - 14.0, top + 2.0));
+    }
     if app.mode == Mode::Pilot && app.v.crew.seated() && !matches!(app.ship.state, ShipState::Transit { .. }) {
         y += instruments(frame, app, Vec2::new(4.0, y)) + 6.0;
     }
@@ -288,13 +291,6 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         let heat = if ship.laser_overheated { RED } else { AMBER };
         rows.push(bar_row("LASER", ship.laser_heat, if ship.laser_overheated { "HOT".into() } else { format!("GUN {}", ship.ammo) }, heat));
     }
-    // On the hypernet: the lag from the backbone and the relay it's through; off it, since when.
-    let net = match (&app.net, app.net_seen) {
-        (Some((lag, via)), _) => (format!("{}  {}", fmt::lag(*lag), relay_short(via)), HUD),
-        (None, Some(seen)) => (format!("OFFLINE  {} AGO", fmt::lag(app.now() - seen)), AMBER),
-        (None, None) => ("OFFLINE".into(), AMBER),
-    };
-    rows.push(text_row("NET", net.0, net.1));
     // Our standing with whoever holds this space.
     if let Some(k) = app.v.realm.holder_index(app.view.origin) {
         let s = app.v.standing.get(k).copied().unwrap_or(0.0);
@@ -317,16 +313,33 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     h
 }
 
-/// A relay's name, short enough for a HUD row: the station, a gate, or a port by its own name.
-pub(crate) fn relay_short(name: &str) -> String {
-    let s = if name.ends_with(" Station") {
-        "STATION".to_string()
-    } else if name.starts_with("Gate to ") {
-        "GATE".to_string()
-    } else {
-        name.trim_start_matches("Port ").to_uppercase()
+/// The hypernet badge, top right left of `right`: signal bars by our lag
+/// from the backbone (green under a second, yellow under a minute, red past
+/// it; grey and crossed off the net), and the lag itself.
+fn net_badge(frame: &mut Frame, app: &App, right: Vec2) {
+    const GREEN: Color = Color::hex(0x60ff90);
+    const YELLOW: Color = Color::hex(0xffd040);
+    let (bars, c, text) = match &app.net {
+        Some((lag, _)) if *lag < 1.0 => (4, GREEN, fmt::lag(*lag)),
+        Some((lag, _)) if *lag < 60.0 => (3, YELLOW, fmt::lag(*lag)),
+        Some((lag, _)) => (1, RED, fmt::lag(*lag)),
+        None => (0, DIM, "OFF".to_string()),
     };
-    s.chars().take(10).collect()
+    let label = format!("NET {text}");
+    let w = 22.0 + text_size(&label).x;
+    let at = right - Vec2::new(w, 0.0);
+    frame.hud_rect(at - 2.0, Vec2::new(w, GLYPH) + 4.0, SOFT_PANEL);
+    // Four bars, rising; lit as many as the signal's worth.
+    for k in 0..4 {
+        let h = 3.0 + k as f32 * 2.5;
+        let p = at + Vec2::new(k as f32 * 4.0, GLYPH - h);
+        frame.hud_rect(p, Vec2::new(3.0, h), if k < bars { c } else { DIM.scale(0.35) });
+    }
+    if bars == 0 {
+        frame.hud_line(at + Vec2::new(0.0, 1.0), at + Vec2::new(14.0, GLYPH - 1.0), DIM);
+        frame.hud_line(at + Vec2::new(14.0, 1.0), at + Vec2::new(0.0, GLYPH - 1.0), DIM);
+    }
+    frame.text(at + Vec2::new(20.0, 0.0), &label, c);
 }
 
 fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
