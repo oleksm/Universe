@@ -46,6 +46,10 @@ pub enum Does {
     /// twin's through the throat (Dogma's `TRANSIT_TIME`), handling a message
     /// in `lag` (s) more, `capacity` messages an hour.
     GateRelay { lag: f64, capacity: f64 },
+    /// A hyper relay (space structures): links its site to others through
+    /// hyperspace (Dogma's hyper-signal), handling a message in `lag` (s),
+    /// `capacity` messages an hour.
+    HyperRelay { lag: f64, capacity: f64 },
     LifeSupport,
     Gun,
     Laser,
@@ -148,7 +152,7 @@ impl Does {
             Does::Transponder => SlotKind::Transponder,
             Does::Sensors { .. } => SlotKind::Sensors,
             Does::Comm { .. } => SlotKind::Comm,
-            Does::GateRelay { .. } => SlotKind::Relay,
+            Does::GateRelay { .. } | Does::HyperRelay { .. } => SlotKind::Relay,
             Does::LifeSupport => SlotKind::LifeSupport,
             Does::Gun | Does::Laser => SlotKind::Hardpoint,
             Does::MiningRig => SlotKind::Utility,
@@ -247,7 +251,7 @@ impl Module {
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
             Does::Sensors { range } => positive("range", *range),
             Does::Comm { capture, link, lag, capacity } => positive("capture", *capture).and(positive("link", *link)).and(positive("capacity", *capacity)).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
-            Does::GateRelay { lag, capacity } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
+            Does::GateRelay { lag, capacity } | Does::HyperRelay { lag, capacity } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
             Does::Hyperdrive { efficiency } => if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) },
             // (Storage can't beat the physics sheet's density.)
             Does::Capacitor { capacity, rate } => positive("capacity", *capacity).and(positive("rate", *rate)).and(if *capacity <= crate::sheet::CAPACITOR_DENSITY * self.mass * 1.001 {

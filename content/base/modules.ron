@@ -68,8 +68,15 @@
     // decides); lag (s) to pass a message on; capacity: messages an hour.
     // Reach goes as the root of power and both antennas' gain (Friis).
     (key: "comm.long.s1", brand: "brand.tallis", name: "LONG-RANGE COMM", does: Comm(capture: 3.0e8, link: 7.5e10, lag: 0.05, capacity: 3000.0), size: 1, mass: 300.0, volume: 0.8, power: 2.0e5, price: 9000.0),
-    // Infrastructure: relays for stations, ports, outposts and gates (no ship has room or power for one).
-    (key: "relay.port", brand: "brand.tallis", name: "TALLIS BACKBONE RELAY", does: Comm(capture: 1.0e9, link: 7.5e10, lag: 0.02, capacity: 100000.0), size: 4, mass: 20000.0, volume: 60.0, power: 1.0e6, price: 400000.0),
-    (key: "relay.beacon", brand: "brand.tallis", name: "TALLIS BEACON RELAY", does: Comm(capture: 5.0e8, link: 7.5e10, lag: 0.05, capacity: 20000.0), size: 4, mass: 6000.0, volume: 20.0, power: 3.0e5, price: 150000.0),
+    // Infrastructure (space structures only; nothing of it works from a world's ground).
+    // Transceivers: what ships' comms (and ports below them) connect to, within their
+    // radius (`link`), at light speed: the hypernet's towers.
+    (key: "transceiver.station", brand: "brand.tallis", name: "TALLIS STATION TRANSCEIVER", does: Comm(capture: 1.0e9, link: 7.5e10, lag: 0.02, capacity: 100000.0), size: 4, mass: 20000.0, volume: 60.0, power: 1.0e6, price: 400000.0),
+    (key: "transceiver.beacon", brand: "brand.tallis", name: "TALLIS BEACON TRANSCEIVER", does: Comm(capture: 5.0e8, link: 7.5e10, lag: 0.05, capacity: 20000.0), size: 4, mass: 6000.0, volume: 20.0, power: 3.0e5, price: 150000.0),
+    // Relays: link two sites through hyperspace (Dogma's hyper-signal), so news crosses a
+    // system in seconds, not hours. A system's relays link its sites the shortest way all told.
+    (key: "relay.hyper", brand: "brand.halcyon", name: "HALCYON HYPER RELAY", does: HyperRelay(lag: 0.1, capacity: 100000.0), size: 4, mass: 15000.0, volume: 40.0, power: 1.5e6, price: 350000.0),
+    // A port's or outpost's ground terminal: up to the transceivers over its world.
+    (key: "terminal.ground", brand: "brand.tallis", name: "TALLIS GROUND TERMINAL", does: Comm(capture: 1.0e8, link: 1.0e9, lag: 0.02, capacity: 50000.0), size: 3, mass: 3000.0, volume: 10.0, power: 1.0e5, price: 60000.0),
     (key: "relay.gate", brand: "brand.halcyon", name: "HALCYON GATE RELAY", does: GateRelay(lag: 1.0, capacity: 50000.0), size: 4, mass: 40000.0, volume: 100.0, power: 2.0e6, price: 900000.0),
 ]

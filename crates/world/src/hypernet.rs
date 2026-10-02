@@ -36,9 +36,12 @@ pub struct Node {
     pub gate_relay: Option<(usize, f64)>,
     /// A beacon's place from its body (m; zero for the rest).
     pub offset: DVec3,
-    /// A world's relay: the world it's round (a constellation in orbit, it
-    /// sees past its own world on every side).
+    /// An orbital site: the world it's round (a few satellites, one always
+    /// in sight: it sees past its own world on every side).
     pub around: Option<usize>,
+    /// Its hyper relay's handling lag (s); None: on the ground, no relay (a
+    /// port talks up to the transceivers over its world).
+    pub relay: Option<f64>,
 }
 
 /// The structure that stands for a body or port of the seeded world: the
@@ -61,22 +64,35 @@ fn span(s: &Structure) -> f64 {
     if let StructureKind::GateRing { span_ly, .. } = s.kind { span_ly } else { 0.0 }
 }
 
-/// What a structure has fitted: its comm, and a gate relay's lag if any.
-fn fitted(s: &Structure) -> (Comm, Option<f64>) {
+/// What a structure has fitted: its comm (a transceiver, or a ground
+/// terminal), and the lags of its hyper relay and gate relay, if any.
+fn fitted(s: &Structure) -> (Comm, Option<f64>, Option<f64>) {
     let c = content();
     let modules = s.fit.iter().filter_map(|k| c.handle::<crate::modules::Module>(k)).map(|h| &c.get(h).does);
-    let (mut comm, mut relay) = (None, None);
+    let (mut comm, mut hyper, mut gate) = (None, None, None);
     for d in modules {
         match d {
-            Does::GateRelay { lag, .. } => relay = Some(*lag),
+            Does::GateRelay { lag, .. } => gate = Some(*lag),
+            Does::HyperRelay { lag, .. } => hyper = Some(*lag),
             d => comm = comm.or(d.comm()),
         }
     }
-    (comm.expect("every structure has a comm (content checks)"), relay)
+    (comm.expect("every structure has a comm (content checks)"), hyper, gate)
 }
 
-/// The system's relays: every station, spaceport and gate, and in a settled
-/// system (a station or ports in it) a relay round every planet and moon.
+/// A hyper relay's handling lag (s), by its module's key.
+pub fn relay_lag(module: &str) -> Option<f64> {
+    let c = content();
+    c.handle::<crate::modules::Module>(module).and_then(|h| match c.get(h).does {
+        Does::HyperRelay { lag, .. } => Some(lag),
+        _ => None,
+    })
+}
+
+/// The system's net: its sites in space (the station, its gates, and in a
+/// settled system an orbital site round every planet and moon), each a
+/// transceiver and a hyper relay; and its ports on the ground, each a
+/// terminal up to the transceivers over its world.
 pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
     let mut out = Vec::new();
     for (i, b) in sys.bodies.iter().enumerate() {
@@ -88,23 +104,37 @@ pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
             }
             _ => continue,
         };
-        let (comm, relay) = fitted(structure(&kind, lane));
+        let (comm, relay, gate) = fitted(structure(&kind, lane));
         let backbone = kind == StructureKind::Station;
-        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: relay.zip(b.link).map(|(lag, to)| (to, lag)), offset: DVec3::ZERO, around: None });
+        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: gate.zip(b.link).map(|(lag, to)| (to, lag)), offset: DVec3::ZERO, around: None, relay });
     }
-    // (The station is the system's hub; with none, its ports are.)
-    let hub = !out.iter().any(|n| n.backbone);
-    let (comm, _) = fitted(structure(&StructureKind::Spaceport, 0.0));
+    let (comm, _, _) = fitted(structure(&StructureKind::Spaceport, 0.0));
     for (k, sp) in sys.spaceports.iter().enumerate() {
-        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: hub, gate_relay: None, offset: DVec3::ZERO, around: None });
+        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: None, relay: None });
     }
     if !out.is_empty() {
-        let (comm, _) = fitted(structure(&StructureKind::Relay, 0.0));
+        let (comm, relay, _) = fitted(structure(&StructureKind::Orbital, 0.0));
         for (i, b) in sys.bodies.iter().enumerate().filter(|(_, b)| matches!(b.kind, BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon)) {
-            out.push(Node { at: NodeAt::Body(i), name: format!("{} relay", b.name), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: Some(i) });
+            out.push(Node { at: NodeAt::Body(i), name: format!("{} orbital", b.name), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: Some(i), relay });
         }
     }
     out
+}
+
+/// A hyper-signal's time from `a` to `b` (s): along the line, at the
+/// medium's limit there (Dogma: slower the nearer a world's surface).
+pub fn hyper_time(sys: &StarSystem, positions: &[DVec3], a: DVec3, b: DVec3) -> f64 {
+    const STEPS: usize = 48;
+    let len = a.distance(b);
+    let step = len / STEPS as f64;
+    (0..STEPS)
+        .map(|k| {
+            let p = a.lerp(b, (k as f64 + 0.5) / STEPS as f64);
+            // (The nearest surface; a site's own world's no nearer than its orbit.)
+            let near = sys.bodies.iter().zip(positions).filter(|(b, _)| matches!(b.kind, BodyKind::Star | BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon)).map(|(b, c)| p.distance(*c) - b.rail.radius).fold(f64::INFINITY, f64::min);
+            step / universe_physics::hyper::limit(near.max(1.0e7))
+        })
+        .sum()
 }
 
 /// Where a node is at `t` (`positions` at `t`).
@@ -134,12 +164,12 @@ pub fn blocked_but(sys: &StarSystem, positions: &[DVec3], a: DVec3, b: DVec3, sk
     sys.bodies.iter().zip(positions).enumerate().any(|(i, (body, p))| !skip.contains(&Some(i)) && matches!(body.kind, BodyKind::Star | BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon) && universe_physics::segment_distance(a, b, *p) < body.rail.radius * 0.999)
 }
 
-/// The net at a moment. Each day (at its start, as the worlds stand then)
-/// every place that needs the net — the station, ports, gates, beacons —
-/// gets its quickest way to the backbone, hopping relay to relay (a tree,
-/// not a mesh), and only the relays on those ways are switched on; the rest
-/// stand by. As the worlds go round, a line on the day's routes may close:
-/// that branch finds another way then.
+/// The net at a moment. Each day (as the sites stand at its start) the
+/// system's hyper relays link its sites the shortest way all told (a
+/// minimum spanning tree: each link to a near neighbour, no more links than
+/// it takes); messages cross them through hyperspace, in seconds. Ports on
+/// the ground talk up to a transceiver in sight, at light speed; so do ships
+/// within a transceiver's radius.
 #[derive(Clone, Debug, Default)]
 pub struct Net {
     pub nodes: Vec<Node>,
@@ -148,38 +178,8 @@ pub struct Net {
     pub uplink: Vec<Option<usize>>,
     /// Each node's lag from the backbone along its route (None: cut off).
     pub lag: Vec<Option<f64>>,
-    /// Switched on: a place that needs the net, or a relay on one's way in.
+    /// On the net (its relay linked in, or a port with a transceiver in sight).
     pub used: Vec<bool>,
-}
-
-/// The quickest ways to the backbone over the links standing at `at` (the
-/// worlds at `positions`): each node's uplink and lag. `fixed`: nodes whose
-/// way is settled already (their lag), the rest finding theirs through them.
-fn quickest(sys: &StarSystem, nodes: &[Node], at: &[DVec3], positions: &[DVec3], fixed: &[Option<f64>]) -> (Vec<Option<usize>>, Vec<Option<f64>>) {
-    let n = nodes.len();
-    let mut lag = fixed.to_vec();
-    let mut uplink = vec![None; n];
-    let mut done = vec![false; n];
-    // (Dijkstra; a few dozen nodes.)
-    while let Some(a) = (0..n).filter(|&k| !done[k] && lag[k].is_some()).min_by(|&x, &y| lag[x].unwrap_or(f64::MAX).total_cmp(&lag[y].unwrap_or(f64::MAX))) {
-        done[a] = true;
-        let la = lag[a].unwrap_or(0.0);
-        for b in 0..n {
-            if done[b] || fixed[b].is_some() {
-                continue;
-            }
-            let d = at[a].distance(at[b]);
-            if d > nodes[a].comm.link_with(&nodes[b].comm) || blocked_but(sys, positions, at[a], at[b], [nodes[a].around, nodes[b].around]) {
-                continue;
-            }
-            let via = la + d / SPEED_OF_LIGHT + nodes[b].comm.lag;
-            if lag[b].is_none_or(|old| via < old - 1e-12) {
-                lag[b] = Some(via);
-                uplink[b] = Some(a);
-            }
-        }
-    }
-    (uplink, lag)
 }
 
 /// A ship's (or anything's) place on the net.
@@ -195,60 +195,64 @@ impl Net {
     /// The net of `nodes` at `t` (`positions` at `t`).
     pub fn at(sys: &StarSystem, nodes: Vec<Node>, t: f64, positions: &[DVec3]) -> Net {
         let n = nodes.len();
-        let seeds: Vec<Option<f64>> = nodes.iter().map(|x| x.backbone.then_some(0.0)).collect();
-        // The day's routes, as the worlds stood when it began.
-        let day = (t / crate::units::DAY).floor() * crate::units::DAY;
-        let mut then = Vec::new();
-        sys.positions(day, &mut then);
-        let at_then: Vec<DVec3> = nodes.iter().map(|x| position(sys, x, day, &then)).collect();
-        let (plan, _) = quickest(sys, &nodes, &at_then, &then, &seeds);
-        // Only the relays on a place's way in.
-        let needs = |x: &Node| x.around.is_none();
-        let mut used = vec![false; n];
-        for k in (0..n).filter(|&k| needs(&nodes[k])) {
-            let mut c = Some(k);
-            while let Some(i) = c.filter(|&i| !used[i]) {
-                used[i] = true;
-                c = plan[i];
-            }
-        }
-        // Now: the lag along the day's routes where every line still holds.
-        let at: Vec<DVec3> = nodes.iter().map(|x| position(sys, x, t, positions)).collect();
-        let holds = |a: usize, b: usize| at[a].distance(at[b]) <= nodes[a].comm.link_with(&nodes[b].comm) && !blocked_but(sys, positions, at[a], at[b], [nodes[a].around, nodes[b].around]);
-        let mut lag: Vec<Option<f64>> = seeds.clone();
+        let sites: Vec<usize> = (0..n).filter(|&k| nodes[k].relay.is_some()).collect();
         let mut uplink: Vec<Option<usize>> = vec![None; n];
-        for _ in 0..n {
-            for b in 0..n {
-                if let (None, Some(a)) = (lag[b], plan[b])
-                    && let Some(la) = lag[a]
-                    && holds(a, b)
-                {
-                    lag[b] = Some(la + at[a].distance(at[b]) / SPEED_OF_LIGHT + nodes[b].comm.lag);
-                    uplink[b] = Some(a);
+        let mut lag: Vec<Option<f64>> = vec![None; n];
+        let at: Vec<DVec3> = nodes.iter().map(|x| position(sys, x, t, positions)).collect();
+        // The day's links: a minimum spanning tree over the sites as they stood
+        // at its start, grown from the backbone (Prim's; a few dozen sites).
+        if let Some(&root) = sites.iter().find(|&&k| nodes[k].backbone).or(sites.first()) {
+            let day = (t / crate::units::DAY).floor() * crate::units::DAY;
+            let mut then = Vec::new();
+            sys.positions(day, &mut then);
+            let at_then: Vec<DVec3> = nodes.iter().map(|x| position(sys, x, day, &then)).collect();
+            let mut joined = vec![false; n];
+            joined[root] = true;
+            let mut best: Vec<(f64, usize)> = (0..n).map(|k| (at_then[k].distance(at_then[root]), root)).collect();
+            for _ in 1..sites.len() {
+                let Some(&k) = sites.iter().filter(|&&k| !joined[k]).min_by(|&&x, &&y| best[x].0.total_cmp(&best[y].0)) else { break };
+                joined[k] = true;
+                uplink[k] = Some(best[k].1);
+                for &m in sites.iter().filter(|&&m| !joined[m]) {
+                    let d = at_then[m].distance(at_then[k]);
+                    if d < best[m].0 {
+                        best[m] = (d, k);
+                    }
                 }
             }
-        }
-        // A broken branch finds another way, through what's standing.
-        if (0..n).any(|k| used[k] && lag[k].is_none() && plan[k].is_some()) {
-            let (up, l) = quickest(sys, &nodes, &at, positions, &lag);
-            for k in 0..n {
-                if lag[k].is_none() && l[k].is_some() && needs(&nodes[k]) {
-                    let mut c = Some(k);
-                    while let Some(i) = c.filter(|&i| lag[i].is_none()) {
-                        lag[i] = l[i];
-                        uplink[i] = up[i];
-                        used[i] = true;
-                        c = up[i];
+            // Now: the lag along the tree, through hyperspace.
+            lag[root] = Some(0.0);
+            for _ in 0..sites.len() {
+                for &k in &sites {
+                    if let (None, Some(u)) = (lag[k], uplink[k])
+                        && let Some(lu) = lag[u]
+                    {
+                        lag[k] = Some(lu + hyper_time(sys, positions, at[u], at[k]) + nodes[k].relay.unwrap_or(0.0));
                     }
                 }
             }
         }
-        for k in 0..n {
-            if !used[k] {
-                lag[k] = None;
-                uplink[k] = None;
+        // The ports: up to the transceiver in sight that gets them in soonest
+        // (their own world's orbital site is always in sight).
+        for k in (0..n).filter(|&k| nodes[k].relay.is_none()) {
+            let ground = match nodes[k].at {
+                NodeAt::Port(p) => Some(sys.spaceports[p].body),
+                _ => None,
+            };
+            let up = sites
+                .iter()
+                .filter_map(|&s| {
+                    let d = at[s].distance(at[k]);
+                    let sight = nodes[s].around.is_some() && nodes[s].around == ground || !blocked_but(sys, positions, at[s], at[k], [nodes[s].around, None]);
+                    (d <= nodes[s].comm.link && sight).then(|| Some((s, lag[s]? + d / SPEED_OF_LIGHT + nodes[k].comm.lag))).flatten()
+                })
+                .min_by(|a, b| a.1.total_cmp(&b.1));
+            if let Some((s, l)) = up {
+                uplink[k] = Some(s);
+                lag[k] = Some(l);
             }
         }
+        let used = lag.iter().map(|l| l.is_some()).collect();
         Net { nodes, at, uplink, lag, used }
     }
 
@@ -257,9 +261,10 @@ impl Net {
     pub fn status(&self, sys: &StarSystem, positions: &[DVec3], p: DVec3, comm: &Comm) -> Option<Status> {
         let mut best: Option<Status> = None;
         for (k, n) in self.nodes.iter().enumerate() {
-            let Some(l) = self.lag[k] else { continue };
+            // (Transceivers in space only: within one's radius, in sight.)
+            let Some(l) = self.lag[k].filter(|_| n.relay.is_some()) else { continue };
             let d = self.at[k].distance(p);
-            if d > n.comm.link_with(comm) || blocked_but(sys, positions, self.at[k], p, [n.around, None]) {
+            if d > n.comm.link || blocked_but(sys, positions, self.at[k], p, [n.around, None]) {
                 continue;
             }
             let lag = l + d / SPEED_OF_LIGHT + n.comm.lag + comm.lag;

@@ -308,8 +308,15 @@ impl Content {
             if !fitted.iter().any(|m| m.does.comm().is_some()) {
                 return Err(format!("structures.ron '{}': no comm (every structure has one)", s.key));
             }
+            // (Relays only in space; a gate relay only on a ring.)
             let ring = matches!(s.kind, crate::structures_catalogue::StructureKind::GateRing { .. });
-            if let Some(m) = fitted.iter().find(|m| !matches!(m.does.slot(), crate::modules::SlotKind::Comm) && !(ring && matches!(m.does.slot(), crate::modules::SlotKind::Relay))) {
+            let space = !s.kind.grounded();
+            let fits = |d: &crate::modules::Does| match d {
+                crate::modules::Does::GateRelay { .. } => ring,
+                crate::modules::Does::HyperRelay { .. } => space,
+                d => d.comm().is_some(),
+            };
+            if let Some(m) = fitted.iter().find(|m| !fits(&m.does)) {
                 return Err(format!("structures.ron '{}': {} doesn't go on it", s.key, m.key));
             }
         }

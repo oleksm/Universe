@@ -2,20 +2,21 @@
 // (brands.ron), like any module or hull. The seeded world's stations,
 // spaceports, outposts and gates are these. (Not yet: their geometry and
 // gear from here; built by players.) `fit`: the modules installed: every
-// structure has a comm (its relay); a gate ring may carry a gate relay.
+// structure has a comm (a transceiver in space, a ground terminal on a world); those in
+// space a hyper relay; a gate ring may carry a gate relay.
 [
-    (key: "structure.platform", brand: "brand.halvard", name: "HALVARD PLATFORM", kind: Station, fit: ["relay.port"],
+    (key: "structure.platform", brand: "brand.halvard", name: "HALVARD PLATFORM", kind: Station, fit: ["transceiver.station", "relay.hyper"],
         note: "An orbital platform: a deck of 16 pads, the main structure on one edge, its hangar inside."),
-    (key: "structure.spaceport", brand: "brand.halvard", name: "HALVARD SPACEPORT", kind: Spaceport, fit: ["relay.port"],
+    (key: "structure.spaceport", brand: "brand.halvard", name: "HALVARD SPACEPORT", kind: Spaceport, fit: ["terminal.ground"],
         note: "A port on a world's ground: 16 pads on a cleared plain."),
-    (key: "structure.outpost", brand: "brand.halvard", name: "HALVARD OUTPOST", kind: Outpost, fit: ["relay.beacon"],
+    (key: "structure.outpost", brand: "brand.halvard", name: "HALVARD OUTPOST", kind: Outpost, fit: ["terminal.ground"],
         note: "A small settlement's port: pads, a works, a few thousand people."),
-    (key: "structure.relay", brand: "brand.tallis", name: "TALLIS WORLD RELAY", kind: Relay, fit: ["relay.beacon"],
-        note: "A constellation of relays round a planet or moon: the hypernet hops world to world."),
-    (key: "structure.ring.i", brand: "brand.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 10.0), fit: ["relay.beacon", "relay.gate"],
+    (key: "structure.orbital", brand: "brand.tallis", name: "TALLIS ORBITAL SITE", kind: Orbital, fit: ["transceiver.beacon", "relay.hyper"],
+        note: "A transceiver and a hyper relay in orbit round a planet or moon (a few satellites: one is always in sight)."),
+    (key: "structure.ring.i", brand: "brand.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 10.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
         note: "A gate ring, class I: the shortest throats."),
-    (key: "structure.ring.ii", brand: "brand.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 25.0), fit: ["relay.beacon", "relay.gate"],
+    (key: "structure.ring.ii", brand: "brand.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 25.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
         note: "A gate ring, class II: the settled lanes' ring."),
-    (key: "structure.ring.iii", brand: "brand.halcyon", name: "HALCYON RING III", kind: GateRing(class: 3, span_ly: 50.0), fit: ["relay.beacon", "relay.gate"],
+    (key: "structure.ring.iii", brand: "brand.halcyon", name: "HALCYON RING III", kind: GateRing(class: 3, span_ly: 50.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
         note: "A gate ring, class III: the longest throat anyone builds."),
 ]

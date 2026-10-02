@@ -524,7 +524,7 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
         // Each relay switched on: its reach, to scale (its true circle through
         // the chart's mapping; one for relays together, a world's and its ports).
         let mut drawn: Vec<DVec3> = Vec::new();
-        for (k, node) in n.net.nodes.iter().enumerate().filter(|(k, _)| n.net.used[*k]) {
+        for (k, node) in n.net.nodes.iter().enumerate().filter(|(k, x)| n.net.used[*k] && x.relay.is_some()) {
             let at = n.net.at[k];
             if drawn.iter().any(|d| d.distance(at) < node.comm.link * 0.05) {
                 continue;

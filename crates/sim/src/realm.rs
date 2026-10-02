@@ -15,7 +15,9 @@ use universe_world::hypernet::{comm_of, nodes, Node, NodeAt};
 use universe_world::{Galaxy, StarSystem};
 
 /// The relay a claim beacon is (a module of the content).
-pub const BEACON: &str = "relay.beacon";
+pub const BEACON: &str = "transceiver.beacon";
+/// The hyper relay planted with it.
+pub const BEACON_RELAY: &str = "relay.hyper";
 
 /// A claim beacon: where (beside a body of a system), for whom.
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
@@ -80,10 +82,10 @@ impl Realm {
     /// beacon is the backbone where there's no station or port.
     pub fn nodes(&self, galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
         let mut out = nodes(galaxy, sys);
-        let bare = out.iter().all(|n| !n.backbone) && sys.spaceports.is_empty();
-        let Some(comm) = comm_of(BEACON) else { return out };
+        let bare = out.iter().all(|n| !n.backbone);
+        let (Some(comm), relay) = (comm_of(BEACON), universe_world::hypernet::relay_lag(BEACON_RELAY)) else { return out };
         for (k, c) in self.claims.iter().enumerate().filter(|(_, c)| c.system == sys.index) {
-            out.push(Node { at: NodeAt::Beacon { body: c.body, claim: k }, name: c.name.clone(), comm, backbone: bare, gate_relay: None, offset: c.offset, around: None });
+            out.push(Node { at: NodeAt::Beacon { body: c.body, claim: k }, name: c.name.clone(), comm, backbone: bare && k == self.claims.iter().position(|x| x.system == sys.index).unwrap_or(k), gate_relay: None, offset: c.offset, around: None, relay: relay.or(Some(0.0)) });
         }
         out
     }
@@ -174,7 +176,7 @@ impl crate::universe::Universe {
             return Err(format!("{} HOLDS THIS SYSTEM", f.name));
         }
         let c = universe_world::content::content();
-        let price = c.handle::<universe_world::modules::Module>(BEACON).map_or(0.0, |h| c.get(h).price) + CLAIM_FEE;
+        let price = [BEACON, BEACON_RELAY].iter().map(|k| c.handle::<universe_world::modules::Module>(k).map_or(0.0, |h| c.get(h).price)).sum::<f64>() + CLAIM_FEE;
         self.ledger.transfer(Party::Pilot(id), Party::World, Asset::Credits, price, self.tick, universe_protocol::Cause::Rules).map_err(|_| format!("A BEACON AND ITS CLAIM: {price:.0} CR"))?;
         let mut positions = Vec::new();
         sys.positions(self.world.time, &mut positions);

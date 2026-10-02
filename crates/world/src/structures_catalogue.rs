@@ -8,8 +8,8 @@ pub enum StructureKind {
     Station,
     Spaceport,
     Outpost,
-    /// A world's relay: a constellation round a planet or moon.
-    Relay,
+    /// An orbital site round a planet or moon: its transceiver and hyper relay.
+    Orbital,
     /// A gate ring: its class, and the longest throat a pair of them holds (light years).
     GateRing { class: u8, span_ly: f64 },
 }
@@ -24,6 +24,13 @@ pub struct Structure {
     /// The modules installed (keys): its comm, a gate relay.
     pub fit: Vec<String>,
     pub note: String,
+}
+
+impl StructureKind {
+    /// On a world's ground (no transceiver or relay works from there).
+    pub fn grounded(&self) -> bool {
+        matches!(self, StructureKind::Spaceport | StructureKind::Outpost)
+    }
 }
 
 impl Structure {
