@@ -18,7 +18,7 @@
         label: "FARM WORLD",
         population: 60.0,
         ship_fuel: 60.0,
-        works: [("recipe.farm", 8.0), ("recipe.artisans", 2.0)],
+        works: [("recipe.farm", 8.0), ("recipe.artisans", 2.0), ("recipe.wells", 1.0)],
         sells: ["goods.food", "goods.water", "goods.textiles", "goods.biologics", "goods.luxuries", "goods.art"],
         wants: ["goods.machinery", "goods.electronics", "goods.computers", "goods.medicine", "goods.tools", "goods.robots", "goods.fuel"],
     ),

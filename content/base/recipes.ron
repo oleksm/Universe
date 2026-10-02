@@ -3,6 +3,7 @@
 [
     (key: "recipe.mine", name: "MINE", takes: [], makes: [("goods.ores", 40.0), ("goods.minerals", 4.0)]),
     (key: "recipe.ice", name: "ICE WORKS", takes: [], makes: [("goods.water", 300.0)]),
+    (key: "recipe.wells", name: "WELLS", takes: [], makes: [("goods.water", 20.0)]),
     (key: "recipe.farm", name: "FARMS", takes: [("goods.chemicals", 2.0)], makes: [("goods.food", 30.0), ("goods.biologics", 0.6), ("goods.textiles", 1.2)]),
     (key: "recipe.artisans", name: "ARTISANS", takes: [("goods.textiles", 1.0), ("goods.minerals", 0.5)], makes: [("goods.luxuries", 1.5), ("goods.art", 0.3)]),
     (key: "recipe.refinery", name: "REFINERY", takes: [("goods.ores", 30.0)], makes: [("goods.metals", 20.0), ("goods.minerals", 2.0)]),

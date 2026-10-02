@@ -30,6 +30,18 @@ pub const STEP: f64 = 600.0;
 pub const COVER_DAYS: f64 = 10.0;
 /// Its storage holds this many times that; full, its works stop.
 const STORAGE: f64 = 3.0;
+/// Fed (its food and water met, over a few days): it grows this much a
+/// day, to `ROOM` times its founding size.
+pub const GROWTH: f64 = 0.002;
+pub const ROOM: f64 = 3.0;
+/// Hungry, its people want to leave: at worst this share a day joins those
+/// waiting for passage (no more than `WAITING_MOST` of them).
+pub const EMIGRATE: f64 = 0.05;
+pub const WAITING_MOST: f64 = 0.33;
+/// Starving (under half fed), at worst this share of its people die a day.
+pub const DEATH: f64 = 0.01;
+/// How long being fed or hungry takes to tell (days).
+const FED_DAYS: f64 = 3.0;
 const DAY: f64 = 86_400.0;
 
 fn line(c: Category) -> usize {
@@ -94,8 +106,17 @@ pub struct Place {
     pub system: usize,
     pub facility: Facility,
     pub kind: PlaceKind,
-    /// People (thousands).
+    /// People (thousands); as founded.
     pub population: f64,
+    pub founded: f64,
+    /// How well fed (its food and water met, over the last few days, 0..1).
+    pub fed: f64,
+    /// Those waiting for passage away (thousands, of its people).
+    pub waiting: f64,
+    /// Over the last step, per day: how many more of its people (thousands,
+    /// births less deaths), and how many died.
+    pub growth: f64,
+    pub deaths: f64,
     /// Stock by kind of goods (tonnes).
     pub stock: Vec<f64>,
     /// Over the last step, per day (tonnes): made, used (by works and
@@ -107,7 +128,21 @@ pub struct Place {
 
 impl Place {
     fn new(system: usize, facility: Facility, kind: PlaceKind) -> Self {
-        let mut p = Place { system, facility, kind, population: kind.population(), stock: vec![0.0; lines()], made: vec![0.0; lines()], used: vec![0.0; lines()], short: vec![0.0; lines()] };
+        let mut p = Place {
+            system,
+            facility,
+            kind,
+            population: kind.population(),
+            founded: kind.population(),
+            fed: 1.0,
+            waiting: 0.0,
+            growth: 0.0,
+            deaths: 0.0,
+            stock: vec![0.0; lines()],
+            made: vec![0.0; lines()],
+            used: vec![0.0; lines()],
+            short: vec![0.0; lines()],
+        };
         // Starting at the stock it aims for, working at full: what it makes
         // and uses a day so (until its first step says otherwise).
         for c in Category::all() {
@@ -118,16 +153,22 @@ impl Place {
         p
     }
 
+    /// Its works' workforce against what they were founded with: fewer
+    /// people, less work (more, up to twice as much).
+    pub fn labour(&self) -> f64 {
+        (self.population / self.founded.max(1e-9)).min(2.0)
+    }
+
     /// What it uses of kind `c` in a day, at full work (tonnes).
     pub fn needs(&self, c: Category) -> f64 {
-        let works: f64 = self.kind.works().flat_map(|(r, n)| r.takes.iter().filter(|t| t.0 == c).map(move |t| t.1 * n)).sum();
+        let works: f64 = self.labour() * self.kind.works().flat_map(|(r, n)| r.takes.iter().filter(|t| t.0 == c).map(move |t| t.1 * n)).sum::<f64>();
         let ships = if c == Category::fuel() { self.kind.ship_fuel() } else { 0.0 };
         works + ships + c.basket() * self.population
     }
 
     /// What it makes of kind `c` in a day, at full work (tonnes).
     pub fn makes(&self, c: Category) -> f64 {
-        self.kind.works().flat_map(|(r, n)| r.makes.iter().filter(|m| m.0 == c).map(move |m| m.1 * n)).sum()
+        self.labour() * self.kind.works().flat_map(|(r, n)| r.makes.iter().filter(|m| m.0 == c).map(move |m| m.1 * n)).sum::<f64>()
     }
 
     /// The stock it aims to hold of kind `c` (tonnes); zero if it neither uses nor makes it.
@@ -173,7 +214,9 @@ impl Place {
     fn step(&mut self, days: f64) {
         let (mut made, mut used, mut short) = (vec![0.0; lines()], vec![0.0; lines()], vec![0.0; lines()]);
         let full: Vec<bool> = Category::all().map(|c| self.stock[line(c)] >= self.target(c) * STORAGE).collect();
+        let labour = self.labour();
         for (r, n) in self.kind.works() {
+            let n = n * labour;
             // As much as its inputs allow; none while its outputs have nowhere to go.
             let mut k: f64 = if r.makes.iter().all(|m| full[line(m.0)]) { 0.0 } else { 1.0 };
             for &(c, rate) in &r.takes {
@@ -193,6 +236,9 @@ impl Place {
                 made[line(c)] += t;
             }
         }
+        // Its people's needs; the food and water of them, how well met.
+        let (mut wanted, mut had) = (0.0, 0.0);
+        let essential = [Category::of("goods.food"), Category::of("goods.water")];
         for c in Category::all() {
             let want = c.basket() * self.population * days;
             if want <= 0.0 {
@@ -202,12 +248,65 @@ impl Place {
             self.stock[line(c)] -= got;
             used[line(c)] += got;
             short[line(c)] += want - got;
+            if essential.contains(&Some(c)) {
+                wanted += want;
+                had += got;
+            }
         }
+        self.live(if wanted > 0.0 { had / wanted } else { 1.0 }, days);
         for i in 0..lines() {
             self.made[i] = made[i] / days;
             self.used[i] = used[i] / days;
             self.short[i] = short[i] / days;
         }
+    }
+}
+
+impl Place {
+    /// `days` of its people's lives, their food and water met this well
+    /// (0..1): fed, they grow; hungry, they want to leave (and wait for
+    /// passage); starving, they die.
+    fn live(&mut self, met: f64, days: f64) {
+        self.fed += (met - self.fed) * (days / FED_DAYS).min(1.0);
+        let before = self.population;
+        if self.fed > 0.95 {
+            self.population = (self.population * (1.0 + GROWTH * days)).min(self.founded * ROOM).max(self.population);
+            // (Fed again: those waiting stay.)
+            self.waiting *= (1.0 - days).max(0.0);
+        } else if self.fed < 0.9 {
+            let leaving = self.population * EMIGRATE * (0.9 - self.fed) / 0.9 * days;
+            self.waiting = (self.waiting + leaving).min(self.population * WAITING_MOST);
+        }
+        let died = if self.fed < 0.5 { self.population * DEATH * (0.5 - self.fed) / 0.5 * days } else { 0.0 };
+        if died > 0.0 {
+            let left = (self.population - died).max(0.0);
+            self.waiting *= left / self.population.max(1e-12);
+            self.population = left;
+        }
+        if self.population < 0.001 {
+            self.population = 0.0;
+            self.waiting = 0.0;
+        }
+        self.growth = (self.population - before) / days;
+        self.deaths = died / days;
+    }
+
+    /// `people` (thousands) of those waiting board a ship: gone from here.
+    pub fn depart(&mut self, people: f64) -> f64 {
+        let n = people.min(self.waiting).max(0.0);
+        self.waiting -= n;
+        self.population -= n;
+        n
+    }
+
+    /// `people` (thousands) arrive to settle.
+    pub fn arrive(&mut self, people: f64) {
+        self.population += people.max(0.0);
+    }
+
+    /// Would people settle here (fed, with room)?
+    pub fn welcomes(&self) -> bool {
+        self.fed > 0.9 && self.population < self.founded * ROOM
     }
 }
 
@@ -377,5 +476,40 @@ mod tests {
         let made: f64 = t.iter().map(|l| l.1).sum();
         eprintln!("hauled {:.0} t/day; made {made:.0} t/day; short {short:.1} t/day", hauled / 30.0);
         assert!(short < made * 0.05, "hardly anything short: {short:.1} of {made:.0} t/day");
+    }
+}
+
+#[cfg(test)]
+mod people {
+    use super::*;
+
+    fn economy() -> Economy {
+        let w = universe_world::World::new(1984);
+        let sys = w.system(w.home_system);
+        Economy::new(std::iter::once((w.home_system, &*sys)), 0.0)
+    }
+
+    #[test]
+    fn unsupplied_people_go_hungry_queue_to_leave_and_then_die_while_the_fed_grow() {
+        let mut e = economy();
+        let station = e.places.iter().position(|p| p.kind == PlaceKind::Station).unwrap();
+        let farm = e.places.iter().position(|p| p.kind == PlaceKind::Farm).unwrap();
+        let (people, farmers) = (e.places[station].population, e.places[farm].population);
+        // Ten days: the station's food lasts (it starts with ten days of it).
+        e.step_to(8.0 * DAY);
+        assert!(e.places[station].fed > 0.95 && e.places[station].waiting == 0.0);
+        // A month with nothing delivered: hungry, then starving.
+        e.step_to(30.0 * DAY);
+        let s = &e.places[station];
+        eprintln!("station after a month unsupplied: fed {:.2}, {:.1}k of {people:.1}k left, {:.1}k waiting, {:.2}k dying a day", s.fed, s.population, s.waiting, s.deaths);
+        assert!(s.fed < 0.5, "starving: fed {}", s.fed);
+        assert!(s.waiting > 0.0, "people want to leave");
+        assert!(s.population < people, "people died");
+        // The farm feeds itself: it grows.
+        assert!(e.places[farm].population > farmers, "the farm world grows: {} -> {}", farmers, e.places[farm].population);
+        // Those waiting board a ship and settle at the farm.
+        let gone = e.places[station].depart(1.0);
+        assert!(gone > 0.0 && e.places[farm].welcomes());
+        e.places[farm].arrive(gone);
     }
 }

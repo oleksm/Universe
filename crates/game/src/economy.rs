@@ -89,7 +89,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     y += line * 1.5;
 
     // The places, under their headers.
-    frame.text(Vec2::new(12.0, y), &format!(" {:<9} {:<18} {:<7} {:>6}  {}", "SYSTEM", "PLACE", "KIND", "PEOPLE", "SHORTEST"), DIM);
+    frame.text(Vec2::new(12.0, y), &format!(" {:<9} {:<12} {:<7} {:>6} {:>4} {:>5}  {}", "SYSTEM", "PLACE", "KIND", "PEOPLE", "FED", "WAIT", "SHORTEST"), DIM);
     y += line;
     let top = y;
     let shown = ((size.y - top - 20.0) / line) as usize;
@@ -104,11 +104,13 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         let mark = if k == panel.selected { ">" } else { " " };
         let sys = app.charts.system(p.system);
         let text = format!(
-            "{mark}{:<9} {:<18} {:<7} {:>5.0}K  {}",
+            "{mark}{:<9} {:<12} {:<7} {:>5.1}K {:>3.0}% {:>4.1}K  {}",
             sys.name.to_uppercase().chars().take(9).collect::<String>(),
-            p.facility.name(&sys).to_uppercase().split(" (").next().unwrap_or("").chars().take(18).collect::<String>(),
+            p.facility.name(&sys).to_uppercase().split(" (").next().unwrap_or("").chars().take(12).collect::<String>(),
             p.kind.label().split(' ').next().unwrap_or(""),
             p.population,
+            p.fed * 100.0,
+            p.waiting,
             worst.map_or(String::new(), |(c, d)| format!("{} {}", c.name(), days(d)))
         );
         frame.text(Vec2::new(12.0, y), &text, if k == panel.selected { TEXT } else { c });
@@ -117,9 +119,12 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
 
     // The place under the cursor, in full.
     let Some(p) = places.get(panel.selected) else { return };
-    let x = (size.x * 0.5).floor();
+    let x = (size.x * 0.54).floor();
     let mut y = top;
-    frame.text(Vec2::new(x, y), &format!("{} ({}, {:.0}K PEOPLE)", place_name(app, p), p.kind.label(), p.population), TEXT);
+    frame.text(Vec2::new(x, y), &format!("{} ({}, {:.1}K PEOPLE)", place_name(app, p), p.kind.label(), p.population), TEXT);
+    y += line;
+    let life = if p.deaths > 0.0 { format!("{:.2}K DYING A DAY", p.deaths) } else { format!("{:+.2}K A DAY", p.growth) };
+    frame.text(Vec2::new(x, y), &format!("FED {:.0}%   {:.1}K WAITING TO LEAVE   {life}", p.fed * 100.0, p.waiting), if p.fed < 0.5 { BAD } else if p.fed < 0.9 { WARN } else { DIM });
     y += line * 1.5;
     frame.text(Vec2::new(x, y), &format!("{:<11} {:>5} {:>5} {:>5} {:>5} {:>6} {:>6} {:>5}", "KIND", "TRADE", "STOCK", "COVER", "PRICE", "MADE", "USED", "SHORT"), DIM);
     y += line;
