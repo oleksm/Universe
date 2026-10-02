@@ -706,7 +706,7 @@ impl App {
     fn handle_events(&mut self, ctx: &Context) {
         let view = self.v.clone();
         for event in view.events.iter().cloned() {
-            sound::event(ctx, &event);
+            sound::event(ctx, Some(self), &event);
             // Hits show on the HUD (hull, flash), not as messages: a burst would flood them.
             if let Event::Ship(ShipEvent::Hit { .. }) = event {
                 self.hit_age = 0.0;

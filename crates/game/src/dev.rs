@@ -1080,7 +1080,7 @@ pub fn sound_test(ctx: &universe_engine::Context, t: f64, last_t: f64) -> bool {
     ];
     for (time, event) in &events {
         if at(*time) {
-            crate::sound::event(ctx, event);
+            crate::sound::event(ctx, None, event);
         }
     }
     if at(0.2) {
