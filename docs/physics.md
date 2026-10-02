@@ -56,65 +56,80 @@ system is quick and cheap; between stars it's an expedition; gates are justified
 
 ### The medium
 
-Space carries a **hyper-medium**. Anything moving through it (a drive's field, a signal) is held
-under a local speed limit:
+Space carries a **hyper-medium**. Near a mass it holds anything moving through it (a drive's
+field, a signal) under a local limit:
 
-    v_lim(x) = min(K · d(x), V_MAX)
+    v_lim(x) = K · d(x)
 
-- `d`: distance to the nearest massive body's surface. Slow deep in wells, fast in open space,
-  zero at a surface: bodies block it.
-- `K = 2 /s`; `V_MAX = 10⁵ c`. In a system the well rules (at 1 AU from a star the limit is about
-  1,000 c); between stars, the cap.
+- `d`: distance to the nearest massive body's surface. Slow deep in wells, zero at a surface:
+  bodies block it. `K = 2 /s` (at 1 AU from a star the limit is about 1,000 c).
+- **In open space there's no speed limit.** The only limit is energy (below).
 - The **interlock**: nothing moves in it within 1 km of a body's highest ground.
 
-### Hyperdrive: speed and energy
+### Hyperdrive: speed is bought with energy
 
 A ship of mass `m` held in the field at speed `v` draws power
 
-    P(v) = m · (q + c_h · v²)
+    P(v) = m · q · (1/3) · (2 + (v / v*)³)
 
-- `q`: the field's upkeep (holding the ship in the medium at all), per kg.
-- `c_h · v²`: pushing through it.
+- The first part is the field's upkeep (holding the ship in the medium at all). The second is pushing
+  through it, which grows like drag: power with the cube of speed.
+- Over a distance `L` the energy is `E = m · L · ε* · f(v/v*)`, where `ε* = q / v*` is the cost per kg
+  per metre at the best speed `v*`, and
 
-Over a distance `L` at steady speed, the energy is `E = P · L / v = m · L · (q/v + c_h · v)`.
-That has a **best speed**, `v* = √(q / c_h)`: slower wastes energy on upkeep, faster on the push.
-At `v*` the cost is `2 m L √(q c_h)`, and at `k` times `v*` it's `(k + 1/k)/2` times that.
+      f(k) = (2/k + k²) / 3       (f(1) = 1, the least)
 
-Energy comes from fuel (energy density `e`, times the drive's efficiency `η`, by brand). The
-fuel burnt is part of the mass carried, so like a rocket the range is exponential:
+| Speed | Energy per distance | 40 ly takes |
+|---|---|---|
+| ½ v* | 1.4× | 70 h |
+| v* = 10⁴ c | 1× (the least) | 35 h |
+| 2 v* | 1.7× | 18 h |
+| 3 v* | 3.2× | 12 h |
+| 10 v* | 33× | 3.5 h |
+| 100 v* | 3,300× | 21 min |
 
-    L_max = Λ · ln(m_full / m_empty),    Λ = η · e / (2 √(q c_h))
+Energy comes from fuel (energy density `e`, times the drive's efficiency `η`, by brand). The fuel
+burnt is mass carried, so like a rocket the range is exponential:
 
-`Λ` is the drive's **range scale**: each `Λ` travelled costs a factor e (2.72) in mass.
+    L_max = (Λ / f(v/v*)) · ln(m_full / m_empty),    Λ = η · e / ε*
+
+`Λ` is the drive's **range scale** at the best speed: each `Λ` travelled costs a factor e (2.72) in
+mass. Going `k` times faster shrinks it by `f(k)`.
 
 | Constant | Value | Meaning |
 |---|---|---|
 | `e` | 1×10¹³ J/kg | usable energy in fuel (fusion) |
 | `η` | 0.6–1.2 | a drive's efficiency, by brand and grade |
-| `v*` | 10⁴ c | best speed (at η = 1) |
-| `Λ` | 20 ly (at η = 1) | range scale |
-| `q` | 7.9×10⁷ W/kg | upkeep (from `v*` and `Λ`) |
-| `c_h` | 8.8×10⁻¹⁸ /s | push (from `v*` and `Λ`) |
+| `v*` | 10⁴ c | best speed |
+| `Λ` | 20 ly (at η = 1) | range scale at the best speed |
+| `ε*` | 5.3×10⁻⁵ J/(kg·m) | energy per kg per metre at `v*` |
+| `q` | 1.6×10⁸ W/kg | the field's upkeep (`ε* · v*`) |
 
 What it means:
 
-- **Within a system:** the well holds you well under `v*`, and the upkeep per e-fold of distance is
-  `q/K`: about 0.4 kg of fuel per e-fold for a 90 t ship, 3–5 kg planet to planet. Quick and cheap,
-  as today.
-- **To the nearest stars (about 40 ly):** at `v*` it takes 35 hours, and needs `m_full/m_empty = e²`,
+- **Within a system:** the well holds you well under `v*`; the upkeep per e-fold of distance is
+  `(2/3) q / K`, about 0.5 kg of fuel per e-fold for a 90 t ship, 3–6 kg planet to planet. Quick
+  and cheap, as today.
+- **To the nearest stars (about 40 ly):** at `v*` it takes 35 hours and needs `m_full/m_empty = e²`,
   about 7.4. A ship must be 86% fuel to get there, with none to come back.
 
-| Ship | Empty | Fuel | Range (one way) |
+| Ship | Empty | Fuel | Range at v* (one way) |
 |---|---|---|---|
 | A Drover (stock) | 60 t | 30 t | 8 ly: can't reach a neighbour |
 | An expedition ship | 200 t | 1,300 t | 40 ly: there, not back |
 | The same, to 100 ly | 200 t | 29,500 t | not practical: needs depots |
 
-- **So expeditions** go one way, carrying a mobile outpost that makes fuel from local matter (ice,
-  gas) to get home, or settle. If the outpost fails, they're stranded. Going farther takes depots
-  laid stage by stage. Going faster than `v*` burns range: at 3×, 40% less.
+- **Speed is logistics.** Going faster is always possible, but each step costs steeply more fuel. Over a
+  long way the mass ratio runs away (exponential in `f(k) · L / Λ`), so speed comes only from
+  refuelling often: a lane with depots every few light years can be run fast; a lone crossing must
+  creep at `v*`. **So where fuel is made and stocked decides where travel and the hypernet are
+  fast.** Fuel-rich systems (gas giants, ice) and the depot chains between them become the
+  galaxy's arteries.
+- **Expeditions** go one way at the best speed, carrying a mobile outpost that makes fuel from local
+  matter to get home, or settle. If it fails, they're stranded. Going farther takes depots laid stage by
+  stage.
 - **Time costs too:** crew eat, breathe and need power the whole way (life support per person per
-  day). A slow, cheap crossing needs more supplies.
+  day). Creeping slower than `v*` saves nothing and costs supplies.
 
 ### Gates: justified, and limited
 
@@ -141,8 +156,9 @@ distance `S` between its rings.
 
 ### Hyper-signals: the hypernet's carrier
 
-- A relay's signal travels the medium under the same limit: its time is `∫ ds / v_lim` along the way.
-  It's quick in open space, slow climbing out of wells, and blocked by bodies.
+- A relay's signal travels the medium under the same limit near masses: its time is `∫ ds / v_lim`
+  climbing out of wells (blocked by bodies). In open space it's as fast as its energy buys,
+  under the same law: a stronger relay sends faster, and farther.
 - **Its strength falls with the square of the distance:** a relay sending `P_tx` reaches a receiver of
   sensitivity `p_min` within `R = √(P_tx · G / p_min)` (`G`: the antennas' gain, by brand and size).
   So reach is bought with power and size, and the far frontier needs relays laid out to it.
@@ -159,6 +175,7 @@ distance `S` between its rings.
 
 ## To tune (playtest)
 
-- `Λ`, `v*`, `V_MAX`, `P₀`, `τ` and ring classes: the numbers above are a first cut, chosen so the
-  stock ships stay local and the nearest stars need an expedition.
+- `Λ`, `v*`, the push's exponent (3), `P₀`, `τ` and ring classes: the numbers above are a first cut,
+  chosen so the stock ships stay local, the nearest stars need an expedition, and speed is
+  fuel logistics.
 - How expensive life support is per crew-day (food, water, air, power).
