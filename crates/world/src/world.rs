@@ -521,9 +521,9 @@ impl World {
                 result
             }
             ShipState::Transit { to, from, remaining, duration, local_velocity, local_offset, local_orientation } => {
-                // The transit takes a few real seconds; the world clock keeps its pace.
+                // Through the tube in game time: its natural crossing for the ship's mass.
                 let result = advance(clock, real_dt * warp);
-                let left = remaining - real_dt;
+                let left = remaining - real_dt * warp;
                 if left > 0.0 {
                     ship.state = ShipState::Transit { to, from, remaining: left, duration, local_velocity, local_offset, local_orientation };
                 } else {

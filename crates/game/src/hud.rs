@@ -160,7 +160,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
 
     if let ShipState::Transit { to, remaining, .. } = &app.ship.state {
         let name = universe_sim::names::star_name(app.charts.galaxy.stars[*to].seed).to_uppercase();
-        let text = format!("GATE TRANSIT TO {name} - ARRIVING IN {remaining:.1} S");
+        let text = format!("GATE TRANSIT TO {name} - ARRIVING IN {}", fmt::lag(*remaining));
         frame.text_boxed(((size - text_size(&text)) / 2.0).floor(), &text, AMBER, PANEL);
     }
     if app.show_help {
@@ -470,7 +470,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>, alerts: &mut Vec<(Str
         ShipState::Destroyed { respawn_in } => lines.push((format!("DESTROYED  RESPAWN IN {respawn_in:.0}"), RED)),
         ShipState::Transit { to, remaining, .. } => {
             let name = universe_sim::names::star_name(app.charts.galaxy.stars[*to].seed).to_uppercase();
-            lines.push((format!("GATE TRANSIT TO {name}  {remaining:.1} S"), AMBER));
+            lines.push((format!("GATE TRANSIT TO {name}  {}", fmt::lag(*remaining)), AMBER));
         }
         ShipState::Anchored { field, body, .. } => {
             let name = app.view.system.field_bodies(*field)[*body].name.to_uppercase();

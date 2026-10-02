@@ -118,6 +118,29 @@ mod tests {
         }
         assert!(p.ship.is_flying() && !p.crashed(), "{:?}", p.events);
         assert!(p.events.iter().any(|e| matches!(e, crate::events::ShipEvent::RuleFired { outcome, .. } if outcome.contains("wrong way"))));
+        // The right way, slow enough to be caught: through the lane's tube at its
+        // natural time for the ship's mass and the span, out at the twin.
+        let (pos, t) = (p.positions(), p.world.time);
+        let frame = GateFrame::new(&sys, g, t, &pos);
+        p.ship.position = frame.center - axis * 300.0;
+        p.ship.velocity = frame.velocity + axis * 100.0;
+        let span = p.world.galaxy.offset(home, dest).length();
+        let expected = universe_physics::hyper::tube_natural_time(p.ship.mass(), span);
+        let mut duration = None;
+        for _ in 0..600 {
+            p.step(1.0 / 60.0, 1.0);
+            if let crate::ship::ShipState::Transit { duration: d, .. } = p.ship.state {
+                duration = Some(d);
+                break;
+            }
+        }
+        let d = duration.unwrap_or_else(|| panic!("into the tube; events {:?}", p.events));
+        assert!((d - expected).abs() < 1e-6 * expected, "{d} s against {expected} s");
+        for _ in 0..(d / (100.0 / 60.0)) as usize + 20 {
+            p.step(1.0 / 60.0, 100.0);
+        }
+        assert_eq!(p.system, dest, "out at the twin: {:?} after {d} s; events {:?}", p.ship.state, p.events.iter().rev().take(5).collect::<Vec<_>>());
+        assert!(p.ship.is_flying(), "{:?}", p.ship.state);
     }
 }
 
