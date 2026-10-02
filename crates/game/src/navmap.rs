@@ -414,7 +414,7 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
     };
 
     // Names, small and faint (the one picked in the list gets its full title).
-    const SMALL: f32 = 0.6;
+    const SMALL: f32 = 0.45;
     let faint = |c: Color| Color([c.0[0], c.0[1], c.0[2], 0.55]);
     let label = |frame: &mut Frame, at: Vec2, name: &str, c: Color| {
         frame.text_scaled(at, &name.to_uppercase(), faint(c), SMALL);

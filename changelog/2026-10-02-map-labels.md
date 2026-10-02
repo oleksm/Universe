@@ -6,3 +6,4 @@
   ring ("0.14 AU", then "+0.10", "+0.22"... in AU), above and below the axis by turns so they
   stay apart (the rings are evenly spaced on the chart; the worlds' orbits aren't).
 - Engine: `Frame::text_scaled` (text at any size).
+- Names of unpicked objects smaller still (0.45 size).
