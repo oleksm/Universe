@@ -170,6 +170,10 @@ under fire.
 
 ### Gates: justified, and limited
 
+> **Being replaced (2026-10-02):** gates as **tubes along the route** with a crossing formula by
+> mass and speed, and data crossing in capsules: `docs/world/hyperspace.md` §3. The code still runs
+> the model below until the new one is settled (holding a tube is still to be set).
+
 A gate pair is one wormhole throat: matter and hyper-signals entering one ring leave the other
 after `TRANSIT_TIME` (10 s), within the ring's size and under its speed limit. A pair spans a
 distance `S` between its rings.
@@ -197,6 +201,9 @@ distance `S` between its rings.
 (All of the hyper layer in one place, with its numbers and open questions: `docs/world/hyperspace.md`.)
 
 ### Hyper-signals: the hypernet's carrier
+
+> **Being replaced (2026-10-02):** data crosses gates and relays in capsules, under the same
+> crossing formula as ships: `docs/world/hyperspace.md` §3.
 
 - A relay's signal is **field pulses, not photons**: the relay turns the message into a tiny field
   round each bit (`HYPER_BIT_MASS`), sends it through the medium, and the far relay turns it back
