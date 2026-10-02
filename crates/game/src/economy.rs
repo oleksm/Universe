@@ -60,13 +60,25 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     let line = 11.0;
-    let places = &app.v.economy;
+    // (Each place as its last report reached us over the hypernet, and how old.)
+    let heard: Vec<(&Place, Option<f64>)> = app
+        .v
+        .economy
+        .iter()
+        .enumerate()
+        .map(|(i, live)| {
+            let (snap, age) = app.v.economy_heard.get(i).map_or((None, None), |(s, a)| (Some(s), *a));
+            let known = snap.and_then(|s| s.iter().find(|q| q.system == live.system && q.facility == live.facility)).unwrap_or(live);
+            (known, age)
+        })
+        .collect();
+    let places: Vec<&Place> = heard.iter().map(|h| h.0).collect();
     let mut y = 12.0;
     let people: f64 = places.iter().map(|p| p.population).sum();
     let short_places = places.iter().filter(|p| p.short.iter().any(|s| *s > 1e-6)).count();
     frame.text(
         Vec2::new(12.0, y),
-        &format!("ECONOMY - {} PLACES, {people:.0}K PEOPLE, {short_places} SHORT OF SOMETHING   ({} CLOSES, UP/DOWN PLACE)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
+        &format!("ECONOMY - {} PLACES, {people:.0}K PEOPLE, {short_places} SHORT OF SOMETHING   AS HEARD OVER THE HYPERNET   ({} CLOSES, UP/DOWN PLACE)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
         TEXT,
     );
     y += line * 1.5;
@@ -89,12 +101,17 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     y += line * 1.5;
 
     // The places, under their headers.
-    frame.text(Vec2::new(12.0, y), &format!(" {:<9} {:<12} {:<7} {:>6} {:>4} {:>5}  {}", "SYSTEM", "PLACE", "KIND", "PEOPLE", "FED", "WAIT", "SHORTEST"), DIM);
+    frame.text(Vec2::new(12.0, y), &format!(" {:<9} {:<12} {:<7} {:>6} {:>4} {:>7}  {}", "SYSTEM", "PLACE", "KIND", "PEOPLE", "FED", "AGE", "SHORTEST"), DIM);
     y += line;
     let top = y;
     let shown = ((size.y - top - 20.0) / line) as usize;
     let first = panel.selected.saturating_sub(shown.saturating_sub(1));
-    for (k, p) in places.iter().enumerate().skip(first).take(shown) {
+    let age = |a: Option<f64>| match a {
+        Some(a) if a.is_infinite() => "LONG".to_string(),
+        Some(a) => crate::fmt::lag(a),
+        None => "NO WORD".to_string(),
+    };
+    for (k, &p) in places.iter().enumerate().skip(first).take(shown) {
         let worst = shortest(p);
         let c = match worst {
             Some((_, d)) if d < 1.0 => BAD,
@@ -104,13 +121,13 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         let mark = if k == panel.selected { ">" } else { " " };
         let sys = app.charts.system(p.system);
         let text = format!(
-            "{mark}{:<9} {:<12} {:<7} {:>5.1}K {:>3.0}% {:>4.1}K  {}",
+            "{mark}{:<9} {:<12} {:<7} {:>5.1}K {:>3.0}% {:>7}  {}",
             sys.name.to_uppercase().chars().take(9).collect::<String>(),
             p.facility.name(&sys).to_uppercase().split(" (").next().unwrap_or("").chars().take(12).collect::<String>(),
             p.kind.label().split(' ').next().unwrap_or(""),
             p.population,
             p.fed * 100.0,
-            p.waiting,
+            age(heard[k].1),
             worst.map_or(String::new(), |(c, d)| format!("{} {}", c.name(), days(d)))
         );
         frame.text(Vec2::new(12.0, y), &text, if k == panel.selected { TEXT } else { c });
@@ -118,10 +135,17 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     }
 
     // The place under the cursor, in full.
-    let Some(p) = places.get(panel.selected) else { return };
+    let Some(&p) = places.get(panel.selected) else { return };
     let x = (size.x * 0.54).floor();
     let mut y = top;
     frame.text(Vec2::new(x, y), &format!("{} ({}, {:.1}K PEOPLE)", place_name(app, p), p.kind.label(), p.population), TEXT);
+    y += line;
+    let report = match heard[panel.selected].1 {
+        Some(a) if a.is_infinite() => "ITS REPORT: LONG KNOWN".to_string(),
+        Some(a) => format!("ITS REPORT AS IT REACHED US: {} OLD", crate::fmt::lag(a)),
+        None => "NO WORD OF IT REACHES US: WHAT'S LONG KNOWN".to_string(),
+    };
+    frame.text(Vec2::new(x, y), &report, DIM);
     y += line;
     let life = if p.deaths > 0.0 { format!("{:.2}K DYING A DAY", p.deaths) } else { format!("{:+.2}K A DAY", p.growth) };
     frame.text(Vec2::new(x, y), &format!("FED {:.0}%   {:.1}K WAITING TO LEAVE   {life}", p.fed * 100.0, p.waiting), if p.fed < 0.5 { BAD } else if p.fed < 0.9 { WARN } else { DIM });

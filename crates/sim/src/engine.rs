@@ -185,6 +185,8 @@ pub struct View {
     pub dug: f64,
     /// The settled economy's places, as of the last change.
     pub economy: Arc<Vec<universe_services::economy::Place>>,
+    /// The economy as it's reached us over the hypernet (see `commerce::Heard`).
+    pub economy_heard: crate::commerce::Heard,
     /// What's been dug out of the rocks of our system: ((field, body), kg).
     pub mined: Vec<((usize, usize), f64)>,
     /// The market we're docked at; the markets of the system; the one watched.
@@ -404,6 +406,7 @@ impl Engine {
             nav_marker: None,
             reach: u.pilot_reach(),
             economy: u.markets.economy.snapshot(),
+            economy_heard: u.boards.heard_economy(system, u.ship.position, &u.ship.spec().comm, now),
             mined: u.world.mined.iter().filter(|((s, _, _), _)| *s == system).map(|(&(_, f, b), &kg)| ((f, b), kg)).collect(),
             dug: match u.ship.state {
                 universe_world::ShipState::Anchored { field, body, .. } => u.world.dug(system, field, body),

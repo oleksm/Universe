@@ -37,7 +37,15 @@ pub struct Boards {
     lags: HashMap<(usize, Facility), Option<f64>>,
     /// Each system's net at the last boards: the system, its bodies then, the net.
     nets: HashMap<usize, (std::sync::Arc<universe_world::StarSystem>, Vec<glam::DVec3>, universe_world::hypernet::Net)>,
+    /// The settled places' reports (their stocks, people, what they make and
+    /// lack), put out with the boards: when, and all of them then.
+    places: VecDeque<(f64, std::sync::Arc<Vec<universe_services::economy::Place>>)>,
 }
+
+/// What we know of the economy: for each place (as the economy has them), the
+/// report of it that's reached us (in a snapshot of them all: its own entry),
+/// and how old it is (None: no word reaches us; what's long known shown).
+pub type Heard = Vec<(std::sync::Arc<Vec<universe_services::economy::Place>>, Option<f64>)>;
 
 impl Boards {
     /// The newest board of `f` that `here` (in `system`) has by `now`, and
@@ -56,10 +64,56 @@ impl Boards {
     /// The newest board of `f` (in `system`) that's reached a comm at `p` by
     /// `now`, over the net, and its age. None: nothing of it reaches there.
     pub fn known_at(&self, system: usize, f: Facility, p: glam::DVec3, comm: &universe_world::modules::Comm, now: f64) -> Option<(f64, &Vec<Option<Quote>>)> {
-        let (sys, positions, net) = self.nets.get(&system)?;
-        let ours = net.status(sys, positions, p, comm)?.lag;
-        let delay = self.lags.get(&(system, f)).copied().flatten()? + ours;
+        let delay = self.delay(system, f, &self.to_us(system, p, comm)?)?;
         self.newest(system, f, now - delay).map(|(t, b)| (now - t, b))
+    }
+
+    /// From each system to us (in `us`, a comm at `p`), over the net (s): its
+    /// backbone through the gate relays to ours, and out to us. None: we're off the net.
+    fn to_us(&self, us: usize, p: glam::DVec3, comm: &universe_world::modules::Comm) -> Option<HashMap<usize, f64>> {
+        let (sys, positions, net) = self.nets.get(&us)?;
+        let ours = net.status(sys, positions, p, comm)?.lag;
+        let mut dist = HashMap::from([(us, ours)]);
+        loop {
+            let mut changed = false;
+            for (&a, (_, _, na)) in &self.nets {
+                for (b, out) in na.gates() {
+                    let (Some(&rest), Some((_, _, nb))) = (dist.get(&b), self.nets.get(&b)) else { continue };
+                    let Some(back) = nb.gate_in(a) else { continue };
+                    let via = out + back + rest;
+                    if dist.get(&a).is_none_or(|&old| via < old - 1e-9) {
+                        dist.insert(a, via);
+                        changed = true;
+                    }
+                }
+            }
+            if !changed {
+                break;
+            }
+        }
+        Some(dist)
+    }
+
+    /// How long word from `f` (in `system`) takes to reach us, given `to_us`.
+    fn delay(&self, system: usize, f: Facility, to_us: &HashMap<usize, f64>) -> Option<f64> {
+        Some(self.lags.get(&(system, f)).copied().flatten()? + to_us.get(&system)?)
+    }
+
+    /// The economy as it's reached a comm at `p` in `us` by `now` (see `Heard`).
+    pub fn heard_economy(&self, us: usize, p: glam::DVec3, comm: &universe_world::modules::Comm, now: f64) -> Heard {
+        let Some((_, latest)) = self.places.back() else { return Vec::new() };
+        let to_us = self.to_us(us, p, comm);
+        let first = self.places.front().map(|s| s.1.clone()).unwrap_or_else(|| latest.clone());
+        latest
+            .iter()
+            .map(|place| {
+                let delay = to_us.as_ref().and_then(|t| self.delay(place.system, place.facility, t));
+                match delay.and_then(|d| self.places.iter().rev().find(|s| s.0 <= now - d)) {
+                    Some((t, snap)) => (snap.clone(), Some(now - t)),
+                    None => (first.clone(), None),
+                }
+            })
+            .collect()
     }
 }
 
@@ -261,6 +315,12 @@ impl Universe {
                     list.pop_front();
                 }
             }
+        }
+        // And the places' reports, all at once.
+        let snap = self.markets.economy.snapshot();
+        self.boards.places.push_back((if first { f64::NEG_INFINITY } else { now }, snap));
+        while self.boards.places.len() >= 2 && self.boards.places[1].0 <= now - BOARD_KEPT {
+            self.boards.places.pop_front();
         }
     }
 
