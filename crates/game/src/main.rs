@@ -447,7 +447,13 @@ impl App {
                 (&c.ship, self.prev.crafts.get(i).filter(|p| p.system == c.system).map(|p| &p.ship))
             }
         };
-        let (position, orientation) = match before.filter(|b| b.position.distance(now.position) < 20_000.0) {
+        // (Not when it jumped: a respawn, a gate. Judged against where its
+        // motion would have taken it: around a world it moves tens of km a
+        // second, and two views a hitch apart are kilometres apart. Snapping
+        // then put the ship at one moment and the world at another: the
+        // ground leapt for a frame.)
+        let dt = self.v.time - self.prev.time;
+        let (position, orientation) = match before.filter(|b| (b.position + b.velocity * dt).distance(now.position) < 20_000.0) {
             Some(b) => {
                 let a = self.alpha();
                 (b.position.lerp(now.position, a), b.orientation.slerp(now.orientation, a))

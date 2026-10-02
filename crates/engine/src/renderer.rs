@@ -41,7 +41,7 @@ const SHADOW_DEPTH: f64 = 8_000.0;
 /// along the light, depth only.
 /// Globe maps' texels a face side, layers (worlds at once), mip levels.
 const GLOBE_SIZE: u32 = 512;
-const GLOBE_LAYERS: u32 = 8;
+const GLOBE_LAYERS: u32 = 16;
 const GLOBE_MIPS: u32 = 10;
 
 /// The globe maps on the GPU: which map holds each layer, and the frame it
@@ -52,16 +52,24 @@ struct Globes {
 }
 
 impl Globes {
-    /// The layer holding `map`, uploading it if it's new.
-    fn layer(&mut self, gpu: &Gpu, map: &crate::model::GlobeMap, now: u64) -> u32 {
+    /// Whether `map` is in a layer already.
+    fn resident(&self, map: &crate::model::GlobeMap) -> bool {
+        self.layers.iter().any(|l| matches!(l, Some((id, _)) if *id == map.id()))
+    }
+
+    /// The layer holding `map` for frame `now`, uploading it if it's new
+    /// into the oldest layer not drawn this frame. None: every layer is
+    /// someone's this frame (a layer given out is never overwritten before
+    /// the frame's drawn: that showed one world's ground as another's).
+    fn layer(&mut self, gpu: &Gpu, map: &crate::model::GlobeMap, now: u64) -> Option<u32> {
         if let Some(k) = self.layers.iter().position(|l| matches!(l, Some((id, _)) if *id == map.id())) {
             self.layers[k] = Some((map.id(), now));
-            return k as u32;
+            return Some(k as u32);
         }
-        let k = (0..self.layers.len()).min_by_key(|&k| self.layers[k].map_or(0, |(_, used)| used + 1)).unwrap_or(0);
+        let k = (0..self.layers.len()).filter(|&k| self.layers[k].is_none_or(|(_, used)| used != now)).min_by_key(|&k| self.layers[k].map_or(0, |(_, used)| used + 1))?;
         self.layers[k] = Some((map.id(), now));
         self.upload(gpu, map, k as u32);
-        k as u32
+        Some(k as u32)
     }
 
     fn upload(&self, gpu: &Gpu, map: &crate::model::GlobeMap, layer: u32) {
@@ -1088,10 +1096,25 @@ impl Renderer {
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
         (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);
         // Globe maps: each in a layer (new ones uploaded); instances name the layer.
-        let layers: Vec<u32> = frame.globe_maps.iter().map(|m| self.globes.layer(gpu, m, now)).collect();
+        // With more maps than layers, those already up and the most drawn (the
+        // world underfoot is many patches) come first; the rest go plain this frame.
+        let mut uses = vec![0usize; frame.globe_maps.len()];
+        for inst in &data {
+            if inst.globe[0] > 0.5
+                && let Some(u) = uses.get_mut(inst.globe[0] as usize - 1)
+            {
+                *u += 1;
+            }
+        }
+        let mut order: Vec<usize> = (0..frame.globe_maps.len()).collect();
+        order.sort_by_key(|&i| (!self.globes.resident(&frame.globe_maps[i]), std::cmp::Reverse(uses[i])));
+        let mut layers: Vec<Option<u32>> = vec![None; frame.globe_maps.len()];
+        for i in order {
+            layers[i] = self.globes.layer(gpu, &frame.globe_maps[i], now);
+        }
         for inst in &mut data {
             if inst.globe[0] > 0.5 {
-                inst.globe[0] = layers.get(inst.globe[0] as usize - 1).map_or(0.0, |&l| l as f32 + 1.0);
+                inst.globe[0] = layers.get(inst.globe[0] as usize - 1).copied().flatten().map_or(0.0, |l| l as f32 + 1.0);
             }
         }
         // The casters: those within reach of the shadow boxes.

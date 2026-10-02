@@ -285,7 +285,7 @@ pub fn apply(app: &mut App, name: &str) {
                 for _ in 0..60 * 60 * 30 {
                     app.engine.universe().step_world(1.0 / 60.0, 20.0, &Controls::default());
                     let low = matches!(app.engine.universe().approach(), Some(universe_sim::Approach::Land { ref status, .. })
-                        if status.phase == Phase::Descent && status.altitude < 1500.0);
+                        if status.phase == Phase::Descent && status.altitude < std::env::var("UNIVERSE_ALT").ok().and_then(|a| a.parse().ok()).unwrap_or(1500.0));
                     if (name == "autoland" && low) || !app.engine.universe().ship.is_flying() {
                         break;
                     }
