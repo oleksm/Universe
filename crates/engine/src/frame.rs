@@ -309,6 +309,15 @@ impl Frame {
         }
     }
 
+    /// A triangle of added light (a glow's shape of your own: an
+    /// atmosphere's rim), its colour at each corner (linear, may be over 1).
+    pub fn glow_triangle(&mut self, p: [DVec3; 3], light: [[f32; 3]; 3]) {
+        for k in 0..3 {
+            let pos = self.rel(p[k]);
+            self.glows.push(Vertex { pos, color: [light[k][0], light[k][1], light[k][2], 1.0] });
+        }
+    }
+
     /// Meshes drawn in `f` have this surface: `glint` (0 matte .. 1 polished
     /// metal), `sharp` (its power: 8 broad .. 80 tight), `glow` (lit by itself).
     pub fn with_surface(&mut self, glint: f32, sharp: f32, glow: f32, f: impl FnOnce(&mut Frame)) {

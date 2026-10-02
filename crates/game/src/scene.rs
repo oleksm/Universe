@@ -407,6 +407,12 @@ fn bodies(frame: &mut Frame, app: &App) {
             });
         }
 
+        // Air: its rim lit by the sun; settled worlds, their lights by night.
+        if b.rail.atmosphere.is_some() {
+            atmosphere(frame, app, i, center);
+        }
+        city_lights(frame, app, i, center);
+
         // True silhouette outline, plus a halo for stars.
         let to = center - cam;
         let d = to.length();
@@ -484,7 +490,8 @@ fn dust(frame: &mut Frame, app: &App) {
         return;
     };
     let origin = app.view.positions[i];
-    let v = ship.velocity - sys.velocity(i, app.now());
+    // (At rest with the body as it turns: near a world, with its ground and air.)
+    let v = ship.velocity - sys.velocity(i, app.now()) - sys.bodies[i].angular_velocity().cross(cam - origin);
     let speed = v.length();
     // (Nearly still against them: a mote, not a streak.)
     let along = if speed > 0.3 { -v / speed } else { DVec3::Y };
@@ -513,6 +520,97 @@ fn dust(frame: &mut Frame, app: &App) {
                 let c = Color([0.55 * fade, 0.6 * fade, 0.68 * fade, 1.0]);
                 frame.line(p, p + along * streak, c);
             }
+        }
+    }
+}
+
+/// A world's air seen edge-on: a band round its limb, the sky's colour
+/// where the sun lights it (a warm band at the terminator), dark at night,
+/// fading out as it thins with height.
+fn atmosphere(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
+    let b = &app.view.system.bodies[i];
+    let cam = frame.camera.position;
+    let to = center - cam;
+    let d = to.length();
+    let r = b.rail.radius;
+    if d <= r * 1.02 {
+        return;
+    }
+    let Some(star) = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star) else { return };
+    let sun = (app.view.positions[star] - center).normalize();
+    let dir = to / d;
+    // The limb: the circle where the line of sight grazes the surface.
+    let limb_c = center - dir * (r * r / d);
+    let limb_r = r * (1.0 - (r * r) / (d * d)).sqrt();
+    let thick = 1.0 + 0.035_f64.max(100_000.0 / r);
+    let (u, v) = (dir.any_orthonormal_vector(), dir.cross(dir.any_orthonormal_vector()));
+    // (Earth-like: sky blue; others their own colour, paler.)
+    let sky = match b.terrain.as_ref().map(|t| t.kind) {
+        Some(universe_sim::TerrainKind::Terran) => [0.35, 0.6, 1.0],
+        _ => {
+            let [cr, cg, cb] = b.color;
+            [0.4 + 0.6 * cr, 0.4 + 0.6 * cg, 0.4 + 0.6 * cb]
+        }
+    };
+    let n = 96;
+    let point = |k: usize, s: f64| {
+        let a = k as f64 / n as f64 * std::f64::consts::TAU;
+        let out = u * a.cos() + v * a.sin();
+        (limb_c + out * limb_r * s, out)
+    };
+    let light = |out: DVec3| {
+        // Lit by how far round to the sun this edge is; warm at the terminator.
+        let day = out.dot(sun);
+        let lit = ((day + 0.25) / 1.25).clamp(0.0, 1.0) as f32;
+        let warm = (1.0 - (day.abs() / 0.3)).clamp(0.0, 1.0) as f32;
+        let k = 2.4 * lit;
+        [k * (sky[0] + 0.8 * warm), k * (sky[1] + 0.25 * warm), k * sky[2] * (1.0 - 0.5 * warm)]
+    };
+    for k in 0..n {
+        let ((a0, o0), (a1, o1)) = (point(k, 1.0), point(k + 1, 1.0));
+        let ((b0, _), (b1, _)) = (point(k, thick), point(k + 1, thick));
+        let (l0, l1) = (light(o0), light(o1));
+        frame.glow_triangle([a0, a1, b1], [l0, l1, [0.0; 3]]);
+        frame.glow_triangle([a0, b1, b0], [l0, [0.0; 3], [0.0; 3]]);
+    }
+}
+
+/// A settled world's lights by night: round each of its spaceports, towns
+/// scattered about the city, as many as it has people; only where the sun's down.
+fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
+    let sys = &app.view.system;
+    let b = &sys.bodies[i];
+    let Some(star) = sys.bodies.iter().position(|b| b.kind == BodyKind::Star) else { return };
+    let rot = b.rotation(app.now());
+    let sun = (app.view.positions[star] - center).normalize();
+    // Too far to show a light from: skip.
+    if frame.projected_radius(center, b.rail.radius) < 4.0 {
+        return;
+    }
+    for (k, port) in sys.spaceports.iter().enumerate().filter(|(_, p)| p.body == i) {
+        let people = app.v.economy.iter().find(|p| p.system == app.view.origin && p.facility == universe_sim::world::Facility::Spaceport(k)).map_or(0.0, |p| p.population);
+        if people <= 0.0 {
+            continue;
+        }
+        let towns = (people * 1.5).clamp(6.0, 120.0) as usize;
+        let (e1, e2) = universe_sim::world::spaceport::tangent(port.direction);
+        for t in 0..towns {
+            let h = |s: u64| {
+                let mut x = (k as u64 * 7919 + t as u64 * 104_729 + s).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+                x ^= x >> 29;
+                (x % 10_000) as f64 / 10_000.0
+            };
+            // (Most close in, some far out along the roads.)
+            let spread = 0.12 * h(1).powf(1.8);
+            let a = h(2) * std::f64::consts::TAU;
+            let local = (port.direction + (e1 * a.cos() + e2 * a.sin()) * spread).normalize();
+            let world = rot * local;
+            let night = -world.dot(sun);
+            if night < 0.05 {
+                continue;
+            }
+            let glow = (night.min(0.4) / 0.4) as f32 * (0.6 + 1.4 * h(3) as f32) * if t == 0 { 2.5 } else { 1.0 };
+            frame.glow(center + world * (b.surface_radius(local) + 50.0), 1500.0, [2.2 * glow, 1.6 * glow, 0.8 * glow], 0.8);
         }
     }
 }
