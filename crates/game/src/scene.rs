@@ -46,6 +46,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     frame.reflector = reflector(frame, app);
     universe_prof::time("draw/scene/bodies", || bodies(frame, app));
     universe_prof::time("draw/scene/asteroids", || crate::rocks::draw(frame, app));
+    universe_prof::time("draw/scene/dust", || dust(frame, app));
     if app.mode == Mode::Pilot
         && let Some(s) = crate::rocks::scan(app)
     {
@@ -460,6 +461,59 @@ fn livery(name: &str) -> Color {
         "Settler" => Color::hex(0x868d94),
         "" => Color::hex(0xa4adb6),
         _ => HULL,
+    }
+}
+
+/// Motes of dust round the eye, at rest in the frame of the body nearest
+/// (scattered one to a cell of a grid there, so they hold still), each a
+/// short streak along our motion against them: drift, braking and slip seen
+/// at a glance. Fainter with distance; none in the hyperdrive.
+fn dust(frame: &mut Frame, app: &App) {
+    const CELL: f64 = 22.0;
+    const REACH: f64 = 80.0;
+    let ship = &app.v.ship;
+    if app.mode != Mode::Pilot || ship.hyperdrive || !app.v.crew.seated() {
+        return;
+    }
+    let sys = &app.view.system;
+    let cam = frame.camera.position;
+    let Some(i) = (0..sys.bodies.len()).min_by(|&a, &b| {
+        let d = |k: usize| app.view.positions[k].distance(cam) - sys.bodies[k].rail.radius;
+        d(a).total_cmp(&d(b))
+    }) else {
+        return;
+    };
+    let origin = app.view.positions[i];
+    let v = ship.velocity - sys.velocity(i, app.now());
+    let speed = v.length();
+    // (Nearly still against them: a mote, not a streak.)
+    let along = if speed > 0.3 { -v / speed } else { DVec3::Y };
+    let streak = (speed * 0.05).clamp(1.2, 22.0);
+    let local = cam - origin;
+    let c0 = (local / CELL).floor();
+    let n = (REACH / CELL).ceil() as i64;
+    let hash = |x: i64, y: i64, z: i64, k: u64| {
+        let mut h = (x as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ (y as u64).wrapping_mul(0xC2B2_AE3D_27D4_EB4F) ^ (z as u64).wrapping_mul(0x1656_67B1_9E37_79F9) ^ k;
+        h ^= h >> 31;
+        h = h.wrapping_mul(0xBF58_476D_1CE4_E5B9);
+        (h >> 11) as f64 / (1u64 << 53) as f64
+    };
+    for dx in -n..=n {
+        for dy in -n..=n {
+            for dz in -n..=n {
+                let (x, y, z) = (c0.x as i64 + dx, c0.y as i64 + dy, c0.z as i64 + dz);
+                let off = DVec3::new(hash(x, y, z, 1), hash(x, y, z, 2), hash(x, y, z, 3));
+                let p = origin + (DVec3::new(x as f64, y as f64, z as f64) + off) * CELL;
+                let d = p.distance(cam);
+                if d > REACH || d < 2.0 {
+                    continue;
+                }
+                // (A gentle fade: most of them are out near the reach.)
+                let fade = ((1.0 - d / REACH).powf(0.6) * 1.4) as f32;
+                let c = Color([0.55 * fade, 0.6 * fade, 0.68 * fade, 1.0]);
+                frame.line(p, p + along * streak, c);
+            }
+        }
     }
 }
 
