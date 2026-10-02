@@ -14,3 +14,6 @@
   patches are cut by thresholds), slopes from about 6.
 - **The station's roof:** masts are slim poles on footings with a platform partway up and a thinner
   tip; no cross-arms. Plant of different sizes is spread about, not a row of identical boxes.
+- **A round radar scope:** its rings, ticks and sector lines are drawn where they fall (`hud_line_smooth`),
+  not snapped to whole HUD units (two real pixels each), which made the curves step and wobble.
+  Rings have 128–160 segments. Every HUD ellipse is smooth now.

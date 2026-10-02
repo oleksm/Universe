@@ -615,13 +615,20 @@ impl Frame {
     }
 
     /// Ellipse outline in HUD pixel coordinates.
+    /// A HUD line where it falls, not snapped to whole units (curves and
+    /// slants: snapped, their pieces would step and wobble).
+    pub fn hud_line_smooth(&mut self, a: Vec2, b: Vec2, color: Color) {
+        self.hud.push(Vertex { pos: [a.x, a.y, 0.0], color: color.0 });
+        self.hud.push(Vertex { pos: [b.x, b.y, 0.0], color: color.0 });
+    }
+
     pub fn hud_ellipse(&mut self, center: Vec2, radii: Vec2, segments: u32, color: Color) {
         let at = |i: u32| {
             let a = i as f32 / segments as f32 * std::f32::consts::TAU;
             center + Vec2::new(a.cos(), a.sin()) * radii
         };
         for i in 0..segments {
-            self.hud_line(at(i), at(i + 1), color);
+            self.hud_line_smooth(at(i), at(i + 1), color);
         }
     }
 

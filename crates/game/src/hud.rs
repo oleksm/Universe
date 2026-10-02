@@ -1209,7 +1209,7 @@ fn scanner(frame: &mut Frame, app: &App) {
     // a little brighter with ticks round it, a sector ahead, our chevron.
     let ring = Color::hex(0x7fb8cc);
     let disc = |frame: &mut Frame, r: Vec2, inner: Color, outer: Color| {
-        let n = 64;
+        let n = 128;
         let at = |k: u32| {
             let a = k as f32 / n as f32 * std::f32::consts::TAU;
             center + Vec2::new(a.cos() * r.x, a.sin() * r.y)
@@ -1221,24 +1221,24 @@ fn scanner(frame: &mut Frame, app: &App) {
     };
     disc(frame, radii * 1.08, Color([0.015, 0.028, 0.04, 0.78]), Color([0.015, 0.028, 0.04, 0.55]));
     for (k, a) in [(1.0 / 3.0, 0.18), (2.0 / 3.0, 0.22)] {
-        frame.hud_ellipse(center, radii * k, 48, Color([ring.0[0], ring.0[1], ring.0[2], a]));
+        frame.hud_ellipse(center, radii * k, 128, Color([ring.0[0], ring.0[1], ring.0[2], a]));
     }
-    frame.hud_ellipse(center, radii, 64, Color([ring.0[0], ring.0[1], ring.0[2], 0.55]));
+    frame.hud_ellipse(center, radii, 160, Color([ring.0[0], ring.0[1], ring.0[2], 0.55]));
     for k in 0..36 {
         let a = k as f32 / 36.0 * std::f32::consts::TAU;
         let dir = Vec2::new(a.cos(), a.sin());
         let len = if k % 9 == 0 { 0.08 } else { 0.035 };
-        frame.hud_line(center + dir * radii, center + dir * radii * (1.0 - len), Color([ring.0[0], ring.0[1], ring.0[2], 0.5]));
+        frame.hud_line_smooth(center + dir * radii, center + dir * radii * (1.0 - len), Color([ring.0[0], ring.0[1], ring.0[2], 0.5]));
     }
     // Ahead (up the scope): a faint sector.
     for s in [-1.0f32, 1.0] {
         let a = -std::f32::consts::FRAC_PI_2 + s * 0.45;
-        frame.hud_line(center, center + Vec2::new(a.cos() * radii.x, a.sin() * radii.y), Color([ring.0[0], ring.0[1], ring.0[2], 0.16]));
+        frame.hud_line_smooth(center, center + Vec2::new(a.cos() * radii.x, a.sin() * radii.y), Color([ring.0[0], ring.0[1], ring.0[2], 0.16]));
     }
-    frame.hud_line(center - Vec2::new(radii.x, 0.0), center + Vec2::new(radii.x, 0.0), Color([ring.0[0], ring.0[1], ring.0[2], 0.1]));
+    frame.hud_line_smooth(center - Vec2::new(radii.x, 0.0), center + Vec2::new(radii.x, 0.0), Color([ring.0[0], ring.0[1], ring.0[2], 0.1]));
     let chevron = Color([0.9, 0.95, 1.0, 0.9]);
-    frame.hud_line(center + Vec2::new(-3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
-    frame.hud_line(center + Vec2::new(3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
+    frame.hud_line_smooth(center + Vec2::new(-3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
+    frame.hud_line_smooth(center + Vec2::new(3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
 
     let inv = app.ship.orientation.inverse();
     for (i, b) in app.view.system.bodies.iter().enumerate() {
