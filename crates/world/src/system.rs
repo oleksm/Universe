@@ -189,6 +189,7 @@ impl StarSystem {
                 tilt: random_tilt(&mut rng, 7.0),
                 collider: BodyKind::Star.collider(),
                 atmosphere: None,
+                pulled_by: Vec::new(),
             },
             rock: None,
         }];
@@ -228,7 +229,8 @@ impl StarSystem {
                 rng.range(0.0, TAU),
                 rng.range(0.0, TAU),
                 rng.range(0.0, TAU),
-                star_mu,
+                // (A pair's separation orbits by their combined mass.)
+                star_mu + G * mass,
             );
             let planet = bodies.len();
             bodies.push(Body {
@@ -249,6 +251,7 @@ impl StarSystem {
                     tilt: random_tilt(&mut rng, 30.0),
                     collider: kind.collider(),
                     atmosphere: None,
+                    pulled_by: Vec::new(),
                 },
                 rock: None,
             });
@@ -279,7 +282,7 @@ impl StarSystem {
                     rng.range(0.0, TAU),
                     rng.range(0.0, TAU),
                     rng.range(0.0, TAU),
-                    G * mass,
+                    G * (mass + moon_mass),
                 );
                 bodies.push(Body {
                     name: format!("{planet_name} {}", names::roman(m)),
@@ -299,6 +302,7 @@ impl StarSystem {
                         tilt: DQuat::IDENTITY,
                         collider: BodyKind::Moon.collider(),
                         atmosphere: None,
+                        pulled_by: Vec::new(),
                     },
                     rock: None,
                 });
@@ -319,7 +323,14 @@ impl StarSystem {
         system.add_terrain(star.seed);
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);
+        system.settle();
         system
+    }
+
+    /// Who pulls whom back among its bodies (see `universe_physics::settle`):
+    /// after they're made or changed.
+    pub fn settle(&mut self) {
+        settle_bodies(&mut self.bodies);
     }
 
     /// Terrain for rocky planets (oceans on temperate ones) and moons.
@@ -395,6 +406,7 @@ impl StarSystem {
                 tilt,
                 collider: BodyKind::Station.collider(),
                 atmosphere: None,
+                pulled_by: Vec::new(),
             },
             rock: None,
         };
@@ -461,10 +473,12 @@ impl StarSystem {
                     tilt,
                     collider: BodyKind::Gate.collider(),
                     atmosphere: None,
+                    pulled_by: Vec::new(),
                 },
                 rock: None,
             });
         }
+        self.settle();
     }
 
     /// The gate in this system leading to system `to`.
@@ -518,4 +532,9 @@ impl StarSystem {
     pub fn dominant(&self, p: DVec3, positions: &[DVec3]) -> usize {
         universe_physics::dominant(&self.bodies, p, positions)
     }
+}
+
+/// Who pulls whom back among `bodies` (see `universe_physics::settle`).
+pub fn settle_bodies(bodies: &mut [Body]) {
+    universe_physics::settle(&mut bodies.iter_mut().map(|b| &mut b.rail).collect::<Vec<_>>());
 }

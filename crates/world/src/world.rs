@@ -249,6 +249,7 @@ impl World {
                 crate::belt::shrink(b, kg);
             }
         }
+        crate::system::settle_bodies(&mut now);
         let now = Arc::new(now);
         cache.insert((sys.index, f), (total, now.clone()));
         now

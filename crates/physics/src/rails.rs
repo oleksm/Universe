@@ -1,6 +1,11 @@
-//! Bodies on rails: each moves on an exact Kepler orbit around its parent (or
-//! stays put at the origin) and spins about a tilted axis. Their motion is a
-//! function of time only, so nothing that happens in the world can disturb it.
+//! Bodies on rails: each pair (a body and its parent) moves on an exact
+//! Kepler orbit about its shared centre of mass, and each body spins about a
+//! tilted axis. A body's own orbit is its place relative to its parent; its
+//! parent is pulled back the other way by its share of their mass (the
+//! reflex: a star wobbling round its system's balance point, a planet round
+//! its moons'). The root's system's centre of mass stays at the origin.
+//! Their motion is a function of time only, so nothing that happens in the
+//! world can disturb it.
 
 use std::f64::consts::TAU;
 
@@ -30,6 +35,9 @@ pub struct RailBody {
     pub collider: Collider,
     /// Its air, if it has any.
     pub atmosphere: Option<crate::atmosphere::Atmosphere>,
+    /// Its children that pull it back (index, share of its subsystem's
+    /// mass): set by `settle` once the set of bodies is made or changed.
+    pub pulled_by: Vec<(usize, f64)>,
 }
 
 impl RailBody {
@@ -58,26 +66,80 @@ impl OnRails for RailBody {
     }
 }
 
-/// Positions of all bodies (relative to the root, body 0) at time `t`.
-pub fn positions<B: OnRails>(bodies: &[B], t: f64, out: &mut Vec<DVec3>) {
-    out.clear();
-    for b in bodies {
-        let b = b.rail();
-        let p = match (b.parent, &b.orbit) {
-            (Some(parent), Some(orbit)) => out[parent] + orbit.position(t),
-            _ => DVec3::ZERO,
-        };
-        out.push(p);
+/// Works out who pulls whom back (`RailBody::pulled_by`), for a set of
+/// bodies just made or changed: each attracting child, by its subsystem's
+/// share of its parent's (its mass with everything riding on it). Bodies too
+/// light to matter (they don't attract) pull nothing back.
+pub fn settle(rails: &mut [&mut RailBody]) {
+    let mut sub: Vec<f64> = rails.iter().map(|b| if b.attracts { b.mu } else { 0.0 }).collect();
+    // (Children come after their parents: gather from the leaves up.)
+    for c in (0..rails.len()).rev() {
+        if let Some(p) = rails[c].parent {
+            sub[p] += sub[c];
+        }
+    }
+    for b in rails.iter_mut() {
+        b.pulled_by.clear();
+    }
+    for c in 0..rails.len() {
+        if let (Some(p), Some(_)) = (rails[c].parent, &rails[c].orbit)
+            && sub[c] > 0.0
+        {
+            let share = sub[c] / sub[p].max(f64::MIN_POSITIVE);
+            rails[p].pulled_by.push((c, share));
+        }
     }
 }
 
-/// Velocity of body `i` relative to the root.
-pub fn velocity<B: OnRails>(bodies: &[B], i: usize, t: f64) -> DVec3 {
-    let b = bodies[i].rail();
-    match (b.parent, &b.orbit) {
-        (Some(parent), Some(orbit)) => velocity(bodies, parent, t) + orbit.state(t).1,
-        _ => DVec3::ZERO,
+/// What body `i`'s children pull it back by (`of`: their orbits' position,
+/// velocity or acceleration).
+fn pulled_back<B: OnRails>(bodies: &[B], i: usize, of: &dyn Fn(&Orbit) -> DVec3) -> DVec3 {
+    bodies[i].rail().pulled_by.iter().filter_map(|&(c, share)| bodies[c].rail().orbit.as_ref().map(|o| of(o) * share)).sum()
+}
+
+/// Each body's place relative to its parent (zero for the root), and what
+/// its children pull it back by: (relative, reflex), by `of` (its orbit's
+/// position, velocity or acceleration).
+fn relative_and_reflex<B: OnRails>(bodies: &[B], of: impl Fn(&Orbit) -> DVec3) -> (Vec<DVec3>, Vec<DVec3>) {
+    let rel: Vec<DVec3> = bodies.iter().map(|b| b.rail().orbit.as_ref().filter(|_| b.rail().parent.is_some()).map_or(DVec3::ZERO, &of)).collect();
+    let back = (0..bodies.len()).map(|i| bodies[i].rail().pulled_by.iter().map(|&(c, share)| rel[c] * share).sum()).collect();
+    (rel, back)
+}
+
+/// Positions of all bodies (relative to the root system's centre of mass) at time `t`.
+pub fn positions<B: OnRails>(bodies: &[B], t: f64, out: &mut Vec<DVec3>) {
+    // Each one's place relative to its parent first; then, parents before
+    // children, each on its parent less its children's pull (theirs still
+    // relative: they come after it).
+    out.clear();
+    out.extend(bodies.iter().map(|b| b.rail().orbit.as_ref().filter(|_| b.rail().parent.is_some()).map_or(DVec3::ZERO, |o| o.position(t))));
+    for (i, b) in bodies.iter().enumerate() {
+        let b = b.rail();
+        let back: DVec3 = b.pulled_by.iter().map(|&(c, share)| out[c] * share).sum();
+        let base = b.parent.map_or(DVec3::ZERO, |p| out[p]);
+        out[i] = base + out[i] - back;
     }
+}
+
+/// Position of body `i` alone (as `positions` has it, without the others').
+pub fn position<B: OnRails>(bodies: &[B], i: usize, t: f64) -> DVec3 {
+    chain(bodies, i, &|o: &Orbit| o.position(t))
+}
+
+/// Velocity of body `i` relative to the root system's centre of mass.
+pub fn velocity<B: OnRails>(bodies: &[B], i: usize, t: f64) -> DVec3 {
+    chain(bodies, i, &|o: &Orbit| o.state(t).1)
+}
+
+/// Body `i`'s place (or velocity: `of`) up its chain of parents, each less
+/// what its children pull it back by.
+fn chain<B: OnRails>(bodies: &[B], i: usize, of: &dyn Fn(&Orbit) -> DVec3) -> DVec3 {
+    let b = bodies[i].rail();
+    let own = match (b.parent, &b.orbit) {
+        (Some(parent), Some(orbit)) => chain(bodies, parent, of) + of(orbit),
+        _ => DVec3::ZERO,
+    };
+    own - pulled_back(bodies, i, of)
 }
 
 /// Body states at one moment, extrapolated to nearby times with
@@ -99,20 +161,21 @@ impl Ephemeris {
     pub fn new<B: OnRails>(bodies: &[B], t: f64) -> Self {
         let n = bodies.len();
         let (mut pos, mut vel, mut acc) = (Vec::with_capacity(n), Vec::with_capacity(n), Vec::with_capacity(n));
-        for b in bodies {
-            let b = b.rail();
-            let (p, v, a) = match (b.parent, &b.orbit) {
-                (Some(parent), Some(orbit)) => {
-                    let (rp, rv) = orbit.state(t);
-                    // On Keplerian rails: accelerated only by the parent's gravity.
-                    let ra = -rp * (orbit.mu / rp.length().powi(3));
-                    (pos[parent] + rp, vel[parent] + rv, acc[parent] + ra)
-                }
-                _ => (DVec3::ZERO, DVec3::ZERO, DVec3::ZERO),
+        let (rp, bp) = relative_and_reflex(bodies, |o| o.position(t));
+        let (rv, bv) = relative_and_reflex(bodies, |o| o.state(t).1);
+        // (On Keplerian rails a pair's separation is accelerated by their gravity alone.)
+        let (ra, ba) = relative_and_reflex(bodies, |o| {
+            let r = o.position(t);
+            -r * (o.mu / r.length().powi(3))
+        });
+        for (i, b) in bodies.iter().enumerate() {
+            let (p, v, a) = match b.rail().parent {
+                Some(parent) => (pos[parent] + rp[i], vel[parent] + rv[i], acc[parent] + ra[i]),
+                None => (DVec3::ZERO, DVec3::ZERO, DVec3::ZERO),
             };
-            pos.push(p);
-            vel.push(v);
-            acc.push(a);
+            pos.push(p - bp[i]);
+            vel.push(v - bv[i]);
+            acc.push(a - ba[i]);
         }
         Ephemeris { t0: t, pos, vel, acc }
     }
@@ -161,13 +224,24 @@ mod tests {
     fn children_ride_on_their_parents() {
         let planet = Orbit::new(1.5e11, 0.02, 0.01, 0.2, 0.3, 0.4, 1.3e20);
         let moon = Orbit::new(4.0e8, 0.05, 0.1, 0.5, 0.6, 0.7, 4.0e14);
-        let bodies = [body(None, None, 1.3e20, 7.0e8), body(Some(0), Some(planet.clone()), 4.0e14, 6.4e6), body(Some(1), Some(moon.clone()), 4.9e12, 1.7e6)];
+        let mut bodies = [body(None, None, 1.3e20, 7.0e8), body(Some(0), Some(planet.clone()), 4.0e14, 6.4e6), body(Some(1), Some(moon.clone()), 4.9e12, 1.7e6)];
+        settle(&mut bodies.iter_mut().collect::<Vec<_>>());
         let mut p = Vec::new();
         positions(&bodies, 5000.0, &mut p);
-        assert_eq!(p[0], DVec3::ZERO);
-        assert_eq!(p[1], planet.position(5000.0));
-        assert_eq!(p[2], p[1] + moon.position(5000.0));
-        assert_eq!(velocity(&bodies, 2, 5000.0), planet.state(5000.0).1 + moon.state(5000.0).1);
+        // A moon rides its planet; each pair about its shared centre of mass.
+        let close = |a: DVec3, b: DVec3| (a - b).length() < 1e-6 * b.length().max(1.0);
+        assert!(close(p[2] - p[1], moon.position(5000.0)));
+        assert!(close(p[1] - p[0], planet.position(5000.0) * (1.3e20 / (1.3e20 + 4.0e14 + 4.9e12)) + planet.position(5000.0) * ((4.0e14 + 4.9e12) / (1.3e20 + 4.0e14 + 4.9e12)) - moon.position(5000.0) * (4.9e12 / (4.0e14 + 4.9e12))));
+        // The system's centre of mass stays put.
+        let mus = [1.3e20, 4.0e14, 4.9e12];
+        let centre: DVec3 = p.iter().zip(mus).map(|(x, m)| *x * m).sum::<DVec3>() / mus.iter().sum::<f64>();
+        assert!(centre.length() < 1.0, "the centre of mass moved {} m", centre.length());
+        for (i, at) in p.iter().enumerate() {
+            assert!(close(position(&bodies, i, 5000.0), *at), "body {i} alone");
+        }
+        // And moves not at all (velocities, by their masses).
+        let v: DVec3 = (0..3).map(|i| velocity(&bodies, i, 5000.0) * mus[i]).sum::<DVec3>() / mus.iter().sum::<f64>();
+        assert!(v.length() < 1e-6, "{}", v.length());
 
         // The ephemeris is exact at its moment and close nearby.
         let e = Ephemeris::new(&bodies, 5000.0);

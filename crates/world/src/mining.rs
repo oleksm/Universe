@@ -177,16 +177,8 @@ pub fn excavate(sys: &StarSystem, ship: &mut Ship, dug: f64, dt: f64, events: &m
 pub fn hold(sys: &StarSystem, ship: &mut Ship, t: f64) {
     let ShipState::Anchored { field, body, local_position, local_orientation } = ship.state else { return };
     let bodies = sys.field_bodies(field);
-    // (The rock and what it orbits only, not the whole swarm.)
-    let mut center = DVec3::ZERO;
-    let mut i = Some(body);
-    while let Some(k) = i {
-        let rail = &bodies[k].rail;
-        if let Some(o) = &rail.orbit {
-            center += o.position(t);
-        }
-        i = rail.parent;
-    }
+    // (The rock alone, not the whole swarm.)
+    let center = universe_physics::position(&bodies[..], body, t);
     let rail = &bodies[body].rail;
     let rot = rail.rotation(t);
     let offset = rot * local_position;

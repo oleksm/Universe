@@ -279,6 +279,7 @@ fn body(name: String, rock: Rock, parent: usize, orbit: Orbit, attracts: bool, r
             tilt: DQuat::from_rotation_arc(DVec3::Y, rng.unit_vector()),
             collider: Collider::Surface,
             atmosphere: None,
+            pulled_by: Vec::new(),
         },
         rock: Some(Arc::new(rock)),
     }
@@ -405,6 +406,7 @@ impl StarSystem {
             .get_or_init(|| {
                 let mut bodies = self.bodies.clone();
                 bodies.extend(swarm(self, field));
+                crate::system::settle_bodies(&mut bodies);
                 Arc::new(bodies)
             })
             .clone()
@@ -421,19 +423,9 @@ impl StarSystem {
     /// (solving only it and what it orbits, not the whole swarm).
     pub fn field_body_state(&self, f: usize, i: usize, t: f64) -> (DVec3, DVec3) {
         let bodies = self.field_bodies(f);
-        let (mut p, mut v) = (DVec3::ZERO, DVec3::ZERO);
-        let mut k = Some(i);
-        while let Some(j) = k {
-            let rail = &bodies[j].rail;
-            if let Some(o) = &rail.orbit {
-                let (dp, dv) = o.state(t);
-                p += dp;
-                v += dv;
-            }
-            k = rail.parent;
-        }
-        (p, v)
+        (universe_physics::position(&bodies[..], i, t), universe_physics::velocity(&bodies[..], i, t))
     }
+
 
     /// The field whose swarm a point is among or near (`positions`: the
     /// system's bodies), if any.
