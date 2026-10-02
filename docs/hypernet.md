@@ -49,8 +49,8 @@ In the base world (`content/base/modules.ron`, step 1 done):
 |---|---|---|---|---|---|---|
 | COMM (`comm.basic.s1`, every ship's) | Orbital Systems | 50,000 km | 0.05 AU | 0.05 s | 600 | 2 kW |
 | LONG-RANGE COMM (`comm.long.s1`) | Tallis Signal Works | 300,000 km | 0.5 AU | 0.05 s | 3,000 | 200 kW |
-| BACKBONE RELAY (`relay.port`: stations, spaceports) | Tallis Signal Works | 1,000,000 km | 30 AU | 0.02 s | 100,000 | 1 MW |
-| BEACON RELAY (`relay.beacon`: outposts, gate rings) | Tallis Signal Works | 500,000 km | 5 AU | 0.05 s | 20,000 | 300 kW |
+| BACKBONE RELAY (`relay.port`: stations, spaceports) | Tallis Signal Works | 1,000,000 km | 0.5 AU | 0.02 s | 100,000 | 1 MW |
+| BEACON RELAY (`relay.beacon`: outposts, gate rings, world relays, claims) | Tallis Signal Works | 500,000 km | 0.5 AU | 0.05 s | 20,000 | 300 kW |
 | GATE RELAY (`relay.gate`: gate rings) | Halcyon Field Systems | - | the gate pair | the transit + 1 s | 50,000 | 2 MW |
 
 ## Who's connected
@@ -93,6 +93,14 @@ In the base world (`content/base/modules.ron`, step 1 done):
    chart and the list, not another map. Each relay's uplink drawn, coloured by its lag; relays dark
    in red; a ring round each asteroid field, by whether your comm would be on the net there; your
    line in; a NET column of lag (or DARK) for every place; your status over the list.)
+   **A relay round every planet and moon** of a settled system (`structure.relay`, a
+   constellation: it sees past its own world). **Routes are planned each day**, as the worlds
+   stand at its start: every place that needs the net (station, ports, gates, beacons) gets its
+   quickest way to the backbone, hop by hop, and only the relays on those ways are switched on (the
+   rest stand by, drawn dim). A line on the day's routes that closes mid-day: that branch finds
+   another way then. The map draws each switched-on relay's reach to scale (its true circle
+   through the chart's mapping). With every relay reaching 0.5 AU, the outer worlds (gaps wider
+   than that) are off the net: bridging them takes stronger relays or relays between the worlds.
    **Routing is a tree, not a mesh:** each relay keeps one uplink, to the neighbour that gets it to
    the backbone soonest, and messages hop relay to relay. As the worlds go round their orbits, a
    line closes and the relay switches to another neighbour: the net reshapes with the seasons.

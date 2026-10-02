@@ -390,6 +390,17 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
         let a = angle_of(map.positions[i]);
         center + Vec2::new(a.cos(), a.sin()) * ring * k
     };
+    // Any point on the chart as the worlds are: at its true angle, its
+    // distance from the star placed between the rings as theirs are.
+    let chart_at = |p: DVec3| -> Vec2 {
+        let v = p - map.positions[0];
+        let d = (v.x * v.x + v.z * v.z).sqrt();
+        let inside = planets.iter().filter(|&&q| semi_major(q) < d).count();
+        let lo = inside.checked_sub(1).map_or(0.0, |k| semi_major(planets[k]));
+        let hi = planets.get(inside).map_or_else(|| lo + (lo - inside.checked_sub(2).map_or(0.0, |k| semi_major(planets[k]))).max(1.0), |&q| semi_major(q));
+        let k = inside as f32 + ((d - lo) / (hi - lo).max(1.0)) as f32;
+        center + Vec2::new((v.z as f32).atan2(v.x as f32).cos(), (v.z as f32).atan2(v.x as f32).sin()) * ring * k
+    };
     // Where a body sits on the chart: planets on their ring, moons and stations beside their planet.
     let chart_pos = |i: usize| -> Vec2 {
         match sys.bodies[i].rail.parent {
@@ -416,7 +427,7 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
         let gap = semi_major(p) - inner;
         inner = semi_major(p);
         // (The unit once; then above and below the axis by turns, to keep apart.)
-        let text = if k == 0 { fmt::distance(gap) } else { format!("+{:.2}", gap / universe_sim::world::units::AU) };
+        let text = if k == 0 { fmt::distance(gap) } else { format!("{:.2}", gap / universe_sim::world::units::AU) };
         let w = text_size(&text).x * SMALL;
         let y = if k % 2 == 0 { -9.0 } else { 3.0 };
         frame.text_scaled(center + Vec2::new((r0 + r1) / 2.0 - w / 2.0, y), &text, DIM.scale(0.8), SMALL);
@@ -502,7 +513,34 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
             frame.hud_line_smooth(node_at(n, k), node_at(n, up), c);
         }
         for k in 0..n.net.nodes.len() {
-            frame.hud_ellipse(node_at(n, k), Vec2::splat(3.0), 8, n.net.lag[k].map_or(DARK, lag_color));
+            // (A world's relay not on anyone's way in stands by: dim, not dark.)
+            let c = match n.net.lag[k] {
+                Some(l) => lag_color(l),
+                None if n.net.nodes[k].around.is_some() && !n.net.used[k] => DIM.scale(0.5),
+                None => DARK,
+            };
+            frame.hud_ellipse(node_at(n, k), Vec2::splat(3.0), 8, c);
+        }
+        // Each relay switched on: its reach, to scale (its true circle through
+        // the chart's mapping; one for relays together, a world's and its ports).
+        let mut drawn: Vec<DVec3> = Vec::new();
+        for (k, node) in n.net.nodes.iter().enumerate().filter(|(k, _)| n.net.used[*k]) {
+            let at = n.net.at[k];
+            if drawn.iter().any(|d| d.distance(at) < node.comm.link * 0.05) {
+                continue;
+            }
+            drawn.push(at);
+            let c = n.net.lag[k].map_or(DARK, lag_color).scale(0.35);
+            const SIDES: usize = 48;
+            let pts: Vec<Vec2> = (0..=SIDES).map(|i| {
+                let a = i as f64 / SIDES as f64 * std::f64::consts::TAU;
+                chart_at(at + DVec3::new(a.cos(), 0.0, a.sin()) * node.comm.link)
+            }).collect();
+            for w in pts.windows(2) {
+                if (w[0] - center).length() < max_r * 1.08 && (w[1] - center).length() < max_r * 1.08 {
+                    frame.hud_line_smooth(w[0], w[1], c);
+                }
+            }
         }
         let comm = app.ship.spec().comm;
         for f in &sys.fields {

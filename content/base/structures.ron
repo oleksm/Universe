@@ -10,6 +10,8 @@
         note: "A port on a world's ground: 16 pads on a cleared plain."),
     (key: "structure.outpost", brand: "brand.halvard", name: "HALVARD OUTPOST", kind: Outpost, fit: ["relay.beacon"],
         note: "A small settlement's port: pads, a works, a few thousand people."),
+    (key: "structure.relay", brand: "brand.tallis", name: "TALLIS WORLD RELAY", kind: Relay, fit: ["relay.beacon"],
+        note: "A constellation of relays round a planet or moon: the hypernet hops world to world."),
     (key: "structure.ring.i", brand: "brand.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 10.0), fit: ["relay.beacon", "relay.gate"],
         note: "A gate ring, class I: the shortest throats."),
     (key: "structure.ring.ii", brand: "brand.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 25.0), fit: ["relay.beacon", "relay.gate"],

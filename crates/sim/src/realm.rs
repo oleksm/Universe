@@ -83,7 +83,7 @@ impl Realm {
         let bare = out.iter().all(|n| !n.backbone) && sys.spaceports.is_empty();
         let Some(comm) = comm_of(BEACON) else { return out };
         for (k, c) in self.claims.iter().enumerate().filter(|(_, c)| c.system == sys.index) {
-            out.push(Node { at: NodeAt::Beacon { body: c.body, claim: k }, name: c.name.clone(), comm, backbone: bare, gate_relay: None, offset: c.offset });
+            out.push(Node { at: NodeAt::Beacon { body: c.body, claim: k }, name: c.name.clone(), comm, backbone: bare, gate_relay: None, offset: c.offset, around: None });
         }
         out
     }

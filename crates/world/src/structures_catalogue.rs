@@ -8,6 +8,8 @@ pub enum StructureKind {
     Station,
     Spaceport,
     Outpost,
+    /// A world's relay: a constellation round a planet or moon.
+    Relay,
     /// A gate ring: its class, and the longest throat a pair of them holds (light years).
     GateRing { class: u8, span_ly: f64 },
 }

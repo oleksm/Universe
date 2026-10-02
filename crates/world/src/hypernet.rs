@@ -36,6 +36,9 @@ pub struct Node {
     pub gate_relay: Option<(usize, f64)>,
     /// A beacon's place from its body (m; zero for the rest).
     pub offset: DVec3,
+    /// A world's relay: the world it's round (a constellation in orbit, it
+    /// sees past its own world on every side).
+    pub around: Option<usize>,
 }
 
 /// The structure that stands for a body or port of the seeded world: the
@@ -72,7 +75,8 @@ fn fitted(s: &Structure) -> (Comm, Option<f64>) {
     (comm.expect("every structure has a comm (content checks)"), relay)
 }
 
-/// The system's relays: every station, spaceport and gate.
+/// The system's relays: every station, spaceport and gate, and in a settled
+/// system (a station or ports in it) a relay round every planet and moon.
 pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
     let mut out = Vec::new();
     for (i, b) in sys.bodies.iter().enumerate() {
@@ -86,13 +90,19 @@ pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
         };
         let (comm, relay) = fitted(structure(&kind, lane));
         let backbone = kind == StructureKind::Station;
-        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: relay.zip(b.link).map(|(lag, to)| (to, lag)), offset: DVec3::ZERO });
+        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: relay.zip(b.link).map(|(lag, to)| (to, lag)), offset: DVec3::ZERO, around: None });
     }
     // (The station is the system's hub; with none, its ports are.)
     let hub = !out.iter().any(|n| n.backbone);
     let (comm, _) = fitted(structure(&StructureKind::Spaceport, 0.0));
     for (k, sp) in sys.spaceports.iter().enumerate() {
-        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: hub, gate_relay: None, offset: DVec3::ZERO });
+        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: hub, gate_relay: None, offset: DVec3::ZERO, around: None });
+    }
+    if !out.is_empty() {
+        let (comm, _) = fitted(structure(&StructureKind::Relay, 0.0));
+        for (i, b) in sys.bodies.iter().enumerate().filter(|(_, b)| matches!(b.kind, BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon)) {
+            out.push(Node { at: NodeAt::Body(i), name: format!("{} relay", b.name), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: Some(i) });
+        }
     }
     out
 }
@@ -115,25 +125,61 @@ pub fn comm_of(module: &str) -> Option<Comm> {
 
 /// Whether a world (a star, planet or moon) stands between `a` and `b`.
 pub fn blocked(sys: &StarSystem, positions: &[DVec3], a: DVec3, b: DVec3) -> bool {
-    // (A hair under the radius: a port on the ground sees its own sky.)
-    sys.bodies.iter().zip(positions).any(|(body, p)| matches!(body.kind, BodyKind::Star | BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon) && universe_physics::segment_distance(a, b, *p) < body.rail.radius * 0.999)
+    blocked_but(sys, positions, a, b, [None, None])
 }
 
-/// The net at a moment: where its nodes are, which could link (in each
-/// other's reach, the line clear), and the route each takes in: one uplink a
-/// relay, to the neighbour that gets it to the backbone soonest (a tree, not
-/// a mesh: messages hop relay to relay). As the worlds go round, the line to
-/// one neighbour closes and a relay switches its uplink to another.
+/// `blocked`, but for the worlds in `skip` (a world's relay sees past its own).
+pub fn blocked_but(sys: &StarSystem, positions: &[DVec3], a: DVec3, b: DVec3, skip: [Option<usize>; 2]) -> bool {
+    // (A hair under the radius: a port on the ground sees its own sky.)
+    sys.bodies.iter().zip(positions).enumerate().any(|(i, (body, p))| !skip.contains(&Some(i)) && matches!(body.kind, BodyKind::Star | BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon) && universe_physics::segment_distance(a, b, *p) < body.rail.radius * 0.999)
+}
+
+/// The net at a moment. Each day (at its start, as the worlds stand then)
+/// every place that needs the net — the station, ports, gates, beacons —
+/// gets its quickest way to the backbone, hopping relay to relay (a tree,
+/// not a mesh), and only the relays on those ways are switched on; the rest
+/// stand by. As the worlds go round, a line on the day's routes may close:
+/// that branch finds another way then.
 #[derive(Clone, Debug, Default)]
 pub struct Net {
     pub nodes: Vec<Node>,
     pub at: Vec<DVec3>,
-    /// Pairs that could link now.
-    pub links: Vec<(usize, usize)>,
     /// Each node's uplink (None: the backbone itself, or cut off).
     pub uplink: Vec<Option<usize>>,
     /// Each node's lag from the backbone along its route (None: cut off).
     pub lag: Vec<Option<f64>>,
+    /// Switched on: a place that needs the net, or a relay on one's way in.
+    pub used: Vec<bool>,
+}
+
+/// The quickest ways to the backbone over the links standing at `at` (the
+/// worlds at `positions`): each node's uplink and lag. `fixed`: nodes whose
+/// way is settled already (their lag), the rest finding theirs through them.
+fn quickest(sys: &StarSystem, nodes: &[Node], at: &[DVec3], positions: &[DVec3], fixed: &[Option<f64>]) -> (Vec<Option<usize>>, Vec<Option<f64>>) {
+    let n = nodes.len();
+    let mut lag = fixed.to_vec();
+    let mut uplink = vec![None; n];
+    let mut done = vec![false; n];
+    // (Dijkstra; a few dozen nodes.)
+    while let Some(a) = (0..n).filter(|&k| !done[k] && lag[k].is_some()).min_by(|&x, &y| lag[x].unwrap_or(f64::MAX).total_cmp(&lag[y].unwrap_or(f64::MAX))) {
+        done[a] = true;
+        let la = lag[a].unwrap_or(0.0);
+        for b in 0..n {
+            if done[b] || fixed[b].is_some() {
+                continue;
+            }
+            let d = at[a].distance(at[b]);
+            if d > nodes[a].comm.link_with(&nodes[b].comm) || blocked_but(sys, positions, at[a], at[b], [nodes[a].around, nodes[b].around]) {
+                continue;
+            }
+            let via = la + d / SPEED_OF_LIGHT + nodes[b].comm.lag;
+            if lag[b].is_none_or(|old| via < old - 1e-12) {
+                lag[b] = Some(via);
+                uplink[b] = Some(a);
+            }
+        }
+    }
+    (uplink, lag)
 }
 
 /// A ship's (or anything's) place on the net.
@@ -146,40 +192,64 @@ pub struct Status {
 }
 
 impl Net {
-    /// The net of `nodes` at `t`.
+    /// The net of `nodes` at `t` (`positions` at `t`).
     pub fn at(sys: &StarSystem, nodes: Vec<Node>, t: f64, positions: &[DVec3]) -> Net {
-        let at: Vec<DVec3> = nodes.iter().map(|n| position(sys, n, t, positions)).collect();
-        let mut links = Vec::new();
-        for i in 0..nodes.len() {
-            for j in i + 1..nodes.len() {
-                if at[i].distance(at[j]) <= nodes[i].comm.link_with(&nodes[j].comm) && !blocked(sys, positions, at[i], at[j]) {
-                    links.push((i, j));
+        let n = nodes.len();
+        let seeds: Vec<Option<f64>> = nodes.iter().map(|x| x.backbone.then_some(0.0)).collect();
+        // The day's routes, as the worlds stood when it began.
+        let day = (t / crate::units::DAY).floor() * crate::units::DAY;
+        let mut then = Vec::new();
+        sys.positions(day, &mut then);
+        let at_then: Vec<DVec3> = nodes.iter().map(|x| position(sys, x, day, &then)).collect();
+        let (plan, _) = quickest(sys, &nodes, &at_then, &then, &seeds);
+        // Only the relays on a place's way in.
+        let needs = |x: &Node| x.around.is_none();
+        let mut used = vec![false; n];
+        for k in (0..n).filter(|&k| needs(&nodes[k])) {
+            let mut c = Some(k);
+            while let Some(i) = c.filter(|&i| !used[i]) {
+                used[i] = true;
+                c = plan[i];
+            }
+        }
+        // Now: the lag along the day's routes where every line still holds.
+        let at: Vec<DVec3> = nodes.iter().map(|x| position(sys, x, t, positions)).collect();
+        let holds = |a: usize, b: usize| at[a].distance(at[b]) <= nodes[a].comm.link_with(&nodes[b].comm) && !blocked_but(sys, positions, at[a], at[b], [nodes[a].around, nodes[b].around]);
+        let mut lag: Vec<Option<f64>> = seeds.clone();
+        let mut uplink: Vec<Option<usize>> = vec![None; n];
+        for _ in 0..n {
+            for b in 0..n {
+                if let (None, Some(a)) = (lag[b], plan[b])
+                    && let Some(la) = lag[a]
+                    && holds(a, b)
+                {
+                    lag[b] = Some(la + at[a].distance(at[b]) / SPEED_OF_LIGHT + nodes[b].comm.lag);
+                    uplink[b] = Some(a);
                 }
             }
         }
-        // Lag from the backbone: the quickest way in (a few nodes: plain relaxation).
-        let mut lag: Vec<Option<f64>> = nodes.iter().map(|n| n.backbone.then_some(0.0)).collect();
-        let mut uplink: Vec<Option<usize>> = vec![None; nodes.len()];
-        loop {
-            let mut changed = false;
-            for &(i, j) in &links {
-                let hop = at[i].distance(at[j]) / SPEED_OF_LIGHT;
-                for (a, b) in [(i, j), (j, i)] {
-                    if let Some(l) = lag[a] {
-                        let via = l + hop + nodes[b].comm.lag;
-                        if lag[b].is_none_or(|old| via < old - 1e-12) {
-                            lag[b] = Some(via);
-                            uplink[b] = Some(a);
-                            changed = true;
-                        }
+        // A broken branch finds another way, through what's standing.
+        if (0..n).any(|k| used[k] && lag[k].is_none() && plan[k].is_some()) {
+            let (up, l) = quickest(sys, &nodes, &at, positions, &lag);
+            for k in 0..n {
+                if lag[k].is_none() && l[k].is_some() && needs(&nodes[k]) {
+                    let mut c = Some(k);
+                    while let Some(i) = c.filter(|&i| lag[i].is_none()) {
+                        lag[i] = l[i];
+                        uplink[i] = up[i];
+                        used[i] = true;
+                        c = up[i];
                     }
                 }
             }
-            if !changed {
-                break;
+        }
+        for k in 0..n {
+            if !used[k] {
+                lag[k] = None;
+                uplink[k] = None;
             }
         }
-        Net { nodes, at, links, uplink, lag }
+        Net { nodes, at, uplink, lag, used }
     }
 
     /// Where a comm at `p` stands on the net: through the node that gets a
@@ -189,7 +259,7 @@ impl Net {
         for (k, n) in self.nodes.iter().enumerate() {
             let Some(l) = self.lag[k] else { continue };
             let d = self.at[k].distance(p);
-            if d > n.comm.link_with(comm) || blocked(sys, positions, self.at[k], p) {
+            if d > n.comm.link_with(comm) || blocked_but(sys, positions, self.at[k], p, [n.around, None]) {
                 continue;
             }
             let lag = l + d / SPEED_OF_LIGHT + n.comm.lag + comm.lag;
@@ -209,7 +279,7 @@ impl Net {
         for (k, n) in self.nodes.iter().enumerate() {
             let Some(l) = self.lag[k] else { continue };
             let d = self.at[k].distance(p);
-            if d > n.comm.capture || blocked(sys, positions, self.at[k], p) {
+            if d > n.comm.capture || blocked_but(sys, positions, self.at[k], p, [n.around, None]) {
                 continue;
             }
             let t = d / SPEED_OF_LIGHT + n.comm.lag + l;

@@ -69,7 +69,7 @@
     // Reach goes as the root of power and both antennas' gain (Friis).
     (key: "comm.long.s1", brand: "brand.tallis", name: "LONG-RANGE COMM", does: Comm(capture: 3.0e8, link: 7.5e10, lag: 0.05, capacity: 3000.0), size: 1, mass: 300.0, volume: 0.8, power: 2.0e5, price: 9000.0),
     // Infrastructure: relays for stations, ports, outposts and gates (no ship has room or power for one).
-    (key: "relay.port", brand: "brand.tallis", name: "TALLIS BACKBONE RELAY", does: Comm(capture: 1.0e9, link: 4.5e12, lag: 0.02, capacity: 100000.0), size: 4, mass: 20000.0, volume: 60.0, power: 1.0e6, price: 400000.0),
-    (key: "relay.beacon", brand: "brand.tallis", name: "TALLIS BEACON RELAY", does: Comm(capture: 5.0e8, link: 7.5e11, lag: 0.05, capacity: 20000.0), size: 4, mass: 6000.0, volume: 20.0, power: 3.0e5, price: 150000.0),
+    (key: "relay.port", brand: "brand.tallis", name: "TALLIS BACKBONE RELAY", does: Comm(capture: 1.0e9, link: 7.5e10, lag: 0.02, capacity: 100000.0), size: 4, mass: 20000.0, volume: 60.0, power: 1.0e6, price: 400000.0),
+    (key: "relay.beacon", brand: "brand.tallis", name: "TALLIS BEACON RELAY", does: Comm(capture: 5.0e8, link: 7.5e10, lag: 0.05, capacity: 20000.0), size: 4, mass: 6000.0, volume: 20.0, power: 3.0e5, price: 150000.0),
     (key: "relay.gate", brand: "brand.halcyon", name: "HALCYON GATE RELAY", does: GateRelay(lag: 1.0, capacity: 50000.0), size: 4, mass: 40000.0, volume: 100.0, power: 2.0e6, price: 900000.0),
 ]
