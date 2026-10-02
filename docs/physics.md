@@ -50,50 +50,104 @@ dodge a design problem.
 ## Invented: the hyper layer
 
 Exactly two devices exist beyond known physics: the **hyperdrive** and **gates**, plus whatever is
-built on the same medium (hypernet relays). They share one set of rules, and they're the only
-exceptions.
+built on the same medium (hypernet relays). They share one set of rules, below, and they're the
+only exceptions. The rules are chosen so the game's shape falls out of them: travel within a
+system is quick and cheap; between stars it's an expedition; gates are justified, and limited.
 
-### The medium (proposed)
+### The medium
 
-- Space carries a **hyper-medium**. Its local speed limit is
-  `v_h(x) = K × d(x)`, capped at `V_MAX`, where `d` is the distance to the nearest massive body's
-  surface. It's slow deep in gravity wells, fast in open space. Near a body, `v_h` falls to nothing:
-  masses block it.
-- The **interlock**: nothing moves in it within `INTERLOCK` of a body's highest ground.
-- Today `K = 2 /s`, `INTERLOCK = 1 km`, and there is no cap.
+Space carries a **hyper-medium**. Anything moving through it (a drive's field, a signal) is held
+under a local speed limit:
 
-### Hyperdrive (proposed rules)
+    v_lim(x) = min(K · d(x), V_MAX)
 
-- A ship in the medium moves at up to `v_h` (times its throttle), relative to the dominant
-  body's frame; dropping out keeps a chosen exit velocity.
-- **It costs energy:** fuel (or power) per unit distance and mass, so range is limited, and far
-  systems need fuel depots (exploration's chain: beacon, relay, fuel depot, and so on).
-- **`V_MAX` sets interstellar travel.** Within a system nothing reaches the cap (at 1 AU from a star,
-  `v_h` is about 1,000 c), so in-system trips stay seconds to minutes. Between stars the cap rules:
+- `d`: distance to the nearest massive body's surface. Slow deep in wells, fast in open space,
+  zero at a surface: bodies block it.
+- `K = 2 /s`; `V_MAX = 10⁵ c`. In a system the well rules (at 1 AU from a star the limit is about
+  1,000 c); between stars, the cap.
+- The **interlock**: nothing moves in it within 1 km of a body's highest ground.
 
-| V_MAX | 40 ly (a near neighbour) | 1,000 ly | Across the galaxy (19,000 ly) |
+### Hyperdrive: speed and energy
+
+A ship of mass `m` held in the field at speed `v` draws power
+
+    P(v) = m · (q + c_h · v²)
+
+- `q`: the field's upkeep (holding the ship in the medium at all), per kg.
+- `c_h · v²`: pushing through it.
+
+Over a distance `L` at steady speed, the energy is `E = P · L / v = m · L · (q/v + c_h · v)`.
+That has a **best speed**, `v* = √(q / c_h)`: slower wastes energy on upkeep, faster on the push.
+At `v*` the cost is `2 m L √(q c_h)`, and at `k` times `v*` it's `(k + 1/k)/2` times that.
+
+Energy comes from fuel (energy density `e`, times the drive's efficiency `η`, by brand). The
+fuel burnt is part of the mass carried, so like a rocket the range is exponential:
+
+    L_max = Λ · ln(m_full / m_empty),    Λ = η · e / (2 √(q c_h))
+
+`Λ` is the drive's **range scale**: each `Λ` travelled costs a factor e (2.72) in mass.
+
+| Constant | Value | Meaning |
+|---|---|---|
+| `e` | 1×10¹³ J/kg | usable energy in fuel (fusion) |
+| `η` | 0.6–1.2 | a drive's efficiency, by brand and grade |
+| `v*` | 10⁴ c | best speed (at η = 1) |
+| `Λ` | 20 ly (at η = 1) | range scale |
+| `q` | 7.9×10⁷ W/kg | upkeep (from `v*` and `Λ`) |
+| `c_h` | 8.8×10⁻¹⁸ /s | push (from `v*` and `Λ`) |
+
+What it means:
+
+- **Within a system:** the well holds you well under `v*`, and the upkeep per e-fold of distance is
+  `q/K`: about 0.4 kg of fuel per e-fold for a 90 t ship, 3–5 kg planet to planet. Quick and cheap,
+  as today.
+- **To the nearest stars (about 40 ly):** at `v*` it takes 35 hours, and needs `m_full/m_empty = e²`,
+  about 7.4. A ship must be 86% fuel to get there, with none to come back.
+
+| Ship | Empty | Fuel | Range (one way) |
 |---|---|---|---|
-| 10⁴ c | 35 h | 36 days | about 2 years |
-| 10⁵ c | 3.5 h | 3.7 days | 70 days |
-| 10⁶ c | 21 min | 9 h | 7 days |
+| A Drover (stock) | 60 t | 30 t | 8 ly: can't reach a neighbour |
+| An expedition ship | 200 t | 1,300 t | 40 ly: there, not back |
+| The same, to 100 ly | 200 t | 24,000 t | not practical: needs depots |
 
-  Gates make the settled lanes fast (seconds), so beyond the gates the frontier is far but always
-  reachable: the galaxy stays open.
+- **So expeditions** go one way, carrying a mobile outpost that makes fuel from local matter (ice,
+  gas) to get home, or settle. If the outpost fails, they're stranded. Going farther takes depots
+  laid stage by stage. Going faster than `v*` burns range: at 3×, a third less.
+- **Time costs too:** crew eat, breathe and need power the whole way (life support per person per
+  day). A slow, cheap crossing needs more supplies.
 
-### Gates (proposed rules)
+### Gates: justified, and limited
 
-- A gate pair is one short wormhole: matter and hyper-signals entering one ring leave the other
-  after `TRANSIT_TIME` (10 s), within the ring's size and under its speed limit.
-- **Made as a pair, at one place;** one ring is then hauled through the medium to its far end. Laying
-  a lane is an expedition, and it takes time and fuel by the rules above. That's how players extend
-  the network.
+A gate pair is one wormhole throat: matter and hyper-signals entering one ring leave the other
+after `TRANSIT_TIME` (10 s), within the ring's size and under its speed limit. A pair spans a
+distance `S` between its rings.
 
-### Hyper-signals: the hypernet's carrier (proposed rules)
+- **Holding the throat open** takes continuous power, growing steeply with the span:
 
-- Relays signal through the medium: a signal's time is the path integral of `1/v_h` along its way
-  (fast in open space, slow out of wells, blocked by bodies), capped by `V_MAX`.
-- **Strength falls with distance** (inverse square), so each relay's power and antenna set its
-  reach. A message beyond reach needs another relay in between, a gate relay, or a ship to carry it.
+      P_gate = P₀ · (S / S₀)³,   P₀ = 1 GW, S₀ = 10 ly
+
+  10 ly: 1 GW; 25 ly: 16 GW; 50 ly: 125 GW. Lost power closes the lane, and the
+  powerplant is infrastructure that wears and breaks (maintenance).
+- **A ring's class sets its greatest span** (its throat's strength): class I 25 ly, II 50 ly,
+  III 100 ly (rarer, dearer, hungrier). Nothing bridges farther.
+- **A transit costs** `E = τ · m · S`, with `τ` 2.6×10⁻⁹ J/(kg·m): 1,000 t across 40 ly costs about
+  10¹⁵ J, roughly 100 kg of fuel. That's 20,000 times cheaper than hyperdrive. That's why lanes carry
+  trade, and why the gate's owner charges fees.
+- **Laying a lane:** the pair is built together at one place. One ring (thousands of tonnes) is then
+  hauled to the far end through the medium, under the range law above: depots on the way, an
+  expedition's worth of fuel. It's a corporation's or faction's project, not a pilot's afternoon.
+- So the galaxy is open (anything's reachable by expedition) but **lanes are earned**. Bridging far
+  takes chains of rings and their power, each one built, fuelled and defended.
+
+### Hyper-signals: the hypernet's carrier
+
+- A relay's signal travels the medium under the same limit: its time is `∫ ds / v_lim` along the way.
+  It's quick in open space, slow climbing out of wells, and blocked by bodies.
+- **Its strength falls with the square of the distance:** a relay sending `P_tx` reaches a receiver of
+  sensitivity `p_min` within `R = √(P_tx · G / p_min)` (`G`: the antennas' gain, by brand and size).
+  So reach is bought with power and size, and the far frontier needs relays laid out to it.
+- Between stars a signal pays the same steep reach. A **gate relay module** sends it through the
+  throat instead (at `TRANSIT_TIME`). The network's backbone is its gates.
 - **Capture stays real:** events are sensed by light and radar at light speed, within range. Only
   carrying uses the medium.
 
@@ -103,8 +157,8 @@ exceptions.
   gravity; no shields; no free energy.
 - A new feature uses the above, or comes here first as a written rule with its costs.
 
-## Open decisions
+## To tune (playtest)
 
-1. `V_MAX`: from the table above.
-2. Hyperdrive energy: fuel per distance and mass, or power drawn at speed?
-3. Hyper-signal reach: how strong relays are by brand and size.
+- `Λ`, `v*`, `V_MAX`, `P₀`, `τ` and ring classes: the numbers above are a first cut, chosen so the
+  stock ships stay local and the nearest stars need an expedition.
+- How expensive life support is per crew-day (food, water, air, power).
