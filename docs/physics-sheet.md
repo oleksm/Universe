@@ -36,19 +36,21 @@ A hyper-field's draw: P = m·s·(P_FLOOR + P_PUSH·(v/v*)³) / η, η the device
 | `P_FLOOR` | 10000 | W/kg | Invented | Holding a field in open space, per kg in it. |
 | `P_PUSH` | 5000 | W/kg | Invented | Pushing it through the medium at the best speed; grows with the cube of speed. |
 | `V_BEST_C` | 1000 | c | Invented | v*: the speed the push is reckoned at. |
-| `HYPER_BIT_MASS` | 1e-9 | kg | Invented | A hyper-signal's carrier: the field a relay holds round each bit it sends. Nearly free where the medium's stiff; between stars every bit pays the wall. |
 
-## Throat
+## Tube
 
-A gate pair is one wormhole throat: holding it open takes P = P0·(S/S0)³ for a span S; a transit costs τ·m·S.
+A gate or relay holds a tube of the medium open along its route (as long as the span; millions of c inside). Crossing in time t: E = eps·m·S·e^(t_nat/t), t_nat = T_LY·(S/1 ly)·(m/1 kg)^GAMMA. A tube of diameter d weighs as mu(d) = RHO·(d/1 m)^K: opening it is the same formula, holding it a share of that. See docs/world/hyperspace.md; tools/experiments/.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `MAX_TRANSIT_SPEED` | 300 | m/s | Invented | Faster through a throat and the transit wrecks what goes in. |
-| `TRANSIT_TIME` | 10 | s | Invented | Matter through the throat, ring to ring: under MAX_TRANSIT_SPEED, a throat about 3 km long. A signal crosses it at light speed (about 10 µs). |
-| `GATE_P0` | 1e9 | W | Invented | Holding a throat open at the reference span. |
-| `GATE_S0` | 10 | ly | Invented | The reference span. |
-| `GATE_TAU` | 2.6e-9 | J/(kg·m) | Invented | A transit's energy per kg per metre of span (the gate's, not the traveller's). |
+| `TUBE_T_LY` | 0.2 | s/ly | Invented | Natural crossing per light year for a 1 kg payload. Target: data crosses at 200 ms per ly; faster gets punishing. |
+| `TUBE_GAMMA` | 0.3333333333 |  | Invented | Heavier is naturally slower, by the cube root of mass. Target: a 100 t ship under a minute through a 5 ly gate, a capital ship several minutes. |
+| `TUBE_EPS` | 2.24e-12 | J/(kg·m) | Invented | A crossing's energy scale. Target: a 100 t ship at natural speed through a 5 ly gate costs an S2 plant-hour. |
+| `TUBE_RHO` | 406 | kg | Invented | A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry. |
+| `TUBE_K` | 3 |  | Invented | A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 9 ships a day. |
+| `TUBE_HOLD` | 2.592e8 | s | Invented | Holding a tube costs its opening over this (100 months: 1% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous. |
+| `TUBE_SETTLE` | 3 | s | Invented | After a throw a tube's flow settles this long before the next can be caught: the cadence data is batched at. Target: news crosses a relay link in 1-2 s. |
+| `MAX_TRANSIT_SPEED` | 300 | m/s | Invented | A ring catches what enters it slower than this; faster and the capture wrecks it. |
 
 # The base world's numbers
 
@@ -70,6 +72,9 @@ The world's gate rings.
 |---|---|---|---|---|
 | `GATE_RADIUS` | 1500 | m | Tuning | A ring's centreline radius; its opening is a little smaller. |
 | `RING_TUBE` | 60 | m | Tuning | Half the ring structure's thickness. |
+| `RELAY_TUBE` | 0.01 | m | Tuning | A hyper relay's tube: capsules only, no ship fits (a gate's is its ring's opening). |
+| `GATE_CAPSULE` | 1 | kg | Tuning | A gate's data capsule: a casing and hardened storage (target: the 200 ms per ly is a 1 kg capsule's). |
+| `RELAY_CAPSULE` | 0.01 | kg | Tuning | A relay's data capsule, small enough for its tube. |
 
 ## Technology
 
@@ -151,9 +156,10 @@ From `content/base/materials.ron`.
 | INTERCEPTOR with the strongest plant | 0.33 kW/kg: can't cross |
 | A future explorer at 30 kW/kg | 1.41 × the best speed: 5 ly in 1.3 days, 40 ly in 10.4 days |
 | The medium's slack at 1 AU / 40 AU / 2 ly | 1e-6 / 2e-3 / 1 |
-| A gate spanning 5 ly holds open at | 125 MW |
-| A gate spanning 10 ly holds open at | 1.0 GW |
-| A gate spanning 25 ly holds open at | 15.6 GW |
-| A gate spanning 50 ly holds open at | 125.0 GW |
-| A gate spanning 40 ly holds open at | 64.0 GW |
-| A gate transit, per tonne across 40 ly | 9.8e11 J |
+| A gate spanning 1 ly: opened at / held at | 6.3e17 J / 2.4 GW |
+| A gate spanning 5 ly: opened at / held at | 3.2e18 J / 12.2 GW |
+| A gate spanning 10 ly: opened at / held at | 6.3e18 J / 24.4 GW |
+| A gate spanning 40 ly: opened at / held at | 2.5e19 J / 97.5 GW |
+| data (1 kg) through a 5 ly gate at natural speed | 1.0 s, 2.9e5 J |
+| a 100 t ship through a 5 ly gate at natural speed | 46.4 s, 2.9e10 J |
+| a capital ship (100 kt) through a 5 ly gate at natural speed | 464.2 s, 2.9e13 J |

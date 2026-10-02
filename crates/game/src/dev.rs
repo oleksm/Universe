@@ -540,11 +540,11 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.position = f.center + f.axis() * 9_000.0 + f.rotation * DVec3::X * 2_500.0;
             u.ship.velocity = f.velocity;
             u.ship.orientation = universe_sim::ship::facing(f.center - u.ship.position, f.rotation * DVec3::Z);
-            use universe_sim::world::gate::TRANSIT_TIME;
+            const TRANSIT_TIME: f64 = 10.0;
             for (k, (from, to, remaining, at)) in [(home, dest, TRANSIT_TIME - 0.4, DVec3::new(400.0, 0.0, 250.0)), (dest, home, 0.5, DVec3::new(-500.0, 0.0, -300.0))].into_iter().enumerate() {
                 let c = &mut u.crafts[k];
                 c.system = from;
-                c.ship.state = ShipState::Transit { to, from, remaining, local_velocity: DVec3::Y * 80.0, local_offset: at, local_orientation: universe_engine::glam::DQuat::IDENTITY };
+                c.ship.state = ShipState::Transit { to, from, remaining, duration: TRANSIT_TIME, local_velocity: DVec3::Y * 80.0, local_offset: at, local_orientation: universe_engine::glam::DQuat::IDENTITY };
                 u.pilots()[k].avionics.route.active = false;
             }
         }

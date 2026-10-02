@@ -2,7 +2,7 @@
 //! the medium's slack, a field's draw and the speed a power buys, a throat's
 //! upkeep. Devices built on them (hyperdrives, gates, relays) are the world's.
 
-use crate::laws::{GATE_P0, GATE_S0, GATE_TAU, HYPER_BIT_MASS, HYPER_RATE, MAX_TRANSIT_SPEED, P_FLOOR, P_PUSH, SPEED_OF_LIGHT, TRANSIT_TIME, V_BEST_C, V_OPEN_C};
+use crate::laws::{HYPER_RATE, P_FLOOR, P_PUSH, SPEED_OF_LIGHT, TUBE_EPS, TUBE_GAMMA, TUBE_HOLD, TUBE_K, TUBE_RHO, TUBE_T_LY, V_BEST_C, V_OPEN_C};
 
 /// The medium's slack `d` metres from the nearest surface: 0 stiff (deep in
 /// a system), 1 slack (between the stars).
@@ -36,36 +36,32 @@ pub fn field_speed(mass: f64, s: f64, power: f64, eta: f64) -> Option<f64> {
     Some(V_BEST_C * SPEED_OF_LIGHT * ((usable - hold) / (mass * s * P_PUSH)).cbrt())
 }
 
-/// The power holding a throat open across `span_ly` light years takes (W).
-pub fn throat_upkeep(span_ly: f64) -> f64 {
-    GATE_P0 * (span_ly / GATE_S0).powi(3)
+/// A light year (m), for the tube's per-light-year law.
+const LY: f64 = 9.460_730_472_580_8e15;
+
+/// A tube's natural crossing time (s) for `mass` kg over a span of `span` m.
+pub fn tube_natural_time(mass: f64, span: f64) -> f64 {
+    TUBE_T_LY * (span / LY) * mass.max(1e-9).powf(TUBE_GAMMA)
 }
 
-/// A transit's energy for `mass` kg across a throat `span` metres long (J).
-pub fn transit_energy(mass: f64, span: f64) -> f64 {
-    GATE_TAU * mass * span
+/// The energy (J) to take `mass` kg through a tube `span` m long in `time` s:
+/// past the natural time it's steeply dearer; slower, never under `eps·m·S`.
+pub fn tube_crossing_energy(mass: f64, span: f64, time: f64) -> f64 {
+    TUBE_EPS * mass * span * (tube_natural_time(mass, span) / time.max(1e-12)).min(700.0).exp()
 }
 
-/// A hyper-signal is a field round each bit, held while it crosses: the
-/// energy (J) a relay of efficiency `eta` spends sending one bit `length`
-/// metres where the slack is `s`, at the push's best speed (`v*`). Deep in
-/// a system (`s` near 0) next to nothing; between stars every bit pays the wall.
-pub fn bit_energy(s: f64, length: f64, eta: f64) -> f64 {
-    HYPER_BIT_MASS * s * (P_FLOOR + P_PUSH) * length / (V_BEST_C * SPEED_OF_LIGHT) / eta
+/// A tube of `diameter` m: its equivalent mass (kg).
+pub fn tube_mass(diameter: f64) -> f64 {
+    TUBE_RHO * diameter.powf(TUBE_K)
 }
 
-/// What a relay of `power` W at `eta` can send `length` m through slack `s`
-/// (bits a second): its power over each bit's energy.
-pub fn relay_throughput(power: f64, eta: f64, s: f64, length: f64) -> f64 {
-    power * eta / bit_energy(s, length, eta.max(1e-9)).max(1e-30)
+/// Opening a tube of `diameter` m over `span` m at its natural pace (J).
+pub fn tube_open_energy(diameter: f64, span: f64) -> f64 {
+    let mu = tube_mass(diameter);
+    tube_crossing_energy(mu, span, tube_natural_time(mu, span))
 }
 
-/// A throat's length (m): what matter crosses in `TRANSIT_TIME` under `MAX_TRANSIT_SPEED`.
-pub fn throat_length() -> f64 {
-    MAX_TRANSIT_SPEED * TRANSIT_TIME
-}
-
-/// A signal through a throat (s): its length at light speed.
-pub fn throat_signal_time() -> f64 {
-    throat_length() / SPEED_OF_LIGHT
+/// Holding it open (W): its opening over `TUBE_HOLD`.
+pub fn tube_hold_power(diameter: f64, span: f64) -> f64 {
+    tube_open_energy(diameter, span) / TUBE_HOLD
 }

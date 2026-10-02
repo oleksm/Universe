@@ -106,7 +106,9 @@ pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
         };
         let (comm, relay, gate) = fitted(structure(&kind, lane));
         let backbone = kind == StructureKind::Station;
-        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: gate.zip(b.link).map(|(lag, to)| (to, lag)), offset: DVec3::ZERO, around: None, relay });
+        // (A gate relay's capsules cross the lane's tube.)
+        let crossing = capsule_time(crate::sheet::GATE_CAPSULE, lane * crate::units::LIGHT_YEAR);
+        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: gate.zip(b.link).map(|(lag, to)| (to, lag + crossing)), offset: DVec3::ZERO, around: None, relay });
     }
     let (comm, _, _) = fitted(structure(&StructureKind::Spaceport, 0.0));
     for (k, sp) in sys.spaceports.iter().enumerate() {
@@ -121,22 +123,12 @@ pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
     out
 }
 
-/// A hyper-signal's time from `a` to `b` (s): along the line, at the
-/// medium's limit there (Dogma: slower the nearer a world's surface).
-pub fn hyper_time(sys: &StarSystem, positions: &[DVec3], a: DVec3, b: DVec3) -> f64 {
-    const STEPS: usize = 48;
-    let len = a.distance(b);
-    let step = len / STEPS as f64;
-    (0..STEPS)
-        .map(|k| {
-            let p = a.lerp(b, (k as f64 + 0.5) / STEPS as f64);
-            // (The nearest surface; a site's own world's no nearer than its orbit.)
-            let near = sys.bodies.iter().zip(positions).filter(|(b, _)| matches!(b.kind, BodyKind::Star | BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon)).map(|(b, c)| p.distance(*c) - b.rail.radius).fold(f64::INFINITY, f64::min);
-            step / universe_physics::hyper::limit(near.max(1.0e7))
-        })
-        .sum()
+/// Data across a tube `span` m long in capsules of `capsule` kg (s): half
+/// the flow's settle (the cadence it's thrown at, on average a wait), and the
+/// capsule's natural crossing.
+pub fn capsule_time(capsule: f64, span: f64) -> f64 {
+    universe_physics::laws::TUBE_SETTLE / 2.0 + universe_physics::hyper::tube_natural_time(capsule, span)
 }
-
 /// Where a node is at `t` (`positions` at `t`).
 pub fn position(sys: &StarSystem, node: &Node, t: f64, positions: &[DVec3]) -> DVec3 {
     match node.at {
@@ -167,7 +159,8 @@ pub fn blocked_but(sys: &StarSystem, positions: &[DVec3], a: DVec3, b: DVec3, sk
 /// The net at a moment. Each day (as the sites stand at its start) the
 /// system's hyper relays link its sites the shortest way all told (a
 /// minimum spanning tree: each link to a near neighbour, no more links than
-/// it takes); messages cross them through hyperspace, in seconds. Ports on
+/// it takes); messages cross their tubes in capsules, at the flow's settle
+/// cadence (`capsule_time`): a second or two a hop. Ports on
 /// the ground talk up to a transceiver in sight, at light speed; so do ships
 /// within a transceiver's radius.
 #[derive(Clone, Debug, Default)]
@@ -227,7 +220,7 @@ impl Net {
                     if let (None, Some(u)) = (lag[k], uplink[k])
                         && let Some(lu) = lag[u]
                     {
-                        lag[k] = Some(lu + hyper_time(sys, positions, at[u], at[k]) + nodes[k].relay.unwrap_or(0.0));
+                        lag[k] = Some(lu + capsule_time(crate::sheet::RELAY_CAPSULE, at[u].distance(at[k])) + nodes[k].relay.unwrap_or(0.0));
                     }
                 }
             }
@@ -303,17 +296,16 @@ impl Net {
         self.nodes.iter().position(|n| n.at == at)
     }
 
-    /// From the backbone out through each gate relay on the net to the throat:
-    /// (the system it leads to, the delay to the far ring (s): the lag to the
-    /// gate, its handling, and the crossing: a signal through a throat at
-    /// light speed, microseconds).
+    /// From the backbone out through each gate relay on the net to the far
+    /// ring: (the system it leads to, the delay (s): the lag to the gate, and
+    /// its relay's handling and capsules' crossing of the lane's tube).
     pub fn gates(&self) -> Vec<(usize, f64)> {
         self.nodes
             .iter()
             .zip(&self.lag)
             .filter_map(|(n, l)| {
                 let (to, handling) = n.gate_relay?;
-                Some((to, (*l)? + handling + universe_physics::hyper::throat_signal_time()))
+                Some((to, (*l)? + handling))
             })
             .collect()
     }
@@ -361,8 +353,11 @@ mod tests {
         // A fight by the station is on the backbone within a second; one far out isn't heard.
         assert!(net.heard(&sys, &positions, near).is_some_and(|t| t < 1.0));
         assert!(net.heard(&sys, &positions, far).is_none());
-        // Out through a gate relay: the relay's handling, the throat in microseconds.
-        assert!(net.gates().iter().all(|(_, d)| *d >= 1.0 && *d < 5.0), "{:?}", net.gates());
+        // Out through a gate relay: its handling, the flow's cadence, and the capsules'
+        // 200 ms a light year along the lane.
+        let lane = |to: usize| w.galaxy.stars[w.home_system].position.distance(w.galaxy.stars[to].position);
+        let site = |to: usize| net.nodes.iter().zip(&net.lag).find(|(n, _)| n.gate_relay.is_some_and(|g| g.0 == to)).and_then(|(_, l)| *l).unwrap_or(0.0);
+        assert!(net.gates().iter().all(|&(to, d)| (d - site(to) - (0.2 * lane(to) + 1.5 + 1.0)).abs() < 0.1), "{:?}", net.gates());
         // Behind a world, from its only relay: blocked.
         let p = positions[sys.bodies[station].rail.parent.unwrap()];
         assert!(blocked(&sys, &positions, p + DVec3::X * 1.0e9, p - DVec3::X * 1.0e9));

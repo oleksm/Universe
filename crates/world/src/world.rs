@@ -520,12 +520,12 @@ impl World {
                 crate::mining::excavate(&sys, ship, self.dug(*system, field, body), real_dt * warp, events);
                 result
             }
-            ShipState::Transit { to, from, remaining, local_velocity, local_offset, local_orientation } => {
+            ShipState::Transit { to, from, remaining, duration, local_velocity, local_offset, local_orientation } => {
                 // The transit takes a few real seconds; the world clock keeps its pace.
                 let result = advance(clock, real_dt * warp);
                 let left = remaining - real_dt;
                 if left > 0.0 {
-                    ship.state = ShipState::Transit { to, from, remaining: left, local_velocity, local_offset, local_orientation };
+                    ship.state = ShipState::Transit { to, from, remaining: left, duration, local_velocity, local_offset, local_orientation };
                 } else {
                     self.arrive_through_gate(*clock, ship, system, to, from, local_velocity, local_offset, local_orientation, events);
                 }

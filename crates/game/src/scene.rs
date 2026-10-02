@@ -214,11 +214,10 @@ fn galaxy(frame: &mut Frame, app: &App, starlight: f32) {
 /// sun left behind dwindles, the one ahead swells; a flash leaving one gate
 /// and coming out of the other. Our ship rides it, its drive full.
 fn transit_push(frame: &mut Frame, app: &App) {
-    use universe_sim::world::gate::TRANSIT_TIME;
-    let ShipState::Transit { to, from, remaining, .. } = app.ship.state else { return };
+    let ShipState::Transit { to, from, remaining, duration, .. } = app.ship.state else { return };
     let g = &app.charts.galaxy;
     let (a, b) = (g.stars[from].position, g.stars[to].position);
-    let p = (1.0 - remaining / TRANSIT_TIME).clamp(0.0, 1.0);
+    let p = (1.0 - remaining / duration.max(1e-6)).clamp(0.0, 1.0);
     let ease = |p: f64| (1.0 - (p * std::f64::consts::PI).cos()) * 0.5;
     let at = a + (b - a) * ease(p);
     // (A moment ago: where each star's streak starts.)
@@ -295,14 +294,13 @@ const GATE_FLASH: f64 = 2.5;
 /// axis), and one where another is about to come through (the ring's light
 /// gathering to a point).
 fn gate_flashes(frame: &mut Frame, app: &App) {
-    use universe_sim::world::gate::TRANSIT_TIME;
     let sys = &app.view.system;
     let here = app.view.origin;
     for c in app.v.crafts.iter() {
-        let ShipState::Transit { to, from, remaining, local_offset, .. } = c.ship.state else { continue };
+        let ShipState::Transit { to, from, remaining, duration, local_offset, .. } = c.ship.state else { continue };
         // (Leaving here: the gate to where it's going; coming here: the gate from where it was.)
         let (gate, since, leaving) = if from == here {
-            (sys.gate_to(to), TRANSIT_TIME - remaining, true)
+            (sys.gate_to(to), duration - remaining, true)
         } else if to == here {
             (sys.gate_to(from), GATE_FLASH - remaining, false)
         } else {

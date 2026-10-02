@@ -168,63 +168,14 @@ Not yet. When they come, the proposal: a deflector on the same medium, a thin sh
 resists matter passing through. Its draw grows with the energy it stops, so it drains capacitors
 under fire.
 
-### Gates: justified, and limited
+### Gates and relays: tubes
 
-> **Being replaced (2026-10-02):** gates as **tubes along the route** with a crossing formula by
-> mass and speed, and data crossing in capsules: `docs/world/hyperspace.md` §3. The code still runs
-> the model below until the new one is settled (holding a tube is still to be set).
-
-A gate pair is one wormhole throat: matter and hyper-signals entering one ring leave the other
-after `TRANSIT_TIME` (10 s), within the ring's size and under its speed limit. A pair spans a
-distance `S` between its rings.
-
-- **Holding the throat open** takes continuous power, growing steeply with the span:
-
-      P_gate = P₀ · (S / S₀)³,   P₀ = 1 GW, S₀ = 10 ly
-
-  10 ly: 1 GW; 25 ly: 16 GW; 50 ly: 125 GW. Lost power closes the lane, and the
-  powerplant is infrastructure that wears and breaks (maintenance).
-- **A ring's class sets its greatest span** (its throat's strength): class I 10 ly, II 25 ly,
-  III 50 ly (rarer, dearer, hungrier). Nothing bridges farther. Some stars may never be worth
-  bridging: the power grows with the cube of the span (5 ly: 125 MW; 40 ly: 64 GW; 100 ly: 1 TW).
-- **A transit costs** `E = τ · m · S`, with `τ` 2.6×10⁻⁹ J/(kg·m): 1,000 t across 40 ly costs about
-  10¹⁵ J, roughly 100 kg of fuel: 10⁹ J per kg, against an explorer's 2×10¹⁰ J per kg held across
-  40 ly (about 20 times cheaper). More: any ship can use it (no explorer's power needed), in 10 s
-  instead of days, with no risk of stranding. That's why lanes carry
-  trade, and why the gate's owner charges fees.
-- **Laying a lane:** the pair is built together at one place. One ring (thousands of tonnes) is then
-  hauled to the far end through the medium by an explorer's power, under the rules above: an
-  expedition in itself. It's a corporation's or faction's project, not a pilot's afternoon.
-- So the galaxy is open (anything's reachable by expedition) but **lanes are earned**. Bridging far
-  takes chains of rings and their power, each one built, fuelled and defended.
-
-(All of the hyper layer in one place, with its numbers and open questions: `docs/world/hyperspace.md`.)
-
-### Hyper-signals: the hypernet's carrier
-
-> **Being replaced (2026-10-02):** data crosses gates and relays in capsules, under the same
-> crossing formula as ships: `docs/world/hyperspace.md` §3.
-
-- A relay's signal is **field pulses, not photons**: the relay turns the message into a tiny field
-  round each bit (`HYPER_BIT_MASS`), sends it through the medium, and the far relay turns it back
-  into photons. Its time is `∫ ds / v_lim` (the medium's limit binds, as for ships); its energy per
-  bit `m_bit · s · (P_FLOOR + P_PUSH) · L / v* / η`: next to nothing in a system, dear between
-  stars. A relay's power buys throughput, not speed.
-- **Its strength falls with the square of the distance:** a relay sending `P_tx` reaches a receiver of
-  sensitivity `p_min` within `R = √(P_tx · G / p_min)` (`G`: the antennas' gain, by brand and size).
-  So reach is bought with power and size, and the far frontier needs relays laid out to it.
-- **Comms are products** (`modules.ron`, `Does::Comm`): today each states its reach (`link`), what it
-  hears (`capture`), its handling lag and its capacity (messages an hour) — figures its maker
-  worked out from the law above. Simplified: a link between two comms reaches as far as the
-  shorter of their two reaches (the real link, `√(P_a·G_a·G_b / p_b)`, comes with equipment tuning),
-  and capacity is a count of messages, not bits.
-- Every ship carries a comm (a base block); every structure a relay (`structures.ron` `fit`); a
-  gate ring may carry a gate relay (`Does::GateRelay`), the throat's crossing being Dogma's.
-- Between stars a signal pays the wall per bit. A **gate relay module** sends it through the
-  throat instead: about 3 km, crossed at light speed (microseconds; matter takes its 10 s). The
-  network's backbone is its gates.
-- **Capture stays real:** events are sensed by light and radar at light speed, within range. Only
-  carrying uses the medium.
+A gate pair (or a relay pair, a thin one) holds a **tube** of the medium open along its route: as
+long as the span, millions of c inside. Crossing, opening and holding are one formula by mass
+(a tube weighs by its diameter cubed); data crosses in capsules, thrown and caught at the flow's
+settle cadence (light can't be caught reliably in the tube's unstable flow). The laws, their
+targets and the numbers: **`docs/world/hyperspace.md` §3**; Dogma's `Tube` laws; the calculations
+in `tools/experiments/`.
 
 ### What doesn't exist
 

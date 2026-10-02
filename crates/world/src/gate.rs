@@ -12,7 +12,7 @@ use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
 // (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::{GATE_RADIUS, RING_TUBE};
-pub use universe_physics::laws::{MAX_TRANSIT_SPEED, TRANSIT_TIME};
+pub use universe_physics::laws::MAX_TRANSIT_SPEED;
 
 /// The ring's shape, for Dogma; its opening is the trigger.
 pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };

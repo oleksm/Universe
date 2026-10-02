@@ -8,13 +8,6 @@ use universe_physics::laws::*;
 use universe_world::sheet::*;
 use universe_world::units::{AU, LIGHT_YEAR};
 
-/// The gate rings' spans (light years), by class: the world's ring products.
-fn ring_spans() -> Vec<f64> {
-    let mut spans: Vec<(u8, f64)> = content().structures.iter().filter_map(|(_, s)| if let universe_world::structures_catalogue::StructureKind::GateRing { class, span_ly } = s.kind { Some((class, span_ly)) } else { None }).collect();
-    spans.sort_by_key(|s| s.0);
-    spans.into_iter().map(|s| s.1).collect()
-}
-
 /// The most power any plant makes, and the most per kg of plant.
 fn best_plant() -> (f64, f64) {
     content().modules.iter().filter_map(|(_, m)| if let Does::PowerPlant { output, .. } = m.does { Some((output, output / m.mass)) } else { None }).fold((0.0, 0.0), |(a, b), (o, d)| (a.max(o), b.max(d)))
@@ -57,26 +50,42 @@ fn within_a_system_the_medium_is_stiff() {
     assert!(slack(40.0 * AU) < STIFF_SLACK, "a field must still form at the outer planets: {}", slack(40.0 * AU));
     // And between stars it's all slack.
     assert!(slack(2.0 * LIGHT_YEAR) >= 1.0);
-    // A hyper-signal: next to free across a system, dear between stars.
-    use universe_physics::hyper::bit_energy;
-    assert!(bit_energy(slack(AU), AU, 0.6) < 1e-6, "{}", bit_energy(slack(AU), AU, 0.6));
-    assert!(bit_energy(1.0, 5.0 * LIGHT_YEAR, 0.6) > 1.0, "{}", bit_energy(1.0, 5.0 * LIGHT_YEAR, 0.6));
-    // A signal through a throat in microseconds; matter in its 10 s.
-    assert!(universe_physics::hyper::throat_signal_time() < 1e-3);
+    // Data across a relay's tube in a system: the flow's settle, a second or two.
+    let hop = universe_world::hypernet::capsule_time(RELAY_CAPSULE, 2.0 * AU);
+    assert!((1.0..2.5).contains(&hop), "a relay hop takes {hop} s");
 }
 
 #[test]
 fn gates_are_justified_and_limited() {
-    let power = |span_ly: f64| GATE_P0 * (span_ly / GATE_S0).powi(3);
-    // A near lane is affordable infrastructure; the longest a ring can span is a giant's work.
-    let spans = ring_spans();
-    let longest = *spans.last().expect("the world builds gate rings");
-    assert!(power(5.0) < 1e9 && power(longest) > 1e11, "{:e} {:e}", power(5.0), power(longest));
-    assert!(spans.windows(2).all(|w| w[0] < w[1]), "a higher class spans farther: {spans:?}");
+    use universe_physics::hyper::{tube_crossing_energy, tube_hold_power, tube_natural_time, tube_open_energy};
+    let s5 = 5.0 * LIGHT_YEAR;
+    // Data at 200 ms a light year; a 100 t ship under a minute through a typical gate; a
+    // capital ship several minutes (docs/world/hyperspace.md, tools/experiments/).
+    assert!((tube_natural_time(GATE_CAPSULE, LIGHT_YEAR) - 0.2).abs() < 1e-9);
+    let ship = tube_natural_time(1e5, s5);
+    assert!((30.0..60.0).contains(&ship), "a 100 t ship takes {ship} s");
+    assert!((180.0..900.0).contains(&tube_natural_time(1e8, s5)));
+    // Rushing punishes: twice as fast costs e times as much; slow never free.
+    let at = |t: f64| tube_crossing_energy(1e5, s5, t);
+    assert!((at(ship / 2.0) / at(ship) - std::f64::consts::E).abs() < 1e-6);
+    assert!(at(ship * 100.0) > at(ship) / std::f64::consts::E);
+    // A pass at natural speed costs about an S2 plant-hour.
+    assert!((1e10..1e11).contains(&at(ship)), "{:e}", at(ship));
+    // Holding a gate is the economic choice: opening a one-ship tube for one pass costs
+    // thousands of passes; a held gate pays at a handful of ships a day; opening it is a
+    // faction's year.
+    let gate = 2.0 * GATE_RADIUS;
+    let own = tube_open_energy(100.0, s5);
+    assert!(own > 1e3 * at(ship), "own tube {own:e} against a pass {:e}", at(ship));
+    let day = tube_hold_power(gate, s5) * 86_400.0;
+    assert!((1.0..50.0).contains(&(day / own)), "a held gate's day is {} own tubes", day / own);
+    assert!((1e18..1e19).contains(&tube_open_energy(gate, s5)));
+    // Relays' thin tubes are next to free to hold.
+    assert!(tube_hold_power(RELAY_TUBE, 2.0 * AU) < 1.0);
     // Freight by gate beats an explorer's crossing per kg (and any ship can take it).
-    let gate = GATE_TAU * 40.0 * LIGHT_YEAR;
+    let by_gate = tube_crossing_energy(1e5, 40.0 * LIGHT_YEAR, tube_natural_time(1e5, 40.0 * LIGHT_YEAR)) / 1e5;
     let explorer = EXPLORER_POWER * 40.0 * LIGHT_YEAR / ((((EXPLORER_POWER * ETA_FIELD_MAX - P_FLOOR) / P_PUSH).cbrt()) * V_BEST_C * SPEED_OF_LIGHT);
-    assert!(gate * 10.0 < explorer, "gate {gate:e} J/kg against an explorer's {explorer:e}");
+    assert!(by_gate * 10.0 < explorer, "gate {by_gate:e} J/kg against an explorer's {explorer:e}");
 }
 
 #[test]

@@ -51,7 +51,8 @@ pub enum Rule {
     /// Pass the body through to the structure's twin in system `to`, if
     /// slower than `max_speed` (its motion relative to this one kept for the
     /// other side). Else it's wrecked by `otherwise`.
-    Transit { name: String, max_speed: f64, to: usize, says: ShipEvent, otherwise: String },
+    /// `span`: the lane's length (m), what its tube's crossing takes.
+    Transit { name: String, max_speed: f64, to: usize, span: f64, says: ShipEvent, otherwise: String },
     /// Bounce off below `max_speed` (during the step, see `bounces`); harder
     /// than that, wrecked by `otherwise`.
     Bounce { name: String, max_speed: f64, otherwise: String },
@@ -163,7 +164,7 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
                 }
             }
         }
-        Rule::Transit { name, max_speed, to, says, otherwise } => {
+        Rule::Transit { name, max_speed, to, span, says, otherwise } => {
             // One way: against the gate's axis, it's an empty ring.
             let Fact::Trigger { relative_velocity, .. } = fact else { return };
             if relative_velocity.dot(sys.bodies[body].rotation(t) * DVec3::Y) <= 0.0 {
@@ -179,10 +180,13 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             // Relative to the structure's pose and drift (it doesn't spin), kept for the other side.
             let frame = Frame { angular_velocity: DVec3::ZERO, ..Frame::of(&sys.bodies, body, t, positions) };
             let local = Relative::of(&frame, &ship.rigid());
+            // Through the tube at its natural pace for the ship's mass.
+            let duration = universe_physics::hyper::tube_natural_time(ship.mass(), *span);
             ship.state = ShipState::Transit {
                 to: *to,
                 from: system,
-                remaining: crate::gate::TRANSIT_TIME,
+                remaining: duration,
+                duration,
                 local_velocity: local.velocity,
                 local_offset: DVec3::new(local.position.x, 0.0, local.position.z),
                 local_orientation: local.orientation,

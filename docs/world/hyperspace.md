@@ -103,15 +103,43 @@ storage: a world product), thrown and caught by the gates:
   whatever the traffic's balance.
 - On a 5 ly gate (1 kg capsules): one-way latency 0.5 s needs 23 MW; **1 s 1.6 MW**; 2 s 290 kW;
   5 s 58 kW; 20 s 8.5 kW.
-- **Relays** are the same physics with thin tubes (capsules only, no ship fits): cheap to hold,
-  carrying the hypernet between a system's sites.
+- **Relays** are the same physics with thin tubes (1 cm: capsules of 10 g only, no ship fits):
+  next to free to hold, carrying the hypernet between a system's sites in capsules too.
 
-### Holding a tube open
+### Opening and holding a tube: the same formula
 
-*Targets still to set* (the law's form and numbers): opening should cost colossal energy once,
-holding it a great continuous power, enough that a faction is motivated to keep a gate up;
-thin relay tubes far less. Today's Dogma has `P = 1 GW × (S/10 ly)³` for the old throat model;
-it will be re-derived from those targets.
+A tube weighs by its diameter, `μ(d) = ρ · (d / 1 m)^K`; **opening** it is a crossing by that
+equivalent mass (the same formula, the same exponential for opening it faster); **holding** it
+costs its opening over `TUBE_HOLD` (it leaks, topped up continuously).
+
+    μ(d)    = ρ × (d / 1 m)^3,                 ρ = 406 kg
+    E_open  = ε × μ × S × e^(t_nat(μ,S) / t)   (natural pace: t = t_nat)
+    P_hold  = E_open,natural / TUBE_HOLD,      TUBE_HOLD = 100 months (1% a month)
+
+| | Kind | Value | From the target |
+|---|---|---|---|
+| Diameter exponent | Invented constant | K = 3 | **opening a tube sized for one ship (100 m) just for one pass costs thousands of passes through a held gate; a held gate pays once about 9 ships a day use it** (K = 2 tried: holding always pays, at 0.3 ships a day) |
+| ρ | Invented constant | 406 kg | **opening a typical gate (a 3 km ring, 5 ly) costs about a year of a 100 GW industry** |
+| TUBE_HOLD | Invented constant | 2.59×10⁸ s | **holding costs about 1% of the opening a month: small next to opening, big in absolute terms; a lapse (re-opening) is ruinous** |
+
+| Tube | Opening (natural pace) | Takes | Holding |
+|---|---|---|---|
+| Gate 3 km, 1 ly | 6.3×10¹⁷ J | 74 min | 2.4 GW |
+| **Gate 3 km, 5 ly** | **3.2×10¹⁸ J** | 6 h | **12 GW** (about 1,500 S2 plants) |
+| Gate 3 km, 10 ly | 6.3×10¹⁸ J | | 24 GW |
+| One-ship tube 100 m, 5 ly | 1.2×10¹⁴ J (4,000 passes) | 12 min | 0.5 MW |
+| Relay tube 1 cm | next to nothing | | microwatts |
+
+(`tools/experiments/tube_holding.py`.) *Open for one pass* is a comparison, not a thing ships do:
+no ship today can hold a tube between the stars (the wall).
+
+### The flow settles: data's cadence
+
+After a throw a tube's unstable flow takes **`TUBE_SETTLE` = 3 s** to settle before the next
+throw can be caught: the cadence data is batched at, the same for every tube (target: **news
+crosses a relay link in 1-2 s**). Data across a tube takes half a settle (the wait for the next
+throw) plus the capsule's crossing: a relay hop in a system about 1.5 s (the crossing is
+microseconds), a 5 ly gate about 2.5 s (+ its relay's handling).
 
 ## 4. Typical gates
 
@@ -121,12 +149,18 @@ the real-density galaxy on the roadmap (neighbours about 4-5 ly apart).
 
 ## Open questions
 
-1. **Holding a tube open:** the law's form and its targets (above).
-2. **Natural speed and the owner's power:** should more holding power buy a faster tube (premium
+1. **Natural speed and the owner's power:** should more holding power buy a faster tube (premium
    lanes, a neglected gate slowing down)? Leaning yes.
-3. **Capsules as products:** casing mass and hardened storage density per brand.
-4. **In code:** Dogma, the hypernet and gate transits still run the earlier model (a flat 10 s
-   throat); they follow once these are settled.
+2. **Capsules as products:** casing mass and hardened storage density per brand (today a gate's
+   1 kg and a relay's 10 g are tuning values in the world sheet).
+3. **Gate economics in play:** owners paying to open and hold, fees by mass and speed, ships
+   choosing their crossing speed (today every crossing is at natural speed, unpaid).
+4. **Today's lanes are long** (16-90 ly in the 41 ly galaxy): a 100 t ship's natural crossing
+   there is 2-14 minutes. The real-density galaxy (5 ly gates) brings it to under a minute.
+
+*In code (2026-10-02):* Dogma's Tube laws (`config/dogma.ron`), `hyper::tube_*`; gate transits
+take the natural time for the ship's mass and the lane; the hypernet's relay hops and gate data
+cross in capsules at the settle cadence; the Dogma checks test the targets above.
 
 ## Numbers at a glance
 
@@ -139,3 +173,5 @@ the real-density galaxy on the roadmap (neighbours about 4-5 ly apart).
 | A 100 t ship through a 5 ly gate, natural | 46 s, an S2 plant-hour |
 | A capital ship (100 kt) through a 5 ly gate | 7.7 min |
 | Rushing 2× / 3× / 10× | 2.7× / 7× / 8,000× the cost |
+| Opening / holding a 5 ly gate | 3.2×10¹⁸ J / 12 GW |
+| A relay hop in a system | about 1.5 s |

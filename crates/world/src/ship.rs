@@ -647,10 +647,19 @@ pub enum ShipState {
         to: usize,
         from: usize,
         remaining: f64,
+        /// How long the crossing takes in all (s): the tube's natural time for
+        /// the ship's mass over the lane's span.
+        #[serde(default = "transit_default")]
+        duration: f64,
         local_velocity: DVec3,
         local_offset: DVec3,
         local_orientation: DQuat,
     },
+}
+
+/// (Saves from before transits had a duration.)
+fn transit_default() -> f64 {
+    10.0
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
