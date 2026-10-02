@@ -1,4 +1,4 @@
-use universe_engine::glam::Vec3;
+use universe_engine::glam::{DVec3, Vec3};
 use universe_engine::{Mesh, WireModel};
 use universe_sim::world::content::content;
 use universe_sim::world::shape::Shape;
@@ -27,7 +27,7 @@ impl Models {
             moon: Mesh::new(WireModel::globe(8, 5, 4)),
             star: Mesh::new(WireModel::globe(16, 9, 3)),
             station: Mesh::new(platform()),
-            hulls: content().hulls.iter().map(|(_, h)| Mesh::new(wire(h.shape()))).collect(),
+            hulls: content().hulls.iter().map(|(_, h)| Mesh::new(bevelled(h.shape()))).collect(),
             hull_lights: content().hulls.iter().map(|(_, h)| nav_lights(h.shape())).collect(),
             hull_bells: content().hulls.iter().map(|(_, h)| Mesh::new(bells(h))).collect(),
             hull_glass: content().hulls.iter().map(|(_, h)| Mesh::new(canopy(h.shape()))).collect(),
@@ -128,16 +128,80 @@ fn nav_lights(s: &Shape) -> [universe_engine::glam::DVec3; 3] {
     [pick(&|p| -p.x), pick(&|p| p.x), pick(&|p| p.z + 0.5 * p.y)]
 }
 
-/// A shape as the renderer draws it: its mesh (faces hide what's behind,
-/// edges are drawn) and its detail lines.
-pub fn wire(s: &Shape) -> WireModel {
+/// The corners of the convex solid `planes` bound (each n·p ≤ d), its
+/// edges cut back by a chamfer `bevel` deep where its faces meet at an angle.
+fn chamfered(planes: &[(DVec3, f64)], bevel: f64) -> Vec<Vec3> {
+    // Its faces' planes, each once.
+    let mut faces: Vec<(DVec3, f64)> = Vec::new();
+    for &(n, d) in planes {
+        if !faces.iter().any(|&(m, e)| m.dot(n) > 1.0 - 1e-6 && (e - d).abs() < 1e-4) {
+            faces.push((n, d));
+        }
+    }
+    let corners = |ps: &[(DVec3, f64)]| -> Vec<DVec3> {
+        let mut out: Vec<DVec3> = Vec::new();
+        for i in 0..ps.len() {
+            for j in i + 1..ps.len() {
+                for k in j + 1..ps.len() {
+                    let (a, b, c) = (ps[i], ps[j], ps[k]);
+                    let det = a.0.dot(b.0.cross(c.0));
+                    if det.abs() < 1e-9 {
+                        continue;
+                    }
+                    let p = (b.0.cross(c.0) * a.1 + c.0.cross(a.0) * b.1 + a.0.cross(b.0) * c.1) / det;
+                    if ps.iter().all(|&(n, d)| n.dot(p) <= d + 1e-6) && !out.iter().any(|q| q.distance(p) < 1e-5) {
+                        out.push(p);
+                    }
+                }
+            }
+        }
+        out
+    };
+    let points = corners(&faces);
+    // Where two faces share an edge (two corners on both) at an angle: a chamfer's plane.
+    let mut all = faces.clone();
+    for i in 0..faces.len() {
+        for j in i + 1..faces.len() {
+            let (a, b) = (faces[i], faces[j]);
+            if a.0.dot(b.0) > 0.97 {
+                continue;
+            }
+            let on = |p: &&DVec3| (a.0.dot(**p) - a.1).abs() < 1e-5 && (b.0.dot(**p) - b.1).abs() < 1e-5;
+            if points.iter().filter(on).count() < 2 {
+                continue;
+            }
+            let n = (a.0 + b.0).normalize();
+            let reach = points.iter().map(|p| n.dot(*p)).fold(f64::NEG_INFINITY, f64::max);
+            all.push((n, reach - bevel));
+        }
+    }
+    corners(&all).into_iter().map(|p| p.as_vec3()).collect()
+}
+
+/// A shape as the renderer draws it, its edges bevelled: each part's solid
+/// with a chamfer where its faces meet (catching the light), its detail
+/// lines as they are.
+pub fn bevelled(s: &Shape) -> WireModel {
+    let mut m = WireModel::default();
+    for planes in &s.solids {
+        // (A chamfer a few percent of the part's thinnest way, never more than half a metre.)
+        let pts = chamfered(planes, 0.0);
+        let (lo, hi) = pts.iter().fold((Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
+        let thin = (hi - lo).min_element() as f64;
+        let bevel = (thin * 0.12).min(0.5).max(0.02);
+        let part = WireModel::convex_hull(&chamfered(planes, bevel));
+        let base = m.positions.len() as u32;
+        m.positions.extend_from_slice(&part.positions);
+        m.faces.extend(part.faces.iter().map(|f| f.map(|i| i + base)));
+        m.edges.extend(part.edges.iter().map(|e| e.map(|i| i + base)));
+    }
     let v = |p: universe_engine::glam::DVec3| p.as_vec3();
-    let mut m = WireModel { positions: s.mesh.points.iter().map(|&p| v(p)).collect(), edges: s.mesh.edges.clone(), faces: s.mesh.faces.clone(), colors: Vec::new() };
     for l in &s.loops {
         m.add_loop(&l.iter().map(|&p| v(p)).collect::<Vec<Vec3>>());
     }
     m
 }
+
 
 /// The platform station's boxes, in metres (its own frame).
 fn station_boxes() -> Vec<(Vec3, Vec3)> {
@@ -198,22 +262,15 @@ fn platform() -> WireModel {
     let mut m = WireModel::default();
     let boxes = station_boxes();
     for &(lo, hi) in &boxes {
+        // (Each box with its edges bevelled: a tenth of its thinnest way, two metres at most.)
+        let (lo, hi) = (lo.as_dvec3(), hi.as_dvec3());
+        let planes = [(DVec3::X, hi.x), (DVec3::NEG_X, -lo.x), (DVec3::Y, hi.y), (DVec3::NEG_Y, -lo.y), (DVec3::Z, hi.z), (DVec3::NEG_Z, -lo.z)];
+        let bevel = ((hi - lo).min_element() * 0.1).min(2.0);
+        let part = WireModel::convex_hull(&chamfered(&planes, bevel));
         let base = m.positions.len() as u32;
-        for k in 0..8 {
-            m.positions.push(Vec3::new(if k & 1 == 0 { lo.x } else { hi.x }, if k & 2 == 0 { lo.y } else { hi.y }, if k & 4 == 0 { lo.z } else { hi.z }));
-        }
-        // Each face: the corners with that coordinate at its limit.
-        for (axis, bit) in [(0usize, 1u32), (1, 2), (2, 4)] {
-            for high in [false, true] {
-                let corners: Vec<u32> = (0..8u32).filter(|k| (k & bit != 0) == high).map(|k| base + k).collect();
-                let mut normal = Vec3::ZERO;
-                normal[axis] = if high { 1.0 } else { -1.0 };
-                let ring = m.add_polygon(&corners, normal);
-                for w in 0..4 {
-                    m.edges.push([ring[w], ring[(w + 1) % 4]]);
-                }
-            }
-        }
+        m.positions.extend_from_slice(&part.positions);
+        m.faces.extend(part.faces.iter().map(|f| f.map(|i| i + base)));
+        m.edges.extend(part.edges.iter().map(|e| e.map(|i| i + base)));
     }
     let deck = DECK_TOP as f32 + 0.5;
     for k in 0..universe_sim::world::spaceport::PADS {
