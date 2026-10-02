@@ -270,6 +270,77 @@ fn alarms(a: &universe_engine::Audio, app: &App) {
     }
 }
 
+/// Dynamic pressure (Pa) at which the air over the hull roars its loudest.
+const AIR_ROAR: f64 = 40_000.0;
+/// Thinner than this (kg/m³), there's no air to carry sound: vacuum.
+const AIR_THIN: f64 = 0.005;
+
+/// The air density at `p` (world, kg/m³), and the body it's of.
+fn air_at(app: &App, p: DVec3) -> (f64, Option<usize>) {
+    let sys = &app.view.system;
+    sys.bodies
+        .iter()
+        .enumerate()
+        .filter_map(|(i, b)| {
+            let atm = b.rail.atmosphere.as_ref()?;
+            let altitude = p.distance(app.view.positions[i]) - b.rail.radius;
+            Some((atm.density(altitude), Some(i)))
+        })
+        .fold((0.0, None), |a, b| if b.0 > a.0 { b } else { a })
+}
+
+/// Air, or the lack of it: over the hull in flight, the rush of it by
+/// its dynamic pressure (½ρv², roaring on the way in); on foot, wind
+/// where there's air (and other ships' engines carried through it), and in
+/// vacuum nothing from outside, only your breathing in the suit.
+fn air(a: &universe_engine::Audio, app: &App) {
+    let ship = &app.v.ship;
+    let piloting = app.mode == Mode::Pilot && !app.paused;
+    let (mut air, mut bright, mut gusty, mut breath, mut distant) = (0.0f32, 0.0f32, false, 0.0f32, 0.0f32);
+    match app.v.crew.place {
+        Place::Seat | Place::Aboard { .. } if piloting && matches!(ship.state, ShipState::Flying) => {
+            let (rho, body) = air_at(app, app.view.ship_pos);
+            if let Some(i) = body.filter(|_| rho > 0.0) {
+                let b = &app.view.system.bodies[i];
+                let ground = app.view.system.velocity(i, app.now()) + b.angular_velocity().cross(app.view.ship_pos - app.view.positions[i]);
+                let v = (ship.velocity - ground).length();
+                let q = 0.5 * rho * v * v;
+                air = (q / AIR_ROAR).sqrt().min(1.0) as f32;
+                bright = (v / 1500.0).min(1.0) as f32;
+            }
+        }
+        Place::Outside { body, position, .. } if piloting => {
+            let b = &app.view.system.bodies[body];
+            let at = app.view.positions[body] + b.rotation(app.now()) * position;
+            let (rho, _) = air_at(app, at);
+            if rho > AIR_THIN {
+                let thick = (rho / 1.2).sqrt().min(1.0);
+                air = 0.3 * thick as f32;
+                bright = 0.2;
+                gusty = true;
+                // Ships firing near by: their thrust over the distance squared.
+                let loud: f64 = app
+                    .v
+                    .crafts
+                    .iter()
+                    .filter(|c| c.system == app.v.ship_system)
+                    .map(|c| {
+                        let push: f64 = c.ship.spec().thrusters.iter().zip(&c.ship.jets).map(|(t, &u)| t.thrust * u).sum();
+                        push / c.ship.position.distance_squared(at).max(100.0)
+                    })
+                    .sum();
+                distant = ((loud / 5.0).sqrt().min(1.0) * thick) as f32;
+            } else {
+                breath = 0.6;
+            }
+        }
+        _ => {}
+    }
+    a.set_air(air, bright, gusty);
+    a.set_breath(breath);
+    a.set_distant(distant, 0.0);
+}
+
 /// When the radio next carries someone else's talk (wall clock), and how many so far.
 static CHATTER: Mutex<(Option<std::time::Instant>, u32)> = Mutex::new((None, 0));
 /// Within this of a station or port (m), its traffic is on the radio.
@@ -365,6 +436,7 @@ pub fn update(ctx: &Context, app: &App) {
     }
     alarms(a, app);
     chatter(a, app);
+    air(a, app);
     // On foot: a step every stride; aboard, boots on the deck plating;
     // outside, softer on the ground.
     let at = match app.v.crew.place {
@@ -468,6 +540,10 @@ mod tests {
                 a.radio(0.0, 1.3, OUR_PITCH, OUR_VOICE, RADIO_VOLUME * 0.8);
                 a.radio(1.5, 2.4, CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME);
             }), 4.2),
+            ("re-entry", Box::new(|a, t| a.set_air(if t < 2.0 { 0.8 } else { 0.0 }, 0.8, false)), 2.5),
+            ("wind", Box::new(|a, t| a.set_air(if t < 3.0 { 0.3 } else { 0.0 }, 0.2, true)), 3.5),
+            ("breathing", Box::new(|a, t| a.set_breath(if t < 4.2 { 0.6 } else { 0.0 })), 4.5),
+            ("far engine", Box::new(|a, t| a.set_distant(if t < 2.0 { 0.6 } else { 0.0 }, 0.0)), 2.5),
             ("klaxon", Box::new(|a, t| if t == 0.0 {
                 a.alarm(500.0, 1000.0, 0.5, 0.2);
                 a.alarm_after(0.6, 500.0, 1000.0, 0.5, 0.2);

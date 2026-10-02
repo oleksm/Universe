@@ -113,6 +113,29 @@ impl Audio {
         self.with(|s| s.ambience.target = level.clamp(0.0, 1.0));
     }
 
+    /// Air: rushing over the hull (`gusty` false: steady, `bright` 0..1 with
+    /// the speed) or wind round someone standing in it (gusty), 0..1.
+    pub fn set_air(&self, level: f32, bright: f32, gusty: bool) {
+        self.with(|s| {
+            s.air.target = level.clamp(0.0, 1.0);
+            s.air_bright.target = bright.clamp(0.0, 1.0);
+            s.gusty = gusty;
+        });
+    }
+
+    /// Breathing inside a suit, 0..1.
+    pub fn set_breath(&self, level: f32) {
+        self.with(|s| s.breath.target = level.clamp(0.0, 1.0));
+    }
+
+    /// Other ships' engines heard through the air, 0..1, from `pan`.
+    pub fn set_distant(&self, level: f32, pan: f32) {
+        self.with(|s| {
+            s.distant.target = level.clamp(0.0, 1.0);
+            s.distant_pan.target = pan.clamp(-1.0, 1.0);
+        });
+    }
+
     /// Each thruster this frame (their order kept from frame to frame).
     pub fn set_jets(&self, jets: &[Jet]) {
         self.with(|s| {
@@ -485,6 +508,19 @@ struct Synth {
     jets: Vec<JetVoice>,
     voices: Vec<Voice>,
     rooms: [Room; 2],
+    air: Smoothed,
+    air_bright: Smoothed,
+    gusty: bool,
+    gust: f32,
+    gust_to: f32,
+    air_lpf: (f32, f32),
+    air_low: f32,
+    breath: Smoothed,
+    breath_t: f32,
+    breath_f: (f32, f32),
+    distant: Smoothed,
+    distant_pan: Smoothed,
+    distant_lp: (f32, f32),
 }
 
 impl Synth {
@@ -508,6 +544,19 @@ impl Synth {
             jets: Vec::new(),
             voices: Vec::new(),
             rooms: [Room::new(rate, 0), Room::new(rate, 23)],
+            air: Smoothed::default(),
+            air_bright: Smoothed::default(),
+            gusty: false,
+            gust: 0.5,
+            gust_to: 0.5,
+            air_lpf: (0.0, 0.0),
+            air_low: 0.0,
+            breath: Smoothed::default(),
+            breath_t: 0.0,
+            breath_f: (0.0, 0.0),
+            distant: Smoothed::default(),
+            distant_pan: Smoothed::default(),
+            distant_lp: (0.0, 0.0),
         }
     }
 
@@ -579,8 +628,8 @@ impl Synth {
             let centre = if j.lift { 700.0 } else { 1500.0 + 900.0 * j.near } * spread;
             svf(&mut v.low, &mut v.band, n, centre, if j.lift { 0.8 } else { 1.4 }, rate);
             v.rush += (n - v.rush) * 0.03;
-            // (The small thrusters half the lift jets' loudness: they're small.)
-            let gain = (0.35 + 0.65 * j.near) * if j.lift { 1.3 } else { 0.5 };
+            // (The small thrusters quiet beside the lift jets: they are small.)
+            let gain = (0.35 + 0.65 * j.near) * if j.lift { 1.3 } else { 0.25 };
             let mut s = (v.band * 0.6 + v.rush * 0.8) * v.env * gain * 1.1;
             // The valve: a short knock as it opens.
             if v.tick > 1e-4 {
@@ -588,6 +637,55 @@ impl Synth {
                 v.tick *= 1.0 - 1.0 / (0.004 * rate);
             }
             put(s, j.pan * 0.85, 0.25, &mut l, &mut r, &mut send);
+        }
+
+        // Air: over the hull a steady rush, brighter the faster; outdoors,
+        // wind rising and falling in gusts.
+        let air = self.air.next(glide * 0.5);
+        let bright = self.air_bright.next(glide * 0.5);
+        if air > 1e-4 {
+            let n = self.white();
+            let mut level = air;
+            if self.gusty {
+                // (A slow random walk between gusts.)
+                if (self.gust - self.gust_to).abs() < 0.01 {
+                    self.gust_to = 0.2 + 0.8 * self.white().abs();
+                }
+                self.gust += (self.gust_to - self.gust) * 0.4 * dt;
+                level *= self.gust;
+            }
+            let cutoff = 150.0 + 2500.0 * bright + if self.gusty { 400.0 * self.gust } else { 0.0 };
+            svf(&mut self.air_lpf.0, &mut self.air_lpf.1, n, cutoff, 0.8, rate);
+            self.air_low += (n - self.air_low) * 0.01;
+            let v = (self.air_lpf.0 * 1.5 + self.air_low * 5.0) * level;
+            put(v, 0.0, 0.1, &mut l, &mut r, &mut send);
+        }
+
+        // Breathing in a suit: in (rising), a pause, out (falling), and again.
+        let breath = self.breath.next(glide * 0.5);
+        if breath > 1e-4 {
+            let n = self.white();
+            self.breath_t = (self.breath_t + dt) % 4.2;
+            let t = self.breath_t;
+            let (env, freq) = if t < 1.3 {
+                ((t / 1.3 * PI).sin(), 900.0 + 500.0 * t)
+            } else if t > 1.7 && t < 3.6 {
+                (((t - 1.7) / 1.9 * PI).sin() * 0.8, 800.0 - 150.0 * (t - 1.7))
+            } else {
+                (0.0, 800.0)
+            };
+            svf(&mut self.breath_f.0, &mut self.breath_f.1, n, freq, 2.0, rate);
+            put(self.breath_f.1 * env * env * breath * 0.8, 0.0, 0.05, &mut l, &mut r, &mut send);
+        }
+
+        // Others' engines through the air: a far, low roar.
+        let distant = self.distant.next(glide * 0.3);
+        let dpan = self.distant_pan.next(glide * 0.3);
+        if distant > 1e-4 {
+            let n = self.white();
+            self.distant_lp.0 += (n - self.distant_lp.0) * 0.02;
+            self.distant_lp.1 += (self.distant_lp.0 - self.distant_lp.1) * 0.02;
+            put(self.distant_lp.1 * 6.0 * distant, dpan, 0.05, &mut l, &mut r, &mut send);
         }
 
         // The hyperdrive: detuned saws under a low-pass, a sub beneath.
