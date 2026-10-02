@@ -247,6 +247,11 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let fuel = ship.fuel / ship.spec().fuel_capacity;
     let fc = if fuel < 0.1 { RED } else if fuel < 0.25 { AMBER } else { HUD };
     rows.push(bar_row("FUEL", fuel, format!("{:.1} T", ship.fuel / 1000.0), fc));
+    let cap = ship.spec().capacitor_capacity;
+    if cap > 0.0 {
+        let k = ship.energy / cap;
+        rows.push(bar_row("CAP", k, format!("{:.1} GJ", ship.energy / 1e9), if k < 0.15 { AMBER } else { HUD }));
+    }
     let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
     rows.push(bar_row("HULL", ship.hull, format!("{:.0}%", ship.hull * 100.0), if hurt { RED } else { HUD }));
     if ship.armed {

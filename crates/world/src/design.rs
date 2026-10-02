@@ -408,7 +408,7 @@ impl Design {
         let slots = self.slots();
         for (name, kind, _) in &slots {
             let z = match kind {
-                SlotKind::Power | SlotKind::Hyperdrive => at(self.engines_at),
+                SlotKind::Power | SlotKind::Hyperdrive | SlotKind::Capacitor => at(self.engines_at),
                 SlotKind::Drive => at(self.engines_at + 0.05),
                 SlotKind::Tank => at(self.tank_at),
                 SlotKind::Cargo => at(self.hold_at),

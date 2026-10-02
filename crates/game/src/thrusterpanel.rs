@@ -6,7 +6,7 @@
 
 use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{Color, Frame};
-use universe_sim::world::ship::{ThrusterRole, EXHAUST_VELOCITY, HYPER_FUEL_FLOW};
+use universe_sim::world::ship::{ThrusterRole, EXHAUST_VELOCITY};
 
 use crate::fmt;
 use crate::App;
@@ -200,7 +200,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     view(frame, &picture, Vec2::new(left + box_w + 12.0, top), Vec2::new(box_w, box_h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE (TOP RIGHT)");
 
     // Under them: the fuel, the burn, the balance.
-    let flow = ship.fuel_flow() + if ship.hyperdrive { HYPER_FUEL_FLOW * ship.throttle.clamp(0.0, 1.0) } else { 0.0 };
+    let flow = ship.fuel_flow();
     let mut y = top + box_h + LINE;
     let mut put = |text: String, c: Color| {
         frame.text(Vec2::new(left, y), &text, c);

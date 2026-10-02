@@ -23,6 +23,8 @@ pub enum Does {
     Lift { thrust: f64 },
     /// Holds fuel (kg).
     Tank { capacity: f64 },
+    /// A capacitor bank: stores energy (J), taken in or given out at up to `rate` (W).
+    Capacitor { capacity: f64, rate: f64 },
     /// Holds cargo (kg).
     Rack { capacity: f64 },
     /// A passenger cabin: seats, with their life support (in a cargo slot).
@@ -70,6 +72,8 @@ pub enum SlotKind {
     Thrusters,
     Lift,
     Tank,
+    /// Capacitor banks.
+    Capacitor,
     Cargo,
     Hyperdrive,
     Computer,
@@ -104,6 +108,7 @@ impl Does {
             Does::Thrusters { .. } => SlotKind::Thrusters,
             Does::Lift { .. } => SlotKind::Lift,
             Does::Tank { .. } => SlotKind::Tank,
+            Does::Capacitor { .. } => SlotKind::Capacitor,
             Does::Rack { .. } | Does::Cabin { .. } => SlotKind::Cargo,
             Does::Hyperdrive => SlotKind::Hyperdrive,
             Does::FlightComputer { .. } => SlotKind::Computer,
@@ -183,10 +188,22 @@ impl Module {
         match &self.does {
             Does::PowerPlant { output } => positive("output", *output),
             Does::Drive { thrust } | Does::Thrusters { thrust } | Does::Lift { thrust } => positive("thrust", *thrust),
-            Does::Tank { capacity } | Does::Rack { capacity } => positive("capacity", *capacity),
+            // (A tank holds fuel at its real density: the physics sheet's.)
+            Does::Tank { capacity } => positive("capacity", *capacity).and(if *capacity <= crate::sheet::FUSION_FUEL_DENSITY * self.volume * 1.001 {
+                Ok(())
+            } else {
+                Err(format!("holds {:.0} kg of fuel in {:.0} m³: denser than fusion fuel's {:.0} kg/m³", capacity, self.volume, crate::sheet::FUSION_FUEL_DENSITY))
+            }),
+            Does::Rack { capacity } => positive("capacity", *capacity),
             Does::Cabin { seats } => positive("seats", *seats as f64),
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
             Does::Sensors { range } => positive("range", *range),
+            // (Storage can't beat the physics sheet's density.)
+            Does::Capacitor { capacity, rate } => positive("capacity", *capacity).and(positive("rate", *rate)).and(if *capacity <= crate::sheet::CAPACITOR_DENSITY * self.mass * 1.001 {
+                Ok(())
+            } else {
+                Err(format!("stores {:.1e} J in {:.0} kg: past the sheet's {:.0e} J/kg", capacity, self.mass, crate::sheet::CAPACITOR_DENSITY))
+            }),
             _ => Ok(()),
         }
     }

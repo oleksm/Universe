@@ -10,7 +10,7 @@ use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
 // (Its constants are the physics sheet's: config/physics.ron.)
-pub use crate::sheet::{EXHAUST_VELOCITY, HYPER_FUEL_FLOW};
+pub use crate::sheet::EXHAUST_VELOCITY;
 
 /// The hull a new ship is built as, unless it's told otherwise.
 pub const STARTING_HULL: &str = "hull.drover";
@@ -38,6 +38,10 @@ pub struct ClassSpec {
     /// Fuel tank (kg), and the most cargo the hold carries (kg) and the
     /// room in it (m³: its racks').
     pub fuel_capacity: f64,
+    /// Its capacitor banks: what they store (J), and how fast they take it
+    /// in or give it out, all together (W).
+    pub capacitor_capacity: f64,
+    pub capacitor_rate: f64,
     pub hold_capacity: f64,
     pub hold_volume: f64,
     /// Passenger seats (its cabins').
@@ -402,6 +406,7 @@ impl ClassSpec {
         let dry_mass = frame.frame_mass + modules().map(|m| m.mass).sum::<f64>();
         let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity } = m.does { Some(capacity) } else { None }).sum();
         let hold_capacity: f64 = modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum();
+        let (capacitor_capacity, capacitor_rate) = modules().filter_map(|m| if let Does::Capacitor { capacity, rate } = m.does { Some((capacity, rate)) } else { None }).fold((0.0, 0.0), |(c, r), (a, b)| (c + a, r + b));
         let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
         let hold_volume: f64 = modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum();
         let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output } = m.does { Some(output) } else { None }).sum();
@@ -473,6 +478,8 @@ impl ClassSpec {
             fit,
             dry_mass,
             fuel_capacity,
+            capacitor_capacity,
+            capacitor_rate,
             hold_capacity,
             hold_volume,
             seats,
@@ -654,6 +661,9 @@ pub struct Ship {
     /// Fuel on board (kg).
     #[serde(default = "full_tank")]
     pub fuel: f64,
+    /// Energy in its capacitor banks (J).
+    #[serde(default)]
+    pub energy: f64,
     /// Cargo on board (kg): the mass of what's in the hold; and the room it
     /// takes (m³).
     #[serde(default)]
@@ -753,6 +763,7 @@ impl Ship {
             state: ShipState::Flying,
             rcs: DVec3::ZERO,
             fuel: starter().fuel_capacity,
+            energy: starter().capacitor_capacity,
             class: starting_hull(),
             fit: None,
             spec_ref: None,
@@ -1077,9 +1088,24 @@ impl Ship {
         self.spec().thrusters.iter().zip(&self.jets).map(|(t, &u)| t.thrust * u).sum::<f64>() / EXHAUST_VELOCITY
     }
 
-    /// `dt` seconds of the drives as set: the fuel they burn.
+    /// `dt` seconds of the drives as set: the fuel they burn. And, powered and
+    /// out of the hyperdrive, the plant's spare power charges the capacitor
+    /// banks (the reactor burning fuel for it).
     pub fn burn(&mut self, dt: f64) {
         self.fuel = (self.fuel - self.fuel_flow() * dt).max(0.0);
+        let spec = self.spec();
+        if self.powered && !self.hyperdrive && self.fuel > 0.0 && self.energy < spec.capacitor_capacity {
+            let power = self.spare_power().min(spec.capacitor_rate);
+            let taken = (power * dt).min(spec.capacitor_capacity - self.energy);
+            self.energy += taken;
+            self.fuel = (self.fuel - reactor_fuel(taken)).max(0.0);
+        }
+    }
+
+    /// The plant's power beyond what its modules draw at work (W).
+    pub fn spare_power(&self) -> f64 {
+        let spec = self.spec();
+        (spec.power_output - spec.power_draw).max(0.0)
     }
 
 }
@@ -1204,5 +1230,32 @@ mod balance {
         let straight = crate::thrusters::STRAIGHT * d.turn_accel.min_element();
         let off = crate::thrusters::balanced(&d.thrusters, com + DVec3::Z * 3.0, m, i, DVec3::Y, d.lift_thrust, straight);
         assert!(off < 0.85 * d.lift_thrust, "{:.0}%", 100.0 * off / d.lift_thrust);
+    }
+}
+
+/// The fusion fuel a reactor burns to make `energy` (J) of power (kg).
+pub fn reactor_fuel(energy: f64) -> f64 {
+    energy / (crate::sheet::REACTOR_EFFICIENCY * crate::sheet::FUSION_ENERGY)
+}
+
+#[cfg(test)]
+mod energy_tests {
+    use super::*;
+
+    #[test]
+    fn the_plant_charges_the_banks_burning_fuel_for_it() {
+        let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
+        ship.energy = 0.0;
+        let (fuel, spec) = (ship.fuel, ship.spec().clone());
+        ship.burn(10.0);
+        let power = ship.spare_power().min(spec.capacitor_rate);
+        assert!(power > 0.0, "a stock ship has power to spare");
+        assert!((ship.energy - power * 10.0).abs() < 1.0, "{} J", ship.energy);
+        assert!((fuel - ship.fuel - reactor_fuel(power * 10.0)).abs() < 1e-9, "fuel burnt for it");
+        // Full, it stops.
+        ship.energy = spec.capacitor_capacity;
+        let fuel = ship.fuel;
+        ship.burn(10.0);
+        assert_eq!((ship.energy, ship.fuel), (spec.capacitor_capacity, fuel));
     }
 }

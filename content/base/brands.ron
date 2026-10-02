@@ -6,4 +6,5 @@
     (key: "brand.hadley", name: "HADLEY HEAVY INDUSTRIES", note: "PLANTS, TANKS AND RACKS: RUGGED AND CHEAP"),
     (key: "brand.orbital", name: "ORBITAL SYSTEMS", note: "COMPUTERS, SENSORS, NAVIGATION"),
     (key: "brand.cormorant", name: "CORMORANT MINING", note: "MINING GEAR"),
+    (key: "brand.meridian", name: "MERIDIAN POWER", note: "CAPACITOR BANKS AND POWER STORAGE"),
 ]

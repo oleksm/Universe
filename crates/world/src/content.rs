@@ -555,7 +555,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(&dir);
         assert_eq!(c.hulls.len(), Content::load(&[]).unwrap().hulls.len() + 1);
         let hull = c.handle::<ClassSpec>("hull.drover").unwrap();
-        assert_eq!(c.get(hull).dry_mass, 70_000.0, "replaced where it stands");
+        assert_eq!(c.get(hull).dry_mass, 71_500.0, "replaced where it stands");
         assert!(c.handle::<ClassSpec>("hull.drover_mk2").is_some(), "added");
         assert_eq!(c.handle::<ClassSpec>("hull.drover_old"), Some(hull), "the old name resolves");
         assert_ne!(c.hash(), Content::load(&[]).unwrap().hash(), "other packs, another hash");
@@ -592,7 +592,7 @@ mod tests {
     #[test]
     fn the_starter_is_its_frame_and_its_fit() {
         let c = crate::ship::starter();
-        assert_eq!((c.dry_mass, c.fuel_capacity, c.hold_capacity), (60_000.0, 30_000.0, 20_000.0));
+        assert_eq!((c.dry_mass, c.fuel_capacity, c.hold_capacity, c.capacitor_capacity), (61_500.0, 30_000.0, 20_000.0, 1.5e10));
         assert_eq!(c.fit.len(), c.slots.len(), "every slot filled");
         assert!(c.power_draw <= c.power_output, "{} of {} W", c.power_draw, c.power_output);
         assert_eq!(c.features.len(), 6, "{:?}", c.features);

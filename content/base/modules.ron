@@ -8,7 +8,7 @@
     (key: "power.fusion.s2", brand: "brand.hadley", name: "FUSION PLANT S2", does: PowerPlant(output: 8.0e6), size: 2, mass: 3000.0, volume: 6.0, price: 18000.0),
     (key: "drive.torch.s2", name: "TORCH DRIVE S2", does: Drive(thrust: 1.35e6), size: 2, mass: 6000.0, volume: 14.0, power: 1.0e6, price: 42000.0),
     (key: "thrusters.quad.s2", name: "THRUSTER QUADS S2", does: Thrusters(thrust: 2.7e5), size: 2, mass: 1500.0, volume: 3.0, power: 2.0e5, price: 9000.0),
-    (key: "tank.s3", brand: "brand.hadley", name: "FUEL TANK 30 T", does: Tank(capacity: 30000.0), size: 3, mass: 2000.0, volume: 45.0, price: 4000.0),
+    (key: "tank.s3", brand: "brand.hadley", name: "FUEL TANK 30 T", does: Tank(capacity: 30000.0), size: 3, mass: 2000.0, volume: 300.0, price: 4000.0),
     (key: "computer.fbw.s1", name: "FLIGHT COMPUTER", does: FlightComputer(turn_rate: 1.0, roll_rate: 1.8), size: 1, mass: 200.0, volume: 0.4, power: 5.0e4, price: 6000.0),
     (key: "transponder.s1", name: "TRANSPONDER", does: Transponder, size: 1, mass: 50.0, volume: 0.1, power: 1.0e3, price: 500.0),
     (key: "sensors.radar.s1", brand: "brand.orbital", name: "RADAR 500 KM", does: Sensors(range: 500000.0), size: 1, mass: 300.0, volume: 0.8, power: 1.0e5, price: 7000.0),
@@ -27,8 +27,9 @@
     (key: "lift.belly.s1", brand: "brand.kestrel", name: "BELLY LIFT S1", does: Lift(thrust: 2.2e5), size: 1, mass: 1100.0, volume: 2.5, power: 1.5e5, price: 7000.0),
     (key: "lift.belly.s3", brand: "brand.kestrel", name: "BELLY LIFT S3", does: Lift(thrust: 1.6e6), size: 3, mass: 7000.0, volume: 14.0, power: 8.0e5, price: 42000.0),
     (key: "drive.torch.s3", name: "TORCH DRIVE S3", does: Drive(thrust: 2.0e6), size: 3, mass: 14000.0, volume: 30.0, power: 2.0e6, price: 95000.0),
-    (key: "tank.s1", brand: "brand.hadley", name: "FUEL TANK 8 T", does: Tank(capacity: 8000.0), size: 1, mass: 600.0, volume: 12.0, price: 1200.0),
-    (key: "tank.s4", brand: "brand.hadley", name: "FUEL TANK 80 T", does: Tank(capacity: 80000.0), size: 4, mass: 5000.0, volume: 120.0, price: 9000.0),
+    (key: "tank.s0", brand: "brand.hadley", name: "FUEL TANK 4 T", does: Tank(capacity: 4000.0), size: 1, mass: 350.0, volume: 40.0, price: 700.0),
+    (key: "tank.s1", brand: "brand.hadley", name: "FUEL TANK 8 T", does: Tank(capacity: 8000.0), size: 1, mass: 600.0, volume: 80.0, price: 1200.0),
+    (key: "tank.s4", brand: "brand.hadley", name: "FUEL TANK 80 T", does: Tank(capacity: 80000.0), size: 4, mass: 5000.0, volume: 800.0, price: 9000.0),
     (key: "rack.s1", brand: "brand.hadley", name: "CARGO RACKS 4 T", does: Rack(capacity: 4000.0), size: 1, mass: 350.0, volume: 6.0, price: 700.0),
     (key: "rack.s4", brand: "brand.hadley", name: "CARGO RACKS 150 T", does: Rack(capacity: 150000.0), size: 4, mass: 9000.0, volume: 220.0, price: 16000.0),
     (key: "hyperdrive.s1", name: "HYPERDRIVE S1", does: Hyperdrive, size: 1, mass: 2500.0, volume: 6.0, power: 9.0e5, price: 38000.0),
@@ -38,7 +39,7 @@
     // Alternatives.
     (key: "power.fusion.s3", brand: "brand.hadley", name: "FUSION PLANT S3", does: PowerPlant(output: 14.0e6), size: 3, mass: 5000.0, volume: 10.0, price: 32000.0),
     (key: "drive.torch.s1", brand: "brand.kestrel", name: "TORCH DRIVE S1", does: Drive(thrust: 0.9e6), size: 1, mass: 3500.0, volume: 8.0, power: 7.0e5, price: 24000.0),
-    (key: "tank.s2", brand: "brand.hadley", name: "FUEL TANK 15 T", does: Tank(capacity: 15000.0), size: 2, mass: 1100.0, volume: 23.0, price: 2200.0),
+    (key: "tank.s2", brand: "brand.hadley", name: "FUEL TANK 15 T", does: Tank(capacity: 15000.0), size: 2, mass: 1100.0, volume: 150.0, price: 2200.0),
     (key: "rack.s2", brand: "brand.hadley", name: "CARGO RACKS 10 T", does: Rack(capacity: 10000.0), size: 2, mass: 800.0, volume: 15.0, price: 1600.0),
     // Passenger cabins: in a cargo slot instead of racks, seats with their life support.
     (key: "cabin.s1", brand: "brand.hadley", name: "PASSENGER CABIN 6", does: Cabin(seats: 6), size: 1, mass: 900.0, volume: 6.0, power: 1.2e4, price: 3500.0),
@@ -48,4 +49,9 @@
     (key: "nav.basic.s1", name: "NAV COMPUTER (BASIC)", does: NavComputer(features: [Docking, Landing]), size: 1, mass: 100.0, volume: 0.2, power: 1.0e4, price: 6000.0),
     (key: "drive.kestrel.k2", brand: "brand.kestrel", name: "KESTREL K2 DRIVE", does: Drive(thrust: 1.5e6), size: 2, mass: 4800.0, volume: 12.0, power: 1.1e6, price: 68000.0),
     (key: "nav.full.s1", brand: "brand.orbital", name: "NAV COMPUTER", does: NavComputer(features: [Docking, Landing, Gate, Follow, Hyperdrive, Route]), size: 1, mass: 150.0, volume: 0.3, power: 2.0e4, price: 20000.0),
+    // Capacitor banks: energy stored for bursts (the hyperdrive, later shields), charged
+    // by the plant. Within the physics sheet's density (1e7 J/kg).
+    (key: "capacitor.s1", brand: "brand.meridian", name: "CAPACITOR BANK 5 GJ", does: Capacitor(capacity: 5.0e9, rate: 2.0e7), size: 1, mass: 500.0, volume: 1.5, price: 6000.0),
+    (key: "capacitor.s2", brand: "brand.meridian", name: "CAPACITOR BANK 15 GJ", does: Capacitor(capacity: 1.5e10, rate: 6.0e7), size: 2, mass: 1500.0, volume: 4.0, price: 15000.0),
+    (key: "capacitor.s3", brand: "brand.meridian", name: "CAPACITOR BANK 40 GJ", does: Capacitor(capacity: 4.0e10, rate: 1.5e8), size: 3, mass: 4000.0, volume: 10.0, price: 36000.0),
 ]

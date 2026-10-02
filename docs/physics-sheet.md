@@ -21,8 +21,8 @@ The hyper-medium (invented): its local limit v_lim = K·d near masses; slack in 
 | `HYPER_RATE` | 2 | 1/s | Invented | K: the medium's limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c. |
 | `INTERLOCK` | 1000 | m | Invented | Nothing moves in the medium within this of a body's highest ground. |
 | `GROUND_MARGIN` | 20000 | m | Tuning | Flying along the nose at a world, the drive drops out this far above its ground (or its air's top). |
-| `V_OPEN_C` | 1e6 | c | Planned | Where the slack sets in: s(d) = min(1, (K·d / v_open)²). A few hundred AU out. |
-| `STIFF_SLACK` | 0.01 |  | Planned | A field forms only where the slack is below this (inside a system). |
+| `V_OPEN_C` | 1e6 | c | Invented | Where the slack sets in: s(d) = min(1, (K·d / v_open)²). A few hundred AU out. |
+| `STIFF_SLACK` | 0.01 |  | Invented | A field forms only where the slack is below this (inside a system). |
 
 ## Hyperdrive
 
@@ -30,12 +30,12 @@ Draw P = m·(P_FLOOR·s + P_PUSH·(v/v*)³)/η. Between stars, power per kg is t
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `HYPER_FUEL_FLOW` | 0.2 | kg/s | Simplified | Today's flat fuel draw while engaged, at full throttle: to be replaced by the energy model. |
-| `P_FLOOR` | 10000 | W/kg | Planned | Holding the field in open space, per kg aboard. Today's best plant gives 2.8 kW/kg on its own. |
-| `P_PUSH` | 5000 | W/kg | Planned | Pushing through the medium at the best speed; grows with its cube. |
-| `V_BEST_C` | 1000 | c | Planned | v*: the best speed between stars (an explorer at 30 kW/kg goes 1.6 v*). |
+| `P_FLOOR` | 10000 | W/kg | Invented | Holding the field in open space, per kg aboard. Today's best plant gives 2.8 kW/kg on its own. |
+| `P_PUSH` | 5000 | W/kg | Invented | Pushing through the medium at the best speed; grows with its cube. |
+| `V_BEST_C` | 1000 | c | Invented | v*: the best speed between stars (an explorer at 30 kW/kg goes 1.6 v*). |
 | `ETA_FIELD_MIN` | 0.5 |  | Planned | The field's efficiency, the worst drives (the rest is heat). |
 | `ETA_FIELD_MAX` | 0.8 |  | Planned | The field's efficiency, the best drives. |
+| `ETA_FIELD` | 0.65 |  | Invented | The field's efficiency of today's drives (one grade, till brands differ): the rest of its draw is heat. |
 | `EXPLORER_POWER` | 30000 | W/kg | Planned | The reference future explorer's power per kg aboard (next-generation reactors), for the dogma's claims. |
 
 ## Gates
@@ -54,6 +54,22 @@ A gate pair is one wormhole throat (invented): power cubic in span, limited by r
 | `RING_SPAN_I` | 10 | ly | Planned | A class I ring's greatest span. |
 | `RING_SPAN_II` | 25 | ly | Planned | A class II ring's greatest span. |
 | `RING_SPAN_III` | 50 | ly | Planned | A class III ring's greatest span: nothing bridges farther. |
+
+## Energy
+
+The chain: fuel → reactor → capacitor bank → consumers; losses become heat. Fuels at their real energies and densities.
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `FUSION_ENERGY` | 3.5e14 | J/kg | Real | D–He3 fusion: the energy released per kg of fuel. |
+| `FUSION_FUEL_DENSITY` | 100 | kg/m³ | Real | Liquid D–He3 (deuterium 163, helium-3 59): what ships' tanks hold today. |
+| `D_T_ENERGY` | 3.4e14 | J/kg | Real | D–T fusion (tritium bred from lithium; its neutrons wear a reactor). Planned fuel. |
+| `FISSION_ENERGY` | 8.2e13 | J/kg | Real | U-235 fission. Planned fuel. |
+| `METHALOX_ENERGY` | 1e7 | J/kg | Real | Methane + oxygen, burnt (exhaust 3.3–3.7 km/s; 830 kg/m³). Planned fuel. |
+| `KEROLOX_ENERGY` | 1e7 | J/kg | Real | Kerosene + oxygen (exhaust 3.0–3.4 km/s; 1,030 kg/m³). Planned fuel. |
+| `HYDROLOX_ENERGY` | 1.3e7 | J/kg | Real | Hydrogen + oxygen (exhaust 4.4–4.5 km/s; 320 kg/m³). Planned fuel. |
+| `REACTOR_EFFICIENCY` | 0.4 |  | Grounded | A fusion reactor's fuel energy to power (the rest is heat). |
+| `CAPACITOR_DENSITY` | 1e7 | J/kg | Grounded | What a capacitor bank stores per kg: optimistic (superconducting magnetic storage). Batteries hold about 1e6. |
 
 ## Drives
 
@@ -83,11 +99,11 @@ The hull's skin in air: Sutton–Graves heating in, Stefan–Boltzmann radiation
 |---|---|
 | The wall between stars (holding the field, best drive) | 12.5 kW per kg aboard |
 | Today's best plant on its own | 2.8 kW/kg (14 MW at most) |
-| DROVER with the strongest plant | 0.16 kW/kg: can't cross |
-| SPRINT COURIER with the strongest plant | 0.31 kW/kg: can't cross |
-| BULK HAULER with the strongest plant | 0.06 kW/kg: can't cross |
+| DROVER with the strongest plant | 0.15 kW/kg: can't cross |
+| SPRINT COURIER with the strongest plant | 0.36 kW/kg: can't cross |
+| BULK HAULER with the strongest plant | 0.05 kW/kg: can't cross |
 | PROSPECTOR with the strongest plant | 0.13 kW/kg: can't cross |
-| INTERCEPTOR with the strongest plant | 0.31 kW/kg: can't cross |
+| INTERCEPTOR with the strongest plant | 0.33 kW/kg: can't cross |
 | A future explorer at 30 kW/kg | 1.41 × the best speed: 5 ly in 1.3 days, 40 ly in 10.4 days |
 | The medium's slack at 1 AU / 40 AU / 2 ly | 1e-6 / 2e-3 / 1 |
 | A gate spanning 5 ly holds open at | 125 MW |

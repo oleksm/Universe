@@ -652,7 +652,7 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     assert!((machinery(&u) - (before - 0.8 + 0.75)).abs() < 1e-6, "0.8 t built, half the old 1.5 t back");
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
-    assert_eq!(u.ship.spec().dry_mass, 60_000.0 - 1500.0 + 800.0);
+    assert_eq!(u.ship.spec().dry_mass, 61_500.0 - 1500.0 + 800.0, "(with its 1.5 t capacitor bank)");
     // The gun out: it doesn't fire.
     u.refit("hardpoint_1", None).unwrap();
     assert!(!u.ship.spec().has(universe_sim::world::modules::Gear::Gun));

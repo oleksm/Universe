@@ -136,6 +136,8 @@ impl Avionics {
             | ShipEvent::AnchorReleased
             | ShipEvent::Mined { .. }
             | ShipEvent::OutOfFuel
+            | ShipEvent::FieldCollapsed
+            | ShipEvent::FieldWontForm
             | ShipEvent::ExcavatorStopped { .. }
             | ShipEvent::GateArrived { .. }
             | ShipEvent::GateTooFast { .. }

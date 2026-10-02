@@ -756,6 +756,8 @@ impl App {
                 Event::Insured { excess: Some(x) } => format!("INSURED: THE SAME SHIP AGAIN, FOR AN EXCESS OF {x:.0} CR"),
                 Event::Insured { excess: None } => "INSURED: COULDN'T PAY THE EXCESS - A BASIC SHIP INSTEAD".into(),
                 Event::Ship(ShipEvent::OutOfFuel) => "OUT OF FUEL - NO THRUST, NO HYPERDRIVE".into(),
+                Event::Ship(ShipEvent::FieldCollapsed) => "HYPERDRIVE FIELD COLLAPSED - NOT POWER ENOUGH TO HOLD IT HERE".into(),
+                Event::Ship(ShipEvent::FieldWontForm) => "THE FIELD WON'T FORM HERE - THE MEDIUM IS SLACK BETWEEN THE STARS".into(),
                 Event::Ship(ShipEvent::Landed { body, station: false }) => format!("LANDED ON {body}"),
                 Event::Ship(ShipEvent::TookOff) => "LIFT OFF".into(),
                 Event::Ship(ShipEvent::Crashed { body }) => format!("SHIP DESTROYED - {body}"),

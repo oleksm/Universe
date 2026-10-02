@@ -754,6 +754,7 @@ impl World {
             let _ = ship.refit(fit);
         }
         ship.fuel = ship.spec().fuel_capacity;
+        ship.energy = ship.spec().capacitor_capacity;
         events.push(ShipEvent::Respawned);
     }
 
