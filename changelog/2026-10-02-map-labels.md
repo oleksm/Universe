@@ -8,3 +8,4 @@
 - Engine: `Frame::text_scaled` (text at any size).
 - Names of unpicked objects smaller still (0.45 size).
 - The ring distances on one line above the axis, "AU" once after the last.
+- **A legend,** small, bottom right: star, planet, moon, station, gate, spaceport, asteroid field, you, what the rings and their numbers are; with NETWORK, the relay links, the transceiver radius and the lag colours.

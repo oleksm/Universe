@@ -309,6 +309,80 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
 
     let (center, max_r) = (Vec2::new(size.x * 0.76, size.y * 0.5), (size.x * 0.22).min(size.y * 0.42));
     chart(frame, app, map, net.as_ref(), center, max_r);
+    legend(frame, net.is_some());
+}
+
+/// The chart's key, small, in the bottom right corner: each symbol as the
+/// chart draws it; with the network layer, its marks too.
+fn legend(frame: &mut Frame, network: bool) {
+    const S: f32 = 0.55;
+    let size = frame.size();
+    let row = (GLYPH + 2.0) * S + 3.0;
+    let mut rows: Vec<(u8, &str)> = vec![
+        (0, "STAR"),
+        (1, "PLANET"),
+        (2, "MOON"),
+        (3, "STATION"),
+        (4, "GATE"),
+        (5, "SPACEPORT"),
+        (6, "ASTEROID FIELD"),
+        (7, "YOU"),
+        (8, "RINGS: ORBITS, EVENLY SPACED"),
+        (12, "NUMBERS: GAP TO EACH RING"),
+    ];
+    if network {
+        rows.extend([(9, "RELAY LINK / UPLINK"), (10, "TRANSCEIVER RADIUS (TO SCALE)"), (11, "LAG <1S <1M <1H MORE DARK")]);
+    }
+    let w = 150.0;
+    let h = rows.len() as f32 * row + 6.0;
+    let at = Vec2::new(size.x - w - 6.0, size.y - h - 6.0);
+    frame.hud_rect(at, Vec2::new(w, h), Color([0.0, 0.0, 0.0, 0.55]));
+    for (k, (icon, text)) in rows.iter().enumerate() {
+        let y = at.y + 3.0 + k as f32 * row;
+        let c = at + Vec2::new(8.0, y - at.y + row * 0.45);
+        match icon {
+            0 => frame.hud_rect(c - 3.0, Vec2::splat(6.0), Color::hex(0xffc878)),
+            1 => frame.hud_rect(c - 2.0, Vec2::splat(5.0), Color::hex(0xb08060)),
+            2 => frame.hud_rect(c - 1.0, Vec2::splat(3.0), Color::hex(0xa0a0a0)),
+            3 => frame.hud_box(c - 3.0, Vec2::splat(6.0), Color::WHITE),
+            4 => frame.hud_ellipse(c, Vec2::splat(4.0), 10, Color::hex(0xffc040)),
+            5 => {
+                let b = Color::hex(0x60c0ff);
+                frame.hud_line(c + Vec2::new(-3.0, 2.0), c + Vec2::new(3.0, 2.0), b);
+                frame.hud_line(c + Vec2::new(-3.0, 2.0), c + Vec2::new(0.0, -3.0), b);
+                frame.hud_line(c + Vec2::new(3.0, 2.0), c + Vec2::new(0.0, -3.0), b);
+            }
+            6 => frame.hud_ellipse(c, Vec2::splat(4.0), 6, Color::hex(0xc0b0a0)),
+            7 => {
+                for i in 0..3 {
+                    let a = i as f32 / 3.0 * TAU - TAU / 4.0;
+                    let b = (i + 1) as f32 / 3.0 * TAU - TAU / 4.0;
+                    frame.hud_line(c + Vec2::new(a.cos(), a.sin()) * 4.0, c + Vec2::new(b.cos(), b.sin()) * 4.0, TEXT);
+                }
+            }
+            8 => {
+                frame.hud_ellipse(c, Vec2::splat(2.0), 12, DIM.scale(0.7));
+                frame.hud_ellipse(c, Vec2::splat(4.0), 16, DIM.scale(0.7));
+            }
+            9 => frame.hud_line(c + Vec2::new(-4.0, 2.0), c + Vec2::new(4.0, -2.0), lag_color(0.1).scale(0.8)),
+            10 => frame.hud_ellipse(c, Vec2::splat(4.0), 16, lag_color(0.1).scale(0.5)),
+            12 => {
+                frame.text_scaled(c + Vec2::new(-5.0, -3.0), "0.1", DIM.scale(0.8), 0.35);
+            }
+            _ => {}
+        }
+        let tx = at + Vec2::new(18.0, y - at.y);
+        if *icon == 11 {
+            // (Each word in its colour.)
+            let mut x = tx.x;
+            for (word, c) in [("LAG", DIM), ("<1S", lag_color(0.1)), ("<1M", lag_color(10.0)), ("<1H", lag_color(100.0)), ("MORE", lag_color(1e4)), ("DARK", DARK)] {
+                frame.text_scaled(Vec2::new(x, tx.y), word, c, S);
+                x += text_size(word).x * S + 6.0;
+            }
+        } else {
+            frame.text_scaled(tx, text, DIM, S);
+        }
+    }
 }
 
 /// The browsed system's hypernet now: its relays' net, the bodies' positions,
