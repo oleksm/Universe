@@ -170,7 +170,7 @@ impl Audio {
 
     /// The computer's chirp: a soft tone gliding from `f0` to `f1` Hz.
     pub fn tone(&self, f0: f32, f1: f32, seconds: f32, volume: f32) {
-        self.with(|s| s.voices.push(Voice::Beep { phase: 0.0, f0, f1, t: 0.0, dur: seconds, vol: volume }));
+        self.with(|s| s.push(Voice::Beep { phase: 0.0, f0, f1, t: 0.0, dur: seconds, vol: volume }));
     }
 
     /// An alarm's note: a hard-edged tone (a saw, rounded off) gliding from
@@ -187,7 +187,7 @@ impl Audio {
 
     /// A blast: a deep boom and its crackle (`seconds` long).
     pub fn noise(&self, seconds: f32, volume: f32) {
-        self.with(|s| s.voices.push(Voice::Blast { t: 0.0, dur: seconds, vol: volume, lp: 0.0, lp2: 0.0, phase: 0.0 }));
+        self.with(|s| s.push(Voice::Blast { t: 0.0, dur: seconds, vol: volume, lp: 0.0, lp2: 0.0, phase: 0.0 }));
     }
 
     /// The hull struck, `strength` 0..1, from `pan` (-1 left .. 1 right):
@@ -205,27 +205,51 @@ impl Audio {
                 // (Plating held by its frame and lined: damped, not a bell.)
                 *m = (f, 0.08 + 0.3 * st / r, (1.0 / r).sqrt() * (0.5 + 0.5 * s.white().abs()), 0.0);
             }
-            s.voices.push(Voice::Ring { modes, t: 0.0, vol: 0.35 + 0.65 * st, pan });
-            s.voices.push(Voice::Crack { t: 0.0, vol: 0.4 + 0.6 * st, pan, hp: 0.0, last: 0.0 });
-            s.voices.push(Voice::Thud { phase: 0.0, freq: 55.0, t: 0.0, decay: 0.12 + 0.25 * st, vol: 0.3 + 0.7 * st, pan: pan * 0.3 });
+            s.push(Voice::Ring { modes, t: 0.0, vol: 0.35 + 0.65 * st, pan });
+            s.push(Voice::Crack { t: 0.0, vol: 0.4 + 0.6 * st, pan, hp: 0.0, last: 0.0 });
+            s.push(Voice::Thud { phase: 0.0, freq: 55.0, t: 0.0, decay: 0.12 + 0.25 * st, vol: 0.3 + 0.7 * st, pan: pan * 0.3 });
         });
     }
 
     /// A thud felt through the deck (a clamp, a step, the gun's recoil):
     /// a low knock at `freq` Hz, falling as it sounds.
     pub fn thud(&self, freq: f32, volume: f32, pan: f32) {
-        self.with(|s| s.voices.push(Voice::Thud { phase: 0.0, freq, t: 0.0, decay: 0.09, vol: volume, pan }));
+        self.with(|s| s.push(Voice::Thud { phase: 0.0, freq, t: 0.0, decay: 0.09, vol: volume, pan }));
     }
 
     /// A hiss of air or gas (a valve, the hatch, a breach venting):
     /// `bright` 0 (a dull rush) .. 1 (a sharp jet).
     pub fn hiss(&self, seconds: f32, volume: f32, bright: f32, pan: f32) {
-        self.with(|s| s.voices.push(Voice::Hiss { t: 0.0, dur: seconds, vol: volume, bright: bright.clamp(0.0, 1.0), pan, low: 0.0, band: 0.0 }));
+        self.with(|s| s.push(Voice::Hiss { t: 0.0, dur: seconds, vol: volume, bright: bright.clamp(0.0, 1.0), pan, low: 0.0, band: 0.0 }));
     }
 
     /// Bits of something rattling off the hull for `seconds`.
     pub fn rattle(&self, seconds: f32, volume: f32, pan: f32) {
-        self.with(|s| s.voices.push(Voice::Rattle { t: 0.0, dur: seconds, vol: volume, pan, next: 0.0, env: 0.0, low: 0.0, band: 0.0 }));
+        self.with(|s| s.push(Voice::Rattle { t: 0.0, dur: seconds, vol: volume, pan, next: 0.0, env: 0.0, low: 0.0, band: 0.0 }));
+    }
+
+    /// What `f` plays, starting `delay` seconds from now (a sequence: the
+    /// machine's motor, then the can dropping, then it opening).
+    pub fn after(&self, delay: f32, f: impl FnOnce(&Audio)) {
+        self.with(|s| s.delay = delay.max(0.0));
+        f(self);
+        self.with(|s| s.delay = 0.0);
+    }
+
+    /// A small electric motor running for `seconds` (a buzz, its pitch
+    /// rising as it gets going).
+    pub fn motor(&self, seconds: f32, volume: f32) {
+        self.with(|s| s.push(Voice::Motor { t: 0.0, dur: seconds, vol: volume, phase: 0.0, lp: 0.0 }));
+    }
+
+    /// A drink fizzing for `seconds`: tiny bubbles bursting, fewer as it goes flat.
+    pub fn fizz(&self, seconds: f32, volume: f32) {
+        self.with(|s| s.push(Voice::Fizz { t: 0.0, dur: seconds, vol: volume, env: 0.0, hp: 0.0, last: 0.0 }));
+    }
+
+    /// A crunchy bite: a burst of cracking, brittle and dry.
+    pub fn crunch(&self, volume: f32) {
+        self.with(|s| s.push(Voice::Crunch { t: 0.0, vol: volume, env: 0.0, next: 0.0, low: 0.0, band: 0.0 }));
     }
 
     /// The ship's systems spooling up (relays, then a rising whine) or down.
@@ -325,6 +349,9 @@ enum Voice {
     Delayed { wait: f32, freq: f32 },
     /// Another voice, `wait` seconds on.
     Later { wait: f32, then: Box<Voice> },
+    Motor { t: f32, dur: f32, vol: f32, phase: f32, lp: f32 },
+    Fizz { t: f32, dur: f32, vol: f32, env: f32, hp: f32, last: f32 },
+    Crunch { t: f32, vol: f32, env: f32, next: f32, low: f32, band: f32 },
 }
 
 /// A small metal room: Schroeder reverb (combs into all-passes), a side each.
@@ -406,6 +433,8 @@ struct Synth {
     distant_pan: Smoothed,
     distant_lp: (f32, f32),
     music: Music,
+    /// One-shots played now start this long after (see `Audio::after`).
+    delay: f32,
 }
 
 /// The score: pads drifting through a cycle of chords, a bell now and then
@@ -587,7 +616,14 @@ impl Synth {
             distant_pan: Smoothed::default(),
             distant_lp: (0.0, 0.0),
             music: Music::new(),
+            delay: 0.0,
         }
+    }
+
+    /// A one-shot in, after the delay set (see `Audio::after`).
+    fn push(&mut self, v: Voice) {
+        let v = if self.delay > 0.0 { Voice::Later { wait: self.delay, then: Box::new(v) } } else { v };
+        self.voices.push(v);
     }
 
     fn white(&mut self) -> f32 {
@@ -827,6 +863,40 @@ impl Synth {
                     *t += dt;
                     let w = *phase * TAU;
                     ((w.sin() * 0.5 + (2.0 * w).sin() * 0.2) * env * 0.35, 0.0, 0.3, *t >= dur)
+                }
+                Voice::Motor { t, dur, vol, phase, lp } => {
+                    // (A buzzy saw, spinning up to speed, through a low-pass.)
+                    let k = *t / *dur;
+                    let f = 70.0 + 50.0 * (*t / 0.15).min(1.0);
+                    *phase = (*phase + f * dt).fract();
+                    *lp += ((*phase * 2.0 - 1.0) + 0.3 * noise - *lp) * 0.15;
+                    let env = (*t / 0.03).min(1.0) * ((1.0 - k) / 0.1).min(1.0);
+                    *t += dt;
+                    (*lp * env * *vol, 0.1, 0.3, *t >= *dur)
+                }
+                Voice::Fizz { t, dur, vol, env, hp, last } => {
+                    // (Bubbles: tiny random clicks, high-passed, thinning out.)
+                    let k = *t / *dur;
+                    if noise.abs() > 0.97 + 0.025 * k {
+                        *env = 0.5 + 0.5 * noise.abs();
+                    }
+                    *env *= 1.0 - 1.0 / (0.0015 * rate);
+                    *hp = 0.7 * (*hp + noise - *last);
+                    *last = noise;
+                    *t += dt;
+                    (*hp * *env * *vol * (1.0 - k), 0.1, 0.2, *t >= *dur)
+                }
+                Voice::Crunch { t, vol, env, next, low, band } => {
+                    // (A bite: dense brittle cracks for a fifth of a second, then crumbs.)
+                    if *t >= *next {
+                        *env = 0.5 + 0.5 * noise.abs();
+                        *next = *t + if *t < 0.18 { 0.004 + 0.01 * noise.abs() } else { 0.03 + 0.05 * noise.abs() };
+                    }
+                    *env *= 1.0 - 1.0 / (0.003 * rate);
+                    svf(low, band, noise, 1800.0, 0.8, rate);
+                    let tail = if *t < 0.18 { 1.0 } else { (1.0 - (*t - 0.18) / 0.25).max(0.0) * 0.4 };
+                    *t += dt;
+                    ((*band + noise * 0.3) * *env * *vol * tail, 0.0, 0.15, *t >= 0.43)
                 }
                 Voice::Later { wait, then } => {
                     *wait -= dt;

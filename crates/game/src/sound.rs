@@ -39,6 +39,35 @@ pub fn chime(ctx: &Context) {
     }
 }
 
+/// A vending machine's sale, as heard standing at it: the motor, the drop,
+/// then (`drink`) a can cracked open, fizzing, a few gulps; or a wrapper
+/// torn open and three crunchy bites.
+fn vend(a: &universe_engine::Audio, drink: bool) {
+    a.motor(0.7, 0.25);
+    a.after(0.72, |a| {
+        a.thud(if drink { 95.0 } else { 130.0 }, if drink { 0.45 } else { 0.3 }, 0.1);
+        a.impact(if drink { 0.12 } else { 0.05 }, 2.2, 0.1);
+        a.rattle(0.2, 0.12, 0.1);
+    });
+    if drink {
+        // The ring-pull's click, the gas out, the fizz; a pause, then gulps.
+        a.after(1.4, |a| {
+            a.thud(1100.0, 0.12, 0.0);
+            a.hiss(0.3, 0.3, 0.95, 0.0);
+            a.fizz(2.2, 0.5);
+        });
+        for k in 0..3 {
+            a.after(2.4 + 0.45 * k as f32, |a| a.thud(170.0, 0.22, 0.0));
+        }
+    } else {
+        // The wrapper torn (a bright rustle), then bites.
+        a.after(1.3, |a| a.hiss(0.45, 0.12, 1.0, 0.0));
+        for k in 0..3 {
+            a.after(2.0 + 0.6 * k as f32, |a| a.crunch(0.6));
+        }
+    }
+}
+
 /// Which side of the ship (-1 left .. 1 right) a ship seen from `us` is on.
 fn side_of(app: Option<&App>, by: usize) -> f32 {
     let Some(app) = app else { return 0.0 };
@@ -179,12 +208,9 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             a.impact(0.15, 1.6, -0.4);
             a.impact(0.15, 1.5, 0.4);
         }
-        // The machine: its works clunk, the can drops into the tray.
-        Event::Vended { .. } => {
-            a.thud(140.0, 0.35, 0.0);
-            a.impact(0.12, 2.2, 0.1);
-            a.rattle(0.25, 0.15, 0.1);
-        }
+        // The machine: its motor runs, what's bought drops into the tray;
+        // then a drink opened and drunk, or a snack unwrapped and eaten.
+        Event::Vended { what, .. } => vend(a, what.contains("COLA") || what.contains("WATER")),
         // Anything else is silent (add a sound here for a new event that should have one).
         _ => {}
     }
@@ -535,6 +561,8 @@ mod tests {
             ("hatch", ev(Event::Crew(universe_sim::world::CrewEvent::CameAboard)), 1.5),
             ("gate", ev(Event::Ship(ShipEvent::GateEntered { to: String::new() })), 3.0),
             ("clearance", ev(Event::Traffic(TrafficEvent::ClearanceGranted { target: String::new(), kind: universe_sim::world::ClearanceKind::Dock })), 1.0),
+            ("vend drink", Box::new(|a, t| if t == 0.0 { vend(a, true) }), 4.5),
+            ("vend snack", Box::new(|a, t| if t == 0.0 { vend(a, false) }), 4.0),
             ("klaxon", Box::new(|a, t| if t == 0.0 {
                 a.alarm(500.0, 1000.0, 0.5, 0.2);
                 a.alarm_after(0.6, 500.0, 1000.0, 0.5, 0.2);
