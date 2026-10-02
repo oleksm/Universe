@@ -108,6 +108,14 @@ mod tests {
             i += 1;
         }
         assert_eq!(seen.len(), 5, "network must be connected");
-        eprintln!("gate links: {:?}", w.gate_links);
+        // Every settled system held; the first faction at home; every faction holding some.
+        let charts = w.charts();
+        let held: Vec<_> = charts.territory().collect();
+        assert_eq!(held.len(), 5);
+        assert_eq!(charts.holder(w.home_system).map(|f| f.key.as_str()), Some("faction.concord"));
+        for (_, f) in crate::content::content().factions.iter() {
+            assert!(held.iter().any(|(_, g)| g.key == f.key), "{} holds nothing", f.key);
+        }
+        eprintln!("territory: {:?}", held.iter().map(|(s, f)| (*s, &f.tag)).collect::<Vec<_>>());
     }
 }

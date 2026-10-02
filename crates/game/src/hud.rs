@@ -179,10 +179,14 @@ fn status_strip(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let home = if app.view.origin == app.charts.home_system { "  HOME" } else { "" };
     let place = format!("   {} ({}){home}", sys.name.to_uppercase(), sys.class.letter());
     let first = format!("{mode}  {}  {warp}", fmt::clock(app.v.time));
-    let size = text_size(&first) + Vec2::new(text_size(&place).x, 0.0);
+    // Whose space it is.
+    let holder = app.charts.holder(app.view.origin);
+    let whose = holder.map_or("   UNCLAIMED".to_string(), |f| format!("   {} SPACE", f.name));
+    let size = text_size(&first) + Vec2::new(text_size(&place).x + text_size(&whose).x, 0.0);
     frame.hud_rect(at, size + Vec2::new(8.0, 6.0), SOFT_PANEL);
     let p = frame.text(at + Vec2::new(4.0, 3.0), &first, top);
-    frame.text(p, &place, DIM);
+    let p = frame.text(p, &place, DIM);
+    frame.text(p, &whose, holder.map_or(DIM, |f| Color([f.color[0], f.color[1], f.color[2], 1.0])));
     size.y + 6.0
 }
 

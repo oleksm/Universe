@@ -117,6 +117,7 @@ pub enum Act {
     Manual,
     Passengers,
     Network,
+    Factions,
 }
 
 /// The table, in the order letters are given out (what's used most first,
@@ -162,13 +163,15 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Manual, Scope::Nav, "THRUSTERS"),
     (Act::Passengers, Scope::Docked, "PASSENGERS"),
     (Act::Network, Scope::Map, "NETWORK"),
+    (Act::Factions, Scope::Map, "FACTIONS"),
 ];
 
 /// Actions whose key is set, not taken from the name (given out first).
 // (POWER: every letter of its name is taken in flight; J is the one free.)
 // (THRUSTERS, manual flight: likewise every letter taken; G is free.
-// DOCKING on O, as asked: ECONOMY takes its N.)
-const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J'), (Act::Manual, 'G'), (Act::Clearance, 'O')];
+// DOCKING on O, as asked: ECONOMY takes its N.
+// FACTIONS, on the maps: every letter of it taken there; H is free.)
+const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J'), (Act::Manual, 'G'), (Act::Clearance, 'O'), (Act::Factions, 'H')];
 
 /// An action's binding: its letter, and where it stands in the name (None:
 /// not in it — given the first free letter instead).

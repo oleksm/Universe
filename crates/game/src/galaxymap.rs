@@ -26,6 +26,8 @@ pub struct GalaxyMap {
     center: DVec2,
     scale: f64,
     glow: Glow,
+    /// The factions layer: who holds which systems.
+    pub factions: bool,
 }
 
 /// Cells a side of the glow image, and how far it reaches (ly, each way from the centre).
@@ -115,7 +117,7 @@ fn flat(app: &App, i: usize) -> DVec2 {
 impl GalaxyMap {
     /// Centred on us, its scale bar `DEFAULT_BAR` light years.
     pub fn open(app: &App, _size: Vec2) -> Self {
-        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(app) }
+        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(app), factions: false }
     }
 
     /// (Dev scenarios: closer by `k`.)
@@ -145,6 +147,9 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     map.center += DVec2::new(input.axis(KeyCode::ArrowLeft, KeyCode::ArrowRight) as f64, input.axis(KeyCode::ArrowUp, KeyCode::ArrowDown) as f64) * pan;
     if input.pressed(KeyCode::Home) {
         map.center = you;
+    }
+    if crate::keys::pressed(input, crate::keys::Act::Factions) {
+        map.factions = !map.factions;
     }
     true
 }
@@ -217,6 +222,28 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             frame.text(p + Vec2::new(5.0, -4.0), &star_name(galaxy.stars[i].seed).to_uppercase(), TEXT.scale(0.8));
         }
     }
+    // The factions layer: each held system ringed in its holder's colour,
+    // with its tag, and the holders listed.
+    if map.factions {
+        for (s, f) in app.charts.territory() {
+            let p = map.to_screen(size, flat(app, s));
+            if !on_screen(p) {
+                continue;
+            }
+            let c = Color([f.color[0], f.color[1], f.color[2], 1.0]);
+            frame.hud_glow(p, 22.0, 20, Color([f.color[0], f.color[1], f.color[2], 0.25]), Color([f.color[0], f.color[1], f.color[2], 0.0]));
+            frame.hud_ellipse(p, Vec2::splat(6.0), 20, c);
+            frame.text(p + Vec2::new(-12.0, -18.0), &f.tag, c);
+        }
+        let mut y = 52.0;
+        for (_, f) in universe_sim::world::content::content().factions.iter() {
+            let n = app.charts.territory().filter(|(_, g)| g.key == f.key).count();
+            let c = Color([f.color[0], f.color[1], f.color[2], 1.0]);
+            frame.text(Vec2::new(16.0, y), &format!("{} {} - {n} SYSTEM{}", f.tag, f.name, if n == 1 { "" } else { "S" }), c);
+            frame.text(Vec2::new(16.0 + 24.0, y + 14.0), &f.note, DIM);
+            y += 34.0;
+        }
+    }
     // Us.
     let p = map.to_screen(size, flat(app, app.v.ship_system));
     frame.hud_ellipse(p, Vec2::splat(9.0), 32, YOU);
@@ -252,6 +279,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             ("WHL".to_string(), "ZOOM".to_string(), Lamp::Off),
             ("ARR".to_string(), "PAN".to_string(), Lamp::Off),
             ("HOME".to_string(), "YOU".to_string(), Lamp::Off),
+            (key(Act::Factions), "FACTIONS".to_string(), if map.factions { Lamp::On } else { Lamp::Off }),
             (key(Act::Galaxy), "GALAXY".to_string(), Lamp::On),
             (key(Act::Map), "MAP".to_string(), Lamp::Off),
         ];

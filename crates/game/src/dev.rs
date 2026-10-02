@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -234,7 +234,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, look);
             app.engine.universe().request_clearance();
         }
-        "galaxymap" | "galaxyzoom" => {
+        "galaxymap" | "galaxyzoom" | "galaxyfactions" => {
             // The galaxy map, having been to the gate network's systems.
             app.mode = Mode::Pilot;
             let links = app.engine.universe().world.gate_links.clone();
@@ -249,6 +249,7 @@ pub fn apply(app: &mut App, name: &str) {
             } else if name == "galaxyzoom" {
                 map.zoom(4.0);
             }
+            map.factions = name == "galaxyfactions";
             app.galaxy_map = Some(map);
         }
         "help" => {

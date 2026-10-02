@@ -37,6 +37,14 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **Backbone** | A system's hub on the hypernet: its station's relay (its ports', with no station). Lag is counted from it. |
 | **Relay** | A structure's comm (backbone, beacon); a **gate relay** links two systems' nets through the throat. |
 
+## Factions (`docs/factions.md`)
+
+| Tag | Faction |
+|---|---|
+| HCD | Halden Concord (holds the home system) |
+| FRA | Free Reach Assembly |
+| TSD | Tessaly Directorate |
+
 ## The world's makers (brands)
 
 | Brand | Makes |
