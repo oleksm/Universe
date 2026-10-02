@@ -109,6 +109,8 @@ pub struct App {
     pub paused: bool,
     pub last_step: StepResult,
     pub show_help: bool,
+    /// Debug info shown (F3): 0 none, 1 performance and traffic, 2 the profiler as well.
+    pub debug: u8,
     /// Grid lines: orbit trajectories, planets' latitude/longitude grids, the ground grid's lines (O).
     pub show_grid: bool,
     pub show_labels: bool,
@@ -257,6 +259,7 @@ impl App {
             paused: false,
             last_step: StepResult::default(),
             show_help: false,
+            debug: 0,
             show_grid: false,
             show_labels: true,
             muted: false,
@@ -455,9 +458,10 @@ impl App {
         if input.pressed(KeyCode::F1) {
             self.show_help = !self.show_help;
         }
-        // F3: the profiler, and its panel.
+        // F3: debug info (performance, traffic, trades), then the profiler too, then off.
         if input.pressed(KeyCode::F3) {
-            universe_prof::enable(!universe_prof::enabled());
+            self.debug = (self.debug + 1) % 3;
+            universe_prof::enable(self.debug == 2);
         }
         if input.pressed(KeyCode::F7) {
             self.show_thrusters = !self.show_thrusters;

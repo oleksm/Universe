@@ -19,6 +19,8 @@ const RED: Color = Color::hex(0xff4040);
 const PREDICT: Color = Color::hex(0x40c0ff);
 const GUIDE_PATH: Color = Color::hex(0xff60ff);
 const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
+/// A lighter backing for text over the world: readable on a bright sky, the view still through it.
+const SOFT_PANEL: Color = Color([0.01, 0.015, 0.022, 0.55]);
 const LINE: f32 = GLYPH + 2.0;
 
 pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
@@ -57,13 +59,15 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     if app.mode == Mode::Pilot {
         crate::manual::draw(frame, app);
     }
+    // What's going on (route, approach, the lock, where we are), in a column
+    // at the left; warnings in a stack at the top centre.
     let mut lines: Vec<(String, Color)> = Vec::new();
-    status(app, &mut lines);
+    let mut alerts: Vec<(String, Color)> = Vec::new();
     match app.mode {
         Mode::Observer => observer_info(app, &mut lines),
         Mode::Pilot if !app.v.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),
         Mode::Pilot => {
-            pilot_info(app, &mut lines);
+            pilot_info(app, &mut lines, &mut alerts);
             crate::followguide::lines(app, &mut lines);
             approach_info(app, &mut lines);
             universe_prof::time("draw/hud/pilot overlay", || pilot_overlay(frame, app));
@@ -84,32 +88,46 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     // The guidance banner, if one's up, has the very top line; the mode bar
     // goes under it.
     let top = if banner_up(app) { banner_y(app) + GLYPH + 10.0 } else { 4.0 };
-    // (Below the performance lines at the top right, which a long status line would run into.)
-    let mut y = top + 4.0 * LINE;
+    let size = frame.size();
+    let mut y = top;
     if app.mode == Mode::Pilot && app.v.crew.seated() {
-        y = y.max(top + mode_bar(frame, app, Vec2::new(4.0, top)) + 4.0);
+        y += mode_bar(frame, app, Vec2::new(4.0, top)) + 2.0;
     }
     match app.mode {
         Mode::Pilot if app.v.crew.seated() => action_grid(frame, app),
         Mode::Pilot => draw_grid(frame, "ON FOOT", &on_foot_cells()),
         Mode::Observer => draw_grid(frame, "OBSERVER", &observer_cells()),
     }
-    for (text, c) in &lines {
-        frame.text(Vec2::new(4.0, y), text, *c);
-        y += LINE;
+    // The status strip: mode, clock, time rate, system; credits at the right.
+    y += status_strip(frame, app, Vec2::new(4.0, y)) + 6.0;
+    let credits = format!("{:.0} CR", app.v.credits);
+    frame.text_boxed(Vec2::new(size.x - text_size(&credits).x - 6.0, top + 2.0), &credits, HUD, SOFT_PANEL);
+    if app.mode == Mode::Pilot && app.v.crew.seated() {
+        y += instruments(frame, app, Vec2::new(4.0, y)) + 6.0;
     }
+    text_column(frame, Vec2::new(4.0, y), &lines);
 
-    let size = frame.size();
-    perf(frame, app, ctx, top);
+    // Debug (F3): performance, traffic, trades; then the profiler as well.
+    let mut right = top + LINE + 6.0;
+    if app.debug > 0 {
+        right = perf(frame, app, ctx, right) + 6.0;
+        right = trade_feed(frame, app, right) + 6.0;
+    }
     if universe_prof::enabled() {
         profile_panel(frame);
     }
-    universe_prof::time("draw/hud/kill feed", || kill_feed(frame, app, top + 8.0 * LINE));
-    trade_feed(frame, app, top + 15.0 * LINE);
+    universe_prof::time("draw/hud/kill feed", || kill_feed(frame, app, right));
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
-    // Messages go below the status block so they never overlap it.
-    let mut y = (top + lines.len() as f32 * LINE + 8.0).max(size.y * 0.3);
+    // Warnings: a stack at the top centre, under the guidance banner.
+    let mut y = top + 40.0;
+    for (text, c) in &alerts {
+        let w = text_size(text).x;
+        frame.text_boxed(Vec2::new(((size.x - w) / 2.0).floor(), y), text, *c, PANEL);
+        y += LINE + 4.0;
+    }
+    // Messages under them, a third of the way down.
+    let mut y = (y + 8.0).max(size.y * 0.3);
     for m in &app.messages {
         let c = if m.ttl < 1.0 { AMBER.scale(m.ttl) } else { AMBER };
         for line in m.text.lines() {
@@ -129,7 +147,9 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
 }
 
-fn status(app: &App, lines: &mut Vec<(String, Color)>) {
+/// The status strip (one line, under the mode bar): mode, clock, time
+/// rate, the system. Its height.
+fn status_strip(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let ship = &app.ship;
     let mode = match app.mode {
         Mode::Observer => "OBSERVER",
@@ -145,21 +165,101 @@ fn status(app: &App, lines: &mut Vec<(String, Color)>) {
     } else {
         format!("TIME {}", fmt::warp(app.warp()))
     };
-    lines.push((format!("{mode}  {}  {warp}", fmt::clock(app.v.time)), top));
     let sys = &app.view.system;
     let home = if app.view.origin == app.charts.home_system { "  HOME" } else { "" };
-    lines.push((
-        format!("SYSTEM {} ({}) {} PLANETS{home}", sys.name.to_uppercase(), sys.class.letter(), sys.planet_count()),
-        DIM,
-    ));
-    if !app.v.crafts.is_empty() {
-        let here = app.v.crafts.iter().filter(|c| c.system == app.view.origin).count();
-        let t = &app.v.traffic;
-        lines.push((
-            format!("TRAFFIC {} SHIPS, {here} HERE  STOPS {} GATES {} CRASHES {}  COLLISIONS {}  TRADES {}  KILLS {}  POSSES {}/{}", app.v.crafts.len(), t.stops, t.transits, t.crashes, t.collision_losses, t.trades, t.shot_down, t.defences, t.aggressors_downed),
-            DIM,
-        ));
+    let place = format!("   {} ({}){home}", sys.name.to_uppercase(), sys.class.letter());
+    let first = format!("{mode}  {}  {warp}", fmt::clock(app.v.time));
+    let size = text_size(&first) + Vec2::new(text_size(&place).x, 0.0);
+    frame.hud_rect(at, size + Vec2::new(8.0, 6.0), SOFT_PANEL);
+    let p = frame.text(at + Vec2::new(4.0, 3.0), &first, top);
+    frame.text(p, &place, DIM);
+    size.y + 6.0
+}
+
+/// A column of lines on a soft dark backing.
+fn text_column(frame: &mut Frame, at: Vec2, lines: &[(String, Color)]) {
+    if lines.is_empty() {
+        return;
     }
+    let w = lines.iter().map(|(t, _)| text_size(t).x).fold(0.0, f32::max);
+    frame.hud_rect(at, Vec2::new(w + 8.0, lines.len() as f32 * LINE + 6.0), SOFT_PANEL);
+    for (i, (text, c)) in lines.iter().enumerate() {
+        frame.text(at + Vec2::new(4.0, 3.0 + i as f32 * LINE), text, *c);
+    }
+}
+
+/// Where we are and how we're moving against what's near: (its name,
+/// altitude, whether it's ground speed, speed, vertical speed).
+fn readout(app: &App) -> Option<(String, f64, bool, f64, f64)> {
+    let r = app.view.reference?;
+    let b = &app.view.system.bodies[r];
+    let offset = app.view.ship_pos - app.view.positions[r];
+    // Height above the ground actually under us (terrain, or sea level).
+    let altitude = offset.length() - b.surface_radius_at(app.view.positions[r], app.view.ship_pos, app.v.time);
+    let mut rel_vel = app.ship.velocity - app.view.system.velocity(r, app.v.time);
+    // Close to the ground, speed relative to the rotating surface is what matters.
+    let surface = altitude < 0.05 * b.rail.radius;
+    if surface {
+        rel_vel -= b.angular_velocity().cross(offset);
+    }
+    Some((b.name.to_uppercase(), altitude, surface, rel_vel.length(), rel_vel.dot(offset.normalize())))
+}
+
+/// The flight instruments (left): where, how high, how fast; thrust, fuel,
+/// hull as bars; mass, load and drive. Its height.
+/// One row of the instruments, drawn at a place.
+type Row = Box<dyn Fn(&mut Frame, Vec2)>;
+
+fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
+    let ship = &app.ship;
+    const W: f32 = 214.0;
+    const LABEL: f32 = 54.0;
+    const ROW: f32 = LINE + 1.0;
+    let mut rows: Vec<Row> = Vec::new();
+    let text_row = |label: &'static str, value: String, c: Color| -> Row {
+        Box::new(move |frame: &mut Frame, p: Vec2| {
+            frame.text(p, label, DIM);
+            frame.text(p + Vec2::new(LABEL, 0.0), &value, c);
+        })
+    };
+    let bar_row = |label: &'static str, x: f64, value: String, c: Color| -> Row {
+        Box::new(move |frame: &mut Frame, p: Vec2| {
+            frame.text(p, label, DIM);
+            let (bp, bs) = (p + Vec2::new(LABEL, 1.0), Vec2::new(80.0, GLYPH - 2.0));
+            frame.hud_rect(bp, bs, DIM.scale(0.25));
+            frame.hud_rect(bp, Vec2::new(bs.x * x.clamp(0.0, 1.0) as f32, bs.y), c);
+            frame.text(p + Vec2::new(LABEL + 88.0, 0.0), &value, c);
+        })
+    };
+    if let Some((name, alt, surface, speed, vertical)) = readout(app) {
+        rows.push(text_row("NEAR", name, HUD));
+        rows.push(text_row("ALT", fmt::distance(alt), HUD));
+        rows.push(text_row(if surface { "GND" } else { "SPD" }, fmt::speed(speed), HUD));
+        rows.push(text_row("VSPD", fmt::speed(vertical), HUD));
+    }
+    let thr = if ship.hyperdrive { AMBER } else { HUD };
+    rows.push(bar_row("THR", ship.throttle, format!("{:.0}%", ship.throttle * 100.0), thr));
+    let fuel = ship.fuel / ship.spec().fuel_capacity;
+    let fc = if fuel < 0.1 { RED } else if fuel < 0.25 { AMBER } else { HUD };
+    rows.push(bar_row("FUEL", fuel, format!("{:.1} T", ship.fuel / 1000.0), fc));
+    let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
+    rows.push(bar_row("HULL", ship.hull, format!("{:.0}%", ship.hull * 100.0), if hurt { RED } else { HUD }));
+    if ship.armed {
+        let heat = if ship.laser_overheated { RED } else { AMBER };
+        rows.push(bar_row("LASER", ship.laser_heat, if ship.laser_overheated { "HOT".into() } else { format!("GUN {}", ship.ammo) }, heat));
+    }
+    rows.push(text_row("MASS", format!("{:.1} T  LOAD {:.1} T", ship.mass() / 1000.0, ship.cargo / 1000.0), DIM));
+    rows.push(text_row("DRIVE", format!("{:.1} M/S2", ship.main_accel()), DIM));
+    if !app.contacts.is_empty() {
+        rows.push(text_row("RADAR", format!("{} IN {}", app.contacts.len(), fmt::distance(RADAR_RANGE)), DIM));
+    }
+    let h = rows.len() as f32 * ROW + 8.0;
+    frame.hud_rect(at, Vec2::new(W, h), SOFT_PANEL);
+    frame.hud_line(at, at + Vec2::new(W, 0.0), DIM.scale(0.6));
+    for (i, row) in rows.iter().enumerate() {
+        row(frame, at + Vec2::new(6.0, 4.0 + i as f32 * ROW));
+    }
+    h
 }
 
 fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
@@ -193,34 +293,19 @@ fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {
 }
 
 fn ship_readout(app: &App, lines: &mut Vec<(String, Color)>) {
-    let ship = &app.ship;
-    if let Some(r) = app.view.reference {
-        let b = &app.view.system.bodies[r];
-        let offset = app.view.ship_pos - app.view.positions[r];
-        // Height above the ground actually under us (terrain, or sea level).
-        let altitude = offset.length() - b.surface_radius_at(app.view.positions[r], app.view.ship_pos, app.v.time);
-        let mut rel_vel = ship.velocity - app.view.system.velocity(r, app.v.time);
-        // Close to the ground, speed relative to the rotating surface is what matters.
-        let surface = altitude < 0.05 * b.rail.radius;
-        if surface {
-            rel_vel -= b.angular_velocity().cross(offset);
-        }
-        let vertical = rel_vel.dot(offset.normalize());
-        lines.push((format!("NEAR {}  ALT {}", b.name.to_uppercase(), fmt::distance(altitude)), DIM));
+    if let Some((name, altitude, surface, speed, vertical)) = readout(app) {
+        lines.push((format!("NEAR {name}  ALT {}", fmt::distance(altitude)), DIM));
         let label = if surface { "SRF SPD" } else { "SPD" };
-        lines.push((format!("{label} {}  VSPD {}", fmt::speed(rel_vel.length()), fmt::speed(vertical)), DIM));
+        lines.push((format!("{label} {}  VSPD {}", fmt::speed(speed), fmt::speed(vertical)), DIM));
     }
 }
 
-fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
+fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>, alerts: &mut Vec<(String, Color)>) {
     route_info(app, lines);
-    ship_readout(app, lines);
     radar_info(app, lines);
-    collision_info(app, lines);
+    collision_info(app, alerts);
     prospect_info(app, lines);
     let ship = &app.ship;
-    let bar: String = (0..10).map(|i| if (i as f64) < ship.throttle * 10.0 - 0.01 { '#' } else { '.' }).collect();
-    lines.push((format!("THR [{bar}] {:3.0}%", ship.throttle * 100.0), if ship.hyperdrive { AMBER } else { HUD }));
     // Off balance (its load, or what's fitted, off the thrusters' centre):
     // what its lift and drive still give without turning it.
     {
@@ -229,32 +314,19 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         // (A stock ship keeps 92% and more, empty to full: under 90% it's off.)
         if lift < 0.9 || main < 0.9 {
             let c = if lift < 0.75 || main < 0.75 { RED } else { AMBER };
-            lines.push((format!("OFF BALANCE - LIFT {:.0}%  DRIVE {:.0}%", lift * 100.0, main * 100.0), c));
+            alerts.push((format!("OFF BALANCE - LIFT {:.0}%  DRIVE {:.0}%", lift * 100.0, main * 100.0), c));
         }
     }
-    lines.push((
-        format!(
-            "MASS {:.1} T  FUEL {:.1} T  CARGO {:.1} T  MAX ACC {:.1} M/S2  {:.0} CR",
-            ship.mass() / 1000.0,
-            ship.fuel / 1000.0,
-            ship.cargo / 1000.0,
-            ship.main_accel(),
-            app.v.credits
-        ),
-        DIM,
-    ));
-    let gauge = |x: f64| -> String { (0..10).map(|i| if (i as f64) < x * 10.0 - 0.01 { '#' } else { '.' }).collect() };
     // Fuel, once it's running down.
     let fuel = ship.fuel / ship.spec().fuel_capacity;
     if fuel < 0.25 {
         let hours = ship.fuel / (ship.spec().main_thrust / universe_sim::world::ship::EXHAUST_VELOCITY) / 3600.0;
-        lines.push((format!("FUEL [{}] {:3.0}%  {:.1} H OF FULL BURN LEFT - REFUEL AT A MARKET", gauge(fuel), fuel * 100.0, hours), if fuel < 0.1 { RED } else { AMBER }));
+        alerts.push((format!("FUEL {:.0}%  {:.1} H OF FULL BURN LEFT - REFUEL AT A MARKET", fuel * 100.0, hours), if fuel < 0.1 { RED } else { AMBER }));
     }
-    let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
     let now = app.v.time;
     if let Some(until) = app.v.aggressed_until {
         let left = (until - now) / app.warp().max(1.0);
-        lines.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
+        alerts.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
     }
     // Missiles after us: how many, and the nearest's time to reach us.
     let inbound: Vec<(f64, f64)> = app
@@ -270,23 +342,15 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
     if let Some(&(d, closing)) = inbound.iter().min_by(|a, b| a.0.total_cmp(&b.0)) {
         let eta = if closing > 1.0 { format!(", IMPACT IN {}", fmt::countdown(d / closing)) } else { String::new() };
         let blink = (app.now() * 4.0).fract() < 0.6;
-        lines.push((format!("MISSILE LOCK - {} INBOUND, NEAREST {}{eta}", inbound.len(), fmt::distance(d)), if blink { RED } else { RED.scale(0.5) }));
+        alerts.push((format!("MISSILE LOCK - {} INBOUND, NEAREST {}{eta}", inbound.len(), fmt::distance(d)), if blink { RED } else { RED.scale(0.5) }));
     }
-    if ship.armed {
-        let heat = if ship.laser_overheated { " HOT".to_string() } else { String::new() };
-        let c = if hurt { RED } else { AMBER };
-        lines.push((format!("HULL [{}] {:3.0}%  GUN {}  LASER [{}]{heat}", gauge(ship.hull), ship.hull * 100.0, ship.ammo, gauge(ship.laser_heat)), c));
-        if !ship.weapons_hot() {
-            lines.push((format!("WEAPONS PRIMING  {:.1} S", ship.arming), AMBER));
-        }
-    } else {
-        let c = if hurt { RED } else { DIM };
-        lines.push((format!("HULL [{}] {:3.0}%", gauge(ship.hull), ship.hull * 100.0), c));
+    if ship.armed && !ship.weapons_hot() {
+        alerts.push((format!("WEAPONS PRIMING  {:.1} S", ship.arming), AMBER));
     }
     // The klaxon's words (see `sound::alarms`), blinking. (Low fuel has its own line above.)
     let blink = (app.now() * 2.0).fract() < 0.6;
     if ship.hull < crate::sound::HULL_CRITICAL {
-        lines.push(("HULL CRITICAL".into(), if blink { RED } else { RED.scale(0.5) }));
+        alerts.push(("HULL CRITICAL".into(), if blink { RED } else { RED.scale(0.5) }));
     }
     // The skin, once air (or the memory of it) has warmed it.
     let skin = ship.skin_temp;
@@ -299,7 +363,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         } else {
             ("", AMBER)
         };
-        lines.push((format!("SKIN {skin:.0} K / {SKIN_LIMIT:.0} K{note}"), c));
+        alerts.push((format!("SKIN {skin:.0} K / {SKIN_LIMIT:.0} K{note}"), c));
     }
     match &ship.state {
         ShipState::Landed { body, local_position, .. } => {
@@ -443,8 +507,7 @@ fn collision_info(app: &App, lines: &mut Vec<(String, Color)>) {
             let left = (c.time - (app.v.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
             lines.push((format!("COLLISION {} IN {}  AT {}", c.what.to_uppercase(), fmt::countdown(left), fmt::speed(c.speed)), RED));
         }
-        None if p.clear => lines.push((format!("PATH CLEAR {}", fmt::distance(universe_sim::avionics::collision::RANGE)), DIM)),
-        None => lines.push((format!("PATH CLEAR {} (LOOKED THAT FAR)", fmt::distance(p.reach)), DIM)),
+        None => {}
     }
 }
 
@@ -454,14 +517,8 @@ fn radar_info(app: &App, lines: &mut Vec<(String, Color)>) {
     if !app.ship.is_flying() && app.contacts.is_empty() {
         return;
     }
-    let Some(c) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) else {
-        let n = app.contacts.len();
-        if n > 0 {
-            let s = if n == 1 { "" } else { "S" };
-            lines.push((format!("RADAR {n} CONTACT{s} IN {}", fmt::distance(RADAR_RANGE)), DIM));
-        }
-        return;
-    };
+    // (The count is on the instruments.)
+    let Some(c) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) else { return };
     let ship = &app.ship;
     let closing = c.blip.closing_speed(ship.position, ship.velocity);
     let trend = if closing >= 0.0 { "CLOSING" } else { "OPENING" };
@@ -1683,10 +1740,10 @@ fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
         .filter(|k| now - k.time < shown)
         .filter(|k| k.system == app.view.origin || k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER)
         .rev()
-        .take(6)
+        .take(3)
         .collect();
-    let size = frame.size();
-    for (i, k) in lines.iter().enumerate() {
+    let mut rows = Vec::new();
+    for k in &lines {
         let age = ((now - k.time) / shown) as f32;
         let ours = k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER;
         let base = if ours { RED } else { AMBER };
@@ -1696,20 +1753,21 @@ fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
             format!("{} DESTROYED {} - {}", k.killer_name, k.victim_name, k.weapon)
         };
         let c = base.scale(1.0 - 0.7 * age.max(0.0));
-        frame.text(Vec2::new(size.x - text_size(&text).x - 4.0, top + i as f32 * LINE), &text, c);
+        rows.push((text, c));
     }
+    right_column(frame, top, &rows);
 }
 
 /// Trades, right side below the kills: who bought or sold how many of what,
 /// where, for how much, and their cargo and credits after. Those in the
 /// system in view (and ours), each for `TRADE_SHOWN` real seconds.
-fn trade_feed(frame: &mut Frame, app: &App, top: f32) {
+fn trade_feed(frame: &mut Frame, app: &App, top: f32) -> f32 {
     let now = app.v.time;
     let shown = TRADE_SHOWN * app.warp().max(1.0);
     let recent: Vec<&universe_sim::TradeRecord> =
         app.v.trade_log.iter().filter(|r| now - r.time < shown && (r.system == app.view.origin || r.trader == "YOU")).rev().take(6).collect();
-    let size = frame.size();
-    for (i, r) in recent.iter().enumerate() {
+    let mut rows = Vec::new();
+    for r in &recent {
         let age = ((now - r.time) / shown) as f32;
         let after = format!("CARGO {:.1} T, {:.0} CR", r.cargo / 1000.0, r.credits);
         let text = match &r.deal {
@@ -1720,8 +1778,9 @@ fn trade_feed(frame: &mut Frame, app: &App, top: f32) {
         };
         let base = if r.trader == "YOU" { HUD } else { Color::hex(0x60c0ff) };
         let c = base.scale(1.0 - 0.7 * age.max(0.0));
-        frame.text(Vec2::new(size.x - text_size(&text).x - 4.0, top + i as f32 * LINE), &text, c);
+        rows.push((text, c));
     }
+    right_column(frame, top, &rows)
 }
 
 /// Real seconds a trade stays in the feed.
@@ -1732,7 +1791,7 @@ const KILL_SHOWN: f64 = 15.0;
 
 /// Performance, top right: the frame, the world tick, the planner, where the
 /// frame's time went and what it drew.
-fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) {
+fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
     let p = &ctx.perf;
     let ships = 1 + app.v.crafts.len();
     let k = |n: u32| if n >= 10_000 { format!("{:.0}K", n as f32 / 1000.0) } else if n >= 1000 { format!("{:.1}K", n as f32 / 1000.0) } else { n.to_string() };
@@ -1754,17 +1813,35 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) {
     }
     lines.push((format!("UPD {:.1} DRAW {:.1} GPU {:.1} IDLE {:.1}", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms), DIM));
     lines.push((format!("{} LINES {} TRIS {} PTS", k(p.lines), k(p.triangles), k(p.points)), DIM));
-    let size = frame.size();
-    for (i, (text, c)) in lines.iter().enumerate() {
-        frame.text(Vec2::new(size.x - text_size(text).x - 4.0, top + i as f32 * LINE), text, *c);
+    if !app.v.crafts.is_empty() {
+        let here = app.v.crafts.iter().filter(|c| c.system == app.view.origin).count();
+        let t = &app.v.traffic;
+        lines.push((format!("TRAFFIC {} SHIPS, {here} HERE", app.v.crafts.len()), DIM));
+        lines.push((format!("STOPS {} GATES {} CRASHES {} COLLISIONS {}", t.stops, t.transits, t.crashes, t.collision_losses), DIM));
+        lines.push((format!("TRADES {} KILLS {} POSSES {}/{}", t.trades, t.shot_down, t.defences, t.aggressors_downed), DIM));
     }
+    right_column(frame, top, &lines)
+}
+
+/// A column of lines against the right edge, on a soft backing; its bottom.
+fn right_column(frame: &mut Frame, top: f32, lines: &[(String, Color)]) -> f32 {
+    if lines.is_empty() {
+        return top;
+    }
+    let size = frame.size();
+    let w = lines.iter().map(|(t, _)| text_size(t).x).fold(0.0, f32::max);
+    frame.hud_rect(Vec2::new(size.x - w - 10.0, top), Vec2::new(w + 8.0, lines.len() as f32 * LINE + 6.0), SOFT_PANEL);
+    for (i, (text, c)) in lines.iter().enumerate() {
+        frame.text(Vec2::new(size.x - text_size(text).x - 6.0, top + 3.0 + i as f32 * LINE), text, *c);
+    }
+    top + lines.len() as f32 * LINE + 6.0
 }
 
 /// The profiler's report (F3): every scope taking real time, as a tree, with
 /// its mean and worst time per frame over the last couple of seconds.
 fn profile_panel(frame: &mut Frame) {
     let rows: Vec<universe_prof::Stat> = universe_prof::report().into_iter().filter(|s| s.mean_ms >= 0.02 || s.max_ms >= 1.0).collect();
-    let mut text = String::from("PROFILE (F3)            MEAN    MAX  CALLS\n");
+    let mut text = String::from("PROFILE (F3 F3)            MEAN    MAX  CALLS\n");
     for st in rows.iter().take(48) {
         let depth = st.name.matches('/').count();
         let leaf = st.name.rsplit('/').next().unwrap_or(st.name).to_uppercase();
