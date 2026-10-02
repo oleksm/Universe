@@ -32,6 +32,9 @@ const HOLD_JOIN: f64 = 5_000.0;
 const DESCENT_RADIUS: f64 = 2500.0;
 /// Top speed while routing around the planet (m/s).
 const ROUTE_SPEED: f64 = 3000.0;
+/// The plain round a port (horizontal distance, m): the ground within it is
+/// low enough (see the terrain's flats) to come straight down over.
+const APPROACH_PLAIN: f64 = 20_000.0;
 /// Lowest cruise altitude when routing around the planet, as a fraction of its radius.
 const MIN_ROUTE_ALTITUDE: f64 = 0.05;
 
@@ -139,15 +142,20 @@ pub fn guidance(pad: &PadFrame, pos: DVec3, descent: bool, main_accel: f64) -> G
     // entry point is over the flattened ground around the port.
     // Over the flattened ground around the port there's nothing to clear.
     let above_terrain = entry + pad.up * pad.terrain_top;
-    let over_port = horiz.length() < 30_000.0 && h > -1000.0;
+    let over_port = horiz.length() < APPROACH_PLAIN && h > -1000.0;
     let clear = over_port || segment_distance(pos, above_terrain, c) > radius + pad.terrain_top + 500.0;
     let brake = 0.4 * (main_accel - pad.surface_gravity()).max(5.0);
     if clear {
-        let d = entry - pos;
+        // Over the port's plain, down to the entry point; till then, toward
+        // a point high over the port, above the tallest ground (the hills
+        // short of the plain stand in the way of a straight line down).
+        let aim = if over_port { entry } else { pad.pad + pad.up * (pad.terrain_top + 500.0).max(ENTRY_ALTITUDE) };
+        let d = aim - pos;
         let dist = d.length();
-        let speed = (2.0 * brake * dist).sqrt().min(ROUTE_SPEED).min(dist * 0.5);
+        let left = (entry - pos).length();
+        let speed = (2.0 * brake * left).sqrt().min(ROUTE_SPEED).min(left * 0.5);
         let desired_velocity = if dist > 1.0 { d / dist * speed } else { DVec3::ZERO };
-        return Guidance { desired_velocity, waypoint: entry, waypoint_dir: -pad.up, final_run: false };
+        return Guidance { desired_velocity, waypoint: aim, waypoint_dir: -pad.up, final_run: false };
     }
 
     // The straight line would cut through the planet: cruise along the great

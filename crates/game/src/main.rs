@@ -19,6 +19,7 @@ mod save;
 mod scene;
 mod shipyard;
 mod sound;
+mod terrain_lod;
 mod terrain_view;
 mod thrusterpanel;
 mod passengers;
@@ -147,6 +148,8 @@ pub struct App {
     pub eta_shown: Option<f64>,
     /// Colored terrain globes, built once per (system, body): the full mesh,
     /// and a coarse one for when it's small on screen.
+    /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
+    pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
     /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
     pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
@@ -281,6 +284,7 @@ impl App {
             sim_ms: 0.0,
             eta_shown: None,
             globes: std::collections::HashMap::new(),
+            terrain_lod: Default::default(),
             rocks: std::collections::HashMap::new(),
             rigs: Default::default(),
             mining: Default::default(),

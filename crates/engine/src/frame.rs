@@ -98,6 +98,7 @@ pub struct Frame {
     /// Globe maps drawn this frame (instances name them by place here + 1).
     pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
     globe: [f32; 4],
+    globe_at: [f32; 4],
 }
 
 /// One mesh draw: the mesh, and its instance data.
@@ -137,6 +138,10 @@ pub(crate) struct Instance {
     /// none), the world's kind (0 Earth-like, 1 dry, 2 cratered), its relief
     /// (m, scaled), the brightness of its colours.
     pub globe: [f32; 4],
+    /// Where its vertices are on the world, in radii: `pos * w + xyz` (a
+    /// whole globe: (0, 0, 0, 1); a patch of ground with its own origin:
+    /// that origin, and 1 / radius, its vertices in metres).
+    pub globe_at: [f32; 4],
 }
 
 /// A light source: a star. How bright it looks falls with the square of the
@@ -259,6 +264,7 @@ impl Frame {
             in_front: false,
             globe_maps: Vec::new(),
             globe: [0.0; 4],
+            globe_at: [0.0, 0.0, 0.0, 1.0],
         }
     }
 
@@ -344,7 +350,8 @@ impl Frame {
     /// as drawn) its heights for slope shading, `bright` its colours'
     /// brightness. Their fill tint is the world's own colour (and their
     /// vertex colours should be white).
-    pub fn with_globe(&mut self, map: &std::sync::Arc<crate::model::GlobeMap>, kind: f32, relief: f32, bright: f32, f: impl FnOnce(&mut Frame)) {
+    /// `at`: where its vertices are on the world (see `Instance::globe_at`).
+    pub fn with_globe(&mut self, map: &std::sync::Arc<crate::model::GlobeMap>, kind: f32, relief: f32, bright: f32, at: [f32; 4], f: impl FnOnce(&mut Frame)) {
         let k = match self.globe_maps.iter().position(|m| m.id() == map.id()) {
             Some(k) => k,
             None => {
@@ -353,8 +360,10 @@ impl Frame {
             }
         };
         let before = std::mem::replace(&mut self.globe, [k as f32 + 1.0, kind, relief, bright]);
+        let before_at = std::mem::replace(&mut self.globe_at, at);
         f(self);
         self.globe = before;
+        self.globe_at = before_at;
     }
 
     /// Meshes drawn in `f` cast no shadows (a planet's globe: its night is
@@ -514,6 +523,7 @@ impl Frame {
             refl_color: [0.0; 4],
             material: self.surface,
             globe: self.globe,
+            globe_at: self.globe_at,
         };
         if lit && let Some(light) = self.light {
             let dir = (light.position - t.position).normalize_or_zero().as_vec3();

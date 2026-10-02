@@ -824,14 +824,17 @@ pub fn apply(app: &mut App, name: &str) {
                 "dusk" => std::f64::consts::FRAC_PI_2 - 0.02,
                 _ => 2.4,
             };
+            // (UNIVERSE_SUN: the sun's angle from overhead instead; UNIVERSE_ALT: the height, m.)
+            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            let angle = env("UNIVERSE_SUN").unwrap_or(angle);
             let up = (sun * angle.cos() + side * angle.sin()).normalize();
             let center = positions[planet];
             let ground = b.surface_radius_at(center, center + up, t);
-            app.engine.universe().ship.position = center + up * (ground + 2_000.0);
+            app.engine.universe().ship.position = center + up * (ground + env("UNIVERSE_ALT").unwrap_or(2_000.0));
             app.engine.universe().ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.engine.universe().ship.position - center);
             // Look toward the sun's side along the horizon, a little down.
             let ahead = (sun - up * sun.dot(up)).normalize_or(side);
-            let look = (ahead - up * 0.08).normalize();
+            let look = (ahead - up * std::env::var("UNIVERSE_DOWN").ok().and_then(|v| v.parse::<f64>().ok()).unwrap_or(0.08)).normalize();
             app.engine.universe().ship.orientation = universe_sim::ship::facing(look, up);
         }
         "lowflight" => {

@@ -14,6 +14,19 @@ use crate::rng::Rng;
 const PAD_FLAT_INNER: f64 = 4_000.0;
 const PAD_FLAT_OUTER: f64 = 40_000.0;
 
+/// The small-scale relief (see `Terrain::relief`): its octaves, the first's
+/// frequency (a feature about 1/RELIEF_FREQ radii across: 25 km on a big
+/// world), how much finer each next, the slope of each, and how much
+/// rougher the roughest ground is than that.
+const RELIEF_OCTAVES: u32 = 8;
+const RELIEF_FREQ: f64 = 300.0;
+const RELIEF_LACUNARITY: f64 = 2.1;
+const RELIEF_SLOPE: f64 = 0.035;
+const RELIEF_ROUGHEST: f64 = 1.6;
+/// The plain round a spaceport: no small relief within this (m), all of it by that.
+const RELIEF_FLAT_INNER: f64 = 20_000.0;
+const RELIEF_FLAT_OUTER: f64 = 60_000.0;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TerrainKind {
     /// Oceans, continents, mountains, a few craters.
@@ -83,7 +96,36 @@ impl Terrain {
 
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
-        self.amplitude * 1.3
+        self.amplitude * 1.3 + self.relief_max()
+    }
+
+    /// The small-scale relief's amplitude (m) at octave `o` (see `relief`):
+    /// the same slope at every scale, so ground stays rough however near.
+    fn relief_amp(&self, o: u32) -> f64 {
+        RELIEF_SLOPE * self.body_radius / (RELIEF_FREQ * RELIEF_LACUNARITY.powi(o as i32))
+    }
+
+    /// The highest the relief stands (m): each octave's half-plain,
+    /// half-ridged noise reaches at most 0.3 of its amplitude above zero
+    /// (its gullies go deeper), at the roughest.
+    fn relief_max(&self) -> f64 {
+        0.3 * (0..RELIEF_OCTAVES).map(|o| self.relief_amp(o)).sum::<f64>() * RELIEF_ROUGHEST
+    }
+
+    /// Small-scale relief (m): hills, ridges and gullies from tens of
+    /// kilometres down to tens of metres, rough in the mountains and gentle
+    /// on the lowlands (`rough` 0..1).
+    fn relief(&self, dir: DVec3, rough: f64) -> f64 {
+        let mut h = 0.0;
+        let mut f = RELIEF_FREQ;
+        for o in 0..RELIEF_OCTAVES {
+            let n = value_noise(self.seed.wrapping_add(0x51ed + o as u64 * 0x2545), dir * f);
+            // (Half ridged: sharp crests and gullies, like eroded ground.)
+            let ridged = 0.6 - n.abs() * 1.6;
+            h += self.relief_amp(o) * (0.5 * n + 0.5 * ridged);
+            f *= RELIEF_LACUNARITY;
+        }
+        h * (0.25 + (RELIEF_ROUGHEST - 0.25) * rough)
     }
 
     fn noise(&self, p: DVec3) -> f64 {
@@ -131,7 +173,11 @@ impl Terrain {
         };
         let mountains = ridge * continents.max(0.0) * 1.2;
         let (crater, inside) = self.craters(dir);
-        ((continents + mountains) * self.amplitude + crater, inside)
+        // (Rougher the higher and the more mountainous.)
+        let rough = (continents.max(0.0) * 1.5 + mountains * 2.0).min(1.0);
+        // (A spaceport stands on a wide plain: the small relief dies down round it.)
+        let relief = self.relief(dir, rough) * self.flat_within(dir, RELIEF_FLAT_INNER, RELIEF_FLAT_OUTER);
+        ((continents + mountains) * self.amplitude + crater + relief, inside)
     }
 
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
@@ -147,10 +193,15 @@ impl Terrain {
 
     /// How much of the natural height stands here (0 on a spaceport's flat, 1 away from them).
     fn pad_flat(&self, dir: DVec3) -> f64 {
+        self.flat_within(dir, PAD_FLAT_INNER, PAD_FLAT_OUTER)
+    }
+
+    /// 0 within `inner` (m, over the ground) of a spaceport, rising smoothly to 1 by `outer`.
+    fn flat_within(&self, dir: DVec3, inner: f64, outer: f64) -> f64 {
         let mut w: f64 = 1.0;
         for p in &self.pads {
             let ground = dir.distance(*p) * self.body_radius;
-            let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
+            let t = ((ground - inner) / (outer - inner)).clamp(0.0, 1.0);
             w = w.min(t * t * (3.0 - 2.0 * t));
         }
         w

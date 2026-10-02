@@ -16,8 +16,9 @@ const DIM: Color = Color::hex(0x7d93a0);
 const GATE: Color = Color::hex(0xffc040);
 const YOU: Color = Color::hex(0x60ffff);
 
-/// Light years from us to the map's top edge when it opens.
-const DEFAULT_REACH: f64 = 50.0;
+/// The scale bar's length (px, about) and what it reads when the map opens (ly).
+const BAR_PX: f64 = 120.0;
+const DEFAULT_BAR: f64 = 50.0;
 
 /// Where the map looks (light years, the galaxy's plane) and how close (px
 /// per light year); the galaxy's glow, gathered once (see `Glow`).
@@ -112,9 +113,9 @@ fn flat(app: &App, i: usize) -> DVec2 {
 }
 
 impl GalaxyMap {
-    /// Centred on us, `DEFAULT_REACH` light years to the top and bottom.
-    pub fn open(app: &App, size: Vec2) -> Self {
-        Self { center: flat(app, app.v.ship_system), scale: size.y as f64 * 0.5 / DEFAULT_REACH, glow: Glow::gather(app) }
+    /// Centred on us, its scale bar `DEFAULT_BAR` light years.
+    pub fn open(app: &App, _size: Vec2) -> Self {
+        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(app) }
     }
 
     /// (Dev scenarios: closer by `k`.)
@@ -235,7 +236,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
     frame.text(Vec2::new(16.0, 16.0), &title, TEXT);
     frame.text(Vec2::new(16.0, 30.0), "ABOUT 19,000 LIGHT YEARS ACROSS. EVERY STAR CAN BE REACHED BY HYPERDRIVE.", DIM);
     // A scale bar: a round number of light years about 120 px long.
-    let ly = 120.0 / map.scale;
+    let ly = BAR_PX / map.scale;
     let round = [1.0, 2.0, 5.0].iter().flat_map(|m| (0..6).map(move |e| m * 10f64.powi(e))).filter(|v| *v <= ly).fold(1.0, f64::max);
     let px = (round * map.scale) as f32;
     let at = Vec2::new(16.0, size.y - 76.0);

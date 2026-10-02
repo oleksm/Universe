@@ -85,7 +85,7 @@ const N: i32 = 24;
 /// to the planet (cells snap to a cube-sphere lattice), sized to reach roughly
 /// to the horizon, and fades toward its edges.
 /// With `fine` spacing (m), a small grid underfoot instead, for walking.
-/// `lines`: draw the grid's lines too (the shaded ground is always drawn).
+/// `lines`: just the grid's lines, over the ground's patches (else its own shaded ground too).
 pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64, fine: Option<f64>, lines: bool) {
     let Some(terrain) = &body.terrain else { return };
     let rot = body.rotation(t);
@@ -164,7 +164,7 @@ pub fn surface_grid(frame: &mut Frame, body: &Body, center: DVec3, t: f64, fine:
                 let (q, d) = at(i, j + 1);
                 frame.line2(p, q, c, d);
             }
-            if i + 1 < side && j + 1 < side {
+            if !lines && i + 1 < side && j + 1 < side {
                 let (q, cq) = at(i + 1, j);
                 let (w, cw) = at(i, j + 1);
                 let (z, cz) = at(i + 1, j + 1);

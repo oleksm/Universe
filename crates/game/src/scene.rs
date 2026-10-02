@@ -370,26 +370,31 @@ fn bodies(frame: &mut Frame, app: &App) {
         if let Some((full, coarse, map)) = app.globes.get(&(app.view.origin, i)) {
             // Small on screen: the coarse mesh does (a sixteenth of the triangles).
             let globe = if px > GLOBE_FULL_PX { full } else { coarse };
-            // Terrain world: colored globe; near the surface, a local grid on
-            // the ground (the globe drops a hair so the grid sits on top).
+            // Terrain world: from afar its globe; near, its ground as patches
+            // finer toward the eye (see `terrain_lod`).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
-            let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
-            let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
-            universe_prof::time("draw/scene/bodies/globe mesh", || {
-                frame.no_shadow(|frame| {
-                    frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, |frame| {
-                        frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
-                    })
-                })
-            });
             if near {
-                universe_prof::time("draw/scene/bodies/surface grid", || terrain_view::surface_grid(frame, b, center, t, None, app.show_grid));
-                // On foot here: a fine grid underfoot.
+                universe_prof::time("draw/scene/bodies/ground", || {
+                    app.terrain_lod.borrow_mut().draw(frame, app.view.origin, i, b, map, center, b.rotation(t), cam, c);
+                });
+            } else {
+                let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
+                universe_prof::time("draw/scene/bodies/globe mesh", || {
+                    frame.no_shadow(|frame| {
+                        frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, [0.0, 0.0, 0.0, 1.0], |frame| {
+                            frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
+                        })
+                    })
+                });
+            }
+            // The grid on the ground (F4), and underfoot on foot.
+            if near && app.show_grid {
+                universe_prof::time("draw/scene/bodies/surface grid", || terrain_view::surface_grid(frame, b, center, t, None, true));
                 if let universe_sim::world::Place::Outside { body, .. } = app.v.crew.place
                     && body == i
                     && app.view.origin == app.v.ship_system
                 {
-                    terrain_view::surface_grid(frame, b, center, t, Some(4.0), app.show_grid);
+                    terrain_view::surface_grid(frame, b, center, t, Some(4.0), true);
                 }
             }
             if frame.projected_radius(center, b.rail.radius) > 150.0 {
