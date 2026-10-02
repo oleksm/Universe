@@ -193,24 +193,55 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
     frame.text_boxed(p, prompt, Color::hex(0xffc040), Color([0.012, 0.018, 0.026, 0.85]));
 }
 
+/// What vending item `k` looks like: a few coloured boxes in a unit square
+/// (x across, y up, 0..1): (x, y, w, h, colour). Drawn on the machine's
+/// shelves (`scene`) and beside its name in the panel.
+pub(crate) fn vending_icon(k: usize) -> Vec<([f32; 4], Color)> {
+    let (red, white, blue, cap, yellow, brown, green) =
+        (Color::hex(0xd82020), Color::hex(0xf4f4f4), Color::hex(0x60b0ff), Color::hex(0x2050a0), Color::hex(0xffd030), Color::hex(0x6a3a1a), Color::hex(0x40c060));
+    match k {
+        // A can, its white band.
+        0 => vec![([0.3, 0.05, 0.4, 0.8], red), ([0.3, 0.45, 0.4, 0.12], white)],
+        // A bottle and its cap.
+        1 => vec![([0.36, 0.05, 0.28, 0.65], blue), ([0.42, 0.7, 0.16, 0.12], blue), ([0.42, 0.82, 0.16, 0.08], cap)],
+        // A crisp bag, puffed, its label.
+        2 => vec![([0.2, 0.08, 0.6, 0.78], yellow), ([0.3, 0.35, 0.4, 0.2], red)],
+        // A chocolate bar, its wrapper half open.
+        3 => vec![([0.12, 0.3, 0.76, 0.3], brown), ([0.12, 0.3, 0.3, 0.3], white)],
+        // A protein bar.
+        _ => vec![([0.12, 0.32, 0.76, 0.26], green), ([0.42, 0.32, 0.16, 0.26], white)],
+    }
+}
+
 /// The vending machine's panel: what it sells, the pick, and how to buy.
 fn vending_panel(frame: &mut Frame, app: &App) {
     use universe_sim::world::spaceport::VENDING;
     let pick = app.vending.unwrap_or(0);
-    let mut lines = vec![("VENDING MACHINE".to_string(), Color::hex(0xff5050)), (String::new(), Color::hex(0xdcebf2))];
-    for (k, (what, price, _)) in VENDING.iter().enumerate() {
-        let here = k == pick;
-        lines.push((format!("{}{:<18} {:>3.0} CR", if here { ">" } else { " " }, what, price), if here { Color::hex(0xffc040) } else { Color::hex(0xdcebf2) }));
-    }
-    lines.push((String::new(), Color::hex(0xdcebf2)));
-    lines.push(("UP/DOWN PICK  ENTER BUY  F DONE".into(), Color::hex(0x7d93a0)));
-    let w = lines.iter().map(|l| text_size(&l.0).x).fold(0.0, f32::max);
+    const ROW: f32 = 18.0;
+    const ICON: f32 = 14.0;
     let size = frame.size();
-    let at = Vec2::new(((size.x - w) / 2.0).floor(), (size.y * 0.35).floor());
-    let h = lines.len() as f32 * 12.0;
+    let rows: Vec<String> = VENDING.iter().enumerate().map(|(k, (what, price, _))| format!("{}{:<18} {:>3.0} CR", if k == pick { ">" } else { " " }, what, price)).collect();
+    let help = "UP/DOWN PICK  ENTER BUY  F DONE";
+    let w = rows.iter().map(|r| text_size(r).x + ICON + 8.0).fold(text_size(help).x, f32::max);
+    let h = 14.0 + rows.len() as f32 * ROW + 20.0;
+    // (To the right of the machine, so it's in sight, and clear of the messages.)
+    let at = Vec2::new((size.x * 0.68).floor().min(size.x - w - 16.0), (size.y * 0.42).floor());
     frame.hud_rect(at - 8.0, Vec2::new(w, h) + 16.0, Color([0.05, 0.0, 0.0, 0.92]));
     frame.hud_box(at - 8.0, Vec2::new(w, h) + 16.0, Color::hex(0xff5050));
-    for (k, (t, c)) in lines.iter().enumerate() {
-        frame.text(at + Vec2::new(0.0, k as f32 * 12.0), t, *c);
+    frame.text(at, "VENDING MACHINE", Color::hex(0xff5050));
+    for (k, row) in rows.iter().enumerate() {
+        let y = at.y + 14.0 + k as f32 * ROW;
+        let here = k == pick;
+        // Its icon, then its name and price.
+        let box_at = Vec2::new(at.x, y - 2.0);
+        frame.hud_rect(box_at, Vec2::splat(ICON), Color([0.0, 0.0, 0.0, 0.6]));
+        if here {
+            frame.hud_box(box_at - 1.0, Vec2::splat(ICON + 2.0), Color::hex(0xffc040));
+        }
+        for ([x, yy, bw, bh], c) in vending_icon(k) {
+            frame.hud_rect(box_at + Vec2::new(x * ICON, (1.0 - yy - bh) * ICON), Vec2::new(bw * ICON, bh * ICON), c);
+        }
+        frame.text(Vec2::new(at.x + ICON + 8.0, y), row, if here { Color::hex(0xffc040) } else { Color::hex(0xdcebf2) });
     }
+    frame.text(Vec2::new(at.x, at.y + 14.0 + rows.len() as f32 * ROW + 6.0), help, Color::hex(0x7d93a0));
 }

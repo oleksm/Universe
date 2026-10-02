@@ -1369,14 +1369,44 @@ fn spaceports(frame: &mut Frame, app: &App) {
                     frame.line(f[k], f[(k + 1) % 4], edge);
                 }
             }
-            // Its lit front (just proud of the face), and the slot.
+            // Its window (just proud of the face): dark glass, lit within,
+            // two shelves of what it sells; the slot below.
             let front = [corner(-0.8, 0.9, 1.02), corner(0.8, 0.9, 1.02), corner(0.8, 1.8, 1.02), corner(-0.8, 1.8, 1.02)];
-            frame.triangle(front[0], front[1], front[2], Color::hex(0xd0d8e0));
-            frame.triangle(front[0], front[2], front[3], Color::hex(0xd0d8e0));
+            let glass = Color::hex(0x1a2430);
+            frame.triangle(front[0], front[1], front[2], glass);
+            frame.triangle(front[0], front[2], front[3], glass);
             for k in 0..4 {
                 frame.line(front[k], front[(k + 1) % 4], glow);
             }
             frame.line(corner(-0.5, 0.3, 1.02), corner(0.5, 0.3, 1.02), glow.scale(0.6));
+            // (Three on the top shelf, two below; each in its slot, on a shelf line.)
+            let n_items = universe_sim::world::spaceport::VENDING.len();
+            for k in 0..n_items {
+                // (Read left to right facing it: its east is on our left.)
+                let (row, col, cols) = if k < 3 { (0, k, 3) } else { (1, k - 3, n_items - 3) };
+                let col = cols - 1 - col;
+                let slot_w = 1.6 / cols as f64;
+                let (x0, h0) = (-0.8 + slot_w * col as f64, 1.38 - row as f64 * 0.44);
+                let size = (slot_w * 0.5).min(0.36);
+                let (sx, sy) = (x0 + (slot_w - size * 2.0) / 2.0 / 0.5 * 0.5, h0 + 0.03);
+                // The shelf under it.
+                frame.line(corner(x0 + 0.04, h0, 1.03), corner(x0 + slot_w - 0.04, h0, 1.03), glow.scale(0.35));
+                for ([x, y, w, h], c) in crate::onfoot::vending_icon(k) {
+                    let x = 1.0 - x - w;
+                    let (a, b) = (sx + x as f64 * size * 2.0, sy + y as f64 * size);
+                    let (a2, b2) = (a + w as f64 * size * 2.0, b + h as f64 * size);
+                    let quad = [corner(a, b, 1.04), corner(a2, b, 1.04), corner(a2, b2, 1.04), corner(a, b2, 1.04)];
+                    frame.triangle(quad[0], quad[1], quad[2], c);
+                    frame.triangle(quad[0], quad[2], quad[3], c);
+                }
+                // The one picked on the panel, outlined.
+                if app.vending == Some(k) {
+                    let o = [corner(x0 + 0.03, h0 + 0.01, 1.05), corner(x0 + slot_w - 0.03, h0 + 0.01, 1.05), corner(x0 + slot_w - 0.03, h0 + 0.42, 1.05), corner(x0 + 0.03, h0 + 0.42, 1.05)];
+                    for j in 0..4 {
+                        frame.line(o[j], o[(j + 1) % 4], Color::hex(0xffc040));
+                    }
+                }
+            }
         }
 
         // Ground grid, 1 km spacing, out to 10 km (F4 only).
