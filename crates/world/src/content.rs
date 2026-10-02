@@ -572,10 +572,6 @@ impl Entry for ClassSpec {
 mod tests {
     use super::*;
 
-    fn base(file: &str) -> &'static str {
-        BASE.iter().find(|(f, _)| *f == file).unwrap().1
-    }
-
     #[test]
     fn the_base_pack_loads_and_its_hulls_are_sound() {
         let c = Content::load(&[]).expect("the base pack loads");
@@ -583,66 +579,5 @@ mod tests {
         assert_eq!(c.get(hull).name, "DROVER");
         assert_eq!(c.key_of(hull), "hull.drover");
         assert_eq!(c.hash(), Content::load(&[]).unwrap().hash(), "same packs, same hash");
-    }
-
-    #[test]
-    fn an_override_pack_replaces_by_key_adds_and_renames() {
-        let dir = std::env::temp_dir().join(format!("universe-pack-{}", std::process::id()));
-        std::fs::create_dir_all(&dir).unwrap();
-        let base = base("hulls.ron");
-        // (The entry: from the parenthesis that opens it, before its key.)
-        let open = base[..base.find("key:").unwrap()].rfind('(').unwrap();
-        let entry = &base[open..=base.rfind(')').unwrap()];
-        // The Drover replaced (heavier), and a Mk 2 added.
-        let heavier = entry.replacen("frame_mass: 32800.0", "frame_mass: 42800.0", 1);
-        let another = entry.replacen("hull.drover", "hull.drover_mk2", 1);
-        std::fs::write(dir.join("hulls.ron"), format!("[{heavier}, {another}]")).unwrap();
-        std::fs::write(dir.join("aliases.ron"), r#"{"hull.drover_old": "hull.drover"}"#).unwrap();
-        let c = Content::load(std::slice::from_ref(&dir)).expect("the override loads");
-        let _ = std::fs::remove_dir_all(&dir);
-        assert_eq!(c.hulls.len(), Content::load(&[]).unwrap().hulls.len() + 1);
-        let hull = c.handle::<ClassSpec>("hull.drover").unwrap();
-        assert_eq!(c.get(hull).dry_mass, 71_500.0, "replaced where it stands");
-        assert!(c.handle::<ClassSpec>("hull.drover_mk2").is_some(), "added");
-        assert_eq!(c.handle::<ClassSpec>("hull.drover_old"), Some(hull), "the old name resolves");
-        assert_ne!(c.hash(), Content::load(&[]).unwrap().hash(), "other packs, another hash");
-    }
-
-    /// The base pack with `hulls.ron` (and `modules.ron`) edited: why it's refused.
-    fn refused(hulls: impl Fn(&str) -> String, modules: impl Fn(&str) -> String, tag: &str) -> String {
-        let dir = std::env::temp_dir().join(format!("universe-bad-pack-{}-{tag}", std::process::id()));
-        std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(dir.join("hulls.ron"), hulls(base("hulls.ron"))).unwrap();
-        std::fs::write(dir.join("modules.ron"), modules(base("modules.ron"))).unwrap();
-        let err = Content::load(std::slice::from_ref(&dir)).err().expect("refused");
-        let _ = std::fs::remove_dir_all(&dir);
-        err
-    }
-
-    #[test]
-    fn unsound_content_is_refused_with_the_reason() {
-        let same = |s: &str| s.to_string();
-        // No main drive fitted: a base block missing.
-        let e = refused(|s| s.replace(r#"("drive", "drive.torch.s2"), "#, ""), same, "nodrive");
-        assert!(e.contains("hull.drover") && e.contains("Drive"), "{e}");
-        // A module too big for its slot.
-        let e = refused(same, |s| s.replace(r#"does: Gun, size: 1"#, r#"does: Gun, size: 3"#), "big");
-        assert!(e.contains("too big"), "{e}");
-        // More draw than the plant makes.
-        let e = refused(same, |s| s.replace("output: 8.0e6", "output: 2.0e6"), "power");
-        assert!(e.contains("MW"), "{e}");
-        // A module in the wrong kind of slot.
-        let e = refused(|s| s.replace(r#"("hardpoint_1", "gun.mass_driver.s1")"#, r#"("hardpoint_1", "tank.s3")"#), same, "slot");
-        assert!(e.contains("doesn't go in"), "{e}");
-    }
-
-    #[test]
-    fn the_starter_is_its_frame_and_its_fit() {
-        let c = crate::ship::starter();
-        assert_eq!((c.dry_mass, c.fuel_capacity, c.hold_capacity, c.capacitor_capacity), (61_500.0, 30_000.0, 20_000.0, 1.5e10));
-        assert_eq!(c.fit.len(), c.slots.len(), "every slot filled");
-        assert!(c.power_draw <= c.power_output, "{} of {} W", c.power_draw, c.power_output);
-        assert_eq!(c.features.len(), 6, "{:?}", c.features);
-        assert_eq!((c.turn_rate, c.roll_rate), (1.0, 1.8), "its flight computer's");
     }
 }

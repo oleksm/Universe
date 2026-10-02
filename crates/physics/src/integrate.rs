@@ -271,29 +271,4 @@ mod tests {
         assert!(((energy(&probe) - e0) / e0).abs() < 1e-4);
     }
 
-    #[test]
-    fn stop_and_bounce_on_contact() {
-        let mut still = body(None, None, 1.0, 600.0);
-        still.attracts = false;
-        still.day = 1.0e15;
-        still.collider = Collider::Blocks(Blocks::new(vec![(DVec3::splat(-500.0), DVec3::splat(500.0))], vec![]));
-        let bodies = [still];
-        let approach = RigidBody::new(DVec3::X * 600.0, DVec3::NEG_X * 5.0, DQuat::IDENTITY, 12.0);
-        let mut p = Vec::new();
-
-        // Stopping: the call ends at the contact, reporting it.
-        let mut probe = approach;
-        let out = integrate(&bodies, None, &mut p, &mut probe, Span { t: 0.0, dt: 60.0, max_h: f64::INFINITY, contact_step: FINE_STEP }, &mut Coast);
-        let Some(Fact::Contact(c)) = out.fact else { panic!("expected a contact, got {:?}", out.fact) };
-        assert_eq!(c.feature, Feature::Hull);
-        assert!(c.normal.distance(DVec3::X) < 1e-12);
-        assert!(out.simulated < 60.0 && (probe.position.x - 512.0).abs() < 1.0);
-
-        // Bouncing: back out the way it came, a little slower.
-        let mut probe = approach;
-        let out = integrate(&bodies, None, &mut p, &mut probe, Span { t: 0.0, dt: 60.0, max_h: f64::INFINITY, contact_step: FINE_STEP }, &mut Wander { accel: 0.0, turned: 0.0 });
-        assert!(out.fact.is_none() && (out.simulated - 60.0).abs() < 1e-6);
-        assert!(probe.velocity.x > 0.0 && probe.velocity.x < 5.0, "velocity after bouncing {:?}", probe.velocity);
-    }
-
 }

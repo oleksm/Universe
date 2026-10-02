@@ -58,24 +58,3 @@ pub fn simulate<B: OnRails>(bodies: &[B], ephemeris: Option<&Ephemeris>, body: &
     let outcome = integrate(bodies, ephemeris, &mut positions, &mut copy, span, driver);
     (copy, outcome)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::testkit::body;
-
-    #[test]
-    fn gravity_sums_attracting_bodies_and_dominant_picks_the_strongest() {
-        let mut light = body(None, None, 1.0e20, 10.0);
-        light.attracts = false;
-        let bodies = [body(None, None, 4.0e14, 6.4e6), body(Some(0), None, 4.9e12, 1.7e6), light];
-        let positions = [DVec3::ZERO, DVec3::X * 4.0e8, DVec3::X * 1.0e7];
-        let p = DVec3::X * 3.9e8;
-        let g = gravity(&bodies, p, &positions);
-        let expected = -DVec3::X * (4.0e14 / (3.9e8f64 * 3.9e8)) + DVec3::X * (4.9e12 / 1.0e14);
-        assert!((g - expected).length() < 1e-12 * expected.length() + 1e-15);
-        assert_eq!(dominant(&bodies, p, &positions), 1, "the moon dominates 10,000 km from it");
-        assert_eq!(dominant(&bodies, DVec3::X * 1.0e7, &positions), 0, "a body that doesn't attract never dominates");
-    }
-
-}

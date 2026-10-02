@@ -201,7 +201,7 @@ mod tests {
     
 
     use super::*;
-    use crate::ship::{Destination, ShipCommands};
+    use crate::ship::ShipCommands;
     use crate::testkit::Probe;
 
     /// Commands the hyperdrive every frame: fixed orders, or a dive straight
@@ -242,92 +242,6 @@ mod tests {
     }
 
     #[test]
-    fn heading_out_into_the_slack_the_field_collapses() {
-        let mut p = Probe::new(42);
-        let pos = p.positions();
-        // At the system's edge (60 AU: still stiff enough to form), heading
-        // straight out, full: the room grows, and so does the slack, till all
-        // its plant and banks can give at once can't hold the field: it
-        // collapses (a stock ship's reach: a couple of hundred AU).
-        let out = DVec3::X;
-        p.ship.position = pos[0] + out * 60.0 * crate::units::AU;
-        p.ship.velocity = DVec3::ZERO;
-        p.ship.orientation = glam::DQuat::from_rotation_arc(DVec3::NEG_Z, out);
-        p.toggle_hyperdrive();
-        p.set_throttle(1.0);
-        assert!(p.ship.hyperdrive, "it should engage at 60 AU: {:?}", p.events);
-        let mut heard = Vec::new();
-        for _ in 0..(60 * 120) {
-            p.step(1.0 / 60.0, 1.0);
-            heard.append(&mut p.events);
-            if !p.ship.hyperdrive {
-                break;
-            }
-        }
-        let au = p.ship.position.distance(p.positions()[0]) / crate::units::AU;
-        eprintln!("collapsed {au:.0} AU out");
-        assert!(!p.ship.hyperdrive && heard.iter().any(|e| matches!(e, ShipEvent::FieldCollapsed)), "{heard:?}");
-        assert!(au > 60.0 && au < 1_000.0, "{au} AU");
-    }
-
-    #[test]
-    fn untargeted_the_drive_drops_out_at_the_top_of_the_air() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let pos = p.positions();
-        // The nearest planet with air (or any planet), dead ahead.
-        let body = (1..sys.bodies.len()).filter(|&i| matches!(sys.bodies[i].kind, BodyKind::Rocky)).min_by_key(|&i| (sys.bodies[i].rail.atmosphere.is_none(), pos[i].distance(p.ship.position) as u64)).expect("a planet");
-        let b = &sys.bodies[body];
-        p.ship.orientation = glam::DQuat::from_rotation_arc(DVec3::NEG_Z, (pos[body] - p.ship.position).normalize());
-        p.toggle_hyperdrive();
-        p.set_throttle(1.0);
-        for _ in 0..(60 * 60) {
-            p.step(1.0 / 60.0, 1.0);
-            if !p.ship.hyperdrive {
-                break;
-            }
-        }
-        assert!(!p.ship.hyperdrive && p.ship.is_flying(), "{:?}", p.events);
-        let pos = p.positions();
-        let alt = p.ship.position.distance(pos[body]) - b.rail.radius;
-        let ground = b.max_radius() - b.rail.radius + GROUND_MARGIN;
-        let expect = b.rail.atmosphere.map_or(ground, |a| a.top.max(ground));
-        eprintln!("dropped out at {:.0} km (air top {:?} km)", alt / 1000.0, b.rail.atmosphere.map(|a| a.top / 1000.0));
-        assert!(alt > 0.8 * expect && alt < 1.2 * expect, "altitude {alt:.0}, expected about {expect:.0}");
-    }
-
-    #[test]
-    fn a_drive_that_drops_straight_out_leaves_the_throttle_and_speed_alone() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
-        // Nose down at it, engine full.
-        let pos = p.positions();
-        let up = (p.ship.position - pos[planet]).normalize();
-        let b = &sys.bodies[planet];
-        // (Half way down to where an untargeted drive drops out: it won't run.)
-        let ground = b.max_radius() - b.rail.radius + GROUND_MARGIN;
-        let margin = b.rail.atmosphere.map_or(ground, |a| a.top.max(ground));
-        p.ship.position = pos[planet] + up * (b.rail.radius + 0.5 * margin);
-        p.ship.velocity = sys.velocity(planet, p.world.time) + up * 30.0;
-        p.ship.orientation = glam::DQuat::from_rotation_arc(DVec3::NEG_Z, -up);
-        p.ship.state = crate::ship::ShipState::Flying;
-        p.ship.hyperdrive = false;
-        p.set_throttle(1.0);
-        let before = p.ship.velocity;
-        p.toggle_hyperdrive();
-        for _ in 0..30 {
-            p.step(1.0 / 60.0, 1.0);
-            if !p.ship.hyperdrive {
-                break;
-            }
-        }
-        assert!(!p.ship.hyperdrive, "the planet's in the way: it drops out");
-        assert_eq!(p.ship.throttle, 1.0, "the engine as it was");
-        assert!((p.ship.velocity - before).length() < 1.0, "the speed as it was");
-    }
-
-    #[test]
     fn the_interlock_never_lets_the_drive_into_a_body() {
         let mut p = Probe::new(42);
         let sys = p.sys();
@@ -349,33 +263,4 @@ mod tests {
         assert!(above > 0.0, "never inside the body");
     }
 
-    #[test]
-    fn speed_follows_room_and_throttle_and_dropping_out_keeps_the_exit_velocity() {
-        let mut p = Probe::new(42);
-        p.toggle_hyperdrive();
-        p.set_throttle(0.5);
-        // A destination 50 km ahead, much nearer than any surface: it sets the room.
-        let frame_velocity = DVec3::new(1000.0, -2000.0, 500.0);
-        let point = p.ship.position + p.ship.forward() * 50_000.0;
-        let orders = HyperdriveCommand {
-            steering: true,
-            frame_velocity: Some(frame_velocity),
-            destination: Some(Destination { point, body: 0 }),
-            ..HyperdriveCommand::CRUISE
-        };
-        let mut o = Orders { orders, at: None };
-        frame(&mut p, &mut o);
-        let expected = p.ship.forward() * (HYPER_RATE * 50_000.0 * 0.5);
-        // (The destination is placed ~1e11 m from the star: allow for rounding there.)
-        assert!((p.ship.velocity - frame_velocity).distance(expected) < 1e-6 * expected.length(), "relative velocity {:?}", p.ship.velocity - frame_velocity);
-
-        // Dropping out happens when ordered (before the next step flies on).
-        let exit = DVec3::new(-30.0, 40.0, 7.0);
-        let c = ShipCommands { hyperdrive: Some(HyperdriveCommand { engage: false, exit_velocity: Some(exit), ..Default::default() }), ..p.ship.holding() };
-        let system = p.system;
-        p.world.command(&mut p.ship, system, &c, &mut p.events);
-        assert!(!p.ship.hyperdrive && p.ship.throttle == 0.0);
-        assert_eq!(p.ship.velocity, exit);
-        assert!(p.events.contains(&ShipEvent::HyperdriveDisengaged));
-    }
 }

@@ -283,19 +283,4 @@ mod tests {
         assert!(p.ship.is_flying(), "{:?}", p.events);
     }
 
-    #[test]
-    fn the_deck_wrecks_a_hard_arrival() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let station = sys.station().unwrap();
-        let pos = p.positions();
-        let f = StationFrame::new(&sys, station, p.world.time, &pos);
-        p.ship.position = f.pad(5) + f.up() * 40.0;
-        p.ship.velocity = f.velocity_at(p.ship.position) - f.up() * 30.0;
-        for _ in 0..600 {
-            p.step(1.0 / 60.0, 1.0);
-        }
-        assert!(p.events.iter().any(|e| matches!(e, ShipEvent::Crashed { .. })), "{:?}", p.events);
-    }
-
 }

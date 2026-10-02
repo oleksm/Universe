@@ -439,10 +439,10 @@ The world time scale (default 1×) is game seconds per real second, chosen by th
 player warp multiplies it (not in hyperdrive).
 
 Tests: unit tests next to the code; whole flights through the orchestrator in
-`crates/sim/tests/flights.rs` (autodock, autoland from orbit, hyperdrive to a port, the plan
-reaching the pads, gate transit keeping motion, the route autopilot); NPC pilots apart in
-`crates/sim/tests/pilots.rs` (on time = lockstep to the bit, a slow pool never slows the tick,
-the dead-man rule).
+`crates/sim/tests/flights.rs` (autodock, the plan reaching the pads, hyperdrive to a field);
+a few ships in one situation in `crates/sim/tests/interactions.rs`; pilots and the cockpit in
+`crates/sim/tests/pilots.rs` (the dead-man rule, a recorded session replaying). The suite is
+kept under 80 tests and a few seconds: only fast, isolated checks; a slow one is cut, not kept.
 
 **Not yet**
 

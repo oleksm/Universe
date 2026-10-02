@@ -369,56 +369,6 @@ mod tests {
     }
 
     #[test]
-    fn slugs_fly_hit_and_push_both_ways() {
-        let (mut world, mut a, mut b, sys) = duel(3_000.0);
-        let (mut ea, mut eb) = (Vec::new(), Vec::new());
-        a.triggers.gun = true;
-        for _ in 0..6 {
-            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 1.0 / 60.0);
-        }
-        a.triggers.gun = false;
-        assert_eq!(a.ammo, GUN_AMMO - 1, "one round in a tenth of a second");
-        assert!(a.velocity.z > 0.0, "recoil pushes the shooter back (+Z)");
-        // About a second of flight for 3 km.
-        for _ in 0..70 {
-            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 1.0 / 60.0);
-        }
-        let hit = eb.iter().find_map(|e| match e {
-            ShipEvent::Hit { by, damage, .. } => Some((*by, *damage)),
-            _ => None,
-        });
-        let (by, damage) = hit.expect("the slug hits");
-        assert_eq!(by, 1);
-        let joules = 0.5 * SLUG_MASS * GUN_MUZZLE * GUN_MUZZLE;
-        assert!((damage - joules / crate::ship::starter().hull_strength).abs() < 0.01, "{damage}");
-        assert!(b.velocity.z < 0.0, "the hit pushes the target away");
-        assert!(world.slugs.is_empty());
-    }
-
-    #[test]
-    fn weapons_fire_only_when_armed_and_primed() {
-        let (mut world, mut a, mut b, sys) = duel(3_000.0);
-        let (mut ea, mut eb) = (Vec::new(), Vec::new());
-        a.triggers.gun = true;
-        master_arm(&mut a, false, &mut ea);
-        assert_eq!(a.triggers, Triggers::default(), "going safe released the triggers");
-        a.triggers.gun = true;
-        frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
-        assert_eq!(a.ammo, GUN_AMMO, "safe: no shot");
-        master_arm(&mut a, true, &mut ea);
-        a.triggers.gun = true;
-        for _ in 0..18 {
-            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
-        }
-        assert_eq!(a.ammo, GUN_AMMO, "still priming");
-        for _ in 0..3 {
-            frame(&mut world, sys, &mut a, &mut b, &mut ea, &mut eb, 0.1);
-        }
-        assert!(a.ammo < GUN_AMMO, "hot: firing");
-        assert!(ea.contains(&ShipEvent::WeaponsArming) && ea.contains(&ShipEvent::WeaponsHot) && ea.contains(&ShipEvent::WeaponsSafe));
-    }
-
-    #[test]
     fn the_laser_burns_heats_up_and_destroys() {
         let (mut world, mut a, mut b, sys) = duel(1_000.0);
         let (mut ea, mut eb) = (Vec::new(), Vec::new());

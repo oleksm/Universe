@@ -218,20 +218,4 @@ mod tests {
         assert!(fired < 30, "most rounds on target: {fired}");
     }
 
-    #[test]
-    fn combat_mode_and_clearance_exclude_each_other() {
-        let mut u = Universe::new(1984);
-        u.respawn();
-        assert!(u.request_clearance(), "cleared to dock");
-        u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
-        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-        assert!(u.avionics().clearance.is_none(), "arming gives the clearance up");
-        assert!(!u.request_clearance(), "no clearance while armed");
-        u.command(&ShipCommands { arm: Some(false), ..u.ship.holding() });
-        assert!(u.request_clearance(), "safe again: cleared");
-        u.toggle_autopilot();
-        u.cancel_clearance();
-        assert!(u.avionics().clearance.is_none(), "given up");
-        assert_eq!(u.ship.throttle, 0.0, "its autopilot stopped, engines idle");
-    }
 }

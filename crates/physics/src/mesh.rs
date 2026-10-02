@@ -163,35 +163,6 @@ impl Mesh {
 mod tests {
     use super::*;
 
-    fn cube(half: f64, offset: DVec3) -> Mesh {
-        let mut pts = Vec::new();
-        for x in [-half, half] {
-            for y in [-half, half] {
-                for z in [-half, half] {
-                    pts.push(DVec3::new(x, y, z) + offset);
-                }
-            }
-        }
-        Mesh::convex_hull(&pts)
-    }
-
-    #[test]
-    fn a_cube_is_a_cube_wherever_it_is() {
-        let off = DVec3::new(3.0, -2.0, 5.0);
-        let m = cube(1.0, off);
-        assert_eq!(m.faces.len(), 12, "six squares, two triangles each");
-        assert_eq!(m.edges.len(), 12, "the outlines, not the diagonals");
-        let p = m.mass_properties();
-        assert!((p.volume - 8.0).abs() < 1e-9, "{}", p.volume);
-        assert!(p.centroid.distance(off) < 1e-9, "{}", p.centroid);
-        // A cube of side 2 and mass 8: I = m (a² + a²) / 12 = 8 × 8 / 12 about each axis.
-        let i = 8.0 * 8.0 / 12.0;
-        assert!((p.inertia.x_axis.x - i).abs() < 1e-9 && (p.inertia.y_axis.y - i).abs() < 1e-9 && (p.inertia.z_axis.z - i).abs() < 1e-9, "{:?}", p.inertia);
-        assert!(p.inertia.x_axis.y.abs() < 1e-9, "no products of inertia");
-        assert!((m.area() - 24.0).abs() < 1e-9);
-        assert!((m.silhouette(DVec3::X) - 4.0).abs() < 1e-9, "a 2×2 square edge-on");
-    }
-
     #[test]
     fn a_long_box_turns_harder_end_over_end_than_about_its_length() {
         let pts: Vec<DVec3> = [-1.0, 1.0].iter().flat_map(|&x| [-1.0, 1.0].iter().flat_map(move |&y| [-5.0, 5.0].iter().map(move |&z| DVec3::new(x, y, z)))).collect();

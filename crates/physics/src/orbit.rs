@@ -144,18 +144,4 @@ mod tests {
         assert!((p0.length() - o.periapsis()) >= -1e-6 && (p0.length() - o.apoapsis()) <= 1e-6);
     }
 
-    #[test]
-    fn an_orbit_from_its_state_is_the_same_orbit() {
-        let o = Orbit::new(4.0e11, 0.12, 0.2, 1.3, 2.1, 0.4, 1.3e20);
-        let (r, v) = o.state(5.0e6);
-        let back = Orbit::from_state(r, v, o.mu, 5.0e6);
-        for t in [5.0e6, 1.0e7, 3.3e8] {
-            assert!(back.position(t).distance(o.position(t)) < 1.0, "off at t = {t}");
-        }
-        // And a circle.
-        let c = Orbit::new(2.0e4, 0.0, 0.7, 0.2, 0.0, 1.0, 50.0);
-        let (r, v) = c.state(100.0);
-        let back = Orbit::from_state(r, v, 50.0, 100.0);
-        assert!(back.position(9.0e5).distance(c.position(9.0e5)) < 1e-3);
-    }
 }

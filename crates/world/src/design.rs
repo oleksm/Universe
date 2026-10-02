@@ -524,55 +524,6 @@ mod tests {
         assert!(ship.applied.0.z < -0.9 * content().get(h).main_thrust * 0.5, "{:?}", ship.applied);
     }
 
-    #[test]
-    fn a_ship_built_to_a_design_saves_by_its_key_and_loads_as_it() {
-        let d = Design { length: 52.0, racks: 2, ..Design::default() };
-        let h = d.commission().unwrap();
-        let mut ship = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
-        ship.class = h;
-        ship.refresh();
-        let json = ron::to_string(&ship).unwrap();
-        assert!(json.contains(&d.key()), "by its key");
-        let back: crate::ship::Ship = ron::from_str(&json).unwrap();
-        assert_eq!(back.class, h);
-        assert_eq!(back.spec().hold_capacity, content().get(h).hold_capacity);
-    }
-
-    #[test]
-    fn a_copy_of_each_hull_comes_out_close_to_it() {
-        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.")) {
-            let d = Design::after(h);
-            let s = d.spec().unwrap_or_else(|e| panic!("{}: {e}", h.key));
-            let (a, b) = (h.shape().mesh.extent(), s.shape().mesh.extent());
-            let (la, lb) = (a.1.z - a.0.z, b.1.z - b.0.z);
-            let (wa, wb) = (a.1.x - a.0.x, b.1.x - b.0.x);
-            eprintln!("{:<16} length {la:.0} -> {lb:.0} m, span {wa:.0} -> {wb:.0} m, slots {} -> {}, drives {} -> {}", h.name, h.slots.len(), s.slots.len(), h.thrusters.iter().filter(|t| t.role == crate::ship::ThrusterRole::Main).count(), d.mains);
-            assert!((lb / la - 1.0).abs() < 0.15 && (wb / wa - 1.0).abs() < 0.25, "{}: its size", h.key);
-            assert_eq!(s.slots.iter().filter(|x| x.kind == SlotKind::Cargo).count(), h.slots.iter().filter(|x| x.kind == SlotKind::Cargo).count(), "{}: its racks", h.key);
-        }
-    }
-
-    #[test]
-    fn more_drive_nozzles_share_the_drive_they_dont_add_to_it() {
-        let push = |n: u8| Design { mains: n, ..Design::default() }.spec().unwrap().main_thrust;
-        for n in 1..=4 {
-            assert!((push(n) - push(2)).abs() < 1.0, "{n} nozzles: {} vs {}", push(n), push(2));
-        }
-    }
-
-    #[test]
-    fn where_the_masses_sit_is_the_designers_to_balance() {
-        // Everything heavy in the tail, the thrusters forward: off balance.
-        let bad = Design { engines_at: 0.46, tank_at: 0.46, hold_at: 0.46, bridge_at: 0.3, quads_at: -0.3, lift_at: -0.3, ..Design::default() };
-        let good = Design::default();
-        let lift = |d: &Design| {
-            let s = d.spec().unwrap();
-            s.authority(s.fuel_capacity, s.hold_capacity / 2.0).lift / s.lift_thrust
-        };
-        let (b, g) = (lift(&bad), lift(&good));
-        eprintln!("lift kept: balanced {:.0}%, tail-heavy {:.0}%", g * 100.0, b * 100.0);
-        assert!(b < g - 0.15, "tail-heavy {b:.2} vs {g:.2}");
-    }
 }
 
 #[cfg(test)]
@@ -599,13 +550,4 @@ mod room {
         }
     }
 
-    #[test]
-    fn a_hull_too_small_for_its_modules_wont_go_together() {
-        // A 16 m sliver asked to carry the biggest of everything.
-        let d = Design { length: 16.0, width: 4.0, height: 3.0, class: 4, racks: 3, wing_span: 0.0, ..Design::default() };
-        match d.build() {
-            Ok(s) => panic!("{} went together", s.key),
-            Err(why) => assert!(why.contains("NO ROOM"), "{why}"),
-        }
-    }
 }

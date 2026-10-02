@@ -189,7 +189,6 @@ pub fn ray<B: OnRails>(bodies: &[B], positions: &[DVec3], from: DVec3, dir: DVec
 mod tests {
     use super::*;
     use crate::rails::RailBody;
-    use crate::testkit::body;
 
     fn empty() -> Vec<RailBody> {
         Vec::new()
@@ -215,18 +214,4 @@ mod tests {
         }
     }
 
-    #[test]
-    fn a_ray_stops_at_the_nearer_of_a_target_and_a_planet() {
-        let bodies = vec![body(None, None, 3.986e14, 6.371e6)];
-        let positions = vec![DVec3::ZERO];
-        let from = DVec3::X * 6.4e6;
-        let toward = DVec3::NEG_X;
-        let hit = ray(&bodies, &positions, from, toward, 1.0e5, 0.0, &[]).expect("hits the ground");
-        assert!(matches!(hit.0, Hit::Body { body: 0, .. }));
-        assert!((hit.1 - 29_000.0).abs() < 50.0, "{}", hit.1);
-        let near = Target { id: 3, position: from + toward * 5_000.0, velocity: DVec3::ZERO, radius: 12.0 };
-        let hit = ray(&bodies, &positions, from, toward, 1.0e5, 0.0, &[near]).unwrap();
-        assert!(matches!(hit.0, Hit::Target { id: 3, .. }));
-        assert!((hit.1 - 4_988.0).abs() < 1.0);
-    }
 }

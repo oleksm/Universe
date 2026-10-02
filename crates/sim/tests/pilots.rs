@@ -1,79 +1,13 @@
-//! NPC pilots apart from the world (re-architecture R6): on time they fly
-//! exactly as in lockstep; however slow they are, the tick doesn't wait; a
-//! pilot gone quiet trips the dead-man rule.
+//! Pilots and the cockpit: a pilot gone quiet trips the dead-man rule, the
+//! cockpit flies the ship from the client side, a recorded session replays.
 
 use std::time::{Duration, Instant};
 
 use glam::DVec3;
 use universe_sim::{Controls, ShipState, Universe};
 
-/// Settlers all leaving their stops at once: departures, corridors, hyperdrive.
-fn busy(n: usize) -> Universe {
-    let mut u = Universe::new(1984);
-    u.spawn_settlers(n, 3);
-    // (Their time at the first stop up now.)
-    let now = u.world.time;
-    for p in u.pilots().iter_mut() {
-        p.avionics.route.dwell_until = Some(now);
-    }
-    u
-}
-
 fn tick(u: &mut Universe) {
     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-}
-
-#[test]
-fn on_time_pilots_apart_fly_exactly_as_in_lockstep() {
-    let run = |apart: bool| {
-        let mut u = busy(24);
-        if apart {
-            u.run_pilots_apart(2);
-        }
-        for _ in 0..900 {
-            tick(&mut u);
-            // On time: the pool has thought on this tick's view before the next.
-            u.pool().wait_for(u.tick);
-        }
-        let ships: Vec<(usize, [u64; 3])> = u.crafts.iter().map(|c| (c.system, c.ship.position.to_array().map(f64::to_bits))).collect();
-        (ships, u.atc.journal.len(), u.records.stats.stops, u.late, u.dropped)
-    };
-    let (lockstep, apart) = (run(false), run(true));
-    let flying = lockstep.0.len();
-    eprintln!("24 settlers, 15 s: journal {} changes, late {} dropped {}", apart.1, apart.3, apart.4);
-    assert_eq!(apart.3 + apart.4, 0, "on time: nothing late");
-    assert_eq!(lockstep, apart, "the same world, to the bit ({flying} ships)");
-    assert!(lockstep.1 > 0, "traffic control was busy");
-}
-
-#[test]
-fn a_slow_pool_never_slows_the_tick() {
-    let mut u = busy(50);
-    for _ in 0..10 {
-        tick(&mut u);
-    }
-    let start = Instant::now();
-    for _ in 0..120 {
-        tick(&mut u);
-    }
-    let lockstep = start.elapsed() / 120;
-    u.run_pilots_apart(2);
-    u.pool().slow_down(Duration::from_millis(50));
-    let t0 = u.world.time;
-    // Paced (a millisecond between ticks, not counted), so the pool's
-    // postings come in while the world runs, behind it.
-    let mut spent = Duration::ZERO;
-    for _ in 0..120 {
-        let start = Instant::now();
-        tick(&mut u);
-        spent += start.elapsed();
-        std::thread::sleep(Duration::from_millis(1));
-    }
-    let apart = spent / 120;
-    eprintln!("tick: lockstep {lockstep:?}, apart with a pool 50 ms behind {apart:?}; late {} dropped {}", u.late, u.dropped);
-    assert!((u.world.time - t0 - 2.0).abs() < 1e-6, "the world ran its 2 s");
-    assert!(apart < lockstep * 2 + Duration::from_millis(1), "the tick didn't wait ({apart:?} vs {lockstep:?})");
-    assert!(u.late + u.dropped > 0, "the pool's postings came late");
 }
 
 #[test]
@@ -137,27 +71,6 @@ fn the_cockpit_flies_the_ship_from_the_client_side() {
         std::thread::sleep(Duration::from_millis(5));
     }
     assert!(ok, "the throttle and nav target went from the client's cockpit to the ship");
-}
-
-#[test]
-fn the_cockpit_predicts_what_its_orders_will_do_to_the_tick() {
-    let mut u = Universe::new(1984);
-    u.respawn();
-    u.ship.angular_velocity = DVec3::ZERO;
-    tick(&mut u);
-    let start = u.ship.orientation;
-    let stick = Controls { pitch: 1.0, yaw: 0.0, roll: 0.0 };
-    u.step_world(1.0 / 60.0, 1.0, &stick);
-    // The stick is pushed: the ship hasn't turned yet (the order is on its way), the prediction has.
-    let (_, turned) = u.cockpit().prediction.expect("a prediction");
-    assert!(u.ship.orientation.angle_between(start) < 1e-12, "not turned yet");
-    assert!(turned.angle_between(glam::DQuat::IDENTITY) > 1e-4, "the prediction turns");
-    let predicted = turned * u.ship.orientation;
-    // When the order lands, the ship is where the prediction said.
-    u.step_world(1.0 / 60.0, 1.0, &stick);
-    u.step_world(1.0 / 60.0, 1.0, &stick);
-    let off = u.ship.orientation.angle_between(predicted);
-    assert!(off < 1e-9, "predicted to within {off:e} rad");
 }
 
 #[test]

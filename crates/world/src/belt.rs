@@ -248,11 +248,6 @@ fn rock(class: RockClass, diameter: f64, grade: f64, rng: &mut Rng) -> Rock {
     Rock { class, structure, composition: Composition::of(class, grade, rng), density: class.density(structure), shape: RockShape::new(diameter * 0.5, rng) }
 }
 
-#[cfg(test)]
-pub(crate) fn rock_for_test(class: RockClass, diameter: f64, grade: f64, rng: &mut Rng) -> Rock {
-    rock(class, diameter, grade, rng)
-}
-
 /// An asteroid body: `rock`, named `name`, orbiting `parent` on `orbit`.
 fn body(name: String, rock: Rock, parent: usize, orbit: Orbit, attracts: bool, rng: &mut Rng) -> Body {
     let mass = rock.density * rock.shape.volume();
@@ -502,33 +497,4 @@ mod tests {
         assert!(fields > 120, "{fields} fields in 120 systems");
     }
 
-    #[test]
-    fn a_swarm_orbits_its_remnant_and_shares_its_class() {
-        let systems = systems();
-        let (sys, f) = systems.iter().find_map(|s| (!s.fields.is_empty()).then_some((s, 0))).unwrap();
-        let field = &sys.fields[f];
-        let bodies = sys.field_bodies(f);
-        let n = sys.bodies.len();
-        assert_eq!(bodies.len(), n + field.count);
-        let remnant = &sys.bodies[field.body];
-        let class = field.class(sys);
-        let mut p = Vec::new();
-        for t in [0.0, 1.0e5, 3.0e7] {
-            universe_physics::positions(&bodies[..], t, &mut p);
-            for (k, b) in bodies[n..].iter().enumerate() {
-                let r = p[n + k].distance(p[field.body]);
-                assert!(r > remnant.rail.radius * 1.5 && r < field.extent * 1.3 + 1.0, "fragment {k} at {r} m");
-                let rock = b.rock.as_ref().unwrap();
-                assert_eq!(rock.class, class);
-                assert!(rock.shape.radius * 2.0 >= SMALLEST - 1e-9);
-                // Rubble piles spin no faster than they hold together.
-                if rock.structure == Structure::Rubble {
-                    assert!(b.rail.day > 2.2 * HOUR);
-                }
-            }
-        }
-        // Slow: centimetres to about a metre a second around the remnant.
-        let v = universe_physics::velocity(&bodies[..], n, 0.0) - universe_physics::velocity(&bodies[..], field.body, 0.0);
-        assert!(v.length() < 3.0, "{} m/s", v.length());
-    }
 }

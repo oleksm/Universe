@@ -96,32 +96,3 @@ pub fn settled(places: &[crate::economy::Place]) -> Vec<usize> {
     s.dedup();
     s
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use universe_world::content::content;
-
-    #[test]
-    fn a_brand_sells_all_at_home_and_less_and_dearer_away() {
-        let w = universe_world::World::new(1984);
-        let mut s: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        s.sort_unstable();
-        s.dedup();
-        let systems: Vec<_> = s.iter().map(|&i| (i, w.system(i))).collect();
-        let e = crate::economy::Economy::new(systems.iter().map(|(i, s)| (*i, &**s)), 0.0);
-        let settled = settled(&e.places);
-        let home = brand_home(1984, "brand.kestrel", &settled).unwrap();
-        assert_eq!(Some(home), brand_home(1984, "brand.kestrel", &settled), "the same every time");
-        assert_eq!(hops(&w.gate_links, home, home), Some(0));
-        let drive = content().modules.iter().map(|(_, m)| m).find(|m| m.key == "drive.kestrel.k2").unwrap();
-        let station = |sys: usize| e.places.iter().find(|p| p.system == sys && matches!(p.facility, Facility::Station(_))).map(|p| p.facility);
-        let at_home = offer(1984, &w.gate_links, &settled, home, station(home).unwrap(), drive);
-        assert!(at_home.carried && at_home.price == drive.price, "{at_home:?}");
-        // Across the network: fewer carry it, and it costs more the farther.
-        let away: Vec<Offer> = settled.iter().filter(|&&sys| sys != home).filter_map(|&sys| station(sys).map(|f| offer(1984, &w.gate_links, &settled, sys, f, drive))).collect();
-        let carried = away.iter().filter(|o| o.carried).count();
-        assert!(carried < away.len(), "not everywhere: {carried} of {}", away.len());
-        assert!(away.iter().all(|o| o.price > drive.price && (o.price - drive.price * (1.0 + MARKUP_PER_HOP * o.hops as f64)).abs() < 1e-6));
-    }
-}

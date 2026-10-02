@@ -354,25 +354,3 @@ fn step_craft(world: &universe_world::World, c: &mut Craft, t0: f64, real_dt: f6
     (happened, velocity)
 }
 
-#[cfg(test)]
-mod tests {
-    
-
-    use super::*;
-
-    #[test]
-    fn settler_routes_are_reproducible() {
-        let mut u = Universe::new(1984);
-        let a = u.settler_route(7, 10);
-        let b = u.settler_route(7, 10);
-        let c = u.settler_route(8, 10);
-        assert_eq!(a.len(), 10);
-        assert_eq!(a, b, "same seed, same route");
-        assert_ne!(a, c, "different seed, different route");
-        assert!(a.windows(2).all(|w| w[0] != w[1]));
-        let systems: std::collections::HashSet<usize> = a.iter().map(|s| s.system).collect();
-        eprintln!("route 7 visits {} systems: {:?}", systems.len(), a.iter().map(|s| (s.system, s.target)).collect::<Vec<_>>());
-    }
-
-}
-

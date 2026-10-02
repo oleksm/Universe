@@ -33,10 +33,7 @@ fn no_ship_today_can_cross_between_stars() {
         let per_kg = most / (h.dry_mass + h.fuel_capacity * 0.1);
         assert!(per_kg < wall(), "{} could hold a field between stars: {:.0} W/kg against the wall of {:.0}", h.key, per_kg, wall());
     }
-}
-
-#[test]
-fn not_even_a_ship_all_reactor() {
+    // Not even a ship that's all reactor.
     let (_, density) = best_plant();
     assert!(density < wall(), "a ship that's all reactor makes {density:.0} W/kg: past the wall of {:.0}", wall());
 }
@@ -82,11 +79,7 @@ fn the_sheets_are_whole() {
         assert!(!e.note.is_empty(), "{} has no reason", e.name);
         assert!(e.value.is_finite(), "{}", e.name);
     }
-}
-
-#[test]
-fn dogma_names_no_material() {
-    // (The laws are nature's and the hyper layer's: no fuels, no devices.)
+    // Dogma names no material (the laws are nature's and the hyper layer's: no fuels, no devices).
     for e in universe_physics::laws::SHEET {
         for word in ["FUEL", "DEUTERIUM", "HELIUM", "URANIUM", "METHALOX", "REACTOR", "CAPACITOR", "EXHAUST"] {
             assert!(!e.name.contains(word), "Dogma's laws name {}: that's the world's", e.name);

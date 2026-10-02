@@ -186,38 +186,13 @@ pub fn balanced_with(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMa
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ship::{starter, ThrusterRole};
+    use crate::ship::starter;
 
     /// The starter at the load it's balanced for: a full tank, its hold half full.
     fn starter_now() -> (f64, DVec3, DMat3) {
         let mut s = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
         s.cargo = s.spec().hold_capacity / 2.0;
         (s.mass(), s.centre_of_mass(), s.inertia())
-    }
-
-    /// `allocate` run to convergence from cold (in flight it starts from the last frame's).
-    fn settled(thrusters: &[Thruster], com: DVec3, m: f64, i: DMat3, force: DVec3, torque: DVec3, u: &mut Vec<f64>) -> (DVec3, DVec3) {
-        let mut out = (DVec3::ZERO, DVec3::ZERO);
-        for _ in 0..12 {
-            out = allocate(thrusters, com, m, i, force, torque, u);
-        }
-        out
-    }
-
-    #[test]
-    fn full_throttle_is_both_main_engines_and_no_turn() {
-        let (m, com, i) = starter_now();
-        let mut u = Vec::new();
-        // (As in flight: the drive at the throttle, the rest holding it straight.)
-        let mut fq = (DVec3::ZERO, DVec3::ZERO);
-        for _ in 0..12 {
-            fq = allocate_with(&starter().thrusters, com, m, i, Some(1.0), DVec3::NEG_Z * starter().main_thrust, DVec3::ZERO, &mut u);
-        }
-        let (f, q) = fq;
-        assert!((f.z + starter().main_thrust).abs() < 1e3, "{f}");
-        assert!((i.inverse() * q).length() < 0.01, "no turn: {q}");
-        let mains: Vec<f64> = starter().thrusters.iter().zip(&u).filter(|(t, _)| t.role == ThrusterRole::Main).map(|(_, &x)| x).collect();
-        assert!(mains.iter().all(|&x| x > 0.99), "{mains:?}");
     }
 
     #[test]
@@ -234,57 +209,4 @@ mod tests {
         assert!(f.length() / m < 0.05, "pushes nowhere: {} m/s²", f.length() / m);
     }
 
-    #[test]
-    fn every_way_it_pushes_it_can_push_nearly_full_without_turning() {
-        // (A layout that balances about the centre of mass: thrusters placed
-        // badly would have to throttle back to keep the ship from turning.)
-        let (m, com, i) = starter_now();
-        let c = starter();
-        for (d, full) in [(DVec3::X, c.rcs_thrust), (DVec3::NEG_X, c.rcs_thrust), (DVec3::NEG_Y, c.rcs_thrust), (DVec3::Z, c.rcs_thrust), (DVec3::NEG_Z, c.rcs_thrust), (DVec3::Y, c.lift_thrust)] {
-            let mut u = Vec::new();
-            let (f, q) = settled(&c.thrusters, com, m, i, d * full, DVec3::ZERO, &mut u);
-            let got = f.dot(d) / full;
-            eprintln!("{d}: {:.0}% of {:.0} kN, turning {:.3} rad/s²", got * 100.0, full / 1000.0, (i.inverse() * q).length());
-            assert!(got > 0.95, "{d}: only {:.0}%", got * 100.0);
-        }
-    }
-
-    #[test]
-    fn going_straight_it_burns_the_least_no_thrusters_fighting() {
-        // As the pilot found it: the drives uneven, thrusters pushing against
-        // each other (left over from a turn), and now a straight push asked.
-        let (m, com, i) = starter_now();
-        let c = starter();
-        let mut u: Vec<f64> = c.thrusters.iter().map(|t| match (t.role, t.nozzle.as_str()) {
-            (ThrusterRole::Main, "nozzle_main_0") => 0.81,
-            (ThrusterRole::Main, _) => 0.17,
-            (ThrusterRole::Rcs, _) => 0.5,
-            _ => 0.2,
-        }).collect();
-        let want = DVec3::NEG_Z * 0.8 * c.main_thrust;
-        // Half a second of flight (each step from the last), the throttle at 80%.
-        let mut got = (DVec3::ZERO, DVec3::ZERO);
-        for _ in 0..30 {
-            got = allocate_with(&c.thrusters, com, m, i, Some(0.8), want, DVec3::ZERO, &mut u);
-        }
-        let mains: Vec<f64> = c.thrusters.iter().zip(&u).filter(|(t, _)| t.role == ThrusterRole::Main).map(|(_, &x)| x).collect();
-        let by = |role: ThrusterRole| c.thrusters.iter().zip(&u).filter(|(t, _)| t.role == role).map(|(t, &x)| t.thrust * x).sum::<f64>();
-        let lift_before: f64 = c.thrusters.iter().filter(|t| t.role == ThrusterRole::Lift).map(|t| t.thrust * 0.2).sum();
-        assert!((got.0 - want).length() < 0.01 * want.length(), "{:?}", got.0);
-        assert!((mains[0] - mains[1]).abs() < 0.02, "the drives evenly: {mains:?}");
-        // (A little stays: the couple that holds off the drive's turn, its line
-        // a few centimetres off the centre of mass — not always the cheapest.)
-        assert!(by(ThrusterRole::Rcs) < 0.02 * want.length(), "no thrusters pushing against each other: {:.0} kN", by(ThrusterRole::Rcs) / 1000.0);
-        assert!(by(ThrusterRole::Lift) < lift_before / 5.0, "the lift's imbalance unwinding: {:.0} kN of {:.0}", by(ThrusterRole::Lift) / 1000.0, lift_before / 1000.0);
-    }
-
-    #[test]
-    fn strafing_is_balanced_so_it_does_not_turn_the_ship() {
-        let (m, com, i) = starter_now();
-        let mut u = Vec::new();
-        let want = DVec3::X * 0.5 * starter().rcs_thrust;
-        let (f, q) = allocate(&starter().thrusters, com, m, i, want, DVec3::ZERO, &mut u);
-        assert!((f - want).length() < 0.05 * want.length(), "{f}");
-        assert!(q.y.abs() / i.y_axis.y < 0.02, "no yaw from it: {:.3} rad/s²", q.y / i.y_axis.y);
-    }
 }

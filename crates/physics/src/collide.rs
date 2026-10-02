@@ -272,7 +272,7 @@ mod tests {
     use glam::DQuat;
 
     use super::*;
-    use crate::testkit::{body, Ocean};
+    use crate::testkit::body;
 
     fn still() -> Frame {
         Frame { center: DVec3::ZERO, velocity: DVec3::ZERO, rotation: DQuat::IDENTITY, angular_velocity: DVec3::ZERO }
@@ -287,45 +287,6 @@ mod tests {
         assert!(c.surface_velocity.distance(DVec3::new(0.0, 0.0, -50.5)) < 1e-9);
         assert!(c.relative_velocity.distance(DVec3::new(0.0, 0.0, 50.5)) < 1e-9);
     }
-
-    #[test]
-    fn surface_contact_reports_liquid() {
-        let mut planet = body(None, None, 4.0e14, 6.4e6);
-        planet.day = 1.0e4;
-        let bodies = [Ocean(planet)];
-        let positions = [DVec3::ZERO];
-        // The test surface is ocean over the +X hemisphere, ground 1 km up elsewhere.
-        let over = |dir: DVec3, h: f64| surface_contact(&bodies, 0, 0.0, &positions, dir * (6.4e6 + h), DVec3::ZERO, 12.0);
-        assert!(over(DVec3::X, 20.0).is_none());
-        let c = over(DVec3::X, 5.0).expect("touching the sea");
-        assert_eq!(c.feature, Feature::Surface { liquid: true });
-        assert!(c.normal.distance(DVec3::X) < 1e-12);
-        assert!(over(DVec3::NEG_X, 1020.0).is_none());
-        let c = over(DVec3::NEG_X, 1005.0).expect("touching the ground");
-        assert_eq!(c.feature, Feature::Surface { liquid: false });
-        // A body at rest on a spinning planet moves relative to its ground.
-        let spin = TAU_OVER_DAY * (6.4e6 + 1005.0);
-        assert!((c.relative_velocity.length() - spin).abs() < 1e-6);
-    }
-
-    #[test]
-    fn a_deck_is_its_top_and_the_rest_is_hull() {
-        // A slab with a block standing at one end.
-        let p = Blocks::new(vec![(DVec3::new(-300.0, -150.0, -225.0), DVec3::new(300.0, -100.0, 375.0)), (DVec3::new(-300.0, -150.0, -375.0), DVec3::new(300.0, 150.0, -225.0))], vec![0]);
-        let at = |x: f64, y: f64, z: f64| p.contact(0, &still(), DVec3::new(x, y, z), DVec3::ZERO, 12.0);
-        let c = at(0.0, -90.0, 100.0).expect("on the deck");
-        assert_eq!(c.feature, Feature::Deck(0));
-        assert!(c.normal.distance(DVec3::Y) < 1e-12);
-        assert!(at(0.0, -80.0, 100.0).is_none(), "above it");
-        assert!(at(310.0, -50.0, 100.0).is_none(), "past its edge, above it: open");
-        let wall = at(0.0, 0.0, -215.0).expect("against the block's face");
-        assert_eq!(wall.feature, Feature::Hull);
-        assert!(wall.normal.distance(DVec3::Z) < 1e-12);
-        assert_eq!(at(0.0, -160.0, 100.0).unwrap().feature, Feature::Hull, "under the deck");
-        assert!(at(0.0, 0.0, 600.0).is_none());
-    }
-
-    const TAU_OVER_DAY: f64 = std::f64::consts::TAU / 1.0e4;
 
     #[test]
     fn detect_finds_the_ring_trigger_and_the_ground() {

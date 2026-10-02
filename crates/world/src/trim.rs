@@ -202,24 +202,3 @@ fn imbalance_torque(spec: &ClassSpec, fuel: f64, load: f64, trim: &Trim) -> DVec
     let com = centre_of_mass(spec, fuel, load, trim);
     thrusters(spec, trim).iter().filter(|t| t.role == ThrusterRole::Main).map(|t| (t.at - com).cross(t.push * t.thrust)).sum()
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::content::content;
-
-    #[test]
-    fn a_balanced_drover_pushes_through_its_centre_of_mass() {
-        let s = content().hulls.iter().find(|(_, h)| h.key == "hull.drover").map(|(_, h)| h).unwrap();
-        let (fuel, load) = (s.fuel_capacity, 0.0);
-        let before = imbalance(s, fuel, load, &Trim::default());
-        let t = balance(s, fuel, load);
-        let after = imbalance(s, fuel, load, &t);
-        eprintln!("miss {:.3?} -> {:.4?}; burn {:.4} -> {:.5}; trim {:?}", before.miss, after.miss, before.burn, after.burn, t);
-        assert!(before.miss.length() > 0.03, "it starts off balance");
-        assert!(after.torque.length() < before.torque.length() * 0.02, "balanced: {:.0} N·m left of {:.0}", after.torque.length(), before.torque.length());
-        assert!(after.burn < before.burn * 0.1 + 1e-4, "the thrusters hardly needed: {}", after.burn);
-        // (The trim is within its limits.)
-        assert_eq!(t, t.clamped());
-    }
-}

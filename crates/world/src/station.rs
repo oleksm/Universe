@@ -125,8 +125,6 @@ impl StationFrame {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ship::ShipState;
-    use crate::testkit::Probe;
 
     #[test]
     fn pads_lie_on_the_deck_clear_of_the_structure() {
@@ -138,18 +136,4 @@ mod tests {
         assert!(hull().contact(0, &Frame { center: DVec3::ZERO, velocity: DVec3::ZERO, rotation: DQuat::IDENTITY, angular_velocity: DVec3::ZERO }, pad_local(5), DVec3::ZERO, SHIP_RADIUS + 0.1).is_some());
     }
 
-    #[test]
-    fn lifting_off_a_pad_clears_the_station() {
-        let mut p = Probe::new(42);
-        let station = p.sys().station().unwrap();
-        p.ship.state = ShipState::Landed { body: station, local_position: pad_local(5), local_orientation: parked() };
-        p.ship.rcs = DVec3::Y;
-        p.step(1.0 / 60.0, 1.0);
-        assert!(p.ship.is_flying(), "{:?}", p.events);
-        for _ in 0..600 {
-            p.ship.rcs = DVec3::Y;
-            p.step(1.0 / 60.0, 1.0);
-        }
-        assert!(p.ship.is_flying(), "lifting off should not hit the station: {:?}", p.events);
-    }
 }

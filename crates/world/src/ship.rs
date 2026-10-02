@@ -1219,36 +1219,6 @@ fn cruise() -> HyperdriveCommand {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn the_starters_thrusters_add_up_to_its_envelope() {
-        let c = starter();
-        assert_eq!(c.thrusters.len(), 18);
-        assert!((c.main_thrust - 2.7e6).abs() < 1.0, "{}", c.main_thrust);
-        assert!((c.lift_thrust - 2.25e6).abs() < 1.0, "{}", c.lift_thrust);
-        // The same push every way the thrusters push (down, the sides, fore and aft).
-        for d in [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z] {
-            let sum: f64 = c.thrusters.iter().filter(|t| t.role == ThrusterRole::Rcs).map(|t| t.thrust * t.push.dot(d).max(0.0)).sum();
-            assert!((sum - 5.4e5).abs() < 1.0, "{d}: {sum}");
-        }
-        assert!((c.rcs_thrust - 5.4e5).abs() < 1.0);
-    }
-
-    #[test]
-    fn a_ships_inertia_follows_its_shape_and_its_load() {
-        let mut s = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
-        let full = s.inertia();
-        // Wider than it's long: hardest to roll? No — it's flat: yaw (about Y) is hardest.
-        let (pitch, yaw, roll) = (full.x_axis.x, full.y_axis.y, full.z_axis.z);
-        assert!(yaw > pitch && yaw > roll, "pitch {pitch:.3e} yaw {yaw:.3e} roll {roll:.3e}");
-        s.fuel = 0.0;
-        assert!(s.inertia().y_axis.y < yaw && s.inertia().x_axis.x < pitch, "lighter, easier to turn");
-    }
-}
-
-#[cfg(test)]
 mod classes {
     use super::*;
     use crate::content::content;

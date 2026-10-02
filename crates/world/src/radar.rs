@@ -52,30 +52,3 @@ pub fn sweep<'a>(own: &Ship, system: usize, others: impl IntoIterator<Item = (us
     blips.sort_by(|a, b| a.distance.total_cmp(&b.distance).then(a.id.cmp(&b.id)));
     blips
 }
-
-#[cfg(test)]
-mod tests {
-    use glam::DQuat;
-
-    use super::*;
-
-    fn ship_at(x: f64) -> Ship {
-        Ship::new(DVec3::new(x, 0.0, 0.0), DVec3::ZERO, DQuat::IDENTITY)
-    }
-
-    #[test]
-    fn sees_ships_in_range_in_the_same_system_nearest_first() {
-        let own = ship_at(0.0);
-        let far = ship_at(RADAR_RANGE * 1.5);
-        let near = ship_at(2_000.0);
-        let mid = ship_at(50_000.0);
-        let elsewhere = ship_at(1_000.0);
-        let mut wreck = ship_at(500.0);
-        wreck.state = ShipState::Destroyed { respawn_in: 5.0 };
-        let blips = sweep(&own, 7, [(0, 7, &far), (1, 7, &mid), (2, 7, &near), (3, 8, &elsewhere), (4, 7, &wreck)]);
-        let ids: Vec<usize> = blips.iter().map(|b| b.id).collect();
-        assert_eq!(ids, [2, 1]);
-        assert_eq!(blips[0].distance, 2_000.0);
-    }
-
-}

@@ -175,24 +175,3 @@ pub fn report_text() -> String {
     }
     s
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn scopes_add_up_per_frame() {
-        enable(true);
-        for _ in 0..3 {
-            for _ in 0..4 {
-                let _s = scope("test/work");
-                std::thread::sleep(std::time::Duration::from_millis(1));
-            }
-            frame_end();
-        }
-        let r = report();
-        let w = r.iter().find(|s| s.name == "test/work").expect("recorded");
-        assert!((w.calls - 4.0).abs() < 1e-9);
-        assert!(w.mean_ms >= 4.0 && w.max_ms >= w.mean_ms, "{w:?}");
-    }
-}

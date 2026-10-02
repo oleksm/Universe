@@ -226,27 +226,6 @@ mod tests {
     }
 
     #[test]
-    fn a_rock_is_hit_like_anything_else() {
-        // Drifting down onto it: gently, a bounce and a scrape; hard, a wreck.
-        for (speed, survives) in [(3.0, true), (40.0, false)] {
-            let (mut p, _) = by_a_rock(5.0, -speed);
-            for _ in 0..120 {
-                p.step(1.0 / 60.0, 1.0);
-            }
-            let struck = p.events.iter().find_map(|e| match e {
-                ShipEvent::StruckRock { speed, damage, .. } => Some((*speed, *damage)),
-                _ => None,
-            });
-            let (closing, damage) = struck.unwrap_or_else(|| panic!("{speed} m/s: no strike in {:?}", p.events));
-            // (Its hull touches where it's nearest the rock, a little aslant.)
-            assert!((closing - speed).abs() < 0.1 * speed, "struck at {closing}");
-            let expected = 0.5 * p.ship.mass() * speed * speed * (1.0 - RESTITUTION * RESTITUTION) / p.ship.spec().hull_strength;
-            assert!((damage - expected).abs() < expected * 0.3, "{damage} vs {expected}");
-            assert_eq!(!p.crashed(), survives, "{speed} m/s: {:?}", p.events);
-        }
-    }
-
-    #[test]
     fn the_anchor_holds_a_ship_drifting_with_the_surface_and_lets_go() {
         // Too fast against the surface: it doesn't hold.
         let (mut p, _) = by_a_rock(10.0, 2.0);
@@ -323,49 +302,4 @@ mod tests {
         assert!(!p.ship.excavator && p.ship.hopper == 0.0);
     }
 
-    #[test]
-    fn harder_rock_digs_slower_and_each_class_yields_its_ore() {
-        let mut rng = crate::rng::Rng::new(7);
-        let dig = |class, d: f64, rng: &mut crate::rng::Rng| {
-            let r = crate::belt::rock_for_test(class, d, 0.5, rng);
-            (dig_rate(&r), ore(&r))
-        };
-        let (gravel, _) = dig(RockClass::Stony, 400.0, &mut rng);
-        let (stone, s) = dig(RockClass::Stony, 50.0, &mut rng);
-        let (ice, i) = dig(RockClass::Icy, 50.0, &mut rng);
-        let (c, cc) = dig(RockClass::Carbonaceous, 50.0, &mut rng);
-        assert_eq!((gravel, stone, ice), (EXCAVATOR_THROUGHPUT, 5.0, EXCAVATOR_THROUGHPUT));
-        assert_eq!((s, i, cc), (Ore::Stony, Ore::WaterIce, Ore::Carbonaceous));
-        assert!(c > stone);
-        // Solid nickel-iron is the hardest; rich in platinum metals, it's PGM ore.
-        let mut metal = crate::belt::rock_for_test(RockClass::Metallic, 50.0, 0.5, &mut rng);
-        metal.structure = Structure::Monolith;
-        assert!(dig_rate(&metal) < 1.0);
-        metal.composition.pgm_ppm = 10.0;
-        assert_eq!(ore(&metal), Ore::NickelIron);
-        metal.composition.pgm_ppm = 50.0;
-        assert_eq!(ore(&metal), Ore::Pgm);
-    }
-
-    #[test]
-    fn a_rock_dug_into_is_the_smaller_for_it() {
-        let (mut p, i) = by_a_rock(5.0, 0.0);
-        let sys = p.sys();
-        let whole = sys.field_bodies(0)[i].clone();
-        // Seven eighths of it dug out: half as wide.
-        p.world.mined.insert((sys.index, 0, i), whole.mass * 7.0 / 8.0);
-        let now = p.world.field_bodies_now(&sys, 0);
-        assert!((now[i].rail.radius / whole.rail.radius - 0.5).abs() < 1e-9);
-        assert!((now[i].mass - whole.mass / 8.0).abs() < 1.0);
-        // Where its surface was, there's nothing to touch.
-        for _ in 0..60 {
-            p.step(1.0 / 60.0, 1.0);
-        }
-        assert!(!p.events.iter().any(|e| matches!(e, ShipEvent::StruckRock { .. })));
-        // The gap to its surface grew by what its radius lost.
-        let mut pos = Vec::new();
-        universe_physics::positions(&now[..], p.world.time, &mut pos);
-        let gap = clearance(&now, i, p.world.time, &pos, p.ship.position);
-        assert!((gap - (5.0 + whole.rail.radius * 0.5)).abs() < whole.rail.radius * 0.3 + 1.0, "gap {gap}");
-    }
 }

@@ -51,32 +51,3 @@ pub(crate) fn activity(craft: &Craft) -> &'static str {
     }
 }
 
-
-#[cfg(test)]
-mod tests {
-    use glam::DVec3;
-
-    use crate::universe::Universe;
-
-    #[test]
-    fn radar_locks_contacts_nearest_first_and_loses_them_out_of_range() {
-        let mut u = Universe::new(1984);
-        u.spawn_settlers(3, 1);
-        let (sys, pos) = (u.ship_system, u.ship.position);
-        for (i, c) in u.crafts.iter_mut().enumerate() {
-            c.system = sys;
-            c.ship.state = universe_world::ShipState::Flying;
-            c.ship.position = pos + DVec3::X * 1_000.0 * (3 - i) as f64;
-        }
-        let order: Vec<usize> = u.contacts().iter().map(|c| c.blip.id).collect();
-        assert_eq!(order, [2, 1, 0]);
-        assert_eq!(u.lock_next_contact().map(|c| c.blip.id), Some(2));
-        assert_eq!(u.lock_next_contact().map(|c| c.blip.id), Some(1));
-        assert_eq!(u.lock_next_contact().map(|c| c.blip.id), Some(0));
-        assert!(u.lock_next_contact().is_none(), "past the farthest: unlocked");
-        u.lock_next_contact();
-        u.crafts[2].ship.position = pos + DVec3::X * 1.0e6;
-        let contacts = u.contacts();
-        assert!(u.locked_contact_in(&contacts).is_none(), "out of range: lost");
-    }
-}

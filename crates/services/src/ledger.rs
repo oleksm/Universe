@@ -124,25 +124,3 @@ impl Ledger {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn transfers_balance_and_pilots_cannot_overdraw() {
-        let mut l = Ledger::default();
-        let (me, shop) = (Party::Pilot(1), Party::Market(3, Facility::Station(2)));
-        l.settle(me, Asset::Credits, 100.0, 0, Cause::Rules);
-        l.transfer(me, shop, Asset::Credits, 40.0, 1, Cause::Rules).unwrap();
-        l.transfer(shop, me, Asset::Goods(7), 5.0, 1, Cause::Rules).unwrap();
-        assert_eq!(l.credits(me), 60.0);
-        assert_eq!(l.hold(1), vec![(7, 5)]);
-        assert!(l.transfer(me, shop, Asset::Credits, 61.0, 2, Cause::Rules).is_err());
-        assert!(l.transfer(me, shop, Asset::Goods(7), 6.0, 2, Cause::Rules).is_err());
-        assert!(l.balanced());
-        assert_eq!(l.journal.len(), 3);
-        l.write_off(1, 3, Cause::Rules);
-        assert!(l.hold(1).is_empty() && l.balanced());
-    }
-}

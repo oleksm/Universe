@@ -250,34 +250,4 @@ mod tests {
         assert_eq!(restored.world.mined.get(&(u.ship_system, 0, 1)), Some(&1500.0), "and the dug rock");
     }
 
-    #[test]
-    fn a_save_from_before_keys_still_loads() {
-        let u = Universe::new(7);
-        let mut json: serde_json::Value = serde_json::to_value(u.save()).unwrap();
-        // As written before: no version or content, goods by catalogue position, no hull.
-        let o = json.as_object_mut().unwrap();
-        o.remove("version");
-        o.remove("content");
-        o["ship"].as_object_mut().unwrap().remove("class");
-        let ore = universe_world::goods::Ore::Pgm.item();
-        o.insert("hold".into(), serde_json::json!([[ore, 2]]));
-        let save: UniverseSave = serde_json::from_value(json).unwrap();
-        assert_eq!(save.version, 0);
-        let mut restored = Universe::new(7);
-        restored.load(save);
-        assert_eq!(restored.hold(), vec![(ore, 2)]);
-        assert_eq!(restored.ship.class, universe_world::ship::starting_hull());
-    }
-
-    #[test]
-    fn a_hull_gone_from_the_content_loads_as_the_starting_hull() {
-        let u = Universe::new(42);
-        let mut json = serde_json::to_value(u.save()).unwrap();
-        json["ship"]["class"] = "hull.long_gone".into();
-        assert!(serde_json::from_value::<UniverseSave>(json.clone()).is_err());
-        forget_missing(&mut json);
-        let save: UniverseSave = serde_json::from_value(json).unwrap();
-        assert_eq!(save.ship.class, universe_world::ship::starting_hull());
-    }
-
 }

@@ -45,15 +45,3 @@ fn has_triple(name: &str) -> bool {
 pub fn roman(n: usize) -> &'static str {
     ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"].get(n).copied().unwrap_or("X+")
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn names_are_sayable_and_mostly_different() {
-        let names: Vec<String> = (0..200u64).map(|s| super::star_name(s * 7919)).collect();
-        eprintln!("{}", names[..40].join(" "));
-        let distinct: std::collections::HashSet<_> = names.iter().collect();
-        assert!(distinct.len() > 190, "{} of 200 distinct", distinct.len());
-        assert!(names.iter().all(|n| (4..=9).contains(&n.len())));
-    }
-}

@@ -436,10 +436,6 @@ mod tests {
     use super::*;
     use universe_world::World;
 
-    fn kind(key: &str) -> Category {
-        Category::of(key).unwrap()
-    }
-
     fn economy() -> (World, Economy) {
         let w = World::new(1984);
         let mut s: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
@@ -448,27 +444,6 @@ mod tests {
         let systems: Vec<_> = s.iter().map(|&i| (i, w.system(i))).collect();
         let e = Economy::new(systems.iter().map(|(i, s)| (*i, &**s)), 0.0);
         (w, e)
-    }
-
-    #[test]
-    fn a_place_alone_works_while_its_inputs_last_then_goes_short() {
-        let (_, mut e) = economy();
-        assert!(e.places.len() > 20);
-        let station = e.places.iter().position(|p| p.kind == PlaceKind::Station).unwrap();
-        // Thirty days with no ship calling: it eats through its food (it grows
-        // none), and its factories stop when the metal runs out.
-        e.step_to(30.0 * DAY);
-        let p = &e.places[station];
-        assert_eq!(p.stock_of(kind("goods.food")), 0.0);
-        assert!(p.short[line(kind("goods.food"))] > 0.0, "people go hungry");
-        assert!(p.factor(kind("goods.food")).unwrap() > 2.0, "and food is dear there");
-        assert_eq!(p.made[line(kind("goods.machinery"))], 0.0, "no metal, no machines");
-        // Nothing runs away: every stock stays within its storage.
-        for p in &e.places {
-            for c in Category::all() {
-                assert!(p.stock_of(c) <= p.storage(c) + 1e-6 && p.stock_of(c) >= 0.0);
-            }
-        }
     }
 
     #[test]

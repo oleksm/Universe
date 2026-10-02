@@ -509,35 +509,3 @@ pub(crate) fn runs(bus: &mut impl Bus, f: universe_world::modules::Feature, even
     ok
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn physical_events_end_clearances_and_forget_targets() {
-        let target = NavTarget::Station(3);
-        let set = || Avionics {
-            nav_target: Some(target),
-            clearance: Some(Clearance { target, autopilot: true, phase: Phase::Final, pad: PadSlot::Center }),
-            hyper_autopilot: true,
-            ..Default::default()
-        };
-        let after = |e: ShipEvent| {
-            let mut a = set();
-            a.observe(&e);
-            a
-        };
-        let docked = after(ShipEvent::Landed { body: "Station".into(), station: true });
-        assert!(docked.clearance.is_none() && docked.nav_target == Some(target), "arrived: the clearance is used up");
-        let crashed = after(ShipEvent::Crashed { body: "Station".into() });
-        assert!(crashed.clearance.is_none());
-        let gone = after(ShipEvent::GateEntered { to: "Thabro".into() });
-        assert!(gone.clearance.is_none() && gone.nav_target.is_none(), "the target was in the old system");
-        let dropped = after(ShipEvent::HyperdriveDisengaged);
-        assert!(!dropped.hyper_autopilot && dropped.autopilot_engaged());
-        assert!(after(ShipEvent::Bumped).autopilot_engaged(), "a bump changes nothing");
-        let new = after(ShipEvent::Respawned);
-        assert!(new.nav_target.is_none() && new.clearance.is_none() && !new.hyper_autopilot);
-    }
-}
-

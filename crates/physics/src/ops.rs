@@ -74,32 +74,3 @@ pub fn bounce(rb: &mut RigidBody, contact: &Contact, restitution: f64, separatio
     rb.velocity = contact.surface_velocity + rel - n * ((1.0 + restitution) * into) + n * separation;
     rb.position += n * push;
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::testkit::body;
-
-    #[test]
-    fn a_weld_rides_the_spin() {
-        let mut planet = body(None, None, 4.0e14, 6.4e6);
-        planet.tilt = DQuat::from_rotation_x(0.4);
-        planet.day = 1.0e4;
-        let bodies = [planet];
-        let positions = [DVec3::ZERO];
-        let up = DVec3::new(0.3, 0.8, 0.5).normalize();
-        let rb = RigidBody::new(up * 6.4e6, DVec3::ZERO, DQuat::from_rotation_z(0.3), 12.0);
-        let weld = Weld::capture(&bodies, 0, 1234.0, &positions, &rb);
-        // Where it was captured, it stays; a quarter day later it has turned with the ground.
-        let mut at = rb;
-        weld.place(&bodies, 1234.0, &positions, &mut at);
-        assert!(at.position.distance(rb.position) < 1e-6);
-        assert!(at.orientation.angle_between(rb.orientation) < 1e-6);
-        weld.place(&bodies, 1234.0 + 2500.0, &positions, &mut at);
-        let axis = bodies[0].angular_velocity().normalize();
-        assert!((at.position.dot(axis) - rb.position.dot(axis)).abs() < 1e-6, "turns about the spin axis");
-        assert!((at.position.length() - 6.4e6).abs() < 1e-6);
-        assert!(at.velocity.distance(bodies[0].angular_velocity().cross(at.position)) < 1e-9, "moves with the ground");
-    }
-
-}

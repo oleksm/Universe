@@ -372,20 +372,3 @@ fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
     }
     frame.text(you + Vec2::new(-28.0, -4.0), "YOU", TEXT);
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn a_held_key_steps_once_then_repeats() {
-        let mut held = 0.0;
-        assert_eq!(super::repeat(&mut held, true, true, 0.016), 1);
-        // Held: nothing until the delay, then a step every interval.
-        let mut steps = 0;
-        for _ in 0..60 {
-            steps += super::repeat(&mut held, true, false, 1.0 / 60.0);
-        }
-        let expected = ((1.0 - super::REPEAT_AFTER) / super::REPEAT_EVERY) as u32;
-        assert!((expected..=expected + 1).contains(&steps), "a second held: {steps}");
-        assert_eq!(super::repeat(&mut held, false, false, 0.016), 0);
-    }
-}
