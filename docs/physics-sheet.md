@@ -61,8 +61,10 @@ The chain: fuel → reactor → capacitor bank → consumers; losses become heat
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `FUSION_ENERGY` | 3.5e14 | J/kg | Real | D–He3 fusion: the energy released per kg of fuel. |
-| `FUSION_FUEL_DENSITY` | 100 | kg/m³ | Real | Liquid D–He3 (deuterium 163, helium-3 59): what ships' tanks hold today. |
+| `FUSION_ENERGY` | 3.45e14 | J/kg | Real | Catalysed D–D fusion (the tritium and helium-3 it makes burnt too): ships' fuel today, deuterium. |
+| `FUSION_FUEL_DENSITY` | 163 | kg/m³ | Real | Liquid deuterium: what ships' tanks hold. |
+| `DEUTERIUM_IN_WATER` | 3.2e-5 | kg/kg | Real | Deuterium's share of water's mass (1 D per 6,400 H): a tonne of it in about 31,000 t of water. Fuel comes from seas and ice. |
+| `D_HE3_ENERGY` | 3.5e14 | J/kg | Real | D–He3 fusion (few neutrons: the premium fuel). Helium-3 is rare: gas giants' air (about 1e-5), regolith (about 1e-8). Planned fuel. |
 | `D_T_ENERGY` | 3.4e14 | J/kg | Real | D–T fusion (tritium bred from lithium; its neutrons wear a reactor). Planned fuel. |
 | `FISSION_ENERGY` | 8.2e13 | J/kg | Real | U-235 fission. Planned fuel. |
 | `METHALOX_ENERGY` | 1e7 | J/kg | Real | Methane + oxygen, burnt (exhaust 3.3–3.7 km/s; 830 kg/m³). Planned fuel. |

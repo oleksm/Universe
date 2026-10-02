@@ -65,13 +65,13 @@
     ),
     (
         key: "goods.fuel",
-        name: "FUEL",
+        name: "DEUTERIUM",
         price: (10.0, 150.0),
-        mass: 700.0,
-        bulk_density: 0.8,
+        mass: 160.0,
+        bulk_density: 0.16,
         basket: 0.1,
-        adjectives: ["Liquid", "Slush", "Enriched", "Cracked", "Compressed", "Cryo", "Refined", "Blended", "Metallic"],
-        nouns: ["Hydrogen", "Methane", "Deuterium", "Helium-3", "Oxygen", "Hydrazine", "Kerosene", "Ammonia", "Xenon"],
+        adjectives: ["Liquid", "Slush", "Cryo", "Refined", "Pure", "Reactor-Grade", "Standard", "Bulk", "Certified", "Premium", "Industrial", "Clean"],
+        nouns: ["Deuterium", "Heavy Hydrogen", "D2", "Deuterium Ice", "Fusion Deuterium"],
     ),
     (
         key: "goods.textiles",

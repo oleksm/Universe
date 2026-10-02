@@ -1,6 +1,8 @@
 // Kinds of place in the economy (which a facility is follows from where it
 // is: a station; a spaceport on an Earth-like world, a dry world, a cratered
 // moon). population: thousands. ship_fuel: fuel kept for calling ships (t/day).
+// Fuel (deuterium) is made where there's water: Earth-like worlds' seas and
+// outposts' ice. Stations import it.
 // works: (recipe, how many). sells / wants: what its market leans to where
 // there's no economy behind it (beyond the gate network).
 [
@@ -9,18 +11,18 @@
         label: "STATION",
         population: 25.0,
         ship_fuel: 200.0,
-        works: [("recipe.factory", 2.0), ("recipe.fab", 2.0), ("recipe.fuel_plant", 32.0), ("recipe.pharma", 1.0), ("recipe.smelter", 1.0)],
-        sells: ["goods.machinery", "goods.electronics", "goods.computers", "goods.robots", "goods.tools", "goods.medicine", "goods.fuel", "goods.chemicals"],
-        wants: ["goods.food", "goods.water", "goods.ores", "goods.metals", "goods.luxuries", "goods.textiles", "goods.biologics", "goods.art"],
+        works: [("recipe.factory", 2.0), ("recipe.fab", 2.0), ("recipe.pharma", 1.0), ("recipe.smelter", 1.0)],
+        sells: ["goods.machinery", "goods.electronics", "goods.computers", "goods.robots", "goods.tools", "goods.medicine", "goods.chemicals"],
+        wants: ["goods.fuel", "goods.food", "goods.water", "goods.ores", "goods.metals", "goods.luxuries", "goods.textiles", "goods.biologics", "goods.art"],
     ),
     (
         key: "place.farm",
         label: "FARM WORLD",
         population: 60.0,
         ship_fuel: 60.0,
-        works: [("recipe.farm", 8.0), ("recipe.artisans", 2.0), ("recipe.wells", 1.0)],
-        sells: ["goods.food", "goods.water", "goods.textiles", "goods.biologics", "goods.luxuries", "goods.art"],
-        wants: ["goods.machinery", "goods.electronics", "goods.computers", "goods.medicine", "goods.tools", "goods.robots", "goods.fuel"],
+        works: [("recipe.farm", 8.0), ("recipe.artisans", 2.0), ("recipe.wells", 1.0), ("recipe.fuel_plant", 6.0)],
+        sells: ["goods.food", "goods.water", "goods.fuel", "goods.textiles", "goods.biologics", "goods.luxuries", "goods.art"],
+        wants: ["goods.machinery", "goods.electronics", "goods.computers", "goods.medicine", "goods.tools", "goods.robots"],
     ),
     (
         key: "place.mine",
@@ -36,7 +38,7 @@
         label: "OUTPOST",
         population: 3.0,
         ship_fuel: 20.0,
-        works: [("recipe.mine", 0.5), ("recipe.ice", 1.0)],
+        works: [("recipe.mine", 0.5), ("recipe.ice", 1.0), ("recipe.fuel_plant", 1.0)],
         sells: ["goods.ores", "goods.metals", "goods.minerals", "goods.chemicals", "goods.fuel", "goods.artifacts"],
         wants: ["goods.food", "goods.water", "goods.machinery", "goods.tools", "goods.medicine", "goods.robots", "goods.luxuries"],
     ),

@@ -1,4 +1,6 @@
-// Works: what they take and what they make, in tonnes a day. (Wells: only
+// Works: what they take and what they make, in tonnes a day. (Deuterium plants:
+// only where there's water to process: an Earth-like world's seas, an outpost's
+// ice. Wells: only
 // an Earth-like world, oceans and rain, has water to draw and sell. An Earth-like
 // world's own rain waters its fields.)
 [
@@ -10,7 +12,9 @@
     (key: "recipe.refinery", name: "REFINERY", takes: [("goods.ores", 30.0)], makes: [("goods.metals", 20.0), ("goods.minerals", 2.0)]),
     (key: "recipe.smelter", name: "SMELTER", takes: [("goods.ores", 10.0)], makes: [("goods.metals", 6.0)]),
     (key: "recipe.chemicals", name: "CHEMICAL PLANT", takes: [("goods.ores", 8.0), ("goods.water", 10.0)], makes: [("goods.chemicals", 24.0)]),
-    (key: "recipe.fuel_plant", name: "FUEL PLANT", takes: [("goods.water", 20.0)], makes: [("goods.fuel", 18.0)]),
+    // Deuterium from the sea or ice where it stands (a tonne in about 31,000 t of
+    // water: a plant processing that much a day, not traded water).
+    (key: "recipe.fuel_plant", name: "DEUTERIUM PLANT", takes: [], makes: [("goods.fuel", 20.0)]),
     (key: "recipe.factory", name: "FACTORY", takes: [("goods.metals", 10.0), ("goods.chemicals", 3.0), ("goods.electronics", 1.0)], makes: [("goods.machinery", 6.0), ("goods.tools", 4.0), ("goods.robots", 1.0), ("goods.weapons", 1.0)]),
     (key: "recipe.fab", name: "ELECTRONICS FAB", takes: [("goods.metals", 1.0), ("goods.minerals", 2.0), ("goods.chemicals", 2.0)], makes: [("goods.electronics", 3.0), ("goods.computers", 1.0)]),
     (key: "recipe.pharma", name: "PHARMA PLANT", takes: [("goods.chemicals", 2.0), ("goods.biologics", 2.0)], makes: [("goods.medicine", 4.0)]),
