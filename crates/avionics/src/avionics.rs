@@ -257,11 +257,12 @@ impl Avionics {
         // ship's up drifts off the vertical and the lift pushes it sideways
         // till it can't hold its height. (Not by a station: off its deck it
         // rises as it lies.)
-        if self.route.active
-            && self.route.departing
-            && self.clearance.is_none()
-            && !sys.bodies.iter().enumerate().any(|(i, b)| b.kind == universe_world::BodyKind::Station && positions[i].distance(ship.position) < 3000.0)
-        {
+        if self.route.active && self.route.departing && self.clearance.is_none() {
+            // (By a station: a still stick — not hands off, which a saved
+            // log can't tell from no change.)
+            if sys.bodies.iter().enumerate().any(|(i, b)| b.kind == universe_world::BodyKind::Station && positions[i].distance(ship.position) < 3000.0) {
+                return Some(Controls::default());
+            }
             let d = sys.dominant(ship.position, &positions);
             let up = (ship.position - positions[d]).normalize_or(DVec3::Y);
             let fwd = ship.forward();
