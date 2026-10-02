@@ -11,6 +11,7 @@
 
 pub mod belt;
 pub mod charts;
+pub mod climate;
 pub mod collisions;
 pub mod content;
 pub mod crew;

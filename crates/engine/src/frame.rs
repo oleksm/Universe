@@ -659,8 +659,7 @@ impl Frame {
                 cursor = Vec2::new(origin.x, cursor.y + GLYPH + 2.0);
                 continue;
             }
-            let k = (ch as usize).wrapping_sub(32);
-            let g = atlas.glyphs.get(k).copied().unwrap_or(atlas.glyphs[(b'?' - 32) as usize]);
+            let g = crate::font::glyph_index(ch).and_then(|k| atlas.glyphs.get(k).copied()).unwrap_or(atlas.glyphs[(b'?' - 32) as usize]);
             if g.at[2] > 0.0 {
                 let p = cursor + Vec2::new(inset + g.at[0], crate::font::BASELINE + g.at[1]);
                 let (a, b) = (p, p + Vec2::new(g.at[2], g.at[3]));

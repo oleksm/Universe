@@ -781,6 +781,13 @@ pub struct Ship {
     /// The hull's skin temperature (K): see `heat`.
     #[serde(default = "skin_ambient")]
     pub skin_temp: f64,
+    /// Game time not yet taken into the skin's balance (s): it's reckoned a
+    /// second at a time (a tenth in air), slow as heat is.
+    #[serde(default)]
+    pub heat_owed: f64,
+    /// Was it in air at its last reckoning?
+    #[serde(default)]
+    pub heat_in_air: bool,
     /// Seconds the hyperdrive stays jammed (hits disrupt it: see `damage::HYPER_JAM`).
     #[serde(skip)]
     pub hyper_jam: f64,
@@ -837,6 +844,8 @@ impl Ship {
             gun_target: None,
             hyper_jam: 0.0,
             skin_temp: crate::heat::AMBIENT,
+            heat_owed: 0.0,
+            heat_in_air: false,
             hyper_orders: HyperdriveCommand::CRUISE,
             locked_at: f64::NEG_INFINITY,
             hyper_engaged: None,

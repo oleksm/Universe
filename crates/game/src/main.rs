@@ -263,7 +263,8 @@ impl App {
             paused: false,
             last_step: StepResult::default(),
             show_help: false,
-            debug: 0,
+            // (UNIVERSE_DEBUG: start with the debug info up.)
+            debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v| v.parse().ok()).unwrap_or(0),
             show_grid: false,
             show_labels: true,
             muted: false,

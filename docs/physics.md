@@ -40,12 +40,14 @@ dodge a design problem.
   wobble; moons don't move their planet.
 - **Small bodies have no gravity:** stations, gates and asteroids.
 - **Atmospheres** are a height band with a density profile, not a full air model.
-- **Heat** is the skin in air only: no sunlight, no cooling at night, no temperature of planets.
+- **Heat** is the skin as one body (no hot and cold sides), its own power's heat going to built-in
+  radiators but for a leak (radiators come as modules); worlds' climates are equilibrium-and-swing
+  models, not weather.
 - **Stars don't move** across the galaxy.
 
 ## Planned (making the simplified real)
 
-1. **Heat as an energy balance** (next):
+1. **Heat as an energy balance** (done, coarse: `heat`, `climate`):
    - **The ship's temperature, shown on the HUD.** In: sunlight on the lit side (distance, eclipses,
      shadows), a planet's reflected light and infrared, waste heat from the power plant and
      engines, air friction. Out: radiation at T⁴, exchange with the air.

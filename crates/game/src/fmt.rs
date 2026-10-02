@@ -73,3 +73,8 @@ pub fn countdown(s: f64) -> String {
         format!("{}:{:02}", s / 60, s % 60)
     }
 }
+
+/// A temperature (K) as people read it: degrees Celsius.
+pub fn temperature(kelvin: f64) -> String {
+    format!("{:.0} °C", kelvin - 273.15)
+}

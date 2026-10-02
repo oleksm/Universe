@@ -173,6 +173,9 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
             lines.push((format!("GRAVITY {g:.2} M/S2 ({:.2} G)", g / 9.81), DIM));
             let ship_at = app.view.ship_pos;
             let me = app.view.positions[body] + b.rotation(app.now()) * position;
+            // The ground's (or the air's) temperature here.
+            let temp = universe_sim::world::climate::air_temperature(&app.view.system, body, &app.view.positions, app.now(), me);
+            lines.push((format!("{} {}", if b.rail.atmosphere.is_some() { "AIR" } else { "GROUND" }, crate::fmt::temperature(temp)), DIM));
             lines.push((format!("SHIP {}", fmt::distance(me.distance(ship_at))), DIM));
             lines.push(("WASD WALK  SHIFT RUN  SPACE JUMP  F USE".into(), DIM));
         }

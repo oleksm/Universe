@@ -32,7 +32,7 @@ pub struct Atlas {
     /// Coverage, one byte a pixel.
     pub pixels: Vec<u8>,
     /// Printable ASCII (32..127), and where the solid patch is (uv).
-    pub glyphs: [Glyph; 96],
+    pub glyphs: [Glyph; 96 + EXTRA.len()],
     pub solid: [f32; 2],
     /// A glyph's advance (layout pixels).
     pub advance: f32,
@@ -41,6 +41,17 @@ pub struct Atlas {
 pub fn atlas() -> &'static Atlas {
     static ATLAS: OnceLock<Atlas> = OnceLock::new();
     ATLAS.get_or_init(build)
+}
+
+/// Beyond printable ASCII: in the atlas's last row (before the solid patch).
+pub const EXTRA: [char; 6] = ['°', '–', '·', '²', '³', '×'];
+
+/// A character's place among the glyphs, if the atlas has it.
+pub fn glyph_index(ch: char) -> Option<usize> {
+    match ch {
+        ' '..='~' => Some(ch as usize - 32),
+        _ => EXTRA.iter().position(|&c| c == ch).map(|k| 96 + k),
+    }
 }
 
 fn build() -> Atlas {
@@ -52,12 +63,12 @@ fn build() -> Atlas {
     let (cols, rows) = (16u32, 7u32);
     let (width, height) = (cols * cell, rows * cell);
     let mut pixels = vec![0u8; (width * height) as usize];
-    let mut glyphs = [Glyph::default(); 96];
-    for (k, ch) in (32u8..128).enumerate() {
+    let mut glyphs = [Glyph::default(); 96 + EXTRA.len()];
+    for (k, ch) in (32u8..128).map(char::from).chain(EXTRA).enumerate() {
         let (cx, cy) = ((k as u32 % cols) * cell, (k as u32 / cols) * cell);
         // (The pen at the cell's left, the baseline a third of the way up from its foot.)
         let base = (cx as f32 + cell as f32 * 0.2, cy as f32 + cell as f32 * 0.72);
-        let g = font.glyph_id(ch as char).with_scale_and_position(scale, ab_glyph::point(base.0, base.1));
+        let g = font.glyph_id(ch).with_scale_and_position(scale, ab_glyph::point(base.0, base.1));
         let Some(outline) = font.outline_glyph(g) else { continue };
         let b = outline.px_bounds();
         outline.draw(|x, y, c| {

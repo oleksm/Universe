@@ -14,6 +14,7 @@ Constants of physics.
 |---|---|---|---|---|
 | `SPEED_OF_LIGHT` | 2.99792458e8 | m/s | Real | c: light, radio, radar, and every capture of an event. |
 | `STEFAN_BOLTZMANN` | 5.670374e-8 | W/(m²·K⁴) | Real | σ: how a body radiates heat: σ·ε·A·T⁴. |
+| `SOLAR_LUMINOSITY` | 3.828e26 | W | Real | The Sun's power: stars' luminosities are reckoned in it (1361 W/m² at 1 AU). |
 
 ## Medium
 
@@ -91,6 +92,24 @@ The hull's skin in air: Sutton–Graves heating in, Stefan–Boltzmann radiation
 | `SKIN_LIMIT` | 1500 | K | Real | Beyond it the hull burns (refractory alloys). |
 | `AMBIENT` | 290 | K | Simplified | What the skin settles to with nothing heating it: to be replaced by the energy balance (sunlight, night). |
 | `AIR_CP` | 1005 | J/(kg·K) | Real | Earth-like air's specific heat at constant pressure. |
+| `HULL_ABSORPTIVITY` | 0.3 |  | Real | How much sunlight a hull's paint takes in (white paint about 0.25–0.35). |
+| `INTERNAL_LEAK` | 0.01 |  | Simplified | The share of a ship's power use that reaches its skin as heat; the rest goes to its radiators (built in for now: radiators come as modules). |
+| `CONVECTION` | 25 | W/(m²·K) | Simplified | Heat exchange between a hull and Earth-like air at sea level (scaling with the air's density to the half power). |
+
+## Climate
+
+Worlds' surface temperatures: radiative equilibrium from their star, their albedo, a greenhouse from their air; day and night swings damped by air.
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `ALBEDO_TERRAN` | 0.3 |  | Real | An Earth-like world's albedo (Earth's: 0.3). |
+| `ALBEDO_DRY` | 0.15 |  | Real | A dry rocky world's (Mars: 0.17). |
+| `ALBEDO_CRATERED` | 0.12 |  | Real | A cratered moon's (the Moon: 0.12). |
+| `ALBEDO_GIANT` | 0.5 |  | Real | A gas or ice giant's cloud tops (Jupiter: 0.5). |
+| `GREENHOUSE` | 33 | K | Simplified | What Earth-like air at sea level adds to a world's mean (Earth's: 33 K); grows with the air's density to the 0.6. |
+| `SWING_DAMPING` | 0.05 | kg/m³ | Simplified | Air this dense halves a world's day–night swing; Earth-like air (1.2) all but flattens it. |
+| `LAPSE_RATE` | 0.0065 | K/m | Real | Air cooling with height (Earth's standard atmosphere). |
+| `NIGHT_FLOOR` | 0.35 |  | Simplified | An airless world's night, as a share of its mean (the Moon: about 100 K of 270). |
 
 ## References
 

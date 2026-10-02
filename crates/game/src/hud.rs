@@ -212,6 +212,15 @@ fn readout(app: &App) -> Option<(String, f64, bool, f64, f64)> {
 
 /// The flight instruments (left): where, how high, how fast; thrust, fuel,
 /// hull as bars; mass, load and drive. Its height.
+/// The air's temperature where the ship is, if it's in a world's air (K).
+fn air_outside(app: &App) -> Option<f64> {
+    let sys = &app.view.system;
+    let p = app.view.ship_pos;
+    let (i, b) = sys.bodies.iter().enumerate().filter(|(_, b)| b.rail.atmosphere.is_some()).min_by(|a, b| app.view.positions[a.0].distance(p).total_cmp(&app.view.positions[b.0].distance(p)))?;
+    let altitude = app.view.positions[i].distance(p) - b.rail.radius;
+    (altitude < b.rail.atmosphere?.top).then(|| universe_sim::world::climate::air_temperature(sys, i, &app.view.positions, app.now(), p))
+}
+
 /// One row of the instruments, drawn at a place.
 type Row = Box<dyn Fn(&mut Frame, Vec2)>;
 
@@ -254,6 +263,10 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     }
     let hurt = app.hit_age < 0.25 || ship.hull < 0.3;
     rows.push(bar_row("HULL", ship.hull, format!("{:.0}%", ship.hull * 100.0), if hurt { RED } else { HUD }));
+    // Its skin's temperature, and the air's outside when in it.
+    let hot = ship.skin_temp > universe_sim::world::heat::SKIN_LIMIT * 0.4;
+    let outside = air_outside(app).map(|t| format!("  AIR {}", crate::fmt::temperature(t))).unwrap_or_default();
+    rows.push(text_row("TEMP", format!("{}{outside}", crate::fmt::temperature(ship.skin_temp)), if hot { AMBER } else { HUD }));
     if ship.armed {
         let heat = if ship.laser_overheated { RED } else { AMBER };
         rows.push(bar_row("LASER", ship.laser_heat, if ship.laser_overheated { "HOT".into() } else { format!("GUN {}", ship.ammo) }, heat));
@@ -363,9 +376,9 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>, alerts: &mut Vec<(Str
     if ship.hull < crate::sound::HULL_CRITICAL {
         alerts.push(("HULL CRITICAL".into(), if blink { RED } else { RED.scale(0.5) }));
     }
-    // The skin, once air (or the memory of it) has warmed it.
+    // The skin, once air has heated it past what sunlight does.
     let skin = ship.skin_temp;
-    if skin > universe_sim::world::heat::AMBIENT + 30.0 {
+    if skin > universe_sim::world::heat::SKIN_LIMIT * 0.4 {
         use universe_sim::world::heat::SKIN_LIMIT;
         let (note, c) = if skin >= SKIN_LIMIT - 1.0 {
             ("  HULL BURNING - SLOW DOWN OR CLIMB", RED)

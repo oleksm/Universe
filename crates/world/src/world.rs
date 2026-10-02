@@ -544,18 +544,29 @@ impl World {
                 universe_prof::time("sim/crafts/tick/world step/flight (physics)", || self.flight_step(clock, &sys, ship, *system, real_dt * warp, events))
             }
         };
-        // The skin in air (and cooling after).
-        if ship.is_flying() && !ship.hyperdrive {
-            let _air = universe_prof::scope("sim/crafts/tick/world step/air lookup");
-            let air = if sys.bodies.iter().any(|b| b.rail.atmosphere.is_some()) {
+        // The skin: its energy balance in the light and air where it is.
+        ship.heat_owed += real_dt * warp;
+        let every = if ship.heat_in_air { 0.1 } else { 1.0 };
+        if (ship.is_flying() || matches!(ship.state, ShipState::Landed { .. })) && ship.heat_owed >= every {
+            let around = universe_prof::time("sim/crafts/tick/world step/surroundings", || {
                 let positions = self.rails_at(*system, *clock);
-                universe_physics::air_at(&sys.bodies, ship.position, &positions, *clock)
-            } else {
-                None
-            };
-            universe_prof::time("sim/crafts/tick/world step/heat", || crate::heat::heat(ship, air, real_dt * warp, events));
-        } else if ship.hyperdrive {
-            crate::heat::heat(ship, None, real_dt * warp, events);
+                let (sun, world) = crate::climate::light_at(&sys, &positions, ship.position);
+                let air = if ship.hyperdrive {
+                    None
+                } else {
+                    universe_physics::air_at(&sys.bodies, ship.position, &positions, *clock).map(|(density, v)| {
+                        let over = sys.bodies.iter().enumerate().take(positions.len()).filter(|(_, b)| b.rail.atmosphere.is_some()).min_by(|a, b| positions[a.0].distance(ship.position).total_cmp(&positions[b.0].distance(ship.position))).map(|(i, _)| i);
+                        let temp = over.map_or(250.0, |i| crate::climate::air_temperature(&sys, i, &positions, *clock, ship.position));
+                        // (Resting on the ground: still in the air.)
+                        let v = if ship.is_flying() { v } else { ship.velocity };
+                        (density, v, temp)
+                    })
+                };
+                crate::heat::Surroundings { sun, world, air }
+            });
+            ship.heat_in_air = around.air.is_some();
+            let owed = std::mem::take(&mut ship.heat_owed);
+            universe_prof::time("sim/crafts/tick/world step/heat", || crate::heat::heat(ship, &around, owed, events));
         }
         if ship.is_flying() {
             let _p = universe_prof::scope("sim/crafts/tick/world step/handover");

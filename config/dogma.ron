@@ -18,6 +18,7 @@
         entries: [
             (name: "SPEED_OF_LIGHT", value: 299792458.0, unit: "m/s", kind: Real, note: "c: light, radio, radar, and every capture of an event."),
             (name: "STEFAN_BOLTZMANN", value: 5.670374e-8, unit: "W/(m²·K⁴)", kind: Real, note: "σ: how a body radiates heat: σ·ε·A·T⁴."),
+            (name: "SOLAR_LUMINOSITY", value: 3.828e26, unit: "W", kind: Real, note: "The Sun's power: stars' luminosities are reckoned in it (1361 W/m² at 1 AU)."),
         ],
     ),
     (
