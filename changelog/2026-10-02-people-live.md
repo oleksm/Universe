@@ -11,8 +11,12 @@
 - **Works follow the workforce:** a place's works run in proportion to its people against its
   founding numbers (up to twice). A famine spreads into what a place makes; a growing place
   makes more.
-- **Farm worlds have wells** (20 t of water a day; their rain waters the fields too). Before,
-  their people went thirsty.
+- **Farm worlds have wells:** 60 t of water a day, enough to sell (their rain waters the fields
+  too). Before, their people went thirsty.
+  - Only Earth-like worlds (oceans and rain: temperate and oceanic) have water to draw.
+  - Dry mining worlds import theirs, from them or from the outposts' ice works.
+- **A place's storage keeps its founding size** (`Place::storage`): its warehouses don't shrink
+  when its people do. (The stock limit had followed the shrinking target.)
 - `Place::depart` and `arrive` move people between places (passengers, next).
 - **The economy panel shows FED and WAIT per place,** and for the one picked, fed, waiting and
   growth or deaths a day.

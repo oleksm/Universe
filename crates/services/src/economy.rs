@@ -192,9 +192,16 @@ impl Place {
         (target > 0.0).then(|| (target / self.stock[line(c)].max(target * 0.05)).powf(0.6).clamp(0.4, 3.0))
     }
 
+    /// What it can store of kind `c` (tonnes): `STORAGE` times its target,
+    /// as built for its founding numbers (its warehouses don't shrink when
+    /// its people do).
+    pub fn storage(&self, c: Category) -> f64 {
+        self.target(c) * STORAGE * (self.founded / self.population.max(1e-9)).max(1.0)
+    }
+
     /// Room left for kind `c` (tonnes): what it would take in.
     pub fn room(&self, c: Category) -> f64 {
-        (self.target(c) * STORAGE - self.stock[line(c)]).max(0.0)
+        (self.storage(c) - self.stock[line(c)]).max(0.0)
     }
 
     pub fn stock_of(&self, c: Category) -> f64 {
@@ -213,7 +220,7 @@ impl Place {
     /// `days` of work and life.
     fn step(&mut self, days: f64) {
         let (mut made, mut used, mut short) = (vec![0.0; lines()], vec![0.0; lines()], vec![0.0; lines()]);
-        let full: Vec<bool> = Category::all().map(|c| self.stock[line(c)] >= self.target(c) * STORAGE).collect();
+        let full: Vec<bool> = Category::all().map(|c| self.stock[line(c)] >= self.storage(c)).collect();
         let labour = self.labour();
         for (r, n) in self.kind.works() {
             let n = n * labour;
@@ -231,7 +238,7 @@ impl Place {
             for &(c, rate) in &r.makes {
                 let t = rate * n * days * k;
                 // (What there's no room for is dumped.)
-                let room = (self.target(c) * STORAGE - self.stock[line(c)]).max(0.0);
+                let room = (self.storage(c) - self.stock[line(c)]).max(0.0);
                 self.stock[line(c)] += t.min(room);
                 made[line(c)] += t;
             }
@@ -455,7 +462,7 @@ mod tests {
         // Nothing runs away: every stock stays within its storage.
         for p in &e.places {
             for c in Category::all() {
-                assert!(p.stock_of(c) <= p.target(c) * STORAGE + 1e-6 && p.stock_of(c) >= 0.0);
+                assert!(p.stock_of(c) <= p.storage(c) + 1e-6 && p.stock_of(c) >= 0.0);
             }
         }
     }
