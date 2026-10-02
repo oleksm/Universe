@@ -126,8 +126,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     if universe_prof::enabled() {
         profile_panel(frame);
     }
-    let right = news_ticker(frame, app, right);
-    universe_prof::time("draw/hud/kill feed", || kill_feed(frame, app, right));
+    universe_prof::time("draw/hud/news feed", || news_feed(frame, app, right));
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
     // Warnings: a stack at the top centre, under the guidance banner and the status strip.
@@ -1842,31 +1841,71 @@ pub(crate) fn draw_panel(frame: &mut Frame, title: &str, cells: &[(String, Strin
     rows * (cell.y + 2.0) + LINE + 4.0
 }
 
-/// Kills by weapons fire, right side: who destroyed whom, with what (the
-/// last hit). Those in the system in view, and any involving us; each shows
-/// for `KILL_SHOWN` real seconds.
-fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
-    let now = app.v.time;
-    let shown = KILL_SHOWN * app.warp().max(1.0);
-    // (As heard: over the hypernet, or with our own comm; shown from then.)
-    let mut lines: Vec<(&universe_sim::Kill, f64)> = app.v.kills.iter().filter_map(|k| Some((k, app.news.heard(&universe_sim::news::Key::kill(k))?))).filter(|(_, heard)| now - heard < shown).collect();
-    lines.sort_by(|a, b| a.1.total_cmp(&b.1));
-    let mut rows = Vec::new();
-    for (k, heard) in lines.iter().rev().take(3) {
-        let age = ((now - heard) / shown) as f32;
-        let ours = k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER;
-        let base = if ours { RED } else { AMBER };
-        let what = if k.weapon == "COLLISION" {
-            format!("{} WRECKED IN A COLLISION WITH {}", k.victim_name, k.killer_name)
-        } else {
-            format!("{} DESTROYED {} - {}", k.killer_name, k.victim_name, k.weapon)
-        };
-        let text = format!("{what}{}", news_from(app, k.system, k.time, *heard));
-        let c = base.scale(1.0 - 0.7 * age.max(0.0));
-        rows.push((text, c));
-    }
-    right_column(frame, top, &rows);
+/// What's come to us as news, over the hypernet or within our own comm's
+/// hearing: each kill reported, each outlet's digest; when we heard it.
+pub(crate) struct NewsItem<'a> {
+    pub heard: f64,
+    pub time: f64,
+    pub system: usize,
+    pub what: News<'a>,
 }
+
+pub(crate) enum News<'a> {
+    /// A kill: its line, and whether it was ours (we did it, or it was us).
+    Kill(String, bool),
+    Digest(&'a universe_sim::newsroom::Digest),
+}
+
+/// Everything heard, newest first.
+pub(crate) fn news_items(app: &App) -> Vec<NewsItem<'_>> {
+    let mut items: Vec<NewsItem> = app
+        .v
+        .kills
+        .iter()
+        .filter_map(|k| {
+            let heard = app.news.heard(&universe_sim::news::Key::kill(k))?;
+            let ours = k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER;
+            let line = if k.weapon == "COLLISION" {
+                format!("{} WRECKED IN A COLLISION WITH {}", k.victim_name, k.killer_name)
+            } else {
+                format!("{} DESTROYED {} - {}", k.killer_name, k.victim_name, k.weapon)
+            };
+            Some(NewsItem { heard, time: k.time, system: k.system, what: News::Kill(line, ours) })
+        })
+        .collect();
+    if let Some(room) = &app.newsroom {
+        items.extend(room.digests.iter().filter_map(|d| Some(NewsItem { heard: app.news.heard(&d.key())?, time: d.time, system: d.system, what: News::Digest(d) })));
+    }
+    items.sort_by(|a, b| b.heard.total_cmp(&a.heard));
+    items
+}
+
+/// The newsfeed, right side: what's newly come to us (kills reported,
+/// digests), newest on top, each for `NEWS_SHOWN` real seconds from when we
+/// heard it: where it's from, and how long it was on its way.
+fn news_feed(frame: &mut Frame, app: &App, top: f32) -> f32 {
+    let now = app.v.time;
+    let shown = NEWS_SHOWN * app.warp().max(1.0);
+    let mut rows = Vec::new();
+    for item in news_items(app).iter().filter(|i| now - i.heard < shown).take(4) {
+        let fade = 1.0 - 0.6 * ((now - item.heard) / shown) as f32;
+        let from = news_from(app, item.system, item.time, item.heard);
+        match &item.what {
+            News::Kill(line, ours) => rows.push((format!("{line}{from}"), if *ours { RED } else { AMBER }.scale(fade))),
+            News::Digest(d) => {
+                let c = Color::hex(0x60ffb0).scale(fade);
+                rows.push((format!("NEWS - {}{from}", d.outlet), c));
+                if let Some(h) = d.headlines.first() {
+                    rows.push((format!("  {h}"), c.scale(0.85)));
+                }
+            }
+        }
+    }
+    right_column(frame, top, &rows) + 6.0
+}
+
+/// Real seconds an item stays in the newsfeed.
+const NEWS_SHOWN: f64 = 15.0;
 
 /// Trades, right side below the kills: who bought or sold how many of what,
 /// where, for how much, and their cargo and credits after. Those in the
@@ -1908,29 +1947,9 @@ fn news_from(app: &App, system: usize, time: f64, heard: f64) -> String {
     s
 }
 
-/// The latest digest we've heard, right side over the kills, for
-/// `NEWS_SHOWN` real seconds from when it reached us: its outlet and lead.
-fn news_ticker(frame: &mut Frame, app: &App, top: f32) -> f32 {
-    let Some(room) = &app.newsroom else { return top };
-    let now = app.v.time;
-    let shown = NEWS_SHOWN * app.warp().max(1.0);
-    let latest = room.digests.iter().filter_map(|d| Some((d, app.news.heard(&d.key())?))).filter(|(_, h)| now - h < shown).max_by(|a, b| a.1.total_cmp(&b.1));
-    let Some((d, heard)) = latest else { return top };
-    let age = ((now - heard) / shown) as f32;
-    let c = Color::hex(0x60ffb0).scale(1.0 - 0.6 * age.max(0.0));
-    let mut rows = vec![(format!("NEWS - {}{}", d.outlet, news_from(app, d.system, d.time, heard)), c)];
-    rows.extend(d.headlines.iter().take(2).map(|h| (h.clone(), c.scale(0.85))));
-    right_column(frame, top, &rows) + 6.0
-}
-
-/// Real seconds a digest stays on the ticker.
-const NEWS_SHOWN: f64 = 20.0;
 
 /// Real seconds a trade stays in the feed.
 const TRADE_SHOWN: f64 = 12.0;
-
-/// Real seconds a kill stays in the feed.
-const KILL_SHOWN: f64 = 15.0;
 
 /// Performance, top right: the frame, the world tick, the planner, where the
 /// frame's time went and what it drew.

@@ -10,6 +10,8 @@ use crate::{fmt, App};
 const TEXT: Color = Color::hex(0xdcebf2);
 const DIM: Color = Color::hex(0x7d93a0);
 const HEAD: Color = Color::hex(0x60ffb0);
+const AMBER: Color = Color::hex(0xffb040);
+const RED: Color = Color::hex(0xff4040);
 
 /// Keys while open. False when it should close.
 pub fn input(_app: &mut App, ctx: &Context) -> bool {
@@ -17,39 +19,51 @@ pub fn input(_app: &mut App, ctx: &Context) -> bool {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
+    use crate::hud::{news_items, News};
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     let line = GLYPH + 4.0;
     let (x, mut y) = (16.0, 16.0);
     let now = app.v.time;
-    let mut heard: Vec<_> = app.newsroom.iter().flat_map(|r| r.digests.iter()).filter_map(|d| Some((d, app.news.heard(&d.key())?))).collect();
-    heard.sort_by(|a, b| b.1.total_cmp(&a.1));
+    let items = news_items(app);
     let status = match &app.net {
         Some((lag, _)) => format!("ON THE HYPERNET ({} FROM THE BACKBONE)", fmt::lag(*lag)),
         None => "OFF THE HYPERNET: NOTHING NEW REACHES US".to_string(),
     };
-    frame.text(Vec2::new(x, y), &format!("NEWS - {} DIGESTS HEARD   {status}   ({} CLOSES)", heard.len(), "F11"), TEXT);
+    frame.text(Vec2::new(x, y), &format!("NEWS - {} ITEMS HEARD   {status}   (F11 CLOSES)", items.len()), TEXT);
     y += line * 2.0;
-    if heard.is_empty() {
+    if items.is_empty() {
         frame.text(Vec2::new(x, y), "NO NEWS HAS REACHED US YET (OUTLETS PUT OUT A DIGEST EVERY 10 MIN)", DIM);
     }
-    for (d, at) in heard {
-        if y > size.y - line * 4.0 {
-            break;
+    for item in &items {
+        if y > size.y - line * 3.0 {
+            frame.text(Vec2::new(x, y), "...", DIM);
+            return;
         }
-        let sys = universe_sim::names::star_name(app.charts.galaxy.stars[d.system].seed).to_uppercase();
-        let late = at - d.time;
+        let sys = universe_sim::names::star_name(app.charts.galaxy.stars[item.system].seed).to_uppercase();
+        let late = item.heard - item.time;
         let way = if late > 2.0 { format!(", {} ON ITS WAY", fmt::lag(late)) } else { String::new() };
-        frame.text(Vec2::new(x, y), &format!("{} - {sys}   PUT OUT {} AGO{way}", d.outlet, fmt::lag(now - d.time)), HEAD);
-        y += line;
-        for h in &d.headlines {
-            if y > size.y - line * 2.0 {
-                frame.text(Vec2::new(x + 24.0, y), "...", DIM);
-                return;
+        let when = format!("{} AGO{way}", fmt::lag(now - item.time));
+        match &item.what {
+            News::Kill(text, ours) => {
+                frame.text(Vec2::new(x, y), &format!("REPORT - {sys}   {when}"), DIM);
+                y += line;
+                frame.text(Vec2::new(x + 24.0, y), text, if *ours { RED } else { AMBER });
+                y += line * 1.5;
             }
-            frame.text(Vec2::new(x + 24.0, y), h, TEXT);
-            y += line;
+            News::Digest(d) => {
+                frame.text(Vec2::new(x, y), &format!("{} - {sys}   {when}", d.outlet), HEAD);
+                y += line;
+                for h in &d.headlines {
+                    if y > size.y - line * 2.0 {
+                        frame.text(Vec2::new(x + 24.0, y), "...", DIM);
+                        return;
+                    }
+                    frame.text(Vec2::new(x + 24.0, y), h, TEXT);
+                    y += line;
+                }
+                y += line * 0.5;
+            }
         }
-        y += line * 0.5;
     }
 }
