@@ -42,7 +42,11 @@ pub struct ClassSpec {
     /// plants' efficiency (their output's share of the fuel's energy; the
     /// rest is heat).
     pub fuel: String,
+    /// Who builds it (a brand's key; "": a design of one's own).
+    pub brand: String,
     pub plant_efficiency: f64,
+    /// Its hyperdrive's field efficiency (0: none fitted).
+    pub hyper_efficiency: f64,
     /// Its capacitor banks: what they store (J), and how fast they take it
     /// in or give it out, all together (W).
     pub capacitor_capacity: f64,
@@ -138,6 +142,9 @@ pub struct Thruster {
 pub(crate) struct HullDef {
     key: String,
     name: String,
+    /// Who builds it ("": a design of one's own).
+    #[serde(default)]
+    brand: String,
     shape: String,
     /// The frame alone (kg), and its price (credits).
     frame_mass: f64,
@@ -172,11 +179,15 @@ impl HullDef {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn made(key: String, name: String, shape: String, frame_mass: f64, price: f64, slots: Vec<(String, crate::modules::SlotKind, u8)>, fit: Vec<(String, String)>, thrusters: Vec<(String, String, f64)>, radius: f64, drag_area: f64, hull_strength: f64) -> Self {
         let thrusters = thrusters.into_iter().map(|(nozzle, slot, share)| ThrusterDef { nozzle, slot, share }).collect();
-        HullDef { key, name, shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength }
+        HullDef { key, name, brand: String::new(), shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength }
     }
 
     pub(crate) fn key(&self) -> &str {
         &self.key
+    }
+
+    pub(crate) fn brand(&self) -> &str {
+        &self.brand
     }
 
     pub(crate) fn shape_key(&self) -> &str {
@@ -215,7 +226,11 @@ impl HullDef {
             fit.push((slot.clone(), h));
         }
         let frame = HullFrame { frame_mass: self.frame_mass, price: self.price, slots, nozzles, radius: self.radius, drag_area: self.drag_area, hull_strength: self.hull_strength };
-        ClassSpec::assemble(self.key, self.name, self.shape, shape_ref, shape, frame, fit, |h| found[&h])
+        let brand = self.brand.clone();
+        ClassSpec::assemble(self.key, self.name, self.shape, shape_ref, shape, frame, fit, |h| found[&h]).map(|mut s| {
+            s.brand = brand;
+            s
+        })
     }
 }
 
@@ -422,6 +437,7 @@ impl ClassSpec {
         let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
         let hold_volume: f64 = modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum();
         let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output, .. } = m.does { Some(output) } else { None }).sum();
+        let hyper_efficiency = modules().filter_map(|m| if let Does::Hyperdrive { efficiency } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max);
         let plant_efficiency = modules().filter_map(|m| if let Does::PowerPlant { output, efficiency, .. } = m.does { Some(output * efficiency) } else { None }).sum::<f64>() / power_output.max(1e-9);
         let power_draw: f64 = modules().map(|m| m.power).sum();
         if power_draw > power_output {
@@ -492,7 +508,9 @@ impl ClassSpec {
             dry_mass,
             fuel_capacity,
             fuel,
+            brand: String::new(),
             plant_efficiency,
+            hyper_efficiency,
             capacitor_capacity,
             capacitor_rate,
             hold_capacity,

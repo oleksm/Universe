@@ -12,7 +12,6 @@
         note: "The world's drives and hyperdrives as built today.",
         entries: [
             (name: "EXHAUST_VELOCITY", value: 1.0e7, unit: "m/s", kind: Grounded, note: "Today's main drives and thrusters are fusion torches (Daedalus-class, 3% of c): each burns thrust / this, in kg/s."),
-            (name: "ETA_FIELD", value: 0.65, unit: "", kind: Grounded, note: "Today's hyperdrives' field efficiency (one grade, till brands differ): the rest of the draw is heat."),
             (name: "GROUND_MARGIN", value: 20000.0, unit: "m", kind: Tuning, note: "Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top)."),
         ],
     ),
@@ -22,9 +21,6 @@
         entries: [
             (name: "GATE_RADIUS", value: 1500.0, unit: "m", kind: Tuning, note: "A ring's centreline radius; its opening is a little smaller."),
             (name: "RING_TUBE", value: 60.0, unit: "m", kind: Tuning, note: "Half the ring structure's thickness."),
-            (name: "RING_SPAN_I", value: 10.0, unit: "ly", kind: Planned, note: "A class I ring's greatest span."),
-            (name: "RING_SPAN_II", value: 25.0, unit: "ly", kind: Planned, note: "A class II ring's greatest span."),
-            (name: "RING_SPAN_III", value: 50.0, unit: "ly", kind: Planned, note: "A class III ring's greatest span."),
         ],
     ),
     (

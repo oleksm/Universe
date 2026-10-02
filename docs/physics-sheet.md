@@ -59,7 +59,6 @@ The world's drives and hyperdrives as built today.
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
 | `EXHAUST_VELOCITY` | 1e7 | m/s | Grounded | Today's main drives and thrusters are fusion torches (Daedalus-class, 3% of c): each burns thrust / this, in kg/s. |
-| `ETA_FIELD` | 0.65 |  | Grounded | Today's hyperdrives' field efficiency (one grade, till brands differ): the rest of the draw is heat. |
 | `GROUND_MARGIN` | 20000 | m | Tuning | Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top). |
 
 ## Gates
@@ -70,9 +69,6 @@ The world's gate rings.
 |---|---|---|---|---|
 | `GATE_RADIUS` | 1500 | m | Tuning | A ring's centreline radius; its opening is a little smaller. |
 | `RING_TUBE` | 60 | m | Tuning | Half the ring structure's thickness. |
-| `RING_SPAN_I` | 10 | ly | Planned | A class I ring's greatest span. |
-| `RING_SPAN_II` | 25 | ly | Planned | A class II ring's greatest span. |
-| `RING_SPAN_III` | 50 | ly | Planned | A class III ring's greatest span. |
 
 ## Technology
 
@@ -128,7 +124,7 @@ From `content/base/materials.ron`.
 | Claim | Figure |
 |---|---|
 | The wall between stars (holding the field, best drive) | 12.5 kW per kg aboard |
-| Today's best plant on its own | 2.8 kW/kg (14 MW at most) |
+| Today's best plant on its own | 3.5 kW/kg (14 MW at most) |
 | DROVER with the strongest plant | 0.15 kW/kg: can't cross |
 | SPRINT COURIER with the strongest plant | 0.36 kW/kg: can't cross |
 | BULK HAULER with the strongest plant | 0.05 kW/kg: can't cross |
@@ -139,6 +135,6 @@ From `content/base/materials.ron`.
 | A gate spanning 5 ly holds open at | 125 MW |
 | A gate spanning 10 ly holds open at | 1.0 GW |
 | A gate spanning 25 ly holds open at | 15.6 GW |
-| A gate spanning 40 ly holds open at | 64.0 GW |
 | A gate spanning 50 ly holds open at | 125.0 GW |
+| A gate spanning 40 ly holds open at | 64.0 GW |
 | A gate transit, per tonne across 40 ly | 9.8e11 J |

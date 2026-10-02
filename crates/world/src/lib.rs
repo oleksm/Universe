@@ -39,6 +39,7 @@ pub mod thrusters;
 pub mod rules;
 pub mod station;
 pub mod structures;
+pub mod structures_catalogue;
 pub mod system;
 pub mod terrain;
 #[cfg(test)]

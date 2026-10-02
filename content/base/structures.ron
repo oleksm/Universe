@@ -1,0 +1,18 @@
+// Structures: the big things built in the world, each a product of a maker
+// (brands.ron), like any module or hull. The seeded world's stations,
+// spaceports, outposts and gates are these. (Not yet: their geometry and
+// gear from here; built by players.)
+[
+    (key: "structure.platform", brand: "brand.halvard", name: "HALVARD PLATFORM", kind: Station,
+        note: "An orbital platform: a deck of 16 pads, the main structure on one edge, its hangar inside."),
+    (key: "structure.spaceport", brand: "brand.halvard", name: "HALVARD SPACEPORT", kind: Spaceport,
+        note: "A port on a world's ground: 16 pads on a cleared plain."),
+    (key: "structure.outpost", brand: "brand.halvard", name: "HALVARD OUTPOST", kind: Outpost,
+        note: "A small settlement's port: pads, a works, a few thousand people."),
+    (key: "structure.ring.i", brand: "brand.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 10.0),
+        note: "A gate ring, class I: the shortest throats."),
+    (key: "structure.ring.ii", brand: "brand.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 25.0),
+        note: "A gate ring, class II: the settled lanes' ring."),
+    (key: "structure.ring.iii", brand: "brand.halcyon", name: "HALCYON RING III", kind: GateRing(class: 3, span_ly: 50.0),
+        note: "A gate ring, class III: the longest throat anyone builds."),
+]

@@ -29,7 +29,9 @@ pub enum Does {
     Rack { capacity: f64 },
     /// A passenger cabin: seats, with their life support (in a cargo slot).
     Cabin { seats: u32 },
-    Hyperdrive,
+    /// The hyperdrive: its field's `efficiency` (the share of its draw that holds
+    /// and pushes the field; the rest is heat).
+    Hyperdrive { efficiency: f64 },
     /// Flies the ship by wire: how fast it lets it turn (rad/s): pitch and yaw, roll.
     FlightComputer { turn_rate: f64, roll_rate: f64 },
     Transponder,
@@ -95,7 +97,7 @@ impl Does {
             Does::Gun => Some(Gear::Gun),
             Does::Laser => Some(Gear::Laser),
             Does::MiningRig => Some(Gear::MiningRig),
-            Does::Hyperdrive => Some(Gear::Hyperdrive),
+            Does::Hyperdrive { .. } => Some(Gear::Hyperdrive),
             _ => None,
         }
     }
@@ -110,7 +112,7 @@ impl Does {
             Does::Tank { .. } => SlotKind::Tank,
             Does::Capacitor { .. } => SlotKind::Capacitor,
             Does::Rack { .. } | Does::Cabin { .. } => SlotKind::Cargo,
-            Does::Hyperdrive => SlotKind::Hyperdrive,
+            Does::Hyperdrive { .. } => SlotKind::Hyperdrive,
             Does::FlightComputer { .. } => SlotKind::Computer,
             Does::Transponder => SlotKind::Transponder,
             Does::Sensors { .. } => SlotKind::Sensors,
@@ -193,6 +195,7 @@ impl Module {
             Does::Cabin { seats } => positive("seats", *seats as f64),
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
             Does::Sensors { range } => positive("range", *range),
+            Does::Hyperdrive { efficiency } => if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) },
             // (Storage can't beat the physics sheet's density.)
             Does::Capacitor { capacity, rate } => positive("capacity", *capacity).and(positive("rate", *rate)).and(if *capacity <= crate::sheet::CAPACITOR_DENSITY * self.mass * 1.001 {
                 Ok(())

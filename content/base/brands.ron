@@ -7,4 +7,10 @@
     (key: "brand.orbital", name: "ORBITAL SYSTEMS", note: "COMPUTERS, SENSORS, NAVIGATION"),
     (key: "brand.cormorant", name: "CORMORANT MINING", note: "MINING GEAR"),
     (key: "brand.meridian", name: "MERIDIAN POWER", note: "CAPACITOR BANKS AND POWER STORAGE"),
+    (key: "brand.aurel", name: "AUREL FUSION WORKS", note: "FUSION PLANTS: LIGHT, EFFICIENT, DEAR"),
+    (key: "brand.halcyon", name: "HALCYON FIELD SYSTEMS", note: "HYPERDRIVES AND GATE RINGS: CLEAN FIELDS, DEAR"),
+    (key: "brand.garrick", name: "GARRICK ARMS", note: "WEAPONS: MASS DRIVERS AND LASERS"),
+    (key: "brand.tolland", name: "TOLLAND YARDS", note: "HULLS: WORKHORSES AND HAULERS"),
+    (key: "brand.vireo", name: "VIREO SPACEWORKS", note: "HULLS: FAST AND LIGHT"),
+    (key: "brand.halvard", name: "HALVARD CONSTRUCTION", note: "STATIONS, SPACEPORTS AND OUTPOSTS"),
 ]

@@ -22,7 +22,6 @@ use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
 // (Its constants are the physics sheet's: config/physics.ron.)
 pub use crate::sheet::GROUND_MARGIN;
-use crate::sheet::ETA_FIELD;
 pub use universe_physics::hyper::slack;
 use universe_physics::hyper::{field_draw, field_speed};
 pub use universe_physics::laws::{HYPER_RATE, INTERLOCK};
@@ -134,7 +133,8 @@ pub fn cruise(
     let m = ship.mass();
     let spare = if ship.fuel > 0.0 { ship.spare_power() } else { 0.0 };
     let bank = if ship.energy > 0.0 { ship.spec().capacitor_rate } else { 0.0 };
-    let Some(power_speed) = field_speed(m, s, spare + bank, ETA_FIELD) else {
+    let eta = ship.spec().hyper_efficiency.max(1e-6);
+    let Some(power_speed) = field_speed(m, s, spare + bank, eta) else {
         events.push(if ship.fuel <= 0.0 { ShipEvent::OutOfFuel } else { ShipEvent::FieldCollapsed });
         let base = sys.velocity(sys.dominant(ship.position, positions), t);
         ship.position += base * (real_dt * warp);
@@ -180,7 +180,7 @@ pub fn cruise(
     let room = cmd.destination.map_or(clearance, |d| clearance.min(p.distance(d.point)));
     let speed = (HYPER_RATE * room.max(1000.0) * ship.throttle.max(0.02)).min(power_speed);
     // What it draws: the plant first, the banks for the rest; the reactor burns fuel for its part.
-    let draw = field_draw(m, s, speed, ETA_FIELD);
+    let draw = field_draw(m, s, speed, eta);
     let from_plant = draw.min(spare);
     ship.fuel = (ship.fuel - ship.reactor_fuel(from_plant * real_dt)).max(0.0);
     ship.energy = (ship.energy - (draw - from_plant) * real_dt).max(0.0);

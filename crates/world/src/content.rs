@@ -29,6 +29,7 @@ const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("materials.ron", include_str!("../../../content/base/materials.ron")),
     ("brands.ron", include_str!("../../../content/base/brands.ron")),
+    ("structures.ron", include_str!("../../../content/base/structures.ron")),
     ("modules.ron", include_str!("../../../content/base/modules.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
@@ -206,6 +207,7 @@ pub struct Content {
     pub shapes: Registry<Shape>,
     pub materials: Registry<crate::materials::Material>,
     pub brands: Registry<crate::modules::Brand>,
+    pub structures: Registry<crate::structures_catalogue::Structure>,
     pub modules: Registry<crate::modules::Module>,
     pub hulls: Registry<ClassSpec>,
     pub goods: Registry<GoodsKind>,
@@ -289,10 +291,17 @@ impl Content {
         }).collect::<Result<_, String>>()?)?;
         let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
         let brands: Registry<crate::modules::Brand> = Registry::build(Self::defs(&packs, "brands.ron")?)?;
+        let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
+        for (_, s) in structures.iter() {
+            if resolve(&brands, &aliases, &s.brand).is_none() {
+                return Err(format!("structures.ron '{}': no brand '{}' (every product has a maker)", s.key, s.brand));
+            }
+        }
         let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
         for (_, m) in modules.iter() {
-            if !m.brand.is_empty() && resolve(&brands, &aliases, &m.brand).is_none() {
-                return Err(format!("modules.ron '{}': no brand '{}'", m.key, m.brand));
+            // (Every product has a maker.)
+            if resolve(&brands, &aliases, &m.brand).is_none() {
+                return Err(format!("modules.ron '{}': no brand '{}' (every product has a maker)", m.key, m.brand));
             }
             // What it holds or burns is a material, at its real properties.
             let of = |key: &str| resolve(&materials, &aliases, key).map(|h| materials.get(h)).ok_or_else(|| format!("modules.ron '{}': no material '{key}'", m.key));
@@ -318,6 +327,9 @@ impl Content {
                 .into_iter()
                 .map(|d| {
                     let key = d.key().to_string();
+                    if resolve(&brands, &aliases, d.brand()).is_none() {
+                        return Err(format!("hulls.ron '{key}': no brand '{}' (every product has a maker)", d.brand()));
+                    }
                     let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("hulls.ron '{key}': no shape '{}'", d_shape(&d)))?;
                     d.build(shape, shapes.get(shape), module).map_err(|e| format!("hulls.ron '{key}': {e}"))
                 })
@@ -358,7 +370,7 @@ impl Content {
         let tank_fuel = &hulls.get(starter).fuel;
         let fuel_goods = resolve(&materials, &aliases, tank_fuel).map(|h| materials.get(h).goods.clone()).unwrap_or_default();
         let fuel = kind(&fuel_goods, &format!("the starting hull's fuel '{tank_fuel}'"))?;
-        let c = Content { shapes, materials, brands, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -491,6 +503,7 @@ entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
 entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
 entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
+entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {
         positive("a rate", *t)?;

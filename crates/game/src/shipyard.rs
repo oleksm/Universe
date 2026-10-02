@@ -534,7 +534,8 @@ fn slot_help(kind: universe_sim::world::modules::SlotKind) -> (&'static str, &'s
 
 fn what(m: &Module) -> String {
     match &m.does {
-        Does::PowerPlant { output, .. } => format!("{:.1} MW", output / 1e6),
+        Does::PowerPlant { output, efficiency, .. } => format!("{:.1} MW AT {:.0}%", output / 1e6, efficiency * 100.0),
+        Does::Hyperdrive { efficiency } => format!("FIELD {:.0}%", efficiency * 100.0),
         Does::Drive { thrust } | Does::Thrusters { thrust } | Does::Lift { thrust } => format!("{:.0} KN A NOZZLE", thrust / 1e3),
         Does::Tank { capacity, .. } | Does::Rack { capacity } => fmt::tonnes(*capacity),
         Does::Cabin { seats } => format!("{seats} SEATS"),
@@ -611,7 +612,8 @@ fn draw_hulls(frame: &mut Frame, app: &App, y: &Shipyard) {
     }
     let Some((_, s)) = content().hulls.iter().nth(y.hull_pick) else { return };
     let mut yy = top + (3 + content().hulls.len()) as f32 * LINE;
-    frame.text(Vec2::new(12.0, yy), &format!("{} - {} SLOTS. AS SOLD:", s.name, s.slots.len()), TEXT);
+    let maker = universe_sim::world::content::content().brands.iter().find(|(_, b)| b.key == s.brand).map_or("YOUR OWN DESIGN", |(_, b)| b.name.as_str());
+    frame.text(Vec2::new(12.0, yy), &format!("{} BY {} - {} SLOTS. AS SOLD:", s.name, maker, s.slots.len()), TEXT);
     yy += LINE;
     let names: Vec<String> = s.fit.iter().map(|(_, m)| content().get(*m).name.clone()).collect();
     for chunk in names.chunks(5) {

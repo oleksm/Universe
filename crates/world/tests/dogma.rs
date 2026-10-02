@@ -8,6 +8,13 @@ use universe_physics::laws::*;
 use universe_world::sheet::*;
 use universe_world::units::{AU, LIGHT_YEAR};
 
+/// The gate rings' spans (light years), by class: the world's ring products.
+fn ring_spans() -> Vec<f64> {
+    let mut spans: Vec<(u8, f64)> = content().structures.iter().filter_map(|(_, s)| if let universe_world::structures_catalogue::StructureKind::GateRing { class, span_ly } = s.kind { Some((class, span_ly)) } else { None }).collect();
+    spans.sort_by_key(|s| s.0);
+    spans.into_iter().map(|s| s.1).collect()
+}
+
 /// The most power any plant makes, and the most per kg of plant.
 fn best_plant() -> (f64, f64) {
     content().modules.iter().filter_map(|(_, m)| if let Does::PowerPlant { output, .. } = m.does { Some((output, output / m.mass)) } else { None }).fold((0.0, 0.0), |(a, b), (o, d)| (a.max(o), b.max(d)))
@@ -59,8 +66,10 @@ fn within_a_system_the_medium_is_stiff() {
 fn gates_are_justified_and_limited() {
     let power = |span_ly: f64| GATE_P0 * (span_ly / GATE_S0).powi(3);
     // A near lane is affordable infrastructure; the longest a ring can span is a giant's work.
-    assert!(power(5.0) < 1e9 && power(RING_SPAN_III) > 1e11, "{:e} {:e}", power(5.0), power(RING_SPAN_III));
-    const { assert!(RING_SPAN_I < RING_SPAN_II && RING_SPAN_II < RING_SPAN_III) };
+    let spans = ring_spans();
+    let longest = *spans.last().expect("the world builds gate rings");
+    assert!(power(5.0) < 1e9 && power(longest) > 1e11, "{:e} {:e}", power(5.0), power(longest));
+    assert!(spans.windows(2).all(|w| w[0] < w[1]), "a higher class spans farther: {spans:?}");
     // Freight by gate beats an explorer's crossing per kg (and any ship can take it).
     let gate = GATE_TAU * 40.0 * LIGHT_YEAR;
     let explorer = EXPLORER_POWER * 40.0 * LIGHT_YEAR / ((((EXPLORER_POWER * ETA_FIELD_MAX - P_FLOOR) / P_PUSH).cbrt()) * V_BEST_C * SPEED_OF_LIGHT);

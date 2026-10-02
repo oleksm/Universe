@@ -8,6 +8,13 @@ use universe_physics::laws::*;
 use universe_world::sheet::*;
 use universe_world::units::{AU, LIGHT_YEAR};
 
+/// The gate rings' spans (light years), by class: the world's ring products.
+fn ring_spans() -> Vec<f64> {
+    let mut spans: Vec<(u8, f64)> = content().structures.iter().filter_map(|(_, s)| if let universe_world::structures_catalogue::StructureKind::GateRing { class, span_ly } = s.kind { Some((class, span_ly)) } else { None }).collect();
+    spans.sort_by_key(|s| s.0);
+    spans.into_iter().map(|s| s.1).collect()
+}
+
 fn main() {
     let mut md = String::from("# The physics sheet\n\nGenerated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.\n\n");
     let mut table = |title: &str, source: &str, sections: &[(&str, &str)], sheet: &[universe_physics::sheet::Entry]| {
@@ -42,7 +49,7 @@ fn main() {
     md.push_str(&format!("| A future explorer at {:.0} kW/kg | {:.2} × the best speed: 5 ly in {:.1} days, 40 ly in {:.1} days |\n", EXPLORER_POWER / 1000.0, k, days(5.0), days(40.0)));
     let slack = |d: f64| ((HYPER_RATE * d) / (V_OPEN_C * SPEED_OF_LIGHT)).powi(2).min(1.0);
     md.push_str(&format!("| The medium's slack at 1 AU / 40 AU / 2 ly | {:.0e} / {:.0e} / {} |\n", slack(AU), slack(40.0 * AU), slack(2.0 * LIGHT_YEAR)));
-    for span in [5.0, RING_SPAN_I, RING_SPAN_II, 40.0, RING_SPAN_III] {
+    for span in std::iter::once(5.0).chain(ring_spans()).chain(std::iter::once(40.0)) {
         md.push_str(&format!("| A gate spanning {span} ly holds open at | {} |\n", watts(GATE_P0 * (span / GATE_S0).powi(3))));
     }
     md.push_str(&format!("| A gate transit, per tonne across 40 ly | {:.1e} J |\n", GATE_TAU * 1000.0 * 40.0 * LIGHT_YEAR));
