@@ -342,7 +342,7 @@ fn air(a: &universe_engine::Audio, app: &App) {
 static STEPS: Mutex<Option<(DVec3, f64, bool)>> = Mutex::new(None);
 /// A step every this many metres, walking; running, a longer stride.
 const STRIDE: f64 = 0.9;
-const STRIDE_RUNNING: f64 = 1.6;
+const STRIDE_RUNNING: f64 = 2.2;
 /// Faster than this (m/s), running.
 const RUNNING: f64 = 2.8;
 
@@ -350,7 +350,8 @@ const RUNNING: f64 = 2.8;
 /// the deck plating. Each foot a little to its side, a little different.
 fn footstep(a: &universe_engine::Audio, inside: bool, left: bool, running: bool) {
     let pan = if left { -0.15 } else { 0.15 };
-    let k = if running { 1.4 } else { 1.0 };
+    // (Running: the same light step, only further apart.)
+    let k = if running { 0.9 } else { 1.0 };
     let pitch = if left { 1.0 } else { 1.06 };
     a.thud(85.0 * pitch, 0.2 * k, pan);
     a.hiss(0.07, 0.07 * k, 0.15, pan);
