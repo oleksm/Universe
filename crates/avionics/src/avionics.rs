@@ -206,9 +206,12 @@ impl Avionics {
     pub fn prepare(&mut self, bus: &mut impl Bus, dt: f64, events: &mut Vec<Event>) -> Option<Controls> {
         // Close to a gate's corridor: ask traffic control whether it's ours.
         // Near it (approaching or lining up), ask; waiting ships keep their own place.
+        // (On the final run it has had its turn: traffic control frees the
+        // corridor as it nears the ring for the next ship; asking again then
+        // would put it back in line, behind the others.)
         self.wait_place = bus.id();
         self.corridor_ahead = match self.clearance {
-            Some(Clearance { target: NavTarget::Gate(b), phase: Phase::Approach | Phase::Align | Phase::Final, .. })
+            Some(Clearance { target: NavTarget::Gate(b), phase: Phase::Approach | Phase::Align, .. })
                 if target_position(bus, NavTarget::Gate(b)).is_some_and(|p| p.distance(bus.ship().position) < 12_000.0) =>
             {
                 bus.request_corridor(b)

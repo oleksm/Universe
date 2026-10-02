@@ -17,3 +17,6 @@
 - **A round radar scope:** its rings, ticks and sector lines are drawn where they fall (`hud_line_smooth`),
   not snapped to whole HUD units (two real pixels each), which made the curves step and wobble.
   Rings have 128–160 segments. Every HUD ellipse is smooth now.
+- **No "queued" on a gate's final run:** a ship asks for the corridor only while approaching or lining
+  up. Traffic control frees it as the ship nears the ring, and asking again on the run put it back in
+  line, behind the others. Every ship waiting there also counted one more ahead than there was.
