@@ -698,6 +698,7 @@ fn hull_detail(frame: &mut Frame, (bells, glass): (&universe_engine::Mesh, &univ
 /// Other ships in the system being viewed.
 fn crafts(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
+    let mut names: Vec<(f64, DVec3, String, Color)> = Vec::new();
     for (i, c) in app.v.crafts.iter().enumerate() {
         let visible = (c.ship.is_flying() || matches!(c.ship.state, ShipState::Landed { .. } | ShipState::Anchored { .. })) && c.ship.hangar.is_none();
         if c.system != app.view.origin || !visible {
@@ -715,11 +716,15 @@ fn crafts(frame: &mut Frame, app: &App) {
         hull_detail(frame, app.models.detail(&c.ship), &t);
         nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i);
         jets(frame, &c.ship, pos, turned, app.now(), i);
-        if pos.distance(cam) < 20_000.0
-            && let Some(p) = frame.project(pos)
-        {
-            frame.text(p + Vec2::new(6.0, -14.0), &c.name.to_uppercase(), tc.scale(0.8));
+        if pos.distance(cam) < 5_000.0 {
+            names.push((pos.distance(cam), pos, c.name.to_uppercase(), tc.scale(0.8)));
         }
+    }
+    // Their names, nearest first, none over another (a crowd shows its nearest).
+    names.sort_by(|a, b| a.0.total_cmp(&b.0));
+    let mut placed = Labels { placed: Vec::new() };
+    for (_, pos, name, c) in names {
+        placed.add(frame, pos, &name, c);
     }
 }
 

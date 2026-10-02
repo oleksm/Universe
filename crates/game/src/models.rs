@@ -188,7 +188,7 @@ pub fn bevelled(s: &Shape) -> WireModel {
         let pts = chamfered(planes, 0.0);
         let (lo, hi) = pts.iter().fold((Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
         let thin = (hi - lo).min_element() as f64;
-        let bevel = (thin * 0.12).min(0.5).max(0.02);
+        let bevel = (thin * 0.12).clamp(0.02, 0.5);
         let part = WireModel::convex_hull(&chamfered(planes, bevel));
         let base = m.positions.len() as u32;
         m.positions.extend_from_slice(&part.positions);
