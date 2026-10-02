@@ -400,7 +400,9 @@ fn bodies(frame: &mut Frame, app: &App) {
             // everything else is lit by it.
             frame.no_shadow(|frame| {
                 if b.kind == BodyKind::Star {
-                    frame.model(model, &at, c.scale(0.3 * grid_detail(px * 0.5)), fill);
+                    // (Its surface white-hot, no grid on it: it blooms.)
+                    let hot = Color([fill.0[0] * 5.0 + 1.0, fill.0[1] * 5.0 + 1.0, fill.0[2] * 5.0 + 1.0, 1.0]);
+                    frame.model(model, &at, Color([0.0, 0.0, 0.0, 0.0]), hot);
                 } else {
                     frame.model_shaded_faded(model, &at, c, fill, if app.show_grid { grid_detail(px) } else { 0.0 });
                 }
@@ -606,7 +608,7 @@ fn dust(frame: &mut Frame, app: &App) {
                 }
                 // (Faint: about a tenth there, fading out toward the reach.)
                 let fade = (1.0 - d / REACH).powf(0.6) as f32;
-                let c = Color([0.8, 0.85, 0.9, 0.12 * fade]);
+                let c = Color([0.8, 0.85, 0.9, 0.2 * fade]);
                 frame.line(p, p + along * streak, c);
             }
         }

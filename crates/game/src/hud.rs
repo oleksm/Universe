@@ -1300,7 +1300,6 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     // times the light close in is ten times the glare.
     let irradiance = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU, radius: 0.0 }.irradiance_at(cam);
     let [r, g, b] = sys.class.color();
-    let tint = |a: f32| Color([r, g, b, (a * visible).min(1.0)]);
     let disc = frame.projected_radius(sun, sys.bodies[star].rail.radius).max(2.0);
     let k = (irradiance.sqrt() as f32).min(12.0);
     // Looking toward it, the view washes out: a veil over everything, the
@@ -1312,11 +1311,21 @@ fn sun_glare(frame: &mut Frame, app: &App) {
         frame.hud_rect(Vec2::ZERO, size, Color([r.max(0.9), g.max(0.85), b.max(0.8), veil * visible]));
     }
     let k = k / 1.6;
-    // Halo, core.
-    let halo = disc * 2.5 + 14.0 + 40.0 * k;
-    frame.hud_glow(p, halo, 32, tint(0.3 + 0.05 * k), tint(0.0));
+    // The glare: light scattered in the eye, brightest at the sun and
+    // falling away smoothly with angle (layered glows, each twice as wide
+    // and half as strong: no edge), white near it, the star's colour out.
+    let mix = |w: f32| [r + (1.0 - r) * w, g + (1.0 - g) * w, b + (1.0 - b) * w];
+    let strength = (0.35 + 0.08 * k).min(0.9) * visible;
+    let mut radius = disc * 1.6 + 5.0;
+    for j in 0..7 {
+        let [cr, cg, cb] = mix((1.0 - j as f32 / 4.0).max(0.0));
+        let a = strength * 0.55f32.powi(j);
+        frame.hud_glow(p, radius, 40, Color([cr, cg, cb, a]), Color([cr, cg, cb, 0.0]));
+        radius *= 1.9;
+    }
     // The core: in the scene, just this side of the star, so what stands in
-    // front of it (a station's structure, a ship) hides it pixel by pixel.
+    // front of it (a station's structure, a ship) hides it pixel by pixel;
+    // white-hot (it blooms in the tone curve).
     let core = disc * 1.4 + 4.0 + 6.0 * k;
     let radius = sys.bodies[star].rail.radius;
     let centre = sun - dir * radius * 1.05;
@@ -1326,17 +1335,29 @@ fn sun_glare(frame: &mut Frame, app: &App) {
         let a = i as f64 * std::f64::consts::TAU / 24.0;
         centre + (u * a.cos() + v * a.sin()) * world
     };
-    let (white, edge) = (Color([1.0, 1.0, 0.96, 1.0]), Color([r, g, b, 0.0]));
+    let (white, edge) = (Color([6.0, 6.0, 5.8, 1.0]), Color([r, g, b, 0.0]));
     for i in 0..24 {
         frame.triangle3([centre, rim(i), rim(i + 1)], [white, edge, edge]);
     }
-    // Rays: long spikes and shorter ones between, fading out.
-    let long = disc * 2.0 + 40.0 + 180.0 * k;
-    for i in 0..12 {
-        let a = i as f32 * std::f32::consts::TAU / 12.0 + 0.2;
-        let len = if i % 3 == 0 { long } else { long * 0.45 };
+    // Streaks: many fine ones, uneven, a few longer; fading out.
+    let long = disc * 2.0 + 60.0 + 200.0 * k;
+    for i in 0..32 {
+        let h = ((i as u32).wrapping_mul(2_654_435_761) >> 20) as f32 / 4096.0;
+        let a = i as f32 * std::f32::consts::TAU / 32.0 + 0.11 + h * 0.08;
+        let len = long * if i % 8 == 0 { 1.0 } else { 0.25 + 0.45 * h };
         let d = Vec2::new(a.cos(), a.sin());
-        frame.hud_line2(p + d * disc, p + d * len, tint(0.05), tint(0.0));
+        let w = mix(0.7);
+        frame.hud_line2(p + d * disc, p + d * len, Color([w[0], w[1], w[2], (if i % 8 == 0 { 0.16 } else { 0.08 }) * visible]), Color([w[0], w[1], w[2], 0.0]));
+    }
+    // Lens ghosts: faint coloured discs on the line from the sun through
+    // the middle of the view, stronger the nearer it is to the middle.
+    let middle = size * 0.5;
+    let off = middle - p;
+    let near_middle = (1.0 - off.length() / size.length()).clamp(0.0, 1.0);
+    for (f, rad, col) in [(0.35f32, 9.0f32, [1.0f32, 0.75, 0.35]), (0.7, 20.0, [0.35, 0.9, 0.6]), (1.15, 13.0, [0.35, 0.55, 1.0]), (1.6, 34.0, [0.7, 0.45, 1.0])] {
+        let at = p + off * (1.0 + f);
+        let a = 0.07 * near_middle * visible * (0.5 + 0.1 * k).min(1.5);
+        frame.hud_glow(at, rad, 24, Color([col[0], col[1], col[2], a]), Color([col[0], col[1], col[2], a * 0.4]));
     }
 }
 
