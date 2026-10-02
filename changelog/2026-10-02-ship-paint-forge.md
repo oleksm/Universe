@@ -14,3 +14,5 @@
 - **The forge glow in the chase view:** glows made in the front layer (`Frame::in_front`) are now
   drawn with it (`front_glows`). Before, our own hull, drawn over everything, hid its bells' glow.
 - The `manual` scenario takes `UNIVERSE_BURN` (mains held).
+- **Small thrusters puff, don't glow:** lift and attitude thrusters give a white, dusty spray of cold gas,
+  specks drifting out, widening and fading. Only the main drive has the blue forge glow and plume.

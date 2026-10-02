@@ -1397,14 +1397,9 @@ fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned:
         let flicker = 0.8 + 0.2 * ((now * 31.0 + k as f64 * 1.7 + seed as f64 * 0.37).sin());
         let from = pos + turned * t.at;
         let out = turned * -t.push;
-        // (A drive's plume blue-white; the thrusters' cold gas pale.)
-        let hot = if t.role == ThrusterRole::Rcs { Color::rgb(0.75, 0.78, 0.82) } else { Color::rgb(0.55, 0.72, 1.0) }.scale((0.4 + 0.4 * u) as f32);
-        // The plume: a fan of lines from the mouth's rim to a point downstream.
         let reach = PLUME * force.sqrt() * flicker;
         let mouth = GLOW * t.thrust.sqrt();
-        if t.role == ThrusterRole::Rcs {
-            frame.line(from, from + out * reach, hot);
-        } else {
+        if t.role == ThrusterRole::Main {
             // A drive's plume: faint in vacuum, a short blue cone of light
             // fading and narrowing away from the bell.
             let length = reach.min(mouth * 14.0);
@@ -1414,14 +1409,25 @@ fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned:
                 let fade = (1.0 - f as f32).powi(2);
                 frame.glow(from + out * (length * f), mouth * (1.1 - 0.6 * f), [0.35 * k * fade, 0.75 * k * fade, 2.2 * k * fade], 0.0);
             }
-        }
-        // The forge glow in the bell: blue, white-hot at its heart, as bright as the drive's set.
-        if t.role != ThrusterRole::Rcs {
-            let k = (u * flicker) as f32;
+            // The forge glow in the bell: blue, white-hot at its heart, as bright as the drive's set.
             frame.glow(from + out * 0.3, mouth * 1.5 * (0.6 + 0.4 * u), [0.9 * k, 1.8 * k, 5.0 * k], 2.0);
             frame.glow(from + out * 0.3, mouth * 0.6 * (0.6 + 0.4 * u), [3.0 * k, 4.0 * k, 6.0 * k], 1.2);
         } else {
-            frame.point(from, Color::rgb(0.8, 0.82, 0.86));
+            // A thruster's puff: cold gas, a white dusty spray widening and
+            // thinning out, each speck drifting out and fading (no glow at the nozzle).
+            let (a, b) = (out.any_orthonormal_vector(), out.cross(out.any_orthonormal_vector()));
+            let length = reach.max(1.0) * 1.4;
+            for i in 0..10u32 {
+                let h = |n: u32| ((i.wrapping_mul(2_654_435_761) ^ n.wrapping_mul(40_503) ^ (k as u32).wrapping_mul(97)) % 1000) as f64 / 1000.0;
+                // (Each speck on its own loop out along the jet.)
+                let f = (now * 3.0 + h(1)).fract();
+                let spread = f * length * 0.35;
+                let ang = h(2) * std::f64::consts::TAU;
+                let at = from + out * (f * length) + (a * ang.cos() + b * ang.sin()) * spread * h(3);
+                let fade = (1.0 - f as f32) * (0.4 + 0.6 * u as f32);
+                let w = 0.45 * fade;
+                frame.glow(at, mouth * (0.4 + 1.6 * f), [w, w, w * 1.03], 0.0);
+            }
         }
     }
 }
