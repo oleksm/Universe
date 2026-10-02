@@ -42,6 +42,7 @@ pub mod terrain;
 #[cfg(test)]
 mod testkit;
 pub mod traffic;
+pub mod trim;
 pub mod turrets;
 pub mod units;
 pub mod weapons;

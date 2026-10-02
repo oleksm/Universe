@@ -11,7 +11,12 @@
 //! Pages (TAB): PLAN — ↑/↓ slot, ←/→ module, ENTER put it in the plan,
 //! SHIFT+ENTER (docked, twice) build the plan here; HULLS — ↑/↓, ENTER plan
 //! from that hull; PLANS — ↑/↓, ENTER load, DELETE drop, the first row
-//! keeps the plan as it is. The shipyard key or ESC close.
+//! keeps the plan as it is; BALANCE — the ship flown now: where its centre
+//! of mass sits against its main drive's thrust, and its trim (fuel pumped
+//! to the trim cells, each main's share of the drive): ↑/↓ row, ←/→ set it
+//! (SHIFT: five times), ENTER on AUTO-BALANCE works the trim out for the
+//! load aboard, ENTER on TRIM THE SHIP (docked) has it done. The shipyard
+//! key or ESC close.
 
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::{DVec3, Vec2};
@@ -63,6 +68,7 @@ enum Page {
     Hulls,
     Plans,
     Design,
+    Balance,
 }
 
 /// The panel: the plan being worked on, and the cursors.
@@ -83,6 +89,9 @@ pub struct Shipyard {
     /// Typing the design's name.
     naming: bool,
     held_side: f32,
+    /// The balance page: the trim worked on, and its row.
+    trim: universe_sim::world::trim::Trim,
+    trim_row: usize,
 }
 
 /// How this station stands to module `m`: carried, at what price, and
@@ -140,7 +149,7 @@ fn with(fit: &Fit, slot: &Slot, module: Option<Handle<Module>>) -> Fit {
 impl Shipyard {
     /// The plan: the ship flown now.
     fn new(app: &App) -> Self {
-        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false, knob: 0, naming: false, held_side: 0.0 };
+        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false, knob: 0, naming: false, held_side: 0.0, trim: app.ship.trim.clone(), trim_row: 0 };
         y.choice = y.current_choice(0);
         y
     }
@@ -171,6 +180,17 @@ impl Shipyard {
     /// (Dev scenarios: the hulls page, hull `hull` picked.)
     pub fn showing_hulls(app: &App, hull: usize) -> Self {
         Shipyard { page: Page::Hulls, hull_pick: hull, ..Shipyard::new(app) }
+    }
+
+    /// Work the trim out for the load aboard (AUTO-BALANCE).
+    pub fn auto_balance(&mut self, app: &App) {
+        let ship = &app.ship;
+        self.trim = universe_sim::world::trim::balance(ship.spec(), ship.fuel, ship.cargo + ship.hopper);
+    }
+
+    /// Open on the balance page, at row `row`.
+    pub fn balancing(app: &App, row: usize) -> Self {
+        Shipyard { page: Page::Balance, trim_row: row, ..Shipyard::new(app) }
     }
 
     fn spec(&self) -> &'static ClassSpec {
@@ -288,7 +308,8 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             Page::Plan => Page::Hulls,
             Page::Hulls => Page::Design,
             Page::Design => Page::Plans,
-            Page::Plans => Page::Plan,
+            Page::Plans => Page::Balance,
+            Page::Balance => Page::Plan,
         };
         y.armed = false;
         return true;
@@ -302,6 +323,43 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         }
     };
     match y.page {
+        Page::Balance => {
+            use universe_sim::world::trim;
+            let ship = &app.ship;
+            let s = ship.spec();
+            let mains = s.thrusters.iter().filter(|t| t.role == universe_sim::world::ship::ThrusterRole::Main).count();
+            y.trim.mains.resize(mains, 1.0);
+            // (Rows: the three cells, each main, AUTO-BALANCE, TRIM THE SHIP.)
+            let rows = 3 + mains + 2;
+            step(&mut y.trim_row, rows);
+            let side = input.axis(KeyCode::ArrowLeft, KeyCode::ArrowRight);
+            let turns = crate::navmap::repeat(&mut y.held_side, side != 0.0, input.pressed(KeyCode::ArrowLeft) || input.pressed(KeyCode::ArrowRight), ctx.dt);
+            if side != 0.0 && turns > 0 {
+                let by = side as f64 * if shift { 0.1 } else { 0.02 } * turns as f64;
+                match y.trim_row {
+                    r @ 0..=2 => {
+                        // (Rows: fore–aft, down–up, port–starboard.)
+                        let axis = [2, 1, 0][r];
+                        y.trim.cells[axis] += by;
+                    }
+                    r if r < 3 + mains => y.trim.mains[r - 3] += by * 0.5,
+                    _ => {}
+                }
+                y.trim = y.trim.clamped();
+            }
+            if input.pressed(KeyCode::Enter) {
+                if y.trim_row == 3 + mains {
+                    y.trim = trim::balance(s, ship.fuel, ship.cargo + ship.hopper);
+                    app.say("BALANCED FOR THE LOAD ABOARD".into());
+                } else if y.trim_row == 4 + mains {
+                    if docked {
+                        app.engine.send(Command::Trim(y.trim.clone()));
+                    } else {
+                        app.say("TRIM DOCKED AT A STATION".into());
+                    }
+                }
+            }
+        }
         Page::Design => {
             use universe_sim::world::design::KNOBS;
             // Rows: the name, the knobs, commissioning.
@@ -581,6 +639,105 @@ fn draw_plans(frame: &mut Frame, app: &App, y: &Shipyard) {
     }
 }
 
+/// The balance page: the ship flown now, its trim as worked on (rows to
+/// set), how it stands with it (the thrust line against the centre of mass,
+/// the thrusters' burn to hold it straight; with the load aboard, and tank
+/// full and empty), a bubble level of it magnified, and the ship drawn with
+/// its trim cells (lit by what they hold) and its centre of thrust.
+fn draw_balance(frame: &mut Frame, app: &App, y: &Shipyard) {
+    use universe_sim::world::ship::ThrusterRole;
+    use universe_sim::world::trim::{self, TRIM_SHARE};
+    let ship = &app.ship;
+    let s = ship.spec();
+    let load = ship.cargo + ship.hopper;
+    let t = &y.trim;
+    let mains = t.mains.len();
+    let top = 12.0 + LINE * 2.0;
+    frame.text(Vec2::new(12.0, top - LINE), &format!("BALANCE: {} - THE MAIN DRIVE SHOULD PUSH THROUGH THE CENTRE OF MASS", s.name.to_uppercase()), DIM);
+    // The rows.
+    let side = |v: f64, neg: &str, pos: &str| if v.abs() < 0.005 { "LEVEL".to_string() } else { format!("{:.0}% {}", v.abs() * 100.0, if v < 0.0 { neg } else { pos }) };
+    let moved = |v: f64| fmt::tonnes(ship.fuel * TRIM_SHARE * v.abs());
+    let mut rows: Vec<(String, String)> = vec![
+        ("FORE / AFT CELLS".into(), format!("{:>10}  {}", side(t.cells.z, "FORE", "AFT"), moved(t.cells.z))),
+        ("DOWN / UP CELLS".into(), format!("{:>10}  {}", side(t.cells.y, "DOWN", "UP"), moved(t.cells.y))),
+        ("PORT / STARBOARD".into(), format!("{:>10}  {}", side(t.cells.x, "PORT", "STBD"), moved(t.cells.x))),
+    ];
+    for k in 0..mains {
+        rows.push((format!("MAIN {} SHARE", k + 1), format!("{:>9.0}%", t.main(k) * 100.0)));
+    }
+    rows.push(("AUTO-BALANCE".into(), "FOR THE LOAD ABOARD".into()));
+    rows.push(("TRIM THE SHIP".into(), if station(app).is_some() { "HERE".into() } else { "(DOCKED AT A STATION)".into() }));
+    for (k, (label, value)) in rows.iter().enumerate() {
+        let here = k == y.trim_row;
+        frame.text(Vec2::new(12.0, top + k as f32 * LINE), &format!("{}{:<18} {}", if here { ">" } else { " " }, label, value), if here { SELECT } else { TEXT });
+    }
+    // How it stands: with the load aboard (the worked trim, and the ship's now), tank full, tank dry.
+    let mut yy = top + (rows.len() as f32 + 1.0) * LINE;
+    let mut put = |text: String, c: Color| {
+        frame.text(Vec2::new(12.0, yy), &text, c);
+        yy += LINE;
+    };
+    let say = |i: trim::Imbalance| {
+        let cm = |v: f64, neg: &str, pos: &str| if v.abs() < 0.0005 { "ON IT".to_string() } else { format!("{:.1} CM {}", v.abs() * 100.0, if v < 0.0 { neg } else { pos }) };
+        format!("THRUST {} / {}, BURN {:.2}%", cm(i.miss.y, "BELOW", "ABOVE"), cm(i.miss.x, "LEFT", "RIGHT"), i.burn * 100.0)
+    };
+    let now = trim::imbalance(s, ship.fuel, load, &ship.trim);
+    let worked = trim::imbalance(s, ship.fuel, load, t);
+    put("THE THRUST LINE AGAINST THE CENTRE OF MASS; BURN: THE THRUSTERS HOLDING IT STRAIGHT".into(), DIM);
+    put(format!("AS TRIMMED NOW   {}", say(now)), TEXT);
+    put(format!("THIS TRIM        {}", say(worked)), if worked.burn < now.burn - 1e-5 { BETTER } else { TEXT });
+    put(format!("  TANK FULL      {}", say(trim::imbalance(s, s.fuel_capacity, load, t))), DIM);
+    put(format!("  TANK NEAR DRY  {}", say(trim::imbalance(s, s.fuel_capacity * 0.1, load, t))), DIM);
+    put(format!("LOAD ABOARD: FUEL {} OF {}, CARGO {}", fmt::tonnes(ship.fuel), fmt::tonnes(s.fuel_capacity), fmt::tonnes(load)), DIM);
+    let help = "TRIM CELLS: UP TO 15% OF THE FUEL ABOARD, PUMPED TO THE HULL'S ENDS: THEY MOVE THE CENTRE OF MASS. THEY DRAIN AS THE FUEL BURNS, SO A TRIM HOLDS BEST AT THE LOAD IT WAS SET FOR: TRIM AGAIN AFTER LOADING. MAIN SHARES: TURN ONE NOZZLE DOWN TO SWING THE THRUST SIDEWAYS (FOR LESS DRIVE). SIDE BY SIDE MAINS CAN'T MOVE IT UP OR DOWN: THAT'S THE CELLS' WORK.";
+    yy += LINE * 0.5;
+    for h in wrap(help, 56) {
+        frame.text(Vec2::new(12.0, yy), &h, DIM);
+        yy += LINE;
+    }
+    // The bubble level: the centre of mass at the middle, the thrust line's
+    // point a dot, 2 mm a pixel.
+    let size = frame.size();
+    let (bw, bh) = (150.0f32, 150.0f32);
+    let at = Vec2::new(size.x - bw - 16.0, top + 8.0);
+    frame.hud_box(at, Vec2::new(bw, bh), DIM.scale(0.6));
+    frame.text(at + Vec2::new(6.0, 4.0), "LEVEL (x500)", DIM);
+    let mid = at + Vec2::new(bw, bh) * 0.5;
+    frame.hud_line(mid - Vec2::new(8.0, 0.0), mid + Vec2::new(8.0, 0.0), Color::hex(0xff60ff));
+    frame.hud_line(mid - Vec2::new(0.0, 8.0), mid + Vec2::new(0.0, 8.0), Color::hex(0xff60ff));
+    frame.hud_ellipse(mid, Vec2::splat(6.0), 16, DIM);
+    for (i, c) in [(now, DIM), (worked, SELECT)] {
+        let d = (Vec2::new(i.miss.x as f32, -i.miss.y as f32) * 500.0).clamp(Vec2::splat(-bw * 0.45), Vec2::splat(bw * 0.45));
+        frame.hud_rect(mid + d - Vec2::splat(2.0), Vec2::splat(4.0), c);
+    }
+    // The ship from above and from the side: its trim cells, the centre of thrust.
+    let com = trim::centre_of_mass(s, ship.fuel, load, t);
+    let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com, mounts: true, picked: &["tank"], labels: &[] };
+    let (vw, vh) = (((size.x - 24.0) * 0.25).floor(), (size.y * 0.42).floor());
+    let vy = at.y + bh + 12.0;
+    let vx = size.x - 2.0 * vw - 20.0;
+    crate::thrusterpanel::view(frame, &picture, Vec2::new(vx, vy), Vec2::new(vw, vh), DVec3::X, DVec3::NEG_Z, "FROM ABOVE (NOSE UP)");
+    crate::thrusterpanel::view(frame, &picture, Vec2::new(vx + vw + 8.0, vy), Vec2::new(vw, vh), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE (TOP RIGHT)");
+    let thrust: f64 = s.thrusters.iter().filter(|t| t.role == ThrusterRole::Main).map(|t| t.thrust).sum::<f64>().max(1.0);
+    let centre = trim::thrusters(s, t).iter().filter(|t| t.role == ThrusterRole::Main).map(|t| t.at * t.thrust).sum::<DVec3>() / thrust;
+    // (Each cell lit by its share; the centre of thrust amber.)
+    let fill = [t.cells.x.max(0.0), (-t.cells.x).max(0.0), t.cells.y.max(0.0), (-t.cells.y).max(0.0), t.cells.z.max(0.0), (-t.cells.z).max(0.0)];
+    let (lo, hi) = s.shape().mesh.extent();
+    let reach = (hi - lo).length() * 0.5;
+    for (box_at, across, up) in [(Vec2::new(vx, vy), DVec3::X, DVec3::NEG_Z), (Vec2::new(vx + vw + 8.0, vy), DVec3::Y, DVec3::NEG_Z)] {
+        let scale = (vw.min(vh) as f64 * 0.42) / reach;
+        let c = box_at + Vec2::new(vw, vh) * 0.5;
+        let to = |q: DVec3| c + Vec2::new((q.dot(across) * scale) as f32, -(q.dot(up) * scale) as f32);
+        for (cell, f) in s.trim_cells.iter().zip(fill) {
+            let p = to(*cell);
+            let col = if f > 0.0 { Color::hex(0x60c0ff) } else { Color::hex(0x60c0ff).scale(0.35) };
+            frame.hud_box(p - Vec2::splat(2.5 + 2.0 * f as f32), Vec2::splat(5.0 + 4.0 * f as f32), col);
+        }
+        let p = to(centre);
+        frame.hud_ellipse(p, Vec2::splat(4.0), 12, Color::hex(0xffb050));
+    }
+}
+
 /// The design page: the numbers a hull is drawn up from, its own numbers
 /// (and what's wrong with it), and it drawn; commissioning it at the end.
 fn draw_design(frame: &mut Frame, app: &App, y: &Shipyard) {
@@ -692,6 +849,20 @@ fn actions(frame: &mut Frame, app: &App, y: &Shipyard) {
                 ],
             )
         }
+        Page::Balance => {
+            let mains = y.trim.mains.len();
+            (
+                "BALANCE",
+                vec![
+                    cell("UP DN", "PICK", Lamp::Off),
+                    cell("LT RT", "SET IT", can(y.trim_row < 3 + mains)),
+                    cell("SHIFT", "SET x5", can(y.trim_row < 3 + mains)),
+                    cell("ENTER", if y.trim_row == 4 + mains { "TRIM THE SHIP" } else { "AUTO-BALANCE" }, can(y.trim_row == 3 + mains || (y.trim_row == 4 + mains && docked))),
+                    cell("TAB", "PLAN", Lamp::Off),
+                    close,
+                ],
+            )
+        }
         Page::Plans => {
             let keep = y.plan_pick == 0;
             ("PLANS", vec![cell("UP DN", "PLAN", Lamp::Off), cell("ENTER", if keep { "KEEP THIS PLAN" } else { "LOAD IT" }, Lamp::Off), cell("DEL", "DROP IT", can(!keep)), cell("TAB", "PLAN", Lamp::Off), close])
@@ -713,9 +884,9 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     frame.text(Vec2::new(12.0, 12.0), &format!("{title}   {:.0} CR", app.v.credits), TEXT);
     // The pages, as tabs (TAB moves on).
     use crate::hud::{draw_cell, Lamp};
-    let tabs = [(Page::Plan, "PLAN"), (Page::Hulls, "HULLS"), (Page::Design, "DESIGN"), (Page::Plans, "PLANS")];
+    let tabs = [(Page::Plan, "PLAN"), (Page::Hulls, "HULLS"), (Page::Design, "DESIGN"), (Page::Plans, "PLANS"), (Page::Balance, "BALANCE")];
     let tab = Vec2::new(86.0, 14.0);
-    let x0 = size.x - 4.0 * (tab.x + 2.0) - 8.0;
+    let x0 = size.x - tabs.len() as f32 * (tab.x + 2.0) - 8.0;
     let now = tabs.iter().position(|(p, _)| *p == y.page).unwrap_or(0);
     for (k, (page, name)) in tabs.iter().enumerate() {
         // (TAB on the next one along.)
@@ -726,6 +897,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         Page::Hulls => return draw_hulls(frame, app, y),
         Page::Plans => return draw_plans(frame, app, y),
         Page::Design => return draw_design(frame, app, y),
+        Page::Balance => return draw_balance(frame, app, y),
         Page::Plan => {}
     }
     let spec = y.spec();

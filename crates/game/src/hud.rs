@@ -1459,7 +1459,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 },
                 {
                     let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
-                    let label = if ship.hull >= 1.0 { "HULL SOUND".to_string() } else { format!("MEND HULL {:.0}%", ship.hull * 100.0) };
+                    let label = if ship.hull >= 1.0 { "HULL SOUND".to_string() } else { format!("OVERHAUL {:.0}%", ship.hull * 100.0) };
                     b(Act::Repair, &label, if station && ship.hull < 1.0 { Lamp::Off } else { Lamp::Unavailable })
                 },
                 c("S+E", "LIFT OFF", if ship.powered { Lamp::Off } else { Lamp::Unavailable }),
@@ -1478,14 +1478,14 @@ fn action_grid(frame: &mut Frame, app: &App) {
         _ => (
             "NAV",
             vec![
-                b(Act::Clearance, "CLEARANCE", clearance.1),
+                b(Act::Clearance, "DOCKING", clearance.1),
                 b(Act::Autopilot, "AUTOPILOT", on(auto)),
                 b(Act::Hyperdrive, "HYPERDRIVE", hyper),
                 b(Act::Lock, "LOCK", lock),
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
                 b(Act::Cancel, "CANCEL", let_go),
-                b(Act::Proximity, "IMPACT WARNING", collide),
+                b(Act::Proximity, "IMPACT", collide),
                 b(Act::Manual, "THRUSTERS", Lamp::Off),
             ],
         ),

@@ -134,8 +134,8 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Keep, Scope::Flight, "KEEP"),
     (Act::Orbit, Scope::Flight, "ORBIT"),
     (Act::Cancel, Scope::Flight, "CANCEL"),
-    (Act::Clearance, Scope::Nav, "CLEARANCE"),
-    (Act::Proximity, Scope::Nav, "IMPACT WARNING"),
+    (Act::Clearance, Scope::Nav, "DOCKING"),
+    (Act::Proximity, Scope::Nav, "IMPACT"),
     (Act::Laser, Scope::Combat, "PULSE LASER"),
     (Act::Prospect, Scope::Mining, "PROSPECT"),
     (Act::ZeroIn, Scope::Mining, "ZERO IN"),
@@ -156,14 +156,15 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Shipyard, Scope::Global, "SHIPYARD"),
     (Act::Systems, Scope::Flight, "POWER"),
     (Act::Refuel, Scope::Docked, "FUEL UP"),
-    (Act::Repair, Scope::Docked, "MEND HULL"),
+    (Act::Repair, Scope::Docked, "OVERHAUL"),
     (Act::Manual, Scope::Nav, "THRUSTERS"),
 ];
 
 /// Actions whose key is set, not taken from the name (given out first).
 // (POWER: every letter of its name is taken in flight; J is the one free.)
-// (THRUSTERS, manual flight: likewise every letter taken; G is free.)
-const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J'), (Act::Manual, 'G')];
+// (THRUSTERS, manual flight: likewise every letter taken; G is free.
+// DOCKING on O, as asked: ECONOMY takes its N.)
+const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J'), (Act::Manual, 'G'), (Act::Clearance, 'O')];
 
 /// An action's binding: its letter, and where it stands in the name (None:
 /// not in it — given the first free letter instead).

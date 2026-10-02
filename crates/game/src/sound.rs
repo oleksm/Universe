@@ -170,6 +170,11 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             a.thud(160.0, 0.3, 0.0);
             a.hiss(1.4, 0.15, 0.1, 0.0);
         }
+        // The yard's pumps moving the fuel.
+        Event::Trimmed => {
+            a.thud(160.0, 0.3, 0.0);
+            a.hiss(1.8, 0.12, 0.1, 0.0);
+        }
         Event::Repaired { .. } => {
             a.impact(0.15, 1.6, -0.4);
             a.impact(0.15, 1.5, 0.4);

@@ -172,6 +172,20 @@ pub fn apply(app: &mut App, name: &str) {
             let y = crate::shipyard::Shipyard::designing(app, 15);
             app.shipyard = Some(y);
         }
+        "balance" | "balanced" => {
+            // Docked at the home station, the shipyard's balance page
+            // ("balanced": auto-balanced, the trim worked out but not yet done).
+            apply(app, "docked");
+            app.engine.refresh();
+            app.v = app.engine.view();
+            app.ship = app.v.ship.clone();
+            let mains = app.ship.spec().thrusters.iter().filter(|t| t.role == universe_sim::world::ship::ThrusterRole::Main).count();
+            let mut y = crate::shipyard::Shipyard::balancing(app, if name == "balanced" { 3 + mains } else { 0 });
+            if name == "balanced" {
+                y.auto_balance(app);
+            }
+            app.shipyard = Some(y);
+        }
         "planner" => {
             // In flight: the ship planner, on the drive slot with another drive picked.
             app.mode = Mode::Pilot;

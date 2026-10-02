@@ -42,6 +42,8 @@ pub enum Event {
     Refitted { slot: String, module: Option<String>, credits: f64 },
     /// A new ship bought at a shipyard, the old one traded in: what it cost.
     BoughtShip { name: String, credits: f64 },
+    /// The ship's trim set at a shipyard.
+    Trimmed,
     /// Bought from a vending machine: what, for how much, and how it is.
     Vended { what: String, credits: f64, note: String },
     /// The hull mended at a station: what it cost, and how sound it is now (0..1).

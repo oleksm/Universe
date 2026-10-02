@@ -746,9 +746,10 @@ impl World {
         // excess is paid is the ledger's business), a full tank.
         let ship_pos = pos - prograde * 4000.0;
         let orientation = upright(radial, prograde);
-        let (class, fit) = (ship.class, ship.fit.clone());
+        let (class, fit, trim) = (ship.class, ship.fit.clone(), ship.trim.clone());
         *ship = Ship::new(ship_pos, vel, orientation);
         ship.class = class;
+        ship.trim = trim;
         if let Some(fit) = fit {
             let _ = ship.refit(fit);
         }

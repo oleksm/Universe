@@ -66,6 +66,8 @@ pub struct ClassSpec {
     pub dry_inertia: DMat3,
     pub tank_at: DVec3,
     pub hold_at: DVec3,
+    /// Its trim cells, at the hull's ends (see `trim::cells`).
+    pub trim_cells: [DVec3; 6],
     /// Where each module sits, and what has no room (see `place`).
     pub placed: Vec<Placed>,
     pub crowded: Vec<String>,
@@ -315,9 +317,14 @@ impl ClassSpec {
     /// (N). Off balance, less than they're rated. Worked out per tonne of
     /// fuel and load (a tonne either way changes little).
     pub fn authority(&'static self, fuel: f64, load: f64) -> Authority {
-        let key = (self as *const ClassSpec as usize, (fuel / 1000.0).round() as i64, (load / 1000.0).round() as i64);
+        self.authority_trimmed(fuel, load, &crate::trim::Trim::default())
+    }
+
+    /// `authority`, with the ship trimmed by `trim` (see `trim`).
+    pub fn authority_trimmed(&'static self, fuel: f64, load: f64, trim: &crate::trim::Trim) -> Authority {
+        let key = (self as *const ClassSpec as usize, (fuel / 1000.0).round() as i64, (load / 1000.0).round() as i64, trim.key());
         thread_local! {
-            static CACHE: std::cell::RefCell<std::collections::HashMap<(usize, i64, i64), Authority>> = Default::default();
+            static CACHE: std::cell::RefCell<std::collections::HashMap<(usize, i64, i64, i64), Authority>> = Default::default();
         }
         if let Some(a) = CACHE.with(|c| c.borrow().get(&key).copied()) {
             return a;
@@ -325,11 +332,12 @@ impl ClassSpec {
         // (At the tonne the key stands for, so it's the same answer whoever
         // asks first: the world stays the same to the bit.)
         let (fuel, load) = (key.1 as f64 * 1000.0, key.2 as f64 * 1000.0);
-        let (com, mass, inertia) = (self.centre_of_mass(fuel, load), self.dry_mass + fuel + load, self.inertia(fuel, load));
+        let (com, mass, inertia) = (crate::trim::centre_of_mass(self, fuel, load, trim), self.dry_mass + fuel + load, crate::trim::inertia(self, fuel, load, trim));
         let straight = crate::thrusters::STRAIGHT * self.turn_accel.min_element();
-        let push = |d: DVec3, full: f64| crate::thrusters::balanced(&self.thrusters, com, mass, inertia, d, full, straight);
+        let thrusters = crate::trim::thrusters(self, trim);
+        let push = |d: DVec3, full: f64| crate::thrusters::balanced(&thrusters, com, mass, inertia, d, full, straight);
         let a = Authority {
-            main: crate::thrusters::balanced_with(&self.thrusters, com, mass, inertia, DVec3::NEG_Z, self.main_thrust, straight, true),
+            main: crate::thrusters::balanced_with(&thrusters, com, mass, inertia, DVec3::NEG_Z, self.main_thrust, straight, true),
             lift: push(DVec3::Y, self.lift_thrust),
             side: [DVec3::X, DVec3::NEG_X, DVec3::NEG_Y, DVec3::Z, DVec3::NEG_Z].iter().map(|&d| push(d, self.rcs_thrust)).fold(f64::INFINITY, f64::min),
         };
@@ -470,6 +478,7 @@ impl ClassSpec {
             dry_inertia,
             tank_at,
             hold_at,
+            trim_cells: crate::trim::cells(shape, tank_at),
             placed,
             crowded,
             radius: frame.radius,
@@ -617,6 +626,9 @@ pub struct Ship {
     /// throttle, nothing to steady it.
     #[serde(default)]
     pub manual: bool,
+    /// Its trim (set at a shipyard: see `trim`).
+    #[serde(default)]
+    pub trim: crate::trim::Trim,
     #[serde(default)]
     pub held: u64,
     /// Taxiing on the ground between a pad and a spaceport's hangar (see
@@ -729,6 +741,7 @@ impl Ship {
             hangar: None,
             powered: true,
             manual: false,
+            trim: Default::default(),
             held: 0,
             taxi: None,
             cargo: 0.0,
@@ -806,18 +819,18 @@ impl Ship {
     /// Its centre of mass (shape frame, m): its shape's, as a solid.
     /// (Fuel and cargo are taken as spread like the hull, for now.)
     pub fn centre_of_mass(&self) -> DVec3 {
-        self.spec().centre_of_mass(self.fuel, self.cargo + self.hopper)
+        crate::trim::centre_of_mass(self.spec(), self.fuel, self.cargo + self.hopper, &self.trim)
     }
 
     /// Its inertia tensor about its centre of mass (kg·m², body frame).
     pub fn inertia(&self) -> glam::DMat3 {
-        self.spec().inertia(self.fuel, self.cargo + self.hopper)
+        crate::trim::inertia(self.spec(), self.fuel, self.cargo + self.hopper, &self.trim)
     }
 
     /// What its thrusters can give without turning it, loaded as it is (see
     /// `ClassSpec::authority`).
     pub fn authority(&self) -> Authority {
-        self.spec().authority(self.fuel, self.cargo + self.hopper)
+        self.spec().authority_trimmed(self.fuel, self.cargo + self.hopper, &self.trim)
     }
 
     /// How fast its thrusters turn it now (rad/s² about each body axis).
@@ -858,7 +871,8 @@ impl Ship {
             // The drive at the throttle (its nozzles together, as far as it
             // goes straight); the thrusters and lift do the rest.
             let level = if push { self.throttle.clamp(0.0, 1.0) * a.main / s.main_thrust.max(1.0) } else { 0.0 };
-            self.applied = crate::thrusters::allocate_with(&s.thrusters, self.centre_of_mass(), self.mass(), inertia, Some(level), force, torque, &mut self.jets);
+            let thrusters = crate::trim::thrusters(s, &self.trim);
+            self.applied = crate::thrusters::allocate_with(&thrusters, self.centre_of_mass(), self.mass(), inertia, Some(level), force, torque, &mut self.jets);
         }
         // Turning: I ω̇ = τ. (The spin's own coupling, ω × Iω, is left out:
         // the flight computer holds against it when it turns the ship, and a
@@ -883,7 +897,8 @@ impl Ship {
         let com = self.centre_of_mass();
         self.jets.resize(s.thrusters.len(), 0.0);
         let (mut force, mut torque) = (DVec3::ZERO, DVec3::ZERO);
-        for (k, t) in s.thrusters.iter().enumerate() {
+        let thrusters = crate::trim::thrusters(s, &self.trim);
+        for (k, t) in thrusters.iter().enumerate() {
             let on = k < 64 && self.held & (1 << k) != 0 && self.fuel > 0.0;
             self.jets[k] = if on { 1.0 } else { 0.0 };
             if on {

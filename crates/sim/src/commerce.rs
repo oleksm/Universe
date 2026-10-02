@@ -322,6 +322,8 @@ impl crate::universe::Universe {
         let mut new = old.clone();
         new.class = hull;
         new.fit = None;
+        // (A new hull: untrimmed.)
+        new.trim = Default::default();
         new.refresh();
         new.fuel = old.fuel.min(spec.fuel_capacity);
         new.hull = 1.0;
@@ -422,5 +424,25 @@ impl crate::universe::Universe {
             _ => universe_avionics::Event::Refused { reason: "NO VENDING MACHINE WITHIN REACH".into() },
         };
         self.events.push(e);
+    }
+}
+
+impl crate::universe::Universe {
+    /// The player's ship trimmed (see `world::trim`): at a station's
+    /// shipyard, where its fuel can be pumped and its drive set.
+    pub fn set_trim(&mut self, trim: universe_world::trim::Trim) -> Result<(), String> {
+        let sys = self.ship_system();
+        let r = match universe_world::traffic::docked_at(&sys, &self.ship) {
+            Some(Facility::Station(_)) => {
+                self.ship.trim = trim.clamped();
+                Ok(())
+            }
+            _ => Err("TRIM DOCKED AT A STATION".to_string()),
+        };
+        self.events.push(match &r {
+            Ok(()) => universe_avionics::Event::Trimmed,
+            Err(reason) => universe_avionics::Event::Refused { reason: reason.clone() },
+        });
+        r
     }
 }

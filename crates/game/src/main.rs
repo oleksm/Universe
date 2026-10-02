@@ -600,7 +600,7 @@ impl App {
         if mode == ShipMode::Nav && pressed(input, Act::Proximity) {
             let on = !self.v.avionics.collision_warning;
             self.engine.send(Command::CollisionWarning(on));
-            self.say(if on { "IMPACT WARNING ON" } else { "IMPACT WARNING OFF" }.into());
+            self.say(if on { "IMPACT ON" } else { "IMPACT OFF" }.into());
         }
         // T: lock on (tap: what's ahead; hold: choose from the list).
         let listing = lock::input(self, ctx) | orbitpick::input(self, ctx);
@@ -724,6 +724,7 @@ impl App {
                 Event::Refuelled { tonnes, credits } if tonnes < 1.0 => format!("REFUELLED {:.0} KG FOR {credits:.0} CR", tonnes * 1000.0),
                 Event::Refuelled { tonnes, credits } => format!("REFUELLED {tonnes:.1} T FOR {credits:.0} CR"),
                 Event::Repaired { credits, hull } => format!("HULL REPAIRED TO {:.0}% FOR {credits:.0} CR", hull * 100.0),
+                Event::Trimmed => "SHIP TRIMMED".into(),
                 Event::Vended { what, credits, note } => format!("{what} - {credits:.0} CR. {note}"),
                 Event::Refitted { slot, module, credits } => format!("{} FITTED IN {} - {} {:.0} CR", module.unwrap_or_else(|| "NOTHING".into()), slot.to_uppercase(), if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
                 Event::BoughtShip { name, credits } => format!("NEW SHIP: {name} - {} {:.0} CR WITH YOUR OLD ONE TRADED IN", if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
@@ -822,7 +823,7 @@ impl App {
     fn target_hint(&self) -> String {
         match self.v.avionics.nav_target {
             Some(universe_sim::NavTarget::Asteroid(_)) => format!("{} TO KEEP STATION, {} TO ORBIT", crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Orbit)),
-            _ => format!("{} FOR CLEARANCE", crate::keys::key(crate::keys::Act::Clearance)),
+            _ => format!("{} FOR DOCKING", crate::keys::key(crate::keys::Act::Clearance)),
         }
     }
 

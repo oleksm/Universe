@@ -802,3 +802,38 @@ fn manual_thrusters_fire_only_what_is_held_and_nothing_steadies_the_ship() {
     }
     assert!(!u.ship.manual && u.ship.held == 0);
 }
+
+#[test]
+fn a_ship_balanced_at_the_yard_goes_straight_on_its_mains_alone() {
+    use universe_sim::world::ship::ThrusterRole;
+    use universe_sim::world::ShipCommands;
+    // Mains alone from a standstill, manual, for two seconds: how fast it's turning then.
+    let spin_after = |trimmed: bool| {
+        let mut u = bench(0);
+        let station = u.ship_system().station().unwrap();
+        let home = u.ship_system;
+        u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+        assert!(u.set_trim(universe_sim::world::trim::Trim::default()).is_ok(), "docked: the yard trims it");
+        if trimmed {
+            let s = u.ship.spec();
+            let t = universe_sim::world::trim::balance(s, u.ship.fuel, u.ship.cargo);
+            u.set_trim(t).unwrap();
+        }
+        // Out in free space, still.
+        u.respawn();
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        u.ship.position += DVec3::new(0.0, 0.0, 5.0e7);
+        u.ship.angular_velocity = DVec3::ZERO;
+        let mains: u64 = u.ship.spec().thrusters.iter().enumerate().filter(|(_, t)| t.role == ThrusterRole::Main).map(|(i, _)| 1u64 << i).sum();
+        u.command(&ShipCommands { manual: Some(true), ..u.ship.holding() });
+        u.command(&ShipCommands { jets: Some(mains), ..u.ship.holding() });
+        for _ in 0..120 {
+            u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        }
+        u.ship.angular_velocity.length()
+    };
+    let (off, on) = (spin_after(false), spin_after(true));
+    eprintln!("turning after 2 s on the mains: untrimmed {off:.5} rad/s, trimmed {on:.7} rad/s");
+    assert!(off > 1e-3, "untrimmed, it turns: {off}");
+    assert!(on < off * 0.02, "trimmed, it goes straight: {on} against {off}");
+}

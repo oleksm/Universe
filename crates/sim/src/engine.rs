@@ -71,6 +71,8 @@ pub enum Command {
     Repair,
     /// Buy item `0` of the vending machine within reach (on foot at a spaceport).
     Vend(usize),
+    /// Trim the ship (docked at a station's shipyard).
+    Trim(universe_world::trim::Trim),
     StopFollowing,
     /// Lock what's in the beam around the nose (again: the next).
     LockInBeam,
@@ -265,6 +267,9 @@ impl Engine {
             Command::Refuel => u.refuel_player(),
             Command::Repair => u.repair_player(),
             Command::Vend(item) => u.vend(item),
+            Command::Trim(t) => {
+                let _ = u.set_trim(t);
+            }
             Command::RoutePush(stop) => u.cockpit().route_push(stop),
             Command::RoutePop => u.cockpit().route_pop(),
             Command::RouteClear => u.cockpit().route_set(Vec::new()),
