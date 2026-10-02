@@ -49,8 +49,11 @@ impl BodyKind {
     }
 
     /// Does it pull on ships? (Stations and gates are too light to matter.)
+    /// Does it pull? Everything with mass does: a station's 10⁹ kg pulls a
+    /// ship 500 m off at about 3×10⁻⁷ m/s², a gate's 10¹⁰ kg ten times that
+    /// (never enough to count as the dominant body).
     pub fn massive(self) -> bool {
-        !matches!(self, BodyKind::Station | BodyKind::Gate)
+        true
     }
 
     /// Its shape, for Dogma: a station's hull with its docking
@@ -537,4 +540,25 @@ impl StarSystem {
 /// Who pulls whom back among `bodies` (see `universe_physics::settle`).
 pub fn settle_bodies(bodies: &mut [Body]) {
     universe_physics::settle(&mut bodies.iter_mut().map(|b| &mut b.rail).collect::<Vec<_>>());
+}
+
+#[cfg(test)]
+mod small_body_tests {
+    use crate::testkit::Probe;
+    use crate::system::BodyKind;
+
+    #[test]
+    fn a_station_pulls_faintly_and_its_world_still_dominates() {
+        let mut p = Probe::new(42);
+        let sys = p.sys();
+        let pos = p.positions();
+        let s = sys.station().expect("a station");
+        assert!(sys.bodies[s].rail.attracts, "a station has mass: it pulls");
+        // Just off its deck: its pull is real but tiny; the world it orbits is still the dominant body.
+        let here = pos[s] + glam::DVec3::Y * 800.0;
+        let own = universe_physics::pull(sys.bodies[s].rail.mu, pos[s] - here).length();
+        assert!(own > 0.0 && own < 1e-5, "{own} m/s²");
+        let d = universe_physics::dominant(&sys.bodies, here, &pos);
+        assert!(sys.bodies[d].kind != BodyKind::Station && sys.bodies[d].kind != BodyKind::Gate, "{:?}", sys.bodies[d].kind);
+    }
 }

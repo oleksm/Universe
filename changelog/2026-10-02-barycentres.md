@@ -14,3 +14,10 @@
   planet's plus theirs), as two-body motion has it.
 - Code that summed orbit chains by hand (an anchored ship's rock, a field body's state) uses Dogma's
   functions now. The simulation's cost is unchanged.
+
+## Small bodies pull too
+
+- Stations (10⁹ kg) and gates (10¹⁰ kg) now attract: everything with mass pulls. A station pulls a
+  ship 800 m off at about 10⁻⁷ m/s². They're never the dominant body (checked). Asteroids already
+  attracted.
+- The charter's "simplified" and "planned" lists are updated.

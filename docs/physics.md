@@ -36,9 +36,9 @@ dodge a design problem.
 
 ## Simplified (approximations of the real, to refine)
 
-- **Bodies on rails:** they don't pull on each other. A planet feels only its star; the star doesn't
-  wobble; moons don't move their planet.
-- **Small bodies have no gravity:** stations, gates and asteroids.
+- **Bodies on rails, two by two:** each pair (a body and its parent) moves about its shared centre
+  of mass (the star wobbles, a planet round its moons'), but a planet doesn't feel its neighbours:
+  no n-body perturbations.
 - **Atmospheres** are a height band with a density profile, not a full air model.
 - **Heat** is the skin as one body (no hot and cold sides), its own power's heat going to built-in
   radiators but for a leak (radiators come as modules); worlds' climates are equilibrium-and-swing
@@ -55,10 +55,9 @@ dodge a design problem.
      greenhouse boost from the atmosphere; a day/night swing set by the air (thin air, large
      swings; thick, small); colder toward the poles and with height.
    - **Air temperature** is what a ship flies through and a walker feels.
-2. **Barycentres:** the star moves about the system's centre of mass; a planet and its moons about
-   theirs. Still exact (closed form).
-3. **Small bodies' gravity:** stations, gates and asteroids pull too (tiny, and it matters for
-   orbiting a rock).
+2. **Barycentres** (done): the star moves about the system's centre of mass; a planet and its
+   moons about theirs. Still exact (closed form).
+3. **Small bodies' gravity** (done): stations and gates pull too (faintly); asteroids already did.
 4. **Full n-body later**, when player actions can change orbits (moving asteroids, terraforming).
    Its costs: no closed form (saves and late joiners replay or snapshot; every client integrates
    identically) and long-run chaos (systems must be generated stable).
