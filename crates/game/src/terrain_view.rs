@@ -26,16 +26,59 @@ pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
     }
 }
 
+/// The ground's colour at `dir` (body frame, unit), continuous: an
+/// Earth-like world's seas darker the deeper (turquoise in the shallows),
+/// its coasts sand, its land green to brown with height, snow on the peaks
+/// and ice at the poles; other worlds their colour, lighter high, darker in
+/// craters; a little variation everywhere (no flat fills).
+pub fn ground_color(body: &Body, terrain: &universe_sim::world::terrain::Terrain, dir: DVec3) -> Color {
+    let h = terrain.raw_height(dir);
+    let a = terrain.amplitude.max(1.0);
+    let t = (h / a) as f32;
+    let mix = |p: [f32; 3], q: [f32; 3], k: f32| {
+        let k = k.clamp(0.0, 1.0);
+        [p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k, p[2] + (q[2] - p[2]) * k]
+    };
+    // (A little variation: a hash of where.)
+    let jitter = {
+        let q = (dir * 900.0).round();
+        let x = (q.x as i64).wrapping_mul(73_856_093) ^ (q.y as i64).wrapping_mul(19_349_663) ^ (q.z as i64).wrapping_mul(83_492_791);
+        0.94 + 0.12 * ((x.rem_euclid(1000)) as f32 / 1000.0)
+    };
+    let polar = ((dir.y.abs() as f32 - 0.86) / 0.08).clamp(0.0, 1.0);
+    let c = match terrain.kind {
+        TerrainKind::Terran if h < 0.0 => {
+            let deep = (-t / 0.5).clamp(0.0, 1.0);
+            mix([0.12, 0.42, 0.62], [0.03, 0.12, 0.36], deep)
+        }
+        TerrainKind::Terran => {
+            let land = if t < 0.03 {
+                mix([0.72, 0.68, 0.5], [0.24, 0.45, 0.2], t / 0.03)
+            } else if t < 0.45 {
+                mix([0.24, 0.45, 0.2], [0.42, 0.36, 0.24], (t - 0.03) / 0.42)
+            } else {
+                mix([0.42, 0.36, 0.24], [0.9, 0.9, 0.92], (t - 0.45) / 0.35)
+            };
+            land.map(|c| c * jitter)
+        }
+        _ => {
+            let base = color(body.color).0;
+            let (_, inside) = terrain.classify(dir);
+            let shade = 0.75 + 0.35 * (t * 0.5 + 0.5).clamp(0.0, 1.0);
+            let crater = if inside > 0.25 { 0.6 } else { 1.0 };
+            [base[0], base[1], base[2]].map(|c| c * shade * crater * jitter)
+        }
+    };
+    let c = mix(c, [0.92, 0.94, 0.97], polar);
+    Color([c[0], c[1], c[2], 1.0])
+}
+
 /// A unit globe (latitude/longitude lines) displaced by the terrain and
 /// colored by what's under each point. Built once per body.
 pub fn globe(body: &Body, detail: u32) -> Option<WireModel> {
     let terrain = body.terrain.as_ref()?;
     let mut m = WireModel::globe(24, 14, detail);
-    m.colors = m
-        .positions
-        .iter()
-        .map(|p| surface_color(body, terrain.kind, terrain.classify(p.as_dvec3()).0).0)
-        .collect();
+    m.colors = m.positions.iter().map(|p| ground_color(body, terrain, p.as_dvec3()).0).collect();
     let r = body.rail.radius;
     for p in &mut m.positions {
         let h = terrain.surface(p.as_dvec3());

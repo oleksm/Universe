@@ -56,7 +56,7 @@ pub fn mesh(b: &Body) -> Option<WireModel> {
     let mut edges: Vec<[u32; 2]> = faces.iter().flat_map(|&[a, b, c]| [[a, b], [b, c], [c, a]]).map(|[a, b]| [a.min(b), a.max(b)]).collect();
     edges.sort_unstable();
     edges.dedup();
-    Some(WireModel { positions, edges, faces, colors: Vec::new() })
+    Some(WireModel { positions, edges, faces, colors: Vec::new(), smooth: false })
 }
 
 /// The field whose swarm is in sight from `p` (bodies at `positions`).

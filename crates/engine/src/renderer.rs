@@ -147,12 +147,27 @@ impl GpuMesh {
         use wgpu::util::DeviceExt;
         let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
         let mut faces = Vec::with_capacity(mesh.faces.len() * 3);
+        // (Smooth: each corner's normal the faces' meeting there, weighted by their size.)
+        let corner_normals: Vec<Vec3> = if mesh.smooth {
+            let mut sum = vec![Vec3::ZERO; mesh.positions.len()];
+            for f in &mesh.faces {
+                let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
+                let n = (b - a).cross(c - a);
+                for &i in f {
+                    sum[i as usize] += n;
+                }
+            }
+            sum.into_iter().map(|n| n.normalize_or_zero()).collect()
+        } else {
+            Vec::new()
+        };
         for f in &mesh.faces {
             let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
             // Faces are wound counter-clockwise seen from outside: that's their normal.
             // (Not "away from the centre": a station or a winged hull isn't convex about it.)
             let n = (b - a).cross(c - a).normalize_or_zero();
             for &i in f {
+                let n = corner_normals.get(i as usize).copied().unwrap_or(n);
                 faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i) });
             }
         }

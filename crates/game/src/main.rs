@@ -848,7 +848,7 @@ impl App {
         let origin = self.view.origin;
         for (i, b) in self.view.system.bodies.iter().enumerate() {
             if !self.globes.contains_key(&(origin, i))
-                && let (Some(full), Some(coarse)) = (terrain_view::globe(b, 4), terrain_view::globe(b, 1))
+                && let (Some(full), Some(coarse)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2))
             {
                 self.globes.insert((origin, i), (full.into(), coarse.into()));
             }

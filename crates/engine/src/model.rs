@@ -67,6 +67,9 @@ pub struct WireModel {
     pub faces: Vec<[u32; 3]>,
     /// Optional per-vertex colors (RGBA). Empty means use the colors given when drawing.
     pub colors: Vec<[f32; 4]>,
+    /// Shaded smooth (a curved surface: each corner's normal the average of
+    /// the faces meeting there), not face by face.
+    pub smooth: bool,
 }
 
 impl WireModel {
@@ -75,7 +78,7 @@ impl WireModel {
     pub fn globe(meridians: u32, parallels: u32, detail: u32) -> Self {
         let lon_seg = meridians * detail;
         let lat_seg = (parallels + 1) * detail;
-        let mut m = WireModel::default();
+        let mut m = WireModel { smooth: true, ..WireModel::default() };
 
         // Grid of (lat_seg + 1) rows x lon_seg columns, rows from north to south pole.
         for row in 0..=lat_seg {

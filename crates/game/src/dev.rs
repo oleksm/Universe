@@ -54,7 +54,12 @@ pub fn apply(app: &mut App, name: &str) {
         }
         "system" => observe(app, 0, outer * 2.2, 0.6),
         "inner" => observe(app, 0, outer * 0.25, 0.45),
-        "planet" => observe(app, planet, sys.bodies[planet].rail.radius * 6.0, 0.3),
+        "planet" => {
+            observe(app, planet, sys.bodies[planet].rail.radius * std::env::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(6.0), 0.3);
+            if let Some(y) = std::env::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()) {
+                app.observer.yaw = y;
+            }
+        }
         "giant" => {
             let giant = sys.bodies.iter().position(|b| b.rings.is_some()).or_else(|| sys.bodies.iter().position(|b| b.kind == BodyKind::GasGiant)).unwrap_or(0);
             observe(app, giant, sys.bodies[giant].rail.radius * 7.0, 0.35);
