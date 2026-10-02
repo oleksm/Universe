@@ -34,6 +34,7 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **Explorer** | A future ship built around next-generation reactors that can cross between stars (40 ly: an epic). |
 | **Hypernet** | The information network to come: events captured in range, carried by relays, gates and ships (`docs/hypernet.md`). |
 | **Comm** | A ship's or structure's hypernet equipment: what it hears (capture), how far it links, its lag and capacity. Every ship carries one. |
+| **Backbone** | A system's hub on the hypernet: its station's relay (its ports', with no station). Lag is counted from it. |
 | **Relay** | A structure's comm (backbone, beacon); a **gate relay** links two systems' nets through the throat. |
 
 ## The world's makers (brands)

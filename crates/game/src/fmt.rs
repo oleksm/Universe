@@ -39,6 +39,19 @@ pub fn speed(v: f64) -> String {
     }
 }
 
+/// A delay: seconds (to the hundredth under ten), minutes, then hours and on.
+pub fn lag(s: f64) -> String {
+    if s < 10.0 {
+        format!("{s:.2} S")
+    } else if s < 120.0 {
+        format!("{s:.0} S")
+    } else if s < 7200.0 {
+        format!("{:.0} MIN", s / 60.0)
+    } else {
+        duration(s)
+    }
+}
+
 pub fn duration(s: f64) -> String {
     if s < 2.0 * DAY {
         format!("{:.1} H", s / 3600.0)

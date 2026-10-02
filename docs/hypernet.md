@@ -84,8 +84,11 @@ In the base world (`content/base/modules.ron`, step 1 done):
 
 1. ✓ Comm equipment as modules and as infrastructure (content, brands); every ship fitted with a
    basic comm.
-2. The network: nodes, links (range, line of sight), gate relays, lag from the backbone. The
-   HUD status.
+2. ✓ The network: nodes, links (range, line of sight), gate relays, lag from the backbone. The
+   HUD status. (`crates/world/src/hypernet.rs`: a system's nodes are its station, gates and ports;
+   the station is the backbone, its ports where it has none. Worlds block the line, so a port on
+   its world's far side drops off the net and comes back as the world turns. Ships link to nodes
+   but don't relay yet: that comes with capture and delivery.)
 3. Hypernet mode on the nav map: coverage, links, lag.
 4. Capture and delivery: events captured in range, carried over the net and by docking. The kill and
    trade feeds go local.

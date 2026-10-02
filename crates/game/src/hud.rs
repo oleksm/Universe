@@ -271,6 +271,13 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         let heat = if ship.laser_overheated { RED } else { AMBER };
         rows.push(bar_row("LASER", ship.laser_heat, if ship.laser_overheated { "HOT".into() } else { format!("GUN {}", ship.ammo) }, heat));
     }
+    // On the hypernet: the lag from the backbone and the relay it's through; off it, since when.
+    let net = match (&app.net, app.net_seen) {
+        (Some((lag, via)), _) => (format!("{}  {}", fmt::lag(*lag), relay_short(via)), HUD),
+        (None, Some(seen)) => (format!("OFFLINE  {} AGO", fmt::lag(app.now() - seen)), AMBER),
+        (None, None) => ("OFFLINE".into(), AMBER),
+    };
+    rows.push(text_row("NET", net.0, net.1));
     rows.push(text_row("MASS", format!("{:.1} T  LOAD {:.1} T", ship.mass() / 1000.0, ship.cargo / 1000.0), DIM));
     rows.push(text_row("DRIVE", format!("{:.1} M/S2", ship.main_accel()), DIM));
     if !app.contacts.is_empty() {
@@ -283,6 +290,18 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         row(frame, at + Vec2::new(6.0, 4.0 + i as f32 * ROW));
     }
     h
+}
+
+/// A relay's name, short enough for a HUD row: the station, a gate, or a port by its own name.
+fn relay_short(name: &str) -> String {
+    let s = if name.ends_with(" Station") {
+        "STATION".to_string()
+    } else if name.starts_with("Gate to ") {
+        "GATE".to_string()
+    } else {
+        name.trim_start_matches("Port ").to_uppercase()
+    };
+    s.chars().take(10).collect()
 }
 
 fn observer_info(app: &App, lines: &mut Vec<(String, Color)>) {

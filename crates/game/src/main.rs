@@ -186,6 +186,13 @@ pub struct App {
     pub fire: Option<(universe_sim::avionics::Track, Option<universe_sim::avionics::Solution>)>,
     /// Seconds since the ship was last hit (for the HUD's flash).
     pub hit_age: f32,
+    /// On the hypernet: the lag from the backbone (s) and the node it's through.
+    pub net: Option<(f64, String)>,
+    /// When it was last on the net (game time), and when the status was last worked out.
+    pub net_seen: Option<f64>,
+    pub net_at: f64,
+    /// This system's relays (its index with them).
+    pub net_nodes: Option<(usize, Vec<universe_sim::world::hypernet::Node>)>,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
@@ -311,6 +318,10 @@ impl App {
             contacts: Vec::new(),
             fire: None,
             hit_age: 99.0,
+            net: None,
+            net_seen: None,
+            net_at: f64::NEG_INFINITY,
+            net_nodes: None,
             sparks: Vec::new(),
             reach: None,
             turrets: Vec::new(),
@@ -387,6 +398,30 @@ impl App {
     }
 
     /// World time to draw at.
+    /// Where the ship stands on its system's hypernet (worked out twice a second).
+    fn update_net(&mut self) {
+        use universe_sim::world::hypernet::{nodes, Net};
+        let t = self.now();
+        if (t - self.net_at).abs() < 0.5 {
+            return;
+        }
+        self.net_at = t;
+        let sys = self.view.system.clone();
+        if sys.index != self.v.ship_system {
+            self.net = None;
+            return;
+        }
+        if self.net_nodes.as_ref().is_none_or(|(i, _)| *i != sys.index) {
+            self.net_nodes = Some((sys.index, nodes(&self.charts.galaxy, &sys)));
+        }
+        let all = self.net_nodes.as_ref().map(|(_, n)| n.clone()).unwrap_or_default();
+        let net = Net::at(&sys, all, t, &self.view.positions);
+        self.net = net.status(&sys, &self.view.positions, self.view.ship_pos, &self.ship.spec().comm).map(|s| (s.lag, net.nodes[s.via].name.clone()));
+        if self.net.is_some() {
+            self.net_seen = Some(t);
+        }
+    }
+
     pub fn now(&self) -> f64 {
         self.prev.time + (self.v.time - self.prev.time) * self.alpha()
     }
@@ -1127,6 +1162,7 @@ impl Game for App {
         self.hit_age += ctx.dt;
         self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
         universe_prof::time("update/build view", || self.build_view());
+        self.update_net();
         // Where things are drawn is the moment drawn: the nav target and the
         // approach guidance are worked out here, at it, from the charts (the
         // view's are a tick off it).
