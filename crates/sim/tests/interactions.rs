@@ -837,3 +837,25 @@ fn a_ship_balanced_at_the_yard_goes_straight_on_its_mains_alone() {
     assert!(off > 1e-3, "untrimmed, it turns: {off}");
     assert!(on < off * 0.02, "trimmed, it goes straight: {on} against {off}");
 }
+
+#[test]
+fn goods_bought_where_made_sell_dearer_where_needed() {
+    use universe_sim::world::goods::Category;
+    let mut u = bench(0);
+    let home = u.ship_system;
+    let sys = u.ship_system();
+    let food = Category::of("goods.food").unwrap();
+    // A farm world that makes food, a station that needs it: both at their usual stock.
+    let places = u.markets.economy.places.clone();
+    let maker = places.iter().find(|p| p.system == home && p.sells(food)).expect("a farm at home");
+    let user = places.iter().find(|p| p.system == home && !p.sells(food) && p.needs(food) > 0.0).expect("somewhere that needs food");
+    let item = u.markets.goods().iter().position(|g| g.category == food).unwrap();
+    let now = u.world.time;
+    let bought = u.markets.quote_for(home, &sys, maker.facility, item, now).and_then(|q| q.buy).expect("the farm sells food");
+    let sold = u.markets.quote_for(home, &sys, user.facility, item, now).map(|q| q.sell).expect("the station buys food");
+    eprintln!("food: bought at {bought:.0}, sold at {sold:.0} ({:+.0}%)", 100.0 * (sold / bought - 1.0));
+    assert!(sold > bought * 1.4, "hauling it pays: {bought} -> {sold}");
+    // Sold back where it was bought: a loss.
+    let back = u.markets.quote_for(home, &sys, maker.facility, item, now).unwrap().sell;
+    assert!(back < bought);
+}

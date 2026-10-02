@@ -161,15 +161,31 @@ fn place_market(seed: u64, place: &crate::economy::Place, catalog: &[Item]) -> M
     Market { offers, banned: Vec::new(), wants }
 }
 
+/// Against the catalogue price, what a settled place prices goods at where
+/// it makes them (cheap) and where it needs them (dear): the difference is
+/// what pays for hauling them from one to the other.
+pub const MAKER_PRICE: f64 = 0.75;
+pub const USER_PRICE: f64 = 1.3;
+/// A maker keeps this many days of its own use before it sells any.
+pub const RESERVE_DAYS: f64 = 3.0;
+/// A maker sells at this over its price, and buys back at this under it.
+const ASK: f64 = 1.05;
+const BID: f64 = 0.85;
+
 /// A settled market's quote for `o`, from its place's stock now: selling,
-/// what's in stock; buying, the room it has. Prices follow the stock (see
-/// `Place::factor`).
+/// what's in stock beyond what it keeps for itself (`RESERVE_DAYS`);
+/// buying, the room it has. Prices follow the stock (see `Place::factor`),
+/// from the maker's or the user's price.
 fn place_quote(place: &crate::economy::Place, o: &Offer, item: &Item) -> Quote {
     let c = item.category;
-    let p = item.price * place.factor(c).unwrap_or(1.0);
+    let factor = place.factor(c).unwrap_or(1.0);
     match o.side {
-        Side::Sells => Quote { offer: *o, level: (place.stock_of(c) * 1000.0 / item.mass).floor(), buy: Some(p * 1.1), sell: p * 0.9 },
-        Side::Buys => Quote { offer: *o, level: (place.room(c) * 1000.0 / item.mass).floor(), buy: None, sell: p },
+        Side::Sells => {
+            let p = item.price * MAKER_PRICE * factor;
+            let spare = (place.stock_of(c) - place.needs(c) * RESERVE_DAYS).max(0.0);
+            Quote { offer: *o, level: (spare * 1000.0 / item.mass).floor(), buy: Some(p * ASK), sell: p * BID }
+        }
+        Side::Buys => Quote { offer: *o, level: (place.room(c) * 1000.0 / item.mass).floor(), buy: None, sell: item.price * USER_PRICE * factor },
     }
 }
 
