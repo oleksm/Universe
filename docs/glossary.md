@@ -33,9 +33,11 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **Ring classes** | A gate ring's greatest span: I 10 ly, II 25 ly, III 50 ly. |
 | **Explorer** | A future ship built around next-generation reactors that can cross between stars (40 ly: an epic). |
 | **Hypernet** | The information network to come: events captured in range, carried by relays, gates and ships (`docs/hypernet.md`). |
-| **Comm** | A ship's or structure's hypernet equipment: what it hears (capture), how far it links, its lag and capacity. Every ship carries one. |
-| **Backbone** | A system's hub on the hypernet: its station's relay (its ports', with no station). Lag is counted from it. |
-| **Relay** | A structure's comm (backbone, beacon); a **gate relay** links two systems' nets through the throat. |
+| **Comm** | A ship's hypernet equipment: what it hears (capture), its lag. Every ship carries one. |
+| **Backbone** | A system's hub on the hypernet: its station's site. Lag is counted from it. |
+| **Transceiver** | A space structure's tower: ships' comms connect to it within its radius (0.5 AU), at light speed. |
+| **Hyper relay** | Links two sites through hyperspace: a system's relays link its sites the shortest way all told, daily. A **gate relay** links two systems' nets through the throat. |
+| **Orbital site** | A transceiver and hyper relay in orbit round a planet or moon. |
 
 ## Factions (`docs/factions.md`)
 
