@@ -136,14 +136,24 @@ impl Terrain {
 
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
     pub fn raw_height(&self, dir: DVec3) -> f64 {
-        let (h, _) = self.natural(dir);
+        self.natural(dir).0 * self.pad_flat(dir)
+    }
+
+    /// Ground height (as `raw_height`) and how far inside a crater (0..1), together.
+    pub fn height_and_crater(&self, dir: DVec3) -> (f64, f64) {
+        let (h, inside) = self.natural(dir);
+        (h * self.pad_flat(dir), inside)
+    }
+
+    /// How much of the natural height stands here (0 on a spaceport's flat, 1 away from them).
+    fn pad_flat(&self, dir: DVec3) -> f64 {
         let mut w: f64 = 1.0;
         for p in &self.pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
             w = w.min(t * t * (3.0 - 2.0 * t));
         }
-        h * w
+        w
     }
 
     /// The solid (or liquid) surface height (m): oceans fill anything below 0.

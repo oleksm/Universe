@@ -95,6 +95,9 @@ pub struct Frame {
     /// Meshes drawn over everything, the HUD included (see `in_front`).
     pub(crate) front: Vec<MeshDraw>,
     in_front: bool,
+    /// Globe maps drawn this frame (instances name them by place here + 1).
+    pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
+    globe: [f32; 4],
 }
 
 /// One mesh draw: the mesh, and its instance data.
@@ -130,6 +133,10 @@ pub(crate) struct Instance {
     /// Its surface: how much it glints in the light (0 matte .. 1), how
     /// tight the glint (a power: higher, sharper), how much it glows itself.
     pub material: [f32; 4],
+    /// A globe's surface map (see `Frame::with_globe`): its layer + 1 (0:
+    /// none), the world's kind (0 Earth-like, 1 dry, 2 cratered), its relief
+    /// (m, scaled), the brightness of its colours.
+    pub globe: [f32; 4],
 }
 
 /// A light source: a star. How bright it looks falls with the square of the
@@ -250,6 +257,8 @@ impl Frame {
             front: Vec::new(),
             front_glows: Vec::new(),
             in_front: false,
+            globe_maps: Vec::new(),
+            globe: [0.0; 4],
         }
     }
 
@@ -328,6 +337,24 @@ impl Frame {
         let before = std::mem::replace(&mut self.surface, [glint, sharp, glow, 0.0]);
         f(self);
         self.surface = before;
+    }
+
+    /// Meshes drawn in `f` are a world's globe surfaced from `map`: `kind`
+    /// (0 Earth-like, 1 dry, 2 cratered) picks its palette, `relief` (m,
+    /// as drawn) its heights for slope shading, `bright` its colours'
+    /// brightness. Their fill tint is the world's own colour (and their
+    /// vertex colours should be white).
+    pub fn with_globe(&mut self, map: &std::sync::Arc<crate::model::GlobeMap>, kind: f32, relief: f32, bright: f32, f: impl FnOnce(&mut Frame)) {
+        let k = match self.globe_maps.iter().position(|m| m.id() == map.id()) {
+            Some(k) => k,
+            None => {
+                self.globe_maps.push(map.clone());
+                self.globe_maps.len() - 1
+            }
+        };
+        let before = std::mem::replace(&mut self.globe, [k as f32 + 1.0, kind, relief, bright]);
+        f(self);
+        self.globe = before;
     }
 
     /// Meshes drawn in `f` cast no shadows (a planet's globe: its night is
@@ -486,6 +513,7 @@ impl Frame {
             refl_dir: [0.0; 4],
             refl_color: [0.0; 4],
             material: self.surface,
+            globe: self.globe,
         };
         if lit && let Some(light) = self.light {
             let dir = (light.position - t.position).normalize_or_zero().as_vec3();

@@ -21,4 +21,4 @@ pub use audio::{Audio, Jet};
 pub use frame::{disc_covered, text_size, Color, Frame, Light, Reflector, GLYPH};
 pub use glam;
 pub use input::{Input, KeyCode, MouseButton};
-pub use model::{Mesh, Transform, WireModel};
+pub use model::{GlobeMap, Mesh, Transform, WireModel};

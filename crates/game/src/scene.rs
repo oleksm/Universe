@@ -367,14 +367,21 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
-        if let Some((full, coarse)) = app.globes.get(&(app.view.origin, i)) {
+        if let Some((full, coarse, map)) = app.globes.get(&(app.view.origin, i)) {
             // Small on screen: the coarse mesh does (a sixteenth of the triangles).
             let globe = if px > GLOBE_FULL_PX { full } else { coarse };
             // Terrain world: colored globe; near the surface, a local grid on
             // the ground (the globe drops a hair so the grid sits on top).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             let scale = if near { b.rail.radius * 0.998 } else { b.rail.radius };
-            universe_prof::time("draw/scene/bodies/globe mesh", || frame.no_shadow(|frame| frame.model_colored_shaded(globe, &Transform { position: center, rotation, scale }, if app.show_grid { grid_detail(px) } else { 0.0 }, terrain_view::FILL * 2.5)));
+            let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
+            universe_prof::time("draw/scene/bodies/globe mesh", || {
+                frame.no_shadow(|frame| {
+                    frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, |frame| {
+                        frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
+                    })
+                })
+            });
             if near {
                 universe_prof::time("draw/scene/bodies/surface grid", || terrain_view::surface_grid(frame, b, center, t, None, app.show_grid));
                 // On foot here: a fine grid underfoot.

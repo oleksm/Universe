@@ -39,6 +39,80 @@ const SHADOW_DEPTH: f64 = 8_000.0;
 /// The light's view of what's near the eye, for shadows: two cascades
 /// (the near one an eighth the size, finer), each an orthographic box
 /// along the light, depth only.
+/// Globe maps' texels a face side, layers (worlds at once), mip levels.
+const GLOBE_SIZE: u32 = 512;
+const GLOBE_LAYERS: u32 = 8;
+const GLOBE_MIPS: u32 = 10;
+
+/// The globe maps on the GPU: which map holds each layer, and the frame it
+/// was last drawn (the oldest gives way to a new one).
+struct Globes {
+    texture: wgpu::Texture,
+    layers: Vec<Option<(u64, u64)>>,
+}
+
+impl Globes {
+    /// The layer holding `map`, uploading it if it's new.
+    fn layer(&mut self, gpu: &Gpu, map: &crate::model::GlobeMap, now: u64) -> u32 {
+        if let Some(k) = self.layers.iter().position(|l| matches!(l, Some((id, _)) if *id == map.id())) {
+            self.layers[k] = Some((map.id(), now));
+            return k as u32;
+        }
+        let k = (0..self.layers.len()).min_by_key(|&k| self.layers[k].map_or(0, |(_, used)| used + 1)).unwrap_or(0);
+        self.layers[k] = Some((map.id(), now));
+        self.upload(gpu, map, k as u32);
+        k as u32
+    }
+
+    fn upload(&self, gpu: &Gpu, map: &crate::model::GlobeMap, layer: u32) {
+        let n = map.size as usize;
+        assert_eq!(map.size, GLOBE_SIZE, "globe maps are {GLOBE_SIZE} a side");
+        for face in 0..6 {
+            let mut level: Vec<[f32; 2]> = map.texels[face * n * n..(face + 1) * n * n].to_vec();
+            let mut side = n;
+            for mip in 0..GLOBE_MIPS {
+                let bytes: Vec<u16> = level.iter().flat_map(|t| [half(t[0]), half(t[1])]).collect();
+                gpu.queue.write_texture(
+                    wgpu::TexelCopyTextureInfo { texture: &self.texture, mip_level: mip, origin: wgpu::Origin3d { x: 0, y: 0, z: layer * 6 + face as u32 }, aspect: wgpu::TextureAspect::All },
+                    bytemuck::cast_slice(&bytes),
+                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
+                    wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
+                );
+                if side == 1 {
+                    break;
+                }
+                // (The next level: each texel the mean of four.)
+                let half_side = side / 2;
+                level = (0..half_side * half_side)
+                    .map(|i| {
+                        let (x, y) = (i % half_side * 2, i / half_side * 2);
+                        let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
+                        let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
+                        [(a[0] + b[0] + c[0] + d[0]) / 4.0, (a[1] + b[1] + c[1] + d[1]) / 4.0]
+                    })
+                    .collect();
+                side = half_side;
+            }
+        }
+    }
+}
+
+/// A float as a half (IEEE binary16), for globe maps (small values; no
+/// subnormals: those go to zero).
+fn half(x: f32) -> u16 {
+    let b = x.to_bits();
+    let sign = ((b >> 16) & 0x8000) as u16;
+    let e = ((b >> 23) & 0xff) as i32 - 127 + 15;
+    let m = ((b & 0x7f_ffff) >> 13) as u16;
+    if e <= 0 {
+        sign
+    } else if e >= 31 {
+        sign | 0x7c00
+    } else {
+        sign | ((e as u16) << 10) | m
+    }
+}
+
 struct Shadows {
     /// Each cascade's layer of the map, to draw into.
     layers: [wgpu::TextureView; 2],
@@ -280,6 +354,7 @@ pub(crate) struct Renderer {
     mesh_pipe: wgpu::RenderPipeline,
     mesh_line_pipe: wgpu::RenderPipeline,
     shadows: Shadows,
+    globes: Globes,
     meshes: HashMap<u64, GpuMesh>,
     /// This frame's mesh instances: faces, then edges; and the runs to draw
     /// (mesh, first instance, count) for each.
@@ -406,7 +481,8 @@ impl Renderer {
                 step_mode: wgpu::VertexStepMode::Instance,
                 attributes: &wgpu::vertex_attr_array![
                     3 => Float32x4, 4 => Float32x4, 5 => Float32x4, 6 => Float32x4, 7 => Float32x4,
-                    8 => Float32x4, 9 => Float32x4, 10 => Float32x4, 11 => Float32x4, 12 => Float32x4, 13 => Float32x4
+                    8 => Float32x4, 9 => Float32x4, 10 => Float32x4, 11 => Float32x4, 12 => Float32x4, 13 => Float32x4,
+                    14 => Float32x4
                 ],
             }),
         ];
@@ -443,13 +519,45 @@ impl Renderer {
                     count: None,
                 },
                 wgpu::BindGroupLayoutEntry { binding: 1, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison), count: None },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::CubeArray, multisampled: false },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry { binding: 3, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
             ],
+        });
+        // Globe maps: a cube array, a layer per world in view (see `GlobeMap`).
+        let globe_texture = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("globe maps"),
+            size: wgpu::Extent3d { width: GLOBE_SIZE, height: GLOBE_SIZE, depth_or_array_layers: 6 * GLOBE_LAYERS },
+            mip_level_count: GLOBE_MIPS,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rg16Float,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let globe_view = globe_texture.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
+        let globe_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("globe maps"),
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Linear,
+            ..Default::default()
         });
         let shadow_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("shadow map"),
             layout: &shadow_layout,
-            entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&shadow_sample) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&shadow_cmp) }],
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&shadow_sample) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&shadow_cmp) },
+                wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::TextureView(&globe_view) },
+                wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::Sampler(&globe_sampler) },
+            ],
         });
+        let globes = Globes { texture: globe_texture, layers: vec![None; GLOBE_LAYERS as usize] };
         let light_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("shadow light"),
             entries: &[wgpu::BindGroupLayoutEntry {
@@ -693,6 +801,7 @@ impl Renderer {
             front_face_runs: Vec::new(),
             front_edge_runs: Vec::new(),
             shadows,
+            globes,
             frames: 0,
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
@@ -978,6 +1087,13 @@ impl Renderer {
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
         (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);
+        // Globe maps: each in a layer (new ones uploaded); instances name the layer.
+        let layers: Vec<u32> = frame.globe_maps.iter().map(|m| self.globes.layer(gpu, m, now)).collect();
+        for inst in &mut data {
+            if inst.globe[0] > 0.5 {
+                inst.globe[0] = layers.get(inst.globe[0] as usize - 1).map_or(0.0, |&l| l as f32 + 1.0);
+            }
+        }
         // The casters: those within reach of the shadow boxes.
         let reach = frame.shadow_reach as f32 * 1.5;
         let casting: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().chain(&frame.front).filter(|d| d.casts && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).collect();

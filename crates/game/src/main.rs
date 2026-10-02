@@ -147,7 +147,8 @@ pub struct App {
     pub eta_shown: Option<f64>,
     /// Colored terrain globes, built once per (system, body): the full mesh,
     /// and a coarse one for when it's small on screen.
-    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh)>,
+    /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
+    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
     pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
     /// Mining rigs: how far each ship's gear is out (see `rig`).
@@ -852,9 +853,9 @@ impl App {
         let origin = self.view.origin;
         for (i, b) in self.view.system.bodies.iter().enumerate() {
             if !self.globes.contains_key(&(origin, i))
-                && let (Some(full), Some(coarse)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2))
+                && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
             {
-                self.globes.insert((origin, i), (full.into(), coarse.into()));
+                self.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
             }
         }
     }

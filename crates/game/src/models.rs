@@ -146,10 +146,10 @@ fn canopy(s: &Shape) -> WireModel {
     }
     let ys = corners(half).map(|c| c.unwrap_or(0.0));
     let floor = ys.iter().copied().fold(f32::INFINITY, f32::min);
-    let h = (half * 0.6).min(len * 0.05);
-    // (Sunk a little into the plating, its ridge over the highest of them.)
-    let y = |k: usize| ys[k] - h * 0.25;
-    let ridge = ys.iter().copied().fold(f32::NEG_INFINITY, f32::max) + h * 0.75;
+    let h = (half * 0.3).min(len * 0.022);
+    // (Set low: sunk well into the plating, its ridge just over the highest of them.)
+    let y = |k: usize| ys[k] - h * 0.6;
+    let ridge = ys.iter().copied().fold(f32::NEG_INFINITY, f32::max) + h * 0.55;
     let _ = floor;
     let mut m = WireModel::default();
     // Base corners (front pair narrower), the ridge.

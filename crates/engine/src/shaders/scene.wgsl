@@ -14,6 +14,9 @@ struct Globals {
 @group(0) @binding(0) var<uniform> g: Globals;
 @group(1) @binding(0) var shadow_map: texture_depth_2d_array;
 @group(1) @binding(1) var shadow_cmp: sampler_comparison;
+// Worlds' surfaces (see `GlobeMap`): height (in relief units) and crater-ness.
+@group(1) @binding(2) var globe_maps: texture_cube_array<f32>;
+@group(1) @binding(3) var globe_soft: sampler;
 
 struct VertexIn {
     @location(0) pos: vec3<f32>,
@@ -79,6 +82,8 @@ struct MeshIn {
     @location(12) refl_color: vec4<f32>,
     // x: glint (0 matte .. 1), y: its sharpness (a power), z: glow.
     @location(13) material: vec4<f32>,
+    // A globe's map: layer + 1 (0 none), kind, relief (m), brightness.
+    @location(14) globe: vec4<f32>,
 };
 
 const EXPOSURE: f32 = 0.3;
@@ -132,25 +137,152 @@ struct MeshOut {
     @location(6) sun_dir: vec3<f32>,
     @location(7) sun_light: vec3<f32>,
     @location(8) material: vec4<f32>,
+    // Where on the model (its own frame), and its globe map (see MeshIn).
+    @location(9) local: vec3<f32>,
+    @location(10) @interpolate(flat) globe: vec4<f32>,
 };
+
+// Value noise in 0..1 (a hash on the lattice, smoothly blended).
+fn hash3(p: vec3<i32>) -> f32 {
+    var h = u32(p.x) * 73856093u ^ u32(p.y) * 19349663u ^ u32(p.z) * 83492791u;
+    h = (h ^ (h >> 13u)) * 1274126177u;
+    h = h ^ (h >> 16u);
+    return f32(h & 0xffffffu) / 16777216.0;
+}
+
+fn vnoise(p: vec3<f32>) -> f32 {
+    let f = floor(p);
+    let t = p - f;
+    let s = t * t * (3.0 - 2.0 * t);
+    let i = vec3<i32>(f);
+    let a = mix(hash3(i), hash3(i + vec3<i32>(1, 0, 0)), s.x);
+    let b = mix(hash3(i + vec3<i32>(0, 1, 0)), hash3(i + vec3<i32>(1, 1, 0)), s.x);
+    let c = mix(hash3(i + vec3<i32>(0, 0, 1)), hash3(i + vec3<i32>(1, 0, 1)), s.x);
+    let d = mix(hash3(i + vec3<i32>(0, 1, 1)), hash3(i + vec3<i32>(1, 1, 1)), s.x);
+    return mix(mix(a, b, s.y), mix(c, d, s.y), s.z);
+}
+
+// Fine detail on a globe, octaves of noise down to about the pixel, each
+// fading in as it grows to a few pixels across (no shimmer): x a colour
+// detail (-1..1), y a height detail (in radii: the same slope at every
+// scale, so ground keeps its relief however near), z a second, unrelated
+// detail (moisture).
+fn globe_detail(dir: vec3<f32>, footprint: f32) -> vec3<f32> {
+    var sum = vec3<f32>(0.0);
+    var amp = 0.5;
+    var f = 40.0;
+    for (var o = 0; o < 13; o++) {
+        let fade = clamp(1.0 / (f * footprint * 3.0) - 1.0, 0.0, 1.0);
+        if (fade <= 0.0) {
+            break;
+        }
+        let v = vnoise(dir * f) * 2.0 - 1.0;
+        // (Half ridged: sharp crests, like eroded ground.)
+        let r = mix(v, 0.6 - abs(v) * 1.6, 0.5);
+        let w = vnoise(dir * f + vec3<f32>(31.7, 11.3, 5.9)) * 2.0 - 1.0;
+        sum += fade * vec3<f32>(amp * r, r / f, amp * w);
+        amp *= 0.55;
+        f *= 2.13;
+    }
+    return sum;
+}
+
+// A world's ground colour: an Earth-like one's seas darker the deeper,
+// turquoise in the shallows, a crisp coast with surf, sand; its land in
+// crisp-edged patches (forest, grass, dry ground, rock, snow) by moisture
+// and height; others their own colour, lighter high, darker in craters,
+// with outcrops; ice at the poles. `d`: the fine detail (see `globe_detail`).
+fn globe_color(kind: f32, h: f32, inside: f32, base: vec3<f32>, dir: vec3<f32>, d: vec3<f32>) -> vec3<f32> {
+    var c: vec3<f32>;
+    let polar = abs(dir.y);
+    if (kind < 0.5) {
+        let t = h + d.x * 0.03;
+        if (t < 0.0) {
+            let deep = clamp(-t / 0.5, 0.0, 1.0);
+            c = mix(vec3<f32>(0.1, 0.4, 0.58), vec3<f32>(0.02, 0.1, 0.3), sqrt(deep));
+            c = mix(c, vec3<f32>(0.55, 0.7, 0.72), smoothstep(-0.004, 0.0, t) * 0.6);
+        } else {
+            // Moisture: wetter low, drier high and toward the tropics' deserts.
+            let wet = d.z * 1.2 - t * 0.8 + 0.25 - 0.35 * smoothstep(0.15, 0.3, polar) * (1.0 - smoothstep(0.35, 0.5, polar));
+            let forest = vec3<f32>(0.1, 0.24, 0.09);
+            let grass = vec3<f32>(0.28, 0.42, 0.16);
+            let dry = vec3<f32>(0.52, 0.46, 0.33);
+            let rock = vec3<f32>(0.36, 0.32, 0.28);
+            c = mix(dry, grass, smoothstep(-0.06, 0.02, wet));
+            c = mix(c, forest, smoothstep(0.18, 0.24, wet));
+            c = mix(c, rock, smoothstep(0.38, 0.44, t + d.x * 0.25));
+            c = mix(c, vec3<f32>(0.93, 0.94, 0.96), smoothstep(0.66, 0.7, t + d.x * 0.2 + polar * 0.4));
+            // (The beach.)
+            c = mix(vec3<f32>(0.76, 0.71, 0.54), c, smoothstep(0.004, 0.012, t));
+        }
+    } else {
+        let shade = 0.72 + 0.4 * clamp(h * 0.5 + 0.5 + d.x * 0.3, 0.0, 1.0);
+        let crater = 1.0 - 0.4 * clamp(inside * 4.0 - 1.0, 0.0, 1.0);
+        // (Outcrops of darker and paler ground.)
+        let mottle = mix(0.82, 1.12, smoothstep(-0.05, 0.05, d.z));
+        c = base * shade * crater * mottle;
+    }
+    c *= 1.0 + 0.22 * d.x;
+    let ice = smoothstep(0.86, 0.9, polar + d.x * 0.05);
+    return mix(c, vec3<f32>(0.92, 0.94, 0.97), ice);
+}
 
 @fragment
 fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
-    let n = normalize(in.normal);
+    // (Globe surfacing, sampled whatever the mesh: derivatives need it out
+    // here, and it's cheap; used only for a globe.)
+    let dir = normalize(in.local);
+    let ldx = dpdx(in.local);
+    let ldy = dpdy(in.local);
+    let layer = max(i32(in.globe.x) - 1, 0);
+    let ground = textureSampleGrad(globe_maps, globe_soft, in.local, layer, ldx, ldy);
+    let footprint = (length(ldx) + length(ldy)) / max(length(in.local), 1e-6);
+    // (Fine detail, for a globe: in its colour, and in the heights its
+    // slopes are shaded by — ridges and hollows at any zoom, drawing only.)
+    var d = vec3<f32>(0.0);
+    if (in.globe.x > 0.5) {
+        d = globe_detail(dir, footprint);
+    }
+    let land = select(1.0, step(0.0, ground.r + d.x * 0.03), in.globe.y < 0.5);
+    // (Its radius as drawn: metres a pixel over radians a pixel.)
+    let radius = length(dpdx(in.at)) / max(length(ldx) / max(length(in.local), 1e-6), 1e-9);
+    let lift = ground.r * in.globe.z + land * d.y * 0.06 * radius;
+    let hx = dpdx(lift);
+    let hy = dpdy(lift);
+    let px = dpdx(in.at);
+    let py = dpdy(in.at);
+    var n = normalize(in.normal);
+    var albedo = in.color;
+    if (in.globe.x > 0.5) {
+        // Slopes from the height (surface gradient: no tangents needed).
+        let r1 = cross(py, n);
+        let r2 = cross(n, px);
+        let det = dot(px, r1);
+        if (abs(det) > 1e-12) {
+            let grad = sign(det) * (hx * r1 + hy * r2);
+            n = normalize(abs(det) * n - grad);
+        }
+        albedo = vec4<f32>(globe_color(in.globe.y, ground.r, ground.g, in.color.rgb, dir, d) * in.globe.w, in.color.a);
+    }
     let seen = sunlit(in.at, n);
-    let light = min(in.sun * seen + in.fill, vec3<f32>(4.0));
+    // (A globe lit per pixel: its slopes, its terminator.)
+    var sun = in.sun;
+    if (in.globe.x > 0.5) {
+        sun = max(dot(n, in.sun_dir), 0.0) * in.sun_light;
+    }
+    let light = min(sun * seen + in.fill, vec3<f32>(4.0));
     if (g.shadow.w > 0.0 && seen < 0.5 && max(in.sun.r, max(in.sun.g, in.sun.b)) > 0.0) {
         return vec4<f32>(0.8, 0.0, 0.0, in.color.a);
     }
-    var c = in.color.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light);
+    var c = albedo.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light);
     // The sun's glint: where the surface turns the light to the eye (Blinn).
     if (in.material.x > 0.0 && dot(n, in.sun_dir) > 0.0) {
         let h = normalize(in.sun_dir + normalize(-in.at));
         c += in.sun_light * in.material.x * pow(max(dot(n, h), 0.0), in.material.y) * seen;
     }
     // What glows of itself (windows, lamps, hot metal).
-    c += in.color.rgb * in.material.z;
-    return vec4<f32>(c, in.color.a);
+    c += albedo.rgb * in.material.z;
+    return vec4<f32>(c, albedo.a);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {
@@ -166,7 +298,7 @@ fn vs_mesh(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material);
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, v.pos, v.globe);
 }
 
 @vertex
@@ -177,5 +309,5 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
-    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0));
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos, vec4<f32>(0.0));
 }

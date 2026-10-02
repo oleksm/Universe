@@ -3,6 +3,44 @@ use std::f32::consts::{PI, TAU};
 
 use glam::{DVec3, Quat, Vec3};
 
+/// A world's surface as a cube map (six faces of `size`², in the GPU's
+/// cube face order +X −X +Y −Y +Z −Z, rows top down): per texel its height
+/// (in units of the world's relief, ocean below 0) and how far inside a
+/// crater it is (0..1). Drawn with `Frame::with_globe`: colour, coasts and
+/// slopes worked out per pixel from it.
+pub struct GlobeMap {
+    id: u64,
+    pub size: u32,
+    pub texels: Vec<[f32; 2]>,
+}
+
+impl GlobeMap {
+    pub fn new(size: u32, texels: Vec<[f32; 2]>) -> Self {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        assert_eq!(texels.len(), (6 * size * size) as usize);
+        GlobeMap { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), size, texels }
+    }
+
+    pub fn id(&self) -> u64 {
+        self.id
+    }
+
+    /// The direction (unit) through texel centre `(x, y)` of `face`.
+    pub fn direction(size: u32, face: usize, x: u32, y: u32) -> glam::DVec3 {
+        let u = 2.0 * (x as f64 + 0.5) / size as f64 - 1.0;
+        let v = 2.0 * (y as f64 + 0.5) / size as f64 - 1.0;
+        let d = match face {
+            0 => glam::DVec3::new(1.0, -v, -u),
+            1 => glam::DVec3::new(-1.0, -v, u),
+            2 => glam::DVec3::new(u, 1.0, v),
+            3 => glam::DVec3::new(u, -1.0, -v),
+            4 => glam::DVec3::new(u, -v, 1.0),
+            _ => glam::DVec3::new(-u, -v, -1.0),
+        };
+        d.normalize()
+    }
+}
+
 /// A model to draw, kept on the GPU: uploaded the first time it's drawn
 /// and reused every frame after, by its id. Cheap to clone (shared).
 #[derive(Clone, Debug)]
