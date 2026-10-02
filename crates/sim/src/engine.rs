@@ -67,6 +67,8 @@ pub enum Command {
     LockContact(usize),
     /// Fill the tank where docked or landed.
     Refuel,
+    /// Enlist with the holder of the station we're docked at, or leave if sworn to it.
+    Enlist,
     /// Have the hull mended (docked at a station).
     Repair,
     /// Buy item `0` of the vending machine within reach (on foot at a spaceport).
@@ -187,8 +189,9 @@ pub struct View {
     pub bookings: Vec<crate::commerce::Booking>,
     pub markets: Vec<(Facility, String)>,
     pub market: Option<MarketView>,
-    /// Our standing with each faction (by content order).
+    /// Our standing with each faction (by content order), and the one we're sworn to.
     pub standing: Vec<f64>,
+    pub member: Option<usize>,
     /// The ship's system's defence turrets, where they are now; who's on
     /// each pad of each of its ports.
     pub turrets: Vec<(Turret, DVec3)>,
@@ -276,6 +279,7 @@ impl Engine {
             Command::CollisionWarning(on) => u.cockpit().collision_warning(on),
             Command::Respawn => u.respawn(),
             Command::Refuel => u.refuel_player(),
+            Command::Enlist => u.enlist_player(),
             Command::Repair => u.repair_player(),
             Command::Vend(item) => u.vend(item),
             Command::Trim(t) => {
@@ -396,6 +400,7 @@ impl Engine {
             markets,
             market,
             standing: (0..universe_world::content::content().factions.iter().count()).map(|k| u.standings.of(crate::combat::PLAYER, k)).collect(),
+            member: u.standings.member_of(crate::combat::PLAYER),
             turrets: u.world.turret_motions(system).into_iter().map(|(t, p, _)| (t, p)).collect(),
             pads,
             last_step: self.last_step,

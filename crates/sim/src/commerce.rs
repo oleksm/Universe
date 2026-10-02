@@ -140,6 +140,21 @@ impl Universe {
         self.events.push(e);
     }
 
+    /// We enlist with the holder of the station we're docked at; sworn to
+    /// it already, we leave. What's said back.
+    pub fn enlist_player(&mut self) {
+        let sys = self.world.system(self.ship_system);
+        let Some(market) = docked_at(&sys, &self.ship) else {
+            return self.events.push(universe_avionics::Event::Refused { reason: "ENLIST: DOCK AT A STATION".into() });
+        };
+        let ours = self.charts().holder_index(self.ship_system);
+        let r = if ours.is_some() && self.standings.member_of(crate::combat::PLAYER) == ours { self.resign(crate::combat::PLAYER, market) } else { self.enlist(crate::combat::PLAYER, market) };
+        self.events.push(match r {
+            Ok(text) => universe_avionics::Event::Notice { text },
+            Err(reason) => universe_avionics::Event::Refused { reason: format!("ENLIST: {reason}") },
+        });
+    }
+
     /// Craft `i`'s credits, as the ledger has them.
     pub fn craft_credits(&self, i: usize) -> f64 {
         self.ledger.credits(Party::Pilot(crate::combat::craft_id(i)))
@@ -176,6 +191,9 @@ impl Universe {
             }
             Request::Land { market } => {
                 let _ = self.land_passengers(id, market);
+            }
+            Request::Enlist { market } => {
+                let _ = self.enlist(id, market);
             }
             _ => {}
         }

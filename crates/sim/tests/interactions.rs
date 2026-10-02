@@ -308,13 +308,21 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     // A basic nav computer: it docks and lands, but runs no route.
     u.refit("avionics", Some(m("nav.basic.s1"))).unwrap();
     assert!(u.ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.ship.spec().runs(universe_sim::world::modules::Feature::Route));
-    // Saved and loaded, the fit stays.
+    // Sworn to the station's holder: +10 with it; not twice.
+    let holder = u.world.charts().holder_index(home).expect("held");
+    u.enlist(universe_sim::PLAYER, Facility::Station(station)).unwrap();
+    assert_eq!(u.standings.member_of(universe_sim::PLAYER), Some(holder));
+    assert_eq!(u.standings.of(universe_sim::PLAYER, holder), universe_sim::standing::SWORN);
+    assert!(u.enlist(universe_sim::PLAYER, Facility::Station(station)).is_err());
+    // Saved and loaded, the fit stays, and the oath.
     let json = serde_json::to_string(&u.save()).unwrap();
     assert!(json.contains("nav.basic.s1"));
     let mut back = bench(0);
     back.load(serde_json::from_str(&json).unwrap());
     assert_eq!(back.ship.spec().hold_capacity, 10_000.0);
     assert!(!back.ship.spec().runs(universe_sim::world::modules::Feature::Route));
+    assert_eq!(back.standings.member_of(universe_sim::PLAYER), Some(holder));
+    assert_eq!(back.standings.of(universe_sim::PLAYER, holder), universe_sim::standing::SWORN);
 }
 
 #[test]

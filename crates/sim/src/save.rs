@@ -39,6 +39,11 @@ pub struct UniverseSave {
     /// What's been dug out of asteroids: ((system, field, rock), kg).
     #[serde(default)]
     pub mined: Vec<((usize, usize, usize), f64)>,
+    /// The faction we're sworn to, and our standing with each (by key).
+    #[serde(default)]
+    pub sworn: Option<String>,
+    #[serde(default)]
+    pub standing: Vec<(String, f64)>,
 }
 
 /// The save format's version: 1, content by key (0: goods by catalogue position).
@@ -79,6 +84,10 @@ struct SaveRecord {
     hold: Vec<(GoodsRef, u32)>,
     #[serde(default)]
     mined: Vec<((usize, usize, usize), f64)>,
+    #[serde(default)]
+    sworn: Option<String>,
+    #[serde(default)]
+    standing: Vec<(String, f64)>,
 }
 
 #[derive(Deserialize)]
@@ -113,6 +122,8 @@ impl From<SaveRecord> for UniverseSave {
             credits: r.credits,
             hold: r.hold,
             mined: r.mined,
+            sworn: r.sworn,
+            standing: r.standing,
         }
     }
 }
@@ -168,6 +179,8 @@ impl Universe {
                 m.sort_by_key(|e| e.0);
                 m
             },
+            sworn: self.standings.member_of(crate::combat::PLAYER).and_then(|k| universe_world::content::content().factions.iter().nth(k)).map(|(_, f)| f.key.clone()),
+            standing: universe_world::content::content().factions.iter().enumerate().map(|(k, (_, f))| (f.key.clone(), self.standings.of(crate::combat::PLAYER, k))).filter(|(_, s)| *s != 0.0).collect(),
         }
     }
 
@@ -211,6 +224,9 @@ impl Universe {
         self.ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
         self.ship.cargo_volume = universe_services::market::cargo_volume(&self.world.goods, &self.hold());
         self.world.mined = save.mined.into_iter().collect();
+        // Our allegiance and standing (factions the content no longer has are forgotten).
+        let faction = |key: &str| universe_world::content::content().factions.iter().position(|(_, f)| f.key == key);
+        self.standings.restore(crate::combat::PLAYER, save.sworn.as_deref().and_then(faction), save.standing.iter().filter_map(|(k, s)| Some((faction(k)?, *s))));
         self.events.clear();
     }
 }

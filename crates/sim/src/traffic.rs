@@ -287,6 +287,7 @@ impl Universe {
                 destination,
                 hull: c.ship.hull,
                 aggressed: self.law.aggressed(crate::combat::craft_id(i), now),
+                faction: self.standings.member_of(crate::combat::craft_id(i)).and_then(|k| universe_world::content::content().factions.iter().nth(k)).map(|(_, f)| f.tag.clone()),
             });
         }
         crate::contract::CockpitView { world, transponders }

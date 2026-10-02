@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market enemy galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market enemy sworn galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -1133,6 +1133,21 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.refresh();
             app.v = app.engine.view();
             app.market = Some(crate::market::MarketView::open(app));
+        }
+        "sworn" => {
+            // Docked at home, traffic run a few minutes (settlers swear at
+            // their first station), then we enlist too.
+            apply(app, "docked");
+            while app.engine.universe().world.time < 600.0 {
+                app.engine.universe().step_world(1.0 / 60.0, 10.0, &Controls::default());
+            }
+            let u = app.engine.universe();
+            if let Some(f) = u.docked_market() {
+                let r = u.enlist(universe_sim::PLAYER, f);
+                log::info!("scenario sworn: {r:?}, {} sworn", u.standings.members().count());
+            }
+            app.engine.refresh();
+            app.v = app.engine.view();
         }
         "enemy" => {
             // On approach to the home station, an enemy of its holder.

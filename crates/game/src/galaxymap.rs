@@ -240,7 +240,8 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             let n = app.charts.territory().filter(|(_, g)| g.key == f.key).count();
             let c = Color([f.color[0], f.color[1], f.color[2], 1.0]);
             let s = app.v.standing.get(k).copied().unwrap_or(0.0);
-            frame.text(Vec2::new(16.0, y), &format!("{} {} - {n} SYSTEM{}   YOU: {s:+.0} {}", f.tag, f.name, if n == 1 { "" } else { "S" }, universe_sim::standing::label(s)), c);
+            let sworn = if app.v.member == Some(k) { ", MEMBER" } else { "" };
+            frame.text(Vec2::new(16.0, y), &format!("{} {} - {n} SYSTEM{}   YOU: {s:+.0} {}{sworn}", f.tag, f.name, if n == 1 { "" } else { "S" }, universe_sim::standing::label(s)), c);
             frame.text(Vec2::new(16.0 + 24.0, y + 14.0), &f.note, DIM);
             y += 34.0;
         }

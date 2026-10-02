@@ -30,6 +30,10 @@ pub const MURDER: f64 = -30.0;
 pub const BOUNTY: f64 = 5.0;
 /// A trade at its market.
 pub const TRADE: f64 = 0.2;
+/// Swearing in.
+pub const SWORN: f64 = 10.0;
+/// Leaving.
+pub const LEFT: f64 = -5.0;
 /// How often the factions take in what they've heard (s).
 const EVERY: f64 = 5.0;
 
@@ -62,6 +66,8 @@ pub struct Standings {
     table: HashMap<(usize, usize), f64>,
     /// Deeds already counted, by faction.
     counted: HashSet<(Key, usize)>,
+    /// Who's sworn to which faction (by content order).
+    members: HashMap<usize, usize>,
     next: f64,
 }
 
@@ -69,6 +75,28 @@ impl Standings {
     /// Pilot `pilot`'s standing with faction `faction` (by content order).
     pub fn of(&self, pilot: usize, faction: usize) -> f64 {
         self.table.get(&(pilot, faction)).copied().unwrap_or(0.0)
+    }
+
+    /// The faction pilot `pilot` is sworn to, if any.
+    pub fn member_of(&self, pilot: usize) -> Option<usize> {
+        self.members.get(&pilot).copied()
+    }
+
+    /// Everyone sworn, and to whom.
+    pub fn members(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
+        self.members.iter().map(|(&p, &k)| (p, k))
+    }
+
+    /// A pilot's allegiance and standings as saved.
+    pub fn restore(&mut self, pilot: usize, sworn: Option<usize>, standing: impl Iterator<Item = (usize, f64)>) {
+        self.table.retain(|(p, _), _| *p != pilot);
+        for (k, s) in standing {
+            self.set(pilot, k, s);
+        }
+        match sworn {
+            Some(k) => self.members.insert(pilot, k),
+            None => self.members.remove(&pilot),
+        };
     }
 
     /// Set it outright (a scenario, a test, a court).
@@ -97,6 +125,48 @@ impl Standings {
 }
 
 impl Universe {
+    /// Pilot `id` swears to the faction holding the station `market` it's
+    /// docked at: what's said, or why not. Not while that faction finds it
+    /// unwelcome, nor while sworn to another.
+    pub fn enlist(&mut self, id: usize, market: universe_world::Facility) -> Result<String, String> {
+        let (system, ship) = self.ship_by_id(id).map(|(_, s, ship)| (s, ship.clone())).ok_or("NO SHIP")?;
+        let sys = self.system(system);
+        if universe_world::traffic::docked_at(&sys, &ship) != Some(market) || !matches!(market, universe_world::Facility::Station(_)) {
+            return Err("DOCK AT A STATION TO ENLIST".into());
+        }
+        let charts = self.charts();
+        let (k, f) = charts.holder_index(system).zip(charts.holder(system)).ok_or("NOBODY HOLDS THIS STATION")?;
+        match self.standings.member_of(id) {
+            Some(m) if m == k => return Err(format!("ALREADY SWORN TO THE {}", f.name)),
+            Some(m) => {
+                let other = universe_world::content::content().factions.iter().nth(m).map_or(String::new(), |(_, g)| g.name.clone());
+                return Err(format!("SWORN TO THE {other} - RESIGN AT ONE OF ITS STATIONS FIRST"));
+            }
+            None => {}
+        }
+        if self.standings.of(id, k) <= -10.0 {
+            return Err(format!("THE {} WON'T HAVE YOU ({})", f.name, label(self.standings.of(id, k))));
+        }
+        self.standings.members.insert(id, k);
+        self.standings.add(id, k, SWORN);
+        Ok(format!("SWORN TO THE {}", f.name))
+    }
+
+    /// Pilot `id` leaves its faction, at one of its stations: what's said, or why not.
+    pub fn resign(&mut self, id: usize, market: universe_world::Facility) -> Result<String, String> {
+        let k = self.standings.member_of(id).ok_or("SWORN TO NO ONE")?;
+        let (system, ship) = self.ship_by_id(id).map(|(_, s, ship)| (s, ship.clone())).ok_or("NO SHIP")?;
+        let sys = self.system(system);
+        let charts = self.charts();
+        let name = universe_world::content::content().factions.iter().nth(k).map_or(String::new(), |(_, f)| f.name.clone());
+        if universe_world::traffic::docked_at(&sys, &ship) != Some(market) || charts.holder_index(system) != Some(k) {
+            return Err(format!("RESIGN AT A STATION OF THE {name}"));
+        }
+        self.standings.members.remove(&id);
+        self.standings.add(id, k, LEFT);
+        Ok(format!("LEFT THE {name}"))
+    }
+
     /// The factions take in the deeds that have reached them, when due.
     pub(crate) fn update_standings(&mut self) {
         let now = self.world.time;
@@ -109,6 +179,7 @@ impl Universe {
             self.standings.desks = Standings::open(&charts);
         }
         // Who opened fire on whom, seen where the shooter was.
+        let targets: HashMap<Key, usize> = self.law.rulings.iter().filter(|r| r.new).map(|r| (Key::Aggression { time: r.evidence.time.to_bits(), ship: r.ship }, r.evidence.target)).collect();
         let sightings: Vec<Sighting> = self
             .law
             .rulings
@@ -129,7 +200,10 @@ impl Universe {
             let Some(comm) = nodes(&charts.galaxy, &sys).into_iter().find(|n| n.at == NodeAt::Body(d.station)).map(|n| n.comm) else { continue };
             d.knows.update(&charts, now, &Listener { system: d.system, at: positions[d.station], comm, player: false }, &crate::news::Happenings { kills: &kills, trades: &trades, broadcasts: &[], sightings: &sightings });
             let ours = |system: usize| charts.holder_index(system) == Some(faction);
-            for k in kills.iter().filter(|k| ours(k.system) && universe_world::turrets::turret_of(k.killer).is_none()) {
+            // (Its space, or one of its own: a deed against a member counts wherever it's heard.)
+            let members = &self.standings.members;
+            let sworn = |id: usize| members.get(&id) == Some(&faction);
+            for k in kills.iter().filter(|k| (ours(k.system) || sworn(k.victim)) && universe_world::turrets::turret_of(k.killer).is_none()) {
                 let key = Key::kill(k);
                 if d.knows.heard(&key).is_some() {
                     let fair = self.law.until(k.victim, k.time).is_some();
@@ -142,7 +216,7 @@ impl Universe {
                     deeds.push((r.pilot, faction, TRADE, key));
                 }
             }
-            for (key, ..) in sightings.iter().filter(|s| ours(s.2)) {
+            for (key, ..) in sightings.iter().filter(|s| ours(s.2) || targets.get(&s.0).is_some_and(|&t| sworn(t))) {
                 if let (Some(_), Key::Aggression { ship, .. }) = (d.knows.heard(key), key) {
                     deeds.push((*ship, faction, AGGRESSION, key.clone()));
                 }

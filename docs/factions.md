@@ -42,8 +42,13 @@ one, and nothing is held for good, preset factions included. (See `roadmap.md` Â
    lost pays its debt where it comes back: no longer an enemy there (no friend either). The HUD
    warns "ENEMY OF THE <FACTION> - ITS GUNS FIRE, ITS DOCKS REFUSE". Not yet: patrols, bans by
    faction, crimes known only where heard (the law still rules in a system at once).
-4. **Enlisting:** join a faction (an action at its station); NPC settlers belong to factions too,
-   shown on their transponders.
+4. âœ“ **Enlisting:** ENLIST (Z, docked at a station) swears you to its holder (+10); docked at one
+   of its stations, the same key leaves it (-5). Not while it finds you UNWELCOME or worse, nor
+   while sworn to another. Settlers swear to the holder of the first station they stop at
+   (their own call, as clients; pirates never do). A deed against a member counts with its
+   faction wherever the faction hears of it, not only in its space. Members' transponders carry
+   the tag ("SETTLER 90 [HCD]"); your STAND row says MEMBER. Saved with the game: your oath and
+   standings. Not yet: ranks, duties and pay; a faction's members defending each other.
 5. **Founding and claiming:** a pilot founds a faction (a charter) and claims places; territory
    changes hands by building, buying or taking. Factions own assets (stations, fleets) that can
    be destroyed.

@@ -293,7 +293,8 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         let s = app.v.standing.get(k).copied().unwrap_or(0.0);
         let tag = app.charts.holder(app.view.origin).map_or("", |f| f.tag.as_str());
         let c = if s <= -10.0 { RED } else if s >= 10.0 { HUD } else { DIM };
-        rows.push(text_row("STAND", format!("{s:+.0} {}  {tag}", universe_sim::standing::label(s)), c));
+        let sworn = if app.v.member == Some(k) { " MEMBER" } else { "" };
+        rows.push(text_row("STAND", format!("{s:+.0} {}  {tag}{sworn}", universe_sim::standing::label(s)), c));
     }
     rows.push(text_row("MASS", format!("{:.1} T  LOAD {:.1} T", ship.mass() / 1000.0, ship.cargo / 1000.0), DIM));
     rows.push(text_row("DRIVE", format!("{:.1} M/S2", ship.main_accel()), DIM));
@@ -1672,6 +1673,14 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Autopilot, "AUTOPILOT", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
                 b(Act::Foot, "FOOT", Lamp::Off),
                 b(Act::Passengers, "PASSENGERS", if app.v.docked_market.is_some() { if app.passengers.is_some() { Lamp::On } else { Lamp::Off } } else { Lamp::Unavailable }),
+                {
+                    // Enlist with this station's holder; sworn to it, leave.
+                    let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
+                    let holder = app.charts.holder_index(app.view.origin);
+                    let ours = holder.is_some() && app.v.member == holder;
+                    let tag = app.charts.holder(app.view.origin).map_or(String::new(), |f| format!(" {}", f.tag));
+                    b(Act::Enlist, &if ours { format!("LEAVE{tag}") } else { format!("ENLIST{tag}") }, if !station || holder.is_none() { Lamp::Unavailable } else if ours { Lamp::On } else { Lamp::Off })
+                },
             ],
         ),
         _ if ship.manual => (

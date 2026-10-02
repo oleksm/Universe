@@ -626,6 +626,9 @@ impl App {
             if pressed(input, Act::Repair) {
                 self.engine.send(Command::Repair);
             }
+            if pressed(input, Act::Enlist) {
+                self.engine.send(Command::Enlist);
+            }
             if pressed(input, Act::Passengers) && self.v.docked_market.is_some() {
                 self.passengers = Some(0);
             }
@@ -830,6 +833,7 @@ impl App {
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),
                 Event::Refused { reason } => reason,
+                Event::Notice { text } => text,
                 Event::Following { what: Some((how, range)) } if how == "CLOSE ON" => format!("CLOSING ON THE ROCK, {range:.0} M OFF ITS SURFACE\n{} TO ANCHOR WHEN IN REACH, {} TO CANCEL", crate::keys::key(crate::keys::Act::Anchor), crate::keys::key(crate::keys::Act::Cancel)),
                 Event::Following { what: Some((how, range)) } if how == "ORBIT" => format!("ORBIT AT {} - HOLD {} TO CHOOSE THE RANGE, {} TO CANCEL", orbitpick::label(range), crate::keys::key(crate::keys::Act::Orbit), crate::keys::key(crate::keys::Act::Cancel)),
                 Event::Following { what: Some((how, range)) } => format!("{how} {} - {} AGAIN: NEXT RANGE, {} TO CANCEL", orbitpick::label(range), crate::keys::key(crate::keys::Act::Keep), crate::keys::key(crate::keys::Act::Cancel)),

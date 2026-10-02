@@ -176,6 +176,8 @@ pub struct Transponder {
     pub destination: Option<String>,
     pub hull: f64,
     pub aggressed: bool,
+    /// The tag of the faction it's sworn to, if any.
+    pub faction: Option<String>,
 }
 
 /// What the cockpit reads each tick.
