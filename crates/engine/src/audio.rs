@@ -761,7 +761,7 @@ impl Synth {
             let hum = (self.hum_phase * TAU).sin() * 0.5 + (self.hum_phase * 2.0 * TAU).sin() * 0.3 + (self.hum_phase * 3.0 * TAU).sin() * 0.08;
             let n = self.white();
             self.air_lp += (n - self.air_lp) * 0.05;
-            put((hum * 0.12 + self.air_lp * 0.45) * amb, 0.0, 0.3, &mut l, &mut r, &mut send);
+            put((hum * 0.12 + self.air_lp * 0.22) * amb, 0.0, 0.3, &mut l, &mut r, &mut send);
         }
 
         // The thrusters: each a hiss through its own band, the valve's
