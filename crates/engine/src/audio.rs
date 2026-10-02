@@ -658,7 +658,7 @@ impl Synth {
             svf(&mut v.low, &mut v.band, n, centre, if j.lift { 0.8 } else { 1.4 }, rate);
             v.rush += (n - v.rush) * 0.03;
             // (The small thrusters quiet beside the lift jets: they are small.)
-            let gain = (0.35 + 0.65 * j.near) * if j.lift { 1.3 } else { 0.25 };
+            let gain = (0.35 + 0.65 * j.near) * if j.lift { 1.3 } else { 0.125 };
             let mut s = (v.band * 0.6 + v.rush * 0.8) * v.env * gain * 1.1;
             // The valve: a short knock as it opens.
             if v.tick > 1e-4 {

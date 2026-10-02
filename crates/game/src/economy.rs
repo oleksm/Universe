@@ -88,7 +88,9 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     }
     y += line * 1.5;
 
-    // The places.
+    // The places, under their headers.
+    frame.text(Vec2::new(12.0, y), &format!(" {:<9} {:<18} {:<7} {:>6}  {}", "SYSTEM", "PLACE", "KIND", "PEOPLE", "SHORTEST"), DIM);
+    y += line;
     let top = y;
     let shown = ((size.y - top - 20.0) / line) as usize;
     let first = panel.selected.saturating_sub(shown.saturating_sub(1));
@@ -102,7 +104,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         let mark = if k == panel.selected { ">" } else { " " };
         let sys = app.charts.system(p.system);
         let text = format!(
-            "{mark}{:<9} {:<18} {:<7} {:>4.0}K {}",
+            "{mark}{:<9} {:<18} {:<7} {:>5.0}K  {}",
             sys.name.to_uppercase().chars().take(9).collect::<String>(),
             p.facility.name(&sys).to_uppercase().split(" (").next().unwrap_or("").chars().take(18).collect::<String>(),
             p.kind.label().split(' ').next().unwrap_or(""),
@@ -119,22 +121,23 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     let mut y = top;
     frame.text(Vec2::new(x, y), &format!("{} ({}, {:.0}K PEOPLE)", place_name(app, p), p.kind.label(), p.population), TEXT);
     y += line * 1.5;
-    frame.text(Vec2::new(x, y), &format!("{:<11} {:>4} {:>6} {:>5} {:>5} {:>6} {:>6} {:>5}", "KIND", "", "STOCK", "COVER", "PRICE", "MADE", "USED", "SHORT"), DIM);
+    frame.text(Vec2::new(x, y), &format!("{:<11} {:>5} {:>5} {:>5} {:>5} {:>6} {:>6} {:>5}", "KIND", "TRADE", "STOCK", "COVER", "PRICE", "MADE", "USED", "SHORT"), DIM);
     y += line;
     for c in Category::all().filter(|&c| p.trades(c)) {
         let i = c.index();
         let d = cover(p, c);
         let col = if p.short[i] > 1e-6 { BAD } else if d < COVER_DAYS * 0.5 && p.needs(c) > 0.0 { WARN } else { TEXT };
         let text = format!(
-            "{:<11} {:>4} {:>6.0} {:>5} {:>4.2}x {:>6.1} {:>6.1} {:>5.1}",
+            "{:<11} {:>5} {:>5.0} {:>5} {:>4.2}x {:>6.1} {:>6.1} {:>5.1}",
             c.name(),
             if p.sells(c) { "SELL" } else { "BUY" },
             p.stock_of(c),
             days(d),
             p.factor(c).unwrap_or(1.0),
-            p.made[i],
-            p.used[i],
-            p.short[i]
+            // (+ 0.0: nothing made shows 0, not -0.)
+            p.made[i] + 0.0,
+            p.used[i] + 0.0,
+            p.short[i] + 0.0
         );
         frame.text(Vec2::new(x, y), &text, col);
         y += line;

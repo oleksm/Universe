@@ -108,9 +108,12 @@ pub struct Place {
 impl Place {
     fn new(system: usize, facility: Facility, kind: PlaceKind) -> Self {
         let mut p = Place { system, facility, kind, population: kind.population(), stock: vec![0.0; lines()], made: vec![0.0; lines()], used: vec![0.0; lines()], short: vec![0.0; lines()] };
-        // Starting at the stock it aims for.
+        // Starting at the stock it aims for, working at full: what it makes
+        // and uses a day so (until its first step says otherwise).
         for c in Category::all() {
             p.stock[line(c)] = p.target(c);
+            p.made[line(c)] = p.makes(c);
+            p.used[line(c)] = p.needs(c) - if c == Category::fuel() { kind.ship_fuel() } else { 0.0 };
         }
         p
     }
