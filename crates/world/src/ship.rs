@@ -46,6 +46,8 @@ pub struct ClassSpec {
     pub plant_efficiency: f64,
     /// Its hyperdrive's field efficiency (0: none fitted).
     pub hyper_efficiency: f64,
+    /// Its comm (a base block): what it hears and whom it reaches on the hypernet.
+    pub comm: crate::modules::Comm,
     /// Its capacitor banks: what they store (J), and how fast they take it
     /// in or give it out, all together (W).
     pub capacitor_capacity: f64,
@@ -454,6 +456,7 @@ impl ClassSpec {
         if power_draw > power_output {
             return Err(format!("its modules draw {:.1} MW, its plant makes {:.1} MW", power_draw / 1e6, power_output / 1e6));
         }
+        let comm = modules().find_map(|m| m.does.comm()).expect("a comm (a base block)");
         let (turn_rate, roll_rate) = modules()
             .find_map(|m| if let Does::FlightComputer { turn_rate, roll_rate } = m.does { Some((turn_rate, roll_rate)) } else { None })
             .expect("a flight computer (a base block)");
@@ -523,6 +526,7 @@ impl ClassSpec {
             brand: String::new(),
             plant_efficiency,
             hyper_efficiency,
+            comm,
             capacitor_capacity,
             capacitor_rate,
             hold_capacity,

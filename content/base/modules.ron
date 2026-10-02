@@ -12,6 +12,7 @@
     (key: "computer.fbw.s1", brand: "brand.orbital", name: "FLIGHT COMPUTER", does: FlightComputer(turn_rate: 1.0, roll_rate: 1.8), size: 1, mass: 200.0, volume: 0.4, power: 5.0e4, price: 6000.0),
     (key: "transponder.s1", brand: "brand.orbital", name: "TRANSPONDER", does: Transponder, size: 1, mass: 50.0, volume: 0.1, power: 1.0e3, price: 500.0),
     (key: "sensors.radar.s1", brand: "brand.orbital", name: "RADAR 500 KM", does: Sensors(range: 500000.0), size: 1, mass: 300.0, volume: 0.8, power: 1.0e5, price: 7000.0),
+    (key: "comm.basic.s1", brand: "brand.orbital", name: "COMM", does: Comm(capture: 5.0e7, link: 7.5e9, lag: 0.05, capacity: 600.0), size: 1, mass: 40.0, volume: 0.1, power: 2.0e3, price: 800.0),
     (key: "life.s2", brand: "brand.hadley", name: "LIFE SUPPORT", does: LifeSupport, size: 2, mass: 1500.0, volume: 8.0, power: 2.0e5, price: 5000.0),
     // Specialised equipment.
     (key: "lift.belly.s2", brand: "brand.kestrel", name: "BELLY LIFT S2", does: Lift(thrust: 5.625e5, exhaust: 1.0e7, efficiency: 0.3, burns: "material.deuterium"), size: 2, mass: 2500.0, volume: 5.0, power: 3.0e5, price: 15000.0),
@@ -62,4 +63,13 @@
     (key: "hyperdrive.halcyon.s1", brand: "brand.halcyon", name: "HALCYON FIELD 1", does: Hyperdrive(efficiency: 0.75), size: 1, mass: 2600.0, volume: 6.0, power: 9.0e5, price: 64000.0),
     (key: "hyperdrive.halcyon.s2", brand: "brand.halcyon", name: "HALCYON FIELD 2", does: Hyperdrive(efficiency: 0.75), size: 2, mass: 4200.0, volume: 10.0, power: 1.5e6, price: 100000.0),
     (key: "hyperdrive.halcyon.s3", brand: "brand.halcyon", name: "HALCYON FIELD 3", does: Hyperdrive(efficiency: 0.75), size: 3, mass: 9400.0, volume: 22.0, power: 3.0e6, price: 180000.0),
+    // Comms: the hypernet (docs/hypernet.md). Capture: how far it hears what
+    // happens; link: how far it reaches another comm (the shorter of the two
+    // decides); lag (s) to pass a message on; capacity: messages an hour.
+    // Reach goes as the root of power and both antennas' gain (Friis).
+    (key: "comm.long.s1", brand: "brand.tallis", name: "LONG-RANGE COMM", does: Comm(capture: 3.0e8, link: 7.5e10, lag: 0.05, capacity: 3000.0), size: 1, mass: 300.0, volume: 0.8, power: 2.0e5, price: 9000.0),
+    // Infrastructure: relays for stations, ports, outposts and gates (no ship has room or power for one).
+    (key: "relay.port", brand: "brand.tallis", name: "TALLIS BACKBONE RELAY", does: Comm(capture: 1.0e9, link: 4.5e12, lag: 0.02, capacity: 100000.0), size: 4, mass: 20000.0, volume: 60.0, power: 1.0e6, price: 400000.0),
+    (key: "relay.beacon", brand: "brand.tallis", name: "TALLIS BEACON RELAY", does: Comm(capture: 5.0e8, link: 7.5e11, lag: 0.05, capacity: 20000.0), size: 4, mass: 6000.0, volume: 20.0, power: 3.0e5, price: 150000.0),
+    (key: "relay.gate", brand: "brand.halcyon", name: "HALCYON GATE RELAY", does: GateRelay(lag: 1.0, capacity: 50000.0), size: 4, mass: 40000.0, volume: 100.0, power: 2.0e6, price: 900000.0),
 ]

@@ -280,6 +280,7 @@ impl Design {
             ("computer".into(), SlotKind::Computer, 1),
             ("transponder".into(), SlotKind::Transponder, 1),
             ("sensors".into(), SlotKind::Sensors, 1),
+            ("comm".into(), SlotKind::Comm, 1),
             ("life".into(), SlotKind::LifeSupport, c.min(2)),
             ("avionics".into(), SlotKind::Avionics, 1),
         ];
@@ -412,11 +413,11 @@ impl Design {
                 SlotKind::Drive => at(self.engines_at + 0.05),
                 SlotKind::Tank => at(self.tank_at),
                 SlotKind::Cargo => at(self.hold_at),
-                SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Avionics | SlotKind::LifeSupport => at(self.bridge_at),
+                SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Comm | SlotKind::Avionics | SlotKind::LifeSupport => at(self.bridge_at),
                 SlotKind::Thrusters => at(self.quads_at),
                 SlotKind::Lift => at(self.lift_at),
                 SlotKind::Hardpoint => at(-0.42),
-                SlotKind::Utility => 0.0,
+                SlotKind::Utility | SlotKind::Relay => 0.0,
             };
             let y = match kind {
                 SlotKind::Lift | SlotKind::Hardpoint => -self.section(z).1 * 0.7,

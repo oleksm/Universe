@@ -33,6 +33,8 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **Ring classes** | A gate ring's greatest span: I 10 ly, II 25 ly, III 50 ly. |
 | **Explorer** | A future ship built around next-generation reactors that can cross between stars (40 ly: an epic). |
 | **Hypernet** | The information network to come: events captured in range, carried by relays, gates and ships (`docs/hypernet.md`). |
+| **Comm** | A ship's or structure's hypernet equipment: what it hears (capture), how far it links, its lag and capacity. Every ship carries one. |
+| **Relay** | A structure's comm (backbone, beacon); a **gate relay** links two systems' nets through the throat. |
 
 ## The world's makers (brands)
 
@@ -41,9 +43,10 @@ The one place to look a name up. Keep it current when a name is added or changed
 | Kestrel Driveworks | drives, thrusters, lift, standard hyperdrives |
 | Hadley Heavy Industries | rugged fusion plants, tanks, racks, cabins, life support |
 | Aurel Fusion Works | light, efficient fusion plants |
-| Halcyon Field Systems | premium hyperdrives, gate rings |
+| Halcyon Field Systems | premium hyperdrives, gate rings, gate relays |
 | Meridian Power | capacitor banks |
-| Orbital Systems | computers, sensors, transponders, nav computers |
+| Orbital Systems | computers, sensors, transponders, nav computers, basic comms |
+| Tallis Signal Works | long-range comms, backbone and beacon relays |
 | Garrick Arms | mass drivers, lasers |
 | Cormorant Mining | mining gear, the Prospector |
 | Tolland Yards | hulls: Drover, Bulk Hauler |

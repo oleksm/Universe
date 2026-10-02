@@ -291,13 +291,22 @@ impl Content {
         }).collect::<Result<_, String>>()?)?;
         let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
         let brands: Registry<crate::modules::Brand> = Registry::build(Self::defs(&packs, "brands.ron")?)?;
+        let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
         let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
         for (_, s) in structures.iter() {
             if resolve(&brands, &aliases, &s.brand).is_none() {
                 return Err(format!("structures.ron '{}': no brand '{}' (every product has a maker)", s.key, s.brand));
             }
+            // What's installed: a comm on each, a gate relay only on a ring.
+            let fitted = s.fit.iter().map(|k| resolve(&modules, &aliases, k).map(|h| modules.get(h)).ok_or_else(|| format!("structures.ron '{}': no module '{k}'", s.key))).collect::<Result<Vec<_>, _>>()?;
+            if !fitted.iter().any(|m| m.does.comm().is_some()) {
+                return Err(format!("structures.ron '{}': no comm (every structure has one)", s.key));
+            }
+            let ring = matches!(s.kind, crate::structures_catalogue::StructureKind::GateRing { .. });
+            if let Some(m) = fitted.iter().find(|m| !matches!(m.does.slot(), crate::modules::SlotKind::Comm) && !(ring && matches!(m.does.slot(), crate::modules::SlotKind::Relay))) {
+                return Err(format!("structures.ron '{}': {} doesn't go on it", s.key, m.key));
+            }
         }
-        let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
         for (_, m) in modules.iter() {
             // (Every product has a maker.)
             if resolve(&brands, &aliases, &m.brand).is_none() {

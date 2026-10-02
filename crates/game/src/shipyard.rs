@@ -525,6 +525,8 @@ fn slot_help(kind: universe_sim::world::modules::SlotKind) -> (&'static str, &'s
         Computer => ("THE FLIGHT COMPUTER: HOW FAST IT LETS THE SHIP TURN.", "QUICKER TURN RATES ALLOWED.", "GENTLER LIMITS."),
         Transponder => ("THE TRANSPONDER: WHO YOU ARE TO TRAFFIC CONTROL.", "", ""),
         Sensors => ("THE SENSORS: HOW FAR YOU SEE SHIPS.", "SEE FURTHER.", "LIGHTER; SEE LESS."),
+        Comm => ("THE COMM: WHAT YOU HEAR ROUND YOU, AND HOW FAR YOU REACH THE HYPERNET.", "HEAR AND REACH FARTHER. DRAWS MORE.", "LIGHTER; HEARS LITTLE, REACHES LITTLE."),
+        Relay => ("A GATE RELAY.", "", ""),
         LifeSupport => ("LIFE SUPPORT.", "", ""),
         Hardpoint => ("A GUN MOUNT.", "MORE FIREPOWER. MASS AT THE NOSE.", "(EMPTY: LIGHTER, NOTHING TO FIGHT WITH.)"),
         Utility => ("A GEAR SLOT: THE MINING RIG.", "THE RIG: DIG ASTEROIDS. MASS ON THE SPINE.", "(EMPTY: LIGHTER, NO DIGGING.)"),
@@ -541,6 +543,7 @@ fn what(m: &Module) -> String {
         Does::Cabin { seats } => format!("{seats} SEATS"),
         Does::FlightComputer { turn_rate, roll_rate } => format!("TURNS {turn_rate:.1}, ROLLS {roll_rate:.1} RAD/S"),
         Does::Sensors { range } => fmt::distance(*range),
+        Does::Comm { capture, link, .. } => format!("HEARS {}, LINKS {}", fmt::distance(*capture), fmt::distance(*link)),
         Does::NavComputer { features } => features.iter().map(|f| format!("{f:?}").to_uppercase()).collect::<Vec<_>>().join(" "),
         _ => String::new(),
     }
@@ -994,22 +997,22 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
             frame.text(Vec2::new(12.0, yy), "DOCK AT A STATION'S SHIPYARD TO BUILD IT", DIM);
         }
     }
-    // What the slot's for, and bigger or smaller.
+    // What the slot's for, and bigger or smaller (under the maker's lines).
     let (about, more, less) = slot_help(slot.kind);
-    let mut hy = yy + LINE * 1.5;
+    let mut hy = top + (list.len() + 8) as f32 * LINE;
     for (head, text, col) in [("", about, TEXT), ("BIGGER: ", more, BETTER), ("SMALLER: ", less, BETTER)] {
         if text.is_empty() {
             continue;
         }
-        for line in wrap(&format!("{head}{text}"), 60) {
-            frame.text(Vec2::new(12.0, hy), &line, col);
+        for line in wrap(&format!("{head}{text}"), 56) {
+            frame.text(Vec2::new(x, hy), &line, col);
             hy += LINE;
         }
     }
     // Where it all sits.
     if let Ok(s) = &preview {
         let w = ((size.x - x - 24.0) / 2.0).floor();
-        let at = Vec2::new(x, top + (list.len() + 8) as f32 * LINE);
+        let at = Vec2::new(x, hy + LINE);
         let h = (size.y - at.y - 12.0 - 4.5 * LINE).max(60.0);
         let picked = [slot.name.as_str()];
         let picture = crate::thrusterpanel::Picture { spec: s, jets: &[], com: s.centre_of_mass(s.fuel_capacity, s.hold_capacity / 2.0), mounts: true, picked: &picked, labels: &[] };

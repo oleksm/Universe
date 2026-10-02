@@ -12,5 +12,6 @@
     (key: "brand.garrick", name: "GARRICK ARMS", note: "WEAPONS: MASS DRIVERS AND LASERS"),
     (key: "brand.tolland", name: "TOLLAND YARDS", note: "HULLS: WORKHORSES AND HAULERS"),
     (key: "brand.vireo", name: "VIREO SPACEWORKS", note: "HULLS: FAST AND LIGHT"),
+    (key: "brand.tallis", name: "TALLIS SIGNAL WORKS", note: "COMMS AND RELAYS: FAR-REACHING, POWER-HUNGRY"),
     (key: "brand.halvard", name: "HALVARD CONSTRUCTION", note: "STATIONS, SPACEPORTS AND OUTPOSTS"),
 ]

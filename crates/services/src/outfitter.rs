@@ -84,7 +84,7 @@ pub fn offer(seed: u64, links: &[(usize, usize)], settled: &[usize], system: usi
 
 /// What module `m` is made of: (kind of goods, tonnes).
 pub fn materials(m: &Module) -> (Category, f64) {
-    let electronic = matches!(m.does.slot(), SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Avionics);
+    let electronic = matches!(m.does.slot(), SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Comm | SlotKind::Avionics);
     let kind = if electronic { "goods.electronics" } else { "goods.machinery" };
     (Category::of(kind).expect("machinery and electronics are kinds of goods"), m.mass / 1000.0)
 }

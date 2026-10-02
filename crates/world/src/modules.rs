@@ -37,6 +37,15 @@ pub enum Does {
     Transponder,
     /// Sensors: how far they see a ship (m).
     Sensors { range: f64 },
+    /// A comm (the hypernet, `docs/hypernet.md`): it hears what happens within
+    /// `capture` (m), links to another comm within `link` (m; the shorter of
+    /// the two decides), passes a message on after `lag` (s), and handles
+    /// `capacity` messages an hour.
+    Comm { capture: f64, link: f64, lag: f64, capacity: f64 },
+    /// A gate relay (fitted to a gate ring): links its system's net to its
+    /// twin's through the throat (Dogma's `TRANSIT_TIME`), handling a message
+    /// in `lag` (s) more, `capacity` messages an hour.
+    GateRelay { lag: f64, capacity: f64 },
     LifeSupport,
     Gun,
     Laser,
@@ -81,6 +90,10 @@ pub enum SlotKind {
     Computer,
     Transponder,
     Sensors,
+    /// The comm.
+    Comm,
+    /// A gate's relay (structures only).
+    Relay,
     LifeSupport,
     /// Guns and lasers.
     Hardpoint,
@@ -112,6 +125,14 @@ impl Does {
         }
     }
 
+    /// A comm's figures, if it's one.
+    pub fn comm(&self) -> Option<Comm> {
+        match *self {
+            Does::Comm { capture, link, lag, capacity } => Some(Comm { capture, link, lag, capacity }),
+            _ => None,
+        }
+    }
+
     /// The kind of slot it goes in.
     pub fn slot(&self) -> SlotKind {
         match self {
@@ -126,6 +147,8 @@ impl Does {
             Does::FlightComputer { .. } => SlotKind::Computer,
             Does::Transponder => SlotKind::Transponder,
             Does::Sensors { .. } => SlotKind::Sensors,
+            Does::Comm { .. } => SlotKind::Comm,
+            Does::GateRelay { .. } => SlotKind::Relay,
             Does::LifeSupport => SlotKind::LifeSupport,
             Does::Gun | Does::Laser => SlotKind::Hardpoint,
             Does::MiningRig => SlotKind::Utility,
@@ -135,7 +158,23 @@ impl Does {
 }
 
 /// The slots every ship must have filled to fly: the base blocks.
-pub const BASE_BLOCKS: [SlotKind; 8] = [SlotKind::Power, SlotKind::Drive, SlotKind::Thrusters, SlotKind::Tank, SlotKind::Computer, SlotKind::Transponder, SlotKind::Sensors, SlotKind::LifeSupport];
+pub const BASE_BLOCKS: [SlotKind; 9] = [SlotKind::Power, SlotKind::Drive, SlotKind::Thrusters, SlotKind::Tank, SlotKind::Computer, SlotKind::Transponder, SlotKind::Sensors, SlotKind::Comm, SlotKind::LifeSupport];
+
+/// A comm's figures (see `Does::Comm`).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Comm {
+    pub capture: f64,
+    pub link: f64,
+    pub lag: f64,
+    pub capacity: f64,
+}
+
+impl Comm {
+    /// The longest link between two comms: the shorter reach decides.
+    pub fn link_with(&self, other: &Comm) -> f64 {
+        self.link.min(other.link)
+    }
+}
 
 /// A maker of modules (content: `brands.ron`).
 #[derive(Clone, Debug, PartialEq, Deserialize)]
@@ -207,6 +246,8 @@ impl Module {
             Does::Cabin { seats } => positive("seats", *seats as f64),
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
             Does::Sensors { range } => positive("range", *range),
+            Does::Comm { capture, link, lag, capacity } => positive("capture", *capture).and(positive("link", *link)).and(positive("capacity", *capacity)).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
+            Does::GateRelay { lag, capacity } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
             Does::Hyperdrive { efficiency } => if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) },
             // (Storage can't beat the physics sheet's density.)
             Does::Capacitor { capacity, rate } => positive("capacity", *capacity).and(positive("rate", *rate)).and(if *capacity <= crate::sheet::CAPACITOR_DENSITY * self.mass * 1.001 {

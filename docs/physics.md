@@ -202,6 +202,13 @@ distance `S` between its rings.
 - **Its strength falls with the square of the distance:** a relay sending `P_tx` reaches a receiver of
   sensitivity `p_min` within `R = √(P_tx · G / p_min)` (`G`: the antennas' gain, by brand and size).
   So reach is bought with power and size, and the far frontier needs relays laid out to it.
+- **Comms are products** (`modules.ron`, `Does::Comm`): today each states its reach (`link`), what it
+  hears (`capture`), its handling lag and its capacity (messages an hour) — figures its maker
+  worked out from the law above. Simplified: a link between two comms reaches as far as the
+  shorter of their two reaches (the real link, `√(P_a·G_a·G_b / p_b)`, comes with equipment tuning),
+  and capacity is a count of messages, not bits.
+- Every ship carries a comm (a base block); every structure a relay (`structures.ron` `fit`); a
+  gate ring may carry a gate relay (`Does::GateRelay`), the throat's crossing being Dogma's.
 - Between stars a signal pays the same steep reach. A **gate relay module** sends it through the
   throat instead (at `TRANSIT_TIME`). The network's backbone is its gates.
 - **Capture stays real:** events are sensed by light and radar at light speed, within range. Only

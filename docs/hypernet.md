@@ -43,6 +43,16 @@ what a place or ship has heard, and when. (See `roadmap.md` §1–2.)
 Brands differ: range against power, capacity against cost, robustness (later: wear and failure).
 Numbers are first guesses, to tune.
 
+In the base world (`content/base/modules.ron`, step 1 done):
+
+| Product | Maker | Capture | Link | Lag | Capacity (msgs/h) | Power |
+|---|---|---|---|---|---|---|
+| COMM (`comm.basic.s1`, every ship's) | Orbital Systems | 50,000 km | 0.05 AU | 0.05 s | 600 | 2 kW |
+| LONG-RANGE COMM (`comm.long.s1`) | Tallis Signal Works | 300,000 km | 0.5 AU | 0.05 s | 3,000 | 200 kW |
+| BACKBONE RELAY (`relay.port`: stations, spaceports) | Tallis Signal Works | 1,000,000 km | 30 AU | 0.02 s | 100,000 | 1 MW |
+| BEACON RELAY (`relay.beacon`: outposts, gate rings) | Tallis Signal Works | 500,000 km | 5 AU | 0.05 s | 20,000 | 300 kW |
+| GATE RELAY (`relay.gate`: gate rings) | Halcyon Field Systems | - | the gate pair | the transit + 1 s | 50,000 | 2 MW |
+
 ## Who's connected
 
 - A settlement, ship or outpost is **on the net** when its comm has a chain of links to the
@@ -72,7 +82,7 @@ Numbers are first guesses, to tune.
 
 ## Build order (coarse first)
 
-1. Comm equipment as modules and as infrastructure (content, brands); every ship fitted with a
+1. ✓ Comm equipment as modules and as infrastructure (content, brands); every ship fitted with a
    basic comm.
 2. The network: nodes, links (range, line of sight), gate relays, lag from the backbone. The
    HUD status.

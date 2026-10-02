@@ -19,6 +19,8 @@ pub struct Structure {
     pub brand: String,
     pub name: String,
     pub kind: StructureKind,
+    /// The modules installed (keys): its comm, a gate relay.
+    pub fit: Vec<String>,
     pub note: String,
 }
 
