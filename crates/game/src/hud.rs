@@ -94,9 +94,9 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
             crate::orbitpick::draw(frame, app);
         }
     }
-    // The guidance banner, if one's up, has the very top line; the mode bar
-    // goes under it.
-    let top = if banner_up(app) { banner_y(app) + GLYPH + 10.0 } else { 4.0 };
+    // The top line is for status: the hypernet badge at its left, the
+    // guidance banner when one's up; the buttons always start under it.
+    let top = banner_y(app) + GLYPH + 10.0;
     let size = frame.size();
     let mut y = top;
     if app.mode == Mode::Pilot && app.v.crew.seated() {
@@ -113,7 +113,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     let credits = format!("{:.0} CR", app.v.credits);
     frame.text_boxed(Vec2::new(size.x - text_size(&credits).x - 6.0, top + 2.0), &credits, HUD, SOFT_PANEL);
     if app.mode == Mode::Pilot {
-        net_badge(frame, app, Vec2::new(size.x - text_size(&credits).x - 14.0, top + 2.0));
+        net_badge(frame, app, Vec2::new(6.0, banner_y(app) + 2.0));
     }
     if app.mode == Mode::Pilot && app.v.crew.seated() && !matches!(app.ship.state, ShipState::Transit { .. }) {
         y += instruments(frame, app, Vec2::new(4.0, y)) + 6.0;
@@ -313,10 +313,10 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     h
 }
 
-/// The hypernet badge, top right left of `right`: signal bars by our lag
+/// The hypernet badge, at `at` (the top line's left): signal bars by our lag
 /// from the backbone (green under a second, yellow under a minute, red past
 /// it; grey and crossed off the net), and the lag itself.
-fn net_badge(frame: &mut Frame, app: &App, right: Vec2) {
+fn net_badge(frame: &mut Frame, app: &App, at: Vec2) {
     const GREEN: Color = Color::hex(0x60ff90);
     const YELLOW: Color = Color::hex(0xffd040);
     let (bars, c, text) = match &app.net {
@@ -325,9 +325,8 @@ fn net_badge(frame: &mut Frame, app: &App, right: Vec2) {
         Some((lag, _)) => (1, RED, fmt::lag(*lag)),
         None => (0, DIM, "OFF".to_string()),
     };
-    let label = format!("NET {text}");
+    let label = text;
     let w = 22.0 + text_size(&label).x;
-    let at = right - Vec2::new(w, 0.0);
     frame.hud_rect(at - 2.0, Vec2::new(w, GLYPH) + 4.0, SOFT_PANEL);
     // Four bars, rising; lit as many as the signal's worth.
     for k in 0..4 {
@@ -860,11 +859,6 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
 /// Where a guidance banner goes: the very top line.
 pub fn banner_y(_app: &App) -> f32 {
     4.0
-}
-
-/// A guidance banner is up: an approach's phases, or a follow program's.
-fn banner_up(app: &App) -> bool {
-    app.approach.is_some() || app.v.avionics.following.is_some()
 }
 
 fn phase_banner(frame: &mut Frame, app: &App) {
