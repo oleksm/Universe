@@ -330,7 +330,8 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>, alerts: &mut Vec<(Str
     // Fuel, once it's running down.
     let fuel = ship.fuel / ship.spec().fuel_capacity;
     if fuel < 0.25 {
-        let hours = ship.fuel / (ship.spec().main_thrust / universe_sim::world::ship::EXHAUST_VELOCITY) / 3600.0;
+        let s = ship.spec();
+        let hours = ship.fuel / (s.main_thrust / s.exhaust_of(universe_sim::world::ship::ThrusterRole::Main)) / 3600.0;
         alerts.push((format!("FUEL {:.0}%  {:.1} H OF FULL BURN LEFT - REFUEL AT A MARKET", fuel * 100.0, hours), if fuel < 0.1 { RED } else { AMBER }));
     }
     let now = app.v.time;

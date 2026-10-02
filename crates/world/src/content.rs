@@ -318,7 +318,16 @@ impl Content {
                         return Err(format!("modules.ron '{}': {} doesn't burn", m.key, mat.name));
                     }
                 }
-                _ => {}
+                // An engine's jet can't carry more energy per kg than its fuel gives at its efficiency.
+                d => {
+                    if let Some((_, exhaust, efficiency, burns)) = d.engine() {
+                        let mat = of(burns)?;
+                        let jet = 0.5 * exhaust * exhaust;
+                        if jet > efficiency * mat.energy * 1.001 {
+                            return Err(format!("modules.ron '{}': an exhaust of {:.0} m/s carries {:.1e} J/kg; {} at {:.0}% gives {:.1e}", m.key, exhaust, jet, mat.name, efficiency * 100.0, efficiency * mat.energy));
+                        }
+                    }
+                }
             }
         }
         let module = |key: &str| resolve(&modules, &aliases, key).map(|h| (h, modules.get(h)));

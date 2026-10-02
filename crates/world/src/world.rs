@@ -909,7 +909,7 @@ mod tests {
                 assert!(dw.length() <= alpha.length() * 1.02 + 1e-9, "spun {dw} on a turn of {alpha}");
                 // …and it burns the fuel they show.
                 let burned = fuel0 - p.ship.fuel;
-                let shown: f64 = s.thrusters.iter().zip(&p.ship.jets).map(|(t, &u)| t.thrust * u).sum::<f64>() / crate::ship::EXHAUST_VELOCITY * dt;
+                let shown: f64 = s.thrusters.iter().zip(&p.ship.jets).map(|(t, &u)| t.thrust * u / t.exhaust).sum::<f64>() * dt;
                 assert!((burned - shown).abs() < 0.02 * shown + 1e-9, "burned {burned} kg, shown {shown}");
                 checked += 1;
             }
@@ -930,7 +930,7 @@ mod tests {
         let burned = fuel - p.ship.fuel;
         // The drive at full, and a little more: the thrusters holding off
         // the turn its line makes, a few centimetres off the centre of mass.
-        let expected = crate::ship::starter().main_thrust / crate::ship::EXHAUST_VELOCITY * 10.0;
+        let expected = crate::ship::starter().main_thrust / crate::ship::starter().exhaust_of(crate::ship::ThrusterRole::Main) * 10.0;
         assert!(burned >= expected * 0.999 && burned < expected * 1.1, "burned {burned} kg in 10 s, expected {expected} and a little");
         // Dry: the engine gives nothing, the hyperdrive won't start.
         p.ship.fuel = 0.0;

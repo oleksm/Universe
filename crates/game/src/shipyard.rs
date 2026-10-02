@@ -23,7 +23,7 @@ use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{Color, Context, Frame, KeyCode};
 use universe_sim::world::content::{content, Handle};
 use universe_sim::world::modules::{Does, Module, BASE_BLOCKS};
-use universe_sim::world::ship::{fitted, ClassSpec, Fit, Hull, Slot, EXHAUST_VELOCITY};
+use universe_sim::world::ship::{fitted, ClassSpec, Fit, Hull, Slot, ThrusterRole};
 use universe_sim::world::Facility;
 use universe_sim::Command;
 
@@ -536,7 +536,7 @@ fn what(m: &Module) -> String {
     match &m.does {
         Does::PowerPlant { output, efficiency, .. } => format!("{:.1} MW AT {:.0}%", output / 1e6, efficiency * 100.0),
         Does::Hyperdrive { efficiency } => format!("FIELD {:.0}%", efficiency * 100.0),
-        Does::Drive { thrust } | Does::Thrusters { thrust } | Does::Lift { thrust } => format!("{:.0} KN A NOZZLE", thrust / 1e3),
+        Does::Drive { thrust, exhaust, .. } | Does::Thrusters { thrust, exhaust, .. } | Does::Lift { thrust, exhaust, .. } => format!("{:.0} KN A NOZZLE, {:.0} KM/S", thrust / 1e3, exhaust / 1e3),
         Does::Tank { capacity, .. } | Does::Rack { capacity } => fmt::tonnes(*capacity),
         Does::Cabin { seats } => format!("{seats} SEATS"),
         Does::FlightComputer { turn_rate, roll_rate } => format!("TURNS {turn_rate:.1}, ROLLS {roll_rate:.1} RAD/S"),
@@ -572,8 +572,8 @@ fn numbers(s: &'static ClassSpec) -> Vec<(&'static str, String)> {
         ("TURNS", format!("{:.1} {:.1} {:.1} RAD/S2", s.turn_accel.x, s.turn_accel.y, s.turn_accel.z)),
         // (Lift, then drive: empty hold / full hold.)
         ("BALANCE", format!("L {}/{}% D {}/{}%", share(a_empty.lift, s.lift_thrust), share(a_full.lift, s.lift_thrust), share(a_empty.main, s.main_thrust), share(a_full.main, s.main_thrust))),
-        ("FULL DRIVE", format!("{} A TANK", hours(s.main_thrust / EXHAUST_VELOCITY))),
-        ("HOVER 1 G", format!("{} A TANK", hours(loaded * G / EXHAUST_VELOCITY))),
+        ("FULL DRIVE", format!("{} A TANK", hours(s.main_thrust / s.exhaust_of(ThrusterRole::Main)))),
+        ("HOVER 1 G", format!("{} A TANK", hours(loaded * G / s.exhaust_of(ThrusterRole::Lift)))),
         ("AUTOPILOTS", if s.features.is_empty() { "NONE".into() } else { s.features.iter().map(|f| format!("{f:?}").to_uppercase().chars().take(3).collect::<String>()).collect::<Vec<_>>().join(" ") }),
         ("SEATS", if s.seats > 0 { format!("{} PASSENGERS", s.seats) } else { "NONE".into() }),
         ("LIST PRICE", format!("{price:.0} CR")),

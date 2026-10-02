@@ -16,11 +16,11 @@ pub enum Does {
     /// Makes power (W) from the material it `burns`, at `efficiency` (the rest heat).
     PowerPlant { output: f64, efficiency: f64, burns: String },
     /// The main drive: the thrust of a full-share nozzle (N).
-    Drive { thrust: f64 },
+    Drive { thrust: f64, exhaust: f64, efficiency: f64, burns: String },
     /// Translation and attitude thrusters: the thrust of a full-share nozzle (N).
-    Thrusters { thrust: f64 },
+    Thrusters { thrust: f64, exhaust: f64, efficiency: f64, burns: String },
     /// The belly lift: the thrust of a full-share nozzle (N).
-    Lift { thrust: f64 },
+    Lift { thrust: f64, exhaust: f64, efficiency: f64, burns: String },
     /// Holds fuel (kg): the material it `holds`.
     Tank { capacity: f64, holds: String },
     /// A capacitor bank: stores energy (J), taken in or given out at up to `rate` (W).
@@ -98,6 +98,16 @@ impl Does {
             Does::Laser => Some(Gear::Laser),
             Does::MiningRig => Some(Gear::MiningRig),
             Does::Hyperdrive { .. } => Some(Gear::Hyperdrive),
+            _ => None,
+        }
+    }
+
+    /// An engine's figures (a drive's, thrusters', lift's): its thrust a
+    /// nozzle (N), exhaust velocity (m/s), efficiency (the share of its fuel's
+    /// energy that goes into the jet; the rest heat), and what it burns.
+    pub fn engine(&self) -> Option<(f64, f64, f64, &str)> {
+        match self {
+            Does::Drive { thrust, exhaust, efficiency, burns } | Does::Thrusters { thrust, exhaust, efficiency, burns } | Does::Lift { thrust, exhaust, efficiency, burns } => Some((*thrust, *exhaust, *efficiency, burns)),
             _ => None,
         }
     }
@@ -189,7 +199,9 @@ impl Module {
         let positive = |what: &str, v: f64| if v.is_finite() && v > 0.0 { Ok(()) } else { Err(format!("{what} must be positive ({v})")) };
         match &self.does {
             Does::PowerPlant { output, efficiency, .. } => positive("output", *output).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
-            Does::Drive { thrust } | Does::Thrusters { thrust } | Does::Lift { thrust } => positive("thrust", *thrust),
+            Does::Drive { thrust, exhaust, efficiency, .. } | Does::Thrusters { thrust, exhaust, efficiency, .. } | Does::Lift { thrust, exhaust, efficiency, .. } => {
+                positive("thrust", *thrust).and(positive("exhaust", *exhaust)).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) })
+            }
             // (What a tank holds is checked against its material when content loads.)
             Does::Tank { capacity, .. } | Does::Rack { capacity } => positive("capacity", *capacity),
             Does::Cabin { seats } => positive("seats", *seats as f64),

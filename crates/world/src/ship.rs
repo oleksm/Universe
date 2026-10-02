@@ -10,7 +10,6 @@ use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
 // (Its constants are the physics sheet's: config/dogma.ron.)
-pub use crate::sheet::EXHAUST_VELOCITY;
 
 /// The hull a new ship is built as, unless it's told otherwise.
 pub const STARTING_HULL: &str = "hull.drover";
@@ -134,6 +133,10 @@ pub struct Thruster {
     pub at: DVec3,
     pub push: DVec3,
     pub thrust: f64,
+    /// Its engine's exhaust velocity (m/s) and efficiency (the jet's share of
+    /// its fuel's energy; the rest heat): its module's.
+    pub exhaust: f64,
+    pub efficiency: f64,
 }
 
 /// A hull as `hulls.ron` has it: its thrusters by nozzle name.
@@ -323,6 +326,14 @@ pub struct Placed {
 }
 
 impl ClassSpec {
+    /// The exhaust velocity of its engines in `role`, by their thrust (m/s).
+    pub fn exhaust_of(&self, role: ThrusterRole) -> f64 {
+        let (f, fe) = self.thrusters.iter().filter(|t| t.role == role).fold((0.0, 0.0), |(f, fe), t| (f + t.thrust, fe + t.thrust / t.exhaust));
+        if fe > 0.0 { f / fe } else { 1.0 }
+    }
+}
+
+impl ClassSpec {
     /// Where each fitted module sits (see `place`).
     pub fn layout(&self) -> &[Placed] {
         &self.placed
@@ -427,9 +438,9 @@ impl ClassSpec {
         let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity, .. } = m.does { Some(capacity) } else { None }).sum();
         // One fuel aboard: what the tanks hold, and what the plants burn.
         let held: Vec<&String> = modules().filter_map(|m| if let Does::Tank { holds, .. } = &m.does { Some(holds) } else { None }).collect();
-        let burnt: Vec<&String> = modules().filter_map(|m| if let Does::PowerPlant { burns, .. } = &m.does { Some(burns) } else { None }).collect();
-        let fuel = held.first().or(burnt.first()).map(|s| s.to_string()).unwrap_or_default();
-        if let Some(other) = held.iter().chain(&burnt).find(|k| ***k != fuel) {
+        let burnt: Vec<&str> = modules().filter_map(|m| if let Does::PowerPlant { burns, .. } = &m.does { Some(burns.as_str()) } else { m.does.engine().map(|e| e.3) }).collect();
+        let fuel = held.first().map(|s| s.to_string()).or(burnt.first().map(|s| s.to_string())).unwrap_or_default();
+        if let Some(other) = held.iter().map(|s| s.as_str()).chain(burnt.iter().copied()).find(|k| *k != fuel) {
             return Err(format!("its tanks and plants must hold and burn one fuel ({fuel} and {other})"));
         }
         let hold_capacity: f64 = modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum();
@@ -456,13 +467,14 @@ impl ClassSpec {
         let mut thrusters = Vec::new();
         for n in &frame.nozzles {
             let Some((slot, m)) = fitted.iter().find(|(s, _)| s.name == n.slot) else { continue };
-            let (role, rating) = match (slot.kind, &m.does) {
-                (SlotKind::Drive, Does::Drive { thrust }) => (ThrusterRole::Main, *thrust),
-                (SlotKind::Thrusters, Does::Thrusters { thrust }) => (ThrusterRole::Rcs, *thrust),
-                (SlotKind::Lift, Does::Lift { thrust }) => (ThrusterRole::Lift, *thrust),
+            let role = match (slot.kind, &m.does) {
+                (SlotKind::Drive, Does::Drive { .. }) => ThrusterRole::Main,
+                (SlotKind::Thrusters, Does::Thrusters { .. }) => ThrusterRole::Rcs,
+                (SlotKind::Lift, Does::Lift { .. }) => ThrusterRole::Lift,
                 _ => return Err(format!("thruster at {}: slot '{}' doesn't drive nozzles", n.nozzle, n.slot)),
             };
-            thrusters.push(Thruster { nozzle: n.nozzle.clone(), role, at: n.at, push: n.push, thrust: rating * n.share });
+            let (rating, exhaust, efficiency, _) = m.does.engine().expect("an engine");
+            thrusters.push(Thruster { nozzle: n.nozzle.clone(), role, at: n.at, push: n.push, thrust: rating * n.share, exhaust, efficiency });
         }
         // Each role's push along a direction (only thrusters pushing that way count).
         let along = |role: ThrusterRole, d: DVec3| thrusters.iter().filter(|t| t.role == role).map(|t| t.thrust * t.push.dot(d).max(0.0)).sum::<f64>();
@@ -1118,7 +1130,7 @@ impl Ship {
     /// What the engine and thrusters burn as set (kg/s): their thrust over
     /// the exhaust velocity.
     pub fn fuel_flow(&self) -> f64 {
-        self.spec().thrusters.iter().zip(&self.jets).map(|(t, &u)| t.thrust * u).sum::<f64>() / EXHAUST_VELOCITY
+        self.spec().thrusters.iter().zip(&self.jets).map(|(t, &u)| t.thrust * u / t.exhaust).sum::<f64>()
     }
 
     /// `dt` seconds of the drives as set: the fuel they burn. And, powered and
@@ -1141,6 +1153,12 @@ impl Ship {
         let spec = self.spec();
         let per_kg = crate::materials::material(&spec.fuel).map_or(0.0, |m| m.energy) * spec.plant_efficiency;
         if per_kg > 0.0 { energy / per_kg } else { 0.0 }
+    }
+
+    /// The heat its engines make now (W): each jet's power (thrust × exhaust
+    /// / 2), over its efficiency, less what went into the jet.
+    pub fn engine_heat(&self) -> f64 {
+        self.spec().thrusters.iter().zip(&self.jets).map(|(t, &u)| t.thrust * u * t.exhaust * 0.5 * (1.0 / t.efficiency - 1.0)).sum()
     }
 
     /// The plant's power beyond what its modules draw at work (W).

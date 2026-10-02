@@ -54,11 +54,10 @@ From `content/base/sheet.ron`.
 
 ## Drives
 
-The world's drives and hyperdrives as built today.
+The world's drives as built today (each engine's exhaust and efficiency are its product's: modules.ron).
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `EXHAUST_VELOCITY` | 1e7 | m/s | Grounded | Today's main drives and thrusters are fusion torches (Daedalus-class, 3% of c): each burns thrust / this, in kg/s. |
 | `GROUND_MARGIN` | 20000 | m | Tuning | Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top). |
 
 ## Gates

@@ -6,7 +6,7 @@
 
 use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{Color, Frame};
-use universe_sim::world::ship::{ThrusterRole, EXHAUST_VELOCITY};
+use universe_sim::world::ship::ThrusterRole;
 
 use crate::fmt;
 use crate::App;
@@ -184,7 +184,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     y += LINE;
     for (t, &u) in s.thrusters.iter().zip(&ship.jets) {
         let bar: String = (0..10).map(|i| if (i as f64) + 0.5 < u * 10.0 { '#' } else { '.' }).collect();
-        let flow = t.thrust * u / EXHAUST_VELOCITY;
+        let flow = t.thrust * u / t.exhaust;
         let c = if u > 0.02 { color(t.role) } else { DIM };
         frame.text(Vec2::new(12.0, y), &format!("{:<18} [{bar}] {:>6.0} {:>9.1}", label(&t.nozzle).chars().take(18).collect::<String>(), t.thrust * u / 1000.0, flow * 3600.0), c);
         y += LINE;

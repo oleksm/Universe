@@ -9,9 +9,8 @@
 [
     (
         name: "Drives",
-        note: "The world's drives and hyperdrives as built today.",
+        note: "The world's drives as built today (each engine's exhaust and efficiency are its product's: modules.ron).",
         entries: [
-            (name: "EXHAUST_VELOCITY", value: 1.0e7, unit: "m/s", kind: Grounded, note: "Today's main drives and thrusters are fusion torches (Daedalus-class, 3% of c): each burns thrust / this, in kg/s."),
             (name: "GROUND_MARGIN", value: 20000.0, unit: "m", kind: Tuning, note: "Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top)."),
         ],
     ),
