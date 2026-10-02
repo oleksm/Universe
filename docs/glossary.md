@@ -8,7 +8,7 @@ The one place to look a name up. Keep it current when a name is added or changed
 |---|---|
 | **FREEFALL** | The game. |
 | **Plurence** | The company making it. |
-| **The universe** | The setting's own name: **not chosen yet** (proposed: *The Long Fall*; second choice *Aphelion*). |
+| **The universe** | The setting: simply *the universe* (no other name). |
 
 ## The engine and the world
 
