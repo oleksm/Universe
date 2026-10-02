@@ -118,7 +118,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     text_column(frame, Vec2::new(4.0, y), &lines);
 
     // Debug (F3): performance, traffic, trades; then the profiler as well.
-    let mut right = top + LINE + 6.0;
+    let mut right = under_strip;
     if app.debug > 0 {
         right = perf(frame, app, ctx, right) + 6.0;
         right = trade_feed(frame, app, right) + 6.0;
@@ -135,6 +135,14 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     for (text, c) in &alerts {
         let w = text_size(text).x;
         frame.text_boxed(Vec2::new(((size.x - w) / 2.0).floor(), y), text, *c, PANEL);
+        y += LINE + 4.0;
+    }
+    // Founding a faction: the name prompt.
+    if let Some(name) = &app.founding {
+        let cursor = if (app.v.time * 2.0).fract() < 0.5 { "_" } else { " " };
+        let text = format!("FOUND A FACTION - CHARTER {:.0} CR   NAME: {name}{cursor}   (ENTER FOUNDS, ESC CANCELS)", universe_sim::realm::CHARTER);
+        let w = text_size(&text).x;
+        frame.text_boxed(Vec2::new(((size.x - w) / 2.0).floor(), y), &text, HUD, PANEL);
         y += LINE + 4.0;
     }
     // Messages under them, a third of the way down.
@@ -1681,6 +1689,10 @@ fn action_grid(frame: &mut Frame, app: &App) {
                     let tag = app.v.realm.holder(app.view.origin).map_or(String::new(), |f| format!(" {}", f.tag));
                     b(Act::Enlist, &if ours { format!("LEAVE{tag}") } else { format!("ENLIST{tag}") }, if !station || holder.is_none() { Lamp::Unavailable } else if ours { Lamp::On } else { Lamp::Off })
                 },
+                {
+                    let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
+                    c("S+Z", "FOUND", if station && app.v.member.is_none() { Lamp::Off } else { Lamp::Unavailable })
+                },
             ],
         ),
         _ if ship.manual => (
@@ -1703,6 +1715,8 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Cancel, "CANCEL", let_go),
                 b(Act::Proximity, "IMPACT", collide),
                 b(Act::Manual, "THRUSTERS", Lamp::Off),
+                // Plant a claim beacon: sworn to a faction, in an unclaimed system.
+                c("S+Z", "CLAIM", if app.v.member.is_some() && app.v.realm.holder(app.view.origin).is_none() { Lamp::Off } else { Lamp::Unavailable }),
             ],
         ),
     };

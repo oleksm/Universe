@@ -348,6 +348,27 @@ fn a_ship_is_bought_at_a_station_trading_in_the_old_one() {
     assert_eq!(u.ship.cargo, 3_000.0, "the cargo moved over");
     assert!((before - metals(&u) - 118.0).abs() < 1e-6, "its frame built from the station's metals");
     assert!(u.buy_hull(hauler).is_err(), "that's the ship we have");
+    // A faction founded here (its charter paid), then a claim planted out in
+    // an unsettled system: it's ours, and stays so through a save.
+    u.ledger.settle(Party::Pilot(universe_sim::PLAYER), Asset::Credits, 1_000_000.0, u.tick, universe_sim::protocol::Cause::Rules);
+    let msg = u.found(universe_sim::PLAYER, "Open Reach").unwrap();
+    assert!(msg.contains("OPEN REACH"), "{msg}");
+    let ours = u.standings.member_of(universe_sim::PLAYER).expect("sworn to it");
+    assert!(u.found(universe_sim::PLAYER, "Another").is_err(), "sworn already");
+    let wild = (0..u.world.galaxy.stars.len()).find(|&s| u.realm.holder(s).is_none() && !u.world.gate_links.iter().any(|&(a, b)| a == s || b == s)).unwrap();
+    u.ship_system = wild;
+    let mut pos = Vec::new();
+    u.world.system(wild).positions(u.world.time, &mut pos);
+    u.ship = universe_sim::world::Ship::new(pos[0] + DVec3::new(1.5e11, 0.0, 0.0), DVec3::ZERO, DQuat::IDENTITY);
+    u.plant_claim(universe_sim::PLAYER).unwrap();
+    assert_eq!(u.realm.holder_index(wild), Some(ours));
+    assert!(u.plant_claim(universe_sim::PLAYER).is_err(), "held now");
+    let json = serde_json::to_string(&u.save()).unwrap();
+    let mut back = bench(0);
+    back.load(serde_json::from_str(&json).unwrap());
+    let k = back.realm.holder_index(wild).expect("still held");
+    assert_eq!(back.realm.faction(k).map(|f| f.name.as_str()), Some("OPEN REACH"));
+    assert_eq!(back.standings.member_of(universe_sim::PLAYER), Some(k));
 }
 
 #[test]

@@ -66,6 +66,14 @@ impl Input {
         self.buttons_down.clear();
     }
 
+    /// Take this frame's keys for oneself (a text prompt, say): after this,
+    /// nothing is held, pressed or typed.
+    pub fn swallow(&mut self) {
+        self.keys_pressed.clear();
+        self.keys_down.clear();
+        self.typed.clear();
+    }
+
     pub(crate) fn end_frame(&mut self) {
         self.keys_pressed.clear();
         self.buttons_pressed.clear();

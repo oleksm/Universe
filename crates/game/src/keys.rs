@@ -173,7 +173,8 @@ const TABLE: &[(Act, Scope, &str)] = &[
 // (THRUSTERS, manual flight: likewise every letter taken; G is free.
 // DOCKING on O, as asked: ECONOMY takes its N.
 // FACTIONS, on the maps: every letter of it taken there; H is free.
-// ENLIST, docked: likewise; Z is the one left.)
+// ENLIST, docked: likewise; Z is the one left. Shift with it founds a
+// faction there, and claims a system in flight: see `FIXED`.)
 const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J'), (Act::Manual, 'G'), (Act::Clearance, 'O'), (Act::Factions, 'H'), (Act::Enlist, 'Z')];
 
 /// An action's binding: its letter, and where it stands in the name (None:
@@ -255,6 +256,7 @@ pub const FIXED: &[(&str, &str, Scope)] = &[
     ("F2 F4 F6", "LABELS, GRID, PAUSE", Scope::Global),
     ("F3 F5 F9", "DEBUG INFO, QUICKSAVE, LOAD", Scope::Global),
     ("F7", "THRUSTERS PANEL", Scope::Flight),
+    ("S+Z", "CLAIM THIS SYSTEM (SWORN, IN FLIGHT); DOCKED: FOUND A FACTION", Scope::Flight),
     ("F11", "NEWS", Scope::Global),
     ("NUMPAD W", "MANUAL: FIRE A THRUSTER, THE MAINS", Scope::Nav),
     ("F8 F12", "MUTE, SCREENSHOT", Scope::Global),

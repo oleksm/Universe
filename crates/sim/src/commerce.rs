@@ -155,6 +155,14 @@ impl Universe {
         });
     }
 
+    /// What came of something we did, said back (`what`: its name, before a refusal).
+    pub(crate) fn say_back(&mut self, what: &str, r: Result<String, String>) {
+        self.events.push(match r {
+            Ok(text) => universe_avionics::Event::Notice { text },
+            Err(reason) => universe_avionics::Event::Refused { reason: format!("{what}: {reason}") },
+        });
+    }
+
     /// Craft `i`'s credits, as the ledger has them.
     pub fn craft_credits(&self, i: usize) -> f64 {
         self.ledger.credits(Party::Pilot(crate::combat::craft_id(i)))

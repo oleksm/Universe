@@ -200,6 +200,8 @@ pub struct App {
     pub newsroom: Option<universe_sim::newsroom::Newsroom>,
     /// The news panel, when open.
     pub news_panel: bool,
+    /// Founding a faction: the name typed so far.
+    pub founding: Option<String>,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
@@ -332,6 +334,7 @@ impl App {
             news: Default::default(),
             newsroom: None,
             news_panel: false,
+            founding: None,
             sparks: Vec::new(),
             reach: None,
             turrets: Vec::new(),
@@ -634,11 +637,19 @@ impl App {
                 self.engine.send(Command::Repair);
             }
             if pressed(input, Act::Enlist) {
-                self.engine.send(Command::Enlist);
+                if input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight) {
+                    self.founding = Some(String::new());
+                } else {
+                    self.engine.send(Command::Enlist);
+                }
             }
             if pressed(input, Act::Passengers) && self.v.docked_market.is_some() {
                 self.passengers = Some(0);
             }
+        }
+        // Shift+Z in flight: plant a claim beacon (docked, the same founds a faction).
+        if self.v.ship.is_flying() && input.pressed(KeyCode::KeyZ) && (input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight)) {
+            self.engine.send(Command::Claim);
         }
         if pressed(input, Act::Hyperdrive) {
             if mode == ShipMode::Nav || self.v.ship.hyperdrive {
@@ -1031,8 +1042,27 @@ impl Game for App {
             self.launched = true;
             sound::launch(ctx);
         }
+        // Founding a faction: the name prompt takes the keyboard (the world runs on).
+        if let Some(name) = &mut self.founding {
+            let input = &ctx.input;
+            for c in input.typed.chars().filter(|c| c.is_ascii_alphanumeric() || *c == ' ' || *c == '-') {
+                if name.len() < 24 {
+                    name.push(c.to_ascii_uppercase());
+                }
+            }
+            if input.pressed(KeyCode::Backspace) {
+                name.pop();
+            }
+            if input.pressed(KeyCode::Enter) {
+                let name = name.clone();
+                self.engine.send(Command::Found { name });
+                self.founding = None;
+            } else if input.pressed(KeyCode::Escape) {
+                self.founding = None;
+            }
+            ctx.input.swallow();
+        }
         self.global_keys(ctx);
-
         // The economy panel (5) takes the keyboard while open.
         let economy_was_open = self.economy_panel.is_some();
         if economy_was_open {

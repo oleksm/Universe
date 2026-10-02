@@ -82,6 +82,12 @@ impl Standings {
         self.members.get(&pilot).copied()
     }
 
+    /// Pilot `pilot` swears to faction `faction`: +`SWORN` with it.
+    pub(crate) fn swear(&mut self, pilot: usize, faction: usize) {
+        self.members.insert(pilot, faction);
+        self.add(pilot, faction, SWORN);
+    }
+
     /// Everyone sworn, and to whom.
     pub fn members(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
         self.members.iter().map(|(&p, &k)| (p, k))
@@ -146,8 +152,7 @@ impl Universe {
         if self.standings.of(id, k) <= -10.0 {
             return Err(format!("THE {} WON'T HAVE YOU ({})", f.name, label(self.standings.of(id, k))));
         }
-        self.standings.members.insert(id, k);
-        self.standings.add(id, k, SWORN);
+        self.standings.swear(id, k);
         Ok(format!("SWORN TO THE {}", f.name))
     }
 

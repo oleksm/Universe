@@ -49,6 +49,13 @@ one, and nothing is held for good, preset factions included. (See `roadmap.md` �
    faction wherever the faction hears of it, not only in its space. Members' transponders carry
    the tag ("SETTLER 90 [HCD]"); your STAND row says MEMBER. Saved with the game: your oath and
    standings. Not yet: ranks, duties and pay; a faction's members defending each other.
-5. **Founding and claiming:** a pilot founds a faction (a charter) and claims places; territory
-   changes hands by building, buying or taking. Factions own assets (stations, fleets) that can
-   be destroyed.
+5. **Founding and claiming** (`sim/src/realm.rs`: the realm, territory as live world state):
+   - ✓ **Founding** (Shift+Z docked at a station, a name typed): the charter, 250,000 CR, paid to
+     the station's market; you're sworn to it (+10). Its tag from its name, its colour from it
+     too; default law (10 min fair game, enemy at -50). Not while sworn to another.
+   - ✓ **Claiming** (Shift+Z in flight, sworn to a faction, in an unclaimed system): a claim
+     beacon planted where you are (the beacon relay and a 50,000 CR fee): the system is your
+     faction's. The beacon is a hypernet relay there (the backbone where there's no station).
+   - Founded factions and claims are saved with the game.
+   - Next: buying and taking held places, and assets (stations, beacons, fleets) that can be
+     destroyed.

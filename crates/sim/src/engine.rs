@@ -69,6 +69,10 @@ pub enum Command {
     Refuel,
     /// Enlist with the holder of the station we're docked at, or leave if sworn to it.
     Enlist,
+    /// Found a faction, so named (docked at a station).
+    Found { name: String },
+    /// Plant a claim beacon for our faction where we are.
+    Claim,
     /// Have the hull mended (docked at a station).
     Repair,
     /// Buy item `0` of the vending machine within reach (on foot at a spaceport).
@@ -282,6 +286,14 @@ impl Engine {
             Command::Respawn => u.respawn(),
             Command::Refuel => u.refuel_player(),
             Command::Enlist => u.enlist_player(),
+            Command::Found { name } => {
+                let r = u.found(crate::combat::PLAYER, &name);
+                u.say_back("FOUND", r);
+            }
+            Command::Claim => {
+                let r = u.plant_claim(crate::combat::PLAYER);
+                u.say_back("CLAIM", r);
+            }
             Command::Repair => u.repair_player(),
             Command::Vend(item) => u.vend(item),
             Command::Trim(t) => {
