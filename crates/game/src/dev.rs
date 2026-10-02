@@ -630,6 +630,10 @@ pub fn apply(app: &mut App, name: &str) {
             let bit = |name: &str| s.thrusters.iter().position(|t| t.nozzle.ends_with(name)).map_or(0, |k| 1u64 << k);
             u.ship.manual = true;
             u.ship.held = bit("nose_left_side") | bit("tail_right_side");
+            // UNIVERSE_BURN: the mains held instead (to see the drive lit from behind).
+            if std::env::var("UNIVERSE_BURN").is_ok() {
+                u.ship.held = s.thrusters.iter().enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum();
+            }
             for _ in 0..20 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }

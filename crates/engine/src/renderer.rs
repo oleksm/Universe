@@ -295,6 +295,7 @@ pub(crate) struct Renderer {
     front_lines: DynBuffer,
     points: DynBuffer,
     glows: DynBuffer,
+    front_glows: DynBuffer,
     glow_pipe: wgpu::RenderPipeline,
     hud_tris: DynBuffer,
     atlas_bind: wgpu::BindGroup,
@@ -698,6 +699,7 @@ impl Renderer {
             front_lines: DynBuffer::new(device, "front lines"),
             points: DynBuffer::new(device, "points"),
             glows: DynBuffer::new(device, "glows"),
+            front_glows: DynBuffer::new(device, "front glows"),
             glow_pipe,
             hud_tris: DynBuffer::new(device, "hud tris"),
             atlas_bind,
@@ -809,6 +811,7 @@ impl Renderer {
         self.front_lines.upload(gpu, &frame.front_lines);
         self.points.upload(gpu, &frame.points);
         self.glows.upload(gpu, &frame.glows);
+        self.front_glows.upload(gpu, &frame.front_glows);
         self.hud_tris.upload_bytes(gpu, bytemuck::cast_slice(&frame.hud_tris), frame.hud_tris.len() as u32);
         self.hud.upload(gpu, &frame.hud);
         self.upload_meshes(gpu, frame);
@@ -906,6 +909,7 @@ impl Renderer {
             self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.front_lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+            self.front_glows.draw(&mut pass, &self.glow_pipe);
         }
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {

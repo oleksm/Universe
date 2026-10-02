@@ -86,6 +86,8 @@ pub struct Frame {
     pub(crate) points: Vec<Vertex>,
     /// Lights' glows: discs facing the eye, adding light (see `glow`).
     pub(crate) glows: Vec<Vertex>,
+    /// Glows drawn with the front layer (see `in_front`).
+    pub(crate) front_glows: Vec<Vertex>,
     pub(crate) hud_tris: Vec<HudVertex>,
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
@@ -246,6 +248,7 @@ impl Frame {
             hud: Vec::new(),
             meshes: Vec::new(),
             front: Vec::new(),
+            front_glows: Vec::new(),
             in_front: false,
         }
     }
@@ -304,8 +307,9 @@ impl Frame {
             let a = k as f64 / 12.0 * std::f64::consts::TAU;
             Vertex { pos: (rel + right * a.cos() + up * a.sin()).as_vec3().to_array(), color: [0.0, 0.0, 0.0, 0.0] }
         };
+        let glows = if self.in_front { &mut self.front_glows } else { &mut self.glows };
         for k in 0..12 {
-            self.glows.extend([centre, rim(k), rim(k + 1)]);
+            glows.extend([centre, rim(k), rim(k + 1)]);
         }
     }
 
@@ -314,7 +318,7 @@ impl Frame {
     pub fn glow_triangle(&mut self, p: [DVec3; 3], light: [[f32; 3]; 3]) {
         for k in 0..3 {
             let pos = self.rel(p[k]);
-            self.glows.push(Vertex { pos, color: [light[k][0], light[k][1], light[k][2], 1.0] });
+            (if self.in_front { &mut self.front_glows } else { &mut self.glows }).push(Vertex { pos, color: [light[k][0], light[k][1], light[k][2], 1.0] });
         }
     }
 

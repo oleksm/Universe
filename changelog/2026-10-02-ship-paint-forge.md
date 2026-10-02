@@ -8,3 +8,9 @@
 - **Two-tone hulls:** wings and fins (flat parts) take a second tone per livery, for contrast
   with the body. Ours: graphite wings on a light body.
 - `showship` takes `UNIVERSE_BURN` (mains held).
+
+## Follow-up
+
+- **The forge glow in the chase view:** glows made in the front layer (`Frame::in_front`) are now
+  drawn with it (`front_glows`). Before, our own hull, drawn over everything, hid its bells' glow.
+- The `manual` scenario takes `UNIVERSE_BURN` (mains held).
