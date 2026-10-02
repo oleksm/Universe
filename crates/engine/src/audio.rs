@@ -136,6 +136,19 @@ impl Audio {
         });
     }
 
+    /// The score: on or off (0..1 its loudness), and how tense (0 calm .. 1 a fight).
+    pub fn set_music(&self, level: f32, tension: f32) {
+        self.with(|s| {
+            s.music.level.target = level.clamp(0.0, 1.0);
+            s.music.tension.target = tension.clamp(0.0, 1.0);
+        });
+    }
+
+    /// The score swells for a few seconds (an arrival).
+    pub fn music_swell(&self) {
+        self.with(|s| s.music.swell = 1.0);
+    }
+
     /// Each thruster this frame (their order kept from frame to frame).
     pub fn set_jets(&self, jets: &[Jet]) {
         self.with(|s| {
@@ -521,6 +534,150 @@ struct Synth {
     distant: Smoothed,
     distant_pan: Smoothed,
     distant_lp: (f32, f32),
+    music: Music,
+}
+
+/// The score: pads drifting through a cycle of chords, a bell now and then
+/// from the chord, and under tension a pulsing bass; through the long room.
+struct Music {
+    level: Smoothed,
+    tension: Smoothed,
+    swell: f32,
+    t: f32,
+    chord: usize,
+    pads: Vec<Pad>,
+    bells: Vec<Bell>,
+    next_bell: f32,
+    beat: f32,
+    bass_env: f32,
+    bass_phase: f32,
+    bass_lp: f32,
+    rng: u32,
+}
+
+/// One note of a pad: three detuned saws, low-passed, a slow envelope.
+struct Pad {
+    freq: f32,
+    phase: [f32; 3],
+    env: f32,
+    on: bool,
+    lp: f32,
+}
+
+/// A bell: a sine carrier, a sine modulating it (FM), dying away.
+struct Bell {
+    freq: f32,
+    t: f32,
+    carrier: f32,
+    modulator: f32,
+    vol: f32,
+}
+
+/// The chords (MIDI notes): a dark minor cycle (i, VI, iv, v in D).
+const CHORDS: [[u8; 4]; 4] = [[50, 57, 60, 64], [46, 53, 57, 62], [43, 55, 58, 62], [45, 52, 55, 60]];
+/// Each chord this long (s).
+const CHORD_TIME: f32 = 14.0;
+
+fn midi(n: f32) -> f32 {
+    440.0 * 2f32.powf((n - 69.0) / 12.0)
+}
+
+impl Music {
+    fn new() -> Self {
+        Music {
+            level: Smoothed::default(),
+            tension: Smoothed::default(),
+            swell: 0.0,
+            t: CHORD_TIME,
+            chord: CHORDS.len() - 1,
+            pads: Vec::new(),
+            bells: Vec::new(),
+            next_bell: 5.0,
+            beat: 0.0,
+            bass_env: 0.0,
+            bass_phase: 0.0,
+            bass_lp: 0.0,
+            rng: 0x9e37_79b9,
+        }
+    }
+
+    fn rand(&mut self) -> f32 {
+        self.rng ^= self.rng << 13;
+        self.rng ^= self.rng >> 17;
+        self.rng ^= self.rng << 5;
+        self.rng as f32 / u32::MAX as f32
+    }
+
+    fn sample(&mut self, rate: f32) -> f32 {
+        let dt = 1.0 / rate;
+        let level = self.level.next(dt * 0.5);
+        let tension = self.tension.next(dt * 0.3);
+        if level < 1e-4 && self.pads.is_empty() {
+            return 0.0;
+        }
+        self.swell = (self.swell - dt / 6.0).max(0.0);
+        // The next chord: the old notes let go, the new ones come in.
+        self.t += dt;
+        if self.t >= CHORD_TIME {
+            self.t = 0.0;
+            self.chord = (self.chord + 1) % CHORDS.len();
+            for p in &mut self.pads {
+                p.on = false;
+            }
+            for &n in &CHORDS[self.chord] {
+                self.pads.push(Pad { freq: midi(n as f32), phase: [0.0, 0.33, 0.66], env: 0.0, on: true, lp: 0.0 });
+            }
+        }
+        let mut out = 0.0;
+        // (Tension darkens the pads; an arrival opens them up.)
+        let cutoff = (0.02 + 0.03 * self.swell - 0.012 * tension).max(0.005);
+        for p in &mut self.pads {
+            let target = if p.on { 1.0 } else { 0.0 };
+            let speed = if p.on { 1.0 / 3.0 } else { 1.0 / 4.5 };
+            p.env += (target - p.env) * speed * dt;
+            let mut saw = 0.0;
+            for (k, ph) in p.phase.iter_mut().enumerate() {
+                let detune = 1.0 + (k as f32 - 1.0) * 0.004;
+                *ph = (*ph + p.freq * detune * dt).fract();
+                saw += *ph * 2.0 - 1.0;
+            }
+            p.lp += (saw / 3.0 - p.lp) * cutoff;
+            out += p.lp * p.env * 0.22;
+        }
+        self.pads.retain(|p| p.on || p.env > 1e-3);
+        // A bell now and then, from the chord an octave or two up (fewer when tense).
+        self.next_bell -= dt;
+        if self.next_bell <= 0.0 {
+            let notes = CHORDS[self.chord];
+            let n = notes[(self.rand() * 4.0) as usize % 4] as f32 + if self.rand() > 0.5 { 12.0 } else { 24.0 };
+            let vol = 0.5 + 0.5 * self.rand();
+            self.bells.push(Bell { freq: midi(n), t: 0.0, carrier: 0.0, modulator: 0.0, vol });
+            self.next_bell = 3.0 + 6.0 * self.rand() + 6.0 * tension;
+        }
+        for b in &mut self.bells {
+            b.modulator = (b.modulator + b.freq * 3.5 * dt).fract();
+            let index = 2.0 * (-b.t * 3.0).exp();
+            b.carrier = (b.carrier + b.freq * dt).fract();
+            let v = (b.carrier * TAU + index * (b.modulator * TAU).sin()).sin();
+            out += v * (-b.t / 1.8).exp() * (b.t / 0.01).min(1.0) * b.vol * 0.08;
+            b.t += dt;
+        }
+        self.bells.retain(|b| b.t < 8.0);
+        // Under tension, the bass: the chord's root, eighth notes at 96 a minute.
+        if tension > 0.02 {
+            self.beat += dt;
+            if self.beat >= 60.0 / 96.0 / 2.0 {
+                self.beat = 0.0;
+                self.bass_env = 1.0;
+            }
+            self.bass_env *= 1.0 - dt / 0.18;
+            let root = midi(CHORDS[self.chord][0] as f32 - 12.0);
+            self.bass_phase = (self.bass_phase + root * dt).fract();
+            self.bass_lp += ((self.bass_phase * 2.0 - 1.0) - self.bass_lp) * 0.03;
+            out += self.bass_lp * self.bass_env * tension * 0.35;
+        }
+        out * level * 2.0 * (1.0 + 0.6 * self.swell)
+    }
 }
 
 impl Synth {
@@ -557,6 +714,7 @@ impl Synth {
             distant: Smoothed::default(),
             distant_pan: Smoothed::default(),
             distant_lp: (0.0, 0.0),
+            music: Music::new(),
         }
     }
 
@@ -686,6 +844,12 @@ impl Synth {
             self.distant_lp.0 += (n - self.distant_lp.0) * 0.02;
             self.distant_lp.1 += (self.distant_lp.0 - self.distant_lp.1) * 0.02;
             put(self.distant_lp.1 * 6.0 * distant, dpan, 0.05, &mut l, &mut r, &mut send);
+        }
+
+        // The score: wide (a little of it each side late through the room).
+        let m = self.music.sample(rate);
+        if m != 0.0 {
+            put(m, 0.0, 0.7, &mut l, &mut r, &mut send);
         }
 
         // The hyperdrive: detuned saws under a low-pass, a sub beneath.

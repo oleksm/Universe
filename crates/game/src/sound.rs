@@ -16,6 +16,8 @@ use crate::{App, Mode};
 
 /// Master volume (0..1).
 pub const VOLUME: f32 = 0.25;
+/// The score's loudness under everything else (0..1).
+pub const MUSIC_LEVEL: f32 = 0.6;
 
 pub fn click(ctx: &Context, freq: f32) {
     if let Some(a) = ctx.audio() {
@@ -62,12 +64,16 @@ pub fn event(ctx: &Context, app: Option<&App>, event: &Event) {
 pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
     match event {
         // Setting down: the gear takes the weight (a thud, its hydraulics).
-        Event::Ship(ShipEvent::Landed { .. }) => {
+        Event::Ship(ShipEvent::Landed { station, .. }) => {
+            if *station {
+                a.music_swell();
+            }
             a.thud(70.0, 0.6, 0.0);
             a.hiss(0.7, 0.12, 0.3, 0.0);
             a.tone(660.0, 660.0, 0.12, 0.2);
         }
         Event::Ship(ShipEvent::LandedAtPort { .. }) => {
+            a.music_swell();
             a.tone(660.0, 660.0, 0.12, 0.2);
             a.tone(880.0, 880.0, 0.15, 0.16);
         }
@@ -125,7 +131,10 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             }
         }
         Event::Ship(ShipEvent::Respawned) => a.tone(440.0, 880.0, 0.3, 0.2),
-        Event::Ship(ShipEvent::EnteredSystem { .. }) => a.tone(880.0, 880.0, 0.2, 0.2),
+        Event::Ship(ShipEvent::EnteredSystem { .. }) => {
+            a.tone(880.0, 880.0, 0.2, 0.2);
+            a.music_swell();
+        }
         Event::Ship(ShipEvent::HyperdriveEngaged) => {
             a.tone(150.0, 1400.0, 0.7, 0.2);
             a.thud(50.0, 0.6, 0.0);
@@ -163,6 +172,7 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             a.thud(40.0, 0.8, 0.0);
         }
         Event::Ship(ShipEvent::GateArrived { .. }) => {
+            a.music_swell();
             a.tone(1800.0, 300.0, 0.8, 0.14);
             a.thud(45.0, 0.6, 0.0);
         }
@@ -437,6 +447,10 @@ pub fn update(ctx: &Context, app: &App) {
     alarms(a, app);
     chatter(a, app);
     air(a, app);
+    // The score: tense in a fight (armed, a missile after us, the hull hurt).
+    let inbound = app.v.missiles.iter().any(|m| m.4 && m.0 == app.v.ship_system);
+    let tense = ship.armed || inbound || ship.hull < HULL_CAUTION;
+    a.set_music(if app.music_off || app.paused { 0.0 } else { MUSIC_LEVEL }, if tense { 1.0 } else { 0.0 });
     // On foot: a step every stride; aboard, boots on the deck plating;
     // outside, softer on the ground.
     let at = match app.v.crew.place {
@@ -544,6 +558,8 @@ mod tests {
             ("wind", Box::new(|a, t| a.set_air(if t < 3.0 { 0.3 } else { 0.0 }, 0.2, true)), 3.5),
             ("breathing", Box::new(|a, t| a.set_breath(if t < 4.2 { 0.6 } else { 0.0 })), 4.5),
             ("far engine", Box::new(|a, t| a.set_distant(if t < 2.0 { 0.6 } else { 0.0 }, 0.0)), 2.5),
+            ("music calm", Box::new(|a, _| a.set_music(0.6, 0.0)), 32.0),
+            ("music tense", Box::new(|a, _| a.set_music(0.6, 1.0)), 20.0),
             ("klaxon", Box::new(|a, t| if t == 0.0 {
                 a.alarm(500.0, 1000.0, 0.5, 0.2);
                 a.alarm_after(0.6, 500.0, 1000.0, 0.5, 0.2);

@@ -112,6 +112,8 @@ pub struct App {
     pub show_grid: bool,
     pub show_labels: bool,
     pub muted: bool,
+    /// The score off (F10), the ship's sounds still on.
+    pub music_off: bool,
     pub messages: Vec<Message>,
     pub view: View,
     /// Docking or landing guidance for the HUD, when cleared.
@@ -255,6 +257,7 @@ impl App {
             show_grid: false,
             show_labels: true,
             muted: false,
+            music_off: false,
             messages: Vec::new(),
             view: View { origin, system, positions: Vec::new(), ship_pos: DVec3::ZERO, reference: None },
             approach: None,
@@ -466,6 +469,10 @@ impl App {
             if let Some(a) = ctx.audio() {
                 a.set_master(if self.muted { 0.0 } else { sound::VOLUME });
             }
+        }
+        if input.pressed(KeyCode::F10) {
+            self.music_off = !self.music_off;
+            self.say(if self.music_off { "MUSIC OFF" } else { "MUSIC ON" }.into());
         }
         if input.pressed(KeyCode::F5) {
             match save::save(self) {
