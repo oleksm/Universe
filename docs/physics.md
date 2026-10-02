@@ -96,6 +96,20 @@ burnt is mass carried, so like a rocket the range is exponential:
 `Λ` is the drive's **range scale** at the best speed: each `Λ` travelled costs a factor e (2.72) in
 mass. Going `k` times faster shrinks it by `f(k)`.
 
+**The mass `m` is everything in the field:** the empty ship, its payload (cargo, passengers, a
+mobile outpost), crew and supplies, and the fuel still aboard. The payload isn't burnt, so it sits
+in the empty mass:
+
+    L_max = (Λ / f(k)) · ln( (m_ship + m_payload + m_fuel) / (m_ship + m_payload) )
+
+and the fuel to carry a payload a distance `L` is
+
+    m_fuel = (m_ship + m_payload) · (e^(f(k)·L/Λ) − 1)
+
+So each tonne delivered costs `e^(f·L/Λ) − 1` tonnes of fuel: 6.4 t across 40 ly at the best speed,
+147 t across 100 ly. That's why freight between the stars goes by gate (whose transit energy is the
+gate's, linear in mass, not the ship's), and hyperdrive carries only what must go where no gate does.
+
 | Constant | Value | Meaning |
 |---|---|---|
 | `e` | 1×10¹³ J/kg | usable energy in fuel (fusion) |
