@@ -11,6 +11,8 @@ pub struct Models {
     pub station: Mesh,
     /// Each hull's, in the content's order (see `hull`).
     pub hulls: Vec<Mesh>,
+    /// Each hull's navigation lights (shape frame): port, starboard, the tail strobe.
+    pub hull_lights: Vec<[universe_engine::glam::DVec3; 3]>,
     pub gate: Mesh,
 }
 
@@ -23,6 +25,7 @@ impl Models {
             star: Mesh::new(WireModel::globe(16, 9, 3)),
             station: Mesh::new(platform()),
             hulls: content().hulls.iter().map(|(_, h)| Mesh::new(wire(h.shape()))).collect(),
+            hull_lights: content().hulls.iter().map(|(_, h)| nav_lights(h.shape())).collect(),
             gate: Mesh::new(gate_ring()),
         }
     }
@@ -33,6 +36,19 @@ impl Models {
     pub fn hull(&self, ship: &universe_sim::world::Ship) -> &Mesh {
         &self.hulls[ship.class.index()]
     }
+
+    /// A ship's navigation lights (see `nav_lights`).
+    pub fn lights(&self, ship: &universe_sim::world::Ship) -> [universe_engine::glam::DVec3; 3] {
+        self.hull_lights.get(ship.class.index()).copied().unwrap_or_default()
+    }
+}
+
+/// Where a hull's navigation lights go: the port and starboard tips (its
+/// farthest points left and right), and the strobe at its top rear.
+fn nav_lights(s: &Shape) -> [universe_engine::glam::DVec3; 3] {
+    let pts = &s.mesh.points;
+    let pick = |key: &dyn Fn(&universe_engine::glam::DVec3) -> f64| pts.iter().copied().max_by(|a, b| key(a).total_cmp(&key(b))).unwrap_or_default();
+    [pick(&|p| -p.x), pick(&|p| p.x), pick(&|p| p.z + 0.5 * p.y)]
 }
 
 /// A shape as the renderer draws it: its mesh (faces hide what's behind,

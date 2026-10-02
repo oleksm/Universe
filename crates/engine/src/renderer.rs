@@ -279,6 +279,8 @@ pub(crate) struct Renderer {
     lines: DynBuffer,
     front_lines: DynBuffer,
     points: DynBuffer,
+    glows: DynBuffer,
+    glow_pipe: wgpu::RenderPipeline,
     hud_tris: DynBuffer,
     hud: DynBuffer,
 }
@@ -500,6 +502,8 @@ impl Renderer {
         let solid_pipe = scene_pipeline("solids", "vs_world", Topo::TriangleList, Some((true, Cmp::Greater)), alpha, world);
         let line_pipe = scene_pipeline("lines", "vs_line", Topo::LineList, Some((false, Cmp::GreaterEqual)), alpha, world);
         let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha, world);
+        // Lights' glows add up, behind what's solid, hiding nothing.
+        let glow_pipe = scene_pipeline("glows", "vs_line", Topo::TriangleList, Some((false, Cmp::GreaterEqual)), additive, world);
         // The HUD has its own layer without depth (or antialiasing, or HDR).
         let hud_tri_pipe = scene_pipeline("hud tris", "vs_hud", Topo::TriangleList, None, alpha, (COLOR_FORMAT, 1));
         let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha, (COLOR_FORMAT, 1));
@@ -613,6 +617,8 @@ impl Renderer {
             lines: DynBuffer::new(device, "lines"),
             front_lines: DynBuffer::new(device, "front lines"),
             points: DynBuffer::new(device, "points"),
+            glows: DynBuffer::new(device, "glows"),
+            glow_pipe,
             hud_tris: DynBuffer::new(device, "hud tris"),
             hud: DynBuffer::new(device, "hud"),
         }
@@ -720,6 +726,7 @@ impl Renderer {
         self.lines.upload(gpu, &frame.lines);
         self.front_lines.upload(gpu, &frame.front_lines);
         self.points.upload(gpu, &frame.points);
+        self.glows.upload(gpu, &frame.glows);
         self.hud_tris.upload(gpu, &frame.hud_tris);
         self.hud.upload(gpu, &frame.hud);
         self.upload_meshes(gpu, frame);
@@ -791,6 +798,7 @@ impl Renderer {
             self.lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
             self.points.draw(&mut pass, &self.point_pipe);
+            self.glows.draw(&mut pass, &self.glow_pipe);
         }
         {
             // The front layer: its meshes (and lines), with a fresh depth.

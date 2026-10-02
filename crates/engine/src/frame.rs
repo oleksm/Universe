@@ -74,6 +74,8 @@ pub struct Frame {
     /// Lines drawn with the front layer's meshes (see `in_front`).
     pub(crate) front_lines: Vec<Vertex>,
     pub(crate) points: Vec<Vertex>,
+    /// Lights' glows: discs facing the eye, adding light (see `glow`).
+    pub(crate) glows: Vec<Vertex>,
     pub(crate) hud_tris: Vec<Vertex>,
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
@@ -229,6 +231,7 @@ impl Frame {
             lines: Vec::new(),
             front_lines: Vec::new(),
             points: Vec::new(),
+            glows: Vec::new(),
             hud_tris: Vec::new(),
             hud: Vec::new(),
             meshes: Vec::new(),
@@ -269,6 +272,31 @@ impl Frame {
         let before = std::mem::replace(&mut self.in_front, true);
         f(self);
         self.in_front = before;
+    }
+
+    /// A light's glow at `at` (world): a soft disc facing the eye, `radius`
+    /// metres across (and never less than `least` HUD pixels, so a lamp far
+    /// off still shows), adding `light` (linear, may be over 1: it blooms in
+    /// the tone curve). Hidden behind what's solid; hides nothing.
+    pub fn glow(&mut self, at: DVec3, radius: f64, light: [f32; 3], least: f32) {
+        let rel = at - self.camera.position;
+        let d = rel.length();
+        if d < 1e-3 {
+            return;
+        }
+        let per_px = d / self.pixels_per_radian().max(1e-3) as f64;
+        let r = radius.max(least as f64 * per_px);
+        // (Facing the eye: across its right and up.)
+        let q = self.camera.orientation.as_dquat();
+        let (right, up) = (q * DVec3::X * r, q * DVec3::Y * r);
+        let centre = Vertex { pos: rel.as_vec3().to_array(), color: [light[0], light[1], light[2], 1.0] };
+        let rim = |k: usize| {
+            let a = k as f64 / 12.0 * std::f64::consts::TAU;
+            Vertex { pos: (rel + right * a.cos() + up * a.sin()).as_vec3().to_array(), color: [0.0, 0.0, 0.0, 0.0] }
+        };
+        for k in 0..12 {
+            self.glows.extend([centre, rim(k), rim(k + 1)]);
+        }
     }
 
     /// Meshes drawn in `f` have this surface: `glint` (0 matte .. 1 polished

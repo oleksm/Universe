@@ -25,8 +25,8 @@ const BOTTOM: f64 = -150.0;
 pub const DECK_FROM: f64 = -225.0;
 pub const DECK_TO: f64 = 375.0;
 /// The main structure: from the far edge to the deck, and how high (m).
-const STRUCTURE_FROM: f64 = -375.0;
-const STRUCTURE_TOP: f64 = 150.0;
+pub const STRUCTURE_FROM: f64 = -375.0;
+pub const STRUCTURE_TOP: f64 = 150.0;
 /// About the station's size: its bounding radius, rounded (m).
 pub const STATION_SIZE: f64 = 500.0;
 /// Touching the deck slower than this lands (m/s); faster wrecks.

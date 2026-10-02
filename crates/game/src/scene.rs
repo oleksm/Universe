@@ -345,6 +345,7 @@ fn bodies(frame: &mut Frame, app: &App) {
                 let t = Transform { position: center, rotation, scale: 1.0 };
                 let metal = Color::hex(0x767d85);
                 frame.with_surface(0.45, 44.0, 0.0, |frame| frame.model_shaded(&app.models.gate, &t, metal.scale(0.7), metal));
+                gate_lights(frame, center, b.rotation(app.now()), app.now());
             } else {
                 frame.point(center, c);
             }
@@ -354,6 +355,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             if px > 0.8 {
                 let t = Transform { position: center, rotation, scale: 1.0 };
                 frame.with_surface(0.2, 24.0, 0.0, |frame| frame.model_shaded(&app.models.station, &t, HULL.scale(0.75), HULL));
+                station_lights(frame, app, i, center, b.rotation(app.now()));
             } else {
                 frame.point(center, c.scale(0.8));
             }
@@ -461,6 +463,70 @@ fn livery(name: &str) -> Color {
     }
 }
 
+/// A station's lights: a lamp at each pad's corners (the pad we're
+/// cleared for green, the rest a dim warm white), its window band lit warm,
+/// the hangar's mouth spilling light, red beacons blinking on the
+/// structure's top corners.
+fn station_lights(frame: &mut Frame, app: &App, body: usize, center: DVec3, rot: DQuat) {
+    use universe_sim::world::station::{pad_local, DECK_FROM, DECK_HALF, DECK_TOP, STRUCTURE_FROM, STRUCTURE_TOP};
+    let at = |p: DVec3| center + rot * p;
+    let ours = app.v.avionics.clearance.and_then(|c| match (c.target, c.pad) {
+        (universe_sim::NavTarget::Station(s), universe_sim::avionics::nav::PadSlot::Pad(k)) if s == body => Some(k),
+        _ => None,
+    });
+    let deck = DECK_TOP + 0.6;
+    for k in 0..universe_sim::world::spaceport::PADS {
+        let c = pad_local(k);
+        let (light, least) = if ours == Some(k) { ([0.3, 5.0, 0.9], 2.0) } else { ([1.8, 1.4, 0.9], 1.3) };
+        for (dx, dz) in [(-1.0, -1.0), (1.0, -1.0), (1.0, 1.0), (-1.0, 1.0)] {
+            frame.glow(at(DVec3::new(c.x + dx * 35.0, deck, c.z + dz * 35.0)), 1.2, light, least);
+        }
+    }
+    // The window band, over the hangar: warm, along the face over the deck.
+    let face = DECK_FROM + 1.0;
+    let w = DECK_HALF - 30.0;
+    for k in 0..24 {
+        let x = -w + 2.0 * w * (k as f64 + 0.5) / 24.0;
+        frame.glow(at(DVec3::new(x, DECK_TOP + 162.0, face)), 4.0, [1.6, 1.2, 0.7], 0.9);
+    }
+    // The hangar's mouth.
+    frame.glow(at(DVec3::new(0.0, DECK_TOP + 30.0, face)), 70.0, [0.5, 0.42, 0.3], 0.0);
+    // Beacons on the structure's top corners, blinking together.
+    if (app.now() * 0.5).fract() < 0.12 {
+        for (x, z) in [(-DECK_HALF, STRUCTURE_FROM), (DECK_HALF, STRUCTURE_FROM), (-DECK_HALF, DECK_FROM), (DECK_HALF, DECK_FROM)] {
+            frame.glow(at(DVec3::new(x, STRUCTURE_TOP + 2.0, z)), 3.0, [6.0, 0.3, 0.2], 1.6);
+        }
+    }
+}
+
+/// A gate's running lights: the side it's entered from steady white, the
+/// side it leaves by green, a pulse chasing round it (the way through).
+fn gate_lights(frame: &mut Frame, center: DVec3, rot: DQuat, now: f64) {
+    use universe_sim::world::gate::{GATE_RADIUS, RING_TUBE};
+    let n = 32;
+    for k in 0..n {
+        let a = k as f64 / n as f64 * std::f64::consts::TAU;
+        let dir = DVec3::new(a.cos(), 0.0, a.sin()) * GATE_RADIUS;
+        // (The gate's axis, +Y, faces where it goes.)
+        frame.glow(center + rot * (dir - DVec3::Y * RING_TUBE * 1.05), 14.0, [3.5, 3.5, 3.8], 2.2);
+        let chase = ((k as f64 / n as f64 - now * 0.25).rem_euclid(1.0) * 8.0).fract();
+        let lit = if chase < 0.25 { 6.0 } else { 1.2 };
+        frame.glow(center + rot * (dir + DVec3::Y * RING_TUBE * 1.05), 14.0, [0.15 * lit, 1.0 * lit, 0.4 * lit], 2.2);
+    }
+}
+
+/// A ship's navigation lights: red to port, green to starboard (steady),
+/// a white strobe at its top rear flashing on its own beat (`seed`).
+fn nav_lights(frame: &mut Frame, lights: [DVec3; 3], pos: DVec3, turned: DQuat, now: f64, seed: usize) {
+    let at = |p: DVec3| pos + turned * p;
+    frame.glow(at(lights[0]), 0.9, [5.0, 0.2, 0.12], 2.0);
+    frame.glow(at(lights[1]), 0.9, [0.15, 4.2, 0.8], 2.0);
+    let beat = (now * 0.8 + seed as f64 * 0.137).fract();
+    if beat < 0.06 {
+        frame.glow(at(lights[2]), 1.4, [12.0, 12.0, 12.0], 3.0);
+    }
+}
+
 /// A hull drawn solid: its plating in `fill`, its panel lines a little
 /// darker (no outline), metal glinting in the sun.
 fn hull_model(frame: &mut Frame, mesh: &universe_engine::Mesh, t: &Transform, fill: Color) {
@@ -484,6 +550,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
         hull_model(frame, app.models.hull(&c.ship), &t, livery(&c.name));
+        nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i);
         jets(frame, &c.ship, pos, turned, app.now(), i);
         if pos.distance(cam) < 20_000.0
             && let Some(p) = frame.project(pos)
@@ -1107,8 +1174,10 @@ fn ship(frame: &mut Frame, app: &App) {
             hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
             jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
         });
+        nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
     } else {
         hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
+        nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
         jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
     }
     // Landed on a body: the landing legs, down to the ground.
