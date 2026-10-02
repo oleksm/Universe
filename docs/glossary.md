@@ -69,6 +69,14 @@ The one place to look a name up. Keep it current when a name is added or changed
 Deuterium (ships' fuel today), helium-3, D–He3 blend, D–T blend, enriched uranium, methalox, kerolox,
 hydrolox, hydrogen: `content/base/materials.ron`.
 
+## World articles (`docs/world/`)
+
+How things work in the universe, one subject an article, to refer to later.
+
+| Article | What |
+|---|---|
+| `docs/world/hyperspace.md` | The hyper layer whole: the medium, fields, throats, hyper-signals; numbers; open questions. |
+
 ## The plans
 
 | Doc | What |

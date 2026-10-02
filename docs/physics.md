@@ -194,6 +194,8 @@ distance `S` between its rings.
 - So the galaxy is open (anything's reachable by expedition) but **lanes are earned**. Bridging far
   takes chains of rings and their power, each one built, fuelled and defended.
 
+(All of the hyper layer in one place, with its numbers and open questions: `docs/world/hyperspace.md`.)
+
 ### Hyper-signals: the hypernet's carrier
 
 - A relay's signal travels the medium under the same limit near masses: its time is `∫ ds / v_lim`
