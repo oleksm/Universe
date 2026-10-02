@@ -31,6 +31,7 @@ pub mod network;
 pub mod port;
 pub mod rng;
 pub mod shape;
+pub mod sheet;
 pub mod ship;
 pub mod spaceport;
 pub mod thrusters;

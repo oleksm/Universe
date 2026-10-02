@@ -1,5 +1,11 @@
 # Physics: what's real, what's simplified, what's invented
 
+> **The numbers live in the physics sheet**, `config/physics.ron`: every constant with its unit,
+> its kind (real, grounded, simplified, invented, tuning, planned) and its reason. The build makes
+> the code's constants from it; `crates/world/tests/dogma.rs` checks the claims below against it;
+> `docs/physics-sheet.md` is its generated report (`cargo run -p universe-world --example
+> physics_sheet`). Change the dogma there, and the checks say what it breaks.
+
 Physical accuracy is the game's heart. Every feature is checked against this page: it uses the
 real physics below, or one of the few invented devices under their written rules, and nothing
 else. Travel, information, exploration and the economy all rest on it, so nothing is made up to
@@ -128,7 +134,7 @@ So the wall is **power per kg, sustained**:
 |---|---|---|
 | Today's best (a Sprint, 14 MW in about 30 t) | about 0.5 kW/kg | impossible: below the floor |
 | A ship that's all reactor (today's best plant) | 2.8 kW/kg | impossible |
-| A future explorer (next-generation reactors, 30 kW/kg aboard) | 30 kW/kg | 1.6 v*: 5 ly in about 1 day; 40 ly in about 9 days, held without a fault |
+| A future explorer (next-generation reactors, 30 kW/kg aboard) | 30 kW/kg | 1.4 v* (at η 0.8): 5 ly in about 1.3 days; 40 ly in about 10 days, held without a fault |
 
 - **No ship today can cross even to a star 5 ly away.** Explorers come later, built around rare,
   costly reactors and huge radiators, mostly power plant with a sliver of payload. 40 ly is an epic:

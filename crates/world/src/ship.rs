@@ -557,12 +557,6 @@ pub fn starter() -> &'static ClassSpec {
 /// A ship's size as traffic lays out room for it (pads, docking slots,
 /// corridors), and the starting hull's collision radius (m).
 pub const SHIP_RADIUS: f64 = 12.0;
-/// The drives' exhaust velocity (m/s): a torch drive (a few percent of
-/// light speed), so a tank lasts a day of burning. Each device burns its
-/// thrust / this, in kg/s. (The economy's knob: see `economy`.)
-pub const EXHAUST_VELOCITY: f64 = 1.0e7;
-/// The hyperdrive's draw at full throttle (kg/s), while engaged.
-pub const HYPER_FUEL_FLOW: f64 = 0.2;
 fn full_tank() -> f64 {
     starter().fuel_capacity
 }
@@ -1211,4 +1205,5 @@ mod balance {
     }
 }
 
-
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{EXHAUST_VELOCITY, HYPER_FUEL_FLOW};

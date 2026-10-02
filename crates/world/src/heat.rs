@@ -13,27 +13,10 @@ use crate::damage::destroy;
 use crate::events::ShipEvent;
 use crate::ship::Ship;
 
-/// Nose radius for the stagnation heating (m).
-pub const NOSE_RADIUS: f64 = 2.0;
-/// The area taking the heating, at the stagnation rate (an effective area:
-/// the underside and leading edges, averaged) (m²).
-pub const HEATED_AREA: f64 = 150.0;
-/// The area radiating it away (m²), and how well (emissivity).
-pub const RADIATING_AREA: f64 = 500.0;
-pub const EMISSIVITY: f64 = 0.8;
-/// Heat capacity of the skin (J/K): about 3 t of metal.
-pub const SKIN_CAPACITY: f64 = 3.0e6;
-/// The skin's limit (K): beyond it the hull burns.
-pub const SKIN_LIMIT: f64 = 1_500.0;
-/// The temperature it settles to with nothing heating it (K).
-pub const AMBIENT: f64 = 290.0;
 /// Share of the heat beyond the limit that goes into damaging the hull (the
 /// rest is carried off by what burns away).
 const ABLATION: f64 = 0.05;
-/// Air's specific heat at constant pressure (J/kg·K).
-const AIR_CP: f64 = 1_005.0;
-/// Stefan–Boltzmann constant (W/m²K⁴).
-const SIGMA: f64 = 5.670_374e-8;
+use crate::sheet::{AIR_CP, STEFAN_BOLTZMANN as SIGMA};
 
 /// The skin over `dt` seconds, flying through air of `density` (kg/m³)
 /// moving at `air` (none: in vacuum). Burns the hull past the limit.
@@ -102,3 +85,6 @@ mod tests {
     }
 
 }
+
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{AMBIENT, EMISSIVITY, HEATED_AREA, NOSE_RADIUS, RADIATING_AREA, SKIN_CAPACITY, SKIN_LIMIT};

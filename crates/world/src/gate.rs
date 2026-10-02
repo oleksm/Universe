@@ -11,14 +11,6 @@ use universe_physics::{Frame, Relative, RigidBody, Ring};
 use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
 
-/// Radius of the ring's centerline (m); the opening is a little smaller.
-pub const GATE_RADIUS: f64 = 1500.0;
-/// Half-thickness of the ring structure (m).
-pub const RING_TUBE: f64 = 60.0;
-/// Faster than this through a gate and the transit fails (m/s).
-pub const MAX_TRANSIT_SPEED: f64 = 300.0;
-/// How long the transit between gates takes (real seconds).
-pub const TRANSIT_TIME: f64 = 10.0;
 /// The ring's shape, for the physics kernel; its opening is the trigger.
 pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
 
@@ -166,3 +158,6 @@ mod clear {
         assert!(checked > 100, "{checked}");
     }
 }
+
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{GATE_RADIUS, MAX_TRANSIT_SPEED, RING_TUBE, TRANSIT_TIME};

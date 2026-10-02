@@ -21,14 +21,6 @@ use crate::ship::{HyperdriveCommand, Ship};
 use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
 
-/// Hyperdrive speed = this * distance to the nearest obstacle, per second.
-pub const HYPER_RATE: f64 = 2.0;
-/// The interlock: the drive never takes a ship within this of a planet's,
-/// moon's or star's highest ground (m), and won't run there.
-pub const INTERLOCK: f64 = 1_000.0;
-/// Flying along the nose at a planet or moon, the drive drops out this far
-/// above its highest ground, or at the top of its air if that's higher (m).
-pub const GROUND_MARGIN: f64 = 20_000.0;
 
 /// Engage or disengage as commanded (only in flight). Both ways the engine
 /// is set back to zero: hyperdrive speed follows the throttle, so carrying
@@ -318,3 +310,6 @@ mod tests {
         assert!(p.events.contains(&ShipEvent::HyperdriveDisengaged));
     }
 }
+
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{GROUND_MARGIN, HYPER_RATE, INTERLOCK};
