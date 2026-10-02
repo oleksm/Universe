@@ -426,11 +426,11 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
         let (r0, r1) = (ring * k as f32, ring * (k as f32 + 1.0));
         let gap = semi_major(p) - inner;
         inner = semi_major(p);
-        // (The unit once; then above and below the axis by turns, to keep apart.)
-        let text = if k == 0 { fmt::distance(gap) } else { format!("{:.2}", gap / universe_sim::world::units::AU) };
-        let w = text_size(&text).x * SMALL;
-        let y = if k % 2 == 0 { -9.0 } else { 3.0 };
-        frame.text_scaled(center + Vec2::new((r0 + r1) / 2.0 - w / 2.0, y), &text, DIM.scale(0.8), SMALL);
+        // (On one line above the axis, in AU: the unit after the last.)
+        let au = gap / universe_sim::world::units::AU;
+        let text = if k + 1 == planets.len() { format!("{au:.2} AU") } else { format!("{au:.2}") };
+        let w = text_size(&format!("{au:.2}")).x * SMALL;
+        frame.text_scaled(center + Vec2::new((r0 + r1) / 2.0 - w / 2.0, -9.0), &text, DIM.scale(0.8), SMALL);
     }
     for (k, &p) in planets.iter().enumerate() {
         frame.hud_ellipse(center, Vec2::splat(ring * (k as f32 + 1.0)), 64, DIM.scale(0.6));
