@@ -279,6 +279,7 @@ impl Universe {
             time: self.world.time,
             system,
             market: market.name(&sys),
+            pilot: id,
             place: Some(market),
             trader,
             bought: deal == Deal::Bought,

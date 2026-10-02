@@ -93,7 +93,7 @@ impl Newsroom {
             sys.positions(now, &mut positions);
             let relay = nodes(&charts.galaxy, &sys).into_iter().find(|n| n.at == NodeAt::Body(o.station)).map(|n| n.comm);
             let Some(comm) = relay else { continue };
-            o.knows.update(charts, now, &Listener { system: o.system, at: positions[o.station], comm, player: false }, kills, trades, &[]);
+            o.knows.update(charts, now, &Listener { system: o.system, at: positions[o.station], comm, player: false }, &crate::news::Happenings { kills, trades, ..Default::default() });
             if (now / DIGEST_EVERY).floor() > (o.last / DIGEST_EVERY).floor() {
                 let headlines = compile(charts, o, kills, trades, now);
                 if !headlines.is_empty() {

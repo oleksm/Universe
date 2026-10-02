@@ -90,6 +90,8 @@ pub struct Universe {
     pub markets: universe_services::Markets,
     /// The price boards markets have put out over the hypernet (see `commerce::Boards`).
     pub(crate) boards: crate::commerce::Boards,
+    /// Each faction's view of every pilot (see `standing`).
+    pub standings: crate::standing::Standings,
     /// Messages sent to services so far (each one's id, for causes).
     pub(crate) messages: u64,
     /// The world's NPC clients (see `contract::Pilots`), postings that came
@@ -139,6 +141,7 @@ impl Universe {
             ledger: Default::default(),
             markets: universe_services::Markets::new(seed, goods),
             boards: Default::default(),
+            standings: Default::default(),
             messages: 0,
             npcs: Box::new(crate::contract::NoPilots),
             late: 0,
@@ -328,6 +331,7 @@ impl Universe {
         universe_prof::time("sim/recorder", || self.record());
         universe_prof::time("sim/economy", || self.markets.economy.step_to(self.world.time));
         self.publish_boards();
+        self.update_standings();
         // (The dead-man rule counts in seconds: a look once a second.)
         if self.tick.is_multiple_of(60) {
             universe_prof::time("sim/dead man", || self.dead_man());
@@ -601,6 +605,7 @@ impl Universe {
                 time: self.world.time,
                 system: self.ship_system,
                 market: f.name(&sys),
+                pilot: crate::combat::PLAYER,
                 place: Some(f),
                 trader: "YOU".into(),
                 deal: if units > 0 { universe_services::records::Deal::Bought } else { universe_services::records::Deal::Sold },

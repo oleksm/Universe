@@ -44,6 +44,8 @@ pub struct TradeRecord {
     pub time: f64,
     pub system: usize,
     pub market: String,
+    /// Who traded (the player 0, craft i: i + 1).
+    pub pilot: usize,
     /// The market's place (where it was heard first).
     pub place: Option<universe_world::Facility>,
     pub trader: String,

@@ -287,6 +287,13 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         (None, None) => ("OFFLINE".into(), AMBER),
     };
     rows.push(text_row("NET", net.0, net.1));
+    // Our standing with whoever holds this space.
+    if let Some(k) = app.charts.holder_index(app.view.origin) {
+        let s = app.v.standing.get(k).copied().unwrap_or(0.0);
+        let tag = app.charts.holder(app.view.origin).map_or("", |f| f.tag.as_str());
+        let c = if s <= -10.0 { RED } else if s >= 10.0 { HUD } else { DIM };
+        rows.push(text_row("STAND", format!("{s:+.0} {}  {tag}", universe_sim::standing::label(s)), c));
+    }
     rows.push(text_row("MASS", format!("{:.1} T  LOAD {:.1} T", ship.mass() / 1000.0, ship.cargo / 1000.0), DIM));
     rows.push(text_row("DRIVE", format!("{:.1} M/S2", ship.main_accel()), DIM));
     if !app.contacts.is_empty() {

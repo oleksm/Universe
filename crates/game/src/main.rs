@@ -1184,7 +1184,7 @@ impl Game for App {
         room.update(&self.charts, self.v.time, &self.v.kills, &self.v.trade_log);
         let casts = room.broadcasts();
         let us = universe_sim::news::Listener { system: self.v.ship_system, at: self.ship.position, comm: self.ship.spec().comm, player: true };
-        self.news.update(&self.charts, self.v.time, &us, &self.v.kills, &self.v.trade_log, &casts);
+        self.news.update(&self.charts, self.v.time, &us, &universe_sim::news::Happenings { kills: &self.v.kills, trades: &self.v.trade_log, broadcasts: &casts, sightings: &[] });
         // Where things are drawn is the moment drawn: the nav target and the
         // approach guidance are worked out here, at it, from the charts (the
         // view's are a tick off it).

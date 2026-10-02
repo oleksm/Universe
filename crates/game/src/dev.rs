@@ -1151,7 +1151,7 @@ pub fn apply(app: &mut App, name: &str) {
                 room.update(&app.charts, now, &app.v.kills, &app.v.trade_log);
                 let casts = room.broadcasts();
                 let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true };
-                app.news.update(&app.charts, now, &us, &app.v.kills, &app.v.trade_log, &casts);
+                app.news.update(&app.charts, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
             }
             log::info!("scenario newsdesk: {} digests", app.newsroom.as_ref().map_or(0, |r| r.digests.len()));
             app.news_panel = name == "newsdesk";

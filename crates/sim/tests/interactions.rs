@@ -110,6 +110,10 @@ fn a_ship_under_fire_runs_for_the_guns() {
     let havens: Vec<_> = u.world.turret_motions(u.ship_system).into_iter().map(|(t, _, _)| t.facility).collect();
     assert!(heading.is_some_and(|h| havens.contains(&h)), "heading for a defended place: {heading:?}, turret at {:?}", turret.facility);
     assert!(r.active);
+    // The holder of this space hears of it: the pirate's standing there falls.
+    let faction = u.world.charts().holder_index(u.ship_system).expect("held");
+    let pirate = universe_sim::craft_id(0);
+    assert!(run(&mut u, 15.0, |u| u.standings.of(pirate, faction) < 0.0), "standing {}", u.standings.of(pirate, faction));
 }
 
 #[test]

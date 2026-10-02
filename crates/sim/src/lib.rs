@@ -21,6 +21,7 @@ pub mod newsroom;
 pub mod operator;
 pub mod pilots;
 pub mod setup;
+pub mod standing;
 mod follow;
 pub mod recorder;
 pub mod save;

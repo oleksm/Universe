@@ -34,6 +34,11 @@ impl Charts {
         crate::content::content().factions.iter().nth(k).map(|(_, f)| f)
     }
 
+    /// The holder of system `i`, by its place among the factions (content order).
+    pub fn holder_index(&self, i: usize) -> Option<usize> {
+        self.territory.iter().find(|t| t.0 == i).map(|t| t.1)
+    }
+
     /// Every held system, and who holds it.
     pub fn territory(&self) -> impl Iterator<Item = (usize, &'static crate::factions::Faction)> + '_ {
         self.territory.iter().filter_map(|&(s, _)| Some((s, self.holder(s)?)))

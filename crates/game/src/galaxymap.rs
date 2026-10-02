@@ -236,10 +236,11 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             frame.text(p + Vec2::new(-12.0, -18.0), &f.tag, c);
         }
         let mut y = 52.0;
-        for (_, f) in universe_sim::world::content::content().factions.iter() {
+        for (k, (_, f)) in universe_sim::world::content::content().factions.iter().enumerate() {
             let n = app.charts.territory().filter(|(_, g)| g.key == f.key).count();
             let c = Color([f.color[0], f.color[1], f.color[2], 1.0]);
-            frame.text(Vec2::new(16.0, y), &format!("{} {} - {n} SYSTEM{}", f.tag, f.name, if n == 1 { "" } else { "S" }), c);
+            let s = app.v.standing.get(k).copied().unwrap_or(0.0);
+            frame.text(Vec2::new(16.0, y), &format!("{} {} - {n} SYSTEM{}   YOU: {s:+.0} {}", f.tag, f.name, if n == 1 { "" } else { "S" }, universe_sim::standing::label(s)), c);
             frame.text(Vec2::new(16.0 + 24.0, y + 14.0), &f.note, DIM);
             y += 34.0;
         }

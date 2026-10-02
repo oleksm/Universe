@@ -43,7 +43,7 @@ world's facts; deciding is the clients': pilots, players, corporations, factions
 - A few preset factions seeded in the world. Settlers can enlist, or found their own.
 - Territory, law, security forces. Assets and power matter; nothing is indestructible, preset
   NPC factions included. The goal: players expand the inhabited universe and carry its politics.
-- Plan and progress: `docs/factions.md` (step 1, factions and territory, done).
+- Plan and progress: `docs/factions.md` (steps 1–2, territory and standing, done).
 
 ## 4. Corporations
 
