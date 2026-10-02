@@ -627,6 +627,14 @@ impl Universe {
         self.ship_system = home;
     }
 
+    /// The player in flight 4 km behind the home station, its ship as it
+    /// is (no insurer, nothing said): where tests and dev scenarios start.
+    pub fn start_in_flight(&mut self) {
+        self.atc.release(crate::combat::PLAYER);
+        let mut events = Vec::new();
+        self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
+    }
+
     /// Put a new ship next to the home station, matching its orbit.
     pub fn respawn(&mut self) {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Respawn));

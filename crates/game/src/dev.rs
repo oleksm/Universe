@@ -11,6 +11,11 @@ use crate::{App, Mode};
 pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
+    // (Scenarios start in flight behind the home station, as a new pilot
+    // once did, not parked on its deck.)
+    if matches!(app.engine.universe().ship.state, ShipState::Landed { .. }) && app.engine.universe().world.time < 1.0 {
+        app.engine.universe().start_in_flight();
+    }
     let home = app.engine.universe().world.home_system;
     let sys = app.engine.universe().system(home);
     let t = app.engine.universe().world.time;

@@ -527,10 +527,11 @@ impl Music {
         }
         for b in &mut self.bells {
             b.modulator = (b.modulator + b.freq * 3.5 * dt).fract();
-            let index = 2.0 * (-b.t * 3.0).exp();
+            // (A soft bell: little of the metallic sidebands, swelling in, far under the pads.)
+            let index = 0.8 * (-b.t * 3.0).exp();
             b.carrier = (b.carrier + b.freq * dt).fract();
             let v = (b.carrier * TAU + index * (b.modulator * TAU).sin()).sin();
-            out += v * (-b.t / 1.8).exp() * (b.t / 0.01).min(1.0) * b.vol * 0.08;
+            out += v * (-b.t / 1.8).exp() * (b.t / 0.06).min(1.0) * b.vol * 0.013;
             b.t += dt;
         }
         self.bells.retain(|b| b.t < 8.0);

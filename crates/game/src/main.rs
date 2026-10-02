@@ -920,14 +920,14 @@ impl App {
                 let turned = self.place(Who::Me).1;
                 let orientation = turned.as_quat();
                 // Spine to a rock (closing on it, or anchored): the chase view
-                // rolls over, so the rock is below and the ship over it.
+                // off to the side, upright with the ship: its top up, the rock above it.
                 let over_rock = matches!(ship.state, ShipState::Anchored { .. })
                     || self.v.avionics.following.is_some_and(|f| matches!(f.manoeuvre, universe_sim::avionics::follow::Manoeuvre::Surface(_)));
                 let (chase, orientation) = if over_rock && self.chase_cam {
                     // Off to one side and a little behind, level with the gap
-                    // between ship and rock, the rock below: the gear at work.
-                    let at = DVec3::new(75.0, -12.0, 60.0);
-                    let look = universe_sim::ship::facing(-(turned * at).normalize(), turned * DVec3::NEG_Y);
+                    // between ship and rock, the rock above: the gear at work.
+                    let at = DVec3::new(75.0, 12.0, 60.0);
+                    let look = universe_sim::ship::facing(-(turned * at).normalize(), turned * DVec3::Y);
                     (at, look.as_quat())
                 } else {
                     (DVec3::new(0.0, 20.0, 115.0), orientation)
