@@ -338,11 +338,14 @@ fn air(a: &universe_engine::Audio, app: &App) {
     a.set_distant(distant, 0.0);
 }
 
-/// Walking: where the last step fell, how far since, and which foot is next.
-static STEPS: Mutex<Option<(DVec3, f64, bool)>> = Mutex::new(None);
+/// Walking: where the last step fell, how far since, which foot is next,
+/// and whether off the ground (and how fast it was falling).
+static STEPS: Mutex<Option<Steps>> = Mutex::new(None);
+/// (Where the last step fell, how far since, which foot next, the fastest fall while aloft.)
+type Steps = (DVec3, f64, bool, Option<f64>);
 /// A step every this many metres, walking; running, a longer stride.
 const STRIDE: f64 = 0.9;
-const STRIDE_RUNNING: f64 = 2.2;
+const STRIDE_RUNNING: f64 = 2.6;
 /// Faster than this (m/s), running.
 const RUNNING: f64 = 2.8;
 
@@ -350,8 +353,8 @@ const RUNNING: f64 = 2.8;
 /// the deck plating. Each foot a little to its side, a little different.
 fn footstep(a: &universe_engine::Audio, inside: bool, left: bool, running: bool) {
     let pan = if left { -0.15 } else { 0.15 };
-    // (Running: the same light step, only further apart.)
-    let k = if running { 0.9 } else { 1.0 };
+    // (Running: a lighter step, further apart.)
+    let k = if running { 0.75 } else { 1.0 };
     let pitch = if left { 1.0 } else { 1.06 };
     a.thud(85.0 * pitch, 0.2 * k, pan);
     a.hiss(0.07, 0.07 * k, 0.15, pan);
@@ -409,25 +412,54 @@ pub fn update(ctx: &Context, app: &App) {
     a.set_music(if app.music_off || app.paused { 0.0 } else { MUSIC_LEVEL }, if tense { 1.0 } else { 0.0 });
     // On foot: a step every stride; aboard, boots on the deck plating;
     // outside, softer on the ground.
-    let at = match app.v.crew.place {
-        Place::Aboard { position, .. } => Some((position, true)),
-        Place::Outside { position, .. } => Some((position, false)),
-        Place::Seat => None,
+    // (Outside: how high off the ground, and how fast going up.)
+    let (at, air) = match app.v.crew.place {
+        Place::Aboard { position, .. } => (Some((position, true)), None),
+        Place::Outside { body, position, velocity, .. } => {
+            let up = position.normalize_or_zero();
+            let height = position.length() - app.view.system.bodies[body].surface_radius(up);
+            (Some((position, false)), Some((height, velocity.dot(up))))
+        }
+        Place::Seat => (None, None),
     };
     let Ok(mut steps) = STEPS.lock() else { return };
     match at {
         Some((p, inside)) if piloting => {
-            let (last, walked, left) = steps.get_or_insert((p, 0.0, false));
+            let (last, walked, left, aloft) = steps.get_or_insert((p, 0.0, false, None));
             let moved = p.distance(*last);
-            // (A jump in place, a respawn: start over.)
-            *walked = if moved > 5.0 { 0.0 } else { *walked + moved };
             *last = p;
-            let running = moved / (ctx.dt as f64).max(1e-3) > RUNNING;
-            let stride = if running { STRIDE_RUNNING } else { STRIDE };
-            if *walked >= stride {
-                *walked = 0.0;
-                *left = !*left;
-                footstep(a, inside, *left, running);
+            // Off the ground: no steps. Pushing off, the jump's; coming down, the landing's.
+            let airborne = air.is_some_and(|(height, _)| height > 0.1);
+            match (aloft.is_some(), airborne) {
+                (false, true) => {
+                    a.hiss(0.08, 0.06, 0.2, 0.0);
+                    a.thud(110.0, 0.12, 0.0);
+                    *aloft = Some(0.0);
+                }
+                (true, true) => {
+                    let falling = air.map_or(0.0, |(_, v)| -v).max(0.0);
+                    *aloft = Some(aloft.unwrap_or(0.0).max(falling));
+                }
+                (true, false) => {
+                    // (Harder the faster it came down.)
+                    let hit = (aloft.unwrap_or(0.0) as f32 / 4.0).clamp(0.3, 1.0);
+                    a.thud(75.0, 0.3 * hit, 0.0);
+                    a.hiss(0.1, 0.08 * hit, 0.2, 0.0);
+                    *aloft = None;
+                    *walked = 0.0;
+                }
+                (false, false) => {}
+            }
+            if !airborne {
+                // (A jump in place, a respawn: start over.)
+                *walked = if moved > 5.0 { 0.0 } else { *walked + moved };
+                let running = moved / (ctx.dt as f64).max(1e-3) > RUNNING;
+                let stride = if running { STRIDE_RUNNING } else { STRIDE };
+                if *walked >= stride {
+                    *walked = 0.0;
+                    *left = !*left;
+                    footstep(a, inside, *left, running);
+                }
             }
         }
         _ => *steps = None,
