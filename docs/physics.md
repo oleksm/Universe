@@ -108,11 +108,11 @@ What it means:
 |---|---|---|---|
 | A Drover (stock) | 60 t | 30 t | 8 ly: can't reach a neighbour |
 | An expedition ship | 200 t | 1,300 t | 40 ly: there, not back |
-| The same, to 100 ly | 200 t | 24,000 t | not practical: needs depots |
+| The same, to 100 ly | 200 t | 29,500 t | not practical: needs depots |
 
 - **So expeditions** go one way, carrying a mobile outpost that makes fuel from local matter (ice,
   gas) to get home, or settle. If the outpost fails, they're stranded. Going farther takes depots
-  laid stage by stage. Going faster than `v*` burns range: at 3×, a third less.
+  laid stage by stage. Going faster than `v*` burns range: at 3×, 40% less.
 - **Time costs too:** crew eat, breathe and need power the whole way (life support per person per
   day). A slow, cheap crossing needs more supplies.
 
