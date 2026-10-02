@@ -21,7 +21,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let starlight = universe_prof::time("draw/scene/sky", || sky(frame, app));
     universe_prof::time("draw/scene/galaxy", || galaxy(frame, app, starlight));
     if matches!(app.ship.state, ShipState::Transit { .. }) && app.mode == Mode::Pilot {
-        transit_tunnel(frame, app);
+        transit_push(frame, app);
         return;
     }
     if app.show_grid {
@@ -207,16 +207,82 @@ fn galaxy(frame: &mut Frame, app: &App, starlight: f32) {
 }
 
 /// Between gates: rings rushing past, straight ahead.
-fn transit_tunnel(frame: &mut Frame, app: &App) {
+/// Through a gate: a push across the space between the two stars. The eye
+/// rides the line from the star left to the star ahead (easing up to speed
+/// and down again over the transit), turned so the destination is dead
+/// ahead of the nose: the stars round about stream past and streak, the
+/// sun left behind dwindles, the one ahead swells; a flash leaving one gate
+/// and coming out of the other. Our ship rides it, its drive full.
+fn transit_push(frame: &mut Frame, app: &App) {
+    use universe_sim::world::gate::TRANSIT_TIME;
+    let ShipState::Transit { to, from, remaining, .. } = app.ship.state else { return };
+    let g = &app.charts.galaxy;
+    let (a, b) = (g.stars[from].position, g.stars[to].position);
+    let p = (1.0 - remaining / TRANSIT_TIME).clamp(0.0, 1.0);
+    let ease = |p: f64| (1.0 - (p * std::f64::consts::PI).cos()) * 0.5;
+    let at = a + (b - a) * ease(p);
+    // (A moment ago: where each star's streak starts.)
+    let before = a + (b - a) * ease((p - 0.012).max(0.0));
     let cam = frame.camera.position;
-    let fwd = frame.camera.forward().as_dvec3();
-    let spacing = 150.0;
-    let shift = (app.now() * 900.0) % spacing;
-    for k in 0..28 {
-        let z = k as f64 * spacing - shift + 20.0;
-        let fade = (1.0 - z / (28.0 * spacing)) as f32;
-        let c = if k % 2 == 0 { Color::hex(0xffc040) } else { Color::hex(0x40c0ff) };
-        frame.circle(cam + fwd * z, fwd, 260.0, 40, c.scale(fade.max(0.1)));
+    let ahead = frame.camera.forward().as_dvec3();
+    let turn = DQuat::from_rotation_arc((b - a).normalize(), ahead);
+    let sky = 1.0e5;
+    for (i, s) in g.stars.iter().enumerate() {
+        let rel = s.position - at;
+        let d = rel.length().max(1e-3);
+        let flux = s.class.luminosity() / (d * d);
+        let bright = ((flux.log10() + 8.0) / 6.0).clamp(0.15, 1.0) as f32;
+        let c = color(s.class.color()).scale(bright);
+        let dir = turn * (rel / d);
+        if i == from || i == to {
+            // The two suns: a glow, its size by how much light reaches us.
+            let size = (flux.sqrt() * 2.0e3).clamp(150.0, 6.0e3);
+            let [r, gg, bb] = s.class.color();
+            let k = (flux.sqrt() * 4.0).clamp(0.6, 6.0) as f32;
+            frame.glow(cam + dir * sky, size, [r * k, gg * k, bb * k], 2.0);
+            continue;
+        }
+        let was = turn * (s.position - before).normalize_or_zero();
+        // (Near ones swept a way across the sky since a moment ago: streaks.)
+        if dir.angle_between(was) > 0.002 {
+            frame.line(cam + was * sky, cam + dir * sky, c);
+        } else {
+            frame.sky_point(dir.as_vec3(), c);
+        }
+    }
+    // The push itself: streaks of light flowing past along the way, round
+    // the eye, longer and brighter the faster (still at the ends, long at
+    // the middle). Each loops along its own lane as the path goes by.
+    let speed = (p * std::f64::consts::PI).sin();
+    let (u, v) = (ahead.any_orthonormal_vector(), ahead.cross(ahead.any_orthonormal_vector()));
+    let travelled = ease(p) * 90.0;
+    const LANE: f64 = 1600.0;
+    for i in 0..360u32 {
+        let h = |n: u32| ((i.wrapping_mul(2_654_435_761) ^ n.wrapping_mul(40_503)) % 10_000) as f64 / 10_000.0;
+        let ang = h(1) * std::f64::consts::TAU;
+        let radius = 40.0 + 500.0 * h(2) * h(2);
+        let along = (h(3) - travelled).rem_euclid(1.0) * LANE - LANE * 0.3;
+        let at = cam + (u * ang.cos() + v * ang.sin()) * radius + ahead * along;
+        let length = 4.0 + 420.0 * speed;
+        let fade = (1.0 - (along / (LANE * 0.7)).abs()).clamp(0.0, 1.0) as f32;
+        let k = (0.25 + 0.75 * speed as f32) * fade * (0.4 + 0.6 * h(4) as f32);
+        frame.line(at, at - ahead * length, Color([0.75 * k, 0.85 * k, 1.0 * k, 1.0]));
+    }
+    // Our ship, its drive full (chase view).
+    if app.chase_cam && matches!(app.v.crew.place, universe_sim::world::Place::Seat) {
+        let t = Transform { position: app.view.ship_pos, rotation: app.ship.orientation.as_quat(), scale: 1.0 };
+        frame.in_front(|frame| {
+            hull_model(frame, app.models.painted(&app.ship, 0), &t);
+            hull_detail(frame, app.models.detail(&app.ship), &t);
+            let mut burning = app.ship.clone();
+            burning.hyperdrive = true;
+            jets(frame, &burning, app.view.ship_pos, app.ship.orientation, app.now(), usize::MAX);
+        });
+    }
+    // The flashes: leaving the gate, and coming out of its twin.
+    let flash = (1.0 - p / 0.06).max(0.0).max(((p - 0.94) / 0.06).max(0.0)) as f32;
+    if flash > 0.0 {
+        frame.hud_rect(Vec2::ZERO, frame.size(), Color([0.85, 0.92, 1.0, flash * 0.85]));
     }
 }
 

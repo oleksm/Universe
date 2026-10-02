@@ -460,7 +460,7 @@ pub fn apply(app: &mut App, name: &str) {
                         if status.phase == Phase::Final && status.distance < 1500.0);
                     let stop = match name {
                         "gateauto" => running,
-                        "transit" => matches!(app.engine.universe().ship.state, ShipState::Transit { remaining, .. } if remaining < 3.5),
+                        "transit" => matches!(app.engine.universe().ship.state, ShipState::Transit { remaining, .. } if remaining < std::env::var("UNIVERSE_LEFT").ok().and_then(|v| v.parse().ok()).unwrap_or(3.5)),
                         _ => app.engine.universe().ship_system != home && app.engine.universe().ship.is_flying(),
                     };
                     if stop {

@@ -55,7 +55,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::thrusterpanel::draw(frame, app);
         return;
     }
-    universe_prof::time("draw/hud/sun glare", || sun_glare(frame, app));
+    // (Not in a gate's transit: the push draws its own suns.)
+    if !matches!(app.ship.state, ShipState::Transit { .. }) {
+        universe_prof::time("draw/hud/sun glare", || sun_glare(frame, app));
+    }
     if app.mode == Mode::Pilot {
         crate::manual::draw(frame, app);
     }
@@ -66,6 +69,8 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     match app.mode {
         Mode::Observer => observer_info(app, &mut lines),
         Mode::Pilot if !app.v.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),
+        // (In a gate's transit: between the stars, none of the system's markers.)
+        Mode::Pilot if matches!(app.ship.state, ShipState::Transit { .. }) => pilot_info(app, &mut lines, &mut alerts),
         Mode::Pilot => {
             pilot_info(app, &mut lines, &mut alerts);
             crate::followguide::lines(app, &mut lines);
@@ -102,7 +107,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     y += status_strip(frame, app, Vec2::new(4.0, y)) + 6.0;
     let credits = format!("{:.0} CR", app.v.credits);
     frame.text_boxed(Vec2::new(size.x - text_size(&credits).x - 6.0, top + 2.0), &credits, HUD, SOFT_PANEL);
-    if app.mode == Mode::Pilot && app.v.crew.seated() {
+    if app.mode == Mode::Pilot && app.v.crew.seated() && !matches!(app.ship.state, ShipState::Transit { .. }) {
         y += instruments(frame, app, Vec2::new(4.0, y)) + 6.0;
     }
     text_column(frame, Vec2::new(4.0, y), &lines);
