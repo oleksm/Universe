@@ -561,28 +561,23 @@ fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
     }
 }
 
-/// Motes of dust round the eye, at rest in the frame of the body nearest
-/// (scattered one to a cell of a grid there, so they hold still), each a
-/// short streak along our motion against them: drift, braking and slip seen
-/// at a glance. Fainter with distance; none in the hyperdrive.
+/// In the hyperdrive only: motes of dust streaming past the eye along our
+/// heading, as if at `HYPER_DUST_SPEED` (the real speed would make them
+/// jump about), scattered one to a cell of a grid, each a short streak.
+/// Fainter with distance.
 fn dust(frame: &mut Frame, app: &App) {
     const CELL: f64 = 50.0;
     const REACH: f64 = 120.0;
+    const HYPER_DUST_SPEED: f64 = 400.0;
     let ship = &app.v.ship;
-    if app.mode != Mode::Pilot || ship.hyperdrive || !app.v.crew.seated() {
+    if app.mode != Mode::Pilot || !ship.hyperdrive || !app.v.crew.seated() {
         return;
     }
-    let sys = &app.view.system;
     let cam = frame.camera.position;
-    let Some(i) = (0..sys.bodies.len()).min_by(|&a, &b| {
-        let d = |k: usize| app.view.positions[k].distance(cam) - sys.bodies[k].rail.radius;
-        d(a).total_cmp(&d(b))
-    }) else {
-        return;
-    };
-    let origin = app.view.positions[i];
-    // (At rest with the body as it turns: near a world, with its ground and air.)
-    let v = ship.velocity - sys.velocity(i, app.now()) - sys.bodies[i].angular_velocity().cross(cam - origin);
+    let heading = ship.velocity.try_normalize().unwrap_or(ship.orientation * DVec3::NEG_Z);
+    // (A frame the motes rest in, which we cross at that speed.)
+    let origin = cam - heading * (app.now() * HYPER_DUST_SPEED);
+    let v = heading * HYPER_DUST_SPEED;
     let speed = v.length();
     // (Nearly still against them: a mote, not a streak.)
     let along = if speed > 0.3 { -v / speed } else { DVec3::Y };
@@ -608,7 +603,7 @@ fn dust(frame: &mut Frame, app: &App) {
                 }
                 // (Faint: about a tenth there, fading out toward the reach.)
                 let fade = (1.0 - d / REACH).powf(0.6) as f32;
-                let c = Color([0.8, 0.85, 0.9, 0.2 * fade]);
+                let c = Color([0.8, 0.85, 0.9, 0.15 * fade]);
                 frame.line(p, p + along * streak, c);
             }
         }
