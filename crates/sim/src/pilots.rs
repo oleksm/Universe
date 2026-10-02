@@ -87,6 +87,8 @@ pub struct Pilot {
     /// paid for what it carries, its route's seed, stops made so far, and
     /// the market service's answer, waiting.
     pub trader: bool,
+    /// A shuttle pilot: carries passengers who've booked passage (see `operator::ferry`).
+    pub shuttle: bool,
     /// A miner, and the rock it's working (see `miner`).
     pub miner: bool,
     pub(crate) dig: crate::miner::Dig,
@@ -98,7 +100,7 @@ pub struct Pilot {
 
 impl Pilot {
     pub fn new(avionics: Avionics) -> Self {
-        Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, miner: false, dig: Default::default(), paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
+        Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, shuttle: false, miner: false, dig: Default::default(), paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
     }
 }
 
@@ -309,6 +311,8 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
         if let Some(answer) = pilot.market.take() {
             if pilot.miner {
                 crate::miner::sell(&answer, &mut business);
+            } else if pilot.shuttle {
+                crate::operator::ferry(pilot, &view.charts, &answer, &mut business);
             } else {
                 crate::operator::trade(pilot, &view.charts, &answer, &mut business);
             }
@@ -390,7 +394,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
                 requests.push(Request::Repair { market });
             }
         }
-        if (pilot.trader || pilot.miner)
+        if (pilot.trader || pilot.miner || pilot.shuttle)
             && let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship)
         {
             requests.push(Request::Quotes { system, market });
@@ -494,7 +498,7 @@ fn deliver(pilots: &mut [Pilot], mail: &mut Vec<(usize, Msg)>) {
         let Some(p) = pilots.get_mut(i) else { continue };
         match m {
             Msg::Feed(events) => p.feed.extend(events),
-            Msg::Market(a) => p.market = Some(a),
+            Msg::Market(a) => p.market = Some(*a),
         }
     }
 }

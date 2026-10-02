@@ -40,6 +40,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::market::draw(frame, app, m);
         return;
     }
+    if let Some(pick) = app.passengers.filter(|_| app.mode == Mode::Pilot) {
+        crate::passengers::draw(frame, app, pick);
+        return;
+    }
     if let Some(y) = &app.shipyard {
         crate::shipyard::draw(frame, app, y);
         return;
@@ -1465,6 +1469,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 c("S+E", "LIFT OFF", if ship.powered { Lamp::Off } else { Lamp::Unavailable }),
                 b(Act::Autopilot, "AUTOPILOT", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
                 b(Act::Foot, "FOOT", Lamp::Off),
+                b(Act::Passengers, "PASSENGERS", if app.v.docked_market.is_some() { if app.passengers.is_some() { Lamp::On } else { Lamp::Off } } else { Lamp::Unavailable }),
             ],
         ),
         _ if ship.manual => (

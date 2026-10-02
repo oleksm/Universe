@@ -106,7 +106,7 @@ impl Universe {
                     return;
                 }
                 let answer = self.market_answer(id, system, market);
-                self.tell(id - 1, crate::contract::Msg::Market(answer));
+                self.tell(id - 1, crate::contract::Msg::Market(Box::new(answer)));
             }
             Request::Trade { market, item, units } => {
                 if let Ok(amount) = self.pilot_trade(id, market, item, units) {
@@ -120,6 +120,12 @@ impl Universe {
             }
             Request::Repair { .. } => {
                 let _ = self.repair(id);
+            }
+            Request::Board { market, to } => {
+                let _ = self.board_passengers(id, market, to);
+            }
+            Request::Land { market } => {
+                let _ = self.land_passengers(id, market);
             }
             _ => {}
         }
@@ -138,7 +144,10 @@ impl Universe {
         items.extend(here.iter().filter(|q| q.buy.is_some()).map(|q| q.offer.item).filter(|i| !held.contains(i)));
         let there = facilities(&sys).into_iter().filter(|&f| f != at).map(|f| (f, self.markets.quotes_for(system, &sys, f, &items, now))).collect();
         let (cargo, capacity) = self.ship_by_id(id).map_or((0.0, 0.0), |(_, _, s)| (s.cargo, s.spec().hold_capacity));
-        crate::contract::MarketAnswer { system, at, here, here_held, items, there, credits: self.ledger.credits(Party::Pilot(id)), hold, cargo, capacity }
+        let (passengers, bound_for, seats) = self.ship_by_id(id).map_or((0, None, 0), |(_, _, s)| (s.passengers, s.bound_for, s.passenger_room()));
+        let bookings = self.bookings(system, at);
+        let waiting = self.markets.economy.places.iter().filter(|p| p.system == system).map(|p| (p.facility, p.waiting)).collect();
+        crate::contract::MarketAnswer { system, at, here, here_held, items, there, credits: self.ledger.credits(Party::Pilot(id)), hold, cargo, capacity, bookings, waiting, passengers, bound_for, seats }
     }
 
     /// A trade (or a plan) in the log, as pilot `id` made it at `market`.
@@ -444,5 +453,141 @@ impl crate::universe::Universe {
             Err(reason) => universe_avionics::Event::Refused { reason: reason.clone() },
         });
         r
+    }
+}
+
+/// A passenger's fare (credits): this much, and this much more for each
+/// gate on the way (paid on arrival by the settlement fund of the place
+/// they settle at).
+pub const FARE: f64 = 40.0;
+pub const FARE_PER_GATE: f64 = 120.0;
+
+/// Passage booked by people waiting to leave a place: where to, how many,
+/// what each pays.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Booking {
+    pub system: usize,
+    pub to: Facility,
+    pub people: u32,
+    pub fare: f64,
+}
+
+impl crate::universe::Universe {
+    fn ship_mut_by_id(&mut self, id: usize) -> Option<&mut universe_world::Ship> {
+        if id == crate::combat::PLAYER { Some(&mut self.ship) } else { self.crafts.get_mut(id - 1).map(|c| &mut c.ship) }
+    }
+
+    /// The passage booked from `market` in `system`: its people waiting to
+    /// leave, each bound for a place that would have them (fed, with room)
+    /// in this system or one a gate away, shared out by the room there.
+    pub fn bookings(&self, system: usize, market: Facility) -> Vec<Booking> {
+        let Some(here) = self.markets.economy.place(system, market) else { return Vec::new() };
+        let waiting = (here.waiting * 1000.0).floor();
+        if waiting < 1.0 {
+            return Vec::new();
+        }
+        let near = |s: usize| s == system || self.world.gate_links.iter().any(|&(a, b)| (a == system && b == s) || (b == system && a == s));
+        let homes: Vec<(&universe_services::economy::Place, f64)> = self
+            .markets
+            .economy
+            .places
+            .iter()
+            .filter(|p| near(p.system) && !(p.system == system && p.facility == market) && p.welcomes())
+            .map(|p| (p, (p.founded * universe_services::economy::ROOM - p.population).max(0.0)))
+            .filter(|(_, room)| *room > 0.0)
+            .collect();
+        let rooms: f64 = homes.iter().map(|h| h.1).sum();
+        homes
+            .iter()
+            .filter_map(|(p, room)| {
+                let people = (waiting * room / rooms).floor() as u32;
+                (people > 0).then_some(Booking { system: p.system, to: p.facility, people, fare: FARE + if p.system == system { 0.0 } else { FARE_PER_GATE } })
+            })
+            .collect()
+    }
+
+    /// Pilot `id`, docked at `market`, takes aboard people who've booked
+    /// passage to `to` (system, market): as many as there are and its
+    /// cabins seat. How many.
+    pub fn board_passengers(&mut self, id: usize, market: Facility, to: (usize, Facility)) -> Result<u32, String> {
+        let Some((_, system, _)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        let sys = self.system(system);
+        let ship = self.ship_by_id(id).expect("there").2;
+        if universe_world::traffic::docked_at(&sys, ship) != Some(market) {
+            return Err("BOARD PASSENGERS DOCKED OR LANDED".into());
+        }
+        if ship.spec().seats == 0 {
+            return Err("NO PASSENGER CABIN FITTED".into());
+        }
+        if ship.passengers > 0 && ship.bound_for != Some(to) {
+            return Err("THE PASSENGERS ABOARD ARE BOUND ELSEWHERE".into());
+        }
+        let seats = ship.passenger_room();
+        let Some(b) = self.bookings(system, market).into_iter().find(|b| (b.system, b.to) == to) else { return Err("NOBODY BOOKED FOR THERE".into()) };
+        let n = b.people.min(seats);
+        if n == 0 {
+            return Err("EVERY SEAT TAKEN".into());
+        }
+        if let Some(place) = self.markets.economy.place_mut(system, market) {
+            place.depart(n as f64 / 1000.0);
+        }
+        let ship = self.ship_mut_by_id(id).expect("there");
+        ship.passengers += n;
+        ship.bound_for = Some(to);
+        ship.fare = b.fare;
+        Ok(n)
+    }
+
+    /// Pilot `id`, docked at `market`, lands its passengers where they
+    /// booked passage to (if it still has room for them): their fares paid
+    /// by its settlement fund. The fares.
+    pub fn land_passengers(&mut self, id: usize, market: Facility) -> Result<f64, String> {
+        use universe_services::{Asset, Party};
+        let Some((_, system, _)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        let sys = self.system(system);
+        let ship = self.ship_by_id(id).expect("there").2;
+        if universe_world::traffic::docked_at(&sys, ship) != Some(market) {
+            return Err("LAND PASSENGERS DOCKED OR LANDED".into());
+        }
+        let (n, fare) = (ship.passengers, ship.fare);
+        if n == 0 {
+            return Err("NO PASSENGERS ABOARD".into());
+        }
+        if ship.bound_for != Some((system, market)) {
+            return Err("THEY BOOKED PASSAGE ELSEWHERE".into());
+        }
+        let Some(place) = self.markets.economy.place_mut(system, market) else { return Err("NOBODY LIVES HERE".into()) };
+        place.arrive(n as f64 / 1000.0);
+        let paid = fare * n as f64;
+        self.ledger.transfer(Party::World, Party::Pilot(id), Asset::Credits, paid, self.tick, universe_protocol::Cause::Rules).map_err(|e| format!("{e:?}"))?;
+        let ship = self.ship_mut_by_id(id).expect("there");
+        ship.passengers = 0;
+        ship.bound_for = None;
+        ship.fare = 0.0;
+        Ok(paid)
+    }
+
+    /// The player, docked: lands the passengers aboard where they're bound
+    /// (if this is it), or boards those booked for `to`.
+    pub fn passengers(&mut self, to: Option<(usize, Facility)>) {
+        let sys = self.ship_system();
+        let Some(market) = universe_world::traffic::docked_at(&sys, &self.ship) else {
+            self.events.push(universe_avionics::Event::Refused { reason: "PASSENGERS DOCKED OR LANDED".into() });
+            return;
+        };
+        let e = match to {
+            None => {
+                let n = self.ship.passengers;
+                match self.land_passengers(crate::combat::PLAYER, market) {
+                    Ok(credits) => universe_avionics::Event::PassengersLanded { count: n, credits },
+                    Err(reason) => universe_avionics::Event::Refused { reason },
+                }
+            }
+            Some(to) => match self.board_passengers(crate::combat::PLAYER, market, to) {
+                Ok(count) => universe_avionics::Event::PassengersBoarded { count },
+                Err(reason) => universe_avionics::Event::Refused { reason },
+            },
+        };
+        self.events.push(e);
     }
 }

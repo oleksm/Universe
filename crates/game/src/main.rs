@@ -21,6 +21,7 @@ mod shipyard;
 mod sound;
 mod terrain_view;
 mod thrusterpanel;
+mod passengers;
 mod manual;
 
 use std::sync::Arc;
@@ -193,6 +194,8 @@ pub struct App {
     pub show_cargo: bool,
     /// The thrusters panel (F7).
     pub show_thrusters: bool,
+    /// The passengers panel open: its row picked.
+    pub passengers: Option<usize>,
     /// Manual: the thrusters last held (sent when it changes).
     pub jets_held: u64,
     /// Mining mode and the prospector's pulse; T's lock picker.
@@ -281,6 +284,7 @@ impl App {
             orbit_pick: Default::default(),
             show_cargo: false,
             show_thrusters: false,
+            passengers: None,
             jets_held: 0,
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
@@ -501,6 +505,13 @@ impl App {
         if ctx.input.pressed(KeyCode::Escape) {
             ctx.grab_cursor(false);
         }
+        // The passengers panel takes the keys while open.
+        if self.passengers.is_some() {
+            if !passengers::input(self, ctx) {
+                self.passengers = None;
+            }
+            return Controls::default();
+        }
         // On foot: walking, not flying (the ship flies on as last set).
         if !self.v.crew.seated() {
             // At a vending machine: F opens it; its panel takes the keys while open.
@@ -559,6 +570,9 @@ impl App {
             }
             if pressed(input, Act::Repair) {
                 self.engine.send(Command::Repair);
+            }
+            if pressed(input, Act::Passengers) && self.v.docked_market.is_some() {
+                self.passengers = Some(0);
             }
         }
         if pressed(input, Act::Hyperdrive) {
@@ -725,6 +739,8 @@ impl App {
                 Event::Refuelled { tonnes, credits } => format!("REFUELLED {tonnes:.1} T FOR {credits:.0} CR"),
                 Event::Repaired { credits, hull } => format!("HULL REPAIRED TO {:.0}% FOR {credits:.0} CR", hull * 100.0),
                 Event::Trimmed => "SHIP TRIMMED".into(),
+                Event::PassengersBoarded { count } => format!("{count} PASSENGERS ABOARD"),
+                Event::PassengersLanded { count, credits } => format!("{count} PASSENGERS LANDED - {credits:.0} CR IN FARES"),
                 Event::Vended { what, credits, note } => format!("{what} - {credits:.0} CR. {note}"),
                 Event::Refitted { slot, module, credits } => format!("{} FITTED IN {} - {} {:.0} CR", module.unwrap_or_else(|| "NOTHING".into()), slot.to_uppercase(), if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
                 Event::BoughtShip { name, credits } => format!("NEW SHIP: {name} - {} {:.0} CR WITH YOUR OLD ONE TRADED IN", if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),

@@ -73,6 +73,9 @@ pub enum Command {
     Vend(usize),
     /// Trim the ship (docked at a station's shipyard).
     Trim(universe_world::trim::Trim),
+    /// Board the passengers booked for there (docked), or (None) land
+    /// those aboard where they're bound.
+    Passengers(Option<(usize, universe_world::Facility)>),
     StopFollowing,
     /// Lock what's in the beam around the nose (again: the next).
     LockInBeam,
@@ -176,6 +179,8 @@ pub struct View {
     pub mined: Vec<((usize, usize), f64)>,
     /// The market we're docked at; the markets of the system; the one watched.
     pub docked_market: Option<Facility>,
+    /// Passage booked from the market docked at (see `Universe::bookings`).
+    pub bookings: Vec<crate::commerce::Booking>,
     pub markets: Vec<(Facility, String)>,
     pub market: Option<MarketView>,
     /// The ship's system's defence turrets, where they are now; who's on
@@ -270,6 +275,7 @@ impl Engine {
             Command::Trim(t) => {
                 let _ = u.set_trim(t);
             }
+            Command::Passengers(to) => u.passengers(to),
             Command::RoutePush(stop) => u.cockpit().route_push(stop),
             Command::RoutePop => u.cockpit().route_pop(),
             Command::RouteClear => u.cockpit().route_set(Vec::new()),
@@ -385,6 +391,7 @@ impl Engine {
                 _ => 0.0,
             },
             docked_market: u.docked_market(),
+            bookings: u.docked_market().map(|m| u.bookings(u.ship_system, m)).unwrap_or_default(),
             markets,
             market,
             turrets: u.world.turret_motions(system).into_iter().map(|(t, p, _)| (t, p)).collect(),

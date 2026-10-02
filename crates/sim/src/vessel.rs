@@ -21,6 +21,9 @@ pub(crate) enum Request {
     Refuel { market: universe_world::Facility },
     /// Have the hull repaired (at a station).
     Repair { market: universe_world::Facility },
+    /// Take aboard people waiting to leave; land those aboard to settle.
+    Board { market: universe_world::Facility, to: (usize, universe_world::Facility) },
+    Land { market: universe_world::Facility },
 }
 
 /// A ship's commands on their way to its devices: its pilot's postings,

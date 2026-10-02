@@ -44,6 +44,9 @@ pub enum Event {
     BoughtShip { name: String, credits: f64 },
     /// The ship's trim set at a shipyard.
     Trimmed,
+    /// Passengers taken aboard; landed to settle, for their fares.
+    PassengersBoarded { count: u32 },
+    PassengersLanded { count: u32, credits: f64 },
     /// Bought from a vending machine: what, for how much, and how it is.
     Vended { what: String, credits: f64, note: String },
     /// The hull mended at a station: what it cost, and how sound it is now (0..1).

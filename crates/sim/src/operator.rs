@@ -30,7 +30,7 @@ use crate::vessel::Request;
 /// Stops on a settler's route.
 pub const ROUTE_STOPS: usize = 10;
 /// About one settler in `PIRATE_ONE_IN` is a pirate, and as many again
-/// traders, and twice as many miners.
+/// traders, twice as many miners, and as many as the traders shuttle pilots.
 pub const PIRATE_ONE_IN: u64 = 10;
 /// A trip must promise at least this (credits), or the trader moves on to another system.
 pub const MIN_PROFIT: f64 = 300.0;
@@ -91,9 +91,10 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
         let mut route = Route { stops, next: 0, active: true, dwell_until: Some(now + rng.range(0.0, 600.0)), departing: false, stay: None, hangar_ordered: 0.0 };
         // Roles, from the seed (the same settlers every time): one slice
         // pirates, another traders, two miners (where their home system
-        // has asteroids to work), the rest just travel.
+        // has asteroids to work), one shuttle pilots (carrying passengers
+        // who've booked passage), the rest just travel.
         let role = mix(route_seed, 0x0917_27e5) % PIRATE_ONE_IN;
-        let (pirate, trader) = (role == 0, role == 1);
+        let (pirate, trader, shuttle) = (role == 0, role == 1, role == 4);
         let mining = (role == 2 || role == 3).then(|| crate::miner::route(charts, at.system, route_seed)).flatten();
         let miner = mining.is_some();
         if let Some(stops) = mining {
@@ -102,14 +103,15 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
         }
         // Settlers are passengers: hours at each stop (traders, miners and
         // pirates have business, and keep moving).
-        if !pirate && !trader && !miner {
+        if !pirate && !trader && !miner && !shuttle {
             route.stay = Some(rng.range(1.0, 4.0) * 3600.0);
         }
         // Named for what they do (the number stays each craft's own).
-        let name = format!("{} {}", if pirate { "Pirate" } else if trader { "Trader" } else if miner { "Miner" } else { "Settler" }, first + out.len() + 1);
+        let name = format!("{} {}", if pirate { "Pirate" } else if trader { "Trader" } else if miner { "Miner" } else if shuttle { "Shuttle" } else { "Settler" }, first + out.len() + 1);
         let mut pilot = Pilot::new(Avionics { route, pirate, ..Avionics::default() });
         pilot.trader = trader;
         pilot.miner = miner;
+        pilot.shuttle = shuttle;
         pilot.route_seed = route_seed;
         // Each flies a hull for its work: pirates interceptors, miners
         // prospectors, traders haulers or Drovers, settlers couriers or Drovers.
@@ -120,12 +122,16 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
             "hull.prospector"
         } else if trader {
             if either { "hull.hauler" } else { "hull.drover" }
+        } else if shuttle {
+            "hull.drover"
         } else if either {
             "hull.sprint"
         } else {
             "hull.drover"
         };
-        out.push((Registration { name, at, pad: (route_seed % universe_world::spaceport::PADS as u64) as usize, hull: hull.into() }, pilot));
+        // (A shuttle's cargo slot a passenger cabin.)
+        let fit = if shuttle { vec![("cargo".to_string(), "cabin.s3".to_string())] } else { Vec::new() };
+        out.push((Registration { name, at, pad: (route_seed % universe_world::spaceport::PADS as u64) as usize, hull: hull.into(), fit }, pilot));
     }
     out
 }
@@ -296,5 +302,91 @@ impl crate::universe::Universe {
         u.player = Some(Box::new(crate::cockpit::Cockpit::new(save.cockpit.clone().unwrap_or_default())));
         u.input_log = Some(save.log.clone());
         u
+    }
+}
+
+
+/// A shuttle pilot's business at a market (see `ferry`'s steps): its
+/// passengers landed if this is where they're bound; then a booking taken
+/// (the fullest fare: seats it can fill times what each pays) and set
+/// out for; with none here, off to where most are waiting in the system,
+/// else on to a neighbouring system.
+pub(crate) fn ferry(pilot: &mut Pilot, charts: &Charts, ans: &MarketAnswer, requests: &mut Vec<Request>) {
+    let mut aboard = ans.passengers;
+    if aboard > 0 && ans.bound_for == Some((ans.system, ans.at)) {
+        requests.push(Request::Land { market: ans.at });
+        aboard = 0;
+    }
+    let next = if aboard > 0 {
+        // Still bound elsewhere: there.
+        ans.bound_for.map(|(system, target)| Stop { system, target })
+    } else {
+        let seats = ans.seats + ans.passengers;
+        let best = ans.bookings.iter().max_by(|a, b| (a.people.min(seats) as f64 * a.fare).total_cmp(&(b.people.min(seats) as f64 * b.fare)));
+        match best {
+            Some(b) if seats > 0 => {
+                requests.push(Request::Board { market: ans.at, to: (b.system, b.to) });
+                Some(Stop { system: b.system, target: b.to })
+            }
+            _ => {
+                let most = ans.waiting.iter().filter(|w| w.0 != ans.at && w.1 > 0.01).max_by(|a, b| a.1.total_cmp(&b.1));
+                match most {
+                    Some(&(target, _)) => Some(Stop { system: ans.system, target }),
+                    None => {
+                        let links = charts.gate_links_of(ans.system);
+                        let pick = mix(pilot.route_seed, pilot.stops_made);
+                        links.get(pick as usize % links.len().max(1)).and_then(|(next, _)| {
+                            let there = charts.system(*next);
+                            let markets = facilities(&there);
+                            markets.get((pick >> 16) as usize % markets.len().max(1)).map(|&target| Stop { system: *next, target })
+                        })
+                    }
+                }
+            }
+        }
+    };
+    if let Some(stop) = next {
+        let r = &mut pilot.avionics.route;
+        r.stops.truncate(r.next + 1);
+        r.stops.push(stop);
+    }
+}
+
+#[cfg(test)]
+mod ferry_tests {
+    use super::*;
+    use crate::commerce::Booking;
+
+    fn answer(system: usize, at: Facility) -> MarketAnswer {
+        MarketAnswer { system, at, here: Vec::new(), here_held: Vec::new(), items: Vec::new(), there: Vec::new(), credits: 0.0, hold: Vec::new(), cargo: 0.0, capacity: 0.0, bookings: Vec::new(), waiting: Vec::new(), passengers: 0, bound_for: None, seats: 30 }
+    }
+
+    #[test]
+    fn a_shuttle_takes_the_best_booking_lands_where_bound_and_seeks_out_the_waiting() {
+        let w = universe_world::World::new(1984);
+        let charts = w.charts();
+        let home = w.home_system;
+        let (a, b, c) = (Facility::Station(0), Facility::Spaceport(0), Facility::Spaceport(1));
+        let mut pilot = Pilot::new(Avionics::default());
+        // Two bookings: 10 at 40 each, 50 (only 30 seats) at 160: the second.
+        let mut ans = answer(home, a);
+        ans.bookings = vec![Booking { system: home, to: b, people: 10, fare: 40.0 }, Booking { system: home, to: c, people: 50, fare: 160.0 }];
+        let mut req = Vec::new();
+        ferry(&mut pilot, &charts, &ans, &mut req);
+        assert!(matches!(req[..], [Request::Board { to, .. }] if to == (home, c)), "{req:?}");
+        assert_eq!(pilot.avionics.route.stops.last().map(|s| s.target), Some(c));
+        // There, bound for here: it lands them.
+        let mut ans = answer(home, c);
+        (ans.passengers, ans.bound_for, ans.seats) = (30, Some((home, c)), 0);
+        let mut req = Vec::new();
+        ferry(&mut pilot, &charts, &ans, &mut req);
+        assert!(matches!(req.first(), Some(Request::Land { market }) if *market == c), "{req:?}");
+        // Nothing booked here: off to where most are waiting.
+        let mut ans = answer(home, c);
+        ans.waiting = vec![(a, 0.0), (b, 0.4), (c, 0.0)];
+        let mut req = Vec::new();
+        ferry(&mut pilot, &charts, &ans, &mut req);
+        assert!(req.is_empty());
+        assert_eq!(pilot.avionics.route.stops.last().map(|s| s.target), Some(b));
     }
 }

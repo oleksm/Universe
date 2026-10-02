@@ -40,6 +40,11 @@
     (key: "drive.torch.s1", brand: "brand.kestrel", name: "TORCH DRIVE S1", does: Drive(thrust: 0.9e6), size: 1, mass: 3500.0, volume: 8.0, power: 7.0e5, price: 24000.0),
     (key: "tank.s2", brand: "brand.hadley", name: "FUEL TANK 15 T", does: Tank(capacity: 15000.0), size: 2, mass: 1100.0, volume: 23.0, price: 2200.0),
     (key: "rack.s2", brand: "brand.hadley", name: "CARGO RACKS 10 T", does: Rack(capacity: 10000.0), size: 2, mass: 800.0, volume: 15.0, price: 1600.0),
+    // Passenger cabins: in a cargo slot instead of racks, seats with their life support.
+    (key: "cabin.s1", brand: "brand.hadley", name: "PASSENGER CABIN 6", does: Cabin(seats: 6), size: 1, mass: 900.0, volume: 6.0, power: 1.2e4, price: 3500.0),
+    (key: "cabin.s2", brand: "brand.hadley", name: "PASSENGER CABIN 14", does: Cabin(seats: 14), size: 2, mass: 2000.0, volume: 15.0, power: 2.8e4, price: 8000.0),
+    (key: "cabin.s3", brand: "brand.hadley", name: "PASSENGER CABIN 30", does: Cabin(seats: 30), size: 3, mass: 4200.0, volume: 30.0, power: 6.0e4, price: 16000.0),
+    (key: "cabin.s4", brand: "brand.hadley", name: "PASSENGER CABIN 200", does: Cabin(seats: 200), size: 4, mass: 26000.0, volume: 220.0, power: 4.0e5, price: 90000.0),
     (key: "nav.basic.s1", name: "NAV COMPUTER (BASIC)", does: NavComputer(features: [Docking, Landing]), size: 1, mass: 100.0, volume: 0.2, power: 1.0e4, price: 6000.0),
     (key: "drive.kestrel.k2", brand: "brand.kestrel", name: "KESTREL K2 DRIVE", does: Drive(thrust: 1.5e6), size: 2, mass: 4800.0, volume: 12.0, power: 1.1e6, price: 68000.0),
     (key: "nav.full.s1", brand: "brand.orbital", name: "NAV COMPUTER", does: NavComputer(features: [Docking, Landing, Gate, Follow, Hyperdrive, Route]), size: 1, mass: 150.0, volume: 0.3, power: 2.0e4, price: 20000.0),

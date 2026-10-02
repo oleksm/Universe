@@ -96,9 +96,21 @@ impl Universe {
             let n = universe_world::spaceport::PADS;
             let pad = (0..n).map(|k| (reg.pad + k) % n).find(|&k| owners[k].is_none()).unwrap_or(reg.pad);
             let mut ship = self.world.ship_on(reg.at.system, reg.at.target, pad);
-            if let Some(h) = universe_world::content::content().handle(&reg.hull) {
+            let c = universe_world::content::content();
+            if let Some(h) = c.handle(&reg.hull) {
                 ship.class = h;
                 ship.fuel = ship.spec().fuel_capacity;
+            }
+            if !reg.fit.is_empty() {
+                // (Its hull's stock fit, with these in their slots.)
+                let mut fit = c.get(ship.class).fit.clone();
+                for (slot, key) in &reg.fit {
+                    if let Some(m) = c.handle(key) {
+                        fit.retain(|(s, _)| s != slot);
+                        fit.push((slot.clone(), m));
+                    }
+                }
+                let _ = ship.refit(fit);
             }
             self.crafts.push(Craft { name: reg.name, ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
             let me = universe_services::Party::Pilot(crate::combat::craft_id(self.crafts.len() - 1));

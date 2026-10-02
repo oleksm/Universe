@@ -52,7 +52,7 @@ pub enum Msg {
     /// What happened to its ship (its sensors and the devices report it).
     Feed(Vec<ShipEvent>),
     /// The market service's answer to its request for quotes.
-    Market(MarketAnswer),
+    Market(Box<MarketAnswer>),
 }
 
 
@@ -153,6 +153,14 @@ pub struct MarketAnswer {
     /// What its cargo weighs (kg), and the most its hold takes (kg).
     pub cargo: f64,
     pub capacity: f64,
+    /// Passage booked from here; the people waiting to leave each market in
+    /// the system (thousands); its passengers aboard, where they're bound,
+    /// and its free seats.
+    pub bookings: Vec<crate::commerce::Booking>,
+    pub waiting: Vec<(Facility, f64)>,
+    pub passengers: u32,
+    pub bound_for: Option<(usize, Facility)>,
+    pub seats: u32,
 }
 
 
@@ -182,6 +190,9 @@ pub struct Registration {
     pub pad: usize,
     /// The hull it's built as (content key; empty: the starting hull).
     pub hull: String,
+    /// Modules fitted in place of its hull's stock ones: (slot, module key).
+    #[serde(default)]
+    pub fit: Vec<(String, String)>,
 }
 
 /// The world's NPC clients, as the world sees them: it hands them each

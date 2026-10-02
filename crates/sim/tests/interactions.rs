@@ -859,3 +859,43 @@ fn goods_bought_where_made_sell_dearer_where_needed() {
     let back = u.markets.quote_for(home, &sys, maker.facility, item, now).unwrap().sell;
     assert!(back < bought);
 }
+
+#[test]
+fn passengers_book_passage_board_a_cabin_and_settle_where_they_booked_for_the_fare() {
+    use universe_sim::world::content::content;
+    let mut u = bench(0);
+    let home = u.ship_system;
+    let station = u.ship_system().station().unwrap();
+    let here = Facility::Station(station);
+    // The station hungry: a thousand of its people waiting to leave.
+    {
+        let p = u.markets.economy.place_mut(home, here).unwrap();
+        p.fed = 0.6;
+        p.waiting = 1.0;
+    }
+    let bookings = u.bookings(home, here);
+    assert!(!bookings.is_empty(), "they book passage somewhere fed");
+    let b = bookings[0];
+    let to = (b.system, b.to);
+    // Docked without a cabin: no seats.
+    u.ship = u.world.ship_on(home, here, 0);
+    assert!(u.board_passengers(universe_sim::PLAYER, here, to).is_err(), "no cabin, no passengers");
+    // A cabin in a cargo slot: 30 seats.
+    u.refit("cargo", Some(content().handle("cabin.s3").unwrap())).unwrap();
+    let n = u.board_passengers(universe_sim::PLAYER, here, to).unwrap();
+    assert_eq!(n, 30.min(b.people));
+    assert_eq!(u.ship.passengers, n);
+    let waiting = u.markets.economy.place(home, here).unwrap().waiting;
+    assert!((waiting - (1.0 - n as f64 / 1000.0)).abs() < 1e-9, "they left the station");
+    // Landed anywhere else: refused. Where they booked: they settle, and the fare's paid.
+    assert!(u.land_passengers(universe_sim::PLAYER, here).is_err());
+    let (people, credits) = (u.markets.economy.place(to.0, to.1).unwrap().population, u.credits());
+    u.ship = { let mut s = u.world.ship_on(to.0, to.1, 1); s.class = u.ship.class; s.fit = u.ship.fit.clone(); s.passengers = u.ship.passengers; s.bound_for = u.ship.bound_for; s.fare = u.ship.fare; s.refresh(); s };
+    u.ship_system = to.0;
+    let paid = u.land_passengers(universe_sim::PLAYER, to.1).unwrap();
+    assert!((paid - b.fare * n as f64).abs() < 1e-9);
+    assert!((u.credits() - credits - paid).abs() < 1e-6, "the fares paid");
+    assert!((u.markets.economy.place(to.0, to.1).unwrap().population - people - n as f64 / 1000.0).abs() < 1e-9, "they settled");
+    assert_eq!(u.ship.passengers, 0);
+    assert!(u.ledger.balanced());
+}

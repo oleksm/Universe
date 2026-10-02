@@ -177,6 +177,22 @@ pub fn apply(app: &mut App, name: &str) {
             let y = crate::shipyard::Shipyard::designing(app, 15);
             app.shipyard = Some(y);
         }
+        "passengers" => {
+            // Docked at the home station, hungry, a thousand waiting to leave;
+            // a passenger cabin fitted; the passengers panel open.
+            apply(app, "docked");
+            let u = app.engine.universe();
+            let station = u.ship_system().station().unwrap();
+            let home = u.ship_system;
+            if let Some(p) = u.markets.economy.place_mut(home, universe_sim::world::Facility::Station(station)) {
+                p.fed = 0.6;
+                p.waiting = 1.0;
+            }
+            let _ = u.refit("cargo", universe_sim::world::content::content().handle("cabin.s3"));
+            app.engine.refresh();
+            app.v = app.engine.view();
+            app.passengers = Some(0);
+        }
         "balance" | "balanced" => {
             // Docked at the home station, the shipyard's balance page
             // ("balanced": auto-balanced, the trim worked out but not yet done).

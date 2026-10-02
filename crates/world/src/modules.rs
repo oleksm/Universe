@@ -25,6 +25,8 @@ pub enum Does {
     Tank { capacity: f64 },
     /// Holds cargo (kg).
     Rack { capacity: f64 },
+    /// A passenger cabin: seats, with their life support (in a cargo slot).
+    Cabin { seats: u32 },
     Hyperdrive,
     /// Flies the ship by wire: how fast it lets it turn (rad/s): pitch and yaw, roll.
     FlightComputer { turn_rate: f64, roll_rate: f64 },
@@ -102,7 +104,7 @@ impl Does {
             Does::Thrusters { .. } => SlotKind::Thrusters,
             Does::Lift { .. } => SlotKind::Lift,
             Does::Tank { .. } => SlotKind::Tank,
-            Does::Rack { .. } => SlotKind::Cargo,
+            Does::Rack { .. } | Does::Cabin { .. } => SlotKind::Cargo,
             Does::Hyperdrive => SlotKind::Hyperdrive,
             Does::FlightComputer { .. } => SlotKind::Computer,
             Does::Transponder => SlotKind::Transponder,
@@ -182,6 +184,7 @@ impl Module {
             Does::PowerPlant { output } => positive("output", *output),
             Does::Drive { thrust } | Does::Thrusters { thrust } | Does::Lift { thrust } => positive("thrust", *thrust),
             Does::Tank { capacity } | Does::Rack { capacity } => positive("capacity", *capacity),
+            Does::Cabin { seats } => positive("seats", *seats as f64),
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
             Does::Sensors { range } => positive("range", *range),
             _ => Ok(()),

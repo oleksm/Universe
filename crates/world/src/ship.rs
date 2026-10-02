@@ -36,6 +36,8 @@ pub struct ClassSpec {
     /// Fuel tank (kg), and the most cargo the hold carries (kg).
     pub fuel_capacity: f64,
     pub hold_capacity: f64,
+    /// Passenger seats (its cabins').
+    pub seats: u32,
     /// The power its plant makes, and its modules draw at work (W).
     pub power_output: f64,
     pub power_draw: f64,
@@ -102,6 +104,9 @@ pub enum ThrusterRole {
     Rcs,
     Lift,
 }
+
+/// A passenger's mass (kg), with their things (their seat is a cabin's).
+pub const PASSENGER_MASS: f64 = 100.0;
 
 /// A thruster on a hull: at a nozzle of its shape (metres, shape frame),
 /// pushing along `push` (unit: opposite its exhaust) with up to `thrust` (N).
@@ -393,6 +398,7 @@ impl ClassSpec {
         let dry_mass = frame.frame_mass + modules().map(|m| m.mass).sum::<f64>();
         let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity } = m.does { Some(capacity) } else { None }).sum();
         let hold_capacity: f64 = modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum();
+        let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
         let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output } = m.does { Some(output) } else { None }).sum();
         let power_draw: f64 = modules().map(|m| m.power).sum();
         if power_draw > power_output {
@@ -463,6 +469,7 @@ impl ClassSpec {
             dry_mass,
             fuel_capacity,
             hold_capacity,
+            seats,
             power_output,
             power_draw,
             features,
@@ -650,6 +657,14 @@ pub struct Ship {
     /// Cargo on board (kg): the mass of what's in the hold.
     #[serde(default)]
     pub cargo: f64,
+    /// Passengers aboard (each `PASSENGER_MASS`, in a cabin's seat), and
+    /// where they've booked passage to (system, market) for what fare each.
+    #[serde(default)]
+    pub passengers: u32,
+    #[serde(default)]
+    pub bound_for: Option<(usize, crate::traffic::Facility)>,
+    #[serde(default)]
+    pub fare: f64,
     /// The excavator is switched on (it digs while anchored: see `mining`).
     #[serde(default)]
     pub excavator: bool,
@@ -744,6 +759,9 @@ impl Ship {
             trim: Default::default(),
             held: 0,
             taxi: None,
+            passengers: 0,
+            bound_for: None,
+            fare: 0.0,
             cargo: 0.0,
             excavator: false,
             hopper: 0.0,
@@ -769,7 +787,7 @@ impl Ship {
 
     /// Total mass right now (kg).
     pub fn mass(&self) -> f64 {
-        self.spec().dry_mass + self.fuel + self.cargo + self.hopper
+        self.spec().dry_mass + self.fuel + self.load()
     }
 
     /// What its class is built with.
@@ -819,18 +837,18 @@ impl Ship {
     /// Its centre of mass (shape frame, m): its shape's, as a solid.
     /// (Fuel and cargo are taken as spread like the hull, for now.)
     pub fn centre_of_mass(&self) -> DVec3 {
-        crate::trim::centre_of_mass(self.spec(), self.fuel, self.cargo + self.hopper, &self.trim)
+        crate::trim::centre_of_mass(self.spec(), self.fuel, self.load(), &self.trim)
     }
 
     /// Its inertia tensor about its centre of mass (kg·m², body frame).
     pub fn inertia(&self) -> glam::DMat3 {
-        crate::trim::inertia(self.spec(), self.fuel, self.cargo + self.hopper, &self.trim)
+        crate::trim::inertia(self.spec(), self.fuel, self.load(), &self.trim)
     }
 
     /// What its thrusters can give without turning it, loaded as it is (see
     /// `ClassSpec::authority`).
     pub fn authority(&self) -> Authority {
-        self.spec().authority_trimmed(self.fuel, self.cargo + self.hopper, &self.trim)
+        self.spec().authority_trimmed(self.fuel, self.load(), &self.trim)
     }
 
     /// How fast its thrusters turn it now (rad/s² about each body axis).
@@ -915,6 +933,16 @@ impl Ship {
     /// Room left in the hold (kg).
     pub fn hold_room(&self) -> f64 {
         (self.spec().hold_capacity - self.cargo - self.hopper).max(0.0)
+    }
+
+    /// What's aboard besides fuel (kg): cargo, ore, passengers.
+    pub fn load(&self) -> f64 {
+        self.cargo + self.hopper + self.passengers as f64 * PASSENGER_MASS
+    }
+
+    /// How many more passengers it has seats for (its cabins').
+    pub fn passenger_room(&self) -> u32 {
+        self.spec().seats.saturating_sub(self.passengers)
     }
 
     /// Main engine acceleration at full throttle without turning the ship (m/s^2).
