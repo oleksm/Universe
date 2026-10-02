@@ -5,7 +5,7 @@
 //! U/M/ESC close.
 
 use universe_engine::glam::{DVec2, Vec2};
-use universe_engine::{Color, Context, Frame, KeyCode};
+use universe_engine::{text_size, Color, Context, Frame, KeyCode};
 use universe_sim::names::star_name;
 
 use crate::scene::color;
@@ -28,6 +28,8 @@ pub struct GalaxyMap {
     glow: Glow,
     /// The factions layer: who holds which systems.
     pub factions: bool,
+    /// Where a drag (left button) last had the cursor.
+    dragged_from: Option<Vec2>,
 }
 
 /// Cells a side of the glow image, and how far it reaches (ly, each way from the centre).
@@ -117,7 +119,7 @@ fn flat(app: &App, i: usize) -> DVec2 {
 impl GalaxyMap {
     /// Centred on us, its scale bar `DEFAULT_BAR` light years.
     pub fn open(app: &App, _size: Vec2) -> Self {
-        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(app), factions: false }
+        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(app), factions: false, dragged_from: None }
     }
 
     /// (Dev scenarios: closer by `k`.)
@@ -147,6 +149,19 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     map.center += DVec2::new(input.axis(KeyCode::ArrowLeft, KeyCode::ArrowRight) as f64, input.axis(KeyCode::ArrowUp, KeyCode::ArrowDown) as f64) * pan;
     if input.pressed(KeyCode::Home) {
         map.center = you;
+    }
+    // A drag with the left button moves the map under the cursor.
+    let at = input.cursor;
+    if input.button_pressed(universe_engine::MouseButton::Left) {
+        map.dragged_from = Some(at);
+    }
+    if !input.button_down(universe_engine::MouseButton::Left) {
+        map.dragged_from = None;
+    }
+    if let Some(from) = map.dragged_from {
+        let d = at - from;
+        map.center -= DVec2::new(d.x as f64, d.y as f64) / map.scale;
+        map.dragged_from = Some(at);
     }
     if crate::keys::pressed(input, crate::keys::Act::Factions) {
         map.factions = !map.factions;
@@ -204,9 +219,18 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             frame.hud_glow(p, r * 0.6, 8, Color([1.0, 1.0, 1.0, 0.9]), Color([cr, cg, cb, 0.6]));
         }
     }
-    // The settled systems' gate links.
+    // The settled systems' gate links; zoomed in to 50 ly (the scale bar), each lane's length.
+    let lengths = BAR_PX / map.scale <= DEFAULT_BAR + 1e-6;
     for &(a, b) in &app.charts.gate_links {
-        frame.hud_line(map.to_screen(size, flat(app, a)), map.to_screen(size, flat(app, b)), GATE.scale(0.6));
+        let (pa, pb) = (map.to_screen(size, flat(app, a)), map.to_screen(size, flat(app, b)));
+        frame.hud_line(pa, pb, GATE.scale(0.6));
+        if lengths {
+            let ly = galaxy.stars[a].position.distance(galaxy.stars[b].position);
+            let text = format!("{ly:.1} LY");
+            let mid = (pa + pb) / 2.0;
+            let w = text_size(&text).x * 0.6;
+            frame.text_scaled(mid - Vec2::new(w / 2.0, 8.0), &text, GATE.scale(0.9), 0.6);
+        }
     }
     // Where we've been: bright, named when there's room.
     // (Named once they'd stand apart: the settled ones are light years from each other.)
