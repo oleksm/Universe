@@ -124,7 +124,8 @@ fn rock(frame: &mut Frame, app: &App, f: usize, i: usize, b: &Body, center: DVec
     };
     let edges = ((px - 2.0) / 30.0).clamp(0.0, 1.0);
     let at = Transform { position: center, rotation: b.rotation(t).as_quat(), scale: b.rail.radius * remaining(app, f, i, b) };
-    frame.model_shaded_faded(mesh, &at, c.scale(0.8), c.scale(0.3), edges);
+    // (Rock: matte, its edges no more than creases.)
+    frame.model_shaded_faded(mesh, &at, c.scale(0.25), c.scale(0.3), edges * 0.5);
 }
 
 /// How big rock `i` of field `f` still is, as a share of its size: what's

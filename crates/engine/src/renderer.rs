@@ -10,6 +10,12 @@ use crate::model::Mesh;
 use crate::gpu::Gpu;
 
 const COLOR_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
+/// The scene's light, before it's tone-mapped for the screen (HDR).
+const SCENE_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba16Float;
+/// Samples a pixel of the scene (antialiasing).
+const SAMPLES: u32 = 4;
+/// Screenshots' size: the same every run.
+const SHOT: UVec2 = UVec2::new(1920, 1080);
 const DEPTH_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 
 #[repr(C)]
@@ -221,10 +227,13 @@ const MESH_KEEP: u64 = 600;
 struct Target {
     size: UVec2,
     hud_size: UVec2,
+    /// The scene drawn (antialiased: `SAMPLES` a pixel), and resolved.
+    color_msaa: wgpu::TextureView,
     color: wgpu::TextureView,
     depth: wgpu::TextureView,
     hud: wgpu::TextureView,
-    /// The front layer (see `Frame::in_front`).
+    /// The front layer (see `Frame::in_front`): drawn, and resolved.
+    front_msaa: wgpu::TextureView,
     front: wgpu::TextureView,
     composite: wgpu::TextureView,
     blit: wgpu::BindGroup,
@@ -242,6 +251,7 @@ pub(crate) struct Renderer {
     globals_bind: wgpu::BindGroup,
     blit_layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
+    linear: wgpu::Sampler,
     sky_pipe: wgpu::RenderPipeline,
     solid_pipe: wgpu::RenderPipeline,
     line_pipe: wgpu::RenderPipeline,
@@ -319,7 +329,8 @@ impl Renderer {
                               vs: &str,
                               topology: wgpu::PrimitiveTopology,
                               depth: Option<(bool, wgpu::CompareFunction)>,
-                              blend: wgpu::BlendState| {
+                              blend: wgpu::BlendState,
+                              (format, samples): (wgpu::TextureFormat, u32)| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some(label),
                 layout: Some(&scene_layout),
@@ -337,13 +348,13 @@ impl Renderer {
                     stencil: Default::default(),
                     bias: Default::default(),
                 }),
-                multisample: Default::default(),
+                multisample: wgpu::MultisampleState { count: samples, ..Default::default() },
                 fragment: Some(wgpu::FragmentState {
                     module: &scene,
                     entry_point: Some("fs_color"),
                     compilation_options: Default::default(),
                     targets: &[Some(wgpu::ColorTargetState {
-                        format: COLOR_FORMAT,
+                        format,
                         blend: Some(blend),
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
@@ -376,7 +387,7 @@ impl Renderer {
                 step_mode: wgpu::VertexStepMode::Instance,
                 attributes: &wgpu::vertex_attr_array![
                     3 => Float32x4, 4 => Float32x4, 5 => Float32x4, 6 => Float32x4, 7 => Float32x4,
-                    8 => Float32x4, 9 => Float32x4, 10 => Float32x4, 11 => Float32x4, 12 => Float32x4
+                    8 => Float32x4, 9 => Float32x4, 10 => Float32x4, 11 => Float32x4, 12 => Float32x4, 13 => Float32x4
                 ],
             }),
         ];
@@ -471,12 +482,12 @@ impl Renderer {
                     stencil: Default::default(),
                     bias: Default::default(),
                 }),
-                multisample: Default::default(),
+                multisample: wgpu::MultisampleState { count: SAMPLES, ..Default::default() },
                 fragment: Some(wgpu::FragmentState {
                     module: &scene,
                     entry_point: Some("fs_mesh"),
                     compilation_options: Default::default(),
-                    targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
+                    targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
                 }),
                 multiview_mask: None,
                 cache: None,
@@ -484,13 +495,14 @@ impl Renderer {
         };
         let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
         let mesh_line_pipe = mesh_pipeline("mesh edges", "vs_mesh_line", wgpu::PrimitiveTopology::LineList, false, wgpu::CompareFunction::GreaterEqual);
-        let sky_pipe = scene_pipeline("sky", "vs_sky", Topo::PointList, Some((false, Cmp::Always)), additive);
-        let solid_pipe = scene_pipeline("solids", "vs_world", Topo::TriangleList, Some((true, Cmp::Greater)), alpha);
-        let line_pipe = scene_pipeline("lines", "vs_line", Topo::LineList, Some((false, Cmp::GreaterEqual)), alpha);
-        let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha);
-        // The HUD has its own layer without depth.
-        let hud_tri_pipe = scene_pipeline("hud tris", "vs_hud", Topo::TriangleList, None, alpha);
-        let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha);
+        let world = (SCENE_FORMAT, SAMPLES);
+        let sky_pipe = scene_pipeline("sky", "vs_sky", Topo::PointList, Some((false, Cmp::Always)), additive, world);
+        let solid_pipe = scene_pipeline("solids", "vs_world", Topo::TriangleList, Some((true, Cmp::Greater)), alpha, world);
+        let line_pipe = scene_pipeline("lines", "vs_line", Topo::LineList, Some((false, Cmp::GreaterEqual)), alpha, world);
+        let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha, world);
+        // The HUD has its own layer without depth (or antialiasing, or HDR).
+        let hud_tri_pipe = scene_pipeline("hud tris", "vs_hud", Topo::TriangleList, None, alpha, (COLOR_FORMAT, 1));
+        let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha, (COLOR_FORMAT, 1));
 
         let texture_entry = |binding| wgpu::BindGroupLayoutEntry {
             binding,
@@ -514,6 +526,12 @@ impl Renderer {
                     count: None,
                 },
                 texture_entry(3),
+                wgpu::BindGroupLayoutEntry {
+                    binding: 4,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                    count: None,
+                },
             ],
         });
         let blit = device.create_shader_module(wgpu::include_wgsl!("shaders/blit.wgsl"));
@@ -553,8 +571,14 @@ impl Renderer {
             min_filter: wgpu::FilterMode::Nearest,
             ..Default::default()
         });
+        let linear = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("linear"),
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            ..Default::default()
+        });
 
-        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler);
+        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear);
         Self {
             wait: std::time::Duration::ZERO,
             low_height,
@@ -565,6 +589,7 @@ impl Renderer {
             globals_bind,
             blit_layout,
             sampler,
+            linear,
             sky_pipe,
             solid_pipe,
             line_pipe,
@@ -599,6 +624,11 @@ impl Renderer {
         UVec2::new(((low_height as f32 * aspect).round() as u32).max(1), low_height)
     }
 
+    /// The scene's size: the window's, full resolution (a screenshot run: `SHOT`).
+    fn scene_size(gpu: &Gpu, forced_aspect: Option<f32>) -> UVec2 {
+        if forced_aspect.is_some() { SHOT } else { UVec2::new(gpu.config.width.max(1), gpu.config.height.max(1)) }
+    }
+
     fn create_target(
         gpu: &Gpu,
         low_height: u32,
@@ -606,16 +636,17 @@ impl Renderer {
         forced_aspect: Option<f32>,
         layout: &wgpu::BindGroupLayout,
         sampler: &wgpu::Sampler,
+        linear: &wgpu::Sampler,
     ) -> Target {
-        let size = Self::low_res_size(gpu, low_height, forced_aspect);
-        let hud_size = size * hud_scale;
-        let texture = |label, size: UVec2, format, usage| {
+        let size = Self::scene_size(gpu, forced_aspect);
+        let hud_size = Self::low_res_size(gpu, low_height, forced_aspect) * hud_scale;
+        let texture_n = |label, size: UVec2, format, usage, samples: u32| {
             gpu.device
                 .create_texture(&wgpu::TextureDescriptor {
                     label: Some(label),
                     size: wgpu::Extent3d { width: size.x, height: size.y, depth_or_array_layers: 1 },
                     mip_level_count: 1,
-                    sample_count: 1,
+                    sample_count: samples,
                     dimension: wgpu::TextureDimension::D2,
                     format,
                     usage,
@@ -623,12 +654,15 @@ impl Renderer {
                 })
                 .create_view(&Default::default())
         };
+        let texture = |label, size: UVec2, format, usage| texture_n(label, size, format, usage, 1);
         use wgpu::TextureUsages as U;
-        let color = texture("low-res color", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
-        let depth = texture("low-res depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT);
+        let color_msaa = texture_n("scene (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
+        let color = texture("scene", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
+        let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let hud = texture("hud", hud_size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
-        let front = texture("front", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
-        let composite = texture("composite", hud_size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
+        let front_msaa = texture_n("front (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
+        let front = texture("front", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
+        let composite = texture("composite", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
         let blit = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("blit"),
             layout,
@@ -637,15 +671,16 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::TextureView(&hud) },
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::Sampler(sampler) },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&front) },
+                wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::Sampler(linear) },
             ],
         });
-        Target { size, hud_size, color, depth, hud, front, composite, blit }
+        Target { size, hud_size, color_msaa, color, depth, hud, front_msaa, front, composite, blit }
     }
 
     pub fn resize(&mut self, gpu: &Gpu) {
-        if Self::low_res_size(gpu, self.low_height, self.forced_aspect) != self.target.size {
+        if Self::scene_size(gpu, self.forced_aspect) != self.target.size {
             self.target =
-                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler);
+                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler, &self.linear);
         }
     }
 
@@ -728,12 +763,12 @@ impl Renderer {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("scene"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &self.target.color,
+                    view: &self.target.color_msaa,
                     depth_slice: None,
-                    resolve_target: None,
+                    resolve_target: Some(&self.target.color),
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color { r, g, b, a }),
-                        store: wgpu::StoreOp::Store,
+                        store: wgpu::StoreOp::Discard,
                     },
                 })],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
@@ -762,10 +797,10 @@ impl Renderer {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("front"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &self.target.front,
+                    view: &self.target.front_msaa,
                     depth_slice: None,
-                    resolve_target: None,
-                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
+                    resolve_target: Some(&self.target.front),
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Discard },
                 })],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &self.target.depth,
@@ -893,7 +928,7 @@ impl Renderer {
     }
 
     fn copy_to_buffer(&self, gpu: &Gpu, encoder: &mut wgpu::CommandEncoder) -> (wgpu::Buffer, u32) {
-        let size = self.target.hud_size;
+        let size = self.target.size;
         let padded_row = (size.x * 4).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT);
         let buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("screenshot"),
@@ -922,7 +957,7 @@ impl Renderer {
     }
 
     fn save_png(&self, gpu: &Gpu, buffer: &wgpu::Buffer, padded_row: u32, path: &Path) -> Result<(), String> {
-        let size = self.target.hud_size;
+        let size = self.target.size;
         buffer.slice(..).map_async(wgpu::MapMode::Read, |_| {});
         gpu.device.poll(wgpu::PollType::wait_indefinitely()).map_err(|e| e.to_string())?;
         let mapped = buffer.slice(..).get_mapped_range().map_err(|e| e.to_string())?;

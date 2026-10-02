@@ -106,7 +106,9 @@ fn reflector(frame: &Frame, app: &App) -> Option<universe_engine::Reflector> {
     };
     let [r, g, bl] = b.color;
     let top = r.max(g).max(bl).max(1e-3);
-    Some(universe_engine::Reflector { center: app.view.positions[i], radius: b.rail.radius, albedo, color: [r / top, g / top, bl / top] })
+    // (Its colour paled by clouds and haze: half way to white.)
+    let pale = |c: f32| 0.5 + 0.5 * c / top;
+    Some(universe_engine::Reflector { center: app.view.positions[i], radius: b.rail.radius, albedo, color: [pale(r), pale(g), pale(bl)] })
 }
 
 /// Top of a world's atmosphere, for the sky's colour (m).
@@ -341,7 +343,8 @@ fn bodies(frame: &mut Frame, app: &App) {
         if b.kind == BodyKind::Gate {
             if frame.projected_radius(center, b.rail.radius) > 0.8 {
                 let t = Transform { position: center, rotation, scale: 1.0 };
-                frame.model_shaded(&app.models.gate, &t, c, c.scale(0.45));
+                let metal = Color::hex(0x767d85);
+                frame.with_surface(0.45, 44.0, 0.0, |frame| frame.model_shaded(&app.models.gate, &t, metal.scale(0.7), metal));
             } else {
                 frame.point(center, c);
             }
@@ -350,7 +353,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         if b.kind == BodyKind::Station {
             if px > 0.8 {
                 let t = Transform { position: center, rotation, scale: 1.0 };
-                frame.model_shaded(&app.models.station, &t, Color::WHITE, HULL);
+                frame.with_surface(0.2, 24.0, 0.0, |frame| frame.model_shaded(&app.models.station, &t, HULL.scale(0.75), HULL));
             } else {
                 frame.point(center, c.scale(0.8));
             }
@@ -406,7 +409,8 @@ fn bodies(frame: &mut Frame, app: &App) {
         let d = to.length();
         if d > b.rail.radius {
             let dir = to / d;
-            let rings: &[(f64, f32)] = if b.kind == BodyKind::Star { &[(1.0, 1.0), (1.12, 0.45), (1.3, 0.2)] } else { &[(1.0, 1.0)] };
+            // (A planet's own surface shows it: no outline. The star: its halo, for now.)
+            let rings: &[(f64, f32)] = if b.kind == BodyKind::Star { &[(1.12, 0.45), (1.3, 0.2)] } else { &[] };
             for &(k, brightness) in rings {
                 let r = b.rail.radius * k;
                 if d > r {
@@ -438,8 +442,30 @@ fn grid_detail(px: f32) -> f32 {
 pub const TRAFFIC: Color = Color::hex(0x50d8ff);
 /// Ships that are aggressed (fair game).
 pub const AGGRESSED: Color = Color::hex(0xff4040);
-/// Hull plating of ships and stations, as lit by the star.
-const HULL: Color = Color::hex(0x5a6068);
+/// Hull plating of stations (and ships of no livery), as lit by the star.
+const HULL: Color = Color::hex(0x6c7278);
+/// Metal: a hull's glint in the sun (strength, sharpness).
+const METAL: (f32, f32) = (0.35, 36.0);
+
+/// A ship's livery: neutral plating with a faint tint by its trade (the
+/// player's a clean light grey-blue).
+fn livery(name: &str) -> Color {
+    match name.split(' ').next().unwrap_or("") {
+        "Trader" => Color::hex(0x9c9488),
+        "Pirate" => Color::hex(0x5e5658),
+        "Miner" => Color::hex(0x928c72),
+        "Shuttle" => Color::hex(0xa8b0b8),
+        "Settler" => Color::hex(0x868d94),
+        "" => Color::hex(0xa4adb6),
+        _ => HULL,
+    }
+}
+
+/// A hull drawn solid: its plating in `fill`, its panel lines a little
+/// darker (no outline), metal glinting in the sun.
+fn hull_model(frame: &mut Frame, mesh: &universe_engine::Mesh, t: &Transform, fill: Color) {
+    frame.with_surface(METAL.0, METAL.1, 0.0, |frame| frame.model_shaded(mesh, t, fill.scale(0.72), fill));
+}
 
 /// Other ships in the system being viewed.
 fn crafts(frame: &mut Frame, app: &App) {
@@ -457,7 +483,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         }
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
-        frame.model_shaded(app.models.hull(&c.ship), &t, tc, HULL);
+        hull_model(frame, app.models.hull(&c.ship), &t, livery(&c.name));
         jets(frame, &c.ship, pos, turned, app.now(), i);
         if pos.distance(cam) < 20_000.0
             && let Some(p) = frame.project(pos)
@@ -1078,11 +1104,11 @@ fn ship(frame: &mut Frame, app: &App) {
     if app.mode == Mode::Pilot && app.chase_cam && !panel {
         // (Its jets too: drawn behind the hull, they'd be hidden by it.)
         frame.in_front(|frame| {
-            frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL);
+            hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
             jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
         });
     } else {
-        frame.model_shaded(app.models.hull(&app.ship), &t, SHIP_COLOR, HULL);
+        hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
         jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
     }
     // Landed on a body: the landing legs, down to the ground.

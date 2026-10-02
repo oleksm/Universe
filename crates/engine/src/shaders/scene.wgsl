@@ -77,6 +77,8 @@ struct MeshIn {
     @location(10) light_color: vec4<f32>,
     @location(11) refl_dir: vec4<f32>,
     @location(12) refl_color: vec4<f32>,
+    // x: glint (0 matte .. 1), y: its sharpness (a power), z: glow.
+    @location(13) material: vec4<f32>,
 };
 
 const EXPOSURE: f32 = 0.3;
@@ -126,16 +128,29 @@ struct MeshOut {
     @location(3) ambient: f32,
     @location(4) at: vec3<f32>,
     @location(5) normal: vec3<f32>,
+    // The sun's direction (xyz) and its light here (rgb), unshaded; the surface.
+    @location(6) sun_dir: vec3<f32>,
+    @location(7) sun_light: vec3<f32>,
+    @location(8) material: vec4<f32>,
 };
 
 @fragment
 fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
-    let seen = sunlit(in.at, normalize(in.normal));
+    let n = normalize(in.normal);
+    let seen = sunlit(in.at, n);
     let light = min(in.sun * seen + in.fill, vec3<f32>(4.0));
     if (g.shadow.w > 0.0 && seen < 0.5 && max(in.sun.r, max(in.sun.g, in.sun.b)) > 0.0) {
         return vec4<f32>(0.8, 0.0, 0.0, in.color.a);
     }
-    return vec4<f32>(in.color.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light), in.color.a);
+    var c = in.color.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light);
+    // The sun's glint: where the surface turns the light to the eye (Blinn).
+    if (in.material.x > 0.0 && dot(n, in.sun_dir) > 0.0) {
+        let h = normalize(in.sun_dir + normalize(-in.at));
+        c += in.sun_light * in.material.x * pow(max(dot(n, h), 0.0), in.material.y) * seen;
+    }
+    // What glows of itself (windows, lamps, hot metal).
+    c += in.color.rgb * in.material.z;
+    return vec4<f32>(c, in.color.a);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {
@@ -151,7 +166,7 @@ fn vs_mesh(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n);
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material);
 }
 
 @vertex
@@ -161,5 +176,6 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     let p = place(v);
     var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
-    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n);
+    // (Edges, panel lines: no glint of their own.)
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0));
 }

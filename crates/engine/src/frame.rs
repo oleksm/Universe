@@ -62,6 +62,8 @@ pub struct Frame {
     /// (metres; 0: none). See `no_shadow`.
     pub shadow_reach: f64,
     casts: bool,
+    /// The surface meshes are drawn with now (see `Instance::material`, `with_surface`).
+    surface: [f32; 4],
     /// Low-res scene resolution.
     scene_size: Vec2,
     /// HUD layer resolution (a multiple of the scene's).
@@ -111,6 +113,9 @@ pub(crate) struct Instance {
     pub light_color: [f32; 4],
     pub refl_dir: [f32; 4],
     pub refl_color: [f32; 4],
+    /// Its surface: how much it glints in the light (0 matte .. 1), how
+    /// tight the glint (a power: higher, sharper), how much it glows itself.
+    pub material: [f32; 4],
 }
 
 /// A light source: a star. How bright it looks falls with the square of the
@@ -216,6 +221,7 @@ impl Frame {
             eclipsers: Vec::new(),
             shadow_reach: 0.0,
             casts: true,
+            surface: [0.0, 16.0, 0.0, 0.0],
             scene_size,
             size: hud_size,
             sky: Vec::new(),
@@ -263,6 +269,14 @@ impl Frame {
         let before = std::mem::replace(&mut self.in_front, true);
         f(self);
         self.in_front = before;
+    }
+
+    /// Meshes drawn in `f` have this surface: `glint` (0 matte .. 1 polished
+    /// metal), `sharp` (its power: 8 broad .. 80 tight), `glow` (lit by itself).
+    pub fn with_surface(&mut self, glint: f32, sharp: f32, glow: f32, f: impl FnOnce(&mut Frame)) {
+        let before = std::mem::replace(&mut self.surface, [glint, sharp, glow, 0.0]);
+        f(self);
+        self.surface = before;
     }
 
     /// Meshes drawn in `f` cast no shadows (a planet's globe: its night is
@@ -420,6 +434,7 @@ impl Frame {
             light_color: [0.0, 0.0, 0.0, 1.0],
             refl_dir: [0.0; 4],
             refl_color: [0.0; 4],
+            material: self.surface,
         };
         if lit && let Some(light) = self.light {
             let dir = (light.position - t.position).normalize_or_zero().as_vec3();
