@@ -38,7 +38,7 @@ what a place or ship has heard, and when. (See `roadmap.md` §1–2.)
 | Ship comm, long-range | about 300,000 km | about 0.5 AU | small | medium | power-hungry |
 | Port or station relay | about 1,000,000 km | about 30 AU | small | high | the backbone in a system |
 | Beacon relay (outpost) | about 500,000 km | about 5 AU | small | medium | for chains into belts and far systems |
-| Gate relay module | (its system's relay) | the gate pair | about the transit | high | links two systems |
+| Gate relay module | (its system's relay) | the gate pair | 1 s (the throat itself: microseconds) | high | links two systems |
 
 Brands differ: range against power, capacity against cost, robustness (later: wear and failure).
 Numbers are first guesses, to tune.
@@ -58,7 +58,7 @@ In the base world (`content/base/modules.ron`). Two kinds of infrastructure, **i
 | STATION TRANSCEIVER (`transceiver.station`) | transceiver | stations | 0.5 AU | 1,000,000 km | 0.02 s | 100,000 | 1 MW |
 | BEACON TRANSCEIVER (`transceiver.beacon`) | transceiver | gates, orbital sites, claim beacons | 0.5 AU | 500,000 km | 0.05 s | 20,000 | 300 kW |
 | HYPER RELAY (`relay.hyper`, Halcyon) | relay | every space structure | hyperspace | - | 0.1 s | 100,000 | 1.5 MW |
-| GATE RELAY (`relay.gate`, Halcyon) | relay | gate rings | through the throat | - | 1 s + the crossing | 50,000 | 2 MW |
+| GATE RELAY (`relay.gate`, Halcyon) | relay | gate rings | through the throat | - | 1 s (the throat: microseconds) | 50,000 | 2 MW |
 | GROUND TERMINAL (`terminal.ground`) | terminal | spaceports, outposts | up to orbit | 100,000 km | 0.02 s | 50,000 | 100 kW |
 
 **The system's net:** its sites in space (the station, the gates, an orbital site round every

@@ -36,6 +36,7 @@ A hyper-field's draw: P = m·s·(P_FLOOR + P_PUSH·(v/v*)³) / η, η the device
 | `P_FLOOR` | 10000 | W/kg | Invented | Holding a field in open space, per kg in it. |
 | `P_PUSH` | 5000 | W/kg | Invented | Pushing it through the medium at the best speed; grows with the cube of speed. |
 | `V_BEST_C` | 1000 | c | Invented | v*: the speed the push is reckoned at. |
+| `HYPER_BIT_MASS` | 1e-9 | kg | Invented | A hyper-signal's carrier: the field a relay holds round each bit it sends. Nearly free where the medium's stiff; between stars every bit pays the wall. |
 
 ## Throat
 
@@ -44,7 +45,7 @@ A gate pair is one wormhole throat: holding it open takes P = P0·(S/S0)³ for a
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
 | `MAX_TRANSIT_SPEED` | 300 | m/s | Invented | Faster through a throat and the transit wrecks what goes in. |
-| `TRANSIT_TIME` | 10 | s | Invented | Through the throat, ring to ring (matter and hyper-signals). |
+| `TRANSIT_TIME` | 10 | s | Invented | Matter through the throat, ring to ring: under MAX_TRANSIT_SPEED, a throat about 3 km long. A signal crosses it at light speed (about 10 µs). |
 | `GATE_P0` | 1e9 | W | Invented | Holding a throat open at the reference span. |
 | `GATE_S0` | 10 | ly | Invented | The reference span. |
 | `GATE_TAU` | 2.6e-9 | J/(kg·m) | Invented | A transit's energy per kg per metre of span (the gate's, not the traveller's). |

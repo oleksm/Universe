@@ -57,6 +57,12 @@ fn within_a_system_the_medium_is_stiff() {
     assert!(slack(40.0 * AU) < STIFF_SLACK, "a field must still form at the outer planets: {}", slack(40.0 * AU));
     // And between stars it's all slack.
     assert!(slack(2.0 * LIGHT_YEAR) >= 1.0);
+    // A hyper-signal: next to free across a system, dear between stars.
+    use universe_physics::hyper::bit_energy;
+    assert!(bit_energy(slack(AU), AU, 0.6) < 1e-6, "{}", bit_energy(slack(AU), AU, 0.6));
+    assert!(bit_energy(1.0, 5.0 * LIGHT_YEAR, 0.6) > 1.0, "{}", bit_energy(1.0, 5.0 * LIGHT_YEAR, 0.6));
+    // A signal through a throat in microseconds; matter in its 10 s.
+    assert!(universe_physics::hyper::throat_signal_time() < 1e-3);
 }
 
 #[test]

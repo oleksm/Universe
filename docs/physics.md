@@ -198,9 +198,11 @@ distance `S` between its rings.
 
 ### Hyper-signals: the hypernet's carrier
 
-- A relay's signal travels the medium under the same limit near masses: its time is `∫ ds / v_lim`
-  climbing out of wells (blocked by bodies). In open space it's as fast as its energy buys,
-  under the same law: a stronger relay sends faster, and farther.
+- A relay's signal is **field pulses, not photons**: the relay turns the message into a tiny field
+  round each bit (`HYPER_BIT_MASS`), sends it through the medium, and the far relay turns it back
+  into photons. Its time is `∫ ds / v_lim` (the medium's limit binds, as for ships); its energy per
+  bit `m_bit · s · (P_FLOOR + P_PUSH) · L / v* / η`: next to nothing in a system, dear between
+  stars. A relay's power buys throughput, not speed.
 - **Its strength falls with the square of the distance:** a relay sending `P_tx` reaches a receiver of
   sensitivity `p_min` within `R = √(P_tx · G / p_min)` (`G`: the antennas' gain, by brand and size).
   So reach is bought with power and size, and the far frontier needs relays laid out to it.
@@ -211,8 +213,9 @@ distance `S` between its rings.
   and capacity is a count of messages, not bits.
 - Every ship carries a comm (a base block); every structure a relay (`structures.ron` `fit`); a
   gate ring may carry a gate relay (`Does::GateRelay`), the throat's crossing being Dogma's.
-- Between stars a signal pays the same steep reach. A **gate relay module** sends it through the
-  throat instead (at `TRANSIT_TIME`). The network's backbone is its gates.
+- Between stars a signal pays the wall per bit. A **gate relay module** sends it through the
+  throat instead: about 3 km, crossed at light speed (microseconds; matter takes its 10 s). The
+  network's backbone is its gates.
 - **Capture stays real:** events are sensed by light and radar at light speed, within range. Only
   carrying uses the medium.
 

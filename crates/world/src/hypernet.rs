@@ -305,14 +305,15 @@ impl Net {
 
     /// From the backbone out through each gate relay on the net to the throat:
     /// (the system it leads to, the delay to the far ring (s): the lag to the
-    /// gate, its handling, and the crossing).
+    /// gate, its handling, and the crossing: a signal through a throat at
+    /// light speed, microseconds).
     pub fn gates(&self) -> Vec<(usize, f64)> {
         self.nodes
             .iter()
             .zip(&self.lag)
             .filter_map(|(n, l)| {
                 let (to, handling) = n.gate_relay?;
-                Some((to, (*l)? + handling + crate::gate::TRANSIT_TIME))
+                Some((to, (*l)? + handling + universe_physics::hyper::throat_signal_time()))
             })
             .collect()
     }
@@ -360,8 +361,8 @@ mod tests {
         // A fight by the station is on the backbone within a second; one far out isn't heard.
         assert!(net.heard(&sys, &positions, near).is_some_and(|t| t < 1.0));
         assert!(net.heard(&sys, &positions, far).is_none());
-        // Out through a gate relay: the crossing and a little.
-        assert!(net.gates().iter().all(|(_, d)| *d >= crate::gate::TRANSIT_TIME && *d < crate::gate::TRANSIT_TIME + 5.0));
+        // Out through a gate relay: the relay's handling, the throat in microseconds.
+        assert!(net.gates().iter().all(|(_, d)| *d >= 1.0 && *d < 5.0), "{:?}", net.gates());
         // Behind a world, from its only relay: blocked.
         let p = positions[sys.bodies[station].rail.parent.unwrap()];
         assert!(blocked(&sys, &positions, p + DVec3::X * 1.0e9, p - DVec3::X * 1.0e9));

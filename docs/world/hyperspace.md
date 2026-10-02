@@ -57,7 +57,7 @@ A gate pair is one wormhole: what enters one ring leaves the other.
 | Holding the throat open | `P = P₀ · (S / S₀)³`, P₀ = 1 GW, S₀ = 10 ly: 10 ly 1 GW, 25 ly 16 GW, 50 ly 125 GW, 100 ly 1 TW | on paper |
 | A transit's energy | `E = τ · m · S`, τ = 2.6×10⁻⁹ J/(kg·m): 1,000 t across 40 ly ≈ 10¹⁵ J (the gate's, not the traveller's) | on paper |
 | Entry speed | at most 300 m/s, or the transit wrecks what goes in | simulated |
-| Time through | 10 s, ring to ring, for anything (TRANSIT_TIME) | simulated |
+| Time through | matter: 10 s, ring to ring (TRANSIT_TIME); the throat is about 3 km long (300 m/s × 10 s); a signal crosses it at light speed, about 10 µs | simulated |
 
 - **Ring classes** (world content, not Dogma): a ring's class sets the longest throat it holds:
   I 10 ly, II 25 ly, III 50 ly.
@@ -68,27 +68,44 @@ A gate pair is one wormhole: what enters one ring leaves the other.
 
 ## 4. Hyper-signals: the hypernet's carrier
 
-- A relay's signal travels the medium **at its limit along the line**: its time is `∫ ds / v_lim`,
-  slow climbing away from each world, fast across the open middle. A 1 AU hop: about 10-15 s
-  (light: 499 s). Each relay adds its handling (0.1 s).
+**What a hyper-signal is.** Not photons. The hypernet carries data two ways:
+
+- **Ship ↔ transceiver: photons.** Radio or laser at light speed, falling off with the square of
+  the distance: a transceiver's radius (0.5 AU) is what its power and antennas reach.
+- **Relay ↔ relay: field pulses.** A relay transduces the message out of photons into a train of
+  tiny fields in the medium, one round each bit (the same kind of field a hyperdrive holds, with
+  next to nothing in it), sends them through the medium, and the far relay turns them back into
+  photons. The "pipe" is pulses; photons only at its ends.
+
+The field law applies to the pulses as to ships:
+
+| | Formula | Means |
+|---|---|---|
+| Speed | the medium's limit along the line: `t = ∫ ds / v_lim` | slow climbing away from each world, fast across the open middle: a 1 AU hop about 10-15 s (light: 499 s) |
+| Energy per bit | `E = m_bit · s · (P_FLOOR + P_PUSH) · L / v* / η` (at the push's best speed v*), m_bit = 10⁻⁹ kg (HYPER_BIT_MASS) | across 1 AU in a system about 10⁻¹¹ J (free); across 5 ly between stars about 4 J |
+| Throughput | a relay's power × η ÷ the energy per bit | in a system, limited by the relay's handling, not its power; a 1.5 MW relay across 5 ly of slack: about 230,000 bits a second |
+
+- **Energy buys throughput, not speed:** in a system the medium's limit binds (as for ships); a
+  stronger relay carries more, not faster. Between stars, a gateless link is dear per bit: the
+  far frontier needs relays laid out to it, or gates.
+- **Through a gate** a signal crosses the throat at light speed (about 10 µs), plus the gate
+  relay's handling (1 s): the 10 s is matter's.
+- Each relay adds its handling (0.1 s).
 - *Simplified:* a signal is reckoned at least 10,000 km from any surface (a site sits in orbit,
   not on its world).
-- Through a gate a signal takes the throat's 10 s, as matter does (plus the gate relay's 1 s).
 - See `docs/hypernet.md`: transceivers (the towers ships connect to, 0.5 AU) and hyper relays (the
   links between sites, the shortest network all told, planned daily).
 
 ## Open questions
 
-1. **Why 10 s through a throat?** Asserted, not derived. It could follow from a throat length and
-   the 300 m/s limit (300 m/s × 10 s ≈ a 3 km throat), perhaps longer for a bigger ring.
-2. **Should signals cross a throat almost at once?** A signal isn't bound by the 300 m/s matter
-   limit; through a 3 km throat at light speed it would take microseconds. Gate crossings are
-   today the larger part of news between systems.
-3. **Should a relay's energy matter?** The charter says a signal in open space goes "as fast as its
-   energy buys"; today only the geometry counts. In a system that's consistent with ships (the
-   limit binds); energy would only bite on links through slack space between stars.
-4. **Gates' power and transit energy aren't simulated:** no powerplant, no fuel, no fees; lanes
+1. **Why 10 s through a throat?** Still asserted (the throat's 3 km follows from it, not the other
+   way round); a bigger ring might have a longer throat.
+2. **Gates' power and transit energy aren't simulated:** no powerplant, no fuel, no fees; lanes
    don't go dark. Natural with factions owning gates.
+3. **Relays' energy isn't simulated yet** (their power per bit, their throughput): nothing yet
+   links through slack space, where it would bite.
+4. *Settled (2026-10-02):* signals cross a throat in microseconds; a relay's energy buys
+   throughput, not speed.
 
 ## Numbers at a glance
 
@@ -101,3 +118,5 @@ A gate pair is one wormhole: what enters one ring leaves the other.
 | 1,000 t through a 40 ly gate | about 10¹⁵ J |
 | Through a throat | 10 s, entering under 300 m/s |
 | A hyper-signal across 1 AU | about 10-15 s (light 8.3 min) |
+| A signal through a throat | about 10 µs (matter: 10 s) |
+| A bit across 5 ly of slack | about 4 J |

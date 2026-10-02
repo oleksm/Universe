@@ -43,7 +43,7 @@ pub enum Does {
     /// `capacity` messages an hour.
     Comm { capture: f64, link: f64, lag: f64, capacity: f64 },
     /// A gate relay (fitted to a gate ring): links its system's net to its
-    /// twin's through the throat (Dogma's `TRANSIT_TIME`), handling a message
+    /// twin's through the throat (a signal crosses it in microseconds), handling a message
     /// in `lag` (s) more, `capacity` messages an hour.
     GateRelay { lag: f64, capacity: f64 },
     /// A hyper relay (space structures): links its site to others through

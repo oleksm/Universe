@@ -38,6 +38,7 @@
             (name: "P_FLOOR", value: 1.0e4, unit: "W/kg", kind: Invented, note: "Holding a field in open space, per kg in it."),
             (name: "P_PUSH", value: 5.0e3, unit: "W/kg", kind: Invented, note: "Pushing it through the medium at the best speed; grows with the cube of speed."),
             (name: "V_BEST_C", value: 1000.0, unit: "c", kind: Invented, note: "v*: the speed the push is reckoned at."),
+            (name: "HYPER_BIT_MASS", value: 1.0e-9, unit: "kg", kind: Invented, note: "A hyper-signal's carrier: the field a relay holds round each bit it sends. Nearly free where the medium's stiff; between stars every bit pays the wall."),
         ],
     ),
     (
@@ -45,7 +46,7 @@
         note: "A gate pair is one wormhole throat: holding it open takes P = P0·(S/S0)³ for a span S; a transit costs τ·m·S.",
         entries: [
             (name: "MAX_TRANSIT_SPEED", value: 300.0, unit: "m/s", kind: Invented, note: "Faster through a throat and the transit wrecks what goes in."),
-            (name: "TRANSIT_TIME", value: 10.0, unit: "s", kind: Invented, note: "Through the throat, ring to ring (matter and hyper-signals)."),
+            (name: "TRANSIT_TIME", value: 10.0, unit: "s", kind: Invented, note: "Matter through the throat, ring to ring: under MAX_TRANSIT_SPEED, a throat about 3 km long. A signal crosses it at light speed (about 10 µs)."),
             (name: "GATE_P0", value: 1.0e9, unit: "W", kind: Invented, note: "Holding a throat open at the reference span."),
             (name: "GATE_S0", value: 10.0, unit: "ly", kind: Invented, note: "The reference span."),
             (name: "GATE_TAU", value: 2.6e-9, unit: "J/(kg·m)", kind: Invented, note: "A transit's energy per kg per metre of span (the gate's, not the traveller's)."),

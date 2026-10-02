@@ -248,6 +248,6 @@ mod tests {
         news.update(&charts, &realm, 60.0, &us, &Happenings { kills: &kills, ..Default::default() });
         assert!(heard(&news, &kills[1]).is_none(), "nobody saw it");
         let t = heard(&news, &kills[2]).expect("through the gates by now");
-        assert!(t >= universe_world::gate::TRANSIT_TIME, "a crossing at least: {t}");
+        assert!(t >= 1.0, "the gate relays' handling at least: {t}");
     }
 }
