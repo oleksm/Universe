@@ -16,3 +16,6 @@
 - The `manual` scenario takes `UNIVERSE_BURN` (mains held).
 - **Small thrusters puff, don't glow:** lift and attitude thrusters give a white, dusty spray of cold gas,
   specks drifting out, widening and fading. Only the main drive has the blue forge glow and plume.
+- **The drive idles warm:** powered up (J) and flying, the main bells keep a low forge glow; it
+  brightens with the throttle. **In the hyperdrive** it burns full (the old amber wake line is gone).
+  Before, the hyperdrive showed no glow at all: its jet settings are empty then.

@@ -1369,11 +1369,6 @@ fn ship(frame: &mut Frame, app: &App) {
             frame.line(foot - side, foot + side, SHIP_COLOR.scale(0.7));
         }
     }
-    if app.ship.hyperdrive {
-        // The drive's wake (it has no jets).
-        let back = turned * DVec3::Z;
-        frame.line(pos + back * 16.0, pos + back * 26.0, Color::hex(0xffa040));
-    }
 }
 
 /// Plume length per √newton of thrust (m): a full Drover drive nozzle
@@ -1389,7 +1384,19 @@ const GLOW: f64 = 0.0016;
 /// flickering. `seed` sets the flicker apart ship from ship.
 fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned: DQuat, now: f64, seed: usize) {
     use universe_sim::world::ship::ThrusterRole;
-    for (k, (t, &u)) in ship.spec().thrusters.iter().zip(&ship.jets).enumerate() {
+    // (Its jets' settings may be empty: in the hyperdrive, say. Then 0.)
+    for (k, t) in ship.spec().thrusters.iter().enumerate() {
+        let u = ship.jets.get(k).copied().unwrap_or(0.0);
+        // (A powered drive idles warm in its bells; in the hyperdrive it burns full.)
+        let u = if t.role != ThrusterRole::Main {
+            u
+        } else if ship.hyperdrive {
+            1.0
+        } else if ship.powered && ship.is_flying() {
+            u.max(0.15)
+        } else {
+            u
+        };
         if u < 0.02 {
             continue;
         }
