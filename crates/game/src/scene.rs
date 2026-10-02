@@ -1418,17 +1418,19 @@ fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned:
             // A thruster's puff: cold gas, a white dusty spray widening and
             // thinning out, each speck drifting out and fading (no glow at the nozzle).
             let (a, b) = (out.any_orthonormal_vector(), out.cross(out.any_orthonormal_vector()));
-            let length = reach.max(1.0) * 1.4;
-            for i in 0..10u32 {
+            let length = reach.max(1.0) * 0.8;
+            // (Forced out of the nozzle: a tight jet, a faint core along it.)
+            frame.line(from, from + out * (length * 0.6), Color::rgb(0.5, 0.52, 0.55).scale(0.3 + 0.4 * u as f32));
+            for i in 0..8u32 {
                 let h = |n: u32| ((i.wrapping_mul(2_654_435_761) ^ n.wrapping_mul(40_503) ^ (k as u32).wrapping_mul(97)) % 1000) as f64 / 1000.0;
                 // (Each speck on its own loop out along the jet.)
                 let f = (now * 3.0 + h(1)).fract();
-                let spread = f * length * 0.35;
+                let spread = f * length * 0.08;
                 let ang = h(2) * std::f64::consts::TAU;
                 let at = from + out * (f * length) + (a * ang.cos() + b * ang.sin()) * spread * h(3);
                 let fade = (1.0 - f as f32) * (0.4 + 0.6 * u as f32);
-                let w = 0.45 * fade;
-                frame.glow(at, mouth * (0.4 + 1.6 * f), [w, w, w * 1.03], 0.0);
+                let w = 0.3 * fade;
+                frame.glow(at, mouth * (0.2 + 0.5 * f), [w, w, w * 1.03], 0.0);
             }
         }
     }

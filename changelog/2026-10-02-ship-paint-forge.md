@@ -19,3 +19,5 @@
 - **The drive idles warm:** powered up (J) and flying, the main bells keep a low forge glow; it
   brightens with the throttle. **In the hyperdrive** it burns full (the old amber wake line is gone).
   Before, the hyperdrive showed no glow at all: its jet settings are empty then.
+- **Thruster puffs tighter:** smaller specks, a narrow jet (forced out, little spread), shorter, with a
+  faint core line. No more looking like debris round a wreck.
