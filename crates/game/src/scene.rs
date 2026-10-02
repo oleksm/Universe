@@ -533,6 +533,16 @@ fn hull_model(frame: &mut Frame, mesh: &universe_engine::Mesh, t: &Transform, fi
     frame.with_surface(METAL.0, METAL.1, 0.0, |frame| frame.model_shaded(mesh, t, fill.scale(0.72), fill));
 }
 
+/// A ship's detail: its engine bells (dark, heat-stained metal) and its
+/// canopy (dark glass, glinting).
+fn hull_detail(frame: &mut Frame, (bells, glass): (&universe_engine::Mesh, &universe_engine::Mesh), t: &Transform) {
+    let soot = Color::hex(0x3a3a3e);
+    // (Too small for the shadow map to cast them cleanly: they cast none.)
+    frame.no_shadow(|frame| frame.with_surface(0.5, 30.0, 0.0, |frame| frame.model_shaded(bells, t, soot.scale(0.6), soot)));
+    let tint = Color::hex(0x1c2630);
+    frame.with_surface(1.2, 90.0, 0.0, |frame| frame.model_shaded(glass, t, tint.scale(1.6), tint));
+}
+
 /// Other ships in the system being viewed.
 fn crafts(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
@@ -550,6 +560,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
         hull_model(frame, app.models.hull(&c.ship), &t, livery(&c.name));
+        hull_detail(frame, app.models.detail(&c.ship), &t);
         nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i);
         jets(frame, &c.ship, pos, turned, app.now(), i);
         if pos.distance(cam) < 20_000.0
@@ -1172,11 +1183,13 @@ fn ship(frame: &mut Frame, app: &App) {
         // (Its jets too: drawn behind the hull, they'd be hidden by it.)
         frame.in_front(|frame| {
             hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
+            hull_detail(frame, app.models.detail(&app.ship), &t);
             jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
         });
         nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
     } else {
         hull_model(frame, app.models.hull(&app.ship), &t, livery(""));
+        hull_detail(frame, app.models.detail(&app.ship), &t);
         nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
         jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
     }

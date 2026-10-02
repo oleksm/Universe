@@ -11,6 +11,9 @@ pub struct Models {
     pub station: Mesh,
     /// Each hull's, in the content's order (see `hull`).
     pub hulls: Vec<Mesh>,
+    /// Each hull's detail: its engine bells (dark metal), its canopy (glass).
+    pub hull_bells: Vec<Mesh>,
+    pub hull_glass: Vec<Mesh>,
     /// Each hull's navigation lights (shape frame): port, starboard, the tail strobe.
     pub hull_lights: Vec<[universe_engine::glam::DVec3; 3]>,
     pub gate: Mesh,
@@ -26,6 +29,8 @@ impl Models {
             station: Mesh::new(platform()),
             hulls: content().hulls.iter().map(|(_, h)| Mesh::new(wire(h.shape()))).collect(),
             hull_lights: content().hulls.iter().map(|(_, h)| nav_lights(h.shape())).collect(),
+            hull_bells: content().hulls.iter().map(|(_, h)| Mesh::new(bells(h))).collect(),
+            hull_glass: content().hulls.iter().map(|(_, h)| Mesh::new(canopy(h.shape()))).collect(),
             gate: Mesh::new(gate_ring()),
         }
     }
@@ -37,10 +42,82 @@ impl Models {
         &self.hulls[ship.class.index()]
     }
 
+    /// A ship's engine bells and canopy (see `bells`, `canopy`).
+    pub fn detail(&self, ship: &universe_sim::world::Ship) -> (&Mesh, &Mesh) {
+        let k = ship.class.index().min(self.hull_bells.len() - 1);
+        (&self.hull_bells[k], &self.hull_glass[k])
+    }
+
     /// A ship's navigation lights (see `nav_lights`).
     pub fn lights(&self, ship: &universe_sim::world::Ship) -> [universe_engine::glam::DVec3; 3] {
         self.hull_lights.get(ship.class.index()).copied().unwrap_or_default()
     }
+}
+
+/// A hull's engine bells: at each main nozzle a cone flaring out along the
+/// exhaust (a ring of faces, open at the mouth), sized by its thrust.
+fn bells(h: &universe_sim::world::ship::ClassSpec) -> WireModel {
+    use universe_sim::world::ship::ThrusterRole;
+    let mut m = WireModel::default();
+    for t in h.thrusters.iter().filter(|t| t.role == ThrusterRole::Main) {
+        let out = (-t.push).normalize().as_vec3();
+        let mouth = (0.0026 * t.thrust.sqrt()) as f32;
+        let (throat, length) = (mouth * 0.55, mouth * 1.4);
+        let a = out.any_orthonormal_vector();
+        let b = out.cross(a);
+        let at = t.at.as_vec3() - out * (length * 0.35);
+        let n = 14;
+        let base = m.positions.len() as u32;
+        for k in 0..n {
+            let ang = k as f32 / n as f32 * std::f32::consts::TAU;
+            let r = a * ang.cos() + b * ang.sin();
+            m.positions.push(at + r * throat);
+            m.positions.push(at + out * length + r * mouth);
+        }
+        let v = |k: u32, end: u32| base + (k % n) * 2 + end;
+        for k in 0..n {
+            // (Wound to face out of the cone.)
+            m.faces.push([v(k, 0), v(k + 1, 0), v(k + 1, 1)]);
+            m.faces.push([v(k, 0), v(k + 1, 1), v(k, 1)]);
+            m.edges.push([v(k, 1), v(k + 1, 1)]);
+            if k % 2 == 0 {
+                m.edges.push([v(k, 0), v(k, 1)]);
+            }
+        }
+    }
+    m
+}
+
+/// A hull's canopy: a low glass wedge on the top of its nose (found from its
+/// shape: a quarter of the way back, on its top there).
+fn canopy(s: &Shape) -> WireModel {
+    let pts = &s.mesh.points;
+    let (lo, hi) = s.mesh.extent();
+    let len = (hi.z - lo.z) as f32;
+    let (z0, z1) = (lo.z as f32 + 0.12 * len, lo.z as f32 + 0.32 * len);
+    // Its top and half-width over that stretch.
+    let near: Vec<&universe_engine::glam::DVec3> = pts.iter().filter(|p| (p.z as f32) >= z0 - 0.1 * len && (p.z as f32) <= z1 + 0.1 * len).collect();
+    let top = near.iter().map(|p| p.y as f32).fold(f32::NEG_INFINITY, f32::max);
+    let half = near.iter().map(|p| p.x.abs() as f32).fold(0.0, f32::max) * 0.35;
+    if !top.is_finite() || half <= 0.0 {
+        return WireModel::default();
+    }
+    let h = (half * 0.55).min(len * 0.04);
+    let y = top - h * 0.15;
+    let mut m = WireModel::default();
+    // Base corners (front pair narrower), the ridge.
+    let p = [
+        Vec3::new(-half * 0.5, y, z0), Vec3::new(half * 0.5, y, z0), Vec3::new(half, y, z1), Vec3::new(-half, y, z1),
+        Vec3::new(-half * 0.35, y + h, z0 + 0.4 * (z1 - z0)), Vec3::new(half * 0.35, y + h, z0 + 0.4 * (z1 - z0)), Vec3::new(half * 0.6, y + h * 0.9, z1), Vec3::new(-half * 0.6, y + h * 0.9, z1),
+    ];
+    m.positions.extend_from_slice(&p);
+    for (quad, n) in [([0, 1, 5, 4], Vec3::new(0.0, 0.6, -1.0)), ([1, 2, 6, 5], Vec3::X), ([3, 0, 4, 7], Vec3::NEG_X), ([4, 5, 6, 7], Vec3::Y), ([2, 3, 7, 6], Vec3::Z)] {
+        let ring = m.add_polygon(&quad, n);
+        for w in 0..4 {
+            m.edges.push([ring[w], ring[(w + 1) % 4]]);
+        }
+    }
+    m
 }
 
 /// Where a hull's navigation lights go: the port and starboard tips (its

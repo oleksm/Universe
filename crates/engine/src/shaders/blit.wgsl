@@ -22,7 +22,7 @@ fn vs_main(@builtin(vertex_index) i: u32) -> VertexOut {
 // The light as a camera takes it: a filmic curve (ACES, fitted), bright
 // highlights rolling off instead of clipping.
 fn film(x: vec3<f32>) -> vec3<f32> {
-    let e = x * 1.15;
+    let e = x * 0.9;
     return clamp((e * (2.51 * e + 0.03)) / (e * (2.43 * e + 0.59) + 0.14), vec3<f32>(0.0), vec3<f32>(1.0));
 }
 
