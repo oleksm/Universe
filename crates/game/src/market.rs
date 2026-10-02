@@ -20,6 +20,7 @@ const TEXT: Color = Color::hex(0xdcebf2);
 const DIM: Color = Color::hex(0x7d93a0);
 const SELECT: Color = Color::hex(0xffc040);
 const RED: Color = Color::hex(0xff4040);
+const AMBER: Color = Color::hex(0xffb040);
 const ROWS: usize = 34;
 
 /// One row: an offer here, or something in the hold this market doesn't trade.
@@ -39,6 +40,8 @@ pub struct MarketView {
     pub rows: Vec<Row>,
     pub banned: Vec<Category>,
     pub docked: Option<Facility>,
+    /// How old its quotes are (see `MarketView::age`).
+    pub age: Option<f64>,
     /// Up or down held this long (s): the cursor repeats.
     held: f32,
 }
@@ -49,7 +52,7 @@ impl MarketView {
         let markets = app.v.markets.clone();
         let docked = app.v.docked_market;
         let shown = docked.and_then(|d| markets.iter().position(|(f, _)| *f == d)).unwrap_or(0);
-        let mut v = MarketView { markets, shown, selected: 0, scroll: 0, rows: Vec::new(), banned: Vec::new(), docked, held: 0.0 };
+        let mut v = MarketView { markets, shown, selected: 0, scroll: 0, rows: Vec::new(), banned: Vec::new(), docked, age: None, held: 0.0 };
         v.refresh(app);
         v
     }
@@ -73,6 +76,7 @@ impl MarketView {
         rows.extend(m.held.iter().map(|&(item, quote)| Row { item, quote }));
         self.rows = rows;
         self.banned = m.banned.clone();
+        self.age = m.age;
         self.selected = self.selected.min(self.rows.len().saturating_sub(1));
     }
 }
@@ -141,8 +145,14 @@ pub fn draw(frame: &mut Frame, app: &App, v: &MarketView) {
     frame.text(Vec2::new(x, y), &title, TEXT);
     y += line;
     let here = v.docked == Some(*f);
-    let status = if here { "DOCKED HERE - TRADING OPEN".to_string() } else { "VIEW ONLY - DOCK OR LAND HERE TO TRADE".to_string() };
-    frame.text(Vec2::new(x, y), &status, if here { SELECT } else { DIM });
+    // Elsewhere: its prices as its board reached us over the hypernet.
+    let (status, sc) = match (here, v.age) {
+        (true, _) => ("DOCKED HERE - TRADING OPEN".to_string(), SELECT),
+        (false, None) => ("NO WORD OF ITS PRICES REACHES US - DOCK OR LAND HERE TO SEE".to_string(), AMBER),
+        (false, Some(a)) if a.is_infinite() => ("ITS PRICES AS LONG KNOWN (NO NEWER BOARD HAS REACHED US) - DOCK OR LAND TO TRADE".to_string(), AMBER),
+        (false, Some(a)) => (format!("ITS BOARD AS IT REACHED US OVER THE HYPERNET: {} OLD - DOCK OR LAND TO TRADE", crate::fmt::lag(a)), DIM),
+    };
+    frame.text(Vec2::new(x, y), &status, sc);
     y += line;
     let ship = &app.v.ship;
     let banned = if v.banned.is_empty() { "NOTHING".to_string() } else { v.banned.iter().map(|c| c.name()).collect::<Vec<_>>().join(", ") };

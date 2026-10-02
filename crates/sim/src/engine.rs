@@ -121,6 +121,10 @@ pub struct MarketView {
     pub banned: Vec<Category>,
     /// Quotes for what's in the hold and not listed (it may still be taken).
     pub held: Vec<(usize, Option<Quote>)>,
+    /// How old the quotes are (s): 0 where we're docked; elsewhere, its price
+    /// board as it reached us over the hypernet (infinite: long known);
+    /// None: no word of it reaches us.
+    pub age: Option<f64>,
 }
 
 /// The world as the client sees it after a tick.
@@ -339,12 +343,7 @@ impl Engine {
             })
             .collect();
         let markets = universe_world::traffic::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect();
-        let market = self.watched.map(|f| {
-            let (quotes, banned) = u.market_quotes(f);
-            let held = u.hold().into_iter().map(|(i, _)| i).filter(|i| !quotes.iter().any(|q| q.offer.item == *i)).collect::<Vec<_>>();
-            let held = held.into_iter().map(|i| (i, u.quote_for(f, i))).collect();
-            MarketView { market: f, quotes, banned, held }
-        });
+        let market = self.watched.map(|f| u.market_view(f));
         let pads = (0..sys.spaceports.len()).map(|p| u.atc.owners(system, universe_world::Facility::Spaceport(p))).collect();
         self.serial += 1;
         View {

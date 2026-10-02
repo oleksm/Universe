@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -1132,6 +1132,25 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.refresh();
             app.v = app.engine.view();
             app.market = Some(crate::market::MarketView::open(app));
+        }
+        "marketnear" | "marketfar" => {
+            // Docked at home, the world run a while (boards put out), looking at
+            // another market's prices as its board reached us: a port close by, or far.
+            apply(app, "docked");
+            for _ in 0..2400 {
+                app.engine.universe().step_world(1.0 / 60.0, 10.0, &Controls::default());
+            }
+            let u = app.engine.universe();
+            let names = u.markets();
+            let pick = if name == "marketnear" { "Port Sosavi" } else { "Port Fuba" };
+            let f = names.iter().find(|(_, n)| n.starts_with(pick)).or(names.last()).map(|m| m.0);
+            app.engine.send(universe_sim::Command::WatchMarket(f));
+            app.engine.refresh();
+            app.v = app.engine.view();
+            let mut m = crate::market::MarketView::open(app);
+            m.shown = m.markets.iter().position(|(g, _)| Some(*g) == f).unwrap_or(0);
+            m.refresh(app);
+            app.market = Some(m);
         }
         other => log::warn!("unknown scenario {other:?}; try one of: {SCENARIOS}"),
     }

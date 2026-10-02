@@ -145,9 +145,11 @@ pub struct MarketAnswer {
     /// Every quote here, and here for each item held.
     pub here: Vec<Quote>,
     pub here_held: Vec<Option<Quote>>,
-    /// The other markets, quoting `items` (held, then what's buyable here).
+    /// The other markets, quoting `items` (held, then what's buyable here),
+    /// as their boards have come here over the hypernet: with their age (s;
+    /// infinite: long known). A market whose board doesn't reach here isn't listed.
     pub items: Vec<usize>,
-    pub there: Vec<(Facility, Vec<Option<Quote>>)>,
+    pub there: Vec<(Facility, f64, Vec<Option<Quote>>)>,
     pub credits: f64,
     pub hold: Vec<(usize, u32)>,
     /// What its cargo weighs (kg), and the most its hold takes (kg); the

@@ -2,7 +2,9 @@
 //! market, booked in the ledger), quotes on request, and the trade log. What
 //! a trader buys and sells, and where it goes, is its own (see `operator`).
 
-use universe_services::market::{cargo_mass, Order};
+use std::collections::{HashMap, VecDeque};
+
+use universe_services::market::{cargo_mass, Order, Quote};
 use universe_services::Party;
 use universe_world::traffic::{docked_at, facilities};
 use universe_world::Facility;
@@ -12,6 +14,54 @@ use universe_services::records::{Deal, TradeRecord};
 
 /// What a new settler starts with (credits).
 pub const SETTLER_CREDITS: f64 = 3000.0;
+
+/// Markets put out their price boards this often (s), over the hypernet.
+pub const BOARD_EVERY: f64 = 120.0;
+/// Boards kept this long (s): past the slowest way round a system's net.
+const BOARD_KEPT: f64 = 3.0 * 3600.0;
+
+/// A price board: when it was put out, and the market's quote for every good
+/// (by the goods' order; None: not traded there).
+pub type Board = (f64, Vec<Option<Quote>>);
+
+/// What markets know of each other (`docs/hypernet.md`, step 5): each puts
+/// out its board every `BOARD_EVERY`; another market has it once it's come
+/// over the net (the board's market's lag from the backbone, and its own).
+/// A market off the net puts out nothing that's heard, and hears nothing.
+/// The world's first boards are long known everywhere.
+#[derive(Default)]
+pub struct Boards {
+    next: f64,
+    boards: HashMap<(usize, Facility), VecDeque<Board>>,
+    /// Each market's lag from its system's backbone at the last boards (None: dark).
+    lags: HashMap<(usize, Facility), Option<f64>>,
+    /// Each system's net at the last boards: the system, its bodies then, the net.
+    nets: HashMap<usize, (std::sync::Arc<universe_world::StarSystem>, Vec<glam::DVec3>, universe_world::hypernet::Net)>,
+}
+
+impl Boards {
+    /// The newest board of `f` that `here` (in `system`) has by `now`, and
+    /// its age (infinite: long known). None: nothing of it reaches here.
+    pub fn known(&self, system: usize, here: Facility, f: Facility, now: f64) -> Option<(f64, &Vec<Option<Quote>>)> {
+        let lag = |m: Facility| self.lags.get(&(system, m)).copied().flatten();
+        let delay = lag(f)? + lag(here)?;
+        self.newest(system, f, now - delay).map(|(t, b)| (now - t, b))
+    }
+
+    /// The newest board of `f` put out by `by`: when, and its quotes.
+    fn newest(&self, system: usize, f: Facility, by: f64) -> Option<(f64, &Vec<Option<Quote>>)> {
+        self.boards.get(&(system, f))?.iter().rev().find(|b| b.0 <= by).map(|b| (b.0, &b.1))
+    }
+
+    /// The newest board of `f` (in `system`) that's reached a comm at `p` by
+    /// `now`, over the net, and its age. None: nothing of it reaches there.
+    pub fn known_at(&self, system: usize, f: Facility, p: glam::DVec3, comm: &universe_world::modules::Comm, now: f64) -> Option<(f64, &Vec<Option<Quote>>)> {
+        let (sys, positions, net) = self.nets.get(&system)?;
+        let ours = net.status(sys, positions, p, comm)?.lag;
+        let delay = self.lags.get(&(system, f)).copied().flatten()? + ours;
+        self.newest(system, f, now - delay).map(|(t, b)| (now - t, b))
+    }
+}
 
 impl Universe {
     /// Pilot `pilot` (the player's 0, craft i: i + 1) asks the market at `f`
@@ -131,8 +181,66 @@ impl Universe {
         }
     }
 
-    /// What the market service tells pilot `id` at `at`: every market's
-    /// quotes in the system (as anyone there could see them), and its account.
+    /// The market screen's view of `f` in our system: live where we're docked;
+    /// elsewhere, its newest board that's reached us over the net (`age`:
+    /// how old; None: nothing of it reaches us, and no quotes).
+    pub fn market_view(&mut self, f: Facility) -> crate::engine::MarketView {
+        let (live, banned) = self.market_quotes(f);
+        let held: Vec<usize> = self.hold().into_iter().map(|(i, _)| i).collect();
+        if self.docked_market() == Some(f) {
+            let held = held.into_iter().filter(|i| !live.iter().any(|q| q.offer.item == *i)).map(|i| (i, self.quote_for(f, i))).collect();
+            return crate::engine::MarketView { market: f, quotes: live, banned, held, age: Some(0.0) };
+        }
+        let known = self.boards.known_at(self.ship_system, f, self.ship.position, &self.ship.spec().comm, self.world.time);
+        let Some((age, board)) = known else { return crate::engine::MarketView { market: f, quotes: Vec::new(), banned, held: Vec::new(), age: None } };
+        // (What it listed then, in its listing's order; and what we hold besides.)
+        let quotes: Vec<Quote> = live.iter().filter_map(|q| board.get(q.offer.item).copied().flatten()).collect();
+        let held = held.into_iter().filter(|i| !quotes.iter().any(|q| q.offer.item == *i)).map(|i| (i, board.get(i).copied().flatten())).collect();
+        crate::engine::MarketView { market: f, quotes, banned, held, age: Some(age) }
+    }
+
+    /// Every market in the gate network puts out its board, when due.
+    pub(crate) fn publish_boards(&mut self) {
+        use universe_world::hypernet::{nodes, Net, NodeAt};
+        let now = self.world.time;
+        if now < self.boards.next {
+            return;
+        }
+        let first = self.boards.boards.is_empty();
+        self.boards.next = now + BOARD_EVERY;
+        let mut systems: Vec<usize> = self.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).chain(self.markets.economy.places.iter().map(|p| p.system)).collect();
+        systems.sort();
+        systems.dedup();
+        let all: Vec<usize> = (0..self.world.goods.len()).collect();
+        for system in systems {
+            let sys = self.system(system);
+            let mut positions = Vec::new();
+            sys.positions(now, &mut positions);
+            let net = Net::at(&sys, nodes(&self.world.galaxy, &sys), now, &positions);
+            let net = &self.boards.nets.entry(system).insert_entry((sys.clone(), positions, net)).into_mut().2;
+            for f in facilities(&sys) {
+                let at = match f {
+                    Facility::Station(b) | Facility::Gate(b) => Some(NodeAt::Body(b)),
+                    Facility::Spaceport(k) => Some(NodeAt::Port(k)),
+                    _ => None,
+                };
+                let lag = at.and_then(|a| net.node(a)).and_then(|k| net.lag[k]);
+                self.boards.lags.insert((system, f), lag);
+                let quotes = self.markets.quotes_for(system, &sys, f, &all, now);
+                let list = self.boards.boards.entry((system, f)).or_default();
+                // (The world's first boards: long known.)
+                list.push_back((if first { f64::NEG_INFINITY } else { now }, quotes));
+                // (Older ones go, but for the newest from before then: still the latest someone far may have.)
+                while list.len() >= 2 && list[1].0 <= now - BOARD_KEPT {
+                    list.pop_front();
+                }
+            }
+        }
+    }
+
+    /// What the market service tells pilot `id` at `at`: its own quotes, the
+    /// other markets' as their boards have reached this one over the
+    /// hypernet (with their age), and its account.
     fn market_answer(&mut self, id: usize, system: usize, at: Facility) -> crate::contract::MarketAnswer {
         let sys = self.system(system);
         let now = self.world.time;
@@ -142,7 +250,14 @@ impl Universe {
         let here_held = self.markets.quotes_for(system, &sys, at, &held, now);
         let mut items = held.clone();
         items.extend(here.iter().filter(|q| q.buy.is_some()).map(|q| q.offer.item).filter(|i| !held.contains(i)));
-        let there = facilities(&sys).into_iter().filter(|&f| f != at).map(|f| (f, self.markets.quotes_for(system, &sys, f, &items, now))).collect();
+        let there = facilities(&sys)
+            .into_iter()
+            .filter(|&f| f != at)
+            .filter_map(|f| {
+                let (age, board) = self.boards.known(system, at, f, now)?;
+                Some((f, age, items.iter().map(|&i| board.get(i).copied().flatten()).collect()))
+            })
+            .collect();
         let (cargo, capacity, space) = self.ship_by_id(id).map_or((0.0, 0.0, 0.0), |(_, _, s)| (s.cargo, s.spec().hold_capacity, s.hold_space()));
         let (passengers, bound_for, seats) = self.ship_by_id(id).map_or((0, None, 0), |(_, _, s)| (s.passengers, s.bound_for, s.passenger_room()));
         let bookings = self.bookings(system, at);

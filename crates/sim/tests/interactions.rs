@@ -188,6 +188,10 @@ fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
     let mine: Vec<_> = u.records.trades.iter().filter(|t| t.trader == name).map(|t| format!("{:?} {} {}", t.deal, t.units, t.item)).collect();
     eprintln!("{name}: {mine:?} (stops {})", u.records.stats.stops);
     assert!(!mine.is_empty(), "the trader traded or declared where it's going");
+    // Not docked there, we see the station's prices as its board reached us
+    // over the hypernet: not live.
+    let v = u.market_view(Facility::Station(station));
+    assert!(v.age.is_some_and(|a| a > 0.0), "{:?}", v.age);
 }
 
 /// One settler made a miner (its route: a field of the home system, then the

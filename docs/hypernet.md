@@ -104,4 +104,10 @@ In the base world (`content/base/modules.ron`, step 1 done):
    when we're back. The kill and trade feeds show what we've heard, from when we heard it, with
    where (other systems) and how old it was on arrival. Not yet: ships carrying news in their
    memories (couriers), and anyone but us acting on what they know (step 5).
-5. Markets on knowledge (quotes with age and source); then news and digests (`roadmap.md` §2).
+5. ✓ Markets on knowledge (`crates/sim/src/commerce.rs`, `Boards`): every market puts out its price
+   board every 2 minutes; another market has it once it's crossed the net (both markets' lags from
+   the backbone). Traders decide on the boards their market has, so a far port's prices are old
+   and the trip may find otherwise; a market off the net hears nothing new. The world's first
+   boards are long known everywhere. The market screen: live where you're docked; elsewhere, the
+   board as it reached you, with its age ("76 S OLD", or long known), or no word at all.
+   Next: news and digests (`roadmap.md` §2); boards across systems (through gate relays).

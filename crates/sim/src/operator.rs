@@ -186,7 +186,8 @@ pub(crate) fn trade(pilot: &mut Pilot, charts: &Charts, ans: &MarketAnswer, requ
     let quote = |list: &Vec<Option<Quote>>, item: usize| ans.items.iter().position(|&i| i == item).and_then(|k| list[k]);
     let buyable: Vec<&Quote> = ans.here.iter().filter(|q| q.buy.is_some() && q.level >= 1.0).collect();
     let mut best: Option<Trip> = None;
-    for (there, list) in &ans.there {
+    // (On what's known here: a board may be stale, and the trip find otherwise.)
+    for (there, _age, list) in &ans.there {
         let mut value = 0.0;
         for &(item, n) in &hold {
             if let Some(q) = quote(list, item) {
