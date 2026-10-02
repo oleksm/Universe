@@ -597,6 +597,7 @@ impl Universe {
                 time: self.world.time,
                 system: self.ship_system,
                 market: f.name(&sys),
+                place: Some(f),
                 trader: "YOU".into(),
                 deal: if units > 0 { universe_services::records::Deal::Bought } else { universe_services::records::Deal::Sold },
                 bought: units > 0,

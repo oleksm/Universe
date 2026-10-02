@@ -89,9 +89,19 @@ In the base world (`content/base/modules.ron`, step 1 done):
    the station is the backbone, its ports where it has none. Worlds block the line, so a port on
    its world's far side drops off the net and comes back as the world turns. Ships link to nodes
    but don't relay yet: that comes with capture and delivery.)
-3. ✓ Hypernet mode on the nav map: coverage, links, lag. (NETWORK on the map, `K`: the chart to scale
-   by the root of distance; links coloured by lag; shaded, where your comm reaches a relay on the net;
-   the relays listed with reach and lag, dark ones red; your status and the relay you're through.)
-4. Capture and delivery: events captured in range, carried over the net and by docking. The kill and
-   trade feeds go local.
+3. ✓ Hypernet mode on the nav map: coverage, links, lag. (NETWORK on the map, `K`: a layer over the
+   chart and the list, not another map. Each relay's uplink drawn, coloured by its lag; relays dark
+   in red; a ring round each asteroid field, by whether your comm would be on the net there; your
+   line in; a NET column of lag (or DARK) for every place; your status over the list.)
+   **Routing is a tree, not a mesh:** each relay keeps one uplink, to the neighbour that gets it to
+   the backbone soonest, and messages hop relay to relay. As the worlds go round their orbits, a
+   line closes and the relay switches to another neighbour: the net reshapes with the seasons.
+4. ✓ Capture and delivery (`crates/sim/src/news.rs`): a kill is heard where it happens, by our own
+   comm in its capture range, or by a relay on the net in its capture range (the light passes once:
+   unseen then, never known); a trade by its market's relay (a dark port passes it on when it's back
+   on the net). From its system's backbone through gate relays (the crossing and the relays' lags)
+   to ours, and out to us while we're on the net; off it, everything that came in meanwhile arrives
+   when we're back. The kill and trade feeds show what we've heard, from when we heard it, with
+   where (other systems) and how old it was on arrival. Not yet: ships carrying news in their
+   memories (couriers), and anyone but us acting on what they know (step 5).
 5. Markets on knowledge (quotes with age and source); then news and digests (`roadmap.md` §2).

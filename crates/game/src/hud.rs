@@ -293,7 +293,7 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
 }
 
 /// A relay's name, short enough for a HUD row: the station, a gate, or a port by its own name.
-fn relay_short(name: &str) -> String {
+pub(crate) fn relay_short(name: &str) -> String {
     let s = if name.ends_with(" Station") {
         "STATION".to_string()
     } else if name.starts_with("Gate to ") {
@@ -1801,23 +1801,20 @@ pub(crate) fn draw_panel(frame: &mut Frame, title: &str, cells: &[(String, Strin
 fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
     let now = app.v.time;
     let shown = KILL_SHOWN * app.warp().max(1.0);
-    let lines: Vec<&universe_sim::Kill> = app.v.kills
-        .iter()
-        .filter(|k| now - k.time < shown)
-        .filter(|k| k.system == app.view.origin || k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER)
-        .rev()
-        .take(3)
-        .collect();
+    // (As heard: over the hypernet, or with our own comm; shown from then.)
+    let mut lines: Vec<(&universe_sim::Kill, f64)> = app.v.kills.iter().filter_map(|k| Some((k, app.news.heard(&universe_sim::news::Key::kill(k))?))).filter(|(_, heard)| now - heard < shown).collect();
+    lines.sort_by(|a, b| a.1.total_cmp(&b.1));
     let mut rows = Vec::new();
-    for k in &lines {
-        let age = ((now - k.time) / shown) as f32;
+    for (k, heard) in lines.iter().rev().take(3) {
+        let age = ((now - heard) / shown) as f32;
         let ours = k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER;
         let base = if ours { RED } else { AMBER };
-        let text = if k.weapon == "COLLISION" {
+        let what = if k.weapon == "COLLISION" {
             format!("{} WRECKED IN A COLLISION WITH {}", k.victim_name, k.killer_name)
         } else {
             format!("{} DESTROYED {} - {}", k.killer_name, k.victim_name, k.weapon)
         };
+        let text = format!("{what}{}", news_from(app, k.system, k.time, *heard));
         let c = base.scale(1.0 - 0.7 * age.max(0.0));
         rows.push((text, c));
     }
@@ -1830,11 +1827,12 @@ fn kill_feed(frame: &mut Frame, app: &App, top: f32) {
 fn trade_feed(frame: &mut Frame, app: &App, top: f32) -> f32 {
     let now = app.v.time;
     let shown = TRADE_SHOWN * app.warp().max(1.0);
-    let recent: Vec<&universe_sim::TradeRecord> =
-        app.v.trade_log.iter().filter(|r| now - r.time < shown && (r.system == app.view.origin || r.trader == "YOU")).rev().take(6).collect();
+    // (As heard over the hypernet; shown from then.)
+    let mut recent: Vec<(&universe_sim::TradeRecord, f64)> = app.v.trade_log.iter().filter_map(|r| Some((r, app.news.heard(&universe_sim::news::Key::trade(r))?))).filter(|(_, heard)| now - heard < shown).collect();
+    recent.sort_by(|a, b| a.1.total_cmp(&b.1));
     let mut rows = Vec::new();
-    for r in &recent {
-        let age = ((now - r.time) / shown) as f32;
+    for (r, heard) in recent.iter().rev().take(6) {
+        let age = ((now - heard) / shown) as f32;
         let after = format!("CARGO {:.1} T, {:.0} CR", r.cargo / 1000.0, r.credits);
         let text = match &r.deal {
             universe_sim::Deal::Bought => format!("{} BOUGHT {} {} FOR {:.0} CR - {after}", r.trader, r.units, r.item, r.amount),
@@ -1842,11 +1840,25 @@ fn trade_feed(frame: &mut Frame, app: &App, top: f32) -> f32 {
             universe_sim::Deal::Heading { to, expect } => format!("{} HEADS FOR {to} - EXPECTS +{expect:.0} CR", r.trader),
             universe_sim::Deal::MovingOn { to } => format!("{} FINDS NOTHING HERE - MOVES ON TO {to}", r.trader),
         };
+        let text = format!("{text}{}", news_from(app, r.system, r.time, *heard));
         let base = if r.trader == "YOU" { HUD } else { Color::hex(0x60c0ff) };
         let c = base.scale(1.0 - 0.7 * age.max(0.0));
         rows.push((text, c));
     }
     right_column(frame, top, &rows)
+}
+
+/// Where news is from, if not here, and how old it was when it came, if
+/// it was a while on its way.
+fn news_from(app: &App, system: usize, time: f64, heard: f64) -> String {
+    let mut s = String::new();
+    if system != app.v.ship_system {
+        s += &format!(" - IN {}", universe_sim::names::star_name(app.charts.galaxy.stars[system].seed).to_uppercase());
+    }
+    if heard - time > 2.0 {
+        s += &format!(" ({} AGO)", fmt::lag(heard - time));
+    }
+    s
 }
 
 /// Real seconds a trade stays in the feed.

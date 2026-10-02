@@ -227,18 +227,44 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
         frame.text(Vec2::new(16.0, y), "NOTHING TO DOCK OR LAND AT HERE", DIM);
     }
     let route_has = |t: NavTarget| app.v.avionics.route.stops.iter().any(|s| s.system == map.view && s.target == t);
+    // The network layer: our status over the list, and each place's lag and uplink in it.
     let net = map.network.then(|| network(app, map));
-    if let Some(net) = &net {
-        y = relays(frame, app, map, net, y, line);
+    if let (Some(n), true) = (&net, map.here(app)) {
+        let comm = app.ship.spec().comm;
+        let (text, c) = match &n.ship {
+            Some(s) => (format!("ON THE HYPERNET: {} FROM THE BACKBONE, VIA {}", fmt::lag(s.lag), n.net.nodes[s.via].name.to_uppercase()), lag_color(s.lag)),
+            None => ("OFF THE HYPERNET: NO RELAY ON THE NET IN REACH".to_string(), DARK),
+        };
+        frame.text(Vec2::new(16.0, y), &text, c);
+        y += line;
+        frame.text(Vec2::new(16.0, y), &format!("YOUR COMM LINKS {}, HEARS {}", fmt::distance(comm.link), fmt::distance(comm.capture)), DIM);
+        y += line * 1.5;
     }
-    for (i, e) in map.entries.iter().enumerate().filter(|_| net.is_none()) {
+    let header = match &net {
+        Some(_) => format!("   {:<28} {:<9} {:<3} {:>10} {:>9}", "PLACE", "KIND", "", "DISTANCE", "NET"),
+        None => format!("   {:<34} {:<9} {:<3} {:>10}", "PLACE", "KIND", "", "DISTANCE"),
+    };
+    frame.text(Vec2::new(16.0, y), &header, DIM);
+    y += line;
+    for (i, e) in map.entries.iter().enumerate() {
         let locked = map.here(app) && app.v.avionics.nav_target == Some(e.target);
         let c = if i == map.selected { SELECT } else if locked { LOCKED } else { TEXT };
         let cursor = if i == map.selected { ">" } else { " " };
         let mark = if locked { "*" } else if route_has(e.target) { "+" } else { " " };
         let dist = if e.distance.is_finite() { fmt::distance(e.distance) } else { String::new() };
         let sam = if map.defended.contains(&e.target) { "SAM" } else { "" };
-        let row = format!("{cursor}{mark} {:<34} {:<9} {:<3} {:>10}", e.name, e.kind, sam, dist);
+        let row = match &net {
+            Some(n) => {
+                let (lag, nc) = place_on_net(app, map, n, e.target);
+                let name: String = e.name.chars().take(28).collect();
+                frame.text(Vec2::new(16.0, y), &format!("{cursor}{mark} {name:<28} {:<9} {sam:<3} {dist:>10}", e.kind), c);
+                // (The net's column in its own colour.)
+                frame.text(Vec2::new(16.0, y), &format!("{:>57}{lag:>9}", ""), nc);
+                y += line;
+                continue;
+            }
+            None => format!("{cursor}{mark} {:<34} {:<9} {:<3} {:>10}", e.name, e.kind, sam, dist),
+        };
         frame.text(Vec2::new(16.0, y), &row, c);
         y += line;
     }
@@ -279,10 +305,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     }
 
     let (center, max_r) = (Vec2::new(size.x * 0.76, size.y * 0.5), (size.x * 0.22).min(size.y * 0.42));
-    match &net {
-        Some(net) => net_chart(frame, app, map, net, center, max_r),
-        None => chart(frame, map, center, max_r),
-    }
+    chart(frame, app, map, net.as_ref(), center, max_r);
 }
 
 /// The browsed system's hypernet now: its relays' net, the bodies' positions,
@@ -319,145 +342,32 @@ fn lag_color(lag: f64) -> Color {
 }
 const DARK: Color = Color::hex(0xff5050);
 
-/// The relays, a row each (in place of the targets), with our status above.
-fn relays(frame: &mut Frame, app: &App, map: &NavMap, n: &NetNow, mut y: f32, line: f32) -> f32 {
+/// A place on the net: its lag from the backbone (a relay's own; at a rock,
+/// ours if we were there), in the lag's colour.
+fn place_on_net(app: &App, map: &NavMap, n: &NetNow, target: NavTarget) -> (String, Color) {
     use universe_sim::world::hypernet::NodeAt;
-    let comm = app.ship.spec().comm;
-    if map.here(app) {
-        let (text, c) = match &n.ship {
-            Some(s) => (format!("ON THE HYPERNET: {} FROM THE BACKBONE, VIA {}", fmt::lag(s.lag), n.net.nodes[s.via].name.to_uppercase()), lag_color(s.lag)),
-            None => ("OFF THE HYPERNET: NO RELAY ON THE NET IN REACH".to_string(), DARK),
-        };
-        frame.text(Vec2::new(16.0, y), &text, c);
-        y += line;
-        frame.text(Vec2::new(16.0, y), &format!("YOUR COMM LINKS {}, HEARS {}", fmt::distance(comm.link), fmt::distance(comm.capture)), DIM);
-        y += line * 1.5;
-    }
-    frame.text(Vec2::new(16.0, y), &format!("  {:<30} {:<9} {:>10} {:>10}", "RELAY", "KIND", "REACH", "LAG"), DIM);
-    y += line;
-    for (k, node) in n.net.nodes.iter().enumerate() {
-        let kind = match node.at {
-            _ if node.backbone => "BACKBONE",
-            NodeAt::Port(_) => "PORT",
-            NodeAt::Body(_) if node.gate_relay.is_some() => "GATE",
-            NodeAt::Body(_) => "STATION",
-        };
-        let (lag, c) = match n.net.lag[k] {
-            Some(l) => (fmt::lag(l), lag_color(l)),
-            None => ("DARK".to_string(), DARK),
-        };
-        let via = n.ship.as_ref().is_some_and(|s| s.via == k);
-        let name: String = node.name.to_uppercase().chars().take(30).collect();
-        frame.text(Vec2::new(16.0, y), &format!("{}{:<30} {:<9} {:>10} {:>10}", if via { "> " } else { "  " }, name, kind, fmt::distance(node.comm.link), lag), c);
-        y += line;
-    }
-    y
-}
-
-/// The hypernet to scale (the square root of the distance from the star, so
-/// the inner worlds keep room): the relays, the links between them (by lag),
-/// and where our comm would be on the net (its reach to each relay on it).
-fn net_chart(frame: &mut Frame, app: &App, map: &NavMap, n: &NetNow, center: Vec2, max_r: f32) {
-    let sys = &map.system;
-    let star = n.positions[0];
-    let semi_major = |i: usize| sys.bodies[i].rail.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis);
-    let planets: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0) && sys.bodies[i].kind.is_planet()).collect();
-    let reach = planets.iter().map(|&p| semi_major(p)).fold(1.0, f64::max).max(n.net.at.iter().map(|p| (*p - star).length()).fold(1.0, f64::max)) * 1.1;
-    let scale = |d: f64| max_r * (d / reach).sqrt() as f32;
-    let place = |p: DVec3| {
-        let v = p - star;
-        let d = (v.x * v.x + v.z * v.z).sqrt();
-        let a = (v.z as f32).atan2(v.x as f32);
-        center + Vec2::new(a.cos(), a.sin()) * scale(d)
+    let node = match target {
+        NavTarget::Station(b) | NavTarget::Gate(b) => n.net.node(NodeAt::Body(b)),
+        NavTarget::Spaceport(k) => n.net.node(NodeAt::Port(k)),
+        NavTarget::Asteroid(b) => {
+            return match n.net.status(&map.system, &n.positions, n.positions[b], &app.ship.spec().comm) {
+                Some(s) => (fmt::lag(s.lag), lag_color(s.lag)),
+                None => ("DARK".into(), DARK),
+            };
+        }
     };
-    let inside = |q: Vec2| (q - center).length() <= max_r * 1.02;
-    // Our reach round each relay on the net: where our comm would link.
-    let comm = app.ship.spec().comm;
-    for (k, node) in n.net.nodes.iter().enumerate() {
-        let Some(lag) = n.net.lag[k] else { continue };
-        let r = node.comm.link_with(&comm);
-        let at = n.net.at[k];
-        let mid = place(at);
-        const SIDES: usize = 40;
-        let ring: Vec<Vec2> = (0..=SIDES)
-            .map(|i| {
-                let a = i as f64 / SIDES as f64 * std::f64::consts::TAU;
-                let q = place(at + DVec3::new(a.cos(), 0.0, a.sin()) * r);
-                // (At least a few pixels across: a reach smaller than that still shows.)
-                let off = q - mid;
-                if off.length() < 3.0 { mid + off.normalize_or_zero() * 3.0 } else { q }
-            })
-            .collect();
-        let fill = lag_color(lag).scale(0.16);
-        for w in ring.windows(2) {
-            if inside(w[0]) && inside(w[1]) {
-                frame.hud_triangle_colored([mid, w[0], w[1]], [fill, fill, fill]);
-                frame.hud_line_smooth(w[0], w[1], lag_color(lag).scale(0.5));
-            }
-        }
+    let Some(k) = node else { return (String::new(), DIM) };
+    match n.net.lag[k] {
+        Some(l) => (fmt::lag(l), lag_color(l)),
+        None => ("DARK".into(), DARK),
     }
-    // The worlds' orbits and the worlds.
-    frame.hud_rect(center - 3.0, Vec2::splat(7.0), color(sys.bodies[0].color));
-    for &p in &planets {
-        frame.hud_ellipse(center, Vec2::splat(scale(semi_major(p))), 96, DIM.scale(0.35));
-        frame.hud_rect(place(n.positions[p]) - 2.0, Vec2::splat(5.0), color(sys.bodies[p].color));
-    }
-    // The links, by the lag at their far end.
-    for &(i, j) in &n.net.links {
-        let l = n.net.lag[i].zip(n.net.lag[j]).map(|(a, b)| a.max(b));
-        let c = l.map_or(DARK.scale(0.4), |l| lag_color(l).scale(0.7));
-        frame.hud_line_smooth(place(n.net.at[i]), place(n.net.at[j]), c);
-    }
-    // The relays: the station a square, ports dots, gates rings (a relay's, with where it leads).
-    use universe_sim::world::hypernet::NodeAt;
-    // (Labels of relays drawn at the same spot stack downward.)
-    let mut labelled: Vec<Vec2> = Vec::new();
-    for (k, node) in n.net.nodes.iter().enumerate() {
-        let at = place(n.net.at[k]);
-        let c = n.net.lag[k].map_or(DARK, lag_color);
-        match node.at {
-            NodeAt::Port(_) => frame.hud_rect(at - 1.0, Vec2::splat(3.0), c),
-            NodeAt::Body(_) if node.gate_relay.is_some() => frame.hud_ellipse(at, Vec2::splat(5.0), 10, c),
-            NodeAt::Body(_) => frame.hud_box(at - 3.0, Vec2::splat(7.0), c),
-        }
-        if let Some((to, _)) = node.gate_relay {
-            let name = universe_sim::names::star_name(app.charts.galaxy.stars[to].seed).to_uppercase();
-            let below = labelled.iter().filter(|p| p.distance(at) < 12.0).count();
-            labelled.push(at);
-            frame.text(at + Vec2::new(8.0, -4.0 + below as f32 * (GLYPH + 2.0)), &format!("> {name}"), c.scale(0.8));
-        }
-    }
-    // Us, and our link in.
-    if map.here(app) {
-        let you = place(app.ship.position);
-        if let Some(s) = &n.ship {
-            frame.hud_line_smooth(you, place(n.net.at[s.via]), Color::WHITE);
-        }
-        for i in 0..3 {
-            let a = i as f32 / 3.0 * TAU - TAU / 4.0;
-            let b = (i + 1) as f32 / 3.0 * TAU - TAU / 4.0;
-            frame.hud_line(you + Vec2::new(a.cos(), a.sin()) * 5.0, you + Vec2::new(b.cos(), b.sin()) * 5.0, TEXT);
-        }
-        frame.text(you + Vec2::new(-8.0 - text_size("YOU").x, -4.0), "YOU", if n.ship.is_some() { TEXT } else { DARK });
-    }
-    // The key.
-    let mut y = center.y + max_r + 10.0;
-    let x = center.x - max_r;
-    frame.text(Vec2::new(x, y), "HYPERNET - TO SCALE (ROOT OF DISTANCE)", TEXT);
-    y += GLYPH + 4.0;
-    frame.text(Vec2::new(x, y), "SHADED: WHERE YOUR COMM REACHES A RELAY ON THE NET", DIM);
-    y += GLYPH + 4.0;
-    frame.text(Vec2::new(x, y), "LAG", DIM);
-    let mut lx = x + 40.0;
-    for (label, l) in [("<1 S", 0.1), ("<1 MIN", 10.0), ("<1 H", 100.0), ("MORE", 1e4)] {
-        frame.text(Vec2::new(lx, y), label, lag_color(l));
-        lx += text_size(label).x + 16.0;
-    }
-    frame.text(Vec2::new(lx, y), "DARK", DARK);
 }
 
 /// Top-down schematic: planets on evenly spaced rings at their true angles.
-fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
+/// With the network layer on (`net`), the routes in use over it, each relay
+/// by its lag, each rock by whether our comm would be on the net there, and
+/// our own line in.
+fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, center: Vec2, max_r: f32) {
     let sys = &map.system;
     let planets: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0) && sys.bodies[i].kind.is_planet()).collect();
     let semi_major = |i: usize| sys.bodies[i].rail.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis);
@@ -547,9 +457,37 @@ fn chart(frame: &mut Frame, map: &NavMap, center: Vec2, max_r: f32) {
         }
     }
 
+    // The network layer.
+    use universe_sim::world::hypernet::NodeAt;
+    let node_at = |n: &NetNow, k: usize| match n.net.nodes[k].at {
+        NodeAt::Port(p) => chart_pos(sys.spaceports[p].body) + Vec2::new(0.0, -10.0),
+        NodeAt::Body(b) if sys.bodies[b].kind == BodyKind::Station => chart_pos(b) + Vec2::new(11.0, 0.0),
+        NodeAt::Body(b) => chart_pos(b),
+    };
+    if let Some(n) = net {
+        for (k, up) in n.net.routes() {
+            let c = n.net.lag[k].map_or(DARK.scale(0.5), |l| lag_color(l).scale(0.8));
+            frame.hud_line_smooth(node_at(n, k), node_at(n, up), c);
+        }
+        for k in 0..n.net.nodes.len() {
+            frame.hud_ellipse(node_at(n, k), Vec2::splat(3.0), 8, n.net.lag[k].map_or(DARK, lag_color));
+        }
+        let comm = app.ship.spec().comm;
+        for f in &sys.fields {
+            let c = n.net.status(sys, &n.positions, n.positions[f.body], &comm).map_or(DARK, |s| lag_color(s.lag));
+            frame.hud_ellipse(chart_pos(f.body), Vec2::splat(10.0), 16, c.scale(0.8));
+        }
+    }
+
     // The ship, next to whatever it's orbiting (only in its own system).
     let Some(ship_body) = map.ship_body else { return };
     let you = chart_pos(ship_body) + Vec2::new(-10.0, 6.0);
+    if let Some(n) = net {
+        let c = n.ship.as_ref().map_or(DARK, |s| lag_color(s.lag));
+        if let Some(s) = &n.ship {
+            frame.hud_line_smooth(you, node_at(n, s.via), c);
+        }
+    }
     for i in 0..3 {
         let a = i as f32 / 3.0 * TAU - TAU / 4.0;
         let b = (i + 1) as f32 / 3.0 * TAU - TAU / 4.0;

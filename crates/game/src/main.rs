@@ -193,6 +193,8 @@ pub struct App {
     pub net_at: f64,
     /// This system's relays (its index with them).
     pub net_nodes: Option<(usize, Vec<universe_sim::world::hypernet::Node>)>,
+    /// What news has come to us over the hypernet (or our own comm), and when.
+    pub news: universe_sim::news::Knowledge,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
@@ -322,6 +324,7 @@ impl App {
             net_seen: None,
             net_at: f64::NEG_INFINITY,
             net_nodes: None,
+            news: Default::default(),
             sparks: Vec::new(),
             reach: None,
             turrets: Vec::new(),
@@ -1163,6 +1166,8 @@ impl Game for App {
         self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
         universe_prof::time("update/build view", || self.build_view());
         self.update_net();
+        let us = universe_sim::news::Listener { system: self.v.ship_system, at: self.ship.position, comm: self.ship.spec().comm };
+        self.news.update(&self.charts, self.v.time, &us, &self.v.kills, &self.v.trade_log);
         // Where things are drawn is the moment drawn: the nav target and the
         // approach guidance are worked out here, at it, from the charts (the
         // view's are a tick off it).

@@ -139,7 +139,8 @@ impl Universe {
         // The wreck, as logged this tick.
         let index = self.log.iter().rposition(|(id, e)| *id == victim && matches!(e, ShipEvent::Crashed { .. })).unwrap_or(0) as u32;
         let cause = universe_protocol::Cause::Event { tick: self.tick, index };
-        Some(Kill { time: self.world.time, system, killer, victim, killer_name: self.ship_name(killer), victim_name: self.ship_name(victim), weapon, cause })
+        let at = self.ship_by_id(victim).map_or(glam::DVec3::ZERO, |(_, _, s)| s.position);
+        Some(Kill { time: self.world.time, system, killer, victim, killer_name: self.ship_name(killer), victim_name: self.ship_name(victim), weapon, at, cause })
     }
 
     fn record_kill(&mut self, kill: Kill) {

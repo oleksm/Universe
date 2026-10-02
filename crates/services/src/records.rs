@@ -20,6 +20,8 @@ pub struct Kill {
     pub killer_name: String,
     pub victim_name: String,
     pub weapon: String,
+    /// Where the victim was (its system's frame).
+    pub at: glam::DVec3,
     /// What it came of: the wreck, as the core logged it.
     pub cause: Cause,
 }
@@ -42,6 +44,8 @@ pub struct TradeRecord {
     pub time: f64,
     pub system: usize,
     pub market: String,
+    /// The market's place (where it was heard first).
+    pub place: Option<universe_world::Facility>,
     pub trader: String,
     pub deal: Deal,
     pub bought: bool,

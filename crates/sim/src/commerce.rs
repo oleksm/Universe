@@ -164,6 +164,7 @@ impl Universe {
             time: self.world.time,
             system,
             market: market.name(&sys),
+            place: Some(market),
             trader,
             bought: deal == Deal::Bought,
             deal,

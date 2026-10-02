@@ -107,13 +107,20 @@ pub fn blocked(sys: &StarSystem, positions: &[DVec3], a: DVec3, b: DVec3) -> boo
     sys.bodies.iter().zip(positions).any(|(body, p)| matches!(body.kind, BodyKind::Star | BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon) && universe_physics::segment_distance(a, b, *p) < body.rail.radius * 0.999)
 }
 
-/// The net at a moment: where its nodes are, which link, and each node's
-/// lag from the backbone (None: cut off from it).
+/// The net at a moment: where its nodes are, which could link (in each
+/// other's reach, the line clear), and the route each takes in: one uplink a
+/// relay, to the neighbour that gets it to the backbone soonest (a tree, not
+/// a mesh: messages hop relay to relay). As the worlds go round, the line to
+/// one neighbour closes and a relay switches its uplink to another.
 #[derive(Clone, Debug, Default)]
 pub struct Net {
     pub nodes: Vec<Node>,
     pub at: Vec<DVec3>,
+    /// Pairs that could link now.
     pub links: Vec<(usize, usize)>,
+    /// Each node's uplink (None: the backbone itself, or cut off).
+    pub uplink: Vec<Option<usize>>,
+    /// Each node's lag from the backbone along its route (None: cut off).
     pub lag: Vec<Option<f64>>,
 }
 
@@ -140,6 +147,7 @@ impl Net {
         }
         // Lag from the backbone: the quickest way in (a few nodes: plain relaxation).
         let mut lag: Vec<Option<f64>> = nodes.iter().map(|n| n.backbone.then_some(0.0)).collect();
+        let mut uplink: Vec<Option<usize>> = vec![None; nodes.len()];
         loop {
             let mut changed = false;
             for &(i, j) in &links {
@@ -149,6 +157,7 @@ impl Net {
                         let via = l + hop + nodes[b].comm.lag;
                         if lag[b].is_none_or(|old| via < old - 1e-12) {
                             lag[b] = Some(via);
+                            uplink[b] = Some(a);
                             changed = true;
                         }
                     }
@@ -158,7 +167,7 @@ impl Net {
                 break;
             }
         }
-        Net { nodes, at, links, lag }
+        Net { nodes, at, links, uplink, lag }
     }
 
     /// Where a comm at `p` stands on the net: through the node that gets a
@@ -177,6 +186,54 @@ impl Net {
             }
         }
         best
+    }
+
+    /// How long after something happens at `p` it's on the backbone: heard
+    /// by the soonest relay on the net in its capture range with the line
+    /// clear (light time), handled, and passed in (None: no relay on the net
+    /// hears it).
+    pub fn heard(&self, sys: &StarSystem, positions: &[DVec3], p: DVec3) -> Option<f64> {
+        let mut best: Option<f64> = None;
+        for (k, n) in self.nodes.iter().enumerate() {
+            let Some(l) = self.lag[k] else { continue };
+            let d = self.at[k].distance(p);
+            if d > n.comm.capture || blocked(sys, positions, self.at[k], p) {
+                continue;
+            }
+            let t = d / SPEED_OF_LIGHT + n.comm.lag + l;
+            best = Some(best.map_or(t, |b: f64| b.min(t)));
+        }
+        best
+    }
+
+    /// The links in use: each relay to its uplink.
+    pub fn routes(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
+        self.uplink.iter().enumerate().filter_map(|(k, u)| u.map(|u| (k, u)))
+    }
+
+    /// The node at `at`, if it's one of the net's.
+    pub fn node(&self, at: NodeAt) -> Option<usize> {
+        self.nodes.iter().position(|n| n.at == at)
+    }
+
+    /// From the backbone out through each gate relay on the net to the throat:
+    /// (the system it leads to, the delay to the far ring (s): the lag to the
+    /// gate, its handling, and the crossing).
+    pub fn gates(&self) -> Vec<(usize, f64)> {
+        self.nodes
+            .iter()
+            .zip(&self.lag)
+            .filter_map(|(n, l)| {
+                let (to, handling) = n.gate_relay?;
+                Some((to, (*l)? + handling + crate::gate::TRANSIT_TIME))
+            })
+            .collect()
+    }
+
+    /// The lag from the far ring of the gate from `from` in to the backbone
+    /// (None: no relay there, or it's dark).
+    pub fn gate_in(&self, from: usize) -> Option<f64> {
+        self.nodes.iter().zip(&self.lag).find(|(n, _)| n.gate_relay.is_some_and(|g| g.0 == from)).and_then(|(_, l)| *l)
     }
 
     /// The systems its gate relays reach (from nodes on the net).
@@ -201,6 +258,9 @@ mod tests {
         // from every relay, and back).
         assert!(net.nodes.iter().zip(&net.lag).filter(|(n, _)| n.gate_relay.is_some()).all(|(_, l)| l.is_some()));
         assert!(net.gates_out().count() > 0);
+        // A tree: one uplink for each relay on the net but the backbone's.
+        let on = net.lag.iter().zip(&net.nodes).filter(|(l, n)| l.is_some() && !n.backbone).count();
+        assert_eq!(net.routes().count(), on);
         let comm = crate::ship::starter().comm;
         // By the station: on the net, a whisker of lag.
         let station = sys.station().unwrap();
@@ -210,6 +270,11 @@ mod tests {
         // Far out past the last world and gate: nobody hears it.
         let far = DVec3::new(1.0e14, 0.0, 0.0);
         assert!(net.status(&sys, &positions, far, &comm).is_none());
+        // A fight by the station is on the backbone within a second; one far out isn't heard.
+        assert!(net.heard(&sys, &positions, near).is_some_and(|t| t < 1.0));
+        assert!(net.heard(&sys, &positions, far).is_none());
+        // Out through a gate relay: the crossing and a little.
+        assert!(net.gates().iter().all(|(_, d)| *d >= crate::gate::TRANSIT_TIME && *d < crate::gate::TRANSIT_TIME + 5.0));
         // Behind a world, from its only relay: blocked.
         let p = positions[sys.bodies[station].rail.parent.unwrap()];
         assert!(blocked(&sys, &positions, p + DVec3::X * 1.0e9, p - DVec3::X * 1.0e9));
