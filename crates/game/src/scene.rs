@@ -695,8 +695,8 @@ fn hull_detail(frame: &mut Frame, (bells, glass): (&universe_engine::Mesh, &univ
     // them cleanly: they cast none.)
     frame.no_shadow(|frame| frame.with_surface(0.9, 40.0, 0.0, |frame| frame.model_colored_shaded(bells, t, 0.35, 1.0)));
     let tint = Color::hex(0x1c2630);
-    // (Glass glinting, and the cockpit's own glow through it: it reads in shade too.)
-    frame.with_surface(1.2, 90.0, 1.5, |frame| frame.model_shaded(glass, t, tint.scale(1.6), tint));
+    // (Glass glinting in the sun; a faint trace of the cockpit's own light through it.)
+    frame.with_surface(1.4, 90.0, 0.08, |frame| frame.model_shaded(glass, t, tint.scale(1.6), tint));
 }
 
 /// Other ships in the system being viewed.

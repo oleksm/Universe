@@ -1306,7 +1306,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     // nearer the star and the more squarely we face it.
     let facing = frame.camera.orientation.as_dquat() * DVec3::NEG_Z;
     let toward = facing.dot(dir).max(0.0).powi(6) as f32;
-    let veil = (0.06 * k * toward).min(0.9);
+    let veil = (0.015 * k * toward).min(0.3);
     if veil > 0.005 {
         frame.hud_rect(Vec2::ZERO, size, Color([r.max(0.9), g.max(0.85), b.max(0.8), veil * visible]));
     }
@@ -1315,13 +1315,13 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     // falling away smoothly with angle (layered glows, each twice as wide
     // and half as strong: no edge), white near it, the star's colour out.
     let mix = |w: f32| [r + (1.0 - r) * w, g + (1.0 - g) * w, b + (1.0 - b) * w];
-    let strength = (0.35 + 0.08 * k).min(0.9) * visible;
+    let strength = (0.35 + 0.06 * k).min(0.8) * visible;
     let mut radius = disc * 1.6 + 5.0;
-    for j in 0..7 {
-        let [cr, cg, cb] = mix((1.0 - j as f32 / 4.0).max(0.0));
-        let a = strength * 0.55f32.powi(j);
+    for j in 0..5 {
+        let [cr, cg, cb] = mix((1.0 - j as f32 / 3.0).max(0.0));
+        let a = strength * 0.4f32.powi(j);
         frame.hud_glow(p, radius, 40, Color([cr, cg, cb, a]), Color([cr, cg, cb, 0.0]));
-        radius *= 1.9;
+        radius *= 1.7;
     }
     // The core: in the scene, just this side of the star, so what stands in
     // front of it (a station's structure, a ship) hides it pixel by pixel;
