@@ -1665,42 +1665,48 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Keep, &keep.0, keep.1),
                 b(Act::Orbit, &orbit.0, orbit.1),
                 b(Act::Cancel, "CANCEL", let_go),
-            ],
+            ]
+            .into_iter()
+            // (Each weapon's button only with it fitted.)
+            .filter(|cell| (cell.1 != "GUN" || ship.spec().has(universe_sim::world::modules::Gear::Gun)) && (cell.1 != "PULSE LASER" || ship.spec().has(universe_sim::world::modules::Gear::Laser)))
+            .collect(),
         ),
-        ShipState::Landed { .. } => (
-            // Set down: the pilot's own business — power, fuel, repairs.
-            if matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_))) { "DOCKED" } else { "LANDED" },
-            vec![
-                b(Act::Systems, if ship.powered { "POWER DOWN" } else { "POWER UP" }, if ship.powered { Lamp::On } else { Lamp::Off }),
-                {
-                    let market = universe_sim::world::traffic::docked_at(&app.view.system, ship).is_some();
-                    let room = ship.spec().fuel_capacity - ship.fuel;
-                    let label = if room < 1.0 { "TANK FULL".to_string() } else if room < 1000.0 { format!("FUEL UP {room:.0} KG") } else { format!("FUEL UP {:.1} T", room / 1000.0) };
-                    b(Act::Refuel, &label, if market && room >= 1.0 { Lamp::Off } else { Lamp::Unavailable })
-                },
-                {
-                    let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
-                    let label = if ship.hull >= 1.0 { "HULL SOUND".to_string() } else { format!("OVERHAUL {:.0}%", ship.hull * 100.0) };
-                    b(Act::Repair, &label, if station && ship.hull < 1.0 { Lamp::Off } else { Lamp::Unavailable })
-                },
-                c("S+E", "LIFT OFF", if ship.powered { Lamp::Off } else { Lamp::Unavailable }),
-                b(Act::Autopilot, "AUTOPILOT", if a.route.stops.is_empty() { Lamp::Unavailable } else { on(a.route.active) }),
-                b(Act::Foot, "FOOT", Lamp::Off),
-                b(Act::Passengers, "PASSENGERS", if app.v.docked_market.is_some() { if app.passengers.is_some() { Lamp::On } else { Lamp::Off } } else { Lamp::Unavailable }),
-                {
-                    // Enlist with this station's holder; sworn to it, leave.
-                    let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
-                    let holder = app.v.realm.holder_index(app.view.origin);
-                    let ours = holder.is_some() && app.v.member == holder;
-                    let tag = app.v.realm.holder(app.view.origin).map_or(String::new(), |f| format!(" {}", f.tag));
-                    b(Act::Enlist, &if ours { format!("LEAVE{tag}") } else { format!("ENLIST{tag}") }, if !station || holder.is_none() { Lamp::Unavailable } else if ours { Lamp::On } else { Lamp::Off })
-                },
-                {
-                    let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
-                    c("S+Z", "FOUND", if station && app.v.member.is_none() { Lamp::Off } else { Lamp::Unavailable })
-                },
-            ],
-        ),
+        ShipState::Landed { .. } => {
+            // Set down: the pilot's own business — power, fuel, repairs. Only
+            // what this place and this ship offer (greyed: offered, not now).
+            let at = universe_sim::world::traffic::docked_at(&app.view.system, ship);
+            let station = matches!(at, Some(universe_sim::world::Facility::Station(_)));
+            let holder = app.v.realm.holder_index(app.view.origin);
+            let mut cells = vec![b(Act::Systems, if ship.powered { "POWER DOWN" } else { "POWER UP" }, if ship.powered { Lamp::On } else { Lamp::Off })];
+            if at.is_some() {
+                let room = ship.spec().fuel_capacity - ship.fuel;
+                let label = if room < 1.0 { "TANK FULL".to_string() } else if room < 1000.0 { format!("FUEL UP {room:.0} KG") } else { format!("FUEL UP {:.1} T", room / 1000.0) };
+                cells.push(b(Act::Refuel, &label, if room >= 1.0 { Lamp::Off } else { Lamp::Unavailable }));
+            }
+            if station {
+                let label = if ship.hull >= 1.0 { "HULL SOUND".to_string() } else { format!("OVERHAUL {:.0}%", ship.hull * 100.0) };
+                cells.push(b(Act::Repair, &label, if ship.hull < 1.0 { Lamp::Off } else { Lamp::Unavailable }));
+            }
+            cells.push(c("S+E", "LIFT OFF", if ship.powered { Lamp::Off } else { Lamp::Unavailable }));
+            if !a.route.stops.is_empty() {
+                cells.push(b(Act::Autopilot, "AUTOPILOT", on(a.route.active)));
+            }
+            cells.push(b(Act::Foot, "FOOT", Lamp::Off));
+            // (Passengers only with a cabin aboard.)
+            if app.v.docked_market.is_some() && ship.spec().seats > 0 {
+                cells.push(b(Act::Passengers, "PASSENGERS", if app.passengers.is_some() { Lamp::On } else { Lamp::Off }));
+            }
+            if station && holder.is_some() {
+                // Enlist with this station's holder; sworn to it, leave.
+                let ours = app.v.member == holder;
+                let tag = app.v.realm.holder(app.view.origin).map_or(String::new(), |f| format!(" {}", f.tag));
+                cells.push(b(Act::Enlist, &if ours { format!("LEAVE{tag}") } else { format!("ENLIST{tag}") }, if ours { Lamp::On } else { Lamp::Off }));
+            }
+            if station && app.v.member.is_none() {
+                cells.push(c("S+Z", "FOUND", Lamp::Off));
+            }
+            (if station { "DOCKED" } else { "LANDED" }, cells)
+        }
         _ if ship.manual => (
             "NAV - MANUAL THRUSTERS",
             vec![b(Act::Manual, "THRUSTERS", Lamp::On), c("NUM", "FIRE A JET", Lamp::Off), c("W", "MAINS", Lamp::Off), c("F7", "THRUSTERS PANEL", if app.show_thrusters { Lamp::On } else { Lamp::Off })],
@@ -1711,19 +1717,26 @@ fn action_grid(frame: &mut Frame, app: &App) {
         ),
         _ => (
             "NAV",
-            vec![
-                b(Act::Clearance, "DOCKING", clearance.1),
-                b(Act::Autopilot, "AUTOPILOT", on(auto)),
-                b(Act::Hyperdrive, "HYPERDRIVE", hyper),
-                b(Act::Lock, "LOCK", lock),
-                b(Act::Keep, &keep.0, keep.1),
-                b(Act::Orbit, &orbit.0, orbit.1),
-                b(Act::Cancel, "CANCEL", let_go),
-                b(Act::Proximity, "IMPACT", collide),
-                b(Act::Manual, "THRUSTERS", Lamp::Off),
-                // Plant a claim beacon: sworn to a faction, in an unclaimed system.
-                c("S+Z", "CLAIM", if app.v.member.is_some() && app.v.realm.holder(app.view.origin).is_none() { Lamp::Off } else { Lamp::Unavailable }),
-            ],
+            {
+                let mut cells = vec![b(Act::Clearance, "DOCKING", clearance.1), b(Act::Autopilot, "AUTOPILOT", on(auto))];
+                // (Only with a hyperdrive fitted.)
+                if ship.spec().has(universe_sim::world::modules::Gear::Hyperdrive) {
+                    cells.push(b(Act::Hyperdrive, "HYPERDRIVE", hyper));
+                }
+                cells.extend([
+                    b(Act::Lock, "LOCK", lock),
+                    b(Act::Keep, &keep.0, keep.1),
+                    b(Act::Orbit, &orbit.0, orbit.1),
+                    b(Act::Cancel, "CANCEL", let_go),
+                    b(Act::Proximity, "IMPACT", collide),
+                    b(Act::Manual, "THRUSTERS", Lamp::Off),
+                ]);
+                // Plant a claim beacon: only sworn to a faction, in an unclaimed system.
+                if app.v.member.is_some() && app.v.realm.holder(app.view.origin).is_none() {
+                    cells.push(c("S+Z", "CLAIM", Lamp::Off));
+                }
+                cells
+            },
         ),
     };
     draw_grid(frame, mode, &cells);
@@ -1775,6 +1788,13 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("F7".into(), "THRUST".into(), lamp(app.show_thrusters)),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
     ];
+    // (A mode only with its gear: combat with a weapon fitted, mining with a rig.)
+    use universe_sim::world::modules::Gear;
+    let spec = app.ship.spec();
+    let cells: Vec<(String, String, Lamp)> = cells
+        .into_iter()
+        .filter(|c| (c.1 != "COMBAT" || spec.has(Gear::Gun) || spec.has(Gear::Laser)) && (c.1 != "MINING" || spec.has(Gear::MiningRig)))
+        .collect();
     // Six to a row, more rows as it grows.
     const PER_ROW: usize = 7;
     let cell = Vec2::new(76.0, 14.0);
