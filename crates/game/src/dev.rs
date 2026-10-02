@@ -589,6 +589,23 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.hull = 0.2;
             u.ship.fuel = 1_000.0;
         }
+        "showship" => {
+            // Our ship as the hull UNIVERSE_HULL names (default the hauler),
+            // in sunlight by the home station, seen from the side and above.
+            let key = std::env::var("UNIVERSE_HULL").unwrap_or_else(|_| "hull.hauler".into());
+            let u = app.engine.universe();
+            u.respawn();
+            if let Some(h) = universe_sim::world::content::content().handle(&key) {
+                u.ship.class = h;
+                u.ship.fit = None;
+                u.ship.refresh();
+            }
+            app.mode = Mode::Observer;
+            app.observer.focus = Focus::Ship;
+            app.observer.distance = std::env::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(160.0);
+            app.observer.pitch = 0.35;
+            app.observer.yaw = std::env::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()).unwrap_or(2.3);
+        }
         "manual" => {
             // In flight by the home station, the flight computer off, a nose
             // thruster and the opposite tail one held (a yaw).

@@ -175,6 +175,12 @@ fn nav_lights(s: &Shape) -> [universe_engine::glam::DVec3; 3] {
 /// The corners of the convex solid `planes` bound (each n·p ≤ d), its
 /// edges cut back by a chamfer `bevel` deep where its faces meet at an angle.
 fn chamfered(planes: &[(DVec3, f64)], bevel: f64) -> Vec<Vec3> {
+    chamfered_cut(planes, bevel, &[])
+}
+
+/// `chamfered`, cut by `cuts` too (planes that bound it, unbevelled: a
+/// slab of the solid between paint lines).
+fn chamfered_cut(planes: &[(DVec3, f64)], bevel: f64, cuts: &[(DVec3, f64)]) -> Vec<Vec3> {
     // Its faces' planes, each once.
     let mut faces: Vec<(DVec3, f64)> = Vec::new();
     for &(n, d) in planes {
@@ -219,6 +225,7 @@ fn chamfered(planes: &[(DVec3, f64)], bevel: f64) -> Vec<Vec3> {
             all.push((n, reach - bevel));
         }
     }
+    all.extend_from_slice(cuts);
     corners(&all).into_iter().map(|p| p.as_vec3()).collect()
 }
 
@@ -247,43 +254,101 @@ pub const SCHEMES: [Scheme; 6] = [
 /// the engine end sooted toward the nozzles. Colours in its vertices (draw
 /// it with a white fill).
 pub fn painted(s: &Shape, scheme: &Scheme) -> WireModel {
-    let solid = bevelled(s);
     let (lo, hi) = s.mesh.extent();
-    let (z0, len, wide) = (lo.z as f32, (hi.z - lo.z).max(1e-3) as f32, (hi.x.abs().max(lo.x.abs())) as f32);
-    let planes: Vec<Vec3> = s.solids.iter().flatten().map(|(n, _)| n.as_vec3()).collect();
+    let (z0, len, wide) = (lo.z, (hi.z - lo.z).max(1e-3), hi.x.abs().max(lo.x.abs()));
+    // The paint lines along it: the band's edges, where the soot starts.
+    let at = |share: f64| z0 + share * len;
+    let lines = [f64::NEG_INFINITY, at(scheme.band.0 as f64), at(scheme.band.1 as f64), at(0.8), f64::INFINITY];
     let mut m = WireModel::default();
-    for f in &solid.faces {
-        let [a, b, c] = f.map(|i| solid.positions[i as usize]);
-        let n = (b - a).cross(c - a).normalize_or_zero();
-        let mid = (a + b + c) / 3.0;
-        let along = (mid.z - z0) / len;
-        // (A panel: on one of the part's own planes; else a bevel strip.)
-        let panel = planes.iter().any(|p| p.dot(n) > 0.999);
-        let shade = {
-            let q = (n * 7.0).round();
-            let h = ((q.x * 73.0 + q.y * 151.0 + q.z * 269.0 + (mid.z * 0.25).floor() * 37.0) as i32).rem_euclid(97) as f32 / 97.0;
-            0.93 + 0.1 * h
-        };
-        let accent = (along >= scheme.band.0 && along <= scheme.band.1) || mid.x.abs() > wide * 0.88;
-        let mut col = if accent { scheme.accent } else { scheme.base };
-        let k = if panel { shade } else { 0.72 };
-        // (Soot toward the nozzles: the last fifth darkening.)
-        let soot = if along > 0.8 { 1.0 - (along - 0.8) / 0.2 * 0.45 } else { 1.0 };
-        for c in &mut col {
-            *c *= k * soot;
+    for planes in &s.solids {
+        let pts = chamfered(planes, 0.0);
+        let (plo, phi) = pts.iter().fold((Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
+        let bevel = ((phi - plo).min_element() as f64 * 0.12).clamp(0.02, 0.5);
+        let normals: Vec<Vec3> = planes.iter().map(|(n, _)| n.as_vec3()).collect();
+        for w in lines.windows(2) {
+            let (za, zb) = (w[0], w[1]);
+            if zb <= plo.z as f64 + 1e-3 || za >= phi.z as f64 - 1e-3 {
+                continue;
+            }
+            let mut cuts = Vec::new();
+            if za.is_finite() {
+                cuts.push((DVec3::NEG_Z, -za));
+            }
+            if zb.is_finite() {
+                cuts.push((DVec3::Z, zb));
+            }
+            let slab = chamfered_cut(planes, bevel, &cuts);
+            if slab.len() < 4 {
+                continue;
+            }
+            let part = WireModel::convex_hull(&slab);
+            for f in &part.faces {
+                let [a, b, c] = f.map(|i| part.positions[i as usize]);
+                let n = (b - a).cross(c - a).normalize_or_zero();
+                // (The cut faces are inside: none drawn.)
+                if n.z.abs() > 0.999 && cuts.iter().any(|(cn, _)| cn.as_vec3().dot(n) > 0.999) {
+                    continue;
+                }
+                let mid = (a + b + c) / 3.0;
+                let along = ((mid.z as f64 - z0) / len) as f32;
+                let panel = normals.iter().any(|p| p.dot(n) > 0.999);
+                let shade = {
+                    let q = (n * 7.0).round();
+                    let h = ((q.x * 73.0 + q.y * 151.0 + q.z * 269.0 + (mid.z * 0.25).floor() * 37.0) as i32).rem_euclid(97) as f32 / 97.0;
+                    0.93 + 0.1 * h
+                };
+                let accent = (along >= scheme.band.0 && along <= scheme.band.1) || mid.x.abs() as f64 > wide * 0.88;
+                let mut col = if accent { scheme.accent } else { scheme.base };
+                let k = if panel { shade } else { 0.72 };
+                let soot = if along > 0.8 { 1.0 - (along - 0.8) / 0.2 * 0.45 } else { 1.0 };
+                for c in &mut col {
+                    *c *= k * soot;
+                }
+                let base = m.positions.len() as u32;
+                m.positions.extend_from_slice(&[a, b, c]);
+                m.colors.extend([[col[0], col[1], col[2], 1.0]; 3]);
+                m.faces.push([base, base + 1, base + 2]);
+            }
+            for e in &part.edges {
+                let base = m.positions.len() as u32;
+                m.positions.push(part.positions[e[0] as usize]);
+                m.positions.push(part.positions[e[1] as usize]);
+                m.colors.extend([[0.6, 0.6, 0.62, 1.0]; 2]);
+                m.edges.push([base, base + 1]);
+            }
         }
-        let base = m.positions.len() as u32;
-        m.positions.extend_from_slice(&[a, b, c]);
-        m.colors.extend([[col[0], col[1], col[2], 1.0]; 3]);
-        m.faces.push([base, base + 1, base + 2]);
     }
-    // The panel lines, the detail loops: dark.
-    for e in &solid.edges {
+    // A long hull's frames: ribs round its main body every few metres, standing proud.
+    if len > 60.0
+        && let Some(body) = s.solids.first()
+    {
+        let proud: Vec<(DVec3, f64)> = body.iter().map(|&(n, d)| (n, d + 0.35)).collect();
+        let pts = chamfered(body, 0.0);
+        let (zl, zh) = pts.iter().fold((f64::INFINITY, f64::NEG_INFINITY), |(l, h), p| (l.min(p.z as f64), h.max(p.z as f64)));
+        let col = scheme.base.map(|c| c * 0.78);
+        let mut z = zl + 0.18 * (zh - zl);
+        while z < zh - 0.12 * (zh - zl) {
+            let rib = chamfered_cut(&proud, 0.15, &[(DVec3::NEG_Z, -z), (DVec3::Z, z + 1.0)]);
+            if rib.len() >= 4 {
+                let part = WireModel::convex_hull(&rib);
+                for f in &part.faces {
+                    let base = m.positions.len() as u32;
+                    m.positions.extend(f.map(|i| part.positions[i as usize]));
+                    m.colors.extend([[col[0], col[1], col[2], 1.0]; 3]);
+                    m.faces.push([base, base + 1, base + 2]);
+                }
+            }
+            z += 9.0;
+        }
+    }
+    for l in &s.loops {
+        let pts: Vec<Vec3> = l.iter().map(|p| p.as_vec3()).collect();
         let base = m.positions.len() as u32;
-        m.positions.push(solid.positions[e[0] as usize]);
-        m.positions.push(solid.positions[e[1] as usize]);
-        m.colors.extend([[0.6, 0.6, 0.62, 1.0]; 2]);
-        m.edges.push([base, base + 1]);
+        m.positions.extend_from_slice(&pts);
+        m.colors.extend(std::iter::repeat_n([0.5, 0.5, 0.52, 1.0], pts.len()));
+        for k in 0..pts.len() as u32 {
+            m.edges.push([base + k, base + (k + 1) % pts.len() as u32]);
+        }
     }
     m
 }
