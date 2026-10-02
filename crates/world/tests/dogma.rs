@@ -59,7 +59,7 @@ fn gates_are_justified_and_limited() {
     let power = |span_ly: f64| GATE_P0 * (span_ly / GATE_S0).powi(3);
     // A near lane is affordable infrastructure; the longest a ring can span is a giant's work.
     assert!(power(5.0) < 1e9 && power(RING_SPAN_III) > 1e11, "{:e} {:e}", power(5.0), power(RING_SPAN_III));
-    assert!(RING_SPAN_I < RING_SPAN_II && RING_SPAN_II < RING_SPAN_III);
+    const { assert!(RING_SPAN_I < RING_SPAN_II && RING_SPAN_II < RING_SPAN_III) };
     // Freight by gate beats an explorer's crossing per kg (and any ship can take it).
     let gate = GATE_TAU * 40.0 * LIGHT_YEAR;
     let explorer = EXPLORER_POWER * 40.0 * LIGHT_YEAR / ((((EXPLORER_POWER * ETA_FIELD_MAX - P_FLOOR) / P_PUSH).cbrt()) * V_BEST_C * SPEED_OF_LIGHT);
