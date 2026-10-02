@@ -30,7 +30,7 @@ use crate::vessel::Request;
 /// Stops on a settler's route.
 pub const ROUTE_STOPS: usize = 10;
 /// About one settler in `PIRATE_ONE_IN` is a pirate, and as many again
-/// traders, and as many again miners.
+/// traders, and twice as many miners.
 pub const PIRATE_ONE_IN: u64 = 10;
 /// A trip must promise at least this (credits), or the trader moves on to another system.
 pub const MIN_PROFIT: f64 = 300.0;
@@ -90,11 +90,11 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
         let Some(&at) = stops.first() else { continue };
         let mut route = Route { stops, next: 0, active: true, dwell_until: Some(now + rng.range(0.0, 600.0)), departing: false, stay: None, hangar_ordered: 0.0 };
         // Roles, from the seed (the same settlers every time): one slice
-        // pirates, another traders, another miners (where their home
-        // system has asteroids to work), the rest just travel.
+        // pirates, another traders, two miners (where their home system
+        // has asteroids to work), the rest just travel.
         let role = mix(route_seed, 0x0917_27e5) % PIRATE_ONE_IN;
         let (pirate, trader) = (role == 0, role == 1);
-        let mining = (role == 2).then(|| crate::miner::route(charts, at.system, route_seed)).flatten();
+        let mining = (role == 2 || role == 3).then(|| crate::miner::route(charts, at.system, route_seed)).flatten();
         let miner = mining.is_some();
         if let Some(stops) = mining {
             // Out to the field first (from home, its market).
