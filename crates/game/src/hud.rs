@@ -279,6 +279,11 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>) {
         let c = if hurt { RED } else { DIM };
         lines.push((format!("HULL [{}] {:3.0}%", gauge(ship.hull), ship.hull * 100.0), c));
     }
+    // The klaxon's words (see `sound::alarms`), blinking. (Low fuel has its own line above.)
+    let blink = (app.now() * 2.0).fract() < 0.6;
+    if ship.hull < crate::sound::HULL_CRITICAL {
+        lines.push(("HULL CRITICAL".into(), if blink { RED } else { RED.scale(0.5) }));
+    }
     // The skin, once air (or the memory of it) has warmed it.
     let skin = ship.skin_temp;
     if skin > universe_sim::world::heat::AMBIENT + 30.0 {

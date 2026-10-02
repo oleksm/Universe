@@ -175,6 +175,83 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
     }
 }
 
+/// The alarms: when each last sounded (wall clock: time warp doesn't hurry
+/// them), and what was last seen of the hull.
+struct Alarms {
+    klaxon: Option<std::time::Instant>,
+    fuel: Option<std::time::Instant>,
+    proximity: Option<std::time::Instant>,
+    missile: Option<std::time::Instant>,
+    /// The missile warble's next note high.
+    high: bool,
+    hull: f64,
+}
+
+static ALARMS: Mutex<Alarms> = Mutex::new(Alarms { klaxon: None, fuel: None, proximity: None, missile: None, high: false, hull: 1.0 });
+
+/// The hull below this: the master caution, once.
+pub const HULL_CAUTION: f64 = 0.5;
+/// Below this: the klaxon, until it's mended.
+pub const HULL_CRITICAL: f64 = 0.25;
+/// The tank below this share, burning: the low-fuel beeps.
+pub const FUEL_LOW: f64 = 0.1;
+/// A collision ahead faster than this (m/s) sets the proximity beeps going
+/// (slower is a touchdown).
+const PROXIMITY_SPEED: f64 = 8.0;
+/// They start this far off (s).
+const PROXIMITY_TIME: f64 = 30.0;
+
+/// The alarms, as the ship's state calls for them.
+fn alarms(a: &universe_engine::Audio, app: &App) {
+    use std::time::{Duration, Instant};
+    let Ok(mut al) = ALARMS.lock() else { return };
+    let ship = &app.v.ship;
+    let now = Instant::now();
+    let since = |t: Option<Instant>| t.map_or(Duration::MAX, |t| now - t);
+    let seated = app.mode == Mode::Pilot && app.v.crew.seated() && !app.paused;
+    // The hull: a caution as it drops past half; critical, the klaxon.
+    if seated && ship.hull < HULL_CAUTION && al.hull >= HULL_CAUTION {
+        a.alarm(880.0, 880.0, 0.18, 0.18);
+        a.alarm(660.0, 660.0, 0.3, 0.18);
+    }
+    al.hull = ship.hull;
+    if seated && ship.hull < HULL_CRITICAL && since(al.klaxon) > Duration::from_millis(2500) {
+        al.klaxon = Some(now);
+        // (Two whoops.)
+        a.alarm(500.0, 1000.0, 0.5, 0.2);
+        a.alarm_after(0.6, 500.0, 1000.0, 0.5, 0.2);
+    }
+    // Low fuel, burning: three beeps, again every twenty seconds.
+    let burning = ship.jets.iter().any(|&j| j > 0.02);
+    let low = ship.fuel < FUEL_LOW * ship.spec().fuel_capacity;
+    if seated && low && burning && since(al.fuel) > Duration::from_secs(20) {
+        al.fuel = Some(now);
+        for k in 0..3 {
+            a.alarm_after(0.2 * k as f32, 1200.0, 1200.0, 0.09, 0.14);
+        }
+    }
+    // Impact ahead (the warning on): beeps quicker as it nears, all but one tone at the last.
+    if let Some(c) = app.collision.as_ref().and_then(|p| p.collision.as_ref())
+        && seated
+        && c.speed > PROXIMITY_SPEED
+        && c.time < PROXIMITY_TIME
+    {
+        let every = Duration::from_secs_f64((c.time / 8.0).clamp(0.08, 1.2));
+        if since(al.proximity) > every {
+            al.proximity = Some(now);
+            a.alarm(1500.0, 1500.0, 0.06, 0.14);
+        }
+    }
+    // A missile tracking us: a fast two-tone warble.
+    let inbound = app.v.missiles.iter().any(|m| m.4 && m.0 == app.v.ship_system);
+    if seated && inbound && since(al.missile) > Duration::from_millis(250) {
+        al.missile = Some(now);
+        al.high = !al.high;
+        let f = if al.high { 1400.0 } else { 1000.0 };
+        a.alarm(f, f, 0.12, 0.13);
+    }
+}
+
 /// Walking: where the last step fell, and how far since.
 static STEPS: Mutex<Option<(DVec3, f64)>> = Mutex::new(None);
 /// A step every this many metres.
@@ -221,6 +298,7 @@ pub fn update(ctx: &Context, app: &App) {
     } else {
         a.set_drone(0.0, 60.0);
     }
+    alarms(a, app);
     // On foot: a step every stride; aboard, boots on the deck plating;
     // outside, softer on the ground.
     let at = match app.v.crew.place {
@@ -320,6 +398,15 @@ mod tests {
             ("hatch", ev(Event::Crew(universe_sim::world::CrewEvent::CameAboard)), 1.5),
             ("gate", ev(Event::Ship(ShipEvent::GateEntered { to: String::new() })), 3.0),
             ("clearance", ev(Event::Traffic(TrafficEvent::ClearanceGranted { target: String::new(), kind: universe_sim::world::ClearanceKind::Dock })), 1.0),
+            ("klaxon", Box::new(|a, t| if t == 0.0 {
+                a.alarm(500.0, 1000.0, 0.5, 0.2);
+                a.alarm_after(0.6, 500.0, 1000.0, 0.5, 0.2);
+            }), 1.4),
+            ("low fuel", Box::new(|a, t| if t == 0.0 {
+                for k in 0..3 {
+                    a.alarm_after(0.2 * k as f32, 1200.0, 1200.0, 0.09, 0.14);
+                }
+            }), 0.8),
             ("gun", Box::new(|a, t| if t == 0.0 {
                 a.thud(60.0, 0.6, 0.0);
                 a.impact(0.12, 2.0, 0.0);

@@ -137,6 +137,18 @@ impl Audio {
         self.with(|s| s.voices.push(Voice::Beep { phase: 0.0, f0, f1, t: 0.0, dur: seconds, vol: volume }));
     }
 
+    /// An alarm's note: a hard-edged tone (a saw, rounded off) gliding from
+    /// `f0` to `f1` Hz, to cut through everything else.
+    pub fn alarm(&self, f0: f32, f1: f32, seconds: f32, volume: f32) {
+        self.alarm_after(0.0, f0, f1, seconds, volume);
+    }
+
+    /// `alarm`, starting `delay` seconds from now.
+    pub fn alarm_after(&self, delay: f32, f0: f32, f1: f32, seconds: f32, volume: f32) {
+        let note = Voice::Alarm { phase: 0.0, f0, f1, t: 0.0, dur: seconds, vol: volume, lp: 0.0 };
+        self.with(|s| s.voices.push(if delay > 0.0 { Voice::Later { wait: delay, then: Box::new(note) } } else { note }));
+    }
+
     /// A blast: a deep boom and its crackle (`seconds` long).
     pub fn noise(&self, seconds: f32, volume: f32) {
         self.with(|s| s.voices.push(Voice::Blast { t: 0.0, dur: seconds, vol: volume, lp: 0.0, lp2: 0.0, phase: 0.0 }));
@@ -264,6 +276,7 @@ struct JetVoice {
 
 enum Voice {
     Beep { phase: f32, f0: f32, f1: f32, t: f32, dur: f32, vol: f32 },
+    Alarm { phase: f32, f0: f32, f1: f32, t: f32, dur: f32, vol: f32, lp: f32 },
     Blast { t: f32, dur: f32, vol: f32, lp: f32, lp2: f32, phase: f32 },
     /// Struck metal ringing: (frequency, decay time, amplitude, phase) each mode.
     Ring { modes: [(f32, f32, f32, f32); 6], t: f32, vol: f32, pan: f32 },
@@ -274,6 +287,8 @@ enum Voice {
     Spool { up: bool, t: f32, phase: f32 },
     /// A relay's click, `wait` seconds on.
     Delayed { wait: f32, freq: f32 },
+    /// Another voice, `wait` seconds on.
+    Later { wait: f32, then: Box<Voice> },
 }
 
 /// A small metal room: Schroeder reverb (combs into all-passes), a side each.
@@ -435,7 +450,8 @@ impl Synth {
             let centre = if j.lift { 700.0 } else { 1500.0 + 900.0 * j.near } * spread;
             svf(&mut v.low, &mut v.band, n, centre, if j.lift { 0.8 } else { 1.4 }, rate);
             v.rush += (n - v.rush) * 0.03;
-            let gain = (0.35 + 0.65 * j.near) * if j.lift { 1.3 } else { 1.0 };
+            // (The small thrusters half the lift jets' loudness: they're small.)
+            let gain = (0.35 + 0.65 * j.near) * if j.lift { 1.3 } else { 0.5 };
             let mut s = (v.band * 0.6 + v.rush * 0.8) * v.env * gain * 1.1;
             // The valve: a short knock as it opens.
             if v.tick > 1e-4 {
@@ -471,6 +487,15 @@ impl Synth {
                     *t += dt;
                     let w = *phase * TAU;
                     ((w.sin() + 0.18 * (3.0 * w).sin()) * env * *vol * 1.8, 0.0, 0.15, *t >= *dur)
+                }
+                Voice::Alarm { phase, f0, f1, t, dur, vol, lp } => {
+                    let k = *t / *dur;
+                    *phase = (*phase + (*f0 + (*f1 - *f0) * k) * dt).fract();
+                    // (A saw through a gentle low-pass: harsh, not shrill; square-edged in time.)
+                    *lp += ((*phase * 2.0 - 1.0) - *lp) * 0.35;
+                    let env = (*t / 0.004).min(1.0) * ((*dur - *t) / 0.01).clamp(0.0, 1.0);
+                    *t += dt;
+                    (*lp * env * *vol * 4.0, 0.0, 0.1, *t >= *dur)
                 }
                 Voice::Blast { t, dur, vol, lp, lp2, phase } => {
                     let k = *t / *dur;
@@ -539,6 +564,14 @@ impl Synth {
                     *t += dt;
                     let w = *phase * TAU;
                     ((w.sin() * 0.5 + (2.0 * w).sin() * 0.2) * env * 0.35, 0.0, 0.3, *t >= dur)
+                }
+                Voice::Later { wait, then } => {
+                    *wait -= dt;
+                    if *wait <= 0.0 {
+                        let next = std::mem::replace(then.as_mut(), Voice::Delayed { wait: f32::INFINITY, freq: 0.0 });
+                        self.voices[i] = next;
+                    }
+                    (0.0, 0.0, 0.0, false)
                 }
                 Voice::Delayed { wait, freq } => {
                     *wait -= dt;

@@ -546,6 +546,14 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.orientation = universe_sim::ship::facing(positions[star] - at, f.up());
             app.chase_cam = false;
         }
+        "alarms" => {
+            // In flight by the home station, the hull critical and the tank nearly dry.
+            app.mode = Mode::Pilot;
+            let u = app.engine.universe();
+            u.respawn();
+            u.ship.hull = 0.2;
+            u.ship.fuel = 1_000.0;
+        }
         "manual" => {
             // In flight by the home station, the flight computer off, a nose
             // thruster and the opposite tail one held (a yaw).
