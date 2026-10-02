@@ -110,7 +110,7 @@ fn canopy(s: &Shape) -> WireModel {
     // Its top and half-width over that stretch.
     let near: Vec<&universe_engine::glam::DVec3> = pts.iter().filter(|p| (p.z as f32) >= z0 - 0.1 * len && (p.z as f32) <= z1 + 0.1 * len).collect();
     let top = near.iter().map(|p| p.y as f32).fold(f32::NEG_INFINITY, f32::max);
-    let half = near.iter().map(|p| p.x.abs() as f32).fold(0.0, f32::max) * 0.35;
+    let half = near.iter().map(|p| p.x.abs() as f32).fold(0.0, f32::max) * 0.55;
     if !top.is_finite() || half <= 0.0 {
         return WireModel::default();
     }
@@ -143,7 +143,7 @@ fn canopy(s: &Shape) -> WireModel {
     }
     let ys = corners(half).map(|c| c.unwrap_or(0.0));
     let floor = ys.iter().copied().fold(f32::INFINITY, f32::min);
-    let h = (half * 0.55).min(len * 0.04);
+    let h = (half * 0.6).min(len * 0.05);
     // (Sunk a little into the plating, its ridge over the highest of them.)
     let y = |k: usize| ys[k] - h * 0.25;
     let ridge = ys.iter().copied().fold(f32::NEG_INFINITY, f32::max) + h * 0.75;

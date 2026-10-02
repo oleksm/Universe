@@ -665,18 +665,19 @@ fn gate_lights(frame: &mut Frame, center: DVec3, rot: DQuat, now: f64) {
     }
 }
 
-/// A ship's lights: white strobes on its wing tips, a quick double flash
-/// together, and its tail strobe between them, each ship on its own beat (`seed`).
+/// A ship's lights: white strobes on its wing tips flashing together, its
+/// tail strobe between them, each ship on its own beat (`seed`).
 fn nav_lights(frame: &mut Frame, lights: [DVec3; 3], pos: DVec3, turned: DQuat, now: f64, seed: usize) {
     let at = |p: DVec3| pos + turned * p;
-    let beat = (now * 0.8 + seed as f64 * 0.137).fract();
-    let white = [11.0, 11.0, 12.0];
-    if beat < 0.04 || (0.1..0.14).contains(&beat) {
-        frame.glow(at(lights[0]), 1.1, white, 2.4);
-        frame.glow(at(lights[1]), 1.1, white, 2.4);
+    // (A short flash every three seconds or so: there, not distracting.)
+    let beat = (now * 0.33 + seed as f64 * 0.137).fract();
+    let white = [4.5, 4.5, 5.0];
+    if beat < 0.03 {
+        frame.glow(at(lights[0]), 0.8, white, 1.6);
+        frame.glow(at(lights[1]), 0.8, white, 1.6);
     }
-    if (0.5..0.54).contains(&beat) {
-        frame.glow(at(lights[2]), 1.3, white, 2.8);
+    if (0.5..0.53).contains(&beat) {
+        frame.glow(at(lights[2]), 0.9, white, 1.8);
     }
 }
 
@@ -692,7 +693,8 @@ fn hull_detail(frame: &mut Frame, (bells, glass): (&universe_engine::Mesh, &univ
     // (Too small for the shadow map to cast them cleanly: they cast none.)
     frame.no_shadow(|frame| frame.with_surface(0.5, 30.0, 0.0, |frame| frame.model_shaded(bells, t, soot.scale(0.6), soot)));
     let tint = Color::hex(0x1c2630);
-    frame.with_surface(1.2, 90.0, 0.0, |frame| frame.model_shaded(glass, t, tint.scale(1.6), tint));
+    // (Glass glinting, and the cockpit's own glow through it: it reads in shade too.)
+    frame.with_surface(1.2, 90.0, 1.5, |frame| frame.model_shaded(glass, t, tint.scale(1.6), tint));
 }
 
 /// Other ships in the system being viewed.

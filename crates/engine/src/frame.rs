@@ -529,6 +529,14 @@ impl Frame {
         self.hud.push(Vertex { pos: [b.x, b.y, 0.0], color: cb.0 });
     }
 
+    /// A HUD triangle, a colour at each corner (blended across it).
+    pub fn hud_triangle_colored(&mut self, p: [Vec2; 3], c: [Color; 3]) {
+        let solid = crate::font::atlas().solid;
+        for k in 0..3 {
+            self.hud_tris.push(HudVertex { pos: [p[k].x, p[k].y], uv: solid, color: c[k].0 });
+        }
+    }
+
     /// A filled disc that fades from `inner` at the center to `outer` at the
     /// rim (a glow), in HUD pixel coordinates.
     pub fn hud_glow(&mut self, center: Vec2, radius: f32, segments: u32, inner: Color, outer: Color) {

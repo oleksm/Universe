@@ -603,7 +603,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Observer;
             app.observer.focus = Focus::Ship;
             app.observer.distance = std::env::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(160.0);
-            app.observer.pitch = 0.35;
+            app.observer.pitch = std::env::var("UNIVERSE_PITCH").ok().and_then(|d| d.parse().ok()).unwrap_or(0.35);
             app.observer.yaw = std::env::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()).unwrap_or(2.3);
         }
         "manual" => {
