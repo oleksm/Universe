@@ -89,7 +89,9 @@ In the base world (`content/base/modules.ron`, step 1 done):
    the station is the backbone, its ports where it has none. Worlds block the line, so a port on
    its world's far side drops off the net and comes back as the world turns. Ships link to nodes
    but don't relay yet: that comes with capture and delivery.)
-3. Hypernet mode on the nav map: coverage, links, lag.
+3. ✓ Hypernet mode on the nav map: coverage, links, lag. (NETWORK on the map, `K`: the chart to scale
+   by the root of distance; links coloured by lag; shaded, where your comm reaches a relay on the net;
+   the relays listed with reach and lag, dark ones red; your status and the relay you're through.)
 4. Capture and delivery: events captured in range, carried over the net and by docking. The kill and
    trade feeds go local.
 5. Markets on knowledge (quotes with age and source); then news and digests (`roadmap.md` §2).

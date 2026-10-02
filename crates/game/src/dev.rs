@@ -259,9 +259,11 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             app.economy_panel = Some(Default::default());
         }
-        "navmap" => {
+        "navmap" | "netmap" => {
             app.mode = Mode::Pilot;
-            app.nav_map = Some(crate::navmap::NavMap::open(app));
+            let mut map = crate::navmap::NavMap::open(app);
+            map.network = name == "netmap";
+            app.nav_map = Some(map);
         }
         "landing" | "padview" | "autoland" | "touchdown" => {
             // Target the spaceport on the station's planet and get landing clearance.
