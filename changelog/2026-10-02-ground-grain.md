@@ -11,3 +11,12 @@
   ripples, hummocks), the same slope at each scale, fading in as they grow to a few pixels. They go into
   the shading heights and a touch of colour. (It rides in the instance columns' spare w: the vertex
   attributes are all used.)
+
+# No lake at the port, no grid
+
+- **A port's plain is dry ground:** its flat sits exactly at sea level, and the ground's own height
+  (good to a metre) read as sea there, its edge flickering. The surface map now marks each port's plain
+  (below zero in its second channel; `Terrain::port_plain`): never sea, no beach, just land.
+- **Sea up close** only where the map says it's deep (smooth: no flickering edge), and the ground's own
+  height doesn't stand above it.
+- **The port's 1 km ground grid** only with F4.

@@ -308,11 +308,19 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     }
     // A patch of ground: its height is its own (in relief units), exact —
     // land where it stands above the sea, the sea's depth from the map.
+    // (The map's second channel: crater-ness, or below zero a port's plain.)
+    let inside = max(ground.g, 0.0);
+    let plain = max(-ground.g, 0.0);
     var h = ground.r;
     if (on_patch) {
+        // Sea where the map says it's deep enough (smooth: no flicker on its
+        // edge), never on a port's plain; else the ground's own height.
         let own = (length(in.local) - 1.0) / max(in.patch_scale * in.globe.z, 1e-12);
-        h = select(min(ground.r, -0.0005), own, own > 0.0002 || in.globe.y > 0.5);
+        let sea = in.globe.y < 0.5 && ground.r < -0.002 && plain < 0.01 && own < 0.0004;
+        h = select(max(own, 0.0), min(ground.r, -0.0005), sea);
     }
+    // (A port's plain: dry ground, no beach.)
+    h = max(h, 0.03 * smoothstep(0.0, 0.3, plain));
     let land = select(1.0, step(0.0, select(ground.r + d.x * 0.03, h, on_patch)), in.globe.y < 0.5);
     // (Shaded the same near and far: the map's slopes and the fine detail's,
     // over whatever shape the mesh has — till a pixel is a few metres or
@@ -339,7 +347,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             let grad = sign(det) * (hx * r1 + hy * r2);
             n = normalize(abs(det) * n - grad);
         }
-        albedo = vec4<f32>(globe_color(in.globe.y, h, ground.g, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
+        albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
     }
     let seen = sunlit(in.at, n);
     // (A globe lit per pixel: its slopes, its terminator.)

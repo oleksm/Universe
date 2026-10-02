@@ -191,6 +191,11 @@ impl Terrain {
         (h * self.pad_flat(dir), inside)
     }
 
+    /// How much a spaceport's plain this is (1 on its flat, 0 away from it).
+    pub fn port_plain(&self, dir: DVec3) -> f64 {
+        1.0 - self.pad_flat(dir)
+    }
+
     /// How much of the natural height stands here (0 on a spaceport's flat, 1 away from them).
     fn pad_flat(&self, dir: DVec3) -> f64 {
         self.flat_within(dir, PAD_FLAT_INNER, PAD_FLAT_OUTER)

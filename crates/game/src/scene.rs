@@ -1381,8 +1381,8 @@ fn spaceports(frame: &mut Frame, app: &App) {
             frame.line(corner(-0.5, 0.3, 1.02), corner(0.5, 0.3, 1.02), glow.scale(0.6));
         }
 
-        // Ground grid, 1 km spacing, out to 10 km.
-        if dist < 150_000.0 {
+        // Ground grid, 1 km spacing, out to 10 km (F4 only).
+        if dist < 150_000.0 && app.show_grid {
             let g = GRID.scale(if dist < 30_000.0 { 1.0 } else { 0.6 });
             let n = 10;
             for k in -n..=n {

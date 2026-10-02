@@ -30,7 +30,8 @@ pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
 pub const MAP_SIZE: u32 = 512;
 
 /// A world's surface map (see `GlobeMap`): its terrain sampled on a cube,
-/// height in units of its relief and crater-ness, made on all cores.
+/// height in units of its relief and crater-ness (or, below zero, how much
+/// a spaceport's plain it is), made on all cores.
 pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
     let terrain = body.terrain.as_ref()?;
     let n = MAP_SIZE as usize;
@@ -46,7 +47,9 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
                     let (face, y, x) = (row / n, (row % n) as u32, (i % n) as u32);
                     let dir = universe_engine::GlobeMap::direction(MAP_SIZE, face, x, y);
                     let (h, inside) = terrain.height_and_crater(dir);
-                    *t = [(h / amp) as f32, inside as f32];
+                    // (A port's plain marked in place of crater-ness, below zero.)
+                    let plain = terrain.port_plain(dir);
+                    *t = [(h / amp) as f32, if plain > 0.01 { -plain as f32 } else { inside as f32 }];
                 }
             });
         }
