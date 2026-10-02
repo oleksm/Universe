@@ -402,10 +402,29 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
         }
     };
 
+    // Names, small and faint (the one picked in the list gets its full title).
+    const SMALL: f32 = 0.6;
+    let faint = |c: Color| Color([c.0[0], c.0[1], c.0[2], 0.55]);
+    let label = |frame: &mut Frame, at: Vec2, name: &str, c: Color| {
+        frame.text_scaled(at, &name.to_uppercase(), faint(c), SMALL);
+    };
     frame.hud_rect(center - 3.0, Vec2::splat(7.0), color(sys.bodies[0].color));
+    // How far apart the rings are (the gap out to each, along the axis to the right).
+    let mut inner = 0.0;
+    for (k, &p) in planets.iter().enumerate() {
+        let (r0, r1) = (ring * k as f32, ring * (k as f32 + 1.0));
+        let gap = semi_major(p) - inner;
+        inner = semi_major(p);
+        // (The unit once; then above and below the axis by turns, to keep apart.)
+        let text = if k == 0 { fmt::distance(gap) } else { format!("+{:.2}", gap / universe_sim::world::units::AU) };
+        let w = text_size(&text).x * SMALL;
+        let y = if k % 2 == 0 { -9.0 } else { 3.0 };
+        frame.text_scaled(center + Vec2::new((r0 + r1) / 2.0 - w / 2.0, y), &text, DIM.scale(0.8), SMALL);
+    }
     for (k, &p) in planets.iter().enumerate() {
         frame.hud_ellipse(center, Vec2::splat(ring * (k as f32 + 1.0)), 64, DIM.scale(0.6));
         let at = place(p);
+        label(frame, at + Vec2::new(6.0, 3.0), &sys.bodies[p].name, TEXT);
         let b = &sys.bodies[p];
         let s = match b.kind {
             BodyKind::GasGiant | BodyKind::IceGiant => 7.0,
@@ -416,6 +435,7 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
     for (i, b) in sys.bodies.iter().enumerate() {
         if b.kind == BodyKind::Moon {
             frame.hud_rect(chart_pos(i) - 1.0, Vec2::splat(3.0), color(b.color).scale(0.8));
+            label(frame, chart_pos(i) + Vec2::new(4.0, 2.0), &b.name, DIM);
         }
     }
     // Asteroid fields: a scatter of dots.
@@ -447,6 +467,14 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
                 frame.hud_line(at + Vec2::new(-3.0, 0.0), at + Vec2::new(0.0, -5.0), c);
                 frame.hud_line(at + Vec2::new(3.0, 0.0), at + Vec2::new(0.0, -5.0), c);
             }
+        }
+        if i != map.selected {
+            let name = match e.target {
+                NavTarget::Spaceport(p) => sys.spaceports[p].name.clone(),
+                NavTarget::Station(b) | NavTarget::Gate(b) => sys.bodies[b].name.clone(),
+                NavTarget::Asteroid(_) => e.name.clone(),
+            };
+            label(frame, at + Vec2::new(8.0, -10.0), &name, c);
         }
         if i == map.selected {
             let k = 12.0;

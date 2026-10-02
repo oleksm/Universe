@@ -649,6 +649,11 @@ impl Frame {
     /// Draw text (the HUD typeface, on its monospaced grid); `\n` starts a
     /// new line. Returns the end position.
     pub fn text(&mut self, pos: Vec2, text: &str, color: Color) -> Vec2 {
+        self.text_scaled(pos, text, color, 1.0)
+    }
+
+    /// `text`, its glyphs `scale` times the usual size (small labels).
+    pub fn text_scaled(&mut self, pos: Vec2, text: &str, color: Color, scale: f32) -> Vec2 {
         let atlas = crate::font::atlas();
         let origin = pos;
         let mut cursor = origin;
@@ -656,18 +661,18 @@ impl Frame {
         let inset = (GLYPH - atlas.advance) * 0.5;
         for ch in text.chars() {
             if ch == '\n' {
-                cursor = Vec2::new(origin.x, cursor.y + GLYPH + 2.0);
+                cursor = Vec2::new(origin.x, cursor.y + (GLYPH + 2.0) * scale);
                 continue;
             }
             let g = crate::font::glyph_index(ch).and_then(|k| atlas.glyphs.get(k).copied()).unwrap_or(atlas.glyphs[(b'?' - 32) as usize]);
             if g.at[2] > 0.0 {
-                let p = cursor + Vec2::new(inset + g.at[0], crate::font::BASELINE + g.at[1]);
-                let (a, b) = (p, p + Vec2::new(g.at[2], g.at[3]));
+                let p = cursor + Vec2::new(inset + g.at[0], crate::font::BASELINE + g.at[1]) * scale;
+                let (a, b) = (p, p + Vec2::new(g.at[2], g.at[3]) * scale);
                 let (u0, v0, u1, v1) = (g.uv[0], g.uv[1], g.uv[2], g.uv[3]);
                 let v = |x: f32, y: f32, u: f32, w: f32| HudVertex { pos: [x, y], uv: [u, w], color: color.0 };
                 self.hud_tris.extend([v(a.x, a.y, u0, v0), v(b.x, a.y, u1, v0), v(b.x, b.y, u1, v1), v(a.x, a.y, u0, v0), v(b.x, b.y, u1, v1), v(a.x, b.y, u0, v1)]);
             }
-            cursor.x += GLYPH;
+            cursor.x += GLYPH * scale;
         }
         cursor
     }
