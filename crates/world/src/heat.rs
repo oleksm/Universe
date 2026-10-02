@@ -17,6 +17,8 @@ use crate::ship::Ship;
 /// rest is carried off by what burns away).
 const ABLATION: f64 = 0.05;
 use crate::sheet::{AIR_CP, STEFAN_BOLTZMANN as SIGMA};
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{AMBIENT, EMISSIVITY, HEATED_AREA, NOSE_RADIUS, RADIATING_AREA, SKIN_CAPACITY, SKIN_LIMIT};
 
 /// The skin over `dt` seconds, flying through air of `density` (kg/m³)
 /// moving at `air` (none: in vacuum). Burns the hull past the limit.
@@ -85,6 +87,3 @@ mod tests {
     }
 
 }
-
-// (Its constants are the physics sheet's: config/physics.ron.)
-pub use crate::sheet::{AMBIENT, EMISSIVITY, HEATED_AREA, NOSE_RADIUS, RADIATING_AREA, SKIN_CAPACITY, SKIN_LIMIT};

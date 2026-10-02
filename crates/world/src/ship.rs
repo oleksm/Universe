@@ -9,6 +9,8 @@
 use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{EXHAUST_VELOCITY, HYPER_FUEL_FLOW};
 
 /// The hull a new ship is built as, unless it's told otherwise.
 pub const STARTING_HULL: &str = "hull.drover";
@@ -1204,6 +1206,3 @@ mod balance {
         assert!(off < 0.85 * d.lift_thrust, "{:.0}%", 100.0 * off / d.lift_thrust);
     }
 }
-
-// (Its constants are the physics sheet's: config/physics.ron.)
-pub use crate::sheet::{EXHAUST_VELOCITY, HYPER_FUEL_FLOW};

@@ -20,6 +20,8 @@ use crate::galaxy::Galaxy;
 use crate::ship::{HyperdriveCommand, Ship};
 use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{GROUND_MARGIN, HYPER_RATE, INTERLOCK};
 
 
 /// Engage or disengage as commanded (only in flight). Both ways the engine
@@ -310,6 +312,3 @@ mod tests {
         assert!(p.events.contains(&ShipEvent::HyperdriveDisengaged));
     }
 }
-
-// (Its constants are the physics sheet's: config/physics.ron.)
-pub use crate::sheet::{GROUND_MARGIN, HYPER_RATE, INTERLOCK};

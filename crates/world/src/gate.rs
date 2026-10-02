@@ -10,6 +10,8 @@ use universe_physics::{Frame, Relative, RigidBody, Ring};
 
 use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
+// (Its constants are the physics sheet's: config/physics.ron.)
+pub use crate::sheet::{GATE_RADIUS, MAX_TRANSIT_SPEED, RING_TUBE, TRANSIT_TIME};
 
 /// The ring's shape, for the physics kernel; its opening is the trigger.
 pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
@@ -158,6 +160,3 @@ mod clear {
         assert!(checked > 100, "{checked}");
     }
 }
-
-// (Its constants are the physics sheet's: config/physics.ron.)
-pub use crate::sheet::{GATE_RADIUS, MAX_TRANSIT_SPEED, RING_TUBE, TRANSIT_TIME};
