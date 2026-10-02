@@ -6,3 +6,7 @@ version.workspace = true
 # The physics kernel: rails, rigid bodies, colliders, ops. Knows nothing about the game.
 [dependencies]
 glam.workspace = true
+
+[build-dependencies]
+serde = { version = "1", features = ["derive"] }
+ron = "0.12"

@@ -1,85 +1,86 @@
 # The physics sheet
 
-Generated from `config/physics.ron` (run `cargo run -p universe-world --example physics_sheet`): edit the sheet, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.
+Generated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.
+
+# The kernel's laws
+
+From `config/physics.ron`.
 
 ## Nature
 
-Constants of physics (real).
+Constants of physics.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
 | `SPEED_OF_LIGHT` | 2.99792458e8 | m/s | Real | c: light, radio, radar, and every capture of an event. |
 | `STEFAN_BOLTZMANN` | 5.670374e-8 | W/(m²·K⁴) | Real | σ: how a body radiates heat: σ·ε·A·T⁴. |
-| `AIR_CP` | 1005 | J/(kg·K) | Real | Air's specific heat at constant pressure (Earth-like air). |
 
 ## Medium
 
-The hyper-medium (invented): its local limit v_lim = K·d near masses; slack in open space.
+The hyper-medium: near masses it holds what moves in it under v_lim = K·d; far from them it's slack, s(d) = min(1, (K·d / v_open)²).
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `HYPER_RATE` | 2 | 1/s | Invented | K: the medium's limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c. |
+| `HYPER_RATE` | 2 | 1/s | Invented | K: the limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c. |
 | `INTERLOCK` | 1000 | m | Invented | Nothing moves in the medium within this of a body's highest ground. |
-| `GROUND_MARGIN` | 20000 | m | Tuning | Flying along the nose at a world, the drive drops out this far above its ground (or its air's top). |
-| `V_OPEN_C` | 1e6 | c | Invented | Where the slack sets in: s(d) = min(1, (K·d / v_open)²). A few hundred AU out. |
+| `V_OPEN_C` | 1e6 | c | Invented | Where the slack sets in (a few hundred AU from a star). |
 | `STIFF_SLACK` | 0.01 |  | Invented | A field forms only where the slack is below this (inside a system). |
 
-## Hyperdrive
+## Field
 
-Draw P = m·(P_FLOOR·s + P_PUSH·(v/v*)³)/η. Between stars, power per kg is the wall.
-
-| Name | Value | Unit | Kind | Why |
-|---|---|---|---|---|
-| `P_FLOOR` | 10000 | W/kg | Invented | Holding the field in open space, per kg aboard. Today's best plant gives 2.8 kW/kg on its own. |
-| `P_PUSH` | 5000 | W/kg | Invented | Pushing through the medium at the best speed; grows with its cube. |
-| `V_BEST_C` | 1000 | c | Invented | v*: the best speed between stars (an explorer at 30 kW/kg goes 1.6 v*). |
-| `ETA_FIELD_MIN` | 0.5 |  | Planned | The field's efficiency, the worst drives (the rest is heat). |
-| `ETA_FIELD_MAX` | 0.8 |  | Planned | The field's efficiency, the best drives. |
-| `ETA_FIELD` | 0.65 |  | Invented | The field's efficiency of today's drives (one grade, till brands differ): the rest of its draw is heat. |
-| `EXPLORER_POWER` | 30000 | W/kg | Planned | The reference future explorer's power per kg aboard (next-generation reactors), for the dogma's claims. |
-
-## Gates
-
-A gate pair is one wormhole throat (invented): power cubic in span, limited by ring class.
+A hyper-field's draw: P = m·s·(P_FLOOR + P_PUSH·(v/v*)³) / η, η the device's. Between stars, power per kg is the wall.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `GATE_RADIUS` | 1500 | m | Tuning | The ring's centreline radius; its opening is a little smaller. |
-| `RING_TUBE` | 60 | m | Tuning | Half the ring structure's thickness. |
-| `MAX_TRANSIT_SPEED` | 300 | m/s | Invented | Faster through a ring and the transit wrecks the ship. |
+| `P_FLOOR` | 10000 | W/kg | Invented | Holding a field in open space, per kg in it. |
+| `P_PUSH` | 5000 | W/kg | Invented | Pushing it through the medium at the best speed; grows with the cube of speed. |
+| `V_BEST_C` | 1000 | c | Invented | v*: the speed the push is reckoned at. |
+
+## Throat
+
+A gate pair is one wormhole throat: holding it open takes P = P0·(S/S0)³ for a span S; a transit costs τ·m·S.
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `MAX_TRANSIT_SPEED` | 300 | m/s | Invented | Faster through a throat and the transit wrecks what goes in. |
 | `TRANSIT_TIME` | 10 | s | Invented | Through the throat, ring to ring (matter and hyper-signals). |
-| `GATE_P0` | 1e9 | W | Planned | Holding a throat open at the reference span: P = P0·(S/S0)³. |
-| `GATE_S0` | 10 | ly | Planned | The reference span. |
-| `GATE_TAU` | 2.6e-9 | J/(kg·m) | Planned | A transit's energy per kg per metre of span (the gate's, not the ship's). |
-| `RING_SPAN_I` | 10 | ly | Planned | A class I ring's greatest span. |
-| `RING_SPAN_II` | 25 | ly | Planned | A class II ring's greatest span. |
-| `RING_SPAN_III` | 50 | ly | Planned | A class III ring's greatest span: nothing bridges farther. |
+| `GATE_P0` | 1e9 | W | Invented | Holding a throat open at the reference span. |
+| `GATE_S0` | 10 | ly | Invented | The reference span. |
+| `GATE_TAU` | 2.6e-9 | J/(kg·m) | Invented | A transit's energy per kg per metre of span (the gate's, not the traveller's). |
 
-## Energy
+# The base world's numbers
 
-The chain: fuel → reactor → capacitor bank → consumers; losses become heat. Fuels at their real energies and densities.
-
-| Name | Value | Unit | Kind | Why |
-|---|---|---|---|---|
-| `FUSION_ENERGY` | 3.45e14 | J/kg | Real | Catalysed D–D fusion (the tritium and helium-3 it makes burnt too): ships' fuel today, deuterium. |
-| `FUSION_FUEL_DENSITY` | 163 | kg/m³ | Real | Liquid deuterium: what ships' tanks hold. |
-| `DEUTERIUM_IN_WATER` | 3.2e-5 | kg/kg | Real | Deuterium's share of water's mass (1 D per 6,400 H): a tonne of it in about 31,000 t of water. Fuel comes from seas and ice. |
-| `D_HE3_ENERGY` | 3.5e14 | J/kg | Real | D–He3 fusion (few neutrons: the premium fuel). Helium-3 is rare: gas giants' air (about 1e-5), regolith (about 1e-8). Planned fuel. |
-| `D_T_ENERGY` | 3.4e14 | J/kg | Real | D–T fusion (tritium bred from lithium; its neutrons wear a reactor). Planned fuel. |
-| `FISSION_ENERGY` | 8.2e13 | J/kg | Real | U-235 fission. Planned fuel. |
-| `METHALOX_ENERGY` | 1e7 | J/kg | Real | Methane + oxygen, burnt (exhaust 3.3–3.7 km/s; 830 kg/m³). Planned fuel. |
-| `KEROLOX_ENERGY` | 1e7 | J/kg | Real | Kerosene + oxygen (exhaust 3.0–3.4 km/s; 1,030 kg/m³). Planned fuel. |
-| `HYDROLOX_ENERGY` | 1.3e7 | J/kg | Real | Hydrogen + oxygen (exhaust 4.4–4.5 km/s; 320 kg/m³). Planned fuel. |
-| `REACTOR_EFFICIENCY` | 0.4 |  | Grounded | A fusion reactor's fuel energy to power (the rest is heat). |
-| `CAPACITOR_DENSITY` | 1e7 | J/kg | Grounded | What a capacitor bank stores per kg: optimistic (superconducting magnetic storage). Batteries hold about 1e6. |
+From `content/base/sheet.ron`.
 
 ## Drives
 
-Today's main drive: a fusion torch.
+The world's drives and hyperdrives as built today.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `EXHAUST_VELOCITY` | 1e7 | m/s | Grounded | A fusion torch (Daedalus-class, 3% of c). Each drive burns thrust / this, in kg/s. Its power isn't yet accounted (the energy chain). |
+| `EXHAUST_VELOCITY` | 1e7 | m/s | Grounded | Today's main drives and thrusters are fusion torches (Daedalus-class, 3% of c): each burns thrust / this, in kg/s. |
+| `ETA_FIELD` | 0.65 |  | Grounded | Today's hyperdrives' field efficiency (one grade, till brands differ): the rest of the draw is heat. |
+| `GROUND_MARGIN` | 20000 | m | Tuning | Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top). |
+
+## Gates
+
+The world's gate rings.
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `GATE_RADIUS` | 1500 | m | Tuning | A ring's centreline radius; its opening is a little smaller. |
+| `RING_TUBE` | 60 | m | Tuning | Half the ring structure's thickness. |
+| `RING_SPAN_I` | 10 | ly | Planned | A class I ring's greatest span. |
+| `RING_SPAN_II` | 25 | ly | Planned | A class II ring's greatest span. |
+| `RING_SPAN_III` | 50 | ly | Planned | A class III ring's greatest span. |
+
+## Technology
+
+How far the world's engineering goes today.
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `CAPACITOR_DENSITY` | 1e7 | J/kg | Grounded | The most a capacitor bank stores per kg (superconducting magnetic storage, optimistic; batteries about 1e6). |
 
 ## Heat
 
@@ -94,6 +95,33 @@ The hull's skin in air: Sutton–Graves heating in, Stefan–Boltzmann radiation
 | `SKIN_CAPACITY` | 3e6 | J/K | Simplified | The skin's heat capacity: about 3 t of metal. |
 | `SKIN_LIMIT` | 1500 | K | Real | Beyond it the hull burns (refractory alloys). |
 | `AMBIENT` | 290 | K | Simplified | What the skin settles to with nothing heating it: to be replaced by the energy balance (sunlight, night). |
+| `AIR_CP` | 1005 | J/(kg·K) | Real | Earth-like air's specific heat at constant pressure. |
+
+## References
+
+For the dogma's claims (not used by the code).
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `ETA_FIELD_MIN` | 0.5 |  | Planned | The field's efficiency, the worst drives. |
+| `ETA_FIELD_MAX` | 0.8 |  | Planned | The field's efficiency, the best drives. |
+| `EXPLORER_POWER` | 30000 | W/kg | Planned | A future explorer's power per kg aboard (next-generation reactors). |
+
+# The base world's materials
+
+From `content/base/materials.ron`.
+
+| Material | Density (kg/m³) | Energy (J/kg) | Process | Trades as | Note |
+|---|---|---|---|---|---|
+| DEUTERIUM | 163 | 3.45e14 | Fusion | goods.fuel | Catalysed D–D fusion (the tritium and helium-3 it makes burnt too). A tonne in about 31,000 t of water. |
+| HELIUM-3 | 59 | 0 | None | - | Burnt with deuterium (D–He3, few neutrons). Rare: gas giants' air about 1e-5, regolith about 1e-8. |
+| D–HE3 BLEND | 100 | 3.5e14 | Fusion | - | Deuterium and helium-3, 2:3 by mass: the cleanest fusion fuel. |
+| D–T BLEND | 200 | 3.4e14 | Fusion | - | Deuterium and tritium (bred from lithium); its neutrons wear a reactor. |
+| ENRICHED URANIUM | 19000 | 8.2e13 | Fission | - | U-235 fission. |
+| METHALOX | 830 | 1e7 | Chemical | - | Methane and oxygen (exhaust 3.3–3.7 km/s): made from ice and CO₂ almost anywhere. |
+| KEROLOX | 1030 | 1e7 | Chemical | - | Kerosene and oxygen (exhaust 3.0–3.4 km/s). |
+| HYDROLOX | 320 | 1.3e7 | Chemical | - | Hydrogen and oxygen (exhaust 4.4–4.5 km/s): the best chemical fuel, bulky. |
+| HYDROGEN | 71 | 0 | None | - | Reaction mass for nuclear thermal engines (exhaust about 9 km/s). |
 
 ## What it adds up to
 

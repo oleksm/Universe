@@ -22,6 +22,7 @@ pub mod goods;
 pub mod gate;
 pub mod heat;
 pub mod hyperdrive;
+pub mod materials;
 pub mod mining;
 pub mod missiles;
 pub mod modules;

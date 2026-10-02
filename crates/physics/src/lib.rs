@@ -10,7 +10,9 @@
 pub mod atmosphere;
 pub mod body;
 pub mod collide;
+pub mod hyper;
 pub mod integrate;
+pub mod laws;
 pub mod mesh;
 pub mod ops;
 pub mod orbit;
@@ -18,6 +20,7 @@ pub mod pairs;
 pub mod projectile;
 pub mod query;
 pub mod rails;
+pub mod sheet;
 pub mod surface;
 #[cfg(test)]
 mod testkit;

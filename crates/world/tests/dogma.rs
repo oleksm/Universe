@@ -1,15 +1,16 @@
-//! The dogma's claims, checked against the physics sheet (`config/physics.ron`;
-//! the charter: `docs/physics.md`). Change a number in the sheet and these say
-//! which promise it breaks.
+//! The dogma's claims: the kernel's laws (`config/physics.ron`) against the
+//! base world built on them (`content/base/`). The charter: `docs/physics.md`.
+//! Change a law or the world, and these say which promise it breaks.
 
 use universe_world::content::content;
 use universe_world::modules::Does;
+use universe_physics::laws::*;
 use universe_world::sheet::*;
 use universe_world::units::{AU, LIGHT_YEAR};
 
 /// The most power any plant makes, and the most per kg of plant.
 fn best_plant() -> (f64, f64) {
-    content().modules.iter().filter_map(|(_, m)| if let Does::PowerPlant { output } = m.does { Some((output, output / m.mass)) } else { None }).fold((0.0, 0.0), |(a, b), (o, d)| (a.max(o), b.max(d)))
+    content().modules.iter().filter_map(|(_, m)| if let Does::PowerPlant { output, .. } = m.does { Some((output, output / m.mass)) } else { None }).fold((0.0, 0.0), |(a, b), (o, d)| (a.max(o), b.max(d)))
 }
 
 /// Holding the field between stars needs at least this per kg aboard (the best drive).
@@ -67,9 +68,19 @@ fn gates_are_justified_and_limited() {
 }
 
 #[test]
-fn the_sheet_is_whole() {
-    for e in SHEET {
+fn the_sheets_are_whole() {
+    for e in universe_physics::laws::SHEET.iter().chain(universe_world::sheet::SHEET) {
         assert!(!e.note.is_empty(), "{} has no reason", e.name);
         assert!(e.value.is_finite(), "{}", e.name);
+    }
+}
+
+#[test]
+fn the_kernel_names_no_material() {
+    // (The laws are nature's and the hyper layer's: no fuels, no devices.)
+    for e in universe_physics::laws::SHEET {
+        for word in ["FUEL", "DEUTERIUM", "HELIUM", "URANIUM", "METHALOX", "REACTOR", "CAPACITOR", "EXHAUST"] {
+            assert!(!e.name.contains(word), "the kernel's laws name {}: that's the world's", e.name);
+        }
     }
 }

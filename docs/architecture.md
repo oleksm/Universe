@@ -36,6 +36,29 @@ changes.
    randomness, no wall clock inside the simulation. This underpins multiplayer (server
    authority, client prediction), replays and reproducible traffic simulations.
 
+## Kernel and distro
+
+The engine is a **kernel**: the laws every world runs on, the same whatever is built in it. The
+world is a **distro** on it: a seeded instance with its own matter, devices, designs, production
+and economy. As with an OS kernel and a distribution, the distro can change anything of its own and
+nothing of the kernel's.
+
+| | Kernel | Distro (the base world) |
+|---|---|---|
+| Where | `crates/physics` (`universe-physics`) and its laws, `config/physics.ron` | `content/base/` (a content pack), and the world code that runs it |
+| What | nature's constants; mechanics, gravity, orbits, contact; the hyper layer's laws (the medium, fields, throats: `laws`, `hyper`) | materials (`materials.ron`), devices (`modules.ron`), hulls, brands, recipes, places, markets, its fixed design numbers (`sheet.ron`) |
+| Knows | bodies, forces, energy, the medium | fuels, reactors, tanks, ships, stations, goods, who makes what |
+| Never | names a material, a device, a fuel or a good (`dogma.rs` checks) | breaks a law (devices are checked against the kernel and their materials) |
+
+- **The code never names a fuel.** A tank holds a material, a plant burns one at its own
+  efficiency, and the energy comes from the material's entry. Ships' traded fuel is whatever the
+  starting hull's tanks hold.
+- **Production isn't dogma.** The seeded recipes, places and fuels are one starting state. Anyone
+  can collect any matter and build any device the laws allow.
+- **Not yet:** the world crate still holds device behaviour (the hyperdrive and gates as devices,
+  the heat model) next to world rules. The distro's numbers are compiled in, not overridable by
+  packs. Elements and reactions (the kernel deriving a fuel's energy) come with the depth of matter.
+
 ## Layers (crates), dependencies pointing down only
 
 ```

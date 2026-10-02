@@ -1,10 +1,14 @@
 # Physics: what's real, what's simplified, what's invented
 
-> **The numbers live in the physics sheet**, `config/physics.ron`: every constant with its unit,
-> its kind (real, grounded, simplified, invented, tuning, planned) and its reason. The build makes
-> the code's constants from it; `crates/world/tests/dogma.rs` checks the claims below against it;
-> `docs/physics-sheet.md` is its generated report (`cargo run -p universe-world --example
-> physics_sheet`). Change the dogma there, and the checks say what it breaks.
+> **Kernel and distro.** The engine is a kernel; the world is a distro on it (see
+> `docs/architecture.md`). **The kernel's laws** are `config/physics.ron` (nature's constants, the
+> hyper layer's laws: `universe_physics::laws`, `universe_physics::hyper`): no materials, devices
+> or designs. **The base world** (`content/base/`) brings its matter (`materials.ron`: real
+> substances at real properties), its devices (`modules.ron`: a plant says what it burns and how
+> well, a tank what it holds) and its fixed design numbers (`sheet.ron`). Every constant carries a
+> unit, a kind and a reason; `crates/world/tests/dogma.rs` checks the claims below against both;
+> `docs/physics-sheet.md` is the generated report (`cargo run -p universe-world --example
+> physics_sheet`).
 
 Physical accuracy is the game's heart. Every feature is checked against this page: it uses the
 real physics below, or one of the few invented devices under their written rules, and nothing

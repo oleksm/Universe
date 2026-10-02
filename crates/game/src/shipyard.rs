@@ -534,9 +534,9 @@ fn slot_help(kind: universe_sim::world::modules::SlotKind) -> (&'static str, &'s
 
 fn what(m: &Module) -> String {
     match &m.does {
-        Does::PowerPlant { output } => format!("{:.1} MW", output / 1e6),
+        Does::PowerPlant { output, .. } => format!("{:.1} MW", output / 1e6),
         Does::Drive { thrust } | Does::Thrusters { thrust } | Does::Lift { thrust } => format!("{:.0} KN A NOZZLE", thrust / 1e3),
-        Does::Tank { capacity } | Does::Rack { capacity } => fmt::tonnes(*capacity),
+        Does::Tank { capacity, .. } | Does::Rack { capacity } => fmt::tonnes(*capacity),
         Does::Cabin { seats } => format!("{seats} SEATS"),
         Does::FlightComputer { turn_rate, roll_rate } => format!("TURNS {turn_rate:.1}, ROLLS {roll_rate:.1} RAD/S"),
         Does::Sensors { range } => fmt::distance(*range),

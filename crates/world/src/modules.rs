@@ -13,16 +13,16 @@ use serde::Deserialize;
 /// What a module does, with its numbers.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
 pub enum Does {
-    /// Makes power (W).
-    PowerPlant { output: f64 },
+    /// Makes power (W) from the material it `burns`, at `efficiency` (the rest heat).
+    PowerPlant { output: f64, efficiency: f64, burns: String },
     /// The main drive: the thrust of a full-share nozzle (N).
     Drive { thrust: f64 },
     /// Translation and attitude thrusters: the thrust of a full-share nozzle (N).
     Thrusters { thrust: f64 },
     /// The belly lift: the thrust of a full-share nozzle (N).
     Lift { thrust: f64 },
-    /// Holds fuel (kg).
-    Tank { capacity: f64 },
+    /// Holds fuel (kg): the material it `holds`.
+    Tank { capacity: f64, holds: String },
     /// A capacitor bank: stores energy (J), taken in or given out at up to `rate` (W).
     Capacitor { capacity: f64, rate: f64 },
     /// Holds cargo (kg).
@@ -186,15 +186,10 @@ impl Module {
         }
         let positive = |what: &str, v: f64| if v.is_finite() && v > 0.0 { Ok(()) } else { Err(format!("{what} must be positive ({v})")) };
         match &self.does {
-            Does::PowerPlant { output } => positive("output", *output),
+            Does::PowerPlant { output, efficiency, .. } => positive("output", *output).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
             Does::Drive { thrust } | Does::Thrusters { thrust } | Does::Lift { thrust } => positive("thrust", *thrust),
-            // (A tank holds fuel at its real density: the physics sheet's.)
-            Does::Tank { capacity } => positive("capacity", *capacity).and(if *capacity <= crate::sheet::FUSION_FUEL_DENSITY * self.volume * 1.001 {
-                Ok(())
-            } else {
-                Err(format!("holds {:.0} kg of fuel in {:.0} m³: denser than fusion fuel's {:.0} kg/m³", capacity, self.volume, crate::sheet::FUSION_FUEL_DENSITY))
-            }),
-            Does::Rack { capacity } => positive("capacity", *capacity),
+            // (What a tank holds is checked against its material when content loads.)
+            Does::Tank { capacity, .. } | Does::Rack { capacity } => positive("capacity", *capacity),
             Does::Cabin { seats } => positive("seats", *seats as f64),
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
             Does::Sensors { range } => positive("range", *range),

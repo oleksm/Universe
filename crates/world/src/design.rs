@@ -486,7 +486,7 @@ fn stock_fit(slots: &[(String, SlotKind, u8)]) -> Result<Vec<(String, String)>, 
         .modules
         .iter()
         .map(|(_, m)| m)
-        .filter(|m| m.size <= size && matches!(m.does, Does::PowerPlant { output } if output >= draw))
+        .filter(|m| m.size <= size && matches!(m.does, Does::PowerPlant { output, .. } if output >= draw))
         .min_by(|a, b| a.price.total_cmp(&b.price))
         .ok_or_else(|| format!("no plant that fits makes the {:.1} MW its modules draw", draw / 1e6))?;
     fit.push((power, plant.key.clone()));

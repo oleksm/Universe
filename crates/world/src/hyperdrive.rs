@@ -21,14 +21,12 @@ use crate::ship::{HyperdriveCommand, Ship};
 use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
 // (Its constants are the physics sheet's: config/physics.ron.)
-pub use crate::sheet::{GROUND_MARGIN, HYPER_RATE, INTERLOCK};
-use crate::sheet::{ETA_FIELD, P_FLOOR, P_PUSH, SPEED_OF_LIGHT, STIFF_SLACK, V_BEST_C, V_OPEN_C};
-
-/// The medium's slack `d` from the nearest surface (m): 0 stiff (deep in a
-/// system), 1 slack (between the stars). See the physics sheet.
-pub fn slack(d: f64) -> f64 {
-    ((HYPER_RATE * d.max(0.0)) / (V_OPEN_C * SPEED_OF_LIGHT)).powi(2).min(1.0)
-}
+pub use crate::sheet::GROUND_MARGIN;
+use crate::sheet::ETA_FIELD;
+pub use universe_physics::hyper::slack;
+use universe_physics::hyper::{field_draw, field_speed};
+pub use universe_physics::laws::{HYPER_RATE, INTERLOCK};
+use universe_physics::laws::STIFF_SLACK;
 
 /// Distance to the nearest natural body's surface in `sys` (m).
 fn nearest_surface(sys: &StarSystem, p: DVec3, positions: &[DVec3]) -> f64 {
@@ -136,18 +134,13 @@ pub fn cruise(
     let m = ship.mass();
     let spare = if ship.fuel > 0.0 { ship.spare_power() } else { 0.0 };
     let bank = if ship.energy > 0.0 { ship.spec().capacitor_rate } else { 0.0 };
-    let usable = (spare + bank) * ETA_FIELD;
-    let hold = m * s * P_FLOOR;
-    if hold > usable {
+    let Some(power_speed) = field_speed(m, s, spare + bank, ETA_FIELD) else {
         events.push(if ship.fuel <= 0.0 { ShipEvent::OutOfFuel } else { ShipEvent::FieldCollapsed });
         let base = sys.velocity(sys.dominant(ship.position, positions), t);
         ship.position += base * (real_dt * warp);
         drop_out(sys, ship, cmd.exit_velocity, t, positions, false, events);
         return;
-    }
-    // (The fastest the rest buys: P_PUSH·(v/v*)³ per kg, scaled by the slack.)
-    let v_best = V_BEST_C * SPEED_OF_LIGHT;
-    let power_speed = if s > 0.0 { v_best * ((usable - hold) / (m * s * P_PUSH)).cbrt() } else { f64::INFINITY };
+    };
     let dir = cmd.heading.unwrap_or_else(|| ship.forward());
     // The frame it moves in, and where that carries it this frame: even
     // dropping out, it's been carried along (the bodies have moved on to `t`).
@@ -187,9 +180,9 @@ pub fn cruise(
     let room = cmd.destination.map_or(clearance, |d| clearance.min(p.distance(d.point)));
     let speed = (HYPER_RATE * room.max(1000.0) * ship.throttle.max(0.02)).min(power_speed);
     // What it draws: the plant first, the banks for the rest; the reactor burns fuel for its part.
-    let draw = m * s * (P_FLOOR + P_PUSH * (speed / v_best).powi(3)) / ETA_FIELD;
+    let draw = field_draw(m, s, speed, ETA_FIELD);
     let from_plant = draw.min(spare);
-    ship.fuel = (ship.fuel - crate::ship::reactor_fuel(from_plant * real_dt)).max(0.0);
+    ship.fuel = (ship.fuel - ship.reactor_fuel(from_plant * real_dt)).max(0.0);
     ship.energy = (ship.energy - (draw - from_plant) * real_dt).max(0.0);
     ship.velocity = base + dir * speed;
     let next = carried + dir * speed * real_dt.min(0.1);

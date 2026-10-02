@@ -1,0 +1,29 @@
+// Materials: what the world's matter is, as far as its machines care — real
+// substances at their real properties. Tanks hold one; reactors and engines
+// burn one. Which exist, who makes them and what burns them is the world's
+// (a distro's), not the kernel's: anyone can collect or make any of them.
+//
+// density: kg/m³ as stored (liquid, solid). energy: J/kg released by its
+// process. process: Fusion, Fission, Chemical (burnt with what it carries),
+// None (inert, or reaction mass). goods: the market kind it trades as (none:
+// not traded yet).
+[
+    (key: "material.deuterium", name: "DEUTERIUM", density: 163.0, energy: 3.45e14, process: Fusion, goods: "goods.fuel",
+        note: "Catalysed D–D fusion (the tritium and helium-3 it makes burnt too). A tonne in about 31,000 t of water."),
+    (key: "material.helium3", name: "HELIUM-3", density: 59.0, energy: 0.0, process: None, goods: "",
+        note: "Burnt with deuterium (D–He3, few neutrons). Rare: gas giants' air about 1e-5, regolith about 1e-8."),
+    (key: "material.d_he3", name: "D–HE3 BLEND", density: 100.0, energy: 3.5e14, process: Fusion, goods: "",
+        note: "Deuterium and helium-3, 2:3 by mass: the cleanest fusion fuel."),
+    (key: "material.d_t", name: "D–T BLEND", density: 200.0, energy: 3.4e14, process: Fusion, goods: "",
+        note: "Deuterium and tritium (bred from lithium); its neutrons wear a reactor."),
+    (key: "material.uranium", name: "ENRICHED URANIUM", density: 19000.0, energy: 8.2e13, process: Fission, goods: "",
+        note: "U-235 fission."),
+    (key: "material.methalox", name: "METHALOX", density: 830.0, energy: 1.0e7, process: Chemical, goods: "",
+        note: "Methane and oxygen (exhaust 3.3–3.7 km/s): made from ice and CO₂ almost anywhere."),
+    (key: "material.kerolox", name: "KEROLOX", density: 1030.0, energy: 1.0e7, process: Chemical, goods: "",
+        note: "Kerosene and oxygen (exhaust 3.0–3.4 km/s)."),
+    (key: "material.hydrolox", name: "HYDROLOX", density: 320.0, energy: 1.3e7, process: Chemical, goods: "",
+        note: "Hydrogen and oxygen (exhaust 4.4–4.5 km/s): the best chemical fuel, bulky."),
+    (key: "material.hydrogen", name: "HYDROGEN", density: 71.0, energy: 0.0, process: None, goods: "",
+        note: "Reaction mass for nuclear thermal engines (exhaust about 9 km/s)."),
+]

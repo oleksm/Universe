@@ -4,20 +4,31 @@
 
 use universe_world::content::content;
 use universe_world::modules::Does;
+use universe_physics::laws::*;
 use universe_world::sheet::*;
 use universe_world::units::{AU, LIGHT_YEAR};
 
 fn main() {
-    let mut md = String::from("# The physics sheet\n\nGenerated from `config/physics.ron` (run `cargo run -p universe-world --example physics_sheet`): edit the sheet, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.\n\n");
-    for &(section, note) in SECTIONS {
-        md.push_str(&format!("## {section}\n\n{note}\n\n| Name | Value | Unit | Kind | Why |\n|---|---|---|---|---|\n"));
-        for e in SHEET.iter().filter(|e| e.section == section) {
-            md.push_str(&format!("| `{}` | {} | {} | {:?} | {} |\n", e.name, fmt(e.value), e.unit, e.kind, e.note));
+    let mut md = String::from("# The physics sheet\n\nGenerated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.\n\n");
+    let mut table = |title: &str, source: &str, sections: &[(&str, &str)], sheet: &[universe_physics::sheet::Entry]| {
+        md.push_str(&format!("# {title}\n\nFrom `{source}`.\n\n"));
+        for &(section, note) in sections {
+            md.push_str(&format!("## {section}\n\n{note}\n\n| Name | Value | Unit | Kind | Why |\n|---|---|---|---|---|\n"));
+            for e in sheet.iter().filter(|e| e.section == section) {
+                md.push_str(&format!("| `{}` | {} | {} | {:?} | {} |\n", e.name, fmt(e.value), e.unit, e.kind, e.note));
+            }
+            md.push('\n');
         }
-        md.push('\n');
+    };
+    table("The kernel's laws", "config/physics.ron", universe_physics::laws::SECTIONS, universe_physics::laws::SHEET);
+    table("The base world's numbers", "content/base/sheet.ron", universe_world::sheet::SECTIONS, universe_world::sheet::SHEET);
+    md.push_str("# The base world's materials\n\nFrom `content/base/materials.ron`.\n\n| Material | Density (kg/m³) | Energy (J/kg) | Process | Trades as | Note |\n|---|---|---|---|---|---|\n");
+    for (_, m) in content().materials.iter() {
+        md.push_str(&format!("| {} | {} | {} | {:?} | {} | {} |\n", m.name, fmt(m.density), fmt(m.energy), m.process, if m.goods.is_empty() { "-" } else { &m.goods }, m.note));
     }
+    md.push('\n');
     // What it adds up to.
-    let (most, density) = content().modules.iter().filter_map(|(_, m)| if let Does::PowerPlant { output } = m.does { Some((output, output / m.mass)) } else { None }).fold((0.0f64, 0.0f64), |(a, b), (o, d)| (a.max(o), b.max(d)));
+    let (most, density) = content().modules.iter().filter_map(|(_, m)| if let Does::PowerPlant { output, .. } = m.does { Some((output, output / m.mass)) } else { None }).fold((0.0f64, 0.0f64), |(a, b), (o, d)| (a.max(o), b.max(d)));
     let wall = P_FLOOR / ETA_FIELD_MAX;
     md.push_str("## What it adds up to\n\n| Claim | Figure |\n|---|---|\n");
     md.push_str(&format!("| The wall between stars (holding the field, best drive) | {:.1} kW per kg aboard |\n", wall / 1000.0));

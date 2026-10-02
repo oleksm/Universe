@@ -16,7 +16,8 @@ use crate::ship::Ship;
 /// Share of the heat beyond the limit that goes into damaging the hull (the
 /// rest is carried off by what burns away).
 const ABLATION: f64 = 0.05;
-use crate::sheet::{AIR_CP, STEFAN_BOLTZMANN as SIGMA};
+use crate::sheet::AIR_CP;
+use universe_physics::laws::STEFAN_BOLTZMANN as SIGMA;
 // (Its constants are the physics sheet's: config/physics.ron.)
 pub use crate::sheet::{AMBIENT, EMISSIVITY, HEATED_AREA, NOSE_RADIUS, RADIATING_AREA, SKIN_CAPACITY, SKIN_LIMIT};
 

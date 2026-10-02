@@ -27,6 +27,7 @@ use crate::ship::ClassSpec;
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
+    ("materials.ron", include_str!("../../../content/base/materials.ron")),
     ("brands.ron", include_str!("../../../content/base/brands.ron")),
     ("modules.ron", include_str!("../../../content/base/modules.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
@@ -203,6 +204,7 @@ impl<T: Entry> Registry<T> {
 /// The loaded content.
 pub struct Content {
     pub shapes: Registry<Shape>,
+    pub materials: Registry<crate::materials::Material>,
     pub brands: Registry<crate::modules::Brand>,
     pub modules: Registry<crate::modules::Module>,
     pub hulls: Registry<ClassSpec>,
@@ -285,11 +287,29 @@ impl Content {
             let key = d.key.clone();
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
+        let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
         let brands: Registry<crate::modules::Brand> = Registry::build(Self::defs(&packs, "brands.ron")?)?;
         let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
         for (_, m) in modules.iter() {
             if !m.brand.is_empty() && resolve(&brands, &aliases, &m.brand).is_none() {
                 return Err(format!("modules.ron '{}': no brand '{}'", m.key, m.brand));
+            }
+            // What it holds or burns is a material, at its real properties.
+            let of = |key: &str| resolve(&materials, &aliases, key).map(|h| materials.get(h)).ok_or_else(|| format!("modules.ron '{}': no material '{key}'", m.key));
+            match &m.does {
+                crate::modules::Does::Tank { capacity, holds } => {
+                    let mat = of(holds)?;
+                    if *capacity > mat.density * m.volume * 1.001 {
+                        return Err(format!("modules.ron '{}': holds {:.0} kg of {} in {:.0} m³: denser than it is ({:.0} kg/m³)", m.key, capacity, mat.name, m.volume, mat.density));
+                    }
+                }
+                crate::modules::Does::PowerPlant { burns, .. } => {
+                    let mat = of(burns)?;
+                    if mat.process == crate::materials::Process::None {
+                        return Err(format!("modules.ron '{}': {} doesn't burn", m.key, mat.name));
+                    }
+                }
+                _ => {}
             }
         }
         let module = |key: &str| resolve(&modules, &aliases, key).map(|h| (h, modules.get(h)));
@@ -333,8 +353,12 @@ impl Content {
         )?;
         let rules = Self::single::<crate::goods::MarketRulesDef>(&packs, "markets.ron")?;
         let markets = MarketRules { bans: rules.bans.iter().map(|(k, p)| Ok((kind(k, "markets.ron")?, *p))).collect::<Result<_, String>>()? };
-        let fuel = kind("goods.fuel", "the tanks")?;
-        let c = Content { shapes, brands, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        // Ships' fuel, as traded: what the starting hull's tanks hold.
+        let starter = resolve(&hulls, &aliases, crate::ship::STARTING_HULL).ok_or("no starting hull")?;
+        let tank_fuel = &hulls.get(starter).fuel;
+        let fuel_goods = resolve(&materials, &aliases, tank_fuel).map(|h| materials.get(h).goods.clone()).unwrap_or_default();
+        let fuel = kind(&fuel_goods, &format!("the starting hull's fuel '{tank_fuel}'"))?;
+        let c = Content { shapes, materials, brands, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -466,6 +490,7 @@ entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
 entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
+entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {
         positive("a rate", *t)?;

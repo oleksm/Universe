@@ -1,102 +1,53 @@
-// The physics sheet: the game's dogma as numbers. Every constant the world's
-// physics runs on is here, with its unit, what kind of thing it is, and why.
-// The build turns it into the code's constants (`universe_world::sheet`), the
-// dogma's claims are checked against it (`crates/world/tests/dogma.rs`), and
-// its report is `docs/physics-sheet.md` (regenerate: `cargo run -p
-// universe-world --example physics_sheet`). The charter is `docs/physics.md`.
+// The kernel's laws: the physics every world runs on, whatever is built in
+// it. Only nature's constants and the laws (real, or the invented hyper
+// layer's) — no materials, devices, structures or designs: those are the
+// world's (a distro: `content/base/`, its own sheet `content/base/sheet.ron`
+// and its `materials.ron`).
 //
-// Kinds:
-//   Real       — measured nature (a constant of physics, a material's property).
-//   Grounded   — real physics, speculative engineering (a fusion torch).
-//   Simplified — an approximation of the real, to refine.
-//   Invented   — the hyper layer: beyond known physics, by written rule.
-//   Tuning     — a designer's choice within the rules (a size, a margin).
-//   Planned    — in the charter, not yet used by the code.
+// The build turns this into `universe_physics::laws`; the dogma's claims are
+// checked against it (`crates/world/tests/dogma.rs`); the report is
+// `docs/physics-sheet.md` (`cargo run -p universe-world --example
+// physics_sheet`). The charter: `docs/physics.md`.
+//
+// Kinds: Real (measured nature) · Invented (the hyper layer, by written rule) ·
+// Simplified (an approximation of the real, to refine).
 [
     (
         name: "Nature",
-        note: "Constants of physics (real).",
+        note: "Constants of physics.",
         entries: [
             (name: "SPEED_OF_LIGHT", value: 299792458.0, unit: "m/s", kind: Real, note: "c: light, radio, radar, and every capture of an event."),
             (name: "STEFAN_BOLTZMANN", value: 5.670374e-8, unit: "W/(m²·K⁴)", kind: Real, note: "σ: how a body radiates heat: σ·ε·A·T⁴."),
-            (name: "AIR_CP", value: 1005.0, unit: "J/(kg·K)", kind: Real, note: "Air's specific heat at constant pressure (Earth-like air)."),
         ],
     ),
     (
         name: "Medium",
-        note: "The hyper-medium (invented): its local limit v_lim = K·d near masses; slack in open space.",
+        note: "The hyper-medium: near masses it holds what moves in it under v_lim = K·d; far from them it's slack, s(d) = min(1, (K·d / v_open)²).",
         entries: [
-            (name: "HYPER_RATE", value: 2.0, unit: "1/s", kind: Invented, note: "K: the medium's limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c."),
+            (name: "HYPER_RATE", value: 2.0, unit: "1/s", kind: Invented, note: "K: the limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c."),
             (name: "INTERLOCK", value: 1000.0, unit: "m", kind: Invented, note: "Nothing moves in the medium within this of a body's highest ground."),
-            (name: "GROUND_MARGIN", value: 20000.0, unit: "m", kind: Tuning, note: "Flying along the nose at a world, the drive drops out this far above its ground (or its air's top)."),
-            (name: "V_OPEN_C", value: 1.0e6, unit: "c", kind: Invented, note: "Where the slack sets in: s(d) = min(1, (K·d / v_open)²). A few hundred AU out."),
+            (name: "V_OPEN_C", value: 1.0e6, unit: "c", kind: Invented, note: "Where the slack sets in (a few hundred AU from a star)."),
             (name: "STIFF_SLACK", value: 0.01, unit: "", kind: Invented, note: "A field forms only where the slack is below this (inside a system)."),
         ],
     ),
     (
-        name: "Hyperdrive",
-        note: "Draw P = m·(P_FLOOR·s + P_PUSH·(v/v*)³)/η. Between stars, power per kg is the wall.",
+        name: "Field",
+        note: "A hyper-field's draw: P = m·s·(P_FLOOR + P_PUSH·(v/v*)³) / η, η the device's. Between stars, power per kg is the wall.",
         entries: [
-            (name: "P_FLOOR", value: 1.0e4, unit: "W/kg", kind: Invented, note: "Holding the field in open space, per kg aboard. Today's best plant gives 2.8 kW/kg on its own."),
-            (name: "P_PUSH", value: 5.0e3, unit: "W/kg", kind: Invented, note: "Pushing through the medium at the best speed; grows with its cube."),
-            (name: "V_BEST_C", value: 1000.0, unit: "c", kind: Invented, note: "v*: the best speed between stars (an explorer at 30 kW/kg goes 1.6 v*)."),
-            (name: "ETA_FIELD_MIN", value: 0.5, unit: "", kind: Planned, note: "The field's efficiency, the worst drives (the rest is heat)."),
-            (name: "ETA_FIELD_MAX", value: 0.8, unit: "", kind: Planned, note: "The field's efficiency, the best drives."),
-            (name: "ETA_FIELD", value: 0.65, unit: "", kind: Invented, note: "The field's efficiency of today's drives (one grade, till brands differ): the rest of its draw is heat."),
-            (name: "EXPLORER_POWER", value: 3.0e4, unit: "W/kg", kind: Planned, note: "The reference future explorer's power per kg aboard (next-generation reactors), for the dogma's claims."),
+            (name: "P_FLOOR", value: 1.0e4, unit: "W/kg", kind: Invented, note: "Holding a field in open space, per kg in it."),
+            (name: "P_PUSH", value: 5.0e3, unit: "W/kg", kind: Invented, note: "Pushing it through the medium at the best speed; grows with the cube of speed."),
+            (name: "V_BEST_C", value: 1000.0, unit: "c", kind: Invented, note: "v*: the speed the push is reckoned at."),
         ],
     ),
     (
-        name: "Gates",
-        note: "A gate pair is one wormhole throat (invented): power cubic in span, limited by ring class.",
+        name: "Throat",
+        note: "A gate pair is one wormhole throat: holding it open takes P = P0·(S/S0)³ for a span S; a transit costs τ·m·S.",
         entries: [
-            (name: "GATE_RADIUS", value: 1500.0, unit: "m", kind: Tuning, note: "The ring's centreline radius; its opening is a little smaller."),
-            (name: "RING_TUBE", value: 60.0, unit: "m", kind: Tuning, note: "Half the ring structure's thickness."),
-            (name: "MAX_TRANSIT_SPEED", value: 300.0, unit: "m/s", kind: Invented, note: "Faster through a ring and the transit wrecks the ship."),
+            (name: "MAX_TRANSIT_SPEED", value: 300.0, unit: "m/s", kind: Invented, note: "Faster through a throat and the transit wrecks what goes in."),
             (name: "TRANSIT_TIME", value: 10.0, unit: "s", kind: Invented, note: "Through the throat, ring to ring (matter and hyper-signals)."),
-            (name: "GATE_P0", value: 1.0e9, unit: "W", kind: Planned, note: "Holding a throat open at the reference span: P = P0·(S/S0)³."),
-            (name: "GATE_S0", value: 10.0, unit: "ly", kind: Planned, note: "The reference span."),
-            (name: "GATE_TAU", value: 2.6e-9, unit: "J/(kg·m)", kind: Planned, note: "A transit's energy per kg per metre of span (the gate's, not the ship's)."),
-            (name: "RING_SPAN_I", value: 10.0, unit: "ly", kind: Planned, note: "A class I ring's greatest span."),
-            (name: "RING_SPAN_II", value: 25.0, unit: "ly", kind: Planned, note: "A class II ring's greatest span."),
-            (name: "RING_SPAN_III", value: 50.0, unit: "ly", kind: Planned, note: "A class III ring's greatest span: nothing bridges farther."),
-        ],
-    ),
-    (
-        name: "Energy",
-        note: "The chain: fuel → reactor → capacitor bank → consumers; losses become heat. Fuels at their real energies and densities.",
-        entries: [
-            (name: "FUSION_ENERGY", value: 3.45e14, unit: "J/kg", kind: Real, note: "Catalysed D–D fusion (the tritium and helium-3 it makes burnt too): ships' fuel today, deuterium."),
-            (name: "FUSION_FUEL_DENSITY", value: 163.0, unit: "kg/m³", kind: Real, note: "Liquid deuterium: what ships' tanks hold."),
-            (name: "DEUTERIUM_IN_WATER", value: 3.2e-5, unit: "kg/kg", kind: Real, note: "Deuterium's share of water's mass (1 D per 6,400 H): a tonne of it in about 31,000 t of water. Fuel comes from seas and ice."),
-            (name: "D_HE3_ENERGY", value: 3.5e14, unit: "J/kg", kind: Real, note: "D–He3 fusion (few neutrons: the premium fuel). Helium-3 is rare: gas giants' air (about 1e-5), regolith (about 1e-8). Planned fuel."),
-            (name: "D_T_ENERGY", value: 3.4e14, unit: "J/kg", kind: Real, note: "D–T fusion (tritium bred from lithium; its neutrons wear a reactor). Planned fuel."),
-            (name: "FISSION_ENERGY", value: 8.2e13, unit: "J/kg", kind: Real, note: "U-235 fission. Planned fuel."),
-            (name: "METHALOX_ENERGY", value: 1.0e7, unit: "J/kg", kind: Real, note: "Methane + oxygen, burnt (exhaust 3.3–3.7 km/s; 830 kg/m³). Planned fuel."),
-            (name: "KEROLOX_ENERGY", value: 1.0e7, unit: "J/kg", kind: Real, note: "Kerosene + oxygen (exhaust 3.0–3.4 km/s; 1,030 kg/m³). Planned fuel."),
-            (name: "HYDROLOX_ENERGY", value: 1.3e7, unit: "J/kg", kind: Real, note: "Hydrogen + oxygen (exhaust 4.4–4.5 km/s; 320 kg/m³). Planned fuel."),
-            (name: "REACTOR_EFFICIENCY", value: 0.4, unit: "", kind: Grounded, note: "A fusion reactor's fuel energy to power (the rest is heat)."),
-            (name: "CAPACITOR_DENSITY", value: 1.0e7, unit: "J/kg", kind: Grounded, note: "What a capacitor bank stores per kg: optimistic (superconducting magnetic storage). Batteries hold about 1e6."),
-        ],
-    ),
-    (
-        name: "Drives",
-        note: "Today's main drive: a fusion torch.",
-        entries: [
-            (name: "EXHAUST_VELOCITY", value: 1.0e7, unit: "m/s", kind: Grounded, note: "A fusion torch (Daedalus-class, 3% of c). Each drive burns thrust / this, in kg/s. Its power isn't yet accounted (the energy chain)."),
-        ],
-    ),
-    (
-        name: "Heat",
-        note: "The hull's skin in air: Sutton–Graves heating in, Stefan–Boltzmann radiation out. Sunlight and night: planned.",
-        entries: [
-            (name: "NOSE_RADIUS", value: 2.0, unit: "m", kind: Tuning, note: "For the stagnation heating."),
-            (name: "HEATED_AREA", value: 150.0, unit: "m²", kind: Simplified, note: "The area taking the heating at the stagnation rate (underside and leading edges, averaged)."),
-            (name: "RADIATING_AREA", value: 500.0, unit: "m²", kind: Simplified, note: "The area radiating it away."),
-            (name: "EMISSIVITY", value: 0.8, unit: "", kind: Real, note: "How well the skin radiates (oxidised metal)."),
-            (name: "SKIN_CAPACITY", value: 3.0e6, unit: "J/K", kind: Simplified, note: "The skin's heat capacity: about 3 t of metal."),
-            (name: "SKIN_LIMIT", value: 1500.0, unit: "K", kind: Real, note: "Beyond it the hull burns (refractory alloys)."),
-            (name: "AMBIENT", value: 290.0, unit: "K", kind: Simplified, note: "What the skin settles to with nothing heating it: to be replaced by the energy balance (sunlight, night)."),
+            (name: "GATE_P0", value: 1.0e9, unit: "W", kind: Invented, note: "Holding a throat open at the reference span."),
+            (name: "GATE_S0", value: 10.0, unit: "ly", kind: Invented, note: "The reference span."),
+            (name: "GATE_TAU", value: 2.6e-9, unit: "J/(kg·m)", kind: Invented, note: "A transit's energy per kg per metre of span (the gate's, not the traveller's)."),
         ],
     ),
 ]

@@ -38,6 +38,11 @@ pub struct ClassSpec {
     /// Fuel tank (kg), and the most cargo the hold carries (kg) and the
     /// room in it (m³: its racks').
     pub fuel_capacity: f64,
+    /// What its tanks hold (a material's key; its plants burn it), and its
+    /// plants' efficiency (their output's share of the fuel's energy; the
+    /// rest is heat).
+    pub fuel: String,
+    pub plant_efficiency: f64,
     /// Its capacitor banks: what they store (J), and how fast they take it
     /// in or give it out, all together (W).
     pub capacitor_capacity: f64,
@@ -404,12 +409,20 @@ impl ClassSpec {
         }
         let modules = || fitted.iter().map(|(_, m)| *m);
         let dry_mass = frame.frame_mass + modules().map(|m| m.mass).sum::<f64>();
-        let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity } = m.does { Some(capacity) } else { None }).sum();
+        let fuel_capacity: f64 = modules().filter_map(|m| if let Does::Tank { capacity, .. } = m.does { Some(capacity) } else { None }).sum();
+        // One fuel aboard: what the tanks hold, and what the plants burn.
+        let held: Vec<&String> = modules().filter_map(|m| if let Does::Tank { holds, .. } = &m.does { Some(holds) } else { None }).collect();
+        let burnt: Vec<&String> = modules().filter_map(|m| if let Does::PowerPlant { burns, .. } = &m.does { Some(burns) } else { None }).collect();
+        let fuel = held.first().or(burnt.first()).map(|s| s.to_string()).unwrap_or_default();
+        if let Some(other) = held.iter().chain(&burnt).find(|k| ***k != fuel) {
+            return Err(format!("its tanks and plants must hold and burn one fuel ({fuel} and {other})"));
+        }
         let hold_capacity: f64 = modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum();
         let (capacitor_capacity, capacitor_rate) = modules().filter_map(|m| if let Does::Capacitor { capacity, rate } = m.does { Some((capacity, rate)) } else { None }).fold((0.0, 0.0), |(c, r), (a, b)| (c + a, r + b));
         let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
         let hold_volume: f64 = modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum();
-        let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output } = m.does { Some(output) } else { None }).sum();
+        let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output, .. } = m.does { Some(output) } else { None }).sum();
+        let plant_efficiency = modules().filter_map(|m| if let Does::PowerPlant { output, efficiency, .. } = m.does { Some(output * efficiency) } else { None }).sum::<f64>() / power_output.max(1e-9);
         let power_draw: f64 = modules().map(|m| m.power).sum();
         if power_draw > power_output {
             return Err(format!("its modules draw {:.1} MW, its plant makes {:.1} MW", power_draw / 1e6, power_output / 1e6));
@@ -461,7 +474,7 @@ impl ClassSpec {
             let total: f64 = w.iter().map(|x| x.0).sum();
             if total > 0.0 { w.iter().map(|(c, at)| *at * *c).sum::<DVec3>() / total } else { dry_com }
         };
-        let tank_at = weighted(SlotKind::Tank, |d| if let Does::Tank { capacity } = d { *capacity } else { 0.0 });
+        let tank_at = weighted(SlotKind::Tank, |d| if let Does::Tank { capacity, .. } = d { *capacity } else { 0.0 });
         let hold_at = weighted(SlotKind::Cargo, |d| if let Does::Rack { capacity } = d { *capacity } else { 0.0 });
         let mass = dry_mass + fuel_capacity;
         let com = (dry_com * dry_mass + tank_at * fuel_capacity) / mass;
@@ -478,6 +491,8 @@ impl ClassSpec {
             fit,
             dry_mass,
             fuel_capacity,
+            fuel,
+            plant_efficiency,
             capacitor_capacity,
             capacitor_rate,
             hold_capacity,
@@ -1098,8 +1113,16 @@ impl Ship {
             let power = self.spare_power().min(spec.capacitor_rate);
             let taken = (power * dt).min(spec.capacitor_capacity - self.energy);
             self.energy += taken;
-            self.fuel = (self.fuel - reactor_fuel(taken)).max(0.0);
+            self.fuel = (self.fuel - self.reactor_fuel(taken)).max(0.0);
         }
+    }
+
+    /// The fuel its plants burn to make `energy` (J) of power (kg): by the
+    /// fuel's energy (its material's) and their efficiency.
+    pub fn reactor_fuel(&self, energy: f64) -> f64 {
+        let spec = self.spec();
+        let per_kg = crate::materials::material(&spec.fuel).map_or(0.0, |m| m.energy) * spec.plant_efficiency;
+        if per_kg > 0.0 { energy / per_kg } else { 0.0 }
     }
 
     /// The plant's power beyond what its modules draw at work (W).
@@ -1233,10 +1256,6 @@ mod balance {
     }
 }
 
-/// The fusion fuel a reactor burns to make `energy` (J) of power (kg).
-pub fn reactor_fuel(energy: f64) -> f64 {
-    energy / (crate::sheet::REACTOR_EFFICIENCY * crate::sheet::FUSION_ENERGY)
-}
 
 #[cfg(test)]
 mod energy_tests {
@@ -1251,7 +1270,7 @@ mod energy_tests {
         let power = ship.spare_power().min(spec.capacitor_rate);
         assert!(power > 0.0, "a stock ship has power to spare");
         assert!((ship.energy - power * 10.0).abs() < 1.0, "{} J", ship.energy);
-        assert!((fuel - ship.fuel - reactor_fuel(power * 10.0)).abs() < 1e-9, "fuel burnt for it");
+        assert!((fuel - ship.fuel - ship.reactor_fuel(power * 10.0)).abs() < 1e-9, "fuel burnt for it");
         // Full, it stops.
         ship.energy = spec.capacitor_capacity;
         let fuel = ship.fuel;

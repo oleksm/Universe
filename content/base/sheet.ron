@@ -1,0 +1,60 @@
+// The base world's fixed numbers (a distro's, not the kernel's laws: those
+// are `config/physics.ron`): its designs, devices and technology as they
+// stand. The build turns this into `universe_world::sheet`. (Not yet:
+// override packs replacing these; they're compiled in.)
+//
+// Kinds: Real (a real material's property) · Grounded (real physics,
+// speculative engineering) · Simplified · Tuning (a designer's choice) ·
+// Planned (a reference for the dogma's claims, not used by the code).
+[
+    (
+        name: "Drives",
+        note: "The world's drives and hyperdrives as built today.",
+        entries: [
+            (name: "EXHAUST_VELOCITY", value: 1.0e7, unit: "m/s", kind: Grounded, note: "Today's main drives and thrusters are fusion torches (Daedalus-class, 3% of c): each burns thrust / this, in kg/s."),
+            (name: "ETA_FIELD", value: 0.65, unit: "", kind: Grounded, note: "Today's hyperdrives' field efficiency (one grade, till brands differ): the rest of the draw is heat."),
+            (name: "GROUND_MARGIN", value: 20000.0, unit: "m", kind: Tuning, note: "Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top)."),
+        ],
+    ),
+    (
+        name: "Gates",
+        note: "The world's gate rings.",
+        entries: [
+            (name: "GATE_RADIUS", value: 1500.0, unit: "m", kind: Tuning, note: "A ring's centreline radius; its opening is a little smaller."),
+            (name: "RING_TUBE", value: 60.0, unit: "m", kind: Tuning, note: "Half the ring structure's thickness."),
+            (name: "RING_SPAN_I", value: 10.0, unit: "ly", kind: Planned, note: "A class I ring's greatest span."),
+            (name: "RING_SPAN_II", value: 25.0, unit: "ly", kind: Planned, note: "A class II ring's greatest span."),
+            (name: "RING_SPAN_III", value: 50.0, unit: "ly", kind: Planned, note: "A class III ring's greatest span."),
+        ],
+    ),
+    (
+        name: "Technology",
+        note: "How far the world's engineering goes today.",
+        entries: [
+            (name: "CAPACITOR_DENSITY", value: 1.0e7, unit: "J/kg", kind: Grounded, note: "The most a capacitor bank stores per kg (superconducting magnetic storage, optimistic; batteries about 1e6)."),
+        ],
+    ),
+    (
+        name: "Heat",
+        note: "The hull's skin in air: Sutton–Graves heating in, Stefan–Boltzmann radiation out. Sunlight and night: planned.",
+        entries: [
+            (name: "NOSE_RADIUS", value: 2.0, unit: "m", kind: Tuning, note: "For the stagnation heating."),
+            (name: "HEATED_AREA", value: 150.0, unit: "m²", kind: Simplified, note: "The area taking the heating at the stagnation rate (underside and leading edges, averaged)."),
+            (name: "RADIATING_AREA", value: 500.0, unit: "m²", kind: Simplified, note: "The area radiating it away."),
+            (name: "EMISSIVITY", value: 0.8, unit: "", kind: Real, note: "How well the skin radiates (oxidised metal)."),
+            (name: "SKIN_CAPACITY", value: 3.0e6, unit: "J/K", kind: Simplified, note: "The skin's heat capacity: about 3 t of metal."),
+            (name: "SKIN_LIMIT", value: 1500.0, unit: "K", kind: Real, note: "Beyond it the hull burns (refractory alloys)."),
+            (name: "AMBIENT", value: 290.0, unit: "K", kind: Simplified, note: "What the skin settles to with nothing heating it: to be replaced by the energy balance (sunlight, night)."),
+            (name: "AIR_CP", value: 1005.0, unit: "J/(kg·K)", kind: Real, note: "Earth-like air's specific heat at constant pressure."),
+        ],
+    ),
+    (
+        name: "References",
+        note: "For the dogma's claims (not used by the code).",
+        entries: [
+            (name: "ETA_FIELD_MIN", value: 0.5, unit: "", kind: Planned, note: "The field's efficiency, the worst drives."),
+            (name: "ETA_FIELD_MAX", value: 0.8, unit: "", kind: Planned, note: "The field's efficiency, the best drives."),
+            (name: "EXPLORER_POWER", value: 3.0e4, unit: "W/kg", kind: Planned, note: "A future explorer's power per kg aboard (next-generation reactors)."),
+        ],
+    ),
+]
