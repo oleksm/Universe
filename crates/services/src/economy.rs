@@ -34,8 +34,11 @@ const STORAGE: f64 = 3.0;
 /// day, to `ROOM` times its founding size.
 pub const GROWTH: f64 = 0.002;
 pub const ROOM: f64 = 3.0;
-/// Hungry, its people want to leave: at worst this share a day joins those
-/// waiting for passage (no more than `WAITING_MOST` of them).
+/// A few of its people want to move on anyway, fed or not: this share a
+/// day joins those waiting for passage (no more than `WAITING_CALM` of them).
+pub const RESTLESS: f64 = 0.0005;
+pub const WAITING_CALM: f64 = 0.02;
+/// Hungry, many more: at worst this share a day (no more than `WAITING_MOST`).
 pub const EMIGRATE: f64 = 0.05;
 pub const WAITING_MOST: f64 = 0.33;
 /// Starving (under half fed), at worst this share of its people die a day.
@@ -278,12 +281,13 @@ impl Place {
         let before = self.population;
         if self.fed > 0.95 {
             self.population = (self.population * (1.0 + GROWTH * days)).min(self.founded * ROOM).max(self.population);
-            // (Fed again: those waiting stay.)
-            self.waiting *= (1.0 - days).max(0.0);
-        } else if self.fed < 0.9 {
-            let leaving = self.population * EMIGRATE * (0.9 - self.fed) / 0.9 * days;
-            self.waiting = (self.waiting + leaving).min(self.population * WAITING_MOST);
         }
+        // Some always want to move on; hunger drives many more.
+        let hungry = (0.9 - self.fed).max(0.0) / 0.9;
+        let leaving = self.population * (RESTLESS + EMIGRATE * hungry) * days;
+        let most = if hungry > 0.0 { WAITING_MOST } else { WAITING_CALM };
+        // (Fed again, most of those waiting stay.)
+        self.waiting = (self.waiting + leaving).min(self.population * most);
         let died = if self.fed < 0.5 { self.population * DEATH * (0.5 - self.fed) / 0.5 * days } else { 0.0 };
         if died > 0.0 {
             let left = (self.population - died).max(0.0);
@@ -504,7 +508,9 @@ mod people {
         let (people, farmers) = (e.places[station].population, e.places[farm].population);
         // Ten days: the station's food lasts (it starts with ten days of it).
         e.step_to(8.0 * DAY);
-        assert!(e.places[station].fed > 0.95 && e.places[station].waiting == 0.0);
+        // (Fed: only the few who'd move on anyway are waiting.)
+        let s = &e.places[station];
+        assert!(s.fed > 0.95 && s.waiting > 0.0 && s.waiting <= s.population * WAITING_CALM + 1e-9, "fed {}, waiting {}", s.fed, s.waiting);
         // A month with nothing delivered: hungry, then starving.
         e.step_to(30.0 * DAY);
         let s = &e.places[station];

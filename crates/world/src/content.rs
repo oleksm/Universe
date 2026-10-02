@@ -308,7 +308,10 @@ impl Content {
         let ores = Registry::build(
             Self::defs::<crate::goods::OreDef>(&packs, "ores.ron")?
                 .into_iter()
-                .map(|d| Ok(OreEntry { kind: kind(&d.kind, &d.key)?, key: d.key, name: d.name, price: d.price }))
+                .map(|d| {
+                    let k = kind(&d.kind, &d.key)?;
+                    Ok(OreEntry { bulk_density: if d.bulk_density > 0.0 { d.bulk_density } else { k.bulk_density() }, kind: k, key: d.key, name: d.name, price: d.price })
+                })
                 .collect::<Result<_, String>>()?,
         )?;
         let pairs = |list: &[(String, f64)], whose: &str| list.iter().map(|(k, t)| Ok((kind(k, whose)?, *t))).collect::<Result<Vec<_>, String>>();

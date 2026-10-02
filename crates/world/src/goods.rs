@@ -89,6 +89,9 @@ pub(crate) struct OreDef {
     pub name: String,
     pub kind: String,
     pub price: f64,
+    /// As stowed, broken, in a hold (t/m³); missing (0): its kind's.
+    #[serde(default)]
+    pub bulk_density: f64,
 }
 
 /// An ore of the loaded content: the goods an excavator fills a hold
@@ -99,6 +102,8 @@ pub struct OreEntry {
     pub name: String,
     pub kind: Category,
     pub price: f64,
+    /// As stowed, broken, in a hold (t/m³).
+    pub bulk_density: f64,
 }
 
 /// A recipe as `recipes.ron` has it.
@@ -178,6 +183,8 @@ pub struct Item {
     pub price: f64,
     /// Mass per unit (kg).
     pub mass: f64,
+    /// As stowed in a hold (t/m³): its kind's, or (an ore) its own.
+    pub bulk_density: f64,
 }
 
 /// Raw materials dug out of asteroids (see `mining`): what an excavator
@@ -248,11 +255,12 @@ pub fn catalog(seed: u64) -> Vec<Item> {
                 category,
                 price: (price * 10.0).round() / 10.0,
                 mass: mass.round().max(1.0),
+                bulk_density: kind.bulk_density,
             });
         }
     }
     for (_, o) in content().ores.iter() {
-        items.push(Item { id: items.len(), key: o.key.clone(), name: o.name.clone(), category: o.kind, price: o.price, mass: TONNE });
+        items.push(Item { id: items.len(), key: o.key.clone(), name: o.name.clone(), category: o.kind, price: o.price, mass: TONNE, bulk_density: o.bulk_density });
     }
     items
 }

@@ -1,10 +1,12 @@
 // Raw materials dug out of asteroids (see `mining`), by the tonne: after the
 // generated goods in the catalogue, the same in every galaxy. Water is worth
-// most where it's needed: in space, as propellant and air.
+// most where it's needed: in space, as propellant and air. bulk_density: as
+// stowed, broken, in a hold (t/m³: the solid rock's, less the gaps between
+// the pieces, about a third).
 [
-    (key: "ore.water_ice", name: "Asteroid Water Ice", kind: "goods.water", price: 30.0),
-    (key: "ore.carbonaceous", name: "Carbonaceous Ore", kind: "goods.ores", price: 20.0),
-    (key: "ore.stony", name: "Stony Ore", kind: "goods.ores", price: 8.0),
-    (key: "ore.nickel_iron", name: "Nickel-Iron Ore", kind: "goods.ores", price: 35.0),
-    (key: "ore.pgm", name: "PGM-Rich Ore", kind: "goods.ores", price: 400.0),
+    (key: "ore.water_ice", name: "Asteroid Water Ice", kind: "goods.water", price: 30.0, bulk_density: 0.6),
+    (key: "ore.carbonaceous", name: "Carbonaceous Ore", kind: "goods.ores", price: 20.0, bulk_density: 1.2),
+    (key: "ore.stony", name: "Stony Ore", kind: "goods.ores", price: 8.0, bulk_density: 1.8),
+    (key: "ore.nickel_iron", name: "Nickel-Iron Ore", kind: "goods.ores", price: 35.0, bulk_density: 4.5),
+    (key: "ore.pgm", name: "PGM-Rich Ore", kind: "goods.ores", price: 400.0, bulk_density: 4.0),
 ]
