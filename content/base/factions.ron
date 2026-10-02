@@ -2,11 +2,14 @@
 // whose stations, ports and gates it owns), keeps its own law there, and can
 // rise or fall: nothing is indestructible. Anyone can found one; these are
 // the ones the world starts with. See docs/factions.md.
+// Its law: `aggression`, how long one who opens fire on the innocent stays
+// fair game in its space (s); `hostile`, the standing at or below which it
+// treats a pilot as an enemy (its guns fire, its docks refuse).
 [
-    (key: "faction.concord", name: "HALDEN CONCORD", tag: "HCD", color: (0.35, 0.75, 1.0),
+    (key: "faction.concord", name: "HALDEN CONCORD", tag: "HCD", color: (0.35, 0.75, 1.0), aggression: 900.0, hostile: -40.0,
         note: "THE FOUNDING WORLDS' UNION: STRICT LAW, OPEN MARKETS."),
-    (key: "faction.reach", name: "FREE REACH ASSEMBLY", tag: "FRA", color: (1.0, 0.7, 0.3),
+    (key: "faction.reach", name: "FREE REACH ASSEMBLY", tag: "FRA", color: (1.0, 0.7, 0.3), aggression: 300.0, hostile: -70.0,
         note: "FRONTIER SETTLEMENTS GOVERNING THEMSELVES: LIGHT LAW, CHEAP LICENCES."),
-    (key: "faction.tessaly", name: "TESSALY DIRECTORATE", tag: "TSD", color: (0.75, 0.45, 1.0),
+    (key: "faction.tessaly", name: "TESSALY DIRECTORATE", tag: "TSD", color: (0.75, 0.45, 1.0), aggression: 600.0, hostile: -50.0,
         note: "AN INDUSTRIAL DIRECTORATE: ORDER, TARIFFS, ITS OWN YARDS."),
 ]

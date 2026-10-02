@@ -526,7 +526,13 @@ entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
 entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
-entry!(crate::factions::Faction, "factions.ron", factions, |f| if f.tag.len() == 3 { Ok(()) } else { Err(format!("a tag is three letters ({})", f.tag)) });
+entry!(crate::factions::Faction, "factions.ron", factions, |f| {
+    if f.tag.len() != 3 {
+        return Err(format!("a tag is three letters ({})", f.tag));
+    }
+    positive("aggression", f.aggression)?;
+    if f.hostile >= 0.0 { Err(format!("hostile is a standing below zero ({})", f.hostile)) } else { Ok(()) }
+});
 entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
 entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {

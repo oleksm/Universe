@@ -402,6 +402,16 @@ impl Universe {
         // one went with it), because of the respawn, as logged.
         if let Some(cause) = self.logged(id, |e| matches!(e, ShipEvent::Respawned)) {
             self.law.forget(id);
+            // Its debt with the holder where it comes back paid by its loss:
+            // no longer an enemy there (but no friend).
+            if let Some(system) = self.ship_by_id(id).map(|s| s.1) {
+                let charts = self.charts();
+                if let (Some(k), Some(f)) = (charts.holder_index(system), charts.holder(system))
+                    && self.standings.of(id, k) <= f.hostile
+                {
+                    self.standings.set(id, k, f.hostile + 1.0);
+                }
+            }
             self.ledger.write_off(id, self.tick, cause);
             if id == crate::combat::PLAYER {
                 self.insure(cause);

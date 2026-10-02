@@ -7,7 +7,8 @@ use std::collections::HashMap;
 
 use universe_protocol::{BodyId, Cause};
 
-/// How long a ship stays aggressed after hitting one that wasn't (s): 10 minutes.
+/// How long a ship stays aggressed after hitting one that wasn't (s), where
+/// a holder's law doesn't say: 10 minutes.
 pub const AGGRESSION: f64 = 600.0;
 
 /// A hit the core reported: who fired, who was struck, when.
@@ -59,14 +60,16 @@ impl Law {
     }
 
     /// A hit, as the core logged it (`cause`): firing on a ship that isn't
-    /// fair game makes the shooter fair game (if `shooter_answers`: a turret,
-    /// say, doesn't). The ruling, if one was made.
-    pub fn hit(&mut self, hit: Hit, shooter_answers: bool, cause: Cause) -> Option<Ruling> {
+    /// fair game makes the shooter fair game for `lasts` (s: the law of
+    /// whoever holds the space; None: unclaimed, no law) — if
+    /// `shooter_answers` (a turret, say, doesn't). The ruling, if one was made.
+    pub fn hit(&mut self, hit: Hit, shooter_answers: bool, lasts: Option<f64>, cause: Cause) -> Option<Ruling> {
+        let lasts = lasts?;
         if !shooter_answers || self.aggressed(hit.target, hit.time) {
             return None;
         }
         let new = !self.aggressed(hit.shooter, hit.time);
-        let ruling = Ruling { ship: hit.shooter, until: hit.time + AGGRESSION, cause, evidence: hit, new };
+        let ruling = Ruling { ship: hit.shooter, until: hit.time + lasts, cause, evidence: hit, new };
         self.record(ruling);
         Some(ruling)
     }
@@ -100,7 +103,9 @@ mod tests {
     #[test]
     fn opening_fire_on_the_innocent_makes_the_shooter_fair_game_with_the_evidence() {
         let mut law = Law::default();
-        let r = law.hit(Hit { shooter: 1, target: 2, time: 10.0 }, true, EV).expect("ruled");
+        let r = law.hit(Hit { shooter: 1, target: 2, time: 10.0 }, true, Some(AGGRESSION), EV).expect("ruled");
+        // Unclaimed space: no law.
+        assert!(Law::default().hit(Hit { shooter: 1, target: 2, time: 10.0 }, true, None, EV).is_none());
         assert!(law.aggressed(1, 10.0) && !law.aggressed(2, 10.0));
         assert_eq!(r.until, 10.0 + AGGRESSION);
         assert_eq!(r.cause, EV);

@@ -46,10 +46,17 @@ pub(crate) struct Snap {
     pub hyperdrive: bool,
     pub hull: f64,
     pub aggressed: bool,
+    /// Hostile to whoever holds the space it's in (by its standing there).
+    pub hostile: bool,
 }
 
 impl Snap {
-    fn of(system: usize, ship: &Ship, aggressed: bool) -> Self {
+    /// Fair game, or an enemy here: what the holder's guns fire on.
+    pub fn wanted(&self) -> bool {
+        self.aggressed || self.hostile
+    }
+
+    fn of(system: usize, ship: &Ship, aggressed: bool, hostile: bool) -> Self {
         Snap {
             system,
             position: ship.position,
@@ -61,6 +68,7 @@ impl Snap {
             hyperdrive: ship.hyperdrive,
             hull: ship.hull,
             aggressed,
+            hostile,
         }
     }
 }
@@ -330,11 +338,14 @@ impl Universe {
     /// Take the frame's snapshot of every ship, and who's aggressed.
     pub(crate) fn snapshot(&mut self) {
         let now = self.world.time;
-        let law = &self.law;
+        let charts = self.charts();
+        let (law, standings) = (&self.law, &self.standings);
+        // (Hostile to the holder of the space: its standing there at or under the holder's line.)
+        let hostile = |id: usize, system: usize| charts.holder_index(system).is_some_and(|k| charts.holder(system).is_some_and(|f| standings.of(id, k) <= f.hostile));
         let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
-        snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now)));
+        snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now), hostile(crate::combat::PLAYER, self.ship_system)));
         use rayon::prelude::*;
-        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, law.aggressed(crate::combat::craft_id(i), now))).collect();
+        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, law.aggressed(crate::combat::craft_id(i), now), hostile(crate::combat::craft_id(i), c.system))).collect();
         snaps.extend(crafts);
         self.snaps = Arc::new(snaps);
         self.snap_time = now;

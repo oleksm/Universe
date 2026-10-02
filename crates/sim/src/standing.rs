@@ -71,6 +71,11 @@ impl Standings {
         self.table.get(&(pilot, faction)).copied().unwrap_or(0.0)
     }
 
+    /// Set it outright (a scenario, a test, a court).
+    pub fn set(&mut self, pilot: usize, faction: usize, s: f64) {
+        self.table.insert((pilot, faction), s.clamp(-MOST, MOST));
+    }
+
     fn add(&mut self, pilot: usize, faction: usize, by: f64) {
         let s = self.table.entry((pilot, faction)).or_insert(0.0);
         *s = (*s + by).clamp(-MOST, MOST);

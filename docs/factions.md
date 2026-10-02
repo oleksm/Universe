@@ -6,11 +6,11 @@ one, and nothing is held for good, preset factions included. (See `roadmap.md` Â
 
 ## The world's factions (base)
 
-| Tag | Faction | What it is |
-|---|---|---|
-| HCD | Halden Concord | The founding worlds' union: strict law, open markets. Holds the home system. |
-| FRA | Free Reach Assembly | Frontier settlements governing themselves: light law, cheap licences. |
-| TSD | Tessaly Directorate | An industrial directorate: order, tariffs, its own yards. |
+| Tag | Faction | What it is | Fair game for | Enemy at |
+|---|---|---|---|---|
+| HCD | Halden Concord | The founding worlds' union: strict law, open markets. Holds the home system. | 15 min | -40 |
+| FRA | Free Reach Assembly | Frontier settlements governing themselves: light law, cheap licences. | 5 min | -70 |
+| TSD | Tessaly Directorate | An industrial directorate: order, tariffs, its own yards. | 10 min | -50 |
 
 ## Territory
 
@@ -34,9 +34,14 @@ one, and nothing is held for good, preset factions included. (See `roadmap.md` Â
    HONOURED (+50). Shown: STAND in the instruments (with the holder of the space you're in), and
    with each faction on the galaxy map's FACTIONS layer. Not yet: standing fading with time,
    work done for a faction, deeds against its ships outside its space.
-3. **Faction law and security:** the holder's law (how long aggression stands, what's banned,
-   docking refused to the hostile); its turrets and patrols enforce it; crimes are known where
-   they're heard.
+3. âœ“ **Faction law and security:** each faction's law (`factions.ron`): how long one who opens
+   fire on the innocent stays fair game in its space (`aggression`), and the standing at or below
+   which it treats a pilot as an enemy (`hostile`). **Unclaimed space has no law:** firing there
+   makes no one fair game. In its space the holder's turrets fire on the fair game and on its
+   enemies; its docks refuse its enemies ("REFUSED - <FACTION> TREATS YOU AS AN ENEMY"). A ship
+   lost pays its debt where it comes back: no longer an enemy there (no friend either). The HUD
+   warns "ENEMY OF THE <FACTION> - ITS GUNS FIRE, ITS DOCKS REFUSE". Not yet: patrols, bans by
+   faction, crimes known only where heard (the law still rules in a system at once).
 4. **Enlisting:** join a faction (an action at its station); NPC settlers belong to factions too,
    shown on their transponders.
 5. **Founding and claiming:** a pilot founds a faction (a charter) and claims places; territory

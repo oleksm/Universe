@@ -18,6 +18,11 @@ pub struct Faction {
     pub tag: String,
     /// Its colour on maps.
     pub color: [f32; 3],
+    /// Its law: how long one who opens fire on the innocent stays fair game
+    /// in its space (s); the standing at or below which it treats a pilot as
+    /// an enemy (its guns fire, its docks refuse).
+    pub aggression: f64,
+    pub hostile: f64,
     pub note: String,
 }
 

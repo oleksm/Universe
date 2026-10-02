@@ -109,6 +109,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
     // The status strip: mode, clock, time rate, system; credits at the right.
     y += status_strip(frame, app, Vec2::new(4.0, y)) + 6.0;
+    let under_strip = y;
     let credits = format!("{:.0} CR", app.v.credits);
     frame.text_boxed(Vec2::new(size.x - text_size(&credits).x - 6.0, top + 2.0), &credits, HUD, SOFT_PANEL);
     if app.mode == Mode::Pilot && app.v.crew.seated() && !matches!(app.ship.state, ShipState::Transit { .. }) {
@@ -129,8 +130,8 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     universe_prof::time("draw/hud/kill feed", || kill_feed(frame, app, right));
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
-    // Warnings: a stack at the top centre, under the guidance banner.
-    let mut y = top + 40.0;
+    // Warnings: a stack at the top centre, under the guidance banner and the status strip.
+    let mut y = (top + 40.0).max(under_strip);
     for (text, c) in &alerts {
         let w = text_size(text).x;
         frame.text_boxed(Vec2::new(((size.x - w) / 2.0).floor(), y), text, *c, PANEL);
@@ -386,6 +387,12 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>, alerts: &mut Vec<(Str
     if let Some(until) = app.v.aggressed_until {
         let left = (until - now) / app.warp().max(1.0);
         alerts.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
+    }
+    // An enemy of whoever holds this space: its guns fire, its docks refuse.
+    if let (Some(k), Some(f)) = (app.charts.holder_index(app.view.origin), app.charts.holder(app.view.origin))
+        && app.v.standing.get(k).is_some_and(|&s| s <= f.hostile)
+    {
+        alerts.push((format!("ENEMY OF THE {} - ITS GUNS FIRE, ITS DOCKS REFUSE", f.name), RED));
     }
     // Missiles after us: how many, and the nearest's time to reach us.
     let inbound: Vec<(f64, f64)> = app
@@ -1741,7 +1748,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
     ];
     // Six to a row, more rows as it grows.
-    const PER_ROW: usize = 6;
+    const PER_ROW: usize = 7;
     let cell = Vec2::new(76.0, 14.0);
     for (i, (key, label, lamp)) in cells.iter().enumerate() {
         let pos = at + Vec2::new((i % PER_ROW) as f32 * (cell.x + 2.0), (i / PER_ROW) as f32 * (cell.y + 2.0));

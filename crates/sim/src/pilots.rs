@@ -191,6 +191,11 @@ impl Bus for PoolLink<'_> {
     fn request_clearance(&mut self, target: Option<NavTarget>) -> Result<NavTarget, String> {
         let positions = self.rails();
         let target = target.or_else(|| universe_services::atc::nearest_station(&self.sys, self.ship.position, &positions));
+        // The holder's docks refuse its enemies.
+        if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
+            let who = self.view.charts.holder(self.sys.index).map_or("THE HOLDER".to_string(), |f| f.name.clone());
+            return Err(format!("REFUSED - {who} TREATS YOU AS AN ENEMY"));
+        }
         universe_services::atc::request(&self.sys, &self.ship, target, self.view.time, &positions)
     }
 
@@ -433,7 +438,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
 fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, view: &PilotView) -> Vec<Posting> {
     use universe_avionics::gunner::Quarry;
     use universe_protocol::TurretCommand;
-    let mut systems: Vec<usize> = view.snaps.iter().filter(|s| s.aggressed && (s.flying || s.landed)).map(|s| s.system).collect();
+    let mut systems: Vec<usize> = view.snaps.iter().filter(|s| s.wanted() && (s.flying || s.landed)).map(|s| s.system).collect();
     systems.sort_unstable();
     systems.dedup();
     let latency = view.dt * (COMMAND_DELAY + 1) as f64;
@@ -443,7 +448,7 @@ fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, vie
         let sys = view.charts.system(system);
         let Some(positions) = view.rails.get(&system) else { continue };
         let guns = guns_of(view, system, &sys);
-        let quarry: Vec<Quarry> = view.snaps.iter().enumerate().filter(|(_, s)| s.system == system && s.aggressed && (s.flying || s.landed)).map(|(id, s)| Quarry { id, position: s.position, velocity: s.velocity }).collect();
+        let quarry: Vec<Quarry> = view.snaps.iter().enumerate().filter(|(_, s)| s.system == system && s.wanted() && (s.flying || s.landed)).map(|(id, s)| Quarry { id, position: s.position, velocity: s.velocity }).collect();
         for g in guns.iter() {
             let gun = g.aim.unwrap_or_else(|| (quarry.first().map_or(g.at, |q| q.position) - g.at).normalize_or(DVec3::Y));
             let clear = |p: DVec3| {

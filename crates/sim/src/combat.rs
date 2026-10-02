@@ -97,6 +97,10 @@ impl Universe {
     /// for the hits after), and a ruling that's news goes to the shooter.
     fn rule_on_hits(&mut self, now: f64, player: &mut Vec<ShipEvent>, crafts: &mut [Vec<ShipEvent>]) {
         let tick = self.tick;
+        let charts = self.charts();
+        // (The law of whoever holds the space the struck ship's in.)
+        let lasts = |system: usize| charts.holder(system).map(|f| f.aggression);
+        let system_of = |u: &Self, id: usize| u.ship_by_id(id).map(|s| s.1);
         let mut notices: Vec<(usize, ShipEvent)> = Vec::new();
         for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {
             for e in events {
@@ -105,7 +109,8 @@ impl Universe {
                 if let ShipEvent::Hit { by, weapon: true, .. } = *e {
                     let answers = universe_world::turrets::turret_of(by).is_none();
                     let hit = universe_services::law::Hit { shooter: by, target: id, time: now };
-                    if let Some(r) = self.law.hit(hit, answers, universe_protocol::Cause::Event { tick, index })
+                    let law = system_of(self, id).and_then(lasts);
+                    if let Some(r) = self.law.hit(hit, answers, law, universe_protocol::Cause::Event { tick, index })
                         && r.new
                     {
                         notices.push((r.ship, ShipEvent::Aggressed { until: r.until }));

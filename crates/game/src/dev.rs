@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market enemy galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -1133,6 +1133,14 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.refresh();
             app.v = app.engine.view();
             app.market = Some(crate::market::MarketView::open(app));
+        }
+        "enemy" => {
+            // On approach to the home station, an enemy of its holder.
+            apply(app, "approach");
+            let k = app.charts.holder_index(app.charts.home_system).unwrap_or(0);
+            app.engine.universe().standings.set(universe_sim::PLAYER, k, -100.0);
+            app.engine.refresh();
+            app.v = app.engine.view();
         }
         "newsdesk" | "newsticker" => {
             // Docked at home; traffic runs 12 minutes, the outlets and we

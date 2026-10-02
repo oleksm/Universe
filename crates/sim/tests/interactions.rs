@@ -81,7 +81,7 @@ fn a_turret(u: &mut Universe) -> (universe_sim::world::turrets::Turret, DVec3, D
 }
 
 #[test]
-fn turrets_shoot_the_aggressor_and_spare_the_innocent() {
+fn turrets_shoot_the_aggressor_and_the_holders_enemy_and_spare_the_innocent() {
     let mut u = bench(2);
     let (_, at, v, side) = a_turret(&mut u);
     place(&mut u, 0, at + side * 2_500.0, v, at);
@@ -92,6 +92,13 @@ fn turrets_shoot_the_aggressor_and_spare_the_innocent() {
     assert!(u.crafts[1].ship.hull > 0.99, "the innocent untouched ({:.2})", u.crafts[1].ship.hull);
     let kill = u.records.kills.last().expect("a kill");
     assert!(kill.killer_name.starts_with("SAM TURRET"), "{}", kill.killer_name);
+    // An enemy of the holder by its standing, though it's fired on no one:
+    // its docks refuse it, and its guns fire on it too.
+    let faction = u.world.charts().holder_index(u.ship_system).expect("held");
+    u.standings.set(universe_sim::craft_id(1), faction, -100.0);
+    run(&mut u, 0.5, |_| false);
+    assert!(!u.craft_request_clearance(1), "refused");
+    assert!(run(&mut u, 60.0, |u| !u.crafts[1].ship.is_flying()), "the enemy is shot down (hull {:.2})", u.crafts[1].ship.hull);
 }
 
 #[test]
