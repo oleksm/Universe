@@ -672,34 +672,37 @@ impl Synth {
             put((hum * 0.12 + self.air_lp * 0.22) * amb, 0.0, 0.3, &mut l, &mut r, &mut send);
         }
 
-        // The thrusters: each a hiss through its own band, the valve's
-        // envelope opening fast and closing with a tail ("pssht").
+        // The thrusters: each a soft, low rush through its own band, the
+        // valve's envelope easing open and closed (no sharp "pssht" on every
+        // little correction); many at once no louder than a few.
+        let firing = self.jets.iter().filter(|v| v.jet.level > 0.06).count().max(1) as f32;
+        let share = 1.0 / firing.sqrt();
         for k in 0..self.jets.len() {
             let n = self.white();
             let v = &mut self.jets[k];
             let j = v.jet;
-            let on = j.level > 0.02;
+            let on = j.level > 0.06;
             if on && !v.open {
                 v.tick = 1.0;
             }
             v.open = on;
             let target = if on { j.level.sqrt() } else { 0.0 };
-            let rate_env = if target > v.env { 1.0 / (0.012 * rate) } else { 1.0 / (0.05 * rate) };
+            let rate_env = if target > v.env { 1.0 / (0.06 * rate) } else { 1.0 / (0.2 * rate) };
             v.env += (target - v.env) * rate_env;
             if v.env < 1e-4 && v.tick < 1e-4 {
                 continue;
             }
             // (Each jet a little different; lift jets bigger and lower; nearer the cabin, brighter.)
             let spread = 1.0 + 0.12 * (((v.seed * 2_654_435_761) >> 24) as f32 / 255.0 - 0.5);
-            let centre = if j.lift { 700.0 } else { 1500.0 + 900.0 * j.near } * spread;
-            svf(&mut v.low, &mut v.band, n, centre, if j.lift { 0.8 } else { 1.4 }, rate);
-            v.rush += (n - v.rush) * 0.03;
+            let centre = if j.lift { 320.0 } else { 450.0 + 250.0 * j.near } * spread;
+            svf(&mut v.low, &mut v.band, n, centre, 0.7, rate);
+            v.rush += (n - v.rush) * 0.02;
             // (The small thrusters quiet beside the lift jets: they are small.)
-            let gain = (0.35 + 0.65 * j.near) * if j.lift { 1.3 } else { 0.125 };
-            let mut s = (v.band * 0.6 + v.rush * 0.8) * v.env * gain * 1.1;
-            // The valve: a short knock as it opens.
+            let gain = (0.35 + 0.65 * j.near) * if j.lift { 0.5 } else { 0.05 };
+            let mut s = (v.band * 0.3 + v.rush * 1.0) * v.env * gain * share;
+            // The valve: a soft knock as it opens.
             if v.tick > 1e-4 {
-                s += v.tick * (v.low * 2.0).clamp(-1.0, 1.0) * 0.25;
+                s += v.tick * (v.low * 2.0).clamp(-1.0, 1.0) * 0.06;
                 v.tick *= 1.0 - 1.0 / (0.004 * rate);
             }
             put(s, j.pan * 0.85, 0.25, &mut l, &mut r, &mut send);
