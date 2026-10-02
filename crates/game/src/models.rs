@@ -85,6 +85,9 @@ fn bells(h: &universe_sim::world::ship::ClassSpec) -> WireModel {
             let r = a * ang.cos() + b * ang.sin();
             m.positions.push(at + r * throat);
             m.positions.push(at + out * length + r * mouth);
+            // (Heat-tinted metal: bronze at the throat, blued steel at the lip.)
+            m.colors.push([0.66, 0.46, 0.24, 1.0]);
+            m.colors.push([0.24, 0.29, 0.42, 1.0]);
         }
         let v = |k: u32, end: u32| base + (k % n) * 2 + end;
         for k in 0..n {
@@ -234,18 +237,20 @@ fn chamfered_cut(planes: &[(DVec3, f64)], bevel: f64, cuts: &[(DVec3, f64)]) -> 
 /// its length from the nose).
 pub struct Scheme {
     pub base: [f32; 3],
+    /// Wings and fins (flat parts): a second tone, for contrast with the body.
+    pub wings: [f32; 3],
     pub accent: [f32; 3],
     pub band: (f32, f32),
 }
 
 /// The schemes, by who flies them: ours, traders, pirates, miners, shuttles, settlers.
 pub const SCHEMES: [Scheme; 6] = [
-    Scheme { base: [0.86, 0.88, 0.9], accent: [0.12, 0.22, 0.5], band: (0.30, 0.36) },
-    Scheme { base: [0.8, 0.76, 0.68], accent: [0.85, 0.42, 0.1], band: (0.22, 0.27) },
-    Scheme { base: [0.26, 0.27, 0.29], accent: [0.62, 0.08, 0.06], band: (0.18, 0.26) },
-    Scheme { base: [0.78, 0.62, 0.18], accent: [0.08, 0.08, 0.09], band: (0.12, 0.2) },
-    Scheme { base: [0.9, 0.91, 0.92], accent: [0.15, 0.4, 0.75], band: (0.4, 0.46) },
-    Scheme { base: [0.66, 0.69, 0.72], accent: [0.1, 0.45, 0.45], band: (0.33, 0.38) },
+    Scheme { base: [0.86, 0.88, 0.9], wings: [0.2, 0.22, 0.25], accent: [0.12, 0.22, 0.5], band: (0.30, 0.36) },
+    Scheme { base: [0.8, 0.76, 0.68], wings: [0.42, 0.39, 0.35], accent: [0.85, 0.42, 0.1], band: (0.22, 0.27) },
+    Scheme { base: [0.26, 0.27, 0.29], wings: [0.5, 0.12, 0.09], accent: [0.62, 0.08, 0.06], band: (0.18, 0.26) },
+    Scheme { base: [0.78, 0.62, 0.18], wings: [0.24, 0.24, 0.26], accent: [0.08, 0.08, 0.09], band: (0.12, 0.2) },
+    Scheme { base: [0.9, 0.91, 0.92], wings: [0.5, 0.58, 0.68], accent: [0.15, 0.4, 0.75], band: (0.4, 0.46) },
+    Scheme { base: [0.66, 0.69, 0.72], wings: [0.32, 0.38, 0.4], accent: [0.1, 0.45, 0.45], band: (0.33, 0.38) },
 ];
 
 /// A shape painted: its bevelled solid (see `bevelled`) with each panel its
@@ -265,6 +270,9 @@ pub fn painted(s: &Shape, scheme: &Scheme) -> WireModel {
         let (plo, phi) = pts.iter().fold((Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
         let bevel = ((phi - plo).min_element() as f64 * 0.12).clamp(0.02, 0.5);
         let normals: Vec<Vec3> = planes.iter().map(|(n, _)| n.as_vec3()).collect();
+        // (A flat part, wider than it's thick: a wing or fin, in the second tone.)
+        let size = phi - plo;
+        let wing = size.y < 0.3 * size.x || size.x < 0.3 * size.y;
         for w in lines.windows(2) {
             let (za, zb) = (w[0], w[1]);
             if zb <= plo.z as f64 + 1e-3 || za >= phi.z as f64 - 1e-3 {
@@ -298,7 +306,7 @@ pub fn painted(s: &Shape, scheme: &Scheme) -> WireModel {
                     0.93 + 0.1 * h
                 };
                 let accent = (along >= scheme.band.0 && along <= scheme.band.1) || mid.x.abs() as f64 > wide * 0.88;
-                let mut col = if accent { scheme.accent } else { scheme.base };
+                let mut col = if accent { scheme.accent } else if wing { scheme.wings } else { scheme.base };
                 let k = if panel { shade } else { 0.72 };
                 let soot = if along > 0.8 { 1.0 - (along - 0.8) / 0.2 * 0.45 } else { 1.0 };
                 for c in &mut col {

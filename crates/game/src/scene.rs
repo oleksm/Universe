@@ -691,9 +691,9 @@ fn hull_model(frame: &mut Frame, mesh: &universe_engine::Mesh, t: &Transform) {
 /// A ship's detail: its engine bells (dark, heat-stained metal) and its
 /// canopy (dark glass, glinting).
 fn hull_detail(frame: &mut Frame, (bells, glass): (&universe_engine::Mesh, &universe_engine::Mesh), t: &Transform) {
-    let soot = Color::hex(0x3a3a3e);
-    // (Too small for the shadow map to cast them cleanly: they cast none.)
-    frame.no_shadow(|frame| frame.with_surface(0.5, 30.0, 0.0, |frame| frame.model_shaded(bells, t, soot.scale(0.6), soot)));
+    // (Painted per corner, heat-tinted. Too small for the shadow map to cast
+    // them cleanly: they cast none.)
+    frame.no_shadow(|frame| frame.with_surface(0.9, 40.0, 0.0, |frame| frame.model_colored_shaded(bells, t, 0.35, 1.0)));
     let tint = Color::hex(0x1c2630);
     // (Glass glinting, and the cockpit's own glow through it: it reads in shade too.)
     frame.with_surface(1.2, 90.0, 1.5, |frame| frame.model_shaded(glass, t, tint.scale(1.6), tint));
@@ -1397,24 +1397,32 @@ fn jets(frame: &mut Frame, ship: &universe_sim::world::Ship, pos: DVec3, turned:
         let flicker = 0.8 + 0.2 * ((now * 31.0 + k as f64 * 1.7 + seed as f64 * 0.37).sin());
         let from = pos + turned * t.at;
         let out = turned * -t.push;
-        let hot = Color::hex(0xffb050).scale((0.6 + 0.4 * u) as f32);
+        // (A drive's plume blue-white; the thrusters' cold gas pale.)
+        let hot = if t.role == ThrusterRole::Rcs { Color::rgb(0.75, 0.78, 0.82) } else { Color::rgb(0.55, 0.72, 1.0) }.scale((0.4 + 0.4 * u) as f32);
         // The plume: a fan of lines from the mouth's rim to a point downstream.
         let reach = PLUME * force.sqrt() * flicker;
         let mouth = GLOW * t.thrust.sqrt();
-        let across = out.any_orthonormal_vector();
-        let spokes = if t.role == ThrusterRole::Rcs { 1 } else { 6 };
-        for i in 0..spokes {
-            let a = i as f64 * std::f64::consts::TAU / spokes as f64;
-            let rim = if spokes == 1 { from } else { from + (DQuat::from_axis_angle(out, a) * across) * mouth * 0.8 };
-            frame.line(rim, from + out * reach, hot);
+        if t.role == ThrusterRole::Rcs {
+            frame.line(from, from + out * reach, hot);
+        } else {
+            // A drive's plume: faint in vacuum, a short blue cone of light
+            // fading and narrowing away from the bell.
+            let length = reach.min(mouth * 14.0);
+            let k = (u * flicker) as f32;
+            for i in 1..=6 {
+                let f = i as f64 / 6.0;
+                let fade = (1.0 - f as f32).powi(2);
+                frame.glow(from + out * (length * f), mouth * (1.1 - 0.6 * f), [0.35 * k * fade, 0.75 * k * fade, 2.2 * k * fade], 0.0);
+            }
         }
-        // The mouth glowing: seen from behind, the drive lit.
+        // The forge glow in the bell: blue, white-hot at its heart, as bright as the drive's set.
         if t.role != ThrusterRole::Rcs {
-            let glow = Color::hex(0xfff0c0).scale((0.4 + 0.6 * u) as f32);
-            frame.circle(from + out * 0.3, out, mouth * (0.5 + 0.5 * u), 16, glow);
-            frame.circle(from + out * 0.3, out, mouth * 0.35 * (0.5 + 0.5 * u), 12, glow);
+            let k = (u * flicker) as f32;
+            frame.glow(from + out * 0.3, mouth * 1.5 * (0.6 + 0.4 * u), [0.9 * k, 1.8 * k, 5.0 * k], 2.0);
+            frame.glow(from + out * 0.3, mouth * 0.6 * (0.6 + 0.4 * u), [3.0 * k, 4.0 * k, 6.0 * k], 1.2);
+        } else {
+            frame.point(from, Color::rgb(0.8, 0.82, 0.86));
         }
-        frame.point(from, Color::hex(0xfff0c0));
     }
 }
 

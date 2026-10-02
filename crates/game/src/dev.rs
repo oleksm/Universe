@@ -610,6 +610,15 @@ pub fn apply(app: &mut App, name: &str) {
             app.observer.distance = std::env::var("UNIVERSE_DIST").ok().and_then(|d| d.parse().ok()).unwrap_or(160.0);
             app.observer.pitch = std::env::var("UNIVERSE_PITCH").ok().and_then(|d| d.parse().ok()).unwrap_or(0.35);
             app.observer.yaw = std::env::var("UNIVERSE_YAW").ok().and_then(|d| d.parse().ok()).unwrap_or(2.3);
+            // UNIVERSE_BURN: the mains held (to see the drive lit).
+            if std::env::var("UNIVERSE_BURN").is_ok() {
+                let u = app.engine.universe();
+                u.ship.manual = true;
+                u.ship.held = u.ship.spec().thrusters.iter().enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum();
+                for _ in 0..10 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+            }
         }
         "manual" => {
             // In flight by the home station, the flight computer off, a nose

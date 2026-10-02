@@ -1,0 +1,10 @@
+# Painted nozzles, a forge glow, two-tone hulls
+
+- **Nozzles painted:** heat-tinted metal, bronze at the throat to blued steel at the lip, with a glint.
+- **The forge glow:** a lit drive glows blue in its bells, white-hot at the heart, as bright as
+  the drive's set (it flickers a little).
+- **The plume:** a short blue cone of light fading and narrowing away from the bell, instead of
+  long line spikes (exhaust is faint in vacuum). The thrusters' cold gas is pale.
+- **Two-tone hulls:** wings and fins (flat parts) take a second tone per livery, for contrast
+  with the body. Ours: graphite wings on a light body.
+- `showship` takes `UNIVERSE_BURN` (mains held).
