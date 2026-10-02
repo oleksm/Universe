@@ -243,8 +243,11 @@ pub fn apply(app: &mut App, name: &str) {
                 app.explored.insert(b);
             }
             let mut map = crate::galaxymap::GalaxyMap::open(app, universe_engine::glam::Vec2::new(960.0, 540.0));
-            if name == "galaxyzoom" {
-                map.zoom(400.0);
+            // (UNIVERSE_ZOOM: closer by that much, or farther under 1.)
+            if let Some(k) = std::env::var("UNIVERSE_ZOOM").ok().and_then(|z| z.parse().ok()) {
+                map.zoom(k);
+            } else if name == "galaxyzoom" {
+                map.zoom(4.0);
             }
             app.galaxy_map = Some(map);
         }
