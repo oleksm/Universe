@@ -99,6 +99,7 @@ pub struct Frame {
     pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
     globe: [f32; 4],
     globe_at: [f32; 4],
+    globe_micro: [f32; 4],
 }
 
 /// One mesh draw: the mesh, and its instance data.
@@ -143,6 +144,12 @@ pub(crate) struct Instance {
     /// that origin, and 1 / radius, its vertices in metres).
     pub globe_at: [f32; 4],
 }
+// (A patch's place for its fine grain rides in the columns' spare w: its
+// origin (m, the world's own frame) wrapped to `MICRO_PERIOD`, its vertices
+// added in the shader — exact to the millimetre, and the same across patches.)
+
+/// The fine grain on the ground repeats every this many metres (see `Instance::globe_micro`).
+pub const MICRO_PERIOD: f64 = 4096.0;
 
 /// A light source: a star. How bright it looks falls with the square of the
 /// distance; the eye adapts only part of the way (`EXPOSURE`), so a planet
@@ -265,6 +272,7 @@ impl Frame {
             globe_maps: Vec::new(),
             globe: [0.0; 4],
             globe_at: [0.0, 0.0, 0.0, 1.0],
+            globe_micro: [0.0; 4],
         }
     }
 
@@ -351,7 +359,9 @@ impl Frame {
     /// brightness. Their fill tint is the world's own colour (and their
     /// vertex colours should be white).
     /// `at`: where its vertices are on the world (see `Instance::globe_at`).
-    pub fn with_globe(&mut self, map: &std::sync::Arc<crate::model::GlobeMap>, kind: f32, relief: f32, bright: f32, at: [f32; 4], f: impl FnOnce(&mut Frame)) {
+    /// `micro`: a patch's origin (m, the world's frame) for its fine grain (none: zero).
+    #[allow(clippy::too_many_arguments)]
+    pub fn with_globe(&mut self, map: &std::sync::Arc<crate::model::GlobeMap>, kind: f32, relief: f32, bright: f32, at: [f32; 4], micro: glam::DVec3, f: impl FnOnce(&mut Frame)) {
         let k = match self.globe_maps.iter().position(|m| m.id() == map.id()) {
             Some(k) => k,
             None => {
@@ -361,9 +371,12 @@ impl Frame {
         };
         let before = std::mem::replace(&mut self.globe, [k as f32 + 1.0, kind, relief, bright]);
         let before_at = std::mem::replace(&mut self.globe_at, at);
+        let wrap = micro.map(|v| v.rem_euclid(MICRO_PERIOD)).as_vec3();
+        let before_micro = std::mem::replace(&mut self.globe_micro, [wrap.x, wrap.y, wrap.z, 0.0]);
         f(self);
         self.globe = before;
         self.globe_at = before_at;
+        self.globe_micro = before_micro;
     }
 
     /// Meshes drawn in `f` cast no shadows (a planet's globe: its night is
@@ -527,6 +540,7 @@ impl Frame {
             globe: self.globe,
             globe_at: self.globe_at,
         };
+        (inst.c0[3], inst.c1[3], inst.c2[3]) = (self.globe_micro[0], self.globe_micro[1], self.globe_micro[2]);
         if lit && let Some(light) = self.light {
             let dir = (light.position - t.position).normalize_or_zero().as_vec3();
             // (What a planet or moon leaves of the sun here.)

@@ -87,6 +87,7 @@ struct MeshIn {
     // Where its vertices are on the world, in radii: pos * w + xyz.
     @location(15) globe_at: vec4<f32>,
 };
+// (A patch's origin wrapped to the fine grain's period (m) rides in c0.w, c1.w, c2.w.)
 
 const EXPOSURE: f32 = 0.3;
 
@@ -144,7 +145,52 @@ struct MeshOut {
     @location(10) @interpolate(flat) globe: vec4<f32>,
     // A patch of ground (its vertices in metres): 1 / the world's radius; a whole globe 1.
     @location(11) @interpolate(flat) patch_scale: f32,
+    // Where on the ground for its fine grain (m, wrapped; exact).
+    @location(12) micro: vec3<f32>,
 };
+
+// The fine grain repeats every this many metres (see `MICRO_PERIOD`).
+const MICRO_PERIOD: f32 = 4096.0;
+
+// The lattice's value at `q`, wrapped every `n` cells.
+fn whash(q: vec3<i32>, n: i32) -> f32 {
+    return hash3(((q % n) + n) % n);
+}
+
+// Value noise in 0..1 on a lattice that wraps every `n` cells.
+fn wnoise(p: vec3<f32>, n: i32) -> f32 {
+    let f = floor(p);
+    let t = p - f;
+    let s = t * t * (3.0 - 2.0 * t);
+    let i = vec3<i32>(f);
+    let a = mix(whash(i, n), whash(i + vec3<i32>(1, 0, 0), n), s.x);
+    let b = mix(whash(i + vec3<i32>(0, 1, 0), n), whash(i + vec3<i32>(1, 1, 0), n), s.x);
+    let c = mix(whash(i + vec3<i32>(0, 0, 1), n), whash(i + vec3<i32>(1, 0, 1), n), s.x);
+    let d = mix(whash(i + vec3<i32>(0, 1, 1), n), whash(i + vec3<i32>(1, 1, 1), n), s.x);
+    return mix(mix(a, b, s.y), mix(c, d, s.y), s.z);
+}
+
+// The ground's fine grain (a patch's, up close): octaves from 128 m down to
+// half a metre, each fading in as it grows to a few pixels across (`pixel`,
+// m). x: a colour detail (-1..1); y: a height (m), the same slope at every
+// scale (pebbles, ripples, hummocks); exact, from `m` (see `micro`).
+fn micro_detail(m: vec3<f32>, pixel: f32) -> vec2<f32> {
+    var sum = vec2<f32>(0.0);
+    var amp = 0.5;
+    var cells = 32;
+    for (var o = 0; o < 9; o++) {
+        let size = MICRO_PERIOD / f32(cells);
+        let fade = clamp(size / (pixel * 6.0) - 1.0, 0.0, 1.0);
+        if (fade > 0.0) {
+            let v = wnoise(m / size, cells) * 2.0 - 1.0;
+            let r = mix(v, 0.6 - abs(v) * 1.6, 0.5);
+            sum += fade * vec2<f32>(amp * r, r * size * 0.12);
+        }
+        amp *= 0.6;
+        cells *= 2;
+    }
+    return sum;
+}
 
 // Value noise in 0..1 (a hash on the lattice, smoothly blended).
 fn hash3(p: vec3<i32>) -> f32 {
@@ -240,13 +286,16 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // (Globe surfacing, sampled whatever the mesh: derivatives need it out
     // here, and it's cheap; used only for a globe.)
     let dir = normalize(in.local);
-    let ldx = dpdx(in.local);
-    let ldy = dpdy(in.local);
-    let layer = max(i32(in.globe.x) - 1, 0);
-    let ground = textureSampleGrad(globe_maps, globe_soft, in.local, layer, ldx, ldy);
     let px = dpdx(in.at);
     let py = dpdy(in.at);
     let on_patch = in.patch_scale < 0.5;
+    // (Where on the world is good to about a metre only (it's in radii, in
+    // 32 bits): on a patch its steps across the screen come from the eye's
+    // metres, which are exact.)
+    let ldx = select(dpdx(in.local), px * in.patch_scale, on_patch);
+    let ldy = select(dpdy(in.local), py * in.patch_scale, on_patch);
+    let layer = max(i32(in.globe.x) - 1, 0);
+    let ground = textureSampleGrad(globe_maps, globe_soft, in.local, layer, ldx, ldy);
     // How much of the world a pixel spans (radians), from the eye's metres
     // (precise) on a patch; the radius as drawn (m).
     let radius = select(length(px) / max(length(ldx) / max(length(in.local), 1e-6), 1e-9), 1.0 / in.patch_scale, on_patch);
@@ -266,8 +315,17 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     }
     let land = select(1.0, step(0.0, select(ground.r + d.x * 0.03, h, on_patch)), in.globe.y < 0.5);
     // (Shaded the same near and far: the map's slopes and the fine detail's,
-    // over whatever shape the mesh has.)
-    let lift = ground.r * in.globe.z + land * d.y * 0.06 * radius;
+    // over whatever shape the mesh has — till a pixel is a few metres or
+    // less: then where on the world is too coarse to take slopes from (they'd
+    // speckle), and the mesh's own shape shades it.)
+    let pixel = length(px) + length(py);
+    let slopes = select(1.0, smoothstep(2.0, 10.0, pixel), on_patch);
+    // Up close on a patch, the fine grain instead (exact: it doesn't speckle).
+    var grain = vec2<f32>(0.0);
+    if (on_patch && in.globe.x > 0.5) {
+        grain = micro_detail(in.micro, pixel) * (1.0 - slopes * 0.5);
+    }
+    let lift = (ground.r * in.globe.z + land * d.y * 0.06 * radius) * slopes + land * grain.y;
     let hx = dpdx(lift);
     let hy = dpdy(lift);
     var n = normalize(in.normal);
@@ -281,7 +339,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             let grad = sign(det) * (hx * r1 + hy * r2);
             n = normalize(abs(det) * n - grad);
         }
-        albedo = vec4<f32>(globe_color(in.globe.y, h, ground.g, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * in.globe.w, in.color.a);
+        albedo = vec4<f32>(globe_color(in.globe.y, h, ground.g, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
     }
     let seen = sunlit(in.at, n);
     // (A globe lit per pixel: its slopes, its terminator.)
@@ -317,7 +375,7 @@ fn vs_mesh(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, v.pos * v.globe_at.w + v.globe_at.xyz, v.globe, v.globe_at.w);
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, v.pos * v.globe_at.w + v.globe_at.xyz, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w));
 }
 
 @vertex
@@ -328,5 +386,5 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
-    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0);
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0));
 }

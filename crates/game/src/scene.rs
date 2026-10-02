@@ -451,7 +451,7 @@ fn bodies(frame: &mut Frame, app: &App) {
                 let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
                 universe_prof::time("draw/scene/bodies/globe mesh", || {
                     frame.no_shadow(|frame| {
-                        frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, [0.0, 0.0, 0.0, 1.0], |frame| {
+                        frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, [0.0, 0.0, 0.0, 1.0], DVec3::ZERO, |frame| {
                             frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
                         })
                     })
