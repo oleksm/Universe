@@ -1,7 +1,7 @@
-// The kernel's laws: the physics every world runs on, whatever is built in
+// Dogma's laws: the physics every world runs on, whatever is built in
 // it. Only nature's constants and the laws (real, or the invented hyper
 // layer's) — no materials, devices, structures or designs: those are the
-// world's (a distro: `content/base/`, its own sheet `content/base/sheet.ron`
+// world's (the world: `content/base/`, its own sheet `content/base/sheet.ron`
 // and its `materials.ron`).
 //
 // The build turns this into `universe_physics::laws`; the dogma's claims are

@@ -53,7 +53,7 @@ impl BodyKind {
         !matches!(self, BodyKind::Station | BodyKind::Gate)
     }
 
-    /// Its shape, for the physics kernel: a station's hull with its docking
+    /// Its shape, for Dogma: a station's hull with its docking
     /// slot, a gate's ring, or a (terrain) surface.
     fn collider(self) -> Collider {
         match self {
@@ -81,7 +81,7 @@ pub struct Body {
     pub link: Option<usize>,
     /// Surface heights, for rocky planets and moons.
     pub terrain: Option<crate::terrain::Terrain>,
-    /// How it moves (parent, orbit, spin), pulls and collides: the physics kernel's part.
+    /// How it moves (parent, orbit, spin), pulls and collides: Dogma's part.
     pub rail: RailBody,
     /// For asteroids: what it is, and its shape.
     pub rock: Option<std::sync::Arc<crate::belt::Rock>>,

@@ -1,4 +1,4 @@
-//! Ships colliding with each other: the kernel finds the pairs whose
+//! Ships colliding with each other: Dogma finds the pairs whose
 //! bounding spheres touched during the frame (`universe_physics::contacts`);
 //! then their shapes — each hull's contact spheres, where they were through
 //! the frame — say whether they really met, where, and which way (a wing

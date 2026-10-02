@@ -19,9 +19,9 @@ changes.
    the world — the player's ship, a settler, a half-built station — and it never changes its
    rules because of what is built or run on top of it.
 2. **Physics knows nothing about game concepts.** No "station", "spaceport", "gate", "dock",
-   "land", "autopilot", "clearance", "route" or "player" inside the physics kernel. Those are
+   "land", "autopilot", "clearance", "route" or "player" inside Dogma. Those are
    objects and programs *in* the world, and later things players construct.
-3. **Everything moves through devices.** Nothing but the kernel's integration and its few
+3. **Everything moves through devices.** Nothing but Dogma's integration and its few
    explicit, audited operations (spawn, weld/unweld, relocate) changes a body's position or
    velocity. Intent (a pilot's stick, an autopilot) becomes commands to a ship's devices
    (engine, thrusters, lift, hyperdrive…), and devices turn commands into forces within their
@@ -36,19 +36,18 @@ changes.
    randomness, no wall clock inside the simulation. This underpins multiplayer (server
    authority, client prediction), replays and reproducible traffic simulations.
 
-## Kernel and distro
+## Dogma and the world
 
-The engine is a **kernel**: the laws every world runs on, the same whatever is built in it. The
-world is a **distro** on it: a seeded instance with its own matter, devices, designs, production
-and economy. As with an OS kernel and a distribution, the distro can change anything of its own and
-nothing of the kernel's.
+The core engine is **Dogma**: the laws every world runs on, the same whatever is built in it. On
+it stands **the world**: a seeded instance (its initial conditions) with its own matter, devices,
+designs, production and economy. The world can change anything of its own and nothing of Dogma's.
 
-| | Kernel | Distro (the base world) |
+| | Dogma | The world (the base world) |
 |---|---|---|
-| Where | `crates/physics` (`universe-physics`) and its laws, `config/physics.ron` | `content/base/` (a content pack), and the world code that runs it |
+| Where | `crates/physics` (`universe-physics`) and its laws, `config/dogma.ron` | `content/base/` (a content pack), and the world code that runs it |
 | What | nature's constants; mechanics, gravity, orbits, contact; the hyper layer's laws (the medium, fields, throats: `laws`, `hyper`) | materials (`materials.ron`), devices (`modules.ron`), hulls, brands, recipes, places, markets, its fixed design numbers (`sheet.ron`) |
 | Knows | bodies, forces, energy, the medium | fuels, reactors, tanks, ships, stations, goods, who makes what |
-| Never | names a material, a device, a fuel or a good (`dogma.rs` checks) | breaks a law (devices are checked against the kernel and their materials) |
+| Never | names a material, a device, a fuel or a good (`dogma.rs` checks) | breaks a law (devices are checked against Dogma and their materials) |
 
 - **The code never names a fuel.** A tank holds a material, a plant burns one at its own
   efficiency, and the energy comes from the material's entry. Ships' traded fuel is whatever the
@@ -56,8 +55,8 @@ nothing of the kernel's.
 - **Production isn't dogma.** The seeded recipes, places and fuels are one starting state. Anyone
   can collect any matter and build any device the laws allow.
 - **Not yet:** the world crate still holds device behaviour (the hyperdrive and gates as devices,
-  the heat model) next to world rules. The distro's numbers are compiled in, not overridable by
-  packs. Elements and reactions (the kernel deriving a fuel's energy) come with the depth of matter.
+  the heat model) next to world rules. The world's numbers are compiled in, not overridable by
+  packs. Elements and reactions (Dogma deriving a fuel's energy) come with the depth of matter.
 
 ## Layers (crates), dependencies pointing down only
 
@@ -78,7 +77,7 @@ nothing of the kernel's.
    │                    port, landing gear, damage, gate transit), world
    │                    services (traffic control / clearance), events
    │
- physics                the kernel (below)                                 crates/physics
+ physics                Dogma (below)                                 crates/physics
  (universe-physics)
                         engine (universe-engine): rendering only, no sim deps
 ```
@@ -140,14 +139,14 @@ Threads:
    the GPU (`Mesh`: uploaded once, instanced by mesh, transformed and lit in the shader).
 
 Crate boundaries are enforced by Cargo: `universe-physics` depends on `glam` only and cannot
-import world or avionics types; `universe-world` depends on the kernel (+ `glam`, `serde`) and
-cannot import avionics; `universe-avionics` depends on the kernel and the world; `universe-sim`
+import world or avionics types; `universe-world` depends on Dogma (+ `glam`, `serde`) and
+cannot import avionics; `universe-avionics` depends on Dogma and the world; `universe-sim`
 on all three; the game on `universe-sim` and `universe-engine`. `universe-sim` re-exports the
 layers below it (`universe_sim::{physics, world, avionics}`, the old module paths
 `universe_sim::{galaxy, names, rng, ship, system, terrain, units, docking, landing, gate, plan,
 route}` and the common types at its root), so the game needs only the one dependency.
 
-## Physics kernel (`universe-physics`)
+## Dogma (`universe-physics`)
 
 `crates/physics/src/`: `orbit`, `rails`, `surface`, `body`, `collide`, `integrate`, `ops`,
 `query` (plus a test-only `testkit`). It knows only:
@@ -157,14 +156,14 @@ route}` and the common types at its root), so the game needs only the one depend
   tilt, day, collider }`: gravitational parameter, spin (tilt + day), its **collider**, and an
   `attracts` flag (bodies too light to matter neither pull nor dominate). The **surface** is not
   stored in it: owners implement `OnRails` (`rail()` + optional `surface() -> &dyn Surface`), so
-  the world keeps its own terrain type and hands the kernel the height function. Positions,
+  the world keeps its own terrain type and hands Dogma the height function. Positions,
   velocities, rotations at any time (`positions`, `velocity`, `Frame::of` / `local` /
   `velocity_at`); per-frame **ephemeris** snapshots (p + v·τ + ½·a·τ²) for cheap substeps;
   gravity sum; dominant body.
 - **Surface** trait: `height(dir)` (ground under any liquid), `surface(dir)` (what is touched),
   `max_height()`, `liquid(dir)`; `surface_radius`, `surface_radius_at`, `max_radius`.
 - **Rigid bodies**: `RigidBody { position, velocity, orientation, angular_velocity, radius }`,
-  moved only by integration of gravity + applied acceleration, or by kernel ops. Mass stays
+  moved only by integration of gravity + applied acceleration, or by Dogma ops. Mass stays
   with the owner: drivers return an **acceleration** (force / mass).
 - **Integration**: `integrate(bodies, ephemeris, positions, body, Span { t, dt, max_h },
   driver)` — leapfrog + adaptive substeps (1/100 of the dominant body's orbital time scale,
@@ -177,7 +176,7 @@ route}` and the common types at its root), so the game needs only the one depend
   frame (metres), contact with the nearest box (normal from the closest point, or the face it's
   least deep behind), some boxes' tops marked as **decks**; ring (torus) with an
   opening **trigger**, measuring the start of a step against where the ring was then. The
-  kernel reports **facts**, never what they mean: `Fact::Contact(Contact { body, feature:
+  Dogma reports **facts**, never what they mean: `Fact::Contact(Contact { body, feature:
   Surface{liquid} | Hull | Deck(k) | Ring, normal, local, surface_velocity, relative_velocity
   })`, `Fact::Trigger { body, relative_velocity }`.
 - **Ops** (explicit, audited): `Weld` (capture a body's pose in a rail body's frame, place it
@@ -189,10 +188,10 @@ route}` and the common types at its root), so the game needs only the one depend
 
 Fairness rules: no special cases by object kind or owner; the same integrator, tick and
 contact rules for everything (substep length comes from physical state — proximity and whether a
-device pushes — never from who or what is flying); all inputs are accelerations or audited ops. The kernel contains
+device pushes — never from who or what is flying); all inputs are accelerations or audited ops. Dogma contains
 none of the game words (checked by grep).
 
-Invariant tests live with the kernel: determinism (`same_inputs_same_world`: a state hash after
+Invariant tests live with Dogma: determinism (`same_inputs_same_world`: a state hash after
 N steps), orbit stability and energy (`orbit_closes_and_keeps_its_energy`,
 `a_circular_orbit_stays_circular`), the orbit's numeric derivative, exact integration of an
 applied acceleration, colliders and triggers (a structure's hull / deck / open air past its edge / spin,
@@ -201,19 +200,19 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 
 **Not yet**
 
-- Rotation: orientation and angular velocity are carried but not integrated by the kernel; the
+- Rotation: orientation and angular velocity are carried but not integrated by Dogma; the
   ship's attitude device sets the orientation (see World). Integrate rotation (torques) once
   attitude is a force-producing device.
 - Ops: there is no explicit unweld, launch-impulse, spawn or despawn op; the world's device
   rules write those poses directly (see World, *Not yet*).
-- Mass and forces: drivers give accelerations; a kernel-side mass (and momentum bookkeeping
+- Mass and forces: drivers give accelerations; a Dogma-side mass (and momentum bookkeeping
   across bodies) comes with constructed, non-rail bodies.
 
 ## World (`universe-world`)
 
 `crates/world/src/`, the entities and their rules:
 
-- **Content**: `units`, `rng`, `names`, `galaxy`, `terrain` (implements the kernel's `Surface`),
+- **Content**: `units`, `rng`, `names`, `galaxy`, `terrain` (implements Dogma's `Surface`),
   `system` (star systems: bodies with a `rail`, kinds, colours, spaceports; `on_pad`,
   `port_at`), `network` (home system choice, the gate network, links). `World { galaxy, time,
   home_system, gate_links }` owns the clock and caches: generated systems (the gate network's
@@ -225,7 +224,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   family's remnant (a system body, `BodyKind::Asteroid`, pulling faintly) and a swarm of
   fragments on Kepler orbits around it, inside its Hill sphere; one class per family (C, S, M,
   icy), power-law sizes, rubble piles and monoliths, composition, an ellipsoid-with-lumps shape
-  (`RockShape`, the kernel's `Surface`). The swarm is generated on first approach:
+  (`RockShape`, Dogma's `Surface`). The swarm is generated on first approach:
   `StarSystem::field_bodies(f)` = the system's bodies + the swarm, which a ship near the field
   flies among (`World::field_at`; its own ephemeris cache). Surface bodies under `SMALL_BODY`
   get fine substeps like structures.
@@ -258,7 +257,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
     (`touch_down`: slow enough → weld, oceans and fast impacts → destroyed; `lift_off`).
   - `gate`: a rail body + ring collider + opening trigger + link to its paired gate
     (`GateFrame`, `RING`); the **gate device** (`enter`: trigger crossed below the speed limit →
-    transit, else destroyed; `emerge` via the kernel's `Relative` op; ring contact → destroyed).
+    transit, else destroyed; `emerge` via Dogma's `Relative` op; ring contact → destroyed).
 - **Ships** (`ship`): `Ship` = rigid-body state + device settings (`throttle`, `rcs`,
   `hyperdrive`), `state` (flying, landed/docked, in transit, destroyed), fuel, cargo — **no
   navigation state**. Commands: `ShipCommands { throttle, rcs, turn: Option<Controls>,
@@ -284,24 +283,24 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 - **The ship step**: `World::command(ship, system, &ShipCommands)` (no time passes: settings,
   then the hyperdrive switch) and `World::step_ship(ship, system, &ShipCommands, computer,
   real_dt, warp)` — destroyed (respawn countdown), landed (weld; turn; launch / lift-off),
-  transit (countdown; emerge), hyperdrive, or free flight through the kernel with `Devices` as
-  the driver, then the reaction to the fact the kernel stopped on, then the system hand-over (a
-  floating origin at interstellar scale). It reads only the ship, the commands and kernel facts.
+  transit (countdown; emerge), hyperdrive, or free flight through Dogma with `Devices` as
+  the driver, then the reaction to the fact Dogma stopped on, then the system hand-over (a
+  floating origin at interstellar scale). It reads only the ship, the commands and Dogma facts.
   **Nothing runs inside the step but physics:** whatever flies the ship (a pilot, a program)
   has had its say before it, as device settings that hold through it (hyperdrive orders too,
   `Ship::hyper_orders`). Turning is physics, over the game time the step covers (in hyperdrive,
-  over real time). Fine substeps come from proximity to structures (kernel) or any device
+  over real time). Fine substeps come from proximity to structures (Dogma) or any device
   pushing — engine or thrusters (device state), whoever flies — never from who is flying.
   `step_ship_at` steps from an explicit clock, so ships can step side by side.
-- `Devices` (public) is the kernel `Driver` for a ship's devices: they push with the thrust
+- `Devices` (public) is Dogma `Driver` for a ship's devices: they push with the thrust
   they're set to, station bounces are judged by the world. The same driver flies a *copy* of a
   ship when a flight is simulated ahead (the planner).
 
 **Not yet**
 
-- Direct pose writes remain in world device rules, outside kernel ops: the hyperdrive's motion
+- Direct pose writes remain in world device rules, outside Dogma ops: the hyperdrive's motion
   and drop-out velocity, the lift-off nudge (deck or ground), the touch-down pose, respawn and `ship_at`, and the hand-over (a change of coordinates, not
-  physics). Candidates for explicit kernel ops (unweld, launch impulse, spawn).
+  physics). Candidates for explicit Dogma ops (unweld, launch impulse, spawn).
 - `Ship`'s fields are `pub`, so "only through commands" is kept by review, not by the compiler.
 - A ship's numbers come from its hull's frame and the modules in its slots (`ClassSpec::assemble`,
   cached per fit by `ship::fitted`), never set by hand; see the modules row below. Fuel is burned by the drives
@@ -348,7 +347,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 - `route`: `Route` (with `pop`, keeping its progress valid), `Stop`, `DWELL`, `gate_path`,
   `stop_name`, and the route autopilot (leave, cross systems through gates, hyperdrive, dock or
   land, dwell, repeat).
-- `plan`: the flight **planner**. It clones the ship and flies the copy with the kernel's
+- `plan`: the flight **planner**. It clones the ship and flies the copy with Dogma's
   `simulate` and the world's `Devices`, under the same `Computer`/autopilot, point by point; it
   arrives when the world's rules (a station's deck, landing gear on the target pad, gate device)
   would take the copy in. Within the autopilot's own range (the hyperjump limit: 200 km from a
@@ -414,7 +413,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 - `cockpit` (R7): **the player's client**: its pilot (the NPC `think` with a human at the
   stick) and ship computers (radar picture from the snapshot and transponders in range, fire
   control, flight plan when shown, collision warning, follow, approach, nav marker), and
-  prediction of what its orders on their way will do (the shared kernel, with and without
+  prediction of what its orders on their way will do (the shared Dogma, with and without
   them). In the universe for tests; on the client's world-link thread in the game.
 - `audit` (R9): the input log, `Universe::replay`, `state_hash`, and `WorldSave` (the log plus
   each pilot's own state).
@@ -422,7 +421,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
   and its event feed), and each craft's `Inbox` of postings by due tick:
   1. avionics `prepare` (route autopilot, hyperjump) → commands over the bus;
   2. the pilot's stick → the frame's `ShipCommands` (unless a computer is flying the ship);
-  3. `World::step_ship` with the avionics' `Computer`: devices → kernel step → contact/trigger
+  3. `World::step_ship` with the avionics' `Computer`: devices → Dogma step → contact/trigger
      facts → device/world rules;
   4. the physical events → `Avionics::record` (observe, then the pilot's feed);
   5. avionics `conclude` (hyperdrive arrival, clearance lapse).
@@ -519,7 +518,7 @@ ship's pose directly, like tests do — then render.
 | The tick's event log (`Universe::log`): every ship event in order — what causes point into | sim: `universe` |
 | Contact rules as data: lock (deck / ground, with what it says by zone), transit, bounce, wreck; release (lift-off, along a deck's normal or the local vertical); every firing told (`RuleFired`) | world: `rules` |
 | The rules each structure's owner registers (stations, worlds and their ports, gates) — to move into the services (R4) | world: `structures` |
-| Ship-to-ship collisions (kernel `pairs` sweep + world bounce/damage rules) | physics: `pairs`, world: `collisions` |
+| Ship-to-ship collisions (Dogma `pairs` sweep + world bounce/damage rules) | physics: `pairs`, world: `collisions` |
 | Flight recorder: every ship's last 15 s, incidents with traces | sim: `recorder` |
 | Radar (sweep, blips) | world: `radar` |
 | Gun, laser, hull damage (a hit jams the hyperdrive 15 s); the combat phase (`World::combat`, `Armed`) | world: `weapons`, `damage` |
@@ -534,7 +533,7 @@ ship's pose directly, like tests do — then render.
 | Gates: one way, each facing the star it leads to (its twin faces back); against the axis an empty ring; out of the twin with the motion turned half round its X (the same way through space); orbits in gaps clear of moons, stations and fields (`GATE_CLEARANCE`) | world: `gate`, `system::add_gates`, `rules` (transit); avionics: `gate` |
 | The ship planner and shipyard (one panel, the shipyard key; anywhere, docked a shipyard): PLAN (any hull and fit vs your ship, numbers, drawn with mounts and centre of mass, built at a station), HULLS, DESIGN, PLANS (kept in the save); a turning wireframe with hidden back faces | game: `shipyard`, `thrusterpanel::{view, turning}` |
 | Hull design: a hull from a few numbers (body, wings, fins, slots, nozzles, where masses and thrusters sit); its shape, nodes, frame and stock fit built; commissioned designs added to the content's hulls as the game runs (`Registry::add`), each carrying its own shape; kept in the save and commissioned on load | world: `design`, `content::Registry::add`, `ship::ClassSpec::shape_own` |
-| Ship against ship: bounding spheres (the kernel's swept grid), then each hull's corners and edge middles against the other's convex parts through the frame; normal from the face it came in by | world: `collisions`, `shape::{solids, inside, probes}` |
+| Ship against ship: bounding spheres (Dogma's swept grid), then each hull's corners and edge middles against the other's convex parts through the frame; normal from the face it came in by | world: `collisions`, `shape::{solids, inside, probes}` |
 | The thrusters panel (F7): the ship's plan from above and the side, every thruster's level, thrust and fuel flow, time to empty at this burn, centre of mass and balance | game: `thrusterpanel` |
 | SAM turrets (seeded per station/gate/spaceport, 6 km reach, fire on aggressors with a clear line), coverage | world: `turrets` |
 | SAM missiles: each turret's launcher (2 in the air, 10 s reload, 80 km), motor 6 g for 60 s, zero-effort-miss guidance, proximity fuse 40 m, 15 MJ blast; self-destruct on losing the target. The gunner names the target (`TurretCommand::launch`) | world: `missiles`, `weapons::fly_missiles`; sim: `pilots::aim_guns` |
@@ -542,7 +541,7 @@ ship's pose directly, like tests do — then render.
 | Fight or flight: lawful ships judge aggressors (`hunter::judge`) and gang up on them; frame-start ship snapshot for what ships see (`Universe::snaps`) | avionics: `hunter`, sim: `traffic` |
 | Fire control: track on a contact, gun lead | avionics: `fire_control` |
 | Follow: keep at range / orbit a ship, station or gate (thrusters + engine, anchor-acceleration feedforward) | avionics: `follow`, sim: `follow` |
-| Collision warning: predicted path through the kernel, first impact (bodies, stations, gates, ships) | avionics: `collision` |
+| Collision warning: predicted path through Dogma, first impact (bodies, stations, gates, ships) | avionics: `collision` |
 | Radar contacts + transponders, the lock | sim: `contacts` |
 | Combat phase in the tick (ship ids: player 0, craft i → i+1), fire control for the player | sim: `combat` |
 | Frame profiler: named scopes per frame (per-thread tallies), mean/worst over 120 frames (F3 panel, `UNIVERSE_PROFILE=1`) | prof |
@@ -561,7 +560,7 @@ ship's pose directly, like tests do — then render.
 
 ## How changes are verified
 
-- **Unit tests** in each crate (kernel invariants, device rules, traffic control, markets…): the
+- **Unit tests** in each crate (Dogma invariants, device rules, traffic control, markets…): the
   whole suite runs in a few seconds.
 - **Interaction tests** (`crates/sim/tests/interactions.rs`): 2–10 ships placed in one situation
   (two ships at a gate, full pads with one holding, one leaving a station as another docks, a

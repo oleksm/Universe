@@ -1,5 +1,5 @@
 //! Collision warning: fly a copy of the ship ahead as it is set now (engine
-//! and thrusters holding), through the physics kernel, and report the first
+//! and thrusters holding), through Dogma, and report the first
 //! thing it would hit: a body's surface, a station, a gate's ring (flying
 //! through the opening is fine), or another ship (radar contacts, assumed to
 //! hold their course). A ship's system that can be switched on or off.
@@ -20,8 +20,8 @@ pub const RANGE: f64 = 100_000.0;
 pub const HORIZON: f64 = 1800.0;
 /// How far the ship may move between contact checks near stations and gates (m).
 const CONTACT_RESOLUTION: f64 = 20.0;
-/// Most kernel substeps per prediction (keeps it cheap near stations, where
-/// the kernel steps finely).
+/// Most Dogma substeps per prediction (keeps it cheap near stations, where
+/// Dogma steps finely).
 const BUDGET: u32 = 8000;
 
 /// What the ship would hit.

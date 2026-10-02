@@ -242,7 +242,7 @@ impl Terrain {
     }
 }
 
-/// The physics kernel collides with the same height function.
+/// Dogma collides with the same height function.
 impl universe_physics::Surface for Terrain {
     fn height(&self, dir: DVec3) -> f64 {
         self.raw_height(dir)

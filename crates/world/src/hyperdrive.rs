@@ -20,7 +20,7 @@ use crate::galaxy::Galaxy;
 use crate::ship::{HyperdriveCommand, Ship};
 use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
-// (Its constants are the physics sheet's: config/physics.ron.)
+// (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::GROUND_MARGIN;
 pub use universe_physics::hyper::slack;
 use universe_physics::hyper::{field_draw, field_speed};

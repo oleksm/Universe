@@ -5,7 +5,7 @@
 //! each ship takes its turn in a fixed order (`vessel`); traffic (the
 //! settlers, their totals and crash log) and save/load live here too.
 //! Deterministic and headless; knows nothing about rendering. (The physics
-//! itself is the kernel, `universe-physics`.)
+//! itself is Dogma, `universe-physics`.)
 
 mod combat;
 mod commerce;

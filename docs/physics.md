@@ -1,7 +1,7 @@
 # Physics: what's real, what's simplified, what's invented
 
-> **Kernel and distro.** The engine is a kernel; the world is a distro on it (see
-> `docs/architecture.md`). **The kernel's laws** are `config/physics.ron` (nature's constants, the
+> **Dogma and the world.** The core engine is Dogma; the world is built on it (see
+> `docs/architecture.md`). **Dogma's laws** are `config/dogma.ron` (nature's constants, the
 > hyper layer's laws: `universe_physics::laws`, `universe_physics::hyper`): no materials, devices
 > or designs. **The base world** (`content/base/`) brings its matter (`materials.ron`: real
 > substances at real properties), its devices (`modules.ron`: a plant says what it burns and how

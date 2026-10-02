@@ -1,4 +1,4 @@
-//! A sheet of constants (the kernel's laws, `laws`; a world's fixed numbers,
+//! A sheet of constants (Dogma's laws, `laws`; a world's fixed numbers,
 //! `universe_world::sheet`): each with its unit, kind and reason.
 
 /// What kind of thing a constant is.

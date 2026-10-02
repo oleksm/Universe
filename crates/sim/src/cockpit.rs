@@ -54,7 +54,7 @@ pub struct Cockpit {
     pub collision_cost: f32,
     collision_age: f64,
     /// Prediction (see `predict`): its own copy of the world's rules (the
-    /// shared kernel, from the same seed), the turns it posted by due tick,
+    /// shared Dogma, from the same seed), the turns it posted by due tick,
     /// and what its orders on their way will do to the ship: the difference
     /// they make to where it is and how it's turned, at their due tick.
     world: Option<universe_world::World>,
@@ -183,7 +183,7 @@ impl Cockpit {
     }
 
     /// What our orders on their way will do: the ship stepped through the
-    /// ticks until they're all due by the shared kernel, with them and
+    /// ticks until they're all due by the shared Dogma, with them and
     /// without; the difference in where it is and how it's turned. (Our
     /// ship is drawn from the world's view plus this: input shows at once.)
     fn predict(&mut self) -> Option<(DVec3, glam::DQuat)> {

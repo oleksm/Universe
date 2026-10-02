@@ -1,7 +1,7 @@
 // Materials: what the world's matter is, as far as its machines care — real
 // substances at their real properties. Tanks hold one; reactors and engines
 // burn one. Which exist, who makes them and what burns them is the world's
-// (a distro's), not the kernel's: anyone can collect or make any of them.
+// (the world's), not Dogma's: anyone can collect or make any of them.
 //
 // density: kg/m³ as stored (liquid, solid). energy: J/kg released by its
 // process. process: Fusion, Fission, Chemical (burnt with what it carries),

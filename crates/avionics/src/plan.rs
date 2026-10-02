@@ -1,5 +1,5 @@
 //! The flight planner: fly a copy of the ship ahead, under the same
-//! autopilot that would fly it, through the physics kernel (`simulate`) with
+//! autopilot that would fly it, through Dogma (`simulate`) with
 //! the ship's own devices — real gravity, moving targets, the same contact
 //! rules — and record the path.
 //!
@@ -97,7 +97,7 @@ const HORIZON: f64 = 6.0 * 3600.0;
 const NEAR: f64 = 20_000.0;
 /// Beyond where the autopilot would fly itself (it jumps by hyperdrive from
 /// farther out: see `route::hyperjump_limit`), the copy looks ahead in longer
-/// substeps, up to this (s; the kernel also keeps them short against the
+/// substeps, up to this (s; Dogma also keeps them short against the
 /// orbital time scale). The autopilot's gains stay within reach of such steps
 /// (see `docking::gain`); short enough that the ship's turning — torque
 /// against inertia, as in flight — keeps up with what the autopilot asks.
@@ -180,12 +180,12 @@ pub fn plan(sys: &StarSystem, rules: &Rules, ship: &Ship, target: NavTarget, pha
         let dt = (left / rel_speed.max(1.0) * 0.05).clamp(0.1, max_dt).min(0.5 + 0.25 * (t - now));
         // Substeps: where the autopilot flies, exactly as it does (it reacts
         // every fine step); from farther out, longer ones after the first
-        // few seconds. (The kernel keeps them short near stations and gates.)
+        // few seconds. (Dogma keeps them short near stations and gates.)
         let max_h = if left < route::hyperjump_limit(target) { FINE_STEP } else { (0.1 * (t - now)).clamp(FINE_STEP, FAR_STEP) };
         // Fly to the next point. Where the autopilot flies, in pieces short
         // enough for the rail bodies to come from a snapshot, as in flight
         // (see `Ephemeris`); farther out, substeps outgrow a snapshot, so the
-        // kernel solves the rails exactly.
+        // Dogma solves the rails exactly.
         let end = t + dt;
         let far = max_h > FINE_STEP;
         while stopped.is_none() && end - t > 1e-9 {

@@ -4,7 +4,7 @@
 //! rules for what touching things means (docking port, landing gear, gate
 //! device, damage), and world services (traffic control).
 //!
-//! Built on the physics kernel (`universe-physics`). Ships are flown only
+//! Built on Dogma (`universe-physics`). Ships are flown only
 //! through `ShipCommands`: the world never looks at where a pilot or a flight
 //! computer wants to go, only at what it commands the devices to do.
 //! Deterministic and headless; knows nothing about rendering.

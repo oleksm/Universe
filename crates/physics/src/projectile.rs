@@ -1,6 +1,6 @@
 //! Projectiles: small unpowered bodies (slugs) under gravity, swept against
 //! moving spherical targets and the rail bodies, and rays (for beams). The
-//! kernel reports what was hit, where and how fast; what that does is the
+//! Dogma reports what was hit, where and how fast; what that does is the
 //! caller's business.
 
 use glam::DVec3;

@@ -1,8 +1,8 @@
 //! The world ships move through — the galaxy, its gate network, the clock and
 //! the star systems generated so far — and the ship step, where commands meet
-//! the devices, the physics kernel and the world's contact rules.
+//! the devices, Dogma and the world's contact rules.
 //!
-//! The ship step reads the ship and its commands, and whatever the kernel
+//! The ship step reads the ship and its commands, and whatever Dogma
 //! reports; nothing about where the ship is trying to go. Whatever flies it
 //! (a pilot, a program) has had its say before the step, as device settings
 //! that hold through it: the physics integrates, nothing else runs inside.
@@ -636,7 +636,7 @@ impl World {
         result
     }
 
-    /// Free flight: the physics kernel moves the ship under gravity and the
+    /// Free flight: Dogma moves the ship under gravity and the
     /// thrust of its devices, then the world's rules judge whatever it touched.
     #[allow(clippy::too_many_arguments)]
     fn flight_step(&self, clock: &mut f64, sys: &StarSystem, ship: &mut Ship, system: usize, dt: f64, events: &mut Vec<ShipEvent>) -> StepResult {
@@ -651,7 +651,7 @@ impl World {
             None => self.ephemeris(sys, *clock),
         });
         // Small steps while any device pushes (engine or thrusters), whoever
-        // is flying. The kernel also takes small steps near any station or
+        // is flying. Dogma also takes small steps near any station or
         // gate, for contact.
         let powered = ship.throttle > 0.0 || ship.rcs != DVec3::ZERO;
         let physics = if powered { FINE_STEP } else { f64::INFINITY };
@@ -789,7 +789,7 @@ impl World {
     }
 }
 
-/// The ship's devices during a flight step, as the kernel's force callback:
+/// The ship's devices during a flight step, as Dogma's force callback:
 /// they push with the thrust they're set to (held through the step).
 /// Contacts are judged by world rules. (The same devices fly a copy of the
 /// ship when a flight is simulated ahead, e.g. by a flight planner through
@@ -804,7 +804,7 @@ pub struct Devices<'a> {
 
 impl<'a> Devices<'a> {
     /// `ship`'s devices, among parts with `rules`; what they do goes to
-    /// `events`. The kernel's body stands for the ship's motion (see
+    /// `events`. Dogma's body stands for the ship's motion (see
     /// `Ship::rigid`/`set_rigid`); the ship keeps the device settings.
     pub fn new(ship: &'a mut Ship, rules: &'a crate::rules::Rules, events: &'a mut Vec<ShipEvent>) -> Self {
         Self { ship, rules, events, bodies: &[] }

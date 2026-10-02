@@ -42,7 +42,7 @@ impl RailBody {
     }
 }
 
-/// Anything the kernel can treat as a body on rails: its motion and shape, and
+/// Anything Dogma can treat as a body on rails: its motion and shape, and
 /// the height function of its surface if it has one.
 pub trait OnRails {
     fn rail(&self) -> &RailBody;

@@ -22,7 +22,7 @@ pub const FINE_RANGE: f64 = 30_000.0;
 pub const FINE_STEP: f64 = 0.05;
 
 /// What pushes a body, and what happens when it touches something. Supplied
-/// by the caller: the kernel only integrates and reports.
+/// by the caller: Dogma only integrates and reports.
 pub trait Driver {
     /// Applied acceleration (force / mass, m/s²; gravity excluded) for the
     /// substep of `h` seconds starting at `t`, with the rail bodies at
@@ -46,7 +46,7 @@ pub enum Response {
 }
 
 /// One call's worth of time: from `t`, for `dt` seconds, in substeps no longer
-/// than `max_h` (pass infinity for no limit beyond the kernel's own), and no
+/// than `max_h` (pass infinity for no limit beyond Dogma's own), and no
 /// longer than `contact_step` within `FINE_RANGE` of a small collider (flight
 /// uses `FINE_STEP`; a coarse look-ahead may pass more, trading contact
 /// precision for speed).

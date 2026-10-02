@@ -10,11 +10,11 @@ use universe_physics::{Frame, Relative, RigidBody, Ring};
 
 use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
-// (Its constants are the physics sheet's: config/physics.ron.)
+// (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::{GATE_RADIUS, RING_TUBE};
 pub use universe_physics::laws::{MAX_TRANSIT_SPEED, TRANSIT_TIME};
 
-/// The ring's shape, for the physics kernel; its opening is the trigger.
+/// The ring's shape, for Dogma; its opening is the trigger.
 pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
 
 /// A gate's pose and motion at one instant, in the system frame.
@@ -30,7 +30,7 @@ impl GateFrame {
         Self { center: positions[gate], velocity: sys.velocity(gate, t), rotation: sys.bodies[gate].rotation(t) }
     }
 
-    /// As a kernel frame (a gate doesn't spin), e.g. to relocate a ship between gates.
+    /// As a Dogma frame (a gate doesn't spin), e.g. to relocate a ship between gates.
     pub fn frame(&self) -> Frame {
         Frame { center: self.center, velocity: self.velocity, rotation: self.rotation, angular_velocity: DVec3::ZERO }
     }

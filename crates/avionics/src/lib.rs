@@ -7,7 +7,7 @@
 //! `ShipCommands` to its devices, nothing else (see `Bus` and the world's
 //! a ship's device settings, held through the world's step). They can't cheat: an autopilot is exactly as limited as
 //! a pilot. The flight planner predicts a flight by simulating a copy of the
-//! ship through the physics kernel under the same autopilot.
+//! ship through Dogma under the same autopilot.
 //! Deterministic and headless.
 
 pub mod avionics;

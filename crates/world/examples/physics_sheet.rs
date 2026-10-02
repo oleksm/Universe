@@ -1,5 +1,5 @@
 //! Writes the physics sheet's report, `docs/physics-sheet.md`: every constant
-//! of `config/physics.ron` with its unit, kind and reason, and what they add
+//! of `config/dogma.ron` with its unit, kind and reason, and what they add
 //! up to. Run: `cargo run -p universe-world --example physics_sheet`.
 
 use universe_world::content::content;
@@ -27,7 +27,7 @@ fn main() {
             md.push('\n');
         }
     };
-    table("The kernel's laws", "config/physics.ron", universe_physics::laws::SECTIONS, universe_physics::laws::SHEET);
+    table("Dogma's laws", "config/dogma.ron", universe_physics::laws::SECTIONS, universe_physics::laws::SHEET);
     table("The base world's numbers", "content/base/sheet.ron", universe_world::sheet::SECTIONS, universe_world::sheet::SHEET);
     md.push_str("# The base world's materials\n\nFrom `content/base/materials.ron`.\n\n| Material | Density (kg/m³) | Energy (J/kg) | Process | Trades as | Note |\n|---|---|---|---|---|---|\n");
     for (_, m) in content().materials.iter() {

@@ -1,5 +1,5 @@
 //! The base world's fixed numbers (`content/base/sheet.ron`) into
-//! `universe_world::sheet` (the kernel's laws are `universe_physics::laws`).
+//! `universe_world::sheet` (Dogma's laws are `universe_physics::laws`).
 
 include!("../physics/build/sheetgen.rs");
 

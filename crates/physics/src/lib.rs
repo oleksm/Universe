@@ -1,4 +1,4 @@
-//! The physics kernel: bodies on Kepler rails, rigid bodies moved by gravity and
+//! Dogma: bodies on Kepler rails, rigid bodies moved by gravity and
 //! applied forces, colliders that report facts, and a few explicit operations.
 //!
 //! It knows nothing about what the bodies are, who owns them or what flies them:

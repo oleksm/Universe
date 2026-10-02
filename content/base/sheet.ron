@@ -1,5 +1,5 @@
-// The base world's fixed numbers (a distro's, not the kernel's laws: those
-// are `config/physics.ron`): its designs, devices and technology as they
+// The base world's fixed numbers (the world's, not Dogma's laws: those
+// are `config/dogma.ron`): its designs, devices and technology as they
 // stand. The build turns this into `universe_world::sheet`. (Not yet:
 // override packs replacing these; they're compiled in.)
 //

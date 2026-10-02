@@ -1,6 +1,6 @@
 //! Materials: the world's matter as its machines care about it — real
 //! substances at their real properties (content: `materials.ron`, a
-//! distro's). Tanks hold one, reactors and engines burn one. The kernel knows
+//! world's). Tanks hold one, reactors and engines burn one. Dogma knows
 //! none of them; which exist and what burns them is the world's.
 
 use serde::Deserialize;

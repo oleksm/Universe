@@ -9,7 +9,7 @@
 use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
-// (Its constants are the physics sheet's: config/physics.ron.)
+// (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::EXHAUST_VELOCITY;
 
 /// The hull a new ship is built as, unless it's told otherwise.
@@ -1048,14 +1048,14 @@ impl Ship {
         matches!(self.state, ShipState::Flying)
     }
 
-    /// The ship as the physics kernel sees it.
+    /// The ship as Dogma sees it.
     pub fn rigid(&self) -> RigidBody {
         // Drag in air (none in the hyperdrive's field).
         let ballistic = if self.hyperdrive { 0.0 } else { self.mass() / self.spec().drag_area };
         RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: self.spec().radius, parts: &self.spec().shape().spheres, ballistic }
     }
 
-    /// Take the kernel's word for where the ship is and how it moves.
+    /// Take Dogma's word for where the ship is and how it moves.
     pub fn set_rigid(&mut self, body: &RigidBody) {
         self.position = body.position;
         self.velocity = body.velocity;

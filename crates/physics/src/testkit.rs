@@ -1,4 +1,4 @@
-//! Small fixtures shared by the kernel's tests.
+//! Small fixtures shared by Dogma's tests.
 
 use glam::{DQuat, DVec3};
 

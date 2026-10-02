@@ -1,7 +1,7 @@
 //! Contacts between moving bodies: spheres that touched during a step. Each
 //! moved in a straight line over the step (to its `position` at the end), so
 //! the test is swept on their relative motion and can't be stepped over. A
-//! spatial grid keeps it cheap with many bodies about. The kernel reports the
+//! spatial grid keeps it cheap with many bodies about. Dogma reports the
 //! contacts; what they do (bounce, damage) is the caller's business, with
 //! `bounce_pair` for the physics of the bounce itself.
 

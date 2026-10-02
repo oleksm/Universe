@@ -18,7 +18,7 @@ use crate::ship::Ship;
 const ABLATION: f64 = 0.05;
 use crate::sheet::AIR_CP;
 use universe_physics::laws::STEFAN_BOLTZMANN as SIGMA;
-// (Its constants are the physics sheet's: config/physics.ron.)
+// (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::{AMBIENT, EMISSIVITY, HEATED_AREA, NOSE_RADIUS, RADIATING_AREA, SKIN_CAPACITY, SKIN_LIMIT};
 
 /// The skin over `dt` seconds, flying through air of `density` (kg/m³)

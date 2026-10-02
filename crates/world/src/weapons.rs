@@ -5,7 +5,7 @@
 //! weapons primed (`ARM_TIME`). Traffic control won't clear an armed ship,
 //! and a clearance lapses when the ship arms (see `traffic`).
 //!
-//! The gun fires real slugs (kernel projectiles): they leave the muzzle at
+//! The gun fires real slugs (Dogma projectiles): they leave the muzzle at
 //! the ship's own velocity plus `GUN_MUZZLE` along the nose, fall under
 //! gravity, and hit with their kinetic energy relative to the target
 //! (½ m v²). Every shot pushes the ship back (momentum), and a hit pushes the

@@ -1,4 +1,4 @@
-//! The dogma's claims: the kernel's laws (`config/physics.ron`) against the
+//! The dogma's claims: Dogma's laws (`config/dogma.ron`) checked against the
 //! base world built on them (`content/base/`). The charter: `docs/physics.md`.
 //! Change a law or the world, and these say which promise it breaks.
 
@@ -85,11 +85,11 @@ fn the_sheets_are_whole() {
 }
 
 #[test]
-fn the_kernel_names_no_material() {
+fn dogma_names_no_material() {
     // (The laws are nature's and the hyper layer's: no fuels, no devices.)
     for e in universe_physics::laws::SHEET {
         for word in ["FUEL", "DEUTERIUM", "HELIUM", "URANIUM", "METHALOX", "REACTOR", "CAPACITOR", "EXHAUST"] {
-            assert!(!e.name.contains(word), "the kernel's laws name {}: that's the world's", e.name);
+            assert!(!e.name.contains(word), "Dogma's laws name {}: that's the world's", e.name);
         }
     }
 }

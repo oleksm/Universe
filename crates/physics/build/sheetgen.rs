@@ -1,4 +1,4 @@
-// Shared by the kernel's and the world's build scripts: a sheet (RON: sections
+// Shared by Dogma's and the world's build scripts: a sheet (RON: sections
 // of named constants with their units, kinds and reasons) into Rust: one
 // `pub const` each, documented, and the whole as a table.
 

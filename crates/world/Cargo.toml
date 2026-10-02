@@ -4,7 +4,7 @@ edition.workspace = true
 version.workspace = true
 
 # The world: content, structures, ships and their devices, world rules and
-# services. Built on the physics kernel; knows nothing about navigation.
+# services. Built on Dogma; knows nothing about navigation.
 [dependencies]
 universe-protocol = { path = "../protocol" }
 universe-prof = { path = "../prof" }

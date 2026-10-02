@@ -2,9 +2,9 @@
 
 Generated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.
 
-# The kernel's laws
+# Dogma's laws
 
-From `config/physics.ron`.
+From `config/dogma.ron`.
 
 ## Nature
 

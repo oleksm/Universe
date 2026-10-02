@@ -1,7 +1,7 @@
-//! The kernel's laws (`config/physics.ron`) into `universe_physics::laws`.
+//! Dogma's laws (`config/dogma.ron`) into `universe_physics::laws`.
 
 include!("build/sheetgen.rs");
 
 fn main() {
-    generate("../../config/physics.ron", "laws.rs", "crate::sheet");
+    generate("../../config/dogma.ron", "laws.rs", "crate::sheet");
 }
