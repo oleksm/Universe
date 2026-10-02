@@ -43,6 +43,8 @@ pub struct Picture<'a> {
     /// Draw its modules (boxes where they sit), those in these slots bright.
     pub mounts: bool,
     pub picked: &'a [&'a str],
+    /// Each thruster's key, written by it (empty: none).
+    pub labels: &'a [String],
 }
 
 /// The ship drawn in a box at `at`, `size` across, looking along `view`
@@ -73,6 +75,20 @@ pub fn view(frame: &mut Frame, p: &Picture, at: Vec2, size: Vec2, across: DVec3,
         let q = to(t.at);
         let c = color(t.role);
         frame.hud_rect(q - Vec2::splat(1.5), Vec2::splat(3.0), c.scale(if u > 0.02 { 1.0 } else { 0.45 }));
+        // Its key: off to the side it fires from (up and down jets, which
+        // fire along the line of sight, above and below), lit while firing.
+        if let Some(l) = p.labels.get(k).filter(|l| !l.is_empty()) {
+            let out = Vec2::new(t.push.dot(across) as f32, -t.push.dot(up) as f32);
+            let off = if out.length() > 0.3 {
+                -out.normalize() * 11.0
+            } else if t.push.y < 0.0 {
+                Vec2::new(-10.0, -11.0)
+            } else {
+                Vec2::new(4.0, 4.0)
+            };
+            let tw = universe_engine::text_size(l).x;
+            frame.text((q + off - Vec2::new(tw * 0.5, 4.0)).floor(), l, if u > 0.02 { c } else { c.scale(0.6) });
+        }
         if u > 0.02 {
             let out = -t.push;
             let dir = Vec2::new(out.dot(across) as f32, -out.dot(up) as f32);
@@ -179,7 +195,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let box_w = ((size.x - left - 24.0) * 0.5).floor();
     let box_h = (size.y * 0.55).floor();
     let top = 12.0 + LINE * 2.0;
-    let picture = Picture { spec: s, jets: &ship.jets, com: ship.centre_of_mass(), mounts: false, picked: &[] };
+    let picture = Picture { spec: s, jets: &ship.jets, com: ship.centre_of_mass(), mounts: false, picked: &[], labels: &[] };
     view(frame, &picture, Vec2::new(left, top), Vec2::new(box_w, box_h), DVec3::X, DVec3::NEG_Z, "FROM ABOVE (NOSE UP)");
     view(frame, &picture, Vec2::new(left + box_w + 12.0, top), Vec2::new(box_w, box_h), DVec3::Y, DVec3::NEG_Z, "FROM THE SIDE (TOP RIGHT)");
 

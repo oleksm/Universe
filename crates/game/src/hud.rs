@@ -50,6 +50,9 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         return;
     }
     universe_prof::time("draw/hud/sun glare", || sun_glare(frame, app));
+    if app.mode == Mode::Pilot {
+        crate::manual::draw(frame, app);
+    }
     let mut lines: Vec<(String, Color)> = Vec::new();
     status(app, &mut lines);
     match app.mode {
@@ -1459,6 +1462,10 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Foot, "FOOT", Lamp::Off),
             ],
         ),
+        _ if ship.manual => (
+            "NAV - MANUAL THRUSTERS",
+            vec![b(Act::Manual, "THRUSTERS", Lamp::On), c("NUM", "FIRE A JET", Lamp::Off), c("W", "MAINS", Lamp::Off), c("F7", "THRUSTERS PANEL", if app.show_thrusters { Lamp::On } else { Lamp::Off })],
+        ),
         _ if ship.hyperdrive => (
             "NAV - HYPERDRIVE",
             vec![b(Act::Hyperdrive, "HYPERDRIVE OFF", Lamp::On), b(Act::Autopilot, "AUTOPILOT", on(a.hyper_autopilot)), c("W S", "SPEED", Lamp::Off)],
@@ -1474,7 +1481,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 b(Act::Orbit, &orbit.0, orbit.1),
                 b(Act::Cancel, "CANCEL", let_go),
                 b(Act::Proximity, "IMPACT WARNING", collide),
-                c("F7", "THRUSTERS", if app.show_thrusters { Lamp::On } else { Lamp::Off }),
+                b(Act::Manual, "THRUSTERS", Lamp::Off),
             ],
         ),
     };

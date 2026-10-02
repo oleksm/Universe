@@ -756,3 +756,49 @@ fn a_cola_from_the_vending_machine_between_the_pads() {
     assert!((before - u.credits() - 2.0).abs() < 1e-9, "a cola for 2 CR");
     assert!(u.events.iter().any(|e| matches!(e, universe_sim::avionics::Event::Vended { what, .. } if what == "COLA")));
 }
+
+#[test]
+fn manual_thrusters_fire_only_what_is_held_and_nothing_steadies_the_ship() {
+    use universe_sim::world::ship::ThrusterRole;
+    use universe_sim::world::ShipCommands;
+    let mut u = bench(0);
+    let spec = u.ship.spec();
+    let k = spec.thrusters.iter().position(|t| t.nozzle.ends_with("nose_left_side")).expect("a nose thruster");
+    let mains: u64 = spec.thrusters.iter().enumerate().filter(|(_, t)| t.role == ThrusterRole::Main).map(|(i, _)| 1u64 << i).sum();
+    u.ship.angular_velocity = DVec3::ZERO;
+    u.command(&ShipCommands { manual: Some(true), ..u.ship.holding() });
+    // The stick does nothing now.
+    u.step_world(1.0 / 60.0, 1.0, &Controls { pitch: 1.0, yaw: 1.0, roll: 1.0 });
+    assert!(u.ship.angular_velocity.length() < 1e-9, "no stick: {}", u.ship.angular_velocity);
+    // One nose thruster held: it alone fires, and the ship yaws.
+    u.command(&ShipCommands { jets: Some(1 << k), ..u.ship.holding() });
+    for _ in 0..30 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!(u.ship.jets.iter().enumerate().all(|(i, &j)| (j > 0.0) == (i == k)), "{:?}", u.ship.jets);
+    assert!(u.ship.angular_velocity.length() > 1e-3, "turning: {}", u.ship.angular_velocity);
+    // Let go (the order reaching it a tick on): nothing steadies it; it turns on as it was.
+    u.command(&ShipCommands { jets: Some(0), ..u.ship.holding() });
+    for _ in 0..3 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    let spin = u.ship.angular_velocity;
+    for _ in 0..30 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!((u.ship.angular_velocity - spin).length() < 1e-6 * spin.length().max(1.0) + 1e-9, "{} vs {spin}", u.ship.angular_velocity);
+    // The mains held: it speeds up along its nose.
+    let v0 = u.ship.velocity;
+    let nose = u.ship.orientation * DVec3::NEG_Z;
+    u.command(&ShipCommands { jets: Some(mains), ..u.ship.holding() });
+    for _ in 0..60 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!((u.ship.velocity - v0).dot(nose) > 5.0, "mains push: {}", (u.ship.velocity - v0).dot(nose));
+    // Back on the flight computer: nothing held.
+    u.command(&ShipCommands { manual: Some(false), ..u.ship.holding() });
+    for _ in 0..3 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    assert!(!u.ship.manual && u.ship.held == 0);
+}

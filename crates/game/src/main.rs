@@ -21,6 +21,7 @@ mod shipyard;
 mod sound;
 mod terrain_view;
 mod thrusterpanel;
+mod manual;
 
 use std::sync::Arc;
 
@@ -190,6 +191,8 @@ pub struct App {
     pub show_cargo: bool,
     /// The thrusters panel (F7).
     pub show_thrusters: bool,
+    /// Manual: the thrusters last held (sent when it changes).
+    pub jets_held: u64,
     /// Mining mode and the prospector's pulse; T's lock picker.
     pub mining: mining::Mining,
     pub picker: lock::Picker,
@@ -275,6 +278,7 @@ impl App {
             orbit_pick: Default::default(),
             show_cargo: false,
             show_thrusters: false,
+            jets_held: 0,
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
             galaxy_map: None,
@@ -615,6 +619,43 @@ impl App {
         }
         if pressed(input, Act::Cancel) && self.v.avionics.following.is_some() {
             self.engine.send(Command::StopFollowing);
+        }
+        // Manual thrusters (NAV): the flight computer off, every thruster
+        // fired by hand; again, back on.
+        let flying = self.v.ship.is_flying() && !self.v.ship.hyperdrive;
+        if mode == ShipMode::Nav && pressed(input, Act::Manual) {
+            if !self.v.ship.manual && !flying {
+                self.say("MANUAL THRUSTERS IN FLIGHT ONLY".into());
+            } else {
+                let on = !self.v.ship.manual;
+                // (Going manual, the autopilots let go: nothing flies it but you.)
+                if on {
+                    if self.v.avionics.following.is_some() {
+                        self.engine.send(Command::StopFollowing);
+                    }
+                    if self.v.avionics.route.active {
+                        self.engine.send(Command::ToggleRoute);
+                    } else if self.v.avionics.clearance.is_some_and(|c| c.autopilot) {
+                        self.engine.send(Command::ToggleAutopilot);
+                    }
+                }
+                self.jets_held = 0;
+                self.engine.send(Command::Ship(ShipCommands { manual: Some(on), throttle: 0.0, rcs: DVec3::ZERO, ..self.v.ship.holding() }));
+                self.say(if on { "MANUAL THRUSTERS - FLIGHT COMPUTER OFF" } else { "FLIGHT COMPUTER ON" }.into());
+            }
+        }
+        if self.v.ship.manual {
+            // An autopilot taken up: the flight computer's back on to fly it.
+            if self.v.avionics.route.active || self.v.avionics.clearance.is_some_and(|c| c.autopilot) || self.v.avionics.following.is_some() || !flying {
+                self.engine.send(Command::Ship(ShipCommands { manual: Some(false), ..self.v.ship.holding() }));
+                return Controls::default();
+            }
+            let held = manual::held(input, self.v.ship.spec());
+            if held != self.jets_held {
+                self.jets_held = held;
+                self.engine.send(Command::Ship(ShipCommands { jets: Some(held), ..self.v.ship.holding() }));
+            }
+            return Controls::default();
         }
         // The autopilot has the stick.
         if self.v.avionics.route.active || self.v.avionics.clearance.is_some_and(|c| c.autopilot) || self.v.avionics.following.is_some() {

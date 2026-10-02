@@ -546,6 +546,21 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.orientation = universe_sim::ship::facing(positions[star] - at, f.up());
             app.chase_cam = false;
         }
+        "manual" => {
+            // In flight by the home station, the flight computer off, a nose
+            // thruster and the opposite tail one held (a yaw).
+            app.mode = Mode::Pilot;
+            let u = app.engine.universe();
+            u.respawn();
+            let s = u.ship.spec();
+            let bit = |name: &str| s.thrusters.iter().position(|t| t.nozzle.ends_with(name)).map_or(0, |k| 1u64 << k);
+            u.ship.manual = true;
+            u.ship.held = bit("nose_left_side") | bit("tail_right_side");
+            for _ in 0..20 {
+                u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+            }
+            app.chase_cam = true;
+        }
         "platform" | "platformdeck" => {
             // The home station from off its corner, a little above its deck
             // (or, "platformdeck", from just above the deck), looking at it.

@@ -57,6 +57,14 @@ pub struct ShipCommands {
     /// (powered down, parked: only while landed). None: leave them.
     #[serde(default)]
     pub power: Option<bool>,
+    /// The flight computer off (manual: each thruster fires only as the
+    /// pilot holds it, nothing steadies the ship) or back on. None: leave it.
+    #[serde(default)]
+    pub manual: Option<bool>,
+    /// In manual: the thrusters held firing (bit `k`: the hull's thruster
+    /// `k`, at full). None: leave them as they are.
+    #[serde(default)]
+    pub jets: Option<u64>,
 }
 
 /// Moving between a spaceport's pads and its hangar (see `ShipCommands::hangar`).

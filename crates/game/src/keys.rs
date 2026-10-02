@@ -114,6 +114,7 @@ pub enum Act {
     Systems,
     Refuel,
     Repair,
+    Manual,
 }
 
 /// The table, in the order letters are given out (what's used most first,
@@ -156,11 +157,13 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Systems, Scope::Flight, "POWER"),
     (Act::Refuel, Scope::Docked, "FUEL UP"),
     (Act::Repair, Scope::Docked, "MEND HULL"),
+    (Act::Manual, Scope::Nav, "THRUSTERS"),
 ];
 
 /// Actions whose key is set, not taken from the name (given out first).
 // (POWER: every letter of its name is taken in flight; J is the one free.)
-const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J')];
+// (THRUSTERS, manual flight: likewise every letter taken; G is free.)
+const PINNED: &[(Act, char)] = &[(Act::Cancel, 'X'), (Act::Systems, 'J'), (Act::Manual, 'G')];
 
 /// An action's binding: its letter, and where it stands in the name (None:
 /// not in it — given the first free letter instead).
@@ -241,6 +244,7 @@ pub const FIXED: &[(&str, &str, Scope)] = &[
     ("F2 F4 F6", "LABELS, GRID, PAUSE", Scope::Global),
     ("F3 F5 F9", "PROFILER, QUICKSAVE, LOAD", Scope::Global),
     ("F7", "THRUSTERS PANEL", Scope::Flight),
+    ("NUMPAD W", "MANUAL: FIRE A THRUSTER, THE MAINS", Scope::Nav),
     ("F8 F12", "MUTE, SCREENSHOT", Scope::Global),
     (", .", "TIME WARP DOWN / UP", Scope::Global),
     ("W S", "THROTTLE", Scope::Flight),

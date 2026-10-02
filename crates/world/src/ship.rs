@@ -612,6 +612,13 @@ pub struct Ship {
     /// that sets down powers down (parked); its pilot powers it up to fly.
     #[serde(default = "powered")]
     pub powered: bool,
+    /// The flight computer off: each thruster fires only while the pilot
+    /// holds it (`held`, bit `k` its thruster `k`, at full); no stick, no
+    /// throttle, nothing to steady it.
+    #[serde(default)]
+    pub manual: bool,
+    #[serde(default)]
+    pub held: u64,
     /// Taxiing on the ground between a pad and a spaceport's hangar (see
     /// `World::hangar_move`): out of the pads' count while it does.
     #[serde(default)]
@@ -721,6 +728,8 @@ impl Ship {
             spec_ref: None,
             hangar: None,
             powered: true,
+            manual: false,
+            held: 0,
             taxi: None,
             cargo: 0.0,
             excavator: false,
@@ -826,6 +835,9 @@ impl Ship {
     /// sets the drive's speed, or on the ground, where the landing gear's
     /// rules decide lift-off.)
     pub fn drive(&mut self, turn: Option<&Controls>, dt: f64, push: bool) {
+        if self.manual && push {
+            return self.drive_manual(dt);
+        }
         let s = self.spec();
         let inertia = self.inertia();
         let w = self.angular_velocity;
@@ -860,6 +872,28 @@ impl Ship {
             next = DVec3::new(toward(w.x, next.x, want.x), toward(w.y, next.y, want.y), toward(w.z, next.z, want.z));
         }
         self.angular_velocity = next;
+        self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
+    }
+
+    /// Manual flight, for `dt`: the held thrusters at full (while there's
+    /// fuel), every other off; the ship pushed and turned by just what
+    /// they give about its centre of mass, nothing held against it.
+    fn drive_manual(&mut self, dt: f64) {
+        let s = self.spec();
+        let com = self.centre_of_mass();
+        self.jets.resize(s.thrusters.len(), 0.0);
+        let (mut force, mut torque) = (DVec3::ZERO, DVec3::ZERO);
+        for (k, t) in s.thrusters.iter().enumerate() {
+            let on = k < 64 && self.held & (1 << k) != 0 && self.fuel > 0.0;
+            self.jets[k] = if on { 1.0 } else { 0.0 };
+            if on {
+                let f = t.push * t.thrust;
+                force += f;
+                torque += (t.at - com).cross(f);
+            }
+        }
+        self.applied = (force, torque);
+        self.angular_velocity += self.inertia().inverse() * torque * dt;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
     }
 
@@ -927,7 +961,7 @@ impl Ship {
     /// Commands that keep the engine and thrusters as they are, turn nothing
     /// and leave the hyperdrive alone: a starting point for new commands.
     pub fn holding(&self) -> ShipCommands {
-        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None, anchor: None, excavate: None, hangar: None, power: None }
+        ShipCommands { throttle: self.throttle, rcs: self.rcs, turn: None, hyperdrive: None, weapons: None, arm: None, gun_target: None, anchor: None, excavate: None, hangar: None, power: None, manual: None, jets: None }
     }
 
     /// The main engine and thrusters take their new settings.
@@ -938,6 +972,15 @@ impl Ship {
             self.powered = true;
         }
         let on = self.powered || c.power == Some(true);
+        if let Some(m) = c.manual {
+            self.manual = m;
+            self.held = 0;
+        }
+        if let Some(j) = c.jets {
+            self.held = j;
+        }
+        // (Manual: the stick and throttle answer nothing; the held jets do.)
+        let on = on && !self.manual;
         self.throttle = if on { c.throttle } else { 0.0 };
         self.rcs = if on { c.rcs } else { DVec3::ZERO };
         if let Some(t) = c.weapons {

@@ -214,6 +214,13 @@ fn expect(ship: &mut Ship, c: &ShipCommands) {
     if let Some(on) = c.arm {
         ship.armed = on;
     }
+    if let Some(m) = c.manual {
+        ship.manual = m;
+        ship.held = 0;
+    }
+    if let Some(j) = c.jets {
+        ship.held = j;
+    }
 }
 
 /// Its ship as pilot `pending` sees it at `tick`: as the view reports it,
