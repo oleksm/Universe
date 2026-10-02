@@ -499,16 +499,11 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
     }
 }
 
-/// The collision warning: what the path hits and when, or how far it's clear.
+/// The collision warning: what the path hits and when.
 fn collision_info(app: &App, lines: &mut Vec<(String, Color)>) {
-    let Some(p) = app.collision.as_ref().filter(|_| impact_shown(app)) else { return };
-    match &p.collision {
-        Some(c) => {
-            let left = (c.time - (app.v.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
-            lines.push((format!("COLLISION {} IN {}  AT {}", c.what.to_uppercase(), fmt::countdown(left), fmt::speed(c.speed)), RED));
-        }
-        None => {}
-    }
+    let Some(c) = app.collision.as_ref().filter(|_| impact_shown(app)).and_then(|p| p.collision.as_ref()) else { return };
+    let left = (c.time - (app.v.time - app.collision_at)).max(0.0) / app.warp().max(1.0);
+    lines.push((format!("COLLISION {} IN {}  AT {}", c.what.to_uppercase(), fmt::countdown(left), fmt::speed(c.speed)), RED));
 }
 
 /// The radar: how many ships it sees, and the locked one's range, closing
