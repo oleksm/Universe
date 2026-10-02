@@ -1,6 +1,6 @@
 # Backlog
 
-The bigger features still to do, roughly in order (as of 2026-10-02). Small
+The bigger features still to do, roughly in order (as of 2026-10-02, updated after the visual revamp). Small
 fixes go straight in; this is for what needs deciding or building.
 
 1. **Hull space balance.** A Drover's modules take 132 m³ of its 5,269 m³
@@ -25,6 +25,9 @@ fixes go straight in; this is for what needs deciding or building.
    licences in faction space, towing asteroids.
 9. **Engine headroom:** 100k ships at 1.5x budget; seed-only checkpoints.
 10. **Trademark** FREEFALL (the user's to do).
-0. **Visual revamp (now):** `docs/art-direction.md` — render core, detailed
-   shapes (ships, stations, gates), landscapes, interface, lights and motion,
-   bodies, liveries.
+0. **Visual revamp (mostly done):** `docs/art-direction.md`. Done: render core (HDR, MSAA,
+   no outlines), materials and lights, shapes (ships, station), paint and liveries, the HUD
+   organised, the radar scope, planets surfaced per pixel, landscapes (quadtree ground on the
+   physics terrain, fine grain), the sun's glare, the galaxy map, the gate's push. Left: the
+   gate's own redesign, the sprint and interceptor shapes, atmosphere haze and the sky's fade
+   with height, the sun's corona, a cockpit frame (optional).
