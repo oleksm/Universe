@@ -20,6 +20,8 @@ use universe_physics::laws::SPEED_OF_LIGHT;
 pub enum NodeAt {
     Body(usize),
     Port(usize),
+    /// A beacon someone planted (a claim): beside `body`, at the node's `offset`.
+    Beacon { body: usize, claim: usize },
 }
 
 /// A relay in the system.
@@ -32,6 +34,8 @@ pub struct Node {
     pub backbone: bool,
     /// A gate relay: the system its twin is in, and its handling lag (s).
     pub gate_relay: Option<(usize, f64)>,
+    /// A beacon's place from its body (m; zero for the rest).
+    pub offset: DVec3,
 }
 
 /// The structure that stands for a body or port of the seeded world: the
@@ -82,23 +86,31 @@ pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
         };
         let (comm, relay) = fitted(structure(&kind, lane));
         let backbone = kind == StructureKind::Station;
-        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: relay.zip(b.link).map(|(lag, to)| (to, lag)) });
+        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: relay.zip(b.link).map(|(lag, to)| (to, lag)), offset: DVec3::ZERO });
     }
     // (The station is the system's hub; with none, its ports are.)
     let hub = !out.iter().any(|n| n.backbone);
     let (comm, _) = fitted(structure(&StructureKind::Spaceport, 0.0));
     for (k, sp) in sys.spaceports.iter().enumerate() {
-        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: hub, gate_relay: None });
+        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: hub, gate_relay: None, offset: DVec3::ZERO });
     }
     out
 }
 
 /// Where a node is at `t` (`positions` at `t`).
-pub fn position(sys: &StarSystem, at: NodeAt, t: f64, positions: &[DVec3]) -> DVec3 {
-    match at {
+pub fn position(sys: &StarSystem, node: &Node, t: f64, positions: &[DVec3]) -> DVec3 {
+    match node.at {
         NodeAt::Body(i) => positions[i],
         NodeAt::Port(k) => crate::spaceport::pad_position(sys, k, t, positions),
+        NodeAt::Beacon { body, .. } => positions[body] + node.offset,
     }
+}
+
+/// The comm a structure product (`structures.ron`-style module key) is: a
+/// beacon's, say.
+pub fn comm_of(module: &str) -> Option<Comm> {
+    let c = content();
+    c.handle::<crate::modules::Module>(module).and_then(|h| c.get(h).does.comm())
 }
 
 /// Whether a world (a star, planet or moon) stands between `a` and `b`.
@@ -136,7 +148,7 @@ pub struct Status {
 impl Net {
     /// The net of `nodes` at `t`.
     pub fn at(sys: &StarSystem, nodes: Vec<Node>, t: f64, positions: &[DVec3]) -> Net {
-        let at: Vec<DVec3> = nodes.iter().map(|n| position(sys, n.at, t, positions)).collect();
+        let at: Vec<DVec3> = nodes.iter().map(|n| position(sys, n, t, positions)).collect();
         let mut links = Vec::new();
         for i in 0..nodes.len() {
             for j in i + 1..nodes.len() {

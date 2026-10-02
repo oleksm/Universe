@@ -147,7 +147,7 @@ impl Universe {
         let Some(market) = docked_at(&sys, &self.ship) else {
             return self.events.push(universe_avionics::Event::Refused { reason: "ENLIST: DOCK AT A STATION".into() });
         };
-        let ours = self.charts().holder_index(self.ship_system);
+        let ours = self.realm.holder_index(self.ship_system);
         let r = if ours.is_some() && self.standings.member_of(crate::combat::PLAYER) == ours { self.resign(crate::combat::PLAYER, market) } else { self.enlist(crate::combat::PLAYER, market) };
         self.events.push(match r {
             Ok(text) => universe_avionics::Event::Notice { text },
@@ -219,7 +219,7 @@ impl Universe {
 
     /// Every market in the gate network puts out its board, when due.
     pub(crate) fn publish_boards(&mut self) {
-        use universe_world::hypernet::{nodes, Net, NodeAt};
+        use universe_world::hypernet::{Net, NodeAt};
         let now = self.world.time;
         if now < self.boards.next {
             return;
@@ -234,7 +234,7 @@ impl Universe {
             let sys = self.system(system);
             let mut positions = Vec::new();
             sys.positions(now, &mut positions);
-            let net = Net::at(&sys, nodes(&self.world.galaxy, &sys), now, &positions);
+            let net = Net::at(&sys, self.realm.nodes(&self.world.galaxy, &sys), now, &positions);
             let net = &self.boards.nets.entry(system).insert_entry((sys.clone(), positions, net)).into_mut().2;
             for f in facilities(&sys) {
                 let at = match f {

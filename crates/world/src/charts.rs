@@ -18,30 +18,11 @@ pub struct Charts {
     pub goods: Vec<Item>,
     pub home_system: usize,
     systems: Mutex<HashMap<usize, Arc<StarSystem>>>,
-    /// Who holds each settled system (see `factions::territory`).
-    territory: Vec<(usize, usize)>,
 }
 
 impl Charts {
     pub fn new(seed: u64, galaxy: Galaxy, gate_links: Vec<(usize, usize)>, goods: Vec<Item>, home_system: usize) -> Self {
-        let territory = crate::factions::territory(seed, &gate_links, home_system, crate::content::content().factions.iter().count());
-        Charts { seed, galaxy, gate_links, goods, home_system, systems: Mutex::new(HashMap::new()), territory }
-    }
-
-    /// The faction holding system `i` (None: nobody's).
-    pub fn holder(&self, i: usize) -> Option<&'static crate::factions::Faction> {
-        let k = self.territory.iter().find(|t| t.0 == i)?.1;
-        crate::content::content().factions.iter().nth(k).map(|(_, f)| f)
-    }
-
-    /// The holder of system `i`, by its place among the factions (content order).
-    pub fn holder_index(&self, i: usize) -> Option<usize> {
-        self.territory.iter().find(|t| t.0 == i).map(|t| t.1)
-    }
-
-    /// Every held system, and who holds it.
-    pub fn territory(&self) -> impl Iterator<Item = (usize, &'static crate::factions::Faction)> + '_ {
-        self.territory.iter().filter_map(|&(s, _)| Some((s, self.holder(s)?)))
+        Charts { seed, galaxy, gate_links, goods, home_system, systems: Mutex::new(HashMap::new()) }
     }
 
     /// Star system `i`, generated on first look (with its gates).

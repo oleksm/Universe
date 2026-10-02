@@ -90,6 +90,8 @@ pub struct PilotView {
     /// per system with crafts in it.
     pub rails: HashMap<usize, Arc<Vec<DVec3>>>,
     pub turrets: HashMap<usize, Guns>,
+    /// The factions, who holds what (see `realm`).
+    pub realm: Arc<crate::realm::Realm>,
 }
 
 /// What a pilot posts after thinking.

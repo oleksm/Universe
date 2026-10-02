@@ -15,7 +15,7 @@ use std::sync::Arc;
 use glam::DVec3;
 use universe_services::records::{Kill, TradeRecord};
 use universe_world::charts::Charts;
-use universe_world::hypernet::{blocked, nodes, Net, NodeAt};
+use universe_world::hypernet::{blocked, Net, NodeAt};
 use universe_world::modules::Comm;
 use universe_world::physics::laws::SPEED_OF_LIGHT;
 use universe_world::{Facility, StarSystem};
@@ -98,13 +98,13 @@ impl Knowledge {
         self.heard(key).is_some_and(|t| t > from && t <= to)
     }
 
-    fn net(&mut self, charts: &Charts, system: usize, now: f64) -> &SystemNet {
+    fn net(&mut self, charts: &Charts, realm: &crate::realm::Realm, system: usize, now: f64) -> &SystemNet {
         let stale = self.nets.get(&system).is_none_or(|n| (now - n.at).abs() > NET_EVERY);
         if stale {
             let sys = charts.system(system);
             let mut positions = Vec::new();
             sys.positions(now, &mut positions);
-            let net = Net::at(&sys, nodes(&charts.galaxy, &sys), now, &positions);
+            let net = Net::at(&sys, realm.nodes(&charts.galaxy, &sys), now, &positions);
             self.nets.insert(system, SystemNet { at: now, sys, positions, net });
         }
         &self.nets[&system]
@@ -112,16 +112,16 @@ impl Knowledge {
 
     /// From each system in the gate network to ours (s): through gate relays
     /// on both ends of each lane, the quickest way.
-    fn delays_to_us(&mut self, charts: &Charts, us: usize, now: f64) -> HashMap<usize, f64> {
+    fn delays_to_us(&mut self, charts: &Charts, realm: &crate::realm::Realm, us: usize, now: f64) -> HashMap<usize, f64> {
         let mut systems: Vec<usize> = charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).chain([us]).collect();
         systems.sort();
         systems.dedup();
         // (Out of each system through its gates, and in at the far end.)
         let mut hops: Vec<(usize, usize, f64)> = Vec::new();
         for &s in &systems {
-            let out = self.net(charts, s, now).net.gates();
+            let out = self.net(charts, realm, s, now).net.gates();
             for (to, d) in out {
-                if let Some(back) = self.net(charts, to, now).net.gate_in(s) {
+                if let Some(back) = self.net(charts, realm, to, now).net.gate_in(s) {
                     hops.push((s, to, d + back));
                 }
             }
@@ -146,7 +146,7 @@ impl Knowledge {
     }
 
     /// Take in what's come to us by `now`, from the kills and trades on record.
-    pub fn update(&mut self, charts: &Charts, now: f64, us: &Listener, what: &Happenings) {
+    pub fn update(&mut self, charts: &Charts, realm: &crate::realm::Realm, now: f64, us: &Listener, what: &Happenings) {
         let Happenings { kills, trades, broadcasts, sightings } = *what;
         if (now - self.last).abs() < EVERY {
             return;
@@ -154,10 +154,10 @@ impl Knowledge {
         self.last = now;
         // Our lag from the backbone, if we're on the net.
         let ours = {
-            let n = self.net(charts, us.system, now);
+            let n = self.net(charts, realm, us.system, now);
             n.net.status(&n.sys, &n.positions, us.at, &us.comm).map(|s| s.lag)
         };
-        let to_us = self.delays_to_us(charts, us.system, now);
+        let to_us = self.delays_to_us(charts, realm, us.system, now);
         let happenings = kills
             .iter()
             .map(|k| (Key::kill(k), k.time, k.system, Some(k.at), None, us.player && (k.killer == crate::combat::PLAYER || k.victim == crate::combat::PLAYER)))
@@ -177,7 +177,7 @@ impl Knowledge {
             }
             // Seen with our own comm.
             if let Some(p) = at.filter(|_| system == us.system) {
-                let n = self.net(charts, system, now);
+                let n = self.net(charts, realm, system, now);
                 let d = p.distance(us.at);
                 if d <= us.comm.capture && !blocked(&n.sys, &n.positions, p, us.at) {
                     self.heard.insert(key, time + d / SPEED_OF_LIGHT);
@@ -188,7 +188,7 @@ impl Knowledge {
             // fight's light passes once), or from the market's own relay
             // whenever that's on the net.
             if !self.entered.contains_key(&key) {
-                let n = self.net(charts, system, now);
+                let n = self.net(charts, realm, system, now);
                 let entered = match (at, place) {
                     (Some(p), _) => Some(n.net.heard(&n.sys, &n.positions, p).map_or(f64::INFINITY, |d| time + d)),
                     (None, Some(f)) => match f {
@@ -225,6 +225,7 @@ mod tests {
     fn a_kill_by_a_relay_comes_at_once_one_unseen_never_one_next_door_after_the_gates() {
         let w = universe_world::World::new(1984);
         let charts = w.charts();
+        let realm = crate::realm::Realm::new(&charts);
         let home = w.home_system;
         let sys = charts.system(home);
         let mut positions = Vec::new();
@@ -240,11 +241,11 @@ mod tests {
         let kills = [kill(home, station + DVec3::new(2.0e8, 0.0, 0.0), 1), kill(home, DVec3::new(1.0e14, 0.0, 0.0), 2), kill(next, their[there.station().unwrap()], 3)];
         let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm, player: true };
         let mut news = Knowledge::default();
-        news.update(&charts, 2.0, &us, &Happenings { kills: &kills, ..Default::default() });
+        news.update(&charts, &realm, 2.0, &us, &Happenings { kills: &kills, ..Default::default() });
         let heard = |n: &Knowledge, k: &Kill| n.heard(&Key::kill(k));
         assert!(heard(&news, &kills[0]).is_some_and(|t| t < 2.0), "by the station: at once");
         assert!(heard(&news, &kills[2]).is_none(), "next door: not yet");
-        news.update(&charts, 60.0, &us, &Happenings { kills: &kills, ..Default::default() });
+        news.update(&charts, &realm, 60.0, &us, &Happenings { kills: &kills, ..Default::default() });
         assert!(heard(&news, &kills[1]).is_none(), "nobody saw it");
         let t = heard(&news, &kills[2]).expect("through the gates by now");
         assert!(t >= universe_world::gate::TRANSIT_TIME, "a crossing at least: {t}");

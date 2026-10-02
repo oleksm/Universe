@@ -94,7 +94,7 @@ fn turrets_shoot_the_aggressor_and_the_holders_enemy_and_spare_the_innocent() {
     assert!(kill.killer_name.starts_with("SAM TURRET"), "{}", kill.killer_name);
     // An enemy of the holder by its standing, though it's fired on no one:
     // its docks refuse it, and its guns fire on it too.
-    let faction = u.world.charts().holder_index(u.ship_system).expect("held");
+    let faction = u.realm.holder_index(u.ship_system).expect("held");
     u.standings.set(universe_sim::craft_id(1), faction, -100.0);
     run(&mut u, 0.5, |_| false);
     assert!(!u.craft_request_clearance(1), "refused");
@@ -118,7 +118,7 @@ fn a_ship_under_fire_runs_for_the_guns() {
     assert!(heading.is_some_and(|h| havens.contains(&h)), "heading for a defended place: {heading:?}, turret at {:?}", turret.facility);
     assert!(r.active);
     // The holder of this space hears of it: the pirate's standing there falls.
-    let faction = u.world.charts().holder_index(u.ship_system).expect("held");
+    let faction = u.realm.holder_index(u.ship_system).expect("held");
     let pirate = universe_sim::craft_id(0);
     assert!(run(&mut u, 15.0, |u| u.standings.of(pirate, faction) < 0.0), "standing {}", u.standings.of(pirate, faction));
 }
@@ -309,7 +309,7 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     u.refit("avionics", Some(m("nav.basic.s1"))).unwrap();
     assert!(u.ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.ship.spec().runs(universe_sim::world::modules::Feature::Route));
     // Sworn to the station's holder: +10 with it; not twice.
-    let holder = u.world.charts().holder_index(home).expect("held");
+    let holder = u.realm.holder_index(home).expect("held");
     u.enlist(universe_sim::PLAYER, Facility::Station(station)).unwrap();
     assert_eq!(u.standings.member_of(universe_sim::PLAYER), Some(holder));
     assert_eq!(u.standings.of(universe_sim::PLAYER, holder), universe_sim::standing::SWORN);

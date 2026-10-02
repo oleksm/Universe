@@ -333,16 +333,16 @@ impl Universe {
             board: self.atc.board(),
             rails,
             turrets,
+            realm: self.realm.clone(),
         }
     }
 
     /// Take the frame's snapshot of every ship, and who's aggressed.
     pub(crate) fn snapshot(&mut self) {
         let now = self.world.time;
-        let charts = self.charts();
-        let (law, standings) = (&self.law, &self.standings);
+        let (law, standings, realm) = (&self.law, &self.standings, &self.realm);
         // (Hostile to the holder of the space: its standing there at or under the holder's line.)
-        let hostile = |id: usize, system: usize| charts.holder_index(system).is_some_and(|k| charts.holder(system).is_some_and(|f| standings.of(id, k) <= f.hostile));
+        let hostile = |id: usize, system: usize| realm.holder_index(system).is_some_and(|k| realm.holder(system).is_some_and(|f| standings.of(id, k) <= f.hostile));
         let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
         snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now), hostile(crate::combat::PLAYER, self.ship_system)));
         use rayon::prelude::*;

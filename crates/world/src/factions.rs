@@ -9,7 +9,7 @@
 use serde::Deserialize;
 
 /// A faction of the loaded content.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Deserialize, serde::Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Faction {
     pub key: String,
@@ -24,6 +24,9 @@ pub struct Faction {
     pub aggression: f64,
     pub hostile: f64,
     pub note: String,
+    /// Who founded it (a pilot's id; the world's own factions: none).
+    #[serde(default)]
+    pub founder: Option<usize>,
 }
 
 /// Gate hops from `from` to every system it reaches (unreached: absent).

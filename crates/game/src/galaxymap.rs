@@ -225,7 +225,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
     // The factions layer: each held system ringed in its holder's colour,
     // with its tag, and the holders listed.
     if map.factions {
-        for (s, f) in app.charts.territory() {
+        for (s, f) in app.v.realm.territory() {
             let p = map.to_screen(size, flat(app, s));
             if !on_screen(p) {
                 continue;
@@ -236,8 +236,8 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             frame.text(p + Vec2::new(-12.0, -18.0), &f.tag, c);
         }
         let mut y = 52.0;
-        for (k, (_, f)) in universe_sim::world::content::content().factions.iter().enumerate() {
-            let n = app.charts.territory().filter(|(_, g)| g.key == f.key).count();
+        for (k, f) in app.v.realm.factions.iter().enumerate() {
+            let n = app.v.realm.territory().filter(|(_, g)| g.key == f.key).count();
             let c = Color([f.color[0], f.color[1], f.color[2], 1.0]);
             let s = app.v.standing.get(k).copied().unwrap_or(0.0);
             let sworn = if app.v.member == Some(k) { ", MEMBER" } else { "" };

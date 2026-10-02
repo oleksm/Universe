@@ -196,7 +196,7 @@ impl Bus for PoolLink<'_> {
         let target = target.or_else(|| universe_services::atc::nearest_station(&self.sys, self.ship.position, &positions));
         // The holder's docks refuse its enemies.
         if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
-            let who = self.view.charts.holder(self.sys.index).map_or("THE HOLDER".to_string(), |f| f.name.clone());
+            let who = self.view.realm.holder(self.sys.index).map_or("THE HOLDER".to_string(), |f| f.name.clone());
             return Err(format!("REFUSED - {who} TREATS YOU AS AN ENEMY"));
         }
         universe_services::atc::request(&self.sys, &self.ship, target, self.view.time, &positions)

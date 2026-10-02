@@ -10,7 +10,7 @@
 
 use universe_services::records::{Deal, Kill, TradeRecord};
 use universe_world::charts::Charts;
-use universe_world::hypernet::{nodes, NodeAt};
+use universe_world::hypernet::NodeAt;
 use universe_world::Facility;
 
 use crate::news::{Broadcast, Key, Knowledge, Listener};
@@ -82,7 +82,7 @@ impl Newsroom {
     }
 
     /// Each outlet hears what's reached its station by `now`, and puts out a digest when due.
-    pub fn update(&mut self, charts: &Charts, now: f64, kills: &[Kill], trades: &[TradeRecord]) {
+    pub fn update(&mut self, charts: &Charts, realm: &crate::realm::Realm, now: f64, kills: &[Kill], trades: &[TradeRecord]) {
         if now - self.listened < LISTEN_EVERY {
             return;
         }
@@ -91,9 +91,9 @@ impl Newsroom {
             let sys = charts.system(o.system);
             let mut positions = Vec::new();
             sys.positions(now, &mut positions);
-            let relay = nodes(&charts.galaxy, &sys).into_iter().find(|n| n.at == NodeAt::Body(o.station)).map(|n| n.comm);
+            let relay = realm.nodes(&charts.galaxy, &sys).into_iter().find(|n| n.at == NodeAt::Body(o.station)).map(|n| n.comm);
             let Some(comm) = relay else { continue };
-            o.knows.update(charts, now, &Listener { system: o.system, at: positions[o.station], comm, player: false }, &crate::news::Happenings { kills, trades, ..Default::default() });
+            o.knows.update(charts, realm, now, &Listener { system: o.system, at: positions[o.station], comm, player: false }, &crate::news::Happenings { kills, trades, ..Default::default() });
             if (now / DIGEST_EVERY).floor() > (o.last / DIGEST_EVERY).floor() {
                 let headlines = compile(charts, o, kills, trades, now);
                 if !headlines.is_empty() {

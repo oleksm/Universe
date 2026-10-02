@@ -1152,7 +1152,7 @@ pub fn apply(app: &mut App, name: &str) {
         "enemy" => {
             // On approach to the home station, an enemy of its holder.
             apply(app, "approach");
-            let k = app.charts.holder_index(app.charts.home_system).unwrap_or(0);
+            let k = app.v.realm.holder_index(app.charts.home_system).unwrap_or(0);
             app.engine.universe().standings.set(universe_sim::PLAYER, k, -100.0);
             app.engine.refresh();
             app.v = app.engine.view();
@@ -1171,10 +1171,10 @@ pub fn apply(app: &mut App, name: &str) {
                 app.v = app.engine.view();
                 let (now, sys) = (app.v.time, app.v.ship_system);
                 let room = app.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
-                room.update(&app.charts, now, &app.v.kills, &app.v.trade_log);
+                room.update(&app.charts, &app.v.realm, now, &app.v.kills, &app.v.trade_log);
                 let casts = room.broadcasts();
                 let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true };
-                app.news.update(&app.charts, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
+                app.news.update(&app.charts, &app.v.realm, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
             }
             log::info!("scenario newsdesk: {} digests", app.newsroom.as_ref().map_or(0, |r| r.digests.len()));
             app.news_panel = name == "newsdesk";

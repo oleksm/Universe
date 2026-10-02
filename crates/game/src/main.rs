@@ -192,8 +192,8 @@ pub struct App {
     /// When it was last on the net (game time), and when the status was last worked out.
     pub net_seen: Option<f64>,
     pub net_at: f64,
-    /// This system's relays (its index with them).
-    pub net_nodes: Option<(usize, Vec<universe_sim::world::hypernet::Node>)>,
+    /// This system's relays (its index, and how many claims there were, with them).
+    pub net_nodes: Option<((usize, usize), Vec<universe_sim::world::hypernet::Node>)>,
     /// What news has come to us over the hypernet (or our own comm), and when.
     pub news: universe_sim::news::Knowledge,
     /// The news outlets, and their digests (opened on the first update).
@@ -410,7 +410,7 @@ impl App {
     /// World time to draw at.
     /// Where the ship stands on its system's hypernet (worked out twice a second).
     fn update_net(&mut self) {
-        use universe_sim::world::hypernet::{nodes, Net};
+        use universe_sim::world::hypernet::Net;
         let t = self.now();
         if (t - self.net_at).abs() < 0.5 {
             return;
@@ -421,8 +421,9 @@ impl App {
             self.net = None;
             return;
         }
-        if self.net_nodes.as_ref().is_none_or(|(i, _)| *i != sys.index) {
-            self.net_nodes = Some((sys.index, nodes(&self.charts.galaxy, &sys)));
+        let key = (sys.index, self.v.realm.claims.len());
+        if self.net_nodes.as_ref().is_none_or(|(k, _)| *k != key) {
+            self.net_nodes = Some((key, self.v.realm.nodes(&self.charts.galaxy, &sys)));
         }
         let all = self.net_nodes.as_ref().map(|(_, n)| n.clone()).unwrap_or_default();
         let net = Net::at(&sys, all, t, &self.view.positions);
@@ -1185,10 +1186,10 @@ impl Game for App {
         self.update_net();
         // The outlets hear and put out their digests; we hear what reaches us, digests too.
         let room = self.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&self.charts, self.v.time));
-        room.update(&self.charts, self.v.time, &self.v.kills, &self.v.trade_log);
+        room.update(&self.charts, &self.v.realm, self.v.time, &self.v.kills, &self.v.trade_log);
         let casts = room.broadcasts();
         let us = universe_sim::news::Listener { system: self.v.ship_system, at: self.ship.position, comm: self.ship.spec().comm, player: true };
-        self.news.update(&self.charts, self.v.time, &us, &universe_sim::news::Happenings { kills: &self.v.kills, trades: &self.v.trade_log, broadcasts: &casts, sightings: &[] });
+        self.news.update(&self.charts, &self.v.realm, self.v.time, &us, &universe_sim::news::Happenings { kills: &self.v.kills, trades: &self.v.trade_log, broadcasts: &casts, sightings: &[] });
         // Where things are drawn is the moment drawn: the nav target and the
         // approach guidance are worked out here, at it, from the charts (the
         // view's are a tick off it).

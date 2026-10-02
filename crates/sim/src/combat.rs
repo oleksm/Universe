@@ -97,9 +97,9 @@ impl Universe {
     /// for the hits after), and a ruling that's news goes to the shooter.
     fn rule_on_hits(&mut self, now: f64, player: &mut Vec<ShipEvent>, crafts: &mut [Vec<ShipEvent>]) {
         let tick = self.tick;
-        let charts = self.charts();
+        let realm = self.realm.clone();
         // (The law of whoever holds the space the struck ship's in.)
-        let lasts = |system: usize| charts.holder(system).map(|f| f.aggression);
+        let lasts = |system: usize| realm.holder(system).map(|f| f.aggression);
         let system_of = |u: &Self, id: usize| u.ship_by_id(id).map(|s| s.1);
         let mut notices: Vec<(usize, ShipEvent)> = Vec::new();
         for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {

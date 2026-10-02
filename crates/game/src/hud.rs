@@ -181,7 +181,7 @@ fn status_strip(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let place = format!("   {} ({}){home}", sys.name.to_uppercase(), sys.class.letter());
     let first = format!("{mode}  {}  {warp}", fmt::clock(app.v.time));
     // Whose space it is.
-    let holder = app.charts.holder(app.view.origin);
+    let holder = app.v.realm.holder(app.view.origin);
     let whose = holder.map_or("   UNCLAIMED".to_string(), |f| format!("   {} SPACE", f.name));
     let size = text_size(&first) + Vec2::new(text_size(&place).x + text_size(&whose).x, 0.0);
     frame.hud_rect(at, size + Vec2::new(8.0, 6.0), SOFT_PANEL);
@@ -289,9 +289,9 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     };
     rows.push(text_row("NET", net.0, net.1));
     // Our standing with whoever holds this space.
-    if let Some(k) = app.charts.holder_index(app.view.origin) {
+    if let Some(k) = app.v.realm.holder_index(app.view.origin) {
         let s = app.v.standing.get(k).copied().unwrap_or(0.0);
-        let tag = app.charts.holder(app.view.origin).map_or("", |f| f.tag.as_str());
+        let tag = app.v.realm.holder(app.view.origin).map_or("", |f| f.tag.as_str());
         let c = if s <= -10.0 { RED } else if s >= 10.0 { HUD } else { DIM };
         let sworn = if app.v.member == Some(k) { " MEMBER" } else { "" };
         rows.push(text_row("STAND", format!("{s:+.0} {}  {tag}{sworn}", universe_sim::standing::label(s)), c));
@@ -390,7 +390,7 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>, alerts: &mut Vec<(Str
         alerts.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
     }
     // An enemy of whoever holds this space: its guns fire, its docks refuse.
-    if let (Some(k), Some(f)) = (app.charts.holder_index(app.view.origin), app.charts.holder(app.view.origin))
+    if let (Some(k), Some(f)) = (app.v.realm.holder_index(app.view.origin), app.v.realm.holder(app.view.origin))
         && app.v.standing.get(k).is_some_and(|&s| s <= f.hostile)
     {
         alerts.push((format!("ENEMY OF THE {} - ITS GUNS FIRE, ITS DOCKS REFUSE", f.name), RED));
@@ -1676,9 +1676,9 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 {
                     // Enlist with this station's holder; sworn to it, leave.
                     let station = matches!(universe_sim::world::traffic::docked_at(&app.view.system, ship), Some(universe_sim::world::Facility::Station(_)));
-                    let holder = app.charts.holder_index(app.view.origin);
+                    let holder = app.v.realm.holder_index(app.view.origin);
                     let ours = holder.is_some() && app.v.member == holder;
-                    let tag = app.charts.holder(app.view.origin).map_or(String::new(), |f| format!(" {}", f.tag));
+                    let tag = app.v.realm.holder(app.view.origin).map_or(String::new(), |f| format!(" {}", f.tag));
                     b(Act::Enlist, &if ours { format!("LEAVE{tag}") } else { format!("ENLIST{tag}") }, if !station || holder.is_none() { Lamp::Unavailable } else if ours { Lamp::On } else { Lamp::Off })
                 },
             ],

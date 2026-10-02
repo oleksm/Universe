@@ -15,7 +15,7 @@
 use std::collections::{HashMap, HashSet};
 
 use universe_world::charts::Charts;
-use universe_world::hypernet::{nodes, NodeAt};
+use universe_world::hypernet::NodeAt;
 
 use crate::news::{Key, Knowledge, Listener, Sighting};
 use crate::universe::Universe;
@@ -111,11 +111,10 @@ impl Standings {
 
     /// A desk for each faction holding territory: at its seat (the first of
     /// its systems with a station).
-    fn open(charts: &Charts) -> Vec<Desk> {
-        let n = universe_world::content::content().factions.iter().count();
-        (0..n)
+    fn open(charts: &Charts, realm: &crate::realm::Realm) -> Vec<Desk> {
+        (0..realm.factions.len())
             .filter_map(|k| {
-                let mut held: Vec<usize> = charts.territory().filter(|(s, _)| charts.holder_index(*s) == Some(k)).map(|(s, _)| s).collect();
+                let mut held: Vec<usize> = realm.territory().filter(|(s, _)| realm.holder_index(*s) == Some(k)).map(|(s, _)| s).collect();
                 // (The home system first, for the faction that holds it.)
                 held.sort_by_key(|&s| (s != charts.home_system, s));
                 held.into_iter().find_map(|s| charts.system(s).station().map(|station| Desk { system: s, station, knows: Knowledge::default() }))
@@ -134,12 +133,12 @@ impl Universe {
         if universe_world::traffic::docked_at(&sys, &ship) != Some(market) || !matches!(market, universe_world::Facility::Station(_)) {
             return Err("DOCK AT A STATION TO ENLIST".into());
         }
-        let charts = self.charts();
-        let (k, f) = charts.holder_index(system).zip(charts.holder(system)).ok_or("NOBODY HOLDS THIS STATION")?;
+        let realm = self.realm.clone();
+        let (k, f) = realm.holder_index(system).zip(realm.holder(system)).ok_or("NOBODY HOLDS THIS STATION")?;
         match self.standings.member_of(id) {
             Some(m) if m == k => return Err(format!("ALREADY SWORN TO THE {}", f.name)),
             Some(m) => {
-                let other = universe_world::content::content().factions.iter().nth(m).map_or(String::new(), |(_, g)| g.name.clone());
+                let other = realm.faction(m).map_or(String::new(), |g| g.name.clone());
                 return Err(format!("SWORN TO THE {other} - RESIGN AT ONE OF ITS STATIONS FIRST"));
             }
             None => {}
@@ -157,9 +156,9 @@ impl Universe {
         let k = self.standings.member_of(id).ok_or("SWORN TO NO ONE")?;
         let (system, ship) = self.ship_by_id(id).map(|(_, s, ship)| (s, ship.clone())).ok_or("NO SHIP")?;
         let sys = self.system(system);
-        let charts = self.charts();
-        let name = universe_world::content::content().factions.iter().nth(k).map_or(String::new(), |(_, f)| f.name.clone());
-        if universe_world::traffic::docked_at(&sys, &ship) != Some(market) || charts.holder_index(system) != Some(k) {
+        let realm = self.realm.clone();
+        let name = realm.faction(k).map_or(String::new(), |f| f.name.clone());
+        if universe_world::traffic::docked_at(&sys, &ship) != Some(market) || realm.holder_index(system) != Some(k) {
             return Err(format!("RESIGN AT A STATION OF THE {name}"));
         }
         self.standings.members.remove(&id);
@@ -175,8 +174,10 @@ impl Universe {
         }
         self.standings.next = now + EVERY;
         let charts = self.charts();
-        if self.standings.desks.is_empty() {
-            self.standings.desks = Standings::open(&charts);
+        let realm = self.realm.clone();
+        // (A desk for each faction holding something; opened again as that changes.)
+        if self.standings.desks.len() != realm.factions.iter().enumerate().filter(|(k, _)| realm.territory().any(|(s, _)| realm.holder_index(s) == Some(*k))).count() {
+            self.standings.desks = Standings::open(&charts, &realm);
         }
         // Who opened fire on whom, seen where the shooter was.
         let targets: HashMap<Key, usize> = self.law.rulings.iter().filter(|r| r.new).map(|r| (Key::Aggression { time: r.evidence.time.to_bits(), ship: r.ship }, r.evidence.target)).collect();
@@ -193,13 +194,13 @@ impl Universe {
         let (kills, trades) = (self.records.kills.clone(), self.records.trades.clone());
         let mut deeds: Vec<(usize, usize, f64, Key)> = Vec::new();
         for d in &mut self.standings.desks {
-            let faction = charts.holder_index(d.system).unwrap_or(0);
+            let faction = realm.holder_index(d.system).unwrap_or(0);
             let sys = charts.system(d.system);
             let mut positions = Vec::new();
             sys.positions(now, &mut positions);
-            let Some(comm) = nodes(&charts.galaxy, &sys).into_iter().find(|n| n.at == NodeAt::Body(d.station)).map(|n| n.comm) else { continue };
-            d.knows.update(&charts, now, &Listener { system: d.system, at: positions[d.station], comm, player: false }, &crate::news::Happenings { kills: &kills, trades: &trades, broadcasts: &[], sightings: &sightings });
-            let ours = |system: usize| charts.holder_index(system) == Some(faction);
+            let Some(comm) = realm.nodes(&charts.galaxy, &sys).into_iter().find(|n| n.at == NodeAt::Body(d.station)).map(|n| n.comm) else { continue };
+            d.knows.update(&charts, &realm, now, &Listener { system: d.system, at: positions[d.station], comm, player: false }, &crate::news::Happenings { kills: &kills, trades: &trades, broadcasts: &[], sightings: &sightings });
+            let ours = |system: usize| realm.holder_index(system) == Some(faction);
             // (Its space, or one of its own: a deed against a member counts wherever it's heard.)
             let members = &self.standings.members;
             let sworn = |id: usize| members.get(&id) == Some(&faction);

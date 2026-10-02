@@ -222,7 +222,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     let whose = if map.here(app) { "  (YOU ARE HERE)".to_string() } else { format!("  {:.1} LY AWAY", app.charts.distance_ly(app.v.ship_system, map.view)) };
     let title = format!("NAVIGATION - {} SYSTEM{whose}   < {k}/{} >", map.system.name.to_uppercase(), systems.len());
     let end = frame.text(Vec2::new(16.0, y), &title, TEXT);
-    let holder = app.charts.holder(map.view);
+    let holder = app.v.realm.holder(map.view);
     let held = holder.map_or("   UNCLAIMED".to_string(), |f| format!("   {} SPACE", f.name));
     frame.text(end, &held, holder.map_or(DIM, |f| Color([f.color[0], f.color[1], f.color[2], 1.0])));
     y += line * 2.0;
@@ -320,12 +320,12 @@ pub struct NetNow {
 }
 
 fn network(app: &App, map: &NavMap) -> NetNow {
-    use universe_sim::world::hypernet::{nodes, Net};
+    use universe_sim::world::hypernet::Net;
     let sys = &map.system;
     let t = app.v.time;
     let mut positions = Vec::new();
     sys.positions(t, &mut positions);
-    let net = Net::at(sys, nodes(&app.charts.galaxy, sys), t, &positions);
+    let net = Net::at(sys, app.v.realm.nodes(&app.charts.galaxy, sys), t, &positions);
     let ship = map.here(app).then(|| net.status(sys, &positions, app.ship.position, &app.ship.spec().comm)).flatten();
     NetNow { net, positions, ship }
 }
@@ -466,6 +466,7 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
         NodeAt::Port(p) => chart_pos(sys.spaceports[p].body) + Vec2::new(0.0, -10.0),
         NodeAt::Body(b) if sys.bodies[b].kind == BodyKind::Station => chart_pos(b) + Vec2::new(11.0, 0.0),
         NodeAt::Body(b) => chart_pos(b),
+        NodeAt::Beacon { body, .. } => chart_pos(body) + Vec2::new(-11.0, 0.0),
     };
     if let Some(n) = net {
         for (k, up) in n.net.routes() {

@@ -192,6 +192,8 @@ pub struct View {
     /// Our standing with each faction (by content order), and the one we're sworn to.
     pub standing: Vec<f64>,
     pub member: Option<usize>,
+    /// The factions, who holds what, the claims.
+    pub realm: Arc<crate::realm::Realm>,
     /// The ship's system's defence turrets, where they are now; who's on
     /// each pad of each of its ports.
     pub turrets: Vec<(Turret, DVec3)>,
@@ -399,8 +401,9 @@ impl Engine {
             bookings: u.docked_market().map(|m| u.bookings(u.ship_system, m)).unwrap_or_default(),
             markets,
             market,
-            standing: (0..universe_world::content::content().factions.iter().count()).map(|k| u.standings.of(crate::combat::PLAYER, k)).collect(),
+            standing: (0..u.realm.factions.len()).map(|k| u.standings.of(crate::combat::PLAYER, k)).collect(),
             member: u.standings.member_of(crate::combat::PLAYER),
+            realm: u.realm.clone(),
             turrets: u.world.turret_motions(system).into_iter().map(|(t, p, _)| (t, p)).collect(),
             pads,
             last_step: self.last_step,
