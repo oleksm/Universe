@@ -30,6 +30,13 @@ world's facts; deciding is the clients': pilots, players, corporations, factions
 - The event system goes onto the hypernet. Events become messages from where they happen,
   spreading at the network's pace. News outlets compile them into digests and broadcasts.
   The kill feed and trade log become news as heard here, not omniscience.
+- **Done, coarse (2026-10-02):** kills and trades travel the hypernet (`sim/src/news.rs`); each
+  settled system's station runs an outlet (`sim/src/newsroom.rs`) that hears what reaches it and
+  puts out a digest every 10 minutes: its own system first (the fighting, the trade, the biggest
+  deal), then a line for each system it heard from. A digest is a broadcast from its station,
+  carried like any news. NEWS (F11) lists the digests heard; a ticker shows the latest as it
+  arrives. Next: outlets as owned enterprises (factions, corporations), more kinds of news
+  (shortages, prices moving, arrivals, discoveries), and ships carrying news off the net.
 
 ## 3. Factions, social politics, security
 

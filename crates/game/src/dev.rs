@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -1132,6 +1132,28 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.refresh();
             app.v = app.engine.view();
             app.market = Some(crate::market::MarketView::open(app));
+        }
+        "newsdesk" | "newsticker" => {
+            // Docked at home; traffic runs 12 minutes, the outlets and we
+            // listening as it goes; then the news panel. (The ticker: just
+            // past the first digests, the panel shut.)
+            apply(app, "docked");
+            let until = if name == "newsticker" { 612.0 } else { 720.0 };
+            while app.engine.universe().world.time < until {
+                for _ in 0..30 {
+                    app.engine.universe().step_world(1.0 / 60.0, 10.0, &Controls::default());
+                }
+                app.engine.refresh();
+                app.v = app.engine.view();
+                let (now, sys) = (app.v.time, app.v.ship_system);
+                let room = app.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
+                room.update(&app.charts, now, &app.v.kills, &app.v.trade_log);
+                let casts = room.broadcasts();
+                let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true };
+                app.news.update(&app.charts, now, &us, &app.v.kills, &app.v.trade_log, &casts);
+            }
+            log::info!("scenario newsdesk: {} digests", app.newsroom.as_ref().map_or(0, |r| r.digests.len()));
+            app.news_panel = name == "newsdesk";
         }
         "marketnear" | "marketfar" => {
             // Docked at home, the world run a while (boards put out), looking at

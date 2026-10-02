@@ -25,6 +25,8 @@ use universe_world::{Facility, StarSystem};
 pub enum Key {
     Kill { time: u64, killer: usize, victim: usize },
     Trade { time: u64, system: usize, trader: String, market: String, item: String, units: u32 },
+    /// A broadcast: an outlet's digest, by its system and when it went out.
+    Digest { system: usize, time: u64 },
 }
 
 impl Key {
@@ -50,7 +52,12 @@ pub struct Listener {
     pub system: usize,
     pub at: DVec3,
     pub comm: Comm,
+    /// The player's own: what it does itself it knows at once.
+    pub player: bool,
 }
+
+/// A broadcast put out at a place: (what it is, when, its system, where).
+pub type Broadcast = (Key, f64, usize, Facility);
 
 /// A net is worked out again after this long (s): relays move slowly.
 const NET_EVERY: f64 = 5.0;
@@ -71,6 +78,11 @@ impl Knowledge {
     /// When we heard it (None: not yet).
     pub fn heard(&self, key: &Key) -> Option<f64> {
         self.heard.get(key).copied()
+    }
+
+    /// Whether we heard it after `from`, by `to`.
+    pub fn heard_in(&self, key: &Key, from: f64, to: f64) -> bool {
+        self.heard(key).is_some_and(|t| t > from && t <= to)
     }
 
     fn net(&mut self, charts: &Charts, system: usize, now: f64) -> &SystemNet {
@@ -121,7 +133,7 @@ impl Knowledge {
     }
 
     /// Take in what's come to us by `now`, from the kills and trades on record.
-    pub fn update(&mut self, charts: &Charts, now: f64, us: &Listener, kills: &[Kill], trades: &[TradeRecord]) {
+    pub fn update(&mut self, charts: &Charts, now: f64, us: &Listener, kills: &[Kill], trades: &[TradeRecord], broadcasts: &[Broadcast]) {
         if (now - self.last).abs() < EVERY {
             return;
         }
@@ -134,8 +146,9 @@ impl Knowledge {
         let to_us = self.delays_to_us(charts, us.system, now);
         let happenings = kills
             .iter()
-            .map(|k| (Key::kill(k), k.time, k.system, Some(k.at), None, k.killer == crate::combat::PLAYER || k.victim == crate::combat::PLAYER))
-            .chain(trades.iter().map(|r| (Key::trade(r), r.time, r.system, None, r.place, r.trader == "YOU")));
+            .map(|k| (Key::kill(k), k.time, k.system, Some(k.at), None, us.player && (k.killer == crate::combat::PLAYER || k.victim == crate::combat::PLAYER)))
+            .chain(trades.iter().map(|r| (Key::trade(r), r.time, r.system, None, r.place, us.player && r.trader == "YOU")))
+            .chain(broadcasts.iter().map(|(key, time, system, at)| (key.clone(), *time, *system, None, Some(*at), false)));
         let mut live = std::collections::HashSet::new();
         for (key, time, system, at, place, ours_too) in happenings {
             live.insert(key.clone());
@@ -210,13 +223,13 @@ mod tests {
         let mut their = Vec::new();
         there.positions(0.0, &mut their);
         let kills = [kill(home, station + DVec3::new(2.0e8, 0.0, 0.0), 1), kill(home, DVec3::new(1.0e14, 0.0, 0.0), 2), kill(next, their[there.station().unwrap()], 3)];
-        let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm };
+        let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm, player: true };
         let mut news = Knowledge::default();
-        news.update(&charts, 2.0, &us, &kills, &[]);
+        news.update(&charts, 2.0, &us, &kills, &[], &[]);
         let heard = |n: &Knowledge, k: &Kill| n.heard(&Key::kill(k));
         assert!(heard(&news, &kills[0]).is_some_and(|t| t < 2.0), "by the station: at once");
         assert!(heard(&news, &kills[2]).is_none(), "next door: not yet");
-        news.update(&charts, 60.0, &us, &kills, &[]);
+        news.update(&charts, 60.0, &us, &kills, &[], &[]);
         assert!(heard(&news, &kills[1]).is_none(), "nobody saw it");
         let t = heard(&news, &kills[2]).expect("through the gates by now");
         assert!(t >= universe_world::gate::TRANSIT_TIME, "a crossing at least: {t}");

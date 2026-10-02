@@ -1,5 +1,6 @@
 mod dev;
 mod economy;
+mod newspanel;
 mod fmt;
 mod followguide;
 mod galaxymap;
@@ -195,6 +196,10 @@ pub struct App {
     pub net_nodes: Option<(usize, Vec<universe_sim::world::hypernet::Node>)>,
     /// What news has come to us over the hypernet (or our own comm), and when.
     pub news: universe_sim::news::Knowledge,
+    /// The news outlets, and their digests (opened on the first update).
+    pub newsroom: Option<universe_sim::newsroom::Newsroom>,
+    /// The news panel, when open.
+    pub news_panel: bool,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
@@ -325,6 +330,8 @@ impl App {
             net_at: f64::NEG_INFINITY,
             net_nodes: None,
             news: Default::default(),
+            newsroom: None,
+            news_panel: false,
             sparks: Vec::new(),
             reach: None,
             turrets: Vec::new(),
@@ -473,7 +480,7 @@ impl App {
         }
         let input = &ctx.input;
         // (TAB turns a panel's pages while one's open.)
-        let panel = self.shipyard.is_some() || self.market.is_some() || self.economy_panel.is_some();
+        let panel = self.shipyard.is_some() || self.market.is_some() || self.economy_panel.is_some() || self.news_panel;
         if input.pressed(KeyCode::Tab) && !panel {
             self.mode = match self.mode {
                 Mode::Observer => Mode::Pilot,
@@ -1024,6 +1031,12 @@ impl Game for App {
         } else if self.nav_map.is_none() && self.galaxy_map.is_none() && self.market.is_none() && keys::pressed(&ctx.input, keys::Act::Economy) {
             self.economy_panel = Some(Default::default());
         }
+        // The news panel likewise.
+        if self.news_panel {
+            self.news_panel = newspanel::input(self, ctx);
+        } else if self.nav_map.is_none() && self.galaxy_map.is_none() && self.market.is_none() && self.economy_panel.is_none() && ctx.input.pressed(KeyCode::F11) {
+            self.news_panel = true;
+        }
         // Where we are is explored.
         self.explored.insert(self.v.ship_system);
         // The galaxy map, then the navigation map, take the keyboard while open.
@@ -1057,7 +1070,7 @@ impl Game for App {
             sound::click(ctx, 900.0);
         }
         let (controls, focus_changed) = match self.mode {
-            _ if map_was_open || self.nav_map.is_some() || self.galaxy_map.is_some() || market_was_open || self.market.is_some() || economy_was_open || self.economy_panel.is_some() || yard_was_open || self.shipyard.is_some() => (Controls::default(), false),
+            _ if map_was_open || self.nav_map.is_some() || self.galaxy_map.is_some() || market_was_open || self.market.is_some() || economy_was_open || self.economy_panel.is_some() || self.news_panel || yard_was_open || self.shipyard.is_some() => (Controls::default(), false),
             Mode::Pilot => (self.pilot_input(ctx), false),
             Mode::Observer => (Controls::default(), self.observer.input(ctx, &self.v, &self.charts)),
         };
@@ -1166,8 +1179,12 @@ impl Game for App {
         self.beam_shown = (self.beam_shown - ctx.dt).max(0.0);
         universe_prof::time("update/build view", || self.build_view());
         self.update_net();
-        let us = universe_sim::news::Listener { system: self.v.ship_system, at: self.ship.position, comm: self.ship.spec().comm };
-        self.news.update(&self.charts, self.v.time, &us, &self.v.kills, &self.v.trade_log);
+        // The outlets hear and put out their digests; we hear what reaches us, digests too.
+        let room = self.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&self.charts, self.v.time));
+        room.update(&self.charts, self.v.time, &self.v.kills, &self.v.trade_log);
+        let casts = room.broadcasts();
+        let us = universe_sim::news::Listener { system: self.v.ship_system, at: self.ship.position, comm: self.ship.spec().comm, player: true };
+        self.news.update(&self.charts, self.v.time, &us, &self.v.kills, &self.v.trade_log, &casts);
         // Where things are drawn is the moment drawn: the nav target and the
         // approach guidance are worked out here, at it, from the charts (the
         // view's are a tick off it).

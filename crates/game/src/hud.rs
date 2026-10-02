@@ -30,6 +30,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::economy::draw(frame, app, panel);
         return;
     }
+    if app.news_panel {
+        crate::newspanel::draw(frame, app);
+        return;
+    }
     if let Some(map) = &app.galaxy_map {
         crate::galaxymap::draw(frame, app, map);
         return;
@@ -121,6 +125,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     if universe_prof::enabled() {
         profile_panel(frame);
     }
+    let right = news_ticker(frame, app, right);
     universe_prof::time("draw/hud/kill feed", || kill_feed(frame, app, right));
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
 
@@ -1717,6 +1722,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         (key(Act::Market), "MARKET".into(), lamp(app.market.is_some())),
         (key(Act::Cargo), "CARGO".into(), lamp(app.show_cargo)),
         (key(Act::Economy), "ECONOMY".into(), lamp(app.economy_panel.is_some())),
+        ("F11".into(), "NEWS".into(), lamp(app.news_panel)),
         (key(Act::Shipyard), "SHIPYARD".into(), lamp(app.shipyard.is_some())),
         (key(Act::View), "VIEW".into(), Lamp::Off),
         ("TAB".into(), "WATCH".into(), Lamp::Off),
@@ -1860,6 +1866,24 @@ fn news_from(app: &App, system: usize, time: f64, heard: f64) -> String {
     }
     s
 }
+
+/// The latest digest we've heard, right side over the kills, for
+/// `NEWS_SHOWN` real seconds from when it reached us: its outlet and lead.
+fn news_ticker(frame: &mut Frame, app: &App, top: f32) -> f32 {
+    let Some(room) = &app.newsroom else { return top };
+    let now = app.v.time;
+    let shown = NEWS_SHOWN * app.warp().max(1.0);
+    let latest = room.digests.iter().filter_map(|d| Some((d, app.news.heard(&d.key())?))).filter(|(_, h)| now - h < shown).max_by(|a, b| a.1.total_cmp(&b.1));
+    let Some((d, heard)) = latest else { return top };
+    let age = ((now - heard) / shown) as f32;
+    let c = Color::hex(0x60ffb0).scale(1.0 - 0.6 * age.max(0.0));
+    let mut rows = vec![(format!("NEWS - {}{}", d.outlet, news_from(app, d.system, d.time, heard)), c)];
+    rows.extend(d.headlines.iter().take(2).map(|h| (h.clone(), c.scale(0.85))));
+    right_column(frame, top, &rows) + 6.0
+}
+
+/// Real seconds a digest stays on the ticker.
+const NEWS_SHOWN: f64 = 20.0;
 
 /// Real seconds a trade stays in the feed.
 const TRADE_SHOWN: f64 = 12.0;
