@@ -160,7 +160,8 @@ distance `S` between its rings.
   III 50 ly (rarer, dearer, hungrier). Nothing bridges farther. Some stars may never be worth
   bridging: the power grows with the cube of the span (5 ly: 125 MW; 40 ly: 64 GW; 100 ly: 1 TW).
 - **A transit costs** `E = τ · m · S`, with `τ` 2.6×10⁻⁹ J/(kg·m): 1,000 t across 40 ly costs about
-  10¹⁵ J, roughly 100 kg of fuel. That's 20,000 times cheaper than hyperdrive. That's why lanes carry
+  10¹⁵ J, roughly 100 kg of fuel: 10⁶ J per kg, against an explorer's 2×10¹⁰ J per kg held across 40 ly
+  (about 20,000 times cheaper). That's why lanes carry
   trade, and why the gate's owner charges fees.
 - **Laying a lane:** the pair is built together at one place. One ring (thousands of tonnes) is then
   hauled to the far end through the medium by an explorer's power, under the rules above: an
