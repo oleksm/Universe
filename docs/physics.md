@@ -1,5 +1,9 @@
 # Physics: what's real, what's simplified, what's invented
 
+> **Why "Dogma".** Some of it is invented (the hyper layer), but in the game it's settled, not up for
+> debate: nothing in the world bends, bargains with or designs around it. It changes only by a
+> deliberate review, out of the game: edit the sheet, and the dogma checks say which promises break.
+>
 > **Dogma and the world.** The core engine is Dogma; the world is built on it (see
 > `docs/architecture.md`). **Dogma's laws** are `config/dogma.ron` (nature's constants, the
 > hyper layer's laws: `universe_physics::laws`, `universe_physics::hyper`): no materials, devices
