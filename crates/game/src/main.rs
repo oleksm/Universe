@@ -491,16 +491,21 @@ impl App {
         let input = &ctx.input;
         // (TAB turns a panel's pages while one's open.)
         let panel = self.shipyard.is_some() || self.market.is_some() || self.economy_panel.is_some() || self.news_panel;
+        // TAB: the view round — the cockpit, the chase camera, watching.
         if input.pressed(KeyCode::Tab) && !panel {
-            self.mode = match self.mode {
-                Mode::Observer => Mode::Pilot,
+            match self.mode {
+                Mode::Observer => {
+                    self.mode = Mode::Pilot;
+                    self.chase_cam = false;
+                }
+                Mode::Pilot if !self.chase_cam => self.chase_cam = true,
                 Mode::Pilot => {
                     ctx.grab_cursor(false);
                     self.observer.focus = Focus::Ship;
                     self.observer.distance = 180.0;
-                    Mode::Observer
+                    self.mode = Mode::Observer;
                 }
-            };
+            }
             sound::click(ctx, 500.0);
         }
         let input = &ctx.input;
@@ -620,9 +625,6 @@ impl App {
         use keys::{pressed, Act};
         use hud::ShipMode;
         let mode = hud::active_mode(self);
-        if pressed(input, Act::View) {
-            self.chase_cam = !self.chase_cam;
-        }
         // The hyperdrive is navigation's: nothing fights or digs in hyperspace.
         // Docked or landed: the pilot's own business — flight systems up (to
         // fly) or down (to park), the tank filled, the hull mended.

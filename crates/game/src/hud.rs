@@ -1635,7 +1635,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
     let b = |act: Act, l: &str, lamp: Lamp| (key(act), l.to_string(), lamp);
     let (mode, cells): (&str, Vec<(String, String, Lamp)>) = match &ship.state {
         ShipState::Destroyed { .. } => ("DESTROYED", vec![c("BKSP", "RESPAWN", Lamp::Off)]),
-        ShipState::Transit { .. } => ("GATE TRANSIT", vec![b(Act::View, &view, Lamp::Off)]),
+        ShipState::Transit { .. } => ("GATE TRANSIT", vec![c("TAB", &view, Lamp::Off)]),
         _ if active_mode(app) == ShipMode::Mining => (
             "MINING",
             vec![
@@ -1764,8 +1764,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         (key(Act::Economy), "ECONOMY".into(), lamp(app.economy_panel.is_some())),
         ("F11".into(), "NEWS".into(), lamp(app.news_panel)),
         (key(Act::Shipyard), "SHIPYARD".into(), lamp(app.shipyard.is_some())),
-        (key(Act::View), "VIEW".into(), Lamp::Off),
-        ("TAB".into(), "WATCH".into(), Lamp::Off),
+        ("TAB".into(), (if app.mode == Mode::Observer { "WATCH" } else if app.chase_cam { "CHASE" } else { "COCKPIT" }).into(), Lamp::Off),
         ("F7".into(), "THRUST".into(), lamp(app.show_thrusters)),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
     ];

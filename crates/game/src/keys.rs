@@ -84,7 +84,6 @@ pub enum Act {
     Economy,
     Combat,
     Mining,
-    View,
     Foot,
     Shipyard,
     Lock,
@@ -130,7 +129,6 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Economy, Scope::Global, "ECONOMY"),
     (Act::Combat, Scope::Global, "COMBAT"),
     (Act::Mining, Scope::Global, "MINING"),
-    (Act::View, Scope::Global, "VIEW"),
     (Act::Foot, Scope::Global, "FOOT"),
     (Act::Lock, Scope::Flight, "LOCK"),
     (Act::Hyperdrive, Scope::Flight, "HYPERDRIVE"),
@@ -251,7 +249,7 @@ pub fn key(act: Act) -> String {
 /// The keys that aren't letters by name: (key, what, where).
 pub const FIXED: &[(&str, &str, Scope)] = &[
     ("F1", "HELP", Scope::Global),
-    ("TAB", "WATCH (OBSERVER)", Scope::Global),
+    ("TAB", "VIEW: COCKPIT, CHASE, WATCH", Scope::Global),
     ("BKSP", "RESPAWN AT HOME", Scope::Global),
     ("F2 F4 F6", "LABELS, GRID, PAUSE", Scope::Global),
     ("F3 F5 F9", "DEBUG INFO, QUICKSAVE, LOAD", Scope::Global),
