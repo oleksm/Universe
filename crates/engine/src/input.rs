@@ -15,6 +15,8 @@ pub struct Input {
     pub mouse_delta: Vec2,
     /// Scroll wheel accumulated this frame, in "lines".
     pub scroll: f32,
+    /// Where the cursor is, in HUD pixels.
+    pub cursor: Vec2,
     /// Text typed this frame (printable characters, as the keyboard makes them).
     pub typed: String,
 }

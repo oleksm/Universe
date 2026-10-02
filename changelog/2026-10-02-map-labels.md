@@ -9,3 +9,11 @@
 - Names of unpicked objects smaller still (0.45 size).
 - The ring distances on one line above the axis, "AU" once after the last.
 - **A legend,** small, bottom right: star, planet, moon, station, gate, spaceport, asteroid field, you, what the rings and their numbers are; with NETWORK, the relay links, the transceiver radius and the lag colours.
+- **Zoom (mouse wheel) and move (drag) the system map:** toward the cursor, up to 60×; all the way
+  out, back as it was. What sits round a world (its moons, station, gates, ports) spreads out as
+  you zoom (up to 10×), the ports of a world fanned round it, so a crowded world comes apart.
+  The chart is cut at its area's edge (it no longer runs over the list).
+- **No coverage rings round asteroid fields** in the network layer, and no NET for them in the
+  list: nobody lives there.
+- Engine: the cursor's place in HUD pixels (`Input::cursor`), the HUD's size on the context, and
+  drawing clipped to a rectangle (`Frame::hud_clipped`).

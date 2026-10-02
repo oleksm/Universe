@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market enemy sworn founding galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom enemy sworn founding galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -260,10 +260,13 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             app.economy_panel = Some(Default::default());
         }
-        "navmap" | "netmap" => {
+        "navmap" | "netmap" | "navzoom" => {
             app.mode = Mode::Pilot;
             let mut map = crate::navmap::NavMap::open(app);
             map.network = name == "netmap";
+            if name == "navzoom" {
+                map.set_view(5.0, universe_engine::glam::Vec2::new(150.0, -500.0));
+            }
             app.nav_map = Some(map);
         }
         "landing" | "padview" | "autoland" | "touchdown" => {

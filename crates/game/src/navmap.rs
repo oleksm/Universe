@@ -40,6 +40,21 @@ pub struct NavMap {
     held: f32,
     /// Showing the hypernet: the chart to scale, its relays and their reach.
     pub network: bool,
+    /// The chart zoomed (1: all of it) and moved (HUD px), by the wheel and a drag.
+    zoom: f32,
+    pan: Vec2,
+    dragged_from: Option<Vec2>,
+}
+
+/// The chart's place on the screen, and its radius at zoom 1.
+fn chart_box(size: Vec2) -> (Vec2, f32) {
+    (Vec2::new(size.x * 0.76, size.y * 0.5), (size.x * 0.22).min(size.y * 0.42))
+}
+
+/// The chart's area: what it's drawn within.
+fn chart_area(size: Vec2) -> (Vec2, Vec2) {
+    let (c, r) = chart_box(size);
+    (Vec2::new(size.x * 0.54, (c.y - r * 1.12).max(0.0)), Vec2::new(size.x, (c.y + r * 1.12).min(size.y)))
 }
 
 /// Systems you can browse: the ship's first, then the gate network.
@@ -56,13 +71,18 @@ impl NavMap {
     pub fn open(app: &mut App) -> Self {
         let system = app.charts.system(app.v.ship_system);
         let view = app.v.ship_system;
-        let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None, defended: Vec::new(), held: 0.0, network: false };
+        let mut map = Self { selected: 0, view, settler_seed: 1, entries: Vec::new(), system, positions: Vec::new(), ship_body: None, defended: Vec::new(), held: 0.0, network: false, zoom: 1.0, pan: Vec2::ZERO, dragged_from: None };
         map.refresh(app);
         // Start on the current target if there is one.
         if let Some(t) = app.v.avionics.nav_target {
             map.selected = map.entries.iter().position(|e| e.target == t).unwrap_or(0);
         }
         map
+    }
+
+    /// (Dev scenarios: the chart zoomed and moved.)
+    pub fn set_view(&mut self, zoom: f32, pan: Vec2) {
+        (self.zoom, self.pan) = (zoom, pan);
     }
 
     fn here(&self, app: &App) -> bool {
@@ -140,6 +160,35 @@ pub fn repeat(held: &mut f32, down: bool, pressed: bool, dt: f32) -> u32 {
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let Some(mut map) = app.nav_map.take() else { return false };
     let input = &ctx.input;
+    // The chart: the wheel zooms toward the cursor, a drag moves it; all the
+    // way out, it's back as it was.
+    {
+        let size = ctx.hud_size.as_vec2();
+        let (lo, hi) = chart_area(size);
+        let (centre, _) = chart_box(size);
+        let at = input.cursor;
+        let over = at.x >= lo.x && at.y >= lo.y && at.x <= hi.x && at.y <= hi.y;
+        if input.scroll != 0.0 && over {
+            let z = (map.zoom * (input.scroll * 0.2).exp()).clamp(1.0, 60.0);
+            // (The point under the cursor stays under it.)
+            let from = at - centre;
+            map.pan = from - (from - map.pan) * (z / map.zoom);
+            map.zoom = z;
+        }
+        if input.button_pressed(universe_engine::MouseButton::Left) && over {
+            map.dragged_from = Some(at);
+        }
+        if !input.button_down(universe_engine::MouseButton::Left) {
+            map.dragged_from = None;
+        }
+        if let Some(from) = map.dragged_from {
+            map.pan += at - from;
+            map.dragged_from = Some(at);
+        }
+        if map.zoom <= 1.0 {
+            map.pan = Vec2::ZERO;
+        }
+    }
     // Browse systems.
     let systems = browsable(app);
     let i = systems.iter().position(|&s| s == map.view).unwrap_or(0);
@@ -258,7 +307,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
         let sam = if map.defended.contains(&e.target) { "SAM" } else { "" };
         let row = match &net {
             Some(n) => {
-                let (lag, nc) = place_on_net(app, map, n, e.target);
+                let (lag, nc) = place_on_net(n, e.target);
                 let name: String = e.name.chars().take(28).collect();
                 frame.text(Vec2::new(16.0, y), &format!("{cursor}{mark} {name:<28} {:<9} {sam:<3} {dist:>10}", e.kind), c);
                 // (The net's column in its own colour.)
@@ -307,9 +356,13 @@ pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
         crate::hud::draw_grid(frame, "MAP", &cells);
     }
 
-    let (center, max_r) = (Vec2::new(size.x * 0.76, size.y * 0.5), (size.x * 0.22).min(size.y * 0.42));
-    chart(frame, app, map, net.as_ref(), center, max_r);
+    let (center, max_r) = chart_box(size);
+    let (lo, hi) = chart_area(size);
+    frame.hud_clipped(lo, hi, |frame| chart(frame, map, net.as_ref(), center + map.pan, max_r * map.zoom, map.zoom));
     legend(frame, net.is_some());
+    if map.zoom > 1.0 {
+        frame.text_scaled(Vec2::new(lo.x + 4.0, lo.y + 2.0), &format!("ZOOM {:.1}X - WHEEL, DRAG TO MOVE", map.zoom), DIM, 0.55);
+    }
 }
 
 /// The chart's key, small, in the bottom right corner: each symbol as the
@@ -385,11 +438,10 @@ fn legend(frame: &mut Frame, network: bool) {
     }
 }
 
-/// The browsed system's hypernet now: its relays' net, the bodies' positions,
-/// and (in our own system) our status on it.
+/// The browsed system's hypernet now: its relays' net, and (in our own
+/// system) our status on it.
 pub struct NetNow {
     net: universe_sim::world::hypernet::Net,
-    positions: Vec<DVec3>,
     ship: Option<universe_sim::world::hypernet::Status>,
 }
 
@@ -401,7 +453,7 @@ fn network(app: &App, map: &NavMap) -> NetNow {
     sys.positions(t, &mut positions);
     let net = Net::at(sys, app.v.realm.nodes(&app.charts.galaxy, sys), t, &positions);
     let ship = map.here(app).then(|| net.status(sys, &positions, app.ship.position, &app.ship.spec().comm)).flatten();
-    NetNow { net, positions, ship }
+    NetNow { net, ship }
 }
 
 /// How quick a lag is, as a colour: green under a second, cyan under a
@@ -421,17 +473,13 @@ const DARK: Color = Color::hex(0xff5050);
 
 /// A place on the net: its lag from the backbone (a relay's own; at a rock,
 /// ours if we were there), in the lag's colour.
-fn place_on_net(app: &App, map: &NavMap, n: &NetNow, target: NavTarget) -> (String, Color) {
+fn place_on_net(n: &NetNow, target: NavTarget) -> (String, Color) {
     use universe_sim::world::hypernet::NodeAt;
     let node = match target {
         NavTarget::Station(b) | NavTarget::Gate(b) => n.net.node(NodeAt::Body(b)),
         NavTarget::Spaceport(k) => n.net.node(NodeAt::Port(k)),
-        NavTarget::Asteroid(b) => {
-            return match n.net.status(&map.system, &n.positions, n.positions[b], &app.ship.spec().comm) {
-                Some(s) => (fmt::lag(s.lag), lag_color(s.lag)),
-                None => ("DARK".into(), DARK),
-            };
-        }
+        // (A field isn't on the net: nobody lives there.)
+        NavTarget::Asteroid(_) => return (String::new(), DIM),
     };
     let Some(k) = node else { return (String::new(), DIM) };
     match n.net.lag[k] {
@@ -444,7 +492,9 @@ fn place_on_net(app: &App, map: &NavMap, n: &NetNow, target: NavTarget) -> (Stri
 /// With the network layer on (`net`), the routes in use over it, each relay
 /// by its lag, each rock by whether our comm would be on the net there, and
 /// our own line in.
-fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, center: Vec2, max_r: f32) {
+fn chart(frame: &mut Frame, map: &NavMap, net: Option<&NetNow>, center: Vec2, max_r: f32, zoom: f32) {
+    // (What sits round a world spreads out as the chart's zoomed in.)
+    let spread = zoom.min(10.0);
     let sys = &map.system;
     let planets: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0) && sys.bodies[i].kind.is_planet()).collect();
     let semi_major = |i: usize| sys.bodies[i].rail.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis);
@@ -482,9 +532,18 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
             Some(0) => place(i),
             Some(p) => {
                 let a = angle_of(map.positions[i] - map.positions[p]);
-                place(p) + Vec2::new(a.cos(), a.sin()) * 14.0
+                place(p) + Vec2::new(a.cos(), a.sin()) * 14.0 * spread
             }
         }
+    };
+    // A port beside its world: the world's ports fanned out round its top.
+    let port_pos = |p: usize| -> Vec2 {
+        let body = sys.spaceports[p].body;
+        let ours: Vec<usize> = (0..sys.spaceports.len()).filter(|&q| sys.spaceports[q].body == body).collect();
+        let j = ours.iter().position(|&q| q == p).unwrap_or(0) as f32;
+        let n = ours.len().max(1) as f32;
+        let a = -TAU / 4.0 + (j - (n - 1.0) / 2.0) * 0.6;
+        chart_pos(body) + Vec2::new(a.cos(), a.sin()) * 8.0 * spread
     };
 
     // Names, small and faint (the one picked in the list gets its full title).
@@ -538,10 +597,7 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
             NavTarget::Station(b) => (chart_pos(b), Color::WHITE),
             NavTarget::Gate(b) => (chart_pos(b), Color::hex(0xffc040)),
             NavTarget::Asteroid(b) => (chart_pos(b), color(sys.bodies[b].color)),
-            NavTarget::Spaceport(p) => {
-                let body = sys.spaceports[p].body;
-                (chart_pos(body) + Vec2::new(0.0, -8.0), Color::hex(0x60c0ff))
-            }
+            NavTarget::Spaceport(p) => (port_pos(p), Color::hex(0x60c0ff)),
         };
         match e.target {
             NavTarget::Station(_) => frame.hud_box(at + Vec2::new(8.0, -3.0), Vec2::splat(6.0), c),
@@ -576,7 +632,7 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
     // The network layer.
     use universe_sim::world::hypernet::NodeAt;
     let node_at = |n: &NetNow, k: usize| match n.net.nodes[k].at {
-        NodeAt::Port(p) => chart_pos(sys.spaceports[p].body) + Vec2::new(0.0, -10.0),
+        NodeAt::Port(p) => port_pos(p),
         NodeAt::Body(b) if sys.bodies[b].kind == BodyKind::Station => chart_pos(b) + Vec2::new(11.0, 0.0),
         NodeAt::Body(b) => chart_pos(b),
         NodeAt::Beacon { body, .. } => chart_pos(body) + Vec2::new(-11.0, 0.0),
@@ -615,11 +671,6 @@ fn chart(frame: &mut Frame, app: &App, map: &NavMap, net: Option<&NetNow>, cente
                     frame.hud_line_smooth(w[0], w[1], c);
                 }
             }
-        }
-        let comm = app.ship.spec().comm;
-        for f in &sys.fields {
-            let c = n.net.status(sys, &n.positions, n.positions[f.body], &comm).map_or(DARK, |s| lag_color(s.lag));
-            frame.hud_ellipse(chart_pos(f.body), Vec2::splat(10.0), 16, c.scale(0.8));
         }
     }
 

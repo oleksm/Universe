@@ -628,6 +628,48 @@ impl Frame {
         self.hud_rect(pos + s, Vec2::ONE, color); // close the last corner pixel
     }
 
+    /// Draw with `f` inside the HUD rectangle `lo`..`hi` only: its lines cut
+    /// at the edges, its fills and text kept only where wholly inside.
+    pub fn hud_clipped(&mut self, lo: Vec2, hi: Vec2, f: impl FnOnce(&mut Frame)) {
+        let (lines, tris) = (self.hud.len(), self.hud_tris.len());
+        f(self);
+        let inside = |p: Vec2| p.x >= lo.x && p.y >= lo.y && p.x <= hi.x && p.y <= hi.y;
+        // Lines: each pair cut to the box (Liang-Barsky), or gone.
+        let added: Vec<Vertex> = self.hud.drain(lines..).collect();
+        for pair in added.chunks_exact(2) {
+            let (a, b) = (Vec2::new(pair[0].pos[0], pair[0].pos[1]), Vec2::new(pair[1].pos[0], pair[1].pos[1]));
+            let d = b - a;
+            let (mut t0, mut t1) = (0.0f32, 1.0f32);
+            let mut keep = true;
+            for (p, q) in [(-d.x, a.x - lo.x), (d.x, hi.x - a.x), (-d.y, a.y - lo.y), (d.y, hi.y - a.y)] {
+                if p == 0.0 {
+                    if q < 0.0 {
+                        keep = false;
+                    }
+                } else {
+                    let r = q / p;
+                    if p < 0.0 {
+                        t0 = t0.max(r);
+                    } else {
+                        t1 = t1.min(r);
+                    }
+                }
+            }
+            if keep && t0 <= t1 {
+                let (pa, pb) = (a + d * t0, a + d * t1);
+                self.hud.push(Vertex { pos: [pa.x, pa.y, 0.0], color: pair[0].color });
+                self.hud.push(Vertex { pos: [pb.x, pb.y, 0.0], color: pair[1].color });
+            }
+        }
+        // Fills and glyphs: each triangle wholly inside, or gone.
+        let added: Vec<HudVertex> = self.hud_tris.drain(tris..).collect();
+        for t in added.chunks_exact(3) {
+            if t.iter().all(|v| inside(Vec2::new(v.pos[0], v.pos[1]))) {
+                self.hud_tris.extend_from_slice(t);
+            }
+        }
+    }
+
     /// Ellipse outline in HUD pixel coordinates.
     /// A HUD line where it falls, not snapped to whole units (curves and
     /// slants: snapped, their pieces would step and wobble).

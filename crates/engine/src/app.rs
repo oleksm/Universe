@@ -73,6 +73,8 @@ pub struct Context {
     pub perf: Perf,
     /// Size of the retro framebuffer in pixels.
     pub low_res: UVec2,
+    /// Size of the HUD's layout in pixels (what `Input::cursor` is in).
+    pub hud_size: UVec2,
     window: Arc<Window>,
     audio: Option<Audio>,
     cursor_grabbed: bool,
@@ -177,6 +179,7 @@ impl<G: Game> Runner<G> {
         s.ctx.time = (now - self.start).as_secs_f64();
         let rs = s.render.state();
         s.ctx.low_res = rs.low_res;
+        s.ctx.hud_size = rs.hud_size;
 
         s.frame_count += 1;
         // UNIVERSE_SCREENSHOT_FRAMES=n: also the n frames after it (name_1.png…),
@@ -270,6 +273,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             fps: 0.0,
             perf: Perf::default(),
             low_res: renderer.low_res(),
+            hud_size: UVec2::ONE,
             window,
             // Automated screenshot runs stay silent.
             audio: if std::env::var_os("UNIVERSE_SCREENSHOT").is_some() { None } else { Audio::new() },
@@ -313,6 +317,11 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             }
             WindowEvent::MouseInput { state, button, .. } => {
                 s.ctx.input.button(button, state == ElementState::Pressed);
+            }
+            WindowEvent::CursorMoved { position, .. } => {
+                // (In the HUD's pixels: the window stretched over its layout.)
+                let (win, hud) = (s.ctx.window.inner_size(), s.render.state().hud_size);
+                s.ctx.input.cursor = Vec2::new(position.x as f32 / win.width.max(1) as f32 * hud.x as f32, position.y as f32 / win.height.max(1) as f32 * hud.y as f32);
             }
             WindowEvent::MouseWheel { delta, .. } => {
                 s.ctx.input.scroll += match delta {
