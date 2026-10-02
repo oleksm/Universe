@@ -636,7 +636,7 @@ impl Frame {
         let inside = |p: Vec2| p.x >= lo.x && p.y >= lo.y && p.x <= hi.x && p.y <= hi.y;
         // Lines: each pair cut to the box (Liang-Barsky), or gone.
         let added: Vec<Vertex> = self.hud.drain(lines..).collect();
-        for pair in added.chunks_exact(2) {
+        for pair in added.as_chunks::<2>().0 {
             let (a, b) = (Vec2::new(pair[0].pos[0], pair[0].pos[1]), Vec2::new(pair[1].pos[0], pair[1].pos[1]));
             let d = b - a;
             let (mut t0, mut t1) = (0.0f32, 1.0f32);
@@ -663,7 +663,7 @@ impl Frame {
         }
         // Fills and glyphs: each triangle wholly inside, or gone.
         let added: Vec<HudVertex> = self.hud_tris.drain(tris..).collect();
-        for t in added.chunks_exact(3) {
+        for t in added.as_chunks::<3>().0 {
             if t.iter().all(|v| inside(Vec2::new(v.pos[0], v.pos[1]))) {
                 self.hud_tris.extend_from_slice(t);
             }
