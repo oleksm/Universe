@@ -1,6 +1,6 @@
 # Backlog
 
-The bigger features still to do, roughly in order (as of 2026-10-02, updated after the visual revamp). Small
+The game's smaller items, roughly in order (as of 2026-10-02). The world's foundations come first: see `roadmap.md`. Economy tuning waits for them. Small
 fixes go straight in; this is for what needs deciding or building.
 
 1. **Hull space balance.** A Drover's modules take 132 m³ of its 5,269 m³
