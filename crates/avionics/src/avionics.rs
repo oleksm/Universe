@@ -92,7 +92,8 @@ impl Avionics {
     pub fn flies(&self, ship: &Ship) -> bool {
         match ship.state {
             ShipState::Flying if ship.hyperdrive => self.hyper_autopilot,
-            ShipState::Flying => self.autopilot_engaged(),
+            // (Climbing out on a route, it holds the ship level: see `fly`.)
+            ShipState::Flying => self.autopilot_engaged() || (self.route.active && self.route.departing),
             _ => false,
         }
     }
@@ -250,6 +251,22 @@ impl Avionics {
                 events.push(Event::HyperdriveArrived { target });
             }
             return turn.filter(|_| self.hyper_autopilot);
+        }
+        // Climbing out on the lift (a route leaving a world's ground): held
+        // level with the local vertical, nose where it points — else the
+        // ship's up drifts off the vertical and the lift pushes it sideways
+        // till it can't hold its height. (Not by a station: off its deck it
+        // rises as it lies.)
+        if self.route.active
+            && self.route.departing
+            && self.clearance.is_none()
+            && !sys.bodies.iter().enumerate().any(|(i, b)| b.kind == universe_world::BodyKind::Station && positions[i].distance(ship.position) < 3000.0)
+        {
+            let d = sys.dominant(ship.position, &positions);
+            let up = (ship.position - positions[d]).normalize_or(DVec3::Y);
+            let fwd = ship.forward();
+            let level = (fwd - up * fwd.dot(up)).try_normalize().unwrap_or_else(|| up.any_orthonormal_vector());
+            return Some(crate::docking::attitude(&ship, universe_world::ship::facing(level, up), DVec3::ZERO, dt));
         }
         let c = self.clearance.filter(|c| c.autopilot)?;
         let wait = self.corridor_denied.then_some(self.wait_place);
