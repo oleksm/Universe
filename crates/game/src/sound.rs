@@ -39,13 +39,6 @@ pub fn chime(ctx: &Context) {
     }
 }
 
-/// The radio: traffic control's voice and ours (pitch, manner), how loud.
-const CONTROL_PITCH: f32 = 125.0;
-const CONTROL_VOICE: u32 = 7;
-const OUR_PITCH: f32 = 98.0;
-const OUR_VOICE: u32 = 3;
-const RADIO_VOLUME: f32 = 0.5;
-
 /// Which side of the ship (-1 left .. 1 right) a ship seen from `us` is on.
 fn side_of(app: Option<&App>, by: usize) -> f32 {
     let Some(app) = app else { return 0.0 };
@@ -99,12 +92,8 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             a.thud(85.0, 0.45, 0.0);
         }
         Event::Crew(_) => a.thud(220.0, 0.2, 0.0),
-        // Traffic control on the radio: our call (a lower voice), then its answer.
-        Event::Traffic(TrafficEvent::PadAssigned { .. }) => a.radio(0.0, 1.6, CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME),
-        Event::Traffic(TrafficEvent::Holding { .. }) => {
-            a.radio(0.0, 1.0, OUR_PITCH, OUR_VOICE, RADIO_VOLUME * 0.8);
-            a.radio(1.2, 2.2, CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME);
-        }
+        Event::Traffic(TrafficEvent::PadAssigned { .. }) => a.tone(1100.0, 1100.0, 0.12, 0.2),
+        Event::Traffic(TrafficEvent::Holding { .. }) => a.tone(500.0, 400.0, 0.3, 0.2),
         // Struck: the plating rings and the frame takes it; harder, bits rattle off.
         Event::Ship(ShipEvent::Collided { with, speed }) => {
             let s = (*speed as f32 / 25.0).min(1.0);
@@ -145,18 +134,11 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
         }
         Event::HyperdriveArrived { .. } => a.tone(880.0, 1320.0, 0.25, 0.18),
         Event::Traffic(TrafficEvent::ClearanceGranted { .. }) => {
-            a.radio(0.0, 1.3, OUR_PITCH, OUR_VOICE, RADIO_VOLUME * 0.8);
-            a.radio(1.5, 2.4, CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME);
+            a.tone(880.0, 880.0, 0.1, 0.2);
+            a.tone(1320.0, 1320.0, 0.25, 0.14);
         }
-        Event::Traffic(TrafficEvent::ClearanceDenied { .. }) => {
-            a.radio(0.0, 1.3, OUR_PITCH, OUR_VOICE, RADIO_VOLUME * 0.8);
-            a.radio(1.5, 1.6, CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME);
-        }
-        Event::Refused { .. } => a.tone(180.0, 160.0, 0.35, 0.22),
-        Event::Traffic(TrafficEvent::ClearanceCancelled) => {
-            a.radio(0.0, 1.0, OUR_PITCH, OUR_VOICE, RADIO_VOLUME * 0.8);
-            a.radio(1.2, 0.9, CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME);
-        }
+        Event::Traffic(TrafficEvent::ClearanceDenied { .. }) | Event::Refused { .. } => a.tone(180.0, 160.0, 0.35, 0.22),
+        Event::Traffic(TrafficEvent::ClearanceCancelled) => a.tone(600.0, 300.0, 0.3, 0.18),
         Event::Autopilot { on: true } | Event::Following { what: Some(_) } => a.tone(500.0, 900.0, 0.2, 0.18),
         Event::Following { what: None } | Event::Autopilot { on: false } => a.tone(900.0, 500.0, 0.2, 0.18),
         Event::NavTargetSet { .. } => a.tone(1000.0, 1300.0, 0.08, 0.14),
@@ -351,53 +333,6 @@ fn air(a: &universe_engine::Audio, app: &App) {
     a.set_distant(distant, 0.0);
 }
 
-/// When the radio next carries someone else's talk (wall clock), and how many so far.
-static CHATTER: Mutex<(Option<std::time::Instant>, u32)> = Mutex::new((None, 0));
-/// Within this of a station or port (m), its traffic is on the radio.
-const CHATTER_RANGE: f64 = 40_000.0;
-
-/// Others' talk on the radio, near a station or a port: now and then a
-/// pilot or a controller, quieter than what's for us, each a voice of its own.
-fn chatter(a: &universe_engine::Audio, app: &App) {
-    use std::time::{Duration, Instant};
-    let Ok(mut c) = CHATTER.lock() else { return };
-    let ship = &app.v.ship;
-    let seated = app.mode == Mode::Pilot && app.v.crew.seated() && !app.paused && ship.powered && !ship.hyperdrive;
-    let sys = &app.view.system;
-    let near = sys.bodies.iter().enumerate().any(|(i, b)| b.kind == universe_sim::BodyKind::Station && app.view.positions[i].distance(app.view.ship_pos) < CHATTER_RANGE)
-        || (0..sys.spaceports.len()).any(|p| {
-            let port = &sys.spaceports[p];
-            let b = &sys.bodies[port.body];
-            let at = app.view.positions[port.body] + b.rotation(app.now()) * (port.direction * b.rail.radius);
-            at.distance(app.view.ship_pos) < CHATTER_RANGE
-        });
-    let now = Instant::now();
-    if !seated || !near {
-        c.0 = None;
-        return;
-    }
-    let Some(next) = c.0 else {
-        c.0 = Some(now + Duration::from_secs(6));
-        return;
-    };
-    if now < next {
-        return;
-    }
-    // (A small hash for who speaks, how long, and when the next does.)
-    c.1 += 1;
-    let h = c.1.wrapping_mul(2_654_435_761);
-    let unit = |shift: u32| ((h >> shift) & 0xff) as f32 / 255.0;
-    let pilot = unit(0) < 0.6;
-    let voice = 100 + (h >> 8) % 23;
-    let pitch = if pilot { 90.0 + 70.0 * unit(16) } else { CONTROL_PITCH };
-    a.radio(0.0, 1.0 + 2.5 * unit(24), pitch, if pilot { voice } else { CONTROL_VOICE }, RADIO_VOLUME * 0.45);
-    // (A pilot's call, now and then answered.)
-    if pilot && unit(4) < 0.5 {
-        a.radio(3.8, 1.2 + 1.2 * unit(12), CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME * 0.45);
-    }
-    c.0 = Some(now + Duration::from_secs_f32(14.0 + 30.0 * unit(20)));
-}
-
 /// Walking: where the last step fell, how far since, and which foot is next.
 static STEPS: Mutex<Option<(DVec3, f64, bool)>> = Mutex::new(None);
 /// A step every this many metres, walking; running, a longer stride.
@@ -461,7 +396,6 @@ pub fn update(ctx: &Context, app: &App) {
         a.set_drone(0.0, 60.0);
     }
     alarms(a, app);
-    chatter(a, app);
     air(a, app);
     // The score: tense in a fight (armed, a missile after us, the hull hurt).
     let inbound = app.v.missiles.iter().any(|m| m.4 && m.0 == app.v.ship_system);
@@ -562,23 +496,7 @@ mod tests {
             ("power down", ev(Event::Ship(ShipEvent::SystemsOff)), 2.0),
             ("hatch", ev(Event::Crew(universe_sim::world::CrewEvent::CameAboard)), 1.5),
             ("gate", ev(Event::Ship(ShipEvent::GateEntered { to: String::new() })), 3.0),
-            ("clearance", ev(Event::Traffic(TrafficEvent::ClearanceGranted { target: String::new(), kind: universe_sim::world::ClearanceKind::Dock })), 4.0),
-            ("radio", Box::new(|a, t| if t == 0.0 {
-                a.radio(0.0, 1.3, OUR_PITCH, OUR_VOICE, RADIO_VOLUME * 0.8);
-                a.radio(1.5, 2.4, CONTROL_PITCH, CONTROL_VOICE, RADIO_VOLUME);
-            }), 4.2),
-            ("re-entry", Box::new(|a, t| a.set_air(if t < 2.0 { 0.8 } else { 0.0 }, 0.8, false)), 2.5),
-            ("wind", Box::new(|a, t| a.set_air(if t < 3.0 { 0.3 } else { 0.0 }, 0.2, true)), 3.5),
-            ("breathing", Box::new(|a, t| a.set_breath(if t < 4.2 { 0.6 } else { 0.0 })), 4.5),
-            ("far engine", Box::new(|a, t| a.set_distant(if t < 2.0 { 0.6 } else { 0.0 }, 0.0)), 2.5),
-            ("music calm", Box::new(|a, _| a.set_music(0.6, 0.0)), 32.0),
-            ("music tense", Box::new(|a, _| a.set_music(0.6, 1.0)), 20.0),
-            ("steps", Box::new(|a, t| {
-                let f = (t * 60.0).round() as i32;
-                if f % 33 == 0 && f < 200 {
-                    footstep(a, true, f % 66 == 0, false);
-                }
-            }), 3.5),
+            ("clearance", ev(Event::Traffic(TrafficEvent::ClearanceGranted { target: String::new(), kind: universe_sim::world::ClearanceKind::Dock })), 1.0),
             ("klaxon", Box::new(|a, t| if t == 0.0 {
                 a.alarm(500.0, 1000.0, 0.5, 0.2);
                 a.alarm_after(0.6, 500.0, 1000.0, 0.5, 0.2);

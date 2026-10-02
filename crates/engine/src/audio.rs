@@ -185,17 +185,6 @@ impl Audio {
         self.with(|s| s.voices.push(if delay > 0.0 { Voice::Later { wait: delay, then: Box::new(note) } } else { note }));
     }
 
-    /// A voice on the radio for `seconds`, starting `delay` seconds from
-    /// now: speech you hear but can't make out (a buzz at `pitch` Hz shaped
-    /// into syllables by shifting vowel formants, consonants between),
-    /// through a radio's narrow band and a little distortion, static under
-    /// it, the squelch clicking open and shut. `voice` keeps a speaker's
-    /// manner (its pace and its vowels) the same each time; `volume` its loudness.
-    pub fn radio(&self, delay: f32, seconds: f32, pitch: f32, voice: u32, volume: f32) {
-        let r = Voice::Radio(Box::new(Radio::new(seconds, pitch, voice, volume)));
-        self.with(|s| s.voices.push(if delay > 0.0 { Voice::Later { wait: delay, then: Box::new(r) } } else { r }));
-    }
-
     /// A blast: a deep boom and its crackle (`seconds` long).
     pub fn noise(&self, seconds: f32, volume: f32) {
         self.with(|s| s.voices.push(Voice::Blast { t: 0.0, dur: seconds, vol: volume, lp: 0.0, lp2: 0.0, phase: 0.0 }));
@@ -336,124 +325,6 @@ enum Voice {
     Delayed { wait: f32, freq: f32 },
     /// Another voice, `wait` seconds on.
     Later { wait: f32, then: Box<Voice> },
-    Radio(Box<Radio>),
-}
-
-/// Vowels as their first two formants (Hz).
-const VOWELS: [(f32, f32); 8] = [(730.0, 1090.0), (530.0, 1840.0), (270.0, 2290.0), (570.0, 840.0), (300.0, 870.0), (660.0, 1720.0), (440.0, 1020.0), (490.0, 1350.0)];
-
-/// A transmission (see `Audio::radio`).
-struct Radio {
-    t: f32,
-    dur: f32,
-    vol: f32,
-    pitch: f32,
-    rng: u32,
-    /// The glottal pulse's phase; the syllable's start, length and vowel.
-    phase: f32,
-    syllable_at: f32,
-    syllable_len: f32,
-    pace: f32,
-    target: (f32, f32),
-    formant: (f32, f32),
-    /// Before a vowel, a consonant's hiss (s) this long.
-    consonant: f32,
-    f1: (f32, f32),
-    f2: (f32, f32),
-    band: (f32, f32),
-    high: (f32, f32),
-    high2: (f32, f32),
-    stat: f32,
-}
-
-impl Radio {
-    fn new(dur: f32, pitch: f32, voice: u32, vol: f32) -> Self {
-        let mut r = Radio {
-            t: 0.0,
-            dur,
-            vol,
-            pitch,
-            rng: voice.wrapping_mul(2_654_435_761) | 1,
-            phase: 0.0,
-            syllable_at: 0.0,
-            syllable_len: 0.0,
-            pace: 0.0,
-            target: VOWELS[0],
-            formant: VOWELS[0],
-            consonant: 0.0,
-            f1: (0.0, 0.0),
-            f2: (0.0, 0.0),
-            band: (0.0, 0.0),
-            high: (0.0, 0.0),
-            high2: (0.0, 0.0),
-            stat: 0.0,
-        };
-        r.pace = 0.16 + 0.08 * r.next().abs();
-        r.syllable_at = 0.12;
-        r
-    }
-
-    fn next(&mut self) -> f32 {
-        self.rng ^= self.rng << 13;
-        self.rng ^= self.rng >> 17;
-        self.rng ^= self.rng << 5;
-        self.rng as f32 / u32::MAX as f32 * 2.0 - 1.0
-    }
-
-    fn sample(&mut self, noise: f32, rate: f32) -> (f32, bool) {
-        let dt = 1.0 / rate;
-        let t = self.t;
-        self.t += dt;
-        // The squelch: a click open, static under all of it, a "kssht" closing.
-        let (open, close) = (0.08, self.dur - 0.15);
-        self.stat += (noise - self.stat) * 0.5;
-        let mut out = self.stat * 0.06;
-        if t < 0.01 || (t > close && t < close + 0.01) {
-            out += noise * 0.8;
-        }
-        if t > close {
-            out += noise * 0.35 * (1.0 - (t - close) / 0.15).max(0.0);
-        }
-        // Speech, between: syllables at its pace, a pause now and then.
-        if t > open && t < close - 0.05 {
-            if t >= self.syllable_at {
-                self.syllable_len = self.pace * (0.7 + 0.6 * self.next().abs());
-                let pause = if self.next() > 0.75 { 0.12 + 0.15 * self.next().abs() } else { 0.0 };
-                self.syllable_at = t + self.syllable_len + pause;
-                let v = (self.next().abs() * VOWELS.len() as f32) as usize % VOWELS.len();
-                self.target = VOWELS[v];
-                self.consonant = if self.next() > 0.0 { 0.03 + 0.04 * self.next().abs() } else { 0.0 };
-            }
-            // (How far into the syllable.)
-            let k = (1.0 - (self.syllable_at - t) / self.syllable_len.max(1e-3)).clamp(0.0, 1.0);
-            // (The formants glide to the vowel; the pitch falls through a phrase.)
-            self.formant.0 += (self.target.0 - self.formant.0) * 0.004;
-            self.formant.1 += (self.target.1 - self.formant.1) * 0.004;
-            let f0 = self.pitch * (1.1 - 0.2 * (t / self.dur)) * (1.0 + 0.05 * (k * PI).sin());
-            self.phase += f0 * dt;
-            let pulse = if self.phase >= 1.0 {
-                self.phase -= 1.0;
-                1.0
-            } else {
-                0.0
-            };
-            let env = (k * PI).sin().max(0.0).powf(0.6);
-            let consonant = k * self.syllable_len < self.consonant;
-            let source = if consonant { noise * 0.25 } else { pulse * 6.0 };
-            svf(&mut self.f1.0, &mut self.f1.1, source, self.formant.0, 6.0, rate);
-            svf(&mut self.f2.0, &mut self.f2.1, source, self.formant.1, 8.0, rate);
-            out += (self.f1.1 + 0.6 * self.f2.1) * env * 0.5;
-        }
-        // The radio: a narrow band (about 400 Hz to 3 kHz), a little overdriven.
-        // (Two high-pass stages: a radio's small speaker has no bass.)
-        svf(&mut self.high.0, &mut self.high.1, out, 400.0, 0.7, rate);
-        let hp = out - self.high.0;
-        svf(&mut self.high2.0, &mut self.high2.1, hp, 400.0, 0.7, rate);
-        let hp = hp - self.high2.0;
-        svf(&mut self.band.0, &mut self.band.1, hp, 2800.0, 0.7, rate);
-        let v = (self.band.0 * 4.0).tanh() * 1.2;
-        (v * self.vol, self.t >= self.dur)
-    }
 }
 
 /// A small metal room: Schroeder reverb (combs into all-passes), a side each.
@@ -955,10 +826,6 @@ impl Synth {
                     *t += dt;
                     let w = *phase * TAU;
                     ((w.sin() * 0.5 + (2.0 * w).sin() * 0.2) * env * 0.35, 0.0, 0.3, *t >= dur)
-                }
-                Voice::Radio(r) => {
-                    let (v, done) = r.sample(noise, rate);
-                    (v, 0.0, 0.08, done)
                 }
                 Voice::Later { wait, then } => {
                     *wait -= dt;
