@@ -25,5 +25,6 @@ fixes go straight in; this is for what needs deciding or building.
    licences in faction space, towing asteroids.
 9. **Engine headroom:** 100k ships at 1.5x budget; seed-only checkpoints.
 10. **Trademark** FREEFALL (the user's to do).
-11. **Visual revamp:** see the ideas list in the conversation of 2026-10-02
-    (lights, dust, atmospheres, stations, gates).
+0. **Visual revamp (now):** `docs/art-direction.md` — render core, detailed
+   shapes (ships, stations, gates), landscapes, interface, lights and motion,
+   bodies, liveries.

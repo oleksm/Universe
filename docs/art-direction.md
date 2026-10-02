@@ -76,8 +76,18 @@ and the things in it solid, made and used.
 
 1. **Render core:** full resolution with antialiasing, HDR and tone mapping,
    no contour outlines (panel lines only), neutral hull materials, a clean sky.
-2. **Interface:** the typeface, the UI palette, panels and HUD restyled.
-3. **Lights and motion:** navigation lights, lit windows, bloom, space dust,
+2. **Shapes, not bricks:** ships built from parts with form (a fuselage that
+   tapers, a canopy, nacelles and intakes, wing roots, chamfered edges,
+   hatches and vents); stations as structures (decks on trusses, modules,
+   radiators, antennas, a hangar that's a hangar); gates as engineered rings.
+   The designer builds from the same parts. (Hand-modelled meshes, from
+   Blender, can replace any of them later.)
+3. **Landscapes:** real ground near the surface, not a coarse globe: terrain
+   in patches that grow finer as you come down, mountains and valleys, craters
+   with rims and ejecta, boulders, shading by slope and height (rock, dust,
+   ice, vegetation where it's Earth-like), shorelines.
+4. **Interface:** the typeface, the UI palette, panels and HUD restyled.
+5. **Lights and motion:** navigation lights, lit windows, bloom, space dust,
    thruster puffs.
-4. **Bodies:** atmospheres, clouds, night lights, the sun's face and corona.
-5. **Stations and gates** redesigned; **ship detail** and liveries.
+6. **Bodies:** atmospheres, clouds, night lights, the sun's face and corona.
+7. **Liveries and detail:** colours by role and maker, damage on hulls, wear.
