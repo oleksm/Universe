@@ -9,7 +9,6 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **FREEFALL** | The game. |
 | **Plurence** | The company making it. |
 | **The universe** | The setting: simply *the universe* (no other name). |
-| **Mining ship** | A ship to turn rock somewhere far into value at a market, and bring its crew home; what it carries follows from the forces in the way (`docs/ships/mining-ship.md`). |
 
 ## The engine and the world
 
@@ -22,6 +21,7 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **The dogma checks** | Tests of the charter's promises against the sheets. | `crates/world/tests/dogma.rs` |
 | **The charted region** | The cube of space play happens in: 200 ly a side, stars at real density (neighbours 4-6 ly), made from the seed. The galaxy beyond is a backdrop for now. | `universe_world::galaxy`, `docs/world/galaxy.md` |
 | **Kinds of constant** | Real, Grounded, Simplified, Invented, Tuning, Planned. | the sheets |
+| **Mining ship** | A ship to turn rock somewhere far into value at a market, and bring its crew home; what it carries follows from the forces in the way (`docs/ships/mining-ship.md`). |
 
 ## The hyper layer (invented, in Dogma)
 
