@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Solution treating and ageing
+  kind: thermal
+  method: heat treatment
+  description: 'Aluminium alloy heated, quenched, then held warm so hardening particles form: 6061 to
+    6061-T6.'
+inputs:
+  materials:
+  - item: aluminium-alloy-6061
+    amount: 1.0
+outputs:
+  products:
+  - item: aluminium-alloy-6061
+    grade: T6
+rate:
+  mode: batch
+equipment:
+  facility: foundry
+quality:
+  property_change: stronger and harder

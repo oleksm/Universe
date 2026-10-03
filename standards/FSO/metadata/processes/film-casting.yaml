@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Film casting
+  kind: mechanical
+  method: casting
+  description: A polymer spread thin and set into film.
+inputs:
+  form: fluid
+outputs:
+  products:
+  - item: polyimide-film
+    form: film
+rate:
+  mode: continuous
+equipment:
+  facility: mill

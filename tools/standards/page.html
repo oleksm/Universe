@@ -116,7 +116,19 @@ const elBySymbol = Object.fromEntries(DATA.elements.map(e => [e.identity.symbol,
 const matMatches = (m, q) => !q || q.split(/\s+/).every(w => `${m.identity.name} ${m.identity.class} ${m.identity.grade || ""}`.toLowerCase().includes(w));
 const materialsUnder = (id, q) => DATA.materials.filter(m => m.under === id && matMatches(m, q));
 const matBySlug = Object.fromEntries(DATA.materials.map(m => [m.slug, m]));
-const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length;
+// And the processes.
+const procMatches = (p, q) => !q || q.split(/\s+/).every(w => `${p.identity.name} ${p.identity.kind} ${p.identity.method || ""} ${p.identity.description || ""}`.toLowerCase().includes(w));
+const processesUnder = (id, q) => DATA.processes.filter(p => p.under === id && procMatches(p, q));
+const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
+const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length;
+// An element or material named in a process: a link to it.
+const itemLink = x => {
+  const e = elBySymbol[x.item], m = matBySlug[x.item];
+  const label = e ? e.identity.name : m ? m.identity.name : (x.name || x.item);
+  const k = e ? "el:" + x.item : m ? "mat:" + x.item : null;
+  const extra = [x.amount !== undefined ? `${x.amount} t/t` : "", x.form || "", x.grade || ""].filter(Boolean).join(", ");
+  return (k ? `<a data-k="${esc(k)}">${esc(label)}</a>` : esc(label)) + (extra ? ` <span class="meta">${esc(extra)}</span>` : "");
+};
 const ofBody = (body, q) => DATA.standards.filter(s => s.body === body.key && matches(s, q));
 
 // What's open, kept between visits (if storage works).
@@ -142,7 +154,7 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0));
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0));
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
@@ -153,6 +165,7 @@ function rows(q) {
         if (n && (open.has("x:" + s.id) || q)) {
           for (const e of elementsUnder(s.id, q)) out.push({ k: "el:" + e.identity.symbol, depth: depth + 1, kind: "el", el: e });
           for (const m of materialsUnder(s.id, q)) out.push({ k: "mat:" + m.slug, depth: depth + 1, kind: "mat", mat: m });
+          for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
         }
       }
     };
@@ -165,8 +178,8 @@ let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
-  if (k.startsWith("el:") || k.startsWith("mat:")) {
-    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : matBySlug[k.slice(4)]; if (!e) return;
+  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:")) {
+    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
     const up = byId[e.under]; if (up) open.add("b:" + up.body);
     keepOpen();
@@ -193,6 +206,9 @@ function render() {
     } else if (n.kind === "mat") {
       const i = n.mat.identity;
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${esc(i.name)} <span class="n">${esc(i.class)}</span></div>`;
+    } else if (n.kind === "proc") {
+      const i = n.proc.identity;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${esc(i.name)} <span class="n">${esc(i.kind)}</span></div>`;
     } else if (n.kind === "std") {
       const twisty = n.n ? (n.isOpen ? "▾" : "▸") : "";
       const count = n.n ? ` <span class="n">(${n.n})</span>` : "";
@@ -205,7 +221,7 @@ function render() {
   }
   document.getElementById("tree").innerHTML = html;
   const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
-  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "");
+  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "");
   document.getElementById("detail").innerHTML = detail(current);
 }
 
@@ -266,16 +282,16 @@ function detail(k) {
     if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
-  if (kind === "el" || kind === "mat") {
-    const e = kind === "el" ? elBySymbol[rest[0]] : matBySlug[rest.join(":")]; if (!e) return "";
+  if (kind === "el" || kind === "mat" || kind === "proc") {
+    const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
     let h = kind === "el" ? `<h2><span style="color:var(--id)">${i.atomic_number} ${esc(i.symbol)}</span> ${esc(i.name)}</h2>` : `<h2>${esc(i.name)}</h2>`;
     if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
-    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : DATA.material_groups)) {
+    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : DATA.process_groups)) {
       if (!e[g]) continue;
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
-      for (const [key, note] of Object.entries(props)) if (key in e[g]) h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
+      for (const [key, note] of Object.entries(props)) if (key in e[g]) h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
       h += `</table>`;
     }
     h += `<div class="file" style="margin-top:24px">standards/${esc(e.file)}</div>`;
@@ -296,6 +312,8 @@ function detail(k) {
   if (els.length) h += periodicTable(els);
   const mats = materialsUnder(s.id, "");
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td><a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
+  const procs = processesUnder(s.id, "");
+  if (procs.length) h += `<h3>Processes</h3><table><tr><th>Process</th><th>Kind</th><th>Goes in</th><th>Comes out</th></tr>${procs.map(p => `<tr><td><a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${esc(p.identity.kind)}</td><td>${(((p.inputs || {}).materials) || []).map(x => esc((elBySymbol[x.item] || matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name)).join(", ")}</td><td>${(((p.outputs || {}).products) || []).map(x => esc((matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name) + (x.form ? ` (${esc(x.form)})` : x.grade ? ` (${esc(x.grade)})` : "")).join(", ")}</td></tr>`).join("")}</table>`;
   if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
     if (sec.title) h += `<h3>${esc(sec.title)}</h3>`;
@@ -329,7 +347,7 @@ function detail(k) {
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
     keepOpen();
   }

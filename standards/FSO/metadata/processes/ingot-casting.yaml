@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Ingot casting
+  kind: mechanical
+  method: casting
+  description: Molten metal poured and cooled into ingots, the starting stock.
+inputs:
+  materials:
+  - item: aluminium-alloy-6061
+    amount: 1.0
+  form: fluid
+outputs:
+  products:
+  - item: aluminium-alloy-6061
+    form: ingot
+rate:
+  mode: batch
+equipment:
+  facility: foundry

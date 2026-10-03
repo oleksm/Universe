@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Aramid synthesis
+  kind: chemical
+  method: polymerisation
+  description: Carbon, hydrogen, nitrogen and oxygen joined into aramid polymer, ready for spinning.
+inputs:
+  materials:
+  - item: C
+  - item: H
+  - item: N
+  - item: O
+outputs:
+  products:
+  - name: aramid polymer
+    form: fluid
+equipment:
+  facility: foundry

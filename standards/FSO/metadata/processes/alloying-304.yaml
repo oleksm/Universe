@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Alloying 304 stainless steel
+  kind: chemical
+  method: alloying
+  description: Iron melted with chromium and nickel into stainless steel.
+inputs:
+  materials:
+  - item: Fe
+    amount: 0.68
+  - item: Cr
+    amount: 0.19
+  - item: Ni
+    amount: 0.095
+  - item: Mn
+    amount: 0.02
+  - item: Si
+    amount: 0.01
+  - item: C
+    amount: 0.0008
+outputs:
+  products:
+  - item: stainless-steel-304
+    form: ingot
+rate:
+  mode: batch
+equipment:
+  facility: foundry

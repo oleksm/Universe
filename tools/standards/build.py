@@ -197,9 +197,9 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "FSO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials = [], []
+elements, materials, processes = [], [], []
 for s in standards:
     if "records" not in s:
         continue
@@ -217,7 +217,7 @@ for s in standards:
         full = os.path.join(folder, name)
         pattern = r"[0-9]{3}-[a-z-]+\.yaml" if kind == "elements" else r"[a-z0-9-]+\.yaml"
         if not re.fullmatch(pattern, name):
-            problem(full, "an element's file is named NNN-<name>.yaml (its atomic number)" if kind == "elements" else "a material's file is named <name>.yaml (lower case, words joined by -)")
+            problem(full, "an element's file is named NNN-<name>.yaml (its atomic number)" if kind == "elements" else "its file is named <name>.yaml (lower case, words joined by -)")
             continue
         e = load(full)
         ident = e.get("identity") or {}
@@ -228,6 +228,12 @@ for s in standards:
             if ident.get("atomic_number") != int(name[:3]):
                 problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
             key = ident.get("symbol")
+        elif kind == "processes":
+            for k in ("name", "kind"):
+                if not ident.get(k):
+                    problem(full, f"identity: no {k}")
+            key = ident.get("name")
+            e["slug"] = name[:-5]
         else:
             for k in ("name", "class"):
                 if not ident.get(k):
@@ -249,9 +255,22 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        (elements if kind == "elements" else materials).append(e)
+        {"elements": elements, "materials": materials, "processes": processes}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
+# (A process's inputs and outputs name elements by symbol, materials by file name.)
+symbols = {(e.get("identity") or {}).get("symbol") for e in elements}
+slugs = {m.get("slug") for m in materials}
+for pr in processes:
+    where = os.path.join(TREE, pr["file"])
+    for group in ("inputs", "outputs"):
+        for listed in ("materials", "consumables", "products", "by_products", "waste"):
+            for x in (pr.get(group) or {}).get(listed, []) or []:
+                item = x.get("item")
+                if item is None and not x.get("name"):
+                    problem(where, f"{group}.{listed}: an entry needs item or name")
+                elif item is not None and item not in symbols and item not in slugs:
+                    problem(where, f"{group}.{listed}: '{item}' is no element's symbol and no material's file name")
 
 ids = {s["id"] for s in standards}
 for s in standards:
@@ -328,6 +347,8 @@ def write_html():
         "brands": BRANDS,
         "elements": elements,
         "materials": materials,
+        "processes": processes,
+        "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["processes"]["properties"].items()},
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["elements"]["properties"].items()},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["materials"]["properties"].items()},
@@ -349,5 +370,5 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
-print(f"{len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials")
+print(f"{len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes")
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron")

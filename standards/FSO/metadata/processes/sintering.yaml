@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Sintering
+  kind: thermal
+  method: sintering
+  description: Powder pressed and heated until its grains bond into a dense solid, without melting.
+inputs:
+  materials:
+  - item: silicon-carbide
+    amount: 1.0
+  form: powder
+outputs:
+  products:
+  - item: silicon-carbide
+    form: plate
+rate:
+  mode: batch
+equipment:
+  facility: foundry

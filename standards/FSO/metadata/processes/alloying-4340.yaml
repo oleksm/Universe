@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Alloying 4340 steel
+  kind: chemical
+  method: alloying
+  description: Iron melted with nickel, chromium, molybdenum and carbon into high-strength steel.
+inputs:
+  materials:
+  - item: Fe
+    amount: 0.957
+  - item: Ni
+    amount: 0.018
+  - item: Cr
+    amount: 0.008
+  - item: Mn
+    amount: 0.008
+  - item: C
+    amount: 0.004
+  - item: Si
+    amount: 0.0025
+  - item: Mo
+    amount: 0.0025
+outputs:
+  products:
+  - item: high-strength-steel-4340
+    form: ingot
+rate:
+  mode: batch
+equipment:
+  facility: foundry

@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Carbide synthesis
+  kind: chemical
+  method: synthesis
+  description: Silicon and carbon reacted at high heat into silicon carbide powder.
+inputs:
+  materials:
+  - item: Si
+    amount: 0.7
+  - item: C
+    amount: 0.3
+outputs:
+  products:
+  - item: silicon-carbide
+    form: powder
+rate:
+  mode: batch
+equipment:
+  facility: foundry

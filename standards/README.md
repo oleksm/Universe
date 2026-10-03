@@ -19,6 +19,8 @@ standards/
         026-iron.yaml           NNN-<name>.yaml, its atomic number; to schema/element.schema.yaml
       materials/                the materials, under FSO 5 (its `records: materials`)
         fused-silica.yaml       <name>.yaml; to schema/material.schema.yaml
+      processes/                material processes, under FSO 7 (its `records: processes`)
+        rolling.yaml            <name>.yaml; to schema/process.schema.yaml
 ```
 
 - **Numbers are permanent:** `FSO 1` stays `FSO 1` whatever it's later filed under (as ISO

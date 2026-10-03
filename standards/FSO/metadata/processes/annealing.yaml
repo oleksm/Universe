@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Annealing
+  kind: thermal
+  method: heat treatment
+  description: A metal heated and slowly cooled to soften it and relieve its stresses.
+inputs:
+  materials:
+  - item: stainless-steel-304
+    amount: 1.0
+outputs:
+  products:
+  - item: stainless-steel-304
+    grade: annealed
+rate:
+  mode: batch
+equipment:
+  facility: foundry
+quality:
+  property_change: softer, more ductile, less strong

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Polymerisation of polyethylene
+  kind: chemical
+  method: polymerisation
+  description: Carbon and hydrogen (as ethylene) joined into long polyethylene chains.
+inputs:
+  materials:
+  - item: C
+  - item: H
+outputs:
+  products:
+  - item: polyethylene-uhmw
+    form: powder
+equipment:
+  facility: foundry

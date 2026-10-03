@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Wire drawing
+  kind: mechanical
+  method: drawing
+  description: Rod pulled through smaller and smaller dies into wire.
+inputs:
+  materials:
+  - item: copper
+    amount: 1.0
+  form: rod
+outputs:
+  products:
+  - item: copper
+    form: wire
+rate:
+  mode: continuous
+equipment:
+  facility: mill

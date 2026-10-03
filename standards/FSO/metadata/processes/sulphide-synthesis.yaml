@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Sulphide synthesis
+  kind: chemical
+  method: synthesis
+  description: Molybdenum and sulphur reacted into molybdenum disulphide powder.
+inputs:
+  materials:
+  - item: Mo
+    amount: 0.599
+  - item: S
+    amount: 0.401
+outputs:
+  products:
+  - item: molybdenum-disulphide
+    form: powder
+equipment:
+  facility: foundry
