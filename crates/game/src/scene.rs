@@ -206,67 +206,64 @@ fn galaxy(frame: &mut Frame, app: &App, starlight: f32) {
     }
 }
 
-/// Between gates: rings rushing past, straight ahead.
-/// Through a gate: a push across the space between the two stars. The eye
-/// rides the line from the star left to the star ahead (easing up to speed
-/// and down again over the transit), turned so the destination is dead
-/// ahead of the nose: the stars round about stream past and streak, the
-/// sun left behind dwindles, the one ahead swells; a flash leaving one gate
-/// and coming out of the other. Our ship rides it, its drive full.
+/// Through a gate: inside the tube. Rings of the held medium rush past
+/// (quickening as we go in), wavering with its unstable flow, their light
+/// drifting between cyan and amber down the tube; streaks of plasma run along
+/// its wall; the far end's light grows as the crossing nears its end; a flash
+/// going in and coming out. Our ship rides it, its drive full.
 fn transit_push(frame: &mut Frame, app: &App) {
-    let ShipState::Transit { to, from, remaining, duration, .. } = app.ship.state else { return };
-    let g = &app.charts.galaxy;
-    let (a, b) = (g.stars[from].position, g.stars[to].position);
-    let p = (1.0 - remaining / duration.max(1e-6)).clamp(0.0, 1.0);
-    let ease = |p: f64| (1.0 - (p * std::f64::consts::PI).cos()) * 0.5;
-    let at = a + (b - a) * ease(p);
-    // (A moment ago: where each star's streak starts.)
-    let before = a + (b - a) * ease((p - 0.012).max(0.0));
+    let ShipState::Transit { remaining, duration, .. } = app.ship.state else { return };
+    let since = duration - remaining;
+    let p = (since / duration.max(1e-6)).clamp(0.0, 1.0);
     let cam = frame.camera.position;
-    let ahead = frame.camera.forward().as_dvec3();
-    let turn = DQuat::from_rotation_arc((b - a).normalize(), ahead);
-    let sky = 1.0e5;
-    for (i, s) in g.stars.iter().enumerate() {
-        let rel = s.position - at;
-        let d = rel.length().max(1e-3);
-        let flux = s.class.luminosity() / (d * d);
-        let bright = ((flux.log10() + 8.0) / 6.0).clamp(0.15, 1.0) as f32;
-        let c = color(s.class.color()).scale(bright);
-        let dir = turn * (rel / d);
-        if i == from || i == to {
-            // The two suns: a glow, its size by how much light reaches us.
-            let size = (flux.sqrt() * 2.0e3).clamp(150.0, 6.0e3);
-            let [r, gg, bb] = s.class.color();
-            let k = (flux.sqrt() * 4.0).clamp(0.6, 6.0) as f32;
-            frame.glow(cam + dir * sky, size, [r * k, gg * k, bb * k], 2.0);
-            continue;
-        }
-        let was = turn * (s.position - before).normalize_or_zero();
-        // (Near ones swept a way across the sky since a moment ago: streaks.)
-        if dir.angle_between(was) > 0.002 {
-            frame.line(cam + was * sky, cam + dir * sky, c);
-        } else {
-            frame.sky_point(dir.as_vec3(), c);
-        }
+    let fwd = frame.camera.forward().as_dvec3();
+    let (u, v) = (fwd.any_orthonormal_vector(), fwd.cross(fwd.any_orthonormal_vector()));
+    let t = app.now();
+    // Up to speed over the first 3 s: how far we've come down the tube (m).
+    const SPEED: f64 = 1400.0;
+    let gone = SPEED * if since < 3.0 { since * since / 6.0 } else { since - 1.5 };
+    let pace = (since / 3.0).min(1.0) as f32;
+    // The tube's line wavers (its flow is unstable): its centre at a distance ahead.
+    let sway = |z: f64| {
+        let w = z + gone;
+        (u * (w * 0.0021 + t * 1.1).sin() + v * (w * 0.0017 + t * 0.8).cos()) * 45.0 * (z / 600.0).min(1.0)
+    };
+    let hue = |z: f64| {
+        let k = (0.5 + 0.5 * ((z + gone) / 900.0 + t * 0.35).sin()) as f32;
+        [0.35 + 0.65 * k, 0.78 - 0.08 * k, 1.0 - 0.7 * k]
+    };
+    const SPACING: f64 = 110.0;
+    const RINGS: usize = 44;
+    let shift = gone.rem_euclid(SPACING);
+    for k in 0..RINGS {
+        let z = k as f64 * SPACING - shift + 30.0;
+        let fade = (1.0 - z / (RINGS as f64 * SPACING)).clamp(0.0, 1.0) as f32;
+        let radius = 230.0 * (1.0 + 0.07 * ((z + gone) * 0.011 + t * 2.3).sin());
+        let centre = cam + fwd * z + sway(z);
+        let [r, g, b] = hue(z);
+        let k = fade * (0.35 + 0.65 * pace) * 1.6;
+        // (A bright line in a softer halo.)
+        frame.circle(centre, fwd, radius, 48, Color([r * k, g * k, b * k, 1.0]));
+        frame.circle(centre, fwd, radius * 1.04, 48, Color([r * k * 0.35, g * k * 0.35, b * k * 0.35, 1.0]));
     }
-    // The push itself: streaks of light flowing past along the way, round
-    // the eye, longer and brighter the faster (still at the ends, long at
-    // the middle). Each loops along its own lane as the path goes by.
-    let speed = (p * std::f64::consts::PI).sin();
-    let (u, v) = (ahead.any_orthonormal_vector(), ahead.cross(ahead.any_orthonormal_vector()));
-    let travelled = ease(p) * 90.0;
-    const LANE: f64 = 1600.0;
-    for i in 0..360u32 {
+    // Plasma along the wall: streaks flowing past, longer the faster.
+    for i in 0..64u32 {
         let h = |n: u32| ((i.wrapping_mul(2_654_435_761) ^ n.wrapping_mul(40_503)) % 10_000) as f64 / 10_000.0;
-        let ang = h(1) * std::f64::consts::TAU;
-        let radius = 40.0 + 500.0 * h(2) * h(2);
-        let along = (h(3) - travelled).rem_euclid(1.0) * LANE - LANE * 0.3;
-        let at = cam + (u * ang.cos() + v * ang.sin()) * radius + ahead * along;
-        let length = 4.0 + 420.0 * speed;
-        let fade = (1.0 - (along / (LANE * 0.7)).abs()).clamp(0.0, 1.0) as f32;
-        let k = (0.25 + 0.75 * speed as f32) * fade * (0.4 + 0.6 * h(4) as f32);
-        frame.line(at, at - ahead * length, Color([0.75 * k, 0.85 * k, 1.0 * k, 1.0]));
+        let ang = h(1) * std::f64::consts::TAU + t * 0.15;
+        let lane = RINGS as f64 * SPACING;
+        // (From a little way ahead: right by the eye a streak is a smear across the view.)
+        let z = 250.0 + (h(2) * lane - gone * (0.8 + 0.4 * h(3))).rem_euclid(lane - 250.0);
+        let wall = 215.0 + 12.0 * h(4);
+        let at = cam + fwd * z + sway(z) + (u * ang.cos() + v * ang.sin()) * wall;
+        let length = 30.0 + 260.0 * pace as f64;
+        let fade = ((1.0 - z / lane) * (0.4 + 0.6 * h(5))) as f32 * pace;
+        let [r, g, b] = hue(z);
+        frame.line(at, at - fwd * length, Color([(r + 0.4) * fade, (g + 0.4) * fade, (b + 0.4) * fade, 1.0]));
     }
+    // The far end: a light down the tube, growing as we near it.
+    let end = cam + fwd * 6_000.0 + sway(6_000.0);
+    let near_end = (p * p) as f32;
+    frame.glow(end, 150.0 + 1_400.0 * p * p, [0.6 + 2.0 * near_end, 0.8 + 2.0 * near_end, 1.0 + 2.0 * near_end], 3.0);
     // Our ship, its drive full (chase view).
     if app.chase_cam && matches!(app.v.crew.place, universe_sim::world::Place::Seat) {
         let t = Transform { position: app.view.ship_pos, rotation: app.ship.orientation.as_quat(), scale: 1.0 };
@@ -278,8 +275,8 @@ fn transit_push(frame: &mut Frame, app: &App) {
             jets(frame, &burning, app.view.ship_pos, app.ship.orientation, app.now(), usize::MAX);
         });
     }
-    // The flashes: leaving the gate, and coming out of its twin.
-    let flash = (1.0 - p / 0.06).max(0.0).max(((p - 0.94) / 0.06).max(0.0)) as f32;
+    // The flashes: going in (the first second), and coming out (the last).
+    let flash = (1.0 - since).max(1.0 - remaining).max(0.0) as f32;
     if flash > 0.0 {
         frame.hud_rect(Vec2::ZERO, frame.size(), Color([0.85, 0.92, 1.0, flash * 0.85]));
     }
@@ -288,6 +285,8 @@ fn transit_push(frame: &mut Frame, app: &App) {
 /// How long a gate flashes as a ship goes through it, and before one comes
 /// out of it (s).
 const GATE_FLASH: f64 = 2.5;
+/// How long the plasma a ship pushes through a gate takes to fade out past it (s).
+const GATE_PULSE: f64 = 4.0;
 
 /// Other ships going through the gates here: a flash where one crosses the
 /// ring and is gone (a burst in the ring's plane, a streak out along its
@@ -307,7 +306,7 @@ fn gate_flashes(frame: &mut Frame, app: &App) {
             continue;
         };
         let Some(g) = gate else { continue };
-        if !(0.0..GATE_FLASH).contains(&since) {
+        if !(0.0..if leaving { GATE_PULSE } else { GATE_FLASH }).contains(&since) {
             continue;
         }
         let f = GateFrame::new(sys, g, app.now(), &app.view.positions);
@@ -316,7 +315,7 @@ fn gate_flashes(frame: &mut Frame, app: &App) {
         if frame.projected_radius(at, 400.0) < 0.5 {
             continue;
         }
-        let k = since / GATE_FLASH;
+        let k = since / if leaving { GATE_PULSE } else { GATE_FLASH };
         // A starburst in the ring's plane, white at its heart.
         let u = f.rotation * DVec3::X;
         let v = axis.cross(u);
@@ -332,11 +331,29 @@ fn gate_flashes(frame: &mut Frame, app: &App) {
             frame.point(at, Color::WHITE.scale(bright));
         };
         if leaving {
-            // Out: the burst flaring and spreading, and a streak out through the ring.
-            let bright = (1.0 - k) as f32;
-            burst(frame, 150.0 + 650.0 * k, 50.0 + 800.0 * k, bright);
-            // (Through it, the way it leads.)
-            frame.line(at, at + axis * 4000.0 * (1.0 - k), Color::WHITE.scale(bright));
+            // In through the ring, and the plasma it pushed goes out the far side:
+            // the ring flaring, then a pulse shooting off along the axis the way
+            // the tube runs, quickening, narrowing, a trail of the ring behind it.
+            let ring = universe_sim::world::gate::GATE_RADIUS;
+            let flare = (1.0 - k * 3.0).max(0.0) as f32;
+            if flare > 0.0 {
+                frame.circle(f.center, axis, ring, 64, Color::hex(0x9fe8ff).scale(flare * 1.5));
+                frame.glow(f.center, ring * 0.8, [0.5 * flare, 0.8 * flare, 1.2 * flare], 4.0);
+            }
+            let fade = (1.0 - k).powf(0.7) as f32;
+            let reach = 25_000.0 * k.powf(1.5) + 800.0 * k;
+            let front = f.center + axis * reach;
+            for i in 0..12 {
+                let s = i as f64 / 12.0;
+                let c = f.center + axis * reach * s;
+                let r = ring * (1.0 - s * 0.85);
+                let glow = fade * (0.4 + 1.2 * s as f32);
+                frame.circle(c, axis, r, 48, Color([0.6 * glow, 0.8 * glow, 1.0 * glow, 1.0]));
+                frame.glow(c, r * 0.5, [0.25 * glow, 0.35 * glow, 0.6 * glow], 1.0);
+            }
+            frame.line(f.center, front, Color([0.8 * fade, 0.9 * fade, 1.0 * fade, 1.0]));
+            frame.glow(front, 700.0 + 1_500.0 * k, [3.0 * fade, 4.0 * fade, 6.0 * fade], 8.0);
+            let _ = burst;
         } else {
             // In: light gathering to a point where it will come out.
             burst(frame, 150.0 + 650.0 * (1.0 - k), 50.0 + 800.0 * (1.0 - k), (k as f32).max(0.25));

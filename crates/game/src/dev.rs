@@ -475,7 +475,8 @@ pub fn apply(app: &mut App, name: &str) {
                         if status.phase == Phase::Final && status.distance < 1500.0);
                     let stop = match name {
                         "gateauto" => running,
-                        "transit" => matches!(app.engine.universe().ship.state, ShipState::Transit { remaining, .. } if remaining < std::env::var("UNIVERSE_LEFT").ok().and_then(|v| v.parse().ok()).unwrap_or(3.5)),
+                        // (So far into the tube: UNIVERSE_SINCE s, 20 by default.)
+                        "transit" => matches!(app.engine.universe().ship.state, ShipState::Transit { remaining, duration, .. } if duration - remaining > std::env::var("UNIVERSE_SINCE").ok().and_then(|v| v.parse().ok()).unwrap_or(20.0)),
                         _ => app.engine.universe().ship_system != home && app.engine.universe().ship.is_flying(),
                     };
                     if stop {
@@ -540,8 +541,16 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship.position = f.center + f.axis() * 9_000.0 + f.rotation * DVec3::X * 2_500.0;
             u.ship.velocity = f.velocity;
             u.ship.orientation = universe_sim::ship::facing(f.center - u.ship.position, f.rotation * DVec3::Z);
+            // (UNIVERSE_SIDE: side on instead, 25 km off its axis, looking at the way out of it.)
+            if std::env::var("UNIVERSE_SIDE").is_ok() {
+                let look = f.center + f.axis() * 7_000.0;
+                u.ship.position = look + f.rotation * DVec3::X * 25_000.0;
+                u.ship.orientation = universe_sim::ship::facing(look - u.ship.position, f.rotation * DVec3::Z);
+            }
             const TRANSIT_TIME: f64 = 10.0;
-            for (k, (from, to, remaining, at)) in [(home, dest, TRANSIT_TIME - 0.4, DVec3::new(400.0, 0.0, 250.0)), (dest, home, 0.5, DVec3::new(-500.0, 0.0, -300.0))].into_iter().enumerate() {
+            // (How long since the first went in: UNIVERSE_SINCE s, 0.4 by default.)
+            let since = std::env::var("UNIVERSE_SINCE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.4);
+            for (k, (from, to, remaining, at)) in [(home, dest, TRANSIT_TIME - since, DVec3::new(400.0, 0.0, 250.0)), (dest, home, 0.5, DVec3::new(-500.0, 0.0, -300.0))].into_iter().enumerate() {
                 let c = &mut u.crafts[k];
                 c.system = from;
                 c.ship.state = ShipState::Transit { to, from, remaining, duration: TRANSIT_TIME, local_velocity: DVec3::Y * 80.0, local_offset: at, local_orientation: universe_engine::glam::DQuat::IDENTITY };
@@ -1190,7 +1199,7 @@ pub fn apply(app: &mut App, name: &str) {
                 let room = app.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
                 room.update(&app.charts, &app.v.realm, now, &app.v.kills, &app.v.trade_log);
                 let casts = room.broadcasts();
-                let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true };
+                let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true, in_tube: false };
                 app.news.update(&app.charts, &app.v.realm, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
             }
             log::info!("scenario newsdesk: {} digests", app.newsroom.as_ref().map_or(0, |r| r.digests.len()));

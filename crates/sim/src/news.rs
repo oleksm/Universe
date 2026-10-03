@@ -56,6 +56,8 @@ pub struct Listener {
     pub comm: Comm,
     /// The player's own: what it does itself it knows at once.
     pub player: bool,
+    /// In a gate's tube: off the net (nothing gets in or out till it's through).
+    pub in_tube: bool,
 }
 
 /// A broadcast put out at a place: (what it is, when, its system, where).
@@ -155,7 +157,7 @@ impl Knowledge {
         // Our lag from the backbone, if we're on the net.
         let ours = {
             let n = self.net(charts, realm, us.system, now);
-            n.net.status(&n.sys, &n.positions, us.at, &us.comm).map(|s| s.lag)
+            n.net.status(&n.sys, &n.positions, us.at, &us.comm).map(|s| s.lag).filter(|_| !us.in_tube)
         };
         let to_us = self.delays_to_us(charts, realm, us.system, now);
         let happenings = kills
@@ -241,7 +243,7 @@ mod tests {
         // (Out from the station away from its world, so the world doesn't stand in the way.)
         let out = (station - positions[sys.bodies[sys.station().unwrap()].rail.parent.unwrap()]).normalize();
         let kills = [kill(home, station + out * 2.0e8, 1), kill(home, DVec3::new(1.0e14, 0.0, 0.0), 2), kill(next, their[there.station().unwrap()], 3)];
-        let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm, player: true };
+        let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm, player: true, in_tube: false };
         let mut news = Knowledge::default();
         news.update(&charts, &realm, 2.0, &us, &Happenings { kills: &kills, ..Default::default() });
         let heard = |n: &Knowledge, k: &Kill| n.heard(&Key::kill(k));

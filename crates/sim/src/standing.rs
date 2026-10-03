@@ -204,7 +204,7 @@ impl Universe {
             let mut positions = Vec::new();
             sys.positions(now, &mut positions);
             let Some(comm) = realm.nodes(&charts.galaxy, &sys).into_iter().find(|n| n.at == NodeAt::Body(d.station)).map(|n| n.comm) else { continue };
-            d.knows.update(&charts, &realm, now, &Listener { system: d.system, at: positions[d.station], comm, player: false }, &crate::news::Happenings { kills: &kills, trades: &trades, broadcasts: &[], sightings: &sightings });
+            d.knows.update(&charts, &realm, now, &Listener { system: d.system, at: positions[d.station], comm, player: false, in_tube: false }, &crate::news::Happenings { kills: &kills, trades: &trades, broadcasts: &[], sightings: &sightings });
             let ours = |system: usize| realm.holder_index(system) == Some(faction);
             // (Its space, or one of its own: a deed against a member counts wherever it's heard.)
             let members = &self.standings.members;

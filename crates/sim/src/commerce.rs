@@ -271,7 +271,12 @@ impl Universe {
             let held = held.into_iter().filter(|i| !live.iter().any(|q| q.offer.item == *i)).map(|i| (i, self.quote_for(f, i))).collect();
             return crate::engine::MarketView { market: f, quotes: live, banned, held, age: Some(0.0) };
         }
-        let known = self.boards.known_at(self.ship_system, f, self.ship.position, &self.ship.spec().comm, self.world.time);
+        // (In a gate's tube we're off the net: what we knew going in.)
+        let when = match self.ship.state {
+            universe_world::ShipState::Transit { remaining, duration, .. } => self.world.time - (duration - remaining),
+            _ => self.world.time,
+        };
+        let known = self.boards.known_at(self.ship_system, f, self.ship.position, &self.ship.spec().comm, when).map(|(age, b)| (age + self.world.time - when, b));
         let Some((age, board)) = known else { return crate::engine::MarketView { market: f, quotes: Vec::new(), banned, held: Vec::new(), age: None } };
         // (What it listed then, in its listing's order; and what we hold besides.)
         let quotes: Vec<Quote> = live.iter().filter_map(|q| board.get(q.offer.item).copied().flatten()).collect();
