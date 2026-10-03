@@ -75,6 +75,10 @@ bpy.ops.object.join()
 hull = bpy.context.active_object
 hull.name = "hull"
 
+# Turned to the convention: the nose along +Y (it was built nose to -Y).
+hull.rotation_euler = (0, 0, math.pi)
+bpy.ops.object.transform_apply(rotation=True)
+
 # Flat-ish shading with sharp chamfers: smooth by angle.
 bpy.ops.object.shade_auto_smooth(angle=math.radians(35))
 
@@ -177,5 +181,50 @@ nt.links.new(te.outputs["Color"], bsdf.inputs["Emission Color"])
 bsdf.inputs["Emission Strength"].default_value = 4.0
 hull.data.materials.append(mat)
 
-bpy.ops.export_scene.gltf(filepath=out, export_format="GLB", export_tangents=True, export_apply=True, export_yup=True)
+# --- The hull's conventions (see crates/world/src/import.rs).
+def collider(name, size, loc):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
+    o = bpy.context.active_object
+    o.name = name
+    o.scale = size
+    bpy.ops.object.transform_apply(scale=True)
+    o.display_type = "WIRE"
+collider("COL_body", (6.6, 31.0, 6.0), (0, 1.5, 0.6))
+for x in (-5.6, 5.6):
+    collider("COL_pod_%s" % ("l" if x < 0 else "r"), (3.9, 11.5, 3.9), (x, -7.0, -0.4))
+
+def empty(name, loc, toward):
+    """An empty whose +Y arrow points `toward` (a unit axis: exhaust, way out, view)."""
+    bpy.ops.object.empty_add(type="ARROWS", location=loc)
+    o = bpy.context.active_object
+    o.name = name
+    o.rotation_mode = "QUATERNION"
+    from mathutils import Vector
+    o.rotation_quaternion = Vector((0, 1, 0)).rotation_difference(Vector(toward))
+    return o
+
+# Main drive aft (the nose is +Y, so aft is -Y): exhaust astern.
+for k, x in enumerate((-1.4, 1.4)):
+    empty("nozzle_main_%d" % k, (x, -14.4, -0.2), (0, -1, 0))
+# Manoeuvring quads at the four corners: up, down, out, fore, aft.
+for end, y in (("nose", 11.0), ("tail", -10.0)):
+    for side, sx in (("left", -1), ("right", 1)):
+        base = (sx * 3.4, y, 1.2)
+        for d, v in (("up", (0, 0, 1)), ("down", (0, 0, -1)), ("side", (sx, 0, 0)), ("fore", (0, 1, 0)), ("aft", (0, -1, 0))):
+            empty("nozzle_%s_%s_%s" % (end, side, d), base, v)
+# Belly lift jets: exhaust down.
+for k, (x, y) in enumerate(((-2.0, 8.0), (2.0, 8.0), (-2.0, -6.0), (2.0, -6.0))):
+    empty("nozzle_lift_%d" % k, (x, y, -2.6), (0, 0, -1))
+# Landing gear under it.
+for k, (x, y) in enumerate(((-2.2, 9.0), (2.2, 9.0), (0.0, -8.0))):
+    empty("gear_%d" % k, (x, y, -2.7), (0, 0, -1))
+empty("cockpit", (0, 14.5, 1.0), (0, 1, 0))
+empty("mount_hardpoint_1", (-2.0, 12.0, -2.4), (0, 1, 0))
+empty("mount_hardpoint_2", (2.0, 12.0, -2.4), (0, 1, 0))
+empty("mount_cargo", (0, -1.0, 0.0), (0, 1, 0))
+empty("mount_utility", (0, 2.0, 2.6), (0, 1, 0))
+bpy.context.scene["freefall_name"] = "TEST MINER"
+bpy.context.scene["freefall_class"] = 2
+
+bpy.ops.export_scene.gltf(filepath=out, export_format="GLB", export_tangents=True, export_apply=True, export_yup=True, export_extras=True)
 print("wrote", out, len(hull.data.polygons), "faces")

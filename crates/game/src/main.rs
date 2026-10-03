@@ -359,6 +359,23 @@ impl App {
         let name = app.view.system.bodies[app.view.system.station().unwrap_or(0)].name.clone();
         app.say(format!("WELCOME TO {}", name.to_uppercase()));
         app.say("J POWERS UP, SHIFT+E LIFTS OFF - F1 FOR CONTROLS".into());
+        // A hull imported from a glTF file, the ship we fly (`UNIVERSE_HULL=file.glb`).
+        if let Ok(path) = std::env::var("UNIVERSE_HULL") {
+            match std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, &path)) {
+                Ok(h) => {
+                    let u = app.engine.universe();
+                    u.ship.class = h;
+                    u.ship.refresh();
+                    u.ship.fuel = u.ship.spec().fuel_capacity;
+                    u.ship.energy = u.ship.spec().capacitor_capacity;
+                    let name = u.ship.spec().name.clone();
+                    app.say(format!("FLYING {name}"));
+                    app.engine.refresh();
+                    app.v = app.engine.view();
+                }
+                Err(e) => app.say(format!("HULL {path}: {e}").to_uppercase()),
+            }
+        }
         if let Ok(name) = std::env::var("UNIVERSE_SCENARIO") {
             dev::apply(&mut app, &name);
             app.engine.refresh();

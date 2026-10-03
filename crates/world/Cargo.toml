@@ -6,6 +6,8 @@ version.workspace = true
 # The world: content, structures, ships and their devices, world rules and
 # services. Built on Dogma; knows nothing about navigation.
 [dependencies]
+gltf = { version = "1", default-features = false, features = ["utils", "names", "extras"] }
+serde_json.workspace = true
 universe-protocol = { path = "../protocol" }
 universe-prof = { path = "../prof" }
 universe-physics = { path = "../physics" }

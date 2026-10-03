@@ -28,6 +28,8 @@ pub struct ClassSpec {
     pub shape_ref: crate::content::Handle<crate::shape::Shape>,
     /// A designed hull's own shape (not in the content: see `design`).
     pub shape_own: Option<&'static crate::shape::Shape>,
+    /// An imported hull's model (a glTF file's path: see `import`), drawn as made.
+    pub visual: Option<String>,
     /// The frame alone (kg), its slots, and what's fitted in them.
     pub frame_mass: f64,
     pub slots: Vec<Slot>,
@@ -526,6 +528,7 @@ impl ClassSpec {
             shape: shape_key,
             shape_ref,
             shape_own: None,
+            visual: None,
             frame_mass: frame.frame_mass,
             slots: frame.slots.clone(),
             fit,

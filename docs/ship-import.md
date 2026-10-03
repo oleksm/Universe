@@ -1,0 +1,38 @@
+# Importing a ship from Blender (glTF)
+
+A ship modelled in Blender (or any tool that writes glTF 2.0) becomes a hull like any other: it
+renders as made (textured, physically based) and flies by its physics. Example and template:
+`tools/blender/test_hull.py` (builds `assets/models/test_hull.glb` headless).
+
+## Conventions
+
+| In Blender | Means |
+|---|---|
+| Nose along **+Y**, up **+Z**, metres | the ship's frame (the exporter turns it into ours) |
+| Meshes named `COL_…` | convex collision parts (`COL_body` first); hidden in the game. None: the whole model's convex hull |
+| Every other mesh | what's drawn (glTF metallic-roughness materials: base colour, metallic/roughness, normal map, emission) |
+| Empties named `nozzle_main_…` | the main drive's nozzles (driven by its drive slot) |
+| `nozzle_lift_…` | lift jets (the lift slot) |
+| any other `nozzle_…` | manoeuvring thrusters (the thrusters slot) |
+| `gear_…`, `dock_…`, `cockpit` | landing contacts, docking ports, the pilot's seat |
+| `mount_hardpoint_…`, `mount_cargo…`, `mount_utility…` | one slot each (guns, racks, utility); other `mount_<slot>` set where that module sits |
+| An empty's **+Y arrow** | a nozzle's exhaust; a port's way out; the pilot's view |
+| Scene properties `freefall_name`, `freefall_class` (1-4) | its name; its size class (how big its slots are) |
+
+Blender's `.001` suffixes are ignored. Export: glTF Binary (`.glb`), **Tangents** and **Custom
+Properties** on, **+Y Up** on.
+
+## What follows from it
+
+Its slots are standard for its class; its stock fit the cheapest module for each with a plant big
+enough; its frame's mass from its size (as a design's); then everything about how it flies from
+the physics: its mass and inertia from where its modules sit inside it, its thrust and turning
+from where its nozzles push. Nothing is balanced by hand.
+
+## Trying it
+
+    UNIVERSE_HULL=your_ship.glb cargo run --release
+
+(you fly it), or to look at it alone:
+
+    UNIVERSE_SCENARIO=showcase UNIVERSE_MODEL=your_ship.glb UNIVERSE_MODEL_CLEAN=1 cargo run --release

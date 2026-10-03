@@ -2493,9 +2493,11 @@ name = "universe-world"
 version = "0.1.0"
 dependencies = [
  "glam",
+ "gltf",
  "rayon",
  "ron",
  "serde",
+ "serde_json",
  "universe-physics",
  "universe-prof",
  "universe-protocol",

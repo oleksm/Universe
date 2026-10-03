@@ -39,6 +39,21 @@ impl Models {
     }
 }
 
+/// An imported hull's model (its glTF file), loaded once and kept.
+pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
+    use std::collections::HashMap;
+    use std::sync::{Mutex, OnceLock};
+    static LOADED: OnceLock<Mutex<HashMap<String, Option<universe_engine::PbrModel>>>> = OnceLock::new();
+    let mut loaded = LOADED.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
+    loaded
+        .entry(path.to_string())
+        .or_insert_with(|| {
+            let r = std::fs::read(path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf(&b));
+            r.map_err(|e| log::warn!("model {path}: {e}")).ok()
+        })
+        .clone()
+}
+
 impl Models {
     /// A ship's model in paint scheme `scheme` (see `SCHEMES`).
     pub fn painted(&self, ship: &universe_sim::world::Ship, scheme: usize) -> &Mesh {

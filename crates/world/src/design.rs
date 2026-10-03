@@ -22,12 +22,12 @@ use crate::modules::{Does, Module, SlotKind};
 use crate::ship::{ClassSpec, Hull};
 
 /// The frame's mass per square metre of its size (V^⅔: its skin, roughly), kg.
-const FRAME_PER_AREA: f64 = 108.0;
+pub(crate) const FRAME_PER_AREA: f64 = 108.0;
 /// What a kilogram of frame costs, and a size of slot (credits).
-const PRICE_PER_KG: f64 = 3.0;
-const PRICE_PER_SLOT_SIZE: f64 = 2000.0;
+pub(crate) const PRICE_PER_KG: f64 = 3.0;
+pub(crate) const PRICE_PER_SLOT_SIZE: f64 = 2000.0;
 /// The energy that wrecks the hull per kilogram of frame (J).
-const STRENGTH_PER_KG: f64 = 600.0;
+pub(crate) const STRENGTH_PER_KG: f64 = 600.0;
 
 /// A hull as designed (metres; positions along the body as shares of its
 /// length from its middle, + aft).
@@ -268,32 +268,7 @@ impl Design {
 
     /// Its slots: (name, kind, size).
     fn slots(&self) -> Vec<(String, SlotKind, u8)> {
-        let c = self.class.clamp(1, 4);
-        let big = (c + 1).min(4);
-        let mut s = vec![
-            ("power".to_string(), SlotKind::Power, c),
-            ("drive".into(), SlotKind::Drive, c),
-            ("thrusters".into(), SlotKind::Thrusters, c),
-            ("lift".into(), SlotKind::Lift, c),
-            ("tank".into(), SlotKind::Tank, big),
-            ("hyperdrive".into(), SlotKind::Hyperdrive, c),
-            ("computer".into(), SlotKind::Computer, 1),
-            ("transponder".into(), SlotKind::Transponder, 1),
-            ("sensors".into(), SlotKind::Sensors, 1),
-            ("comm".into(), SlotKind::Comm, 1),
-            ("life".into(), SlotKind::LifeSupport, c.min(2)),
-            ("avionics".into(), SlotKind::Avionics, 1),
-        ];
-        for k in 0..self.racks {
-            s.push((if k == 0 { "cargo".to_string() } else { format!("cargo_{}", k + 1) }, SlotKind::Cargo, big));
-        }
-        for k in 0..self.hardpoints {
-            s.push((format!("hardpoint_{}", k + 1), SlotKind::Hardpoint, 1));
-        }
-        for k in 0..self.utility {
-            s.push((if k == 0 { "utility".to_string() } else { format!("utility_{}", k + 1) }, SlotKind::Utility, c.min(2)));
-        }
-        s
+        standard_slots(self.class, self.racks, self.hardpoints, self.utility)
     }
 
     /// The body's half-width and half-height at `z` (it tapers to the nose
@@ -466,10 +441,42 @@ impl Design {
     }
 }
 
+/// A hull's slots by its size class (1..4: how big its slots are), with its
+/// cargo racks, hardpoints and utility slots: the base blocks, the lift, the
+/// tank, the hyperdrive.
+pub(crate) fn standard_slots(class: u8, racks: u8, hardpoints: u8, utility: u8) -> Vec<(String, SlotKind, u8)> {
+    let c = class.clamp(1, 4);
+    let big = (c + 1).min(4);
+    let mut s = vec![
+        ("power".to_string(), SlotKind::Power, c),
+        ("drive".into(), SlotKind::Drive, c),
+        ("thrusters".into(), SlotKind::Thrusters, c),
+        ("lift".into(), SlotKind::Lift, c),
+        ("tank".into(), SlotKind::Tank, big),
+        ("hyperdrive".into(), SlotKind::Hyperdrive, c),
+        ("computer".into(), SlotKind::Computer, 1),
+        ("transponder".into(), SlotKind::Transponder, 1),
+        ("sensors".into(), SlotKind::Sensors, 1),
+        ("comm".into(), SlotKind::Comm, 1),
+        ("life".into(), SlotKind::LifeSupport, c.min(2)),
+        ("avionics".into(), SlotKind::Avionics, 1),
+    ];
+    for k in 0..racks {
+        s.push((if k == 0 { "cargo".to_string() } else { format!("cargo_{}", k + 1) }, SlotKind::Cargo, big));
+    }
+    for k in 0..hardpoints {
+        s.push((format!("hardpoint_{}", k + 1), SlotKind::Hardpoint, 1));
+    }
+    for k in 0..utility {
+        s.push((if k == 0 { "utility".to_string() } else { format!("utility_{}", k + 1) }, SlotKind::Utility, c.min(2)));
+    }
+    s
+}
+
 /// The cheapest module of each kind that fits each slot (a base block, the
 /// lift, a hold, a hyperdrive: what a ship flies on; guns and gear left
 /// empty), with a plant big enough for the lot.
-fn stock_fit(slots: &[(String, SlotKind, u8)]) -> Result<Vec<(String, String)>, String> {
+pub(crate) fn stock_fit(slots: &[(String, SlotKind, u8)]) -> Result<Vec<(String, String)>, String> {
     let c = content();
     let cheapest = |kind: SlotKind, size: u8| c.modules.iter().map(|(_, m)| m).filter(|m| m.does.slot() == kind && m.size <= size).min_by(|a, b| a.price.total_cmp(&b.price));
     let mut fit = Vec::new();
@@ -523,6 +530,16 @@ mod tests {
         ship.throttle = 1.0;
         ship.drive(None, 1.0 / 60.0, true);
         assert!(ship.applied.0.z < -0.9 * content().get(h).main_thrust * 0.5, "{:?}", ship.applied);
+        // A hull modelled in Blender (tools/blender/test_hull.py), imported the same way: it flies too.
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/test_hull.glb");
+        let h = crate::import::commission(&std::fs::read(path).unwrap(), path).unwrap();
+        let s = content().get(h);
+        let a = s.authority(s.fuel_capacity, 0.0);
+        eprintln!("{}: frame {:.1} t, dry {:.1} t, main {:.1} m/s², lift {:.1} m/s², {} nozzles", s.name, s.frame.frame_mass / 1e3, s.dry_mass / 1e3, s.main_thrust / (s.dry_mass + s.fuel_capacity), s.lift_thrust / (s.dry_mass + s.fuel_capacity), s.thrusters.len());
+        assert_eq!(s.name, "TEST MINER");
+        assert!(s.main_thrust > 0.0 && s.lift_thrust > 0.0 && s.rcs_thrust > 0.0 && a.lift > 0.0, "{a:?}");
+        assert_eq!(s.visual.as_deref(), Some(path));
+        assert_eq!(crate::import::commission(&std::fs::read(path).unwrap(), path).unwrap(), h, "the same file, the same hull");
     }
 
 }

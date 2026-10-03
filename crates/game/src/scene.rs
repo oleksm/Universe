@@ -278,8 +278,7 @@ fn transit_push(frame: &mut Frame, app: &App) {
     if app.chase_cam && matches!(app.v.crew.place, universe_sim::world::Place::Seat) {
         let t = Transform { position: app.view.ship_pos, rotation: app.ship.orientation.as_quat(), scale: 1.0 };
         frame.in_front(|frame| {
-            hull_model(frame, app.models.painted(&app.ship, 0), &t);
-            hull_detail(frame, app.models.detail(&app.ship), &t);
+            hull(frame, app, &app.ship, 0, &t);
             let mut burning = app.ship.clone();
             burning.hyperdrive = true;
             jets(frame, &burning, app.view.ship_pos, app.ship.orientation, app.now(), usize::MAX);
@@ -785,6 +784,17 @@ fn nav_lights(frame: &mut Frame, lights: [DVec3; 3], pos: DVec3, turned: DQuat, 
     }
 }
 
+/// A ship's hull: its imported model as made (glTF: see `world::import`), or
+/// its shape in paint scheme `scheme` with its engine bells and canopy.
+fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: usize, t: &Transform) {
+    if let Some(m) = ship.spec().visual.as_deref().and_then(crate::models::pbr) {
+        frame.model_pbr(&m, t);
+        return;
+    }
+    hull_model(frame, app.models.painted(ship, scheme), t);
+    hull_detail(frame, app.models.detail(ship), t);
+}
+
 /// A hull drawn solid in its paint (colours in the mesh), metal glinting in the sun.
 fn hull_model(frame: &mut Frame, mesh: &universe_engine::Mesh, t: &Transform) {
     frame.with_surface(METAL.0, METAL.1, 0.0, |frame| frame.model_colored_shaded(mesh, t, 0.55, 0.62));
@@ -818,8 +828,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         }
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
-        hull_model(frame, app.models.painted(&c.ship, livery(&c.name)), &t);
-        hull_detail(frame, app.models.detail(&c.ship), &t);
+        hull(frame, app, &c.ship, livery(&c.name), &t);
         nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i);
         jets(frame, &c.ship, pos, turned, app.now(), i);
         // (In the pilot's seat the radar tags them: see `hud::contact_marker`.)
@@ -1476,14 +1485,12 @@ fn ship(frame: &mut Frame, app: &App) {
     if app.mode == Mode::Pilot && app.chase_cam && !panel {
         // (Its jets too: drawn behind the hull, they'd be hidden by it.)
         frame.in_front(|frame| {
-            hull_model(frame, app.models.painted(&app.ship, 0), &t);
-            hull_detail(frame, app.models.detail(&app.ship), &t);
+            hull(frame, app, &app.ship, 0, &t);
             jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
         });
         nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
     } else {
-        hull_model(frame, app.models.painted(&app.ship, 0), &t);
-        hull_detail(frame, app.models.detail(&app.ship), &t);
+        hull(frame, app, &app.ship, 0, &t);
         nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
         jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
     }

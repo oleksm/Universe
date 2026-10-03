@@ -126,7 +126,9 @@ impl PbrModel {
 fn walk(node: &gltf::Node, parent: glam::Mat4, buffers: &[gltf::buffer::Data], data: &mut PbrData) {
     let m = parent * glam::Mat4::from_cols_array_2d(&node.transform().matrix());
     let normal_m = glam::Mat3::from_mat4(m).inverse().transpose();
-    if let Some(mesh) = node.mesh() {
+    // (Collision parts, `COL_*`, are the hull's shape for physics, not drawn.)
+    let hidden = node.name().is_some_and(|n| n.starts_with("COL_"));
+    if let Some(mesh) = node.mesh().filter(|_| !hidden) {
         for prim in mesh.primitives() {
             let r = prim.reader(|b| Some(&buffers[b.index()]));
             let Some(pos) = r.read_positions() else { continue };
