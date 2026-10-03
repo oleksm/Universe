@@ -1,0 +1,120 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Material
+description: One material (what things are made of) and its properties. Any one material uses only some of them.
+type: object
+additionalProperties: false
+required: [identity]
+definitions:
+  number_or_null:
+    description: A number, or null where the material has none (or it isn't known).
+    type: [number, "null"]
+  rating:
+    description: How well it does, from none to excellent; null where it isn't known.
+    enum: [none, poor, fair, good, excellent, null]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, class]
+    properties:
+      name: { type: string }
+      class: { enum: [metal, alloy, ceramic, glass, polymer, composite, fluid] }
+      composition:
+        description: What it's made of, each part's share by mass (0 to 1). A part is an element's symbol or another material's name.
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [part, share]
+          properties:
+            part: { type: string }
+            share: { type: number, minimum: 0, maximum: 1 }
+      form: { type: array, items: { enum: [sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid] }, description: The forms it comes in. }
+      grade: { type: [string, "null"], description: "Its grade or temper: how it was treated (annealed, hardened...)." }
+
+  mass:
+    type: object
+    additionalProperties: false
+    properties:
+      density: { $ref: "#/definitions/number_or_null", description: kg/m3 }
+
+  mechanical:
+    type: object
+    additionalProperties: false
+    properties:
+      youngs_modulus: { $ref: "#/definitions/number_or_null", description: "GPa; stiffness" }
+      shear_modulus: { $ref: "#/definitions/number_or_null", description: GPa }
+      poissons_ratio: { $ref: "#/definitions/number_or_null" }
+      yield_strength: { $ref: "#/definitions/number_or_null", description: "MPa; where it starts to bend for good" }
+      tensile_strength: { $ref: "#/definitions/number_or_null", description: "MPa; where it breaks, pulled" }
+      compressive_strength: { $ref: "#/definitions/number_or_null", description: "MPa; where it breaks, pressed" }
+      shear_strength: { $ref: "#/definitions/number_or_null", description: MPa }
+      elongation_at_break: { $ref: "#/definitions/number_or_null", description: "share of its length (0.2: 20%); ductility" }
+      hardness: { $ref: "#/definitions/number_or_null", description: Mohs scale }
+      fracture_toughness: { $ref: "#/definitions/number_or_null", description: "MPa m^0.5; resistance to cracks growing" }
+      impact_toughness: { $ref: "#/definitions/number_or_null", description: "J (Charpy); resistance to sudden blows" }
+      fatigue_limit: { $ref: "#/definitions/number_or_null", description: "MPa; the load it survives over many cycles" }
+      creep_resistance: { $ref: "#/definitions/rating", description: "Against slow sagging under long load, hot above all." }
+      wear_resistance: { $ref: "#/definitions/rating" }
+      friction_coefficient: { $ref: "#/definitions/number_or_null", description: "against steel, dry" }
+
+  thermal:
+    type: object
+    additionalProperties: false
+    properties:
+      melting_point: { $ref: "#/definitions/number_or_null", description: "K; or where it softens or decomposes" }
+      max_service_temperature: { $ref: "#/definitions/number_or_null", description: K }
+      min_service_temperature: { $ref: "#/definitions/number_or_null", description: "K; below it, brittle" }
+      thermal_conductivity: { $ref: "#/definitions/number_or_null", description: W/(m K) }
+      specific_heat_capacity: { $ref: "#/definitions/number_or_null", description: J/(kg K) }
+      thermal_expansion: { $ref: "#/definitions/number_or_null", description: "1/K, linear" }
+      thermal_shock_resistance: { $ref: "#/definitions/rating" }
+      emissivity: { $ref: "#/definitions/number_or_null", description: "0 to 1; how well it radiates heat" }
+      absorptivity: { $ref: "#/definitions/number_or_null", description: "0 to 1; how much sunlight it soaks up" }
+
+  electrical_magnetic:
+    type: object
+    additionalProperties: false
+    properties:
+      electrical_conductivity: { $ref: "#/definitions/number_or_null", description: S/m }
+      dielectric_strength: { $ref: "#/definitions/number_or_null", description: "MV/m; the field an insulator withstands" }
+      magnetic: { enum: [ferromagnetic, paramagnetic, diamagnetic, null] }
+      superconducting_temperature: { $ref: "#/definitions/number_or_null", description: "K; null if none" }
+
+  optical:
+    type: object
+    additionalProperties: false
+    properties:
+      transparency: { $ref: "#/definitions/number_or_null", description: "0 to 1; the share of visible light passed" }
+      refractive_index: { $ref: "#/definitions/number_or_null" }
+      reflectivity: { $ref: "#/definitions/number_or_null", description: "0 to 1, of visible light" }
+      colour: { type: [string, "null"] }
+
+  environment:
+    description: How it survives space and use.
+    type: object
+    additionalProperties: false
+    properties:
+      corrosion_resistance: { $ref: "#/definitions/rating" }
+      oxidation_resistance: { $ref: "#/definitions/rating", description: "Hot, in air." }
+      chemical_resistance: { $ref: "#/definitions/rating", description: "To fuels and acids." }
+      outgassing: { $ref: "#/definitions/number_or_null", description: "share of its mass lost in vacuum (total mass loss, 0 to 1)" }
+      radiation_resistance: { $ref: "#/definitions/rating", description: "Against damage from radiation over time." }
+      radiation_shielding: { $ref: "#/definitions/rating", description: "How well it stops radiation." }
+      uv_resistance: { $ref: "#/definitions/rating" }
+      flammability: { enum: [none, low, medium, high, null] }
+      permeability: { $ref: "#/definitions/rating", description: "How well it holds gas in (excellent: nothing leaks through)." }
+      toxicity: { enum: [none, low, medium, high, null] }
+
+  making:
+    description: Making and mending.
+    type: object
+    additionalProperties: false
+    properties:
+      formability: { $ref: "#/definitions/rating", description: "Rolled, bent, forged." }
+      machinability: { $ref: "#/definitions/rating" }
+      weldability: { $ref: "#/definitions/rating" }
+      joining: { type: array, items: { enum: [welded, brazed, bonded, bolted, riveted, sewn] }, description: How it's joined. }
+      castability: { $ref: "#/definitions/rating", description: "Cast or printed." }
+      repairability: { $ref: "#/definitions/rating" }
+      recyclability: { $ref: "#/definitions/rating" }
