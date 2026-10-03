@@ -93,23 +93,116 @@ pub struct Galaxy {
 /// neighbours 4-6 ly apart). One region for now; more, generated from the
 /// seed as they're reached, later.
 pub const REGION: f64 = 200.0;
-/// Stars per cubic light year near the Sun (about 0.14 per cubic parsec).
+/// Stars per cubic light year near the Sun (about 0.14 per cubic parsec):
+/// the density at the region's centre, which the galaxy's shape is scaled to.
 pub const STAR_DENSITY: f64 = 0.004;
 /// Where the region sits in the galaxy (ly from its centre, in its plane):
-/// the outer disc, about where the Sun is in ours.
+/// the outer disc between the arms, about where the Sun is in ours.
 pub const REGION_CENTRE: DVec3 = DVec3::new(4000.0, 0.0, 0.0);
+/// The galaxy's stars come in cubes this many light years a side, each from
+/// the seed and its place: as many as the density there says.
+pub const SECTOR: f64 = 100.0;
+
+/// A sector's place: which cube of `SECTOR` light years (x, y, z).
+pub type Sector = [i32; 3];
+
+/// The galaxy's shape (relative density; 1 at the disc's middle): an
+/// exponential disc (scale length 2,600 ly, height 300 ly) with two
+/// logarithmic arms (pitch 13°) three to five times denser than between
+/// them, fading out past 8,000 ly, and a central bulge.
+fn shape(p: DVec3) -> f64 {
+    let r = (p.x * p.x + p.z * p.z).sqrt();
+    let disc = (-r / 2600.0).exp() * (-p.y.abs() / 300.0).exp() * (1.0 - (r - 8000.0) / 1500.0).clamp(0.0, 1.0) * arms(p);
+    let bulge = 4.0 * (-(r * r) / (2.0 * 700.0 * 700.0) - p.y * p.y / (2.0 * 350.0 * 350.0)).exp();
+    disc + bulge
+}
+
+/// How much the arms crowd a place's stars: 0.4 between them, 2.4 on one.
+pub fn arms(p: DVec3) -> f64 {
+    let r = (p.x * p.x + p.z * p.z).sqrt().max(300.0);
+    let pitch = 13f64.to_radians().tan();
+    let along = p.z.atan2(p.x) - (r / 300.0).ln() / pitch;
+    // (Two arms, half a turn apart: the angle off the nearer.)
+    let off = along - (along / std::f64::consts::PI).round() * std::f64::consts::PI;
+    0.4 + 2.0 * (-off * off / (2.0 * 0.28 * 0.28)).exp()
+}
+
+/// Stars per cubic light year at `p` (light years, the galaxy's frame).
+pub fn density(p: DVec3) -> f64 {
+    STAR_DENSITY * shape(p) / shape(REGION_CENTRE)
+}
+
+/// Stars per square light year looking straight down through the disc at
+/// (x, z): the density summed through its thickness (the map's glow).
+pub fn column(x: f64, z: f64) -> f64 {
+    let r = (x * x + z * z).sqrt();
+    let p = DVec3::new(x, 0.0, z);
+    let disc = (-r / 2600.0).exp() * (1.0 - (r - 8000.0) / 1500.0).clamp(0.0, 1.0) * arms(p) * 2.0 * 300.0;
+    let bulge = 4.0 * (-(r * r) / (2.0 * 700.0 * 700.0)).exp() * (std::f64::consts::TAU).sqrt() * 350.0;
+    STAR_DENSITY * (disc + bulge) / shape(REGION_CENTRE)
+}
+
+fn sector_seed(seed: u64, s: Sector) -> u64 {
+    mix(mix(mix(seed ^ 0x7365_6374, s[0] as u32 as u64), s[1] as u32 as u64), s[2] as u32 as u64)
+}
+
+/// The sector a place is in.
+pub fn sector_of(p: DVec3) -> Sector {
+    [(p.x / SECTOR).floor() as i32, (p.y / SECTOR).floor() as i32, (p.z / SECTOR).floor() as i32]
+}
+
+/// How many stars a sector holds: its volume at the density at its middle.
+pub fn sector_count(seed: u64, s: Sector) -> usize {
+    sector_draw(&mut Rng::new(sector_seed(seed, s)), s)
+}
+
+fn sector_draw(rng: &mut Rng, s: Sector) -> usize {
+    let middle = (DVec3::new(s[0] as f64, s[1] as f64, s[2] as f64) + 0.5) * SECTOR;
+    let expected = density(middle) * SECTOR.powi(3);
+    (expected.floor() + if rng.f64() < expected.fract() { 1.0 } else { 0.0 }) as usize
+}
+
+/// A sector's first `limit` stars (all of them, at most its count), from the
+/// seed: spread evenly through it, so the first few are a fair sample.
+pub fn sector_stars(seed: u64, s: Sector, limit: usize) -> Vec<GalaxyStar> {
+    let base = sector_seed(seed, s);
+    let mut rng = Rng::new(base);
+    let n = sector_draw(&mut rng, s).min(limit);
+    let corner = DVec3::new(s[0] as f64, s[1] as f64, s[2] as f64) * SECTOR;
+    (0..n)
+        .map(|i| {
+            let position = corner + DVec3::new(rng.f64(), rng.f64(), rng.f64()) * SECTOR;
+            GalaxyStar { position, class: StarClass::random(&mut rng), seed: mix(base, i as u64) }
+        })
+        .collect()
+}
+
+/// The sectors the charted region is made of.
+pub fn region_sectors() -> Vec<Sector> {
+    let (lo, hi) = (sector_of(REGION_CENTRE - REGION / 2.0), sector_of(REGION_CENTRE + REGION / 2.0 - 1e-6));
+    let mut out = Vec::new();
+    for x in lo[0]..=hi[0] {
+        for y in lo[1]..=hi[1] {
+            for z in lo[2]..=hi[2] {
+                out.push([x, y, z]);
+            }
+        }
+    }
+    out
+}
 
 impl Galaxy {
-    /// The charted region's stars, from the seed: uniformly through the cube
-    /// at the real density, by the real mix of classes.
+    /// The charted region's stars: its sectors', from the seed (the same stars
+    /// the map shows there).
     pub fn generate(seed: u64) -> Self {
-        Self::generate_n(seed, (REGION.powi(3) * STAR_DENSITY).round() as usize)
+        let stars = region_sectors().into_iter().flat_map(|s| sector_stars(seed, s, usize::MAX)).collect();
+        Self { seed, stars }
     }
 
-    /// `generate` with `count` stars (tests: a small region).
+    /// A small uniform region of `count` stars at the local density (tests).
     pub fn generate_n(seed: u64, count: usize) -> Self {
         let mut rng = Rng::new(seed);
-        let side = REGION * (count as f64 / (REGION.powi(3) * STAR_DENSITY)).cbrt();
+        let side = (count as f64 / STAR_DENSITY).cbrt();
         let stars = (0..count)
             .map(|i| {
                 let position = REGION_CENTRE + DVec3::new(rng.f64() - 0.5, rng.f64() - 0.5, rng.f64() - 0.5) * side;
@@ -117,32 +210,6 @@ impl Galaxy {
             })
             .collect();
         Self { seed, stars }
-    }
-
-    /// The galaxy beyond the region, for the map's glow only (never visited,
-    /// never stored as stars): a two-armed spiral with a central bulge, `count`
-    /// sample points in light years.
-    pub fn backdrop(seed: u64, count: usize) -> Vec<DVec3> {
-        let mut rng = Rng::new(seed ^ 0x6261_636b);
-        let pitch = 13f64.to_radians().tan();
-        (0..count)
-            .map(|_| {
-                let kind = rng.f64();
-                if kind < 0.12 {
-                    DVec3::new(rng.normal() * 700.0, rng.normal() * 350.0, rng.normal() * 700.0)
-                } else {
-                    let r = (-2600.0 * (1.0 - rng.f64()).ln()).clamp(300.0, 9000.0);
-                    let angle = if kind < 0.35 {
-                        rng.range(0.0, std::f64::consts::TAU)
-                    } else {
-                        let arm = (rng.next_u64() % 2) as f64 * std::f64::consts::PI;
-                        arm + (r / 300.0).ln() / pitch + rng.normal() * 0.28
-                    };
-                    let jitter = DVec3::new(rng.normal(), 0.0, rng.normal()) * 120.0;
-                    DVec3::new(r * angle.cos(), rng.normal() * 90.0, r * angle.sin()) + jitter
-                }
-            })
-            .collect()
     }
 
     /// Offset in meters from star `from` to star `to`.

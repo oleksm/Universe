@@ -28,6 +28,8 @@ pub struct GalaxyMap {
     center: DVec2,
     scale: f64,
     glow: Glow,
+    /// Sectors' stars made so far (their first so many, by sector).
+    sectors: std::cell::RefCell<std::collections::HashMap<universe_sim::world::galaxy::Sector, Vec<universe_sim::world::galaxy::GalaxyStar>>>,
     /// The factions layer: who holds which systems.
     pub factions: bool,
     /// Where a drag (left button) last had the cursor.
@@ -46,53 +48,24 @@ struct Glow {
 }
 
 impl Glow {
-    fn gather(app: &App) -> Self {
+    /// The galaxy's light from above: its stars per square light year (the
+    /// density summed through the disc, `galaxy::column`), toned against the
+    /// bright end of the disc.
+    fn gather() -> Self {
+        use universe_sim::world::galaxy::{arms, column};
         let n = GLOW_CELLS + 1;
         let cell = 2.0 * GLOW_REACH / GLOW_CELLS as f64;
-        let mut light = vec![0.0f32; n * n];
-        // (The galaxy beyond the charted region: its glow only.)
-        for p in universe_sim::world::galaxy::Galaxy::backdrop(app.charts.galaxy.seed, 40_000) {
-            let (x, y) = ((p.x + GLOW_REACH) / cell, (p.z + GLOW_REACH) / cell);
-            if x < 0.0 || y < 0.0 || x >= (n - 1) as f64 || y >= (n - 1) as f64 {
-                continue;
-            }
-            // (Shared among the four corners round it.)
-            let (i, j) = (x as usize, y as usize);
-            let (fx, fy) = ((x - i as f64) as f32, (y - j as f64) as f32);
-            light[j * n + i] += (1.0 - fx) * (1.0 - fy);
-            light[j * n + i + 1] += fx * (1.0 - fy);
-            light[(j + 1) * n + i] += (1.0 - fx) * fy;
-            light[(j + 1) * n + i + 1] += fx * fy;
-        }
-        let blur = |src: &[f32], r: i32| -> Vec<f32> {
-            let w: Vec<f32> = (-r..=r).map(|k| (-(k * k) as f32 / (0.5 * (r * r) as f32 + 0.5)).exp()).collect();
-            let total: f32 = w.iter().sum();
-            let mut a = vec![0.0f32; n * n];
-            let mut b = vec![0.0f32; n * n];
-            for y in 0..n {
-                for x in 0..n {
-                    a[y * n + x] = (-r..=r).map(|k| src[y * n + (x as i32 + k).clamp(0, n as i32 - 1) as usize] * w[(k + r) as usize]).sum::<f32>() / total;
-                }
-            }
-            for y in 0..n {
-                for x in 0..n {
-                    b[y * n + x] = (-r..=r).map(|k| a[(y as i32 + k).clamp(0, n as i32 - 1) as usize * n + x] * w[(k + r) as usize]).sum::<f32>() / total;
-                }
-            }
-            b
-        };
-        let fine = blur(&light, 1);
-        let soft = blur(&light, 4);
-        // (Toned against the bright end of the disc.)
-        let mut sorted: Vec<f32> = soft.iter().copied().filter(|v| *v > 0.0).collect();
-        sorted.sort_by(f32::total_cmp);
-        let bright = sorted.get(sorted.len() * 97 / 100).copied().unwrap_or(1.0).max(1e-3);
+        let at = |k: usize| ((k % n) as f64 * cell - GLOW_REACH, (k / n) as f64 * cell - GLOW_REACH);
+        let light: Vec<f64> = (0..n * n).map(|k| { let (x, z) = at(k); column(x, z) }).collect();
+        let mut sorted: Vec<f64> = light.iter().copied().filter(|v| *v > 0.0).collect();
+        sorted.sort_by(f64::total_cmp);
+        let bright = sorted.get(sorted.len() * 97 / 100).copied().unwrap_or(1.0).max(1e-9);
         let corners = (0..n * n)
             .map(|k| {
-                let (x, y) = ((k % n) as f64 * cell - GLOW_REACH, (k / n) as f64 * cell - GLOW_REACH);
-                let r = (x * x + y * y).sqrt();
-                let v = 0.6 * fine[k] + 0.4 * soft[k];
-                let lit = 1.0 - (-v / bright * 1.1).exp();
+                let (x, z) = at(k);
+                let r = (x * x + z * z).sqrt();
+                // (Gently: the disc between the arms still glows, as in a photograph.)
+                let lit = (1.0 - (-(light[k] / bright).powf(0.6) * 1.5).exp()) as f32;
                 let warm = [1.0, 0.86, 0.64];
                 let cool = [0.72, 0.8, 1.0];
                 let t = ((r - 900.0) / 4000.0).clamp(0.0, 1.0) as f32;
@@ -100,11 +73,11 @@ impl Glow {
                 for i in 0..3 {
                     c[i] = warm[i] + (cool[i] - warm[i]) * t;
                 }
-                // Clumps standing out of their surroundings in the arms: young, pink.
-                let clump = ((fine[k] / soft[k].max(1e-6) - 1.5) / 0.8).clamp(0.0, 1.0) * (((r - 1500.0) / 1500.0).clamp(0.0, 1.0) as f32);
+                // On the arms: young stars, pink.
+                let young = (((arms(universe_engine::glam::DVec3::new(x, 0.0, z)) - 1.0) / 1.4).clamp(0.0, 1.0) * ((r - 1500.0) / 1500.0).clamp(0.0, 1.0)) as f32;
                 let pink = [1.0, 0.48, 0.66];
                 for i in 0..3 {
-                    c[i] += (pink[i] - c[i]) * clump * 0.7;
+                    c[i] += (pink[i] - c[i]) * young * 0.6;
                 }
                 [c[0], c[1], c[2], (lit * 0.95).min(0.95)]
             })
@@ -112,6 +85,12 @@ impl Glow {
         Glow { corners }
     }
 }
+
+/// Stars drawn at most a frame: past it, every sector in view is thinned
+/// alike (so the arms still show denser).
+const STAR_BUDGET: f64 = 30_000.0;
+/// Sectors in view past which only the glow is drawn.
+const MAX_SECTORS: usize = 6_000;
 
 /// A star's place on the map: its position seen from above (x, z).
 fn flat(app: &App, i: usize) -> DVec2 {
@@ -122,7 +101,7 @@ fn flat(app: &App, i: usize) -> DVec2 {
 impl GalaxyMap {
     /// Centred on us, its scale bar `DEFAULT_BAR` light years.
     pub fn open(app: &App, _size: Vec2) -> Self {
-        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(app), factions: false, dragged_from: None }
+        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(), sectors: Default::default(), factions: false, dragged_from: None }
     }
 
     /// (Dev scenarios: closer by `k`.)
@@ -202,40 +181,68 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             }
         }
     }
-    // Every star: far out a fine point (a real pixel), near a soft glowing disc in its class's
-    // colour; fading with height above or below our plane (a slab round us, not the whole depth).
-    let px_per_ly = map.scale as f32;
-    let our_y = galaxy.stars[app.v.ship_system].position.y;
-    for (i, s) in galaxy.stars.iter().enumerate() {
-        let depth = 1.0 - ((s.position.y - our_y).abs() / SLAB) as f32;
-        if depth <= 0.0 {
-            continue;
-        }
-        let p = map.to_screen(size, flat(app, i));
-        if !on_screen(p) {
-            continue;
-        }
-        let c = color(s.class.color()).scale(depth);
-        if px_per_ly < 0.08 {
-            // (A sprinkle, over the glow.)
-            if i % 3 == 0 {
-                frame.hud_rect(p, Vec2::splat(0.5), c.scale(0.8));
-            }
-        } else {
-            let r = (0.8 + px_per_ly * 0.08).min(6.0);
-            let [cr, cg, cb, _] = c.0;
-            frame.hud_glow(p, r * 2.5, 12, Color([cr, cg, cb, 0.35]), Color([cr, cg, cb, 0.0]));
-            frame.hud_glow(p, r * 0.6, 8, Color([1.0, 1.0, 1.0, 0.9]), Color([cr, cg, cb, 0.6]));
-        }
-    }
-    // The charted region's edge (its square in the galaxy's plane).
+    // The stars, from their sectors, in a slab round our plane (fading with height above or below
+    // it): far out a fine point, near a soft glowing disc in its class's colour.
     {
-        use universe_sim::world::galaxy::{REGION, REGION_CENTRE};
-        let h = REGION / 2.0;
-        let c = DVec2::new(REGION_CENTRE.x, REGION_CENTRE.z);
-        let corners = [c + DVec2::new(-h, -h), c + DVec2::new(h, -h), c + DVec2::new(h, h), c + DVec2::new(-h, h)];
-        for k in 0..4 {
-            frame.hud_line(map.to_screen(size, corners[k]), map.to_screen(size, corners[(k + 1) % 4]), DIM.scale(0.6));
+        use universe_sim::world::galaxy::{sector_count, sector_stars, SECTOR};
+        let px_per_ly = map.scale as f32;
+        let our_y = galaxy.stars[app.v.ship_system].position.y;
+        let half = DVec2::new(size.x as f64, size.y as f64) * 0.5 / map.scale;
+        let (lo, hi) = (map.center - half, map.center + half);
+        let span = |a: f64, b: f64| (a / SECTOR).floor() as i32..=(b / SECTOR).floor() as i32;
+        let (xs, ys, zs) = (span(lo.x, hi.x), span(our_y - SLAB, our_y + SLAB), span(lo.y, hi.y));
+        let count = xs.clone().count() * ys.clone().count() * zs.clone().count();
+        if count <= MAX_SECTORS {
+            // How many would be in view, and the share of each sector's to draw.
+            let overlap = |a0: f64, a1: f64, k: i32| ((a1.min((k + 1) as f64 * SECTOR) - a0.max(k as f64 * SECTOR)) / SECTOR).max(0.0);
+            let mut cells = Vec::with_capacity(count);
+            let mut expected = 0.0;
+            for x in xs.clone() {
+                for y in ys.clone() {
+                    for z in zs.clone() {
+                        let n = sector_count(galaxy.seed, [x, y, z]);
+                        expected += n as f64 * overlap(lo.x, hi.x, x) * overlap(our_y - SLAB, our_y + SLAB, y) * overlap(lo.y, hi.y, z);
+                        cells.push(([x, y, z], n));
+                    }
+                }
+            }
+            let share = (STAR_BUDGET / expected.max(1.0)).min(1.0);
+            // (Thinned: each drawn star stands for more, so a little brighter.)
+            let boost = (1.0 / share.sqrt()).min(3.0) as f32;
+            let mut made = map.sectors.borrow_mut();
+            if made.len() > 4 * MAX_SECTORS {
+                made.clear();
+            }
+            for (sector, n) in cells {
+                let want = ((n as f64 * share).ceil() as usize).min(n).min(200_000);
+                let stars = made.entry(sector).or_default();
+                if stars.len() < want {
+                    *stars = sector_stars(galaxy.seed, sector, want);
+                }
+                for s in &stars[..want] {
+                    let depth = 1.0 - ((s.position.y - our_y).abs() / SLAB) as f32;
+                    if depth <= 0.0 {
+                        continue;
+                    }
+                    let p = map.to_screen(size, DVec2::new(s.position.x, s.position.z));
+                    if !on_screen(p) {
+                        continue;
+                    }
+                    // (Faded by opacity, never darkened: over the glow a star is a light, not a speck.)
+                    let alpha = depth * (1.0 - fade * 0.6);
+                    let [r0, g0, b0, _] = color(s.class.color()).0;
+                    let c = Color([r0, g0, b0, alpha]);
+                    if px_per_ly < 0.5 {
+                        let w = |v: f32| (v + (1.0 - v) * 0.35) * boost.min(1.6);
+                        frame.hud_rect(p, Vec2::splat(1.0), Color([w(r0), w(g0), w(b0), alpha]));
+                    } else {
+                        let r = (0.8 + px_per_ly * 0.08).min(6.0);
+                        let [cr, cg, cb, _] = c.0;
+                        frame.hud_glow(p, r * 2.5, 12, Color([cr, cg, cb, 0.35 * alpha]), Color([cr, cg, cb, 0.0]));
+                        frame.hud_glow(p, r * 0.6, 8, Color([1.0, 1.0, 1.0, 0.9 * alpha]), Color([cr, cg, cb, 0.6 * alpha]));
+                    }
+                }
+            }
         }
     }
     // The settled systems' gate links; zoomed in to 50 ly (the scale bar), each lane's length,
@@ -305,9 +312,9 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
         s.len()
     };
     let seen = app.explored.len();
-    let title = format!("GALAXY - CHARTED REGION {total} STARS   {seen} EXPLORED ({:.3}%)   {settled} SETTLED", seen as f64 / total as f64 * 100.0);
+    let title = format!("GALAXY   CHARTED REGION {total} STARS   {seen} EXPLORED ({:.3}%)   {settled} SETTLED", seen as f64 / total as f64 * 100.0);
     frame.text(Vec2::new(16.0, 16.0), &title, TEXT);
-    frame.text(Vec2::new(16.0, 30.0), &format!("THE CHARTED REGION: A CUBE {:.0} LY A SIDE, STARS 4-6 LY APART. THE GALAXY BEYOND (ABOUT 19,000 LY ACROSS) IS UNCHARTED.", universe_sim::world::galaxy::REGION), DIM);
+    frame.text(Vec2::new(16.0, 30.0), "ABOUT 19,000 LIGHT YEARS ACROSS. STARS SHOWN IN A SLAB 40 LY THICK ROUND YOUR PLANE.", DIM);
     // A scale bar: a round number of light years about 120 px long.
     let ly = BAR_PX / map.scale;
     let round = [1.0, 2.0, 5.0].iter().flat_map(|m| (0..6).map(move |e| m * 10f64.powi(e))).filter(|v| *v <= ly).fold(1.0, f64::max);
