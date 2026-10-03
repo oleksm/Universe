@@ -16,3 +16,5 @@ properties:
     properties:
       latitude: { type: number, minimum: -90, maximum: 90 }
       longitude: { type: number, minimum: -180, maximum: 180 }
+  about: { type: string, description: What it is. }
+  story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }

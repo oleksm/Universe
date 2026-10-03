@@ -3,3 +3,6 @@ name: "Port Eikir"
 kind: settlement
 at: Treistun d
 position: { latitude: 47.547, longitude: -179.612 }
+about: "The port on Treistun d, at 48° north. Gravity 1.07 g, with air, and warm."
+story:
+  - "Put far to the north on purpose, out of the worst of d's heat. It is the one port besides Nacaubun where people can stand outside under a sky."

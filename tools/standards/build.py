@@ -199,7 +199,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position"}:
+            if k not in {"name", "kind", "at", "position", "about", "story"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -208,7 +208,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "bodies", "address"}:
+        if k not in {"name", "bodies", "address", "about", "story"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:

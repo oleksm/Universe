@@ -2,3 +2,6 @@
 name: "Treistun e Station"
 kind: settlement
 at: Treistun e
+about: "The system's station, in orbit round Treistun e. It is a landing deck of 16 pads with the main structure standing along one edge and a hangar inside. It turns once an orbit, keeping the same side to the planet."
+story:
+  - "Raised above Nacaubun when the port ran out of room. The yards, the makers' offices, the Standards Foundry Office and the administration all followed the ships up, and it has been the centre of the system since."

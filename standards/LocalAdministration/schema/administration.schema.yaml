@@ -17,3 +17,5 @@ properties:
       deck: { type: integer, minimum: 1 }
       section: { type: string }
       unit: { type: integer, minimum: 1 }
+  about: { type: string, description: What it is. }
+  story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
