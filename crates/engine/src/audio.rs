@@ -465,6 +465,10 @@ struct Synth {
     gust_to: f32,
     air_lpf: (f32, f32),
     air_low: f32,
+    air_low2: f32,
+    air_band: (f32, f32),
+    /// Buffeting: slow and fast random walks (each toward a target), 0..1.
+    buffet: [(f32, f32); 2],
     breath: Smoothed,
     breath_t: f32,
     breath_f: (f32, f32),
@@ -739,6 +743,9 @@ impl Synth {
             gust_to: 0.5,
             air_lpf: (0.0, 0.0),
             air_low: 0.0,
+            air_low2: 0.0,
+            air_band: (0.0, 0.0),
+            buffet: [(0.5, 0.5); 2],
             breath: Smoothed::default(),
             breath_t: 0.0,
             breath_f: (0.0, 0.0),
@@ -862,10 +869,32 @@ impl Synth {
                 self.gust += (self.gust_to - self.gust) * 0.4 * dt;
                 level *= self.gust;
             }
-            let cutoff = 150.0 + 2500.0 * bright + if self.gusty { 400.0 * self.gust } else { 0.0 };
-            svf(&mut self.air_lpf.0, &mut self.air_lpf.1, n, cutoff, 0.8, rate);
-            self.air_low += (n - self.air_low) * 0.01;
-            let v = (self.air_lpf.0 * 1.5 + self.air_low * 5.0) * level;
+            // Turbulence, not a hiss: the flow buffets, slowly and in a fast churn
+            // (each a random walk toward a new target as it reaches the last).
+            for (k, rate_hz) in [(0usize, 1.2f32), (1, 8.0)] {
+                let (v, to) = &mut self.buffet[k];
+                if (*v - *to).abs() < 0.02 {
+                    *to = 0.15 + 0.85 * ((self.rng >> 8) as f32 / (1u32 << 24) as f32);
+                }
+                *v += (*to - *v) * (rate_hz * dt).min(1.0);
+            }
+            self.rng ^= self.rng << 13;
+            self.rng ^= self.rng >> 17;
+            self.rng ^= self.rng << 5;
+            let (slow, churn) = (self.buffet[0].0, self.buffet[1].0);
+            // A deep rumble (the hull taking the flow), pumped by the slow buffet.
+            self.air_low += (n - self.air_low) * 0.012;
+            self.air_low2 += (self.air_low - self.air_low2) * 0.012;
+            let rumble = self.air_low2 * 5.5 * (0.55 + 0.45 * slow);
+            // A dull rush over it, no brighter than about 1.2 kHz, churning.
+            let cutoff = 120.0 + 1100.0 * bright + if self.gusty { 250.0 * self.gust } else { 0.0 };
+            svf(&mut self.air_lpf.0, &mut self.air_lpf.1, n, cutoff, 0.55, rate);
+            let rush = self.air_lpf.0 * 1.6 * (0.5 + 0.7 * churn);
+            // And a broad roar band where the flow tears off edges (250-600 Hz), with the slow buffet.
+            svf(&mut self.air_band.0, &mut self.air_band.1, n, 250.0 + 350.0 * bright, 0.5, rate);
+            let roar = self.air_band.1 * 0.5 * slow;
+            // (About half as loud as the old hiss.)
+            let v = (rumble + rush + roar) * level * 0.55;
             put(v, 0.0, 0.1, &mut l, &mut r, &mut send);
         }
 
