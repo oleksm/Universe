@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Plutonium
   symbol: Pu
@@ -11,7 +13,15 @@ identity:
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f6 7s2'
+  valence_electrons: 8
+  atomic_radius: null
+  covalent_radius: 187.0
   van_der_waals_radius: 243.0
+  ionic_radius: 71.0
+  stable_isotopes: 0
+  isotope_abundances: []
+  half_life: 2501710000000000.0
+  decay_mode: alpha
 chemical:
   electronegativity: 1.28
   first_ionisation_energy: 584.7
@@ -21,12 +31,43 @@ chemical:
   - 5
   - 4
   - 3
+  reactivity:
+    air: slow
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.031
+  flammable: false
 physical:
   phase: solid
   melting_point: 913.0
   boiling_point: 3501.0
   density: 19840.0
+  crystal_structure: simple monoclinic
+  allotropes: []
+  heat_of_fusion: null
+  heat_of_vaporisation: 325.0
+  vapour_pressure: 3.4e-49
 thermal:
   specific_heat_capacity: 145.5
+  thermal_conductivity: 6.0
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: 670000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: 96.0
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: silvery white, tarnishing to dark gray in air
+  emission_lines:
+  - 732.223
+  - 732.597
+  - 733.181
+  - 743.118
+  - 744.799
+  neutron_cross_section: 1.7

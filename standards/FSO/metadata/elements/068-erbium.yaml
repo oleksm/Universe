@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Erbium
   symbol: Er
@@ -11,19 +13,70 @@ identity:
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f12 6s2'
+  valence_electrons: 14
+  atomic_radius: 226.0
+  covalent_radius: 189.0
   van_der_waals_radius: 235.0
+  ionic_radius: 89.0
+  stable_isotopes: 6
+  isotope_abundances:
+  - mass_number: 162
+    abundance: 0.00139
+  - mass_number: 164
+    abundance: 0.01601
+  - mass_number: 166
+    abundance: 0.33503
+  - mass_number: 167
+    abundance: 0.22869
+  - mass_number: 168
+    abundance: 0.26978
+  - mass_number: 170
+    abundance: 0.1491
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.24
   first_ionisation_energy: 589.3
   electron_affinity: 30.1
   oxidation_states:
   - 3
+  reactivity:
+    air: slow
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.0
+  flammable: false
 physical:
   phase: solid
   melting_point: 1802.0
   boiling_point: 3141.0
   density: 9070.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 19.9
+  heat_of_vaporisation: 285.0
+  vapour_pressure: 5.0e-43
 thermal:
-  specific_heat_capacity: 168.1
+  specific_heat_capacity: 168.0
+  thermal_conductivity: 15.0
+  thermal_expansion: 1.22e-05
+electrical_magnetic:
+  electrical_conductivity: 1200000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 1.97
+  youngs_modulus: 70.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 386.285
+  - 389.268
+  - 400.796
+  - 408.763
+  - 415.111
+  neutron_cross_section: 165.0

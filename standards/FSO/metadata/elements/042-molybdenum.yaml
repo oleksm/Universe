@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Molybdenum
   symbol: Mo
@@ -11,19 +13,72 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d5 5s1'
+  valence_electrons: 6
+  atomic_radius: 190.0
+  covalent_radius: 154.0
   van_der_waals_radius: 209.0
+  ionic_radius: 59.0
+  stable_isotopes: 6
+  isotope_abundances:
+  - mass_number: 92
+    abundance: 0.14649
+  - mass_number: 94
+    abundance: 0.09187
+  - mass_number: 95
+    abundance: 0.15873
+  - mass_number: 96
+    abundance: 0.16673
+  - mass_number: 97
+    abundance: 0.09582
+  - mass_number: 98
+    abundance: 0.24292
+  - mass_number: 100
+    abundance: 0.09744
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.16
   first_ionisation_energy: 684.3
   electron_affinity: 72.1
   oxidation_states:
   - 6
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 2896.0
   boiling_point: 4912.0
   density: 10200.0
+  crystal_structure: body-centered cubic
+  allotropes: []
+  heat_of_fusion: 36.0
+  heat_of_vaporisation: 600.0
+  vapour_pressure: 4.1e-98
 thermal:
-  specific_heat_capacity: 250.8
+  specific_heat_capacity: 251.0
+  thermal_conductivity: 139.0
+  thermal_expansion: 4.8e-06
+electrical_magnetic:
+  electrical_conductivity: 20000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.915
+  band_gap: null
+mechanical:
+  hardness: 5.5
+  youngs_modulus: 329.0
+  tensile_strength: null
+  ductility: very ductile
 optical_nuclear:
   colour: gray metallic
+  emission_lines:
+  - 386.41
+  - 390.295
+  - 414.355
+  - 550.649
+  - 553.303
+  neutron_cross_section: 2.6

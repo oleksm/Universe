@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Fluorine
   symbol: F
@@ -11,15 +13,61 @@ identity:
   category: halogen
 atomic_structure:
   electron_configuration: '[He] 2s2 2p5'
+  valence_electrons: 7
+  atomic_radius: 42.0
+  covalent_radius: 57.0
   van_der_waals_radius: 135.0
+  ionic_radius: 133.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 19
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 3.98
   first_ionisation_energy: 1681
   electron_affinity: 328.1649
   oxidation_states:
   - -1
+  reactivity:
+    air: none
+    water: violent
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: 2.87
+  flammable: false
 physical:
   phase: gas
   melting_point: 53.53
   boiling_point: 85.03
   density: 1.696
+  crystal_structure: base-centered monoclinic
+  allotropes:
+  - difluorine
+  heat_of_fusion: 0.26
+  heat_of_vaporisation: 3.27
+  vapour_pressure: null
+thermal:
+  specific_heat_capacity: 824.0
+  thermal_conductivity: 0.0277
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: null
+  magnetic_ordering: null
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
+optical_nuclear:
+  colour: colorless
+  emission_lines:
+  - 685.603
+  - 703.747
+  - 712.789
+  - 720.236
+  - 731.102
+  neutron_cross_section: 0.0096

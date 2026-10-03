@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Iron
   symbol: Fe
@@ -11,7 +13,23 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Ar] 3d6 4s2'
+  valence_electrons: 8
+  atomic_radius: 156.0
+  covalent_radius: 132.0
   van_der_waals_radius: 194.0
+  ionic_radius: 64.5
+  stable_isotopes: 4
+  isotope_abundances:
+  - mass_number: 54
+    abundance: 0.05845
+  - mass_number: 56
+    abundance: 0.91754
+  - mass_number: 57
+    abundance: 0.02119
+  - mass_number: 58
+    abundance: 0.00282
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.83
   first_ionisation_energy: 762.5
@@ -19,12 +37,43 @@ chemical:
   oxidation_states:
   - 3
   - 2
+  reactivity:
+    air: slow
+    water: slow
+    acids: slow
+  bond_type: metallic
+  standard_electrode_potential: -0.44
+  flammable: false
 physical:
   phase: solid
   melting_point: 1811.0
   boiling_point: 3134.0
   density: 7874.0
+  crystal_structure: body-centered cubic
+  allotropes: []
+  heat_of_fusion: 13.8
+  heat_of_vaporisation: 347.0
+  vapour_pressure: 1.1e-56
 thermal:
-  specific_heat_capacity: 449.5
+  specific_heat_capacity: 449.0
+  thermal_conductivity: 79.0
+  thermal_expansion: 1.18e-05
+electrical_magnetic:
+  electrical_conductivity: 10000000.0
+  magnetic_ordering: ferromagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 4.0
+  youngs_modulus: 211.0
+  tensile_strength: 350
+  ductility: ductile
 optical_nuclear:
   colour: lustrous metallic with a grayish tinge
+  emission_lines:
+  - 385.637
+  - 387.857
+  - 389.971
+  - 393.03
+  - 526.954
+  neutron_cross_section: 2.56

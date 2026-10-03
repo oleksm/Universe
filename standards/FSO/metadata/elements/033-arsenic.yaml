@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Arsenic
   symbol: As
@@ -11,7 +13,17 @@ identity:
   category: metalloid
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2 4p3'
+  valence_electrons: 5
+  atomic_radius: 114.0
+  covalent_radius: 119.0
   van_der_waals_radius: 185.0
+  ionic_radius: 46.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 75
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.18
   first_ionisation_energy: 947
@@ -20,12 +32,46 @@ chemical:
   - 5
   - 3
   - -3
+  reactivity:
+    air: slow
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 1090.0
   boiling_point: 887.0
   density: 5776.0
+  crystal_structure: simple trigonal
+  allotropes:
+  - yellow arsenic
+  - black arsenic
+  - gray arsenic
+  heat_of_fusion: 27.7
+  heat_of_vaporisation: 32.4
+  vapour_pressure: 1.4e-12
 thermal:
-  specific_heat_capacity: 328.9
+  specific_heat_capacity: 328.0
+  thermal_conductivity: 50.0
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: 3300000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 3.5
+  youngs_modulus: 8.0
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: metallic grey
+  emission_lines:
+  - 506.898
+  - 512.134
+  - 514.163
+  - 540.813
+  - 545.132
+  neutron_cross_section: 4.2

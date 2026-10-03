@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Cerium
   symbol: Ce
@@ -11,7 +13,23 @@ identity:
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f1 5d1 6s2'
+  valence_electrons: 4
+  atomic_radius: null
+  covalent_radius: 204.0
   van_der_waals_radius: 235.0
+  ionic_radius: 87.0
+  stable_isotopes: 4
+  isotope_abundances:
+  - mass_number: 136
+    abundance: 0.00186
+  - mass_number: 138
+    abundance: 0.00251
+  - mass_number: 140
+    abundance: 0.88449
+  - mass_number: 142
+    abundance: 0.11114
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.12
   first_ionisation_energy: 534.4
@@ -19,12 +37,43 @@ chemical:
   oxidation_states:
   - 4
   - 3
+  reactivity:
+    air: fast
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.336
+  flammable: true
 physical:
   phase: solid
   melting_point: 1071.0
   boiling_point: 3697.0
   density: 6770.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 5.5
+  heat_of_vaporisation: 350.0
+  vapour_pressure: 2.0e-62
 thermal:
-  specific_heat_capacity: 192.3
+  specific_heat_capacity: 192.0
+  thermal_conductivity: 11.0
+  thermal_expansion: 6.3e-06
+electrical_magnetic:
+  electrical_conductivity: 1400000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.022
+  band_gap: null
+mechanical:
+  hardness: 2.5
+  youngs_modulus: 34.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 515.969
+  - 516.148
+  - 524.592
+  - 569.699
+  - 569.923
+  neutron_cross_section: 0.6

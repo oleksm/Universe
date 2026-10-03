@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Yttrium
   symbol: Y
@@ -11,19 +13,60 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d1 5s2'
+  valence_electrons: 3
+  atomic_radius: 212.0
+  covalent_radius: 190.0
   van_der_waals_radius: 219.0
+  ionic_radius: 90.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 89
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.22
   first_ionisation_energy: 600
   electron_affinity: 29.6
   oxidation_states:
   - 3
+  reactivity:
+    air: slow
+    water: none
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.372
+  flammable: false
 physical:
   phase: solid
   melting_point: 1795.0
   boiling_point: 3618.0
   density: 4470.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 11.4
+  heat_of_vaporisation: 380.0
+  vapour_pressure: 3.6e-58
 thermal:
-  specific_heat_capacity: 298.4
+  specific_heat_capacity: 298.0
+  thermal_conductivity: 17.0
+  thermal_expansion: 1.06e-05
+electrical_magnetic:
+  electrical_conductivity: 1800000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 1.3
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: 64.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 407.736
+  - 410.236
+  - 412.83
+  - 414.284
+  - 416.751
+  neutron_cross_section: 1.28

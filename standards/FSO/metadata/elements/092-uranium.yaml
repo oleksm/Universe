@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Uranium
   symbol: U
@@ -11,7 +13,21 @@ identity:
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f3 6d1 7s2'
+  valence_electrons: 6
+  atomic_radius: null
+  covalent_radius: 196.0
   van_der_waals_radius: 240.0
+  ionic_radius: 73.0
+  stable_isotopes: 0
+  isotope_abundances:
+  - mass_number: 234
+    abundance: 5.4e-05
+  - mass_number: 235
+    abundance: 0.007204
+  - mass_number: 238
+    abundance: 0.992742
+  half_life: 1.41097e+17
+  decay_mode: alpha
 chemical:
   electronegativity: 1.38
   first_ionisation_energy: 597.6
@@ -21,10 +37,43 @@ chemical:
   - 5
   - 4
   - 3
+  reactivity:
+    air: slow
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -1.798
+  flammable: false
 physical:
   phase: solid
   melting_point: 1408.0
   boiling_point: 4404.0
   density: 18950.0
+  crystal_structure: base orthorhombic
+  allotropes: []
+  heat_of_fusion: 14.0
+  heat_of_vaporisation: 420.0
+  vapour_pressure: 1.2e-73
 thermal:
-  specific_heat_capacity: 116.2
+  specific_heat_capacity: 116.0
+  thermal_conductivity: 27.0
+  thermal_expansion: 1.39e-05
+electrical_magnetic:
+  electrical_conductivity: 3600000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.69
+  band_gap: null
+mechanical:
+  hardness: 6.0
+  youngs_modulus: 208.0
+  tensile_strength: null
+  ductility: brittle
+optical_nuclear:
+  colour: silver
+  emission_lines:
+  - 381.199
+  - 383.963
+  - 387.103
+  - 394.382
+  - 404.275
+  neutron_cross_section: 7.57

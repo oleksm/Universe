@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Niobium
   symbol: Nb
@@ -11,7 +13,17 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d4 5s1'
+  valence_electrons: 5
+  atomic_radius: 198.0
+  covalent_radius: 164.0
   van_der_waals_radius: 207.0
+  ionic_radius: 64.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 93
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.6
   first_ionisation_energy: 652.1
@@ -19,12 +31,43 @@ chemical:
   oxidation_states:
   - 5
   - 3
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: -1.099
+  flammable: false
 physical:
   phase: solid
   melting_point: 2750.0
   boiling_point: 5017.0
   density: 8570.0
+  crystal_structure: body-centered cubic
+  allotropes: []
+  heat_of_fusion: 26.8
+  heat_of_vaporisation: 690.0
+  vapour_pressure: 4.9e-108
 thermal:
-  specific_heat_capacity: 264.8
+  specific_heat_capacity: 265.0
+  thermal_conductivity: 54.0
+  thermal_expansion: 7.3e-06
+electrical_magnetic:
+  electrical_conductivity: 6700000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 9.25
+  band_gap: null
+mechanical:
+  hardness: 6.0
+  youngs_modulus: 105.0
+  tensile_strength: null
+  ductility: very ductile
 optical_nuclear:
   colour: gray metallic, bluish when oxidized
+  emission_lines:
+  - 405.894
+  - 407.973
+  - 410.092
+  - 412.381
+  - 416.366
+  neutron_cross_section: 1.15

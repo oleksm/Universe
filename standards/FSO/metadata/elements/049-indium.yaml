@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Indium
   symbol: In
@@ -11,19 +13,62 @@ identity:
   category: post-transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p1'
+  valence_electrons: 3
+  atomic_radius: 156.0
+  covalent_radius: 142.0
   van_der_waals_radius: 193.0
+  ionic_radius: 80.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 113
+    abundance: 0.04281
+  - mass_number: 115
+    abundance: 0.95719
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.78
   first_ionisation_energy: 558.3
   electron_affinity: 37.043
   oxidation_states:
   - 3
+  reactivity:
+    air: none
+    water: none
+    acids: slow
+  bond_type: metallic
+  standard_electrode_potential: -0.34
+  flammable: false
 physical:
   phase: solid
   melting_point: 429.75
   boiling_point: 2345.0
   density: 7310.0
+  crystal_structure: centered tetragonal
+  allotropes: []
+  heat_of_fusion: 3.26
+  heat_of_vaporisation: 230.0
+  vapour_pressure: 1.2e-31
 thermal:
-  specific_heat_capacity: 232.9
+  specific_heat_capacity: 233.0
+  thermal_conductivity: 82.0
+  thermal_expansion: 3.21e-05
+electrical_magnetic:
+  electrical_conductivity: 12000000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: 3.41
+  band_gap: null
+mechanical:
+  hardness: 1.2
+  youngs_modulus: 11.0
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: silvery lustrous gray
+  emission_lines:
+  - 410.175
+  - 451.13
+  - 525.432
+  - 570.991
+  - 572.768
+  neutron_cross_section: 194.0

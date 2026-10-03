@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Tellurium
   symbol: Te
@@ -11,7 +13,31 @@ identity:
   category: metalloid
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p4'
+  valence_electrons: 6
+  atomic_radius: 123.0
+  covalent_radius: 138.0
   van_der_waals_radius: 206.0
+  ionic_radius: 56.0
+  stable_isotopes: 5
+  isotope_abundances:
+  - mass_number: 120
+    abundance: 0.0009
+  - mass_number: 122
+    abundance: 0.0255
+  - mass_number: 123
+    abundance: 0.0089
+  - mass_number: 124
+    abundance: 0.0474
+  - mass_number: 125
+    abundance: 0.0707
+  - mass_number: 126
+    abundance: 0.1884
+  - mass_number: 128
+    abundance: 0.3174
+  - mass_number: 130
+    abundance: 0.3408
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.1
   first_ionisation_energy: 869.3
@@ -20,10 +46,43 @@ chemical:
   - 6
   - 4
   - -2
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: -1.143
+  flammable: false
 physical:
   phase: solid
   melting_point: 722.66
   boiling_point: 1261.0
   density: 6232.0
+  crystal_structure: simple trigonal
+  allotropes: []
+  heat_of_fusion: 17.5
+  heat_of_vaporisation: 48.0
+  vapour_pressure: 7.9e-11
 thermal:
-  specific_heat_capacity: 201.6
+  specific_heat_capacity: 201.0
+  thermal_conductivity: 3.0
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: 10000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: 0.33
+mechanical:
+  hardness: 2.25
+  youngs_modulus: 43.0
+  tensile_strength: null
+  ductility: very ductile
+optical_nuclear:
+  colour: silver
+  emission_lines:
+  - 634.952
+  - 683.765
+  - 685.388
+  - 719.108
+  - 726.38
+  neutron_cross_section: 5.4

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Rhodium
   symbol: Rh
@@ -11,19 +13,60 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d8 5s1'
+  valence_electrons: 9
+  atomic_radius: 173.0
+  covalent_radius: 142.0
   van_der_waals_radius: 195.0
+  ionic_radius: 66.5
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 103
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.28
   first_ionisation_energy: 719.7
   electron_affinity: 110.27
   oxidation_states:
   - 3
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 2237.0
   boiling_point: 3968.0
   density: 12400.0
+  crystal_structure: face-centered cubic
+  allotropes: []
+  heat_of_fusion: 21.7
+  heat_of_vaporisation: 495.0
+  vapour_pressure: 8.2e-81
 thermal:
-  specific_heat_capacity: 242.7
+  specific_heat_capacity: 240.0
+  thermal_conductivity: 150.0
+  thermal_expansion: 8.0e-06
+electrical_magnetic:
+  electrical_conductivity: 23000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 6.0
+  youngs_modulus: 275.0
+  tensile_strength: null
+  ductility: very ductile
 optical_nuclear:
   colour: silvery white metallic
+  emission_lines:
+  - 382.226
+  - 385.652
+  - 395.886
+  - 421.114
+  - 437.48
+  neutron_cross_section: 145.0

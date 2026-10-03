@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Gallium
   symbol: Ga
@@ -11,19 +13,62 @@ identity:
   category: post-transition metal
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2 4p1'
+  valence_electrons: 3
+  atomic_radius: 136.0
+  covalent_radius: 122.0
   van_der_waals_radius: 187.0
+  ionic_radius: 62.0
+  stable_isotopes: 2
+  isotope_abundances:
+  - mass_number: 69
+    abundance: 0.60108
+  - mass_number: 71
+    abundance: 0.39892
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.81
   first_ionisation_energy: 578.8
   electron_affinity: 41
   oxidation_states:
   - 3
+  reactivity:
+    air: none
+    water: none
+    acids: slow
+  bond_type: metallic
+  standard_electrode_potential: -0.549
+  flammable: false
 physical:
   phase: solid
   melting_point: 302.91
   boiling_point: 2477.0
   density: 5910.0
+  crystal_structure: base orthorhombic
+  allotropes: []
+  heat_of_fusion: 5.59
+  heat_of_vaporisation: 256.0
+  vapour_pressure: 2.5e-36
 thermal:
-  specific_heat_capacity: 370.9
+  specific_heat_capacity: 371.0
+  thermal_conductivity: 29.0
+  thermal_expansion: 0.00012
+electrical_magnetic:
+  electrical_conductivity: 7100000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: 1.083
+  band_gap: null
+mechanical:
+  hardness: 1.5
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: silver-white
+  emission_lines:
+  - 639.656
+  - 641.345
+  - 725.14
+  - 740.3
+  - 746.4
+  neutron_cross_section: 2.9

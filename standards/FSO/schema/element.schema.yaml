@@ -28,12 +28,12 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      electron_configuration: { type: string, description: "e.g. [Ar] 3d6 4s2" }
-      valence_electrons: { type: integer, minimum: 0 }
+      electron_configuration: { type: [string, "null"], description: "e.g. [Ar] 3d6 4s2" }
+      valence_electrons: { type: [integer, "null"], minimum: 0 }
       atomic_radius: { $ref: "#/definitions/number_or_null", description: pm }
       covalent_radius: { $ref: "#/definitions/number_or_null", description: pm }
       van_der_waals_radius: { $ref: "#/definitions/number_or_null", description: pm }
-      ionic_radius: { $ref: "#/definitions/number_or_null", description: "pm, for its most common ion" }
+      ionic_radius: { $ref: "#/definitions/number_or_null", description: "pm, for its commonest ion" }
       stable_isotopes: { type: integer, minimum: 0, description: How many. }
       isotope_abundances:
         description: Each isotope's mass number and its share (0 to 1).
@@ -57,21 +57,22 @@ properties:
       electron_affinity: { $ref: "#/definitions/number_or_null", description: kJ/mol }
       oxidation_states: { type: array, items: { type: integer }, description: The common ones. }
       reactivity:
+        description: At room temperature, with air, water and dilute acid. Rated by hand.
         type: object
         additionalProperties: false
         properties:
-          air: { enum: [none, slow, fast, violent] }
-          water: { enum: [none, slow, fast, violent] }
-          acids: { enum: [none, slow, fast, violent] }
+          air: { enum: [none, slow, fast, violent, null] }
+          water: { enum: [none, slow, fast, violent, null] }
+          acids: { enum: [none, slow, fast, violent, null] }
       bond_type: { enum: [metallic, covalent, ionic, none], description: The type it typically forms. }
-      standard_electrode_potential: { $ref: "#/definitions/number_or_null", description: V }
-      flammable: { type: boolean }
+      standard_electrode_potential: { $ref: "#/definitions/number_or_null", description: "V; its ion to the element (the 2+ ion where there is one)" }
+      flammable: { type: [boolean, "null"], description: "The bulk element burns in air once lit. Rated by hand." }
 
   physical:
     type: object
     additionalProperties: false
     properties:
-      phase: { enum: [solid, liquid, gas], description: At room temperature. }
+      phase: { enum: [solid, liquid, gas, null], description: At room temperature. }
       melting_point: { $ref: "#/definitions/number_or_null", description: K }
       boiling_point: { $ref: "#/definitions/number_or_null", description: K }
       density: { $ref: "#/definitions/number_or_null", description: kg/m3 }
@@ -79,7 +80,7 @@ properties:
       allotropes: { type: array, items: { type: string }, description: "e.g. graphite, diamond" }
       heat_of_fusion: { $ref: "#/definitions/number_or_null", description: kJ/mol }
       heat_of_vaporisation: { $ref: "#/definitions/number_or_null", description: kJ/mol }
-      vapour_pressure: { $ref: "#/definitions/number_or_null", description: Pa, at room temperature }
+      vapour_pressure: { $ref: "#/definitions/number_or_null", description: "Pa, at 298 K; carried down from the measured curve; null for a gas" }
 
   thermal:
     type: object
@@ -94,7 +95,7 @@ properties:
     additionalProperties: false
     properties:
       electrical_conductivity: { $ref: "#/definitions/number_or_null", description: S/m }
-      magnetic_ordering: { enum: [ferromagnetic, antiferromagnetic, paramagnetic, diamagnetic] }
+      magnetic_ordering: { enum: [ferromagnetic, antiferromagnetic, paramagnetic, diamagnetic, null] }
       superconducting_temperature: { $ref: "#/definitions/number_or_null", description: "K; null if none" }
       band_gap: { $ref: "#/definitions/number_or_null", description: "eV; null if not a semiconductor or insulator" }
 
@@ -104,13 +105,13 @@ properties:
     properties:
       hardness: { $ref: "#/definitions/number_or_null", description: Mohs scale }
       youngs_modulus: { $ref: "#/definitions/number_or_null", description: GPa }
-      tensile_strength: { $ref: "#/definitions/number_or_null", description: MPa }
-      ductility: { enum: [brittle, ductile, very ductile, null], description: Ductility and malleability. }
+      tensile_strength: { $ref: "#/definitions/number_or_null", description: "MPa, annealed" }
+      ductility: { enum: [brittle, ductile, very ductile, null], description: "By Pugh's ratio (bulk / shear modulus): over 2.5 very ductile, over 1.75 ductile, else brittle." }
 
   optical_nuclear:
     type: object
     additionalProperties: false
     properties:
-      colour: { type: string, description: Colour and lustre. }
-      emission_lines: { type: array, items: { type: number }, description: "nm, the strongest lines of its spectrum" }
+      colour: { type: [string, "null"], description: Colour and lustre. }
+      emission_lines: { type: array, items: { type: number }, description: "nm, the five strongest visible lines of the neutral atom" }
       neutron_cross_section: { $ref: "#/definitions/number_or_null", description: "barns, thermal neutron absorption" }

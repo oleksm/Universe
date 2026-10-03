@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Xenon
   symbol: Xe
@@ -11,17 +13,76 @@ identity:
   category: noble gas
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p6'
+  valence_electrons: 8
+  atomic_radius: 108.0
+  covalent_radius: 140.0
   van_der_waals_radius: 216.0
+  ionic_radius: 48.0
+  stable_isotopes: 9
+  isotope_abundances:
+  - mass_number: 124
+    abundance: 0.00095
+  - mass_number: 126
+    abundance: 0.00089
+  - mass_number: 128
+    abundance: 0.0191
+  - mass_number: 129
+    abundance: 0.26401
+  - mass_number: 130
+    abundance: 0.04071
+  - mass_number: 131
+    abundance: 0.21232
+  - mass_number: 132
+    abundance: 0.26909
+  - mass_number: 134
+    abundance: 0.10436
+  - mass_number: 136
+    abundance: 0.08857
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.6
   first_ionisation_energy: 1170.4
   electron_affinity: -77
   oxidation_states:
   - 0
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: none
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: gas
   melting_point: 161.36
   boiling_point: 165.03
   density: 5.887
+  crystal_structure: face-centered cubic
+  allotropes: []
+  heat_of_fusion: 2.3
+  heat_of_vaporisation: 12.64
+  vapour_pressure: null
+thermal:
+  specific_heat_capacity: 158.32
+  thermal_conductivity: 0.00565
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: null
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: colorless gas, exhibiting a blue glow when placed in a high voltage electric field
+  emission_lines:
+  - 473.415
+  - 491.651
+  - 492.315
+  - 631.806
+  - 711.96
+  neutron_cross_section: 25.0

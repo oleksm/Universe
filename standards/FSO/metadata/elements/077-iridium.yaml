@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Iridium
   symbol: Ir
@@ -11,7 +13,19 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d7 6s2'
+  valence_electrons: 9
+  atomic_radius: 180.0
+  covalent_radius: 141.0
   van_der_waals_radius: 202.0
+  ionic_radius: 62.5
+  stable_isotopes: 2
+  isotope_abundances:
+  - mass_number: 191
+    abundance: 0.373
+  - mass_number: 193
+    abundance: 0.627
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.2
   first_ionisation_energy: 880
@@ -19,12 +33,43 @@ chemical:
   oxidation_states:
   - 4
   - 3
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 2719.0
   boiling_point: 4701.0
   density: 22420.0
+  crystal_structure: face-centered cubic
+  allotropes: []
+  heat_of_fusion: 26.0
+  heat_of_vaporisation: 560.0
+  vapour_pressure: 7.0e-99
 thermal:
-  specific_heat_capacity: 130.6
+  specific_heat_capacity: 131.0
+  thermal_conductivity: 150.0
+  thermal_expansion: 6.4e-06
+electrical_magnetic:
+  electrical_conductivity: 21000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.11
+  band_gap: null
+mechanical:
+  hardness: 6.5
+  youngs_modulus: 528.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 380.012
+  - 390.251
+  - 391.538
+  - 397.631
+  - 399.212
+  neutron_cross_section: 425.0

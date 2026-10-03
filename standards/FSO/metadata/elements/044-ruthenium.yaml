@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Ruthenium
   symbol: Ru
@@ -11,19 +13,72 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d7 5s1'
+  valence_electrons: 8
+  atomic_radius: 178.0
+  covalent_radius: 146.0
   van_der_waals_radius: 207.0
+  ionic_radius: 68.0
+  stable_isotopes: 7
+  isotope_abundances:
+  - mass_number: 96
+    abundance: 0.0554
+  - mass_number: 98
+    abundance: 0.0187
+  - mass_number: 99
+    abundance: 0.1276
+  - mass_number: 100
+    abundance: 0.126
+  - mass_number: 101
+    abundance: 0.1706
+  - mass_number: 102
+    abundance: 0.3155
+  - mass_number: 104
+    abundance: 0.1862
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.2
   first_ionisation_energy: 710.2
   electron_affinity: 100.96
   oxidation_states:
   - 3
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: 0.455
+  flammable: false
 physical:
   phase: solid
   melting_point: 2607.0
   boiling_point: 4423.0
   density: 12100.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 25.7
+  heat_of_vaporisation: 580.0
+  vapour_pressure: 1.5e-97
 thermal:
   specific_heat_capacity: 238.0
+  thermal_conductivity: 120.0
+  thermal_expansion: 6.4e-06
+electrical_magnetic:
+  electrical_conductivity: 14000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.49
+  band_gap: null
+mechanical:
+  hardness: 6.5
+  youngs_modulus: 447.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery white metallic
+  emission_lines:
+  - 408.06
+  - 419.99
+  - 421.206
+  - 429.771
+  - 455.451
+  neutron_cross_section: 2.6

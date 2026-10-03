@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Sulfur
   symbol: S
@@ -11,7 +13,23 @@ identity:
   category: non-metal
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p4'
+  valence_electrons: 6
+  atomic_radius: 87.0
+  covalent_radius: 105.0
   van_der_waals_radius: 180.0
+  ionic_radius: 184.0
+  stable_isotopes: 4
+  isotope_abundances:
+  - mass_number: 32
+    abundance: 0.9485
+  - mass_number: 33
+    abundance: 0.00763
+  - mass_number: 34
+    abundance: 0.04365
+  - mass_number: 36
+    abundance: 0.000158
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.58
   first_ionisation_energy: 999.6
@@ -20,12 +38,46 @@ chemical:
   - 6
   - 4
   - -2
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: null
+  flammable: true
 physical:
   phase: solid
   melting_point: 388.36
   boiling_point: 717.75
   density: 2067.0
+  crystal_structure: face-centered orthorhombic
+  allotropes:
+  - rhombic sulphur
+  - monoclinic sulphur
+  - amorphous sulphur
+  heat_of_fusion: 1.73
+  heat_of_vaporisation: 9.8
+  vapour_pressure: 0.00065
 thermal:
-  specific_heat_capacity: 709.4
+  specific_heat_capacity: 705.0
+  thermal_conductivity: 0.205
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: 1.0e-15
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: 2.6
+mechanical:
+  hardness: 2.0
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: lemon yellow sintered microcrystals
+  emission_lines:
+  - 469.413
+  - 570.611
+  - 605.266
+  - 674.879
+  - 675.716
+  neutron_cross_section: 0.52

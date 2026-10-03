@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Chlorine
   symbol: Cl
@@ -11,7 +13,19 @@ identity:
   category: halogen
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p5'
+  valence_electrons: 7
+  atomic_radius: 79.0
+  covalent_radius: 102.0
   van_der_waals_radius: 175.0
+  ionic_radius: 181.0
+  stable_isotopes: 2
+  isotope_abundances:
+  - mass_number: 35
+    abundance: 0.758
+  - mass_number: 37
+    abundance: 0.242
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 3.16
   first_ionisation_energy: 1251.2
@@ -21,10 +35,44 @@ chemical:
   - 5
   - 1
   - -1
+  reactivity:
+    air: none
+    water: slow
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: 1.36
+  flammable: false
 physical:
   phase: gas
   melting_point: 171.65
   boiling_point: 239.11
   density: 3.214
+  crystal_structure: base orthorhombic
+  allotropes:
+  - dichlorine
+  heat_of_fusion: 3.2
+  heat_of_vaporisation: 10.2
+  vapour_pressure: null
+thermal:
+  specific_heat_capacity: 478.2
+  thermal_conductivity: 0.0089
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: 0.01
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: pale yellow-green gas
+  emission_lines:
+  - 708.681
+  - 725.662
+  - 741.411
+  - 748.947
+  - 749.212
+  neutron_cross_section: 35.3

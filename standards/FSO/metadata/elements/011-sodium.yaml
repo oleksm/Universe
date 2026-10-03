@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Sodium
   symbol: Na
@@ -11,19 +13,60 @@ identity:
   category: alkali metal
 atomic_structure:
   electron_configuration: '[Ne] 3s1'
+  valence_electrons: 1
+  atomic_radius: 190.0
+  covalent_radius: 166.0
   van_der_waals_radius: 227.0
+  ionic_radius: 102.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 23
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 0.93
   first_ionisation_energy: 495.8
   electron_affinity: 52.867
   oxidation_states:
   - 1
+  reactivity:
+    air: fast
+    water: violent
+    acids: violent
+  bond_type: metallic
+  standard_electrode_potential: -2.71
+  flammable: true
 physical:
   phase: solid
   melting_point: 370.95
   boiling_point: 1156.0
   density: 970.0
+  crystal_structure: body-centered cubic
+  allotropes: []
+  heat_of_fusion: 2.6
+  heat_of_vaporisation: 97.7
+  vapour_pressure: 3.9e-09
 thermal:
-  specific_heat_capacity: 1228.0
+  specific_heat_capacity: 1230.0
+  thermal_conductivity: 140.0
+  thermal_expansion: 7.0e-05
+electrical_magnetic:
+  electrical_conductivity: 21000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 0.5
+  youngs_modulus: 10.0
+  tensile_strength: null
+  ductility: ductile
 optical_nuclear:
   colour: silvery white metallic
+  emission_lines:
+  - 388.18
+  - 443.23
+  - 507.12
+  - 588.995
+  - 589.592
+  neutron_cross_section: 0.53

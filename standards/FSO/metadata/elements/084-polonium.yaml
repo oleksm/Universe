@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Polonium
   symbol: Po
@@ -11,7 +13,15 @@ identity:
   category: metalloid
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s2 6p4'
+  valence_electrons: 6
+  atomic_radius: 135.0
+  covalent_radius: 140.0
   van_der_waals_radius: 197.0
+  ionic_radius: 94.0
+  stable_isotopes: 0
+  isotope_abundances: []
+  half_life: 3222210000.0
+  decay_mode: alpha
 chemical:
   electronegativity: 2.0
   first_ionisation_energy: 812.1
@@ -19,12 +29,45 @@ chemical:
   oxidation_states:
   - 4
   - 2
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: 0.76
+  flammable: false
 physical:
   phase: solid
   melting_point: 527.0
   boiling_point: 1235.0
   density: 9320.0
+  crystal_structure: simple cubic
+  allotropes:
+  - alpha polonium
+  - beta polonium
+  heat_of_fusion: 13.0
+  heat_of_vaporisation: 100.0
+  vapour_pressure: 2.9e-09
 thermal:
   specific_heat_capacity: 126.3
+  thermal_conductivity: null
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: 2300000.0
+  magnetic_ordering: null
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: silvery
+  emission_lines:
+  - 386.193
+  - 417.052
+  - 449.321
+  - 487.624
+  - 532.323
+  neutron_cross_section: 0.5

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Mercury
   symbol: Hg
@@ -11,7 +13,29 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s2'
+  valence_electrons: 12
+  atomic_radius: 171.0
+  covalent_radius: 132.0
   van_der_waals_radius: 209.0
+  ionic_radius: 102.0
+  stable_isotopes: 7
+  isotope_abundances:
+  - mass_number: 196
+    abundance: 0.0015
+  - mass_number: 198
+    abundance: 0.1004
+  - mass_number: 199
+    abundance: 0.1694
+  - mass_number: 200
+    abundance: 0.2314
+  - mass_number: 201
+    abundance: 0.1317
+  - mass_number: 202
+    abundance: 0.2974
+  - mass_number: 204
+    abundance: 0.0682
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.0
   first_ionisation_energy: 1007.1
@@ -19,12 +43,43 @@ chemical:
   oxidation_states:
   - 2
   - 1
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: 0.85
+  flammable: false
 physical:
   phase: liquid
   melting_point: 234.32
   boiling_point: 629.88
   density: 13530.0
+  crystal_structure: simple trigonal
+  allotropes: []
+  heat_of_fusion: 2.29
+  heat_of_vaporisation: 59.2
+  vapour_pressure: 0.27
 thermal:
   specific_heat_capacity: 139.5
+  thermal_conductivity: 8.3
+  thermal_expansion: 0.000181
+electrical_magnetic:
+  electrical_conductivity: 1000000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: 4.154
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: silvery
+  emission_lines:
+  - 404.656
+  - 435.834
+  - 546.075
+  - 690.746
+  - 708.19
+  neutron_cross_section: 374.0

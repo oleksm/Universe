@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Neodymium
   symbol: Nd
@@ -11,19 +13,72 @@ identity:
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f4 6s2'
+  valence_electrons: 6
+  atomic_radius: 206.0
+  covalent_radius: 201.0
   van_der_waals_radius: 229.0
+  ionic_radius: 98.3
+  stable_isotopes: 5
+  isotope_abundances:
+  - mass_number: 142
+    abundance: 0.27153
+  - mass_number: 143
+    abundance: 0.12173
+  - mass_number: 144
+    abundance: 0.23798
+  - mass_number: 145
+    abundance: 0.08293
+  - mass_number: 146
+    abundance: 0.17189
+  - mass_number: 148
+    abundance: 0.05756
+  - mass_number: 150
+    abundance: 0.05638
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.14
   first_ionisation_energy: 533.1
   electron_affinity: 184.87
   oxidation_states:
   - 3
+  reactivity:
+    air: fast
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.1
+  flammable: false
 physical:
   phase: solid
   melting_point: 1294.0
   boiling_point: 3347.0
   density: 7010.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 7.1
+  heat_of_vaporisation: 285.0
+  vapour_pressure: 7.8e-44
 thermal:
-  specific_heat_capacity: 190.3
+  specific_heat_capacity: 190.0
+  thermal_conductivity: 17.0
+  thermal_expansion: 9.6e-06
+electrical_magnetic:
+  electrical_conductivity: 1600000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 1.23
+  youngs_modulus: 41.0
+  tensile_strength: null
+  ductility: ductile
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 463.424
+  - 464.11
+  - 468.345
+  - 488.381
+  - 492.453
+  neutron_cross_section: 49.0

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Zirconium
   symbol: Zr
@@ -11,19 +13,68 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d2 5s2'
+  valence_electrons: 4
+  atomic_radius: 206.0
+  covalent_radius: 175.0
   van_der_waals_radius: 186.0
+  ionic_radius: 72.0
+  stable_isotopes: 4
+  isotope_abundances:
+  - mass_number: 90
+    abundance: 0.5145
+  - mass_number: 91
+    abundance: 0.1122
+  - mass_number: 92
+    abundance: 0.1715
+  - mass_number: 94
+    abundance: 0.1738
+  - mass_number: 96
+    abundance: 0.028
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.33
   first_ionisation_energy: 640.1
   electron_affinity: 41.806
   oxidation_states:
   - 4
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: -1.45
+  flammable: false
 physical:
   phase: solid
   melting_point: 2128.0
   boiling_point: 4682.0
   density: 6520.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 21.0
+  heat_of_vaporisation: 580.0
+  vapour_pressure: 8.5e-91
 thermal:
   specific_heat_capacity: 278.0
+  thermal_conductivity: 23.0
+  thermal_expansion: 5.7e-06
+electrical_magnetic:
+  electrical_conductivity: 2400000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.61
+  band_gap: null
+mechanical:
+  hardness: 5.0
+  youngs_modulus: 67.0
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 383.596
+  - 386.387
+  - 389.032
+  - 423.931
+  - 468.78
+  neutron_cross_section: 0.184

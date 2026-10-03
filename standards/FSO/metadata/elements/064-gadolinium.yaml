@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Gadolinium
   symbol: Gd
@@ -11,19 +13,72 @@ identity:
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f7 5d1 6s2'
+  valence_electrons: 10
+  atomic_radius: 233.0
+  covalent_radius: 196.0
   van_der_waals_radius: 237.0
+  ionic_radius: 93.8
+  stable_isotopes: 6
+  isotope_abundances:
+  - mass_number: 152
+    abundance: 0.002
+  - mass_number: 154
+    abundance: 0.0218
+  - mass_number: 155
+    abundance: 0.148
+  - mass_number: 156
+    abundance: 0.2047
+  - mass_number: 157
+    abundance: 0.1565
+  - mass_number: 158
+    abundance: 0.2484
+  - mass_number: 160
+    abundance: 0.2186
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.2
   first_ionisation_energy: 593.4
   electron_affinity: 13.22
   oxidation_states:
   - 3
+  reactivity:
+    air: slow
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.279
+  flammable: false
 physical:
   phase: solid
   melting_point: 1586.0
   boiling_point: 3546.0
   density: 7900.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 10.0
+  heat_of_vaporisation: 305.0
+  vapour_pressure: 1.7e-39
 thermal:
-  specific_heat_capacity: 235.5
+  specific_heat_capacity: 240.0
+  thermal_conductivity: 11.0
+  thermal_expansion: 9.4e-06
+electrical_magnetic:
+  electrical_conductivity: 770000.0
+  magnetic_ordering: ferromagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 5.13
+  youngs_modulus: 55.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 405.364
+  - 405.822
+  - 407.87
+  - 417.554
+  - 422.585
+  neutron_cross_section: 49000.0

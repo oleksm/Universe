@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Germanium
   symbol: Ge
@@ -11,7 +13,25 @@ identity:
   category: metalloid
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2 4p2'
+  valence_electrons: 4
+  atomic_radius: 125.0
+  covalent_radius: 120.0
   van_der_waals_radius: 211.0
+  ionic_radius: 53.0
+  stable_isotopes: 4
+  isotope_abundances:
+  - mass_number: 70
+    abundance: 0.2052
+  - mass_number: 72
+    abundance: 0.2745
+  - mass_number: 73
+    abundance: 0.0776
+  - mass_number: 74
+    abundance: 0.3652
+  - mass_number: 76
+    abundance: 0.0775
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.01
   first_ionisation_energy: 762
@@ -19,12 +39,43 @@ chemical:
   oxidation_states:
   - 4
   - 2
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: 0.12
+  flammable: false
 physical:
   phase: solid
   melting_point: 1211.4
   boiling_point: 3106.0
   density: 5323.0
+  crystal_structure: face-centered cubic
+  allotropes: []
+  heat_of_fusion: 31.8
+  heat_of_vaporisation: 334.0
+  vapour_pressure: 6.8e-49
 thermal:
-  specific_heat_capacity: 319.7
+  specific_heat_capacity: 321.4
+  thermal_conductivity: 60.0
+  thermal_expansion: 6.0e-06
+electrical_magnetic:
+  electrical_conductivity: 2000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: 0.67
+mechanical:
+  hardness: 6.0
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: grayish-white
+  emission_lines:
+  - 422.656
+  - 468.583
+  - 565.596
+  - 569.196
+  - 580.209
+  neutron_cross_section: 2.2

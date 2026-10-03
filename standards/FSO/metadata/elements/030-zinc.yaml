@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Zinc
   symbol: Zn
@@ -11,19 +13,68 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2'
+  valence_electrons: 12
+  atomic_radius: 142.0
+  covalent_radius: 122.0
   van_der_waals_radius: 139.0
+  ionic_radius: 74.0
+  stable_isotopes: 5
+  isotope_abundances:
+  - mass_number: 64
+    abundance: 0.4917
+  - mass_number: 66
+    abundance: 0.2773
+  - mass_number: 67
+    abundance: 0.0404
+  - mass_number: 68
+    abundance: 0.1845
+  - mass_number: 70
+    abundance: 0.0061
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.65
   first_ionisation_energy: 906.4
   electron_affinity: -58
   oxidation_states:
   - 2
+  reactivity:
+    air: slow
+    water: none
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -0.7618
+  flammable: false
 physical:
   phase: solid
   melting_point: 692.68
   boiling_point: 1180.0
   density: 7134.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 7.35
+  heat_of_vaporisation: 119.0
+  vapour_pressure: 2.1e-12
 thermal:
-  specific_heat_capacity: 389.4
+  specific_heat_capacity: 388.0
+  thermal_conductivity: 120.0
+  thermal_expansion: 3.02e-05
+electrical_magnetic:
+  electrical_conductivity: 17000000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: 0.85
+  band_gap: null
+mechanical:
+  hardness: 2.5
+  youngs_modulus: 108.0
+  tensile_strength: 300
+  ductility: brittle
 optical_nuclear:
   colour: silver-gray
+  emission_lines:
+  - 462.981
+  - 468.014
+  - 472.216
+  - 481.053
+  - 577.21
+  neutron_cross_section: 1.1

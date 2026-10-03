@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Carbon
   symbol: C
@@ -11,7 +13,19 @@ identity:
   category: non-metal
 atomic_structure:
   electron_configuration: '[He] 2s2 2p2'
+  valence_electrons: 4
+  atomic_radius: 67.0
+  covalent_radius: 76.0
   van_der_waals_radius: 170.0
+  ionic_radius: 16.0
+  stable_isotopes: 2
+  isotope_abundances:
+  - mass_number: 12
+    abundance: 0.9894
+  - mass_number: 13
+    abundance: 0.0106
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.55
   first_ionisation_energy: 1086.5
@@ -20,10 +34,50 @@ chemical:
   - 4
   - 2
   - -4
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: null
+  flammable: true
 physical:
   phase: solid
   melting_point: 3823.0
   boiling_point: 4098.0
   density: 2267.0
+  crystal_structure: simple hexagonal
+  allotropes:
+  - graphite
+  - diamond
+  - amorphous carbon
+  - lonsdaleite
+  - fullerene
+  - carbon nanotube
+  - graphene
+  heat_of_fusion: 105.0
+  heat_of_vaporisation: 715.0
+  vapour_pressure: 5.2e-124
 thermal:
-  specific_heat_capacity: 709.1
+  specific_heat_capacity: 710.0
+  thermal_conductivity: 140.0
+  thermal_expansion: 7.1e-06
+electrical_magnetic:
+  electrical_conductivity: 100000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: 5.47
+mechanical:
+  hardness: 0.5
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
+optical_nuclear:
+  colour: black
+  emission_lines:
+  - 505.215
+  - 538.033
+  - 601.322
+  - 711.318
+  - 711.519
+  neutron_cross_section: 0.0035

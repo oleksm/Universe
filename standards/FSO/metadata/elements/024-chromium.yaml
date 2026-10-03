@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Chromium
   symbol: Cr
@@ -11,7 +13,23 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Ar] 3d5 4s1'
+  valence_electrons: 6
+  atomic_radius: 166.0
+  covalent_radius: 139.0
   van_der_waals_radius: 189.0
+  ionic_radius: 44.0
+  stable_isotopes: 4
+  isotope_abundances:
+  - mass_number: 50
+    abundance: 0.04345
+  - mass_number: 52
+    abundance: 0.83789
+  - mass_number: 53
+    abundance: 0.09501
+  - mass_number: 54
+    abundance: 0.02365
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.66
   first_ionisation_energy: 652.9
@@ -20,12 +38,43 @@ chemical:
   - 6
   - 3
   - 2
+  reactivity:
+    air: none
+    water: none
+    acids: slow
+  bond_type: metallic
+  standard_electrode_potential: -0.9
+  flammable: false
 physical:
   phase: solid
   melting_point: 2180.0
   boiling_point: 2944.0
   density: 7150.0
+  crystal_structure: body-centered cubic
+  allotropes: []
+  heat_of_fusion: 20.5
+  heat_of_vaporisation: 339.0
+  vapour_pressure: 3.2e-55
 thermal:
-  specific_heat_capacity: 449.1
+  specific_heat_capacity: 448.0
+  thermal_conductivity: 94.0
+  thermal_expansion: 4.9e-06
+electrical_magnetic:
+  electrical_conductivity: 7900000.0
+  magnetic_ordering: antiferromagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 8.5
+  youngs_modulus: 279.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery metallic
+  emission_lines:
+  - 520.45
+  - 520.602
+  - 520.841
+  - 534.58
+  - 540.978
+  neutron_cross_section: 3.1

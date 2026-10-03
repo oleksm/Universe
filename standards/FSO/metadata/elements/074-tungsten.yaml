@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Tungsten
   symbol: W
@@ -11,19 +13,68 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d4 6s2'
+  valence_electrons: 6
+  atomic_radius: 193.0
+  covalent_radius: 162.0
   van_der_waals_radius: 210.0
+  ionic_radius: 60.0
+  stable_isotopes: 5
+  isotope_abundances:
+  - mass_number: 180
+    abundance: 0.0012
+  - mass_number: 182
+    abundance: 0.265
+  - mass_number: 183
+    abundance: 0.1431
+  - mass_number: 184
+    abundance: 0.3064
+  - mass_number: 186
+    abundance: 0.2843
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.36
   first_ionisation_energy: 770
   electron_affinity: 78.76
   oxidation_states:
   - 6
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 3695.0
   boiling_point: 5828.0
   density: 19300.0
+  crystal_structure: body-centered cubic
+  allotropes: []
+  heat_of_fusion: 35.0
+  heat_of_vaporisation: 800.0
+  vapour_pressure: 1.2e-136
 thermal:
   specific_heat_capacity: 132.0
+  thermal_conductivity: 170.0
+  thermal_expansion: 4.5e-06
+electrical_magnetic:
+  electrical_conductivity: 20000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.015
+  band_gap: null
+mechanical:
+  hardness: 7.5
+  youngs_modulus: 411.0
+  tensile_strength: 585
+  ductility: ductile
 optical_nuclear:
   colour: grayish white, lustrous
+  emission_lines:
+  - 386.799
+  - 400.875
+  - 407.436
+  - 429.461
+  - 505.328
+  neutron_cross_section: 18.4

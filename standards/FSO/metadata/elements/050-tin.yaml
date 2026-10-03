@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Tin
   symbol: Sn
@@ -11,7 +13,35 @@ identity:
   category: post-transition metal
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p2'
+  valence_electrons: 4
+  atomic_radius: 145.0
+  covalent_radius: 139.0
   van_der_waals_radius: 217.0
+  ionic_radius: 69.0
+  stable_isotopes: 10
+  isotope_abundances:
+  - mass_number: 112
+    abundance: 0.0097
+  - mass_number: 114
+    abundance: 0.0066
+  - mass_number: 115
+    abundance: 0.0034
+  - mass_number: 116
+    abundance: 0.1454
+  - mass_number: 117
+    abundance: 0.0768
+  - mass_number: 118
+    abundance: 0.2422
+  - mass_number: 119
+    abundance: 0.0859
+  - mass_number: 120
+    abundance: 0.3258
+  - mass_number: 122
+    abundance: 0.0463
+  - mass_number: 124
+    abundance: 0.0579
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.96
   first_ionisation_energy: 708.6
@@ -19,12 +49,45 @@ chemical:
   oxidation_states:
   - 4
   - 2
+  reactivity:
+    air: none
+    water: none
+    acids: slow
+  bond_type: metallic
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 505.08
   boiling_point: 2875.0
   density: 7287.0
+  crystal_structure: centered tetragonal
+  allotropes:
+  - white tin
+  - gray tin
+  heat_of_fusion: 7.0
+  heat_of_vaporisation: 290.0
+  vapour_pressure: 2.3e-42
 thermal:
-  specific_heat_capacity: 228.4
+  specific_heat_capacity: 217.0
+  thermal_conductivity: 67.0
+  thermal_expansion: 2.2e-05
+electrical_magnetic:
+  electrical_conductivity: 9100000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: 3.72
+  band_gap: null
+mechanical:
+  hardness: 1.5
+  youngs_modulus: 50.0
+  tensile_strength: 107.5
+  ductility: very ductile
 optical_nuclear:
   colour: silvery-white (beta, β) or gray (alpha, α)
+  emission_lines:
+  - 380.101
+  - 452.473
+  - 563.168
+  - 606.912
+  - 614.96
+  neutron_cross_section: 0.62

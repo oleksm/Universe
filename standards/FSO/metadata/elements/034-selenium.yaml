@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Selenium
   symbol: Se
@@ -11,7 +13,27 @@ identity:
   category: non-metal
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2 4p4'
+  valence_electrons: 6
+  atomic_radius: 103.0
+  covalent_radius: 120.0
   van_der_waals_radius: 190.0
+  ionic_radius: 198.0
+  stable_isotopes: 5
+  isotope_abundances:
+  - mass_number: 74
+    abundance: 0.0086
+  - mass_number: 76
+    abundance: 0.0923
+  - mass_number: 77
+    abundance: 0.076
+  - mass_number: 78
+    abundance: 0.2369
+  - mass_number: 80
+    abundance: 0.498
+  - mass_number: 82
+    abundance: 0.0882
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.55
   first_ionisation_energy: 941
@@ -20,12 +42,47 @@ chemical:
   - 6
   - 4
   - -2
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: null
+  flammable: true
 physical:
   phase: solid
   melting_point: 493.65
   boiling_point: 958.0
   density: 4809.0
+  crystal_structure: simple monoclinic
+  allotropes:
+  - amorphous red selenium
+  - amorphous black selenium
+  - monoclinic selenium
+  - hexagonal selenium
+  heat_of_fusion: 5.4
+  heat_of_vaporisation: 26.0
+  vapour_pressure: 6.5e-08
 thermal:
   specific_heat_capacity: 321.2
+  thermal_conductivity: 0.52
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: null
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: 1.83
+mechanical:
+  hardness: 2.0
+  youngs_modulus: 10.0
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: black, red, and gray (not pictured) allotropes
+  emission_lines:
+  - 473.08
+  - 473.9
+  - 474.22
+  - 701.081
+  - 706.207
+  neutron_cross_section: 11.7

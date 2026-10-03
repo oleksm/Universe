@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Gold
   symbol: Au
@@ -11,7 +13,17 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s1'
+  valence_electrons: 11
+  atomic_radius: 174.0
+  covalent_radius: 136.0
   van_der_waals_radius: 166.0
+  ionic_radius: 85.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 197
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.54
   first_ionisation_energy: 890.1
@@ -19,12 +31,43 @@ chemical:
   oxidation_states:
   - 3
   - 1
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  standard_electrode_potential: 1.52
+  flammable: false
 physical:
   phase: solid
   melting_point: 1337.33
   boiling_point: 3129.0
   density: 19280.0
+  crystal_structure: face-centered cubic
+  allotropes: []
+  heat_of_fusion: 12.5
+  heat_of_vaporisation: 330.0
+  vapour_pressure: 1.5e-49
 thermal:
-  specific_heat_capacity: 129.0
+  specific_heat_capacity: 129.1
+  thermal_conductivity: 320.0
+  thermal_expansion: 1.42e-05
+electrical_magnetic:
+  electrical_conductivity: 45000000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 2.5
+  youngs_modulus: 78.0
+  tensile_strength: 100
+  ductility: very ductile
 optical_nuclear:
   colour: metallic yellow
+  emission_lines:
+  - 404.093
+  - 406.507
+  - 460.751
+  - 479.258
+  - 627.817
+  neutron_cross_section: 98.7

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Cobalt
   symbol: Co
@@ -11,7 +13,17 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Ar] 3d7 4s2'
+  valence_electrons: 9
+  atomic_radius: 152.0
+  covalent_radius: 126.0
   van_der_waals_radius: 192.0
+  ionic_radius: 54.5
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 59
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.88
   first_ionisation_energy: 760.4
@@ -19,12 +31,43 @@ chemical:
   oxidation_states:
   - 3
   - 2
+  reactivity:
+    air: slow
+    water: none
+    acids: slow
+  bond_type: metallic
+  standard_electrode_potential: -0.28
+  flammable: false
 physical:
   phase: solid
   melting_point: 1768.0
   boiling_point: 3200.0
   density: 8860.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 16.2
+  heat_of_vaporisation: 375.0
+  vapour_pressure: 2.0e-58
 thermal:
   specific_heat_capacity: 421.0
+  thermal_conductivity: 100.0
+  thermal_expansion: 1.3e-05
+electrical_magnetic:
+  electrical_conductivity: 17000000.0
+  magnetic_ordering: ferromagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 5.0
+  youngs_modulus: 209.0
+  tensile_strength: null
+  ductility: ductile
 optical_nuclear:
   colour: hard lustrous gray metal
+  emission_lines:
+  - 384.547
+  - 387.312
+  - 389.408
+  - 399.531
+  - 412.132
+  neutron_cross_section: 37.2

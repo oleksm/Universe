@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Beryllium
   symbol: Be
@@ -11,19 +13,60 @@ identity:
   category: alkaline earth metal
 atomic_structure:
   electron_configuration: '[He] 2s2'
+  valence_electrons: 2
+  atomic_radius: 112.0
+  covalent_radius: 96.0
   van_der_waals_radius: 153.0
+  ionic_radius: 45.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 9
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.57
   first_ionisation_energy: 899.5
   electron_affinity: -48
   oxidation_states:
   - 2
+  reactivity:
+    air: none
+    water: none
+    acids: slow
+  bond_type: metallic
+  standard_electrode_potential: -1.847
+  flammable: false
 physical:
   phase: solid
   melting_point: 1560.0
   boiling_point: 2744.0
   density: 1850.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 7.95
+  heat_of_vaporisation: 297.0
+  vapour_pressure: 1.0e-43
 thermal:
-  specific_heat_capacity: 1825.0
+  specific_heat_capacity: 1820.0
+  thermal_conductivity: 190.0
+  thermal_expansion: 1.13e-05
+electrical_magnetic:
+  electrical_conductivity: 25000000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: 0.026
+  band_gap: null
+mechanical:
+  hardness: 5.5
+  youngs_modulus: 287.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: white-gray metallic
+  emission_lines:
+  - 381.345
+  - 440.793
+  - 457.267
+  - 698.275
+  - 720.913
+  neutron_cross_section: 0.0092

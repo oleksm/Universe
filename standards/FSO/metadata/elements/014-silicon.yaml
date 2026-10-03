@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Silicon
   symbol: Si
@@ -11,7 +13,21 @@ identity:
   category: metalloid
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p2'
+  valence_electrons: 4
+  atomic_radius: 111.0
+  covalent_radius: 111.0
   van_der_waals_radius: 210.0
+  ionic_radius: 40.0
+  stable_isotopes: 3
+  isotope_abundances:
+  - mass_number: 28
+    abundance: 0.922545
+  - mass_number: 29
+    abundance: 0.04672
+  - mass_number: 30
+    abundance: 0.030735
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.9
   first_ionisation_energy: 786.5
@@ -20,12 +36,43 @@ chemical:
   - 4
   - 2
   - -4
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 1687.0
   boiling_point: 3538.0
   density: 2330.0
+  crystal_structure: tetrahedral packing
+  allotropes: []
+  heat_of_fusion: 50.2
+  heat_of_vaporisation: 359.0
+  vapour_pressure: 3.1e-59
 thermal:
-  specific_heat_capacity: 704.6
+  specific_heat_capacity: 710.0
+  thermal_conductivity: 150.0
+  thermal_expansion: 2.6e-06
+electrical_magnetic:
+  electrical_conductivity: 1000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: 1.12
+mechanical:
+  hardness: 6.5
+  youngs_modulus: 47.0
+  tensile_strength: 7000
+  ductility: null
 optical_nuclear:
   colour: crystalline, reflective with bluish-tinged faces
+  emission_lines:
+  - 390.552
+  - 728.917
+  - 740.577
+  - 741.595
+  - 742.35
+  neutron_cross_section: 0.166

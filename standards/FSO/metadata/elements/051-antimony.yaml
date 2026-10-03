@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Antimony
   symbol: Sb
@@ -11,7 +13,19 @@ identity:
   category: metalloid
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p3'
+  valence_electrons: 5
+  atomic_radius: 133.0
+  covalent_radius: 139.0
   van_der_waals_radius: 206.0
+  ionic_radius: 60.0
+  stable_isotopes: 2
+  isotope_abundances:
+  - mass_number: 121
+    abundance: 0.5721
+  - mass_number: 123
+    abundance: 0.4279
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 2.05
   first_ionisation_energy: 834
@@ -20,12 +34,46 @@ chemical:
   - 5
   - 3
   - -3
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: null
+  flammable: false
 physical:
   phase: solid
   melting_point: 903.78
   boiling_point: 1860.0
   density: 6685.0
+  crystal_structure: simple trigonal
+  allotropes:
+  - white antimony
+  - yellow antimony
+  - black antimony
+  heat_of_fusion: 19.7
+  heat_of_vaporisation: 67.0
+  vapour_pressure: 2.2e-22
 thermal:
-  specific_heat_capacity: 207.2
+  specific_heat_capacity: 207.0
+  thermal_conductivity: 24.0
+  thermal_expansion: 1.1e-05
+electrical_magnetic:
+  electrical_conductivity: 2500000.0
+  magnetic_ordering: diamagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 3.0
+  youngs_modulus: 55.0
+  tensile_strength: null
+  ductility: ductile
 optical_nuclear:
   colour: silvery lustrous gray
+  emission_lines:
+  - 403.354
+  - 555.601
+  - 560.207
+  - 563.194
+  - 573.034
+  neutron_cross_section: 5.4

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Scandium
   symbol: Sc
@@ -11,19 +13,60 @@ identity:
   category: transition metal
 atomic_structure:
   electron_configuration: '[Ar] 3d1 4s2'
+  valence_electrons: 3
+  atomic_radius: 184.0
+  covalent_radius: 170.0
   van_der_waals_radius: 211.0
+  ionic_radius: 74.5
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 45
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.36
   first_ionisation_energy: 633.1
   electron_affinity: 18
   oxidation_states:
   - 3
+  reactivity:
+    air: slow
+    water: none
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.077
+  flammable: false
 physical:
   phase: solid
   melting_point: 1814.0
   boiling_point: 3109.0
   density: 2990.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 16.0
+  heat_of_vaporisation: 318.0
+  vapour_pressure: 5.6e-52
 thermal:
-  specific_heat_capacity: 567.7
+  specific_heat_capacity: 567.0
+  thermal_conductivity: 16.0
+  thermal_expansion: 1.02e-05
+electrical_magnetic:
+  electrical_conductivity: 1800000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.05
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: 74.0
+  tensile_strength: null
+  ductility: ductile
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 673.788
+  - 673.945
+  - 681.711
+  - 681.949
+  - 683.502
+  neutron_cross_section: 27.2

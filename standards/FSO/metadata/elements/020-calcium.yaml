@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Calcium
   symbol: Ca
@@ -11,17 +13,70 @@ identity:
   category: alkaline earth metal
 atomic_structure:
   electron_configuration: '[Ar] 4s2'
+  valence_electrons: 2
+  atomic_radius: 194.0
+  covalent_radius: 176.0
   van_der_waals_radius: 231.0
+  ionic_radius: 100.0
+  stable_isotopes: 5
+  isotope_abundances:
+  - mass_number: 40
+    abundance: 0.96941
+  - mass_number: 42
+    abundance: 0.00647
+  - mass_number: 43
+    abundance: 0.00135
+  - mass_number: 44
+    abundance: 0.02086
+  - mass_number: 46
+    abundance: 4.0e-05
+  - mass_number: 48
+    abundance: 0.00187
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.0
   first_ionisation_energy: 589.8
   electron_affinity: 2.37
   oxidation_states:
   - 2
+  reactivity:
+    air: slow
+    water: fast
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.868
+  flammable: true
 physical:
   phase: solid
   melting_point: 1115.0
   boiling_point: 1757.0
   density: 1540.0
+  crystal_structure: face-centered cubic
+  allotropes: []
+  heat_of_fusion: 8.54
+  heat_of_vaporisation: 155.0
+  vapour_pressure: 1.9e-20
 thermal:
-  specific_heat_capacity: 646.9
+  specific_heat_capacity: 631.0
+  thermal_conductivity: 200.0
+  thermal_expansion: 2.23e-05
+electrical_magnetic:
+  electrical_conductivity: 29000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 1.75
+  youngs_modulus: 20.0
+  tensile_strength: null
+  ductility: ductile
+optical_nuclear:
+  colour: silver
+  emission_lines:
+  - 422.673
+  - 643.907
+  - 646.257
+  - 714.815
+  - 732.615
+  neutron_cross_section: 0.43

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Thulium
   symbol: Tm
@@ -11,19 +13,60 @@ identity:
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f13 6s2'
+  valence_electrons: 15
+  atomic_radius: 222.0
+  covalent_radius: 190.0
   van_der_waals_radius: 227.0
+  ionic_radius: 88.0
+  stable_isotopes: 1
+  isotope_abundances:
+  - mass_number: 169
+    abundance: 1.0
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 1.25
   first_ionisation_energy: 596.7
   electron_affinity: 99
   oxidation_states:
   - 3
+  reactivity:
+    air: slow
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.4
+  flammable: false
 physical:
   phase: solid
   melting_point: 1818.0
   boiling_point: 2223.0
   density: 9320.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: 16.8
+  heat_of_vaporisation: 250.0
+  vapour_pressure: 1.8e-29
 thermal:
   specific_heat_capacity: 160.0
+  thermal_conductivity: 17.0
+  thermal_expansion: 1.33e-05
+electrical_magnetic:
+  electrical_conductivity: 1400000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 1.77
+  youngs_modulus: 74.0
+  tensile_strength: null
+  ductility: brittle
 optical_nuclear:
   colour: silvery gray
+  emission_lines:
+  - 388.313
+  - 409.419
+  - 410.584
+  - 418.762
+  - 420.373
+  neutron_cross_section: 105.0

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Strontium
   symbol: Sr
@@ -11,17 +13,66 @@ identity:
   category: alkaline earth metal
 atomic_structure:
   electron_configuration: '[Kr] 5s2'
+  valence_electrons: 2
+  atomic_radius: 219.0
+  covalent_radius: 195.0
   van_der_waals_radius: 249.0
+  ionic_radius: 118.0
+  stable_isotopes: 4
+  isotope_abundances:
+  - mass_number: 84
+    abundance: 0.0056
+  - mass_number: 86
+    abundance: 0.0986
+  - mass_number: 87
+    abundance: 0.07
+  - mass_number: 88
+    abundance: 0.8258
+  half_life: null
+  decay_mode: null
 chemical:
   electronegativity: 0.95
   first_ionisation_energy: 549.5
   electron_affinity: 5.023
   oxidation_states:
   - 2
+  reactivity:
+    air: fast
+    water: fast
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.899
+  flammable: true
 physical:
   phase: solid
   melting_point: 1050.0
   boiling_point: 1655.0
   density: 2640.0
+  crystal_structure: face-centered cubic
+  allotropes: []
+  heat_of_fusion: 8.0
+  heat_of_vaporisation: 137.0
+  vapour_pressure: 7.5e-18
 thermal:
-  specific_heat_capacity: 301.3
+  specific_heat_capacity: 300.0
+  thermal_conductivity: 35.0
+  thermal_expansion: 2.25e-05
+electrical_magnetic:
+  electrical_conductivity: 7700000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: null
+  band_gap: null
+mechanical:
+  hardness: 1.5
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
+optical_nuclear:
+  colour: silver
+  emission_lines:
+  - 460.733
+  - 525.69
+  - 679.102
+  - 687.831
+  - 707.007
+  neutron_cross_section: 1.2

@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
-# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Americium
   symbol: Am
@@ -11,7 +13,15 @@ identity:
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f7 7s2'
+  valence_electrons: 9
+  atomic_radius: null
+  covalent_radius: 180.0
   van_der_waals_radius: 244.0
+  ionic_radius: 85.0
+  stable_isotopes: 0
+  isotope_abundances: []
+  half_life: 233160000000.0
+  decay_mode: alpha
 chemical:
   electronegativity: 1.3
   first_ionisation_energy: 578
@@ -21,12 +31,43 @@ chemical:
   - 5
   - 4
   - 3
+  reactivity:
+    air: null
+    water: null
+    acids: null
+  bond_type: metallic
+  standard_electrode_potential: -1.9
+  flammable: null
 physical:
   phase: solid
   melting_point: 1449.0
   boiling_point: 2284.0
   density: 13690.0
+  crystal_structure: simple hexagonal
+  allotropes: []
+  heat_of_fusion: null
+  heat_of_vaporisation: null
+  vapour_pressure: 2.7e-37
 thermal:
   specific_heat_capacity: 258.0
+  thermal_conductivity: 10.0
+  thermal_expansion: null
+electrical_magnetic:
+  electrical_conductivity: null
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 0.6
+  band_gap: null
+mechanical:
+  hardness: null
+  youngs_modulus: null
+  tensile_strength: null
+  ductility: null
 optical_nuclear:
   colour: silvery white
+  emission_lines:
+  - 428.926
+  - 466.279
+  - 468.165
+  - 605.464
+  - 640.511
+  neutron_cross_section: 74.0
