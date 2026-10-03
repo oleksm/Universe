@@ -1,6 +1,9 @@
 //! Observing the running game, for whoever's helping debug it.
 //!
-//! **Recordings** (debug on, PROFILE: SHIFT+F3): the profiler and a trace on,
+//! **Observing** (SHIFT+F3, again to stop): the live port answering, the
+//! profiler and the hitch log on, and a recording started.
+//!
+//! **Recordings** (with observing, or `/record/start`): the profiler and a trace on,
 //! every frame captured, for up to `MAX_SECONDS`; then a session folder —
 //! frames as PNGs, every frame's time and scopes (`profile.json`), a timeline
 //! of every thread (`trace.json`, Chrome's format: Perfetto opens it), the
@@ -9,8 +12,8 @@
 //! at start-up.
 //!
 //! **The live port** (127.0.0.1 only, `UNIVERSE_OBSERVE_PORT`, default 7878;
-//! `UNIVERSE_OBSERVE=0`: none; opened the first time debug comes on, answering
-//! only while it's on): plain HTTP, for the now — where we are, the
+//! `UNIVERSE_OBSERVE=0`: none; opened the first time observing comes on,
+//! answering only while observing): plain HTTP, for the now — where we are, the
 //! frame times, the profile, what the renderer holds, the graphics settings
 //! (set them too), a screenshot, recordings started and stopped. `GET /`
 //! lists it all.
@@ -209,7 +212,8 @@ pub fn frame(app: &mut App, ctx: &mut Context) {
 pub fn stop(app: &mut App, ctx: &Context) {
     let Some(r) = app.recording.take() else { return };
     let trace = universe_prof::stop_trace();
-    universe_prof::enable(app.debug == 2);
+    // (Observing still: the profiler stays on for the port's questions.)
+    universe_prof::enable(app.debug == 2 || app.observing);
     let dir = r.dir.clone();
     let _ = std::fs::write(dir.join("trace.json"), trace);
     let _ = std::fs::write(dir.join("status_end.json"), serde_json::to_vec_pretty(&status(app, ctx)).unwrap_or_default());
@@ -272,9 +276,9 @@ pub fn answer(app: &mut App, ctx: &mut Context) {
     let Some(rx) = app.observe_port.as_ref() else { return };
     let pending: Vec<Request> = rx.try_iter().collect();
     for req in pending {
-        // (Debug off: nothing's answered but that.)
-        if app.debug == 0 && app.recording.is_none() {
-            let _ = req.reply.send(("text/plain", b"debug is off in the game (F3 turns it on)\n".to_vec()));
+        // (Not observing: nothing's answered but that.)
+        if !app.observing {
+            let _ = req.reply.send(("text/plain", b"not observing: SHIFT+F3 in the game turns it on\n".to_vec()));
             continue;
         }
         let (path, query) = req.path.split_once('?').unwrap_or((req.path.as_str(), ""));

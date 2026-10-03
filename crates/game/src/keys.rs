@@ -252,6 +252,7 @@ pub const FIXED: &[(&str, &str, Scope)] = &[
     ("BKSP", "RESPAWN AT HOME", Scope::Global),
     ("F2 F4 F6", "LABELS, GRID, PAUSE", Scope::Global),
     ("F3 F5 F9", "DEBUG INFO, QUICKSAVE, LOAD", Scope::Global),
+    ("S+F3", "OBSERVE: LIVE PORT, PROFILER, RECORDING (FOR WHOEVER'S HELPING)", Scope::Global),
     ("F7", "THRUSTERS PANEL", Scope::Flight),
     ("S+Z", "CLAIM THIS SYSTEM (SWORN, IN FLIGHT); DOCKED: FOUND A FACTION", Scope::Flight),
     ("F11", "NEWS", Scope::Global),

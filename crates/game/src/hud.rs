@@ -1768,11 +1768,16 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
         ("F3".into(), "DEBUG".into(), lamp(app.debug > 0)),
     ];
-    // (Debug on: recording, to look into what's on screen.)
+    // (Debug on, or observing: SHIFT+F3, for whoever's helping.)
     let mut cells = cells;
-    if app.debug > 0 || app.recording.is_some() {
-        let rec = app.recording.as_ref().map(|r| format!("REC {:.0} S", r.seconds()));
-        cells.push(("S+F3".into(), rec.clone().unwrap_or_else(|| "PROFILE".into()), if rec.is_some() { Lamp::Hot } else { Lamp::Off }));
+    if app.debug > 0 || app.observing {
+        let label = match &app.recording {
+            Some(r) => format!("REC {:.0} S", r.seconds()),
+            None if app.observing => "OBSERVING".into(),
+            None => "OBSERVE".into(),
+        };
+        let lamp = if app.recording.is_some() { Lamp::Hot } else if app.observing { Lamp::On } else { Lamp::Off };
+        cells.push(("S+F3".into(), label, lamp));
     }
     // (A mode only with its gear: combat with a weapon fitted, mining with a rig.)
     use universe_sim::world::modules::Gear;
