@@ -83,12 +83,20 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             app.chase_cam = false;
         }
-        "watch" => {
-            // Docked, watching our ship (TAB's other view).
-            apply(app, "docked");
+        "watch" | "padwatch" => {
+            // Docked (padwatch: on the spaceport's pad), watching our ship (TAB's
+            // other view); UNIVERSE_DIST, UNIVERSE_PITCH, UNIVERSE_YAW to frame it.
+            apply(app, if name == "padwatch" { "touchdown" } else { "docked" });
             app.mode = Mode::Observer;
             app.observer.focus = crate::observer::Focus::Ship;
-            app.observer.distance = 160.0;
+            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            app.observer.distance = env("UNIVERSE_DIST").unwrap_or(160.0);
+            if let Some(p) = env("UNIVERSE_PITCH") {
+                app.observer.pitch = p;
+            }
+            if let Some(y) = env("UNIVERSE_YAW") {
+                app.observer.yaw = y;
+            }
         }
         "showcase" => {
             // Looking away from the sun, a little to one side and down: the sun

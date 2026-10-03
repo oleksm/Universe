@@ -21,7 +21,17 @@ renders as made (textured, physically based) and flies by its physics. Example a
 | An empty's **+Y arrow** | a nozzle's exhaust; a port's way out; the pilot's view |
 | Scene properties `freefall_name`, `freefall_class` (1-4) | its name; its size class (how big its slots are) |
 
-Blender's `.001` suffixes are ignored. Export: glTF Binary (`.glb`), **Tangents** and **Custom
+Blender's `.001` suffixes are ignored.
+
+**From your own .blend** (`tools/blender/export_hull.py`): exports the file as it stands, at a
+frame of its rig (`--frame`), leaving out lights, cameras and what doesn't render (boolean
+cutters, volumes), and places any conventions the file lacks from its parts' names (footpads
+`*_Pad` → `gear_*`, `*EngineGlow*` faces → main nozzles, `*Glass*` → `cockpit`, `*Ramp*` →
+`hatch`, `*Laser*_Head` → hardpoints, `Hull_*` → `COL_*` boxes, lift jets and thruster quads),
+printing where. Your own empties win. Rerun it after every change:
+
+    blender -b design.blend -P tools/blender/export_hull.py -- assets/models/mc07.glb --frame 50 --name MC-07 --class 3
+ Export: glTF Binary (`.glb`), **Tangents** and **Custom
 Properties** on, **+Y Up** on.
 
 ## What follows from it

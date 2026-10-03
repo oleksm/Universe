@@ -363,8 +363,8 @@ impl App {
         app.say(format!("WELCOME TO {}", name.to_uppercase()));
         app.say("J POWERS UP, SHIFT+E LIFTS OFF - F1 FOR CONTROLS".into());
         // A hull imported from a glTF file, the ship we fly (`UNIVERSE_HULL=file.glb`;
-        // by default, for now, the ORE CUTTER, if its file is there).
-        const DEFAULT_HULL: &str = "assets/models/miner.glb";
+        // by default, for now, the MC-07, if its file is there).
+        const DEFAULT_HULL: &str = "assets/models/mc07.glb";
         let hull = std::env::var("UNIVERSE_HULL").ok().or_else(|| std::path::Path::new(DEFAULT_HULL).exists().then(|| DEFAULT_HULL.to_string()));
         if let Some(path) = hull {
             match std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, &path)) {
