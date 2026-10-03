@@ -176,13 +176,13 @@ function detail(k) {
     const n = DATA.standards.filter(s => s.body === b.key).length;
     const seat = b.seat === "home" ? "the home station" : b.seat;
     let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${n} standards</div><p>${esc(b.note)}</p>`;
+    if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
     if (b.purpose) h += `<h3>Purpose</h3><p>${esc(b.purpose)}</p>`;
     if (b.details) {
       const paras = Array.isArray(b.details.text) ? b.details.text : (b.details.text ? [b.details.text] : []);
       h += paras.map(p => p.startsWith("- ") ? `<li>${esc(p.slice(2))}</li>` : `<p>${esc(p)}</p>`).join("").replace(/((?:<li>.*?<\/li>)+)/g, "<ul>$1</ul>");
     }
     if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
-    if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
     return h;
   }
   if (kind === "g") {
