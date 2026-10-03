@@ -130,7 +130,7 @@ fn offers(slot: &Slot) -> Vec<Option<Handle<Module>>> {
 }
 
 fn fit_of(app: &App) -> Fit {
-    app.ship.fit.clone().unwrap_or_else(|| content().get(app.ship.class).fit.clone())
+    app.ship.fit.as_deref().cloned().unwrap_or_else(|| content().get(app.ship.class).fit.clone())
 }
 
 fn in_slot(fit: &Fit, slot: &Slot) -> Option<Handle<Module>> {

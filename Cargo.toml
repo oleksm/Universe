@@ -10,7 +10,7 @@ version = "0.1.0"
 wgpu = "30"
 winit = "0.30"
 glam = { version = "0.33", features = ["bytemuck", "serde"] }
-serde = { version = "1", features = ["derive"] }
+serde = { version = "1", features = ["derive", "rc"] }
 serde_json = { version = "1", features = ["float_roundtrip"] }
 bytemuck = { version = "1", features = ["derive"] }
 pollster = "1"

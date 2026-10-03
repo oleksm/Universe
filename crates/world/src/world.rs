@@ -763,7 +763,7 @@ impl World {
         ship.class = class;
         ship.trim = trim;
         if let Some(fit) = fit {
-            let _ = ship.refit(fit);
+            let _ = ship.refit((*fit).clone());
         }
         ship.fuel = ship.spec().fuel_capacity;
         ship.energy = ship.spec().capacitor_capacity;

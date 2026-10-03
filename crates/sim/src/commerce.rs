@@ -379,7 +379,7 @@ impl crate::universe::Universe {
         let sys = self.world.system(system);
         let Some(Facility::Station(station)) = universe_world::traffic::docked_at(&sys, ship) else { return Err("REFIT DOCKED AT A STATION".into()) };
         let c = universe_world::content::content();
-        let mut fit = ship.fit.clone().unwrap_or_else(|| c.get(ship.class).fit.clone());
+        let mut fit = ship.fit.as_deref().cloned().unwrap_or_else(|| c.get(ship.class).fit.clone());
         let old = fit.iter().position(|(s, _)| s == slot);
         let taken = old.map(|i| fit[i].1);
         if taken == module {

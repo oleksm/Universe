@@ -734,8 +734,9 @@ pub struct Ship {
     #[serde(default = "starting_hull")]
     pub class: Hull,
     /// What's fitted, if not its hull's stock fit (modules by content key).
+    /// Shared: a copy of the ship (every view of it) doesn't copy the list.
     #[serde(default)]
-    pub fit: Option<Fit>,
+    pub fit: Option<std::sync::Arc<Fit>>,
     /// Its numbers, hull and fit together (kept to hand; see `spec`).
     #[serde(skip)]
     spec_ref: Option<&'static ClassSpec>,
@@ -950,7 +951,7 @@ impl Ship {
             self.fit = None;
             self.spec_ref = None;
         } else {
-            self.fit = Some(fit);
+            self.fit = Some(std::sync::Arc::new(fit));
             self.spec_ref = Some(spec);
         }
         self.jets.clear();
@@ -1363,3 +1364,4 @@ mod energy_tests {
         assert_eq!((ship.energy, ship.fuel), (spec.capacitor_capacity, fuel));
     }
 }
+
