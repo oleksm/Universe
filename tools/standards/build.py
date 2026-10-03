@@ -30,7 +30,7 @@ CONTENT = os.path.join(ROOT, "content", "base")
 
 STATUSES = ["draft", "published", "superseded", "withdrawn"]
 CHECKS = ["at_most", "at_least", "equals", "fits_within", "provides"]
-BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about"}
+BODY_FIELDS = {"key", "name", "prefix", "seat", "address", "note", "kind", "purpose", "details", "founded_by", "about"}
 BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
 STANDARD_FIELDS = {"version", "title", "parent", "records", "purpose", "details", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
 
@@ -242,6 +242,11 @@ for name in sorted(os.listdir(TREE)):
     for m in body.get("founded_by", []) or []:
         if m not in BRANDS:
             problem(meta_path, f"founded_by: no maker '{m}' in Maker House")
+    if "address" in body:
+        sysm, _, at = str(body["address"]).partition("/")
+        adm = next((a for a in administrations if a["slug"] == sysm), None)
+        if adm is None or not any(x["slug"] == at for x in adm["bodies"]):
+            problem(meta_path, f"address: no '{body['address']}' in Local Administration (<system>/<body>)")
     if isinstance(body.get("about"), str):
         body["about"] = [body["about"]]
     if body.get("prefix") != name:
@@ -427,7 +432,7 @@ def write_ron():
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
-        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
+        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "address", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
         "house": house,
         "local": local,

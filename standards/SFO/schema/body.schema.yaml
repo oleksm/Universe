@@ -20,6 +20,9 @@ properties:
     pattern: ^[A-Z]{2,6}$
   seat:
     type: string
+  address:
+    type: string
+    description: 'Where its office is: <system>/<body>, by their file names in LocalAdministration.'
   kind:
     enum:
     - consortium
