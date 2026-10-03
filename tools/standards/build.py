@@ -348,6 +348,8 @@ def write_html():
         "elements": elements,
         "materials": materials,
         "processes": processes,
+        # (Icons: FSO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
+        "icons": {f[:-4]: open(os.path.join(TREE, "FSO", "icons", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, "FSO", "icons"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, "FSO", "icons")) else {},
         "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["processes"]["properties"].items()},
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["elements"]["properties"].items()},

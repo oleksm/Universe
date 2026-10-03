@@ -12,6 +12,7 @@ it (`docs/standards.md` for what a standard is).
 standards/
   FSO/                          a body: its folder named after its prefix
     schema/                     the schemas for the editor
+    icons/                      <a record's file name>.svg: its icon (24 x 24 line art, stroke currentColor)
     metadata/
       FSO.yaml                  who it is
       0001-mining-ship.yaml     a record: NNNN-<slug>.yaml, its id "FSO 1"

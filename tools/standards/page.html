@@ -60,6 +60,14 @@ td.num { text-align: right; }
 .problems li { margin: 2px 0; }
 .file { color: var(--dim); font-size: 12px; }
 p { margin: 4px 0 8px; max-width: 80ch; }
+.ico { display: inline-block; vertical-align: middle; line-height: 0; color: var(--head); }
+.ico svg { width: 18px; height: 18px; }
+.ico.big svg { width: 44px; height: 44px; }
+.ico.mid svg { width: 26px; height: 26px; }
+.row .ico { margin-right: 6px; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-width: none; margin: 6px 0 12px; }
+.gallery a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; background: var(--tbl); border: 1px solid var(--tline); border-radius: 4px; text-align: center; color: var(--text); font-size: 12px; letter-spacing: 0; }
+.gallery a:hover { border-color: var(--head); text-decoration: none; }
 /* The periodic table: 18 groups across (a column of period numbers first), the f-block below. */
 .ptable { display: grid; grid-template-columns: 22px repeat(18, 46px); gap: 3px; margin: 8px 0 12px; max-width: none; letter-spacing: 0; }
 .ptable .hd { color: var(--dim); font-size: 11px; text-align: center; align-self: center; }
@@ -122,6 +130,7 @@ const processesUnder = (id, q) => DATA.processes.filter(p => p.under === id && p
 const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
 const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length;
 // An element or material named in a process: a link to it.
+const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""}">${DATA.icons[slug]}</span>` : "";
 const itemLink = x => {
   const e = elBySymbol[x.item], m = matBySlug[x.item];
   const label = e ? e.identity.name : m ? m.identity.name : (x.name || x.item);
@@ -208,7 +217,7 @@ function render() {
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${esc(i.name)} <span class="n">${esc(i.class)}</span></div>`;
     } else if (n.kind === "proc") {
       const i = n.proc.identity;
-      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${esc(i.name)} <span class="n">${esc(i.kind)}</span></div>`;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${icon(n.proc.slug)}${esc(i.name)} <span class="n">${esc(i.kind)}</span></div>`;
     } else if (n.kind === "std") {
       const twisty = n.n ? (n.isOpen ? "▾" : "▸") : "";
       const count = n.n ? ` <span class="n">(${n.n})</span>` : "";
@@ -285,7 +294,7 @@ function detail(k) {
   if (kind === "el" || kind === "mat" || kind === "proc") {
     const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
-    let h = kind === "el" ? `<h2><span style="color:var(--id)">${i.atomic_number} ${esc(i.symbol)}</span> ${esc(i.name)}</h2>` : `<h2>${esc(i.name)}</h2>`;
+    let h = kind === "el" ? `<h2><span style="color:var(--id)">${i.atomic_number} ${esc(i.symbol)}</span> ${esc(i.name)}</h2>` : `<h2>${kind === "proc" ? icon(e.slug, "big") + " " : ""}${esc(i.name)}</h2>`;
     if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
     for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : DATA.process_groups)) {
@@ -313,7 +322,7 @@ function detail(k) {
   const mats = materialsUnder(s.id, "");
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td><a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
   const procs = processesUnder(s.id, "");
-  if (procs.length) h += `<h3>Processes</h3><table><tr><th>Process</th><th>Kind</th><th>Goes in</th><th>Comes out</th></tr>${procs.map(p => `<tr><td><a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${esc(p.identity.kind)}</td><td>${(((p.inputs || {}).materials) || []).map(x => esc((elBySymbol[x.item] || matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name)).join(", ")}</td><td>${(((p.outputs || {}).products) || []).map(x => esc((matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name) + (x.form ? ` (${esc(x.form)})` : x.grade ? ` (${esc(x.grade)})` : "")).join(", ")}</td></tr>`).join("")}</table>`;
+  if (procs.length) h += `<h3>Processes</h3><div class="gallery">${procs.map(p => `<a data-k="${esc("proc:" + p.slug)}">${icon(p.slug, "big")}<span>${esc(p.identity.name)}</span></a>`).join("")}</div><table><tr><th>Process</th><th>Kind</th><th>Goes in</th><th>Comes out</th></tr>${procs.map(p => `<tr><td>${icon(p.slug)} <a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${esc(p.identity.kind)}</td><td>${(((p.inputs || {}).materials) || []).map(x => esc((elBySymbol[x.item] || matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name)).join(", ")}</td><td>${(((p.outputs || {}).products) || []).map(x => esc((matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name) + (x.form ? ` (${esc(x.form)})` : x.grade ? ` (${esc(x.grade)})` : "")).join(", ")}</td></tr>`).join("")}</table>`;
   if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
     if (sec.title) h += `<h3>${esc(sec.title)}</h3>`;
