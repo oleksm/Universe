@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Address
+purpose: An address says where a place is, so that anyone can find it, deliver to it and record who is there. It follows how the place is physically built, from the largest part down to the single unit.
+details:
+  text:
+    - "An address reads from the smallest part to the largest, and uses only the levels the place has."
+  table:
+    columns: [Level, What it is, Example]
+    rows:
+      - [Unit, "The single space someone occupies.", "Unit 14"]
+      - [Section, "A named or lettered area of a deck.", "Section C"]
+      - [Deck, "A numbered level.", "Deck 7"]
+      - [Tower, "A major part of the structure (a tower, a ring, an arm), usually with one main purpose.", "Habitation Tower"]
+      - [Settlement, "The station, port or outpost.", "Treistun e Station"]
+      - [Body, "The planet or moon the settlement is at. On a surface, with latitude and longitude.", "Treistun e"]
+      - [System, "The star system.", "Treistun"]
+sections:
+  - title: Rules
+    text:
+      - "A small outpost uses fewer levels: a few modules with units in them have no towers or decks."
+      - "An address never changes: when a structure grows, the new part gets new addresses and nothing is renumbered."
+      - "The example levels inside a settlement (tower, deck, section, unit) are a scheme. No station has them recorded yet."
