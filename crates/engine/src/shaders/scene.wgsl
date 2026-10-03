@@ -9,6 +9,9 @@ struct Globals {
     // x, y: a texel of each cascade (metres); z: shadows on (1) or not;
     // w: tint what's in shadow red (checking them).
     shadow: vec4<f32>,
+    // Graphics toggles (1 on): textures, normal maps, occlusion, emission; specular, planet light, tone map.
+    look: vec4<f32>,
+    look2: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;

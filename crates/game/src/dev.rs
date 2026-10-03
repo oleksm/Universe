@@ -98,6 +98,24 @@ pub fn apply(app: &mut App, name: &str) {
                 app.observer.yaw = y;
             }
         }
+        "sunlit" => {
+            // Our ship in open space, watched, turned so the sun shines on it from over the
+            // eye's shoulder (like a model lit from the front): for comparing looks.
+            // UNIVERSE_DIST, UNIVERSE_PITCH, UNIVERSE_YAW frame it.
+            app.mode = Mode::Observer;
+            app.observer.focus = crate::observer::Focus::Ship;
+            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            app.observer.distance = env("UNIVERSE_DIST").unwrap_or(110.0);
+            app.observer.pitch = env("UNIVERSE_PITCH").unwrap_or(0.25);
+            app.observer.yaw = env("UNIVERSE_YAW").unwrap_or(2.3);
+            let (p, y) = (app.observer.pitch, app.observer.yaw);
+            let eye = DVec3::new(p.cos() * y.sin(), p.sin(), p.cos() * y.cos());
+            let side = eye.cross(DVec3::Y).normalize_or(DVec3::X);
+            let local_sun = (eye + DVec3::Y * 0.6 + side * 0.4).normalize();
+            let u = app.engine.universe();
+            let sun = (positions[0] - u.ship.position).normalize();
+            u.ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(local_sun, sun);
+        }
         "showcase" => {
             // Looking away from the sun, a little to one side and down: the sun
             // over the eye's shoulder (for `UNIVERSE_MODEL`).

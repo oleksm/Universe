@@ -2,7 +2,7 @@
 the import conventions (docs/ship-import.md).
 
     blender -b design.blend -P tools/blender/export_hull.py -- assets/models/out.glb \
-        [--frame 50] [--name "MC-07"] [--class 3]
+        [--frame 50] [--name "MC-07"] [--class 3] [--bake 4096]
 
 Run it again whenever the design changes. The .blend isn't changed (nothing is saved).
 
@@ -22,6 +22,9 @@ Run it again whenever the design changes. The .blend isn't changed (nothing is s
     - `COL_*`: a box round each big `Hull_*` mesh that isn't mostly inside the others
       (convex parts for contact and mass; overlaps count twice, so kept few).
 - **Scene properties:** `freefall_name` and `freefall_class` from the arguments (or the file's).
+- **Baked** (`--bake 4096`, the maps' size; `--bake 0`: not): node-made materials, which glTF
+  can't hold, rendered into one atlas the meshes share (base colour, roughness, metalness,
+  normal, ambient occlusion). Lamps, glows and glass keep their own materials.
 """
 import sys
 import bpy, bmesh
@@ -238,11 +241,154 @@ for name, at in made:
     print("placed", name, at)
 print("ship %s: %.1f x %.1f x %.1f m" % (scene.get("freefall_name", "?"), hi.x - lo.x, hi.y - lo.y, hi.z - lo.z))
 
+# ---------------------------------------------------------------- baking
+# Node-made materials (procedural textures: brick, noise, an AO node's grime, a bump) don't
+# exist in glTF: exported, they come out plain white. Baked here into one texture atlas the
+# meshes share: base colour, roughness, metalness, normal (the bump), and ambient occlusion
+# (where light from round about can't reach: seams, the corners between armour layers).
+bake_size = int(opt.get("--bake", "4096"))
+
+
+def procedural(m):
+    return m is not None and m.use_nodes and any(n.type.startswith("TEX_") and n.type != "TEX_IMAGE" for n in m.node_tree.nodes)
+
+
+def principled(m):
+    return next((n for n in m.node_tree.nodes if n.type == "BSDF_PRINCIPLED"), None) if m and m.use_nodes else None
+
+
+def glowing(m):
+    b = principled(m)
+    if b is None:
+        return False
+    strength = b.inputs["Emission Strength"].default_value
+    colour = b.inputs["Emission Color"].default_value
+    return strength * max(colour[0], colour[1], colour[2]) > 0.05 or "Glass" in m.name
+
+
+if bake_size:
+    import time
+    started = time.time()
+    targets = [o for o in scene.objects if o.type == "MESH" and shown(o) and any(procedural(slot.material) for slot in o.material_slots)]
+    print("baking %d meshes into %d px maps" % (len(targets), bake_size))
+    bpy.ops.object.select_all(action="DESELECT")
+    for o in targets:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = targets[0]
+    # The geometry as drawn (booleans, bevels applied): what the maps are laid on.
+    bpy.ops.object.make_single_user(object=True, obdata=True)
+    bpy.ops.object.convert(target="MESH")
+    # One UV layout across them all, islands packed together (the same texels a metre everywhere).
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=0.0015, scale_to_bounds=False)
+    bpy.ops.uv.select_all(action="SELECT")
+    bpy.ops.uv.average_islands_scale()
+    bpy.ops.uv.pack_islands(margin=0.0015, rotate=True)
+    bpy.ops.object.mode_set(mode="OBJECT")
+    area = sum(p.area for o in targets for p in o.data.polygons) * 1.0
+    print("  %.0f m2 of surface: about %.1f texels a metre" % (area, bake_size / max(area, 1.0) ** 0.5 * 0.8))
+
+    # (The collision boxes are the game's, not the ship's: out of the light while baking, or
+    # they'd wrap the hull and every point would look shut in.)
+    for o in scene.objects:
+        if o.name.startswith("COL_"):
+            o.hide_render = True
+    scene.render.engine = "CYCLES"
+    try:
+        prefs = bpy.context.preferences.addons["cycles"].preferences
+        for kind in ("OPTIX", "CUDA", "HIP", "ONEAPI", "METAL"):
+            try:
+                prefs.compute_device_type = kind
+            except TypeError:
+                continue
+            prefs.get_devices()
+            if any(d.type == kind for d in prefs.devices):
+                for d in prefs.devices:
+                    d.use = d.type == kind
+                scene.cycles.device = "GPU"
+                print("  on the GPU (%s)" % kind)
+                break
+    except Exception as e:
+        print("  on the CPU (%s)" % e)
+    scene.render.bake.margin = 4
+    scene.render.bake.use_clear = True
+    if scene.world is None:
+        scene.world = bpy.data.worlds.new("bake")
+    scene.world.light_settings.distance = 1.5
+
+    def image(name, colour):
+        im = bpy.data.images.new("hull_" + name, bake_size, bake_size, alpha=False)
+        im.colorspace_settings.name = "sRGB" if colour else "Non-Color"
+        return im
+
+    maps = {k: image(k, k == "base") for k in ("base", "rough", "metal", "normal", "ao")}
+    mats = {slot.material for o in targets for slot in o.material_slots if slot.material}
+    for m in mats:
+        m.use_nodes = True
+    bakers = {}
+    for m in mats:
+        n = m.node_tree.nodes.new("ShaderNodeTexImage")
+        bakers[m] = n
+
+    def bake(kind, samples, **kw):
+        t = time.time()
+        for m, n in bakers.items():
+            n.image = maps[kind]
+            m.node_tree.nodes.active = n
+        scene.cycles.samples = samples
+        bpy.ops.object.bake(**kw)
+        print("  %s: %.0f s" % (kind, time.time() - t))
+
+    bake("base", 8, type="DIFFUSE", pass_filter={"COLOR"})
+    bake("rough", 4, type="ROUGHNESS")
+    bake("normal", 4, type="NORMAL", normal_space="TANGENT")
+    bake("ao", 32, type="AO")
+    # (Metalness has no pass of its own: baked as a colour, each material's base colour its metalness.)
+    for m in mats:
+        b = principled(m)
+        if b is None:
+            continue
+        v = b.inputs["Metallic"].default_value
+        for l in list(b.inputs["Base Color"].links):
+            m.node_tree.links.remove(l)
+        b.inputs["Base Color"].default_value = (v, v, v, 1.0)
+    bake("metal", 1, type="DIFFUSE", pass_filter={"COLOR"})
+
+    # The baked material, for every face not lit of itself (lamps, glows and glass keep theirs).
+    baked = bpy.data.materials.new("Hull_Baked")
+    baked.use_nodes = True
+    nt = baked.node_tree
+    b = principled(baked)
+    tex = {}
+    for k, im in maps.items():
+        tex[k] = nt.nodes.new("ShaderNodeTexImage")
+        tex[k].image = im
+    nt.links.new(tex["base"].outputs["Color"], b.inputs["Base Color"])
+    nt.links.new(tex["rough"].outputs["Color"], b.inputs["Roughness"])
+    nt.links.new(tex["metal"].outputs["Color"], b.inputs["Metallic"])
+    nm = nt.nodes.new("ShaderNodeNormalMap")
+    nt.links.new(tex["normal"].outputs["Color"], nm.inputs["Color"])
+    nt.links.new(nm.outputs["Normal"], b.inputs["Normal"])
+    # (Occlusion, the way the glTF exporter takes it: a node group of this name.)
+    group = bpy.data.node_groups.get("glTF Material Output") or bpy.data.node_groups.new("glTF Material Output", "ShaderNodeTree")
+    if "Occlusion" not in [i.name for i in group.interface.items_tree]:
+        group.interface.new_socket("Occlusion", in_out="INPUT", socket_type="NodeSocketFloat")
+    out_node = nt.nodes.new("ShaderNodeGroup")
+    out_node.node_tree = group
+    nt.links.new(tex["ao"].outputs["Color"], out_node.inputs["Occlusion"])
+    for o in targets:
+        for slot in o.material_slots:
+            if slot.material and not glowing(slot.material):
+                slot.material = baked
+    print("  baked in %.0f s" % (time.time() - started))
+
 # Out: what renders, the nodes and colliders.
 for o in scene.objects:
     o.select_set(shown(o) or o.type == "EMPTY" or o.name.startswith("COL_"))
 bpy.ops.export_scene.gltf(
     filepath=out, export_format="GLB", use_selection=True, export_apply=True, export_yup=True,
     export_extras=True, export_tangents=True, export_lights=False, export_cameras=False, export_animations=False,
+    export_image_format="JPEG", export_jpeg_quality=92,
 )
 print("wrote", out)

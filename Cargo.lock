@@ -2436,6 +2436,7 @@ dependencies = [
  "log",
  "png",
  "pollster",
+ "serde",
  "universe-prof",
  "wgpu",
  "winit",

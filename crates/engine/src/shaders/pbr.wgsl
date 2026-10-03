@@ -10,6 +10,9 @@ struct Globals {
     shadow_near: mat4x4<f32>,
     shadow_far: mat4x4<f32>,
     shadow: vec4<f32>,
+    // Graphics toggles (1 on): textures, normal maps, occlusion, emission; specular, planet light, tone map.
+    look: vec4<f32>,
+    look2: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -21,6 +24,8 @@ struct Material {
     // x metallic, y roughness, z normal scale, w alpha cutoff (0: opaque).
     params: vec4<f32>,
     emissive: vec4<f32>,
+    // x occlusion strength.
+    extra: vec4<f32>,
 };
 
 @group(2) @binding(0) var<uniform> mat: Material;
@@ -29,6 +34,7 @@ struct Material {
 @group(2) @binding(3) var normal_tex: texture_2d<f32>;
 @group(2) @binding(4) var emissive_tex: texture_2d<f32>;
 @group(2) @binding(5) var tex_sampler: sampler;
+@group(2) @binding(6) var occlusion_tex: texture_2d<f32>;
 
 struct In {
     @location(0) pos: vec3<f32>,
@@ -124,12 +130,16 @@ fn schlick(f0: vec3<f32>, vh: f32) -> vec3<f32> {
 
 @fragment
 fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
-    let base = textureSample(base_tex, tex_sampler, in.uv) * mat.base_color;
+    // (Textures off: the material's plain values; a texture that's white.)
+    let textured = g.look.x > 0.5;
+    let base = select(vec4<f32>(1.0), textureSample(base_tex, tex_sampler, in.uv), textured) * mat.base_color;
     // (A cut-out: decals, grilles. Below the cutoff the pixel isn't there.)
     if (mat.params.w > 0.0 && base.a < mat.params.w) {
         discard;
     }
-    let mr = textureSample(mr_tex, tex_sampler, in.uv);
+    let mr = select(vec4<f32>(1.0), textureSample(mr_tex, tex_sampler, in.uv), textured);
+    // How much of the light from round about reaches here (seams, corners: less).
+    let occ = select(1.0, 1.0 + mat.extra.x * (textureSample(occlusion_tex, tex_sampler, in.uv).r - 1.0), g.look.z > 0.5);
     let metallic = clamp(mr.b * mat.params.x, 0.0, 1.0);
     var roughness = clamp(mr.g * mat.params.y, 0.04, 1.0);
     // The normal map, in the surface's tangent frame.
@@ -137,7 +147,7 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let ng = normalize(in.normal);
     let t = normalize(in.tangent.xyz - ng * dot(ng, in.tangent.xyz));
     let b = cross(ng, t) * in.tangent.w;
-    let n = normalize(t * tn.x * mat.params.z + b * tn.y * mat.params.z + ng * tn.z);
+    let n = select(ng, normalize(t * tn.x * mat.params.z + b * tn.y * mat.params.z + ng * tn.z), g.look.y > 0.5);
     // Specular anti-aliasing: where the normal swings across a pixel (fine
     // normal-map detail, far away), the glint would sparkle from frame to
     // frame; widen the roughness by how much it swings (Kaplanyan & Hoffman).
@@ -150,7 +160,7 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let f0 = mix(vec3<f32>(0.04), base.rgb, metallic);
     // The light on it as the meshes reckon it (the same units, the same eye):
     // the sun's (in shadow or not), the reflecting planet's, an ambient floor.
-    let ambient = in.sun_dir.w;
+    let ambient = in.sun_dir.w * occ;
     let shadow = sunlit(in.at, ng);
     var spec = vec3<f32>(0.0);
     var f = f0;
@@ -161,6 +171,10 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
         spec = ggx(nh, roughness * roughness) * smith(nv, nl, roughness) * f / max(4.0 * nv * nl, 1e-4);
     }
     let sun = in.sun_light * nl * shadow;
+    // (UNIVERSE_SHADOW_DEBUG: what's in shadow, facing the sun, red; as on the meshes.)
+    if (g.shadow.w > 0.0 && shadow < 0.5 && nl > 0.0) {
+        return vec4<f32>(0.8, 0.0, 0.0, 1.0);
+    }
     // The planet's light: how much of the sky it fills from its side, through
     // the eye's adaptation as on the meshes (see scene.wgsl `fill`).
     var fill = vec3<f32>(0.0);
@@ -168,26 +182,26 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
         let s = min(in.refl_dir.w, 1.0);
         let cc = 1.0 - sqrt(1.0 - s);
         let seen = s * max((dot(n, in.refl_dir.xyz) + cc) / (1.0 + cc), 0.0);
-        fill = max(pow(in.refl_color.w * seen, 0.3) - 0.12, 0.0) / 0.88 * in.refl_color.rgb;
+        fill = max(pow(in.refl_color.w * seen, 0.3) - 0.12, 0.0) / 0.88 * in.refl_color.rgb * occ;
     }
     // The body (what isn't metal) takes all of it; metal only reflects.
     let body = base.rgb * (1.0 - metallic);
     var c = body * (vec3<f32>(ambient) + (1.0 - ambient) * (sun * (vec3<f32>(1.0) - f) + fill));
-    c += spec * PI * sun;
+    c += spec * PI * sun * g.look2.x;
     // Metal under the same ambient floor (what's round it, dimly reflected).
     c += base.rgb * metallic * ambient;
     // What a glossy surface reflects of the planet: a light the size it looks
     // (an area light). The reflection's lobe widens with roughness; it catches
     // the disc's share of itself (energy kept: a broad lobe, a dim, wide image).
-    if (in.refl_dir.w > 0.0) {
+    if (in.refl_dir.w > 0.0 && g.look2.x > 0.5) {
         let r = reflect(-v, n);
         let radius = asin(sqrt(min(in.refl_dir.w, 1.0)));
         let lobe = max(roughness * roughness * 1.2, 0.003);
         let off = acos(clamp(dot(r, in.refl_dir.xyz), -1.0, 1.0));
         let edge = clamp((radius + lobe - off) / (2.0 * lobe), 0.0, 1.0);
         let share = min(1.0, (radius * radius) / (lobe * lobe));
-        c += schlick(f0, nv) * in.refl_color.rgb * in.refl_color.w * edge * share;
+        c += schlick(f0, nv) * in.refl_color.rgb * in.refl_color.w * edge * share * occ;
     }
-    c += textureSample(emissive_tex, tex_sampler, in.uv).rgb * mat.emissive.rgb;
+    c += select(vec4<f32>(1.0), textureSample(emissive_tex, tex_sampler, in.uv), textured).rgb * mat.emissive.rgb * g.look.w;
     return vec4<f32>(c, 1.0);
 }

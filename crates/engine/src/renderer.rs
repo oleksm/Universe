@@ -28,6 +28,10 @@ struct Globals {
     shadow_far: [[f32; 4]; 4],
     /// A texel of each cascade (metres); shadows on (1) or not.
     shadow: [f32; 4],
+    /// `Graphics`, 1 on, 0 off: textures, normal maps, occlusion, emission;
+    look: [f32; 4],
+    /// specular, planet light, tone map, (unused).
+    look2: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -735,6 +739,13 @@ impl Renderer {
                     ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
                     count: None,
                 },
+                // (The globals: the graphics toggles, the tone map's.)
+                wgpu::BindGroupLayoutEntry {
+                    binding: 5,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None },
+                    count: None,
+                },
             ],
         });
         let blit = device.create_shader_module(wgpu::include_wgsl!("shaders/blit.wgsl"));
@@ -781,7 +792,7 @@ impl Renderer {
             ..Default::default()
         });
 
-        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear);
+        let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear, &globals);
         let pbr = crate::pbr::PbrRenderer::new(device, &globals_layout, &shadow_layout, &light_layout, SCENE_FORMAT, DEPTH_FORMAT, SAMPLES);
         Self {
             pbr,
@@ -839,6 +850,7 @@ impl Renderer {
         if forced_aspect.is_some() { SHOT } else { UVec2::new(gpu.config.width.max(1), gpu.config.height.max(1)) }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn create_target(
         gpu: &Gpu,
         low_height: u32,
@@ -847,6 +859,7 @@ impl Renderer {
         layout: &wgpu::BindGroupLayout,
         sampler: &wgpu::Sampler,
         linear: &wgpu::Sampler,
+        globals: &wgpu::Buffer,
     ) -> Target {
         let size = Self::scene_size(gpu, forced_aspect);
         let hud_size = Self::low_res_size(gpu, low_height, forced_aspect) * hud_scale;
@@ -883,6 +896,7 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::Sampler(sampler) },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&front) },
                 wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::Sampler(linear) },
+                wgpu::BindGroupEntry { binding: 5, resource: globals.as_entire_binding() },
             ],
         });
         Target { size, hud_size, color_msaa, color, depth, hud, front_msaa, front, composite, blit }
@@ -891,7 +905,7 @@ impl Renderer {
     pub fn resize(&mut self, gpu: &Gpu) {
         if Self::scene_size(gpu, self.forced_aspect) != self.target.size {
             self.target =
-                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler, &self.linear);
+                Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler, &self.linear, &self.globals);
         }
     }
 
@@ -909,12 +923,13 @@ impl Renderer {
         let hud = self.target.hud_size.as_vec2();
         // The shadow cascades: along the light from the eye, if there's a
         // light and shadows are wanted.
-        let sun = frame.light.filter(|_| frame.shadow_reach > 0.0).and_then(|l| (l.position - frame.camera.position).try_normalize());
+        let sun = frame.light.filter(|_| frame.shadow_reach > 0.0 && frame.graphics.shadows).and_then(|l| (l.position - frame.camera.position).try_normalize());
         // (The near cascade tight round the eye: a ship close by gets a few cm a texel.)
         let (near, far) = (frame.shadow_reach / 24.0, frame.shadow_reach);
         let cascade = |half: f64| sun.map_or(glam::Mat4::IDENTITY, |s| shadow_matrix(frame.camera.position, s, half));
         let (shadow_near, shadow_far) = (cascade(near), cascade(far));
         let texel = |half: f64| (2.0 * half / SHADOW_SIZE as f64) as f32;
+        let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
@@ -922,6 +937,8 @@ impl Renderer {
             shadow_far: shadow_far.to_cols_array_2d(),
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
             shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
+            look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
+            look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), 0.0],
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));

@@ -4,6 +4,7 @@ mod newspanel;
 mod fmt;
 mod followguide;
 mod galaxymap;
+mod graphics;
 mod hud;
 mod market;
 mod models;
@@ -202,6 +203,9 @@ pub struct App {
     pub newsroom: Option<universe_sim::newsroom::Newsroom>,
     /// The news panel, when open.
     pub news_panel: bool,
+    /// What's drawn of what can be (see `graphics`), and its panel open.
+    pub graphics: universe_engine::Graphics,
+    pub graphics_panel: bool,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// A glTF model shown ahead of the eye (dev: `UNIVERSE_MODEL=file.glb`).
@@ -337,6 +341,8 @@ impl App {
             news: Default::default(),
             newsroom: None,
             news_panel: false,
+            graphics: graphics::load(),
+            graphics_panel: false,
             sparks: Vec::new(),
             showcase: std::env::var("UNIVERSE_MODEL").ok().and_then(|path| {
                 let r = std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf(&b));
@@ -1089,6 +1095,12 @@ impl Game for App {
         } else if self.nav_map.is_none() && self.galaxy_map.is_none() && self.market.is_none() && keys::pressed(&ctx.input, keys::Act::Economy) {
             self.economy_panel = Some(Default::default());
         }
+        // The graphics panel: at the side, the scene live behind it.
+        if self.graphics_panel {
+            self.graphics_panel = graphics::input(self, ctx);
+        } else if graphics::opens(ctx) {
+            self.graphics_panel = true;
+        }
         // The news panel likewise.
         if self.news_panel {
             self.news_panel = newspanel::input(self, ctx);
@@ -1298,10 +1310,14 @@ impl Game for App {
     }
 
     fn draw(&self, frame: &mut Frame, ctx: &Context) {
+        frame.graphics = self.graphics;
         universe_prof::time("draw/scene", || scene::draw(frame, self));
         // (Dev: the showcased model alone, no HUD: `UNIVERSE_MODEL_CLEAN`.)
         if !(self.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
             universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));
+        }
+        if self.graphics_panel {
+            graphics::draw(frame, self);
         }
     }
 }

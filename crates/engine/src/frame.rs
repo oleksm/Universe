@@ -53,6 +53,35 @@ pub(crate) struct HudVertex {
     pub color: [f32; 4],
 }
 
+/// What the renderer draws of what it can: each on by default, each off
+/// alone, to see what it brings (and trace a difference to it).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct Graphics {
+    /// The sun's shadows (ships, stations, rocks on each other and the ground).
+    pub shadows: bool,
+    /// Models' textures (colour, roughness, metalness): off, their materials' plain values.
+    pub textures: bool,
+    /// Models' normal maps (fine relief: seams, rivets, panel edges).
+    pub normal_maps: bool,
+    /// Models' ambient occlusion (seams and corners light from round about doesn't reach).
+    pub occlusion: bool,
+    /// What glows of itself (lamps, windows, engine glow).
+    pub emission: bool,
+    /// Glossy highlights: the sun's glint and the planet's reflection.
+    pub specular: bool,
+    /// The light a nearby planet or moon sends back.
+    pub planet_light: bool,
+    /// The film curve (AgX): off, light straight to the screen, clipped.
+    pub tone_map: bool,
+}
+
+impl Default for Graphics {
+    fn default() -> Self {
+        Graphics { shadows: true, textures: true, normal_maps: true, occlusion: true, emission: true, specular: true, planet_light: true, tone_map: true }
+    }
+}
+
 /// Immediate-mode draw list for one frame.
 ///
 /// World-space input is `f64`; it is converted to camera-relative `f32` on submission.
@@ -71,6 +100,8 @@ pub struct Frame {
     /// Shadows cast by meshes on meshes, out to this far from the eye
     /// (metres; 0: none). See `no_shadow`.
     pub shadow_reach: f64,
+    /// What's drawn of what can be (see `Graphics`).
+    pub graphics: Graphics,
     casts: bool,
     /// The surface meshes are drawn with now (see `Instance::material`, `with_surface`).
     surface: [f32; 4],
@@ -265,6 +296,7 @@ impl Frame {
             reflector: None,
             eclipsers: Vec::new(),
             shadow_reach: 0.0,
+            graphics: Graphics::default(),
             casts: true,
             surface: [0.0, 16.0, 0.0, 0.0],
             scene_size,
@@ -483,7 +515,7 @@ impl Frame {
     /// share of the sun's light its ground sends back, with its colour times
     /// the sun's brightness here. None if there's none to speak of.
     fn fill_at(&self, p: DVec3) -> Option<(Vec3, f32, (f32, [f32; 3]))> {
-        let (r, light) = (self.reflector?, self.light?);
+        let (r, light) = (self.reflector.filter(|_| self.graphics.planet_light)?, self.light?);
         let off = p - r.center;
         // The reflector itself (or anything at its heart) isn't lit by it.
         if off.length() < r.radius * 0.5 {

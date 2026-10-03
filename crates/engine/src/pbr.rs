@@ -56,6 +56,9 @@ pub struct Material {
     pub mr_tex: Option<usize>,
     pub normal_tex: Option<usize>,
     pub emissive_tex: Option<usize>,
+    /// Ambient occlusion in R (how much light from round about reaches), and its strength.
+    pub occlusion_tex: Option<usize>,
+    pub occlusion_strength: f32,
     /// glTF's alpha mask: below this, the pixel isn't drawn (decals,
     /// grilles cut from a texture); None: opaque.
     pub alpha_cutoff: Option<f32>,
@@ -104,6 +107,8 @@ impl PbrModel {
                 mr_tex: tex(pbr.metallic_roughness_texture().map(|i| i.texture())),
                 normal_tex: tex(m.normal_texture().map(|n| n.texture())),
                 emissive_tex: tex(m.emissive_texture().map(|i| i.texture())),
+                occlusion_tex: tex(m.occlusion_texture().map(|o| o.texture())),
+                occlusion_strength: m.occlusion_texture().map_or(1.0, |o| o.strength()),
                 alpha_cutoff: (m.alpha_mode() == gltf::material::AlphaMode::Mask).then(|| m.alpha_cutoff().unwrap_or(0.5)),
             });
         }
@@ -114,7 +119,7 @@ impl PbrModel {
         }
         // (A primitive with no material: a plain grey one.)
         if data.primitives.iter().any(|p| p.material == usize::MAX) {
-            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None, alpha_cutoff: None });
+            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None, occlusion_tex: None, occlusion_strength: 1.0, alpha_cutoff: None });
             for p in &mut data.primitives {
                 if p.material == usize::MAX {
                     p.material = fallback;
@@ -237,6 +242,8 @@ struct MaterialUniform {
     /// x metallic, y roughness, z normal scale, w alpha cutoff (0: opaque).
     params: [f32; 4],
     emissive: [f32; 4],
+    /// x occlusion strength.
+    extra: [f32; 4],
 }
 
 struct GpuModel {
@@ -295,6 +302,7 @@ impl PbrRenderer {
                 tex_entry(3),
                 tex_entry(4),
                 wgpu::BindGroupLayoutEntry { binding: 5, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+                tex_entry(6),
             ],
         });
         let buffers = [
@@ -387,13 +395,14 @@ impl PbrRenderer {
             .materials
             .iter()
             .map(|m| {
-                let uniform = MaterialUniform { base_color: m.base_color, params: [m.metallic, m.roughness, m.normal_scale, m.alpha_cutoff.unwrap_or(0.0)], emissive: [m.emissive[0], m.emissive[1], m.emissive[2], 0.0] };
+                let uniform = MaterialUniform { base_color: m.base_color, params: [m.metallic, m.roughness, m.normal_scale, m.alpha_cutoff.unwrap_or(0.0)], emissive: [m.emissive[0], m.emissive[1], m.emissive[2], 0.0], extra: [m.occlusion_strength, 0.0, 0.0, 0.0] };
                 let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr material"), contents: bytemuck::bytes_of(&uniform), usage: wgpu::BufferUsages::UNIFORM });
                 let base = m.base_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, true));
                 let mr = m.mr_tex.map_or_else(|| white.clone(), |i| texture(i, false));
                 let normal = m.normal_tex.map_or_else(|| flat.clone(), |i| texture(i, false));
                 // (No texture: the factor alone, as glTF has it. Black here put out every untextured lamp.)
                 let emissive = m.emissive_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, true));
+                let occlusion = m.occlusion_tex.map_or_else(|| white.clone(), |i| texture(i, false));
                 device.create_bind_group(&wgpu::BindGroupDescriptor {
                     label: Some("pbr material"),
                     layout: &self.material_layout,
@@ -404,6 +413,7 @@ impl PbrRenderer {
                         wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::TextureView(&normal) },
                         wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&emissive) },
                         wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::Sampler(&self.sampler) },
+                        wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(&occlusion) },
                     ],
                 })
             })

@@ -16,3 +16,4 @@ cpal = "0.18"
 font8x8 = "0.3"
 ab_glyph = "0.2"
 gltf = { version = "1", default-features = false, features = ["import", "utils", "names", "KHR_materials_emissive_strength"] }
+serde.workspace = true

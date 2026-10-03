@@ -7,6 +7,17 @@
 @group(0) @binding(3) var front_tex: texture_2d<f32>;
 @group(0) @binding(4) var soft: sampler;
 
+struct Globals {
+    view_proj: mat4x4<f32>,
+    hud_proj: mat4x4<f32>,
+    shadow_near: mat4x4<f32>,
+    shadow_far: mat4x4<f32>,
+    shadow: vec4<f32>,
+    look: vec4<f32>,
+    look2: vec4<f32>,
+};
+@group(0) @binding(5) var<uniform> g: Globals;
+
 struct VertexOut {
     @builtin(position) clip: vec4<f32>,
     @location(0) uv: vec2<f32>,
@@ -30,6 +41,10 @@ fn agx_contrast(x: vec3<f32>) -> vec3<f32> {
 }
 
 fn film(x: vec3<f32>) -> vec3<f32> {
+    // (Off: the light straight to the screen, clipped, gamma-encoded.)
+    if (g.look2.z < 0.5) {
+        return pow(clamp(x * EXPOSURE, vec3<f32>(0.0), vec3<f32>(1.0)), vec3<f32>(1.0 / 2.2));
+    }
     let agx = mat3x3<f32>(
         vec3<f32>(0.842479062253094, 0.0423282422610123, 0.0423756549057051),
         vec3<f32>(0.0784335999999992, 0.878468636469772, 0.0784336),

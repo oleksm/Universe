@@ -26,7 +26,7 @@ struct GameSave {
     design: universe_sim::world::design::Design,
 }
 
-fn data_dir() -> PathBuf {
+pub fn data_dir() -> PathBuf {
     std::env::var_os("XDG_DATA_HOME")
         .map(PathBuf::from)
         .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/share")))
