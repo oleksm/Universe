@@ -332,6 +332,7 @@ impl Engine {
         let now = u.world.time;
         let system = u.ship_system;
         let sys = u.ship_system();
+        let gather = universe_prof::scope("sim/view/crafts");
         let crafts = u
             .crafts
             .iter()
@@ -346,11 +347,13 @@ impl Engine {
                 aggressed: u.law.aggressed(crate::combat::craft_id(i), now),
             })
             .collect();
+        drop(gather);
+        let rest = universe_prof::scope("sim/view/rest");
         let markets = universe_world::traffic::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect();
         let market = self.watched.map(|f| u.market_view(f));
         let pads = (0..sys.spaceports.len()).map(|p| u.atc.owners(system, universe_world::Facility::Spaceport(p))).collect();
         self.serial += 1;
-        View {
+        let view = View {
             time: now,
             ship: u.ship.clone(),
             ship_system: system,
@@ -406,8 +409,10 @@ impl Engine {
             pilots: (u.npcs.apart(), u.late, u.dropped),
             serial: self.serial,
             made: std::time::Instant::now(),
-        }
-        .with_cockpit(self.universe.player.as_ref().and_then(|p| p.as_any().downcast_ref::<crate::cockpit::Cockpit>()))
+        };
+        drop(rest);
+        let _p = universe_prof::scope("sim/view/cockpit");
+        view.with_cockpit(self.universe.player.as_ref().and_then(|p| p.as_any().downcast_ref::<crate::cockpit::Cockpit>()))
     }
 }
 

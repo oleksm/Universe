@@ -276,6 +276,22 @@ pub const SHADE_AMBIENT: f32 = 0.06;
 /// Brightness of an edge on the unlit side.
 pub const LINE_AMBIENT: f32 = 0.25;
 
+/// A glow's rim: twelve points around the unit circle (cos, sin).
+const RIM: [(f32, f32); 12] = [
+    (1.0, 0.0),
+    (0.866_025_4, 0.5),
+    (0.5, 0.866_025_4),
+    (0.0, 1.0),
+    (-0.5, 0.866_025_4),
+    (-0.866_025_4, 0.5),
+    (-1.0, 0.0),
+    (-0.866_025_4, -0.5),
+    (-0.5, -0.866_025_4),
+    (0.0, -1.0),
+    (0.5, -0.866_025_4),
+    (0.866_025_4, -0.5),
+];
+
 /// Width and height of one character cell of the HUD font, in pixels.
 pub const GLYPH: f32 = 8.0;
 
@@ -355,7 +371,7 @@ impl Frame {
         self.in_front = before;
     }
 
-    /// A light's glow at `at` (world): a soft disc facing the eye, `radius`
+    /// A light's glow at `at` (world): a soft disc facing the eye (`RIM`), `radius`
     /// metres across (and never less than `least` HUD pixels, so a lamp far
     /// off still shows), adding `light` (linear, may be over 1: it blooms in
     /// the tone curve). Hidden behind what's solid; hides nothing.
@@ -367,17 +383,22 @@ impl Frame {
         }
         let per_px = d / self.pixels_per_radian().max(1e-3) as f64;
         let r = radius.max(least as f64 * per_px);
-        // (Facing the eye: across its right and up.)
+        // (Under half a pixel, or wholly behind the eye: nothing to see.)
         let q = self.camera.orientation.as_dquat();
-        let (right, up) = (q * DVec3::X * r, q * DVec3::Y * r);
-        let centre = Vertex { pos: rel.as_vec3().to_array(), color: [light[0], light[1], light[2], 1.0] };
-        let rim = |k: usize| {
-            let a = k as f64 / 12.0 * std::f64::consts::TAU;
-            Vertex { pos: (rel + right * a.cos() + up * a.sin()).as_vec3().to_array(), color: [0.0, 0.0, 0.0, 0.0] }
-        };
+        if r < 0.5 * per_px || rel.dot(q * DVec3::NEG_Z) < -r {
+            return;
+        }
+        // (Facing the eye: across its right and up.)
+        let (right, up) = ((q * DVec3::X * r).as_vec3(), (q * DVec3::Y * r).as_vec3());
+        let at = rel.as_vec3();
+        let centre = Vertex { pos: at.to_array(), color: [light[0], light[1], light[2], 1.0] };
+        let rim: [Vertex; 13] = std::array::from_fn(|k| {
+            let (c, s) = RIM[k % 12];
+            Vertex { pos: (at + right * c + up * s).to_array(), color: [0.0, 0.0, 0.0, 0.0] }
+        });
         let glows = if self.in_front { &mut self.front_glows } else { &mut self.glows };
         for k in 0..12 {
-            glows.extend([centre, rim(k), rim(k + 1)]);
+            glows.extend([centre, rim[k], rim[k + 1]]);
         }
     }
 

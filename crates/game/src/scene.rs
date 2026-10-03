@@ -822,7 +822,7 @@ fn crafts(frame: &mut Frame, app: &App) {
         if c.system != app.view.origin || !visible {
             continue;
         }
-        let (pos, turned) = app.place(crate::Who::Craft(i));
+        let (pos, turned) = universe_prof::time("draw/scene/crafts/place", || app.place(crate::Who::Craft(i)));
         if frame.projected_radius(pos, 25.0) < 1.0 {
             let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
             frame.point(pos, tc.scale(0.8));
@@ -830,9 +830,9 @@ fn crafts(frame: &mut Frame, app: &App) {
         }
         let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
         let tc = if c.aggressed { AGGRESSED } else { TRAFFIC };
-        hull(frame, app, &c.ship, livery(&c.name), &t);
-        nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i);
-        jets(frame, &c.ship, pos, turned, app.now(), i);
+        universe_prof::time("draw/scene/crafts/hull", || hull(frame, app, &c.ship, livery(&c.name), &t));
+        universe_prof::time("draw/scene/crafts/nav lights", || nav_lights(frame, app.models.lights(&c.ship), pos, turned, app.now(), i));
+        universe_prof::time("draw/scene/crafts/jets", || jets(frame, &c.ship, pos, turned, app.now(), i));
         // (In the pilot's seat the radar tags them: see `hud::contact_marker`.)
         if pos.distance(cam) < 5_000.0 && app.mode != Mode::Pilot {
             names.push((pos.distance(cam), pos, c.name.to_uppercase(), tc.scale(0.8)));

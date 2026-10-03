@@ -109,6 +109,7 @@ impl World {
         // Each system's pairs found side by side; then put right in order.
         let found: Vec<(Vec<Mover>, Vec<universe_physics::PairContact>)> = {
             use rayon::prelude::*;
+            let gather = universe_prof::scope("sim/combat/collisions/movers");
             let movers: Vec<Vec<Mover>> = systems
                 .iter()
                 .map(|(_, members)| {
@@ -123,9 +124,11 @@ impl World {
                         .collect()
                 })
                 .collect();
+            drop(gather);
             let _p = universe_prof::scope("sim/combat/collisions/pairs");
             movers.into_par_iter().map(|m| { let c = contacts(&m, dt); (m, c) }).collect()
         };
+        let _p = universe_prof::scope("sim/combat/collisions/shapes");
         for (movers, found) in found {
             for c in found {
                 let (ma, mb) = (movers[c.a], movers[c.b]);

@@ -301,6 +301,7 @@ impl Universe {
         systems.dedup();
         let mut rails = std::collections::HashMap::new();
         let mut turrets = std::collections::HashMap::new();
+        let places = universe_prof::scope("sim/pilot view/rails and turrets");
         for s in systems {
             let positions = self.world.rails_at(s, t);
             let sys = self.world.system(s);
@@ -311,9 +312,11 @@ impl Universe {
             turrets.insert(s, Arc::new(guns));
             rails.insert(s, positions);
         }
+        drop(places);
         // Everyone as they are now (pilots read the newest); full ships only
         // of the pilots awake (and ours).
-        self.snapshot();
+        universe_prof::time("sim/pilot view/snapshot", || self.snapshot());
+        let _p = universe_prof::scope("sim/pilot view/ships and board");
         self.snapped_at = self.tick;
         let tick = self.tick;
         let mut ships: std::collections::HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash> = Default::default();
