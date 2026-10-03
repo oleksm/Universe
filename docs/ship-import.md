@@ -16,7 +16,7 @@ renders as made (textured, physically based) and flies by its physics. Example a
 | any other `nozzle_…` | manoeuvring thrusters (the thrusters slot) |
 | `gear_…` | landing contacts: put them at the bottoms of the feet. Set down, the ship stands on the lowest one (its centre that high over the ground or deck) |
 | `dock_…`, `cockpit` | docking ports, the pilot's seat |
-| `hatch` | the crew hatch; landed, a stair runs aft from it to the ground (none: the generic port-side ramp) |
+| `hatch` | the crew hatch; its +Y arrow down the ramp. Landed, you walk out that way to the ground (pointing straight down: aft; none: the generic port-side ramp) |
 | `mount_hardpoint_…`, `mount_cargo…`, `mount_utility…` | one slot each (guns, racks, utility); other `mount_<slot>` set where that module sits |
 | An empty's **+Y arrow** | a nozzle's exhaust; a port's way out; the pilot's view |
 | Scene properties `freefall_name`, `freefall_class` (1-4) | its name; its size class (how big its slots are) |

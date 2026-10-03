@@ -151,11 +151,16 @@ const STAIR_RUN: f64 = 8.0;
 
 /// The way out of `ship`, landed (ship frame): the top of its stair and
 /// where its foot reaches, horizontally (it meets the ground below that).
-/// A modelled hull's belly hatch, a stair aft from it; otherwise the
+/// A modelled hull's belly hatch, a stair from it the way the hatch points
+/// (down its ramp), or aft; otherwise the
 /// cabin's port door and a ramp beside the ship.
 pub fn stair(ship: &Ship) -> (DVec3, DVec3) {
     match ship.spec().shape().nodes(crate::shape::Role::Hatch).next() {
-        Some(h) => (h.at, h.at + DVec3::Z * STAIR_RUN),
+        Some(h) => {
+            // (Down its ramp, the way the node points; straight down, aft.)
+            let along = DVec3::new(h.dir.x, 0.0, h.dir.z).try_normalize().unwrap_or(DVec3::Z);
+            (h.at, h.at + along * STAIR_RUN)
+        }
         None => (DVec3::new(ROOMS[2].x0, DECK, HATCH.z), RAMP_FOOT),
     }
 }

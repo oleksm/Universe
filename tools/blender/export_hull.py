@@ -14,7 +14,8 @@ Run it again whenever the design changes. The .blend isn't changed (nothing is s
     - `gear_*`: under each mesh named `*_Pad` (a landing foot), at its lowest point;
     - `nozzle_main_*`: each island of faces in an `*EngineGlow*` material, firing aft;
     - `cockpit`: the middle of the `*Glass*` faces farthest forward, looking forward;
-    - `hatch`: the middle of a mesh named `*Ramp*` (where the crew go in and out);
+    - `hatch`: the top of a mesh named `*Ramp*`, where it meets the belly, pointing down the
+      ramp (the way out);
     - `mount_hardpoint_*`: each mesh named `*Laser*_Head`; `mount_cargo`, `mount_utility`;
     - `nozzle_lift_*`: under the hull, six, firing down; manoeuvring thrusters in quads,
       at the nose and the tail;
@@ -163,8 +164,14 @@ if not has("cockpit"):
 if not has("hatch"):
     ramps = [o for o in meshes if "Ramp" in o.name and o.name.split("_")[0].endswith("Ramp")]
     if ramps:
-        a, b = box(ramps[0])
-        empty("hatch", ((a.x + b.x) / 2, (a.y + b.y) / 2, a.z), (0, 0, -1))
+        # (Its top, where it meets the belly: shut or lowered, that's the way in.)
+        # (Pointing down it to its foot when it's lowered: the way out.)
+        o = ramps[0]
+        pts = world_points(o)
+        top, foot = max(pts, key=lambda p: p.z), min(pts, key=lambda p: p.z)
+        a, b = box(o)
+        way = Vector((0.0, foot.y - top.y, foot.z - top.z))
+        empty("hatch", ((a.x + b.x) / 2, top.y, b.z), way if way.length > 1.0 else (0, 0, -1))
 
 if not has("mount_"):
     heads = sorted((o for o in meshes if "Laser" in o.name and o.name.endswith("_Head")), key=lambda o: o.name)

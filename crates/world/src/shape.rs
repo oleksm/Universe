@@ -27,7 +27,7 @@ pub enum Role {
     Dock,
     /// `cockpit`: where the pilot sits.
     Cockpit,
-    /// `hatch`: where the crew go in and out (a stair runs aft from it).
+    /// `hatch`: where the crew go in and out; `dir` down its ramp (straight down: a stair aft).
     Hatch,
 }
 
