@@ -61,6 +61,9 @@ pub struct ClassSpec {
     pub power_draw: f64,
     /// The autopilots its nav computers run, and the gear fitted.
     pub features: Vec<crate::modules::Feature>,
+    /// Its avionics' hyperdrive interlock (m from a body's highest ground; None: none fitted:
+    /// the drive carries it into whatever's ahead).
+    pub interlock: Option<f64>,
     pub gear: Vec<crate::modules::Gear>,
     /// Its thrusters: where each sits on the shape, which way it pushes, how hard.
     pub thrusters: Vec<Thruster>,
@@ -460,7 +463,7 @@ impl ClassSpec {
         let (turn_rate, roll_rate) = modules()
             .find_map(|m| if let Does::FlightComputer { turn_rate, roll_rate } = m.does { Some((turn_rate, roll_rate)) } else { None })
             .expect("a flight computer (a base block)");
-        let mut features: Vec<crate::modules::Feature> = modules().flat_map(|m| if let Does::NavComputer { features } = &m.does { features.clone() } else { Vec::new() }).collect();
+        let mut features: Vec<crate::modules::Feature> = modules().flat_map(|m| if let Does::NavComputer { features, .. } = &m.does { features.clone() } else { Vec::new() }).collect();
         features.sort();
         features.dedup();
         let mut gear: Vec<crate::modules::Gear> = modules().filter_map(|m| m.does.gear()).collect();
@@ -534,6 +537,7 @@ impl ClassSpec {
             seats,
             power_output,
             power_draw,
+            interlock: modules().filter_map(|m| if let Does::NavComputer { interlock, .. } = m.does { (interlock > 0.0).then_some(interlock) } else { None }).reduce(f64::max),
             features,
             gear,
             thrusters,
@@ -1175,6 +1179,20 @@ impl Ship {
         let spec = self.spec();
         let per_kg = crate::materials::material(&spec.fuel).map_or(0.0, |m| m.energy) * spec.plant_efficiency;
         if per_kg > 0.0 { energy / per_kg } else { 0.0 }
+    }
+
+    /// The fuel its hyperdrive burns for `energy` (J) of field: by the fuel's
+    /// energy (its material's); the drive's efficiency is in the field's cost.
+    pub fn hyper_fuel(&self, energy: f64) -> f64 {
+        let per_kg = crate::materials::material(&self.spec().fuel).map_or(0.0, |m| m.energy);
+        if per_kg > 0.0 { energy / per_kg } else { f64::INFINITY }
+    }
+
+    /// How far its tank takes it in hyperdrive at `speed` (m), as it is now.
+    pub fn hyper_range(&self, speed: f64) -> f64 {
+        let cost = universe_physics::hyper::field_cost(self.mass(), speed, self.spec().hyper_efficiency.max(1e-6));
+        let per_kg = crate::materials::material(&self.spec().fuel).map_or(0.0, |m| m.energy);
+        self.fuel * per_kg / cost
     }
 
     /// The heat its engines make now (W): each jet's power (thrust × exhaust

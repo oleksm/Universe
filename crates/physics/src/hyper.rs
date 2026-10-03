@@ -2,38 +2,22 @@
 //! the medium's slack, a field's draw and the speed a power buys, a throat's
 //! upkeep. Devices built on them (hyperdrives, gates, relays) are the world's.
 
-use crate::laws::{HYPER_RATE, P_FLOOR, P_PUSH, SPEED_OF_LIGHT, TUBE_EPS, TUBE_GAMMA, TUBE_HOLD, TUBE_K, TUBE_RHO, TUBE_T_LY, V_BEST_C, V_OPEN_C};
-
-/// The medium's slack `d` metres from the nearest surface: 0 stiff (deep in
-/// a system), 1 slack (between the stars).
-pub fn slack(d: f64) -> f64 {
-    ((HYPER_RATE * d.max(0.0)) / (V_OPEN_C * SPEED_OF_LIGHT)).powi(2).min(1.0)
-}
+use crate::laws::{FIELD_COST, HYPER_RATE, SPEED_OF_LIGHT, TUBE_EPS, TUBE_GAMMA, TUBE_HOLD, TUBE_K, TUBE_RHO, TUBE_T_LY, V_BEST_C, V_TOP_C};
 
 /// The medium's limit on speed `d` metres from the nearest surface (m/s).
 pub fn limit(d: f64) -> f64 {
     HYPER_RATE * d
 }
 
-/// The power a field holding `mass` kg at `speed` draws where the slack is
-/// `s`, through a device of efficiency `eta` (W).
-pub fn field_draw(mass: f64, s: f64, speed: f64, eta: f64) -> f64 {
-    mass * s * (P_FLOOR + P_PUSH * (speed / (V_BEST_C * SPEED_OF_LIGHT)).powi(3)) / eta
+/// The energy a field holding `mass` kg takes to go a metre at `speed`,
+/// through a device of efficiency `eta` (J/m): from the tank.
+pub fn field_cost(mass: f64, speed: f64, eta: f64) -> f64 {
+    mass * FIELD_COST * (1.0 + (speed / (V_BEST_C * SPEED_OF_LIGHT)).powi(2)) / eta
 }
 
-/// The fastest a field holding `mass` kg can go where the slack is `s`, on
-/// `power` W through a device of efficiency `eta` (m/s); `None` if it can't
-/// be held at all.
-pub fn field_speed(mass: f64, s: f64, power: f64, eta: f64) -> Option<f64> {
-    let usable = power * eta;
-    let hold = mass * s * P_FLOOR;
-    if hold > usable {
-        return None;
-    }
-    if s <= 0.0 {
-        return Some(f64::INFINITY);
-    }
-    Some(V_BEST_C * SPEED_OF_LIGHT * ((usable - hold) / (mass * s * P_PUSH)).cbrt())
+/// A field's top speed (m/s).
+pub fn field_top() -> f64 {
+    V_TOP_C * SPEED_OF_LIGHT
 }
 
 /// A light year (m), for the tube's per-light-year law.

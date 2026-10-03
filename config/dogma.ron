@@ -23,21 +23,18 @@
     ),
     (
         name: "Medium",
-        note: "The hyper-medium: near masses it holds what moves in it under v_lim = K·d; far from them it's slack, s(d) = min(1, (K·d / v_open)²).",
+        note: "The hyper-medium: it holds what moves in it under v_lim = K·d, d the distance from the nearest surface (slow close to bodies, fast in the open). The same everywhere: no inside, no outside.",
         entries: [
             (name: "HYPER_RATE", value: 2.0, unit: "1/s", kind: Invented, note: "K: the limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c."),
-            (name: "INTERLOCK", value: 1000.0, unit: "m", kind: Invented, note: "Nothing moves in the medium within this of a body's highest ground."),
-            (name: "V_OPEN_C", value: 1.0e6, unit: "c", kind: Invented, note: "Where the slack sets in (a few hundred AU from a star)."),
-            (name: "STIFF_SLACK", value: 0.01, unit: "", kind: Invented, note: "A field forms only where the slack is below this (inside a system)."),
         ],
     ),
     (
         name: "Field",
-        note: "A hyper-field's draw: P = m·s·(P_FLOOR + P_PUSH·(v/v*)³) / η, η the device's. Between stars, power per kg is the wall.",
+        note: "A hyper-field's cost, drawn from the tank: dE/dx = m·E0·(1 + (v/v*)²) / η, η the device's. Anywhere: what limits a ship is the fuel it carries. See docs/world/hyperspace.md; tools/experiments/hyper_fuel.py.",
         entries: [
-            (name: "P_FLOOR", value: 1.0e4, unit: "W/kg", kind: Invented, note: "Holding a field in open space, per kg in it."),
-            (name: "P_PUSH", value: 5.0e3, unit: "W/kg", kind: Invented, note: "Pushing it through the medium at the best speed; grows with the cube of speed."),
-            (name: "V_BEST_C", value: 1000.0, unit: "c", kind: Invented, note: "v*: the speed the push is reckoned at."),
+            (name: "FIELD_COST", value: 2.391e-3, unit: "J/(kg·m)", kind: Invented, note: "E0: the energy per kg per metre, going slow. Target: a normal ship (a Drover's tank, an S2 drive) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star; an explorer that's mostly tank about 5 ly."),
+            (name: "V_BEST_C", value: 1000.0, unit: "c", kind: Invented, note: "v*: at this speed the cost is double the slow cost (it grows with the square of speed)."),
+            (name: "V_TOP_C", value: 3000.0, unit: "c", kind: Invented, note: "A field's top speed. Target: full throttle costs ten times the slow cost (rushing burns a tank in a tenth of the distance)."),
         ],
     ),
     (

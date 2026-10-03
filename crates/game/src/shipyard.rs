@@ -544,7 +544,10 @@ fn what(m: &Module) -> String {
         Does::FlightComputer { turn_rate, roll_rate } => format!("TURNS {turn_rate:.1}, ROLLS {roll_rate:.1} RAD/S"),
         Does::Sensors { range } => fmt::distance(*range),
         Does::Comm { capture, link, .. } => format!("HEARS {}, LINKS {}", fmt::distance(*capture), fmt::distance(*link)),
-        Does::NavComputer { features } => features.iter().map(|f| format!("{f:?}").to_uppercase()).collect::<Vec<_>>().join(" "),
+        Does::NavComputer { features, interlock } => {
+            let runs = features.iter().map(|f| format!("{f:?}").to_uppercase()).collect::<Vec<_>>().join(" ");
+            if *interlock > 0.0 { format!("{runs}  INTERLOCK {:.0} M", interlock) } else { runs }
+        }
         _ => String::new(),
     }
 }

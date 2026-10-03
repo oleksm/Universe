@@ -55,8 +55,9 @@ pub enum Does {
     Laser,
     /// The anchor and excavator.
     MiningRig,
-    /// Runs these autopilots.
-    NavComputer { features: Vec<Feature> },
+    /// Runs these autopilots; and its hyperdrive interlock: never closer
+    /// than `interlock` m to a body's highest ground (0: it has none).
+    NavComputer { features: Vec<Feature>, #[serde(default)] interlock: f64 },
 }
 
 /// An autopilot a nav computer runs.

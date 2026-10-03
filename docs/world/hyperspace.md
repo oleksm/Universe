@@ -6,16 +6,18 @@ invented are in the charter (`docs/physics.md`). Kept current as the hyper layer
 
 ## In one breath
 
-Space carries a **hyper-medium**. Near masses it's stiff and holds anything moving in it to a
-speed limit that grows with distance from the nearest surface; between the stars it goes slack.
-A ship's **field** (its hyperdrive) moves through the stiff medium cheaply; in slack space
-holding a field costs power per kilogram, a wall no ship today climbs. **Gates** are **tubes**
-laid along the real route between two rings: a 5 ly gate is 5 ly long, but inside it anything
-can go millions of times faster than light, paying by its mass and how fast it insists on going.
-Light can travel a tube too, but its flow is unstable and a light signal can't be caught at the
-far end reliably, so **information crosses in physical capsules**, thrown and caught like any
-payload: by the same rule, data crosses a light year in about 200 ms, a regular ship in tens of
-seconds, a capital ship in minutes.
+Space carries a **hyper-medium**: it holds anything moving in it to a speed limit that grows with
+distance from the nearest surface (slow close to bodies, fast in the open). A ship's **field** (its
+hyperdrive) moves through it burning fuel by the metre, more the faster it goes, by one formula
+that's the same anywhere: no zones, no walls; what limits how far a ship goes is the fuel it
+carries. A normal ship's tank won't reach the next star; an explorer that's mostly tank just
+will. **Gates** are **tubes** laid along the real route between two rings: a 5 ly gate is 5 ly
+long, but inside it anything can go millions of times faster than light, paying by its mass and
+how fast it insists on going, about a billion times cheaper per kilogram than a field. Light can
+travel a tube too, but its flow is unstable and a light signal can't be caught at the far end
+reliably, so **information crosses in physical capsules**, thrown and caught like any payload: by
+the same rule, data crosses a light year in about 200 ms, a regular ship in tens of seconds, a
+capital ship in minutes.
 
 (*How the numbers are chosen*: each invented constant comes from a stated design target, see
 `docs/world/README.md`; the calculations are in `tools/experiments/`.)
@@ -25,34 +27,46 @@ seconds, a capital ship in minutes.
 | Law | Formula | Constants |
 |---|---|---|
 | Speed limit near masses | `v_lim = K · d` (`d`: distance from the nearest surface) | K = 2 /s: at 1 AU from a star about 1,000 c |
-| Interlock | nothing moves in the medium within 1 km of a body's highest ground | INTERLOCK = 1,000 m |
-| Slack | `s = min(1, (K · d / v_open)²)` | v_open = 10⁶ c: slack sets in a few hundred AU out |
-| Where a field forms | only where `s` < 0.01: inside systems | STIFF_SLACK = 0.01 |
 
-- Deep inside a system the slack is about 0; between stars it's 1.
-- Climbing out of a well is slow: near a world the limit is small (20,000 km/s at 10,000 km).
+- A formula, not a zone: close to a world the limit is small (20,000 km/s at 10,000 km), in the
+  open it's large.
+- Keeping a drive from carrying a ship into a body is its **avionics' interlock** (a product's
+  spec, e.g. 1 km off the highest ground), not a law: with none fitted, the drive goes where it's
+  pointed.
 
 ## 2. The field: hyperdrives
 
-A ship's hyperdrive holds a field round it and pushes it through the medium. Its draw:
+A ship's hyperdrive holds a field round it and moves it through the medium, burning fuel from its
+tank by the metre (Invented law; the shape borrowed from drag, where pushing through a medium costs
+energy per distance growing with the square of speed):
 
-    P = m · s · (P_FLOOR + P_PUSH · (v / v*)³) / η
+    dE/dx = m · E0 · (1 + (v / v*)²) / η
 
-| Constant | Value | Meaning |
-|---|---|---|
-| P_FLOOR | 10 kW/kg | holding a field in open space, per kg in it |
-| P_PUSH | 5 kW/kg | pushing it at the best speed; grows with the cube of speed |
-| v* (V_BEST_C) | 1,000 c | the speed the push is reckoned at |
-| η | the drive's (a product spec) | the share of its draw that holds and pushes the field; the rest is heat |
+| | Kind | Value | From the target |
+|---|---|---|---|
+| E0 (FIELD_COST) | Invented constant | 2.4×10⁻³ J/(kg·m) | **a normal ship (a Drover: 91.5 t, 30 t of deuterium, an S2 drive at 0.6) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star** |
+| v* (V_BEST_C) | Invented constant | 1,000 c | the cost doubles there over going slow: **5 ly in about 2 days at v*** |
+| Top speed (V_TOP_C) | Invented constant | 3,000 c | **full throttle costs ten times the slow cost** |
+| η | the drive's (a product spec) | 0.6-0.75 | brands |
 
-- **In a system** (s ≈ 0) power hardly matters: the medium's limit binds. Speed follows the room
-  ahead and the throttle; dropping out keeps the exit velocity.
-- **Between stars** (s = 1) power per kg is **the wall**: about 12.5 kW/kg with the best drive. No
-  ship today reaches it; a future **explorer** (about 30 kW/kg) makes 5 ly in about 1.3 days and
-  40 ly in about 10: an epic, not a trip.
-- **The field collapses** when the power can't hold it (the capacitors run dry), and won't form
-  where the medium is slack.
-- *Simulated:* the drive draws from the capacitor banks, charged by the plant.
+What comes out (`tools/experiments/hyper_fuel.py`; deuterium at 3.45×10¹⁴ J/kg):
+
+| | Slow | At v* | Full throttle |
+|---|---|---|---|
+| A Drover on a full tank | 3.0 ly | 1.5 ly | 0.3 ly |
+| An explorer, nine tenths tank, η 0.75 | 10.2 ly | 5.2 ly | 1.0 ly |
+
+| Trip, a Drover | Fuel |
+|---|---|
+| A 1 AU hop | 0.2 kg |
+| 40 AU round a system | 7 kg |
+| 200 AU out and back | about 130 kg |
+| A light year at v* | 20 t |
+
+- **Nothing walls a ship in.** Fuel and money limit how far it goes; exploration is logistics
+  (tankers, depots, drop tanks, ships that are mostly tank).
+- **Speed is the limit of the medium and the throttle:** `v = throttle × min(K·d, top speed)`.
+- Out of fuel in hyperdrive, it drops out where it is.
 
 ## 3. Gates: tubes along the route
 
@@ -131,7 +145,7 @@ costs its opening over `TUBE_HOLD` (it leaks, topped up continuously).
 | Relay tube 1 cm | next to nothing | | microwatts |
 
 (`tools/experiments/tube_holding.py`.) *Open for one pass* is a comparison, not a thing ships do:
-no ship today can hold a tube between the stars (the wall).
+no ship today could carry the energy to open a tube of its own.
 
 ### The flow settles: data's cadence
 
@@ -164,9 +178,9 @@ cross in capsules at the settle cadence; the Dogma checks test the targets above
 
 | | |
 |---|---|
-| Speed limit at 1 AU from a star (open medium) | about 1,000 c |
-| The wall (best drive, between stars) | about 12.5 kW/kg |
-| A future explorer, 40 ly | about 10 days |
+| Speed limit at 1 AU from a star | about 1,000 c |
+| A Drover's full tank at v* | 1.5 ly (never the next star) |
+| An explorer's (nine tenths tank) at v* | about 5 ly, 2 days |
 | Data through a gate, natural | 200 ms per ly (1 s for 5 ly) |
 | A 100 t ship through a 5 ly gate, natural | 46 s, an S2 plant-hour |
 | A capital ship (100 kt) through a 5 ly gate | 7.7 min |

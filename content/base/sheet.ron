@@ -68,8 +68,6 @@
         note: "For the dogma's claims (not used by the code).",
         entries: [
             (name: "ETA_FIELD_MIN", value: 0.5, unit: "", kind: Planned, note: "The field's efficiency, the worst drives."),
-            (name: "ETA_FIELD_MAX", value: 0.8, unit: "", kind: Planned, note: "The field's efficiency, the best drives."),
-            (name: "EXPLORER_POWER", value: 3.0e4, unit: "W/kg", kind: Planned, note: "A future explorer's power per kg aboard (next-generation reactors)."),
         ],
     ),
 ]

@@ -36,10 +36,6 @@ pub enum ShipEvent {
     AnchorFailed { why: String },
     /// The tank is dry: no thrust, no hyperdrive.
     OutOfFuel,
-    /// The hyperdrive's field couldn't be held (not power enough for the medium's slack): it collapsed.
-    FieldCollapsed,
-    /// The field won't form here: the medium is slack (between the stars).
-    FieldWontForm,
     /// The anchor let go (any loose ore in the hopper drifts away).
     AnchorReleased,
     /// A tonne of `item` (an ore) dug out of rock `rock` among field `field`'s

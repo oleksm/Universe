@@ -18,24 +18,21 @@ Constants of physics.
 
 ## Medium
 
-The hyper-medium: near masses it holds what moves in it under v_lim = K·d; far from them it's slack, s(d) = min(1, (K·d / v_open)²).
+The hyper-medium: it holds what moves in it under v_lim = K·d, d the distance from the nearest surface (slow close to bodies, fast in the open). The same everywhere: no inside, no outside.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
 | `HYPER_RATE` | 2 | 1/s | Invented | K: the limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c. |
-| `INTERLOCK` | 1000 | m | Invented | Nothing moves in the medium within this of a body's highest ground. |
-| `V_OPEN_C` | 1e6 | c | Invented | Where the slack sets in (a few hundred AU from a star). |
-| `STIFF_SLACK` | 0.01 |  | Invented | A field forms only where the slack is below this (inside a system). |
 
 ## Field
 
-A hyper-field's draw: P = m·s·(P_FLOOR + P_PUSH·(v/v*)³) / η, η the device's. Between stars, power per kg is the wall.
+A hyper-field's cost, drawn from the tank: dE/dx = m·E0·(1 + (v/v*)²) / η, η the device's. Anywhere: what limits a ship is the fuel it carries. See docs/world/hyperspace.md; tools/experiments/hyper_fuel.py.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `P_FLOOR` | 10000 | W/kg | Invented | Holding a field in open space, per kg in it. |
-| `P_PUSH` | 5000 | W/kg | Invented | Pushing it through the medium at the best speed; grows with the cube of speed. |
-| `V_BEST_C` | 1000 | c | Invented | v*: the speed the push is reckoned at. |
+| `FIELD_COST` | 0.002391 | J/(kg·m) | Invented | E0: the energy per kg per metre, going slow. Target: a normal ship (a Drover's tank, an S2 drive) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star; an explorer that's mostly tank about 5 ly. |
+| `V_BEST_C` | 1000 | c | Invented | v*: at this speed the cost is double the slow cost (it grows with the square of speed). |
+| `V_TOP_C` | 3000 | c | Invented | A field's top speed. Target: full throttle costs ten times the slow cost (rushing burns a tank in a tenth of the distance). |
 
 ## Tube
 
@@ -124,8 +121,6 @@ For the dogma's claims (not used by the code).
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
 | `ETA_FIELD_MIN` | 0.5 |  | Planned | The field's efficiency, the worst drives. |
-| `ETA_FIELD_MAX` | 0.8 |  | Planned | The field's efficiency, the best drives. |
-| `EXPLORER_POWER` | 30000 | W/kg | Planned | A future explorer's power per kg aboard (next-generation reactors). |
 
 # The base world's materials
 
@@ -147,15 +142,12 @@ From `content/base/materials.ron`.
 
 | Claim | Figure |
 |---|---|
-| The wall between stars (holding the field, best drive) | 12.5 kW per kg aboard |
-| Today's best plant on its own | 3.5 kW/kg (14 MW at most) |
-| DROVER with the strongest plant | 0.15 kW/kg: can't cross |
-| SPRINT COURIER with the strongest plant | 0.36 kW/kg: can't cross |
-| BULK HAULER with the strongest plant | 0.05 kW/kg: can't cross |
-| PROSPECTOR with the strongest plant | 0.13 kW/kg: can't cross |
-| INTERCEPTOR with the strongest plant | 0.33 kW/kg: can't cross |
-| A future explorer at 30 kW/kg | 1.41 × the best speed: 5 ly in 1.3 days, 40 ly in 10.4 days |
-| The medium's slack at 1 AU / 40 AU / 2 ly | 1e-6 / 2e-3 / 1 |
+| DROVER on a full tank (S drive, 0.6) | 3.0 ly slow, 1.5 ly at 1,000 c |
+| SPRINT COURIER on a full tank (S drive, 0.6) | 1.9 ly slow, 0.9 ly at 1,000 c |
+| BULK HAULER on a full tank (S drive, 0.6) | 2.9 ly slow, 1.4 ly at 1,000 c |
+| PROSPECTOR on a full tank (S drive, 0.6) | 2.5 ly slow, 1.2 ly at 1,000 c |
+| INTERCEPTOR on a full tank (S drive, 0.6) | 0.9 ly slow, 0.4 ly at 1,000 c |
+| An explorer, nine tenths tank (0.75) | 5.1 ly at 1,000 c, 5 ly in 1.8 days |
 | A gate spanning 1 ly: opened at / held at | 6.3e17 J / 2.4 GW |
 | A gate spanning 5 ly: opened at / held at | 3.2e18 J / 12.2 GW |
 | A gate spanning 10 ly: opened at / held at | 6.3e18 J / 24.4 GW |

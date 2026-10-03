@@ -26,10 +26,9 @@ The one place to look a name up. Keep it current when a name is added or changed
 
 | Name | What it is |
 |---|---|
-| **The hyper-medium** (the medium) | What space carries: stiff near masses, slack between the stars. |
-| **Slack** (`s`) | How slack the medium is where you are: 0 deep in a system, 1 between stars. |
-| **The field** | What a hyperdrive holds a ship in. It draws power; it forms only where the medium is stiff; short of power, it collapses. |
-| **The wall** | The power per kg needed to hold a field between stars (about 12.5 kW/kg with the best drive): no ship today reaches it. |
+| **The hyper-medium** (the medium) | What space carries: it holds what moves in it under a limit growing with distance from the nearest surface (`v ≤ K·d`). |
+| **The field** | What a hyperdrive holds a ship in. It burns fuel by the metre, more the faster (`dE/dx = m·E0·(1 + (v/v*)²)/η`), the same anywhere: fuel is the only limit. |
+| **Interlock** | An avionics product's spec: its drive drops out rather than fly into a body. Not a law. |
 | **The tube** | What a gate pair holds open along its route: as long as the span, millions of c inside, crossed by mass and chosen speed (`docs/world/hyperspace.md`). (Was "the throat", a wormhole: being replaced.) |
 | **Data capsule** | How information crosses a tube: thrown and caught in batches (light can't be caught reliably in the tube's flow). |
 | **Ring classes** | A gate ring's greatest span: I 10 ly, II 25 ly, III 50 ly. |

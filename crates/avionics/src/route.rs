@@ -120,7 +120,7 @@ fn clear_to_jump(bus: &mut impl Bus) -> bool {
     }
     let d = sys.dominant(p, &positions);
     let above_highest = p.distance(positions[d]) - sys.bodies[d].max_radius();
-    ground_altitude(bus) >= 3000.0 && above_highest > 2.0 * universe_world::hyperdrive::INTERLOCK
+    ground_altitude(bus) >= 3000.0 && above_highest > 2.0 * bus.ship().spec().interlock.unwrap_or(1000.0)
 }
 
 impl Avionics {

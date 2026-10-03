@@ -2,10 +2,13 @@
 //!
 //! While engaged it carries the ship along a heading (the nose, or one
 //! commanded) at a speed set by the throttle and the room to move: the
-//! distance to the nearest obstacle's surface, and to a commanded destination
-//! so as never to overshoot it. It moves relative to a reference frame
+//! distance to the nearest obstacle's surface (the medium's limit, K·d), up to
+//! the field's top speed, and to a commanded destination so as never to
+//! overshoot it. It burns fuel by the way it goes (`hyper::field_cost`), the
+//! same anywhere: what limits how far a ship goes is the fuel it carries. It moves relative to a reference frame
 //! (commanded, or the dominant body's), since targets ride along with their
-//! planets at tens of km/s. Interlock: it never carries the ship into a body.
+//! planets at tens of km/s. Its interlock (a feature of the drive, not a law)
+//! never carries the ship into a body.
 //! Dropping out leaves the ship with the commanded exit velocity (or
 //! co-moving with the dominant body), engines at zero.
 //!
@@ -22,15 +25,8 @@ use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
 // (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::GROUND_MARGIN;
-pub use universe_physics::hyper::slack;
-use universe_physics::hyper::{field_draw, field_speed};
-pub use universe_physics::laws::{HYPER_RATE, INTERLOCK};
-use universe_physics::laws::STIFF_SLACK;
-
-/// Distance to the nearest natural body's surface in `sys` (m).
-fn nearest_surface(sys: &StarSystem, p: DVec3, positions: &[DVec3]) -> f64 {
-    sys.bodies.iter().zip(positions).filter(|(b, _)| !b.kind.artificial()).map(|(b, &c)| c.distance(p) - b.rail.radius).fold(f64::INFINITY, f64::min)
-}
+use universe_physics::hyper::{field_cost, field_top};
+pub use universe_physics::laws::HYPER_RATE;
 
 
 /// Engage or disengage as commanded (only in flight). Both ways the engine
@@ -44,10 +40,6 @@ pub fn switch(sys: &StarSystem, ship: &mut Ship, c: &HyperdriveCommand, t: f64, 
         drop_out(sys, ship, c.exit_velocity, t, positions, true, events);
     } else if ship.fuel <= 0.0 {
         events.push(ShipEvent::OutOfFuel);
-        return;
-    } else if slack(nearest_surface(sys, ship.position, positions)) >= STIFF_SLACK {
-        // Between the stars the medium is slack: a field can't form there.
-        events.push(ShipEvent::FieldWontForm);
         return;
     } else if ship.hyper_jam > 0.0 {
         // Hits disrupt the drive: it won't engage for a while.
@@ -126,21 +118,8 @@ pub fn cruise(
     }
     let (clearance, radius, center, body) = nearest;
 
-    // The field's power (see the physics sheet): holding it against the
-    // medium's slack, and pushing through, from the plant's spare power and
-    // the capacitor banks. Short of holding it, it collapses.
-    let s = slack(clearance);
     let m = ship.mass();
-    let spare = if ship.fuel > 0.0 { ship.spare_power() } else { 0.0 };
-    let bank = if ship.energy > 0.0 { ship.spec().capacitor_rate } else { 0.0 };
     let eta = ship.spec().hyper_efficiency.max(1e-6);
-    let Some(power_speed) = field_speed(m, s, spare + bank, eta) else {
-        events.push(if ship.fuel <= 0.0 { ShipEvent::OutOfFuel } else { ShipEvent::FieldCollapsed });
-        let base = sys.velocity(sys.dominant(ship.position, positions), t);
-        ship.position += base * (real_dt * warp);
-        drop_out(sys, ship, cmd.exit_velocity, t, positions, false, events);
-        return;
-    };
     let dir = cmd.heading.unwrap_or_else(|| ship.forward());
     // The frame it moves in, and where that carries it this frame: even
     // dropping out, it's been carried along (the bodies have moved on to `t`).
@@ -178,17 +157,28 @@ pub fn cruise(
     // Speed grows with room to move: distance to the nearest surface, and
     // to the destination if there is one, so we never overshoot it.
     let room = cmd.destination.map_or(clearance, |d| clearance.min(p.distance(d.point)));
-    let speed = (HYPER_RATE * room.max(1000.0) * ship.throttle.max(0.02)).min(power_speed);
-    // What it draws: the plant first, the banks for the rest; the reactor burns fuel for its part.
-    let draw = field_draw(m, s, speed, eta);
-    let from_plant = draw.min(spare);
-    ship.fuel = (ship.fuel - ship.reactor_fuel(from_plant * real_dt)).max(0.0);
-    ship.energy = (ship.energy - (draw - from_plant) * real_dt).max(0.0);
+    let speed = (HYPER_RATE * room.max(1000.0)).min(field_top()) * ship.throttle.max(0.02);
+    // What it costs: the field's energy for the way it goes, from the tank (`field_cost`).
+    let burnt = ship.hyper_fuel(field_cost(m, speed, eta) * speed * real_dt);
+    if burnt >= ship.fuel {
+        ship.fuel = 0.0;
+        events.push(ShipEvent::OutOfFuel);
+        ship.position = carried;
+        drop_out(sys, ship, cmd.exit_velocity, t, positions, false, events);
+        return;
+    }
+    ship.fuel -= burnt;
     ship.velocity = base + dir * speed;
     let next = carried + dir * speed * real_dt.min(0.1);
     // Interlock: never hyperdrive into a planet, moon or star.
-    let inside = sys.bodies.iter().zip(positions).any(|(b, &c)| !b.kind.artificial() && c.distance(next) < b.max_radius() + INTERLOCK);
-    if inside {
+    // Its avionics' interlock: never into a body (none fitted: it goes where it's pointed).
+    let hit = sys.bodies.iter().zip(positions).find(|(b, c)| !b.kind.artificial() && c.distance(next) < b.max_radius() + ship.spec().interlock.unwrap_or(0.0));
+    if let Some((b, _)) = hit {
+        if ship.spec().interlock.is_none() {
+            ship.position = next;
+            crate::damage::destroy(ship, &b.name, events);
+            return;
+        }
         ship.position = carried;
         drop_out(sys, ship, cmd.exit_velocity, t, positions, false, events);
         return;
@@ -229,16 +219,21 @@ mod tests {
     }
 
     #[test]
-    fn between_the_stars_the_field_wont_form() {
+    fn between_the_stars_the_field_burns_fuel_by_the_way_it_goes() {
         let mut p = Probe::new(42);
         let pos = p.positions();
-        // Two light years out from the home star: the medium is slack.
+        // Two light years out from the home star: the same field, the same law.
         p.ship.position = pos[0] + DVec3::X * 2.0 * crate::units::LIGHT_YEAR;
         p.ship.velocity = DVec3::ZERO;
         p.toggle_hyperdrive();
+        p.set_throttle(1.0 / 3.0);
+        let (before, at) = (p.ship.fuel, p.ship.position);
         p.step(1.0 / 60.0, 1.0);
-        assert!(!p.ship.hyperdrive, "it engaged between the stars");
-        assert!(p.events.iter().any(|e| matches!(e, ShipEvent::FieldWontForm)), "{:?}", p.events);
+        assert!(p.ship.hyperdrive, "{:?}", p.events);
+        let gone = p.ship.position.distance(at);
+        let speed = gone * 60.0;
+        let expected = p.ship.hyper_fuel(universe_physics::hyper::field_cost(p.ship.mass(), speed, p.ship.spec().hyper_efficiency) * gone);
+        assert!(gone > 1.0e9 && ((before - p.ship.fuel) - expected).abs() < 1e-4 * expected.max(1e-9), "{} kg for {gone:e} m (expected {expected})", before - p.ship.fuel);
     }
 
     #[test]

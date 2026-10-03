@@ -8,48 +8,47 @@ use universe_physics::laws::*;
 use universe_world::sheet::*;
 use universe_world::units::{AU, LIGHT_YEAR};
 
-/// The most power any plant makes, and the most per kg of plant.
-fn best_plant() -> (f64, f64) {
-    content().modules.iter().filter_map(|(_, m)| if let Does::PowerPlant { output, .. } = m.does { Some((output, output / m.mass)) } else { None }).fold((0.0, 0.0), |(a, b), (o, d)| (a.max(o), b.max(d)))
+/// A field's efficiency, the best drive there is.
+fn best_drive() -> f64 {
+    content().modules.iter().filter_map(|(_, m)| if let Does::Hyperdrive { efficiency } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max)
 }
 
-/// Holding the field between stars needs at least this per kg aboard (the best drive).
-fn wall() -> f64 {
-    P_FLOOR / ETA_FIELD_MAX
+/// How far a full tank takes a ship of `mass` kg carrying `fuel` kg of deuterium at `speed`
+/// through a drive of efficiency `eta` (ly): its fuel's energy over the field's cost per metre.
+fn range_ly(mass: f64, fuel: f64, speed: f64, eta: f64) -> f64 {
+    let per_kg = universe_world::materials::material("material.deuterium").map(|m| m.energy).unwrap();
+    fuel * per_kg / universe_physics::hyper::field_cost(mass, speed, eta) / LIGHT_YEAR
 }
 
 #[test]
-fn no_ship_today_can_cross_between_stars() {
-    let (most, _) = best_plant();
+fn a_normal_ship_cannot_reach_the_next_star_on_its_tank() {
+    // Neighbours are 4-7 ly apart (docs/world/galaxy.md). Every hull on its own full tank, with
+    // the best drive, going slow (its cheapest): short of 4 ly. Fuel's what holds it, nothing else.
+    let v_star = V_BEST_C * SPEED_OF_LIGHT;
     for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.")) {
-        // (Generous: the strongest plant there is, in the lightest it can be — no cargo.)
-        let per_kg = most / (h.dry_mass + h.fuel_capacity * 0.1);
-        assert!(per_kg < wall(), "{} could hold a field between stars: {:.0} W/kg against the wall of {:.0}", h.key, per_kg, wall());
+        let mass = h.dry_mass + h.fuel_capacity;
+        let slow = range_ly(mass, h.fuel_capacity, 0.0, best_drive());
+        assert!(slow < 4.0, "{} goes {slow:.1} ly on a tank", h.key);
+        assert!(range_ly(mass, h.fuel_capacity, v_star, best_drive()) < slow * 0.51, "faster costs more");
     }
-    // Not even a ship that's all reactor.
-    let (_, density) = best_plant();
-    assert!(density < wall(), "a ship that's all reactor makes {density:.0} W/kg: past the wall of {:.0}", wall());
 }
 
 #[test]
-fn a_future_explorer_makes_40_ly_an_epic() {
-    // At its power per kg, after holding the field, what's left pushes: P_PUSH·k³ = EXPLORER_POWER·η − P_FLOOR.
-    let left = EXPLORER_POWER * ETA_FIELD_MAX - P_FLOOR;
-    assert!(left > 0.0, "the reference explorer can't hold the field");
-    let k = (left / P_PUSH).cbrt();
-    let days = |ly: f64| ly * LIGHT_YEAR / (k * V_BEST_C * SPEED_OF_LIGHT) / 86_400.0;
-    assert!((0.5..3.0).contains(&days(5.0)), "5 ly takes {:.1} days", days(5.0));
-    assert!((5.0..30.0).contains(&days(40.0)), "40 ly takes {:.1} days: an epic, not a trip nor a lifetime", days(40.0));
+fn an_explorer_that_is_mostly_tank_reaches_the_next_star() {
+    // Nine tenths of it fuel, the best drive: about 5 ly at v*, in a couple of days.
+    let v_star = V_BEST_C * SPEED_OF_LIGHT;
+    let r = range_ly(1.0e5, 0.9e5, v_star, best_drive());
+    assert!((4.0..8.0).contains(&r), "an explorer goes {r:.1} ly");
+    let days = 5.0 * LIGHT_YEAR / v_star / 86_400.0;
+    assert!((1.0..3.0).contains(&days), "5 ly takes {days:.1} days");
 }
 
 #[test]
-fn within_a_system_the_medium_is_stiff() {
-    // The slack at 1 AU and at 40 AU from a star (no other mass near): next to nothing.
-    let slack = |d: f64| ((HYPER_RATE * d) / (V_OPEN_C * SPEED_OF_LIGHT)).powi(2).min(1.0);
-    assert!(slack(AU) < 1e-5, "{}", slack(AU));
-    assert!(slack(40.0 * AU) < STIFF_SLACK, "a field must still form at the outer planets: {}", slack(40.0 * AU));
-    // And between stars it's all slack.
-    assert!(slack(2.0 * LIGHT_YEAR) >= 1.0);
+fn hopping_round_a_system_costs_little() {
+    // 40 AU at a third of v*: a sliver of a Drover's tank.
+    let per_kg = universe_world::materials::material("material.deuterium").map(|m| m.energy).unwrap();
+    let kg = universe_physics::hyper::field_cost(91_500.0, V_BEST_C * SPEED_OF_LIGHT / 3.0, 0.6) * 40.0 * AU / per_kg;
+    assert!(kg < 30.0, "{kg:.1} kg for 40 AU");
     // Data across a relay's tube in a system: the flow's settle, a second or two.
     let hop = universe_world::hypernet::capsule_time(RELAY_CAPSULE, 2.0 * AU);
     assert!((1.0..2.5).contains(&hop), "a relay hop takes {hop} s");
@@ -82,10 +81,10 @@ fn gates_are_justified_and_limited() {
     assert!((1e18..1e19).contains(&tube_open_energy(gate, s5)));
     // Relays' thin tubes are next to free to hold.
     assert!(tube_hold_power(RELAY_TUBE, 2.0 * AU) < 1.0);
-    // Freight by gate beats an explorer's crossing per kg (and any ship can take it).
+    // Freight by gate beats a field's crossing per kg by far (and any ship can take it).
     let by_gate = tube_crossing_energy(1e5, 40.0 * LIGHT_YEAR, tube_natural_time(1e5, 40.0 * LIGHT_YEAR)) / 1e5;
-    let explorer = EXPLORER_POWER * 40.0 * LIGHT_YEAR / ((((EXPLORER_POWER * ETA_FIELD_MAX - P_FLOOR) / P_PUSH).cbrt()) * V_BEST_C * SPEED_OF_LIGHT);
-    assert!(by_gate * 10.0 < explorer, "gate {by_gate:e} J/kg against an explorer's {explorer:e}");
+    let by_field = universe_physics::hyper::field_cost(1e5, V_BEST_C * SPEED_OF_LIGHT, best_drive()) * 40.0 * LIGHT_YEAR / 1e5;
+    assert!(by_gate * 1e6 < by_field, "gate {by_gate:e} J/kg against a field's {by_field:e}");
 }
 
 #[test]
