@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Radium
+  symbol: Ra
+  atomic_number: 88
+  atomic_mass: 226.02541
+  group: 2
+  period: 7
+  block: s
+  category: alkaline earth metal
+atomic_structure:
+  electron_configuration: '[Rn] 7s2'
+  van_der_waals_radius: 283.0
+chemical:
+  electronegativity: 0.9
+  first_ionisation_energy: 509.3
+  electron_affinity: 9.6485
+  oxidation_states:
+  - 2
+physical:
+  phase: solid
+  melting_point: 973.0
+  boiling_point: 1413.0
+  density: 5000.0
+optical_nuclear:
+  colour: silvery white metallic

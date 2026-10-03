@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Indium
+  symbol: In
+  atomic_number: 49
+  atomic_mass: 114.818
+  group: 13
+  period: 5
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d10 5s2 5p1'
+  van_der_waals_radius: 193.0
+chemical:
+  electronegativity: 1.78
+  first_ionisation_energy: 558.3
+  electron_affinity: 37.043
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 429.75
+  boiling_point: 2345.0
+  density: 7310.0
+thermal:
+  specific_heat_capacity: 232.9
+optical_nuclear:
+  colour: silvery lustrous gray

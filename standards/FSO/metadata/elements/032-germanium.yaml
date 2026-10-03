@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Germanium
+  symbol: Ge
+  atomic_number: 32
+  atomic_mass: 72.63
+  group: 14
+  period: 4
+  block: p
+  category: metalloid
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s2 4p2'
+  van_der_waals_radius: 211.0
+chemical:
+  electronegativity: 2.01
+  first_ionisation_energy: 762
+  electron_affinity: 118.9352
+  oxidation_states:
+  - 4
+  - 2
+physical:
+  phase: solid
+  melting_point: 1211.4
+  boiling_point: 3106.0
+  density: 5323.0
+thermal:
+  specific_heat_capacity: 319.7
+optical_nuclear:
+  colour: grayish-white

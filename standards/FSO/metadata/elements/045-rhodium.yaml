@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Rhodium
+  symbol: Rh
+  atomic_number: 45
+  atomic_mass: 102.9055
+  group: 9
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d8 5s1'
+  van_der_waals_radius: 195.0
+chemical:
+  electronegativity: 2.28
+  first_ionisation_energy: 719.7
+  electron_affinity: 110.27
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 2237.0
+  boiling_point: 3968.0
+  density: 12400.0
+thermal:
+  specific_heat_capacity: 242.7
+optical_nuclear:
+  colour: silvery white metallic

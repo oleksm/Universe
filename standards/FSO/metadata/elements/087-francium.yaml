@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Francium
+  symbol: Fr
+  atomic_number: 87
+  atomic_mass: 223.01973
+  group: 1
+  period: 7
+  block: s
+  category: alkali metal
+atomic_structure:
+  electron_configuration: '[Rn] 7s1'
+  van_der_waals_radius: 348.0
+chemical:
+  electronegativity: 0.7
+  first_ionisation_energy: 380
+  electron_affinity: 46.89
+  oxidation_states:
+  - 1
+physical:
+  phase: solid
+  melting_point: 300.0

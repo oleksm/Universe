@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Lithium
+  symbol: Li
+  atomic_number: 3
+  atomic_mass: 7.0
+  group: 1
+  period: 2
+  block: s
+  category: alkali metal
+atomic_structure:
+  electron_configuration: '[He] 2s1'
+  van_der_waals_radius: 182.0
+chemical:
+  electronegativity: 0.98
+  first_ionisation_energy: 520.2
+  electron_affinity: 59.6326
+  oxidation_states:
+  - 1
+physical:
+  phase: solid
+  melting_point: 453.65
+  boiling_point: 1615.0
+  density: 534.0
+thermal:
+  specific_heat_capacity: 3551.0
+optical_nuclear:
+  colour: silvery-white

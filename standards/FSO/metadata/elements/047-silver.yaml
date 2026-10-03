@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Silver
+  symbol: Ag
+  atomic_number: 47
+  atomic_mass: 107.868
+  group: 11
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d10 5s1'
+  van_der_waals_radius: 172.0
+chemical:
+  electronegativity: 1.93
+  first_ionisation_energy: 731
+  electron_affinity: 125.862
+  oxidation_states:
+  - 1
+physical:
+  phase: solid
+  melting_point: 1234.93
+  boiling_point: 2435.0
+  density: 10500.0
+thermal:
+  specific_heat_capacity: 235.0
+optical_nuclear:
+  colour: lustrous white metal

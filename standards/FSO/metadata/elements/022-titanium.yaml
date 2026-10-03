@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Titanium
+  symbol: Ti
+  atomic_number: 22
+  atomic_mass: 47.867
+  group: 4
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d2 4s2'
+  van_der_waals_radius: 187.0
+chemical:
+  electronegativity: 1.54
+  first_ionisation_energy: 658.8
+  electron_affinity: 7.289
+  oxidation_states:
+  - 4
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1941.0
+  boiling_point: 3560.0
+  density: 4500.0
+thermal:
+  specific_heat_capacity: 523.5
+optical_nuclear:
+  colour: silvery grey-white metallic

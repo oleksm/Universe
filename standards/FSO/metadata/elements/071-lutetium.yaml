@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Lutetium
+  symbol: Lu
+  atomic_number: 71
+  atomic_mass: 174.9667
+  group: null
+  period: 6
+  block: d
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d1 6s2'
+  van_der_waals_radius: 221.0
+chemical:
+  electronegativity: 1.27
+  first_ionisation_energy: 523.5
+  electron_affinity: 33.4
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1936.0
+  boiling_point: 3675.0
+  density: 9840.0
+thermal:
+  specific_heat_capacity: 153.5
+optical_nuclear:
+  colour: silvery white

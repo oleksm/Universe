@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Niobium
+  symbol: Nb
+  atomic_number: 41
+  atomic_mass: 92.90637
+  group: 5
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d4 5s1'
+  van_der_waals_radius: 207.0
+chemical:
+  electronegativity: 1.6
+  first_ionisation_energy: 652.1
+  electron_affinity: 88.516
+  oxidation_states:
+  - 5
+  - 3
+physical:
+  phase: solid
+  melting_point: 2750.0
+  boiling_point: 5017.0
+  density: 8570.0
+thermal:
+  specific_heat_capacity: 264.8
+optical_nuclear:
+  colour: gray metallic, bluish when oxidized

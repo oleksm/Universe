@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Phosphorus
+  symbol: P
+  atomic_number: 15
+  atomic_mass: 30.973762
+  group: 15
+  period: 3
+  block: p
+  category: non-metal
+atomic_structure:
+  electron_configuration: '[Ne] 3s2 3p3'
+  van_der_waals_radius: 180.0
+chemical:
+  electronegativity: 2.19
+  first_ionisation_energy: 1011.8
+  electron_affinity: 72.037
+  oxidation_states:
+  - 5
+  - 3
+  - -3
+physical:
+  phase: solid
+  melting_point: 317.3
+  boiling_point: 553.65
+  density: 1820.0
+thermal:
+  specific_heat_capacity: 769.2
+optical_nuclear:
+  colour: colourless, waxy white, yellow, scarlet, red, violet, black

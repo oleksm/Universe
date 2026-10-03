@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Plutonium
+  symbol: Pu
+  atomic_number: 94
+  atomic_mass: 244.0642
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 5f6 7s2'
+  van_der_waals_radius: 243.0
+chemical:
+  electronegativity: 1.28
+  first_ionisation_energy: 584.7
+  electron_affinity: -48.33
+  oxidation_states:
+  - 6
+  - 5
+  - 4
+  - 3
+physical:
+  phase: solid
+  melting_point: 913.0
+  boiling_point: 3501.0
+  density: 19840.0
+thermal:
+  specific_heat_capacity: 145.5
+optical_nuclear:
+  colour: silvery white, tarnishing to dark gray in air

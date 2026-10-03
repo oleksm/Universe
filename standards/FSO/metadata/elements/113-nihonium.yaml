@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Nihonium
+  symbol: Nh
+  atomic_number: 113
+  atomic_mass: 286.182
+  group: 13
+  period: 7
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d10 7s2 7p1'
+chemical:
+  electron_affinity: 66.6

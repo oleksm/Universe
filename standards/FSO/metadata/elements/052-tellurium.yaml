@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Tellurium
+  symbol: Te
+  atomic_number: 52
+  atomic_mass: 127.6
+  group: 16
+  period: 5
+  block: p
+  category: metalloid
+atomic_structure:
+  electron_configuration: '[Kr] 4d10 5s2 5p4'
+  van_der_waals_radius: 206.0
+chemical:
+  electronegativity: 2.1
+  first_ionisation_energy: 869.3
+  electron_affinity: 190.161
+  oxidation_states:
+  - 6
+  - 4
+  - -2
+physical:
+  phase: solid
+  melting_point: 722.66
+  boiling_point: 1261.0
+  density: 6232.0
+thermal:
+  specific_heat_capacity: 201.6

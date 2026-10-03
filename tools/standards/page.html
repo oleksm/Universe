@@ -60,6 +60,20 @@ td.num { text-align: right; }
 .problems li { margin: 2px 0; }
 .file { color: var(--dim); font-size: 12px; }
 p { margin: 4px 0 8px; max-width: 80ch; }
+/* The periodic table: 18 groups across (a column of period numbers first), the f-block below. */
+.ptable { display: grid; grid-template-columns: 22px repeat(18, 46px); gap: 3px; margin: 8px 0 12px; max-width: none; letter-spacing: 0; }
+.ptable .hd { color: var(--dim); font-size: 11px; text-align: center; align-self: center; }
+.ptable .el { height: 46px; padding: 2px 4px; border-radius: 3px; cursor: pointer; color: #eef3f6; line-height: 1.15; overflow: hidden; }
+.ptable .el:hover { outline: 2px solid var(--head); }
+.ptable .el .z { font-size: 10px; opacity: .8; display: block; }
+.ptable .el .sy { font-size: 16px; font-weight: 700; }
+.ptable .ph { height: 46px; font-size: 10px; color: var(--dim); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: 3px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; max-width: none; font-size: 12px; }
+.legend span i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; }
+.c-alkali-metal { background: #8a3f3f; } .c-alkaline-earth-metal { background: #8a643a; } .c-transition-metal { background: #3d5f86; }
+.c-post-transition-metal { background: #357a70; } .c-metalloid { background: #5f7d35; } .c-non-metal { background: #2f7a48; }
+.c-halogen { background: #74408a; } .c-noble-gas { background: #4c4496; } .c-lanthanide { background: #8a3c68; } .c-actinide { background: #8a5236; }
+.c-unknown { background: #48505a; }
 @media (max-width: 720px) {
   main { grid-template-columns: 1fr; height: auto; }
   #grip { display: none; }
@@ -94,6 +108,10 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "
 // A body's topics (tags on its standards), and its standards under one.
 const topicsOf = body => [...new Set(DATA.standards.filter(s => s.body === body.key).flatMap(s => s.topics || []))].sort();
 const under = (body, topic, q) => DATA.standards.filter(s => s.body === body.key && (s.topics || []).includes(topic) && matches(s, q));
+// The elements under a record (its `records`), those matching `q`.
+const elMatches = (e, q) => !q || q.split(/\s+/).every(w => `${e.identity.name} ${e.identity.symbol} ${e.identity.atomic_number} ${e.identity.category || ""}`.toLowerCase().includes(w));
+const elementsUnder = (id, q) => DATA.elements.filter(e => e.under === id && elMatches(e, q));
+const elBySymbol = Object.fromEntries(DATA.elements.map(e => [e.identity.symbol, e]));
 const ofBody = (body, q) => DATA.standards.filter(s => s.body === body.key && matches(s, q));
 
 // What's open, kept between visits (if storage works).
@@ -119,12 +137,15 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible);
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && elementsUnder(s.id, q).length > 0);
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
-        out.push({ k: "s:" + s.id, depth, kind: "std", std: s });
+        const n = elementsUnder(s.id, "").length;
+        out.push({ k: "s:" + s.id, depth, kind: "std", std: s, n: n || undefined, isOpen: open.has("x:" + s.id) || !!q });
         walk(s.id, depth + 1);
+        // (Its elements, when it's open: by atomic number.)
+        if (n && (open.has("x:" + s.id) || q)) for (const e of elementsUnder(s.id, q)) out.push({ k: "el:" + e.identity.symbol, depth: depth + 1, kind: "el", el: e });
       }
     };
     walk(null, 1);
@@ -136,6 +157,13 @@ let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
+  if (k.startsWith("el:")) {
+    const e = elBySymbol[k.slice(3)]; if (!e) return;
+    open.add("x:" + e.under);
+    const up = byId[e.under]; if (up) open.add("b:" + up.body);
+    keepOpen();
+    return;
+  }
   const s = stdOf(k); if (!s) return;
   open.add("b:" + s.body);
   keepOpen();
@@ -151,8 +179,13 @@ function render() {
     const pad = `padding-left:${12 + n.depth * 18}px`;
     const sel = n.k === current ? " sel" : "";
     const tw = n.kind === "std" ? "" : (open.has(n.k) || q ? "▾" : "▸");
-    if (n.kind === "std") {
-      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw"></span>${esc(n.std.title)} <span class="n">${esc(n.std.id)}</span></div>`;
+    if (n.kind === "el") {
+      const i = n.el.identity;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span><span class="n">${i.atomic_number}</span> <b>${esc(i.symbol)}</b> ${esc(i.name)}</div>`;
+    } else if (n.kind === "std") {
+      const twisty = n.n ? (n.isOpen ? "▾" : "▸") : "";
+      const count = n.n ? ` <span class="n">(${n.n})</span>` : "";
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw">${twisty}</span>${esc(n.std.title)} <span class="n">${esc(n.std.id)}</span>${count}</div>`;
     } else {
       const cls = n.kind === "body" ? " body" : "";
       const count = n.n !== undefined ? ` <span class="n">(${n.n})</span>` : "";
@@ -161,8 +194,31 @@ function render() {
   }
   document.getElementById("tree").innerHTML = html;
   const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
-  document.getElementById("count").textContent = `${DATA.standards.length} standards`;
+  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "");
   document.getElementById("detail").innerHTML = detail(current);
+}
+
+// The periodic table: groups 1-18 across, periods 1-7 down; the lanthanides (57-71) and
+// actinides (89-103) in two rows below, under where they belong (group 3).
+function periodicTable(els) {
+  const slug = c => "c-" + (c || "unknown").replace(/[^a-z]+/g, "-");
+  let h = `<h3>The periodic table</h3><div class="ptable">`;
+  h += `<div class="hd" style="grid-row:1;grid-column:1"></div>`;
+  for (let g = 1; g <= 18; g++) h += `<div class="hd" style="grid-row:1;grid-column:${g + 1}">${g}</div>`;
+  for (let p = 1; p <= 7; p++) h += `<div class="hd" style="grid-row:${p + 1};grid-column:1">${p}</div>`;
+  h += `<div class="ph" style="grid-row:7;grid-column:4">57-71</div><div class="ph" style="grid-row:8;grid-column:4">89-103</div>`;
+  h += `<div class="hd" style="grid-row:9;grid-column:1 / span 19;height:10px"></div>`;
+  for (const e of els) {
+    const i = e.identity, z = i.atomic_number;
+    let row, col;
+    if (z >= 57 && z <= 71) { row = 10; col = z - 57 + 4; }
+    else if (z >= 89 && z <= 103) { row = 11; col = z - 89 + 4; }
+    else { row = i.period + 1; col = i.group + 1; }
+    h += `<div class="el ${slug(i.category)}" style="grid-row:${row};grid-column:${col}" data-k="${esc("el:" + i.symbol)}" title="${esc(`${i.name} (${i.category || ""})`)}"><span class="z">${z}</span><span class="sy">${esc(i.symbol)}</span></div>`;
+  }
+  h += `</div><div class="legend">`;
+  for (const c of [...new Set(els.map(e => e.identity.category).filter(Boolean))]) h += `<span><i class="${slug(c)}"></i>${esc(c)}</span>`;
+  return h + `</div>`;
 }
 
 function value(v) { return Array.isArray(v) ? `${v[0]} – ${v[1]}` : esc(v); }
@@ -199,6 +255,21 @@ function detail(k) {
     if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
+  if (kind === "el") {
+    const e = elBySymbol[rest[0]]; if (!e) return "";
+    const i = e.identity, up = byId[e.under];
+    let h = `<h2><span style="color:var(--id)">${i.atomic_number} ${esc(i.symbol)}</span> ${esc(i.name)}</h2>`;
+    if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
+    const show = v => v === null ? "none" : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
+    for (const [g, props] of Object.entries(DATA.element_groups)) {
+      if (!e[g]) continue;
+      h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
+      for (const [key, note] of Object.entries(props)) if (key in e[g]) h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
+      h += `</table>`;
+    }
+    h += `<div class="file" style="margin-top:24px">standards/${esc(e.file)}</div>`;
+    return h;
+  }
   const s = stdOf(k); if (!s) return "";
   const body = DATA.bodies.find(x => x.key === s.body);
   let h = `<h2><span style="color:var(--id)">${esc(s.id)}</span> ${esc(s.title)}</h2>`;
@@ -210,6 +281,8 @@ function detail(k) {
     h += paras.map(p => p.startsWith("- ") ? `<li>${esc(p.slice(2))}</li>` : `<p>${esc(p)}</p>`).join("").replace(/((?:<li>.*?<\/li>)+)/g, "<ul>$1</ul>");
     if (s.details.table) h += `<table><tr>${s.details.table.columns.map(c => `<th>${esc(c)}</th>`).join("")}</tr>${s.details.table.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`;
   }
+  const els = elementsUnder(s.id, "");
+  if (els.length) h += periodicTable(els);
   if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
     if (sec.title) h += `<h3>${esc(sec.title)}</h3>`;
@@ -243,8 +316,14 @@ function detail(k) {
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
+    keepOpen();
+  }
+  // (A record with elements under it: its list opens, and closes on a second click.)
+  if (el.classList.contains("row") && k.startsWith("s:") && elementsUnder(k.slice(2), "").length) {
+    const x = "x:" + k.slice(2);
+    if (open.has(x) && k === current) open.delete(x); else open.add(x);
     keepOpen();
   }
   reveal(k);

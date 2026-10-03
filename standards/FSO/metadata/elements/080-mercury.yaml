@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Mercury
+  symbol: Hg
+  atomic_number: 80
+  atomic_mass: 200.59
+  group: 12
+  period: 6
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s2'
+  van_der_waals_radius: 209.0
+chemical:
+  electronegativity: 2.0
+  first_ionisation_energy: 1007.1
+  electron_affinity: -48
+  oxidation_states:
+  - 2
+  - 1
+physical:
+  phase: liquid
+  melting_point: 234.32
+  boiling_point: 629.88
+  density: 13530.0
+thermal:
+  specific_heat_capacity: 139.5
+optical_nuclear:
+  colour: silvery

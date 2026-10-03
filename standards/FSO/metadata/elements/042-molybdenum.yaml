@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Molybdenum
+  symbol: Mo
+  atomic_number: 42
+  atomic_mass: 95.95
+  group: 6
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d5 5s1'
+  van_der_waals_radius: 209.0
+chemical:
+  electronegativity: 2.16
+  first_ionisation_energy: 684.3
+  electron_affinity: 72.1
+  oxidation_states:
+  - 6
+physical:
+  phase: solid
+  melting_point: 2896.0
+  boiling_point: 4912.0
+  density: 10200.0
+thermal:
+  specific_heat_capacity: 250.8
+optical_nuclear:
+  colour: gray metallic

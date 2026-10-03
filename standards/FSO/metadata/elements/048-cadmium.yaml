@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Cadmium
+  symbol: Cd
+  atomic_number: 48
+  atomic_mass: 112.41
+  group: 12
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d10 5s2'
+  van_der_waals_radius: 158.0
+chemical:
+  electronegativity: 1.69
+  first_ionisation_energy: 867.8
+  electron_affinity: -68
+  oxidation_states:
+  - 2
+physical:
+  phase: solid
+  melting_point: 594.22
+  boiling_point: 1040.0
+  density: 8690.0
+thermal:
+  specific_heat_capacity: 231.5
+optical_nuclear:
+  colour: silvery bluish-gray metallic

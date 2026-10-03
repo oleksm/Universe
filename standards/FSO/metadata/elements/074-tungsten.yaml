@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Tungsten
+  symbol: W
+  atomic_number: 74
+  atomic_mass: 183.84
+  group: 6
+  period: 6
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d4 6s2'
+  van_der_waals_radius: 210.0
+chemical:
+  electronegativity: 2.36
+  first_ionisation_energy: 770
+  electron_affinity: 78.76
+  oxidation_states:
+  - 6
+physical:
+  phase: solid
+  melting_point: 3695.0
+  boiling_point: 5828.0
+  density: 19300.0
+thermal:
+  specific_heat_capacity: 132.0
+optical_nuclear:
+  colour: grayish white, lustrous

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Tin
+  symbol: Sn
+  atomic_number: 50
+  atomic_mass: 118.71
+  group: 14
+  period: 5
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d10 5s2 5p2'
+  van_der_waals_radius: 217.0
+chemical:
+  electronegativity: 1.96
+  first_ionisation_energy: 708.6
+  electron_affinity: 107.2984
+  oxidation_states:
+  - 4
+  - 2
+physical:
+  phase: solid
+  melting_point: 505.08
+  boiling_point: 2875.0
+  density: 7287.0
+thermal:
+  specific_heat_capacity: 228.4
+optical_nuclear:
+  colour: silvery-white (beta, β) or gray (alpha, α)

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Cesium
+  symbol: Cs
+  atomic_number: 55
+  atomic_mass: 132.905452
+  group: 1
+  period: 6
+  block: s
+  category: alkali metal
+atomic_structure:
+  electron_configuration: '[Xe] 6s1'
+  van_der_waals_radius: 343.0
+chemical:
+  electronegativity: 0.79
+  first_ionisation_energy: 375.7
+  electron_affinity: 45.505
+  oxidation_states:
+  - 1
+physical:
+  phase: solid
+  melting_point: 301.59
+  boiling_point: 944.0
+  density: 1930.0
+thermal:
+  specific_heat_capacity: 242.4
+optical_nuclear:
+  colour: silvery gold

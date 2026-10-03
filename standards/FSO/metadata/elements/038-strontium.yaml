@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Strontium
+  symbol: Sr
+  atomic_number: 38
+  atomic_mass: 87.62
+  group: 2
+  period: 5
+  block: s
+  category: alkaline earth metal
+atomic_structure:
+  electron_configuration: '[Kr] 5s2'
+  van_der_waals_radius: 249.0
+chemical:
+  electronegativity: 0.95
+  first_ionisation_energy: 549.5
+  electron_affinity: 5.023
+  oxidation_states:
+  - 2
+physical:
+  phase: solid
+  melting_point: 1050.0
+  boiling_point: 1655.0
+  density: 2640.0
+thermal:
+  specific_heat_capacity: 301.3

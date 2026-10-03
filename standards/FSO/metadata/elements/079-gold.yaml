@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Gold
+  symbol: Au
+  atomic_number: 79
+  atomic_mass: 196.96657
+  group: 11
+  period: 6
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s1'
+  van_der_waals_radius: 166.0
+chemical:
+  electronegativity: 2.54
+  first_ionisation_energy: 890.1
+  electron_affinity: 222.747
+  oxidation_states:
+  - 3
+  - 1
+physical:
+  phase: solid
+  melting_point: 1337.33
+  boiling_point: 3129.0
+  density: 19280.0
+thermal:
+  specific_heat_capacity: 129.0
+optical_nuclear:
+  colour: metallic yellow

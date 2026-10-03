@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Rutherfordium
+  symbol: Rf
+  atomic_number: 104
+  atomic_mass: 267.122
+  group: 4
+  period: 7
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d2 7s2'
+chemical:
+  first_ionisation_energy: 580
+  oxidation_states:
+  - 4
+physical:
+  phase: solid

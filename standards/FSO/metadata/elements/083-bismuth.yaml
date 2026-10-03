@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Bismuth
+  symbol: Bi
+  atomic_number: 83
+  atomic_mass: 208.9804
+  group: 15
+  period: 6
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s2 6p3'
+  van_der_waals_radius: 207.0
+chemical:
+  electronegativity: 2.02
+  first_ionisation_energy: 703
+  electron_affinity: 90.924
+  oxidation_states:
+  - 5
+  - 3
+physical:
+  phase: solid
+  melting_point: 544.55
+  boiling_point: 1837.0
+  density: 9807.0
+thermal:
+  specific_heat_capacity: 122.1
+optical_nuclear:
+  colour: lustrous silver

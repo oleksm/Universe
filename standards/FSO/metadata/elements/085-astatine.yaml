@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Astatine
+  symbol: At
+  atomic_number: 85
+  atomic_mass: 209.98715
+  group: 17
+  period: 6
+  block: p
+  category: halogen
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s2 6p5'
+  van_der_waals_radius: 202.0
+chemical:
+  electronegativity: 2.2
+  first_ionisation_energy: 899.003
+  electron_affinity: 233
+  oxidation_states:
+  - 7
+  - 5
+  - 3
+  - 1
+  - -1
+physical:
+  phase: solid
+  melting_point: 575.0
+  density: 7000.0
+optical_nuclear:
+  colour: unknown, probably metallic

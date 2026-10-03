@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Rhenium
+  symbol: Re
+  atomic_number: 75
+  atomic_mass: 186.207
+  group: 7
+  period: 6
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d5 6s2'
+  van_der_waals_radius: 217.0
+chemical:
+  electronegativity: 1.9
+  first_ionisation_energy: 760
+  electron_affinity: 5.8273
+  oxidation_states:
+  - 7
+  - 6
+  - 4
+physical:
+  phase: solid
+  melting_point: 3459.0
+  boiling_point: 5869.0
+  density: 20800.0
+thermal:
+  specific_heat_capacity: 136.8
+optical_nuclear:
+  colour: silvery-grayish

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Sulfur
+  symbol: S
+  atomic_number: 16
+  atomic_mass: 32.07
+  group: 16
+  period: 3
+  block: p
+  category: non-metal
+atomic_structure:
+  electron_configuration: '[Ne] 3s2 3p4'
+  van_der_waals_radius: 180.0
+chemical:
+  electronegativity: 2.58
+  first_ionisation_energy: 999.6
+  electron_affinity: 200.4101
+  oxidation_states:
+  - 6
+  - 4
+  - -2
+physical:
+  phase: solid
+  melting_point: 388.36
+  boiling_point: 717.75
+  density: 2067.0
+thermal:
+  specific_heat_capacity: 709.4
+optical_nuclear:
+  colour: lemon yellow sintered microcrystals

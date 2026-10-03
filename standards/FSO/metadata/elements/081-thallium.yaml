@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Thallium
+  symbol: Tl
+  atomic_number: 81
+  atomic_mass: 204.383
+  group: 13
+  period: 6
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s2 6p1'
+  van_der_waals_radius: 196.0
+chemical:
+  electronegativity: 1.62
+  first_ionisation_energy: 589.4
+  electron_affinity: 36.4
+  oxidation_states:
+  - 3
+  - 1
+physical:
+  phase: solid
+  melting_point: 577.0
+  boiling_point: 1746.0
+  density: 11800.0
+thermal:
+  specific_heat_capacity: 128.8
+optical_nuclear:
+  colour: silvery white

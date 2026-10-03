@@ -42,6 +42,9 @@ properties:
     type: string
     pattern: ^[A-Z]{2,6} [0-9]+$
     description: The record it sits under (its category).
+  records:
+    type: string
+    description: A folder in metadata/ whose records sit under this one (elements).
   purpose:
     type: string
     description: Why it exists, a paragraph.

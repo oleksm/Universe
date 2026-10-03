@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Zirconium
+  symbol: Zr
+  atomic_number: 40
+  atomic_mass: 91.22
+  group: 4
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d2 5s2'
+  van_der_waals_radius: 186.0
+chemical:
+  electronegativity: 1.33
+  first_ionisation_energy: 640.1
+  electron_affinity: 41.806
+  oxidation_states:
+  - 4
+physical:
+  phase: solid
+  melting_point: 2128.0
+  boiling_point: 4682.0
+  density: 6520.0
+thermal:
+  specific_heat_capacity: 278.0
+optical_nuclear:
+  colour: silvery white

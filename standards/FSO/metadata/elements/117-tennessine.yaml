@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Tennessine
+  symbol: Ts
+  atomic_number: 117
+  atomic_mass: 294.211
+  group: 17
+  period: 7
+  block: p
+  category: halogen
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d10 7s2 7p5'
+chemical:
+  electron_affinity: 165.9
+  oxidation_states:
+  - 5
+  - 3
+  - 1
+  - -1

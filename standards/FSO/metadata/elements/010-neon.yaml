@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Neon
+  symbol: Ne
+  atomic_number: 10
+  atomic_mass: 20.18
+  group: 18
+  period: 2
+  block: p
+  category: noble gas
+atomic_structure:
+  electron_configuration: '[He] 2s2 2p6'
+  van_der_waals_radius: 154.0
+chemical:
+  first_ionisation_energy: 2080.7
+  electron_affinity: -116
+  oxidation_states:
+  - 0
+physical:
+  phase: gas
+  melting_point: 24.56
+  boiling_point: 27.07
+  density: 0.8999
+optical_nuclear:
+  colour: colorless gas exhibiting an orange-red glow when placed in a high voltage electric field

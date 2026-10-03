@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Gadolinium
+  symbol: Gd
+  atomic_number: 64
+  atomic_mass: 157.25
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f7 5d1 6s2'
+  van_der_waals_radius: 237.0
+chemical:
+  electronegativity: 1.2
+  first_ionisation_energy: 593.4
+  electron_affinity: 13.22
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1586.0
+  boiling_point: 3546.0
+  density: 7900.0
+thermal:
+  specific_heat_capacity: 235.5
+optical_nuclear:
+  colour: silvery white

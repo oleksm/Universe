@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Helium
+  symbol: He
+  atomic_number: 2
+  atomic_mass: 4.0026
+  group: 18
+  period: 1
+  block: s
+  category: noble gas
+atomic_structure:
+  electron_configuration: 1s2
+  van_der_waals_radius: 140.0
+chemical:
+  first_ionisation_energy: 2372.3
+  electron_affinity: -48
+  oxidation_states:
+  - 0
+physical:
+  phase: gas
+  melting_point: 0.95
+  boiling_point: 4.22
+  density: 0.1785
+optical_nuclear:
+  colour: colorless gas, exhibiting a red-orange glow when placed in a high-voltage electric field

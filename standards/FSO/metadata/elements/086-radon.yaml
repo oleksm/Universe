@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Radon
+  symbol: Rn
+  atomic_number: 86
+  atomic_mass: 222.01758
+  group: 18
+  period: 6
+  block: p
+  category: noble gas
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s2 6p6'
+  van_der_waals_radius: 220.0
+chemical:
+  first_ionisation_energy: 1037
+  electron_affinity: -68
+  oxidation_states:
+  - 0
+physical:
+  phase: gas
+  melting_point: 202.0
+  boiling_point: 211.45
+  density: 9.73
+optical_nuclear:
+  colour: colorless gas, occasionally glows green or red in discharge tubes

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Zinc
+  symbol: Zn
+  atomic_number: 30
+  atomic_mass: 65.4
+  group: 12
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s2'
+  van_der_waals_radius: 139.0
+chemical:
+  electronegativity: 1.65
+  first_ionisation_energy: 906.4
+  electron_affinity: -58
+  oxidation_states:
+  - 2
+physical:
+  phase: solid
+  melting_point: 692.68
+  boiling_point: 1180.0
+  density: 7134.0
+thermal:
+  specific_heat_capacity: 389.4
+optical_nuclear:
+  colour: silver-gray

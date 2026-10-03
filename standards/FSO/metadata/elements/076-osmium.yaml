@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Osmium
+  symbol: Os
+  atomic_number: 76
+  atomic_mass: 190.2
+  group: 8
+  period: 6
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d6 6s2'
+  van_der_waals_radius: 216.0
+chemical:
+  electronegativity: 2.2
+  first_ionisation_energy: 840
+  electron_affinity: 103.99
+  oxidation_states:
+  - 4
+  - 3
+physical:
+  phase: solid
+  melting_point: 3306.0
+  boiling_point: 5285.0
+  density: 22570.0
+thermal:
+  specific_heat_capacity: 129.9
+optical_nuclear:
+  colour: silvery, blue cast

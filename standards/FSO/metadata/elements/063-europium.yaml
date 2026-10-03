@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Europium
+  symbol: Eu
+  atomic_number: 63
+  atomic_mass: 151.964
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f7 6s2'
+  van_der_waals_radius: 233.0
+chemical:
+  first_ionisation_energy: 547.1
+  electron_affinity: 11.2
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1095.0
+  boiling_point: 1802.0
+  density: 5240.0
+thermal:
+  specific_heat_capacity: 182.0

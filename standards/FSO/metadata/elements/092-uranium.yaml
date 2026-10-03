@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Uranium
+  symbol: U
+  atomic_number: 92
+  atomic_mass: 238.0289
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 5f3 6d1 7s2'
+  van_der_waals_radius: 240.0
+chemical:
+  electronegativity: 1.38
+  first_ionisation_energy: 597.6
+  electron_affinity: 50.94
+  oxidation_states:
+  - 6
+  - 5
+  - 4
+  - 3
+physical:
+  phase: solid
+  melting_point: 1408.0
+  boiling_point: 4404.0
+  density: 18950.0
+thermal:
+  specific_heat_capacity: 116.2

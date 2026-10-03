@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Technetium
+  symbol: Tc
+  atomic_number: 43
+  atomic_mass: 96.90636
+  group: 7
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d5 5s2'
+  van_der_waals_radius: 209.0
+chemical:
+  electronegativity: 1.9
+  first_ionisation_energy: 702
+  electron_affinity: 53
+  oxidation_states:
+  - 7
+  - 6
+  - 4
+physical:
+  phase: solid
+  melting_point: 2430.0
+  boiling_point: 4538.0
+  density: 11000.0
+thermal:
+  specific_heat_capacity: 250.4
+optical_nuclear:
+  colour: shiny gray metal

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Erbium
+  symbol: Er
+  atomic_number: 68
+  atomic_mass: 167.26
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f12 6s2'
+  van_der_waals_radius: 235.0
+chemical:
+  electronegativity: 1.24
+  first_ionisation_energy: 589.3
+  electron_affinity: 30.1
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1802.0
+  boiling_point: 3141.0
+  density: 9070.0
+thermal:
+  specific_heat_capacity: 168.1
+optical_nuclear:
+  colour: silvery white

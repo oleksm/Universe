@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Silicon
+  symbol: Si
+  atomic_number: 14
+  atomic_mass: 28.085
+  group: 14
+  period: 3
+  block: p
+  category: metalloid
+atomic_structure:
+  electron_configuration: '[Ne] 3s2 3p2'
+  van_der_waals_radius: 210.0
+chemical:
+  electronegativity: 1.9
+  first_ionisation_energy: 786.5
+  electron_affinity: 134.0684
+  oxidation_states:
+  - 4
+  - 2
+  - -4
+physical:
+  phase: solid
+  melting_point: 1687.0
+  boiling_point: 3538.0
+  density: 2330.0
+thermal:
+  specific_heat_capacity: 704.6
+optical_nuclear:
+  colour: crystalline, reflective with bluish-tinged faces

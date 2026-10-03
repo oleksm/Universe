@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Livermorium
+  symbol: Lv
+  atomic_number: 116
+  atomic_mass: 293.205
+  group: 16
+  period: 7
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d10 7s2 7p4'
+chemical:
+  electron_affinity: 74.9
+  oxidation_states:
+  - 4
+  - 2
+  - -2

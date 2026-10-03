@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Scandium
+  symbol: Sc
+  atomic_number: 21
+  atomic_mass: 44.95591
+  group: 3
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d1 4s2'
+  van_der_waals_radius: 211.0
+chemical:
+  electronegativity: 1.36
+  first_ionisation_energy: 633.1
+  electron_affinity: 18
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1814.0
+  boiling_point: 3109.0
+  density: 2990.0
+thermal:
+  specific_heat_capacity: 567.7
+optical_nuclear:
+  colour: silvery white

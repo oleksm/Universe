@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Nickel
+  symbol: Ni
+  atomic_number: 28
+  atomic_mass: 58.693
+  group: 10
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d8 4s2'
+  van_der_waals_radius: 163.0
+chemical:
+  electronegativity: 1.91
+  first_ionisation_energy: 737.1
+  electron_affinity: 111.65
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1728.0
+  boiling_point: 3186.0
+  density: 8912.0
+thermal:
+  specific_heat_capacity: 444.2
+optical_nuclear:
+  colour: lustrous, metallic, and silver with a gold tinge

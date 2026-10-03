@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Palladium
+  symbol: Pd
+  atomic_number: 46
+  atomic_mass: 106.42
+  group: 10
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d10'
+  van_der_waals_radius: 202.0
+chemical:
+  electronegativity: 2.2
+  first_ionisation_energy: 804.4
+  electron_affinity: 54.24
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1828.05
+  boiling_point: 3236.0
+  density: 12000.0
+thermal:
+  specific_heat_capacity: 244.1
+optical_nuclear:
+  colour: silvery white

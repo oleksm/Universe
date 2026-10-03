@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Oxygen
+  symbol: O
+  atomic_number: 8
+  atomic_mass: 15.999
+  group: 16
+  period: 2
+  block: p
+  category: non-metal
+atomic_structure:
+  electron_configuration: '[He] 2s2 2p4'
+  van_der_waals_radius: 152.0
+chemical:
+  electronegativity: 3.44
+  first_ionisation_energy: 1313.9
+  electron_affinity: 140.976
+  oxidation_states:
+  - -2
+physical:
+  phase: gas
+  melting_point: 54.36
+  boiling_point: 90.2
+  density: 1.429

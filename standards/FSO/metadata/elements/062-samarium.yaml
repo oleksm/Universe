@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Samarium
+  symbol: Sm
+  atomic_number: 62
+  atomic_mass: 150.4
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f6 6s2'
+  van_der_waals_radius: 229.0
+chemical:
+  electronegativity: 1.17
+  first_ionisation_energy: 544.5
+  electron_affinity: 15.63
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1347.0
+  boiling_point: 2067.0
+  density: 7520.0
+thermal:
+  specific_heat_capacity: 196.4
+optical_nuclear:
+  colour: silvery white

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Copper
+  symbol: Cu
+  atomic_number: 29
+  atomic_mass: 63.55
+  group: 11
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s1'
+  van_der_waals_radius: 140.0
+chemical:
+  electronegativity: 1.9
+  first_ionisation_energy: 745.5
+  electron_affinity: 119.235
+  oxidation_states:
+  - 2
+  - 1
+physical:
+  phase: solid
+  melting_point: 1357.77
+  boiling_point: 2835.0
+  density: 8933.0
+thermal:
+  specific_heat_capacity: 384.6
+optical_nuclear:
+  colour: red-orange metallic luster

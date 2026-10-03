@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Hassium
+  symbol: Hs
+  atomic_number: 108
+  atomic_mass: 269.1336
+  group: 8
+  period: 7
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d6 7s2'
+chemical:
+  oxidation_states:
+  - 8
+  - 6
+  - 5
+  - 4
+  - 3
+  - 2
+physical:
+  phase: solid

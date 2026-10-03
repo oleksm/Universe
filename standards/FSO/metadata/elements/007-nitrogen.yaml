@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Nitrogen
+  symbol: N
+  atomic_number: 7
+  atomic_mass: 14.007
+  group: 15
+  period: 2
+  block: p
+  category: non-metal
+atomic_structure:
+  electron_configuration: '[He] 2s2 2p3'
+  van_der_waals_radius: 155.0
+chemical:
+  electronegativity: 3.04
+  first_ionisation_energy: 1402.3
+  electron_affinity: -6.8
+  oxidation_states:
+  - 5
+  - 4
+  - 3
+  - 2
+  - 1
+  - -1
+  - -2
+  - -3
+physical:
+  phase: gas
+  melting_point: 63.15
+  boiling_point: 77.36
+  density: 1.251
+optical_nuclear:
+  colour: colorless gas, liquid or solid

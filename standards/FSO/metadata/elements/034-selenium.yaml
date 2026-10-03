@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Selenium
+  symbol: Se
+  atomic_number: 34
+  atomic_mass: 78.97
+  group: 16
+  period: 4
+  block: p
+  category: non-metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s2 4p4'
+  van_der_waals_radius: 190.0
+chemical:
+  electronegativity: 2.55
+  first_ionisation_energy: 941
+  electron_affinity: 194.9587
+  oxidation_states:
+  - 6
+  - 4
+  - -2
+physical:
+  phase: solid
+  melting_point: 493.65
+  boiling_point: 958.0
+  density: 4809.0
+thermal:
+  specific_heat_capacity: 321.2
+optical_nuclear:
+  colour: black, red, and gray (not pictured) allotropes

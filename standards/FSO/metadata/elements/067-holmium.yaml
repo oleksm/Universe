@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Holmium
+  symbol: Ho
+  atomic_number: 67
+  atomic_mass: 164.93033
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f11 6s2'
+  van_der_waals_radius: 216.0
+chemical:
+  electronegativity: 1.23
+  first_ionisation_energy: 581
+  electron_affinity: 32.61
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1747.0
+  boiling_point: 2973.0
+  density: 8800.0
+thermal:
+  specific_heat_capacity: 164.6
+optical_nuclear:
+  colour: silvery white

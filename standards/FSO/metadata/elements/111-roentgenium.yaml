@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Roentgenium
+  symbol: Rg
+  atomic_number: 111
+  atomic_mass: 282.169
+  group: 11
+  period: 7
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d10 7s1'
+chemical:
+  electron_affinity: 151
+  oxidation_states:
+  - 5
+  - 3
+  - 1
+  - -1

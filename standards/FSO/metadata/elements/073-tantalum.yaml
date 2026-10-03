@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Tantalum
+  symbol: Ta
+  atomic_number: 73
+  atomic_mass: 180.9479
+  group: 5
+  period: 6
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d3 6s2'
+  van_der_waals_radius: 217.0
+chemical:
+  electronegativity: 1.5
+  first_ionisation_energy: 761
+  electron_affinity: 31
+  oxidation_states:
+  - 5
+physical:
+  phase: solid
+  melting_point: 3290.0
+  boiling_point: 5731.0
+  density: 16400.0
+thermal:
+  specific_heat_capacity: 140.2
+optical_nuclear:
+  colour: gray blue

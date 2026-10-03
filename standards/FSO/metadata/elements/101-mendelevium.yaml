@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Mendelevium
+  symbol: Md
+  atomic_number: 101
+  atomic_mass: 258.09843
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 5f13 7s2'
+chemical:
+  electronegativity: 1.3
+  first_ionisation_energy: 635
+  electron_affinity: 93.91
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1100.0

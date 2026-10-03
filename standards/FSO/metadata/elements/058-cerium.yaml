@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Cerium
+  symbol: Ce
+  atomic_number: 58
+  atomic_mass: 140.116
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f1 5d1 6s2'
+  van_der_waals_radius: 235.0
+chemical:
+  electronegativity: 1.12
+  first_ionisation_energy: 534.4
+  electron_affinity: 55
+  oxidation_states:
+  - 4
+  - 3
+physical:
+  phase: solid
+  melting_point: 1071.0
+  boiling_point: 3697.0
+  density: 6770.0
+thermal:
+  specific_heat_capacity: 192.3
+optical_nuclear:
+  colour: silvery white

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Potassium
+  symbol: K
+  atomic_number: 19
+  atomic_mass: 39.0983
+  group: 1
+  period: 4
+  block: s
+  category: alkali metal
+atomic_structure:
+  electron_configuration: '[Ar] 4s1'
+  van_der_waals_radius: 275.0
+chemical:
+  electronegativity: 0.82
+  first_ionisation_energy: 418.8
+  electron_affinity: 48.383
+  oxidation_states:
+  - 1
+physical:
+  phase: solid
+  melting_point: 336.53
+  boiling_point: 1032.0
+  density: 890.0
+thermal:
+  specific_heat_capacity: 757.1
+optical_nuclear:
+  colour: silvery gray

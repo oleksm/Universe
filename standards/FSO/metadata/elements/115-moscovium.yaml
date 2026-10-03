@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Moscovium
+  symbol: Mc
+  atomic_number: 115
+  atomic_mass: 290.196
+  group: 15
+  period: 7
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d10 7s2 7p3'
+chemical:
+  electron_affinity: 35.3
+  oxidation_states:
+  - 3
+  - 1

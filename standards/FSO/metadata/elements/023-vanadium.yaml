@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Vanadium
+  symbol: V
+  atomic_number: 23
+  atomic_mass: 50.9415
+  group: 5
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d3 4s2'
+  van_der_waals_radius: 179.0
+chemical:
+  electronegativity: 1.63
+  first_ionisation_energy: 650.9
+  electron_affinity: 50.911
+  oxidation_states:
+  - 5
+  - 4
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 2183.0
+  boiling_point: 3680.0
+  density: 6000.0
+thermal:
+  specific_heat_capacity: 488.6
+optical_nuclear:
+  colour: blue-silver-grey metal

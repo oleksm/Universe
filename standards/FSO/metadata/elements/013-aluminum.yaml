@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Aluminum
+  symbol: Al
+  atomic_number: 13
+  atomic_mass: 26.981538
+  group: 13
+  period: 3
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Ne] 3s2 3p1'
+  van_der_waals_radius: 184.0
+chemical:
+  electronegativity: 1.61
+  first_ionisation_energy: 577.5
+  electron_affinity: 41.762
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 933.437
+  boiling_point: 2792.0
+  density: 2700.0
+thermal:
+  specific_heat_capacity: 896.9
+optical_nuclear:
+  colour: silvery gray metallic

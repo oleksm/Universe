@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Krypton
+  symbol: Kr
+  atomic_number: 36
+  atomic_mass: 83.8
+  group: 18
+  period: 4
+  block: p
+  category: noble gas
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s2 4p6'
+  van_der_waals_radius: 202.0
+chemical:
+  electronegativity: 3.0
+  first_ionisation_energy: 1350.8
+  electron_affinity: -96
+  oxidation_states:
+  - 0
+physical:
+  phase: gas
+  melting_point: 115.79
+  boiling_point: 119.93
+  density: 3.733
+optical_nuclear:
+  colour: colorless gas, exhibiting a whitish glow in a high electric field

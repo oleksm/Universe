@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Bromine
+  symbol: Br
+  atomic_number: 35
+  atomic_mass: 79.9
+  group: 17
+  period: 4
+  block: p
+  category: halogen
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s2 4p5'
+  van_der_waals_radius: 183.0
+chemical:
+  electronegativity: 2.96
+  first_ionisation_energy: 1139.9
+  electron_affinity: 324.537
+  oxidation_states:
+  - 5
+  - 1
+  - -1
+physical:
+  phase: liquid
+  melting_point: 265.95
+  boiling_point: 331.95
+  density: 3110.0

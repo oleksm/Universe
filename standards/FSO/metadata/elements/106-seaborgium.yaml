@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Seaborgium
+  symbol: Sg
+  atomic_number: 106
+  atomic_mass: 269.128
+  group: 6
+  period: 7
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d4 7s2'
+chemical:
+  oxidation_states:
+  - 6
+  - 5
+  - 4
+  - 3
+  - 0
+physical:
+  phase: solid

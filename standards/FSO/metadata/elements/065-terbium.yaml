@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Terbium
+  symbol: Tb
+  atomic_number: 65
+  atomic_mass: 158.92535
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f9 6s2'
+  van_der_waals_radius: 221.0
+chemical:
+  first_ionisation_energy: 565.8
+  electron_affinity: 112.4
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1629.0
+  boiling_point: 3503.0
+  density: 8230.0
+thermal:
+  specific_heat_capacity: 181.9
+optical_nuclear:
+  colour: silvery white

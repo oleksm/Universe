@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Thulium
+  symbol: Tm
+  atomic_number: 69
+  atomic_mass: 168.93422
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f13 6s2'
+  van_der_waals_radius: 227.0
+chemical:
+  electronegativity: 1.25
+  first_ionisation_energy: 596.7
+  electron_affinity: 99
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1818.0
+  boiling_point: 2223.0
+  density: 9320.0
+thermal:
+  specific_heat_capacity: 160.0
+optical_nuclear:
+  colour: silvery gray

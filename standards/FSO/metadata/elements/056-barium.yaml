@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Barium
+  symbol: Ba
+  atomic_number: 56
+  atomic_mass: 137.33
+  group: 2
+  period: 6
+  block: s
+  category: alkaline earth metal
+atomic_structure:
+  electron_configuration: '[Xe] 6s2'
+  van_der_waals_radius: 268.0
+chemical:
+  electronegativity: 0.89
+  first_ionisation_energy: 502.9
+  electron_affinity: 13.954
+  oxidation_states:
+  - 2
+physical:
+  phase: solid
+  melting_point: 1000.0
+  boiling_point: 2170.0
+  density: 3620.0
+thermal:
+  specific_heat_capacity: 204.4

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Chromium
+  symbol: Cr
+  atomic_number: 24
+  atomic_mass: 51.996
+  group: 6
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d5 4s1'
+  van_der_waals_radius: 189.0
+chemical:
+  electronegativity: 1.66
+  first_ionisation_energy: 652.9
+  electron_affinity: 65.21
+  oxidation_states:
+  - 6
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 2180.0
+  boiling_point: 2944.0
+  density: 7150.0
+thermal:
+  specific_heat_capacity: 449.1
+optical_nuclear:
+  colour: silvery metallic

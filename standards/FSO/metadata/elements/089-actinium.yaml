@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Actinium
+  symbol: Ac
+  atomic_number: 89
+  atomic_mass: 227.02775
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 6d1 7s2'
+  van_der_waals_radius: 260.0
+chemical:
+  electronegativity: 1.1
+  first_ionisation_energy: 499
+  electron_affinity: 33.77
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1324.0
+  boiling_point: 3471.0
+  density: 10070.0
+thermal:
+  specific_heat_capacity: 119.8

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Magnesium
+  symbol: Mg
+  atomic_number: 12
+  atomic_mass: 24.305
+  group: 2
+  period: 3
+  block: s
+  category: alkaline earth metal
+atomic_structure:
+  electron_configuration: '[Ne] 3s2'
+  van_der_waals_radius: 173.0
+chemical:
+  electronegativity: 1.31
+  first_ionisation_energy: 737.7
+  electron_affinity: -40
+  oxidation_states:
+  - 2
+physical:
+  phase: solid
+  melting_point: 923.0
+  boiling_point: 1363.0
+  density: 1740.0
+thermal:
+  specific_heat_capacity: 1023.0
+optical_nuclear:
+  colour: shiny grey solid

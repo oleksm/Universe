@@ -34,7 +34,7 @@ BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "purpose", "deta
 BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
 # The game's brands (members and makers are named by them).
 BRANDS = dict(re.findall(r'key: "(brand\.[a-z0-9_]+)", name: "([^"]*)"', open(os.path.join(ROOT, "content", "base", "brands.ron"), encoding="utf-8").read()))
-STANDARD_FIELDS = {"version", "title", "parent", "purpose", "details", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
+STANDARD_FIELDS = {"version", "title", "parent", "records", "purpose", "details", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
 
 problems = []
 
@@ -175,7 +175,7 @@ for name in sorted(os.listdir(TREE)):
         if name == os.path.basename(folder) + ".yaml":
             continue
         if os.path.isdir(full):
-            problem(full, "no folders in metadata/: the records sit flat")
+            # (A folder of records under one of the standards: see its `records`. Read below.)
             continue
         m = re.fullmatch(r"([0-9]{4})-[a-z0-9-]+\.yaml", name)
         if not m:
@@ -194,6 +194,46 @@ for name in sorted(os.listdir(TREE)):
         st["file"] = os.path.relpath(full, TREE)
         standards.append(st)
     bodies.append(body)
+
+# Records in folders (a standard's `records`): the chemical elements, to their schema.
+ELEMENT_SCHEMA = yaml.safe_load(open(os.path.join(TREE, "FSO", "schema", "element.schema.yaml"), encoding="utf-8"))
+elements = []
+for s in standards:
+    if "records" not in s:
+        continue
+    prefix = s["id"].split(" ")[0]
+    folder = os.path.join(TREE, prefix, "metadata", str(s["records"]))
+    if not os.path.isdir(folder):
+        problem(os.path.join(TREE, s["file"]), f"records: no folder metadata/{s['records']}")
+        continue
+    seen = {}
+    for name in sorted(os.listdir(folder)):
+        full = os.path.join(folder, name)
+        if not re.fullmatch(r"[0-9]{3}-[a-z-]+\.yaml", name):
+            problem(full, "an element's file is named NNN-<name>.yaml (its atomic number)")
+            continue
+        e = load(full)
+        ident = e.get("identity") or {}
+        for k in ("name", "symbol", "atomic_number"):
+            if k not in ident:
+                problem(full, f"identity: no {k}")
+        if ident.get("atomic_number") != int(name[:3]):
+            problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
+        if ident.get("symbol") in seen:
+            problem(full, f"symbol {ident.get('symbol')} twice (also {seen[ident.get('symbol')]})")
+        seen[ident.get("symbol")] = name
+        for group, props in e.items():
+            known = ELEMENT_SCHEMA["properties"].get(group)
+            if known is None:
+                problem(full, f"unknown group '{group}'")
+                continue
+            for k in props or {}:
+                if k not in known["properties"]:
+                    problem(full, f"{group}: unknown property '{k}'")
+        e["under"] = s["id"]
+        e["file"] = os.path.relpath(full, TREE)
+        elements.append(e)
+elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 
 ids = {s["id"] for s in standards}
 for s in standards:
@@ -268,6 +308,9 @@ def write_html():
     data = {
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
+        "elements": elements,
+        # (Each element property's unit or note, from the schema.)
+        "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in ELEMENT_SCHEMA["properties"].items()},
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,
@@ -286,5 +329,5 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
-print(f"{len(bodies)} bodies, {len(standards)} standards, {len({t for s in standards for t in s.get('topics', [])})} topics")
+print(f"{len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements")
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron")

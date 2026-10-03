@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Praseodymium
+  symbol: Pr
+  atomic_number: 59
+  atomic_mass: 140.90766
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f3 6s2'
+  van_der_waals_radius: 239.0
+chemical:
+  electronegativity: 1.13
+  first_ionisation_energy: 527
+  electron_affinity: 93
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1204.0
+  boiling_point: 3793.0
+  density: 6770.0
+thermal:
+  specific_heat_capacity: 193.0
+optical_nuclear:
+  colour: grayish white

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Thorium
+  symbol: Th
+  atomic_number: 90
+  atomic_mass: 232.038
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 6d2 7s2'
+  van_der_waals_radius: 237.0
+chemical:
+  electronegativity: 1.3
+  first_ionisation_energy: 587
+  electron_affinity: 112.72
+  oxidation_states:
+  - 4
+physical:
+  phase: solid
+  melting_point: 2023.0
+  boiling_point: 5061.0
+  density: 11720.0
+thermal:
+  specific_heat_capacity: 113.0
+optical_nuclear:
+  colour: silvery, often with black tarnish

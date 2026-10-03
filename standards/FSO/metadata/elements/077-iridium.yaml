@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Iridium
+  symbol: Ir
+  atomic_number: 77
+  atomic_mass: 192.22
+  group: 9
+  period: 6
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d7 6s2'
+  van_der_waals_radius: 202.0
+chemical:
+  electronegativity: 2.2
+  first_ionisation_energy: 880
+  electron_affinity: 150.94
+  oxidation_states:
+  - 4
+  - 3
+physical:
+  phase: solid
+  melting_point: 2719.0
+  boiling_point: 4701.0
+  density: 22420.0
+thermal:
+  specific_heat_capacity: 130.6
+optical_nuclear:
+  colour: silvery white

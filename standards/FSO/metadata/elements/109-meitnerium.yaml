@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Meitnerium
+  symbol: Mt
+  atomic_number: 109
+  atomic_mass: 277.154
+  group: 9
+  period: 7
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d7 7s2'
+chemical:
+  oxidation_states:
+  - 9
+  - 8
+  - 6
+  - 4
+  - 3
+  - 1
+physical:
+  phase: solid

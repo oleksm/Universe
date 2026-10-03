@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-title: Chemical Element
+title: Chemical Elements
+records: elements
 purpose: A chemical element is one kind of atom, set by the number of protons in it. Elements are what all matter is made of; every material is one element or a combination of them.
 details:
   text:

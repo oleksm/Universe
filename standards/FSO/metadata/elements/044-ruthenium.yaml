@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Ruthenium
+  symbol: Ru
+  atomic_number: 44
+  atomic_mass: 101.1
+  group: 8
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d7 5s1'
+  van_der_waals_radius: 207.0
+chemical:
+  electronegativity: 2.2
+  first_ionisation_energy: 710.2
+  electron_affinity: 100.96
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 2607.0
+  boiling_point: 4423.0
+  density: 12100.0
+thermal:
+  specific_heat_capacity: 238.0
+optical_nuclear:
+  colour: silvery white metallic

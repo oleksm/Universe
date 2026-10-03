@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Fluorine
+  symbol: F
+  atomic_number: 9
+  atomic_mass: 18.99840316
+  group: 17
+  period: 2
+  block: p
+  category: halogen
+atomic_structure:
+  electron_configuration: '[He] 2s2 2p5'
+  van_der_waals_radius: 135.0
+chemical:
+  electronegativity: 3.98
+  first_ionisation_energy: 1681
+  electron_affinity: 328.1649
+  oxidation_states:
+  - -1
+physical:
+  phase: gas
+  melting_point: 53.53
+  boiling_point: 85.03
+  density: 1.696

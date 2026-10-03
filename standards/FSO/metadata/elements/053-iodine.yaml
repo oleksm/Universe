@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Iodine
+  symbol: I
+  atomic_number: 53
+  atomic_mass: 126.9045
+  group: 17
+  period: 5
+  block: p
+  category: halogen
+atomic_structure:
+  electron_configuration: '[Kr] 4d10 5s2 5p5'
+  van_der_waals_radius: 198.0
+chemical:
+  electronegativity: 2.66
+  first_ionisation_energy: 1008.4
+  electron_affinity: 295.1531
+  oxidation_states:
+  - 7
+  - 5
+  - 1
+  - -1
+physical:
+  phase: solid
+  melting_point: 386.85
+  boiling_point: 457.55
+  density: 4930.0
+optical_nuclear:
+  colour: lustrous metallic gray, violet as a gas

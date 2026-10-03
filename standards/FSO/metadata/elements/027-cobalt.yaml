@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Cobalt
+  symbol: Co
+  atomic_number: 27
+  atomic_mass: 58.93319
+  group: 9
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d7 4s2'
+  van_der_waals_radius: 192.0
+chemical:
+  electronegativity: 1.88
+  first_ionisation_energy: 760.4
+  electron_affinity: 63.898
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1768.0
+  boiling_point: 3200.0
+  density: 8860.0
+thermal:
+  specific_heat_capacity: 421.0
+optical_nuclear:
+  colour: hard lustrous gray metal

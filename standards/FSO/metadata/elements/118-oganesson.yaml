@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Oganesson
+  symbol: Og
+  atomic_number: 118
+  atomic_mass: 295.216
+  group: 18
+  period: 7
+  block: p
+  category: noble gas
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 6d10 7s2 7p6'
+chemical:
+  electron_affinity: 5.40318
+  oxidation_states:
+  - 6
+  - 4
+  - 2
+  - 1
+  - 0
+  - -1

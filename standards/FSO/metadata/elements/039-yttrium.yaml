@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Yttrium
+  symbol: Y
+  atomic_number: 39
+  atomic_mass: 88.90584
+  group: 3
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d1 5s2'
+  van_der_waals_radius: 219.0
+chemical:
+  electronegativity: 1.22
+  first_ionisation_energy: 600
+  electron_affinity: 29.6
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1795.0
+  boiling_point: 3618.0
+  density: 4470.0
+thermal:
+  specific_heat_capacity: 298.4
+optical_nuclear:
+  colour: silvery white

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Chlorine
+  symbol: Cl
+  atomic_number: 17
+  atomic_mass: 35.45
+  group: 17
+  period: 3
+  block: p
+  category: halogen
+atomic_structure:
+  electron_configuration: '[Ne] 3s2 3p5'
+  van_der_waals_radius: 175.0
+chemical:
+  electronegativity: 3.16
+  first_ionisation_energy: 1251.2
+  electron_affinity: 348.575
+  oxidation_states:
+  - 7
+  - 5
+  - 1
+  - -1
+physical:
+  phase: gas
+  melting_point: 171.65
+  boiling_point: 239.11
+  density: 3.214
+optical_nuclear:
+  colour: pale yellow-green gas

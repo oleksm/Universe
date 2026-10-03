@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Lead
+  symbol: Pb
+  atomic_number: 82
+  atomic_mass: 207.0
+  group: 14
+  period: 6
+  block: p
+  category: post-transition metal
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s2 6p2'
+  van_der_waals_radius: 202.0
+chemical:
+  electronegativity: 2.33
+  first_ionisation_energy: 715.6
+  electron_affinity: 34.4204
+  oxidation_states:
+  - 4
+  - 2
+physical:
+  phase: solid
+  melting_point: 600.61
+  boiling_point: 2022.0
+  density: 11340.0
+thermal:
+  specific_heat_capacity: 128.7
+optical_nuclear:
+  colour: metallic gray

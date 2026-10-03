@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Protactinium
+  symbol: Pa
+  atomic_number: 91
+  atomic_mass: 231.03588
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 5f2 6d1 7s2'
+  van_der_waals_radius: 243.0
+chemical:
+  electronegativity: 1.5
+  first_ionisation_energy: 568
+  electron_affinity: 53.03
+  oxidation_states:
+  - 5
+  - 4
+physical:
+  phase: solid
+  melting_point: 1845.0
+  density: 15370.0
+optical_nuclear:
+  colour: bright, silvery metallic luster

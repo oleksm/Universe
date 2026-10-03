@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Boron
+  symbol: B
+  atomic_number: 5
+  atomic_mass: 10.81
+  group: 13
+  period: 2
+  block: p
+  category: metalloid
+atomic_structure:
+  electron_configuration: '[He] 2s2 2p1'
+  van_der_waals_radius: 192.0
+chemical:
+  electronegativity: 2.04
+  first_ionisation_energy: 800.6
+  electron_affinity: 26.989
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 2348.0
+  boiling_point: 4273.0
+  density: 2370.0
+thermal:
+  specific_heat_capacity: 1026.0
+optical_nuclear:
+  colour: black-brown

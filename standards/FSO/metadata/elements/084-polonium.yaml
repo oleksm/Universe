@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Polonium
+  symbol: Po
+  atomic_number: 84
+  atomic_mass: 208.98243
+  group: 16
+  period: 6
+  block: p
+  category: metalloid
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 5d10 6s2 6p4'
+  van_der_waals_radius: 197.0
+chemical:
+  electronegativity: 2.0
+  first_ionisation_energy: 812.1
+  electron_affinity: 136
+  oxidation_states:
+  - 4
+  - 2
+physical:
+  phase: solid
+  melting_point: 527.0
+  boiling_point: 1235.0
+  density: 9320.0
+thermal:
+  specific_heat_capacity: 126.3
+optical_nuclear:
+  colour: silvery

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Antimony
+  symbol: Sb
+  atomic_number: 51
+  atomic_mass: 121.76
+  group: 15
+  period: 5
+  block: p
+  category: metalloid
+atomic_structure:
+  electron_configuration: '[Kr] 4d10 5s2 5p3'
+  van_der_waals_radius: 206.0
+chemical:
+  electronegativity: 2.05
+  first_ionisation_energy: 834
+  electron_affinity: 101.059
+  oxidation_states:
+  - 5
+  - 3
+  - -3
+physical:
+  phase: solid
+  melting_point: 903.78
+  boiling_point: 1860.0
+  density: 6685.0
+thermal:
+  specific_heat_capacity: 207.2
+optical_nuclear:
+  colour: silvery lustrous gray

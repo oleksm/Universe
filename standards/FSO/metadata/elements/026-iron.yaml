@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Iron
+  symbol: Fe
+  atomic_number: 26
+  atomic_mass: 55.84
+  group: 8
+  period: 4
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Ar] 3d6 4s2'
+  van_der_waals_radius: 194.0
+chemical:
+  electronegativity: 1.83
+  first_ionisation_energy: 762.5
+  electron_affinity: 14.785
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1811.0
+  boiling_point: 3134.0
+  density: 7874.0
+thermal:
+  specific_heat_capacity: 449.5
+optical_nuclear:
+  colour: lustrous metallic with a grayish tinge

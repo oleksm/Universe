@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Arsenic
+  symbol: As
+  atomic_number: 33
+  atomic_mass: 74.92159
+  group: 15
+  period: 4
+  block: p
+  category: metalloid
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s2 4p3'
+  van_der_waals_radius: 185.0
+chemical:
+  electronegativity: 2.18
+  first_ionisation_energy: 947
+  electron_affinity: 77.65
+  oxidation_states:
+  - 5
+  - 3
+  - -3
+physical:
+  phase: solid
+  melting_point: 1090.0
+  boiling_point: 887.0
+  density: 5776.0
+thermal:
+  specific_heat_capacity: 328.9
+optical_nuclear:
+  colour: metallic grey

@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Einsteinium
+  symbol: Es
+  atomic_number: 99
+  atomic_mass: 252.083
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 5f11 7s2'
+  van_der_waals_radius: 245.0
+chemical:
+  electronegativity: 1.3
+  first_ionisation_energy: 619
+  electron_affinity: -28.6
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1133.0
+optical_nuclear:
+  colour: silver-colored

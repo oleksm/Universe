@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Nobelium
+  symbol: 'No'
+  atomic_number: 102
+  atomic_mass: 259.101
+  group: null
+  period: 7
+  block: f
+  category: actinide
+atomic_structure:
+  electron_configuration: '[Rn] 5f14 7s2'
+chemical:
+  electronegativity: 1.3
+  first_ionisation_energy: 642
+  electron_affinity: -223.22
+  oxidation_states:
+  - 3
+  - 2
+physical:
+  phase: solid
+  melting_point: 1100.0

@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Carbon
+  symbol: C
+  atomic_number: 6
+  atomic_mass: 12.011
+  group: 14
+  period: 2
+  block: p
+  category: non-metal
+atomic_structure:
+  electron_configuration: '[He] 2s2 2p2'
+  van_der_waals_radius: 170.0
+chemical:
+  electronegativity: 2.55
+  first_ionisation_energy: 1086.5
+  electron_affinity: 121.7763
+  oxidation_states:
+  - 4
+  - 2
+  - -4
+physical:
+  phase: solid
+  melting_point: 3823.0
+  boiling_point: 4098.0
+  density: 2267.0
+thermal:
+  specific_heat_capacity: 709.1

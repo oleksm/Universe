@@ -91,7 +91,7 @@
         body: "body.fso",
         branch: "all",
         version: 1,
-        title: "CHEMICAL ELEMENT",
+        title: "CHEMICAL ELEMENTS",
         scope: "",
         status: Draft,
         refs: [],

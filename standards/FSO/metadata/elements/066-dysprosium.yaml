@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Dysprosium
+  symbol: Dy
+  atomic_number: 66
+  atomic_mass: 162.5
+  group: null
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f10 6s2'
+  van_der_waals_radius: 229.0
+chemical:
+  electronegativity: 1.22
+  first_ionisation_energy: 573
+  electron_affinity: 33.96
+  oxidation_states:
+  - 3
+physical:
+  phase: solid
+  melting_point: 1685.0
+  boiling_point: 2840.0
+  density: 8550.0
+thermal:
+  specific_heat_capacity: 170.5
+optical_nuclear:
+  colour: silvery white

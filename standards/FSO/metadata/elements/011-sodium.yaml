@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Sodium
+  symbol: Na
+  atomic_number: 11
+  atomic_mass: 22.9897693
+  group: 1
+  period: 3
+  block: s
+  category: alkali metal
+atomic_structure:
+  electron_configuration: '[Ne] 3s1'
+  van_der_waals_radius: 227.0
+chemical:
+  electronegativity: 0.93
+  first_ionisation_energy: 495.8
+  electron_affinity: 52.867
+  oxidation_states:
+  - 1
+physical:
+  phase: solid
+  melting_point: 370.95
+  boiling_point: 1156.0
+  density: 970.0
+thermal:
+  specific_heat_capacity: 1228.0
+optical_nuclear:
+  colour: silvery white metallic

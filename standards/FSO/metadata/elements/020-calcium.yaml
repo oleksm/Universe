@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem periodic table (NIH) and Periodic-Table-JSON; only what they give.
+identity:
+  name: Calcium
+  symbol: Ca
+  atomic_number: 20
+  atomic_mass: 40.08
+  group: 2
+  period: 4
+  block: s
+  category: alkaline earth metal
+atomic_structure:
+  electron_configuration: '[Ar] 4s2'
+  van_der_waals_radius: 231.0
+chemical:
+  electronegativity: 1.0
+  first_ionisation_energy: 589.8
+  electron_affinity: 2.37
+  oxidation_states:
+  - 2
+physical:
+  phase: solid
+  melting_point: 1115.0
+  boiling_point: 1757.0
+  density: 1540.0
+thermal:
+  specific_heat_capacity: 646.9
