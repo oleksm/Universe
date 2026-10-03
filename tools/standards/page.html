@@ -11,14 +11,14 @@
   /* The game's HUD: near-black panels on dark slate, pale text, amber, cyan, green. */
   --bg: #2b3138; --panel: #20262c; --line: #3a4652; --text: #dcebf2; --dim: #8fa3b0;
   --head: #60ffb0; --id: #ffb040; --link: #5cc8f0; --sel: #1f4a3d; --bad: #ff5a4a; --code: #2e363e;
-  --th: #191e23;
+  --th: #1d3a4a; --tbl: #16262f; --tline: #2f5163;
   --nav: #20262c;
 }
 :root[data-theme="light"] {
   color-scheme: light;
   --bg: #ffffff; --panel: #ffffff; --line: #b9c4cd; --text: #0a1117; --dim: #3d4f5c;
   --head: #04683b; --id: #0a58b8; --link: #0a58b8; --sel: #cdeedd; --bad: #b0281a; --code: #e9eef2;
-  --th: #eef1f4;
+  --th: #dceaf3; --tbl: #f3f8fb; --tline: #b7cbd8;
   --nav: #f4f6f8;
 }
 * { box-sizing: border-box; }
@@ -50,9 +50,9 @@ a { color: var(--link); text-decoration: none; cursor: pointer; }
 a:hover { text-decoration: underline; }
 table { border-collapse: collapse; margin: 4px 0; }
 th, td { text-align: left; padding: 3px 14px 3px 0; vertical-align: top; }
-th { color: var(--dim); font-weight: 700; border-bottom: 1px solid var(--line); text-transform: uppercase; font-size: 12px; background: var(--th); }
-tr + tr td { border-top: 1px solid var(--code); }
-table { background: var(--panel); border: 1px solid var(--line); }
+th { color: var(--dim); font-weight: 700; border-bottom: 1px solid var(--line); text-transform: uppercase; font-size: 12px; background: var(--th); color: var(--text); border-bottom-color: var(--tline); }
+tr + tr td { border-top: 1px solid var(--tline); }
+table { background: var(--tbl); border: 1px solid var(--tline); }
 th, td { padding: 4px 14px 4px 8px; }
 th:first-child, td:first-child { padding-left: 4px; }
 td.num { text-align: right; }
