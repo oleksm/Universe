@@ -158,14 +158,12 @@ for name in sorted(os.listdir(TREE)):
     if body.get("prefix") != name:
         problem(meta_path, f"prefix {body.get('prefix')} but the folder is {name}")
     numbers = {}
-    for name in sorted(os.listdir(folder)):
-        full = os.path.join(folder, name)
-        if name == os.path.basename(folder) + ".yaml":
-            continue
+    # (Its records: the standards, in its metadata folder.)
+    records = os.path.join(folder, "metadata")
+    for name in sorted(os.listdir(records)) if os.path.isdir(records) else []:
+        full = os.path.join(records, name)
         if os.path.isdir(full):
-            # (A body's schema and metadata folders; no others.)
-            if name not in ("schema", "metadata"):
-                problem(full, "no folders in a body but schema/ and metadata/: its standards sit flat beside <PREFIX>.yaml")
+            problem(full, "no folders in metadata/: the records sit flat")
             continue
         m = re.fullmatch(r"([0-9]{4})-[a-z0-9-]+\.yaml", name)
         if not m:

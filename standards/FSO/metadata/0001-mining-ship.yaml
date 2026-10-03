@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=schema/standard.schema.json
+# yaml-language-server: $schema=../schema/standard.schema.json
 title: Mining ship
 sections:
   - text: >-
