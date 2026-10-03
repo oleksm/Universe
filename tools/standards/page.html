@@ -242,7 +242,21 @@ function rows(q) {
     };
     under(null, 2);
   }
+  // The Address Registry: no records of its own, a reference to everything that has an address.
+  const listed = addressed().filter(r => !q || q.split(/\s+/).every(w => `${r.who} ${r.address}`.toLowerCase().includes(w)));
+  out.push({ k: "ar", depth: 0, kind: "body", label: "Address Registry", n: addressed().length });
+  if (open.has("ar") || q) for (const r of listed) out.push({ k: "ra:" + r.key, depth: 1, kind: "maker", label: r.who, ticker: r.tag });
   return out;
+}
+// Everything with an address (<system>/<body> in Local Administration), spelled out.
+function addressed() {
+  const out = [];
+  for (const o of DATA.bodies) {
+    if (!o.address) continue;
+    const [sy, at] = o.address.split("/"); const a = DATA.administrations.find(x => x.slug === sy); const x = a && a.bodies.find(y => y.slug === at); if (!x) continue;
+    out.push({ key: o.key, who: o.name, tag: o.prefix, to: "b:" + o.key, body: `bd:${sy}:${at}`, address: [x.name, x.at, a.name].filter(Boolean).join(", ") });
+  }
+  return out.sort((p, r) => p.address.localeCompare(r.address));
 }
 
 let current = decodeURIComponent(location.hash.slice(1));
@@ -258,6 +272,7 @@ function reveal(k) {
     return;
   }
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
+  if (k.startsWith("ra:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
   if (k.startsWith("bd:") || k.startsWith("at:")) {
     const org = k.startsWith("at:") ? DATA.bodies.find(o => o.key === k.slice(3)) : null;
@@ -340,7 +355,8 @@ function detail(k) {
   if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick something on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
-  if (kind === "at") return detail("b:" + rest.join(":"));
+  if (kind === "at" || kind === "ra") return detail("b:" + rest.join(":"));
+  if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td><a data-k="${esc(r.body)}">${esc(r.address)}</a></td><td><a data-k="${esc(r.to)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
