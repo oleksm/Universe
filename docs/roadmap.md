@@ -46,6 +46,15 @@ world's facts; deciding is the clients': pilots, players, corporations, factions
 - Factions to join, found and claim for were built and removed: too close to another game's
   pledging and powers. Politics, if it comes back, grows out of what players own and run.
 
+## 3½. Standards: the Foundry Standards Office (next)
+
+- A registry of standards, the tree that describes the civilisation: units, size classes, pads,
+  sockets, containers, power, signals. Anyone can found a standards body and publish; the game
+  seeds the **Foundry Standards Office**. Standards are voluntary agreements (not physics, not
+  products, not law), published at a seat and spread over the hypernet. Ships are its first use:
+  size classes for berths, hulls publishing sockets, module vendors building to them.
+  See `standards.md`. Corporations build to it.
+
 ## 4. Corporations
 
 - Real ones, following the rules of life: brands that make products, governed by factions
