@@ -8,6 +8,9 @@
         seat: "home",
         note: "THE STANDARDS EVERYONE BUILDS TO, WHOEVER THEY ANSWER TO. OPEN TO ALL.",
         branches: [
+            ("definitions", "DEFINITIONS"),
+            ("mining", "MINING"),
+            ("vessels", "VESSELS"),
         ],
     ),
 ]

@@ -205,6 +205,12 @@ function detail(k) {
   h += `<div class="meta">${esc(s.status)} · licence ${esc(lic)} · ${esc(body ? body.name : s.body)}</div><div class="file">standards/${esc(s.file)}</div>`;
   h += `<div style="margin-top:6px">` + (s.topics || []).map(t => `<a data-k="${esc(`t:${s.body}:${t}`)}">#${esc(t)}</a>`).join(" ") + `</div>`;
   h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
+  for (const sec of s.sections || []) {
+    h += `<h3>${esc(sec.title)}</h3>`;
+    const paras = Array.isArray(sec.text) ? sec.text : (sec.text ? [sec.text] : []);
+    h += paras.map(p => `<p>${esc(p)}</p>`).join("");
+    if (sec.table) h += `<table><tr>${sec.table.columns.map(c => `<th>${esc(c)}</th>`).join("")}</tr>${sec.table.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`;
+  }
   if ((s.refs || []).length) h += `<h3>Builds on</h3>` + s.refs.map(r => `<div><a data-k="s:${r}">${esc(r)}</a> ${esc(byId[r] ? byId[r].title : "?")}</div>`).join("");
   const cited = DATA.cited[s.id] || [];
   if (cited.length) h += `<h3>Built on by</h3>` + cited.map(r => `<div><a data-k="s:${r}">${esc(r)}</a> ${esc(byId[r] ? byId[r].title : "?")}</div>`).join("");

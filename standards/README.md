@@ -29,6 +29,7 @@ standards/
 | `title`, `scope` | what it is; what it covers and what it doesn't |
 | `status` | `draft`, `published`, `superseded`, `withdrawn` |
 | `topics` | at least one tag |
+| `sections` | titled sections, each `text` (paragraphs) and/or a `table` (`columns`, `rows`): for a standard that's mostly prose, a definition say |
 | `refs` | ids it builds on (`"FSO 1"`) |
 | `params` | `key`, `value` (a number, `[min, max]`, or text), `unit`, `note`; a key `ROW.column` (`S.length_max`) makes a table |
 | `requires` | `subject` (`module.mass`), `check` (`at_most`, `at_least`, `equals`, `fits_within`, `provides`), `param`, `per` (the row: `size`, `class`...) |

@@ -34,7 +34,7 @@ BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "founded_by", "a
 BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
 # The game's brands (members and makers are named by them).
 BRANDS = dict(re.findall(r'key: "(brand\.[a-z0-9_]+)", name: "([^"]*)"', open(os.path.join(ROOT, "content", "base", "brands.ron"), encoding="utf-8").read()))
-STANDARD_FIELDS = {"version", "title", "status", "topics", "scope", "refs", "params", "requires", "text", "licence", "published"}
+STANDARD_FIELDS = {"version", "title", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
 
 problems = []
 
@@ -78,6 +78,26 @@ def check_standard(s, ids):
             problem(where, f"refers to {r}: no such standard (ids are like 'FSO 12')")
         if r == s["id"]:
             problem(where, "refers to itself")
+    # Sections: titled, each paragraphs and/or a table (columns, rows of as many cells).
+    for sec in s.get("sections", []) or []:
+        if not isinstance(sec, dict) or not sec.get("title"):
+            problem(where, "a section needs a title")
+            continue
+        for extra in set(sec) - {"title", "text", "table"}:
+            problem(where, f"section '{sec['title']}': unknown field '{extra}' (title, text, table)")
+        text = sec.get("text", [])
+        if not isinstance(text, (str, list)):
+            problem(where, f"section '{sec['title']}': text is a paragraph or a list of them")
+        t = sec.get("table")
+        if t is not None:
+            cols = t.get("columns") if isinstance(t, dict) else None
+            rows = t.get("rows") if isinstance(t, dict) else None
+            if not isinstance(cols, list) or not isinstance(rows, list):
+                problem(where, f"section '{sec['title']}': a table has columns and rows")
+            else:
+                for r in rows:
+                    if not isinstance(r, list) or len(r) != len(cols):
+                        problem(where, f"section '{sec['title']}': a row of {len(r) if isinstance(r, list) else '?'} cells for {len(cols)} columns")
     keys = set()
     for p in s.get("params", []) or []:
         k = str(p.get("key", ""))
