@@ -19,9 +19,12 @@ rng = np.random.default_rng(1984)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 
 def prism(name, sides, radius, length, loc, rot=(0, 0, 0), scale=(1, 1, 1), bevel=0.15):
-    bpy.ops.mesh.primitive_cylinder_add(vertices=sides, radius=radius, depth=length, location=loc, rotation=rot)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=sides, radius=radius, depth=length, location=loc)
     o = bpy.context.active_object
     o.name = name
+    # (Its spin about its own axis first, z, then laid along the ship, x: order ZXY.)
+    o.rotation_mode = "ZXY"
+    o.rotation_euler = rot
     o.scale = scale
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
     m = o.modifiers.new("bevel", "BEVEL")
@@ -43,7 +46,8 @@ def block(name, size, loc, bevel=0.12):
     return o
 
 # The body: an octagonal prism along Y (nose at -Y), flattened a little.
-parts = [prism("body", 8, 3.2, 26.0, (0, 0, 0), rot=(math.pi / 2, 0, math.pi / 8), scale=(1.0, 1.0, 0.8), bevel=0.25)]
+# (Scaled in its own frame before it's turned: local z is its length, local y becomes up.)
+parts = [prism("body", 8, 3.2, 26.0, (0, 0, 0), rot=(math.pi / 2, 0, math.pi / 8), scale=(1.0, 0.8, 1.0), bevel=0.25)]
 # Cockpit block forward, raked: a box with its front cut by a slanted cube later (kept simple: two blocks).
 parts.append(block("cockpit", (4.6, 4.2, 3.2), (0, -14.5, 0.6)))
 parts.append(block("brow", (3.8, 2.0, 1.4), (0, -15.8, 2.2), bevel=0.2))
