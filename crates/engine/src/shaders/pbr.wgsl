@@ -18,7 +18,7 @@ struct Globals {
 
 struct Material {
     base_color: vec4<f32>,
-    // x metallic, y roughness, z normal scale.
+    // x metallic, y roughness, z normal scale, w alpha cutoff (0: opaque).
     params: vec4<f32>,
     emissive: vec4<f32>,
 };
@@ -125,6 +125,10 @@ fn schlick(f0: vec3<f32>, vh: f32) -> vec3<f32> {
 @fragment
 fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let base = textureSample(base_tex, tex_sampler, in.uv) * mat.base_color;
+    // (A cut-out: decals, grilles. Below the cutoff the pixel isn't there.)
+    if (mat.params.w > 0.0 && base.a < mat.params.w) {
+        discard;
+    }
     let mr = textureSample(mr_tex, tex_sampler, in.uv);
     let metallic = clamp(mr.b * mat.params.x, 0.0, 1.0);
     var roughness = clamp(mr.g * mat.params.y, 0.04, 1.0);

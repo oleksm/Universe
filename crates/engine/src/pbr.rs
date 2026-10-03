@@ -56,6 +56,9 @@ pub struct Material {
     pub mr_tex: Option<usize>,
     pub normal_tex: Option<usize>,
     pub emissive_tex: Option<usize>,
+    /// glTF's alpha mask: below this, the pixel isn't drawn (decals,
+    /// grilles cut from a texture); None: opaque.
+    pub alpha_cutoff: Option<f32>,
 }
 
 /// An image, RGBA8 rows top down.
@@ -100,6 +103,7 @@ impl PbrModel {
                 mr_tex: tex(pbr.metallic_roughness_texture().map(|i| i.texture())),
                 normal_tex: tex(m.normal_texture().map(|n| n.texture())),
                 emissive_tex: tex(m.emissive_texture().map(|i| i.texture())),
+                alpha_cutoff: (m.alpha_mode() == gltf::material::AlphaMode::Mask).then(|| m.alpha_cutoff().unwrap_or(0.5)),
             });
         }
         let fallback = data.materials.len();
@@ -109,7 +113,7 @@ impl PbrModel {
         }
         // (A primitive with no material: a plain grey one.)
         if data.primitives.iter().any(|p| p.material == usize::MAX) {
-            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None });
+            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None, alpha_cutoff: None });
             for p in &mut data.primitives {
                 if p.material == usize::MAX {
                     p.material = fallback;
@@ -229,7 +233,7 @@ fn mips(img: &Image, srgb: bool) -> Vec<(u32, u32, Vec<u8>)> {
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 struct MaterialUniform {
     base_color: [f32; 4],
-    /// x metallic, y roughness, z normal scale.
+    /// x metallic, y roughness, z normal scale, w alpha cutoff (0: opaque).
     params: [f32; 4],
     emissive: [f32; 4],
 }
@@ -382,7 +386,7 @@ impl PbrRenderer {
             .materials
             .iter()
             .map(|m| {
-                let uniform = MaterialUniform { base_color: m.base_color, params: [m.metallic, m.roughness, m.normal_scale, 0.0], emissive: [m.emissive[0], m.emissive[1], m.emissive[2], 0.0] };
+                let uniform = MaterialUniform { base_color: m.base_color, params: [m.metallic, m.roughness, m.normal_scale, m.alpha_cutoff.unwrap_or(0.0)], emissive: [m.emissive[0], m.emissive[1], m.emissive[2], 0.0] };
                 let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr material"), contents: bytemuck::bytes_of(&uniform), usage: wgpu::BufferUsages::UNIFORM });
                 let base = m.base_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, true));
                 let mr = m.mr_tex.map_or_else(|| white.clone(), |i| texture(i, false));
