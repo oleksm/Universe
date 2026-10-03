@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Treistun c"
+kind: planet

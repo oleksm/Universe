@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Port Aipika"
+kind: settlement
+at: Treistun i II

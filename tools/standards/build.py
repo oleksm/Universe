@@ -179,10 +179,31 @@ administrations = []
 adm_dir = os.path.join(TREE, LOCAL, "metadata", "administrations")
 for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     full = os.path.join(adm_dir, name)
+    if os.path.isdir(full):
+        # (An administration's bodies: read with it, below.)
+        continue
     if not re.fullmatch(r"[a-z0-9-]+\.yaml", name):
         problem(full, "an administration's file is named <name>.yaml (lower case, words joined by -)")
         continue
     ad = load(full)
+    # (Its bodies: one file each, in the folder named after it.)
+    ad["bodies"] = []
+    bodies_dir = full[:-5]
+    for bn in sorted(os.listdir(bodies_dir)) if os.path.isdir(bodies_dir) else []:
+        bfull = os.path.join(bodies_dir, bn)
+        if not re.fullmatch(r"[a-z0-9-]+\.yaml", bn):
+            problem(bfull, "a body's file is named <name>.yaml (lower case, words joined by -)")
+            continue
+        x = load(bfull)
+        for k in ["name", "kind"]:
+            if k not in x:
+                problem(bfull, f"no {k}")
+        for k in x:
+            if k not in {"name", "kind", "at"}:
+                problem(bfull, f"unknown field '{k}'")
+        x["slug"] = bn[:-5]
+        x["file"] = os.path.relpath(bfull, TREE)
+        ad["bodies"].append(x)
     for k in ["name", "system"]:
         if k not in ad:
             problem(full, f"no {k}")
@@ -207,32 +228,37 @@ LAND = "LandRegister"
 land = load(os.path.join(TREE, LAND, "metadata", LAND + ".yaml"))
 parcels = []
 parcels_dir = os.path.join(TREE, LAND, "metadata", "parcels")
-for name in sorted(os.listdir(parcels_dir)) if os.path.isdir(parcels_dir) else []:
-    full = os.path.join(parcels_dir, name)
-    if name.startswith("."):
-        continue
-    if not re.fullmatch(r"[a-z0-9-]+\.yaml", name):
-        problem(full, "a parcel's file is named <name>.yaml (lower case, words joined by -)")
-        continue
-    pc = load(full)
-    for k in ["name", "administration", "body", "owner"]:
-        if k not in pc:
-            problem(full, f"no {k}")
-    adm = next((a for a in administrations if a["slug"] == pc.get("administration")), None)
-    if "administration" in pc and adm is None:
-        problem(full, f"administration: no '{pc['administration']}' in Local Administration")
-    of = next((x for x in (adm or {}).get("bodies") or [] if x.get("name") == pc.get("body")), None)
-    if adm is not None and "body" in pc and of is None:
-        problem(full, f"body: no '{pc['body']}' among {adm.get('name')}'s bodies")
-    for k in pc:
-        if k not in {"name", "administration", "body", "place", "owner"}:
-            problem(full, f"unknown field '{k}'")
-    pc["body_kind"] = (of or {}).get("kind", "")
-    if "owner" in pc and pc["owner"] not in BRANDS and not str(pc["owner"]).startswith("body."):
-        problem(full, f"owner: no maker '{pc['owner']}' in Maker House")
-    pc["file"] = os.path.relpath(full, TREE)
-    pc["slug"] = name[:-5]
-    parcels.append(pc)
+# (Filed by system, then body: parcels/<system>/<body>/<name>.yaml.)
+for dirpath, dirs, files in os.walk(parcels_dir):
+    dirs.sort()
+    for name in sorted(files):
+        full = os.path.join(dirpath, name)
+        parts = os.path.relpath(full, parcels_dir).split(os.sep)
+        if len(parts) != 3 or not re.fullmatch(r"[a-z0-9-]+\.yaml", name):
+            problem(full, "a parcel is filed as parcels/<system>/<body>/<name>.yaml (lower case, words joined by -)")
+            continue
+        pc = load(full)
+        for k in ["name", "owner"]:
+            if k not in pc:
+                problem(full, f"no {k}")
+        for k in pc:
+            if k not in {"name", "place", "owner"}:
+                problem(full, f"unknown field '{k}'")
+        adm = next((a for a in administrations if a["slug"] == parts[0]), None)
+        if adm is None:
+            problem(full, f"no administration '{parts[0]}' in Local Administration")
+        of = next((x for x in (adm or {}).get("bodies") or [] if x.get("slug") == parts[1]), None)
+        if adm is not None and of is None:
+            problem(full, f"no body '{parts[1]}' among {adm.get('name')}'s bodies")
+        if "owner" in pc and pc["owner"] not in BRANDS and not str(pc["owner"]).startswith("body."):
+            problem(full, f"owner: no maker '{pc['owner']}' in Maker House")
+        pc["administration"] = parts[0]
+        pc["body"] = (of or {}).get("name", parts[1])
+        pc["body_kind"] = (of or {}).get("kind", "")
+        pc["body_slug"] = parts[1]
+        pc["file"] = os.path.relpath(full, TREE)
+        pc["slug"] = "/".join(parts)[:-5]
+        parcels.append(pc)
 
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):

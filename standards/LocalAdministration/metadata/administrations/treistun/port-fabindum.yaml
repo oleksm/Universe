@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Port Fabindum"
+kind: settlement
+at: Treistun c I

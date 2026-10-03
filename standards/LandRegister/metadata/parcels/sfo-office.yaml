@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../schema/parcel.schema.yaml
-name: SFO office
-administration: treistun
-body: Treistun e Station
-owner: body.sfo

@@ -1,20 +1,9 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Administration
-description: 'standards/LocalAdministration/metadata/administrations/<name>.yaml: one settled system''s administration. It manages the land in its system.'
+description: 'standards/LocalAdministration/metadata/administrations/<name>.yaml: one settled system''s administration. It manages the land in its system. Its bodies are the records in the folder beside it, <name>/.'
 type: object
 additionalProperties: false
 required: [name, system]
 properties:
   name: { type: string }
   system: { type: string, description: The settled system it administers. }
-  bodies:
-    description: The bodies in its system that land is filed by.
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [name, kind]
-      properties:
-        name: { type: string }
-        kind: { enum: [planet, moon, belt, settlement] }
-        at: { type: string, description: "The body it is at: a moon's planet, a settlement's planet or moon." }

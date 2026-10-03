@@ -1,12 +1,10 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Parcel
-description: 'standards/LandRegister/metadata/parcels/<name>.yaml: one piece of land and who owns it.'
+description: 'standards/LandRegister/metadata/parcels/<system>/<body>/<name>.yaml: one piece of land and who owns it. Its folders say where it is: the administration (system) and the body, by their file names in LocalAdministration.'
 type: object
 additionalProperties: false
-required: [name, administration, body, owner]
+required: [name, owner]
 properties:
   name: { type: string }
-  administration: { type: string, description: The administration that manages it (its file name in LocalAdministration). }
-  body: { type: string, description: The body it is on or at (one of its administration's bodies). }
   place: { type: string, description: Where on the body. }
-  owner: { type: string, pattern: '^(brand|body)\.[a-z0-9_]+$', description: Who owns it (a company in Maker House, or a standards body). }
+  owner: { type: string, pattern: '^(brand|body)\.[a-z0-9_]+$', description: 'Who owns it (a company in Maker House, or a standards body).' }

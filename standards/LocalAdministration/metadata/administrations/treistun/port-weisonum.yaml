@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Port Weisonum"
+kind: settlement
+at: Treistun h II

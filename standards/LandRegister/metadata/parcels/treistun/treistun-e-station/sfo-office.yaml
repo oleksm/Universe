@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../../../../schema/parcel.schema.yaml
+name: SFO office
+owner: body.sfo

@@ -1,0 +1,10 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Body
+description: 'standards/LocalAdministration/metadata/administrations/<system>/<name>.yaml: one body in a system, that land is filed by.'
+type: object
+additionalProperties: false
+required: [name, kind]
+properties:
+  name: { type: string }
+  kind: { enum: [planet, moon, belt, settlement] }
+  at: { type: string, description: "The body it is at: a moon's planet, a settlement's planet or moon." }

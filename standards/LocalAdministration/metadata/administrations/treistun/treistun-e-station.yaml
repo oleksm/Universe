@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Treistun e Station"
+kind: settlement
+at: Treistun e
