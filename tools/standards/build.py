@@ -136,8 +136,8 @@ for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
     if not os.path.isdir(folder) or name == "schema":
         continue
-    # (The body's own file: named after its folder, FSO/FSO.yaml.)
-    meta_path = os.path.join(folder, name + ".yaml")
+    # (The body's own file: named after its folder, FSO/metadata/FSO.yaml.)
+    meta_path = os.path.join(folder, "metadata", name + ".yaml")
     if not os.path.exists(meta_path):
         problem(folder, f"a body's folder needs {name}.yaml")
         continue
@@ -162,6 +162,8 @@ for name in sorted(os.listdir(TREE)):
     records = os.path.join(folder, "metadata")
     for name in sorted(os.listdir(records)) if os.path.isdir(records) else []:
         full = os.path.join(records, name)
+        if name == os.path.basename(folder) + ".yaml":
+            continue
         if os.path.isdir(full):
             problem(full, "no folders in metadata/: the records sit flat")
             continue

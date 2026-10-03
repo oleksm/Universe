@@ -11,9 +11,9 @@ it (`docs/standards.md` for what a standard is).
 ```
 standards/
   FSO/                          a body: its folder named after its prefix
-    FSO.yaml                  who it is (key, name, prefix, seat, kind, founded_by, about, note)
     schema/                     the schemas for the editor
     metadata/
+      FSO.yaml                  who it is
       0001-mining-ship.yaml     a record: NNNN-<slug>.yaml, its id "FSO 1"
 ```
 
