@@ -156,7 +156,7 @@ for name in sorted(os.listdir(makers_dir)):
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "ticker", "note", "who", "what", "story"}:
+        if k not in {"key", "name", "ticker", "note", "who", "what", "story", "slug", "file"}:
             problem(full, f"unknown field '{k}'")
     if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
         problem(full, "ticker: 2 to 4 capital letters")
@@ -167,6 +167,7 @@ for name in sorted(os.listdir(makers_dir)):
     if any(x.get("key") == m.get("key") for x in makers):
         problem(full, f"{m.get('key')} twice")
     m["file"] = os.path.relpath(full, TREE)
+    m["slug"] = name[:-5]
     makers.append(m)
 BRANDS = {m.get("key"): m.get("name") for m in makers}
 
@@ -380,6 +381,8 @@ def write_html():
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
         "house": house,
+        # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
+        "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},
         "makers": makers,
         "elements": elements,
         "materials": materials,

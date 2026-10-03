@@ -69,6 +69,11 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 .ico.big svg { width: 44px; height: 44px; }
 .ico.mid svg { width: 26px; height: 26px; }
 .row .ico { margin-right: 6px; }
+.logo { --logo-cut: var(--bg); display: inline-block; vertical-align: middle; line-height: 0; }
+.logo svg { width: 18px; height: 18px; }
+.logo.big svg { width: 96px; height: 96px; }
+.row .logo { --logo-cut: var(--nav); margin-right: 6px; }
+.row.sel .logo { --logo-cut: var(--sel); }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-width: none; margin: 6px 0 12px; }
 .gallery a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; background: var(--tbl); border: 1px solid var(--tline); border-radius: 4px; text-align: center; color: var(--text); font-size: 12px; letter-spacing: 0; }
 .gallery a:hover { border-color: var(--head); text-decoration: none; }
@@ -152,6 +157,7 @@ const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
 const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length;
 // An element or material named in a process: a link to it.
 const elTile = (e, small) => { const i = e.identity; const c = "c-" + (i.category || "unknown").replace(/[^a-z]+/g, "-"); return small ? `<span class="tile small ${c}"><span class="sy">${esc(i.symbol)}</span></span>` : `<span class="tile ${c}"><span class="z">${i.atomic_number}</span><span class="sy">${esc(i.symbol)}</span></span>`; };
+const logo = (slug, cls) => DATA.logos[slug] ? `<span class="logo ${cls || ""}">${DATA.logos[slug]}</span>` : "";
 const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""} ${procBySlug[slug] ? "k-" + procBySlug[slug].identity.kind : matBySlug[slug] ? "m-" + matBySlug[slug].identity.class : ""}">${DATA.icons[slug]}</span>` : "";
 // The kind of process shown in a record's gallery and table (all, or one kind).
 let kindShown = "all";
@@ -207,7 +213,7 @@ function rows(q) {
   // Maker House: the makers under it.
   const mq = m => !q || q.split(/\s+/).every(w => `${m.name} ${m.ticker} ${m.note} ${m.who || ""} ${m.what || ""}`.toLowerCase().includes(w));
   out.push({ k: "mh", depth: 0, kind: "body", label: DATA.house.name, n: DATA.makers.length });
-  if (open.has("mh") || q) for (const m of DATA.makers.filter(mq)) out.push({ k: "mk:" + m.key, depth: 1, kind: "maker", label: m.name, ticker: m.ticker });
+  if (open.has("mh") || q) for (const m of DATA.makers.filter(mq)) out.push({ k: "mk:" + m.key, depth: 1, kind: "maker", label: m.name, ticker: m.ticker, slug: m.slug });
   return out;
 }
 
@@ -254,7 +260,7 @@ function render() {
     } else {
       const cls = n.kind === "body" ? " body" : "";
       const count = n.n !== undefined ? ` <span class="n">(${n.n})</span>` : "";
-      html += `<div class="row${cls}${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.title || n.label)}"><span class="tw">${tw}</span>${esc(n.label)}${n.ticker ? ` <span class="n">${esc(n.ticker)}</span>` : ""}${count}</div>`;
+      html += `<div class="row${cls}${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.title || n.label)}"><span class="tw">${tw}</span>${n.slug ? logo(n.slug) : ""}${esc(n.label)}${n.ticker ? ` <span class="n">${esc(n.ticker)}</span>` : ""}${count}</div>`;
     }
   }
   document.getElementById("tree").innerHTML = html;
@@ -306,10 +312,10 @@ function detail(k) {
     if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
     return h;
   }
-  if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div><a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
+  if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div>${logo(m.slug)} <a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
-    return `<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
+    return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
   }
   if (kind === "g") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
