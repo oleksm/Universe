@@ -245,7 +245,7 @@ pub fn key(act: Act) -> String {
 /// The keys that aren't letters by name: (key, what, where).
 pub const FIXED: &[(&str, &str, Scope)] = &[
     ("F1", "HELP", Scope::Global),
-    ("TAB", "VIEW: COCKPIT, CHASE, WATCH", Scope::Global),
+    ("TAB", "VIEW: THE SHIP (CHASE) OR WATCH", Scope::Global),
     ("BKSP", "RESPAWN AT HOME", Scope::Global),
     ("F2 F4 F6", "LABELS, GRID, PAUSE", Scope::Global),
     ("F3 F5 F9", "DEBUG INFO, QUICKSAVE, LOAD", Scope::Global),

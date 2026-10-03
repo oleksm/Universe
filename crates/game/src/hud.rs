@@ -1619,7 +1619,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
     // The active mode's instruments (the mode bar at the top picks it).
     let anchored = matches!(ship.state, ShipState::Anchored { .. });
     let collide = if app.collision.as_ref().is_some_and(|p| p.collision.is_some()) { Lamp::Hot } else { on(a.collision_warning) };
-    let view = (if app.chase_cam { "CHASE" } else { "COCKPIT" }).to_string();
+    let view = "CHASE".to_string();
     let hyper = if flying || ship.hyperdrive { on(ship.hyperdrive) } else { Lamp::Unavailable };
     let let_go = if a.following.is_some() { Lamp::Off } else { Lamp::Unavailable };
     use crate::keys::{key, Act};
@@ -1755,7 +1755,7 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         (key(Act::Economy), "ECONOMY".into(), lamp(app.economy_panel.is_some())),
         ("F11".into(), "NEWS".into(), lamp(app.news_panel)),
         (key(Act::Shipyard), "SHIPYARD".into(), lamp(app.shipyard.is_some())),
-        ("TAB".into(), (if app.mode == Mode::Observer { "WATCH" } else if app.chase_cam { "CHASE" } else { "COCKPIT" }).into(), Lamp::Off),
+        ("TAB".into(), (if app.mode == Mode::Observer { "WATCH" } else { "CHASE" }).into(), Lamp::Off),
         ("F7".into(), "THRUST".into(), lamp(app.show_thrusters)),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
     ];

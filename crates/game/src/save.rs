@@ -88,7 +88,9 @@ pub fn load(app: &mut App) -> Result<(), String> {
     }
     app.mode = save.mode;
     app.warp_index = save.warp_index.min(crate::WARPS.len() - 1);
-    app.chase_cam = save.chase_cam;
+    // (The cockpit view is gone: always the ship, from behind.)
+    let _ = save.chase_cam;
+    app.chase_cam = true;
     app.observer = save.observer;
     app.explored.extend(save.explored);
     app.plans = save.plans;
