@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Standing
+purpose: Standing is a place's memory of how you've behaved there. Its purpose is to let strangers deal with each other safely in a big, open space where nobody can watch everyone.
+details:
+  text:
+    - "Why a civilisation needs it:"
+    - "- Trust between strangers: a port can't vet every arriving ship, but it can remember what that pilot did before. Good conduct earns access; harm closes doors."
+    - "- Consequences without walls: nobody stops you from going anywhere or doing anything, but what you do follows you. Freedom stays, and so does accountability."
+    - "- Law that scales: an authority can't police every corner of a system, but it can refuse service, refuse docking, and in the end defend itself. Standing tells it when to."
+    - "- Protection for the innocent: it makes attacking peaceful ships costly, so honest traders and miners can work."
+    - "- Room to redeem: standing is earned and lost through deeds, so people can change."
+    - "It's local: each settled system's authority keeps its own record, from what it hears of. Information travels physically, so news of what you did reaches a place only as fast as it can. That leaves room for a fresh start far away, and for a bad name that hasn't caught up with you yet."
