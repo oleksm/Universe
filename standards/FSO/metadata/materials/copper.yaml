@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: our element record (Copper). A range there is given as its middle. null: not given there.
+# Data: our element record (Copper). A range there is given as its middle.
 identity:
   name: Copper
   class: metal
@@ -10,61 +10,19 @@ identity:
   - wire
   - sheet
   - tube
-  grade: null
 mass:
   density: 8933.0
 mechanical:
   youngs_modulus: 130.0
-  shear_modulus: null
-  poissons_ratio: null
-  yield_strength: null
   tensile_strength: 210
-  compressive_strength: null
-  shear_strength: null
-  elongation_at_break: null
   hardness: 3.0
-  fracture_toughness: null
-  impact_toughness: null
-  fatigue_limit: null
-  creep_resistance: null
-  wear_resistance: null
-  friction_coefficient: null
 thermal:
   melting_point: 1357.77
-  max_service_temperature: null
-  min_service_temperature: null
   thermal_conductivity: 400.0
   specific_heat_capacity: 384.4
   thermal_expansion: 1.65e-05
-  thermal_shock_resistance: null
-  emissivity: null
-  absorptivity: null
 electrical_magnetic:
   electrical_conductivity: 59000000.0
-  dielectric_strength: null
   magnetic: diamagnetic
-  superconducting_temperature: null
 optical:
-  transparency: null
-  refractive_index: null
-  reflectivity: null
   colour: red-orange metallic luster
-environment:
-  corrosion_resistance: null
-  oxidation_resistance: null
-  chemical_resistance: null
-  outgassing: null
-  radiation_resistance: null
-  radiation_shielding: null
-  uv_resistance: null
-  flammability: null
-  permeability: null
-  toxicity: null
-making:
-  formability: null
-  machinability: null
-  weldability: null
-  joining: []
-  castability: null
-  repairability: null
-  recyclability: null

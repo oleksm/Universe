@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Niobium
   symbol: Nb
@@ -22,8 +22,6 @@ atomic_structure:
   isotope_abundances:
   - mass_number: 93
     abundance: 1.0
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.6
   first_ionisation_energy: 652.1
@@ -44,7 +42,6 @@ physical:
   boiling_point: 5017.0
   density: 8570.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 26.8
   heat_of_vaporisation: 690.0
   vapour_pressure: 4.9e-108
@@ -56,11 +53,9 @@ electrical_magnetic:
   electrical_conductivity: 6700000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 9.25
-  band_gap: null
 mechanical:
   hardness: 6.0
   youngs_modulus: 105.0
-  tensile_strength: null
   ductility: very ductile
 optical_nuclear:
   colour: gray metallic, bluish when oxidized

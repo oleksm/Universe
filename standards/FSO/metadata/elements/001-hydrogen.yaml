@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Hydrogen
   symbol: H
@@ -17,15 +17,12 @@ atomic_structure:
   atomic_radius: 53.0
   covalent_radius: 31.0
   van_der_waals_radius: 120.0
-  ionic_radius: null
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 1
     abundance: 0.999855
   - mass_number: 2
     abundance: 0.000145
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.2
   first_ionisation_energy: 1312
@@ -50,21 +47,11 @@ physical:
   - dihydrogen
   heat_of_fusion: 0.558
   heat_of_vaporisation: 0.452
-  vapour_pressure: null
 thermal:
   specific_heat_capacity: 14300.0
   thermal_conductivity: 0.1805
-  thermal_expansion: null
 electrical_magnetic:
-  electrical_conductivity: null
   magnetic_ordering: diamagnetic
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: colorless gas
   emission_lines:

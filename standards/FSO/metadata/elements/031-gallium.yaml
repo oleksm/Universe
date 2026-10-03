@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Gallium
   symbol: Ga
@@ -24,8 +24,6 @@ atomic_structure:
     abundance: 0.60108
   - mass_number: 71
     abundance: 0.39892
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.81
   first_ionisation_energy: 578.8
@@ -45,7 +43,6 @@ physical:
   boiling_point: 2477.0
   density: 5910.0
   crystal_structure: base orthorhombic
-  allotropes: []
   heat_of_fusion: 5.59
   heat_of_vaporisation: 256.0
   vapour_pressure: 2.5e-36
@@ -57,12 +54,8 @@ electrical_magnetic:
   electrical_conductivity: 7100000.0
   magnetic_ordering: diamagnetic
   superconducting_temperature: 1.083
-  band_gap: null
 mechanical:
   hardness: 1.5
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: silver-white
   emission_lines:

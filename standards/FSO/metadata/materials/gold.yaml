@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: our element record (Gold). A range there is given as its middle. null: not given there.
+# Data: our element record (Gold). A range there is given as its middle.
 identity:
   name: Gold
   class: metal
@@ -8,61 +8,19 @@ identity:
     share: 1.0
   form:
   - film
-  grade: null
 mass:
   density: 19280.0
 mechanical:
   youngs_modulus: 78.0
-  shear_modulus: null
-  poissons_ratio: null
-  yield_strength: null
   tensile_strength: 100
-  compressive_strength: null
-  shear_strength: null
-  elongation_at_break: null
   hardness: 2.5
-  fracture_toughness: null
-  impact_toughness: null
-  fatigue_limit: null
-  creep_resistance: null
-  wear_resistance: null
-  friction_coefficient: null
 thermal:
   melting_point: 1337.33
-  max_service_temperature: null
-  min_service_temperature: null
   thermal_conductivity: 320.0
   specific_heat_capacity: 129.1
   thermal_expansion: 1.42e-05
-  thermal_shock_resistance: null
-  emissivity: null
-  absorptivity: null
 electrical_magnetic:
   electrical_conductivity: 45000000.0
-  dielectric_strength: null
   magnetic: diamagnetic
-  superconducting_temperature: null
 optical:
-  transparency: null
-  refractive_index: null
-  reflectivity: null
   colour: metallic yellow
-environment:
-  corrosion_resistance: null
-  oxidation_resistance: null
-  chemical_resistance: null
-  outgassing: null
-  radiation_resistance: null
-  radiation_shielding: null
-  uv_resistance: null
-  flammability: null
-  permeability: null
-  toxicity: null
-making:
-  formability: null
-  machinability: null
-  weldability: null
-  joining: []
-  castability: null
-  repairability: null
-  recyclability: null

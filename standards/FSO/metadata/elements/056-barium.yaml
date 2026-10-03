@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Barium
   symbol: Ba
@@ -34,8 +34,6 @@ atomic_structure:
     abundance: 0.1123
   - mass_number: 138
     abundance: 0.717
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 0.89
   first_ionisation_energy: 502.9
@@ -55,7 +53,6 @@ physical:
   boiling_point: 2170.0
   density: 3620.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 8.0
   heat_of_vaporisation: 140.0
   vapour_pressure: 1.6e-17
@@ -66,12 +63,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 2900000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 1.25
   youngs_modulus: 13.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silver

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Strontium
   symbol: Sr
@@ -28,8 +28,6 @@ atomic_structure:
     abundance: 0.07
   - mass_number: 88
     abundance: 0.8258
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 0.95
   first_ionisation_energy: 549.5
@@ -49,7 +47,6 @@ physical:
   boiling_point: 1655.0
   density: 2640.0
   crystal_structure: face-centered cubic
-  allotropes: []
   heat_of_fusion: 8.0
   heat_of_vaporisation: 137.0
   vapour_pressure: 7.5e-18
@@ -60,13 +57,8 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 7700000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 1.5
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: silver
   emission_lines:

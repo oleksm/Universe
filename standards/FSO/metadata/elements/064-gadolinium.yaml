@@ -1,13 +1,12 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Gadolinium
   symbol: Gd
   atomic_number: 64
   atomic_mass: 157.25
-  group: null
   period: 6
   block: f
   category: lanthanide
@@ -34,8 +33,6 @@ atomic_structure:
     abundance: 0.2484
   - mass_number: 160
     abundance: 0.2186
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.2
   first_ionisation_energy: 593.4
@@ -55,7 +52,6 @@ physical:
   boiling_point: 3546.0
   density: 7900.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 10.0
   heat_of_vaporisation: 305.0
   vapour_pressure: 1.7e-39
@@ -66,12 +62,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 770000.0
   magnetic_ordering: ferromagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 5.13
   youngs_modulus: 55.0
-  tensile_strength: null
   ductility: brittle
 optical_nuclear:
   colour: silvery white

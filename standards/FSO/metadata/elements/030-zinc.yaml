@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Zinc
   symbol: Zn
@@ -30,8 +30,6 @@ atomic_structure:
     abundance: 0.1845
   - mass_number: 70
     abundance: 0.0061
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.65
   first_ionisation_energy: 906.4
@@ -51,7 +49,6 @@ physical:
   boiling_point: 1180.0
   density: 7134.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 7.35
   heat_of_vaporisation: 119.0
   vapour_pressure: 2.1e-12
@@ -63,7 +60,6 @@ electrical_magnetic:
   electrical_conductivity: 17000000.0
   magnetic_ordering: diamagnetic
   superconducting_temperature: 0.85
-  band_gap: null
 mechanical:
   hardness: 2.5
   youngs_modulus: 108.0

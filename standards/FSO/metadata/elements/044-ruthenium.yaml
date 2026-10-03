@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Ruthenium
   symbol: Ru
@@ -34,8 +34,6 @@ atomic_structure:
     abundance: 0.3155
   - mass_number: 104
     abundance: 0.1862
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.2
   first_ionisation_energy: 710.2
@@ -55,7 +53,6 @@ physical:
   boiling_point: 4423.0
   density: 12100.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 25.7
   heat_of_vaporisation: 580.0
   vapour_pressure: 1.5e-97
@@ -67,11 +64,9 @@ electrical_magnetic:
   electrical_conductivity: 14000000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 0.49
-  band_gap: null
 mechanical:
   hardness: 6.5
   youngs_modulus: 447.0
-  tensile_strength: null
   ductility: brittle
 optical_nuclear:
   colour: silvery white metallic

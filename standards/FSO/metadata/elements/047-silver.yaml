@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Silver
   symbol: Ag
@@ -24,8 +24,6 @@ atomic_structure:
     abundance: 0.51839
   - mass_number: 109
     abundance: 0.48161
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.93
   first_ionisation_energy: 731
@@ -45,7 +43,6 @@ physical:
   boiling_point: 2435.0
   density: 10500.0
   crystal_structure: face-centered cubic
-  allotropes: []
   heat_of_fusion: 11.3
   heat_of_vaporisation: 255.0
   vapour_pressure: 1.2e-36
@@ -56,8 +53,6 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 62000000.0
   magnetic_ordering: diamagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 2.5
   youngs_modulus: 85.0

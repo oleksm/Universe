@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Cadmium
   symbol: Cd
@@ -36,8 +36,6 @@ atomic_structure:
     abundance: 0.28754
   - mass_number: 116
     abundance: 0.07512
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.69
   first_ionisation_energy: 867.8
@@ -57,7 +55,6 @@ physical:
   boiling_point: 1040.0
   density: 8690.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 6.3
   heat_of_vaporisation: 100.0
   vapour_pressure: 2.8e-09
@@ -69,11 +66,9 @@ electrical_magnetic:
   electrical_conductivity: 14000000.0
   magnetic_ordering: diamagnetic
   superconducting_temperature: 0.517
-  band_gap: null
 mechanical:
   hardness: 2.0
   youngs_modulus: 50.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silvery bluish-gray metallic

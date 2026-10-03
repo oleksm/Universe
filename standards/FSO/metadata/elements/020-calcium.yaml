@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Calcium
   symbol: Ca
@@ -32,8 +32,6 @@ atomic_structure:
     abundance: 4.0e-05
   - mass_number: 48
     abundance: 0.00187
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.0
   first_ionisation_energy: 589.8
@@ -53,7 +51,6 @@ physical:
   boiling_point: 1757.0
   density: 1540.0
   crystal_structure: face-centered cubic
-  allotropes: []
   heat_of_fusion: 8.54
   heat_of_vaporisation: 155.0
   vapour_pressure: 1.9e-20
@@ -64,12 +61,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 29000000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 1.75
   youngs_modulus: 20.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silver

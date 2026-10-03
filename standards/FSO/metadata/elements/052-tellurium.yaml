@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Tellurium
   symbol: Te
@@ -36,8 +36,6 @@ atomic_structure:
     abundance: 0.3174
   - mass_number: 130
     abundance: 0.3408
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.1
   first_ionisation_energy: 869.3
@@ -59,23 +57,19 @@ physical:
   boiling_point: 1261.0
   density: 6232.0
   crystal_structure: simple trigonal
-  allotropes: []
   heat_of_fusion: 17.5
   heat_of_vaporisation: 48.0
   vapour_pressure: 7.9e-11
 thermal:
   specific_heat_capacity: 201.0
   thermal_conductivity: 3.0
-  thermal_expansion: null
 electrical_magnetic:
   electrical_conductivity: 10000.0
   magnetic_ordering: diamagnetic
-  superconducting_temperature: null
   band_gap: 0.33
 mechanical:
   hardness: 2.25
   youngs_modulus: 43.0
-  tensile_strength: null
   ductility: very ductile
 optical_nuclear:
   colour: silver

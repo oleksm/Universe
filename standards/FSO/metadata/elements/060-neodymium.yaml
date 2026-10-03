@@ -1,13 +1,12 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Neodymium
   symbol: Nd
   atomic_number: 60
   atomic_mass: 144.24
-  group: null
   period: 6
   block: f
   category: lanthanide
@@ -34,8 +33,6 @@ atomic_structure:
     abundance: 0.05756
   - mass_number: 150
     abundance: 0.05638
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.14
   first_ionisation_energy: 533.1
@@ -55,7 +52,6 @@ physical:
   boiling_point: 3347.0
   density: 7010.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 7.1
   heat_of_vaporisation: 285.0
   vapour_pressure: 7.8e-44
@@ -66,12 +62,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 1600000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 1.23
   youngs_modulus: 41.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silvery white

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Tin
   symbol: Sn
@@ -40,8 +40,6 @@ atomic_structure:
     abundance: 0.0463
   - mass_number: 124
     abundance: 0.0579
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.96
   first_ionisation_energy: 708.6
@@ -54,7 +52,6 @@ chemical:
     water: none
     acids: slow
   bond_type: metallic
-  standard_electrode_potential: null
   flammable: false
 physical:
   phase: solid
@@ -76,7 +73,6 @@ electrical_magnetic:
   electrical_conductivity: 9100000.0
   magnetic_ordering: diamagnetic
   superconducting_temperature: 3.72
-  band_gap: null
 mechanical:
   hardness: 1.5
   youngs_modulus: 50.0

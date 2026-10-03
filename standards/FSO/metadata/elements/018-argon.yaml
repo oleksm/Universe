@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Argon
   symbol: Ar
@@ -17,7 +17,6 @@ atomic_structure:
   atomic_radius: 71.0
   covalent_radius: 106.0
   van_der_waals_radius: 188.0
-  ionic_radius: null
   stable_isotopes: 3
   isotope_abundances:
   - mass_number: 36
@@ -26,10 +25,7 @@ atomic_structure:
     abundance: 0.000629
   - mass_number: 40
     abundance: 0.996035
-  half_life: null
-  decay_mode: null
 chemical:
-  electronegativity: null
   first_ionisation_energy: 1520.6
   electron_affinity: -96
   oxidation_states:
@@ -39,7 +35,6 @@ chemical:
     water: none
     acids: none
   bond_type: none
-  standard_electrode_potential: null
   flammable: false
 physical:
   phase: gas
@@ -47,24 +42,13 @@ physical:
   boiling_point: 87.3
   density: 1.784
   crystal_structure: face-centered cubic
-  allotropes: []
   heat_of_fusion: 1.18
   heat_of_vaporisation: 6.5
-  vapour_pressure: null
 thermal:
   specific_heat_capacity: 520.33
   thermal_conductivity: 0.01772
-  thermal_expansion: null
 electrical_magnetic:
-  electrical_conductivity: null
   magnetic_ordering: diamagnetic
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: colorless gas exhibiting a lilac/violet glow when placed in a high voltage electric field
   emission_lines:

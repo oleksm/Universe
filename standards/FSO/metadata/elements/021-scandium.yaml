@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Scandium
   symbol: Sc
@@ -22,8 +22,6 @@ atomic_structure:
   isotope_abundances:
   - mass_number: 45
     abundance: 1.0
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.36
   first_ionisation_energy: 633.1
@@ -43,7 +41,6 @@ physical:
   boiling_point: 3109.0
   density: 2990.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 16.0
   heat_of_vaporisation: 318.0
   vapour_pressure: 5.6e-52
@@ -55,11 +52,8 @@ electrical_magnetic:
   electrical_conductivity: 1800000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 0.05
-  band_gap: null
 mechanical:
-  hardness: null
   youngs_modulus: 74.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silvery white

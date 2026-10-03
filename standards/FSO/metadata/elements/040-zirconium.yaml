@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Zirconium
   symbol: Zr
@@ -30,8 +30,6 @@ atomic_structure:
     abundance: 0.1738
   - mass_number: 96
     abundance: 0.028
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.33
   first_ionisation_energy: 640.1
@@ -51,7 +49,6 @@ physical:
   boiling_point: 4682.0
   density: 6520.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 21.0
   heat_of_vaporisation: 580.0
   vapour_pressure: 8.5e-91
@@ -63,12 +60,9 @@ electrical_magnetic:
   electrical_conductivity: 2400000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 0.61
-  band_gap: null
 mechanical:
   hardness: 5.0
   youngs_modulus: 67.0
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: silvery white
   emission_lines:

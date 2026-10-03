@@ -1,13 +1,12 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Promethium
   symbol: Pm
   atomic_number: 61
   atomic_mass: 144.91276
-  group: null
   period: 6
   block: f
   category: lanthanide
@@ -19,11 +18,9 @@ atomic_structure:
   van_der_waals_radius: 236.0
   ionic_radius: 97.0
   stable_isotopes: 0
-  isotope_abundances: []
   half_life: 559383000.0
   decay_mode: electron capture
 chemical:
-  electronegativity: null
   first_ionisation_energy: 540
   electron_affinity: 12.45
   oxidation_states:
@@ -40,24 +37,15 @@ physical:
   melting_point: 1315.0
   boiling_point: 3273.0
   density: 7260.0
-  crystal_structure: null
-  allotropes: []
   heat_of_fusion: 7.7
   heat_of_vaporisation: 290.0
-  vapour_pressure: null
 thermal:
-  specific_heat_capacity: null
   thermal_conductivity: 15.0
   thermal_expansion: 1.1e-05
 electrical_magnetic:
   electrical_conductivity: 1300000.0
-  magnetic_ordering: null
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
-  hardness: null
   youngs_modulus: 46.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: metallic

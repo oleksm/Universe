@@ -1,25 +1,20 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Nobelium
   symbol: 'No'
   atomic_number: 102
   atomic_mass: 259.101
-  group: null
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f14 7s2'
   valence_electrons: 16
-  atomic_radius: null
-  covalent_radius: null
-  van_der_waals_radius: null
   ionic_radius: 108.5
   stable_isotopes: 0
-  isotope_abundances: []
   half_life: 10000.0
   decay_mode: alpha
 chemical:
@@ -29,38 +24,8 @@ chemical:
   oxidation_states:
   - 3
   - 2
-  reactivity:
-    air: null
-    water: null
-    acids: null
   bond_type: metallic
   standard_electrode_potential: -2.5
-  flammable: null
 physical:
   phase: solid
   melting_point: 1100.0
-  boiling_point: null
-  density: null
-  crystal_structure: null
-  allotropes: []
-  heat_of_fusion: null
-  heat_of_vaporisation: null
-  vapour_pressure: null
-thermal:
-  specific_heat_capacity: null
-  thermal_conductivity: null
-  thermal_expansion: null
-electrical_magnetic:
-  electrical_conductivity: null
-  magnetic_ordering: null
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
-optical_nuclear:
-  colour: null
-  emission_lines: []
-  neutron_cross_section: null

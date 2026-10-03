@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Mercury
   symbol: Hg
@@ -34,8 +34,6 @@ atomic_structure:
     abundance: 0.2974
   - mass_number: 204
     abundance: 0.0682
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.0
   first_ionisation_energy: 1007.1
@@ -56,7 +54,6 @@ physical:
   boiling_point: 629.88
   density: 13530.0
   crystal_structure: simple trigonal
-  allotropes: []
   heat_of_fusion: 2.29
   heat_of_vaporisation: 59.2
   vapour_pressure: 0.27
@@ -68,12 +65,6 @@ electrical_magnetic:
   electrical_conductivity: 1000000.0
   magnetic_ordering: diamagnetic
   superconducting_temperature: 4.154
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: silvery
   emission_lines:

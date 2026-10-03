@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Cesium
   symbol: Cs
@@ -22,8 +22,6 @@ atomic_structure:
   isotope_abundances:
   - mass_number: 133
     abundance: 1.0
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 0.79
   first_ionisation_energy: 375.7
@@ -43,24 +41,18 @@ physical:
   boiling_point: 944.0
   density: 1930.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 2.09
   heat_of_vaporisation: 64.0
   vapour_pressure: 0.0002
 thermal:
   specific_heat_capacity: 242.0
   thermal_conductivity: 36.0
-  thermal_expansion: null
 electrical_magnetic:
   electrical_conductivity: 5000000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 0.2
   youngs_modulus: 1.7
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: silvery gold
   emission_lines:

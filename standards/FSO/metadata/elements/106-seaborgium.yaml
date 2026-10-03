@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Seaborgium
   symbol: Sg
@@ -14,56 +14,16 @@ identity:
 atomic_structure:
   electron_configuration: '[Rn] 5f14 6d4 7s2'
   valence_electrons: 6
-  atomic_radius: null
-  covalent_radius: null
-  van_der_waals_radius: null
-  ionic_radius: null
   stable_isotopes: 0
-  isotope_abundances: []
   half_life: 7000.0
   decay_mode: alpha
 chemical:
-  electronegativity: null
-  first_ionisation_energy: null
-  electron_affinity: null
   oxidation_states:
   - 6
   - 5
   - 4
   - 3
   - 0
-  reactivity:
-    air: null
-    water: null
-    acids: null
   bond_type: metallic
-  standard_electrode_potential: null
-  flammable: null
 physical:
   phase: solid
-  melting_point: null
-  boiling_point: null
-  density: null
-  crystal_structure: null
-  allotropes: []
-  heat_of_fusion: null
-  heat_of_vaporisation: null
-  vapour_pressure: null
-thermal:
-  specific_heat_capacity: null
-  thermal_conductivity: null
-  thermal_expansion: null
-electrical_magnetic:
-  electrical_conductivity: null
-  magnetic_ordering: null
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
-optical_nuclear:
-  colour: null
-  emission_lines: []
-  neutron_cross_section: null

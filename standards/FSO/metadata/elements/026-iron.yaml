@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Iron
   symbol: Fe
@@ -28,8 +28,6 @@ atomic_structure:
     abundance: 0.02119
   - mass_number: 58
     abundance: 0.00282
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.83
   first_ionisation_energy: 762.5
@@ -50,7 +48,6 @@ physical:
   boiling_point: 3134.0
   density: 7874.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 13.8
   heat_of_vaporisation: 347.0
   vapour_pressure: 1.1e-56
@@ -61,8 +58,6 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 10000000.0
   magnetic_ordering: ferromagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 4.0
   youngs_modulus: 211.0

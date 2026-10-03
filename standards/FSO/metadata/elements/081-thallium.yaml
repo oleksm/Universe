@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Thallium
   symbol: Tl
@@ -24,8 +24,6 @@ atomic_structure:
     abundance: 0.29515
   - mass_number: 205
     abundance: 0.70485
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.62
   first_ionisation_energy: 589.4
@@ -46,7 +44,6 @@ physical:
   boiling_point: 1746.0
   density: 11800.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 4.2
   heat_of_vaporisation: 165.0
   vapour_pressure: 7.3e-21
@@ -58,11 +55,9 @@ electrical_magnetic:
   electrical_conductivity: 6700000.0
   magnetic_ordering: diamagnetic
   superconducting_temperature: 2.38
-  band_gap: null
 mechanical:
   hardness: 1.2
   youngs_modulus: 8.0
-  tensile_strength: null
   ductility: very ductile
 optical_nuclear:
   colour: silvery white

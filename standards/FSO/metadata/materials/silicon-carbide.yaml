@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: Wikipedia: Silicon carbide (6H). A range there is given as its middle. null: not given there.
+# Data: Wikipedia: Silicon carbide (6H). A range there is given as its middle.
 identity:
   name: Silicon carbide
   class: ceramic
@@ -11,61 +11,14 @@ identity:
   form:
   - plate
   - tile
-  grade: null
 mass:
   density: 3210.0
 mechanical:
-  youngs_modulus: null
-  shear_modulus: null
-  poissons_ratio: null
-  yield_strength: null
-  tensile_strength: null
-  compressive_strength: null
-  shear_strength: null
-  elongation_at_break: null
   hardness: 9.25
-  fracture_toughness: null
-  impact_toughness: null
-  fatigue_limit: null
-  creep_resistance: null
-  wear_resistance: null
-  friction_coefficient: null
 thermal:
   melting_point: 3103.15
-  max_service_temperature: null
-  min_service_temperature: null
   thermal_conductivity: 325.0
-  specific_heat_capacity: null
   thermal_expansion: 2.25e-06
-  thermal_shock_resistance: null
-  emissivity: null
-  absorptivity: null
-electrical_magnetic:
-  electrical_conductivity: null
-  dielectric_strength: null
-  magnetic: null
-  superconducting_temperature: null
 optical:
-  transparency: null
   refractive_index: 2.55
-  reflectivity: null
   colour: yellow to green to bluish-black
-environment:
-  corrosion_resistance: null
-  oxidation_resistance: null
-  chemical_resistance: null
-  outgassing: null
-  radiation_resistance: null
-  radiation_shielding: null
-  uv_resistance: null
-  flammability: null
-  permeability: null
-  toxicity: null
-making:
-  formability: null
-  machinability: null
-  weldability: null
-  joining: []
-  castability: null
-  repairability: null
-  recyclability: null

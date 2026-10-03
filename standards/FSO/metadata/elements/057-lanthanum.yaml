@@ -1,20 +1,18 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Lanthanum
   symbol: La
   atomic_number: 57
   atomic_mass: 138.9055
-  group: null
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 5d16s2'
   valence_electrons: 3
-  atomic_radius: null
   covalent_radius: 207.0
   van_der_waals_radius: 240.0
   ionic_radius: 103.2
@@ -24,8 +22,6 @@ atomic_structure:
     abundance: 0.0008881
   - mass_number: 139
     abundance: 0.999112
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.1
   first_ionisation_energy: 538.1
@@ -45,7 +41,6 @@ physical:
   boiling_point: 3737.0
   density: 6150.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 6.3
   heat_of_vaporisation: 400.0
   vapour_pressure: 1.4e-46
@@ -57,11 +52,9 @@ electrical_magnetic:
   electrical_conductivity: 1600000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 4.88
-  band_gap: null
 mechanical:
   hardness: 2.5
   youngs_modulus: 37.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silvery white

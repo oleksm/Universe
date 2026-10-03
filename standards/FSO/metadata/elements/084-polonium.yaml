@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Polonium
   symbol: Po
@@ -19,7 +19,6 @@ atomic_structure:
   van_der_waals_radius: 197.0
   ionic_radius: 94.0
   stable_isotopes: 0
-  isotope_abundances: []
   half_life: 3222210000.0
   decay_mode: alpha
 chemical:
@@ -50,18 +49,8 @@ physical:
   vapour_pressure: 2.9e-09
 thermal:
   specific_heat_capacity: 126.3
-  thermal_conductivity: null
-  thermal_expansion: null
 electrical_magnetic:
   electrical_conductivity: 2300000.0
-  magnetic_ordering: null
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: silvery
   emission_lines:

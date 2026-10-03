@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Iodine
   symbol: I
@@ -22,8 +22,6 @@ atomic_structure:
   isotope_abundances:
   - mass_number: 127
     abundance: 1.0
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.66
   first_ionisation_energy: 1008.4
@@ -54,17 +52,9 @@ physical:
 thermal:
   specific_heat_capacity: 429.0
   thermal_conductivity: 0.449
-  thermal_expansion: null
 electrical_magnetic:
   electrical_conductivity: 1.0e-07
   magnetic_ordering: diamagnetic
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: lustrous metallic gray, violet as a gas
   emission_lines:

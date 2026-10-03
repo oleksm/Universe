@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Bromine
   symbol: Br
@@ -24,8 +24,6 @@ atomic_structure:
     abundance: 0.5065
   - mass_number: 81
     abundance: 0.4935
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.96
   first_ionisation_energy: 1139.9
@@ -55,17 +53,9 @@ physical:
 thermal:
   specific_heat_capacity: 947.3
   thermal_conductivity: 0.12
-  thermal_expansion: null
 electrical_magnetic:
   electrical_conductivity: 1.0e-10
   magnetic_ordering: diamagnetic
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: red
   emission_lines:

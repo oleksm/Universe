@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Rhenium
   symbol: Re
@@ -24,8 +24,6 @@ atomic_structure:
     abundance: 0.374
   - mass_number: 187
     abundance: 0.626
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.9
   first_ionisation_energy: 760
@@ -47,7 +45,6 @@ physical:
   boiling_point: 5869.0
   density: 20800.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 33.0
   heat_of_vaporisation: 705.0
   vapour_pressure: 7.7e-118
@@ -59,11 +56,9 @@ electrical_magnetic:
   electrical_conductivity: 5600000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 1.7
-  band_gap: null
 mechanical:
   hardness: 7.0
   youngs_modulus: 463.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silvery-grayish

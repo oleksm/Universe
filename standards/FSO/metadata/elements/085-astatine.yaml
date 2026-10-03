@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Astatine
   symbol: At
@@ -19,7 +19,6 @@ atomic_structure:
   van_der_waals_radius: 202.0
   ionic_radius: 62.0
   stable_isotopes: 0
-  isotope_abundances: []
   half_life: 29000.0
   decay_mode: beta+
 chemical:
@@ -32,38 +31,15 @@ chemical:
   - 3
   - 1
   - -1
-  reactivity:
-    air: null
-    water: null
-    acids: null
   bond_type: covalent
-  standard_electrode_potential: null
-  flammable: null
 physical:
   phase: solid
   melting_point: 575.0
-  boiling_point: null
   density: 7000.0
-  crystal_structure: null
-  allotropes: []
   heat_of_fusion: 6.0
   heat_of_vaporisation: 40.0
   vapour_pressure: 0.0022
 thermal:
-  specific_heat_capacity: null
   thermal_conductivity: 2.0
-  thermal_expansion: null
-electrical_magnetic:
-  electrical_conductivity: null
-  magnetic_ordering: null
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: unknown, probably metallic
-  emission_lines: []
-  neutron_cross_section: null

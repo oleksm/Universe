@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Technetium
   symbol: Tc
@@ -19,7 +19,6 @@ atomic_structure:
   van_der_waals_radius: 209.0
   ionic_radius: 56.0
   stable_isotopes: 0
-  isotope_abundances: []
   half_life: 6661760000000.0
   decay_mode: beta-
 chemical:
@@ -35,7 +34,6 @@ chemical:
     water: none
     acids: none
   bond_type: metallic
-  standard_electrode_potential: null
   flammable: false
 physical:
   phase: solid
@@ -43,24 +41,16 @@ physical:
   boiling_point: 4538.0
   density: 11000.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 23.0
   heat_of_vaporisation: 550.0
   vapour_pressure: 2.0e-73
 thermal:
   specific_heat_capacity: 63.0
   thermal_conductivity: 51.0
-  thermal_expansion: null
 electrical_magnetic:
   electrical_conductivity: 5000000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 7.7
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: shiny gray metal
   emission_lines:

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Nickel
   symbol: Ni
@@ -30,8 +30,6 @@ atomic_structure:
     abundance: 0.036345
   - mass_number: 64
     abundance: 0.009256
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.91
   first_ionisation_energy: 737.1
@@ -52,7 +50,6 @@ physical:
   boiling_point: 3186.0
   density: 8912.0
   crystal_structure: face-centered cubic
-  allotropes: []
   heat_of_fusion: 17.2
   heat_of_vaporisation: 378.0
   vapour_pressure: 7.0e-59
@@ -63,8 +60,6 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 14000000.0
   magnetic_ordering: ferromagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 4.0
   youngs_modulus: 200.0

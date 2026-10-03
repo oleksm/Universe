@@ -1,13 +1,12 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Terbium
   symbol: Tb
   atomic_number: 65
   atomic_mass: 158.92535
-  group: null
   period: 6
   block: f
   category: lanthanide
@@ -22,10 +21,7 @@ atomic_structure:
   isotope_abundances:
   - mass_number: 159
     abundance: 1.0
-  half_life: null
-  decay_mode: null
 chemical:
-  electronegativity: null
   first_ionisation_energy: 565.8
   electron_affinity: 112.4
   oxidation_states:
@@ -43,7 +39,6 @@ physical:
   boiling_point: 3503.0
   density: 8230.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 10.8
   heat_of_vaporisation: 295.0
   vapour_pressure: 8.3e-53
@@ -54,12 +49,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 830000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 2.33
   youngs_modulus: 56.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silvery white

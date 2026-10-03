@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Sodium
   symbol: Na
@@ -22,8 +22,6 @@ atomic_structure:
   isotope_abundances:
   - mass_number: 23
     abundance: 1.0
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 0.93
   first_ionisation_energy: 495.8
@@ -43,7 +41,6 @@ physical:
   boiling_point: 1156.0
   density: 970.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 2.6
   heat_of_vaporisation: 97.7
   vapour_pressure: 3.9e-09
@@ -54,12 +51,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 21000000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 0.5
   youngs_modulus: 10.0
-  tensile_strength: null
   ductility: ductile
 optical_nuclear:
   colour: silvery white metallic

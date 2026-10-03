@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Lithium
   symbol: Li
@@ -24,8 +24,6 @@ atomic_structure:
     abundance: 0.0485
   - mass_number: 7
     abundance: 0.9515
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 0.98
   first_ionisation_energy: 520.2
@@ -45,7 +43,6 @@ physical:
   boiling_point: 1615.0
   density: 534.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 3.0
   heat_of_vaporisation: 147.0
   vapour_pressure: 1.5e-17
@@ -56,12 +53,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 11000000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 0.6
   youngs_modulus: 4.9
-  tensile_strength: null
   ductility: very ductile
 optical_nuclear:
   colour: silvery-white

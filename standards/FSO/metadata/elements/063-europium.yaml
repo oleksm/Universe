@@ -1,13 +1,12 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Europium
   symbol: Eu
   atomic_number: 63
   atomic_mass: 151.964
-  group: null
   period: 6
   block: f
   category: lanthanide
@@ -24,10 +23,7 @@ atomic_structure:
     abundance: 0.4781
   - mass_number: 153
     abundance: 0.5219
-  half_life: null
-  decay_mode: null
 chemical:
-  electronegativity: null
   first_ionisation_energy: 547.1
   electron_affinity: 11.2
   oxidation_states:
@@ -46,7 +42,6 @@ physical:
   boiling_point: 1802.0
   density: 5240.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 9.3
   heat_of_vaporisation: 175.0
   vapour_pressure: 5.2e-20
@@ -58,11 +53,9 @@ electrical_magnetic:
   electrical_conductivity: 1100000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 1.8
-  band_gap: null
 mechanical:
   hardness: 3.07
   youngs_modulus: 18.0
-  tensile_strength: null
   ductility: brittle
 optical_nuclear:
   colour: silver

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Xenon
   symbol: Xe
@@ -38,8 +38,6 @@ atomic_structure:
     abundance: 0.10436
   - mass_number: 136
     abundance: 0.08857
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.6
   first_ionisation_energy: 1170.4
@@ -51,7 +49,6 @@ chemical:
     water: none
     acids: none
   bond_type: none
-  standard_electrode_potential: null
   flammable: false
 physical:
   phase: gas
@@ -59,24 +56,13 @@ physical:
   boiling_point: 165.03
   density: 5.887
   crystal_structure: face-centered cubic
-  allotropes: []
   heat_of_fusion: 2.3
   heat_of_vaporisation: 12.64
-  vapour_pressure: null
 thermal:
   specific_heat_capacity: 158.32
   thermal_conductivity: 0.00565
-  thermal_expansion: null
 electrical_magnetic:
-  electrical_conductivity: null
   magnetic_ordering: diamagnetic
-  superconducting_temperature: null
-  band_gap: null
-mechanical:
-  hardness: null
-  youngs_modulus: null
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: colorless gas, exhibiting a blue glow when placed in a high voltage electric field
   emission_lines:

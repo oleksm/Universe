@@ -1,20 +1,18 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Uranium
   symbol: U
   atomic_number: 92
   atomic_mass: 238.0289
-  group: null
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f3 6d1 7s2'
   valence_electrons: 6
-  atomic_radius: null
   covalent_radius: 196.0
   van_der_waals_radius: 240.0
   ionic_radius: 73.0
@@ -50,7 +48,6 @@ physical:
   boiling_point: 4404.0
   density: 18950.0
   crystal_structure: base orthorhombic
-  allotropes: []
   heat_of_fusion: 14.0
   heat_of_vaporisation: 420.0
   vapour_pressure: 1.2e-73
@@ -62,11 +59,9 @@ electrical_magnetic:
   electrical_conductivity: 3600000.0
   magnetic_ordering: paramagnetic
   superconducting_temperature: 0.69
-  band_gap: null
 mechanical:
   hardness: 6.0
   youngs_modulus: 208.0
-  tensile_strength: null
   ductility: brittle
 optical_nuclear:
   colour: silver

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Manganese
   symbol: Mn
@@ -22,8 +22,6 @@ atomic_structure:
   isotope_abundances:
   - mass_number: 55
     abundance: 1.0
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.55
   first_ionisation_energy: 717.3
@@ -46,7 +44,6 @@ physical:
   boiling_point: 2334.0
   density: 7300.0
   crystal_structure: body-centered cubic
-  allotropes: []
   heat_of_fusion: 13.2
   heat_of_vaporisation: 220.0
   vapour_pressure: 5.0e-36
@@ -57,13 +54,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 620000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 6.0
   youngs_modulus: 198.0
-  tensile_strength: null
-  ductility: null
 optical_nuclear:
   colour: silvery metallic
   emission_lines:

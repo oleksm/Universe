@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: Wikipedia: A36 steel. A range there is given as its middle. null: not given there.
+# Data: Wikipedia: A36 steel. A range there is given as its middle.
 identity:
   name: Structural steel A36
   class: alloy
@@ -17,7 +17,6 @@ identity:
   form:
   - plate
   - bar
-  grade: null
 mass:
   density: 7800.0
 mechanical:
@@ -26,52 +25,5 @@ mechanical:
   poissons_ratio: 0.26
   yield_strength: 250.0
   tensile_strength: 475.0
-  compressive_strength: null
-  shear_strength: null
-  elongation_at_break: null
-  hardness: null
-  fracture_toughness: null
-  impact_toughness: null
-  fatigue_limit: null
-  creep_resistance: null
-  wear_resistance: null
-  friction_coefficient: null
-thermal:
-  melting_point: null
-  max_service_temperature: null
-  min_service_temperature: null
-  thermal_conductivity: null
-  specific_heat_capacity: null
-  thermal_expansion: null
-  thermal_shock_resistance: null
-  emissivity: null
-  absorptivity: null
 electrical_magnetic:
   electrical_conductivity: 7000000.0
-  dielectric_strength: null
-  magnetic: null
-  superconducting_temperature: null
-optical:
-  transparency: null
-  refractive_index: null
-  reflectivity: null
-  colour: null
-environment:
-  corrosion_resistance: null
-  oxidation_resistance: null
-  chemical_resistance: null
-  outgassing: null
-  radiation_resistance: null
-  radiation_shielding: null
-  uv_resistance: null
-  flammability: null
-  permeability: null
-  toxicity: null
-making:
-  formability: null
-  machinability: null
-  weldability: null
-  joining: []
-  castability: null
-  repairability: null
-  recyclability: null

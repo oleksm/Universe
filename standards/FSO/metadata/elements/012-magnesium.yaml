@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Magnesium
   symbol: Mg
@@ -26,8 +26,6 @@ atomic_structure:
     abundance: 0.10011
   - mass_number: 26
     abundance: 0.11025
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 1.31
   first_ionisation_energy: 737.7
@@ -47,7 +45,6 @@ physical:
   boiling_point: 1363.0
   density: 1740.0
   crystal_structure: simple hexagonal
-  allotropes: []
   heat_of_fusion: 8.7
   heat_of_vaporisation: 128.0
   vapour_pressure: 3.1e-15
@@ -58,12 +55,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 23000000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 2.5
   youngs_modulus: 45.0
-  tensile_strength: null
   ductility: very ductile
 optical_nuclear:
   colour: shiny grey solid

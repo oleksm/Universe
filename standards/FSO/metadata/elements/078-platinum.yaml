@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/element.schema.yaml
 # Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
-# strength, band gaps). null: no value, or none known. reactivity and flammable: rated by hand. See schema for the rest.
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
   name: Platinum
   symbol: Pt
@@ -32,8 +32,6 @@ atomic_structure:
     abundance: 0.25211
   - mass_number: 198
     abundance: 0.07356
-  half_life: null
-  decay_mode: null
 chemical:
   electronegativity: 2.28
   first_ionisation_energy: 870
@@ -54,7 +52,6 @@ physical:
   boiling_point: 4098.0
   density: 21460.0
   crystal_structure: face-centered cubic
-  allotropes: []
   heat_of_fusion: 20.0
   heat_of_vaporisation: 490.0
   vapour_pressure: 7.8e-80
@@ -65,12 +62,9 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 9400000.0
   magnetic_ordering: paramagnetic
-  superconducting_temperature: null
-  band_gap: null
 mechanical:
   hardness: 3.5
   youngs_modulus: 168.0
-  tensile_strength: null
   ductility: very ductile
 optical_nuclear:
   colour: silvery white
