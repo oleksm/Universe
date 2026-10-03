@@ -208,6 +208,7 @@ impl World {
         }
         let mut lasers = Vec::new();
         let mut fired = Vec::new();
+        let firing = universe_prof::scope("sim/combat/weapons/fire");
         for a in ships.iter_mut() {
             let ship = &mut *a.ship;
             // Nothing to do (most ships, most of the time): weapons safe, the
@@ -262,9 +263,10 @@ impl World {
         // The missiles in the air fly the frame; then the defence turrets'
         // guns and launchers, as their gunners have set them (what they
         // launch is where it is at the frame's end already: it flies from the next).
+        drop(firing);
         let mut hits: Vec<(usize, f64, DVec3, usize, &'static str)> = Vec::new(); // (ship id, joules, impulse, by, cause)
-        self.fly_missiles(ships, dt, &mut hits);
-        self.turrets_fire(dt, &mut fired);
+        universe_prof::time("sim/combat/weapons/missiles", || self.fly_missiles(ships, dt, &mut hits));
+        universe_prof::time("sim/combat/weapons/turrets", || self.turrets_fire(dt, &mut fired));
         if self.slugs.is_empty() && lasers.is_empty() && hits.is_empty() {
             self.slugs = fired;
             return;
@@ -285,7 +287,9 @@ impl World {
         let mut positions = Vec::new();
         let mut positioned = usize::MAX;
         let none = Vec::new();
+        let flying = universe_prof::scope("sim/combat/weapons/slugs");
         slugs.retain_mut(|slug| {
+            universe_prof::add("sim/combat/weapons/slugs/each", 0.0);
             let sys = self.system(slug.system);
             if positioned != slug.system {
                 sys.positions(t, &mut positions);
@@ -313,7 +317,9 @@ impl World {
         slugs.extend(fired);
         self.slugs = slugs;
 
+        drop(flying);
         // Beams.
+        let _p = universe_prof::scope("sim/combat/weapons/beams");
         for (owner, system, from, dir) in lasers {
             let sys = self.system(system);
             sys.positions(t, &mut positions);

@@ -27,6 +27,10 @@ use crate::world::World;
 pub const RESTITUTION: f64 = 0.3;
 /// Slower than this, touching ships just ease apart (m/s).
 const IMPACT: f64 = 0.5;
+/// From this many pairs a frame, their shapes are judged side by side
+/// (fewer aren't worth handing out).
+const SIDE_BY_SIDE: usize = 8;
+
 /// Did ships `a` and `b`, whose bounding spheres met `before_end` seconds
 /// before the end of the frame, touch? Each ship moves as it was, turned as
 /// it is now, so against the other each point of its surface (corners, the
@@ -192,31 +196,42 @@ impl World {
             let _p = universe_prof::scope("sim/combat/collisions/pairs");
             movers.into_par_iter().map(|m| { let c = contacts(&m, dt); (m, c) }).collect()
         };
-        let _p = universe_prof::scope("sim/combat/collisions/shapes");
-        for (movers, found) in found {
-            for c in found {
-                let (ma, mb) = (movers[c.a], movers[c.b]);
-                let (ia, ib) = (ma.id, mb.id);
-                // Their shapes: did they really meet, and which way?
-                let Some((normal, closing, gap)) = shapes_touch(ships[ia].ship, ships[ib].ship, c.before_end) else { continue };
-                let c = universe_physics::PairContact { normal, closing, ..c };
-                let (dva, dvb, lost) = bounce_pair(c.normal, c.closing, ma.mass, mb.mass, RESTITUTION);
-                let (ida, idb) = (ships[ia].id, ships[ib].id);
-                // Push apart to touching, the lighter (or free) one the more.
-                let (wa, wb) = (1.0 / ma.mass, 1.0 / mb.mass);
-                for (k, dv, w, other, sign) in [(ia, dva, wa, idb, 1.0), (ib, dvb, wb, ida, -1.0)] {
-                    let a = &mut ships[k];
-                    if w > 0.0 {
-                        a.ship.velocity += dv;
-                        if gap > 0.0 {
-                            a.ship.position += c.normal * (sign * gap * w / (wa + wb));
-                        }
+        // Every pair's shapes judged side by side (they only read the ships:
+        // each contact from where they all were at the end of their flight),
+        // then put right in order, one by one.
+        let pairs: Vec<(Mover, Mover, universe_physics::PairContact)> = found.iter().flat_map(|(movers, found)| found.iter().map(move |c| (movers[c.a], movers[c.b], *c))).collect();
+        let touched: Vec<Option<(DVec3, f64, f64)>> = {
+            let _p = universe_prof::scope("sim/combat/collisions/shapes");
+            let ships: &[Armed] = ships;
+            let judge = |&(ma, mb, c): &(Mover, Mover, universe_physics::PairContact)| universe_prof::time("sim/combat/collisions/shapes/pair", || shapes_touch(ships[ma.id].ship, ships[mb.id].ship, c.before_end));
+            if pairs.len() >= SIDE_BY_SIDE {
+                use rayon::prelude::*;
+                pairs.par_iter().map(judge).collect()
+            } else {
+                pairs.iter().map(judge).collect()
+            }
+        };
+        for ((ma, mb, c), touch) in pairs.into_iter().zip(touched) {
+            // Their shapes: did they really meet, and which way?
+            let Some((normal, closing, gap)) = touch else { continue };
+            let (ia, ib) = (ma.id, mb.id);
+            let c = universe_physics::PairContact { normal, closing, ..c };
+            let (dva, dvb, lost) = bounce_pair(c.normal, c.closing, ma.mass, mb.mass, RESTITUTION);
+            let (ida, idb) = (ships[ia].id, ships[ib].id);
+            // Push apart to touching, the lighter (or free) one the more.
+            let (wa, wb) = (1.0 / ma.mass, 1.0 / mb.mass);
+            for (k, dv, w, other, sign) in [(ia, dva, wa, idb, 1.0), (ib, dvb, wb, ida, -1.0)] {
+                let a = &mut ships[k];
+                if w > 0.0 {
+                    a.ship.velocity += dv;
+                    if gap > 0.0 {
+                        a.ship.position += c.normal * (sign * gap * w / (wa + wb));
                     }
-                    // Resting against each other is no impact.
-                    if c.closing >= IMPACT {
-                        a.events.push(ShipEvent::Collided { with: other, speed: c.closing });
-                        damage::hit(a.ship, lost * 0.5, DVec3::ZERO, other, "COLLISION", a.events);
-                    }
+                }
+                // Resting against each other is no impact.
+                if c.closing >= IMPACT {
+                    a.events.push(ShipEvent::Collided { with: other, speed: c.closing });
+                    damage::hit(a.ship, lost * 0.5, DVec3::ZERO, other, "COLLISION", a.events);
                 }
             }
         }
