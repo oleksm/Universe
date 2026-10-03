@@ -87,6 +87,12 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 .ptable .el .z { font-size: 10px; opacity: .8; display: block; }
 .ptable .el .sy { font-size: 16px; font-weight: 700; }
 .ptable .ph { height: 46px; font-size: 10px; color: var(--dim); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: 3px; }
+/* An element's icon: its tile from the periodic table. */
+.tile { display: inline-flex; flex-direction: column; justify-content: center; width: 46px; height: 46px; padding: 2px 4px; border-radius: 3px; color: #eef3f6; line-height: 1.15; vertical-align: middle; letter-spacing: 0; margin-right: 10px; }
+.tile .z { font-size: 10px; opacity: .8; font-weight: 400; }
+.tile .sy { font-size: 16px; font-weight: 700; }
+.tile.small { width: 22px; height: 18px; padding: 0; margin-right: 6px; align-items: center; }
+.tile.small .sy { font-size: 10px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; max-width: none; font-size: 12px; }
 .legend span i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; }
 .c-alkali-metal { background: #8a3f3f; } .c-alkaline-earth-metal { background: #8a643a; } .c-transition-metal { background: #3d5f86; }
@@ -141,6 +147,7 @@ const processesUnder = (id, q) => DATA.processes.filter(p => p.under === id && p
 const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
 const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length;
 // An element or material named in a process: a link to it.
+const elTile = (e, small) => { const i = e.identity; const c = "c-" + (i.category || "unknown").replace(/[^a-z]+/g, "-"); return small ? `<span class="tile small ${c}"><span class="sy">${esc(i.symbol)}</span></span>` : `<span class="tile ${c}"><span class="z">${i.atomic_number}</span><span class="sy">${esc(i.symbol)}</span></span>`; };
 const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""} ${procBySlug[slug] ? "k-" + procBySlug[slug].identity.kind : ""}">${DATA.icons[slug]}</span>` : "";
 // The kind of process shown in a record's gallery and table (all, or one kind).
 let kindShown = "all";
@@ -224,7 +231,7 @@ function render() {
     const tw = n.kind === "std" ? "" : (open.has(n.k) || q ? "▾" : "▸");
     if (n.kind === "el") {
       const i = n.el.identity;
-      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span><span class="n">${i.atomic_number}</span> <b>${esc(i.symbol)}</b> ${esc(i.name)}</div>`;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${elTile(n.el, true)}${esc(i.name)} <span class="n">${i.atomic_number}</span></div>`;
     } else if (n.kind === "mat") {
       const i = n.mat.identity;
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${esc(i.name)} <span class="n">${esc(i.class)}</span></div>`;
@@ -307,7 +314,7 @@ function detail(k) {
   if (kind === "el" || kind === "mat" || kind === "proc") {
     const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
-    let h = kind === "el" ? `<h2><span style="color:var(--id)">${i.atomic_number} ${esc(i.symbol)}</span> ${esc(i.name)}</h2>` : `<h2>${kind === "proc" ? icon(e.slug, "big") + " " : ""}${esc(i.name)}</h2>`;
+    let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${kind === "proc" ? icon(e.slug, "big") + " " : ""}${esc(i.name)}</h2>`;
     if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
     for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : DATA.process_groups)) {
