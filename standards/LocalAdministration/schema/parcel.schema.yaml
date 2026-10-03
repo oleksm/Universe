@@ -1,0 +1,9 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Parcel
+description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/<zone>/parcel-<number>.yaml: one piece of a zone, and who owns it.'
+type: object
+additionalProperties: false
+required: [number, owner]
+properties:
+  number: { type: integer, minimum: 1, description: Its number in its zone. }
+  owner: { type: string, pattern: '^(brand|body)\.[a-z0-9_]+$', description: 'Who owns it (a company in Maker House, or a standards body).' }

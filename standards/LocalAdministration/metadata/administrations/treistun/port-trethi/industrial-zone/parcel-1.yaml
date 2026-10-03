@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+number: 1
+owner: brand.hadley

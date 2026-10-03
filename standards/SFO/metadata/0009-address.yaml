@@ -11,6 +11,8 @@ details:
       - [Section, "A named or lettered area of a deck.", "Section C"]
       - [Deck, "A numbered level.", "Deck 7"]
       - [Tower, "A major part of the structure (a tower, a ring, an arm), usually with one main purpose.", "Habitation Tower"]
+      - [Parcel, "A numbered piece of a zone, with an owner.", "Parcel 1"]
+      - [Zone, "A part of a settlement set aside for one use.", "Industrial Zone"]
       - [Settlement, "The station, port or outpost.", "Treistun e Station"]
       - [Body, "The planet or moon the settlement is at. On a surface, with latitude and longitude.", "Treistun e"]
       - [System, "The star system.", "Treistun"]

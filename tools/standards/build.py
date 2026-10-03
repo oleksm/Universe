@@ -174,6 +174,7 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 # Local Administration: each settled system's, one file each
 # (LocalAdministration/metadata/administrations/<name>.yaml), to its administration.schema.yaml.
 LOCAL = "LocalAdministration"
+ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
 local = load(os.path.join(TREE, LOCAL, "metadata", LOCAL + ".yaml"))
 administrations = []
 adm_dir = os.path.join(TREE, LOCAL, "metadata", "administrations")
@@ -191,6 +192,9 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     bodies_dir = full[:-5]
     for bn in sorted(os.listdir(bodies_dir)) if os.path.isdir(bodies_dir) else []:
         bfull = os.path.join(bodies_dir, bn)
+        if os.path.isdir(bfull):
+            # (A settlement's zones: read with it, below.)
+            continue
         if not re.fullmatch(r"[a-z0-9-]+\.yaml", bn):
             problem(bfull, "a body's file is named <name>.yaml (lower case, words joined by -)")
             continue
@@ -199,10 +203,58 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "about", "story"}:
+            if k not in {"name", "kind", "at", "position", "about", "story", "zones"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
+        # (Its zones: one file each in the folder named after it; a zone's parcels in the folder
+        # named after the zone.)
+        zones_dir = bfull[:-5]
+        zones = []
+        for zn in sorted(os.listdir(zones_dir)) if os.path.isdir(zones_dir) else []:
+            zfull = os.path.join(zones_dir, zn)
+            if os.path.isdir(zfull):
+                continue
+            if not re.fullmatch(r"[a-z0-9-]+\.yaml", zn):
+                problem(zfull, "a zone's file is named <name>.yaml (lower case, words joined by -)")
+                continue
+            z = load(zfull)
+            for k in ["name", "use"]:
+                if k not in z:
+                    problem(zfull, f"no {k}")
+            for k in z:
+                if k not in {"name", "use"}:
+                    problem(zfull, f"unknown field '{k}'")
+            if z.get("use") not in ZONE_USES:
+                problem(zfull, f"use: one of {', '.join(ZONE_USES)}")
+            if x.get("kind") != "settlement":
+                problem(zfull, "zones belong to a settlement")
+            z["slug"] = zn[:-5]
+            z["file"] = os.path.relpath(zfull, TREE)
+            z["parcels"] = []
+            for pn in sorted(os.listdir(zfull[:-5])) if os.path.isdir(zfull[:-5]) else []:
+                pfull = os.path.join(zfull[:-5], pn)
+                m = re.fullmatch(r"parcel-([0-9]+)\.yaml", pn)
+                if not m:
+                    problem(pfull, "a parcel's file is named parcel-<number>.yaml")
+                    continue
+                pc = load(pfull)
+                for k in ["number", "owner"]:
+                    if k not in pc:
+                        problem(pfull, f"no {k}")
+                for k in pc:
+                    if k not in {"number", "owner"}:
+                        problem(pfull, f"unknown field '{k}'")
+                if pc.get("number") != int(m.group(1)):
+                    problem(pfull, f"number {pc.get('number')} in a file numbered {m.group(1)}")
+                if "owner" in pc and pc["owner"] not in BRANDS and not str(pc["owner"]).startswith("body."):
+                    problem(pfull, f"owner: no maker '{pc['owner']}' in Maker House")
+                pc["file"] = os.path.relpath(pfull, TREE)
+                z["parcels"].append(pc)
+            z["parcels"].sort(key=lambda pc: pc.get("number", 0))
+            zones.append(z)
+        if zones:
+            x["zones"] = zones
         ad["bodies"].append(x)
     for k in ["name"]:
         if k not in ad:

@@ -185,6 +185,7 @@ function matches(s, q) {
 }
 
 // Everyone with an address (SFO 9): standards bodies and makers.
+const ORGS_ALL = [...DATA.bodies.map(o => ({ key: o.key, name: o.name, to: "b:" + o.key })), ...DATA.makers.map(m => ({ key: m.key, name: m.name, to: "mk:" + m.key }))];
 const ORGS = [...DATA.bodies.map(o => ({ key: o.key, name: o.name, tag: o.prefix, to: "b:" + o.key, address: o.address })), ...DATA.makers.map(m => ({ key: m.key, name: m.name, tag: m.ticker, to: "mk:" + m.key, address: m.address, slug: m.slug })), ...DATA.administrations.map(a => ({ key: "adm." + a.slug, name: `Administration of ${a.name}`, tag: "", to: "ad:" + a.slug, address: a.address }))].filter(o => o.address && o.address.at);
 const placeOf = o => { const [sy, at] = o.address.at.split("/"); const a = DATA.administrations.find(x => x.slug === sy); const x = a && a.bodies.find(y => y.slug === at); return x ? { sy, at, a, x } : null; };
 const inside = ad => [ad.unit && `Unit ${ad.unit}`, ad.section && `Section ${ad.section}`, ad.deck && `Deck ${ad.deck}`, ad.tower].filter(Boolean);
@@ -192,6 +193,13 @@ const addressText = o => { const p = placeOf(o); return p ? [...inside(o.address
 const addressHtml = o => { const p = placeOf(o); if (!p) return ""; const ad = o.address;
   return [...inside(ad).map(esc), `<a data-k="${esc(`bd:${p.sy}:${p.at}`)}">${esc(p.x.name)}</a>`, p.x.at && esc(p.x.at), `<a data-k="${esc("ad:" + p.sy)}">${esc(p.a.name)}</a>`].filter(Boolean).join(", "); };
 const orgsAt = (sy, at) => ORGS.filter(o => o.address.at === `${sy}/${at}`).sort((p, r) => String(p.address.tower || "").localeCompare(String(r.address.tower || "")) || (p.address.deck || 0) - (r.address.deck || 0) || String(p.address.section || "").localeCompare(String(r.address.section || "")) || (p.address.unit || 0) - (r.address.unit || 0));
+
+// A parcel's owner, and its address: parcel, zone, settlement, what that is at, system.
+const ownerOf = k => ORGS_ALL.find(o => o.key === k) || { name: k, to: "" };
+const ownerLink = k => { const o = ownerOf(k); return o.to ? `<a data-k="${esc(o.to)}">${esc(o.name)}</a>` : esc(o.name); };
+const parcelKey = (a, x, z, p) => `pc:${a.slug}:${x.slug}:${z.slug}:${p.number}`;
+const parcelAddress = (a, x, z, p) => [`Parcel ${p.number}`, z.name, x.name, x.at, a.name].filter(Boolean).join(", ");
+const allParcels = () => DATA.administrations.flatMap(a => a.bodies.flatMap(x => (x.zones || []).flatMap(z => z.parcels.map(p => ({ a, x, z, p })))));
 
 // The tree as shown: each body, its standards under it.
 function rows(q) {
@@ -241,11 +249,18 @@ function rows(q) {
       for (const x of bodies.filter(x => (known(x.at) ? x.at : null) === at)) {
         const k = `bd:${a.slug}:${x.slug}`;
         const orgs = orgsAt(a.slug, x.slug);
-        const has = orgs.length > 0 || bodies.some(y => y.at === x.name);
+        const zones = x.zones || [];
+        const has = orgs.length > 0 || zones.length > 0 || bodies.some(y => y.at === x.name);
         if (q && !hit(x) && !has) continue;
         out.push({ k, depth, kind: "maker", label: x.name, ticker: x.at && !known(x.at) ? x.at : x.kind, leaf: !has });
         if (!has || !(open.has(k) || q)) continue;
         for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.tag, leaf: true });
+        // (Its zones, and each zone's parcels.)
+        for (const z of zones) {
+          const zk = `zn:${a.slug}:${x.slug}:${z.slug}`;
+          out.push({ k: zk, depth: depth + 1, kind: "maker", label: z.name, ticker: z.use, leaf: !z.parcels.length });
+          if (open.has(zk) || q) for (const p of z.parcels) out.push({ k: parcelKey(a, x, z, p), depth: depth + 2, kind: "maker", label: `Parcel ${p.number}`, ticker: ownerOf(p.owner).name, leaf: true });
+        }
         under(x.name, depth + 1);
       }
     };
@@ -254,12 +269,13 @@ function rows(q) {
   // The Address Registry: no records of its own, a reference to everything that has an address.
   const listed = addressed().filter(r => !q || q.split(/\s+/).every(w => `${r.who} ${r.address}`.toLowerCase().includes(w)));
   out.push({ k: "ar", depth: 0, kind: "body", label: "Address Registry", n: addressed().length });
-  if (open.has("ar") || q) for (const r of listed) out.push({ k: "ra:" + r.key, depth: 1, kind: "maker", label: r.who, ticker: r.tag });
+  if (open.has("ar") || q) for (const r of listed) out.push({ k: r.org ? "ra:" + r.key : "rp:" + r.key, depth: 1, kind: "maker", label: r.who, ticker: r.org ? r.tag : r.address.split(", ").slice(0, 3).join(", ") });
   return out;
 }
 // Everything with an address, spelled out.
 function addressed() {
-  return ORGS.filter(placeOf).map(o => ({ key: o.key, who: o.name, tag: o.tag, to: o.to, org: o, address: addressText(o) })).sort((p, r) => p.address.localeCompare(r.address, undefined, { numeric: true }));
+  const land = allParcels().map(({ a, x, z, p }) => ({ key: parcelKey(a, x, z, p).slice(3), who: ownerOf(p.owner).name, tag: "", to: parcelKey(a, x, z, p), html: `<a data-k="${esc(parcelKey(a, x, z, p))}">${esc(parcelAddress(a, x, z, p))}</a>`, whoTo: ownerOf(p.owner).to, address: parcelAddress(a, x, z, p) }));
+  return [...ORGS.filter(placeOf).map(o => ({ key: o.key, who: o.name, tag: o.tag, to: o.to, org: o, address: addressText(o) })), ...land].sort((p, r) => p.address.localeCompare(r.address, undefined, { numeric: true }));
 }
 
 let current = decodeURIComponent(location.hash.slice(1));
@@ -275,16 +291,17 @@ function reveal(k) {
     return;
   }
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
-  if (k.startsWith("ra:")) { open.add("ar"); keepOpen(); return; }
+  if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
-  if (k.startsWith("bd:") || k.startsWith("at:")) {
+  if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("zn:") || k.startsWith("pc:")) {
     const org = k.startsWith("at:") ? ORGS.find(o => o.key === k.slice(3)) : null;
     const [sy, slug] = org ? org.address.at.split("/") : k.split(":").slice(1);
     const a = DATA.administrations.find(x => x.slug === sy); if (!a) return;
     open.add("la"); open.add("ad:" + sy);
     // (Open the bodies above it; and itself and its tower, for what has its address there.)
     let x = a.bodies.find(y => y.slug === slug);
-    if (x && org) open.add(`bd:${sy}:${x.slug}`);
+    if (x && (org || k.startsWith("zn:") || k.startsWith("pc:"))) open.add(`bd:${sy}:${x.slug}`);
+    if (k.startsWith("pc:")) open.add(`zn:${k.split(":").slice(1, 4).join(":")}`);
     for (x = x && a.bodies.find(y => y.name === x.at); x; x = a.bodies.find(y => y.name === x.at)) open.add(`bd:${sy}:${x.slug}`);
     keepOpen(); return;
   }
@@ -358,8 +375,9 @@ function detail(k) {
   if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick something on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
+  if (kind === "rp") return detail("pc:" + rest.join(":"));
   if (kind === "at" || kind === "ra") { const o = ORGS.find(x => x.key === rest.join(":")); return o ? detail(o.to) : ""; }
-  if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${addressHtml(r.org)}</td><td><a data-k="${esc(r.to)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
+  if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${r.org ? addressHtml(r.org) : r.html}</td><td><a data-k="${esc(r.org ? r.to : r.whoTo)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
@@ -392,7 +410,15 @@ function detail(k) {
     const up = x.at && a.bodies.find(y => y.name === x.at);
     const here = a.bodies.filter(y => y.at === x.name);
     const orgs = orgsAt(a.slug, x.slug);
-    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Parcels</th></tr>` + x.zones.map(z => `<tr><td><a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a></td><td>${esc(z.use)}</td><td>${z.parcels.length || ""}</td></tr>`).join("") + `</table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+  }
+  if (kind === "zn" || kind === "pc") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const z = x && (x.zones || []).find(y => y.slug === rest[2]); if (!z) return "";
+    const where = `<a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
+    const zlink = `<a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a>`;
+    if (kind === "zn") return `<h2>${esc(z.name)}</h2><div class="meta">zone · ${esc(z.use)} · at ${where}</div><h3>Parcels</h3>` + (z.parcels.length ? `<table><tr><th>Parcel</th><th>Owner</th></tr>` + z.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, z, p))}">Parcel ${p.number}</a></td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet.</p>`) + `<div class="file" style="margin-top:24px">standards/${esc(z.file)}</div>`;
+    const p = z.parcels.find(y => String(y.number) === rest[3]); if (!p) return "";
+    return `<h2>Parcel ${p.number}</h2><div class="meta">parcel · zoned ${esc(z.use)}</div><h3>Address</h3><p>Parcel ${p.number}, ${zlink}, ${where}</p><h3>Owner</h3><p>${ownerLink(p.owner)}</p><div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";

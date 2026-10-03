@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../../../../schema/zone.schema.yaml
+name: Industrial Zone
+use: industrial
