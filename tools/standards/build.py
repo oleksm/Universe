@@ -220,50 +220,10 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     ad["slug"] = name[:-5]
     administrations.append(ad)
 
-# The Land Register: parcels of land, one file each (LandRegister/metadata/parcels/<name>.yaml),
-# to LandRegister/schema/parcel.schema.yaml. Each is owned by a company in Maker House.
-LAND = "LandRegister"
-land = load(os.path.join(TREE, LAND, "metadata", LAND + ".yaml"))
-parcels = []
-parcels_dir = os.path.join(TREE, LAND, "metadata", "parcels")
-# (Filed by system, then body: parcels/<system>/<body>/<name>.yaml.)
-for dirpath, dirs, files in os.walk(parcels_dir):
-    dirs.sort()
-    for name in sorted(files):
-        full = os.path.join(dirpath, name)
-        parts = os.path.relpath(full, parcels_dir).split(os.sep)
-        if len(parts) != 3 or not re.fullmatch(r"[a-z0-9-]+\.yaml", name):
-            problem(full, "a parcel is filed as parcels/<system>/<body>/<name>.yaml (lower case, words joined by -)")
-            continue
-        pc = load(full)
-        for k in ["name", "owner"]:
-            if k not in pc:
-                problem(full, f"no {k}")
-        for k in pc:
-            if k not in {"name", "position", "owner"}:
-                problem(full, f"unknown field '{k}'")
-        adm = next((a for a in administrations if a["slug"] == parts[0]), None)
-        if adm is None:
-            problem(full, f"no administration '{parts[0]}' in Local Administration")
-        of = next((x for x in (adm or {}).get("bodies") or [] if x.get("slug") == parts[1]), None)
-        if adm is not None and of is None:
-            problem(full, f"no body '{parts[1]}' among {adm.get('name')}'s bodies")
-        if "owner" in pc and pc["owner"] not in BRANDS and not str(pc["owner"]).startswith("body."):
-            problem(full, f"owner: no maker '{pc['owner']}' in Maker House")
-        pc["administration"] = parts[0]
-        pc["body"] = (of or {}).get("name", parts[1])
-        pc["body_kind"] = (of or {}).get("kind", "")
-        pc["body_slug"] = parts[1]
-        # (Its address, from where it is filed: parcel, body, what the body is at, system.)
-        pc["address"] = ", ".join(str(x) for x in [pc.get("name"), pc["body"], (of or {}).get("at"), (adm or {}).get("name")] if x)
-        pc["file"] = os.path.relpath(full, TREE)
-        pc["slug"] = "/".join(parts)[:-5]
-        parcels.append(pc)
-
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", HOUSE, LAND, LOCAL):
+    if not os.path.isdir(folder) or name in ("schema", HOUSE, LOCAL):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -470,10 +430,8 @@ def write_html():
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
         "house": house,
-        "land": land,
         "local": local,
         "administrations": administrations,
-        "parcels": parcels,
         # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
         "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},
         "makers": makers,
