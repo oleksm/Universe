@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
 title: Material Processing
-purpose: Material Processing is the first stage of making anything (turning raw matter into materials and stock that things can be built from). It takes elements in and gives out named, graded materials in usable forms like sheet, bar and wire.
+purpose: Material Processing is the first stage of making materials (turning raw matter into materials and stock that things can be built from). It takes elements in and gives out named, graded materials in usable forms like sheet, bar and wire.
 details:
   text:
     - "Why a civilisation needs it:"
