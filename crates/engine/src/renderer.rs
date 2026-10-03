@@ -383,6 +383,8 @@ pub(crate) struct Renderer {
     hud_tris: DynBuffer,
     atlas_bind: wgpu::BindGroup,
     hud: DynBuffer,
+    /// Textured, physically based models (glTF).
+    pbr: crate::pbr::PbrRenderer,
 }
 
 impl Renderer {
@@ -780,7 +782,9 @@ impl Renderer {
         });
 
         let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear);
+        let pbr = crate::pbr::PbrRenderer::new(device, &globals_layout, &shadow_layout, &light_layout, SCENE_FORMAT, DEPTH_FORMAT, SAMPLES);
         Self {
+            pbr,
             wait: std::time::Duration::ZERO,
             low_height,
             hud_scale,
@@ -932,6 +936,7 @@ impl Renderer {
         self.hud_tris.upload_bytes(gpu, bytemuck::cast_slice(&frame.hud_tris), frame.hud_tris.len() as u32);
         self.hud.upload(gpu, &frame.hud);
         self.upload_meshes(gpu, frame);
+        self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5);
         drop(upload);
 
         let acquire = std::time::Instant::now();
@@ -965,6 +970,7 @@ impl Renderer {
             if sun.is_some() {
                 pass.set_bind_group(0, &self.shadows.light_binds[k], &[]);
                 self.draw_meshes(&mut pass, &self.shadows.runs, &self.shadows.pipe, |m| (&m.faces, m.face_vertices));
+                self.pbr.draw_shadows(&mut pass);
             }
         }
         {
@@ -997,6 +1003,7 @@ impl Renderer {
             self.sky.draw(&mut pass, &self.sky_pipe);
             self.solids.draw(&mut pass, &self.solid_pipe);
             self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+            self.pbr.draw(&mut pass);
             self.lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
             self.points.draw(&mut pass, &self.point_pipe);

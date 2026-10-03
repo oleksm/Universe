@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system showcase inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -82,6 +82,17 @@ pub fn apply(app: &mut App, name: &str) {
         "cockpit" => {
             app.mode = Mode::Pilot;
             app.chase_cam = false;
+        }
+        "showcase" => {
+            // Looking away from the sun, a little to one side and down: the sun
+            // over the eye's shoulder (for `UNIVERSE_MODEL`).
+            app.mode = Mode::Pilot;
+            app.chase_cam = false;
+            let u = app.engine.universe();
+            let away = (u.ship.position - positions[0]).normalize();
+            let side = away.any_orthonormal_vector();
+            let look = (away + side * 0.6 - away.cross(side) * 0.35).normalize();
+            u.ship.orientation = universe_sim::ship::facing(look, side);
         }
         "hyper" => {
             // Aim at a nearby star on the open-sky side of the planet, and jump.

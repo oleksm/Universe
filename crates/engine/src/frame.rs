@@ -94,6 +94,8 @@ pub struct Frame {
     pub(crate) meshes: Vec<MeshDraw>,
     /// Meshes drawn over everything, the HUD included (see `in_front`).
     pub(crate) front: Vec<MeshDraw>,
+    /// Textured, physically based models to draw this frame (see `model_pbr`).
+    pub(crate) pbr: Vec<PbrDraw>,
     in_front: bool,
     /// Globe maps drawn this frame (instances name them by place here + 1).
     pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
@@ -110,6 +112,16 @@ pub(crate) struct MeshDraw {
     pub edges: bool,
     /// It casts shadows (see `Frame::no_shadow`); how far it reaches from its
     /// origin (metres, scaled).
+    pub casts: bool,
+    pub reach: f32,
+}
+
+/// A textured model to draw: the model, and its instance (placed and lit
+/// as a mesh's: see `Instance`).
+pub(crate) struct PbrDraw {
+    pub model: crate::pbr::PbrModel,
+    pub instance: Instance,
+    /// It casts shadows; how far it reaches from its origin (metres, scaled).
     pub casts: bool,
     pub reach: f32,
 }
@@ -266,6 +278,7 @@ impl Frame {
             hud_tris: Vec::new(),
             hud: Vec::new(),
             meshes: Vec::new(),
+            pbr: Vec::new(),
             front: Vec::new(),
             front_glows: Vec::new(),
             in_front: false,
@@ -521,6 +534,20 @@ impl Frame {
     /// Queue a mesh draw: where it is (camera-relative), its tints, and the
     /// light on it here, for the GPU to transform and light.
     fn mesh(&mut self, mesh: &Mesh, t: &Transform, line: [f32; 4], fill: [f32; 4], edges: bool, lit: bool) {
+        let inst = self.instance(t, line, fill, lit);
+        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32 };
+        if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
+    }
+
+    /// A textured, physically based model (glTF), lit as meshes are: the
+    /// sun, its shadows, the reflecting planet's light.
+    pub fn model_pbr(&mut self, model: &crate::pbr::PbrModel, t: &Transform) {
+        let inst = self.instance(t, [1.0; 4], [1.0; 4], true);
+        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach: model.radius() * t.scale as f32 });
+    }
+
+    /// Where a draw is (camera-relative), its tints, and the light on it here.
+    fn instance(&self, t: &Transform, line: [f32; 4], fill: [f32; 4], lit: bool) -> Instance {
         let origin = t.position - self.camera.position;
         let m = glam::Mat3::from_quat(t.rotation) * t.scale as f32;
         let at = origin.as_vec3();
@@ -553,8 +580,7 @@ impl Frame {
                 inst.refl_color = [c[0], c[1], c[2], base];
             }
         }
-        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32 };
-        if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
+        inst
     }
 
     /// Line with a color at each end (blended along it).

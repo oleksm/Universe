@@ -202,6 +202,8 @@ pub struct App {
     pub news_panel: bool,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
+    /// A glTF model shown ahead of the eye (dev: `UNIVERSE_MODEL=file.glb`).
+    pub showcase: Option<universe_engine::PbrModel>,
     /// On foot: what's in reach to use.
     pub reach: Option<Reach>,
     /// Defence turrets of the system in view, where they are now.
@@ -333,6 +335,10 @@ impl App {
             newsroom: None,
             news_panel: false,
             sparks: Vec::new(),
+            showcase: std::env::var("UNIVERSE_MODEL").ok().and_then(|path| {
+                let r = std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf(&b));
+                r.map_err(|e| log::warn!("showcase {path}: {e}")).ok()
+            }),
             reach: None,
             turrets: Vec::new(),
             following: None,
@@ -1249,7 +1255,10 @@ impl Game for App {
 
     fn draw(&self, frame: &mut Frame, ctx: &Context) {
         universe_prof::time("draw/scene", || scene::draw(frame, self));
-        universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));
+        // (Dev: the showcased model alone, no HUD: `UNIVERSE_MODEL_CLEAN`.)
+        if !(self.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
+            universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));
+        }
     }
 }
 
