@@ -22,7 +22,8 @@ sections:
       - "Inside a settlement the levels are tower, deck, section, unit. Every deck of a tower has the same sections, and every section the same number of units."
   - title: Unit size
     text:
-      - "A unit is one standard space, so that an office, shop or workshop made for one settlement fits in any other. A larger occupant takes several adjoining units."
+      - "A unit is one standard space, so that an office, shop or workshop made for one settlement fits in any other."
+      - "An address stops at the level its holder has: a single unit, a whole section, or a whole deck. A large company holds a deck."
       - "These numbers are invented: nothing in the game is built to them yet."
     table:
       columns: [Measure, Value]

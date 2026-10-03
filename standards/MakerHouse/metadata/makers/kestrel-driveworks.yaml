@@ -2,7 +2,7 @@
 key: brand.kestrel
 name: Kestrel Driveworks
 ticker: KDW
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 4, section: B, unit: 3 }
+address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 4 }
 note: "Drives and thrusters: light, strong, dear"
 who: "A propulsion house run by engineers, known for finish and for charging for it. One of the founders of the SFO."
 what: "Designs and builds main drives and manoeuvring thrusters. Its units are lighter and stronger than most, and priced to match."

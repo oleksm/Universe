@@ -2,7 +2,7 @@
 key: brand.orbital
 name: Orbital Systems
 ticker: ORB
-address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 22, section: C, unit: 5 }
+address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 22 }
 note: "Computers, sensors, navigation"
 who: "An electronics company; most ships fly on something of theirs. One of the founders of the SFO."
 what: "Makes flight computers, sensors and navigation equipment."

@@ -2,7 +2,7 @@
 key: brand.aurel
 name: Aurel Fusion Works
 ticker: AFW
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 11, section: A, unit: 6 }
+address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 11 }
 note: "Fusion plants: light, efficient, dear"
 who: "A small, exacting builder of reactors for buyers who count every kilogram."
 what: "Builds fusion plants: light, efficient and expensive."

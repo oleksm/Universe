@@ -2,7 +2,7 @@
 key: brand.meridian
 name: Meridian Power
 ticker: MPW
-address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 9, section: B, unit: 2 }
+address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 9 }
 note: "Capacitor banks and power storage"
 who: "A power-storage specialist that makes one kind of thing and little else."
 what: "Makes capacitor banks and power storage."
