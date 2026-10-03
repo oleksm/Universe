@@ -131,7 +131,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         right = trade_feed(frame, app, right) + 6.0;
     }
     if universe_prof::enabled() {
-        profile_panel(frame);
+        right = profile_panel(frame, right) + 6.0;
     }
     universe_prof::time("draw/hud/news feed", || news_feed(frame, app, right));
     frame.text(Vec2::new(size.x - 7.0 * GLYPH - 4.0, size.y - GLYPH - 4.0), "F1 HELP", DIM);
@@ -2035,10 +2035,13 @@ fn right_column(frame: &mut Frame, top: f32, lines: &[(String, Color)]) -> f32 {
 
 /// The profiler's report (F3): every scope taking real time, as a tree, with
 /// its mean and worst time per frame over the last couple of seconds.
-fn profile_panel(frame: &mut Frame) {
+/// The profiler's report, against the right edge under what's there (from
+/// `top`), as many rows as fit; its bottom.
+fn profile_panel(frame: &mut Frame, top: f32) -> f32 {
     let rows: Vec<universe_prof::Stat> = universe_prof::report().into_iter().filter(|s| s.mean_ms >= 0.02 || s.max_ms >= 1.0).collect();
+    let fit = ((frame.size().y - top - 3.0 * LINE) / LINE).max(4.0) as usize;
     let mut text = String::from("PROFILE (F3 F3)            MEAN    MAX  CALLS\n");
-    for st in rows.iter().take(48) {
+    for st in rows.iter().take(fit.min(48)) {
         let depth = st.name.matches('/').count();
         let leaf = st.name.rsplit('/').next().unwrap_or(st.name).to_uppercase();
         let label: String = format!("{}{leaf}", " ".repeat(depth)).chars().take(22).collect();
@@ -2047,10 +2050,11 @@ fn profile_panel(frame: &mut Frame) {
     }
     let size = frame.size();
     let box_size = text_size(&text);
-    let pos = Vec2::new(size.x - box_size.x - 8.0, size.y * 0.25).floor();
+    let pos = Vec2::new(size.x - box_size.x - 8.0, top + 4.0).floor();
     frame.hud_rect(pos - 4.0, box_size + 8.0, Color([0.012, 0.018, 0.026, 0.85]));
     frame.hud_box(pos - 4.0, box_size + 8.0, DIM);
     frame.text(pos, &text, HUD);
+    pos.y + box_size.y + 4.0
 }
 
 fn help(frame: &mut Frame) {
