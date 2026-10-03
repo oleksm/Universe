@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schema/administration.schema.yaml
+# The home system, as the game makes it from its seed (1984).
+name: Treistun administration
+system: Treistun
+bodies:
+  - { name: Treistun b, kind: planet }
+  - { name: Treistun b I, kind: moon, at: Treistun b }
+  - { name: Treistun c, kind: planet }
+  - { name: Treistun c I, kind: moon, at: Treistun c }
+  - { name: Treistun d, kind: planet }
+  - { name: Treistun d I, kind: moon, at: Treistun d }
+  - { name: Treistun e, kind: planet }
+  - { name: Treistun f, kind: planet }
+  - { name: Treistun g, kind: planet }
+  - { name: Treistun g I, kind: moon, at: Treistun g }
+  - { name: Treistun g II, kind: moon, at: Treistun g }
+  - { name: Treistun g III, kind: moon, at: Treistun g }
+  - { name: Treistun h, kind: planet }
+  - { name: Treistun h I, kind: moon, at: Treistun h }
+  - { name: Treistun h II, kind: moon, at: Treistun h }
+  - { name: Treistun i, kind: planet }
+  - { name: Treistun i I, kind: moon, at: Treistun i }
+  - { name: Treistun i II, kind: moon, at: Treistun i }
+  - { name: Treistun i III, kind: moon, at: Treistun i }
+  - { name: Treistun j, kind: planet }
+  - { name: Treistun j I, kind: moon, at: Treistun j }
+  - { name: Treistun j II, kind: moon, at: Treistun j }
+  - { name: Treistun j III, kind: moon, at: Treistun j }
+  - { name: Treistun j IV, kind: moon, at: Treistun j }
+  - { name: "Tukau family", kind: belt }
+  - { name: "Tautreris family", kind: belt }
+  - { name: "Hogimo group (Treistun g L5)", kind: belt }
+  - { name: "Paiteishe group (Treistun h L4)", kind: belt }
+  - { name: "Ugaula group (Treistun i L5)", kind: belt }
+  - { name: "Shembinum group (Treistun j L4)", kind: belt }
+  - { name: "Shirornis group (Treistun j L5)", kind: belt }
+  - { name: "Truhora family", kind: belt }
+  - { name: Treistun e Station, kind: settlement, at: Treistun e }
+  - { name: Port Zaudalein, kind: settlement, at: Treistun b }
+  - { name: Port Seiwiti, kind: settlement, at: Treistun b I }
+  - { name: Port Lisaur, kind: settlement, at: Treistun c }
+  - { name: Port Fabindum, kind: settlement, at: Treistun c I }
+  - { name: Port Eikir, kind: settlement, at: Treistun d }
+  - { name: Port Sirnendis, kind: settlement, at: Treistun d I }
+  - { name: Port Nacaubun, kind: settlement, at: Treistun e }
+  - { name: Port Trethi, kind: settlement, at: Treistun f }
+  - { name: Port Weisonum, kind: settlement, at: Treistun h II }
+  - { name: Port Aipika, kind: settlement, at: Treistun i II }

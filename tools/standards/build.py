@@ -187,8 +187,16 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "system"}:
+        if k not in {"name", "system", "bodies"}:
             problem(full, f"unknown field '{k}'")
+    names = [x.get("name") for x in ad.get("bodies") or []]
+    for x in ad.get("bodies") or []:
+        if x.get("kind") not in ("planet", "moon", "belt", "settlement"):
+            problem(full, f"body {x.get('name')}: kind one of planet, moon, belt, settlement")
+        if "at" in x and x["at"] not in names:
+            problem(full, f"body {x.get('name')}: at '{x['at']}', no such body")
+        if names.count(x.get("name")) > 1:
+            problem(full, f"body {x.get('name')} twice")
     ad["file"] = os.path.relpath(full, TREE)
     ad["slug"] = name[:-5]
     administrations.append(ad)
@@ -207,17 +215,20 @@ for name in sorted(os.listdir(parcels_dir)) if os.path.isdir(parcels_dir) else [
         problem(full, "a parcel's file is named <name>.yaml (lower case, words joined by -)")
         continue
     pc = load(full)
-    for k in ["name", "administration", "body", "body_kind", "owner"]:
+    for k in ["name", "administration", "body", "owner"]:
         if k not in pc:
             problem(full, f"no {k}")
-    if "administration" in pc and not any(a["slug"] == pc["administration"] for a in administrations):
+    adm = next((a for a in administrations if a["slug"] == pc.get("administration")), None)
+    if "administration" in pc and adm is None:
         problem(full, f"administration: no '{pc['administration']}' in Local Administration")
+    of = next((x for x in (adm or {}).get("bodies") or [] if x.get("name") == pc.get("body")), None)
+    if adm is not None and "body" in pc and of is None:
+        problem(full, f"body: no '{pc['body']}' among {adm.get('name')}'s bodies")
     for k in pc:
-        if k not in {"name", "administration", "body", "body_kind", "place", "owner"}:
+        if k not in {"name", "administration", "body", "place", "owner"}:
             problem(full, f"unknown field '{k}'")
-    if "body_kind" in pc and pc["body_kind"] not in ("planet", "moon", "belt", "settlement"):
-        problem(full, "body_kind: one of planet, moon, belt, settlement")
-    if "owner" in pc and pc["owner"] not in BRANDS:
+    pc["body_kind"] = (of or {}).get("kind", "")
+    if "owner" in pc and pc["owner"] not in BRANDS and not str(pc["owner"]).startswith("body."):
         problem(full, f"owner: no maker '{pc['owner']}' in Maker House")
     pc["file"] = os.path.relpath(full, TREE)
     pc["slug"] = name[:-5]
