@@ -127,13 +127,18 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let base = textureSample(base_tex, tex_sampler, in.uv) * mat.base_color;
     let mr = textureSample(mr_tex, tex_sampler, in.uv);
     let metallic = clamp(mr.b * mat.params.x, 0.0, 1.0);
-    let roughness = clamp(mr.g * mat.params.y, 0.04, 1.0);
+    var roughness = clamp(mr.g * mat.params.y, 0.04, 1.0);
     // The normal map, in the surface's tangent frame.
     let tn = textureSample(normal_tex, tex_sampler, in.uv).xyz * 2.0 - vec3<f32>(1.0);
     let ng = normalize(in.normal);
     let t = normalize(in.tangent.xyz - ng * dot(ng, in.tangent.xyz));
     let b = cross(ng, t) * in.tangent.w;
     let n = normalize(t * tn.x * mat.params.z + b * tn.y * mat.params.z + ng * tn.z);
+    // Specular anti-aliasing: where the normal swings across a pixel (fine
+    // normal-map detail, far away), the glint would sparkle from frame to
+    // frame; widen the roughness by how much it swings (Kaplanyan & Hoffman).
+    let dn = 0.25 * (dot(dpdx(n), dpdx(n)) + dot(dpdy(n), dpdy(n)));
+    roughness = sqrt(sqrt(min(roughness * roughness * roughness * roughness + min(2.0 * dn, 0.18), 1.0)));
     let v = normalize(-in.at);
     let l = in.sun_dir.xyz;
     let nv = max(dot(n, v), 1e-4);
