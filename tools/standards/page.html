@@ -224,7 +224,8 @@ function rows(q) {
     out.push({ k: "ad:" + a.slug, depth: 1, kind: "adm", label: a.name, n: bodies.length });
     if (!open.has("ad:" + a.slug) && !q) continue;
     // (Its bodies: each under the body it is at.)
-    const under = at => { for (const x of bodies.filter(x => (x.at || null) === at)) { const kids = bodies.some(y => y.at === x.name); if (!q || hit(x) || kids) out.push({ k: `bd:${a.slug}:${x.slug}`, depth: 0, kind: "maker", label: x.name, ticker: x.kind, d: 0, at }); under(x.name); } };
+    const known = n => bodies.some(y => y.name === n);
+    const under = at => { for (const x of bodies.filter(x => (known(x.at) ? x.at : null) === at)) { const kids = bodies.some(y => y.at === x.name); if (!q || hit(x) || kids) out.push({ k: `bd:${a.slug}:${x.slug}`, depth: 0, kind: "maker", label: x.name, ticker: x.at && !known(x.at) ? x.at : x.kind, d: 0, at }); under(x.name); } };
     const from = out.length; under(null);
     const depthOf = name => { const x = bodies.find(y => y.name === name); return x && x.at ? 1 + depthOf(x.at) : 0; };
     for (let i = from; i < out.length; i++) out[i].depth = 2 + (out[i].at ? 1 + depthOf(out[i].at) : 0);
@@ -348,7 +349,7 @@ function detail(k) {
     const link = y => `<a data-k="${esc(`bd:${a.slug}:${y.slug}`)}">${esc(y.name)}</a>`;
     const up = x.at && a.bodies.find(y => y.name === x.at);
     const here = a.bodies.filter(y => y.at === x.name);
-    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + `<h3>Land</h3>` + parcelTable(DATA.parcels.filter(p => p.administration === a.slug && p.body === x.name)) + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + `<h3>Land</h3>` + parcelTable(DATA.parcels.filter(p => p.administration === a.slug && p.body === x.name)) + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
   }
   if (k === "lr") return `<h2>${esc(DATA.land.name)}</h2><p>${esc(DATA.land.note || "")}</p>` + parcelTable(DATA.parcels);
   if (kind === "pc") {

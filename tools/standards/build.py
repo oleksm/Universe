@@ -214,8 +214,6 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     for x in ad.get("bodies") or []:
         if x.get("kind") not in ("planet", "moon", "belt", "settlement"):
             problem(full, f"body {x.get('name')}: kind one of planet, moon, belt, settlement")
-        if "at" in x and x["at"] not in names:
-            problem(full, f"body {x.get('name')}: at '{x['at']}', no such body")
         if names.count(x.get("name")) > 1:
             problem(full, f"body {x.get('name')} twice")
     ad["file"] = os.path.relpath(full, TREE)
