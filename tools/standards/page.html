@@ -204,6 +204,10 @@ function rows(q) {
     };
     walk(null, 1);
   }
+  // Maker House: the makers under it.
+  const mq = m => !q || q.split(/\s+/).every(w => `${m.name} ${m.note}`.toLowerCase().includes(w));
+  out.push({ k: "mh", depth: 0, kind: "body", label: DATA.house.name, n: DATA.makers.length });
+  if (open.has("mh") || q) for (const m of DATA.makers.filter(mq)) out.push({ k: "mk:" + m.key, depth: 1, kind: "maker", label: m.name });
   return out;
 }
 
@@ -218,6 +222,7 @@ function reveal(k) {
     keepOpen();
     return;
   }
+  if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   const s = stdOf(k); if (!s) return;
   open.add("b:" + s.body);
   keepOpen();
@@ -232,7 +237,7 @@ function render() {
   for (const n of list) {
     const pad = `padding-left:${12 + n.depth * 18}px`;
     const sel = n.k === current ? " sel" : "";
-    const tw = n.kind === "std" ? "" : (open.has(n.k) || q ? "▾" : "▸");
+    const tw = n.kind === "std" || n.kind === "maker" ? "" : (open.has(n.k) || q ? "▾" : "▸");
     if (n.kind === "el") {
       const i = n.el.identity;
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${elTile(n.el, true)}${esc(i.name)} <span class="n">${i.atomic_number}</span></div>`;
@@ -284,7 +289,7 @@ function periodicTable(els) {
 function value(v) { return Array.isArray(v) ? `${v[0]} – ${v[1]}` : esc(v); }
 
 function detail(k) {
-  if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick a body or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
+  if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick something on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
   if (kind === "b") {
@@ -300,6 +305,11 @@ function detail(k) {
     }
     if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
     return h;
+  }
+  if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div><a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.note)}</span></div>`).join("");
+  if (kind === "mk") {
+    const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
+    return `<h2>${esc(m.name)}</h2><p>${esc(m.note)}</p><p class="meta">standards/${esc(m.file)}</p>`;
   }
   if (kind === "g") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
