@@ -77,6 +77,17 @@ adoption decides.
 - **Seeded content:** the FSO's set in content files, one per standard, loaded like hulls and
   modules.
 
+## In the game now
+
+- The registry is content: `content/base/bodies.ron` (bodies, their seat and branches) and
+  `content/base/standards.ron` (the FSO's first ten), checked at load (every standard in a
+  branch of its body, its references found, its requirements against its own parameters).
+- **Docked or landed at a port: V STANDARDS** opens the port's copy as a tree: the bodies, their
+  branches (with how many standards are under each), the standards; UP/DOWN, RIGHT opens, LEFT
+  closes or goes up. The standard under the cursor shows in full: its parameters (tables with
+  headers), what it builds on, its requirements, its notes (where invented numbers come from).
+- Not yet: products declaring conformance, the checks run, publishing your own.
+
 ## Ships to standards (the first use)
 
 - **Size classes** (FSO 3): the berth envelope ports lay out for: maximum length, width, height,

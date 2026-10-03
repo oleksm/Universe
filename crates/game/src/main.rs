@@ -20,6 +20,7 @@ mod rocks;
 mod save;
 mod scene;
 mod shipyard;
+mod standards;
 mod sound;
 mod terrain_lod;
 mod terrain_view;
@@ -222,6 +223,8 @@ pub struct App {
     pub show_cargo: bool,
     /// The thrusters panel (F7).
     pub show_thrusters: bool,
+    /// The standards registry open (docked), and where in its tree.
+    pub standards: Option<standards::StandardsView>,
     /// The passengers panel open: its row picked.
     pub passengers: Option<usize>,
     /// Manual: the thrusters last held (sent when it changes).
@@ -317,6 +320,7 @@ impl App {
             show_cargo: false,
             show_thrusters: false,
             passengers: None,
+            standards: None,
             jets_held: 0,
             sky_cache: std::cell::RefCell::new(None),
             nav_map: None,
@@ -611,6 +615,13 @@ impl App {
         if ctx.input.pressed(KeyCode::Escape) {
             ctx.grab_cursor(false);
         }
+        // The standards registry takes the keys while open (docked: the station's copy).
+        if self.standards.is_some() {
+            if !standards::input(self, ctx) || !matches!(self.v.ship.state, ShipState::Landed { .. }) {
+                self.standards = None;
+            }
+            return Controls::default();
+        }
         // The passengers panel takes the keys while open.
         if self.passengers.is_some() {
             if !passengers::input(self, ctx) {
@@ -676,6 +687,9 @@ impl App {
             }
             if pressed(input, Act::Passengers) && self.v.docked_market.is_some() {
                 self.passengers = Some(0);
+            }
+            if pressed(input, Act::Standards) && universe_sim::world::traffic::docked_at(&self.view.system, &self.ship).is_some() {
+                self.standards = Some(standards::StandardsView::new());
             }
         }
         if pressed(input, Act::Hyperdrive) {

@@ -38,6 +38,7 @@ pub mod shape;
 pub mod sheet;
 pub mod ship;
 pub mod spaceport;
+pub mod standards;
 pub mod thrusters;
 pub mod rules;
 pub mod station;

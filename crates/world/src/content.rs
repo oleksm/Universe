@@ -38,6 +38,8 @@ const BASE: &[(&str, &str)] = &[
     ("places.ron", include_str!("../../../content/base/places.ron")),
     ("markets.ron", include_str!("../../../content/base/markets.ron")),
     ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
+    ("bodies.ron", include_str!("../../../content/base/bodies.ron")),
+    ("standards.ron", include_str!("../../../content/base/standards.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether
@@ -215,6 +217,9 @@ pub struct Content {
     pub recipes: Registry<Recipe>,
     pub places: Registry<PlaceDef>,
     pub markets: MarketRules,
+    /// Standards bodies, and the standards in their registers.
+    pub bodies: Registry<crate::standards::Body>,
+    pub standards: Registry<crate::standards::Standard>,
     /// Ship fuel: what tanks are filled with (the code's one kind of goods by name).
     pub fuel: Category,
     aliases: HashMap<String, String>,
@@ -395,7 +400,22 @@ impl Content {
         let tank_fuel = &hulls.get(starter).fuel;
         let fuel_goods = resolve(&materials, &aliases, tank_fuel).map(|h| materials.get(h).goods.clone()).unwrap_or_default();
         let fuel = kind(&fuel_goods, &format!("the starting hull's fuel '{tank_fuel}'"))?;
-        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let bodies: Registry<crate::standards::Body> = Registry::build(Self::defs(&packs, "bodies.ron")?)?;
+        let standards: Registry<crate::standards::Standard> = Registry::build(Self::defs(&packs, "standards.ron")?)?;
+        for (_, s) in standards.iter() {
+            let Some(b) = resolve(&bodies, &aliases, &s.body) else {
+                return Err(format!("standards.ron '{}': no body '{}'", s.key, s.body));
+            };
+            if bodies.get(b).branch(&s.branch).is_none() {
+                return Err(format!("standards.ron '{}': its body has no branch {}", s.key, s.branch));
+            }
+            for r in &s.refs {
+                if resolve(&standards, &aliases, r).is_none() {
+                    return Err(format!("standards.ron '{}': refers to no standard '{r}'", s.key));
+                }
+            }
+        }
+        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -527,6 +547,8 @@ entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
 entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
+entry!(crate::standards::Body, "bodies.ron", bodies, |b| b.check());
+entry!(crate::standards::Standard, "standards.ron", standards, |s| s.check());
 entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
 entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {

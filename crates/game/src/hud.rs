@@ -34,6 +34,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::newspanel::draw(frame, app);
         return;
     }
+    if app.standards.is_some() {
+        crate::standards::draw(frame, app);
+        return;
+    }
     if let Some(map) = &app.galaxy_map {
         crate::galaxymap::draw(frame, app, map);
         return;
@@ -1676,6 +1680,10 @@ fn action_grid(frame: &mut Frame, app: &App) {
                 cells.push(b(Act::Autopilot, "AUTOPILOT", on(a.route.active)));
             }
             cells.push(b(Act::Foot, "FOOT", Lamp::Off));
+            // (The standards registry: the port's copy.)
+            if at.is_some() {
+                cells.push(b(Act::Standards, "STANDARDS", if app.standards.is_some() { Lamp::On } else { Lamp::Off }));
+            }
             // (Passengers only with a cabin aboard.)
             if app.v.docked_market.is_some() && ship.spec().seats > 0 {
                 cells.push(b(Act::Passengers, "PASSENGERS", if app.passengers.is_some() { Lamp::On } else { Lamp::Off }));

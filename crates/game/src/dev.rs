@@ -98,6 +98,13 @@ pub fn apply(app: &mut App, name: &str) {
                 app.observer.yaw = y;
             }
         }
+        "standards" => {
+            // Docked, the standards registry open on UNIVERSE_STANDARD (a key; the first otherwise).
+            apply(app, "docked");
+            let mut view = crate::standards::StandardsView::new();
+            view.focus(&std::env::var("UNIVERSE_STANDARD").unwrap_or_else(|_| "FSO/3.1/001".into()));
+            app.standards = Some(view);
+        }
         "sunlit" => {
             // Our ship in open space, watched, turned so the sun shines on it from over the
             // eye's shoulder (like a model lit from the front): for comparing looks.

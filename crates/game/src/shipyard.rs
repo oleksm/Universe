@@ -496,7 +496,7 @@ fn design_picks(row: usize) -> Vec<&'static str> {
 }
 
 /// `text` in lines of at most `width` characters, broken between words.
-fn wrap(text: &str, width: usize) -> Vec<String> {
+pub(crate) fn wrap(text: &str, width: usize) -> Vec<String> {
     let mut lines: Vec<String> = Vec::new();
     for word in text.split_whitespace() {
         match lines.last_mut() {
