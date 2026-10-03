@@ -890,6 +890,21 @@ impl Ship {
         }
     }
 
+    /// What's seen of it from another system: where it is, how it moves,
+    /// what it's doing and on what hull; nothing inside it (no lists, nothing
+    /// to allocate). Its fuel, cargo, weapons and the rest are a new ship's.
+    pub fn far(&self) -> Ship {
+        Ship {
+            angular_velocity: self.angular_velocity,
+            state: self.state.clone(),
+            hyperdrive: self.hyperdrive,
+            powered: self.powered,
+            hangar: self.hangar,
+            class: self.class,
+            ..Ship::new(self.position, self.velocity, self.orientation)
+        }
+    }
+
     /// Total mass right now (kg).
     pub fn mass(&self) -> f64 {
         self.spec().dry_mass + self.fuel + self.load()

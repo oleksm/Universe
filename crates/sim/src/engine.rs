@@ -88,6 +88,9 @@ pub enum Command {
     RouteRandom { seed: u64, stops: usize },
     /// Show this market's quotes in the view (None: none).
     WatchMarket(Option<Facility>),
+    /// The system the client is looking at (none: its ship's): ships there
+    /// come in full in the view, the rest as seen from afar (`Ship::far`).
+    LookAt(Option<usize>),
     Trade { market: Facility, item: usize, units: i64 },
     /// Refit slot `slot` with module `module` (content key; None: empty it), docked at a station.
     Refit { slot: String, module: Option<String> },
@@ -212,6 +215,7 @@ pub struct Engine {
     pub universe: Universe,
     charts: Arc<Charts>,
     watched: Option<Facility>,
+    looking_at: Option<usize>,
     events: Vec<Event>,
     last_step: StepResult,
     sim_ms: f32,
@@ -236,6 +240,7 @@ impl Engine {
             universe,
             charts,
             watched: None,
+            looking_at: None,
             events: Vec::new(),
             last_step: StepResult::default(),
             sim_ms: 0.0,
@@ -292,6 +297,7 @@ impl Engine {
                 u.cockpit().route_set(stops);
             }
             Command::WatchMarket(m) => self.watched = m,
+            Command::LookAt(s) => self.looking_at = s,
             Command::BuyHull { hull } => {
                 if let Some(h) = universe_world::content::content().handle(&hull) {
                     let _ = u.buy_hull(h);
@@ -333,6 +339,10 @@ impl Engine {
         let system = u.ship_system;
         let sys = u.ship_system();
         let gather = universe_prof::scope("sim/view/crafts");
+        // In full: the ships where the client is looking, and those passing
+        // through its gates (to or from there); the rest as seen from afar.
+        let here = self.looking_at.unwrap_or(system);
+        let near = |c: &crate::traffic::Craft| c.system == here || matches!(c.ship.state, universe_world::ShipState::Transit { to, from, .. } if to == here || from == here);
         let crafts = u
             .crafts
             .iter()
@@ -340,7 +350,7 @@ impl Engine {
             .map(|(i, c)| CraftView {
                 name: c.name.clone(),
                 system: c.system,
-                ship: c.ship.clone(),
+                ship: if near(c) { c.ship.clone() } else { c.ship.far() },
                 route_next: c.status.route_next,
                 route_stops: c.status.route_len,
                 stage: crate::contacts::activity(c),

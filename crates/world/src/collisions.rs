@@ -14,7 +14,7 @@
 use std::collections::HashMap;
 
 use glam::DVec3;
-use universe_physics::{bounce_pair, contacts, Mover};
+use universe_physics::{bounce_pair, Mover};
 
 use crate::damage;
 use crate::events::ShipEvent;
@@ -27,6 +27,9 @@ use crate::world::World;
 pub const RESTITUTION: f64 = 0.3;
 /// Slower than this, touching ships just ease apart (m/s).
 const IMPACT: f64 = 0.5;
+/// The fewest movers a thread is handed at a time to find pairs for.
+const BUNDLE: usize = 32;
+
 /// From this many pairs a frame, their shapes are judged side by side
 /// (fewer aren't worth handing out).
 const SIDE_BY_SIDE: usize = 8;
@@ -174,32 +177,38 @@ impl World {
         let mut systems: Vec<_> = by_system.into_iter().filter(|(_, v)| v.len() > 1).collect();
         systems.sort_by_key(|(s, _)| *s);
         drop(sort);
-        // Each system's pairs found side by side; then put right in order.
-        let found: Vec<(Vec<Mover>, Vec<universe_physics::PairContact>)> = {
+        // The movers, by system.
+        let gather = universe_prof::scope("sim/combat/collisions/movers");
+        let movers: Vec<Vec<Mover>> = systems
+            .iter()
+            .map(|(_, members)| {
+                members
+                    .iter()
+                    .map(|&k| {
+                        let s = &ships[k].ship;
+                        let fixed = matches!(s.state, ShipState::Landed { .. });
+                        // (Its reach: the sphere round its shape; the shapes decide after.)
+                        Mover { id: k, position: s.position, velocity: s.velocity, radius: s.spec().shape().mesh.bound(), mass: if fixed { f64::INFINITY } else { s.mass() } }
+                    })
+                    .collect()
+            })
+            .collect();
+        drop(gather);
+        // Their pairs: one job per mover, whatever its system, handed out
+        // to the threads in bundles as they take them (a crowded port is
+        // shared out, not one thread's); then in order, the systems' and
+        // their movers'.
+        let pairs: Vec<(Mover, Mover, universe_physics::PairContact)> = {
             use rayon::prelude::*;
-            let gather = universe_prof::scope("sim/combat/collisions/movers");
-            let movers: Vec<Vec<Mover>> = systems
-                .iter()
-                .map(|(_, members)| {
-                    members
-                        .iter()
-                        .map(|&k| {
-                            let s = &ships[k].ship;
-                            let fixed = matches!(s.state, ShipState::Landed { .. });
-                            // (Its reach: the sphere round its shape; the shapes decide after.)
-                            Mover { id: k, position: s.position, velocity: s.velocity, radius: s.spec().shape().mesh.bound(), mass: if fixed { f64::INFINITY } else { s.mass() } }
-                        })
-                        .collect()
-                })
-                .collect();
-            drop(gather);
             let _p = universe_prof::scope("sim/combat/collisions/pairs");
-            movers.into_par_iter().map(|m| { let c = contacts(&m, dt); (m, c) }).collect()
+            let grids: Vec<universe_physics::Grid> = movers.iter().map(|m| universe_physics::Grid::new(m, dt)).collect();
+            let jobs: Vec<(usize, usize)> = grids.iter().enumerate().flat_map(|(s, g)| (0..g.len()).map(move |i| (s, i))).collect();
+            let found: Vec<Vec<universe_physics::PairContact>> = jobs.par_iter().with_min_len(BUNDLE).map(|&(s, i)| grids[s].around(i)).collect();
+            jobs.iter().zip(found).flat_map(|(&(s, _), found)| found.into_iter().map(|c| (movers[s][c.a], movers[s][c.b], c)).collect::<Vec<_>>()).collect()
         };
         // Every pair's shapes judged side by side (they only read the ships:
         // each contact from where they all were at the end of their flight),
         // then put right in order, one by one.
-        let pairs: Vec<(Mover, Mover, universe_physics::PairContact)> = found.iter().flat_map(|(movers, found)| found.iter().map(move |c| (movers[c.a], movers[c.b], *c))).collect();
         let touched: Vec<Option<(DVec3, f64, f64)>> = {
             let _p = universe_prof::scope("sim/combat/collisions/shapes");
             let ships: &[Armed] = ships;

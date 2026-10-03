@@ -1048,6 +1048,9 @@ impl App {
         // an asteroid field, to its remnant (the star dominates out there).
         let field = system.fields.iter().find(|f| positions[f.body].distance(ship_pos) < f.extent + rocks::SCAN_RANGE).map(|f| f.body);
         let reference = (origin == self.v.ship_system).then(|| field.unwrap_or_else(|| system.dominant(ship_pos, &positions)));
+        if origin != self.view.origin {
+            self.engine.send(universe_sim::Command::LookAt(Some(origin)));
+        }
         self.view = View { origin, system, positions, ship_pos, reference };
     }
 
