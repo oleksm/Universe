@@ -67,6 +67,8 @@ pub struct Shape {
     pub solids: Vec<Vec<(DVec3, f64)>>,
     /// Each convex part's points in `mesh.points` (the body first).
     pub part_points: Vec<std::ops::Range<usize>>,
+    /// Each convex part's reach and probes (as `solids`).
+    pub parts: Vec<Part>,
     /// Where its centre of mass was in the frame it was made in (it's
     /// centred on it since): a model made in that frame is drawn shifted by −this.
     pub made_centre: DVec3,
@@ -87,32 +89,47 @@ impl Shape {
     /// soonest), or failing that the one it's least deep behind.
     pub fn inside(&self, p: DVec3, v: DVec3) -> Option<(f64, DVec3)> {
         let mut best: Option<(f64, DVec3)> = None;
-        for planes in &self.solids {
-            let out = planes.iter().map(|&(n, d)| n.dot(p) - d).fold(f64::NEG_INFINITY, f64::max);
-            if out >= 0.0 {
-                continue;
-            }
-            let came_in = planes
-                .iter()
-                .filter(|&&(n, _)| v.dot(n) < -1e-9)
-                .map(|&(n, d)| ((d - n.dot(p)) / -v.dot(n), d - n.dot(p), n))
-                .min_by(|a, b| a.0.total_cmp(&b.0))
-                .map(|(_, depth, n)| (depth, n));
-            let least = planes.iter().map(|&(n, d)| (d - n.dot(p), n)).min_by(|a, b| a.0.total_cmp(&b.0)).expect("a solid has faces");
-            let (depth, n) = came_in.unwrap_or(least);
-            if best.is_none_or(|(d, _)| depth > d) {
+        for k in 0..self.solids.len() {
+            if let Some((depth, n)) = self.inside_part(k, p, v)
+                && best.is_none_or(|(d, _)| depth > d)
+            {
                 best = Some((depth, n));
             }
         }
         best
     }
 
-    /// Points of its surface to test against another solid: its corners and
-    /// the middles of its edges (its own frame).
-    pub fn probes(&self) -> impl Iterator<Item = DVec3> + '_ {
-        let p = &self.mesh.points;
-        p.iter().copied().chain(self.mesh.edges.iter().map(move |e| (p[e[0] as usize] + p[e[1] as usize]) * 0.5))
+    /// Like `inside`, for its convex part `k` alone.
+    pub fn inside_part(&self, k: usize, p: DVec3, v: DVec3) -> Option<(f64, DVec3)> {
+        // (Outside the sphere round its corners: outside it.)
+        let part = &self.parts[k];
+        if p.distance_squared(part.centre) > part.radius * part.radius {
+            return None;
+        }
+        let planes = &self.solids[k];
+        let out = planes.iter().map(|&(n, d)| n.dot(p) - d).fold(f64::NEG_INFINITY, f64::max);
+        if out >= 0.0 {
+            return None;
+        }
+        let came_in = planes
+            .iter()
+            .filter(|&&(n, _)| v.dot(n) < -1e-9)
+            .map(|&(n, d)| ((d - n.dot(p)) / -v.dot(n), d - n.dot(p), n))
+            .min_by(|a, b| a.0.total_cmp(&b.0))
+            .map(|(_, depth, n)| (depth, n));
+        let least = planes.iter().map(|&(n, d)| (d - n.dot(p), n)).min_by(|a, b| a.0.total_cmp(&b.0)).expect("a solid has faces");
+        Some(came_in.unwrap_or(least))
     }
+}
+
+/// A convex part of a shape, for contact: the sphere round its corners,
+/// and the points of its surface tested against another solid (its
+/// corners and the middles of its edges). Its own shape's frame.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Part {
+    pub centre: DVec3,
+    pub radius: f64,
+    pub probes: Vec<DVec3>,
 }
 
 /// Fitted contact spheres stand this far apart across a shape's plan (m).
@@ -299,7 +316,7 @@ impl ShapeDef {
             spheres.push(universe_physics::Sphere { at: point(at) * s - c, radius: r * s });
         }
         // Each part as a solid: its faces' planes.
-        let solids = ranges
+        let solids: Vec<Vec<(DVec3, f64)>> = ranges
             .iter()
             .map(|&(_, _, f0, f1)| {
                 mesh.faces[f0..f1]
@@ -320,6 +337,18 @@ impl ShapeDef {
             }
         }
         let part_points = ranges.iter().map(|&(p0, p1, _, _)| p0..p1).collect();
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, made_centre: c })
+        let parts = ranges
+            .iter()
+            .map(|&(p0, p1, _, _)| {
+                let points = &mesh.points[p0..p1];
+                let centre = points.iter().sum::<DVec3>() / points.len() as f64;
+                let radius = points.iter().map(|p| p.distance(centre)).fold(0.0, f64::max);
+                let mut probes = points.to_vec();
+                let mine = |e: &[u32; 2]| (p0..p1).contains(&(e[0] as usize));
+                probes.extend(mesh.edges.iter().filter(|e| mine(e)).map(|e| (mesh.points[e[0] as usize] + mesh.points[e[1] as usize]) * 0.5));
+                Part { centre, radius, probes }
+            })
+            .collect();
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c })
     }
 }

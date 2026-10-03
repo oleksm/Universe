@@ -44,6 +44,10 @@ dodge a design problem.
   radiators but for a leak (radiators come as modules); worlds' climates are equilibrium-and-swing
   models, not weather.
 - **Stars don't move** across the galaxy.
+- **Ship against ship** is swept exactly through each tick, so no speed passes through a hull
+  unseen. But within a tick each ship keeps its turn (it moves, it doesn't rotate), and contact is
+  a point of one (a corner, an edge's middle) entering a convex part of the other: two edges
+  crossing between those points aren't seen.
 
 ## Planned (making the simplified real)
 
