@@ -32,6 +32,38 @@ opt = {argv[i]: argv[i + 1] for i in range(1, len(argv) - 1) if argv[i].startswi
 scene = bpy.context.scene
 if "--frame" in opt:
     scene.frame_set(int(opt["--frame"]))
+    # Held there: each animated value as it is at that frame, the animation taken off (the
+    # exporter evaluates the scene again, at a frame of its own choosing, animated).
+    for o in scene.objects:
+        ad = o.animation_data
+        if not ad or not ad.action:
+            continue
+        a = ad.action
+        try:
+            curves = list(a.fcurves)
+        except AttributeError:
+            curves = [fc for layer in a.layers for strip in layer.strips for bag in strip.channelbags for fc in bag.fcurves]
+        held = []
+        for fc in curves:
+            try:
+                held.append((fc.data_path, fc.array_index, fc.evaluate(scene.frame_current)))
+            except Exception:
+                pass
+        ad.action = None
+        for path, i, v in held:
+            try:
+                if path.startswith('["'):
+                    # (A custom property: the rig's controls, read by its drivers.)
+                    o[path[2:-2]] = v
+                    continue
+                target = o.path_resolve(path)
+                if hasattr(target, "__len__") and not isinstance(target, str):
+                    target[i] = v
+                else:
+                    setattr(o, path, v)
+            except Exception as e:
+                print("couldn't hold", o.name, path, e)
+    bpy.context.view_layer.update()
 if "--name" in opt:
     scene["freefall_name"] = opt["--name"]
 if "--class" in opt:

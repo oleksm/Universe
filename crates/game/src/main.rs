@@ -372,6 +372,10 @@ impl App {
                     let u = app.engine.universe();
                     u.ship.class = h;
                     u.ship.refresh();
+                    // (Set down at its own height: the new game stood the default hull.)
+                    let mut ship = u.ship.clone();
+                    u.world.resettle(u.ship_system, &mut ship);
+                    u.ship = ship;
                     u.ship.fuel = u.ship.spec().fuel_capacity;
                     u.ship.energy = u.ship.spec().capacitor_capacity;
                     let name = u.ship.spec().name.clone();

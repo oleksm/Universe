@@ -777,6 +777,26 @@ impl World {
 
     /// A ship resting at `at` in `system`: on pad `pad` of a station's deck
     /// or a spaceport.
+    /// A ship set down (on a port or open ground) stood again at its own
+    /// height (`Ship::rest_height`): after its hull changed under it (a new
+    /// one bought, another commissioned), on its feet, not in the deck or over it.
+    pub fn resettle(&self, system: usize, ship: &mut Ship) {
+        let ShipState::Landed { body, local_position, local_orientation } = ship.state else { return };
+        let sys = self.system(system);
+        let h = ship.rest_height();
+        let local_position = match crate::port::at(&sys, body, local_position) {
+            Some(port) => crate::port::settle(&sys, port, local_position, h),
+            None => {
+                let dir = local_position.normalize();
+                dir * (sys.bodies[body].surface_radius(dir) + h)
+            }
+        };
+        let mut rigid = ship.rigid();
+        Weld { body, local_position, local_orientation }.place(&sys.bodies, self.time, &self.rails_now(system), &mut rigid);
+        ship.set_rigid(&rigid);
+        ship.state = ShipState::Landed { body, local_position, local_orientation };
+    }
+
     pub fn ship_on(&mut self, system: usize, at: Facility, pad: usize) -> Ship {
         let sys = self.system(system);
         let positions = self.rails_now(system);

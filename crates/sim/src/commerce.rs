@@ -519,6 +519,8 @@ impl crate::universe::Universe {
         new.fuel = old.fuel.min(spec.fuel_capacity);
         new.hull = 1.0;
         new.jets.clear();
+        // (On its own feet: the new hull may stand taller or lower.)
+        self.world.resettle(system, &mut new);
         match id {
             crate::combat::PLAYER => self.ship = new,
             _ => self.crafts[id - 1].ship = new,
