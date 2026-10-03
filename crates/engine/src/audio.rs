@@ -252,6 +252,43 @@ impl Audio {
         self.with(|s| s.push(Voice::Crunch { t: 0.0, vol: volume, env: 0.0, next: 0.0, low: 0.0, band: 0.0 }));
     }
 
+    /// Something huge moving (a field forming, a gate's tube taking hold):
+    /// a rush of noise through a band gliding from `f0` to `f1` Hz, a
+    /// resonance riding it, partials gliding with it, a sub beneath;
+    /// building up to its end (`up`) or dying away from its start.
+    pub fn sweep(&self, f0: f32, f1: f32, seconds: f32, volume: f32, up: bool) {
+        self.with(|s| s.push(Voice::Sweep { t: 0.0, dur: seconds, f0, f1, vol: volume, up, low: 0.0, band: 0.0, low2: 0.0, band2: 0.0, phase: [0.0; 5], sub: 0.0 }));
+    }
+
+    /// A great structure ringing (a gate's ring, a station's frame): deep
+    /// inharmonic modes at `base` Hz and up, dying over about `seconds`.
+    pub fn resonate(&self, base: f32, seconds: f32, volume: f32) {
+        self.with(|s| {
+            const RATIOS: [f32; 6] = [1.0, 1.47, 2.09, 2.56, 3.39, 4.61];
+            let mut modes = [(0.0, 0.0, 0.0, 0.0); 6];
+            for (m, r) in modes.iter_mut().zip(RATIOS) {
+                let f = base * r * (1.0 + 0.01 * s.white());
+                *m = (f, seconds / r.sqrt() * 0.4, 1.0 / r, s.white().abs());
+            }
+            s.push(Voice::Ring { modes, t: 0.0, vol: volume * 3.0, pan: 0.0 });
+        });
+    }
+
+    /// A servo driving something (a turret, the guns' covers): a geared motor
+    /// gliding from `f0` to `f1` Hz over `seconds`, its gearing's whirr.
+    pub fn servo(&self, seconds: f32, f0: f32, f1: f32, volume: f32) {
+        self.with(|s| s.push(Voice::Servo { t: 0.0, dur: seconds, f0, f1, vol: volume, phase: [0.0; 2], low: 0.0, band: 0.0 }));
+    }
+
+    /// The beam weapon firing: 0..1 level and its heat 0..1 (the plasma's
+    /// hum and sizzle, crackling more as it heats).
+    pub fn set_beam(&self, level: f32, heat: f32) {
+        self.with(|s| {
+            s.beam.target = level.clamp(0.0, 1.0);
+            s.beam_heat.target = heat.clamp(0.0, 1.0);
+        });
+    }
+
     /// The ship's systems spooling up (relays, then a rising whine) or down.
     pub fn spool(&self, up: bool) {
         self.with(|s| {
@@ -352,6 +389,8 @@ enum Voice {
     Motor { t: f32, dur: f32, vol: f32, phase: f32, lp: f32 },
     Fizz { t: f32, dur: f32, vol: f32, env: f32, hp: f32, last: f32 },
     Crunch { t: f32, vol: f32, env: f32, next: f32, low: f32, band: f32 },
+    Sweep { t: f32, dur: f32, f0: f32, f1: f32, vol: f32, up: bool, low: f32, band: f32, low2: f32, band2: f32, phase: [f32; 5], sub: f32 },
+    Servo { t: f32, dur: f32, f0: f32, f1: f32, vol: f32, phase: [f32; 2], low: f32, band: f32 },
 }
 
 /// A small metal room: Schroeder reverb (combs into all-passes), a side each.
@@ -433,6 +472,15 @@ struct Synth {
     distant_pan: Smoothed,
     distant_lp: (f32, f32),
     music: Music,
+    beam: Smoothed,
+    beam_heat: Smoothed,
+    beam_phase: f32,
+    beam_crack: f32,
+    beam_f: (f32, f32),
+    beam_c: (f32, f32),
+    beam_lp: f32,
+    drone_f: (f32, f32),
+    drone_beat: f32,
     /// One-shots played now start this long after (see `Audio::after`).
     delay: f32,
 }
@@ -698,6 +746,15 @@ impl Synth {
             distant_pan: Smoothed::default(),
             distant_lp: (0.0, 0.0),
             music: Music::new(),
+            beam: Smoothed::default(),
+            beam_heat: Smoothed::default(),
+            beam_phase: 0.0,
+            beam_crack: 0.0,
+            beam_f: (0.0, 0.0),
+            beam_c: (0.0, 0.0),
+            beam_lp: 0.0,
+            drone_f: (0.0, 0.0),
+            drone_beat: 0.0,
             delay: 0.0,
         }
     }
@@ -856,7 +913,32 @@ impl Synth {
                 saw += if i == 2 { (*p * TAU).sin() } else { *p * 2.0 - 1.0 };
             }
             self.drone_lp += (saw * 0.4 - self.drone_lp) * 0.04;
-            put(self.drone_lp * drone * 1.4, 0.0, 0.2, &mut l, &mut r, &mut send);
+            // (The field: a hiss high in its band, swelling and ebbing as two of its tones beat.)
+            let n = self.white();
+            svf(&mut self.drone_f.0, &mut self.drone_f.1, n, pitch * 14.0, 3.0, rate);
+            self.drone_beat = (self.drone_beat + 0.37 * dt).fract();
+            let beat = 0.6 + 0.4 * (self.drone_beat * TAU).sin();
+            put((self.drone_lp * 1.4 + self.drone_f.1 * 0.25 * beat) * drone, 0.0, 0.3, &mut l, &mut r, &mut send);
+        }
+
+        // The beam weapon: its supply's hum, the plasma's sizzle, crackling as it heats.
+        let beam = self.beam.next(glide * 2.0);
+        let heat = self.beam_heat.next(glide);
+        if beam > 1e-4 {
+            let n = self.white();
+            self.beam_phase = (self.beam_phase + 120.0 * dt).fract();
+            let w = self.beam_phase * TAU;
+            let hum = w.sin() * 0.5 + (2.0 * w).sin() * 0.35 + (3.0 * w).sin() * 0.2 + (5.0 * w).sin() * 0.1;
+            svf(&mut self.beam_f.0, &mut self.beam_f.1, n, 500.0 + 900.0 * heat, 1.2, rate);
+            if n.abs() > 0.992 - 0.012 * heat {
+                self.beam_crack = 0.6 + 0.4 * n.abs();
+            }
+            self.beam_crack *= 1.0 - 1.0 / (0.003 * rate);
+            svf(&mut self.beam_c.0, &mut self.beam_c.1, n, 1800.0, 2.0, rate);
+            let v = hum * 0.14 + self.beam_f.1 * 0.2 + self.beam_c.1 * self.beam_crack * 0.35;
+            // (Heard through the hull: rounded off above a couple of kHz.)
+            self.beam_lp += (v - self.beam_lp) * 0.3;
+            put(self.beam_lp * beam * 1.3, 0.0, 0.25, &mut l, &mut r, &mut send);
         }
 
         // One-shots.
@@ -942,12 +1024,14 @@ impl Synth {
                     let dur = 1.6;
                     let k = (*t / dur).min(1.0);
                     let s = if *up { k } else { 1.0 - k };
-                    let f = 80.0 + 520.0 * s * s;
+                    // (A turbine: its shaft and blades a little out of tune, the air it moves.)
+                    let f = 45.0 + 260.0 * s * s;
                     *phase = (*phase + f * dt).fract();
                     let env = if *up { (k * 4.0).min(1.0) * (1.0 - k).max(0.0).sqrt() } else { (1.0 - k).powi(2) };
                     *t += dt;
                     let w = *phase * TAU;
-                    ((w.sin() * 0.5 + (2.0 * w).sin() * 0.2) * env * 0.35, 0.0, 0.3, *t >= dur)
+                    let tone = w.sin() * 0.45 + (2.01 * w).sin() * 0.2 + (3.03 * w).sin() * 0.12 + (7.1 * w).sin() * 0.04;
+                    ((tone + noise * 0.04 * s) * env * 0.35, 0.0, 0.3, *t >= dur)
                 }
                 Voice::Motor { t, dur, vol, phase, lp } => {
                     // (A buzzy saw, spinning up to speed, through a low-pass.)
@@ -982,6 +1066,41 @@ impl Synth {
                     let tail = if *t < 0.18 { 1.0 } else { (1.0 - (*t - 0.18) / 0.25).max(0.0) * 0.4 };
                     *t += dt;
                     ((*band + noise * 0.3) * *env * *vol * tail, 0.0, 0.15, *t >= 0.43)
+                }
+                Voice::Sweep { t, dur, f0, f1, vol, up, low, band, low2, band2, phase, sub } => {
+                    let k = (*t / *dur).min(1.0);
+                    let f = *f0 * (*f1 / *f0).powf(k);
+                    svf(low, band, noise, f, 1.4, rate);
+                    svf(low2, band2, noise, f * 1.5, 6.0, rate);
+                    const PARTS: [(f32, f32); 5] = [(1.0, 1.0), (1.5, 0.5), (2.003, 0.35), (2.997, 0.2), (4.01, 0.12)];
+                    let mut tone = 0.0;
+                    for (ph, (r, a)) in phase.iter_mut().zip(PARTS) {
+                        *ph = (*ph + f * 0.25 * r * dt).fract();
+                        tone += (*ph * TAU).sin() * a;
+                    }
+                    *sub = (*sub + (f * 0.07).clamp(25.0, 70.0) * dt).fract();
+                    let env = if *up {
+                        // (Building to its end, a moment's fade not to click.)
+                        k.powf(1.6) * ((1.0 - k) / 0.04).min(1.0)
+                    } else {
+                        (*t / 0.05).min(1.0) * (1.0 - k).powf(1.4)
+                    };
+                    *t += dt;
+                    ((*band * 0.9 + *band2 * 0.5 + tone * 0.2 + (*sub * TAU).sin() * 0.45) * env * *vol, 0.0, 0.4, *t >= *dur)
+                }
+                Voice::Servo { t, dur, f0, f1, vol, phase, low, band } => {
+                    let k = (*t / *dur).min(1.0);
+                    let f = *f0 + (*f1 - *f0) * k;
+                    let mut saw = 0.0;
+                    for (i, ph) in phase.iter_mut().enumerate() {
+                        *ph = (*ph + f * (1.0 + 0.012 * i as f32) * dt).fract();
+                        saw += *ph * 2.0 - 1.0;
+                    }
+                    // (Its gearing: the motor's tone through a resonance a few times up, a little grit.)
+                    svf(low, band, saw * 0.5 + noise * 0.2, f * 3.0, 2.5, rate);
+                    let env = (*t / 0.05).min(1.0) * ((*dur - *t) / 0.08).clamp(0.0, 1.0);
+                    *t += dt;
+                    ((*band * 0.8 + *low * 0.2) * env * *vol, 0.1, 0.3, *t >= *dur)
                 }
                 Voice::Later { wait, then } => {
                     *wait -= dt;

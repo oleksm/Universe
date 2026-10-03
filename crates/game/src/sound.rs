@@ -108,12 +108,22 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             a.noise(2.5, 0.9);
             a.rattle(1.6, 0.5, 0.0);
         }
-        Event::Ship(ShipEvent::WeaponsArming) => a.tone(150.0, 700.0, 2.0, 0.12),
-        Event::Ship(ShipEvent::WeaponsHot) => {
-            a.thud(140.0, 0.3, 0.0);
-            a.tone(1320.0, 1320.0, 0.15, 0.15);
+        // The guns run out: their covers' servos, the latches; hot, the capacitors take the charge.
+        Event::Ship(ShipEvent::WeaponsArming) => {
+            a.servo(1.7, 55.0, 120.0, 0.3);
+            a.after(0.85, |a| a.thud(150.0, 0.25, -0.3));
+            a.after(1.7, |a| a.thud(150.0, 0.25, 0.3));
         }
-        Event::Ship(ShipEvent::WeaponsSafe) => a.tone(600.0, 200.0, 0.4, 0.12),
+        Event::Ship(ShipEvent::WeaponsHot) => {
+            a.thud(140.0, 0.35, 0.0);
+            a.impact(0.08, 1.8, 0.0);
+            a.sweep(70.0, 260.0, 0.45, 0.12, true);
+        }
+        Event::Ship(ShipEvent::WeaponsSafe) => {
+            a.sweep(260.0, 60.0, 0.6, 0.1, false);
+            a.servo(1.0, 120.0, 55.0, 0.25);
+            a.after(1.0, |a| a.thud(150.0, 0.25, 0.0));
+        }
         Event::Crew(universe_sim::world::CrewEvent::HatchRefused { .. }) => a.tone(200.0, 150.0, 0.2, 0.2),
         // The hatch: its seals let go with a hiss, the door thuds home.
         Event::Crew(universe_sim::world::CrewEvent::SteppedOutside { .. } | universe_sim::world::CrewEvent::CameAboard) => {
@@ -153,12 +163,17 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             a.tone(880.0, 880.0, 0.2, 0.2);
             a.music_swell();
         }
+        // The field forming round the ship (a rush building, the frame taking
+        // it); letting go (a rush dying, the frame settling).
         Event::Ship(ShipEvent::HyperdriveEngaged) => {
-            a.tone(150.0, 1400.0, 0.7, 0.2);
-            a.thud(50.0, 0.6, 0.0);
+            a.sweep(40.0, 480.0, 1.8, 0.45, true);
+            a.after(1.75, |a| {
+                a.thud(42.0, 0.7, 0.0);
+                a.rattle(0.3, 0.1, 0.0);
+            });
         }
         Event::Ship(ShipEvent::HyperdriveDisengaged) => {
-            a.tone(1400.0, 150.0, 0.6, 0.2);
+            a.sweep(480.0, 40.0, 1.4, 0.4, false);
             a.thud(50.0, 0.5, 0.0);
         }
         Event::HyperdriveArrived { .. } => a.tone(880.0, 1320.0, 0.25, 0.18),
@@ -176,16 +191,22 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
             a.thud(110.0, 0.45, 0.0);
             a.hiss(0.4, 0.15, 0.5, 0.0);
         }
-        // Into the gate: a deep swell and the rush of it; out, it fades.
+        // Into the gate: the ring's whole structure rings deep, the tube takes
+        // hold (a rush building, a boom through the frame), and the flow roars on.
         Event::Ship(ShipEvent::GateEntered { .. }) => {
-            a.tone(120.0, 1800.0, 1.5, 0.16);
-            a.hiss(2.5, 0.35, 0.15, 0.0);
-            a.thud(40.0, 0.8, 0.0);
+            a.resonate(36.0, 7.0, 0.3);
+            a.sweep(45.0, 700.0, 2.0, 0.5, true);
+            a.after(1.95, |a| {
+                a.thud(32.0, 0.9, 0.0);
+                a.hiss(3.5, 0.25, 0.12, 0.0);
+            });
         }
+        // Out: thrown clear (a boom, the rush dying away), the twin's ring ringing behind.
         Event::Ship(ShipEvent::GateArrived { .. }) => {
             a.music_swell();
-            a.tone(1800.0, 300.0, 0.8, 0.14);
-            a.thud(45.0, 0.6, 0.0);
+            a.thud(38.0, 0.8, 0.0);
+            a.sweep(800.0, 50.0, 2.4, 0.45, false);
+            a.resonate(42.0, 5.0, 0.22);
         }
         Event::RouteStop { .. } => a.tone(700.0, 1050.0, 0.25, 0.16),
         Event::RouteComplete => {
@@ -425,11 +446,10 @@ pub fn update(ctx: &Context, app: &App) {
     if flying && ship.hyperdrive {
         let pitch = 40.0 + 9.0 * (ship.velocity.length().max(1.0).log10() as f32);
         a.set_drone(0.6, pitch);
-    } else if lasing {
-        a.set_drone(0.45, 180.0 + 120.0 * ship.laser_heat as f32);
     } else {
         a.set_drone(0.0, 60.0);
     }
+    a.set_beam(if lasing { 0.6 } else { 0.0 }, ship.laser_heat as f32);
     alarms(a, app);
     air(a, app);
     // The score: tense in a fight (armed, a missile after us, the hull hurt).
