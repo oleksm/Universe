@@ -195,35 +195,52 @@ for name in sorted(os.listdir(TREE)):
         standards.append(st)
     bodies.append(body)
 
-# Records in folders (a standard's `records`): the chemical elements, to their schema.
-ELEMENT_SCHEMA = yaml.safe_load(open(os.path.join(TREE, "FSO", "schema", "element.schema.yaml"), encoding="utf-8"))
-elements = []
+# Records in folders (a standard's `records`): chemical elements and materials, each kind to
+# its schema (schema/element.schema.yaml, schema/material.schema.yaml).
+KINDS = {"elements": "element", "materials": "material"}
+SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "FSO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
+elements, materials = [], []
 for s in standards:
     if "records" not in s:
         continue
+    kind = str(s["records"])
     prefix = s["id"].split(" ")[0]
-    folder = os.path.join(TREE, prefix, "metadata", str(s["records"]))
+    folder = os.path.join(TREE, prefix, "metadata", kind)
+    if kind not in KINDS:
+        problem(os.path.join(TREE, s["file"]), f"records: one of {', '.join(KINDS)}")
+        continue
     if not os.path.isdir(folder):
-        problem(os.path.join(TREE, s["file"]), f"records: no folder metadata/{s['records']}")
+        problem(os.path.join(TREE, s["file"]), f"records: no folder metadata/{kind}")
         continue
     seen = {}
     for name in sorted(os.listdir(folder)):
         full = os.path.join(folder, name)
-        if not re.fullmatch(r"[0-9]{3}-[a-z-]+\.yaml", name):
-            problem(full, "an element's file is named NNN-<name>.yaml (its atomic number)")
+        pattern = r"[0-9]{3}-[a-z-]+\.yaml" if kind == "elements" else r"[a-z0-9-]+\.yaml"
+        if not re.fullmatch(pattern, name):
+            problem(full, "an element's file is named NNN-<name>.yaml (its atomic number)" if kind == "elements" else "a material's file is named <name>.yaml (lower case, words joined by -)")
             continue
         e = load(full)
         ident = e.get("identity") or {}
-        for k in ("name", "symbol", "atomic_number"):
-            if k not in ident:
-                problem(full, f"identity: no {k}")
-        if ident.get("atomic_number") != int(name[:3]):
-            problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
-        if ident.get("symbol") in seen:
-            problem(full, f"symbol {ident.get('symbol')} twice (also {seen[ident.get('symbol')]})")
-        seen[ident.get("symbol")] = name
+        if kind == "elements":
+            for k in ("name", "symbol", "atomic_number"):
+                if k not in ident:
+                    problem(full, f"identity: no {k}")
+            if ident.get("atomic_number") != int(name[:3]):
+                problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
+            key = ident.get("symbol")
+        else:
+            for k in ("name", "class"):
+                if not ident.get(k):
+                    problem(full, f"identity: no {k}")
+            key = ident.get("name")
+            e["slug"] = name[:-5]
+        if key in seen:
+            problem(full, f"{key} twice (also {seen[key]})")
+        seen[key] = name
         for group, props in e.items():
-            known = ELEMENT_SCHEMA["properties"].get(group)
+            if group == "slug":
+                continue
+            known = SCHEMAS[kind]["properties"].get(group)
             if known is None:
                 problem(full, f"unknown group '{group}'")
                 continue
@@ -232,8 +249,9 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        elements.append(e)
+        (elements if kind == "elements" else materials).append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
+materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 
 ids = {s["id"] for s in standards}
 for s in standards:
@@ -309,8 +327,10 @@ def write_html():
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
         "elements": elements,
-        # (Each element property's unit or note, from the schema.)
-        "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in ELEMENT_SCHEMA["properties"].items()},
+        "materials": materials,
+        # (Each property's unit or note, from the schemas.)
+        "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["elements"]["properties"].items()},
+        "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["materials"]["properties"].items()},
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,
@@ -329,5 +349,5 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
-print(f"{len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements")
+print(f"{len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials")
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron")

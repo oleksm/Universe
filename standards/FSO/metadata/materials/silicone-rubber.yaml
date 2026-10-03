@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: Wikipedia: Silicone rubber. A range there is given as its middle. null: not given there.
+identity:
+  name: Silicone rubber
+  class: polymer
+  composition: []
+  form:
+  - sheet
+  - tube
+  grade: null
+mass:
+  density: 1075.0
+mechanical:
+  youngs_modulus: null
+  shear_modulus: null
+  poissons_ratio: null
+  yield_strength: null
+  tensile_strength: 5.9
+  compressive_strength: null
+  shear_strength: null
+  elongation_at_break: 7.0
+  hardness: null
+  fracture_toughness: null
+  impact_toughness: null
+  fatigue_limit: null
+  creep_resistance: null
+  wear_resistance: poor
+  friction_coefficient: null
+thermal:
+  melting_point: null
+  max_service_temperature: 573.15
+  min_service_temperature: 173.15
+  thermal_conductivity: null
+  specific_heat_capacity: null
+  thermal_expansion: null
+  thermal_shock_resistance: null
+  emissivity: null
+  absorptivity: null
+electrical_magnetic:
+  electrical_conductivity: null
+  dielectric_strength: null
+  magnetic: null
+  superconducting_temperature: null
+optical:
+  transparency: null
+  refractive_index: null
+  reflectivity: null
+  colour: null
+environment:
+  corrosion_resistance: null
+  oxidation_resistance: null
+  chemical_resistance: null
+  outgassing: null
+  radiation_resistance: null
+  radiation_shielding: null
+  uv_resistance: null
+  flammability: null
+  permeability: null
+  toxicity: null
+making:
+  formability: null
+  machinability: null
+  weldability: null
+  joining: []
+  castability: null
+  repairability: null
+  recyclability: null

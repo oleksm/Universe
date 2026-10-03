@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: our element record (Lead). A range there is given as its middle. null: not given there.
+identity:
+  name: Lead
+  class: metal
+  composition:
+  - part: Pb
+    share: 1.0
+  form:
+  - sheet
+  grade: null
+mass:
+  density: 11340.0
+mechanical:
+  youngs_modulus: 16.0
+  shear_modulus: null
+  poissons_ratio: null
+  yield_strength: null
+  tensile_strength: 12
+  compressive_strength: null
+  shear_strength: null
+  elongation_at_break: null
+  hardness: 1.5
+  fracture_toughness: null
+  impact_toughness: null
+  fatigue_limit: null
+  creep_resistance: null
+  wear_resistance: null
+  friction_coefficient: null
+thermal:
+  melting_point: 600.61
+  max_service_temperature: null
+  min_service_temperature: null
+  thermal_conductivity: 35.0
+  specific_heat_capacity: 127.0
+  thermal_expansion: 2.89e-05
+  thermal_shock_resistance: null
+  emissivity: null
+  absorptivity: null
+electrical_magnetic:
+  electrical_conductivity: 4800000.0
+  dielectric_strength: null
+  magnetic: diamagnetic
+  superconducting_temperature: 7.2
+optical:
+  transparency: null
+  refractive_index: null
+  reflectivity: null
+  colour: metallic gray
+environment:
+  corrosion_resistance: null
+  oxidation_resistance: null
+  chemical_resistance: null
+  outgassing: null
+  radiation_resistance: null
+  radiation_shielding: null
+  uv_resistance: null
+  flammability: null
+  permeability: null
+  toxicity: null
+making:
+  formability: null
+  machinability: null
+  weldability: null
+  joining: []
+  castability: null
+  repairability: null
+  recyclability: null

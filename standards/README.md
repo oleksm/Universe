@@ -17,6 +17,8 @@ standards/
       0001-mining-ship.yaml     a record: NNNN-<slug>.yaml, its id "FSO 1"
       elements/                 the chemical elements, under FSO 6 (its `records: elements`)
         026-iron.yaml           NNN-<name>.yaml, its atomic number; to schema/element.schema.yaml
+      materials/                the materials, under FSO 5 (its `records: materials`)
+        fused-silica.yaml       <name>.yaml; to schema/material.schema.yaml
 ```
 
 - **Numbers are permanent:** `FSO 1` stays `FSO 1` whatever it's later filed under (as ISO

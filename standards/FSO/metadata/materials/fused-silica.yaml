@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: Wikipedia: Fused quartz. A range there is given as its middle. null: not given there.
+identity:
+  name: Fused silica
+  class: glass
+  composition:
+  - part: Si
+    share: 0.467
+  - part: O
+    share: 0.533
+  form:
+  - sheet
+  - fibre
+  - tube
+  grade: null
+mass:
+  density: 2203.0
+mechanical:
+  youngs_modulus: 71.7
+  shear_modulus: 31.0
+  poissons_ratio: 0.17
+  yield_strength: null
+  tensile_strength: 48.3
+  compressive_strength: 1100.0
+  shear_strength: null
+  elongation_at_break: null
+  hardness: 5.9
+  fracture_toughness: null
+  impact_toughness: null
+  fatigue_limit: null
+  creep_resistance: null
+  wear_resistance: null
+  friction_coefficient: null
+thermal:
+  melting_point: 1938.15
+  max_service_temperature: null
+  min_service_temperature: null
+  thermal_conductivity: 1.3
+  specific_heat_capacity: null
+  thermal_expansion: 5.5e-07
+  thermal_shock_resistance: excellent
+  emissivity: null
+  absorptivity: null
+electrical_magnetic:
+  electrical_conductivity: 1.0e-18
+  dielectric_strength: 32.5
+  magnetic: null
+  superconducting_temperature: null
+optical:
+  transparency: null
+  refractive_index: null
+  reflectivity: null
+  colour: null
+environment:
+  corrosion_resistance: null
+  oxidation_resistance: null
+  chemical_resistance: null
+  outgassing: null
+  radiation_resistance: null
+  radiation_shielding: null
+  uv_resistance: null
+  flammability: null
+  permeability: null
+  toxicity: null
+making:
+  formability: null
+  machinability: null
+  weldability: null
+  joining: []
+  castability: null
+  repairability: null
+  recyclability: null
