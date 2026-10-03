@@ -197,7 +197,6 @@ function detail(k) {
   const s = stdOf(k); if (!s) return "";
   const body = DATA.bodies.find(x => x.key === s.body);
   let h = `<h2><span style="color:var(--id)">${esc(s.id)}</span> ${esc(s.title)}</h2>`;
-  h += `<div class="file">standards/${esc(s.file)}</div>`;
   if (s.purpose) h += `<h3>Purpose</h3><p>${esc(s.purpose)}</p>`;
   if (s.details) {
     h += `<h3>Details</h3>`;
@@ -232,6 +231,7 @@ function detail(k) {
   if (notes.length) h += `<h3>Notes</h3><table><tr><th>Parameter</th><th>Note</th></tr>${notes.map(p => `<tr><td>${esc(p.key)}</td><td>${esc(p.note)}</td></tr>`).join("")}</table>`;
   if ((s.requires || []).length) h += `<h3>Requires</h3><table><tr><th>Subject</th><th>Check</th><th>Against</th><th>Per</th></tr>${s.requires.map(r => `<tr><td>${esc(r.subject)}</td><td>${esc(String(r.check).replace(/_/g, " "))}</td><td>${esc(r.param)}</td><td>${esc(r.per || "")}</td></tr>`).join("")}</table>`;
   if (s.text) h += `<h3>Why</h3><p>${esc(s.text)}</p>`;
+  h += `<div class="file" style="margin-top:24px">standards/${esc(s.file)}</div>`;
   return h;
 }
 
