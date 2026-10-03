@@ -34,7 +34,7 @@ BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "founded_by", "a
 BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
 # The game's brands (members and makers are named by them).
 BRANDS = dict(re.findall(r'key: "(brand\.[a-z0-9_]+)", name: "([^"]*)"', open(os.path.join(ROOT, "content", "base", "brands.ron"), encoding="utf-8").read()))
-STANDARD_FIELDS = {"version", "title", "purpose", "details", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
+STANDARD_FIELDS = {"version", "title", "parent", "purpose", "details", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
 
 problems = []
 
@@ -71,6 +71,16 @@ def check_standard(s, ids):
     lic = s.get("licence", "open")
     if not (lic == "open" or (isinstance(lic, dict) and set(lic) == {"fee"} and isinstance(lic["fee"], (int, float)) and lic["fee"] >= 0)):
         problem(where, "licence: open, or {fee: credits}")
+    if "parent" in s:
+        if s["parent"] not in ids:
+            problem(where, f"parent {s['parent']}: no such record")
+        seen, up = {s["id"]}, s["parent"]
+        while up in ids:
+            if up in seen:
+                problem(where, "parent: goes round in a circle")
+                break
+            seen.add(up)
+            up = next((x.get("parent") for x in standards if x["id"] == up), None)
     for r in s.get("refs", []) or []:
         if r not in ids:
             problem(where, f"refers to {r}: no such standard (ids are like 'FSO 12')")

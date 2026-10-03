@@ -38,6 +38,10 @@ definitions:
 properties:
   title:
     type: string
+  parent:
+    type: string
+    pattern: ^[A-Z]{2,6} [0-9]+$
+    description: The record it sits under (its category).
   purpose:
     type: string
     description: Why it exists, a paragraph.

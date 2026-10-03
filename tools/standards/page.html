@@ -115,7 +115,19 @@ function rows(q) {
     const bk = "b:" + body.key;
     out.push({ k: bk, depth: 0, kind: "body", label: `${body.name} (${body.prefix})`, title: body.name });
     if (!open.has(bk) && !q) continue;
-    for (const s of ofBody(body, q)) out.push({ k: "s:" + s.id, depth: 1, kind: "std", std: s });
+    // (Records under their parent: a record with none sits under the body.)
+    const all = ofBody(body, "");
+    const shown = new Set(ofBody(body, q).map(s => s.id));
+    const kids = id => all.filter(s => (s.parent || null) === id);
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible);
+    const walk = (id, depth) => {
+      for (const s of kids(id)) {
+        if (q && !visible(s)) continue;
+        out.push({ k: "s:" + s.id, depth, kind: "std", std: s });
+        walk(s.id, depth + 1);
+      }
+    };
+    walk(null, 1);
   }
   return out;
 }
