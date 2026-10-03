@@ -211,6 +211,8 @@ pub struct App {
     /// The live observer port's questions (see `observe`), and a recording under way.
     pub observe_port: Option<std::sync::mpsc::Receiver<observe::Request>>,
     pub recording: Option<observe::Recording>,
+    /// The port tried (once: it stays open, answering only while debug's on).
+    pub observe_tried: bool,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// A glTF model shown ahead of the eye (dev: `UNIVERSE_MODEL=file.glb`).
@@ -351,7 +353,11 @@ impl App {
             news_panel: false,
             graphics: graphics::load(),
             graphics_panel: false,
-            observe_port: { observe::clean_up(); observe::listen() },
+            observe_port: {
+                observe::clean_up();
+                None
+            },
+            observe_tried: false,
             recording: None,
             sparks: Vec::new(),
             showcase: std::env::var("UNIVERSE_MODEL").ok().and_then(|path| {
@@ -1115,6 +1121,13 @@ impl Game for App {
         // The observer: the live port's questions answered; a recording's frame kept.
         observe::answer(self, ctx);
         observe::frame(self, ctx);
+        // (Slow frames written down only while debug's on, or recording.)
+        ctx.watch_hitches = self.debug > 0 || self.recording.is_some();
+        if ctx.watch_hitches && self.observe_port.is_none() && !self.observe_tried {
+            // The live port, opened the first time debug comes on.
+            self.observe_tried = true;
+            self.observe_port = observe::listen();
+        }
         if !self.launched {
             self.launched = true;
             sound::launch(ctx);

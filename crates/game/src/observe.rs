@@ -9,7 +9,8 @@
 //! at start-up.
 //!
 //! **The live port** (127.0.0.1 only, `UNIVERSE_OBSERVE_PORT`, default 7878;
-//! `UNIVERSE_OBSERVE=0`: none): plain HTTP, for the now — where we are, the
+//! `UNIVERSE_OBSERVE=0`: none; opened the first time debug comes on, answering
+//! only while it's on): plain HTTP, for the now — where we are, the
 //! frame times, the profile, what the renderer holds, the graphics settings
 //! (set them too), a screenshot, recordings started and stopped. `GET /`
 //! lists it all.
@@ -271,6 +272,11 @@ pub fn answer(app: &mut App, ctx: &mut Context) {
     let Some(rx) = app.observe_port.as_ref() else { return };
     let pending: Vec<Request> = rx.try_iter().collect();
     for req in pending {
+        // (Debug off: nothing's answered but that.)
+        if app.debug == 0 && app.recording.is_none() {
+            let _ = req.reply.send(("text/plain", b"debug is off in the game (F3 turns it on)\n".to_vec()));
+            continue;
+        }
         let (path, query) = req.path.split_once('?').unwrap_or((req.path.as_str(), ""));
         let js = |v: Value| ("application/json", serde_json::to_vec_pretty(&v).unwrap_or_default());
         let answer = match path {

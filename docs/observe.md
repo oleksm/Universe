@@ -26,11 +26,13 @@ trace shows that cost under `render`.
 
 ## The live port (whoever's helping)
 
-`http://127.0.0.1:7878/` while the game runs (this machine only; `UNIVERSE_OBSERVE_PORT` to move
+`http://127.0.0.1:7878/` while the game runs, opened the first time debug comes on (F3) and
+answering only while it's on (this machine only; `UNIVERSE_OBSERVE_PORT` to move
 it, `UNIVERSE_OBSERVE=0` for none; screenshot runs don't open it). `GET /` lists it:
 `/status`, `/perf` (the last 300 frame times, hitches), `/profile`, `/resources`, `/graphics`
 (`?shadows=off&textures=on` to set, for this run), `/screenshot` (the next frame, its path
 answered), `/record/start`, `/record/stop`, `/sessions`.
 
-Slow frames are also written to `hitches.log` beside the quicksave (see the changelog,
-2026-10-03, hitch log).
+While debug's on (or a recording runs), slow frames are written to `hitches.log` beside the
+quicksave (it starts over past 1 MB, the last kept as `hitches.log.old`). Debug off, nothing is
+logged or written: the frame times are only counted, for the graph when F3 comes on.

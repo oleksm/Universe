@@ -79,6 +79,8 @@ pub struct Resources {
 
 /// Frames kept in `Perf::history`.
 pub const HISTORY: usize = 300;
+/// The hitch log's size (bytes) before it starts over.
+pub const HITCH_LOG_MAX: u64 = 1 << 20;
 /// A frame this slow (s) is a hitch: written down (see `Config::hitch_log`).
 pub const HITCH: f32 = 0.05;
 
@@ -91,6 +93,9 @@ impl Perf {
 /// What the game sees each frame: input, timing, and a few window controls.
 pub struct Context {
     pub input: Input,
+    /// Slow frames written down (the log and `Config::hitch_log`): the game
+    /// sets it while its debug view is on; off, they're only counted.
+    pub watch_hitches: bool,
     /// Seconds since the last frame (clamped to avoid huge steps after stalls).
     pub dt: f32,
     /// Seconds since start.
@@ -215,6 +220,8 @@ impl<G: Game> Runner<G> {
         let bar = std::env::var("UNIVERSE_HITCH_MS").ok().and_then(|v| v.parse::<f32>().ok()).map_or(HITCH, |ms| ms / 1000.0);
         if raw_dt > bar && s.frame_count > 60 {
             p.hitches += 1;
+        }
+        if raw_dt > bar && s.frame_count > 60 && s.ctx.watch_hitches {
             let (u, d, h) = s.last_parts;
             let rs = s.render.state();
             let mut text = format!(
@@ -227,6 +234,10 @@ impl<G: Game> Runner<G> {
             log::warn!("{}", text.trim_end());
             if let Some(path) = &self.config.hitch_log {
                 use std::io::Write;
+                // (Kept small: past `HITCH_LOG_MAX` it starts over, the last one kept as .old.)
+                if std::fs::metadata(path).is_ok_and(|m| m.len() > HITCH_LOG_MAX) {
+                    let _ = std::fs::rename(path, path.with_extension("log.old"));
+                }
                 if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(path) {
                     let _ = writeln!(f, "{} {text}", chrono_stamp());
                 }
@@ -326,6 +337,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         let renderer = Renderer::new(&gpu, self.config.low_res_height, self.config.hud_scale, screenshot_run.then_some(16.0 / 9.0));
         let ctx = Context {
             input: Input::default(),
+            watch_hitches: false,
             dt: 0.0,
             time: 0.0,
             fps: 0.0,
