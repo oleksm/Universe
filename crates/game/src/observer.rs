@@ -1,7 +1,7 @@
 use std::f64::consts::FRAC_PI_2;
 
 use serde::{Deserialize, Serialize};
-use universe_engine::glam::{DVec3, Vec3};
+use universe_engine::glam::DVec3;
 use universe_engine::{Camera, Context, KeyCode, MouseButton};
 use universe_sim::world::charts::Charts;
 use universe_sim::View;
@@ -119,10 +119,15 @@ impl Observer {
     }
 
     pub fn camera(&self, target: DVec3) -> Camera {
-        let dir = DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
+        self.camera_in(target, glam::DQuat::IDENTITY)
+    }
+
+    /// Orbiting `target` in `frame` (a ship's turn: yaw about its up, pitch over its top).
+    pub fn camera_in(&self, target: DVec3, frame: glam::DQuat) -> Camera {
+        let dir = frame * DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
         let target = target + self.transition;
         let mut camera = Camera { position: target + dir * self.distance, near: 1.0, ..Default::default() };
-        camera.look_at(target, Vec3::Y);
+        camera.look_at(target, (frame * DVec3::Y).as_vec3());
         camera
     }
 }

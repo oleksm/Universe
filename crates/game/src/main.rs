@@ -104,6 +104,8 @@ pub struct App {
     pub mode: Mode,
     pub observer: Observer,
     pub chase_cam: bool,
+    /// The chase camera's own turn: the ship's, eased (it trails into a turn).
+    pub chase_turn: Option<universe_engine::glam::DQuat>,
     pub warp_index: usize,
     /// The world's base time scale (game seconds per real second). The same
     /// for everyone in a shared world; set with UNIVERSE_TIME_SCALE (1-100).
@@ -271,6 +273,7 @@ impl App {
             mode: Mode::Pilot,
             observer: Observer::new(),
             chase_cam: true,
+            chase_turn: None,
             warp_index: 0,
             time_scale: std::env::var("UNIVERSE_TIME_SCALE")
                 .ok()
@@ -1013,7 +1016,14 @@ impl App {
                 }
                 self.observer.transition *= (-4.0 * dt).exp();
                 self.prev_focus = Some((self.view.origin, focus));
-                self.camera = self.observer.camera(focus);
+                // (Round a ship in its own frame: about its up, over its top.)
+                let frame = match self.observer.focus {
+                    Focus::Ship => self.place(Who::Me).1,
+                    Focus::Craft(i) => self.place(Who::Craft(i)).1,
+                    _ => universe_engine::glam::DQuat::IDENTITY,
+                };
+                self.camera = self.observer.camera_in(focus, frame);
+                self.chase_turn = None;
             }
             Mode::Pilot if !self.v.crew.seated() => {
                 let sys = self.charts.system(self.v.ship_system);
@@ -1036,10 +1046,21 @@ impl App {
                     let at = DVec3::new(75.0, 12.0, 60.0);
                     let look = universe_sim::ship::facing(-(turned * at).normalize(), turned * DVec3::Y);
                     (at, look.as_quat())
+                } else if self.chase_cam {
+                    // Behind on a soft arm: its turn eased toward the ship's (a third
+                    // of a second to catch up), so it trails into a turn and the ship
+                    // swings through the frame; a hard turn past a quarter-circle snaps it back.
+                    let eased = match self.chase_turn {
+                        Some(q) if q.angle_between(turned) < 1.6 => q.slerp(turned, 1.0 - (-dt / 0.33).exp()),
+                        _ => turned,
+                    };
+                    self.chase_turn = Some(eased);
+                    (DVec3::new(0.0, 20.0, 115.0), eased.as_quat())
                 } else {
-                    (DVec3::new(0.0, 20.0, 115.0), orientation)
+                    (DVec3::ZERO, orientation)
                 };
-                let offset = if self.chase_cam { turned * chase } else { DVec3::ZERO };
+                let frame = if over_rock { turned } else { self.chase_turn.unwrap_or(turned) };
+                let offset = if self.chase_cam { frame * chase } else { DVec3::ZERO };
                 self.camera = Camera { position: self.view.ship_pos + offset, orientation, near: 0.5, ..Default::default() };
                 self.prev_focus = None;
             }
