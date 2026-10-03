@@ -175,6 +175,8 @@ let open = new Set();
 try { open = new Set(JSON.parse(localStorage.getItem("standards-open2") || "[]")); } catch (e) {}
 const keepOpen = () => { try { localStorage.setItem("standards-open2", JSON.stringify([...open])); } catch (e) {} };
 if (!open.size) DATA.bodies.forEach(b => open.add("b:" + b.key));
+// (Seen before there were expanders on standards with standards under them: those start open.)
+try { if (!localStorage.getItem("standards-expanders")) { DATA.standards.forEach(s => { if (s.parent) open.add("x:" + s.parent); }); localStorage.setItem("standards-expanders", "1"); } } catch (e) {}
 
 function matches(s, q) {
   if (!q) return true;
@@ -198,10 +200,11 @@ function rows(q) {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
         const n = recordsUnder(s.id);
-        out.push({ k: "s:" + s.id, depth, kind: "std", std: s, n: n || undefined, isOpen: open.has("x:" + s.id) || !!q });
-        walk(s.id, depth + 1);
+        const isOpen = open.has("x:" + s.id) || !!q;
+        out.push({ k: "s:" + s.id, depth, kind: "std", std: s, n: n || undefined, has: n > 0 || kids(s.id).length > 0, isOpen });
+        if (isOpen) walk(s.id, depth + 1);
         // (Its elements, when it's open: by atomic number.)
-        if (n && (open.has("x:" + s.id) || q)) {
+        if (n && isOpen) {
           for (const e of elementsUnder(s.id, q)) out.push({ k: "el:" + e.identity.symbol, depth: depth + 1, kind: "el", el: e });
           for (const m of materialsUnder(s.id, q)) out.push({ k: "mat:" + m.slug, depth: depth + 1, kind: "mat", mat: m });
           for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
@@ -223,12 +226,21 @@ function rows(q) {
     if (q && !aq(a) && !bodies.some(hit)) continue;
     out.push({ k: "ad:" + a.slug, depth: 1, kind: "adm", label: a.name, n: bodies.length });
     if (!open.has("ad:" + a.slug) && !q) continue;
-    // (Its bodies: each under the body it is at.)
+    // (Its bodies: each under the body it is at, and under each what has its address there.)
     const known = n => bodies.some(y => y.name === n);
-    const under = at => { for (const x of bodies.filter(x => (known(x.at) ? x.at : null) === at)) { const kids = bodies.some(y => y.at === x.name); if (!q || hit(x) || kids) out.push({ k: `bd:${a.slug}:${x.slug}`, depth: 0, kind: "maker", label: x.name, ticker: x.at && !known(x.at) ? x.at : x.kind, d: 0, at }); under(x.name); } };
-    const from = out.length; under(null);
-    const depthOf = name => { const x = bodies.find(y => y.name === name); return x && x.at ? 1 + depthOf(x.at) : 0; };
-    for (let i = from; i < out.length; i++) out[i].depth = 2 + (out[i].at ? 1 + depthOf(out[i].at) : 0);
+    const under = (at, depth) => {
+      for (const x of bodies.filter(x => (known(x.at) ? x.at : null) === at)) {
+        const k = `bd:${a.slug}:${x.slug}`;
+        const orgs = DATA.bodies.filter(o => o.address === `${a.slug}/${x.slug}`);
+        const has = orgs.length > 0 || bodies.some(y => y.at === x.name);
+        if (q && !hit(x) && !has) continue;
+        out.push({ k, depth, kind: "maker", label: x.name, ticker: x.at && !known(x.at) ? x.at : x.kind, leaf: !has });
+        if (!has || !(open.has(k) || q)) continue;
+        for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.prefix, leaf: true });
+        under(x.name, depth + 1);
+      }
+    };
+    under(null, 2);
   }
   return out;
 }
@@ -241,14 +253,26 @@ function reveal(k) {
     const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
     const up = byId[e.under]; if (up) open.add("b:" + up.body);
+    for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
     keepOpen();
     return;
   }
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
-  if (k.startsWith("bd:")) { open.add("la"); open.add("ad:" + k.split(":")[1]); keepOpen(); return; }
+  if (k.startsWith("bd:") || k.startsWith("at:")) {
+    const org = k.startsWith("at:") ? DATA.bodies.find(o => o.key === k.slice(3)) : null;
+    const [sy, slug] = org ? (org.address || "").split("/") : k.split(":").slice(1);
+    const a = DATA.administrations.find(x => x.slug === sy); if (!a) return;
+    open.add("la"); open.add("ad:" + sy);
+    // (Open the bodies above it; and itself, for what has its address there.)
+    let x = a.bodies.find(y => y.slug === slug);
+    if (org && x) open.add(`bd:${sy}:${x.slug}`);
+    for (x = x && a.bodies.find(y => y.name === x.at); x; x = a.bodies.find(y => y.name === x.at)) open.add(`bd:${sy}:${x.slug}`);
+    keepOpen(); return;
+  }
   const s = stdOf(k); if (!s) return;
   open.add("b:" + s.body);
+  for (let u = s; u && u.parent; u = byId[u.parent]) open.add("x:" + u.parent);
   keepOpen();
 }
 reveal(current);
@@ -261,7 +285,7 @@ function render() {
   for (const n of list) {
     const pad = `padding-left:${12 + n.depth * 18}px`;
     const sel = n.k === current ? " sel" : "";
-    const tw = n.kind === "std" || n.kind === "maker" ? "" : (open.has(n.k) || q ? "▾" : "▸");
+    const tw = n.kind === "std" || (n.kind === "maker" && n.leaf !== false) ? "" : (open.has(n.k) || q ? "▾" : "▸");
     if (n.kind === "el") {
       const i = n.el.identity;
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${elTile(n.el, true)}${esc(i.name)} <span class="n">${i.atomic_number}</span></div>`;
@@ -272,7 +296,7 @@ function render() {
       const i = n.proc.identity;
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${icon(n.proc.slug)}${esc(i.name)} <span class="n">${esc(i.kind)}</span></div>`;
     } else if (n.kind === "std") {
-      const twisty = n.n ? (n.isOpen ? "▾" : "▸") : "";
+      const twisty = n.has ? (n.isOpen ? "▾" : "▸") : "";
       const count = n.n ? ` <span class="n">(${n.n})</span>` : "";
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw">${twisty}</span>${esc(n.std.title)} <span class="n">${esc(n.std.id)}</span>${count}</div>`;
     } else {
@@ -316,6 +340,7 @@ function detail(k) {
   if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick something on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
+  if (kind === "at") return detail("b:" + rest.join(":"));
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
@@ -346,7 +371,8 @@ function detail(k) {
     const link = y => `<a data-k="${esc(`bd:${a.slug}:${y.slug}`)}">${esc(y.name)}</a>`;
     const up = x.at && a.bodies.find(y => y.name === x.at);
     const here = a.bodies.filter(y => y.at === x.name);
-    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+    const orgs = DATA.bodies.filter(o => o.address === `${a.slug}/${x.slug}`);
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3>` + orgs.map(o => `<div><a data-k="${esc("at:" + o.key)}">${esc(o.name)}</a> <span class="meta">${esc(o.prefix)}</span></div>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
@@ -443,7 +469,7 @@ document.addEventListener("click", e => {
     keepOpen();
   }
   // (A record with elements under it: its list opens, and closes on a second click.)
-  if (el.classList.contains("row") && k.startsWith("s:") && recordsUnder(k.slice(2))) {
+  if (el.classList.contains("row") && k.startsWith("s:") && (recordsUnder(k.slice(2)) || DATA.standards.some(x => x.parent === k.slice(2)))) {
     const x = "x:" + k.slice(2);
     if (open.has(x) && k === current) open.delete(x); else open.add(x);
     keepOpen();
