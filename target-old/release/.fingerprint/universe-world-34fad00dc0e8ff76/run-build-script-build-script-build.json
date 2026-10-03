@@ -1,1 +1,0 @@
-{"rustc":13444744534853132663,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[16067324004670341689,"build_script_build",false,4819704234321296103]],"local":[{"RerunIfChanged":{"output":"release/build/universe-world-34fad00dc0e8ff76/output","paths":["../../content/base/sheet.ron"]}}],"rustflags":[],"config":0,"compile_kind":0}
