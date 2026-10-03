@@ -202,7 +202,8 @@ function detail(k) {
   if (s.details) {
     h += `<h3>Details</h3>`;
     const paras = Array.isArray(s.details.text) ? s.details.text : (s.details.text ? [s.details.text] : []);
-    h += paras.map(p => `<p>${esc(p)}</p>`).join("");
+    // (A line starting "- " is a list item.)
+    h += paras.map(p => p.startsWith("- ") ? `<li>${esc(p.slice(2))}</li>` : `<p>${esc(p)}</p>`).join("").replace(/((?:<li>.*?<\/li>)+)/g, "<ul>$1</ul>");
     if (s.details.table) h += `<table><tr>${s.details.table.columns.map(c => `<th>${esc(c)}</th>`).join("")}</tr>${s.details.table.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`;
   }
   if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;

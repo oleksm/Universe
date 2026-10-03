@@ -1,3 +1,12 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
 title: Spaceships
-purpose: What people need and where it is are in different places, and space is in between.
+purpose: Ships exist because what people need and where it is are in different places, and space is in between.
+details:
+  text:
+    - "From that come a few reasons to cross it:"
+    - "- To move things: goods, ore and fuel from where they are to where they're wanted."
+    - "- To move people: to work, settle, trade or come home."
+    - "- To reach what can't be had at home: resources, land, knowledge."
+    - "- To do work out there: mining, building, repairing, rescuing."
+    - "- To protect or take: defend what's yours, take what isn't."
+    - "Everything a ship carries follows from crossing that space and surviving it: distance, gravity, energy, heat, vacuum, isolation. A specific ship (miner, hauler, transport) is just which reason it's built for, and which of those forces it fights hardest."
