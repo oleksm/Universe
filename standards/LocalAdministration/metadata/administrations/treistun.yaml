@@ -1,4 +1,3 @@
 # yaml-language-server: $schema=../../schema/administration.schema.yaml
 # The home system, as the game makes it from its seed (1984). Its bodies: the folder treistun/.
-name: Treistun administration
-system: Treistun
+name: Treistun

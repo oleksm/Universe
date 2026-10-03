@@ -204,11 +204,11 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
         ad["bodies"].append(x)
-    for k in ["name", "system"]:
+    for k in ["name"]:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "system", "bodies"}:
+        if k not in {"name", "bodies"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
