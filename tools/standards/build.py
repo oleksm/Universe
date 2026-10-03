@@ -171,6 +171,28 @@ for name in sorted(os.listdir(makers_dir)):
     makers.append(m)
 BRANDS = {m.get("key"): m.get("name") for m in makers}
 
+# Local Administration: each settled system's, one file each
+# (LocalAdministration/metadata/administrations/<name>.yaml), to its administration.schema.yaml.
+LOCAL = "LocalAdministration"
+local = load(os.path.join(TREE, LOCAL, "metadata", LOCAL + ".yaml"))
+administrations = []
+adm_dir = os.path.join(TREE, LOCAL, "metadata", "administrations")
+for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
+    full = os.path.join(adm_dir, name)
+    if not re.fullmatch(r"[a-z0-9-]+\.yaml", name):
+        problem(full, "an administration's file is named <name>.yaml (lower case, words joined by -)")
+        continue
+    ad = load(full)
+    for k in ["name", "system"]:
+        if k not in ad:
+            problem(full, f"no {k}")
+    for k in ad:
+        if k not in {"name", "system"}:
+            problem(full, f"unknown field '{k}'")
+    ad["file"] = os.path.relpath(full, TREE)
+    ad["slug"] = name[:-5]
+    administrations.append(ad)
+
 # The Land Register: parcels of land, one file each (LandRegister/metadata/parcels/<name>.yaml),
 # to LandRegister/schema/parcel.schema.yaml. Each is owned by a company in Maker House.
 LAND = "LandRegister"
@@ -185,11 +207,13 @@ for name in sorted(os.listdir(parcels_dir)) if os.path.isdir(parcels_dir) else [
         problem(full, "a parcel's file is named <name>.yaml (lower case, words joined by -)")
         continue
     pc = load(full)
-    for k in ["name", "place", "owner"]:
+    for k in ["name", "administration", "place", "owner"]:
         if k not in pc:
             problem(full, f"no {k}")
+    if "administration" in pc and not any(a["slug"] == pc["administration"] for a in administrations):
+        problem(full, f"administration: no '{pc['administration']}' in Local Administration")
     for k in pc:
-        if k not in {"name", "place", "owner"}:
+        if k not in {"name", "administration", "place", "owner"}:
             problem(full, f"unknown field '{k}'")
     if "owner" in pc and pc["owner"] not in BRANDS:
         problem(full, f"owner: no maker '{pc['owner']}' in Maker House")
@@ -200,7 +224,7 @@ for name in sorted(os.listdir(parcels_dir)) if os.path.isdir(parcels_dir) else [
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", HOUSE, LAND):
+    if not os.path.isdir(folder) or name in ("schema", HOUSE, LAND, LOCAL):
         continue
     # (The body's own file: named after its folder, FSO/metadata/FSO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -408,6 +432,8 @@ def write_html():
         "brands": BRANDS,
         "house": house,
         "land": land,
+        "local": local,
+        "administrations": administrations,
         "parcels": parcels,
         # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
         "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},

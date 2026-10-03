@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../../schema/administration.schema.yaml
+name: Home administration
+system: home

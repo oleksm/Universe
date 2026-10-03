@@ -3,8 +3,9 @@ title: Parcel
 description: 'standards/LandRegister/metadata/parcels/<name>.yaml: one piece of land and who owns it.'
 type: object
 additionalProperties: false
-required: [name, place, owner]
+required: [name, administration, place, owner]
 properties:
   name: { type: string }
+  administration: { type: string, description: The administration that manages it (its file name in LocalAdministration). }
   place: { type: string, description: Where it is. }
   owner: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: Who owns it (a company in Maker House). }

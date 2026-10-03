@@ -1,0 +1,9 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Administration
+description: 'standards/LocalAdministration/metadata/administrations/<name>.yaml: one settled system''s administration. It manages the land in its system.'
+type: object
+additionalProperties: false
+required: [name, system]
+properties:
+  name: { type: string }
+  system: { type: string, description: The settled system it administers. }
