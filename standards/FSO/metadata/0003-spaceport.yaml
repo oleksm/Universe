@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Spaceport
+purpose: Ships exist because what people need is somewhere else, and a spaceport is where "somewhere else" meets the ground. A world's goods and people are on its surface, and the port is the door.
+details:
+  text:
+    - "The forces it answers:"
+    - "- Gravity: landing and lifting are the hardest, most dangerous moments. The port gives flat, prepared, known ground, and guidance down."
+    - "- Traffic: many ships, one sky. Pads and clearance keep them apart."
+    - "- Trade: cargo changes hands here, so goods leave and enter the world."
+    - "- Distance: ships arrive low on fuel and leave needing a full tank."
+    - "- People: crew and passengers step out into the world."
+    - "- Law: the world's authority meets every ship that comes and goes."
+    - "A station plays the same role in orbit. A spaceport does it on the surface, where the world's people and industry actually are."
