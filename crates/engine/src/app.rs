@@ -29,16 +29,19 @@ pub struct Config {
     /// The most frames a second (0: as many as the display takes);
     /// `UNIVERSE_MAX_FPS` overrides it.
     pub max_fps: f32,
+    /// Where slow frames are written down (see `HITCH`): the frame, its
+    /// parts, and with the profiler on, every scope's time in it. None: the log only.
+    pub hitch_log: Option<std::path::PathBuf>,
 }
 
 impl Default for Config {
     fn default() -> Self {
-        Self { title: "Freefall".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 240.0 }
+        Self { title: "Freefall".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 240.0, hitch_log: None }
     }
 }
 
 /// Where the last frames' time went (ms, smoothed) and what they drew.
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct Perf {
     /// Whole frame, start to start.
     pub frame_ms: f32,
@@ -53,7 +56,16 @@ pub struct Perf {
     pub lines: u32,
     pub triangles: u32,
     pub points: u32,
+    /// The last frames' times (ms, raw), oldest first (`HISTORY` of them).
+    pub history: std::collections::VecDeque<f32>,
+    /// Frames slower than `HITCH` since the start.
+    pub hitches: u32,
 }
+
+/// Frames kept in `Perf::history`.
+pub const HISTORY: usize = 300;
+/// A frame this slow (s) is a hitch: written down (see `Config::hitch_log`).
+pub const HITCH: f32 = 0.05;
 
 impl Perf {
     fn smooth(old: f32, new: f32) -> f32 {
@@ -142,6 +154,8 @@ struct Running {
     fps_timer: f32,
     fps_frames: u32,
     frame_count: u64,
+    /// The last frame's update, draw and hand-over (ms), for a hitch's report.
+    last_parts: (f32, f32, f32),
     /// `UNIVERSE_SCREENSHOT=path`: capture a frame shortly after startup, then exit.
     auto_screenshot: Option<PathBuf>,
 }
@@ -176,6 +190,31 @@ impl<G: Game> Runner<G> {
         }
 
         s.ctx.dt = raw_dt.min(0.1);
+        // The frame times; a slow one written down, with what the frame before it did.
+        let p = &mut s.ctx.perf;
+        p.history.push_back(raw_dt * 1000.0);
+        while p.history.len() > HISTORY {
+            p.history.pop_front();
+        }
+        if raw_dt > HITCH && s.frame_count > 60 {
+            p.hitches += 1;
+            let (u, d, h) = s.last_parts;
+            let rs = s.render.state();
+            let mut text = format!(
+                "hitch: frame {} took {:.1} ms (update {:.1}, draw {:.1}, hand-over {:.1}; render thread {:.1}, waiting for the screen {:.1})\n",
+                s.frame_count, raw_dt * 1000.0, u, d, h, rs.render_ms, rs.wait_ms
+            );
+            for (name, ms, calls) in universe_prof::last_frame().iter().filter(|x| x.1 >= 0.5).take(30) {
+                text += &format!("    {ms:>8.2} ms  {name}  ({calls}x)\n");
+            }
+            log::warn!("{}", text.trim_end());
+            if let Some(path) = &self.config.hitch_log {
+                use std::io::Write;
+                if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(path) {
+                    let _ = writeln!(f, "{} {text}", chrono_stamp());
+                }
+            }
+        }
         s.ctx.time = (now - self.start).as_secs_f64();
         let rs = s.render.state();
         s.ctx.low_res = rs.low_res;
@@ -225,6 +264,7 @@ impl<G: Game> Runner<G> {
         universe_prof::frame_end();
 
         let ms = |d: std::time::Duration| d.as_secs_f32() * 1000.0;
+        s.last_parts = (ms(t1 - t0), ms(t2 - t1), ms(Instant::now() - t2));
         let p = &mut s.ctx.perf;
         p.frame_ms = Perf::smooth(p.frame_ms, raw_dt * 1000.0);
         p.update_ms = Perf::smooth(p.update_ms, ms(t1 - t0));
@@ -288,6 +328,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             fps_timer: 0.0,
             fps_frames: 0,
             frame_count: 0,
+            last_parts: (0.0, 0.0, 0.0),
             auto_screenshot: std::env::var_os("UNIVERSE_SCREENSHOT").map(PathBuf::from),
         });
     }
@@ -356,4 +397,10 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         event_loop.set_control_flow(ControlFlow::Poll);
         s.ctx.window.request_redraw();
     }
+}
+
+/// Seconds since the Unix epoch, for the hitch log (no calendar: no dependency).
+fn chrono_stamp() -> String {
+    let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs_f64()).unwrap_or(0.0);
+    format!("[{t:.3}]")
 }

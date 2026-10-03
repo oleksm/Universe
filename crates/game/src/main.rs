@@ -1353,5 +1353,10 @@ pub type SkyCache = (usize, Vec<(universe_engine::glam::Vec3, universe_engine::C
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
         .init();
-    run(Config { title: "Freefall".into(), ..Default::default() }, App::new());
+    // (Slow frames written down beside the quicksave: hitches.log.)
+    let hitch_log = Some(save::data_dir().join("freefall").join("hitches.log"));
+    if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {
+        let _ = std::fs::create_dir_all(dir);
+    }
+    run(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new());
 }

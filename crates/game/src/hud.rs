@@ -1979,6 +1979,8 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
         lines.push((format!("COLLIDE {:.1} MS EVERY 0.2 S", app.collision_cost * 1000.0), DIM));
     }
     lines.push((format!("UPD {:.1} DRAW {:.1} GPU {:.1} IDLE {:.1}", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms), DIM));
+    let worst = p.history.iter().copied().fold(0.0, f32::max);
+    lines.push((format!("WORST {worst:.0} MS OF {}  HITCHES {}", p.history.len(), p.hitches), if p.hitches > 0 { AMBER } else { DIM }));
     lines.push((format!("{} LINES {} TRIS {} PTS", k(p.lines), k(p.triangles), k(p.points)), DIM));
     if !app.v.crafts.is_empty() {
         let here = app.v.crafts.iter().filter(|c| c.system == app.view.origin).count();
@@ -1987,7 +1989,27 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
         lines.push((format!("STOPS {} GATES {} CRASHES {} COLLISIONS {}", t.stops, t.transits, t.crashes, t.collision_losses), DIM));
         lines.push((format!("TRADES {} KILLS {} POSSES {}/{}", t.trades, t.shot_down, t.defences, t.aggressors_downed), DIM));
     }
-    right_column(frame, top, &lines)
+    let bottom = right_column(frame, top, &lines);
+    frame_graph(frame, p, bottom + 4.0)
+}
+
+/// The last frames' times as bars, against the right edge: green under
+/// 1/60 s, amber under a hitch, red over (see `HITCH`); a line at 1/60 s.
+fn frame_graph(frame: &mut Frame, p: &universe_engine::Perf, top: f32) -> f32 {
+    let size = frame.size();
+    let (w, h) = (universe_engine::HISTORY as f32, 48.0);
+    let x0 = size.x - w - 6.0;
+    frame.hud_rect(Vec2::new(x0 - 2.0, top), Vec2::new(w + 4.0, h + 4.0), SOFT_PANEL);
+    // (Scale: 100 ms the full height; a stall past it clipped.)
+    let full = 100.0;
+    for (i, ms) in p.history.iter().enumerate() {
+        let bar = (ms / full).min(1.0) * h;
+        let c = if *ms > universe_engine::HITCH * 1000.0 { RED } else if *ms > 1000.0 / 59.0 { AMBER } else { Color::hex(0x60ff90) };
+        frame.hud_rect(Vec2::new(x0 + i as f32, top + 2.0 + h - bar), Vec2::new(1.0, bar.max(1.0)), c);
+    }
+    let y60 = top + 2.0 + h - (1000.0 / 60.0) / full * h;
+    frame.hud_rect(Vec2::new(x0, y60), Vec2::new(w, 1.0), DIM);
+    top + h + 6.0
 }
 
 /// A column of lines against the right edge, on a soft backing; its bottom.

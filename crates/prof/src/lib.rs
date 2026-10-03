@@ -40,6 +40,8 @@ struct State {
     /// The last frames' totals per scope (ring of `WINDOW`), and where the ring is.
     history: HashMap<&'static str, Vec<(f64, u32)>>,
     frames: usize,
+    /// The last frame's totals, as it ended (for a slow frame's breakdown).
+    last: Vec<(&'static str, f64, u32)>,
 }
 
 /// Turn profiling on or off.
@@ -106,6 +108,8 @@ pub fn frame_end() {
     }
     let slot = s.frames % WINDOW;
     let frame = std::mem::take(&mut s.frame);
+    s.last = frame.iter().map(|(&n, &(t, c))| (n, t, c)).collect();
+    s.last.sort_by(|a, b| b.1.total_cmp(&a.1));
     for (name, h) in s.history.iter_mut() {
         h[slot] = frame.get(name).copied().unwrap_or_default();
     }
@@ -117,6 +121,12 @@ pub fn frame_end() {
         });
     }
     s.frames += 1;
+}
+
+/// The last frame's scopes, the slowest first: (name, ms, calls).
+pub fn last_frame() -> Vec<(&'static str, f64, u32)> {
+    let g = STATE.lock().unwrap_or_else(|e| e.into_inner());
+    g.as_ref().map(|s| s.last.iter().map(|&(n, t, c)| (n, t * 1000.0, c)).collect()).unwrap_or_default()
 }
 
 /// One scope's statistics.
