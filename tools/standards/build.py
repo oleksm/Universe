@@ -222,7 +222,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
 
 # An address (SFO 9): at <system>/<body> in Local Administration, then tower, deck, section, unit
 # where the settlement has them.
-taken = []
+taken = {}
 
 
 def check_address(rec, where):
@@ -253,13 +253,10 @@ def check_address(rec, where):
         problem(where, f"address: {tower['name']} has sections {', '.join(map(str, tower['sections']))}")
     if "unit" in a and not (isinstance(a["unit"], int) and 1 <= a["unit"] <= tower["units"]):
         problem(where, f"address: a section of {tower['name']} has units 1 to {tower['units']}")
-    # (It holds everything under the level it stops at: nobody else may be in or over it.)
-    spot = [a["at"], a["tower"]] + [a[k] for k in ("deck", "section", "unit") if k in a]
-    for other, who in taken:
-        n = min(len(other), len(spot))
-        if n > 2 and other[:n] == spot[:n]:
-            problem(where, f"address: {who} is already there")
-    taken.append((spot, rec.get("name")))
+    spot = (a["at"], a["tower"], a.get("deck"), a.get("section"), a.get("unit"))
+    if "unit" in a and spot in taken:
+        problem(where, f"address: {taken[spot]} is already there")
+    taken[spot] = rec.get("name")
 
 
 for m in makers:

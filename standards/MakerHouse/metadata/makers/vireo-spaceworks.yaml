@@ -2,7 +2,7 @@
 key: brand.vireo
 name: Vireo Spaceworks
 ticker: VIR
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 5 }
+address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 5, section: D, unit: 4 }
 note: "Hulls: fast and light"
 who: "A shipyard that builds for speed before capacity. One of the founders of the SFO."
 what: "Builds hulls: fast and light."

@@ -2,7 +2,7 @@
 key: brand.tolland
 name: Tolland Yards
 ticker: TOL
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 3 }
+address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 3, section: A, unit: 2 }
 note: "Hulls: workhorses and haulers"
 who: "A shipyard for working ships, built for people who earn a living with them. One of the founders of the SFO."
 what: "Builds hulls: workhorses and haulers."

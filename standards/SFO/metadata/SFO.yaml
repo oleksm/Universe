@@ -3,7 +3,7 @@ key: body.sfo
 name: Standards Foundry Office
 prefix: SFO
 seat: home
-address: { at: treistun/treistun-e-station, tower: Civic Tower, deck: 12, section: A }
+address: { at: treistun/treistun-e-station, tower: Civic Tower, deck: 12, section: A, unit: 1 }
 kind: independent
 note: The standards everyone builds to, whoever they answer to. Open to all.
 purpose: The SFO exists so that what people make fits together, whoever made it and wherever it goes.

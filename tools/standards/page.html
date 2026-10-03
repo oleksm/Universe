@@ -251,18 +251,12 @@ function rows(q) {
           const tk = `tw:${a.slug}:${x.slug}:${t.name}`; const there = orgsAt(a.slug, x.slug, t.name);
           out.push({ k: tk, depth: depth + 1, kind: "maker", label: t.name, ticker: `${t.decks} decks`, leaf: !there.length });
           if (!there.length || !(open.has(tk) || q)) continue;
-          // (An address stops at the level held: the holder's row is that level's.)
-          const seen = new Set();
+          let deck = null, section = null;
           for (const o of there) {
             const ad = o.address;
-            const levels = [ad.deck !== undefined && [`Deck ${ad.deck}`, ad.deck], ad.section !== undefined && [`Section ${ad.section}`, ad.section], ad.unit !== undefined && [`Unit ${ad.unit}`, ad.unit]].filter(Boolean);
-            let key = tk;
-            levels.forEach(([label, v], i) => {
-              key += ":" + v;
-              if (i === levels.length - 1) out.push({ k: "at:" + o.key, depth: depth + 2 + i, kind: "maker", label, ticker: o.name, leaf: true });
-              else if (!seen.has(key)) { seen.add(key); out.push({ k: key, depth: depth + 2 + i, kind: "maker", label, flat: true }); }
-            });
-            if (!levels.length) out.push({ k: "at:" + o.key, depth: depth + 2, kind: "maker", label: o.name, leaf: true });
+            if (ad.deck !== deck) { deck = ad.deck; section = null; out.push({ k: `${tk}:${deck}`, depth: depth + 2, kind: "maker", label: `Deck ${deck}`, flat: true }); }
+            if (ad.section !== section) { section = ad.section; out.push({ k: `${tk}:${deck}:${section}`, depth: depth + 3, kind: "maker", label: `Section ${section}`, flat: true }); }
+            out.push({ k: "at:" + o.key, depth: depth + 4, kind: "maker", label: `Unit ${ad.unit}`, ticker: o.name, logoOf: o.slug, leaf: true });
           }
         }
         for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.tag, leaf: true });
@@ -384,7 +378,7 @@ function detail(k) {
     const a = DATA.administrations.find(x => x.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const t = x && (x.towers || []).find(y => y.name === rest[2]); if (!t) return "";
     if (rest.length > 3) return detail(`tw:${rest[0]}:${rest[1]}:${rest[2]}`);
     const there = orgsAt(rest[0], rest[1], t.name);
-    return `<h2>${esc(t.name)}</h2><div class="meta">tower · at <a data-k="${esc(`bd:${rest[0]}:${rest[1]}`)}">${esc(x.name)}</a></div><p>${esc(t.purpose || "")}</p><table><tr><th>Decks</th><th>Sections on each deck</th><th>Units in each section</th></tr><tr><td>1 to ${t.decks}</td><td>${esc(t.sections.join(", "))}</td><td>1 to ${t.units}</td></tr></table><h3>Here</h3>` + (there.length ? `<table><tr><th>Deck</th><th>Section</th><th>Unit</th><th>Who</th></tr>` + there.map(o => `<tr><td>${o.address.deck || "all"}</td><td>${esc(o.address.section || "all")}</td><td>${o.address.unit || "all"}</td><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nobody yet.</p>`);
+    return `<h2>${esc(t.name)}</h2><div class="meta">tower · at <a data-k="${esc(`bd:${rest[0]}:${rest[1]}`)}">${esc(x.name)}</a></div><p>${esc(t.purpose || "")}</p><table><tr><th>Decks</th><th>Sections on each deck</th><th>Units in each section</th></tr><tr><td>1 to ${t.decks}</td><td>${esc(t.sections.join(", "))}</td><td>1 to ${t.units}</td></tr></table><h3>Here</h3>` + (there.length ? `<table><tr><th>Deck</th><th>Section</th><th>Unit</th><th>Who</th></tr>` + there.map(o => `<tr><td>${o.address.deck || ""}</td><td>${esc(o.address.section || "")}</td><td>${o.address.unit || ""}</td><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nobody yet.</p>`);
   }
   if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${addressHtml(r.org)}</td><td><a data-k="${esc(r.to)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
   if (kind === "b") {
