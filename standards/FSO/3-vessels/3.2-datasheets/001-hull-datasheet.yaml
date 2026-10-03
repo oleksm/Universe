@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../../schema/standard.schema.json
+version: 1
+title: HULL DATASHEET
+status: published
+scope: >-
+  WHAT A HULL VENDOR PUBLISHES SO OTHERS CAN BUILD TO THE HULL: ITS ENVELOPE, LIMITS AND SOCKETS. NOT
+  HOW IT'S BUILT.
+refs:
+- FSO/3.1/001
+- FSO/2.1/001
+- FSO/2.1/002
+- FSO/2.1/003
+- FSO/6.1/001
+params:
+- key: envelope
+  value: SIZE CLASS; LENGTH, WIDTH, HEIGHT; DRY MASS; CENTRE OF MASS
+- key: limits
+  value: MAXIMUM THRUST LOAD; G RATING
+- key: sockets
+  value: 'EACH: STANDARD AND SIZE, FRAME, MAXIMUM MASS AND LOAD, CLEARANCE, SERVICES, HATCH'
+- key: thrust_layout
+  value: EACH NOZZLE SOCKET'S AXIS AND ALLOWED THRUST
+requires:
+- subject: hull.datasheet
+  check: provides
+  param: envelope
+- subject: hull.datasheet
+  check: provides
+  param: limits
+- subject: hull.datasheet
+  check: provides
+  param: sockets
+- subject: hull.datasheet
+  check: provides
+  param: thrust_layout
+text: >-
+  THE PAGE EVERY MODULE VENDOR READS FIRST. A HULL WITHOUT ONE CAN STILL FLY, BUT NOBODY BUILDS FOR IT.
+licence: open

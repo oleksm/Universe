@@ -11,10 +11,10 @@
 //! Each body's standards sit in its branches: a tree (`0 Foundations`,
 //! `2.1 Sockets`...), the bodies at its roots.
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A standards body: who publishes, where, and its branches of the tree.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Body {
     pub key: String,
@@ -31,7 +31,7 @@ pub struct Body {
 }
 
 /// Where a standard stands.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Status {
     Draft,
     Published,
@@ -40,7 +40,7 @@ pub enum Status {
 }
 
 /// On what terms products may be built to it.
-#[derive(Clone, Copy, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Licence {
     Open,
     /// Credits per conforming product made.
@@ -48,7 +48,7 @@ pub enum Licence {
 }
 
 /// A value it fixes.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Value {
     Num(f64),
     /// At least, at most.
@@ -59,7 +59,7 @@ pub enum Value {
 /// One parameter: its key (dotted for a table: `M.length_max` is row M,
 /// column length_max), its value, its unit (empty: none), a note (where an
 /// invented number comes from, what it's aimed at).
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Param {
     pub key: String,
@@ -71,7 +71,7 @@ pub struct Param {
 }
 
 /// How a product's figure is held against a parameter.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Check {
     AtMost,
     AtLeast,
@@ -85,7 +85,7 @@ pub enum Check {
 /// A requirement: the product's `subject` (`ship.length`, `module.mass`...)
 /// held to `param` by `check`; `per` names the row it's held to (the size
 /// class or socket size the product declares), if the parameter is a table's.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Requirement {
     pub subject: String,
@@ -96,7 +96,7 @@ pub struct Requirement {
 }
 
 /// A standard, as its register holds it.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Standard {
     /// Its id without the version: body prefix, branch, number (`FSO/3.1/001`).

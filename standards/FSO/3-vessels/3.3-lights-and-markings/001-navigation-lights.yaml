@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/standard.schema.json
+version: 1
+title: NAVIGATION LIGHTS
+status: published
+scope: >-
+  THE LIGHTS A VESSEL SHOWS SO OTHERS CAN TELL ITS ATTITUDE AND HEADING. NOT ITS FLOODLIGHTS.
+refs:
+- FSO/0.1/001
+params:
+- key: port
+  value: RED
+- key: starboard
+  value: GREEN
+- key: stern_and_top
+  value: WHITE
+- key: strobe
+  value: 1.0
+  unit: Hz
+  note: WHITE, ANTI-COLLISION
+text: >-
+  THE OLD SEA'S RULE, KEPT: RED TO PORT, GREEN TO STARBOARD. SEE A RED ON YOUR LEFT AND A GREEN ON YOUR
+  RIGHT AND IT'S COMING AT YOU.
+licence: open

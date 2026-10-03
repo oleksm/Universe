@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Standards Registry</title>
+<style>
+:root {
+  --bg: #0b1016; --panel: #111922; --line: #22303d; --text: #dce6ee; --dim: #7d93a0;
+  --head: #60ffb0; --id: #ffb040; --sel: #17352a; --bad: #ff6050; --code: #0e151d;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --bg: #f4f6f8; --panel: #ffffff; --line: #d6dde3; --text: #1b2630; --dim: #5f7380; --head: #0b8a55; --id: #b06a00; --sel: #dff3ea; --bad: #c0392b; --code: #eef2f5; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace; }
+header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+header h1 { font-size: 15px; margin: 0; color: var(--head); letter-spacing: .05em; white-space: nowrap; }
+header input { flex: 1; min-width: 0; max-width: 420px; padding: 6px 10px; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; font: inherit; }
+header .count { color: var(--dim); white-space: nowrap; }
+main { display: grid; grid-template-columns: minmax(260px, 38%) 1fr; height: calc(100vh - 49px); }
+nav { overflow: auto; border-right: 1px solid var(--line); padding: 8px 0; }
+article { overflow: auto; padding: 16px 24px 48px; }
+.row { padding: 2px 12px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row:hover { background: var(--code); }
+.row.sel { background: var(--sel); }
+.row .tw { display: inline-block; width: 1.2em; color: var(--dim); }
+.row.body { color: var(--head); font-weight: bold; }
+.row.empty { color: var(--dim); }
+.row .n { color: var(--dim); }
+.row .sid { color: var(--id); }
+h2 { color: var(--head); font-size: 17px; margin: 0 0 4px; }
+h3 { color: var(--dim); font-size: 12px; letter-spacing: .08em; margin: 22px 0 6px; font-weight: normal; text-transform: uppercase; }
+.meta { color: var(--dim); }
+a { color: var(--id); text-decoration: none; cursor: pointer; }
+a:hover { text-decoration: underline; }
+table { border-collapse: collapse; margin: 4px 0; }
+th, td { text-align: left; padding: 3px 14px 3px 0; vertical-align: top; }
+th { color: var(--dim); font-weight: normal; border-bottom: 1px solid var(--line); }
+td.num { text-align: right; }
+.problems { border: 1px solid var(--bad); color: var(--bad); padding: 8px 12px; margin: 8px 12px; border-radius: 4px; }
+.problems li { margin: 2px 0; }
+.file { color: var(--dim); font-size: 12px; }
+p { margin: 4px 0 8px; max-width: 80ch; }
+@media (max-width: 720px) {
+  main { grid-template-columns: 1fr; height: auto; }
+  nav { max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--line); }
+  header { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>STANDARDS REGISTRY</h1>
+  <input id="q" type="search" placeholder="Search ids, titles, text, parameters…" autocomplete="off">
+  <span class="count" id="count"></span>
+</header>
+<main>
+  <nav id="tree"></nav>
+  <article id="detail"></article>
+</main>
+<script>
+const DATA = /*DATA*/null;
+const byId = Object.fromEntries(DATA.standards.map(s => [s.id, s]));
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const parentOf = p => p.includes(".") ? p.slice(0, p.lastIndexOf(".")) : null;
+const numeric = p => p.split(".").map(Number);
+const cmpPath = (a, b) => { const x = numeric(a), y = numeric(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] ?? -1) - (y[i] ?? -1); if (d) return d; } return 0; };
+
+// What's open, kept between visits (if storage works).
+let open = new Set();
+try { open = new Set(JSON.parse(localStorage.getItem("standards-open") || "[]")); } catch (e) {}
+const keepOpen = () => { try { localStorage.setItem("standards-open", JSON.stringify([...open])); } catch (e) {} };
+if (!open.size) DATA.bodies.forEach(b => open.add("b:" + b.key));
+
+function nodeKey(n) { return n.kind === "body" ? "b:" + n.body.key : n.kind === "branch" ? `r:${n.body.key}:${n.branch.path}` : "s:" + n.std.id; }
+
+function count(body, path) {
+  return DATA.standards.filter(s => s.body === body.key && (s.branch === path || s.branch.startsWith(path + "."))).length;
+}
+
+function matches(s, q) {
+  if (!q) return true;
+  const hay = [s.id, s.title, s.scope, s.text, ...(s.params || []).map(p => `${p.key} ${p.value} ${p.unit || ""} ${p.note || ""}`)].join(" ").toLowerCase();
+  return q.split(/\s+/).every(w => hay.includes(w));
+}
+
+function rows(q) {
+  const out = [];
+  for (const body of DATA.bodies) {
+    out.push({ kind: "body", body, depth: 0 });
+    if (!open.has("b:" + body.key) && !q) continue;
+    const branches = [...body.branches].sort((a, b) => cmpPath(a.path, b.path));
+    const visit = (parent, depth) => {
+      for (const br of branches.filter(b => parentOf(b.path) === parent)) {
+        const stds = DATA.standards.filter(s => s.body === body.key && s.branch === br.path && matches(s, q));
+        const under = DATA.standards.filter(s => s.body === body.key && (s.branch === br.path || s.branch.startsWith(br.path + ".")) && matches(s, q)).length;
+        if (q && !under) continue;
+        const n = { kind: "branch", body, branch: br, depth };
+        out.push(n);
+        if (open.has(nodeKey(n)) || q) {
+          visit(br.path, depth + 1);
+          for (const s of stds) out.push({ kind: "std", body, std: s, depth: depth + 1 });
+        }
+      }
+    };
+    visit(null, 1);
+  }
+  return out;
+}
+
+let current = location.hash.slice(1);
+// (Open the way to a standard: its body and each branch down to it.)
+function reveal(k) {
+  const s = k.startsWith("s:") && byId[k.slice(2)];
+  if (!s) return;
+  open.add("b:" + s.body);
+  let p = s.branch;
+  while (p) { open.add(`r:${s.body}:${p}`); p = parentOf(p); }
+  keepOpen();
+}
+reveal(current);
+function select(key) { current = key; location.hash = key; render(); }
+
+function render() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const tree = document.getElementById("tree");
+  const list = rows(q);
+  let html = DATA.problems.length ? `<div class="problems"><b>${DATA.problems.length} problem(s)</b> (the game's content isn't updated until they're fixed):<ul>${DATA.problems.map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>` : "";
+  for (const n of list) {
+    const k = nodeKey(n);
+    const pad = `padding-left:${12 + n.depth * 18}px`;
+    const sel = k === current ? " sel" : "";
+    if (n.kind === "body") {
+      html += `<div class="row body${sel}" style="${pad}" data-k="${k}"><span class="tw">${open.has(k) ? "▾" : "▸"}</span>${esc(n.body.name)} (${esc(n.body.prefix)})</div>`;
+    } else if (n.kind === "branch") {
+      const c = count(n.body, n.branch.path);
+      html += `<div class="row${c ? "" : " empty"}${sel}" style="${pad}" data-k="${k}"><span class="tw">${open.has(k) || q ? "▾" : "▸"}</span>${esc(n.branch.path)} ${esc(n.branch.title)} <span class="n">(${c})</span></div>`;
+    } else {
+      html += `<div class="row${sel}" style="${pad}" data-k="${k}"><span class="tw"></span><span class="sid">${esc(n.std.id)}</span> ${esc(n.std.title)}</div>`;
+    }
+  }
+  tree.innerHTML = html;
+  document.getElementById("count").textContent = `${DATA.standards.length} standards · ${DATA.bodies.reduce((a, b) => a + b.branches.length, 0)} branches`;
+  document.getElementById("detail").innerHTML = detail(current);
+}
+
+function value(v) { return Array.isArray(v) ? `${v[0]} – ${v[1]}` : esc(v); }
+
+function detail(k) {
+  if (!k) return `<h2>The standards registry</h2><p class="meta">Pick a body, branch or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
+  const [kind, ...rest] = k.split(":");
+  if (kind === "b") {
+    const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
+    const n = DATA.standards.filter(s => s.body === b.key).length;
+    return `<h2>${esc(b.name)}</h2><div class="meta">prefix ${esc(b.prefix)} · seat ${esc(b.seat)} · ${b.branches.length} branches · ${n} standards</div><p>${esc(b.note)}</p>`;
+  }
+  if (kind === "r") {
+    const b = DATA.bodies.find(x => x.key === rest[0]); const br = b && b.branches.find(x => x.path === rest[1]); if (!br) return "";
+    const subs = b.branches.filter(x => parentOf(x.path) === br.path).sort((x, y) => cmpPath(x.path, y.path));
+    const here = DATA.standards.filter(s => s.body === b.key && s.branch === br.path);
+    let h = `<h2>${esc(b.prefix)} ${esc(br.path)} ${esc(br.title)}</h2><div class="file">standards/${esc(br.folder)}/</div>`;
+    if (br.note) h += `<p>${esc(br.note)}</p>`;
+    if (subs.length) h += `<h3>Branches</h3>` + subs.map(s => `<div><a data-k="r:${b.key}:${s.path}">${esc(s.path)} ${esc(s.title)}</a> <span class="meta">(${count(b, s.path)})</span></div>`).join("");
+    if (here.length) h += `<h3>Standards</h3>` + here.map(s => `<div><a data-k="s:${s.id}">${esc(s.id)} v${s.version}</a> ${esc(s.title)}</div>`).join("");
+    if (!subs.length && !here.length) h += `<p class="meta">Nothing published here yet.</p>`;
+    return h;
+  }
+  const s = byId[rest.join(":")]; if (!s) return "";
+  const body = DATA.bodies.find(x => x.key === s.body);
+  const lic = s.licence === "open" ? "open" : `${s.licence.fee} credits a product`;
+  let h = `<h2><span style="color:var(--id)">${esc(s.id)} v${s.version}</span> ${esc(s.title)}</h2>`;
+  h += `<div class="meta">${esc(s.status)} · licence ${esc(lic)} · ${esc(body ? body.name : s.body)}</div><div class="file">standards/${esc(s.file)}</div>`;
+  h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
+  if ((s.refs || []).length) h += `<h3>Builds on</h3>` + s.refs.map(r => `<div><a data-k="s:${r}">${esc(r)}</a> ${esc(byId[r] ? byId[r].title : "?")}</div>`).join("");
+  const cited = DATA.cited[s.id] || [];
+  if (cited.length) h += `<h3>Built on by</h3>` + cited.map(r => `<div><a data-k="s:${r}">${esc(r)}</a> ${esc(byId[r] ? byId[r].title : "?")}</div>`).join("");
+  const params = s.params || [];
+  const table = params.filter(p => String(p.key).includes("."));
+  const plain = params.filter(p => !String(p.key).includes("."));
+  if (table.length) {
+    const rowsK = [...new Set(table.map(p => String(p.key).split(".")[0]))];
+    const cols = [...new Set(table.map(p => String(p.key).split(".")[1]))];
+    const unit = c => (table.find(p => String(p.key).endsWith("." + c)) || {}).unit;
+    h += `<h3>Parameters by class or size</h3><table><tr><th></th>${cols.map(c => `<th>${esc(c)}${unit(c) ? ` (${esc(unit(c))})` : ""}</th>`).join("")}</tr>`;
+    for (const r of rowsK) h += `<tr><td><b>${esc(r)}</b></td>${cols.map(c => { const p = table.find(x => x.key === `${r}.${c}`); return `<td class="${p && typeof p.value === "number" ? "num" : ""}">${p ? value(p.value) : "–"}</td>`; }).join("")}</tr>`;
+    h += `</table>`;
+  }
+  if (plain.length) h += `<h3>Parameters</h3><table><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr>${plain.map(p => `<tr><td>${esc(p.key)}</td><td>${value(p.value)}</td><td>${esc(p.unit || "")}</td></tr>`).join("")}</table>`;
+  const notes = params.filter(p => p.note);
+  if (notes.length) h += `<h3>Notes</h3><table><tr><th>Parameter</th><th>Note</th></tr>${notes.map(p => `<tr><td>${esc(p.key)}</td><td>${esc(p.note)}</td></tr>`).join("")}</table>`;
+  if ((s.requires || []).length) h += `<h3>Requires</h3><table><tr><th>Subject</th><th>Check</th><th>Against</th><th>Per</th></tr>${s.requires.map(r => `<tr><td>${esc(r.subject)}</td><td>${esc(String(r.check).replace(/_/g, " "))}</td><td>${esc(r.param)}</td><td>${esc(r.per || "")}</td></tr>`).join("")}</table>`;
+  h += `<h3>Why</h3><p>${esc(s.text)}</p>`;
+  return h;
+}
+
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-k]"); if (!el) return;
+  const k = el.dataset.k;
+  if (el.classList.contains("row") && !k.startsWith("s:")) {
+    if (open.has(k) && k === current) open.delete(k); else open.add(k);
+    keepOpen();
+  }
+  reveal(k);
+  select(k);
+});
+document.getElementById("q").addEventListener("input", render);
+window.addEventListener("hashchange", () => { current = location.hash.slice(1); reveal(current); render(); });
+render();
+</script>
+</body>
+</html>

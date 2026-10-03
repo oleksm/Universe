@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../../schema/standard.schema.json
+version: 1
+title: VESSEL POWER BUS
+status: published
+scope: >-
+  THE POWER A SOCKET HANDS A MODULE: VOLTAGE, CURRENT CLASSES, CONNECTOR. NOT HOW IT'S MADE (THE PLANT).
+refs:
+- FSO/0.1/001
+params:
+- key: voltage
+  value: 800.0
+  unit: V
+  note: 'INVENTED: DIRECT CURRENT, AS HEAVY VEHICLES USE'
+- key: tolerance
+  value:
+  - 720.0
+  - 880.0
+  unit: V
+- key: A.current_max
+  value: 100.0
+  unit: A
+  note: 80 KW
+- key: B.current_max
+  value: 400.0
+  unit: A
+  note: 320 KW
+- key: C.current_max
+  value: 1600.0
+  unit: A
+  note: 1.28 MW
+- key: D.current_max
+  value: 6000.0
+  unit: A
+  note: 4.8 MW
+requires:
+- subject: module.voltage
+  check: equals
+  param: voltage
+- subject: module.current
+  check: at_most
+  param: current_max
+  per: power_class
+text: >-
+  ONE VOLTAGE EVERYWHERE, SO ANY MODULE RUNS OFF ANY HULL'S SOCKET OF ITS CLASS.
+licence: open

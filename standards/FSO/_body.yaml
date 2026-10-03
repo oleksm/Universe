@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../schema/body.schema.json
+key: body.fso
+name: FOUNDRY STANDARDS OFFICE
+prefix: FSO
+seat: home
+note: 'THE FIRST STANDARDS: OPEN TO ALL, BUILT TO BY MOST'

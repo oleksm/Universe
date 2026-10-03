@@ -77,16 +77,16 @@ adoption decides.
 - **Seeded content:** the FSO's set in content files, one per standard, loaded like hulls and
   modules.
 
-## In the game now
+## Where they're kept
 
-- The registry is content: `content/base/bodies.ron` (bodies, their seat and branches) and
-  `content/base/standards.ron` (the FSO's first ten), checked at load (every standard in a
-  branch of its body, its references found, its requirements against its own parameters).
-- **Docked or landed at a port: V STANDARDS** opens the port's copy as a tree: the bodies, their
-  branches (with how many standards are under each), the standards; UP/DOWN, RIGHT opens, LEFT
-  closes or goes up. The standard under the cursor shows in full: its parameters (tables with
-  headers), what it builds on, its requirements, its notes (where invented numbers come from).
-- Not yet: products declaring conformance, the checks run, publishing your own.
+- **The source is YAML in the repo** (`standards/`, see its README): the folders are the tree
+  (a body per folder, a branch per folder inside it, a standard per file), with JSON Schemas for
+  the editor. Authored in the IDE, not in the game.
+- `python3 tools/standards/build.py` checks it all and writes `standards/index.html` (the tree to
+  browse: search, tables with headers, what each builds on and what builds on it) and the game's
+  content (`content/base/bodies.ron`, `standards.ron`, generated).
+- **In the game:** docked or landed at a port, **V STANDARDS** shows the port's copy as a tree.
+  Next: products declaring what they conform to, the checks run.
 
 ## Ships to standards (the first use)
 

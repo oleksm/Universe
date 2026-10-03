@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../../schema/standard.schema.json
+version: 1
+title: UNITS AND MEASURES
+status: published
+scope: >-
+  THE UNITS EVERY OTHER STANDARD STATES ITS FIGURES IN. NOT HOW THINGS ARE MEASURED (INSTRUMENTS).
+params:
+- key: length
+  value: METRE
+  unit: m
+- key: mass
+  value: KILOGRAM; TONNE = 1000 KG
+  unit: kg
+- key: time
+  value: SECOND
+  unit: s
+- key: force
+  value: NEWTON
+  unit: N
+- key: energy
+  value: JOULE
+  unit: J
+- key: power
+  value: WATT
+  unit: W
+- key: temperature
+  value: KELVIN
+  unit: K
+- key: angle
+  value: RADIAN; DEGREES FOR PEOPLE
+  unit: rad
+- key: voltage
+  value: VOLT
+  unit: V
+text: >-
+  ONE SET OF UNITS, SO A FIGURE IN ONE STANDARD MEANS THE SAME IN THE NEXT. THE OLD METRIC SYSTEM, KEPT
+  AS IT WAS.
+licence: open

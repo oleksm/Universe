@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../../schema/standard.schema.json
+version: 1
+title: VESSEL SIZE CLASSES
+status: published
+scope: >-
+  THE ENVELOPE A VESSEL OF EACH CLASS STAYS WITHIN, SO PORTS CAN LAY OUT FOR IT. NOT WHAT A VESSEL IS
+  FOR.
+refs:
+- FSO/0.1/001
+params:
+- key: S.length_max
+  value: 30.0
+  unit: m
+  note: 'INVENTED: A SHUTTLE OR A FIGHTER'
+- key: S.width_max
+  value: 20.0
+  unit: m
+- key: S.height_max
+  value: 12.0
+  unit: m
+- key: S.mass_max
+  value: 400.0
+  unit: t
+  note: LOADED
+- key: M.length_max
+  value: 60.0
+  unit: m
+  note: 'INVENTED: A HAULER, A MINER'
+- key: M.width_max
+  value: 35.0
+  unit: m
+- key: M.height_max
+  value: 20.0
+  unit: m
+- key: M.mass_max
+  value: 2000.0
+  unit: t
+- key: L.length_max
+  value: 110.0
+  unit: m
+  note: 'INVENTED: A BIG WORKER (THE MC-07 IS 74 M)'
+- key: L.width_max
+  value: 60.0
+  unit: m
+- key: L.height_max
+  value: 35.0
+  unit: m
+- key: L.mass_max
+  value: 12000.0
+  unit: t
+- key: XL.length_max
+  value: 400.0
+  unit: m
+  note: 'INVENTED: CAPITAL SHIPS, BERTHED IN ORBIT ONLY'
+- key: XL.width_max
+  value: 200.0
+  unit: m
+- key: XL.height_max
+  value: 120.0
+  unit: m
+- key: XL.mass_max
+  value: 300000.0
+  unit: t
+requires:
+- subject: ship.length
+  check: at_most
+  param: length_max
+  per: class
+- subject: ship.width
+  check: at_most
+  param: width_max
+  per: class
+- subject: ship.height
+  check: at_most
+  param: height_max
+  per: class
+- subject: ship.mass
+  check: at_most
+  param: mass_max
+  per: class
+text: >-
+  A PORT CAN'T TAKE EVERY SHAPE. FOUR ENVELOPES, EACH A PAD OR BERTH SIZE: BUILD WITHIN ONE AND EVERY
+  PORT WITH THAT SIZE CAN SET YOU DOWN. HEIGHT INCLUDES GEAR DOWN; MASS IS LOADED.
+licence: open

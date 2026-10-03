@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../schema/standard.schema.json
+version: 1
+title: LANDING PADS AND BERTHS
+status: published
+scope: >-
+  THE PADS AND BERTHS A PORT OFFERS, BY VESSEL CLASS: SIZE, SPACING, WHAT THEY BEAR. NOT HOW TRAFFIC IS
+  RUN.
+refs:
+- FSO/3.1/001
+params:
+- key: S.side
+  value: 40.0
+  unit: m
+  note: 'INVENTED: A CLASS S ENVELOPE AND 5 M ROUND IT'
+- key: S.spacing
+  value: 60.0
+  unit: m
+  note: CENTRE TO CENTRE
+- key: S.bears
+  value: 4000.0
+  unit: kN
+  note: A LOADED CLASS S AT 1 G, TWICE OVER
+- key: M.side
+  value: 70.0
+  unit: m
+  note: TODAY'S PAINTED PADS
+- key: M.spacing
+  value: 100.0
+  unit: m
+- key: M.bears
+  value: 40000.0
+  unit: kN
+- key: L.side
+  value: 120.0
+  unit: m
+  note: 'INVENTED: A CLASS L ENVELOPE AND 5 M ROUND IT'
+- key: L.spacing
+  value: 150.0
+  unit: m
+  note: TODAY'S PAD GRID
+- key: L.bears
+  value: 240000.0
+  unit: kN
+- key: XL.side
+  value: 'NONE: BERTHED IN ORBIT'
+requires:
+- subject: ship.class
+  check: at_most
+  param: side
+  per: pad
+text: >-
+  A PAD OF A CLASS TAKES A VESSEL OF THAT CLASS OR SMALLER. SPACING KEEPS NEIGHBOURS CLEAR AND LEAVES
+  ROOM FOR A MISSED APPROACH.
+licence: open
