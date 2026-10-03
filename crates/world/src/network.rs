@@ -1,7 +1,5 @@
 //! The home system and the gate network linking it to its neighbours.
 
-use std::collections::HashMap;
-
 use crate::galaxy::{Galaxy, StarClass};
 use crate::names::star_name;
 use crate::rng::Rng;
@@ -28,42 +26,56 @@ pub fn find_home(galaxy: &Galaxy, seed: u64) -> usize {
     0
 }
 
-/// Link the home system and its 4 nearest neighbours with gates: a
-/// spanning tree (each system to the nearest already-linked one), plus up
-/// to two extra short links for loops. Every system gets 1-3 gates.
-pub fn build(galaxy: &Galaxy, home: usize) -> Vec<(usize, usize)> {
-    const MAX_GATES: usize = 3;
-    let mut nodes = vec![home];
-    nodes.extend(galaxy.nearest(home, 4));
-    let dist = |a: usize, b: usize| galaxy.stars[a].position.distance(galaxy.stars[b].position);
-    let mut degree: HashMap<usize, usize> = HashMap::new();
-    let mut links: Vec<(usize, usize)> = Vec::new();
-    for k in 1..nodes.len() {
-        let n = nodes[k];
-        let best = nodes[..k]
-            .iter()
-            .copied()
-            .filter(|m| degree.get(m).copied().unwrap_or(0) < MAX_GATES)
-            .min_by(|&a, &b| dist(a, n).total_cmp(&dist(b, n)))
-            .unwrap_or(nodes[0]);
-        links.push((best, n));
-        *degree.entry(best).or_default() += 1;
-        *degree.entry(n).or_default() += 1;
-    }
-    let mut pairs: Vec<(usize, usize)> =
-        nodes.iter().flat_map(|&a| nodes.iter().filter(move |&&b| b > a).map(move |&b| (a, b))).collect();
-    pairs.sort_by(|p, q| dist(p.0, p.1).total_cmp(&dist(q.0, q.1)));
-    let mut extra = 0;
-    for (a, b) in pairs {
-        let linked = links.iter().any(|&(x, y)| (x, y) == (a, b) || (y, x) == (a, b));
-        let room = |n: usize| degree.get(&n).copied().unwrap_or(0) < MAX_GATES;
-        if extra < 2 && !linked && room(a) && room(b) {
-            links.push((a, b));
-            *degree.entry(a).or_default() += 1;
-            *degree.entry(b).or_default() += 1;
-            extra += 1;
+/// The settled neighbours round home: one toward each of four even
+/// directions round it (seen from above), near and near its plane; of the
+/// ways to turn those four directions, the one with the tightest ring. Home
+/// sits in the middle of its neighbourhood.
+pub fn neighbours(galaxy: &Galaxy, home: usize) -> Vec<usize> {
+    use std::f64::consts::{FRAC_PI_2, FRAC_PI_4, TAU};
+    let at = galaxy.stars[home].position;
+    let near = galaxy.nearest(home, 80);
+    let mut best: Option<(f64, Vec<usize>)> = None;
+    for turn in 0..18 {
+        let turn = turn as f64 * 5f64.to_radians();
+        let mut picked = Vec::new();
+        let mut total = 0.0;
+        for quarter in 0..4 {
+            let centre = turn + quarter as f64 * FRAC_PI_2;
+            let pick = near
+                .iter()
+                .filter_map(|&i| {
+                    let d = galaxy.stars[i].position - at;
+                    let off = (d.z.atan2(d.x) - centre + TAU + FRAC_PI_4).rem_euclid(TAU) - FRAC_PI_4;
+                    // (Gates are short: 8 ly at most.)
+                    (off.abs() <= FRAC_PI_4 && d.length() <= 8.0 && !picked.contains(&i)).then(|| (d.length() * (1.0 + off.abs()) + 1.5 * d.y.abs(), i))
+                })
+                .min_by(|a, b| a.0.total_cmp(&b.0));
+            if let Some((cost, i)) = pick {
+                total += cost;
+                picked.push(i);
+            } else if let Some(&i) = near.iter().find(|i| !picked.contains(i)) {
+                // (Nothing near that way: the nearest left.)
+                total += 100.0 + galaxy.stars[i].position.distance(at);
+                picked.push(i);
+            }
+        }
+        if best.as_ref().is_none_or(|b| total < b.0) {
+            best = Some((total, picked));
         }
     }
+    best.map(|b| b.1).unwrap_or_default()
+}
+
+/// Gate the home system to each of its neighbours (`neighbours`): home the
+/// hub, plus the two shortest links between neighbours side by side for loops.
+pub fn build(galaxy: &Galaxy, home: usize) -> Vec<(usize, usize)> {
+    let around = neighbours(galaxy, home);
+    let dist = |a: usize, b: usize| galaxy.stars[a].position.distance(galaxy.stars[b].position);
+    let mut links: Vec<(usize, usize)> = around.iter().map(|&n| (home, n)).collect();
+    // (Loops between neighbours side by side round home, never across it.)
+    let mut pairs: Vec<(usize, usize)> = (0..around.len()).map(|k| (around[k], around[(k + 1) % around.len()])).filter(|(a, b)| a != b).collect();
+    pairs.sort_by(|p, q| dist(p.0, p.1).total_cmp(&dist(q.0, q.1)));
+    links.extend(pairs.into_iter().take(2));
     links
 }
 
@@ -82,7 +94,7 @@ mod tests {
     use crate::World;
 
     #[test]
-    fn gate_network_links_five_systems_with_one_to_three_gates_each() {
+    fn gate_network_links_home_to_four_neighbours_each_with_one_to_three_gates() {
         let w = World::new(1984);
         let mut systems: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
         systems.sort();
@@ -91,7 +103,9 @@ mod tests {
         assert!(systems.contains(&w.home_system));
         for &s in &systems {
             let links = w.gate_links_of(s);
-            assert!((1..=3).contains(&links.len()), "system {s} has {} gates", links.len());
+            // (Home is the hub: a gate to each neighbour.)
+            let gates = if s == w.home_system { 4..=4 } else { 1..=3 };
+            assert!(gates.contains(&links.len()), "system {s} has {} gates", links.len());
             let sys = w.system(s);
             for (to, _) in &links {
                 let g = sys.gate_to(*to).expect("a gate for every link");
