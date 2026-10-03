@@ -6,7 +6,8 @@
 //!
 //! What counts, in a faction's own space (Tuning):
 //! - opening fire on a ship that wasn't fair game: `AGGRESSION`;
-//! - destroying a ship that wasn't fair game: `MURDER`; one that was: `BOUNTY`;
+//! - destroying a ship that wasn't fair game: `MURDER`; one that was: `BOUNTY` (a wreck in a
+//!   collision is neither: an accident);
 //! - a trade at one of its markets: `TRADE`.
 //!
 //! The faction's own bookkeeping (a client of the world, like an outlet):
@@ -209,7 +210,8 @@ impl Universe {
             // (Its space, or one of its own: a deed against a member counts wherever it's heard.)
             let members = &self.standings.members;
             let sworn = |id: usize| members.get(&id) == Some(&faction);
-            for k in kills.iter().filter(|k| (ours(k.system) || sworn(k.victim)) && universe_world::turrets::turret_of(k.killer).is_none()) {
+            // (A wreck in a collision is an accident, not a deed: nobody fired.)
+            for k in kills.iter().filter(|k| (ours(k.system) || sworn(k.victim)) && universe_world::turrets::turret_of(k.killer).is_none() && k.weapon != "COLLISION") {
                 let key = Key::kill(k);
                 if d.knows.heard(&key).is_some() {
                     let fair = self.law.until(k.victim, k.time).is_some();
