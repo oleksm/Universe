@@ -196,7 +196,9 @@ impl<G: Game> Runner<G> {
         while p.history.len() > HISTORY {
             p.history.pop_front();
         }
-        if raw_dt > HITCH && s.frame_count > 60 {
+        // (UNIVERSE_HITCH_MS: a lower bar, to catch the small dips too.)
+        let bar = std::env::var("UNIVERSE_HITCH_MS").ok().and_then(|v| v.parse::<f32>().ok()).map_or(HITCH, |ms| ms / 1000.0);
+        if raw_dt > bar && s.frame_count > 60 {
             p.hitches += 1;
             let (u, d, h) = s.last_parts;
             let rs = s.render.state();

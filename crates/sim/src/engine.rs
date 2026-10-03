@@ -523,7 +523,7 @@ impl EngineHandle {
         // real time (before, setting up, they keep in step with it, however
         // fast it's run), on half the cores. UNIVERSE_LOCKSTEP=1: in step always.
         if std::env::var_os("UNIVERSE_LOCKSTEP").is_none() {
-            engine.universe.run_pilots_apart(std::thread::available_parallelism().map_or(2, |n| (n.get() / 2).max(1)));
+            engine.universe.run_pilots_apart(crate::engine::thread_budget().1);
         }
         let (tx, rx) = std::sync::mpsc::channel::<Msg>();
         let mailbox = self.mailbox.clone();
@@ -773,4 +773,21 @@ impl Drop for EngineHandle {
             let _ = t.join();
         }
     }
+}
+
+/// How the cores are shared: (the crowd's step, the pilots' thinking).
+/// Three are left to the main, render and world threads (else, with every
+/// core busy stepping crafts and thinking, they're starved now and then: the
+/// frame rate dips in a beat); the rest split between the two pools.
+pub fn thread_budget() -> (usize, usize) {
+    let cores = std::thread::available_parallelism().map_or(4, |n| n.get());
+    let workers = cores.saturating_sub(3).max(2);
+    let crowd = (workers / 2).max(1);
+    (crowd, (workers - crowd).max(1))
+}
+
+/// The crowd's pool (rayon's global one) sized to its share; call before
+/// anything uses rayon (later, it's already made: left as it is).
+pub fn size_thread_pools() {
+    let _ = rayon::ThreadPoolBuilder::new().num_threads(thread_budget().0).thread_name(|i| format!("crowd {i}")).build_global();
 }
