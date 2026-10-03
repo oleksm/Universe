@@ -8,6 +8,7 @@ properties:
   key: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: What the game calls it. }
   name: { type: string }
   ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: Its short trading name; no two alike. }
+  colour: { type: string, pattern: '^#[0-9a-f]{6}$', description: Its brand colour. }
   note: { type: string, description: One line, as the game shows it. }
   who: { type: string, description: Who they are. }
   what: { type: string, description: What they do. }
