@@ -19,4 +19,4 @@ sections:
     text:
       - "A small outpost uses fewer levels: a few modules with units in them have no towers or decks."
       - "An address never changes: when a structure grows, the new part gets new addresses and nothing is renumbered."
-      - "Inside a settlement the levels are tower, deck, section, unit. Every deck of a tower has the same sections, and every section the same number of units."
+      - "The settlement is the unit of administration. Inside it, tower, deck, section and unit are the settlement's own business."

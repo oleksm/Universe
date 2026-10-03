@@ -199,7 +199,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "note", "towers"}:
+            if k not in {"name", "kind", "at", "position"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -220,8 +220,8 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     ad["slug"] = name[:-5]
     administrations.append(ad)
 
-# An address (SFO 9): at <system>/<body> in Local Administration, then tower, deck, section, unit
-# where the settlement has them.
+# An address (SFO 9): at <system>/<body> in Local Administration (the settlement is the unit of
+# administration), then tower, deck, section, unit inside it.
 taken = {}
 
 
@@ -241,19 +241,11 @@ def check_address(rec, where):
     for k in a:
         if k not in {"at", "tower", "deck", "section", "unit"}:
             problem(where, f"address: unknown field '{k}'")
-    if "tower" not in a:
+    # (Inside the settlement is its own business: tower, deck, section and unit aren't checked
+    # against a layout, only that no two are at the same one.)
+    if "unit" not in a:
         return
-    tower = next((t for t in body.get("towers") or [] if t.get("name") == a["tower"]), None)
-    if tower is None:
-        problem(where, f"address: {body['name']} has no '{a['tower']}'")
-        return
-    if "deck" in a and not (isinstance(a["deck"], int) and 1 <= a["deck"] <= tower["decks"]):
-        problem(where, f"address: {tower['name']} has decks 1 to {tower['decks']}")
-    if "section" in a and str(a["section"]) not in [str(x) for x in tower["sections"]]:
-        problem(where, f"address: {tower['name']} has sections {', '.join(map(str, tower['sections']))}")
-    if "unit" in a and not (isinstance(a["unit"], int) and 1 <= a["unit"] <= tower["units"]):
-        problem(where, f"address: a section of {tower['name']} has units 1 to {tower['units']}")
-    spot = (a["at"], a["tower"], a.get("deck"), a.get("section"), a.get("unit"))
+    spot = (a["at"], a.get("tower"), a.get("deck"), a.get("section"), a.get("unit"))
     if "unit" in a and spot in taken:
         problem(where, f"address: {taken[spot]} is already there")
     taken[spot] = rec.get("name")

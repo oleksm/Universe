@@ -21,7 +21,7 @@ properties:
   seat:
     type: string
   address:
-    description: 'Where it is (SFO 9). at: <system>/<body>, by their file names in LocalAdministration; then the tower, deck, section and unit, where the settlement has them.'
+    description: 'Where it is (SFO 9). at: <system>/<body>, by their file names in LocalAdministration; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
     type: object
     additionalProperties: false
     required: [at]

@@ -2,33 +2,3 @@
 name: "Treistun e Station"
 kind: settlement
 at: Treistun e
-# The towers are a plan for a full-size outpost. In the game today the station is one main
-# structure (the Dock Tower here) beside a landing deck of 16 pads. Deck, section and unit counts
-# are invented.
-note: The towers are a plan. In the game today the station is one main structure, the Dock Tower here, beside a landing deck of 16 pads.
-towers:
-  - name: Dock Tower
-    purpose: Beside the landing deck. The hangar, traffic control, customs and the port offices.
-    decks: 20
-    sections: [A, B, C, D]
-    units: 24
-  - name: Civic Tower
-    purpose: The system's administration and the offices of record.
-    decks: 30
-    sections: [A, B, C, D]
-    units: 24
-  - name: Trade Tower
-    purpose: Markets, company offices and showrooms.
-    decks: 40
-    sections: [A, B, C, D]
-    units: 24
-  - name: Works Tower
-    purpose: Workshops, yards and heavy plant.
-    decks: 30
-    sections: [A, B, C, D]
-    units: 24
-  - name: Habitation Tower
-    purpose: Where the station's people live.
-    decks: 60
-    sections: [A, B, C, D]
-    units: 24
