@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Chemical Element
+purpose: A chemical element is one kind of atom, set by the number of protons in it. Elements are what all matter is made of; every material is one element or a combination of them.
+details:
+  text:
+    - "Why a civilisation needs them named and described:"
+    - "- A common language for matter: iron is iron everywhere. Anyone, anywhere, can say exactly what a thing is made of."
+    - "- Knowing what a rock holds: prospecting and assaying report elements. That tells a miner what a rock is worth before cutting it."
+    - "- Making materials: a material's properties come from its elements and how they're combined. To make steel, glass or fuel, you start from the right elements."
+    - "- Predicting behaviour: an element's properties (melting point, density, reactivity, conductivity) say what it can and can't do, before anything is built."
+    - "- Honest trade: purity and composition can be stated and checked, so a buyer knows what they're getting."
+    - "Elements sit one level below materials: an element is a kind of atom; a material is stuff you build with, made of elements."
