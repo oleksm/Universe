@@ -29,6 +29,18 @@ properties:
     - players
   note:
     type: string
+  purpose:
+    type: string
+  details:
+    type: object
+    additionalProperties: false
+    properties:
+      text:
+        oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
   founded_by:
     type: array
     items:

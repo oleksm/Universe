@@ -30,7 +30,7 @@ CONTENT = os.path.join(ROOT, "content", "base")
 
 STATUSES = ["draft", "published", "superseded", "withdrawn"]
 CHECKS = ["at_most", "at_least", "equals", "fits_within", "provides"]
-BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "founded_by", "about"}
+BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about"}
 BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
 # The game's brands (members and makers are named by them).
 BRANDS = dict(re.findall(r'key: "(brand\.[a-z0-9_]+)", name: "([^"]*)"', open(os.path.join(ROOT, "content", "base", "brands.ron"), encoding="utf-8").read()))
@@ -266,7 +266,7 @@ def write_ron():
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
-        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "founded_by", "about") if k in b} for b in bodies],
+        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
