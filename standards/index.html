@@ -186,6 +186,13 @@ function detail(k) {
   const body = DATA.bodies.find(x => x.key === s.body);
   let h = `<h2><span style="color:var(--id)">${esc(s.id)}</span> ${esc(s.title)}</h2>`;
   h += `<div class="file">standards/${esc(s.file)}</div>`;
+  if (s.purpose) h += `<h3>Purpose</h3><p>${esc(s.purpose)}</p>`;
+  if (s.details) {
+    h += `<h3>Details</h3>`;
+    const paras = Array.isArray(s.details.text) ? s.details.text : (s.details.text ? [s.details.text] : []);
+    h += paras.map(p => `<p>${esc(p)}</p>`).join("");
+    if (s.details.table) h += `<table><tr>${s.details.table.columns.map(c => `<th>${esc(c)}</th>`).join("")}</tr>${s.details.table.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`;
+  }
   if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
     if (sec.title) h += `<h3>${esc(sec.title)}</h3>`;

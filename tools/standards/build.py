@@ -34,7 +34,7 @@ BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "founded_by", "a
 BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
 # The game's brands (members and makers are named by them).
 BRANDS = dict(re.findall(r'key: "(brand\.[a-z0-9_]+)", name: "([^"]*)"', open(os.path.join(ROOT, "content", "base", "brands.ron"), encoding="utf-8").read()))
-STANDARD_FIELDS = {"version", "title", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
+STANDARD_FIELDS = {"version", "title", "purpose", "details", "status", "topics", "scope", "sections", "refs", "params", "requires", "text", "licence", "published"}
 
 problems = []
 
@@ -76,8 +76,13 @@ def check_standard(s, ids):
             problem(where, f"refers to {r}: no such standard (ids are like 'FSO 12')")
         if r == s["id"]:
             problem(where, "refers to itself")
+    if "purpose" in s and not isinstance(s["purpose"], str):
+        problem(where, "purpose: a paragraph")
+    # Details: text and/or a table, as a section is.
+    if "details" in s and not isinstance(s["details"], dict):
+        problem(where, "details: text and/or table")
     # Sections: titled, each paragraphs and/or a table (columns, rows of as many cells).
-    for sec in s.get("sections", []) or []:
+    for sec in ([s["details"]] if isinstance(s.get("details"), dict) else []) + (s.get("sections", []) or []):
         if not isinstance(sec, dict):
             problem(where, "a section is title, text and/or table")
             continue

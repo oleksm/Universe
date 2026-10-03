@@ -24,6 +24,8 @@ standards/
 |---|---|
 | `version` | from 1 |
 | `title`, `scope` | what it is; what it covers and what it doesn't |
+| `purpose` | why it exists, a paragraph |
+| `details` | `text` and/or a `table` (`columns`, `rows`) |
 | `status` | `draft`, `published`, `superseded`, `withdrawn` |
 | `sections` | titled sections, each `text` (paragraphs) and/or a `table` (`columns`, `rows`): for a standard that's mostly prose, a definition say |
 | `refs` | ids it builds on (`"FSO 1"`) |
