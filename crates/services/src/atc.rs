@@ -11,7 +11,9 @@
 //! - **Corridors**: a gate's run takes one ship
 //!   at a time (`request_corridor`). It's held until the ship is through (it
 //!   docked, it went through the gate, or it's on its final run and close in),
-//!   has launched and gone, or is released.
+//!   has launched and gone, or is released. A gate's corridor isn't given
+//!   while traffic is coming out of its tube into the run-in, or is due to
+//!   (`outbound`): only the entrance is kept clear, not the whole tube.
 //!
 //! What's observed each frame is only physical fact (`presence`): who stands
 //! on which pad or is in its column, and who has left a corridor behind.
@@ -104,6 +106,9 @@ pub struct TrafficControl {
     corridors: HashMap<(usize, usize), usize>,
     /// Ships waiting for each corridor, in order, with when each last asked.
     corridor_queues: HashMap<(usize, usize), Vec<(usize, f64)>>,
+    /// Gate corridors with traffic coming out (or due out) of their tubes into
+    /// the run-in, this frame: not given till it's clear.
+    outbound: std::collections::HashSet<(usize, usize)>,
     /// Every change, with its tick and cause (the last `JOURNAL`).
     pub journal: Vec<Change>,
     /// The tick now, why the next changes (other than requests) happen, and
@@ -228,7 +233,8 @@ impl TrafficControl {
                 queue.len() - 1
             }
         };
-        if place == 0 && !self.corridors.contains_key(&key) {
+        let coming_out = self.outbound.contains(&key);
+        if place == 0 && !self.corridors.contains_key(&key) && !coming_out {
             queue.remove(0);
             self.corridors.insert(key, ship);
             let cause = self.request_from(ship);
@@ -236,7 +242,13 @@ impl TrafficControl {
             return None;
         }
         // Ahead: the one in the corridor, and those before it in line.
-        Some(place + usize::from(self.corridors.contains_key(&key)))
+        Some(place + usize::from(self.corridors.contains_key(&key) || coming_out))
+    }
+
+    /// This frame's gate corridors (system, gate body) with traffic coming out
+    /// of their tubes into the run-in, or due out shortly (see the module).
+    pub fn outbound(&mut self, corridors: impl IntoIterator<Item = (usize, usize)>) {
+        self.outbound = corridors.into_iter().collect();
     }
 
     /// Ship `ship` is done with its corridor at `body` (it docked, went
@@ -407,7 +419,7 @@ mod tests {
     }
 
     #[test]
-    fn a_corridor_takes_one_ship_until_it_is_done() {
+    fn a_corridor_takes_one_ship_until_it_is_done_and_waits_for_traffic_coming_out() {
         let mut tc = TrafficControl::default();
         assert_eq!(tc.request_corridor(1, 5, 1, 0.0), None);
         assert_eq!(tc.request_corridor(1, 5, 2, 0.0), Some(1), "taken: one ahead");
@@ -417,6 +429,10 @@ mod tests {
         assert_eq!(tc.request_corridor(1, 5, 2, 1.0), None, "free once it's through, and 2's turn");
         tc.release(2);
         assert_eq!(tc.corridor(1, 5), None);
+        // A ship coming out of the gate's tube: the entrance waits till it's clear.
+        tc.outbound([(1, 5)]);
+        assert_eq!(tc.request_corridor(1, 5, 3, 2.0), Some(1), "traffic coming out");
+        tc.outbound([]);
         assert_eq!(tc.request_corridor(1, 5, 3, 2.0), None);
     }
 }

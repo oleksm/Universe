@@ -29,7 +29,7 @@ pub fn click(ctx: &Context, freq: f32) {
 pub fn launch(ctx: &Context) {
     if let Some(a) = ctx.audio() {
         a.set_master(VOLUME);
-        a.tone(440.0, 660.0, 0.3, 0.18);
+        a.spool(true);
     }
 }
 
@@ -158,7 +158,14 @@ pub fn play(a: &universe_engine::Audio, app: Option<&App>, event: &Event) {
                 a.rattle(0.5, 0.25, pan);
             }
         }
-        Event::Ship(ShipEvent::Respawned) => a.tone(440.0, 880.0, 0.3, 0.2),
+        // A new ship: its frame settling, its systems coming to life.
+        Event::Ship(ShipEvent::Respawned) => {
+            a.sweep(35.0, 160.0, 1.2, 0.25, true);
+            a.after(1.1, |a| {
+                a.thud(55.0, 0.4, 0.0);
+                a.spool(true);
+            });
+        }
         Event::Ship(ShipEvent::EnteredSystem { .. }) => {
             a.tone(880.0, 880.0, 0.2, 0.2);
             a.music_swell();

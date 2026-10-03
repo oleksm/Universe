@@ -22,6 +22,9 @@ const PRESENCE_EVERY: u64 = 6;
 
 /// A ship on its final run this close to the station or gate lets the next one start (m).
 const CORRIDOR_RELEASE: f64 = 1_500.0;
+/// A ship due out of a gate's tube within this keeps its entrance closed (s):
+/// about a final run's length (4 km at 100 m/s), so no one is on it as it comes out.
+const ENTRY_LEAD: f64 = 60.0;
 
 /// What a new pilot starts with (credits).
 /// (For now, while ships are being built and tried: enough to buy any.
@@ -540,6 +543,30 @@ impl Universe {
             })
             .collect();
         self.atc.presence(&present);
+        // Gates with traffic coming out of their tubes: due out shortly, or out
+        // and heading away down the run-in, not clear of it yet.
+        let mut out = Vec::new();
+        let mut frames: std::collections::HashMap<usize, Vec<(usize, universe_world::GateFrame)>> = std::collections::HashMap::new();
+        let all = std::iter::once((self.ship_system, &self.ship)).chain(self.crafts.iter().map(|c| (c.system, &c.ship)));
+        for (system, s) in all {
+            match s.state {
+                ShipState::Transit { to, from, remaining, .. } if remaining < ENTRY_LEAD => out.extend(self.world.system(to).gate_to(from).map(|g| (to, g))),
+                _ if s.is_flying() && !s.hyperdrive => {
+                    let gates = frames.entry(system).or_insert_with(|| {
+                        let sys = self.world.system(system);
+                        let positions = self.world.rails_now(system);
+                        sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == universe_world::BodyKind::Gate).map(|(g, _)| (g, universe_world::GateFrame::new(&sys, g, now, &positions))).collect()
+                    });
+                    for (g, f) in gates.iter() {
+                        if universe_avionics::gate::in_final_zone(f, s.position) && (s.velocity - f.velocity).dot(f.axis()) < -1.0 {
+                            out.push((system, *g));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+        self.atc.outbound(out);
     }
 
     // The pilot's requests, to the ship's avionics (or, for `command`,
