@@ -124,6 +124,7 @@ M_WHITE = plain("lamp_white", (1, 1, 1), 0.3, emission=(1.0, 0.95, 0.85), streng
 M_RED = plain("lamp_red", (1, 0.1, 0.05), 0.3, emission=(1.0, 0.05, 0.02), strength=25.0)
 M_GREEN = plain("lamp_green", (0.1, 1, 0.2), 0.3, emission=(0.05, 1.0, 0.1), strength=25.0)
 M_NOZZLE = plain("nozzle", (0.08, 0.07, 0.07), 0.35, metal=1.0, emission=(0.6, 0.75, 1.0), strength=0.0)
+M_CHROME = plain("chrome", (0.72, 0.72, 0.70), 0.22, metal=1.0)
 
 # ---------------------------------------------------------------- shapes
 parts = []
@@ -182,6 +183,8 @@ def cylinder(name, r1, r2, depth, loc, axis="Y", mat=M_DARK, segs=24):
     parts.append(o)
     return o
 
+MAINS = (-3.4, 3.4)
+
 # Engine block aft.
 slab("engine_block", (15.0, 11.0, 10.0), (0, -25.5, 0.0), chamfer=1.4)
 slab("engine_collar", (11.0, 2.0, 8.0), (0, -19.0, 0.3), chamfer=0.8, mat=M_DARK)
@@ -208,10 +211,10 @@ for sx in (-1, 1):
         slab("strut_low", (4.0, 1.2, 1.0), (sx * 6.8, y, -2.4), chamfer=0.3, mat=M_DARK)
     # Pod thrusters aft.
     cylinder("pod_bell", 1.3, 2.0, 2.6, (sx * 11.0, -19.6, -0.6), axis="Y", mat=M_NOZZLE)
-# Main bells aft.
-for x in (-4.2, 0.0, 4.2):
-    cylinder("main_bell", 1.6, 2.4, 3.4, (x, -32.6, 0.0), axis="Y", mat=M_NOZZLE)
-    cylinder("main_throat", 1.2, 1.2, 1.2, (x, -31.0, 0.0), axis="Y", mat=M_DARK)
+# Two main bells aft.
+for x in MAINS:
+    cylinder("main_bell", 1.9, 2.9, 3.8, (x, -32.8, 0.0), axis="Y", mat=M_NOZZLE)
+    cylinder("main_throat", 1.4, 1.4, 1.2, (x, -31.0, 0.0), axis="Y", mat=M_DARK)
 
 # ---------------------------------------------------------------- armour plates
 def plate(o, cuts_per_m=0.3, min_area=4.0):
@@ -361,7 +364,8 @@ def marking(text, loc, normal, size=1.4, mat=M_MARK):
     bm = bmesh.new()
     bmesh.ops.create_cube(bm, size=1.0)
     for v in bm.verts:
-        v.co = Vector((cx + v.co.x * w, cy + v.co.y * h, v.co.z * lift - lift / 2 + lift))
+        # (Sunk 0.3 m into the hull too: over a recessed plate it still sits on metal.)
+        v.co = Vector((cx + v.co.x * w, cy + v.co.y * h, v.co.z * (lift + 0.3) + (lift - 0.3) / 2))
     bmesh.ops.bevel(bm, geom=[e for e in bm.edges], offset=min(0.05, lift * 0.3), segments=1, affect="EDGES")
     basis = Matrix((x, y, n)).transposed()
     for v in bm.verts:
@@ -376,7 +380,60 @@ for sx in (-1, 1):
     marking("HADLEY  OC-7", (sx * pod_face, -6.0, -2.6), (sx, 0, 0), size=1.1)
     marking("ORE CUTTER", (sx * 5.25, 9.5, -1.2), (sx, 0, 0), size=0.8)
     marking("07", (sx * pod_face, -6.0, 0.6), (sx, 0, 0), size=3.0)
-    marking("MASS LIMIT 900 T", (sx * 7.5, -25.5, -2.5), (sx, 0, 0), size=0.5)
+    # (Low on the engine block's flat side, clear of its chamfers: z -3.6..3.6.)
+    marking("MASS LIMIT 900 T", (sx * 7.5, -25.5, -3.0), (sx, 0, 0), size=0.5)
+
+# ---------------------------------------------------------------- landing gear, hatch
+# It sets down standing on its belly side, so legs, not wheels: four struts
+# splayed out to round footpads (a shock absorber in each, braced fore and
+# aft), each out of a bay whose doors stand open beside it. Two under the
+# keel forward, two under the ore pods aft: a wide stance. The feet are
+# at FOOT (the gear_* contacts: where the ship stands on the ground).
+FOOT = -10.8
+
+def rod(name, a, b, r, mat=M_DARK, segs=12):
+    a, b = Vector(a), Vector(b)
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, segments=segs, radius1=r, radius2=r, depth=(b - a).length)
+    rot = Vector((0, 0, 1)).rotation_difference(b - a).to_matrix().to_4x4()
+    bmesh.ops.transform(bm, matrix=Matrix.Translation((a + b) / 2) @ rot, verts=bm.verts)
+    o = obj_from_bm(name, bm, mat)
+    parts.append(o)
+
+def panel(name, size, at, tilt_y=0.0, mat=M_DARK):
+    """A thin box, turned `tilt_y` about the ship's length (fore-aft) axis."""
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    for v in bm.verts:
+        v.co = Vector((v.co.x * size[0], v.co.y * size[1], v.co.z * size[2]))
+    bmesh.ops.bevel(bm, geom=list(bm.edges), offset=min(size) * 0.3, segments=1, affect="EDGES")
+    bmesh.ops.transform(bm, matrix=Matrix.Translation(at) @ Matrix.Rotation(tilt_y, 4, "Y"), verts=bm.verts)
+    o = obj_from_bm(name, bm, mat)
+    parts.append(o)
+
+LEGS = [((sx * 2.2, 6.0, -5.9), (sx * 6.5, 8.0)) for sx in (-1, 1)] + [((sx * 11.0, -13.0, -4.85), (sx * 14.5, -14.0)) for sx in (-1, 1)]
+for mount, (fx, fy) in LEGS:
+    m = Vector(mount)
+    knee = Vector((fx, fy, FOOT + 0.85))
+    side = 1 if fx > 0 else -1
+    # The bay: a dark well, its two doors open, hanging either side of the strut.
+    panel("gear_bay", (2.4, 3.4, 0.2), (m.x, m.y, m.z + 0.02))
+    for d in (-1, 1):
+        panel("gear_door", (0.12, 3.2, 1.7), (m.x + d * 1.3, m.y, m.z - 0.8), tilt_y=-d * 0.25, mat=M_HULL)
+    # The strut: a sleeve, the piston out of it, a knuckle and the pad.
+    rod("gear_sleeve", m, m.lerp(knee, 0.58), 0.45)
+    rod("gear_piston", m.lerp(knee, 0.5), knee, 0.28, mat=M_CHROME)
+    for dy in (-2.6, 2.6):
+        rod("gear_brace", (m.x - side * 0.4, m.y + dy, m.z + 0.1), m.lerp(knee, 0.72), 0.16)
+    cylinder("gear_knuckle", 0.5, 0.5, 0.6, (fx, fy, FOOT + 0.85), axis="X", mat=M_DARK, segs=12)
+    cylinder("gear_pad", 1.7, 1.25, 0.45, (fx, fy, FOOT + 0.225), axis="Z", mat=M_DARK, segs=24)
+    cylinder("gear_pad_hub", 0.6, 0.45, 0.5, (fx, fy, FOOT + 0.65), axis="Z", mat=M_DARK, segs=12)
+
+# The crew hatch, in the keel's belly (a stair drops aft from it, landed):
+# a dark frame, the door inset, a lamp over it.
+HATCH = (0.0, -4.0, -5.9)
+panel("hatch_frame", (2.0, 3.0, 0.12), (HATCH[0], HATCH[1], HATCH[2] - 0.04))
+panel("hatch_door", (1.6, 2.6, 0.1), (HATCH[0], HATCH[1], HATCH[2] - 0.07), mat=M_ACCENT)
 
 # ---------------------------------------------------------------- lights
 def lamp(loc, mat, r=0.18):
@@ -394,6 +451,7 @@ for y in (-20.0, -10.0, 0.0, 10.0):
     lamp((-5.6, y, 4.5), M_WHITE, r=0.1)
     lamp((5.6, y, 4.5), M_WHITE, r=0.1)
 lamp((0, 25.4, -1.0), M_WHITE, r=0.25)
+lamp((0, HATCH[1] + 1.8, HATCH[2] - 0.12), M_WHITE, r=0.12)
 
 # ---------------------------------------------------------------- join, UVs, shading
 bpy.ops.object.select_all(action="DESELECT")
@@ -438,8 +496,8 @@ def empty(name, loc, toward):
     o.rotation_mode = "QUATERNION"
     o.rotation_quaternion = Vector((0, 1, 0)).rotation_difference(Vector(toward))
 
-for k, x in enumerate((-4.2, 0.0, 4.2)):
-    empty("nozzle_main_%d" % k, (x, -34.4, 0.0), (0, -1, 0))
+for k, x in enumerate(MAINS):
+    empty("nozzle_main_%d" % k, (x, -34.7, 0.0), (0, -1, 0))
 for k, sx in enumerate((-1, 1)):
     empty("nozzle_main_pod_%d" % k, (sx * 11.0, -21.0, -0.6), (0, -1, 0))
 for end, y in (("nose", 22.0), ("tail", -24.0)):
@@ -449,8 +507,9 @@ for end, y in (("nose", 22.0), ("tail", -24.0)):
             empty("nozzle_%s_%s_%s" % (end, side, d), base, v)
 for k, (x, y) in enumerate(((-2.0, 10.0), (2.0, 10.0), (-2.0, -16.0), (2.0, -16.0), (-11.0, -6.0), (11.0, -6.0))):
     empty("nozzle_lift_%d" % k, (x, y, -6.0 if abs(x) < 5 else -5.3), (0, 0, -1))
-for k, (x, y) in enumerate(((-2.4, 11.0), (2.4, 11.0), (-2.4, -16.0), (2.4, -16.0))):
-    empty("gear_%d" % k, (x, y, -6.1), (0, 0, -1))
+for k, (_, (x, y)) in enumerate(LEGS):
+    empty("gear_%d" % k, (x, y, FOOT), (0, 0, -1))
+empty("hatch", (HATCH[0], HATCH[1], HATCH[2] - 0.1), (0, 0, -1))
 empty("cockpit", (0, 22.5, 2.6), (0, 1, 0))
 empty("mount_hardpoint_1", (-3.0, 22.0, -2.0), (0, 1, 0))
 empty("mount_hardpoint_2", (3.0, 22.0, -2.0), (0, 1, 0))

@@ -146,11 +146,25 @@ pub fn hatch_body(sys: &StarSystem, ship: &Ship) -> Result<usize, String> {
     }
 }
 
+/// How far aft a stair from a hull's own `hatch` runs to the ground (m).
+const STAIR_RUN: f64 = 8.0;
+
+/// The way out of `ship`, landed (ship frame): the top of its stair and
+/// where its foot reaches, horizontally (it meets the ground below that).
+/// A modelled hull's belly hatch, a stair aft from it; otherwise the
+/// cabin's port door and a ramp beside the ship.
+pub fn stair(ship: &Ship) -> (DVec3, DVec3) {
+    match ship.spec().shape().nodes(crate::shape::Role::Hatch).next() {
+        Some(h) => (h.at, h.at + DVec3::Z * STAIR_RUN),
+        None => (DVec3::new(ROOMS[2].x0, DECK, HATCH.z), RAMP_FOOT),
+    }
+}
+
 /// Where the ramp's foot is on `body` (its frame, on the ground), for a
 /// ship landed on it.
 fn ramp_foot(sys: &StarSystem, ship: &Ship, body: usize, t: f64, center: DVec3) -> DVec3 {
     let b = &sys.bodies[body];
-    let world = ship.position + ship.orientation * RAMP_FOOT;
+    let world = ship.position + ship.orientation * stair(ship).1;
     let local = b.rotation(t).inverse() * (world - center);
     let dir = local.normalize();
     dir * b.surface_radius(dir)
@@ -246,7 +260,9 @@ impl Person {
                                 let foot = ramp_foot(sys, ship, body, t, positions[body]);
                                 // Face away from the ship (outward along the ramp).
                                 let rot = sys.bodies[body].rotation(t);
-                                let out = rot.inverse() * (ship.orientation * DVec3::NEG_X);
+                                let (top, bottom) = stair(ship);
+                                let run = DVec3::new(bottom.x - top.x, 0.0, bottom.z - top.z).normalize_or(DVec3::NEG_X);
+                                let out = rot.inverse() * (ship.orientation * run);
                                 let up = foot.normalize();
                                 let (north, east) = tangent(up);
                                 let yaw = f64::atan2(-out.dot(east), out.dot(north));

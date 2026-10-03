@@ -130,7 +130,7 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, read: &mut Read) 
         } else {
             read.visual.extend(points);
         }
-    } else if name == "cockpit" || ["nozzle_", "mount_", "gear_", "dock_"].iter().any(|p| name.starts_with(p)) {
+    } else if name == "cockpit" || name == "hatch" || ["nozzle_", "mount_", "gear_", "dock_"].iter().any(|p| name.starts_with(p)) {
         // (Blender's +Y is glTF's −Z.)
         let dir = m.transform_vector3(DVec3::NEG_Z).normalize_or(DVec3::NEG_Z);
         read.nodes.push((name.clone(), m.transform_point3(DVec3::ZERO), dir));

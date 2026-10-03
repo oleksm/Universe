@@ -5,7 +5,7 @@
 
 use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{text_size, Color, Context, Frame, KeyCode};
-use universe_sim::world::crew::{Reach, Room, BESIDE_SEAT, DECK, HATCH, HEADROOM, RAMP_FOOT, ROOMS, SEAT};
+use universe_sim::world::crew::{Reach, Room, BESIDE_SEAT, DECK, HATCH, HEADROOM, ROOMS, SEAT};
 use universe_sim::world::{Place, WalkCommands};
 
 use crate::{fmt, App};
@@ -136,14 +136,15 @@ pub fn ramp(frame: &mut Frame, app: &App) {
         let dir = (w - center).normalize();
         center + dir * b.surface_radius_at(center, w, t)
     };
-    let x = ROOMS[2].x0;
-    for dz in [-1.0, 1.0] {
-        let top = at(DVec3::new(x, DECK, HATCH.z + dz));
-        let foot = ground(RAMP_FOOT + DVec3::Z * dz);
-        frame.line(top, foot, HATCH_C);
+    // (Its two rails, a metre either side; the top and the foot across.)
+    let (top, foot) = universe_sim::world::crew::stair(ship);
+    let run = foot - top;
+    let side = DVec3::Y.cross(DVec3::new(run.x, 0.0, run.z)).normalize_or(DVec3::Z);
+    for d in [-1.0, 1.0] {
+        frame.line(at(top + side * d), ground(foot + side * d), HATCH_C);
     }
-    frame.line(ground(RAMP_FOOT - DVec3::Z), ground(RAMP_FOOT + DVec3::Z), HATCH_C);
-    frame.line(at(DVec3::new(x, DECK, HATCH.z - 1.0)), at(DVec3::new(x, DECK, HATCH.z + 1.0)), HATCH_C);
+    frame.line(ground(foot - side), ground(foot + side), HATCH_C);
+    frame.line(at(top - side), at(top + side), HATCH_C);
 }
 
 /// Status lines on foot, and the prompt for what's in reach.

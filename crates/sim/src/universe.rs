@@ -508,7 +508,7 @@ impl Universe {
                     let flat = |v: DVec3, up: DVec3| v - up * v.dot(up);
                     let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
                         let d = |k| {
-                            let pad = universe_world::port::pad(sys, sp.port, k);
+                            let pad = universe_world::port::pad(sys, sp.port, k, universe_world::ship::SHIP_RADIUS);
                             let up = universe_world::port::up(sp.port, pad);
                             flat(local - pad, up).length()
                         };

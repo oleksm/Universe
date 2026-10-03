@@ -349,8 +349,8 @@ impl World {
             }
             (HangarCommand::Leave { pad }, Some(port)) if pad < PADS && crate::port::body(&sys, port) == Some(body) => {
                 // Out of the door, in sight again, and taxiing.
-                let local_position = crate::port::hangar(&sys, port);
-                let local_orientation = crate::port::resting(port, local_position, crate::port::pad(&sys, port, pad) - local_position);
+                let local_position = crate::port::hangar(&sys, port, ship.rest_height());
+                let local_orientation = crate::port::resting(port, local_position, crate::port::pad(&sys, port, pad, ship.rest_height()) - local_position);
                 let mut rigid = ship.rigid();
                 Weld { body, local_position, local_orientation }.place(&sys.bodies, t, &self.rails_at(system, t), &mut rigid);
                 ship.set_rigid(&rigid);
@@ -369,13 +369,13 @@ impl World {
     fn taxi_step(&self, sys: &StarSystem, ship: &mut Ship, dt: f64, events: &mut Vec<ShipEvent>) {
         let (Some(taxi), ShipState::Landed { body, local_position, local_orientation }) = (ship.taxi, ship.state.clone()) else { return };
         let to = match taxi.pad {
-            Some(pad) => crate::port::pad(sys, taxi.port, pad),
-            None => crate::port::hangar(sys, taxi.port),
+            Some(pad) => crate::port::pad(sys, taxi.port, pad, ship.rest_height()),
+            None => crate::port::hangar(sys, taxi.port, ship.rest_height()),
         };
         let step = TAXI_SPEED * dt;
         let name = taxi.port.name(sys);
         let arrived = local_position.distance(to) <= step;
-        let local_position = if arrived { to } else { crate::port::settle(sys, taxi.port, local_position + (to - local_position).normalize() * step) };
+        let local_position = if arrived { to } else { crate::port::settle(sys, taxi.port, local_position + (to - local_position).normalize() * step, ship.rest_height()) };
         let local_orientation = if arrived { local_orientation } else { crate::port::resting(taxi.port, local_position, to - local_position) };
         ship.state = ShipState::Landed { body, local_position, local_orientation };
         if arrived {
@@ -786,7 +786,7 @@ impl World {
             _ => Facility::Spaceport(0),
         };
         let body = crate::port::body(&sys, at).expect("a port");
-        let local_position = crate::port::pad(&sys, at, pad);
+        let local_position = crate::port::pad(&sys, at, pad, ship.rest_height());
         let local_orientation = match at {
             Facility::Station(_) => crate::station::parked(),
             _ => crate::port::resting(at, local_position, local_position.any_orthonormal_vector()),

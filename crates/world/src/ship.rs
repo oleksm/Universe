@@ -596,6 +596,14 @@ impl ClassSpec {
     pub fn shape(&self) -> &'static crate::shape::Shape {
         self.shape_own.unwrap_or_else(|| crate::content::content().get(self.shape_ref))
     }
+
+    /// How high its centre stands over the ground when it's set down: on a
+    /// modelled hull, the depth of its lowest landing contact (its footpads);
+    /// otherwise `SHIP_RADIUS` (legs drawn down from the hull).
+    pub fn rest_height(&self) -> f64 {
+        let feet = self.shape().nodes(crate::shape::Role::Gear).map(|g| -g.at.y).fold(f64::NAN, f64::max);
+        if self.visual.is_some() && feet > 0.0 { feet } else { SHIP_RADIUS }
+    }
 }
 
 /// A hull of the loaded content.
@@ -1091,6 +1099,11 @@ impl Ship {
 
     pub fn up(&self) -> DVec3 {
         self.orientation * DVec3::Y
+    }
+
+    /// How high its centre stands over the ground when it's set down.
+    pub fn rest_height(&self) -> f64 {
+        self.spec().rest_height()
     }
 
     pub fn is_flying(&self) -> bool {

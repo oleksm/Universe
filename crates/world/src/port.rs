@@ -6,7 +6,7 @@
 
 use glam::{DQuat, DVec3};
 
-use crate::ship::{upright, SHIP_RADIUS};
+use crate::ship::upright;
 use crate::system::{BodyKind, StarSystem};
 use crate::traffic::Facility;
 use crate::{spaceport, station};
@@ -20,14 +20,16 @@ pub fn body(sys: &StarSystem, port: Facility) -> Option<usize> {
     }
 }
 
-/// Where a ship rests above body-frame point `at` (on the ground, or the deck).
-pub fn settle(sys: &StarSystem, port: Facility, at: DVec3) -> DVec3 {
+/// Where a ship whose centre stands `height` over its feet
+/// (`Ship::rest_height`) rests above body-frame point `at` (on the ground,
+/// or the deck).
+pub fn settle(sys: &StarSystem, port: Facility, at: DVec3, height: f64) -> DVec3 {
     match port {
         Facility::Spaceport(p) => {
             let dir = at.normalize();
-            dir * (sys.bodies[sys.spaceports[p].body].surface_radius(dir) + SHIP_RADIUS)
+            dir * (sys.bodies[sys.spaceports[p].body].surface_radius(dir) + height)
         }
-        _ => station::rest(at),
+        _ => station::rest(at, height),
     }
 }
 
@@ -39,19 +41,19 @@ pub fn up(port: Facility, at: DVec3) -> DVec3 {
     }
 }
 
-/// Where a ship rests on pad `pad`.
-pub fn pad(sys: &StarSystem, port: Facility, pad: usize) -> DVec3 {
+/// Where a ship `height` tall to its centre rests on pad `pad`.
+pub fn pad(sys: &StarSystem, port: Facility, pad: usize, height: f64) -> DVec3 {
     match port {
-        Facility::Spaceport(p) => settle(sys, port, spaceport::pad_direction(sys, p, pad.min(spaceport::PADS - 1))),
-        _ => station::pad_local(pad.min(spaceport::PADS - 1)),
+        Facility::Spaceport(p) => settle(sys, port, spaceport::pad_direction(sys, p, pad.min(spaceport::PADS - 1)), height),
+        _ => station::rest(station::pad_local(pad.min(spaceport::PADS - 1)), height),
     }
 }
 
-/// Where a ship in the hangar rests (out of sight).
-pub fn hangar(sys: &StarSystem, port: Facility) -> DVec3 {
+/// Where a ship `height` tall to its centre rests in the hangar (out of sight).
+pub fn hangar(sys: &StarSystem, port: Facility, height: f64) -> DVec3 {
     match port {
-        Facility::Spaceport(p) => settle(sys, port, spaceport::hangar_direction(sys, p)),
-        _ => station::hangar_local(),
+        Facility::Spaceport(p) => settle(sys, port, spaceport::hangar_direction(sys, p), height),
+        _ => station::rest(station::hangar_local(), height),
     }
 }
 

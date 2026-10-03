@@ -45,9 +45,10 @@ pub fn hull() -> Blocks {
     )
 }
 
-/// Where a ship rests on the deck above local point `at` (station frame).
-pub fn rest(at: DVec3) -> DVec3 {
-    DVec3::new(at.x, DECK_TOP + SHIP_RADIUS, at.z)
+/// Where a ship whose centre stands `height` over its feet rests on the
+/// deck above local point `at` (station frame).
+pub fn rest(at: DVec3, height: f64) -> DVec3 {
+    DVec3::new(at.x, DECK_TOP + height, at.z)
 }
 
 /// Where a ship rests on pad `pad` (0..`PADS`, row by row from the main
@@ -55,7 +56,7 @@ pub fn rest(at: DVec3) -> DVec3 {
 pub fn pad_local(pad: usize) -> DVec3 {
     let half = (GRID as f64 - 1.0) / 2.0;
     let (row, col) = ((pad / GRID) as f64 - half, (pad % GRID) as f64 - half);
-    rest(DVec3::new(col * PAD_SPACING, 0.0, (DECK_FROM + DECK_TO) / 2.0 + row * PAD_SPACING))
+    rest(DVec3::new(col * PAD_SPACING, 0.0, (DECK_FROM + DECK_TO) / 2.0 + row * PAD_SPACING), SHIP_RADIUS)
 }
 
 /// The pad a ship resting at `local` (station frame) is on, if any.
@@ -67,11 +68,11 @@ pub fn pad_at(local: DVec3) -> Option<usize> {
 /// The hangar inside the main structure (where ships in it rest, out of
 /// sight), and its door onto the deck.
 pub fn hangar_local() -> DVec3 {
-    rest(DVec3::new(0.0, 0.0, (STRUCTURE_FROM + DECK_FROM) / 2.0))
+    rest(DVec3::new(0.0, 0.0, (STRUCTURE_FROM + DECK_FROM) / 2.0), SHIP_RADIUS)
 }
 
 pub fn door_local() -> DVec3 {
-    rest(DVec3::new(0.0, 0.0, DECK_FROM))
+    rest(DVec3::new(0.0, 0.0, DECK_FROM), SHIP_RADIUS)
 }
 
 /// Upright on the deck, the nose toward the main structure.

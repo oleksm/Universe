@@ -1496,9 +1496,11 @@ fn ship(frame: &mut Frame, app: &App) {
         nav_lights(frame, app.models.lights(&app.ship), pos, turned, app.now(), 7);
         jets(frame, &app.ship, pos, turned, app.now(), usize::MAX);
     }
-    // Landed on a body: the landing legs, down to the ground.
+    // Landed on a body: the landing legs, down to the ground (a modelled
+    // hull stands on its own).
     if let ShipState::Landed { body, .. } = app.ship.state
         && app.view.system.bodies[body].kind != BodyKind::Station
+        && app.ship.spec().visual.is_none()
     {
         let (b, center) = (&app.view.system.bodies[body], app.view.positions[body]);
         let o = app.place(crate::Who::Me).1;

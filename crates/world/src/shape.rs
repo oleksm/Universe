@@ -27,12 +27,15 @@ pub enum Role {
     Dock,
     /// `cockpit`: where the pilot sits.
     Cockpit,
+    /// `hatch`: where the crew go in and out (a stair runs aft from it).
+    Hatch,
 }
 
 impl Role {
     fn of(name: &str) -> Option<Role> {
         let roles = [("mount_", Role::Mount), ("nozzle_", Role::Nozzle), ("gear_", Role::Gear), ("dock_", Role::Dock)];
         roles.iter().find(|(p, _)| name.starts_with(p) && name.len() > p.len()).map(|r| r.1).or((name == "cockpit").then_some(Role::Cockpit))
+            .or((name == "hatch").then_some(Role::Hatch))
     }
 }
 
@@ -279,7 +282,7 @@ impl ShapeDef {
         solid.centroid = DVec3::ZERO;
         let mut nodes = Vec::new();
         for n in self.nodes {
-            let role = Role::of(&n.name).ok_or_else(|| format!("node '{}': name it mount_*, nozzle_*, gear_*, dock_* or cockpit", n.name))?;
+            let role = Role::of(&n.name).ok_or_else(|| format!("node '{}': name it mount_*, nozzle_*, gear_*, dock_*, cockpit or hatch", n.name))?;
             let dir = point(n.dir).try_normalize().ok_or_else(|| format!("node '{}' points nowhere", n.name))?;
             if nodes.iter().any(|m: &Node| m.name == n.name) {
                 return Err(format!("node '{}' twice", n.name));

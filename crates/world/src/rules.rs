@@ -13,7 +13,7 @@ use universe_physics::{Fact, Feature, Frame, Relative};
 
 use crate::damage;
 use crate::events::ShipEvent;
-use crate::ship::{upright, Ship, ShipState, SHIP_RADIUS};
+use crate::ship::{upright, Ship, ShipState};
 use crate::system::StarSystem;
 
 /// Which part of a structure (or body) was touched.
@@ -138,8 +138,8 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             let b = &sys.bodies[body];
             let rot = b.rotation(t);
             let held = match *pose {
-                Pose::Deck => (speed < *max_speed).then(|| (crate::station::rest(c.local), upright(rot * DVec3::Y, ship.forward()))),
-                Pose::Ground => (speed < *max_speed).then(|| (c.local * (b.surface_radius(c.local) + SHIP_RADIUS), upright(c.normal, ship.forward()))),
+                Pose::Deck => (speed < *max_speed).then(|| (crate::station::rest(c.local, ship.rest_height()), upright(rot * DVec3::Y, ship.forward()))),
+                Pose::Ground => (speed < *max_speed).then(|| (c.local * (b.surface_radius(c.local) + ship.rest_height()), upright(c.normal, ship.forward()))),
             };
             match held {
                 Some((local_position, orientation)) => {
