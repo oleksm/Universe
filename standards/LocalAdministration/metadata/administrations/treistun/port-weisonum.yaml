@@ -2,3 +2,4 @@
 name: "Port Weisonum"
 kind: settlement
 at: Treistun h II
+position: { latitude: 34.206, longitude: 125.66 }

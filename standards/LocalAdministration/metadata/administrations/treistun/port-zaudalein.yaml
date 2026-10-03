@@ -2,3 +2,4 @@
 name: "Port Zaudalein"
 kind: settlement
 at: Treistun b
+position: { latitude: -12.482, longitude: 55.107 }

@@ -2,3 +2,4 @@
 name: "Port Eikir"
 kind: settlement
 at: Treistun d
+position: { latitude: 47.547, longitude: -179.612 }

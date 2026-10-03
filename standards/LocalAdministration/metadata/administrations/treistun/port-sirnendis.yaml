@@ -2,3 +2,4 @@
 name: "Port Sirnendis"
 kind: settlement
 at: Treistun d I
+position: { latitude: -32.137, longitude: -88.842 }

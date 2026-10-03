@@ -2,3 +2,4 @@
 name: "Port Nacaubun"
 kind: settlement
 at: Treistun e
+position: { latitude: 37.945, longitude: -86.741 }

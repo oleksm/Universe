@@ -2,3 +2,4 @@
 name: "Port Trethi"
 kind: settlement
 at: Treistun f
+position: { latitude: 5.337, longitude: 52.127 }

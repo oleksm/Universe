@@ -199,7 +199,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at"}:
+            if k not in {"name", "kind", "at", "position"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -240,7 +240,7 @@ for dirpath, dirs, files in os.walk(parcels_dir):
             if k not in pc:
                 problem(full, f"no {k}")
         for k in pc:
-            if k not in {"name", "place", "owner"}:
+            if k not in {"name", "position", "owner"}:
                 problem(full, f"unknown field '{k}'")
         adm = next((a for a in administrations if a["slug"] == parts[0]), None)
         if adm is None:
@@ -254,8 +254,8 @@ for dirpath, dirs, files in os.walk(parcels_dir):
         pc["body"] = (of or {}).get("name", parts[1])
         pc["body_kind"] = (of or {}).get("kind", "")
         pc["body_slug"] = parts[1]
-        # (Its address, from where it is filed: parcel, place, body, what the body is at, system.)
-        pc["address"] = ", ".join(str(x) for x in [pc.get("name"), pc.get("place"), pc["body"], (of or {}).get("at"), (adm or {}).get("name")] if x)
+        # (Its address, from where it is filed: parcel, body, what the body is at, system.)
+        pc["address"] = ", ".join(str(x) for x in [pc.get("name"), pc["body"], (of or {}).get("at"), (adm or {}).get("name")] if x)
         pc["file"] = os.path.relpath(full, TREE)
         pc["slug"] = "/".join(parts)[:-5]
         parcels.append(pc)

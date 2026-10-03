@@ -1,10 +1,17 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Parcel
-description: 'standards/LandRegister/metadata/parcels/<system>/<body>/<name>.yaml: one piece of land and who owns it. Its folders say where it is: the administration (system) and the body, by their file names in LocalAdministration. Its address is made from them: parcel, place, body, what the body is at, system.'
+description: 'standards/LandRegister/metadata/parcels/<system>/<body>/<name>.yaml: one piece of land and who owns it. Its folders say where it is: the administration (system) and the body, by their file names in LocalAdministration. Its address is made from them: parcel, body, what the body is at, system.'
 type: object
 additionalProperties: false
 required: [name, owner]
 properties:
   name: { type: string }
-  place: { type: string, description: Where on the body. }
+  position:
+    description: "Where on the surface of its body, in degrees. Latitude from the equator toward the spin axis (north positive); longitude round the spin axis from the body frame's x axis (our convention: the game has no prime meridian)."
+    type: object
+    additionalProperties: false
+    required: [latitude, longitude]
+    properties:
+      latitude: { type: number, minimum: -90, maximum: 90 }
+      longitude: { type: number, minimum: -180, maximum: 180 }
   owner: { type: string, pattern: '^(brand|body)\.[a-z0-9_]+$', description: 'Who owns it (a company in Maker House, or a standards body).' }

@@ -8,3 +8,11 @@ properties:
   name: { type: string }
   kind: { enum: [planet, moon, settlement] }
   at: { type: string, description: "The planet or moon it is at, by name." }
+  position:
+    description: "Where on the surface of the body it is at, in degrees. Latitude from the equator toward the spin axis (north positive); longitude round the spin axis from the body frame's x axis (our convention: the game has no prime meridian)."
+    type: object
+    additionalProperties: false
+    required: [latitude, longitude]
+    properties:
+      latitude: { type: number, minimum: -90, maximum: 90 }
+      longitude: { type: number, minimum: -180, maximum: 180 }

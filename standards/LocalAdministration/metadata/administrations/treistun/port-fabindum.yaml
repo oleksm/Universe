@@ -2,3 +2,4 @@
 name: "Port Fabindum"
 kind: settlement
 at: Treistun c I
+position: { latitude: -43.742, longitude: -87.965 }

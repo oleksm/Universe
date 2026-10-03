@@ -2,3 +2,4 @@
 name: "Port Aipika"
 kind: settlement
 at: Treistun i II
+position: { latitude: -21.118, longitude: 142.499 }

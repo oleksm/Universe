@@ -2,3 +2,4 @@
 name: "Port Lisaur"
 kind: settlement
 at: Treistun c
+position: { latitude: -4.192, longitude: -42.108 }
