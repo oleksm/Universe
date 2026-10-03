@@ -20,7 +20,8 @@ fn a_silent_pilot_holds_its_controls_then_the_dead_man_rule_cuts_in() {
     c.system = sys;
     c.ship.state = ShipState::Flying;
     c.ship.hyperdrive = false;
-    c.ship.position = pos + DVec3::new(0.0, 0.0, 1.0e7);
+    // (High above the system's plane: nothing there to hit.)
+    c.ship.position = pos + DVec3::new(0.0, 2.0e10, 0.0);
     c.ship.velocity = vel;
     c.ship.throttle = 0.3;
     c.ship.armed = true;

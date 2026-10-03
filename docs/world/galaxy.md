@@ -10,8 +10,8 @@ how many stars per cubic light year at any place (a disc, two arms, a bulge), sc
 **real density near the Sun** where we live. Its stars come from the seed in **sectors** (cubes
 100 ly a side), as many as the density says, whenever something looks there: the galaxy map
 shows them anywhere, from the whole spiral down to single stars. Play happens in **the charted
-region**: the 200 ly cube of sectors round home in the outer disc, between the arms, where
-neighbours are 4-6 ly apart as Alpha Centauri is to the Sun (about 27,000 stars, by the real mix
+region**: the 200 ly cube of sectors round home on an outer arm, 4,000 ly out, where
+neighbours are 4-6 ly apart as Alpha Centauri is to the Sun (about 32,000 stars, by the real mix
 of star classes: three in four are red dwarfs). More regions, the same sectors made into
 systems as they're reached and spread over engine nodes, come later.
 
@@ -23,8 +23,8 @@ systems as they're reached and spread over engine nodes, come later.
 | Neighbour spacing | Derived | median about 4.5 ly | from the density: the nearest of a random spread at 0.004 per ly³ (`0.55 / n^(1/3)` ≈ 3.5 ly mean nearest; the seeded lanes come out 3.7-7 ly) |
 | Class mix | Real (rounded) | M 76.5%, K 12%, G 7.6%, F 3%, A 0.6%, B 0.2%, O 0.003% | the main-sequence stars near the Sun (Harvard spectral classes, by number) |
 | Region side | Tuning | 200 ly | **room for decades of play and the star count the engine already handles**: about 32,000 stars (about 1.5 MB), about 40 gate hops across; a 40 ly explorer's epic is a fifth of it. 100 ly would be cramped (4,000 stars), 500 ly needs a spatial index (500,000) |
-| Region's place | Tuning | 4,000 ly out from the centre, in the plane | the outer disc, about where the Sun is in ours (the Sun is about 26,000 ly out in a galaxy five times bigger) |
-| Galaxy shape | Tuning | an exponential disc (scale length 2,600 ly, height 300 ly, fading out past 8,000 ly), two logarithmic arms (pitch 13°, about 16° wide) six times denser than between them, a bulge (700 ly across, 350 ly thick) | a familiar spiral, the Milky Way's shape scaled down five times (its disc's scale length is about 9,000 ly, the Sun 26,000 ly out between arms); the density at the galactic centre comes out about 50 times the Sun's neighbourhood |
+| Region's place | Tuning | on an outer arm 4,000 ly out from the centre, in the plane | the outer disc, about where the Sun is in ours (the Sun is about 26,000 ly out in a galaxy five times bigger, near an arm) |
+| Galaxy shape | Tuning | 40,000 sample stars of a two-armed spiral (pitch 13°) with a bulge, about 19,000 ly across, gathered on a grid (82 ly cells) and softened; thinning above and below the plane (about 150 ly) | the look of the galaxy map (its glow is the same grid); the stars are made by it, scaled so the region averages the real density |
 | Sector | Tuning | 100 ly cubes; their count from the density at their middle | small enough that the density hardly changes across one, big enough to be few; a sector's stars are evenly spread, so its first few are a fair sample (the map thins by drawing fewer of each) |
 
 ## Home
@@ -41,8 +41,9 @@ The galaxy map is the whole galaxy from above, one continuous zoom:
 - **Stars** from their sectors in a **slab** 40 ly thick round your plane (fading with height
   above or below it; the whole depth flattened would be noise), at most about 30,000 a frame:
   past that every sector is thinned alike, so the arms still show denser.
-- **The glow** is the same density summed through the disc's thickness (`galaxy::column`): a
-  bright arm is dense with stars when you zoom in. It takes over as the stars get too small.
+- **The glow** is the shape's grid itself (`galaxy::shape_grid`): a bright arm is dense with
+  stars when you zoom in. It takes over as the stars get too small, with a sprinkle of the
+  shape's own sample stars over it.
 - It opens at a 5 ly scale bar on your neighbourhood.
 
 ## Open questions

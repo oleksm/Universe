@@ -96,9 +96,11 @@ pub const REGION: f64 = 200.0;
 /// Stars per cubic light year near the Sun (about 0.14 per cubic parsec):
 /// the density at the region's centre, which the galaxy's shape is scaled to.
 pub const STAR_DENSITY: f64 = 0.004;
-/// Where the region sits in the galaxy (ly from its centre, in its plane):
-/// the outer disc between the arms, about where the Sun is in ours.
-pub const REGION_CENTRE: DVec3 = DVec3::new(4000.0, 0.0, 0.0);
+/// Where the region sits in the galaxy (ly from its centre, in its plane): on
+/// an arm 4,000 ly out (`shape_stars`' arms run at angle ln(r/300)/tan 13°),
+/// the outer disc, about where the Sun is in ours.
+/// (Its corners on the sector grid: a whole number of sectors.)
+pub const REGION_CENTRE: DVec3 = DVec3::new(-900.0, 0.0, 3900.0);
 /// The galaxy's stars come in cubes this many light years a side, each from
 /// the seed and its place: as many as the density there says.
 pub const SECTOR: f64 = 100.0;
@@ -106,40 +108,121 @@ pub const SECTOR: f64 = 100.0;
 /// A sector's place: which cube of `SECTOR` light years (x, y, z).
 pub type Sector = [i32; 3];
 
-/// The galaxy's shape (relative density; 1 at the disc's middle): an
-/// exponential disc (scale length 2,600 ly, height 300 ly) with two
-/// logarithmic arms (pitch 13°) three to five times denser than between
-/// them, fading out past 8,000 ly, and a central bulge.
+/// The galaxy's shape, sampled: 40,000 stars of a two-armed spiral with a
+/// central bulge (the same every world). Gathered on a grid and softened it's
+/// the galaxy's light on the map, and the density its stars are made by.
+pub fn shape_stars() -> &'static [GalaxyStar] {
+    static STARS: std::sync::OnceLock<Vec<GalaxyStar>> = std::sync::OnceLock::new();
+    STARS.get_or_init(|| {
+        let seed = 1984;
+        let mut rng = Rng::new(seed);
+        let pitch = 13f64.to_radians().tan();
+        (0..40_000)
+            .map(|i| {
+                let kind = rng.f64();
+                let position = if kind < 0.12 {
+                    // Bulge.
+                    DVec3::new(rng.normal() * 700.0, rng.normal() * 350.0, rng.normal() * 700.0)
+                } else {
+                    let r = (-2600.0 * (1.0 - rng.f64()).ln()).clamp(300.0, 9000.0);
+                    let angle = if kind < 0.35 {
+                        rng.range(0.0, std::f64::consts::TAU) // inter-arm disc
+                    } else {
+                        let arm = (rng.next_u64() % 2) as f64 * std::f64::consts::PI;
+                        arm + (r / 300.0).ln() / pitch + rng.normal() * 0.28
+                    };
+                    let jitter = DVec3::new(rng.normal(), 0.0, rng.normal()) * 120.0;
+                    DVec3::new(r * angle.cos(), rng.normal() * 90.0, r * angle.sin()) + jitter
+                };
+                GalaxyStar { position, class: StarClass::random(&mut rng), seed: mix(seed, i as u64) }
+            })
+            .collect()
+    })
+}
+
+/// Cells a side of the shape grid, and how far it reaches (ly, each way from the centre).
+pub const SHAPE_CELLS: usize = 256;
+pub const SHAPE_REACH: f64 = 10_500.0;
+
+/// The shape's stars gathered on the grid over the plane (each shared among
+/// the four corners round it), softened a little (`fine`) and a lot (`soft`):
+/// per corner, `(SHAPE_CELLS + 1)²`.
+pub struct ShapeGrid {
+    pub fine: Vec<f32>,
+    pub soft: Vec<f32>,
+}
+
+pub fn shape_grid() -> &'static ShapeGrid {
+    static GRID: std::sync::OnceLock<ShapeGrid> = std::sync::OnceLock::new();
+    GRID.get_or_init(|| {
+        let n = SHAPE_CELLS + 1;
+        let cell = 2.0 * SHAPE_REACH / SHAPE_CELLS as f64;
+        let mut light = vec![0.0f32; n * n];
+        for s in shape_stars() {
+            let (x, y) = ((s.position.x + SHAPE_REACH) / cell, (s.position.z + SHAPE_REACH) / cell);
+            if x < 0.0 || y < 0.0 || x >= (n - 1) as f64 || y >= (n - 1) as f64 {
+                continue;
+            }
+            let (i, j) = (x as usize, y as usize);
+            let (fx, fy) = ((x - i as f64) as f32, (y - j as f64) as f32);
+            light[j * n + i] += (1.0 - fx) * (1.0 - fy);
+            light[j * n + i + 1] += fx * (1.0 - fy);
+            light[(j + 1) * n + i] += (1.0 - fx) * fy;
+            light[(j + 1) * n + i + 1] += fx * fy;
+        }
+        let blur = |src: &[f32], r: i32| -> Vec<f32> {
+            let w: Vec<f32> = (-r..=r).map(|k| (-(k * k) as f32 / (0.5 * (r * r) as f32 + 0.5)).exp()).collect();
+            let total: f32 = w.iter().sum();
+            let mut a = vec![0.0f32; n * n];
+            let mut b = vec![0.0f32; n * n];
+            for y in 0..n {
+                for x in 0..n {
+                    a[y * n + x] = (-r..=r).map(|k| src[y * n + (x as i32 + k).clamp(0, n as i32 - 1) as usize] * w[(k + r) as usize]).sum::<f32>() / total;
+                }
+            }
+            for y in 0..n {
+                for x in 0..n {
+                    b[y * n + x] = (-r..=r).map(|k| a[(y as i32 + k).clamp(0, n as i32 - 1) as usize * n + x] * w[(k + r) as usize]).sum::<f32>() / total;
+                }
+            }
+            b
+        };
+        ShapeGrid { fine: blur(&light, 1), soft: blur(&light, 4) }
+    })
+}
+
+/// The shape's light in the plane at (x, z): the grid, between its corners.
+fn plane(x: f64, z: f64) -> f64 {
+    let g = shape_grid();
+    let n = SHAPE_CELLS + 1;
+    let cell = 2.0 * SHAPE_REACH / SHAPE_CELLS as f64;
+    let (u, v) = ((x + SHAPE_REACH) / cell, (z + SHAPE_REACH) / cell);
+    if u < 0.0 || v < 0.0 || u >= (n - 1) as f64 || v >= (n - 1) as f64 {
+        return 0.0;
+    }
+    let (i, j) = (u as usize, v as usize);
+    let (fx, fz) = (u - i as f64, v - j as f64);
+    let at = |i: usize, j: usize| 0.6 * g.fine[j * n + i] as f64 + 0.4 * g.soft[j * n + i] as f64;
+    let a = at(i, j) + (at(i + 1, j) - at(i, j)) * fx;
+    let b = at(i, j + 1) + (at(i + 1, j + 1) - at(i, j + 1)) * fx;
+    a + (b - a) * fz
+}
+
+/// The galaxy's shape (relative density): the plane's light, thinning above
+/// and below it (about 150 ly).
 fn shape(p: DVec3) -> f64 {
-    let r = (p.x * p.x + p.z * p.z).sqrt();
-    let disc = (-r / 2600.0).exp() * (-p.y.abs() / 300.0).exp() * (1.0 - (r - 8000.0) / 1500.0).clamp(0.0, 1.0) * arms(p);
-    let bulge = 4.0 * (-(r * r) / (2.0 * 700.0 * 700.0) - p.y * p.y / (2.0 * 350.0 * 350.0)).exp();
-    disc + bulge
+    plane(p.x, p.z) * (-p.y * p.y / (2.0 * 150.0 * 150.0)).exp()
 }
 
-/// How much the arms crowd a place's stars: 0.4 between them, 2.4 on one.
-pub fn arms(p: DVec3) -> f64 {
-    let r = (p.x * p.x + p.z * p.z).sqrt().max(300.0);
-    let pitch = 13f64.to_radians().tan();
-    let along = p.z.atan2(p.x) - (r / 300.0).ln() / pitch;
-    // (Two arms, half a turn apart: the angle off the nearer.)
-    let off = along - (along / std::f64::consts::PI).round() * std::f64::consts::PI;
-    0.4 + 2.0 * (-off * off / (2.0 * 0.28 * 0.28)).exp()
-}
-
-/// Stars per cubic light year at `p` (light years, the galaxy's frame).
+/// Stars per cubic light year at `p` (light years, the galaxy's frame): the
+/// shape, scaled so the charted region averages the real density.
 pub fn density(p: DVec3) -> f64 {
-    STAR_DENSITY * shape(p) / shape(REGION_CENTRE)
-}
-
-/// Stars per square light year looking straight down through the disc at
-/// (x, z): the density summed through its thickness (the map's glow).
-pub fn column(x: f64, z: f64) -> f64 {
-    let r = (x * x + z * z).sqrt();
-    let p = DVec3::new(x, 0.0, z);
-    let disc = (-r / 2600.0).exp() * (1.0 - (r - 8000.0) / 1500.0).clamp(0.0, 1.0) * arms(p) * 2.0 * 300.0;
-    let bulge = 4.0 * (-(r * r) / (2.0 * 700.0 * 700.0)).exp() * (std::f64::consts::TAU).sqrt() * 350.0;
-    STAR_DENSITY * (disc + bulge) / shape(REGION_CENTRE)
+    static REGION_SHAPE: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
+    let mean = *REGION_SHAPE.get_or_init(|| {
+        let s = region_sectors();
+        s.iter().map(|c| shape((DVec3::new(c[0] as f64, c[1] as f64, c[2] as f64) + 0.5) * SECTOR)).sum::<f64>() / s.len() as f64
+    });
+    STAR_DENSITY * shape(p) / mean
 }
 
 fn sector_seed(seed: u64, s: Sector) -> u64 {

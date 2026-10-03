@@ -37,8 +37,8 @@ pub struct GalaxyMap {
 }
 
 /// Cells a side of the glow image, and how far it reaches (ly, each way from the centre).
-const GLOW_CELLS: usize = 256;
-const GLOW_REACH: f64 = 10_500.0;
+const GLOW_CELLS: usize = universe_sim::world::galaxy::SHAPE_CELLS;
+const GLOW_REACH: f64 = universe_sim::world::galaxy::SHAPE_REACH;
 
 /// The galaxy as light: every star's glow gathered on a grid over its
 /// plane, softened, toned (warm in the bulge, bluish in the disc, pink
@@ -48,24 +48,22 @@ struct Glow {
 }
 
 impl Glow {
-    /// The galaxy's light from above: its stars per square light year (the
-    /// density summed through the disc, `galaxy::column`), toned against the
-    /// bright end of the disc.
     fn gather() -> Self {
-        use universe_sim::world::galaxy::{arms, column};
         let n = GLOW_CELLS + 1;
         let cell = 2.0 * GLOW_REACH / GLOW_CELLS as f64;
-        let at = |k: usize| ((k % n) as f64 * cell - GLOW_REACH, (k / n) as f64 * cell - GLOW_REACH);
-        let light: Vec<f64> = (0..n * n).map(|k| { let (x, z) = at(k); column(x, z) }).collect();
-        let mut sorted: Vec<f64> = light.iter().copied().filter(|v| *v > 0.0).collect();
-        sorted.sort_by(f64::total_cmp);
-        let bright = sorted.get(sorted.len() * 97 / 100).copied().unwrap_or(1.0).max(1e-9);
+        // (The galaxy's shape, gathered and softened: the same the stars are made by.)
+        let grid = universe_sim::world::galaxy::shape_grid();
+        let (fine, soft) = (&grid.fine, &grid.soft);
+        // (Toned against the bright end of the disc.)
+        let mut sorted: Vec<f32> = soft.iter().copied().filter(|v| *v > 0.0).collect();
+        sorted.sort_by(f32::total_cmp);
+        let bright = sorted.get(sorted.len() * 97 / 100).copied().unwrap_or(1.0).max(1e-3);
         let corners = (0..n * n)
             .map(|k| {
-                let (x, z) = at(k);
-                let r = (x * x + z * z).sqrt();
-                // (Gently: the disc between the arms still glows, as in a photograph.)
-                let lit = (1.0 - (-(light[k] / bright).powf(0.6) * 1.5).exp()) as f32;
+                let (x, y) = ((k % n) as f64 * cell - GLOW_REACH, (k / n) as f64 * cell - GLOW_REACH);
+                let r = (x * x + y * y).sqrt();
+                let v = 0.6 * fine[k] + 0.4 * soft[k];
+                let lit = 1.0 - (-v / bright * 1.1).exp();
                 let warm = [1.0, 0.86, 0.64];
                 let cool = [0.72, 0.8, 1.0];
                 let t = ((r - 900.0) / 4000.0).clamp(0.0, 1.0) as f32;
@@ -73,11 +71,11 @@ impl Glow {
                 for i in 0..3 {
                     c[i] = warm[i] + (cool[i] - warm[i]) * t;
                 }
-                // On the arms: young stars, pink.
-                let young = (((arms(universe_engine::glam::DVec3::new(x, 0.0, z)) - 1.0) / 1.4).clamp(0.0, 1.0) * ((r - 1500.0) / 1500.0).clamp(0.0, 1.0)) as f32;
+                // Clumps standing out of their surroundings in the arms: young, pink.
+                let clump = ((fine[k] / soft[k].max(1e-6) - 1.5) / 0.8).clamp(0.0, 1.0) * (((r - 1500.0) / 1500.0).clamp(0.0, 1.0) as f32);
                 let pink = [1.0, 0.48, 0.66];
                 for i in 0..3 {
-                    c[i] += (pink[i] - c[i]) * young * 0.6;
+                    c[i] += (pink[i] - c[i]) * clump * 0.7;
                 }
                 [c[0], c[1], c[2], (lit * 0.95).min(0.95)]
             })
@@ -192,7 +190,15 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
         let span = |a: f64, b: f64| (a / SECTOR).floor() as i32..=(b / SECTOR).floor() as i32;
         let (xs, ys, zs) = (span(lo.x, hi.x), span(our_y - SLAB, our_y + SLAB), span(lo.y, hi.y));
         let count = xs.clone().count() * ys.clone().count() * zs.clone().count();
-        if count <= MAX_SECTORS {
+        if count > MAX_SECTORS {
+            // (Too far out for the sectors: a sprinkle of the shape's own stars, over the glow.)
+            for (i, s) in universe_sim::world::galaxy::shape_stars().iter().enumerate() {
+                let p = map.to_screen(size, DVec2::new(s.position.x, s.position.z));
+                if i % 3 == 0 && on_screen(p) {
+                    frame.hud_rect(p, Vec2::splat(0.5), color(s.class.color()).scale(0.8));
+                }
+            }
+        } else {
             // How many would be in view, and the share of each sector's to draw.
             let overlap = |a0: f64, a1: f64, k: i32| ((a1.min((k + 1) as f64 * SECTOR) - a0.max(k as f64 * SECTOR)) / SECTOR).max(0.0);
             let mut cells = Vec::with_capacity(count);
