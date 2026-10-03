@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><circle cx="48" cy="48" r="43" fill="#e0a81c"/><g fill="none" stroke="#b98510" stroke-width="5"><ellipse cx="48" cy="48" rx="20" ry="43"/><path d="M5 48h86"/></g><path d="M56 12 L28 52 L45 52 L40 84 L68 44 L51 44 Z" fill="#1c1a1a"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><radialGradient id="me-a" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#c7bf8f"/><stop offset=".6" stop-color="#8e7e52"/><stop offset="1" stop-color="#67553a"/></radialGradient></defs>
+<circle cx="48" cy="48" r="43" fill="url(#me-a)"/>
+<g fill="none" stroke="#493c28" stroke-width="1.800" opacity=".75"><ellipse cx="48" cy="48" rx="17" ry="43"/><ellipse cx="48" cy="48" rx="32" ry="43"/><path d="M5 48h86M11 27h74M11 69h74"/></g>
+<circle cx="48" cy="48" r="43" fill="none" stroke="#493c28" stroke-width="2.500"/>
+<path d="M55 8 L28 52 L45 52 L39 88 L69 40 L51 40 Z" fill="#1c2023" stroke="#d6d1ad" stroke-width="2.500" stroke-linejoin="round"/>
+<path d="M53 16 L34 49 L48 49 L44 74 L63 43 L48 43 Z" fill="#5792aa"/></svg>

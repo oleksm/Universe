@@ -72,11 +72,7 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 .logo { --logo-cut: var(--bg); display: inline-block; vertical-align: middle; line-height: 0; }
 .logo svg { width: 18px; height: 18px; }
 .logo.big svg { width: 96px; height: 96px; }
-.lockup { display: inline-flex; align-items: center; gap: 22px; padding: 18px 30px 18px 22px; background: #ffffff; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 12px; font-family: Inter, "Helvetica Neue", Arial, sans-serif; }
-.lockup .logo svg { width: 88px; height: 88px; }
-.lockup b { display: block; font-size: 38px; line-height: 1; font-weight: 800; letter-spacing: .06em; color: #1c1a1a; text-transform: uppercase; }
-.lockup i { display: block; margin-top: 9px; font-style: normal; font-size: 15px; line-height: 1; letter-spacing: .5em; text-transform: uppercase; }
-.row .logo { --logo-cut: var(--nav); margin-right: 6px; background: #ffffff; border-radius: 3px; padding: 2px; }
+.row .logo { --logo-cut: var(--nav); margin-right: 6px; }
 .row.sel .logo { --logo-cut: var(--sel); }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-width: none; margin: 6px 0 12px; }
 .gallery a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; background: var(--tbl); border: 1px solid var(--tline); border-radius: 4px; text-align: center; color: var(--text); font-size: 12px; letter-spacing: 0; }
@@ -319,8 +315,7 @@ function detail(k) {
   if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div>${logo(m.slug)} <a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
-    const [first, ...others] = m.name.split(" ");
-    return `<div><span class="lockup">${logo(m.slug)}<span><b>${esc(first)}</b><i style="color:${esc(m.colour || "#1c1a1a")}">${esc(others.join(" "))}</i></span></span></div><h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
+    return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
   }
   if (kind === "g") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";

@@ -156,7 +156,7 @@ for name in sorted(os.listdir(makers_dir)):
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "ticker", "colour", "note", "who", "what", "story", "slug", "file"}:
+        if k not in {"key", "name", "ticker", "note", "who", "what", "story", "slug", "file"}:
             problem(full, f"unknown field '{k}'")
     if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
         problem(full, "ticker: 2 to 4 capital letters")
