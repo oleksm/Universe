@@ -254,6 +254,8 @@ for dirpath, dirs, files in os.walk(parcels_dir):
         pc["body"] = (of or {}).get("name", parts[1])
         pc["body_kind"] = (of or {}).get("kind", "")
         pc["body_slug"] = parts[1]
+        # (Its address, from where it is filed: parcel, place, body, what the body is at, system.)
+        pc["address"] = ", ".join(str(x) for x in [pc.get("name"), pc.get("place"), pc["body"], (of or {}).get("at"), (adm or {}).get("name")] if x)
         pc["file"] = os.path.relpath(full, TREE)
         pc["slug"] = "/".join(parts)[:-5]
         parcels.append(pc)

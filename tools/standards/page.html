@@ -231,7 +231,7 @@ function rows(q) {
     for (let i = from; i < out.length; i++) out[i].depth = 2 + (out[i].at ? 1 + depthOf(out[i].at) : 0);
   }
   // The Land Register: the parcels under it.
-  const pq = p => !q || q.split(/\s+/).every(w => `${p.name} ${p.body} ${p.place || ""} ${DATA.brands[p.owner] || ""}`.toLowerCase().includes(w));
+  const pq = p => !q || q.split(/\s+/).every(w => `${p.address} ${DATA.brands[p.owner] || ""}`.toLowerCase().includes(w));
   out.push({ k: "lr", depth: 0, kind: "body", label: DATA.land.name, n: DATA.parcels.length });
   if (open.has("lr") || q) for (const p of DATA.parcels.filter(pq)) out.push({ k: "pc:" + p.slug, depth: 1, kind: "maker", label: p.name });
   return out;
@@ -351,10 +351,10 @@ function detail(k) {
     const here = a.bodies.filter(y => y.at === x.name);
     return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + `<h3>Land</h3>` + parcelTable(DATA.parcels.filter(p => p.administration === a.slug && p.body === x.name)) + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
   }
-  if (k === "lr") return `<h2>${esc(DATA.land.name)}</h2><p>${esc(DATA.land.note || "")}</p>` + parcelTable(DATA.parcels);
+  if (k === "lr") return `<h2>${esc(DATA.land.name)}</h2><p>${esc(DATA.land.note || "")}</p>` + (DATA.parcels.length ? `<table><tr><th>Address</th><th>Owner</th></tr>` + DATA.parcels.map(p => `<tr><td><a data-k="${esc("pc:" + p.slug)}">${esc(p.address)}</a></td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `</table>` : `<p class="meta">No parcels yet.</p>`);
   if (kind === "pc") {
     const p = DATA.parcels.find(x => x.slug === rest.join(":")); if (!p) return "";
-    return `<h2>${esc(p.name)}</h2>` + parcelTable([p]) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
+    return `<h2>${esc(p.name)}</h2><h3>Address</h3><p>${esc(p.address)}</p>` + parcelTable([p]) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";

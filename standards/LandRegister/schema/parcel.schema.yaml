@@ -1,6 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Parcel
-description: 'standards/LandRegister/metadata/parcels/<system>/<body>/<name>.yaml: one piece of land and who owns it. Its folders say where it is: the administration (system) and the body, by their file names in LocalAdministration.'
+description: 'standards/LandRegister/metadata/parcels/<system>/<body>/<name>.yaml: one piece of land and who owns it. Its folders say where it is: the administration (system) and the body, by their file names in LocalAdministration. Its address is made from them: parcel, place, body, what the body is at, system.'
 type: object
 additionalProperties: false
 required: [name, owner]
