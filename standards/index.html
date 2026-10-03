@@ -3,13 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>Standards Registry</title>
 <style>
 :root {
-  --bg: #ffffff; --panel: #f3f5f7; --line: #b9c4cd; --text: #0a1117; --dim: #3d4f5c;
+  color-scheme: light;
+  --bg: #ffffff; --panel: #ffffff; --line: #b9c4cd; --text: #0a1117; --dim: #3d4f5c;
   --head: #04683b; --id: #0a58b8; --sel: #cdeedd; --bad: #b0281a; --code: #e9eef2;
 }
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #0b1016; --panel: #111922; --line: #22303d; --text: #dce6ee; --dim: #7d93a0;
   --head: #60ffb0; --id: #6cb2ff; --sel: #17352a; --bad: #ff6050; --code: #0e151d;
 }
