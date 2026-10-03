@@ -3,29 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark light">
 <title>Standards Registry</title>
 <style>
 :root {
+  color-scheme: dark;
+  /* The game's HUD: near-black panels on dark slate, pale text, amber, cyan, green. */
+  --bg: #2b3138; --panel: #050708; --line: #3a4652; --text: #dcebf2; --dim: #8fa3b0;
+  --head: #60ffb0; --id: #ffb040; --link: #5cc8f0; --sel: #12302a; --bad: #ff5a4a; --code: #10161b;
+}
+:root[data-theme="light"] {
   color-scheme: light;
   --bg: #ffffff; --panel: #ffffff; --line: #b9c4cd; --text: #0a1117; --dim: #3d4f5c;
-  --head: #04683b; --id: #0a58b8; --sel: #cdeedd; --bad: #b0281a; --code: #e9eef2;
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #0b1016; --panel: #111922; --line: #22303d; --text: #dce6ee; --dim: #7d93a0;
-  --head: #60ffb0; --id: #6cb2ff; --sel: #17352a; --bad: #ff6050; --code: #0e151d;
+  --head: #04683b; --id: #0a58b8; --link: #0a58b8; --sel: #cdeedd; --bad: #b0281a; --code: #e9eef2;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; letter-spacing: .06em; }
 header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+header { text-transform: none; }
 header h1 { font-size: 15px; margin: 0; color: var(--head); letter-spacing: .05em; white-space: nowrap; }
 header input { flex: 1; min-width: 0; max-width: 420px; padding: 6px 10px; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; font: inherit; }
 header .count { color: var(--dim); white-space: nowrap; }
 header button { margin-left: auto; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; font: inherit; cursor: pointer; }
 main { display: grid; grid-template-columns: minmax(260px, 38%) 1fr; height: calc(100vh - 49px); }
-nav { overflow: auto; border-right: 1px solid var(--line); padding: 8px 0; }
+nav { overflow: auto; border-right: 1px solid var(--line); padding: 8px 0; background: var(--panel); }
 article { overflow: auto; padding: 16px 24px 48px; }
+article > * { max-width: 110ch; }
 .row { padding: 2px 12px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row:hover { background: var(--code); }
 .row.sel { background: var(--sel); box-shadow: inset 3px 0 0 var(--head); font-weight: 600; }
@@ -35,14 +38,16 @@ article { overflow: auto; padding: 16px 24px 48px; }
 .row .n { color: var(--dim); }
 .row .sid { color: var(--id); }
 h2 { color: var(--head); font-size: 17px; margin: 0 0 4px; }
-h3 { color: var(--text); font-weight: 700 !important; font-size: 12px; letter-spacing: .08em; margin: 22px 0 6px; font-weight: normal; text-transform: uppercase; }
+h3 { color: var(--dim); font-weight: 700 !important; font-size: 12px; letter-spacing: .08em; margin: 22px 0 6px; font-weight: normal; text-transform: uppercase; }
 .meta { color: var(--dim); }
-a { color: var(--id); text-decoration: none; cursor: pointer; }
+a { color: var(--link); text-decoration: none; cursor: pointer; }
 a:hover { text-decoration: underline; }
 table { border-collapse: collapse; margin: 4px 0; }
 th, td { text-align: left; padding: 3px 14px 3px 0; vertical-align: top; }
-th { color: var(--text); font-weight: 700; border-bottom: 2px solid var(--line); }
+th { color: var(--dim); font-weight: 700; border-bottom: 1px solid var(--line); text-transform: uppercase; font-size: 12px; }
 tr + tr td { border-top: 1px solid var(--code); }
+table { background: var(--panel); padding: 6px 10px; border: 1px solid var(--line); }
+th:first-child, td:first-child { padding-left: 4px; }
 td.num { text-align: right; }
 .problems { border: 1px solid var(--bad); color: var(--bad); padding: 8px 12px; margin: 8px 12px; border-radius: 4px; }
 .problems li { margin: 2px 0; }
@@ -68,12 +73,12 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 </main>
 <script>
 const DATA = /*DATA*/null;
-// Light by default; dark if chosen (kept, if storage works).
-try { if (localStorage.getItem("standards-theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}
+// The game's dark by default; light if chosen (kept, if storage works).
+try { if (localStorage.getItem("standards-theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) {}
 document.getElementById("theme").addEventListener("click", () => {
-  const dark = document.documentElement.dataset.theme !== "dark";
-  if (dark) document.documentElement.dataset.theme = "dark"; else delete document.documentElement.dataset.theme;
-  try { localStorage.setItem("standards-theme", dark ? "dark" : "light"); } catch (e) {}
+  const light = document.documentElement.dataset.theme !== "light";
+  if (light) document.documentElement.dataset.theme = "light"; else delete document.documentElement.dataset.theme;
+  try { localStorage.setItem("standards-theme", light ? "light" : "dark"); } catch (e) {}
 });
 const byId = Object.fromEntries(DATA.standards.map(s => [s.id, s]));
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
