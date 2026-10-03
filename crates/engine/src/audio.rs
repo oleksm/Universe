@@ -437,17 +437,31 @@ struct Synth {
     delay: f32,
 }
 
-/// The score: pads drifting through a cycle of chords, a bell now and then
-/// from the chord, and under tension a pulsing bass; through the long room.
+/// The score: bright pads drifting through a major cycle, opening and
+/// closing slowly; a soft arpeggio of the chord through a long echo (two
+/// cycles on, one off, so it never nags); a gentle pulse on the root; a bell
+/// now and then; and under tension the pads darken and a driving bass comes in.
 struct Music {
     level: Smoothed,
     tension: Smoothed,
     swell: f32,
     t: f32,
+    /// Seconds since it started (the pads' slow sweep).
+    clock: f32,
     chord: usize,
+    /// Chords played (the arpeggio's on and off).
+    played: usize,
     pads: Vec<Pad>,
     bells: Vec<Bell>,
     next_bell: f32,
+    plucks: Vec<Pluck>,
+    step: usize,
+    step_t: f32,
+    arp: Smoothed,
+    echo: Vec<f32>,
+    echo_at: usize,
+    pulse_env: f32,
+    pulse_phase: f32,
     beat: f32,
     bass_env: f32,
     bass_phase: f32,
@@ -473,10 +487,22 @@ struct Bell {
     vol: f32,
 }
 
-/// The chords (MIDI notes): a dark minor cycle (i, VI, iv, v in D).
-const CHORDS: [[u8; 4]; 4] = [[50, 57, 60, 64], [46, 53, 57, 62], [43, 55, 58, 62], [45, 52, 55, 60]];
+/// An arpeggio note: a soft sine with a touch of its octave, quick in, dying away.
+struct Pluck {
+    freq: f32,
+    t: f32,
+    phase: f32,
+    vol: f32,
+}
+
+/// The chords (MIDI notes): a bright major cycle in D (Imaj7, IVmaj7, vi, V).
+const CHORDS: [[u8; 4]; 4] = [[50, 57, 61, 66], [43, 55, 59, 66], [47, 54, 59, 62], [45, 57, 61, 64]];
 /// Each chord this long (s).
-const CHORD_TIME: f32 = 14.0;
+const CHORD_TIME: f32 = 10.0;
+/// The arpeggio's pace (beats a minute; it plays eighths).
+const TEMPO: f32 = 104.0;
+/// Which of the chord's notes the arpeggio takes, step by step (4: the root an octave up).
+const PATTERN: [usize; 8] = [0, 1, 2, 3, 4, 3, 2, 1];
 
 fn midi(n: f32) -> f32 {
     440.0 * 2f32.powf((n - 69.0) / 12.0)
@@ -489,10 +515,20 @@ impl Music {
             tension: Smoothed::default(),
             swell: 0.0,
             t: CHORD_TIME,
+            clock: 0.0,
             chord: CHORDS.len() - 1,
+            played: 0,
             pads: Vec::new(),
             bells: Vec::new(),
-            next_bell: 5.0,
+            next_bell: 4.0,
+            plucks: Vec::new(),
+            step: 0,
+            step_t: 0.0,
+            arp: Smoothed::default(),
+            echo: Vec::new(),
+            echo_at: 0,
+            pulse_env: 0.0,
+            pulse_phase: 0.0,
             beat: 0.0,
             bass_env: 0.0,
             bass_phase: 0.0,
@@ -515,12 +551,14 @@ impl Music {
         if level < 1e-4 && self.pads.is_empty() {
             return 0.0;
         }
+        self.clock += dt;
         self.swell = (self.swell - dt / 6.0).max(0.0);
         // The next chord: the old notes let go, the new ones come in.
         self.t += dt;
         if self.t >= CHORD_TIME {
             self.t = 0.0;
             self.chord = (self.chord + 1) % CHORDS.len();
+            self.played += 1;
             for p in &mut self.pads {
                 p.on = false;
             }
@@ -528,39 +566,82 @@ impl Music {
                 self.pads.push(Pad { freq: midi(n as f32), phase: [0.0, 0.33, 0.66], env: 0.0, on: true, lp: 0.0 });
             }
         }
+        let notes = CHORDS[self.chord];
         let mut out = 0.0;
-        // (Tension darkens the pads; an arrival opens them up.)
-        let cutoff = (0.02 + 0.03 * self.swell - 0.012 * tension).max(0.005);
+        // Pads: open, breathing slowly brighter and darker (tension darkens them; an arrival opens them up).
+        let sweep = 0.5 + 0.5 * (self.clock * TAU / 37.0).sin();
+        let cutoff = (0.035 + 0.035 * sweep + 0.03 * self.swell - 0.03 * tension).max(0.006);
         for p in &mut self.pads {
             let target = if p.on { 1.0 } else { 0.0 };
-            let speed = if p.on { 1.0 / 3.0 } else { 1.0 / 4.5 };
+            let speed = if p.on { 1.0 / 2.5 } else { 1.0 / 4.0 };
             p.env += (target - p.env) * speed * dt;
             let mut saw = 0.0;
             for (k, ph) in p.phase.iter_mut().enumerate() {
-                let detune = 1.0 + (k as f32 - 1.0) * 0.004;
+                let detune = 1.0 + (k as f32 - 1.0) * 0.006;
                 *ph = (*ph + p.freq * detune * dt).fract();
                 saw += *ph * 2.0 - 1.0;
             }
             p.lp += (saw / 3.0 - p.lp) * cutoff;
-            out += p.lp * p.env * 0.22;
+            out += p.lp * p.env * 0.16;
         }
         self.pads.retain(|p| p.on || p.env > 1e-3);
+        // The arpeggio: eighths up and down the chord, an octave up; two cycles of
+        // the chords on, one off (fading), and out of the way under tension.
+        let cycle = (self.played / CHORDS.len()) % 3;
+        let arp = self.arp.next(dt * 0.25);
+        self.arp.target = if cycle < 2 && self.played > 0 { 1.0 - tension } else { 0.0 };
+        self.step_t += dt;
+        if self.step_t >= 60.0 / TEMPO / 2.0 {
+            self.step_t = 0.0;
+            let k = PATTERN[self.step % PATTERN.len()];
+            let n = if k == 4 { notes[0] as f32 + 24.0 } else { notes[k] as f32 + 12.0 };
+            // (Accents on the beat; now and then a rest.)
+            let vol = if self.step % 2 == 0 { 1.0 } else { 0.7 };
+            if self.rand() > 0.08 && arp > 0.01 {
+                self.plucks.push(Pluck { freq: midi(n), t: 0.0, phase: 0.0, vol: vol * arp });
+            }
+            // A soft pulse on the root each beat.
+            if self.step % 2 == 0 {
+                self.pulse_env = 1.0;
+            }
+            self.step += 1;
+        }
+        let mut dry = 0.0;
+        for p in &mut self.plucks {
+            p.phase = (p.phase + p.freq * dt).fract();
+            let v = (p.phase * TAU).sin() + 0.25 * (p.phase * 2.0 * TAU).sin();
+            dry += v * (-p.t / 0.32).exp() * (p.t / 0.006).min(1.0) * p.vol * 0.035;
+            p.t += dt;
+        }
+        self.plucks.retain(|p| p.t < 2.0);
+        // Through a long echo (a dotted eighth, fading over a few repeats).
+        let len = ((60.0 / TEMPO * 0.75) * rate) as usize;
+        if self.echo.len() != len {
+            self.echo = vec![0.0; len.max(1)];
+            self.echo_at = 0;
+        }
+        let back = self.echo[self.echo_at];
+        self.echo[self.echo_at] = dry + back * 0.42;
+        self.echo_at = (self.echo_at + 1) % self.echo.len();
+        out += dry + back * 0.55;
+        // The pulse: the root low and round, swelling and easing with each beat.
+        self.pulse_env *= 1.0 - dt / 0.35;
+        self.pulse_phase = (self.pulse_phase + midi(notes[0] as f32 - 12.0) * dt).fract();
+        out += (self.pulse_phase * TAU).sin() * self.pulse_env * (1.0 - self.pulse_env).max(0.0) * 4.0 * 0.05 * (1.0 - tension);
         // A bell now and then, from the chord an octave or two up (fewer when tense).
         self.next_bell -= dt;
         if self.next_bell <= 0.0 {
-            let notes = CHORDS[self.chord];
             let n = notes[(self.rand() * 4.0) as usize % 4] as f32 + if self.rand() > 0.5 { 12.0 } else { 24.0 };
             let vol = 0.5 + 0.5 * self.rand();
             self.bells.push(Bell { freq: midi(n), t: 0.0, carrier: 0.0, modulator: 0.0, vol });
-            self.next_bell = 3.0 + 6.0 * self.rand() + 6.0 * tension;
+            self.next_bell = 2.5 + 4.0 * self.rand() + 6.0 * tension;
         }
         for b in &mut self.bells {
             b.modulator = (b.modulator + b.freq * 3.5 * dt).fract();
-            // (A soft bell: little of the metallic sidebands, swelling in, far under the pads.)
             let index = 0.8 * (-b.t * 3.0).exp();
             b.carrier = (b.carrier + b.freq * dt).fract();
             let v = (b.carrier * TAU + index * (b.modulator * TAU).sin()).sin();
-            out += v * (-b.t / 1.8).exp() * (b.t / 0.06).min(1.0) * b.vol * 0.013;
+            out += v * (-b.t / 1.8).exp() * (b.t / 0.06).min(1.0) * b.vol * 0.016;
             b.t += dt;
         }
         self.bells.retain(|b| b.t < 8.0);
@@ -572,12 +653,13 @@ impl Music {
                 self.bass_env = 1.0;
             }
             self.bass_env *= 1.0 - dt / 0.18;
-            let root = midi(CHORDS[self.chord][0] as f32 - 12.0);
+            let root = midi(notes[0] as f32 - 12.0);
             self.bass_phase = (self.bass_phase + root * dt).fract();
             self.bass_lp += ((self.bass_phase * 2.0 - 1.0) - self.bass_lp) * 0.03;
             out += self.bass_lp * self.bass_env * tension * 0.35;
         }
-        out * level * 2.0 * (1.0 + 0.6 * self.swell)
+        // (As loud overall as the old score: there, not in the way.)
+        out * level * 1.7 * (1.0 + 0.6 * self.swell)
     }
 }
 
