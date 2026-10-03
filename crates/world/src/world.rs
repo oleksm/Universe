@@ -15,7 +15,7 @@ use universe_physics::integrate::FINE_STEP;
 use universe_physics::{integrate, Driver, Ephemeris, Fact, Response, RigidBody, Span, Weld};
 
 use crate::events::ShipEvent;
-use crate::galaxy::{Galaxy, GALAXY_STARS};
+use crate::galaxy::Galaxy;
 use crate::gate::{self, GateFrame};
 use crate::hyperdrive;
 use crate::network;
@@ -115,7 +115,7 @@ type RailsAt = (f64, Arc<Vec<DVec3>>);
 
 impl World {
     pub fn new(seed: u64) -> Self {
-        let galaxy = Galaxy::generate(seed, GALAXY_STARS);
+        let galaxy = Galaxy::generate(seed);
         let home_system = network::find_home(&galaxy, seed);
         let gate_links = network::build(&galaxy, home_system);
         Self {

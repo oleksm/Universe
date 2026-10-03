@@ -238,7 +238,9 @@ mod tests {
         let there = charts.system(next);
         let mut their = Vec::new();
         there.positions(0.0, &mut their);
-        let kills = [kill(home, station + DVec3::new(2.0e8, 0.0, 0.0), 1), kill(home, DVec3::new(1.0e14, 0.0, 0.0), 2), kill(next, their[there.station().unwrap()], 3)];
+        // (Out from the station away from its world, so the world doesn't stand in the way.)
+        let out = (station - positions[sys.bodies[sys.station().unwrap()].rail.parent.unwrap()]).normalize();
+        let kills = [kill(home, station + out * 2.0e8, 1), kill(home, DVec3::new(1.0e14, 0.0, 0.0), 2), kill(next, their[there.station().unwrap()], 3)];
         let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm, player: true };
         let mut news = Knowledge::default();
         news.update(&charts, &realm, 2.0, &us, &Happenings { kills: &kills, ..Default::default() });

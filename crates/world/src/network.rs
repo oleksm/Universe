@@ -7,19 +7,21 @@ use crate::names::star_name;
 use crate::rng::Rng;
 use crate::system::StarSystem;
 
-/// A sun-like star in the galactic disc with a station around a rocky world.
+/// A sun-like star near the middle of the charted region with a station
+/// round a rocky world (and room round it for neighbours to settle).
 pub fn find_home(galaxy: &Galaxy, seed: u64) -> usize {
     let mut rng = Rng::new(seed ^ 0x686f_6d65);
     let n = galaxy.stars.len();
-    for _ in 0..10_000 {
+    for _ in 0..100_000 {
         let i = (rng.next_u64() % n as u64) as usize;
         let s = &galaxy.stars[i];
-        let r = (s.position.x.powi(2) + s.position.z.powi(2)).sqrt();
-        if !matches!(s.class, StarClass::G | StarClass::K) || !(2500.0..5000.0).contains(&r) {
+        if !matches!(s.class, StarClass::G | StarClass::K) || s.position.distance(crate::galaxy::REGION_CENTRE) > crate::galaxy::REGION * 0.15 {
             continue;
         }
         let sys = StarSystem::generate(i, s);
-        if sys.station().is_some() && sys.planet_count() >= 4 {
+        // (An Earth-like home world: a starter ship lands on it, about 1 g at most.)
+        let earthlike = sys.station().and_then(|st| sys.bodies[st].rail.parent).is_some_and(|p| sys.bodies[p].rail.mu / sys.bodies[p].rail.radius.powi(2) < 11.0);
+        if earthlike && sys.planet_count() >= 4 {
             return i;
         }
     }

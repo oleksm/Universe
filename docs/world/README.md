@@ -25,3 +25,4 @@ not picked. A number with no target, derivation or source is a bug in the articl
 | Article | What |
 |---|---|
 | [`hyperspace.md`](hyperspace.md) | The hyper layer: the medium, ships' fields, gates (tubes), data through them. |
+| [`galaxy.md`](galaxy.md) | The galaxy and the charted region: star density, the class mix, home, the map. |

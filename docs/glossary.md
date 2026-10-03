@@ -19,6 +19,7 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **The charter** | What's real, simplified and invented, and the rules of the invented. | `docs/physics.md` |
 | **The sheets** | Every constant with its unit, kind and reason: Dogma's laws, and the world's fixed numbers. | `config/dogma.ron`, `content/base/sheet.ron`; report `docs/physics-sheet.md` |
 | **The dogma checks** | Tests of the charter's promises against the sheets. | `crates/world/tests/dogma.rs` |
+| **The charted region** | The cube of space play happens in: 200 ly a side, stars at real density (neighbours 4-6 ly), made from the seed. The galaxy beyond is a backdrop for now. | `universe_world::galaxy`, `docs/world/galaxy.md` |
 | **Kinds of constant** | Real, Grounded, Simplified, Invented, Tuning, Planned. | the sheets |
 
 ## The hyper layer (invented, in Dogma)
@@ -77,6 +78,7 @@ How things work in the universe, one subject an article, to refer to later.
 | Article | What |
 |---|---|
 | `docs/world/hyperspace.md` | The hyper layer whole: the medium, fields, gates as tubes, data in capsules; the crossing formula; numbers; open questions. |
+| `docs/world/galaxy.md` | The galaxy and the charted region: real star density, the class mix, home, the map's slab. |
 | `docs/world/README.md` | How a number earns its place: real, derived, invented (with a target), tuning. |
 
 ## The plans

@@ -18,7 +18,9 @@ const YOU: Color = Color::hex(0x60ffff);
 
 /// The scale bar's length (px, about) and what it reads when the map opens (ly).
 const BAR_PX: f64 = 120.0;
-const DEFAULT_BAR: f64 = 50.0;
+const DEFAULT_BAR: f64 = 5.0;
+/// Stars this far above or below our plane fade out (the map's a slab of the region round us).
+const SLAB: f64 = 20.0;
 
 /// Where the map looks (light years, the galaxy's plane) and how close (px
 /// per light year); the galaxy's glow, gathered once (see `Glow`).
@@ -48,8 +50,9 @@ impl Glow {
         let n = GLOW_CELLS + 1;
         let cell = 2.0 * GLOW_REACH / GLOW_CELLS as f64;
         let mut light = vec![0.0f32; n * n];
-        for s in &app.charts.galaxy.stars {
-            let (x, y) = ((s.position.x + GLOW_REACH) / cell, (s.position.z + GLOW_REACH) / cell);
+        // (The galaxy beyond the charted region: its glow only.)
+        for p in universe_sim::world::galaxy::Galaxy::backdrop(app.charts.galaxy.seed, 40_000) {
+            let (x, y) = ((p.x + GLOW_REACH) / cell, (p.z + GLOW_REACH) / cell);
             if x < 0.0 || y < 0.0 || x >= (n - 1) as f64 || y >= (n - 1) as f64 {
                 continue;
             }
@@ -199,14 +202,20 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             }
         }
     }
-    // Every star: far out a fine point (a real pixel), near a soft glowing disc in its class's colour.
+    // Every star: far out a fine point (a real pixel), near a soft glowing disc in its class's
+    // colour; fading with height above or below our plane (a slab round us, not the whole depth).
     let px_per_ly = map.scale as f32;
+    let our_y = galaxy.stars[app.v.ship_system].position.y;
     for (i, s) in galaxy.stars.iter().enumerate() {
+        let depth = 1.0 - ((s.position.y - our_y).abs() / SLAB) as f32;
+        if depth <= 0.0 {
+            continue;
+        }
         let p = map.to_screen(size, flat(app, i));
         if !on_screen(p) {
             continue;
         }
-        let c = color(s.class.color());
+        let c = color(s.class.color()).scale(depth);
         if px_per_ly < 0.08 {
             // (A sprinkle, over the glow.)
             if i % 3 == 0 {
@@ -219,22 +228,33 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             frame.hud_glow(p, r * 0.6, 8, Color([1.0, 1.0, 1.0, 0.9]), Color([cr, cg, cb, 0.6]));
         }
     }
-    // The settled systems' gate links; zoomed in to 50 ly (the scale bar), each lane's length.
-    let lengths = BAR_PX / map.scale <= DEFAULT_BAR + 1e-6;
+    // The charted region's edge (its square in the galaxy's plane).
+    {
+        use universe_sim::world::galaxy::{REGION, REGION_CENTRE};
+        let h = REGION / 2.0;
+        let c = DVec2::new(REGION_CENTRE.x, REGION_CENTRE.z);
+        let corners = [c + DVec2::new(-h, -h), c + DVec2::new(h, -h), c + DVec2::new(h, h), c + DVec2::new(-h, h)];
+        for k in 0..4 {
+            frame.hud_line(map.to_screen(size, corners[k]), map.to_screen(size, corners[(k + 1) % 4]), DIM.scale(0.6));
+        }
+    }
+    // The settled systems' gate links; zoomed in to 50 ly (the scale bar), each lane's length,
+    // where it fits along the lane.
+    let lengths = BAR_PX / map.scale <= 50.0 + 1e-6;
     for &(a, b) in &app.charts.gate_links {
         let (pa, pb) = (map.to_screen(size, flat(app, a)), map.to_screen(size, flat(app, b)));
         frame.hud_line(pa, pb, GATE.scale(0.6));
-        if lengths {
-            let ly = galaxy.stars[a].position.distance(galaxy.stars[b].position);
-            let text = format!("{ly:.1} LY");
+        let ly = galaxy.stars[a].position.distance(galaxy.stars[b].position);
+        let text = format!("{ly:.1} LY");
+        let w = text_size(&text).x * 0.6;
+        if lengths && pa.distance(pb) > w + 24.0 {
             let mid = (pa + pb) / 2.0;
-            let w = text_size(&text).x * 0.6;
             frame.text_scaled(mid - Vec2::new(w / 2.0, 8.0), &text, GATE.scale(0.9), 0.6);
         }
     }
     // Where we've been: bright, named when there's room.
     // (Named once they'd stand apart: the settled ones are light years from each other.)
-    let named = map.scale > 1.0;
+    let named = map.scale > 6.0;
     for &i in &app.explored {
         let p = map.to_screen(size, flat(app, i));
         if !on_screen(p) {
@@ -285,9 +305,9 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
         s.len()
     };
     let seen = app.explored.len();
-    let title = format!("GALAXY - {total} STARS   {seen} EXPLORED ({:.3}%)   {settled} SETTLED", seen as f64 / total as f64 * 100.0);
+    let title = format!("GALAXY - CHARTED REGION {total} STARS   {seen} EXPLORED ({:.3}%)   {settled} SETTLED", seen as f64 / total as f64 * 100.0);
     frame.text(Vec2::new(16.0, 16.0), &title, TEXT);
-    frame.text(Vec2::new(16.0, 30.0), "ABOUT 19,000 LIGHT YEARS ACROSS. EVERY STAR CAN BE REACHED BY HYPERDRIVE.", DIM);
+    frame.text(Vec2::new(16.0, 30.0), &format!("THE CHARTED REGION: A CUBE {:.0} LY A SIDE, STARS 4-6 LY APART. THE GALAXY BEYOND (ABOUT 19,000 LY ACROSS) IS UNCHARTED.", universe_sim::world::galaxy::REGION), DIM);
     // A scale bar: a round number of light years about 120 px long.
     let ly = BAR_PX / map.scale;
     let round = [1.0, 2.0, 5.0].iter().flat_map(|m| (0..6).map(move |e| m * 10f64.powi(e))).filter(|v| *v <= ly).fold(1.0, f64::max);

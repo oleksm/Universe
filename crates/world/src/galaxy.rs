@@ -58,17 +58,17 @@ impl StarClass {
         format!("{self:?}").chars().next().unwrap()
     }
 
+    /// A star of the Sun's neighbourhood, by the real mix of classes (main
+    /// sequence, near the Sun: about three in four are red dwarfs).
     fn random(rng: &mut Rng) -> Self {
-        // Real stellar populations are dominated by M dwarfs; skewed toward
-        // brighter classes here so the sky is more varied.
         let x = rng.f64();
         match x {
-            _ if x < 0.40 => StarClass::M,
-            _ if x < 0.65 => StarClass::K,
-            _ if x < 0.82 => StarClass::G,
-            _ if x < 0.92 => StarClass::F,
-            _ if x < 0.975 => StarClass::A,
-            _ if x < 0.997 => StarClass::B,
+            _ if x < 0.765 => StarClass::M,
+            _ if x < 0.886 => StarClass::K,
+            _ if x < 0.962 => StarClass::G,
+            _ if x < 0.992 => StarClass::F,
+            _ if x < 0.998 => StarClass::A,
+            _ if x < 0.99997 => StarClass::B,
             _ => StarClass::O,
         }
     }
@@ -88,34 +88,61 @@ pub struct Galaxy {
     pub stars: Vec<GalaxyStar>,
 }
 
-pub const GALAXY_STARS: usize = 40_000;
+/// The charted region: a cube this many light years a side, at the real
+/// density of stars near the Sun (one per about 250 cubic light years:
+/// neighbours 4-6 ly apart). One region for now; more, generated from the
+/// seed as they're reached, later.
+pub const REGION: f64 = 200.0;
+/// Stars per cubic light year near the Sun (about 0.14 per cubic parsec).
+pub const STAR_DENSITY: f64 = 0.004;
+/// Where the region sits in the galaxy (ly from its centre, in its plane):
+/// the outer disc, about where the Sun is in ours.
+pub const REGION_CENTRE: DVec3 = DVec3::new(4000.0, 0.0, 0.0);
 
 impl Galaxy {
-    /// A two-armed spiral with a central bulge.
-    pub fn generate(seed: u64, count: usize) -> Self {
+    /// The charted region's stars, from the seed: uniformly through the cube
+    /// at the real density, by the real mix of classes.
+    pub fn generate(seed: u64) -> Self {
+        Self::generate_n(seed, (REGION.powi(3) * STAR_DENSITY).round() as usize)
+    }
+
+    /// `generate` with `count` stars (tests: a small region).
+    pub fn generate_n(seed: u64, count: usize) -> Self {
         let mut rng = Rng::new(seed);
-        let pitch = 13f64.to_radians().tan();
+        let side = REGION * (count as f64 / (REGION.powi(3) * STAR_DENSITY)).cbrt();
         let stars = (0..count)
             .map(|i| {
+                let position = REGION_CENTRE + DVec3::new(rng.f64() - 0.5, rng.f64() - 0.5, rng.f64() - 0.5) * side;
+                GalaxyStar { position, class: StarClass::random(&mut rng), seed: mix(seed, i as u64) }
+            })
+            .collect();
+        Self { seed, stars }
+    }
+
+    /// The galaxy beyond the region, for the map's glow only (never visited,
+    /// never stored as stars): a two-armed spiral with a central bulge, `count`
+    /// sample points in light years.
+    pub fn backdrop(seed: u64, count: usize) -> Vec<DVec3> {
+        let mut rng = Rng::new(seed ^ 0x6261_636b);
+        let pitch = 13f64.to_radians().tan();
+        (0..count)
+            .map(|_| {
                 let kind = rng.f64();
-                let position = if kind < 0.12 {
-                    // Bulge.
+                if kind < 0.12 {
                     DVec3::new(rng.normal() * 700.0, rng.normal() * 350.0, rng.normal() * 700.0)
                 } else {
                     let r = (-2600.0 * (1.0 - rng.f64()).ln()).clamp(300.0, 9000.0);
                     let angle = if kind < 0.35 {
-                        rng.range(0.0, std::f64::consts::TAU) // inter-arm disc
+                        rng.range(0.0, std::f64::consts::TAU)
                     } else {
                         let arm = (rng.next_u64() % 2) as f64 * std::f64::consts::PI;
                         arm + (r / 300.0).ln() / pitch + rng.normal() * 0.28
                     };
                     let jitter = DVec3::new(rng.normal(), 0.0, rng.normal()) * 120.0;
                     DVec3::new(r * angle.cos(), rng.normal() * 90.0, r * angle.sin()) + jitter
-                };
-                GalaxyStar { position, class: StarClass::random(&mut rng), seed: mix(seed, i as u64) }
+                }
             })
-            .collect();
-        Self { seed, stars }
+            .collect()
     }
 
     /// Offset in meters from star `from` to star `to`.

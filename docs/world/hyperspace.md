@@ -143,9 +143,9 @@ microseconds), a 5 ly gate about 2.5 s (+ its relay's handling).
 
 ## 4. Typical gates
 
-A typical gate spans **up to about 5 ly** (40 ly is an outlier). *Today's galaxy doesn't fit
-yet:* its stars are a median 41 ly apart and the seeded lanes run 16.5-90 ly; 5 ly gates need
-the real-density galaxy on the roadmap (neighbours about 4-5 ly apart).
+A typical gate spans **up to about 5 ly** (40 ly is an outlier). The charted region has stars at
+real density (`galaxy.md`: neighbours 4-6 ly), and the seeded lanes run about 4-7 ly: a 91 t
+Drover crosses in 37-63 s.
 
 ## Open questions
 
@@ -155,8 +155,6 @@ the real-density galaxy on the roadmap (neighbours about 4-5 ly apart).
    1 kg and a relay's 10 g are tuning values in the world sheet).
 3. **Gate economics in play:** owners paying to open and hold, fees by mass and speed, ships
    choosing their crossing speed (today every crossing is at natural speed, unpaid).
-4. **Today's lanes are long** (16-90 ly in the 41 ly galaxy): a 100 t ship's natural crossing
-   there is 2-14 minutes. The real-density galaxy (5 ly gates) brings it to under a minute.
 
 *In code (2026-10-02):* Dogma's Tube laws (`config/dogma.ron`), `hyper::tube_*`; gate transits
 take the natural time for the ship's mass and the lane; the hypernet's relay hops and gate data

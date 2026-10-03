@@ -51,8 +51,11 @@ pub struct UniverseSave {
     pub claims: Vec<(String, crate::realm::Claim)>,
 }
 
-/// The save format's version: 1, content by key (0: goods by catalogue position).
-pub const SAVE_VERSION: u32 = 1;
+/// The save format's version: 2, the charted region's stars (1: content by key, in the old
+/// sparse galaxy; 0: goods by catalogue position).
+pub const SAVE_VERSION: u32 = 2;
+/// Saves before this were made in the old sparse galaxy: their stars are other stars now.
+pub const REGION_VERSION: u32 = 2;
 
 /// A good in a save: by key; saves before keys had its place in the catalogue.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

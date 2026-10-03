@@ -457,7 +457,7 @@ mod tests {
 
     /// Systems of the test galaxy that have fields.
     fn systems() -> Vec<StarSystem> {
-        let galaxy = Galaxy::generate(1984, 120);
+        let galaxy = Galaxy::generate_n(1984, 120);
         (0..120).map(|i| StarSystem::generate(i, &galaxy.stars[i])).collect()
     }
 

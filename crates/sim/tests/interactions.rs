@@ -498,10 +498,11 @@ fn passengers_book_passage_board_a_cabin_and_settle_where_they_booked_for_the_fa
     // Docked without a cabin: no seats.
     u.ship = u.world.ship_on(home, here, 0);
     assert!(u.board_passengers(universe_sim::PLAYER, here, to).is_err(), "no cabin, no passengers");
-    // A cabin in a cargo slot: 30 seats.
-    u.refit("cargo", Some(content().handle("cabin.s3").unwrap())).unwrap();
+    // A cabin in a cargo slot (one this station sells): its seats.
+    let cabins: Vec<_> = content().modules.iter().filter_map(|(h, m)| if let universe_sim::world::modules::Does::Cabin { seats } = m.does { Some((h, seats)) } else { None }).collect();
+    let seats = cabins.iter().find(|(h, _)| u.refit("cargo", Some(*h)).is_ok()).map(|c| c.1).expect("a cabin sold here");
     let n = u.board_passengers(universe_sim::PLAYER, here, to).unwrap();
-    assert_eq!(n, 30.min(b.people));
+    assert_eq!(n, seats.min(b.people));
     assert_eq!(u.ship.passengers, n);
     let waiting = u.markets.economy.place(home, here).unwrap().waiting;
     assert!((waiting - (1.0 - n as f64 / 1000.0)).abs() < 1e-9, "they left the station");

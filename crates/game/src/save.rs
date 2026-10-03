@@ -76,6 +76,9 @@ pub fn load(app: &mut App) -> Result<(), String> {
     }
     let save: GameSave = serde_json::from_value(value).map_err(|e| e.to_string())?;
     let universe = save.universe;
+    if universe.version < universe_sim::save::REGION_VERSION {
+        return Err("saved in the old galaxy, before the charted region: its stars are gone".into());
+    }
     // Made with other content (other packs, or another build's): keys keep
     // most of it, but say so.
     let other = universe.content != 0 && universe.content != universe_sim::world::content::content().hash();
