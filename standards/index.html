@@ -10,12 +10,14 @@
   color-scheme: dark;
   /* The game's HUD: near-black panels on dark slate, pale text, amber, cyan, green. */
   --bg: #2b3138; --panel: #050708; --line: #3a4652; --text: #dcebf2; --dim: #8fa3b0;
-  --head: #60ffb0; --id: #ffb040; --link: #5cc8f0; --sel: #12302a; --bad: #ff5a4a; --code: #10161b;
+  --head: #60ffb0; --id: #ffb040; --link: #5cc8f0; --sel: #1f4a3d; --bad: #ff5a4a; --code: #10161b;
+  --nav: #20262c;
 }
 :root[data-theme="light"] {
   color-scheme: light;
   --bg: #ffffff; --panel: #ffffff; --line: #b9c4cd; --text: #0a1117; --dim: #3d4f5c;
   --head: #04683b; --id: #0a58b8; --link: #0a58b8; --sel: #cdeedd; --bad: #b0281a; --code: #e9eef2;
+  --nav: #f4f6f8;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; letter-spacing: .06em; }
@@ -25,8 +27,10 @@ header h1 { font-size: 15px; margin: 0; color: var(--head); letter-spacing: .05e
 header input { flex: 1; min-width: 0; max-width: 420px; padding: 6px 10px; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; font: inherit; }
 header .count { color: var(--dim); white-space: nowrap; }
 header button { margin-left: auto; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; font: inherit; cursor: pointer; }
-main { display: grid; grid-template-columns: minmax(260px, 38%) 1fr; height: calc(100vh - 49px); }
-nav { overflow: auto; border-right: 1px solid var(--line); padding: 8px 0; background: var(--panel); }
+main { display: grid; grid-template-columns: var(--nav-w, 320px) 6px 1fr; height: calc(100vh - 49px); }
+#grip { cursor: col-resize; background: var(--line); opacity: .5; }
+#grip:hover, #grip.drag { opacity: 1; background: var(--head); }
+nav { overflow: auto; padding: 8px 0; background: var(--nav); }
 article { overflow: auto; padding: 16px 24px 48px; }
 article > * { max-width: 110ch; }
 .row { padding: 2px 12px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -55,6 +59,7 @@ td.num { text-align: right; }
 p { margin: 4px 0 8px; max-width: 80ch; }
 @media (max-width: 720px) {
   main { grid-template-columns: 1fr; height: auto; }
+  #grip { display: none; }
   nav { max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--line); }
   header { flex-wrap: wrap; }
 }
@@ -69,6 +74,7 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 </header>
 <main>
   <nav id="tree"></nav>
+  <div id="grip" title="Drag to resize"></div>
   <article id="detail"></article>
 </main>
 <script>
@@ -151,12 +157,12 @@ function render() {
     const pad = `padding-left:${12 + n.depth * 18}px`;
     const sel = k === current ? " sel" : "";
     if (n.kind === "body") {
-      html += `<div class="row body${sel}" style="${pad}" data-k="${k}"><span class="tw">${open.has(k) ? "▾" : "▸"}</span>${esc(n.body.name)} (${esc(n.body.prefix)})</div>`;
+      html += `<div class="row body${sel}" style="${pad}" data-k="${k}" title="${esc(n.body.name)}"><span class="tw">${open.has(k) ? "▾" : "▸"}</span>${esc(n.body.name)} (${esc(n.body.prefix)})</div>`;
     } else if (n.kind === "branch") {
       const c = count(n.body, n.branch.path);
-      html += `<div class="row${c ? "" : " empty"}${sel}" style="${pad}" data-k="${k}"><span class="tw">${open.has(k) || q ? "▾" : "▸"}</span>${esc(n.branch.path)} ${esc(n.branch.title)} <span class="n">(${c})</span></div>`;
+      html += `<div class="row${c ? "" : " empty"}${sel}" style="${pad}" data-k="${k}" title="${esc(n.branch.path + " " + n.branch.title)}"><span class="tw">${open.has(k) || q ? "▾" : "▸"}</span>${esc(n.branch.path)} ${esc(n.branch.title)} <span class="n">(${c})</span></div>`;
     } else {
-      html += `<div class="row${sel}" style="${pad}" data-k="${k}"><span class="tw"></span><span class="sid">${esc(n.std.id)}</span> ${esc(n.std.title)}</div>`;
+      html += `<div class="row${sel}" style="${pad}" data-k="${k}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw"></span><span class="sid">${esc(n.std.id)}</span> ${esc(n.std.title)}</div>`;
     }
   }
   tree.innerHTML = html;
@@ -224,6 +230,21 @@ document.addEventListener("click", e => {
   select(k);
 });
 document.getElementById("q").addEventListener("input", render);
+// The tree's width: dragged, and kept.
+{
+  const main = document.querySelector("main"), grip = document.getElementById("grip");
+  const setW = w => main.style.setProperty("--nav-w", Math.max(180, Math.min(w, window.innerWidth - 300)) + "px");
+  try { const w = +localStorage.getItem("standards-nav-w"); if (w) setW(w); } catch (e) {}
+  grip.addEventListener("pointerdown", e => {
+    grip.classList.add("drag"); grip.setPointerCapture(e.pointerId);
+    const move = ev => setW(ev.clientX);
+    const up = ev => {
+      grip.classList.remove("drag"); grip.removeEventListener("pointermove", move); grip.removeEventListener("pointerup", up);
+      try { localStorage.setItem("standards-nav-w", Math.round(ev.clientX)); } catch (e2) {}
+    };
+    grip.addEventListener("pointermove", move); grip.addEventListener("pointerup", up);
+  });
+}
 window.addEventListener("hashchange", () => { current = location.hash.slice(1); reveal(current); render(); });
 render();
 </script>
