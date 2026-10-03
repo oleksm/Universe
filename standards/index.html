@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<title>Standards Registry</title>
+<title>Freefall Facts</title>
 <style>
 :root {
   color-scheme: dark;
@@ -113,7 +113,7 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 </head>
 <body>
 <header>
-  <h1>STANDARDS REGISTRY</h1>
+  <h1>FREEFALL FACTS</h1>
   <input id="q" type="search" placeholder="Search ids, titles, text, parameters…" autocomplete="off">
   <span class="count" id="count"></span>
   <button id="theme" title="Light or dark">◐</button>
@@ -284,7 +284,7 @@ function periodicTable(els) {
 function value(v) { return Array.isArray(v) ? `${v[0]} – ${v[1]}` : esc(v); }
 
 function detail(k) {
-  if (!k) return `<h2>The standards registry</h2><p class="meta">Pick a body or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
+  if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick a body or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
   if (kind === "b") {
