@@ -9,6 +9,7 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **FREEFALL** | The game. |
 | **Plurence** | The company making it. |
 | **The universe** | The setting: simply *the universe* (no other name). |
+| **Mining ship** | A ship to turn rock somewhere far into value at a market, and bring its crew home; what it carries follows from the forces in the way (`docs/ships/mining-ship.md`). |
 
 ## The engine and the world
 
