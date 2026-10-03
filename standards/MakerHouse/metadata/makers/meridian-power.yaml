@@ -1,3 +1,7 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
 key: brand.meridian
 name: Meridian Power
+ticker: MPW
 note: "Capacitor banks and power storage"
+who: A power-storage specialist that makes one kind of thing and little else.
+what: "Makes capacitor banks and power storage."

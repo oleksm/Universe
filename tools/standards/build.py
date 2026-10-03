@@ -139,7 +139,8 @@ def check_standard(s, ids):
 
 
 # ---------------------------------------------------------------- reading
-# Maker House: the makers, one file each (MakerHouse/metadata/makers/<name>.yaml). The game's
+# Maker House: the makers, one file each (MakerHouse/metadata/makers/<name>.yaml), to
+# MakerHouse/schema/company.schema.yaml. The game's
 # brands.ron is written from them.
 HOUSE = "MakerHouse"
 house = load(os.path.join(TREE, HOUSE, "metadata", HOUSE + ".yaml"))
@@ -151,12 +152,16 @@ for name in sorted(os.listdir(makers_dir)):
         problem(full, "a maker's file is named <name>.yaml (lower case, words joined by -)")
         continue
     m = load(full)
-    for k in ["key", "name", "note"]:
+    for k in ["key", "name", "ticker", "note"]:
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "note"}:
+        if k not in {"key", "name", "ticker", "note", "who", "what"}:
             problem(full, f"unknown field '{k}'")
+    if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
+        problem(full, "ticker: 2 to 4 capital letters")
+    if any(x.get("ticker") == m.get("ticker") for x in makers):
+        problem(full, f"ticker {m.get('ticker')} twice")
     if not re.fullmatch(r"brand\.[a-z0-9_]+", str(m.get("key", ""))):
         problem(full, "key: brand.<name>")
     if any(x.get("key") == m.get("key") for x in makers):

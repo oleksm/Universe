@@ -1,3 +1,7 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
 key: brand.halcyon
 name: Halcyon Field Systems
+ticker: HFS
 note: "Hyperdrives and gate rings: clean fields, dear"
+who: A field-engineering company working on the hardest part of travel: the jump.
+what: "Builds hyperdrives and gate rings, known for clean fields and high prices."

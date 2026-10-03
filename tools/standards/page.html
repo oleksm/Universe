@@ -205,9 +205,9 @@ function rows(q) {
     walk(null, 1);
   }
   // Maker House: the makers under it.
-  const mq = m => !q || q.split(/\s+/).every(w => `${m.name} ${m.note}`.toLowerCase().includes(w));
+  const mq = m => !q || q.split(/\s+/).every(w => `${m.name} ${m.ticker} ${m.note} ${m.who || ""} ${m.what || ""}`.toLowerCase().includes(w));
   out.push({ k: "mh", depth: 0, kind: "body", label: DATA.house.name, n: DATA.makers.length });
-  if (open.has("mh") || q) for (const m of DATA.makers.filter(mq)) out.push({ k: "mk:" + m.key, depth: 1, kind: "maker", label: m.name });
+  if (open.has("mh") || q) for (const m of DATA.makers.filter(mq)) out.push({ k: "mk:" + m.key, depth: 1, kind: "maker", label: m.name, ticker: m.ticker });
   return out;
 }
 
@@ -254,7 +254,7 @@ function render() {
     } else {
       const cls = n.kind === "body" ? " body" : "";
       const count = n.n !== undefined ? ` <span class="n">(${n.n})</span>` : "";
-      html += `<div class="row${cls}${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.title || n.label)}"><span class="tw">${tw}</span>${esc(n.label)}${count}</div>`;
+      html += `<div class="row${cls}${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.title || n.label)}"><span class="tw">${tw}</span>${esc(n.label)}${n.ticker ? ` <span class="n">${esc(n.ticker)}</span>` : ""}${count}</div>`;
     }
   }
   document.getElementById("tree").innerHTML = html;
@@ -306,10 +306,10 @@ function detail(k) {
     if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
     return h;
   }
-  if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div><a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.note)}</span></div>`).join("");
+  if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div><a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
-    return `<h2>${esc(m.name)}</h2><p>${esc(m.note)}</p><p class="meta">standards/${esc(m.file)}</p>`;
+    return `<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
   }
   if (kind === "g") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";

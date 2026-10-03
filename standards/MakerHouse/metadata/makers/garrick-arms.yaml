@@ -1,3 +1,7 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
 key: brand.garrick
 name: Garrick Arms
+ticker: GAR
 note: "Weapons: mass drivers and lasers"
+who: An arms maker that sells to anyone allowed to buy.
+what: "Makes ship weapons: mass drivers and lasers."

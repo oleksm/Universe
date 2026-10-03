@@ -1,3 +1,7 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
 key: brand.cormorant
 name: Cormorant Mining
+ticker: CMN
 note: "Mining gear"
+who: A company of miners that started building its own tools and now sells them.
+what: "Makes mining gear for ships."

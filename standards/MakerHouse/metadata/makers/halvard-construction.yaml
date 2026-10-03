@@ -1,3 +1,7 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
 key: brand.halvard
 name: Halvard Construction
+ticker: HVC
 note: "Stations, spaceports and outposts"
+who: A construction company that builds the places ships go to. One of the founders of the FSO.
+what: "Builds stations, spaceports and outposts."

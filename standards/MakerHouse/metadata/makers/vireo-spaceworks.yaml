@@ -1,3 +1,7 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
 key: brand.vireo
 name: Vireo Spaceworks
+ticker: VIR
 note: "Hulls: fast and light"
+who: A shipyard that builds for speed before capacity. One of the founders of the FSO.
+what: "Builds hulls: fast and light."
