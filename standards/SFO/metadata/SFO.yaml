@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../schema/body.schema.yaml
-key: body.fso
-name: Foundry Standards Office
-prefix: FSO
+key: body.sfo
+name: Standards Foundry Office
+prefix: SFO
 seat: home
 kind: independent
 note: The standards everyone builds to, whoever they answer to. Open to all.
-purpose: The FSO exists so that what people make fits together, whoever made it and wherever it goes.
+purpose: The SFO exists so that what people make fits together, whoever made it and wherever it goes.
 details:
   text:
     - "- Interoperability: a module from one maker fits a hull from another."
@@ -22,7 +22,7 @@ founded_by:
   - brand.halvard
 about:
   - >
-    The Foundry Standards Office is independent and international: no government owns it and it
+    The Standards Foundry Office is independent and international: no government owns it and it
     governs no one. Its members are the standards bodies of the civilisations that take part,
     with the makers who build to its work; the first makers founded it. It is seated at the home
     station, where it keeps its register.

@@ -2,8 +2,8 @@
 
 [
     (
-        key: "FSO 1",
-        body: "body.fso",
+        key: "SFO 1",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "MINING SHIP",
@@ -19,8 +19,8 @@
         published: 0.0,
     ),
     (
-        key: "FSO 2",
-        body: "body.fso",
+        key: "SFO 2",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "SPACESHIPS",
@@ -36,8 +36,8 @@
         published: 0.0,
     ),
     (
-        key: "FSO 3",
-        body: "body.fso",
+        key: "SFO 3",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "SPACEPORT",
@@ -53,8 +53,8 @@
         published: 0.0,
     ),
     (
-        key: "FSO 4",
-        body: "body.fso",
+        key: "SFO 4",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "STANDING",
@@ -70,8 +70,8 @@
         published: 0.0,
     ),
     (
-        key: "FSO 5",
-        body: "body.fso",
+        key: "SFO 5",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "MATERIALS",
@@ -87,8 +87,8 @@
         published: 0.0,
     ),
     (
-        key: "FSO 6",
-        body: "body.fso",
+        key: "SFO 6",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "CHEMICAL ELEMENTS",
@@ -104,8 +104,8 @@
         published: 0.0,
     ),
     (
-        key: "FSO 7",
-        body: "body.fso",
+        key: "SFO 7",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "MATERIAL PROCESSING",
@@ -121,8 +121,8 @@
         published: 0.0,
     ),
     (
-        key: "FSO 8",
-        body: "body.fso",
+        key: "SFO 8",
+        body: "body.sfo",
         branch: "all",
         version: 1,
         title: "STOCK",

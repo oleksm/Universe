@@ -5,7 +5,7 @@
 
 Reads `standards/`: a folder per body (named after its prefix) with `<PREFIX>.yaml`, and its
 standards beside it, flat, one file each: `NNNN-<slug>.yaml`, the number its permanent id
-(`FSO 12`: never reused, never changed, whatever it's later filed under). A standard's `topics`
+(`SFO 12`: never reused, never changed, whatever it's later filed under). A standard's `topics`
 are free tags describing it; how they'll be classified is left until patterns show.
 
 Writes:
@@ -81,7 +81,7 @@ def check_standard(s, ids):
             up = next((x.get("parent") for x in standards if x["id"] == up), None)
     for r in s.get("refs", []) or []:
         if r not in ids:
-            problem(where, f"refers to {r}: no such standard (ids are like 'FSO 12')")
+            problem(where, f"refers to {r}: no such standard (ids are like 'SFO 12')")
         if r == s["id"]:
             problem(where, "refers to itself")
     if "purpose" in s and not isinstance(s["purpose"], str):
@@ -239,7 +239,7 @@ for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
     if not os.path.isdir(folder) or name in ("schema", HOUSE, LAND, LOCAL):
         continue
-    # (The body's own file: named after its folder, FSO/metadata/FSO.yaml.)
+    # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
     if not os.path.exists(meta_path):
         problem(folder, f"a body's folder needs {name}.yaml")
@@ -291,7 +291,7 @@ for name in sorted(os.listdir(TREE)):
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
 KINDS = {"elements": "element", "materials": "material", "processes": "process"}
-SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "FSO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
+SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
 elements, materials, processes = [], [], []
 for s in standards:
     if "records" not in s:
@@ -454,8 +454,8 @@ def write_html():
         "elements": elements,
         "materials": materials,
         "processes": processes,
-        # (Icons: FSO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
-        "icons": {f[:-4]: open(os.path.join(TREE, "FSO", "icons", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, "FSO", "icons"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, "FSO", "icons")) else {},
+        # (Icons: SFO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
+        "icons": {f[:-4]: open(os.path.join(TREE, "SFO", "icons", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, "SFO", "icons"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, "SFO", "icons")) else {},
         "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["processes"]["properties"].items()},
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["elements"]["properties"].items()},

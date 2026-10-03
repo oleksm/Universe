@@ -1,6 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Standards body
-description: 'standards/FSO/FSO.yaml: who the body is.'
+description: 'standards/SFO/SFO.yaml: who the body is.'
 type: object
 additionalProperties: false
 required:
