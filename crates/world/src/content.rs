@@ -29,7 +29,6 @@ const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("materials.ron", include_str!("../../../content/base/materials.ron")),
     ("brands.ron", include_str!("../../../content/base/brands.ron")),
-    ("factions.ron", include_str!("../../../content/base/factions.ron")),
     ("structures.ron", include_str!("../../../content/base/structures.ron")),
     ("modules.ron", include_str!("../../../content/base/modules.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
@@ -208,7 +207,6 @@ pub struct Content {
     pub shapes: Registry<Shape>,
     pub materials: Registry<crate::materials::Material>,
     pub brands: Registry<crate::modules::Brand>,
-    pub factions: Registry<crate::factions::Faction>,
     pub structures: Registry<crate::structures_catalogue::Structure>,
     pub modules: Registry<crate::modules::Module>,
     pub hulls: Registry<ClassSpec>,
@@ -293,10 +291,6 @@ impl Content {
         }).collect::<Result<_, String>>()?)?;
         let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
         let brands: Registry<crate::modules::Brand> = Registry::build(Self::defs(&packs, "brands.ron")?)?;
-        let factions: Registry<crate::factions::Faction> = Registry::build(Self::defs(&packs, "factions.ron")?)?;
-        if factions.iter().next().is_none() {
-            return Err("factions.ron: the world needs at least one faction".into());
-        }
         let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
         let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
         for (_, s) in structures.iter() {
@@ -401,7 +395,7 @@ impl Content {
         let tank_fuel = &hulls.get(starter).fuel;
         let fuel_goods = resolve(&materials, &aliases, tank_fuel).map(|h| materials.get(h).goods.clone()).unwrap_or_default();
         let fuel = kind(&fuel_goods, &format!("the starting hull's fuel '{tank_fuel}'"))?;
-        let c = Content { shapes, materials, brands, factions, structures, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -533,13 +527,6 @@ entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
 entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
-entry!(crate::factions::Faction, "factions.ron", factions, |f| {
-    if f.tag.len() != 3 {
-        return Err(format!("a tag is three letters ({})", f.tag));
-    }
-    positive("aggression", f.aggression)?;
-    if f.hostile >= 0.0 { Err(format!("hostile is a standing below zero ({})", f.hostile)) } else { Ok(()) }
-});
 entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
 entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {

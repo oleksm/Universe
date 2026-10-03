@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy sworn founding galaxyfactions newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -234,7 +234,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().ship.orientation = universe_engine::glam::DQuat::from_rotation_arc(DVec3::NEG_Z, look);
             app.engine.universe().request_clearance();
         }
-        "galaxymap" | "galaxyzoom" | "galaxyfactions" => {
+        "galaxymap" | "galaxyzoom" => {
             // The galaxy map, having been to the gate network's systems.
             app.mode = Mode::Pilot;
             let links = app.engine.universe().world.gate_links.clone();
@@ -249,7 +249,6 @@ pub fn apply(app: &mut App, name: &str) {
             } else if name == "galaxyzoom" {
                 map.zoom(4.0);
             }
-            map.factions = name == "galaxyfactions";
             app.galaxy_map = Some(map);
         }
         "help" => {
@@ -1155,31 +1154,11 @@ pub fn apply(app: &mut App, name: &str) {
             app.v = app.engine.view();
             app.market = Some(crate::market::MarketView::open(app));
         }
-        "sworn" => {
-            // Docked at home, traffic run a few minutes (settlers swear at
-            // their first station), then we enlist too.
-            apply(app, "docked");
-            while app.engine.universe().world.time < 600.0 {
-                app.engine.universe().step_world(1.0 / 60.0, 10.0, &Controls::default());
-            }
-            let u = app.engine.universe();
-            if let Some(f) = u.docked_market() {
-                let r = u.enlist(universe_sim::PLAYER, f);
-                log::info!("scenario sworn: {r:?}, {} sworn", u.standings.members().count());
-            }
-            app.engine.refresh();
-            app.v = app.engine.view();
-        }
-        "founding" => {
-            // Docked at home, naming a faction to found.
-            apply(app, "docked");
-            app.founding = Some("OPEN REACH".into());
-        }
         "enemy" => {
-            // On approach to the home station, an enemy of its holder.
+            // On approach to the home station, an enemy of the home system.
             apply(app, "approach");
-            let k = app.v.realm.holder_index(app.charts.home_system).unwrap_or(0);
-            app.engine.universe().standings.set(universe_sim::PLAYER, k, -100.0);
+            let home = app.charts.home_system;
+            app.engine.universe().standings.set(universe_sim::PLAYER, home, -100.0);
             app.engine.refresh();
             app.v = app.engine.view();
         }
@@ -1197,10 +1176,10 @@ pub fn apply(app: &mut App, name: &str) {
                 app.v = app.engine.view();
                 let (now, sys) = (app.v.time, app.v.ship_system);
                 let room = app.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
-                room.update(&app.charts, &app.v.realm, now, &app.v.kills, &app.v.trade_log);
+                room.update(&app.charts, now, &app.v.kills, &app.v.trade_log);
                 let casts = room.broadcasts();
                 let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true, in_tube: false };
-                app.news.update(&app.charts, &app.v.realm, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
+                app.news.update(&app.charts, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
             }
             log::info!("scenario newsdesk: {} digests", app.newsroom.as_ref().map_or(0, |r| r.digests.len()));
             app.news_panel = name == "newsdesk";

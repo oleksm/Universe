@@ -81,7 +81,7 @@ fn a_turret(u: &mut Universe) -> (universe_sim::world::turrets::Turret, DVec3, D
 }
 
 #[test]
-fn turrets_shoot_the_aggressor_and_the_holders_enemy_and_spare_the_innocent() {
+fn turrets_shoot_the_aggressor_and_the_systems_enemy_and_spare_the_innocent() {
     let mut u = bench(2);
     let (_, at, v, side) = a_turret(&mut u);
     place(&mut u, 0, at + side * 2_500.0, v, at);
@@ -92,10 +92,10 @@ fn turrets_shoot_the_aggressor_and_the_holders_enemy_and_spare_the_innocent() {
     assert!(u.crafts[1].ship.hull > 0.99, "the innocent untouched ({:.2})", u.crafts[1].ship.hull);
     let kill = u.records.kills.last().expect("a kill");
     assert!(kill.killer_name.starts_with("SAM TURRET"), "{}", kill.killer_name);
-    // An enemy of the holder by its standing, though it's fired on no one:
+    // An enemy of the system by its standing, though it's fired on no one:
     // its docks refuse it, and its guns fire on it too.
-    let faction = u.realm.holder_index(u.ship_system).expect("held");
-    u.standings.set(universe_sim::craft_id(1), faction, -100.0);
+    let system = u.ship_system;
+    u.standings.set(universe_sim::craft_id(1), system, -100.0);
     run(&mut u, 0.5, |_| false);
     assert!(!u.craft_request_clearance(1), "refused");
     assert!(run(&mut u, 60.0, |u| !u.crafts[1].ship.is_flying()), "the enemy is shot down (hull {:.2})", u.crafts[1].ship.hull);
@@ -117,10 +117,10 @@ fn a_ship_under_fire_runs_for_the_guns() {
     let havens: Vec<_> = u.world.turret_motions(u.ship_system).into_iter().map(|(t, _, _)| t.facility).collect();
     assert!(heading.is_some_and(|h| havens.contains(&h)), "heading for a defended place: {heading:?}, turret at {:?}", turret.facility);
     assert!(r.active);
-    // The holder of this space hears of it: the pirate's standing there falls.
-    let faction = u.realm.holder_index(u.ship_system).expect("held");
+    // The system's authority hears of it: the pirate's standing there falls.
+    let system = u.ship_system;
     let pirate = universe_sim::craft_id(0);
-    assert!(run(&mut u, 15.0, |u| u.standings.of(pirate, faction) < 0.0), "standing {}", u.standings.of(pirate, faction));
+    assert!(run(&mut u, 15.0, |u| u.standings.of(pirate, system) < 0.0), "standing {}", u.standings.of(pirate, system));
 }
 
 #[test]
@@ -308,21 +308,16 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     // A basic nav computer: it docks and lands, but runs no route.
     u.refit("avionics", Some(m("nav.basic.s1"))).unwrap();
     assert!(u.ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.ship.spec().runs(universe_sim::world::modules::Feature::Route));
-    // Sworn to the station's holder: +10 with it; not twice.
-    let holder = u.realm.holder_index(home).expect("held");
-    u.enlist(universe_sim::PLAYER, Facility::Station(station)).unwrap();
-    assert_eq!(u.standings.member_of(universe_sim::PLAYER), Some(holder));
-    assert_eq!(u.standings.of(universe_sim::PLAYER, holder), universe_sim::standing::SWORN);
-    assert!(u.enlist(universe_sim::PLAYER, Facility::Station(station)).is_err());
-    // Saved and loaded, the fit stays, and the oath.
+    // Unwelcome here.
+    u.standings.set(universe_sim::PLAYER, home, -20.0);
+    // Saved and loaded, the fit stays, and the standing.
     let json = serde_json::to_string(&u.save()).unwrap();
     assert!(json.contains("nav.basic.s1"));
     let mut back = bench(0);
     back.load(serde_json::from_str(&json).unwrap());
     assert_eq!(back.ship.spec().hold_capacity, 10_000.0);
     assert!(!back.ship.spec().runs(universe_sim::world::modules::Feature::Route));
-    assert_eq!(back.standings.member_of(universe_sim::PLAYER), Some(holder));
-    assert_eq!(back.standings.of(universe_sim::PLAYER, holder), universe_sim::standing::SWORN);
+    assert_eq!(back.standings.of(universe_sim::PLAYER, home), -20.0);
 }
 
 #[test]
@@ -348,27 +343,6 @@ fn a_ship_is_bought_at_a_station_trading_in_the_old_one() {
     assert_eq!(u.ship.cargo, 3_000.0, "the cargo moved over");
     assert!((before - metals(&u) - 118.0).abs() < 1e-6, "its frame built from the station's metals");
     assert!(u.buy_hull(hauler).is_err(), "that's the ship we have");
-    // A faction founded here (its charter paid), then a claim planted out in
-    // an unsettled system: it's ours, and stays so through a save.
-    u.ledger.settle(Party::Pilot(universe_sim::PLAYER), Asset::Credits, 1_000_000.0, u.tick, universe_sim::protocol::Cause::Rules);
-    let msg = u.found(universe_sim::PLAYER, "Open Reach").unwrap();
-    assert!(msg.contains("OPEN REACH"), "{msg}");
-    let ours = u.standings.member_of(universe_sim::PLAYER).expect("sworn to it");
-    assert!(u.found(universe_sim::PLAYER, "Another").is_err(), "sworn already");
-    let wild = (0..u.world.galaxy.stars.len()).find(|&s| u.realm.holder(s).is_none() && !u.world.gate_links.iter().any(|&(a, b)| a == s || b == s)).unwrap();
-    u.ship_system = wild;
-    let mut pos = Vec::new();
-    u.world.system(wild).positions(u.world.time, &mut pos);
-    u.ship = universe_sim::world::Ship::new(pos[0] + DVec3::new(1.5e11, 0.0, 0.0), DVec3::ZERO, DQuat::IDENTITY);
-    u.plant_claim(universe_sim::PLAYER).unwrap();
-    assert_eq!(u.realm.holder_index(wild), Some(ours));
-    assert!(u.plant_claim(universe_sim::PLAYER).is_err(), "held now");
-    let json = serde_json::to_string(&u.save()).unwrap();
-    let mut back = bench(0);
-    back.load(serde_json::from_str(&json).unwrap());
-    let k = back.realm.holder_index(wild).expect("still held");
-    assert_eq!(back.realm.faction(k).map(|f| f.name.as_str()), Some("OPEN REACH"));
-    assert_eq!(back.standings.member_of(universe_sim::PLAYER), Some(k));
 }
 
 #[test]

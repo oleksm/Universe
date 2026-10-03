@@ -287,7 +287,6 @@ impl Universe {
                 destination,
                 hull: c.ship.hull,
                 aggressed: self.law.aggressed(crate::combat::craft_id(i), now),
-                faction: self.standings.member_of(crate::combat::craft_id(i)).and_then(|k| universe_world::content::content().factions.iter().nth(k)).map(|(_, f)| f.tag.clone()),
             });
         }
         crate::contract::CockpitView { world, transponders }
@@ -333,16 +332,15 @@ impl Universe {
             board: self.atc.board(),
             rails,
             turrets,
-            realm: self.realm.clone(),
         }
     }
 
     /// Take the frame's snapshot of every ship, and who's aggressed.
     pub(crate) fn snapshot(&mut self) {
         let now = self.world.time;
-        let (law, standings, realm) = (&self.law, &self.standings, &self.realm);
-        // (Hostile to the holder of the space: its standing there at or under the holder's line.)
-        let hostile = |id: usize, system: usize| realm.holder_index(system).is_some_and(|k| realm.holder(system).is_some_and(|f| standings.of(id, k) <= f.hostile));
+        let (law, standings) = (&self.law, &self.standings);
+        // (Hostile to the system's authority: its standing there at or under its line.)
+        let hostile = |id: usize, system: usize| standings.of(id, system) <= crate::standing::HOSTILE;
         let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
         snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now), hostile(crate::combat::PLAYER, self.ship_system)));
         use rayon::prelude::*;

@@ -200,8 +200,6 @@ pub struct App {
     pub newsroom: Option<universe_sim::newsroom::Newsroom>,
     /// The news panel, when open.
     pub news_panel: bool,
-    /// Founding a faction: the name typed so far.
-    pub founding: Option<String>,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// On foot: what's in reach to use.
@@ -334,7 +332,6 @@ impl App {
             news: Default::default(),
             newsroom: None,
             news_panel: false,
-            founding: None,
             sparks: Vec::new(),
             reach: None,
             turrets: Vec::new(),
@@ -425,9 +422,9 @@ impl App {
             self.net = None;
             return;
         }
-        let key = (sys.index, self.v.realm.claims.len());
+        let key = (sys.index, 0);
         if self.net_nodes.as_ref().is_none_or(|(k, _)| *k != key) {
-            self.net_nodes = Some((key, self.v.realm.nodes(&self.charts.galaxy, &sys)));
+            self.net_nodes = Some((key, universe_sim::world::hypernet::nodes(&self.charts.galaxy, &sys)));
         }
         let all = self.net_nodes.as_ref().map(|(_, n)| n.clone()).unwrap_or_default();
         let net = Net::at(&sys, all, t, &self.view.positions);
@@ -639,20 +636,9 @@ impl App {
             if pressed(input, Act::Repair) {
                 self.engine.send(Command::Repair);
             }
-            if pressed(input, Act::Enlist) {
-                if input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight) {
-                    self.founding = Some(String::new());
-                } else {
-                    self.engine.send(Command::Enlist);
-                }
-            }
             if pressed(input, Act::Passengers) && self.v.docked_market.is_some() {
                 self.passengers = Some(0);
             }
-        }
-        // Shift+Z in flight: plant a claim beacon (docked, the same founds a faction).
-        if self.v.ship.is_flying() && input.pressed(KeyCode::KeyZ) && (input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight)) {
-            self.engine.send(Command::Claim);
         }
         if pressed(input, Act::Hyperdrive) {
             if mode == ShipMode::Nav || self.v.ship.hyperdrive {
@@ -1045,26 +1031,6 @@ impl Game for App {
             self.launched = true;
             sound::launch(ctx);
         }
-        // Founding a faction: the name prompt takes the keyboard (the world runs on).
-        if let Some(name) = &mut self.founding {
-            let input = &ctx.input;
-            for c in input.typed.chars().filter(|c| c.is_ascii_alphanumeric() || *c == ' ' || *c == '-') {
-                if name.len() < 24 {
-                    name.push(c.to_ascii_uppercase());
-                }
-            }
-            if input.pressed(KeyCode::Backspace) {
-                name.pop();
-            }
-            if input.pressed(KeyCode::Enter) {
-                let name = name.clone();
-                self.engine.send(Command::Found { name });
-                self.founding = None;
-            } else if input.pressed(KeyCode::Escape) {
-                self.founding = None;
-            }
-            ctx.input.swallow();
-        }
         self.global_keys(ctx);
         // The economy panel (5) takes the keyboard while open.
         let economy_was_open = self.economy_panel.is_some();
@@ -1225,11 +1191,11 @@ impl Game for App {
         self.update_net();
         // The outlets hear and put out their digests; we hear what reaches us, digests too.
         let room = self.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&self.charts, self.v.time));
-        room.update(&self.charts, &self.v.realm, self.v.time, &self.v.kills, &self.v.trade_log);
+        room.update(&self.charts, self.v.time, &self.v.kills, &self.v.trade_log);
         let casts = room.broadcasts();
         let in_tube = matches!(self.ship.state, ShipState::Transit { .. });
         let us = universe_sim::news::Listener { system: self.v.ship_system, at: self.ship.position, comm: self.ship.spec().comm, player: true, in_tube };
-        self.news.update(&self.charts, &self.v.realm, self.v.time, &us, &universe_sim::news::Happenings { kills: &self.v.kills, trades: &self.v.trade_log, broadcasts: &casts, sightings: &[] });
+        self.news.update(&self.charts, self.v.time, &us, &universe_sim::news::Happenings { kills: &self.v.kills, trades: &self.v.trade_log, broadcasts: &casts, sightings: &[] });
         // Where things are drawn is the moment drawn: the nav target and the
         // approach guidance are worked out here, at it, from the charts (the
         // view's are a tick off it).

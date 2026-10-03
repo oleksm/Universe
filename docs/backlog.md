@@ -22,7 +22,7 @@ fixes go straight in; this is for what needs deciding or building.
 6. **Key scheme regroup:** free letters nearly gone (manual took G, docking O).
 7. **Ship models from Blender** (glTF import).
 8. **Endgame player outposts:** modular mining bases from blueprints,
-   licences in faction space, towing asteroids.
+   licences in settled space, towing asteroids.
 9. **Engine headroom:** 100k ships at 1.5x budget; seed-only checkpoints.
 10. **Trademark** FREEFALL (the user's to do).
 0. **Visual revamp (mostly done):** `docs/art-direction.md`. Done: render core (HDR, MSAA,

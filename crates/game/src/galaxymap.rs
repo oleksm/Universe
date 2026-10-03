@@ -30,8 +30,6 @@ pub struct GalaxyMap {
     glow: Glow,
     /// Sectors' stars made so far (their first so many, by sector).
     sectors: std::cell::RefCell<std::collections::HashMap<universe_sim::world::galaxy::Sector, Vec<universe_sim::world::galaxy::GalaxyStar>>>,
-    /// The factions layer: who holds which systems.
-    pub factions: bool,
     /// Where a drag (left button) last had the cursor.
     dragged_from: Option<Vec2>,
 }
@@ -99,7 +97,7 @@ fn flat(app: &App, i: usize) -> DVec2 {
 impl GalaxyMap {
     /// Centred on us, its scale bar `DEFAULT_BAR` light years.
     pub fn open(app: &App, _size: Vec2) -> Self {
-        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(), sectors: Default::default(), factions: false, dragged_from: None }
+        Self { center: flat(app, app.v.ship_system), scale: BAR_PX / DEFAULT_BAR, glow: Glow::gather(), sectors: Default::default(), dragged_from: None }
     }
 
     /// (Dev scenarios: closer by `k`.)
@@ -142,9 +140,6 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         let d = at - from;
         map.center -= DVec2::new(d.x as f64, d.y as f64) / map.scale;
         map.dragged_from = Some(at);
-    }
-    if crate::keys::pressed(input, crate::keys::Act::Factions) {
-        map.factions = !map.factions;
     }
     true
 }
@@ -279,30 +274,6 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             frame.text(p + Vec2::new(5.0, -4.0), &star_name(galaxy.stars[i].seed).to_uppercase(), TEXT.scale(0.8));
         }
     }
-    // The factions layer: each held system ringed in its holder's colour,
-    // with its tag, and the holders listed.
-    if map.factions {
-        for (s, f) in app.v.realm.territory() {
-            let p = map.to_screen(size, flat(app, s));
-            if !on_screen(p) {
-                continue;
-            }
-            let c = Color([f.color[0], f.color[1], f.color[2], 1.0]);
-            frame.hud_glow(p, 22.0, 20, Color([f.color[0], f.color[1], f.color[2], 0.25]), Color([f.color[0], f.color[1], f.color[2], 0.0]));
-            frame.hud_ellipse(p, Vec2::splat(6.0), 20, c);
-            frame.text(p + Vec2::new(-12.0, -18.0), &f.tag, c);
-        }
-        let mut y = 52.0;
-        for (k, f) in app.v.realm.factions.iter().enumerate() {
-            let n = app.v.realm.territory().filter(|(_, g)| g.key == f.key).count();
-            let c = Color([f.color[0], f.color[1], f.color[2], 1.0]);
-            let s = app.v.standing.get(k).copied().unwrap_or(0.0);
-            let sworn = if app.v.member == Some(k) { ", MEMBER" } else { "" };
-            frame.text(Vec2::new(16.0, y), &format!("{} {} - {n} SYSTEM{}   YOU: {s:+.0} {}{sworn}", f.tag, f.name, if n == 1 { "" } else { "S" }, universe_sim::standing::label(s)), c);
-            frame.text(Vec2::new(16.0 + 24.0, y + 14.0), &f.note, DIM);
-            y += 34.0;
-        }
-    }
     // Us.
     let p = map.to_screen(size, flat(app, app.v.ship_system));
     frame.hud_ellipse(p, Vec2::splat(9.0), 32, YOU);
@@ -338,7 +309,6 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             ("WHL".to_string(), "ZOOM".to_string(), Lamp::Off),
             ("ARR".to_string(), "PAN".to_string(), Lamp::Off),
             ("HOME".to_string(), "YOU".to_string(), Lamp::Off),
-            (key(Act::Factions), "FACTIONS".to_string(), if map.factions { Lamp::On } else { Lamp::Off }),
             (key(Act::Galaxy), "GALAXY".to_string(), Lamp::On),
             (key(Act::Map), "MAP".to_string(), Lamp::Off),
         ];

@@ -97,9 +97,11 @@ impl Universe {
     /// for the hits after), and a ruling that's news goes to the shooter.
     fn rule_on_hits(&mut self, now: f64, player: &mut Vec<ShipEvent>, crafts: &mut [Vec<ShipEvent>]) {
         let tick = self.tick;
-        let realm = self.realm.clone();
-        // (The law of whoever holds the space the struck ship's in.)
-        let lasts = |system: usize| realm.holder(system).map(|f| f.aggression);
+        // (The law where the struck ship is: in a settled system, a station's or a port's.)
+        let lasts = |u: &Self, system: usize| {
+            let sys = u.world.system(system);
+            (sys.station().is_some() || !sys.spaceports.is_empty()).then_some(crate::standing::FAIR_GAME)
+        };
         let system_of = |u: &Self, id: usize| u.ship_by_id(id).map(|s| s.1);
         let mut notices: Vec<(usize, ShipEvent)> = Vec::new();
         for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {
@@ -109,7 +111,7 @@ impl Universe {
                 if let ShipEvent::Hit { by, weapon: true, .. } = *e {
                     let answers = universe_world::turrets::turret_of(by).is_none();
                     let hit = universe_services::law::Hit { shooter: by, target: id, time: now };
-                    let law = system_of(self, id).and_then(lasts);
+                    let law = system_of(self, id).and_then(|s| lasts(self, s));
                     if let Some(r) = self.law.hit(hit, answers, law, universe_protocol::Cause::Event { tick, index })
                         && r.new
                     {

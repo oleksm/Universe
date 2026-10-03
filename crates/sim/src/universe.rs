@@ -95,8 +95,6 @@ pub struct Universe {
     pub(crate) boards: crate::commerce::Boards,
     /// Each faction's view of every pilot (see `standing`).
     pub standings: crate::standing::Standings,
-    /// The factions as they stand, who holds what, the claims (see `realm`).
-    pub realm: Arc<crate::realm::Realm>,
     /// Messages sent to services so far (each one's id, for causes).
     pub(crate) messages: u64,
     /// The world's NPC clients (see `contract::Pilots`), postings that came
@@ -147,7 +145,6 @@ impl Universe {
             markets: universe_services::Markets::new(seed, goods),
             boards: Default::default(),
             standings: Default::default(),
-            realm: Default::default(),
             messages: 0,
             npcs: Box::new(crate::contract::NoPilots),
             late: 0,
@@ -156,7 +153,6 @@ impl Universe {
             charts: None,
             positions: Vec::new(),
         };
-        u.realm = Arc::new(crate::realm::Realm::new(&u.charts()));
         // The settled systems' economy (the gate network's).
         let mut settled: Vec<usize> = u.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
         settled.sort_unstable();
@@ -409,15 +405,12 @@ impl Universe {
         // one went with it), because of the respawn, as logged.
         if let Some(cause) = self.logged(id, |e| matches!(e, ShipEvent::Respawned)) {
             self.law.forget(id);
-            // Its debt with the holder where it comes back paid by its loss:
+            // Its debt with the system where it comes back paid by its loss:
             // no longer an enemy there (but no friend).
-            if let Some(system) = self.ship_by_id(id).map(|s| s.1) {
-                let realm = self.realm.clone();
-                if let (Some(k), Some(f)) = (realm.holder_index(system), realm.holder(system))
-                    && self.standings.of(id, k) <= f.hostile
-                {
-                    self.standings.set(id, k, f.hostile + 1.0);
-                }
+            if let Some(system) = self.ship_by_id(id).map(|s| s.1)
+                && self.standings.of(id, system) <= crate::standing::HOSTILE
+            {
+                self.standings.set(id, system, crate::standing::HOSTILE + 1.0);
             }
             self.ledger.write_off(id, self.tick, cause);
             if id == crate::combat::PLAYER {

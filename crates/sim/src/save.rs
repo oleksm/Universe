@@ -39,16 +39,10 @@ pub struct UniverseSave {
     /// What's been dug out of asteroids: ((system, field, rock), kg).
     #[serde(default)]
     pub mined: Vec<((usize, usize, usize), f64)>,
-    /// The faction we're sworn to, and our standing with each (by key).
+    /// Our standing with each settled system's authority: (system, standing).
+    /// (Saves from before kept it by faction: forgotten.)
     #[serde(default)]
-    pub sworn: Option<String>,
-    #[serde(default)]
-    pub standing: Vec<(String, f64)>,
-    /// Factions founded, and the claims planted (each by its faction's key).
-    #[serde(default)]
-    pub founded: Vec<universe_world::factions::Faction>,
-    #[serde(default)]
-    pub claims: Vec<(String, crate::realm::Claim)>,
+    pub standings: Vec<(usize, f64)>,
 }
 
 /// The save format's version: 2, the charted region's stars (1: content by key, in the old
@@ -93,13 +87,7 @@ struct SaveRecord {
     #[serde(default)]
     mined: Vec<((usize, usize, usize), f64)>,
     #[serde(default)]
-    sworn: Option<String>,
-    #[serde(default)]
-    standing: Vec<(String, f64)>,
-    #[serde(default)]
-    founded: Vec<universe_world::factions::Faction>,
-    #[serde(default)]
-    claims: Vec<(String, crate::realm::Claim)>,
+    standings: Vec<(usize, f64)>,
 }
 
 #[derive(Deserialize)]
@@ -134,10 +122,7 @@ impl From<SaveRecord> for UniverseSave {
             credits: r.credits,
             hold: r.hold,
             mined: r.mined,
-            sworn: r.sworn,
-            standing: r.standing,
-            founded: r.founded,
-            claims: r.claims,
+            standings: r.standings,
         }
     }
 }
@@ -193,10 +178,7 @@ impl Universe {
                 m.sort_by_key(|e| e.0);
                 m
             },
-            sworn: self.standings.member_of(crate::combat::PLAYER).and_then(|k| self.realm.faction(k)).map(|f| f.key.clone()),
-            standing: self.realm.factions.iter().enumerate().map(|(k, f)| (f.key.clone(), self.standings.of(crate::combat::PLAYER, k))).filter(|(_, s)| *s != 0.0).collect(),
-            founded: self.realm.factions.iter().filter(|f| f.founder.is_some()).cloned().collect(),
-            claims: self.realm.claims.iter().filter_map(|c| Some((self.realm.faction(c.faction)?.key.clone(), c.clone()))).collect(),
+            standings: self.standings.all(crate::combat::PLAYER).into_iter().filter(|(_, s)| *s != 0.0).collect(),
         }
     }
 
@@ -240,21 +222,8 @@ impl Universe {
         self.ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
         self.ship.cargo_volume = universe_services::market::cargo_volume(&self.world.goods, &self.hold());
         self.world.mined = save.mined.into_iter().collect();
-        // The factions founded and the claims planted; then our allegiance
-        // and standing (factions no longer there are forgotten).
-        let mut realm = crate::realm::Realm::new(&self.charts());
-        for f in save.founded {
-            realm.found(f);
-        }
-        for (key, mut c) in save.claims {
-            if let Some(k) = realm.factions.iter().position(|f| f.key == key) {
-                c.faction = k;
-                realm.claim(c);
-            }
-        }
-        self.realm = std::sync::Arc::new(realm);
-        let faction = |key: &str| self.realm.factions.iter().position(|f| f.key == key);
-        self.standings.restore(crate::combat::PLAYER, save.sworn.as_deref().and_then(faction), save.standing.iter().filter_map(|(k, s)| Some((faction(k)?, *s))));
+        // Our standing with each system.
+        self.standings.restore(crate::combat::PLAYER, save.standings.into_iter());
         self.events.clear();
     }
 }

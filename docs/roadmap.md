@@ -38,12 +38,13 @@ world's facts; deciding is the clients': pilots, players, corporations, factions
   arrives. Next: outlets as owned enterprises (factions, corporations), more kinds of news
   (shortages, prices moving, arrivals, discoveries), and ships carrying news off the net.
 
-## 3. Factions, social politics, security
+## 3. Law and standing
 
-- A few preset factions seeded in the world. Settlers can enlist, or found their own.
-- Territory, law, security forces. Assets and power matter; nothing is indestructible, preset
-  NPC factions included. The goal: players expand the inhabited universe and carry its politics.
-- Plan and progress: `docs/factions.md` (steps 1–4, territory, standing, law, enlisting, done).
+- **Done (2026-10-03):** every settled system enforces the law (fair game for 10 minutes after
+  firing on the innocent); each system's authority keeps a standing for every pilot from the
+  deeds it hears of; hostile, its turrets fire and its docks refuse (`docs/standing.md`).
+- Factions to join, found and claim for were built and removed: too close to another game's
+  pledging and powers. Politics, if it comes back, grows out of what players own and run.
 
 ## 4. Corporations
 

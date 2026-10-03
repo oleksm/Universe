@@ -131,13 +131,5 @@ mod tests {
             i += 1;
         }
         assert_eq!(seen.len(), 5, "network must be connected");
-        // Every settled system held; the first faction at home; every faction holding some.
-        let n = crate::content::content().factions.iter().count();
-        let held = crate::factions::territory(w.galaxy.seed, &w.gate_links, w.home_system, n);
-        assert_eq!(held.len(), 5);
-        assert!(held.iter().any(|&(s, k)| s == w.home_system && k == 0), "the first faction at home");
-        for k in 0..n {
-            assert!(held.iter().any(|h| h.1 == k), "faction {k} holds nothing");
-        }
     }
 }

@@ -89,9 +89,6 @@ pub struct Pilot {
     pub trader: bool,
     /// A shuttle pilot: carries passengers who've booked passage (see `operator::ferry`).
     pub shuttle: bool,
-    /// Asked to enlist already (a settler swears to the first station's
-    /// holder it stops at; pirates never do).
-    pub(crate) enlisted: bool,
     /// A miner, and the rock it's working (see `miner`).
     pub miner: bool,
     pub(crate) dig: crate::miner::Dig,
@@ -103,7 +100,7 @@ pub struct Pilot {
 
 impl Pilot {
     pub fn new(avionics: Avionics) -> Self {
-        Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, shuttle: false, enlisted: false, miner: false, dig: Default::default(), paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
+        Pilot { avionics, silent: false, feed: Vec::new(), next_think: 0, pending: Vec::new(), last_turn: None, last_status: None, last_posted: f64::NEG_INFINITY, last_sleep: 0, trader: false, shuttle: false, miner: false, dig: Default::default(), paid: Default::default(), route_seed: 0, stops_made: 0, market: None }
     }
 }
 
@@ -194,10 +191,9 @@ impl Bus for PoolLink<'_> {
     fn request_clearance(&mut self, target: Option<NavTarget>) -> Result<NavTarget, String> {
         let positions = self.rails();
         let target = target.or_else(|| universe_services::atc::nearest_station(&self.sys, self.ship.position, &positions));
-        // The holder's docks refuse its enemies.
+        // The system's docks refuse its enemies.
         if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
-            let who = self.view.realm.holder(self.sys.index).map_or("THE HOLDER".to_string(), |f| f.name.clone());
-            return Err(format!("REFUSED - {who} TREATS YOU AS AN ENEMY"));
+            return Err(format!("REFUSED - {} TREATS YOU AS AN ENEMY", self.sys.name.to_uppercase()));
         }
         universe_services::atc::request(&self.sys, &self.ship, target, self.view.time, &positions)
     }
@@ -397,11 +393,6 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
         // Every pilot fills its tank at a stop with a market.
         if let Some(market) = universe_world::traffic::docked_at(&view.charts.system(system), ship) {
             requests.push(Request::Refuel { market });
-            // A settler swears to the first station's holder it stops at.
-            if !pilot.enlisted && !pilot.avionics.pirate && matches!(market, universe_world::Facility::Station(_)) {
-                requests.push(Request::Enlist { market });
-                pilot.enlisted = true;
-            }
             // And mends its hull, at a station.
             if ship.hull < 1.0 && matches!(market, universe_world::Facility::Station(_)) {
                 requests.push(Request::Repair { market });

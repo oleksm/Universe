@@ -23,7 +23,6 @@ pub mod pilots;
 pub mod setup;
 pub mod standing;
 mod follow;
-pub mod realm;
 pub mod recorder;
 pub mod save;
 mod traffic;

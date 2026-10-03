@@ -589,11 +589,7 @@ fn contacts(view: &CockpitView) -> Vec<Contact> {
             }
             let t = view.transponders.get(&(id - 1))?;
             let blip = universe_world::radar::Blip { id: id - 1, position: s.position, velocity: s.velocity, distance };
-            // (Its faction's tag after its name, if it's sworn to one.)
-            let name = match &t.faction {
-                Some(tag) => format!("{} [{tag}]", t.name.to_uppercase()),
-                None => t.name.to_uppercase(),
-            };
+            let name = t.name.to_uppercase();
             Some(Contact { blip, name, activity: t.activity, destination: t.destination.clone(), hull: t.hull, aggressed: t.aggressed })
         })
         .collect();

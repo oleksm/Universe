@@ -41,13 +41,13 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **Hyper relay** | Links two sites through hyperspace: a system's relays link its sites the shortest way all told, daily. A **gate relay** links two systems' nets through the throat. |
 | **Orbital site** | A transceiver and hyper relay in orbit round a planet or moon. |
 
-## Factions (`docs/factions.md`)
+## Law and standing (`docs/standing.md`)
 
-| Tag | Faction |
+| Name | What it is |
 |---|---|
-| HCD | Halden Concord (holds the home system) |
-| FRA | Free Reach Assembly |
-| TSD | Tessaly Directorate |
+| **Settled system** | One with a station or a port: its law runs, its authority keeps standings. |
+| **Fair game** | Fired on the innocent in a settled system: anyone may shoot back, for 10 minutes. |
+| **Standing** | A system's authority's view of a pilot, -100 to +100, from deeds it hears of; hostile at -50. |
 
 ## The world's makers (brands)
 
@@ -85,7 +85,7 @@ How things work in the universe, one subject an article, to refer to later.
 
 | Doc | What |
 |---|---|
-| `docs/roadmap.md` | The foundations, in order: hypernet, news, factions, corporations, breakables, drones, exploration, matter, a real-density galaxy, terraforming. |
+| `docs/roadmap.md` | The foundations, in order: hypernet, news, law and standing, corporations, breakables, drones, exploration, matter, a real-density galaxy, terraforming. |
 | `docs/backlog.md` | Smaller game items. |
 | `docs/art-direction.md` | The look. |
 | `docs/architecture.md` | The code's shape (Dogma and the world, the layers). |

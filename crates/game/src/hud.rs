@@ -139,14 +139,6 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         frame.text_boxed(Vec2::new(((size.x - w) / 2.0).floor(), y), text, *c, PANEL);
         y += LINE + 4.0;
     }
-    // Founding a faction: the name prompt.
-    if let Some(name) = &app.founding {
-        let cursor = if (app.v.time * 2.0).fract() < 0.5 { "_" } else { " " };
-        let text = format!("FOUND A FACTION - CHARTER {:.0} CR   NAME: {name}{cursor}   (ENTER FOUNDS, ESC CANCELS)", universe_sim::realm::CHARTER);
-        let w = text_size(&text).x;
-        frame.text_boxed(Vec2::new(((size.x - w) / 2.0).floor(), y), &text, HUD, PANEL);
-        y += LINE + 4.0;
-    }
     // Messages under them, a third of the way down.
     let mut y = (y + 8.0).max(size.y * 0.3);
     for m in &app.messages {
@@ -190,14 +182,10 @@ fn status_strip(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     let home = if app.view.origin == app.charts.home_system { "  HOME" } else { "" };
     let place = format!("   {} ({}){home}", sys.name.to_uppercase(), sys.class.letter());
     let first = format!("{mode}  {}  {warp}", fmt::clock(app.v.time));
-    // Whose space it is.
-    let holder = app.v.realm.holder(app.view.origin);
-    let whose = holder.map_or("   UNCLAIMED".to_string(), |f| format!("   {} SPACE", f.name));
-    let size = text_size(&first) + Vec2::new(text_size(&place).x + text_size(&whose).x, 0.0);
+    let size = text_size(&first) + Vec2::new(text_size(&place).x, 0.0);
     frame.hud_rect(at, size + Vec2::new(8.0, 6.0), SOFT_PANEL);
     let p = frame.text(at + Vec2::new(4.0, 3.0), &first, top);
-    let p = frame.text(p, &place, DIM);
-    frame.text(p, &whose, holder.map_or(DIM, |f| Color([f.color[0], f.color[1], f.color[2], 1.0])));
+    frame.text(p, &place, DIM);
     size.y + 6.0
 }
 
@@ -291,13 +279,11 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         let heat = if ship.laser_overheated { RED } else { AMBER };
         rows.push(bar_row("LASER", ship.laser_heat, if ship.laser_overheated { "HOT".into() } else { format!("GUN {}", ship.ammo) }, heat));
     }
-    // Our standing with whoever holds this space.
-    if let Some(k) = app.v.realm.holder_index(app.view.origin) {
-        let s = app.v.standing.get(k).copied().unwrap_or(0.0);
-        let tag = app.v.realm.holder(app.view.origin).map_or("", |f| f.tag.as_str());
+    // Our standing with this system's authority (a settled system's).
+    if app.view.system.station().is_some() || !app.view.system.spaceports.is_empty() {
+        let s = app.v.standing;
         let c = if s <= -10.0 { RED } else if s >= 10.0 { HUD } else { DIM };
-        let sworn = if app.v.member == Some(k) { " MEMBER" } else { "" };
-        rows.push(text_row("STAND", format!("{s:+.0} {}  {tag}{sworn}", universe_sim::standing::label(s)), c));
+        rows.push(text_row("STAND", format!("{s:+.0} {}", universe_sim::standing::label(s)), c));
     }
     rows.push(text_row("MASS", format!("{:.1} T  LOAD {:.1} T", ship.mass() / 1000.0, ship.cargo / 1000.0), DIM));
     rows.push(text_row("DRIVE", format!("{:.1} M/S2", ship.main_accel()), DIM));
@@ -408,11 +394,9 @@ fn pilot_info(app: &App, lines: &mut Vec<(String, Color)>, alerts: &mut Vec<(Str
         let left = (until - now) / app.warp().max(1.0);
         alerts.push((format!("AGGRESSED {} - FAIR GAME TO ANYONE", fmt::countdown(left)), RED));
     }
-    // An enemy of whoever holds this space: its guns fire, its docks refuse.
-    if let (Some(k), Some(f)) = (app.v.realm.holder_index(app.view.origin), app.v.realm.holder(app.view.origin))
-        && app.v.standing.get(k).is_some_and(|&s| s <= f.hostile)
-    {
-        alerts.push((format!("ENEMY OF THE {} - ITS GUNS FIRE, ITS DOCKS REFUSE", f.name), RED));
+    // An enemy of this system: its guns fire, its docks refuse.
+    if app.v.standing <= universe_sim::standing::HOSTILE {
+        alerts.push((format!("ENEMY OF {} - ITS GUNS FIRE, ITS DOCKS REFUSE", app.view.system.name.to_uppercase()), RED));
     }
     // Missiles after us: how many, and the nearest's time to reach us.
     let inbound: Vec<(f64, f64)> = app
@@ -1676,7 +1660,6 @@ fn action_grid(frame: &mut Frame, app: &App) {
             // what this place and this ship offer (greyed: offered, not now).
             let at = universe_sim::world::traffic::docked_at(&app.view.system, ship);
             let station = matches!(at, Some(universe_sim::world::Facility::Station(_)));
-            let holder = app.v.realm.holder_index(app.view.origin);
             let mut cells = vec![b(Act::Systems, if ship.powered { "POWER DOWN" } else { "POWER UP" }, if ship.powered { Lamp::On } else { Lamp::Off })];
             if at.is_some() {
                 let room = ship.spec().fuel_capacity - ship.fuel;
@@ -1695,15 +1678,6 @@ fn action_grid(frame: &mut Frame, app: &App) {
             // (Passengers only with a cabin aboard.)
             if app.v.docked_market.is_some() && ship.spec().seats > 0 {
                 cells.push(b(Act::Passengers, "PASSENGERS", if app.passengers.is_some() { Lamp::On } else { Lamp::Off }));
-            }
-            if station && holder.is_some() {
-                // Enlist with this station's holder; sworn to it, leave.
-                let ours = app.v.member == holder;
-                let tag = app.v.realm.holder(app.view.origin).map_or(String::new(), |f| format!(" {}", f.tag));
-                cells.push(b(Act::Enlist, &if ours { format!("LEAVE{tag}") } else { format!("ENLIST{tag}") }, if ours { Lamp::On } else { Lamp::Off }));
-            }
-            if station && app.v.member.is_none() {
-                cells.push(c("S+Z", "FOUND", Lamp::Off));
             }
             (if station { "DOCKED" } else { "LANDED" }, cells)
         }
@@ -1731,10 +1705,6 @@ fn action_grid(frame: &mut Frame, app: &App) {
                     b(Act::Proximity, "IMPACT", collide),
                     b(Act::Manual, "THRUSTERS", Lamp::Off),
                 ]);
-                // Plant a claim beacon: only sworn to a faction, in an unclaimed system.
-                if app.v.member.is_some() && app.v.realm.holder(app.view.origin).is_none() {
-                    cells.push(c("S+Z", "CLAIM", Lamp::Off));
-                }
                 cells
             },
         ),

@@ -56,13 +56,13 @@ In the base world (`content/base/modules.ron`). Two kinds of infrastructure, **i
 | COMM (`comm.basic.s1`, every ship's) | ship comm | ships | 0.05 AU | 50,000 km | 0.05 s | 600 | 2 kW |
 | LONG-RANGE COMM (`comm.long.s1`) | ship comm | ships | 0.5 AU | 300,000 km | 0.05 s | 3,000 | 200 kW |
 | STATION TRANSCEIVER (`transceiver.station`) | transceiver | stations | 0.5 AU | 1,000,000 km | 0.02 s | 100,000 | 1 MW |
-| BEACON TRANSCEIVER (`transceiver.beacon`) | transceiver | gates, orbital sites, claim beacons | 0.5 AU | 500,000 km | 0.05 s | 20,000 | 300 kW |
+| BEACON TRANSCEIVER (`transceiver.beacon`) | transceiver | gates, orbital sites | 0.5 AU | 500,000 km | 0.05 s | 20,000 | 300 kW |
 | HYPER RELAY (`relay.hyper`, Halcyon) | relay | every space structure | hyperspace | - | 0.1 s | 100,000 | 1.5 MW |
 | GATE RELAY (`relay.gate`, Halcyon) | relay | gate rings | through the throat | - | 1 s (the throat: microseconds) | 50,000 | 2 MW |
 | GROUND TERMINAL (`terminal.ground`) | terminal | spaceports, outposts | up to orbit | 100,000 km | 0.02 s | 50,000 | 100 kW |
 
 **The system's net:** its sites in space (the station, the gates, an orbital site round every
-planet and moon of a settled system, claim beacons) each carry a transceiver and a hyper relay.
+planet and moon of a settled system) each carry a transceiver and a hyper relay.
 Each day, as the sites stand at its start, the relays link them **the shortest way all told** (a
 minimum spanning tree: each link to a near neighbour, no more than it takes). Lag over a link is
 the hyper-signal's time along it. Ports on the ground talk up to a transceiver in sight (their own
@@ -95,7 +95,7 @@ worlds' 0.5 AU radii, are off it.
   no law.
 - **Money:** settlement over the net, with lag. Off it: open questions (credit checked later, cash,
   barter).
-- **Politics:** a faction's reach is its network. Relays are its borders, and worth fighting over.
+- **Politics:** whoever runs the relays runs the news. Worth fighting over, once anyone owns them.
 
 ## Build order (coarse first)
 
