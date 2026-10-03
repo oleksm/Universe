@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system showcase watch inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system showcase watch rawland inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -1053,6 +1053,19 @@ pub fn apply(app: &mut App, name: &str) {
             if name == "vendingopen" {
                 app.vending = Some(0);
             }
+        }
+        "rawland" => {
+            // Set down on open ground (no port), step out, walk off a way and face the ship.
+            apply(app, "landed");
+            use universe_sim::world::crew::HATCH;
+            app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: HATCH, yaw: 0.0, pitch: 0.0 };
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+            for _ in 0..250 {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
+            }
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { yaw: std::f64::consts::PI, pitch: 0.1, ..Default::default() }, 0.02);
+            let u = app.engine.universe();
+            log::info!("scenario rawland: ship {:?}, crew {:?}", u.ship.state, u.crew.place);
         }
         "outside" => {
             // Land on the pad, step out, turn round to look at the ship.
