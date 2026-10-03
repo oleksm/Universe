@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=../schema/body.schema.json
 key: body.fso
 name: FOUNDRY STANDARDS OFFICE
 prefix: FSO
