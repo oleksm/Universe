@@ -171,10 +171,36 @@ for name in sorted(os.listdir(makers_dir)):
     makers.append(m)
 BRANDS = {m.get("key"): m.get("name") for m in makers}
 
+# The Land Register: parcels of land, one file each (LandRegister/metadata/parcels/<name>.yaml),
+# to LandRegister/schema/parcel.schema.yaml. Each is owned by a company in Maker House.
+LAND = "LandRegister"
+land = load(os.path.join(TREE, LAND, "metadata", LAND + ".yaml"))
+parcels = []
+parcels_dir = os.path.join(TREE, LAND, "metadata", "parcels")
+for name in sorted(os.listdir(parcels_dir)) if os.path.isdir(parcels_dir) else []:
+    full = os.path.join(parcels_dir, name)
+    if name.startswith("."):
+        continue
+    if not re.fullmatch(r"[a-z0-9-]+\.yaml", name):
+        problem(full, "a parcel's file is named <name>.yaml (lower case, words joined by -)")
+        continue
+    pc = load(full)
+    for k in ["name", "place", "owner"]:
+        if k not in pc:
+            problem(full, f"no {k}")
+    for k in pc:
+        if k not in {"name", "place", "owner"}:
+            problem(full, f"unknown field '{k}'")
+    if "owner" in pc and pc["owner"] not in BRANDS:
+        problem(full, f"owner: no maker '{pc['owner']}' in Maker House")
+    pc["file"] = os.path.relpath(full, TREE)
+    pc["slug"] = name[:-5]
+    parcels.append(pc)
+
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", HOUSE):
+    if not os.path.isdir(folder) or name in ("schema", HOUSE, LAND):
         continue
     # (The body's own file: named after its folder, FSO/metadata/FSO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -381,6 +407,8 @@ def write_html():
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
         "house": house,
+        "land": land,
+        "parcels": parcels,
         # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
         "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},
         "makers": makers,

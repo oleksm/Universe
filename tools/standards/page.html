@@ -214,6 +214,10 @@ function rows(q) {
   const mq = m => !q || q.split(/\s+/).every(w => `${m.name} ${m.ticker} ${m.note} ${m.who || ""} ${m.what || ""}`.toLowerCase().includes(w));
   out.push({ k: "mh", depth: 0, kind: "body", label: DATA.house.name, n: DATA.makers.length });
   if (open.has("mh") || q) for (const m of DATA.makers.filter(mq)) out.push({ k: "mk:" + m.key, depth: 1, kind: "maker", label: m.name, ticker: m.ticker, slug: m.slug });
+  // The Land Register: the parcels under it.
+  const pq = p => !q || q.split(/\s+/).every(w => `${p.name} ${p.place} ${DATA.brands[p.owner] || ""}`.toLowerCase().includes(w));
+  out.push({ k: "lr", depth: 0, kind: "body", label: DATA.land.name, n: DATA.parcels.length });
+  if (open.has("lr") || q) for (const p of DATA.parcels.filter(pq)) out.push({ k: "pc:" + p.slug, depth: 1, kind: "maker", label: p.name });
   return out;
 }
 
@@ -229,6 +233,7 @@ function reveal(k) {
     return;
   }
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
+  if (k.startsWith("pc:")) { open.add("lr"); keepOpen(); return; }
   const s = stdOf(k); if (!s) return;
   open.add("b:" + s.body);
   keepOpen();
@@ -313,6 +318,11 @@ function detail(k) {
     return h;
   }
   if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div>${logo(m.slug)} <a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
+  if (k === "lr") return `<h2>${esc(DATA.land.name)}</h2>` + (DATA.parcels.length ? `<table><tr><th>Parcel</th><th>Place</th><th>Owner</th></tr>` + DATA.parcels.map(p => `<tr><td><a data-k="${esc("pc:" + p.slug)}">${esc(p.name)}</a></td><td>${esc(p.place)}</td><td><a data-k="${esc("mk:" + p.owner)}">${esc(DATA.brands[p.owner] || p.owner)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">No parcels yet.</p>`);
+  if (kind === "pc") {
+    const p = DATA.parcels.find(x => x.slug === rest.join(":")); if (!p) return "";
+    return `<h2>${esc(p.name)}</h2><table><tr><th>Place</th><th>Owner</th></tr><tr><td>${esc(p.place)}</td><td><a data-k="${esc("mk:" + p.owner)}">${esc(DATA.brands[p.owner] || p.owner)}</a></td></tr></table><div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
+  }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
     return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;

@@ -1,0 +1,10 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Parcel
+description: 'standards/LandRegister/metadata/parcels/<name>.yaml: one piece of land and who owns it.'
+type: object
+additionalProperties: false
+required: [name, place, owner]
+properties:
+  name: { type: string }
+  place: { type: string, description: Where it is. }
+  owner: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: Who owns it (a company in Maker House). }
