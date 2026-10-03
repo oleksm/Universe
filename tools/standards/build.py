@@ -3,7 +3,7 @@
 
     python3 tools/standards/build.py
 
-Reads `standards/`: a folder per body (named after its prefix) with `_body.yaml`, and its
+Reads `standards/`: a folder per body (named after its prefix) with `<PREFIX>.yaml`, and its
 standards beside it, flat, one file each: `NNNN-<slug>.yaml`, the number its permanent id
 (`FSO 12`: never reused, never changed, whatever it's later filed under). A standard's `topics`
 are free tags describing it; how they'll be classified is left until patterns show.
@@ -136,9 +136,10 @@ for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
     if not os.path.isdir(folder) or name == "schema":
         continue
-    meta_path = os.path.join(folder, "_body.yaml")
+    # (The body's own file: named after its folder, FSO/FSO.yaml.)
+    meta_path = os.path.join(folder, name + ".yaml")
     if not os.path.exists(meta_path):
-        problem(folder, "a body's folder needs _body.yaml")
+        problem(folder, f"a body's folder needs {name}.yaml")
         continue
     body = load(meta_path)
     for k in ["key", "name", "prefix", "seat", "note"]:
@@ -159,12 +160,12 @@ for name in sorted(os.listdir(TREE)):
     numbers = {}
     for name in sorted(os.listdir(folder)):
         full = os.path.join(folder, name)
-        if name == "_body.yaml":
+        if name == os.path.basename(folder) + ".yaml":
             continue
         if os.path.isdir(full):
             # (A body's schema and metadata folders; no others.)
             if name not in ("schema", "metadata"):
-                problem(full, "no folders in a body but schema/ and metadata/: its standards sit flat beside _body.yaml")
+                problem(full, "no folders in a body but schema/ and metadata/: its standards sit flat beside <PREFIX>.yaml")
             continue
         m = re.fullmatch(r"([0-9]{4})-[a-z0-9-]+\.yaml", name)
         if not m:

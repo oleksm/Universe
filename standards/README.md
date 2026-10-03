@@ -11,7 +11,7 @@ it (`docs/standards.md` for what a standard is).
 ```
 standards/
   FSO/                          a body: its folder named after its prefix
-    _body.yaml                  who it is (key, name, prefix, seat, kind, founded_by, about, note)
+    FSO.yaml                  who it is (key, name, prefix, seat, kind, founded_by, about, note)
     0001-size-classes.yaml      a standard: NNNN-<slug>.yaml, its id "FSO 1"
 ```
 

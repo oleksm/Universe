@@ -72,7 +72,7 @@ adoption decides.
   and keeps its own national standards body for its own codes. Rivals are other governments
   with other charters.
 - So two trees: the FSO register (technical, universal) and each government's charter and codes
-  (its way of life). Its own record (`standards/FSO/_body.yaml`, `about`) says so in full.
+  (its way of life). Its own record (`standards/FSO/FSO.yaml`, `about`) says so in full.
 - **Adoption is a fact on products and places**, not on the standard: a product declares what
   it conforms to; a port, the pad and berth standards it offers; an authority, what it mandates.
 - **Certification** is a service: a record, signed by its certifier, that a product was
