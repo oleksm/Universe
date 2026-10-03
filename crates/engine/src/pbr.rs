@@ -97,7 +97,8 @@ impl PbrModel {
                 base_color: pbr.base_color_factor(),
                 metallic: pbr.metallic_factor(),
                 roughness: pbr.roughness_factor(),
-                emissive: m.emissive_factor(),
+                // (Times its strength, KHR_materials_emissive_strength: lamps far brighter than 1.)
+                emissive: m.emissive_factor().map(|c| c * m.emissive_strength().unwrap_or(1.0)),
                 normal_scale: m.normal_texture().map_or(1.0, |n| n.scale()),
                 base_tex: tex(pbr.base_color_texture().map(|i| i.texture())),
                 mr_tex: tex(pbr.metallic_roughness_texture().map(|i| i.texture())),
@@ -381,7 +382,7 @@ impl PbrRenderer {
             textures.entry((i, srgb)).or_insert_with(|| upload_texture(device, queue, &data.images[i], srgb)).clone()
         };
         let plain = |px: [u8; 4], srgb: bool| upload_texture(device, queue, &Image { width: 1, height: 1, rgba: px.to_vec() }, srgb);
-        let (white_srgb, white, flat, black) = (plain([255; 4], true), plain([255; 4], false), plain([128, 128, 255, 255], false), plain([0, 0, 0, 255], true));
+        let (white_srgb, white, flat) = (plain([255; 4], true), plain([255; 4], false), plain([128, 128, 255, 255], false));
         let materials = data
             .materials
             .iter()
@@ -391,7 +392,8 @@ impl PbrRenderer {
                 let base = m.base_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, true));
                 let mr = m.mr_tex.map_or_else(|| white.clone(), |i| texture(i, false));
                 let normal = m.normal_tex.map_or_else(|| flat.clone(), |i| texture(i, false));
-                let emissive = m.emissive_tex.map_or_else(|| black.clone(), |i| texture(i, true));
+                // (No texture: the factor alone, as glTF has it. Black here put out every untextured lamp.)
+                let emissive = m.emissive_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, true));
                 device.create_bind_group(&wgpu::BindGroupDescriptor {
                     label: Some("pbr material"),
                     layout: &self.material_layout,
