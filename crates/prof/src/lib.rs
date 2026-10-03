@@ -62,9 +62,76 @@ pub struct Scope {
 impl Drop for Scope {
     fn drop(&mut self) {
         if let Some(start) = self.start {
-            add(self.name, start.elapsed().as_secs_f64());
+            let took = start.elapsed();
+            add(self.name, took.as_secs_f64());
+            if TRACING.load(Ordering::Relaxed) && took.as_micros() >= TRACE_FLOOR_US {
+                trace_event(self.name, start, took);
+            }
         }
     }
+}
+
+// ---------------------------------------------------------------- tracing
+// While tracing, every scope over `TRACE_FLOOR_US` is kept as an event (its
+// thread, start and length): a timeline of who did what when, in Chrome's
+// trace format (open it in Perfetto or chrome://tracing).
+
+/// Shorter scopes aren't kept (a thousand crafts' steps a tick would swamp it).
+pub const TRACE_FLOOR_US: u128 = 20;
+
+static TRACING: AtomicBool = AtomicBool::new(false);
+static EPOCH: Mutex<Option<Instant>> = Mutex::new(None);
+/// One thread's events: (name, start µs since the trace began, length µs).
+type Events = std::sync::Arc<Mutex<(String, Vec<(&'static str, u64, u64)>)>>;
+static TRACE_THREADS: Mutex<Vec<Events>> = Mutex::new(Vec::new());
+
+thread_local! {
+    static MY_EVENTS: Events = {
+        let name = std::thread::current().name().map_or_else(|| format!("{:?}", std::thread::current().id()), str::to_string);
+        let e: Events = std::sync::Arc::new(Mutex::new((name, Vec::new())));
+        TRACE_THREADS.lock().unwrap_or_else(|e| e.into_inner()).push(e.clone());
+        e
+    };
+}
+
+fn trace_event(name: &'static str, start: Instant, took: std::time::Duration) {
+    let Some(epoch) = *EPOCH.lock().unwrap_or_else(|e| e.into_inner()) else { return };
+    let at = start.saturating_duration_since(epoch).as_micros() as u64;
+    MY_EVENTS.with(|e| e.lock().unwrap_or_else(|e| e.into_inner()).1.push((name, at, took.as_micros() as u64)));
+}
+
+/// Start a trace (profiling on as well).
+pub fn start_trace() {
+    for t in TRACE_THREADS.lock().unwrap_or_else(|e| e.into_inner()).iter() {
+        t.lock().unwrap_or_else(|e| e.into_inner()).1.clear();
+    }
+    *EPOCH.lock().unwrap_or_else(|e| e.into_inner()) = Some(Instant::now());
+    enable(true);
+    TRACING.store(true, Ordering::Relaxed);
+}
+
+pub fn tracing() -> bool {
+    TRACING.load(Ordering::Relaxed)
+}
+
+/// Stop the trace: its events, as a Chrome trace (JSON text).
+pub fn stop_trace() -> String {
+    TRACING.store(false, Ordering::Relaxed);
+    let mut out = String::from("{\"traceEvents\":[\n");
+    let mut first = true;
+    for (tid, t) in TRACE_THREADS.lock().unwrap_or_else(|e| e.into_inner()).iter().enumerate() {
+        let (name, events) = &mut *t.lock().unwrap_or_else(|e| e.into_inner());
+        if events.is_empty() {
+            continue;
+        }
+        let sep = |first: &mut bool| if std::mem::replace(first, false) { "" } else { ",\n" };
+        out += &format!("{}{{\"name\":\"thread_name\",\"ph\":\"M\",\"pid\":1,\"tid\":{tid},\"args\":{{\"name\":\"{}\"}}}}", sep(&mut first), name.replace('"', "'"));
+        for (n, at, dur) in events.drain(..) {
+            out += &format!("{}{{\"name\":\"{n}\",\"ph\":\"X\",\"pid\":1,\"tid\":{tid},\"ts\":{at},\"dur\":{dur}}}", sep(&mut first));
+        }
+    }
+    out += "\n]}\n";
+    out
 }
 
 /// Time from now until the returned guard is dropped, as `name`.

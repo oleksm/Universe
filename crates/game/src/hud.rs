@@ -1766,7 +1766,14 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         ("TAB".into(), (if app.mode == Mode::Observer { "WATCH" } else { "CHASE" }).into(), Lamp::Off),
         ("F7".into(), "THRUST".into(), lamp(app.show_thrusters)),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
+        ("F3".into(), "DEBUG".into(), lamp(app.debug > 0)),
     ];
+    // (Debug on: recording, to look into what's on screen.)
+    let mut cells = cells;
+    if app.debug > 0 || app.recording.is_some() {
+        let rec = app.recording.as_ref().map(|r| format!("REC {:.0} S", r.seconds()));
+        cells.push(("S+F3".into(), rec.clone().unwrap_or_else(|| "PROFILE".into()), if rec.is_some() { Lamp::Hot } else { Lamp::Off }));
+    }
     // (A mode only with its gear: combat with a weapon fitted, mining with a rig.)
     use universe_sim::world::modules::Gear;
     let spec = app.ship.spec();

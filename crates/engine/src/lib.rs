@@ -16,7 +16,7 @@ pub mod pbr;
 mod render_thread;
 mod renderer;
 
-pub use app::{run, Config, Context, Game, Perf, HISTORY, HITCH};
+pub use app::{run, Config, Context, Game, Perf, Resources, HISTORY, HITCH};
 pub use camera::Camera;
 pub use audio::{Audio, Jet};
 pub use frame::{disc_covered, text_size, Color, Frame, Graphics, Light, Reflector, GLYPH};

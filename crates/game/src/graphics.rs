@@ -69,6 +69,17 @@ fn store(g: &Graphics) {
     }
 }
 
+/// One setting by name (as `UNIVERSE_GRAPHICS` has them) set; false if there's none of that name.
+pub fn set(g: &mut Graphics, name: &str, on: bool) -> bool {
+    match flag(g, name) {
+        Some(f) => {
+            *f = on;
+            true
+        }
+        None => false,
+    }
+}
+
 /// Opens it (`): true if the key was it.
 pub fn opens(ctx: &Context) -> bool {
     ctx.input.pressed(KeyCode::Backquote)

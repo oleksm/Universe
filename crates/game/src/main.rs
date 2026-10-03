@@ -13,6 +13,7 @@ mod observer;
 mod keys;
 mod lock;
 mod mining;
+mod observe;
 mod onfoot;
 mod orbitpick;
 mod rig;
@@ -207,6 +208,9 @@ pub struct App {
     /// What's drawn of what can be (see `graphics`), and its panel open.
     pub graphics: universe_engine::Graphics,
     pub graphics_panel: bool,
+    /// The live observer port's questions (see `observe`), and a recording under way.
+    pub observe_port: Option<std::sync::mpsc::Receiver<observe::Request>>,
+    pub recording: Option<observe::Recording>,
     /// Recent hits, for their sparks.
     pub sparks: Vec<Spark>,
     /// A glTF model shown ahead of the eye (dev: `UNIVERSE_MODEL=file.glb`).
@@ -347,6 +351,8 @@ impl App {
             news_panel: false,
             graphics: graphics::load(),
             graphics_panel: false,
+            observe_port: { observe::clean_up(); observe::listen() },
+            recording: None,
             sparks: Vec::new(),
             showcase: std::env::var("UNIVERSE_MODEL").ok().and_then(|path| {
                 let r = std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf(&b));
@@ -565,9 +571,20 @@ impl App {
             self.show_help = !self.show_help;
         }
         // F3: debug info (performance, traffic, trades), then the profiler too, then off.
-        if input.pressed(KeyCode::F3) {
+        // SHIFT+F3 (debug on): record — profile, trace, every frame (see `observe`).
+        let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+        if input.pressed(KeyCode::F3) && shift {
+            if self.recording.is_some() {
+                observe::stop(self, ctx);
+            } else {
+                self.debug = self.debug.max(1);
+                observe::start(self, ctx);
+            }
+        } else if input.pressed(KeyCode::F3) {
             self.debug = (self.debug + 1) % 3;
-            universe_prof::enable(self.debug == 2);
+            if self.recording.is_none() {
+                universe_prof::enable(self.debug == 2);
+            }
         }
         if input.pressed(KeyCode::F7) {
             self.show_thrusters = !self.show_thrusters;
@@ -1095,6 +1112,9 @@ impl App {
 impl Game for App {
     fn update(&mut self, ctx: &mut Context) {
         let dt = ctx.dt as f64;
+        // The observer: the live port's questions answered; a recording's frame kept.
+        observe::answer(self, ctx);
+        observe::frame(self, ctx);
         if !self.launched {
             self.launched = true;
             sound::launch(ctx);

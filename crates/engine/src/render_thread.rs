@@ -36,6 +36,7 @@ pub(crate) struct RenderState {
     pub hud_size: UVec2,
     pub render_ms: f32,
     pub wait_ms: f32,
+    pub resources: crate::app::Resources,
 }
 
 /// The longest the main thread waits for the render thread to take a frame.
@@ -89,6 +90,7 @@ impl RenderThread {
                     let mut s = lock(&shared);
                     s.wait_ms = renderer.wait.as_secs_f32() * 1000.0;
                     s.render_ms = start.elapsed().as_secs_f32() * 1000.0 - s.wait_ms;
+                    s.resources = renderer.resources();
                 }
             })
             .expect("render thread");
@@ -137,5 +139,6 @@ impl Drop for RenderThread {
         if let Some(t) = self.thread.take() {
             let _ = t.join();
         }
+        crate::renderer::wait_for_writes();
     }
 }

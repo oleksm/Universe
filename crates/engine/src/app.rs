@@ -60,6 +60,21 @@ pub struct Perf {
     pub history: std::collections::VecDeque<f32>,
     /// Frames slower than `HITCH` since the start.
     pub hitches: u32,
+    /// What the renderer holds (see `Resources`).
+    pub resources: Resources,
+}
+
+/// What the renderer holds on the GPU, as of its last frame.
+#[derive(Clone, Copy, Debug, Default, serde::Serialize)]
+pub struct Resources {
+    /// Meshes uploaded (kept while drawn lately), and the instances drawn last frame.
+    pub meshes: usize,
+    pub instances: usize,
+    /// Textured (glTF) models uploaded.
+    pub models: usize,
+    /// Worlds' surface maps in GPU layers, of the layers there are.
+    pub globe_layers: usize,
+    pub globe_capacity: usize,
 }
 
 /// Frames kept in `Perf::history`.
@@ -273,6 +288,7 @@ impl<G: Game> Runner<G> {
         p.draw_ms = Perf::smooth(p.draw_ms, ms(t2 - t1));
         p.render_ms = Perf::smooth(p.render_ms, rs.render_ms);
         p.wait_ms = Perf::smooth(p.wait_ms, rs.wait_ms);
+        p.resources = rs.resources;
         (p.lines, p.triangles, p.points) = counts;
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();

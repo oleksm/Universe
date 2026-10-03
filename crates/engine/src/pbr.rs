@@ -285,6 +285,11 @@ const INSTANCE_ATTRS: [wgpu::VertexAttribute; 8] = [
 const KEEP: u64 = 600;
 
 impl PbrRenderer {
+    /// Models uploaded.
+    pub fn model_count(&self) -> usize {
+        self.models.len()
+    }
+
     pub(crate) fn new(device: &wgpu::Device, globals: &wgpu::BindGroupLayout, shadows: &wgpu::BindGroupLayout, light: &wgpu::BindGroupLayout, scene_format: wgpu::TextureFormat, depth_format: wgpu::TextureFormat, samples: u32) -> Self {
         let shader = device.create_shader_module(wgpu::include_wgsl!("shaders/pbr.wgsl"));
         let tex_entry = |binding| wgpu::BindGroupLayoutEntry {

@@ -918,6 +918,17 @@ impl Renderer {
     }
 
     /// Render `frame`; if `capture` is set, also save the composited image (at HUD resolution) as PNG.
+    /// What it holds on the GPU now.
+    pub fn resources(&self) -> crate::app::Resources {
+        crate::app::Resources {
+            meshes: self.meshes.len(),
+            instances: self.instances.count as usize,
+            models: self.pbr.model_count(),
+            globe_layers: self.globes.layers.iter().filter(|l| l.is_some()).count(),
+            globe_capacity: self.globes.layers.len(),
+        }
+    }
+
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
         let size = self.target.size.as_vec2();
         let hud = self.target.hud_size.as_vec2();
@@ -1102,7 +1113,7 @@ impl Renderer {
 
         if let (Some(path), Some((buffer, padded_row))) = (capture, readback) {
             match self.save_png(gpu, &buffer, padded_row, path) {
-                Ok(()) => log::info!("screenshot saved to {}", path.display()),
+                Ok(()) => log::debug!("screenshot saved to {}", path.display()),
                 Err(e) => log::error!("screenshot failed: {e}"),
             }
         }
@@ -1224,15 +1235,33 @@ impl Renderer {
         for row in mapped.chunks(padded_row as usize) {
             pixels.extend_from_slice(&row[..(size.x * 4) as usize]);
         }
+        drop(mapped);
+        buffer.unmap();
         if let Some(dir) = path.parent() {
             std::fs::create_dir_all(dir).map_err(|e| e.to_string())?;
         }
-        let file = std::fs::File::create(path).map_err(|e| e.to_string())?;
-        let mut encoder = png::Encoder::new(std::io::BufWriter::new(file), size.x, size.y);
-        encoder.set_color(png::ColorType::Rgba);
-        encoder.set_depth(png::BitDepth::Eight);
-        let mut writer = encoder.write_header().map_err(|e| e.to_string())?;
-        writer.write_image_data(&pixels).map_err(|e| e.to_string())
+        // (Compressed and written off the render thread: a recording captures every frame.)
+        let path = path.to_path_buf();
+        WRITING.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        std::thread::Builder::new()
+            .name("png".into())
+            .spawn(move || {
+                let _done = Written;
+                let write = || -> Result<(), String> {
+                    let file = std::fs::File::create(&path).map_err(|e| e.to_string())?;
+                    let mut encoder = png::Encoder::new(std::io::BufWriter::new(file), size.x, size.y);
+                    encoder.set_color(png::ColorType::Rgba);
+                    encoder.set_depth(png::BitDepth::Eight);
+                    encoder.set_compression(png::Compression::Fast);
+                    let mut writer = encoder.write_header().map_err(|e| e.to_string())?;
+                    writer.write_image_data(&pixels).map_err(|e| e.to_string())
+                };
+                if let Err(e) = write() {
+                    log::error!("screenshot {} failed: {e}", path.display());
+                }
+            })
+            .map(|_| ())
+            .map_err(|e| e.to_string())
     }
 }
 
@@ -1273,4 +1302,23 @@ fn batch(draws: &[crate::frame::MeshDraw], data: &mut Vec<Instance>) -> (Runs, R
     let faces = runs(&|_| true);
     let edges = runs(&|i| draws[i].edges);
     (faces, edges)
+}
+
+/// Captures still being compressed and written (see `save_png`).
+static WRITING: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+
+/// One fewer being written, when dropped (however the write ended).
+struct Written;
+impl Drop for Written {
+    fn drop(&mut self) {
+        WRITING.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
+    }
+}
+
+/// Wait (a few seconds at most) for the captures still being written.
+pub fn wait_for_writes() {
+    let start = std::time::Instant::now();
+    while WRITING.load(std::sync::atomic::Ordering::SeqCst) > 0 && start.elapsed() < std::time::Duration::from_secs(10) {
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
 }

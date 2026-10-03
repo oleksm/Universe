@@ -138,6 +138,11 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3) {
 }
 
 impl Lod {
+    /// Patches made and kept.
+    pub fn patch_count(&self) -> usize {
+        self.patches.len()
+    }
+
     /// Draw world `body` (of system `system`, its middle at `center`,
     /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
     #[allow(clippy::too_many_arguments)]
