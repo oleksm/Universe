@@ -184,6 +184,15 @@ function matches(s, q) {
   return q.split(/\s+/).every(w => hay.includes(w));
 }
 
+// Everyone with an address (SFO 9): standards bodies and makers.
+const ORGS = [...DATA.bodies.map(o => ({ key: o.key, name: o.name, tag: o.prefix, to: "b:" + o.key, address: o.address })), ...DATA.makers.map(m => ({ key: m.key, name: m.name, tag: m.ticker, to: "mk:" + m.key, address: m.address, slug: m.slug }))].filter(o => o.address && o.address.at);
+const placeOf = o => { const [sy, at] = o.address.at.split("/"); const a = DATA.administrations.find(x => x.slug === sy); const x = a && a.bodies.find(y => y.slug === at); return x ? { sy, at, a, x } : null; };
+const inside = ad => [ad.unit && `Unit ${ad.unit}`, ad.section && `Section ${ad.section}`, ad.deck && `Deck ${ad.deck}`, ad.tower].filter(Boolean);
+const addressText = o => { const p = placeOf(o); return p ? [...inside(o.address), p.x.name, p.x.at, p.a.name].filter(Boolean).join(", ") : ""; };
+const addressHtml = o => { const p = placeOf(o); if (!p) return ""; const ad = o.address; const tw = ad.tower ? `<a data-k="${esc(`tw:${p.sy}:${p.at}:${ad.tower}`)}">${esc(ad.tower)}</a>` : null;
+  return [...inside({ ...ad, tower: null }).map(esc), tw, `<a data-k="${esc(`bd:${p.sy}:${p.at}`)}">${esc(p.x.name)}</a>`, p.x.at && esc(p.x.at), `<a data-k="${esc("ad:" + p.sy)}">${esc(p.a.name)}</a>`].filter(Boolean).join(", "); };
+const orgsAt = (sy, at, tower) => ORGS.filter(o => o.address.at === `${sy}/${at}` && (tower === undefined || (o.address.tower || null) === tower)).sort((p, r) => (p.address.deck || 0) - (r.address.deck || 0) || String(p.address.section || "").localeCompare(String(r.address.section || "")) || (p.address.unit || 0) - (r.address.unit || 0));
+
 // The tree as shown: each body, its standards under it.
 function rows(q) {
   const out = [];
@@ -231,12 +240,26 @@ function rows(q) {
     const under = (at, depth) => {
       for (const x of bodies.filter(x => (known(x.at) ? x.at : null) === at)) {
         const k = `bd:${a.slug}:${x.slug}`;
-        const orgs = DATA.bodies.filter(o => o.address === `${a.slug}/${x.slug}`);
-        const has = orgs.length > 0 || bodies.some(y => y.at === x.name);
+        const orgs = orgsAt(a.slug, x.slug, null);
+        const towers = x.towers || [];
+        const has = orgs.length > 0 || towers.length > 0 || bodies.some(y => y.at === x.name);
         if (q && !hit(x) && !has) continue;
         out.push({ k, depth, kind: "maker", label: x.name, ticker: x.at && !known(x.at) ? x.at : x.kind, leaf: !has });
         if (!has || !(open.has(k) || q)) continue;
-        for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.prefix, leaf: true });
+        // (Tower, deck, section, unit: the occupied ones.)
+        for (const t of towers) {
+          const tk = `tw:${a.slug}:${x.slug}:${t.name}`; const there = orgsAt(a.slug, x.slug, t.name);
+          out.push({ k: tk, depth: depth + 1, kind: "maker", label: t.name, ticker: `${t.decks} decks`, leaf: !there.length });
+          if (!there.length || !(open.has(tk) || q)) continue;
+          let deck = null, section = null;
+          for (const o of there) {
+            const ad = o.address;
+            if (ad.deck !== deck) { deck = ad.deck; section = null; out.push({ k: `${tk}:${deck}`, depth: depth + 2, kind: "maker", label: `Deck ${deck}`, flat: true }); }
+            if (ad.section !== section) { section = ad.section; out.push({ k: `${tk}:${deck}:${section}`, depth: depth + 3, kind: "maker", label: `Section ${section}`, flat: true }); }
+            out.push({ k: "at:" + o.key, depth: depth + 4, kind: "maker", label: `Unit ${ad.unit}`, ticker: o.name, logoOf: o.slug, leaf: true });
+          }
+        }
+        for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.tag, leaf: true });
         under(x.name, depth + 1);
       }
     };
@@ -248,15 +271,9 @@ function rows(q) {
   if (open.has("ar") || q) for (const r of listed) out.push({ k: "ra:" + r.key, depth: 1, kind: "maker", label: r.who, ticker: r.tag });
   return out;
 }
-// Everything with an address (<system>/<body> in Local Administration), spelled out.
+// Everything with an address, spelled out.
 function addressed() {
-  const out = [];
-  for (const o of DATA.bodies) {
-    if (!o.address) continue;
-    const [sy, at] = o.address.split("/"); const a = DATA.administrations.find(x => x.slug === sy); const x = a && a.bodies.find(y => y.slug === at); if (!x) continue;
-    out.push({ key: o.key, who: o.name, tag: o.prefix, to: "b:" + o.key, body: `bd:${sy}:${at}`, address: [x.name, x.at, a.name].filter(Boolean).join(", ") });
-  }
-  return out.sort((p, r) => p.address.localeCompare(r.address));
+  return ORGS.filter(placeOf).map(o => ({ key: o.key, who: o.name, tag: o.tag, to: o.to, org: o, address: addressText(o) })).sort((p, r) => p.address.localeCompare(r.address, undefined, { numeric: true }));
 }
 
 let current = decodeURIComponent(location.hash.slice(1));
@@ -274,14 +291,15 @@ function reveal(k) {
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   if (k.startsWith("ra:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
-  if (k.startsWith("bd:") || k.startsWith("at:")) {
-    const org = k.startsWith("at:") ? DATA.bodies.find(o => o.key === k.slice(3)) : null;
-    const [sy, slug] = org ? (org.address || "").split("/") : k.split(":").slice(1);
+  if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("tw:")) {
+    const org = k.startsWith("at:") ? ORGS.find(o => o.key === k.slice(3)) : null;
+    const [sy, slug] = org ? org.address.at.split("/") : k.split(":").slice(1);
     const a = DATA.administrations.find(x => x.slug === sy); if (!a) return;
     open.add("la"); open.add("ad:" + sy);
-    // (Open the bodies above it; and itself, for what has its address there.)
+    // (Open the bodies above it; and itself and its tower, for what has its address there.)
     let x = a.bodies.find(y => y.slug === slug);
-    if (org && x) open.add(`bd:${sy}:${x.slug}`);
+    if (x && (org || k.startsWith("tw:"))) open.add(`bd:${sy}:${x.slug}`);
+    if (org && org.address.tower) open.add(`tw:${sy}:${slug}:${org.address.tower}`);
     for (x = x && a.bodies.find(y => y.name === x.at); x; x = a.bodies.find(y => y.name === x.at)) open.add(`bd:${sy}:${x.slug}`);
     keepOpen(); return;
   }
@@ -300,7 +318,7 @@ function render() {
   for (const n of list) {
     const pad = `padding-left:${12 + n.depth * 18}px`;
     const sel = n.k === current ? " sel" : "";
-    const tw = n.kind === "std" || (n.kind === "maker" && n.leaf !== false) ? "" : (open.has(n.k) || q ? "▾" : "▸");
+    const tw = n.kind === "std" || (n.kind === "maker" && (n.leaf !== false || n.flat)) ? "" : (open.has(n.k) || q ? "▾" : "▸");
     if (n.kind === "el") {
       const i = n.el.identity;
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${elTile(n.el, true)}${esc(i.name)} <span class="n">${i.atomic_number}</span></div>`;
@@ -355,16 +373,22 @@ function detail(k) {
   if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick something on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
-  if (kind === "at" || kind === "ra") return detail("b:" + rest.join(":"));
-  if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td><a data-k="${esc(r.body)}">${esc(r.address)}</a></td><td><a data-k="${esc(r.to)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
+  if (kind === "at" || kind === "ra") { const o = ORGS.find(x => x.key === rest.join(":")); return o ? detail(o.to) : ""; }
+  if (kind === "tw") {
+    const a = DATA.administrations.find(x => x.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const t = x && (x.towers || []).find(y => y.name === rest[2]); if (!t) return "";
+    if (rest.length > 3) return detail(`tw:${rest[0]}:${rest[1]}:${rest[2]}`);
+    const there = orgsAt(rest[0], rest[1], t.name);
+    return `<h2>${esc(t.name)}</h2><div class="meta">tower · at <a data-k="${esc(`bd:${rest[0]}:${rest[1]}`)}">${esc(x.name)}</a></div><p>${esc(t.purpose || "")}</p><table><tr><th>Decks</th><th>Sections on each deck</th><th>Units in each section</th></tr><tr><td>1 to ${t.decks}</td><td>${esc(t.sections.join(", "))}</td><td>1 to ${t.units}</td></tr></table><h3>Here</h3>` + (there.length ? `<table><tr><th>Deck</th><th>Section</th><th>Unit</th><th>Who</th></tr>` + there.map(o => `<tr><td>${o.address.deck || ""}</td><td>${esc(o.address.section || "")}</td><td>${o.address.unit || ""}</td><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nobody yet.</p>`);
+  }
+  if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${addressHtml(r.org)}</td><td><a data-k="${esc(r.to)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
     const seat = b.seat === "home" ? "the home station" : b.seat;
     let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · ${n} standards</div><p>${esc(b.note)}</p>`;
-    if (b.address) {
-      const [sy, at] = b.address.split("/"); const a = DATA.administrations.find(x => x.slug === sy); const x = a && a.bodies.find(y => y.slug === at);
-      if (x) h += `<h3>Address</h3><p><a data-k="${esc(`bd:${sy}:${at}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + sy)}">${esc(a.name)}</a></p>`;
+    const me = ORGS.find(o => o.key === b.key);
+    if (me) {
+      h += `<h3>Address</h3><p>${addressHtml(me)}</p>`;
     } else h += `<div class="meta">seated at ${esc(seat)}</div>`;
     if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
     if (b.purpose) h += `<h3>Purpose</h3><p>${esc(b.purpose)}</p>`;
@@ -387,12 +411,13 @@ function detail(k) {
     const link = y => `<a data-k="${esc(`bd:${a.slug}:${y.slug}`)}">${esc(y.name)}</a>`;
     const up = x.at && a.bodies.find(y => y.name === x.at);
     const here = a.bodies.filter(y => y.at === x.name);
-    const orgs = DATA.bodies.filter(o => o.address === `${a.slug}/${x.slug}`);
-    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3>` + orgs.map(o => `<div><a data-k="${esc("at:" + o.key)}">${esc(o.name)}</a> <span class="meta">${esc(o.prefix)}</span></div>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+    const orgs = orgsAt(a.slug, x.slug);
+    const towers = x.towers || [];
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (x.note ? `<p>${esc(x.note)}</p>` : "") + (towers.length ? `<h3>Towers</h3><table><tr><th>Tower</th><th>Purpose</th><th>Decks</th><th>Sections</th><th>Units per section</th><th>Occupied</th></tr>` + towers.map(t => `<tr><td><a data-k="${esc(`tw:${a.slug}:${x.slug}:${t.name}`)}">${esc(t.name)}</a></td><td>${esc(t.purpose || "")}</td><td>${t.decks}</td><td>${esc(t.sections.join(", "))}</td><td>${t.units}</td><td>${orgsAt(a.slug, x.slug, t.name).length || ""}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
-    return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
+    return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (ORGS.find(o => o.key === m.key) ? `<h3>Address</h3><p>${addressHtml(ORGS.find(o => o.key === m.key))}</p>` : "") + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
   }
   if (kind === "g") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";

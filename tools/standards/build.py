@@ -156,7 +156,7 @@ for name in sorted(os.listdir(makers_dir)):
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "ticker", "note", "who", "what", "story", "slug", "file"}:
+        if k not in {"key", "name", "ticker", "address", "note", "who", "what", "story", "slug", "file"}:
             problem(full, f"unknown field '{k}'")
     if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
         problem(full, "ticker: 2 to 4 capital letters")
@@ -199,7 +199,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position"}:
+            if k not in {"name", "kind", "at", "position", "note", "towers"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -219,6 +219,48 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     ad["file"] = os.path.relpath(full, TREE)
     ad["slug"] = name[:-5]
     administrations.append(ad)
+
+# An address (SFO 9): at <system>/<body> in Local Administration, then tower, deck, section, unit
+# where the settlement has them.
+taken = {}
+
+
+def check_address(rec, where):
+    a = rec.get("address")
+    if a is None:
+        return
+    if not isinstance(a, dict) or "at" not in a:
+        problem(where, "address: at (<system>/<body>), then tower, deck, section, unit")
+        return
+    sysm, _, at = str(a["at"]).partition("/")
+    adm = next((x for x in administrations if x["slug"] == sysm), None)
+    body = next((x for x in (adm or {}).get("bodies", []) if x["slug"] == at), None)
+    if body is None:
+        problem(where, f"address: no '{a['at']}' in Local Administration (<system>/<body>)")
+        return
+    for k in a:
+        if k not in {"at", "tower", "deck", "section", "unit"}:
+            problem(where, f"address: unknown field '{k}'")
+    if "tower" not in a:
+        return
+    tower = next((t for t in body.get("towers") or [] if t.get("name") == a["tower"]), None)
+    if tower is None:
+        problem(where, f"address: {body['name']} has no '{a['tower']}'")
+        return
+    if "deck" in a and not (isinstance(a["deck"], int) and 1 <= a["deck"] <= tower["decks"]):
+        problem(where, f"address: {tower['name']} has decks 1 to {tower['decks']}")
+    if "section" in a and str(a["section"]) not in [str(x) for x in tower["sections"]]:
+        problem(where, f"address: {tower['name']} has sections {', '.join(map(str, tower['sections']))}")
+    if "unit" in a and not (isinstance(a["unit"], int) and 1 <= a["unit"] <= tower["units"]):
+        problem(where, f"address: a section of {tower['name']} has units 1 to {tower['units']}")
+    spot = (a["at"], a["tower"], a.get("deck"), a.get("section"), a.get("unit"))
+    if "unit" in a and spot in taken:
+        problem(where, f"address: {taken[spot]} is already there")
+    taken[spot] = rec.get("name")
+
+
+for m in makers:
+    check_address(m, os.path.join(TREE, m["file"]))
 
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
@@ -242,11 +284,7 @@ for name in sorted(os.listdir(TREE)):
     for m in body.get("founded_by", []) or []:
         if m not in BRANDS:
             problem(meta_path, f"founded_by: no maker '{m}' in Maker House")
-    if "address" in body:
-        sysm, _, at = str(body["address"]).partition("/")
-        adm = next((a for a in administrations if a["slug"] == sysm), None)
-        if adm is None or not any(x["slug"] == at for x in adm["bodies"]):
-            problem(meta_path, f"address: no '{body['address']}' in Local Administration (<system>/<body>)")
+    check_address(body, meta_path)
     if isinstance(body.get("about"), str):
         body["about"] = [body["about"]]
     if body.get("prefix") != name:

@@ -16,3 +16,17 @@ properties:
     properties:
       latitude: { type: number, minimum: -90, maximum: 90 }
       longitude: { type: number, minimum: -180, maximum: 180 }
+  note: { type: string }
+  towers:
+    description: "A settlement's major parts (SFO 9: tower, deck, section, unit). Every deck has the same sections, every section the same number of units."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, decks, sections, units]
+      properties:
+        name: { type: string }
+        purpose: { type: string }
+        decks: { type: integer, minimum: 1, description: How many, numbered from 1. }
+        sections: { type: array, items: { type: string }, description: The sections of each deck. }
+        units: { type: integer, minimum: 1, description: "Units in each section, numbered from 1." }
