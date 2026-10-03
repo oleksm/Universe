@@ -902,12 +902,14 @@ pub fn apply(app: &mut App, name: &str) {
             let off = (peak + peak.any_orthonormal_vector() * 0.02).normalize();
             let up = rot * off;
             log::info!("lowflight: peak {:.0} m", best.0);
-            app.engine.universe().ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + 6000.0);
+            // (UNIVERSE_ALT: the height instead, m; UNIVERSE_SPEED: the ground speed, m/s.)
+            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            app.engine.universe().ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + env("UNIVERSE_ALT").unwrap_or(6000.0));
             let to_peak = rot * peak - up;
             let fwd = (to_peak - up * to_peak.dot(up)).normalize();
-            app.engine.universe().ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.engine.universe().ship.position - positions[planet]) + fwd * 200.0;
+            app.engine.universe().ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.engine.universe().ship.position - positions[planet]) + fwd * env("UNIVERSE_SPEED").unwrap_or(200.0);
             app.engine.universe().ship.orientation = universe_sim::ship::facing(fwd - up * 0.15, up);
-            app.chase_cam = false;
+            app.chase_cam = std::env::var_os("UNIVERSE_CHASE").is_some();
         }
         "moon" => {
             let moon = sys.bodies.iter().position(|b| b.kind == BodyKind::Moon && b.terrain.is_some()).unwrap_or(planet);

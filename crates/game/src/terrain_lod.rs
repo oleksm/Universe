@@ -164,6 +164,14 @@ impl Lod {
             if key.level < MAX_LEVEL && dist < SPLIT * size * r {
                 let children = key.children();
                 if children.iter().all(|c| self.patches.contains_key(c)) {
+                    // (All four kept while their parent splits, those out of
+                    // sight too: dropped, the parent stood in for a frame —
+                    // a coarse patch metres off the ground, at your feet.)
+                    for c in &children {
+                        if let Some(p) = self.patches.get_mut(c) {
+                            p.used = now;
+                        }
+                    }
                     stack.extend(children);
                     continue;
                 }
