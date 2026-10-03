@@ -36,7 +36,7 @@ atomic_structure:
     abundance: 0.4078
 chemical:
   electronegativity: 2.2
-  first_ionisation_energy: 840
+  first_ionisation_energy: 814.2
   electron_affinity: 103.99
   oxidation_states:
   - 4

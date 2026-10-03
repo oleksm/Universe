@@ -21,7 +21,6 @@ atomic_structure:
 chemical:
   electronegativity: 1.3
   first_ionisation_energy: 619
-  electron_affinity: -28.6
   oxidation_states:
   - 3
   bond_type: metallic

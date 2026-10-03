@@ -22,7 +22,7 @@ atomic_structure:
   decay_mode: beta-
 chemical:
   electronegativity: 0.7
-  first_ionisation_energy: 380
+  first_ionisation_energy: 393.0
   electron_affinity: 46.89
   oxidation_states:
   - 1

@@ -45,7 +45,7 @@ physical:
   crystal_structure: simple hexagonal
   allotropes:
   - dihydrogen
-  heat_of_fusion: 0.558
+  heat_of_fusion: 0.0585
   heat_of_vaporisation: 0.452
 thermal:
   specific_heat_capacity: 14300.0

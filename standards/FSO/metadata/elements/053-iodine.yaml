@@ -50,7 +50,7 @@ physical:
   heat_of_vaporisation: 20.9
   vapour_pressure: 44.0
 thermal:
-  specific_heat_capacity: 429.0
+  specific_heat_capacity: 214.0
   thermal_conductivity: 0.449
 electrical_magnetic:
   electrical_conductivity: 1.0e-07

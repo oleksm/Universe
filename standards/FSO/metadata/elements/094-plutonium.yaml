@@ -22,7 +22,6 @@ atomic_structure:
 chemical:
   electronegativity: 1.28
   first_ionisation_energy: 584.7
-  electron_affinity: -48.33
   oxidation_states:
   - 6
   - 5

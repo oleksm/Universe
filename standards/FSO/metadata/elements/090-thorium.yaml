@@ -26,7 +26,7 @@ atomic_structure:
   decay_mode: alpha
 chemical:
   electronegativity: 1.3
-  first_ionisation_energy: 587
+  first_ionisation_energy: 608.5
   electron_affinity: 112.72
   oxidation_states:
   - 4

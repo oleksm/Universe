@@ -30,7 +30,7 @@ properties:
     properties:
       electron_configuration: { type: [string, "null"], description: "e.g. [Ar] 3d6 4s2" }
       valence_electrons: { type: [integer, "null"], minimum: 0 }
-      atomic_radius: { $ref: "#/definitions/number_or_null", description: pm }
+      atomic_radius: { $ref: "#/definitions/number_or_null", description: "pm, calculated" }
       covalent_radius: { $ref: "#/definitions/number_or_null", description: pm }
       van_der_waals_radius: { $ref: "#/definitions/number_or_null", description: pm }
       ionic_radius: { $ref: "#/definitions/number_or_null", description: "pm, for its commonest ion" }
@@ -54,7 +54,7 @@ properties:
     properties:
       electronegativity: { $ref: "#/definitions/number_or_null", description: Pauling scale }
       first_ionisation_energy: { $ref: "#/definitions/number_or_null", description: kJ/mol }
-      electron_affinity: { $ref: "#/definitions/number_or_null", description: kJ/mol }
+      electron_affinity: { $ref: "#/definitions/number_or_null", description: "kJ/mol; left out where no stable negative ion forms" }
       oxidation_states: { type: array, items: { type: integer }, description: The common ones. }
       reactivity:
         description: At room temperature, with air, water and dilute acid. Rated by hand.
@@ -78,8 +78,8 @@ properties:
       density: { $ref: "#/definitions/number_or_null", description: kg/m3 }
       crystal_structure: { type: [string, "null"], description: "e.g. body-centred cubic" }
       allotropes: { type: array, items: { type: string }, description: "e.g. graphite, diamond" }
-      heat_of_fusion: { $ref: "#/definitions/number_or_null", description: kJ/mol }
-      heat_of_vaporisation: { $ref: "#/definitions/number_or_null", description: kJ/mol }
+      heat_of_fusion: { $ref: "#/definitions/number_or_null", description: "kJ per mole of atoms" }
+      heat_of_vaporisation: { $ref: "#/definitions/number_or_null", description: "kJ per mole of atoms" }
       vapour_pressure: { $ref: "#/definitions/number_or_null", description: "Pa, at 298 K; carried down from the measured curve; null for a gas" }
 
   thermal:
