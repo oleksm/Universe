@@ -19,6 +19,10 @@ pub struct Mover {
     pub velocity: DVec3,
     pub radius: f64,
     pub mass: f64,
+    /// The velocity of what it moves with (the world it's near, say): its
+    /// sweep is measured against it, so bodies moving together are cheap to
+    /// pair. Any value is right; a near one only saves work.
+    pub frame: DVec3,
 }
 
 /// Two bodies touching: when (seconds before the end of the step), where
@@ -36,34 +40,60 @@ pub struct PairContact {
     pub before_end: f64,
 }
 
-/// Grid cell size (m). Each body is filed under every cell its sweep
-/// through the step covers, so any speed is caught; the size only trades
-/// cells filed (small) against bodies compared in each (large).
+/// Grid cell size (m): bodies are filed by where they end the step, and
+/// each looks as far round it as it could have met another (see `Grid`).
 const CELL: f64 = 250.0;
 
-/// The bodies by the grid cells their sweeps through a step of `dt` seconds
-/// cover (from where each was to where it is, as wide as its reach): two
-/// that touched during the step share a cell, however fast they passed.
+/// The bodies by where they end a step of `dt` seconds, for finding which
+/// touched during it, at any speed. Each body sweeps `q`: its reach plus how
+/// far it moved against its frame. Two that touched end no further apart
+/// than both sweeps and how far their frames moved apart (`|Δframe|·dt`);
+/// of a free pair, the one sweeping more (the lower index if level) looks
+/// that far, so finds the other; against fixed ones, the free one looks.
+/// Bodies moving together (a port's traffic with its world) look only a
+/// little way; a fast one looks far, and finds what it passed.
 pub struct Grid<'a> {
     movers: &'a [Mover],
     dt: f64,
+    sweep: Vec<f64>,
+    group_of: Vec<usize>,
+    groups: Vec<Group>,
+}
+
+/// Bodies sharing a frame: it, the most a fixed one of them sweeps, the box
+/// round where they end, and their cells.
+struct Group {
+    frame: DVec3,
+    fixed_sweep: f64,
+    lo: DVec3,
+    hi: DVec3,
     cells: HashMap<(i64, i64, i64), Vec<usize>, CellHash>,
+}
+
+fn cell(p: DVec3) -> (i64, i64, i64) {
+    ((p.x / CELL).floor() as i64, (p.y / CELL).floor() as i64, (p.z / CELL).floor() as i64)
 }
 
 impl<'a> Grid<'a> {
     pub fn new(movers: &'a [Mover], dt: f64) -> Self {
-        let mut cells: HashMap<(i64, i64, i64), Vec<usize>, CellHash> = HashMap::with_capacity_and_hasher(movers.len(), CellHash::default());
+        let sweep: Vec<f64> = movers.iter().map(|m| (m.velocity - m.frame).length() * dt + m.radius).collect();
+        let mut groups: Vec<Group> = Vec::new();
+        let mut by_frame: HashMap<[u64; 3], usize, CellHash> = HashMap::default();
+        let mut group_of = Vec::with_capacity(movers.len());
         for (i, m) in movers.iter().enumerate() {
-            let (lo, hi) = swept(m, dt);
-            for x in lo.0..=hi.0 {
-                for y in lo.1..=hi.1 {
-                    for z in lo.2..=hi.2 {
-                        cells.entry((x, y, z)).or_default().push(i);
-                    }
-                }
+            let g = *by_frame.entry(m.frame.to_array().map(f64::to_bits)).or_insert_with(|| {
+                groups.push(Group { frame: m.frame, fixed_sweep: 0.0, lo: m.position, hi: m.position, cells: HashMap::default() });
+                groups.len() - 1
+            });
+            let group = &mut groups[g];
+            if !m.mass.is_finite() {
+                group.fixed_sweep = group.fixed_sweep.max(sweep[i]);
             }
+            (group.lo, group.hi) = (group.lo.min(m.position), group.hi.max(m.position));
+            group.cells.entry(cell(m.position)).or_default().push(i);
+            group_of.push(g);
         }
-        Grid { movers, dt, cells }
+        Grid { movers, dt, sweep, group_of, groups }
     }
 
     pub fn len(&self) -> usize {
@@ -74,43 +104,42 @@ impl<'a> Grid<'a> {
         self.movers.is_empty()
     }
 
-    /// Body `i`'s contacts during the step: each free pair once (from the
-    /// lower index), free–fixed from the free one. Only what moves can touch
-    /// anything (two fixed ones, landed side by side, are never compared).
+    /// The contacts body `i` finds (see `Grid`: each pair is found once).
+    /// Only what moves can touch anything (two fixed ones, landed side by
+    /// side, are never compared).
     pub fn around(&self, i: usize) -> Vec<PairContact> {
         let a = &self.movers[i];
         if !a.mass.is_finite() {
             return Vec::new();
         }
-        let (lo, hi) = swept(a, self.dt);
-        let mut near = Vec::new();
-        for x in lo.0..=hi.0 {
-            for y in lo.1..=hi.1 {
-                for z in lo.2..=hi.2 {
-                    let Some(cell) = self.cells.get(&(x, y, z)) else { continue };
-                    near.extend(cell.iter().copied().filter(|&j| j != i && !(self.movers[j].mass.is_finite() && j < i)));
+        let (q, frame) = (self.sweep[i], self.groups[self.group_of[i]].frame);
+        let mut out = Vec::new();
+        for h in &self.groups {
+            let reach = q + q.max(h.fixed_sweep) + (frame - h.frame).length() * self.dt;
+            if (a.position - reach).cmpgt(h.hi).any() || (a.position + reach).cmplt(h.lo).any() {
+                continue;
+            }
+            let (lo, hi) = (cell(a.position - reach), cell(a.position + reach));
+            for x in lo.0..=hi.0 {
+                for y in lo.1..=hi.1 {
+                    for z in lo.2..=hi.2 {
+                        let Some(members) = h.cells.get(&(x, y, z)) else { continue };
+                        for &j in members {
+                            let b = &self.movers[j];
+                            // (A free pair: the one sweeping more looks.)
+                            if j == i || (b.mass.is_finite() && (self.sweep[j] > q || (self.sweep[j] == q && j < i))) {
+                                continue;
+                            }
+                            if let Some(c) = touch(a, b, self.dt) {
+                                out.push(if i < j { PairContact { a: i, b: j, ..c } } else { PairContact { a: j, b: i, ..flip(c) } });
+                            }
+                        }
+                    }
                 }
             }
         }
-        // (Met in several cells: once.)
-        near.sort_unstable();
-        near.dedup();
-        near.into_iter()
-            .filter_map(|j| {
-                let c = touch(a, &self.movers[j], self.dt)?;
-                Some(if i < j { PairContact { a: i, b: j, ..c } } else { PairContact { a: j, b: i, ..flip(c) } })
-            })
-            .collect()
+        out
     }
-}
-
-/// The cells a body's sweep through the step covers: from its first to its
-/// last, corner to corner.
-fn swept(m: &Mover, dt: f64) -> ((i64, i64, i64), (i64, i64, i64)) {
-    let key = |p: DVec3| ((p.x / CELL).floor() as i64, (p.y / CELL).floor() as i64, (p.z / CELL).floor() as i64);
-    let start = m.position - m.velocity * dt;
-    let reach = DVec3::splat(m.radius);
-    (key(start.min(m.position) - reach), key(start.max(m.position) + reach))
 }
 
 /// Every pair of `movers` that touched during the last `dt` seconds.
@@ -209,7 +238,7 @@ mod tests {
     use super::*;
 
     fn m(id: usize, x: f64, vx: f64) -> Mover {
-        Mover { id, position: DVec3::new(x, 0.0, 0.0), velocity: DVec3::new(vx, 0.0, 0.0), radius: 12.0, mass: 90_000.0 }
+        Mover { id, position: DVec3::new(x, 0.0, 0.0), velocity: DVec3::new(vx, 0.0, 0.0), radius: 12.0, mass: 90_000.0, frame: DVec3::ZERO }
     }
 
     #[test]

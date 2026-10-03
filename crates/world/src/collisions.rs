@@ -179,16 +179,27 @@ impl World {
         drop(sort);
         // The movers, by system.
         let gather = universe_prof::scope("sim/combat/collisions/movers");
+        let now = self.time;
         let movers: Vec<Vec<Mover>> = systems
             .iter()
-            .map(|(_, members)| {
+            .map(|(system, members)| {
+                let sys = self.system(*system);
+                let mut positions = Vec::new();
+                sys.positions(now, &mut positions);
+                // (Each world's velocity worked out once.)
+                let mut frames: HashMap<usize, DVec3, universe_physics::pairs::CellHash> = HashMap::default();
                 members
                     .iter()
                     .map(|&k| {
                         let s = &ships[k].ship;
-                        let fixed = matches!(s.state, ShipState::Landed { .. });
-                        // (Its reach: the sphere round its shape; the shapes decide after.)
-                        Mover { id: k, position: s.position, velocity: s.velocity, radius: s.spec().shape().mesh.bound(), mass: if fixed { f64::INFINITY } else { s.mass() } }
+                        let (fixed, body) = match s.state {
+                            ShipState::Landed { body, .. } => (true, body),
+                            _ => (false, sys.dominant(s.position, &positions)),
+                        };
+                        // (Its reach: the sphere round its shape; the shapes decide after.
+                        // Its frame: the world it's on, or whose pull rules where it is.)
+                        let frame = *frames.entry(body).or_insert_with(|| sys.velocity(body, now));
+                        Mover { id: k, position: s.position, velocity: s.velocity, radius: s.spec().shape().mesh.bound(), mass: if fixed { f64::INFINITY } else { s.mass() }, frame }
                     })
                     .collect()
             })

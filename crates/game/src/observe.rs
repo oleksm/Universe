@@ -171,6 +171,8 @@ fn resources(app: &App, ctx: &Context) -> Value {
         "renderer": ctx.perf.resources,
         "terrain_patches": app.terrain_lod.borrow().patch_count(),
         "crafts": app.v.crafts.len(),
+        "crafts_here": app.v.crafts.iter().filter(|c| c.system == app.view.origin).count(),
+        "slugs": app.v.slugs.len(),
         "bodies_here": app.view.system.bodies.len(),
     })
 }

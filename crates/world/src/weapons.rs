@@ -33,6 +33,23 @@ pub const SLUG_MASS: f64 = 0.5;
 pub const GUN_AMMO: u32 = 500;
 /// Seconds a slug flies before it's no longer tracked (about 30 km).
 pub const SLUG_LIFETIME: f64 = 10.0;
+
+/// The most a slug's path can bend from straight over a step of `dt` (m),
+/// under a pull of `g` where it starts: half the pull times the step
+/// squared, the pull taken four times over (it can grow along the path)
+/// and a metre a second squared more.
+fn slug_bend(g: DVec3, dt: f64) -> f64 {
+    0.5 * (4.0 * g.length() + 1.0) * dt * dt
+}
+
+/// Could a slug, flying `dt` from where it is, meet target `tg` (which is
+/// where it is at the step's end)? Not unless it starts within the
+/// target's radius, plus how far they close in the step, plus how far its
+/// path bends (`bend`).
+fn could_meet(p: &Projectile, tg: &Target, dt: f64, bend: f64) -> bool {
+    let at_start = tg.position - tg.velocity * dt;
+    (p.position - at_start).length() <= tg.radius + (p.velocity - tg.velocity).length() * dt + bend
+}
 /// Beam power on target at up to `LASER_FOCUS` (W).
 pub const LASER_POWER: f64 = 2.0e6;
 /// Beyond this the beam spreads: power falls as (focus / range)^2 (m).
@@ -281,43 +298,59 @@ impl World {
         }
         let index: HashMap<usize, usize> = ships.iter().enumerate().map(|(i, a)| (a.id, i)).collect();
 
-        // Slugs.
+        // Slugs: each flies the frame against the ships near enough its
+        // path to be met (side by side: they only read the world), then what
+        // they hit, in order.
         let t = self.time;
-        let mut slugs = std::mem::take(&mut self.slugs);
-        let mut positions = Vec::new();
-        let mut positioned = usize::MAX;
-        let none = Vec::new();
         let flying = universe_prof::scope("sim/combat/weapons/slugs");
-        slugs.retain_mut(|slug| {
-            universe_prof::add("sim/combat/weapons/slugs/each", 0.0);
-            let sys = self.system(slug.system);
-            if positioned != slug.system {
+        let mut slugs = std::mem::take(&mut self.slugs);
+        // Each system's bodies, and where they are, once.
+        let mut here: HashMap<usize, (std::sync::Arc<crate::system::StarSystem>, Vec<DVec3>)> = HashMap::new();
+        for slug in &slugs {
+            here.entry(slug.system).or_insert_with(|| {
+                let sys = self.system(slug.system);
+                let mut positions = Vec::new();
                 sys.positions(t, &mut positions);
-                positioned = slug.system;
-            }
-            let all = targets.get(&slug.system).unwrap_or(&none);
-            // Clear of its own ship's hull for the first moments.
-            let fresh = slug.age < 0.5;
-            let here: Vec<Target> = all.iter().filter(|tg| !(fresh && tg.id == slug.owner)).copied().collect();
-            let step = dt.min(SLUG_LIFETIME - slug.age).max(0.0);
-            slug.age += dt;
-            match step_projectile(&sys.bodies, &positions, &mut slug.projectile, t - dt, step, &here) {
+                (sys, positions)
+            });
+        }
+        let none = Vec::new();
+        let outcomes: Vec<Option<Hit>> = {
+            use rayon::prelude::*;
+            slugs
+                .par_iter_mut()
+                .with_min_len(16)
+                .map(|slug| {
+                    let (sys, positions) = &here[&slug.system];
+                    // Clear of its own ship's hull for the first moments.
+                    let fresh = slug.age < 0.5;
+                    let step = dt.min(SLUG_LIFETIME - slug.age).max(0.0);
+                    slug.age += dt;
+                    let bend = slug_bend(universe_physics::gravity(&sys.bodies, slug.projectile.position, positions), step);
+                    let near: Vec<Target> = targets.get(&slug.system).unwrap_or(&none).iter().filter(|tg| !(fresh && tg.id == slug.owner) && could_meet(&slug.projectile, tg, step, bend)).copied().collect();
+                    step_projectile(&sys.bodies, positions, &mut slug.projectile, t - dt, step, &near)
+                })
+                .collect()
+        };
+        let mut kept = Vec::with_capacity(slugs.len() + fired.len());
+        for (slug, outcome) in slugs.into_iter().zip(outcomes) {
+            match outcome {
                 Some(Hit::Target { id, relative_velocity, point }) => {
                     let joules = 0.5 * SLUG_MASS * relative_velocity.length_squared();
                     hits.push((id, joules, relative_velocity * SLUG_MASS, slug.owner, "GUNFIRE"));
                     self.impacts.push(Impact { system: slug.system, point, by: slug.owner, target: id, laser: false });
-                    false
                 }
-                Some(Hit::Body { .. }) => false,
-                None => slug.age < SLUG_LIFETIME,
+                Some(Hit::Body { .. }) => {}
+                None if slug.age < SLUG_LIFETIME => kept.push(slug),
+                None => {}
             }
-        });
+        }
         // This frame's rounds are where they are at its end already; they
         // fly from the next frame.
-        slugs.extend(fired);
-        self.slugs = slugs;
-
+        kept.extend(fired);
+        self.slugs = kept;
         drop(flying);
+        let mut positions = Vec::new();
         // Beams.
         let _p = universe_prof::scope("sim/combat/weapons/beams");
         for (owner, system, from, dir) in lasers {
