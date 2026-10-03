@@ -596,12 +596,12 @@ impl Music {
             let k = PATTERN[self.step % PATTERN.len()];
             let n = if k == 4 { notes[0] as f32 + 24.0 } else { notes[k] as f32 + 12.0 };
             // (Accents on the beat; now and then a rest.)
-            let vol = if self.step % 2 == 0 { 1.0 } else { 0.7 };
+            let vol = if self.step.is_multiple_of(2) { 1.0 } else { 0.7 };
             if self.rand() > 0.08 && arp > 0.01 {
                 self.plucks.push(Pluck { freq: midi(n), t: 0.0, phase: 0.0, vol: vol * arp });
             }
             // A soft pulse on the root each beat.
-            if self.step % 2 == 0 {
+            if self.step.is_multiple_of(2) {
                 self.pulse_env = 1.0;
             }
             self.step += 1;
