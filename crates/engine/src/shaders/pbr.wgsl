@@ -79,14 +79,28 @@ fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
     let near = g.shadow_near * vec4<f32>(p + n * g.shadow.x * 1.5, 1.0);
     let a = vec2<f32>(near.x * 0.5 + 0.5, 0.5 - near.y * 0.5);
     if (all(a > vec2<f32>(0.01)) && all(a < vec2<f32>(0.99)) && near.z > 0.0 && near.z < 1.0) {
-        return textureSampleCompareLevel(shadow_map, shadow_cmp, a, 0, near.z);
+        return pcf(a, 0, near.z);
     }
     let far = g.shadow_far * vec4<f32>(p + n * g.shadow.y * 1.5, 1.0);
     let b = vec2<f32>(far.x * 0.5 + 0.5, 0.5 - far.y * 0.5);
     if (all(b > vec2<f32>(0.0)) && all(b < vec2<f32>(1.0)) && far.z > 0.0 && far.z < 1.0) {
-        return textureSampleCompareLevel(shadow_map, shadow_cmp, b, 1, far.z);
+        return pcf(b, 1, far.z);
     }
     return 1.0;
+}
+
+// A shadow map texel (its uv): 1 / SHADOW_SIZE (renderer.rs).
+const SHADOW_TEXEL: f32 = 1.0 / 4096.0;
+
+// 3x3 compared samples (each itself filtered 2x2): soft edges, no stair steps.
+fn pcf(uv: vec2<f32>, layer: i32, depth: f32) -> f32 {
+    var lit = 0.0;
+    for (var y = -1; y <= 1; y++) {
+        for (var x = -1; x <= 1; x++) {
+            lit += textureSampleCompareLevel(shadow_map, shadow_cmp, uv + vec2<f32>(f32(x), f32(y)) * SHADOW_TEXEL, layer, depth);
+        }
+    }
+    return lit / 9.0;
 }
 
 const PI: f32 = 3.14159265;
@@ -141,6 +155,19 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
         let s = min(in.refl_dir.w, 1.0);
         let k = s * max((dot(n, in.refl_dir.xyz) + 0.3) / 1.3, 0.0);
         c += base.rgb * (1.0 - metallic * 0.6) * in.refl_color.rgb * in.refl_color.w * k;
+    }
+    // What a glossy surface reflects of the planet: a light the size it looks
+    // (an area light). The reflection's lobe widens with roughness; it catches
+    // the disc's share of itself (energy kept: a broad lobe, a dim, wide image).
+    if (in.refl_dir.w > 0.0) {
+        let r = reflect(-v, n);
+        let radius = asin(sqrt(min(in.refl_dir.w, 1.0)));
+        let lobe = max(roughness * roughness * 1.2, 0.003);
+        let off = acos(clamp(dot(r, in.refl_dir.xyz), -1.0, 1.0));
+        let edge = clamp((radius + lobe - off) / (2.0 * lobe), 0.0, 1.0);
+        let share = min(1.0, (radius * radius) / (lobe * lobe));
+        let fr = schlick(f0, nv);
+        c += fr * in.refl_color.rgb * in.refl_color.w * edge * share;
     }
     // The ambient share (the meshes' own: starlight and the eye adjusting).
     c += base.rgb * in.sun_dir.w * 0.25 * mix(1.0, 0.3, metallic);

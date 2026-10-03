@@ -116,14 +116,28 @@ fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
     let near = g.shadow_near * vec4<f32>(p + n * g.shadow.x * 1.5, 1.0);
     let a = vec2<f32>(near.x * 0.5 + 0.5, 0.5 - near.y * 0.5);
     if (all(a > vec2<f32>(0.01)) && all(a < vec2<f32>(0.99)) && near.z > 0.0 && near.z < 1.0) {
-        return textureSampleCompareLevel(shadow_map, shadow_cmp, a, 0, near.z);
+        return pcf(a, 0, near.z);
     }
     let far = g.shadow_far * vec4<f32>(p + n * g.shadow.y * 1.5, 1.0);
     let b = vec2<f32>(far.x * 0.5 + 0.5, 0.5 - far.y * 0.5);
     if (all(b > vec2<f32>(0.0)) && all(b < vec2<f32>(1.0)) && far.z > 0.0 && far.z < 1.0) {
-        return textureSampleCompareLevel(shadow_map, shadow_cmp, b, 1, far.z);
+        return pcf(b, 1, far.z);
     }
     return 1.0;
+}
+
+// A shadow map texel (its uv): 1 / SHADOW_SIZE (renderer.rs).
+const SHADOW_TEXEL: f32 = 1.0 / 4096.0;
+
+// 3x3 compared samples (each itself filtered 2x2): soft edges, no stair steps.
+fn pcf(uv: vec2<f32>, layer: i32, depth: f32) -> f32 {
+    var lit = 0.0;
+    for (var y = -1; y <= 1; y++) {
+        for (var x = -1; x <= 1; x++) {
+            lit += textureSampleCompareLevel(shadow_map, shadow_cmp, uv + vec2<f32>(f32(x), f32(y)) * SHADOW_TEXEL, layer, depth);
+        }
+    }
+    return lit / 9.0;
 }
 
 // A mesh's face or edge, lit per pixel: its colour, the sun's light on it

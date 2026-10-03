@@ -31,7 +31,7 @@ struct Globals {
 }
 
 /// The shadow map's side (texels), each of its two cascades.
-const SHADOW_SIZE: u32 = 2048;
+const SHADOW_SIZE: u32 = 4096; // (the shaders' SHADOW_TEXEL: keep them together)
 /// How far toward the light (and away) a shadow box reaches from the eye
 /// (m): what casts from up to this far sunward of it.
 const SHADOW_DEPTH: f64 = 8_000.0;
@@ -910,7 +910,8 @@ impl Renderer {
         // The shadow cascades: along the light from the eye, if there's a
         // light and shadows are wanted.
         let sun = frame.light.filter(|_| frame.shadow_reach > 0.0).and_then(|l| (l.position - frame.camera.position).try_normalize());
-        let (near, far) = (frame.shadow_reach / 8.0, frame.shadow_reach);
+        // (The near cascade tight round the eye: a ship close by gets a few cm a texel.)
+        let (near, far) = (frame.shadow_reach / 24.0, frame.shadow_reach);
         let cascade = |half: f64| sun.map_or(glam::Mat4::IDENTITY, |s| shadow_matrix(frame.camera.position, s, half));
         let (shadow_near, shadow_far) = (cascade(near), cascade(far));
         let texel = |half: f64| (2.0 * half / SHADOW_SIZE as f64) as f32;
