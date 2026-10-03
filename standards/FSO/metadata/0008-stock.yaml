@@ -9,4 +9,5 @@ details:
     - "- Trade and transport: stock is what crosses space. It's dense, stackable, countable and gradable (so many tonnes of 6061 sheet at 3 mm). It's the unit that markets price and haulers carry."
     - "- A buffer: stock keeps. A yard holding sheet and bar can build without waiting for a foundry, and a foundry can run steadily without knowing what will be built. It decouples making materials from making things."
     - "- Known properties: stock carries its grade with it. A bar of 4340, quenched and tempered, has a certified strength, so a designer can trust the part before it's made."
+    - "How it's counted: a stock item is a material in a form (6061 sheet, 4340 bar, copper wire), traded in tonnes. Sizes aren't standardised for now: nothing yet cuts a part to a dimension, and the material's grade already carries its properties."
     - "It sits between material processing below it, and the fabrication of parts above it."
