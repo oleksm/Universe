@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Materials
+purpose: Materials are what everything is made of (hulls, engines, stations, tools, fuel). Every made thing starts as matter taken from somewhere and changed into something useful.
+details:
+  text:
+    - "Why a civilisation needs them, and needs them named and graded:"
+    - "- Building: nothing gets made without them. Hulls need strong, light metals; reactors need fuel; radiators need conductive metals; windows need glass."
+    - "- Fitness for purpose: different jobs need different properties: strength, weight, heat tolerance, conductivity, radiation shielding. The right material decides whether a thing works or fails."
+    - "- Trade: materials are what miners sell and makers buy. A common name and grade means a buyer far away knows what they're getting."
+    - "- Value from rock: raw ore is a mix. Refining turns it into materials, and the difference in value is what makes mining worth doing."
+    - "- Scarcity and place: some materials are common everywhere, others only in certain rocks or worlds. That's what sends ships far away, and why trade routes exist."
+    - "Materials are the link between the rock a mining ship cuts and everything else people build."
