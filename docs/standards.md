@@ -37,7 +37,10 @@ Decided with the user, 2026-10-03. The roadmap's next big feature (`roadmap.md`,
 The requirements are what make it a system rather than flavour: the shipyard checks a module
 against a socket, a port a ship against its pad, without anyone writing those checks by hand.
 
-## The tree
+## A tree to come
+
+(Sketched before any standard was written; kept as a list of what will need covering, not as
+the classification: that comes from the standards themselves.)
 
 | Branch | Covers (the first standards in bold) |
 |---|---|
@@ -88,14 +91,14 @@ adoption decides.
 
 ## Where they're kept
 
-- **The source is YAML in the repo** (`standards/`, see its README): the folders are the tree
-  (a body per folder, a branch per folder inside it, a standard per file), with JSON Schemas for
-  the editor. Authored in the IDE, not in the game.
-- `python3 tools/standards/build.py` checks it all and writes `standards/index.html` (the tree to
-  browse: search, tables with headers, what each builds on and what builds on it) and the game's
-  content (`content/base/bodies.ron`, `standards.ron`, generated).
-- **In the game:** docked or landed at a port, **V STANDARDS** shows the port's copy as a tree.
-  Next: products declaring what they conform to, the checks run.
+- **The source is YAML in the repo** (`standards/`, see its README): a folder per body, its
+  standards flat beside it with **permanent numbers** (`FSO 12`, as ISO numbers), and free
+  **topics** as tags. The classification (likely multi-dimensional) waits until the standards
+  written show what it should be; nothing is renumbered when it comes.
+- `python3 tools/standards/build.py` checks it all and writes `standards/index.html` (browse by
+  topic or by number) and the game's content (`content/base/bodies.ron`, `standards.ron`,
+  generated; the game's tree is the topics for now).
+- **In the game:** docked or landed at a port, **V STANDARDS** shows the port's copy.
 
 ## Ships to standards (the first use)
 

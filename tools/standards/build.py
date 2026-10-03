@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-"""The standards, from their YAML tree, checked and built.
+"""The standards, from their YAML, checked and built.
 
     python3 tools/standards/build.py
 
-Reads `standards/` (a folder per body with `_body.yaml`; a folder per branch, named
-`<path>-<slug>`, with `_branch.yaml`; a file per standard, `NNN-<slug>.yaml`, its id
-<prefix>/<branch path>/<NNN>), checks it, and writes:
+Reads `standards/`: a folder per body (named after its prefix) with `_body.yaml`, and its
+standards beside it, flat, one file each: `NNNN-<slug>.yaml`, the number its permanent id
+(`FSO 12`: never reused, never changed, whatever it's later filed under). A standard's `topics`
+are free tags describing it; how they'll be classified is left until patterns show.
 
-- `standards/index.html`: the tree to browse (open it; rerun and refresh after an edit);
-- `content/base/bodies.ron` and `content/base/standards.ron`: what the game loads
-  (generated: edit the YAML, not these).
+Writes:
+- `standards/index.html`: browse by topic or by number (rerun and refresh after an edit);
+- `content/base/bodies.ron` and `content/base/standards.ron`: what the game loads (generated:
+  edit the YAML, not these; the game's tree is the topics for now).
 
 Exits non-zero with every problem listed if anything's wrong (the page still shows them).
-The schemas in `standards/schema/` are for the editor (yaml-language-server); the checks
-here don't need them. See docs/standards.md.
+See docs/standards.md.
 """
 import html
 import json
@@ -33,7 +34,7 @@ BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "founded_by", "a
 BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
 # The game's brands (members and makers are named by them).
 BRANDS = dict(re.findall(r'key: "(brand\.[a-z0-9_]+)", name: "([^"]*)"', open(os.path.join(ROOT, "content", "base", "brands.ron"), encoding="utf-8").read()))
-STANDARD_FIELDS = {"version", "title", "status", "scope", "refs", "params", "requires", "text", "licence", "published"}
+STANDARD_FIELDS = {"version", "title", "status", "topics", "scope", "refs", "params", "requires", "text", "licence", "published"}
 
 problems = []
 
@@ -51,54 +52,20 @@ def load(path):
         return {}
 
 
-def walk_branch(body, folder, parent_path, branches, standards):
-    """A branch folder: its _branch.yaml, its standards, its sub-branches."""
-    meta = load(os.path.join(folder, "_branch.yaml"))
-    path = str(meta.get("path", ""))
-    title = meta.get("title", "")
-    if not re.fullmatch(r"[0-9]+(\.[0-9]+)*", path):
-        problem(folder, f"_branch.yaml: path '{path}' should be like 2 or 2.1")
-        return
-    parent = path.rsplit(".", 1)[0] if "." in path else None
-    if parent != parent_path:
-        problem(folder, f"branch {path} is in the folder of {parent_path or 'its body'} (its parent should be {parent or 'the body'})")
-    if not os.path.basename(folder).startswith(path + "-"):
-        problem(folder, f"folder should be named '{path}-<slug>'")
-    if not title:
-        problem(folder, "_branch.yaml: no title")
-    branches.append({"path": path, "title": title, "note": meta.get("note", ""), "folder": os.path.relpath(folder, TREE)})
-    numbers = set()
-    for name in sorted(os.listdir(folder)):
-        full = os.path.join(folder, name)
-        if os.path.isdir(full):
-            if os.path.exists(os.path.join(full, "_branch.yaml")):
-                walk_branch(body, full, path, branches, standards)
-            else:
-                problem(full, "a folder without _branch.yaml (not a branch)")
-        elif name.endswith(".yaml") and name != "_branch.yaml":
-            m = re.fullmatch(r"([0-9]{3})-[a-z0-9-]+\.yaml", name)
-            if not m:
-                problem(full, "a standard's file is named NNN-<slug>.yaml")
-                continue
-            if m.group(1) in numbers:
-                problem(full, f"number {m.group(1)} twice in branch {path}")
-            numbers.add(m.group(1))
-            s = load(full)
-            s["id"] = f"{body['prefix']}/{path}/{m.group(1)}"
-            s["body"] = body["key"]
-            s["branch"] = path
-            s["file"] = os.path.relpath(full, TREE)
-            standards.append(s)
-
-
 def check_standard(s, ids):
     where = os.path.join(TREE, s["file"])
     for k in s:
-        if k not in STANDARD_FIELDS | {"id", "body", "branch", "file"}:
+        if k not in STANDARD_FIELDS | {"id", "body", "number", "file"}:
             problem(where, f"unknown field '{k}'")
-    for k in ["version", "title", "status", "scope", "text", "licence"]:
+    for k in ["version", "title", "status", "topics", "scope", "text", "licence"]:
         if k not in s:
             problem(where, f"no {k}")
+    topics = s.get("topics") or []
+    if not isinstance(topics, list) or not topics:
+        problem(where, "topics: a list of at least one tag")
+    for t in topics if isinstance(topics, list) else []:
+        if not isinstance(t, str) or not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", t):
+            problem(where, f"topic '{t}': lower case words joined by -")
     if not isinstance(s.get("version", 1), int) or s.get("version", 1) < 1:
         problem(where, "version: a whole number from 1")
     if s.get("status", "published") not in STATUSES:
@@ -108,7 +75,7 @@ def check_standard(s, ids):
         problem(where, "licence: open, or {fee: credits}")
     for r in s.get("refs", []) or []:
         if r not in ids:
-            problem(where, f"refers to {r}: no such standard")
+            problem(where, f"refers to {r}: no such standard (ids are like 'FSO 12')")
         if r == s["id"]:
             problem(where, "refers to itself")
     keys = set()
@@ -165,21 +132,31 @@ for name in sorted(os.listdir(TREE)):
         body["about"] = [body["about"]]
     if body.get("prefix") != name:
         problem(meta_path, f"prefix {body.get('prefix')} but the folder is {name}")
-    body["branches"] = []
-    body_standards = []
-    for sub in sorted(os.listdir(folder)):
-        full = os.path.join(folder, sub)
+    numbers = {}
+    for name in sorted(os.listdir(folder)):
+        full = os.path.join(folder, name)
+        if name == "_body.yaml":
+            continue
         if os.path.isdir(full):
-            if os.path.exists(os.path.join(full, "_branch.yaml")):
-                walk_branch(body, full, None, body["branches"], body_standards)
-            else:
-                problem(full, "a folder without _branch.yaml (not a branch)")
-    paths = [b["path"] for b in body["branches"]]
-    for p in set(paths):
-        if paths.count(p) > 1:
-            problem(folder, f"branch {p} twice")
+            problem(full, "no folders in a body: its standards sit flat beside _body.yaml")
+            continue
+        m = re.fullmatch(r"([0-9]{4})-[a-z0-9-]+\.yaml", name)
+        if not m:
+            problem(full, "a standard's file is named NNNN-<slug>.yaml (its permanent number)")
+            continue
+        n = int(m.group(1))
+        if n == 0:
+            problem(full, "numbers start at 1")
+        if n in numbers:
+            problem(full, f"number {n} twice (also {numbers[n]})")
+        numbers[n] = name
+        st = load(full)
+        st["number"] = n
+        st["id"] = f"{body.get('prefix', name)} {n}"
+        st["body"] = body.get("key", "")
+        st["file"] = os.path.relpath(full, TREE)
+        standards.append(st)
     bodies.append(body)
-    standards += body_standards
 
 ids = {s["id"] for s in standards}
 for s in standards:
@@ -219,17 +196,18 @@ def write_ron():
         out.append("    (")
         out.append(f"        key: {ron_str(b['key'])},\n        name: {ron_str(caps(b['name']))},\n        prefix: {ron_str(b['prefix'])},")
         out.append(f"        seat: {ron_str(b['seat'])},\n        note: {ron_str(caps(b['note']))},")
+        # (The game's tree, for now: the topics, flat.)
         out.append("        branches: [")
-        for br in sorted(b["branches"], key=lambda x: [int(n) for n in x["path"].split(".")]):
-            out.append(f"            ({ron_str(br['path'])}, {ron_str(caps(br['title']))}),")
+        for t in sorted({t for s in standards if s["body"] == b["key"] for t in s.get("topics", [])}):
+            out.append(f"            ({ron_str(t)}, {ron_str(caps(t.replace('-', ' ')))}),")
         out.append("        ],\n    ),")
     out.append("]\n")
     with open(os.path.join(CONTENT, "bodies.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
     out = [head, "["]
-    for s in sorted(standards, key=lambda s: s["id"]):
+    for s in sorted(standards, key=lambda s: (s["body"], s["number"])):
         out.append("    (")
-        out.append(f"        key: {ron_str(s['id'])},\n        body: {ron_str(s['body'])},\n        branch: {ron_str(s['branch'])},")
+        out.append(f"        key: {ron_str(s['id'])},\n        body: {ron_str(s['body'])},\n        branch: {ron_str((s.get('topics') or ['?'])[0])},")
         out.append(f"        version: {s.get('version', 1)},\n        title: {ron_str(caps(s.get('title', '')))},")
         out.append(f"        scope: {ron_str(caps(s.get('scope', '')))},\n        status: {enum(s.get('status', 'draft'))},")
         out.append("        refs: [" + ", ".join(ron_str(r) for r in s.get("refs", []) or []) + "],")
@@ -251,9 +229,9 @@ def write_ron():
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
-        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "founded_by", "about", "branches") if k in b} for b in bodies],
+        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "founded_by", "about") if k in b} for b in bodies],
         "brands": BRANDS,
-        "standards": sorted(standards, key=lambda s: s["id"]),
+        "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,
     }
@@ -271,5 +249,5 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
-print(f"{len(bodies)} bodies, {sum(len(b['branches']) for b in bodies)} branches, {len(standards)} standards")
+print(f"{len(bodies)} bodies, {len(standards)} standards, {len({t for s in standards for t in s.get('topics', [])})} topics")
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron")

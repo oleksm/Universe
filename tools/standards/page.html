@@ -91,118 +91,119 @@ document.getElementById("theme").addEventListener("click", () => {
 });
 const byId = Object.fromEntries(DATA.standards.map(s => [s.id, s]));
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-const parentOf = p => p.includes(".") ? p.slice(0, p.lastIndexOf(".")) : null;
-const numeric = p => p.split(".").map(Number);
-const cmpPath = (a, b) => { const x = numeric(a), y = numeric(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] ?? -1) - (y[i] ?? -1); if (d) return d; } return 0; };
+// A body's topics (tags on its standards), and its standards under one.
+const topicsOf = body => [...new Set(DATA.standards.filter(s => s.body === body.key).flatMap(s => s.topics || []))].sort();
+const under = (body, topic, q) => DATA.standards.filter(s => s.body === body.key && (s.topics || []).includes(topic) && matches(s, q));
+const ofBody = (body, q) => DATA.standards.filter(s => s.body === body.key && matches(s, q));
 
 // What's open, kept between visits (if storage works).
 let open = new Set();
-try { open = new Set(JSON.parse(localStorage.getItem("standards-open") || "[]")); } catch (e) {}
-const keepOpen = () => { try { localStorage.setItem("standards-open", JSON.stringify([...open])); } catch (e) {} };
-if (!open.size) DATA.bodies.forEach(b => open.add("b:" + b.key));
-
-function nodeKey(n) { return n.kind === "body" ? "b:" + n.body.key : n.kind === "branch" ? `r:${n.body.key}:${n.branch.path}` : "s:" + n.std.id; }
-
-function count(body, path) {
-  return DATA.standards.filter(s => s.body === body.key && (s.branch === path || s.branch.startsWith(path + "."))).length;
-}
+try { open = new Set(JSON.parse(localStorage.getItem("standards-open2") || "[]")); } catch (e) {}
+const keepOpen = () => { try { localStorage.setItem("standards-open2", JSON.stringify([...open])); } catch (e) {} };
+if (!open.size) DATA.bodies.forEach(b => { open.add("b:" + b.key); open.add("g:" + b.key + ":topics"); });
 
 function matches(s, q) {
   if (!q) return true;
-  const hay = [s.id, s.title, s.scope, s.text, ...(s.params || []).map(p => `${p.key} ${p.value} ${p.unit || ""} ${p.note || ""}`)].join(" ").toLowerCase();
+  const hay = [s.id, s.title, s.scope, s.text, ...(s.topics || []), ...(s.params || []).map(p => `${p.key} ${p.value} ${p.unit || ""} ${p.note || ""}`)].join(" ").toLowerCase();
   return q.split(/\s+/).every(w => hay.includes(w));
 }
 
+// The tree as shown: body; by topic (each topic, its standards); by number.
 function rows(q) {
   const out = [];
   for (const body of DATA.bodies) {
-    out.push({ kind: "body", body, depth: 0 });
-    if (!open.has("b:" + body.key) && !q) continue;
-    const branches = [...body.branches].sort((a, b) => cmpPath(a.path, b.path));
-    const visit = (parent, depth) => {
-      for (const br of branches.filter(b => parentOf(b.path) === parent)) {
-        const stds = DATA.standards.filter(s => s.body === body.key && s.branch === br.path && matches(s, q));
-        const under = DATA.standards.filter(s => s.body === body.key && (s.branch === br.path || s.branch.startsWith(br.path + ".")) && matches(s, q)).length;
-        if (q && !under) continue;
-        const n = { kind: "branch", body, branch: br, depth };
-        out.push(n);
-        if (open.has(nodeKey(n)) || q) {
-          visit(br.path, depth + 1);
-          for (const s of stds) out.push({ kind: "std", body, std: s, depth: depth + 1 });
-        }
+    const bk = "b:" + body.key;
+    out.push({ k: bk, depth: 0, kind: "body", label: `${body.name} (${body.prefix})`, title: body.name });
+    if (!open.has(bk) && !q) continue;
+    const gt = `g:${body.key}:topics`;
+    out.push({ k: gt, depth: 1, kind: "group", label: "By topic", n: topicsOf(body).length });
+    if (open.has(gt) || q) {
+      for (const t of topicsOf(body)) {
+        const stds = under(body, t, q);
+        if (q && !stds.length) continue;
+        const tk = `t:${body.key}:${t}`;
+        out.push({ k: tk, depth: 2, kind: "topic", label: t, n: under(body, t, "").length });
+        if (open.has(tk) || q) for (const s of stds) out.push({ k: "s:" + s.id + "@" + t, depth: 3, kind: "std", std: s });
       }
-    };
-    visit(null, 1);
+    }
+    const gn = `g:${body.key}:number`;
+    out.push({ k: gn, depth: 1, kind: "group", label: "By number", n: ofBody(body, "").length });
+    if (open.has(gn) || q) for (const s of ofBody(body, q)) out.push({ k: "s:" + s.id + "@#", depth: 2, kind: "std", std: s });
   }
   return out;
 }
 
-let current = location.hash.slice(1);
-// (Open the way to a standard: its body and each branch down to it.)
+let current = decodeURIComponent(location.hash.slice(1));
+const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
+// (Open the way to a standard: under its first topic.)
 function reveal(k) {
-  const s = k.startsWith("s:") && byId[k.slice(2)];
-  if (!s) return;
+  const s = stdOf(k); if (!s) return;
+  const at = k.includes("@") ? k.split("@")[1] : (s.topics || [])[0];
   open.add("b:" + s.body);
-  let p = s.branch;
-  while (p) { open.add(`r:${s.body}:${p}`); p = parentOf(p); }
+  if (at === "#") open.add(`g:${s.body}:number`);
+  else if (at) { open.add(`g:${s.body}:topics`); open.add(`t:${s.body}:${at}`); }
   keepOpen();
 }
 reveal(current);
-function select(key) { current = key; location.hash = key; render(); }
+function select(key) { current = key; location.hash = encodeURIComponent(key); render(); }
 
 function render() {
   const q = document.getElementById("q").value.trim().toLowerCase();
-  const tree = document.getElementById("tree");
   const list = rows(q);
   let html = DATA.problems.length ? `<div class="problems"><b>${DATA.problems.length} problem(s)</b> (the game's content isn't updated until they're fixed):<ul>${DATA.problems.map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>` : "";
   for (const n of list) {
-    const k = nodeKey(n);
     const pad = `padding-left:${12 + n.depth * 18}px`;
-    const sel = k === current ? " sel" : "";
-    if (n.kind === "body") {
-      html += `<div class="row body${sel}" style="${pad}" data-k="${k}" title="${esc(n.body.name)}"><span class="tw">${open.has(k) ? "▾" : "▸"}</span>${esc(n.body.name)} (${esc(n.body.prefix)})</div>`;
-    } else if (n.kind === "branch") {
-      const c = count(n.body, n.branch.path);
-      html += `<div class="row${c ? "" : " empty"}${sel}" style="${pad}" data-k="${k}" title="${esc(n.branch.path + " " + n.branch.title)}"><span class="tw">${open.has(k) || q ? "▾" : "▸"}</span>${esc(n.branch.path)} ${esc(n.branch.title)} <span class="n">(${c})</span></div>`;
+    const sel = n.k === current ? " sel" : "";
+    const tw = n.kind === "std" ? "" : (open.has(n.k) || q ? "▾" : "▸");
+    if (n.kind === "std") {
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw"></span><span class="sid">${esc(n.std.id)}</span> ${esc(n.std.title)}</div>`;
     } else {
-      html += `<div class="row${sel}" style="${pad}" data-k="${k}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw"></span><span class="sid">${esc(n.std.id)}</span> ${esc(n.std.title)}</div>`;
+      const cls = n.kind === "body" ? " body" : "";
+      const count = n.n !== undefined ? ` <span class="n">(${n.n})</span>` : "";
+      html += `<div class="row${cls}${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.title || n.label)}"><span class="tw">${tw}</span>${esc(n.label)}${count}</div>`;
     }
   }
-  tree.innerHTML = html;
-  document.getElementById("count").textContent = `${DATA.standards.length} standards · ${DATA.bodies.reduce((a, b) => a + b.branches.length, 0)} branches`;
+  document.getElementById("tree").innerHTML = html;
+  const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
+  document.getElementById("count").textContent = `${DATA.standards.length} standards · ${topics.size} topics`;
   document.getElementById("detail").innerHTML = detail(current);
 }
 
 function value(v) { return Array.isArray(v) ? `${v[0]} – ${v[1]}` : esc(v); }
 
 function detail(k) {
-  if (!k) return `<h2>The standards registry</h2><p class="meta">Pick a body, branch or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
+  if (!k) return `<h2>The standards registry</h2><p class="meta">Pick a body, topic or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
+  const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} <span class="meta">${esc((s.topics || []).join(" · "))}</span></div>`).join("") || `<p class="meta">None yet.</p>`;
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
     const seat = b.seat === "home" ? "the home station" : b.seat;
-    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${b.branches.length} branches · ${n} standards</div><p>${esc(b.note)}</p>`;
+    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${n} standards · ${topicsOf(b).length} topics</div><p>${esc(b.note)}</p>`;
     if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
     if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
     return h;
   }
-  if (kind === "r") {
-    const b = DATA.bodies.find(x => x.key === rest[0]); const br = b && b.branches.find(x => x.path === rest[1]); if (!br) return "";
-    const subs = b.branches.filter(x => parentOf(x.path) === br.path).sort((x, y) => cmpPath(x.path, y.path));
-    const here = DATA.standards.filter(s => s.body === b.key && s.branch === br.path);
-    let h = `<h2>${esc(b.prefix)} ${esc(br.path)} ${esc(br.title)}</h2><div class="file">standards/${esc(br.folder)}/</div>`;
-    if (br.note) h += `<p>${esc(br.note)}</p>`;
-    if (subs.length) h += `<h3>Branches</h3>` + subs.map(s => `<div><a data-k="r:${b.key}:${s.path}">${esc(s.path)} ${esc(s.title)}</a> <span class="meta">(${count(b, s.path)})</span></div>`).join("");
-    if (here.length) h += `<h3>Standards</h3>` + here.map(s => `<div><a data-k="s:${s.id}">${esc(s.id)} v${s.version}</a> ${esc(s.title)}</div>`).join("");
-    if (!subs.length && !here.length) h += `<p class="meta">Nothing published here yet.</p>`;
+  if (kind === "g") {
+    const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
+    if (rest[1] === "number") return `<h2>${esc(b.prefix)} by number</h2>` + list(ofBody(b, ""));
+    return `<h2>${esc(b.prefix)} by topic</h2>` + topicsOf(b).map(t => `<div><a data-k="${esc(`t:${b.key}:${t}`)}">${esc(t)}</a> <span class="meta">(${under(b, t, "").length})</span></div>`).join("") || `<p class="meta">No topics yet: they come from the standards' tags.</p>`;
+  }
+  if (kind === "t") {
+    const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
+    const t = rest.slice(1).join(":");
+    const stds = under(b, t, "");
+    const near = [...new Set(stds.flatMap(s => s.topics || []))].filter(x => x !== t).sort();
+    let h = `<h2>${esc(t)}</h2><div class="meta">${esc(b.prefix)} · ${stds.length} standards</div><h3>Standards</h3>` + list(stds);
+    if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
-  const s = byId[rest.join(":")]; if (!s) return "";
+  const s = stdOf(k); if (!s) return "";
   const body = DATA.bodies.find(x => x.key === s.body);
   const lic = s.licence === "open" ? "open" : `${s.licence.fee} credits a product`;
-  let h = `<h2><span style="color:var(--id)">${esc(s.id)} v${s.version}</span> ${esc(s.title)}</h2>`;
+  let h = `<h2><span style="color:var(--id)">${esc(s.id)}</span> <span class="meta">v${s.version}</span> ${esc(s.title)}</h2>`;
   h += `<div class="meta">${esc(s.status)} · licence ${esc(lic)} · ${esc(body ? body.name : s.body)}</div><div class="file">standards/${esc(s.file)}</div>`;
+  h += `<div style="margin-top:6px">` + (s.topics || []).map(t => `<a data-k="${esc(`t:${s.body}:${t}`)}">#${esc(t)}</a>`).join(" ") + `</div>`;
   h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   if ((s.refs || []).length) h += `<h3>Builds on</h3>` + s.refs.map(r => `<div><a data-k="s:${r}">${esc(r)}</a> ${esc(byId[r] ? byId[r].title : "?")}</div>`).join("");
   const cited = DATA.cited[s.id] || [];
@@ -252,7 +253,7 @@ document.getElementById("q").addEventListener("input", render);
     grip.addEventListener("pointermove", move); grip.addEventListener("pointerup", up);
   });
 }
-window.addEventListener("hashchange", () => { current = location.hash.slice(1); reveal(current); render(); });
+window.addEventListener("hashchange", () => { current = decodeURIComponent(location.hash.slice(1)); reveal(current); render(); });
 render();
 </script>
 </body>
