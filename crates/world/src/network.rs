@@ -67,7 +67,8 @@ pub fn neighbours(galaxy: &Galaxy, home: usize) -> Vec<usize> {
 }
 
 /// Gate the home system to each of its neighbours (`neighbours`): home the
-/// hub, plus the two shortest links between neighbours side by side for loops.
+/// hub, plus the two shortest links between neighbours side by side for loops;
+/// the hub's longest gate dropped, that neighbour reached through a loop.
 pub fn build(galaxy: &Galaxy, home: usize) -> Vec<(usize, usize)> {
     let around = neighbours(galaxy, home);
     let dist = |a: usize, b: usize| galaxy.stars[a].position.distance(galaxy.stars[b].position);
@@ -76,6 +77,12 @@ pub fn build(galaxy: &Galaxy, home: usize) -> Vec<(usize, usize)> {
     let mut pairs: Vec<(usize, usize)> = (0..around.len()).map(|k| (around[k], around[(k + 1) % around.len()])).filter(|(a, b)| a != b).collect();
     pairs.sort_by(|p, q| dist(p.0, p.1).total_cmp(&dist(q.0, q.1)));
     links.extend(pairs.into_iter().take(2));
+    // The hub's longest gate goes where a loop reaches that neighbour anyway:
+    // it's reached through the next system (traffic and news chain through).
+    let looped = |n: usize| links.iter().any(|&(a, b)| a != home && b != home && (a == n || b == n));
+    if let Some(k) = (0..around.len()).filter(|&k| looped(links[k].1)).max_by(|&a, &b| dist(home, links[a].1).total_cmp(&dist(home, links[b].1))) {
+        links.remove(k);
+    }
     links
 }
 
@@ -94,7 +101,7 @@ mod tests {
     use crate::World;
 
     #[test]
-    fn gate_network_links_home_to_four_neighbours_each_with_one_to_three_gates() {
+    fn gate_network_links_home_to_its_neighbours_each_with_one_to_three_gates() {
         let w = World::new(1984);
         let mut systems: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
         systems.sort();
@@ -103,8 +110,8 @@ mod tests {
         assert!(systems.contains(&w.home_system));
         for &s in &systems {
             let links = w.gate_links_of(s);
-            // (Home is the hub: a gate to each neighbour.)
-            let gates = if s == w.home_system { 4..=4 } else { 1..=3 };
+            // (Home is the hub: a gate to each neighbour but the one reached through a loop.)
+            let gates = if s == w.home_system { 3..=3 } else { 1..=3 };
             assert!(gates.contains(&links.len()), "system {s} has {} gates", links.len());
             let sys = w.system(s);
             for (to, _) in &links {

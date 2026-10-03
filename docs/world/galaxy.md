@@ -33,7 +33,9 @@ The first home is a sun-like star (G or K) near the middle of the region, with a
 round an **Earth-like world** (surface gravity under about 1.1 g, so a starter ship lands on it)
 and at least four planets. Four neighbours are settled round it, one toward each side (seen from
 above, within 8 ly, near its plane: `network::neighbours`); home is the gate hub, with a gate to
-each, plus loops between the two closest pairs side by side (`network::build`). With real spacing the lanes come out
+each but the farthest, plus loops between the two closest pairs side by side; the farthest
+neighbour is reached through a loop, so its traffic and news chain through the next system
+(`network::build`). With real spacing the lanes come out
 about 4-7 ly, the typical gate of `hyperspace.md`, so a 100 t ship crosses one in under a minute.
 
 ## The map
