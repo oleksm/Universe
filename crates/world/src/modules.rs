@@ -29,9 +29,9 @@ pub enum Does {
     Rack { capacity: f64 },
     /// A passenger cabin: seats, with their life support (in a cargo slot).
     Cabin { seats: u32 },
-    /// The hyperdrive: its field's `efficiency` (the share of its draw that holds
-    /// and pushes the field; the rest is heat).
-    Hyperdrive { efficiency: f64 },
+    /// The hyperdrive: its field's `efficiency` (the share of the fuel's energy
+    /// that goes into the field; the rest is heat), and its top speed (`top_c`, c).
+    Hyperdrive { efficiency: f64, top_c: f64 },
     /// Flies the ship by wire: how fast it lets it turn (rad/s): pitch and yaw, roll.
     FlightComputer { turn_rate: f64, roll_rate: f64 },
     Transponder,
@@ -44,12 +44,13 @@ pub enum Does {
     Comm { capture: f64, link: f64, lag: f64, capacity: f64 },
     /// A gate relay (fitted to a gate ring): links its system's net to its
     /// twin's through the lane's tube (in capsules: `hypernet::capsule_time`), handling a message
-    /// in `lag` (s) more, `capacity` messages an hour.
-    GateRelay { lag: f64, capacity: f64 },
+    /// in `lag` (s) more, `capacity` messages an hour, throwing a batch every
+    /// `cadence` s (capsules can't pass each other in the flow: they go by turns).
+    GateRelay { lag: f64, capacity: f64, cadence: f64 },
     /// A hyper relay (space structures): links its site to others through
     /// hyperspace (Dogma's hyper-signal), handling a message in `lag` (s),
-    /// `capacity` messages an hour.
-    HyperRelay { lag: f64, capacity: f64 },
+    /// `capacity` messages an hour, throwing a batch every `cadence` s.
+    HyperRelay { lag: f64, capacity: f64, cadence: f64 },
     LifeSupport,
     Gun,
     Laser,
@@ -57,7 +58,15 @@ pub enum Does {
     MiningRig,
     /// Runs these autopilots; and its hyperdrive interlock: never closer
     /// than `interlock` m to a body's highest ground (0: it has none).
-    NavComputer { features: Vec<Feature>, #[serde(default)] interlock: f64 },
+    NavComputer {
+        features: Vec<Feature>,
+        #[serde(default)]
+        interlock: f64,
+        /// Its hyperdrive governor (1/s): held to this times the distance to
+        /// the nearest surface (slow close to bodies; 0: none).
+        #[serde(default)]
+        governor: f64,
+    },
 }
 
 /// An autopilot a nav computer runs.
@@ -252,8 +261,8 @@ impl Module {
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
             Does::Sensors { range } => positive("range", *range),
             Does::Comm { capture, link, lag, capacity } => positive("capture", *capture).and(positive("link", *link)).and(positive("capacity", *capacity)).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
-            Does::GateRelay { lag, capacity } | Does::HyperRelay { lag, capacity } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
-            Does::Hyperdrive { efficiency } => if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) },
+            Does::GateRelay { lag, capacity, .. } | Does::HyperRelay { lag, capacity, .. } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
+            Does::Hyperdrive { efficiency, top_c } => positive("top_c", *top_c).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
             // (Storage can't beat the physics sheet's density.)
             Does::Capacitor { capacity, rate } => positive("capacity", *capacity).and(positive("rate", *rate)).and(if *capacity <= crate::sheet::CAPACITOR_DENSITY * self.mass * 1.001 {
                 Ok(())

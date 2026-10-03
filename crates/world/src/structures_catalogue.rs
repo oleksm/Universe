@@ -10,8 +10,10 @@ pub enum StructureKind {
     Outpost,
     /// An orbital site round a planet or moon: its transceiver and hyper relay.
     Orbital,
-    /// A gate ring: its class, and the longest throat a pair of them holds (light years).
-    GateRing { class: u8, span_ly: f64 },
+    /// A gate ring: its class, the longest throat a pair of them holds (light
+    /// years), and the fastest it catches a ship entering it (m/s): faster, the
+    /// capture wrecks it.
+    GateRing { class: u8, span_ly: f64, capture: f64 },
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize)]
@@ -39,6 +41,11 @@ impl Structure {
             && !(span_ly.is_finite() && span_ly > 0.0)
         {
             return Err(format!("a ring's span must be positive ({span_ly})"));
+        }
+        if let StructureKind::GateRing { capture, .. } = self.kind
+            && !(capture.is_finite() && capture > 0.0)
+        {
+            return Err(format!("a ring's capture speed must be positive ({capture})"));
         }
         Ok(())
     }

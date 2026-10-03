@@ -18,23 +18,14 @@
         entries: [
             (name: "SPEED_OF_LIGHT", value: 299792458.0, unit: "m/s", kind: Real, note: "c: light, radio, radar, and every capture of an event."),
             (name: "STEFAN_BOLTZMANN", value: 5.670374e-8, unit: "W/(m²·K⁴)", kind: Real, note: "σ: how a body radiates heat: σ·ε·A·T⁴."),
-            (name: "SOLAR_LUMINOSITY", value: 3.828e26, unit: "W", kind: Real, note: "The Sun's power: stars' luminosities are reckoned in it (1361 W/m² at 1 AU)."),
-        ],
-    ),
-    (
-        name: "Medium",
-        note: "The hyper-medium: it holds what moves in it under v_lim = K·d, d the distance from the nearest surface (slow close to bodies, fast in the open). The same everywhere: no inside, no outside.",
-        entries: [
-            (name: "HYPER_RATE", value: 2.0, unit: "1/s", kind: Invented, note: "K: the limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c."),
         ],
     ),
     (
         name: "Field",
-        note: "A hyper-field's cost, drawn from the tank: dE/dx = m·E0·(1 + (v/v*)²) / η, η the device's. Anywhere: what limits a ship is the fuel it carries. See docs/world/hyperspace.md; tools/experiments/hyper_fuel.py.",
+        note: "A hyper-field's cost, drawn from the tank: dE/dx = m·E0·(1 + (v/v*)²) / η, η the device's. The same everywhere (how fast a drive can go, and its governor near bodies, are its products' specs): what limits a ship is the fuel it carries. See docs/world/hyperspace.md; tools/experiments/hyper_fuel.py.",
         entries: [
             (name: "FIELD_COST", value: 2.391e-3, unit: "J/(kg·m)", kind: Invented, note: "E0: the energy per kg per metre, going slow. Target: a normal ship (a Drover's tank, an S2 drive) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star; an explorer that's mostly tank about 5 ly."),
             (name: "V_BEST_C", value: 1000.0, unit: "c", kind: Invented, note: "v*: at this speed the cost is double the slow cost (it grows with the square of speed)."),
-            (name: "V_TOP_C", value: 3000.0, unit: "c", kind: Invented, note: "A field's top speed. Target: full throttle costs ten times the slow cost (rushing burns a tank in a tenth of the distance)."),
         ],
     ),
     (
@@ -47,8 +38,6 @@
             (name: "TUBE_RHO", value: 406.0, unit: "kg", kind: Invented, note: "A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry."),
             (name: "TUBE_K", value: 3.0, unit: "", kind: Invented, note: "A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 9 ships a day."),
             (name: "TUBE_HOLD", value: 2.592e8, unit: "s", kind: Invented, note: "Holding a tube costs its opening over this (100 months: 1% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous."),
-            (name: "TUBE_SETTLE", value: 3.0, unit: "s", kind: Invented, note: "After a throw a tube's flow settles this long before the next can be caught: the cadence data is batched at. Target: news crosses a relay link in 1-2 s."),
-            (name: "MAX_TRANSIT_SPEED", value: 300.0, unit: "m/s", kind: Invented, note: "A ring catches what enters it slower than this; faster and the capture wrecks it."),
         ],
     ),
 ]

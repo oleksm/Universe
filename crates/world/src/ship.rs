@@ -46,6 +46,11 @@ pub struct ClassSpec {
     pub plant_efficiency: f64,
     /// Its hyperdrive's field efficiency (0: none fitted).
     pub hyper_efficiency: f64,
+    /// Its hyperdrive's top speed (m/s; its product's).
+    pub hyper_top: f64,
+    /// Its avionics' hyperdrive governor (1/s: held to this times the distance to the nearest
+    /// surface; None: none fitted, the drive goes as fast as the throttle says).
+    pub governor: Option<f64>,
     /// Its comm (a base block): what it hears and whom it reaches on the hypernet.
     pub comm: crate::modules::Comm,
     /// Its capacitor banks: what they store (J), and how fast they take it
@@ -453,7 +458,8 @@ impl ClassSpec {
         let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
         let hold_volume: f64 = modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum();
         let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output, .. } = m.does { Some(output) } else { None }).sum();
-        let hyper_efficiency = modules().filter_map(|m| if let Does::Hyperdrive { efficiency } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max);
+        let hyper_efficiency = modules().filter_map(|m| if let Does::Hyperdrive { efficiency, .. } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max);
+        let hyper_top = modules().filter_map(|m| if let Does::Hyperdrive { top_c, .. } = m.does { Some(top_c * universe_physics::laws::SPEED_OF_LIGHT) } else { None }).fold(0.0, f64::max);
         let plant_efficiency = modules().filter_map(|m| if let Does::PowerPlant { output, efficiency, .. } = m.does { Some(output * efficiency) } else { None }).sum::<f64>() / power_output.max(1e-9);
         let power_draw: f64 = modules().map(|m| m.power).sum();
         if power_draw > power_output {
@@ -529,6 +535,8 @@ impl ClassSpec {
             brand: String::new(),
             plant_efficiency,
             hyper_efficiency,
+            hyper_top,
+            governor: modules().filter_map(|m| if let Does::NavComputer { governor, .. } = m.does { (governor > 0.0).then_some(governor) } else { None }).reduce(f64::max),
             comm,
             capacitor_capacity,
             capacitor_rate,

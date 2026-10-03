@@ -537,16 +537,18 @@ fn slot_help(kind: universe_sim::world::modules::SlotKind) -> (&'static str, &'s
 fn what(m: &Module) -> String {
     match &m.does {
         Does::PowerPlant { output, efficiency, .. } => format!("{:.1} MW AT {:.0}%", output / 1e6, efficiency * 100.0),
-        Does::Hyperdrive { efficiency } => format!("FIELD {:.0}%", efficiency * 100.0),
+        Does::Hyperdrive { efficiency, top_c } => format!("FIELD {:.0}%, TOP {top_c:.0} C", efficiency * 100.0),
         Does::Drive { thrust, exhaust, .. } | Does::Thrusters { thrust, exhaust, .. } | Does::Lift { thrust, exhaust, .. } => format!("{:.0} KN A NOZZLE, {:.0} KM/S", thrust / 1e3, exhaust / 1e3),
         Does::Tank { capacity, .. } | Does::Rack { capacity } => fmt::tonnes(*capacity),
         Does::Cabin { seats } => format!("{seats} SEATS"),
         Does::FlightComputer { turn_rate, roll_rate } => format!("TURNS {turn_rate:.1}, ROLLS {roll_rate:.1} RAD/S"),
         Does::Sensors { range } => fmt::distance(*range),
         Does::Comm { capture, link, .. } => format!("HEARS {}, LINKS {}", fmt::distance(*capture), fmt::distance(*link)),
-        Does::NavComputer { features, interlock } => {
+        Does::NavComputer { features, interlock, governor } => {
             let runs = features.iter().map(|f| format!("{f:?}").to_uppercase()).collect::<Vec<_>>().join(" ");
-            if *interlock > 0.0 { format!("{runs}  INTERLOCK {:.0} M", interlock) } else { runs }
+            let interlock = if *interlock > 0.0 { format!("  INTERLOCK {interlock:.0} M") } else { String::new() };
+            let governor = if *governor > 0.0 { format!("  GOVERNOR {governor:.0}/S") } else { String::new() };
+            format!("{runs}{interlock}{governor}")
         }
         _ => String::new(),
     }

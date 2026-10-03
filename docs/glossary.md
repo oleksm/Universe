@@ -26,7 +26,8 @@ The one place to look a name up. Keep it current when a name is added or changed
 
 | Name | What it is |
 |---|---|
-| **The hyper-medium** (the medium) | What space carries: it holds what moves in it under a limit growing with distance from the nearest surface (`v ≤ K·d`). |
+| **The hyper-medium** (the medium) | What a drive's field moves through and tubes are held open in. No zones, no limits of its own. |
+| **Governor** | A nav computer's spec: its drive held to `k × the distance to the nearest surface` (slow near bodies). Not a law. |
 | **The field** | What a hyperdrive holds a ship in. It burns fuel by the metre, more the faster (`dE/dx = m·E0·(1 + (v/v*)²)/η`), the same anywhere: fuel is the only limit. |
 | **Interlock** | An avionics product's spec: its drive drops out rather than fly into a body. Not a law. |
 | **The tube** | What a gate pair holds open along its route: as long as the span, millions of c inside, crossed by mass and chosen speed (`docs/world/hyperspace.md`). (Was "the throat", a wormhole: being replaced.) |

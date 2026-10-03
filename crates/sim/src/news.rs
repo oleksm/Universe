@@ -234,14 +234,14 @@ mod tests {
         let station = positions[sys.station().unwrap()];
         let kill = |system: usize, at: DVec3, victim: usize| Kill { time: 0.0, system, killer: 7, victim, killer_name: "A".into(), victim_name: "B".into(), weapon: "GUNFIRE".into(), at, cause: universe_protocol::Cause::Rules };
         // A fight 200,000 km from the station (past our own comm's hearing); one far out in the dark;
-        // one by the station of a system next door through a gate.
+        // one by the station (or the gate) of a system next door through a gate.
         let next = charts.gate_links.iter().find_map(|&(a, b)| if a == home { Some(b) } else if b == home { Some(a) } else { None }).unwrap();
         let there = charts.system(next);
         let mut their = Vec::new();
         there.positions(0.0, &mut their);
         // (Out from the station away from its world, so the world doesn't stand in the way.)
         let out = (station - positions[sys.bodies[sys.station().unwrap()].rail.parent.unwrap()]).normalize();
-        let kills = [kill(home, station + out * 2.0e8, 1), kill(home, DVec3::new(1.0e14, 0.0, 0.0), 2), kill(next, their[there.station().unwrap()], 3)];
+        let kills = [kill(home, station + out * 2.0e8, 1), kill(home, DVec3::new(1.0e14, 0.0, 0.0), 2), kill(next, their[there.station().or_else(|| there.gate_to(home)).unwrap()], 3)];
         let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm, player: true, in_tube: false };
         let mut news = Knowledge::default();
         news.update(&charts, 2.0, &us, &Happenings { kills: &kills, ..Default::default() });

@@ -39,7 +39,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     frame.light = app.view.system.bodies.iter().position(|b| b.kind == BodyKind::Star).map(|i| Light {
         position: app.view.positions[i],
         color: tint.map(|c| c / top),
-        luminosity: class.luminosity(),
+        luminosity: app.view.system.luminosity,
         reference: universe_sim::units::AU,
         radius: app.view.system.bodies[i].rail.radius,
     });
@@ -146,7 +146,7 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let thick = (1.0 - altitude / ATMOSPHERE).clamp(0.0, 1.0) as f32;
     let day = ((elevation + 0.05) / 0.3).clamp(0.0, 1.0);
     let twilight = (-(elevation / 0.08).powi(2)).exp();
-    let bright = Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU, radius: 0.0 }.intensity_at(cam);
+    let bright = Light { position: sun, color: [1.0; 3], luminosity: sys.luminosity, reference: universe_sim::units::AU, radius: 0.0 }.intensity_at(cam);
     let tint = sys.class.color();
     let blue = [0.22, 0.42, 0.85];
     let dusk = [0.85, 0.38, 0.16];
@@ -163,7 +163,7 @@ fn galaxy(frame: &mut Frame, app: &App, starlight: f32) {
     let star = |s: &universe_sim::galaxy::GalaxyStar| {
         let rel = (s.position - origin) * LIGHT_YEAR - cam;
         let d_ly = rel.length() / LIGHT_YEAR;
-        let flux = s.class.luminosity() / (d_ly * d_ly).max(1e-9);
+        let flux = s.luminosity() / (d_ly * d_ly).max(1e-9);
         let brightness = ((flux.log10() + 8.0) / 6.0).clamp(0.2, 1.0) as f32;
         (rel.normalize().as_vec3(), color(s.class.color()).scale(brightness))
     };

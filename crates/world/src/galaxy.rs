@@ -37,10 +37,6 @@ impl StarClass {
         self.params().1
     }
 
-    /// Luminosity in solar units (mass-luminosity relation).
-    pub fn luminosity(self) -> f64 {
-        self.mass_suns().powf(3.5)
-    }
 
     pub fn color(self) -> [f32; 3] {
         match self {
@@ -80,6 +76,18 @@ pub struct GalaxyStar {
     pub position: DVec3,
     pub class: StarClass,
     pub seed: u64,
+}
+
+impl GalaxyStar {
+    /// Its mass (suns): its class's, give or take 15% (seeded: its system's first draw).
+    pub fn mass_suns(&self) -> f64 {
+        self.class.mass_suns() * Rng::new(self.seed).range(0.85, 1.15)
+    }
+
+    /// Its luminosity (suns): by its own mass, L ∝ M^3.5 (the main sequence's).
+    pub fn luminosity(&self) -> f64 {
+        self.mass_suns().powf(3.5)
+    }
 }
 
 #[derive(Clone)]

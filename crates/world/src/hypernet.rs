@@ -42,6 +42,8 @@ pub struct Node {
     /// Its hyper relay's handling lag (s); None: on the ground, no relay (a
     /// port talks up to the transceivers over its world).
     pub relay: Option<f64>,
+    /// Its hyper relay's cadence (s: it throws a batch this often).
+    pub cadence: f64,
 }
 
 /// The structure that stands for a body or port of the seeded world: the
@@ -64,27 +66,41 @@ fn span(s: &Structure) -> f64 {
     if let StructureKind::GateRing { span_ly, .. } = s.kind { span_ly } else { 0.0 }
 }
 
+/// The ring a gate of the seeded world is: the smallest class spanning its lane.
+pub fn gate_ring(galaxy: &Galaxy, sys: &StarSystem, gate: usize) -> &'static Structure {
+    let to = sys.bodies[gate].link.unwrap_or(sys.index);
+    structure(&StructureKind::GateRing { class: 0, span_ly: 0.0, capture: 0.0 }, galaxy.stars[sys.index].position.distance(galaxy.stars[to].position))
+}
+
+/// The fastest a gate catches a ship entering it (m/s): its ring's.
+pub fn capture_speed(galaxy: &Galaxy, sys: &StarSystem, gate: usize) -> f64 {
+    if let StructureKind::GateRing { capture, .. } = gate_ring(galaxy, sys, gate).kind { capture } else { 0.0 }
+}
+
 /// What a structure has fitted: its comm (a transceiver, or a ground
-/// terminal), and the lags of its hyper relay and gate relay, if any.
-fn fitted(s: &Structure) -> (Comm, Option<f64>, Option<f64>) {
+/// terminal), and its hyper relay's and gate relay's (lag, cadence), if any.
+/// A relay's (handling lag, cadence) (s).
+type RelaySpec = (f64, f64);
+
+fn fitted(s: &Structure) -> (Comm, Option<RelaySpec>, Option<RelaySpec>) {
     let c = content();
     let modules = s.fit.iter().filter_map(|k| c.handle::<crate::modules::Module>(k)).map(|h| &c.get(h).does);
     let (mut comm, mut hyper, mut gate) = (None, None, None);
     for d in modules {
         match d {
-            Does::GateRelay { lag, .. } => gate = Some(*lag),
-            Does::HyperRelay { lag, .. } => hyper = Some(*lag),
+            Does::GateRelay { lag, cadence, .. } => gate = Some((*lag, *cadence)),
+            Does::HyperRelay { lag, cadence, .. } => hyper = Some((*lag, *cadence)),
             d => comm = comm.or(d.comm()),
         }
     }
     (comm.expect("every structure has a comm (content checks)"), hyper, gate)
 }
 
-/// A hyper relay's handling lag (s), by its module's key.
-pub fn relay_lag(module: &str) -> Option<f64> {
+/// A hyper relay's (handling lag, cadence) (s), by its module's key.
+pub fn relay_lag(module: &str) -> Option<(f64, f64)> {
     let c = content();
     c.handle::<crate::modules::Module>(module).and_then(|h| match c.get(h).does {
-        Does::HyperRelay { lag, .. } => Some(lag),
+        Does::HyperRelay { lag, cadence, .. } => Some((lag, cadence)),
         _ => None,
     })
 }
@@ -100,34 +116,34 @@ pub fn nodes(galaxy: &Galaxy, sys: &StarSystem) -> Vec<Node> {
             BodyKind::Station => (StructureKind::Station, 0.0),
             BodyKind::Gate => {
                 let to = b.link.unwrap_or(sys.index);
-                (StructureKind::GateRing { class: 0, span_ly: 0.0 }, galaxy.stars[sys.index].position.distance(galaxy.stars[to].position))
+                (StructureKind::GateRing { class: 0, span_ly: 0.0, capture: 0.0 }, galaxy.stars[sys.index].position.distance(galaxy.stars[to].position))
             }
             _ => continue,
         };
         let (comm, relay, gate) = fitted(structure(&kind, lane));
         let backbone = kind == StructureKind::Station;
-        // (A gate relay's capsules cross the lane's tube.)
-        let crossing = capsule_time(crate::sheet::GATE_CAPSULE, lane * crate::units::LIGHT_YEAR);
-        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay: gate.zip(b.link).map(|(lag, to)| (to, lag + crossing)), offset: DVec3::ZERO, around: None, relay });
+        // (A gate relay's capsules cross the lane's tube, thrown at its cadence.)
+        let gate_relay = gate.zip(b.link).map(|((lag, cadence), to)| (to, lag + capsule_time(crate::sheet::GATE_CAPSULE, lane * crate::units::LIGHT_YEAR, cadence)));
+        out.push(Node { at: NodeAt::Body(i), name: b.name.clone(), comm, backbone, gate_relay, offset: DVec3::ZERO, around: None, relay: relay.map(|r| r.0), cadence: relay.map_or(0.0, |r| r.1) });
     }
     let (comm, _, _) = fitted(structure(&StructureKind::Spaceport, 0.0));
     for (k, sp) in sys.spaceports.iter().enumerate() {
-        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: None, relay: None });
+        out.push(Node { at: NodeAt::Port(k), name: sp.name.clone(), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: None, relay: None, cadence: 0.0 });
     }
     if !out.is_empty() {
         let (comm, relay, _) = fitted(structure(&StructureKind::Orbital, 0.0));
         for (i, b) in sys.bodies.iter().enumerate().filter(|(_, b)| matches!(b.kind, BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon)) {
-            out.push(Node { at: NodeAt::Body(i), name: format!("{} orbital", b.name), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: Some(i), relay });
+            out.push(Node { at: NodeAt::Body(i), name: format!("{} orbital", b.name), comm, backbone: false, gate_relay: None, offset: DVec3::ZERO, around: Some(i), relay: relay.map(|r| r.0), cadence: relay.map_or(0.0, |r| r.1) });
         }
     }
     out
 }
 
-/// Data across a tube `span` m long in capsules of `capsule` kg (s): half
-/// the flow's settle (the cadence it's thrown at, on average a wait), and the
-/// capsule's natural crossing.
-pub fn capsule_time(capsule: f64, span: f64) -> f64 {
-    universe_physics::laws::TUBE_SETTLE / 2.0 + universe_physics::hyper::tube_natural_time(capsule, span)
+/// Data across a tube `span` m long in capsules of `capsule` kg thrown every
+/// `cadence` s (s): half the cadence (on average, the wait for the next throw),
+/// and the capsule's natural crossing.
+pub fn capsule_time(capsule: f64, span: f64, cadence: f64) -> f64 {
+    cadence / 2.0 + universe_physics::hyper::tube_natural_time(capsule, span)
 }
 /// Where a node is at `t` (`positions` at `t`).
 pub fn position(sys: &StarSystem, node: &Node, t: f64, positions: &[DVec3]) -> DVec3 {
@@ -220,7 +236,7 @@ impl Net {
                     if let (None, Some(u)) = (lag[k], uplink[k])
                         && let Some(lu) = lag[u]
                     {
-                        lag[k] = Some(lu + capsule_time(crate::sheet::RELAY_CAPSULE, at[u].distance(at[k])) + nodes[k].relay.unwrap_or(0.0));
+                        lag[k] = Some(lu + capsule_time(crate::sheet::RELAY_CAPSULE, at[u].distance(at[k]), nodes[k].cadence) + nodes[k].relay.unwrap_or(0.0));
                     }
                 }
             }

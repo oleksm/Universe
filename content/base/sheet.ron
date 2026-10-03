@@ -11,6 +11,7 @@
         name: "Drives",
         note: "The world's drives as built today (each engine's exhaust and efficiency are its product's: modules.ron).",
         entries: [
+            (name: "SOLAR_LUMINOSITY", value: 3.828e26, unit: "W", kind: Real, note: "The Sun's power: the unit stars' luminosities are given in (each star's its own, seeded round its class's)."),
             (name: "GROUND_MARGIN", value: 20000.0, unit: "m", kind: Tuning, note: "Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top)."),
         ],
     ),

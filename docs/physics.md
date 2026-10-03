@@ -71,15 +71,11 @@ system is quick and cheap; between stars it's an expedition; gates are justified
 
 ### The medium
 
-Space carries a **hyper-medium**. Near a mass it holds anything moving through it (a drive's
-field, a signal) under a local limit:
-
-    v_lim(x) = K · d(x)
-
-- `d`: distance to the nearest massive body's surface. Slow deep in wells, zero at a surface:
-  bodies block it. `K = 2 /s` (at 1 AU from a star the limit is about 1,000 c).
-- **In open space there's no speed limit.** The only limit is energy (below).
-- The **interlock**: nothing moves in it within 1 km of a body's highest ground.
+Space carries a **hyper-medium** that a drive's field moves through and tubes are held open in.
+It has no zones and no limits of its own: what a field costs is the one law below
+(*Hyperdrive*), the same everywhere. How fast a drive goes, how its avionics slow it near bodies
+(a **governor**, `v ≤ k · d` with d the distance to the nearest surface) and keep it out of them
+(an **interlock**) are **products' specs**, by brand, not laws.
 
 ### Energy: fuel, reactors, capacitors, consumers
 
@@ -137,8 +133,9 @@ drawn straight from its tank (the fuel's energy: deuterium 3.45×10¹⁴ J/kg).
   of speed (the shape of drag: borrowed, not derived). Speed is bought.
 - **Top speed 3,000 c** (Invented): full throttle costs ten times the slow cost.
 - **`η`** (0.6-0.75 by brand): the drive's efficiency.
-- Speed is also held to the medium's limit near masses, `v ≤ K · d` (`K = 2 /s`, d the distance to
-  the nearest surface): slow close to bodies, fast in the open. A formula, not a zone.
+- How fast a drive can go (its top speed) and its avionics' governor near bodies are products'
+  specs: Kestrel drives 3,000 c, Halcyon 3,500 c; the nav computers' governor 2/s (k × the
+  distance to the nearest surface). Without avionics: as fast as the throttle says, anywhere.
 
 So: **nothing walls a ship in; fuel and money limit how far it goes.** A hop round a system costs
 kilograms; leaving and coming back from a few hundred AU, about a hundred; the next star, more
@@ -159,7 +156,7 @@ under fire.
 A gate pair (or a relay pair, a thin one) holds a **tube** of the medium open along its route: as
 long as the span, millions of c inside. Crossing, opening and holding are one formula by mass
 (a tube weighs by its diameter cubed); data crosses in capsules, thrown and caught at the flow's
-settle cadence (light can't be caught reliably in the tube's unstable flow). The laws, their
+relays' cadence (light can't be caught reliably in the tube's unstable flow). The laws, their
 targets and the numbers: **`docs/world/hyperspace.md` §3**; Dogma's `Tube` laws; the calculations
 in `tools/experiments/`.
 

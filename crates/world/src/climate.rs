@@ -5,7 +5,8 @@
 //! a near world's glow and reflection).
 
 use glam::DVec3;
-use universe_physics::laws::{SOLAR_LUMINOSITY, STEFAN_BOLTZMANN as SIGMA};
+use crate::sheet::SOLAR_LUMINOSITY;
+use universe_physics::laws::STEFAN_BOLTZMANN as SIGMA;
 
 use crate::sheet::{ALBEDO_CRATERED, ALBEDO_DRY, ALBEDO_GIANT, ALBEDO_TERRAN, GREENHOUSE, LAPSE_RATE, NIGHT_FLOOR, SWING_DAMPING};
 use crate::system::{BodyKind, StarSystem};
@@ -19,7 +20,7 @@ fn star(sys: &StarSystem, positions: &[DVec3]) -> Option<(usize, DVec3)> {
 /// Starlight at `p` (W/m²), unshaded.
 pub fn flux(sys: &StarSystem, positions: &[DVec3], p: DVec3) -> f64 {
     let Some((_, s)) = star(sys, positions) else { return 0.0 };
-    sys.class.luminosity() * SOLAR_LUMINOSITY / (4.0 * std::f64::consts::PI * p.distance_squared(s).max(1.0))
+    sys.luminosity * SOLAR_LUMINOSITY / (4.0 * std::f64::consts::PI * p.distance_squared(s).max(1.0))
 }
 
 /// Is the star hidden from `p` by a world or moon?

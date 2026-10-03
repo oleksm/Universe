@@ -1,23 +1,12 @@
 //! The hyper layer's laws (invented, by written rule: `docs/physics.md`):
-//! the medium's slack, a field's draw and the speed a power buys, a throat's
-//! upkeep. Devices built on them (hyperdrives, gates, relays) are the world's.
+//! a field's cost by the metre, a tube's crossing, opening and holding. Devices built on them (hyperdrives, gates, relays) are the world's.
 
-use crate::laws::{FIELD_COST, HYPER_RATE, SPEED_OF_LIGHT, TUBE_EPS, TUBE_GAMMA, TUBE_HOLD, TUBE_K, TUBE_RHO, TUBE_T_LY, V_BEST_C, V_TOP_C};
-
-/// The medium's limit on speed `d` metres from the nearest surface (m/s).
-pub fn limit(d: f64) -> f64 {
-    HYPER_RATE * d
-}
+use crate::laws::{FIELD_COST, SPEED_OF_LIGHT, TUBE_EPS, TUBE_GAMMA, TUBE_HOLD, TUBE_K, TUBE_RHO, TUBE_T_LY, V_BEST_C};
 
 /// The energy a field holding `mass` kg takes to go a metre at `speed`,
 /// through a device of efficiency `eta` (J/m): from the tank.
 pub fn field_cost(mass: f64, speed: f64, eta: f64) -> f64 {
     mass * FIELD_COST * (1.0 + (speed / (V_BEST_C * SPEED_OF_LIGHT)).powi(2)) / eta
-}
-
-/// A field's top speed (m/s).
-pub fn field_top() -> f64 {
-    V_TOP_C * SPEED_OF_LIGHT
 }
 
 /// A light year (m), for the tube's per-light-year law.

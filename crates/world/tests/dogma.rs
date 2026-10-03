@@ -10,7 +10,7 @@ use universe_world::units::{AU, LIGHT_YEAR};
 
 /// A field's efficiency, the best drive there is.
 fn best_drive() -> f64 {
-    content().modules.iter().filter_map(|(_, m)| if let Does::Hyperdrive { efficiency } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max)
+    content().modules.iter().filter_map(|(_, m)| if let Does::Hyperdrive { efficiency, .. } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max)
 }
 
 /// How far a full tank takes a ship of `mass` kg carrying `fuel` kg of deuterium at `speed`
@@ -49,8 +49,9 @@ fn hopping_round_a_system_costs_little() {
     let per_kg = universe_world::materials::material("material.deuterium").map(|m| m.energy).unwrap();
     let kg = universe_physics::hyper::field_cost(91_500.0, V_BEST_C * SPEED_OF_LIGHT / 3.0, 0.6) * 40.0 * AU / per_kg;
     assert!(kg < 30.0, "{kg:.1} kg for 40 AU");
-    // Data across a relay's tube in a system: the flow's settle, a second or two.
-    let hop = universe_world::hypernet::capsule_time(RELAY_CAPSULE, 2.0 * AU);
+    // Data across a relay's tube in a system (the relay's cadence its own): a second or two.
+    let cadence = universe_world::hypernet::relay_lag("relay.hyper").map(|r| r.1).unwrap();
+    let hop = universe_world::hypernet::capsule_time(RELAY_CAPSULE, 2.0 * AU, cadence);
     assert!((1.0..2.5).contains(&hop), "a relay hop takes {hop} s");
 }
 

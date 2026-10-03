@@ -758,12 +758,13 @@ fn docking_info(app: &App, station: usize, st: &DockingStatus, lines: &mut Vec<(
 
 fn transit_info(app: &App, gate: usize, st: &universe_sim::GateStatus, lines: &mut Vec<(String, Color)>) {
     use universe_sim::gate::TRANSIT_SPEED;
-    use universe_sim::world::gate::MAX_TRANSIT_SPEED;
+    // (The fastest its ring catches a ship: the ring's own spec.)
+    let max = universe_sim::world::hypernet::capture_speed(&app.charts.galaxy, &app.view.system, gate);
     let name = app.view.system.bodies[gate].name.to_uppercase();
     lines.push((format!("TRANSIT {name}  {}", mode_label(st.autopilot, st.phase)), HUD));
-    let too_fast = st.speed > MAX_TRANSIT_SPEED;
+    let too_fast = st.speed > max;
     let target = if st.guidance.final_run {
-        format!("PASS AT {}, MAX {}", fmt::speed(TRANSIT_SPEED), fmt::speed(MAX_TRANSIT_SPEED))
+        format!("PASS AT {}, MAX {}", fmt::speed(TRANSIT_SPEED), fmt::speed(max))
     } else {
         format!("GO {}", fmt::speed(st.guidance.desired_velocity.length()))
     };
@@ -1443,7 +1444,7 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     // The glare goes with the light itself: the square root of the
     // irradiance (1 at 1 AU from a sun-like star), unadapted — a hundred
     // times the light close in is ten times the glare.
-    let irradiance = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.class.luminosity(), reference: universe_sim::units::AU, radius: 0.0 }.irradiance_at(cam);
+    let irradiance = universe_engine::Light { position: sun, color: [1.0; 3], luminosity: sys.luminosity, reference: universe_sim::units::AU, radius: 0.0 }.irradiance_at(cam);
     let [r, g, b] = sys.class.color();
     let disc = frame.projected_radius(sun, sys.bodies[star].rail.radius).max(2.0);
     let k = (irradiance.sqrt() as f32).min(12.0);

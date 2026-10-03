@@ -24,15 +24,18 @@ capital ship in minutes.
 
 ## 1. The medium
 
-| Law | Formula | Constants |
-|---|---|---|
-| Speed limit near masses | `v_lim = K · d` (`d`: distance from the nearest surface) | K = 2 /s: at 1 AU from a star about 1,000 c |
+No laws of its own: no zones, no limits, the same everywhere. What moving through it costs is the
+field's law (§2); what holding a tube in it costs, the tubes' (§3). The rest is products':
 
-- A formula, not a zone: close to a world the limit is small (20,000 km/s at 10,000 km), in the
-  open it's large.
-- Keeping a drive from carrying a ship into a body is its **avionics' interlock** (a product's
-  spec, e.g. 1 km off the highest ground), not a law: with none fitted, the drive goes where it's
-  pointed.
+| Spec | On | Value (base world) |
+|---|---|---|
+| Top speed | a hyperdrive | Kestrel 3,000 c, Halcyon 3,500 c |
+| Governor: `v ≤ k · d` near bodies (d: distance to the nearest surface) | a nav computer | k = 2 /s (about 1,000 c at 1 AU from a star, 20,000 km/s at 10,000 km from a world) |
+| Interlock: drops out rather than come within this of a body's ground | a nav computer | 1 km |
+| Capture: the fastest a ring catches a ship entering it | a gate ring | 300 m/s |
+| Cadence: a batch of capsules thrown this often | a hyper relay, a gate relay | 3 s |
+
+Without avionics a drive goes as fast as the throttle says, wherever it's pointed.
 
 ## 2. The field: hyperdrives
 
@@ -65,7 +68,7 @@ What comes out (`tools/experiments/hyper_fuel.py`; deuterium at 3.45×10¹⁴ J/
 
 - **Nothing walls a ship in.** Fuel and money limit how far it goes; exploration is logistics
   (tankers, depots, drop tanks, ships that are mostly tank).
-- **Speed is the limit of the medium and the throttle:** `v = throttle × min(K·d, top speed)`.
+- **Speed:** `v = throttle × min(governor, top speed)`, both products' specs (§1).
 - Out of fuel in hyperdrive, it drops out where it is.
 
 ## 3. Gates: tubes along the route
@@ -101,7 +104,7 @@ What comes out (`tools/experiments/gate_transit.py`):
 
 - **Rushing**, any payload: 2× faster costs 2.7×, 3× 7×, 5× 55×, 10× about 8,000×.
 - **Cost is linear in mass and span**: the gate's owner prices by both, and by the speed asked.
-- The tube is entered under the ring's capture speed (300 m/s: faster and the capture fails),
+- The tube is entered under the ring's capture speed (its spec: 300 m/s; faster and the capture fails),
   a docking rule at the mouth, not the speed inside.
 
 ### Data through a tube
@@ -147,11 +150,11 @@ costs its opening over `TUBE_HOLD` (it leaks, topped up continuously).
 (`tools/experiments/tube_holding.py`.) *Open for one pass* is a comparison, not a thing ships do:
 no ship today could carry the energy to open a tube of its own.
 
-### The flow settles: data's cadence
+### Data's cadence
 
-After a throw a tube's unstable flow takes **`TUBE_SETTLE` = 3 s** to settle before the next
-throw can be caught: the cadence data is batched at, the same for every tube (target: **news
-crosses a relay link in 1-2 s**). Data across a tube takes half a settle (the wait for the next
+Capsules can't pass each other in a tube's flow, so data goes in batches, thrown by turns: how
+often is the relay's **cadence** (a product's spec, 3 s on the base world's relays; target: news
+crosses a relay link in 1-2 s). Data across a tube takes half a cadence (the wait for the next
 throw) plus the capsule's crossing: a relay hop in a system about 1.5 s (the crossing is
 microseconds), a 5 ly gate about 2.5 s (+ its relay's handling).
 
@@ -172,7 +175,7 @@ Drover crosses in 37-63 s.
 
 *In code (2026-10-02):* Dogma's Tube laws (`config/dogma.ron`), `hyper::tube_*`; gate transits
 take the natural time for the ship's mass and the lane; the hypernet's relay hops and gate data
-cross in capsules at the settle cadence; the Dogma checks test the targets above.
+cross in capsules at their relays' cadence; the Dogma checks test the targets above.
 
 ## Numbers at a glance
 

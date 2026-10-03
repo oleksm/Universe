@@ -12,7 +12,6 @@ use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
 // (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::{GATE_RADIUS, RING_TUBE};
-pub use universe_physics::laws::MAX_TRANSIT_SPEED;
 
 /// The ring's shape, for Dogma; its opening is the trigger.
 pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
@@ -140,7 +139,7 @@ mod tests {
             p.step(1.0 / 60.0, 100.0);
         }
         assert_eq!(p.system, dest, "out at the twin: {:?} after {d} s; events {:?}", p.ship.state, p.events.iter().rev().take(5).collect::<Vec<_>>());
-        assert!(p.ship.is_flying(), "{:?}", p.ship.state);
+        assert!(p.ship.is_flying(), "{:?}; events {:?}", p.ship.state, p.events.iter().rev().take(6).collect::<Vec<_>>());
     }
 }
 

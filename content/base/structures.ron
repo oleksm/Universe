@@ -13,10 +13,10 @@
         note: "A small settlement's port: pads, a works, a few thousand people."),
     (key: "structure.orbital", brand: "brand.tallis", name: "TALLIS ORBITAL SITE", kind: Orbital, fit: ["transceiver.beacon", "relay.hyper"],
         note: "A transceiver and a hyper relay in orbit round a planet or moon (a few satellites: one is always in sight)."),
-    (key: "structure.ring.i", brand: "brand.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 10.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
+    (key: "structure.ring.i", brand: "brand.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 10.0, capture: 300.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
         note: "A gate ring, class I: the shortest throats."),
-    (key: "structure.ring.ii", brand: "brand.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 25.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
+    (key: "structure.ring.ii", brand: "brand.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 25.0, capture: 300.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
         note: "A gate ring, class II: the settled lanes' ring."),
-    (key: "structure.ring.iii", brand: "brand.halcyon", name: "HALCYON RING III", kind: GateRing(class: 3, span_ly: 50.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
+    (key: "structure.ring.iii", brand: "brand.halcyon", name: "HALCYON RING III", kind: GateRing(class: 3, span_ly: 50.0, capture: 300.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
         note: "A gate ring, class III: the longest throat anyone builds."),
 ]

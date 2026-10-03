@@ -2,9 +2,9 @@
 //!
 //! While engaged it carries the ship along a heading (the nose, or one
 //! commanded) at a speed set by the throttle and the room to move: the
-//! distance to the nearest obstacle's surface (the medium's limit, K·d), up to
-//! the field's top speed, and to a commanded destination so as never to
-//! overshoot it. It burns fuel by the way it goes (`hyper::field_cost`), the
+//! drive's top speed (its product's), held near bodies by its avionics'
+//! governor (K × the distance to the nearest surface, or to a commanded
+//! destination so as never to overshoot it). It burns fuel by the way it goes (`hyper::field_cost`), the
 //! same anywhere: what limits how far a ship goes is the fuel it carries. It moves relative to a reference frame
 //! (commanded, or the dominant body's), since targets ride along with their
 //! planets at tens of km/s. Its interlock (a feature of the drive, not a law)
@@ -25,8 +25,7 @@ use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
 // (Its constants are the physics sheet's: config/dogma.ron.)
 pub use crate::sheet::GROUND_MARGIN;
-use universe_physics::hyper::{field_cost, field_top};
-pub use universe_physics::laws::HYPER_RATE;
+use universe_physics::hyper::field_cost;
 
 
 /// Engage or disengage as commanded (only in flight). Both ways the engine
@@ -157,7 +156,10 @@ pub fn cruise(
     // Speed grows with room to move: distance to the nearest surface, and
     // to the destination if there is one, so we never overshoot it.
     let room = cmd.destination.map_or(clearance, |d| clearance.min(p.distance(d.point)));
-    let speed = (HYPER_RATE * room.max(1000.0)).min(field_top()) * ship.throttle.max(0.02);
+    // As fast as the drive goes (its product's), held near bodies by its avionics' governor if fitted.
+    let top = ship.spec().hyper_top;
+    let cap = ship.spec().governor.map_or(top, |k| (k * room.max(1000.0)).min(top));
+    let speed = cap * ship.throttle.max(0.02);
     // What it costs: the field's energy for the way it goes, from the tank (`field_cost`).
     let burnt = ship.hyper_fuel(field_cost(m, speed, eta) * speed * real_dt);
     if burnt >= ship.fuel {

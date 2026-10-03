@@ -43,7 +43,7 @@ pub fn rules(galaxy: &Galaxy, sys: &StarSystem) -> Rules {
                 let to = b.link.unwrap_or(sys.index);
                 let says = ShipEvent::GateEntered { to: star_name(galaxy.stars[to].seed) };
                 let span = galaxy.stars[sys.index].position.distance(galaxy.stars[to].position) * crate::units::LIGHT_YEAR;
-                r.set(i, Part::Opening, Rule::Transit { name: name.clone(), max_speed: crate::gate::MAX_TRANSIT_SPEED, to, span, says, otherwise: name.clone() });
+                r.set(i, Part::Opening, Rule::Transit { name: name.clone(), max_speed: crate::hypernet::capture_speed(galaxy, sys, i), to, span, says, otherwise: name.clone() });
                 r.set(i, Part::Ring, Rule::Wreck { name: format!("{name} ring"), cause: name.clone() });
             }
             kind if kind.landable() => {

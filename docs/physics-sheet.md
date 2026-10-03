@@ -14,25 +14,15 @@ Constants of physics.
 |---|---|---|---|---|
 | `SPEED_OF_LIGHT` | 2.99792458e8 | m/s | Real | c: light, radio, radar, and every capture of an event. |
 | `STEFAN_BOLTZMANN` | 5.670374e-8 | W/(m²·K⁴) | Real | σ: how a body radiates heat: σ·ε·A·T⁴. |
-| `SOLAR_LUMINOSITY` | 3.828e26 | W | Real | The Sun's power: stars' luminosities are reckoned in it (1361 W/m² at 1 AU). |
-
-## Medium
-
-The hyper-medium: it holds what moves in it under v_lim = K·d, d the distance from the nearest surface (slow close to bodies, fast in the open). The same everywhere: no inside, no outside.
-
-| Name | Value | Unit | Kind | Why |
-|---|---|---|---|---|
-| `HYPER_RATE` | 2 | 1/s | Invented | K: the limit per metre from the nearest surface. At 1 AU from a star, about 1,000 c. |
 
 ## Field
 
-A hyper-field's cost, drawn from the tank: dE/dx = m·E0·(1 + (v/v*)²) / η, η the device's. Anywhere: what limits a ship is the fuel it carries. See docs/world/hyperspace.md; tools/experiments/hyper_fuel.py.
+A hyper-field's cost, drawn from the tank: dE/dx = m·E0·(1 + (v/v*)²) / η, η the device's. The same everywhere (how fast a drive can go, and its governor near bodies, are its products' specs): what limits a ship is the fuel it carries. See docs/world/hyperspace.md; tools/experiments/hyper_fuel.py.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
 | `FIELD_COST` | 0.002391 | J/(kg·m) | Invented | E0: the energy per kg per metre, going slow. Target: a normal ship (a Drover's tank, an S2 drive) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star; an explorer that's mostly tank about 5 ly. |
 | `V_BEST_C` | 1000 | c | Invented | v*: at this speed the cost is double the slow cost (it grows with the square of speed). |
-| `V_TOP_C` | 3000 | c | Invented | A field's top speed. Target: full throttle costs ten times the slow cost (rushing burns a tank in a tenth of the distance). |
 
 ## Tube
 
@@ -46,8 +36,6 @@ A gate or relay holds a tube of the medium open along its route (as long as the 
 | `TUBE_RHO` | 406 | kg | Invented | A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry. |
 | `TUBE_K` | 3 |  | Invented | A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 9 ships a day. |
 | `TUBE_HOLD` | 2.592e8 | s | Invented | Holding a tube costs its opening over this (100 months: 1% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous. |
-| `TUBE_SETTLE` | 3 | s | Invented | After a throw a tube's flow settles this long before the next can be caught: the cadence data is batched at. Target: news crosses a relay link in 1-2 s. |
-| `MAX_TRANSIT_SPEED` | 300 | m/s | Invented | A ring catches what enters it slower than this; faster and the capture wrecks it. |
 
 # The base world's numbers
 
@@ -59,6 +47,7 @@ The world's drives as built today (each engine's exhaust and efficiency are its 
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
+| `SOLAR_LUMINOSITY` | 3.828e26 | W | Real | The Sun's power: the unit stars' luminosities are given in (each star's its own, seeded round its class's). |
 | `GROUND_MARGIN` | 20000 | m | Tuning | Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top). |
 
 ## Gates

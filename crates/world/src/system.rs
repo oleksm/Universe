@@ -143,6 +143,8 @@ pub struct StarSystem {
     pub index: usize,
     pub name: String,
     pub class: StarClass,
+    /// Its star's luminosity (suns): its own, by its seeded mass.
+    pub luminosity: f64,
     /// Parents always come before their children; body 0 is the star.
     pub bodies: Vec<Body>,
     pub spaceports: Vec<Spaceport>,
@@ -169,9 +171,9 @@ impl StarSystem {
         let mut rng = Rng::new(star.seed);
         let name = names::star_name(star.seed);
         let class = star.class;
-        let lum = class.luminosity();
-
+        // (Its first draw: the same as `GalaxyStar::mass_suns`'s.)
         let star_mass = class.mass_suns() * SUN_MASS * rng.range(0.85, 1.15);
+        let lum = star.luminosity();
         let star_radius = class.radius_suns() * SUN_RADIUS * rng.range(0.85, 1.15);
         let star_mu = G * star_mass;
         let mut bodies = vec![Body {
@@ -313,13 +315,14 @@ impl StarSystem {
             }
 
             let closeness = (a / habitable).ln().abs();
-            if kind == BodyKind::Rocky && station_parent.is_none_or(|(_, c)| closeness < c) {
+            // (Not a scorched inner world: its starlight at most four times Earth's, or a hull cooks.)
+            if kind == BodyKind::Rocky && a >= 0.5 * habitable && station_parent.is_none_or(|(_, c)| closeness < c) {
                 station_parent = Some((planet, closeness));
             }
             a *= rng.range(1.5, 2.1);
         }
 
-        let mut system = Self { index, name, class, bodies, spaceports: Vec::new(), fields: Vec::new() };
+        let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new() };
         if let Some((planet, _)) = station_parent {
             system.add_station(planet, &mut rng);
         }
@@ -431,10 +434,22 @@ impl StarSystem {
     /// way through, points at that star; the twin there faces back), and
     /// orbits in a gap: no moon, station or asteroid field comes near its path.
     pub fn add_gates(&mut self, links: &[(usize, String, DVec3)], seed: u64) {
+        // (No station: the planet nearest the habitable zone that isn't scorched,
+        // starlight at most four times Earth's: a hull at the gate mustn't cook.)
+        let habitable = crate::units::AU * self.luminosity.sqrt();
+        let temperate = |b: &Body| b.rail.orbit.as_ref().map(|o| o.semi_major_axis);
         let parent = self
             .station()
             .and_then(|s| self.bodies[s].rail.parent)
-            .or_else(|| self.bodies.iter().position(|b| b.rail.parent == Some(0) && b.kind.is_planet()))
+            .or_else(|| {
+                self.bodies
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, b)| b.rail.parent == Some(0) && b.kind.is_planet())
+                    .filter_map(|(i, b)| temperate(b).filter(|&a| a >= 0.5 * habitable).map(|a| (i, (a / habitable).ln().abs())))
+                    .min_by(|x, y| x.1.total_cmp(&y.1))
+                    .map(|(i, _)| i)
+            })
             .unwrap_or(0);
         let p_radius = self.bodies[parent].rail.radius;
         let p_mu = self.bodies[parent].rail.mu;
