@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: Wikipedia: LI-900. A range there is given as its middle.
+# Data: NASA Ames Thermal Protection Materials database (TPSX), LI-900 Rigid Tile: measured values, through the thickness; Wikipedia: LI-900 (thermal shock).
 identity:
   name: Silica tile LI-900
   class: ceramic
@@ -9,7 +9,15 @@ identity:
   form:
   - tile
 mass:
-  density: 144.2
+  density: 144.0
+mechanical:
+  youngs_modulus: 0.0483
+  tensile_strength: 0.165
+  compressive_strength: 0.193
 thermal:
-  max_service_temperature: 1477.15
+  max_service_temperature: 1590.0
   thermal_shock_resistance: excellent
+  thermal_conductivity: 0.0476
+  specific_heat_capacity: 628.0
+  thermal_expansion: 4.05e-07
+  emissivity: 0.88
