@@ -181,7 +181,11 @@ function detail(k) {
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
-    return `<h2>${esc(b.name)}</h2><div class="meta">prefix ${esc(b.prefix)} · seat ${esc(b.seat)} · ${b.branches.length} branches · ${n} standards</div><p>${esc(b.note)}</p>`;
+    const seat = b.seat === "home" ? "the home station" : b.seat;
+    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${b.branches.length} branches · ${n} standards</div><p>${esc(b.note)}</p>`;
+    if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
+    if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
+    return h;
   }
   if (kind === "r") {
     const b = DATA.bodies.find(x => x.key === rest[0]); const br = b && b.branches.find(x => x.path === rest[1]); if (!br) return "";

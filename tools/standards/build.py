@@ -29,6 +29,10 @@ CONTENT = os.path.join(ROOT, "content", "base")
 
 STATUSES = ["draft", "published", "superseded", "withdrawn"]
 CHECKS = ["at_most", "at_least", "equals", "fits_within", "provides"]
+BODY_FIELDS = {"key", "name", "prefix", "seat", "note", "kind", "founded_by", "about"}
+BODY_KINDS = ["consortium", "independent", "authority", "corporation", "players"]
+# The game's brands (members and makers are named by them).
+BRANDS = dict(re.findall(r'key: "(brand\.[a-z0-9_]+)", name: "([^"]*)"', open(os.path.join(ROOT, "content", "base", "brands.ron"), encoding="utf-8").read()))
 STANDARD_FIELDS = {"version", "title", "status", "scope", "refs", "params", "requires", "text", "licence", "published"}
 
 problems = []
@@ -149,6 +153,16 @@ for name in sorted(os.listdir(TREE)):
     for k in ["key", "name", "prefix", "seat", "note"]:
         if k not in body:
             problem(meta_path, f"no {k}")
+    for k in body:
+        if k not in BODY_FIELDS:
+            problem(meta_path, f"unknown field '{k}'")
+    if body.get("kind", "consortium") not in BODY_KINDS:
+        problem(meta_path, f"kind: one of {', '.join(BODY_KINDS)}")
+    for m in body.get("founded_by", []) or []:
+        if m not in BRANDS:
+            problem(meta_path, f"founded_by: no brand '{m}' in content/base/brands.ron")
+    if isinstance(body.get("about"), str):
+        body["about"] = [body["about"]]
     if body.get("prefix") != name:
         problem(meta_path, f"prefix {body.get('prefix')} but the folder is {name}")
     body["branches"] = []
@@ -237,7 +251,8 @@ def write_ron():
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
-        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "branches") if k in b} for b in bodies],
+        "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "note", "kind", "founded_by", "about", "branches") if k in b} for b in bodies],
+        "brands": BRANDS,
         "standards": sorted(standards, key=lambda s: s["id"]),
         "cited": cited,
         "problems": problems,

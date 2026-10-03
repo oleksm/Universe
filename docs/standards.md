@@ -59,8 +59,12 @@ adoption decides.
 - **A standards body** is an organisation like any other: founded by a player, an NPC, a
   corporation or an authority; an owner, a seat (a station), a namespace (its prefix). Coarse
   first: the owner publishes. Committees and votes later.
-- **The FSO** (seeded): the starting set, open-licensed, seated at the home station. It plays by
-  the same rules as anyone and can be outdone.
+- **The FSO** (seeded) is a **consortium** of the first makers (Tolland Yards, Vireo Spaceworks,
+  Kestrel Driveworks, Hadley Heavy Industries, Orbital Systems, Halvard Construction), seated at
+  the home station. It **controls no space**: its power is adoption (build to it and your module
+  fits every hull, your ship lands at every port). Decided 2026-10-03: a government's standards
+  office would have brought back territory, which was removed as too close to another game.
+  Its own record (`standards/FSO/_body.yaml`, `about`) says so in full.
 - **Adoption is a fact on products and places**, not on the standard: a product declares what
   it conforms to; a port, the pad and berth standards it offers; an authority, what it mandates.
 - **Certification** is a service: a record, signed by its certifier, that a product was

@@ -26,6 +26,13 @@ standards/
 - Each file's first line points at its schema, so an editor with the YAML language server (VS
   Code's Red Hat YAML extension, for one) completes fields and flags mistakes as you type.
 
+## A body (`_body.yaml`)
+
+`key` (body.fso), `name`, `prefix` (the folder's name), `seat` (a place, or `home`), `note`
+(one line), `kind` (`consortium`, `independent`, `authority`, `corporation`, `players`),
+`founded_by` (brand keys from `content/base/brands.ron`), `about` (paragraphs: who it is, why it's
+followed, what it isn't).
+
 ## A standard
 
 | Field | Holds |

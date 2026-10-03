@@ -81,7 +81,7 @@ p { margin: 4px 0 8px; max-width: 80ch; }
   <article id="detail"></article>
 </main>
 <script>
-const DATA = {"bodies": [{"key": "body.fso", "name": "FOUNDRY STANDARDS OFFICE", "prefix": "FSO", "seat": "home", "note": "THE FIRST STANDARDS: OPEN TO ALL, BUILT TO BY MOST", "branches": []}], "standards": [], "cited": {}, "problems": []};
+const DATA = {"bodies": [{"key": "body.fso", "name": "Foundry Standards Office", "prefix": "FSO", "seat": "home", "note": "The first standards, from the first makers. Open to all, built to by most.", "kind": "consortium", "founded_by": ["brand.tolland", "brand.vireo", "brand.kestrel", "brand.hadley", "brand.orbital", "brand.halvard"], "about": ["The Foundry Standards Office is a consortium: the first makers of hulls, drives, plants, avionics and ports agreeing on how their things fit together, so that a module from one fits a hull from another and every ship can set down at every port. It is seated at the home station, where it keeps its register.\n", "It controls no space. Nobody has to follow its standards; most do because it pays. A module built to an FSO socket sells to every FSO hull, and a ship within an FSO size class lands at every port with pads of that class. Its power is that most of what exists is built to it.\n", "Mandates are not the FSO's. A settled system's authority may require a standard in its space (a port that only takes conforming hulls, lights required on approach), and that is the authority's rule, recorded as theirs, enforced the way it enforces anything: by refusing service. There are no borders in it.\n", "It can be outdone. Anyone (a corporation, a group of players, an authority) can found a standards body and publish rivals; adoption decides. The FSO plays by the same rules as everyone else.\n", "What it isn't: physics (what's true doesn't change by agreement), a product (it makes nothing; products conform to it), law (it can't make anyone follow it), or a guarantee (conformance is claimed by the maker; certifying it is a service someone else performs).\n"], "branches": []}], "brands": {"brand.kestrel": "KESTREL DRIVEWORKS", "brand.hadley": "HADLEY HEAVY INDUSTRIES", "brand.orbital": "ORBITAL SYSTEMS", "brand.cormorant": "CORMORANT MINING", "brand.meridian": "MERIDIAN POWER", "brand.aurel": "AUREL FUSION WORKS", "brand.halcyon": "HALCYON FIELD SYSTEMS", "brand.garrick": "GARRICK ARMS", "brand.tolland": "TOLLAND YARDS", "brand.vireo": "VIREO SPACEWORKS", "brand.tallis": "TALLIS SIGNAL WORKS", "brand.halvard": "HALVARD CONSTRUCTION"}, "standards": [], "cited": {}, "problems": []};
 // The game's dark by default; light if chosen (kept, if storage works).
 try { if (localStorage.getItem("standards-theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) {}
 document.getElementById("theme").addEventListener("click", () => {
@@ -181,7 +181,11 @@ function detail(k) {
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
-    return `<h2>${esc(b.name)}</h2><div class="meta">prefix ${esc(b.prefix)} · seat ${esc(b.seat)} · ${b.branches.length} branches · ${n} standards</div><p>${esc(b.note)}</p>`;
+    const seat = b.seat === "home" ? "the home station" : b.seat;
+    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${b.branches.length} branches · ${n} standards</div><p>${esc(b.note)}</p>`;
+    if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
+    if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
+    return h;
   }
   if (kind === "r") {
     const b = DATA.bodies.find(x => x.key === rest[0]); const br = b && b.branches.find(x => x.path === rest[1]); if (!br) return "";
