@@ -155,7 +155,7 @@ under fire.
 
 A gate pair (or a relay pair, a thin one) holds a **tube** of the medium open along its route: as
 long as the span, millions of c inside. Crossing, opening and holding are one formula by mass
-(a tube weighs by its diameter cubed); data crosses in capsules, thrown and caught at the flow's
+(a tube weighs by its diameter cubed); data crosses in capsules, thrown and caught at their
 relays' cadence (light can't be caught reliably in the tube's unstable flow). The laws, their
 targets and the numbers: **`docs/world/hyperspace.md` §3**; Dogma's `Tube` laws; the calculations
 in `tools/experiments/`.
