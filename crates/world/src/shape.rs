@@ -64,6 +64,9 @@ pub struct Shape {
     pub solids: Vec<Vec<(DVec3, f64)>>,
     /// Each convex part's points in `mesh.points` (the body first).
     pub part_points: Vec<std::ops::Range<usize>>,
+    /// Where its centre of mass was in the frame it was made in (it's
+    /// centred on it since): a model made in that frame is drawn shifted by −this.
+    pub made_centre: DVec3,
 }
 
 impl Shape {
@@ -314,6 +317,6 @@ impl ShapeDef {
             }
         }
         let part_points = ranges.iter().map(|&(p0, p1, _, _)| p0..p1).collect();
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points })
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, made_centre: c })
     }
 }

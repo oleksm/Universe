@@ -788,7 +788,9 @@ fn nav_lights(frame: &mut Frame, lights: [DVec3; 3], pos: DVec3, turned: DQuat, 
 /// its shape in paint scheme `scheme` with its engine bells and canopy.
 fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: usize, t: &Transform) {
     if let Some(m) = ship.spec().visual.as_deref().and_then(crate::models::pbr) {
-        frame.model_pbr(&m, t);
+        // (Its hull is centred on its centre of mass; the model is in the frame it was made in.)
+        let shift = t.rotation.as_dquat() * -ship.spec().shape().made_centre;
+        frame.model_pbr(&m, &Transform { position: t.position + shift, ..*t });
         return;
     }
     hull_model(frame, app.models.painted(ship, scheme), t);

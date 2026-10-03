@@ -144,23 +144,34 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let nv = max(dot(n, v), 1e-4);
     let nl = max(dot(n, l), 0.0);
     let f0 = mix(vec3<f32>(0.04), base.rgb, metallic);
-    var c = vec3<f32>(0.0);
+    // The light on it as the meshes reckon it (the same units, the same eye):
+    // the sun's (in shadow or not), the reflecting planet's, an ambient floor.
+    let ambient = in.sun_dir.w;
+    let shadow = sunlit(in.at, ng);
+    var spec = vec3<f32>(0.0);
+    var f = f0;
     if (nl > 0.0) {
         let h = normalize(l + v);
         let nh = max(dot(n, h), 0.0);
-        let f = schlick(f0, max(dot(v, h), 0.0));
-        let spec = ggx(nh, roughness * roughness) * smith(nv, nl, roughness) * f / max(4.0 * nv * nl, 1e-4);
-        let diffuse = (vec3<f32>(1.0) - f) * (1.0 - metallic) * base.rgb;
-        // (The sun's light here is in the meshes' units: what a white Lambert face lit
-        // square on shows. Diffuse at that scale; the glint over it.)
-        c += (diffuse + spec * PI) * in.sun_light * nl * sunlit(in.at, ng);
+        f = schlick(f0, max(dot(v, h), 0.0));
+        spec = ggx(nh, roughness * roughness) * smith(nv, nl, roughness) * f / max(4.0 * nv * nl, 1e-4);
     }
-    // The reflecting planet's light: how much of the sky it fills, from its side.
+    let sun = in.sun_light * nl * shadow;
+    // The planet's light: how much of the sky it fills from its side, through
+    // the eye's adaptation as on the meshes (see scene.wgsl `fill`).
+    var fill = vec3<f32>(0.0);
     if (in.refl_dir.w > 0.0) {
         let s = min(in.refl_dir.w, 1.0);
-        let k = s * max((dot(n, in.refl_dir.xyz) + 0.3) / 1.3, 0.0);
-        c += base.rgb * (1.0 - metallic * 0.6) * in.refl_color.rgb * in.refl_color.w * k;
+        let cc = 1.0 - sqrt(1.0 - s);
+        let seen = s * max((dot(n, in.refl_dir.xyz) + cc) / (1.0 + cc), 0.0);
+        fill = max(pow(in.refl_color.w * seen, 0.3) - 0.12, 0.0) / 0.88 * in.refl_color.rgb;
     }
+    // The body (what isn't metal) takes all of it; metal only reflects.
+    let body = base.rgb * (1.0 - metallic);
+    var c = body * (vec3<f32>(ambient) + (1.0 - ambient) * (sun * (vec3<f32>(1.0) - f) + fill));
+    c += spec * PI * sun;
+    // Metal under the same ambient floor (what's round it, dimly reflected).
+    c += base.rgb * metallic * ambient;
     // What a glossy surface reflects of the planet: a light the size it looks
     // (an area light). The reflection's lobe widens with roughness; it catches
     // the disc's share of itself (energy kept: a broad lobe, a dim, wide image).
@@ -171,11 +182,8 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
         let off = acos(clamp(dot(r, in.refl_dir.xyz), -1.0, 1.0));
         let edge = clamp((radius + lobe - off) / (2.0 * lobe), 0.0, 1.0);
         let share = min(1.0, (radius * radius) / (lobe * lobe));
-        let fr = schlick(f0, nv);
-        c += fr * in.refl_color.rgb * in.refl_color.w * edge * share;
+        c += schlick(f0, nv) * in.refl_color.rgb * in.refl_color.w * edge * share;
     }
-    // The ambient share (the meshes' own: starlight and the eye adjusting).
-    c += base.rgb * in.sun_dir.w * 0.25 * mix(1.0, 0.3, metallic);
     c += textureSample(emissive_tex, tex_sampler, in.uv).rgb * mat.emissive.rgb;
     return vec4<f32>(c, 1.0);
 }
