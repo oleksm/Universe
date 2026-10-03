@@ -6,11 +6,12 @@
 <title>Standards Registry</title>
 <style>
 :root {
+  --bg: #f4f6f8; --panel: #ffffff; --line: #d6dde3; --text: #1b2630; --dim: #5f7380;
+  --head: #0b8a55; --id: #b06a00; --sel: #dff3ea; --bad: #c0392b; --code: #eef2f5;
+}
+:root[data-theme="dark"] {
   --bg: #0b1016; --panel: #111922; --line: #22303d; --text: #dce6ee; --dim: #7d93a0;
   --head: #60ffb0; --id: #ffb040; --sel: #17352a; --bad: #ff6050; --code: #0e151d;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) { --bg: #f4f6f8; --panel: #ffffff; --line: #d6dde3; --text: #1b2630; --dim: #5f7380; --head: #0b8a55; --id: #b06a00; --sel: #dff3ea; --bad: #c0392b; --code: #eef2f5; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace; }
@@ -18,6 +19,7 @@ header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; bord
 header h1 { font-size: 15px; margin: 0; color: var(--head); letter-spacing: .05em; white-space: nowrap; }
 header input { flex: 1; min-width: 0; max-width: 420px; padding: 6px 10px; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; font: inherit; }
 header .count { color: var(--dim); white-space: nowrap; }
+header button { margin-left: auto; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; font: inherit; cursor: pointer; }
 main { display: grid; grid-template-columns: minmax(260px, 38%) 1fr; height: calc(100vh - 49px); }
 nav { overflow: auto; border-right: 1px solid var(--line); padding: 8px 0; }
 article { overflow: auto; padding: 16px 24px 48px; }
@@ -54,6 +56,7 @@ p { margin: 4px 0 8px; max-width: 80ch; }
   <h1>STANDARDS REGISTRY</h1>
   <input id="q" type="search" placeholder="Search ids, titles, text, parameters…" autocomplete="off">
   <span class="count" id="count"></span>
+  <button id="theme" title="Light or dark">◐</button>
 </header>
 <main>
   <nav id="tree"></nav>
@@ -61,6 +64,13 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 </main>
 <script>
 const DATA = /*DATA*/null;
+// Light by default; dark if chosen (kept, if storage works).
+try { if (localStorage.getItem("standards-theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}
+document.getElementById("theme").addEventListener("click", () => {
+  const dark = document.documentElement.dataset.theme !== "dark";
+  if (dark) document.documentElement.dataset.theme = "dark"; else delete document.documentElement.dataset.theme;
+  try { localStorage.setItem("standards-theme", dark ? "dark" : "light"); } catch (e) {}
+});
 const byId = Object.fromEntries(DATA.standards.map(s => [s.id, s]));
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const parentOf = p => p.includes(".") ? p.slice(0, p.lastIndexOf(".")) : null;
