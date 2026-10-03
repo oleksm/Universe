@@ -103,4 +103,21 @@
         licence: Open,
         published: 0.0,
     ),
+    (
+        key: "FSO 7",
+        body: "body.fso",
+        branch: "all",
+        version: 1,
+        title: "MATERIAL PROCESSING",
+        scope: "",
+        status: Draft,
+        refs: [],
+        params: [
+        ],
+        requires: [
+        ],
+        text: "",
+        licence: Open,
+        published: 0.0,
+    ),
 ]

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Material Processing
+purpose: Material Processing is the first stage of making anything (turning raw matter into materials and stock that things can be built from). It takes elements in and gives out named, graded materials in usable forms like sheet, bar and wire.
+details:
+  text:
+    - "Why a civilisation needs it:"
+    - "- Elements aren't buildable: almost nothing is made from a raw element. Iron becomes useful as steel, and silicon and oxygen as glass. Processing is where matter gets the properties a builder needs."
+    - "- Properties are made, not found: the same composition can be weak or strong depending on how it was treated. Heat treatment and forming set a material's strength, hardness and toughness."
+    - "- Form matters: a builder needs sheet, bar, tube or wire, not a lump. Processing delivers material in shapes the next stage can work with."
+    - "- Consistency: a grade made to a standard is the same from every producer, so a part designed on one world can be built from stock made on another."
+    - "- Value: each step adds worth. Stock sells for more than ingot, and ingot for more than elements. That margin is what pays for the industry, and gives miners a market."
+    - "It sits between mining and refining below it, and fabrication of parts above it."
