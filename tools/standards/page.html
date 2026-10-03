@@ -13,6 +13,7 @@
   --head: #60ffb0; --id: #ffb040; --link: #5cc8f0; --sel: #1f4a3d; --bad: #ff5a4a; --code: #2e363e;
   --th: #48505a; --tbl: #383e46; --tline: #535c67;
   --nav: #20262c;
+  --k-chemical: #60ffb0; --k-thermal: #ffb040; --k-mechanical: #5cc8f0;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -20,6 +21,7 @@
   --head: #04683b; --id: #0a58b8; --link: #0a58b8; --sel: #cdeedd; --bad: #b0281a; --code: #e9eef2;
   --th: #dceaf3; --tbl: #f3f8fb; --tline: #b7cbd8;
   --nav: #f4f6f8;
+  --k-chemical: #04683b; --k-thermal: #a85a00; --k-mechanical: #0a58b8;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; letter-spacing: .06em; }
@@ -68,6 +70,15 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-width: none; margin: 6px 0 12px; }
 .gallery a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; background: var(--tbl); border: 1px solid var(--tline); border-radius: 4px; text-align: center; color: var(--text); font-size: 12px; letter-spacing: 0; }
 .gallery a:hover { border-color: var(--head); text-decoration: none; }
+.ico.k-chemical { color: var(--k-chemical); } .ico.k-thermal { color: var(--k-thermal); } .ico.k-mechanical { color: var(--k-mechanical); }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; max-width: none; }
+.badge { padding: 3px 12px; border: 1px solid var(--tline); border-radius: 12px; cursor: pointer; font-size: 12px; color: var(--dim); background: transparent; user-select: none; }
+.badge:hover { color: var(--text); }
+.badge.on { color: var(--bg); background: var(--text); border-color: var(--text); font-weight: 700; }
+.badge.k-chemical.on { background: var(--k-chemical); border-color: var(--k-chemical); }
+.badge.k-thermal.on { background: var(--k-thermal); border-color: var(--k-thermal); }
+.badge.k-mechanical.on { background: var(--k-mechanical); border-color: var(--k-mechanical); }
+.badge.k-chemical { border-color: var(--k-chemical); } .badge.k-thermal { border-color: var(--k-thermal); } .badge.k-mechanical { border-color: var(--k-mechanical); }
 /* The periodic table: 18 groups across (a column of period numbers first), the f-block below. */
 .ptable { display: grid; grid-template-columns: 22px repeat(18, 46px); gap: 3px; margin: 8px 0 12px; max-width: none; letter-spacing: 0; }
 .ptable .hd { color: var(--dim); font-size: 11px; text-align: center; align-self: center; }
@@ -130,7 +141,9 @@ const processesUnder = (id, q) => DATA.processes.filter(p => p.under === id && p
 const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
 const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length;
 // An element or material named in a process: a link to it.
-const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""}">${DATA.icons[slug]}</span>` : "";
+const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""} ${procBySlug[slug] ? "k-" + procBySlug[slug].identity.kind : ""}">${DATA.icons[slug]}</span>` : "";
+// The kind of process shown in a record's gallery and table (all, or one kind).
+let kindShown = "all";
 const itemLink = x => {
   const e = elBySymbol[x.item], m = matBySlug[x.item];
   const label = e ? e.identity.name : m ? m.identity.name : (x.name || x.item);
@@ -321,8 +334,13 @@ function detail(k) {
   if (els.length) h += periodicTable(els);
   const mats = materialsUnder(s.id, "");
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td><a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
-  const procs = processesUnder(s.id, "");
-  if (procs.length) h += `<h3>Processes</h3><div class="gallery">${procs.map(p => `<a data-k="${esc("proc:" + p.slug)}">${icon(p.slug, "big")}<span>${esc(p.identity.name)}</span></a>`).join("")}</div><table><tr><th>Process</th><th>Kind</th><th>Goes in</th><th>Comes out</th></tr>${procs.map(p => `<tr><td>${icon(p.slug)} <a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${esc(p.identity.kind)}</td><td>${(((p.inputs || {}).materials) || []).map(x => esc((elBySymbol[x.item] || matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name)).join(", ")}</td><td>${(((p.outputs || {}).products) || []).map(x => esc((matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name) + (x.form ? ` (${esc(x.form)})` : x.grade ? ` (${esc(x.grade)})` : "")).join(", ")}</td></tr>`).join("")}</table>`;
+  const allProcs = processesUnder(s.id, "");
+  const procs = allProcs.filter(p => kindShown === "all" || p.identity.kind === kindShown);
+  if (allProcs.length) {
+    const kinds = [...new Set(allProcs.map(p => p.identity.kind))];
+    h += `<h3>Processes</h3><div class="badges"><span class="badge${kindShown === "all" ? " on" : ""}" data-kind="all">all (${allProcs.length})</span>${kinds.map(k => `<span class="badge k-${esc(k)}${kindShown === k ? " on" : ""}" data-kind="${esc(k)}">${esc(k)} (${allProcs.filter(p => p.identity.kind === k).length})</span>`).join("")}</div>`;
+  }
+  if (allProcs.length) h += `<div class="gallery">${procs.map(p => `<a data-k="${esc("proc:" + p.slug)}">${icon(p.slug, "big")}<span>${esc(p.identity.name)}</span></a>`).join("")}</div><table><tr><th>Process</th><th>Kind</th><th>Goes in</th><th>Comes out</th></tr>${procs.map(p => `<tr><td>${icon(p.slug)} <a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${esc(p.identity.kind)}</td><td>${(((p.inputs || {}).materials) || []).map(x => esc((elBySymbol[x.item] || matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name)).join(", ")}</td><td>${(((p.outputs || {}).products) || []).map(x => esc((matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name) + (x.form ? ` (${esc(x.form)})` : x.grade ? ` (${esc(x.grade)})` : "")).join(", ")}</td></tr>`).join("")}</table>`;
   if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
     if (sec.title) h += `<h3>${esc(sec.title)}</h3>`;
@@ -354,6 +372,8 @@ function detail(k) {
 }
 
 document.addEventListener("click", e => {
+  const badge = e.target.closest("[data-kind]");
+  if (badge) { kindShown = badge.dataset.kind; render(); return; }
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
   if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:")) {
