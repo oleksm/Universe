@@ -11,3 +11,4 @@ properties:
   note: { type: string, description: One line, as the game shows it. }
   who: { type: string, description: Who they are. }
   what: { type: string, description: What they do. }
+  story: { type: array, items: { type: string }, description: Their story, in paragraphs. }

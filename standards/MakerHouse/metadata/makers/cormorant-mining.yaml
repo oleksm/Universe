@@ -5,3 +5,7 @@ ticker: CMN
 note: "Mining gear"
 who: "A company of miners that started building its own tools and now sells them."
 what: "Makes mining gear for ships."
+story:
+  - "Cormorant was a mining crew before it was a company. Working the belts with gear built for other jobs, they cut, welded and rebuilt it until it suited the rock, and other crews started asking to buy what they had made."
+  - "It still runs its own mining ships, and every new tool goes out on them for a season before it is sold. The gear looks rough, and the manuals read like they were written by people with gloves on."
+  - "Miners trust Cormorant because it is one of them, and because it will tell a buyer when a cheaper tool would do."
