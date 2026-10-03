@@ -7,14 +7,14 @@
         branch: "all",
         version: 1,
         title: "MINING SHIP",
-        scope: "WHAT A MINING SHIP IS, AND WHY IT CARRIES WHAT IT CARRIES: ITS PURPOSE, THE FORCES IN ITS WAY, AND THE SYSTEMS THAT ANSWER THEM. NOT HOW ANY OF THEM IS BUILT (OTHER STANDARDS, AND MAKERS, DO THAT).",
+        scope: "",
         status: Draft,
         refs: [],
         params: [
         ],
         requires: [
         ],
-        text: "A MINING SHIP EXISTS TO TURN ROCK SOMEWHERE FAR AWAY INTO VALUE AT A MARKET, AND BRING ITS CREW HOME. EVERYTHING ABOARD FOLLOWS FROM THE FORCES IN THE WAY OF THAT. DEFINED FIRST SO THE STANDARDS AFTER IT CAN SAY WHAT THEY ARE FOR.",
+        text: "",
         licence: Open,
         published: 0.0,
     ),

@@ -184,12 +184,11 @@ function detail(k) {
   }
   const s = stdOf(k); if (!s) return "";
   const body = DATA.bodies.find(x => x.key === s.body);
-  const lic = s.licence === "open" ? "open" : `${s.licence.fee} credits a product`;
-  let h = `<h2><span style="color:var(--id)">${esc(s.id)}</span> <span class="meta">v${s.version}</span> ${esc(s.title)}</h2>`;
-  h += `<div class="meta">${esc(s.status)} · licence ${esc(lic)} · ${esc(body ? body.name : s.body)}</div><div class="file">standards/${esc(s.file)}</div>`;
-  h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
+  let h = `<h2><span style="color:var(--id)">${esc(s.id)}</span> ${esc(s.title)}</h2>`;
+  h += `<div class="file">standards/${esc(s.file)}</div>`;
+  if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
-    h += `<h3>${esc(sec.title)}</h3>`;
+    if (sec.title) h += `<h3>${esc(sec.title)}</h3>`;
     const paras = Array.isArray(sec.text) ? sec.text : (sec.text ? [sec.text] : []);
     h += paras.map(p => `<p>${esc(p)}</p>`).join("");
     if (sec.table) h += `<table><tr>${sec.table.columns.map(c => `<th>${esc(c)}</th>`).join("")}</tr>${sec.table.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`;
@@ -212,7 +211,7 @@ function detail(k) {
   const notes = params.filter(p => p.note);
   if (notes.length) h += `<h3>Notes</h3><table><tr><th>Parameter</th><th>Note</th></tr>${notes.map(p => `<tr><td>${esc(p.key)}</td><td>${esc(p.note)}</td></tr>`).join("")}</table>`;
   if ((s.requires || []).length) h += `<h3>Requires</h3><table><tr><th>Subject</th><th>Check</th><th>Against</th><th>Per</th></tr>${s.requires.map(r => `<tr><td>${esc(r.subject)}</td><td>${esc(String(r.check).replace(/_/g, " "))}</td><td>${esc(r.param)}</td><td>${esc(r.per || "")}</td></tr>`).join("")}</table>`;
-  h += `<h3>Why</h3><p>${esc(s.text)}</p>`;
+  if (s.text) h += `<h3>Why</h3><p>${esc(s.text)}</p>`;
   return h;
 }
 

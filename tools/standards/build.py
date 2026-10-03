@@ -57,7 +57,7 @@ def check_standard(s, ids):
     for k in s:
         if k not in STANDARD_FIELDS | {"id", "body", "number", "file"}:
             problem(where, f"unknown field '{k}'")
-    for k in ["version", "title", "status", "scope", "text", "licence"]:
+    for k in ["title"]:
         if k not in s:
             problem(where, f"no {k}")
     topics = s.get("topics") or []
@@ -78,9 +78,10 @@ def check_standard(s, ids):
             problem(where, "refers to itself")
     # Sections: titled, each paragraphs and/or a table (columns, rows of as many cells).
     for sec in s.get("sections", []) or []:
-        if not isinstance(sec, dict) or not sec.get("title"):
-            problem(where, "a section needs a title")
+        if not isinstance(sec, dict):
+            problem(where, "a section is title, text and/or table")
             continue
+        sec.setdefault("title", "")
         for extra in set(sec) - {"title", "text", "table"}:
             problem(where, f"section '{sec['title']}': unknown field '{extra}' (title, text, table)")
         text = sec.get("text", [])
