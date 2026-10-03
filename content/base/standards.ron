@@ -4,9 +4,9 @@
     (
         key: "FSO 1",
         body: "body.fso",
-        branch: "vessels",
+        branch: "all",
         version: 1,
-        title: "MINING SHIP: A DEFINITION",
+        title: "MINING SHIP",
         scope: "WHAT A MINING SHIP IS, AND WHY IT CARRIES WHAT IT CARRIES: ITS PURPOSE, THE FORCES IN ITS WAY, AND THE SYSTEMS THAT ANSWER THEM. NOT HOW ANY OF THEM IS BUILT (OTHER STANDARDS, AND MAKERS, DO THAT).",
         status: Draft,
         refs: [],

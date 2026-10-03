@@ -4,7 +4,7 @@ The standards, as YAML: edit here, in your editor; the game and a browsable page
 it (`docs/standards.md` for what a standard is).
 
     python3 tools/standards/build.py     # check everything; write index.html and the game's content
-    open standards/index.html            # browse by topic or by number (refresh after a rebuild)
+    open standards/index.html            # browse (refresh after a rebuild)
 
 ## Layout
 
@@ -17,9 +17,6 @@ standards/
 
 - **Numbers are permanent:** `FSO 1` stays `FSO 1` whatever it's later filed under (as ISO
   numbers do). Take the next free one for a new standard.
-- **Topics are free tags** (`topics: [vessels, docking]`), as many as describe it. The page
-  groups by them; how they'll be classified (likely more than one dimension) is left until
-  patterns show. Lower case, words joined by `-`.
 
 ## A standard
 
@@ -28,7 +25,6 @@ standards/
 | `version` | from 1 |
 | `title`, `scope` | what it is; what it covers and what it doesn't |
 | `status` | `draft`, `published`, `superseded`, `withdrawn` |
-| `topics` | at least one tag |
 | `sections` | titled sections, each `text` (paragraphs) and/or a `table` (`columns`, `rows`): for a standard that's mostly prose, a definition say |
 | `refs` | ids it builds on (`"FSO 1"`) |
 | `params` | `key`, `value` (a number, `[min, max]`, or text), `unit`, `note`; a key `ROW.column` (`S.length_max`) makes a table |
@@ -36,7 +32,7 @@ standards/
 | `text` | why, for people |
 | `licence` | `open`, or `{fee: 500}` |
 
-Only `version`, `title`, `status`, `topics`, `scope`, `text`, `licence` are needed; write what's
+Only `version`, `title`, `status`, `scope`, `text`, `licence` are needed; write what's
 known, leave the rest out. Ordinary case (the game shows capitals).
 
 With a problem the build lists them all, the page shows them, and the game's content is left as

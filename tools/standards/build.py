@@ -57,12 +57,10 @@ def check_standard(s, ids):
     for k in s:
         if k not in STANDARD_FIELDS | {"id", "body", "number", "file"}:
             problem(where, f"unknown field '{k}'")
-    for k in ["version", "title", "status", "topics", "scope", "text", "licence"]:
+    for k in ["version", "title", "status", "scope", "text", "licence"]:
         if k not in s:
             problem(where, f"no {k}")
     topics = s.get("topics") or []
-    if not isinstance(topics, list) or not topics:
-        problem(where, "topics: a list of at least one tag")
     for t in topics if isinstance(topics, list) else []:
         if not isinstance(t, str) or not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", t):
             problem(where, f"topic '{t}': lower case words joined by -")
@@ -218,7 +216,7 @@ def write_ron():
         out.append(f"        seat: {ron_str(b['seat'])},\n        note: {ron_str(caps(b['note']))},")
         # (The game's tree, for now: the topics, flat.)
         out.append("        branches: [")
-        for t in sorted({t for s in standards if s["body"] == b["key"] for t in s.get("topics", [])}):
+        for t in sorted({t for s in standards if s["body"] == b["key"] for t in (s.get("topics") or ["all"])}):
             out.append(f"            ({ron_str(t)}, {ron_str(caps(t.replace('-', ' ')))}),")
         out.append("        ],\n    ),")
     out.append("]\n")
@@ -227,7 +225,7 @@ def write_ron():
     out = [head, "["]
     for s in sorted(standards, key=lambda s: (s["body"], s["number"])):
         out.append("    (")
-        out.append(f"        key: {ron_str(s['id'])},\n        body: {ron_str(s['body'])},\n        branch: {ron_str((s.get('topics') or ['?'])[0])},")
+        out.append(f"        key: {ron_str(s['id'])},\n        body: {ron_str(s['body'])},\n        branch: {ron_str((s.get('topics') or ['all'])[0])},")
         out.append(f"        version: {s.get('version', 1)},\n        title: {ron_str(caps(s.get('title', '')))},")
         out.append(f"        scope: {ron_str(caps(s.get('scope', '')))},\n        status: {enum(s.get('status', 'draft'))},")
         out.append("        refs: [" + ", ".join(ron_str(r) for r in s.get("refs", []) or []) + "],")

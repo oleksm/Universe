@@ -1,10 +1,6 @@
 version: 1
-title: 'Mining ship: a definition'
+title: Mining ship
 status: draft
-topics:
-- vessels
-- mining
-- definitions
 scope: >-
   What a mining ship is, and why it carries what it carries: its purpose, the forces in its way, and the
   systems that answer them. Not how any of them is built (other standards, and makers, do that).

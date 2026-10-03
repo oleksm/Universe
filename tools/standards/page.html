@@ -100,7 +100,7 @@ const ofBody = (body, q) => DATA.standards.filter(s => s.body === body.key && ma
 let open = new Set();
 try { open = new Set(JSON.parse(localStorage.getItem("standards-open2") || "[]")); } catch (e) {}
 const keepOpen = () => { try { localStorage.setItem("standards-open2", JSON.stringify([...open])); } catch (e) {} };
-if (!open.size) DATA.bodies.forEach(b => { open.add("b:" + b.key); open.add("g:" + b.key + ":topics"); });
+if (!open.size) DATA.bodies.forEach(b => open.add("b:" + b.key));
 
 function matches(s, q) {
   if (!q) return true;
@@ -108,40 +108,24 @@ function matches(s, q) {
   return q.split(/\s+/).every(w => hay.includes(w));
 }
 
-// The tree as shown: body; by topic (each topic, its standards); by number.
+// The tree as shown: each body, its standards under it.
 function rows(q) {
   const out = [];
   for (const body of DATA.bodies) {
     const bk = "b:" + body.key;
     out.push({ k: bk, depth: 0, kind: "body", label: `${body.name} (${body.prefix})`, title: body.name });
     if (!open.has(bk) && !q) continue;
-    const gt = `g:${body.key}:topics`;
-    out.push({ k: gt, depth: 1, kind: "group", label: "By topic", n: topicsOf(body).length });
-    if (open.has(gt) || q) {
-      for (const t of topicsOf(body)) {
-        const stds = under(body, t, q);
-        if (q && !stds.length) continue;
-        const tk = `t:${body.key}:${t}`;
-        out.push({ k: tk, depth: 2, kind: "topic", label: t, n: under(body, t, "").length });
-        if (open.has(tk) || q) for (const s of stds) out.push({ k: "s:" + s.id + "@" + t, depth: 3, kind: "std", std: s });
-      }
-    }
-    const gn = `g:${body.key}:number`;
-    out.push({ k: gn, depth: 1, kind: "group", label: "By number", n: ofBody(body, "").length });
-    if (open.has(gn) || q) for (const s of ofBody(body, q)) out.push({ k: "s:" + s.id + "@#", depth: 2, kind: "std", std: s });
+    for (const s of ofBody(body, q)) out.push({ k: "s:" + s.id, depth: 1, kind: "std", std: s });
   }
   return out;
 }
 
 let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
-// (Open the way to a standard: under its first topic.)
+// (Open the way to a standard: its body.)
 function reveal(k) {
   const s = stdOf(k); if (!s) return;
-  const at = k.includes("@") ? k.split("@")[1] : (s.topics || [])[0];
   open.add("b:" + s.body);
-  if (at === "#") open.add(`g:${s.body}:number`);
-  else if (at) { open.add(`g:${s.body}:topics`); open.add(`t:${s.body}:${at}`); }
   keepOpen();
 }
 reveal(current);
@@ -156,7 +140,7 @@ function render() {
     const sel = n.k === current ? " sel" : "";
     const tw = n.kind === "std" ? "" : (open.has(n.k) || q ? "▾" : "▸");
     if (n.kind === "std") {
-      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw"></span><span class="sid">${esc(n.std.id)}</span> ${esc(n.std.title)}</div>`;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw"></span>${esc(n.std.title)} <span class="n">${esc(n.std.id)}</span></div>`;
     } else {
       const cls = n.kind === "body" ? " body" : "";
       const count = n.n !== undefined ? ` <span class="n">(${n.n})</span>` : "";
@@ -165,21 +149,21 @@ function render() {
   }
   document.getElementById("tree").innerHTML = html;
   const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
-  document.getElementById("count").textContent = `${DATA.standards.length} standards · ${topics.size} topics`;
+  document.getElementById("count").textContent = `${DATA.standards.length} standards`;
   document.getElementById("detail").innerHTML = detail(current);
 }
 
 function value(v) { return Array.isArray(v) ? `${v[0]} – ${v[1]}` : esc(v); }
 
 function detail(k) {
-  if (!k) return `<h2>The standards registry</h2><p class="meta">Pick a body, topic or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
+  if (!k) return `<h2>The standards registry</h2><p class="meta">Pick a body or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
-  const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} <span class="meta">${esc((s.topics || []).join(" · "))}</span></div>`).join("") || `<p class="meta">None yet.</p>`;
+  const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
     const seat = b.seat === "home" ? "the home station" : b.seat;
-    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${n} standards · ${topicsOf(b).length} topics</div><p>${esc(b.note)}</p>`;
+    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${n} standards</div><p>${esc(b.note)}</p>`;
     if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
     if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
     return h;
@@ -203,7 +187,6 @@ function detail(k) {
   const lic = s.licence === "open" ? "open" : `${s.licence.fee} credits a product`;
   let h = `<h2><span style="color:var(--id)">${esc(s.id)}</span> <span class="meta">v${s.version}</span> ${esc(s.title)}</h2>`;
   h += `<div class="meta">${esc(s.status)} · licence ${esc(lic)} · ${esc(body ? body.name : s.body)}</div><div class="file">standards/${esc(s.file)}</div>`;
-  h += `<div style="margin-top:6px">` + (s.topics || []).map(t => `<a data-k="${esc(`t:${s.body}:${t}`)}">#${esc(t)}</a>`).join(" ") + `</div>`;
   h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
     h += `<h3>${esc(sec.title)}</h3>`;
