@@ -207,14 +207,16 @@ for name in sorted(os.listdir(parcels_dir)) if os.path.isdir(parcels_dir) else [
         problem(full, "a parcel's file is named <name>.yaml (lower case, words joined by -)")
         continue
     pc = load(full)
-    for k in ["name", "administration", "place", "owner"]:
+    for k in ["name", "administration", "body", "body_kind", "owner"]:
         if k not in pc:
             problem(full, f"no {k}")
     if "administration" in pc and not any(a["slug"] == pc["administration"] for a in administrations):
         problem(full, f"administration: no '{pc['administration']}' in Local Administration")
     for k in pc:
-        if k not in {"name", "administration", "place", "owner"}:
+        if k not in {"name", "administration", "body", "body_kind", "place", "owner"}:
             problem(full, f"unknown field '{k}'")
+    if "body_kind" in pc and pc["body_kind"] not in ("planet", "moon", "belt", "settlement"):
+        problem(full, "body_kind: one of planet, moon, belt, settlement")
     if "owner" in pc and pc["owner"] not in BRANDS:
         problem(full, f"owner: no maker '{pc['owner']}' in Maker House")
     pc["file"] = os.path.relpath(full, TREE)

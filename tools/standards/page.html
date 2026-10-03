@@ -219,7 +219,7 @@ function rows(q) {
   out.push({ k: "la", depth: 0, kind: "body", label: DATA.local.name, n: DATA.administrations.length });
   if (open.has("la") || q) for (const a of DATA.administrations.filter(aq)) out.push({ k: "ad:" + a.slug, depth: 1, kind: "maker", label: a.name });
   // The Land Register: the parcels under it.
-  const pq = p => !q || q.split(/\s+/).every(w => `${p.name} ${p.place} ${DATA.brands[p.owner] || ""}`.toLowerCase().includes(w));
+  const pq = p => !q || q.split(/\s+/).every(w => `${p.name} ${p.body} ${p.place || ""} ${DATA.brands[p.owner] || ""}`.toLowerCase().includes(w));
   out.push({ k: "lr", depth: 0, kind: "body", label: DATA.land.name, n: DATA.parcels.length });
   if (open.has("lr") || q) for (const p of DATA.parcels.filter(pq)) out.push({ k: "pc:" + p.slug, depth: 1, kind: "maker", label: p.name });
   return out;
@@ -324,7 +324,7 @@ function detail(k) {
   }
   if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div>${logo(m.slug)} <a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
   const admName = s => (DATA.administrations.find(a => a.slug === s) || {}).name || s;
-  const parcelTable = ps => ps.length ? `<table><tr><th>Parcel</th><th>Place</th><th>Managed by</th><th>Owner</th></tr>` + ps.map(p => `<tr><td><a data-k="${esc("pc:" + p.slug)}">${esc(p.name)}</a></td><td>${esc(p.place)}</td><td><a data-k="${esc("ad:" + p.administration)}">${esc(admName(p.administration))}</a></td><td><a data-k="${esc("mk:" + p.owner)}">${esc(DATA.brands[p.owner] || p.owner)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">No parcels yet.</p>`;
+  const parcelTable = ps => ps.length ? `<table><tr><th>Parcel</th><th>Body</th><th>Kind</th><th>Place</th><th>Managed by</th><th>Owner</th></tr>` + ps.map(p => `<tr><td><a data-k="${esc("pc:" + p.slug)}">${esc(p.name)}</a></td><td>${esc(p.body)}</td><td>${esc(p.body_kind)}</td><td>${esc(p.place || "")}</td><td><a data-k="${esc("ad:" + p.administration)}">${esc(admName(p.administration))}</a></td><td><a data-k="${esc("mk:" + p.owner)}">${esc(DATA.brands[p.owner] || p.owner)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">No parcels yet.</p>`;
   if (k === "la") return `<h2>${esc(DATA.local.name)}</h2><p>${esc(DATA.local.note || "")}</p>` + DATA.administrations.map(a => `<div><a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a> <span class="meta">${esc(a.system)}</span></div>`).join("");
   if (kind === "ad") {
     const a = DATA.administrations.find(x => x.slug === rest.join(":")); if (!a) return "";
