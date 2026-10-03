@@ -20,3 +20,14 @@ sections:
       - "A small outpost uses fewer levels: a few modules with units in them have no towers or decks."
       - "An address never changes: when a structure grows, the new part gets new addresses and nothing is renumbered."
       - "Inside a settlement the levels are tower, deck, section, unit. Every deck of a tower has the same sections, and every section the same number of units."
+  - title: Unit size
+    text:
+      - "A unit is one standard space, so that an office, shop or workshop made for one settlement fits in any other. A larger occupant takes several adjoining units."
+      - "These numbers are invented: nothing in the game is built to them yet."
+    table:
+      columns: [Measure, Value]
+      rows:
+        - [Width, "6 m"]
+        - [Depth, "12 m"]
+        - [Clear height, "3 m"]
+        - [Floor area, "72 m2"]

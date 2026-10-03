@@ -208,7 +208,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "bodies"}:
+        if k not in {"name", "bodies", "address"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
@@ -261,6 +261,8 @@ def check_address(rec, where):
 
 for m in makers:
     check_address(m, os.path.join(TREE, m["file"]))
+for ad in administrations:
+    check_address(ad, os.path.join(TREE, ad["file"]))
 
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):

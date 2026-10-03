@@ -1,3 +1,4 @@
 # yaml-language-server: $schema=../../schema/administration.schema.yaml
 # The home system, as the game makes it from its seed (1984). Its bodies: the folder treistun/.
 name: Treistun
+address: { at: treistun/treistun-e-station, tower: Civic Tower, deck: 1, section: A, unit: 1 }

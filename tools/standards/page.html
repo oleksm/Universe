@@ -185,7 +185,7 @@ function matches(s, q) {
 }
 
 // Everyone with an address (SFO 9): standards bodies and makers.
-const ORGS = [...DATA.bodies.map(o => ({ key: o.key, name: o.name, tag: o.prefix, to: "b:" + o.key, address: o.address })), ...DATA.makers.map(m => ({ key: m.key, name: m.name, tag: m.ticker, to: "mk:" + m.key, address: m.address, slug: m.slug }))].filter(o => o.address && o.address.at);
+const ORGS = [...DATA.bodies.map(o => ({ key: o.key, name: o.name, tag: o.prefix, to: "b:" + o.key, address: o.address })), ...DATA.makers.map(m => ({ key: m.key, name: m.name, tag: m.ticker, to: "mk:" + m.key, address: m.address, slug: m.slug })), ...DATA.administrations.map(a => ({ key: "adm." + a.slug, name: `Administration of ${a.name}`, tag: "", to: "ad:" + a.slug, address: a.address }))].filter(o => o.address && o.address.at);
 const placeOf = o => { const [sy, at] = o.address.at.split("/"); const a = DATA.administrations.find(x => x.slug === sy); const x = a && a.bodies.find(y => y.slug === at); return x ? { sy, at, a, x } : null; };
 const inside = ad => [ad.unit && `Unit ${ad.unit}`, ad.section && `Section ${ad.section}`, ad.deck && `Deck ${ad.deck}`, ad.tower].filter(Boolean);
 const addressText = o => { const p = placeOf(o); return p ? [...inside(o.address), p.x.name, p.x.at, p.a.name].filter(Boolean).join(", ") : ""; };
@@ -404,7 +404,7 @@ function detail(k) {
   if (k === "la") return `<h2>${esc(DATA.local.name)}</h2><p>${esc(DATA.local.note || "")}</p>` + DATA.administrations.map(a => `<div><a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a> <span class="meta">${(a.bodies || []).length} bodies</span></div>`).join("");
   if (kind === "ad") {
     const a = DATA.administrations.find(x => x.slug === rest.join(":")); if (!a) return "";
-    return `<h2>${esc(a.name)}</h2><div class="meta">system</div><h3>Bodies</h3><table><tr><th>Body</th><th>Kind</th><th>At</th><th>Position</th></tr>` + (a.bodies || []).map(x => `<tr><td><a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a></td><td>${esc(x.kind)}</td><td>${esc(x.at || "")}</td><td>${pos(x.position)}</td></tr>`).join("") + `</table>` + `<div class="file" style="margin-top:24px">standards/${esc(a.file)}</div>`;
+    return `<h2>${esc(a.name)}</h2><div class="meta">system</div>${ORGS.find(o => o.key === "adm." + a.slug) ? `<h3>Address of its administration</h3><p>${addressHtml(ORGS.find(o => o.key === "adm." + a.slug))}</p>` : ""}<h3>Bodies</h3><table><tr><th>Body</th><th>Kind</th><th>At</th><th>Position</th></tr>` + (a.bodies || []).map(x => `<tr><td><a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a></td><td>${esc(x.kind)}</td><td>${esc(x.at || "")}</td><td>${pos(x.position)}</td></tr>`).join("") + `</table>` + `<div class="file" style="margin-top:24px">standards/${esc(a.file)}</div>`;
   }
   if (kind === "bd") {
     const a = DATA.administrations.find(x => x.slug === rest[0]); const x = a && (a.bodies || []).find(y => y.slug === rest[1]); if (!x) return "";
