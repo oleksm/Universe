@@ -41,13 +41,20 @@ pub struct Interior {
     /// The access plan: its points and the lines between them (session only).
     plan: Plan,
     /// The tool in hand, the work plane's height (its frame, m; none: the hatch's),
-    /// a line's first point, and where a press began (a click, if it doesn't move).
+    /// the point a path being laid runs on from, and where a press began (a click,
+    /// if it doesn't move).
     tool: Tool,
     plane: Option<f32>,
     from: Option<usize>,
     press: Option<Vec2>,
-    /// The point, or else the line, under the cursor; the cursor (HUD pixels).
+    /// The plane's handle held (dragged up or down); the right button pressed to
+    /// stop a path (so it doesn't move the view too).
+    lifting: bool,
+    stopped: bool,
+    /// The point, or else the line, under the cursor, and the one picked (REMOVE
+    /// takes it out); the cursor (HUD pixels).
     hover: Option<Hover>,
+    pick: Option<Hover>,
     cursor: Vec2,
 }
 
@@ -70,13 +77,12 @@ struct Point {
 
 #[derive(Clone, Copy, Default, PartialEq)]
 enum Tool {
-    /// Only looking (turning, moving, nearer and farther).
+    /// Looking (turning, moving, nearer and farther); a click picks a point or line.
     #[default]
     Look,
-    /// A click on the work plane puts a point there.
-    Point,
-    /// A click on a point, then on another, joins them.
-    Line,
+    /// Laying paths: a click on the work plane puts a point there, joined to the last;
+    /// a click on a point joins to it and runs on from it.
+    Path,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -116,7 +122,7 @@ impl Interior {
         let b = add(Vec3::new(c.x, h.y, c.z), &mut self.plan);
         let d = add(Vec3::new(e.x, h.y, (h.z + e.z) * 0.5), &mut self.plan);
         self.plan.lines.extend([(hatch, a), (a, b), (b, cockpit), (hatch, d), (d, engines)]);
-        self.tool = Tool::Point;
+        self.tool = Tool::Path;
     }
 
     /// Turned to look from `yaw`, `pitch` (rad; dev scenarios).
@@ -212,33 +218,54 @@ impl Camera {
     }
 }
 
-/// The toolbar: key, name, what it does.
-const TOOLBAR: [(&str, &str, Action); 6] = [
-    ("V", "LOOK", Action::Tool(Tool::Look)),
-    ("P", "POINT", Action::Tool(Tool::Point)),
-    ("L", "LINE", Action::Tool(Tool::Line)),
-    ("[", "PLANE DOWN", Action::Plane(-0.5)),
-    ("]", "PLANE UP", Action::Plane(0.5)),
-    ("DEL", "REMOVE", Action::Remove),
-];
-
-#[derive(Clone, Copy, PartialEq)]
-enum Action {
-    Tool(Tool),
-    Plane(f32),
-    Remove,
-}
+/// The toolbar: the tools (key, name).
+const TOOLBAR: [(&str, &str, Tool); 2] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path)];
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
     (Vec2::new(12.0 + k as f32 * 124.0, 30.0), Vec2::new(120.0, 16.0))
 }
 
-fn button_at(q: Vec2) -> Option<Action> {
-    (0..TOOLBAR.len()).find(|&k| {
-        let (p, c) = button(k);
-        q.x >= p.x && q.x <= p.x + c.x && q.y >= p.y && q.y <= p.y + c.y
-    }).map(|k| TOOLBAR[k].2)
+fn button_at(q: Vec2) -> Option<Tool> {
+    (0..TOOLBAR.len()).find(|&k| inside(button(k), q)).map(|k| TOOLBAR[k].2)
+}
+
+fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
+    q.x >= p.x && q.x <= p.x + c.x && q.y >= p.y && q.y <= p.y + c.y
+}
+
+/// The tool's panel, at the left: where it is and its size.
+const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 198.0));
+
+/// The panel's actions: the work plane down and up, what's picked out.
+#[derive(Clone, Copy, PartialEq)]
+enum Action {
+    PlaneDown,
+    PlaneUp,
+    Remove,
+}
+
+/// The panel's buttons for the tool in hand (where, its label, what it does).
+fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
+    let (p, c) = PANEL;
+    let at = |row: f32, col: f32, w: f32| (Vec2::new(p.x + 8.0 + col, p.y + row), Vec2::new(w, 16.0));
+    let w = (c.x - 16.0 - 6.0) / 2.0;
+    match tool {
+        Tool::Path => vec![(at(150.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(150.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(174.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)],
+        Tool::Look => vec![(at(150.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)],
+    }
+}
+
+fn panel_button_at(tool: Tool, q: Vec2) -> Option<Action> {
+    panel_buttons(tool).into_iter().find(|(r, _, _)| inside(*r, q)).map(|(_, _, a)| a)
+}
+
+/// The work plane's handle: its corner farthest from the camera, by the walls (its
+/// frame; always in view).
+fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
+    let x = if cam.eye.x > (h.lo.x + h.hi.x) * 0.5 { h.lo.x } else { h.hi.x };
+    let z = if cam.eye.z > (h.lo.z + h.hi.z) * 0.5 { h.lo.z } else { h.hi.z };
+    Vec3::new(x, plane, z)
 }
 
 /// The work plane's height (its frame): as set, or the hatch's (where the crew come in).
@@ -270,9 +297,6 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     interior.refresh(&spec.key, spec.shape());
     interior.seed(&spec.key, spec.shape());
     if input.pressed(KeyCode::Escape) {
-        if interior.from.take().is_some() {
-            return true;
-        }
         return false;
     }
     let Some(h) = interior.hull(&spec.key) else { return true };
@@ -281,17 +305,19 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let cursor = input.cursor;
     interior.cursor = cursor;
     let d = input.mouse_delta;
-    let clicked = if input.button_pressed(MouseButton::Left) { button_at(cursor) } else { None };
-    // The tools, and the work plane up and down.
-    for (key, tool) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Point), (KeyCode::KeyL, Tool::Line)] {
-        if input.pressed(key) || clicked == Some(Action::Tool(tool)) {
-            interior.tool = tool;
+    let pressed = input.button_pressed(MouseButton::Left);
+    // The tools (toolbar or key); the panel's actions.
+    let tool = if pressed { button_at(cursor) } else { None };
+    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path)] {
+        if input.pressed(key) || tool == Some(t) {
+            interior.tool = t;
             interior.from = None;
         }
     }
-    let lift = if input.pressed(KeyCode::BracketRight) || clicked == Some(Action::Plane(0.5)) {
+    let action = if pressed { panel_button_at(interior.tool, cursor) } else { None };
+    let lift = if input.pressed(KeyCode::BracketRight) || action == Some(Action::PlaneUp) {
         0.5
-    } else if input.pressed(KeyCode::BracketLeft) || clicked == Some(Action::Plane(-0.5)) {
+    } else if input.pressed(KeyCode::BracketLeft) || action == Some(Action::PlaneDown) {
         -0.5
     } else {
         0.0
@@ -300,32 +326,59 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         interior.plane = Some((plane_of(interior, &h) + lift).clamp(h.lo.y, h.hi.y));
     }
     interior.hover = hover_at(interior, &cam, cursor);
-    // Removed: what's under the cursor (the hull's own points stay); a point takes
-    // its lines with it.
-    if input.pressed(KeyCode::Delete) || clicked == Some(Action::Remove) {
-        match interior.hover {
-            Some(Hover::Point(k)) if interior.plan.points[k].name.is_none() => {
-                interior.plan.points.remove(k);
-                interior.plan.lines.retain(|&(a, b)| a != k && b != k);
-                for l in &mut interior.plan.lines {
-                    l.0 -= usize::from(l.0 > k);
-                    l.1 -= usize::from(l.1 > k);
-                }
-                interior.from = None;
+    // Removed: what's under the cursor (DEL), or what's picked (REMOVE); the hull's
+    // own points stay; a point takes its lines with it.
+    let gone = if input.pressed(KeyCode::Delete) { interior.hover.or(interior.pick) } else if action == Some(Action::Remove) { interior.pick } else { None };
+    match gone {
+        Some(Hover::Point(k)) if interior.plan.points[k].name.is_none() => {
+            interior.plan.points.remove(k);
+            interior.plan.lines.retain(|&(a, b)| a != k && b != k);
+            for l in &mut interior.plan.lines {
+                l.0 -= usize::from(l.0 > k);
+                l.1 -= usize::from(l.1 > k);
             }
-            Some(Hover::Line(k)) => {
-                interior.plan.lines.remove(k);
-            }
-            _ => {}
+            interior.from = None;
+            interior.pick = None;
         }
+        Some(Hover::Line(k)) => {
+            interior.plan.lines.remove(k);
+            interior.pick = None;
+        }
+        _ => {}
+    }
+    if gone.is_some() {
         interior.hover = None;
     }
-    if clicked.is_some() {
+    if tool.is_some() || action.is_some() || (pressed && inside(PANEL, cursor)) {
         return true;
     }
-    // A left press: a click if it ends where it began (a point placed or picked),
+    // The right button: stops a path being laid (and only that, this press).
+    if input.button_pressed(MouseButton::Right) && interior.from.is_some() {
+        interior.from = None;
+        interior.stopped = true;
+    }
+    if !input.button_down(MouseButton::Right) {
+        interior.stopped = false;
+    }
+    // The plane's handle (laying paths): held, it goes up and down with the mouse.
+    let plane = plane_of(interior, &h);
+    if pressed && interior.tool == Tool::Path && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
+        interior.lifting = true;
+    }
+    if interior.lifting {
+        if input.button_down(MouseButton::Left) {
+            let handle = plane_handle(&cam, &h, plane);
+            let per_pixel = (handle - cam.eye).length() / cam.focal;
+            interior.plane = Some((plane - d.y * per_pixel).clamp(h.lo.y, h.hi.y));
+        } else {
+            interior.lifting = false;
+            interior.plane = interior.plane.map(|y| (y * 10.0).round() / 10.0);
+        }
+        return true;
+    }
+    // A left press: a click if it ends where it began (a point laid or picked),
     // else a turn.
-    if input.button_pressed(MouseButton::Left) {
+    if pressed {
         interior.press = Some(cursor);
     }
     let dragged = interior.press.is_some_and(|p| p.distance(cursor) > 4.0);
@@ -334,42 +387,41 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         interior.pitch = (interior.pitch + d.y * 0.008).clamp(-1.5, 1.5);
     }
     if !input.button_down(MouseButton::Left)
-        && let Some(_) = interior.press.take()
+        && interior.press.take().is_some()
         && !dragged
     {
         match interior.tool {
-            Tool::Point => {
-                let ray = cam.ray(cursor);
-                let y = plane_of(interior, &h);
-                if ray.y.abs() > 1e-4 {
-                    let t = (y - cam.eye.y) / ray.y;
-                    if t > 0.0 {
-                        let at = cam.eye + ray * t;
-                        let at = Vec3::new((at.x * 4.0).round() / 4.0, y, (at.z * 4.0).round() / 4.0);
-                        interior.plan.points.push(Point { at, name: None });
+            Tool::Path => {
+                // On a point: joined to it, and on from it. Else on the plane: a new
+                // point there, joined to the last.
+                let to = match interior.hover {
+                    Some(Hover::Point(k)) => Some(k),
+                    _ => {
+                        let ray = cam.ray(cursor);
+                        let t = if ray.y.abs() > 1e-4 { (plane - cam.eye.y) / ray.y } else { -1.0 };
+                        (t > 0.0).then(|| {
+                            let at = cam.eye + ray * t;
+                            interior.plan.points.push(Point { at: Vec3::new((at.x * 4.0).round() / 4.0, plane, (at.z * 4.0).round() / 4.0), name: None });
+                            interior.plan.points.len() - 1
+                        })
                     }
+                };
+                if let Some(k) = to {
+                    if let Some(a) = interior.from
+                        && a != k
+                        && !interior.plan.lines.iter().any(|&(p, q)| (p, q) == (a, k) || (p, q) == (k, a))
+                    {
+                        interior.plan.lines.push((a, k));
+                    }
+                    interior.from = Some(k);
                 }
             }
-            Tool::Line => {
-                if let Some(Hover::Point(k)) = interior.hover {
-                    match interior.from {
-                        Some(a) if a != k => {
-                            if !interior.plan.lines.iter().any(|&(p, q)| (p, q) == (a, k) || (p, q) == (k, a)) {
-                                interior.plan.lines.push((a, k));
-                            }
-                            // (On from there: a run of lines, point to point.)
-                            interior.from = Some(k);
-                        }
-                        _ => interior.from = Some(k),
-                    }
-                }
-            }
-            Tool::Look => {}
+            Tool::Look => interior.pick = interior.hover,
         }
     }
     let radius = (h.hi - h.lo).length() * 0.5;
     let distance = (cam.eye - interior.target.unwrap_or((h.lo + h.hi) * 0.5)).length();
-    if input.button_down(MouseButton::Right) || input.button_down(MouseButton::Middle) {
+    if (input.button_down(MouseButton::Right) && !interior.stopped) || input.button_down(MouseButton::Middle) {
         let per_pixel = distance / cam.focal;
         let target = interior.target.unwrap_or((h.lo + h.hi) * 0.5);
         interior.target = Some(target + (-cam.right * d.x + cam.up * d.y) * per_pixel);
@@ -394,9 +446,9 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     // The toolbar: the tool in hand lit, the button under the cursor brighter.
     {
         use crate::hud::{draw_cell, Lamp};
-        for (k, (key, name, action)) in TOOLBAR.iter().enumerate() {
+        for (k, (key, name, tool)) in TOOLBAR.iter().enumerate() {
             let (p, c) = button(k);
-            let lamp = if *action == Action::Tool(interior.tool) || button_at(interior.cursor) == Some(*action) { Lamp::On } else { Lamp::Off };
+            let lamp = if *tool == interior.tool || button_at(interior.cursor) == Some(*tool) { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, key, name, lamp);
         }
     }
@@ -507,8 +559,14 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     }
     // The work plane (placing points): its outline over the hull, at its height.
     let plane = plane_of(interior, &h);
-    if interior.tool == Tool::Point {
+    if interior.tool == Tool::Path {
         let c = [Vec3::new(lo.x, plane, lo.z), Vec3::new(hi.x, plane, lo.z), Vec3::new(hi.x, plane, hi.z), Vec3::new(lo.x, plane, hi.z)];
+        // (A light sheet, so it reads among the hull's lines.)
+        if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
+            let fill = [Color([0.4, 1.0, 0.75, 0.06]); 3];
+            frame.hud_triangle_colored([a, b, cc], fill);
+            frame.hud_triangle_colored([a, cc, d], fill);
+        }
         for k in 0..4 {
             seg(frame, c[k], c[(k + 1) % 4], PLANE);
         }
@@ -522,9 +580,22 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             seg(frame, Vec3::new(lo.x, plane, z), Vec3::new(hi.x, plane, z), PLANE.scale(0.5));
             z += 5.0;
         }
-        // Where a click would put a point.
+        // Its handle: dragged up or down.
+        let handle = plane_handle(&cam, &h, plane);
+        if let Some((q, _)) = cam.project(handle) {
+            let held = interior.lifting || q.distance(interior.cursor) < 10.0;
+            let col = if held { PICKED } else { PATH };
+            frame.hud_rect(q - Vec2::splat(5.0), Vec2::splat(10.0), col);
+            frame.hud_line(q - Vec2::new(0.0, 14.0), q + Vec2::new(0.0, 14.0), col);
+            for dy in [-14.0f32, 14.0] {
+                frame.hud_line(q + Vec2::new(0.0, dy), q + Vec2::new(-4.0, dy - 4.0 * dy.signum()), col);
+                frame.hud_line(q + Vec2::new(0.0, dy), q + Vec2::new(4.0, dy - 4.0 * dy.signum()), col);
+            }
+            frame.text_scaled(q + Vec2::new(10.0, -4.0), &format!("PLANE {:.1} M", plane - lo.y), col, 0.7);
+        }
+        // Where a click would put a point (not over one: that joins to it).
         let ray = cam.ray(interior.cursor);
-        if ray.y.abs() > 1e-4 {
+        if ray.y.abs() > 1e-4 && !matches!(interior.hover, Some(Hover::Point(_))) {
             let t = (plane - cam.eye.y) / ray.y;
             if t > 0.0 {
                 let at = cam.eye + ray * t;
@@ -539,10 +610,10 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     // named); what's under the cursor and a line's first point lit.
     let plan = &interior.plan;
     for (k, &(a, b)) in plan.lines.iter().enumerate() {
-        let col = if interior.hover == Some(Hover::Line(k)) { PICKED } else { PATH };
-        seg(frame, plan.points[a].at, plan.points[b].at, col);
+        let lit = interior.hover == Some(Hover::Line(k)) || interior.pick == Some(Hover::Line(k));
+        seg(frame, plan.points[a].at, plan.points[b].at, if lit { PICKED } else { PATH });
     }
-    if interior.tool == Tool::Line
+    if interior.tool == Tool::Path
         && let Some(a) = interior.from
         && let Some((pa, _)) = cam.project(plan.points[a].at)
     {
@@ -550,18 +621,47 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     }
     for (k, p) in plan.points.iter().enumerate() {
         let Some((q, _)) = cam.project(p.at) else { continue };
-        let lit = interior.hover == Some(Hover::Point(k)) || interior.from == Some(k);
+        let lit = interior.hover == Some(Hover::Point(k)) || interior.from == Some(k) || interior.pick == Some(Hover::Point(k));
         let col = if lit { PICKED } else if p.name.is_some() { ANCHOR } else { PATH };
         frame.hud_rect(q - Vec2::splat(3.0), Vec2::splat(6.0), col);
         if let Some(name) = &p.name {
             frame.text_scaled(q + Vec2::new(6.0, -4.0), name, col, 0.7);
         }
     }
-    // What's on: the tool, the plane's height (from the keel), how much is drawn.
-    let tool = match interior.tool {
-        Tool::Look => "LOOK: DRAG TO TURN",
-        Tool::Point => "POINT: CLICK THE PLANE TO PUT ONE ([ ] MOVE IT)",
-        Tool::Line => "LINE: CLICK A POINT, THEN ANOTHER (ESC: STOP)",
-    };
-    frame.text(Vec2::new(12.0, 54.0), &format!("{tool}    PLANE {:.1} M UP    {} POINTS  {} LINES", plane - lo.y, plan.points.len(), plan.lines.len()), LABEL);
+    // The tool's panel: what it does and how, its actions, how much is drawn.
+    {
+        use crate::hud::{draw_cell, Lamp};
+        let (p, c) = PANEL;
+        frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
+        frame.hud_box(p, c, PLANE.scale(1.5));
+        let (title, help) = match interior.tool {
+            Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT, WHEEL FOR NEARER OR FARTHER. CLICK A POINT OR A LINE TO PICK IT. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
+            Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO JOIN TO IT AND GO ON FROM IT. RIGHT-CLICK STOPS. DRAG THE PLANE'S HANDLE (ITS FAR CORNER) UP OR DOWN."),
+        };
+        frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
+        let mut y = p.y + 28.0;
+        for line in crate::fmt::wrap(help, ((c.x - 16.0) / 8.0 * 1.25) as usize) {
+            frame.text_scaled(Vec2::new(p.x + 8.0, y), &line, LABEL.scale(0.85), 0.8);
+            y += 12.0;
+        }
+        let pick = match interior.pick {
+            Some(Hover::Point(k)) => match &plan.points[k].name {
+                Some(n) => format!("PICKED: {n} (THE HULL'S: STAYS)"),
+                None => format!("PICKED: A POINT {:.1} M UP", plan.points[k].at.y - lo.y),
+            },
+            Some(Hover::Line(k)) => {
+                let (a, b) = plan.lines[k];
+                format!("PICKED: A LINE {:.1} M", plan.points[a].at.distance(plan.points[b].at))
+            }
+            None => format!("{} POINTS  {} LINES", plan.points.len(), plan.lines.len()),
+        };
+        frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 126.0), &pick, PICKED.scale(0.9), 0.8);
+        if interior.tool == Tool::Path {
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 138.0), &format!("PLANE {:.1} M UP", plane - lo.y), PATH, 0.8);
+        }
+        for (r, name, a) in panel_buttons(interior.tool) {
+            let lamp = if inside(r, interior.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, r.0, r.1, "", name, if a == Action::Remove && interior.pick.is_none() { Lamp::Unavailable } else { lamp });
+        }
+    }
 }
