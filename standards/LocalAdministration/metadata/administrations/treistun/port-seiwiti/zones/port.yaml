@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
+# Round what the game has at every port: the pad grid (within 400 m of the centre) and the hangar
+# 450 m south. The ground south of the hangar is invented, for the port's warehouses, as at Port Trethi.
+key: zone.treistun.port-seiwiti.port
+name: Port
+use: port
+outline: [[-400, -900], [400, -900], [400, 400], [-400, 400]]

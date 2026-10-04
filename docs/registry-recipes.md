@@ -110,6 +110,12 @@ to, and flows live in one place, the module's recipes.
   exchange has approved (`facility.exchange`, as Trethi Warehouse is): selling moves it there, or
   it is sold where it lies. Anyone who goes there can see it.
 
+- **When storage is full, what fills it stops.** A module can run only while its factory's storing
+  modules have room for what it makes. Full yards stop the modules that feed them until some stock
+  is taken away (used by another module, sold, hauled off). This is the game's to run; the registry
+  gives the room (`capacity.holds`, `capacity.volume`) and, as a measure, how long each works'
+  room lasts flat out with nothing taken away.
+
 ## Done so far
 
 **Step 1 (2026-10-04): every module's own figures are its first recipe.** `module.recipes[]`:
@@ -175,6 +181,17 @@ kept in it".
 yard (a block more each, `holds: 50000.0`); the yard no longer `takes` sheet (what a shop takes is
 its parts' own, which depends on what it is set to make) and draws 1.72 MW, not 2.05 (its cutting
 table and panel former stand idle). `industry.ron`: the stock yard added.
+
+**Step 4 (2026-10-04): warehouses and zoning at every port.** Each of Treistun's other nine ports
+(Aipika, Eikir, Fabindum, Lisaur, Nacaubun, Seiwiti, Sirnendis, Weisonum, Zaudalein) now has a
+port zone, an industrial zone with nothing on it yet, Dock Road, a parcel south of the hangar and
+a warehouse on it approved by the Treistun Exchange: all as Port Trethi's, invented, and said so
+in each record. What lies on the market at a port lies in its warehouse. The station and the
+three gates have none: they are not ground, and wait for stations to be described as structures.
+`settlements.ron` has nine settlements more (288 lines).
+
+How long each works' room lasts flat out, nothing taken away: the mill 12 days, the orbital works
+26, the smelter 46, the foundry 66, the yard 482.
 
 ## Next
 

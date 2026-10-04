@@ -53,3 +53,8 @@
   any more.
 - **Every works keeps its stock somewhere.** A new stock yard stands at the Trethi mill and yard;
   a works that makes things with nowhere to store them is refused.
+- **A warehouse at every port.** Treistun's other nine ports each have a port zone, an industrial
+  zone still empty, a road, a lot and a warehouse approved by the Treistun Exchange, laid out as
+  Port Trethi's is. What is on the market at a port lies in its warehouse.
+- **Full storage stops production.** Each works' page says how long its yards last flat out with
+  nothing taken away (the mill 12 days, the foundry 66). The rule itself is the game's to run.

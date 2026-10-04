@@ -1310,6 +1310,13 @@ for ad in administrations:
                 fc["stock_room"] = [m for m in every if m in mod_of and ((mod_of[m].get("rate") or {}).get("holds") or (mod_of[m].get("rate") or {}).get("volume"))]
                 if not fc["stock_room"]:
                     problem(where, "it makes things and has nowhere to keep them: a works needs a module that stores (a yard, a warehouse)")
+                # (How long its room lasts: everything it makes and gives off flat out, with nothing taken away. When
+                # it is full, what makes the stock has to stop: the game's to run, worked out here as a measure.)
+                counts = [(im.get("module"), im.get("count", 0)) for ln in fc.get("lines") or [] for im in ln.get("modules") or []] + [(im.get("module"), im.get("count", 0)) for im in fc.get("modules") or []]
+                room = sum(n * ((mod_of[m].get("rate") or {}).get("holds") or 0) for m, n in counts if m in mod_of)
+                out = sum(ln["most"]["output"] + sum(i["rate"] for i in ln["most"]["by_products"]) for ln in fc.get("lines") or [] if "most" in ln)
+                if room and out:
+                    fc["fills"] = {"holds": room, "rate": out, "days": room / out / 24}
             if "exchange" in fc and (fc["exchange"] not in BRANDS or next((m for m in makers if m["key"] == fc["exchange"]), {}).get("business") != "exchange"):
                 problem(where, f"exchange: no exchange '{fc['exchange']}' in Maker House")
             if plot is not None and covered > plot.get("area", 0):

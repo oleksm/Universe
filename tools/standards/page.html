@@ -817,7 +817,8 @@ function detail(k) {
   };
   // A power station: what it is built of, and the most it can supply.
   const powerStation = (a, x, f, p) => `<h3>Built of</h3><table><tr><th>Module</th><th>Number</th><th>Can supply</th><th>Ground</th></tr>` + (f.modules || []).map(im => { const m = modBySlug[im.module]; return `<tr><td><a data-k="${esc("mod:" + im.module)}">${esc(m.identity.name)}</a></td><td>${im.count}</td><td>${im.count * ((m.rate || {}).power || 0)} MW</td><td>${(im.count * m.size.length * m.size.width).toLocaleString()} m²</td></tr>`; }).join("") + `<tr><th>Total</th><th></th><th>${f.capacity} MW at most</th><th>${Math.round(f.built_area).toLocaleString()} m² · ${(100 * f.built_area / p.area).toFixed(0)}% of parcel ${p.number}</th></tr></table>`
-    + flowTable("Flat out, it burns", f.burns || []);
+    + flowTable("Flat out, it burns", f.burns || [])
+    + (f.fills ? `<h3>Its stock</h3><p>Everything it has taken in and not used, and made and not sent out, lies in its own yards: ${(f.stock_room || []).filter((m, i, a) => a.indexOf(m) === i).map(m => `<a data-k="${esc("mod:" + m)}">${esc(modBySlug[m].identity.name.toLowerCase())}</a>`).join(", ")}. They hold ${Math.round(f.fills.holds).toLocaleString()} t. Flat out, with nothing taken away, it makes ${+f.fills.rate.toPrecision(3)} t an hour and they are full in ${f.fills.days >= 10 ? Math.round(f.fills.days) : +f.fills.days.toPrecision(2)} days. When they are full, what makes the stock stops until some is taken away.</p>` : "");
   // A facility's site plan: its parcel, what stands on it, its pipelines, and the streets passing.
   const sitePlan = (a, x, f, p) => {
     // (Its modules where the build lays them out: a rectangle each, its length east or north.)
