@@ -11,6 +11,10 @@ properties:
     required: [name]
     properties:
       name: { type: string }
+      key: { type: string, description: "Its key in the game (content/base/hulls.ron), for one the game has as a stock hull." }
+      maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
+      class: { type: string, description: "What it is built for: mining ship, hauler, courier..." }
+      standing: { enum: [current, outdated], description: "outdated: an early rough guess, kept as a record of what the game has. Not to be balanced against or designed toward." }
       description: { type: string }
   size:
     type: object
@@ -20,11 +24,14 @@ properties:
       width: { type: number, description: m }
       height: { type: number, description: m }
       volume: { type: number, description: "m3, the space its shape takes" }
+      hold_volume: { type: number, description: "m3, the space of its hold" }
   mass:
     type: object
     additionalProperties: false
     properties:
       frame: { type: number, description: "t, the bare hull with nothing fitted" }
+      fuel: { type: number, description: "t of fuel its tanks hold, as fitted" }
+      hold: { type: number, description: "t, the most cargo it is rated to carry" }
   fit:
     description: The equipment it is fitted with when it is built.
     type: array
@@ -47,15 +54,21 @@ properties:
     type: object
     additionalProperties: false
     properties:
+      lands: { enum: [empty, loaded], description: "Whether it sets down with its hold full. empty: it unloads in orbit, and its legs and lift are for the ship without its cargo." }
       loaded_mass: { type: number, description: "t, the ship loaded, in the game: hull, fitted modules, fuel and cargo" }
       main_thrust: { type: number, description: "MN, of its main drive in the game" }
       lift_thrust: { type: number, description: "MN, of its lift nozzles in the game" }
+      thrust_path: { type: array, items: { type: string }, description: "The parts its main drive's push passes through, from the engine forward, by code. Each is checked against it." }
       landing_speed: { type: number, description: "m/s, the touchdown its legs are designed for. What they take at most is worked out." }
       cabin_pressure: { type: number, description: "kPa, of the air its pressurised parts hold against vacuum" }
       safety_factor: { type: number, description: "how many times its load a part must take before it yields" }
       pressure_factor: { type: number, description: "a further factor on cabin pressure" }
       strut_efficiency: { type: number, description: "the share of a landing leg's stroke that does work" }
       minimum_gauge: { type: number, description: "mm, the thinnest skin used where no load says more" }
+  open_questions:
+    description: What is not settled about it. Kept with the hull so it is not forgotten.
+    type: array
+    items: { type: string }
   basis:
     description: 'Where its figures come from. Each entry covers the groups (or group.property) it names. sourced: from a published source or the game, named. derived: worked out from other figures, by physics or from the model. invented: chosen, to be balanced or replaced.'
     type: array

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: a belt's largest body holds 39% of its mass; the belt's mass goes by the ground it covers.
+# The game does not make it yet. Change its status to curated to take it over.
+status: seeded
+identity: {name: Batrairis, kind: asteroid, parent: Driumum, about: 'The largest body of the main belt: over a third of all
+    the belt''s mass. Too small to have pulled itself round.'}
+orbit: {semi_major_axis: 40080000.0, eccentricity: 0.072894102, inclination: 1.54, period: 96.96}
+physical: {radius: 110.1, density: 2100, mass: 1.175e+19}
+rock: {class: carbonaceous}

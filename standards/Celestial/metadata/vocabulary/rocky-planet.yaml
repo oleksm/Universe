@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Rocky planet"
+  group: world
+  about: "A world of rock and metal with a solid surface."
+lies: "Inside the frost line, mostly."
+made_of: "Rock and metal; some have air and water."
+means: "Ground to build on, ore to dig, and a deep well to climb out of."
+game: made
+game_note: "Dry, or temperate with air and seas."

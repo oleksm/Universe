@@ -6,7 +6,13 @@ identity:
   description: "Unwinds the strip in and winds it out."
 physical:
   mass: 150000
+made_from:
+  item: STA36-PL-20
+  quantity: 1105.8
+making:
+  processes: [plate-work]
 fit:
   count: 2
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }

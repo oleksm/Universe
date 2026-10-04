@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Balance point"
+  group: place
+  known_as: "Lagrange point"
+  about: "One of five places near two bodies where a small thing keeps its place between them. Two, 60 degrees ahead of the smaller body and behind, are stable; three, in line with the two, need holding."
+lies: "Near any planet and its star, or moon and its planet."
+made_of: "Nothing: a place."
+figures:
+  - { what: "the two nearest", value: "at the edge of the smaller body's reach, either side of it" }
+  - { what: "the stable two hold", value: "if the larger body is over 24.96 times the smaller" }
+  - { what: "the Earth's nearest", value: "about 1.5 million km" }
+means: "The natural sites for a station, a depot or a gate: in no well, and they stay put."
+game: partly
+game_note: "Trojan fields lie at the stable two; nothing is placed at the others."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Lagrange_point" }

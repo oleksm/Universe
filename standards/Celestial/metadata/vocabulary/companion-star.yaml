@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Companion star"
+  group: star
+  known_as: "binary star"
+  about: "A second star in the system. Planets go round one of the two, or round both."
+lies: "With the first star."
+figures:
+  - { what: "systems with more than one star", value: "about a third" }
+  - { what: "for the smallest stars", value: "22%" }
+  - { what: "for the heaviest", value: "80% and more" }
+means: "Two suns: two frost lines, and fewer places a planet can keep its orbit."
+game: not made
+game_note: "Every system has one star."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Binary_star" }

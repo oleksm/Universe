@@ -6,7 +6,13 @@ identity:
   description: "Moves the fluid."
 physical:
   mass: 5000
+made_from:
+  item: ST4340-FG
+  quantity: 7500
+making:
+  processes: [machining]
 fit:
   count: 8
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }

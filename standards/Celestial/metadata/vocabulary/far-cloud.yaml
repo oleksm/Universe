@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Far cloud"
+  group: region
+  known_as: "Oort cloud"
+  about: "A vast, thin shell of ice bodies at the very edge of the star's hold."
+lies: "Thousands to hundreds of thousands of times a rocky planet's distance."
+made_of: "Ices: water, methane, ethane, carbon monoxide."
+figures:
+  - { what: "how far", value: "2,000 to 200,000 AU" }
+  - { what: "over 1 km across", value: "possibly trillions" }
+  - { what: "all of it together", value: "about five Earth masses" }
+means: "Where the comets that come once in a thousand lifetimes fall from. Past it is the next star's."
+game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Oort_cloud" }

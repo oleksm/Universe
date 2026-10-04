@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Crossing asteroid"
+  group: small body
+  known_as: "near-Earth object"
+  about: "An asteroid knocked out of the belt by a giant's resonance onto an orbit that comes in among the rocky planets."
+lies: "Crossing the inner system."
+made_of: "As the belt's inner part: mostly stony."
+figures:
+  - { what: "known near the Earth", value: "37,255" }
+  - { what: "over 1 km across", value: "about 980" }
+  - { what: "over 140 m", value: "about 35,000" }
+  - { what: "how long one lasts", value: "a few million years" }
+means: "The easiest rock to reach from a settled world, and the kind that hits one."
+game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Near-Earth_object", note: "As of December 2024." }

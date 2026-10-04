@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the others come from the far cloud, once in thousands to millions of years.
+# The game does not make it yet. Change its status to curated to take it over.
+status: seeded
+identity: {name: Zidorfom, kind: comet, parent: Moryemzai, about: A comet from the far cloud. It comes in to 0.14 AU once
+    in a very long time.}
+orbit: {semi_major_axis: 358260000000.0, eccentricity: 0.99994279, inclination: 64.01, period: 74810000.0}
+physical: {radius: 3.6, density: 950, mass: 185700000000000.0}
+rock: {class: icy}

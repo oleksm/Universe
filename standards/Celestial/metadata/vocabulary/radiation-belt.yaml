@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Radiation belt"
+  group: condition
+  about: "Charged particles trapped by a giant's magnetic field, in belts round it."
+lies: "Round a giant with a strong field, reaching its inner moons."
+figures:
+  - { what: "how far Jupiter's field reaches", value: "3.6 to 7.1 million km toward the Sun" }
+  - { what: "a day at Io", value: "3,600 rem" }
+  - { what: "a day at Europa", value: "540 rem" }
+  - { what: "a day on the Earth", value: "0.0007 rem" }
+means: "A giant's inner moons are deadly without heavy shielding: a reason to work the outer ones."
+game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Magnetosphere_of_Jupiter" }

@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Meteoroid stream"
+  group: small body
+  about: "A trail of grains and pebbles shed by a comet, strung along its orbit."
+lies: "Along a comet's orbit; a world passes through one at the same time each year."
+made_of: "Grains up to a metre across."
+figures:
+  - { what: "how fast, near the Earth", value: "up to 42 km/s" }
+  - { what: "falls on the Earth", value: "about 15,000 tonnes a year" }
+means: "Small impacts on a timetable."
+game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Meteoroid" }

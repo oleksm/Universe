@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Fuel Tank 30 T"
+  key: tank.s3
+  maker: brand.hadley
+  slot: tank
+  description: "A fuel tank."
+physical:
+  mass: 2000
+  volume: 300
+performance:
+  capacity: 30000
+  holds: deuterium
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

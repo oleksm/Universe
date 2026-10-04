@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
+# The game does not make it yet. Change its status to curated to take it over.
+status: seeded
+identity: {name: Mumaur, kind: crossing asteroid, parent: Liham, about: 'Knocked out of the belt. At its closest it comes
+    in to 0.03 AU, near the orbit of Liham b.'}
+orbit: {semi_major_axis: 27642600.0, eccentricity: 0.85245752, inclination: 4.97, period: 54.468}
+physical: {radius: 1.015, density: 2100, mass: 9198000000000.0}
+rock: {class: carbonaceous}

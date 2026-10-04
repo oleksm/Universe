@@ -1,0 +1,43 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Celestial vocabulary
+description: 'standards/Celestial/metadata/vocabulary/<name>.yaml: one kind of thing a star system has. What it is, where it lies, what is known of the Sun''s, what it means for people who work in space, and whether the game makes it yet.'
+type: object
+additionalProperties: false
+required: [identity, game]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, group]
+    properties:
+      name: { type: string }
+      group: { enum: [star, world, moon, small body, region, place, condition], description: "star; world (a planet); moon; small body (one rock or ice body); region (where many small bodies lie); place (a point in space set by gravity); condition (something a place does to what is there)." }
+      known_as: { type: string, description: "What astronomers call it, or the Sun's own." }
+      about: { type: string, description: What it is. }
+  lies: { type: string, description: Where in a system it is found. }
+  made_of: { type: string }
+  figures:
+    description: "What is known, of the Sun's system unless it says otherwise."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [what, value]
+      properties:
+        what: { type: string }
+        value: { type: string }
+  means: { type: string, description: "What it means for us: material to be had, a hazard, a place to build." }
+  game: { enum: [made, partly, not made], description: "Whether the game makes it yet." }
+  game_note: { type: string }
+  basis:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [of, tier]
+      properties:
+        of: { type: array, items: { type: string } }
+        tier: { enum: [sourced, derived, invented] }
+        source: { type: string }
+        note: { type: string }
+        review: { type: boolean }

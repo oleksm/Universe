@@ -6,8 +6,14 @@ identity:
   description: "The vacuum vessel the burning plasma is held in."
 physical:
   mass: 5200000
+made_from:
+  item: STA36-PL-20
+  quantity: 38333.3
+making:
+  processes: [plate-work]
 fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's vacuum vessel, 5,200 tonnes. ITER makes 500 MW of fusion power and no electricity; this station's size against it is not worked out." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }

@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Thruster Quads S3"
+  key: thrusters.quad.s3
+  maker: brand.kestrel
+  slot: thrusters
+  description: "Manoeuvring thrusters, in clusters at nose and tail."
+physical:
+  mass: 4500
+  volume: 9
+performance:
+  power_draw: 500
+  efficiency: 0.3
+  thrust: 900
+  exhaust_speed: 10000
+  burns: deuterium
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/hull.schema.yaml
+# OUTDATED. One of the game's early stock hulls (content/base/hulls.ron): a rough guess from before
+# the world had physics to answer to. Kept as a record of what the game has. Do not balance against
+# it or design toward it.
+identity:
+  name: "Prospector"
+  key: hull.prospector
+  maker: brand.cormorant
+  class: mining ship
+  standing: outdated
+  description: "A miner: a mining rig, a big hold, sturdy."
+size:
+  volume: 15607
+mass:
+  frame: 52
+  fuel: 30
+  hold: 40
+fit:
+  - { slot: power, item: power-fusion-s2 }
+  - { slot: drive, item: drive-torch-s2 }
+  - { slot: thrusters, item: thrusters-quad-s2 }
+  - { slot: lift, item: lift-belly-s2 }
+  - { slot: tank, item: tank-s3 }
+  - { slot: cargo, item: rack-s3 }
+  - { slot: cargo_2, item: rack-s3 }
+  - { slot: hyperdrive, item: hyperdrive-s2 }
+  - { slot: capacitor, item: capacitor-s1 }
+  - { slot: computer, item: computer-fbw-s1 }
+  - { slot: transponder, item: transponder-s1 }
+  - { slot: sensors, item: sensors-radar-s1 }
+  - { slot: comm, item: comm-basic-s1 }
+  - { slot: life, item: life-s2 }
+  - { slot: hardpoint_1, item: gun-mass-driver-s1 }
+  - { slot: utility, item: mining-rig-s2 }
+  - { slot: avionics, item: nav-full-s1 }
+design:
+  loaded_mass: 150.04
+  main_thrust: 2.7
+  lift_thrust: 2.25
+basis:
+  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

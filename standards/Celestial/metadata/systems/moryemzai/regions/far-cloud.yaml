@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../schema/region.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the Sun's is 2,000 to 200,000 AU; this star's by the cube root of its mass, as the reach of a pull goes.
+# The game does not make it yet. Change its status to curated to take it over.
+status: seeded
+identity: {name: Far cloud, kind: far cloud, about: A vast thin shell of ice bodies at the edge of the star's hold. Past it
+    is the next star's.}
+extent: {inner: 1378.0, outer: 137800.0}

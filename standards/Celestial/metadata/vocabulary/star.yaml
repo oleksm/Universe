@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Star"
+  group: star
+  about: "The body a system goes round. Its mass sets every orbit; its light sets where water is ice."
+lies: "At the centre."
+made_of: "Hydrogen and helium, fusing."
+means: "Light and heat for everything; the frost line, which sorts what forms where."
+game: made
+game_note: "One to a system, of seven classes by the real mix near the Sun."

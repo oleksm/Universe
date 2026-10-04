@@ -6,8 +6,14 @@ identity:
   description: "A reversing stand that takes the ingot down to a slab."
 physical:
   mass: 1050000
+made_from:
+  item: ST4340-FG
+  quantity: 1575000
+making:
+  processes: [machining]
 fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://thestar.co.uk/business/engineering-firm-receives-overseas-lift-467492", note: "A 5 m heavy plate mill stand, assembled: 1,050 tonnes." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Outer belt"
+  group: region
+  known_as: "Kuiper belt"
+  about: "The wide belt of ice bodies past the last giant."
+lies: "From the last giant's 3:2 resonance to its 2:1."
+made_of: "Frozen methane, ammonia and water."
+figures:
+  - { what: "over 100 km across", value: "more than 100,000" }
+  - { what: "all of it together", value: "about 2% of Earth's mass" }
+  - { what: "how thick", value: "as much as 10 degrees off the plane" }
+means: "The system's store of ice, and the edge of what is charted."
+game: partly
+game_note: "Made as one field."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Kuiper_belt" }

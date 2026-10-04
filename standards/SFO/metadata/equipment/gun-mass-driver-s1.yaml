@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Mass Driver"
+  key: gun.mass_driver.s1
+  maker: brand.garrick
+  slot: hardpoint
+  description: "A weapon."
+physical:
+  mass: 800
+  volume: 1.5
+performance:
+  power_draw: 50
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

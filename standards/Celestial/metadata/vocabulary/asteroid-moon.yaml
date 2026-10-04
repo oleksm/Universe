@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Asteroid with a moon"
+  group: small body
+  known_as: "binary asteroid"
+  about: "An asteroid with a smaller one going round it."
+lies: "Anywhere asteroids are."
+made_of: "As its class."
+figures:
+  - { what: "share of asteroids", value: "about 2%" }
+  - { what: "in the outer belt", value: "about 11%" }
+  - { what: "how far apart", value: "a few hundred to over 3,000 km" }
+means: "Two rocks for one journey, and a way to weigh them."
+game: partly
+game_note: "The game's fields are this, with some two hundred moons where a real one has one or two."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Minor-planet_moon" }

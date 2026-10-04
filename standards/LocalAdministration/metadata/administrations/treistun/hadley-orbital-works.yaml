@@ -12,6 +12,7 @@ about: "A works in orbit, now round Treistun f: a foundry, a mill and a panel wo
 processes:
   - steelmaking-asteroid
   - plate-rolling-4340
+  - plate-rolling-a36
   - tube-making-4340
   - panel-making
   - machining
@@ -27,6 +28,7 @@ lines:
       - { module: casting-bay, count: 1 }
       - { module: ingot-yard, count: 1 }
   - process: plate-rolling-4340
+    also: [plate-rolling-a36]
     modules:
       - { module: reheat-furnace, count: 1 }
       - { module: hot-rolling-mill, count: 1 }
