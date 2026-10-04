@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-28-005
+  name: "Jaw"
+  status: draft
+  drawing: "assets/models/mc07.glb: ClampFwd_Jaw0, ClampFwd_Jaw1, ClampFwd_Jaw2, ClampFwd_Jaw3"
+physical:
+  length: 1.18
+  width: 1.18
+  height: 0.33
+shape:
+  surface_area: 2.0
+fit:
+  count: 4

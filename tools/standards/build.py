@@ -988,7 +988,7 @@ codes = {pt["slug"] for pt in parts}
 for c in parts:
     mine = [pt for pt in parts if pt.get("parent") == c["slug"]]
     known = [pt for pt in mine if (pt.get("physical") or {}).get("mass") is not None]
-    if mine:
+    if known:
         c["parts_mass"] = sum(pt["physical"]["mass"] * (pt.get("fit") or {}).get("count", 1) for pt in known)
         c["parts_weighed"] = [len(known), len(mine)]
 for pt in parts:

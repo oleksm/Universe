@@ -1,15 +1,17 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
 identity:
   code: MC07-02
-  name: Mid hull section
-  description: "The middle third of the hull, which holds the cargo bay and carries the ramp in its belly. The widest and heaviest of the three sections, and the one the other two are joined to."
+  name: "Cockpit"
   status: draft
+  drawing: "assets/models/mc07.glb: Hull_Cockpit"
 physical:
-  length: 22.0
-  width: 30.9
-  height: 17.6
+  length: 11.2
+  width: 20.09
+  height: 11.59
 shape:
-  surface_area: 4739
+  surface_area: 1674.8
 fit:
   count: 1
-  position: "The middle third of the hull: from 22 m to 44 m back from the nose."
+  position: "Its centre is 8.1 m back from the nose and 8.8 m above the keel, on the centre line."

@@ -2,16 +2,16 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
-  code: MC07-11
-  name: "Main sponson"
+  code: MC07-16
+  name: "Connector"
   status: draft
-  drawing: "assets/models/mc07.glb: Hull_MainSponson"
+  drawing: "assets/models/mc07.glb: Hull_Connector"
 physical:
-  length: 22.84
-  width: 29.69
-  height: 1.98
+  length: 2.29
+  width: 14.09
+  height: 9.59
 shape:
-  surface_area: 456.2
+  surface_area: 155.1
 fit:
   count: 1
-  position: "Its centre is 36.0 m back from the nose and 2.4 m above the keel, on the centre line."
+  position: "Its centre is 48.7 m back from the nose and 8.3 m above the keel, on the centre line."

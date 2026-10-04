@@ -1,15 +1,17 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
 identity:
   code: MC07-03
-  name: Aft hull section
-  description: "The rear third of the hull, which holds the engine bay and takes the thrust of the main drive. Built stiffer than the other two for that load."
+  name: "Cockpit skirt"
   status: draft
+  drawing: "assets/models/mc07.glb: Hull_CockpitSkirt"
 physical:
-  length: 22.0
-  width: 30.9
-  height: 17.7
+  length: 8.8
+  width: 21.69
+  height: 3.36
 shape:
-  surface_area: 4909
+  surface_area: 160.2
 fit:
   count: 1
-  position: "The rear third of the hull: from 44 m back from the nose to the tail."
+  position: "Its centre is 9.0 m back from the nose and 6.6 m above the keel, on the centre line."

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-14
+  name: "Main armour tier"
+  status: draft
+  drawing: "assets/models/mc07.glb: Hull_MainArmorTier"
+physical:
+  length: 16.25
+  width: 32.49
+  height: 4.25
+shape:
+  surface_area: 328.7
+fit:
+  count: 1
+  position: "Its centre is 36.1 m back from the nose and 10.5 m above the keel, on the centre line."

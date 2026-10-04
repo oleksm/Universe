@@ -1,10 +1,17 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
 identity:
   code: MC07-09
-  name: Wiring harness
-  description: "All the wiring through the hull, made up as one set: the power bus from the power slot and the signal lines from the computer to every other socket."
+  name: "Spine, mid A"
   status: draft
+  drawing: "assets/models/mc07.glb: Hull_SpineMidA"
+physical:
+  length: 5.49
+  width: 9.29
+  height: 2.09
+shape:
+  surface_area: 148.8
 fit:
   count: 1
-  position: "Through all three hull sections, to every socket."
-  connections: [power, signal]
+  position: "Its centre is 26.3 m back from the nose and 16.3 m above the keel, on the centre line."

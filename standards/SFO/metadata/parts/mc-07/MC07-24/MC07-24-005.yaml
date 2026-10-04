@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-24-005
+  name: "Actuator rod"
+  status: draft
+  drawing: "assets/models/mc07.glb: Gear_RL_ActRod"
+physical:
+  length: 1.81
+  width: 0.4
+  height: 1.28
+shape:
+  surface_area: 2.5
+fit:
+  count: 1

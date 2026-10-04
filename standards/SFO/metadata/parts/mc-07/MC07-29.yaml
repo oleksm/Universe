@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-29
+  name: "Mining laser"
+  status: draft
+  drawing: "assets/models/mc07.glb: LaserL_*, LaserR_*"
+physical:
+  length: 6.39
+  width: 4.09
+  height: 5.38
+shape:
+  surface_area: 206.6
+fit:
+  count: 2
+  position: "Its centre is 34.6 m back from the nose and 13.0 m above the keel, 7.4 m either side of the centre line."

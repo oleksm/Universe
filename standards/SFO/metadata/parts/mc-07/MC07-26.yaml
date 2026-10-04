@@ -2,17 +2,17 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
-  code: MC07-06
-  name: "Cheek, left"
+  code: MC07-26
+  name: "Ore bay door, left"
   status: draft
-  drawing: "assets/models/mc07.glb: Hull_Cheek_L"
+  drawing: "assets/models/mc07.glb: OreBay_DoorL"
 physical:
-  length: 8.09
-  width: 3.29
-  height: 6.19
+  length: 9.95
+  width: 4.2
+  height: 0.29
 shape:
-  surface_area: 178.2
+  surface_area: 99.2
   handed: left
 fit:
   count: 1
-  position: "Its centre is 18.6 m back from the nose and 7.6 m above the keel, 9.8 m to the left of the centre line."
+  position: "Its centre is 34.6 m back from the nose and 15.6 m above the keel, 2.1 m to the left of the centre line."

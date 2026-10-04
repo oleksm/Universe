@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-29-004
+  name: "Hatch"
+  status: draft
+  drawing: "assets/models/mc07.glb: LaserL_Hatch"
+physical:
+  length: 6.39
+  width: 4.09
+  height: 0.19
+shape:
+  surface_area: 55.4
+fit:
+  count: 1

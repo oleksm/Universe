@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-23
+  name: "Landing leg, front"
+  status: draft
+  drawing: "assets/models/mc07.glb: Gear_FL_*, Gear_FR_*"
+physical:
+  length: 7.28
+  width: 3.38
+  height: 9.08
+shape:
+  surface_area: 139.4
+fit:
+  count: 2
+  position: "Its centre is 9.1 m back from the nose and 0.5 m above the keel, 4.5 m either side of the centre line."

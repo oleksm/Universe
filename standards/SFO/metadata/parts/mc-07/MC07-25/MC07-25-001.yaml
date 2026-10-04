@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-25-001
+  name: "Ramp"
+  status: draft
+  drawing: "assets/models/mc07.glb: CargoRamp"
+physical:
+  length: 8.49
+  width: 7.5
+  height: 4.55
+shape:
+  surface_area: 211.1
+fit:
+  count: 1

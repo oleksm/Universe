@@ -2,16 +2,16 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
-  code: MC07-11
-  name: "Main sponson"
+  code: MC07-18
+  name: "Pod armour"
   status: draft
-  drawing: "assets/models/mc07.glb: Hull_MainSponson"
+  drawing: "assets/models/mc07.glb: Hull_PodArmor"
 physical:
-  length: 22.84
-  width: 29.69
-  height: 1.98
+  length: 13.66
+  width: 28.09
+  height: 10.36
 shape:
-  surface_area: 456.2
+  surface_area: 726.5
 fit:
   count: 1
-  position: "Its centre is 36.0 m back from the nose and 2.4 m above the keel, on the centre line."
+  position: "Its centre is 56.6 m back from the nose and 7.8 m above the keel, on the centre line."

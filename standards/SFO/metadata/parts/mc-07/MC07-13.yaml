@@ -1,9 +1,17 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
 identity:
   code: MC07-13
-  name: Thruster cluster mount
-  description: "The fitting that holds a cluster of five small thruster nozzles (fore, aft, up, down and to the side) for turning and shifting the ship."
+  name: "Keel"
   status: draft
+  drawing: "assets/models/mc07.glb: Hull_Keel"
+physical:
+  length: 16.63
+  width: 18.8
+  height: 0.64
+shape:
+  surface_area: 537.0
 fit:
-  count: 4
-  position: "On the upper shoulders, 7.2 m either side of the centre line: two 6.2 m back from the nose, two 62.2 m back."
+  count: 1
+  position: "Its centre is 36.1 m back from the nose and 0.3 m above the keel, on the centre line."

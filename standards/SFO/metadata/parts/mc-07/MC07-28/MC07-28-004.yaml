@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-28-004
+  name: "Stage 3"
+  status: draft
+  drawing: "assets/models/mc07.glb: ClampFwd_Stage3"
+physical:
+  length: 0.84
+  width: 0.84
+  height: 1.9
+shape:
+  surface_area: 6.3
+fit:
+  count: 1

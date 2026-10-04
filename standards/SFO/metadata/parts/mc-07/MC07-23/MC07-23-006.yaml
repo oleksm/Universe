@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-23-006
+  name: "Inner door"
+  status: draft
+  drawing: "assets/models/mc07.glb: Gear_FL_DoorIn"
+physical:
+  length: 6.46
+  width: 0.39
+  height: 1.43
+shape:
+  surface_area: 22.0
+fit:
+  count: 1

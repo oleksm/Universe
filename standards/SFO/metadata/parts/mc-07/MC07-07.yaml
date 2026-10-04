@@ -1,10 +1,17 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
 identity:
   code: MC07-07
-  name: Module socket
-  description: "The fitting where one of the hull's sixteen slots takes its module: a mount to bolt to, and the power and signal connections the module plugs into."
+  name: "Neck"
   status: draft
+  drawing: "assets/models/mc07.glb: Hull_Neck"
+physical:
+  length: 11.59
+  width: 17.09
+  height: 9.6
+shape:
+  surface_area: 1196.3
 fit:
-  count: 16
-  position: "One for each slot. Four have a place on the model: the cargo mount amidships, two hardpoints on top 7.3 m either side of the centre line, and the utility mount under the nose."
-  connections: [power, signal]
+  count: 1
+  position: "Its centre is 18.9 m back from the nose and 8.3 m above the keel, on the centre line."

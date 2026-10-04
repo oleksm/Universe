@@ -1,10 +1,17 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
 identity:
   code: MC07-10
-  name: Duct and pipe set
-  description: "The air ducts and pipes through the hull, made up as one set: air from the life support slot to the cockpit and the bay, and fluid lines to the legs and the ramp."
+  name: "Main armour"
   status: draft
+  drawing: "assets/models/mc07.glb: Hull_MainArmor"
+physical:
+  length: 24.06
+  width: 30.89
+  height: 11.76
+shape:
+  surface_area: 1375.8
 fit:
   count: 1
-  position: "Through all three hull sections."
-  connections: [air, fluid]
+  position: "Its centre is 36.0 m back from the nose and 9.1 m above the keel, on the centre line."
