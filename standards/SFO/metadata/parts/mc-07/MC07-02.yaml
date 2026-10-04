@@ -3,5 +3,13 @@ identity:
   code: MC07-02
   name: Mid hull section
   description: "The middle third of the hull, which holds the cargo bay and carries the ramp in its belly. The widest and heaviest of the three sections, and the one the other two are joined to."
+  status: draft
+physical:
+  length: 22.0
+  width: 30.9
+  height: 17.6
+shape:
+  surface_area: 4739
 fit:
   count: 1
+  position: "The middle third of the hull: from 22 m to 44 m back from the nose."

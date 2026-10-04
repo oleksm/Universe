@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC07-13
+  name: Thruster cluster mount
+  description: "The fitting that holds a cluster of five small thruster nozzles (fore, aft, up, down and to the side) for turning and shifting the ship."
+  status: draft
+fit:
+  count: 4
+  position: "On the upper shoulders, 7.2 m either side of the centre line: two 6.2 m back from the nose, two 62.2 m back."

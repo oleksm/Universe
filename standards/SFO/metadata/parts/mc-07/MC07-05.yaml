@@ -3,5 +3,7 @@ identity:
   code: MC07-05
   name: Ramp
   description: "The hatch in the belly and the ramp that lowers from it to the ground, sloping down toward the nose. The way in and out for crew and cargo when landed."
+  status: draft
 fit:
   count: 1
+  position: "In the belly on the centre line, 35.4 m back from the nose. It lowers toward the nose."

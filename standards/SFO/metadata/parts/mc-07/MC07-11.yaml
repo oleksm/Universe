@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC07-11
+  name: Main nozzle mount
+  description: "The fitting in the tail that holds one nozzle of the main drive and passes its thrust into the hull."
+  status: draft
+fit:
+  count: 6
+  position: "On the rear face, 65.7 m back from the nose: three either side of the centre line, 4.8 m and 6.6 m out."

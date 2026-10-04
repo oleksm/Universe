@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC07-12
+  name: Lift nozzle mount
+  description: "The fitting in the belly that holds one lift nozzle, pointing down."
+  status: draft
+fit:
+  count: 6
+  position: "In the belly in three pairs, 2.5 m either side of the centre line: 15.8 m, 34.2 m and 52.6 m back from the nose."

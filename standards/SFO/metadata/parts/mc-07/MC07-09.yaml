@@ -3,5 +3,8 @@ identity:
   code: MC07-09
   name: Wiring harness
   description: "All the wiring through the hull, made up as one set: the power bus from the power slot and the signal lines from the computer to every other socket."
+  status: draft
 fit:
   count: 1
+  position: "Through all three hull sections, to every socket."
+  connections: [power, signal]

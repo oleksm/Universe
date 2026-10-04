@@ -3,5 +3,13 @@ identity:
   code: MC07-01
   name: Forward hull section
   description: "The front third of the hull: the nose and the cockpit behind it, about 22 m of the hull's 66 m. A closed shell of frames and skin, built as one piece and joined to the mid section."
+  status: draft
+physical:
+  length: 22.0
+  width: 30.9
+  height: 14.4
+shape:
+  surface_area: 3597
 fit:
   count: 1
+  position: "The front third of the hull: from the nose, 22 m back."

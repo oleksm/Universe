@@ -3,5 +3,7 @@ identity:
   code: MC07-06
   name: Cockpit canopy
   description: "The cockpit's windows and the frame that holds them, at the nose. It keeps the air in and gives the pilot a view forward."
+  status: draft
 fit:
   count: 1
+  position: "On the centre line, 4.6 m back from the nose and 9.9 m above the belly."

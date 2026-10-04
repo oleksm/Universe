@@ -3,5 +3,7 @@ identity:
   code: MC07-04
   name: Landing leg
   description: "One of the four legs the hull stands on: two under the nose, 9 m apart, and two under the rear, 11.6 m apart. Each folds into the belly and carries a quarter of the ship on the ground."
+  status: draft
 fit:
   count: 4
+  position: "Under the belly. Two stand 4.5 m either side of the centre line, 4.4 m back from the nose; two stand 5.8 m either side, 51.4 m back. Each foot is 4.1 m below the belly."
