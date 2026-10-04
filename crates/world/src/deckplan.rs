@@ -221,6 +221,19 @@ impl Sides {
         *self.rows.get(r as usize)?
     }
 
+    /// `span`, between its rows: each side where the line between the rows round
+    /// `z` puts it (none where either row has none).
+    pub fn span_between(&self, z: f64) -> Option<(f64, f64)> {
+        let f = (z - self.z0) / STEP;
+        let (r0, t) = (f.floor(), f - f.floor());
+        if r0 < 0.0 {
+            return None;
+        }
+        let a = (*self.rows.get(r0 as usize)?)?;
+        let Some(b) = self.rows.get(r0 as usize + 1).copied().flatten() else { return (t < 1e-9).then_some(a) };
+        Some((a.0 + (b.0 - a.0) * t, a.1 + (b.1 - a.1) * t))
+    }
+
     /// Is `p` (x, z) between its sides?
     pub fn contains(&self, p: DVec2) -> bool {
         self.span(p.y).is_some_and(|(a, b)| p.x >= a && p.x <= b)
@@ -292,6 +305,56 @@ pub fn floor_strips(poly: &[DVec2], sides: &Sides, holes: &[Vec<DVec2>]) -> Vec<
             }
         }
         z += STEP;
+    }
+    out
+}
+
+/// `floor_strips` as geometry: each strip a four-sided piece whose ends follow the
+/// outline, the hull's sides and the holes at its top and its bottom, so a slanted
+/// or curved edge is a line, not a stair. Its corners (x, z): bottom left, bottom
+/// right, top right, top left. (Strips split where the outlines turn, so the
+/// edges between are straight.)
+pub fn floor_pieces(poly: &[DVec2], sides: &Sides, holes: &[Vec<DVec2>]) -> Vec<[DVec2; 4]> {
+    if poly.len() < 3 {
+        return Vec::new();
+    }
+    let (lo, hi) = poly.iter().fold((f64::MAX, f64::MIN), |m, p| (m.0.min(p.y), m.1.max(p.y)));
+    // The strips' edges: every `STEP`, and wherever an outline turns.
+    let mut cuts: Vec<f64> = Vec::new();
+    let mut z = (lo / STEP).floor() * STEP;
+    while z < hi {
+        cuts.push(z.max(lo));
+        z += STEP;
+    }
+    cuts.push(hi);
+    cuts.extend(poly.iter().chain(holes.iter().flatten()).map(|p| p.y).filter(|z| *z > lo && *z < hi));
+    cuts.sort_by(f64::total_cmp);
+    cuts.dedup_by(|a, b| (*a - *b).abs() < 1e-6);
+    let mut out = Vec::new();
+    for w in cuts.windows(2) {
+        let (z0, z1) = (w[0], w[1]);
+        let e = (z1 - z0) * 1e-3;
+        let (b, t) = (z0 + e, z1 - e);
+        // (Spans at its bottom and its top, paired in order; where they don't
+        // pair, the middle's for both: a stair, but only there.)
+        let at = |z: f64| -> Vec<(f64, f64)> {
+            let Some((a, c)) = sides.span_between(z) else { return Vec::new() };
+            let mut spans: Vec<(f64, f64)> = crossings(poly, z).into_iter().map(|(x0, x1)| (x0.max(a), x1.min(c))).collect();
+            for hole in holes {
+                for (h0, h1) in crossings(hole, z) {
+                    spans = spans.into_iter().flat_map(|(s0, s1)| [(s0, s1.min(h0)), (s0.max(h1), s1)]).filter(|(s0, s1)| s1 > s0).collect();
+                }
+            }
+            spans
+        };
+        let (mut sb, mut st) = (at(b), at(t));
+        if sb.len() != st.len() {
+            sb = at((z0 + z1) / 2.0);
+            st = sb.clone();
+        }
+        for ((b0, b1), (t0, t1)) in sb.into_iter().zip(st) {
+            out.push([DVec2::new(b0, z0), DVec2::new(b1, z0), DVec2::new(t1, z1), DVec2::new(t0, z1)]);
+        }
     }
     out
 }
@@ -692,15 +755,15 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
         for poly in &deck.planes {
             // A slab, `DECK` deep: its top (the floor), underside and edges.
             let u = y - DECK;
-            for (z0, z1, x0, x1) in floor_strips(poly, sd, &holes) {
-                b.panels.push(([DVec3::new(x0, y, z0), DVec3::new(x1, y, z0), DVec3::new(x1, y, z1), DVec3::new(x0, y, z1)], true));
-                b.slabs.extend([
-                    [DVec3::new(x0, u, z0), DVec3::new(x0, u, z1), DVec3::new(x1, u, z1), DVec3::new(x1, u, z0)],
-                    [DVec3::new(x0, u, z0), DVec3::new(x0, y, z0), DVec3::new(x0, y, z1), DVec3::new(x0, u, z1)],
-                    [DVec3::new(x1, u, z0), DVec3::new(x1, u, z1), DVec3::new(x1, y, z1), DVec3::new(x1, y, z0)],
-                    [DVec3::new(x0, u, z0), DVec3::new(x1, u, z0), DVec3::new(x1, y, z0), DVec3::new(x0, y, z0)],
-                    [DVec3::new(x0, u, z1), DVec3::new(x0, y, z1), DVec3::new(x1, y, z1), DVec3::new(x1, u, z1)],
-                ]);
+            for q in floor_pieces(poly, sd, &holes) {
+                let top = q.map(|p| DVec3::new(p.x, y, p.y));
+                let under = q.map(|p| DVec3::new(p.x, u, p.y));
+                b.panels.push((top, true));
+                b.slabs.push([under[0], under[3], under[2], under[1]]);
+                for k in 0..4 {
+                    let (i, j) = (k, (k + 1) % 4);
+                    b.slabs.push([under[i], under[j], top[j], top[i]]);
+                }
             }
         }
         for wall in &deck.walls {

@@ -787,9 +787,10 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             }
         }
         for (k, poly) in deck.planes.iter().enumerate() {
-            for (z0, z1, x0, x1) in deckplan::floor_strips(poly, &h.sides, &holes) {
-                let (a, b) = (to(DVec2::new(x1, z0)), to(DVec2::new(x0, z1)));
-                frame.hud_rect(a.min(b), (a - b).abs(), FLOOR);
+            for q in deckplan::floor_pieces(poly, &h.sides, &holes) {
+                let q = q.map(to);
+                frame.hud_triangle_colored([q[0], q[1], q[2]], [FLOOR; 3]);
+                frame.hud_triangle_colored([q[0], q[2], q[3]], [FLOOR; 3]);
             }
             let col = if studio.pick == Some(Pick::Plane(k)) { PICKED } else { INK.scale(0.8) };
             for i in 0..poly.len() {
