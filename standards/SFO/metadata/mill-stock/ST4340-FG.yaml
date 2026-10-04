@@ -8,3 +8,7 @@ made_from:
   temper: "quenched and tempered"
 making:
   process: forging-4340
+physical:
+  shock_limit: 200
+basis:
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

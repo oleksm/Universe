@@ -10,5 +10,8 @@ size:
   thickness: 5
 making:
   process: rolling
+physical:
+  shock_limit: 80
 basis:
   - { of: [size], tier: derived, note: "The gauge the pressurised parts need: see the structure report. Other parts use it by choice." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

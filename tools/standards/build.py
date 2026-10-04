@@ -208,7 +208,7 @@ def check_basis(rec, where):
     for en in bs:
         if not isinstance(en, dict) or not isinstance(en.get("of"), list) or en.get("tier") not in TIERS:
             problem(where, f"basis: each entry names what it is of and a tier ({', '.join(TIERS)})")
-        elif set(en) - {"of", "tier", "source", "note"}:
+        elif set(en) - {"of", "tier", "source", "note", "review"}:
             problem(where, "basis: unknown field")
         elif en["tier"] == "sourced" and not en.get("source"):
             problem(where, "basis: a sourced entry names its source")
@@ -1412,9 +1412,10 @@ has = lambda recs, f: sum(1 for e in recs if f(e))
 n = has(materials, lambda m: (m.get("mechanical") or {}).get("fracture_toughness") is not None)
 rows.append(row("ok" if n == len(materials) else "gap", "Materials with a fracture toughness", f"{n} of {len(materials)}", "how well each resists a crack running through it", ", ".join(m["identity"]["name"] for m in materials if (m.get("mechanical") or {}).get("fracture_toughness") is None) or ""))
 n = has(mill_stock, lambda s_: (s_.get("physical") or {}).get("shock_limit") is not None)
-rows.append(row("ok" if mill_stock and n == len(mill_stock) else "gap", "Mill stock with a shock limit", f"{n} of {len(mill_stock)}", "the hardest jolt each takes as cargo", "none says yet" if not n else ""))
-n = has(parts, lambda p_: (p_.get("physical") or {}).get("shock_limit") is not None)
-rows.append(row("ok" if parts and n == len(parts) else "gap", "Parts with a shock limit", f"{n} of {len(parts)}", "the hardest jolt each takes, fitted or carried", "none says yet" if not n else ""))
+rows.append(row("ok" if mill_stock and n == len(mill_stock) else "gap", "Mill stock with a shock limit", f"{n} of {len(mill_stock)}", "the hardest jolt each takes as cargo", "none says yet" if not n else "guesses, marked to review"))
+single = [p_ for p_ in parts if not kids(p_)]
+n = has(single, lambda p_: (p_.get("physical") or {}).get("shock_limit") is not None)
+rows.append(row("ok" if single and n == len(single) else "gap", "Parts with a shock limit", f"{n} of {len(single)}", "the hardest jolt each takes, fitted or carried", "none says yet" if not n else "guesses, marked to review"))
 for hl in hulls:
     ld = (hl.get("worked") or {}).get("landing") or {}
     if ld:
@@ -1519,17 +1520,18 @@ def numbers(d, path=()):
     return []
 
 
-def tier_of(kind, raw, group, prop):
+def tier_of(kind, raw, group, prop, review=False):
     for exact in (True, False):
         for en in raw.get("basis") or []:
             if (f"{group}.{prop}" in en["of"]) if exact else (group in en["of"]):
-                return en["tier"]
-    return DEFAULT_TIER.get(kind, "unsaid")
+                return bool(en.get("review")) if review else en["tier"]
+    return False if review else DEFAULT_TIER.get(kind, "unsaid")
 
 
-rows, detail = [], []
+rows, detail, reviews = [], [], []
 for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts)):
     tally = {"sourced": 0, "derived": 0, "invented": 0, "unsaid": 0}
+    to_review = 0
     for e in recs:
         raw = load(os.path.join(TREE, e["file"]))
         mine = {"sourced": [], "derived": [], "invented": [], "unsaid": []}
@@ -1538,6 +1540,9 @@ for kind, recs in (("elements", elements), ("materials", materials), ("processes
             if group == "identity" and kind not in ("elements",):
                 continue
             mine[tier_of(kind, raw, group, prop)].append(f"{group}.{prop}".replace("_", " "))
+            if tier_of(kind, raw, group, prop, review=True):
+                to_review += 1
+                reviews.append(row("gap", link((e.get("identity") or {}).get("name", e.get("slug")), KEY_OF[kind](e)), KIND_NAME[kind], f"{group}.{prop}".replace("_", " "), raw[group][prop] if isinstance(raw.get(group), dict) and prop in raw[group] else "", next((en.get("note", "") for en in raw.get("basis") or [] if f"{group}.{prop}" in en["of"]), "")))
         for t in tally:
             tally[t] += len(mine[t])
         if mine["invented"] or mine["unsaid"]:
@@ -1546,8 +1551,9 @@ for kind, recs in (("elements", elements), ("materials", materials), ("processes
     total = sum(tally.values())
     if total:
         share = lambda t: f"{tally[t]:,} ({100 * tally[t] / total:.0f}%)" if tally[t] else ""
-        rows.append(row("gap" if tally["unsaid"] else "note" if tally["invented"] else "ok", KIND_NAME[kind], len(recs), f"{total:,}", share("sourced"), share("derived"), share("invented"), share("unsaid")))
-report("confidence", "Confidence: where the numbers come from", "Every number in the registry, by where it comes from. Sourced: from a published source or the game. Derived: worked out from other figures. Invented: chosen, to be balanced or replaced. A gap is a number whose record does not say.", ["Kind of record", "Records", "Numbers", "Sourced", "Derived", "Invented", "Not said"], rows)
+        rows.append(row("gap" if tally["unsaid"] else "note" if tally["invented"] else "ok", KIND_NAME[kind], len(recs), f"{total:,}", share("sourced"), share("derived"), share("invented"), share("unsaid"), to_review or ""))
+report("confidence", "Confidence: where the numbers come from", "Every number in the registry, by where it comes from. Sourced: from a published source or the game. Derived: worked out from other figures. Invented: chosen, to be balanced or replaced. A gap is a number whose record does not say.", ["Kind of record", "Records", "Numbers", "Sourced", "Derived", "Invented", "Not said", "To review"], rows)
+report("review", "To review: guesses put in so a figure is there", "Each figure marked for review: a guess entered so the game has something to work with, to be replaced when a source or a way to work it out is found. Every row is a gap until it is reviewed.", ["Record", "Kind", "Figure", "Guess", "Note"], reviews)
 report("invented", "Confidence: the records with invented or unexplained numbers", "Each record that has a number that was chosen, or one it does not explain. A gap is a number not explained.", ["Record", "Kind", "Invented", "Which", "Not said", "Which"], detail)
 
 

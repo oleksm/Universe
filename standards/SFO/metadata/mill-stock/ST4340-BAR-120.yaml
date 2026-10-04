@@ -10,5 +10,8 @@ size:
   diameter: 120
 making:
   process: bar-rolling-4340
+physical:
+  shock_limit: 200
 basis:
   - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

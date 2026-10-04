@@ -12,6 +12,7 @@ physical:
   length: 7.82
   width: 9.29
   height: 2.27
+  shock_limit: 10
 shape:
   surface_area: 203.5
 made_from:
@@ -24,3 +25,4 @@ basis:
   - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
   - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
   - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

@@ -55,3 +55,4 @@ properties:
         tier: { enum: [sourced, derived, invented] }
         source: { type: string }
         note: { type: string }
+        review: { type: boolean, description: "A guess put in so the figure is there: to be reviewed." }

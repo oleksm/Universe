@@ -12,6 +12,7 @@ physical:
   length: 9.95
   width: 4.2
   height: 0.29
+  shock_limit: 15
 shape:
   surface_area: 99.2
   handed: left
@@ -25,3 +26,4 @@ basis:
   - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
   - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
   - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

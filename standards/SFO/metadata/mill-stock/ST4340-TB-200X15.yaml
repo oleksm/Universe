@@ -11,5 +11,8 @@ size:
   wall: 15
 making:
   process: tube-making-4340
+physical:
+  shock_limit: 150
 basis:
   - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

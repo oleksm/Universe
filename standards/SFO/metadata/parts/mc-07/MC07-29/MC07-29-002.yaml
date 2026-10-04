@@ -12,6 +12,7 @@ physical:
   length: 2.72
   width: 2.72
   height: 2.05
+  shock_limit: 30
 shape:
   surface_area: 39.2
 made_from:
@@ -23,3 +24,4 @@ basis:
   - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
   - { of: [physical.mass], tier: invented, note: "An estimate: its surface at 4.91 kg for each m2." }
   - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
