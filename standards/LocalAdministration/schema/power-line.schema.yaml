@@ -1,0 +1,16 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Power line
+description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/power-lines/<name>.yaml: a power line of a settlement, from one facility to another. It says what can be carried, not what is.'
+type: object
+additionalProperties: false
+required: [name, from, to, capacity, line]
+properties:
+  name: { type: string }
+  from: { type: string, description: 'The facility it starts at (one that makes power), by file name.' }
+  to: { type: string, description: 'The facility it ends at, by file name.' }
+  capacity: { type: number, description: MW it can carry at most }
+  line:
+    description: "Its run, point by point: metres [east, north] of the settlement's position. It starts on the parcel of the one facility and ends on the parcel of the other."
+    type: array
+    minItems: 2
+    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }

@@ -248,7 +248,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels", "facilities", "streets"}:
+            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -419,6 +419,41 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             facs.append(fc)
         if facs:
             x["facilities"] = facs
+        # (Its power lines: <settlement>/power-lines/<name>.yaml, from one facility's parcel to another's.)
+        pw_dir = os.path.join(bfull[:-5], "power-lines")
+        wires = []
+        for fn in sorted(os.listdir(pw_dir)) if os.path.isdir(pw_dir) else []:
+            ffull = os.path.join(pw_dir, fn)
+            if not re.fullmatch(r"[a-z0-9-]+\.yaml", fn):
+                problem(ffull, "a power line's file is named <name>.yaml (lower case, words joined by -)")
+                continue
+            w = load(ffull)
+            for k in ["name", "from", "to", "capacity", "line"]:
+                if k not in w:
+                    problem(ffull, f"no {k}")
+            for k in w:
+                if k not in {"name", "from", "to", "capacity", "line"}:
+                    problem(ffull, f"unknown field '{k}'")
+            ln = w.get("line")
+            if not (isinstance(ln, list) and len(ln) >= 2 and all(isinstance(c, list) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c) for c in ln)):
+                problem(ffull, "line: two or more points, each [east, north] in metres")
+                continue
+            for end, pt in (("from", ln[0]), ("to", ln[-1])):
+                fc = next((f for f in facs if f["slug"] == w.get(end)), None)
+                plot = fc and next((r for r in plots if r.get("number") == fc.get("parcel")), None)
+                if fc is None:
+                    problem(ffull, f"{end}: {x.get('name')} has no facility '{w.get(end)}'")
+                elif plot is not None and not within(pt, plot["outline"]):
+                    problem(ffull, f"line: it does not {'start' if end == 'from' else 'end'} on {fc.get('name')}'s parcel")
+            src = next((f for f in facs if f["slug"] == w.get("from")), None)
+            if src is not None and src.get("kind") != "power":
+                problem(ffull, f"from: {src.get('name')} makes no power")
+            w["length"] = sum(((ln[i + 1][0] - ln[i][0]) ** 2 + (ln[i + 1][1] - ln[i][1]) ** 2) ** 0.5 for i in range(len(ln) - 1))
+            w["slug"] = fn[:-5]
+            w["file"] = os.path.relpath(ffull, TREE)
+            wires.append(w)
+        if wires:
+            x["power_lines"] = wires
         if plots:
             x["parcels"] = plots
         if zones:
