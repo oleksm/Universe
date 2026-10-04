@@ -595,11 +595,11 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate", "layouts": "layout"}
 # (Parts are filed in folders of their own: read further down.)
 NESTED = {"parts"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
+elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates, layouts = [], [], [], [], [], [], [], [], [], []
 for s in standards:
     if "records" not in s:
         continue
@@ -648,6 +648,11 @@ for s in standards:
                 problem(full, f"identity.maker: no maker '{ident['maker']}' in Maker House")
             key = ident.get("name")
             e["slug"] = name[:-5]
+        elif kind == "layouts":
+            if not ident.get("hull"):
+                problem(full, "identity: no hull")
+            key = ident.get("hull")
+            e["slug"] = name[:-5]
         elif kind == "hulls":
             if not ident.get("name"):
                 problem(full, "identity: no name")
@@ -686,6 +691,9 @@ for s in standards:
                 continue
             if kind in ("hulls", "gates") and group == "fit":
                 continue
+            # (A layout's lists are checked further down, with its hull.)
+            if kind == "layouts" and group in ("decks", "compartments", "openings"):
+                continue
             if kind == "goods" and group == "composition":
                 for c in props or []:
                     if c.get("part") not in {(x.get("identity") or {}).get("symbol") for x in elements} and not os.path.exists(os.path.join(folder, str(c.get("part")) + ".yaml")):
@@ -700,7 +708,7 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock, "equipment": equipment, "gates": gates}[kind].append(e)
+        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock, "equipment": equipment, "gates": gates, "layouts": layouts}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
@@ -1274,6 +1282,24 @@ def write_ron():
     out.append("]\n")
     with open(os.path.join(CONTENT, "industry.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
+    # Ship layouts (SFO 18), what the game builds hulls' insides from: compartments (boxes in
+    # metres back from the nose, above the keel, from the centre line) and the openings between them.
+    out = [head + "// Ship layouts from the SFO (SFO 18): each hull's compartments and openings. Boxes: (aft from, aft to, up from, up to, side from, side to), m.\n["]
+    for lay in sorted(layouts, key=lambda x: x["slug"]):
+        out.append(f"    (hull: {ron_str(lay['identity']['hull'])}, compartments: [")
+        for c in lay.get("compartments") or []:
+            ad = c["address"]
+            bxs = ", ".join("(" + ", ".join(repr(float(v)) for v in bx) + ")" for bx in c["boxes"])
+            out.append(f"        (name: {ron_str(c['name'])}, function: {ron_str(c['function'])}, deck: {int(ad['deck'])}, section: {ron_str(ad['section'])}, unit: {int(ad['unit'])}, pressurised: {'true' if c.get('pressurised') else 'false'}, boxes: [{bxs}]),")
+        out.append("    ], openings: [")
+        for o in lay.get("openings") or []:
+            a, b = o["between"]
+            at = ", ".join(repr(float(v)) for v in o["at"])
+            out.append(f"        (kind: {ron_str(o['kind'])}, a: {ron_str(a)}, b: {ron_str(b)}, at: ({at}), width: {float(o['width'])!r}, height: {float(o['height'])!r}, seals: {'true' if o.get('seals') else 'false'}),")
+        out.append("    ]),")
+    out.append("]\n")
+    with open(os.path.join(CONTENT, "layouts.ron"), "w", encoding="utf-8") as f:
+        f.write("\n".join(out))
 
 
 # ---------------------------------------------------------------- reports
@@ -1382,6 +1408,83 @@ for e in equipment:
     same = game is not None and mass is not None and abs(game - mass) < 0.5
     rows.append(row("gap", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
 report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game, or does not yet say what it is made of.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
+
+# 1b. Ship layouts (SFO 18): a hull's inside, divided. Checked: its hull exists; names, kinds and
+# functions known; boxes the right way round; no two compartments overlapping; each opening on a
+# face its two compartments share (to the outside: on one of its compartment's faces); a door a
+# person fits through; every compartment reachable from outside. Worked out: each compartment's
+# volume and floor area, and what's sealed. (Whether the boxes fit the hull as modelled is checked
+# against the model: tools/standards/hulls/check_layout.py.)
+LAYOUT_SCHEMA = SCHEMAS["layouts"]["properties"]
+FUNCTIONS = set(LAYOUT_SCHEMA["compartments"]["items"]["properties"]["function"]["enum"])
+OPENINGS = set(LAYOUT_SCHEMA["openings"]["items"]["properties"]["kind"]["enum"])
+hull_slugs = {h["slug"] for h in hulls}
+lay_rows = []
+for lay in layouts:
+    where = os.path.join(TREE, lay["file"])
+    if lay["identity"].get("hull") not in hull_slugs:
+        problem(where, f"identity.hull: no hull '{lay['identity'].get('hull')}' in the SFO")
+    decks_n = {d.get("number") for d in lay.get("decks") or []}
+    boxes_of = {}
+    for c in lay.get("compartments") or []:
+        nm = c.get("name")
+        if nm in boxes_of or nm == "outside":
+            problem(where, f"compartments: '{nm}' twice (or named outside)")
+        if c.get("function") not in FUNCTIONS:
+            problem(where, f"compartments: {nm}: no function '{c.get('function')}' (one of {', '.join(sorted(FUNCTIONS))})")
+        if (c.get("address") or {}).get("deck") not in decks_n:
+            problem(where, f"compartments: {nm}: no deck {(c.get('address') or {}).get('deck')}")
+        bxs = []
+        for bx in c.get("boxes") or []:
+            if len(bx) != 6 or any(bx[2 * k] >= bx[2 * k + 1] for k in range(3)):
+                problem(where, f"compartments: {nm}: a box is [aft from, aft to, up from, up to, side from, side to], each from below to: {bx}")
+                continue
+            bxs.append([(float(bx[2 * k]), float(bx[2 * k + 1])) for k in range(3)])
+        boxes_of[nm] = bxs
+        c["volume"] = round(sum((b[0][1] - b[0][0]) * (b[1][1] - b[1][0]) * (b[2][1] - b[2][0]) for b in bxs), 1)
+        c["floor_area"] = round(sum((b[0][1] - b[0][0]) * (b[2][1] - b[2][0]) for b in bxs), 1)
+    names_ = list(boxes_of)
+    for ia, na in enumerate(names_):
+        for nb in names_[ia + 1:]:
+            if any(all(min(p[k][1], q[k][1]) - max(p[k][0], q[k][0]) > 0.01 for k in range(3)) for p in boxes_of[na] for q in boxes_of[nb]):
+                problem(where, f"compartments: {na} and {nb} overlap")
+
+    def faces(bx, at):
+        return [(k, sd) for k in range(3) for sd in (0, 1) if abs(at[k] - bx[k][sd]) < 0.01 and all(bx[m][0] - 0.01 <= at[m] <= bx[m][1] + 0.01 for m in range(3) if m != k)]
+
+    links = {n: set() for n in names_ + ["outside"]}
+    for o in lay.get("openings") or []:
+        pair = o.get("between") or []
+        label = " - ".join(map(str, pair))
+        if o.get("kind") not in OPENINGS:
+            problem(where, f"openings: {label}: no kind '{o.get('kind')}' (one of {', '.join(sorted(OPENINGS))})")
+        if len(pair) != 2 or any(n not in links for n in pair):
+            problem(where, f"openings: {label}: joins no compartment of that name")
+            continue
+        at = [float(v) for v in o.get("at") or []]
+        a, b = pair
+        if a != "outside" and b != "outside":
+            fa = [f for bx in boxes_of[a] for f in faces(bx, at)]
+            fb = [f for bx in boxes_of[b] for f in faces(bx, at)]
+            if not any(x[0] == y[0] and x[1] != y[1] for x in fa for y in fb):
+                problem(where, f"openings: {label} at {o.get('at')}: not on a face they share")
+        elif not any(faces(bx, at) for bx in boxes_of[b if a == "outside" else a]):
+            problem(where, f"openings: {label} at {o.get('at')}: not on a face of its compartment")
+        if o.get("kind") in ("door", "pressure-door") and (o.get("width", 0) < 0.8 or o.get("height", 0) < 2.0):
+            problem(where, f"openings: {label}: {o.get('width')} x {o.get('height')} m is smaller than a person's door (0.8 x 2.0)")
+        links[a].add(b)
+        links[b].add(a)
+    seen_, todo = {"outside"}, ["outside"]
+    while todo:
+        for n in links[todo.pop()]:
+            if n not in seen_:
+                seen_.add(n)
+                todo.append(n)
+    cs = lay.get("compartments") or []
+    unreached = [c["name"] for c in cs if c["name"] not in seen_]
+    lay["worked"] = {"volume": round(sum(c["volume"] for c in cs), 1), "sealed": round(sum(c["volume"] for c in cs if c.get("pressurised")), 1), "floor_area": round(sum(c["floor_area"] for c in cs), 1), "unreached": unreached}
+    lay_rows.append(row("gap" if unreached else "ok", link(lay["identity"]["hull"].upper(), "lay:" + lay["slug"]), len(cs), len(lay.get("openings") or []), f"{lay['worked']['volume']:,.0f} m³", f"{lay['worked']['sealed']:,.0f} m³", f"{lay['worked']['floor_area']:,.0f} m²", ", ".join(unreached)))
+report("layouts", "Layouts: hulls' insides", "Each hull's layout: its compartments and openings, its space, what of it is sealed, and its floor. A gap is a compartment there's no way into from outside.", ["Hull", "Compartments", "Openings", "Space", "Sealed", "Floor", "No way in"], lay_rows)
 
 # 1c. Stargates: what opening and holding each ring's tube costs, by the laws (config/dogma.ron,
 # Tube; the same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
@@ -1727,8 +1830,8 @@ report("goods", "Goods: where each comes from and goes", "Each good: where it co
 # (Elements and materials are from published sources, named in their files; a process's amounts are
 # its material's composition. Other records say for themselves, in `basis`; one that doesn't is a gap.)
 DEFAULT_TIER = {"elements": "sourced", "materials": "sourced", "processes": "derived"}
-KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts", "equipment": "Ship equipment", "gates": "Stargates"}
-KEY_OF = {"gates": lambda e: "gate:" + e["slug"], "equipment": lambda e: "eq:" + e["slug"], "elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
+KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts", "equipment": "Ship equipment", "gates": "Stargates", "layouts": "Ship layouts"}
+KEY_OF = {"layouts": lambda e: "lay:" + e["slug"], "gates": lambda e: "gate:" + e["slug"], "equipment": lambda e: "eq:" + e["slug"], "elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
 
 
 def numbers(d, path=()):
@@ -1753,7 +1856,7 @@ def tier_of(kind, raw, group, prop, review=False):
 
 
 rows, detail, reviews = [], [], []
-for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts), ("equipment", equipment), ("gates", gates)):
+for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts), ("equipment", equipment), ("gates", gates), ("layouts", layouts)):
     tally = {"sourced": 0, "derived": 0, "invented": 0, "unsaid": 0}
     to_review = 0
     for e in recs:
@@ -1803,6 +1906,7 @@ def write_html():
         "mill_stock": mill_stock,
         "equipment": equipment,
         "gates": gates,
+        "layouts": layouts,
         "structures": structures,
         "gate_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["gates"]["properties"].items() if "properties" in d},
         "equipment_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["equipment"]["properties"].items() if "properties" in d},
@@ -1839,4 +1943,4 @@ if problems:
 write_ron()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
-print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron")
+print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/layouts.ron")
