@@ -126,6 +126,22 @@ fn pcf(uv: vec2<f32>, layer: i32, depth: f32) -> f32 {
 
 const PI: f32 = 3.14159265;
 
+// A coloured lamp's light as the eye can show it: the film curve rolls
+// anything far brighter than sunlit paint toward white (a red nav light of
+// strength 40 burns white, its weak green alone outshining the paint), so a
+// strongly coloured glow is held to about that bright, where its colour
+// stays; a whitish one (white lamps, the drive's glow) keeps all of it.
+const LAMP_COLOURED: f32 = 1.2;
+fn lamp(e: vec3<f32>) -> vec3<f32> {
+    let peak = max(e.r, max(e.g, e.b));
+    if (peak <= LAMP_COLOURED) {
+        return e;
+    }
+    let saturation = 1.0 - min(e.r, min(e.g, e.b)) / peak;
+    let limit = mix(peak, LAMP_COLOURED, smoothstep(0.5, 0.9, saturation));
+    return e * (limit / peak);
+}
+
 // Karis's fit of the split-sum reflectance (how much of the mirrored
 // environment a surface of this roughness returns, seen at this angle).
 fn env_brdf(f0: vec3<f32>, roughness: f32, nv: f32) -> vec3<f32> {
@@ -227,6 +243,6 @@ fn fs_pbr(in: Out, @builtin(front_facing) front: bool) -> @location(0) vec4<f32>
     let r = reflect(-v, n);
     let mirrored = textureSampleLevel(env_spec, env_sampler, r, roughness * 7.0).rgb;
     c += mirrored * env_brdf(f0, roughness, nv) * occ * g.look2.x;
-    c += select(vec4<f32>(1.0), textureSample(emissive_tex, tex_sampler, in.uv), textured).rgb * mat.emissive.rgb * g.look.w;
+    c += lamp(select(vec4<f32>(1.0), textureSample(emissive_tex, tex_sampler, in.uv), textured).rgb * mat.emissive.rgb) * g.look.w;
     return vec4<f32>(c, alpha);
 }
