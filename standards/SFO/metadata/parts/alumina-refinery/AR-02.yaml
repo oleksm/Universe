@@ -2,7 +2,7 @@
 identity:
   code: AR-02
   name: "Thickener"
-  status: draft
+  revision: draft
   description: "A wide tank where the red mud settles out."
 physical:
   mass: 400000

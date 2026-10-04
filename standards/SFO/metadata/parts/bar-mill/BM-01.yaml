@@ -2,7 +2,7 @@
 identity:
   code: BM-01
   name: "Roll stand"
-  status: draft
+  revision: draft
   description: "Grooved rolls; the bar passes through each in turn."
 physical:
   mass: 40000

@@ -2,7 +2,7 @@
 identity:
   code: WB-04
   name: "Overhead crane"
-  status: draft
+  revision: draft
   description: "Lifts panels and finished parts."
 physical:
   mass: 60000

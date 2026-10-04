@@ -2,7 +2,7 @@
 identity:
   code: MC-01
   name: "Machine bed"
-  status: draft
+  revision: draft
   description: "The heavy base everything stands on."
 physical:
   mass: 30000

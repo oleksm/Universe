@@ -4,7 +4,7 @@
 identity:
   code: MC07-24
   name: "Landing leg, rear"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_RL_*, Gear_RR_*"
 physical:
   length: 6.28

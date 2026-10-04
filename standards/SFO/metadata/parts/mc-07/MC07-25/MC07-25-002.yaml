@@ -5,7 +5,7 @@
 identity:
   code: MC07-25-002
   name: "Ram body"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: CargoRam_L_Body, CargoRam_R_Body"
 physical:
   mass: 233

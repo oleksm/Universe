@@ -2,7 +2,7 @@
 identity:
   code: LD-03
   name: "Platform"
-  status: draft
+  revision: draft
   description: "The deck goods are set down on."
 physical:
   mass: 200000

@@ -2,7 +2,7 @@
 identity:
   code: PF-02
   name: "Roll"
-  status: draft
+  revision: draft
   description: "The blank is bent between them."
 physical:
   mass: 6000

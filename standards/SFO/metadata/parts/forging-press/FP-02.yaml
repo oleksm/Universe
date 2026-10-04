@@ -2,7 +2,7 @@
 identity:
   code: FP-02
   name: "Main cylinder"
-  status: draft
+  revision: draft
   description: "Hydraulic cylinders that drive the moving crosshead."
 physical:
   mass: 150000

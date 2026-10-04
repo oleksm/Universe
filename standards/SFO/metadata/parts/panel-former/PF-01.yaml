@@ -2,7 +2,7 @@
 identity:
   code: PF-01
   name: "Roll frame"
-  status: draft
+  revision: draft
   description: "The frame that holds the rolls."
 physical:
   mass: 30000

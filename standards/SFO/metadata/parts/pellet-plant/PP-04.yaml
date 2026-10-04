@@ -2,7 +2,7 @@
 identity:
   code: PP-04
   name: "Screen"
-  status: draft
+  revision: draft
   description: "Sorts pellets by size; the wrong sizes go round again."
 physical:
   mass: 20000

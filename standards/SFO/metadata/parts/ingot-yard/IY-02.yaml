@@ -2,7 +2,7 @@
 identity:
   code: IY-02
   name: "Storage rack"
-  status: draft
+  revision: draft
   description: "Holds ingots by grade."
 physical:
   mass: 15000

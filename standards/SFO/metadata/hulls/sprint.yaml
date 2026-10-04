@@ -7,7 +7,7 @@ identity:
   key: hull.sprint
   maker: brand.vireo
   class: courier
-  standing: outdated
+  revision: outdated
   description: "Small and fast, for light cargo and messages."
 size:
   volume: 543

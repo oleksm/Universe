@@ -5,7 +5,7 @@
 identity:
   code: MC07-17
   name: "Rear module"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_RearModule"
 physical:
   mass: 5827

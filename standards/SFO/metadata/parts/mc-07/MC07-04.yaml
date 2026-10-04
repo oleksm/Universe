@@ -5,7 +5,7 @@
 identity:
   code: MC07-04
   name: "Spine, forward"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_SpineFwd"
 physical:
   mass: 1948

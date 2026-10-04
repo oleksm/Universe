@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Lanaike, kind: asteroid, parent: Driumum}
 orbit: {semi_major_axis: 40452500.0, eccentricity: 0.0817, period: 98.2999, inclination: 8.667}
 physical: {mass: 233010000000000.0, radius: 3.49769, gravity: 0.001, day: 26.776, tilt: 105.86}

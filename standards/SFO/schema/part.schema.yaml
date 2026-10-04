@@ -14,7 +14,7 @@ properties:
       name: { type: string }
       description: { type: string }
       revision: { type: string, description: "A, B, C... as its design changes." }
-      status: { enum: [draft, released, superseded] }
+      revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
       designer: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: The company that designed it. }
       standards: { type: array, items: { type: string }, description: "The standards it is built to, by id (SFO 9)." }
       interchangeable_with: { type: array, items: { type: string }, description: Other parts' codes that fit in its place. }

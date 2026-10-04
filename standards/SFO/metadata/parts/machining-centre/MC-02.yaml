@@ -2,7 +2,7 @@
 identity:
   code: MC-02
   name: "Spindle head"
-  status: draft
+  revision: draft
   description: "Turns the cutter."
 physical:
   mass: 5000

@@ -2,7 +2,7 @@
 identity:
   code: LS-02
   name: "Ladle car"
-  status: draft
+  revision: draft
   description: "Carries the ladle under the roof and away."
 physical:
   mass: 50000

@@ -3,9 +3,9 @@ title: Asteroid field
 description: 'standards/Celestial/metadata/systems/<system>/fields/<name>.yaml: one field of asteroids: a family round a named rock.'
 type: object
 additionalProperties: false
-required: [identity, status]
+required: [identity, provenance]
 properties:
-  status: { enum: [seeded, curated, frozen] }
+  provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
   identity:
     type: object
     additionalProperties: false

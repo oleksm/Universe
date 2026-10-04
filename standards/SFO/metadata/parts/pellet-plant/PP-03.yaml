@@ -2,7 +2,7 @@
 identity:
   code: PP-03
   name: "Travelling grate"
-  status: draft
+  revision: draft
   description: "A moving grate that carries the pellets through a furnace to harden them."
 physical:
   mass: 3000000

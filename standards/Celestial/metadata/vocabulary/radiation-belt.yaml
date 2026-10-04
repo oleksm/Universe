@@ -10,6 +10,6 @@ figures:
   - { what: "a day at Europa", value: "540 rem" }
   - { what: "a day on the Earth", value: "0.0007 rem" }
 means: "A giant's inner moons are deadly without heavy shielding: a reason to work the outer ones."
-game: not made
+in_game: not made
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Magnetosphere_of_Jupiter" }

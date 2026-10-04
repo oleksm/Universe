@@ -2,7 +2,7 @@
 identity:
   code: LS-04
   name: "Transformer"
-  status: draft
+  revision: draft
   description: "Feeds its electrodes."
 physical:
   mass: 60000

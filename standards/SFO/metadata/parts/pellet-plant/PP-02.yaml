@@ -2,7 +2,7 @@
 identity:
   code: PP-02
   name: "Balling drum"
-  status: draft
+  revision: draft
   description: "Rolls the damp ground ore into pellets."
 physical:
   mass: 120000

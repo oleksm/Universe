@@ -5,7 +5,7 @@
 identity:
   code: MC07-24-002
   name: "Piston"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_RL_Piston"
 physical:
   mass: 82

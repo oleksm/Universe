@@ -2,7 +2,7 @@
 identity:
   code: LS-01
   name: "Ladle"
-  status: draft
+  revision: draft
   description: "A lined bucket that carries a heat of liquid steel."
 physical:
   mass: 42000

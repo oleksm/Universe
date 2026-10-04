@@ -2,7 +2,7 @@
 identity:
   code: AS-03
   name: "Assembly stand"
-  status: draft
+  revision: draft
   description: "Holds an assembly while it is fitted together."
 physical:
   mass: 5000

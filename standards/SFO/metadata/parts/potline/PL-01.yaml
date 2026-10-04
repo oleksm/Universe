@@ -2,7 +2,7 @@
 identity:
   code: PL-01
   name: "Reduction cell"
-  status: draft
+  revision: draft
   description: "A steel pot lined with carbon, where current through molten salt turns alumina into aluminium."
 physical:
   mass: 44000

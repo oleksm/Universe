@@ -2,7 +2,7 @@
 identity:
   code: FP-01
   name: "Press frame"
-  status: draft
+  revision: draft
   description: "Columns and crossheads that take the press's force."
 physical:
   mass: 5350000

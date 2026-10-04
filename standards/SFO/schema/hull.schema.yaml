@@ -14,7 +14,7 @@ properties:
       key: { type: string, description: "Its key in the game (content/base/hulls.ron), for one the game has as a stock hull." }
       maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
       class: { type: string, description: "What it is built for: mining ship, hauler, courier..." }
-      standing: { enum: [current, outdated], description: "outdated: an early rough guess, kept as a record of what the game has. Not to be balanced against or designed toward." }
+      revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
       description: { type: string }
   size:
     type: object

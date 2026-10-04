@@ -2,7 +2,7 @@
 identity:
   code: GW-03
   name: "Stacker crane"
-  status: draft
+  revision: draft
   description: "Runs in the aisles, putting goods away and fetching them."
 physical:
   mass: 12000

@@ -5,7 +5,7 @@
 identity:
   code: MC07-15
   name: "Spine, mid B"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_SpineMidB"
 physical:
   mass: 1099

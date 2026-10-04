@@ -2,7 +2,7 @@
 identity:
   code: RF-03
   name: "Walking beam"
-  status: draft
+  revision: draft
   description: "Lifts and steps the ingots through the furnace."
 physical:
   mass: 300000

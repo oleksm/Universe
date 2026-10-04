@@ -7,7 +7,7 @@ identity:
   key: hull.prospector
   maker: brand.cormorant
   class: mining ship
-  standing: outdated
+  revision: outdated
   description: "A miner: a mining rig, a big hold, sturdy."
 size:
   volume: 15607

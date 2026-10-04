@@ -2,7 +2,7 @@
 identity:
   code: PM-04
   name: "Drive motor"
-  status: draft
+  revision: draft
   description: "Drive the rolls."
 physical:
   mass: 40000

@@ -2,7 +2,7 @@
 identity:
   code: TF-01
   name: "Tank"
-  status: draft
+  revision: draft
   description: "A steel tank for fluids."
 physical:
   mass: 120000

@@ -11,7 +11,7 @@ figures:
   - { what: "each stretches", value: "about 26 degrees along the orbit" }
   - { what: "their mass", value: "a fifth of the main belt's" }
 means: "Volatiles and carbon held at a known place, far from the star."
-game: partly
-game_note: "Made as one field at some of them."
+in_game: partly
+in_game_note: "Made as one field at some of them."
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Jupiter_trojan" }

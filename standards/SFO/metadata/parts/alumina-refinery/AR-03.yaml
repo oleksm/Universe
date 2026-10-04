@@ -2,7 +2,7 @@
 identity:
   code: AR-03
   name: "Precipitator tank"
-  status: draft
+  revision: draft
   description: "A tall tank where alumina hydrate crystallises out of the cooled liquor."
 physical:
   mass: 300000

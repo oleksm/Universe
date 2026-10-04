@@ -11,6 +11,6 @@ figures:
   - { what: "over 1 km across", value: "possibly trillions" }
   - { what: "all of it together", value: "about five Earth masses" }
 means: "Where the comets that come once in a thousand lifetimes fall from. Past it is the next star's."
-game: not made
+in_game: not made
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Oort_cloud" }

@@ -2,7 +2,7 @@
 identity:
   code: CB-02
   name: "Ingot mould"
-  status: draft
+  revision: draft
   description: "A heavy iron mould the steel sets in."
 physical:
   mass: 8000

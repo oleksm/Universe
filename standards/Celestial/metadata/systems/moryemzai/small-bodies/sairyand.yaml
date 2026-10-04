@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
-# The game does not make it yet. Change its status to curated to take it over.
-status: seeded
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
 identity: {name: Sairyand, kind: crossing asteroid, parent: Moryemzai, about: 'Knocked out of the belt. At its closest it
     comes in to 0.03 AU, near the orbit of Moryemzai b.'}
 orbit: {semi_major_axis: 34628400.0, eccentricity: 0.85142754, inclination: 24.49, period: 71.091}

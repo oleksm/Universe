@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the outer belt's largest: round above about 400 km in radius.
-# The game does not make it yet. Change its status to curated to take it over.
-status: seeded
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
 identity: {name: Cithonon, kind: dwarf planet, parent: Treistun, about: 'A world of ice in the outer belt, heavy enough to
     have pulled itself round. One of perhaps 24.'}
 orbit: {semi_major_axis: 2061920000.0, eccentricity: 0.17213908, inclination: 7.74, period: 22258.0}

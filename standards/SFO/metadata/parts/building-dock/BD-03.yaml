@@ -2,7 +2,7 @@
 identity:
   code: BD-03
   name: "Cradle"
-  status: draft
+  revision: draft
   description: "Carries the hull as it grows."
 physical:
   mass: 20000

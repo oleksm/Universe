@@ -2,7 +2,7 @@
 identity:
   code: AJ-03
   name: "Manipulator arm"
-  status: draft
+  revision: draft
   description: "Brings panels and tubes to their places."
 physical:
   mass: 40000

@@ -2,7 +2,7 @@
 identity:
   code: FL-04
   name: "Stacker"
-  status: draft
+  revision: draft
   description: "Stacks the cut sheets and plates."
 physical:
   mass: 60000

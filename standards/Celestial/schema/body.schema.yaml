@@ -3,9 +3,9 @@ title: Celestial body
 description: 'standards/Celestial/metadata/systems/<system>/bodies/<name>.yaml: one natural body of a system (a planet, a moon, a named asteroid). What people have built there is in Local Administration. A body uses the properties that apply to it.'
 type: object
 additionalProperties: false
-required: [identity, status]
+required: [identity, provenance]
 properties:
-  status: { enum: [seeded, curated, frozen], description: "seeded: written out as the seed makes it, and may be written out again. curated: changed by hand; the record is the truth and the seed no longer applies. frozen: curated and not to be changed (its landscape is made and other work is built on it)." }
+  provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
   identity:
     type: object
     additionalProperties: false

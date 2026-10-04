@@ -2,7 +2,7 @@
 identity:
   code: FL-01
   name: "Leveller"
-  status: draft
+  revision: draft
   description: "Flattens the strip between rollers."
 physical:
   mass: 150000

@@ -1285,11 +1285,11 @@ def write_ron():
     opt = lambda v: "None" if v is None else f"Some({v})"
     for sysm in celestial["systems"]:
         st = sysm.get("star") or {}
-        out.append(f"    (system: {ron_str(sysm['identity']['name'])}, index: {sysm['identity'].get('index', 0)}, status: {ron_str(sysm['status'])}, star: (class: {ron_str(st.get('class', ''))}, mass: {float(st.get('mass', 0))!r}, luminosity: {float(st.get('luminosity', 0))!r}), bodies: [")
+        out.append(f"    (system: {ron_str(sysm['identity']['name'])}, index: {sysm['identity'].get('index', 0)}, status: {ron_str(sysm['provenance'])}, star: (class: {ron_str(st.get('class', ''))}, mass: {float(st.get('mass', 0))!r}, luminosity: {float(st.get('luminosity', 0))!r}), bodies: [")
         for b in sysm["bodies"]:
             ph, ob, sf, at = b.get("physical") or {}, b.get("orbit") or {}, b.get("surface") or {}, b.get("atmosphere")
             col = sf.get("colour") or [0.5, 0.5, 0.5]
-            out.append(f"        (name: {ron_str(b['identity']['name'])}, status: {ron_str(b['status'])}, kind: {ron_str(b['identity']['kind'])}, parent: {ron_str(b['identity'].get('parent', ''))}, mass: {float(ph.get('mass', 0))!r}, radius: {float(ph.get('radius', 0)) * 1000!r}, day: {float(ph.get('day', 0)) * 3600!r}, "
+            out.append(f"        (name: {ron_str(b['identity']['name'])}, status: {ron_str(b['provenance'])}, kind: {ron_str(b['identity']['kind'])}, parent: {ron_str(b['identity'].get('parent', ''))}, mass: {float(ph.get('mass', 0))!r}, radius: {float(ph.get('radius', 0)) * 1000!r}, day: {float(ph.get('day', 0)) * 3600!r}, "
                        + f"semi_major_axis: {opt(repr(float(ob['semi_major_axis']) * 1000) if 'semi_major_axis' in ob else None)}, eccentricity: {opt(repr(float(ob['eccentricity'])) if 'eccentricity' in ob else None)}, "
                        + f"inclination: {opt(repr(math.radians(float(ob['inclination']))) if 'inclination' in ob else None)}, tilt: {math.radians(float(ph.get('tilt', 0)))!r}, landscape: {opt(ron_str(sf['landscape']) if 'landscape' in sf else None)}, "
                        + f"terrain: {opt(ron_str(sf['terrain']) if 'terrain' in sf else None)}, relief: {opt(repr(float(sf['relief'])) if 'relief' in sf else None)}, "
@@ -1298,7 +1298,7 @@ def write_ron():
         out.append("    ], fields: [")
         for fl in sysm["fields"]:
             rk = fl.get("rocks") or {}
-            out.append(f"        (name: {ron_str(fl['identity']['name'])}, status: {ron_str(fl['status'])}, count: {int(rk.get('count', 0))}, extent: {float(rk.get('extent', 0)) * 1000!r}, class: {ron_str(rk.get('class', ''))}),")
+            out.append(f"        (name: {ron_str(fl['identity']['name'])}, status: {ron_str(fl['provenance'])}, count: {int(rk.get('count', 0))}, extent: {float(rk.get('extent', 0)) * 1000!r}, class: {ron_str(rk.get('class', ''))}),")
         out.append("    ]),")
     out.append("]\n")
     with open(os.path.join(CONTENT, "celestial.ron"), "w", encoding="utf-8") as f:
@@ -1539,7 +1539,7 @@ for ad in administrations:
             big_loads.append((f"a day's rock for {x['name']}, flat out", r_["rate"] * 24))
 for st in structures:
     big_loads.append((f"one {st['identity']['name'].lower()}", st["parts_mass"] / 1000))
-for hl in sorted(hulls, key=lambda h_: h_["identity"].get("standing") == "outdated"):
+for hl in sorted(hulls, key=lambda h_: h_["identity"].get("revision") == "outdated"):
     ms, ds, sz = hl.get("mass") or {}, hl.get("design") or {}, hl.get("size") or {}
     frame = hl.get("parts_mass", 0) / 1000 or ms.get("frame", 0)
     fitted = hl.get("fitted_mass", 0) / 1000
@@ -1549,7 +1549,7 @@ for hl in sorted(hulls, key=lambda h_: h_["identity"].get("standing") == "outdat
     hl["budget"] = {"frame": frame, "fitted": fitted, "fuel": fuel, "hold": hold, "loaded": loaded, "fit_volume": fit_vol,
                     "payload": hold / loaded if loaded else 0, "main_g": ds.get("main_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0, "lift_g": ds.get("lift_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0,
                     "loads": [{"what": w_, "tonnes": t_, "loads": t_ / hold if hold else None} for w_, t_ in big_loads]}
-    old = hl["identity"].get("standing") == "outdated"
+    old = hl["identity"].get("revision") == "outdated"
     rows.append(row("note" if old else "ok", link(hl["identity"]["name"], "hull:" + hl["slug"]), "outdated: not to be balanced against" if old else "current", hl["identity"].get("class", ""), f"{frame:,.0f} t" + ("" if hl.get("parts_mass") else " (the game's)"), f"{loaded:,.0f} t", f"{hold:g} t ({100 * hold / loaded:.0f}%)" if loaded else "", f"{fuel:g} t",
                     f"{100 * fit_vol / sz['volume']:.1f}% of {sz['volume']:,} m3" if sz.get("volume") else "", f"{hl['budget']['main_g']:.1f} g", f"{hl['budget']['lift_g']:.2f} g",
                     "; ".join(f"{b_['loads']:,.0f} loads for {b_['what']}" for b_ in hl["budget"]["loads"] if b_["loads"])))
@@ -1899,8 +1899,8 @@ if os.path.isdir(CEL):
                 for q in props or {}:
                     if q not in known[g]["properties"]:
                         problem(full, f"{g}: unknown property '{q}'")
-        if kind != "rock-class" and rec.get("status") not in ("seeded", "curated", "frozen"):
-            problem(full, "status: one of seeded, curated, frozen")
+        if kind != "rock-class" and rec.get("provenance") not in ("seeded", "curated", "frozen"):
+            problem(full, "provenance: one of seeded, curated, frozen")
         if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str((rec.get("identity") or {}).get("name", "")).lower()).strip("-"):
             problem(full, "a celestial record's file is named after it (lower case, words joined by -)")
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
@@ -1924,8 +1924,8 @@ if os.path.isdir(CEL):
         for q in v_.get("identity") or {}:
             if q not in cschema["vocabulary"]["properties"]["identity"]["properties"]:
                 problem(vfull, f"identity: unknown property '{q}'")
-        if v_.get("game") not in ("made", "partly", "not made"):
-            problem(vfull, "game: one of made, partly, not made")
+        if v_.get("in_game") not in ("made", "partly", "not made"):
+            problem(vfull, "in_game: one of made, partly, not made")
         check_basis(v_, vfull)
         v_["slug"], v_["file"] = fn[:-5], os.path.relpath(vfull, TREE)
         celestial["vocabulary"].append(v_)
@@ -2150,26 +2150,26 @@ for sysm in celestial["systems"]:
         t_ = (b.get("conditions") or {}).get("tidal") or {}
         if t_.get("state", "").startswith("far more"):
             rows.append(row("gap", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), "", "", f"its planet would knead {t_['flux']:,.0f} W into each m2 of it, against about 2 for the most volcanic moon known: its orbit, as the seed makes it, is too close and too stretched to last"))
-    count = lambda st: sum(1 for r_ in recs if r_.get("status") == st)
+    count = lambda st: sum(1 for r_ in recs if r_.get("provenance") == st)
     rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), f"{len(sysm['bodies'])} bodies, {len(sysm['fields'])} fields", f"{count('seeded')} seeded, {count('curated')} curated, {count('frozen')} frozen", ""))
 # (A body a person has taken over: what follows from its mass and radius must still agree with them.
 # The game takes its mass, radius, day, orbit (size, shape, tilt), axis, rings, terrain, relief, air
 # and colour; its gravity, period and temperature it works out itself. A system taken over: its star,
 # and its planets and moons exactly as written. A field taken over: its count, extent and class.)
 for sysm in celestial["systems"]:
-    if sysm.get("status") != "seeded":
-        rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), sysm["status"], "", "its star, and its planets and moons exactly as written: one the seed makes that has no record is not there"))
+    if sysm.get("provenance") != "seeded":
+        rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), sysm["provenance"], "", "its star, and its planets and moons exactly as written: one the seed makes that has no record is not there"))
     for fl in sysm["fields"]:
-        if fl.get("status") != "seeded":
-            rows.append(row("ok", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), fl["status"], "", "taken by the game as written"))
+        if fl.get("provenance") != "seeded":
+            rows.append(row("ok", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), fl["provenance"], "", "taken by the game as written"))
     for b in sysm["bodies"]:
-        if b.get("status") == "seeded":
+        if b.get("provenance") == "seeded":
             continue
         ph = b.get("physical") or {}
         g_ = 6.6743e-11 * ph.get("mass", 0) / (ph.get("radius", 1) * 1000) ** 2
         said = ph.get("gravity")
         off = said is not None and abs(said - g_) > 0.01 * g_
-        rows.append(row("gap" if off else "ok", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), b["status"], "", f"its gravity is written as {said} and its mass and radius give {g_:.3f}: the game uses its mass and radius" if off else "taken by the game as written"))
+        rows.append(row("gap" if off else "ok", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), b["provenance"], "", f"its gravity is written as {said} and its mass and radius give {g_:.3f}: the game uses its mass and radius" if off else "taken by the game as written"))
 for ad in administrations:
     sysm = next((s for s in celestial["systems"] if s["identity"]["name"] == ad.get("name")), None)
     if sysm is None:

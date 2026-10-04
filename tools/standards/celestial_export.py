@@ -3,7 +3,7 @@
 (standards/Celestial/metadata/systems). Runs the game's exporter
 (`cargo run -p universe-world --example celestial_export`), or reads its JSON from a file.
 
-A record whose status is `seeded` is written again; one that is `curated` or `frozen` is left
+A record whose provenance is `seeded` is written again; one that is `curated` or `frozen` is left
 alone, and so is anything in it. Nothing is ever deleted: a body the seed no longer makes is
 listed, for a person to decide.
 
@@ -29,10 +29,10 @@ def put(path, schema, rec):
     """Write a record unless a person has taken it over."""
     global wrote, kept
     seen.add(path)
-    if os.path.exists(path) and (yaml.safe_load(open(path)) or {}).get("status") in ("curated", "frozen"):
+    if os.path.exists(path) and (yaml.safe_load(open(path)) or {}).get("provenance") in ("curated", "frozen"):
         kept += 1
         return
-    text = f"# yaml-language-server: $schema={schema}\n# As the seed makes it. Change its status to curated to take it over: it is then never written again.\n" + yaml.safe_dump(rec, sort_keys=False, allow_unicode=True, default_flow_style=None, width=120)
+    text = f"# yaml-language-server: $schema={schema}\n# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.\n" + yaml.safe_dump(rec, sort_keys=False, allow_unicode=True, default_flow_style=None, width=120)
     if not os.path.exists(path) or open(path).read() != text:
         wrote += 1
         if not dry:
@@ -43,7 +43,7 @@ def put(path, schema, rec):
 for s in data["systems"]:
     d = sum(v * v for v in s["from_home_ly"]) ** 0.5
     put(os.path.join(OUT, slug(s["name"]) + ".yaml"), "../../schema/system.schema.yaml", {
-        "status": "seeded",
+        "provenance": "seeded",
         "identity": {"name": s["name"], "index": s["index"]},
         "star": {"class": s["class"], "mass": r(s["mass_suns"]), "luminosity": r(s["luminosity_suns"])},
         "position": {"from_home": [round(v, 3) for v in s["from_home_ly"]], "distance": round(d, 3)},
@@ -51,7 +51,7 @@ for s in data["systems"]:
     for b in s["bodies"]:
         if b["kind"] not in NATURAL:
             continue
-        rec = {"status": "seeded", "identity": {"name": b["name"], "kind": b["kind"]}}
+        rec = {"provenance": "seeded", "identity": {"name": b["name"], "kind": b["kind"]}}
         if "parent" in b:
             rec["identity"]["parent"] = b["parent"]
         if "orbit" in b:
@@ -84,11 +84,11 @@ for s in data["systems"]:
     for f in s["fields"]:
         kind = "trojan" if f["kind"].startswith("Trojan") else f["kind"].lower()
         put(os.path.join(OUT, slug(s["name"]), "fields", slug(f["name"]) + ".yaml"), "../../../../schema/field.schema.yaml", {
-            "status": "seeded",
+            "provenance": "seeded",
             "identity": {"name": f["name"], "kind": kind, "anchor": f["anchor"]},
             "rocks": {"class": f["class"].lower(), "count": f["count"], "extent": r(f["extent"] / 1000)},
         })
-gone = [os.path.relpath(os.path.join(dp, fn), ROOT) for dp, _, fns in os.walk(OUT) for fn in fns if fn.endswith(".yaml") and os.path.join(dp, fn) not in seen]
+gone = [os.path.relpath(os.path.join(dp, fn), ROOT) for dp, _, fns in os.walk(OUT) for fn in fns if fn.endswith(".yaml") and os.path.join(dp, fn) not in seen and os.path.basename(dp) in ("systems", "bodies", "fields")]
 print(f"{len(data['systems'])} systems from seed {data['seed']}: {wrote} records {'would be ' if dry else ''}written, {kept} kept as a person left them")
 for g in gone:
     print(f"  the seed no longer makes {g}")

@@ -11,7 +11,7 @@ figures:
   - { what: "all of it together", value: "3% of the Moon's mass" }
   - { what: "from one to the next", value: "965,600 km on average" }
 means: "Ore in no well at all. Nearly empty: a rock is a place to go to, not a field to fly through."
-game: partly
-game_note: "Made as two to five fields in a system's main belt (its swarms and outer belt have their own); see the note on fields."
+in_game: partly
+in_game_note: "Made as two to five fields in a system's main belt (its swarms and outer belt have their own); see the note on fields."
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_belt" }

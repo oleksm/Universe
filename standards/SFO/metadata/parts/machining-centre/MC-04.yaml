@@ -2,7 +2,7 @@
 identity:
   code: MC-04
   name: "Tool magazine"
-  status: draft
+  revision: draft
   description: "Holds the cutters and changes them."
 physical:
   mass: 3000

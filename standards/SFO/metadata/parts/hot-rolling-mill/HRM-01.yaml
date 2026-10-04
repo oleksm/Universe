@@ -2,7 +2,7 @@
 identity:
   code: HRM-01
   name: "Roughing stand"
-  status: draft
+  revision: draft
   description: "A reversing stand that takes the ingot down to a slab."
 physical:
   mass: 1050000

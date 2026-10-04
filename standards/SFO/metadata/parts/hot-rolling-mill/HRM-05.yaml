@@ -2,7 +2,7 @@
 identity:
   code: HRM-05
   name: "Coiler"
-  status: draft
+  revision: draft
   description: "Winds the strip."
 physical:
   mass: 250000

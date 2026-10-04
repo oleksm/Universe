@@ -2,7 +2,7 @@
 identity:
   code: FL-02
   name: "Shear"
-  status: draft
+  revision: draft
   description: "Cuts it to length and trims its edges."
 physical:
   mass: 80000

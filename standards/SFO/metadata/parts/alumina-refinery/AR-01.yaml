@@ -2,7 +2,7 @@
 identity:
   code: AR-01
   name: "Digester"
-  status: draft
+  revision: draft
   description: "A pressure vessel where hot caustic soda dissolves the alumina out of the bauxite."
 physical:
   mass: 250000

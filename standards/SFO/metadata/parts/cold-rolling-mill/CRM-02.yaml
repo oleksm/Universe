@@ -2,7 +2,7 @@
 identity:
   code: CRM-02
   name: "Roll"
-  status: draft
+  revision: draft
   description: "Work rolls and backup rolls."
 physical:
   mass: 25000

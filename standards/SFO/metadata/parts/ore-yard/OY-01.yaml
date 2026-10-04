@@ -2,7 +2,7 @@
 identity:
   code: OY-01
   name: "Stacker-reclaimer"
-  status: draft
+  revision: draft
   description: "A bucket wheel on a long boom that travels the yard, stacking what arrives and reclaiming it for the plant."
 physical:
   mass: 885000

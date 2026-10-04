@@ -10,7 +10,7 @@ figures:
   - { what: "for the smallest stars", value: "22%" }
   - { what: "for the heaviest", value: "80% and more" }
 means: "Two suns: two frost lines, and fewer places a planet can keep its orbit."
-game: not made
-game_note: "Every system has one star."
+in_game: not made
+in_game_note: "Every system has one star."
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Binary_star" }

@@ -2,7 +2,7 @@
 identity:
   code: AR-04
   name: "Calciner"
-  status: draft
+  revision: draft
   description: "Roasts the hydrate to alumina."
 physical:
   mass: 800000

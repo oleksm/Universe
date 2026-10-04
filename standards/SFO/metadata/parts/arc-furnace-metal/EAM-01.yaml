@@ -2,7 +2,7 @@
 identity:
   code: EAM-01
   name: "Furnace shell"
-  status: draft
+  revision: draft
   description: "The steel bowl the charge is melted in."
 physical:
   mass: 120000

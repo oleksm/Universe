@@ -5,7 +5,7 @@
 identity:
   code: MC07-26
   name: "Ore bay door, left"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: OreBay_DoorL"
 physical:
   mass: 1339

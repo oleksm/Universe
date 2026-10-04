@@ -2,7 +2,7 @@
 identity:
   code: CT-01
   name: "Cutting bed"
-  status: draft
+  revision: draft
   description: "The bed the sheet lies on, with its frame."
 physical:
   mass: 20000

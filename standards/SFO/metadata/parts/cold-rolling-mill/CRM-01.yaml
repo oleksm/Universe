@@ -2,7 +2,7 @@
 identity:
   code: CRM-01
   name: "Mill stand"
-  status: draft
+  revision: draft
   description: "Stands in tandem, each taking the strip thinner, cold."
 physical:
   mass: 360000

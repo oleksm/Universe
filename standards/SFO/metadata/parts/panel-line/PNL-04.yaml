@@ -2,7 +2,7 @@
 identity:
   code: PNL-04
   name: "Finishing station"
-  status: draft
+  revision: draft
   description: "Trims, checks and stacks the panels."
 physical:
   mass: 80000

@@ -5,7 +5,7 @@
 identity:
   code: MC07-12
   name: "Main hull"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_Main"
 physical:
   mass: 19874

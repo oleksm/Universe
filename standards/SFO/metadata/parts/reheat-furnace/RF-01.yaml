@@ -2,7 +2,7 @@
 identity:
   code: RF-01
   name: "Furnace casing"
-  status: draft
+  revision: draft
   description: "The steel box of the furnace."
 physical:
   mass: 400000

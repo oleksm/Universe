@@ -59,7 +59,7 @@ def put(sysdir, folder, schema, rec, why):
     wrote += 1
     if not dry:
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        open(path, "w").write(f"# yaml-language-server: $schema=../../../../schema/{schema}.schema.yaml\n# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: {why}\n# The game does not make it yet. Change its status to curated to take it over.\n"
+        open(path, "w").write(f"# yaml-language-server: $schema=../../../../schema/{schema}.schema.yaml\n# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: {why}\n# The game does not make it yet. Change its provenance to curated to take it over.\n"
                               + yaml.safe_dump(rec, sort_keys=False, allow_unicode=True, default_flow_style=None, width=120))
 
 
@@ -68,7 +68,7 @@ def density(cls):
 
 
 def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu):
-    rec = {"status": "seeded", "identity": {"name": nm, "kind": kind, "parent": parent, "about": about},
+    rec = {"provenance": "seeded", "identity": {"name": nm, "kind": kind, "parent": parent, "about": about},
            "orbit": {"semi_major_axis": r3(a_km, 6), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5)},
            "physical": {"radius": r3(radius_km)}, "rock": {"class": cls}}
     d = laws["sizes"].get("comet_density") if kind == "comet" else density(cls)
@@ -179,7 +179,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
 
     # Regions.
     def region(kind, nm, lo, hi, about, why, parent=None):
-        rec = {"status": "seeded", "identity": {"name": nm, "kind": kind, "about": about}, "extent": {"inner": r3(lo), "outer": r3(hi)}}
+        rec = {"provenance": "seeded", "identity": {"name": nm, "kind": kind, "about": about}, "extent": {"inner": r3(lo), "outer": r3(hi)}}
         if parent:
             rec["identity"]["parent"] = parent
         put(sysdir, "regions", "region", rec, why)

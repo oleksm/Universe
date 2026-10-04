@@ -2,7 +2,7 @@
 identity:
   code: EAF-06
   name: "Charging crane"
-  status: draft
+  revision: draft
   description: "Lifts the charge bucket over the furnace."
 physical:
   mass: 300000

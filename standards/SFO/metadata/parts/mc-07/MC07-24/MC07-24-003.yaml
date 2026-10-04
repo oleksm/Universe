@@ -5,7 +5,7 @@
 identity:
   code: MC07-24-003
   name: "Pad"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_RL_Pad"
 physical:
   mass: 216

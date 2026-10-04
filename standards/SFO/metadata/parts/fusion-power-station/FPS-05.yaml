@@ -2,7 +2,7 @@
 identity:
   code: FPS-05
   name: "Cooling plant"
-  status: draft
+  revision: draft
   description: "Carries the waste heat away."
 physical:
   mass: 1500000

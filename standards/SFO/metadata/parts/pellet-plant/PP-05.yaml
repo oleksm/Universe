@@ -2,7 +2,7 @@
 identity:
   code: PP-05
   name: "Belt conveyor"
-  status: draft
+  revision: draft
   description: "Carries ore and pellets between the machines."
 physical:
   mass: 60000

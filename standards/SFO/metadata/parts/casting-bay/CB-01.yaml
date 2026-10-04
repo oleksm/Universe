@@ -2,7 +2,7 @@
 identity:
   code: CB-01
   name: "Teeming crane"
-  status: draft
+  revision: draft
   description: "Carries the full ladle over the moulds."
 physical:
   mass: 300000

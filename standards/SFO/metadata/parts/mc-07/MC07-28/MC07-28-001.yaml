@@ -5,7 +5,7 @@
 identity:
   code: MC07-28-001
   name: "Pad"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: ClampFwd_Pad"
 physical:
   mass: 94

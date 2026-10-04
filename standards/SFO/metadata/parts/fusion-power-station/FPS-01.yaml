@@ -2,7 +2,7 @@
 identity:
   code: FPS-01
   name: "Reactor vessel"
-  status: draft
+  revision: draft
   description: "The vacuum vessel the burning plasma is held in."
 physical:
   mass: 5200000

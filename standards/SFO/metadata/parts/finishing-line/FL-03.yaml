@@ -2,7 +2,7 @@
 identity:
   code: FL-03
   name: "Ageing furnace"
-  status: draft
+  revision: draft
   description: "Brings the metal to its temper."
 physical:
   mass: 300000

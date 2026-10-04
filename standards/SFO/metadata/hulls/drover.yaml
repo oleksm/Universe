@@ -7,7 +7,7 @@ identity:
   key: hull.drover
   maker: brand.tolland
   class: general freighter
-  standing: outdated
+  revision: outdated
   description: "A workhorse: a bit of everything."
 size:
   volume: 5269

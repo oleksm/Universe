@@ -10,7 +10,7 @@ figures:
   - { what: "how many", value: "20 to 30 well recognised" }
   - { what: "how long one lasts", value: "about a billion years" }
 means: "Find one piece and you know what the rest are made of."
-game: partly
-game_note: "Made as one place, not spread round its orbit."
+in_game: partly
+in_game_note: "Made as one place, not spread round its orbit."
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_family" }

@@ -2,7 +2,7 @@
 identity:
   code: RING-01-002
   name: "Frame tube"
-  status: draft
+  revision: draft
   description: "A 12 m length of tube. Joined end to end they make the hoop frames the skin is fixed to."
 physical:
   mass: 821

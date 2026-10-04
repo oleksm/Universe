@@ -2,7 +2,7 @@
 identity:
   code: OY-02
   name: "Belt conveyor"
-  status: draft
+  revision: draft
   description: "Carries ore between the yard and the plant."
 physical:
   mass: 80000

@@ -2,7 +2,7 @@
 identity:
   code: H2-04
   name: "Compressor"
-  status: draft
+  revision: draft
   description: "Brings the hydrogen up to the pressure the furnace takes it at."
 physical:
   mass: 60000

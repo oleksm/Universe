@@ -2,7 +2,7 @@
 identity:
   code: FP-04
   name: "Manipulator"
-  status: draft
+  revision: draft
   description: "Holds and turns the hot workpiece."
 physical:
   mass: 250000

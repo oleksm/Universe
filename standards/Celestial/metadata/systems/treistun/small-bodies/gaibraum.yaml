@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the others come from the far cloud, once in thousands to millions of years.
-# The game does not make it yet. Change its status to curated to take it over.
-status: seeded
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
 identity: {name: Gaibraum, kind: comet, parent: Treistun, about: A comet from the far cloud. It comes in to 0.18 AU once in
     a very long time.}
 orbit: {semi_major_axis: 915606000000.0, eccentricity: 0.99997082, inclination: 153.95, period: 208280000.0}

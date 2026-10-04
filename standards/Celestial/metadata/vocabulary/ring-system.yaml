@@ -9,7 +9,7 @@ figures:
   - { what: "which planets", value: "all four of the Sun's giants" }
   - { what: "also round", value: "a few small bodies: Chariklo, Chiron, Haumea, Quaoar" }
 means: "Ice by the tonne, already in orbit, in pieces small enough to scoop."
-game: partly
-game_note: "Giants have rings, drawn; nothing can be taken from them."
+in_game: partly
+in_game_note: "Giants have rings, drawn; nothing can be taken from them."
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Ring_system" }

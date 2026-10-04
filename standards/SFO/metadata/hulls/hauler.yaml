@@ -7,7 +7,7 @@ identity:
   key: hull.hauler
   maker: brand.tolland
   class: hauler
-  standing: outdated
+  revision: outdated
   description: "A big hold and not much else."
 size:
   volume: 54301

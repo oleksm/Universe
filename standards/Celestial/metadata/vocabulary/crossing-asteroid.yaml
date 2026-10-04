@@ -12,6 +12,6 @@ figures:
   - { what: "over 140 m", value: "about 35,000" }
   - { what: "how long one lasts", value: "a few million years" }
 means: "The easiest rock to reach from a settled world, and the kind that hits one."
-game: not made
+in_game: not made
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Near-Earth_object", note: "As of December 2024." }

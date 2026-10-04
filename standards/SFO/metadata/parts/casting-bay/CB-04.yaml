@@ -2,7 +2,7 @@
 identity:
   code: CB-04
   name: "Stripper crane"
-  status: draft
+  revision: draft
   description: "Lifts the moulds off the set ingots."
 physical:
   mass: 150000

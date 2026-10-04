@@ -2,7 +2,7 @@
 identity:
   code: LD-01
   name: "Dock crane"
-  status: draft
+  revision: draft
   description: "Lifts cargo between ships and the dock."
 physical:
   mass: 241000

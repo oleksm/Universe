@@ -2,7 +2,7 @@
 identity:
   code: HRM-02
   name: "Finishing stand"
-  status: draft
+  revision: draft
   description: "Stands in a row, each taking the strip thinner."
 physical:
   mass: 700000
