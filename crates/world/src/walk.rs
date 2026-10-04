@@ -89,7 +89,8 @@ impl WalkMesh {
         let normal = |t: &[Vec3; 3]| (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
         // Each edge: the faces along it (their normals), and whether one is seen.
         type Corner = (i64, i64, i64);
-        let mut edges: HashMap<(Corner, Corner), (Vec3, Vec3, Vec<Vec3>, bool)> = HashMap::new();
+        type Edge = (Vec3, Vec3, Vec<Vec3>, bool);
+        let mut edges: HashMap<(Corner, Corner), Edge> = HashMap::new();
         for t in &self.tris {
             let n = normal(t);
             let c = ((t[0] + t[1] + t[2]) / 3.0).as_dvec3();
