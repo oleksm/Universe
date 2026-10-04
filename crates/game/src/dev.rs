@@ -1209,19 +1209,8 @@ pub fn apply(app: &mut App, name: &str) {
             // Out and down the ramp, then back up it into the ship (where you end up: logged).
             apply(app, "outside");
             app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch: -0.15, ..Default::default() }, 0.02);
-            for k in 0..500 {
+            for _ in 0..500 {
                 app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
-                if std::env::var_os("UNIVERSE_TRACE").is_some() && k % 25 == 0 {
-                    let u = app.engine.universe();
-                    let sys = u.ship_system();
-                    if let universe_sim::world::Place::Outside { body, position, .. } = u.crew.place {
-                        let mut positions = Vec::new();
-                        sys.positions(u.world.time, &mut positions);
-                        let inv = sys.bodies[body].rotation(u.world.time).inverse();
-                        let local = (inv * u.ship.orientation).inverse() * (position - inv * (u.ship.position - positions[body]));
-                        log::info!("rampup step {k}: feet {local:.2?}");
-                    }
-                }
             }
             let u = app.engine.universe();
             let sys = u.ship_system();
@@ -1403,11 +1392,6 @@ pub fn apply(app: &mut App, name: &str) {
             app.market = Some(m);
         }
         other => log::warn!("unknown scenario {other:?}; try one of: {SCENARIOS}"),
-    }
-    // (UNIVERSE_TURN=yaw,pitch: on foot, turn the head at the end, to look round.)
-    if std::env::var("UNIVERSE_SCENARIO").as_deref() == Ok(name)
-        && let Some((yaw, pitch)) = std::env::var("UNIVERSE_TURN").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse().ok()?, b.trim().parse().ok()?)))) {
-        app.engine.universe().walk(&universe_sim::world::WalkCommands { yaw, pitch, ..Default::default() }, 0.02);
     }
     app.messages.clear();
     let u = app.engine.universe();

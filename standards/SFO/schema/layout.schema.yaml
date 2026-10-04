@@ -46,14 +46,14 @@ properties:
           type: array
           items: { type: array, items: { type: number }, minItems: 6, maxItems: 6 }
   openings:
-    description: "The ways between compartments (or to the outside), each on a face the two share: its kind, the middle of its sill, its clear width and height (m), and whether it seals. Doors are in walls; hatches, chutes, ramps and windows (up to the hull's glass) in floors and ceilings, where `at` is the opening's middle, `width` is across the ship and `height` along it."
+    description: "The ways between compartments (or to the outside), each on a face the two share: its kind, the middle of its sill, its clear width and height (m), and whether it seals."
     type: array
     items:
       type: object
       additionalProperties: false
       required: [kind, between, at, width, height]
       properties:
-        kind: { enum: [door, pressure-door, hatch, cargo-hatch, chute, ramp, window] }
+        kind: { enum: [door, pressure-door, hatch, cargo-hatch, chute, ramp] }
         between: { type: array, items: { type: string }, minItems: 2, maxItems: 2, description: "The two compartments it joins (or outside)." }
         at: { type: array, items: { type: number }, minItems: 3, maxItems: 3 }
         width: { type: number, description: m }

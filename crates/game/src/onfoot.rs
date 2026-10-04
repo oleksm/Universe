@@ -72,26 +72,16 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
         Place::Seat => {}
         Place::Aboard { .. } => {
             lines.push(("ON FOOT - ABOARD".into(), HUD));
-            if let Some((name, address)) = app.v.crew.room(&app.view.system, &app.ship, app.now(), &app.view.positions) {
-                lines.push((name.to_uppercase(), HUD));
-                lines.push((address, DIM));
-            }
             let ship = &app.ship;
             let state = if ship.is_flying() { format!("SHIP FLYING  {}", fmt::speed(ship.velocity.length())) } else { "SHIP RESTING".into() };
             lines.push((state, DIM));
-            lines.push(("WASD WALK  MOUSE/ARROWS LOOK  F USE  (LADDERS: W CLIMBS)".into(), DIM));
+            lines.push(("WASD WALK  MOUSE/ARROWS LOOK  F USE".into(), DIM));
         }
         Place::Outside { body, position, .. } => {
             let b = &app.view.system.bodies[body];
             let r = position.length();
             let g = b.rail.mu / (r * r);
-            match app.v.crew.room(&app.view.system, &app.ship, app.now(), &app.view.positions) {
-                Some((name, address)) => {
-                    lines.push((format!("ON FOOT - {}", name.to_uppercase()), HUD));
-                    lines.push((address, DIM));
-                }
-                None => lines.push((format!("ON FOOT - {} SURFACE", b.name.to_uppercase()), HUD)),
-            }
+            lines.push((format!("ON FOOT - {} SURFACE", b.name.to_uppercase()), HUD));
             lines.push((format!("GRAVITY {g:.2} M/S2 ({:.2} G)", g / 9.81), DIM));
             let ship_at = app.view.ship_pos;
             let me = app.view.positions[body] + b.rotation(app.now()) * position;
