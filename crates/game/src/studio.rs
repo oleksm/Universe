@@ -15,7 +15,8 @@
 //! (click its foot, then its head: up to the deck above). DELETE removes what's selected; BACKSPACE the last point placed; ESC
 //! stops drawing. N the next deck (round from the top to the bottom), PGUP/
 //! PGDN up and down (round too), a click on a deck in the side view picks it,
-//! SHIFT+N adds a deck above the top one (if the hull has room), +/- its floor, [ ] its height (SHIFT:
+//! SHIFT+N adds a deck above the top one (if the hull has room), +/- its floor, [ ] its height
+//! (the decks above move with either; SHIFT:
 //! more), CTRL+DELETE removes it. Wheel zooms, right drag
 //! pans, HOME fits. Points snap to a quarter metre (ALT: free).
 
@@ -225,6 +226,9 @@ fn button_at(size: Vec2, q: Vec2) -> Option<Action> {
     }).map(|k| TOOLBAR[k].2)
 }
 
+/// Between one deck's ceiling and the next one's floor (m): the deck itself.
+const DECK_THICKNESS: f64 = 0.3;
+
 /// Is there room for a deck between these sides: at least 3 m across, for at
 /// least 3 m of the ship's length (not just its masts and fittings)?
 fn roomy(sides: &Sides) -> bool {
@@ -305,7 +309,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     // and a deck's thickness between (not past the hull's top).
     let mut went: Option<usize> = None;
     if (shift && input.pressed(KeyCode::KeyN)) || clicked == Some(Action::AddDeck) {
-        let floor = if n == 0 { first_floor } else { plan.decks.iter().map(|d| d.floor + d.headroom + 0.3).fold(first_floor, f64::max) };
+        let floor = if n == 0 { first_floor } else { plan.decks.iter().map(|d| d.floor + d.headroom + DECK_THICKNESS).fold(first_floor, f64::max) };
         // (Only where there's hull round it, at a person's waist and under its ceiling.)
         let room = |y: f64| shape.walk.as_ref().is_some_and(|m| roomy(&Sides::of(&m.section_y(y))));
         if room(floor + 1.0) && room(floor + deckplan::HEADROOM - 0.2) {
@@ -330,19 +334,30 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         studio.drawing.clear();
         studio.pick = None;
     }
-    let step = if shift { 0.5 } else { 0.1 };
-    if let Some(deck) = plan.decks.get_mut(studio.deck) {
+    let step: f64 = if shift { 0.5 } else { 0.1 };
+    let k = studio.deck;
+    if k < plan.decks.len() {
+        // The floor moved: the decks above with it (the stack keeps together); not
+        // down into the deck below (its height and a deck's thickness kept).
+        let mut lift = 0.0;
         if input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) || clicked == Some(Action::Floor(0.1)) {
-            deck.floor += step;
+            lift = step;
         }
         if input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) || clicked == Some(Action::Floor(-0.1)) {
-            deck.floor -= step;
+            let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + DECK_THICKNESS);
+            lift = -step.min(plan.decks[k].floor - lowest).max(0.0);
         }
+        // Its height changed: the decks above moved by as much.
+        let mut taller = 0.0;
         if input.pressed(KeyCode::BracketRight) || clicked == Some(Action::Headroom(0.1)) {
-            deck.headroom += step;
+            taller = step;
         }
         if input.pressed(KeyCode::BracketLeft) || clicked == Some(Action::Headroom(-0.1)) {
-            deck.headroom = (deck.headroom - step).max(1.0);
+            taller = -step.min(plan.decks[k].headroom - 1.0).max(0.0);
+        }
+        plan.decks[k].headroom += taller;
+        for (j, d) in plan.decks.iter_mut().enumerate().skip(k) {
+            d.floor += lift + if j > k { taller } else { 0.0 };
         }
     }
     if ((ctrl && input.pressed(KeyCode::Delete)) || clicked == Some(Action::DropDeck)) && studio.deck < plan.decks.len() {
