@@ -1,8 +1,8 @@
-# Standards: the Foundry Standards Office and everyone else's
+# Standards: the Standards Foundry Office and everyone else's
 
 A standard is a published, versioned agreement on how things fit together: dimensions,
 interfaces, units, codes. Anyone can found a standards body and publish standards; the game
-seeds one, the **Foundry Standards Office (FSO)**, with the starting set. All the standards in
+seeds one, the **Standards Foundry Office (SFO)**, with the starting set. All the standards in
 all the registers together are the tree that describes the civilisation: what its ships, ports,
 containers, sockets and signals have in common.
 
@@ -22,7 +22,7 @@ Decided with the user, 2026-10-03. The roadmap's next big feature (`roadmap.md`,
 
 | Field | Holds |
 |---|---|
-| Id | body, path in the tree, number, version: `FSO/2.1/014 v3` |
+| Id | body, path in the tree, number, version: `SFO/2.1/014 v3` |
 | Title, scope | what it covers and what it doesn't |
 | Body | who publishes it |
 | Status | draft, published, superseded, withdrawn |
@@ -62,17 +62,17 @@ adoption decides.
 - **A standards body** is an organisation like any other: founded by a player, an NPC, a
   corporation or an authority; an owner, a seat (a station), a namespace (its prefix). Coarse
   first: the owner publishes. Committees and votes later.
-- **The FSO** (seeded) is **like ISO**: independent and international, governing no one. Its
+- **The SFO** (seeded) is **like ISO**: independent and international, governing no one. Its
   members are the participating civilisations' standards bodies, with the makers; the first
   makers founded it. Its work is interoperability across civilisations (what exists and how it
   fits). Decided 2026-10-03: "like ISO and USA".
 - **Governments are like the USA:** polities, each with its own charter (a way of life: rights,
   duties, conduct, safety law), its people and its systems (each settled system's authority
-  belongs to one). A government adopts FSO standards, may mandate them in its systems (its law),
+  belongs to one). A government adopts SFO standards, may mandate them in its systems (its law),
   and keeps its own national standards body for its own codes. Rivals are other governments
   with other charters.
-- So two trees: the FSO register (technical, universal) and each government's charter and codes
-  (its way of life). Its own record (`standards/FSO/FSO.yaml`, `about`) says so in full.
+- So two trees: the SFO register (technical, universal) and each government's charter and codes
+  (its way of life). Its own record (`standards/SFO/SFO.yaml`, `about`) says so in full.
 - **Adoption is a fact on products and places**, not on the standard: a product declares what
   it conforms to; a port, the pad and berth standards it offers; an authority, what it mandates.
 - **Certification** is a service: a record, signed by its certifier, that a product was
@@ -86,13 +86,13 @@ adoption decides.
 - **In the engine, facts only:** who published what, when and where, and what's been heard where.
   Choosing, adopting, certifying are the clients' (pilots, brands, authorities): the engine
   holds no intentions.
-- **Seeded content:** the FSO's set in content files, one per standard, loaded like hulls and
+- **Seeded content:** the SFO's set in content files, one per standard, loaded like hulls and
   modules.
 
 ## Where they're kept
 
 - **The source is YAML in the repo** (`standards/`, see its README): a folder per body, its
-  standards flat beside it with **permanent numbers** (`FSO 12`, as ISO numbers), and free
+  standards flat beside it with **permanent numbers** (`SFO 12`, as ISO numbers), and free
   **topics** as tags. The classification (likely multi-dimensional) waits until the standards
   written show what it should be; nothing is renumbered when it comes.
 - `python3 tools/standards/build.py` checks it all and writes `standards/index.html` (browse by
@@ -102,10 +102,10 @@ adoption decides.
 
 ## Ships to standards (the first use)
 
-- **Size classes** (FSO 3): the berth envelope ports lay out for: maximum length, width, height,
-  loaded mass and footprint load per class. Ports offer pads and berths by class (FSO 4).
-- **The hull datasheet** (FSO 3): envelope, dry mass, centre of mass, structural limits, and its
-  **sockets**. A socket is a named place built to a socket standard (FSO 2): its frame, maximum
+- **Size classes** (SFO 3): the berth envelope ports lay out for: maximum length, width, height,
+  loaded mass and footprint load per class. Ports offer pads and berths by class (SFO 4).
+- **The hull datasheet** (SFO 3): envelope, dry mass, centre of mass, structural limits, and its
+  **sockets**. A socket is a named place built to a socket standard (SFO 2): its frame, maximum
   mass, force and torque, its clearance (the volume a module may fill, deployed or swept: a
   turret's arc, a mining arm's reach, a plume's keep-out), its services (power, data, coolant,
   propellant), and a hatch or not.
@@ -124,7 +124,7 @@ adoption decides.
 ## First cut (coarse)
 
 1. The record, the registry, bodies; adoption declared on products and ports.
-2. The FSO's first ten: units, size classes, pad classes, hardpoint, nozzle and utility
+2. The SFO's first ten: units, size classes, pad classes, hardpoint, nozzle and utility
    sockets, cargo container unit, power bus, nav lights, the hull datasheet.
 3. Today's slots (kind and size 1-4) become sockets built to those; the MC-07 and the existing
    modules declared against them.

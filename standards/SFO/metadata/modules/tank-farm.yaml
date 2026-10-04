@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Tank farm
+  step: Store
+  description: "A group of tanks for liquids and gases."
+size:
+  length: 100
+  width: 100
+  height: 20
+rate:
+  volume: 40000
+  stores: [goods.water, goods.chemicals, goods.fuel]
+basis:
+  note: "Typical of real buildings of this kind. Approximate figures from memory, not taken from a source."

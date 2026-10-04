@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Treistun i I"
+kind: moon
+at: Treistun i
+about: "A moon of the ice giant Treistun i, 6.2 AU from the star. 1,157 km in radius, 0.10 g at the surface, no air, about 80 K on average. Its day lasts 14 hours."

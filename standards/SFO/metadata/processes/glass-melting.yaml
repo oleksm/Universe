@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Glass melting
+  kind: chemical
+  method: melting
+  description: Silicon and oxygen (as silica) melted into fused silica glass.
+inputs:
+  materials:
+  - item: Si
+    amount: 0.467
+  - item: O
+    amount: 0.533
+outputs:
+  products:
+  - item: fused-silica
+    form: ingot
+rate:
+  mode: batch
+equipment:
+  facility: foundry

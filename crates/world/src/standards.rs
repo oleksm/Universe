@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 pub struct Body {
     pub key: String,
     pub name: String,
-    /// Its namespace: the start of its standards' ids (`FSO`).
+    /// Its namespace: the start of its standards' ids (`SFO`).
     pub prefix: String,
     /// Where it sits and keeps its register (a place, as `places.ron` has it,
     /// or `home`: the home system's station).
@@ -99,9 +99,9 @@ pub struct Requirement {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Standard {
-    /// Its id without the version: body prefix, branch, number (`FSO/3.1/001`).
+    /// Its id without the version: body prefix, branch, number (`SFO/3.1/001`).
     pub key: String,
-    /// Its body (`body.fso`).
+    /// Its body (`body.sfo`).
     pub body: String,
     /// The branch it's in (`3.1`).
     pub branch: String,
@@ -126,7 +126,7 @@ pub struct Standard {
 }
 
 impl Standard {
-    /// As it's cited: `FSO/3.1/001 V1`.
+    /// As it's cited: `SFO/3.1/001 V1`.
     pub fn id(&self) -> String {
         format!("{} V{}", self.key, self.version)
     }

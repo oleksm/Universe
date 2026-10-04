@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Port Seiwiti"
+kind: settlement
+at: Treistun b I
+position: { latitude: -27.005, longitude: -104.409 }
+about: "The port on Treistun b I, the moon of the innermost planet, at 27° south. Gravity 0.14 g, no air."
+story:
+  - "Built so that most ships never have to land on b. Loads come up from Zaudalein and change hands here, where lifting off costs almost nothing."

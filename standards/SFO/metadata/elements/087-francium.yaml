@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
+identity:
+  name: Francium
+  symbol: Fr
+  atomic_number: 87
+  atomic_mass: 223.01973
+  group: 1
+  period: 7
+  block: s
+  category: alkali metal
+atomic_structure:
+  electron_configuration: '[Rn] 7s1'
+  valence_electrons: 1
+  covalent_radius: 260.0
+  van_der_waals_radius: 348.0
+  ionic_radius: 180.0
+  stable_isotopes: 0
+  half_life: 1300.0
+  decay_mode: beta-
+chemical:
+  electronegativity: 0.7
+  first_ionisation_energy: 393.0
+  electron_affinity: 46.89
+  oxidation_states:
+  - 1
+  bond_type: metallic
+  standard_electrode_potential: -2.9
+physical:
+  phase: solid
+  melting_point: 300.0
+  heat_of_fusion: 2.0
+  heat_of_vaporisation: 64.0
+  vapour_pressure: 110.0
+optical_nuclear:
+  colour: silver

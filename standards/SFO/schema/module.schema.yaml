@@ -1,0 +1,63 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Industrial module
+description: One standard piece of industrial plant. It performs one step of a process. Any one module uses only some of these properties.
+type: object
+additionalProperties: false
+required: [identity]
+definitions:
+  amounts:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        item: { type: string, description: "An element's symbol, or a material's or a good's file name." }
+        amount: { type: number, description: "t per t of its product (per MWh, for one that makes power)" }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, step]
+    properties:
+      name: { type: string }
+      step: { type: string, description: The step it performs. }
+      description: { type: string }
+  size:
+    type: object
+    additionalProperties: false
+    properties:
+      length: { type: number, description: m }
+      width: { type: number, description: m }
+      height: { type: number, description: m }
+  rate:
+    type: object
+    additionalProperties: false
+    properties:
+      throughput: { type: number, description: "t/h of its product, at full rate" }
+      batch: { type: number, description: "t in one batch" }
+      holds: { type: number, description: "t it can store" }
+      volume: { type: number, description: "m3 it can store" }
+      stores: { type: array, items: { type: string }, description: "The kinds of goods it stores, by the game's keys (content/base/goods.ron)." }
+      handling: { type: number, description: "t/h it can move in or out" }
+      product: { type: string, description: "What its throughput counts: an element's symbol, a material's or a good's file name." }
+      power: { type: number, description: "MW it supplies, for one that makes power" }
+  inputs:
+    type: object
+    additionalProperties: false
+    properties:
+      materials: { $ref: "#/definitions/amounts", description: "What goes in, t per t of its product." }
+  outputs:
+    type: object
+    additionalProperties: false
+    properties:
+      by_products: { $ref: "#/definitions/amounts", description: "What else comes out, t per t of its product." }
+  needs:
+    type: object
+    additionalProperties: false
+    properties:
+      power: { type: number, description: "MW, at full rate" }
+  basis:
+    type: object
+    additionalProperties: false
+    properties:
+      note: { type: string, description: Where its figures come from. }

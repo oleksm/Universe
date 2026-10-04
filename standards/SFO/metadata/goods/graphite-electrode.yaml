@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Graphite electrode
+  kind: consumable
+  description: "The carbon rods that carry the current into an arc furnace. They burn away as they work."

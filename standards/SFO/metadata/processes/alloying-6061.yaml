@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Alloying 6061 aluminium
+  kind: chemical
+  method: alloying
+  description: Aluminium melted with magnesium and silicon into aluminium alloy.
+inputs:
+  materials:
+  - item: Al
+    amount: 0.972
+  - item: Mg
+    amount: 0.01
+  - item: Si
+    amount: 0.006
+  - item: Fe
+    amount: 0.0035
+  - item: Cu
+    amount: 0.00275
+  - item: Cr
+    amount: 0.00195
+outputs:
+  products:
+  - item: aluminium-alloy-6061
+    form: ingot
+rate:
+  mode: batch
+equipment:
+  facility: foundry

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.meridian
+name: Meridian Power
+ticker: MPW
+address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 9, section: B, unit: 2 }
+note: "Capacitor banks and power storage"
+who: "A power-storage specialist that makes one kind of thing and little else."
+what: "Makes capacitor banks and power storage."
+story:
+  - "Meridian was founded by two people who left a reactor maker over one argument: they held that most ships don't need a bigger plant, they need somewhere to keep the power they already make."
+  - "It has built capacitor banks and power storage ever since and has turned down every chance to build anything else. That narrowness is its whole pitch. Its banks are sized to sit beside any maker's plant, and it publishes how they age."
+  - "Meridian is small, steady and privately held, and seems content to stay that way."

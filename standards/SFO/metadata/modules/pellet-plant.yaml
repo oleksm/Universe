@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Pellet plant
+  step: Prepare
+  description: "Crushes and grinds ore, separates the waste rock, and forms the rest into hard pellets."
+size:
+  length: 250
+  width: 100
+  height: 40
+rate:
+  throughput: 125
+  product: iron-ore-pellets
+inputs:
+  materials:
+  - { item: iron-ore, amount: 1.5 }
+outputs:
+  by_products:
+  - { item: tailings, amount: 0.5 }
+needs:
+  power: 8
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

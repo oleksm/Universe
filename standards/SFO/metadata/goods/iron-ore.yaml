@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Iron ore
+  kind: raw
+  description: "Rock rich enough in iron oxide to be worth working."
+game:
+  goods: goods.ores

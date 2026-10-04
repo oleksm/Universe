@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Weaving
+  kind: mechanical
+  method: weaving
+  description: Fibre woven into fabric.
+inputs:
+  materials:
+  - item: aramid-fibre
+    amount: 1.0
+  form: fibre
+outputs:
+  products:
+  - item: aramid-fibre
+    form: fabric
+rate:
+  mode: continuous
+equipment:
+  facility: mill

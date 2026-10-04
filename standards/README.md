@@ -10,18 +10,21 @@ it (`docs/standards.md` for what a standard is).
 
 ```
 standards/
-  FSO/                          a body: its folder named after its prefix
+  SFO/                          a body: its folder named after its prefix
     schema/                     the schemas for the editor
+    icons/                      <a record's file name>.svg: its icon (24 x 24 line art, stroke currentColor)
     metadata/
-      FSO.yaml                  who it is
-      0001-mining-ship.yaml     a record: NNNN-<slug>.yaml, its id "FSO 1"
-      elements/                 the chemical elements, under FSO 6 (its `records: elements`)
+      SFO.yaml                  who it is
+      0001-mining-ship.yaml     a record: NNNN-<slug>.yaml, its id "SFO 1"
+      elements/                 the chemical elements, under SFO 6 (its `records: elements`)
         026-iron.yaml           NNN-<name>.yaml, its atomic number; to schema/element.schema.yaml
-      materials/                the materials, under FSO 5 (its `records: materials`)
+      materials/                the materials, under SFO 5 (its `records: materials`)
         fused-silica.yaml       <name>.yaml; to schema/material.schema.yaml
+      processes/                material processes, under SFO 7 (its `records: processes`)
+        rolling.yaml            <name>.yaml; to schema/process.schema.yaml
 ```
 
-- **Numbers are permanent:** `FSO 1` stays `FSO 1` whatever it's later filed under (as ISO
+- **Numbers are permanent:** `SFO 1` stays `SFO 1` whatever it's later filed under (as ISO
   numbers do). Take the next free one for a new standard.
 
 ## A standard
@@ -34,7 +37,7 @@ standards/
 | `details` | `text` and/or a `table` (`columns`, `rows`) |
 | `status` | `draft`, `published`, `superseded`, `withdrawn` |
 | `sections` | titled sections, each `text` (paragraphs) and/or a `table` (`columns`, `rows`): for a standard that's mostly prose, a definition say |
-| `refs` | ids it builds on (`"FSO 1"`) |
+| `refs` | ids it builds on (`"SFO 1"`) |
 | `params` | `key`, `value` (a number, `[min, max]`, or text), `unit`, `note`; a key `ROW.column` (`S.length_max`) makes a table |
 | `requires` | `subject` (`module.mass`), `check` (`at_most`, `at_least`, `equals`, `fits_within`, `provides`), `param`, `per` (the row: `size`, `class`...) |
 | `text` | why, for people |

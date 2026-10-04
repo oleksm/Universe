@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Deuterium
+  kind: fuel
+  description: "Heavy hydrogen, the fuel of fusion plants."
+game:
+  goods: goods.fuel

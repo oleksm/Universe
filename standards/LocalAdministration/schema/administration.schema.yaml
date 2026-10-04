@@ -1,0 +1,31 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: System
+description: 'standards/LocalAdministration/metadata/administrations/<name>.yaml: one settled system''s administration. It manages the land in its system. Its bodies are the records in the folder beside it, <name>/.'
+type: object
+additionalProperties: false
+required: [name]
+properties:
+  name: { type: string, description: The settled system's name. }
+  address:
+    description: 'Where its offices are (SFO 9). at: <system>/<body>, by their file names here; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
+    type: object
+    additionalProperties: false
+    required: [at]
+    properties:
+      at: { type: string }
+      tower: { type: string }
+      deck: { type: integer, minimum: 1 }
+      section: { type: string }
+      unit: { type: integer, minimum: 1 }
+  about: { type: string, description: What it is. }
+  story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
+  zoning:
+    description: Its zoning code, what each kind of zone permits.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [use, permits]
+      properties:
+        use: { enum: [port, industrial, commercial, civic, residential] }
+        permits: { type: string }

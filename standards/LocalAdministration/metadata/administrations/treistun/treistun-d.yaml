@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Treistun d"
+kind: planet
+about: "The third planet, 0.41 AU out. 6,654 km in radius, 1.07 g, with air as dense as e's. It is warm: about 320 K on average. Its day lasts 20 hours. One moon."
+story:
+  - "The warm world, and the second with air. It was settled after e, by people who wanted open sky and were willing to take the heat that came with it."

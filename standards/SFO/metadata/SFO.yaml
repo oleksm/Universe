@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../schema/body.schema.yaml
+key: body.sfo
+name: Standards Foundry Office
+prefix: SFO
+seat: home
+address: { at: treistun/treistun-e-station, tower: Civic Tower, deck: 12, section: A, unit: 1 }
+kind: independent
+note: The standards everyone builds to, whoever they answer to. Open to all.
+purpose: The SFO exists so that what people make fits together, whoever made it and wherever it goes.
+details:
+  text:
+    - "- Interoperability: a module from one maker fits a hull from another."
+    - "- Open passage: a ship of any civilisation can set down at any port built to the same standards."
+    - "- Honest measure: a tonne is a tonne and a grade is a grade, so trade can be trusted."
+    - "- Safety: common signals, lights and distress codes, so strangers can avoid harm and help each other."
+    - "- Lower cost: makers build once for everyone instead of for each customer."
+founded_by:
+  - brand.tolland
+  - brand.vireo
+  - brand.kestrel
+  - brand.hadley
+  - brand.orbital
+  - brand.halvard
+about:
+  - >
+    The Standards Foundry Office is independent and international: no government owns it and it
+    governs no one. Its members are the standards bodies of the civilisations that take part,
+    with the makers who build to its work; the first makers founded it. It is seated at the home
+    station, where it keeps its register.
+  - >
+    Its work is interoperability: that a module from one maker fits a hull from another, that a
+    ship of one civilisation can set down at another's port, that a tonne is a tonne and a signal
+    is understood. What exists, and how it fits together.

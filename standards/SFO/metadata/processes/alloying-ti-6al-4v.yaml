@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Alloying Ti-6Al-4V
+  kind: chemical
+  method: alloying
+  description: Titanium melted with aluminium and vanadium into titanium alloy.
+inputs:
+  materials:
+  - item: Ti
+    amount: 0.9
+  - item: Al
+    amount: 0.06
+  - item: V
+    amount: 0.04
+outputs:
+  products:
+  - item: titanium-alloy-ti-6al-4v
+    form: ingot
+rate:
+  mode: batch
+equipment:
+  facility: foundry

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Shaft furnace
+  step: Reduce
+  description: "A tall furnace where hot hydrogen strips the oxygen out of ore pellets at 800 to 1,000 °C, leaving solid sponge iron."
+size:
+  length: 150
+  width: 100
+  height: 120
+rate:
+  throughput: 125
+  product: sponge-iron
+inputs:
+  materials:
+  - { item: iron-ore-pellets, amount: 1.4 }
+  - { item: H, amount: 0.055 }
+outputs:
+  by_products:
+  - { item: water, amount: 0.49 }
+needs:
+  power: 12
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

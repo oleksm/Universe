@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Port Lisaur"
+kind: settlement
+at: Treistun c
+position: { latitude: -6.649, longitude: -44.994 }
+about: "The port on Treistun c, close to the equator at 7° south. Gravity 1.67 g, the highest of any port, and no air."
+story:
+  - "Pilots treat Lisaur as a test. A ship that can lift loaded from here can lift from anywhere in the system, and a ship that can't finds out on the pad."

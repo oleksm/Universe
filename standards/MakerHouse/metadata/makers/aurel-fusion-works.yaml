@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.aurel
+name: Aurel Fusion Works
+ticker: AFW
+address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 11, section: A, unit: 6 }
+note: "Fusion plants: light, efficient, dear"
+who: "A small, exacting builder of reactors for buyers who count every kilogram."
+what: "Builds fusion plants: light, efficient and expensive."
+story:
+  - "Aurel is named after its founder, a reactor designer who believed a fusion plant could weigh half what the big makers said it must. She spent years proving it on a single prototype before selling one."
+  - "The company builds few plants and builds them slowly. Each is light, efficient and costs several times what a Hadley unit does. Racers, couriers and long-range explorers buy them; haulers mostly don't."
+  - "Aurel has refused more than one offer to be bought, and keeps its design office and its workshop under one roof so the people who draw a plant also have to build it."

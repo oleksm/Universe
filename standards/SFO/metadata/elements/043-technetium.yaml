@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
+identity:
+  name: Technetium
+  symbol: Tc
+  atomic_number: 43
+  atomic_mass: 96.90636
+  group: 7
+  period: 5
+  block: d
+  category: transition metal
+atomic_structure:
+  electron_configuration: '[Kr] 4d5 5s2'
+  valence_electrons: 7
+  atomic_radius: 183.0
+  covalent_radius: 147.0
+  van_der_waals_radius: 209.0
+  ionic_radius: 56.0
+  stable_isotopes: 0
+  half_life: 6661760000000.0
+  decay_mode: beta-
+chemical:
+  electronegativity: 1.9
+  first_ionisation_energy: 686.9
+  electron_affinity: 53
+  oxidation_states:
+  - 7
+  - 6
+  - 4
+  reactivity:
+    air: none
+    water: none
+    acids: none
+  bond_type: metallic
+  flammable: false
+physical:
+  phase: solid
+  melting_point: 2430.0
+  boiling_point: 4538.0
+  density: 11000.0
+  crystal_structure: simple hexagonal
+  heat_of_fusion: 23.0
+  heat_of_vaporisation: 550.0
+  vapour_pressure: 2.0e-73
+thermal:
+  specific_heat_capacity: 63.0
+  thermal_conductivity: 51.0
+electrical_magnetic:
+  electrical_conductivity: 5000000.0
+  magnetic_ordering: paramagnetic
+  superconducting_temperature: 7.7
+optical_nuclear:
+  colour: shiny gray metal
+  emission_lines:
+  - 403.163
+  - 409.567
+  - 482.074
+  - 485.359
+  - 486.673
+  neutron_cross_section: 22.0

@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Port Sirnendis"
+kind: settlement
+at: Treistun d I
+position: { latitude: -32.137, longitude: -88.842 }
+about: "The port on Treistun d I, the moon of d, at 32° south. Gravity 0.13 g, no air."
+story:
+  - "Eikir's yard. Ships that have no business in d's air wait here, and those that do make the short drop from it."

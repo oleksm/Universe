@@ -2,9 +2,9 @@
 
 [
     (
-        key: "body.fso",
-        name: "FOUNDRY STANDARDS OFFICE",
-        prefix: "FSO",
+        key: "body.sfo",
+        name: "STANDARDS FOUNDRY OFFICE",
+        prefix: "SFO",
         seat: "home",
         note: "THE STANDARDS EVERYONE BUILDS TO, WHOEVER THEY ANSWER TO. OPEN TO ALL.",
         branches: [

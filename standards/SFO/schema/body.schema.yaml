@@ -1,0 +1,65 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Standards body
+description: 'standards/SFO/SFO.yaml: who the body is.'
+type: object
+additionalProperties: false
+required:
+- key
+- name
+- prefix
+- seat
+- note
+properties:
+  key:
+    type: string
+    pattern: ^body\.[a-z0-9_]+$
+  name:
+    type: string
+  prefix:
+    type: string
+    pattern: ^[A-Z]{2,6}$
+  seat:
+    type: string
+  address:
+    description: 'Where it is (SFO 9). at: <system>/<body>, by their file names in LocalAdministration; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
+    type: object
+    additionalProperties: false
+    required: [at]
+    properties:
+      at: { type: string }
+      tower: { type: string }
+      deck: { type: integer, minimum: 1 }
+      section: { type: string }
+      unit: { type: integer, minimum: 1 }
+  kind:
+    enum:
+    - consortium
+    - independent
+    - authority
+    - corporation
+    - players
+  note:
+    type: string
+  purpose:
+    type: string
+  details:
+    type: object
+    additionalProperties: false
+    properties:
+      text:
+        oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
+  founded_by:
+    type: array
+    items:
+      type: string
+      pattern: ^brand\.[a-z0-9_]+$
+  about:
+    oneOf:
+    - type: string
+    - type: array
+      items:
+        type: string

@@ -1,0 +1,22 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Parcel
+description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/parcels/parcel-<number>.yaml: one surveyed lot of a settlement''s land, and who owns it. Its zone is the one it lies in.'
+type: object
+additionalProperties: false
+required: [number, owner, outline]
+properties:
+  number: { type: integer, minimum: 1, description: Its number in its settlement. }
+  owner: { type: string, pattern: '^(brand|body)\.[a-z0-9_]+$', description: 'Who owns it (a company in Maker House, or a standards body).' }
+  address:
+    description: 'Its address (SFO 9): a number on one of its settlement''s streets, by the street''s file name. The parcel number is the land office''s, not an address.'
+    type: object
+    additionalProperties: false
+    required: [street, number]
+    properties:
+      street: { type: string }
+      number: { type: integer, minimum: 1 }
+  outline:
+    description: "Its corners, in order: metres [east, north] of the settlement's position, on the ground."
+    type: array
+    minItems: 3
+    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }

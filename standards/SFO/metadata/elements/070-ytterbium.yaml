@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
+identity:
+  name: Ytterbium
+  symbol: Yb
+  atomic_number: 70
+  atomic_mass: 173.05
+  period: 6
+  block: f
+  category: lanthanide
+atomic_structure:
+  electron_configuration: '[Xe] 4f14 6s2'
+  valence_electrons: 16
+  atomic_radius: 222.0
+  covalent_radius: 187.0
+  van_der_waals_radius: 242.0
+  ionic_radius: 86.8
+  stable_isotopes: 7
+  isotope_abundances:
+  - mass_number: 168
+    abundance: 0.00123
+  - mass_number: 170
+    abundance: 0.02982
+  - mass_number: 171
+    abundance: 0.14086
+  - mass_number: 172
+    abundance: 0.21686
+  - mass_number: 173
+    abundance: 0.16103
+  - mass_number: 174
+    abundance: 0.32025
+  - mass_number: 176
+    abundance: 0.12995
+chemical:
+  first_ionisation_energy: 603.4
+  oxidation_states:
+  - 3
+  - 2
+  reactivity:
+    air: slow
+    water: slow
+    acids: fast
+  bond_type: metallic
+  standard_electrode_potential: -2.76
+  flammable: false
+physical:
+  phase: solid
+  melting_point: 1092.0
+  boiling_point: 1469.0
+  density: 6900.0
+  crystal_structure: face-centered cubic
+  heat_of_fusion: 7.7
+  heat_of_vaporisation: 160.0
+  vapour_pressure: 3.1e-16
+thermal:
+  specific_heat_capacity: 154.0
+  thermal_conductivity: 39.0
+  thermal_expansion: 2.63e-05
+electrical_magnetic:
+  electrical_conductivity: 3600000.0
+  magnetic_ordering: paramagnetic
+mechanical:
+  youngs_modulus: 24.0
+  ductility: very ductile
+optical_nuclear:
+  colour: silver
+  emission_lines:
+  - 398.799
+  - 399.088
+  - 493.55
+  - 555.647
+  - 679.96
+  neutron_cross_section: 35.0

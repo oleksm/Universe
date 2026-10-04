@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Lime
+  kind: consumable
+  description: "Burnt limestone. In a furnace it forms the slag that takes up impurities."

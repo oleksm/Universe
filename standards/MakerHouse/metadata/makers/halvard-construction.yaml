@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.halvard
+name: Halvard Construction
+ticker: HVC
+address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 15, section: D, unit: 7 }
+note: "Stations, spaceports and outposts"
+who: "A construction company that builds the places ships go to. One of the founders of the SFO."
+what: "Builds stations, spaceports and outposts."
+story:
+  - "Halvard built its first outpost for a mining company that could find nobody else willing to work that far out. It finished late and over cost, and the outpost is still standing."
+  - "Since then it has built stations, spaceports and outposts across the settled systems. It works slowly, with its own crews, and it stays on after the opening to see how the place holds up."
+  - "Halvard joined the founding of the SFO because a port is only useful if every ship can land at it, and it was tired of being told a pad was the wrong size."

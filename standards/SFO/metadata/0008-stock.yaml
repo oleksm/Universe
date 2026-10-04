@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Stock
+purpose: Stock is a material in a standard, usable form (sheet, plate, bar, tube, wire, fibre or film, in set sizes). It's what material processing delivers and what part-making starts from, the form a material is stored, traded and shipped in.
+details:
+  text:
+    - "Why a civilisation needs it:"
+    - "- A starting point for parts: nobody machines a hinge pin from an ingot. A maker picks the stock closest to the part's shape (bar for a pin, sheet for a skin panel, tube for a duct) and removes or bends the least."
+    - "- Standard sizes: when sheet comes in set thicknesses and bar in set diameters, a part designed on one world can be cut from stock made on another, and tools, racks and machines fit everywhere."
+    - "- Trade and transport: stock is what crosses space. It's dense, stackable, countable and gradable (so many tonnes of 6061 sheet at 3 mm). It's the unit that markets price and haulers carry."
+    - "- A buffer: stock keeps. A yard holding sheet and bar can build without waiting for a foundry, and a foundry can run steadily without knowing what will be built. It decouples making materials from making things."
+    - "- Known properties: stock carries its grade with it. A bar of 4340, quenched and tempered, has a certified strength, so a designer can trust the part before it's made."
+    - "How it's counted: a stock item is a material in a form (6061 sheet, 4340 bar, copper wire), traded in tonnes. Sizes aren't standardised for now: nothing yet cuts a part to a dimension, and the material's grade already carries its properties."
+    - "It sits between material processing below it, and the fabrication of parts above it."

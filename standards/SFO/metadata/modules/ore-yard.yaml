@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Ore yard
+  step: Receive and store
+  description: "Open ground where ore, lime and carbon are stockpiled and reclaimed onto conveyors."
+size:
+  length: 200
+  width: 100
+  height: 15
+rate:
+  holds: 150000
+  stores: [goods.ores, goods.minerals, goods.metals]
+needs:
+  power: 0.5
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

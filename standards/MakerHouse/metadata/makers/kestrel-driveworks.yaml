@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.kestrel
+name: Kestrel Driveworks
+ticker: KDW
+address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 4, section: B, unit: 3 }
+note: "Drives and thrusters: light, strong, dear"
+who: "A propulsion house run by engineers, known for finish and for charging for it. One of the founders of the SFO."
+what: "Designs and builds main drives and manoeuvring thrusters. Its units are lighter and stronger than most, and priced to match."
+story:
+  - "Kestrel began as a repair shop on the home station, three engineers rebuilding other makers' thrusters for pilots who couldn't wait for parts. They kept notes on every unit that came in broken, and after a few years they knew better than the makers themselves where drives failed. Their first own design was built from that notebook."
+  - "The company has never been large and has never tried to be cheap. Every drive is test-fired before it ships and carries the name of the person who signed it off. Pilots complain about the price and then buy a second one."
+  - "Kestrel pushed for the SFO early: a small maker lives or dies on whether its drive bolts onto somebody else's hull."

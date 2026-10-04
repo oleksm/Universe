@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: NASA Ames Thermal Protection Materials database (TPSX), Silica Aerogel (density, modulus); Wikipedia: Aerogel (melting point, thermal conductivity at 1 atm).
+identity:
+  name: Silica aerogel
+  class: ceramic
+  composition:
+  - part: Si
+    share: 0.467
+  - part: O
+    share: 0.533
+  form:
+  - foam
+mass:
+  density: 100.0
+mechanical:
+  youngs_modulus: 0.001
+thermal:
+  melting_point: 1473.0
+  thermal_conductivity: 0.0093

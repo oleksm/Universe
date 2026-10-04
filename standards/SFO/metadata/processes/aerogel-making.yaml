@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Aerogel making
+  kind: chemical
+  method: sol-gel and drying
+  description: A silica gel dried without collapsing, leaving a solid that is mostly air.
+inputs:
+  materials:
+  - item: Si
+    amount: 0.467
+  - item: O
+    amount: 0.533
+  form: gel
+outputs:
+  products:
+  - item: silica-aerogel
+    form: foam
+rate:
+  mode: batch
+equipment:
+  facility: foundry

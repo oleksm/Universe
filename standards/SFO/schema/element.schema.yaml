@@ -1,0 +1,117 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Chemical element
+description: One chemical element and its properties.
+type: object
+additionalProperties: false
+required: [identity]
+definitions:
+  number_or_null:
+    description: A number, or null where the element has none (or it isn't known).
+    type: [number, "null"]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, symbol, atomic_number]
+    properties:
+      name: { type: string }
+      symbol: { type: string, pattern: "^[A-Z][a-z]?$" }
+      atomic_number: { type: integer, minimum: 1, description: Protons. }
+      atomic_mass: { type: number, description: u }
+      group: { type: [integer, "null"], minimum: 1, maximum: 18 }
+      period: { type: integer, minimum: 1, maximum: 7 }
+      block: { enum: [s, p, d, f] }
+      category:
+        enum: [alkali metal, alkaline earth metal, transition metal, post-transition metal, metalloid, non-metal, halogen, noble gas, lanthanide, actinide]
+
+  atomic_structure:
+    type: object
+    additionalProperties: false
+    properties:
+      electron_configuration: { type: [string, "null"], description: "e.g. [Ar] 3d6 4s2" }
+      valence_electrons: { type: [integer, "null"], minimum: 0 }
+      atomic_radius: { $ref: "#/definitions/number_or_null", description: "pm, calculated" }
+      covalent_radius: { $ref: "#/definitions/number_or_null", description: pm }
+      van_der_waals_radius: { $ref: "#/definitions/number_or_null", description: pm }
+      ionic_radius: { $ref: "#/definitions/number_or_null", description: "pm, for its commonest ion" }
+      stable_isotopes: { type: integer, minimum: 0, description: How many. }
+      isotope_abundances:
+        description: Each isotope's mass number and its share (0 to 1).
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [mass_number, abundance]
+          properties:
+            mass_number: { type: integer, minimum: 1 }
+            abundance: { type: number, minimum: 0, maximum: 1 }
+      half_life: { $ref: "#/definitions/number_or_null", description: "s, of its longest-lived isotope; null if stable" }
+      decay_mode: { enum: [alpha, beta-, beta+, electron capture, spontaneous fission, null], description: null if stable. }
+
+  chemical:
+    type: object
+    additionalProperties: false
+    properties:
+      electronegativity: { $ref: "#/definitions/number_or_null", description: Pauling scale }
+      first_ionisation_energy: { $ref: "#/definitions/number_or_null", description: kJ/mol }
+      electron_affinity: { $ref: "#/definitions/number_or_null", description: "kJ/mol; left out where no stable negative ion forms" }
+      oxidation_states: { type: array, items: { type: integer }, description: The common ones. }
+      reactivity:
+        description: At room temperature, with air, water and dilute acid. Rated by hand.
+        type: object
+        additionalProperties: false
+        properties:
+          air: { enum: [none, slow, fast, violent, null] }
+          water: { enum: [none, slow, fast, violent, null] }
+          acids: { enum: [none, slow, fast, violent, null] }
+      bond_type: { enum: [metallic, covalent, ionic, none], description: The type it typically forms. }
+      standard_electrode_potential: { $ref: "#/definitions/number_or_null", description: "V; its ion to the element (the 2+ ion where there is one)" }
+      flammable: { type: [boolean, "null"], description: "The bulk element burns in air once lit. Rated by hand." }
+
+  physical:
+    type: object
+    additionalProperties: false
+    properties:
+      phase: { enum: [solid, liquid, gas, null], description: At room temperature. }
+      melting_point: { $ref: "#/definitions/number_or_null", description: K }
+      boiling_point: { $ref: "#/definitions/number_or_null", description: K }
+      density: { $ref: "#/definitions/number_or_null", description: kg/m3 }
+      crystal_structure: { type: [string, "null"], description: "e.g. body-centred cubic" }
+      allotropes: { type: array, items: { type: string }, description: "e.g. graphite, diamond" }
+      heat_of_fusion: { $ref: "#/definitions/number_or_null", description: "kJ per mole of atoms" }
+      heat_of_vaporisation: { $ref: "#/definitions/number_or_null", description: "kJ per mole of atoms" }
+      vapour_pressure: { $ref: "#/definitions/number_or_null", description: "Pa, at 298 K; carried down from the measured curve; null for a gas" }
+
+  thermal:
+    type: object
+    additionalProperties: false
+    properties:
+      specific_heat_capacity: { $ref: "#/definitions/number_or_null", description: J/(kg K) }
+      thermal_conductivity: { $ref: "#/definitions/number_or_null", description: W/(m K) }
+      thermal_expansion: { $ref: "#/definitions/number_or_null", description: "1/K, linear" }
+
+  electrical_magnetic:
+    type: object
+    additionalProperties: false
+    properties:
+      electrical_conductivity: { $ref: "#/definitions/number_or_null", description: S/m }
+      magnetic_ordering: { enum: [ferromagnetic, antiferromagnetic, paramagnetic, diamagnetic, null] }
+      superconducting_temperature: { $ref: "#/definitions/number_or_null", description: "K; null if none" }
+      band_gap: { $ref: "#/definitions/number_or_null", description: "eV; null if not a semiconductor or insulator" }
+
+  mechanical:
+    type: object
+    additionalProperties: false
+    properties:
+      hardness: { $ref: "#/definitions/number_or_null", description: Mohs scale }
+      youngs_modulus: { $ref: "#/definitions/number_or_null", description: GPa }
+      tensile_strength: { $ref: "#/definitions/number_or_null", description: "MPa, annealed" }
+      ductility: { enum: [brittle, ductile, very ductile, null], description: "By Pugh's ratio (bulk / shear modulus): over 2.5 very ductile, over 1.75 ductile, else brittle." }
+
+  optical_nuclear:
+    type: object
+    additionalProperties: false
+    properties:
+      colour: { type: [string, "null"], description: Colour and lustre. }
+      emission_lines: { type: array, items: { type: number }, description: "nm, the five strongest visible lines of the neutral atom" }
+      neutron_cross_section: { $ref: "#/definitions/number_or_null", description: "barns, thermal neutron absorption" }

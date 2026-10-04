@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Sponge iron
+  kind: intermediate
+  description: "Solid iron left when the oxygen is taken out of ore without melting it."

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.tolland
+name: Tolland Yards
+ticker: TOL
+address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 3, section: A, unit: 2 }
+note: "Hulls: workhorses and haulers"
+who: "A shipyard for working ships, built for people who earn a living with them. One of the founders of the SFO."
+what: "Builds hulls: workhorses and haulers."
+story:
+  - "Tolland Yards began by converting worn-out tugs into haulers for crews who couldn't afford a new ship. It learned what working pilots needed by listening to them complain in its own docks."
+  - "Its hulls are plain, roomy and easy to repair with whatever is to hand. A Tolland is seldom anyone's dream ship, but it is very often their first, and many are still flying under their third or fourth owner."
+  - "Tolland was a founder of the SFO for a simple reason: its customers fit their ships with whatever they can find, and it wanted all of it to fit."

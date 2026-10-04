@@ -1,0 +1,67 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Facility
+description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/facilities/<name>.yaml: something built on a parcel, and the work it does. It belongs to the parcel''s owner. The parcel''s zone must permit it: a foundry, a mill or a power station needs an industrial zone, a warehouse a port zone.'
+type: object
+additionalProperties: false
+required: [name, kind, parcel]
+definitions:
+  point: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+properties:
+  name: { type: string }
+  kind: { enum: [foundry, mill, power, warehouse] }
+  parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }
+  processes: { type: array, items: { type: string }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
+  lines:
+    description: 'Its production lines: for each, the process it runs and the industrial modules (SFO 10) it is built of. What the line can make at most, and what it then takes in, gives off, draws and covers, are worked out from them. What it does make is the economy''s business, not recorded here.'
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [process, modules]
+      properties:
+        process: { type: string, description: 'One of its processes, one that has steps.' }
+        modules:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [module, count]
+            properties:
+              module: { type: string, description: 'One of the modules of the process''s steps.' }
+              count: { type: integer, minimum: 1 }
+  modules:
+    description: 'The industrial modules (SFO 10) it is built of, where its production does not say: a power station''s.'
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [module, count]
+      properties:
+        module: { type: string }
+        count: { type: integer, minimum: 1 }
+  exchange: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: 'For a warehouse: the exchange that has approved it, so that goods lying in it can be traded there.' }
+  parts:
+    description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, kind, outline]
+      properties:
+        name: { type: string }
+        kind: { enum: [module, workshop, warehouse, logistics, parking], description: 'module: industrial plant.' }
+        does: { type: string }
+        processes: { type: array, items: { type: string }, description: 'The facility''s processes run here. Each of the facility''s processes is run in exactly one part.' }
+        outline: { type: array, minItems: 3, items: { $ref: '#/definitions/point' }, description: "Its corners, in order: metres [east, north] of the settlement's position." }
+  pipelines:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, carries, from, to, line]
+      properties:
+        name: { type: string }
+        carries: { type: string }
+        from: { type: string, description: The part it starts at, by name. }
+        to: { type: string, description: The part it ends at, by name. }
+        line: { type: array, minItems: 2, items: { $ref: '#/definitions/point' }, description: "Its run, point by point: metres [east, north] of the settlement's position." }

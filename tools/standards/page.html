@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<title>Standards Registry</title>
+<title>Freefall Facts</title>
 <style>
 :root {
   color-scheme: dark;
@@ -13,6 +13,8 @@
   --head: #60ffb0; --id: #ffb040; --link: #5cc8f0; --sel: #1f4a3d; --bad: #ff5a4a; --code: #2e363e;
   --th: #48505a; --tbl: #383e46; --tline: #535c67;
   --nav: #20262c;
+  --k-chemical: #60ffb0; --k-thermal: #ffb040; --k-mechanical: #5cc8f0;
+  --m-metal: #e6c15a; --m-alloy: #9cc4e6; --m-ceramic: #f09a6a; --m-glass: #9be3e8; --m-polymer: #cfa3f5; --m-composite: #7ed29a; --m-fluid: #6aa8ff;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -20,6 +22,8 @@
   --head: #04683b; --id: #0a58b8; --link: #0a58b8; --sel: #cdeedd; --bad: #b0281a; --code: #e9eef2;
   --th: #dceaf3; --tbl: #f3f8fb; --tline: #b7cbd8;
   --nav: #f4f6f8;
+  --k-chemical: #04683b; --k-thermal: #a85a00; --k-mechanical: #0a58b8;
+  --m-metal: #8a6a00; --m-alloy: #2f5f8a; --m-ceramic: #a8481c; --m-glass: #1b7f86; --m-polymer: #7a3fb0; --m-composite: #1f7a3f; --m-fluid: #1f55b8;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; letter-spacing: .06em; }
@@ -60,6 +64,48 @@ td.num { text-align: right; }
 .problems li { margin: 2px 0; }
 .file { color: var(--dim); font-size: 12px; }
 p { margin: 4px 0 8px; max-width: 80ch; }
+.ico { display: inline-block; vertical-align: middle; line-height: 0; color: var(--head); }
+.ico svg { width: 18px; height: 18px; }
+.ico.big svg { width: 44px; height: 44px; }
+.ico.mid svg { width: 26px; height: 26px; }
+.row .ico { margin-right: 6px; }
+.logo { --logo-cut: var(--bg); display: inline-block; vertical-align: middle; line-height: 0; }
+.logo svg { width: 18px; height: 18px; }
+.logo.big svg { width: 96px; height: 96px; }
+.landmap { display: block; width: 100%; max-width: 760px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; margin: 6px 0 12px; }
+.landmap .zone { stroke-width: 6; fill-opacity: .22; }
+.landmap .u-port { fill: #4c9bd9; stroke: #4c9bd9; } .landmap .u-industrial { fill: #d98a3d; stroke: #d98a3d; } .landmap .u-commercial { fill: #9b8cf0; stroke: #9b8cf0; }
+.landmap .u-civic { fill: #5fbf8f; stroke: #5fbf8f; } .landmap .u-residential { fill: #d9c84a; stroke: #d9c84a; }
+.landmap .reach { fill: none; stroke: var(--dim); stroke-width: 3; stroke-dasharray: 14 12; }
+.landmap .padc { fill: none; stroke: var(--text); stroke-width: 5; }
+.landmap .plot { fill: var(--bg); fill-opacity: .55; stroke: var(--text); stroke-width: 6; cursor: pointer; } .landmap .plot.lit { stroke: var(--head); fill: var(--head); fill-opacity: .25; }
+.landmap .zl { fill: var(--dim); letter-spacing: .08em; } .landmap .pl { fill: var(--text); font-weight: 700; cursor: pointer; }
+.landmap .street { fill: none; stroke: var(--text); stroke-opacity: .7; stroke-width: 22; stroke-linecap: round; cursor: pointer; }
+.landmap .part { stroke: var(--text); stroke-width: 1.5; fill-opacity: .45; }
+.landmap .k-module { fill: #d98a3d; } .landmap .k-workshop { fill: #9b8cf0; } .landmap .k-warehouse { fill: #5fbf8f; } .landmap .k-logistics { fill: #4c9bd9; } .landmap .k-parking { fill: #8fa3b0; }
+.landmap .pipe { fill: none; stroke: #ff6a5a; stroke-width: 3; stroke-linejoin: round; }
+.landmap .lot { fill: none; stroke: var(--head); stroke-width: 2.5; }
+.landmap .tl { fill: var(--text); }
+.swatch { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border: 1px solid var(--text); opacity: .8; }
+.swatch.k-module { background: #d98a3d; } .swatch.k-workshop { background: #9b8cf0; } .swatch.k-warehouse { background: #5fbf8f; } .swatch.k-logistics { background: #4c9bd9; } .swatch.k-parking { background: #8fa3b0; } .swatch.pipe { background: #ff6a5a; height: 3px; vertical-align: middle; border: 0; }
+.landmap .wire { fill: none; stroke: #ffd24a; stroke-width: 6; stroke-linejoin: round; cursor: pointer; }
+.landmap .scale { fill: none; stroke: var(--text); stroke-width: 6; }
+.row .logo { --logo-cut: var(--nav); margin-right: 6px; }
+.row.sel .logo { --logo-cut: var(--sel); }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-width: none; margin: 6px 0 12px; }
+.gallery a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; background: var(--tbl); border: 1px solid var(--tline); border-radius: 4px; text-align: center; color: var(--text); font-size: 12px; letter-spacing: 0; }
+.gallery a:hover { border-color: var(--head); text-decoration: none; }
+.ico.k-chemical { color: var(--k-chemical); } .ico.k-thermal { color: var(--k-thermal); } .ico.k-mechanical { color: var(--k-mechanical); }
+.ico.m-metal { color: var(--m-metal); } .ico.m-alloy { color: var(--m-alloy); } .ico.m-ceramic { color: var(--m-ceramic); } .ico.m-glass { color: var(--m-glass); }
+.ico.m-polymer { color: var(--m-polymer); } .ico.m-composite { color: var(--m-composite); } .ico.m-fluid { color: var(--m-fluid); }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; max-width: none; }
+.badge { padding: 3px 12px; border: 1px solid var(--tline); border-radius: 12px; cursor: pointer; font-size: 12px; color: var(--dim); background: transparent; user-select: none; }
+.badge:hover { color: var(--text); }
+.badge.on { color: var(--bg); background: var(--text); border-color: var(--text); font-weight: 700; }
+.badge.k-chemical.on { background: var(--k-chemical); border-color: var(--k-chemical); }
+.badge.k-thermal.on { background: var(--k-thermal); border-color: var(--k-thermal); }
+.badge.k-mechanical.on { background: var(--k-mechanical); border-color: var(--k-mechanical); }
+.badge.k-chemical { border-color: var(--k-chemical); } .badge.k-thermal { border-color: var(--k-thermal); } .badge.k-mechanical { border-color: var(--k-mechanical); }
 /* The periodic table: 18 groups across (a column of period numbers first), the f-block below. */
 .ptable { display: grid; grid-template-columns: 22px repeat(18, 46px); gap: 3px; margin: 8px 0 12px; max-width: none; letter-spacing: 0; }
 .ptable .hd { color: var(--dim); font-size: 11px; text-align: center; align-self: center; }
@@ -68,6 +114,12 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 .ptable .el .z { font-size: 10px; opacity: .8; display: block; }
 .ptable .el .sy { font-size: 16px; font-weight: 700; }
 .ptable .ph { height: 46px; font-size: 10px; color: var(--dim); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: 3px; }
+/* An element's icon: its tile from the periodic table. */
+.tile { display: inline-flex; flex-direction: column; justify-content: center; width: 46px; height: 46px; padding: 2px 4px; border-radius: 3px; color: #eef3f6; line-height: 1.15; vertical-align: middle; letter-spacing: 0; margin-right: 10px; }
+.tile .z { font-size: 10px; opacity: .8; font-weight: 400; }
+.tile .sy { font-size: 16px; font-weight: 700; }
+.tile.small { width: 22px; height: 18px; padding: 0; margin-right: 6px; align-items: center; }
+.tile.small .sy { font-size: 10px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; max-width: none; font-size: 12px; }
 .legend span i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; }
 .c-alkali-metal { background: #8a3f3f; } .c-alkaline-earth-metal { background: #8a643a; } .c-transition-metal { background: #3d5f86; }
@@ -84,7 +136,7 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 </head>
 <body>
 <header>
-  <h1>STANDARDS REGISTRY</h1>
+  <h1>FREEFALL FACTS</h1>
   <input id="q" type="search" placeholder="Search ids, titles, text, parameters…" autocomplete="off">
   <span class="count" id="count"></span>
   <button id="theme" title="Light or dark">◐</button>
@@ -116,7 +168,36 @@ const elBySymbol = Object.fromEntries(DATA.elements.map(e => [e.identity.symbol,
 const matMatches = (m, q) => !q || q.split(/\s+/).every(w => `${m.identity.name} ${m.identity.class} ${m.identity.grade || ""}`.toLowerCase().includes(w));
 const materialsUnder = (id, q) => DATA.materials.filter(m => m.under === id && matMatches(m, q));
 const matBySlug = Object.fromEntries(DATA.materials.map(m => [m.slug, m]));
-const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length;
+// And the processes.
+const procMatches = (p, q) => !q || q.split(/\s+/).every(w => `${p.identity.name} ${p.identity.kind} ${p.identity.method || ""} ${p.identity.description || ""}`.toLowerCase().includes(w));
+const processesUnder = (id, q) => DATA.processes.filter(p => p.under === id && procMatches(p, q));
+const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
+// And the industrial modules.
+const modMatches = (m, q) => !q || q.split(/\s+/).every(w => `${m.identity.name} ${m.identity.step} ${m.identity.description || ""}`.toLowerCase().includes(w));
+const modulesUnder = (id, q) => DATA.modules.filter(m => m.under === id && modMatches(m, q));
+const modBySlug = Object.fromEntries(DATA.modules.map(m => [m.slug, m]));
+// And the goods.
+const goodMatches = (g, q) => !q || q.split(/\s+/).every(w => `${g.identity.name} ${g.identity.kind} ${g.identity.description || ""}`.toLowerCase().includes(w));
+const goodsUnder = (id, q) => DATA.goods.filter(g => g.under === id && goodMatches(g, q));
+const goodBySlug = Object.fromEntries(DATA.goods.map(g => [g.slug, g]));
+const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length;
+// Anything that flows, by its element symbol or its material's or good's file name: its name, and a link to it.
+const itemKey = i => elBySymbol[i] ? "el:" + i : matBySlug[i] ? "mat:" + i : goodBySlug[i] ? "good:" + i : null;
+const itemName = i => (elBySymbol[i] || matBySlug[i] || goodBySlug[i] || { identity: { name: i } }).identity.name;
+const itemA = i => itemKey(i) ? `<a data-k="${esc(itemKey(i))}">${esc(itemName(i))}</a>` : esc(itemName(i));
+// An element or material named in a process: a link to it.
+const elTile = (e, small) => { const i = e.identity; const c = "c-" + (i.category || "unknown").replace(/[^a-z]+/g, "-"); return small ? `<span class="tile small ${c}"><span class="sy">${esc(i.symbol)}</span></span>` : `<span class="tile ${c}"><span class="z">${i.atomic_number}</span><span class="sy">${esc(i.symbol)}</span></span>`; };
+const logo = (slug, cls) => DATA.logos[slug] ? `<span class="logo ${cls || ""}">${DATA.logos[slug]}</span>` : "";
+const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""} ${procBySlug[slug] ? "k-" + procBySlug[slug].identity.kind : matBySlug[slug] ? "m-" + matBySlug[slug].identity.class : ""}">${DATA.icons[slug]}</span>` : "";
+// The kind of process shown in a record's gallery and table (all, or one kind).
+let kindShown = "all";
+const itemLink = x => {
+  const e = elBySymbol[x.item], m = matBySlug[x.item] || goodBySlug[x.item];
+  const label = e ? e.identity.name : m ? m.identity.name : (x.name || x.item);
+  const k = itemKey(x.item);
+  const extra = [x.amount !== undefined ? `${x.amount} t/t` : "", x.form || "", x.grade || ""].filter(Boolean).join(", ");
+  return (k ? `<a data-k="${esc(k)}">${esc(label)}</a>` : esc(label)) + (extra ? ` <span class="meta">${esc(extra)}</span>` : "");
+};
 const ofBody = (body, q) => DATA.standards.filter(s => s.body === body.key && matches(s, q));
 
 // What's open, kept between visits (if storage works).
@@ -124,12 +205,36 @@ let open = new Set();
 try { open = new Set(JSON.parse(localStorage.getItem("standards-open2") || "[]")); } catch (e) {}
 const keepOpen = () => { try { localStorage.setItem("standards-open2", JSON.stringify([...open])); } catch (e) {} };
 if (!open.size) DATA.bodies.forEach(b => open.add("b:" + b.key));
+// (Seen before there were expanders on standards with standards under them: those start open.)
+try { if (!localStorage.getItem("standards-expanders")) { DATA.standards.forEach(s => { if (s.parent) open.add("x:" + s.parent); }); localStorage.setItem("standards-expanders", "1"); } } catch (e) {}
 
 function matches(s, q) {
   if (!q) return true;
   const hay = [s.id, s.title, s.scope, s.text, ...(s.topics || []), ...(s.params || []).map(p => `${p.key} ${p.value} ${p.unit || ""} ${p.note || ""}`)].join(" ").toLowerCase();
   return q.split(/\s+/).every(w => hay.includes(w));
 }
+
+// Everyone with an address (SFO 9): standards bodies and makers.
+const ORGS_ALL = [...DATA.bodies.map(o => ({ key: o.key, name: o.name, to: "b:" + o.key })), ...DATA.makers.map(m => ({ key: m.key, name: m.name, to: "mk:" + m.key }))];
+const ORGS = [...DATA.bodies.map(o => ({ key: o.key, name: o.name, tag: o.prefix, to: "b:" + o.key, address: o.address })), ...DATA.makers.map(m => ({ key: m.key, name: m.name, tag: m.ticker, to: "mk:" + m.key, address: m.address, slug: m.slug })), ...DATA.administrations.map(a => ({ key: "adm." + a.slug, name: `Administration of ${a.name}`, tag: "", to: "ad:" + a.slug, address: a.address }))].filter(o => o.address && o.address.at);
+const placeOf = o => { const [sy, at] = o.address.at.split("/"); const a = DATA.administrations.find(x => x.slug === sy); const x = a && a.bodies.find(y => y.slug === at); return x ? { sy, at, a, x } : null; };
+const inside = ad => [ad.unit && `Unit ${ad.unit}`, ad.section && `Section ${ad.section}`, ad.deck && `Deck ${ad.deck}`, ad.tower].filter(Boolean);
+const addressText = o => { const p = placeOf(o); return p ? [...inside(o.address), p.x.name, p.x.at, p.a.name].filter(Boolean).join(", ") : ""; };
+const addressHtml = o => { const p = placeOf(o); if (!p) return ""; const ad = o.address;
+  return [...inside(ad).map(esc), `<a data-k="${esc(`bd:${p.sy}:${p.at}`)}">${esc(p.x.name)}</a>`, p.x.at && esc(p.x.at), `<a data-k="${esc("ad:" + p.sy)}">${esc(p.a.name)}</a>`].filter(Boolean).join(", "); };
+const orgsAt = (sy, at) => ORGS.filter(o => o.address.at === `${sy}/${at}`).sort((p, r) => String(p.address.tower || "").localeCompare(String(r.address.tower || "")) || (p.address.deck || 0) - (r.address.deck || 0) || String(p.address.section || "").localeCompare(String(r.address.section || "")) || (p.address.unit || 0) - (r.address.unit || 0));
+
+// A parcel's owner, and its address: parcel, zone, settlement, what that is at, system.
+const ownerOf = k => ORGS_ALL.find(o => o.key === k) || { name: k, to: "" };
+const ownerLink = k => { const o = ownerOf(k); return o.to ? `<a data-k="${esc(o.to)}">${esc(o.name)}</a>` : esc(o.name); };
+const parcelKey = (a, x, p) => `pc:${a.slug}:${x.slug}:${p.number}`;
+// (A parcel's address: its number on its street. One with none yet is known by its lot number.)
+const streetOf = (x, p) => p.address && (x.streets || []).find(s => s.slug === p.address.street);
+const parcelLine = (x, p) => streetOf(x, p) ? `${p.address.number} ${streetOf(x, p).name}` : `Parcel ${p.number}`;
+const parcelAddress = (a, x, p) => [parcelLine(x, p), x.name, x.at, a.name].filter(Boolean).join(", ");
+const facKey = (a, x, f) => `fc:${a.slug}:${x.slug}:${f.slug}`;
+const allFacilities = () => DATA.administrations.flatMap(a => a.bodies.flatMap(x => (x.facilities || []).map(f => ({ a, x, f }))));
+const allParcels = () => DATA.administrations.flatMap(a => a.bodies.flatMap(x => (x.parcels || []).map(p => ({ a, x, p }))));
 
 // The tree as shown: each body, its standards under it.
 function rows(q) {
@@ -142,38 +247,120 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0));
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0));
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
         const n = recordsUnder(s.id);
-        out.push({ k: "s:" + s.id, depth, kind: "std", std: s, n: n || undefined, isOpen: open.has("x:" + s.id) || !!q });
-        walk(s.id, depth + 1);
+        const isOpen = open.has("x:" + s.id) || !!q;
+        out.push({ k: "s:" + s.id, depth, kind: "std", std: s, n: n || undefined, has: n > 0 || kids(s.id).length > 0, isOpen });
+        if (isOpen) walk(s.id, depth + 1);
         // (Its elements, when it's open: by atomic number.)
-        if (n && (open.has("x:" + s.id) || q)) {
+        if (n && isOpen) {
           for (const e of elementsUnder(s.id, q)) out.push({ k: "el:" + e.identity.symbol, depth: depth + 1, kind: "el", el: e });
           for (const m of materialsUnder(s.id, q)) out.push({ k: "mat:" + m.slug, depth: depth + 1, kind: "mat", mat: m });
+          for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
+          for (const m of modulesUnder(s.id, q)) out.push({ k: "mod:" + m.slug, depth: depth + 1, kind: "maker", label: m.identity.name, ticker: m.identity.step, leaf: true });
+          for (const g of goodsUnder(s.id, q)) out.push({ k: "good:" + g.slug, depth: depth + 1, kind: "maker", label: g.identity.name, ticker: g.identity.kind, leaf: true });
         }
       }
     };
     walk(null, 1);
   }
+  // Maker House: the makers under it.
+  const mq = m => !q || q.split(/\s+/).every(w => `${m.name} ${m.ticker} ${m.note} ${m.who || ""} ${m.what || ""}`.toLowerCase().includes(w));
+  out.push({ k: "mh", depth: 0, kind: "body", label: DATA.house.name, n: DATA.makers.length });
+  if (open.has("mh") || q) for (const m of DATA.makers.filter(mq)) out.push({ k: "mk:" + m.key, depth: 1, kind: "maker", label: m.name, ticker: m.ticker, slug: m.slug });
+  // Local Administration: the administrations under it.
+  const aq = a => !q || q.split(/\s+/).every(w => a.name.toLowerCase().includes(w));
+  out.push({ k: "la", depth: 0, kind: "body", label: DATA.local.name, n: DATA.administrations.length });
+  if (open.has("la") || q) for (const a of DATA.administrations) {
+    const bodies = a.bodies || [];
+    const hit = x => !q || q.split(/\s+/).every(w => `${x.name} ${x.kind}`.toLowerCase().includes(w));
+    if (q && !aq(a) && !bodies.some(hit)) continue;
+    out.push({ k: "ad:" + a.slug, depth: 1, kind: "adm", label: a.name, n: bodies.length });
+    if (!open.has("ad:" + a.slug) && !q) continue;
+    // (Its bodies: each under the body it is at, and under each what has its address there.)
+    const known = n => bodies.some(y => y.name === n);
+    const under = (at, depth) => {
+      for (const x of bodies.filter(x => (known(x.at) ? x.at : null) === at)) {
+        const k = `bd:${a.slug}:${x.slug}`;
+        const orgs = orgsAt(a.slug, x.slug);
+        const plots = x.parcels || [], zones = x.zones || [], streets = x.streets || [], wires = x.power_lines || [];
+        const has = orgs.length > 0 || plots.length > 0 || zones.length > 0 || streets.length > 0 || wires.length > 0 || bodies.some(y => y.at === x.name);
+        if (q && !hit(x) && !has) continue;
+        out.push({ k, depth, kind: "maker", label: x.name, ticker: x.at && !known(x.at) ? x.at : x.kind, leaf: !has });
+        if (!has || !(open.has(k) || q)) continue;
+        for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.tag, leaf: true });
+        // (Its streets, its zones, then its parcels.)
+        for (const s of streets) out.push({ k: `st:${a.slug}:${x.slug}:${s.slug}`, depth: depth + 1, kind: "maker", label: s.name, ticker: "street", leaf: true });
+        for (const w of wires) out.push({ k: `pw:${a.slug}:${x.slug}:${w.slug}`, depth: depth + 1, kind: "maker", label: w.name, ticker: "power line", leaf: true });
+        for (const z of zones) out.push({ k: `zn:${a.slug}:${x.slug}:${z.slug}`, depth: depth + 1, kind: "maker", label: `${z.name} zone`, ticker: z.use, leaf: true });
+        for (const p of plots) {
+          const on = (x.facilities || []).filter(f => f.parcel === p.number);
+          out.push({ k: parcelKey(a, x, p), depth: depth + 1, kind: "maker", label: `Parcel ${p.number}`, ticker: ownerOf(p.owner).name, leaf: !on.length });
+          if (open.has(parcelKey(a, x, p)) || q) for (const f of on) out.push({ k: facKey(a, x, f), depth: depth + 2, kind: "maker", label: f.name, ticker: f.kind, leaf: true });
+        }
+        under(x.name, depth + 1);
+      }
+    };
+    under(null, 2);
+  }
+  // The Production Register: no records of its own, a reference to what every facility can make at most.
+  const lines = producing().filter(r => !q || q.split(/\s+/).every(w => `${r.f.name} ${r.pr.identity.name} ${r.makes}`.toLowerCase().includes(w)));
+  out.push({ k: "pd", depth: 0, kind: "body", label: "Production Register", n: producing().length });
+  if (open.has("pd") || q) for (const r of lines) out.push({ k: `pl:${r.a.slug}:${r.x.slug}:${r.f.slug}`, depth: 1, kind: "maker", label: r.f.name, ticker: `up to ${perDay(r.ln.most.output)} t/day ${r.makes}` });
+  // The Address Registry: no records of its own, a reference to everything that has an address.
+  const listed = addressed().filter(r => !q || q.split(/\s+/).every(w => `${r.who} ${r.address}`.toLowerCase().includes(w)));
+  out.push({ k: "ar", depth: 0, kind: "body", label: "Address Registry", n: addressed().length });
+  if (open.has("ar") || q) for (const r of listed) out.push({ k: r.org ? "ra:" + r.key : "rp:" + r.key, depth: 1, kind: "maker", label: r.who, ticker: r.org ? r.tag : r.address.split(", ").slice(0, 3).join(", ") });
   return out;
+}
+// What every facility can make at most: one row for each of its lines.
+const perDay = tph => Math.round(tph * 24).toLocaleString();
+function producing() {
+  return allFacilities().flatMap(({ a, x, f }) => (f.lines || []).filter(ln => ln.most).map(ln => {
+    const pr = procBySlug[ln.process]; const out = ((pr.outputs || {}).products || [])[0] || {};
+    return { a, x, f, ln, pr, makes: `${(matBySlug[out.item] || { identity: { name: out.item || "" } }).identity.name}${out.form ? " " + out.form : ""}` };
+  }));
+}
+// Everything with an address, spelled out.
+function addressed() {
+  const land = allParcels().map(({ a, x, p }) => ({ key: parcelKey(a, x, p).slice(3), who: ownerOf(p.owner).name, tag: "", to: parcelKey(a, x, p), html: `<a data-k="${esc(parcelKey(a, x, p))}">${esc(parcelAddress(a, x, p))}</a>`, whoTo: ownerOf(p.owner).to, address: parcelAddress(a, x, p) }));
+  return [...ORGS.filter(placeOf).map(o => ({ key: o.key, who: o.name, tag: o.tag, to: o.to, org: o, address: addressText(o) })), ...land].sort((p, r) => p.address.localeCompare(r.address, undefined, { numeric: true }));
 }
 
 let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
-  if (k.startsWith("el:") || k.startsWith("mat:")) {
-    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : matBySlug[k.slice(4)]; if (!e) return;
+  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:") || k.startsWith("good:")) {
+    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : k.startsWith("good:") ? goodBySlug[k.slice(5)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
     const up = byId[e.under]; if (up) open.add("b:" + up.body);
+    for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
     keepOpen();
     return;
   }
+  if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
+  if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
+  if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
+  if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
+  if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("pc:") || k.startsWith("fc:") || k.startsWith("zn:") || k.startsWith("st:") || k.startsWith("pw:")) {
+    const org = k.startsWith("at:") ? ORGS.find(o => o.key === k.slice(3)) : null;
+    const [sy, slug] = org ? org.address.at.split("/") : k.split(":").slice(1);
+    const a = DATA.administrations.find(x => x.slug === sy); if (!a) return;
+    open.add("la"); open.add("ad:" + sy);
+    // (Open the bodies above it; and itself and its tower, for what has its address there.)
+    let x = a.bodies.find(y => y.slug === slug);
+    if (x && (org || k.startsWith("pc:") || k.startsWith("fc:") || k.startsWith("zn:") || k.startsWith("st:") || k.startsWith("pw:"))) open.add(`bd:${sy}:${x.slug}`);
+    if (x && k.startsWith("fc:")) { const f = (x.facilities || []).find(y => y.slug === k.split(":")[3]); if (f) open.add(`pc:${sy}:${x.slug}:${f.parcel}`); }
+    for (x = x && a.bodies.find(y => y.name === x.at); x; x = a.bodies.find(y => y.name === x.at)) open.add(`bd:${sy}:${x.slug}`);
+    keepOpen(); return;
+  }
   const s = stdOf(k); if (!s) return;
   open.add("b:" + s.body);
+  for (let u = s; u && u.parent; u = byId[u.parent]) open.add("x:" + u.parent);
   keepOpen();
 }
 reveal(current);
@@ -186,26 +373,29 @@ function render() {
   for (const n of list) {
     const pad = `padding-left:${12 + n.depth * 18}px`;
     const sel = n.k === current ? " sel" : "";
-    const tw = n.kind === "std" ? "" : (open.has(n.k) || q ? "▾" : "▸");
+    const tw = n.kind === "std" || (n.kind === "maker" && (n.leaf !== false || n.flat)) ? "" : (open.has(n.k) || q ? "▾" : "▸");
     if (n.kind === "el") {
       const i = n.el.identity;
-      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span><span class="n">${i.atomic_number}</span> <b>${esc(i.symbol)}</b> ${esc(i.name)}</div>`;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${elTile(n.el, true)}${esc(i.name)} <span class="n">${i.atomic_number}</span></div>`;
     } else if (n.kind === "mat") {
       const i = n.mat.identity;
-      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${esc(i.name)} <span class="n">${esc(i.class)}</span></div>`;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${icon(n.mat.slug)}${esc(i.name)} <span class="n">${esc(i.class)}</span></div>`;
+    } else if (n.kind === "proc") {
+      const i = n.proc.identity;
+      html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(i.name)}"><span class="tw"></span>${icon(n.proc.slug)}${esc(i.name)} <span class="n">${esc(i.kind)}</span></div>`;
     } else if (n.kind === "std") {
-      const twisty = n.n ? (n.isOpen ? "▾" : "▸") : "";
+      const twisty = n.has ? (n.isOpen ? "▾" : "▸") : "";
       const count = n.n ? ` <span class="n">(${n.n})</span>` : "";
       html += `<div class="row${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.std.id + " " + n.std.title)}"><span class="tw">${twisty}</span>${esc(n.std.title)} <span class="n">${esc(n.std.id)}</span>${count}</div>`;
     } else {
       const cls = n.kind === "body" ? " body" : "";
       const count = n.n !== undefined ? ` <span class="n">(${n.n})</span>` : "";
-      html += `<div class="row${cls}${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.title || n.label)}"><span class="tw">${tw}</span>${esc(n.label)}${count}</div>`;
+      html += `<div class="row${cls}${sel}" style="${pad}" data-k="${esc(n.k)}" title="${esc(n.title || n.label)}"><span class="tw">${tw}</span>${n.slug ? logo(n.slug) : ""}${esc(n.label)}${n.ticker ? ` <span class="n">${esc(n.ticker)}</span>` : ""}${count}</div>`;
     }
   }
   document.getElementById("tree").innerHTML = html;
   const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
-  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "");
+  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "") + (DATA.modules.length ? ` · ${DATA.modules.length} modules` : "") + (DATA.goods.length ? ` · ${DATA.goods.length} goods` : "");
   document.getElementById("detail").innerHTML = detail(current);
 }
 
@@ -235,14 +425,57 @@ function periodicTable(els) {
 function value(v) { return Array.isArray(v) ? `${v[0]} – ${v[1]}` : esc(v); }
 
 function detail(k) {
-  if (!k) return `<h2>The standards registry</h2><p class="meta">Pick a body or standard on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
+  if (!k) return `<h2>Freefall facts</h2><p class="meta">Pick something on the left. Edit the YAML under <code>standards/</code>, rerun <code>python3 tools/standards/build.py</code>, refresh.</p>`;
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
+  if (kind === "rp") return detail("pc:" + rest.join(":"));
+  const metres = m => `${Math.round(m).toLocaleString()} m`;
+  const sqm = m2 => `${Math.round(m2).toLocaleString()} m² <span class="meta">(${(m2 / 1e4).toLocaleString(undefined, { maximumFractionDigits: 1 })} ha)</span>`;
+  // (An outline's sides in order, closing back to the first corner; a line's stretches.)
+  const sides = (o, closed) => o.slice(0, closed ? o.length : o.length - 1).map((c, i) => { const d = o[(i + 1) % o.length]; return Math.hypot(d[0] - c[0], d[1] - c[1]); });
+  const total = a => a.reduce((s, v) => s + v, 0);
+  const measures = o => `<tr><td>sides</td><td>${sides(o, true).map(metres).join(" · ")}</td><td>its outline, corner to corner</td></tr><tr><td>perimeter</td><td>${metres(total(sides(o, true)))}</td><td>its sides together</td></tr><tr><td>area</td><td>${sqm(area(o))}</td><td>its outline</td></tr>`;
+  const area = o => Math.abs(o.reduce((s, c, i) => s + c[0] * o[(i + 1) % o.length][1] - o[(i + 1) % o.length][0] * c[1], 0)) / 2;
+  const tph = v => `${+v.toPrecision(3)} t/h`, day = v => v * 24 < 1 ? `${+(v * 24000).toPrecision(3)} kg` : `${(+(v * 24).toPrecision(3)).toLocaleString()} t`;
+  const hectares = m2 => `${(m2 / 1e4).toLocaleString(undefined, { maximumFractionDigits: 1 })} ha`;
+  // A settlement's ground: its zones and parcels (outlines in metres east and north of its position),
+  // and the port as the game has it (its pads, its landing area, its hangar to the south).
+  const landMap = (a, x, lit) => {
+    const zones = x.zones || [], plots = x.parcels || []; if (!zones.length && !plots.length) return "";
+    const P = DATA.port, half = (P.grid - 1) / 2, hangar = -(P.grid / 2 + 1) * P.spacing;
+    const streets = x.streets || [];
+    const pts = [...zones, ...plots].flatMap(r => r.outline).concat(streets.flatMap(r => r.line)).concat([[-P.radius, -P.radius], [P.radius, P.radius], [0, hangar - 60]]);
+    const pad = 150, x0 = Math.min(...pts.map(c => c[0])) - pad, x1 = Math.max(...pts.map(c => c[0])) + pad, y0 = Math.min(...pts.map(c => c[1])) - pad, y1 = Math.max(...pts.map(c => c[1])) + pad;
+    const path = o => o.map(c => `${c[0]},${-c[1]}`).join(" ");
+    const mid = o => [o.reduce((s, c) => s + c[0], 0) / o.length, o.reduce((s, c) => s + c[1], 0) / o.length];
+    const w = x1 - x0, t = w / 60;
+    let s = `<svg class="landmap" viewBox="${x0} ${-y1} ${w} ${y1 - y0}" xmlns="http://www.w3.org/2000/svg">`;
+    for (const z of zones) { const m = mid(z.outline); s += `<polygon class="zone u-${esc(z.use)}" points="${path(z.outline)}"/><text class="zl" x="${m[0]}" y="${-Math.max(...z.outline.map(c => c[1])) + t * 1.4}" font-size="${t}" text-anchor="middle">${esc(z.name.toUpperCase())}</text>`; }
+    for (const st of streets) { const e = st.line[st.line.length - 1]; s += `<a data-k="${esc(`st:${a.slug}:${x.slug}:${st.slug}`)}"><polyline class="street" points="${path(st.line)}"/><text class="zl" x="${e[0] - t}" y="${-e[1] - t * 0.6}" font-size="${t * 0.9}" text-anchor="end">${esc(st.name.toUpperCase())}</text></a>`; }
+    s += `<circle class="reach" cx="0" cy="0" r="${P.radius}"/>`;
+    const wiresOn = () => (x.power_lines || []).map(w => `<a data-k="${esc(`pw:${a.slug}:${x.slug}:${w.slug}`)}"><polyline class="wire" points="${path(w.line)}"/></a>`).join("");
+    for (let r = 0; r < P.grid; r++) for (let c = 0; c < P.grid; c++) s += `<circle class="padc" cx="${(c - half) * P.spacing}" cy="${(r - half) * P.spacing}" r="${P.pad}"/>`;
+    s += `<rect class="padc" x="-60" y="${-hangar - 40}" width="120" height="80"/><text class="zl" x="0" y="${-hangar + 40 + t}" font-size="${t * 0.8}" text-anchor="middle">HANGAR</text>`;
+    for (const p of plots) { const m = mid(p.outline); s += `<a data-k="${esc(parcelKey(a, x, p))}"><polygon class="plot${p.number === lit ? " lit" : ""}" points="${path(p.outline)}"/><text class="pl" x="${m[0]}" y="${-m[1] + t * 0.4}" font-size="${t * 1.2}" text-anchor="middle">${p.number}</text></a>`; }
+    s += wiresOn();
+    // (North is up; a 500 m scale.)
+    s += `<path class="scale" d="M${x0 + pad / 2} ${-y0 - pad / 2}h500"/><text class="zl" x="${x0 + pad / 2 + 250}" y="${-y0 - pad / 2 - t * 0.5}" font-size="${t * 0.8}" text-anchor="middle">500 M</text>`;
+    s += `<path class="scale" d="M${x1 - pad / 2} ${-y1 + pad / 2 + 3 * t}v${-2 * t}m${-t * 0.6} ${t * 0.8}l${t * 0.6} ${-t * 0.8}l${t * 0.6} ${t * 0.8}"/><text class="zl" x="${x1 - pad / 2}" y="${-y1 + pad / 2 + 4.2 * t}" font-size="${t * 0.8}" text-anchor="middle">N</text>`;
+    return `<h3>Map</h3>` + s + `</svg>`;
+  };
+  if (kind === "at" || kind === "ra") { const o = ORGS.find(x => x.key === rest.join(":")); return o ? detail(o.to) : ""; }
+  if (kind === "pl") return detail("fc:" + rest.join(":"));
+  if (k === "pd") return `<h2>Production Register</h2><p>What every facility can make at most, from what it is built of. What it does make is the economy's business.</p>` + (producing().length ? `<table><tr><th>Facility</th><th>Owner</th><th>Where</th><th>Process</th><th>Makes</th><th>At most</th></tr>` + producing().map(r => `<tr><td><a data-k="${esc(facKey(r.a, r.x, r.f))}">${esc(r.f.name)}</a></td><td>${ownerLink(r.f.owner)}</td><td>${esc(r.x.name)}, ${esc(r.a.name)}</td><td><a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${perDay(r.ln.most.output)} t/day</td></tr>`).join("") + `</table>` : `<p class="meta">Nothing yet.</p>`);
+  if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${r.org ? addressHtml(r.org) : r.html}</td><td><a data-k="${esc(r.org ? r.to : r.whoTo)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
     const n = DATA.standards.filter(s => s.body === b.key).length;
     const seat = b.seat === "home" ? "the home station" : b.seat;
-    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · seated at ${esc(seat)} · ${n} standards</div><p>${esc(b.note)}</p>`;
+    let h = `<h2>${esc(b.name)}</h2><div class="meta">${esc(b.kind || "")} · prefix ${esc(b.prefix)} · ${n} standards</div><p>${esc(b.note)}</p>`;
+    const me = ORGS.find(o => o.key === b.key);
+    if (me) {
+      h += `<h3>Address</h3><p>${addressHtml(me)}</p>`;
+    } else h += `<div class="meta">seated at ${esc(seat)}</div>`;
     if ((b.about || []).length) h += `<h3>About</h3>` + b.about.map(p => `<p>${esc(p)}</p>`).join("");
     if (b.purpose) h += `<h3>Purpose</h3><p>${esc(b.purpose)}</p>`;
     if (b.details) {
@@ -251,6 +484,129 @@ function detail(k) {
     }
     if ((b.founded_by || []).length) h += `<h3>Founded by</h3>` + b.founded_by.map(m => `<div>${esc(DATA.brands[m] || m)}</div>`).join("");
     return h;
+  }
+  if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div>${logo(m.slug)} <a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
+  const aboutStory = r => (r.about ? `<h3>About</h3><p>${esc(r.about)}</p>` : "") + ((r.story || []).length ? `<h3>Story</h3>` + r.story.map(p => `<p>${esc(p)}</p>`).join("") : "");
+  const pos = p => p ? `${Math.abs(p.latitude).toFixed(3)}° ${p.latitude < 0 ? "S" : "N"}, ${Math.abs(p.longitude).toFixed(3)}° ${p.longitude < 0 ? "W" : "E"}` : "";
+  if (k === "la") return `<h2>${esc(DATA.local.name)}</h2><p>${esc(DATA.local.note || "")}</p>` + DATA.administrations.map(a => `<div><a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a> <span class="meta">${(a.bodies || []).length} bodies</span></div>`).join("");
+  if (kind === "ad") {
+    const a = DATA.administrations.find(x => x.slug === rest.join(":")); if (!a) return "";
+    return `<h2>${esc(a.name)}</h2><div class="meta">system</div>${ORGS.find(o => o.key === "adm." + a.slug) ? `<h3>Address of its administration</h3><p>${addressHtml(ORGS.find(o => o.key === "adm." + a.slug))}</p>` : ""}${aboutStory(a)}${(a.zoning || []).length ? `<h3>Zoning code</h3><table><tr><th>Zone</th><th>Permits</th></tr>` + a.zoning.map(c => `<tr><td>${esc(c.use)}</td><td>${esc(c.permits)}</td></tr>`).join("") + `</table>` : ""}<h3>Bodies</h3><table><tr><th>Body</th><th>Kind</th><th>At</th><th>Position</th></tr>` + (a.bodies || []).map(x => `<tr><td><a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a></td><td>${esc(x.kind)}</td><td>${esc(x.at || "")}</td><td>${pos(x.position)}</td></tr>`).join("") + `</table>` + `<div class="file" style="margin-top:24px">standards/${esc(a.file)}</div>`;
+  }
+  if (kind === "bd") {
+    const a = DATA.administrations.find(x => x.slug === rest[0]); const x = a && (a.bodies || []).find(y => y.slug === rest[1]); if (!x) return "";
+    const link = y => `<a data-k="${esc(`bd:${a.slug}:${y.slug}`)}">${esc(y.name)}</a>`;
+    const up = x.at && a.bodies.find(y => y.name === x.at);
+    const here = a.bodies.filter(y => y.at === x.name);
+    const orgs = orgsAt(a.slug, x.slug);
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + landMap(a, x) + ((x.streets || []).length ? `<h3>Streets</h3><table><tr><th>Street</th><th>Length</th><th>Addresses</th></tr>` + x.streets.map(st => `<tr><td><a data-k="${esc(`st:${a.slug}:${x.slug}:${st.slug}`)}">${esc(st.name)}</a></td><td>${Math.round(st.length).toLocaleString()} m</td><td>${(x.parcels || []).filter(p => p.address && p.address.street === st.slug).length || ""}</td></tr>`).join("") + `<tr><th>Total</th><th>${metres(total(x.streets.map(st => st.length)))}</th><th></th></tr></table>` : "") + ((x.power_lines || []).length ? `<h3>Power lines</h3><table><tr><th>Power line</th><th>From</th><th>To</th><th>Can carry</th><th>Length</th></tr>` + x.power_lines.map(w => { const fac = s => { const f = (x.facilities || []).find(y => y.slug === s); return f ? `<a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a>` : esc(s); }; return `<tr><td><a data-k="${esc(`pw:${a.slug}:${x.slug}:${w.slug}`)}">${esc(w.name)}</a></td><td>${fac(w.from)}</td><td>${fac(w.to)}</td><td>${w.capacity} MW</td><td>${metres(w.length)}</td></tr>`; }).join("") + `<tr><th>Total</th><th></th><th></th><th></th><th>${metres(total(x.power_lines.map(w => w.length)))}</th></tr></table>` : "") + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Permits</th><th>Area</th></tr>` + x.zones.map(z => `<tr><td><a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a></td><td>${esc(z.use)}</td><td>${esc(((a.zoning || []).find(c => c.use === z.use) || {}).permits || "")}</td><td>${sqm(z.area)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th>${sqm(total(x.zones.map(z => z.area)))}</th></tr></table>` : "") + ((x.facilities || []).length ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Parcel</th><th>Owner</th><th>At most</th></tr>` + x.facilities.map(f => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${f.parcel}</td><td>${ownerLink(f.owner)}</td><td>${f.kind === "warehouse" ? `holds ${total((f.store || []).map(r => r.volume || 0)).toLocaleString()} m³ and ${total((f.store || []).map(r => r.holds || 0)).toLocaleString()} t` : f.capacity ? `${f.capacity} MW` : producing().filter(r => r.f === f).map(r => `${perDay(r.ln.most.output)} t/day ${esc(r.makes)}`).join(", ")}</td></tr>`).join("") + `</table>` : "") + ((x.parcels || []).length ? `<h3>Parcels</h3><table><tr><th>Parcel</th><th>Address</th><th>Zone</th><th>Area</th><th>Owner</th></tr>` + x.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${streetOf(x, p) ? esc(parcelLine(x, p)) : ""}</td><td>${esc(((x.zones || []).find(z => z.slug === p.zone) || {}).name || "")}</td><td>${sqm(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th>${sqm(total(x.parcels.map(p => p.area)))}</th><th></th></tr></table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+  }
+  // (A record's properties, as written in its file.)
+  const corners = o => o.map(c => `${c[0]}, ${c[1]}`).join(" · ");
+  const props = rows => `<h3>Properties</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>` + rows.filter(r => r[1] !== undefined && r[1] !== "").map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${esc(r[2] || "")}</td></tr>`).join("") + `</table>`;
+  // What a facility is to make, and what follows from it (worked out by the build from its
+  // processes' modules).
+  const flowTable = (title, rows, note) => rows.length ? `<h3>${title}</h3>${note ? `<p class="meta">${note}</p>` : ""}<table><tr><th>What</th><th>Each hour</th><th>Each day</th></tr>` + rows.map(s => `<tr><td>${itemA(s.item)}</td><td>${tph(s.rate)}</td><td>${day(s.rate)}</td></tr>`).join("") + `</table>` : "";
+  // A line: what it is built of, and the most it can do (worked out by the build).
+  const production = (a, x, f, p) => producing().filter(r => r.f === f).map(r => {
+    const m = r.ln.most, name = s => modBySlug[s].identity.name;
+    return `<h3>Line: ${esc(r.pr.identity.name)}</h3><table><tr><th>Process</th><th>Makes</th><th>At most, each hour</th><th>At most, each day</th><th>Held back by</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(m.output)}</td><td>${day(m.output)}</td><td><a data-k="${esc("mod:" + m.tightest)}">${esc(name(m.tightest))}</a></td></tr></table>`
+      + `<h3>Built of</h3><p class="meta">Number is what it has. The rest is worked out: what that many can put through, and what the line asks of them when it runs flat out.</p><table><tr><th>Module</th><th>Number</th><th>Can put through</th><th>Flat out, the line asks</th><th>Running at</th><th>Ground</th><th>Power flat out</th></tr>`
+      + m.modules.map(r2 => `<tr><td><a data-k="${esc("mod:" + r2.module)}">${esc(name(r2.module))}</a></td><td>${r2.count}</td><td>${r2.can !== null ? tph(r2.can) : r2.holds !== null ? `holds ${r2.holds.toLocaleString()} t` : ""}</td><td>${r2.can !== null ? `${tph(r2.at_full)} ${esc(itemName((modBySlug[r2.module].rate || {}).product || "").toLowerCase())}` : ""}</td><td>${r2.use === null ? "" : Math.round(r2.use * 100) + "%"}</td><td>${Math.round(r2.area).toLocaleString()} m²</td><td>${+r2.power.toPrecision(3)} MW</td></tr>`).join("")
+      + `<tr><th>Total</th><th>${m.modules.reduce((s, r2) => s + r2.count, 0)}</th><th></th><th></th><th></th><th>${Math.round(m.area).toLocaleString()} m² · ${(100 * m.area / p.area).toFixed(0)}% of parcel ${p.number}</th><th>${Math.round(m.power)} MW</th></tr></table>`
+      + flowTable("Flat out, it takes in", m.supplies) + flowTable("Flat out, it also gives off", m.by_products) + flowTable("Flat out, used again on site", m.reused, "Given off by one module and taken in by another.");
+  }).join("") + (f.kind === "power" ? powerStation(a, x, f, p) : "") + (f.kind === "warehouse" ? warehouse(a, x, f, p) : "");
+  // A warehouse: what it is built of, what it can hold and what it can move in and out at most.
+  const cubic = v => `${v.toLocaleString()} m³`;
+  const warehouse = (a, x, f, p) => {
+    const st = f.store || [], sum = k => total(st.map(r => r[k] || 0));
+    return (f.exchange ? `<h3>Market</h3><p>Approved by ${ownerLink(f.exchange)}: goods lying here can be traded there.</p>` : "")
+      + `<h3>Built of</h3><table><tr><th>Module</th><th>Number</th><th>Can hold</th><th>Can move in or out</th><th>Ground</th></tr>` + st.map(r => { const m = modBySlug[r.module]; return `<tr><td><a data-k="${esc("mod:" + r.module)}">${esc(m.identity.name)}</a></td><td>${r.count}</td><td>${r.volume ? cubic(r.volume) : r.holds ? `${r.holds.toLocaleString()} t` : ""}</td><td>${r.handling ? `${r.handling.toLocaleString()} t/h` : ""}</td><td>${(r.count * m.size.length * m.size.width).toLocaleString()} m²</td></tr>`; }).join("")
+      + `<tr><th>Total</th><th>${total(st.map(r => r.count))}</th><th>${cubic(sum("volume"))} and ${sum("holds").toLocaleString()} t at most</th><th>${sum("handling").toLocaleString()} t/h at most · ${(sum("handling") * 24).toLocaleString()} t a day</th><th>${Math.round(f.built_area).toLocaleString()} m² · ${(100 * f.built_area / p.area).toFixed(0)}% of parcel ${p.number}</th></tr></table>`
+      + ((f.holds_of || []).length ? `<h3>What it can hold of each kind of goods</h3><p class="meta">At most: if the space that stores a kind held nothing else. A cubic metre weighs what the game says that kind does as stowed.</p><table><tr><th>Kind of goods</th><th>Stored in</th><th>As stowed</th><th>At most</th></tr>` + f.holds_of.slice().sort((p1, p2) => p2.tonnes - p1.tonnes).map(r => `<tr><td>${esc((DATA.goods_kinds[r.kind] || {}).name || r.kind)}</td><td>${r.in.map(s => `<a data-k="${esc("mod:" + s)}">${esc(modBySlug[s].identity.name)}</a>`).join(", ")}</td><td>${(DATA.goods_kinds[r.kind] || {}).density} t/m³</td><td>${Math.round(r.tonnes).toLocaleString()} t</td></tr>`).join("") + `</table>` : "");
+  };
+  // The power lines at a facility: what can reach it, or what it can send, set against what it draws
+  // or supplies flat out.
+  const hookups = (a, x, f) => {
+    const mine = (x.power_lines || []).filter(w => w.from === f.slug || w.to === f.slug); if (!mine.length) return "";
+    const other = s => { const o = (x.facilities || []).find(y => y.slug === s); return o ? `<a data-k="${esc(facKey(a, x, o))}">${esc(o.name)}</a>` : esc(s); };
+    const draw = total((f.lines || []).filter(ln => ln.most).map(ln => ln.most.power));
+    const into = total(mine.filter(w => w.to === f.slug).map(w => w.capacity)), out = total(mine.filter(w => w.from === f.slug).map(w => w.capacity));
+    return `<h3>Power lines</h3><table><tr><th>Power line</th><th>Way</th><th>Other end</th><th>Can carry</th></tr>` + mine.map(w => `<tr><td><a data-k="${esc(`pw:${a.slug}:${x.slug}:${w.slug}`)}">${esc(w.name)}</a></td><td>${w.to === f.slug ? "in" : "out"}</td><td>${other(w.to === f.slug ? w.from : w.to)}</td><td>${w.capacity} MW</td></tr>`).join("") + `</table>`
+      + (draw ? `<p>Flat out it draws ${Math.round(draw)} MW. Its lines can bring it ${into} MW${into < draw ? ", less than that" : ""}.</p>` : "")
+      + (f.capacity ? `<p>It can supply ${f.capacity} MW. Its lines can carry ${out} MW away${out < f.capacity ? ", less than that" : ""}.</p>` : "");
+  };
+  // A power station: what it is built of, and the most it can supply.
+  const powerStation = (a, x, f, p) => `<h3>Built of</h3><table><tr><th>Module</th><th>Number</th><th>Can supply</th><th>Ground</th></tr>` + (f.modules || []).map(im => { const m = modBySlug[im.module]; return `<tr><td><a data-k="${esc("mod:" + im.module)}">${esc(m.identity.name)}</a></td><td>${im.count}</td><td>${im.count * ((m.rate || {}).power || 0)} MW</td><td>${(im.count * m.size.length * m.size.width).toLocaleString()} m²</td></tr>`; }).join("") + `<tr><th>Total</th><th></th><th>${f.capacity} MW at most</th><th>${Math.round(f.built_area).toLocaleString()} m² · ${(100 * f.built_area / p.area).toFixed(0)}% of parcel ${p.number}</th></tr></table>`
+    + flowTable("Flat out, it burns", f.burns || []);
+  // A facility's site plan: its parcel, what stands on it, its pipelines, and the streets passing.
+  const sitePlan = (a, x, f, p) => {
+    const parts = f.parts || [], pipes = f.pipelines || []; if (!parts.length) return "";
+    const pad = 45, xs = p.outline.map(c => c[0]), ys = p.outline.map(c => c[1]);
+    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+    const path = o => o.map(c => `${c[0]},${-c[1]}`).join(" ");
+    let s = `<svg class="landmap" viewBox="${x0} ${-y1} ${x1 - x0} ${y1 - y0}" xmlns="http://www.w3.org/2000/svg">`;
+    for (const st of x.streets || []) s += `<polyline class="street" points="${path(st.line)}"/><text class="zl" x="${x1 - 8}" y="${-st.line[0][1] - 14}" font-size="9" text-anchor="end">${esc(st.name.toUpperCase())}</text>`;
+    s += `<polygon class="lot" points="${path(p.outline)}"/>`;
+    for (const pt of parts) {
+      const ex = pt.outline.map(c => c[0]), ey = pt.outline.map(c => c[1]);
+      s += `<polygon class="part k-${esc(pt.kind)}" points="${path(pt.outline)}"/><text class="tl" x="${(Math.min(...ex) + Math.max(...ex)) / 2}" y="${-(Math.min(...ey) + Math.max(...ey)) / 2 + 3.5}" font-size="10" text-anchor="middle">${esc(pt.name)}</text>`;
+    }
+    for (const pl of pipes) s += `<polyline class="pipe" points="${path(pl.line)}"/>`;
+    s += `<path class="scale" style="stroke-width:2" d="M${x0 + 12} ${-y0 - 12}h100"/><text class="zl" x="${x0 + 62}" y="${-y0 - 18}" font-size="9" text-anchor="middle">100 M</text>`;
+    s += `<path class="scale" style="stroke-width:2" d="M${x1 - 14} ${-y1 + 34}v-22m-5 7l5 -7l5 7"/><text class="zl" x="${x1 - 14}" y="${-y1 + 45}" font-size="9" text-anchor="middle">N</text>`;
+    const kinds = [...new Set(parts.map(pt => pt.kind))];
+    return `<h3>Site plan</h3>` + s + `</svg><div class="meta">${kinds.map(k => `<span class="swatch k-${esc(k)}"></span>${esc(k)}`).join(" &nbsp; ")}${pipes.length ? ` &nbsp; <span class="swatch pipe"></span>pipeline` : ""}</div>`;
+  };
+  if (kind === "st") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const st = x && (x.streets || []).find(y => y.slug === rest[2]); if (!st) return "";
+    const on = (x.parcels || []).filter(p => p.address && p.address.street === st.slug).sort((p, r) => p.address.number - r.address.number);
+    return `<h2>${esc(st.name)}</h2><div class="meta">street · of <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>`
+      + props([["name", esc(st.name)], ["line", corners(st.line), `points, metres east and north of ${x.name}'s position`]])
+      + `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>${st.line.length > 2 ? `<tr><td>stretches</td><td>${sides(st.line, false).map(metres).join(" · ")}</td><td>its line, point to point</td></tr>` : ""}<tr><td>length</td><td>${metres(st.length)}</td><td>its line</td></tr></table>`
+      + `<h3>Addresses on it</h3>` + (on.length ? `<table><tr><th>Number</th><th>Parcel</th><th>Owner</th><th>On it</th></tr>` + on.map(p => `<tr><td>${p.address.number}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${ownerLink(p.owner)}</td><td>${(x.facilities || []).filter(f => f.parcel === p.number).map(f => `<a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a>`).join(", ")}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet.</p>`)
+      + landMap(a, x) + `<div class="file" style="margin-top:24px">standards/${esc(st.file)}</div>`;
+  }
+  if (kind === "pw") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const w = x && (x.power_lines || []).find(y => y.slug === rest[2]); if (!w) return "";
+    const fac = s => { const f = (x.facilities || []).find(y => y.slug === s); return f ? `<a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a>` : esc(s); };
+    return `<h2>${esc(w.name)}</h2><div class="meta">power line · of <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>`
+      + props([["name", esc(w.name)], ["from", fac(w.from)], ["to", fac(w.to)], ["capacity", `${w.capacity} MW`, "what it can carry at most"], ["line", corners(w.line), `points, metres east and north of ${x.name}'s position`]])
+      + `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>${w.line.length > 2 ? `<tr><td>stretches</td><td>${sides(w.line, false).map(metres).join(" · ")}</td><td>its line, point to point</td></tr>` : ""}<tr><td>length</td><td>${metres(w.length)}</td><td>its line</td></tr></table>`
+      + landMap(a, x) + `<div class="file" style="margin-top:24px">standards/${esc(w.file)}</div>`;
+  }
+  if (kind === "zn") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const z = x && (x.zones || []).find(y => y.slug === rest[2]); if (!z) return "";
+    const inIt = (x.parcels || []).filter(p => p.zone === z.slug);
+    const code = (a.zoning || []).find(c => c.use === z.use);
+    return `<h2>${esc(z.name)} zone</h2><div class="meta">zone · of <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>`
+      + props([["name", esc(z.name)], ["use", esc(z.use), "port, industrial, commercial, civic or residential"], ["outline", corners(z.outline), `corners, metres east and north of ${x.name}'s position`]])
+      + `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>${measures(z.outline)}<tr><td>permits</td><td>${esc(code ? code.permits : "")}</td><td>${esc(a.name)}'s zoning code, for ${esc(z.use)}</td></tr></table>`
+      + `<h3>Parcels in it</h3>` + (inIt.length ? `<table><tr><th>Parcel</th><th>Area</th><th>Owner</th></tr>` + inIt.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${sqm(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `<tr><th>Total</th><th>${sqm(total(inIt.map(p => p.area)))}</th><th>${(100 * total(inIt.map(p => p.area)) / z.area).toLocaleString(undefined, { maximumFractionDigits: 1 })}% of the zone</th></tr></table>` : `<p class="meta">None yet.</p>`)
+      + landMap(a, x) + `<div class="file" style="margin-top:24px">standards/${esc(z.file)}</div>`;
+  }
+  if (kind === "fc") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const f = x && (x.facilities || []).find(y => y.slug === rest[2]); if (!f) return "";
+    const p = (x.parcels || []).find(y => y.number === f.parcel); const z = p && (x.zones || []).find(y => y.slug === p.zone);
+    const where = `${esc(parcelLine(x, p))}, <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
+    const procs = (f.processes || []).map(s => procBySlug[s]).filter(Boolean);
+    const makes = pr => ((pr.outputs || {}).products || []).map(o => o.item ? `<a data-k="${esc("mat:" + o.item)}">${esc((matBySlug[o.item] || { identity: { name: o.item } }).identity.name)}</a>${o.form ? ` <span class="meta">${esc(o.form)}</span>` : ""}` : esc(o.name || "")).join(", ");
+    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Parcel</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>Processes it runs</h3><table><tr><th>Process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + production(a, x, f, p) + hookups(a, x, f) + sitePlan(a, x, f, p)
+      + ((f.parts || []).length ? `<h3>Parts</h3><table><tr><th>Part</th><th>Kind</th><th>What it does</th><th>Size</th><th>Area</th></tr>` + f.parts.map(pt => `<tr><td>${esc(pt.name)}</td><td><span class="swatch k-${esc(pt.kind)}"></span>${esc(pt.kind)}</td><td>${esc(pt.does || "")}${(pt.processes || []).length ? `${pt.does ? " " : ""}Runs ` + pt.processes.map(s => procBySlug[s] ? `<a data-k="${esc("proc:" + s)}">${esc(procBySlug[s].identity.name)}</a>` : esc(s)).join(", ") + "." : ""}</td><td>${(s => s.length === 4 && s[0] === s[2] && s[1] === s[3] ? `${Math.round(s[0])} × ${Math.round(s[1])} m` : s.map(metres).join(" · "))(sides(pt.outline, true))}</td><td>${sqm(pt.area)}</td></tr>`).join("") + `<tr><th>Total built on</th><th></th><th>${(100 * total(f.parts.map(pt => pt.area)) / p.area).toLocaleString(undefined, { maximumFractionDigits: 1 })}% of parcel ${p.number}</th><th></th><th>${sqm(total(f.parts.map(pt => pt.area)))}</th></tr></table>` : "")
+      + ((f.pipelines || []).length ? `<h3>Pipelines</h3><table><tr><th>Pipeline</th><th>Carries</th><th>From</th><th>To</th><th>Length</th></tr>` + f.pipelines.map(pl => `<tr><td>${esc(pl.name)}</td><td>${esc(pl.carries)}</td><td>${esc(pl.from)}</td><td>${esc(pl.to)}</td><td>${metres(pl.length)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th></th><th>${metres(total(f.pipelines.map(pl => pl.length)))}</th></tr></table>` : "")
+      + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(f.file)}</div>`;
+  }
+  if (kind === "pc") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const p = x && (x.parcels || []).find(y => String(y.number) === rest[2]); if (!p) return "";
+    const z = (x.zones || []).find(y => y.slug === p.zone);
+    const where = `<a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
+    return `<h2>Parcel ${p.number}</h2><div class="meta">parcel</div><h3>Address</h3><p>${streetOf(x, p) ? `${p.address.number} <a data-k="${esc(`st:${a.slug}:${x.slug}:${p.address.street}`)}">${esc(streetOf(x, p).name)}</a>, ${where}` : `<span class="meta">None yet.</span>`}</p>`
+      + props([["number", String(p.number), "its lot number in its settlement"], ["owner", ownerLink(p.owner)], ["address", streetOf(x, p) ? esc(`${p.address.number} ${streetOf(x, p).name}`) : undefined, "its number on its street"], ["outline", corners(p.outline), `corners, metres east and north of ${x.name}'s position`]])
+      + `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>${measures(p.outline)}<tr><td>zone</td><td>${z ? `<a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a> <span class="meta">${esc(z.use)}</span>` : ""}</td><td>the zone its outline lies in</td></tr></table>` + ((x.facilities || []).some(f => f.parcel === p.number) ? `<h3>On it</h3>` + x.facilities.filter(f => f.parcel === p.number).map(f => `<div><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a> <span class="meta">${esc(f.kind)}</span></div>`).join("") : "") + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
+  }
+  if (kind === "mk") {
+    const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
+    return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}${m.business ? " · " + esc(m.business) : ""}</div><p>${esc(m.note)}</p>` + (ORGS.find(o => o.key === m.key) ? `<h3>Address</h3><p>${addressHtml(ORGS.find(o => o.key === m.key))}</p>` : "") + (allFacilities().some(r => r.f.exchange === m.key) ? `<h3>Warehouses it has approved</h3><table><tr><th>Warehouse</th><th>Owner</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.exchange === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${ownerLink(f.owner)}</td><td>${esc(parcelAddress(a, x, (x.parcels || []).find(p => p.number === f.parcel)))}</td></tr>`).join("") + `</table>` : "") + (allFacilities().some(r => r.f.owner === m.key) ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.owner === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${esc(parcelAddress(a, x, (x.parcels || []).find(p => p.number === f.parcel)))}</td></tr>`).join("") + `</table>` : "") + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
   }
   if (kind === "g") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
@@ -266,17 +622,39 @@ function detail(k) {
     if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
-  if (kind === "el" || kind === "mat") {
-    const e = kind === "el" ? elBySymbol[rest[0]] : matBySlug[rest.join(":")]; if (!e) return "";
+  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod" || kind === "good") {
+    const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
-    let h = kind === "el" ? `<h2><span style="color:var(--id)">${i.atomic_number} ${esc(i.symbol)}</span> ${esc(i.name)}</h2>` : `<h2>${esc(i.name)}</h2>`;
+    let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${icon(e.slug, "big")} ${esc(i.name)}</h2>`;
     if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
-    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : DATA.material_groups)) {
+    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : DATA.process_groups)) {
       if (!e[g]) continue;
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
-      for (const [key, note] of Object.entries(props)) if (key in e[g]) h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
+      for (const [key, note] of Object.entries(props)) if (key in e[g] && key !== "steps") h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
       h += `</table>`;
+    }
+    const footprint = m => m.size ? `${m.size.length} × ${m.size.width} m` : "";
+    if (kind === "proc" && ((e.equipment || {}).steps || []).length) {
+      // (Its steps, each in its module; and what the line can make, set by its slowest module.)
+      const steps = e.equipment.steps.map(st => ({ ...st, m: modBySlug[st.module] })).filter(st => st.m);
+      h += `<h3>Steps</h3><table><tr><th>Step</th><th>Module</th><th>What happens</th><th>Footprint</th><th>Rate</th><th>Power</th></tr>` + steps.map((st, n) => `<tr><td>${n + 1}. ${esc(st.m.identity.step)}</td><td><a data-k="${esc("mod:" + st.module)}">${esc(st.m.identity.name)}</a></td><td>${esc(st.does)}</td><td>${footprint(st.m)}</td><td>${(st.m.rate || {}).throughput !== undefined ? `${st.m.rate.throughput} t/h` : (st.m.rate || {}).holds !== undefined ? `holds ${st.m.rate.holds.toLocaleString()} t` : ""}</td><td>${(st.m.needs || {}).power !== undefined ? `${st.m.needs.power} MW` : ""}</td></tr>`).join("")
+        + `<tr><th>One of each</th><th></th><th></th><th>${steps.reduce((s, st) => s + (st.m.size ? st.m.size.length * st.m.size.width : 0), 0).toLocaleString()} m²</th><th></th><th>${+steps.reduce((s, st) => s + ((st.m.needs || {}).power || 0), 0).toFixed(1)} MW</th></tr></table>`;
+    }
+    if (kind === "good" || kind === "el" || kind === "mat") {
+      const id = kind === "el" ? e.identity.symbol : e.slug;
+      const into = DATA.modules.filter(m => ((m.inputs || {}).materials || []).some(x => x.item === id));
+      const outOf = DATA.modules.filter(m => (m.rate || {}).product === id || ((m.outputs || {}).by_products || []).some(x => x.item === id));
+      const list = ms => ms.map(m => `<a data-k="${esc("mod:" + m.slug)}">${esc(m.identity.name)}</a>`).join(", ");
+      if (into.length || outOf.length) h += `<h3>In industry</h3><table><tr><th>Comes out of</th><th>Goes into</th></tr><tr><td>${list(outOf)}</td><td>${list(into)}</td></tr></table>`;
+    }
+    if (kind === "mod") {
+      const used = DATA.processes.filter(p => ((p.equipment || {}).steps || []).some(st => st.module === e.slug));
+      if (used.length) h += `<h3>Used in</h3><table><tr><th>Process</th><th>Step</th></tr>` + used.map(p => `<tr><td>${icon(p.slug)} <a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${p.equipment.steps.findIndex(st => st.module === e.slug) + 1}. ${esc(e.identity.step)}</td></tr>`).join("") + `</table>`;
+    }
+    if (kind === "proc") {
+      const at = allFacilities().filter(r => (r.f.processes || []).includes(e.slug));
+      if (at.length) h += `<h3>Run at</h3><table><tr><th>Facility</th><th>Owner</th><th>Where</th></tr>` + at.map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${ownerLink(f.owner)}</td><td>${esc(x.name)}, ${esc(a.name)}</td></tr>`).join("") + `</table>`;
     }
     h += `<div class="file" style="margin-top:24px">standards/${esc(e.file)}</div>`;
     return h;
@@ -295,7 +673,18 @@ function detail(k) {
   const els = elementsUnder(s.id, "");
   if (els.length) h += periodicTable(els);
   const mats = materialsUnder(s.id, "");
-  if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td><a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
+  if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td>${icon(m.slug)} <a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
+  const gds = goodsUnder(s.id, "");
+  if (gds.length) h += `<h3>Goods</h3><table><tr><th>Good</th><th>Kind</th><th>What it is</th></tr>` + gds.map(g => `<tr><td><a data-k="${esc("good:" + g.slug)}">${esc(g.identity.name)}</a></td><td>${esc(g.identity.kind)}</td><td>${esc(g.identity.description || "")}</td></tr>`).join("") + `</table>`;
+  const mods = modulesUnder(s.id, "");
+  if (mods.length) h += `<h3>Modules</h3><table><tr><th>Module</th><th>Step</th><th>Footprint</th><th>Height</th><th>Rate</th><th>Power</th></tr>` + mods.map(m => `<tr><td><a data-k="${esc("mod:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.step)}</td><td>${m.size ? `${m.size.length} × ${m.size.width} m` : ""}</td><td>${m.size ? `${m.size.height} m` : ""}</td><td>${(m.rate || {}).throughput !== undefined ? `${m.rate.throughput} t/h ${esc(itemName(m.rate.product || "").toLowerCase())}` : (m.rate || {}).holds !== undefined ? `holds ${m.rate.holds.toLocaleString()} t` : (m.rate || {}).power !== undefined ? `supplies ${m.rate.power} MW` : ""}</td><td>${(m.needs || {}).power !== undefined ? `${m.needs.power} MW` : ""}</td></tr>`).join("") + `</table>`;
+  const allProcs = processesUnder(s.id, "");
+  const procs = allProcs.filter(p => kindShown === "all" || p.identity.kind === kindShown);
+  if (allProcs.length) {
+    const kinds = [...new Set(allProcs.map(p => p.identity.kind))];
+    h += `<h3>Processes</h3><div class="badges"><span class="badge${kindShown === "all" ? " on" : ""}" data-kind="all">all (${allProcs.length})</span>${kinds.map(k => `<span class="badge k-${esc(k)}${kindShown === k ? " on" : ""}" data-kind="${esc(k)}">${esc(k)} (${allProcs.filter(p => p.identity.kind === k).length})</span>`).join("")}</div>`;
+  }
+  if (allProcs.length) h += `<div class="gallery">${procs.map(p => `<a data-k="${esc("proc:" + p.slug)}">${icon(p.slug, "big")}<span>${esc(p.identity.name)}</span></a>`).join("")}</div><table><tr><th>Process</th><th>Kind</th><th>Goes in</th><th>Comes out</th></tr>${procs.map(p => `<tr><td>${icon(p.slug)} <a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${esc(p.identity.kind)}</td><td>${(((p.inputs || {}).materials) || []).map(x => esc((elBySymbol[x.item] || matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name)).join(", ")}</td><td>${(((p.outputs || {}).products) || []).map(x => esc((matBySlug[x.item] || {identity: {name: x.name || x.item}}).identity.name) + (x.form ? ` (${esc(x.form)})` : x.grade ? ` (${esc(x.grade)})` : "")).join(", ")}</td></tr>`).join("")}</table>`;
   if (s.scope) h += `<h3>Scope</h3><p>${esc(s.scope)}</p>`;
   for (const sec of s.sections || []) {
     if (sec.title) h += `<h3>${esc(sec.title)}</h3>`;
@@ -327,14 +716,16 @@ function detail(k) {
 }
 
 document.addEventListener("click", e => {
+  const badge = e.target.closest("[data-kind]");
+  if (badge) { kindShown = badge.dataset.kind; render(); return; }
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
     keepOpen();
   }
   // (A record with elements under it: its list opens, and closes on a second click.)
-  if (el.classList.contains("row") && k.startsWith("s:") && recordsUnder(k.slice(2))) {
+  if (el.classList.contains("row") && k.startsWith("s:") && (recordsUnder(k.slice(2)) || DATA.standards.some(x => x.parent === k.slice(2)))) {
     const x = "x:" + k.slice(2);
     if (open.has(x) && k === current) open.delete(x); else open.add(x);
     keepOpen();

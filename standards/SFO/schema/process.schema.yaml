@@ -1,0 +1,144 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Material process
+description: One process of material processing (elements into materials, materials into stock). Any one process uses only some of these; a property with no value is left out.
+type: object
+additionalProperties: false
+required: [identity]
+definitions:
+  amount_list:
+    description: Things with amounts. `item` is an element's symbol or a material's file name; `name` is for what isn't in the registry yet. `amount` is tonnes per tonne of product.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        item: { type: string }
+        name: { type: string }
+        amount: { type: number, minimum: 0 }
+        form: { type: string }
+        grade: { type: string }
+  rating:
+    enum: [none, low, medium, high]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, kind]
+    properties:
+      name: { type: string }
+      kind: { enum: [chemical, thermal, mechanical], description: "Chemical changes what it is; thermal, its inner structure; mechanical, its shape." }
+      method: { type: string, description: "smelting, rolling, sintering, spinning..." }
+      description: { type: string, description: What happens, in a sentence. }
+
+  inputs:
+    description: What goes in.
+    type: object
+    additionalProperties: false
+    properties:
+      materials: { $ref: "#/definitions/amount_list", description: "Elements or materials consumed, with amounts." }
+      form: { enum: [ingot, billet, powder, pellet, fibre, sheet, bar, rod, fluid, gel], description: The form the input comes in. }
+      purity: { type: string, description: The purity or grade required. }
+      consumables: { $ref: "#/definitions/amount_list", description: "Used up but not part of the product: flux, electrodes, catalyst, solvent." }
+      gases: { type: array, items: { type: string }, description: "Process gases: argon shield, hydrogen, oxygen." }
+      coolant: { type: number, description: "t of water or coolant per t of product" }
+
+  outputs:
+    description: What comes out.
+    type: object
+    additionalProperties: false
+    properties:
+      products: { $ref: "#/definitions/amount_list", description: "The material made, its form and grade." }
+      sizes: { type: string, description: The dimensions it can make. }
+      yield: { type: number, minimum: 0, maximum: 1, description: The share of the input that becomes product. }
+      by_products: { $ref: "#/definitions/amount_list", description: "Useful: slag, off-gas." }
+      waste: { $ref: "#/definitions/amount_list", description: What must be disposed of. }
+      scrap: { type: number, minimum: 0, maximum: 1, description: The share that goes back to the start as reusable material. }
+
+  conditions:
+    type: object
+    additionalProperties: false
+    properties:
+      temperature: { type: number, description: K }
+      pressure: { type: number, description: "Pa (0: vacuum)" }
+      atmosphere: { enum: [air, inert, vacuum, reducing, oxidising] }
+      gravity: { enum: [needs gravity, needs free fall, either] }
+      cleanliness: { enum: [ordinary, clean room] }
+      hold_time: { type: number, description: "s, at condition (soak time)" }
+      heating_rate: { type: number, description: K/s }
+      cooling_rate: { type: number, description: "K/s (it decides the grade, as in quenching)" }
+
+  energy:
+    type: object
+    additionalProperties: false
+    properties:
+      energy_per_tonne: { type: number, description: MJ/t of product }
+      peak_power: { type: number, description: kW }
+      energy_type: { enum: [electric, thermal, chemical] }
+      waste_heat: { type: number, description: MJ/t to reject }
+      recoverable_heat: { type: number, description: MJ/t that can be reused }
+
+  rate:
+    description: Time and rate.
+    type: object
+    additionalProperties: false
+    properties:
+      mode: { enum: [batch, continuous] }
+      batch_size: { type: number, description: t }
+      cycle_time: { type: number, description: s per batch }
+      throughput: { type: number, description: t/h }
+      startup_time: { type: number, description: "s, to start up or shut down" }
+
+  equipment:
+    type: object
+    additionalProperties: false
+    properties:
+      facility: { type: string, description: "The kind of facility that can run it: foundry, mill..." }
+      machine: { type: string, description: "arc furnace, rolling stand, autoclave..." }
+      tooling: { type: string, description: "Dies, rolls, moulds, and their life." }
+      minimum_scale: { type: number, description: "t/h, the smallest plant that makes sense" }
+      steps:
+        description: "Its steps in order, each done in one industrial module (SFO 10), by the module's file name."
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [module, does]
+          properties:
+            module: { type: string }
+            does: { type: string }
+
+  people:
+    description: People and control.
+    type: object
+    additionalProperties: false
+    properties:
+      crew: { type: integer, minimum: 0 }
+      skill: { $ref: "#/definitions/rating" }
+      automation: { $ref: "#/definitions/rating" }
+
+  quality:
+    type: object
+    additionalProperties: false
+    properties:
+      tolerance: { type: number, description: "mm, on dimensions" }
+      defect_rate: { type: number, minimum: 0, maximum: 1 }
+      property_change: { type: string, description: "What it does to the material: more strength, less ductility." }
+      inspection: { type: string, description: How the result is checked. }
+
+  upkeep:
+    description: The sustainability cycle.
+    type: object
+    additionalProperties: false
+    properties:
+      wear_parts: { type: string, description: "What wears and how often it's replaced: furnace lining, rolls." }
+      maintenance_interval: { type: number, description: "s between maintenance" }
+      maintenance_downtime: { type: number, description: s }
+      consumable_use: { type: number, description: "t of consumables per t of product" }
+
+  hazards:
+    description: Hazards and surroundings.
+    type: object
+    additionalProperties: false
+    properties:
+      hazards: { type: array, items: { enum: [heat, toxic fumes, explosion, radiation, pressure, molten metal, dust] } }
+      emissions: { type: array, items: { type: string }, description: "What it releases: gases, dust, waste water." }

@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.castellan
+name: Castellan Storage
+ticker: CST
+business: warehousing
+note: "Port warehouses, yards and tanks"
+who: "A warehouse company. It owns the buildings goods sit in between a ship and a buyer, and earns from storing and handling them."
+what: "Builds and runs warehouses, bulk yards and tank farms at ports."

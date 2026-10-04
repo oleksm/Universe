@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Loading dock
+  step: Handle
+  description: "Where goods are moved between store and vehicle or ship."
+size:
+  length: 100
+  width: 30
+  height: 10
+rate:
+  handling: 500
+basis:
+  note: "Typical of real buildings of this kind. Approximate figures from memory, not taken from a source."

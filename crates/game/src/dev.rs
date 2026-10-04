@@ -102,7 +102,7 @@ pub fn apply(app: &mut App, name: &str) {
             // Docked, the standards registry open on UNIVERSE_STANDARD (a key; the first otherwise).
             apply(app, "docked");
             let mut view = crate::standards::StandardsView::new();
-            view.focus(&std::env::var("UNIVERSE_STANDARD").unwrap_or_else(|_| "FSO/3.1/001".into()));
+            view.focus(&std::env::var("UNIVERSE_STANDARD").unwrap_or_else(|_| "SFO/3.1/001".into()));
             app.standards = Some(view);
         }
         "sunlit" => {

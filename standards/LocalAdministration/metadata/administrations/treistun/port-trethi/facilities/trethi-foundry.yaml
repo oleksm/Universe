@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+name: Trethi Foundry
+kind: foundry
+parcel: 1
+processes:
+  - steelmaking
+  - alloying-4340
+  - alloying-304
+  - alloying-6061
+  - ingot-casting
+  - quenching-and-tempering
+  - annealing
+  - solution-treating-and-ageing
+# What it is built of. What it can make at most follows from this; what it does make is the
+# economy's business.
+lines:
+  - process: steelmaking
+    modules:
+      - { module: ore-yard, count: 1 }
+      - { module: pellet-plant, count: 1 }
+      - { module: hydrogen-plant, count: 3 }
+      - { module: shaft-furnace, count: 1 }
+      - { module: arc-furnace, count: 1 }
+      - { module: ladle-station, count: 1 }
+      - { module: casting-bay, count: 1 }
+      - { module: ingot-yard, count: 1 }

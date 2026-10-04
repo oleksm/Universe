@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.tallis
+name: Tallis Signal Works
+ticker: TSW
+address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 38, section: B, unit: 3 }
+note: "Comms and relays: far-reaching, power-hungry"
+who: "A communications company whose equipment reaches further than anyone's and draws the power to do it."
+what: "Makes comms equipment and relays."
+story:
+  - "Tallis began with one long-range relay, built by a station's communications officer who was tired of losing ships the moment they left the system. It reached further than anything on sale, and other stations asked for one."
+  - "The company makes comms equipment and relays. Its gear is known for range and for the power it draws to get it; fitting a Tallis set often means fitting a bigger plant too."
+  - "It remains close to the stations that were its first customers, and much of the traffic between settled systems passes through something it built."

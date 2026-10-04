@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Curing
+  kind: thermal
+  method: curing
+  description: A soft polymer set into its final rubbery or rigid state by heat.
+inputs:
+  materials:
+  - name: uncured silicone
+    amount: 1.0
+  form: fluid
+outputs:
+  products:
+  - item: silicone-rubber
+    form: sheet
+rate:
+  mode: batch
+equipment:
+  facility: foundry

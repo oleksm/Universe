@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schema/element.schema.yaml
+# Data: PubChem (NIH), Periodic-Table-JSON, periodictable.com (Wolfram ElementData), mendeleev (ionic radii,
+# isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
+# strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
+identity:
+  name: Bromine
+  symbol: Br
+  atomic_number: 35
+  atomic_mass: 79.9
+  group: 17
+  period: 4
+  block: p
+  category: halogen
+atomic_structure:
+  electron_configuration: '[Ar] 3d10 4s2 4p5'
+  valence_electrons: 7
+  atomic_radius: 94.0
+  covalent_radius: 120.0
+  van_der_waals_radius: 183.0
+  ionic_radius: 196.0
+  stable_isotopes: 2
+  isotope_abundances:
+  - mass_number: 79
+    abundance: 0.5065
+  - mass_number: 81
+    abundance: 0.4935
+chemical:
+  electronegativity: 2.96
+  first_ionisation_energy: 1139.9
+  electron_affinity: 324.537
+  oxidation_states:
+  - 5
+  - 1
+  - -1
+  reactivity:
+    air: none
+    water: slow
+    acids: none
+  bond_type: covalent
+  standard_electrode_potential: 1.0873
+  flammable: false
+physical:
+  phase: liquid
+  melting_point: 265.95
+  boiling_point: 331.95
+  density: 3110.0
+  crystal_structure: base orthorhombic
+  allotropes:
+  - dibromine
+  heat_of_fusion: 5.8
+  heat_of_vaporisation: 14.8
+  vapour_pressure: 59000.0
+thermal:
+  specific_heat_capacity: 474.0
+  thermal_conductivity: 0.12
+electrical_magnetic:
+  electrical_conductivity: 1.0e-10
+  magnetic_ordering: diamagnetic
+optical_nuclear:
+  colour: red
+  emission_lines:
+  - 614.86
+  - 635.073
+  - 655.98
+  - 663.162
+  - 668.228
+  neutron_cross_section: 6.8

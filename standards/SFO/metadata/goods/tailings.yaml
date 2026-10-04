@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Tailings
+  kind: by-product
+  description: "The waste rock left when ore is cleaned."

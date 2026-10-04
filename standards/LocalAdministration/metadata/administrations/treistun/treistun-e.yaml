@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+name: "Treistun e"
+kind: planet
+about: "The fourth planet, 0.66 AU out, and the home world. 6,281 km in radius, 0.98 g, with air. It is cold: about 264 K on average. Its day lasts under 19 hours. It has no moon; the station orbits it."
+story:
+  - "Where Treistun began. The first landing, the first port and the first station were all here, and the system's administration still sits in orbit above it."

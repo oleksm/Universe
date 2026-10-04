@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.halcyon
+name: Halcyon Field Systems
+ticker: HFS
+address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 31, section: A, unit: 1 }
+note: "Hyperdrives and gate rings: clean fields, dear"
+who: "A field-engineering company working on the hardest part of travel: the jump."
+what: "Builds hyperdrives and gate rings, known for clean fields and high prices."
+story:
+  - "Halcyon grew out of a research group that studied jump fields long before anyone sold them. When the group's funding ended, its members formed a company rather than scatter, and took their measurements with them."
+  - "It builds hyperdrives and the rings for gates. Its fields are known for being clean: ships arrive where they meant to, and their other systems are left undisturbed. That takes care in the making, and Halcyon charges for it."
+  - "It is still run like a laboratory. It publishes more than its rivals think wise, on the view that nobody can copy the patience."
