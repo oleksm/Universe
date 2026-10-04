@@ -856,11 +856,34 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for [a, b] in &h.profile {
             frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
         }
+        // The decks' lines, from just right of their labels (so they don't run through them).
+        const SCALE: f32 = 0.7;
+        let label = |k: usize, d: &Deck| format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom);
+        let labels_w = decks.iter().enumerate().map(|(k, d)| label(k, d).chars().count()).max().unwrap_or(0) as f32 * universe_engine::frame::GLYPH * SCALE;
+        let from = side_r.0.x + 6.0 + labels_w + 20.0;
         for (k, d) in decks.iter().enumerate() {
             let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
-            frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor)), Vec2::new(side_r.1.x, sy(d.floor)), col);
-            frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor + d.headroom)), Vec2::new(side_r.1.x, sy(d.floor + d.headroom)), col.scale(0.4));
-            frame.text(Vec2::new(side_r.0.x + 6.0, sy(d.floor) - 14.0), &format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom), col);
+            frame.hud_line(Vec2::new(from, sy(d.floor)), Vec2::new(side_r.1.x, sy(d.floor)), col);
+            frame.hud_line(Vec2::new(from, sy(d.floor + d.headroom)), Vec2::new(side_r.1.x, sy(d.floor + d.headroom)), col.scale(0.4));
+        }
+        // Their labels, small, each level with the middle of its deck; where decks are
+        // closer than a line, pushed apart (top down) with a leader to the deck.
+        let line = 18.0 * SCALE;
+        let mut order: Vec<usize> = (0..decks.len()).collect();
+        order.sort_by(|&a, &b| decks[b].floor.total_cmp(&decks[a].floor));
+        let mut next_free = f32::MIN;
+        for k in order {
+            let d = &decks[k];
+            let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
+            let want = sy(d.floor + d.headroom / 2.0) - line / 2.0;
+            let y = want.max(next_free);
+            next_free = y + line;
+            let text = label(k, d);
+            let end = frame.text_scaled(Vec2::new(side_r.0.x + 6.0, y), &text, col, SCALE);
+            if (y - want).abs() > 1.0 {
+                let mid_y = y + line / 2.0;
+                frame.hud_line(Vec2::new(end.x + 4.0, mid_y), Vec2::new(from, sy(d.floor + d.headroom / 2.0)), col.scale(0.7));
+            }
         }
     });
     // The tool's panel: what its kind of thing is and how it's made, where it's at,

@@ -1218,6 +1218,13 @@ pub fn apply(app: &mut App, name: &str) {
                         log::info!("scenario studio: carved a floor of {} points, x {:.1}..{:.1} z {:.1}..{:.1}, {area:.0} m2", poly.len(), lo.x, hi.x, lo.y, hi.y);
                     }
                 }
+                // (UNIVERSE_DECKS=n: decks stacked up to n, each 2.9 m over the last.)
+                let n: usize = std::env::var("UNIVERSE_DECKS").ok().and_then(|v| v.parse().ok()).unwrap_or(0);
+                while plan.decks.len() < n {
+                    let last = plan.decks.last().expect("a deck");
+                    let deck = universe_sim::world::deckplan::Deck { floor: last.floor + 2.9, headroom: last.headroom, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() };
+                    plan.decks.push(deck);
+                }
                 // (UNIVERSE_FILL: deck 1 filled, as the floors' FILL button does.)
                 if std::env::var_os("UNIVERSE_FILL").is_some()
                     && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
