@@ -11,7 +11,7 @@ definitions:
         additionalProperties: false
         required: [modules]
         properties:
-          makes: { type: string, x-ref: [good, stock, part, hull, gate], description: "What the line is built to make, by its key: its modules have the recipes that lead to it." }
+          makes: { type: string, x-ref: [good, stock, part, hull, gate], description: "What the line is built to make, by its key: its modules have the recipes that lead to it. A line of shop modules has none: it makes whatever parts name its modules." }
           also: { type: array, items: { type: string, x-ref: [good, stock, part, hull, gate] }, description: "What else the same modules can be set to make." }
           modules:
             type: array

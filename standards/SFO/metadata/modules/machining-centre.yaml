@@ -8,11 +8,9 @@ physical:
   length: 20
   width: 10
   height: 6
-recipes:
-  - makes: good.parts
-    does: "Whatever part it is given to make: what goes in is the part's own (what it is made from), and what is cut away comes out as scrap of that metal."
-    rate: 0.138888888888889
-    power: 130000.0
+throughput:
+  rate: 0.138888888888889
+  power: 130000.0
 basis:
-  - { of: [recipes.power], tier: sourced, source: "https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/mag3", note: "A large five-axis machining centre has a 130 kW spindle. The spindle only." }
-  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [throughput.power], tier: sourced, source: "https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/mag3", note: "A large five-axis machining centre has a 130 kW spindle. The spindle only." }
+  - { of: [physical, throughput.rate, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

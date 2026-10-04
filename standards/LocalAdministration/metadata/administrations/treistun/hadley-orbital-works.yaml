@@ -31,14 +31,11 @@ lines:
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.piercing-mill, count: 2 }
-  - makes: good.parts
-    modules:
+  - modules:
       - { module: module.panel-line, count: 1 }
-  - makes: good.parts
-    modules:
+  - modules:
       - { module: module.machining-centre, count: 20 }
-  - makes: good.parts
-    modules:
+  - modules:
       - { module: module.assembly-jig, count: 2 }
 modules:
   - { module: module.fusion-power-station, count: 1 }

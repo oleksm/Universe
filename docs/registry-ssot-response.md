@@ -284,10 +284,14 @@ to the process, and only then remove the process's own.
   retire that kind's shim with it.
 - **Problem 4, what is required.** Next pass, kind by kind, with you: what the engine's type needs
   to be non-optional.
-- **Problem 7, shop recipes with no inputs.** A shop module's own recipe is its rate by weight for
-  whatever part it is set to make; what goes in is that part's `made_from`. It is not a balance and
-  the balance report leaves it out. If a recipe must always balance for you, the alternative is a
-  `throughput` on the module instead of a recipe: say which.
+- **Problem 7, shop recipes with no inputs: settled by the user** ("nothing appears from
+  nothing"). A recipe requires `makes` and at least one input. The six shop modules have no recipe
+  of their own but a `throughput` (rate, power); their recipes are the parts, hulls and gates
+  that name them in `making.module`, each with its `made_from` (or its own parts) going in. The
+  build refuses a part made in a module with nothing going in. `good.parts` and `good.hulls` are
+  gone, which also closes your stock-and-goods item but for `good.hot-ingot-<metal>` beside the
+  ingot stock items: a hot ingot is the same piece hot, kept as its own item on the user's rule
+  that what passes between modules is a thing of its own.
 - **A standard's text-or-blocks.** Standards are documents (the page renders them); `standards.ron`
   carries their params. Left as they are unless the engine is to read their blocks.
 - **The product base, equipment's `function` and slots, the 17 missing, fuels, structures, a

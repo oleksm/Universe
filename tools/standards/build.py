@@ -142,6 +142,7 @@ def read_schema(path):
         props["made_from"] = one
     # (And a module's one recipe as its own figures, as they were before recipes: rate, inputs, outputs, needs.)
     if kind == "module" and "recipes" in props:
+        props.pop("throughput", None)
         R, cap = props.pop("recipes")["items"]["properties"], props.pop("capacity")["properties"]
         group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
         was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": props.pop("generation")["properties"]["supplies"]}),
@@ -228,6 +229,14 @@ def old_names(rec, path):
         for b in rec.get("basis") or []:
             if isinstance(b, dict) and isinstance(b.get("of"), list):
                 b["of"] = [{"generation": "recipes", "generation.supplies": "recipes.supplies", "generation.burns": "recipes.inputs"}.get(x, x) for x in b["of"]]
+    if isinstance(rec, dict) and kind == "modules" and "throughput" in rec:
+        # (A shop module, as this build still takes it: one recipe by weight, for parts (or hulls) as a whole.)
+        tp = rec.pop("throughput")
+        what = "hulls" if "hull" in str((rec.get("identity") or {}).get("step", "")).lower() else "parts"
+        rec = {**{k: v for k, v in rec.items() if k != "basis"}, "recipes": [{"makes": what, "rate": tp["rate"], **({"power": tp["power"]} if "power" in tp else {})}], **({"basis": rec["basis"]} if "basis" in rec else {})}
+        for b in rec.get("basis") or []:
+            if isinstance(b, dict) and isinstance(b.get("of"), list):
+                b["of"] = [y for x in b["of"] for y in {"throughput": ["recipes.rate", "recipes.power"], "throughput.rate": ["recipes.rate"], "throughput.power": ["recipes.power"]}.get(x, [x])]
     if isinstance(rec, dict) and kind == "modules" and ("recipes" in rec or "capacity" in rec):
         # (A module's recipe, as this build still takes it: the module's own rate, inputs, outputs and power.
         # It takes the first; none has more than one yet.)
@@ -1067,7 +1076,7 @@ def set_to(pr, s):
 # comes out), which is what the rest of this build and the page read; `route` holds the recipe each
 # module is set to. Two lines that make the same thing by different modules are two routes.
 routes = []
-item_name = lambda t: next((x["identity"]["name"] for x in mill_stock + goods + materials if x.get("slug") == t), el_name.get(t, t))
+item_name = lambda t: next((x["identity"]["name"] for x in mill_stock + goods + materials if x.get("slug") == t), el_name.get(t, {"parts": "Parts", "hulls": "Hulls"}.get(t, t)))
 
 
 def route_for(where, fc, ln, target):
@@ -1223,6 +1232,11 @@ for ad in administrations:
             plot = next((r for r in x.get("parcels", []) if r.get("number") == fc.get("parcel")), None)
             covered = 0
             for ln in fc.get("lines") or []:
+                if "makes" not in ln and "process" not in ln:
+                    # (A line of shop modules: it makes whatever parts name them. Worked here by weight, as parts or hulls.)
+                    last = next((mod_of[im["module"]] for im in reversed(ln.get("modules") or []) if im.get("module") in mod_of and mod_of[im["module"]].get("recipes")), None)
+                    if last is not None:
+                        ln["makes"] = last["recipes"][0]["product"]
                 if "makes" in ln:
                     made_by = [route_for(where, fc, ln, t) for t in [ln.pop("makes")] + (ln.get("also") or [])]
                     if None in made_by:
@@ -1628,7 +1642,7 @@ def write_ron():
                 makes = [(ln["most"]["product"], ln["most"]["output"]) for ln in fc.get("lines") or [] if ln.get("most")]
                 draws = sum(ln["most"]["power"] for ln in fc.get("lines") or [] if ln.get("most"))
                 holds = sum(st.get("holds") or 0 for st in fc.get("store") or [])
-                name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods + elements + mill_stock if r.get("slug") == slug or (r.get("identity") or {}).get("symbol") == slug), slug)
+                name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods + elements + mill_stock if r.get("slug") == slug or (r.get("identity") or {}).get("symbol") == slug), {"parts": "Parts", "hulls": "Hulls"}.get(slug, slug))
                 out.append(f"            (name: {ron_str(fc['name'])}, kind: {ron_str(fc['kind'])}, parcel: {fc['parcel']},")
                 out.append("                makes: [" + ", ".join(f"({ron_str(name_of(p))}, {float(o)!r})" for p, o in makes) + f"], draws: {float(draws)!r}, supplies: {float(fc.get('capacity') or 0)!r}, holds: {float(holds)!r},")
                 listed = [(r["module"], r["count"]) for ln in fc.get("lines") or [] for r in (ln.get("most") or {}).get("modules", []) if r["count"]] + [(im["module"], im["count"]) for im in fc.get("modules") or []]
@@ -1725,6 +1739,10 @@ lined = {name for ad in administrations for x in ad["bodies"] for fc in x.get("f
 part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "part:" + pt["slug"])
 
 # (The processes that make a material as ingot: what a mill's stock starts from.)
+# (Nothing is made of nothing: a part a module makes has something going in, its stock or its own parts.)
+for pt in parts:
+    if (pt.get("making") or {}).get("module") and not (pt.get("made_from") or {}).get("item") and not kids(pt):
+        problem(os.path.join(TREE, pt["file"]), "making.module: it is made in a module and nothing goes in: it needs what it is made from, or parts of its own")
 # (The lines built with a module that makes something: where a part made in that module can be made.)
 shop_lines = lambda mod: [ln for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and any(r["module"] == mod and r["can"] for r in ln["most"]["modules"])]
 makers_of = lambda item: [m for m in modules if any(r.get("product") == item for r in m.get("recipes") or [])]

@@ -224,6 +224,21 @@ lie in its stock yard between. It takes in sheet again (2.3 t/h) and draws 2.05 
 table's sourced figures are back on its recipes. A plate part's chain has a step more: a yard is
 built to cut and form its stock.
 
+**Step 6 (2026-10-04): nothing is made of nothing.** The user: "Recipe has to have input,
+according to physics nothing appears from nothing."
+
+- A recipe requires `makes` and at least one input: the schema refuses one without.
+- The six shop modules (welding bay, machining centre, panel line, assembly shop, assembly jig,
+  building dock) had a recipe by weight that made "parts" or "hulls" out of nothing, or out of
+  "parts". They have none now. Each has a `throughput` (rate, power): how much it can put through,
+  whatever it is given. Its recipes are the parts, hulls and gates that name it in
+  `making.module`, and what goes into each is its `made_from`, or its own parts.
+- The build refuses a part that is made in a module with nothing going in. None is.
+- The goods `parts` and `hulls` are gone: the last of the names for stock by the tonne.
+- A line of shop modules has no `makes`: it makes whatever parts name its modules.
+- The yard no longer shows `takes` of "Parts" in `settlements.ron`: those were its own parts
+  passing from one of its lines to the next.
+
 ## Next
 
 4. The 26 processes with no module: parked as they are until their machines are described.

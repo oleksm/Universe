@@ -40,11 +40,11 @@ properties:
     items:
       type: object
       additionalProperties: false
-      required: [makes]
+      required: [makes, inputs]
       properties:
         makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
         does: { type: string, description: "What happens in it, set to this." }
-        inputs: { $ref: "#/definitions/amounts", description: "What goes in." }
+        inputs: { $ref: "#/definitions/amounts", description: "What goes in. Nothing is made of nothing: a recipe has at least one." }
         outputs: { $ref: "#/definitions/amounts", description: "What else comes out." }
         rate: { type: number, x-unit: "kg/s", description: "kg/s of what it makes, at full rate, set to this" }
         batch: { type: number, x-unit: "kg", description: "kg in one batch" }
@@ -56,6 +56,14 @@ properties:
           properties:
             time: { type: number, x-unit: "s", description: "s it stands while it is changed over" }
             loss: { type: number, x-unit: "kg", description: "kg of its first output lost" }
+  throughput:
+    description: "For a shop module (one that cuts, machines, welds or assembles whatever it is given): how much it can put through. It has no recipes of its own. Its recipes are the parts, hulls and gates that name it as the module that makes them: what goes in is what each is made from."
+    type: object
+    additionalProperties: false
+    required: [rate]
+    properties:
+      rate: { type: number, x-unit: "kg/s", description: "kg/s of what it is making, at full rate" }
+      power: { type: number, x-unit: "W", description: "W it draws at full rate" }
   generation:
     description: "For one that makes power: what it supplies and what it burns to do it. It makes no item, so it is not a recipe."
     type: object

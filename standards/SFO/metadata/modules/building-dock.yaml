@@ -8,12 +8,9 @@ physical:
   length: 120
   width: 60
   height: 35
-recipes:
-  - makes: good.hulls
-    inputs:
-      - { item: good.parts, quantity: 1.0 }
-    rate: 0.0888888888888889
-    power: 1000000.0
+throughput:
+  rate: 0.0888888888888889
+  power: 1000000.0
 basis:
-  - { of: [recipes.rate], tier: derived, source: "https://www.informs-sim.org/wsc02papers/139.pdf", note: "From an airliner of about this weight: a Boeing 747-400 (183.5 t empty) spent 24 days in final assembly, which is 0.32 t an hour through one position. Other airliners give 0.16 (737, A380)." }
-  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [throughput.rate], tier: derived, source: "https://www.informs-sim.org/wsc02papers/139.pdf", note: "From an airliner of about this weight: a Boeing 747-400 (183.5 t empty) spent 24 days in final assembly, which is 0.32 t an hour through one position. Other airliners give 0.16 (737, A380)." }
+  - { of: [physical, throughput.rate, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

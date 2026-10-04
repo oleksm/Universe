@@ -285,6 +285,12 @@ SFO/schema/module.schema.yaml:
   recipes[].rate:
     per: 0.2777777777777778
     reads: t/h of its product, at full rate
+  throughput.power:
+    per: 1000000.0
+    reads: MW, at full rate
+  throughput.rate:
+    per: 0.2777777777777778
+    reads: t/h of its product, at full rate
 SFO/schema/part.schema.yaml:
   life.inspection_interval:
     per: 3600.0
