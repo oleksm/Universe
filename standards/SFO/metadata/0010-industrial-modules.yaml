@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.10
+identity:
+  key: standard.sfo.10
 title: Industrial Modules
 records: modules
 purpose: An industrial module is one standard piece of plant that performs one step of a process (a furnace, a casting bay, a yard). A process is a line of modules, and a factory is built by setting modules on its land.

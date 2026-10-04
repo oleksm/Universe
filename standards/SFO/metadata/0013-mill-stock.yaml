@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.13
+identity:
+  key: standard.sfo.13
 title: Mill stock
 parent: standard.sfo.8
 records: mill-stock

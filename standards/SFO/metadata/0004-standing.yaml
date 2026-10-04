@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.4
+identity:
+  key: standard.sfo.4
 title: Standing
 purpose: Standing is a place's memory of how you've behaved there. Its purpose is to let strangers deal with each other safely in a big, open space where nobody can watch everyone.
 details:

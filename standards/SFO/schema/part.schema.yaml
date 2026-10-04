@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Part
+x-kind: [part]
 description: 'standards/SFO/metadata/parts/<hull>/<code>.yaml: the full specification of one part of a hull. A part made of other parts has them in the folder named after its code: parts/<hull>/<code>/<code>-NNN.yaml. Any one part uses only some of these properties.'
 type: object
 additionalProperties: false

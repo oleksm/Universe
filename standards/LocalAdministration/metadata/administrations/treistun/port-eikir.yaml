@@ -1,6 +1,7 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-key: settlement.treistun.port-eikir
-name: "Port Eikir"
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
+identity:
+  key: settlement.treistun.port-eikir
+  name: "Port Eikir"
 kind: settlement
 at: body.treistun.treistun-d
 position: { latitude: 45.649, longitude: 165.925 }

@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Material
+x-kind: [material]
 description: One material (what things are made of) and its properties. Any one material uses only some of them.
 type: object
 additionalProperties: false

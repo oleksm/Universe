@@ -1,11 +1,17 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Parcel
+x-kind: [parcel]
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/parcels/parcel-<number>.yaml: one surveyed lot of a settlement''s land, and who owns it. Its zone is the one it lies in.'
 type: object
 additionalProperties: false
-required: [key, number, outline]
+required: [identity, number, outline]
 properties:
-  key: { $ref: "../../common.schema.yaml#/definitions/key" }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
   number: { type: integer, minimum: 1, description: Its number in its settlement. }
   owner: { type: string, x-ref: [org], description: 'Who owns it (a company in Maker House, or a standards body). Left out: vacant, the land office''s to sell.' }
   address:

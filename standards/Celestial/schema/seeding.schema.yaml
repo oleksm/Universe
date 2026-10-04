@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Seeding
+x-kind: [seeding]
 description: 'standards/Celestial/metadata/seeding/<name>.yaml: one set of the settings the seed makes the world by: the galaxy as a whole, how asteroids lie, what a place does to what is there. Not laws of nature (those are Dogma''s): how this world is made. A record has the groups that are its own.'
 type: object
 additionalProperties: false

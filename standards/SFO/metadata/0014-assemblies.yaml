@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.14
+identity:
+  key: standard.sfo.14
 title: Assemblies
 parent: standard.sfo.8
 purpose: An assembly is a part made of other parts, fitted to a hull whole (a landing leg, a ramp, a hull section).

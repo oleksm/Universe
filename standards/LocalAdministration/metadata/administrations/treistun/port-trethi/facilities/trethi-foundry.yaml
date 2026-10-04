@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-key: facility.treistun.port-trethi.trethi-foundry
-name: Trethi Foundry
+identity:
+  key: facility.treistun.port-trethi.trethi-foundry
+  name: Trethi Foundry
 kind: foundry
 parcel: parcel.treistun.port-trethi.1
 processes:

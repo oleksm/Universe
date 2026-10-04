@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
 # The home system, as the game makes it from its seed (1984). Its bodies: the folder treistun/.
-key: org.treistun
+identity:
+  key: org.treistun
+  name: Treistun
 kind: administration
-name: Treistun
 address: { at: settlement.treistun.treistun-e-station, tower: Civic Tower, deck: 1, section: A, unit: 1 }
 about:
   - "Treistun is a K-type star, cooler than most and giving 0.29 of the Sun's light. It has nine planets: five rocky ones close in, then two gas giants and two ice giants, with fifteen moons between them. Two of the rocky worlds, d and e, have air. It is the only settled system so far: one station and ten ports, with gates to Liham, Driumum and Biraidim."

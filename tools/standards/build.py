@@ -269,6 +269,11 @@ def load(path):
     except yaml.YAMLError as e:
         problem(path, f"not valid YAML: {e}")
         return {}
+    # (A record whose key and name were at its top until they moved into `identity`: this build still
+    # takes them there. Local Administration's, a standard, an organisation.)
+    idn = rec.get("identity") if isinstance(rec, dict) else None
+    if isinstance(idn, dict) and str(idn.get("key", "")).split(".")[0] in ("settlement", "rig", "zone", "parcel", "street", "power-line", "facility", "standard", "org"):
+        rec = {**idn, **{k: v for k, v in rec.items() if k != "identity"}}
     if isinstance(rec, dict) and isinstance(rec.get("key"), str) and "." in rec["key"]:
         kind, _, rest = rec["key"].partition(".")
         REGISTRY_KEY[os.path.abspath(path)] = rec["key"]

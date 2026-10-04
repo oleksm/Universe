@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../organisation.schema.yaml
-key: org.sfo
+identity:
+  key: org.sfo
+  name: Standards Foundry Office
 kind: standards_body
-name: Standards Foundry Office
 prefix: SFO
 seat: home
 address: { at: settlement.treistun.treistun-e-station, tower: Civic Tower, deck: 12, section: A, unit: 1 }

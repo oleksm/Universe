@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Material process
+x-kind: [process]
 description: One process of material processing (elements into materials, materials into stock). Any one process uses only some of these; a property with no value is left out.
 type: object
 additionalProperties: false

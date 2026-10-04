@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-key: org.hadley
+identity:
+  key: org.hadley
+  name: Hadley Heavy Industries
 kind: company
-name: Hadley Heavy Industries
 ticker: HHI
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 1, section: A, unit: 1 }
 note: "Plants, tanks and racks: rugged and cheap"

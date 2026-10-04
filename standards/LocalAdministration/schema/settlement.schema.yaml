@@ -1,12 +1,18 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Body
+x-kind: [settlement, rig]
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<name>.yaml: a settlement (a permanent place with people and an administration), or a rig (equipment stationed in the system, not a place). The planet or moon it is at is a celestial body, in standards/Celestial.'
 type: object
 additionalProperties: false
-required: [key, name, kind]
+required: [identity, kind]
 properties:
-  key: { $ref: "../../common.schema.yaml#/definitions/key" }
-  name: { type: string }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
   kind: { enum: [settlement, rig], description: "settlement: a permanent place with people and an administration (a port, a station, a gate). rig: a movable works (as an oil rig is), brought to a job and moved on; no ground, zoning or administration of its own." }
   at: { type: string, x-ref: [body], description: "The planet or moon it is at, by its key." }
   position:

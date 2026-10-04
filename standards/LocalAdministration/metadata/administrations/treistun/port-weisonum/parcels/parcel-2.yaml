@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
 # Invented: the lot and Aurel as its owner, as at Port Trethi.
-key: parcel.treistun.port-weisonum.2
+identity:
+  key: parcel.treistun.port-weisonum.2
 number: 2
 owner: org.aurel
 address: { street: street.treistun.port-weisonum.east-road, number: 2 }

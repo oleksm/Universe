@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.15
+identity:
+  key: standard.sfo.15
 title: Shock
 purpose: A shock is a sudden change of speed (a hard landing, a collision, a blow). What it does to a thing depends on how hard it is, measured in g, and on what the thing is made of. This is what breaking is worked out from.
 details:

@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Mill stock
+x-kind: [stock]
 description: 'standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. What a unit of it weighs is worked out from its material''s density.'
 type: object
 additionalProperties: false

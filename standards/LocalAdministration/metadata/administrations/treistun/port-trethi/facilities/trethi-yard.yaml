@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-key: facility.treistun.port-trethi.trethi-yard
-name: Trethi Yard
+identity:
+  key: facility.treistun.port-trethi.trethi-yard
+  name: Trethi Yard
 kind: yard
 parcel: parcel.treistun.port-trethi.4
 # What it is built of. What it can make at most follows from this; what it does make is the

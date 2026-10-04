@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Rock class
+x-kind: [rock-class]
 description: 'standards/Celestial/metadata/rock-classes/<name>.yaml: one kind of asteroid, by what it is made of. A class uses the properties that apply to it.'
 type: object
 additionalProperties: false

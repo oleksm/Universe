@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Good
+x-kind: [good]
 description: Something that moves in bulk through industry and is neither an element nor a finished material. Rock as it is dug, raw matter won from it, what is used up, what one step hands to the next, what comes out besides the product.
 type: object
 additionalProperties: false

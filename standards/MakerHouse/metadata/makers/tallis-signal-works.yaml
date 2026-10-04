@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-key: org.tallis
+identity:
+  key: org.tallis
+  name: Tallis Signal Works
 kind: company
-name: Tallis Signal Works
 ticker: TSW
 address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 38, section: B, unit: 3 }
 note: "Comms and relays: far-reaching, power-hungry"

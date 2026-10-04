@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-key: org.castellan
+identity:
+  key: org.castellan
+  name: Castellan Storage
 kind: company
-name: Castellan Storage
 ticker: CST
 business: warehousing
 note: "Port warehouses, yards and tanks"

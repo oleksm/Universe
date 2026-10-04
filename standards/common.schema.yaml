@@ -7,6 +7,9 @@ description: 'standards/common.schema.yaml: what every schema of the registry sh
 # A property with a dimension says its unit with `x-unit`, and its values are in that unit: SI (kg, m, s,
 # K, W, N, J, Pa and what is made of them), never t, km, hours, AU or light years. Angles are the one
 # exception: degrees, `x-unit: deg`. A share, a ratio or a count has no x-unit.
+# A schema says which kind of record it holds with `x-kind`: the first part of those records' keys
+# (x-kind: [hull]; a settlement's schema holds two, [settlement, rig]). The build checks each record's
+# key against it.
 definitions:
   made_from:
     description: "What a made thing is made from: each a material, an item of stock or a part, by its key, and how much of it one takes. (A thing put together from parts of its own has none: they are in its folder.)"
