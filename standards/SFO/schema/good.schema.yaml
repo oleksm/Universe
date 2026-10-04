@@ -19,11 +19,12 @@ properties:
     properties:
       bulk_density: { type: number, description: "t/m3, as stowed broken in a hold" }
   source:
-    description: Where a raw good comes from.
+    description: Where a rock is found, or what a raw good is won from.
     type: object
     additionalProperties: false
     properties:
-      won_from: { type: string, description: "The rock it is won from, by file name." }
+      occurs: { enum: [asteroids, temperate planets], description: "For a rock: where in the universe it is found. Temperate planets: rocky, with air and liquid water." }
+      won_from: { type: string, description: "For a raw good: the rock it is won from, by file name." }
       note: { type: string }
   game:
     type: object

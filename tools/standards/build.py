@@ -1335,7 +1335,10 @@ for gd in goods:
     need_made, need_used = kind not in ("rock", "raw", "consumable", "fuel"), kind not in ("by-product", "product", "rock")
     if kind == "rock":
         won = [o for o in goods if (o.get("source") or {}).get("won_from") == gd["slug"]]
-        rows.append(row("ok", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, "dug from asteroids by mining ships (the game's ore)", ", ".join(o["identity"]["name"] for o in won) or "nothing is won from it yet"))
+        used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
+        occurs = (gd.get("source") or {}).get("occurs")
+        ore = (gd.get("game") or {}).get("ore")
+        rows.append(row("ok" if occurs else "gap", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, (f"dug on {occurs}" if occurs else "nowhere said") + ("" if ore else "; the game has no ore for it yet"), ", ".join(o["identity"]["name"] for o in won) or ", ".join(m["identity"]["name"] for m in used) or "nothing uses it yet"))
         continue
     if kind == "raw":
         rock = next((o for o in goods if o["slug"] == (gd.get("source") or {}).get("won_from")), None)

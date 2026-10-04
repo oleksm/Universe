@@ -6,6 +6,8 @@ identity:
   description: "Common asteroid rock: silicates holding iron, magnesium and calcium as oxides."
 physical:
   bulk_density: 1.8
+source:
+  occurs: asteroids
 game:
   goods: goods.ores
   ore: ore.stony

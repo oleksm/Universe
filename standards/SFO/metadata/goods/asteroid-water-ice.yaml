@@ -6,6 +6,8 @@ identity:
   description: "Ice dug from an asteroid: water, frozen, with dust in it."
 physical:
   bulk_density: 0.6
+source:
+  occurs: asteroids
 game:
   goods: goods.water
   ore: ore.water_ice

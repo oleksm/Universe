@@ -552,7 +552,7 @@ function detail(k) {
       + link(lined.size, DATA.processes.length, "processes have a line built for them at a facility")
       + node("Facilities", allFacilities().length, most ? `at most ${most}` : "none makes anything yet", "pd")
       + link(DATA.goods.filter(g => g.identity.kind === "raw" && (g.source || {}).won_from).length, DATA.goods.filter(g => g.identity.kind === "raw").length, "raw goods are won from a rock")
-      + node("Rock", DATA.goods.filter(g => g.identity.kind === "rock").length, "the game's ores, dug from asteroids by mining ships", "s:SFO 11", !DATA.goods.some(g => g.identity.kind === "rock"))
+      + node("Rock", DATA.goods.filter(g => g.identity.kind === "rock").length, [...new Set(DATA.goods.filter(g => g.identity.kind === "rock").map(g => (g.source || {}).occurs).filter(Boolean))].map(o => `dug on ${o}`).join("; "), "s:SFO 11", !DATA.goods.some(g => g.identity.kind === "rock"))
       + `</div>`;
   };
   if (kind === "rep") {

@@ -6,6 +6,8 @@ identity:
   description: "Asteroid metal: iron with nickel in it, already metal and not an oxide."
 physical:
   bulk_density: 4.5
+source:
+  occurs: asteroids
 game:
   goods: goods.ores
   ore: ore.nickel_iron
