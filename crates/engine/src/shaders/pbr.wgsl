@@ -13,6 +13,9 @@ struct Globals {
     // Graphics toggles (1 on): textures, normal maps, occlusion, emission; specular, planet light, tone map.
     look: vec4<f32>,
     look2: vec4<f32>,
+    // The tight cascade round what's looked at; x: a texel of it (metres), y: in use.
+    shadow_tight: mat4x4<f32>,
+    shadow2: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -82,6 +85,13 @@ fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
     if (g.shadow.z == 0.0) {
         return 1.0;
     }
+    if (g.shadow2.y > 0.0) {
+        let tight = g.shadow_tight * vec4<f32>(p + n * g.shadow2.x * 1.5, 1.0);
+        let c = vec2<f32>(tight.x * 0.5 + 0.5, 0.5 - tight.y * 0.5);
+        if (all(c > vec2<f32>(0.02)) && all(c < vec2<f32>(0.98)) && tight.z > 0.0 && tight.z < 1.0) {
+            return pcf(c, 2, tight.z);
+        }
+    }
     let near = g.shadow_near * vec4<f32>(p + n * g.shadow.x * 1.5, 1.0);
     let a = vec2<f32>(near.x * 0.5 + 0.5, 0.5 - near.y * 0.5);
     if (all(a > vec2<f32>(0.01)) && all(a < vec2<f32>(0.99)) && near.z > 0.0 && near.z < 1.0) {
@@ -143,7 +153,10 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let metallic = clamp(mr.b * mat.params.x, 0.0, 1.0);
     var roughness = clamp(mr.g * mat.params.y, 0.04, 1.0);
     // The normal map, in the surface's tangent frame.
-    let tn = textureSample(normal_tex, tex_sampler, in.uv).xyz * 2.0 - vec3<f32>(1.0);
+    // (Its x and y as stored, z from them: a unit normal's, so a two-channel
+    // compressed map (BC5) and a full one read alike.)
+    let nxy = textureSample(normal_tex, tex_sampler, in.uv).xy * 2.0 - vec2<f32>(1.0);
+    let tn = vec3<f32>(nxy, sqrt(max(1.0 - dot(nxy, nxy), 0.0)));
     let ng = normalize(in.normal);
     let t = normalize(in.tangent.xyz - ng * dot(ng, in.tangent.xyz));
     let b = cross(ng, t) * in.tangent.w;

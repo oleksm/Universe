@@ -12,6 +12,9 @@ struct Globals {
     // Graphics toggles (1 on): textures, normal maps, occlusion, emission; specular, planet light, tone map.
     look: vec4<f32>,
     look2: vec4<f32>,
+    // The tight cascade round what's looked at; x: a texel of it (metres), y: in use.
+    shadow_tight: mat4x4<f32>,
+    shadow2: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -115,6 +118,13 @@ fn fill(v: MeshIn, n: vec3<f32>) -> vec3<f32> {
 fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
     if (g.shadow.z == 0.0) {
         return 1.0;
+    }
+    if (g.shadow2.y > 0.0) {
+        let tight = g.shadow_tight * vec4<f32>(p + n * g.shadow2.x * 1.5, 1.0);
+        let c = vec2<f32>(tight.x * 0.5 + 0.5, 0.5 - tight.y * 0.5);
+        if (all(c > vec2<f32>(0.02)) && all(c < vec2<f32>(0.98)) && tight.z > 0.0 && tight.z < 1.0) {
+            return pcf(c, 2, tight.z);
+        }
     }
     let near = g.shadow_near * vec4<f32>(p + n * g.shadow.x * 1.5, 1.0);
     let a = vec2<f32>(near.x * 0.5 + 0.5, 0.5 - near.y * 0.5);

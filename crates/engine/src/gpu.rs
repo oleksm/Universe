@@ -34,7 +34,9 @@ impl Gpu {
 
         let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
             label: Some("device"),
-            required_features: wgpu::Features::empty(),
+            // (Block-compressed textures where the GPU has them: a model's maps at an
+            // eighth to a quarter of the memory.)
+            required_features: adapter.features() & wgpu::Features::TEXTURE_COMPRESSION_BC,
             required_limits: wgpu::Limits::default(),
             experimental_features: wgpu::ExperimentalFeatures::disabled(),
             memory_hints: wgpu::MemoryHints::Performance,

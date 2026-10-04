@@ -292,10 +292,10 @@ if bake_size:
     # One UV layout across them all, islands packed together (the same texels a metre everywhere).
     bpy.ops.object.mode_set(mode="EDIT")
     bpy.ops.mesh.select_all(action="SELECT")
-    # (Smart projection packs every mesh's islands together itself, two texels apart, about half
+    # (Smart projection packs every mesh's islands together itself, a texel apart, about 40%
     # the map covered. Packed again after, a hull this detailed (tens of thousands of islands)
     # came out as specks: the hull sampled the black between them and looked burned.)
-    bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=2.0 / bake_size, scale_to_bounds=False)
+    bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=1.0 / bake_size, scale_to_bounds=False)
     bpy.ops.object.mode_set(mode="OBJECT")
     area = sum(p.area for o in targets for p in o.data.polygons) * 1.0
     print("  %.0f m2 of surface: about %.1f texels a metre" % (area, bake_size / max(area, 1.0) ** 0.5 * 0.8))

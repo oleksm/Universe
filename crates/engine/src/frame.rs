@@ -100,6 +100,9 @@ pub struct Frame {
     /// The light every lit face gets whatever faces it (0 to 1; `SHADE_AMBIENT`
     /// in the world: space is dark): raised in a studio.
     pub ambient: f32,
+    /// How far off what the eye is looking at is (m; 0: nothing in
+    /// particular): a tight shadow cascade is drawn round it.
+    pub shadow_focus: f64,
     /// Shadows cast by meshes on meshes, out to this far from the eye
     /// (metres; 0: none). See `no_shadow`.
     pub shadow_reach: f64,
@@ -320,6 +323,7 @@ impl Frame {
             surface: [0.0, 16.0, 0.0, 0.0],
             scene_size,
             size: hud_size,
+            shadow_focus: 0.0,
             ambient: SHADE_AMBIENT,
             sky: Vec::new(),
             solids: Vec::new(),

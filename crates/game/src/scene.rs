@@ -51,6 +51,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     frame.eclipsers = app.view.system.bodies.iter().enumerate().filter(|(_, b)| !b.kind.artificial() && b.kind != BodyKind::Star).map(|(i, b)| (app.view.positions[i], b.rail.radius)).collect();
     // Ships, stations, gates and rocks shadow each other near the eye.
     frame.shadow_reach = SHADOW_REACH;
+    frame.shadow_focus = shadow_focus(frame, app);
     frame.reflector = reflector(frame, app);
     universe_prof::time("draw/scene/bodies", || bodies(frame, app));
     universe_prof::time("draw/scene/asteroids", || crate::rocks::draw(frame, app));
@@ -102,6 +103,20 @@ pub fn draw(frame: &mut Frame, app: &App) {
     }
 }
 
+/// How far off the ship being looked at is (m), for the tight shadow
+/// cascade: the one watched, or ours behind which the chase camera sits; 0
+/// for anything else.
+fn shadow_focus(frame: &Frame, app: &App) -> f64 {
+    use crate::observer::Focus;
+    let cam = frame.camera.position;
+    match (app.mode, app.observer.focus) {
+        (Mode::Observer, Focus::Ship) => app.view.ship_pos.distance(cam),
+        (Mode::Observer, Focus::Craft(i)) if i < app.v.crafts.len() => app.place(crate::Who::Craft(i)).0.distance(cam),
+        (Mode::Pilot, _) if app.chase_cam => app.view.ship_pos.distance(cam),
+        _ => 0.0,
+    }
+}
+
 /// The studio: the focused ship alone on a neutral backdrop, lit as a
 /// modelling tool lights it: a key light from above and to the left of the
 /// eye (with its shadows), a broad soft light from the opposite side (the
@@ -128,6 +143,7 @@ fn studio(frame: &mut Frame, app: &App) {
     frame.light = Some(Light { position: pos + key * far, color: [1.0, 0.98, 0.95], luminosity: 1.0, reference: far, radius: far * 0.01 });
     frame.eclipsers = Vec::new();
     frame.shadow_reach = SHADOW_REACH;
+    frame.shadow_focus = pos.distance(frame.camera.position);
     // The soft light: a lit sphere on the far side from the key, filling half the sky.
     let size = ship.spec().shape().mesh.bound().max(10.0);
     let radius = size * 40.0;

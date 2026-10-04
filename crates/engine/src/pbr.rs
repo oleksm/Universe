@@ -390,24 +390,24 @@ impl PbrRenderer {
         use wgpu::util::DeviceExt;
         let data = &model.data;
         // Each image as the textures its uses need: colour ones in sRGB, the rest linear.
-        let mut textures: HashMap<(usize, bool), wgpu::TextureView> = HashMap::new();
-        let mut texture = |i: usize, srgb: bool| -> wgpu::TextureView {
-            textures.entry((i, srgb)).or_insert_with(|| upload_texture(device, queue, &data.images[i], srgb)).clone()
+        let mut textures: HashMap<(usize, Kind), wgpu::TextureView> = HashMap::new();
+        let mut texture = |i: usize, kind: Kind| -> wgpu::TextureView {
+            textures.entry((i, kind)).or_insert_with(|| upload_texture(device, queue, &data.images[i], kind)).clone()
         };
-        let plain = |px: [u8; 4], srgb: bool| upload_texture(device, queue, &Image { width: 1, height: 1, rgba: px.to_vec() }, srgb);
-        let (white_srgb, white, flat) = (plain([255; 4], true), plain([255; 4], false), plain([128, 128, 255, 255], false));
+        let plain = |px: [u8; 4], kind: Kind| upload_texture(device, queue, &Image { width: 1, height: 1, rgba: px.to_vec() }, kind);
+        let (white_srgb, white, flat) = (plain([255; 4], Kind::Colour), plain([255; 4], Kind::Data), plain([128, 128, 255, 255], Kind::Normal));
         let materials = data
             .materials
             .iter()
             .map(|m| {
                 let uniform = MaterialUniform { base_color: m.base_color, params: [m.metallic, m.roughness, m.normal_scale, m.alpha_cutoff.unwrap_or(0.0)], emissive: [m.emissive[0], m.emissive[1], m.emissive[2], 0.0], extra: [m.occlusion_strength, 0.0, 0.0, 0.0] };
                 let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr material"), contents: bytemuck::bytes_of(&uniform), usage: wgpu::BufferUsages::UNIFORM });
-                let base = m.base_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, true));
-                let mr = m.mr_tex.map_or_else(|| white.clone(), |i| texture(i, false));
-                let normal = m.normal_tex.map_or_else(|| flat.clone(), |i| texture(i, false));
+                let base = m.base_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, Kind::Colour));
+                let mr = m.mr_tex.map_or_else(|| white.clone(), |i| texture(i, Kind::Data));
+                let normal = m.normal_tex.map_or_else(|| flat.clone(), |i| texture(i, Kind::Normal));
                 // (No texture: the factor alone, as glTF has it. Black here put out every untextured lamp.)
-                let emissive = m.emissive_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, true));
-                let occlusion = m.occlusion_tex.map_or_else(|| white.clone(), |i| texture(i, false));
+                let emissive = m.emissive_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, Kind::Colour));
+                let occlusion = m.occlusion_tex.map_or_else(|| white.clone(), |i| texture(i, Kind::Data));
                 device.create_bind_group(&wgpu::BindGroupDescriptor {
                     label: Some("pbr material"),
                     layout: &self.material_layout,
@@ -471,8 +471,22 @@ impl PbrRenderer {
     }
 }
 
-fn upload_texture(device: &wgpu::Device, queue: &wgpu::Queue, img: &Image, srgb: bool) -> wgpu::TextureView {
+/// What a texture holds: colour (sRGB), other data (linear), a normal map.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+enum Kind {
+    Colour,
+    Data,
+    Normal,
+}
+
+fn upload_texture(device: &wgpu::Device, queue: &wgpu::Queue, img: &Image, kind: Kind) -> wgpu::TextureView {
+    let srgb = kind == Kind::Colour;
     let levels = mips(img, srgb);
+    // Block-compressed where the GPU can (sides whole blocks, not tiny): colour and
+    // data as BC1 (an eighth of the memory), normals as BC5 (a quarter; smooth).
+    if device.features().contains(wgpu::Features::TEXTURE_COMPRESSION_BC) && img.width % 4 == 0 && img.height % 4 == 0 && img.width >= 64 && img.height >= 64 {
+        return upload_compressed(device, queue, img, &levels, kind);
+    }
     let texture = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("pbr texture"),
         size: wgpu::Extent3d { width: img.width, height: img.height, depth_or_array_layers: 1 },
@@ -491,5 +505,42 @@ fn upload_texture(device: &wgpu::Device, queue: &wgpu::Queue, img: &Image, srgb:
             wgpu::Extent3d { width: *w, height: *h, depth_or_array_layers: 1 },
         );
     }
+    texture.create_view(&Default::default())
+}
+
+/// `upload_texture`, block-compressed: each mip level encoded (side by side
+/// on the CPU's threads) and uploaded as whole blocks.
+fn upload_compressed(device: &wgpu::Device, queue: &wgpu::Queue, img: &Image, levels: &[(u32, u32, Vec<u8>)], kind: Kind) -> wgpu::TextureView {
+    let started = std::time::Instant::now();
+    let (codec, format) = match kind {
+        Kind::Colour => (texpresso::Format::Bc1, wgpu::TextureFormat::Bc1RgbaUnormSrgb),
+        Kind::Data => (texpresso::Format::Bc1, wgpu::TextureFormat::Bc1RgbaUnorm),
+        Kind::Normal => (texpresso::Format::Bc5, wgpu::TextureFormat::Bc5RgUnorm),
+    };
+    let texture = device.create_texture(&wgpu::TextureDescriptor {
+        label: Some("pbr texture (compressed)"),
+        size: wgpu::Extent3d { width: img.width, height: img.height, depth_or_array_layers: 1 },
+        mip_level_count: levels.len() as u32,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format,
+        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+        view_formats: &[],
+    });
+    let params = texpresso::Params { algorithm: texpresso::Algorithm::ClusterFit, ..Default::default() };
+    let block = if codec == texpresso::Format::Bc1 { 8 } else { 16 };
+    for (level, (w, h, px)) in levels.iter().enumerate() {
+        let (bw, bh) = (w.div_ceil(4), h.div_ceil(4));
+        let mut out = vec![0u8; codec.compressed_size(*w as usize, *h as usize)];
+        codec.compress(px, *w as usize, *h as usize, params, &mut out);
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo { texture: &texture, mip_level: level as u32, origin: wgpu::Origin3d::ZERO, aspect: wgpu::TextureAspect::All },
+            &out,
+            wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(bw * block), rows_per_image: Some(bh) },
+            // (Whole blocks: a level smaller than one is its block's size.)
+            wgpu::Extent3d { width: bw * 4, height: bh * 4, depth_or_array_layers: 1 },
+        );
+    }
+    log::info!("texture {}x{} {:?}: compressed in {:.2} s", img.width, img.height, kind, started.elapsed().as_secs_f32());
     texture.create_view(&Default::default())
 }

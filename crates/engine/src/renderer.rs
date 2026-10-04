@@ -32,6 +32,10 @@ struct Globals {
     look: [f32; 4],
     /// specular, planet light, tone map, (unused).
     look2: [f32; 4],
+    /// The tight cascade round what's looked at (see `Frame::shadow_focus`),
+    /// and x: a texel of it (metres), y: in use (1) or not.
+    shadow_tight: [[f32; 4]; 4],
+    shadow2: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -40,9 +44,9 @@ const SHADOW_SIZE: u32 = 4096; // (the shaders' SHADOW_TEXEL: keep them together
 /// (m): what casts from up to this far sunward of it.
 const SHADOW_DEPTH: f64 = 8_000.0;
 
-/// The light's view of what's near the eye, for shadows: two cascades
-/// (the near one an eighth the size, finer), each an orthographic box
-/// along the light, depth only.
+/// The light's view of what's near the eye, for shadows: three cascades (far,
+/// near: a twenty-fourth of it; tight: round what's looked at, centimetres a
+/// texel), each an orthographic box along the light, depth only.
 /// Globe maps' texels a face side, layers (worlds at once), mip levels.
 const GLOBE_SIZE: u32 = 512;
 const GLOBE_LAYERS: u32 = 16;
@@ -127,10 +131,10 @@ fn half(x: f32) -> u16 {
 
 struct Shadows {
     /// Each cascade's layer of the map, to draw into.
-    layers: [wgpu::TextureView; 2],
+    layers: [wgpu::TextureView; 3],
     /// Each cascade's matrix (uniform), for the pass drawing it.
-    lights: [wgpu::Buffer; 2],
-    light_binds: [wgpu::BindGroup; 2],
+    lights: [wgpu::Buffer; 3],
+    light_binds: [wgpu::BindGroup; 3],
     /// The map and its comparing sampler, for the mesh shaders.
     bind: wgpu::BindGroup,
     pipe: wgpu::RenderPipeline,
@@ -504,7 +508,7 @@ impl Renderer {
         // shaders' view of it, and the pass that draws it.
         let shadow_texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("shadow map"),
-            size: wgpu::Extent3d { width: SHADOW_SIZE, height: SHADOW_SIZE, depth_or_array_layers: 2 },
+            size: wgpu::Extent3d { width: SHADOW_SIZE, height: SHADOW_SIZE, depth_or_array_layers: 3 },
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
@@ -582,9 +586,9 @@ impl Renderer {
             }],
         });
         let light_buffer = || device.create_buffer(&wgpu::BufferDescriptor { label: Some("shadow light"), size: 64, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
-        let lights = [light_buffer(), light_buffer()];
+        let lights = [light_buffer(), light_buffer(), light_buffer()];
         let light_bind = |b: &wgpu::Buffer| device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("shadow light"), layout: &light_layout, entries: &[wgpu::BindGroupEntry { binding: 0, resource: b.as_entire_binding() }] });
-        let light_binds = [light_bind(&lights[0]), light_bind(&lights[1])];
+        let light_binds = [light_bind(&lights[0]), light_bind(&lights[1]), light_bind(&lights[2])];
         let shadow_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/shadow.wgsl"));
         let shadow_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("shadow casters"),
@@ -604,7 +608,7 @@ impl Renderer {
             multiview_mask: None,
             cache: None,
         });
-        let shadows = Shadows { layers: [shadow_layer(0), shadow_layer(1)], lights, light_binds, bind: shadow_bind, pipe: shadow_pipe, runs: Vec::new() };
+        let shadows = Shadows { layers: [shadow_layer(0), shadow_layer(1), shadow_layer(2)], lights, light_binds, bind: shadow_bind, pipe: shadow_pipe, runs: Vec::new() };
         let mesh_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("meshes"),
             bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout)],
@@ -939,6 +943,10 @@ impl Renderer {
         let (near, far) = (frame.shadow_reach / 24.0, frame.shadow_reach);
         let cascade = |half: f64| sun.map_or(glam::Mat4::IDENTITY, |s| shadow_matrix(frame.camera.position, s, half));
         let (shadow_near, shadow_far) = (cascade(near), cascade(far));
+        // (Round what's looked at, if the game says how far off it is: a ship a few
+        // metres from the eye gets millimetres a texel, not the near cascade's centimetres.)
+        let tight = (frame.shadow_focus > 0.0).then(|| (frame.shadow_focus * 1.2).clamp(6.0, near));
+        let shadow_tight = tight.map_or(glam::Mat4::IDENTITY, cascade);
         let texel = |half: f64| (2.0 * half / SHADOW_SIZE as f64) as f32;
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
         let globals = Globals {
@@ -946,6 +954,8 @@ impl Renderer {
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
             shadow_near: shadow_near.to_cols_array_2d(),
             shadow_far: shadow_far.to_cols_array_2d(),
+            shadow_tight: shadow_tight.to_cols_array_2d(),
+            shadow2: [tight.map_or(0.0, texel), if tight.is_some() && sun.is_some() { 1.0 } else { 0.0 }, 0.0, 0.0],
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
             shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
@@ -953,6 +963,7 @@ impl Renderer {
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));
+        gpu.queue.write_buffer(&self.shadows.lights[2], 0, bytemuck::cast_slice(&shadow_tight.to_cols_array()));
         let upload = universe_prof::scope("render/upload vertices");
         gpu.queue.write_buffer(&self.globals, 0, bytemuck::bytes_of(&globals));
         self.sky.upload(gpu, &frame.sky);
@@ -983,7 +994,7 @@ impl Renderer {
 
         let mut encoder = gpu.device.create_command_encoder(&Default::default());
         // The shadow map: each cascade, the casters seen from the light.
-        for k in 0..2 {
+        for k in 0..3 {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("shadow map"),
                 color_attachments: &[],
