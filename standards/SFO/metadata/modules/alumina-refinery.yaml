@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Alumina refinery
+  step: Refine the ore
+  description: "Dissolves the aluminium oxide out of crushed bauxite in hot caustic soda, settles out the residue, and bakes what is left to a dry white powder."
+size:
+  length: 400
+  width: 250
+  height: 40
+rate:
+  throughput: 100
+  product: alumina
+inputs:
+  materials:
+  - { item: bauxite, amount: 2.3 }
+  - { item: caustic-soda, amount: 0.1 }
+outputs:
+  by_products:
+  - { item: red-mud, amount: 1.4 }
+needs:
+  power: 300
+basis:
+  note: "What goes in and comes out is approximate (bauxite about 45% alumina). Most of its power is heat. Its size, rate and power are typical of real plant of this kind: approximate figures from memory, not taken from a source."

@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Carbon anode
+  kind: consumable
+  description: "Blocks of baked carbon that carry the current into a smelting pot. They burn away as the metal is made."

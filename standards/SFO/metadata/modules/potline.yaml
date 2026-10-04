@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Potline
+  step: Smelt
+  description: "A long row of pots in which a strong current, carried in by carbon anodes, takes the oxygen from molten alumina and leaves liquid aluminium."
+size:
+  length: 1000
+  width: 60
+  height: 15
+rate:
+  throughput: 35
+  product: liquid-aluminium
+inputs:
+  materials:
+  - { item: alumina, amount: 1.89 }
+  - { item: carbon-anode, amount: 0.334 }
+outputs:
+  by_products:
+  - { item: carbon-dioxide, amount: 1.224 }
+needs:
+  power: 490
+basis:
+  note: "What goes in and comes out follows from the chemistry (alumina and carbon to aluminium and carbon dioxide); real pots burn a quarter more carbon. Its power is about 14 MWh for each tonne. Its size, rate and power are typical of real plant of this kind: approximate figures from memory, not taken from a source."

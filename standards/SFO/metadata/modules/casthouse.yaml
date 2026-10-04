@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Casthouse
+  step: Alloy and cast
+  description: "Holding furnaces where the liquid metal is alloyed, skimmed and poured into ingots."
+size:
+  length: 150
+  width: 60
+  height: 15
+rate:
+  throughput: 40
+  product: ingot
+inputs:
+  materials:
+  - { item: liquid-aluminium, amount: 1.02 }
+outputs:
+  by_products:
+  - { item: dross, amount: 0.02 }
+needs:
+  power: 3
+basis:
+  note: "Its size, rate and power are typical of real plant of this kind: approximate figures from memory, not taken from a source."

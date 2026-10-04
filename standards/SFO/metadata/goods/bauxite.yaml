@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Bauxite
+  kind: raw
+  description: "The ore of aluminium: rock rich in aluminium oxide."
+game:
+  goods: goods.ores

@@ -18,10 +18,12 @@
             (number: 4, owner: "", owner_name: "", outline: [(1450.0, -250.0), (1950.0, -250.0), (1950.0, 250.0), (1450.0, 250.0)]),
             (number: 5, owner: "", owner_name: "", outline: [(2000.0, -250.0), (2450.0, -250.0), (2450.0, 250.0), (2000.0, 250.0)]),
             (number: 6, owner: "", owner_name: "", outline: [(600.0, 300.0), (1100.0, 300.0), (1100.0, 800.0), (600.0, 800.0)]),
+            (number: 7, owner: "brand.hadley", owner_name: "Hadley Heavy Industries", outline: [(1150.0, -990.0), (2450.0, -990.0), (2450.0, -460.0), (1150.0, -460.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
             (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
+            (name: "South Road", line: [(450.0, -430.0), (2450.0, -430.0)]),
         ],
         power_lines: [
             (name: "Power line 1", capacity: 400.0, line: [(1275.0, 250.0), (1275.0, 256.0), (850.0, 256.0), (850.0, 250.0)]),
@@ -65,6 +67,17 @@
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
+            (name: "Trethi Smelter", kind: "foundry", parcel: 7,
+                makes: [("Ingot", 34.31372549019608)], draws: 692.0235294117647, supplies: 0.0, holds: 0.0,
+                takes: [("Carbon anode", "", 11.690000000000001), ("Bauxite", "goods.ores", 152.14499999999998), ("Caustic soda", "", 6.614999999999999)], gives: [("Ingot", "", 34.31372549019608), ("Dross", "", 0.6862745098039216), ("Carbon dioxide", "", 42.839999999999996), ("Red mud", "", 92.60999999999999)], burns: [],
+                modules: [("ore-yard", 1), ("alumina-refinery", 1), ("potline", 1), ("casthouse", 1), ("ingot-yard", 1)],
+                blocks: [
+                (module: "ore-yard", centre: (1270.0, -530.0), length: 200.0, width: 100.0, height: 15.0, heading: 0.0),
+                (module: "alumina-refinery", centre: (1590.0, -605.0), length: 400.0, width: 250.0, height: 40.0, heading: 0.0),
+                (module: "potline", centre: (1670.0, -780.0), length: 1000.0, width: 60.0, height: 15.0, heading: 0.0),
+                (module: "casthouse", centre: (2265.0, -780.0), length: 150.0, width: 60.0, height: 15.0, heading: 0.0),
+                (module: "ingot-yard", centre: (1245.0, -880.0), length: 150.0, width: 100.0, height: 15.0, heading: 0.0),
             ]),
             (name: "Trethi Warehouse", kind: "warehouse", parcel: 3,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
