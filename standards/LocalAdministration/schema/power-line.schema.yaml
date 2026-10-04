@@ -14,4 +14,4 @@ properties:
     description: "Its run, point by point: metres [east, north] of the settlement's position. It starts on the parcel of the one facility and ends on the parcel of the other."
     type: array
     minItems: 2
-    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m" }

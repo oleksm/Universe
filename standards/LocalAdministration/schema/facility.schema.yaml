@@ -5,7 +5,7 @@ type: object
 additionalProperties: false
 required: [key, name, kind, parcel]
 definitions:
-  point: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+  point: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m" }
 properties:
   key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }

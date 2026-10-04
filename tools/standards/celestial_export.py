@@ -27,7 +27,13 @@ NATURAL = {"star", "rocky planet", "gas giant", "ice giant", "moon", "asteroid"}
 wrote = kept = 0
 seen = set()
 # (Records are in SI. Each value is rounded as it reads (km, days, hours, light years), then written in SI.)
-LY, SUN_W = 9.4607304725808e15, 3.828e26
+def law(name):
+    """A law's value, from the Dogma registry (standards/Dogma), by its file name."""
+    import glob as _g
+    return float(yaml.safe_load(open(_g.glob(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "standards", "Dogma", "metadata", "*", name + ".yaml"))[0]))["value"])
+
+
+LY, SUN_W = law("light-year"), law("sun-luminosity")
 si = lambda v: float(f"{v:.15g}")
 
 

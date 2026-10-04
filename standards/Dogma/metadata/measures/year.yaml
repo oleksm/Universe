@@ -7,7 +7,7 @@ identity:
   section: dogma.measures
 value: 31557600
 unit: "s"
-kind: real
+kind: reference
 note: "A year of 365.25 days."
 in_game: { file: crates/world/src/units.rs }
 basis:

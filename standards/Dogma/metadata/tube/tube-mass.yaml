@@ -6,9 +6,9 @@ identity:
   label: TUBE_RHO
   section: dogma.tube
 value: 406.0
-unit: "kg"
+unit: "kg/m3"
 kind: invented
-note: "A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry."
+note: "A tube's equivalent mass for each cubic metre of its diameter cubed (mu = rho d^3): a 1 m tube's is 406 kg. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry."
 in_game: { file: config/dogma.ron }
 basis:
   - { of: [value], tier: invented, note: "Chosen to meet its target." }

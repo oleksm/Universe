@@ -21,15 +21,14 @@ properties:
       name: { type: string }
       class: { enum: [metal, alloy, ceramic, glass, polymer, composite, fluid] }
       composition:
-        description: What it's made of, each part's share by mass (0 to 1). A part is an element or another material; `name` is for one that is not in the registry yet.
+        description: What it's made of, each part's share by mass (0 to 1). A part is an element or another material, by its key.
         type: array
         items:
           type: object
           additionalProperties: false
-          required: [share]
+          required: [part, share]
           properties:
             part: { type: string, x-ref: [element, material] }
-            name: { type: string }
             share: { type: number, minimum: 0, maximum: 1 }
       form: { type: array, items: { enum: [ingot, sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid, scrap, blank, panel] }, description: The forms it comes in. }
       grade: { type: [string, "null"], description: "Its grade or temper: how it was treated (annealed, hardened...)." }

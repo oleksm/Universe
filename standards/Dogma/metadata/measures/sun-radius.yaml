@@ -7,7 +7,7 @@ identity:
   section: dogma.measures
 value: 695700000
 unit: "m"
-kind: real
+kind: reference
 note: "What a star's radius is read in."
 in_game: { file: crates/world/src/units.rs }
 basis:

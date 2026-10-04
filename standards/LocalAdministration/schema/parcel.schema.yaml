@@ -20,4 +20,4 @@ properties:
     description: "Its corners, in order: metres [east, north] of the settlement's position, on the ground."
     type: array
     minItems: 3
-    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m" }

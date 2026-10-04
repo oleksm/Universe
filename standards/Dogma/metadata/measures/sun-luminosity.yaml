@@ -7,7 +7,7 @@ identity:
   section: dogma.measures
 value: 3.828e+26
 unit: "W"
-kind: real
+kind: reference
 note: "What a star's light is read in."
 in_game: { file: content/base/sheet.ron }
 basis:

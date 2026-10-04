@@ -16,8 +16,8 @@ properties:
       label: { type: string, pattern: "^[A-Z][A-Z0-9_]*$", description: "Its label: the constant's name, as code and formulas write it (SPEED_OF_LIGHT). No two alike. The engine's name for it, where the engine has one." }
       section: { type: string, x-ref: [dogma] }
   value: { type: number }
-  unit: { type: string, description: "Its unit, in SI. Left out: a pure number." }
-  kind: { enum: [real, simplified, invented], description: "real: measured nature, or a value fixed by definition. simplified: an approximation of the real, to refine. invented: this world's own (the hyper layer), by written rule." }
+  unit: { type: string, description: "Its unit, in SI: checked by the build as an x-unit is. Left out: a pure number (an exponent, a share, a count of scale heights)." }
+  kind: { enum: [real, reference, simplified, invented], description: "real: measured nature. reference: a value fixed by definition or convention, that other things are counted in (a light year, a standard gravity, the Sun's mass): not a law of nature. simplified: an approximation of the real, to refine. invented: this world's own (the hyper layer), by written rule." }
   note: { type: string, description: "What it is for; for an invented one, the target it was chosen to meet." }
   in_game:
     description: "Where the engine has it today, for the build to hold the two together."

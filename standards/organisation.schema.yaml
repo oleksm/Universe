@@ -10,7 +10,7 @@ properties:
   kind: { enum: [company, standards_body, administration], description: "company: it makes, stores or trades. standards_body: it publishes standards. administration: it manages the land of a settled system." }
   address: { $ref: "common.schema.yaml#/definitions/address" }
   note: { type: string, description: One line, as the game shows it. }
-  about: { description: What it is., oneOf: [{ type: string }, { type: array, items: { type: string } }] }
+  about: { type: array, items: { type: string }, description: 'What it is, in paragraphs.' }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
   # A company.
   ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: "A company's short trading name; no two alike." }
@@ -26,7 +26,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      text: { oneOf: [{ type: string }, { type: array, items: { type: string } }] }
+      text: { type: array, items: { type: string } }
   founded_by: { type: array, items: { type: string, x-ref: [org] }, description: "The companies that founded it." }
   # An administration.
   zoning:

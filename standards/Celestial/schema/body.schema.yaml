@@ -138,5 +138,5 @@ properties:
     additionalProperties: false
     properties:
       class: { type: string, x-ref: [rock-class], description: "What it is made of, by its spectrum." }
-      structure: { type: string, description: "How it holds together: loose rubble, or one solid piece." }
+      structure: { enum: [rubble pile, monolith], description: "How it holds together: loose rubble, or one solid piece." }
       density: { type: number, x-unit: "kg/m3", description: kg/m3 }

@@ -7,7 +7,7 @@ identity:
   section: dogma.measures
 value: 149597870700
 unit: "m"
-kind: real
+kind: reference
 note: "The Earth's distance from the Sun: what distances in a star system are read in."
 in_game: { file: crates/world/src/units.rs }
 basis:

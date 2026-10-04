@@ -7,7 +7,7 @@ identity:
   section: dogma.measures
 value: 1.989e+30
 unit: "kg"
-kind: real
+kind: reference
 note: "What a star's mass is read in."
 in_game: { file: crates/world/src/units.rs }
 basis:

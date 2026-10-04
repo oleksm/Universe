@@ -11,4 +11,4 @@ properties:
     description: "Its centre line, point by point: metres [east, north] of the settlement's position, on the ground."
     type: array
     minItems: 2
-    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m" }

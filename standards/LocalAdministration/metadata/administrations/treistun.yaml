@@ -4,7 +4,8 @@ key: org.treistun
 kind: administration
 name: Treistun
 address: { at: settlement.treistun.treistun-e-station, tower: Civic Tower, deck: 1, section: A, unit: 1 }
-about: "Treistun is a K-type star, cooler than most and giving 0.29 of the Sun's light. It has nine planets: five rocky ones close in, then two gas giants and two ice giants, with fifteen moons between them. Two of the rocky worlds, d and e, have air. It is the only settled system so far: one station and ten ports, with gates to Liham, Driumum and Biraidim."
+about:
+  - "Treistun is a K-type star, cooler than most and giving 0.29 of the Sun's light. It has nine planets: five rocky ones close in, then two gas giants and two ice giants, with fifteen moons between them. Two of the rocky worlds, d and e, have air. It is the only settled system so far: one station and ten ports, with gates to Liham, Driumum and Biraidim."
 story:
   - "Treistun was settled from its fourth planet outward. The first port was Nacaubun on Treistun e, and the station was raised above it once there were more ships than one field could take."
   - "From there the ports went both ways: inward to the hot, heavy worlds, and outward to the moons of the giants. The administration grew out of the port office at Nacaubun and moved up to the station with everything else."

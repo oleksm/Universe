@@ -15,8 +15,14 @@ import yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CEL = os.path.join(ROOT, "standards", "Celestial", "metadata")
 dry = "--dry" in sys.argv
-AU, G, SUN = 1.495978707e8, 6.6743e-11, 1.98847e30          # km, SI, kg
-SUN_W = 3.828e26
+def law(name):
+    """A law's value, from the Dogma registry (standards/Dogma), by its file name."""
+    import glob as _g
+    return float(yaml.safe_load(open(_g.glob(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "standards", "Dogma", "metadata", "*", name + ".yaml"))[0]))["value"])
+
+
+AU, G, SUN = law("astronomical-unit") / 1000, law("gravitation"), law("sun-mass")          # km, SI, kg
+SUN_W = law("sun-luminosity")
 si = lambda v: float(f"{v:.15g}")       # (records are in SI; this works in km, days and AU, and writes each value in SI)
 galaxy = yaml.safe_load(open(os.path.join(CEL, "seeding", "galaxy.yaml")))["galaxy"]
 laws = yaml.safe_load(open(os.path.join(CEL, "seeding", "asteroids.yaml")))

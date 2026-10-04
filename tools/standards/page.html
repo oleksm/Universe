@@ -646,7 +646,7 @@ function detail(k) {
     return h;
   }
   if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div>${logo(m.slug)} <a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
-  const aboutStory = r => (r.about ? `<h3>About</h3><p>${esc(r.about)}</p>` : "") + ((r.story || []).length ? `<h3>Story</h3>` + r.story.map(p => `<p>${esc(p)}</p>`).join("") : "");
+  const aboutStory = r => (r.about && r.about.length ? `<h3>About</h3>` + [].concat(r.about).map(p => `<p>${esc(p)}</p>`).join("") : "") + ((r.story || []).length ? `<h3>Story</h3>` + r.story.map(p => `<p>${esc(p)}</p>`).join("") : "");
   const pos = p => p ? `${Math.abs(p.latitude).toFixed(3)}° ${p.latitude < 0 ? "S" : "N"}, ${Math.abs(p.longitude).toFixed(3)}° ${p.longitude < 0 ? "W" : "E"}` : "";
   // The celestial registry.
   const celGroups = (rec, groups) => Object.entries(groups).filter(([g]) => rec[g]).map(([g, props]) => `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>` + Object.entries(props).filter(([q]) => rec[g][q] !== undefined).map(([q, note]) => `<tr><td>${esc(q.replace(/_/g, " "))}</td><td>${esc(Array.isArray(rec[g][q]) ? rec[g][q].join(", ") : typeof rec[g][q] === "number" ? rec[g][q].toLocaleString(undefined, { maximumSignificantDigits: 6 }) : rec[g][q])}</td><td class="meta">${esc(note)}</td></tr>`).join("") + `</table>`).join("");

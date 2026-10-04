@@ -24,7 +24,7 @@ properties:
       region: { type: number, x-unit: "m", description: "m, the side of the charted region (a cube round home)" }
       star_density: { type: number, x-unit: "1/m3", description: "stars for each cubic metre" }
       sector: { type: number, x-unit: "m", description: "m, the side of the cubes the stars are made in" }
-      class_mix: { type: object, description: "The share of stars of each class, by number.", additionalProperties: { type: number } }
+      class_mix: { type: object, additionalProperties: false, description: "The share of stars of each spectral class, by number.", properties: { O: { type: number }, B: { type: number }, A: { type: number }, F: { type: number }, G: { type: number }, K: { type: number }, M: { type: number } } }
   main_belt:
     description: "The belt inside the first gas giant, between two of its resonances. As the Sun's."
     type: object
