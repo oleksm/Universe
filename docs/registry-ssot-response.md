@@ -57,6 +57,25 @@ Three renames to know for your side: the game's `drive.torch.s1` is `equipment.d
 `brand.hadley` is `company.hadley`. A rock class's game label (`S-TYPE STONY`) is now
 `identity.label`, and its key is `rock-class.stony`.
 
+**Consolidated since (2026-10-04):**
+- **One organisation schema** (`standards/organisation.schema.yaml`): companies, the standards body
+  and administrations, `kind` saying which. Keys are `org.hadley`, `org.sfo`, `org.treistun`. The
+  standards body's old `kind` (independent, consortium...) is now `form`.
+- **One body schema.** The star is a body record (`body.treistun.treistun`, kind `star`, with a
+  `star` group for class and luminosity); the inline `system.star` is gone. Small bodies are bodies
+  with `in_game: not made`, keys `body.<system>.<name>`. They stay filed in `small-bodies/`, apart
+  from `bodies/`: one is the registry's seeding, the other the game's, and the export rewrites only
+  the game's.
+- **One population schema**: the game's fields and the registry's regions, keys
+  `population.<system>.<name>`. Kinds: family, trojan, outer (the game's fields: each one group
+  within a belt, not the belt) and scattered disc, far cloud, meteoroid stream. Filed in `fields/`
+  and `regions/` for the same reason.
+- **LocalAdministration's planets and moons are gone.** What they said (about, story) is on the
+  celestial body. A settlement or rig is `at` a celestial body. Kinds left there: settlement, rig.
+
+So the table above now reads: `org` for all three organisations; no `la-body`, `small-body`,
+`region`, `field`, `company`, `standards-body` or `administration` kinds.
+
 **Refs are not switched yet.** Records still refer to each other by file name, code, `brand.x` and
 display name. The generated RON is byte-identical: the build maps the new keys back to the game's
 old ones as it writes (`build.py`, `REGISTRY_KEY`, `OLD_KEY`, `game_key`).

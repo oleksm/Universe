@@ -1,9 +1,0 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-key: la-body.treistun.treistun-d-i
-name: "Treistun d I"
-kind: moon
-at: Treistun d
-gravity: 1.28
-about: "A moon of Treistun d. 1,527 km in radius, 0.13 g at the surface, no air, about 306 K on average. Its day lasts 12 hours."
-story:
-  - "Airless and a little cooler than d below it. It was settled as d's yard: a place to keep ships without bringing them down through the air."

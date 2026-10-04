@@ -29,9 +29,14 @@ def put(path, schema, rec):
     """Write a record unless a person has taken it over."""
     global wrote, kept
     seen.add(path)
-    if os.path.exists(path) and (yaml.safe_load(open(path)) or {}).get("provenance") in ("curated", "frozen"):
+    was = (yaml.safe_load(open(path)) or {}) if os.path.exists(path) else {}
+    if was.get("provenance") in ("curated", "frozen"):
         kept += 1
         return
+    # (What a person wrote about it stays with it: the seed has nothing to say there.)
+    for k in ("about", "story"):
+        if k in (was.get("identity") or {}):
+            rec["identity"][k] = was["identity"][k]
     text = f"# yaml-language-server: $schema={schema}\n# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.\n" + yaml.safe_dump(rec, sort_keys=False, allow_unicode=True, default_flow_style=None, width=120)
     if not os.path.exists(path) or open(path).read() != text:
         wrote += 1

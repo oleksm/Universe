@@ -158,7 +158,7 @@ def key_of(rel, rec):
         if len(p) == 4:
             return "org." + low
         if len(p) == 5:
-            return {"settlement": "settlement.", "rig": "rig."}.get(rec.get("kind"), "la-body.") + p[3] + "." + low
+            return {"settlement": "settlement.", "rig": "rig."}.get(rec.get("kind"), "settlement.") + p[3] + "." + low
         kind = {"zones": "zone", "parcels": "parcel", "streets": "street", "power-lines": "power-line", "facilities": "facility"}[p[5]]
         return f"{kind}.{p[3]}.{p[4]}." + (low[len("parcel-"):] if kind == "parcel" else low)
     return None

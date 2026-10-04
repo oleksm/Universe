@@ -1,7 +1,0 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-key: la-body.treistun.treistun-j-iii
-name: "Treistun j III"
-kind: moon
-at: Treistun j
-gravity: 0.47
-about: "A moon of the gas giant Treistun j, 10.5 AU from the star, the outermost planet. 560 km in radius, 0.05 g at the surface, no air, about 60 K on average. Its day lasts 92 hours."

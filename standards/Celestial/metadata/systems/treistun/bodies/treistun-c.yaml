@@ -1,7 +1,15 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {key: body.treistun.treistun-c, name: Treistun c, kind: rocky planet, parent: Treistun}
+identity:
+  key: body.treistun.treistun-c
+  name: Treistun c
+  kind: rocky planet
+  parent: Treistun
+  about: 'The second planet, 0.22 AU out, and the largest rocky world in the system: 8,815 km in radius, 1.67 g at the surface,
+    no air, about 420 K on average. One moon.'
+  story: ['The heavy world. Setting down on c is easy and leaving it is expensive, and everything about its one port follows
+      from that.']
 orbit: {semi_major_axis: 32519200.0, eccentricity: 0.01948, period: 44.0771, inclination: 2.83}
 physical: {mass: 1.9043e+25, radius: 8814.9, gravity: 16.357, day: 35.821, tilt: 17.14, albedo: 0.15}
 surface:

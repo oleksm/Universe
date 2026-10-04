@@ -17,6 +17,7 @@ properties:
       kind: { enum: [star, rocky planet, gas giant, ice giant, moon, asteroid, dwarf planet, comet, centaur, crossing asteroid, captured moon] }
       parent: { type: string, description: "What it goes round, by name: the star, a planet, or (a captured moon) a giant. A star has none." }
       about: { type: string }
+      story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
   star:
     description: For a star.
     type: object

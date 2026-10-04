@@ -510,6 +510,25 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if zones:
             x["zones"] = zones
         ad["bodies"].append(x)
+    # (The planets and moons its settlements are at are celestial bodies (standards/Celestial), not
+    # records of its own. This build still lists them with its bodies: each rocky planet and moon of
+    # the system of the same name, with what the celestial record says of it.)
+    cel_bodies = os.path.join(TREE, "Celestial", "metadata", "systems", name[:-5], "bodies")
+    for bn in sorted(os.listdir(cel_bodies)) if os.path.isdir(cel_bodies) else []:
+        cb = yaml.safe_load(open(os.path.join(cel_bodies, bn), encoding="utf-8")) or {}
+        ci = cb.get("identity") or {}
+        if ci.get("kind") not in ("rocky planet", "moon"):
+            continue
+        x = {"name": ci.get("name"), "kind": "planet" if ci["kind"] == "rocky planet" else "moon", "slug": bn[:-5], "file": os.path.relpath(os.path.join(cel_bodies, bn), TREE), "celestial_body": ci.get("key")}
+        if ci["kind"] == "moon":
+            x["at"] = ci.get("parent")
+        for k in ("about", "story"):
+            if k in ci:
+                x[k] = ci[k]
+        if "gravity" in (cb.get("physical") or {}):
+            x["gravity"] = cb["physical"]["gravity"]
+        ad["bodies"].append(x)
+    ad["bodies"].sort(key=lambda x: x.get("slug", ""))
     for k in ["name"]:
         if k not in ad:
             problem(full, f"no {k}")

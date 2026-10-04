@@ -1,7 +1,15 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {key: body.treistun.treistun-b-i, name: Treistun b I, kind: moon, parent: Treistun b}
+identity:
+  key: body.treistun.treistun-b-i
+  name: Treistun b I
+  kind: moon
+  parent: Treistun b
+  about: A moon of Treistun b. 1,687 km in radius, 0.14 g at the surface, no air, about 567 K on average. Its day lasts 12
+    hours.
+  story: ['A moon as hot as its planet, but with a seventh of the gravity. That difference is the whole reason Port Seiwiti
+      exists.']
 orbit: {semi_major_axis: 25236.8, eccentricity: 0.007988, period: 0.482886, inclination: 3.141}
 physical: {mass: 6.0307e+22, radius: 1686.76, gravity: 1.415, day: 11.589, tilt: 0.0, albedo: 0.12}
 surface:

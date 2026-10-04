@@ -1,7 +1,0 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-key: la-body.treistun.treistun-i-iii
-name: "Treistun i III"
-kind: moon
-at: Treistun i
-gravity: 0.47
-about: "A moon of the ice giant Treistun i, 6.2 AU from the star. 561 km in radius, 0.05 g at the surface, no air, about 80 K on average. Its day lasts 76 hours."

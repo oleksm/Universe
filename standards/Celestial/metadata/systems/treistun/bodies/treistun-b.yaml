@@ -1,7 +1,15 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {key: body.treistun.treistun-b, name: Treistun b, kind: rocky planet, parent: Treistun}
+identity:
+  key: body.treistun.treistun-b
+  name: Treistun b
+  kind: rocky planet
+  parent: Treistun
+  about: 'The innermost planet, 0.13 AU from the star. Rocky, 6,194 km in radius, with a surface gravity of 0.96 g and no
+    air. It is hot: about 560 K on average. Its day lasts 32 hours. One moon.'
+  story: ['Nobody settled b for comfort. Port Zaudalein is there because someone decided the ground was worth the heat, and
+      it has stayed a place people work at rather than live in.']
 orbit: {semi_major_axis: 19319100.0, eccentricity: 0.05498, period: 20.1829, inclination: 0.002}
 physical: {mass: 5.4016e+24, radius: 6194.41, gravity: 9.396, day: 31.757, tilt: 12.85, albedo: 0.15}
 surface:
