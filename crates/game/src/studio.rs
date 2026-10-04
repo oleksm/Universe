@@ -1077,7 +1077,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             let (a, b) = (span(side_r.0.x, mid.x).0 * sdir + zc, span(side_r.1.x, mid.x).0 * sdir + zc);
             let top = yc + (mid.y - side_r.0.y) as f64 / k - h.keel;
             let bottom = yc - (side_r.1.y - mid.y) as f64 / k - h.keel;
-            view_grid(frame, side_r, k, &zs, |v| sy(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+            view_grid(frame, side_r, k, zs, |v| sy(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
         }
         match &elev {
             Some(e) => {
@@ -1147,7 +1147,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             let (a, b) = (span(end_r.0.x, emid.x).0 * edir + xc, span(end_r.1.x, emid.x).0 * edir + xc);
             let top = yc + (emid.y - end_r.0.y) as f64 / k - h.keel;
             let bottom = yc - (end_r.1.y - emid.y) as f64 / k - h.keel;
-            view_grid(frame, end_r, k, &xs, |v| ey(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+            view_grid(frame, end_r, k, xs, |v| ey(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
             let (x0, x1) = (xs(h.lo.x).min(xs(h.hi.x)), xs(h.lo.x).max(xs(h.hi.x)));
             dimension(frame, Vec2::new(x0, ey(h.lo.y) + 10.0), Vec2::new(x1, ey(h.lo.y) + 10.0), h.hi.x - h.lo.x);
             dimension(frame, Vec2::new(x1 + 12.0, ey(h.lo.y)), Vec2::new(x1 + 12.0, ey(h.hi.y)), h.hi.y - h.lo.y);
