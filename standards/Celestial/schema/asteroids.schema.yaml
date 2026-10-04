@@ -29,6 +29,7 @@ properties:
       count_over_1km: { type: number, description: "asteroids over 1 km across in a giant's two swarms, Jupiter's" }
       spread: { type: number, description: "degrees along the orbit each swarm stretches" }
       mass_share: { type: number, description: "their mass as a share of the main belt's" }
+      giant_mass: { type: number, description: "kg, Jupiter's: a giant's swarms are taken to hold as many as its mass against this" }
   outer_belt:
     description: "The icy belt past the outermost giant, between two of its resonances."
     type: object
@@ -56,6 +57,7 @@ properties:
     properties:
       exponent: { type: number, description: "how fast their number rises as their size falls: the number over a size goes as the size to minus this" }
       smallest: { type: number, description: "m, the smallest the game makes" }
+      comet_density: { type: number, description: "kg/m3, a comet's solid part: ice full of holes" }
   zones:
     description: "Where a body formed, by its distance against the frost line's. What it is made of goes by this."
     type: object

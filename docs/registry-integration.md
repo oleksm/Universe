@@ -47,7 +47,7 @@ way to see what joins up and what doesn't.
 | `industry.ron` | SFO 10, industrial modules | `settlements::IndustrialModule` | used |
 | `celestial.ron` | Celestial Registry: charted systems, bodies, fields | `crates/world/src/celestial.rs` | used: see below |
 | `galaxy.ron` | Celestial Registry: seed, home, laws | `celestial::Galaxy` | the seed is used; the laws are checked by test |
-| `rock_classes.ron` | Celestial Registry: kinds of asteroid | `celestial::RockClassRecord` | **on `fso` only**; checked by test, not used |
+| `rock_classes.ron` | Celestial Registry: kinds of asteroid | `celestial::RockClassRecord` | checked by test, not used |
 
 Everything else in `content/base` (hulls, modules, goods, ores, recipes, places, markets,
 structures, shapes, materials) is still hand-written game content. The registry mirrors some of it

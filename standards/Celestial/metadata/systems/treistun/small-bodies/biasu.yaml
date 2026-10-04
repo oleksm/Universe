@@ -5,5 +5,5 @@ status: seeded
 identity: {name: Biasu, kind: comet, parent: Treistun, about: 'A returning comet. It comes in to 1.02 AU, where it boils and
     grows a tail, and goes out to 17.8 AU.'}
 orbit: {semi_major_axis: 1410730000.0, eccentricity: 0.89150071, inclination: 29.5, period: 12596.0}
-physical: {radius: 2.378, density: 950, mass: 53490000000000.0}
+physical: {radius: 2.378, density: 600, mass: 33790000000000.0}
 rock: {class: icy}

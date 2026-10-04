@@ -5,5 +5,5 @@ status: seeded
 identity: {name: Kaudraunu, kind: comet, parent: Treistun, about: 'A returning comet. It comes in to 0.65 AU, where it boils
     and grows a tail, and goes out to 19.8 AU.'}
 orbit: {semi_major_axis: 1530360000.0, eccentricity: 0.93651116, inclination: 13.79, period: 14232.0}
-physical: {radius: 1.427, density: 950, mass: 11560000000000.0}
+physical: {radius: 1.427, density: 600, mass: 7299000000000.0}
 rock: {class: icy}

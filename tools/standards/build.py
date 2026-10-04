@@ -2001,7 +2001,6 @@ if os.path.isdir(CEL):
             continue
         planets = [b for b in sysm["bodies"] if b["identity"].get("parent") == sysm["identity"]["name"] and b["identity"]["kind"] != "asteroid"]
         giants = [b for b in planets if b["identity"]["kind"] in ("gas giant", "ice giant")]
-        gas = next((b for b in giants if b["identity"]["kind"] == "gas giant"), giants[0] if giants else None)
         au = lambda b: b["orbit"]["semi_major_axis"] / AU_KM
         frost = 2.7 * (sysm.get("star") or {}).get("luminosity", 1) ** 0.5
         mb, ob, tj, sz = laws.get("main_belt") or {}, laws.get("outer_belt") or {}, laws.get("trojans") or {}, laws.get("sizes") or {}
@@ -2016,7 +2015,7 @@ if os.path.isdir(CEL):
                           "over_100km": smaller(n1, 1, 100), "spacing": mb.get("spacing"), "families": round(mb.get("families", 0) * ring(lo, hi) / ring(mb["inner_edge"], mb["outer_edge"])), "family_share": mb.get("family_share"), "inside_frost": hi <= frost})
         for g_ in giants if tj else []:
             for lead in ("L4", "L5"):
-                n1 = tj["count_over_1km"] / 2
+                n1 = tj["count_over_1km"] / 2 * ((g_.get("physical") or {}).get("mass", 0) / tj["giant_mass"] if tj.get("giant_mass") else 1)
                 belts.append({"name": f"{g_['identity']['name']} {lead}", "kind": "trojan", "inner": au(g_), "outer": au(g_), "by": g_["identity"]["name"], "over_1km": n1, "over_100m": smaller(n1, 1, 0.1), "over_smallest": smaller(n1, 1, sz.get("smallest", 15) / 1000),
                               "spread": tj.get("spread"), "lead": lead, "inside_frost": au(g_) <= frost})
         if giants and ob:

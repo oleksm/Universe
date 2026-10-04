@@ -71,7 +71,7 @@ def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu):
     rec = {"status": "seeded", "identity": {"name": nm, "kind": kind, "parent": parent, "about": about},
            "orbit": {"semi_major_axis": r3(a_km, 6), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5)},
            "physical": {"radius": r3(radius_km)}, "rock": {"class": cls}}
-    d = density(cls)
+    d = laws["sizes"].get("comet_density") if kind == "comet" else density(cls)
     if d:
         rec["physical"]["density"] = d
         rec["physical"]["mass"] = r3(d * 4 / 3 * math.pi * (radius_km * 1000) ** 3)
@@ -103,7 +103,10 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
 
     # The main belt's largest body: 39% of the belt's mass (the Sun's largest is), the belt's mass by the ground it covers.
     r = rng("largest")
-    cls = pick(r, "warm" if belt[1] <= frost else "cold")
+    # (By the belt's own mix: the ground it has in each zone, as the build works it out.)
+    zn = laws.get("zones") or {}
+    cuts = [belt[0], min(max(zn.get("warm_to", 0.93) * frost, belt[0]), belt[1]), min(max(zn.get("frost_to", 1.04) * frost, belt[0]), belt[1]), belt[1]]
+    cls = pick(r, r.choices(["warm", "frost_line", "cold"], weights=[cuts[i + 1] ** 2 - cuts[i] ** 2 for i in range(3)])[0])
     d = density(cls) or 2500
     rad = (3 * 0.39 * mb["mass"] * share / (4 * math.pi * d)) ** (1 / 3) / 1000
     a = r.uniform(belt[0] + 0.25 * (belt[1] - belt[0]), belt[1] - 0.25 * (belt[1] - belt[0]))
@@ -133,7 +136,9 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         for _ in range(r.randint(2, 4) if g["identity"]["kind"] == "gas giant" else r.randint(1, 2)):
             back, e = r.random() < 0.6, r.uniform(0.1, 0.5)
             near = least / (1 - e)                       # (so that even at its closest it stays outside them)
-            put(sysdir, "small-bodies", "small-body", body("captured moon", name(r), g["identity"]["name"], r.uniform(near, max(0.47 * reach, near * 1.2)), e, r.uniform(140, 175) if back else r.uniform(25, 55),
+            if near >= 0.47 * reach:                     # (no room between its own moons and the limit of what it can hold)
+                continue
+            put(sysdir, "small-bodies", "small-body", body("captured moon", name(r), g["identity"]["name"], r.uniform(near, 0.47 * reach), e, r.uniform(140, 175) if back else r.uniform(25, 55),
                 math.exp(r.uniform(math.log(1), math.log(60))), r.choices(["primitive", "carbonaceous"], [0.7, 0.3])[0],
                 f"Once it went round the star; {g['identity']['name']} caught it. It goes round {'backward' if back else 'the same way as the planet turns'}, far out.", G * g["physical"]["mass"]),
                 "between 0.05 and 0.47 of the giant's reach, as the Sun's giants' are.")
@@ -151,7 +156,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         lo, hi = au(giants[-1]) / res(ob["inner_resonance"]), au(giants[-1]) / res(ob["outer_resonance"])
         expect = 200 * ring(lo, hi) / ring(ob["inner_edge"], ob["outer_edge"])
         r = rng("dwarfs")
-        for _ in range(min(3, max(1, round(expect)))):
+        for _ in range(min(3, round(expect))):
             put(sysdir, "small-bodies", "small-body", body("dwarf planet", name(r), sname, r.uniform(lo, hi) * AU, r.uniform(0.03, 0.25), r.uniform(1, 28), r.uniform(450, 1200), "icy",
                 f"A world of ice in the outer belt, heavy enough to have pulled itself round. One of perhaps {round(expect)}.", mu),
                 "the outer belt's largest: round above about 400 km in radius.")

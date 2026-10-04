@@ -12,6 +12,6 @@ figures:
   - { what: "how thick", value: "as much as 10 degrees off the plane" }
 means: "The system's store of ice, and the edge of what is charted."
 game: partly
-game_note: "Made as one field."
+game_note: "Made as one or two fields."
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Kuiper_belt" }
