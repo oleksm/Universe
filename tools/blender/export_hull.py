@@ -2,12 +2,15 @@
 the import conventions (docs/ship-import.md).
 
     blender -b -y design.blend -P tools/blender/export_hull.py -- assets/models/out.glb \
-        [--frame 50] [--name "MC-07"] [--class 3] [--bake 4096] [--atlases 1]
+        [--frame 50] [--name "MC-07"] [--class 3] [--bake 4096] [--atlases 1] [--prop cargo_ramp=0]...
 
 Run it again whenever the design changes. The .blend isn't changed (nothing is saved).
 
 - **The pose:** the scene at `--frame` as Blender has it there (its rig's state: gear down,
   doors shut, say). `-y` lets a rig's Python drivers run, as they do in the open file.
+- **Rig controls** (`--prop name=value`, as many as wanted): set on whatever holds that custom
+  property before exporting, the file left as it is: the game wants its hull as built, with the
+  parts it moves itself at rest (the MC-07's `cargo_ramp=0`: the game lowers the ramp).
 - **Left out:** lights, cameras, and whatever doesn't render (boolean cutters, volumes).
 - **Conventions:** nodes the file has (`COL_*` meshes, `nozzle_*`, `gear_*`, `hatch`,
   `cockpit`, `mount_*` empties) are used as they are. Any kind it hasn't, this places from the
@@ -77,6 +80,20 @@ if "--frame" in opt:
                     setattr(o, path, v)
             except Exception as e:
                 print("couldn't hold", o.name, path, e)
+    bpy.context.view_layer.update()
+# The rig's controls asked for (after the frame's, so they win).
+props = [argv[i + 1] for i in range(1, len(argv) - 1) if argv[i] == "--prop"]
+for p in props:
+    name, value = p.split("=", 1)
+    held = [o for o in bpy.data.objects if name in o.keys()]
+    for o in held:
+        o[name] = type(o[name])(float(value)) if isinstance(o[name], (int, float)) else value
+    print(f"set {name}={value} on", [o.name for o in held] or "nothing (no such control)")
+if props:
+    # (Its drivers run again: a frame set does that, an update alone doesn't.)
+    for o in bpy.data.objects:
+        o.update_tag()
+    scene.frame_set(scene.frame_current)
     bpy.context.view_layer.update()
 if "--name" in opt:
     scene["freefall_name"] = opt["--name"]
