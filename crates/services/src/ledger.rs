@@ -20,6 +20,9 @@ pub enum Party {
     World,
     /// A settled system's administration (what its land office takes in).
     Administration(usize),
+    /// A company of the registry's Maker House that owns land (by its number
+    /// in the land office's list).
+    Company(u32),
 }
 
 /// What's held.

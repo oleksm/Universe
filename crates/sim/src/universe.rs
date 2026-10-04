@@ -341,6 +341,7 @@ impl Universe {
         }
         universe_prof::time("sim/recorder", || self.record());
         universe_prof::time("sim/economy", || self.markets.economy.step_to(self.world.time));
+        universe_prof::time("sim/facilities", || self.land.run(self.world.time, &mut self.markets.economy, &mut self.ledger, self.tick));
         self.publish_boards();
         self.update_standings();
         // (The dead-man rule counts in seconds: a look once a second.)

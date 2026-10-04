@@ -54,7 +54,7 @@ impl Universe {
             "power" => "POWER STATION".to_string(),
             k => k.to_uppercase(),
         };
-        self.land.build(system, port, number, name, kind.to_string(), blocks, self.world.time)?;
+        self.land.build(system, port, number, name, kind.to_string(), blueprint.to_string(), blocks, self.world.time)?;
         Ok(format!("BUILDING STARTED FOR {cost:.0} CR: DONE IN {}", crate::estate::duration(time)))
     }
 }

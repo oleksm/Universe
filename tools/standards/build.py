@@ -994,10 +994,21 @@ def write_ron():
                 makes = [(ln["most"]["product"], ln["most"]["output"]) for ln in fc.get("lines") or [] if ln.get("most")]
                 draws = sum(ln["most"]["power"] for ln in fc.get("lines") or [] if ln.get("most"))
                 holds = sum(st.get("holds") or 0 for st in fc.get("store") or [])
-                name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods if r.get("slug") == slug), slug)
+                name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods + elements if r.get("slug") == slug or (r.get("identity") or {}).get("symbol") == slug), slug)
                 out.append(f"            (name: {ron_str(fc['name'])}, kind: {ron_str(fc['kind'])}, parcel: {fc['parcel']},")
                 out.append("                makes: [" + ", ".join(f"({ron_str(name_of(p))}, {float(o)!r})" for p, o in makes) + f"], draws: {float(draws)!r}, supplies: {float(fc.get('capacity') or 0)!r}, holds: {float(holds)!r},")
                 listed = [(r["module"], r["count"]) for ln in fc.get("lines") or [] for r in (ln.get("most") or {}).get("modules", []) if r["count"]] + [(im["module"], im["count"]) for im in fc.get("modules") or []]
+                # (Flat out, an hour: what it takes in, gives off and burns, each with the game's kind of
+                # goods it is, if it has one yet: none, and the game doesn't trade it.)
+                def flow(slug, rate):
+                    rec = next((r for r in goods + materials if r.get("slug") == slug), None)
+                    kind = ((rec or {}).get("game") or {}).get("goods", "")
+                    return f"({ron_str(name_of(slug))}, {ron_str(kind)}, {float(rate)!r})"
+                takes = [flow(i["item"], i["rate"]) for ln in fc.get("lines") or [] if ln.get("most") for i in ln["most"]["supplies"]]
+                gives = [flow(ln["most"]["product"], ln["most"]["output"]) for ln in fc.get("lines") or [] if ln.get("most")]
+                gives += [flow(i["item"], i["rate"]) for ln in fc.get("lines") or [] if ln.get("most") for i in ln["most"]["by_products"]]
+                burns = [flow(i["item"], i["rate"]) for i in fc.get("burns") or []]
+                out.append("                takes: [" + ", ".join(takes) + "], gives: [" + ", ".join(gives) + "], burns: [" + ", ".join(burns) + "],")
                 out.append("                modules: [" + ", ".join(f"({ron_str(m)}, {n})" for m, n in listed) + "],")
                 out.append("                blocks: [")
                 for bl in fc.get("layout", []):

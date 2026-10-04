@@ -105,7 +105,7 @@ fn owner_name(o: &Owner) -> String {
 
 /// Where the plan is drawn on the HUD (`size`): (top left, bottom right).
 fn plan_area(size: Vec2) -> (Vec2, Vec2) {
-    (Vec2::new(12.0, 40.0), Vec2::new(size.x - 12.0, size.y - 76.0))
+    (Vec2::new(12.0, 40.0), Vec2::new(size.x - 12.0, size.y - 88.0))
 }
 
 /// The ground to screen: metres [east, north] of the port to HUD pixels,
@@ -475,6 +475,26 @@ pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
                     y += line;
                     if w.built(now) {
                         frame.text(Vec2::new(12.0, y), &format!("AT MOST: {}", maxima(w).join("   ")), DIM);
+                        y += line;
+                        // How it ran over the last step (the economy's), and what of it isn't traded yet.
+                        if let Some(r) = &w.last {
+                            let held = r.held_by.as_ref().map_or(String::new(), |h| format!(", HELD BY {h}"));
+                            frame.text(Vec2::new(12.0, y), &format!("LAST 10 MIN: RAN AT {:.0}%{held}   EARNED {:+.0} CR", r.rate * 100.0, r.earned), if r.earned < 0.0 { AMBER } else { TEXT });
+                        } else {
+                            frame.text(Vec2::new(12.0, y), "NOT RUN YET", DIM);
+                        }
+                        let c = universe_sim::world::content::content();
+                        if let Some(f) = c.settlements.iter().flat_map(|s| &s.facilities).find(|f| f.name.eq_ignore_ascii_case(&w.blueprint)) {
+                            let untraded: Vec<String> = f.takes.iter().chain(&f.gives).chain(&f.burns).filter(|t| t.1.is_empty()).map(|t| t.0.to_uppercase()).collect();
+                            if !untraded.is_empty() {
+                                let mut text = format!("NOT TRADED YET (NO GAME KIND): {}", untraded.join(", "));
+                                while text_size(&text).x > size.x - 24.0 && text.len() > 4 {
+                                    text.truncate(text.len() - 4);
+                                    text.push_str("...");
+                                }
+                                frame.text(Vec2::new(12.0, y + line), &text, DIM);
+                            }
+                        }
                     } else {
                         let done = (0..n).filter(|&j| w.progress(j, now) >= 1.0).count();
                         let left = w.done_at.last().copied().unwrap_or(now) - now;

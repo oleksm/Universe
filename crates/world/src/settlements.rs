@@ -72,6 +72,11 @@ pub struct Facility {
     pub holds: f64,
     /// What it's built of: (industrial module, how many), in the order laid out.
     pub modules: Vec<(String, u32)>,
+    /// Flat out, an hour: what it takes in, gives off and burns, each (name,
+    /// the game's kind of goods or empty if it has none yet, t/h).
+    pub takes: Vec<(String, String, f64)>,
+    pub gives: Vec<(String, String, f64)>,
+    pub burns: Vec<(String, String, f64)>,
     pub blocks: Vec<Block>,
 }
 
