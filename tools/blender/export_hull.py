@@ -2,7 +2,7 @@
 the import conventions (docs/ship-import.md).
 
     blender -b -y design.blend -P tools/blender/export_hull.py -- assets/models/out.glb \
-        [--frame 50] [--name "MC-07"] [--class 3] [--bake 4096]
+        [--frame 50] [--name "MC-07"] [--class 3] [--bake 4096] [--atlases 1]
 
 Run it again whenever the design changes. The .blend isn't changed (nothing is saved).
 
@@ -24,7 +24,7 @@ Run it again whenever the design changes. The .blend isn't changed (nothing is s
       (convex parts for contact and mass; overlaps count twice, so kept few).
 - **Scene properties:** `freefall_name` and `freefall_class` from the arguments (or the file's).
 - **Baked** (`--bake 4096`, the maps' size; `--bake 0`: not): node-made materials, which glTF
-  can't hold, rendered into one atlas the meshes share (base colour, roughness, metalness,
+  can't hold, rendered into atlases the meshes share (`--atlases N`, balanced by surface; base colour, roughness, metalness,
   normal, ambient occlusion). Lamps, glows and glass keep their own materials.
 """
 import sys
@@ -256,6 +256,8 @@ print("ship %s: %.1f x %.1f x %.1f m" % (scene.get("freefall_name", "?"), hi.x -
 # meshes share: base colour, roughness, metalness, normal (the bump), and ambient occlusion
 # (where light from round about can't reach: seams, the corners between armour layers).
 bake_size = int(opt.get("--bake", "4096"))
+# How many atlases the hull is baked into (each `bake_size`): more, sharper, more memory.
+atlases = max(1, int(opt.get("--atlases", "1")))
 
 
 def procedural(m):
@@ -281,7 +283,6 @@ if bake_size:
     sys.stdout.reconfigure(line_buffering=True)
     started = time.time()
     targets = [o for o in scene.objects if o.type == "MESH" and shown(o) and any(procedural(slot.material) for slot in o.material_slots)]
-    print("baking %d meshes into %d px maps" % (len(targets), bake_size))
     bpy.ops.object.select_all(action="DESELECT")
     for o in targets:
         o.select_set(True)
@@ -289,16 +290,31 @@ if bake_size:
     # The geometry as drawn (booleans, bevels applied): what the maps are laid on.
     bpy.ops.object.make_single_user(object=True, obdata=True)
     bpy.ops.object.convert(target="MESH")
-    # One UV layout across them all, islands packed together (the same texels a metre everywhere).
-    bpy.ops.object.mode_set(mode="EDIT")
-    bpy.ops.mesh.select_all(action="SELECT")
-    # (Smart projection packs every mesh's islands together itself, a texel apart, about 40%
-    # the map covered. Packed again after, a hull this detailed (tens of thousands of islands)
-    # came out as specks: the hull sampled the black between them and looked burned.)
-    bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=1.0 / bake_size, scale_to_bounds=False)
-    bpy.ops.object.mode_set(mode="OBJECT")
-    area = sum(p.area for o in targets for p in o.data.polygons) * 1.0
-    print("  %.0f m2 of surface: about %.1f texels a metre" % (area, bake_size / max(area, 1.0) ** 0.5 * 0.8))
+    # The meshes shared out among the atlases, each about the same surface (the largest first,
+    # each to the atlas with the least so far): more atlases, more texels a metre.
+    surface = {o: sum(p.area for p in o.data.polygons) for o in targets}
+    groups = [[] for _ in range(atlases)]
+    loads = [0.0] * atlases
+    for o in sorted(targets, key=lambda o: -surface[o]):
+        k = loads.index(min(loads))
+        groups[k].append(o)
+        loads[k] += surface[o]
+    groups = [g for g in groups if g]
+    print("baking %d meshes into %d atlas(es) of %d px" % (len(targets), len(groups), bake_size))
+    # Each atlas's UV layout: its meshes' islands packed together (the same texels a metre).
+    for k, g in enumerate(groups):
+        bpy.ops.object.select_all(action="DESELECT")
+        for o in g:
+            o.select_set(True)
+        bpy.context.view_layer.objects.active = g[0]
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.select_all(action="SELECT")
+        # (Smart projection packs the meshes' islands together itself, a texel apart. Packed again
+        # after, a hull this detailed (tens of thousands of islands) came out as specks: the hull
+        # sampled the black between them and looked burned.)
+        bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=1.0 / bake_size, scale_to_bounds=False)
+        bpy.ops.object.mode_set(mode="OBJECT")
+        print("  atlas %d: %d meshes, %.0f m2: about %.1f texels a metre" % (k, len(g), loads[k], bake_size / max(loads[k], 1.0) ** 0.5 * 0.65))
 
     # (The collision boxes are the game's, not the ship's: out of the light while baking, or
     # they'd wrap the hull and every point would look shut in.)
@@ -333,7 +349,7 @@ if bake_size:
         im.colorspace_settings.name = "sRGB" if colour else "Non-Color"
         return im
 
-    maps = {k: image(k, k == "base") for k in ("base", "rough", "metal", "normal", "ao")}
+    maps = [{kind: image("%d_%s" % (k, kind), kind == "base") for kind in ("base", "rough", "metal", "normal", "ao")} for k in range(len(groups))]
     mats = {slot.material for o in targets for slot in o.material_slots if slot.material}
     for m in mats:
         m.use_nodes = True
@@ -342,29 +358,37 @@ if bake_size:
         n = m.node_tree.nodes.new("ShaderNodeTexImage")
         bakers[m] = n
 
-    def bake(kind, samples, **kw):
-        t = time.time()
-        for m, n in bakers.items():
-            n.image = maps[kind]
-            m.node_tree.nodes.active = n
-        scene.cycles.samples = samples
-        bpy.ops.object.bake(**kw)
-        print("  %s: %.0f s" % (kind, time.time() - t))
-
-    # All of them as one object to bake: baked one by one, Blender sets the whole scene up again
-    # for each (on the CPU, the GPU idle meanwhile), every pass. The originals out of the light
-    # while it bakes, or the copy and they would shut each other in.
-    bpy.ops.object.select_all(action="DESELECT")
-    for o in targets:
-        o.select_set(True)
-    bpy.context.view_layer.objects.active = targets[0]
-    bpy.ops.object.duplicate()
-    bpy.ops.object.join()
-    joined = bpy.context.view_layer.objects.active
+    # Each atlas's meshes as one object to bake: baked one by one, Blender sets the whole scene up
+    # again for each (on the CPU, the GPU idle meanwhile), every pass. All of them in the light
+    # (each atlas's occlusion sees its neighbours), the originals out of it, or the copies and
+    # they would shut each other in.
+    joined = []
+    for g in groups:
+        bpy.ops.object.select_all(action="DESELECT")
+        for o in g:
+            o.select_set(True)
+        bpy.context.view_layer.objects.active = g[0]
+        bpy.ops.object.duplicate()
+        bpy.ops.object.join()
+        joined.append(bpy.context.view_layer.objects.active)
     for o in targets:
         o.hide_render = True
-    joined.hide_render = False
-    print("  joined into one object to bake (%d faces)" % len(joined.data.polygons))
+    for j in joined:
+        j.hide_render = False
+    print("  joined into %d object(s) to bake (%d faces)" % (len(joined), sum(len(j.data.polygons) for j in joined)))
+
+    def bake(kind, samples, **kw):
+        t = time.time()
+        scene.cycles.samples = samples
+        for k, j in enumerate(joined):
+            for m, n in bakers.items():
+                n.image = maps[k][kind]
+                m.node_tree.nodes.active = n
+            bpy.ops.object.select_all(action="DESELECT")
+            j.select_set(True)
+            bpy.context.view_layer.objects.active = j
+            bpy.ops.object.bake(**kw)
+        print("  %s: %.0f s" % (kind, time.time() - t))
 
     # (The materials' own grime from Ambient Occlusion nodes stays out of the colour: the
     # occlusion map carries it, once. Baked in too, against all this detail every face came
@@ -395,36 +419,38 @@ if bake_size:
             m.node_tree.links.remove(l)
         b.inputs["Base Color"].default_value = (v, v, v, 1.0)
     bake("metal", 1, type="DIFFUSE", pass_filter={"COLOR"})
-    bpy.data.objects.remove(joined, do_unlink=True)
+    for j in joined:
+        bpy.data.objects.remove(j, do_unlink=True)
     for o in targets:
         o.hide_render = False
 
-    # The baked material, for every face not lit of itself (lamps, glows and glass keep theirs).
-    baked = bpy.data.materials.new("Hull_Baked")
-    baked.use_nodes = True
-    nt = baked.node_tree
-    b = principled(baked)
-    tex = {}
-    for k, im in maps.items():
-        tex[k] = nt.nodes.new("ShaderNodeTexImage")
-        tex[k].image = im
-    nt.links.new(tex["base"].outputs["Color"], b.inputs["Base Color"])
-    nt.links.new(tex["rough"].outputs["Color"], b.inputs["Roughness"])
-    nt.links.new(tex["metal"].outputs["Color"], b.inputs["Metallic"])
-    nm = nt.nodes.new("ShaderNodeNormalMap")
-    nt.links.new(tex["normal"].outputs["Color"], nm.inputs["Color"])
-    nt.links.new(nm.outputs["Normal"], b.inputs["Normal"])
-    # (Occlusion, the way the glTF exporter takes it: a node group of this name.)
+    # Each atlas's baked material, for every face not lit of itself (lamps, glows and glass keep theirs).
     group = bpy.data.node_groups.get("glTF Material Output") or bpy.data.node_groups.new("glTF Material Output", "ShaderNodeTree")
     if "Occlusion" not in [i.name for i in group.interface.items_tree]:
         group.interface.new_socket("Occlusion", in_out="INPUT", socket_type="NodeSocketFloat")
-    out_node = nt.nodes.new("ShaderNodeGroup")
-    out_node.node_tree = group
-    nt.links.new(tex["ao"].outputs["Color"], out_node.inputs["Occlusion"])
-    for o in targets:
-        for slot in o.material_slots:
-            if slot.material and not glowing(slot.material):
-                slot.material = baked
+    for k, g in enumerate(groups):
+        baked = bpy.data.materials.new("Hull_Baked" if len(groups) == 1 else "Hull_Baked_%d" % k)
+        baked.use_nodes = True
+        nt = baked.node_tree
+        b = principled(baked)
+        tex = {}
+        for kind, im in maps[k].items():
+            tex[kind] = nt.nodes.new("ShaderNodeTexImage")
+            tex[kind].image = im
+        nt.links.new(tex["base"].outputs["Color"], b.inputs["Base Color"])
+        nt.links.new(tex["rough"].outputs["Color"], b.inputs["Roughness"])
+        nt.links.new(tex["metal"].outputs["Color"], b.inputs["Metallic"])
+        nm = nt.nodes.new("ShaderNodeNormalMap")
+        nt.links.new(tex["normal"].outputs["Color"], nm.inputs["Color"])
+        nt.links.new(nm.outputs["Normal"], b.inputs["Normal"])
+        # (Occlusion, the way the glTF exporter takes it: a node group of this name.)
+        out_node = nt.nodes.new("ShaderNodeGroup")
+        out_node.node_tree = group
+        nt.links.new(tex["ao"].outputs["Color"], out_node.inputs["Occlusion"])
+        for o in g:
+            for slot in o.material_slots:
+                if slot.material and not glowing(slot.material):
+                    slot.material = baked
     print("  baked in %.0f s" % (time.time() - started))
 
 # Out: what renders, the nodes and colliders.

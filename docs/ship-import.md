@@ -30,7 +30,7 @@ cutters, volumes), and places any conventions the file lacks from its parts' nam
 `hatch`, `*Laser*_Head` → hardpoints, `Hull_*` → `COL_*` boxes, lift jets and thruster quads),
 printing where. Your own empties win. Rerun it after every change:
 
-    blender -b -y design.blend -P tools/blender/export_hull.py -- assets/models/mc07.glb --frame 50 --name MC-07 --class 3
+    blender -b -y design.blend -P tools/blender/export_hull.py -- assets/models/mc07.glb --frame 50 --name MC-07 --class 3 --bake 8192 --atlases 4
  Export: glTF Binary (`.glb`), **Tangents** and **Custom
 Properties** on, **+Y Up** on.
 
