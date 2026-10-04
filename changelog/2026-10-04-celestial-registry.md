@@ -14,3 +14,16 @@ The seeded world written down, so it can be curated and not only seeded.
   a body in Local Administration links to its celestial record; a Celestial report checks the two
   agree.
 - The game does not read these records yet. That is the next step.
+
+## The game reads it (the same day)
+
+- **Curated and frozen bodies are taken from the registry**: the game makes each system from the seed
+  as before, then a body whose record is curated or frozen is as the record says (mass, radius, day,
+  orbit size and shape, rings, terrain, relief, air, colour). What goes round a body whose mass
+  changed follows its new pull. Ports, fields and gates are placed after, on the world as curated.
+- **The charted world can't change unnoticed**: a test makes the five charted systems from the seed
+  and holds every seeded body to its record. A change to how worlds are made that would change one
+  fails it.
+- `content/base/celestial.ron` is written by the registry build; `crates/world/src/celestial.rs`.
+- Not yet taken from records: the star itself, inclination and tilt, asteroid fields, bodies added or
+  removed, and the laws.

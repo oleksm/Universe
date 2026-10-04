@@ -323,12 +323,16 @@ impl StarSystem {
         }
 
         let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new() };
+        // (What the registry has curated or frozen stands in place of what the seed made: see `celestial`.)
+        crate::celestial::apply(&mut system, crate::celestial::Stage::Bodies, star.seed);
         if let Some((planet, _)) = station_parent {
             system.add_station(planet, &mut rng);
         }
         system.add_terrain(star.seed);
+        crate::celestial::apply(&mut system, crate::celestial::Stage::Surfaces, star.seed);
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);
+        crate::celestial::apply(&mut system, crate::celestial::Stage::Rocks, star.seed);
         system.settle();
         system
     }

@@ -1282,6 +1282,25 @@ def write_ron():
     out.append("]\n")
     with open(os.path.join(CONTENT, "industry.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
+    # The celestial registry's systems: each body as written (kg, m, s). The game takes a curated
+    # or frozen body from here in place of what the seed makes; a seeded one it makes itself, and
+    # checks against this.
+    out = [head + "// Celestial bodies from the registry (standards/Celestial): mass (kg), radius (m), day (s), orbit (m), relief (m),\n// atmosphere (surface density kg/m3, scale height m, top m), rings (inner, outer m).\n["]
+    opt = lambda v: "None" if v is None else f"Some({v})"
+    for sysm in celestial["systems"]:
+        out.append(f"    (system: {ron_str(sysm['identity']['name'])}, index: {sysm['identity'].get('index', 0)}, bodies: [")
+        for b in sysm["bodies"]:
+            ph, ob, sf, at = b.get("physical") or {}, b.get("orbit") or {}, b.get("surface") or {}, b.get("atmosphere")
+            col = sf.get("colour") or [0.5, 0.5, 0.5]
+            out.append(f"        (name: {ron_str(b['identity']['name'])}, status: {ron_str(b['status'])}, kind: {ron_str(b['identity']['kind'])}, mass: {float(ph.get('mass', 0))!r}, radius: {float(ph.get('radius', 0)) * 1000!r}, day: {float(ph.get('day', 0)) * 3600!r}, "
+                       + f"semi_major_axis: {opt(repr(float(ob['semi_major_axis']) * 1000) if 'semi_major_axis' in ob else None)}, eccentricity: {opt(repr(float(ob['eccentricity'])) if 'eccentricity' in ob else None)}, "
+                       + f"terrain: {opt(ron_str(sf['terrain']) if 'terrain' in sf else None)}, relief: {opt(repr(float(sf['relief'])) if 'relief' in sf else None)}, "
+                       + f"atmosphere: {opt('(' + ', '.join(repr(float(v)) for v in (at['surface_density'], at['scale_height'] * 1000, at['top'] * 1000)) + ')' if at else None)}, "
+                       + f"colour: ({float(col[0])!r}, {float(col[1])!r}, {float(col[2])!r}), rings: {opt('(' + repr(float(ph['rings'][0]) * 1000) + ', ' + repr(float(ph['rings'][1]) * 1000) + ')' if 'rings' in ph else None)}),")
+        out.append("    ]),")
+    out.append("]\n")
+    with open(os.path.join(CONTENT, "celestial.ron"), "w", encoding="utf-8") as f:
+        f.write("\n".join(out))
     # Ship layouts (SFO 18), what the game builds hulls' insides from: compartments (boxes in
     # metres back from the nose, above the keel, from the centre line) and the openings between them.
     out = [head + "// Ship layouts from the SFO (SFO 18): each hull's compartments and openings. Boxes: (aft from, aft to, up from, up to, side from, side to), m.\n["]
@@ -1946,6 +1965,18 @@ for sysm in celestial["systems"]:
     recs = [sysm] + sysm["bodies"] + sysm["fields"]
     count = lambda st: sum(1 for r_ in recs if r_.get("status") == st)
     rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), f"{len(sysm['bodies'])} bodies, {len(sysm['fields'])} fields", f"{count('seeded')} seeded, {count('curated')} curated, {count('frozen')} frozen", ""))
+# (A body a person has taken over: what follows from its mass and radius must still agree with them.
+# The game takes its mass, radius, day, orbit size and shape, rings, terrain, relief, air and colour;
+# its gravity, period and temperature it works out itself.)
+for sysm in celestial["systems"]:
+    for b in sysm["bodies"]:
+        if b.get("status") == "seeded":
+            continue
+        ph = b.get("physical") or {}
+        g_ = 6.6743e-11 * ph.get("mass", 0) / (ph.get("radius", 1) * 1000) ** 2
+        said = ph.get("gravity")
+        off = said is not None and abs(said - g_) > 0.01 * g_
+        rows.append(row("gap" if off else "ok", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), b["status"], "", f"its gravity is written as {said} and its mass and radius give {g_:.3f}: the game uses its mass and radius" if off else "taken by the game as written"))
 for ad in administrations:
     sysm = next((s for s in celestial["systems"] if s["identity"]["name"] == ad.get("name")), None)
     if sysm is None:
@@ -2024,4 +2055,4 @@ if problems:
 write_ron()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
-print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/layouts.ron")
+print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/layouts.ron, content/base/celestial.ron")

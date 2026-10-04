@@ -43,6 +43,7 @@ const BASE: &[(&str, &str)] = &[
     ("settlements.ron", include_str!("../../../content/base/settlements.ron")),
     ("industry.ron", include_str!("../../../content/base/industry.ron")),
     ("layouts.ron", include_str!("../../../content/base/layouts.ron")),
+    ("celestial.ron", include_str!("../../../content/base/celestial.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether
@@ -227,6 +228,8 @@ pub struct Content {
     pub settlements: Vec<crate::settlements::Settlement>,
     /// The industrial modules facilities are built of (see `settlements`).
     pub industry: Vec<crate::settlements::IndustrialModule>,
+    /// Charted systems' bodies, as the celestial registry has them (see `celestial`).
+    pub celestial: Vec<crate::celestial::System>,
     /// Hulls' insides (the registry's SFO 18): compartments and openings.
     pub layouts: Vec<crate::layout::Layout>,
     /// Ship fuel: what tanks are filled with (the code's one kind of goods by name).
@@ -437,7 +440,11 @@ impl Content {
             }
         }
         let layouts: Vec<crate::layout::Layout> = Self::defs(&packs, "layouts.ron")?;
-        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, industry, layouts, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let celestial: Vec<crate::celestial::System> = Self::defs(&packs, "celestial.ron")?;
+        for s in &celestial {
+            s.check()?;
+        }
+        let c = Content { celestial, shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, industry, layouts, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }

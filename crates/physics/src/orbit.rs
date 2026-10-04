@@ -61,6 +61,12 @@ impl Orbit {
         }
     }
 
+    /// This orbit with another size, shape or pull: the same plane, the same
+    /// way round, the same place along it at t = 0.
+    pub fn reshaped(&self, a: f64, e: f64, mu: f64) -> Self {
+        Self { semi_major_axis: a, eccentricity: e, mu, mean_anomaly_epoch: self.mean_anomaly_epoch, basis: self.basis, mean_motion: (mu / (a * a * a)).sqrt() }
+    }
+
     /// The orbit's normal (unit): the way its angular momentum points.
     pub fn normal(&self) -> DVec3 {
         (self.basis * DVec3::Z).normalize()
