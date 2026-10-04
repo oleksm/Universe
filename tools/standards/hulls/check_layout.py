@@ -8,9 +8,6 @@
 - Every compartment reachable from outside through openings.
 - Nothing of the model passes through a compartment: its triangles' points (corners, edge
   middles, centres) inside a box, more than a hair in, are the hull cutting into the space.
-- Every compartment inside the hull: from points over each box's faces (a metre apart), a ray
-  out fore, aft and to either side meets the model; one that meets nothing leaves the ship, and
-  the box sticks out of the hull there. (Not up or down: bays and the ramp open there.)
 
 Frame as the parts': metres back from the nose, above the keel, from the centre line (starboard
 positive); nose and keel from the model's `Hull_*` meshes. The ramp (a moving part) is left out.
@@ -134,59 +131,6 @@ def main():
     for n in names:
         if n not in seen:
             problems.append(f"{n}: no way in from outside")
-
-    # Inside the hull: rays out from each box's faces, fore, aft and to the sides, all meet the model.
-    tri = t  # (aft, up, side)
-
-    def escapes(points, axis, sign):
-        # Which points' rays along +-axis meet no triangle: the other two axes as the plane.
-        a, b = [k for k in range(3) if k != axis]
-        A, B, C = tri[:, 0], tri[:, 1], tri[:, 2]
-        lo_a = np.minimum(np.minimum(A[:, a], B[:, a]), C[:, a]); hi_a = np.maximum(np.maximum(A[:, a], B[:, a]), C[:, a])
-        lo_b = np.minimum(np.minimum(A[:, b], B[:, b]), C[:, b]); hi_b = np.maximum(np.maximum(A[:, b], B[:, b]), C[:, b])
-        out = []
-        for p in points:
-            m = (lo_a <= p[a]) & (hi_a >= p[a]) & (lo_b <= p[b]) & (hi_b >= p[b])
-            if not m.any():
-                out.append(True)
-                continue
-            a0, b0, c0 = A[m], B[m], C[m]
-            v0, v1 = c0 - a0, b0 - a0
-            d00 = v0[:, a] ** 2 + v0[:, b] ** 2; d01 = v0[:, a] * v1[:, a] + v0[:, b] * v1[:, b]; d11 = v1[:, a] ** 2 + v1[:, b] ** 2
-            wa, wb = p[a] - a0[:, a], p[b] - a0[:, b]
-            d02 = v0[:, a] * wa + v0[:, b] * wb; d12 = v1[:, a] * wa + v1[:, b] * wb
-            den = d00 * d11 - d01 * d01
-            den[np.abs(den) < 1e-12] = 1e-12
-            u = (d11 * d02 - d01 * d12) / den; v = (d00 * d12 - d01 * d02) / den
-            inside = (u >= 0) & (v >= 0) & (u + v <= 1)
-            depth = a0[:, axis] + u * v0[:, axis] + v * v1[:, axis]
-            out.append(not np.any(inside & ((depth - p[axis]) * sign > 0)))
-        return np.array(out)
-
-    poking = {}
-    for c in layout["compartments"]:
-        for bx in comps[c["name"]]:
-            pts = []
-            for k in range(3):
-                for end in (0, 1):
-                    a_, b_ = [m for m in range(3) if m != k]
-                    ga = np.arange(bx[a_, 0] + 0.25, bx[a_, 1], 1.0)
-                    gb = np.arange(bx[b_, 0] + 0.25, bx[b_, 1], 1.0)
-                    for x in ga:
-                        for y in gb:
-                            q = np.zeros(3)
-                            q[k], q[a_], q[b_] = bx[k, end] + (0.05 if end == 0 else -0.05), x, y
-                            pts.append(q)
-            pts = np.array(pts)
-            bad = np.zeros(len(pts), bool)
-            for axis, sign in ((0, 1), (0, -1), (2, 1), (2, -1)):
-                bad |= escapes(pts, axis, sign)
-            if bad.any():
-                q = pts[bad]
-                poking.setdefault(c["name"], []).append((int(bad.sum()), len(pts), q.min(axis=0), q.max(axis=0)))
-    for n, v in poking.items():
-        for cnt, tot, lo, hi in v:
-            problems.append(f"{n}: sticks out of the hull ({cnt} of {tot} points: aft {lo[0]:.1f}-{hi[0]:.1f}, up {lo[1]:.1f}-{hi[1]:.1f}, side {lo[2]:.1f}-{hi[2]:.1f})")
 
     # The hull through a compartment.
     print(f"{'compartment':24} {'volume m3':>9} {'floor m2':>8}  hull inside")

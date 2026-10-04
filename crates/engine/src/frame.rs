@@ -389,14 +389,6 @@ impl Frame {
         self.in_front = before;
     }
 
-    /// The opposite of `in_front`: what `f` draws is in the scene, hidden by
-    /// what's nearer the eye, even while drawing in front.
-    pub fn in_scene(&mut self, f: impl FnOnce(&mut Frame)) {
-        let before = std::mem::replace(&mut self.in_front, false);
-        f(self);
-        self.in_front = before;
-    }
-
     /// A light's glow at `at` (world): a soft disc facing the eye (`RIM`), `radius`
     /// metres across (and never less than `least` HUD pixels, so a lamp far
     /// off still shows), adding `light` (linear, may be over 1: it blooms in

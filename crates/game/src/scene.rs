@@ -854,9 +854,7 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         if let Some(interior) = &shape.interior
             && frame.camera.position.distance(t.position) < 400.0
         {
-            // (In the scene even in the chase view's front layer: the hull, a model drawn in
-            // the scene, hides it. In front, it was painted over the hull.)
-            frame.in_scene(|frame| frame.model_colored(&crate::models::interior(&shape.key, interior), t, 2.2, 1.0));
+            frame.model_colored(&crate::models::interior(&shape.key, interior), t, 2.2, 1.0);
         }
         // Its ramp (part 1), swung down about its hinge as far as it is.
         if let Some(r) = &shape.ramp {
