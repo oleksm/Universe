@@ -1204,7 +1204,21 @@ pub fn apply(app: &mut App, name: &str) {
                 _ => crate::studio::Tool::Select,
             };
             if std::env::var_os("UNIVERSE_EMPTY").is_none() {
-                app.deckplans.push(demo_plan(app));
+                let mut plan = demo_plan(app);
+                // (UNIVERSE_CARVE=x,z: deck 1's floor carved round that point instead.)
+                if let Some((x, z)) = std::env::var("UNIVERSE_CARVE").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f64>().ok()?, b.trim().parse::<f64>().ok()?))))
+                    && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
+                {
+                    let deck = &mut plan.decks[0];
+                    let sides = universe_sim::world::deckplan::Sides::of(&mesh.section_y(deck.floor + 1.0));
+                    deck.planes = universe_sim::world::deckplan::carve(&sides, &deck.walls, universe_engine::glam::DVec2::new(x, z)).into_iter().collect();
+                    if let Some(poly) = deck.planes.first() {
+                        let (lo, hi) = poly.iter().fold((universe_engine::glam::DVec2::MAX, universe_engine::glam::DVec2::MIN), |m, p| (m.0.min(*p), m.1.max(*p)));
+                        let area: f64 = universe_sim::world::deckplan::floor_strips(poly, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
+                        log::info!("scenario studio: carved a floor of {} points, x {:.1}..{:.1} z {:.1}..{:.1}, {area:.0} m2", poly.len(), lo.x, hi.x, lo.y, hi.y);
+                    }
+                }
+                app.deckplans.push(plan);
             }
             app.shipyard = Some(y);
         }
