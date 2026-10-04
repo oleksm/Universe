@@ -1,6 +1,6 @@
 # Planets: grown, not drawn
 
-Status: **purpose agreed, design to come** (2026-10-04). This page says why and what for. How
+Status: **purpose and decisions agreed, design to come** (2026-10-04). This page says why and what for. How
 comes next, in its own sections, once this is settled.
 
 ## Purpose
@@ -87,12 +87,11 @@ If the known worlds come out right, the unknown ones are believable by construct
   what a world's history makes of it. For the settled region we evolve worlds and keep a
   collection of baked ones, choosing from it the worlds we want where we want them. Out in the
   wild, a world is simply what it turned out to be.
+- **Where worlds are baked.** The few developed worlds (five to start, of some 40,000) are
+  baked ahead of time, packaged with the game and built on. The rest are baked on the server,
+  which works its way outward ahead of where people can reach, so a world is ready before
+  anyone arrives. Either way it is the same simulation; only where and when it runs differs.
 - **Civilisation follows the ground.** Ports, settlements and landing places are placed on a
   world after it is baked, on ground that suits them (the registry records them). Nothing
   already built is carried over: settled worlds are re-settled on their evolved surfaces, and
   new ports go where the land allows.
-
-## Open questions
-
-- **Time and space budget.** How long a world may take to evolve (and on what), and how much
-  of it is kept on disk.
