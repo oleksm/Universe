@@ -885,7 +885,8 @@ for ad in administrations:
 # Parts: filed by hull, then by the assembly (category) they go into:
 # SFO/metadata/parts/<hull>/<category>.yaml.
 hull_of = {hl.get("slug"): hl for hl in hulls}
-categories = []
+PART_SCHEMA = yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", "part.schema.yaml"), encoding="utf-8"))
+categories, parts = [], []
 for s in standards:
     if str(s.get("records")) != "parts":
         continue
@@ -899,6 +900,9 @@ for s in standards:
             problem(hdir, f"no hull '{hull}' in the SFO")
         for fn in sorted(os.listdir(hdir)):
             full = os.path.join(hdir, fn)
+            if os.path.isdir(full):
+                # (A category's parts: read with it, below.)
+                continue
             if not re.fullmatch(r"[a-z0-9-]+\.yaml", fn):
                 problem(full, "a category's file is named <name>.yaml (lower case, words joined by -)")
                 continue
@@ -915,7 +919,54 @@ for s in standards:
                 problem(full, f"code {c.get('code')} twice")
             c.update({"slug": fn[:-5], "hull": hull, "under": s["id"], "file": os.path.relpath(full, TREE)})
             categories.append(c)
+            # (Its parts: one file each in the folder named after it, to part.schema.yaml.)
+            pdir = full[:-5]
+            for pn in sorted(os.listdir(pdir)) if os.path.isdir(pdir) else []:
+                pfull = os.path.join(pdir, pn)
+                pt = load(pfull)
+                ident = pt.get("identity") or {}
+                code = str(ident.get("code", ""))
+                if pn != code + ".yaml":
+                    problem(pfull, "a part's file is named <its code>.yaml")
+                if not re.fullmatch(re.escape(str(c.get("code", ""))) + r"-[0-9]{3}", code):
+                    problem(pfull, f"identity.code: {c.get('code')}, a dash, three digits")
+                if not ident.get("name"):
+                    problem(pfull, "identity: no name")
+                if any(o["identity"].get("code") == code for o in parts):
+                    problem(pfull, f"code {code} twice")
+                for group, props in pt.items():
+                    known = PART_SCHEMA["properties"].get(group)
+                    if known is None:
+                        problem(pfull, f"unknown group '{group}'")
+                        continue
+                    for k in props or {}:
+                        if k not in known["properties"]:
+                            problem(pfull, f"{group}: unknown property '{k}'")
+                pt.update({"slug": code, "hull": hull, "category": c["slug"], "under": s["id"], "file": os.path.relpath(pfull, TREE)})
+                parts.append(pt)
 categories.sort(key=lambda c: (c["hull"], str(c.get("code", "")), c.get("name", "")))
+# (What a part names must be there: its material in that form, its processes, its designer, the
+# standards it is built to, the parts it joins or stands in for.)
+codes = {pt["slug"] for pt in parts}
+for pt in parts:
+    where = os.path.join(TREE, pt["file"])
+    st, ident = pt.get("stock") or {}, pt.get("identity") or {}
+    mat = next((m for m in materials if m.get("slug") == st.get("material")), None)
+    if "material" in st and mat is None:
+        problem(where, f"stock.material: no material '{st['material']}'")
+    elif mat is not None and "form" in st and st["form"] not in ((mat.get("identity") or {}).get("form") or []):
+        problem(where, f"stock.form: {st['material']} doesn't come as {st['form']}")
+    for name in (pt.get("making") or {}).get("processes") or []:
+        if name not in by_process:
+            problem(where, f"making.processes: no process '{name}' in the SFO")
+    if "designer" in ident and ident["designer"] not in BRANDS:
+        problem(where, f"identity.designer: no company '{ident['designer']}' in Maker House")
+    for sid in ident.get("standards") or []:
+        if sid not in {s["id"] for s in standards}:
+            problem(where, f"identity.standards: no standard '{sid}'")
+    for other in (ident.get("interchangeable_with") or []) + ((pt.get("fit") or {}).get("joins_to") or []):
+        if other not in codes:
+            problem(where, f"no part '{other}'")
 for m in modules:
     for kind in (m.get("rate") or {}).get("stores") or []:
         if kind not in GOODS_KINDS:
@@ -1069,6 +1120,8 @@ def write_html():
         "goods": goods,
         "hulls": hulls,
         "categories": categories,
+        "parts": parts,
+        "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in PART_SCHEMA["properties"].items()},
         "hull_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["hulls"]["properties"].items()},
         "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["goods"]["properties"].items()},
         "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["modules"]["properties"].items()},

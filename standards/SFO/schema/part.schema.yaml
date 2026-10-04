@@ -1,0 +1,85 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Assembly part
+description: 'standards/SFO/metadata/parts/<hull>/<category>/<code>.yaml: the full specification of one part an assembly is built of. Its folders say which hull and which assembly (category) it belongs to. Any one part uses only some of these properties.'
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [code, name]
+    properties:
+      code: { type: string, pattern: '^[A-Z0-9]+-[0-9]{2}-[0-9]{3}$', description: "Its category's code, then its number in the category (MC07-04-001). No two alike." }
+      name: { type: string }
+      description: { type: string }
+      revision: { type: string, description: "A, B, C... as its design changes." }
+      designer: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: The company that designed it. }
+      standards: { type: array, items: { type: string }, description: "The standards it is built to, by id (SFO 9)." }
+      interchangeable_with: { type: array, items: { type: string }, description: Other parts' codes that fit in its place. }
+
+  stock:
+    description: What it is cut from.
+    type: object
+    additionalProperties: false
+    properties:
+      material: { type: string, description: "The material, by file name." }
+      form: { type: string, description: "The stock's form: one of the forms the material comes in." }
+      size: { type: string, description: "The stock's size: 3 mm sheet, 80 mm bar, 50 x 2 mm tube." }
+      quantity: { type: number, description: How much stock one part takes. }
+      unit: { enum: [m2, m, pieces, kg], description: What the quantity counts. }
+      finished_mass: { type: number, description: "kg, the part as made" }
+      offcut: { type: number, description: "stock used for each kg of finished part (1: none lost)" }
+      temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
+      finish: { type: string, description: "Its surface: bare, anodised, plated, painted." }
+
+  shape:
+    type: object
+    additionalProperties: false
+    properties:
+      length: { type: number, description: m }
+      width: { type: number, description: m }
+      height: { type: number, description: m }
+      thickness: { type: number, description: "mm, its wall or gauge" }
+      surface_area: { type: number, description: m2 }
+      volume: { type: number, description: "m3 of material" }
+      centre_of_mass: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "m, [x, y, z] in the part's own frame" }
+      handed: { enum: [left, right, neither] }
+
+  making:
+    type: object
+    additionalProperties: false
+    properties:
+      processes: { type: array, items: { type: string }, description: "The processes that make it, in order, by file name." }
+      facility: { type: string, description: The kind of facility that makes it. }
+      tolerance: { type: number, description: "mm, on its dimensions" }
+      tooling: { type: string, description: "The jig, die or mould it needs." }
+      batch_size: { type: integer, minimum: 1, description: How many are made at a time. }
+
+  fit:
+    description: How it goes into its assembly.
+    type: object
+    additionalProperties: false
+    properties:
+      count: { type: integer, minimum: 1, description: How many of it one assembly has. }
+      joins_to: { type: array, items: { type: string }, description: The codes of the parts it is joined to. }
+      joining: { type: array, items: { enum: [welded, brazed, bonded, bolted, riveted, sewn] }, description: How it is joined. }
+      connections: { type: array, items: { enum: [power, signal, fluid, air] }, description: What it carries across its joints. }
+
+  limits:
+    type: object
+    additionalProperties: false
+    properties:
+      design_load: { type: number, description: "kN, the load it is built to carry" }
+      min_temperature: { type: number, description: K }
+      max_temperature: { type: number, description: K }
+      pressure: { type: number, description: "kPa it holds" }
+      fatigue_life: { type: number, description: "cycles of its design load" }
+
+  life:
+    type: object
+    additionalProperties: false
+    properties:
+      service_life: { type: number, description: "years in use before it is replaced" }
+      inspection_interval: { type: number, description: "hours of flight between inspections" }
+      field_replaceable: { type: boolean, description: Can be changed without a yard. }
