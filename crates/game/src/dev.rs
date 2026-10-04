@@ -1218,6 +1218,16 @@ pub fn apply(app: &mut App, name: &str) {
                         log::info!("scenario studio: carved a floor of {} points, x {:.1}..{:.1} z {:.1}..{:.1}, {area:.0} m2", poly.len(), lo.x, hi.x, lo.y, hi.y);
                     }
                 }
+                // (UNIVERSE_FILL: deck 1 filled, as the floors' FILL button does.)
+                if std::env::var_os("UNIVERSE_FILL").is_some()
+                    && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
+                {
+                    let deck = &mut plan.decks[0];
+                    let sides = universe_sim::world::deckplan::Sides::of(&mesh.section_y(deck.floor + 1.0));
+                    deck.planes = universe_sim::world::deckplan::fill(&sides);
+                    let areas: Vec<String> = deck.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
+                    log::info!("scenario studio: filled {} floors, m2 {}", deck.planes.len(), areas.join(" "));
+                }
                 app.deckplans.push(plan);
             }
             app.shipyard = Some(y);

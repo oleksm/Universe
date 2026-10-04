@@ -88,8 +88,6 @@ pub struct Studio {
     cursor: Vec2,
     /// WALK HERE pressed away from the plan: the next click on it is where.
     walk_armed: bool,
-    /// AUTO FILL pressed (the floors' panel): the next click on the plan carves a floor.
-    fill_armed: bool,
     /// A walk-through asked for: feet (the hull's frame) and facing (see `shipyard`).
     pub walk: Option<(universe_engine::glam::DVec3, f64)>,
 }
@@ -134,12 +132,12 @@ fn panel_list_top(studio: &Studio) -> f32 {
     86.0 + 8.0 + 22.0 + state as f32 * 14.0 + if auto_shown(studio) { AUTO_ROW } else { 0.0 } + 18.0
 }
 
-/// Is the floors' AUTO FILL button shown (the plane tool in hand)?
+/// Is the floors' FILL button shown (the plane tool in hand)?
 fn auto_shown(studio: &Studio) -> bool {
     studio.tool == Tool::Plane
 }
 
-/// The floors' panel's AUTO FILL button: its place (above the list), and the room it takes.
+/// The floors' panel's FILL button: its place (above the list), and the room it takes.
 const AUTO_ROW: f32 = 28.0;
 fn auto_button(studio: &Studio) -> (Vec2, Vec2) {
     (Vec2::new(20.0, panel_list_top(studio) - 18.0 - AUTO_ROW + 2.0), Vec2::new(PANEL_WIDTH - 16.0, 18.0))
@@ -288,7 +286,7 @@ fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
 fn tool_help(tool: Tool) -> &'static str {
     match tool {
         Tool::Select => "PICK SOMETHING TO CHANGE OR REMOVE. CLICK A WALL, A FLOOR, A LADDER OR A STAIR. A PICKED WALL SHOWS ITS POINTS (SQUARES: DRAG TO MOVE) AND THE MIDDLE OF EACH SEGMENT (RINGS: DRAG SIDEWAYS TO BEND IT INTO AN ARC). A PICKED FLOOR SHOWS ITS CORNERS. DEL REMOVES WHAT'S PICKED.",
-        Tool::Plane => "A FLOOR ON THIS DECK. CLICK ITS CORNERS ONE BY ONE; CLICK THE FIRST AGAIN, OR ENTER, TO CLOSE IT. IT'S TRIMMED TO THE HULL: DRAW IT LARGE AND ONLY WHAT'S INSIDE IS FLOOR. BACKSPACE TAKES THE LAST CORNER BACK. AUTO: SHIFT+CLICK (OR AUTO FILL, THEN A CLICK) INSIDE A SPACE FILLS IT, UP TO THE HULL AND THE WALLS ROUND IT.",
+        Tool::Plane => "A FLOOR ON THIS DECK. CLICK ITS CORNERS ONE BY ONE; CLICK THE FIRST AGAIN, OR ENTER, TO CLOSE IT. IT'S TRIMMED TO THE HULL: DRAW IT LARGE AND ONLY WHAT'S INSIDE IS FLOOR. BACKSPACE TAKES THE LAST CORNER BACK. FILL: A FLOOR OVER THE WHOLE DECK AT ONCE, FOLLOWING THE HULL (ONE FOR EACH PART OF IT AT THIS HEIGHT).",
         Tool::Wall => "A WALL ON THIS DECK, AS TALL AS THE DECK. CLICK ITS POINTS ONE BY ONE; ENTER ENDS IT. IT STOPS WHERE IT MEETS THE HULL (BEYOND, FAINT RED). TO CURVE A SEGMENT, PICK THE WALL WITH SELECT AND DRAG THE RING AT ITS MIDDLE. BACKSPACE TAKES THE LAST POINT BACK.",
         Tool::Door => "A DOORWAY IN A WALL, 0.9 M WIDE AND 2.1 M TALL. CLICK ON A WALL WHERE IT GOES; CLICK AN EXISTING DOOR TO REMOVE IT.",
         Tool::Ladder => "A LADDER UP TO THE DECK ABOVE, THROUGH A 0.9 M HATCH CUT IN ITS FLOOR. CLICK WHERE IT STANDS. ABOARD: WALK INTO IT, W CLIMBS (LOOK DOWN TO CLIMB DOWN). NEEDS A DECK ABOVE.",
@@ -300,9 +298,6 @@ fn tool_help(tool: Tool) -> &'static str {
 fn tool_state(studio: &Studio) -> Option<String> {
     if studio.walk_armed {
         return Some("WALK HERE: CLICK A SPOT ON THE PLAN".into());
-    }
-    if studio.fill_armed {
-        return Some("AUTO FILL: CLICK INSIDE A SPACE".into());
     }
     let n = studio.drawing.len();
     match studio.tool {
@@ -512,16 +507,6 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     let p = snap(at, alt);
     let near = |q: DVec2| q.distance(at) * px < 8.0;
     match studio.tool {
-        // A floor carved round the click: SHIFT+click, or AUTO FILL armed.
-        Tool::Plane if over && input.button_pressed(MouseButton::Left) && (shift || studio.fill_armed) && studio.drawing.is_empty() => {
-            studio.fill_armed = false;
-            if let Some(h) = studio.hull.as_ref()
-                && let Some(poly) = deckplan::carve(&h.sides, &deck.walls, at)
-            {
-                deck.planes.push(poly);
-                studio.pick = Some(Pick::Plane(deck.planes.len() - 1));
-            }
-        }
         Tool::Plane | Tool::Wall => {
             if over && input.button_pressed(MouseButton::Left) {
                 // (A plane closes on its first corner again.)
@@ -637,9 +622,12 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             }
         }
     }
-    // The floors' panel's AUTO FILL: the next click on the plan carves a floor.
+    // The floors' panel's FILL: floors over the whole deck, now.
     if auto_shown(studio) && input.button_pressed(MouseButton::Left) && in_rect({ let (p, c) = auto_button(studio); (p, p + c) }, cursor) {
-        studio.fill_armed = !studio.fill_armed;
+        if let Some(h) = studio.hull.as_ref() {
+            deck.planes.extend(deckplan::fill(&h.sides));
+            studio.pick = deck.planes.len().checked_sub(1).map(Pick::Plane);
+        }
         return true;
     }
     // The panel's list: a row clicked picks that thing (REMOVE then takes it out).
@@ -904,7 +892,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         if auto_shown(studio) {
             let (p, c) = auto_button(studio);
             let hover = in_rect((p, p + c), studio.cursor);
-            crate::hud::draw_cell(frame, p, c, "S+CLK", "AUTO FILL", if studio.fill_armed || hover { crate::hud::Lamp::On } else { crate::hud::Lamp::Off });
+            crate::hud::draw_cell(frame, p, c, "", "FILL THE DECK", if hover { crate::hud::Lamp::On } else { crate::hud::Lamp::Off });
         }
         let top = panel_list_top(studio);
         frame.text(Vec2::new(x, top - 18.0), "ON THIS DECK", INK.scale(0.8));
