@@ -19,6 +19,6 @@
   centaurs, crossing asteroids, captured moons, rings, the scattered disc and far cloud, balance
   points, tidal heating, radiation belts, stellar wind and visitors from other stars. Each says what
   it is, where it lies, what is known of the Sun's (sourced), what it means for people working in
-  space, and whether the game makes it: 7 made, 8 partly, 11 not yet.
+  space, and whether the game makes it: 5 made, 8 partly, 13 not yet.
 - **Each system's page** counts what it has of each kind; **each planet's and moon's page** works
   out its five balance points and how far its pull reaches.
