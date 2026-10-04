@@ -155,7 +155,7 @@ fn schlick(f0: vec3<f32>, vh: f32) -> vec3<f32> {
 }
 
 @fragment
-fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
+fn fs_pbr(in: Out, @builtin(front_facing) front: bool) -> @location(0) vec4<f32> {
     // (Textures off: the material's plain values; a texture that's white.)
     let textured = g.look.x > 0.5;
     let base = select(vec4<f32>(1.0), textureSample(base_tex, tex_sampler, in.uv), textured) * mat.base_color;
@@ -173,7 +173,8 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     // compressed map (BC5) and a full one read alike.)
     let nxy = textureSample(normal_tex, tex_sampler, in.uv).xy * 2.0 - vec2<f32>(1.0);
     let tn = vec3<f32>(nxy, sqrt(max(1.0 - dot(nxy, nxy), 0.0)));
-    let ng = normalize(in.normal);
+    // (A two-sided surface seen from behind: lit as the side that faces the eye.)
+    let ng = normalize(in.normal) * select(-1.0, 1.0, front);
     let t = normalize(in.tangent.xyz - ng * dot(ng, in.tangent.xyz));
     let b = cross(ng, t) * in.tangent.w;
     let n = select(ng, normalize(t * tn.x * mat.params.z + b * tn.y * mat.params.z + ng * tn.z), g.look.y > 0.5);
