@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# One sixtieth of the ring: a length of its tube, 120 m across, of skin panels over frames.
+# Not from a model: chosen, to be reviewed.
+identity:
+  code: RING-01
+  name: "Segment"
+  status: draft
+  description: "A length of the ring's tube: skin panels over hoop frames. Sixty make the ring."
+physical:
+  length: 157.1
+  width: 120
+  height: 120
+shape:
+  surface_area: 59218
+making:
+  processes: [ring-assembly]
+fit:
+  count: 60
+basis:
+  - { of: [physical, shape, fit], tier: invented, review: true, note: "A guess, to be reviewed: the ring (3 km across, 120 m thick, the game's figures) cut into sixty equal lengths." }

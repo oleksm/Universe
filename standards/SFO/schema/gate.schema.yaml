@@ -27,6 +27,21 @@ properties:
     properties:
       span: { type: number, description: "light years, the longest tube it can hold" }
       capture_speed: { type: number, description: "m/s, the fastest a ship may enter it" }
+  built_of:
+    type: object
+    additionalProperties: false
+    properties:
+      parts: { type: string, description: "The folder of parts (SFO 12) its structure is built of." }
+  power:
+    type: object
+    additionalProperties: false
+    properties:
+      station: { type: string, description: "The industrial module (SFO 10) that powers it. How many it takes to hold its tube is worked out." }
+  making:
+    type: object
+    additionalProperties: false
+    properties:
+      process: { type: string, description: "The process that assembles it where it is to stand, by file name." }
   basis:
     description: 'Where its figures come from. Each entry covers the groups (or group.property) it names. sourced: from a published source or the game, named. derived: worked out from other figures. invented: chosen, to be balanced or replaced.'
     type: array

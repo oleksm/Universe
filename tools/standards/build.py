@@ -955,7 +955,7 @@ def read_part(full, hull, parent, under):
     if os.path.basename(full) != code + ".yaml":
         problem(full, "a part's file is named <its code>.yaml")
     if parent is None and not re.fullmatch(r"[A-Z0-9]+-[0-9]{2}", code):
-        problem(full, "identity.code: the hull's code, a dash, two digits (MC07-04)")
+        problem(full, "identity.code: the hull's (or the structure's) code, a dash, two digits (MC07-04)")
     if parent is not None and not re.fullmatch(re.escape(parent) + r"-[0-9]{3}", code):
         problem(full, f"identity.code: {parent}, a dash, three digits")
     if not ident.get("name"):
@@ -989,8 +989,8 @@ for s in standards:
         if not os.path.isdir(hdir):
             problem(hdir, "parts are filed in a folder named after their hull")
             continue
-        if hull not in hull_of:
-            problem(hdir, f"no hull '{hull}' in the SFO")
+        if hull not in hull_of and hull not in {(g.get("built_of") or {}).get("parts") for g in gates}:
+            problem(hdir, f"no hull '{hull}' in the SFO, and no gate built of it")
         for fn in sorted(os.listdir(hdir)):
             full = os.path.join(hdir, fn)
             if os.path.isdir(full):
@@ -1060,6 +1060,19 @@ for hl in hulls:
         if kids(c) and all("mass" in k for k in kids(c)):
             c["mass"], c["mass_from"] = sum(k["mass"] * times(k) for k in kids(c)), "parts"
     hl["parts_mass"] = sum(pt["mass"] * times(pt) for pt in mine if not pt.get("parent") and "mass" in pt)
+# (A gate's structure: its parts weigh what they say; one made of parts, what they do.)
+structures = []
+for name in sorted({(g.get("built_of") or {}).get("parts") for g in gates} - {None}):
+    mine = [pt for pt in parts if pt["hull"] == name]
+    of = [g for g in gates if (g.get("built_of") or {}).get("parts") == name]
+    for pt in mine:
+        if (pt.get("physical") or {}).get("mass") is not None:
+            pt["mass"], pt["mass_from"] = pt["physical"]["mass"], "said"
+    for c in mine:
+        if kids(c) and all("mass" in k for k in kids(c)):
+            c["mass"], c["mass_from"] = sum(k["mass"] * times(k) for k in kids(c)), "parts"
+    structures.append({"slug": name, "key": "gate:" + of[0]["slug"], "identity": {"name": name.replace("-", " ").capitalize()}, "making": of[0].get("making") or {},
+                       "parts_mass": sum(pt["mass"] * times(pt) for pt in mine if not pt.get("parent") and "mass" in pt), "gates": [g["slug"] for g in of]})
 codes = {pt["slug"] for pt in parts}
 for pt in parts:
     where = os.path.join(TREE, pt["file"])
@@ -1271,14 +1284,14 @@ part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "p
 ingot_makers = lambda mat: [q for q in processes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
 # 1. The chain from a hull down to rock: how far each part gets.
 eq_of = {e["slug"]: e for e in equipment}
-for hl in hulls:
+for hl in hulls + structures:
     mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
     leaves = [pt for pt in mine if not kids(pt)]
     rows = []
     how = lambda pt: (pt.get("making") or {}).get("processes") or []
     # (The hull itself, and each part made of parts: is it said how it is put together, and is a yard built to do it?)
-    for name, key, procs in [(hl["identity"]["name"] + " (hull)", link(hl["identity"]["name"] + " (hull)", "hull:" + hl["slug"]), [q for q in [(hl.get("making") or {}).get("process")] if q])] + [(None, part_link(pt), how(pt)) for pt in mine if kids(pt)]:
-        steps = [("says how it is put together", bool(procs) and all(q in by_process for q in procs)), ("a yard is built to do it", bool(procs) and all(q in lined for q in procs))]
+    for name, key, procs in [(hl["identity"]["name"] + " (hull)", link(hl["identity"]["name"] + ("" if "key" in hl else " (hull)"), hl.get("key", "hull:" + hl["slug"])), [q for q in [(hl.get("making") or {}).get("process")] if q])] + [(None, part_link(pt), how(pt)) for pt in mine if kids(pt)]:
+        steps = [("says how it is put together", bool(procs) and all(q in by_process for q in procs)), ("somewhere is built to do it", bool(procs) and all(q in lined for q in procs))]
         if name and hl.get("fit"):
             out = (hl.get("making") or {}).get("fitting_out")
             steps += [("says how it is fitted out", out in by_process), ("a yard is built to fit it out", out in lined)]
@@ -1300,7 +1313,7 @@ for hl in hulls:
         ]
         reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
         rows.append(row("ok" if reached == len(steps) else "gap", part_link(pt), f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
-    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "The hull and each part made of parts: is it said how it is put together, and is a yard built to do it. Each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, is a facility built to run it, can the ingot that stock starts from be made (a process with a line built for it), is it said how the part is made from its stock, and is a yard built to make it.", ["Part", "Links made", "Where it stops"], rows)
+    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "The thing itself and each part made of parts: is it said how it is put together, and is somewhere built to do it. Each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, is a facility built to run it, can the ingot that stock starts from be made (a process with a line built for it), is it said how the part is made from its stock, and is a yard built to make it.", ["Part", "Links made", "Where it stops"], rows)
     # (Where it can be built, and how fast at most: the yards with a line for its assembly, flat out.)
     built = []
     for ad in administrations:
@@ -1363,7 +1376,39 @@ for g in gates:
     else:
         hold = "not worked out: its opening, its span or a law is missing"
     rows.append(row("ok" if game == span else "gap", link(g["identity"]["name"], "gate:" + g["slug"]), f"{span:g} ly" if span else "", (f"the same in the game" if game == span else f"the game says {game:g} ly") if game is not None else "not in the game", hold))
-    rows.append(row("gap", link(g["identity"]["name"], "gate:" + g["slug"]), "", "", "where its power comes from, what the ring weighs and what it is made of: not yet said"))
+    st = next((x for x in structures if g["slug"] in x["gates"]), None)
+    if st and "worked" in g:
+        mine = [pt for pt in parts if pt["hull"] == st["slug"]]
+        each = lambda pt: times(pt) * (times(next(o for o in mine if o["slug"] == pt["parent"])) if pt.get("parent") else 1)
+        can = lambda proc: sum(ln["most"]["output"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and proc in [ln["process"]] + (ln.get("also") or []))
+        run_in = lambda proc: ", ".join(sorted({fc["name"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and proc in [ln["process"]] + (ln.get("also") or [])}))
+        steps, stock_t, ingot_t, made_t = [], {}, {}, {}
+        for pt in [pt for pt in mine if not kids(pt)]:
+            ms = stock_of.get((pt.get("made_from") or {}).get("item"))
+            if ms is None:
+                continue
+            stock_t[ms["slug"]] = stock_t.get(ms["slug"], 0) + pt.get("stock_mass", 0) * each(pt) / 1000
+            for q in (pt.get("making") or {}).get("processes") or []:
+                made_t[q] = made_t.get(q, 0) + pt.get("mass", 0) * each(pt) / 1000
+        def step(what, tonnes_, proc):
+            rate = can(proc) if proc else 0
+            steps.append({"what": what, "tonnes": tonnes_, "process": proc, "at": run_in(proc) if proc else "", "rate": rate, "days": tonnes_ / rate / 24 if rate else None})
+        for q, t_ in made_t.items():
+            step(f"{by_process[q]['identity']['name']}: its parts made from stock", t_, q)
+        for code, t_ in stock_t.items():
+            ms = stock_of[code]
+            step(f"{ms['identity']['name']} rolled or drawn", t_, (ms.get("making") or {}).get("process"))
+            mat = (ms.get("made_from") or {}).get("material")
+            ingot_t[mat] = ingot_t.get(mat, 0) + t_
+        for mat, t_ in ingot_t.items():
+            casts = [q["slug"] for q in ingot_makers(mat) if q["slug"] in lined]
+            step(f"{next(m_ for m_ in materials if m_.get('slug') == mat)['identity']['name']} cast as ingot (at least: the mills' own losses come on top)", t_, casts[0] if casts else None)
+        cargo = max([(ft_.get("performance") or {}).get("capacity", 0) for ft_ in equipment if (ft_.get("identity") or {}).get("slot") == "cargo"] or [0])
+        g["worked"]["build"] = {"structure": st["slug"], "mass": st["parts_mass"], "stock": [{"item": k, "tonnes": v} for k, v in stock_t.items()], "steps": steps,
+                                "stations": math.ceil(g["worked"]["stations"]) if g["worked"].get("stations") else None,
+                                "trips": math.ceil(st["parts_mass"] / cargo) if cargo else None, "hold": cargo}
+    rows.append(row("ok" if st and st["parts_mass"] else "gap", link(g["identity"]["name"], "gate:" + g["slug"]), "", "", f"its ring weighs {tonnes(st['parts_mass'])}, of parts that are guesses" if st and st["parts_mass"] else "what the ring weighs and is made of: not yet said"))
+    rows.append(row("gap", link(g["identity"]["name"], "gate:" + g["slug"]), "", "", "what in the ring holds the tube, what its power stations are made of, how it is assembled in orbit and what carries its parts there: not yet said"))
 report("gates", "Stargates: each ring against the game, and what it costs to hold", "Each gate ring: its span against the game's ring of the same key, and the power its tube takes to hold, worked out from the laws. A gap is a ring that differs from the game, or something a ring does not yet say.", ["Ring", "Span", "Against the game", "Note"], rows)
 
 # 2. Mass: what a thing weighs against what it is made of.
@@ -1685,6 +1730,7 @@ def write_html():
         "mill_stock": mill_stock,
         "equipment": equipment,
         "gates": gates,
+        "structures": structures,
         "gate_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["gates"]["properties"].items() if "properties" in d},
         "equipment_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["equipment"]["properties"].items() if "properties" in d},
         "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["mill-stock"]["properties"].items() if "properties" in d},

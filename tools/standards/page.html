@@ -197,6 +197,8 @@ const goodBySlug = Object.fromEntries(DATA.goods.map(g => [g.slug, g]));
 const topParts = hull => DATA.parts.filter(p => p.hull === hull && !p.parent);
 const subParts = code => DATA.parts.filter(p => p.parent === code);
 const partByCode = Object.fromEntries(DATA.parts.map(p => [p.slug, p]));
+const ownerName = hl => (hullBySlug[hl] || (DATA.structures.find(s => s.slug === hl) || { identity: { name: hl } })).identity.name;
+const ownerKey = hl => hullBySlug[hl] ? "hull:" + hl : (DATA.structures.find(s => s.slug === hl) || {}).key || "";
 const partHulls = id => [...new Set(DATA.parts.filter(p => p.under === id).map(p => p.hull))];
 // And ship equipment.
 const eqUnder = (id, q) => DATA.equipment.filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.key} ${x.identity.slot || ""}`.toLowerCase().includes(w))));
@@ -305,7 +307,7 @@ function rows(q) {
             const hk = "pg:" + hl, hit = p => !q || q.split(/\s+/).every(w => `${p.identity.code} ${p.identity.name} ${p.identity.description || ""}`.toLowerCase().includes(w));
             const tops = topParts(hl).filter(p => hit(p) || subParts(p.slug).some(hit));
             if (q && !tops.length) continue;
-            out.push({ k: hk, depth: depth + 1, kind: "maker", label: (hullBySlug[hl] || { identity: { name: hl } }).identity.name, ticker: `${topParts(hl).length} parts`, leaf: false });
+            out.push({ k: hk, depth: depth + 1, kind: "maker", label: ownerName(hl), ticker: `${topParts(hl).length} parts`, leaf: false });
             if (open.has(hk) || q) for (const p of tops) {
               const pk = "part:" + p.slug, subs = subParts(p.slug), n = (p.fit || {}).count;
               out.push({ k: pk, depth: depth + 2, kind: "maker", label: `${p.identity.code} ${p.identity.name}`, ticker: n > 1 ? `× ${n}` : "", leaf: !subs.length });
@@ -715,7 +717,8 @@ function detail(k) {
   }
   if (kind === "pg") {
     const hl = hullBySlug[rest[0]], tops = topParts(rest[0]); if (!tops.length) return "";
-    return `<h2>${esc(hl ? hl.identity.name : rest[0])} parts</h2><div class="meta">the parts of the hull ${hl ? `<a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : esc(rest[0])}</div>` + partsTable(tops, "In one hull") + (hl && hl.estimate && hl.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(hl.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, at ${+hl.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
+    const st = DATA.structures.find(s => s.slug === rest[0]);
+    return `<h2>${esc(ownerName(rest[0]))} parts</h2><div class="meta">${hl ? `the parts of the hull <a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : st ? "the parts of the ring of " + st.gates.map(g => `<a data-k="${esc("gate:" + g)}">${esc(gateBySlug[g].identity.name)}</a>`).join(", ") : esc(rest[0])}</div>` + partsTable(tops, hl ? "In one hull" : "In one ring") + (hl && hl.estimate && hl.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(hl.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, at ${+hl.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
@@ -739,7 +742,7 @@ function detail(k) {
     const e = kind === "gate" ? gateBySlug[rest.join(":")] : kind === "eq" ? eqBySlug[rest.join(":")] : kind === "stock" ? stockByCode[rest.join(":")] : kind === "part" ? partByCode[rest.join(":")] : kind === "hull" ? hullBySlug[rest.join(":")] : kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
     let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${icon(e.slug, "big")} ${esc(i.name)}</h2>`;
-    if (kind === "part") { const up2 = e.parent && partByCode[e.parent]; h += `<div class="meta">part${up2 ? ` · of <a data-k="${esc("part:" + up2.slug)}">${esc(up2.identity.code + " " + up2.identity.name)}</a>` : ""} · of the hull <a data-k="${esc("hull:" + e.hull)}">${esc((hullBySlug[e.hull] || { identity: { name: e.hull } }).identity.name)}</a></div>`; }
+    if (kind === "part") { const up2 = e.parent && partByCode[e.parent]; h += `<div class="meta">part${up2 ? ` · of <a data-k="${esc("part:" + up2.slug)}">${esc(up2.identity.code + " " + up2.identity.name)}</a>` : ""} · of <a data-k="${esc(ownerKey(e.hull))}">${esc(hullBySlug[e.hull] ? "the hull " + ownerName(e.hull) : ownerName(e.hull))}</a></div>`; }
     else if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
     for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : kind === "hull" ? DATA.hull_groups : kind === "part" ? DATA.part_groups : kind === "stock" ? DATA.mill_stock_groups : kind === "eq" ? DATA.equipment_groups : kind === "gate" ? DATA.gate_groups : DATA.process_groups)) {
@@ -796,7 +799,17 @@ function detail(k) {
         + `<tr><td>to open it, as power for a year</td><td>${pw(wk.open_energy / 31557600)}</td><td>the same energy spread over a year</td></tr>`
         + `<tr><td>to hold it open</td><td>${pw(wk.hold_power)}, all the time</td><td>its opening over ${Math.round(wk.hold_months)} months</td></tr>`
         + (wk.stations ? `<tr><td>power stations to hold it</td><td>${Math.ceil(wk.stations)} of the <a data-k="${esc("mod:" + wk.station)}">${esc(modBySlug[wk.station].identity.name)}</a> module (${modBySlug[wk.station].rate.power} MW each)</td><td>its holding power</td></tr>` : "")
-        + `</table><h3>Worked out: crossing it, at the natural time</h3><table><tr><th>What crosses</th><th>Mass</th><th>Takes</th><th>Costs</th><th>As power while crossing</th></tr>`
+        + `</table>`
+        + (wk.build ? (() => { const bd = wk.build, days = d => d === null ? "nowhere built to do it" : d >= 730 ? `${(d / 365).toFixed(1)} years` : `${Math.round(d)} days`;
+          return `<h3>Worked out: building one ring</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>`
+            + `<tr><td>the ring's weight</td><td>${kg(bd.mass)}</td><td>its <a data-k="${esc("pg:" + bd.structure)}">parts</a>: guesses, to be reviewed</td></tr>`
+            + bd.stock.map(s => `<tr><td>stock it takes</td><td>${Math.round(s.tonnes).toLocaleString()} t of <a data-k="${esc("stock:" + s.item)}">${esc(stockByCode[s.item].identity.name)}</a></td><td>its parts, with what is cut away</td></tr>`).join("")
+            + (bd.stations ? `<tr><td>power stations mounted on it</td><td>${bd.stations}</td><td>to hold its tube; what a station is made of is not yet said</td></tr>` : "")
+            + (bd.trips ? `<tr><td>to carry its parts to orbit</td><td>${bd.trips.toLocaleString()} loads of ${kg(bd.hold)}</td><td>the largest cargo racks in the registry; no hull is built to haul</td></tr>` : "")
+            + `</table><h3>Worked out: the lines it must pass through, each flat out on nothing else</h3><table><tr><th>Step</th><th>Tonnes</th><th>Where</th><th>At most</th><th>Takes</th></tr>`
+            + bd.steps.map(s => `<tr><td>${esc(s.what)}</td><td class="num">${Math.round(s.tonnes).toLocaleString()} t</td><td>${esc(s.at || "nowhere")}</td><td class="num">${s.rate ? +s.rate.toFixed(1) + " t/h" : ""}</td><td class="num">${days(s.days)}</td></tr>`).join("")
+            + `</table><p class="meta">A gate is two rings, one at each star: twice all of this, and the far one carried there.</p>`; })() : "")
+        + `<h3>Worked out: crossing it, at the natural time</h3><table><tr><th>What crosses</th><th>Mass</th><th>Takes</th><th>Costs</th><th>As power while crossing</th></tr>`
         + wk.crossings.map(c => `<tr><td>${esc(c.what)}</td><td class="num">${kg(c.mass)}</td><td class="num">${dur(c.time)}</td><td class="num">${sci(c.energy)}</td><td class="num">${pw(c.energy / c.time)}</td></tr>`).join("") + `</table><p class="meta">Crossing faster costs steeply more: twice as fast 2.7 times, three times as fast 7 times, five times as fast 55 times.</p>`;
     }
     if (kind === "eq") {
@@ -846,7 +859,7 @@ function detail(k) {
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td>${icon(m.slug)} <a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
   // (What a record of this kind can say: its schema's properties, group by group.)
   const schemaOf = groups => Object.entries(groups).map(([g, props]) => `<tr><th colspan="2">${esc(g.replace(/_/g, " "))}</th></tr>` + Object.entries(props).map(([k, note]) => `<tr><td>${esc(k.replace(/_/g, " "))}</td><td class="meta">${esc(note)}</td></tr>`).join("")).join("");
-  if (s.records === "parts") for (const hl of partHulls(s.id)) h += `<h3><a data-k="${esc("pg:" + hl)}">${esc((hullBySlug[hl] || { identity: { name: hl } }).identity.name)}</a> parts</h3>` + partsTable(topParts(hl), "In one hull");
+  if (s.records === "parts") for (const hl of partHulls(s.id)) h += `<h3><a data-k="${esc("pg:" + hl)}">${esc(ownerName(hl))}</a> parts</h3>` + partsTable(topParts(hl), hullBySlug[hl] ? "In one hull" : "In one");
   if (s.records === "parts") h += `<h3>Properties of a part</h3><p class="meta">Its full specification. A part uses the ones that apply. ${Object.values(DATA.part_groups).reduce((n, g) => n + Object.keys(g).length, 0)} properties.</p><table><tr><th>Property</th><th>Unit or note</th></tr>${schemaOf(DATA.part_groups)}</table>`;
   if (s.records === "gates") { const pw = w => `${(w / 1e9).toFixed(0)} GW`; h += `<h3>Rings</h3><table><tr><th>Ring</th><th>Maker</th><th>Opening</th><th>Span</th><th>To hold, at full span</th></tr>` + gatesUnder(s.id, "").map(x => `<tr><td><a data-k="${esc("gate:" + x.slug)}">${esc(x.identity.name)}</a></td><td>${x.identity.maker ? ownerLink(x.identity.maker) : ""}</td><td class="num">${(x.size.opening / 1000)} km</td><td class="num">${x.performance.span} ly</td><td class="num">${x.worked ? pw(x.worked.hold_power) : ""}</td></tr>`).join("") + `</table><h3>Properties of a gate ring</h3><table><tr><th>Property</th><th>Unit or note</th></tr>${schemaOf(DATA.gate_groups)}</table>`; }
   if (s.records === "equipment") { const eqs = eqUnder(s.id, ""); h += `<h3>Equipment</h3><table><tr><th>Equipment</th><th>Slot</th><th>Maker</th><th>Mass</th><th>Volume</th></tr>` + eqs.map(x => `<tr><td><a data-k="${esc("eq:" + x.slug)}">${esc(x.identity.name)}</a></td><td>${esc(x.identity.slot || "")}</td><td>${x.identity.maker ? ownerLink(x.identity.maker) : ""}</td><td class="num">${(x.physical || {}).mass !== undefined ? kg(x.physical.mass) : ""}</td><td class="num">${(x.physical || {}).volume !== undefined ? x.physical.volume + " m³" : ""}</td></tr>`).join("") + `</table><h3>Properties of a piece of equipment</h3><table><tr><th>Property</th><th>Unit or note</th></tr>${schemaOf(DATA.equipment_groups)}</table>`; }

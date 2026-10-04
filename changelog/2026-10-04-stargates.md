@@ -16,3 +16,7 @@
 - **Upkeep halved:** Dogma's `TUBE_HOLD` is 200 months (was 100): holding a tube costs 0.5% of its
   opening a month. A 5 ly gate holds at 6.1 GW (was 12); a held gate pays from about 5 ships a day
   (was 9).
+- **Building a ring, worked out:** the ring as parts (sixty segments of plate skin over tube frames:
+  guesses, marked to review), 72,700 t; the stock it takes, the power stations to hold its tube, the
+  loads to orbit, and how long each of Treistun's lines needs for it flat out (the yard: 2.7 years).
+  A chain report for the ring shows where it stops: nothing is built to assemble it in orbit.

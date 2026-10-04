@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+identity:
+  code: RING-01-002
+  name: "Frame tube"
+  status: draft
+  description: "A 12 m length of tube. Joined end to end they make the hoop frames the skin is fixed to."
+physical:
+  mass: 821
+  length: 12
+  width: 0.2
+  height: 0.2
+made_from:
+  item: ST4340-TB-200X15
+  quantity: 14.4
+making:
+  processes: [machining]
+fit:
+  count: 503
+basis:
+  - { of: [physical.mass], tier: derived, note: "Its length in the stock it is cut from." }
+  - { of: [physical.length, physical.width, physical.height, made_from, fit], tier: invented, review: true, note: "A guess, to be reviewed: 16 hoop frames to a segment, each 377 m round, in 12 m lengths, and a fifth more machined away. Nothing says what loads the ring carries, so they are not sized." }

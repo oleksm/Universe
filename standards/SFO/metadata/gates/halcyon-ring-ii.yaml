@@ -11,6 +11,12 @@ size:
 performance:
   span: 10
   capture_speed: 300
+built_of:
+  parts: halcyon-ring
+power:
+  station: fusion-power-station
+making:
+  process: ring-assembly
 basis:
   - { of: [size], tier: invented, source: "the game: content/base/sheet.ron (GATE_RADIUS, RING_TUBE)", note: "The game's figures, marked there as tuning. The opening is wide enough for capital ships, which are to come; it is not yet worked out from one." }
   - { of: [performance.span], tier: invented, note: "Chosen: 5, 10 and 25 light years for the three classes (2026-10-04)." }

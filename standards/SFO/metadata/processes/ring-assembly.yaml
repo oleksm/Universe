@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Ring assembly
+  kind: mechanical
+  method: assembly
+  description: "A gate ring put together where it is to stand, in orbit: panels and frames joined into segments, segments into the ring, its power stations mounted on it."
+rate:
+  mode: batch
