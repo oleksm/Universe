@@ -189,9 +189,11 @@ const partHulls = id => [...new Set(DATA.parts.filter(p => p.under === id).map(p
 const stockUnder = (id, q) => DATA.mill_stock.filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.code} ${x.identity.name}`.toLowerCase().includes(w))));
 const stockByCode = Object.fromEntries(DATA.mill_stock.map(x => [x.slug, x]));
 const perUnit = x => x.unit === "kg" ? "by weight" : `${+x.weight.toPrecision(3)} kg/${x.unit === "m2" ? "m²" : "m"}`;
-// A table of parts: code, name, how many, description, what each is made of.
-const partsTable = (ps, countHead) => { const size = p => { const f = p.physical || {}; return f.length !== undefined ? `${f.length} × ${f.width} × ${f.height} m` : ""; }; const any = k => ps.some(k);
-  return `<table><tr><th>Code</th><th>Part</th><th>${countHead}</th><th>Length × width × height</th><th>Surface</th>${any(p => p.identity.description) ? "<th>Description</th>" : ""}<th>Made of</th>${any(p => (p.physical || {}).mass !== undefined || p.parts_mass !== undefined) ? "<th>Mass</th>" : ""}</tr>` + ps.map(p => { const subs = subParts(p.slug), st = stockByCode[(p.made_from || {}).item]; return `<tr><td style="white-space:nowrap">${esc(p.identity.code)}</td><td><a data-k="${esc("part:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${(p.fit || {}).count || ""}</td><td style="white-space:nowrap">${size(p)}</td><td style="white-space:nowrap">${(p.shape || {}).surface_area !== undefined ? p.shape.surface_area.toLocaleString() + " m²" : ""}</td>${any(q2 => q2.identity.description) ? `<td>${esc(p.identity.description || "")}</td>` : ""}<td>${subs.length ? `${subs.length} parts` : st ? `<a data-k="${esc("stock:" + st.slug)}">${esc(st.identity.name)}</a>` : `<span class="meta">not yet said</span>`}</td>${any(q2 => (q2.physical || {}).mass !== undefined || q2.parts_mass !== undefined) ? `<td>${(p.physical || {}).mass !== undefined ? p.physical.mass + " kg" : p.parts_mass !== undefined ? (+p.parts_mass.toPrecision(5)).toLocaleString() + " kg" : ""}</td>` : ""}</tr>`; }).join("") + `</table>`; };
+const kg = v => v >= 1000 ? `${(+(v / 1000).toPrecision(3)).toLocaleString()} t` : `${(+v.toPrecision(3)).toLocaleString()} kg`;
+// A table of parts: code, name, how many, size, mass (each, and all of them), what each is made of.
+const partsTable = (ps, countHead) => { const size = p => { const f = p.physical || {}; return f.length !== undefined ? `${f.length} × ${f.width} × ${f.height} m` : ""; }; const any = k => ps.some(k), n = p => (p.fit || {}).count || 1;
+  const all = ps.reduce((s, p) => s + (p.mass || 0) * n(p), 0);
+  return `<table><tr><th>Code</th><th>Part</th><th>${countHead}</th><th>Mass of one</th><th>Mass of all</th><th>Length × width × height</th><th>Surface</th>${any(p => p.identity.description) ? "<th>Description</th>" : ""}<th>Made of</th></tr>` + ps.map(p => { const subs = subParts(p.slug), st = stockByCode[(p.made_from || {}).item]; return `<tr><td style="white-space:nowrap">${esc(p.identity.code)}</td><td><a data-k="${esc("part:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${n(p)}</td><td style="white-space:nowrap">${p.mass !== undefined ? kg(p.mass) : ""}</td><td style="white-space:nowrap">${p.mass !== undefined ? kg(p.mass * n(p)) : ""}</td><td style="white-space:nowrap">${size(p)}</td><td style="white-space:nowrap">${(p.shape || {}).surface_area !== undefined ? p.shape.surface_area.toLocaleString() + " m²" : ""}</td>${any(q2 => q2.identity.description) ? `<td>${esc(p.identity.description || "")}</td>` : ""}<td>${subs.length ? `${subs.length} parts` : st ? `<a data-k="${esc("stock:" + st.slug)}">${esc(st.identity.name)}</a>` : `<span class="meta">not yet said</span>`}</td></tr>`; }).join("") + `<tr><th>Total</th><th>${ps.length} parts</th><th>${ps.reduce((s, p) => s + n(p), 0)}</th><th></th><th>${all ? kg(all) : ""}</th><th></th><th></th>${any(p => p.identity.description) ? "<th></th>" : ""}<th></th></tr></table>`; };
 // And the hulls.
 const hullMatches = (x, q) => !q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.description || ""}`.toLowerCase().includes(w));
 const hullsUnder = (id, q) => DATA.hulls.filter(x => x.under === id && hullMatches(x, q));
@@ -647,7 +649,7 @@ function detail(k) {
   }
   if (kind === "pg") {
     const hl = hullBySlug[rest[0]], tops = topParts(rest[0]); if (!tops.length) return "";
-    return `<h2>${esc(hl ? hl.identity.name : rest[0])} parts</h2><div class="meta">the parts of the hull ${hl ? `<a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : esc(rest[0])}</div>` + partsTable(tops, "In one hull");
+    return `<h2>${esc(hl ? hl.identity.name : rest[0])} parts</h2><div class="meta">the parts of the hull ${hl ? `<a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : esc(rest[0])}</div>` + partsTable(tops, "In one hull") + (hl && hl.estimate && hl.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(hl.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, at ${+hl.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
@@ -699,12 +701,14 @@ function detail(k) {
     if (kind === "part") {
       const subs = subParts(e.slug), n = (e.fit || {}).count || 1;
       h += `<h3>Made of</h3>` + (subs.length ? partsTable(subs, "In one") : (e.made_from || {}).item ? `<p class="meta">Cut from mill stock: see above.</p>` : `<p class="meta">Not yet said: no parts under it, and no mill stock named.</p>`);
-      if (e.parts_mass !== undefined) h += `<h3>Worked out from its parts</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>mass of one</td><td>${(+e.parts_mass.toPrecision(5)).toLocaleString()} kg</td><td>its parts, each as many times as it has them (${e.parts_weighed[0]} of ${e.parts_weighed[1]} have a mass)</td></tr><tr><td>mass in all</td><td>${(+(e.parts_mass * n).toPrecision(5)).toLocaleString()} kg</td><td>${n} of it</td></tr></table>`;
+      const hl = hullBySlug[e.hull] || {}, est = hl.estimate || {};
+      const from = { said: "its own record", parts: "its parts, each as many times as it has them", share: `an estimate: its surface, at ${+(est.per_m2 || 0).toPrecision(3)} kg for each m² (the hull's frame mass in the game, shared over all its parts' surface)` }[e.mass_from];
+      if (e.mass !== undefined) h = h.replace(`<h3>Made of</h3>`, `<h3>Mass</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>mass of one</td><td>${kg(e.mass)}</td><td>${esc(from)}</td></tr>${n > 1 ? `<tr><td>mass of all ${n}</td><td>${kg(e.mass * n)}</td><td>${n} of it</td></tr>` : ""}</table><h3>Made of</h3>`);
     }
     if (kind === "hull") {
       // What it is made of: its parts.
       const cs = topParts(e.slug);
-      if (cs.length) h += `<h3>What it is made of</h3>` + partsTable(cs, "In one hull");
+      if (cs.length) h += `<h3>What it is made of</h3>` + partsTable(cs, "In one hull") + (e.estimate && e.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(e.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, ${Math.round(e.estimate.surface).toLocaleString()} m² in all, which comes to ${+e.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
     }
     if (kind === "good" || kind === "el" || kind === "mat") {
       const id = kind === "el" ? e.identity.symbol : e.slug;

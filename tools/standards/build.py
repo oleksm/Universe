@@ -984,13 +984,31 @@ for ms in mill_stock:
 # (What a part names must be there: its mill stock, its processes, its designer, the standards it is
 # built to, the parts it joins or stands in for. What its stock weighs follows from the quantity.)
 codes = {pt["slug"] for pt in parts}
-# (A part made of parts: its mass is theirs, each as many times as it has them.)
-for c in parts:
-    mine = [pt for pt in parts if pt.get("parent") == c["slug"]]
-    known = [pt for pt in mine if (pt.get("physical") or {}).get("mass") is not None]
-    if known:
-        c["parts_mass"] = sum(pt["physical"]["mass"] * (pt.get("fit") or {}).get("count", 1) for pt in known)
-        c["parts_weighed"] = [len(known), len(mine)]
+# Mass. A part that says its own mass has it. One that doesn't is given its share of what is left of
+# its hull's frame mass (the game's figure), by its surface: an estimate, until what it is cut from
+# says better. A part made of parts weighs what they do, each as many times as it has them.
+kids = lambda c: [pt for pt in parts if pt.get("parent") == c["slug"]]
+times = lambda pt: (pt.get("fit") or {}).get("count", 1)
+for hl in hulls:
+    mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
+    leaves = [pt for pt in mine if not kids(pt)]
+    each = lambda pt: times(pt) * (times(next(o for o in mine if o["slug"] == pt["parent"])) if pt.get("parent") else 1)
+    frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
+    said = sum((pt.get("physical") or {}).get("mass", 0) * each(pt) for pt in leaves)
+    rest = [pt for pt in leaves if (pt.get("physical") or {}).get("mass") is None and (pt.get("shape") or {}).get("surface_area")]
+    surface = sum(pt["shape"]["surface_area"] * each(pt) for pt in rest)
+    per_m2 = (frame - said) / surface if surface and frame > said else 0
+    hl["estimate"] = {"per_m2": per_m2, "surface": surface, "said": said}
+    for pt in leaves:
+        if (pt.get("physical") or {}).get("mass") is not None:
+            pt["mass"], pt["mass_from"] = pt["physical"]["mass"], "said"
+        elif pt in rest and per_m2:
+            pt["mass"], pt["mass_from"] = pt["shape"]["surface_area"] * per_m2, "share"
+    for c in mine:
+        if kids(c) and all("mass" in k for k in kids(c)):
+            c["mass"], c["mass_from"] = sum(k["mass"] * times(k) for k in kids(c)), "parts"
+    hl["parts_mass"] = sum(pt["mass"] * times(pt) for pt in mine if not pt.get("parent") and "mass" in pt)
+codes = {pt["slug"] for pt in parts}
 for pt in parts:
     where = os.path.join(TREE, pt["file"])
     mf, ident = pt.get("made_from") or {}, pt.get("identity") or {}
