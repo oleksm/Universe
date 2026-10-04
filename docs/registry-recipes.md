@@ -16,91 +16,87 @@ places, none of them complete:
 
 ## One model, for everything made
 
-Four records, the same for a tonne of alumina, a plate, a hull part or a gate ring. No split by
-industry.
+*Revised after the user's correction: a recipe belongs to the module, and a setup is what runs.*
+
+The same for a tonne of alumina, a plate, a hull part or a gate ring. No split by industry.
 
 | Record | What it is | What it holds |
 |---|---|---|
 | **Item** | A thing: a good, a stock item, a part, a hull, a piece of equipment | What it is. Not how it is made. |
-| **Recipe** | One way of making one item | `makes`, `inputs`, `steps`, `outputs`, `changeover` |
-| **Module** | A machine | Its limits (size, most it can push through, power) and its **range**: what it can be set to |
+| **Module** | A machine: one step of a line | Its limits (size, power, the most it can push through) and its **recipes**: everything it can be set to make |
+| **Recipe** | One thing a module can be set to make. It is the module's, written in the module's record. | `makes`, `inputs`, `outputs`, `rate`, `power`, `changeover` |
 | **Process** | A method, as knowledge | The science: what happens, at what temperature, with its sources. No quantities for a plant. |
 
-And one thing that is **not** in the registry:
+And what runs, which is **not** in the registry:
 
 | Game state | What it is |
 |---|---|
-| **Campaign** | Which recipe a line is running now. Its owner decides. Switching is a changeover. |
+| **Setup** | A module set to one of its recipes. It takes that recipe's inputs and gives that recipe's item. Its owner chooses it; changing it is a changeover. |
 
-### A recipe
+A module can make several things; at any moment its setup says which one.
+
+### A module with its recipes
 
 ```yaml
 identity:
-  key: recipe.al6061-plate
-  name: "6061 plate, rolled"
-makes: stock.al6061-pl-5          # one item; or a family (see "Open" below)
-inputs:                           # per kg of what it makes, all steps together
-  - { item: stock.al6061-ingot, quantity: 1.524 }
-steps:                            # in order
-  - { process: process.rolling, module: module.reheat-furnace,    does: "Heated through to rolling temperature.", rate: 33.3 }
-  - { process: process.rolling, module: module.hot-rolling-mill,  does: "Squeezed into a long thick strip.",      rate: 27.8, yield: 0.82 }
-  - { process: process.rolling, module: module.cold-rolling-mill, does: "Rolled cold to its final thickness.",    rate: 16.7, yield: 0.84 }
-  - { process: process.rolling, module: module.finishing-line,    does: "Levelled, tempered, cut.",               rate: 16.7, yield: 0.95 }
-outputs:                          # besides what it makes, per kg of it
-  - { item: good.scrap, quantity: 0.524 }
-changeover: {}                    # time and loss to switch a line to this recipe: not known yet
+  key: module.cold-rolling-mill
+  name: Cold rolling mill
+physical: { length: 150, width: 40, height: 15 }
+recipes:
+  - makes: good.cold-rolled-strip         # today's one fixed output, as it stands
+    process: process.rolling
+    inputs:  [{ item: good.hot-rolled-strip, quantity: 1.19 }]     # per kg of what it makes
+    outputs: [{ item: good.scrap, quantity: 0.19 }]
+    rate: 16.7                            # kg/s, set to this
+    power: 38000000                       # W, set to this
+    changeover: {}                        # time and loss to set it to this: not known yet
+  # a second recipe is a second thing it can be set to: another metal, another gauge
 ```
 
-Every figure in that example is in the registry today (the four modules' throughputs in kg/s and
-their inputs per unit of output); it only moves. `changeover` has no figure yet and is left empty.
+Every figure there is the module's own today (`rate.throughput`, `inputs.materials`,
+`outputs.by_products`, `needs.power`); it only moves under a recipe. A module that has one recipe
+today has one after; more are added as they are known.
 
-- **A step** is a process done on a kind of module, with what that step is set to: its rate for
-  this item, its yield, and any setting the method needs (temperature, passes).
-- **Rate** is the recipe's, capped by the module's maximum. The line's rate is its slowest step.
-- **Power** stays the module's.
-- **More than one recipe may make the same item**: steel from ore or from scrap, aluminium from
-  bauxite or from anorthosite. This is why a recipe is its own record and not a group on the item.
-
-### A module's range
-
-```yaml
-range:
-  - { form: plate, materials: [material.aluminium-alloy-6061, material.structural-steel-a36], thickness: [0.003, 0.15], width: [0, 4] }
-```
-
-What it can be set to make: a form, the materials, the sizes. A line can run a recipe if, for
-each step, it has a module of that kind whose range covers the item. No range figures exist
-yet; they are to be sourced or guessed, marked for review.
+- **A line** (a facility's, a rig's) is modules in order. Each has its own setup. What one gives is
+  what the next takes: a line makes plate when each of its modules is set to the recipe that feeds
+  the next.
+- **What a module can make** is its list of recipes. There is no separate `range`.
+- **More than one module may make the same item**, by different recipes: steel from ore in one,
+  from scrap in another.
 
 ### What decides
 
-The owner of the line, a player or an NPC, by choosing a campaign. The registry says what is
-possible (range and recipe) and what switching costs (changeover). It never says what is made.
+The owner of the module, a player or an NPC, by choosing its setup. The registry says what each
+module can be set to and what switching costs. It never says what is made. The seeded world's
+starting setups are seed state, written with the facility that has the module.
 
 ## What moves
 
 | Today | Becomes |
 |---|---|
-| `module.inputs`, `module.outputs`, `module.rate.product` | the steps of recipes; the module keeps `rate` as a maximum and gains `range` |
-| `process.inputs`, `outputs`, `energy`, `rate` (quantities) | recipes; the process keeps what is known of the method, and its sources |
-| `process.equipment.steps` | `recipe.steps` |
-| `item.made_from`, `item.making` (parts, mill stock, hulls, gates) | a recipe for that item: `inputs` and `steps` |
-| the nine goods that are forms of stock (ingot, bar, tube, sheet-and-plate, parts, hulls, forgings, cut-blanks, formed-panels) | gone: a recipe names the stock item it makes |
-| a facility line's `process` and `also` | the recipes the line is built to run |
-| `content/base/recipes.ron` (hand-written) | generated from these |
+| `module.inputs`, `module.outputs`, `module.rate`, `module.needs.power` | the module's first recipe |
+| `process.inputs`, `outputs`, `energy`, `rate` (quantities) | kept only where a module's recipe does not already say it, then moved to the module that does the step; the process keeps what is known of the method, and its sources |
+| `process.equipment.steps` | which modules, in order, a line needs: stays with the process as its outline |
+| `item.made_from`, `item.making` (parts, mill stock, hulls, gates) | a recipe on the module that makes it (a plate: the finishing line; a part: the shop's module; a hull: the building dock) |
+| the nine goods that are forms of stock (ingot, bar, tube, sheet-and-plate, parts, hulls, forgings, cut-blanks, formed-panels) | gone where a recipe names the stock item itself; the ones that pass between modules (hot ingot, strip) stay as items |
+| a facility line's `process` and `also` | the line's modules; what each is set to is its setup |
+| `content/base/recipes.ron` (hand-written) | generated from the modules' recipes |
 
-This answers items 6 and 7 of the SSOT request: a module's output is not a good and not one stock
-item, it is whatever recipe it is set to; and flows live in one place, the recipe.
+This answers items 6 and 7 of the SSOT request: a module's output is whatever recipe it is set
+to, and flows live in one place, the module's recipes.
 
 ## Open
 
-1. **One item or a family.** `makes` one stock item is exact; 6061 plate in five gauges is then
-   five recipes that differ in one number. A family (`makes` a material and a form, the size a
-   parameter) is fewer. Proposal: start with one item each, since there are nine stock items, and
-   add families when the count hurts.
-2. **Parts.** 185 parts each have their own input quantity, so each is its own recipe. They can be
-   written from `made_from` and `making` as they stand, with no new figures.
-3. **Who owns a recipe.** A recipe could be a maker's product, published and licensed, as a
-   blueprint is. Proposal: allow `identity.maker`, leave it empty for now.
+1. **How many recipes a module carries.** A recipe for each stock item is exact; a finishing line
+   that cuts plate in five gauges then has five recipes that differ in one number. Proposal: one
+   recipe for each item for now (there are nine stock items), and a recipe that takes a size as a
+   parameter when the count hurts.
+2. **Parts.** 185 parts, each with its own input quantity: 185 recipes on the shop modules that
+   make them (plate work, machining). They can be written from `made_from` and `making` as they
+   stand, with no new figures. Kept in files beside the module, as parts are kept beside a hull,
+   so a module's record stays readable.
+3. **What passes between modules.** Hot ingot and strip are of one metal or another. Either an
+   item for each metal, or one item with the metal carried along. Proposal: decide when a second
+   metal goes down the same line.
 4. **Order of work.** The MC-07's chain first (rock to hull), since its figures are all there,
    and the chain report is the check that nothing was lost.
