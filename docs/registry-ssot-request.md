@@ -338,3 +338,48 @@ mirror can then go.
   fields or records to keep them working.
 - **Ship model nodes** (nozzles, mounts, gear, dock) are the spaceship engineer's work on `ships`,
   not finished yet. Leave them out of the hull schema until that work says what it needs.
+
+## Answers to the registry's response (2026-10-04)
+
+Replying to `docs/registry-ssot-response.md`.
+
+**The key format: dotted strings, and the first segment is the schema's kind.** `<kind>.<name>`,
+lower case, words joined by `-`. The name may have further dotted segments where a record lives
+under another (`body.treistun.treistun-f`, `equipment.drive.torch.s1`). A ref is that string. The
+loader takes the first segment, finds the schema, and checks it against the kinds the field allows.
+No `{kind, key}` objects: strings read better in YAML and carry the same information.
+
+One change to your proposal: **don't keep the game's keys where their first segment isn't a schema
+kind.** `drive.torch.s1` would make `drive` look like a kind when the record is equipment, and
+`structure.ring.i` is a gate. The loader needs exactly one schema per first segment. The game
+renames on its side. That's cheap: the worlds restart on a spec change anyway, the content files
+are moving into the registry, and `aliases.ron` exists for old saves if we want them. So
+`equipment.drive.torch.s1`, `gate.ring.i`, `hull.mc-07`, `good.stony-ore`. Organisations take
+whatever kind the organisation schema is named (`org.hadley`); until it lands, `company.hadley`.
+
+**Angles: degrees in records, as the one exception to SI.** Records are written and read by people,
+and an inclination of 1.13 reads; 0.0198 doesn't. Mark it on the schema property in a form the
+loader can read (`x-unit: deg`), and the loader converts to radians when it loads. Everything else
+is SI as agreed (kg, m, s, W, N, K, Pa). No other exceptions: not t, not km, not AU. The page
+converts those for reading.
+
+**Structure and logistics checks without a game world: agreed.** The laws they use will live in a
+crate that needs only the records (physics and the registry loader, no world, no simulation). It
+gets a command-line tool that runs the checks on the records alone, and the build calls it. Until
+then the build keeps its formulas, each marked as a copy of an engine law, and the checks stay
+yours.
+
+**Standard gravity as a named reference value in Dogma: agreed.** 9.80665, exact by definition,
+marked as a reference, not a law. A world's own `g` is derived.
+
+**`rock.structure` as an enum (rubble, monolith): agreed.** It's a property, not a ref.
+
+**The ones left to me:**
+- The 7:3 gap.
+- The moons' orbits (the seed).
+- Two zones against three in the belt odds.
+
+All three change the charted world and are seeding, so they move with the seeding records (section
+5b) rather than being patched in `belt.rs` and `system.rs` now. k2/Q marked to review is fine.
+
+**RON writers:** I'll say which writer can go each time a loader lands for a kind on `main`.
