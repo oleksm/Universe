@@ -480,13 +480,26 @@ pub fn enclosed(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64, head: f64, solid
     let at = DVec3::new(p.x, y, p.y);
     let reach = (mesh.hi - mesh.lo).length() + 1.0;
     let front = |dir: DVec3| mesh.ray_face(at, dir, reach).filter(|(_, n)| solid || n.dot(dir) < 0.0).map(|(d, _)| d);
-    if !front(DVec3::Y).is_some_and(|d| d >= head) || front(-DVec3::Y).is_none() {
+    if !roofed(mesh, p, y, head, solid) {
         return false;
     }
     let d = std::f64::consts::FRAC_1_SQRT_2;
     let round = [(1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0), (d, d), (d, -d), (-d, d), (-d, -d)];
     round.iter().filter(|(x, z)| front(DVec3::new(*x, 0.0, *z)).is_some()).count() >= 7
 }
+
+/// `enclosed` overhead and underfoot only: under the hull's roof, whatever's round
+/// about (a doorway in its side, under its lintel and over its sill).
+pub fn roofed(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64, head: f64, solid: bool) -> bool {
+    let at = DVec3::new(p.x, y, p.y);
+    let reach = (mesh.hi - mesh.lo).length() + 1.0;
+    let front = |dir: DVec3| mesh.ray_face(at, dir, reach).filter(|(_, n)| solid || n.dot(dir) < 0.0).map(|(d, _)| d);
+    front(DVec3::Y).is_some_and(|d| d >= head) && front(-DVec3::Y).is_some()
+}
+
+/// How far a floor runs on from where the hull closes a person in, under its roof
+/// (m): out through a doorway to its threshold.
+pub const RUN_ON: f64 = 1.5;
 
 /// Half a person's width (m): a floor is only where they fit.
 pub const BODY: f64 = 0.3;
@@ -501,18 +514,58 @@ pub const BODY: f64 = 0.3;
 pub fn fill(mesh: &crate::walk::WalkMesh, floor: f64) -> Vec<Vec<DVec2>> {
     // (Asked on a coarser grid, 25 cm, each answer kept; near an edge, where the
     // answers round about differ, asked again at the spot itself.)
+    // (Each spot: 2 closed in, 1 only under the roof, 0 neither.)
     const COARSE: f64 = 0.25;
-    let person = |c: DVec2| enclosed(mesh, c, floor + 1.0, 0.9, false) && enclosed(mesh, c, floor + 0.1, 0.0, true) && enclosed(mesh, c, floor - DECK + 0.05, 0.0, true);
-    let mut asked: std::collections::HashMap<(i64, i64), bool> = std::collections::HashMap::new();
-    let keep = |p: DVec2| {
+    let levels = [(floor + 1.0, 0.9, false), (floor + 0.1, 0.0, true), (floor - DECK + 0.05, 0.0, true)];
+    let person = |c: DVec2| -> u8 {
+        if !levels.iter().all(|&(y, head, solid)| roofed(mesh, c, y, head, solid)) {
+            0
+        } else if levels.iter().all(|&(y, head, solid)| enclosed(mesh, c, y, head, solid)) {
+            2
+        } else {
+            1
+        }
+    };
+    let mut asked: std::collections::HashMap<(i64, i64), u8> = std::collections::HashMap::new();
+    let mut fine: std::collections::HashMap<(i64, i64), u8> = std::collections::HashMap::new();
+    let mut class = |p: DVec2| {
         let (i, j) = ((p.x / COARSE).floor() as i64, (p.y / COARSE).floor() as i64);
         let mut coarse = |i: i64, j: i64| *asked.entry((i, j)).or_insert_with(|| person(DVec2::new((i as f64 + 0.5) * COARSE, (j as f64 + 0.5) * COARSE)));
         let here = coarse(i, j);
         let edge = [(1, 0), (-1, 0), (0, 1), (0, -1)].iter().any(|(di, dj)| coarse(i + di, j + dj) != here);
-        if edge { person(p) } else { here }
+        if edge { *fine.entry(((p.x / CELL).floor() as i64, (p.y / CELL).floor() as i64)).or_insert_with(|| person(p)) } else { here }
     };
     let sides = deck_sides(mesh, floor);
-    let Some(mut g) = Ground::where_(&sides, &[], keep) else { return Vec::new() };
+    let Some(mut g) = Ground::where_(&sides, &[], |p| class(p) > 0) else { return Vec::new() };
+    let classes: Vec<u8> = (0..g.nx * g.nz).map(|k| if g.open[k] { class(g.centre(k % g.nx, k / g.nx)) } else { 0 }).collect();
+    // Closed in, and on from there under the roof as far as `RUN_ON`.
+    {
+        let (nx, nz) = (g.nx, g.nz);
+        let mut far = vec![usize::MAX; nx * nz];
+        let mut todo = std::collections::VecDeque::new();
+        for (k, c) in classes.iter().enumerate() {
+            if *c == 2 && g.open[k] {
+                far[k] = 0;
+                todo.push_back(k);
+            }
+        }
+        let most = (RUN_ON / CELL).round() as usize;
+        while let Some(k) = todo.pop_front() {
+            if far[k] >= most {
+                continue;
+            }
+            let (i, j) = (k % nx, k / nx);
+            for (a, b) in [(i + 1, j), (i.wrapping_sub(1), j), (i, j + 1), (i, j.wrapping_sub(1))] {
+                if a < nx && b < nz && g.open[b * nx + a] && far[b * nx + a] == usize::MAX {
+                    far[b * nx + a] = far[k] + 1;
+                    todo.push_back(b * nx + a);
+                }
+            }
+        }
+        for (o, f) in g.open.iter_mut().zip(&far) {
+            *o &= *f != usize::MAX;
+        }
+    }
     // Where a person fits: open all round within `BODY`.
     let (nx, nz) = (g.nx, g.nz);
     let reach = (BODY / CELL).round() as isize;

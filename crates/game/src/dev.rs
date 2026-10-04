@@ -1191,7 +1191,7 @@ pub fn apply(app: &mut App, name: &str) {
                 let sides = universe_sim::world::deckplan::deck_sides(&mesh, d.floor);
                 let areas: Vec<String> = d.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
                 log::info!("scenario layoutlook: deck at {:.1} m up, floors m2 {}", d.floor - mesh.lo.y, areas.join(" "));
-                // (Any slab corner out in the open: a floor poking through the hull.)
+                // (Any slab corner not under the hull and over it: a floor poking out through it.)
                 let mut out = 0;
                 let mut all = 0;
                 for p in &d.planes {
@@ -1199,14 +1199,14 @@ pub fn apply(app: &mut App, name: &str) {
                         for (x, z) in [(x0 + 0.05, z0 + 0.02), (x1 - 0.05, z0 + 0.02), (x0 + 0.05, z1 - 0.02), (x1 - 0.05, z1 - 0.02)] {
                             for y in [d.floor - universe_sim::world::deckplan::DECK + 0.02, d.floor - 0.02] {
                                 all += 1;
-                                if !universe_sim::world::deckplan::enclosed(&mesh, universe_engine::glam::DVec2::new(x, z), y, 0.0, true) {
+                                if !universe_sim::world::deckplan::roofed(&mesh, universe_engine::glam::DVec2::new(x, z), y, 0.0, true) {
                                     out += 1;
                                 }
                             }
                         }
                     }
                 }
-                log::info!("scenario layoutlook:   slab corners out in the open: {out} of {all}");
+                log::info!("scenario layoutlook:   slab corners out from under the hull: {out} of {all}");
             }
             app.engine.universe().set_layout(&plan);
             app.deckplans.retain(|p| p.hull != plan.hull);
@@ -1231,8 +1231,18 @@ pub fn apply(app: &mut App, name: &str) {
                 [x, z, yaw, pitch] => (x, z, yaw, pitch),
                 _ => (0.0, 4.0, 0.0, 0.05),
             };
+            // (UNIVERSE_FLOOR=m: one deck that far up from the keel, filled, instead.)
+            let mut plan = demo_plan(app);
+            let mut floor = floor;
+            if let Some(up) = std::env::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
+                && let Some(mesh) = app.ship.spec().shape().walk.clone()
+            {
+                floor = mesh.lo.y + up;
+                let mut d = universe_sim::world::deckplan::Deck::at(floor);
+                d.planes = universe_sim::world::deckplan::fill(&mesh, floor);
+                plan.decks = vec![d];
+            }
             let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
-            let plan = demo_plan(app);
             app.engine.universe().set_layout(&plan);
             app.engine.universe().preview(Some(at));
             app.preview = app.shipyard.take().map(|_| Default::default());
@@ -1282,6 +1292,12 @@ pub fn apply(app: &mut App, name: &str) {
                     let last = plan.decks.last().expect("a deck");
                     let deck = universe_sim::world::deckplan::Deck { floor: last.floor + 2.9, headroom: last.headroom, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() };
                     plan.decks.push(deck);
+                }
+                // (UNIVERSE_FLOOR=m: deck 1 that far up from the keel, alone.)
+                if let Some(up) = std::env::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
+                    && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
+                {
+                    plan.decks = vec![universe_sim::world::deckplan::Deck::at(mesh.lo.y + up)];
                 }
                 // (UNIVERSE_FILL: deck 1 filled, as the floors' FILL button does.)
                 if std::env::var_os("UNIVERSE_FILL").is_some()
