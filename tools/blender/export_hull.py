@@ -1,12 +1,13 @@
 """A hull designed in Blender, into the game: its .blend as it stands, exported as a .glb with
 the import conventions (docs/ship-import.md).
 
-    blender -b design.blend -P tools/blender/export_hull.py -- assets/models/out.glb \
+    blender -b -y design.blend -P tools/blender/export_hull.py -- assets/models/out.glb \
         [--frame 50] [--name "MC-07"] [--class 3] [--bake 4096]
 
 Run it again whenever the design changes. The .blend isn't changed (nothing is saved).
 
-- **The pose:** the scene at `--frame` (its rig's state there: gear down, doors shut, say).
+- **The pose:** the scene at `--frame` as Blender has it there (its rig's state: gear down,
+  doors shut, say). `-y` lets a rig's Python drivers run, as they do in the open file.
 - **Left out:** lights, cameras, and whatever doesn't render (boolean cutters, volumes).
 - **Conventions:** nodes the file has (`COL_*` meshes, `nozzle_*`, `gear_*`, `hatch`,
   `cockpit`, `mount_*` empties) are used as they are. Any kind it hasn't, this places from the
@@ -49,8 +50,16 @@ if "--frame" in opt:
             curves = [fc for layer in a.layers for strip in layer.strips for bag in strip.channelbags for fc in bag.fcurves]
         held = []
         for fc in curves:
+            # (The value as the scene has it at this frame, not the curve's: a curve Blender
+            # isn't applying would force a pose the scene doesn't show, as the MC-07's demo
+            # sequence stowed its jackhammers while the file had them deployed.)
             try:
-                held.append((fc.data_path, fc.array_index, fc.evaluate(scene.frame_current)))
+                if fc.data_path.startswith('["'):
+                    v = o[fc.data_path[2:-2]]
+                else:
+                    target = o.path_resolve(fc.data_path)
+                    v = target[fc.array_index] if hasattr(target, "__len__") and not isinstance(target, str) else target
+                held.append((fc.data_path, fc.array_index, v))
             except Exception:
                 pass
         ad.action = None

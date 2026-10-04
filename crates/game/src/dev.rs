@@ -65,7 +65,15 @@ pub fn apply(app: &mut App, name: &str) {
             let u = app.engine.universe();
             // (Our own hull, standing on its own feet.)
             let class = u.ship.class;
-            let mut ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 0);
+            // (A pad no ship stands on.)
+            let body = sys.spaceports[port].body;
+            let r = sys.bodies[body].rail.radius;
+            let taken = |k: usize| {
+                let d = universe_sim::world::spaceport::pad_direction(&sys, port, k);
+                u.crafts.iter().any(|c| matches!(c.ship.state, ShipState::Landed { body: b, local_position, .. } if b == body && local_position.normalize().angle_between(d) * r < 60.0))
+            };
+            let pad = (0..universe_sim::world::spaceport::PADS).find(|&k| !taken(k)).unwrap_or(0);
+            let mut ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), pad);
             ship.class = class;
             ship.refresh();
             u.world.resettle(home, &mut ship);
