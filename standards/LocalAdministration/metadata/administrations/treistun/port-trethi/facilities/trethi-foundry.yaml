@@ -11,19 +11,16 @@ processes:
   - quenching-and-tempering
   - annealing
   - solution-treating-and-ageing
-# What it is to make: 1,800 t of steel ingot a day. Chosen so that one of each steelmaking module
-# is enough, all but the hydrogen plant.
-production:
-  - { process: steelmaking, output: 75 }
-power: trethi-power-station
-# Where each thing it takes comes from, and where each thing it gives goes. Through the port:
-# brought or taken by ship.
-flows:
-  - { item: iron-ore, from: port }
-  - { item: lime, from: port }
-  - { item: C, from: port }
-  - { item: graphite-electrode, from: port }
-  - { item: Ar, from: port }
-  - { item: water, from: port }
-  - { item: ingot, to: port }
-  - { item: O, to: port }
+# What it is built of. What it can make at most follows from this; what it does make is the
+# economy's business.
+lines:
+  - process: steelmaking
+    modules:
+      - { module: ore-yard, count: 1 }
+      - { module: pellet-plant, count: 1 }
+      - { module: hydrogen-plant, count: 3 }
+      - { module: shaft-furnace, count: 1 }
+      - { module: arc-furnace, count: 1 }
+      - { module: ladle-station, count: 1 }
+      - { module: casting-bay, count: 1 }
+      - { module: ingot-yard, count: 1 }

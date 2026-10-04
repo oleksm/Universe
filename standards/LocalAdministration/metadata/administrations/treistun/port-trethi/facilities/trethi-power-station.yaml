@@ -4,5 +4,3 @@ kind: power
 parcel: 2
 modules:
   - { module: fusion-power-station, count: 1 }
-flows:
-  - { item: deuterium, from: port }

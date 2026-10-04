@@ -11,16 +11,24 @@ properties:
   kind: { enum: [foundry, mill, power] }
   parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }
   processes: { type: array, items: { type: string }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
-  production:
-    description: 'What it is to make: for each process, the output it is built for. The modules it needs, its supplies, by-products, power and ground are worked out from the process''s steps and their modules (SFO 10).'
+  lines:
+    description: 'Its production lines: for each, the process it runs and the industrial modules (SFO 10) it is built of. What the line can make at most, and what it then takes in, gives off, draws and covers, are worked out from them. What it does make is the economy''s business, not recorded here.'
     type: array
     items:
       type: object
       additionalProperties: false
-      required: [process, output]
+      required: [process, modules]
       properties:
         process: { type: string, description: 'One of its processes, one that has steps.' }
-        output: { type: number, description: 't/h of the product of the process''s last making step' }
+        modules:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [module, count]
+            properties:
+              module: { type: string, description: 'One of the modules of the process''s steps.' }
+              count: { type: integer, minimum: 1 }
   modules:
     description: 'The industrial modules (SFO 10) it is built of, where its production does not say: a power station''s.'
     type: array
@@ -31,18 +39,6 @@ properties:
       properties:
         module: { type: string }
         count: { type: integer, minimum: 1 }
-  power: { type: string, description: 'The power station of its settlement it draws from, by file name.' }
-  flows:
-    description: 'Where each thing it takes comes from and where each thing it gives goes: the port (by ship), or another facility of its settlement by file name.'
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [item]
-      properties:
-        item: { type: string, description: "An element's symbol, or a material's or a good's file name." }
-        from: { type: string }
-        to: { type: string }
   parts:
     description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'
     type: array

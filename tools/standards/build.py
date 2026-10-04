@@ -349,7 +349,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "production", "modules", "power", "flows"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -680,77 +680,79 @@ def plan(pr, output):
     }
 
 
+# What a facility can do at most: from the modules it is built of. A line can make as much as its
+# tightest module lets through; a power station can supply what its modules can. What it does make
+# is not recorded: that is the economy's.
 for ad in administrations:
     for x in ad["bodies"]:
         for fc in x.get("facilities", []):
             where = os.path.join(TREE, fc["file"])
             plot = next((r for r in x.get("parcels", []) if r.get("number") == fc.get("parcel")), None)
-            for ln in fc.get("production") or []:
+            covered = 0
+            for ln in fc.get("lines") or []:
                 pr = by_process.get(ln.get("process"))
-                if set(ln) != {"process", "output"} or not isinstance(ln.get("output"), (int, float)):
-                    problem(where, "production: each is a process and its output (t/h)")
-                elif ln["process"] not in (fc.get("processes") or []):
-                    problem(where, f"production: '{ln['process']}' is not one of its processes")
-                elif pr is None or not (pr.get("equipment") or {}).get("steps"):
-                    problem(where, f"production: '{ln['process']}' has no steps to build a line from")
-                else:
-                    ln["plan"] = plan(pr, ln["output"])
-            # (The modules it says it is built of: a power station's.)
+                if set(ln) != {"process", "modules"}:
+                    problem(where, "lines: each is a process and the modules it is built of")
+                    continue
+                if ln["process"] not in (fc.get("processes") or []):
+                    problem(where, f"lines: '{ln['process']}' is not one of its processes")
+                    continue
+                if pr is None or not (pr.get("equipment") or {}).get("steps"):
+                    problem(where, f"lines: '{ln['process']}' has no steps to build a line from")
+                    continue
+                has = {}
+                for im in ln["modules"] or []:
+                    if im.get("module") not in mod_of or not isinstance(im.get("count"), int) or im["count"] < 1:
+                        problem(where, f"lines: no module '{im.get('module')}' in the SFO, or no count")
+                    else:
+                        has[im["module"]] = im["count"]
+                unit = plan(pr, 1.0)
+                for r in unit["modules"]:
+                    if r["module"] not in has:
+                        problem(where, f"lines: {ln['process']} needs a {r['module']}, and it has none")
+                for m in has:
+                    if m not in [r["module"] for r in unit["modules"]]:
+                        problem(where, f"lines: '{m}' is no step of {ln['process']}")
+                # (The most the line can make: the least any of its modules lets through.)
+                limits = [(has[r["module"]] * mod_of[r["module"]]["rate"]["throughput"] / r["demand"], r["module"]) for r in unit["modules"] if r["demand"] and r["module"] in has]
+                if not limits:
+                    continue
+                most, tightest = min(limits)
+                full = plan(pr, most)
+                rows = []
+                for r in full["modules"]:
+                    m, n = mod_of[r["module"]], has.get(r["module"], 0)
+                    rate, size = m.get("rate") or {}, m.get("size") or {}
+                    rows.append({
+                        "module": r["module"], "count": n,
+                        "can": n * rate["throughput"] if rate.get("throughput") else None,
+                        "holds": n * rate["holds"] if rate.get("holds") else None,
+                        "at_full": r["demand"], "use": r["demand"] / (n * rate["throughput"]) if rate.get("throughput") and n else None,
+                        "area": n * size.get("length", 0) * size.get("width", 0), "power": r["power"],
+                    })
+                ln["most"] = {
+                    "output": most, "product": full["product"], "tightest": tightest, "modules": rows,
+                    "supplies": full["supplies"], "by_products": full["by_products"], "reused": full["reused"],
+                    "area": sum(r["area"] for r in rows), "power": sum(r["power"] for r in rows),
+                }
+                covered += ln["most"]["area"]
+            # (The modules it says it is built of, where it has no line: a power station's.)
             for im in fc.get("modules") or []:
                 if im.get("module") not in mod_of or not isinstance(im.get("count"), int):
                     problem(where, f"modules: no module '{im.get('module')}' in the SFO, or no count")
             built = [(mod_of[im["module"]], im["count"]) for im in fc.get("modules") or [] if im.get("module") in mod_of and isinstance(im.get("count"), int)]
-            fc["capacity"] = sum(((m.get("rate") or {}).get("power") or 0) * n for m, n in built)
-            fc["built_area"] = sum((m.get("size") or {}).get("length", 0) * (m.get("size") or {}).get("width", 0) * n for m, n in built)
-            fc["demand"] = sum(ln["plan"]["power"] for ln in fc.get("production") or [] if "plan" in ln)
-            covered = sum(ln["plan"]["area"] for ln in fc.get("production") or [] if "plan" in ln) + fc["built_area"]
-            if plot is not None and covered > plot.get("area", 0):
-                problem(where, f"production: its modules cover {covered:,.0f} m2, more than parcel {plot.get('number')} ({plot.get('area', 0):,.0f} m2)")
-# Power: each facility that needs it names the station it draws from; a station must cover what is
-# drawn, and burns fuel for it. Flows: everything a facility takes or gives has somewhere it comes
-# from or goes: the port, or another facility of the settlement.
-for ad in administrations:
-    for x in ad["bodies"]:
-        facs = x.get("facilities", [])
-        by_slug = {fc["slug"]: fc for fc in facs}
-        for fc in facs:
-            where = os.path.join(TREE, fc["file"])
-            if "power" in fc:
-                st = by_slug.get(fc["power"])
-                if st is None or st.get("kind") != "power":
-                    problem(where, f"power: {x.get('name')} has no power station '{fc['power']}'")
-                else:
-                    st.setdefault("feeds", []).append({"facility": fc["slug"], "power": fc.get("demand", 0)})
-            elif fc.get("demand", 0) > 0:
-                problem(where, f"power: it needs {fc['demand']:.0f} MW and names no power station")
-        for fc in facs:
-            where = os.path.join(TREE, fc["file"])
-            if fc.get("kind") == "power":
-                drawn = sum(f["power"] for f in fc.get("feeds", []))
-                fc["drawn"] = drawn
-                if drawn > fc.get("capacity", 0):
-                    problem(where, f"it is asked for {drawn:.0f} MW and can supply {fc.get('capacity', 0):.0f} MW")
-                # (Its fuel: what its modules burn for each MWh, for what is drawn.)
+            if built:
+                fc["capacity"] = sum(((m.get("rate") or {}).get("power") or 0) * n for m, n in built)
+                fc["built_area"] = sum((m.get("size") or {}).get("length", 0) * (m.get("size") or {}).get("width", 0) * n for m, n in built)
+                # (What it burns flat out: its modules' fuel for each MWh, at all it can supply.)
                 burn = {}
-                for im in fc.get("modules") or []:
-                    for i in ((mod_of.get(im.get("module")) or {}).get("inputs") or {}).get("materials") or []:
-                        burn[i.get("item")] = i.get("amount", 0)
-                fc["needs"] = [{"item": k, "rate": v * drawn} for k, v in burn.items()]
-                fc["gives"] = []
-            else:
-                plans = [ln["plan"] for ln in fc.get("production") or [] if "plan" in ln]
-                tot = lambda key: [{"item": k, "rate": sum(i["rate"] for pl in plans for i in pl[key] if i["item"] == k)} for k in dict.fromkeys(i["item"] for pl in plans for i in pl[key])]
-                fc["needs"] = tot("supplies")
-                fc["gives"] = tot("by_products") + [{"item": pl["product"], "rate": ln["output"]} for ln, pl in ((ln, ln["plan"]) for ln in fc.get("production") or [] if "plan" in ln)]
-            ends = {"from": {i["item"] for i in fc["needs"]}, "to": {i["item"] for i in fc["gives"]}}
-            for fl in fc.get("flows") or []:
-                way = "from" if "from" in fl else "to" if "to" in fl else None
-                if way is None or set(fl) != {"item", way}:
-                    problem(where, "flows: each is an item and where it comes from, or where it goes to")
-                elif fl["item"] not in ends[way]:
-                    problem(where, f"flows: it does not {'take' if way == 'from' else 'give'} '{fl['item']}'")
-                elif fl[way] != "port" and fl[way] not in by_slug:
-                    problem(where, f"flows: {x.get('name')} has no facility '{fl[way]}' (or say port)")
+                for m, n in built:
+                    for i in (m.get("inputs") or {}).get("materials") or []:
+                        burn[i.get("item")] = burn.get(i.get("item"), 0) + i.get("amount", 0) * ((m.get("rate") or {}).get("power") or 0) * n
+                fc["burns"] = [{"item": k, "rate": v} for k, v in burn.items()]
+                covered += fc["built_area"]
+            if plot is not None and covered > plot.get("area", 0):
+                problem(where, f"its modules cover {covered:,.0f} m2, more than parcel {plot.get('number')} ({plot.get('area', 0):,.0f} m2)")
 for pr in processes + modules:
     where = os.path.join(TREE, pr["file"])
     for group in ("inputs", "outputs"):
