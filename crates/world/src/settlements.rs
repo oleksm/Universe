@@ -38,6 +38,7 @@ pub struct Zone {
 pub struct Parcel {
     pub number: u32,
     pub owner: String,
+    pub owner_name: String,
     pub outline: Vec<(f64, f64)>,
 }
 
@@ -61,6 +62,13 @@ pub struct Facility {
     pub name: String,
     pub kind: String,
     pub parcel: u32,
+    /// The most it can do, as the registry works it out from its modules:
+    /// what each line makes (product, t/h), the power it draws flat out
+    /// (MW), the power it can supply (MW), what it can hold (t).
+    pub makes: Vec<(String, f64)>,
+    pub draws: f64,
+    pub supplies: f64,
+    pub holds: f64,
     pub blocks: Vec<Block>,
 }
 
@@ -103,4 +111,21 @@ impl Settlement {
 pub fn direction(dir: DVec3, radius: f64, at: (f64, f64)) -> DVec3 {
     let (north, east) = crate::spaceport::tangent(dir);
     (dir * radius + east * at.0 + north * at.1).normalize()
+}
+
+/// Is `p` inside the polygon `outline` (even-odd)?
+pub fn inside(outline: &[(f64, f64)], p: (f64, f64)) -> bool {
+    let mut odd = false;
+    for k in 0..outline.len() {
+        let (a, b) = (outline[k], outline[(k + 1) % outline.len()]);
+        if (a.1 > p.1) != (b.1 > p.1) && p.0 < a.0 + (p.1 - a.1) / (b.1 - a.1) * (b.0 - a.0) {
+            odd = !odd;
+        }
+    }
+    odd
+}
+
+/// An outline's area (m², shoelace).
+pub fn area(outline: &[(f64, f64)]) -> f64 {
+    (0..outline.len()).map(|k| { let (a, b) = (outline[k], outline[(k + 1) % outline.len()]); a.0 * b.1 - b.0 * a.1 }).sum::<f64>().abs() / 2.0
 }

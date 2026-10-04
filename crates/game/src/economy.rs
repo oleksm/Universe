@@ -21,6 +21,8 @@ const BAD: Color = Color::hex(0xff5040);
 pub struct EconomyPanel {
     pub selected: usize,
     held: f32,
+    /// The zoning view of the selected place's ground, while open (Enter).
+    pub zoning: Option<crate::zoning::Zoning>,
 }
 
 /// Days a place's stock of line `i` covers (what it uses, or for what it
@@ -38,8 +40,24 @@ fn shortest(p: &Place) -> Option<(Category, f64)> {
 /// Keys while open. False when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let input = &ctx.input;
+    // The zoning view, while open, has the keys (Esc back to the list).
+    if let Some(mut z) = app.economy_panel.as_mut().and_then(|p| p.zoning.take()) {
+        let keep = crate::zoning::input(app, &mut z, ctx);
+        if let Some(p) = app.economy_panel.as_mut() {
+            p.zoning = keep.then_some(z);
+        }
+        return true;
+    }
     if crate::keys::pressed(input, crate::keys::Act::Economy) || input.pressed(KeyCode::Escape) {
         return false;
+    }
+    if input.pressed(KeyCode::Enter) {
+        let selected = app.economy_panel.as_ref().map_or(0, |p| p.selected);
+        let z = app.v.economy.get(selected).and_then(|place| crate::zoning::Zoning::open(app, place));
+        if let (Some(z), Some(p)) = (z, app.economy_panel.as_mut()) {
+            p.zoning = Some(z);
+            return true;
+        }
     }
     let n = app.v.economy.len().max(1);
     let Some(panel) = &mut app.economy_panel else { return false };
@@ -57,6 +75,10 @@ fn place_name(app: &App, p: &Place) -> String {
 }
 
 pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
+    if let Some(z) = &panel.zoning {
+        crate::zoning::draw(frame, app, z);
+        return;
+    }
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     let line = 11.0;
@@ -78,7 +100,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     let short_places = places.iter().filter(|p| p.short.iter().any(|s| *s > 1e-6)).count();
     frame.text(
         Vec2::new(12.0, y),
-        &format!("ECONOMY - {} PLACES, {people:.0}K PEOPLE, {short_places} SHORT OF SOMETHING   AS HEARD OVER THE HYPERNET   ({} CLOSES, UP/DOWN PLACE)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
+        &format!("ECONOMY - {} PLACES, {people:.0}K PEOPLE, {short_places} SHORT OF SOMETHING   AS HEARD OVER THE HYPERNET   ({} CLOSES, UP/DOWN PLACE, ENTER ITS GROUND)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
         TEXT,
     );
     y += line * 1.5;

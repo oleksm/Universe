@@ -1,5 +1,6 @@
 mod dev;
 mod economy;
+mod zoning;
 mod newspanel;
 mod fmt;
 mod followguide;

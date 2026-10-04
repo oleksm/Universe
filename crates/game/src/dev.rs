@@ -320,6 +320,20 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             app.show_help = true;
         }
+        "zoning" => {
+            // The economy panel on Port Trethi's ground (UNIVERSE_PICK: f<k> a facility, p<n> a parcel).
+            app.mode = Mode::Pilot;
+            let mut panel: crate::economy::EconomyPanel = Default::default();
+            let trethi = app.v.economy.iter().position(|p| matches!(p.facility, universe_sim::world::Facility::Spaceport(i) if sys.spaceports[i].name == "Port Trethi"));
+            if let Some(k) = trethi {
+                panel.selected = k;
+                panel.zoning = crate::zoning::Zoning::open(app, &app.v.economy[k]);
+                if let (Some(z), Ok(pick)) = (panel.zoning.as_mut(), std::env::var("UNIVERSE_PICK")) {
+                    z.pick(&pick);
+                }
+            }
+            app.economy_panel = Some(panel);
+        }
         "economy" | "economyheard" => {
             // (Heard: the world run a while first, reports put out and on their way.)
             app.mode = Mode::Pilot;
