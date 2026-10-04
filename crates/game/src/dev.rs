@@ -1267,6 +1267,10 @@ pub fn apply(app: &mut App, name: &str) {
                 Ok("stair") => crate::studio::Tool::Stair,
                 _ => crate::studio::Tool::Select,
             };
+            // (UNIVERSE_FLIP=side,end: those views flipped.)
+            let flip = std::env::var("UNIVERSE_FLIP").unwrap_or_default();
+            y.studio_mut().side_flip = flip.contains("side");
+            y.studio_mut().end_flip = flip.contains("end");
             // (UNIVERSE_CURSOR=x,y: the mouse there, in pixels.)
             if let Some((cx, cy)) = std::env::var("UNIVERSE_CURSOR").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f32>().ok()?, b.trim().parse::<f32>().ok()?)))) {
                 y.studio_mut().cursor = universe_engine::glam::Vec2::new(cx, cy);
