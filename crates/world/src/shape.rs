@@ -77,6 +77,8 @@ pub struct Shape {
     pub walk: Option<std::sync::Arc<crate::walk::WalkMesh>>,
     /// Its ramp, if it has one that swings down (walked on too).
     pub ramp: Option<Ramp>,
+    /// Its inside as laid out (rooms, their lining, where one climbs), if it has a layout.
+    pub interior: Option<std::sync::Arc<crate::layout::Interior>>,
 }
 
 /// A ramp hinged to a hull (its frame): it swings down about `axis` through
@@ -372,6 +374,6 @@ impl ShapeDef {
                 Part { centre, radius, probes }
             })
             .collect();
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c, walk: None, ramp: None })
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c, walk: None, ramp: None, interior: None })
     }
 }
