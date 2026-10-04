@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What a foundry ships and a mill starts from. Its size is not settled, so it has none here.
+identity:
+  key: stock.al6061-ingot
+  code: AL6061-INGOT
+  name: "6061 ingot"
+  form: ingot
+made_from:
+  - item: material.aluminium-alloy-6061

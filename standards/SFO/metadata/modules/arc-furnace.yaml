@@ -10,6 +10,7 @@ physical:
   height: 35
 recipes:
   - makes: good.liquid-steel
+    does: "The sponge iron is melted. Lime forms a slag that takes up the impurities."
     inputs:
       - { item: good.sponge-iron, quantity: 1.1 }
       - { item: good.lime, quantity: 0.05 }

@@ -11,7 +11,7 @@ physical:
 recipes:
   - makes: good.parts
     inputs:
-      - { item: good.hot-rolled-strip, quantity: 1.15 }
+      - { item: stock.st4340-pl-3, quantity: 1.15 }
     outputs:
       - { item: good.scrap, quantity: 0.15 }
     rate: 5.55555555555556

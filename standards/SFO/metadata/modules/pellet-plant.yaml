@@ -10,6 +10,7 @@ physical:
   height: 40
 recipes:
   - makes: good.iron-ore-pellets
+    does: "The ore is crushed, ground, cleaned of waste rock and formed into pellets."
     inputs:
       - { item: good.iron-ore, quantity: 0.955 }
       - { item: element.o, quantity: 0.045 }

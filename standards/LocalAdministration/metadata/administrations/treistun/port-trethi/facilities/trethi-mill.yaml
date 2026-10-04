@@ -3,29 +3,26 @@ key: facility.treistun.port-trethi.trethi-mill
 name: Trethi Mill
 kind: mill
 parcel: parcel.treistun.port-trethi.1
-processes:
-  - process.rolling
-  - process.bar-rolling-4340
-  - process.tube-making-4340
-  - process.forging-4340
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: process.rolling
+  - makes: stock.al6061-pl-5
+    also: [stock.al6061-sh-2]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.hot-rolling-mill, count: 1 }
       - { module: module.cold-rolling-mill, count: 1 }
       - { module: module.finishing-line, count: 1 }
-  - process: process.bar-rolling-4340
+  - makes: stock.st4340-bar-120
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.bar-mill, count: 1 }
-  - process: process.tube-making-4340
+  - makes: stock.st4340-tb-120x10
+    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.piercing-mill, count: 1 }
-  - process: process.forging-4340
+  - makes: stock.st4340-fg
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.forging-press, count: 1 }

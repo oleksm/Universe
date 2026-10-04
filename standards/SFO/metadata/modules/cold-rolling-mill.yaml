@@ -9,9 +9,10 @@ physical:
   width: 40
   height: 15
 recipes:
-  - makes: good.cold-rolled-strip
+  - makes: good.cold-rolled-strip-6061
+    does: "The strip is rolled again cold, to its final thickness."
     inputs:
-      - { item: good.hot-rolled-strip, quantity: 1.19 }
+      - { item: good.hot-rolled-strip-6061, quantity: 1.19 }
     outputs:
       - { item: good.scrap, quantity: 0.19 }
     rate: 16.6666666666667

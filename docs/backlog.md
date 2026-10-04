@@ -25,6 +25,12 @@ fixes go straight in; this is for what needs deciding or building.
    licences in settled space, towing asteroids.
 9. **Engine headroom:** 100k ships at 1.5x budget; seed-only checkpoints.
 10. **Trademark** FREEFALL (the user's to do).
+11. **Logistics, to describe properly.** Decided for now (2026-10-04): inside one factory there
+    is no transport (one pool of stock: what a module puts out is there for the next), and between
+    factories the market is the join. Never designed: how stock actually moves. What carries it
+    inside a works (conveyors, cranes, lifts between floors) and what that limits; hauling between
+    factories of one settlement; buffers between steps; what an item's size, mass and temperature
+    rule out. The registry side is written up in `docs/registry-recipes.md`.
 0. **Visual revamp (mostly done):** `docs/art-direction.md`. Done: render core (HDR, MSAA,
    no outlines), materials and lights, shapes (ships, station), paint and liveries, the HUD
    organised, the radar scope, planets surfaced per pixel, landscapes (quadtree ground on the

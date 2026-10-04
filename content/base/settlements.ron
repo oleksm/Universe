@@ -33,8 +33,8 @@
         ],
         facilities: [
             (name: "Trethi Foundry", kind: "foundry", parcel: 1,
-                makes: [("Ingot", 68.5051625490497)], draws: 347.62347683664296, supplies: 0.0, holds: 0.0,
-                takes: [("Argon", "", 0.07946598855689764), ("Lime", "", 3.973299427844882), ("Carbon", "", 1.1919898283534647), ("Graphite electrode", "", 0.23839796567069294), ("Water", "goods.water", 0.17482517482517324), ("Iron ore", "goods.ores", 119.375)], gives: [("Ingot", "", 68.5051625490497), ("Scrap", "", 10.960826007847952), ("Slag", "", 11.919898283534646), ("Furnace dust", "", 1.1919898283534647), ("Oxygen", "", 32.13723776223776)], burns: [],
+                makes: [("A36 steel ingot", 69.7182602778849)], draws: 347.7059674822038, supplies: 0.0, holds: 0.0,
+                takes: [("Manganese", "", 0.8329937738001687), ("Silicon", "", 0.3234927276893859), ("Copper", "", 0.16174636384469296), ("Argon", "", 0.08087318192234648), ("Lime", "", 3.973299427844882), ("Carbon", "", 1.1919898283534647), ("Graphite electrode", "", 0.23839796567069294), ("Water", "goods.water", 0.17482517482517324), ("Iron ore", "goods.ores", 119.375)], gives: [("A36 steel ingot", "", 69.7182602778849), ("Scrap", "", 11.154921644461583), ("Slag", "", 11.919898283534646), ("Furnace dust", "", 1.1919898283534647), ("Oxygen", "", 32.13723776223776)], burns: [],
                 modules: [("ore-yard", 1), ("pellet-plant", 1), ("hydrogen-plant", 3), ("shaft-furnace", 1), ("arc-furnace", 1), ("ladle-station", 1), ("casting-bay", 1), ("ingot-yard", 1)],
                 blocks: [
                 (module: "ore-yard", centre: (720.0, 180.0), length: 200.0, width: 100.0, height: 15.0, heading: 0.0),
@@ -49,8 +49,8 @@
                 (module: "ingot-yard", centre: (695.0, -300.0), length: 150.0, width: 100.0, height: 15.0, heading: 0.0),
             ]),
             (name: "Trethi Mill", kind: "mill", parcel: 1,
-                makes: [("Sheet and plate", 57.14285714285714), ("Bar", 50.0), ("Tube", 20.0), ("Forgings", 10.0)], draws: 140.1662619047619, supplies: 0.0, holds: 0.0,
-                takes: [("Ingot", "", 87.10799999999999), ("Ingot", "", 55.00000000000001), ("Ingot", "", 21.7), ("Ingot", "", 11.5)], gives: [("Sheet and plate", "", 57.14285714285714), ("Bar", "", 50.0), ("Tube", "", 20.0), ("Forgings", "", 10.0), ("Scrap", "", 29.965142857142858), ("Scrap", "", 5.0), ("Scrap", "", 1.7000000000000002), ("Scrap", "", 1.5)], burns: [],
+                makes: [("6061 plate 5 mm", 57.14285714285714), ("4340 bar 120 mm", 50.0), ("4340 tube 120 x 10 mm", 20.0), ("4340 forging", 10.0)], draws: 140.1662619047619, supplies: 0.0, holds: 0.0,
+                takes: [("6061 ingot", "", 87.10799999999999), ("4340 steel ingot", "", 55.00000000000001), ("4340 steel ingot", "", 21.7), ("4340 steel ingot", "", 11.5)], gives: [("6061 plate 5 mm", "", 57.14285714285714), ("4340 bar 120 mm", "", 50.0), ("4340 tube 120 x 10 mm", "", 20.0), ("4340 forging", "", 10.0), ("Scrap", "", 29.965142857142858), ("Scrap", "", 5.0), ("Scrap", "", 1.7000000000000002), ("Scrap", "", 1.5)], burns: [],
                 modules: [("reheat-furnace", 1), ("hot-rolling-mill", 1), ("cold-rolling-mill", 1), ("finishing-line", 1), ("reheat-furnace", 1), ("bar-mill", 1), ("reheat-furnace", 1), ("piercing-mill", 1), ("reheat-furnace", 1), ("forging-press", 1)],
                 blocks: [
                 (module: "reheat-furnace", centre: (650.0, 220.0), length: 60.0, width: 20.0, height: 12.0, heading: 0.0),
@@ -75,8 +75,8 @@
                 (module: "fusion-power-station", centre: (1230.0, -110.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
             ]),
             (name: "Trethi Smelter", kind: "foundry", parcel: 7,
-                makes: [("Ingot", 36.27450980392157)], draws: 811.0698098039215, supplies: 0.0, holds: 0.0,
-                takes: [("Carbon anode", "", 16.650000000000002), ("Oxygen", "", 5.180000000000001), ("Bauxite", "goods.ores", 152.1033), ("Caustic soda", "", 7.141)], gives: [("Ingot", "", 36.27450980392157), ("Dross", "", 0.7254901960784313), ("Carbon dioxide", "", 56.24), ("Red mud", "", 87.8343)], burns: [],
+                makes: [("6061 ingot", 37.3209602582207)], draws: 812.1162602582207, supplies: 0.0, holds: 0.0,
+                takes: [("Magnesium", "", 0.3806737946338512), ("Silicon", "", 0.22765785757514628), ("Iron", "", 0.13435545692959452), ("Copper", "", 0.10449868872301796), ("Chromium", "", 0.0746419205164414), ("Carbon anode", "", 16.650000000000002), ("Oxygen", "", 5.180000000000001), ("Bauxite", "goods.ores", 152.1033), ("Caustic soda", "", 7.141)], gives: [("6061 ingot", "", 37.3209602582207), ("Dross", "", 0.7464192051644141), ("Carbon dioxide", "", 56.24), ("Red mud", "", 87.8343)], burns: [],
                 modules: [("ore-yard", 1), ("alumina-refinery", 1), ("potline", 1), ("casthouse", 1), ("ingot-yard", 1)],
                 blocks: [
                 (module: "ore-yard", centre: (1270.0, -520.0), length: 200.0, width: 100.0, height: 15.0, heading: 0.0),
@@ -100,7 +100,7 @@
             ]),
             (name: "Trethi Yard", kind: "yard", parcel: 4,
                 makes: [("Parts", 2.0), ("Parts", 1.0), ("Parts", 1.0), ("Hulls", 0.32)], draws: 2.047, supplies: 0.0, holds: 0.0,
-                takes: [("Sheet and plate", "", 2.3), ("Parts", "", 1.0), ("Parts", "", 0.32)], gives: [("Parts", "", 2.0), ("Parts", "", 1.0), ("Parts", "", 1.0), ("Hulls", "", 0.32), ("Scrap", "", 0.3)], burns: [],
+                takes: [("6061 sheet 2 mm", "", 2.3), ("Parts", "", 1.0), ("Parts", "", 0.32)], gives: [("Parts", "", 2.0), ("Parts", "", 1.0), ("Parts", "", 1.0), ("Hulls", "", 0.32), ("Scrap", "", 0.3)], burns: [],
                 modules: [("cutting-table", 1), ("panel-former", 1), ("welding-bay", 2), ("machining-centre", 2), ("assembly-shop", 1), ("building-dock", 1)],
                 blocks: [
                 (module: "cutting-table", centre: (1490.0, 222.5), length: 40.0, width: 15.0, height: 5.0, heading: 0.0),

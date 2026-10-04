@@ -10,6 +10,7 @@ physical:
   height: 137
 recipes:
   - makes: good.sponge-iron
+    does: "Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron."
     inputs:
       - { item: good.iron-ore-pellets, quantity: 1.43 }
       - { item: element.h, quantity: 0.054 }

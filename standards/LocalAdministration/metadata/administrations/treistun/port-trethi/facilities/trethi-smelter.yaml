@@ -3,12 +3,10 @@ key: facility.treistun.port-trethi.trethi-smelter
 name: Trethi Smelter
 kind: foundry
 parcel: parcel.treistun.port-trethi.7
-processes:
-  - process.alloying-6061
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: process.alloying-6061
+  - makes: stock.al6061-ingot
     modules:
       - { module: module.ore-yard, count: 1 }
       - { module: module.alumina-refinery, count: 1 }

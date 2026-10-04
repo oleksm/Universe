@@ -24,5 +24,4 @@ properties:
       diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
       wall: { type: number, x-unit: "m", description: "m, of a tube" }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
-  making: { $ref: "../../common.schema.yaml#/definitions/making" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

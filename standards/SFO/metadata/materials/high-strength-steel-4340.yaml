@@ -21,6 +21,7 @@ identity:
   - part: element.mo
     share: 0.0025
   form:
+  - ingot
   - plate
   - bar
   - forging

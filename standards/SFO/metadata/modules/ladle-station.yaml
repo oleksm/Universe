@@ -9,14 +9,33 @@ physical:
   width: 30
   height: 35
 recipes:
-  - makes: good.refined-steel
+  - makes: good.refined-steel-a36
+    does: "Carbon, manganese and silicon are trimmed to the grade, and dissolved gas is removed."
     inputs:
-      - { item: good.liquid-steel, quantity: 1.0 }
+      - { item: good.liquid-steel, quantity: 0.9826 }
+      - { item: element.mn, quantity: 0.0103 }
+      - { item: element.si, quantity: 0.004 }
+      - { item: element.cu, quantity: 0.002 }
+      - { item: element.ar, quantity: 0.001 }
+    rate: 41.6666666666667
+    batch: 80000
+    power: 7500000.0
+  - makes: good.refined-steel-4340
+    does: "Nickel, chromium, manganese and molybdenum are added and the carbon trimmed, to the grade; dissolved gas is removed."
+    inputs:
+      - { item: good.liquid-steel, quantity: 0.961 }
+      - { item: element.ni, quantity: 0.018 }
+      - { item: element.cr, quantity: 0.008 }
+      - { item: element.mn, quantity: 0.008 }
+      - { item: element.si, quantity: 0.0025 }
+      - { item: element.mo, quantity: 0.0025 }
       - { item: element.ar, quantity: 0.001 }
     rate: 41.6666666666667
     batch: 80000
     power: 7500000.0
 basis:
+  - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, batch, power), used for each grade it makes: a guess, to be reviewed. Each grade has its own." }
+  - { of: [recipes.inputs], tier: derived, note: "The liquid metal and what is added to it, in the shares of the grade it makes (its material's composition); the loss is the module's." }
   - { of: [recipes.inputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "0.3 to 1.45 m3 of argon for each tonne, about 0.5 to 2.6 kg; 1 kg taken." }
   - { of: [recipes.power], tier: sourced, source: "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf", note: "65 kWh for each tonne for ladle refining and gas cleaning together; 50 taken for the ladle alone." }
   - { of: [recipes.makes, recipes.rate, recipes.batch, physical], tier: invented, note: "Its rate and footprint were not found in a source: approximate, from memory." }

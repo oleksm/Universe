@@ -231,7 +231,15 @@ What each world is made of stays empty: the user will bring it.
   light year. One line, in the registry's own exporter; no engine code. `celestial.ron` now lists
   the systems in order of distance from home, which is the only change in it.
 
-## Two of your items I have not done, and why
+## Items 6 and 7, answered by recipes (2026-10-04)
+
+The user settled both: `docs/registry-recipes.md`. A recipe is an industrial module's: what it can
+be set to make, with its inputs, outputs, rate and power. Which recipe a module runs is its setup,
+the game's state. Inside one facility stock is one pool; between facilities the market is the
+join. The mill side is done; shop work (parts, hulls) is next. Read that file for what changed in
+`settlements.ron` (names only).
+
+## Two of your items as I first answered them (superseded by the above)
 
 **Item 6, a module's output as a stock item.** A rolling mill does not make one stock item: it
 makes plate, of any gauge and any metal. `rate.product` can not name `stock.al6061-pl-5`. What it

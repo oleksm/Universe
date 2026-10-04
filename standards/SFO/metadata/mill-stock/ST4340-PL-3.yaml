@@ -10,8 +10,6 @@ size:
   thickness: 0.003
 physical:
   shock_limit: 784.532
-making:
-  processes: [process.plate-rolling-4340]
 basis:
   - { of: [size], tier: invented, review: true, note: "A guess, to be reviewed: the gauge of a gate ring's skin. Nothing says what loads the ring carries." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

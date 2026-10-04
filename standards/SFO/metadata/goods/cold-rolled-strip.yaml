@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=../../schema/good.schema.yaml
-identity:
-  key: good.cold-rolled-strip
-  name: Cold-rolled strip
-  kind: intermediate
-  description: "Strip rolled again cold to its final thickness, not yet cut."

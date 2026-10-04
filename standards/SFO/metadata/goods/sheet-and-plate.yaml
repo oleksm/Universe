@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=../../schema/good.schema.yaml
-identity:
-  key: good.sheet-and-plate
-  name: Sheet and plate
-  kind: product
-  description: "Flat stock, cut to size: what a rolling line ships."

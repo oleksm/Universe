@@ -114,13 +114,45 @@ figures yet). What a store or a dock can hold and move is `capacity`. `rate`, `i
 `outputs` and `needs.power` on a producing module are gone. The power station's fuel was per MWh
 and is now kg/s at full output, so the last non-SI figure is gone. 31 modules, no figure changed.
 
+**Step 2 (2026-10-04): the mill side runs on recipes.**
+
+- *A different item for each metal.* New: three ingots as stock items (`stock.al6061-ingot`,
+  `stock.st4340-ingot`, `stock.sta36-ingot`); goods `hot-ingot-6061/-4340/-a36`,
+  `hot-rolled-strip-6061`, `cold-rolled-strip-6061`, `refined-steel-4340/-a36`. Gone: the goods
+  `ingot`, `hot-ingot`, `hot-rolled-strip`, `cold-rolled-strip`, `sheet-and-plate`, `bar`, `tube`,
+  `forgings`, `refined-steel`.
+- *Recipes for each.* The reheat furnace has three (one a metal), the hot rolling mill three
+  (aluminium strip, 4340 plate, A36 plate), the ladle station and the casting bay two (the two
+  steel grades), the finishing line two (plate, sheet), the piercing mill three (the tube sizes),
+  the cutting table three (the stock it cuts). A recipe has `does`: what happens in it.
+- *A mill stock item has no `making`.* What makes it is the recipe that names it.
+- *Ten processes are gone:* the two alloyings, the two steelmakings, rolling, the two plate
+  rollings, bar rolling, tube making, forging. Their steps' words are the recipes' `does`. The
+  alloying additions they listed are now inputs of the casthouse's and the ladle station's
+  recipes, so those metals are bought, not from nowhere.
+- *A line says what it makes:* `makes: stock.al6061-pl-5`, `also: [stock.al6061-sh-2]`, and its
+  modules. The build finds the route back through its modules' recipes and refuses a line whose
+  modules do not lead to it.
+- *Figures used again are marked.* Where a module had one set of figures and now has a recipe for
+  each metal, gauge or size, the others are that set again, marked to review (49 figures).
+- *Check:* the MC-07's chain and the ring's are complete as before (56 of 56 parts); every
+  recipe balances; the facilities' most is the same but for the foundry and the smelter, which
+  now count the alloying metals they take in (about 2% more ingot).
+
+**What the game loads.** `settlements.ron`: the same shape; a facility's `makes`, `takes` and
+`gives` now name the item (`"6061 plate 5 mm"`, `"A36 steel ingot"`) where they said `"Sheet and
+plate"` and `"Ingot"`, and the foundry's and smelter's `takes` list the alloying metals. Nothing
+else changed. The world's tests pass with it.
+
 ## Next
 
-2. An item for each metal where one passes between modules, and the recipes that make them.
-3. Mill stock's, parts', hulls' and gates' `made_from` and `making` as recipes on the modules that
-   make them.
-4. The processes that have modules dissolved into those recipes; the chain reports as the check.
-5. The nine goods that are forms of stock removed.
+3. **Shop work** (stock into parts, parts into hulls): still by process (`plate-work`,
+   `machining`, `fitting`, `hull-assembly`, `fitting-out`, `panel-making`, `ring-assembly`), with
+   the goods `cut-blanks`, `formed-panels`, `parts` and `hulls` as what flows. It needs its own
+   answer: a part goes through three modules (cut, form, weld), and 185 parts with a recipe on
+   each would be several hundred recipes. Proposal: a part keeps its bill (`made_from`) and lists
+   the modules it passes through; the shop modules keep one recipe each, by weight.
+4. The 26 processes with no module: parked as they are until their machines are described.
 
 ## Open
 

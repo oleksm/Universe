@@ -10,6 +10,7 @@ physical:
   height: 15
 recipes:
   - makes: good.liquid-aluminium
+    does: "Electric current takes the oxygen from the molten alumina, leaving liquid aluminium."
     inputs:
       - { item: good.alumina, quantity: 1.93 }
       - { item: good.carbon-anode, quantity: 0.45 }

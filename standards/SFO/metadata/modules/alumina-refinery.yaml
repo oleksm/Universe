@@ -10,6 +10,7 @@ physical:
   height: 40
 recipes:
   - makes: good.alumina
+    does: "The aluminium oxide is dissolved out of the bauxite, the residue settled out, and the oxide baked to a dry powder."
     inputs:
       - { item: good.bauxite, quantity: 2.13 }
       - { item: good.caustic-soda, quantity: 0.1 }

@@ -9,8 +9,6 @@ made_from:
   - item: material.high-strength-steel-4340
 size:
   diameter: 0.12
-making:
-  processes: [process.bar-rolling-4340]
 physical:
   shock_limit: 1961.33
 basis:

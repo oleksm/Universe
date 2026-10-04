@@ -7,8 +7,6 @@ identity:
   temper: "quenched and tempered"
 made_from:
   - item: material.high-strength-steel-4340
-making:
-  processes: [process.forging-4340]
 physical:
   shock_limit: 1961.33
 basis:

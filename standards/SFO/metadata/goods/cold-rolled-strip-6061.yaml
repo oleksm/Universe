@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.cold-rolled-strip-6061
+  name: "Cold-rolled strip, 6061 aluminium"
+  kind: intermediate
+  description: "6061 aluminium strip rolled cold to its final thickness, not yet levelled, tempered or cut."

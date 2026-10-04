@@ -10,6 +10,7 @@ physical:
   height: 20
 recipes:
   - makes: element.h
+    does: "Water is split to make the hydrogen for the next step, and the water that step gives off comes back here."
     inputs:
       - { item: good.water, quantity: 9 }
     outputs:

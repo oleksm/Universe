@@ -10,8 +10,6 @@ made_from:
 size:
   diameter: 0.2
   wall: 0.015
-making:
-  processes: [process.tube-making-4340]
 physical:
   shock_limit: 1470.9975
 basis:

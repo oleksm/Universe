@@ -9,10 +9,11 @@ definitions:
       items:
         type: object
         additionalProperties: false
-        required: [process, modules]
+        required: [modules]
         properties:
-          process: { type: string, x-ref: [process], description: 'One of its processes, one that has steps.' }
-          also: { type: array, items: { type: string, x-ref: [process] }, description: 'Other processes of its the same line can run instead, on the same modules (another grade of steel). The line''s most is shared between them.' }
+          makes: { type: string, x-ref: [good, stock, part, hull, gate], description: "What the line is built to make, by its key: its modules have the recipes that lead to it." }
+          process: { type: string, x-ref: [process], description: "For a line of shop work (cutting, machining, fitting, assembly): the process it runs. Shop work is not described by recipes yet." }
+          also: { type: array, items: { type: string, x-ref: [good, stock, part, hull, gate, process] }, description: "What else the same modules can be set to make (or, for shop work, run)." }
           modules:
             type: array
             items:

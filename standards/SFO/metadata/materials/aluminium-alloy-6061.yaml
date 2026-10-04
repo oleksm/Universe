@@ -19,6 +19,7 @@ identity:
   - part: element.cr
     share: 0.00195
   form:
+  - ingot
   - sheet
   - plate
   - bar

@@ -11,29 +11,26 @@ owner: org.hadley
 spin: { radius: 150, gravity: 3.0 }
 about: "A works in orbit, now round Treistun f: a foundry, a mill and a panel works on one frame with its own power plant, fed with metal from the asteroids. The part that melts and casts turns, to give the metal weight; the rest is in free fall. It is equipment, not a place. It is brought to where something too large to lift off a world is to be built, and moved on to the next when that is done."
 processes:
-  - process.steelmaking-asteroid
-  - process.plate-rolling-4340
-  - process.plate-rolling-a36
-  - process.tube-making-4340
   - process.panel-making
   - process.machining
   - process.ring-assembly
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: process.steelmaking-asteroid
+  - makes: stock.st4340-ingot
     modules:
       - { module: module.ore-yard, count: 1 }
       - { module: module.arc-furnace-metal, count: 1 }
       - { module: module.ladle-station, count: 1 }
       - { module: module.casting-bay, count: 1 }
       - { module: module.ingot-yard, count: 1 }
-  - process: process.plate-rolling-4340
-    also: [process.plate-rolling-a36]
+  - makes: stock.st4340-pl-3
+    also: [stock.sta36-pl-20]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.hot-rolling-mill, count: 1 }
-  - process: process.tube-making-4340
+  - makes: stock.st4340-tb-120x10
+    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.piercing-mill, count: 2 }

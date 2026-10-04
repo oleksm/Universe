@@ -38,3 +38,12 @@
   makes, what goes in and comes out for each kg, its rate and the power it draws. Every module's
   existing figures became its first recipe; none changed. Which recipe a module is running is the
   game's state, chosen by its owner. The model is written up in `docs/registry-recipes.md`.
+- **The mill side runs on recipes.** Ingot, strip and refined steel are a different item for each
+  metal; ingots are stock items. The furnaces and mills have a recipe for each thing they can be
+  set to make (the reheat furnace three, the hot rolling mill three, the piercing mill three...).
+  A facility's line says what it is built to make, and the build finds the way to it through its
+  modules' recipes. Ten processes that only said this are gone. The foundry and the smelter now
+  take in their alloying metals. In the game's settlement file a works' products are named as
+  items ("6061 plate 5 mm") where they were kinds ("Sheet and plate").
+- **Logistics** is noted in the backlog to describe properly later: for now a factory is one pool
+  of stock, and between factories the market is the join.

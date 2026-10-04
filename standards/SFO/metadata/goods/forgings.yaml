@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=../../schema/good.schema.yaml
-identity:
-  key: good.forgings
-  name: Forgings
-  kind: product
-  description: "Rough shapes pressed from hot metal: what a forge ships."

@@ -184,7 +184,8 @@ const matBySlug = Object.fromEntries(DATA.materials.map(m => [m.slug, m]));
 // And the processes.
 const procMatches = (p, q) => !q || q.split(/\s+/).every(w => `${p.identity.name} ${p.identity.kind} ${p.identity.method || ""} ${p.identity.description || ""}`.toLowerCase().includes(w));
 const processesUnder = (id, q) => DATA.processes.filter(p => p.under === id && procMatches(p, q));
-const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
+// (A line that says what it makes has a route: the recipes its modules are set to, written out as a process is.)
+const procBySlug = Object.fromEntries([...DATA.processes, ...(DATA.routes || [])].map(p => [p.slug, p]));
 // And the industrial modules.
 const modMatches = (m, q) => !q || q.split(/\s+/).every(w => `${m.identity.name} ${m.identity.step} ${m.identity.description || ""}`.toLowerCase().includes(w));
 const modulesUnder = (id, q) => DATA.modules.filter(m => m.under === id && modMatches(m, q));
@@ -224,8 +225,8 @@ const hullsUnder = (id, q) => DATA.hulls.filter(x => x.under === id && hullMatch
 const hullBySlug = Object.fromEntries(DATA.hulls.map(x => [x.slug, x]));
 const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length + hullsUnder(id, "").length + partHulls(id).length + stockUnder(id, "").length + eqUnder(id, "").length + gatesUnder(id, "").length;
 // Anything that flows, by its element symbol or its material's or good's file name: its name, and a link to it.
-const itemKey = i => elBySymbol[i] ? "el:" + i : matBySlug[i] ? "mat:" + i : goodBySlug[i] ? "good:" + i : null;
-const itemName = i => (elBySymbol[i] || matBySlug[i] || goodBySlug[i] || { identity: { name: i } }).identity.name;
+const itemKey = i => elBySymbol[i] ? "el:" + i : matBySlug[i] ? "mat:" + i : goodBySlug[i] ? "good:" + i : stockByCode[i] ? "stock:" + i : null;
+const itemName = i => (elBySymbol[i] || matBySlug[i] || goodBySlug[i] || stockByCode[i] || { identity: { name: i } }).identity.name;
 const itemA = i => itemKey(i) ? `<a data-k="${esc(itemKey(i))}">${esc(itemName(i))}</a>` : esc(itemName(i));
 // An element or material named in a process: a link to it.
 const elTile = (e, small) => { const i = e.identity; const c = "c-" + (i.category || "unknown").replace(/[^a-z]+/g, "-"); return small ? `<span class="tile small ${c}"><span class="sy">${esc(i.symbol)}</span></span>` : `<span class="tile ${c}"><span class="z">${i.atomic_number}</span><span class="sy">${esc(i.symbol)}</span></span>`; };
@@ -234,7 +235,7 @@ const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""} ${
 // The kind of process shown in a record's gallery and table (all, or one kind).
 let kindShown = "all";
 const itemLink = x => {
-  const e = elBySymbol[x.item], m = matBySlug[x.item] || goodBySlug[x.item];
+  const e = elBySymbol[x.item], m = matBySlug[x.item] || goodBySlug[x.item] || stockByCode[x.item];
   const label = e ? e.identity.name : m ? m.identity.name : (x.name || x.item);
   const k = itemKey(x.item);
   const extra = [x.amount !== undefined ? `${x.amount} t/t` : "", x.form || "", x.grade || ""].filter(Boolean).join(", ");
@@ -594,9 +595,9 @@ function detail(k) {
     const stockUsed = [...new Set(leaves.map(p => (p.made_from || {}).item).filter(i => stockByCode[i]))].map(i => stockByCode[i]);
     const procs = [...new Set(stockUsed.map(s => (s.making || {}).process).filter(s => procBySlug[s]))].map(s => procBySlug[s]);
     const stepped = DATA.processes.filter(p => ((p.equipment || {}).steps || []).length);
-    const lined = new Set(producing().map(r => r.pr.slug));
+    const lined = new Set(producing().filter(r => !r.pr.derived).map(r => r.pr.slug));
     const forms = DATA.materials.flatMap(m => (m.identity.form || []).map(f => [m.slug, f]));
-    const made = forms.filter(([m, f]) => DATA.processes.some(p => ((p.outputs || {}).products || []).some(o => o.item === m && o.form === f)));
+    const made = forms.filter(([m, f]) => [...DATA.processes, ...(DATA.routes || [])].some(p => ((p.outputs || {}).products || []).some(o => o.item === m && o.form === f)));
     const node = (title, num, say, k, empty) => `<div class="node${empty ? " empty" : ""}"><span class="num">${num}</span><b>${k ? `<a data-k="${esc(k)}">${esc(title)}</a>` : esc(title)}</b><span class="say">${say}</span></div>`;
     const link = (have, of, what) => { const cls = !of || !have ? "none" : have < of ? "some" : "ok"; return `<div class="link ${cls}"><span class="pipe"></span><span class="bar"><i style="width:${of ? Math.round(100 * have / of) : 0}%"></i></span><span class="what">${have} of ${of} ${what}</span></div>`; };
     const most = producing().map(r => `${perDay(r.ln.most.output)} t a day of ${esc(r.makes)}`).join(", ");
@@ -788,7 +789,7 @@ function detail(k) {
   const production = (a, x, f, p) => producing().filter(r => r.f === f).map(r => {
     const m = r.ln.most, name = s => modBySlug[s].identity.name;
     const also = (r.ln.also || []).filter(s => procBySlug[s]).map(s => { const o = ((procBySlug[s].outputs || {}).products || [])[0] || {}; return `<a data-k="${esc("proc:" + s)}">${esc(procBySlug[s].identity.name)}</a> (${esc((matBySlug[o.item] || { identity: { name: o.item || "" } }).identity.name)}${o.form ? " " + esc(o.form) : ""})`; });
-    return `<h3>Line: ${esc(r.pr.identity.name)}</h3>${also.length ? `<p>The same line can run instead: ${also.join(", ")}. Its most is shared between them.</p>` : ""}<table><tr><th>Process</th><th>Makes</th><th>At most, each hour</th><th>At most, each day</th><th>Held back by</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(m.output)}</td><td>${day(m.output)}</td><td><a data-k="${esc("mod:" + m.tightest)}">${esc(name(m.tightest))}</a></td></tr></table>`
+    return `<h3>Line: ${esc(r.pr.identity.name)}</h3>${also.length ? `<p>The same line can run instead: ${also.join(", ")}. Its most is shared between them.</p>` : ""}<table><tr><th>Line</th><th>Makes</th><th>At most, each hour</th><th>At most, each day</th><th>Held back by</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(m.output)}</td><td>${day(m.output)}</td><td><a data-k="${esc("mod:" + m.tightest)}">${esc(name(m.tightest))}</a></td></tr></table>`
       + `<h3>Built of</h3><p class="meta">Number is what it has. The rest is worked out: what that many can put through, and what the line asks of them when it runs flat out.</p><table><tr><th>Module</th><th>Number</th><th>Can put through</th><th>Flat out, the line asks</th><th>Running at</th><th>Ground</th><th>Power flat out</th></tr>`
       + m.modules.map(r2 => `<tr><td><a data-k="${esc("mod:" + r2.module)}">${esc(name(r2.module))}</a></td><td>${r2.count}</td><td>${r2.can !== null ? tph(r2.can) : r2.holds !== null ? `holds ${r2.holds.toLocaleString()} t` : ""}</td><td>${r2.can !== null ? `${tph(r2.at_full)} ${esc(itemName((modBySlug[r2.module].rate || {}).product || "").toLowerCase())}` : ""}</td><td>${r2.use === null ? "" : Math.round(r2.use * 100) + "%"}</td><td>${Math.round(r2.area).toLocaleString()} m²</td><td>${+r2.power.toPrecision(3)} MW</td></tr>`).join("")
       + `<tr><th>Total</th><th>${m.modules.reduce((s, r2) => s + r2.count, 0)}</th><th></th><th></th><th></th><th>${Math.round(m.area).toLocaleString()} m²${p ? ` · ${(100 * m.area / p.area).toFixed(0)}% of parcel ${p.number}` : ""}</th><th>${Math.round(m.power)} MW</th></tr></table>`
@@ -878,7 +879,7 @@ function detail(k) {
     const where = `${esc(parcelLine(x, p))}, <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
     const procs = (f.processes || []).map(s => procBySlug[s]).filter(Boolean);
     const makes = pr => ((pr.outputs || {}).products || []).map(o => o.item ? `<a data-k="${esc("mat:" + o.item)}">${esc((matBySlug[o.item] || { identity: { name: o.item } }).identity.name)}</a>${o.form ? ` <span class="meta">${esc(o.form)}</span>` : ""}` : esc(o.name || "")).join(", ");
-    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Parcel</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>Processes it runs</h3><table><tr><th>Process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + production(a, x, f, p) + hookups(a, x, f) + sitePlan(a, x, f, p)
+    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Parcel</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>What it is built to make and run</h3><table><tr><th>Line or process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + production(a, x, f, p) + hookups(a, x, f) + sitePlan(a, x, f, p)
       + ((f.parts || []).length ? `<h3>Parts</h3><table><tr><th>Part</th><th>Kind</th><th>What it does</th><th>Size</th><th>Area</th></tr>` + f.parts.map(pt => `<tr><td>${esc(pt.name)}</td><td><span class="swatch k-${esc(pt.kind)}"></span>${esc(pt.kind)}</td><td>${esc(pt.does || "")}${(pt.processes || []).length ? `${pt.does ? " " : ""}Runs ` + pt.processes.map(s => procBySlug[s] ? `<a data-k="${esc("proc:" + s)}">${esc(procBySlug[s].identity.name)}</a>` : esc(s)).join(", ") + "." : ""}</td><td>${(s => s.length === 4 && s[0] === s[2] && s[1] === s[3] ? `${Math.round(s[0])} × ${Math.round(s[1])} m` : s.map(metres).join(" · "))(sides(pt.outline, true))}</td><td>${sqm(pt.area)}</td></tr>`).join("") + `<tr><th>Total built on</th><th></th><th>${(100 * total(f.parts.map(pt => pt.area)) / p.area).toLocaleString(undefined, { maximumFractionDigits: 1 })}% of parcel ${p.number}</th><th></th><th>${sqm(total(f.parts.map(pt => pt.area)))}</th></tr></table>` : "")
       + ((f.pipelines || []).length ? `<h3>Pipelines</h3><table><tr><th>Pipeline</th><th>Carries</th><th>From</th><th>To</th><th>Length</th></tr>` + f.pipelines.map(pl => `<tr><td>${esc(pl.name)}</td><td>${esc(pl.carries)}</td><td>${esc(pl.from)}</td><td>${esc(pl.to)}</td><td>${metres(pl.length)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th></th><th>${metres(total(f.pipelines.map(pl => pl.length)))}</th></tr></table>` : "")
       + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(f.file)}</div>`;
@@ -924,9 +925,18 @@ function detail(k) {
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
     for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : kind === "hull" ? DATA.hull_groups : kind === "part" ? DATA.part_groups : kind === "stock" ? DATA.mill_stock_groups : kind === "eq" ? DATA.equipment_groups : kind === "gate" ? DATA.gate_groups : DATA.process_groups)) {
       if (!e[g] || g === "structure") continue;
+      // (A module that makes something: what it makes is in its recipes, below.)
+      if (kind === "mod" && (e.recipes || []).length && ["inputs", "outputs", "needs"].includes(g)) continue;
+      if (kind === "mod" && (e.recipes || []).length && g === "rate" && !["holds", "volume", "stores", "handling"].some(q => q in e[g])) continue;
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
       for (const [key, note] of Object.entries(props)) if (key in e[g] && key !== "steps" && key !== "assemblies") h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
       h += `</table>`;
+    }
+    if (kind === "mod" && (e.recipes || []).length) {
+      const rs = e.recipes, amounts = xs => (xs || []).map(x => `${itemA(x.item)} <span class="meta">${+(+x.amount).toPrecision(4)}</span>`).join("<br>");
+      h += `<h3>Recipes</h3><p class="meta">${rs.length > 1 ? `What it can be set to make: ${rs.length} recipes, one at a time. Which one it is running is its setup, chosen by whoever owns it.` : `What it makes. It has one recipe, so there is nothing to choose.`} Amounts are for each tonne of what it makes${rs.some(r => r.supplies) ? " (for one that supplies power: tonnes for each MWh)" : ""}.</p>`
+        + `<table><tr><th>Makes</th><th>Takes in</th><th>Also gives</th><th>Rate</th><th>Batch</th><th>Power</th><th>What happens</th></tr>`
+        + rs.map(r => `<tr><td>${r.product ? itemA(r.product) : `power, ${(+r.supplies).toLocaleString()} MW`}</td><td>${amounts(r.inputs)}</td><td>${amounts(r.outputs)}</td><td class="num">${r.throughput ? +(+r.throughput).toPrecision(3) + " t/h" : ""}</td><td class="num">${r.batch ? r.batch + " t" : ""}</td><td class="num">${r.power ? +(+r.power).toPrecision(3) + " MW" : ""}</td><td>${esc(r.does || "")}</td></tr>`).join("") + `</table>`;
     }
     const footprint = m => m.size ? `${m.size.length} × ${m.size.width} m` : "";
     if (kind === "proc" && ((e.equipment || {}).steps || []).length) {

@@ -9,8 +9,6 @@ made_from:
   - item: material.aluminium-alloy-6061
 size:
   thickness: 0.005
-making:
-  processes: [process.rolling]
 physical:
   shock_limit: 784.532
 basis:

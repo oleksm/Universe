@@ -9,9 +9,10 @@ physical:
   width: 30
   height: 15
 recipes:
-  - makes: good.bar
+  - makes: stock.st4340-bar-120
+    does: "A hot ingot drawn out between grooved rolls into round bar."
     inputs:
-      - { item: good.hot-ingot, quantity: 1.1 }
+      - { item: good.hot-ingot-4340, quantity: 1.1 }
     outputs:
       - { item: good.scrap, quantity: 0.1 }
     rate: 13.8888888888889

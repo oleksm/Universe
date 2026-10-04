@@ -11,7 +11,7 @@ definitions:
       type: object
       additionalProperties: false
       properties:
-        item: { type: string, x-ref: [element, material, good], description: "An element, a material or a good, by its key." }
+        item: { type: string, x-ref: [element, material, good, stock, part], description: "What it is, by its key." }
         quantity: { type: number, description: "kg of it for each kg of what the recipe makes. For a recipe that supplies power: kg/s of it at full output." }
 properties:
   identity:
@@ -41,6 +41,7 @@ properties:
       additionalProperties: false
       properties:
         makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
+        does: { type: string, description: "What happens in it, set to this." }
         supplies: { type: number, x-unit: "W", description: "W it supplies, for one that makes power (in place of `makes`)" }
         inputs: { $ref: "#/definitions/amounts", description: "What goes in." }
         outputs: { $ref: "#/definitions/amounts", description: "What else comes out." }
