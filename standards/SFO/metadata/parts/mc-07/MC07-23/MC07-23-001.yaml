@@ -18,6 +18,8 @@ shape:
 made_from:
   item: ST4340-TB-150X10
   quantity: 5.58
+making:
+  processes: [machining]
 fit:
   count: 1
 limits:

@@ -18,6 +18,8 @@ shape:
 made_from:
   item: AL6061-PL-5
   quantity: 617.5
+making:
+  processes: [plate-work]
 fit:
   count: 1
   position: "Its centre is 36.1 m back from the nose and 0.3 m above the keel, on the centre line."

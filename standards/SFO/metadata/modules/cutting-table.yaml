@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Cutting table
+  step: Cut to shape
+  description: "A flat bed where sheet and plate are cut to each panel's outline. What is left between the outlines is scrap."
+size:
+  length: 40
+  width: 15
+  height: 5
+rate:
+  throughput: 2
+  product: cut-blanks
+inputs:
+  materials:
+  - { item: sheet-and-plate, amount: 1.15 }
+outputs:
+  by_products:
+  - { item: scrap, amount: 0.15 }
+needs:
+  power: 0.2
+basis:
+  - { of: [inputs, outputs], tier: invented, note: "The 15% lost in cutting is the allowance the parts' records use." }
+  - { of: [size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

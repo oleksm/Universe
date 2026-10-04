@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Panel former
+  step: Form
+  description: "Rolls and presses that bend flat blanks to a panel's curve."
+size:
+  length: 30
+  width: 15
+  height: 8
+rate:
+  throughput: 2
+  product: formed-panels
+inputs:
+  materials:
+  - { item: cut-blanks, amount: 1.0 }
+needs:
+  power: 0.3
+basis:
+  - { of: [inputs, size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

@@ -770,6 +770,7 @@ function detail(k) {
       const wk = e.worked, ld = wk.landing || {};
       h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>`
         + `<tr><td>mass, loaded</td><td>${kg(wk.ship)}</td><td>its parts, and what the game fits and loads into it</td></tr>`
+        + (e.built || []).map(bl => `<tr><td>can be built at</td><td>${esc(bl.at)}, ${esc(bl.settlement)}: one every ${bl.days.toFixed(0)} days at most</td><td>its parts' weight through the yard's building dock, flat out</td></tr>`).join("")
         + (wk.hover ? `<tr><td>can hover and set down on</td><td>ground of up to ${(wk.hover / 9.81).toFixed(2)} g</td><td>its lift against its weight</td></tr>` : "")
         + (wk.can.length || wk.cannot.length ? `<tr><td>settlements it can set down at</td><td>${esc(wk.can.join(", "))}</td><td>${wk.cannot.length ? "too heavy for: " + esc(wk.cannot.join(", ")) : "their worlds' gravity"}</td></tr>` : "")
         + (ld.designed !== undefined ? `<tr><td>landing its legs are designed for</td><td>${ld.designed} m/s, a jolt of ${ld.jolt.toFixed(2)} g aboard</td><td>its design, over a stroke of ${ld.stroke} m</td></tr><tr><td>hardest landing its legs take</td><td>${ld.hardest.toFixed(1)} m/s, a jolt of ${ld.hardest_jolt.toFixed(1)} g aboard</td><td>the weakest of its legs' parts; faster, a leg fails</td></tr>` : "")

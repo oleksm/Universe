@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Assembly shop
+  step: Fit together
+  description: "A hall where parts are fitted into a working assembly (a landing leg, a ramp) and tried."
+size:
+  length: 60
+  width: 40
+  height: 20
+rate:
+  throughput: 1
+  product: parts
+inputs:
+  materials:
+  - { item: parts, amount: 1.0 }
+needs:
+  power: 0.2
+basis:
+  - { of: [inputs, size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

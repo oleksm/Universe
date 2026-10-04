@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Fitting
+  kind: mechanical
+  method: assembly
+  description: "Parts fitted together into a working assembly."
+rate:
+  mode: batch
+equipment:
+  facility: yard
+  steps:
+  - { module: assembly-shop, does: "The parts are fitted together and the assembly tried." }

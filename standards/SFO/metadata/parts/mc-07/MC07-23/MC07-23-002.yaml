@@ -18,6 +18,8 @@ shape:
 made_from:
   item: ST4340-TB-120X10
   quantity: 4.1
+making:
+  processes: [machining]
 fit:
   count: 1
 limits:

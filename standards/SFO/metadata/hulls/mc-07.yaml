@@ -11,6 +11,8 @@ size:
   volume: 23181
 mass:
   frame: 87.803
+making:
+  process: hull-assembly
 design:
   loaded_mass: 107.6
   main_thrust: 5.4

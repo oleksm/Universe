@@ -12,6 +12,8 @@ physical:
   height: 7.78
 shape:
   surface_area: 227.1
+making:
+  processes: [fitting]
 fit:
   count: 1
   position: "Its centre is 34.2 m back from the nose and -0.1 m above the keel, on the centre line."

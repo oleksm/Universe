@@ -177,7 +177,7 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 LOCAL = "LocalAdministration"
 ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
 # What zone each kind of facility needs.
-FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "power": "industrial", "warehouse": "port"}
+FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -1264,6 +1264,12 @@ for hl in hulls:
     mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
     leaves = [pt for pt in mine if not kids(pt)]
     rows = []
+    how = lambda pt: (pt.get("making") or {}).get("processes") or []
+    # (The hull itself, and each part made of parts: is it said how it is put together, and is a yard built to do it?)
+    for name, key, procs in [(hl["identity"]["name"] + " (hull)", link(hl["identity"]["name"] + " (hull)", "hull:" + hl["slug"]), [q for q in [(hl.get("making") or {}).get("process")] if q])] + [(None, part_link(pt), how(pt)) for pt in mine if kids(pt)]:
+        steps = [("says how it is put together", bool(procs) and all(q in by_process for q in procs)), ("a yard is built to do it", bool(procs) and all(q in lined for q in procs))]
+        reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
+        rows.append(row("ok" if reached == len(steps) else "gap", key, f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
     for pt in leaves:
         ms = stock_of.get((pt.get("made_from") or {}).get("item"))
         proc = ((ms or {}).get("making") or {}).get("process")
@@ -1275,10 +1281,21 @@ for hl in hulls:
             ("the process has steps", bool(pr and (pr.get("equipment") or {}).get("steps"))),
             ("a facility is built to run it", proc in lined),
             ("the ingot that stock is made from can be made", any(q["slug"] in lined for q in ingot_makers((ms or {}).get("made_from", {}).get("material")))),
+            ("says how it is made from its stock", bool(how(pt)) and all(q in by_process for q in how(pt))),
+            ("a yard is built to make it", bool(how(pt)) and all(q in lined for q in how(pt))),
         ]
         reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
         rows.append(row("ok" if reached == len(steps) else "gap", part_link(pt), f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
-    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "For each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, is a facility built to run it, and can the ingot that stock starts from be made (a process with a line built for it).", ["Part", "Links made", "Where it stops"], rows)
+    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "The hull and each part made of parts: is it said how it is put together, and is a yard built to do it. Each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, is a facility built to run it, can the ingot that stock starts from be made (a process with a line built for it), is it said how the part is made from its stock, and is a yard built to make it.", ["Part", "Links made", "Where it stops"], rows)
+    # (Where it can be built, and how fast at most: the yards with a line for its assembly, flat out.)
+    built = []
+    for ad in administrations:
+        for x in ad["bodies"]:
+            for fc in x.get("facilities", []):
+                for ln in fc.get("lines") or []:
+                    if "most" in ln and ln["process"] == (hl.get("making") or {}).get("process") and ln["most"]["output"] and hl.get("parts_mass"):
+                        built.append({"at": fc["name"], "settlement": x["name"], "days": hl["parts_mass"] / 1000 / ln["most"]["output"] / 24})
+    hl["built"] = built
 
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []

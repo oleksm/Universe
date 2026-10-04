@@ -18,6 +18,8 @@ shape:
 made_from:
   item: ST4340-FG
   quantity: 15
+making:
+  processes: [machining]
 fit:
   count: 4
 basis:

@@ -25,6 +25,11 @@ properties:
     additionalProperties: false
     properties:
       frame: { type: number, description: "t, the bare hull with nothing fitted" }
+  making:
+    type: object
+    additionalProperties: false
+    properties:
+      process: { type: string, description: "The process that assembles it from its parts, by file name." }
   design:
     description: What it is designed to stand. Its parts' gauges are checked against these.
     type: object

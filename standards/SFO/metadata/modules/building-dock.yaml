@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Building dock
+  step: Assemble the hull
+  description: "A dock, long, wide and high enough to hold a hull, with cranes over it. The hull's parts are joined here and its assemblies fitted."
+size:
+  length: 120
+  width: 60
+  height: 35
+rate:
+  throughput: 0.25
+  product: hulls
+inputs:
+  materials:
+  - { item: parts, amount: 1.0 }
+needs:
+  power: 1.0
+basis:
+  - { of: [rate.throughput], tier: invented, review: true, note: "A guess, to be reviewed: it sets how fast a hull can be built at most." }
+  - { of: [inputs, size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
