@@ -903,15 +903,19 @@ for s in standards:
                 problem(full, "a category's file is named <name>.yaml (lower case, words joined by -)")
                 continue
             c = load(full)
-            for k in ["name", "count"]:
+            for k in ["code", "name", "count"]:
                 if k not in c:
                     problem(full, f"no {k}")
             for k in c:
-                if k not in {"name", "order", "count", "does"}:
+                if k not in {"code", "name", "count", "description"}:
                     problem(full, f"unknown field '{k}'")
+            if not re.fullmatch(r"[A-Z0-9]+-[0-9]{2}", str(c.get("code", ""))):
+                problem(full, "code: the hull's code, a dash, two digits (MC07-04)")
+            if any(o.get("code") == c.get("code") for o in categories):
+                problem(full, f"code {c.get('code')} twice")
             c.update({"slug": fn[:-5], "hull": hull, "under": s["id"], "file": os.path.relpath(full, TREE)})
             categories.append(c)
-categories.sort(key=lambda c: (c["hull"], c.get("order", 999), c.get("name", "")))
+categories.sort(key=lambda c: (c["hull"], str(c.get("code", "")), c.get("name", "")))
 for m in modules:
     for kind in (m.get("rate") or {}).get("stores") or []:
         if kind not in GOODS_KINDS:

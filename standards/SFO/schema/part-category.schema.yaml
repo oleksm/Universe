@@ -3,9 +3,9 @@ title: Part category
 description: 'standards/SFO/metadata/parts/<hull>/<name>.yaml: one assembly of a hull, as a category its parts are filed under. The folder says which hull (a hull''s file name).'
 type: object
 additionalProperties: false
-required: [name, count]
+required: [code, name, count]
 properties:
+  code: { type: string, pattern: '^[A-Z0-9]+-[0-9]{2}$', description: 'Its code: the hull''s, then its number in the hull''s list. Its parts'' codes start with it. No two alike.' }
   name: { type: string }
-  order: { type: integer, minimum: 1, description: Where it comes in its hull's list. }
   count: { type: integer, minimum: 1, description: How many of it one hull has. }
-  does: { type: string }
+  description: { type: string }

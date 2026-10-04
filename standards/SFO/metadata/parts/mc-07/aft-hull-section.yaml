@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../../schema/part-category.schema.yaml
+code: MC07-03
 name: Aft hull section
-order: 3
 count: 1
-does: "The rear third of the hull, with the engine bay."
+description: "The rear third of the hull, which holds the engine bay and takes the thrust of the main drive. Built stiffer than the other two for that load."

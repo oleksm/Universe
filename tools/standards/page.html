@@ -269,10 +269,10 @@ function rows(q) {
           for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
           for (const m of modulesUnder(s.id, q)) out.push({ k: "mod:" + m.slug, depth: depth + 1, kind: "maker", label: m.identity.name, ticker: m.identity.step, leaf: true });
           for (const hl of partHulls(s.id)) {
-            const hk = "pg:" + hl, cs = catsOf(hl).filter(c => !q || q.split(/\s+/).every(w => `${c.name} ${c.does || ""}`.toLowerCase().includes(w)));
+            const hk = "pg:" + hl, cs = catsOf(hl).filter(c => !q || q.split(/\s+/).every(w => `${c.code} ${c.name} ${c.description || ""}`.toLowerCase().includes(w)));
             if (q && !cs.length) continue;
             out.push({ k: hk, depth: depth + 1, kind: "maker", label: (hullBySlug[hl] || { identity: { name: hl } }).identity.name, ticker: `${catsOf(hl).length} categories`, leaf: false });
-            if (open.has(hk) || q) for (const c of cs) out.push({ k: `pk:${hl}:${c.slug}`, depth: depth + 2, kind: "maker", label: c.name, ticker: c.count > 1 ? `× ${c.count}` : "", leaf: true });
+            if (open.has(hk) || q) for (const c of cs) out.push({ k: `pk:${hl}:${c.slug}`, depth: depth + 2, kind: "maker", label: `${c.code} ${c.name}`, ticker: c.count > 1 ? `× ${c.count}` : "", leaf: true });
           }
           for (const x of hullsUnder(s.id, q)) out.push({ k: "hull:" + x.slug, depth: depth + 1, kind: "maker", label: x.identity.name, ticker: "hull", leaf: true });
           for (const g of goodsUnder(s.id, q)) out.push({ k: "good:" + g.slug, depth: depth + 1, kind: "maker", label: g.identity.name, ticker: g.identity.kind, leaf: true });
@@ -631,10 +631,10 @@ function detail(k) {
   if (kind === "pg" || kind === "pk") {
     const hl = hullBySlug[rest[0]], cs = catsOf(rest[0]); if (!cs.length) return "";
     const hname = hl ? `<a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : esc(rest[0]);
-    const table = `<table><tr><th>Category</th><th>In one hull</th><th>What it is</th><th>Parts</th></tr>` + cs.map(c => `<tr><td><a data-k="${esc(`pk:${c.hull}:${c.slug}`)}">${esc(c.name)}</a></td><td>${c.count}</td><td>${esc(c.does || "")}</td><td class="meta">none yet</td></tr>`).join("") + `</table>`;
+    const table = `<table><tr><th>Code</th><th>Category</th><th>In one hull</th><th>Description</th><th>Parts</th></tr>` + cs.map(c => `<tr><td>${esc(c.code)}</td><td><a data-k="${esc(`pk:${c.hull}:${c.slug}`)}">${esc(c.name)}</a></td><td>${c.count}</td><td>${esc(c.description || "")}</td><td class="meta">none yet</td></tr>`).join("") + `</table>`;
     if (kind === "pg") return `<h2>${esc(hl ? hl.identity.name : rest[0])} parts</h2><div class="meta">parts of the hull ${hname}, by category</div>` + table;
     const c = cs.find(y => y.slug === rest[1]); if (!c) return "";
-    return `<h2>${esc(c.name)}</h2><div class="meta">category of parts · of the hull ${hname}</div><p>${esc(c.does || "")}</p><table><tr><th>In one hull</th></tr><tr><td>${c.count}</td></tr></table><h3>Parts</h3><p class="meta">None yet.</p><div class="file" style="margin-top:24px">standards/${esc(c.file)}</div>`;
+    return `<h2>${esc(c.code)} ${esc(c.name)}</h2><div class="meta">category of parts · of the hull ${hname}</div><p>${esc(c.description || "")}</p><table><tr><th>Code</th><th>In one hull</th></tr><tr><td>${esc(c.code)}</td><td>${c.count}</td></tr></table><h3>Parts</h3><p class="meta">None yet.</p><div class="file" style="margin-top:24px">standards/${esc(c.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
@@ -676,7 +676,7 @@ function detail(k) {
     if (kind === "hull") {
       // What it is made of: its assemblies, the categories its parts are filed under.
       const cs = catsOf(e.slug);
-      if (cs.length) h += `<h3>What it is made of</h3><table><tr><th>Assembly</th><th>Number</th><th>What it is</th></tr>` + cs.map(c => `<tr><td><a data-k="${esc(`pk:${c.hull}:${c.slug}`)}">${esc(c.name)}</a></td><td>${c.count}</td><td>${esc(c.does || "")}</td></tr>`).join("") + `<tr><th>Total</th><th>${cs.reduce((s, c) => s + c.count, 0)}</th><th>${cs.length} kinds</th></tr></table>`;
+      if (cs.length) h += `<h3>What it is made of</h3><table><tr><th>Code</th><th>Assembly</th><th>Number</th><th>Description</th></tr>` + cs.map(c => `<tr><td>${esc(c.code)}</td><td><a data-k="${esc(`pk:${c.hull}:${c.slug}`)}">${esc(c.name)}</a></td><td>${c.count}</td><td>${esc(c.description || "")}</td></tr>`).join("") + `<tr><th>Total</th><th>${cs.length} kinds</th><th>${cs.reduce((s, c) => s + c.count, 0)}</th><th></th></tr></table>`;
     }
     if (kind === "good" || kind === "el" || kind === "mat") {
       const id = kind === "el" ? e.identity.symbol : e.slug;

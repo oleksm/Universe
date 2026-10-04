@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../../schema/part-category.schema.yaml
+code: MC07-09
 name: Wiring harness
-order: 9
 count: 1
-does: "The wiring through the hull, as one set."
+description: "All the wiring through the hull, made up as one set: the power bus from the power slot and the signal lines from the computer to every other socket."
