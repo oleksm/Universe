@@ -23,10 +23,12 @@ use serde::{Deserialize, Serialize};
 
 mod celestial;
 mod common;
+mod organisation;
 mod sfo;
 
-pub use common::Physical;
-pub use sfo::{Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Part};
+pub use common::{Address, Physical};
+pub use organisation::{Business, Details, Form, OrgIdentity, OrgKind, Organisation, ZoneRule, ZoneUse};
+pub use sfo::{Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
 pub use celestial::{Atmosphere, Body, BodyIdentity, BodyKind, BodyOrbit, BodyPhysical, BodyRock, InGame, Population, PopulationIdentity, PopulationKind, PopulationRocks, RockStructure, Star, Surface, Terrain, ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
 
 /// Where a record's figures come from (the common schema's `basis`).
@@ -74,6 +76,10 @@ pub struct Registry {
     pub seeding: Seeding,
     pub rock_classes: Vec<RockClass>,
     pub goods: Vec<Good>,
+    /// Companies, standards bodies and administrations.
+    pub organisations: Vec<Organisation>,
+    /// Every standards body's standards.
+    pub standards: Vec<Standard>,
     pub systems: Vec<System>,
     /// Stars, planets, moons and small bodies, of every system written out.
     pub bodies: Vec<Body>,
@@ -145,6 +151,8 @@ impl Registry {
             };
             match kind.as_str() {
                 "rock-class" => parse(&mut |t| Ok(reg.rock_classes.push(serde_norway::from_str(t)?))),
+                "org" => parse(&mut |t| Ok(reg.organisations.push(serde_norway::from_str(t)?))),
+                "standard" => parse(&mut |t| Ok(reg.standards.push(serde_norway::from_str(t)?))),
                 "good" => parse(&mut |t| Ok(reg.goods.push(serde_norway::from_str(t)?))),
                 "body" => parse(&mut |t| Ok(reg.bodies.push(serde_norway::from_str(t)?))),
                 "population" => parse(&mut |t| Ok(reg.populations.push(serde_norway::from_str(t)?))),
@@ -190,12 +198,12 @@ impl Registry {
 
     /// The compact encoding the binary carries.
     pub fn encode(&self) -> Vec<u8> {
-        postcard::to_stdvec(self).expect("the registry encodes")
+        rmp_serde::to_vec(self).expect("the registry encodes")
     }
 
     /// The registry from [`Registry::encode`]'s bytes.
     pub fn decode(bytes: &[u8]) -> Registry {
-        postcard::from_bytes(bytes).expect("the registry built into the game decodes")
+        rmp_serde::from_slice(bytes).expect("the registry built into the game decodes")
     }
 
     /// The good with this key.

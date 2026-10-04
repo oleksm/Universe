@@ -151,7 +151,7 @@ fn label(node: &Node) -> (String, Color) {
         }
         Node::Standard(k) => {
             let s = c.standards.iter().map(|(_, s)| s).find(|s| &s.key == k).expect("a standard");
-            (format!("{}  {}", s.key, s.title), AMBER)
+            (format!("{}  {}", s.cite, s.title), AMBER)
         }
     }
 }
@@ -266,8 +266,8 @@ fn standard_lines(s: &Standard, width: usize, out: &mut Vec<(String, Color)>) {
         out.push((String::new(), TEXT));
         out.push(("BUILDS ON".into(), DIM));
         for r in &s.refs {
-            let t = c.standards.iter().map(|(_, s)| s).find(|x| &x.key == r).map_or("?", |x| x.title.as_str());
-            out.push((format!("  {r}  {t}"), AMBER));
+            let x = c.standards.iter().map(|(_, s)| s).find(|x| &x.key == r);
+            out.push((format!("  {}  {}", x.map_or(r.as_str(), |x| x.cite.as_str()), x.map_or("?", |x| x.title.as_str())), AMBER));
         }
     }
     // Parameters: the plain ones as a list; ROW.column ones as a table.

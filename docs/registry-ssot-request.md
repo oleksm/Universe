@@ -540,3 +540,18 @@ typed, every group of the body schema included. The game builds its charted syst
   `population.<system>.*` (kinds family, trojan and outer), where `in_game` isn't `not made`. A body
   of a kind the game doesn't make, without `in_game: not made`, stops the game at start. Keep
   marking them.
+
+**Organisations and standards (this commit).** `org.*` and `standard.*` are read whole, strictly
+typed.
+- **`brands.ron`, `bodies.ron` and `standards.ron` are no longer loaded.** That's six of the eight
+  writers that can go: those three, plus `galaxy.ron`, `rock_classes.ron` and `celestial.ron`. The
+  game's hand-written files now name makers `org.*`.
+- **`standard.refs` are still citations** (`SFO 2`, pattern `^[A-Z]{2,6} [0-9]+$`). Make them keys
+  (`standard.sfo.2`, `x-ref: [standard]`) like every other reference; the game turns them into
+  keys today.
+- **A standard's body is found from its key** (`standard.sfo.*` → the body whose prefix is SFO).
+  Fine as long as keys keep the prefix; an explicit `body` ref would be clearer.
+- **`organisation.schema.yaml`, `note`:** the description is cut at a comma, leaving a stray
+  property `as the game shows it.: null` (the same slip as `seeding.galaxy.home`).
+- **Branches are still the topics, flat.** If the register is to be a tree (`parent`), say so, and
+  the game's standards view will follow the parents.

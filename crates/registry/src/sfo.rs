@@ -80,3 +80,142 @@ pub struct GoodInGame {
     #[serde(default)]
     pub ore: Option<String>,
 }
+
+/// `standard.<body>.<number>`: a standard, as its body's register holds it.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Standard {
+    pub identity: StandardIdentity,
+    #[serde(default)]
+    pub title: Option<String>,
+    /// The record it sits under (its category), by key.
+    #[serde(default)]
+    pub parent: Option<String>,
+    /// A folder in metadata/ whose records sit under this one.
+    #[serde(default)]
+    pub records: Option<String>,
+    /// Why it exists, a paragraph.
+    #[serde(default)]
+    pub purpose: Option<String>,
+    #[serde(default)]
+    pub details: Option<Block>,
+    #[serde(default)]
+    pub sections: Vec<Block>,
+    #[serde(default)]
+    pub version: Option<u32>,
+    #[serde(default)]
+    pub status: Option<StandardStatus>,
+    #[serde(default)]
+    pub scope: Option<String>,
+    #[serde(default)]
+    pub topics: Vec<String>,
+    /// The standards it builds on, as cited (`SFO 2`).
+    #[serde(default)]
+    pub refs: Vec<String>,
+    #[serde(default)]
+    pub params: Vec<Param>,
+    #[serde(default)]
+    pub requires: Vec<Requirement>,
+    #[serde(default)]
+    pub text: Option<String>,
+    #[serde(default)]
+    pub licence: Option<Licence>,
+    /// When it was published (world time, s).
+    #[serde(default)]
+    pub published: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StandardIdentity {
+    pub key: String,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum StandardStatus {
+    Draft,
+    Published,
+    Superseded,
+    Withdrawn,
+}
+
+/// Text and/or a table.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Block {
+    #[serde(default)]
+    pub title: Option<String>,
+    #[serde(default)]
+    pub text: Option<Text>,
+    #[serde(default)]
+    pub table: Option<Table>,
+}
+
+/// A paragraph, or several.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Text {
+    One(String),
+    Paragraphs(Vec<String>),
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Table {
+    pub columns: Vec<String>,
+    pub rows: Vec<Vec<String>>,
+}
+
+/// One value a standard fixes.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Param {
+    pub key: String,
+    pub value: ParamValue,
+    #[serde(default)]
+    pub unit: Option<String>,
+    #[serde(default)]
+    pub note: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ParamValue {
+    Number(f64),
+    Range([f64; 2]),
+    Text(String),
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Requirement {
+    pub subject: String,
+    pub check: Check,
+    pub param: String,
+    #[serde(default)]
+    pub per: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum Check {
+    AtMost,
+    AtLeast,
+    Equals,
+    FitsWithin,
+    Provides,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Licence {
+    Open(OpenLicence),
+    Fee { fee: f64 },
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum OpenLicence {
+    Open,
+}

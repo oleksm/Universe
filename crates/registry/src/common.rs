@@ -44,3 +44,19 @@ pub struct Physical {
     #[serde(default)]
     pub shock_limit: Option<f64>,
 }
+
+/// Where something is (SFO 9): the settlement, by key; then the tower, deck,
+/// section and unit inside it (its own business).
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Address {
+    pub at: String,
+    #[serde(default)]
+    pub tower: Option<String>,
+    #[serde(default)]
+    pub deck: Option<u32>,
+    #[serde(default)]
+    pub section: Option<String>,
+    #[serde(default)]
+    pub unit: Option<u32>,
+}

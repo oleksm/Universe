@@ -99,9 +99,12 @@ pub struct Requirement {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Standard {
-    /// Its id without the version: body prefix, branch, number (`SFO/3.1/001`).
+    /// Its key in the registry (`standard.sfo.18`).
     pub key: String,
-    /// Its body (`body.sfo`).
+    /// As it's cited, without the version: its body's prefix and its number
+    /// (`SFO 18`).
+    pub cite: String,
+    /// Its body (`org.sfo`).
     pub body: String,
     /// The branch it's in (`3.1`).
     pub branch: String,
@@ -126,9 +129,9 @@ pub struct Standard {
 }
 
 impl Standard {
-    /// As it's cited: `SFO/3.1/001 V1`.
+    /// As it's cited: `SFO 18 V1`.
     pub fn id(&self) -> String {
-        format!("{} V{}", self.key, self.version)
+        format!("{} V{}", self.cite, self.version)
     }
 
     pub fn param(&self, key: &str) -> Option<&Param> {
@@ -178,4 +181,105 @@ impl Body {
 /// A branch path's parent (`2.1` → `2`; a top branch's: None).
 pub fn parent(path: &str) -> Option<&str> {
     path.rsplit_once('.').map(|(p, _)| p)
+}
+
+/// As the game writes it: in capitals, on one line.
+pub(crate) fn caps(t: &str) -> String {
+    t.split_whitespace().collect::<Vec<_>>().join(" ").to_uppercase()
+}
+
+/// The standards bodies and their standards, from the registry: each body an
+/// organisation of kind `standards_body`; each standard's body the one whose
+/// prefix its key names (`standard.sfo.18`: SFO's), its branch its first
+/// topic (its body's branches: its standards' topics, for now).
+pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Body>, Vec<Standard>) {
+    use crate::registry::{Check as C, Licence as L, OrgKind, ParamValue, StandardStatus as S};
+    let orgs: Vec<_> = reg.organisations.iter().filter(|o| o.kind == OrgKind::StandardsBody).collect();
+    let prefix_of = |o: &crate::registry::Organisation| o.prefix.clone().unwrap_or_else(|| panic!("{}: a standards body with no prefix", o.identity.key));
+    let body_of = |key: &str| {
+        let segment = key.split('.').nth(1).unwrap_or_else(|| panic!("{key}: no body in its key"));
+        orgs.iter().find(|o| prefix_of(o).eq_ignore_ascii_case(segment)).unwrap_or_else(|| panic!("{key}: no standards body {segment}"))
+    };
+    let cite = |key: &str| {
+        let number = key.rsplit('.').next().unwrap_or_default();
+        format!("{} {number}", prefix_of(body_of(key)))
+    };
+    let key_of_cite = |c: &str| {
+        let (prefix, number) = c.split_once(' ').unwrap_or_else(|| panic!("{c}: not a citation"));
+        format!("standard.{}.{number}", prefix.to_lowercase())
+    };
+    let topic = |s: &crate::registry::Standard| s.topics.first().cloned().unwrap_or_else(|| "all".into());
+    let standards: Vec<Standard> = reg
+        .standards
+        .iter()
+        .map(|s| Standard {
+            key: s.identity.key.clone(),
+            cite: cite(&s.identity.key),
+            body: body_of(&s.identity.key).identity.key.clone(),
+            branch: topic(s),
+            version: s.version.unwrap_or(1),
+            title: caps(s.title.as_deref().unwrap_or_default()),
+            scope: caps(s.scope.as_deref().unwrap_or_default()),
+            status: match s.status.unwrap_or(S::Draft) {
+                S::Draft => Status::Draft,
+                S::Published => Status::Published,
+                S::Superseded => Status::Superseded,
+                S::Withdrawn => Status::Withdrawn,
+            },
+            refs: s.refs.iter().map(|r| key_of_cite(r)).collect(),
+            params: s
+                .params
+                .iter()
+                .map(|p| Param {
+                    key: p.key.clone(),
+                    value: match &p.value {
+                        ParamValue::Number(n) => Value::Num(*n),
+                        ParamValue::Range([a, b]) => Value::Range(*a, *b),
+                        ParamValue::Text(t) => Value::Text(caps(t)),
+                    },
+                    unit: p.unit.clone().unwrap_or_default(),
+                    note: caps(p.note.as_deref().unwrap_or_default()),
+                })
+                .collect(),
+            requires: s
+                .requires
+                .iter()
+                .map(|r| Requirement {
+                    subject: r.subject.clone(),
+                    check: match r.check {
+                        C::AtMost => Check::AtMost,
+                        C::AtLeast => Check::AtLeast,
+                        C::Equals => Check::Equals,
+                        C::FitsWithin => Check::FitsWithin,
+                        C::Provides => Check::Provides,
+                    },
+                    param: r.param.clone(),
+                    per: r.per.clone().unwrap_or_default(),
+                })
+                .collect(),
+            text: caps(s.text.as_deref().unwrap_or_default()),
+            licence: match s.licence {
+                Some(L::Fee { fee }) => Licence::Fee(fee),
+                _ => Licence::Open,
+            },
+            published: s.published.unwrap_or(0.0),
+        })
+        .collect();
+    let bodies = orgs
+        .iter()
+        .map(|o| {
+            let mut topics: Vec<String> = reg.standards.iter().filter(|s| body_of(&s.identity.key).identity.key == o.identity.key).map(topic).collect();
+            topics.sort();
+            topics.dedup();
+            Body {
+                key: o.identity.key.clone(),
+                name: caps(&o.identity.name),
+                prefix: prefix_of(o),
+                seat: o.seat.clone().unwrap_or_default(),
+                note: caps(o.note.as_deref().unwrap_or_default()),
+                branches: topics.into_iter().map(|t| { let title = caps(&t.replace('-', " ")); (t, title) }).collect(),
+            }
+        })
+        .collect();
+    (bodies, standards)
 }

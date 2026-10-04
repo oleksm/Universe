@@ -28,7 +28,6 @@ use crate::ship::ClassSpec;
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("materials.ron", include_str!("../../../content/base/materials.ron")),
-    ("brands.ron", include_str!("../../../content/base/brands.ron")),
     ("structures.ron", include_str!("../../../content/base/structures.ron")),
     ("modules.ron", include_str!("../../../content/base/modules.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
@@ -38,8 +37,6 @@ const BASE: &[(&str, &str)] = &[
     ("places.ron", include_str!("../../../content/base/places.ron")),
     ("markets.ron", include_str!("../../../content/base/markets.ron")),
     ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
-    ("bodies.ron", include_str!("../../../content/base/bodies.ron")),
-    ("standards.ron", include_str!("../../../content/base/standards.ron")),
     ("settlements.ron", include_str!("../../../content/base/settlements.ron")),
     ("industry.ron", include_str!("../../../content/base/industry.ron")),
 ];
@@ -303,7 +300,15 @@ impl Content {
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
         let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
-        let brands: Registry<crate::modules::Brand> = Registry::build(Self::defs(&packs, "brands.ron")?)?;
+        // Brands: the registry's makers (the companies whose business is making things).
+        let brands: Registry<crate::modules::Brand> = Registry::build(
+            crate::registry::registry()
+                .organisations
+                .iter()
+                .filter(|o| o.is_maker())
+                .map(|o| crate::modules::Brand { key: o.identity.key.clone(), name: crate::standards::caps(&o.identity.name), note: crate::standards::caps(o.note.as_deref().unwrap_or_default()) })
+                .collect(),
+        )?;
         let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
         let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
         for (_, s) in structures.iter() {
@@ -408,8 +413,8 @@ impl Content {
         let tank_fuel = &hulls.get(starter).fuel;
         let fuel_goods = resolve(&materials, &aliases, tank_fuel).map(|h| materials.get(h).goods.clone()).unwrap_or_default();
         let fuel = kind(&fuel_goods, &format!("the starting hull's fuel '{tank_fuel}'"))?;
-        let bodies: Registry<crate::standards::Body> = Registry::build(Self::defs(&packs, "bodies.ron")?)?;
-        let standards: Registry<crate::standards::Standard> = Registry::build(Self::defs(&packs, "standards.ron")?)?;
+        let (bodies, standards) = crate::standards::from_registry(crate::registry::registry());
+        let (bodies, standards): (Registry<crate::standards::Body>, Registry<crate::standards::Standard>) = (Registry::build(bodies)?, Registry::build(standards)?);
         for (_, s) in standards.iter() {
             let Some(b) = resolve(&bodies, &aliases, &s.body) else {
                 return Err(format!("standards.ron '{}': no body '{}'", s.key, s.body));

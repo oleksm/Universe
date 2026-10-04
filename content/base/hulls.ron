@@ -4,7 +4,7 @@
 [
     (
         key: "hull.drover",
-        brand: "brand.tolland",
+        brand: "org.tolland",
         name: "DROVER",
         shape: "shape.drover",
         // The multirole: a fair hold, lands anywhere, holds its own in a fight.
@@ -57,7 +57,7 @@
     ),
     (
         key: "hull.sprint",
-        brand: "brand.vireo",
+        brand: "org.vireo",
         name: "SPRINT COURIER",
         // Small, light and fast: a courier's and a settler's ship.
         shape: "shape.sprint",
@@ -91,7 +91,7 @@
     ),
     (
         key: "hull.hauler",
-        brand: "brand.tolland",
+        brand: "org.tolland",
         name: "BULK HAULER",
         // A hold before all else; heavy, slow, can't land on a heavy world loaded.
         shape: "shape.hauler",
@@ -127,7 +127,7 @@
     ),
     (
         key: "hull.prospector",
-        brand: "brand.cormorant",
+        brand: "org.cormorant",
         name: "PROSPECTOR",
         // A miner: a mining rig, a big hold, sturdy.
         shape: "shape.prospector",
@@ -161,7 +161,7 @@
     ),
     (
         key: "hull.interceptor",
-        brand: "brand.vireo",
+        brand: "org.vireo",
         name: "INTERCEPTOR",
         // Drive and guns: fast to turn, fast to close, no hold to speak of.
         shape: "shape.interceptor",

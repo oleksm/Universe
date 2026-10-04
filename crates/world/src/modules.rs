@@ -190,9 +190,8 @@ impl Comm {
     }
 }
 
-/// A maker of modules (content: `brands.ron`).
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+/// A maker of modules: one of the registry's makers (`org.*`).
+#[derive(Clone, Debug, PartialEq)]
 pub struct Brand {
     pub key: String,
     pub name: String,
