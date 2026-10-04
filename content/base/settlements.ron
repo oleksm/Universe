@@ -29,6 +29,7 @@
         facilities: [
             (name: "Trethi Foundry", kind: "foundry", parcel: 1,
                 makes: [("Ingot", 79.5772854596384)], draws: 320.11589133260964, supplies: 0.0, holds: 0.0,
+                takes: [("Argon", "", 0.016233766233766236), ("Lime", "", 4.058441558441559), ("Carbon", "", 1.2175324675324677), ("Graphite electrode", "", 0.12175324675324677), ("Water", "goods.water", 0.4464285714285694), ("Iron ore", "goods.ores", 187.50000000000003)], gives: [("Ingot", "", 79.5772854596384), ("Scrap", "", 1.591545709192768), ("Slag", "", 12.175324675324676), ("Furnace dust", "", 1.2175324675324677), ("Oxygen", "", 39.28571428571429), ("Tailings", "", 62.50000000000001)], burns: [],
                 modules: [("ore-yard", 1), ("pellet-plant", 1), ("hydrogen-plant", 3), ("shaft-furnace", 1), ("arc-furnace", 1), ("ladle-station", 1), ("casting-bay", 1), ("ingot-yard", 1)],
                 blocks: [
                 (module: "ore-yard", centre: (720.0, 180.0), length: 200.0, width: 100.0, height: 15.0, heading: 0.0),
@@ -44,12 +45,14 @@
             ]),
             (name: "Trethi Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
             ]),
             (name: "Trethi Warehouse", kind: "warehouse", parcel: 3,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
+                takes: [], gives: [], burns: [],
                 modules: [("general-warehouse", 2), ("tank-farm", 2), ("ore-yard", 1), ("loading-dock", 2)],
                 blocks: [
                 (module: "general-warehouse", centre: (330.0, -785.0), length: 150.0, width: 100.0, height: 12.0, heading: 90.0),
