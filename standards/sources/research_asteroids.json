@@ -1,0 +1,212 @@
+{
+ "main_belt": {
+  "total_mass": {
+   "value": 2.39e+21,
+   "unit": "kg",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "The total mass of the asteroid belt is estimated to be 2.39×10^21 kg, which is 3% of the mass of the Moon.",
+   "verified": true
+  },
+  "mass_in_four_largest": {
+   "value": 62,
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "The four largest objects, Ceres, Vesta, Pallas, and Hygiea, contain an estimated 62% of the belt's total mass, with 39% accounted for by Ceres alone.",
+   "verified": true
+  },
+  "count_over_1km": {
+   "value": [
+    700000,
+    1700000
+   ],
+   "unit": "asteroids",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "the asteroid belt has between 700,000 and 1.7 million asteroids with a diameter of 1 km or more.",
+   "verified": true
+  },
+  "count_over_100km": {
+   "value": 200,
+   "unit": "asteroids",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Over 200 asteroids are larger than 100 km",
+   "verified": true
+  },
+  "average_spacing": {
+   "value": 965600,
+   "unit": "km",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "On average the distance between the asteroids is about 965,600 km (600,000 miles).",
+   "verified": true
+  },
+  "edges": {
+   "value": {
+    "4:1": 2.06,
+    "2:1": 3.27
+   },
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "The 4:1 orbital resonance at 2.06 AU marks the inner boundary; 2:1 at 3.27 AU.",
+   "verified": true
+  },
+  "class_shares": {
+   "value": {
+    "C": 75,
+    "S": 17
+   },
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Carbonaceous asteroids comprise over 75% of the visible asteroids; S-type asteroids form about 17% of the total asteroid population; M-types most of the remainder.",
+   "verified": true
+  },
+  "family_share": {
+   "value": [
+    33,
+    35
+   ],
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_family",
+   "quote": "About 33% to 35% of asteroids in the main belt are family members.",
+   "verified": true
+  },
+  "families": {
+   "value": [
+    20,
+    30
+   ],
+   "unit": "families",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_family",
+   "quote": "There are about 20 to 30 reliably recognized families, with several tens of less certain groupings.",
+   "verified": true
+  },
+  "family_lifetime": {
+   "value": 1000000000.0,
+   "unit": "years",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_family",
+   "quote": "Asteroid families are thought to have lifetimes of the order of a billion years",
+   "verified": true
+  }
+ },
+ "trojans": {
+  "count_over_1km": {
+   "value": 1000000,
+   "unit": "asteroids",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The total number of Jupiter trojans larger than 1 km in diameter is believed to be about 1 million.",
+   "verified": true
+  },
+  "spread": {
+   "value": 26,
+   "unit": "degrees along the orbit, each swarm",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "Each swarm stretches for about 26° along the orbit of Jupiter, amounting to a total distance of about 2.5 AU.",
+   "verified": true
+  },
+  "mass": {
+   "value": 0.2,
+   "unit": "of the asteroid belt's mass",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The total mass of the Jupiter trojans is estimated at 0.0001 of the mass of Earth or one-fifth of the mass of the asteroid belt.",
+   "verified": true
+  },
+  "class": {
+   "value": "D-type",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The Jupiter trojans mostly are D-type asteroids",
+   "verified": true
+  },
+  "albedo": {
+   "value": 0.056,
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The average value is 0.056 ± 0.003 for the objects larger than 57 km.",
+   "verified": true
+  },
+  "density": {
+   "value": [
+    800,
+    2500
+   ],
+   "unit": "kg/m3",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "densities vary from 0.8 to 2.5 g·cm−3",
+   "verified": true
+  }
+ },
+ "outer_belt": {
+  "edges": {
+   "value": {
+    "3:2": 39.5,
+    "2:1": 48
+   },
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "The main body of the belt is generally accepted to extend from the 2:3 mean-motion resonance at 39.5 AU to the 1:2 resonance at roughly 48 AU.",
+   "verified": true
+  },
+  "count_over_100km": {
+   "value": 100000,
+   "unit": "objects",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "more than 100000 KBOs over 100 km (62 mi) in diameter are thought to exist.",
+   "verified": true
+  },
+  "mass": {
+   "value": 0.0197,
+   "unit": "Earth masses",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "The most recent estimate (2018) puts the total mass of the Kuiper belt at (1.97±0.30)×10−2 Earth masses.",
+   "verified": true
+  },
+  "thickness": {
+   "value": 10,
+   "unit": "degrees either side of the plane",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "The Kuiper belt is quite thick, with the main concentration extending as much as ten degrees outside the ecliptic plane",
+   "verified": true
+  }
+ },
+ "moons": {
+  "share_asteroids": {
+   "value": 2,
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+   "quote": "Among asteroids, an estimated 2% would have satellites.",
+   "verified": true
+  },
+  "share_outer": {
+   "value": 11,
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+   "quote": "Among trans-Neptunian objects (TNOs), an estimated 11% are thought to be binary or multiple objects.",
+   "verified": true
+  },
+  "separation": {
+   "value": [
+    300,
+    3000
+   ],
+   "unit": "km",
+   "source": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+   "quote": "The distances of the components for the known binaries vary from a few hundreds of kilometres to more than 3000 km for the asteroids.",
+   "verified": true
+  }
+ },
+ "meteorite_falls": {
+  "by_type": {
+   "value": {
+    "ordinary chondrites": 80.0,
+    "carbonaceous chondrites": 4.4,
+    "enstatite chondrites": 1.6,
+    "achondrites": 8.2,
+    "stony-iron": 1.0,
+    "iron": 4.6
+   },
+   "unit": "% of 1,062 classified falls",
+   "source": "https://en.wikipedia.org/wiki/Meteorite_fall_statistics",
+   "quote": "Chondrites 86.2% (ordinary 80.0%, carbonaceous 4.4%, enstatite 1.6%); achondrites 8.2%; stony-iron 1.0%; iron 4.6%.",
+   "verified": true
+  }
+ },
+ "note": "Fetched 2026-10-04. Each quote is as a page-reading tool returned it; the figures were not checked against the pages by eye."
+}

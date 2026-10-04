@@ -90,6 +90,30 @@ leaves curated and frozen ones alone) and say so in the changelog.
 - Rock classes are records but the game's are still `belt::RockClass` and `goods::Ore`, both
   enums. Adding an asteroid type by record needs both to become data.
 
+## Asteroid belts: what the engine is to support
+
+`standards/Celestial/metadata/asteroids.yaml` holds how asteroids lie, from the Sun's belts
+(sourced), and the build works each charted system's belts out from it and that system's planets
+(shown on each system's page; in `standards/index.html` data as `celestial.systems[].belts`).
+
+What the spec says, against the game today:
+
+| | The spec | The game today |
+|---|---|---|
+| Where belts lie | main belt between the 4:1 and 2:1 resonances of the first gas giant (0.8 to 1.3 of the frost line with none); swarms 60 degrees either side of each giant; an icy belt between the outermost giant's 3:2 and 2:1 | the same rules (`belt.rs`) |
+| How many | by the ground a belt covers at the Sun's count: Treistun's main belt about 142,000 over 1 km and 11 million over 100 m | 2 to 5 fields a system, each one remnant and about 200 fragments |
+| What each goes round | the star, each on an orbit of its own, about a million km apart; about 2% have one moon | fragments go round their remnant, within tens of km |
+| A family | pieces of one body sharing an orbit, spread all round it; about a third of asteroids | one place |
+
+So the engine needs asteroids made from the seed **by region of a belt, on demand**, as stars are
+made by sector: a belt cut into cells by distance and angle, each cell's rocks made when something
+comes near, each on its own Kepler orbit round the star (cells move with the orbit, so a rock's
+place is a function of time, not stored). Only what is near is ever made. The existing bound swarm
+is right for a small share of them (a remnant with a moon or two), not for every field.
+
+This is a spec, not yet a plan: how mining then plays (rocks hours apart, not a cloud) is the
+user's call. Do not start it without them.
+
 ## Where the spec is ahead of the game
 
 These are registry facts the game does not yet follow. None is a bug in the game; each is work to

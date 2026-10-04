@@ -1886,7 +1886,7 @@ report("invented", "Confidence: the records with invented or unexplained numbers
 CEL = os.path.join(TREE, "Celestial")
 celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": []}
 if os.path.isdir(CEL):
-    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class")}
+    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class", "asteroids")}
     celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field", "rock-class")}
 
     def cel_load(full, kind):
@@ -1906,6 +1906,20 @@ if os.path.isdir(CEL):
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
         return rec
 
+    # (How asteroids lie: the Sun's belts, the measure for each system's.)
+    apath = os.path.join(CEL, "metadata", "asteroids.yaml")
+    if os.path.exists(apath):
+        laws = load(apath)
+        for g_, props in laws.items():
+            known = cschema["asteroids"]["properties"].get(g_)
+            if known is None:
+                problem(apath, f"unknown group '{g_}'")
+            elif g_ != "basis":
+                for q in props or {}:
+                    if q not in known["properties"]:
+                        problem(apath, f"{g_}: unknown property '{q}'")
+        check_basis(laws, apath)
+        celestial["asteroids"] = laws
     # (The kinds of asteroid: each yields a rock of the SFO's goods.)
     rdir = os.path.join(CEL, "metadata", "rock-classes")
     celestial["rock_classes"] = [cel_load(os.path.join(rdir, fn), "rock-class") for fn in sorted(os.listdir(rdir)) if fn.endswith(".yaml")] if os.path.isdir(rdir) else []
@@ -1940,6 +1954,54 @@ if os.path.isdir(CEL):
         # (In order out from what each goes round.)
         sysm["bodies"].sort(key=lambda b: (b.get("orbit") or {}).get("semi_major_axis", 0))
         celestial["systems"].append(sysm)
+    # Each system's belts, worked out: the main belt between two resonances of its first gas giant
+    # (with no giant, round its frost line); two swarms on each giant's orbit; an icy belt past its
+    # outermost giant. How many: the Sun's, by the ground each covers (the same number for each
+    # square AU), and by size as the size law says.
+    laws = celestial.get("asteroids") or {}
+    AU_KM = 1.495978707e8
+    res = lambda r_: (lambda a_, b_: (b_ / a_) ** (2 / 3))(*[float(v) for v in r_.split(":")])
+    for sysm in celestial["systems"]:
+        belts = []
+        if not laws:
+            continue
+        planets = [b for b in sysm["bodies"] if b["identity"].get("parent") == sysm["identity"]["name"] and b["identity"]["kind"] != "asteroid"]
+        giants = [b for b in planets if b["identity"]["kind"] in ("gas giant", "ice giant")]
+        gas = next((b for b in giants if b["identity"]["kind"] == "gas giant"), giants[0] if giants else None)
+        au = lambda b: b["orbit"]["semi_major_axis"] / AU_KM
+        frost = 2.7 * (sysm.get("star") or {}).get("luminosity", 1) ** 0.5
+        mb, ob, tj, sz = laws.get("main_belt") or {}, laws.get("outer_belt") or {}, laws.get("trojans") or {}, laws.get("sizes") or {}
+        smaller = lambda n_, from_km, to_km: n_ * (from_km / to_km) ** sz.get("exponent", 2)
+        ring = lambda lo, hi: math.pi * (hi ** 2 - lo ** 2)
+        # (The giant that shapes the belt: the first gas giant out by the frost line, or else the first giant.)
+        gas = next((b for b in giants if b["identity"]["kind"] == "gas giant" and au(b) > 0.8 * frost), giants[0] if giants else None)
+        if mb:
+            lo, hi = (au(gas) * res(mb["inner_resonance"]), au(gas) * res(mb["outer_resonance"])) if gas else (mb.get("no_giant_inner", 0.8) * frost, mb.get("no_giant_outer", 1.3) * frost)
+            n1 = mb["count_over_1km"] * ring(lo, hi) / ring(mb["inner_edge"], mb["outer_edge"])
+            belts.append({"name": "Main belt", "kind": "main", "inner": lo, "outer": hi, "by": gas["identity"]["name"] if gas else None, "over_1km": n1, "over_100m": smaller(n1, 1, 0.1), "over_smallest": smaller(n1, 1, sz.get("smallest", 15) / 1000),
+                          "over_100km": smaller(n1, 1, 100), "spacing": mb.get("spacing"), "families": round(mb.get("families", 0) * ring(lo, hi) / ring(mb["inner_edge"], mb["outer_edge"])), "family_share": mb.get("family_share"), "inside_frost": hi <= frost})
+        for g_ in giants if tj else []:
+            for lead in ("L4", "L5"):
+                n1 = tj["count_over_1km"] / 2
+                belts.append({"name": f"{g_['identity']['name']} {lead}", "kind": "trojan", "inner": au(g_), "outer": au(g_), "by": g_["identity"]["name"], "over_1km": n1, "over_100m": smaller(n1, 1, 0.1), "over_smallest": smaller(n1, 1, sz.get("smallest", 15) / 1000),
+                              "spread": tj.get("spread"), "lead": lead, "inside_frost": au(g_) <= frost})
+        if giants and ob:
+            last = giants[-1]
+            lo, hi = au(last) / res(ob["inner_resonance"]), au(last) / res(ob["outer_resonance"])
+            n100 = ob["count_over_100km"] * ring(lo, hi) / ring(ob["inner_edge"], ob["outer_edge"])
+            belts.append({"name": "Outer belt", "kind": "outer", "inner": lo, "outer": hi, "by": last["identity"]["name"], "over_100km": n100, "over_1km": smaller(n100, 100, 1), "inside_frost": False})
+        # (The game's fields, each in the belt it lies in.)
+        for fl in sysm["fields"]:
+            an = next((b for b in sysm["bodies"] if b["identity"]["name"] == fl["identity"].get("anchor")), None)
+            a_ = au(an) if an and an.get("orbit") else None
+            kind = {"family": "main", "trojan": "trojan", "outer": "outer"}.get(fl["identity"].get("kind"))
+            cand = [bl for bl in belts if bl["kind"] == kind and (kind != "trojan" or (bl["name"].split(" ")[-1] in fl["identity"]["name"] and bl["by"] in fl["identity"]["name"]))]
+            if cand:
+                cand[0].setdefault("fields", []).append(fl["slug"])
+                fl["belt"] = cand[0]["name"]
+                fl["in_belt"] = a_ is None or kind == "trojan" or cand[0]["inner"] * 0.98 <= a_ <= cand[0]["outer"] * 1.02
+        sysm["belts"] = belts
+        sysm["frost_line"] = frost
     home = celestial["galaxy"].get("home")
     celestial["systems"].sort(key=lambda s: (s["identity"]["name"] != home, (s.get("position") or {}).get("distance", 0)))
     if home and home not in {s["identity"]["name"] for s in celestial["systems"]}:
@@ -1988,6 +2050,13 @@ for where_ in ("inside_frost_line", "outside_frost_line"):
     tot = sum((rc.get("forms") or {}).get(where_, 0) for rc in celestial["rock_classes"])
     if celestial["rock_classes"]:
         rows.append(row("ok" if abs(tot - 1) < 1e-6 else "gap", "Rock classes, " + where_.replace("_", " "), f"{len(celestial['rock_classes'])} classes", "", f"their shares add to {tot:g}" + ("" if abs(tot - 1) < 1e-6 else ", not 1")))
+for sysm in celestial["systems"]:
+    for bl in sysm.get("belts") or []:
+        if bl["kind"] != "trojan" or bl.get("fields"):
+            rows.append(row("ok" if bl.get("fields") else "note", f"{sysm['identity']['name']}: {bl['name']}", f"{bl['inner']:.2f} to {bl['outer']:.2f} AU" if bl["kind"] != "trojan" else f"at {bl['inner']:.2f} AU", f"about {bl['over_1km']:,.0f} over 1 km", f"{len(bl.get('fields') or [])} of the game's fields in it" if bl.get("fields") else "the game has no field in it"))
+    for fl in sysm["fields"]:
+        if fl.get("in_belt") is False or "belt" not in fl:
+            rows.append(row("gap", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), "", "", "it lies in no belt its system has, by the laws written out"))
 keys_ = {rc["identity"]["key"].lower() for rc in celestial["rock_classes"]}
 for sysm in celestial["systems"]:
     for fl in sysm["fields"]:
