@@ -171,7 +171,7 @@ pub struct MarketAnswer {
 /// A craft's transponder, as the player's radar reads it alongside the blip.
 #[derive(Clone, Debug)]
 pub struct Transponder {
-    pub name: String,
+    pub name: std::sync::Arc<str>,
     pub activity: &'static str,
     pub destination: Option<String>,
     pub hull: f64,

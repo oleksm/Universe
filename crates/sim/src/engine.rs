@@ -105,7 +105,8 @@ pub enum Command {
 /// Another ship, as the client draws it.
 #[derive(Clone, Debug)]
 pub struct CraftView {
-    pub name: String,
+    /// Shared with the craft: a view copies no names.
+    pub name: std::sync::Arc<str>,
     pub system: usize,
     pub ship: Ship,
     /// Its route: the stop it's on, how many, and what it's doing.
@@ -486,15 +487,19 @@ struct Mailbox {
 
 fn post(mailbox: &std::sync::Mutex<Mailbox>, mut view: View) {
     let mut m = mailbox.lock().unwrap_or_else(|e| e.into_inner());
-    if let Some(old) = m.view.take() {
-        let mut events = old.events;
+    let mut stale = m.view.take();
+    if let Some(old) = &mut stale {
+        let mut events = std::mem::take(&mut old.events);
         events.append(&mut view.events);
         view.events = events;
-        let mut impacts = old.impacts;
+        let mut impacts = std::mem::take(&mut old.impacts);
         impacts.append(&mut view.impacts);
         view.impacts = impacts;
     }
     m.view = Some(view);
+    // (The view not taken is let go of after the client's free to take the new one.)
+    drop(m);
+    drop(stale);
 }
 
 /// The client's handle on the world engine: send commands, read the latest

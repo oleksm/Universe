@@ -17,7 +17,7 @@ const CRASH_LOG: usize = 50;
 /// Another ship in the world: the body (its ship), and what the world
 /// knows of the pilot flying it (see `pilots`: the pilot itself is apart).
 pub struct Craft {
-    pub name: String,
+    pub name: std::sync::Arc<str>,
     pub ship: Ship,
     /// Galaxy index of the system it's in.
     pub system: usize,
@@ -120,7 +120,7 @@ impl Universe {
                 }
                 let _ = ship.refit(fit);
             }
-            self.crafts.push(Craft { name: reg.name, ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
+            self.crafts.push(Craft { name: reg.name.into(), ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
             let me = universe_services::Party::Pilot(crate::combat::craft_id(self.crafts.len() - 1));
             self.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);
         }
@@ -169,7 +169,7 @@ impl Universe {
             let speed = sys.bodies.iter().position(|x| x.name == body).map_or(0.0, |x| (velocity - sys.velocity(x, now)).length());
             let (c, st) = (&self.crafts[i], &self.crafts[i].status);
             self.crash_log.push(CrashReport {
-                craft: c.name.clone(),
+                craft: c.name.to_string(),
                 body,
                 system,
                 time: now,
@@ -319,7 +319,8 @@ impl Universe {
         let _p = universe_prof::scope("sim/pilot view/ships and board");
         self.snapped_at = self.tick;
         let tick = self.tick;
-        let mut ships: std::collections::HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash> = Default::default();
+        // (Room for them all from the start: grown, it would move every ship it holds.)
+        let mut ships: std::collections::HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash> = std::collections::HashMap::with_capacity_and_hasher(self.crafts.len() + 1, Default::default());
         ships.insert(crate::combat::PLAYER, (self.ship_system, self.ship.clone()));
         for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.asleep_until <= tick) {
             ships.insert(crate::combat::craft_id(i), (c.system, c.ship.clone()));

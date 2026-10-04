@@ -1038,7 +1038,7 @@ pub fn apply(app: &mut App, name: &str) {
                 c.ship.position = pos + DVec3::new(-2_000.0 + 5_000.0 * k as f64, 1_500.0, -3_000.0);
                 c.ship.velocity = vel;
                 let number = c.name.split(' ').next_back().unwrap_or("").to_string();
-                c.name = format!("{} {number}", if k == 0 { "Pirate" } else { "Trader" });
+                c.name = format!("{} {number}", if k == 0 { "Pirate" } else { "Trader" }).into();
             }
             for (k, p) in app.engine.universe().pilots()[n - 2..].iter_mut().enumerate() {
                 p.avionics.pirate = k == 0;

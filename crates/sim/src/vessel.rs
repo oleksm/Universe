@@ -38,7 +38,8 @@ pub struct Inbox {
 
 #[derive(Clone, Debug)]
 enum Pending {
-    Devices(Box<ShipCommands>),
+    // (Held as they are: the queue keeps its room, so posting allocates nothing.)
+    Devices(ShipCommands),
     Turn(Option<Controls>),
 }
 
@@ -47,7 +48,7 @@ impl Inbox {
     /// (`seen`: when its pilot saw the world it was ordered against.)
     pub(crate) fn post(&mut self, due: u64, seen: f64, devices: Vec<ShipCommands>, turn: Option<Option<Controls>>) {
         let at = self.pending.iter().position(|(d, _, _)| *d > due).unwrap_or(self.pending.len());
-        let items = devices.into_iter().map(|c| Pending::Devices(Box::new(c))).chain(turn.map(Pending::Turn));
+        let items = devices.into_iter().map(Pending::Devices).chain(turn.map(Pending::Turn));
         for (k, item) in items.enumerate() {
             self.pending.insert(at + k, (due, seen, item));
         }
