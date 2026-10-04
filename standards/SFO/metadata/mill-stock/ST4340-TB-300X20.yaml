@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  code: ST4340-TB-300X20
+  name: "4340 tube 300 x 20 mm"
+made_from:
+  material: high-strength-steel-4340
+  form: tube
+  temper: "quenched and tempered"
+size:
+  diameter: 300
+  wall: 20
+making:
+  process: tube-making-4340
+basis:
+  - { of: [size], tier: derived, note: "Sized for the landing: see the structure report." }

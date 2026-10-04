@@ -1302,6 +1302,85 @@ for hl in hulls:
         rows.append(row("ok" if lost >= 0 else "gap", part_link(pt), tonnes(pt["mass"]), "its own record", tonnes(pt["stock_mass"]), "the stock it takes", f"{lost:,.0f} kg lost as offcut" if lost >= 0 else "it weighs more than the stock it is cut from"))
 report("mass", "Mass: a thing against what it is made of", "A hull against its parts, a part made of parts against them, a part against the stock it is cut from. A gap is a difference of more than 1%, a part with no mass, or a part heavier than its stock.", ["What", "Weighs", "By", "Against", "By", "Difference"], rows)
 
+# 2b. Structure: each hull's parts against the loads it is designed to stand, and the hull against
+# real vehicles. First-order sizing: a pressurised part as a cylinder across its smaller dimension
+# (hoop stress), a landing leg as a column (strength, and Euler buckling with pinned ends).
+_src_path = os.path.join(TREE, "sources", "research_rock_structure.json")
+BENCH = json.load(open(_src_path, encoding="utf-8")) if os.path.exists(_src_path) else {}
+bench = lambda topic, fig: (BENCH.get(topic) or {}).get(fig) or {}
+mat_by = {m.get("slug"): m for m in materials}
+for hl in hulls:
+    ds = hl.get("design") or {}
+    if not ds:
+        continue
+    mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
+    leaves = [pt for pt in mine if not kids(pt)]
+    stock = lambda pt: stock_of.get((pt.get("made_from") or {}).get("item"))
+    mech = lambda ms: (mat_by.get((ms.get("made_from") or {}).get("material")) or {}).get("mechanical") or {}
+    longest = lambda pt: max((pt.get("physical") or {}).get(k, 0) for k in ("length", "width", "height"))
+    case = lambda pt: (pt.get("limits") or {}).get("load_case")
+    SF, PF, eta = ds.get("safety_factor", 1), ds.get("pressure_factor", 1), ds.get("strut_efficiency", 1)
+    frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
+    ship = hl.get("parts_mass", 0) + max(0.0, ds.get("loaded_mass", 0) * 1000 - frame)   # (its parts, and what the game fits and loads)
+    rows = []
+    # (Holding the cabin's air.)
+    for pt in [pt for pt in leaves if case(pt) == "pressure"]:
+        ms = stock(pt)
+        ph, sy, have = pt.get("physical") or {}, mech(ms or {}).get("yield_strength"), ((ms or {}).get("size") or {}).get("thickness")
+        if not (ms and sy and have and ph.get("width")):
+            rows.append(row("gap", part_link(pt), "holds the cabin's air", "", "", "", "its stock, its size or its material's strength is not said"))
+            continue
+        r = min(ph["width"], ph["height"]) / 2
+        need = ds.get("cabin_pressure", 0) * 1e3 * r * SF * PF / (sy * 1e6) * 1000
+        rows.append(row("ok" if have >= need else "gap", part_link(pt), f"holds {ds.get('cabin_pressure')} kPa across {2 * r:.1f} m", f"{need:.1f} mm of skin", f"{have:g} mm", f"{have / need:.2f} times", "as a cylinder across its smaller dimension; its flat sides are not checked"))
+    thin = [pt for pt in leaves if case(pt) is None and ((stock(pt) or {}).get("size") or {}).get("thickness") is not None]
+    below = [pt for pt in thin if stock(pt)["size"]["thickness"] < ds.get("minimum_gauge", 0)]
+    if thin:
+        rows.append(row("gap" if below else "note", f"{len(thin)} skin and plate parts with no load case", "none set", f"{ds.get('minimum_gauge'):g} mm at least", f"{min(stock(pt)['size']['thickness'] for pt in thin):g} mm the thinnest", "", "their gauge was chosen; nothing checks them against thrust, bending or buckling" if not below else f"{len(below)} are below the least gauge"))
+    # (Taking the landing.)
+    legs = {}
+    for pt in [pt for pt in leaves if case(pt) == "landing"]:
+        legs.setdefault(pt.get("parent"), []).append(pt)
+    count = sum(times(next(o for o in mine if o["slug"] == k)) for k in legs if k)
+    energy = 0.5 * ship * ds.get("landing_speed", 0) ** 2
+    worst_g = 0
+    for parent, pts in legs.items():
+        stroke = min(longest(pt) for pt in pts)
+        force = (energy / (stroke * eta) + ship * ds.get("gravity", 0)) / max(count, 1)
+        worst_g = max(worst_g, energy / (stroke * eta) / ship / 9.81)
+        for pt in pts:
+            ms = stock(pt)
+            size, mc = (ms or {}).get("size") or {}, mech(ms or {})
+            d, w, sy, em = size.get("diameter"), size.get("wall"), mc.get("yield_strength"), mc.get("youngs_modulus")
+            if not (d and sy and em):
+                rows.append(row("gap", part_link(pt), "takes the landing", "", "", "", "its stock's size or its material's strength or stiffness is not said"))
+                continue
+            di = d - 2 * w if w else 0
+            a_, i_ = math.pi * (d ** 2 - di ** 2) / 4e6, math.pi * (d ** 4 - di ** 4) / 64e12
+            strength = sy * 1e6 * a_ / (force * SF)
+            buckling = math.pi ** 2 * em * 1e9 * i_ / longest(pt) ** 2 / (force * SF)
+            rows.append(row("ok" if min(strength, buckling) >= 1 else "gap", part_link(pt), f"{force / 1e6:.1f} MN on each of {count} legs", f"{force * SF / 1e6:.1f} MN with its factor", ms["identity"]["name"], f"strength {strength:.2f} times, buckling {buckling:.2f} times", f"a column {longest(pt):.2f} m long, stopping {ship / 1000:.0f} t from {ds.get('landing_speed'):g} m/s in {stroke:.2f} m"))
+    # (Against real vehicles and the game's own engines.)
+    sz = hl.get("size") or {}
+    if all(k in sz for k in ("length", "width", "height")) and hl.get("parts_mass"):
+        box = 2 * (sz["length"] * sz["width"] + sz["length"] * sz["height"] + sz["width"] * sz["height"])
+        ref = bench("fuselage_structure", "areal_mass_formula_AA241")
+        rows.append(row("note", "The hull's parts over its outer box", f"{box:,.0f} m2 of box", "about 24 kg/m2 for an airliner's fuselage" if ref else "", f"{hl['parts_mass'] / box:.1f} kg/m2", f"{hl['parts_mass'] / box / 24:.2f} times", (ref.get("source") or "") + ": a weight formula for pressurised fuselages, by wetted area"))
+    gear = sum(o.get("mass", 0) * times(o) for o in mine if o["slug"] in legs)
+    if gear and ship:
+        lo, hi = 3, 6
+        share = 100 * gear / ship
+        rows.append(row("ok" if lo <= share <= hi else "gap", "The landing legs' share of the ship", f"{ship / 1000:,.0f} t loaded", f"{lo} to {hi}% in transport aircraft", f"{share:.1f}% ({gear / 1000:.1f} t)", "", (bench("weight_fractions", "landing_gear_share_MTOW_VT").get("source") or "")))
+    if ds.get("lift_thrust") and ship:
+        hold = ds["lift_thrust"] * 1e6 / 9.81
+        rows.append(row("ok" if hold >= ship else "gap", "Lift against the ship's weight", f"{ship / 1000:,.0f} t loaded, at 1 g", f"{ship * 9.81 / 1e6:.2f} MN to hover", f"{ds['lift_thrust']:g} MN of lift", f"{hold / ship:.2f} times", f"the lift nozzles hold {hold / 1000:,.0f} t at 1 g, {ds['lift_thrust'] * 1e6 / ds.get('gravity', 9.81) / 1000:,.0f} t on its heaviest world"))
+    if ds.get("main_thrust") and ship:
+        rows.append(row("note", "Main drive", f"{ship / 1000:,.0f} t loaded", "", f"{ds['main_thrust']:g} MN", f"{ds['main_thrust'] * 1e6 / ship / 9.81:.1f} g", "its acceleration flat out; nothing checks the hull against it"))
+    if legs:
+        sink = bench("landing_gear", "design_sink_speed_landing_weight")
+        rows.append(row("note", "The landing the game allows", f"{ds.get('landing_speed'):g} m/s", "3.05 m/s is what aircraft gear is designed for", f"{worst_g:.0f} g on the crew", f"{ds.get('landing_speed', 0) / 3.05:.0f} times the speed, {(ds.get('landing_speed', 0) / 3.05) ** 2:.0f} times the energy", (sink.get("source") or "") + ": 14 CFR 25.473"))
+    report(f"structure-{hl['slug']}", f"Structure: {hl['identity']['name']} against its loads", "Each part that has a load case, against that load, by first-order sizing; and the hull against real vehicles and its own engines. A gap is a part too weak for its load, or a figure outside what real vehicles show.", ["What", "Load", "Needs", "Has", "Margin", "Note or source"], rows)
+
 # 3. Volume: a hull's parts' boxes against the space the hull takes.
 rows = []
 for hl in hulls:

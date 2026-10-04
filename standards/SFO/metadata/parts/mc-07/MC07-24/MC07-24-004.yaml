@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=../../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
-# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
+# clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
+# it is cut from.
 identity:
   code: MC07-24-004
   name: "Actuator body"
   status: draft
   drawing: "assets/models/mc07.glb: Gear_RL_ActBody"
 physical:
-  mass: 22
+  mass: 127
   length: 1.85
   width: 0.52
   height: 1.4
@@ -16,10 +16,10 @@ shape:
   surface_area: 4.5
 made_from:
   item: ST4340-TB-200X15
-  quantity: 0.39
+  quantity: 2.22
 fit:
   count: 1
 basis:
   - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
-  - { of: [physical.mass], tier: invented, note: "An estimate: its surface at 4.91 kg for each m2." }
+  - { of: [physical.mass], tier: derived, note: "Its length in the stock it is cut from." }
   - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }

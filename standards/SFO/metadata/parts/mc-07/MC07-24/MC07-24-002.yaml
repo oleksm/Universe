@@ -1,25 +1,27 @@
 # yaml-language-server: $schema=../../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
-# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
+# clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
+# it is cut from.
 identity:
   code: MC07-24-002
   name: "Piston"
   status: draft
   drawing: "assets/models/mc07.glb: Gear_RL_Piston"
 physical:
-  mass: 44
+  mass: 343
   length: 0.7
   width: 0.7
   height: 3.02
 shape:
   surface_area: 8.9
 made_from:
-  item: ST4340-BAR-120
-  quantity: 0.59
+  item: ST4340-TB-250X20
+  quantity: 3.62
 fit:
   count: 1
+limits:
+  load_case: landing
 basis:
   - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
-  - { of: [physical.mass], tier: invented, note: "An estimate: its surface at 4.91 kg for each m2." }
-  - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.mass], tier: derived, note: "Its length in the stock it is cut from." }
+  - { of: [made_from], tier: derived, note: "Its tube sized for the landing (see the structure report). The fifth more that is machined away was chosen." }

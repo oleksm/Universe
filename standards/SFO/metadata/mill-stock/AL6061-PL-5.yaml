@@ -11,4 +11,4 @@ size:
 making:
   process: rolling
 basis:
-  - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
+  - { of: [size], tier: derived, note: "The gauge the pressurised parts need: see the structure report. Other parts use it by choice." }

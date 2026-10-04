@@ -98,6 +98,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
+      load_case: { enum: [pressure, landing], description: "The load its gauge is checked against: holding the cabin's air, or taking the landing." }
       design_load: { type: number, description: "kN, the load it is built to carry" }
       safety_factor: { type: number, description: "how many times its design load it takes before it breaks" }
       pressure: { type: number, description: "kPa it holds" }

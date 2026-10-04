@@ -11,5 +11,24 @@ size:
   volume: 23181
 mass:
   frame: 87.803
+design:
+  loaded_mass: 107.6
+  main_thrust: 5.4
+  lift_thrust: 1.32
+  landing_speed: 30
+  gravity: 16.36
+  cabin_pressure: 101.3
+  safety_factor: 1.5
+  pressure_factor: 1.33
+  strut_efficiency: 0.85
+  minimum_gauge: 2
 basis:
   - { of: [size, mass], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume, and the frame mass the game's formula gives it." }
+  - { of: [design.loaded_mass, design.main_thrust, design.lift_thrust], tier: sourced, source: "the game: the MC-07 as imported, with its standard fit" }
+  - { of: [design.landing_speed], tier: sourced, source: "the game: crates/world/src/spaceport.rs, LAND_SPEED" }
+  - { of: [design.gravity], tier: sourced, source: "the game: Treistun c, the heaviest world with a port" }
+  - { of: [design.safety_factor], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.303", note: "14 CFR 25.303: a factor of safety of 1.5." }
+  - { of: [design.pressure_factor], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.365", note: "14 CFR 25.365: cabin pressure loads at 1.33 times." }
+  - { of: [design.strut_efficiency], tier: sourced, source: "https://archive.aoe.vt.edu/mason/Mason_f/M96SC05.pdf", note: "An oleo strut does work over 0.8 to 0.9 of its stroke." }
+  - { of: [design.cabin_pressure], tier: invented, note: "Sea-level air, chosen. Airliners hold 54 to 65 kPa above the outside." }
+  - { of: [design.minimum_gauge], tier: invented, note: "Chosen. Airliner skin is about 1 mm." }
