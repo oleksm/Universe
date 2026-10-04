@@ -1,5 +1,5 @@
 // The base world's fixed numbers (the world's, not Dogma's laws: those
-// are `config/dogma.ron`): its designs, devices and technology as they
+// are the registry's, `standards/Dogma`): its designs, devices and technology as they
 // stand. The build turns this into `universe_world::sheet`. (Not yet:
 // override packs replacing these; they're compiled in.)
 //
@@ -11,7 +11,6 @@
         name: "Drives",
         note: "The world's drives as built today (each engine's exhaust and efficiency are its product's: modules.ron).",
         entries: [
-            (name: "SOLAR_LUMINOSITY", value: 3.828e26, unit: "W", kind: Real, note: "The Sun's power: the unit stars' luminosities are given in (each star's its own, seeded round its class's)."),
             (name: "GROUND_MARGIN", value: 20000.0, unit: "m", kind: Tuning, note: "Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top)."),
         ],
     ),
@@ -44,7 +43,6 @@
             (name: "SKIN_CAPACITY", value: 3.0e6, unit: "J/K", kind: Simplified, note: "The skin's heat capacity: about 3 t of metal."),
             (name: "SKIN_LIMIT", value: 1500.0, unit: "K", kind: Real, note: "Beyond it the hull burns (refractory alloys)."),
             (name: "AMBIENT", value: 290.0, unit: "K", kind: Simplified, note: "What the skin settles to with nothing heating it: to be replaced by the energy balance (sunlight, night)."),
-            (name: "AIR_CP", value: 1005.0, unit: "J/(kg·K)", kind: Real, note: "Earth-like air's specific heat at constant pressure."),
             (name: "HULL_ABSORPTIVITY", value: 0.3, unit: "", kind: Real, note: "How much sunlight a hull's paint takes in (white paint about 0.25–0.35)."),
             (name: "INTERNAL_LEAK", value: 0.01, unit: "", kind: Simplified, note: "The share of a ship's power use that reaches its skin as heat; the rest goes to its radiators (built in for now: radiators come as modules)."),
             (name: "CONVECTION", value: 25.0, unit: "W/(m²·K)", kind: Simplified, note: "Heat exchange between a hull and Earth-like air at sea level (scaling with the air's density to the half power)."),
@@ -54,13 +52,8 @@
         name: "Climate",
         note: "Worlds' surface temperatures: radiative equilibrium from their star, their albedo, a greenhouse from their air; day and night swings damped by air.",
         entries: [
-            (name: "ALBEDO_TERRAN", value: 0.3, unit: "", kind: Real, note: "An Earth-like world's albedo (Earth's: 0.3)."),
-            (name: "ALBEDO_DRY", value: 0.15, unit: "", kind: Real, note: "A dry rocky world's (Mars: 0.17)."),
-            (name: "ALBEDO_CRATERED", value: 0.12, unit: "", kind: Real, note: "A cratered moon's (the Moon: 0.12)."),
-            (name: "ALBEDO_GIANT", value: 0.5, unit: "", kind: Real, note: "A gas or ice giant's cloud tops (Jupiter: 0.5)."),
             (name: "GREENHOUSE", value: 33.0, unit: "K", kind: Simplified, note: "What Earth-like air at sea level adds to a world's mean (Earth's: 33 K); grows with the air's density to the 0.6."),
             (name: "SWING_DAMPING", value: 0.05, unit: "kg/m³", kind: Simplified, note: "Air this dense halves a world's day–night swing; Earth-like air (1.2) all but flattens it."),
-            (name: "LAPSE_RATE", value: 0.0065, unit: "K/m", kind: Real, note: "Air cooling with height (Earth's standard atmosphere)."),
             (name: "NIGHT_FLOOR", value: 0.35, unit: "", kind: Simplified, note: "An airless world's night, as a share of its mean (the Moon: about 100 K of 270)."),
         ],
     ),

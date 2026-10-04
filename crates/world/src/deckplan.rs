@@ -605,7 +605,7 @@ mod tests {
         let go = |from: DVec3, wish: DVec3, climb: f64, secs: f64| {
             let mut w = Walker { feet: from, velocity: DVec3::ZERO };
             for _ in 0..(secs * 60.0) as usize {
-                w.step(&cols, &|_| DVec3::Y, 9.81, &|p| walk.climbing(p), &Stride { wish, jump: 0.0, climb }, 1.0 / 60.0);
+                w.step(&cols, &|_| DVec3::Y, crate::units::STANDARD_GRAVITY, &|p| walk.climbing(p), &Stride { wish, jump: 0.0, climb }, 1.0 / 60.0);
             }
             w.feet
         };

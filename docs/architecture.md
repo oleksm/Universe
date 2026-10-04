@@ -44,7 +44,7 @@ designs, production and economy. The world can change anything of its own and no
 
 | | Dogma | The world (the base world) |
 |---|---|---|
-| Where | `crates/physics` (`universe-physics`) and its laws, `config/dogma.ron` | `content/base/` (a content pack), and the world code that runs it |
+| Where | `crates/physics` (`universe-physics`) and its laws, the Dogma registry (`standards/Dogma`) | `content/base/` (a content pack), and the world code that runs it |
 | What | nature's constants; mechanics, gravity, orbits, contact; the hyper layer's laws (the medium, fields, throats: `laws`, `hyper`) | materials (`materials.ron`), devices (`modules.ron`), hulls, brands, recipes, places, markets, its fixed design numbers (`sheet.ron`) |
 | Knows | bodies, forces, energy, the medium | fuels, reactors, tanks, ships, stations, goods, who makes what |
 | Never | names a material, a device, a fuel or a good (`dogma.rs` checks) | breaks a law (devices are checked against Dogma and their materials) |

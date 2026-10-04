@@ -10,7 +10,7 @@ use universe_physics::{Frame, Relative, RigidBody, Ring};
 
 use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
-// (Its constants are the physics sheet's: config/dogma.ron.)
+// (Its constants are the physics sheet's: the Dogma registry, standards/Dogma.)
 pub use crate::sheet::{GATE_RADIUS, RING_TUBE};
 
 /// The ring's shape, for Dogma; its opening is the trigger.

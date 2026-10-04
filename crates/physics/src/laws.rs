@@ -1,5 +1,5 @@
 //! Dogma's laws: nature's constants and the laws every world runs on
 //! (the real, and the invented hyper layer's), generated from
-//! `config/dogma.ron`. The charter: `docs/physics.md`.
+//! the Dogma registry (`standards/Dogma`). The charter: `docs/physics.md`.
 
 include!(concat!(env!("OUT_DIR"), "/laws.rs"));

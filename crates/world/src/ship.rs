@@ -9,7 +9,7 @@
 use glam::{DMat3, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_physics::RigidBody;
-// (Its constants are the physics sheet's: config/dogma.ron.)
+// (Its constants are the physics sheet's: the Dogma registry, standards/Dogma.)
 
 /// The hull a new ship is built as, unless it's told otherwise.
 pub const STARTING_HULL: &str = "hull.drover";
@@ -1309,7 +1309,7 @@ mod classes {
                 "{:<16} dry {:>5.1} t  tank {:>4.0} t  hold {:>5.0} t  main {:>4.1} m/s²  lift {:>4.1} m/s² (full hold {:>4.1})  turns {:.1}/{:.1}/{:.1}  {:.0} CR",
                 h.name, h.dry_mass / 1e3, h.fuel_capacity / 1e3, h.hold_capacity / 1e3, h.main_thrust / loaded, h.lift_thrust / loaded, h.lift_thrust / (loaded + h.hold_capacity), h.turn_accel.x, h.turn_accel.y, h.turn_accel.z, h.frame.price
             );
-            assert!(h.lift_thrust / loaded > 9.81 * 1.1, "{}: can't hover at 1 g with an empty hold", h.key);
+            assert!(h.lift_thrust / loaded > crate::units::STANDARD_GRAVITY * 1.1, "{}: can't hover at 1 g with an empty hold", h.key);
         }
     }
 }

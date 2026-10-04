@@ -1,7 +1,7 @@
-//! Dogma's laws (`config/dogma.ron`) into `universe_physics::laws`.
+//! Dogma's laws, from the registry (`standards/Dogma`), into `universe_physics::laws`.
 
-include!("build/sheetgen.rs");
+include!("build/dogmagen.rs");
 
 fn main() {
-    generate("../../config/dogma.ron", "laws.rs", "crate::sheet");
+    generate_dogma("../../standards/Dogma/metadata", "laws.rs", "crate::sheet");
 }
