@@ -11,3 +11,7 @@ processes:
   - quenching-and-tempering
   - annealing
   - solution-treating-and-ageing
+# What it is to make: 1,800 t of steel ingot a day. Chosen so that one of each steelmaking module
+# is enough, all but the hydrogen plant.
+production:
+  - { process: steelmaking, output: 75 }

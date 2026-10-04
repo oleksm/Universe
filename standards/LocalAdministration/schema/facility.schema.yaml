@@ -11,6 +11,16 @@ properties:
   kind: { enum: [foundry, mill] }
   parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }
   processes: { type: array, items: { type: string }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
+  production:
+    description: 'What it is to make: for each process, the output it is built for. The modules it needs, its supplies, by-products, power and ground are worked out from the process''s steps and their modules (SFO 10).'
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [process, output]
+      properties:
+        process: { type: string, description: 'One of its processes, one that has steps.' }
+        output: { type: number, description: 't/h of the product of the process''s last making step' }
   parts:
     description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'
     type: array

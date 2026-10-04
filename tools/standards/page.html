@@ -295,11 +295,23 @@ function rows(q) {
     };
     under(null, 2);
   }
+  // The Production Register: no records of its own, a reference to what every facility is to make.
+  const lines = producing().filter(r => !q || q.split(/\s+/).every(w => `${r.f.name} ${r.pr.identity.name} ${r.makes}`.toLowerCase().includes(w)));
+  out.push({ k: "pd", depth: 0, kind: "body", label: "Production Register", n: producing().length });
+  if (open.has("pd") || q) for (const r of lines) out.push({ k: `pl:${r.a.slug}:${r.x.slug}:${r.f.slug}`, depth: 1, kind: "maker", label: r.f.name, ticker: `${perDay(r.ln.output)} t/day ${r.makes}` });
   // The Address Registry: no records of its own, a reference to everything that has an address.
   const listed = addressed().filter(r => !q || q.split(/\s+/).every(w => `${r.who} ${r.address}`.toLowerCase().includes(w)));
   out.push({ k: "ar", depth: 0, kind: "body", label: "Address Registry", n: addressed().length });
   if (open.has("ar") || q) for (const r of listed) out.push({ k: r.org ? "ra:" + r.key : "rp:" + r.key, depth: 1, kind: "maker", label: r.who, ticker: r.org ? r.tag : r.address.split(", ").slice(0, 3).join(", ") });
   return out;
+}
+// What every facility is to make: one row for each line of its production.
+const perDay = tph => Math.round(tph * 24).toLocaleString();
+function producing() {
+  return allFacilities().flatMap(({ a, x, f }) => (f.production || []).filter(ln => ln.plan).map(ln => {
+    const pr = procBySlug[ln.process]; const out = ((pr.outputs || {}).products || [])[0] || {};
+    return { a, x, f, ln, pr, makes: `${(matBySlug[out.item] || { identity: { name: out.item || "" } }).identity.name}${out.form ? " " + out.form : ""}` };
+  }));
 }
 // Everything with an address, spelled out.
 function addressed() {
@@ -321,6 +333,7 @@ function reveal(k) {
   }
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
+  if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
   if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("pc:") || k.startsWith("fc:") || k.startsWith("zn:") || k.startsWith("st:")) {
     const org = k.startsWith("at:") ? ORGS.find(o => o.key === k.slice(3)) : null;
@@ -437,6 +450,8 @@ function detail(k) {
     return `<h3>Map</h3>` + s + `</svg>`;
   };
   if (kind === "at" || kind === "ra") { const o = ORGS.find(x => x.key === rest.join(":")); return o ? detail(o.to) : ""; }
+  if (kind === "pl") return detail("fc:" + rest.join(":"));
+  if (k === "pd") return `<h2>Production Register</h2><p>What every facility is to make.</p>` + (producing().length ? `<table><tr><th>Facility</th><th>Owner</th><th>Where</th><th>Process</th><th>Makes</th><th>Output</th></tr>` + producing().map(r => `<tr><td><a data-k="${esc(facKey(r.a, r.x, r.f))}">${esc(r.f.name)}</a></td><td>${ownerLink(r.f.owner)}</td><td>${esc(r.x.name)}, ${esc(r.a.name)}</td><td><a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${perDay(r.ln.output)} t/day</td></tr>`).join("") + `</table>` : `<p class="meta">Nothing yet.</p>`);
   if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${r.org ? addressHtml(r.org) : r.html}</td><td><a data-k="${esc(r.org ? r.to : r.whoTo)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
   if (kind === "b") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
@@ -475,6 +490,17 @@ function detail(k) {
   // (A record's properties, as written in its file.)
   const corners = o => o.map(c => `${c[0]}, ${c[1]}`).join(" · ");
   const props = rows => `<h3>Properties</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>` + rows.filter(r => r[1] !== undefined && r[1] !== "").map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${esc(r[2] || "")}</td></tr>`).join("") + `</table>`;
+  // What a facility is to make, and what follows from it (worked out by the build from its
+  // processes' modules).
+  const production = (a, x, f, p) => producing().filter(r => r.f === f).map(r => {
+    const pl = r.ln.plan, tph = v => `${+v.toPrecision(3)} t/h`, day = v => `${(+(v * 24).toPrecision(3)).toLocaleString()} t`;
+    const flows = (title, rows, note) => rows.length ? `<h3>${title}</h3>${note ? `<p class="meta">${note}</p>` : ""}<table><tr><th>What</th><th>Each hour</th><th>Each day</th></tr>` + rows.map(s => `<tr><td>${esc(s.name)}</td><td>${tph(s.rate)}</td><td>${day(s.rate)}</td></tr>`).join("") + `</table>` : "";
+    return `<h3>Production</h3><table><tr><th>Process</th><th>Makes</th><th>Each hour</th><th>Each day</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(r.ln.output)}</td><td>${day(r.ln.output)}</td></tr></table>`
+      + `<h3>Modules it needs</h3><p class="meta">Worked out from the output: each module's share of the line, how many that takes, and how hard they run.</p><table><tr><th>Module</th><th>Has to put through</th><th>Number</th><th>Running at</th><th>Ground</th><th>Power</th></tr>`
+      + pl.modules.map(m => `<tr><td><a data-k="${esc("mod:" + m.module)}">${esc(modBySlug[m.module].identity.name)}</a></td><td>${m.demand === null ? "" : `${tph(m.demand)} ${esc((modBySlug[m.module].rate || {}).product || "")}`}</td><td>${m.count}</td><td>${m.use === null ? "" : Math.round(m.use * 100) + "%"}</td><td>${Math.round(m.area).toLocaleString()} m²</td><td>${+m.power.toPrecision(3)} MW</td></tr>`).join("")
+      + `<tr><th>Total</th><th></th><th>${pl.modules.reduce((s, m) => s + m.count, 0)}</th><th></th><th>${Math.round(pl.area).toLocaleString()} m² · ${(100 * pl.area / p.area).toFixed(0)}% of parcel ${p.number}</th><th>${Math.round(pl.power)} MW</th></tr></table>`
+      + flows("Supplies it needs", pl.supplies) + flows("What else comes out", pl.by_products) + flows("Used again on site", pl.reused, "Given off by one module and taken in by another.");
+  }).join("");
   // A facility's site plan: its parcel, what stands on it, its pipelines, and the streets passing.
   const sitePlan = (a, x, f, p) => {
     const parts = f.parts || [], pipes = f.pipelines || []; if (!parts.length) return "";
@@ -519,7 +545,7 @@ function detail(k) {
     const where = `${esc(parcelLine(x, p))}, <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
     const procs = (f.processes || []).map(s => procBySlug[s]).filter(Boolean);
     const makes = pr => ((pr.outputs || {}).products || []).map(o => o.item ? `<a data-k="${esc("mat:" + o.item)}">${esc((matBySlug[o.item] || { identity: { name: o.item } }).identity.name)}</a>${o.form ? ` <span class="meta">${esc(o.form)}</span>` : ""}` : esc(o.name || "")).join(", ");
-    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Parcel</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>Processes it runs</h3><table><tr><th>Process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + sitePlan(a, x, f, p)
+    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Parcel</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>Processes it runs</h3><table><tr><th>Process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + production(a, x, f, p) + sitePlan(a, x, f, p)
       + ((f.parts || []).length ? `<h3>Parts</h3><table><tr><th>Part</th><th>Kind</th><th>What it does</th><th>Size</th><th>Area</th></tr>` + f.parts.map(pt => `<tr><td>${esc(pt.name)}</td><td><span class="swatch k-${esc(pt.kind)}"></span>${esc(pt.kind)}</td><td>${esc(pt.does || "")}${(pt.processes || []).length ? `${pt.does ? " " : ""}Runs ` + pt.processes.map(s => procBySlug[s] ? `<a data-k="${esc("proc:" + s)}">${esc(procBySlug[s].identity.name)}</a>` : esc(s)).join(", ") + "." : ""}</td><td>${(s => s.length === 4 && s[0] === s[2] && s[1] === s[3] ? `${Math.round(s[0])} × ${Math.round(s[1])} m` : s.map(metres).join(" · "))(sides(pt.outline, true))}</td><td>${sqm(pt.area)}</td></tr>`).join("") + `<tr><th>Total built on</th><th></th><th>${(100 * total(f.parts.map(pt => pt.area)) / p.area).toLocaleString(undefined, { maximumFractionDigits: 1 })}% of parcel ${p.number}</th><th></th><th>${sqm(total(f.parts.map(pt => pt.area)))}</th></tr></table>` : "")
       + ((f.pipelines || []).length ? `<h3>Pipelines</h3><table><tr><th>Pipeline</th><th>Carries</th><th>From</th><th>To</th><th>Length</th></tr>` + f.pipelines.map(pl => `<tr><td>${esc(pl.name)}</td><td>${esc(pl.carries)}</td><td>${esc(pl.from)}</td><td>${esc(pl.to)}</td><td>${metres(pl.length)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th></th><th>${metres(total(f.pipelines.map(pl => pl.length)))}</th></tr></table>` : "")
       + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(f.file)}</div>`;

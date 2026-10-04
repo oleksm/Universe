@@ -349,7 +349,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "production"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -620,6 +620,78 @@ for pr in processes:
     for st in (pr.get("equipment") or {}).get("steps") or []:
         if st.get("module") not in by_module:
             problem(os.path.join(TREE, pr["file"]), f"equipment.steps: no module '{st.get('module')}' in the SFO")
+# What a facility is to make: from each process's line of modules, how many of each it needs, what
+# they take in and give off, their power and the ground they cover.
+mod_of = {m.get("slug"): m for m in modules}
+el_name = {(e.get("identity") or {}).get("symbol"): (e.get("identity") or {}).get("name") for e in elements}
+
+
+def plan(pr, output):
+    steps = []
+    for st in (pr.get("equipment") or {}).get("steps") or []:
+        if st.get("module") in mod_of and st["module"] not in steps:
+            steps.append(st["module"])
+    label = lambda x: el_name.get(x.get("item")) or x.get("name") or x.get("item") or ""
+    made = {str((mod_of[s].get("rate") or {}).get("product", "")).lower(): s for s in steps if (mod_of[s].get("rate") or {}).get("throughput")}
+    making = [s for s in steps if (mod_of[s].get("rate") or {}).get("throughput")]
+    demand = {s: 0.0 for s in steps}
+    if making:
+        demand[making[-1]] = float(output)
+    supplies, by = {}, {}
+    for s in reversed(steps):
+        m, d = mod_of[s], demand[s]
+        for x in (m.get("inputs") or {}).get("materials") or []:
+            src = made.get(label(x).lower())
+            if src and src != s and steps.index(src) < steps.index(s):
+                demand[src] += d * x.get("amount", 0)
+            else:
+                supplies[label(x)] = supplies.get(label(x), 0) + d * x.get("amount", 0)
+        for x in (m.get("outputs") or {}).get("by_products") or []:
+            by[label(x)] = by.get(label(x), 0) + d * x.get("amount", 0)
+    # (What is given off and needed on the same site is used again.)
+    reused = {k: min(supplies[k], by[k]) for k in supplies if k in by}
+    for k, v in reused.items():
+        supplies[k] -= v
+        by[k] -= v
+    rows = []
+    for s in steps:
+        m = mod_of[s]
+        rate, size = m.get("rate") or {}, m.get("size") or {}
+        through = rate.get("throughput")
+        count = max(1, -(-demand[s] // through)) if through else 1
+        rows.append({
+            "module": s, "count": int(count), "demand": demand[s] if through else None,
+            "use": demand[s] / (count * through) if through else None,
+            "area": count * size.get("length", 0) * size.get("width", 0),
+            "power": ((m.get("needs") or {}).get("power", 0)) * (demand[s] / through if through else 1),
+        })
+    return {
+        "modules": rows, "product": (mod_of[making[-1]].get("rate") or {}).get("product", "") if making else "",
+        "supplies": [{"name": k, "rate": v} for k, v in supplies.items() if v > 1e-9],
+        "by_products": [{"name": k, "rate": v} for k, v in by.items() if v > 1e-9],
+        "reused": [{"name": k, "rate": v} for k, v in reused.items() if v > 1e-9],
+        "area": sum(r["area"] for r in rows), "power": sum(r["power"] for r in rows),
+    }
+
+
+for ad in administrations:
+    for x in ad["bodies"]:
+        for fc in x.get("facilities", []):
+            where = os.path.join(TREE, fc["file"])
+            plot = next((r for r in x.get("parcels", []) if r.get("number") == fc.get("parcel")), None)
+            for ln in fc.get("production") or []:
+                pr = by_process.get(ln.get("process"))
+                if set(ln) != {"process", "output"} or not isinstance(ln.get("output"), (int, float)):
+                    problem(where, "production: each is a process and its output (t/h)")
+                elif ln["process"] not in (fc.get("processes") or []):
+                    problem(where, f"production: '{ln['process']}' is not one of its processes")
+                elif pr is None or not (pr.get("equipment") or {}).get("steps"):
+                    problem(where, f"production: '{ln['process']}' has no steps to build a line from")
+                else:
+                    ln["plan"] = plan(pr, ln["output"])
+            covered = sum(ln["plan"]["area"] for ln in fc.get("production") or [] if "plan" in ln)
+            if plot is not None and covered > plot.get("area", 0):
+                problem(where, f"production: its modules cover {covered:,.0f} m2, more than parcel {plot.get('number')} ({plot.get('area', 0):,.0f} m2)")
 for pr in processes + modules:
     where = os.path.join(TREE, pr["file"])
     for group in ("inputs", "outputs"):
