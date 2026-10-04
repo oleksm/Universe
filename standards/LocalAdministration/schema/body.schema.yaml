@@ -34,8 +34,8 @@ properties:
       radius: { type: number, x-unit: "m", description: "m, from its axis to its floor" }
       gravity: { type: number, x-unit: "m/s2", description: "m/s2 at its floor. How fast it turns is worked out." }
   owner: { type: string, x-ref: [org], description: "For a rig: the company whose it is." }
-  processes: { type: array, items: { type: string, x-ref: [process] }, description: "For a rig: the SFO processes it runs, by its key." }
-  lines: { $ref: "facility.schema.yaml#/properties/lines" }
-  modules: { $ref: "facility.schema.yaml#/properties/modules" }
+  processes: { $ref: "installation.schema.yaml#/definitions/processes" }
+  lines: { $ref: "installation.schema.yaml#/definitions/lines" }
+  modules: { $ref: "installation.schema.yaml#/definitions/modules" }
   about: { type: string, description: What it is. }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }

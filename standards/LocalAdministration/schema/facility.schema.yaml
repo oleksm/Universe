@@ -11,36 +11,9 @@ properties:
   name: { type: string }
   kind: { enum: [foundry, mill, yard, power, warehouse] }
   parcel: { type: string, x-ref: [parcel], description: The parcel of its settlement it stands on. }
-  processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The SFO processes it runs, by its key. Each must be one for its kind of facility.' }
-  lines:
-    description: 'Its production lines: for each, the process it runs and the industrial modules (SFO 10) it is built of. What the line can make at most, and what it then takes in, gives off, draws and covers, are worked out from them. What it does make is the economy''s business, not recorded here.'
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [process, modules]
-      properties:
-        process: { type: string, x-ref: [process], description: 'One of its processes, one that has steps.' }
-        also: { type: array, items: { type: string, x-ref: [process] }, description: 'Other processes of its the same line can run instead, on the same modules (another grade of steel). The line''s most is shared between them.' }
-        modules:
-          type: array
-          items:
-            type: object
-            additionalProperties: false
-            required: [module, count]
-            properties:
-              module: { type: string, x-ref: [module], description: 'One of the modules of the process''s steps.' }
-              count: { type: integer, minimum: 1 }
-  modules:
-    description: 'The industrial modules (SFO 10) it is built of, where its production does not say: a power station''s.'
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [module, count]
-      properties:
-        module: { type: string, x-ref: [module] }
-        count: { type: integer, minimum: 1 }
+  processes: { $ref: "installation.schema.yaml#/definitions/processes" }
+  lines: { $ref: "installation.schema.yaml#/definitions/lines" }
+  modules: { $ref: "installation.schema.yaml#/definitions/modules" }
   exchange: { type: string, x-ref: [org], description: 'For a warehouse: the exchange that has approved it, so that goods lying in it can be traded there.' }
   parts:
     description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'
