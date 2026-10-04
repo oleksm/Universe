@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+name: Trethi Warehouse
+kind: warehouse
+parcel: 3
+exchange: brand.treistun_exchange
+modules:
+  - { module: general-warehouse, count: 2 }
+  - { module: tank-farm, count: 2 }
+  - { module: ore-yard, count: 1 }
+  - { module: loading-dock, count: 2 }

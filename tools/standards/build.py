@@ -156,7 +156,7 @@ for name in sorted(os.listdir(makers_dir)):
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "ticker", "address", "note", "who", "what", "story", "slug", "file"}:
+        if k not in {"key", "name", "ticker", "business", "address", "note", "who", "what", "story", "slug", "file"}:
             problem(full, f"unknown field '{k}'")
     if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
         problem(full, "ticker: 2 to 4 capital letters")
@@ -176,7 +176,7 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 LOCAL = "LocalAdministration"
 ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
 # What zone each kind of facility needs.
-FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "power": "industrial"}
+FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "power": "industrial", "warehouse": "port"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -349,7 +349,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -778,6 +778,9 @@ for ad in administrations:
             built = [(mod_of[im["module"]], im["count"]) for im in fc.get("modules") or [] if im.get("module") in mod_of and isinstance(im.get("count"), int)]
             if built:
                 fc["capacity"] = sum(((m.get("rate") or {}).get("power") or 0) * n for m, n in built)
+                # (What it can hold and handle: a warehouse's.)
+                rate = lambda m: m.get("rate") or {}
+                fc["store"] = [{"module": m["slug"], "count": n, "holds": rate(m).get("holds", 0) * n or None, "volume": rate(m).get("volume", 0) * n or None, "handling": rate(m).get("handling", 0) * n or None} for m, n in built]
                 fc["built_area"] = sum((m.get("size") or {}).get("length", 0) * (m.get("size") or {}).get("width", 0) * n for m, n in built)
                 # (What it burns flat out: its modules' fuel for each MWh, at all it can supply.)
                 burn = {}
@@ -786,6 +789,8 @@ for ad in administrations:
                         burn[i.get("item")] = burn.get(i.get("item"), 0) + i.get("amount", 0) * ((m.get("rate") or {}).get("power") or 0) * n
                 fc["burns"] = [{"item": k, "rate": v} for k, v in burn.items()]
                 covered += fc["built_area"]
+            if "exchange" in fc and (fc["exchange"] not in BRANDS or next((m for m in makers if m["key"] == fc["exchange"]), {}).get("business") != "exchange"):
+                problem(where, f"exchange: no exchange '{fc['exchange']}' in Maker House")
             if plot is not None and covered > plot.get("area", 0):
                 problem(where, f"its modules cover {covered:,.0f} m2, more than parcel {plot.get('number')} ({plot.get('area', 0):,.0f} m2)")
 for pr in processes + modules:
@@ -835,6 +840,8 @@ def write_ron():
     with open(os.path.join(CONTENT, "brands.ron"), "w", encoding="utf-8") as f:
         f.write(head + "// Makers of modules. Each has a home (a settled system, picked from the\n// galaxy's seed) where all its range is sold; farther off, less of it is\n// carried and it costs more (shipping). See docs/content.md.\n[\n")
         for m in makers:
+            if m.get("business", "maker") != "maker":
+                continue
             f.write(f"    (key: {ron_str(m['key'])}, name: {ron_str(caps(m['name']))}, note: {ron_str(caps(m['note']))}),\n")
         f.write("]\n")
     out = [head, "["]

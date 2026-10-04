@@ -7,7 +7,7 @@ story:
   - "Treistun was settled from its fourth planet outward. The first port was Nacaubun on Treistun e, and the station was raised above it once there were more ships than one field could take."
   - "From there the ports went both ways: inward to the hot, heavy worlds, and outward to the moons of the giants. The administration grew out of the port office at Nacaubun and moved up to the station with everything else."
 zoning:
-  - { use: port, permits: "Landing pads, hangars, fuel and the port's own buildings." }
+  - { use: port, permits: "Landing pads, hangars, fuel, warehouses and the port's own buildings." }
   - { use: industrial, permits: "Foundries, mills, workshops and yards." }
   - { use: commercial, permits: "Markets, shops and company offices." }
   - { use: civic, permits: "The administration and offices of record." }

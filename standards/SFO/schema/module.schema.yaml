@@ -36,6 +36,8 @@ properties:
       throughput: { type: number, description: "t/h of its product, at full rate" }
       batch: { type: number, description: "t in one batch" }
       holds: { type: number, description: "t it can store" }
+      volume: { type: number, description: "m3 it can store" }
+      handling: { type: number, description: "t/h it can move in or out" }
       product: { type: string, description: "What its throughput counts: an element's symbol, a material's or a good's file name." }
       power: { type: number, description: "MW it supplies, for one that makes power" }
   inputs:

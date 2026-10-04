@@ -1,6 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Facility
-description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/facilities/<name>.yaml: something built on a parcel, and the work it does. It belongs to the parcel''s owner. The parcel''s zone must permit it: a foundry or a mill needs an industrial zone.'
+description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/facilities/<name>.yaml: something built on a parcel, and the work it does. It belongs to the parcel''s owner. The parcel''s zone must permit it: a foundry, a mill or a power station needs an industrial zone, a warehouse a port zone.'
 type: object
 additionalProperties: false
 required: [name, kind, parcel]
@@ -8,7 +8,7 @@ definitions:
   point: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
 properties:
   name: { type: string }
-  kind: { enum: [foundry, mill, power] }
+  kind: { enum: [foundry, mill, power, warehouse] }
   parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }
   processes: { type: array, items: { type: string }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
   lines:
@@ -39,6 +39,7 @@ properties:
       properties:
         module: { type: string }
         count: { type: integer, minimum: 1 }
+  exchange: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: 'For a warehouse: the exchange that has approved it, so that goods lying in it can be traded there.' }
   parts:
     description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'
     type: array

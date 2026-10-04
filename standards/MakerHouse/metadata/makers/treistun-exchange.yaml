@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/company.schema.yaml
+key: brand.treistun_exchange
+name: Treistun Exchange
+ticker: TEX
+business: exchange
+note: "The market: where goods in store change hands"
+who: "The company that runs the market. It owns no goods and no warehouses: it sets the rules of trade and keeps the record of who owns what lies in the warehouses it has approved."
+what: "Runs trading in goods held at approved warehouses."
