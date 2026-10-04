@@ -518,25 +518,26 @@ fn gate_ring() -> WireModel {
     m
 }
 
-/// A settlement's facilities as one mesh, in its own frame: x east, y up,
-/// z south (metres from its position, the pad grid centre). Each module a
-/// box on its footprint, its edges bevelled, standing on ground that falls
-/// away with the body's curve (`radius`), sunk a metre so no gap shows.
-/// Built once per settlement and kept.
-pub fn settlement(s: &universe_sim::world::settlements::Settlement, radius: f64) -> Mesh {
+/// Modules standing on a settlement's ground, as one mesh in its frame:
+/// x east, y up, z south (metres from its position, the pad grid centre).
+/// Each a box on its footprint, its edges bevelled, `height` tall (a part
+/// of its own while it goes up), standing on ground that falls away with the
+/// body's curve (`radius`), sunk a metre so no gap shows. Built once per
+/// `key` and kept.
+pub fn ground_blocks(key: String, blocks: &[(&universe_sim::world::settlements::Block, f64)], radius: f64) -> Mesh {
     use std::collections::HashMap;
     use std::sync::{Mutex, OnceLock};
     static BUILT: OnceLock<Mutex<HashMap<String, Mesh>>> = OnceLock::new();
     let mut built = BUILT.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
     built
-        .entry(format!("{}/{}/{}", s.system, s.body, s.name))
+        .entry(key)
         .or_insert_with(|| {
             let mut m = WireModel::default();
-            for b in s.facilities.iter().flat_map(|f| &f.blocks) {
+            for &(b, height) in blocks {
                 let (he, hn) = b.half_extent();
                 let (e, n) = b.centre;
                 let floor = -(e * e + n * n) / (2.0 * radius) - 1.0;
-                let (lo, hi) = (DVec3::new(e - he, floor, -(n + hn)), DVec3::new(e + he, floor + b.height + 1.0, -(n - hn)));
+                let (lo, hi) = (DVec3::new(e - he, floor, -(n + hn)), DVec3::new(e + he, floor + height.max(0.5) + 1.0, -(n - hn)));
                 let planes = [(DVec3::X, hi.x), (DVec3::NEG_X, -lo.x), (DVec3::Y, hi.y), (DVec3::NEG_Y, -lo.y), (DVec3::Z, hi.z), (DVec3::NEG_Z, -lo.z)];
                 let part = WireModel::convex_hull(&chamfered(&planes, ((hi - lo).min_element() * 0.05).min(1.5)));
                 let base = m.positions.len() as u32;

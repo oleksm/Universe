@@ -50,7 +50,10 @@ impl Universe {
         let (kind, modules) = blueprint_of(blueprint).ok_or_else(|| format!("NO BLUEPRINT '{blueprint}'"))?;
         let (blocks, cost, time) = self.land.quote_build(system, port, number, Party::Pilot(id), &modules)?;
         self.ledger.transfer(Party::Pilot(id), Party::World, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
-        let name = format!("{} ON PARCEL {number}", kind.to_uppercase());
+        let name = match kind {
+            "power" => "POWER STATION".to_string(),
+            k => k.to_uppercase(),
+        };
         self.land.build(system, port, number, name, kind.to_string(), blocks, self.world.time)?;
         Ok(format!("BUILDING STARTED FOR {cost:.0} CR: DONE IN {}", crate::estate::duration(time)))
     }

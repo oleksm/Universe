@@ -57,6 +57,11 @@ pub fn apply(app: &mut App, name: &str) {
             // Trethi), the camera over it (UNIVERSE_DIST m off, UNIVERSE_YAW, UNIVERSE_PITCH).
             let name = std::env::var("UNIVERSE_PORT").unwrap_or_else(|_| "Port Trethi".into());
             let Some(port) = sys.spaceports.iter().position(|p| p.name.eq_ignore_ascii_case(&name)) else { return };
+            // (Land done first as in `zoning`: UNIVERSE_LAND, UNIVERSE_AFTER.)
+            if std::env::var_os("UNIVERSE_LAND").is_some() {
+                apply(app, "zoning");
+                app.economy_panel = None;
+            }
             let u = app.engine.universe();
             u.ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 0);
             app.mode = Mode::Observer;
@@ -325,6 +330,31 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             let mut panel: crate::economy::EconomyPanel = Default::default();
             let trethi = app.v.economy.iter().position(|p| matches!(p.facility, universe_sim::world::Facility::Spaceport(i) if sys.spaceports[i].name == "Port Trethi"));
+            // (UNIVERSE_LAND: what's done first, as the player: "buy4", "claim:w,s,e,n", "build4:Trethi Power Station", comma... separated by ';'.)
+            if let (Some(port), Ok(ops)) = (sys.spaceports.iter().position(|p| p.name == "Port Trethi"), std::env::var("UNIVERSE_LAND")) {
+                let u = app.engine.universe();
+                for op in ops.split(';') {
+                    let r = if let Some(n) = op.strip_prefix("buy") {
+                        u.buy_parcel(home, port, n.parse().unwrap_or(0))
+                    } else if let Some(c) = op.strip_prefix("claim:") {
+                        let v: Vec<f64> = c.split(',').filter_map(|x| x.parse().ok()).collect();
+                        if v.len() == 4 { u.claim_land(home, port, vec![(v[0], v[1]), (v[2], v[1]), (v[2], v[3]), (v[0], v[3])]) } else { Err("claim:w,s,e,n".into()) }
+                    } else if let Some((n, what)) = op.strip_prefix("build").and_then(|r| r.split_once(':')) {
+                        u.build_facility(home, port, n.parse().unwrap_or(0), what.to_string())
+                    } else {
+                        Err(format!("unknown '{op}'"))
+                    };
+                    log::info!("land {op}: {r:?}");
+                }
+                if let Ok(s) = std::env::var("UNIVERSE_AFTER") {
+                    let until = app.engine.universe().world.time + s.parse::<f64>().unwrap_or(0.0);
+                    while app.engine.universe().world.time < until {
+                        app.engine.universe().step_world(1.0, 1.0, &Controls::default());
+                    }
+                }
+                app.engine.refresh();
+                app.v = app.engine.view();
+            }
             if let Some(k) = trethi {
                 panel.selected = k;
                 panel.zoning = crate::zoning::Zoning::open(app, &app.v.economy[k]);

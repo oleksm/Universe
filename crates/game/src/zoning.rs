@@ -1,13 +1,22 @@
 //! The zoning view (Enter on a place in the economy panel): a settlement's
-//! ground from above, as the registry records it (`world::settlements`):
-//! its zones, parcels, streets, power lines and facilities, each a layer to
-//! show or hide (Z P S W F), with the port's pads and hangar for scale. Click
-//! a parcel or a facility for its facts. Esc goes back to the list.
+//! ground from above, as the land office has it now (`services::land`, from
+//! the registry's records and what's been done since): its zones, lots,
+//! streets, power lines and facilities, each a layer to show or hide
+//! (Z P S W F), with the port's pads and hangar for scale.
+//!
+//! What can be done here, as anyone can: drag a rectangle on free ground and
+//! Enter to claim it; click a vacant lot and Enter to buy it; click a lot of
+//! yours and B to build on it (one of the registry's facilities, laid out on
+//! your lot). Each shows its price, or why it can't be, before you commit.
+//! Esc steps back (menu, then the marked ground, then the list).
 
 use universe_engine::glam::Vec2;
-use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
-use universe_sim::world::settlements::{area, inside, Settlement};
+use universe_engine::{text_size, Color, Context, Frame, KeyCode, MouseButton};
+use universe_sim::services::land::{Ground, LandOffice, Owner, Works};
+use universe_sim::services::Party;
+use universe_sim::world::settlements::{area, inside};
 use universe_sim::world::spaceport::{GRID, PAD_RADIUS, PAD_SPACING};
+use universe_sim::Command;
 
 use crate::App;
 
@@ -15,6 +24,7 @@ const TEXT: Color = Color::hex(0xdcebf2);
 const DIM: Color = Color::hex(0x7d93a0);
 const CYAN: Color = Color::hex(0x60e0ff);
 const AMBER: Color = Color::hex(0xffb040);
+const RED: Color = Color::hex(0xff5040);
 
 /// The layers, their keys and names, in the order they're drawn.
 const LAYERS: [(KeyCode, &str); 5] = [(KeyCode::KeyZ, "ZONES"), (KeyCode::KeyP, "PARCELS"), (KeyCode::KeyS, "STREETS"), (KeyCode::KeyW, "POWER"), (KeyCode::KeyF, "FACILITIES")];
@@ -23,6 +33,8 @@ const PARCELS: usize = 1;
 const STREETS: usize = 2;
 const POWER: usize = 3;
 const FACILITIES: usize = 4;
+/// Marked ground snaps to this (m).
+const SNAP: f64 = 10.0;
 
 /// What's been clicked.
 #[derive(Clone, Copy, PartialEq)]
@@ -31,42 +43,69 @@ enum Pick {
     Facility(usize),
 }
 
-/// The view's state: whose ground, which layers show, what's picked.
+/// The view's state: whose ground, which layers show, what's picked, the
+/// ground being marked, the blueprint menu.
 pub struct Zoning {
     system: usize,
     port: usize,
     layers: [bool; 5],
     picked: Option<Pick>,
+    /// Where a press began (screen), while the button's held.
+    press: Option<Vec2>,
+    /// Ground marked for a claim (a rectangle, metres from the port).
+    marked: Option<Vec<(f64, f64)>>,
+    /// The blueprint menu, while open: the one under the cursor.
+    menu: Option<usize>,
 }
 
 impl Zoning {
-    /// The view of the ground at `place`, if the registry records any there.
+    /// The view of the ground at `place`, if the land office has any there.
     pub fn open(app: &App, place: &universe_sim::services::economy::Place) -> Option<Self> {
         let universe_sim::world::Facility::Spaceport(port) = place.facility else { return None };
-        let z = Zoning { system: place.system, port, layers: [true; 5], picked: None };
-        z.settlement(app).map(|_| z)
+        let z = Zoning { system: place.system, port, layers: [true; 5], picked: None, press: None, marked: None, menu: None };
+        z.ground(app).map(|_| z)
     }
 
-    /// Pick by name, for dev scenarios: `f<k>` facility k, `p<n>` parcel n.
+    /// Pick by name, for dev scenarios: `f<k>` facility k, `p<n>` parcel n,
+    /// `m` the blueprint menu (on a picked lot).
     pub fn pick(&mut self, what: &str) {
-        let n = what.get(1..).and_then(|v| v.parse().ok());
-        self.picked = match (what.chars().next(), n) {
-            (Some('f'), Some(k)) => Some(Pick::Facility(k as usize)),
-            (Some('p'), Some(n)) => Some(Pick::Parcel(n)),
-            _ => None,
-        };
+        for part in what.split(',') {
+            let n = part.get(1..).and_then(|v| v.parse().ok());
+            match (part.chars().next(), n) {
+                (Some('f'), Some(k)) => self.picked = Some(Pick::Facility(k as usize)),
+                (Some('p'), Some(n)) => self.picked = Some(Pick::Parcel(n)),
+                (Some('m'), _) => self.menu = Some(0),
+                _ => {}
+            }
+        }
     }
 
-    fn settlement(&self, app: &App) -> Option<&'static Settlement> {
-        let sys = app.charts.system(self.system);
-        let sp = sys.spaceports.get(self.port)?;
-        universe_sim::world::content::content().settlement(&sys.name, &sys.bodies[sp.body].name, &sp.name)
+    /// Mark ground, for dev scenarios.
+    pub fn mark(&mut self, outline: Vec<(f64, f64)>) {
+        self.marked = Some(outline);
+    }
+
+    fn ground<'a>(&self, app: &'a App) -> Option<&'a Ground> {
+        app.v.land.ground(self.system, self.port)
+    }
+}
+
+const ME: Party = Party::Pilot(universe_sim::PLAYER);
+
+/// Who owns a lot, as shown.
+fn owner_name(o: &Owner) -> String {
+    match o {
+        Owner::Company { name, .. } => name.to_uppercase(),
+        Owner::Party(p) if *p == ME => "YOURS".into(),
+        Owner::Party(Party::Pilot(id)) => format!("PILOT {id}"),
+        Owner::Party(_) => "SOMEONE".into(),
+        Owner::Vacant => "FOR SALE".into(),
     }
 }
 
 /// Where the plan is drawn on the HUD (`size`): (top left, bottom right).
 fn plan_area(size: Vec2) -> (Vec2, Vec2) {
-    (Vec2::new(12.0, 40.0), Vec2::new(size.x - 12.0, size.y - 64.0))
+    (Vec2::new(12.0, 40.0), Vec2::new(size.x - 12.0, size.y - 76.0))
 }
 
 /// The ground to screen: metres [east, north] of the port to HUD pixels,
@@ -78,15 +117,19 @@ struct Plan {
 }
 
 impl Plan {
-    fn of(s: &Settlement, size: Vec2) -> Plan {
+    fn of(g: &Ground, size: Vec2) -> Plan {
+        let s = g.recorded;
         let hangar = -((GRID as f64 / 2.0 + 1.0) * PAD_SPACING);
         let mut pts: Vec<(f64, f64)> = vec![(-PAD_RADIUS, -PAD_RADIUS), (PAD_RADIUS, PAD_RADIUS), (0.0, hangar - 60.0)];
         pts.extend(s.zones.iter().flat_map(|z| z.outline.iter().copied()));
-        pts.extend(s.parcels.iter().flat_map(|p| p.outline.iter().copied()));
+        pts.extend(g.lots.iter().flat_map(|p| p.outline.iter().copied()));
         pts.extend(s.streets.iter().flat_map(|st| st.line.iter().copied()));
         let (lo, hi) = pts.iter().fold(((f64::MAX, f64::MAX), (f64::MIN, f64::MIN)), |(lo, hi), p| ((lo.0.min(p.0), lo.1.min(p.1)), (hi.0.max(p.0), hi.1.max(p.1))));
+        // (Room round it to mark more ground.)
+        let pad = 0.12 * (hi.0 - lo.0).max(hi.1 - lo.1);
+        let (lo, hi) = ((lo.0 - pad, lo.1 - pad), (hi.0 + pad, hi.1 + pad));
         let (a, b) = plan_area(size);
-        let scale = 0.94 * ((b.x - a.x) as f64 / (hi.0 - lo.0).max(1.0)).min((b.y - a.y) as f64 / (hi.1 - lo.1).max(1.0));
+        let scale = ((b.x - a.x) as f64 / (hi.0 - lo.0).max(1.0)).min((b.y - a.y) as f64 / (hi.1 - lo.1).max(1.0));
         Plan { centre: ((lo.0 + hi.0) / 2.0, (lo.1 + hi.1) / 2.0), scale, at: (a + b) / 2.0 }
     }
 
@@ -101,35 +144,93 @@ impl Plan {
 }
 
 /// A facility's module footprints, as outlines.
-fn footprints(f: &universe_sim::world::settlements::Facility) -> impl Iterator<Item = [(f64, f64); 4]> + '_ {
-    f.blocks.iter().map(|b| {
+fn footprints(w: &Works) -> impl Iterator<Item = [(f64, f64); 4]> + '_ {
+    w.blocks.iter().map(|b| {
         let ((e, n), (he, hn)) = (b.centre, b.half_extent());
         [(e - he, n - hn), (e + he, n - hn), (e + he, n + hn), (e - he, n + hn)]
     })
 }
 
+/// A lot that's yours with nothing on it, picked: the one to build on.
+fn buildable(g: &Ground, picked: Option<Pick>) -> Option<u32> {
+    let Some(Pick::Parcel(n)) = picked else { return None };
+    let lot = g.lots.iter().find(|l| l.number == n)?;
+    (lot.owner == Owner::Party(ME) && !g.works.iter().any(|w| w.parcel == n)).then_some(n)
+}
+
 /// Keys and clicks while open. False to go back to the list.
-pub fn input(app: &App, z: &mut Zoning, ctx: &Context) -> bool {
+pub fn input(app: &mut App, z: &mut Zoning, ctx: &Context) -> bool {
     let input = &ctx.input;
+    let Some(g) = z.ground(app) else { return false };
+    let blueprints = universe_sim::estate::blueprints();
+    // The blueprint menu has the keys while it's open.
+    if let Some(sel) = z.menu.as_mut() {
+        if input.pressed(KeyCode::Escape) {
+            z.menu = None;
+        } else if input.pressed(KeyCode::ArrowDown) {
+            *sel = (*sel + 1) % blueprints.len().max(1);
+        } else if input.pressed(KeyCode::ArrowUp) {
+            *sel = (*sel + blueprints.len().max(1) - 1) % blueprints.len().max(1);
+        } else if input.pressed(KeyCode::Enter) {
+            if let (Some(n), Some(b)) = (buildable(g, z.picked), blueprints.get(*sel)) {
+                let cmd = Command::Build { system: z.system, port: z.port, number: n, blueprint: b.to_string() };
+                z.menu = None;
+                app.engine.send(cmd);
+                return true;
+            }
+            z.menu = None;
+        }
+        return true;
+    }
     if input.pressed(KeyCode::Escape) {
-        return false;
+        return z.marked.take().is_some();
     }
     for (k, (key, _)) in LAYERS.iter().enumerate() {
         if input.pressed(*key) {
             z.layers[k] = !z.layers[k];
         }
     }
-    if input.button_pressed(MouseButton::Left) {
-        let Some(s) = z.settlement(app) else { return false };
-        let size = ctx.hud_size.as_vec2();
-        let (a, b) = plan_area(size);
-        let q = input.cursor;
-        if q.x >= a.x && q.y >= a.y && q.x <= b.x && q.y <= b.y {
-            let g = Plan::of(s, size).ground(q);
-            // (A facility's module before the parcel it stands on.)
-            let facility = if z.layers[FACILITIES] { s.facilities.iter().position(|f| footprints(f).any(|o| inside(&o, g))) } else { None };
-            let parcel = if z.layers[PARCELS] { s.parcels.iter().find(|p| inside(&p.outline, g)).map(|p| p.number) } else { None };
-            z.picked = facility.map(Pick::Facility).or(parcel.map(Pick::Parcel));
+    if input.pressed(KeyCode::Enter) {
+        if let Some(outline) = z.marked.take() {
+            app.engine.send(Command::ClaimLand { system: z.system, port: z.port, outline });
+        } else if let Some(Pick::Parcel(n)) = z.picked
+            && g.lots.iter().any(|l| l.number == n && l.owner == Owner::Vacant)
+        {
+            app.engine.send(Command::BuyParcel { system: z.system, port: z.port, number: n });
+        }
+        return true;
+    }
+    if input.pressed(KeyCode::KeyB) && buildable(g, z.picked).is_some() {
+        z.menu = Some(0);
+        return true;
+    }
+    // A press: a click picks; a drag marks ground.
+    let size = ctx.hud_size.as_vec2();
+    let (a, b) = plan_area(size);
+    let q = input.cursor;
+    let over = q.x >= a.x && q.y >= a.y && q.x <= b.x && q.y <= b.y;
+    if input.button_pressed(MouseButton::Left) && over {
+        z.press = Some(q);
+    }
+    let plan = Plan::of(g, size);
+    if let Some(from) = z.press {
+        let snap = |p: (f64, f64)| ((p.0 / SNAP).round() * SNAP, (p.1 / SNAP).round() * SNAP);
+        let dragged = (q - from).length() > 6.0;
+        if dragged {
+            let (p, r) = (snap(plan.ground(from)), snap(plan.ground(q)));
+            let (w, e, s, n) = (p.0.min(r.0), p.0.max(r.0), p.1.min(r.1), p.1.max(r.1));
+            z.marked = Some(vec![(w, s), (e, s), (e, n), (w, n)]);
+            z.picked = None;
+        }
+        if !input.button_down(MouseButton::Left) {
+            z.press = None;
+            if !dragged {
+                let p = plan.ground(q);
+                z.marked = None;
+                let facility = if z.layers[FACILITIES] { g.works.iter().position(|w| footprints(w).any(|o| inside(&o, p))) } else { None };
+                let parcel = if z.layers[PARCELS] { g.lots.iter().find(|l| inside(&l.outline, p)).map(|l| l.number) } else { None };
+                z.picked = facility.map(Pick::Facility).or(parcel.map(Pick::Parcel));
+            }
         }
     }
     true
@@ -160,10 +261,32 @@ fn tint(use_: &str) -> Color {
     }
 }
 
+/// What the registry says a facility built like `w` can do at most (the
+/// registry's facility of the same modules), and the power its modules
+/// supply.
+fn maxima(w: &Works) -> Vec<String> {
+    let c = universe_sim::world::content::content();
+    let mut out = Vec::new();
+    let same = c.settlements.iter().flat_map(|s| &s.facilities).find(|f| f.blocks.len() == w.blocks.len() && f.blocks.iter().zip(&w.blocks).all(|(a, b)| a.module == b.module));
+    if let Some(f) = same {
+        out.extend(f.makes.iter().map(|(what, t)| format!("MAKES {} UP TO {t:.1} T/H", what.to_uppercase())));
+        if f.draws > 0.0 {
+            out.push(format!("DRAWS {:.0} MW FLAT OUT", f.draws));
+        }
+    }
+    let supplies: f64 = w.blocks.iter().filter_map(|b| c.industrial(&b.module)).map(|m| m.supplies).sum();
+    if supplies > 0.0 {
+        out.push(format!("SUPPLIES UP TO {supplies:.0} MW"));
+    }
+    out
+}
+
 pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
-    let Some(s) = z.settlement(app) else { return };
+    let Some(g) = z.ground(app) else { return };
+    let s = g.recorded;
+    let now = app.now();
     let line = 11.0;
     let mut x = 12.0;
     x = frame.text(Vec2::new(x, 12.0), &format!("ZONING - {}, {}   ", s.name.to_uppercase(), s.body.to_uppercase()), TEXT).x;
@@ -172,24 +295,26 @@ pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
         x = frame.text(Vec2::new(x, 12.0), &format!("{k_name} {name}  "), if z.layers[k] { CYAN } else { DIM }).x;
     }
     let _ = x;
-    let hint = "CLICK A PARCEL OR FACILITY: ITS FACTS   ESC: BACK";
-    frame.text(Vec2::new(size.x - 12.0 - universe_engine::text_size(hint).x, size.y - 24.0), hint, DIM);
-    let plan = Plan::of(s, size);
+    let credits = format!("{:.0} CR", app.v.credits);
+    frame.text(Vec2::new(size.x - 12.0 - text_size(&credits).x, 12.0), &credits, TEXT);
+    let plan = Plan::of(g, size);
     let (a, b) = plan_area(size);
     frame.hud_box(a, b - a, Color::hex(0x1e2a33));
-    let on = |k: usize| z.layers[k];
+    // (The menu stands alone: the plan's lines would show through it.)
+    let menu_open = z.menu.is_some() && buildable(g, z.picked).is_some();
+    let on = |k: usize| z.layers[k] && !menu_open;
 
     if on(ZONES) {
         for zn in &s.zones {
             fill(frame, &plan, &zn.outline, tint(&zn.use_));
             outline(frame, &plan, &zn.outline, tint(&zn.use_).scale(2.2));
-            let top = zn.outline.iter().fold((0.0, f64::MIN), |m, p| if p.1 > m.1 { *p } else { m });
+            let top = zn.outline.iter().map(|p| p.1).fold(f64::MIN, f64::max);
             let left = zn.outline.iter().map(|p| p.0).fold(f64::MAX, f64::min);
-            frame.text(plan.screen((left, top.1)) + Vec2::new(4.0, 3.0), &zn.name.to_uppercase(), DIM);
+            frame.text(plan.screen((left, top)) + Vec2::new(4.0, 3.0), &zn.name.to_uppercase(), DIM);
         }
     }
     // The port's own: its pads and its hangar, for scale.
-    {
+    if !menu_open {
         let half = (GRID as f64 - 1.0) / 2.0;
         for row in 0..GRID {
             for col in 0..GRID {
@@ -212,7 +337,7 @@ pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
             // Its name: above it if it runs east-west, beside it (west) if north-south.
             if let (Some(first), Some(last)) = (st.line.first(), st.line.last()) {
                 let label = st.name.to_uppercase();
-                let w = universe_engine::text_size(&label).x;
+                let w = text_size(&label).x;
                 if (last.0 - first.0).abs() >= (last.1 - first.1).abs() {
                     let at = plan.screen((first.0 + (last.0 - first.0) * 0.6, first.1 + (last.1 - first.1) * 0.6));
                     frame.text(at + Vec2::new(-w / 2.0, -14.0 - (10.0 * plan.scale) as f32), &label, DIM);
@@ -223,18 +348,39 @@ pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
             }
         }
     }
+    let lot_colour = |o: &Owner, lit: bool| {
+        if lit {
+            CYAN
+        } else if *o == Owner::Party(ME) {
+            AMBER
+        } else if *o == Owner::Vacant {
+            DIM
+        } else {
+            TEXT.scale(0.7)
+        }
+    };
     if on(PARCELS) {
-        for p in &s.parcels {
-            let lit = z.picked == Some(Pick::Parcel(p.number));
-            outline(frame, &plan, &p.outline, if lit { CYAN } else { TEXT.scale(0.7) });
+        for l in &g.lots {
+            outline(frame, &plan, &l.outline, lot_colour(&l.owner, z.picked == Some(Pick::Parcel(l.number))));
         }
     }
     if on(FACILITIES) {
-        for (k, f) in s.facilities.iter().enumerate() {
+        for (k, w) in g.works.iter().enumerate() {
             let lit = z.picked == Some(Pick::Facility(k));
-            for o in footprints(f) {
-                fill(frame, &plan, &o, if lit { Color::hex(0x2a5866) } else { Color::hex(0x4a5058) });
-                outline(frame, &plan, &o, if lit { CYAN } else { Color::hex(0x9aa0a6) });
+            for (j, o) in footprints(w).enumerate() {
+                let p = w.progress(j, now);
+                if p >= 1.0 {
+                    fill(frame, &plan, &o, if lit { Color::hex(0x2a5866) } else { Color::hex(0x4a5058) });
+                    outline(frame, &plan, &o, if lit { CYAN } else { Color::hex(0x9aa0a6) });
+                } else {
+                    // (Going up: filled from its south edge as far as it's built.)
+                    if p > 0.0 {
+                        let (s0, n0) = (o[0].1, o[2].1);
+                        let top = s0 + (n0 - s0) * p;
+                        fill(frame, &plan, &[o[0], o[1], (o[1].0, top), (o[0].0, top)], Color::hex(0x3a3420));
+                    }
+                    outline(frame, &plan, &o, if lit { CYAN } else { AMBER.scale(0.6) });
+                }
             }
         }
     }
@@ -248,21 +394,26 @@ pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
             }
         }
     }
-    // Parcels' numbers and owners, over everything.
+    // Lots' numbers and owners, over everything.
     if on(PARCELS) {
-        for p in &s.parcels {
-            let lit = z.picked == Some(Pick::Parcel(p.number));
-            // Its number inside its top left corner; who owns it under, if that fits across it.
-            let (w, e) = p.outline.iter().fold((f64::MAX, f64::MIN), |m, q| (m.0.min(q.0), m.1.max(q.1)));
-            let top = p.outline.iter().map(|q| q.1).fold(f64::MIN, f64::max);
+        for l in &g.lots {
+            let c = lot_colour(&l.owner, z.picked == Some(Pick::Parcel(l.number)));
+            let (w, e) = l.outline.iter().fold((f64::MAX, f64::MIN), |m, q| (m.0.min(q.0), m.1.max(q.0)));
+            let top = l.outline.iter().map(|q| q.1).fold(f64::MIN, f64::max);
             let corner = plan.screen((w, top)) + Vec2::new(4.0, 3.0);
-            let c = if lit { CYAN } else { TEXT.scale(0.8) };
-            frame.text(corner, &format!("{}", p.number), c);
-            let owner = p.owner_name.to_uppercase();
-            if universe_engine::text_size(&owner).x + 8.0 < ((e - w) * plan.scale) as f32 {
+            frame.text(corner, &format!("{}", l.number), c);
+            let owner = owner_name(&l.owner);
+            if text_size(&owner).x + 8.0 < ((e - w) * plan.scale) as f32 {
                 frame.text(corner + Vec2::new(0.0, line), &owner, c.scale(0.8));
             }
         }
+    }
+    // Ground marked for a claim.
+    let office: &LandOffice = &app.v.land;
+    let claim = z.marked.as_ref().map(|o| (o, office.quote_claim(z.system, z.port, o)));
+    if let Some((o, quote)) = claim.as_ref().filter(|_| !menu_open) {
+        fill(frame, &plan, o, if quote.is_ok() { Color::hex(0x3a2c10) } else { Color::hex(0x3a1410) });
+        outline(frame, &plan, o, if quote.is_ok() { AMBER } else { RED });
     }
     // Scale: a bar of a round length, bottom left of the plan; north up.
     let metres = [50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0].into_iter().find(|m| m * plan.scale > 60.0).unwrap_or(5000.0);
@@ -270,40 +421,95 @@ pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
     frame.hud_line(base, base + Vec2::new((metres * plan.scale) as f32, 0.0), TEXT);
     frame.text(base + Vec2::new(0.0, -13.0), &format!("{metres:.0} M   N UP"), DIM);
 
-    // What's picked, in full.
+    // What's picked or marked, in full, and what can be done.
     let mut y = b.y + 8.0;
     let zone_of = |o: &[(f64, f64)]| {
         let c = o.iter().fold((0.0, 0.0), |m, q| (m.0 + q.0 / o.len() as f64, m.1 + q.1 / o.len() as f64));
         s.zones.iter().find(|zn| inside(&zn.outline, c)).map_or("NONE".to_string(), |zn| zn.name.to_uppercase())
     };
-    match z.picked {
-        Some(Pick::Parcel(n)) => {
-            let Some(p) = s.parcels.iter().find(|p| p.number == n) else { return };
-            frame.text(Vec2::new(12.0, y), &format!("PARCEL {n}   OWNER {}   ZONE {}   {:.0} M2", p.owner_name.to_uppercase(), zone_of(&p.outline), area(&p.outline)), TEXT);
-            y += line;
-            let on_it: Vec<String> = s.facilities.iter().filter(|f| f.parcel == n).map(|f| f.name.to_uppercase()).collect();
-            frame.text(Vec2::new(12.0, y), &format!("ON IT: {}", if on_it.is_empty() { "NOTHING BUILT".to_string() } else { on_it.join(", ") }), DIM);
+    let mut hint = "CLICK: A LOT OR FACILITY   DRAG: MARK GROUND TO CLAIM   ESC: BACK".to_string();
+    if let Some((o, quote)) = &claim {
+        let (w, e, s0, n0) = o.iter().fold((f64::MAX, f64::MIN, f64::MAX, f64::MIN), |m, p| (m.0.min(p.0), m.1.max(p.0), m.2.min(p.1), m.3.max(p.1)));
+        frame.text(Vec2::new(12.0, y), &format!("MARKED {:.0} X {:.0} M   {:.0} M2   ZONE {}", e - w, n0 - s0, area(o), zone_of(o)), TEXT);
+        y += line;
+        match quote {
+            Ok(price) => {
+                frame.text(Vec2::new(12.0, y), &format!("THE LAND OFFICE ASKS {price:.0} CR"), AMBER);
+                hint = "ENTER: CLAIM IT   ESC: CLEAR".into();
+            }
+            Err(why) => {
+                frame.text(Vec2::new(12.0, y), &format!("CAN'T BE CLAIMED: {why}"), RED);
+                hint = "DRAG AGAIN   ESC: CLEAR".into();
+            }
         }
-        Some(Pick::Facility(k)) => {
-            let Some(f) = s.facilities.get(k) else { return };
-            let owner = s.parcels.iter().find(|p| p.number == f.parcel).map_or(String::new(), |p| p.owner_name.to_uppercase());
-            let n = f.blocks.len();
-            frame.text(Vec2::new(12.0, y), &format!("{}   {}   ON PARCEL {}   {owner}   {n} MODULE{}", f.name.to_uppercase(), f.kind.to_uppercase(), f.parcel, if n == 1 { "" } else { "S" }), TEXT);
-            y += line;
-            let mut most: Vec<String> = f.makes.iter().map(|(what, t)| format!("MAKES {} UP TO {t:.1} T/H", what.to_uppercase())).collect();
-            if f.draws > 0.0 {
-                most.push(format!("DRAWS {:.0} MW FLAT OUT", f.draws));
+    } else {
+        match z.picked {
+            Some(Pick::Parcel(n)) => {
+                if let Some(l) = g.lots.iter().find(|l| l.number == n) {
+                    frame.text(Vec2::new(12.0, y), &format!("PARCEL {n}   {}   ZONE {}   {:.0} M2", owner_name(&l.owner), zone_of(&l.outline), area(&l.outline)), TEXT);
+                    y += line;
+                    let on_it: Vec<String> = g.works.iter().filter(|w| w.parcel == n).map(|w| w.name.to_uppercase()).collect();
+                    if l.owner == Owner::Vacant {
+                        match office.quote_buy(z.system, z.port, n) {
+                            Ok(price) => {
+                                frame.text(Vec2::new(12.0, y), &format!("FOR SALE: {price:.0} CR"), AMBER);
+                                hint = "ENTER: BUY IT   ESC: BACK".into();
+                            }
+                            Err(why) => {
+                                frame.text(Vec2::new(12.0, y), &why, RED);
+                            }
+                        }
+                    } else {
+                        frame.text(Vec2::new(12.0, y), &format!("ON IT: {}", if on_it.is_empty() { "NOTHING BUILT".to_string() } else { on_it.join(", ") }), DIM);
+                        if buildable(g, z.picked).is_some() {
+                            hint = "B: BUILD ON IT   ESC: BACK".into();
+                        }
+                    }
+                }
             }
-            if f.supplies > 0.0 {
-                most.push(format!("SUPPLIES UP TO {:.0} MW", f.supplies));
+            Some(Pick::Facility(k)) => {
+                if let Some(w) = g.works.get(k) {
+                    let owner = g.lots.iter().find(|l| l.number == w.parcel).map_or(String::new(), |l| owner_name(&l.owner));
+                    let n = w.blocks.len();
+                    frame.text(Vec2::new(12.0, y), &format!("{}   {}   ON PARCEL {}   {owner}   {n} MODULE{}", w.name.to_uppercase(), w.kind.to_uppercase(), w.parcel, if n == 1 { "" } else { "S" }), TEXT);
+                    y += line;
+                    if w.built(now) {
+                        frame.text(Vec2::new(12.0, y), &format!("AT MOST: {}", maxima(w).join("   ")), DIM);
+                    } else {
+                        let done = (0..n).filter(|&j| w.progress(j, now) >= 1.0).count();
+                        let left = w.done_at.last().copied().unwrap_or(now) - now;
+                        frame.text(Vec2::new(12.0, y), &format!("BUILDING: {done} OF {n} MODULES UP, DONE IN {}", universe_sim::estate::duration(left)), AMBER);
+                    }
+                }
             }
-            if f.holds > 0.0 {
-                most.push(format!("HOLDS UP TO {:.0} T", f.holds));
+            None => {
+                frame.text(Vec2::new(12.0, y), &format!("{} ZONES, {} LOTS, {} FACILITIES, {} STREETS, {} POWER LINES   AS THE LAND OFFICE HAS THEM", s.zones.len(), g.lots.len(), g.works.len(), s.streets.len(), s.power_lines.len()), DIM);
             }
-            frame.text(Vec2::new(12.0, y), &format!("AT MOST: {}", most.join("   ")), DIM);
         }
-        None => {
-            frame.text(Vec2::new(12.0, y), &format!("{} ZONES, {} PARCELS, {} FACILITIES, {} STREETS, {} POWER LINES   AS THE LAND OFFICE RECORDS THEM", s.zones.len(), s.parcels.len(), s.facilities.len(), s.streets.len(), s.power_lines.len()), DIM);
+    }
+    frame.text(Vec2::new(size.x - 12.0 - text_size(&hint).x, size.y - 24.0), &hint, DIM);
+
+    // The blueprint menu: the registry's facilities, each with what it would
+    // cost on this lot and how long it would take, or why it won't fit.
+    if let (Some(sel), Some(n)) = (z.menu, buildable(g, z.picked)) {
+        let rows = universe_sim::estate::blueprints();
+        let (w, h) = (900.0, 30.0 + (rows.len() as f32 + 1.0) * line + 20.0);
+        let at = Vec2::new((size.x - w) / 2.0, (size.y - h) / 2.0);
+        frame.hud_rect(at, Vec2::new(w, h), Color([0.02, 0.03, 0.04, 0.97]));
+        frame.hud_box(at, Vec2::new(w, h), CYAN.scale(0.6));
+        frame.text(at + Vec2::new(12.0, 10.0), &format!("BUILD ON PARCEL {n}   UP/DOWN, ENTER: BUILD, ESC: CANCEL"), TEXT);
+        let mut ry = at.y + 30.0;
+        frame.text(Vec2::new(at.x + 12.0, ry), &format!(" {:<22} {:>12} {:>9}  {}", "BLUEPRINT", "COST", "TIME", "ON THIS LOT"), DIM);
+        ry += line;
+        for (k, name) in rows.iter().enumerate() {
+            let quote = universe_sim::estate::blueprint_of(name).ok_or_else(|| "NO SUCH BLUEPRINT".to_string()).and_then(|(_, m)| office.quote_build(z.system, z.port, n, ME, &m));
+            let mark = if k == sel { ">" } else { " " };
+            let (text, c) = match quote {
+                Ok((_, cost, time)) => (format!("{mark}{:<22} {:>9.0} CR {:>9}  FITS", name.to_uppercase(), cost, universe_sim::estate::duration(time)), if k == sel { TEXT } else { DIM }),
+                Err(why) => (format!("{mark}{:<22} {:>12} {:>9}  {why}", name.to_uppercase(), "-", "-"), if k == sel { RED } else { RED.scale(0.6) }),
+            };
+            frame.text(Vec2::new(at.x + 12.0, ry), &text, c);
+            ry += line;
         }
     }
 }

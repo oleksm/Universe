@@ -1309,7 +1309,8 @@ fn settlement_ground(frame: &mut Frame, app: &App, port: usize, t: f64) {
     let sys = &app.view.system;
     let sp = &sys.spaceports[port];
     let b = &sys.bodies[sp.body];
-    let Some(s) = universe_sim::world::content::content().settlement(&sys.name, &b.name, &sp.name) else { return };
+    let Some(g) = app.v.land.ground(app.view.origin, port) else { return };
+    let s = g.recorded;
     let rot = b.rotation(t);
     let center = app.view.positions[sp.body];
     let up = rot * sp.direction;
@@ -1318,9 +1319,26 @@ fn settlement_ground(frame: &mut Frame, app: &App, port: usize, t: f64) {
     let r = b.surface_radius_at(center, center + up * b.rail.radius, t);
     let origin = center + up * r;
     let basis = DMat3::from_cols(east, up, east.cross(up));
-    let mesh = crate::models::settlement(s, r);
     let tr = Transform { position: origin, rotation: DQuat::from_mat3(&basis).as_quat(), scale: 1.0 };
+    // What stands built, as one mesh (made again when more is finished); what's
+    // going up, each at the height it has reached (in steps of 1/32).
+    let now = app.now();
+    let built: Vec<(&universe_sim::world::settlements::Block, f64)> = g.works.iter().flat_map(|w| w.blocks.iter().enumerate().filter(move |(k, _)| w.progress(*k, now) >= 1.0).map(|(_, b)| (b, b.height))).collect();
+    let key = format!("{}/{}/{} built {}", s.system, s.body, s.name, g.works.iter().map(|w| format!("{}:{}", w.parcel, (0..w.blocks.len()).filter(|&k| w.progress(k, now) >= 1.0).count())).collect::<Vec<_>>().join(","));
+    let mesh = crate::models::ground_blocks(key, &built, r);
     frame.with_surface(0.15, 16.0, 0.0, |frame| frame.model_shaded(&mesh, &tr, Color::hex(0x3a3f45), Color::hex(0x8c9196)));
+    for w in &g.works {
+        for (k, bl) in w.blocks.iter().enumerate() {
+            let p = w.progress(k, now);
+            if p <= 0.0 || p >= 1.0 {
+                continue;
+            }
+            let step = (p * 32.0).ceil() / 32.0;
+            let key = format!("{}/{} parcel {} block {k} at {step}", s.body, s.name, w.parcel);
+            let rising = crate::models::ground_blocks(key, &[(bl, bl.height * step)], r);
+            frame.with_surface(0.1, 12.0, 0.0, |frame| frame.model_shaded(&rising, &tr, Color::hex(0x6a5a30), Color::hex(0x7a7468)));
+        }
+    }
     // A point on the ground `(east, north)` metres from the port, `h` above it.
     let ground = |p: (f64, f64), h: f64| {
         let d = universe_sim::world::settlements::direction(sp.direction, r, p);
