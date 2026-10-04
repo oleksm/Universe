@@ -1516,8 +1516,12 @@ for m in modules:
     cut = [pt for pt in leaves if (pt.get("made_from") or {}).get("item") in stock_of]
     size = m.get("size") or {}
     floor = size.get("length", 0) * size.get("width", 0)
-    rows.append(row("gap" if not tops or len(cut) < len(leaves) else "ok", link(m["identity"]["name"], "mod:" + m["slug"]), len(tops) or "none listed", sum(times(pt) for pt in tops) or "", tonnes(m["parts_mass"]) if m.get("parts_mass") else "", f"{m['parts_mass'] / floor:,.0f} kg/m2" if m.get("parts_mass") and floor else "", f"{len(cut)} of {len(leaves)}" if leaves else ""))
-report("plant", "Plant: what each industrial module is built of", "Each industrial module: the kinds of component it is built of, how many pieces that is, what they weigh together, that weight over its floor, and how many of its components say what they are made from. A gap is a module with no components listed, or with components that do not yet say what they are made from.", ["Module", "Kinds of component", "Pieces", "Weight", "Over its floor", "Say what they are made from"], rows)
+    need = {}
+    for pt in cut:
+        need[pt["made_from"]["item"]] = need.get(pt["made_from"]["item"], 0) + pt.get("stock_mass", 0) * times(pt) / 1000
+    m["stock_needed"] = [{"item": k, "tonnes": v} for k, v in need.items()]
+    rows.append(row("gap" if not tops or len(cut) < len(leaves) else "ok", link(m["identity"]["name"], "mod:" + m["slug"]), len(tops) or "none listed", sum(times(pt) for pt in tops) or "", tonnes(m["parts_mass"]) if m.get("parts_mass") else "", f"{m['parts_mass'] / floor:,.0f} kg/m2" if m.get("parts_mass") and floor else "", f"{len(cut)} of {len(leaves)}" if leaves else "", ", ".join(f"{v:,.0f} t of {stock_of[k]['identity']['name']}" for k, v in need.items())))
+report("plant", "Plant: what each industrial module is built of", "Each industrial module: the kinds of component it is built of, how many pieces that is, what they weigh together, that weight over its floor, and how many of its components say what they are made from. A gap is a module with no components listed, or with components that do not yet say what they are made from.", ["Module", "Kinds of component", "Pieces", "Weight", "Over its floor", "Say what they are made from", "Stock they take"], rows)
 
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []

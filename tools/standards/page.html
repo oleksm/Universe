@@ -871,6 +871,7 @@ function detail(k) {
     if (kind === "mod") {
       const cs = topParts(e.slug);
       h += `<h3>What it is built of</h3>` + (cs.length ? partsTable(cs, "In one module") + (e.parts_mass ? `<p class="meta">Together ${kg(e.parts_mass)}${e.size && e.size.length ? `, which is ${Math.round(e.parts_mass / (e.size.length * e.size.width)).toLocaleString()} kg for each m² of its floor` : ""}.</p>` : "") : `<p class="meta">Not yet said.</p>`);
+      if ((e.stock_needed || []).length) h += `<h3>Stock its components take</h3><table><tr><th>Stock</th><th>Tonnes</th></tr>` + e.stock_needed.map(s => `<tr><td><a data-k="${esc("stock:" + s.item)}">${esc(stockByCode[s.item].identity.code)} ${esc(stockByCode[s.item].identity.name)}</a></td><td class="num">${Math.round(s.tonnes).toLocaleString()} t</td></tr>`).join("") + `</table><p class="meta">Only the components that say what they are made from: guesses, taken as all steel.</p>`;
     }
     if (kind === "gate" && e.worked) {
       const wk = e.worked, sci = v => { const x = Math.floor(Math.log10(v)); return `${(v / 10 ** x).toFixed(1)} × 10<sup>${x}</sup> J`; };

@@ -6,8 +6,14 @@ identity:
   description: "Runs in the aisles, putting goods away and fetching them."
 physical:
   mass: 12000
+made_from:
+  item: STA36-PL-20
+  quantity: 88.5
+making:
+  processes: [plate-work]
 fit:
   count: 6
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.inform-international.com/100-original-asrs-warehouse-panther-series-stacker-crane-inform-product", note: "A pallet stacker crane 24 m high: 12 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }
