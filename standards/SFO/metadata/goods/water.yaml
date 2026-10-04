@@ -5,3 +5,6 @@ identity:
   description: "Water, as ice or liquid."
 game:
   goods: goods.water
+source:
+  won_from: asteroid-water-ice
+  note: "Melted and filtered."

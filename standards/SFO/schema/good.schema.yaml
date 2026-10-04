@@ -1,6 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Good
-description: Something that moves in bulk through industry and is neither an element nor a finished material. Raw matter, what is used up, what one step hands to the next, what comes out besides the product.
+description: Something that moves in bulk through industry and is neither an element nor a finished material. Rock as it is dug, raw matter won from it, what is used up, what one step hands to the next, what comes out besides the product.
 type: object
 additionalProperties: false
 required: [identity]
@@ -11,10 +11,23 @@ properties:
     required: [name, kind]
     properties:
       name: { type: string }
-      kind: { enum: [raw, consumable, fuel, intermediate, product, by-product] }
+      kind: { enum: [rock, raw, consumable, fuel, intermediate, product, by-product], description: 'rock: dug as it lies. raw: won from a rock, what industry starts from.' }
       description: { type: string }
+  physical:
+    type: object
+    additionalProperties: false
+    properties:
+      bulk_density: { type: number, description: "t/m3, as stowed broken in a hold" }
+  source:
+    description: Where a raw good comes from.
+    type: object
+    additionalProperties: false
+    properties:
+      won_from: { type: string, description: "The rock it is won from, by file name." }
+      note: { type: string }
   game:
     type: object
     additionalProperties: false
     properties:
       goods: { type: string, description: "The kind of goods it is in the game's markets (content/base/goods.ron)." }
+      ore: { type: string, description: "For a rock: the game's ore it is (content/base/ores.ron), dug from asteroids by mining ships." }

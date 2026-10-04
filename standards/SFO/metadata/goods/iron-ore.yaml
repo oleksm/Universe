@@ -5,3 +5,6 @@ identity:
   description: "Rock rich enough in iron oxide to be worth working."
 game:
   goods: goods.ores
+source:
+  won_from: stony-ore
+  note: "Stony ore dressed to a concentrate of its iron oxide. How much rock that takes is not yet said."

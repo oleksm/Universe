@@ -551,8 +551,8 @@ function detail(k) {
       + node("Industrial modules", DATA.modules.length, "furnaces, plants, yards, each with a size, a rate and what goes in and out", "s:SFO 10")
       + link(lined.size, DATA.processes.length, "processes have a line built for them at a facility")
       + node("Facilities", allFacilities().length, most ? `at most ${most}` : "none makes anything yet", "pd")
-      + link(DATA.goods.filter(g => g.identity.kind === "raw").length ? 0 : 0, DATA.goods.filter(g => g.identity.kind === "raw").length, "raw goods have a mine or a well recorded")
-      + node("Rock", 0, "ore, water, what is dug: nothing records where it comes from", null, true)
+      + link(DATA.goods.filter(g => g.identity.kind === "raw" && (g.source || {}).won_from).length, DATA.goods.filter(g => g.identity.kind === "raw").length, "raw goods are won from a rock")
+      + node("Rock", DATA.goods.filter(g => g.identity.kind === "rock").length, "the game's ores, dug from asteroids by mining ships", "s:SFO 11", !DATA.goods.some(g => g.identity.kind === "rock"))
       + `</div>`;
   };
   if (kind === "rep") {

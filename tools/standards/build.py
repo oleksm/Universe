@@ -190,6 +190,7 @@ PORT = {
 
 # The game's kinds of goods: each one's name and how much a cubic metre of it weighs as stowed
 # (content/base/goods.ron).
+ORES = set(re.findall(r'key: "(ore\.[a-z_]+)"', open(os.path.join(ROOT, "content", "base", "ores.ron"), encoding="utf-8").read()))
 GOODS_KINDS = {k: {"name": n.title(), "density": float(d)} for k, n, d in re.findall(r'key: "(goods\.[a-z_]+)",\s*name: "([^"]*)",.*?bulk_density: ([0-9.]+)', open(os.path.join(ROOT, "content", "base", "goods.ron"), encoding="utf-8").read(), re.S)}
 
 
@@ -1317,16 +1318,33 @@ for pr in processes:
     rows.append(row(state, link(pr["identity"]["name"], "proc:" + pr["slug"]), "yes" if steps else "no steps", ", ".join(f["name"] for f in at) or "nowhere", "yes" if pr["slug"] in lined else "no line built for it"))
 report("processes", "Processes: steps, and somewhere they are run", "Each process: whether it is broken into steps with their modules, which facilities list it, and whether any of them has a line built for it.", ["Process", "Steps", "Listed by", "A line built"], rows)
 
+for gd in goods:
+    where = os.path.join(TREE, gd["file"])
+    ore = (gd.get("game") or {}).get("ore")
+    if ore is not None and ore not in ORES:
+        problem(where, f"game.ore: the game has no ore '{ore}'")
+    rock = (gd.get("source") or {}).get("won_from")
+    if rock is not None and next((o for o in goods if o["slug"] == rock), {}).get("identity", {}).get("kind") != "rock":
+        problem(where, f"source.won_from: no rock '{rock}' among the goods")
 # 7. Each good: does something make it, and does something use it?
 rows = []
 for gd in goods:
     made = [m for m in modules if (m.get("rate") or {}).get("product") == gd["slug"] or any(x.get("item") == gd["slug"] for x in (m.get("outputs") or {}).get("by_products") or [])]
     used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
     kind = (gd.get("identity") or {}).get("kind")
-    need_made, need_used = kind not in ("raw", "consumable", "fuel"), kind not in ("by-product", "product")
+    need_made, need_used = kind not in ("rock", "raw", "consumable", "fuel"), kind not in ("by-product", "product", "rock")
+    if kind == "rock":
+        won = [o for o in goods if (o.get("source") or {}).get("won_from") == gd["slug"]]
+        rows.append(row("ok", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, "dug from asteroids by mining ships (the game's ore)", ", ".join(o["identity"]["name"] for o in won) or "nothing is won from it yet"))
+        continue
+    if kind == "raw":
+        rock = next((o for o in goods if o["slug"] == (gd.get("source") or {}).get("won_from")), None)
+        used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
+        rows.append(row("ok" if rock else "gap", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ("won from " + rock["identity"]["name"]) if rock else "no rock it is won from", ", ".join(m["identity"]["name"] for m in used) or "nothing uses it"))
+        continue
     gap = (need_made and not made) or (need_used and not used)
     rows.append(row("gap" if gap else "ok", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ", ".join(m["identity"]["name"] for m in made) or ("comes from outside" if not need_made else "nothing makes it"), ", ".join(m["identity"]["name"] for m in used) or ("goes out" if not need_used else "nothing uses it")))
-report("goods", "Goods: where each comes from and goes", "Each good: the modules it comes out of and the modules it goes into. Raw goods, consumables and fuel come from outside; products and by-products go out.", ["Good", "Kind", "Comes out of", "Goes into"], rows)
+report("goods", "Goods: where each comes from and goes", "Each good: where it comes from and where it goes. A rock is dug; a raw good is won from a rock; consumables and fuel come from outside; the rest come out of one module and go into another, or out.", ["Good", "Kind", "Comes out of", "Goes into"], rows)
 
 
 # ---------------------------------------------------------------- the page

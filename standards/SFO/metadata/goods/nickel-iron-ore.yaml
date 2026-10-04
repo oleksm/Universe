@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+# The game's own ore (content/base/ores.ron): its name and how it stows are the game's.
+identity:
+  name: Nickel-Iron Ore
+  kind: rock
+  description: "Asteroid metal: iron with nickel in it, already metal and not an oxide."
+physical:
+  bulk_density: 4.5
+game:
+  goods: goods.ores
+  ore: ore.nickel_iron
