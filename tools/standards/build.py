@@ -1189,6 +1189,131 @@ def write_ron():
         f.write("\n".join(out))
 
 
+# ---------------------------------------------------------------- reports
+# Where the registry does not yet join up. Nothing here stops the build: these are gaps to close,
+# not mistakes. Each report is a table; a row is ok, a gap, or a note.
+reports = []
+
+
+def report(key, title, about, columns, rows):
+    reports.append({"key": key, "title": title, "about": about, "columns": columns, "rows": rows,
+                    "gaps": sum(1 for r in rows if r["state"] == "gap"), "ok": sum(1 for r in rows if r["state"] == "ok")})
+
+
+def row(state, *cells):
+    return {"state": state, "cells": [c if isinstance(c, dict) else {"t": str(c)} for c in cells]}
+
+
+link = lambda text, key: {"t": str(text), "k": key}
+tonnes = lambda kg_: f"{kg_ / 1000:,.2f} t" if abs(kg_) >= 1000 else f"{kg_:,.0f} kg"
+run_at = {}
+for ad in administrations:
+    for x in ad["bodies"]:
+        for fc in x.get("facilities", []):
+            for name in fc.get("processes") or []:
+                run_at.setdefault(name, []).append(fc)
+lined = {ln["process"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln}
+part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "part:" + pt["slug"])
+
+# 1. The chain from a hull down to rock: how far each part gets.
+for hl in hulls:
+    mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
+    leaves = [pt for pt in mine if not kids(pt)]
+    rows = []
+    for pt in leaves:
+        ms = stock_of.get((pt.get("made_from") or {}).get("item"))
+        proc = ((ms or {}).get("making") or {}).get("process")
+        pr = by_process.get(proc)
+        steps = [
+            ("has a mass", "mass" in pt),
+            ("says what it is cut from", ms is not None),
+            ("that stock has a process", pr is not None),
+            ("the process has steps", bool(pr and (pr.get("equipment") or {}).get("steps"))),
+            ("a facility is built to run it", proc in lined),
+        ]
+        reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
+        rows.append(row("ok" if reached == len(steps) else "gap", part_link(pt), f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
+    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "For each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, and is a facility built to run it.", ["Part", "Links made", "Where it stops"], rows)
+
+# 2. Mass: what a thing weighs against what it is made of.
+rows = []
+for hl in hulls:
+    frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
+    got = hl.get("parts_mass", 0)
+    if frame:
+        d = got - frame
+        rows.append(row("ok" if abs(d) <= 0.01 * frame else "gap", link(hl["identity"]["name"] + " (hull)", "hull:" + hl["slug"]), tonnes(frame), "its frame, in the game", tonnes(got), "its parts", f"{d:+,.0f} kg ({100 * d / frame:+.1f}%)"))
+    for c in [pt for pt in parts if pt["hull"] == hl["slug"] and kids(pt)]:
+        own, sub = (c.get("physical") or {}).get("mass"), sum(k["mass"] * times(k) for k in kids(c) if "mass" in k)
+        missing = [k for k in kids(c) if "mass" not in k]
+        if missing:
+            rows.append(row("gap", part_link(c), "", "", tonnes(sub), "its parts", f"{len(missing)} of its parts have no mass"))
+        elif own is not None:
+            rows.append(row("ok" if abs(own - sub) <= 0.01 * max(own, 1) else "gap", part_link(c), tonnes(own), "its own record", tonnes(sub), "its parts", f"{sub - own:+,.0f} kg"))
+        else:
+            rows.append(row("ok", part_link(c), tonnes(sub), "its parts", "", "", "worked out from its parts"))
+    for pt in [pt for pt in parts if pt["hull"] == hl["slug"] and "stock_mass" in pt and "mass" in pt]:
+        lost = pt["stock_mass"] - pt["mass"]
+        rows.append(row("ok" if lost >= 0 else "gap", part_link(pt), tonnes(pt["mass"]), "its own record", tonnes(pt["stock_mass"]), "the stock it takes", f"{lost:,.0f} kg lost as offcut" if lost >= 0 else "it weighs more than the stock it is cut from"))
+report("mass", "Mass: a thing against what it is made of", "A hull against its parts, a part made of parts against them, a part against the stock it is cut from. A gap is a difference of more than 1%, a part with no mass, or a part heavier than its stock.", ["What", "Weighs", "By", "Against", "By", "Difference"], rows)
+
+# 3. Volume: a hull's parts' boxes against the space the hull takes.
+rows = []
+for hl in hulls:
+    vol = (hl.get("size") or {}).get("volume")
+    boxes = sum((pt.get("physical") or {}).get("length", 0) * (pt.get("physical") or {}).get("width", 0) * (pt.get("physical") or {}).get("height", 0) * times(pt) for pt in parts if pt["hull"] == hl["slug"] and not pt.get("parent"))
+    unsized = [pt for pt in parts if pt["hull"] == hl["slug"] and not pt.get("parent") and not (pt.get("physical") or {}).get("length")]
+    if vol:
+        rows.append(row("note", link(hl["identity"]["name"], "hull:" + hl["slug"]), f"{vol:,.0f} m3", f"{boxes:,.0f} m3", f"{boxes / vol:.1f} times", "The boxes are each part's outer extent and overlap where parts do, so they add up to more than the hull."))
+    for pt in unsized:
+        rows.append(row("gap", part_link(pt), "", "", "", "no size"))
+report("volume", "Volume: a hull against its parts' boxes", "The space the hull's shape takes in the game, against the boxes of its parts added up. A gap is a part with no size.", ["What", "Hull's volume", "Parts' boxes", "Ratio", "Note"], rows)
+
+# 4. What goes in against what comes out, for each industrial module.
+rows = []
+for m in modules:
+    ins = sum(x.get("amount", 0) for x in (m.get("inputs") or {}).get("materials") or [])
+    outs = sum(x.get("amount", 0) for x in (m.get("outputs") or {}).get("by_products") or [])
+    if not ins or not (m.get("rate") or {}).get("throughput"):
+        continue
+    d = ins - (1 + outs)
+    rows.append(row("ok" if abs(d) <= 0.02 * ins else "gap", link(m["identity"]["name"], "mod:" + m["slug"]), f"{ins:.4g} t", f"{1 + outs:.4g} t", f"{d:+.3g} t ({100 * d / ins:+.1f}%)", "balanced" if abs(d) <= 0.02 * ins else ("more goes in than comes out" if d > 0 else "more comes out than goes in")))
+report("modules", "Balance: what goes into a module against what comes out", "For each tonne of a module's product: everything that goes in, against the product and everything else that comes out. Matter is not made or lost, so they should match. A gap is a difference of more than 2%.", ["Module", "Goes in", "Comes out", "Difference", ""], rows)
+
+# 5. Each material, in each form it comes in: does a process make it?
+rows = []
+makes = {}
+for pr in processes:
+    for o in (pr.get("outputs") or {}).get("products") or []:
+        if o.get("item") and o.get("form"):
+            makes.setdefault((o["item"], o["form"]), []).append(pr.get("slug"))
+for m in materials:
+    for form in (m.get("identity") or {}).get("form") or []:
+        by = makes.get((m["slug"], form), [])
+        rows.append(row("ok" if by else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, link(by_process[by[0]]["identity"]["name"], "proc:" + by[0]) if by else "no process makes it"))
+report("stock", "Materials: is every form made by a process", "Each material in each form it is said to come in, and the process that makes it in that form.", ["Material", "Form", "Made by"], rows)
+
+# 6. Each process: has it real steps, and is it run anywhere?
+rows = []
+for pr in processes:
+    steps = bool((pr.get("equipment") or {}).get("steps"))
+    at = run_at.get(pr["slug"], [])
+    state = "ok" if steps and pr["slug"] in lined else "gap"
+    rows.append(row(state, link(pr["identity"]["name"], "proc:" + pr["slug"]), "yes" if steps else "no steps", ", ".join(f["name"] for f in at) or "nowhere", "yes" if pr["slug"] in lined else "no line built for it"))
+report("processes", "Processes: steps, and somewhere they are run", "Each process: whether it is broken into steps with their modules, which facilities list it, and whether any of them has a line built for it.", ["Process", "Steps", "Listed by", "A line built"], rows)
+
+# 7. Each good: does something make it, and does something use it?
+rows = []
+for gd in goods:
+    made = [m for m in modules if (m.get("rate") or {}).get("product") == gd["slug"] or any(x.get("item") == gd["slug"] for x in (m.get("outputs") or {}).get("by_products") or [])]
+    used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
+    kind = (gd.get("identity") or {}).get("kind")
+    need_made, need_used = kind not in ("raw", "consumable", "fuel"), kind not in ("by-product", "product")
+    gap = (need_made and not made) or (need_used and not used)
+    rows.append(row("gap" if gap else "ok", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ", ".join(m["identity"]["name"] for m in made) or ("comes from outside" if not need_made else "nothing makes it"), ", ".join(m["identity"]["name"] for m in used) or ("goes out" if not need_used else "nothing uses it")))
+report("goods", "Goods: where each comes from and goes", "Each good: the modules it comes out of and the modules it goes into. Raw goods, consumables and fuel come from outside; products and by-products go out.", ["Good", "Kind", "Comes out of", "Goes into"], rows)
+
+
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
@@ -1224,6 +1349,7 @@ def write_html():
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,
+        "reports": reports,
     }
     template = open(os.path.join(os.path.dirname(__file__), "page.html"), encoding="utf-8").read()
     page = template.replace("/*DATA*/null", json.dumps(data, ensure_ascii=False).replace("</", "<\\/"))
@@ -1240,4 +1366,5 @@ if problems:
     sys.exit(1)
 write_ron()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
+print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron")

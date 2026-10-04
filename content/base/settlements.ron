@@ -28,8 +28,8 @@
         ],
         facilities: [
             (name: "Trethi Foundry", kind: "foundry", parcel: 1,
-                makes: [("Ingot", 79.5772854596384)], draws: 320.11589133260964, supplies: 0.0, holds: 0.0,
-                takes: [("Argon", "", 0.016233766233766236), ("Lime", "", 4.058441558441559), ("Carbon", "", 1.2175324675324677), ("Graphite electrode", "", 0.12175324675324677), ("Water", "goods.water", 0.4464285714285694), ("Iron ore", "goods.ores", 187.50000000000003)], gives: [("Ingot", "", 79.5772854596384), ("Scrap", "", 1.591545709192768), ("Slag", "", 12.175324675324676), ("Furnace dust", "", 1.2175324675324677), ("Oxygen", "", 39.28571428571429), ("Tailings", "", 62.50000000000001)], burns: [],
+                makes: [("Ingot", 77.90783191852711)], draws: 308.9883220260367, supplies: 0.0, holds: 0.0,
+                takes: [("Argon", "", 0.015893197711379533), ("Lime", "", 3.973299427844883), ("Carbon", "", 1.191989828353465), ("Graphite electrode", "", 0.11919898283534648), ("Water", "goods.water", 0.17482517482517324), ("Iron ore", "goods.ores", 187.50000000000003)], gives: [("Ingot", "", 77.90783191852711), ("Scrap", "", 1.5581566383705423), ("Slag", "", 11.919898283534648), ("Furnace dust", "", 1.191989828353465), ("Oxygen", "", 37.76223776223777), ("Tailings", "", 62.50000000000001)], burns: [],
                 modules: [("ore-yard", 1), ("pellet-plant", 1), ("hydrogen-plant", 3), ("shaft-furnace", 1), ("arc-furnace", 1), ("ladle-station", 1), ("casting-bay", 1), ("ingot-yard", 1)],
                 blocks: [
                 (module: "ore-yard", centre: (720.0, 180.0), length: 200.0, width: 100.0, height: 15.0, heading: 0.0),
