@@ -862,9 +862,11 @@ function detail(k) {
       const wk = e.worked, ld = wk.landing || {};
       h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>`
         + (e.fitted_mass ? `<tr><td>mass, built and fitted</td><td>${kg((e.parts_mass || 0) + e.fitted_mass)}</td><td>its parts (${kg(e.parts_mass || 0)}) and its equipment (${kg(e.fitted_mass)})</td></tr>` : "")
-        + `<tr><td>mass, loaded</td><td>${kg(wk.ship)}</td><td>its parts, and what the game fits and loads into it</td></tr>`
+        + `<tr><td>mass, with fuel</td><td>${kg(wk.light)}</td><td>its parts, its equipment and its fuel</td></tr>`
+        + `<tr><td>mass, with its hold full</td><td>${kg(wk.full)}</td><td>and its rated cargo</td></tr>`
+        + (e.size.hold_volume ? `<tr><td>its hold filled with</td><td>${DATA.goods.filter(g => g.identity.kind === "rock" && (g.physical || {}).bulk_density && (g.game || {}).ore).map(g => `${esc(g.identity.name)}: ${Math.round(Math.min(e.size.hold_volume * g.physical.bulk_density, e.mass.hold)).toLocaleString()} t`).join("; ")}</td><td>its volume by each rock's weight as stowed, up to its rated load</td></tr>` : "")
         + (e.built || []).map(bl => `<tr><td>can be built at</td><td>${esc(bl.at)}, ${esc(bl.settlement)}: one every ${bl.days.toFixed(0)} days at most</td><td>${bl.fitted ? "built and fitted out: its parts' and its equipment's weight" : "the bare hull: its parts' weight"} through the yard's building dock, flat out</td></tr>`).join("")
-        + (wk.hover ? `<tr><td>can hover and set down on</td><td>ground of up to ${(wk.hover / 9.81).toFixed(2)} g</td><td>its lift against its weight</td></tr>` : "")
+        + (wk.hover ? `<tr><td>can hover and set down on</td><td>ground of up to ${(wk.hover / 9.81).toFixed(2)} g, ${esc(wk.as_lands)}</td><td>its lift against its weight</td></tr>` : "")
         + (wk.can.length || wk.cannot.length ? `<tr><td>settlements it can set down at</td><td>${esc(wk.can.join(", "))}</td><td>${wk.cannot.length ? "too heavy for: " + esc(wk.cannot.join(", ")) : "their worlds' gravity"}</td></tr>` : "")
         + (ld.designed !== undefined ? `<tr><td>landing its legs are designed for</td><td>${ld.designed} m/s, a jolt of ${ld.jolt.toFixed(2)} g aboard</td><td>its design, over a stroke of ${ld.stroke} m</td></tr><tr><td>hardest landing its legs take</td><td>${ld.hardest.toFixed(1)} m/s, a jolt of ${ld.hardest_jolt.toFixed(1)} g aboard</td><td>the weakest of its legs' parts; faster, a leg fails</td></tr>` : "")
         + `</table>`;
@@ -911,6 +913,7 @@ function detail(k) {
     if (kind === "hull" && (e.fit || []).length) {
       h += `<h3>Fitted with</h3><table><tr><th>Slot</th><th>Equipment</th><th>Maker</th><th>Mass</th><th>Volume</th><th>Draws</th><th>Gives</th></tr>` + e.fit.map(f => { const x = eqBySlug[f.item] || { identity: { name: f.item }, physical: {}, performance: {} }, pf = x.performance || {}; return `<tr><td>${esc(f.slot)}</td><td><a data-k="${esc("eq:" + f.item)}">${esc(x.identity.name)}</a></td><td>${x.identity.maker ? ownerLink(x.identity.maker) : ""}</td><td class="num">${x.physical.mass !== undefined ? kg(x.physical.mass) : ""}</td><td class="num">${x.physical.volume !== undefined ? x.physical.volume + " m³" : ""}</td><td class="num">${pf.power_draw !== undefined ? pf.power_draw + " kW" : ""}</td><td>${pf.thrust !== undefined ? (f.nozzles ? `${f.nozzles} nozzles × ${pf.thrust} kN: ${(f.nozzles * pf.thrust / 1000).toFixed(2)} MN` : `${pf.thrust} kN a nozzle`) : pf.output !== undefined ? pf.output + " MW" : pf.capacity !== undefined ? kg(pf.capacity) + (pf.holds ? " of " + esc(pf.holds) : "") : ""}</td></tr>`; }).join("") + `<tr><th>Total</th><th></th><th></th><th class="num">${kg(e.fitted_mass)}</th><th class="num">${+e.fit.reduce((n, f) => n + (((eqBySlug[f.item] || {}).physical || {}).volume || 0), 0).toFixed(1)} m³</th><th class="num">${e.fit.reduce((n, f) => n + (((eqBySlug[f.item] || {}).performance || {}).power_draw || 0), 0).toLocaleString()} kW</th><th></th></tr></table>`;
     }
+    if (kind === "hull" && (e.open_questions || []).length) h += `<h3>Open questions</h3><table><tr><th>Not settled</th></tr>` + e.open_questions.map(t => `<tr><td>${esc(t)}</td></tr>`).join("") + `</table>`;
     if (kind === "hull") {
       // What it is made of: its parts.
       const cs = topParts(e.slug);

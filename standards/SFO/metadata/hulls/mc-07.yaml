@@ -1,20 +1,20 @@
 # yaml-language-server: $schema=../../schema/hull.schema.yaml
-# Its size and the mass of its frame are the game's (the MC-07 model, as imported). What it is made
-# of: its parts, in parts/mc-07/.
+# The spec. Its size is the model's. What it is made of, and so what it weighs: its parts, in
+# parts/mc-07/. Where this differs from what the game flies today, this is what is meant.
 identity:
   name: MC-07
   class: mining ship
   standing: current
-  description: A mining ship's hull. The bare hull, with nothing fitted in its slots.
+  description: "A mining ship. It digs an asteroid it is anchored to into the ore bay under its top doors, carries the ore to a station or an outpost in orbit, and unloads there. It sets down on a world only with its bay empty."
 size:
   length: 66.1
   width: 30.9
   height: 19.1
   volume: 23181
+  hold_volume: 669
 mass:
-  frame: 87.803
   fuel: 4
-  hold: 4
+  hold: 1200
 fit:
   - { slot: drive, item: drive-torch-s1, nozzles: 6 }
   - { slot: thrusters, item: thrusters-quad-s1 }
@@ -27,13 +27,13 @@ fit:
   - { slot: comm, item: comm-basic-s1 }
   - { slot: life, item: life-s1 }
   - { slot: avionics, item: nav-basic-s1 }
-  - { slot: cargo, item: rack-s1 }
   - { slot: power, item: power-fusion-s1 }
 making:
   process: hull-assembly
   fitting_out: fitting-out
 design:
-  loaded_mass: 107.6
+  lands: empty
+  thrust_path: [MC07-21, MC07-19, MC07-16, MC07-12, MC07-07, MC07-02]
   main_thrust: 5.4
   lift_thrust: 1.32
   landing_speed: 3.05
@@ -43,12 +43,24 @@ design:
   strut_efficiency: 0.85
   minimum_gauge: 2
 basis:
-  - { of: [fit], tier: sourced, source: "the game: the fit it gives the MC-07 as imported", note: "The cheapest module for each of its slots. Fixed for now: the game lets them be changed." }
-  - { of: [size, mass], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume, and the frame mass the game's formula gives it." }
-  - { of: [design.loaded_mass, design.main_thrust, design.lift_thrust], tier: sourced, source: "the game: the MC-07 as imported, with its standard fit" }
+  - { of: [fit], tier: sourced, source: "the game: the fit it gives the MC-07 as imported", note: "The cheapest module for each of its slots, less the cargo racks: its hold is its ore bay. Fixed for now." }
+  - { of: [size.length, size.width, size.height, size.volume], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume." }
+  - { of: [size.hold_volume], tier: invented, review: true, note: "A guess, to be reviewed: the ore bay under its two top doors. The opening is the doors' (9.95 by 8.4 m, measured from the model); its depth of 8 m is chosen, leaving the cargo deck below. The model's inside has not been measured." }
+  - { of: [mass.hold], tier: derived, review: true, note: "Its bay full of stony ore, the commonest inside the frost line, at 1.8 t for each m3. A denser ore fills it part way. To be reviewed with the bay." }
+  - { of: [mass.fuel], tier: sourced, source: "the game: its tank as fitted" }
+  - { of: [design.main_thrust, design.lift_thrust], tier: sourced, source: "the game: the MC-07 as imported, with its standard fit" }
   - { of: [design.landing_speed], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.473", note: "14 CFR 25.473: gear is designed for a descent of 10 feet a second." }
   - { of: [design.safety_factor], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.303", note: "14 CFR 25.303: a factor of safety of 1.5." }
   - { of: [design.pressure_factor], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.365", note: "14 CFR 25.365: cabin pressure loads at 1.33 times." }
   - { of: [design.strut_efficiency], tier: sourced, source: "https://archive.aoe.vt.edu/mason/Mason_f/M96SC05.pdf", note: "An oleo strut does work over 0.8 to 0.9 of its stroke." }
   - { of: [design.cabin_pressure], tier: invented, note: "Sea-level air, chosen. Airliners hold 54 to 65 kPa above the outside." }
   - { of: [design.minimum_gauge], tier: invented, note: "Chosen. Airliner skin is about 1 mm." }
+open_questions:
+  - "Its mass: its parts come to 154 t; the game flies it with an 88 t frame, worked out from its size. The spec's is what is meant; the game is to follow."
+  - "Its ore bay: its depth is a guess, and so what it carries. The model's inside needs measuring."
+  - "Its skin under the main drive's push: 2 mm sheet buckles unless it is stiffened closely or made thicker (see the structure report). No frames or stringers are parts yet, so their weight is not counted."
+  - "The landing the game allows (30 m/s) against the one its legs are built for (3 m/s, failing near 8)."
+  - "The main drive's heat: 5.4 MN at its exhaust speed is about 27 TW in the exhaust, and more as waste heat. How much of that reaches the ship is not said."
+  - "Its power plant's heat: about 7 MW to shed, and no radiator on the model."
+  - "What the rest of its 23,000 m3 is for. Its equipment, tank and ore bay take about 3%."
+  - "Its equipment is the game's early list, chosen as the cheapest for each slot: not yet reviewed."

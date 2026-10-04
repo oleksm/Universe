@@ -686,6 +686,8 @@ for s in standards:
         for group, props in e.items():
             if group in ("slug", "basis"):
                 continue
+            if kind == "hulls" and group == "open_questions":
+                continue
             if kind in ("hulls", "gates") and group == "fit":
                 continue
             if kind == "goods" and group == "composition":
@@ -1439,7 +1441,7 @@ for g in gates:
     if d and span and all(k in LAW for k in ("TUBE_T_LY", "TUBE_GAMMA", "TUBE_EPS", "TUBE_RHO", "TUBE_K", "TUBE_HOLD")):
         mu = LAW["TUBE_RHO"] * d ** LAW["TUBE_K"]
         opening = tube_energy(mu, span)
-        ships = [("A ship of 100 t", 1e5)] + [(hl["identity"]["name"] + ", loaded", hl.get("parts_mass", 0) + max(0.0, (hl.get("design") or {}).get("loaded_mass", 0) * 1000 - ((hl.get("mass") or {}).get("frame") or 0) * 1000)) for hl in hulls if hl.get("parts_mass")] + [("A hauler of 1,000 t", 1e6), ("A capital ship of 100,000 t", 1e8)]
+        ships = [("A ship of 100 t", 1e5)] + [(hl["identity"]["name"] + ", loaded", hl["parts_mass"] + hl.get("fitted_mass", 0) + 1000 * ((hl.get("mass") or {}).get("fuel", 0) + (hl.get("mass") or {}).get("hold", 0))) for hl in hulls if hl.get("parts_mass")] + [("A hauler of 1,000 t", 1e6), ("A capital ship of 100,000 t", 1e8)]
         g["worked"] = {
             "tube_mass": mu, "open_energy": opening, "open_time": tube_time(mu, span), "hold_power": opening / LAW["TUBE_HOLD"], "hold_months": LAW["TUBE_HOLD"] / (30 * 86400),
             "stations": (opening / LAW["TUBE_HOLD"] / 1e6 / station["rate"]["power"]) if station else None, "station": station["slug"] if station else None,
@@ -1594,7 +1596,11 @@ for hl in built_hulls:
     case = lambda pt: (pt.get("limits") or {}).get("load_case")
     SF, PF, eta = ds.get("safety_factor", 1), ds.get("pressure_factor", 1), ds.get("strut_efficiency", 1)
     frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
-    ship = hl.get("parts_mass", 0) + max(0.0, ds.get("loaded_mass", 0) * 1000 - frame)   # (its parts, and what the game fits and loads)
+    # (Its parts, its equipment and its fuel; and with its hold full. It lands as its design says.)
+    light = hl.get("parts_mass", 0) + hl.get("fitted_mass", 0) + 1000 * (hl.get("mass") or {}).get("fuel", 0)
+    full = light + 1000 * (hl.get("mass") or {}).get("hold", 0)
+    ship = light if ds.get("lands") == "empty" else full
+    as_lands = "empty of cargo" if ds.get("lands") == "empty" else "loaded"
     rows = []
     # (Holding the cabin's air.)
     for pt in [pt for pt in leaves if case(pt) == "pressure"]:
@@ -1659,7 +1665,7 @@ for hl in built_hulls:
         rows.append(row("note", "The hull's parts over its outer box", f"{box:,.0f} m2 of box", "about 24 kg/m2 for an airliner's fuselage" if ref else "", f"{hl['parts_mass'] / box:.1f} kg/m2", f"{hl['parts_mass'] / box / 24:.2f} times", (ref.get("source") or "") + ": a weight formula for pressurised fuselages, by wetted area"))
     gear = sum(o.get("mass", 0) * times(o) for o in mine if o["slug"] in legs)
     if gear and ship:
-        rows.append(row("note", "The landing legs' share of the ship", f"{ship / 1000:,.0f} t loaded", "3 to 6% in transport aircraft, with wheels and brakes, for 1 g", f"{100 * gear / ship:.1f}% ({gear / 1000:.1f} t)", "", (bench("weight_fractions", "landing_gear_share_MTOW_VT").get("source") or "")))
+        rows.append(row("note", "The landing legs' share of the ship", f"{ship / 1000:,.0f} t {as_lands}", "3 to 6% in transport aircraft, with wheels and brakes, for 1 g", f"{100 * gear / ship:.1f}% ({gear / 1000:.1f} t)", "", (bench("weight_fractions", "landing_gear_share_MTOW_VT").get("source") or "")))
     can, cannot = [], []
     if hover:
         for ad in administrations:
@@ -1671,12 +1677,34 @@ for hl in built_hulls:
                     can.append(f"{x['name']} (in orbit)")
                 elif at is not None and "gravity" in at:
                     (can if at["gravity"] <= hover else cannot).append(f"{x['name']} ({at['gravity'] / 9.81:.2f} g)")
-        rows.append(row("note", "Where it can hover and set down", f"{ship / 1000:,.0f} t loaded", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {hover / 9.81:.2f} g", "", f"its lift nozzles hold it where gravity is no more than {hover:.2f} m/s2. Not every ship has to land on a planet."))
+        rows.append(row("note", "Where it can hover and set down", f"{ship / 1000:,.0f} t {as_lands}", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {hover / 9.81:.2f} g", "", f"its lift nozzles hold it where gravity is no more than {hover:.2f} m/s2. Not every ship has to land on a planet."))
+        if full > ship:
+            rows.append(row("note", "With its hold full", f"{full / 1000:,.0f} t", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {ds['lift_thrust'] * 1e6 / full / 9.81:.2f} g", "", "loaded, it unloads in orbit: it is not built to set down full"))
         if can or cannot:
             rows.append(row("note", "Settlements it can set down at", f"{len(can)} of {len(can) + len(cannot)}", "", ", ".join(can), "", ("Too heavy for: " + ", ".join(cannot)) if cannot else ""))
     if ds.get("main_thrust") and ship:
-        rows.append(row("note", "Main drive", f"{ship / 1000:,.0f} t loaded", "", f"{ds['main_thrust']:g} MN", f"{ds['main_thrust'] * 1e6 / ship / 9.81:.1f} g", "its acceleration flat out; nothing checks the hull against it"))
-    hl["worked"] = {"ship": ship, "hover": hover, "landing": landing, "can": can, "cannot": cannot}
+        rows.append(row("note", "Main drive", f"{light / 1000:,.0f} t empty of cargo, {full / 1000:,.0f} t full", "", f"{ds['main_thrust']:g} MN", f"{ds['main_thrust'] * 1e6 / light / 9.81:.1f} g empty, {ds['main_thrust'] * 1e6 / full / 9.81:.2f} g full", "its acceleration flat out"))
+    # (The main drive's push through the hull: each part on its path as a thin-walled box of its
+    # stock's gauge. Strength: the push, with its factor, over the wall's section. Buckling: a flat
+    # panel between stiffeners b apart holds 4 pi^2 E / (12 (1 - nu^2)) (t / b)^2 before it buckles,
+    # so the stress says how close its stiffeners must be.)
+    push = ds.get("main_thrust", 0) * 1e6 * SF
+    for code in ds.get("thrust_path") or []:
+        pt = next((o for o in mine if o["slug"] == code), None)
+        ms = pt and stock(pt)
+        t_ = ((ms or {}).get("size") or {}).get("thickness")
+        mc = mech(ms or {})
+        ph = (pt or {}).get("physical") or {}
+        if not (pt and t_ and mc.get("yield_strength") and mc.get("youngs_modulus") and ph.get("width") and ph.get("height")):
+            rows.append(row("gap", part_link(pt) if pt else code, "carries the main drive's push", "", "", "", "no such part, or its stock's gauge or its material's strength or stiffness is not said"))
+            continue
+        wall = 2 * (ph["width"] + ph["height"]) * t_ / 1000
+        stress = push / wall
+        nu = mc.get("poissons_ratio", 0.33)
+        apart = t_ / 1000 * (4 * math.pi ** 2 * mc["youngs_modulus"] * 1e9 / (12 * (1 - nu ** 2) * stress)) ** 0.5
+        strong = mc["yield_strength"] * 1e6 / stress
+        rows.append(row("ok" if strong >= 1 and apart >= 0.3 else "gap", part_link(pt), f"the main drive's push, {push / 1e6:.1f} MN with its factor", f"{stress / 1e6:.0f} MPa in a wall {2 * (ph['width'] + ph['height']):.0f} m round", f"{t_:g} mm", f"strength {strong:.1f} times", f"it buckles unless stiffened every {apart * 100:.0f} cm or closer" + ("" if apart >= 0.3 else ": closer than can be built (30 cm taken as the least). A thicker skin, or stiffeners as parts, is needed")))
+    hl["worked"] = {"ship": ship, "full": full, "light": light, "as_lands": as_lands, "hover": hover, "landing": landing, "can": can, "cannot": cannot}
     report(f"structure-{hl['slug']}", f"Structure: {hl['identity']['name']} against its loads", "Each part that has a load case, against that load, by first-order sizing; and the hull against real vehicles and its own engines. A gap is a part too weak for its load, or a figure outside what real vehicles show.", ["What", "Load", "Needs", "Has", "Margin", "Note or source"], rows)
 
 # 2c. Shock: what breaking will be worked out from, and how much of it is there.
