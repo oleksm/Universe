@@ -208,6 +208,8 @@ const ownerOf = k => ORGS_ALL.find(o => o.key === k) || { name: k, to: "" };
 const ownerLink = k => { const o = ownerOf(k); return o.to ? `<a data-k="${esc(o.to)}">${esc(o.name)}</a>` : esc(o.name); };
 const parcelKey = (a, x, p) => `pc:${a.slug}:${x.slug}:${p.number}`;
 const parcelAddress = (a, x, p) => [`Parcel ${p.number}`, x.name, x.at, a.name].filter(Boolean).join(", ");
+const facKey = (a, x, f) => `fc:${a.slug}:${x.slug}:${f.slug}`;
+const allFacilities = () => DATA.administrations.flatMap(a => a.bodies.flatMap(x => (x.facilities || []).map(f => ({ a, x, f }))));
 const allParcels = () => DATA.administrations.flatMap(a => a.bodies.flatMap(x => (x.parcels || []).map(p => ({ a, x, p }))));
 
 // The tree as shown: each body, its standards under it.
@@ -265,7 +267,11 @@ function rows(q) {
         if (!has || !(open.has(k) || q)) continue;
         for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.tag, leaf: true });
         // (Its parcels. Its zones are on its map, not in the tree.)
-        for (const p of plots) out.push({ k: parcelKey(a, x, p), depth: depth + 1, kind: "maker", label: `Parcel ${p.number}`, ticker: ownerOf(p.owner).name, leaf: true });
+        for (const p of plots) {
+          const on = (x.facilities || []).filter(f => f.parcel === p.number);
+          out.push({ k: parcelKey(a, x, p), depth: depth + 1, kind: "maker", label: `Parcel ${p.number}`, ticker: ownerOf(p.owner).name, leaf: !on.length });
+          if (open.has(parcelKey(a, x, p)) || q) for (const f of on) out.push({ k: facKey(a, x, f), depth: depth + 2, kind: "maker", label: f.name, ticker: f.kind, leaf: true });
+        }
         under(x.name, depth + 1);
       }
     };
@@ -298,14 +304,15 @@ function reveal(k) {
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
-  if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("pc:")) {
+  if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("pc:") || k.startsWith("fc:")) {
     const org = k.startsWith("at:") ? ORGS.find(o => o.key === k.slice(3)) : null;
     const [sy, slug] = org ? org.address.at.split("/") : k.split(":").slice(1);
     const a = DATA.administrations.find(x => x.slug === sy); if (!a) return;
     open.add("la"); open.add("ad:" + sy);
     // (Open the bodies above it; and itself and its tower, for what has its address there.)
     let x = a.bodies.find(y => y.slug === slug);
-    if (x && (org || k.startsWith("pc:"))) open.add(`bd:${sy}:${x.slug}`);
+    if (x && (org || k.startsWith("pc:") || k.startsWith("fc:"))) open.add(`bd:${sy}:${x.slug}`);
+    if (x && k.startsWith("fc:")) { const f = (x.facilities || []).find(y => y.slug === k.split(":")[3]); if (f) open.add(`pc:${sy}:${x.slug}:${f.parcel}`); }
     for (x = x && a.bodies.find(y => y.name === x.at); x; x = a.bodies.find(y => y.name === x.at)) open.add(`bd:${sy}:${x.slug}`);
     keepOpen(); return;
   }
@@ -423,7 +430,7 @@ function detail(k) {
     return h;
   }
   if (k === "mh") return `<h2>${esc(DATA.house.name)}</h2>` + DATA.makers.map(m => `<div>${logo(m.slug)} <a data-k="${esc("mk:" + m.key)}">${esc(m.name)}</a> <span class="meta">${esc(m.ticker)} · ${esc(m.note)}</span></div>`).join("");
-  const aboutStory = r => (r.about ? `<h3>About</h3><p>${esc(r.about)}</p>` : "") + ((r.story || []).length ? `<h3>Story</h3>` + r.story.map(p => `<p>${esc(p)}</p>`).join("") : "");
+  const aboutStory = r => (r.about ? `<h3>About</h3><p>${esc(r.about)}</p>` : "") + (allFacilities().some(r => r.f.owner === m.key) ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.owner === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>Parcel ${f.parcel}, ${esc(x.name)}, ${esc(a.name)}</td></tr>`).join("") + `</table>` : "") + ((r.story || []).length ? `<h3>Story</h3>` + r.story.map(p => `<p>${esc(p)}</p>`).join("") : "");
   const pos = p => p ? `${Math.abs(p.latitude).toFixed(3)}° ${p.latitude < 0 ? "S" : "N"}, ${Math.abs(p.longitude).toFixed(3)}° ${p.longitude < 0 ? "W" : "E"}` : "";
   if (k === "la") return `<h2>${esc(DATA.local.name)}</h2><p>${esc(DATA.local.note || "")}</p>` + DATA.administrations.map(a => `<div><a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a> <span class="meta">${(a.bodies || []).length} bodies</span></div>`).join("");
   if (kind === "ad") {
@@ -436,17 +443,25 @@ function detail(k) {
     const up = x.at && a.bodies.find(y => y.name === x.at);
     const here = a.bodies.filter(y => y.at === x.name);
     const orgs = orgsAt(a.slug, x.slug);
-    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + landMap(a, x) + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Permits</th><th>Area</th></tr>` + x.zones.map(z => `<tr><td>${esc(z.name)}</td><td>${esc(z.use)}</td><td>${esc(((a.zoning || []).find(c => c.use === z.use) || {}).permits || "")}</td><td>${hectares(z.area)}</td></tr>`).join("") + `</table>` : "") + ((x.parcels || []).length ? `<h3>Parcels</h3><table><tr><th>Parcel</th><th>Zone</th><th>Area</th><th>Owner</th></tr>` + x.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${esc(((x.zones || []).find(z => z.slug === p.zone) || {}).name || "")}</td><td>${hectares(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `</table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + landMap(a, x) + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Permits</th><th>Area</th></tr>` + x.zones.map(z => `<tr><td>${esc(z.name)}</td><td>${esc(z.use)}</td><td>${esc(((a.zoning || []).find(c => c.use === z.use) || {}).permits || "")}</td><td>${hectares(z.area)}</td></tr>`).join("") + `</table>` : "") + ((x.facilities || []).length ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Parcel</th><th>Owner</th></tr>` + x.facilities.map(f => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${f.parcel}</td><td>${ownerLink(f.owner)}</td></tr>`).join("") + `</table>` : "") + ((x.parcels || []).length ? `<h3>Parcels</h3><table><tr><th>Parcel</th><th>Zone</th><th>Area</th><th>Owner</th></tr>` + x.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${esc(((x.zones || []).find(z => z.slug === p.zone) || {}).name || "")}</td><td>${hectares(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `</table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+  }
+  if (kind === "fc") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const f = x && (x.facilities || []).find(y => y.slug === rest[2]); if (!f) return "";
+    const p = (x.parcels || []).find(y => y.number === f.parcel); const z = p && (x.zones || []).find(y => y.slug === p.zone);
+    const where = `<a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a>, <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
+    const procs = (f.processes || []).map(s => procBySlug[s]).filter(Boolean);
+    const makes = pr => ((pr.outputs || {}).products || []).map(o => o.item ? `<a data-k="${esc("mat:" + o.item)}">${esc((matBySlug[o.item] || { identity: { name: o.item } }).identity.name)}</a>${o.form ? ` <span class="meta">${esc(o.form)}</span>` : ""}` : esc(o.name || "")).join(", ");
+    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>Processes it runs</h3><table><tr><th>Process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(f.file)}</div>`;
   }
   if (kind === "pc") {
     const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const p = x && (x.parcels || []).find(y => String(y.number) === rest[2]); if (!p) return "";
     const z = (x.zones || []).find(y => y.slug === p.zone);
     const where = `<a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
-    return `<h2>Parcel ${p.number}</h2><div class="meta">parcel</div><h3>Address</h3><p>Parcel ${p.number}, ${where}</p><table><tr><th>Owner</th><th>Zone</th><th>Area</th></tr><tr><td>${ownerLink(p.owner)}</td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td><td>${hectares(p.area)}</td></tr></table>` + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
+    return `<h2>Parcel ${p.number}</h2><div class="meta">parcel</div><h3>Address</h3><p>Parcel ${p.number}, ${where}</p><table><tr><th>Owner</th><th>Zone</th><th>Area</th></tr><tr><td>${ownerLink(p.owner)}</td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td><td>${hectares(p.area)}</td></tr></table>` + ((x.facilities || []).some(f => f.parcel === p.number) ? `<h3>On it</h3>` + x.facilities.filter(f => f.parcel === p.number).map(f => `<div><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a> <span class="meta">${esc(f.kind)}</span></div>`).join("") : "") + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
-    return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (ORGS.find(o => o.key === m.key) ? `<h3>Address</h3><p>${addressHtml(ORGS.find(o => o.key === m.key))}</p>` : "") + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
+    return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}</div><p>${esc(m.note)}</p>` + (ORGS.find(o => o.key === m.key) ? `<h3>Address</h3><p>${addressHtml(ORGS.find(o => o.key === m.key))}</p>` : "") + (allFacilities().some(r => r.f.owner === m.key) ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.owner === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>Parcel ${f.parcel}, ${esc(x.name)}, ${esc(a.name)}</td></tr>`).join("") + `</table>` : "") + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (allFacilities().some(r => r.f.owner === m.key) ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.owner === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>Parcel ${f.parcel}, ${esc(x.name)}, ${esc(a.name)}</td></tr>`).join("") + `</table>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + (allFacilities().some(r => r.f.owner === m.key) ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.owner === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>Parcel ${f.parcel}, ${esc(x.name)}, ${esc(a.name)}</td></tr>`).join("") + `</table>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
   }
   if (kind === "g") {
     const b = DATA.bodies.find(x => x.key === rest[0]); if (!b) return "";
@@ -473,6 +488,10 @@ function detail(k) {
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
       for (const [key, note] of Object.entries(props)) if (key in e[g]) h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
       h += `</table>`;
+    }
+    if (kind === "proc") {
+      const at = allFacilities().filter(r => (r.f.processes || []).includes(e.slug));
+      if (at.length) h += `<h3>Run at</h3><table><tr><th>Facility</th><th>Owner</th><th>Where</th></tr>` + at.map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${ownerLink(f.owner)}</td><td>${esc(x.name)}, ${esc(a.name)}</td></tr>`).join("") + `</table>`;
     }
     h += `<div class="file" style="margin-top:24px">standards/${esc(e.file)}</div>`;
     return h;

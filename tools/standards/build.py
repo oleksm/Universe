@@ -175,6 +175,8 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 # (LocalAdministration/metadata/administrations/<name>.yaml), to its administration.schema.yaml.
 LOCAL = "LocalAdministration"
 ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
+# What zone each kind of facility needs.
+FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -230,7 +232,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels"}:
+            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels", "facilities"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -284,6 +286,37 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if any(within(c, other["outline"]) for c in zn["outline"]) or any(within(c, zn["outline"]) for c in other["outline"]):
                     problem(os.path.join(TREE, zn["file"]), f"outline: it overlaps the zone {other.get('name')}")
         plots.sort(key=lambda r: r.get("number", 0))
+        # (What is built on its parcels: <settlement>/facilities/<name>.yaml.)
+        fac_dir = os.path.join(bfull[:-5], "facilities")
+        facs = []
+        for fn in sorted(os.listdir(fac_dir)) if os.path.isdir(fac_dir) else []:
+            ffull = os.path.join(fac_dir, fn)
+            if not re.fullmatch(r"[a-z0-9-]+\.yaml", fn):
+                problem(ffull, "a facility's file is named <name>.yaml (lower case, words joined by -)")
+                continue
+            fc = load(ffull)
+            for k in ["name", "kind", "parcel"]:
+                if k not in fc:
+                    problem(ffull, f"no {k}")
+            for k in fc:
+                if k not in {"name", "kind", "parcel", "processes"}:
+                    problem(ffull, f"unknown field '{k}'")
+            if fc.get("kind") not in FACILITY_ZONE:
+                problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
+            plot = next((r for r in plots if r.get("number") == fc.get("parcel")), None)
+            if plot is None:
+                problem(ffull, f"parcel {fc.get('parcel')}: no such parcel of {x.get('name')}")
+            else:
+                zone = next((zn for zn in zones if zn["slug"] == plot.get("zone")), None)
+                need = FACILITY_ZONE.get(fc.get("kind"))
+                if zone is not None and need and zone.get("use") != need:
+                    problem(ffull, f"a {fc.get('kind')} needs a parcel zoned {need}; parcel {plot.get('number')} is zoned {zone.get('use')}")
+                fc["owner"] = plot.get("owner")
+            fc["slug"] = fn[:-5]
+            fc["file"] = os.path.relpath(ffull, TREE)
+            facs.append(fc)
+        if facs:
+            x["facilities"] = facs
         if plots:
             x["parcels"] = plots
         if zones:
@@ -460,6 +493,17 @@ for s in standards:
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
+# (A facility's processes: SFO processes, each one for its kind of facility.)
+by_process = {pr.get("slug"): pr for pr in processes}
+for ad in administrations:
+    for x in ad["bodies"]:
+        for fc in x.get("facilities", []):
+            for name in fc.get("processes") or []:
+                pr = by_process.get(name)
+                if pr is None:
+                    problem(os.path.join(TREE, fc["file"]), f"processes: no process '{name}' in the SFO")
+                elif (pr.get("equipment") or {}).get("facility") != fc.get("kind"):
+                    problem(os.path.join(TREE, fc["file"]), f"processes: '{name}' is run in a {(pr.get('equipment') or {}).get('facility')}, not a {fc.get('kind')}")
 symbols = {(e.get("identity") or {}).get("symbol") for e in elements}
 slugs = {m.get("slug") for m in materials}
 for pr in processes:

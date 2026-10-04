@@ -1,0 +1,11 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Facility
+description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/facilities/<name>.yaml: something built on a parcel, and the work it does. It belongs to the parcel''s owner. The parcel''s zone must permit it: a foundry or a mill needs an industrial zone.'
+type: object
+additionalProperties: false
+required: [name, kind, parcel]
+properties:
+  name: { type: string }
+  kind: { enum: [foundry, mill] }
+  parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }
+  processes: { type: array, items: { type: string }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
