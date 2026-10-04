@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Industrial Modules
+records: modules
+purpose: An industrial module is one standard piece of plant that performs one step of a process (a furnace, a casting bay, a yard). A process is a line of modules, and a factory is built by setting modules on its land.
+details:
+  text:
+    - "What a module's record gives:"
+    - "- Its size: the ground it takes and how tall it stands, so a factory can be laid out and its land worked out."
+    - "- Its rate: how much it puts through in an hour, so the number of each needed follows from what the factory is to make."
+    - "- What goes in and comes out for each tonne of its product, so the modules of a line can be matched to each other."
+    - "- What it needs to run, so the power and supplies behind a factory can be sized."

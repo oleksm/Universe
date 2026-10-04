@@ -3,7 +3,7 @@ identity:
   name: Steelmaking
   kind: chemical
   method: smelting
-  description: Iron and a little carbon melted together into steel, cast as ingots.
+  description: Iron ore is reduced to iron with hydrogen, melted in an electric furnace, refined to grade and cast as ingots.
 inputs:
   materials:
   - item: Fe
@@ -24,3 +24,12 @@ rate:
   mode: batch
 equipment:
   facility: foundry
+  steps:
+  - { module: ore-yard, does: "Ore, lime, carbon and alloying metals arrive and are stockpiled." }
+  - { module: pellet-plant, does: "The ore is crushed, ground, cleaned of waste rock and formed into pellets." }
+  - { module: hydrogen-plant, does: "Water is split to make the hydrogen for the next step, and the water that step gives off comes back here." }
+  - { module: shaft-furnace, does: "Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron." }
+  - { module: arc-furnace, does: "The sponge iron is melted. Lime forms a slag that takes up the impurities." }
+  - { module: ladle-station, does: "Carbon, manganese and silicon are trimmed to the grade, and dissolved gas is removed." }
+  - { module: casting-bay, does: "The steel is poured into moulds and stripped out as ingots." }
+  - { module: ingot-yard, does: "The ingots cool, a sample certifies the grade, and they are stacked." }

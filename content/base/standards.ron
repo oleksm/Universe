@@ -154,4 +154,21 @@
         licence: Open,
         published: 0.0,
     ),
+    (
+        key: "SFO 10",
+        body: "body.sfo",
+        branch: "all",
+        version: 1,
+        title: "INDUSTRIAL MODULES",
+        scope: "",
+        status: Draft,
+        refs: [],
+        params: [
+        ],
+        requires: [
+        ],
+        text: "",
+        licence: Open,
+        published: 0.0,
+    ),
 ]

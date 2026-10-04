@@ -171,7 +171,11 @@ const matBySlug = Object.fromEntries(DATA.materials.map(m => [m.slug, m]));
 const procMatches = (p, q) => !q || q.split(/\s+/).every(w => `${p.identity.name} ${p.identity.kind} ${p.identity.method || ""} ${p.identity.description || ""}`.toLowerCase().includes(w));
 const processesUnder = (id, q) => DATA.processes.filter(p => p.under === id && procMatches(p, q));
 const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
-const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length;
+// And the industrial modules.
+const modMatches = (m, q) => !q || q.split(/\s+/).every(w => `${m.identity.name} ${m.identity.step} ${m.identity.description || ""}`.toLowerCase().includes(w));
+const modulesUnder = (id, q) => DATA.modules.filter(m => m.under === id && modMatches(m, q));
+const modBySlug = Object.fromEntries(DATA.modules.map(m => [m.slug, m]));
+const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length;
 // An element or material named in a process: a link to it.
 const elTile = (e, small) => { const i = e.identity; const c = "c-" + (i.category || "unknown").replace(/[^a-z]+/g, "-"); return small ? `<span class="tile small ${c}"><span class="sy">${esc(i.symbol)}</span></span>` : `<span class="tile ${c}"><span class="z">${i.atomic_number}</span><span class="sy">${esc(i.symbol)}</span></span>`; };
 const logo = (slug, cls) => DATA.logos[slug] ? `<span class="logo ${cls || ""}">${DATA.logos[slug]}</span>` : "";
@@ -234,7 +238,7 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0));
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0));
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
@@ -247,6 +251,7 @@ function rows(q) {
           for (const e of elementsUnder(s.id, q)) out.push({ k: "el:" + e.identity.symbol, depth: depth + 1, kind: "el", el: e });
           for (const m of materialsUnder(s.id, q)) out.push({ k: "mat:" + m.slug, depth: depth + 1, kind: "mat", mat: m });
           for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
+          for (const m of modulesUnder(s.id, q)) out.push({ k: "mod:" + m.slug, depth: depth + 1, kind: "maker", label: m.identity.name, ticker: m.identity.step, leaf: true });
         }
       }
     };
@@ -306,8 +311,8 @@ let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
-  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:")) {
-    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : procBySlug[k.slice(5)]; if (!e) return;
+  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:")) {
+    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
     const up = byId[e.under]; if (up) open.add("b:" + up.body);
     for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
@@ -366,7 +371,7 @@ function render() {
   }
   document.getElementById("tree").innerHTML = html;
   const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
-  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "");
+  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "") + (DATA.modules.length ? ` · ${DATA.modules.length} modules` : "");
   document.getElementById("detail").innerHTML = detail(current);
 }
 
@@ -545,17 +550,28 @@ function detail(k) {
     if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
-  if (kind === "el" || kind === "mat" || kind === "proc") {
-    const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
+  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod") {
+    const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
     let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${icon(e.slug, "big")} ${esc(i.name)}</h2>`;
     if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
-    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : DATA.process_groups)) {
+    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : DATA.process_groups)) {
       if (!e[g]) continue;
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
-      for (const [key, note] of Object.entries(props)) if (key in e[g]) h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
+      for (const [key, note] of Object.entries(props)) if (key in e[g] && key !== "steps") h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
       h += `</table>`;
+    }
+    const footprint = m => m.size ? `${m.size.length} × ${m.size.width} m` : "";
+    if (kind === "proc" && ((e.equipment || {}).steps || []).length) {
+      // (Its steps, each in its module; and what the line can make, set by its slowest module.)
+      const steps = e.equipment.steps.map(st => ({ ...st, m: modBySlug[st.module] })).filter(st => st.m);
+      h += `<h3>Steps</h3><table><tr><th>Step</th><th>Module</th><th>What happens</th><th>Footprint</th><th>Rate</th><th>Power</th></tr>` + steps.map((st, n) => `<tr><td>${n + 1}. ${esc(st.m.identity.step)}</td><td><a data-k="${esc("mod:" + st.module)}">${esc(st.m.identity.name)}</a></td><td>${esc(st.does)}</td><td>${footprint(st.m)}</td><td>${(st.m.rate || {}).throughput !== undefined ? `${st.m.rate.throughput} t/h` : (st.m.rate || {}).holds !== undefined ? `holds ${st.m.rate.holds.toLocaleString()} t` : ""}</td><td>${(st.m.needs || {}).power !== undefined ? `${st.m.needs.power} MW` : ""}</td></tr>`).join("")
+        + `<tr><th>One of each</th><th></th><th></th><th>${steps.reduce((s, st) => s + (st.m.size ? st.m.size.length * st.m.size.width : 0), 0).toLocaleString()} m²</th><th></th><th>${+steps.reduce((s, st) => s + ((st.m.needs || {}).power || 0), 0).toFixed(1)} MW</th></tr></table>`;
+    }
+    if (kind === "mod") {
+      const used = DATA.processes.filter(p => ((p.equipment || {}).steps || []).some(st => st.module === e.slug));
+      if (used.length) h += `<h3>Used in</h3><table><tr><th>Process</th><th>Step</th></tr>` + used.map(p => `<tr><td>${icon(p.slug)} <a data-k="${esc("proc:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${p.equipment.steps.findIndex(st => st.module === e.slug) + 1}. ${esc(e.identity.step)}</td></tr>`).join("") + `</table>`;
     }
     if (kind === "proc") {
       const at = allFacilities().filter(r => (r.f.processes || []).includes(e.slug));
@@ -579,6 +595,8 @@ function detail(k) {
   if (els.length) h += periodicTable(els);
   const mats = materialsUnder(s.id, "");
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td>${icon(m.slug)} <a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
+  const mods = modulesUnder(s.id, "");
+  if (mods.length) h += `<h3>Modules</h3><table><tr><th>Module</th><th>Step</th><th>Footprint</th><th>Height</th><th>Rate</th><th>Power</th></tr>` + mods.map(m => `<tr><td><a data-k="${esc("mod:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.step)}</td><td>${m.size ? `${m.size.length} × ${m.size.width} m` : ""}</td><td>${m.size ? `${m.size.height} m` : ""}</td><td>${(m.rate || {}).throughput !== undefined ? `${m.rate.throughput} t/h ${esc(m.rate.product || "")}` : (m.rate || {}).holds !== undefined ? `holds ${m.rate.holds.toLocaleString()} t` : ""}</td><td>${(m.needs || {}).power !== undefined ? `${m.needs.power} MW` : ""}</td></tr>`).join("") + `</table>`;
   const allProcs = processesUnder(s.id, "");
   const procs = allProcs.filter(p => kindShown === "all" || p.identity.kind === kindShown);
   if (allProcs.length) {
@@ -621,7 +639,7 @@ document.addEventListener("click", e => {
   if (badge) { kindShown = badge.dataset.kind; render(); return; }
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
     keepOpen();
   }

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Ladle station
+  step: Refine
+  description: "The melt, in its ladle, is trimmed to grade with alloying additions, stirred with argon and degassed."
+size:
+  length: 40
+  width: 30
+  height: 35
+rate:
+  throughput: 150
+  batch: 100
+  product: liquid steel, to grade
+inputs:
+  materials:
+  - { name: "Liquid steel", amount: 1.0 }
+  - { item: Ar, amount: 0.0002 }
+needs:
+  power: 5
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

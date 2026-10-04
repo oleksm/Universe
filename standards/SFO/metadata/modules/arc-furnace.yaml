@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Electric arc furnace
+  step: Melt
+  description: "Melts sponge iron with electric arcs at about 1,600 °C. Lime forms a slag that takes up the impurities."
+size:
+  length: 100
+  width: 40
+  height: 35
+rate:
+  throughput: 100
+  batch: 100
+  product: liquid steel
+inputs:
+  materials:
+  - { name: "Sponge iron", amount: 1.1 }
+  - { name: "Lime", amount: 0.05 }
+  - { item: C, amount: 0.015 }
+  - { name: "Graphite electrode", amount: 0.0015 }
+outputs:
+  by_products:
+  - { name: "Slag", amount: 0.15 }
+  - { name: "Dust", amount: 0.015 }
+needs:
+  power: 50
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

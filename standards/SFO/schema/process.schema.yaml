@@ -96,6 +96,16 @@ properties:
       machine: { type: string, description: "arc furnace, rolling stand, autoclave..." }
       tooling: { type: string, description: "Dies, rolls, moulds, and their life." }
       minimum_scale: { type: number, description: "t/h, the smallest plant that makes sense" }
+      steps:
+        description: "Its steps in order, each done in one industrial module (SFO 10), by the module's file name."
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [module, does]
+          properties:
+            module: { type: string }
+            does: { type: string }
 
   people:
     description: People and control.
