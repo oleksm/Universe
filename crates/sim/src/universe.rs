@@ -8,7 +8,7 @@ use std::sync::Arc;
 use glam::{DQuat, DVec3};
 use universe_avionics::route::{self, Stop};
 use universe_avionics::{Event, NavTarget};
-use universe_world::{Controls, Facility, Person, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
+use universe_world::{Controls, Facility, Person, Place, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
 
 use crate::traffic::{CrashReport, Craft};
 
@@ -501,7 +501,7 @@ impl Universe {
             .par_iter()
             .filter_map(|&(id, system, pos, landed, clearance)| {
                 let (sys, positions, ports) = &systems[&system];
-                let mut p = universe_services::Presence { ship: id, system, ..Default::default() };
+                let mut p = universe_services::Presence { ship: id, system, landed, ..Default::default() };
                 // Pads: on one, or in the column over it.
                 for sp in ports {
                     let off = pos - sp.center;
@@ -514,16 +514,19 @@ impl Universe {
                     if !near {
                         continue;
                     }
+                    // (In a pad's own column, not merely nearer it than the others: a ship
+                    // coming in over the field, nearest one pad then the next, had "been and
+                    // gone" from its own and freed it for the next in line while still on its
+                    // way down to it.)
                     let flat = |v: DVec3, up: DVec3| v - up * v.dot(up);
-                    let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
-                        let d = |k| {
-                            let pad = universe_world::port::pad(sys, sp.port, k, universe_world::ship::SHIP_RADIUS);
-                            let up = universe_world::port::up(sp.port, pad);
-                            flat(local - pad, up).length()
-                        };
-                        d(a).total_cmp(&d(b))
-                    });
-                    p.pad = nearest.map(|k| (sp.port, k));
+                    let off_pad = |k| {
+                        let pad = universe_world::port::pad(sys, sp.port, k, universe_world::ship::SHIP_RADIUS);
+                        let up = universe_world::port::up(sp.port, pad);
+                        flat(local - pad, up).length()
+                    };
+                    if let Some(k) = (0..universe_world::spaceport::PADS).find(|&k| off_pad(k) < universe_world::spaceport::PAD_SIZE) {
+                        p.pad = Some((sp.port, k));
+                    }
                 }
                 // Corridors it holds and is done with.
                 for &(s, b) in held.get(&id).map_or(&[][..], |v| &v[..]) {
@@ -585,8 +588,54 @@ impl Universe {
         let sys = self.ship_system();
         sys.positions(self.world.time, &mut self.positions);
         let mut events = Vec::new();
-        self.crew.step(&sys, &self.ship, self.world.time, &self.positions, c, real_dt, &mut events);
+        let around = self.around_crew(&sys);
+        self.crew.step(&sys, &self.ship, self.world.time, &self.positions, &around, c, real_dt, &mut events);
         self.events.extend(events.into_iter().map(Event::Crew));
+    }
+
+    /// What stands near the pilot on a body, to walk on and bump into (its
+    /// frame): the buildings of its ports (as far as they're built), the ships
+    /// landed close by.
+    fn around_crew(&self, sys: &StarSystem) -> Vec<universe_world::walk::Collider<'static>> {
+        use universe_world::walk::Collider;
+        let mut out = Vec::new();
+        let Place::Outside { body, position, .. } = self.crew.place else { return out };
+        let b = &sys.bodies[body];
+        let now = self.world.time;
+        for (port, sp) in sys.spaceports.iter().enumerate().filter(|(_, sp)| sp.body == body) {
+            let r = b.surface_radius(sp.direction);
+            let origin = sp.direction * r;
+            if origin.distance(position) > 5_000.0 {
+                continue;
+            }
+            let Some(g) = self.land.ground(self.ship_system, port) else { continue };
+            // (As the game draws them: x east, y up, z south from the port; the ground falling away with the curve.)
+            let east = universe_world::spaceport::tangent(sp.direction).1;
+            let rot = DQuat::from_mat3(&glam::DMat3::from_cols(east, sp.direction, east.cross(sp.direction)));
+            for w in &g.works {
+                for (k, bl) in w.blocks.iter().enumerate() {
+                    let p = w.progress(k, now);
+                    if p <= 0.0 {
+                        continue;
+                    }
+                    let (he, hn) = bl.half_extent();
+                    let (e, n) = bl.centre;
+                    let floor = -(e * e + n * n) / (2.0 * r) - 1.0;
+                    let top = floor + (bl.height * p).max(0.5) + 1.0;
+                    out.push(Collider::Box { at: origin + rot * DVec3::new(e, (floor + top) / 2.0, -n), rot, half: DVec3::new(he, (top - floor) / 2.0, hn) });
+                }
+            }
+        }
+        let inv = b.rotation(now).inverse();
+        let center = self.positions[body];
+        for craft in self.crafts.iter().filter(|c| c.system == self.ship_system && matches!(c.ship.state, ShipState::Landed { body: cb, .. } if cb == body)) {
+            let at = inv * (craft.ship.position - center);
+            if at.distance(position) < 400.0 {
+                let ramp = universe_world::crew::ramp_angle(sys, &craft.ship);
+                universe_world::crew::ship_colliders(&craft.ship, at, inv * craft.ship.orientation, ramp, &mut out);
+            }
+        }
+        out
     }
 
     /// Where the pilot's eyes are and which way they look (seated: `seat_eye`).

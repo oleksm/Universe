@@ -1,0 +1,99 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# The MC-07's inside, laid out in the hull as carved. A box is [aft from, aft to, up from, up to,
+# side from, side to] in metres: back from the nose, above the keel, from the centre line
+# (starboard positive). Sections: A fore (cockpit and crew), B the main hull (holds), C aft
+# (engineering). An opening's `at` is the middle of its sill.
+identity:
+  hull: mc-07
+  description: "The MC-07 as a crew of two runs it: the cockpit and their quarters forward, the holds amidships with the ramp below, engineering aft."
+decks:
+  - { number: 1, name: "Hold deck" }
+  - { number: 2, name: "Lower deck" }
+  - { number: 3, name: "Main deck" }
+  - { number: 4, name: "Upper deck" }
+compartments:
+  # Section A, fore.
+  - { name: Cockpit, function: cockpit, address: { deck: 3, section: A, unit: 1 }, pressurised: true, boxes: [[6.0, 12.5, 8.4, 11.0, -5.5, 5.5]] }
+  - { name: Avionics bay, function: avionics, address: { deck: 2, section: A, unit: 1 }, pressurised: true, boxes: [[7.0, 13.1, 3.9, 7.4, -1.9, 1.9]] }
+  - { name: Fore stores, function: stores, address: { deck: 2, section: A, unit: 2 }, pressurised: true, boxes: [[13.1, 23.0, 3.9, 7.4, -2.5, 2.5]] }
+  - { name: Crew corridor, function: corridor, address: { deck: 3, section: A, unit: 2 }, pressurised: true, boxes: [[12.5, 25.5, 8.4, 11.0, -1.0, 1.0]] }
+  - { name: Cabin 1, function: quarters, address: { deck: 3, section: A, unit: 3 }, pressurised: true, boxes: [[16.5, 20.5, 8.4, 11.0, -4.8, -1.0]] }
+  - { name: Cabin 2, function: quarters, address: { deck: 3, section: A, unit: 4 }, pressurised: true, boxes: [[16.5, 20.5, 8.4, 11.0, 1.0, 4.8]] }
+  - { name: Galley, function: galley, address: { deck: 3, section: A, unit: 5 }, pressurised: true, boxes: [[20.5, 25.5, 8.4, 11.0, -5.0, -1.0]] }
+  - { name: Restroom, function: restroom, address: { deck: 3, section: A, unit: 6 }, pressurised: true, boxes: [[20.5, 22.5, 8.4, 11.0, 1.0, 3.5]] }
+  - { name: Fore ladder, function: shaft, address: { deck: 2, section: A, unit: 3 }, pressurised: true, boxes: [[23.0, 24.5, 3.9, 11.0, 1.0, 2.5]] }
+  # Section B, the main hull.
+  - { name: Fore cross passage, function: corridor, address: { deck: 3, section: B, unit: 1 }, pressurised: true, boxes: [[25.5, 27.0, 8.4, 10.7, -9.5, 9.5]] }
+  - name: Cargo hold
+    function: cargo
+    address: { deck: 1, section: B, unit: 1 }
+    pressurised: false
+    # (Round the ramp's two rams, which stand in it: a casing each.)
+    boxes:
+      - [27.0, 45.5, 1.05, 4.6, -9.0, -3.7]
+      - [27.0, 45.5, 1.05, 4.6, 3.7, 9.0]
+      - [27.0, 45.5, 1.05, 4.6, -2.9, 2.9]
+      - [27.0, 33.0, 1.05, 4.6, -3.7, -2.9]
+      - [35.1, 45.5, 1.05, 4.6, -3.7, -2.9]
+      - [27.0, 33.0, 1.05, 4.6, 2.9, 3.7]
+      - [35.1, 45.5, 1.05, 4.6, 2.9, 3.7]
+  - { name: Airlock, function: airlock, address: { deck: 1, section: B, unit: 2 }, pressurised: true, boxes: [[27.0, 30.0, 1.05, 4.6, -11.5, -9.0]] }
+  - { name: Main ladder, function: shaft, address: { deck: 1, section: B, unit: 3 }, pressurised: true, boxes: [[27.0, 30.0, 1.05, 10.7, -12.8, -11.5]] }
+  - { name: Starboard ladder, function: shaft, address: { deck: 2, section: B, unit: 1 }, pressurised: true, boxes: [[27.0, 28.5, 4.6, 10.7, 11.0, 12.5]] }
+  - { name: Ore hold, function: ore, address: { deck: 2, section: B, unit: 2 }, pressurised: false, boxes: [[29.5, 44.0, 4.6, 14.0, -5.0, 5.0]] }
+  - { name: Fuel tank bay, function: tanks, address: { deck: 2, section: B, unit: 3 }, pressurised: false, boxes: [[30.0, 45.5, 4.6, 8.4, -12.5, -5.0]] }
+  - { name: Life support, function: life-support, address: { deck: 2, section: B, unit: 4 }, pressurised: true, boxes: [[28.5, 35.0, 4.6, 8.4, 5.0, 12.5]] }
+  - { name: Main stores, function: stores, address: { deck: 2, section: B, unit: 5 }, pressurised: true, boxes: [[35.0, 45.5, 4.6, 8.4, 5.0, 12.5]] }
+  - { name: Port passage, function: corridor, address: { deck: 3, section: B, unit: 2 }, pressurised: true, boxes: [[27.0, 45.5, 8.4, 10.7, -11.5, -5.0]] }
+  - { name: Workshop, function: workshop, address: { deck: 3, section: B, unit: 3 }, pressurised: true, boxes: [[27.0, 45.5, 8.4, 10.7, 5.0, 11.0]] }
+  - { name: Cargo shaft, function: shaft, address: { deck: 1, section: B, unit: 4 }, pressurised: false, boxes: [[44.0, 45.5, 1.05, 4.6, 9.0, 10.8]] }
+  - { name: Aft cross passage, function: corridor, address: { deck: 3, section: B, unit: 4 }, pressurised: true, boxes: [[45.5, 47.8, 8.4, 10.7, -11.0, 11.0]] }
+  - { name: Aft link, function: corridor, address: { deck: 2, section: B, unit: 6 }, pressurised: true, boxes: [[45.5, 50.0, 4.6, 8.4, -6.0, 6.0]] }
+  # Section C, aft (on the rear pod's floor).
+  - { name: Hyperdrive bay, function: hyperdrive, address: { deck: 2, section: C, unit: 1 }, pressurised: false, boxes: [[50.0, 55.0, 4.4, 8.2, -9.5, 9.5]] }
+  - { name: Aft tank bay, function: tanks, address: { deck: 2, section: C, unit: 2 }, pressurised: false, boxes: [[55.0, 59.0, 4.4, 8.2, -9.5, 9.5]] }
+  - { name: Engine room, function: engines, address: { deck: 2, section: C, unit: 3 }, pressurised: false, boxes: [[59.0, 63.0, 4.4, 8.2, -9.5, 9.5]] }
+  - { name: Aft ladder, function: shaft, address: { deck: 2, section: C, unit: 4 }, pressurised: true, boxes: [[50.0, 51.5, 4.4, 11.0, 9.5, 11.0]] }
+  - { name: Reactor room, function: reactor, address: { deck: 3, section: C, unit: 1 }, pressurised: false, boxes: [[50.0, 60.0, 8.2, 11.0, -9.5, 9.5]] }
+  - { name: Upper engineering, function: machinery, address: { deck: 4, section: C, unit: 1 }, pressurised: false, boxes: [[52.5, 60.0, 11.0, 15.0, -6.0, 6.0]] }
+openings:
+  # Outside.
+  - { kind: ramp, between: [outside, Cargo hold], at: [37.5, 1.05, 0.0], width: 5.8, height: 3.5, seals: true }
+  # Section A.
+  - { kind: door, between: [Cockpit, Crew corridor], at: [12.5, 8.4, 0.0], width: 1.0, height: 2.1 }
+  - { kind: door, between: [Crew corridor, Cabin 1], at: [18.5, 8.4, -1.0], width: 0.9, height: 2.1 }
+  - { kind: door, between: [Crew corridor, Cabin 2], at: [18.5, 8.4, 1.0], width: 0.9, height: 2.1 }
+  - { kind: door, between: [Crew corridor, Galley], at: [23.0, 8.4, -1.0], width: 1.0, height: 2.1 }
+  - { kind: door, between: [Crew corridor, Restroom], at: [21.5, 8.4, 1.0], width: 0.8, height: 2.1 }
+  - { kind: door, between: [Crew corridor, Fore ladder], at: [23.75, 8.4, 1.0], width: 0.8, height: 2.1 }
+  - { kind: door, between: [Fore ladder, Fore stores], at: [23.0, 3.9, 1.75], width: 0.8, height: 2.1 }
+  - { kind: door, between: [Fore stores, Avionics bay], at: [13.1, 3.9, 0.0], width: 0.9, height: 2.1 }
+  - { kind: pressure-door, between: [Crew corridor, Fore cross passage], at: [25.5, 8.4, 0.0], width: 1.0, height: 2.1, seals: true }
+  # Section B.
+  - { kind: door, between: [Fore cross passage, Port passage], at: [27.0, 8.4, -8.0], width: 1.2, height: 2.1 }
+  - { kind: door, between: [Fore cross passage, Workshop], at: [27.0, 8.4, 8.0], width: 1.2, height: 2.1 }
+  - { kind: door, between: [Port passage, Main ladder], at: [28.5, 8.4, -11.5], width: 0.8, height: 2.1 }
+  - { kind: pressure-door, between: [Main ladder, Airlock], at: [28.5, 1.05, -11.5], width: 1.0, height: 2.1, seals: true }
+  - { kind: pressure-door, between: [Airlock, Cargo hold], at: [28.5, 1.05, -9.0], width: 1.0, height: 2.1, seals: true }
+  - { kind: pressure-door, between: [Main ladder, Fuel tank bay], at: [30.0, 4.6, -12.0], width: 0.8, height: 2.1, seals: true }
+  - { kind: door, between: [Workshop, Starboard ladder], at: [27.75, 8.4, 11.0], width: 0.8, height: 2.1 }
+  - { kind: door, between: [Starboard ladder, Life support], at: [28.5, 4.6, 11.75], width: 0.8, height: 2.1 }
+  - { kind: door, between: [Life support, Main stores], at: [35.0, 4.6, 9.0], width: 1.2, height: 2.1 }
+  - { kind: cargo-hatch, between: [Cargo shaft, Main stores], at: [44.75, 4.6, 10.0], width: 1.5, height: 1.5, seals: true }
+  - { kind: door, between: [Cargo hold, Cargo shaft], at: [44.75, 1.05, 9.0], width: 1.5, height: 2.4 }
+  - { kind: chute, between: [Ore hold, Cargo hold], at: [43.0, 4.6, 0.0], width: 1.5, height: 1.5, seals: true }
+  - { kind: pressure-door, between: [Port passage, Ore hold], at: [37.0, 8.4, -5.0], width: 0.8, height: 2.1, seals: true }
+  - { kind: door, between: [Port passage, Aft cross passage], at: [45.5, 8.4, -8.0], width: 1.2, height: 2.1 }
+  - { kind: door, between: [Workshop, Aft cross passage], at: [45.5, 8.4, 8.0], width: 1.2, height: 2.1 }
+  - { kind: hatch, between: [Aft cross passage, Aft link], at: [46.5, 8.4, 0.0], width: 0.8, height: 0.8 }
+  - { kind: pressure-door, between: [Aft link, Fuel tank bay], at: [45.5, 4.6, -5.5], width: 0.8, height: 2.1, seals: true }
+  - { kind: door, between: [Aft link, Main stores], at: [45.5, 4.6, 5.5], width: 0.8, height: 2.1 }
+  # Section C.
+  - { kind: pressure-door, between: [Aft link, Hyperdrive bay], at: [50.0, 4.6, 0.0], width: 1.0, height: 2.1, seals: true }
+  - { kind: door, between: [Hyperdrive bay, Aft tank bay], at: [55.0, 4.4, 0.0], width: 1.0, height: 2.1 }
+  - { kind: door, between: [Aft tank bay, Engine room], at: [59.0, 4.4, 0.0], width: 1.0, height: 2.1 }
+  - { kind: door, between: [Aft ladder, Hyperdrive bay], at: [50.75, 4.4, 9.5], width: 0.8, height: 2.1 }
+  - { kind: pressure-door, between: [Aft ladder, Reactor room], at: [50.75, 8.2, 9.5], width: 0.8, height: 2.1, seals: true }
+  - { kind: hatch, between: [Reactor room, Upper engineering], at: [58.0, 11.0, 0.0], width: 0.8, height: 0.8 }
+basis:
+  - { of: [decks, compartments, openings], tier: invented, review: true, note: "Laid out for the game inside the hull as carved (its free space surveyed from the model). Equipment placement, services and structure are the next layers." }

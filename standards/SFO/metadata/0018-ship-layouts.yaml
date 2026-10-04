@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Ship layouts
+parent: SFO 2
+records: layouts
+purpose: "A ship layout is how a hull's inside is divided: its decks, its compartments (each a space with a purpose and an address, sealed or not) and the openings between them (doors, pressure doors, hatches, shafts, the ramp). Positions are metres back from the nose, above the keel and from the centre line (starboard positive), as for parts."

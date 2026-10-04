@@ -357,6 +357,7 @@ struct Target {
 pub(crate) struct Renderer {
     /// The environment as light, drawn each frame (see `env.rs`).
     env: crate::env::Env,
+    sunprobe: crate::sunprobe::SunProbe,
     /// How long the last `render` waited for the next surface texture (vsync).
     pub(crate) wait: std::time::Duration,
     low_height: u32,
@@ -572,6 +573,7 @@ impl Renderer {
             ],
         });
         let env = crate::env::Env::new(device, &globals_layout);
+        let sunprobe = crate::sunprobe::SunProbe::new(device);
         // Globe maps: a cube array, a layer per world in view (see `GlobeMap`).
         let globe_texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("globe maps"),
@@ -828,6 +830,7 @@ impl Renderer {
         let pbr = crate::pbr::PbrRenderer::new(device, &globals_layout, &shadow_layout, &light_layout, SCENE_FORMAT, DEPTH_FORMAT, SAMPLES);
         Self {
             env,
+            sunprobe,
             pbr,
             wait: std::time::Duration::ZERO,
             low_height,
@@ -914,7 +917,8 @@ impl Renderer {
         use wgpu::TextureUsages as U;
         let color_msaa = texture_n("scene (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let color = texture("scene", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
-        let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
+        // (Read after the scene, for the sun probe.)
+        let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING, SAMPLES);
         // (The HUD's layout is `hud_size` pixels; drawn at the screen's full resolution.)
         let hud = texture("hud", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let front_msaa = texture_n("front (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
@@ -965,6 +969,20 @@ impl Renderer {
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
         let size = self.target.size.as_vec2();
         let hud = self.target.hud_size.as_vec2();
+        // The sun probe's answers since (see `sunprobe`), and where it looks this frame.
+        let _ = gpu.device.poll(wgpu::PollType::Poll);
+        self.sunprobe.collect();
+        let probe = frame.sun_probe.and_then(|(at, radius)| {
+            let clip = frame.camera.view_proj(size.x / size.y) * (at - frame.camera.position).as_vec3().extend(1.0);
+            (clip.w > 0.0).then(|| {
+                let ndc = clip.truncate() / clip.w;
+                // (Twice as near as the sun's own core: anything standing in front of it.)
+                ([(ndc.x + 1.0) * 0.5 * size.x, (1.0 - ndc.y) * 0.5 * size.y], radius, ndc.z * 2.0)
+            })
+        });
+        if let Some((centre, radius, threshold)) = probe {
+            self.sunprobe.aim(&gpu.queue, centre, radius, threshold, size.to_array());
+        }
         // The shadow cascades: along the light from the eye, if there's a
         // light and shadows are wanted.
         let sun = frame.light.filter(|_| frame.shadow_reach > 0.0 && frame.graphics.shadows).and_then(|l| (l.position - frame.camera.position).try_normalize());
@@ -1073,7 +1091,7 @@ impl Renderer {
                     view: &self.target.depth,
                     depth_ops: Some(wgpu::Operations {
                         load: wgpu::LoadOp::Clear(0.0),
-                        store: wgpu::StoreOp::Discard,
+                        store: if probe.is_some() { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard },
                     }),
                     stencil_ops: None,
                 }),
@@ -1092,6 +1110,9 @@ impl Renderer {
             self.points.draw(&mut pass, &self.point_pipe);
             self.glows.draw(&mut pass, &self.glow_pipe);
         }
+        if probe.is_some() {
+            self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, false);
+        }
         {
             // The front layer: its meshes (and lines), with a fresh depth.
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -1104,7 +1125,7 @@ impl Renderer {
                 })],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &self.target.depth,
-                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: wgpu::StoreOp::Discard }),
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: if probe.is_some() { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard } }),
                     stencil_ops: None,
                 }),
                 timestamp_writes: None,
@@ -1117,6 +1138,10 @@ impl Renderer {
             self.front_lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
             self.front_glows.draw(&mut pass, &self.glow_pipe);
+        }
+        if probe.is_some() {
+            self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, true);
+            self.sunprobe.copy_out(&mut encoder);
         }
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -1163,6 +1188,7 @@ impl Renderer {
             pass.draw(0..3, 0..1);
         }
         gpu.queue.submit([encoder.finish()]);
+        self.sunprobe.submitted();
         gpu.queue.present(surface_texture);
 
         if let (Some(path), Some((buffer, padded_row))) = (capture, readback) {

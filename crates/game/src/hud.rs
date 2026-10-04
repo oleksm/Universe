@@ -1380,32 +1380,10 @@ fn scanner(frame: &mut Frame, app: &App) {
 
 /// The sun's glare: a white-hot core, a halo, and rays in the star's colour,
 /// on screen so it reads at any distance. It grows with how bright the sun is
-/// here (see `Light`), and a body in the way hides it, fading in as the sun
-/// clears its limb. Not through the walls when we're aboard.
-/// Does a ray from `from` along unit `way` meet the box `lo`..`hi` within `reach`?
-fn ray_hits_box(from: universe_engine::glam::DVec3, way: universe_engine::glam::DVec3, lo: universe_engine::glam::DVec3, hi: universe_engine::glam::DVec3, reach: f64) -> bool {
-    let (mut t0, mut t1) = (0.0f64, reach);
-    for k in 0..3 {
-        if way[k].abs() < 1e-12 {
-            if from[k] < lo[k] || from[k] > hi[k] {
-                return false;
-            }
-        } else {
-            let (a, b) = ((lo[k] - from[k]) / way[k], (hi[k] - from[k]) / way[k]);
-            t0 = t0.max(a.min(b));
-            t1 = t1.min(a.max(b));
-            if t0 > t1 {
-                return false;
-            }
-        }
-    }
-    true
-}
-
+/// here (see `Light`), and whatever stands in the way hides it: a body,
+/// fading in as the sun clears its limb; anything drawn (walls round us,
+/// a station, a ship), as much of the disc as it covers. Through a window, it shows.
 fn sun_glare(frame: &mut Frame, app: &App) {
-    if app.mode == Mode::Pilot && matches!(app.v.crew.place, universe_sim::world::Place::Aboard { .. }) {
-        return;
-    }
     let sys = &app.view.system;
     let Some(star) = sys.bodies.iter().position(|b| b.kind == BodyKind::Star) else { return };
     let sun = app.view.positions[star];
@@ -1414,29 +1392,12 @@ fn sun_glare(frame: &mut Frame, app: &App) {
     let dist = to_sun.length();
     let dir = to_sun / dist;
     // How much of the sun's disc is in sight: what planets and moons leave
-    // of it (exactly), times what's left past the structures near by (the
-    // disc sampled: a ray to each of its points, against their blocks).
+    // of it (exactly), and what everything drawn leaves (the depth buffer
+    // read over its disc on the GPU: a station's structure, a ship, the hull
+    // round the eye, a building alike; a frame or two behind).
     let radius = sys.bodies[star].rail.radius;
-    let mut visible = frame.sun_visible(cam) as f32;
-    let (u, v) = (dir.any_orthonormal_vector(), dir.cross(dir.any_orthonormal_vector()));
-    let disc: Vec<DVec3> = std::iter::once(sun)
-        .chain((0..6).map(|k| sun + (u * (k as f64 / 6.0 * std::f64::consts::TAU).cos() + v * (k as f64 / 6.0 * std::f64::consts::TAU).sin()) * radius * 0.5))
-        .chain((0..12).map(|k| sun + (u * (k as f64 / 12.0 * std::f64::consts::TAU).cos() + v * (k as f64 / 12.0 * std::f64::consts::TAU).sin()) * radius * 0.9))
-        .collect();
-    for (i, b) in sys.bodies.iter().enumerate() {
-        let universe_sim::world::physics::Collider::Blocks(blocks) = &b.rail.collider else { continue };
-        let centre = app.view.positions[i];
-        if centre.distance(cam) > 20_000.0 {
-            continue;
-        }
-        let back = b.rotation(app.now()).inverse();
-        let from = back * (cam - centre);
-        let hidden = disc.iter().filter(|&&p| {
-            let way = back * (p - cam).normalize();
-            blocks.boxes.iter().any(|&(lo, hi)| ray_hits_box(from, way, lo, hi, dist))
-        }).count();
-        visible *= 1.0 - hidden as f32 / disc.len() as f32;
-    }
+    frame.sun_probe = Some((sun - dir * radius * 1.05, frame.projected_radius(sun, radius).max(2.0)));
+    let visible = (frame.sun_visible(cam) as f32).min(universe_engine::sun_seen());
     if visible <= 0.0 {
         return;
     }

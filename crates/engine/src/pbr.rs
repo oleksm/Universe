@@ -31,6 +31,9 @@ pub struct Primitive {
     pub vertices: Vec<PbrVertex>,
     pub indices: Vec<u32>,
     pub material: usize,
+    /// Which part of the model it belongs to (0: the body; a moving part,
+    /// drawn on its own transform: see `load_gltf_parts`).
+    pub part: u8,
 }
 
 #[repr(C)]
@@ -65,6 +68,9 @@ pub struct Material {
     /// glTF's alpha blend: see-through by its base colour's alpha (glass),
     /// drawn after what's solid.
     pub blend: bool,
+    /// Seen from both sides (glTF's `doubleSided`): a surface with no
+    /// thickness (a nozzle's bell, a fin) shows from behind too.
+    pub double_sided: bool,
 }
 
 /// An image, RGBA8 rows top down.
@@ -94,6 +100,12 @@ impl PbrModel {
     /// A model from a glTF file's bytes (`.glb`, or `.gltf` with its data
     /// embedded): every mesh in the default scene, placed by its node.
     pub fn load_gltf(bytes: &[u8]) -> Result<Self, String> {
+        Self::load_gltf_parts(bytes, &[])
+    }
+
+    /// `load_gltf`, with moving parts: a node whose name holds `parts[k]` (and
+    /// what hangs from it) is part `k + 1`, drawn on its own (`Frame::model_pbr_part`).
+    pub fn load_gltf_parts(bytes: &[u8], parts: &[&str]) -> Result<Self, String> {
         let (doc, buffers, images) = gltf::import_slice(bytes).map_err(|e| e.to_string())?;
         let mut data = PbrData { images: images.iter().map(to_rgba).collect(), ..Default::default() };
         let tex = |t: Option<gltf::texture::Texture>| t.map(|t| t.source().index());
@@ -114,16 +126,17 @@ impl PbrModel {
                 occlusion_strength: m.occlusion_texture().map_or(1.0, |o| o.strength()),
                 alpha_cutoff: (m.alpha_mode() == gltf::material::AlphaMode::Mask).then(|| m.alpha_cutoff().unwrap_or(0.5)),
                 blend: m.alpha_mode() == gltf::material::AlphaMode::Blend,
+                double_sided: m.double_sided(),
             });
         }
         let fallback = data.materials.len();
         let scene = doc.default_scene().or_else(|| doc.scenes().next()).ok_or("no scene")?;
         for node in scene.nodes() {
-            walk(&node, glam::Mat4::IDENTITY, &buffers, &mut data);
+            walk(&node, glam::Mat4::IDENTITY, &buffers, parts, 0, &mut data);
         }
         // (A primitive with no material: a plain grey one.)
         if data.primitives.iter().any(|p| p.material == usize::MAX) {
-            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None, occlusion_tex: None, occlusion_strength: 1.0, alpha_cutoff: None, blend: false });
+            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None, occlusion_tex: None, occlusion_strength: 1.0, alpha_cutoff: None, blend: false, double_sided: false });
             for p in &mut data.primitives {
                 if p.material == usize::MAX {
                     p.material = fallback;
@@ -137,8 +150,9 @@ impl PbrModel {
     }
 }
 
-fn walk(node: &gltf::Node, parent: glam::Mat4, buffers: &[gltf::buffer::Data], data: &mut PbrData) {
+fn walk(node: &gltf::Node, parent: glam::Mat4, buffers: &[gltf::buffer::Data], parts: &[&str], part: u8, data: &mut PbrData) {
     let m = parent * glam::Mat4::from_cols_array_2d(&node.transform().matrix());
+    let part = node.name().and_then(|n| parts.iter().position(|p| n.contains(p))).map_or(part, |k| k as u8 + 1);
     let normal_m = glam::Mat3::from_mat4(m).inverse().transpose();
     // (Collision parts, `COL_*`, are the hull's shape for physics, not drawn.)
     let hidden = node.name().is_some_and(|n| n.starts_with("COL_"));
@@ -156,11 +170,11 @@ fn walk(node: &gltf::Node, parent: glam::Mat4, buffers: &[gltf::buffer::Data], d
                 None => tangents(&pos, &normals, &uvs, &indices),
             };
             let vertices = (0..n).map(|i| PbrVertex { pos: pos[i].to_array(), normal: normals[i].to_array(), tangent: tangents[i], uv: uvs[i].to_array() }).collect();
-            data.primitives.push(Primitive { vertices, indices, material: prim.material().index().unwrap_or(usize::MAX) });
+            data.primitives.push(Primitive { vertices, indices, material: prim.material().index().unwrap_or(usize::MAX), part });
         }
     }
     for child in node.children() {
-        walk(&child, m, buffers, data);
+        walk(&child, m, buffers, parts, part, data);
     }
 }
 
@@ -252,26 +266,25 @@ struct MaterialUniform {
 
 struct GpuModel {
     /// Each primitive: vertices, indices, index count, its material's bind group,
-    /// whether it's see-through.
-    primitives: Vec<(wgpu::Buffer, wgpu::Buffer, u32, usize, bool)>,
+    /// which pipeline draws it (`PIPES`), its part.
+    primitives: Vec<(wgpu::Buffer, wgpu::Buffer, u32, usize, usize, u8)>,
     materials: Vec<wgpu::BindGroup>,
     used: u64,
 }
 
 /// The renderer's side: the pipelines, models on the GPU, this frame's draws.
 pub(crate) struct PbrRenderer {
-    pipe: wgpu::RenderPipeline,
-    /// The see-through (glass): blended over what's behind, not hiding it.
-    clear_pipe: wgpu::RenderPipeline,
+    /// One for each kind of surface (`PIPES`), in the order they're drawn.
+    pipes: Vec<wgpu::RenderPipeline>,
     shadow_pipe: wgpu::RenderPipeline,
     material_layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
     models: HashMap<u64, GpuModel>,
     instances: wgpu::Buffer,
     capacity: u64,
-    /// This frame: (model, its instance's index), and those that cast.
-    draws: Vec<(u64, u32)>,
-    casters: Vec<(u64, u32)>,
+    /// This frame: (model, its instance's index, the part drawn), and those that cast.
+    draws: Vec<(u64, u32, u8)>,
+    casters: Vec<(u64, u32, u8)>,
     frames: u64,
 }
 
@@ -288,6 +301,13 @@ const INSTANCE_ATTRS: [wgpu::VertexAttribute; 8] = [
     wgpu::VertexAttribute { format: wgpu::VertexFormat::Float32x4, offset: 128, shader_location: 10 },
     wgpu::VertexAttribute { format: wgpu::VertexFormat::Float32x4, offset: 144, shader_location: 11 },
 ];
+/// The pipelines, by kind of surface: solid (one side, two), see-through (one, two).
+fn pipe_for(blend: bool, double_sided: bool) -> usize {
+    usize::from(blend) * SEE_THROUGH + usize::from(double_sided)
+}
+/// Where the see-through pipelines start.
+const SEE_THROUGH: usize = 2;
+
 /// Models not drawn for this many frames leave the GPU.
 const KEEP: u64 = 600;
 
@@ -324,13 +344,13 @@ impl PbrRenderer {
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("pbr"), bind_group_layouts: &[Some(globals), Some(shadows), Some(&material_layout)], immediate_size: 0 });
         // (Glass: its colour already weighed by its alpha in the shader, what it mirrors
         // not; what's behind shows through by the rest. It doesn't hide what's behind it.)
-        let make = |label, see_through: bool| {
+        let make = |label, see_through: bool, two_sided: bool| {
             let blend = see_through.then_some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING);
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some(label),
                 layout: Some(&layout),
                 vertex: wgpu::VertexState { module: &shader, entry_point: Some("vs_pbr"), compilation_options: Default::default(), buffers: &buffers },
-                primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, cull_mode: Some(wgpu::Face::Back), ..Default::default() },
+                primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, cull_mode: (!two_sided).then_some(wgpu::Face::Back), ..Default::default() },
                 depth_stencil: Some(wgpu::DepthStencilState { format: depth_format, depth_write_enabled: Some(!see_through), depth_compare: Some(wgpu::CompareFunction::Greater), stencil: Default::default(), bias: Default::default() }),
                 multisample: wgpu::MultisampleState { count: samples, ..Default::default() },
                 fragment: Some(wgpu::FragmentState { module: &shader, entry_point: Some("fs_pbr"), compilation_options: Default::default(), targets: &[Some(wgpu::ColorTargetState { format: scene_format, blend, write_mask: wgpu::ColorWrites::ALL })] }),
@@ -338,7 +358,7 @@ impl PbrRenderer {
                 cache: None,
             })
         };
-        let (pipe, clear_pipe) = (make("pbr", false), make("pbr see-through", true));
+        let pipes = vec![make("pbr", false, false), make("pbr two-sided", false, true), make("pbr see-through", true, false), make("pbr see-through two-sided", true, true)];
         let shadow_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/pbr_shadow.wgsl"));
         let shadow_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("pbr shadow"), bind_group_layouts: &[Some(light)], immediate_size: 0 });
         let shadow_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -369,7 +389,7 @@ impl PbrRenderer {
             ..Default::default()
         });
         let instances = device.create_buffer(&wgpu::BufferDescriptor { label: Some("pbr instances"), size: 64 * size_of::<crate::frame::Instance>() as u64, usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
-        PbrRenderer { pipe, clear_pipe, shadow_pipe, material_layout, sampler, models: HashMap::new(), instances, capacity: 64, draws: Vec::new(), casters: Vec::new(), frames: 0 }
+        PbrRenderer { pipes, shadow_pipe, material_layout, sampler, models: HashMap::new(), instances, capacity: 64, draws: Vec::new(), casters: Vec::new(), frames: 0 }
     }
 
     /// This frame's models up (new ones uploaded, old ones dropped), their
@@ -395,8 +415,8 @@ impl PbrRenderer {
         if !data.is_empty() {
             queue.write_buffer(&self.instances, 0, bytemuck::cast_slice(&data));
         }
-        self.draws = draws.iter().enumerate().map(|(i, d)| (d.model.id(), i as u32)).collect();
-        self.casters = draws.iter().enumerate().filter(|(_, d)| d.casts && Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).map(|(i, d)| (d.model.id(), i as u32)).collect();
+        self.draws = draws.iter().enumerate().map(|(i, d)| (d.model.id(), i as u32, d.part)).collect();
+        self.casters = draws.iter().enumerate().filter(|(_, d)| d.casts && Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).map(|(i, d)| (d.model.id(), i as u32, d.part)).collect();
     }
 
     fn gpu_model(&self, device: &wgpu::Device, queue: &wgpu::Queue, model: &PbrModel) -> GpuModel {
@@ -442,7 +462,8 @@ impl PbrRenderer {
             .map(|p| {
                 let v = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr vertices"), contents: bytemuck::cast_slice(&p.vertices), usage: wgpu::BufferUsages::VERTEX });
                 let i = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr indices"), contents: bytemuck::cast_slice(&p.indices), usage: wgpu::BufferUsages::INDEX });
-                (v, i, p.indices.len() as u32, p.material, data.materials[p.material].blend)
+                let m = &data.materials[p.material];
+                (v, i, p.indices.len() as u32, p.material, pipe_for(m.blend, m.double_sided), p.part)
             })
             .collect();
         GpuModel { primitives, materials, used: 0 }
@@ -455,12 +476,12 @@ impl PbrRenderer {
         }
         pass.set_vertex_buffer(1, self.instances.slice(..));
         // (What's solid first, then the see-through over it.)
-        for (pipe, see_through) in [(&self.pipe, false), (&self.clear_pipe, true)] {
+        for (kind, pipe) in self.pipes.iter().enumerate() {
             pass.set_pipeline(pipe);
-            for &(id, k) in &self.draws {
+            for &(id, k, part) in &self.draws {
                 let Some(m) = self.models.get(&id) else { continue };
-                for (v, i, n, mat, blend) in &m.primitives {
-                    if *blend != see_through {
+                for (v, i, n, mat, pk, p) in &m.primitives {
+                    if *pk != kind || *p != part {
                         continue;
                     }
                     pass.set_bind_group(2, &m.materials[*mat], &[]);
@@ -479,10 +500,10 @@ impl PbrRenderer {
         }
         pass.set_pipeline(&self.shadow_pipe);
         pass.set_vertex_buffer(1, self.instances.slice(..));
-        for &(id, k) in &self.casters {
+        for &(id, k, part) in &self.casters {
             let Some(m) = self.models.get(&id) else { continue };
             // (Glass lets the sun through.)
-            for (v, i, n, _, _) in m.primitives.iter().filter(|p| !p.4) {
+            for (v, i, n, _, _, _) in m.primitives.iter().filter(|p| p.4 < SEE_THROUGH && p.5 == part) {
                 pass.set_vertex_buffer(0, v.slice(..));
                 pass.set_index_buffer(i.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..*n, 0, k..k + 1);

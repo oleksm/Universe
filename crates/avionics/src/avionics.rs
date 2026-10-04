@@ -433,6 +433,24 @@ impl Avionics {
             }
             self.clearance = Some(c);
         }
+        // Given a pad: still ours? (Traffic control can have taken it back and
+        // given it to the next in line: flying on to it, two ships come down
+        // on one pad.) Otherwise another, or back to the hold.
+        if let (NavTarget::Spaceport(_) | NavTarget::Station(_), PadSlot::Pad(k)) = (c.target, c.pad) {
+            match bus.request_pad(c.target) {
+                PadGrant::Pad(j) if j == k => {}
+                PadGrant::Pad(j) => {
+                    c.pad = PadSlot::Pad(j);
+                    events.push(Event::Traffic(TrafficEvent::PadAssigned { pad: j }));
+                }
+                PadGrant::Queued(n) => {
+                    c.pad = PadSlot::Hold(n);
+                    c.phase = Phase::Hold;
+                    events.push(Event::Traffic(TrafficEvent::Holding { ahead: n }));
+                }
+            }
+            self.clearance = Some(c);
+        }
         if !bus.clearance_holds(c.target) {
             self.clearance = None;
             self.set_controls(bus, events, |c| c.rcs = DVec3::ZERO);

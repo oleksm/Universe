@@ -10,7 +10,7 @@
 //! Metres; −Z forward, +Y up; centred on its centre of mass as loaded (what
 //! it's built with is moved to match), so a body turns about it.
 
-use glam::DVec3;
+use glam::{DQuat, DVec3};
 use serde::Deserialize;
 use universe_physics::{MassProperties, Mesh};
 
@@ -72,6 +72,29 @@ pub struct Shape {
     /// Where its centre of mass was in the frame it was made in (it's
     /// centred on it since): a model made in that frame is drawn shifted by −this.
     pub made_centre: DVec3,
+    /// A modelled hull's own surfaces, to walk on and bump into (its frame);
+    /// none for a shape made from points.
+    pub walk: Option<std::sync::Arc<crate::walk::WalkMesh>>,
+    /// Its ramp, if it has one that swings down (walked on too).
+    pub ramp: Option<Ramp>,
+}
+
+/// A ramp hinged to a hull (its frame): it swings down about `axis` through
+/// `hinge` (by a positive angle, its far end going down) till it meets the
+/// ground; `length` from the hinge to its far end.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Ramp {
+    pub hinge: DVec3,
+    pub axis: DVec3,
+    pub length: f64,
+    pub walk: std::sync::Arc<crate::walk::WalkMesh>,
+}
+
+impl Ramp {
+    /// Its turn swung down by `angle` (rad): its points `p` go to `hinge + turn·(p − hinge)`.
+    pub fn turn(&self, angle: f64) -> DQuat {
+        DQuat::from_axis_angle(self.axis, angle)
+    }
 }
 
 impl Shape {
@@ -349,6 +372,6 @@ impl ShapeDef {
                 Part { centre, radius, probes }
             })
             .collect();
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c })
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c, walk: None, ramp: None })
     }
 }
