@@ -1,5 +1,6 @@
 //! The charted world, as the celestial registry has it (Freefall Facts'
-//! `standards/Celestial`, generated into `content/base/galaxy.ron` and
+//! `standards/Celestial`: the seed's settings from the registry itself
+//! (`crate::registry`), the systems still generated into
 //! `content/base/celestial.ron` by `tools/standards/build.py`).
 //!
 //! The seed makes every system. What the registry has as **curated** or
@@ -24,43 +25,6 @@ use crate::galaxy::StarClass;
 use crate::system::{BodyKind, StarSystem};
 use crate::terrain::{Terrain, TerrainKind};
 use crate::units::{G, SUN_MASS};
-
-/// The world as a whole: its seed and the laws it is made by. The seed is
-/// the game's; the laws are the code's (`galaxy`), written here so a change
-/// to either is seen (see the test).
-#[derive(Clone, Debug, Deserialize)]
-pub struct Galaxy {
-    pub seed: u64,
-    pub home: String,
-    /// The charted region's side (ly).
-    pub region: f64,
-    /// Stars for each cubic light year.
-    pub star_density: f64,
-    /// The side of the cubes stars are made in (ly).
-    pub sector: f64,
-}
-
-/// A kind of asteroid as the registry has it (the game's are `belt::RockClass`:
-/// held to these by test, not yet made from them).
-#[derive(Clone, Debug, Deserialize)]
-pub struct RockClassRecord {
-    /// Its label in the game.
-    pub key: String,
-    pub density_rubble: f64,
-    pub density_monolith: f64,
-    pub albedo: f64,
-    /// Shares by mass, lean to rich.
-    pub water: (f64, f64),
-    pub organics: (f64, f64),
-    pub metal: (f64, f64),
-    pub volatiles: (f64, f64),
-    /// Platinum-group metals (ppm), lean to rich.
-    pub pgm: (f64, f64),
-    /// J to break a kg loose from a solid piece.
-    pub cut_energy: f64,
-    /// The good it yields.
-    pub yields: String,
-}
 
 /// A system written out, found by its number among the seed's stars.
 #[derive(Clone, Debug, Deserialize)]

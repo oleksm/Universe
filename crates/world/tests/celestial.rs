@@ -1,8 +1,10 @@
-//! The charted world against the celestial registry (`content/base/galaxy.ron`,
+//! The charted world against the celestial registry (the seed's settings and
+//! rock classes from `universe_world::registry`; the systems from
 //! `content/base/celestial.ron`).
 
 use universe_world::celestial::{apply_records, Stage};
 use universe_world::content::content;
+use universe_world::registry::registry;
 use universe_world::system::StarSystem;
 use universe_world::World;
 
@@ -11,17 +13,17 @@ use universe_world::World;
 /// And what the registry has taken over is as its record says.
 #[test]
 fn the_charted_world_is_as_the_registry_has_it() {
-    let g = content().galaxy.as_ref().expect("the galaxy is written out");
-    // (The laws are the code's: written down, they must be the same.)
-    assert_eq!((g.region, g.star_density, g.sector), (universe_world::galaxy::REGION, universe_world::galaxy::STAR_DENSITY, universe_world::galaxy::SECTOR));
+    let g = &registry().seeding.galaxy.galaxy;
     let w = World::new(g.seed);
-    assert_eq!(w.system(w.home_system).name, g.home);
-    // (And the kinds of asteroid: every one the game has is written out, as the code has it.)
+    let home = registry().system(&g.home).expect("home is a system written out");
+    assert_eq!(w.system(w.home_system).name, home.identity.name);
+    // (The kinds of asteroid the game has, still the code's: as the registry has them.)
     use universe_world::belt::{RockClass, Structure};
-    assert_eq!(content().rock_classes.len(), 4);
-    for r in &content().rock_classes {
-        let c = RockClass::named(&r.key).unwrap_or_else(|| panic!("the game has no rock class {}", r.key));
-        assert_eq!((c.density(Structure::Rubble), c.density(Structure::Monolith), f64::from(c.albedo())), (r.density_rubble, r.density_monolith, f64::from(r.albedo as f32)), "{}", r.key);
+    let known: Vec<_> = registry().rock_classes.iter().filter_map(|r| Some((r, RockClass::named(r.identity.label.as_deref()?)?))).collect();
+    assert_eq!(known.len(), 4, "the game's four rock classes, each labelled in the registry");
+    for (r, c) in known {
+        let p = r.physical.as_ref().expect("a rock class the game has is described");
+        assert_eq!((Some(c.density(Structure::Rubble)), Some(c.density(Structure::Monolith)), p.albedo.map(|a| f64::from(a as f32))), (p.density_rubble, p.density_monolith, Some(f64::from(c.albedo()))), "{}", r.identity.key);
     }
     let near = |a: f64, b: f64| (a - b).abs() <= 2e-3 * a.abs().max(b.abs());
     assert!(!content().celestial.is_empty(), "no systems written out");

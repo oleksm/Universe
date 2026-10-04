@@ -177,12 +177,13 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
     // The stars, from their sectors, in a slab round our plane (fading with height above or below
     // it): far out a fine point, near a soft glowing disc in its class's colour.
     {
-        use universe_sim::world::galaxy::{sector_count, sector_stars, SECTOR};
+        use universe_sim::world::galaxy::{charted, sector_count, sector_stars};
+        let sector = charted().sector;
         let px_per_ly = map.scale as f32;
         let our_y = galaxy.stars[app.v.ship_system].position.y;
         let half = DVec2::new(size.x as f64, size.y as f64) * 0.5 / map.scale;
         let (lo, hi) = (map.center - half, map.center + half);
-        let span = |a: f64, b: f64| (a / SECTOR).floor() as i32..=(b / SECTOR).floor() as i32;
+        let span = |a: f64, b: f64| (a / sector).floor() as i32..=(b / sector).floor() as i32;
         let (xs, ys, zs) = (span(lo.x, hi.x), span(our_y - SLAB, our_y + SLAB), span(lo.y, hi.y));
         let count = xs.clone().count() * ys.clone().count() * zs.clone().count();
         if count > MAX_SECTORS {
@@ -195,7 +196,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
             }
         } else {
             // How many would be in view, and the share of each sector's to draw.
-            let overlap = |a0: f64, a1: f64, k: i32| ((a1.min((k + 1) as f64 * SECTOR) - a0.max(k as f64 * SECTOR)) / SECTOR).max(0.0);
+            let overlap = |a0: f64, a1: f64, k: i32| ((a1.min((k + 1) as f64 * sector) - a0.max(k as f64 * sector)) / sector).max(0.0);
             let mut cells = Vec::with_capacity(count);
             let mut expected = 0.0;
             for x in xs.clone() {

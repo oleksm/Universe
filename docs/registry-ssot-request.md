@@ -505,3 +505,14 @@ Needed from the registry for the loader:
   stable.
 - **A law's `note` is optional, but the engine documents each constant with it:** please give every
   law one.
+
+**The registry crate (this commit).** `crates/registry` reads `standards/` into typed records when the
+game is built and carries them in the binary. Today it reads `seeding.galaxy` (the galaxy's
+settings, now the game's only source of them), `rock-class.*` and `system.*` (identity and position).
+- **`galaxy.ron` and `rock_classes.ron` are no longer loaded:** their writers in `build.py` can go.
+- **`seeding/galaxy.yaml`'s comment** "The game does not read this record yet" is now wrong.
+- **`seeding.schema.yaml`, `galaxy.home`:** the description is cut at a colon, leaving a stray
+  property `by its key.: null`.
+- **The loader is strict:** a record of a kind the game reads (`seeding.galaxy`, `rock-class`,
+  `system`) with a field its type doesn't know fails the game's build. Tell me when a schema the
+  game reads gains a property, and I'll add it in the same merge.

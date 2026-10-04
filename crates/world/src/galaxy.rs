@@ -55,18 +55,12 @@ impl StarClass {
     }
 
     /// A star of the Sun's neighbourhood, by the real mix of classes (main
-    /// sequence, near the Sun: about three in four are red dwarfs).
+    /// sequence, near the Sun: about three in four are red dwarfs), as the
+    /// registry has it.
     fn random(rng: &mut Rng) -> Self {
         let x = rng.f64();
-        match x {
-            _ if x < 0.765 => StarClass::M,
-            _ if x < 0.886 => StarClass::K,
-            _ if x < 0.962 => StarClass::G,
-            _ if x < 0.992 => StarClass::F,
-            _ if x < 0.998 => StarClass::A,
-            _ if x < 0.99997 => StarClass::B,
-            _ => StarClass::O,
-        }
+        let cuts = charted().class_cuts;
+        [StarClass::M, StarClass::K, StarClass::G, StarClass::F, StarClass::A, StarClass::B].into_iter().zip(cuts).find(|&(_, cut)| x < cut).map_or(StarClass::O, |(class, _)| class)
     }
 }
 
@@ -96,24 +90,49 @@ pub struct Galaxy {
     pub stars: Vec<GalaxyStar>,
 }
 
-/// The charted region: a cube this many light years a side, at the real
-/// density of stars near the Sun (one per about 250 cubic light years:
-/// neighbours 4-6 ly apart). One region for now; more, generated from the
-/// seed as they're reached, later.
-pub const REGION: f64 = 200.0;
-/// Stars per cubic light year near the Sun (about 0.14 per cubic parsec):
-/// the density at the region's centre, which the galaxy's shape is scaled to.
-pub const STAR_DENSITY: f64 = 0.004;
+/// The charted region and how its stars are made, from the registry's
+/// `seeding.galaxy` (in light years, as the galaxy is laid out): a cube
+/// `region` a side, at the real density of stars near the Sun (one per about
+/// 250 cubic light years: neighbours 4-6 ly apart), made in cubes `sector` a
+/// side, by the real mix of star classes. One region for now; more, generated
+/// from the seed as they're reached, later.
+pub struct Charted {
+    /// The charted region's side (ly).
+    pub region: f64,
+    /// Stars per cubic light year near the Sun: the density at the region's
+    /// centre, which the galaxy's shape is scaled to.
+    pub star_density: f64,
+    /// The galaxy's stars come in cubes this many light years a side, each
+    /// from the seed and its place: as many as the density there says.
+    pub sector: f64,
+    /// Where each class ends in a draw from 0 to 1: M, K, G, F, A, B (the
+    /// rest O).
+    class_cuts: [f64; 6],
+}
+
+/// The charted region, as the registry has it.
+pub fn charted() -> &'static Charted {
+    static CHARTED: std::sync::OnceLock<Charted> = std::sync::OnceLock::new();
+    CHARTED.get_or_init(|| {
+        let g = &crate::registry::registry().seeding.galaxy.galaxy;
+        let ly = crate::units::LIGHT_YEAR;
+        let m = g.class_mix;
+        let mut cut = 0.0;
+        let class_cuts = [m.M, m.K, m.G, m.F, m.A, m.B].map(|share| {
+            cut += share;
+            cut
+        });
+        Charted { region: g.region / ly, star_density: g.star_density * ly.powi(3), sector: g.sector / ly, class_cuts }
+    })
+}
+
 /// Where the region sits in the galaxy (ly from its centre, in its plane): on
 /// an arm 4,000 ly out (`shape_stars`' arms run at angle ln(r/300)/tan 13°),
 /// the outer disc, about where the Sun is in ours.
 /// (Its corners on the sector grid: a whole number of sectors.)
 pub const REGION_CENTRE: DVec3 = DVec3::new(-900.0, 0.0, 3900.0);
-/// The galaxy's stars come in cubes this many light years a side, each from
-/// the seed and its place: as many as the density there says.
-pub const SECTOR: f64 = 100.0;
 
-/// A sector's place: which cube of `SECTOR` light years (x, y, z).
+/// A sector's place: which cube of [`Charted::sector`] light years (x, y, z).
 pub type Sector = [i32; 3];
 
 /// The galaxy's shape, sampled: 40,000 stars of a two-armed spiral with a
@@ -228,9 +247,9 @@ pub fn density(p: DVec3) -> f64 {
     static REGION_SHAPE: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
     let mean = *REGION_SHAPE.get_or_init(|| {
         let s = region_sectors();
-        s.iter().map(|c| shape((DVec3::new(c[0] as f64, c[1] as f64, c[2] as f64) + 0.5) * SECTOR)).sum::<f64>() / s.len() as f64
+        s.iter().map(|c| shape((DVec3::new(c[0] as f64, c[1] as f64, c[2] as f64) + 0.5) * charted().sector)).sum::<f64>() / s.len() as f64
     });
-    STAR_DENSITY * shape(p) / mean
+    charted().star_density * shape(p) / mean
 }
 
 fn sector_seed(seed: u64, s: Sector) -> u64 {
@@ -239,7 +258,7 @@ fn sector_seed(seed: u64, s: Sector) -> u64 {
 
 /// The sector a place is in.
 pub fn sector_of(p: DVec3) -> Sector {
-    [(p.x / SECTOR).floor() as i32, (p.y / SECTOR).floor() as i32, (p.z / SECTOR).floor() as i32]
+    [(p.x / charted().sector).floor() as i32, (p.y / charted().sector).floor() as i32, (p.z / charted().sector).floor() as i32]
 }
 
 /// How many stars a sector holds: its volume at the density at its middle.
@@ -248,8 +267,8 @@ pub fn sector_count(seed: u64, s: Sector) -> usize {
 }
 
 fn sector_draw(rng: &mut Rng, s: Sector) -> usize {
-    let middle = (DVec3::new(s[0] as f64, s[1] as f64, s[2] as f64) + 0.5) * SECTOR;
-    let expected = density(middle) * SECTOR.powi(3);
+    let middle = (DVec3::new(s[0] as f64, s[1] as f64, s[2] as f64) + 0.5) * charted().sector;
+    let expected = density(middle) * charted().sector.powi(3);
     (expected.floor() + if rng.f64() < expected.fract() { 1.0 } else { 0.0 }) as usize
 }
 
@@ -259,10 +278,10 @@ pub fn sector_stars(seed: u64, s: Sector, limit: usize) -> Vec<GalaxyStar> {
     let base = sector_seed(seed, s);
     let mut rng = Rng::new(base);
     let n = sector_draw(&mut rng, s).min(limit);
-    let corner = DVec3::new(s[0] as f64, s[1] as f64, s[2] as f64) * SECTOR;
+    let corner = DVec3::new(s[0] as f64, s[1] as f64, s[2] as f64) * charted().sector;
     (0..n)
         .map(|i| {
-            let position = corner + DVec3::new(rng.f64(), rng.f64(), rng.f64()) * SECTOR;
+            let position = corner + DVec3::new(rng.f64(), rng.f64(), rng.f64()) * charted().sector;
             GalaxyStar { position, class: StarClass::random(&mut rng), seed: mix(base, i as u64) }
         })
         .collect()
@@ -270,7 +289,7 @@ pub fn sector_stars(seed: u64, s: Sector, limit: usize) -> Vec<GalaxyStar> {
 
 /// The sectors the charted region is made of.
 pub fn region_sectors() -> Vec<Sector> {
-    let (lo, hi) = (sector_of(REGION_CENTRE - REGION / 2.0), sector_of(REGION_CENTRE + REGION / 2.0 - 1e-6));
+    let (lo, hi) = (sector_of(REGION_CENTRE - charted().region / 2.0), sector_of(REGION_CENTRE + charted().region / 2.0 - 1e-6));
     let mut out = Vec::new();
     for x in lo[0]..=hi[0] {
         for y in lo[1]..=hi[1] {
@@ -293,7 +312,7 @@ impl Galaxy {
     /// A small uniform region of `count` stars at the local density (tests).
     pub fn generate_n(seed: u64, count: usize) -> Self {
         let mut rng = Rng::new(seed);
-        let side = (count as f64 / STAR_DENSITY).cbrt();
+        let side = (count as f64 / charted().star_density).cbrt();
         let stars = (0..count)
             .map(|i| {
                 let position = REGION_CENTRE + DVec3::new(rng.f64() - 0.5, rng.f64() - 0.5, rng.f64() - 0.5) * side;

@@ -43,6 +43,7 @@ pub mod settlements;
 pub mod spaceport;
 pub mod standards;
 pub mod thrusters;
+pub mod registry;
 pub mod rules;
 pub mod station;
 pub mod structures;
