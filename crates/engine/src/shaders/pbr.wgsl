@@ -21,6 +21,11 @@ struct Globals {
 @group(0) @binding(0) var<uniform> g: Globals;
 @group(1) @binding(0) var shadow_map: texture_depth_2d_array;
 @group(1) @binding(1) var shadow_cmp: sampler_comparison;
+// The environment as light (see `env.rs`): its sampler, its specular cube
+// (mip by roughness), its diffuse cube.
+@group(1) @binding(3) var env_sampler: sampler;
+@group(1) @binding(4) var env_spec: texture_cube<f32>;
+@group(1) @binding(5) var env_diff: texture_cube<f32>;
 
 struct Material {
     base_color: vec4<f32>,
@@ -121,6 +126,17 @@ fn pcf(uv: vec2<f32>, layer: i32, depth: f32) -> f32 {
 
 const PI: f32 = 3.14159265;
 
+// Karis's fit of the split-sum reflectance (how much of the mirrored
+// environment a surface of this roughness returns, seen at this angle).
+fn env_brdf(f0: vec3<f32>, roughness: f32, nv: f32) -> vec3<f32> {
+    let c0 = vec4<f32>(-1.0, -0.0275, -0.572, 0.022);
+    let c1 = vec4<f32>(1.0, 0.0425, 1.04, -0.04);
+    let r = roughness * c0 + c1;
+    let a004 = min(r.x * r.x, exp2(-9.28 * nv)) * r.x + r.y;
+    let ab = vec2<f32>(-1.04, 1.04) * a004 + r.zw;
+    return f0 * ab.x + ab.y;
+}
+
 // GGX's spread of microfacet normals (alpha: roughness squared).
 fn ggx(nh: f32, alpha: f32) -> f32 {
     let a2 = alpha * alpha;
@@ -173,7 +189,6 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let f0 = mix(vec3<f32>(0.04), base.rgb, metallic);
     // The light on it as the meshes reckon it (the same units, the same eye):
     // the sun's (in shadow or not), the reflecting planet's, an ambient floor.
-    let ambient = in.sun_dir.w * occ;
     let shadow = sunlit(in.at, ng);
     var spec = vec3<f32>(0.0);
     var f = f0;
@@ -188,33 +203,19 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     if (g.shadow.w > 0.0 && shadow < 0.5 && nl > 0.0) {
         return vec4<f32>(0.8, 0.0, 0.0, 1.0);
     }
-    // The planet's light: how much of the sky it fills from its side, through
-    // the eye's adaptation as on the meshes (see scene.wgsl `fill`).
-    var fill = vec3<f32>(0.0);
-    if (in.refl_dir.w > 0.0) {
-        let s = min(in.refl_dir.w, 1.0);
-        let cc = 1.0 - sqrt(1.0 - s);
-        let seen = s * max((dot(n, in.refl_dir.xyz) + cc) / (1.0 + cc), 0.0);
-        fill = max(pow(in.refl_color.w * seen, 0.3) - 0.12, 0.0) / 0.88 * in.refl_color.rgb * occ;
-    }
     // The body (what isn't metal) takes all of it; metal only reflects.
     let body = base.rgb * (1.0 - metallic);
-    var c = body * (vec3<f32>(ambient) + (1.0 - ambient) * (sun * (vec3<f32>(1.0) - f) + fill));
+    var c = body * sun * (vec3<f32>(1.0) - f);
     c += spec * PI * sun * g.look2.x;
-    // Metal under the same ambient floor (what's round it, dimly reflected).
-    c += base.rgb * metallic * ambient;
-    // What a glossy surface reflects of the planet: a light the size it looks
-    // (an area light). The reflection's lobe widens with roughness; it catches
-    // the disc's share of itself (energy kept: a broad lobe, a dim, wide image).
-    if (in.refl_dir.w > 0.0 && g.look2.x > 0.5) {
-        let r = reflect(-v, n);
-        let radius = asin(sqrt(min(in.refl_dir.w, 1.0)));
-        let lobe = max(roughness * roughness * 1.2, 0.003);
-        let off = acos(clamp(dot(r, in.refl_dir.xyz), -1.0, 1.0));
-        let edge = clamp((radius + lobe - off) / (2.0 * lobe), 0.0, 1.0);
-        let share = min(1.0, (radius * radius) / (lobe * lobe));
-        c += schlick(f0, nv) * in.refl_color.rgb * in.refl_color.w * edge * share * occ;
-    }
+    // The environment as light: what a matte face turned this way takes in from
+    // the whole sky (the world below, the dark above), and what the surface
+    // mirrors of it, as blurred as it is rough (the split sum: Karis's fit of
+    // its reflectance).
+    let diffuse = textureSampleLevel(env_diff, env_sampler, n, 0.0).rgb;
+    let r = reflect(-v, n);
+    let mirrored = textureSampleLevel(env_spec, env_sampler, r, roughness * 7.0).rgb;
+    c += body * diffuse * occ;
+    c += mirrored * env_brdf(f0, roughness, nv) * occ * g.look2.x;
     c += select(vec4<f32>(1.0), textureSample(emissive_tex, tex_sampler, in.uv), textured).rgb * mat.emissive.rgb * g.look.w;
     return vec4<f32>(c, 1.0);
 }
