@@ -1437,6 +1437,14 @@ fn sun_glare(frame: &mut Frame, app: &App) {
         }).count();
         visible *= 1.0 - hidden as f32 / disc.len() as f32;
     }
+    // And past our own ship, close by (standing in it or beside it): its own surfaces.
+    if app.view.ship_pos.distance(cam) < 300.0 && app.ship.spec().shape().walk.is_some() {
+        let mut hull = Vec::new();
+        let ramp = universe_sim::world::crew::ramp_angle(sys, &app.ship);
+        universe_sim::world::crew::ship_colliders(&app.ship, app.view.ship_pos, app.ship.orientation, ramp, &mut hull);
+        let hidden = disc.iter().filter(|&&p| universe_sim::world::walk::ray(&hull, cam, (p - cam).normalize(), 300.0).is_some()).count();
+        visible *= 1.0 - hidden as f32 / disc.len() as f32;
+    }
     if visible <= 0.0 {
         return;
     }

@@ -115,19 +115,73 @@ impl WalkMesh {
     }
 
     /// The nearest surface along a ray (unit `dir`), within `max`: (how far, its normal facing the ray).
+    /// (The grid's cells walked in the ray's order, from where it enters the
+    /// bounds to where it leaves them or meets something: a long sight line
+    /// through the model costs what it crosses.)
     fn ray(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
-        let to = from + dir * max;
-        let mut best: Option<(f64, DVec3)> = None;
-        self.near(from.min(to), from.max(to), |t| {
-            if let Some(d) = ray_triangle(from, dir, t)
-                && d <= max
-                && best.is_none_or(|b| d < b.0)
-            {
-                let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize();
-                best = Some((d, if n.dot(dir) > 0.0 { -n } else { n }));
+        // The part of the ray within the bounds.
+        let (lo, hi) = (self.lo - DVec3::splat(0.01), self.hi + DVec3::splat(0.01));
+        let (mut t0, mut t1) = (0.0f64, max);
+        for k in 0..3 {
+            if dir[k].abs() < 1e-12 {
+                if from[k] < lo[k] || from[k] > hi[k] {
+                    return None;
+                }
+                continue;
             }
-        });
-        best
+            let (a, b) = ((lo[k] - from[k]) / dir[k], (hi[k] - from[k]) / dir[k]);
+            t0 = t0.max(a.min(b));
+            t1 = t1.min(a.max(b));
+        }
+        if t0 > t1 {
+            return None;
+        }
+        let size = f64::from(CELL);
+        let start = from + dir * t0;
+        let mut c = cell(start.as_vec3());
+        let step = [dir.x, dir.y, dir.z].map(|d| if d > 0.0 { 1 } else { -1 });
+        let next_edge = |k: usize, c: i32| f64::from(c + i32::from(step[k] > 0)) * size;
+        let coords = |c: (i32, i32, i32)| [c.0, c.1, c.2];
+        let mut t_max = [0.0f64; 3];
+        let mut t_delta = [f64::INFINITY; 3];
+        for k in 0..3 {
+            if dir[k].abs() > 1e-12 {
+                t_max[k] = t0 + (next_edge(k, coords(c)[k]) - start[k]) / dir[k];
+                t_delta[k] = size / dir[k].abs();
+            } else {
+                t_max[k] = f64::INFINITY;
+            }
+        }
+        let mut best: Option<(f64, DVec3)> = None;
+        let mut seen = std::collections::HashSet::new();
+        loop {
+            if let Some(v) = self.grid.get(&c) {
+                for &i in v {
+                    if !seen.insert(i) {
+                        continue;
+                    }
+                    let t = self.tris[i as usize].map(|p| p.as_dvec3());
+                    if let Some(d) = ray_triangle(from, dir, t)
+                        && d <= max
+                        && best.is_none_or(|b| d < b.0)
+                    {
+                        let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize();
+                        best = Some((d, if n.dot(dir) > 0.0 { -n } else { n }));
+                    }
+                }
+            }
+            // On to the next cell the ray enters (done once what's met is nearer than it).
+            let k = if t_max[0] <= t_max[1] && t_max[0] <= t_max[2] { 0 } else if t_max[1] <= t_max[2] { 1 } else { 2 };
+            if t_max[k] > t1 || best.is_some_and(|b| b.0 <= t_max[k]) {
+                return best;
+            }
+            match k {
+                0 => c.0 += step[0],
+                1 => c.1 += step[1],
+                _ => c.2 += step[2],
+            }
+            t_max[k] += t_delta[k];
+        }
     }
 }
 

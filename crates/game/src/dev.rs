@@ -1176,6 +1176,28 @@ pub fn apply(app: &mut App, name: &str) {
             let u = app.engine.universe();
             log::info!("scenario rawland: ship {:?}, crew {:?}", u.ship.state, u.crew.place);
         }
+        "sunlook" => {
+            // Landed (on a pad at Port Trethi, by day), standing in the hold, looking
+            // straight at the sun (through the hull).
+            apply(app, "settlement");
+            app.mode = Mode::Pilot;
+            app.chase_cam = false;
+            at_hatch(app, std::f64::consts::PI);
+            let u = app.engine.universe();
+            let sys = u.ship_system();
+            let mut positions = Vec::new();
+            sys.positions(u.world.time, &mut positions);
+            let star = sys.bodies.iter().position(|b| b.kind == universe_sim::world::system::BodyKind::Star).unwrap_or(0);
+            if let universe_sim::world::Place::Outside { body, position, yaw, pitch, .. } = &mut u.crew.place {
+                let inv = sys.bodies[*body].rotation(u.world.time).inverse();
+                let eye = *position + position.normalize() * universe_sim::world::crew::EYE;
+                let d = (inv * (positions[star] - positions[*body]) - eye).normalize();
+                let up = position.normalize();
+                let (north, east) = universe_sim::world::spaceport::tangent(up);
+                *yaw = f64::atan2(-d.dot(east), d.dot(north));
+                *pitch = d.dot(up).clamp(-1.0, 1.0).asin().clamp(-1.4, 1.4);
+            }
+        }
         "rampup" => {
             // Out and down the ramp, then back up it into the ship (where you end up: logged).
             apply(app, "outside");
