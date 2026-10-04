@@ -17,8 +17,8 @@ physical:
 shape:
   surface_area: 8.9
 made_from:
-  item: stock.st4340-tb-120x10
-  quantity: 3.62
+  - item: stock.st4340-tb-120x10
+    quantity: 3.62
 making:
   processes: [process.machining]
 fit:

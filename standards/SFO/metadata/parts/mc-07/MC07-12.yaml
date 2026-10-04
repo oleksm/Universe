@@ -17,8 +17,8 @@ physical:
 shape:
   surface_area: 3680.3
 made_from:
-  item: stock.al6061-sh-2
-  quantity: 4232.3
+  - item: stock.al6061-sh-2
+    quantity: 4232.3
 making:
   processes: [process.plate-work]
 fit:

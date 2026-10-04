@@ -3,15 +3,15 @@ identity:
   key: stock.st4340-tb-120x10
   code: ST4340-TB-120X10
   name: "4340 tube 120 x 10 mm"
-made_from:
-  material: material.high-strength-steel-4340
   form: tube
   temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
 size:
   diameter: 0.12
   wall: 0.01
 making:
-  process: process.tube-making-4340
+  processes: [process.tube-making-4340]
 physical:
   shock_limit: 1470.9975
 basis:

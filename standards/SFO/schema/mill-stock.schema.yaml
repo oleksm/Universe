@@ -8,19 +8,14 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [key, code, name]
+    required: [key, code, name, form]
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       code: { type: string, pattern: '^[A-Z0-9]+(-[A-Z0-9]+)+$', description: "Its code. No two alike." }
       name: { type: string }
-  made_from:
-    type: object
-    additionalProperties: false
-    required: [material, form]
-    properties:
-      material: { type: string, x-ref: [material], description: "The material, by its key." }
-      form: { type: string, description: "One of the forms the material comes in." }
+      form: { type: string, description: "The form it comes in: one of its material's." }
       temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
+  made_from: { $ref: "../../common.schema.yaml#/definitions/made_from" }
   size:
     type: object
     additionalProperties: false
@@ -29,9 +24,5 @@ properties:
       diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
       wall: { type: number, x-unit: "m", description: "m, of a tube" }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
-  making:
-    type: object
-    additionalProperties: false
-    properties:
-      process: { type: string, x-ref: [process], description: "The process that makes it, by its key." }
+  making: { $ref: "../../common.schema.yaml#/definitions/making" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

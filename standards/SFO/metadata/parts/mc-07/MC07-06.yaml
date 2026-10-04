@@ -18,8 +18,8 @@ shape:
   surface_area: 178.2
   handed: left
 made_from:
-  item: stock.al6061-sh-2
-  quantity: 204.9
+  - item: stock.al6061-sh-2
+    quantity: 204.9
 making:
   processes: [process.plate-work]
 fit:

@@ -36,12 +36,7 @@ properties:
         slot: { type: string, description: The slot of the hull it sits in. }
         item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by its key." }
         nozzles: { type: integer, minimum: 1, description: "For a drive or lift: how many nozzles of the hull it feeds, each at full share." }
-  making:
-    type: object
-    additionalProperties: false
-    properties:
-      process: { type: string, x-ref: [process], description: "The process that assembles it from its parts, by its key." }
-      fitting_out: { type: string, x-ref: [process], description: "The process that fits it with its equipment, by its key." }
+  making: { $ref: "../../common.schema.yaml#/definitions/making" }
   design:
     description: What it is designed to stand. Its parts' gauges are checked against these.
     type: object

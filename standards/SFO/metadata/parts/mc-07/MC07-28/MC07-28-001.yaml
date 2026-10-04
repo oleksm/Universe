@@ -17,8 +17,8 @@ physical:
 shape:
   surface_area: 19.1
 made_from:
-  item: stock.st4340-fg
-  quantity: 141
+  - item: stock.st4340-fg
+    quantity: 141
 making:
   processes: [process.machining]
 fit:

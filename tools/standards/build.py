@@ -114,10 +114,11 @@ def read_schema(path):
     """A schema, its descriptions in the units the page reads."""
     sch = yaml.safe_load(open(path, encoding="utf-8"))
     props = sch.get("properties") or {}
-    if "$ref" in (props.get("physical") or {}):
-        # (One `physical` group for every physical thing, in common.schema.yaml: read here in full.)
-        import copy
-        props["physical"] = copy.deepcopy(V.resolve(props["physical"]["$ref"], path)[0])
+    import copy
+    for g in ("physical", "made_from", "making"):
+        # (Groups every made thing shares, in common.schema.yaml: read here in full.)
+        if "$ref" in (props.get(g) or {}):
+            props[g] = copy.deepcopy(V.resolve(props[g]["$ref"], path)[0])
     for at, how in (READING.get(os.path.relpath(path, TREE)) or {}).items():
         node = sch
         for step in at.split("."):
@@ -126,9 +127,20 @@ def read_schema(path):
                 node = node.get("items")
         if isinstance(node, dict):
             node["description"] = how["reads"]
-    # (This build and the page still take a hull's and a module's size and mass as they were grouped
-    # before: `size`, and a hull's `mass`.)
     kind = os.path.basename(path)[:-12]
+    # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
+    # temper with it, and one `process` where there is one.)
+    if "made_from" in props and kind in ("part", "mill-stock"):
+        one = props["made_from"]["items"]
+        one["description"] = props["made_from"].get("description", "")
+        if kind == "mill-stock":
+            idn = props["identity"]["properties"]
+            one["properties"] = {"material": one["properties"]["item"], "form": idn.pop("form"), "temper": idn.pop("temper")}
+        props["made_from"] = one
+    if "making" in props and kind in ("mill-stock", "hull", "gate"):
+        mk = props["making"]["properties"]
+        props["making"]["properties"] = {"process": {**mk["processes"]["items"], "description": "The process that makes it, by its key."}, **({"fitting_out": mk["fitting_out"]} if kind == "hull" else {})}
+    # (And a hull's and a module's size and mass as they were grouped before: `size`, and a hull's `mass`.)
     if kind in ("hull", "module") and "physical" in props:
         ph, cap = props["physical"]["properties"], (props.get("capacity") or {}).get("properties") or {}
         group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
@@ -193,6 +205,18 @@ def old_names(rec, path):
         if "galaxy" in rec:
             flat = {**rec.pop("galaxy"), **({"note": idn["about"]} if "about" in idn else {})}
             rec.update(flat)
+    kind = rel.split(os.sep)[2] if rel.count(os.sep) >= 3 else ""
+    if isinstance(rec, dict) and kind in ("parts", "mill-stock", "hulls", "gates"):
+        # (What it is made from, and how, as this build still takes them.)
+        if isinstance(rec.get("made_from"), list) and rec["made_from"]:
+            one = dict(rec["made_from"][0])
+            if kind == "mill-stock":
+                idn = rec.get("identity") or {}
+                one = {"material": one.get("item"), **{k: idn.pop(k) for k in ("form", "temper") if k in idn}}
+            rec["made_from"] = one
+        mk = rec.get("making")
+        if kind != "parts" and isinstance(mk, dict) and "processes" in mk:
+            rec["making"] = {("process" if k == "processes" else k): (v[0] if k == "processes" else v) for k, v in mk.items()}
     return old_groups(rec, rel) if os.sep in rel else rec
 
 

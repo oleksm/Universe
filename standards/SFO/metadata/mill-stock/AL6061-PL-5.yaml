@@ -3,14 +3,14 @@ identity:
   key: stock.al6061-pl-5
   code: AL6061-PL-5
   name: "6061 plate 5 mm"
-made_from:
-  material: material.aluminium-alloy-6061
   form: plate
   temper: "T6"
+made_from:
+  - item: material.aluminium-alloy-6061
 size:
   thickness: 0.005
 making:
-  process: process.rolling
+  processes: [process.rolling]
 physical:
   shock_limit: 784.532
 basis:

@@ -3,12 +3,12 @@ identity:
   key: stock.st4340-fg
   code: ST4340-FG
   name: "4340 forging"
-made_from:
-  material: material.high-strength-steel-4340
   form: forging
   temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
 making:
-  process: process.forging-4340
+  processes: [process.forging-4340]
 physical:
   shock_limit: 1961.33
 basis:

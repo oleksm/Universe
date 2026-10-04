@@ -3,15 +3,15 @@ identity:
   key: stock.st4340-pl-3
   code: ST4340-PL-3
   name: "4340 plate 3 mm"
-made_from:
-  material: material.high-strength-steel-4340
   form: plate
+made_from:
+  - item: material.high-strength-steel-4340
 size:
   thickness: 0.003
 physical:
   shock_limit: 784.532
 making:
-  process: process.plate-rolling-4340
+  processes: [process.plate-rolling-4340]
 basis:
   - { of: [size], tier: invented, review: true, note: "A guess, to be reviewed: the gauge of a gate ring's skin. Nothing says what loads the ring carries." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

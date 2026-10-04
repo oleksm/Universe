@@ -30,7 +30,7 @@ fit:
   - { slot: avionics, item: equipment.nav.basic.s1 }
   - { slot: power, item: equipment.power.fusion.s1 }
 making:
-  process: process.hull-assembly
+  processes: [process.hull-assembly]
   fitting_out: process.fitting-out
 design:
   lands: empty

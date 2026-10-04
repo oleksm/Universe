@@ -8,8 +8,8 @@ identity:
 physical:
   mass: 44000
 made_from:
-  item: stock.sta36-pl-20
-  quantity: 324.4
+  - item: stock.sta36-pl-20
+    quantity: 324.4
 making:
   processes: [process.plate-work]
 fit:

@@ -47,9 +47,5 @@ properties:
     additionalProperties: false
     properties:
       station: { type: string, x-ref: [module], description: "The industrial module (SFO 10) that powers it. How many it takes to hold its tube is worked out." }
-  making:
-    type: object
-    additionalProperties: false
-    properties:
-      process: { type: string, x-ref: [process], description: "The process that assembles it where it is to stand, by its key." }
+  making: { $ref: "../../common.schema.yaml#/definitions/making" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

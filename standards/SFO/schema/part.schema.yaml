@@ -23,16 +23,7 @@ properties:
 
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
 
-  made_from:
-    description: "What it is cut from. (A part made of other parts has none: they are in its folder.)"
-    type: object
-    additionalProperties: false
-    properties:
-      item: { type: string, x-ref: [stock], description: "The item of mill stock, by its key." }
-      quantity: { type: number, description: "How much of it one part takes, in the unit that stock is counted in (m2 of sheet, plate and film; metres of bar, tube and wire)." }
-      blank: { type: string, description: "The piece cut from the stock before it is shaped: 1.2 x 0.8 m, 400 mm long." }
-      grain: { type: string, description: "The direction the stock's grain or fibre runs in the part." }
-      finish: { type: string, description: "Its surface: bare, anodised, plated, painted." }
+  made_from: { $ref: "../../common.schema.yaml#/definitions/made_from" }
 
   shape:
     type: object
@@ -45,18 +36,7 @@ properties:
       moment_of_inertia: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "kg m2", description: "kg m2, about its own x, y and z axes" }
       handed: { enum: [left, right, neither] }
 
-  making:
-    type: object
-    additionalProperties: false
-    properties:
-      processes: { type: array, items: { type: string, x-ref: [process] }, description: "The processes that make it, in order, by its key." }
-      facility: { type: string, description: The kind of facility that makes it. }
-      time: { type: number, x-unit: "s", description: "s to make one" }
-      tolerance: { type: number, x-unit: "m", description: "m, on its dimensions" }
-      tooling: { type: string, description: "The jig, die or mould it needs." }
-      batch_size: { type: integer, minimum: 1, description: How many are made at a time. }
-      yield: { type: number, minimum: 0, maximum: 1, description: "the share of those made that pass inspection" }
-      inspection: { type: string, description: "How it is checked: measured, X-rayed, pressure-tested." }
+  making: { $ref: "../../common.schema.yaml#/definitions/making" }
 
   fit:
     description: How it goes into the hull, or into the part it is a part of.

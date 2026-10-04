@@ -12,8 +12,8 @@ physical:
   height: 0.2
   shock_limit: 490.3325
 made_from:
-  item: stock.st4340-tb-200x15
-  quantity: 14.4
+  - item: stock.st4340-tb-200x15
+    quantity: 14.4
 making:
   processes: [process.machining]
 fit:
