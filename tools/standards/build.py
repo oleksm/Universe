@@ -1537,7 +1537,7 @@ for ad in administrations:
             big_loads.append((f"a day's rock for {x['name']}, flat out", r_["rate"] * 24))
 for st in structures:
     big_loads.append((f"one {st['identity']['name'].lower()}", st["parts_mass"] / 1000))
-for hl in hulls:
+for hl in sorted(hulls, key=lambda h_: h_["identity"].get("standing") == "outdated"):
     ms, ds, sz = hl.get("mass") or {}, hl.get("design") or {}, hl.get("size") or {}
     frame = hl.get("parts_mass", 0) / 1000 or ms.get("frame", 0)
     fitted = hl.get("fitted_mass", 0) / 1000
@@ -1547,10 +1547,11 @@ for hl in hulls:
     hl["budget"] = {"frame": frame, "fitted": fitted, "fuel": fuel, "hold": hold, "loaded": loaded, "fit_volume": fit_vol,
                     "payload": hold / loaded if loaded else 0, "main_g": ds.get("main_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0, "lift_g": ds.get("lift_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0,
                     "loads": [{"what": w_, "tonnes": t_, "loads": t_ / hold if hold else None} for w_, t_ in big_loads]}
-    rows.append(row("note", link(hl["identity"]["name"], "hull:" + hl["slug"]), hl["identity"].get("class", ""), f"{frame:,.0f} t" + ("" if hl.get("parts_mass") else " (the game's)"), f"{loaded:,.0f} t", f"{hold:g} t ({100 * hold / loaded:.0f}%)" if loaded else "", f"{fuel:g} t",
+    old = hl["identity"].get("standing") == "outdated"
+    rows.append(row("note" if old else "ok", link(hl["identity"]["name"], "hull:" + hl["slug"]), "outdated: not to be balanced against" if old else "current", hl["identity"].get("class", ""), f"{frame:,.0f} t" + ("" if hl.get("parts_mass") else " (the game's)"), f"{loaded:,.0f} t", f"{hold:g} t ({100 * hold / loaded:.0f}%)" if loaded else "", f"{fuel:g} t",
                     f"{100 * fit_vol / sz['volume']:.1f}% of {sz['volume']:,} m3" if sz.get("volume") else "", f"{hl['budget']['main_g']:.1f} g", f"{hl['budget']['lift_g']:.2f} g",
                     "; ".join(f"{b_['loads']:,.0f} loads for {b_['what']}" for b_ in hl["budget"]["loads"] if b_["loads"])))
-report("hulls", "Hulls: each one's budget, and the loads to be moved", "Each hull: what it weighs bare and loaded, what it carries and what share of its loaded weight that is, its fuel, what its equipment takes of its space, how hard its main drive and its lift push it loaded, and how many loads of its hold the registry's big loads are. Nothing here is a gap: it is for comparing hulls.", ["Hull", "Class", "Bare", "Loaded", "Carries", "Fuel", "Equipment takes", "Main drive", "Lift", "Loads"], rows)
+report("hulls", "Hulls: each one's budget, and the loads to be moved", "Each hull: what it weighs bare and loaded, what it carries and what share of its loaded weight that is, its fuel, what its equipment takes of its space, how hard its main drive and its lift push it loaded, and how many loads of its hold the registry's big loads are. An outdated hull is an early rough guess the game still has: listed so it is not forgotten, and not to be balanced against. Nothing here is a gap.", ["Hull", "Standing", "Class", "Bare", "Loaded", "Carries", "Fuel", "Equipment takes", "Main drive", "Lift", "Loads"], rows)
 
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []

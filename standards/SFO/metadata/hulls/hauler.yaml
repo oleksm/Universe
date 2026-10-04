@@ -1,11 +1,13 @@
 # yaml-language-server: $schema=../../schema/hull.schema.yaml
-# One of the game's stock hulls (content/base/hulls.ron): a made shape, not a modelled one. Coarse:
-# what the game has of it. Its parts are not listed.
+# OUTDATED. One of the game's early stock hulls (content/base/hulls.ron): a rough guess from before
+# the world had physics to answer to. Kept as a record of what the game has. Do not balance against
+# it or design toward it.
 identity:
   name: "Bulk Hauler"
   key: hull.hauler
   maker: brand.tolland
   class: hauler
+  standing: outdated
   description: "A big hold and not much else."
 size:
   volume: 54301

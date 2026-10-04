@@ -4,6 +4,7 @@
 identity:
   name: MC-07
   class: mining ship
+  standing: current
   description: A mining ship's hull. The bare hull, with nothing fitted in its slots.
 size:
   length: 66.1

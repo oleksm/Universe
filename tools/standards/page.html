@@ -318,7 +318,7 @@ function rows(q) {
               if (open.has(pk) || q) for (const sp of subs.filter(hit)) out.push({ k: "part:" + sp.slug, depth: depth + 3, kind: "maker", label: `${sp.identity.code} ${sp.identity.name}`, leaf: true });
             }
           }
-          for (const x of hullsUnder(s.id, q)) out.push({ k: "hull:" + x.slug, depth: depth + 1, kind: "maker", label: x.identity.name, ticker: "hull", leaf: true });
+          for (const x of hullsUnder(s.id, q)) out.push({ k: "hull:" + x.slug, depth: depth + 1, kind: "maker", label: x.identity.name, ticker: x.identity.standing === "outdated" ? "hull · outdated" : "hull", leaf: true });
           for (const g of goodsUnder(s.id, q)) out.push({ k: "good:" + g.slug, depth: depth + 1, kind: "maker", label: g.identity.name, ticker: g.identity.kind, leaf: true });
         }
       }
@@ -822,6 +822,7 @@ function detail(k) {
     const e = kind === "gate" ? gateBySlug[rest.join(":")] : kind === "eq" ? eqBySlug[rest.join(":")] : kind === "stock" ? stockByCode[rest.join(":")] : kind === "part" ? partByCode[rest.join(":")] : kind === "hull" ? hullBySlug[rest.join(":")] : kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
     let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${icon(e.slug, "big")} ${esc(i.name)}</h2>`;
+    if (kind === "hull" && i.standing === "outdated") h += `<p style="color:var(--bad)"><b>Outdated.</b> An early rough guess, kept as a record of what the game has. Not to be balanced against or designed toward.</p>`;
     if (kind === "part") { const up2 = e.parent && partByCode[e.parent]; h += `<div class="meta">part${up2 ? ` · of <a data-k="${esc("part:" + up2.slug)}">${esc(up2.identity.code + " " + up2.identity.name)}</a>` : ""} · of <a data-k="${esc(ownerKey(e.hull))}">${esc(hullBySlug[e.hull] ? "the hull " + ownerName(e.hull) : ownerName(e.hull))}</a></div>`; }
     else if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
