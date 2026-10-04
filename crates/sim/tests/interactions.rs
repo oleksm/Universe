@@ -492,3 +492,24 @@ fn passengers_book_passage_board_a_cabin_and_settle_where_they_booked_for_the_fa
     assert_eq!(u.ship.passengers, 0);
     assert!(u.ledger.balanced());
 }
+
+#[test]
+fn standing_up_docked_on_a_station_deck_keeps_you_aboard() {
+    // (The MC-07: a hull with floors to stand on.)
+    let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/mc07.glb")).expect("the MC-07 model");
+    let hull = universe_sim::world::import::commission(&bytes, "assets/models/mc07.glb").expect("it imports");
+    let mut u = bench(0);
+    let home = u.ship_system;
+    let station = u.ship_system().station().expect("a station at home");
+    u.ship = u.world.ship_on(home, Facility::Station(station), 4);
+    u.ship.class = hull;
+    u.ship.refresh();
+    u.crew = Default::default();
+    u.walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+    assert!(matches!(u.crew.place, universe_sim::world::Place::Aboard { .. }), "aboard, not outside on the station: {:?}", u.crew.place);
+    for _ in 0..100 {
+        u.walk(&universe_sim::world::WalkCommands { forward: -1.0, ..Default::default() }, 0.02);
+    }
+    let universe_sim::world::Place::Aboard { position, .. } = u.crew.place else { panic!("still aboard: {:?}", u.crew.place) };
+    assert!(position.length() < 40.0, "still in the ship: {position:?}");
+}

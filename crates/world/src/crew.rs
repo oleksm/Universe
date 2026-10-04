@@ -304,16 +304,17 @@ impl Person {
         interior.room_at(local + DVec3::Y * 0.5).map(|r| (r.name.clone(), r.address.clone()))
     }
 
-    /// Standing at `feet` (ship frame) facing the ship's `yaw`: aboard if
-    /// it flies, outside (on the body it rests on) if it has landed.
+    /// Standing at `feet` (ship frame) facing the ship's `yaw`: outside (on
+    /// the world it rests on) if it has landed on one; aboard otherwise (in
+    /// flight, or docked on a station's deck: the ship's frame, on boots).
     pub fn stand(&mut self, sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], feet: DVec3, yaw: f64) {
-        self.place = match ship.state {
-            ShipState::Landed { body, .. } => {
+        self.place = match hatch_body(sys, ship) {
+            Ok(body) => {
                 let (at, rot) = placed(sys, ship, body, t, positions[body]);
                 let position = at + rot * feet;
                 Place::Outside { body, position, velocity: DVec3::ZERO, yaw: body_yaw(position, rot * DQuat::from_rotation_y(yaw) * DVec3::NEG_Z), pitch: 0.0 }
             }
-            _ => Place::Aboard { position: feet, velocity: DVec3::ZERO, yaw, pitch: 0.0 },
+            Err(_) => Place::Aboard { position: feet, velocity: DVec3::ZERO, yaw, pitch: 0.0 },
         };
     }
 
@@ -322,17 +323,24 @@ impl Person {
     /// else stands near it (buildings, other ships: the body's frame).
     #[allow(clippy::too_many_arguments)]
     pub fn step(&mut self, sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], around: &[Collider], c: &WalkCommands, dt: f64, events: &mut Vec<CrewEvent>) {
-        // A landed ship is part of the ground (walked about in its body's
-        // frame); one taking off carries whoever stands in it (its frame).
+        // A ship landed on a world is part of its ground (walked about in its
+        // frame); one taking off carries whoever stands in it (its frame), as
+        // does one docked on a station's deck. (Nobody stands outside on a
+        // station: put back in the seat.)
+        if let Place::Outside { body, .. } = self.place
+            && sys.bodies[body].kind == BodyKind::Station
+        {
+            self.place = Place::Seat;
+        }
         match self.place {
-            Place::Aboard { position, yaw, .. } if matches!(ship.state, ShipState::Landed { .. }) => {
+            Place::Aboard { position, yaw, .. } if hatch_body(sys, ship).is_ok() => {
                 let pitch = if let Place::Aboard { pitch, .. } = self.place { pitch } else { 0.0 };
                 self.stand(sys, ship, t, positions, position, yaw);
                 if let Place::Outside { pitch: p, .. } = &mut self.place {
                     *p = pitch;
                 }
             }
-            Place::Outside { body, position, pitch, .. } if !matches!(ship.state, ShipState::Landed { .. }) => {
+            Place::Outside { body, position, pitch, .. } if hatch_body(sys, ship) != Ok(body) => {
                 let (at, rot) = placed(sys, ship, body, t, positions[body]);
                 let local = rot.inverse() * (position - at);
                 if within(ship, local) {
