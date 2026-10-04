@@ -1017,7 +1017,8 @@ def write_ron():
                 out.append(f"            (name: {ron_str(zn['name'])}, use: {ron_str(zn['use'])}, outline: {pts(zn['outline'])}),")
             out.append("        ],\n        parcels: [")
             for pc in x.get("parcels", []):
-                out.append(f"            (number: {pc['number']}, owner: {ron_str(pc['owner'])}, outline: {pts(pc['outline'])}),")
+                owner = next((m["name"] for m in makers if m["key"] == pc["owner"]), pc["owner"])
+                out.append(f"            (number: {pc['number']}, owner: {ron_str(pc['owner'])}, owner_name: {ron_str(owner)}, outline: {pts(pc['outline'])}),")
             out.append("        ],\n        streets: [")
             for st in x.get("streets", []):
                 out.append(f"            (name: {ron_str(st['name'])}, line: {pts(st['line'])}),")
@@ -1026,7 +1027,15 @@ def write_ron():
                 out.append(f"            (name: {ron_str(pw['name'])}, capacity: {float(pw['capacity'])!r}, line: {pts(pw['line'])}),")
             out.append("        ],\n        facilities: [")
             for fc in x.get("facilities", []):
-                out.append(f"            (name: {ron_str(fc['name'])}, kind: {ron_str(fc['kind'])}, parcel: {fc['parcel']}, blocks: [")
+                # (The most it can do, as worked out above: what each line makes an hour, the power
+                # it draws flat out, the power it can supply, what it can hold.)
+                makes = [(ln["most"]["product"], ln["most"]["output"]) for ln in fc.get("lines") or [] if ln.get("most")]
+                draws = sum(ln["most"]["power"] for ln in fc.get("lines") or [] if ln.get("most"))
+                holds = sum(st.get("holds") or 0 for st in fc.get("store") or [])
+                name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods if r.get("slug") == slug), slug)
+                out.append(f"            (name: {ron_str(fc['name'])}, kind: {ron_str(fc['kind'])}, parcel: {fc['parcel']},")
+                out.append("                makes: [" + ", ".join(f"({ron_str(name_of(p))}, {float(o)!r})" for p, o in makes) + f"], draws: {float(draws)!r}, supplies: {float(fc.get('capacity') or 0)!r}, holds: {float(holds)!r},")
+                out.append("                blocks: [")
                 for bl in fc.get("layout", []):
                     out.append(f"                (module: {ron_str(bl['module'])}, centre: ({float(bl['centre'][0])!r}, {float(bl['centre'][1])!r}), length: {float(bl['length'])!r}, width: {float(bl['width'])!r}, height: {float(bl['height'])!r}, heading: {float(bl['heading'])!r}),")
                 out.append("            ]),")
