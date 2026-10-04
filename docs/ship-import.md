@@ -27,10 +27,16 @@ Blender's `.001` suffixes are ignored.
 frame of its rig (`--frame`), leaving out lights, cameras and what doesn't render (boolean
 cutters, volumes), and places any conventions the file lacks from its parts' names (footpads
 `*_Pad` → `gear_*`, `*EngineGlow*` faces → main nozzles, `*Glass*` → `cockpit`, `*Ramp*` →
-`hatch`, `*Laser*_Head` → hardpoints, `Hull_*` → `COL_*` boxes, lift jets and thruster quads),
+`hatch`, `*Laser*_Head` / `*Hammer*_Head` → hardpoints, `Hull_*` → `COL_*` boxes, lift jets and thruster quads),
 printing where. Your own empties win. Rerun it after every change:
 
     blender -b -y design.blend -P tools/blender/export_hull.py -- assets/models/mc07.glb --frame 50 --name MC-07 --class 3 --bake 8192 --atlases 4
+
+The MC-07 now ships as vector: no textures, its detail all in the geometry (panel edges, insets,
+lettering), each procedural paint given its flat colour first by the design's `flatten.py`
+(`~/git/blender/mc07-assembly/tools/`), so nothing blurs at any distance (8 MB, 3 s):
+
+    blender -b -y mining_ship.blend -P mc07-assembly/tools/flatten.py -P tools/blender/export_hull.py -- assets/models/mc07.glb --frame 50 --name MC-07 --class 3 --bake 0
  Export: glTF Binary (`.glb`), **Tangents** and **Custom
 Properties** on, **+Y Up** on.
 
