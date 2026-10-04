@@ -91,6 +91,12 @@ pub enum Command {
     /// The system the client is looking at (none: its ship's): ships there
     /// come in full in the view, the rest as seen from afar (`Ship::far`).
     LookAt(Option<usize>),
+    /// Land at a settlement (spaceport `port` of `system`): claim a
+    /// rectangle of free ground, buy a vacant lot, build a blueprint (one of
+    /// the registry's facilities) on one's own lot.
+    ClaimLand { system: usize, port: usize, outline: Vec<(f64, f64)> },
+    BuyParcel { system: usize, port: usize, number: u32 },
+    Build { system: usize, port: usize, number: u32, blueprint: String },
     Trade { market: Facility, item: usize, units: i64 },
     /// Refit slot `slot` with module `module` (content key; None: empty it), docked at a station.
     Refit { slot: String, module: Option<String> },
@@ -185,6 +191,9 @@ pub struct View {
     pub economy: Arc<Vec<universe_services::economy::Place>>,
     /// The economy as it's reached us over the hypernet (see `commerce::Heard`).
     pub economy_heard: crate::commerce::Heard,
+    /// The land at settlements: lots, owners, facilities (shared: copied only
+    /// where it changed).
+    pub land: universe_services::land::LandOffice,
     /// What's been dug out of the rocks of our system: ((field, body), kg).
     pub mined: Vec<((usize, usize), f64)>,
     /// The market we're docked at; the markets of the system; the one watched.
@@ -299,6 +308,18 @@ impl Engine {
             }
             Command::WatchMarket(m) => self.watched = m,
             Command::LookAt(s) => self.looking_at = s,
+            Command::ClaimLand { system, port, outline } => {
+                let r = u.claim_land(system, port, outline);
+                u.events.push(r.map_or_else(|reason| Event::Refused { reason }, |text| Event::Notice { text }));
+            }
+            Command::BuyParcel { system, port, number } => {
+                let r = u.buy_parcel(system, port, number);
+                u.events.push(r.map_or_else(|reason| Event::Refused { reason }, |text| Event::Notice { text }));
+            }
+            Command::Build { system, port, number, blueprint } => {
+                let r = u.build_facility(system, port, number, blueprint);
+                u.events.push(r.map_or_else(|reason| Event::Refused { reason }, |text| Event::Notice { text }));
+            }
             Command::BuyHull { hull } => {
                 if let Some(h) = universe_world::content::content().handle(&hull) {
                     let _ = u.buy_hull(h);
@@ -403,6 +424,7 @@ impl Engine {
             reach: u.pilot_reach(),
             economy: u.markets.economy.snapshot(),
             economy_heard: u.boards.heard_economy(system, u.ship.position, &u.ship.spec().comm, now),
+            land: u.land.clone(),
             mined: u.world.mined.iter().filter(|((s, _, _), _)| *s == system).map(|(&(_, f, b), &kg)| ((f, b), kg)).collect(),
             dug: match u.ship.state {
                 universe_world::ShipState::Anchored { field, body, .. } => u.world.dug(system, field, body),

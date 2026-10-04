@@ -18,6 +18,8 @@ pub enum Party {
     Market(usize, Facility),
     /// The world: where starting funds come from (and what's written off goes).
     World,
+    /// A settled system's administration (what its land office takes in).
+    Administration(usize),
 }
 
 /// What's held.

@@ -9,6 +9,7 @@
 
 mod combat;
 mod commerce;
+pub mod estate;
 pub use commerce::BUYBACK;
 mod contacts;
 pub mod engine;

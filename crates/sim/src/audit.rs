@@ -47,6 +47,10 @@ pub enum Op {
     Respawn,
     Trade { market: Facility, item: usize, units: i64 },
     Walk(WalkCommands, f64),
+    /// Land at a settlement: claimed, bought, built on.
+    Claim { system: usize, port: usize, outline: Vec<(f64, f64)> },
+    BuyParcel { system: usize, port: usize, number: u32 },
+    Build { system: usize, port: usize, number: u32, blueprint: String },
 }
 
 impl Universe {
@@ -72,6 +76,15 @@ impl Universe {
                 let _ = self.trade(market, item, units);
             }
             Op::Walk(c, dt) => self.walk(&c, dt),
+            Op::Claim { system, port, outline } => {
+                let _ = self.pilot_claim(crate::combat::PLAYER, system, port, outline);
+            }
+            Op::BuyParcel { system, port, number } => {
+                let _ = self.pilot_buy_parcel(crate::combat::PLAYER, system, port, number);
+            }
+            Op::Build { system, port, number, blueprint } => {
+                let _ = self.pilot_build(crate::combat::PLAYER, system, port, number, &blueprint);
+            }
         }
     }
 
@@ -117,6 +130,15 @@ impl Universe {
         format!("{:?}", self.records.stats).hash(&mut h);
         self.atc.journal.len().hash(&mut h);
         self.ledger.journal.len().hash(&mut h);
+        // (The land: every lot's owner, every facility's modules and when they're done.)
+        for g in &self.land.grounds {
+            for l in &g.lots {
+                (l.number, format!("{:?}", l.owner)).hash(&mut h);
+            }
+            for w in &g.works {
+                (w.parcel, w.done_at.iter().map(|t| t.to_bits()).collect::<Vec<_>>()).hash(&mut h);
+            }
+        }
         let mut mined: Vec<_> = self.world.mined.iter().map(|(&k, v)| (k, v.to_bits())).collect();
         mined.sort_unstable();
         mined.hash(&mut h);

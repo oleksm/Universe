@@ -90,6 +90,8 @@ pub struct Universe {
     pub atc: universe_services::TrafficControl,
     /// The ledger (credits, and what's in each hold) and the market service.
     pub ledger: universe_services::Ledger,
+    /// Who owns which ground at each settlement, and what stands on it.
+    pub land: universe_services::land::LandOffice,
     pub markets: universe_services::Markets,
     /// The price boards markets have put out over the hypernet (see `commerce::Boards`).
     pub(crate) boards: crate::commerce::Boards,
@@ -142,6 +144,7 @@ impl Universe {
             turret_orders: Default::default(),
             atc: Default::default(),
             ledger: Default::default(),
+            land: Default::default(),
             markets: universe_services::Markets::new(seed, goods),
             boards: Default::default(),
             standings: Default::default(),
@@ -159,6 +162,11 @@ impl Universe {
         settled.dedup();
         let systems: Vec<(usize, Arc<StarSystem>)> = settled.into_iter().map(|i| (i, u.world.system(i))).collect();
         u.markets.economy = universe_services::economy::Economy::new(systems.iter().map(|(i, s)| (*i, &**s)), u.world.time);
+        // The land office, from the registry: each settlement recorded, at its system and port.
+        let content = universe_world::content::content();
+        u.land = universe_services::land::LandOffice::seed(systems.iter().flat_map(|(i, sys)| {
+            sys.spaceports.iter().enumerate().filter_map(move |(p, sp)| content.settlement(&sys.name, &sys.bodies[sp.body].name, &sp.name).map(|s| (*i, p, s)))
+        }));
         u.start_docked();
         u.events.clear();
         u.player_feed.clear();
