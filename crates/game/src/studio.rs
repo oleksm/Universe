@@ -71,6 +71,9 @@ struct Hull {
     profile: Vec<[DVec2; 2]>,
     /// Which way its nose is along z (+1 or -1: where its cockpit is).
     nose: f64,
+    /// Its name, and its mass as built (kg: its frame and what's fitted, dry).
+    name: String,
+    dry_mass: f64,
     keel: f64,
     /// Its lowest floor inside (well above its feet), for a first deck.
     first_floor: f64,
@@ -258,7 +261,7 @@ impl Studio {
         let same = self.hull.as_ref().filter(|h| h.key == hull_key);
         let profile = same.map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
         let first_floor = first_floor(mesh);
-        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, nose: nose_of(shape), keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
+        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, nose: nose_of(shape), name: app.ship.spec().name.clone(), dry_mass: app.ship.spec().dry_mass, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
     }
 }
 
@@ -394,7 +397,7 @@ fn split_views(r: (Vec2, Vec2)) -> ((Vec2, Vec2), (Vec2, Vec2)) {
 fn views_scale(h: &Hull, r: (Vec2, Vec2)) -> f64 {
     let (side, end) = split_views(r);
     let (ws, we, ht) = ((side.1.x - side.0.x) as f64, (end.1.x - end.0.x) as f64, (r.1.y - r.0.y) as f64);
-    (ws / (h.hi.z - h.lo.z)).min(we / (h.hi.x - h.lo.x)).min(ht / (h.hi.y - h.lo.y)) * 0.9
+    (ws / (h.hi.z - h.lo.z)).min(we / (h.hi.x - h.lo.x)).min(ht / (h.hi.y - h.lo.y)) * 0.8
 }
 
 /// The side view's scale and middle (moved by `pan`), for the hull in the strip `r`.
@@ -415,9 +418,45 @@ fn side_y(h: &Hull, r: (Vec2, Vec2), pan: Vec2, y: f32) -> f64 {
     (h.lo.y + h.hi.y) / 2.0 - (y - mid.y) as f64 / k
 }
 
+/// A dimension: a line from `a` to `b` with ticks across its ends, and its
+/// measure beside its middle (over it if it runs across, right of it if up).
+fn dimension(frame: &mut Frame, a: Vec2, b: Vec2, metres: f64) {
+    let along = (b - a).normalize_or_zero();
+    let across = Vec2::new(-along.y, along.x) * 4.0;
+    frame.hud_line(a, b, LABEL.scale(0.8));
+    for p in [a, b] {
+        frame.hud_line(p - across, p + across, LABEL.scale(0.8));
+    }
+    let text = format!("{metres:.1} M");
+    let w = text.chars().count() as f32 * universe_engine::frame::GLYPH * 0.7;
+    let mid = (a + b) * 0.5;
+    let at = if along.x.abs() > along.y.abs() { mid + Vec2::new(-w / 2.0, -12.0) } else { mid + Vec2::new(6.0, -4.0) };
+    frame.text_scaled(at, &text, LABEL, 0.7);
+}
+
+/// A view's grid: a metre (every fifth brighter) across `r`, `to_u`/`to_v` the
+/// screen x of an across measure and the screen y of a height over the keel.
+fn view_grid(frame: &mut Frame, r: (Vec2, Vec2), k: f64, to_u: impl Fn(f64) -> f32, to_v: impl Fn(f64) -> f32, u: (f64, f64), v: (f64, f64)) {
+    if k < 4.0 {
+        return;
+    }
+    for i in (u.0.floor() as i64)..=(u.1.ceil() as i64) {
+        let x = to_u(i as f64);
+        if x >= r.0.x && x <= r.1.x {
+            frame.hud_line(Vec2::new(x, r.0.y), Vec2::new(x, r.1.y), if i % 5 == 0 { GRID5 } else { GRID });
+        }
+    }
+    for i in (v.0.floor() as i64)..=(v.1.ceil() as i64) {
+        let y = to_v(i as f64);
+        if y >= r.0.y && y <= r.1.y {
+            frame.hud_line(Vec2::new(r.0.x, y), Vec2::new(r.1.x, y), if i % 5 == 0 { GRID5 } else { GRID });
+        }
+    }
+}
+
 /// A view's FLIP button: at its top right.
 fn flip_button(r: (Vec2, Vec2)) -> (Vec2, Vec2) {
-    (Vec2::new(r.1.x - 196.0, r.0.y + 4.0), Vec2::new(r.1.x - 4.0, r.0.y + 20.0))
+    (Vec2::new(r.1.x - 42.0, r.0.y + 4.0), Vec2::new(r.1.x - 4.0, r.0.y + 18.0))
 }
 
 /// Snapped to a quarter metre (ALT: as it is).
@@ -878,6 +917,13 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for [a, b] in &h.section {
             frame.hud_line_smooth(to(*a), to(*b), HULL);
         }
+        // Its length along its foot, its beam beside it (the whole hull's).
+        {
+            let corners = [to(DVec2::new(h.lo.x, h.lo.z)), to(DVec2::new(h.hi.x, h.hi.z))];
+            let (lo, hi) = (corners[0].min(corners[1]), corners[0].max(corners[1]));
+            dimension(frame, Vec2::new(lo.x, hi.y - 6.0), Vec2::new(hi.x, hi.y - 6.0), h.hi.z - h.lo.z);
+            dimension(frame, Vec2::new(hi.x + 12.0, hi.y), Vec2::new(hi.x + 12.0, lo.y), h.hi.x - h.lo.x);
+        }
         let Some(deck) = deck else { return };
         // Floors: trimmed to the hull (filled), the openings from the deck below cut out, their outlines as drawn.
         let holes = plan.map(|p| deckplan::openings(p, studio.deck)).unwrap_or_default();
@@ -1024,7 +1070,15 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         }
         frame.text_scaled(c + Vec2::new(-60.0, 24.0), "DRAWING THE HULL", LABEL.scale(0.8), SCALE);
     };
+    // (What the screen spans in metres, for the grids: across and up from the keel.)
+    let span = |c: f32, m: f32| ((c - m) as f64 / k, 0.0);
     frame.hud_clipped(side_r.0, side_r.1, |frame| {
+        {
+            let (a, b) = (span(side_r.0.x, mid.x).0 * sdir + zc, span(side_r.1.x, mid.x).0 * sdir + zc);
+            let top = yc + (mid.y - side_r.0.y) as f64 / k - h.keel;
+            let bottom = yc - (side_r.1.y - mid.y) as f64 / k - h.keel;
+            view_grid(frame, side_r, k, &zs, |v| sy(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+        }
         match &elev {
             Some(e) => {
                 for [a, b] in &e.side[studio.side_flip as usize] {
@@ -1036,6 +1090,13 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for [a, b] in &h.profile {
             frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
         }
+        // Its length under it, its height beside it.
+        let (z0, z1) = (zs(h.lo.z).min(zs(h.hi.z)), zs(h.lo.z).max(zs(h.hi.z)));
+        dimension(frame, Vec2::new(z0, sy(h.lo.y) + 10.0), Vec2::new(z1, sy(h.lo.y) + 10.0), h.hi.z - h.lo.z);
+        dimension(frame, Vec2::new(z1 + 12.0, sy(h.lo.y)), Vec2::new(z1 + 12.0, sy(h.hi.y)), h.hi.y - h.lo.y);
+        // The hull's sheet: its measures and its mass.
+        let sheet = format!("{}   L {:.1} M   B {:.1} M   H {:.1} M   DRY MASS {:.1} T", h.name, h.hi.z - h.lo.z, h.hi.x - h.lo.x, h.hi.y - h.lo.y, h.dry_mass / 1000.0);
+        frame.text_scaled(Vec2::new(side_r.0.x + 6.0, side_r.0.y + 22.0), &sheet, INK.scale(0.8), SCALE);
         // The decks' lines, from just right of their labels (so they don't run through them).
         let label = |k: usize, d: &Deck| format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom);
         let labels_w = decks.iter().enumerate().map(|(k, d)| label(k, d).chars().count()).max().unwrap_or(0) as f32 * universe_engine::frame::GLYPH * SCALE;
@@ -1082,6 +1143,15 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
     let xs = |x: f64| emid.x + ((x - xc) * k * edir) as f32;
     let ey = |y: f64| emid.y - ((y - yc) * k) as f32;
     frame.hud_clipped(end_r.0, end_r.1, |frame| {
+        {
+            let (a, b) = (span(end_r.0.x, emid.x).0 * edir + xc, span(end_r.1.x, emid.x).0 * edir + xc);
+            let top = yc + (emid.y - end_r.0.y) as f64 / k - h.keel;
+            let bottom = yc - (end_r.1.y - emid.y) as f64 / k - h.keel;
+            view_grid(frame, end_r, k, &xs, |v| ey(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+            let (x0, x1) = (xs(h.lo.x).min(xs(h.hi.x)), xs(h.lo.x).max(xs(h.hi.x)));
+            dimension(frame, Vec2::new(x0, ey(h.lo.y) + 10.0), Vec2::new(x1, ey(h.lo.y) + 10.0), h.hi.x - h.lo.x);
+            dimension(frame, Vec2::new(x1 + 12.0, ey(h.lo.y)), Vec2::new(x1 + 12.0, ey(h.hi.y)), h.hi.y - h.lo.y);
+        }
         match &elev {
             Some(e) => {
                 for [a, b] in &e.end[studio.end_flip as usize] {
@@ -1112,7 +1182,9 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for (r, what) in views {
             let (p, q) = flip_button(r);
             let lamp = if in_rect((p, q), studio.cursor) { Lamp::On } else { Lamp::Off };
-            draw_cell(frame, p, q - p, "FLIP", what, lamp);
+            draw_cell(frame, p, q - p, "", "FLIP", lamp);
+            let w = what.chars().count() as f32 * universe_engine::frame::GLYPH * 0.7;
+            frame.text_scaled(Vec2::new(p.x - w - 5.0, p.y + 3.0), what, LABEL.scale(0.8), 0.7);
         }
     }
     // The tool's panel: what its kind of thing is and how it's made, where it's at,
