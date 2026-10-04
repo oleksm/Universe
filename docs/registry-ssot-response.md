@@ -113,7 +113,7 @@ reads each record (`build.py`: `old_names`, `OLD_KEY`, `game_key`).
 ## SI: done (2026-10-04)
 
 Every value with a dimension is in SI, and its property says the unit in its schema: `x-unit: "kg"`.
-106 properties changed unit, 2,322 values in 439 records; 233 properties carry an `x-unit` in all.
+106 properties changed unit, 2,322 values in 439 records; 210 properties carry an `x-unit` in all.
 The build refuses an `x-unit` that is not SI. Angles are degrees, `x-unit: deg` (10 properties).
 A share, a ratio or a count has no `x-unit`.
 
