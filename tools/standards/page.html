@@ -185,11 +185,15 @@ const catsOf = hull => DATA.categories.filter(c => c.hull === hull);
 const partsOf = (hull, cat) => DATA.parts.filter(p => p.hull === hull && p.category === cat);
 const partByCode = Object.fromEntries(DATA.parts.map(p => [p.slug, p]));
 const partHulls = id => [...new Set(DATA.categories.filter(c => c.under === id).map(c => c.hull))];
+// And mill stock.
+const stockUnder = (id, q) => DATA.mill_stock.filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.code} ${x.identity.name}`.toLowerCase().includes(w))));
+const stockByCode = Object.fromEntries(DATA.mill_stock.map(x => [x.slug, x]));
+const perUnit = x => x.unit === "kg" ? "by weight" : `${+x.weight.toPrecision(3)} kg/${x.unit === "m2" ? "m²" : "m"}`;
 // And the hulls.
 const hullMatches = (x, q) => !q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.description || ""}`.toLowerCase().includes(w));
 const hullsUnder = (id, q) => DATA.hulls.filter(x => x.under === id && hullMatches(x, q));
 const hullBySlug = Object.fromEntries(DATA.hulls.map(x => [x.slug, x]));
-const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length + hullsUnder(id, "").length + partHulls(id).length;
+const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length + hullsUnder(id, "").length + partHulls(id).length + stockUnder(id, "").length;
 // Anything that flows, by its element symbol or its material's or good's file name: its name, and a link to it.
 const itemKey = i => elBySymbol[i] ? "el:" + i : matBySlug[i] ? "mat:" + i : goodBySlug[i] ? "good:" + i : null;
 const itemName = i => (elBySymbol[i] || matBySlug[i] || goodBySlug[i] || { identity: { name: i } }).identity.name;
@@ -256,7 +260,7 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0 || hullsUnder(s.id, q).length > 0));
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0 || hullsUnder(s.id, q).length > 0 || stockUnder(s.id, q).length > 0));
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
@@ -270,6 +274,7 @@ function rows(q) {
           for (const m of materialsUnder(s.id, q)) out.push({ k: "mat:" + m.slug, depth: depth + 1, kind: "mat", mat: m });
           for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
           for (const m of modulesUnder(s.id, q)) out.push({ k: "mod:" + m.slug, depth: depth + 1, kind: "maker", label: m.identity.name, ticker: m.identity.step, leaf: true });
+          for (const x of stockUnder(s.id, q)) out.push({ k: "stock:" + x.slug, depth: depth + 1, kind: "maker", label: `${x.identity.code} ${x.identity.name}`, leaf: true });
           for (const hl of partHulls(s.id)) {
             const hk = "pg:" + hl, cs = catsOf(hl).filter(c => !q || q.split(/\s+/).every(w => `${c.code} ${c.name} ${c.description || ""}`.toLowerCase().includes(w)));
             if (q && !cs.length) continue;
@@ -354,8 +359,8 @@ let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
-  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:") || k.startsWith("good:") || k.startsWith("hull:")) {
-    const e = k.startsWith("hull:") ? hullBySlug[k.slice(5)] : k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : k.startsWith("good:") ? goodBySlug[k.slice(5)] : procBySlug[k.slice(5)]; if (!e) return;
+  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:") || k.startsWith("good:") || k.startsWith("hull:") || k.startsWith("stock:")) {
+    const e = k.startsWith("stock:") ? stockByCode[k.slice(6)] : k.startsWith("hull:") ? hullBySlug[k.slice(5)] : k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : k.startsWith("good:") ? goodBySlug[k.slice(5)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
     const up = byId[e.under]; if (up) open.add("b:" + up.body);
     for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
@@ -642,7 +647,7 @@ function detail(k) {
     const table = `<table><tr><th>Code</th><th>Category</th><th>In one hull</th><th>Description</th><th>Parts</th></tr>` + cs.map(c => `<tr><td style="white-space:nowrap">${esc(c.code)}</td><td><a data-k="${esc(`pk:${c.hull}:${c.slug}`)}">${esc(c.name)}</a></td><td>${c.count}</td><td>${esc(c.description || "")}</td><td>${partsOf(c.hull, c.slug).length || `<span class="meta">none yet</span>`}</td></tr>`).join("") + `</table>`;
     if (kind === "pg") return `<h2>${esc(hl ? hl.identity.name : rest[0])} parts</h2><div class="meta">parts of the hull ${hname}, by category</div>` + table;
     const c = cs.find(y => y.slug === rest[1]); if (!c) return "";
-    return `<h2>${esc(c.code)} ${esc(c.name)}</h2><div class="meta">category of parts · of the hull ${hname}</div><p>${esc(c.description || "")}</p><table><tr><th>Code</th><th>In one hull</th></tr><tr><td style="white-space:nowrap">${esc(c.code)}</td><td>${c.count}</td></tr></table><h3>Parts</h3>${(ps => ps.length ? `<table><tr><th>Code</th><th>Part</th><th>In one assembly</th><th>Material</th><th>Stock</th></tr>` + ps.map(p => `<tr><td style="white-space:nowrap">${esc(p.identity.code)}</td><td><a data-k="${esc("part:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${(p.fit || {}).count || ""}</td><td>${(p.stock || {}).material ? itemA(p.stock.material) : ""}</td><td>${esc([(p.stock || {}).size, (p.stock || {}).form].filter(Boolean).join(" "))}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet.</p>`)(partsOf(c.hull, c.slug))}<div class="file" style="margin-top:24px">standards/${esc(c.file)}</div>`;
+    return `<h2>${esc(c.code)} ${esc(c.name)}</h2><div class="meta">category of parts · of the hull ${hname}</div><p>${esc(c.description || "")}</p><table><tr><th>Code</th><th>In one hull</th></tr><tr><td style="white-space:nowrap">${esc(c.code)}</td><td>${c.count}</td></tr></table><h3>Parts</h3>${(ps => ps.length ? `<table><tr><th>Code</th><th>Part</th><th>In one assembly</th><th>Cut from</th><th>Finished mass</th></tr>` + ps.map(p => `<tr><td style="white-space:nowrap">${esc(p.identity.code)}</td><td><a data-k="${esc("part:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${(p.fit || {}).count || ""}</td><td>${stockByCode[(p.made_from || {}).item] ? `<a data-k="${esc("stock:" + p.made_from.item)}">${esc(stockByCode[p.made_from.item].identity.name)}</a>` : ""}</td><td>${(p.made_from || {}).finished_mass !== undefined ? p.made_from.finished_mass + " kg" : ""}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet.</p>`)(partsOf(c.hull, c.slug))}<div class="file" style="margin-top:24px">standards/${esc(c.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
@@ -662,14 +667,14 @@ function detail(k) {
     if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
-  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod" || kind === "good" || kind === "hull" || kind === "part") {
-    const e = kind === "part" ? partByCode[rest.join(":")] : kind === "hull" ? hullBySlug[rest.join(":")] : kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
+  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod" || kind === "good" || kind === "hull" || kind === "part" || kind === "stock") {
+    const e = kind === "stock" ? stockByCode[rest.join(":")] : kind === "part" ? partByCode[rest.join(":")] : kind === "hull" ? hullBySlug[rest.join(":")] : kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
     let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${icon(e.slug, "big")} ${esc(i.name)}</h2>`;
     if (kind === "part") { const c = DATA.categories.find(y => y.hull === e.hull && y.slug === e.category); h += `<div class="meta">part · of <a data-k="${esc(`pk:${e.hull}:${e.category}`)}">${esc(c ? c.code + " " + c.name : e.category)}</a> · of the hull <a data-k="${esc("hull:" + e.hull)}">${esc((hullBySlug[e.hull] || { identity: { name: e.hull } }).identity.name)}</a></div>`; }
     else if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
-    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : kind === "hull" ? DATA.hull_groups : kind === "part" ? DATA.part_groups : DATA.process_groups)) {
+    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : kind === "hull" ? DATA.hull_groups : kind === "part" ? DATA.part_groups : kind === "stock" ? DATA.mill_stock_groups : DATA.process_groups)) {
       if (!e[g] || g === "structure") continue;
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
       for (const [key, note] of Object.entries(props)) if (key in e[g] && key !== "steps" && key !== "assemblies") h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
@@ -681,6 +686,15 @@ function detail(k) {
       const steps = e.equipment.steps.map(st => ({ ...st, m: modBySlug[st.module] })).filter(st => st.m);
       h += `<h3>Steps</h3><table><tr><th>Step</th><th>Module</th><th>What happens</th><th>Footprint</th><th>Rate</th><th>Power</th></tr>` + steps.map((st, n) => `<tr><td>${n + 1}. ${esc(st.m.identity.step)}</td><td><a data-k="${esc("mod:" + st.module)}">${esc(st.m.identity.name)}</a></td><td>${esc(st.does)}</td><td>${footprint(st.m)}</td><td>${(st.m.rate || {}).throughput !== undefined ? `${st.m.rate.throughput} t/h` : (st.m.rate || {}).holds !== undefined ? `holds ${st.m.rate.holds.toLocaleString()} t` : ""}</td><td>${(st.m.needs || {}).power !== undefined ? `${st.m.needs.power} MW` : ""}</td></tr>`).join("")
         + `<tr><th>One of each</th><th></th><th></th><th>${steps.reduce((s, st) => s + (st.m.size ? st.m.size.length * st.m.size.width : 0), 0).toLocaleString()} m²</th><th></th><th>${+steps.reduce((s, st) => s + ((st.m.needs || {}).power || 0), 0).toFixed(1)} MW</th></tr></table>`;
+    }
+    if (kind === "stock") {
+      const used = DATA.parts.filter(p => (p.made_from || {}).item === e.slug);
+      h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>counted in</td><td>${e.unit === "m2" ? "m²" : e.unit === "m" ? "metres" : "kilograms"}</td><td>its form</td></tr><tr><td>weight</td><td>${perUnit(e)}</td><td>its material's density and its size</td></tr></table>`
+        + `<h3>Parts cut from it</h3>` + (used.length ? `<table><tr><th>Code</th><th>Part</th><th>Takes</th></tr>` + used.map(p => `<tr><td style="white-space:nowrap">${esc(p.identity.code)}</td><td><a data-k="${esc("part:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${p.made_from.quantity !== undefined ? `${p.made_from.quantity} ${e.unit === "m2" ? "m²" : e.unit}` : ""}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet.</p>`);
+    }
+    if (kind === "part" && (e.made_from || {}).item && stockByCode[e.made_from.item]) {
+      const st = stockByCode[e.made_from.item], fm = e.made_from.finished_mass;
+      h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>cut from</td><td><a data-k="${esc("stock:" + st.slug)}">${esc(st.identity.code)} ${esc(st.identity.name)}</a></td><td>its mill stock</td></tr>${e.stock_mass !== undefined ? `<tr><td>stock it takes</td><td>${+e.stock_mass.toPrecision(4)} kg</td><td>its quantity, at ${perUnit(st)}</td></tr>` : ""}${e.stock_mass !== undefined && fm ? `<tr><td>lost as offcut</td><td>${+(e.stock_mass - fm).toPrecision(4)} kg · ${Math.round(100 * (1 - fm / e.stock_mass))}%</td><td>the stock it takes, less its finished mass</td></tr>` : ""}</table>`;
     }
     if (kind === "hull") {
       // What it is made of: its assemblies, the categories its parts are filed under.
@@ -720,6 +734,9 @@ function detail(k) {
   if (els.length) h += periodicTable(els);
   const mats = materialsUnder(s.id, "");
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td>${icon(m.slug)} <a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
+  const mst = stockUnder(s.id, "");
+  if (s.records === "mill-stock") h += `<h3>Items</h3>` + (mst.length ? `<table><tr><th>Code</th><th>Item</th><th>Material</th><th>Form</th><th>Weight</th></tr>` + mst.map(x => `<tr><td style="white-space:nowrap">${esc(x.identity.code)}</td><td><a data-k="${esc("stock:" + x.slug)}">${esc(x.identity.name)}</a></td><td>${itemA(x.made_from.material)}</td><td>${esc(x.made_from.form)}</td><td>${perUnit(x)}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet: an item is added when a part asks for it.</p>`);
+  if (s.title === "Assemblies" && DATA.categories.length) h += `<h3>Assemblies</h3><table><tr><th>Code</th><th>Assembly</th><th>Hull</th><th>In one hull</th><th>Parts</th></tr>` + DATA.categories.map(c => `<tr><td style="white-space:nowrap">${esc(c.code)}</td><td><a data-k="${esc(`pk:${c.hull}:${c.slug}`)}">${esc(c.name)}</a></td><td><a data-k="${esc("hull:" + c.hull)}">${esc((hullBySlug[c.hull] || { identity: { name: c.hull } }).identity.name)}</a></td><td>${c.count}</td><td>${partsOf(c.hull, c.slug).length || `<span class="meta">none yet</span>`}</td></tr>`).join("") + `</table>`;
   const gds = goodsUnder(s.id, "");
   if (gds.length) h += `<h3>Goods</h3><table><tr><th>Good</th><th>Kind</th><th>What it is</th></tr>` + gds.map(g => `<tr><td><a data-k="${esc("good:" + g.slug)}">${esc(g.identity.name)}</a></td><td>${esc(g.identity.kind)}</td><td>${esc(g.identity.description || "")}</td></tr>`).join("") + `</table>`;
   const mods = modulesUnder(s.id, "");
@@ -766,7 +783,7 @@ document.addEventListener("click", e => {
   if (badge) { kindShown = badge.dataset.kind; render(); return; }
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:") && !k.startsWith("hull:") && !k.startsWith("part:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:") && !k.startsWith("hull:") && !k.startsWith("part:") && !k.startsWith("stock:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
     keepOpen();
   }

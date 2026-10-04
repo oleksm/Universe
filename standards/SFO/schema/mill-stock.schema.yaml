@@ -1,0 +1,34 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Mill stock
+description: 'standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. What a unit of it weighs is worked out from its material''s density.'
+type: object
+additionalProperties: false
+required: [identity, made_from]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [code, name]
+    properties:
+      code: { type: string, pattern: '^[A-Z0-9]+(-[A-Z0-9]+)+$', description: "Its code. No two alike." }
+      name: { type: string }
+  made_from:
+    type: object
+    additionalProperties: false
+    required: [material, form]
+    properties:
+      material: { type: string, description: "The material, by file name." }
+      form: { type: string, description: "One of the forms the material comes in." }
+      temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
+  size:
+    type: object
+    additionalProperties: false
+    properties:
+      thickness: { type: number, description: "mm, of sheet, plate or film" }
+      diameter: { type: number, description: "mm, of bar, wire or tube (a tube's outside)" }
+      wall: { type: number, description: "mm, of a tube" }
+  making:
+    type: object
+    additionalProperties: false
+    properties:
+      process: { type: string, description: "The process that makes it, by file name." }

@@ -574,11 +574,11 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock"}
 # (Parts are filed in folders of their own: read further down.)
 NESTED = {"parts"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials, processes, modules, goods, hulls = [], [], [], [], [], []
+elements, materials, processes, modules, goods, hulls, mill_stock = [], [], [], [], [], [], []
 for s in standards:
     if "records" not in s:
         continue
@@ -596,7 +596,9 @@ for s in standards:
     seen = {}
     for name in sorted(os.listdir(folder)):
         full = os.path.join(folder, name)
-        pattern = r"[0-9]{3}-[a-z-]+\.yaml" if kind == "elements" else r"[a-z0-9-]+\.yaml"
+        if name.startswith("."):
+            continue
+        pattern = r"[0-9]{3}-[a-z-]+\.yaml" if kind == "elements" else r"[A-Z0-9-]+\.yaml" if kind == "mill-stock" else r"[a-z0-9-]+\.yaml"
         if not re.fullmatch(pattern, name):
             problem(full, "an element's file is named NNN-<name>.yaml (its atomic number)" if kind == "elements" else "its file is named <name>.yaml (lower case, words joined by -)")
             continue
@@ -609,6 +611,14 @@ for s in standards:
             if ident.get("atomic_number") != int(name[:3]):
                 problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
             key = ident.get("symbol")
+        elif kind == "mill-stock":
+            for k in ("code", "name"):
+                if not ident.get(k):
+                    problem(full, f"identity: no {k}")
+            if name != str(ident.get("code")) + ".yaml":
+                problem(full, "an item of mill stock is filed as <its code>.yaml")
+            key = ident.get("code")
+            e["slug"] = name[:-5]
         elif kind == "hulls":
             if not ident.get("name"):
                 problem(full, "identity: no name")
@@ -653,7 +663,7 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls}[kind].append(e)
+        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
@@ -945,17 +955,45 @@ for s in standards:
                 pt.update({"slug": code, "hull": hull, "category": c["slug"], "under": s["id"], "file": os.path.relpath(pfull, TREE)})
                 parts.append(pt)
 categories.sort(key=lambda c: (c["hull"], str(c.get("code", "")), c.get("name", "")))
-# (What a part names must be there: its material in that form, its processes, its designer, the
-# standards it is built to, the parts it joins or stands in for.)
+# Mill stock: its material in that form; what a unit of it weighs, from the material's density and
+# its size (kg per m2 of sheet, plate and film; kg per metre of bar, wire and tube).
+import math
+stock_of = {}
+for ms in mill_stock:
+    where = os.path.join(TREE, ms["file"])
+    mf, size = ms.get("made_from") or {}, ms.get("size") or {}
+    mat = next((m for m in materials if m.get("slug") == mf.get("material")), None)
+    if mat is None:
+        problem(where, f"made_from.material: no material '{mf.get('material')}'")
+        continue
+    if mf.get("form") not in ((mat.get("identity") or {}).get("form") or []):
+        problem(where, f"made_from.form: {mf.get('material')} doesn't come as {mf.get('form')}")
+    proc = (ms.get("making") or {}).get("process")
+    if proc is not None and proc not in by_process:
+        problem(where, f"making.process: no process '{proc}' in the SFO")
+    density = (mat.get("mass") or {}).get("density")
+    t, d, w = size.get("thickness"), size.get("diameter"), size.get("wall")
+    if density and t and not d:
+        ms["unit"], ms["weight"] = "m2", density * t / 1000
+    elif density and d and w:
+        ms["unit"], ms["weight"] = "m", density * math.pi * (d ** 2 - (d - 2 * w) ** 2) / 4e6
+    elif density and d:
+        ms["unit"], ms["weight"] = "m", density * math.pi * d ** 2 / 4e6
+    else:
+        ms["unit"], ms["weight"] = "kg", 1.0
+    stock_of[ms["slug"]] = ms
+# (What a part names must be there: its mill stock, its processes, its designer, the standards it is
+# built to, the parts it joins or stands in for. What its stock weighs follows from the quantity.)
 codes = {pt["slug"] for pt in parts}
 for pt in parts:
     where = os.path.join(TREE, pt["file"])
-    st, ident = pt.get("stock") or {}, pt.get("identity") or {}
-    mat = next((m for m in materials if m.get("slug") == st.get("material")), None)
-    if "material" in st and mat is None:
-        problem(where, f"stock.material: no material '{st['material']}'")
-    elif mat is not None and "form" in st and st["form"] not in ((mat.get("identity") or {}).get("form") or []):
-        problem(where, f"stock.form: {st['material']} doesn't come as {st['form']}")
+    mf, ident = pt.get("made_from") or {}, pt.get("identity") or {}
+    ms = stock_of.get(mf.get("item"))
+    if "item" in mf and ms is None:
+        problem(where, f"made_from.item: no mill stock '{mf['item']}'")
+    elif ms is not None and "quantity" in mf:
+        pt["stock_mass"] = mf["quantity"] * ms["weight"]
+        pt["stock_unit"] = ms["unit"]
     for name in (pt.get("making") or {}).get("processes") or []:
         if name not in by_process:
             problem(where, f"making.processes: no process '{name}' in the SFO")
@@ -1131,6 +1169,8 @@ def write_html():
         "modules": modules,
         "goods": goods,
         "hulls": hulls,
+        "mill_stock": mill_stock,
+        "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["mill-stock"]["properties"].items()},
         "categories": categories,
         "parts": parts,
         "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in PART_SCHEMA["properties"].items()},

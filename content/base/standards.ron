@@ -205,4 +205,38 @@
         licence: Open,
         published: 0.0,
     ),
+    (
+        key: "SFO 13",
+        body: "body.sfo",
+        branch: "all",
+        version: 1,
+        title: "MILL STOCK",
+        scope: "",
+        status: Draft,
+        refs: [],
+        params: [
+        ],
+        requires: [
+        ],
+        text: "",
+        licence: Open,
+        published: 0.0,
+    ),
+    (
+        key: "SFO 14",
+        body: "body.sfo",
+        branch: "all",
+        version: 1,
+        title: "ASSEMBLIES",
+        scope: "",
+        status: Draft,
+        refs: [],
+        params: [
+        ],
+        requires: [
+        ],
+        text: "",
+        licence: Open,
+        published: 0.0,
+    ),
 ]

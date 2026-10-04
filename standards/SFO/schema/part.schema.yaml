@@ -18,19 +18,14 @@ properties:
       standards: { type: array, items: { type: string }, description: "The standards it is built to, by id (SFO 9)." }
       interchangeable_with: { type: array, items: { type: string }, description: Other parts' codes that fit in its place. }
 
-  stock:
+  made_from:
     description: What it is cut from.
     type: object
     additionalProperties: false
     properties:
-      material: { type: string, description: "The material, by file name." }
-      form: { type: string, description: "The stock's form: one of the forms the material comes in." }
-      size: { type: string, description: "The stock's size: 3 mm sheet, 80 mm bar, 50 x 2 mm tube." }
-      quantity: { type: number, description: How much stock one part takes. }
-      unit: { enum: [m2, m, pieces, kg], description: What the quantity counts. }
+      item: { type: string, description: "The item of mill stock, by its code." }
+      quantity: { type: number, description: "How much of it one part takes, in the unit that stock is counted in (m2 of sheet, plate and film; metres of bar, tube and wire)." }
       finished_mass: { type: number, description: "kg, the part as made" }
-      offcut: { type: number, description: "stock used for each kg of finished part (1: none lost)" }
-      temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
       finish: { type: string, description: "Its surface: bare, anodised, plated, painted." }
 
   shape:
