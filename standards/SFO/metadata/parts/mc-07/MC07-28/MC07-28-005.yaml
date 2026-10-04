@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
+# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
+identity:
+  code: MC07-28-005
+  name: "Jaw"
+  status: draft
+  drawing: "assets/models/mc07.glb: ClampFwd_Jaw0, ClampFwd_Jaw1, ClampFwd_Jaw2, ClampFwd_Jaw3"
+physical:
+  mass: 10
+  length: 1.18
+  width: 1.18
+  height: 0.33
+  shock_limit: 100
+shape:
+  surface_area: 2.0
+made_from:
+  item: ST4340-FG
+  quantity: 15
+making:
+  processes: [machining]
+fit:
+  count: 4
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: invented, note: "An estimate: its surface at 4.91 kg for each m2." }
+  - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

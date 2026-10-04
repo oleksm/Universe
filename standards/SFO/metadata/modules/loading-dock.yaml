@@ -10,4 +10,5 @@ size:
 rate:
   handling: 500
 basis:
-  note: "Typical of real buildings of this kind. Approximate figures from memory, not taken from a source."
+  - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Bulk_carrier", note: "Conveyor loading runs 100 to 700 t/h; a dedicated bulk berth 1,000 to 2,000." }
+  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

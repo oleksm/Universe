@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Hulls
+  kind: product
+  description: "Finished hulls, counted by their weight."

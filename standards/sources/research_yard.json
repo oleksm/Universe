@@ -1,0 +1,1164 @@
+{
+ "cutting table": {
+  "laser_machine_footprint_3x1.5m_bed": {
+   "value": [
+    9229,
+    6145,
+    2200
+   ],
+   "unit": "mm (length, width, height) of TruLaser 3030 fiber",
+   "source": "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/",
+   "quote": "Dimensions  Length 9229 mm 11200 mm 15450 mm 19620 mm  Width 6145 mm 6373 mm 6878 mm 6968 mm  Height 2200 mm 2200 mm 2200 mm 2200 mm (columns: TruLaser 3030 / 3040 / 3060 / 3080 fiber)",
+   "verified": true,
+   "note": "Manufacturer product page table. Larger models: 3040 = 11200 x 6373, 3060 = 15450 x 6878, 3080 = 19620 x 6968 mm, all 2200 mm high."
+  },
+  "laser_bed_sizes": {
+   "value": [
+    [
+     3000,
+     1500
+    ],
+    [
+     4000,
+     2000
+    ],
+    [
+     6000,
+     2500
+    ],
+    [
+     8000,
+     2500
+    ]
+   ],
+   "unit": "mm working range X x Y (TruLaser 3030 / 3040 / 3060 / 3080 fiber)",
+   "source": "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/",
+   "quote": "Working range  X axis 3000 mm 4000 mm 6000 mm 8000 mm  Y axis 1500 mm 2000 mm 2500 mm 2500 mm",
+   "verified": true,
+   "note": "Standard flat-bed sheet sizes. Max workpiece weight without heavy-duty pallet changer 1100 / 2000 / 2900 / 4710 kg; basic machine weight 11700 / 14300 / 19800 / 21850 kg (same table)."
+  },
+  "laser_average_power_input": {
+   "value": {
+    "4 kW laser": 10,
+    "6 kW laser": 11,
+    "9 kW laser": 14.5,
+    "12 kW laser": 16,
+    "24 kW laser": 27
+   },
+   "unit": "kW average electrical power input in production",
+   "source": "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/",
+   "quote": "Consumption values  Average power input in production - TruFiber 4001 10 kW ... TruFiber 6001 11 kW ... TruFiber 9001 14.5 kW ... TruFiber 12001 16 kW ... TruFiber 24001 27 kW",
+   "verified": true,
+   "note": "Wall-plug draw of the whole machine as stated by the manufacturer, same for all four bed sizes. Installed laser power options on this machine: 4000, 6000, 9000, 12000, 24000 W."
+  },
+  "laser_max_aluminium_thickness": {
+   "value": {
+    "4000 W": 20,
+    "6000 W": 25,
+    "9000 W": 30,
+    "12000 W": 30,
+    "24000 W": 40
+   },
+   "unit": "mm maximum sheet thickness, aluminum",
+   "source": "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/",
+   "quote": "Laser-specific data - TruFiber 4000  Maximum laser power 4000 W ... Maximum sheet thickness, aluminum 20 mm; TruFiber 6001 ... aluminum 25 mm; TruFiber 9001 ... aluminum 30 mm; TruFiber 12001 ... aluminum 30 mm; TruFiber 24001 ... aluminum 40 mm",
+   "verified": true,
+   "note": "Capacity limit, not a production thickness."
+  },
+  "laser_max_axis_speed": {
+   "value": 170,
+   "unit": "m/min simultaneous axis speed",
+   "source": "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/",
+   "quote": "Maximum speed  Simultaneous 170 m/min",
+   "verified": true,
+   "note": "Positioning speed of the head, not cutting speed."
+  },
+  "laser_cut_speed_aluminium_N2": {
+   "value": {
+    "2 mm": {
+     "4000 W": [
+      13.0,
+      22.0
+     ],
+     "6000 W": [
+      20.0,
+      30.0
+     ]
+    },
+    "3 mm": {
+     "4000 W": [
+      7.0,
+      13.0
+     ],
+     "6000 W": [
+      13.0,
+      18.0
+     ]
+    },
+    "4 mm": {
+     "4000 W": [
+      4.0,
+      5.5
+     ],
+     "6000 W": [
+      10.0,
+      12.0
+     ]
+    },
+    "5 mm": {
+     "4000 W": [
+      3.0,
+      4.0
+     ],
+     "6000 W": [
+      5.0,
+      8.0
+     ]
+    }
+   },
+   "unit": "m/min cutting speed, aluminium alloy, nitrogen assist, IPG fibre source",
+   "source": "https://www.machinemfg.com/fiber-laser-cutting-speed-ipg-laser-source/",
+   "quote": "Aluminum Alloy (N2) 1 10.0-15.0 30.0-45.0 13.0-25.0 30.0-38.0 35.0-40.0 45.0-55.0  2 5.0-6.0 10.0-15.0 7.0-10.0 12.0-16.0 13.0-22.0 20.0-30.0  3 2.5-3.5 5.0-7.0 4.0-6.0 6.5-8.0 7.0-13.0 13.0-18.0  4 1.4-2.0 3.5-5.0 2.5-3.5 3.5-5.0 4.0-5.5 10.0-12.0  5 0.8-1.0 2.0-3.0 1.4-1.8 2.5-3.5 3.0-4.0 5.0-8.0",
+   "verified": true,
+   "note": "Trade-site speed chart (columns IPG 1000 / 1500 / 2000 / 2000 / 3000 / 4000 / 6000 W; the page says figures are approximate). Only the last two columns (4000 W, 6000 W) are recorded because the aluminium rows have six values for seven columns, so alignment of the lower-power columns is ambiguous. Not a manufacturer data sheet."
+  },
+  "laser_wall_plug_efficiency": {
+   "value": {
+    "CO2": [
+     5,
+     10
+    ],
+    "fiber": [
+     20,
+     30
+    ],
+    "direct diode": [
+     30,
+     40
+    ]
+   },
+   "unit": "% efficiency",
+   "source": "https://en.wikipedia.org/wiki/Laser_cutting",
+   "quote": "CO2 lasers have an efficiency of 5 – 10%, fiber lasers 20 – 30%, and direct diode 30 – 40% for cutting sheet metal.",
+   "verified": true,
+   "note": "Wikipedia, citing Kellens et al., 'Energy and Resource Efficiency of Laser Cutting Processes', Physics Procedia 56 (2014) 854-864."
+  },
+  "laser_heat_input_aluminium_CO2": {
+   "value": {
+    "0.51 mm": 1000,
+    "1.0 mm": 1000,
+    "2.0 mm": 1000,
+    "3.2 mm": 3800,
+    "6.4 mm": 10000
+   },
+   "unit": "watts of laser power required (CO2 laser)",
+   "source": "https://en.wikipedia.org/wiki/Laser_cutting",
+   "quote": "Amount of heat input required for various materials at various thicknesses using a CO2 laser [watts] ... Aluminium | 1000 | 1000 | 1000 | 3800 | 10000 (thickness columns 0.51 mm, 1.0 mm, 2.0 mm, 3.2 mm, 6.4 mm)",
+   "verified": true,
+   "note": "Wikipedia table citing Todd, Allen & Alting 1994, p. 188. Old CO2-laser data; fibre lasers need less for aluminium."
+  },
+  "plasma_cut_speed_aluminium": {
+   "value": {
+    "40 A, 1.5 mm": 4799,
+    "40 A, 3 mm": 2596,
+    "40 A, 6 mm": 911,
+    "80 A, 3 mm": 3820,
+    "80 A, 6 mm": 2203,
+    "80 A, 10 mm": 956,
+    "130 A, 6 mm": 2413,
+    "130 A, 10 mm": 1702,
+    "300 A, 12 mm": 2286,
+    "300 A, 25 mm": 1302
+   },
+   "unit": "mm/min approximate cutting speed, aluminum",
+   "source": "https://www.hypertherm.com/hypertherm/xpr/xpr300/",
+   "quote": "Aluminum  Core, CorePlus, VWI, and OptiMix  Air plasma 40 [A]  1.5 [mm] 4799 [mm/min] ... 3  2596 ... 6  911 ... VWI and OptiMix  N2 plasma 80  3  3820 ... 6  2203 ... 10  956 ... N2 plasma 130  6  2413 ... 10  1702 ... N2 300  20  870 ... 12  2286 ... 25  1302 ... 50  524",
+   "verified": true,
+   "note": "Hypertherm XPR300 product page 'Operating data' table (header: Current (Amperage) / Cut chart thickness (mm) / Approximate cutting speed (mm/min)). Read from flattened table text; row grouping should be checked against the page before use."
+  },
+  "plasma_power_supply_output": {
+   "value": 66.5,
+   "unit": "kW maximum output power (300 A)",
+   "source": "https://www.hypertherm.com/hypertherm/xpr/xpr300/",
+   "quote": "Maximum output current 300 A  Maximum output power 66.5 kW ... Duty cycle rating 100% at 66.5 kW, 40° C (104° F) ... Power factor 0.98 at 66.5 kW",
+   "verified": true,
+   "note": "Output power of the plasma power supply; pierce capacity aluminum 38 mm, severance 50 mm (same page)."
+  },
+  "waterjet_cut_speed_aluminium_6mm": {
+   "value": [
+    [
+     12,
+     19
+    ],
+    [
+     23,
+     34
+    ],
+    [
+     30,
+     47
+    ],
+    [
+     38,
+     58
+    ]
+   ],
+   "unit": "inches per minute at 60,000 psi, aluminum 0.25 in thick, for orifice 0.007 / 0.010 / 0.012 / 0.014 in",
+   "source": "https://www.kmtwaterjet.com/KMT%20Orifice-Cutting%20Speeds%20Data.pdf",
+   "quote": "For aluminum at 0.25\" thickness at 60,000 PSI, cutting speeds range from 12-19 inches per minute with a 0.007\" orifice, 23-34 inches per minute with a 0.010\" orifice, 30-47 inches per minute with a 0.012\" orifice, and 38-58 inches per minute with a 0.014\" orifice.",
+   "verified": false,
+   "note": "Search-result excerpt only; the PDF returned HTTP 404 when fetched directly, so the figures were not seen in the document."
+  },
+  "nesting_scrap_example": {
+   "value": 30,
+   "unit": "% scrap on some sheets (traditional sheet nesting, 3660x1525 mm sheets, 1.5 mm galvanized steel)",
+   "source": "https://www.expometals.net/en/hall/machines/machines-for-sheet-metal/stand/dallan-spa/news/sheet-metal-laser-cutting-optimization-coil-fed-laser-vs-traditional-laser-id18709",
+   "quote": "Today, the working cycle requires to cut the parts from 12 sheets with dimensions 3660x1525mm. As we can see from the pictures hereunder, in some of the sheets the amount of scrap is over 30%.",
+   "verified": true,
+   "note": "Machine-builder (Dallan) case study, a single example ('over 30%'), not an industry average."
+  },
+  "nesting_material_utilisation": {
+   "value": {
+    "manual nesting": [
+     60,
+     70
+    ],
+    "automated nesting software": [
+     82,
+     90
+    ]
+   },
+   "unit": "% material utilization",
+   "source": "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication",
+   "quote": "Manual nesting typically achieves only 60–70% material utilization, meaning 30–40% of each sheet becomes waste ... automated nesting software pushes material utilization from 60–70% to 82–90%.",
+   "verified": false,
+   "note": "Search-result excerpt only (page returned HTTP 403). Fabricator's blog, not a primary study."
+  }
+ },
+ "panel former": {
+  "stretch_press_capacity": {
+   "value": 200,
+   "unit": "ton (Triform sheet stretch forming machine)",
+   "source": "https://www.thefabricator.com/thefabricator/news/bending/beckwood-to-manufacture-sheet-stretch-forming-machine-for-hr-parts",
+   "quote": "Beckwood Press Co. ... has been awarded a contract by H&R Parts Co. to manufacture a 200-ton Triform sheet stretch forming machine.",
+   "verified": true,
+   "note": "News release in The Fabricator, April 8, 2020; aerospace sheet-metal supplier (H&R Parts, Wichita)."
+  },
+  "stretch_press_sheet_size": {
+   "value": {
+    "max thickness": "3/16 in",
+    "max width": "114 in"
+   },
+   "unit": "aluminum sheet capacity",
+   "source": "https://www.thefabricator.com/thefabricator/news/bending/beckwood-to-manufacture-sheet-stretch-forming-machine-for-hr-parts",
+   "quote": "The machine is designed for stretch forming parts made from aluminum sheets up to 3/16 in. thick and 114 in. wide.",
+   "verified": true,
+   "note": "Same release."
+  },
+  "stretch_press_stroke_and_jaws": {
+   "value": {
+    "stroke": "40 in",
+    "mounting table": "12 by 100 in",
+    "table tilt": "+/-15 degree",
+    "jaw distance max": "72 in",
+    "jaw distance min": "18 in"
+   },
+   "unit": "machine geometry",
+   "source": "https://www.thefabricator.com/thefabricator/news/bending/beckwood-to-manufacture-sheet-stretch-forming-machine-for-hr-parts",
+   "quote": "It features 40 in. of stroke with a 12- by 100-in. mounting table that includes +/-15-degree tilt. The jaws travel horizontally to allow for a maximum distance of 72 in. and a minimum distance of 18 in. between them.",
+   "verified": true,
+   "note": "Same release. Overall machine footprint and motor power are not given."
+  },
+  "stretch_press_speed_and_part_length": {
+   "value": {
+    "pressing speed": "1-35 IPM (adjustable)",
+    "return speed": "70 IPM",
+    "max part length": "270 in",
+    "jaw clamp force": "6,000 lbf/inch",
+    "min tonnage": 71
+   },
+   "unit": "as published",
+   "source": "https://beckwoodpress.com/?p=124945",
+   "quote": "Minimum tonnage of 71 with calculated pressing speeds of 1-35 IPM (adjustable) and return speed of 70 IPM ... segmented jaws provide 6,000lbf/inch ... The maximum part length is 270\".",
+   "verified": false,
+   "note": "Search-result excerpt only; the Beckwood page returned HTTP 404 when fetched."
+  },
+  "plate_roll_3m_dimensions": {
+   "value": {
+    "working length": "3000 mm",
+    "max thickness": "13 mm",
+    "upper roll diameter": "280 mm",
+    "length x width x height": "4800 x 1900 x 1900 mm",
+    "weight": "8800 kg"
+   },
+   "unit": "Davi Promau MCB 3028 four-roll plate roll",
+   "source": "https://www.exapro.com/davi-promau-mcb-3028-p241025040/",
+   "quote": "Category Plate rolling machines - 4 rolls  Working length 3000 mm  Max thickness 13 mm  Mechanical/Hydraulic Hydraulic  Upper roll Ø 280 mm  Length x width x height 4800.0 × 1900.0 × 1900.0  Weight 8800 kg",
+   "verified": true,
+   "note": "Used-machine listing (2006 machine), not a manufacturer data sheet; seller notes 'Rolling thickness prebending 8 mm'. Motor power not given."
+  },
+  "plate_roll_small_power": {
+   "value": {
+    "working length": "2000 mm",
+    "max plate thickness": "6.0 mm",
+    "engine power": "3.0 kW",
+    "dimensions": "2200 x 1150 x 1100 mm",
+    "weight": "2200 kg"
+   },
+   "unit": "Davi MAX170 plate roll",
+   "source": "https://www.exapro.com/davi-max170-p260907095",
+   "quote": "Davi MAX170: Working length: 2000 mm, Maximum plate thickness: 6.0 mm, Engine power: 3.0 kW, Machine dimensions (L×W×H): 2200 × 1150 × 1100 mm, Weight: 2200 kg",
+   "verified": false,
+   "note": "Search-result excerpt only (listing page not opened). Used-machine listing."
+  },
+  "plate_roll_heavy_power": {
+   "value": {
+    "working length": "3100 mm",
+    "max thickness": "70 mm",
+    "engine power": "74.57 kW",
+    "dimensions": "6000 x 2950 x 2800 mm",
+    "weight": "50000 kg"
+   },
+   "unit": "Davi MCB3060WT plate roll",
+   "source": "https://www.exapro.com/sp/davi-mcb3060wt-18755/",
+   "quote": "Davi MCB3060WT: Working length: 3100 mm, Max thickness: 70 mm, Engine Power: 74.57 kW, Machine dimensions: 6000 × 2950 × 2800 mm, Weight: 50000 kg",
+   "verified": false,
+   "note": "Search-result excerpt only (listing page not opened). Heavy plate machine, far thicker than aircraft skin; given as the upper bound for power and size."
+  }
+ },
+ "welding bay": {
+  "fsw_speed_6mm_plate_TWI": {
+   "value": {
+    "5xxx series": 100,
+    "5083 with GSP tool": 110,
+    "6xxx series (as printed)": 30
+   },
+   "unit": "mm/min welding speed, single pass, 6 mm thick plate",
+   "source": "https://twi-global.com/what-we-do/research-and-technology/research-programmes/core-research-programme/report-abstracts/friction-stir-welding-aluminium-alloy-5083-increased-welding-speed-684-1999",
+   "quote": "The welding speed, however, is slow when compared to welding the 6xxx series (Al-Mg-Si) alloys; typically 100mm/min compared to at least 30mm/min when making single pass welds in 6mm thick plate. ... The GSP tool that was perfected for welding aluminium alloy 5083 gives a high and repeatable weld quality at a modest welding speed (110mm/min).",
+   "verified": true,
+   "note": "TWI Industrial Member Report Summary 684/1999. The '30mm/min' for 6xxx is as printed on the page but contradicts the sentence (6xxx is said to be faster); it is probably a typo on the source page, so treat that one value as unreliable. 1999 tooling."
+  },
+  "fsw_speed_2mm_sheet_6082": {
+   "value": {
+    "conventional": 200,
+    "high-speed": 2500
+   },
+   "unit": "mm/min welding speed, 2.0 mm 6082-T6 sheet",
+   "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6947154",
+   "quote": "The aluminum sheets of 2.0 mm thick were friction stir welded at low (conventional FSW) and high welding speeds (HSFSW) of 200 and 2500 mm/min, respectively.",
+   "verified": true,
+   "note": "Peer-reviewed paper (open access, PMC). Trials ran 2200-2600 mm/min at 2000-2400 rpm, axial force 6 kN."
+  },
+  "fsw_process_heat_power_2mm": {
+   "value": {
+    "conventional (200 mm/min, 710 rpm, 4 kN)": 523,
+    "high-speed (2500 mm/min, 2100 rpm, 6 kN)": 2222
+   },
+   "unit": "Watt total heat input (Q total); linear energy 157 and 53 J/mm",
+   "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6947154",
+   "quote": "Table 1. Weld matrix. FSW Type | v, mm/min | N, rpm | Fz, kN | α | WP, mm/rot | Q total, Watt | l, J/mm — Conventional 200 710 4 2° 0.28 523 157 — High-speed 2500 2100 6 1.2° 1.19 2222 53",
+   "verified": true,
+   "note": "Calculated process heat at the tool for 2 mm sheet, not machine installed power."
+  },
+  "fsw_vs_laser_speed": {
+   "value": {
+    "FSW traditional": "less than 1 m/min",
+    "FSW high-volume development": "3 m/min",
+    "laser welding": "6 m/min to 10 m/min"
+   },
+   "unit": "m/min linear welding speed, aluminium sheet (tailor-welded blanks)",
+   "source": "https://link.springer.com/article/10.1007/s11837-015-1384-x",
+   "quote": "While friction-stir welding (FSW) has been traditionally applied at linear velocities less than 1 m/min ... parameters were developed with a minimum welding velocity of 3 m/min. ... commercial laser welding technologies, which regularly weld at speeds from 6 m/min to 10 m/min.",
+   "verified": true,
+   "note": "JOM 2015 paper (PNNL work), AA5182-O sheets of 1.2 mm and 2.0 mm."
+  },
+  "fsw_machine_spindle_power_range": {
+   "value": {
+    "table model": [
+     10,
+     45
+    ],
+    "static gantry": [
+     10,
+     65
+    ],
+    "moving gantry": [
+     15,
+     130
+    ]
+   },
+   "unit": "kW spindle power",
+   "source": "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf",
+   "quote": "Spindle Power  10 - 45 kW  10 - 65 kW  15 - 130 kW (columns: Table / Static Gantry / Moving Gantry); Maximum Thickness Aluminium 1 - 25 mm / 1 - 50 mm / 1 - 100+ mm",
+   "verified": true,
+   "note": "PTG Powerstir manufacturer brochure. Spindle power only; total connected load not given."
+  },
+  "fsw_machine_working_envelope": {
+   "value": {
+    "table model": "X 0-1,000 mm, Y 0-900 mm, Z 0-300 mm",
+    "static gantry": "X 0-8,000 mm, Y 0-4,000 mm, Z 0-2,500 mm",
+    "moving gantry": "X 0-90,000+ mm, Y 0-9,000+ mm, Z 0-4,000+ mm"
+   },
+   "unit": "axis stroke",
+   "source": "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf",
+   "quote": "Stroke  X Axis 0 - 1,000 mm  0 - 8,000 mm  0 - 90,000+ mm;  Y Axis 0 - 900 mm  0 - 4,000 mm  0 - 9,000+ mm;  Z Axis 0 - 300 mm  0 - 2,500 mm  0 - 4,000+ mm",
+   "verified": true,
+   "note": "Same brochure; stroke, not outer machine footprint. Brochure mentions 'the longest welds for China's fastest trains' for the moving gantry."
+  },
+  "fsw_heavy_gantry_TWI": {
+   "value": {
+    "working envelope": "6000 x 3000 x 500mm",
+    "upper head spindle power": "132kW",
+    "upper head torque": "2480Nm",
+    "lower head spindle power": "60kW",
+    "Z force": "0-150kN"
+   },
+   "unit": "Crawford Swift PowerStir heavy-duty moving-gantry FSW machine",
+   "source": "https://www.twi-global.com/pdfs/Equipment-factsheets/1486-Heavy-duty-FSW-gantry-LR.pdf",
+   "quote": "Working envelope: 6000 x 3000 x 500mm ... Upper head  Spindle power: 132kW  Spindle speed: 0–1000RPM  Spindle torque: 2480Nm  Z force: 0–150kN ... Lower head  Spindle power: 60kW",
+   "verified": true,
+   "note": "TWI equipment factsheet. 'One of the most powerful FSW machines in the world with the potential to weld materials up to 150mm thickness in one pass' - an upper bound, far above sheet work."
+  },
+  "fsw_superstir_envelope": {
+   "value": {
+    "working envelope": "8000 x 5000mm",
+    "high-torque head": "0-3000RPM, 340Nm at 100-500RPM, max vertical loading 100kN, max traverse loading 20kN",
+    "high-speed head": "3000-5000RPM, max vertical load 60kN"
+   },
+   "unit": "ESAB SuperStir FSW machine at TWI",
+   "source": "https://www.twi-global.com/pdfs/Equipment-factsheets/1511-Equipment-ESAB-SuperStir-FSW.pdf",
+   "quote": "Working envelope: 8000 x 5000mm  Welding head 1 (high torque)  Spindle speed: 0–3000RPM  Max. traverse loading: 20kN  Spindle torque: 340Nm at 100–500RPM ... Max. vertical loading: 100kN ... generally t = ≤25mm for Al alloys",
+   "verified": true,
+   "note": "TWI equipment factsheet. Spindle kW not stated."
+  },
+  "fsw_production_gantry_size": {
+   "value": {
+    "x axis": "8 m",
+    "y axis": "3.5 m",
+    "z axis": "1.5 m",
+    "rapid traverse": "up to 40 m / min",
+    "maximum power (axial force)": "50 kN",
+    "total weight": "63 t"
+   },
+   "unit": "Fooke FSW50 3D gantry (Riftec)",
+   "source": "https://www.riftec.de/en/unsere-moeglichkeiten.html",
+   "quote": "Technical details: 3D-capable gantry system Fooke FSW50  x axis: 8 m  y axis: 3.5 m  z axis: 1.5 m  rapid traverse: up to 40 m / min.  maximum power: 50 kN  total weight: 63 t",
+   "verified": true,
+   "note": "Contract FSW shop; welds components up to 8 x 3.5 m, 'welding depths of up to 30 mm'. The page labels the 50 kN force as 'maximum power'."
+  },
+  "esab_legio_thickness_range": {
+   "value": [
+    1.2,
+    65
+   ],
+   "unit": "mm part thickness weldable from one side",
+   "source": "https://ognnews.com/ArticleOGN/421519/New_machine_from_ESAB_is_cost_effective",
+   "quote": "The LEGIO machines are suitable for welding parts ranging in thickness from 1.2 to 65 mm from one side, depending on the materials, and the process requires no special surface preparation.",
+   "verified": true,
+   "note": "Trade-press report of ESAB's LEGIO modular FSW range. No kW or footprint given."
+  },
+  "gmaw_wire_feed_and_speed": {
+   "value": {
+    "semiautomatic wire feed": "2 to 10 m/min (75 – 400 in/min)",
+    "max wire feed": "30 m/min (1200 in/min)"
+   },
+   "unit": "wire feed rate",
+   "source": "https://en.wikipedia.org/wiki/Gas_metal_arc_welding",
+   "quote": "Some wire feeders can reach feed rates as high as 30 m/min (1200 in/min), but feed rates for semiautomatic GMAW typically range from 2 to 10 m/min (75 – 400 in/min).",
+   "verified": true,
+   "note": "Wikipedia citing Nadzam 1997 and Cary & Helzer 2005. Wire feed, not travel speed; general GMAW (mostly steel), not aluminium-specific."
+  },
+  "shipyard_saw_fillet_speed": {
+   "value": [
+    165,
+    230
+   ],
+   "unit": "cm/min travel speed, 4 to 10 mm single-pass fillets (twin-wire tandem SAW, steel)",
+   "source": "https://magazines.marinelink.com/Magazines/MaritimeReporter/201011/page/40",
+   "quote": "High speed fillet welding procedures were developed to deposit 4 to 10mm single pass fillets at travel speeds of up to 230 to 165 cm/min. These results demonstrated repeatable productivity improvements of up to 500% compared to the conventional shipyard practice, without an increase in distortion.",
+   "verified": true,
+   "note": "Maritime Reporter, Nov 2010 (BMT Fleet Technology work). Steel stiffener-to-panel welds; advanced, not typical practice."
+  },
+  "shipyard_steel_manhours_per_ton": {
+   "value": 41.3,
+   "unit": "man-hours manufacturing input per ton of steel",
+   "source": "https://shipjournal.co/index.php/sst/article/download/95/303?inline=1",
+   "quote": "With a steel throughput of 10,464 tons per ship comes a 41.3 man-hours manufacturing input per ton of steel.",
+   "verified": true,
+   "note": "Wanner, Kothe & Eggert, 'Action Plan for Restructuring the Technology of a Medium-Sized Shipyard', Ship Science & Technology. Covers all steel manufacture (cutting, panels, sections, hull), not welding alone; the yard is described as below international standard."
+  }
+ },
+ "machining centre": {
+  "aluminium_5axis_spindle_MAG3": {
+   "value": {
+    "spindle": "33,000 rpm - 130 kW",
+    "pallet": "3,000 x 1,500 mm",
+    "travel": "X: 3,000 mm Y: 1,500 mm Z: 1,000 mm",
+    "rapid traverse": "X: 62,700 mm/min Y / Z 58,000 mm/min",
+    "cutting feedrate": "50,000 mm/min",
+    "max workpiece": "3,000 x 1,500 x 750 mm",
+    "max payload": "3,000 kg"
+   },
+   "unit": "Makino MAG3 5-axis horizontal machining centre",
+   "source": "https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/mag3",
+   "quote": "Pallet: 3,000 x 1,500 mm  X: 3,000 mm Y: 1,500 mm Z: 1,000 mm ... Spindle RPM 33,000 rpm - 130 kW  Rapid Traverse X: 62,700 mm/min Y / Z 58,000 mm/min  Cutting Feedrate 50,000 mm/min  Maximum Workpiece 3,000 x 1,500 x 750 mm  Maximum Payload 3,000 kg",
+   "verified": true,
+   "note": "Manufacturer page; machine for aluminium monolithic aerospace parts. Footprint not given on the page."
+  },
+  "aluminium_removal_rate_80kW": {
+   "value": 5600,
+   "unit": "cm3/min chip-removal rate at peak power, 80 kW (107 hp) 33,000-rpm spindle, aluminium",
+   "source": "https://www.americanmachinist.com/machining-cutting/article/21897815/five-axis-high-flyer-for-aluminum-structures",
+   "quote": "The standard A-Series machines are equipped with a 33,000-rpm HSK-F80 spindle featuring a high-power output of 107 hp (80 kW). At peak power, the A-Series spindle will achieve chip-removal rates up to 5,600 cm3/min (300 in3/min), according to the machine builder.",
+   "verified": true,
+   "note": "American Machinist on Makino MAG A-Series; builder's claim. (The article's own inch figure does not match its cm3 figure.)"
+  },
+  "aluminium_removal_rate_120kW": {
+   "value": 6550,
+   "unit": "cm3/min roughing rate, optional 120-kW spindle, aerospace-grade aluminium",
+   "source": "https://www.americanmachinist.com/machining-cutting/article/21897815/five-axis-high-flyer-for-aluminum-structures",
+   "quote": "These machines can be equipped with an optional 120-kW spindle, according to Makino. This spindle maintains the same maximum rpm of 33,000 but reportedly will deliver 50 percent more power, enabling increased metal-removal roughing rates to as much as 6,550 cm3/min (400 in3/min) in aerospace-grade a[luminum]",
+   "verified": true,
+   "note": "Same article."
+  },
+  "hard_metal_spindle_T2_T4": {
+   "value": {
+    "spindle": "4,000 RPM - 100 kW/1,000 Nm cont.",
+    "T2 pallet": "1,000 mm x 1,250 mm",
+    "T2 travel": "X: 2,000 mm Y: 2,000 mm Z: 1,800 mm",
+    "T2 max payload": "5,000 kg",
+    "T4 pallet": "4,000 x 1,500 mm",
+    "T4 travel": "X: 4,200 mm Y: 2,000 mm Z: 1000 mm",
+    "rapid traverse": "16,000 mm/min"
+   },
+   "unit": "Makino T2 / T4 5-axis horizontal machining centres (titanium)",
+   "source": "https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/t2",
+   "quote": "T2 ... Pallet: 1,000 mm x 1,250 mm  X: 2,000 mm Y: 2,000 mm Z: 1,800 mm ... Spindle RPM 4,000 RPM - 100 kW/1,000 Nm cont.  Rapid Traverse 16,000 mm/min ... Maximum Payload 5,000 kg. (T4 page: Pallet: 4,000 x 1,500 mm  X: 4,200 mm Y: 2,000 mm Z: 1000 mm  Spindle RPM 4,000 RPM - 100 kW/1,000 Nm cont.)",
+   "verified": true,
+   "note": "Manufacturer pages (T4 at https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/t4). High-torque low-speed spindle of the kind used for titanium and hard steels."
+  },
+  "titanium_removal_rate_and_footprint_T2": {
+   "value": {
+    "metal removal": "up to 500 cubic cm of Ti-6Al-4V per minute",
+    "footprint": "7 by 9.8 m"
+   },
+   "unit": "Makino T2",
+   "source": "https://www.machinery.co.uk/content/product-launches/makino-horizontal-machining-centre-is-for-efficient-machining-of-titanium-parts",
+   "quote": "Up to 500 cubic cm of Ti-6Al-4V per minute ... Compact 7 by 9.8 m footprint",
+   "verified": false,
+   "note": "Search-result excerpt only (page returned HTTP 403). The only machine footprint found for a large machining centre."
+  },
+  "steel_removal_rate_record": {
+   "value": {
+    "volume": "1 000 cubic cm in 60 seconds",
+    "mass rate": "8kg of steel per minute"
+   },
+   "unit": "metal removal rate, steel alloy 16MnCr5",
+   "source": "https://metalworkingnews.info/guhring-and-chiron-mill-their-way-into-the-record-books/",
+   "quote": "Guhring and Chiron have set a ground-breaking record: Machining 1 000 cubic cm of steel alloy (16MnCr5) in 60 seconds, which equates to a metal removal rate (MRR) of 8kg of steel per minute. The record was set on a Chiron FZ 16 5-axis machining center using a Guhring RF 100 Speed P tool",
+   "verified": true,
+   "note": "A record demonstration, i.e. an upper bound for steel roughing, not a typical production rate. Spindle kW not stated in the passage read."
+  },
+  "buy_to_fly_plate": {
+   "value": {
+    "example": "10:1",
+    "machined from plate, not unusual": "20:1"
+   },
+   "unit": "buy-to-fly ratio (weight bought : final part weight), aluminium aircraft structure",
+   "source": "https://static.asminternational.org/amp/202403/29/",
+   "quote": "The buy-to-fly ratio is the weight of metal bought divided by the final part weight. For example, if 10 kg of plate is needed to make a 1 kg part, the buy-to-fly ratio is 10:1. In other words, 90% of the plate is turned into machining chips. For parts machined directly from plate, buy-to-fly ratios of 20:1 are not unusual.",
+   "verified": true,
+   "note": "ASM International, Advanced Materials & Processes, Feb/March 2024, p. 29. Aluminium, not steel. The article notes chips and off-cuts are collected for recycling."
+  },
+  "buy_to_fly_by_process": {
+   "value": {
+    "Machining from the forged block": "30 : 1",
+    "Machining from the sections": "12 : 1",
+    "Die forgings": "8:1",
+    "Laser machining": "3:1",
+    "Form casting": "1.4 : 1",
+    "Pressure die-casting": "1.2 : 1",
+    "Additive Manufacturing": "1.2 : 1"
+   },
+   "unit": "buy-to-fly ratio",
+   "source": "https://ph.pollub.pl/index.php/acs/article/download/3237/2802/14959",
+   "quote": "Tab. 1. A comparison of 'buy-to-fly' ratios for various manufacturing technologies: Machining from the forged block 30 : 1; Machining from the sections 12 : 1; Die forgings 8:1; Laser machining 3:1; Form casting 1.4 : 1; Pressure die-casting 1.2 : 1; Additive Manufacturing 1.2 : 1",
+   "verified": true,
+   "note": "Applied Computer Science (Lublin University of Technology) paper on high-speed milling of thin-walled aircraft parts. Material not broken out per row."
+  },
+  "buy_to_fly_thin_wall_frame": {
+   "value": {
+    "initial material": "243 kg",
+    "finished frame": "3.15 kg",
+    "ratio": 77.1,
+    "turned into chips": "98.7%"
+   },
+   "unit": "worked example, milled aircraft frame",
+   "source": "https://ph.pollub.pl/index.php/acs/article/download/3237/2802/14959",
+   "quote": "The weight of the finished frame was 3.15 kg and the weight of the initial material was 243 kg, so the product weight was 1.3% of the initial material. 98.7% of the semi-finished material was changed into chips. Therefore, the 'buy-to-fly' ratio ... was 77.1.",
+   "verified": true,
+   "note": "Same paper; an extreme thin-walled case."
+  },
+  "buy_to_fly_titanium_forging": {
+   "value": "9:1",
+   "unit": "buy-to-fly ratio, forged titanium alloy aerospace components",
+   "source": "https://eprints.whiterose.ac.uk/158586/1/metals-10-00296.pdf",
+   "quote": "a typical buy-to-fly ratio for such components is approximately 9:1, as much of the forged billet is machined to swarf.",
+   "verified": true,
+   "note": "Metals 2020, 10, 296 (University of Sheffield). Titanium forgings; the closest verified figure to 'machined forgings' - nothing found for steel."
+  },
+  "milling_waste_share": {
+   "value": 80,
+   "unit": "% of raw material wasted (as much as), conventional machining such as milling",
+   "source": "https://www.trumpf.com/it_IT/newsroom/storie/seven-ways-to-cut-material-wastage-in-sheet-metal-processing/",
+   "quote": "Conventional machining processes such as milling often waste as much as 80 percent of the raw material.",
+   "verified": true,
+   "note": "Trumpf newsroom story (English text on the it_IT site); a general statement, 'depending on the component being produced'."
+  }
+ },
+ "assembly shop": {
+  "landing_gear_parts_rate_A320": {
+   "value": [
+    10,
+    14
+   ],
+   "unit": "units a week (parts for A320-family landing gear assembly, one Safran plant)",
+   "source": "https://www.theglobeandmail.com/business/article-five-week-strike-by-montreal-area-safran-workers-adds-to-aircraft/",
+   "quote": "The Safran workers produce parts used for the assembly of landing gear at a rate of about 10 to 14 units a week for Airbus's A320 family, Durand said. Other Safran factories also produce the same parts.",
+   "verified": true,
+   "note": "Globe and Mail (Reuters) report on the Safran Mirabel strike. A flow rate through one plant, not assembly hours per gear."
+  },
+  "A320_main_landing_gear_size": {
+   "value": {
+    "height": "3 meters",
+    "width": "1 meter",
+    "weight": "800 kilograms"
+   },
+   "unit": "A320 main landing gear",
+   "source": "https://www.safran-group.com/products-services/main-and-nose-landing-gears-airbus-single-aisle-aircraft-family",
+   "quote": "The main gear specifications include a height of 3 meters, width of 1 meter, and weight of 800 kilograms.",
+   "verified": false,
+   "note": "Search-result excerpt only (Safran page returned HTTP 403)."
+  },
+  "747_position_time_slant1": {
+   "value": 8,
+   "unit": "days in the 'slant 1' final assembly position (Boeing 747, before moving line)",
+   "source": "https://www.informs-sim.org/wsc02papers/139.pdf",
+   "quote": "The plane currently spends a total of 8 days in the slant 1 position ... With the addition of the moving line there will be a reduction of 2 days from the slant 1 position.",
+   "verified": true,
+   "note": "Lu & Sundaram (Boeing), 'Manufacturing Process Modeling of Boeing 747 Moving Line Concepts', Winter Simulation Conference 2002. Time at one assembly position of a wide-body. The paper also mentions completing 'gear swing in the 6 days of FBJ' (final body join)."
+  },
+  "A380_paint_and_cabin": {
+   "value": {
+    "paint": "30 people approximately 10 days",
+    "surface area": "3,150 square meters",
+    "paint mass": "over 500 kilogrammes",
+    "cabin furnishing": "about 33 working days"
+   },
+   "unit": "A380 completion work (Hamburg)",
+   "source": "https://www.asiatraveltips.com/news14/218-EmiratesA380.shtml",
+   "quote": "It takes 30 people approximately 10 days to paint the A380, which has a surface area of 3,150 square meters ... Over 500 kilogrammes of paint is needed just to give the aircraft its white colour. ... It takes about 33 working days to furnish the [cabin]",
+   "verified": true,
+   "note": "Travel-news site reproducing Emirates press material (21 August 2014). Outfitting, not sub-assembly, but the only published labour/time figures found for this stage."
+  }
+ },
+ "building dock": {
+  "737_final_assembly_days_2005": {
+   "value": 11,
+   "unit": "days final assembly (Next-Generation 737, Renton)",
+   "source": "https://boeing.mediaroom.com/2005-01-27-Boeing-Reduces-737-Airplanes-Final-Assembly-Time-by-50-Percent",
+   "quote": "The Boeing Next-Generation 737 airplane is now assembled in 11 days at the company's Renton, Wash., facility, making it the shortest final assembly time of any large commercial jet.",
+   "verified": true,
+   "note": "Boeing press release, 27 Jan 2005 (headline: final assembly time reduced by 50 percent)."
+  },
+  "737_final_assembly_days_2016": {
+   "value": 10,
+   "unit": "days (single 737 in the Renton factory)",
+   "source": "https://en.wikipedia.org/wiki/Boeing_737_Next_Generation",
+   "quote": "In 2016, the monthly production rate was targeted to reach 57 units per month in 2019, even to the factory limit of 63 units later. A single airplane was then produced in the Boeing Renton Factory in 10 days, less than half what it was a few years before.",
+   "verified": true,
+   "note": "Wikipedia (its source, Leeham 11 Oct 2016, is commented out in the wikitext)."
+  },
+  "737_moving_line_speed": {
+   "value": 2,
+   "unit": "inches per minute",
+   "source": "https://boeing.mediaroom.com/2005-01-27-Boeing-Reduces-737-Airplanes-Final-Assembly-Time-by-50-Percent",
+   "quote": "That line moves products from one assembly team to the next at the steady pace of two inches per minute.",
+   "verified": true,
+   "note": "Boeing press release."
+  },
+  "737_production_rate": {
+   "value": {
+    "Sept 2010": 31.5,
+    "2014": 42,
+    "2017 (planned)": 47,
+    "2018 (planned)": 52,
+    "factory limit": 63
+   },
+   "unit": "units per month (Renton)",
+   "source": "https://en.wikipedia.org/wiki/Boeing_737_Next_Generation",
+   "quote": "Boeing was to increase 737 production from 31.5 units per month in September 2010 to 35 in January 2012 and to 38 units per month in 2013. ... Production rate was 42 units per month in 2014, and was planned to reach rates of 47 units per month in 2017 and 52 units per month in 2018. ... even to the factory limit of 63 units later.",
+   "verified": true,
+   "note": "Wikipedia citing Flightglobal and a Boeing press release. Renton runs several lines, so this is the factory rate, not one position."
+  },
+  "737_800_empty_weight": {
+   "value": "91,300 lb / 41,413 kg",
+   "unit": "operating empty weight (OEW), 737-800; length 129 ft 6 in / 39.47 m",
+   "source": "https://en.wikipedia.org/wiki/Boeing_737_Next_Generation",
+   "quote": "OEW | 80,200 lb / 36,378 kg | 83,000 lb / 37,648 kg | 91,300 lb / 41,413 kg | 98,495 lb / 44,677 kg (737-600 / -700 / -800 / -900ER)",
+   "verified": true,
+   "note": "Wikipedia specifications table."
+  },
+  "renton_factory_floor_area": {
+   "value": "1,100,000",
+   "unit": "sq ft floor space",
+   "source": "https://en.wikipedia.org/wiki/Boeing_Renton_Factory",
+   "quote": "The factory covers 1,100,000 square feet of floor space.",
+   "verified": true,
+   "note": "Wikipedia citing Boeing's 'Boeing in Renton' page."
+  },
+  "777_build_days": {
+   "value": 49,
+   "unit": "days build process (777-300ER, 2011)",
+   "source": "https://boeing.mediaroom.com/index.php?s=43&item=2012",
+   "quote": "Additional employee thank-you events will be held as the airplane moves through the 49-day build process.",
+   "verified": true,
+   "note": "Boeing press release, Nov 9, 2011 ('Boeing Begins Work on 1,000th 777'). Counted from wing-spar loading, so it includes major structural assembly, not final assembly alone."
+  },
+  "777_production_rate": {
+   "value": {
+    "2010": 5,
+    "mid-2011": 7,
+    "early 2013 to 2016": 8.3,
+    "2017": 7,
+    "Aug 2017": 5
+   },
+   "unit": "aircraft per month",
+   "source": "https://en.wikipedia.org/wiki/Boeing_777",
+   "quote": "In 2010, Boeing announced plans to increase production from 5 aircraft per month to 7 aircraft per month by mid-2011, and 8.3 per month by early 2013. ... In January 2016, Boeing confirmed plans to reduce the production rate of the 777 family from 8.3 per month to 7 per month in 2017 ... In August 2017, Boeing was scheduled to drop 777 production again to five per month.",
+   "verified": true,
+   "note": "Wikipedia citing Flightglobal."
+  },
+  "777_empty_weight": {
+   "value": {
+    "777-300ER": "371,600 lb",
+    "777-300 (Rolls-Royce, tri-class)": "155.72 t",
+    "777-200 (similarly configured)": "139.38 t"
+   },
+   "unit": "operating empty weight",
+   "source": "https://en.wikipedia.org/wiki/Boeing_777",
+   "quote": "Its operating empty weight is 371,600 lb. [777-300ER] ... Its operating empty weight with Rolls-Royce engines in typical tri-class layout is 155.72 t compared to 139.38 t for a similarly configured -200.",
+   "verified": true,
+   "note": "Wikipedia citing Aviation Week (2004) and Flight International (1997)."
+  },
+  "747_build_days_1997": {
+   "value": 43,
+   "unit": "days to build a jumbo jet (747, Everett)",
+   "source": "https://www.csmonitor.com/1997/1029/102997.us.us.2.html",
+   "quote": "Over the 43 days it takes to build a jumbo jet, workers here fill in a bar chart each time one of 14,000 individual jobs is completed.",
+   "verified": true,
+   "note": "Christian Science Monitor, Oct. 29, 1997, 'Building a 747: 43 Days and 3 Million Fasteners'."
+  },
+  "747_final_assembly_flow_days": {
+   "value": {
+    "traditional": 24,
+    "moving-line target": 18
+   },
+   "unit": "days final assembly flow time (747)",
+   "source": "https://www.informs-sim.org/wsc02papers/139.pdf",
+   "quote": "reducing cost and flow time from the traditionally 24 days to the targeted possible 18 days.",
+   "verified": true,
+   "note": "Boeing authors, Winter Simulation Conference 2002. Final assembly line only."
+  },
+  "747_8_flow_days_2015": {
+   "value": 112,
+   "unit": "flow days for production (747-8), six production bays",
+   "source": "https://airwaysmag.com/legacy-posts/photos-a-boeing-747-factory-tour",
+   "quote": "There are six production bays where the Queen of the Skies is assembled, and it takes about 112 flow days for production currently; this is about two-thirds of the time it use to take.",
+   "verified": true,
+   "note": "Airways magazine factory tour (2015). Whole production flow, not final assembly only. Same article: 'the 747 Factory will only produce 16 aircraft per year or 1.3 per month ... compared to 8.3 aircraft per month currently for the 777'."
+  },
+  "747_8_production_rate": {
+   "value": {
+    "before April 2013": 2,
+    "April 2013": 1.75,
+    "Oct 2013": 1.5,
+    "2016": 1,
+    "from Sept 2016": 0.5
+   },
+   "unit": "aircraft per month",
+   "source": "https://en.wikipedia.org/wiki/Boeing_747-8",
+   "quote": "Production was initially decreased from 2 to 1.75 aircraft per month in April 2013 and then reduced further to 1.5 aircraft per month in October 2013. ... reduce production to one aircraft per month in 2016 ... reducing 747-8 production to 0.5 per month beginning in September 2016",
+   "verified": true,
+   "note": "Wikipedia citing Flight Global and WSJ. Demand-limited rates."
+  },
+  "747_8_empty_weight": {
+   "value": {
+    "747-8I": "485,300 lb",
+    "747-8F": "434,600 lb"
+   },
+   "unit": "operating empty weight (OEW)",
+   "source": "https://en.wikipedia.org/wiki/Boeing_747-8",
+   "quote": "OEW | 485300 lb | 434600 lb (747-8I / 747-8F)",
+   "verified": true,
+   "note": "Wikipedia specifications table citing Boeing's 747-8 Airplane Characteristics for Airport Planning. The Boeing 747 article infobox also gives 'empty weight lb=375100' for an earlier variant."
+  },
+  "everett_main_building": {
+   "value": {
+    "floor area": "98.3 acres",
+    "volume": "472,370,319 cubic feet",
+    "height": "114 ft",
+    "hangar doors": "six, each 82 ft tall and 300 to 350 ft wide",
+    "roof trusses": "300 to 350 ft long",
+    "columns": "90 ft tall",
+    "cranes": "26 overhead cranes on 31 mi of track"
+   },
+   "unit": "Boeing Everett Factory main assembly building",
+   "source": "https://en.wikipedia.org/wiki/Boeing_Everett_Factory",
+   "quote": "Main building: 98.3 acres ... volume Main building: 472,370,319 cu ft ... The main building is 114 ft tall and has six hangar doors that are each 82 ft tall and 300 to 350 ft wide. ... roof trusses, which are 300 to 350 ft long and are supported by columns that are 90 ft tall.",
+   "verified": true,
+   "note": "Wikipedia citing Boeing, Guinness World Records and a 2004 seismic-upgrade paper. Door and truss widths give the clear span of one wide-body assembly bay. Overall length x width of the building is not stated."
+  },
+  "everett_line_speed": {
+   "value": 1.5,
+   "unit": "in per minute",
+   "source": "https://en.wikipedia.org/wiki/Boeing_Everett_Factory",
+   "quote": "The production lines move at a rate of 1.5 in per minute and are guided by 26 overhead cranes that move along 31 mi of track.",
+   "verified": true,
+   "note": "Wikipedia citing CNN 2018."
+  },
+  "A320_production_rate": {
+   "value": {
+    "2015": 42,
+    "2017 (expected)": 50,
+    "mid-2019 target": 60,
+    "2021 aim": 63,
+    "Mobile line, Jan 2019": 4.5,
+    "Tianjin line": "six per month from four"
+   },
+   "unit": "aircraft per month",
+   "source": "https://en.wikipedia.org/wiki/Airbus_A320_family",
+   "quote": "Airbus produced a total of 42 A320s per month in 2015, and expected to increase to 50 per month in 2017. ... As Airbus targets a 60 monthly global production rate by mid-2019, the Tianjin line delivered 51 in 2016 and it could assemble six per month from four ... By January 2019, Mobile was outputting 4.5 A320s per month, raising to 5 by the end of the year.",
+   "verified": true,
+   "note": "Wikipedia. The Mobile and Tianjin figures are for a single final assembly line each, the best published per-line rate found."
+  },
+  "A320_final_assembly_working_days": {
+   "value": {
+    "before": 43,
+    "target": 25
+   },
+   "unit": "working days, A320-family final-assembly process",
+   "source": "https://flightglobal.com/airbus-cuts-time-to-build-a320/60086.article",
+   "quote": "Airbus has worked to slash its A320 family final-assembly process from 43 working days to around 25.",
+   "verified": false,
+   "note": "Search-result excerpt only; the FlightGlobal article (3 May 2005) is behind a paywall and the sentence was not visible in the fetched page."
+  },
+  "A320_empty_weight": {
+   "value": {
+    "A318": "39.5 t",
+    "A319": "40.8 t",
+    "A320": "42.6 t",
+    "A321": "48.5 t"
+   },
+   "unit": "operating empty weight (OEW)",
+   "source": "https://en.wikipedia.org/wiki/Airbus_A320_family",
+   "quote": "OEW | 39.5 t | 40.8 t | 42.6 t | 48.5 t",
+   "verified": true,
+   "note": "Wikipedia specifications table (columns A318 / A319 / A320 / A321)."
+  },
+  "A380_assembly_hall": {
+   "value": [
+    490,
+    250,
+    46
+   ],
+   "unit": "m (length, width, height) of the A380 assembly building, Toulouse",
+   "source": "https://www.airbus.com/en/newsroom/press-releases/2004-05-airbus-a380-assembly-site-is-opened-by-french-prime-minister",
+   "quote": "The Airbus A380 assembly building is one of the largest in the world, measuring 490m by 250 m, with a height of 46 m. It is the largest of several buildings on the site which, together, incorporate more than 32,000 tonnes of steel ... plus 250,000 cubic metres of concrete.",
+   "verified": true,
+   "note": "Airbus press release, May 2004 (Jean-Luc Lagardere plant)."
+  },
+  "A380_production_rate": {
+   "value": {
+    "peak (2012 and 2014)": "30 per year",
+    "July 2012": "3 aircraft per month",
+    "facility design rate": "four A380s per month",
+    "planned full rate (2006 plan)": "45 aircraft per year"
+   },
+   "unit": "aircraft per period",
+   "source": "https://en.wikipedia.org/wiki/Airbus_A380",
+   "quote": "Production peaked at 30 per year in both 2012 and 2014 ... As of July 2012, production was 3 aircraft per month. ... Airbus sized the production facilities and supply chain for a production rate of four A380s per month.",
+   "verified": true,
+   "note": "Wikipedia."
+  },
+  "A380_assembly_to_delivery_days": {
+   "value": [
+    65,
+    80
+   ],
+   "unit": "days for 800 workers to assemble, install, test, paint, furnish and deliver one A380",
+   "source": "https://www.asiatraveltips.com/news14/218-EmiratesA380.shtml",
+   "quote": "It takes 800 workers between 65 and 80 days to assemble, install, test, paint, furnish and deliver an Emirates Airbus A380.",
+   "verified": true,
+   "note": "Travel-news site reproducing Emirates press material (2014). Covers Toulouse assembly plus Hamburg paint and cabin."
+  },
+  "A380_station_assembly_days": {
+   "value": 7.5,
+   "unit": "working days from components arriving in Toulouse to conclusion of assembly",
+   "source": "https://www.flightglobal.com/towards-toulouse/48371.article",
+   "quote": "From the components arriving in Toulouse to the conclusion of the assembly takes just seven and a half working days",
+   "verified": false,
+   "note": "Search-result excerpt only; attribution to this FlightGlobal article is uncertain and the page is paywalled. Another excerpt in the same search said final assembly 'takes about 95 business days'. Treat as unconfirmed."
+  },
+  "A380_empty_weight": {
+   "value": "285 t",
+   "unit": "operating empty weight (OEW)",
+   "source": "https://en.wikipedia.org/wiki/Airbus_A380",
+   "quote": "OEW | 285 t",
+   "verified": true,
+   "note": "Wikipedia specifications table. MTOW 575 t, overall height 24.09 m in the same table."
+  },
+  "liberty_ship_build_days": {
+   "value": {
+    "first ships": 230,
+    "Patrick Henry": 244,
+    "median by 1943": 39,
+    "record (Robert E. Peary, to launch)": "4 days and 15 1/2 hours"
+   },
+   "unit": "days to build",
+   "source": "https://en.wikipedia.org/wiki/Liberty_ship",
+   "quote": "The first ships required about 230 days to build (Patrick Henry took 244 days), but the median production time per ship dropped to 39 days by 1943. The record was set by SS Robert E. Peary, which was launched 4 days and 15 1/2 [hours after the keel was laid]",
+   "verified": true,
+   "note": "Wikipedia citing Davies 2004. Welded, prefabricated wartime series production."
+  },
+  "liberty_ship_size_and_programme": {
+   "value": {
+    "displacement": "14,245 long tons",
+    "tonnage": "7,176 GRT, 10,865 DWT",
+    "length": "441 ft 6 in",
+    "beam": "56 ft 10.75 in",
+    "programme": "2,710 ships by eighteen shipyards between 1941 and 1945 (an average of three ships every two days)"
+   },
+   "unit": "Liberty ship",
+   "source": "https://en.wikipedia.org/wiki/Liberty_ship",
+   "quote": "tonnage 7,176 GRT, 10,865 DWT | displacement 14,245 LT | length 441 ft 6 in | beam 56 ft 10.75 in ... Eighteen American shipyards built 2,710 Liberty ships between 1941 and 1945 (an average of three ships every two days)",
+   "verified": true,
+   "note": "Wikipedia infobox. Displacement is loaded; light-ship weight is not given there."
+  },
+  "frigate_dock_time": {
+   "value": 4.5,
+   "unit": "months between keel laying on the dry-dock floor and launch (Type 054A frigate, Hudong-Zhonghua, 2024)",
+   "source": "https://maritimeindia.org/wp-content/uploads/2025/01/HDZH-SETS-A-NEW-RECORD-FOR-TIME-TAKEN-TO-CONSTRUCT-FRIGATES.pdf",
+   "quote": "It can thus be seen, that the time elapsed between keel laying on the dock floor and launch of the vessels is an amazing four and a half months. ... At its infancy, the yard has set a new benchmark for speed of construction of a frigate sized vessel",
+   "verified": true,
+   "note": "National Maritime Foundation (India) note by Rear Admiral Monty Khanna (Retd), based on satellite imagery (keel laying assessed as mid-August 2024, dock flooded 27 December 2024). Ships launched with 'a high proportion of outfitting completed'; pre-fabricated modules are built beside the dock beforehand. Described by the author as a record, not typical."
+  },
+  "frigate_size_type_054A": {
+   "value": {
+    "displacement": "3,963 tonnes (full)",
+    "length": "134 m",
+    "beam": "16 m"
+   },
+   "unit": "Type 054A frigate",
+   "source": "https://en.wikipedia.org/wiki/Type_054A_frigate",
+   "quote": "displacement = 3,963 tonnes (full) | length = 134 m | beam = 16 m",
+   "verified": true,
+   "note": "Wikipedia infobox citing Jane's Fighting Ships 2015. Full-load, not light-ship."
+  },
+  "patrol_vessel_build_dates": {
+   "value": {
+    "steel cut": "10 October 2014",
+    "launched": "20 August 2016",
+    "displacement": "2,000 tonnes",
+    "length": "90.5 m"
+   },
+   "unit": "HMS Forth (River-class Batch 2 offshore patrol vessel, BAE Govan)",
+   "source": "https://en.wikipedia.org/wiki/HMS_Forth_(P222)",
+   "quote": "laid_down = 10 October 2014 (steel cut) | launched = 20 August 2016 ... displacement = 2,000 tonnes | length = 90.5 m",
+   "verified": true,
+   "note": "Wikipedia infobox. Steel cut to launch (all hull construction), not berth time alone; a slow naval programme."
+  },
+  "covered_building_dock_dimensions": {
+   "value": {
+    "first dock (1987)": "370 meters long, 101,5 meters wide and 60 meters high; extended by an additional 100 meters in 1990/91",
+    "second dock (2004), announced extension": "504 meters long, 125 meters wide, 75 meters high",
+    "output": "three cruise ships a year"
+   },
+   "unit": "Meyer Werft roofed dry docks, Papenburg",
+   "source": "https://en.wikipedia.org/wiki/Meyer_Werft",
+   "quote": "The first covered dock was inaugurated in 1987 and was 370 meters long, 101,5 meters wide and 60 meters high. In 1990/91 the dock was extended by an additional 100 meters. In 2004, a second covered dock was built, which is announced to be extended to a full-length of 504 meters, a width of 125 meters and height of 75 meters ... Meyer Werft will as a result of this be able to build three cruise ships a year.",
+   "verified": true,
+   "note": "Wikipedia (the three-ships-a-year sentence cites Spiegel Online 2008). Large cruise-ship docks, far above the 100-10,000 t class."
+  },
+  "shipyard_steel_throughput_per_ship": {
+   "value": 10464,
+   "unit": "tons of steel per ship (product/chemical tankers, medium-sized shipyard)",
+   "source": "https://shipjournal.co/index.php/sst/article/download/95/303?inline=1",
+   "quote": "With a steel throughput of 10,464 tons per ship comes a 41.3 man-hours manufacturing input per ton of steel.",
+   "verified": true,
+   "note": "Wanner, Kothe & Eggert, Ship Science & Technology. The paper says the yard needed 2.5 ships per year to break even and planned 'four to five ships per year'; it does not state tonnes per dock per year directly."
+  },
+  "shipyard_ships_per_year": {
+   "value": {
+    "break-even": 2.5,
+    "planned": [
+     4,
+     5
+    ]
+   },
+   "unit": "ships per year (medium-sized shipyard, about 10,464 tons steel each)",
+   "source": "https://shipjournal.co/index.php/sst/article/download/95/303?inline=1",
+   "quote": "The economic loss is compensated when 2.5 ships are built per year and this should be reached by 2008. ... to raise the shipyard's output to four to five ships per year.",
+   "verified": true,
+   "note": "Same paper. Yard-level output; number of docks or berths not stated."
+  },
+  "shipyard_manhours_per_cgt": {
+   "value": {
+    "steel, per ton of steel": 41.3,
+    "steel, per CGT": 21.3,
+    "with 40% outfitting, per CGT": 35.5,
+    "international best practice, per CGT": 14
+   },
+   "unit": "man-hours",
+   "source": "https://shipjournal.co/index.php/sst/article/download/95/303?inline=1",
+   "quote": "That is 21.3 man-hours per ton of steel based on CGT. Including an outfitting expenditure of 40%, the manufacturing expenses are 35.5 man-hours per CGT and, therefore, 2.5 times the international standard (best practise 14 manhours/ ton CGT).",
+   "verified": true,
+   "note": "Same paper."
+  },
+  "shipyard_cgt_per_person": {
+   "value": {
+    "Germany": [
+     48.1,
+     52.8,
+     58.8
+    ],
+    "Italy": [
+     41.6,
+     34.1,
+     41.9
+    ],
+    "Poland": [
+     null,
+     null,
+     22.6
+    ],
+    "Korea": [
+     62.5,
+     71.0,
+     79.9
+    ],
+    "Japan": [
+     77.0,
+     82.8,
+     92.4
+    ]
+   },
+   "unit": "CGT/person, 3-year rolling average (1994-96, 1995-97, 1996-98)",
+   "source": "https://nippon.zaidan.info/seikabutsu/2001/00831/contents/00009.htm",
+   "quote": "Average Shipyard Productivity (see Drewry Shipbuilding Report Table 6.1) Country | 3 Year Rolling Average Productivity (CGT/person) | 1994-96 | 1995-97 | 1996-98 — Germany 48.1 52.8 58.8; Italy 41.6 34.1 41.9; Poland n/a n/a 22.6; Korea 62.5 71.0 79.9; Japan 77.0 82.8 92.4. Sources: LR Fleet Statistics for CGT output and OECD for manning",
+   "verified": true,
+   "note": "Nippon Foundation library copy of a 2001 shipbuilding report quoting Drewry / OECD manning data. CGT per person per year."
+  },
+  "naval_shipbuilding_manhours_per_tonne": {
+   "value": {
+    "programme actual": 150,
+    "benchmark": 80
+   },
+   "unit": "man-hours per tonne (Australian naval shipbuilding programme)",
+   "source": "https://www.minister.defence.gov.au/transcripts/2014-07-29/minister-defence-doorstop-defence-industry-conference-2014-adelaide",
+   "quote": "a shipbuilding program was operating at 150 man-hours per tonne in the face of a benchmark of about 80",
+   "verified": false,
+   "note": "Search-result excerpt only (search-engine paraphrase of a 2014 ministerial transcript; the page could not be fetched). Naval work, much higher than commercial."
+  },
+  "starship_dry_mass": {
+   "value": "roughly 100 t",
+   "unit": "dry mass of the Starship upper stage (ship)",
+   "source": "https://en.wikipedia.org/wiki/SpaceX_Starship_(spacecraft)",
+   "quote": "Elon Musk stated in 2021 that the vehicle had a dry mass of roughly 100 t.",
+   "verified": true,
+   "note": "Wikipedia citing a 2021 Everyday Astronaut interview. The infobox footnote also uses 'approximate empty mass (100,000 kg)'."
+  },
+  "starship_ship_dimensions": {
+   "value": {
+    "Block 2 height": "52.1 m",
+    "Block 1 height": "50.3 m",
+    "diameter": "9 m",
+    "hull ring": "9 m diameter, 1.83 m tall, 3.97 mm thick (301 stainless steel)"
+   },
+   "unit": "Starship upper stage",
+   "source": "https://en.wikipedia.org/wiki/SpaceX_Starship_(spacecraft)",
+   "quote": "The now retired Block 2 version of Starship was 52.1 m tall, 9 m wide ... The retired Block 1 ... was only 50.3 m tall. ... rolls of 301 stainless steel, which are unrolled, cut, and welded along an edge to create a cylinder of 9 m diameter, 1.83 m tall, and 3.97 mm thick",
+   "verified": true,
+   "note": "Wikipedia."
+  },
+  "starship_production_goal_per_day": {
+   "value": 1,
+   "unit": "Ship per day (long-term goal, Starfactory)",
+   "source": "https://www.space.com/spacex-starship-one-a-day-starfactory",
+   "quote": "\"This will enable us to increase our production rate significantly as we build toward our long-term goal of producing one Ship per day.\"",
+   "verified": true,
+   "note": "Space.com, 8 June 2024, quoting SpaceX's Flight 4 livestream. A stated goal, not an achieved rate. Wikipedia (SpaceX Starbase) repeats: 'Peak production at Starfactory is planned to be one Ship per day.'"
+  },
+  "starship_production_goal_8_hours": {
+   "value": 8,
+   "unit": "hours per Starship (hiring goal stated on livestream)",
+   "source": "https://payloadspace.com/spacex-leadership-map-out-the-future-of-the-starship-program/",
+   "quote": "SpaceX broadcaster Kate Tice advertised that the company is hiring to meet its goal of building a Starship every 8 hours ... Quick math: 3 Starships per day x 365 days = 1,095 Starships built per year.",
+   "verified": true,
+   "note": "Payload, Nov 2024. Goal only. Same article: SpaceX 'will end 2024 with four (or five) Starship launches', with 25 launches targeted for 2025."
+  },
+  "starship_gigabay_design_rate": {
+   "value": 1000,
+   "unit": "Starships per year (design rate of planned 'gigabay')",
+   "source": "https://www.yahoo.com/news/elon-musk-build-enormous-texas-144308533.html",
+   "quote": "He said the building, designed for 1,000 Starships per year, would be \"by some measures the biggest structure in the world\".",
+   "verified": true,
+   "note": "The Telegraph via Yahoo, May 30, 2025, reporting Musk's Starbase talk. Design target, not achieved."
+  },
+  "starship_current_cadence": {
+   "value": [
+    2,
+    3
+   ],
+   "unit": "weeks per ship (stated current capability, May 2025)",
+   "source": "https://www.vozpopuli.com/indux/en/spacex-is-building-a-factory-for-1000-starships-a-year-and-rockets-are-starting-to-look-like-assembly-line-infrastructure/6290/",
+   "quote": "In May 2025, Musk said the nearer-term production capability was about one ship every two or three weeks, while describing an eventual capacity of 1,000 ships a year—about three per day.",
+   "verified": false,
+   "note": "Search-result excerpt only; page not opened and the attribution of the excerpt to this URL is uncertain. The only figure found for the actual (not target) build cadence."
+  },
+  "starfactory_floor_area_added": {
+   "value": "100,000",
+   "unit": "square feet extra factory floor (9,290 sq m), $100 million",
+   "source": "https://newatlas.com/space/starfactory-starbase-starship-megaship-factory/",
+   "quote": "the addition of Starfactory will give Starbase an extra 100,000 square feet (9,290 sq m) of factory floor",
+   "verified": true,
+   "note": "New Atlas, June 08, 2024. Space.com quotes SpaceX on the same day as saying the new phase gives 'several 100,000 more square feet of space', so the 100,000 figure may be an understatement; total Starfactory area was not verified."
+  }
+ },
+ "not_found": [
+  "cutting table: no verified nesting utilisation / offcut share from a primary study (only a machine builder's 'over 30%' example and an unverified 60-70% / 82-90% blog figure). Tried searches for nesting material utilisation studies; Wikipedia 'Nesting (process)' has no numbers.",
+  "cutting table: waterjet cutting speed and pump power for aluminium - KMT speed-data PDF returned 404, Hypertherm/OMAX waterjet pages have no speed table; only an unverified search excerpt recorded. Wikipedia 'Water jet cutter' has no speeds.",
+  "cutting table: cutting speed for aluminium from a laser manufacturer's own data sheet (Trumpf/Bystronic publish capacity and power, not speed charts); the speed chart recorded is from a trade site.",
+  "cutting table: throughput in tonnes per hour or m2 per hour - not published; only m/min of cut.",
+  "panel former: cycle time per panel for stretch forming or roll forming of aircraft skins - nothing published (searched Cyril Bath, Beckwood, stretch-forming notes).",
+  "panel former: installed electrical power and overall footprint of an aircraft-skin stretch press (Cyril Bath data sheets not openly available); large skin presses (1,000+ ton) specifications not found.",
+  "panel former: scrap / trim share for stretch-formed skins.",
+  "welding bay: MIG/GMAW travel speed tables for aluminium sheet (Lincoln Electric aluminium GMAW guide PDF returned 403; ESAB pages had no table).",
+  "welding bay: installed electrical power (connected load) and footprint of a production FSW machine - only spindle power and working envelope are published.",
+  "welding bay: shipyard welding productivity in metres per hour per welder, and welding-only man-hours per tonne - not found (DTIC/NSRP PDFs returned 403).",
+  "welding bay: ESAB LEGIO spindle power and dimensions (brochure not found).",
+  "machining centre: metal removal rate for steel on a production large machining centre (only a record demonstration found); spindle power for that record not confirmed.",
+  "machining centre: verified machine footprint (the Makino T2 '7 by 9.8 m' is from an unopened page); DMG Mori large-machine data not retrieved.",
+  "machining centre: buy-to-fly ratio specifically for machined steel parts or steel landing-gear forgings - only aluminium plate (10:1 to 20:1), generic process table (forged block 30:1, die forgings 8:1) and titanium forgings (9:1) found.",
+  "machining centre: electrical energy per kg removed (kWh/kg).",
+  "assembly shop: landing gear assembly time (hours or days per shipset) - not published; Safran pages returned 403 and Aviation Week is paywalled. Only a parts flow rate of 10-14 units a week found.",
+  "assembly shop: floor area, power or labour hours for aircraft sub-assembly shops.",
+  "building dock (aircraft): verified current A320 final-assembly days (FlightGlobal 2005 article paywalled; Airbus production page has no figure); verified A380 final-assembly station days; overall length x width of the Boeing Everett main building and of a single Everett bay (only door/truss span and height).",
+  "building dock (aircraft): A380 and 747-400 final-assembly days from Boeing/Airbus primary pages.",
+  "building dock (ships): tonnes of steel per year per building dock - not published as such (only tons per ship and ships per year for one yard); OECD CGT document (one.oecd.org C/WP6(2006)7) returned 403.",
+  "building dock (ships): typical months on dock/slipway for ordinary commercial ships of 100-10,000 t light weight, and dry-dock dimensions for small yards - only the Type 054A record (4.5 months), a patrol vessel's steel-cut-to-launch dates and Meyer Werft's very large docks found. A forum figure (4,000 ton freighter, 9 months to a year on Tyneside) was seen but not recorded as it is not citable.",
+  "building dock (ships): light-ship weight of the Liberty ship and Type 054A (only loaded displacement published in the pages read).",
+  "building dock (spacecraft): actual achieved Starship build cadence from a primary source - only stated goals (one per day, one per 8 hours, 1,000 per year) verified; the 'one ship every two or three weeks' figure is from an unverified excerpt. Mega Bay / Starfactory building dimensions not found in the Wikipedia articles read."
+ ]
+}

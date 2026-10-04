@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Dross
+  kind: by-product
+  description: "The skin of oxide skimmed off molten aluminium."

@@ -62,6 +62,19 @@ th:first-child, td:first-child { padding-left: 4px; }
 td.num { text-align: right; }
 .problems { border: 1px solid var(--bad); color: var(--bad); padding: 8px 12px; margin: 8px 12px; border-radius: 4px; }
 .problems li { margin: 2px 0; }
+tr.gap td:last-child { color: var(--bad); font-weight: 600; } tr.gap td:first-child { box-shadow: inset 3px 0 0 var(--bad); }
+tr.okr td:last-child { color: var(--head); }
+.chain { display: flex; flex-direction: column; align-items: stretch; max-width: 760px; margin: 10px 0 18px; }
+.chain .node { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 10px 14px; display: flex; gap: 14px; align-items: baseline; }
+.chain .node b { color: var(--head); min-width: 150px; } .chain .node .num { font-size: 20px; font-weight: 700; min-width: 64px; text-align: right; } .chain .node .say { color: var(--dim); }
+.chain .node.empty { border-style: dashed; border-color: var(--bad); } .chain .node.empty .num { color: var(--bad); }
+.chain .link { display: flex; align-items: center; gap: 12px; padding: 2px 0 2px 60px; min-height: 44px; }
+.chain .link .pipe { width: 6px; align-self: stretch; border-radius: 3px; background: var(--head); }
+.chain .link.none .pipe { background: repeating-linear-gradient(var(--bad) 0 6px, transparent 6px 12px); } .chain .link.some .pipe { background: #e0a030; }
+.chain .link .bar { width: 160px; height: 10px; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: var(--bg); } .chain .link .bar i { display: block; height: 100%; background: var(--head); }
+.chain .link.none .bar i { background: var(--bad); } .chain .link.some .bar i { background: #e0a030; }
+.chain .link .what { flex: 1; } .chain .link.none .what { color: var(--bad); font-weight: 600; }
+.chain .side { color: var(--dim); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 8px 0 4px; }
 .file { color: var(--dim); font-size: 12px; }
 p { margin: 4px 0 8px; max-width: 80ch; }
 .ico { display: inline-block; vertical-align: middle; line-height: 0; color: var(--head); }
@@ -180,7 +193,25 @@ const modBySlug = Object.fromEntries(DATA.modules.map(m => [m.slug, m]));
 const goodMatches = (g, q) => !q || q.split(/\s+/).every(w => `${g.identity.name} ${g.identity.kind} ${g.identity.description || ""}`.toLowerCase().includes(w));
 const goodsUnder = (id, q) => DATA.goods.filter(g => g.under === id && goodMatches(g, q));
 const goodBySlug = Object.fromEntries(DATA.goods.map(g => [g.slug, g]));
-const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length;
+// And parts: under their standard by hull; a part made of parts has them under it.
+const topParts = hull => DATA.parts.filter(p => p.hull === hull && !p.parent);
+const subParts = code => DATA.parts.filter(p => p.parent === code);
+const partByCode = Object.fromEntries(DATA.parts.map(p => [p.slug, p]));
+const partHulls = id => [...new Set(DATA.parts.filter(p => p.under === id).map(p => p.hull))];
+// And mill stock.
+const stockUnder = (id, q) => DATA.mill_stock.filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.code} ${x.identity.name}`.toLowerCase().includes(w))));
+const stockByCode = Object.fromEntries(DATA.mill_stock.map(x => [x.slug, x]));
+const perUnit = x => x.unit === "kg" ? "by weight" : `${+x.weight.toPrecision(3)} kg/${x.unit === "m2" ? "m²" : "m"}`;
+const kg = v => v >= 1000 ? `${(+(v / 1000).toPrecision(3)).toLocaleString()} t` : `${(+v.toPrecision(3)).toLocaleString()} kg`;
+// A table of parts: code, name, how many, size, mass (each, and all of them), what each is made of.
+const partsTable = (ps, countHead) => { const size = p => { const f = p.physical || {}; return f.length !== undefined ? `${f.length} × ${f.width} × ${f.height} m` : ""; }; const any = k => ps.some(k), n = p => (p.fit || {}).count || 1;
+  const all = ps.reduce((s, p) => s + (p.mass || 0) * n(p), 0);
+  return `<table><tr><th>Code</th><th>Part</th><th>${countHead}</th><th>Mass of one</th><th>Mass of all</th><th>Length × width × height</th><th>Surface</th>${any(p => p.identity.description) ? "<th>Description</th>" : ""}<th>Made of</th></tr>` + ps.map(p => { const subs = subParts(p.slug), st = stockByCode[(p.made_from || {}).item]; return `<tr><td style="white-space:nowrap">${esc(p.identity.code)}</td><td><a data-k="${esc("part:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${n(p)}</td><td style="white-space:nowrap">${p.mass !== undefined ? kg(p.mass) : ""}</td><td style="white-space:nowrap">${p.mass !== undefined ? kg(p.mass * n(p)) : ""}</td><td style="white-space:nowrap">${size(p)}</td><td style="white-space:nowrap">${(p.shape || {}).surface_area !== undefined ? p.shape.surface_area.toLocaleString() + " m²" : ""}</td>${any(q2 => q2.identity.description) ? `<td>${esc(p.identity.description || "")}</td>` : ""}<td>${subs.length ? `${subs.length} parts` : st ? `<a data-k="${esc("stock:" + st.slug)}">${esc(st.identity.name)}</a>` : `<span class="meta">not yet said</span>`}</td></tr>`; }).join("") + `<tr><th>Total</th><th>${ps.length} parts</th><th>${ps.reduce((s, p) => s + n(p), 0)}</th><th></th><th>${all ? kg(all) : ""}</th><th></th><th></th>${any(p => p.identity.description) ? "<th></th>" : ""}<th></th></tr></table>`; };
+// And the hulls.
+const hullMatches = (x, q) => !q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.description || ""}`.toLowerCase().includes(w));
+const hullsUnder = (id, q) => DATA.hulls.filter(x => x.under === id && hullMatches(x, q));
+const hullBySlug = Object.fromEntries(DATA.hulls.map(x => [x.slug, x]));
+const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length + hullsUnder(id, "").length + partHulls(id).length + stockUnder(id, "").length;
 // Anything that flows, by its element symbol or its material's or good's file name: its name, and a link to it.
 const itemKey = i => elBySymbol[i] ? "el:" + i : matBySlug[i] ? "mat:" + i : goodBySlug[i] ? "good:" + i : null;
 const itemName = i => (elBySymbol[i] || matBySlug[i] || goodBySlug[i] || { identity: { name: i } }).identity.name;
@@ -247,7 +278,7 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0));
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0 || hullsUnder(s.id, q).length > 0 || stockUnder(s.id, q).length > 0));
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
@@ -261,6 +292,19 @@ function rows(q) {
           for (const m of materialsUnder(s.id, q)) out.push({ k: "mat:" + m.slug, depth: depth + 1, kind: "mat", mat: m });
           for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
           for (const m of modulesUnder(s.id, q)) out.push({ k: "mod:" + m.slug, depth: depth + 1, kind: "maker", label: m.identity.name, ticker: m.identity.step, leaf: true });
+          for (const x of stockUnder(s.id, q)) out.push({ k: "stock:" + x.slug, depth: depth + 1, kind: "maker", label: `${x.identity.code} ${x.identity.name}`, leaf: true });
+          for (const hl of partHulls(s.id)) {
+            const hk = "pg:" + hl, hit = p => !q || q.split(/\s+/).every(w => `${p.identity.code} ${p.identity.name} ${p.identity.description || ""}`.toLowerCase().includes(w));
+            const tops = topParts(hl).filter(p => hit(p) || subParts(p.slug).some(hit));
+            if (q && !tops.length) continue;
+            out.push({ k: hk, depth: depth + 1, kind: "maker", label: (hullBySlug[hl] || { identity: { name: hl } }).identity.name, ticker: `${topParts(hl).length} parts`, leaf: false });
+            if (open.has(hk) || q) for (const p of tops) {
+              const pk = "part:" + p.slug, subs = subParts(p.slug), n = (p.fit || {}).count;
+              out.push({ k: pk, depth: depth + 2, kind: "maker", label: `${p.identity.code} ${p.identity.name}`, ticker: n > 1 ? `× ${n}` : "", leaf: !subs.length });
+              if (open.has(pk) || q) for (const sp of subs.filter(hit)) out.push({ k: "part:" + sp.slug, depth: depth + 3, kind: "maker", label: `${sp.identity.code} ${sp.identity.name}`, leaf: true });
+            }
+          }
+          for (const x of hullsUnder(s.id, q)) out.push({ k: "hull:" + x.slug, depth: depth + 1, kind: "maker", label: x.identity.name, ticker: "hull", leaf: true });
           for (const g of goodsUnder(s.id, q)) out.push({ k: "good:" + g.slug, depth: depth + 1, kind: "maker", label: g.identity.name, ticker: g.identity.kind, leaf: true });
         }
       }
@@ -306,6 +350,10 @@ function rows(q) {
     };
     under(null, 2);
   }
+  // Reports: where the registry does not yet join up (worked out by the build).
+  const gapsAll = DATA.reports.reduce((s, r) => s + r.gaps, 0);
+  out.push({ k: "rp0", depth: 0, kind: "body", label: "Reports", title: `Reports: ${gapsAll} gaps`, n: gapsAll });
+  if (open.has("rp0") || q) for (const r of DATA.reports.filter(r => !q || q.split(/\s+/).every(w => r.title.toLowerCase().includes(w)))) out.push({ k: "rep:" + r.key, depth: 1, kind: "maker", label: r.title, ticker: r.gaps ? `${r.gaps} gaps` : "no gaps", leaf: true });
   // The Production Register: no records of its own, a reference to what every facility can make at most.
   const lines = producing().filter(r => !q || q.split(/\s+/).every(w => `${r.f.name} ${r.pr.identity.name} ${r.makes}`.toLowerCase().includes(w)));
   out.push({ k: "pd", depth: 0, kind: "body", label: "Production Register", n: producing().length });
@@ -334,17 +382,26 @@ let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
-  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:") || k.startsWith("good:")) {
-    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : k.startsWith("good:") ? goodBySlug[k.slice(5)] : procBySlug[k.slice(5)]; if (!e) return;
+  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:") || k.startsWith("good:") || k.startsWith("hull:") || k.startsWith("stock:")) {
+    const e = k.startsWith("stock:") ? stockByCode[k.slice(6)] : k.startsWith("hull:") ? hullBySlug[k.slice(5)] : k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : k.startsWith("good:") ? goodBySlug[k.slice(5)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
     const up = byId[e.under]; if (up) open.add("b:" + up.body);
     for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
     keepOpen();
     return;
   }
+  if (k.startsWith("pg:") || k.startsWith("part:")) {
+    const pt = k.startsWith("part:") ? partByCode[k.slice(5)] : null;
+    const hl = pt ? pt.hull : k.split(":")[1], any = DATA.parts.find(y => y.hull === hl), up = any && byId[any.under]; if (!up) return;
+    open.add("x:" + up.id); open.add("b:" + up.body); if (pt) open.add("pg:" + hl);
+    if (pt && pt.parent) open.add("part:" + pt.parent);
+    for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
+    keepOpen(); return;
+  }
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
+  if (k.startsWith("rep:")) { open.add("rp0"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
   if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("pc:") || k.startsWith("fc:") || k.startsWith("zn:") || k.startsWith("st:") || k.startsWith("pw:")) {
     const org = k.startsWith("at:") ? ORGS.find(o => o.key === k.slice(3)) : null;
@@ -395,7 +452,7 @@ function render() {
   }
   document.getElementById("tree").innerHTML = html;
   const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
-  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "") + (DATA.modules.length ? ` · ${DATA.modules.length} modules` : "") + (DATA.goods.length ? ` · ${DATA.goods.length} goods` : "");
+  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "") + (DATA.modules.length ? ` · ${DATA.modules.length} modules` : "") + (DATA.goods.length ? ` · ${DATA.goods.length} goods` : "") + (DATA.hulls.length ? ` · ${DATA.hulls.length} hulls` : "");
   document.getElementById("detail").innerHTML = detail(current);
 }
 
@@ -465,6 +522,45 @@ function detail(k) {
   };
   if (kind === "at" || kind === "ra") { const o = ORGS.find(x => x.key === rest.join(":")); return o ? detail(o.to) : ""; }
   if (kind === "pl") return detail("fc:" + rest.join(":"));
+  if (k === "rp0") return `<h2>Reports</h2><p>Where the registry does not yet join up. A gap is something to close, not a mistake: the build still passes.</p><table><tr><th>Report</th><th>Rows</th><th>Complete</th><th>Gaps</th></tr>` + DATA.reports.map(r => `<tr class="${r.gaps ? "gap" : "okr"}"><td><a data-k="${esc("rep:" + r.key)}">${esc(r.title)}</a></td><td>${r.rows.length}</td><td>${r.ok}</td><td>${r.gaps || ""}</td></tr>`).join("") + `<tr><th>Total</th><th>${DATA.reports.reduce((s, r) => s + r.rows.length, 0)}</th><th>${DATA.reports.reduce((s, r) => s + r.ok, 0)}</th><th>${DATA.reports.reduce((s, r) => s + r.gaps, 0)}</th></tr></table>`;
+  // The chain as a picture: from the hull down, each level a box with how many it holds, and between
+  // two levels how many of the upper one's things reach the lower one. A broken link is the gap.
+  const chainPicture = hull => {
+    const hl = hullBySlug[hull]; if (!hl) return "";
+    const mine = DATA.parts.filter(p => p.hull === hull), leaves = mine.filter(p => !subParts(p.slug).length);
+    const stockUsed = [...new Set(leaves.map(p => (p.made_from || {}).item).filter(i => stockByCode[i]))].map(i => stockByCode[i]);
+    const procs = [...new Set(stockUsed.map(s => (s.making || {}).process).filter(s => procBySlug[s]))].map(s => procBySlug[s]);
+    const stepped = DATA.processes.filter(p => ((p.equipment || {}).steps || []).length);
+    const lined = new Set(producing().map(r => r.pr.slug));
+    const forms = DATA.materials.flatMap(m => (m.identity.form || []).map(f => [m.slug, f]));
+    const made = forms.filter(([m, f]) => DATA.processes.some(p => ((p.outputs || {}).products || []).some(o => o.item === m && o.form === f)));
+    const node = (title, num, say, k, empty) => `<div class="node${empty ? " empty" : ""}"><span class="num">${num}</span><b>${k ? `<a data-k="${esc(k)}">${esc(title)}</a>` : esc(title)}</b><span class="say">${say}</span></div>`;
+    const link = (have, of, what) => { const cls = !of || !have ? "none" : have < of ? "some" : "ok"; return `<div class="link ${cls}"><span class="pipe"></span><span class="bar"><i style="width:${of ? Math.round(100 * have / of) : 0}%"></i></span><span class="what">${have} of ${of} ${what}</span></div>`; };
+    const most = producing().map(r => `${perDay(r.ln.most.output)} t a day of ${esc(r.makes)}`).join(", ");
+    return `<div class="chain"><div class="side">From the ship, down</div>`
+      + node(hl.identity.name, 1, `the hull · ${kg((hl.mass || {}).frame * 1000)}`, "hull:" + hull)
+      + link(mine.filter(p => !p.parent).length ? 1 : 0, 1, "hull has its parts listed")
+      + node("Parts", mine.length, `${mine.filter(p => !p.parent).length} at the top, ${mine.filter(p => p.parent).length} under them · ${leaves.length} are cut from stock, not made of parts`, "pg:" + hull)
+      + link(leaves.filter(p => p.mass !== undefined).length, leaves.length, "parts have a mass")
+      + link(leaves.filter(p => stockByCode[(p.made_from || {}).item]).length, leaves.length, "parts say what they are cut from")
+      + node("Mill stock", DATA.mill_stock.length, "sheet, plate, bar, tube, wire in a size", "s:SFO 13", !DATA.mill_stock.length)
+      + link(DATA.mill_stock.filter(s => procBySlug[(s.making || {}).process]).length, DATA.mill_stock.length, "stock items have a process that makes them")
+      + `<div class="side">From the rock, up</div>`
+      + node("Processes", DATA.processes.length, `${made.length} of ${forms.length} material forms have one that makes them`, "s:SFO 7")
+      + link(stepped.length, DATA.processes.length, "processes are broken into steps with their modules")
+      + node("Industrial modules", DATA.modules.length, "furnaces, plants, yards, each with a size, a rate and what goes in and out", "s:SFO 10")
+      + link(lined.size, DATA.processes.length, "processes have a line built for them at a facility")
+      + node("Facilities", allFacilities().length, most ? `at most ${most}` : "none makes anything yet", "pd")
+      + link(DATA.goods.filter(g => g.identity.kind === "raw" && (g.source || {}).won_from).length, DATA.goods.filter(g => g.identity.kind === "raw").length, "raw goods are won from a rock")
+      + node("Rock", DATA.goods.filter(g => g.identity.kind === "rock").length, [...new Set(DATA.goods.filter(g => g.identity.kind === "rock").map(g => (g.source || {}).occurs).filter(Boolean))].map(o => `dug on ${o}`).join("; "), "s:SFO 11", !DATA.goods.some(g => g.identity.kind === "rock"))
+      + `</div>`;
+  };
+  if (kind === "rep") {
+    const r = DATA.reports.find(y => y.key === rest.join(":")); if (!r) return "";
+    const cell = c => c.k ? `<a data-k="${esc(c.k)}">${esc(c.t)}</a>` : esc(c.t);
+    const order = { gap: 0, note: 1, ok: 2 };
+    return `<h2>${esc(r.title)}</h2><div class="meta">report · ${r.rows.length} rows · ${r.ok} complete · ${r.gaps} gaps</div><p>${esc(r.about)}</p>${r.key.startsWith("chain-") ? chainPicture(r.key.slice(6)) : ""}<table><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join("")}<th>State</th></tr>` + r.rows.slice().sort((p1, p2) => order[p1.state] - order[p2.state]).map(w => `<tr class="${w.state === "gap" ? "gap" : w.state === "ok" ? "okr" : ""}">${w.cells.map(c => `<td>${cell(c)}</td>`).join("")}<td>${w.state === "gap" ? "gap" : w.state === "ok" ? "ok" : "note"}</td></tr>`).join("") + `</table>`;
+  }
   if (k === "pd") return `<h2>Production Register</h2><p>What every facility can make at most, from what it is built of. What it does make is the economy's business.</p>` + (producing().length ? `<table><tr><th>Facility</th><th>Owner</th><th>Where</th><th>Process</th><th>Makes</th><th>At most</th></tr>` + producing().map(r => `<tr><td><a data-k="${esc(facKey(r.a, r.x, r.f))}">${esc(r.f.name)}</a></td><td>${ownerLink(r.f.owner)}</td><td>${esc(r.x.name)}, ${esc(r.a.name)}</td><td><a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${perDay(r.ln.most.output)} t/day</td></tr>`).join("") + `</table>` : `<p class="meta">Nothing yet.</p>`);
   if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${r.org ? addressHtml(r.org) : r.html}</td><td><a data-k="${esc(r.org ? r.to : r.whoTo)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
   if (kind === "b") {
@@ -510,7 +606,8 @@ function detail(k) {
   // A line: what it is built of, and the most it can do (worked out by the build).
   const production = (a, x, f, p) => producing().filter(r => r.f === f).map(r => {
     const m = r.ln.most, name = s => modBySlug[s].identity.name;
-    return `<h3>Line: ${esc(r.pr.identity.name)}</h3><table><tr><th>Process</th><th>Makes</th><th>At most, each hour</th><th>At most, each day</th><th>Held back by</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(m.output)}</td><td>${day(m.output)}</td><td><a data-k="${esc("mod:" + m.tightest)}">${esc(name(m.tightest))}</a></td></tr></table>`
+    const also = (r.ln.also || []).filter(s => procBySlug[s]).map(s => { const o = ((procBySlug[s].outputs || {}).products || [])[0] || {}; return `<a data-k="${esc("proc:" + s)}">${esc(procBySlug[s].identity.name)}</a> (${esc((matBySlug[o.item] || { identity: { name: o.item || "" } }).identity.name)}${o.form ? " " + esc(o.form) : ""})`; });
+    return `<h3>Line: ${esc(r.pr.identity.name)}</h3>${also.length ? `<p>The same line can run instead: ${also.join(", ")}. Its most is shared between them.</p>` : ""}<table><tr><th>Process</th><th>Makes</th><th>At most, each hour</th><th>At most, each day</th><th>Held back by</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(m.output)}</td><td>${day(m.output)}</td><td><a data-k="${esc("mod:" + m.tightest)}">${esc(name(m.tightest))}</a></td></tr></table>`
       + `<h3>Built of</h3><p class="meta">Number is what it has. The rest is worked out: what that many can put through, and what the line asks of them when it runs flat out.</p><table><tr><th>Module</th><th>Number</th><th>Can put through</th><th>Flat out, the line asks</th><th>Running at</th><th>Ground</th><th>Power flat out</th></tr>`
       + m.modules.map(r2 => `<tr><td><a data-k="${esc("mod:" + r2.module)}">${esc(name(r2.module))}</a></td><td>${r2.count}</td><td>${r2.can !== null ? tph(r2.can) : r2.holds !== null ? `holds ${r2.holds.toLocaleString()} t` : ""}</td><td>${r2.can !== null ? `${tph(r2.at_full)} ${esc(itemName((modBySlug[r2.module].rate || {}).product || "").toLowerCase())}` : ""}</td><td>${r2.use === null ? "" : Math.round(r2.use * 100) + "%"}</td><td>${Math.round(r2.area).toLocaleString()} m²</td><td>${+r2.power.toPrecision(3)} MW</td></tr>`).join("")
       + `<tr><th>Total</th><th>${m.modules.reduce((s, r2) => s + r2.count, 0)}</th><th></th><th></th><th></th><th>${Math.round(m.area).toLocaleString()} m² · ${(100 * m.area / p.area).toFixed(0)}% of parcel ${p.number}</th><th>${Math.round(m.power)} MW</th></tr></table>`
@@ -608,6 +705,10 @@ function detail(k) {
       + props([["number", String(p.number), "its lot number in its settlement"], ["owner", ownerLink(p.owner)], ["address", streetOf(x, p) ? esc(`${p.address.number} ${streetOf(x, p).name}`) : undefined, "its number on its street"], ["outline", corners(p.outline), `corners, metres east and north of ${x.name}'s position`]])
       + `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>${measures(p.outline)}<tr><td>zone</td><td>${z ? `<a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a> <span class="meta">${esc(z.use)}</span>` : ""}</td><td>the zone its outline lies in</td></tr></table>` + ((x.facilities || []).some(f => f.parcel === p.number) ? `<h3>On it</h3>` + x.facilities.filter(f => f.parcel === p.number).map(f => `<div><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a> <span class="meta">${esc(f.kind)}</span></div>`).join("") : "") + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
   }
+  if (kind === "pg") {
+    const hl = hullBySlug[rest[0]], tops = topParts(rest[0]); if (!tops.length) return "";
+    return `<h2>${esc(hl ? hl.identity.name : rest[0])} parts</h2><div class="meta">the parts of the hull ${hl ? `<a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : esc(rest[0])}</div>` + partsTable(tops, "In one hull") + (hl && hl.estimate && hl.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(hl.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, at ${+hl.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
+  }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
     return `${logo(m.slug, "big")}<h2>${esc(m.name)}</h2><div class="meta">${esc(m.ticker)}${m.business ? " · " + esc(m.business) : ""}</div><p>${esc(m.note)}</p>` + (ORGS.find(o => o.key === m.key) ? `<h3>Address</h3><p>${addressHtml(ORGS.find(o => o.key === m.key))}</p>` : "") + (allFacilities().some(r => r.f.exchange === m.key) ? `<h3>Warehouses it has approved</h3><table><tr><th>Warehouse</th><th>Owner</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.exchange === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${ownerLink(f.owner)}</td><td>${esc(parcelAddress(a, x, (x.parcels || []).find(p => p.number === f.parcel)))}</td></tr>`).join("") + `</table>` : "") + (allFacilities().some(r => r.f.owner === m.key) ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Where</th></tr>` + allFacilities().filter(r => r.f.owner === m.key).map(({ a, x, f }) => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${esc(parcelAddress(a, x, (x.parcels || []).find(p => p.number === f.parcel)))}</td></tr>`).join("") + `</table>` : "") + (m.who ? `<h3>Who they are</h3><p>${esc(m.who)}</p>` : "") + (m.what ? `<h3>What they do</h3><p>${esc(m.what)}</p>` : "") + ((m.story || []).length ? `<h3>Story</h3>` + m.story.map(p => `<p>${esc(p)}</p>`).join("") : "") + `<div class="file" style="margin-top:24px">standards/${esc(m.file)}</div>`;
@@ -626,16 +727,17 @@ function detail(k) {
     if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
-  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod" || kind === "good") {
-    const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
+  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod" || kind === "good" || kind === "hull" || kind === "part" || kind === "stock") {
+    const e = kind === "stock" ? stockByCode[rest.join(":")] : kind === "part" ? partByCode[rest.join(":")] : kind === "hull" ? hullBySlug[rest.join(":")] : kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
     let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${icon(e.slug, "big")} ${esc(i.name)}</h2>`;
-    if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
+    if (kind === "part") { const up2 = e.parent && partByCode[e.parent]; h += `<div class="meta">part${up2 ? ` · of <a data-k="${esc("part:" + up2.slug)}">${esc(up2.identity.code + " " + up2.identity.name)}</a>` : ""} · of the hull <a data-k="${esc("hull:" + e.hull)}">${esc((hullBySlug[e.hull] || { identity: { name: e.hull } }).identity.name)}</a></div>`; }
+    else if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
-    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : DATA.process_groups)) {
-      if (!e[g]) continue;
+    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : kind === "hull" ? DATA.hull_groups : kind === "part" ? DATA.part_groups : kind === "stock" ? DATA.mill_stock_groups : DATA.process_groups)) {
+      if (!e[g] || g === "structure") continue;
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
-      for (const [key, note] of Object.entries(props)) if (key in e[g] && key !== "steps") h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
+      for (const [key, note] of Object.entries(props)) if (key in e[g] && key !== "steps" && key !== "assemblies") h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
       h += `</table>`;
     }
     const footprint = m => m.size ? `${m.size.length} × ${m.size.width} m` : "";
@@ -644,6 +746,40 @@ function detail(k) {
       const steps = e.equipment.steps.map(st => ({ ...st, m: modBySlug[st.module] })).filter(st => st.m);
       h += `<h3>Steps</h3><table><tr><th>Step</th><th>Module</th><th>What happens</th><th>Footprint</th><th>Rate</th><th>Power</th></tr>` + steps.map((st, n) => `<tr><td>${n + 1}. ${esc(st.m.identity.step)}</td><td><a data-k="${esc("mod:" + st.module)}">${esc(st.m.identity.name)}</a></td><td>${esc(st.does)}</td><td>${footprint(st.m)}</td><td>${(st.m.rate || {}).throughput !== undefined ? `${st.m.rate.throughput} t/h` : (st.m.rate || {}).holds !== undefined ? `holds ${st.m.rate.holds.toLocaleString()} t` : ""}</td><td>${(st.m.needs || {}).power !== undefined ? `${st.m.needs.power} MW` : ""}</td></tr>`).join("")
         + `<tr><th>One of each</th><th></th><th></th><th>${steps.reduce((s, st) => s + (st.m.size ? st.m.size.length * st.m.size.width : 0), 0).toLocaleString()} m²</th><th></th><th>${+steps.reduce((s, st) => s + ((st.m.needs || {}).power || 0), 0).toFixed(1)} MW</th></tr></table>`;
+    }
+    if (kind === "good" && (e.composition || []).length) h += `<h3>Composition</h3><table><tr><th>Part</th><th>Share by mass</th></tr>` + e.composition.map(c => `<tr><td>${itemA(c.part)}</td><td>${+(c.share * 100).toPrecision(3)}%</td></tr>`).join("") + `<tr><th>Accounted for</th><th>${+(e.composition.reduce((s, c) => s + c.share, 0) * 100).toPrecision(3)}%</th></tr></table>`;
+    if (kind === "good" && (e.source || {}).yield !== undefined) h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>rock for each tonne</td><td>${+(1 / e.source.yield).toPrecision(3)} t</td><td>its yield</td></tr></table>`;
+    if (Array.isArray(e.basis) && e.basis.length) h += `<h3>Where its figures come from</h3><table><tr><th>Figures</th><th>How</th><th>Source or note</th></tr>` + e.basis.map(bs => `<tr class="${bs.tier === "invented" ? "gap" : ""}"><td>${esc(bs.of.join(", ").replace(/_/g, " "))}</td><td>${esc(bs.tier)}${bs.review ? ` · <b style="color:var(--bad)">to review</b>` : ""}</td><td>${bs.source ? `<b>${esc(bs.source)}</b>${bs.note ? ". " : ""}` : ""}${esc(bs.note || "")}</td></tr>`).join("") + `</table>`;
+    if (kind === "stock") {
+      const used = DATA.parts.filter(p => (p.made_from || {}).item === e.slug);
+      h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>counted in</td><td>${e.unit === "m2" ? "m²" : e.unit === "m" ? "metres" : "kilograms"}</td><td>its form</td></tr><tr><td>weight</td><td>${perUnit(e)}</td><td>its material's density and its size</td></tr>${e.piece_mass !== undefined ? `<tr><td>one piece</td><td>${+e.piece_mass.toPrecision(4)} kg</td><td>its weight, over the piece as supplied</td></tr>` : ""}</table>`
+        + `<h3>Parts cut from it</h3>` + (used.length ? `<table><tr><th>Code</th><th>Part</th><th>Takes</th></tr>` + used.map(p => `<tr><td style="white-space:nowrap">${esc(p.identity.code)}</td><td><a data-k="${esc("part:" + p.slug)}">${esc(p.identity.name)}</a></td><td>${p.made_from.quantity !== undefined ? `${p.made_from.quantity} ${e.unit === "m2" ? "m²" : e.unit}` : ""}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet.</p>`);
+    }
+    if (kind === "part" && (e.made_from || {}).item && stockByCode[e.made_from.item]) {
+      const st = stockByCode[e.made_from.item], fm = (e.physical || {}).mass;
+      h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>cut from</td><td><a data-k="${esc("stock:" + st.slug)}">${esc(st.identity.code)} ${esc(st.identity.name)}</a></td><td>its mill stock</td></tr>${e.stock_mass !== undefined ? `<tr><td>stock it takes</td><td>${+e.stock_mass.toPrecision(4)} kg</td><td>its quantity, at ${perUnit(st)}</td></tr>` : ""}${e.stock_mass !== undefined && fm ? `<tr><td>lost as offcut</td><td>${+(e.stock_mass - fm).toPrecision(4)} kg · ${Math.round(100 * (1 - fm / e.stock_mass))}%</td><td>the stock it takes, less its mass</td></tr>` : ""}</table>`;
+    }
+    if (kind === "part") {
+      const subs = subParts(e.slug), n = (e.fit || {}).count || 1;
+      h += `<h3>Made of</h3>` + (subs.length ? partsTable(subs, "In one") : (e.made_from || {}).item ? `<p class="meta">Cut from mill stock: see above.</p>` : `<p class="meta">Not yet said: no parts under it, and no mill stock named.</p>`);
+      const hl = hullBySlug[e.hull] || {}, est = hl.estimate || {};
+      const from = { said: e.identity.status === "draft" ? "its own record: a draft figure, to be balanced" : "its own record", parts: "its parts, each as many times as it has them", share: `an estimate: its surface, at ${+(est.per_m2 || 0).toPrecision(3)} kg for each m² (the hull's frame mass in the game, shared over all its parts' surface)` }[e.mass_from];
+      if (e.mass !== undefined) h = h.replace(`<h3>Made of</h3>`, `<h3>Mass</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>mass of one</td><td>${kg(e.mass)}</td><td>${esc(from)}</td></tr>${n > 1 ? `<tr><td>mass of all ${n}</td><td>${kg(e.mass * n)}</td><td>${n} of it</td></tr>` : ""}</table><h3>Made of</h3>`);
+    }
+    if (kind === "hull" && e.worked && e.worked.ship) {
+      const wk = e.worked, ld = wk.landing || {};
+      h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>`
+        + `<tr><td>mass, loaded</td><td>${kg(wk.ship)}</td><td>its parts, and what the game fits and loads into it</td></tr>`
+        + (e.built || []).map(bl => `<tr><td>can be built at</td><td>${esc(bl.at)}, ${esc(bl.settlement)}: one every ${bl.days.toFixed(0)} days at most</td><td>its parts' weight through the yard's building dock, flat out</td></tr>`).join("")
+        + (wk.hover ? `<tr><td>can hover and set down on</td><td>ground of up to ${(wk.hover / 9.81).toFixed(2)} g</td><td>its lift against its weight</td></tr>` : "")
+        + (wk.can.length || wk.cannot.length ? `<tr><td>settlements it can set down at</td><td>${esc(wk.can.join(", "))}</td><td>${wk.cannot.length ? "too heavy for: " + esc(wk.cannot.join(", ")) : "their worlds' gravity"}</td></tr>` : "")
+        + (ld.designed !== undefined ? `<tr><td>landing its legs are designed for</td><td>${ld.designed} m/s, a jolt of ${ld.jolt.toFixed(2)} g aboard</td><td>its design, over a stroke of ${ld.stroke} m</td></tr><tr><td>hardest landing its legs take</td><td>${ld.hardest.toFixed(1)} m/s, a jolt of ${ld.hardest_jolt.toFixed(1)} g aboard</td><td>the weakest of its legs' parts; faster, a leg fails</td></tr>` : "")
+        + `</table>`;
+    }
+    if (kind === "hull") {
+      // What it is made of: its parts.
+      const cs = topParts(e.slug);
+      if (cs.length) h += `<h3>What it is made of</h3>` + partsTable(cs, "In one hull") + (e.estimate && e.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(e.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, ${Math.round(e.estimate.surface).toLocaleString()} m² in all, which comes to ${+e.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
     }
     if (kind === "good" || kind === "el" || kind === "mat") {
       const id = kind === "el" ? e.identity.symbol : e.slug;
@@ -678,6 +814,14 @@ function detail(k) {
   if (els.length) h += periodicTable(els);
   const mats = materialsUnder(s.id, "");
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td>${icon(m.slug)} <a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
+  // (What a record of this kind can say: its schema's properties, group by group.)
+  const schemaOf = groups => Object.entries(groups).map(([g, props]) => `<tr><th colspan="2">${esc(g.replace(/_/g, " "))}</th></tr>` + Object.entries(props).map(([k, note]) => `<tr><td>${esc(k.replace(/_/g, " "))}</td><td class="meta">${esc(note)}</td></tr>`).join("")).join("");
+  if (s.records === "parts") for (const hl of partHulls(s.id)) h += `<h3><a data-k="${esc("pg:" + hl)}">${esc((hullBySlug[hl] || { identity: { name: hl } }).identity.name)}</a> parts</h3>` + partsTable(topParts(hl), "In one hull");
+  if (s.records === "parts") h += `<h3>Properties of a part</h3><p class="meta">Its full specification. A part uses the ones that apply. ${Object.values(DATA.part_groups).reduce((n, g) => n + Object.keys(g).length, 0)} properties.</p><table><tr><th>Property</th><th>Unit or note</th></tr>${schemaOf(DATA.part_groups)}</table>`;
+  if (s.records === "mill-stock") h += `<h3>Properties of an item of mill stock</h3><table><tr><th>Property</th><th>Unit or note</th></tr>${schemaOf(DATA.mill_stock_groups)}</table>`;
+  const mst = stockUnder(s.id, "");
+  if (s.records === "mill-stock") h += `<h3>Items</h3>` + (mst.length ? `<table><tr><th>Code</th><th>Item</th><th>Material</th><th>Form</th><th>Weight</th></tr>` + mst.map(x => `<tr><td style="white-space:nowrap">${esc(x.identity.code)}</td><td><a data-k="${esc("stock:" + x.slug)}">${esc(x.identity.name)}</a></td><td>${itemA(x.made_from.material)}</td><td>${esc(x.made_from.form)}</td><td>${perUnit(x)}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet: an item is added when a part asks for it.</p>`);
+  if (s.title === "Assemblies") { const asm = DATA.parts.filter(p => subParts(p.slug).length); h += `<h3>Assemblies</h3>` + (asm.length ? partsTable(asm, "Number") : `<p class="meta">None yet: a part becomes an assembly when it is given parts of its own.</p>`); }
   const gds = goodsUnder(s.id, "");
   if (gds.length) h += `<h3>Goods</h3><table><tr><th>Good</th><th>Kind</th><th>What it is</th></tr>` + gds.map(g => `<tr><td><a data-k="${esc("good:" + g.slug)}">${esc(g.identity.name)}</a></td><td>${esc(g.identity.kind)}</td><td>${esc(g.identity.description || "")}</td></tr>`).join("") + `</table>`;
   const mods = modulesUnder(s.id, "");
@@ -724,7 +868,7 @@ document.addEventListener("click", e => {
   if (badge) { kindShown = badge.dataset.kind; render(); return; }
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:") && !k.startsWith("hull:") && !k.startsWith("stock:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
     keepOpen();
   }

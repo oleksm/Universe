@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Potline
+  step: Smelt
+  description: "A long row of pots in which a strong current, carried in by carbon anodes, takes the oxygen from molten alumina and leaves liquid aluminium."
+size:
+  length: 1150
+  width: 60
+  height: 15
+rate:
+  throughput: 37
+  product: liquid-aluminium
+inputs:
+  materials:
+  - { item: alumina, amount: 1.93 }
+  - { item: carbon-anode, amount: 0.45 }
+  - { item: O, amount: 0.14 }
+outputs:
+  by_products:
+  - { item: carbon-dioxide, amount: 1.52 }
+needs:
+  power: 536
+basis:
+  - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_Bahrain", note: "323,000 t a year for one line of 336 pots." }
+  - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1.93 t of alumina and 0.45 t of carbon anode for each tonne, giving 1.52 t of carbon dioxide. Part of the anode burns in air: that oxygen is set to balance." }
+  - { of: [needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_smelting", note: "13 to 16 MWh for each tonne; 14.5 taken." }
+  - { of: [size.length], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "A potroom 1,150 m long." }
+  - { of: [size], tier: invented, note: "Its width and height were not found in a source." }

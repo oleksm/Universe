@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+# The game's own ore (content/base/ores.ron): its name and how it stows are the game's.
+identity:
+  name: PGM-Rich Ore
+  kind: rock
+  description: "Asteroid metal carrying platinum-group metals."
+physical:
+  bulk_density: 4.0
+source:
+  occurs: asteroids
+game:
+  goods: goods.ores
+  ore: ore.pgm
+basis:
+  - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }

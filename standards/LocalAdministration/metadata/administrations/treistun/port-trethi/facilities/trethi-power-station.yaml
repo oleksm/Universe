@@ -3,4 +3,4 @@ name: Trethi Power Station
 kind: power
 parcel: 2
 modules:
-  - { module: fusion-power-station, count: 1 }
+  - { module: fusion-power-station, count: 4 }

@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+# The game's own ore (content/base/ores.ron): its name and how it stows are the game's.
+identity:
+  name: Asteroid Water Ice
+  kind: rock
+  description: "Ice dug from an asteroid: water, frozen, with dust in it."
+physical:
+  bulk_density: 0.6
+source:
+  occurs: asteroids
+game:
+  goods: goods.water
+  ore: ore.water_ice
+basis:
+  - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }

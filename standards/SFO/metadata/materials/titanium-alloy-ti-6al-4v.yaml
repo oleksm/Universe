@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
+# Fracture toughness: Wikipedia, Fracture toughness (titanium alloy, 84 to 107; a range as its middle).
 # Data: Wikipedia: Ti-6Al-4V. A range there is given as its middle.
 identity:
   name: Titanium alloy Ti-6Al-4V
@@ -18,6 +19,7 @@ identity:
 mass:
   density: 4470.0
 mechanical:
+  fracture_toughness: 95.5
   youngs_modulus: 108.5
   shear_modulus: 42.5
   poissons_ratio: 0.34

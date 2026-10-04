@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Alumina
+  kind: intermediate
+  description: "Aluminium oxide, a white powder: bauxite with everything else taken out."

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Bauxite
+  kind: rock
+  description: "The ore of aluminium: rock rich in aluminium oxide, left where warm rain has leached the ground for a very long time."
+game:
+  goods: goods.ores
+source:
+  occurs: temperate planets
+  note: "It forms only where there is air, warmth and liquid water. The game has no ore for it yet."

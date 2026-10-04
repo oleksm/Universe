@@ -6,18 +6,22 @@ identity:
 size:
   length: 150
   width: 100
-  height: 120
+  height: 137
 rate:
-  throughput: 125
+  throughput: 200
   product: sponge-iron
 inputs:
   materials:
-  - { item: iron-ore-pellets, amount: 1.4 }
-  - { item: H, amount: 0.055 }
+  - { item: iron-ore-pellets, amount: 1.43 }
+  - { item: H, amount: 0.054 }
 outputs:
   by_products:
-  - { item: water, amount: 0.49 }
+  - { item: water, amount: 0.484 }
 needs:
-  power: 12
+  power: 22
 basis:
-  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."
+  - { of: [rate], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "200 t/h for a module of 1.6 Mt a year." }
+  - { of: [inputs, outputs], tier: derived, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "From the chemistry (iron oxide and hydrogen to iron and water), taking the pellets as pure iron oxide. The source gives the same 54 kg of hydrogen for each tonne." }
+  - { of: [needs], tier: sourced, source: "https://www.midrex.com/tech-article/midrex-direct-reduction-plants-2021-operations-summary/", note: "82 to 135 kWh for each tonne; 110 taken. It leaves out heating the gas." }
+  - { of: [size.height], tier: sourced, source: "https://www.primetals.com/en/metals-magazine/voestalpine-taking-a-large-step-into-the-usa", note: "137 m for a plant of 2 Mt a year." }
+  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

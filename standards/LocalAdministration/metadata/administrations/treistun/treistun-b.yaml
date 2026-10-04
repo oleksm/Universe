@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../schema/body.schema.yaml
 name: "Treistun b"
 kind: planet
+gravity: 9.4
 about: "The innermost planet, 0.13 AU from the star. Rocky, 6,194 km in radius, with a surface gravity of 0.96 g and no air. It is hot: about 560 K on average. Its day lasts 32 hours. One moon."
 story:
   - "Nobody settled b for comfort. Port Zaudalein is there because someone decided the ground was worth the heat, and it has stayed a place people work at rather than live in."

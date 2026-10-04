@@ -1,0 +1,857 @@
+{
+ "ordinary_chondrites": {
+  "total_iron_H_L_LL": {
+   "value": [
+    27.5,
+    21.5,
+    19.1
+   ],
+   "unit": "wt% Fe",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Drouard et al. 2018 (A&A), Table 2 'Mean bulk chemical composition (weight %)': H and L from Hutchison (2004); LL column is Saint-Severin from Jarosewich (1990). Fe 27.5 / 21.5 / 19.1",
+   "note": "LL value is a single meteorite (Saint-Severin). Wikipedia infoboxes give H 25-31%, LL 19-22%."
+  },
+  "total_iron_ranges_wikipedia": {
+   "value": {
+    "H": [
+     25,
+     31
+    ],
+    "LL": [
+     19,
+     22
+    ]
+   },
+   "unit": "wt% Fe",
+   "source": "https://en.wikipedia.org/wiki/H_chondrite",
+   "quote": "H: 'Their high iron abundance is about 25-31% by weight. Over half of this is present in metallic form'; LL (LL_chondrite page): 'They contain 19-22% total iron and only 0.3-3% metallic iron.'",
+   "note": "L_chondrite page wording on total iron is inconsistent ('less than 10%'); do not use it."
+  },
+  "metallic_Fe_H_L_LL": {
+   "value": [
+    16.72,
+    7.27,
+    2.64
+   ],
+   "unit": "wt% Fe(m)",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Schaefer & Fegley 2006, Table 1 'Composition of average ordinary chondrite falls', mass % (H: 90 analyses, L: 123, LL: 29), averages H / L / LL: Fe (m) 16.72 / 7.27 / 2.64 (ranges 8.1-26.19, 2.78-14.68, 0.33-12.93)",
+   "note": ""
+  },
+  "Ni_H_L_LL": {
+   "value": [
+    1.7,
+    1.23,
+    1.03
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Schaefer & Fegley 2006, Table 1 'Composition of average ordinary chondrite falls', mass % (H: 90 analyses, L: 123, LL: 29), averages H / L / LL: Ni 1.70 / 1.23 / 1.03",
+   "note": ""
+  },
+  "Co_H_L_LL": {
+   "value": [
+    0.08,
+    0.06,
+    0.054
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Schaefer & Fegley 2006, Table 1 'Composition of average ordinary chondrite falls', mass % (H: 90 analyses, L: 123, LL: 29), averages H / L / LL: Co 0.08 / 0.06 / 0.054",
+   "note": ""
+  },
+  "FeNi_metal_H_L_LL": {
+   "value": [
+    18.5,
+    8.56,
+    3.72
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Sum of Fe(m)+Ni+Co from Table 1",
+   "note": "DERIVED sum. Cross-check Wikipedia Chondrite: H '15-20% Fe-Ni metal by mass', L '7-11%', LL '3-5%' (https://en.wikipedia.org/wiki/Chondrite)."
+  },
+  "troilite_FeS_H_L_LL": {
+   "value": [
+    5.33,
+    5.99,
+    5.87
+   ],
+   "unit": "wt% FeS",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Schaefer & Fegley 2006, Table 1 'Composition of average ordinary chondrite falls', mass % (H: 90 analyses, L: 123, LL: 29), averages H / L / LL: FeS 5.33 / 5.99 / 5.87 (ranges 2.52-9.65, 3.45-9.88, 4.03-8.39)",
+   "note": ""
+  },
+  "FeO_in_silicates_H_L_LL": {
+   "value": [
+    9.54,
+    14.14,
+    17.44
+   ],
+   "unit": "wt% FeO",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Schaefer & Fegley 2006, Table 1 'Composition of average ordinary chondrite falls', mass % (H: 90 analyses, L: 123, LL: 29), averages H / L / LL: FeO 9.54 / 14.14 / 17.44",
+   "note": ""
+  },
+  "iron_in_silicates_H_L_LL": {
+   "value": [
+    7.42,
+    10.99,
+    13.56
+   ],
+   "unit": "wt% Fe",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "FeO x 0.7773",
+   "note": "DERIVED from FeO by stoichiometry. Total Fe recomputed from Fe(m)+Fe in FeO+Fe in FeS = 27.5 / 22.1 / 19.9, consistent with total-iron figures."
+  },
+  "Al_H_L_LL": {
+   "value": [
+    1.13,
+    1.22,
+    1.1
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Drouard et al. 2018 (A&A), Table 2 'Mean bulk chemical composition (weight %)': H and L from Hutchison (2004); LL column is Saint-Severin from Jarosewich (1990). Al 1.13 / 1.22 / 1.10",
+   "note": "Schaefer & Fegley give Al2O3 2.35 / 2.32 / 2.38 wt%."
+  },
+  "Ca_H_L_LL": {
+   "value": [
+    1.25,
+    1.31,
+    1.4
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Drouard et al. 2018 (A&A), Table 2 'Mean bulk chemical composition (weight %)': H and L from Hutchison (2004); LL column is Saint-Severin from Jarosewich (1990). Ca 1.25 / 1.31 / 1.40",
+   "note": "Schaefer & Fegley: CaO 1.70 / 1.84 / 1.82 wt%."
+  },
+  "Mg_H_L_LL": {
+   "value": [
+    14.0,
+    14.9,
+    15.2
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Drouard et al. 2018 (A&A), Table 2 'Mean bulk chemical composition (weight %)': H and L from Hutchison (2004); LL column is Saint-Severin from Jarosewich (1990). Mg 14.0 / 14.9 / 15.2",
+   "note": "Schaefer & Fegley: MgO 23.41 / 24.84 / 25.32 wt%."
+  },
+  "Si_H_L_LL": {
+   "value": [
+    16.9,
+    18.5,
+    19.0
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Drouard et al. 2018 (A&A), Table 2 'Mean bulk chemical composition (weight %)': H and L from Hutchison (2004); LL column is Saint-Severin from Jarosewich (1990). Si 16.9 / 18.5 / 19.0",
+   "note": "Schaefer & Fegley: SiO2 36.49 / 39.66 / 40.48 wt%."
+  },
+  "O_H_L_LL": {
+   "value": [
+    35.7,
+    37.7,
+    38.3
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Drouard et al. 2018 (A&A), Table 2 'Mean bulk chemical composition (weight %)': H and L from Hutchison (2004); LL column is Saint-Severin from Jarosewich (1990). O 35.7 / 37.7 / 38.275",
+   "note": ""
+  },
+  "S_H_L_LL": {
+   "value": [
+    2.0,
+    2.2,
+    3.4
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Drouard et al. 2018 (A&A), Table 2 'Mean bulk chemical composition (weight %)': H and L from Hutchison (2004); LL column is Saint-Severin from Jarosewich (1990). S 2.0 / 2.2 / 3.4",
+   "note": ""
+  },
+  "C_H_L_LL": {
+   "value": [
+    0.12,
+    0.16,
+    0.235
+   ],
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Schaefer & Fegley 2006, Table 1 'Composition of average ordinary chondrite falls', mass % (H: 90 analyses, L: 123, LL: 29), averages H / L / LL: C 0.12 / 0.16 / 0.235",
+   "note": ""
+  },
+  "water_H_L_LL": {
+   "value": [
+    0.32,
+    0.34,
+    0.6
+   ],
+   "unit": "wt% H2O+",
+   "source": "https://arxiv.org/pdf/astro-ph/0606671",
+   "quote": "Schaefer & Fegley 2006, Table 1 'Composition of average ordinary chondrite falls', mass % (H: 90 analyses, L: 123, LL: 29), averages H / L / LL: H2O+ 0.32 / 0.34 / 0.60; H2O- 0.09 / 0.07 / 0.16",
+   "note": ""
+  }
+ },
+ "iron_meteorites": {
+  "Fe_Ni_Co_total": {
+   "value": 95,
+   "unit": "wt% (minimum)",
+   "source": "https://en.wikipedia.org/wiki/Iron_meteorite",
+   "quote": "'The chemical composition is dominated by the elements Fe, Ni and Co, which make up more than 95%.'",
+   "note": ""
+  },
+  "Ni": {
+   "value": [
+    5,
+    25
+   ],
+   "unit": "wt%",
+   "source": "https://en.wikipedia.org/wiki/Iron_meteorite",
+   "quote": "'Ni is always present; the concentration is nearly always higher than 5% and may be as high as about 25%.'",
+   "note": "Group ranges on same page: IIAB 5.3-6.4%, IIIAB 7.1-10.5%, IVA 7.4-9.4%, IVB 16-26% Ni. Fe is therefore roughly 75-94%."
+  },
+  "Co": {
+   "value": "not found",
+   "unit": "wt%",
+   "source": "",
+   "quote": "",
+   "note": "No citable Co figure for iron meteorites was retrieved (commonly ~0.5%, unsourced here). Only chondrite bulk Co (0.05-0.08 wt%) is sourced above."
+  },
+  "Ir_range": {
+   "value": [
+    0.01,
+    100
+   ],
+   "unit": "ppm",
+   "source": "https://arxiv.org/pdf/1312.4450",
+   "quote": "Elvis 2014: 'Ir concentrations span four orders of magnitude, from 0.01 to 100 parts per million (ppm, Kargel 1994).'",
+   "note": ""
+  },
+  "Ir_by_group_examples": {
+   "value": {
+    "IIIAB": [
+     0.01,
+     19
+    ],
+    "IVA": [
+     0.4,
+     4
+    ],
+    "IVB": [
+     13,
+     38
+    ],
+    "IIA": [
+     2,
+     60
+    ]
+   },
+   "unit": "ppm",
+   "source": "https://en.wikipedia.org/wiki/Iron_meteorite",
+   "quote": "Chemical-classification list, e.g. 'IIIAB: Medium octahedrites, 7.1-10.5% Ni, 16-23 ppm Ga, 27-47 ppm Ge, 0.01-19 ppm Ir'; 'IVB: Ataxites, 16-26% Ni ... 13-38 ppm Ir'",
+   "note": ""
+  },
+  "total_PGM_IIIAB_percentiles": {
+   "value": {
+    "p90": 75,
+    "p50": 6.8,
+    "p10": 0.17
+   },
+   "unit": "ppm",
+   "source": "https://arxiv.org/pdf/1312.4450",
+   "quote": "Elvis 2014 Table 1 'Mean resource concentration (ppm) in 10% percentile ranges for type IIIAB iron meteorites. Total PGM richness is set to be 7 times higher than Ir (Kargel 1994)': 90th: Ir 11, PGM 75; 50th: Ir 0.97, PGM 6.8; 10th: Ir 0.024, PGM 0.17",
+   "note": "'Good terrestrial mines have PGM concentrations of up to 2-6 ppm'."
+  },
+  "LL_chondrite_metal_precious_metals": {
+   "value": [
+    50,
+    220
+   ],
+   "unit": "ppm in the metal phase",
+   "source": "https://stafforini.com/works/kargel-1994-metalliferous-asteroids-potential/",
+   "quote": "Kargel 1994 (JGR 99 E10) abstract: LL chondrites 'contain 1.2-5.3% Fe-Ni metal containing 50-220 ppm of precious metals'; metallic asteroids 'up to several hundred ppm'",
+   "note": "Taken from a search-result excerpt of the abstract; page not fetched directly."
+  }
+ },
+ "carbonaceous_chondrites": {
+  "CI_water": {
+   "value": [
+    18,
+    20
+   ],
+   "unit": "wt%",
+   "source": "https://en.wikipedia.org/wiki/CI_chondrite",
+   "quote": "'CI chondrites contain between 18 and 20 wt% water'",
+   "note": "Same page: Ivuna measured 12.73 wt% total water."
+  },
+  "CI_carbon": {
+   "value": [
+    3,
+    5
+   ],
+   "unit": "wt%",
+   "source": "https://en.wikipedia.org/wiki/CI_chondrite",
+   "quote": "'carbon, ranging from approximately 3-5 wt%, primarily in organic form'; Ivuna 3.31 wt%",
+   "note": ""
+  },
+  "CI_total_iron": {
+   "value": [
+    18,
+    20
+   ],
+   "unit": "wt%",
+   "source": "https://en.wikipedia.org/wiki/CI_chondrite",
+   "quote": "'Iron is present with 18-20 wt%.'",
+   "note": ""
+  },
+  "CI_oxygen": {
+   "value": 46,
+   "unit": "wt%",
+   "source": "https://en.wikipedia.org/wiki/CI_chondrite",
+   "quote": "'Oxygen is the most abundant element in CI chondrites (46 wt%.)'",
+   "note": ""
+  },
+  "CM_water": {
+   "value": [
+    3,
+    14
+   ],
+   "unit": "wt%",
+   "source": "https://en.wikipedia.org/wiki/CM_chondrite",
+   "quote": "'CMs having 3-14 wt% water'",
+   "note": "Murchison (CM): H2O 12.6 wt% (Drouard et al. Table 2, from Jarosewich 1990)."
+  },
+  "CM_carbon": {
+   "value": 1.88,
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Table 2, CM (Murchison, Jarosewich 1990): C 1.88",
+   "note": "Single meteorite."
+  },
+  "CM_total_iron": {
+   "value": 20.6,
+   "unit": "wt%",
+   "source": "https://arxiv.org/pdf/1802.04699",
+   "quote": "Table 2, CM (Murchison): Fe 20.6; Si 13.3, Mg 11.9, Al 1.12, Ca 1.29, O 43.2, S 2.3",
+   "note": "Single meteorite."
+  }
+ },
+ "metal_separation": {
+  "method": {
+   "value": "magnetic separation of crushed/pulverised rock",
+   "unit": "",
+   "source": "https://arxiv.org/pdf/2302.12353",
+   "quote": "'Magnetic beneficiation should extract most of the free ferromagnetic metal grains (iron, nickel, and cobalt) from the silicate and carbonaceous grains.'",
+   "note": "Kargel 1994 likewise proposes that pulverised LL-chondrite regolith be 'electromagnetically raked' to separate metal grains (search excerpt). NASA SP-509 vol.3 notes metal is the 'magnetically separable (metallic) component' (https://nss.org/settlement/nasa/spaceresvol3/asterres1c.htm)."
+  },
+  "recovery_fraction": {
+   "value": "not found",
+   "unit": "",
+   "source": "",
+   "quote": "",
+   "note": "No asteroid-mining study with a stated numeric magnetic recovery fraction was found; sources say only 'most'. Elvis 2014: 'Resource extraction efficiency ... is unlikely to be 100%, especially at first'."
+  },
+  "lab_example_H5_magnetic_fraction": {
+   "value": 13.9,
+   "unit": "wt% of bulk recovered as clean metal",
+   "source": "https://arxiv.org/pdf/2409.10382",
+   "quote": "'We crushed the sample in an agate mortar and separated the magnetic (metal) from the non-magnetic (stone) fraction ... we obtained 33 mg of relatively clean metal, corresponding to 13.9 wt% bulk metal.'",
+   "note": "Hand magnet lab prep on an H5 chondrite (Arpu Kuilpu); vs ~18.5 wt% average H metal this is roughly 75% recovered, but that ratio is DERIVED across different samples, not a stated recovery."
+  }
+ },
+ "aluminium_sources": {
+  "lunar_anorthosite_15415_Al2O3": {
+   "value": [
+    35.5,
+    35.71
+   ],
+   "unit": "wt%",
+   "source": "https://curator.jsc.nasa.gov/lunar/lsc/15415.pdf",
+   "quote": "Lunar Sample Compendium (Meyer 2011), Table 1 'Chemical composition of 15415': Al2O3 35.71 (Wanke 75), 35.5 (Haskin 75); SiO2 44.93",
+   "note": "Plagioclase in 15415 by probe: Al2O3 34.5-37. 35.6 wt% Al2O3 = 18.8 wt% Al (derived)."
+  },
+  "lunar_anorthosite_60025_Al2O3": {
+   "value": [
+    34.2,
+    36.84
+   ],
+   "unit": "wt%",
+   "source": "https://curator.jsc.nasa.gov/lunar/lsc/60025.pdf",
+   "quote": "Lunar Sample Compendium 60025 composition table: Al2O3 35.21, 34.2, 35.5, 35.28, 36.84",
+   "note": ""
+  },
+  "lunar_highland_surface_Al2O3": {
+   "value": [
+    26,
+    28
+   ],
+   "unit": "wt%",
+   "source": "https://arch.neicon.ru/xmlui/handle/123456789/3167114",
+   "quote": "'the upper highlands surface on the moon has the bulk composition of anorthositic gabbro (Al2O3 26-28 wt %)'",
+   "note": "Search-result excerpt of abstract; not fetched directly."
+  },
+  "ferroan_anorthosite_plagioclase": {
+   "value": [
+    90,
+    99
+   ],
+   "unit": "wt% plagioclase",
+   "source": "https://en.wikipedia.org/wiki/Ferroan_anorthosite",
+   "quote": "'Ca-rich plagioclase ... composition greater than 90 wt%'; samples 15415, 67075: 99 vol% plagioclase",
+   "note": ""
+  },
+  "bauxite_Al2O3_commercial": {
+   "value": [
+    27,
+    53
+   ],
+   "unit": "wt%",
+   "source": "https://www.ga.gov.au/scientific-topics/minerals/mineral-resources-and-advice/australian-resource-reviews/bauxite",
+   "quote": "Geoscience Australia: Weipa, Amrun and Gove 'amongst the world's highest grade deposits, averaging between 49% and 53% Al2O3'; Darling Range 'lowest grade ... of any commercial-scale operations in the world at around 27-30% Al2O3'",
+   "note": "Quote taken from a search-result excerpt; the page refused direct fetch. Generic '30-60%' range appeared only on non-authoritative sites. No USGS percentage statement was found."
+  }
+ },
+ "fuselage_structure": {
+  "areal_mass_direct_figure": {
+   "value": "not found",
+   "unit": "kg/m2",
+   "source": "",
+   "quote": "",
+   "note": "No fetched source states a typical kg/m2 for airliner fuselage shells. A search summary attributed '5.0 lb/sq ft' (24.4 kg/m2 of wetted area, transport fuselage) to Raymer but the page was not verified."
+  },
+  "areal_mass_formula_AA241": {
+   "value": "W_fuse = (1.051 + 0.102 * I_fuse) * S_fuse",
+   "unit": "lb, with S_fuse in ft2 (so the bracket is lb/ft2 of wetted area)",
+   "source": "https://web.archive.org/web/2012id_/http://adg.stanford.edu/aa241/structures/componentweight.html",
+   "quote": "Stanford AA241 (Kroo): 'Fuselage weight is based on gross fuselage wetted area ... and upon a pressure-bending load parameter. The pressure index is: Ip = 1.5E-3 * P * B ... W fuse = (1.051 + .102 * I fuse) * S fuse. Subtract 8.5% for all-cargo aircraft.'",
+   "note": "Floor of 1.051 lb/ft2 = 5.1 kg/m2; P in lb/ft2, B width in ft. For P = 8.6 psi and B = 20 ft, Ip = 37 giving ~4.8 lb/ft2 = 24 kg/m2 (DERIVED example)."
+  },
+  "skin_thickness_737": {
+   "value": 0.9,
+   "unit": "mm",
+   "source": "https://en.wikipedia.org/wiki/Aloha_Airlines_Flight_243",
+   "quote": "'join the edges of 0.9 mm (0.036 in) thick skin panels'",
+   "note": ""
+  },
+  "skin_thickness_757": {
+   "value": 0.99,
+   "unit": "mm",
+   "source": "https://flightsafety.org/?p=11075",
+   "quote": "Boeing specified skin in the area 0.039 in (0.99 mm); measured 0.035-0.037 in",
+   "note": "Search-result excerpt; page not fetched directly."
+  },
+  "skin_only_areal_mass_1mm_2024": {
+   "value": 2.78,
+   "unit": "kg/m2",
+   "source": "https://en.wikipedia.org/wiki/2024_aluminium_alloy",
+   "quote": "density 2.78 g/cm3 x 1 mm",
+   "note": "DERIVED."
+  }
+ },
+ "vehicles": {
+  "starship_steel": {
+   "value": "304L stainless (from SN7), later proprietary '30X' alloy",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/SpaceX_Starship",
+   "quote": "'SN7 used 304L stainless steel, which is less brittle and more weldable' ... 'Later vehicles used a proprietary alloy, 30X'",
+   "note": ""
+  },
+  "starship_skin_thickness": {
+   "value": 3.97,
+   "unit": "mm",
+   "source": "https://en.wikipedia.org/wiki/SpaceX_Starship",
+   "quote": "'These cylinders have a height of 1.83 m (6 ft), and a thickness of 3.97 mm'",
+   "note": ""
+  },
+  "starship_diameter": {
+   "value": 9,
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/SpaceX_Starship",
+   "quote": "infobox: diameter 9 m",
+   "note": ""
+  },
+  "starship_ship_length": {
+   "value": [
+    50.3,
+    52.1
+   ],
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/SpaceX_Starship",
+   "quote": "second stage length: Block 1 50.3 m, Block 2 52.1 m",
+   "note": ""
+  },
+  "starship_ship_dry_mass": {
+   "value": 100,
+   "unit": "t",
+   "source": "https://en.wikipedia.org/wiki/SpaceX_Starship",
+   "quote": "footnote: 'Super Heavy dry mass: 200 t; Starship dry mass: 100 t'",
+   "note": "Approximate/aspirational figure (2021 source); the stage infobox 'empty' field is blank. Super Heavy infobox empty mass 275 t."
+  },
+  "orbiter_length": {
+   "value": 37.237,
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/Space_Shuttle_orbiter",
+   "quote": "infobox length m = 37.237",
+   "note": ""
+  },
+  "orbiter_wingspan": {
+   "value": 23.79,
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/Space_Shuttle_orbiter",
+   "quote": "infobox span m = 23.79; height 17.86 m",
+   "note": ""
+  },
+  "orbiter_dry_mass": {
+   "value": 78000,
+   "unit": "kg",
+   "source": "https://en.wikipedia.org/wiki/Space_Shuttle_orbiter",
+   "quote": "infobox empty weight kg = 78000; max takeoff weight 110000",
+   "note": "NASA SP-407 gives 'a dry weight of approximately 68,000 kilograms (150,000 pounds)' (design-era figure, https://www.american-spacecraft.org/documents/sp-407/chapter-3.html)."
+  },
+  "orbiter_structure_mass": {
+   "value": "not found",
+   "unit": "kg",
+   "source": "",
+   "quote": "",
+   "note": "No citable structure-only mass breakdown retrieved. Only: crew cabin design weight 30,000 lb (MIT 16.885 lecture, https://www.ocw.mit.edu/courses/16-885j-aircraft-systems-engineering-fall-2005/e01f9fed8a20b4c4019c1e03d9109d6a_mosr_strctrs_tps.pdf)."
+  },
+  "b747_400_length": {
+   "value": 70.66,
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/Boeing_747-400",
+   "quote": "length m = 70.66",
+   "note": ""
+  },
+  "b747_400_wingspan": {
+   "value": 64.44,
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/Boeing_747-400",
+   "quote": "span m = 64.44",
+   "note": ""
+  },
+  "b747_400_OEW": {
+   "value": 183523,
+   "unit": "kg",
+   "source": "https://en.wikipedia.org/wiki/Boeing_747-400",
+   "quote": "Operating empty weight, 747-400: 'PW: 404,600 lb'; 747-400F 'GE: 360,900 lb' (163,700 kg); MTOW 875,000 lb (396,890 kg)",
+   "note": "Converted from lb. OEW/MTOW = 0.46."
+  },
+  "an225_length": {
+   "value": 84,
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/Antonov_An-225_Mriya",
+   "quote": "length m = 84",
+   "note": ""
+  },
+  "an225_wingspan": {
+   "value": 88.4,
+   "unit": "m",
+   "source": "https://en.wikipedia.org/wiki/Antonov_An-225_Mriya",
+   "quote": "span m = 88.4; height 18.1 m",
+   "note": ""
+  },
+  "an225_empty_weight": {
+   "value": 285000,
+   "unit": "kg",
+   "source": "https://en.wikipedia.org/wiki/Antonov_An-225_Mriya",
+   "quote": "empty weight kg = 285,000; max takeoff weight kg = 640,000",
+   "note": "Listed as empty weight (not OEW). Empty/MTOW = 0.445."
+  }
+ },
+ "weight_fractions": {
+  "landing_gear_share_MTOW_wikipedia": {
+   "value": [
+    2.5,
+    5
+   ],
+   "unit": "% of MTOW",
+   "source": "https://en.wikipedia.org/wiki/Landing_gear",
+   "quote": "'The landing gear represents 2.5 to 5% of the maximum takeoff weight (MTOW)'",
+   "note": ""
+  },
+  "landing_gear_share_MTOW_VT": {
+   "value": [
+    3,
+    6
+   ],
+   "unit": "% of MTOW",
+   "source": "https://archive.aoe.vt.edu/mason/Mason_f/M96SC01.pdf",
+   "quote": "Chai & Mason 1996: 'The weight of the landing gear, which typically ranges from three to six percent of the maximum aircraft takeoff weight'",
+   "note": ""
+  },
+  "landing_gear_share_TOW_AA241": {
+   "value": 4.0,
+   "unit": "% of take-off weight",
+   "source": "https://web.archive.org/web/2012id_/http://adg.stanford.edu/aa241/structures/componentweight.html",
+   "quote": "'Gear weight is about 4.0% of the take-off weight. This is the total landing gear weight including structure, actuating system, and the rolling assembly ... The rolling assembly is approximately 39% of the total gear weight'",
+   "note": ""
+  },
+  "landing_gear_group_split": {
+   "value": {
+    "structure": 57,
+    "rolling_stock": 34,
+    "controls": 9
+   },
+   "unit": "% of gear group weight",
+   "source": "https://archive.aoe.vt.edu/mason/Mason_f/M96SC08.pdf",
+   "quote": "'For large transports, landing gear structural weight accounts for roughly 57 percent of the landing gear group weight ... rolling stock ... roughly 34 percent ... controls ... the last nine percent'",
+   "note": ""
+  },
+  "structure_share_of_empty_or_takeoff_weight": {
+   "value": "not found",
+   "unit": "%",
+   "source": "",
+   "quote": "",
+   "note": "No fetched source states the structural share. A search summary said 'typical dry structure weight for a large civil aircraft can be 40% of the total all-up weight' without a verifiable page. Empty/MTOW from the vehicle data above: 747-400 0.46, An-225 0.445."
+  }
+ },
+ "design_rules": {
+  "factor_of_safety_limit_to_ultimate": {
+   "value": 1.5,
+   "unit": "-",
+   "source": "https://www.ecfr.gov/current/title-14/section-25.303",
+   "quote": "14 CFR 25.303: 'Unless otherwise specified, a factor of safety of 1.5 must be applied to the prescribed limit load which are considered external loads on the structure.'",
+   "note": ""
+  },
+  "pressure_cabin_factor": {
+   "value": [
+    1.33,
+    1.67
+   ],
+   "unit": "x max relief valve setting",
+   "source": "https://www.ecfr.gov/current/title-14/section-25.365",
+   "quote": "14 CFR 25.365(d): 'withstand the pressure differential loads corresponding to the maximum relief valve setting multiplied by a factor of 1.33 for airplanes to be approved for operation to 45,000 feet or by a factor of 1.67 for airplanes to be approved for operation above 45,000 feet, omitting other loads.'",
+   "note": "These are limit-load factors; 25.303's 1.5 applies on top (1.33 x 1.5 = 2.0 ultimate), matching Wikipedia Factor_of_safety: 'for pressurized fuselage it is 2.0, and for main landing gear structures it is often 1.25'."
+  },
+  "cabin_pressure_differential": {
+   "value": [
+    53.8,
+    64.8
+   ],
+   "unit": "kPa",
+   "source": "https://en.wikipedia.org/wiki/Cabin_pressurization",
+   "quote": "'typical values are between 540 hPa (7.8 psi) and 650 hPa (9.4 psi)'",
+   "note": "Spacecraft: Shuttle/ISS cabin 14.5 psi (100 kPa) absolute; Apollo/Skylab 5 psi (34 kPa)."
+  },
+  "hoop_stress_cylinder": {
+   "value": "sigma_hoop = p r / t ; sigma_long = p r / (2 t)",
+   "unit": "Pa",
+   "source": "https://en.wikipedia.org/wiki/Pressure_vessel",
+   "quote": "'Stress in a thin-walled pressure vessel in the shape of a cylinder is sigma_theta = pr/t, sigma_long = pr/2t'; sphere: sigma = pr/2t",
+   "note": ""
+  }
+ },
+ "materials": {
+  "Al_6061_T6": {
+   "value": {
+    "yield": [
+     241,
+     270
+    ],
+    "uts": [
+     290,
+     310
+    ],
+    "density": 2700
+   },
+   "unit": "MPa, kg/m3",
+   "source": "https://en.wikipedia.org/wiki/6061_aluminium_alloy",
+   "quote": "'ultimate tensile strength of at least 290 MPa (42 ksi) and yield strength of at least 240 MPa (35 ksi). More typical values are 310 MPa and 270 MPa'; density 2.70 g/cm3",
+   "note": "First number = spec minimum, second = typical."
+  },
+  "Al_2024_T3": {
+   "value": {
+    "yield": [
+     269,
+     276
+    ],
+    "uts": [
+     400,
+     427
+    ],
+    "density": 2780
+   },
+   "unit": "MPa, kg/m3",
+   "source": "https://en.wikipedia.org/wiki/2024_aluminium_alloy",
+   "quote": "'T3 temper 2024 sheet has an ultimate tensile strength of 58-62 ksi and yield strength of at least 39-40 ksi'; density 2.78 g/cm3",
+   "note": "Converted from ksi."
+  },
+  "Al_7075_T6": {
+   "value": {
+    "yield": [
+     434,
+     476
+    ],
+    "uts": [
+     510,
+     538
+    ],
+    "density": 2810
+   },
+   "unit": "MPa, kg/m3",
+   "source": "https://en.wikipedia.org/wiki/7075_aluminium_alloy",
+   "quote": "'T6 temper 7075 has an ultimate tensile strength of 74,000-78,000 psi and yield strength of at least 63,000-69,000 psi'; density 2.81 g/cm3",
+   "note": "Converted from psi. T651: 572 / 503 MPa."
+  },
+  "steel_4340": {
+   "value": {
+    "yield": [
+     740,
+     1860
+    ],
+    "uts": [
+     860,
+     1980
+    ]
+   },
+   "unit": "MPa",
+   "source": "https://en.wikipedia.org/wiki/4340_steel",
+   "quote": "'4340 can commonly have yield strengths of 740-1860 MPa, tensile strengths of 860-1980 MPa' depending on heat treatment (ASM Handbook)",
+   "note": "Specific quench-and-temper condition NOT sourced; the range spans tempers. A search summary cited oil-quenched, tempered 315 C: yield 1620, UTS 1760 MPa, page unverified. Density not sourced."
+  },
+  "steel_300M": {
+   "value": {
+    "yield_min": 1517,
+    "uts_min": 1862
+   },
+   "unit": "MPa",
+   "source": "https://ssa-corp.com/es/300M-4340-MOD_AMS-6417-UNSK44220.php",
+   "quote": "'Minimum Longitudinal Tensile Properties per AMS 6417: Tensile Strength 270 ksi, Yield Strength 0.2% offset 220 ksi, Elongation 8%'; '300M is widely used for Aircraft Landing Gear'",
+   "note": "Supplier datasheet, converted from ksi. Density not verified (a search summary said 7.87 g/cc)."
+  },
+  "Ti_6Al_4V": {
+   "value": {
+    "yield": [
+     880,
+     920
+    ],
+    "uts": [
+     900,
+     950
+    ],
+    "density": [
+     4429,
+     4512
+    ]
+   },
+   "unit": "MPa, kg/m3",
+   "source": "https://en.wikipedia.org/wiki/Ti-6Al-4V",
+   "quote": "properties table Min/Max: density 4.429-4.512 g/cm3, tensile yield 880-920 MPa, tensile ultimate 900-950 MPa",
+   "note": ""
+  },
+  "stainless_304L_room_temp": {
+   "value": {
+    "yield": 193,
+    "uts": 586
+   },
+   "unit": "MPa",
+   "source": "https://www.totalmateria.com/articles/stainless-steels-for-cryogenic-applications",
+   "quote": "Table 1: '304L 24 C: yield 193, tensile 586, elongation 60'",
+   "note": "Density 304: 0.286 lb/in3 = 7,900 kg/m3 (https://en.wikipedia.org/wiki/SAE_304_stainless_steel)."
+  },
+  "stainless_304L_cryogenic": {
+   "value": {
+    "77K": {
+     "yield": 241,
+     "uts": 1340
+    },
+    "19K": {
+     "yield": 233,
+     "uts": 1516
+    }
+   },
+   "unit": "MPa",
+   "source": "https://www.totalmateria.com/articles/stainless-steels-for-cryogenic-applications",
+   "quote": "Table 1: '304L -195.5 C: 241 / 1340; 304L -254 C: 233 / 1516'",
+   "note": "Annealed. 304 (not L): 227/586 at 24 C, 393/1416 at -195.5 C."
+  }
+ },
+ "stiffened_shell_ratio": {
+  "skin_only_to_stiffened_ratio": {
+   "value": "not found",
+   "unit": "-",
+   "source": "",
+   "quote": "",
+   "note": "No source giving total shell weight / skin-only weight was found."
+  },
+  "actual_structure_over_ideal_shell": {
+   "value": 1.3503,
+   "unit": "x analytically sized load-carrying shell",
+   "source": "https://ntrs.nasa.gov/api/citations/19960025262/downloads/19960025262.pdf",
+   "quote": "Ardema et al., NASA TM-110392: 'the nonoptimum factor for fuselage structure is 1.3503; in other words, the calculated weight must be increased by about 35 percent to get the actual structural weight'",
+   "note": "Nearest available: ratio of real load-carrying fuselage structure (frames, bulkheads, covering, stiffeners, longerons) to the idealised optimum shell, fitted to 8 transports. Not a skin-only ratio."
+  },
+  "primary_structure_over_ideal_shell": {
+   "value": 1.8872,
+   "unit": "x",
+   "source": "https://ntrs.nasa.gov/api/citations/19960025262/downloads/19960025262.pdf",
+   "quote": "'W_actual = 1.8872 W_calc, R = 0.9917' for primary structure (adds joints, fasteners, keel beam, flooring, pressure web, fittings)",
+   "note": ""
+  },
+  "total_fuselage_over_ideal_shell": {
+   "value": 2.5686,
+   "unit": "x",
+   "source": "https://ntrs.nasa.gov/api/citations/19960025262/downloads/19960025262.pdf",
+   "quote": "'the nonoptimum factor for the total fuselage weight is 2.5686; ... must be increased by about 157 percent to get the actual total fuselage weight'",
+   "note": ""
+  }
+ },
+ "landing_gear": {
+  "design_sink_speed_landing_weight": {
+   "value": 3.05,
+   "unit": "m/s",
+   "source": "https://www.ecfr.gov/current/title-14/section-25.473",
+   "quote": "14 CFR 25.473(a)(2): 'With a limit descent velocity of 10 fps at the design landing weight'",
+   "note": ""
+  },
+  "design_sink_speed_takeoff_weight": {
+   "value": 1.83,
+   "unit": "m/s",
+   "source": "https://www.ecfr.gov/current/title-14/section-25.473",
+   "quote": "14 CFR 25.473(a)(3): 'With a limit descent velocity of 6 fps at the design take-off weight'",
+   "note": ""
+  },
+  "reserve_energy_sink_speed": {
+   "value": 3.66,
+   "unit": "m/s",
+   "source": "https://www.ecfr.gov/current/title-14/section-25.723",
+   "quote": "14 CFR 25.723(b): 'The landing gear may not fail in a test ... simulating a descent velocity of 12 f.p.s. at design landing weight'",
+   "note": ""
+  },
+  "landing_load_factor": {
+   "value": [
+    0.7,
+    1.5
+   ],
+   "unit": "g (gear reaction factor), 1.2 typical",
+   "source": "https://archive.aoe.vt.edu/mason/Mason_f/M96SC05.pdf",
+   "quote": "'For a transport-type aircraft the landing load factor varies from 0.7 to 1.5, with 1.2 being the most widely used value'",
+   "note": ""
+  },
+  "oleo_efficiency": {
+   "value": [
+    0.8,
+    0.9
+   ],
+   "unit": "-",
+   "source": "https://archive.aoe.vt.edu/mason/Mason_f/M96SC05.pdf",
+   "quote": "'efficiencies of 80 to 90 percent are more usual'; stroke equation: eta_s*S*N*W + eta_t*St*N*W = W*V^2/(2g) + (W-L)(S+St); 'an extra one inch of stroke is usually added'",
+   "note": "The text then says shock-absorber and tire factors are 'generally assumed to be 0.47 and ... 0.8'; the order looks swapped (0.8 oleo, 0.47 tire is consistent with the 80-90% statement)."
+  },
+  "tire_friction_coefficient_max": {
+   "value": 0.8,
+   "unit": "-",
+   "source": "https://www.ecfr.gov/current/title-14/section-25.473",
+   "quote": "'this coefficient of friction need not be more than 0.8'",
+   "note": ""
+  },
+  "materials": {
+   "value": "300M ultra-high-strength steel (4340 mod); high-strength steel; titanium/aluminium wheels",
+   "unit": "",
+   "source": "https://ssa-corp.com/es/300M-4340-MOD_AMS-6417-UNSK44220.php",
+   "quote": "'300M is widely used for Aircraft Landing Gear'",
+   "note": "A search summary (NTRS 19780022667) noted 300M was used for the Space Shuttle orbiter landing gear; not fetched. Gear safety factor often 1.25 (Wikipedia Factor_of_safety)."
+  }
+ }
+}

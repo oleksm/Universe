@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Shock
+purpose: A shock is a sudden change of speed (a hard landing, a collision, a blow). What it does to a thing depends on how hard it is, measured in g, and on what the thing is made of. This is what breaking is worked out from.
+details:
+  text:
+    - "How the registry carries it:"
+    - "- A hull: the landing its legs are designed for, the hardest landing they take, and the jolt each puts on everything aboard (worked out in its structure report)."
+    - "- A part and an item of mill stock: its shock limit, the hardest jolt it takes while it is carried, and its impact resistance, the blow it takes without damage."
+    - "- A material: its fracture toughness, how well it resists a crack running through it. Glass and steel differ by a hundred times."
+sections:
+  - title: What a jolt does to a person
+    text:
+      - "From Wikipedia, g-force (https://en.wikipedia.org/wiki/G-force)."
+    table:
+      columns: [Jolt, What happens]
+      rows:
+        - ["5 g, sustained, head to foot", "A typical person loses consciousness."]
+        - ["9 g, sustained", "What trained pilots can handle."]
+        - ["16 g for a minute", "May be deadly."]
+        - ["20 g for under 10 seconds", "Tolerated in early experiments, lying across the push."]
+        - ["46.2 g, a peak", "Survived once, strapped in, by John Stapp."]
+        - ["Over 100 g, a brief instant", "A car crash that was survived."]

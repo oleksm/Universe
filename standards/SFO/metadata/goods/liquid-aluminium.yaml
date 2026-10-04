@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Liquid aluminium
+  kind: intermediate
+  description: "Molten aluminium tapped from the pots, not yet alloyed."

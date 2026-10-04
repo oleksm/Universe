@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
 # Invented: along the south side of East Road, from the power station's parcel to the foundry's.
-# What it can carry is set to what the station can supply.
+# What it can carry was chosen: a little over what the foundry draws flat out.
 name: Power line 1
 from: trethi-power-station
 to: trethi-foundry

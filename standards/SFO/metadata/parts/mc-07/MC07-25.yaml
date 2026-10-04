@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut.
+identity:
+  code: MC07-25
+  name: "Cargo ramp"
+  status: draft
+  drawing: "assets/models/mc07.glb: CargoRamp, CargoRam_*"
+physical:
+  length: 8.49
+  width: 7.5
+  height: 7.78
+shape:
+  surface_area: 227.1
+making:
+  processes: [fitting]
+fit:
+  count: 1
+  position: "Its centre is 34.2 m back from the nose and -0.1 m above the keel, on the centre line."
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }

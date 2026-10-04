@@ -44,7 +44,7 @@ properties:
     description: The record it sits under (its category).
   records:
     type: string
-    description: A folder in metadata/ whose records sit under this one (elements, materials, processes).
+    description: A folder in metadata/ whose records sit under this one (elements, materials, processes, modules, goods, hulls).
   purpose:
     type: string
     description: Why it exists, a paragraph.

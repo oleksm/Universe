@@ -9,15 +9,16 @@ size:
   height: 35
 rate:
   throughput: 100
-  batch: 100
+  batch: 80
   product: ingot
 inputs:
   materials:
-  - { item: refined-steel, amount: 1.02 }
+  - { item: refined-steel, amount: 1.16 }
 outputs:
   by_products:
-  - { item: scrap, amount: 0.02 }
+  - { item: scrap, amount: 0.16 }
 needs:
   power: 1
 basis:
-  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."
+  - { of: [inputs, outputs], tier: sourced, source: "https://www.britannica.com/technology/steel/Casting-procedures", note: "About 86% of the liquid steel becomes sound ingot; the head of each ingot is cut off as scrap. Read from a search excerpt, not the page itself." }
+  - { of: [rate, size, needs], tier: invented, note: "Not found in a source: approximate, from memory." }

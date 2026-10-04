@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Red mud
+  kind: by-product
+  description: "The iron-rich residue left when alumina is taken out of bauxite."

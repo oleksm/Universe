@@ -8,7 +8,7 @@ size:
   width: 100
   height: 20
 rate:
-  throughput: 1.9
+  throughput: 1.89
   product: H
 inputs:
   materials:
@@ -19,4 +19,6 @@ outputs:
 needs:
   power: 100
 basis:
-  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."
+  - { of: [rate, needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Electrolysis_of_water", note: "53 kWh for each kg of hydrogen, so 100 MW makes 1.89 t an hour." }
+  - { of: [inputs, outputs], tier: derived, source: "https://www.rmi.org/hydrogen-reality-check-distilling-green-hydrogens-water-consumption/", note: "From the chemistry: 9 kg of water gives 1 kg of hydrogen and 8 of oxygen. A real plant draws 20 to 30 with its cooling." }
+  - { of: [size], tier: sourced, source: "https://ispt.eu/news/gigawatt-large-potential-for-production-of-green-hydrogen-in-five-dutch-industrial-regions/", note: "0.8 to 1.7 hectares for each 100 MW." }

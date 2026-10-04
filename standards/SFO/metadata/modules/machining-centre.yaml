@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Machining centre
+  step: Machine
+  description: "Lathes and mills that cut tube, bar and forgings to a part's size. What it takes and cuts away depends on the part: each part's record says."
+size:
+  length: 20
+  width: 10
+  height: 6
+rate:
+  throughput: 0.5
+  product: parts
+needs:
+  power: 0.13
+basis:
+  - { of: [needs.power], tier: sourced, source: "https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/mag3", note: "A large five-axis machining centre has a 130 kW spindle. The spindle only." }
+  - { of: [size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

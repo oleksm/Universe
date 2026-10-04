@@ -1,7 +1,10 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
   name: Iron ore
-  kind: raw
+  kind: rock
   description: "Rock rich enough in iron oxide to be worth working."
 game:
   goods: goods.ores
+source:
+  occurs: rocky planets and moons
+  note: "Ground rich in iron oxide, as rusted rock is. Not from asteroids: there the iron is metal grains and sulphide, and what oxide there is sits bound in the silicates."

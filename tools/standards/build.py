@@ -177,7 +177,7 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 LOCAL = "LocalAdministration"
 ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
 # What zone each kind of facility needs.
-FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "power": "industrial", "warehouse": "port"}
+FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -190,7 +190,28 @@ PORT = {
 
 # The game's kinds of goods: each one's name and how much a cubic metre of it weighs as stowed
 # (content/base/goods.ron).
+ORES = set(re.findall(r'key: "(ore\.[a-z_]+)"', open(os.path.join(ROOT, "content", "base", "ores.ron"), encoding="utf-8").read()))
 GOODS_KINDS = {k: {"name": n.title(), "density": float(d)} for k, n, d in re.findall(r'key: "(goods\.[a-z_]+)",\s*name: "([^"]*)",.*?bulk_density: ([0-9.]+)', open(os.path.join(ROOT, "content", "base", "goods.ron"), encoding="utf-8").read(), re.S)}
+
+
+TIERS = ["sourced", "derived", "invented"]
+
+
+def check_basis(rec, where):
+    """A record's `basis`: entries of what they cover, a tier, and for a sourced one its source."""
+    bs = rec.get("basis")
+    if bs is None:
+        return
+    if not isinstance(bs, list):
+        problem(where, "basis: a list of entries (of, tier, source, note)")
+        return
+    for en in bs:
+        if not isinstance(en, dict) or not isinstance(en.get("of"), list) or en.get("tier") not in TIERS:
+            problem(where, f"basis: each entry names what it is of and a tier ({', '.join(TIERS)})")
+        elif set(en) - {"of", "tier", "source", "note", "review"}:
+            problem(where, "basis: unknown field")
+        elif en["tier"] == "sourced" and not en.get("source"):
+            problem(where, "basis: a sourced entry names its source")
 
 
 def area(o):
@@ -254,7 +275,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines"}:
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -520,7 +541,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", HOUSE, LOCAL):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -574,15 +595,19 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock"}
+# (Parts are filed in folders of their own: read further down.)
+NESTED = {"parts"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials, processes, modules, goods = [], [], [], [], []
+elements, materials, processes, modules, goods, hulls, mill_stock = [], [], [], [], [], [], []
 for s in standards:
     if "records" not in s:
         continue
     kind = str(s["records"])
     prefix = s["id"].split(" ")[0]
     folder = os.path.join(TREE, prefix, "metadata", kind)
+    if kind in NESTED:
+        continue
     if kind not in KINDS:
         problem(os.path.join(TREE, s["file"]), f"records: one of {', '.join(KINDS)}")
         continue
@@ -592,7 +617,9 @@ for s in standards:
     seen = {}
     for name in sorted(os.listdir(folder)):
         full = os.path.join(folder, name)
-        pattern = r"[0-9]{3}-[a-z-]+\.yaml" if kind == "elements" else r"[a-z0-9-]+\.yaml"
+        if name.startswith("."):
+            continue
+        pattern = r"[0-9]{3}-[a-z-]+\.yaml" if kind == "elements" else r"[A-Z0-9-]+\.yaml" if kind == "mill-stock" else r"[a-z0-9-]+\.yaml"
         if not re.fullmatch(pattern, name):
             problem(full, "an element's file is named NNN-<name>.yaml (its atomic number)" if kind == "elements" else "its file is named <name>.yaml (lower case, words joined by -)")
             continue
@@ -605,6 +632,19 @@ for s in standards:
             if ident.get("atomic_number") != int(name[:3]):
                 problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
             key = ident.get("symbol")
+        elif kind == "mill-stock":
+            for k in ("code", "name"):
+                if not ident.get(k):
+                    problem(full, f"identity: no {k}")
+            if name != str(ident.get("code")) + ".yaml":
+                problem(full, "an item of mill stock is filed as <its code>.yaml")
+            key = ident.get("code")
+            e["slug"] = name[:-5]
+        elif kind == "hulls":
+            if not ident.get("name"):
+                problem(full, "identity: no name")
+            key = ident.get("name")
+            e["slug"] = name[:-5]
         elif kind == "goods":
             for k in ("name", "kind"):
                 if not ident.get(k):
@@ -632,8 +672,14 @@ for s in standards:
         if key in seen:
             problem(full, f"{key} twice (also {seen[key]})")
         seen[key] = name
+        check_basis(e, full)
         for group, props in e.items():
-            if group == "slug":
+            if group in ("slug", "basis"):
+                continue
+            if kind == "goods" and group == "composition":
+                for c in props or []:
+                    if c.get("part") not in {(x.get("identity") or {}).get("symbol") for x in elements} and not os.path.exists(os.path.join(folder, str(c.get("part")) + ".yaml")):
+                        problem(full, f"composition: '{c.get('part')}' is no element's symbol and no good's file name")
                 continue
             known = SCHEMAS[kind]["properties"].get(group)
             if known is None:
@@ -644,7 +690,7 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods}[kind].append(e)
+        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
@@ -791,7 +837,7 @@ for ad in administrations:
             covered = 0
             for ln in fc.get("lines") or []:
                 pr = by_process.get(ln.get("process"))
-                if set(ln) != {"process", "modules"}:
+                if set(ln) - {"also"} != {"process", "modules"}:
                     problem(where, "lines: each is a process and the modules it is built of")
                     continue
                 if ln["process"] not in (fc.get("processes") or []):
@@ -813,6 +859,18 @@ for ad in administrations:
                 for m in has:
                     if m not in [r["module"] for r in unit["modules"]]:
                         problem(where, f"lines: '{m}' is no step of {ln['process']}")
+                # (What else the same line can run: each a process of the facility, whose steps are
+                # all in modules the line has.)
+                for other in ln.get("also") or []:
+                    opr = by_process.get(other)
+                    if other not in (fc.get("processes") or []):
+                        problem(where, f"lines: also '{other}' is not one of its processes")
+                    elif opr is None or not (opr.get("equipment") or {}).get("steps"):
+                        problem(where, f"lines: also '{other}' has no steps")
+                    else:
+                        for st in opr["equipment"]["steps"]:
+                            if st.get("module") not in has:
+                                problem(where, f"lines: also '{other}' needs a {st.get('module')}, and the line has none")
                 # (The most the line can make: the least any of its modules lets through.)
                 limits = [(has[r["module"]] * mod_of[r["module"]]["rate"]["throughput"] / r["demand"], r["module"]) for r in unit["modules"] if r["demand"] and r["module"] in has]
                 if not limits:
@@ -873,6 +931,150 @@ for ad in administrations:
             if plot is not None and order:
                 street = next((st for st in x.get("streets", []) if st.get("slug") == (plot.get("address") or {}).get("street")), None)
                 fc["layout"] = lay_out(where, plot, street, order)
+# Parts: filed by hull (SFO/metadata/parts/<hull>/<code>.yaml); a part made of other parts has them
+# in the folder named after its code (parts/<hull>/<code>/<code>-NNN.yaml). All to part.schema.yaml.
+hull_of = {hl.get("slug"): hl for hl in hulls}
+PART_SCHEMA = yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", "part.schema.yaml"), encoding="utf-8"))
+parts = []
+
+
+def read_part(full, hull, parent, under):
+    pt = load(full)
+    ident = pt.get("identity") or {}
+    code = str(ident.get("code", ""))
+    if os.path.basename(full) != code + ".yaml":
+        problem(full, "a part's file is named <its code>.yaml")
+    if parent is None and not re.fullmatch(r"[A-Z0-9]+-[0-9]{2}", code):
+        problem(full, "identity.code: the hull's code, a dash, two digits (MC07-04)")
+    if parent is not None and not re.fullmatch(re.escape(parent) + r"-[0-9]{3}", code):
+        problem(full, f"identity.code: {parent}, a dash, three digits")
+    if not ident.get("name"):
+        problem(full, "identity: no name")
+    if any(o["slug"] == code for o in parts):
+        problem(full, f"code {code} twice")
+    check_basis(pt, full)
+    for group, props in pt.items():
+        if group == "basis":
+            continue
+        known = PART_SCHEMA["properties"].get(group)
+        if known is None:
+            problem(full, f"unknown group '{group}'")
+            continue
+        for k in props or {}:
+            if k not in known["properties"]:
+                problem(full, f"{group}: unknown property '{k}'")
+    pt.update({"slug": code, "hull": hull, "under": under, "file": os.path.relpath(full, TREE)})
+    if parent is not None:
+        pt["parent"] = parent
+    parts.append(pt)
+    return code
+
+
+for s in standards:
+    if str(s.get("records")) != "parts":
+        continue
+    root = os.path.join(TREE, s["id"].split(" ")[0], "metadata", "parts")
+    for hull in sorted(os.listdir(root)):
+        hdir = os.path.join(root, hull)
+        if not os.path.isdir(hdir):
+            problem(hdir, "parts are filed in a folder named after their hull")
+            continue
+        if hull not in hull_of:
+            problem(hdir, f"no hull '{hull}' in the SFO")
+        for fn in sorted(os.listdir(hdir)):
+            full = os.path.join(hdir, fn)
+            if os.path.isdir(full):
+                if not os.path.exists(full + ".yaml"):
+                    problem(full, "a folder of parts is named after the part they make up")
+                continue
+            code = read_part(full, hull, None, s["id"])
+            sub = full[:-5]
+            for pn in sorted(os.listdir(sub)) if os.path.isdir(sub) else []:
+                read_part(os.path.join(sub, pn), hull, code, s["id"])
+# Mill stock: its material in that form; what a unit of it weighs, from the material's density and
+# its size (kg per m2 of sheet, plate and film; kg per metre of bar, wire and tube).
+import math
+stock_of = {}
+for ms in mill_stock:
+    where = os.path.join(TREE, ms["file"])
+    mf, size = ms.get("made_from") or {}, ms.get("size") or {}
+    mat = next((m for m in materials if m.get("slug") == mf.get("material")), None)
+    if mat is None:
+        problem(where, f"made_from.material: no material '{mf.get('material')}'")
+        continue
+    if mf.get("form") not in ((mat.get("identity") or {}).get("form") or []):
+        problem(where, f"made_from.form: {mf.get('material')} doesn't come as {mf.get('form')}")
+    proc = (ms.get("making") or {}).get("process")
+    if proc is not None and proc not in by_process:
+        problem(where, f"making.process: no process '{proc}' in the SFO")
+    density = (mat.get("mass") or {}).get("density")
+    t, d, w = size.get("thickness"), size.get("diameter"), size.get("wall")
+    if density and t and not d:
+        ms["unit"], ms["weight"] = "m2", density * t / 1000
+    elif density and d and w:
+        ms["unit"], ms["weight"] = "m", density * math.pi * (d ** 2 - (d - 2 * w) ** 2) / 4e6
+    elif density and d:
+        ms["unit"], ms["weight"] = "m", density * math.pi * d ** 2 / 4e6
+    else:
+        ms["unit"], ms["weight"] = "kg", 1.0
+    ph = ms.get("physical") or {}
+    if ms["unit"] == "m2" and ph.get("length") and ph.get("width"):
+        ms["piece_mass"] = ms["weight"] * ph["length"] * ph["width"]
+    elif ms["unit"] == "m" and ph.get("length"):
+        ms["piece_mass"] = ms["weight"] * ph["length"]
+    stock_of[ms["slug"]] = ms
+# (What a part names must be there: its mill stock, its processes, its designer, the standards it is
+# built to, the parts it joins or stands in for. What its stock weighs follows from the quantity.)
+codes = {pt["slug"] for pt in parts}
+# Mass. A part that says its own mass has it. One that doesn't is given its share of what is left of
+# its hull's frame mass (the game's figure), by its surface: an estimate, until what it is cut from
+# says better. A part made of parts weighs what they do, each as many times as it has them.
+kids = lambda c: [pt for pt in parts if pt.get("parent") == c["slug"]]
+times = lambda pt: (pt.get("fit") or {}).get("count", 1)
+for hl in hulls:
+    mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
+    leaves = [pt for pt in mine if not kids(pt)]
+    each = lambda pt: times(pt) * (times(next(o for o in mine if o["slug"] == pt["parent"])) if pt.get("parent") else 1)
+    frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
+    said = sum((pt.get("physical") or {}).get("mass", 0) * each(pt) for pt in leaves)
+    rest = [pt for pt in leaves if (pt.get("physical") or {}).get("mass") is None and (pt.get("shape") or {}).get("surface_area")]
+    surface = sum(pt["shape"]["surface_area"] * each(pt) for pt in rest)
+    per_m2 = (frame - said) / surface if surface and frame > said else 0
+    hl["estimate"] = {"per_m2": per_m2, "surface": surface, "said": said}
+    for pt in leaves:
+        if (pt.get("physical") or {}).get("mass") is not None:
+            pt["mass"], pt["mass_from"] = pt["physical"]["mass"], "said"
+        elif pt in rest and per_m2:
+            pt["mass"], pt["mass_from"] = pt["shape"]["surface_area"] * per_m2, "share"
+    for c in mine:
+        if kids(c) and all("mass" in k for k in kids(c)):
+            c["mass"], c["mass_from"] = sum(k["mass"] * times(k) for k in kids(c)), "parts"
+    hl["parts_mass"] = sum(pt["mass"] * times(pt) for pt in mine if not pt.get("parent") and "mass" in pt)
+codes = {pt["slug"] for pt in parts}
+for pt in parts:
+    where = os.path.join(TREE, pt["file"])
+    mf, ident = pt.get("made_from") or {}, pt.get("identity") or {}
+    ms = stock_of.get(mf.get("item"))
+    if "item" in mf and ms is None:
+        problem(where, f"made_from.item: no mill stock '{mf['item']}'")
+    elif ms is not None and "quantity" in mf:
+        pt["stock_mass"] = mf["quantity"] * ms["weight"]
+        pt["stock_unit"] = ms["unit"]
+    for name in (pt.get("making") or {}).get("processes") or []:
+        if name not in by_process:
+            problem(where, f"making.processes: no process '{name}' in the SFO")
+    ph = pt.get("physical") or {}
+    for lo, hi in (("operating_min_temperature", "operating_max_temperature"), ("storage_min_temperature", "storage_max_temperature")):
+        if lo in ph and hi in ph and ph[lo] > ph[hi]:
+            problem(where, f"physical: {lo.replace('_', ' ')} is above {hi.replace('_', ' ')}")
+    if "designer" in ident and ident["designer"] not in BRANDS:
+        problem(where, f"identity.designer: no company '{ident['designer']}' in Maker House")
+    for sid in ident.get("standards") or []:
+        if sid not in {s["id"] for s in standards}:
+            problem(where, f"identity.standards: no standard '{sid}'")
+    for other in (ident.get("interchangeable_with") or []) + ((pt.get("fit") or {}).get("joins_to") or []):
+        if other not in codes:
+            problem(where, f"no part '{other}'")
 for m in modules:
     for kind in (m.get("rate") or {}).get("stores") or []:
         if kind not in GOODS_KINDS:
@@ -1029,6 +1231,369 @@ def write_ron():
         f.write("\n".join(out))
 
 
+# ---------------------------------------------------------------- reports
+# Where the registry does not yet join up. Nothing here stops the build: these are gaps to close,
+# not mistakes. Each report is a table; a row is ok, a gap, or a note.
+reports = []
+
+
+def report(key, title, about, columns, rows):
+    reports.append({"key": key, "title": title, "about": about, "columns": columns, "rows": rows,
+                    "gaps": sum(1 for r in rows if r["state"] == "gap"), "ok": sum(1 for r in rows if r["state"] == "ok")})
+
+
+def row(state, *cells):
+    return {"state": state, "cells": [c if isinstance(c, dict) else {"t": str(c)} for c in cells]}
+
+
+link = lambda text, key: {"t": str(text), "k": key}
+tonnes = lambda kg_: f"{kg_ / 1000:,.2f} t" if abs(kg_) >= 1000 else f"{kg_:,.0f} kg"
+run_at = {}
+for ad in administrations:
+    for x in ad["bodies"]:
+        for fc in x.get("facilities", []):
+            for name in fc.get("processes") or []:
+                run_at.setdefault(name, []).append(fc)
+lined = {name for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln for name in [ln["process"]] + (ln.get("also") or [])}
+part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "part:" + pt["slug"])
+
+# (The processes that make a material as ingot: what a mill's stock starts from.)
+ingot_makers = lambda mat: [q for q in processes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
+# 1. The chain from a hull down to rock: how far each part gets.
+for hl in hulls:
+    mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
+    leaves = [pt for pt in mine if not kids(pt)]
+    rows = []
+    how = lambda pt: (pt.get("making") or {}).get("processes") or []
+    # (The hull itself, and each part made of parts: is it said how it is put together, and is a yard built to do it?)
+    for name, key, procs in [(hl["identity"]["name"] + " (hull)", link(hl["identity"]["name"] + " (hull)", "hull:" + hl["slug"]), [q for q in [(hl.get("making") or {}).get("process")] if q])] + [(None, part_link(pt), how(pt)) for pt in mine if kids(pt)]:
+        steps = [("says how it is put together", bool(procs) and all(q in by_process for q in procs)), ("a yard is built to do it", bool(procs) and all(q in lined for q in procs))]
+        reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
+        rows.append(row("ok" if reached == len(steps) else "gap", key, f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
+    for pt in leaves:
+        ms = stock_of.get((pt.get("made_from") or {}).get("item"))
+        proc = ((ms or {}).get("making") or {}).get("process")
+        pr = by_process.get(proc)
+        steps = [
+            ("has a mass", "mass" in pt),
+            ("says what it is cut from", ms is not None),
+            ("that stock has a process", pr is not None),
+            ("the process has steps", bool(pr and (pr.get("equipment") or {}).get("steps"))),
+            ("a facility is built to run it", proc in lined),
+            ("the ingot that stock is made from can be made", any(q["slug"] in lined for q in ingot_makers((ms or {}).get("made_from", {}).get("material")))),
+            ("says how it is made from its stock", bool(how(pt)) and all(q in by_process for q in how(pt))),
+            ("a yard is built to make it", bool(how(pt)) and all(q in lined for q in how(pt))),
+        ]
+        reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
+        rows.append(row("ok" if reached == len(steps) else "gap", part_link(pt), f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
+    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "The hull and each part made of parts: is it said how it is put together, and is a yard built to do it. Each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, is a facility built to run it, can the ingot that stock starts from be made (a process with a line built for it), is it said how the part is made from its stock, and is a yard built to make it.", ["Part", "Links made", "Where it stops"], rows)
+    # (Where it can be built, and how fast at most: the yards with a line for its assembly, flat out.)
+    built = []
+    for ad in administrations:
+        for x in ad["bodies"]:
+            for fc in x.get("facilities", []):
+                for ln in fc.get("lines") or []:
+                    if "most" in ln and ln["process"] == (hl.get("making") or {}).get("process") and ln["most"]["output"] and hl.get("parts_mass"):
+                        built.append({"at": fc["name"], "settlement": x["name"], "days": hl["parts_mass"] / 1000 / ln["most"]["output"] / 24})
+    hl["built"] = built
+
+# 2. Mass: what a thing weighs against what it is made of.
+rows = []
+for hl in hulls:
+    frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
+    got = hl.get("parts_mass", 0)
+    if frame:
+        d = got - frame
+        rows.append(row("ok" if abs(d) <= 0.01 * frame else "gap", link(hl["identity"]["name"] + " (hull)", "hull:" + hl["slug"]), tonnes(frame), "its frame, in the game", tonnes(got), "its parts", f"{d:+,.0f} kg ({100 * d / frame:+.1f}%)"))
+    for c in [pt for pt in parts if pt["hull"] == hl["slug"] and kids(pt)]:
+        own, sub = (c.get("physical") or {}).get("mass"), sum(k["mass"] * times(k) for k in kids(c) if "mass" in k)
+        missing = [k for k in kids(c) if "mass" not in k]
+        if missing:
+            rows.append(row("gap", part_link(c), "", "", tonnes(sub), "its parts", f"{len(missing)} of its parts have no mass"))
+        elif own is not None:
+            rows.append(row("ok" if abs(own - sub) <= 0.01 * max(own, 1) else "gap", part_link(c), tonnes(own), "its own record", tonnes(sub), "its parts", f"{sub - own:+,.0f} kg"))
+        else:
+            rows.append(row("ok", part_link(c), tonnes(sub), "its parts", "", "", "worked out from its parts"))
+    for pt in [pt for pt in parts if pt["hull"] == hl["slug"] and "stock_mass" in pt and "mass" in pt]:
+        lost = pt["stock_mass"] - pt["mass"]
+        rows.append(row("ok" if lost >= 0 else "gap", part_link(pt), tonnes(pt["mass"]), "its own record", tonnes(pt["stock_mass"]), "the stock it takes", f"{lost:,.0f} kg lost as offcut" if lost >= 0 else "it weighs more than the stock it is cut from"))
+report("mass", "Mass: a thing against what it is made of", "A hull against its parts, a part made of parts against them, a part against the stock it is cut from. A gap is a difference of more than 1%, a part with no mass, or a part heavier than its stock.", ["What", "Weighs", "By", "Against", "By", "Difference"], rows)
+
+# 2b. Structure: each hull's parts against the loads it is designed to stand, and the hull against
+# real vehicles. First-order sizing: a pressurised part as a cylinder across its smaller dimension
+# (hoop stress), a landing leg as a column (strength, and Euler buckling with pinned ends).
+_src_path = os.path.join(TREE, "sources", "research_rock_structure.json")
+BENCH = json.load(open(_src_path, encoding="utf-8")) if os.path.exists(_src_path) else {}
+bench = lambda topic, fig: (BENCH.get(topic) or {}).get(fig) or {}
+mat_by = {m.get("slug"): m for m in materials}
+for hl in hulls:
+    ds = hl.get("design") or {}
+    if not ds:
+        continue
+    mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
+    leaves = [pt for pt in mine if not kids(pt)]
+    stock = lambda pt: stock_of.get((pt.get("made_from") or {}).get("item"))
+    mech = lambda ms: (mat_by.get((ms.get("made_from") or {}).get("material")) or {}).get("mechanical") or {}
+    longest = lambda pt: max((pt.get("physical") or {}).get(k, 0) for k in ("length", "width", "height"))
+    case = lambda pt: (pt.get("limits") or {}).get("load_case")
+    SF, PF, eta = ds.get("safety_factor", 1), ds.get("pressure_factor", 1), ds.get("strut_efficiency", 1)
+    frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
+    ship = hl.get("parts_mass", 0) + max(0.0, ds.get("loaded_mass", 0) * 1000 - frame)   # (its parts, and what the game fits and loads)
+    rows = []
+    # (Holding the cabin's air.)
+    for pt in [pt for pt in leaves if case(pt) == "pressure"]:
+        ms = stock(pt)
+        ph, sy, have = pt.get("physical") or {}, mech(ms or {}).get("yield_strength"), ((ms or {}).get("size") or {}).get("thickness")
+        if not (ms and sy and have and ph.get("width")):
+            rows.append(row("gap", part_link(pt), "holds the cabin's air", "", "", "", "its stock, its size or its material's strength is not said"))
+            continue
+        r = min(ph["width"], ph["height"]) / 2
+        need = ds.get("cabin_pressure", 0) * 1e3 * r * SF * PF / (sy * 1e6) * 1000
+        rows.append(row("ok" if have >= need else "gap", part_link(pt), f"holds {ds.get('cabin_pressure')} kPa across {2 * r:.1f} m", f"{need:.1f} mm of skin", f"{have:g} mm", f"{have / need:.2f} times", "as a cylinder across its smaller dimension; its flat sides are not checked"))
+    thin = [pt for pt in leaves if case(pt) is None and ((stock(pt) or {}).get("size") or {}).get("thickness") is not None]
+    below = [pt for pt in thin if stock(pt)["size"]["thickness"] < ds.get("minimum_gauge", 0)]
+    if thin:
+        rows.append(row("gap" if below else "note", f"{len(thin)} skin and plate parts with no load case", "none set", f"{ds.get('minimum_gauge'):g} mm at least", f"{min(stock(pt)['size']['thickness'] for pt in thin):g} mm the thinnest", "", "their gauge was chosen; nothing checks them against thrust, bending or buckling" if not below else f"{len(below)} are below the least gauge"))
+    # (Where it can hover and set down: where gravity is no more than its lift holds.)
+    hover = ds.get("lift_thrust", 0) * 1e6 / ship if ship else 0
+    # (Taking the landing: on the heaviest ground it can hover over.)
+    legs = {}
+    for pt in [pt for pt in leaves if case(pt) == "landing"]:
+        legs.setdefault(pt.get("parent"), []).append(pt)
+    count = sum(times(next(o for o in mine if o["slug"] == k)) for k in legs if k)
+    v = ds.get("landing_speed", 0)
+    energy = 0.5 * ship * v ** 2
+    most = None            # (the least, over the legs' parts, of the force a leg takes before it fails)
+    strokes = []
+    for parent, pts in legs.items():
+        stroke = min(longest(pt) for pt in pts)
+        strokes.append(stroke)
+        force = (energy / (stroke * eta) + ship * hover) / max(count, 1)
+        for pt in pts:
+            ms = stock(pt)
+            size, mc = (ms or {}).get("size") or {}, mech(ms or {})
+            d, w, sy, em = size.get("diameter"), size.get("wall"), mc.get("yield_strength"), mc.get("youngs_modulus")
+            if not (d and sy and em):
+                rows.append(row("gap", part_link(pt), "takes the landing", "", "", "", "its stock's size or its material's strength or stiffness is not said"))
+                continue
+            di = d - 2 * w if w else 0
+            a_, i_ = math.pi * (d ** 2 - di ** 2) / 4e6, math.pi * (d ** 4 - di ** 4) / 64e12
+            takes = min(sy * 1e6 * a_, math.pi ** 2 * em * 1e9 * i_ / longest(pt) ** 2)
+            most = takes if most is None else min(most, takes)
+            strength = sy * 1e6 * a_ / (force * SF)
+            buckling = math.pi ** 2 * em * 1e9 * i_ / longest(pt) ** 2 / (force * SF)
+            rows.append(row("ok" if min(strength, buckling) >= 1 else "gap", part_link(pt), f"{force / 1e6:.2f} MN on each of {count} legs", f"{force * SF / 1e6:.2f} MN with its factor", ms["identity"]["name"], f"strength {strength:.2f} times, buckling {buckling:.2f} times", f"a column {longest(pt):.2f} m long, stopping {ship / 1000:.0f} t from {v:g} m/s in {stroke:.2f} m, on ground of {hover / 9.81:.2f} g"))
+    # (What follows for everything aboard: the jolt of the designed landing, and the hardest landing
+    # the legs take before one fails, with its jolt.)
+    landing = {}
+    if legs and ship and strokes:
+        s_ = min(strokes)
+        jolt = v ** 2 / (2 * s_ * eta) / 9.81
+        spare = (most or 0) * count - ship * hover
+        vmax = (2 * spare * s_ * eta / ship) ** 0.5 if spare > 0 else 0
+        jmax = vmax ** 2 / (2 * s_ * eta) / 9.81
+        landing = {"designed": v, "jolt": jolt, "hardest": vmax, "hardest_jolt": jmax, "stroke": s_}
+        rows.append(row("note", "The landing its legs are designed for", f"{v:g} m/s", "", f"a jolt of {jolt:.2f} g aboard", "", (bench("landing_gear", "design_sink_speed_landing_weight").get("source") or "") + ": 14 CFR 25.473"))
+        rows.append(row("note", "The hardest landing its legs take", "until one yields or buckles", "", f"{vmax:.1f} m/s", f"a jolt of {jmax:.1f} g aboard", "faster than this a leg fails; the jolt is what everything aboard must take, people and cargo"))
+    # (Against real vehicles and the game's own engines.)
+    sz = hl.get("size") or {}
+    if all(k in sz for k in ("length", "width", "height")) and hl.get("parts_mass"):
+        box = 2 * (sz["length"] * sz["width"] + sz["length"] * sz["height"] + sz["width"] * sz["height"])
+        ref = bench("fuselage_structure", "areal_mass_formula_AA241")
+        rows.append(row("note", "The hull's parts over its outer box", f"{box:,.0f} m2 of box", "about 24 kg/m2 for an airliner's fuselage" if ref else "", f"{hl['parts_mass'] / box:.1f} kg/m2", f"{hl['parts_mass'] / box / 24:.2f} times", (ref.get("source") or "") + ": a weight formula for pressurised fuselages, by wetted area"))
+    gear = sum(o.get("mass", 0) * times(o) for o in mine if o["slug"] in legs)
+    if gear and ship:
+        rows.append(row("note", "The landing legs' share of the ship", f"{ship / 1000:,.0f} t loaded", "3 to 6% in transport aircraft, with wheels and brakes, for 1 g", f"{100 * gear / ship:.1f}% ({gear / 1000:.1f} t)", "", (bench("weight_fractions", "landing_gear_share_MTOW_VT").get("source") or "")))
+    can, cannot = [], []
+    if hover:
+        for ad in administrations:
+            for x in ad["bodies"]:
+                if x.get("kind") != "settlement":
+                    continue
+                at = next((y for y in ad["bodies"] if y.get("name") == x.get("at")), None)
+                if "position" not in x:
+                    can.append(f"{x['name']} (in orbit)")
+                elif at is not None and "gravity" in at:
+                    (can if at["gravity"] <= hover else cannot).append(f"{x['name']} ({at['gravity'] / 9.81:.2f} g)")
+        rows.append(row("note", "Where it can hover and set down", f"{ship / 1000:,.0f} t loaded", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {hover / 9.81:.2f} g", "", f"its lift nozzles hold it where gravity is no more than {hover:.2f} m/s2. Not every ship has to land on a planet."))
+        if can or cannot:
+            rows.append(row("note", "Settlements it can set down at", f"{len(can)} of {len(can) + len(cannot)}", "", ", ".join(can), "", ("Too heavy for: " + ", ".join(cannot)) if cannot else ""))
+    if ds.get("main_thrust") and ship:
+        rows.append(row("note", "Main drive", f"{ship / 1000:,.0f} t loaded", "", f"{ds['main_thrust']:g} MN", f"{ds['main_thrust'] * 1e6 / ship / 9.81:.1f} g", "its acceleration flat out; nothing checks the hull against it"))
+    hl["worked"] = {"ship": ship, "hover": hover, "landing": landing, "can": can, "cannot": cannot}
+    report(f"structure-{hl['slug']}", f"Structure: {hl['identity']['name']} against its loads", "Each part that has a load case, against that load, by first-order sizing; and the hull against real vehicles and its own engines. A gap is a part too weak for its load, or a figure outside what real vehicles show.", ["What", "Load", "Needs", "Has", "Margin", "Note or source"], rows)
+
+# 2c. Shock: what breaking will be worked out from, and how much of it is there.
+rows = []
+has = lambda recs, f: sum(1 for e in recs if f(e))
+n = has(materials, lambda m: (m.get("mechanical") or {}).get("fracture_toughness") is not None)
+rows.append(row("ok" if n == len(materials) else "gap", "Materials with a fracture toughness", f"{n} of {len(materials)}", "how well each resists a crack running through it", ", ".join(m["identity"]["name"] for m in materials if (m.get("mechanical") or {}).get("fracture_toughness") is None) or ""))
+n = has(mill_stock, lambda s_: (s_.get("physical") or {}).get("shock_limit") is not None)
+rows.append(row("ok" if mill_stock and n == len(mill_stock) else "gap", "Mill stock with a shock limit", f"{n} of {len(mill_stock)}", "the hardest jolt each takes as cargo", "none says yet" if not n else "guesses, marked to review"))
+single = [p_ for p_ in parts if not kids(p_)]
+n = has(single, lambda p_: (p_.get("physical") or {}).get("shock_limit") is not None)
+rows.append(row("ok" if single and n == len(single) else "gap", "Parts with a shock limit", f"{n} of {len(single)}", "the hardest jolt each takes, fitted or carried", "none says yet" if not n else "guesses, marked to review"))
+for hl in hulls:
+    ld = (hl.get("worked") or {}).get("landing") or {}
+    if ld:
+        rows.append(row("ok", link(hl["identity"]["name"], "hull:" + hl["slug"]), f"{ld['hardest']:.1f} m/s", "the hardest landing its legs take", f"a jolt of {ld['hardest_jolt']:.1f} g aboard; designed for {ld['designed']:g} m/s, {ld['jolt']:.2f} g"))
+report("shock", "Shock: what breaking is worked out from", "What a ship's landing does to what is aboard, and whether each material, item of stock and part says what it can take (SFO 15). A gap is a kind of record that does not yet say.", ["What", "How many", "Meaning", "Note"], rows)
+
+# 2d. Power: in each settlement, what its stations can supply against what its facilities draw
+# flat out, and whether a line reaches each that draws.
+rows = []
+for ad in administrations:
+    for x in ad["bodies"]:
+        facs = x.get("facilities", [])
+        draw = {fc["slug"]: sum(ln["most"]["power"] for ln in fc.get("lines") or [] if "most" in ln) for fc in facs}
+        supply = sum(fc.get("capacity") or 0 for fc in facs if fc.get("kind") == "power")
+        if not supply and not any(draw.values()):
+            continue
+        total = sum(draw.values())
+        rows.append(row("ok" if supply >= total else "gap", x["name"] + ", all of it", f"{total:,.0f} MW", f"{supply:,.0f} MW", "its power stations", "enough for everything flat out at once" if supply >= total else f"{total - supply:,.0f} MW short with everything flat out at once"))
+        for fc in facs:
+            if not draw[fc["slug"]]:
+                continue
+            wires = [pw for pw in x.get("power_lines", []) if pw.get("to") == fc["slug"]]
+            can = sum(pw["capacity"] for pw in wires)
+            rows.append(row("ok" if can >= draw[fc["slug"]] else "gap", fc["name"], f"{draw[fc['slug']]:,.1f} MW", f"{can:,.0f} MW" if wires else "", ", ".join(pw["name"] for pw in wires) or "no line reaches it", "" if can >= draw[fc["slug"]] else ("its lines carry less than it draws" if wires else "")))
+report("power", "Power: what is supplied against what is drawn", "In each settlement: what its power stations can supply against what its facilities draw with every line flat out, and for each facility the lines that reach it against what it draws. A gap is a shortfall, or a facility no line reaches.", ["What", "Draws flat out", "Can get", "From", "Note"], rows)
+
+# 3. Volume: a hull's parts' boxes against the space the hull takes.
+rows = []
+for hl in hulls:
+    vol = (hl.get("size") or {}).get("volume")
+    boxes = sum((pt.get("physical") or {}).get("length", 0) * (pt.get("physical") or {}).get("width", 0) * (pt.get("physical") or {}).get("height", 0) * times(pt) for pt in parts if pt["hull"] == hl["slug"] and not pt.get("parent"))
+    unsized = [pt for pt in parts if pt["hull"] == hl["slug"] and not pt.get("parent") and not (pt.get("physical") or {}).get("length")]
+    if vol:
+        rows.append(row("note", link(hl["identity"]["name"], "hull:" + hl["slug"]), f"{vol:,.0f} m3", f"{boxes:,.0f} m3", f"{boxes / vol:.1f} times", "The boxes are each part's outer extent and overlap where parts do, so they add up to more than the hull."))
+    for pt in unsized:
+        rows.append(row("gap", part_link(pt), "", "", "", "no size"))
+report("volume", "Volume: a hull against its parts' boxes", "The space the hull's shape takes in the game, against the boxes of its parts added up. A gap is a part with no size.", ["What", "Hull's volume", "Parts' boxes", "Ratio", "Note"], rows)
+
+# 4. What goes in against what comes out, for each industrial module.
+rows = []
+for m in modules:
+    ins = sum(x.get("amount", 0) for x in (m.get("inputs") or {}).get("materials") or [])
+    outs = sum(x.get("amount", 0) for x in (m.get("outputs") or {}).get("by_products") or [])
+    if not ins or not (m.get("rate") or {}).get("throughput"):
+        continue
+    d = ins - (1 + outs)
+    rows.append(row("ok" if abs(d) <= 0.02 * ins else "gap", link(m["identity"]["name"], "mod:" + m["slug"]), f"{ins:.4g} t", f"{1 + outs:.4g} t", f"{d:+.3g} t ({100 * d / ins:+.1f}%)", "balanced" if abs(d) <= 0.02 * ins else ("more goes in than comes out" if d > 0 else "more comes out than goes in")))
+report("modules", "Balance: what goes into a module against what comes out", "For each tonne of a module's product: everything that goes in, against the product and everything else that comes out. Matter is not made or lost, so they should match. A gap is a difference of more than 2%.", ["Module", "Goes in", "Comes out", "Difference", ""], rows)
+
+# 5. Each material, in each form it comes in: does a process make it?
+rows = []
+makes = {}
+for pr in processes:
+    for o in (pr.get("outputs") or {}).get("products") or []:
+        if o.get("item") and o.get("form"):
+            makes.setdefault((o["item"], o["form"]), []).append(pr.get("slug"))
+for m in materials:
+    for form in (m.get("identity") or {}).get("form") or []:
+        by = makes.get((m["slug"], form), [])
+        rows.append(row("ok" if by else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, link(by_process[by[0]]["identity"]["name"], "proc:" + by[0]) if by else "no process makes it"))
+report("stock", "Materials: is every form made by a process", "Each material in each form it is said to come in, and the process that makes it in that form.", ["Material", "Form", "Made by"], rows)
+
+# 6. Each process: has it real steps, and is it run anywhere?
+rows = []
+for pr in processes:
+    steps = bool((pr.get("equipment") or {}).get("steps"))
+    at = run_at.get(pr["slug"], [])
+    state = "ok" if steps and pr["slug"] in lined else "gap"
+    rows.append(row(state, link(pr["identity"]["name"], "proc:" + pr["slug"]), "yes" if steps else "no steps", ", ".join(f["name"] for f in at) or "nowhere", "yes" if pr["slug"] in lined else "no line built for it"))
+report("processes", "Processes: steps, and somewhere they are run", "Each process: whether it is broken into steps with their modules, which facilities list it, and whether any of them has a line built for it.", ["Process", "Steps", "Listed by", "A line built"], rows)
+
+for gd in goods:
+    where = os.path.join(TREE, gd["file"])
+    ore = (gd.get("game") or {}).get("ore")
+    if ore is not None and ore not in ORES:
+        problem(where, f"game.ore: the game has no ore '{ore}'")
+    rock = (gd.get("source") or {}).get("won_from")
+    if rock is not None and next((o for o in goods if o["slug"] == rock), {}).get("identity", {}).get("kind") != "rock":
+        problem(where, f"source.won_from: no rock '{rock}' among the goods")
+# 7. Each good: does something make it, and does something use it?
+rows = []
+for gd in goods:
+    made = [m for m in modules if (m.get("rate") or {}).get("product") == gd["slug"] or any(x.get("item") == gd["slug"] for x in (m.get("outputs") or {}).get("by_products") or [])]
+    used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
+    kind = (gd.get("identity") or {}).get("kind")
+    need_made, need_used = kind not in ("rock", "raw", "consumable", "fuel"), kind not in ("by-product", "product", "rock")
+    if kind == "rock":
+        won = [o for o in goods if (o.get("source") or {}).get("won_from") == gd["slug"]]
+        used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
+        occurs = (gd.get("source") or {}).get("occurs")
+        ore = (gd.get("game") or {}).get("ore")
+        rows.append(row("ok" if occurs else "gap", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, (f"dug on {occurs}" if occurs else "nowhere said") + ("" if ore else "; the game has no ore for it yet"), ", ".join(o["identity"]["name"] for o in won) or ", ".join(m["identity"]["name"] for m in used) or "nothing uses it yet"))
+        continue
+    if kind == "raw":
+        rock = next((o for o in goods if o["slug"] == (gd.get("source") or {}).get("won_from")), None)
+        used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
+        rows.append(row("ok" if rock else "gap", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ("won from " + rock["identity"]["name"] + (f", {100 * gd['source']['yield']:.3g}% of it" if "yield" in gd["source"] else ", how much not said")) if rock else "no rock it is won from", ", ".join(m["identity"]["name"] for m in used) or "nothing uses it"))
+        continue
+    gap = (need_made and not made) or (need_used and not used)
+    rows.append(row("gap" if gap else "ok", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ", ".join(m["identity"]["name"] for m in made) or ("comes from outside" if not need_made else "nothing makes it"), ", ".join(m["identity"]["name"] for m in used) or ("goes out" if not need_used else "nothing uses it")))
+report("goods", "Goods: where each comes from and goes", "Each good: where it comes from and where it goes. A rock is dug; a raw good is won from a rock; consumables and fuel come from outside; the rest come out of one module and go into another, or out.", ["Good", "Kind", "Comes out of", "Goes into"], rows)
+
+
+# 8. Confidence: where every number comes from.
+# (Elements and materials are from published sources, named in their files; a process's amounts are
+# its material's composition. Other records say for themselves, in `basis`; one that doesn't is a gap.)
+DEFAULT_TIER = {"elements": "sourced", "materials": "sourced", "processes": "derived"}
+KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts"}
+KEY_OF = {"elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
+
+
+def numbers(d, path=()):
+    """The numbers in a record as it is written: (group, property) for each."""
+    if isinstance(d, bool):
+        return []
+    if isinstance(d, (int, float)):
+        return [path[:2]] if path and path[0] not in ("basis",) else []
+    if isinstance(d, dict):
+        return [n for k, v in d.items() for n in numbers(v, path + (k,))]
+    if isinstance(d, list):
+        return [n for v in d for n in numbers(v, path)]
+    return []
+
+
+def tier_of(kind, raw, group, prop, review=False):
+    for exact in (True, False):
+        for en in raw.get("basis") or []:
+            if (f"{group}.{prop}" in en["of"]) if exact else (group in en["of"]):
+                return bool(en.get("review")) if review else en["tier"]
+    return False if review else DEFAULT_TIER.get(kind, "unsaid")
+
+
+rows, detail, reviews = [], [], []
+for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts)):
+    tally = {"sourced": 0, "derived": 0, "invented": 0, "unsaid": 0}
+    to_review = 0
+    for e in recs:
+        raw = load(os.path.join(TREE, e["file"]))
+        mine = {"sourced": [], "derived": [], "invented": [], "unsaid": []}
+        for path in numbers(raw):
+            group, prop = path[0], path[1] if len(path) > 1 else ""
+            if group == "identity" and kind not in ("elements",):
+                continue
+            mine[tier_of(kind, raw, group, prop)].append(f"{group}.{prop}".replace("_", " "))
+            if tier_of(kind, raw, group, prop, review=True):
+                to_review += 1
+                reviews.append(row("gap", link((e.get("identity") or {}).get("name", e.get("slug")), KEY_OF[kind](e)), KIND_NAME[kind], f"{group}.{prop}".replace("_", " "), raw[group][prop] if isinstance(raw.get(group), dict) and prop in raw[group] else "", next((en.get("note", "") for en in raw.get("basis") or [] if f"{group}.{prop}" in en["of"]), "")))
+        for t in tally:
+            tally[t] += len(mine[t])
+        if mine["invented"] or mine["unsaid"]:
+            name = (e.get("identity") or {}).get("name", e.get("slug"))
+            detail.append(row("gap" if mine["unsaid"] else "note", link(name, KEY_OF[kind](e)), KIND_NAME[kind], len(mine["invented"]), ", ".join(sorted(set(mine["invented"]))), len(mine["unsaid"]), ", ".join(sorted(set(mine["unsaid"])))))
+    total = sum(tally.values())
+    if total:
+        share = lambda t: f"{tally[t]:,} ({100 * tally[t] / total:.0f}%)" if tally[t] else ""
+        rows.append(row("gap" if tally["unsaid"] else "note" if tally["invented"] else "ok", KIND_NAME[kind], len(recs), f"{total:,}", share("sourced"), share("derived"), share("invented"), share("unsaid"), to_review or ""))
+report("confidence", "Confidence: where the numbers come from", "Every number in the registry, by where it comes from. Sourced: from a published source or the game. Derived: worked out from other figures. Invented: chosen, to be balanced or replaced. A gap is a number whose record does not say.", ["Kind of record", "Records", "Numbers", "Sourced", "Derived", "Invented", "Not said", "To review"], rows)
+report("review", "To review: guesses put in so a figure is there", "Each figure marked for review: a guess entered so the game has something to work with, to be replaced when a source or a way to work it out is found. Every row is a gap until it is reviewed.", ["Record", "Kind", "Figure", "Guess", "Note"], reviews)
+report("invented", "Confidence: the records with invented or unexplained numbers", "Each record that has a number that was chosen, or one it does not explain. A gap is a number not explained.", ["Record", "Kind", "Invented", "Which", "Not said", "Which"], detail)
+
+
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
@@ -1047,17 +1612,24 @@ def write_html():
         "processes": processes,
         "modules": modules,
         "goods": goods,
-        "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["goods"]["properties"].items()},
-        "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["modules"]["properties"].items()},
+        "hulls": hulls,
+        "mill_stock": mill_stock,
+        "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["mill-stock"]["properties"].items() if "properties" in d},
+        "parts": parts,
+        "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in PART_SCHEMA["properties"].items() if "properties" in d},
+        "hull_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["hulls"]["properties"].items() if "properties" in d},
+        "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["goods"]["properties"].items() if "properties" in d},
+        "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["modules"]["properties"].items() if "properties" in d},
         # (Icons: SFO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
         "icons": {f[:-4]: open(os.path.join(TREE, "SFO", "icons", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, "SFO", "icons"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, "SFO", "icons")) else {},
-        "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["processes"]["properties"].items()},
+        "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["processes"]["properties"].items() if "properties" in d},
         # (Each property's unit or note, from the schemas.)
-        "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["elements"]["properties"].items()},
-        "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["materials"]["properties"].items()},
+        "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
+        "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,
+        "reports": reports,
     }
     template = open(os.path.join(os.path.dirname(__file__), "page.html"), encoding="utf-8").read()
     page = template.replace("/*DATA*/null", json.dumps(data, ensure_ascii=False).replace("</", "<\\/"))
@@ -1073,5 +1645,6 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
-print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods")
+print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
+print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron")

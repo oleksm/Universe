@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Carbon dioxide
+  kind: by-product
+  description: "The gas given off as carbon anodes take the oxygen from alumina."

@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Formed panels
+  kind: intermediate
+  description: "Blanks bent to their curve, ready to weld."

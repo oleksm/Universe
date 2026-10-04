@@ -17,7 +17,8 @@ Run it again whenever the design changes. The .blend isn't changed (nothing is s
     - `cockpit`: the middle of the `*Glass*` faces farthest forward, looking forward;
     - `hatch`: the top of a mesh named `*Ramp*`, where it meets the belly, pointing down the
       ramp (the way out);
-    - `mount_hardpoint_*`: each mesh named `*Laser*_Head`; `mount_cargo`, `mount_utility`;
+    - `mount_hardpoint_*`: each mesh named `*Laser*_Head` or `*Hammer*_Head`; `mount_cargo`,
+      `mount_utility`;
     - `nozzle_lift_*`: under the hull, six, firing down; manoeuvring thrusters in quads,
       at the nose and the tail;
     - `COL_*`: a box round each big `Hull_*` mesh that isn't mostly inside the others
@@ -186,7 +187,8 @@ if not has("hatch"):
         empty("hatch", ((a.x + b.x) / 2, top.y, b.z), way if way.length > 1.0 else (0, 0, -1))
 
 if not has("mount_"):
-    heads = sorted((o for o in meshes if "Laser" in o.name and o.name.endswith("_Head")), key=lambda o: o.name)
+    # (The tool at each hardpoint: a laser's head, a hammer's.)
+    heads = sorted((o for o in meshes if any(t in o.name for t in ("Laser", "Hammer")) and o.name.endswith("_Head")), key=lambda o: o.name)
     for k, o in enumerate(heads):
         a, b = box(o)
         empty("mount_hardpoint_%d" % (k + 1), ((a.x + b.x) / 2, (a.y + b.y) / 2, (a.z + b.z) / 2), (0, 1, 0))

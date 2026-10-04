@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Cut blanks
+  kind: intermediate
+  description: "Flat pieces cut from sheet and plate to a panel's outline."

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
+# from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
+identity:
+  code: MC07-03
+  name: "Cockpit skirt"
+  status: draft
+  drawing: "assets/models/mc07.glb: Hull_CockpitSkirt"
+physical:
+  mass: 865
+  length: 8.8
+  width: 21.69
+  height: 3.36
+  shock_limit: 10
+shape:
+  surface_area: 160.2
+made_from:
+  item: AL6061-SH-2
+  quantity: 184.2
+making:
+  processes: [plate-work]
+fit:
+  count: 1
+  position: "Its centre is 9.0 m back from the nose and 6.6 m above the keel, on the centre line."
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
+  - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

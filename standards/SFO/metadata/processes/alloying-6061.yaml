@@ -3,7 +3,7 @@ identity:
   name: Alloying 6061 aluminium
   kind: chemical
   method: alloying
-  description: Aluminium melted with magnesium and silicon into aluminium alloy.
+  description: Alumina is refined from bauxite and smelted to aluminium by electric current; the liquid metal is alloyed with magnesium and silicon and cast as ingots.
 inputs:
   materials:
   - item: Al
@@ -26,3 +26,9 @@ rate:
   mode: batch
 equipment:
   facility: foundry
+  steps:
+  - { module: ore-yard, does: "Bauxite, caustic soda and carbon anodes arrive and are stockpiled." }
+  - { module: alumina-refinery, does: "The aluminium oxide is dissolved out of the bauxite, the residue settled out, and the oxide baked to a dry powder." }
+  - { module: potline, does: "Electric current takes the oxygen from the molten alumina, leaving liquid aluminium." }
+  - { module: casthouse, does: "Magnesium and silicon are added to the grade, the dross is skimmed and the metal is poured into ingots." }
+  - { module: ingot-yard, does: "The ingots cool, a sample certifies the grade, and they are stacked." }

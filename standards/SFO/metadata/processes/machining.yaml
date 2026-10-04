@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/process.schema.yaml
+identity:
+  name: Machining
+  kind: mechanical
+  method: machining
+  description: "Tube, bar or a forging cut to a part's size."
+rate:
+  mode: batch
+equipment:
+  facility: yard
+  steps:
+  - { module: machining-centre, does: "The stock is turned and milled to size." }
