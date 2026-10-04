@@ -18,6 +18,7 @@ See docs/standards.md.
 """
 import html
 import json
+import math
 import os
 import re
 import sys
@@ -722,6 +723,65 @@ def plan(pr, output):
 
 # What a facility can do at most: from the modules it is built of. A line can make as much as its
 # tightest module lets through; a power station can supply what its modules can. What it does make
+# The ground between modules, and between them and the parcel's edges (m). Invented: room to
+# walk and drive round each, until the SFO has a standard for it.
+LAYOUT_GAP = 20.0
+
+
+def lay_out(where, plot, street, order):
+    """Modules on a parcel, in rows: the first along the side facing its street, each row
+    behind the last, each module's length along its row, `LAYOUT_GAP` round each. Only
+    rectangles squared to east and north are laid out yet. Each: the module, its centre
+    [east, north] (m), its size, and which way its length runs (0: east, 90: north)."""
+    o = plot.get("outline") or []
+    es, ns = [p[0] for p in o], [p[1] for p in o]
+    w, e, sth, nth = min(es), max(es), min(ns), max(ns)
+    if len(o) != 4 or any(p[0] not in (w, e) or p[1] not in (sth, nth) for p in o):
+        problem(where, f"layout: parcel {plot.get('number')} isn't a rectangle squared to east and north, which is all that's laid out yet")
+        return []
+    # (Its front: the side nearest its street.)
+    sides = {"north": ((w + e) / 2, nth), "south": ((w + e) / 2, sth), "east": (e, (sth + nth) / 2), "west": (w, (sth + nth) / 2)}
+    def gap_to(pt):
+        line = (street or {}).get("line") or []
+        return min((segment_distance(pt, a, b) for a, b in zip(line, line[1:])), default=0.0)
+    front = min(sides, key=lambda k: gap_to(sides[k])) if street else "north"
+    along = e - w if front in ("north", "south") else nth - sth
+    deep = nth - sth if front in ("north", "south") else e - w
+    blocks, rows, row, at, depth = [], [], [], LAYOUT_GAP, 0.0
+    for slug, n in order:
+        size = mod_of[slug].get("size") or {}
+        for _ in range(n):
+            length, width = size.get("length", 0), size.get("width", 0)
+            if row and at + length > along - LAYOUT_GAP:
+                rows.append((row, depth))
+                row, at, depth = [], LAYOUT_GAP, 0.0
+            row.append((slug, at, length, width, size.get("height", 0)))
+            at += length + LAYOUT_GAP
+            depth = max(depth, width)
+    if row:
+        rows.append((row, depth))
+    back = LAYOUT_GAP
+    for row, d in rows:
+        for slug, a, length, width, height in row:
+            if a + length > along - LAYOUT_GAP + 1e-6:
+                problem(where, f"layout: a {slug} ({length:g} m long) is longer than parcel {plot.get('number')} is wide")
+            u, v = a + length / 2, back + width / 2
+            centre = {"north": (w + u, nth - v), "south": (w + u, sth + v), "east": (e - v, sth + u), "west": (w + v, sth + u)}[front]
+            blocks.append({"module": slug, "centre": [round(centre[0], 3), round(centre[1], 3)], "length": length, "width": width, "height": height, "heading": 0 if front in ("north", "south") else 90})
+        back += d + LAYOUT_GAP
+    if back > deep + 1e-6:
+        problem(where, f"layout: its modules need {back:,.0f} m of depth in rows, and parcel {plot.get('number')} has {deep:,.0f} m")
+    return blocks
+
+
+def segment_distance(p, a, b):
+    """How far point p is from the segment a-b (m)."""
+    ax, ay, bx, by = a[0], a[1], b[0], b[1]
+    dx, dy = bx - ax, by - ay
+    t = 0.0 if dx == dy == 0 else max(0.0, min(1.0, ((p[0] - ax) * dx + (p[1] - ay) * dy) / (dx * dx + dy * dy)))
+    return math.hypot(p[0] - (ax + t * dx), p[1] - (ay + t * dy))
+
+
 # is not recorded: that is the economy's.
 for ad in administrations:
     for x in ad["bodies"]:
@@ -806,6 +866,13 @@ for ad in administrations:
                 problem(where, f"exchange: no exchange '{fc['exchange']}' in Maker House")
             if plot is not None and covered > plot.get("area", 0):
                 problem(where, f"its modules cover {covered:,.0f} m2, more than parcel {plot.get('number')} ({plot.get('area', 0):,.0f} m2)")
+            # Where each module stands on the parcel (see `lay_out`): a line's in the order of its steps,
+            # a station's or a warehouse's as listed.
+            order = [(r["module"], r["count"]) for ln in fc.get("lines") or [] for r in (ln.get("most") or {}).get("modules", []) if r["count"]]
+            order += [(m["slug"], n) for m, n in built]
+            if plot is not None and order:
+                street = next((st for st in x.get("streets", []) if st.get("slug") == (plot.get("address") or {}).get("street")), None)
+                fc["layout"] = lay_out(where, plot, street, order)
 for m in modules:
     for kind in (m.get("rate") or {}).get("stores") or []:
         if kind not in GOODS_KINDS:
@@ -894,6 +961,40 @@ def write_ron():
     out.append("]\n")
     with open(os.path.join(CONTENT, "standards.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
+    # Settlements' ground, for the game to stand on it: each settlement with any, by its system,
+    # body and name (the game's own spaceport, whose pad grid centre is its position).
+    pts = lambda ps: "[" + ", ".join(f"({float(p[0])!r}, {float(p[1])!r})" for p in ps or []) + "]"
+    out = [head + "// Settlements' ground from Local Administration: zones, parcels, streets, power lines and\n"
+           "// facilities (their modules laid out on their parcels). All in metres [east, north] of the\n"
+           "// settlement's position: its spaceport's pad grid centre.\n["]
+    for ad in administrations:
+        for x in ad["bodies"]:
+            if x.get("kind") != "settlement" or not any(x.get(k) for k in ("zones", "parcels", "streets", "power_lines", "facilities")):
+                continue
+            out.append("    (")
+            out.append(f"        system: {ron_str(ad['name'])},\n        body: {ron_str(x.get('at', ''))},\n        name: {ron_str(x['name'])},")
+            out.append("        zones: [")
+            for zn in x.get("zones", []):
+                out.append(f"            (name: {ron_str(zn['name'])}, use: {ron_str(zn['use'])}, outline: {pts(zn['outline'])}),")
+            out.append("        ],\n        parcels: [")
+            for pc in x.get("parcels", []):
+                out.append(f"            (number: {pc['number']}, owner: {ron_str(pc['owner'])}, outline: {pts(pc['outline'])}),")
+            out.append("        ],\n        streets: [")
+            for st in x.get("streets", []):
+                out.append(f"            (name: {ron_str(st['name'])}, line: {pts(st['line'])}),")
+            out.append("        ],\n        power_lines: [")
+            for pw in x.get("power_lines", []):
+                out.append(f"            (name: {ron_str(pw['name'])}, capacity: {float(pw['capacity'])!r}, line: {pts(pw['line'])}),")
+            out.append("        ],\n        facilities: [")
+            for fc in x.get("facilities", []):
+                out.append(f"            (name: {ron_str(fc['name'])}, kind: {ron_str(fc['kind'])}, parcel: {fc['parcel']}, blocks: [")
+                for bl in fc.get("layout", []):
+                    out.append(f"                (module: {ron_str(bl['module'])}, centre: ({float(bl['centre'][0])!r}, {float(bl['centre'][1])!r}), length: {float(bl['length'])!r}, width: {float(bl['width'])!r}, height: {float(bl['height'])!r}, heading: {float(bl['heading'])!r}),")
+                out.append("            ]),")
+            out.append("        ],\n    ),")
+    out.append("]\n")
+    with open(os.path.join(CONTENT, "settlements.ron"), "w", encoding="utf-8") as f:
+        f.write("\n".join(out))
 
 
 # ---------------------------------------------------------------- the page
@@ -941,4 +1042,4 @@ if problems:
     sys.exit(1)
 write_ron()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods")
-print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron")
+print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron")
