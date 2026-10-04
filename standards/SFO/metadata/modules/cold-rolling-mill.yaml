@@ -20,4 +20,4 @@ recipes:
 basis:
   - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 640 kWh for each tonne and an 84% yield. Heat is counted as power: there is no fuel to burn." }
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Tandem mills average 126 t/h and reversing mills 13; 60 lies between." }
-  - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }

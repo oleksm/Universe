@@ -14,4 +14,4 @@ generation:
     - { item: good.deuterium, rate: 2.32222222222222e-06 }
 basis:
   - { of: [generation.burns], tier: derived, note: "From the game: deuterium gives 3.45e14 J/kg and the best fusion plants turn half of it into power." }
-  - { of: [physical, generation.supplies], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [physical, generation.supplies], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

@@ -13,4 +13,4 @@ capacity:
 needs:
   power: 500000.0
 basis:
-  - { of: [physical, capacity, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [physical, capacity, needs], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

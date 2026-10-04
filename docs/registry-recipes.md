@@ -1,7 +1,7 @@
 # Recipes: how a thing is made
 
-*A proposal from the registry side, 2026-10-04. Nothing is migrated yet. For the user and the
-integrator to agree before any record moves.*
+*The production model the user settled on 2026-10-04, and what has been done to the records since
+(see "Done so far"). It began as a proposal; the sections below are in the order it was decided.*
 
 ## The miss
 
@@ -64,6 +64,13 @@ today has one after; more are added as they are known.
 - **More than one module may make the same item**, by different recipes: steel from ore in one,
   from scrap in another.
 
+### What a line's `makes` is
+
+A facility's line says what it is built to make. That is the seeded world's starting setup, not a
+limit: the game loads it as an ordinary setup, and the owner can set the modules to any other of
+their recipes. The rules here for markets, full stores and no transport inside a works are the
+game's mechanics; this file is their spec.
+
 ### What decides
 
 The owner of the module, a player or an NPC, by choosing its setup. The registry says what each
@@ -95,6 +102,8 @@ to, and flows live in one place, the module's recipes.
 - The process record is to go: what it holds moves to recipes. Those with no module yet stay parked
   until their machine is described.
 
+- *(Coarse first: stock moves inside a works at once and at no cost of energy. That is a
+  simplification, to be replaced when logistics is described: backlog item 11.)*
 - **Inside one factory there is no transport.** A facility (or a rig) is one pool of stock: what a
   module puts out is there for any other module of the same facility to take in. No links,
   conveyors or routes between its modules, and its modules need no identities of their own for

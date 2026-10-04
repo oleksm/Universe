@@ -38,4 +38,4 @@ basis:
   - { of: [recipes.inputs], tier: derived, note: "The liquid metal and what is added to it, in the shares of the grade it makes (its material's composition); the loss is the module's." }
   - { of: [recipes.inputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "0.3 to 1.45 m3 of argon for each tonne, about 0.5 to 2.6 kg; 1 kg taken." }
   - { of: [recipes.power], tier: sourced, source: "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf", note: "65 kWh for each tonne for ladle refining and gas cleaning together; 50 taken for the ladle alone." }
-  - { of: [recipes.makes, recipes.rate, recipes.batch, physical], tier: invented, note: "Its rate and footprint were not found in a source: approximate, from memory." }
+  - { of: [recipes.makes, recipes.rate, recipes.batch, physical], tier: invented, review: true, note: "Its rate and footprint were not found in a source: approximate, from memory." }

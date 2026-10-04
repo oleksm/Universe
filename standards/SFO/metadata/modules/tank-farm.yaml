@@ -12,4 +12,4 @@ capacity:
   volume: 40000
   stores: [goods.water, goods.chemicals, goods.fuel]
 basis:
-  - { of: [physical, capacity], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [physical, capacity], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
