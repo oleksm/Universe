@@ -31,6 +31,8 @@ struct Read {
     tris: Vec<[DVec3; 3]>,
     /// A `*Ramp*` mesh's triangles (and what hangs from it): a part that swings down.
     ramp: Vec<[DVec3; 3]>,
+    /// The hull's foremost z and lowest y (its `Hull_*` meshes): where a layout's frame starts.
+    nose_keel: (f64, f64),
     /// The named empties: (name, where, which way).
     nodes: Vec<(String, DVec3, DVec3)>,
 }
@@ -71,7 +73,32 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let mut shape = crate::shape::ShapeDef::made(format!("shape.{key}"), body, parts, Vec::new(), read.nodes).build()?;
     // (Its surfaces in its frame, centred as the shape is.)
     let c = shape.made_centre;
-    let tris: Vec<[DVec3; 3]> = read.tris.iter().map(|t| t.map(|p| p - c)).collect();
+    let mut tris: Vec<[DVec3; 3]> = read.tris.iter().map(|t| t.map(|p| p - c)).collect();
+    // Its inside, if the registry lays it out (by its name: MC-07 → mc-07): lined, and walked on with the rest.
+    let name_key = read.name.as_deref().unwrap_or(stem).to_lowercase();
+    if let Some(layout) = content().layouts.iter().find(|l| l.hull == name_key)
+        && read.nose_keel.0.is_finite()
+    {
+        let (nose, keel) = read.nose_keel;
+        let mut interior = layout.interior(nose - c.z, keel - c.y);
+        for r in &mut interior.rooms {
+            for b in &mut r.boxes {
+                b.0.x -= c.x;
+                b.1.x -= c.x;
+            }
+        }
+        for (q, _, _) in &mut interior.panels {
+            for p in q.iter_mut() {
+                p.x -= c.x;
+            }
+        }
+        for b in &mut interior.climbs {
+            b.0.x -= c.x;
+            b.1.x -= c.x;
+        }
+        tris.extend(interior.triangles());
+        shape.interior = Some(std::sync::Arc::new(interior));
+    }
     shape.walk = Some(std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)));
     shape.ramp = ramp(&shape, read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
     let (lo, hi) = shape.mesh.extent();
@@ -128,6 +155,7 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         visual: Vec::new(),
         tris: Vec::new(),
         ramp: Vec::new(),
+        nose_keel: (f64::INFINITY, f64::INFINITY),
         nodes: Vec::new(),
     };
     for node in scene.nodes() {
@@ -162,6 +190,11 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
         if name.starts_with("COL_") {
             read.collision.push((name.clone(), points));
         } else {
+            if name.starts_with("Hull_") {
+                for p in &points {
+                    read.nose_keel = (read.nose_keel.0.min(p.z), read.nose_keel.1.min(p.y));
+                }
+            }
             read.visual.extend(points);
             if ramp { read.ramp.extend(tris) } else { read.tris.extend(tris) }
         }

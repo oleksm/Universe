@@ -849,6 +849,13 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         let shape = ship.spec().shape();
         let (rot, c) = (t.rotation.as_dquat(), shape.made_centre);
         frame.model_pbr(&m, &Transform { position: t.position + rot * -c, ..*t });
+        // Its inside as laid out (close by: from outside, the hull hides it but for the
+        // ramp's opening and the windows).
+        if let Some(interior) = &shape.interior
+            && frame.camera.position.distance(t.position) < 400.0
+        {
+            frame.model_colored(&crate::models::interior(&shape.key, interior), t, 2.2, 1.0);
+        }
         // Its ramp (part 1), swung down about its hinge as far as it is.
         if let Some(r) = &shape.ramp {
             let turn = r.turn(universe_sim::world::crew::ramp_angle(&app.view.system, ship));

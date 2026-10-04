@@ -39,6 +39,51 @@ impl Models {
     }
 }
 
+/// A hull's inside as laid out (see `layout::Interior`), as one mesh in its frame:
+/// each panel of lining a flat shade (floors lightest, ceilings darkest, a
+/// touch of colour for what the room is for), its edges drawn. Unlit: inside
+/// the hull it's all in the hull's shadow, and there are no lamps yet. Made
+/// once per hull and kept.
+pub fn interior(key: &str, interior: &universe_sim::world::layout::Interior) -> Mesh {
+    use std::collections::HashMap;
+    use std::sync::{Mutex, OnceLock};
+    use universe_sim::world::layout::Face;
+    static BUILT: OnceLock<Mutex<HashMap<String, Mesh>>> = OnceLock::new();
+    let mut built = BUILT.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
+    built
+        .entry(key.to_string())
+        .or_insert_with(|| {
+            let mut m = WireModel::default();
+            for (quad, face, room) in &interior.panels {
+                // (Walls across the ship a shade lighter than those along it: the room reads.)
+                let across = (quad[1] - quad[0]).cross(quad[2] - quad[0]).normalize_or_zero().z.abs() > 0.5;
+                let shade = match face {
+                    Face::Floor => 0.44,
+                    Face::Wall if across => 0.34,
+                    Face::Wall => 0.28,
+                    Face::Ceiling => 0.2,
+                };
+                let tint = match interior.rooms[*room].function.as_str() {
+                    "reactor" | "engines" | "hyperdrive" | "machinery" => [1.15, 0.95, 0.85],
+                    "cargo" | "ore" | "tanks" | "stores" | "workshop" => [1.1, 1.05, 0.9],
+                    "cockpit" | "quarters" | "galley" | "restroom" => [0.92, 1.0, 1.12],
+                    _ => [1.0, 1.0, 1.0],
+                };
+                let c = [shade * tint[0], shade * tint[1], shade * tint[2], 1.0];
+                let base = m.positions.len() as u32;
+                m.positions.extend(quad.iter().map(|p| p.as_vec3()));
+                m.colors.extend([c; 4]);
+                m.faces.push([base, base + 1, base + 2]);
+                m.faces.push([base, base + 2, base + 3]);
+                for k in 0..4u32 {
+                    m.edges.push([base + k, base + (k + 1) % 4]);
+                }
+            }
+            Mesh::new(m)
+        })
+        .clone()
+}
+
 /// An imported hull's model (its glTF file), loaded once and kept; its
 /// `*Ramp*` meshes part 1 (drawn swung down: see `scene::hull`).
 pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
