@@ -64,6 +64,17 @@ td.num { text-align: right; }
 .problems li { margin: 2px 0; }
 tr.gap td:last-child { color: var(--bad); font-weight: 600; } tr.gap td:first-child { box-shadow: inset 3px 0 0 var(--bad); }
 tr.okr td:last-child { color: var(--head); }
+.chain { display: flex; flex-direction: column; align-items: stretch; max-width: 760px; margin: 10px 0 18px; }
+.chain .node { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 10px 14px; display: flex; gap: 14px; align-items: baseline; }
+.chain .node b { color: var(--head); min-width: 150px; } .chain .node .num { font-size: 20px; font-weight: 700; min-width: 64px; text-align: right; } .chain .node .say { color: var(--dim); }
+.chain .node.empty { border-style: dashed; border-color: var(--bad); } .chain .node.empty .num { color: var(--bad); }
+.chain .link { display: flex; align-items: center; gap: 12px; padding: 2px 0 2px 60px; min-height: 44px; }
+.chain .link .pipe { width: 6px; align-self: stretch; border-radius: 3px; background: var(--head); }
+.chain .link.none .pipe { background: repeating-linear-gradient(var(--bad) 0 6px, transparent 6px 12px); } .chain .link.some .pipe { background: #e0a030; }
+.chain .link .bar { width: 160px; height: 10px; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: var(--bg); } .chain .link .bar i { display: block; height: 100%; background: var(--head); }
+.chain .link.none .bar i { background: var(--bad); } .chain .link.some .bar i { background: #e0a030; }
+.chain .link .what { flex: 1; } .chain .link.none .what { color: var(--bad); font-weight: 600; }
+.chain .side { color: var(--dim); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 8px 0 4px; }
 .file { color: var(--dim); font-size: 12px; }
 p { margin: 4px 0 8px; max-width: 80ch; }
 .ico { display: inline-block; vertical-align: middle; line-height: 0; color: var(--head); }
@@ -512,11 +523,43 @@ function detail(k) {
   if (kind === "at" || kind === "ra") { const o = ORGS.find(x => x.key === rest.join(":")); return o ? detail(o.to) : ""; }
   if (kind === "pl") return detail("fc:" + rest.join(":"));
   if (k === "rp0") return `<h2>Reports</h2><p>Where the registry does not yet join up. A gap is something to close, not a mistake: the build still passes.</p><table><tr><th>Report</th><th>Rows</th><th>Complete</th><th>Gaps</th></tr>` + DATA.reports.map(r => `<tr class="${r.gaps ? "gap" : "okr"}"><td><a data-k="${esc("rep:" + r.key)}">${esc(r.title)}</a></td><td>${r.rows.length}</td><td>${r.ok}</td><td>${r.gaps || ""}</td></tr>`).join("") + `<tr><th>Total</th><th>${DATA.reports.reduce((s, r) => s + r.rows.length, 0)}</th><th>${DATA.reports.reduce((s, r) => s + r.ok, 0)}</th><th>${DATA.reports.reduce((s, r) => s + r.gaps, 0)}</th></tr></table>`;
+  // The chain as a picture: from the hull down, each level a box with how many it holds, and between
+  // two levels how many of the upper one's things reach the lower one. A broken link is the gap.
+  const chainPicture = hull => {
+    const hl = hullBySlug[hull]; if (!hl) return "";
+    const mine = DATA.parts.filter(p => p.hull === hull), leaves = mine.filter(p => !subParts(p.slug).length);
+    const stockUsed = [...new Set(leaves.map(p => (p.made_from || {}).item).filter(i => stockByCode[i]))].map(i => stockByCode[i]);
+    const procs = [...new Set(stockUsed.map(s => (s.making || {}).process).filter(s => procBySlug[s]))].map(s => procBySlug[s]);
+    const stepped = DATA.processes.filter(p => ((p.equipment || {}).steps || []).length);
+    const lined = new Set(producing().map(r => r.pr.slug));
+    const forms = DATA.materials.flatMap(m => (m.identity.form || []).map(f => [m.slug, f]));
+    const made = forms.filter(([m, f]) => DATA.processes.some(p => ((p.outputs || {}).products || []).some(o => o.item === m && o.form === f)));
+    const node = (title, num, say, k, empty) => `<div class="node${empty ? " empty" : ""}"><span class="num">${num}</span><b>${k ? `<a data-k="${esc(k)}">${esc(title)}</a>` : esc(title)}</b><span class="say">${say}</span></div>`;
+    const link = (have, of, what) => { const cls = !of || !have ? "none" : have < of ? "some" : "ok"; return `<div class="link ${cls}"><span class="pipe"></span><span class="bar"><i style="width:${of ? Math.round(100 * have / of) : 0}%"></i></span><span class="what">${have} of ${of} ${what}</span></div>`; };
+    const most = producing().map(r => `${perDay(r.ln.most.output)} t a day of ${esc(r.makes)}`).join(", ");
+    return `<div class="chain"><div class="side">From the ship, down</div>`
+      + node(hl.identity.name, 1, `the hull · ${kg((hl.mass || {}).frame * 1000)}`, "hull:" + hull)
+      + link(mine.filter(p => !p.parent).length ? 1 : 0, 1, "hull has its parts listed")
+      + node("Parts", mine.length, `${mine.filter(p => !p.parent).length} at the top, ${mine.filter(p => p.parent).length} under them · ${leaves.length} are cut from stock, not made of parts`, "pg:" + hull)
+      + link(leaves.filter(p => p.mass !== undefined).length, leaves.length, "parts have a mass")
+      + link(leaves.filter(p => stockByCode[(p.made_from || {}).item]).length, leaves.length, "parts say what they are cut from")
+      + node("Mill stock", DATA.mill_stock.length, "sheet, plate, bar, tube, wire in a size", "s:SFO 13", !DATA.mill_stock.length)
+      + link(DATA.mill_stock.filter(s => procBySlug[(s.making || {}).process]).length, DATA.mill_stock.length, "stock items have a process that makes them")
+      + `<div class="side">From the rock, up</div>`
+      + node("Processes", DATA.processes.length, `${made.length} of ${forms.length} material forms have one that makes them`, "s:SFO 7")
+      + link(stepped.length, DATA.processes.length, "processes are broken into steps with their modules")
+      + node("Industrial modules", DATA.modules.length, "furnaces, plants, yards, each with a size, a rate and what goes in and out", "s:SFO 10")
+      + link(lined.size, DATA.processes.length, "processes have a line built for them at a facility")
+      + node("Facilities", allFacilities().length, most ? `at most ${most}` : "none makes anything yet", "pd")
+      + link(DATA.goods.filter(g => g.identity.kind === "raw").length ? 0 : 0, DATA.goods.filter(g => g.identity.kind === "raw").length, "raw goods have a mine or a well recorded")
+      + node("Rock", 0, "ore, water, what is dug: nothing records where it comes from", null, true)
+      + `</div>`;
+  };
   if (kind === "rep") {
     const r = DATA.reports.find(y => y.key === rest.join(":")); if (!r) return "";
     const cell = c => c.k ? `<a data-k="${esc(c.k)}">${esc(c.t)}</a>` : esc(c.t);
     const order = { gap: 0, note: 1, ok: 2 };
-    return `<h2>${esc(r.title)}</h2><div class="meta">report · ${r.rows.length} rows · ${r.ok} complete · ${r.gaps} gaps</div><p>${esc(r.about)}</p><table><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join("")}<th>State</th></tr>` + r.rows.slice().sort((p1, p2) => order[p1.state] - order[p2.state]).map(w => `<tr class="${w.state === "gap" ? "gap" : w.state === "ok" ? "okr" : ""}">${w.cells.map(c => `<td>${cell(c)}</td>`).join("")}<td>${w.state === "gap" ? "gap" : w.state === "ok" ? "ok" : "note"}</td></tr>`).join("") + `</table>`;
+    return `<h2>${esc(r.title)}</h2><div class="meta">report · ${r.rows.length} rows · ${r.ok} complete · ${r.gaps} gaps</div><p>${esc(r.about)}</p>${r.key.startsWith("chain-") ? chainPicture(r.key.slice(6)) : ""}<table><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join("")}<th>State</th></tr>` + r.rows.slice().sort((p1, p2) => order[p1.state] - order[p2.state]).map(w => `<tr class="${w.state === "gap" ? "gap" : w.state === "ok" ? "okr" : ""}">${w.cells.map(c => `<td>${cell(c)}</td>`).join("")}<td>${w.state === "gap" ? "gap" : w.state === "ok" ? "ok" : "note"}</td></tr>`).join("") + `</table>`;
   }
   if (k === "pd") return `<h2>Production Register</h2><p>What every facility can make at most, from what it is built of. What it does make is the economy's business.</p>` + (producing().length ? `<table><tr><th>Facility</th><th>Owner</th><th>Where</th><th>Process</th><th>Makes</th><th>At most</th></tr>` + producing().map(r => `<tr><td><a data-k="${esc(facKey(r.a, r.x, r.f))}">${esc(r.f.name)}</a></td><td>${ownerLink(r.f.owner)}</td><td>${esc(r.x.name)}, ${esc(r.a.name)}</td><td><a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${perDay(r.ln.most.output)} t/day</td></tr>`).join("") + `</table>` : `<p class="meta">Nothing yet.</p>`);
   if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${r.org ? addressHtml(r.org) : r.html}</td><td><a data-k="${esc(r.org ? r.to : r.whoTo)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);
