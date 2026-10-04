@@ -175,6 +175,33 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 # (LocalAdministration/metadata/administrations/<name>.yaml), to its administration.schema.yaml.
 LOCAL = "LocalAdministration"
 ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
+# The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
+_port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
+PORT = {
+    "grid": int(re.search(r"pub const GRID: usize = (\d+);", _port).group(1)),
+    "spacing": float(re.search(r"pub const PAD_SPACING: f64 = ([0-9.]+);", _port).group(1)),
+    "pad": float(re.search(r"pub const PAD_SIZE: f64 = ([0-9.]+);", _port).group(1)),
+    "radius": float(re.search(r"pub const PAD_RADIUS: f64 = ([0-9.]+);", _port).group(1)),
+}
+
+
+def area(o):
+    """An outline's area (m2)."""
+    return abs(sum(o[i][0] * o[(i + 1) % len(o)][1] - o[(i + 1) % len(o)][0] * o[i][1] for i in range(len(o)))) / 2
+
+
+def within(c, o):
+    """Is the point c inside the outline o, or on its edge?"""
+    x, y = c
+    inside = False
+    for i in range(len(o)):
+        (x1, y1), (x2, y2) = o[i], o[(i + 1) % len(o)]
+        if min(x1, x2) <= x <= max(x1, x2) and min(y1, y2) <= y <= max(y1, y2) and abs((x2 - x1) * (y - y1) - (y2 - y1) * (x - x1)) < 1e-9:
+            return True
+        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+            inside = not inside
+    return inside
+
 local = load(os.path.join(TREE, LOCAL, "metadata", LOCAL + ".yaml"))
 administrations = []
 adm_dir = os.path.join(TREE, LOCAL, "metadata", "administrations")
@@ -203,56 +230,62 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "about", "story", "zones"}:
+            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
-        # (Its zones: one file each in the folder named after it; a zone's parcels in the folder
-        # named after the zone.)
-        zones_dir = bfull[:-5]
-        zones = []
-        for zn in sorted(os.listdir(zones_dir)) if os.path.isdir(zones_dir) else []:
-            zfull = os.path.join(zones_dir, zn)
-            if os.path.isdir(zfull):
-                continue
-            if not re.fullmatch(r"[a-z0-9-]+\.yaml", zn):
-                problem(zfull, "a zone's file is named <name>.yaml (lower case, words joined by -)")
-                continue
-            z = load(zfull)
-            for k in ["name", "use"]:
-                if k not in z:
-                    problem(zfull, f"no {k}")
-            for k in z:
-                if k not in {"name", "use"}:
-                    problem(zfull, f"unknown field '{k}'")
-            if z.get("use") not in ZONE_USES:
-                problem(zfull, f"use: one of {', '.join(ZONE_USES)}")
-            if x.get("kind") != "settlement":
-                problem(zfull, "zones belong to a settlement")
-            z["slug"] = zn[:-5]
-            z["file"] = os.path.relpath(zfull, TREE)
-            z["parcels"] = []
-            for pn in sorted(os.listdir(zfull[:-5])) if os.path.isdir(zfull[:-5]) else []:
-                pfull = os.path.join(zfull[:-5], pn)
-                m = re.fullmatch(r"parcel-([0-9]+)\.yaml", pn)
+        # (Its zones and parcels: <settlement>/zones/<name>.yaml and <settlement>/parcels/parcel-<n>.yaml,
+        # each an outline in metres east and north of the settlement's position.)
+        zones, plots = [], []
+        for sub, into in (("zones", zones), ("parcels", plots)):
+            sub_dir = os.path.join(bfull[:-5], sub)
+            for fn in sorted(os.listdir(sub_dir)) if os.path.isdir(sub_dir) else []:
+                ffull = os.path.join(sub_dir, fn)
+                r = load(ffull)
+                need, pattern = (["name", "use", "outline"], r"[a-z0-9-]+\.yaml") if sub == "zones" else (["number", "owner", "outline"], r"parcel-([0-9]+)\.yaml")
+                m = re.fullmatch(pattern, fn)
                 if not m:
-                    problem(pfull, "a parcel's file is named parcel-<number>.yaml")
+                    problem(ffull, "a zone's file is named <name>.yaml" if sub == "zones" else "a parcel's file is named parcel-<number>.yaml")
                     continue
-                pc = load(pfull)
-                for k in ["number", "owner"]:
-                    if k not in pc:
-                        problem(pfull, f"no {k}")
-                for k in pc:
-                    if k not in {"number", "owner"}:
-                        problem(pfull, f"unknown field '{k}'")
-                if pc.get("number") != int(m.group(1)):
-                    problem(pfull, f"number {pc.get('number')} in a file numbered {m.group(1)}")
-                if "owner" in pc and pc["owner"] not in BRANDS and not str(pc["owner"]).startswith("body."):
-                    problem(pfull, f"owner: no maker '{pc['owner']}' in Maker House")
-                pc["file"] = os.path.relpath(pfull, TREE)
-                z["parcels"].append(pc)
-            z["parcels"].sort(key=lambda pc: pc.get("number", 0))
-            zones.append(z)
+                for k in need:
+                    if k not in r:
+                        problem(ffull, f"no {k}")
+                for k in r:
+                    if k not in need:
+                        problem(ffull, f"unknown field '{k}'")
+                o = r.get("outline")
+                if not (isinstance(o, list) and len(o) >= 3 and all(isinstance(c, list) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c) for c in o)):
+                    problem(ffull, "outline: three or more corners, each [east, north] in metres")
+                    continue
+                if x.get("kind") != "settlement" or "position" not in x:
+                    problem(ffull, "zones and parcels belong to a settlement on a surface (one with a position)")
+                r["area"] = area(o)
+                r["slug"] = fn[:-5]
+                r["file"] = os.path.relpath(ffull, TREE)
+                if sub == "zones" and r.get("use") not in ZONE_USES:
+                    problem(ffull, f"use: one of {', '.join(ZONE_USES)}")
+                if sub == "parcels":
+                    if r.get("number") != int(m.group(1)):
+                        problem(ffull, f"number {r.get('number')} in a file numbered {m.group(1)}")
+                    if "owner" in r and r["owner"] not in BRANDS and not str(r["owner"]).startswith("body."):
+                        problem(ffull, f"owner: no maker '{r['owner']}' in Maker House")
+                    # (Its zone: the one all its corners lie in.)
+                    inn = [zn for zn in zones if all(within(c, zn["outline"]) for c in o)]
+                    if len(inn) != 1:
+                        problem(ffull, "outline: it must lie inside one zone" if not inn else "outline: it lies in more than one zone")
+                    else:
+                        r["zone"] = inn[0]["slug"]
+                    for other in plots:
+                        if any(within(c, other["outline"]) for c in o) or any(within(c, o) for c in other["outline"]):
+                            problem(ffull, f"outline: it overlaps parcel {other.get('number')}")
+                into.append(r)
+        for i, zn in enumerate(zones):
+            for other in zones[:i]:
+                if any(within(c, other["outline"]) for c in zn["outline"]) or any(within(c, zn["outline"]) for c in other["outline"]):
+                    problem(os.path.join(TREE, zn["file"]), f"outline: it overlaps the zone {other.get('name')}")
+        plots.sort(key=lambda r: r.get("number", 0))
+        if plots:
+            x["parcels"] = plots
         if zones:
             x["zones"] = zones
         ad["bodies"].append(x)
@@ -260,7 +293,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "bodies", "address", "about", "story"}:
+        if k not in {"name", "bodies", "address", "about", "story", "zoning"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
@@ -520,6 +553,7 @@ def write_html():
         "brands": BRANDS,
         "house": house,
         "local": local,
+        "port": PORT,
         "administrations": administrations,
         # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
         "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},

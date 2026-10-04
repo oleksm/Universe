@@ -19,3 +19,13 @@ properties:
       unit: { type: integer, minimum: 1 }
   about: { type: string, description: What it is. }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
+  zoning:
+    description: Its zoning code, what each kind of zone permits.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [use, permits]
+      properties:
+        use: { enum: [port, industrial, commercial, civic, residential] }
+        permits: { type: string }

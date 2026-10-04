@@ -2,7 +2,7 @@
 name: "Port Nacaubun"
 kind: settlement
 at: Treistun e
-position: { latitude: 37.945, longitude: -86.741 }
-about: "The port on Treistun e, the home world, at 38° north. Gravity 0.98 g, with air, and cold."
+position: { latitude: 23.813, longitude: -79.362 }
+about: "The port on Treistun e, the home world, at 24° north. Gravity 0.98 g, with air, and cold."
 story:
-  - "The first port in the system. It was built in the north of a cold world because that is where the first ship came down, and nobody saw a reason to move it. The station overhead took most of its trade; Nacaubun keeps the ground traffic."
+  - "The first port in the system. It was built where the first ship came down, and nobody saw a reason to move it. The station overhead took most of its trade; Nacaubun keeps the ground traffic."

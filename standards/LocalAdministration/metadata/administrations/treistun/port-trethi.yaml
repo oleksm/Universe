@@ -2,7 +2,7 @@
 name: "Port Trethi"
 kind: settlement
 at: Treistun f
-position: { latitude: 5.337, longitude: 52.127 }
-about: "The port on Treistun f, near the equator at 5° north. Gravity 0.41 g, no air, and about 190 K."
+position: { latitude: 6.331, longitude: 52.014 }
+about: "The port on Treistun f, near the equator at 6° north. Gravity 0.41 g, no air, and about 190 K."
 story:
   - "The last port on solid ground before the giants. Outbound ships top up here because it is the cheapest lift-off of any planet in the system."

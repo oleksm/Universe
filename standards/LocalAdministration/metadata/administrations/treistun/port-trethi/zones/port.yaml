@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
+# Round what the game has: the pad grid (within 400 m of the centre) and the hangar 450 m south.
+name: Port
+use: port
+outline: [[-400, -600], [400, -600], [400, 400], [-400, 400]]
