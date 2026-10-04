@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/rock-class.schema.yaml
-# As the game's code has it (crates/world/src/belt.rs, mining.rs). The game does not read this
-# record yet; a test holds the two together.
+# What it is and what it yields: as the game's code has it (a test holds the two together).
+# Where it is found: the spec, from what is known of the Sun's asteroids. The game's own odds differ.
 identity:
   name: Icy
   key: "ICY"
@@ -15,9 +15,14 @@ composition:
   water: [0.4, 0.7]
   organics: [0.03, 0.08]
   volatiles: [0.05, 0.15]
-forms:
-  inside_frost_line: 0.0
-  outside_frost_line: 0.05
+found:
+  cold: 0.03
+  trojans: 0.15
+  outer: 1.0
 mining:
   cut_energy: 20000
   yields: asteroid-water-ice
+basis:
+  - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
+  - { of: [found.outer], tier: sourced, source: "https://en.wikipedia.org/wiki/Kuiper_belt", note: "Most objects of the outer belt are largely frozen volatiles: methane, ammonia and water." }
+  - { of: [found.cold, found.trojans], tier: invented, review: true, note: "A guess, to be reviewed." }

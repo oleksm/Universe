@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/rock-class.schema.yaml
-# As the game's code has it (crates/world/src/belt.rs, mining.rs). The game does not read this
-# record yet; a test holds the two together.
+# What it is and what it yields: as the game's code has it (a test holds the two together).
+# Where it is found: the spec, from what is known of the Sun's asteroids. The game's own odds differ.
 identity:
   name: Carbonaceous
   key: "C-TYPE CARBONACEOUS"
@@ -16,9 +16,17 @@ composition:
   organics: [0.02, 0.06]
   metal: [0.02, 0.02]
   pgm: [0.2, 1.0]
-forms:
-  inside_frost_line: 0.25
-  outside_frost_line: 0.7
+found:
+  warm: 0.12
+  frost_line: 0.7
+  cold: 0.9
+  trojans: 0.15
+  falls: 0.044
 mining:
   cut_energy: 30000
   yields: carbonaceous-ore
+basis:
+  - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
+  - { of: [found.warm, found.frost_line, found.cold], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "A guess, to be reviewed, made to follow what is known: carbonaceous asteroids dominate the belt's outer regions and are rare in the inner belt; over 75% of those seen. The shares themselves are chosen." }
+  - { of: [found.falls], tier: sourced, source: "https://en.wikipedia.org/wiki/Meteorite_fall_statistics", note: "Carbonaceous chondrites: 4.4% of 1,062 classified falls." }
+  - { of: [found.trojans], tier: invented, review: true, note: "A guess, to be reviewed." }

@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/rock-class.schema.yaml
+# Not in the game yet. A kind of asteroid there is, recorded as far as sources go: what is not
+# written here is not known to the registry, and is not made up.
+identity:
+  name: Stony-iron
+  about: "The boundary of a broken body's core and mantle: green olivine crystals set in iron-nickel. Very rare."
+found:
+  warm: 0.02
+  frost_line: 0.0
+  falls: 0.01
+basis:
+  - { of: [found.warm], tier: invented, review: true, note: "A guess, to be reviewed: as rare among asteroids as among falls." }
+  - { of: [found.falls], tier: sourced, source: "https://en.wikipedia.org/wiki/Meteorite_fall_statistics", note: "Stony-iron meteorites: 1.0% of classified falls. How much of one is metal was not found in a source." }

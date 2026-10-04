@@ -1308,7 +1308,7 @@ def write_ron():
         f.write(head + "// The kinds of asteroid, from the celestial registry (standards/Celestial/metadata/rock-classes). The game's are the code's\n// (crates/world/src/belt.rs, mining.rs); a test holds them to these.\n[\n" + "".join(
             f"    (key: {ron_str(rc['identity']['key'])}, density_rubble: {float(rc['physical']['density_rubble'])!r}, density_monolith: {float(rc['physical']['density_monolith'])!r}, albedo: {float(rc['physical']['albedo'])!r}, "
             f"water: {pair((rc.get('composition') or {}).get('water'))}, organics: {pair((rc.get('composition') or {}).get('organics'))}, metal: {pair((rc.get('composition') or {}).get('metal'))}, volatiles: {pair((rc.get('composition') or {}).get('volatiles'))}, pgm: {pair((rc.get('composition') or {}).get('pgm'))}, "
-            f"cut_energy: {float(rc['mining']['cut_energy'])!r}, yields: {ron_str(rc['mining']['yields'])}),\n" for rc in celestial["rock_classes"]) + "]\n")
+            f"cut_energy: {float(rc['mining']['cut_energy'])!r}, yields: {ron_str(rc['mining']['yields'])}),\n" for rc in celestial["rock_classes"] if rc["identity"].get("key")) + "]\n")
     gx = celestial["galaxy"]
     with open(os.path.join(CONTENT, "galaxy.ron"), "w", encoding="utf-8") as f:
         f.write(head + "// The world as a whole, from the celestial registry (standards/Celestial/metadata/galaxy.yaml): the game takes its seed from here;\n// the laws are the code's, and a test holds them to these.\n[\n"
@@ -1920,6 +1920,8 @@ if os.path.isdir(CEL):
                         problem(apath, f"{g_}: unknown property '{q}'")
         check_basis(laws, apath)
         celestial["asteroids"] = laws
+    for rc_path in (sorted(glob_ for glob_ in os.listdir(os.path.join(CEL, "metadata", "rock-classes")) if glob_.endswith(".yaml")) if os.path.isdir(os.path.join(CEL, "metadata", "rock-classes")) else []):
+        check_basis(load(os.path.join(CEL, "metadata", "rock-classes", rc_path)), os.path.join(CEL, "metadata", "rock-classes", rc_path))
     # (The kinds of asteroid: each yields a rock of the SFO's goods.)
     rdir = os.path.join(CEL, "metadata", "rock-classes")
     celestial["rock_classes"] = [cel_load(os.path.join(rdir, fn), "rock-class") for fn in sorted(os.listdir(rdir)) if fn.endswith(".yaml")] if os.path.isdir(rdir) else []
@@ -2000,6 +2002,26 @@ if os.path.isdir(CEL):
                 cand[0].setdefault("fields", []).append(fl["slug"])
                 fl["belt"] = cand[0]["name"]
                 fl["in_belt"] = a_ is None or kind == "trojan" or cand[0]["inner"] * 0.98 <= a_ <= cand[0]["outer"] * 1.02
+        zn = laws.get("zones") or {}
+        def mix_of(bl):
+            if bl["kind"] == "trojan":
+                parts_ = [("trojans", 1.0)]
+            elif bl["kind"] == "outer":
+                parts_ = [("outer", 1.0)]
+            else:
+                # (By the ground the belt has in each zone.)
+                cuts = [bl["inner"], min(max(zn.get("warm_to", 0.93) * frost, bl["inner"]), bl["outer"]), min(max(zn.get("frost_to", 1.04) * frost, bl["inner"]), bl["outer"]), bl["outer"]]
+                areas = [cuts[i + 1] ** 2 - cuts[i] ** 2 for i in range(3)]
+                parts_ = [(z_, a_ / sum(areas)) for z_, a_ in zip(("warm", "frost_line", "cold"), areas) if a_ > 1e-12]
+            out_ = {}
+            for z_, w_ in parts_:
+                for rc in celestial["rock_classes"]:
+                    v_ = (rc.get("found") or {}).get(z_, 0) * w_
+                    if v_:
+                        out_[rc["slug"]] = out_.get(rc["slug"], 0) + v_
+            return {"zones": [{"zone": z_, "share": w_} for z_, w_ in parts_], "classes": sorted(({"class": k_, "share": v_} for k_, v_ in out_.items()), key=lambda c_: -c_["share"])}
+        for bl in belts:
+            bl["mix"] = mix_of(bl)
         sysm["belts"] = belts
         sysm["frost_line"] = frost
     home = celestial["galaxy"].get("home")
@@ -2046,10 +2068,14 @@ for ad in administrations:
             rows.append(row("gap", link(x["name"], f"cb:{sysm['slug']}:{b['slug']}"), "", "", f"its gravity is {x['gravity']} in Local Administration and {(b.get('physical') or {}).get('gravity')} here"))
         else:
             x["celestial"] = f"cb:{sysm['slug']}:{b['slug']}"
-for where_ in ("inside_frost_line", "outside_frost_line"):
-    tot = sum((rc.get("forms") or {}).get(where_, 0) for rc in celestial["rock_classes"])
+for where_ in ("warm", "frost_line", "cold", "trojans", "outer"):
+    tot = sum((rc.get("found") or {}).get(where_, 0) for rc in celestial["rock_classes"])
     if celestial["rock_classes"]:
-        rows.append(row("ok" if abs(tot - 1) < 1e-6 else "gap", "Rock classes, " + where_.replace("_", " "), f"{len(celestial['rock_classes'])} classes", "", f"their shares add to {tot:g}" + ("" if abs(tot - 1) < 1e-6 else ", not 1")))
+        rows.append(row("ok" if abs(tot - 1) < 1e-6 else "gap", "Rock classes found, " + where_.replace("_", " "), f"{len(celestial['rock_classes'])} classes", "", f"their shares add to {tot:g}" + ("" if abs(tot - 1) < 1e-6 else ", not 1")))
+for rc in celestial["rock_classes"]:
+    lacks = [w_ for w_, has_ in (("its density", (rc.get("physical") or {}).get("density_rubble")), ("what it is made of", rc.get("composition")), ("what it yields", (rc.get("mining") or {}).get("yields"))) if not has_]
+    if lacks or not rc["identity"].get("key"):
+        rows.append(row("gap", link(rc["identity"]["name"], "cr:" + rc["slug"]), "rock class", "", "; ".join((["not in the game yet"] if not rc["identity"].get("key") else []) + (["not said: " + ", ".join(lacks)] if lacks else []))))
 for sysm in celestial["systems"]:
     for bl in sysm.get("belts") or []:
         if bl["kind"] != "trojan" or bl.get("fields"):
@@ -2057,7 +2083,7 @@ for sysm in celestial["systems"]:
     for fl in sysm["fields"]:
         if fl.get("in_belt") is False or "belt" not in fl:
             rows.append(row("gap", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), "", "", "it lies in no belt its system has, by the laws written out"))
-keys_ = {rc["identity"]["key"].lower() for rc in celestial["rock_classes"]}
+keys_ = {rc["identity"]["key"].lower() for rc in celestial["rock_classes"] if rc["identity"].get("key")}
 for sysm in celestial["systems"]:
     for fl in sysm["fields"]:
         if celestial["rock_classes"] and (fl.get("rocks") or {}).get("class") not in keys_:

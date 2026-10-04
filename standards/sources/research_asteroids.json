@@ -208,5 +208,84 @@
    "verified": true
   }
  },
- "note": "Fetched 2026-10-04. Each quote is as a page-reading tool returned it; the figures were not checked against the pages by eye."
+ "note": "Fetched 2026-10-04. Each quote is as a page-reading tool returned it; the figures were not checked against the pages by eye.",
+ "classes": {
+  "trend_by_distance": {
+   "value": "S, C, P, D",
+   "unit": "order of types by increasing distance",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "There is a compositional trend of asteroid types by increasing distance from the Sun, in the order of S, C, P, and the spectrally-featureless D-types.",
+   "verified": true
+  },
+  "s_inner": {
+   "value": 2.5,
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "S-type (silicate-rich) asteroids are more common toward the inner region of the belt, within 2.5 AU of the Sun.",
+   "verified": true
+  },
+  "m_middle": {
+   "value": "middle",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "M-type (metal-rich) asteroids are typically found in the middle of the main belt, and they make up much of the remainder of the total population.",
+   "verified": true
+  },
+  "c_outer": {
+   "value": 75,
+   "unit": "% of visible asteroids",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Carbonaceous asteroids dominate the asteroid belt's outer regions, and are rare in the inner belt. Together they comprise over 75% of the visible asteroids.",
+   "verified": true
+  },
+  "snow_line": {
+   "value": 2.7,
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Planetesimals formed beyond this radius were able to accumulate ice (the 2.7 AU snow line).",
+   "verified": true
+  },
+  "e_type": {
+   "value": "innermost",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_spectral_types",
+   "quote": "E-types found in the innermost region of the asteroid belt among Hungaria family members.",
+   "verified": true
+  },
+  "d_type": {
+   "value": "outer belt and trojans",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_spectral_types",
+   "quote": "D-types typically seen in the outer asteroid belt and among the Jupiter trojans.",
+   "verified": true
+  },
+  "v_type": {
+   "value": "Vesta family",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_spectral_types",
+   "quote": "V-type: most common among the members of the large Vesta family; thought to correlate with HED meteorites.",
+   "verified": true
+  },
+  "hed": {
+   "value": 5,
+   "unit": "% of all falls",
+   "source": "https://en.wikipedia.org/wiki/HED_meteorite",
+   "quote": "The HED meteorites account for about 5% of all falls, which is about 60% of all achondrites. All these types of meteorite are thought to have originated in the crust of the asteroid Vesta. They closely resemble terrestrial igneous rocks.",
+   "verified": true
+  },
+  "enstatite": {
+   "value": 2,
+   "unit": "% of the chondrites that fall",
+   "source": "https://en.wikipedia.org/wiki/Enstatite_chondrite",
+   "quote": "rich in the mineral enstatite ... abundant grains of metal and sulfide minerals ... most of their iron taking the form of metal or sulfide rather than an oxide ... formed near the center of the solar nebula, possibly within the orbit of Mercury.",
+   "verified": true
+  },
+  "pallasite": {
+   "value": "olivine in iron-nickel",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Pallasite",
+   "quote": "centimetre-sized olivine crystals of peridot quality in an iron-nickel matrix ... mantle and core material from differentiated planetesimals. No proportions are given.",
+   "verified": true
+  }
+ }
 }

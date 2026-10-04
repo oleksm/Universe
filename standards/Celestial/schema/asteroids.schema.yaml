@@ -56,6 +56,13 @@ properties:
     properties:
       exponent: { type: number, description: "how fast their number rises as their size falls: the number over a size goes as the size to minus this" }
       smallest: { type: number, description: "m, the smallest the game makes" }
+  zones:
+    description: "Where a body formed, by its distance against the frost line's. What it is made of goes by this."
+    type: object
+    additionalProperties: false
+    properties:
+      warm_to: { type: number, description: "the warm zone reaches this share of the frost line's distance" }
+      frost_to: { type: number, description: "the frost-line zone from there to this share; the cold zone beyond" }
   basis:
     type: array
     items:

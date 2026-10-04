@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/rock-class.schema.yaml
-# As the game's code has it (crates/world/src/belt.rs, mining.rs). The game does not read this
-# record yet; a test holds the two together.
+# What it is and what it yields: as the game's code has it (a test holds the two together).
+# Where it is found: the spec, from what is known of the Sun's asteroids. The game's own odds differ.
 identity:
   name: Stony
   key: "S-TYPE STONY"
@@ -14,9 +14,15 @@ physical:
 composition:
   metal: [0.1, 0.3]
   pgm: [1.0, 6.0]
-forms:
-  inside_frost_line: 0.55
-  outside_frost_line: 0.15
+found:
+  warm: 0.68
+  frost_line: 0.15
+  cold: 0.02
+  falls: 0.8
 mining:
   cut_energy: 60000
   yields: stony-ore
+basis:
+  - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
+  - { of: [found.warm, found.frost_line, found.cold], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "A guess, to be reviewed, made to follow what is known: stony asteroids are commoner within 2.5 AU of the Sun; about 17% of all. The shares themselves are chosen." }
+  - { of: [found.falls], tier: sourced, source: "https://en.wikipedia.org/wiki/Meteorite_fall_statistics", note: "Ordinary chondrites: 80.0% of classified falls." }

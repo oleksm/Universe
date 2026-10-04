@@ -10,3 +10,8 @@
 - **The game's fields are named for what they are**: a remnant with a bound swarm, true to a body
   broken lately, a simplification of a belt. The engine is to follow the spec; `docs/registry-
   integration.md` says what that asks of it.
+- **What belts are made of**: eight rock classes (the game's four, and basaltic, enstatite,
+  stony-iron and primitive, recorded as far as sources go), each with how much of what is there it
+  is by where a body formed against the frost line. Each belt's mix is worked out from the zones it
+  covers: Treistun's main belt, wholly inside its frost line, is 68% stony, 12% carbonaceous, 7%
+  basaltic, 6% metallic; its trojans mostly primitive; its outer belt ice.

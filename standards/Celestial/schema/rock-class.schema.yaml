@@ -8,10 +8,10 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, key]
+    required: [name]
     properties:
       name: { type: string }
-      key: { type: string, description: "Its label in the game." }
+      key: { type: string, description: "Its label in the game. One the game has not got has none." }
       letter: { type: string, description: "Its spectral type, as astronomers class asteroids." }
       about: { type: string }
   physical:
@@ -32,13 +32,17 @@ properties:
       metal: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "nickel-iron: share, lean to rich" }
       volatiles: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "frozen carbon dioxide, ammonia, methane: share, lean to rich" }
       pgm: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "platinum-group metals: parts per million, lean to rich" }
-  forms:
-    description: "How often a family of asteroids is of this class, by where it formed."
+  found:
+    description: "How much of what is there is of this class, by where a body formed. The zones are by distance from the star against its frost line (see the asteroids record)."
     type: object
     additionalProperties: false
     properties:
-      inside_frost_line: { type: number, description: "share of the families that formed inside the frost line" }
-      outside_frost_line: { type: number, description: "share of those that formed outside it" }
+      warm: { type: number, description: "share of the bodies that formed well inside the frost line" }
+      frost_line: { type: number, description: "share of those that formed about the frost line" }
+      cold: { type: number, description: "share of those that formed beyond it, in the main belt" }
+      trojans: { type: number, description: "share of the bodies in a giant's two swarms" }
+      outer: { type: number, description: "share of the bodies of the outer belt" }
+      falls: { type: number, description: "its share of the meteorites seen to fall on Earth: a check, weighted toward tough rock from close by" }
   mining:
     type: object
     additionalProperties: false
@@ -47,3 +51,15 @@ properties:
       yields: { type: string, description: "The rock it yields when dug (SFO 11, Goods), by file name." }
       rich_yields: { type: string, description: "What it yields instead where it is rich enough." }
       rich_above: { type: number, description: "parts per million of platinum-group metals above which it yields that" }
+  basis:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [of, tier]
+      properties:
+        of: { type: array, items: { type: string } }
+        tier: { enum: [sourced, derived, invented] }
+        source: { type: string }
+        note: { type: string }
+        review: { type: boolean }

@@ -35,6 +35,9 @@ moons:
 sizes:
   exponent: 1.89
   smallest: 15
+zones:
+  warm_to: 0.93
+  frost_to: 1.04
 basis:
   - { of: [main_belt], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "Mass 2.39e21 kg (3% of the Moon's); 700,000 to 1.7 million over 1 km (the middle taken); over 200 above 100 km; 965,600 km apart on average; edges at the 4:1 and 2:1 resonances with Jupiter." }
   - { of: [main_belt.family_share, main_belt.families], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_family", note: "33 to 35% are family members; 20 to 30 families reliably recognised. A family lasts about a billion years." }
@@ -44,3 +47,4 @@ basis:
   - { of: [moons], tier: sourced, source: "https://en.wikipedia.org/wiki/Minor-planet_moon", note: "An estimated 2% of asteroids have satellites, and 11% of the objects past Neptune; the two are from a few hundred to over 3,000 km apart." }
   - { of: [sizes.exponent], tier: derived, note: "From the belt's two counts: 1.2 million over 1 km and 200 over 100 km." }
   - { of: [sizes.smallest], tier: sourced, source: "the game: crates/world/src/belt.rs, SMALLEST" }
+  - { of: [zones], tier: derived, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "The Sun's frost line is at 2.7 AU; stony asteroids are commoner within 2.5 AU; the belt's middle ends at the gap at 2.82 AU." }
