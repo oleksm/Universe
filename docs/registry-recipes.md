@@ -105,6 +105,11 @@ to, and flows live in one place, the module's recipes.
   registry describes no route from one factory to another: the market is the join, and prices and
   what is on offer are the game's state. Hauling between settlements is ships, as now.
 
+- **Everything physical is somewhere, and can be seen.** No item is only a number in a ledger. What
+  a factory holds lies in its storing module. What is on the market lies in a warehouse an
+  exchange has approved (`facility.exchange`, as Trethi Warehouse is): selling moves it there, or
+  it is sold where it lies. Anyone who goes there can see it.
+
 ## Done so far
 
 **Step 1 (2026-10-04): every module's own figures are its first recipe.** `module.recipes[]`:
