@@ -595,11 +595,11 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
 NESTED = {"parts"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials, processes, modules, goods, hulls, mill_stock, equipment = [], [], [], [], [], [], [], []
+elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
 for s in standards:
     if "records" not in s:
         continue
@@ -640,7 +640,7 @@ for s in standards:
                 problem(full, "an item of mill stock is filed as <its code>.yaml")
             key = ident.get("code")
             e["slug"] = name[:-5]
-        elif kind == "equipment":
+        elif kind in ("equipment", "gates"):
             for k in ("name", "key"):
                 if not ident.get(k):
                     problem(full, f"identity: no {k}")
@@ -700,7 +700,7 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock, "equipment": equipment}[kind].append(e)
+        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock, "equipment": equipment, "gates": gates}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
@@ -1336,6 +1336,36 @@ for e in equipment:
     rows.append(row("gap", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
 report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game, or does not yet say what it is made of.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
 
+# 1c. Stargates: what opening and holding each ring's tube costs, by the laws (config/dogma.ron,
+# Tube; the same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
+_dogma = open(os.path.join(ROOT, "config", "dogma.ron"), encoding="utf-8").read()
+LAW = {k: float(v) for k, v in re.findall(r'name: "(TUBE_[A-Z_]+)", value: ([0-9.e+-]+)', _dogma)}
+LY = 9.4607304725808e15
+_structs = open(os.path.join(ROOT, "content", "base", "structures.ron"), encoding="utf-8").read()
+GAME_RINGS = {k: float(v) for k, v in re.findall(r'key: "([^"]+)",[^\n]*?span_ly: ([0-9.]+)', _structs)}
+tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * m ** LAW["TUBE_GAMMA"]
+tube_energy = lambda m, span_ly: LAW["TUBE_EPS"] * m * span_ly * LY * math.e      # (at its natural time)
+station = next((m for m in modules if (m.get("rate") or {}).get("power")), None)
+rows = []
+for g in gates:
+    d, span = (g.get("size") or {}).get("opening"), (g.get("performance") or {}).get("span")
+    game = GAME_RINGS.get(g["identity"]["key"])
+    if d and span and all(k in LAW for k in ("TUBE_T_LY", "TUBE_GAMMA", "TUBE_EPS", "TUBE_RHO", "TUBE_K", "TUBE_HOLD")):
+        mu = LAW["TUBE_RHO"] * d ** LAW["TUBE_K"]
+        opening = tube_energy(mu, span)
+        ships = [("A ship of 100 t", 1e5)] + [(hl["identity"]["name"] + ", loaded", hl.get("parts_mass", 0) + max(0.0, (hl.get("design") or {}).get("loaded_mass", 0) * 1000 - ((hl.get("mass") or {}).get("frame") or 0) * 1000)) for hl in hulls if hl.get("parts_mass")] + [("A hauler of 1,000 t", 1e6), ("A capital ship of 100,000 t", 1e8)]
+        g["worked"] = {
+            "tube_mass": mu, "open_energy": opening, "open_time": tube_time(mu, span), "hold_power": opening / LAW["TUBE_HOLD"],
+            "stations": (opening / LAW["TUBE_HOLD"] / 1e6 / station["rate"]["power"]) if station else None, "station": station["slug"] if station else None,
+            "crossings": [{"what": w, "mass": m, "time": tube_time(m, span), "energy": tube_energy(m, span)} for w, m in ships],
+        }
+        hold = f"{g['worked']['hold_power'] / 1e9:,.0f} GW to hold at its full span"
+    else:
+        hold = "not worked out: its opening, its span or a law is missing"
+    rows.append(row("ok" if game == span else "gap", link(g["identity"]["name"], "gate:" + g["slug"]), f"{span:g} ly" if span else "", (f"the same in the game" if game == span else f"the game says {game:g} ly") if game is not None else "not in the game", hold))
+    rows.append(row("gap", link(g["identity"]["name"], "gate:" + g["slug"]), "", "", "where its power comes from, what the ring weighs and what it is made of: not yet said"))
+report("gates", "Stargates: each ring against the game, and what it costs to hold", "Each gate ring: its span against the game's ring of the same key, and the power its tube takes to hold, worked out from the laws. A gap is a ring that differs from the game, or something a ring does not yet say.", ["Ring", "Span", "Against the game", "Note"], rows)
+
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []
 for hl in hulls:
@@ -1579,8 +1609,8 @@ report("goods", "Goods: where each comes from and goes", "Each good: where it co
 # (Elements and materials are from published sources, named in their files; a process's amounts are
 # its material's composition. Other records say for themselves, in `basis`; one that doesn't is a gap.)
 DEFAULT_TIER = {"elements": "sourced", "materials": "sourced", "processes": "derived"}
-KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts", "equipment": "Ship equipment"}
-KEY_OF = {"equipment": lambda e: "eq:" + e["slug"], "elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
+KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts", "equipment": "Ship equipment", "gates": "Stargates"}
+KEY_OF = {"gates": lambda e: "gate:" + e["slug"], "equipment": lambda e: "eq:" + e["slug"], "elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
 
 
 def numbers(d, path=()):
@@ -1605,7 +1635,7 @@ def tier_of(kind, raw, group, prop, review=False):
 
 
 rows, detail, reviews = [], [], []
-for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts), ("equipment", equipment)):
+for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts), ("equipment", equipment), ("gates", gates)):
     tally = {"sourced": 0, "derived": 0, "invented": 0, "unsaid": 0}
     to_review = 0
     for e in recs:
@@ -1654,6 +1684,8 @@ def write_html():
         "hulls": hulls,
         "mill_stock": mill_stock,
         "equipment": equipment,
+        "gates": gates,
+        "gate_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["gates"]["properties"].items() if "properties" in d},
         "equipment_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["equipment"]["properties"].items() if "properties" in d},
         "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["mill-stock"]["properties"].items() if "properties" in d},
         "parts": parts,

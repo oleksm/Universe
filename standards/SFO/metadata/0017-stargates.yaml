@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Stargates
+records: gates
+purpose: A stargate is a pair of rings, one at each of two stars, holding a tube open between them. Inside the tube a ship crosses light years in minutes. Nothing is shortened. The tube is as long as the span; the speed inside is what is extraordinary.
+details:
+  text:
+    - "Why a gate is large, and costly:"
+    - "- The tube weighs by its diameter cubed. A ring twice as wide costs eight times as much to open and to hold, so a ring is as wide as the largest ship it must pass, and no wider."
+    - "- Opening a tube is paid once; holding it open is paid for as long as it stands, about 1% of the opening each month. Letting it lapse means paying the opening again."
+    - "- Both go with the span: twice as far costs twice as much."
+    - "- A ship pays to cross by its mass and the span, and steeply more to cross faster than its natural time."
+    - "The laws and their constants are in config/dogma.ron (Tube); each constant is invented, with the target it was chosen for. What follows for each ring is worked out on its page."

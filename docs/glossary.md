@@ -33,7 +33,7 @@ The one place to look a name up. Keep it current when a name is added or changed
 | **Interlock** | An avionics product's spec: its drive drops out rather than fly into a body. Not a law. |
 | **The tube** | What a gate pair holds open along its route: as long as the span, millions of c inside, crossed by mass and chosen speed (`docs/world/hyperspace.md`). (Was "the throat", a wormhole: being replaced.) |
 | **Data capsule** | How information crosses a tube: thrown and caught in batches (light can't be caught reliably in the tube's flow). |
-| **Ring classes** | A gate ring's greatest span: I 10 ly, II 25 ly, III 50 ly. |
+| **Ring classes** | A gate ring's greatest span: I 5 ly, II 10 ly, III 25 ly. |
 | **Explorer** | A future ship built around next-generation reactors that can cross between stars (40 ly: an epic). |
 | **Hypernet** | The information network to come: events captured in range, carried by relays, gates and ships (`docs/hypernet.md`). |
 | **Comm** | A ship's hypernet equipment: what it hears (capture), its lag. Every ship carries one. |
