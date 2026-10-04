@@ -4,7 +4,7 @@ identity:
   name: Tank farm
   step: Store
   description: "A group of tanks for liquids and gases."
-size:
+physical:
   length: 100
   width: 100
   height: 20
@@ -12,4 +12,4 @@ rate:
   volume: 40000
   stores: [goods.water, goods.chemicals, goods.fuel]
 basis:
-  - { of: [size, rate], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [physical, rate], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

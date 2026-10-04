@@ -9,10 +9,10 @@ identity:
   class: courier
   revision: outdated
   description: "Small and fast, for light cargo and messages."
-size:
+physical:
   volume: 543
-mass:
-  frame: 17500.0
+  mass: 17500.0
+capacity:
   fuel: 8000
   hold: 4000
 fit:
@@ -36,4 +36,4 @@ design:
   main_thrust: 1800000.0
   lift_thrust: 880000.0
 basis:
-  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

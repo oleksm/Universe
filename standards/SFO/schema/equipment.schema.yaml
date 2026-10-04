@@ -15,12 +15,7 @@ properties:
       maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
       slot: { type: string, description: "The kind of slot it fits." }
       description: { type: string }
-  physical:
-    type: object
-    additionalProperties: false
-    properties:
-      mass: { type: number, x-unit: "kg", description: kg }
-      volume: { type: number, x-unit: "m3", description: m3 }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   performance:
     type: object
     additionalProperties: false

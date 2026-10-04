@@ -4,7 +4,7 @@ identity:
   name: Panel line
   step: Make panels
   description: "A line that cuts, forms and finishes one kind of panel without stopping. Set up for one panel, it makes nothing else until it is set up again."
-size:
+physical:
   length: 300
   width: 40
   height: 15
@@ -22,4 +22,4 @@ needs:
 basis:
   - { of: [rate.throughput], tier: invented, review: true, note: "A guess, to be reviewed: ten times a yard's plate work, for panels all alike. It sets how fast a gate ring's skin can be made." }
   - { of: [inputs, outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
-  - { of: [size, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [physical, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

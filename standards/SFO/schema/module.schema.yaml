@@ -23,13 +23,7 @@ properties:
       name: { type: string }
       step: { type: string, description: The step it performs. }
       description: { type: string }
-  size:
-    type: object
-    additionalProperties: false
-    properties:
-      length: { type: number, x-unit: "m", description: m }
-      width: { type: number, x-unit: "m", description: m }
-      height: { type: number, x-unit: "m", description: m }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   rate:
     type: object
     additionalProperties: false

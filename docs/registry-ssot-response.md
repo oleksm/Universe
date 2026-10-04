@@ -154,11 +154,27 @@ says, for each property, the unit it is read in, and the build converts as it re
 page is unchanged and the generated RON is byte-identical. `celestial_export.py` and
 `celestial_seed.py` write SI.
 
+## One `physical` group: done (2026-10-04)
+
+`common.schema.yaml#/definitions/physical` is the one group: mass, length, width, height, envelope,
+volume, bulk_density, operating and storage temperature range, impact_resistance, shock_limit. Part,
+mill stock, equipment, good, hull and industrial module all take it by `$ref`; a record uses the
+properties that apply.
+
+- **Hull:** `size.length/width/height/volume` are `physical.*`; `mass.frame` is `physical.mass`.
+  What it can take aboard is a new group, `capacity`: `hold_volume`, `hold` (kg), `fuel` (kg).
+  `size` and `mass` are gone.
+- **Industrial module:** `size` is `physical`.
+- **`basis.of`** paths follow (`physical.length`, `capacity.hold`).
+
+Left as their own groups, because they say what the thing is rather than what a carrier must know:
+mill stock's `size` (thickness, diameter, wall: its section), a part's `shape`, a gate's `size`
+(opening, thickness), a material's `mass.density`, and a celestial body's `physical`.
+
 ## Next on `fso`, in this order
 
-3. **`physical` as one group** across products, stock and bodies.
-4. Then your order: Dogma, the celestial consolidation that is left (seeding records), products and
-   stock, installations, economy.
+4. Your order from here: Dogma, the celestial seeding records, products and stock, installations,
+   economy.
 
 ## Where I'd do it differently
 

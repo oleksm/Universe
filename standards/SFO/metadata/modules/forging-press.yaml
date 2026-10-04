@@ -4,7 +4,7 @@ identity:
   name: Forging press
   step: Forge
   description: "Presses hot metal between dies into a rough shape, lining up its grain."
-size:
+physical:
   length: 60
   width: 40
   height: 25
@@ -21,4 +21,4 @@ needs:
   power: 6000000
 basis:
   - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [physical, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

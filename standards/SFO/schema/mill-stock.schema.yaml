@@ -28,17 +28,7 @@ properties:
       thickness: { type: number, x-unit: "m", description: "m, of sheet, plate or film" }
       diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
       wall: { type: number, x-unit: "m", description: "m, of a tube" }
-  physical:
-    description: What every physical thing has. What a ship hauling it and a warehouse holding it have to know.
-    type: object
-    additionalProperties: false
-    properties:
-      length: { type: number, x-unit: "m", description: "m, of one piece as supplied (a sheet, a bar, a coil's wire)" }
-      width: { type: number, x-unit: "m", description: "m, of one sheet or plate as supplied" }
-      storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
-      storage_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it may be kept or carried at" }
-      impact_resistance: { type: number, x-unit: "J", description: "J, the blow it takes without damage" }
-      shock_limit: { type: number, x-unit: "m/s2", description: "m/s2, the hardest jolt it takes while it is carried" }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   making:
     type: object
     additionalProperties: false

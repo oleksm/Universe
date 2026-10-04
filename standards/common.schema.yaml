@@ -8,6 +8,24 @@ description: 'standards/common.schema.yaml: what every schema of the registry sh
 # K, W, N, J, Pa and what is made of them), never t, km, hours, AU or light years. Angles are the one
 # exception: degrees, `x-unit: deg`. A share, a ratio or a count has no x-unit.
 definitions:
+  physical:
+    description: "What every physical thing has: what it weighs, the room it takes, what it stands. What a ship hauling it and a warehouse holding it have to know. A record uses those that apply to it."
+    type: object
+    additionalProperties: false
+    properties:
+      mass: { type: number, x-unit: "kg", description: "kg, the thing as made, with nothing fitted to it or carried in it" }
+      length: { type: number, x-unit: "m", description: m }
+      width: { type: number, x-unit: "m", description: m }
+      height: { type: number, x-unit: "m", description: m }
+      envelope: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [length, width, height] of the box it ships in, where that differs from its own size" }
+      volume: { type: number, x-unit: "m3", description: "m3, the space its shape takes" }
+      bulk_density: { type: number, x-unit: "kg/m3", description: "kg/m3, as stowed broken in a hold, for what is carried in bulk" }
+      operating_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it works at" }
+      operating_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it works at" }
+      storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
+      storage_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it may be kept or carried at" }
+      impact_resistance: { type: number, x-unit: "J", description: "J, the blow it takes without damage" }
+      shock_limit: { type: number, x-unit: "m/s2", description: "m/s2, the hardest jolt it takes while it is carried" }
   key:
     description: "A record's one key, in the whole registry: <kind>.<name>, lower case, words joined by -, the kind being its schema's. The name may have more dotted parts where a record lives under another (body.treistun.treistun-f). Another record refers to it by this string."
     type: string

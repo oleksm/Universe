@@ -4,7 +4,7 @@ identity:
   name: Bar mill
   step: Roll to bar
   description: "Roll stands with grooved rolls that draw a hot ingot out into round bar."
-size:
+physical:
   length: 200
   width: 30
   height: 15
@@ -23,4 +23,4 @@ basis:
   - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Bar mills average 39 t/h, medium section mills 53." }
   - { of: [inputs, outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "7 to 15% is lost as scrap in hot rolling; 10 taken." }
   - { of: [needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf", note: "111 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
-  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

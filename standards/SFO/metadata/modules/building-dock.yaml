@@ -4,7 +4,7 @@ identity:
   name: Building dock
   step: Assemble the hull
   description: "A dock, long, wide and high enough to hold a hull, with cranes over it. The hull's parts are joined here and its assemblies fitted."
-size:
+physical:
   length: 120
   width: 60
   height: 35
@@ -18,4 +18,4 @@ needs:
   power: 1000000.0
 basis:
   - { of: [rate.throughput], tier: derived, source: "https://www.informs-sim.org/wsc02papers/139.pdf", note: "From an airliner of about this weight: a Boeing 747-400 (183.5 t empty) spent 24 days in final assembly, which is 0.32 t an hour through one position. Other airliners give 0.16 (737, A380)." }
-  - { of: [inputs, size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [inputs, physical, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

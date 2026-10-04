@@ -9,10 +9,10 @@ identity:
   class: hauler
   revision: outdated
   description: "A big hold and not much else."
-size:
+physical:
   volume: 54301
-mass:
-  frame: 118000
+  mass: 118000
+capacity:
   fuel: 80000
   hold: 150000
 fit:
@@ -36,4 +36,4 @@ design:
   main_thrust: 8000000
   lift_thrust: 6400000.0
 basis:
-  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

@@ -4,7 +4,7 @@ identity:
   name: Fusion power station
   step: Make power
   description: "A fusion plant of industrial size. It burns deuterium and feeds a factory or a settlement."
-size:
+physical:
   length: 120
   width: 80
   height: 40
@@ -15,4 +15,4 @@ inputs:
   - { item: good.deuterium, amount: 2.09e-08 }
 basis:
   - { of: [inputs], tier: derived, note: "From the game: deuterium gives 3.45e14 J/kg and the best fusion plants turn half of it into power." }
-  - { of: [size, rate], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [physical, rate], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

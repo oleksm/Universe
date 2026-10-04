@@ -4,7 +4,7 @@ identity:
   name: Hot rolling mill
   step: Roll hot
   description: "A row of roll stands that squeeze a hot ingot down to a long thick strip."
-size:
+physical:
   length: 300
   width: 40
   height: 20
@@ -22,4 +22,4 @@ needs:
 basis:
   - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 1,221 kg of ingot for each tonne rolled, an 82% yield. Steel loses 7 to 15%." }
   - { of: [needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 265 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
-  - { of: [rate, size], tier: invented, note: "Steel strip mills average 306 t/h and run 700 m long for 5 Mt a year; a mill of this size for aluminium was not found in a source." }
+  - { of: [rate, physical], tier: invented, note: "Steel strip mills average 306 t/h and run 700 m long for 5 Mt a year; a mill of this size for aluminium was not found in a source." }

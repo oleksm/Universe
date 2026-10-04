@@ -15,3 +15,6 @@
 - **SI throughout:** every value with a dimension is in kg, m, s, K, W, N, J, Pa (angles in
   degrees), and its property says its unit. 2,322 values converted. The registry page still reads
   in tonnes, km, hours and AU.
+- **One `physical` group** for every physical thing (mass, size, shipping box, volume, temperature
+  ranges, what blow and jolt it takes), shared by parts, mill stock, equipment, goods, hulls and
+  industrial modules. A hull's hold and tanks are its `capacity`.

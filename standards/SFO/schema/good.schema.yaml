@@ -14,11 +14,7 @@ properties:
       name: { type: string }
       kind: { enum: [rock, raw, consumable, fuel, intermediate, product, by-product], description: 'rock: dug as it lies. raw: won from a rock, what industry starts from.' }
       description: { type: string }
-  physical:
-    type: object
-    additionalProperties: false
-    properties:
-      bulk_density: { type: number, x-unit: "kg/m3", description: "kg/m3, as stowed broken in a hold" }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   composition:
     description: What a rock is made of, each part's share by mass. A part is an element or a good, by its key.
     type: array

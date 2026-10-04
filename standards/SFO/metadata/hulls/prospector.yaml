@@ -9,10 +9,10 @@ identity:
   class: mining ship
   revision: outdated
   description: "A miner: a mining rig, a big hold, sturdy."
-size:
+physical:
   volume: 15607
-mass:
-  frame: 52000
+  mass: 52000
+capacity:
   fuel: 30000
   hold: 40000
 fit:
@@ -38,4 +38,4 @@ design:
   main_thrust: 2700000.0
   lift_thrust: 2250000.0
 basis:
-  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

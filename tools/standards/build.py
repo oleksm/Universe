@@ -113,6 +113,11 @@ def reading(v, path, tab):
 def read_schema(path):
     """A schema, its descriptions in the units the page reads."""
     sch = yaml.safe_load(open(path, encoding="utf-8"))
+    props = sch.get("properties") or {}
+    if "$ref" in (props.get("physical") or {}):
+        # (One `physical` group for every physical thing, in common.schema.yaml: read here in full.)
+        import copy
+        props["physical"] = copy.deepcopy(V.resolve(props["physical"]["$ref"], path)[0])
     for at, how in (READING.get(os.path.relpath(path, TREE)) or {}).items():
         node = sch
         for step in at.split("."):
@@ -121,7 +126,51 @@ def read_schema(path):
                 node = node.get("items")
         if isinstance(node, dict):
             node["description"] = how["reads"]
+    # (This build and the page still take a hull's and a module's size and mass as they were grouped
+    # before: `size`, and a hull's `mass`.)
+    kind = os.path.basename(path)[:-12]
+    if kind in ("hull", "module") and "physical" in props:
+        ph, cap = props["physical"]["properties"], (props.get("capacity") or {}).get("properties") or {}
+        group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
+        size = {k: ph[k] for k in ("length", "width", "height")}
+        new = {}
+        for k, v in props.items():
+            if k == "physical":
+                new["size"] = group(size if kind == "module" else {**size, "volume": ph["volume"], "hold_volume": cap["hold_volume"]})
+                if kind == "hull":
+                    new["mass"] = group({"frame": ph["mass"], "fuel": cap["fuel"], "hold": cap["hold"]})
+            elif k != "capacity":
+                new[k] = v
+        sch["properties"] = new
     return sch
+
+
+def old_groups(rec, rel):
+    """A hull's or a module's `physical` and `capacity`, as this build still takes them: `size` and `mass`."""
+    kind = rel.split(os.sep)[2] if rel.count(os.sep) >= 3 else ""
+    if kind not in ("hulls", "modules") or not isinstance(rec, dict):
+        return rec
+    ph, cap = rec.get("physical") or {}, rec.get("capacity") or {}
+    size = {k: v for k, v in ph.items() if k != "mass"}
+    if "hold_volume" in cap:
+        size["hold_volume"] = cap["hold_volume"]
+    mass = {**({"frame": ph["mass"]} if "mass" in ph else {}), **{k: cap[k] for k in ("fuel", "hold") if k in cap}}
+    new = {}
+    for k, v in rec.items():
+        if k in ("physical", "capacity"):
+            if "size" not in new and size:
+                new["size"] = size
+            if "mass" not in new and mass and kind == "hulls":
+                new["mass"] = mass
+        else:
+            new[k] = v
+    back = {"physical": "size", "physical.mass": "mass.frame", "capacity.hold_volume": "size.hold_volume", "capacity.fuel": "mass.fuel", "capacity.hold": "mass.hold"}
+    for b in new.get("basis") or []:
+        if isinstance(b, dict) and isinstance(b.get("of"), list):
+            b["of"] = [back.get(x, "size" + x[8:] if x.startswith("physical.") else x) for x in b["of"]]
+    rec.clear()
+    rec.update(new)
+    return rec
 
 
 def old_names(rec, path):
@@ -138,7 +187,7 @@ def old_names(rec, path):
         for c in (rec.get("identity") or {}).get("composition") or [] if rel.startswith(os.path.join("SFO", "metadata", "materials")) else []:
             if "name" in c and "part" not in c:
                 c["part"] = c.pop("name")
-    return rec
+    return old_groups(rec, rel) if os.sep in rel else rec
 
 
 def load(path):

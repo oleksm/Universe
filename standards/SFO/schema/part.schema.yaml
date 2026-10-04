@@ -21,22 +21,7 @@ properties:
       interchangeable_with: { type: array, items: { type: string }, description: Other parts' codes that fit in its place. }
       drawing: { type: string, description: The drawing or model file that defines it. }
 
-  physical:
-    description: What every physical thing has. What a ship hauling it and a warehouse holding it have to know.
-    type: object
-    additionalProperties: false
-    properties:
-      mass: { type: number, x-unit: "kg", description: "kg, the part as made" }
-      length: { type: number, x-unit: "m", description: m }
-      width: { type: number, x-unit: "m", description: m }
-      height: { type: number, x-unit: "m", description: m }
-      envelope: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [length, width, height] of the box it ships in, where that differs from its own size" }
-      operating_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it works at" }
-      operating_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it works at" }
-      storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
-      storage_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it may be kept or carried at" }
-      impact_resistance: { type: number, x-unit: "J", description: "J, the blow it takes without damage" }
-      shock_limit: { type: number, x-unit: "m/s2", description: "m/s2, the hardest jolt it takes while it is carried" }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
 
   made_from:
     description: "What it is cut from. (A part made of other parts has none: they are in its folder.)"

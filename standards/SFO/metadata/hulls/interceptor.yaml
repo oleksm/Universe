@@ -9,10 +9,10 @@ identity:
   class: interceptor
   revision: outdated
   description: "A small fast warship."
-size:
+physical:
   volume: 497
-mass:
-  frame: 19000
+  mass: 19000
+capacity:
   fuel: 4000
   hold: 4000
 fit:
@@ -37,4 +37,4 @@ design:
   main_thrust: 2700000.0
   lift_thrust: 880000.0
 basis:
-  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

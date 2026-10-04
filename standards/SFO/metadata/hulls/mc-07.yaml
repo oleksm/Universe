@@ -7,13 +7,13 @@ identity:
   class: mining ship
   revision: draft
   description: "A mining ship. It digs an asteroid it is anchored to into the ore bay under its top doors, carries the ore to a station or an outpost in orbit, and unloads there. It sets down on a world only with its bay empty."
-size:
+physical:
   length: 66.1
   width: 30.9
   height: 19.1
   volume: 23181
+capacity:
   hold_volume: 669
-mass:
   fuel: 4000
   hold: 1200000
 fit:
@@ -45,10 +45,10 @@ design:
   minimum_gauge: 0.002
 basis:
   - { of: [fit], tier: sourced, source: "the game: the fit it gives the MC-07 as imported", note: "The cheapest module for each of its slots, less the cargo racks: its hold is its ore bay. Fixed for now." }
-  - { of: [size.length, size.width, size.height, size.volume], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume." }
-  - { of: [size.hold_volume], tier: invented, review: true, note: "A guess, to be reviewed: the ore bay under its two top doors. The opening is the doors' (9.95 by 8.4 m, measured from the model); its depth of 8 m is chosen, leaving the cargo deck below. The model's inside has not been measured." }
-  - { of: [mass.hold], tier: derived, review: true, note: "Its bay full of stony ore, the commonest inside the frost line, at 1.8 t for each m3. A denser ore fills it part way. To be reviewed with the bay." }
-  - { of: [mass.fuel], tier: sourced, source: "the game: its tank as fitted" }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume." }
+  - { of: [capacity.hold_volume], tier: invented, review: true, note: "A guess, to be reviewed: the ore bay under its two top doors. The opening is the doors' (9.95 by 8.4 m, measured from the model); its depth of 8 m is chosen, leaving the cargo deck below. The model's inside has not been measured." }
+  - { of: [capacity.hold], tier: derived, review: true, note: "Its bay full of stony ore, the commonest inside the frost line, at 1.8 t for each m3. A denser ore fills it part way. To be reviewed with the bay." }
+  - { of: [capacity.fuel], tier: sourced, source: "the game: its tank as fitted" }
   - { of: [design.main_thrust, design.lift_thrust], tier: sourced, source: "the game: the MC-07 as imported, with its standard fit" }
   - { of: [design.landing_speed], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.473", note: "14 CFR 25.473: gear is designed for a descent of 10 feet a second." }
   - { of: [design.safety_factor], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.303", note: "14 CFR 25.303: a factor of safety of 1.5." }

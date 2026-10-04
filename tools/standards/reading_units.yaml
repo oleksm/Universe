@@ -219,13 +219,13 @@ SFO/schema/hull.schema.yaml:
   design.minimum_gauge:
     per: 0.001
     reads: mm, the thinnest skin used where no load says more
-  mass.frame:
+  physical.mass:
     per: 1000.0
     reads: t, the bare hull with nothing fitted
-  mass.fuel:
+  capacity.fuel:
     per: 1000.0
     reads: t of fuel its tanks hold, as fitted
-  mass.hold:
+  capacity.hold:
     per: 1000.0
     reads: t, the most cargo it is rated to carry
 SFO/schema/material.schema.yaml:

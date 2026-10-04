@@ -4,7 +4,7 @@ identity:
   name: Cold rolling mill
   step: Roll cold
   description: "Rolls the strip again cold, to its final thickness and a clean surface."
-size:
+physical:
   length: 150
   width: 40
   height: 15
@@ -22,4 +22,4 @@ needs:
 basis:
   - { of: [inputs, outputs, needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 640 kWh for each tonne and an 84% yield. Heat is counted as power: there is no fuel to burn." }
   - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Tandem mills average 126 t/h and reversing mills 13; 60 lies between." }
-  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

@@ -9,10 +9,10 @@ identity:
   class: general freighter
   revision: outdated
   description: "A workhorse: a bit of everything."
-size:
+physical:
   volume: 5269
-mass:
-  frame: 32800.0
+  mass: 32800.0
+capacity:
   fuel: 30000
   hold: 20000
 fit:
@@ -38,4 +38,4 @@ design:
   main_thrust: 2700000.0
   lift_thrust: 2250000.0
 basis:
-  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
