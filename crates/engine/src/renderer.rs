@@ -36,14 +36,6 @@ struct Globals {
     /// and x: a texel of it (metres), y: in use (1) or not.
     shadow_tight: [[f32; 4]; 4],
     shadow2: [f32; 4],
-    /// The environment (see `env.rs`): the sun's direction from the eye and
-    /// its light here (w); the world nearest's centre from the eye and radius;
-    /// its colour and albedo (w; 0: none); the mode
-    /// (x: 0 space, 1 studio) and the stars' glow (y).
-    env_sun: [f32; 4],
-    env_world: [f32; 4],
-    env_world_color: [f32; 4],
-    env_mode: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -353,8 +345,6 @@ struct Target {
 }
 
 pub(crate) struct Renderer {
-    /// The environment as light, drawn each frame (see `env.rs`).
-    env: crate::env::Env,
     /// How long the last `render` waited for the next surface texture (vsync).
     pub(crate) wait: std::time::Duration,
     low_height: u32,
@@ -554,22 +544,8 @@ impl Renderer {
                     count: None,
                 },
                 wgpu::BindGroupLayoutEntry { binding: 3, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
-                // The environment's specular and diffuse cubes (see `env.rs`).
-                wgpu::BindGroupLayoutEntry {
-                    binding: 4,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 5,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
-                    count: None,
-                },
             ],
         });
-        let env = crate::env::Env::new(device, &globals_layout);
         // Globe maps: a cube array, a layer per world in view (see `GlobeMap`).
         let globe_texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("globe maps"),
@@ -597,8 +573,6 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&shadow_cmp) },
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::TextureView(&globe_view) },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::Sampler(&globe_sampler) },
-                wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&env.spec) },
-                wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(&env.diff) },
             ],
         });
         let globes = Globes { texture: globe_texture, layers: vec![None; GLOBE_LAYERS as usize] };
@@ -825,7 +799,6 @@ impl Renderer {
         let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear, &globals);
         let pbr = crate::pbr::PbrRenderer::new(device, &globals_layout, &shadow_layout, &light_layout, SCENE_FORMAT, DEPTH_FORMAT, SAMPLES);
         Self {
-            env,
             pbr,
             wait: std::time::Duration::ZERO,
             low_height,
@@ -987,17 +960,6 @@ impl Renderer {
             shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
             look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), 0.0],
-            env_sun: frame.light.map_or([0.0; 4], |l| {
-                let d = (l.position - frame.camera.position).normalize_or_zero().as_vec3();
-                [d.x, d.y, d.z, l.intensity_at(frame.camera.position) * frame.sun_visible(frame.camera.position) as f32]
-            }),
-            env_world: frame.reflector.map_or([0.0; 4], |w| {
-                let c = (w.center - frame.camera.position).as_vec3();
-                [c.x, c.y, c.z, w.radius as f32]
-            }),
-            env_world_color: frame.reflector.filter(|_| gr.planet_light).map_or([0.0; 4], |w| [w.color[0], w.color[1], w.color[2], w.albedo]),
-            // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
-            env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));
@@ -1031,8 +993,6 @@ impl Renderer {
         let surface_view = surface_texture.texture.create_view(&Default::default());
 
         let mut encoder = gpu.device.create_command_encoder(&Default::default());
-        // The environment as light, for this frame.
-        self.env.render(&mut encoder, &self.globals_bind);
         // The shadow map: each cascade, the casters seen from the light.
         for k in 0..3 {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {

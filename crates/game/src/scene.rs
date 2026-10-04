@@ -144,11 +144,10 @@ fn studio(frame: &mut Frame, app: &App) {
     frame.eclipsers = Vec::new();
     frame.shadow_reach = SHADOW_REACH;
     frame.shadow_focus = pos.distance(frame.camera.position);
-    // The rest of its light from the studio's soft boxes (the environment, see the
-    // engine's `env.rs`), the key's among them.
+    // The soft light: a lit sphere on the far side from the key, filling half the sky.
     let size = ship.spec().shape().mesh.bound().max(10.0);
-    frame.reflector = None;
-    frame.studio = true;
+    let radius = size * 40.0;
+    frame.reflector = Some(universe_engine::Reflector { center: pos - key * radius * std::f64::consts::SQRT_2, radius, albedo: 0.55, color: [0.92, 0.95, 1.0] });
     frame.ambient = 0.3;
     // The backdrop: a neutral grey sphere round it all, far enough not to crowd it.
     let backdrop = Transform { position: pos, rotation: universe_engine::glam::Quat::IDENTITY, scale: size * 30.0 };
