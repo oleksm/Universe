@@ -100,6 +100,11 @@ to, and flows live in one place, the module's recipes.
   conveyors or routes between its modules, and its modules need no identities of their own for
   this. Moving stock is a matter between facilities, and that is not designed yet.
 
+- **Between factories, the market.** What a factory makes and does not use itself goes on the
+  market of the settlement it stands in, and what it needs and does not make it buys there. The
+  registry describes no route from one factory to another: the market is the join, and prices and
+  what is on offer are the game's state. Hauling between settlements is ships, as now.
+
 ## Done so far
 
 **Step 1 (2026-10-04): every module's own figures are its first recipe.** `module.recipes[]`:
