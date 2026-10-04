@@ -328,8 +328,9 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if not (isinstance(o, list) and len(o) >= 3 and all(isinstance(c, list) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c) for c in o)):
                     problem(ffull, "outline: three or more corners, each [east, north] in metres")
                     continue
-                if x.get("kind") != "settlement" or "position" not in x:
-                    problem(ffull, "zones and parcels belong to a settlement on a surface (one with a position)")
+                # (On a world's ground, or on the deck of a settlement in orbit: metres from its centre.)
+                if x.get("kind") != "settlement":
+                    problem(ffull, "zones and parcels belong to a settlement")
                 r["area"] = area(o)
                 r["slug"] = fn[:-5]
                 r["file"] = os.path.relpath(ffull, TREE)
@@ -1390,9 +1391,10 @@ for g in gates:
             stock_t[ms["slug"]] = stock_t.get(ms["slug"], 0) + pt.get("stock_mass", 0) * each(pt) / 1000
             for q in (pt.get("making") or {}).get("processes") or []:
                 made_t[q] = made_t.get(q, 0) + pt.get("mass", 0) * each(pt) / 1000
-        def step(what, tonnes_, proc):
-            rate = can(proc) if proc else 0
-            steps.append({"what": what, "tonnes": tonnes_, "process": proc, "at": run_in(proc) if proc else "", "rate": rate, "days": tonnes_ / rate / 24 if rate else None})
+        def step(what, tonnes_, procs):
+            procs = [q for q in ([procs] if isinstance(procs, str) else procs or []) if q]
+            rate = sum(can(q) for q in procs)
+            steps.append({"what": what, "tonnes": tonnes_, "at": ", ".join(sorted({n_ for q in procs for n_ in run_in(q).split(", ") if n_})), "rate": rate, "days": tonnes_ / rate / 24 if rate else None})
         for q, t_ in made_t.items():
             step(f"{by_process[q]['identity']['name']}: its parts made from stock", t_, q)
         for code, t_ in stock_t.items():
@@ -1402,7 +1404,7 @@ for g in gates:
             ingot_t[mat] = ingot_t.get(mat, 0) + t_
         for mat, t_ in ingot_t.items():
             casts = [q["slug"] for q in ingot_makers(mat) if q["slug"] in lined]
-            step(f"{next(m_ for m_ in materials if m_.get('slug') == mat)['identity']['name']} cast as ingot (at least: the mills' own losses come on top)", t_, casts[0] if casts else None)
+            step(f"{next(m_ for m_ in materials if m_.get('slug') == mat)['identity']['name']} cast as ingot (at least: the mills' own losses come on top)", t_, casts)
         cargo = max([(ft_.get("performance") or {}).get("capacity", 0) for ft_ in equipment if (ft_.get("identity") or {}).get("slot") == "cargo"] or [0])
         g["worked"]["build"] = {"structure": st["slug"], "mass": st["parts_mass"], "stock": [{"item": k, "tonnes": v} for k, v in stock_t.items()], "steps": steps,
                                 "stations": math.ceil(g["worked"]["stations"]) if g["worked"].get("stations") else None,

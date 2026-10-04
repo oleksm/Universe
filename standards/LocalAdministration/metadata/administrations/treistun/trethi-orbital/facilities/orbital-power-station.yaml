@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+name: Trethi Orbital Power Station
+kind: power
+parcel: 2
+modules:
+  - { module: fusion-power-station, count: 1 }

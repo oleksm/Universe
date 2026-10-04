@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+name: Trethi Orbital Mill
+kind: mill
+parcel: 3
+processes:
+  - plate-rolling-4340
+  - tube-making-4340
+lines:
+  - process: plate-rolling-4340
+    modules:
+      - { module: reheat-furnace, count: 1 }
+      - { module: hot-rolling-mill, count: 1 }
+  - process: tube-making-4340
+    modules:
+      - { module: reheat-furnace, count: 1 }
+      - { module: piercing-mill, count: 2 }

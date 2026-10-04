@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../../../../../schema/street.schema.yaml
+# Invented: the way down the middle of the deck, its lots on either side.
+name: Spine
+line: [[0, 0], [3000, 0]]

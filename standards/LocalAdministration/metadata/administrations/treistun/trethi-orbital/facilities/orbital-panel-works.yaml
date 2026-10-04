@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+name: Trethi Orbital Panel Works
+kind: yard
+parcel: 4
+processes:
+  - panel-making
+  - machining
+lines:
+  - process: panel-making
+    modules:
+      - { module: panel-line, count: 1 }
+  - process: machining
+    modules:
+      - { module: machining-centre, count: 20 }

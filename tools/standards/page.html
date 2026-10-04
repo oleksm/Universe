@@ -511,7 +511,7 @@ function detail(k) {
     const zones = x.zones || [], plots = x.parcels || []; if (!zones.length && !plots.length) return "";
     const P = DATA.port, half = (P.grid - 1) / 2, hangar = -(P.grid / 2 + 1) * P.spacing;
     const streets = x.streets || [];
-    const pts = [...zones, ...plots].flatMap(r => r.outline).concat(streets.flatMap(r => r.line)).concat([[-P.radius, -P.radius], [P.radius, P.radius], [0, hangar - 60]]);
+    const pts = [...zones, ...plots].flatMap(r => r.outline).concat(streets.flatMap(r => r.line)).concat(x.position ? [[-P.radius, -P.radius], [P.radius, P.radius], [0, hangar - 60]] : []);
     const pad = 150, x0 = Math.min(...pts.map(c => c[0])) - pad, x1 = Math.max(...pts.map(c => c[0])) + pad, y0 = Math.min(...pts.map(c => c[1])) - pad, y1 = Math.max(...pts.map(c => c[1])) + pad;
     const path = o => o.map(c => `${c[0]},${-c[1]}`).join(" ");
     const mid = o => [o.reduce((s, c) => s + c[0], 0) / o.length, o.reduce((s, c) => s + c[1], 0) / o.length];
@@ -519,10 +519,11 @@ function detail(k) {
     let s = `<svg class="landmap" viewBox="${x0} ${-y1} ${w} ${y1 - y0}" xmlns="http://www.w3.org/2000/svg">`;
     for (const z of zones) { const m = mid(z.outline); s += `<polygon class="zone u-${esc(z.use)}" points="${path(z.outline)}"/><text class="zl" x="${m[0]}" y="${-Math.max(...z.outline.map(c => c[1])) + t * 1.4}" font-size="${t}" text-anchor="middle">${esc(z.name.toUpperCase())}</text>`; }
     for (const st of streets) { const e = st.line[st.line.length - 1]; s += `<a data-k="${esc(`st:${a.slug}:${x.slug}:${st.slug}`)}"><polyline class="street" points="${path(st.line)}"/><text class="zl" x="${e[0] - t}" y="${-e[1] - t * 0.6}" font-size="${t * 0.9}" text-anchor="end">${esc(st.name.toUpperCase())}</text></a>`; }
-    s += `<circle class="reach" cx="0" cy="0" r="${P.radius}"/>`;
+    // (The game's port, where the settlement is one on the ground: one in orbit has only its deck.)
+    if (x.position) s += `<circle class="reach" cx="0" cy="0" r="${P.radius}"/>`;
     const wiresOn = () => (x.power_lines || []).map(w => `<a data-k="${esc(`pw:${a.slug}:${x.slug}:${w.slug}`)}"><polyline class="wire" points="${path(w.line)}"/></a>`).join("");
-    for (let r = 0; r < P.grid; r++) for (let c = 0; c < P.grid; c++) s += `<circle class="padc" cx="${(c - half) * P.spacing}" cy="${(r - half) * P.spacing}" r="${P.pad}"/>`;
-    s += `<rect class="padc" x="-60" y="${-hangar - 40}" width="120" height="80"/><text class="zl" x="0" y="${-hangar + 40 + t}" font-size="${t * 0.8}" text-anchor="middle">HANGAR</text>`;
+    if (x.position) for (let r = 0; r < P.grid; r++) for (let c = 0; c < P.grid; c++) s += `<circle class="padc" cx="${(c - half) * P.spacing}" cy="${(r - half) * P.spacing}" r="${P.pad}"/>`;
+    if (x.position) s += `<rect class="padc" x="-60" y="${-hangar - 40}" width="120" height="80"/><text class="zl" x="0" y="${-hangar + 40 + t}" font-size="${t * 0.8}" text-anchor="middle">HANGAR</text>`;
     for (const p of plots) { const m = mid(p.outline); s += `<a data-k="${esc(parcelKey(a, x, p))}"><polygon class="plot${p.number === lit ? " lit" : ""}" points="${path(p.outline)}"/><text class="pl" x="${m[0]}" y="${-m[1] + t * 0.4}" font-size="${t * 1.2}" text-anchor="middle">${p.number}</text></a>`; }
     s += wiresOn();
     // (North is up; a 500 m scale.)

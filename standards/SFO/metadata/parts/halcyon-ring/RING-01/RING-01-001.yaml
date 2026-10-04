@@ -5,19 +5,21 @@ identity:
   status: draft
   description: "A plate panel of the segment's skin."
 physical:
-  mass: 270
+  mass: 471
   length: 8
   width: 2.5
-  height: 0.005
+  height: 0.003
+  shock_limit: 10
 shape:
   surface_area: 20
 made_from:
-  item: AL6061-PL-5
+  item: ST4340-PL-3
   quantity: 23
 making:
-  processes: [plate-work]
+  processes: [panel-making]
 fit:
   count: 2961
 basis:
   - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
-  - { of: [physical.length, physical.width, physical.height, shape, made_from, fit], tier: invented, review: true, note: "A guess, to be reviewed: 5 mm plate in panels of 8 by 2.5 m over the whole of the segment's skin, and 15% more lost in cutting. Nothing says what loads the ring carries, so its gauge is not sized." }
+  - { of: [physical.length, physical.width, physical.height, shape, made_from, fit], tier: invented, review: true, note: "A guess, to be reviewed: 3 mm steel plate in panels of 8 by 2.5 m over the whole of the segment's skin, and 15% more lost in cutting. Nothing says what loads the ring carries, so its gauge is not sized." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
