@@ -1183,6 +1183,13 @@ pub fn apply(app: &mut App, name: &str) {
             app.mode = Mode::Pilot;
             app.chase_cam = false;
             at_hatch(app, std::f64::consts::PI);
+            // (UNIVERSE_OUT: down the ramp and out from under the ship first, under the open sky.)
+            if std::env::var_os("UNIVERSE_OUT").is_some() {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { yaw: std::f64::consts::PI, ..Default::default() }, 0.02);
+                for _ in 0..1200 {
+                    app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, run: true, ..Default::default() }, 0.02);
+                }
+            }
             let u = app.engine.universe();
             let sys = u.ship_system();
             let mut positions = Vec::new();

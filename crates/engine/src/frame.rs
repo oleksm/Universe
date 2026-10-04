@@ -105,6 +105,10 @@ pub struct Frame {
     pub shadow_focus: f64,
     /// The environment is a studio's (soft boxes), not space round the eye.
     pub studio: bool,
+    /// Ask how much of the sun is hidden by what's drawn: a point just this
+    /// side of it (world) and its disc's radius on screen (pixels). The
+    /// answer, a frame or two on: `sun_seen`.
+    pub sun_probe: Option<(DVec3, f32)>,
     /// Shadows cast by meshes on meshes, out to this far from the eye
     /// (metres; 0: none). See `no_shadow`.
     pub shadow_reach: f64,
@@ -328,6 +332,7 @@ impl Frame {
             scene_size,
             size: hud_size,
             studio: false,
+            sun_probe: None,
             shadow_focus: 0.0,
             ambient: SHADE_AMBIENT,
             sky: Vec::new(),
