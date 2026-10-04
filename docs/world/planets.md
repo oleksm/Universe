@@ -96,3 +96,78 @@ If the known worlds come out right, the unknown ones are believable by construct
   world after it is baked, on ground that suits them (the registry records them). Nothing
   already built is carried over: settled worlds are re-settled on their evolved surfaces, and
   new ports go where the land allows.
+
+## The planet spec (draft)
+
+What defines a world. Each property is one of three:
+
+- **Seeded:** drawn when the system is made, from a distribution that rests on observation.
+- **Derived:** follows from other properties by a stated law, at once.
+- **Evolved:** comes out of the world's history (see the stages below). Never drawn.
+
+Today a world is a handful of seeded numbers and a colour, and the colour decides its type
+(`system.rs`: a "terran" colour makes a Terran world, which alone gets air). Mass and radius of
+giants are drawn independently, so their densities are arbitrary; moons are all 3,000 kg/m³;
+no world has a composition, core, field, water, age or heat. The spec replaces all of that.
+
+### The star
+
+| Property | Kind | Law or source | Today |
+|---|---|---|---|
+| Mass | Seeded | Class mix of the solar neighbourhood (have it) | ✓ class × U(0.85, 1.15) |
+| Age | Seeded | Uniform over the disc's star-forming history, capped by the star's main-sequence life | none |
+| Metallicity [Fe/H] | Seeded | Solar-neighbourhood distribution (mean about −0.1, spread about 0.2 dex) | none |
+| Luminosity, temperature, radius over time | Derived | Main-sequence relations with brightening over age (the Sun was about 70% as bright at birth); M dwarfs' early flares and wind | luminosity = M^3.5, fixed |
+| X-ray and UV output, wind, over time | Derived | Activity–age relations (young stars far more active): what strips air | none |
+
+### Bulk
+
+| Property | Kind | Law or source | Today |
+|---|---|---|---|
+| Formation distance | Seeded | Where it formed relative to the frost line; may differ from where it is now (migration) | equal to its orbit |
+| Mass | Seeded | Planet occurrence by mass and distance (exoplanet surveys) | ✓ log-uniform by kind |
+| Rock / iron / ice / gas fractions | Seeded within derived bounds | Star's Fe/Mg/Si (from metallicity); formation distance (ice beyond the frost line); mass (gas kept above a few Earth masses) | none |
+| Radius | Derived | Mass–radius relations for that composition (Seager et al. 2007; Zeng et al. 2016, 2019) | drawn separately |
+| Density, surface gravity, escape velocity | Derived | From mass and radius | gravity only |
+| Core mass and radius | Derived | Iron fraction and the structure that holds it | none |
+| Radioactive heat (U, Th, K) | Derived | Metallicity and the galaxy's chemical history at its birth, decaying with age (Turcotte & Schubert, *Geodynamics*) | none |
+| Heat of formation | Derived | Accretion energy and core formation, by mass | none |
+| Water and other volatiles | Seeded within derived bounds | Formation distance, late delivery by impacts | none |
+| Impact history | Seeded | Crater rate over time from lunar and Martian dating (Neukum et al.), scaled by the system's debris | 4–70 craters by kind |
+
+### Orbit, spin and neighbours
+
+| Property | Kind | Law or source | Today |
+|---|---|---|---|
+| Orbit (a, e, i…) | Seeded | ✓ as now | ✓ |
+| Spin at birth, tilt | Seeded | Giant impacts set both | day U(10, 60) h, tilt U(0, 30)° |
+| Spin and tilt over time | Evolved | Tides from star and moons slow the spin and lock close worlds; large moons steady the tilt | moons locked; planets fixed |
+| Moons | Seeded | As now, with real densities from their composition | 3,000 kg/m³ for all |
+| Tidal heating | Derived | Eccentricity, distance, the body's stiffness (what melts Io) | none |
+
+### Evolved: the world as it is
+
+Not drawn but grown, by the stages below: the mantle's temperature and the surface regime
+(moving plates, a stagnant lid, or volcanism through the crust), the magnetic field and how long
+it lasts, the atmosphere's makeup and pressure, oceans and ice, climate by latitude and season,
+and the surface itself: its height, rock, crust age, soil, water, ice, and the ore its history
+left behind. Its type (temperate, desert, ocean, ice, hothouse, dead) is read off the result.
+
+## The stages (outline)
+
+Each stage is an established model at the scale where its process acts, handing fields on to the
+next. The stages are coupled (climate drives erosion; the field decides what air survives; the
+air decides the climate), so they step forward together through time, not one after another.
+
+| Stage | What it settles | Science it rests on |
+|---|---|---|
+| Interior | Mantle and core temperatures over time; whether the core's convection runs a dynamo; the surface regime | Parameterised mantle convection (Stevenson et al. 1983; Turcotte & Schubert); dynamo scaling (Christensen 2010) |
+| Air and water | What the interior breathes out; what the star strips away (less under a field); the carbon cycle that holds a climate steady; a runaway greenhouse | Outgassing models; escape (Jeans, hydrodynamic, wind); carbonate–silicate cycle (Walker et al. 1981; Kasting) |
+| Tectonics | Plates and their motion; ridges whose depth follows the age of the floor; trenches, arcs, mountain belts, rifts, hotspot chains; or, on a stagnant lid, great volcanoes and lava plains | Plate kinematics; half-space cooling (seafloor depth ∝ √age); isostasy |
+| Impacts | Craters by size through time, erased by how fast the world resurfaces | Crater chronologies (Neukum et al.; Hartmann) |
+| Climate | Temperature, wind and rain by latitude and season; rain shadows; ice caps and glaciers | Energy-balance and circulation scalings; builds on `climate.rs` |
+| Erosion | Rivers and their valleys, canyons, deltas, coastal plains and beaches, glacial valleys; sediment where it settles | Stream-power erosion and hillslope diffusion (Braun & Willett 2013, FastScape); glacial erosion |
+| Refinement | Detail toward the metre, near where it is seen | Erosion re-run locally, bounded by the global result |
+
+The order of work comes next: what each stage reads and writes, its resolution and time step,
+and how the Solar System checks each one.
