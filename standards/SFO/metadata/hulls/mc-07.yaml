@@ -4,7 +4,7 @@
 identity:
   name: MC-07
   class: mining ship
-  standing: current
+  revision: draft
   description: "A mining ship. It digs an asteroid it is anchored to into the ore bay under its top doors, carries the ore to a station or an outpost in orbit, and unloads there. It sets down on a world only with its bay empty."
 size:
   length: 66.1

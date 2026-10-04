@@ -5,7 +5,7 @@
 identity:
   code: MC07-23-005
   name: "Actuator rod"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_FL_ActRod"
 physical:
   mass: 192

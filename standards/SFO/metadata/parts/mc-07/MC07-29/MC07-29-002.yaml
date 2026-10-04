@@ -5,7 +5,7 @@
 identity:
   code: MC07-29-002
   name: "Gimbal"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: LaserL_Gimbal"
 physical:
   mass: 192

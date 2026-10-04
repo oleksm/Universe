@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Treistun b, kind: rocky planet, parent: Treistun}
 orbit: {semi_major_axis: 19319100.0, eccentricity: 0.05498, period: 20.1829, inclination: 0.002}
 physical: {mass: 5.4016e+24, radius: 6194.41, gravity: 9.396, day: 31.757, tilt: 12.85, albedo: 0.15}

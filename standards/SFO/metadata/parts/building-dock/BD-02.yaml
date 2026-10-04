@@ -2,7 +2,7 @@
 identity:
   code: BD-02
   name: "Gantry crane"
-  status: draft
+  revision: draft
   description: "Spans the dock and lifts hull parts into place."
 physical:
   mass: 400000

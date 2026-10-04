@@ -2,7 +2,7 @@
 identity:
   code: PNL-01
   name: "Feed table"
-  status: draft
+  revision: draft
   description: "Takes plate in and feeds it to the line."
 physical:
   mass: 60000

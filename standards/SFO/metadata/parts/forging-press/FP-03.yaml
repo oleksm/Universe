@@ -2,7 +2,7 @@
 identity:
   code: FP-03
   name: "Die set"
-  status: draft
+  revision: draft
   description: "The shaped tools the metal is pressed between."
 physical:
   mass: 45000

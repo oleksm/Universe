@@ -5,7 +5,7 @@
 identity:
   code: MC07-23-001
   name: "Strut"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_FL_Strut"
 physical:
   mass: 161

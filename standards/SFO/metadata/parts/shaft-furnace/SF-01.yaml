@@ -2,7 +2,7 @@
 identity:
   code: SF-01
   name: "Furnace shell"
-  status: draft
+  revision: draft
   description: "The tall steel vessel the pellets sink through as the hot gas rises."
 physical:
   mass: 1500000

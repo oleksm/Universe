@@ -5,7 +5,7 @@
 identity:
   code: MC07-08
   name: "Shoulder"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_Shoulder"
 physical:
   mass: 2172

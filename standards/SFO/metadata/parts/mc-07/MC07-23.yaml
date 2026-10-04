@@ -4,7 +4,7 @@
 identity:
   code: MC07-23
   name: "Landing leg, front"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_FL_*, Gear_FR_*"
 physical:
   length: 7.28

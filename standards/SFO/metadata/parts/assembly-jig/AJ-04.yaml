@@ -2,7 +2,7 @@
 identity:
   code: AJ-04
   name: "Welding head"
-  status: draft
+  revision: draft
   description: "Joins them."
 physical:
   mass: 5000

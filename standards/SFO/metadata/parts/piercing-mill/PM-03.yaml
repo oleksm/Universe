@@ -2,7 +2,7 @@
 identity:
   code: PM-03
   name: "Sizing mill"
-  status: draft
+  revision: draft
   description: "Brings the tube to its diameter."
 physical:
   mass: 250000

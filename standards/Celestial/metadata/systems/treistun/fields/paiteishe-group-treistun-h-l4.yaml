@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../../../schema/field.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Paiteishe group (Treistun h L4), kind: trojan, anchor: Paiteishe}
 rocks: {class: icy, count: 169, extent: 60.0}

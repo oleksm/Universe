@@ -2,7 +2,7 @@
 identity:
   code: BM-03
   name: "Shear"
-  status: draft
+  revision: draft
   description: "Crops and cuts the bar."
 physical:
   mass: 30000

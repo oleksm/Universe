@@ -7,7 +7,7 @@ identity:
   key: hull.interceptor
   maker: brand.vireo
   class: interceptor
-  standing: outdated
+  revision: outdated
   description: "A small fast warship."
 size:
   volume: 497

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: between 0.05 and 0.47 of the giant's reach, as the Sun's giants' are.
-# The game does not make it yet. Change its status to curated to take it over.
-status: seeded
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
 identity: {name: Paihozaim, kind: captured moon, parent: Treistun j, about: 'Once it went round the star; Treistun j caught
     it. It goes round backward, far out.'}
 orbit: {semi_major_axis: 67762100.0, eccentricity: 0.13069402, inclination: 168.94, period: 2105.6}

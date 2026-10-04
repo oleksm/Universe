@@ -9,6 +9,6 @@ figures:
   - { what: "over 1 km across", value: "44,000 to over 10 million" }
   - { what: "how long an orbit lasts", value: "a few million years" }
 means: "A comet on its way in. Ice among the giants, not at the edge."
-game: not made
+in_game: not made
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Centaur_(small_Solar_System_body)" }

@@ -2,7 +2,7 @@
 identity:
   code: CH-03
   name: "Homogenising furnace"
-  status: draft
+  revision: draft
   description: "Soaks the ingots to even out the alloy."
 physical:
   mass: 180000

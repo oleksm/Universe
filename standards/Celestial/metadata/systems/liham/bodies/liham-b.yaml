@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Liham b, kind: rocky planet, parent: Liham}
 orbit: {semi_major_axis: 3904260.0, eccentricity: 0.008223, period: 2.89082, inclination: 1.697}
 physical: {mass: 1.2244e+25, radius: 7789.49, gravity: 13.468, day: 40.49, tilt: 11.46, albedo: 0.15}

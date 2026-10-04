@@ -5,7 +5,7 @@
 identity:
   code: MC07-06
   name: "Cheek, left"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_Cheek_L"
 physical:
   mass: 962

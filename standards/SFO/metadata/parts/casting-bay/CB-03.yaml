@@ -2,7 +2,7 @@
 identity:
   code: CB-03
   name: "Mould car"
-  status: draft
+  revision: draft
   description: "Carries a row of moulds."
 physical:
   mass: 20000

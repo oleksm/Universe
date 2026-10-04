@@ -2,7 +2,7 @@
 identity:
   code: GW-02
   name: "Racking"
-  status: draft
+  revision: draft
   description: "Shelves for goods, the height of the hall."
 physical:
   mass: 1200000

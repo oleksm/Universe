@@ -11,7 +11,7 @@ figures:
   - { what: "in the outer belt", value: "about 11%" }
   - { what: "how far apart", value: "a few hundred to over 3,000 km" }
 means: "Two rocks for one journey, and a way to weigh them."
-game: partly
-game_note: "The game's fields are this, with some two hundred moons where a real one has one or two."
+in_game: partly
+in_game_note: "The game's fields are this, with some two hundred moons where a real one has one or two."
 basis:
-  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Minor-planet_moon" }
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Minor-planet_moon", note: "The separations are of the large pairs that can be seen. A 1 km rock in the main belt holds a moon only within about 250 km." }

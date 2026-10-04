@@ -2,7 +2,7 @@
 identity:
   code: CT-02
   name: "Gantry"
-  status: draft
+  revision: draft
   description: "Carries the cutting head over the bed."
 physical:
   mass: 5000

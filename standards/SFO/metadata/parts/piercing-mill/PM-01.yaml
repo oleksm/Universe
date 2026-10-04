@@ -2,7 +2,7 @@
 identity:
   code: PM-01
   name: "Piercer"
-  status: draft
+  revision: draft
   description: "Skewed rolls that drive the hot round over a point, opening it."
 physical:
   mass: 350000

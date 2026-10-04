@@ -2,7 +2,7 @@
 identity:
   code: RING-01-001
   name: "Skin panel"
-  status: draft
+  revision: draft
   description: "A plate panel of the segment's skin."
 physical:
   mass: 471

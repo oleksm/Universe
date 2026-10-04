@@ -22,15 +22,4 @@ properties:
       falls_as: { type: number, description: "the dose goes as the distance to minus this" }
       giant_mass: { type: number, description: "kg, Jupiter's: the dose is taken to go with the giant's mass" }
       deadly_above: { type: number, description: "rem a day above which a person unshielded dies within days" }
-  basis:
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [of, tier]
-      properties:
-        of: { type: array, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
-        source: { type: string }
-        note: { type: string }
-        review: { type: boolean }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

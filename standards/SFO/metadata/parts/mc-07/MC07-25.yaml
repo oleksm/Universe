@@ -4,7 +4,7 @@
 identity:
   code: MC07-25
   name: "Cargo ramp"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: CargoRamp, CargoRam_*"
 physical:
   length: 8.49

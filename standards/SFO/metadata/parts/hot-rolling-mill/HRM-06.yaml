@@ -2,7 +2,7 @@
 identity:
   code: HRM-06
   name: "Main drive motor"
-  status: draft
+  revision: draft
   description: "One to each stand."
 physical:
   mass: 90000

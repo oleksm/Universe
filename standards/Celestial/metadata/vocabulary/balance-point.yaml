@@ -11,7 +11,7 @@ figures:
   - { what: "the stable two hold", value: "if the larger body is over 24.96 times the smaller" }
   - { what: "the Earth's nearest", value: "about 1.5 million km" }
 means: "The natural sites for a station, a depot or a gate: in no well, and they stay put."
-game: partly
-game_note: "Trojan fields lie at the stable two; nothing is placed at the others."
+in_game: partly
+in_game_note: "Trojan fields lie at the stable two; nothing is placed at the others."
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Lagrange_point" }

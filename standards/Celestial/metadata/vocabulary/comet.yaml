@@ -11,8 +11,9 @@ figures:
   - { what: "the others", value: "200 years to millions, from the far cloud" }
   - { what: "its cloud and tail", value: "up to 15 Earths wide, and longer than 1 AU" }
   - { what: "how dark", value: "reflects 3 to 4% of light" }
+  - { what: "how dense", value: "about 600 kg/m3: highly porous" }
   - { what: "known", value: "4,584" }
 means: "Water and volatiles that bring themselves into the inner system. Fast, and gone again."
-game: not made
+in_game: not made
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Comet", note: "As of November 2021." }

@@ -5,7 +5,7 @@
 identity:
   code: MC07-19
   name: "Rear pod"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_RearPod"
 physical:
   mass: 12240

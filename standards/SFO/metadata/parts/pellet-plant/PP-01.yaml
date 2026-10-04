@@ -2,7 +2,7 @@
 identity:
   code: PP-01
   name: "Ball mill"
-  status: draft
+  revision: draft
   description: "A turning drum of steel balls that grinds the ore fine."
 physical:
   mass: 400000

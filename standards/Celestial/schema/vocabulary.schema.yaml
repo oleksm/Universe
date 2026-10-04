@@ -3,7 +3,7 @@ title: Celestial vocabulary
 description: 'standards/Celestial/metadata/vocabulary/<name>.yaml: one kind of thing a star system has. What it is, where it lies, what is known of the Sun''s, what it means for people who work in space, and whether the game makes it yet.'
 type: object
 additionalProperties: false
-required: [identity, game]
+required: [identity, in_game]
 properties:
   identity:
     type: object
@@ -27,17 +27,6 @@ properties:
         what: { type: string }
         value: { type: string }
   means: { type: string, description: "What it means for us: material to be had, a hazard, a place to build." }
-  game: { enum: [made, partly, not made], description: "Whether the game makes it yet." }
-  game_note: { type: string }
-  basis:
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [of, tier]
-      properties:
-        of: { type: array, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
-        source: { type: string }
-        note: { type: string }
-        review: { type: boolean }
+  in_game: { $ref: "../../common.schema.yaml#/definitions/in_game" }
+  in_game_note: { type: string }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

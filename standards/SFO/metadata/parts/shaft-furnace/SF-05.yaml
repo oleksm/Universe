@@ -2,7 +2,7 @@
 identity:
   code: SF-05
   name: "Tower"
-  status: draft
+  revision: draft
   description: "The steel frame that carries the furnace and its feed, as high as the furnace."
 physical:
   mass: 3000000

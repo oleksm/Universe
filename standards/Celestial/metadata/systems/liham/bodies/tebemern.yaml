@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Tebemern, kind: asteroid, parent: Liham}
 orbit: {semi_major_axis: 48189300.0, eccentricity: 0.07126, period: 125.356, inclination: 9.588}
 physical: {mass: 22350000000000.0, radius: 1.05842, gravity: 0.001, day: 28.053, tilt: 125.8}

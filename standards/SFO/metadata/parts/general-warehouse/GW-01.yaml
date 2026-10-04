@@ -2,7 +2,7 @@
 identity:
   code: GW-01
   name: "Hall frame"
-  status: draft
+  revision: draft
   description: "The steel frame of the hall."
 physical:
   mass: 675000

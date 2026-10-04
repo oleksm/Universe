@@ -2,7 +2,7 @@
 identity:
   code: TF-02
   name: "Pipework"
-  status: draft
+  revision: draft
   description: "Joins the tanks to each other and to the dock."
 physical:
   mass: 150000

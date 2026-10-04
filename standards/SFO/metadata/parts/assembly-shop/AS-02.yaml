@@ -2,7 +2,7 @@
 identity:
   code: AS-02
   name: "Overhead crane"
-  status: draft
+  revision: draft
   description: "Lifts parts and assemblies."
 physical:
   mass: 60000

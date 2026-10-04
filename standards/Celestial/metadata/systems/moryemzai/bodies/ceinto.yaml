@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Ceinto, kind: asteroid, parent: Moryemzai}
 orbit: {semi_major_axis: 50597800.0, eccentricity: 0.1258, period: 125.555, inclination: 5.408}
 physical: {mass: 2196000000000.0, radius: 0.73881, gravity: 0.0, day: 14.319, tilt: 64.47}

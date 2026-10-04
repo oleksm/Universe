@@ -3,9 +3,9 @@ title: Small body
 description: 'standards/Celestial/metadata/systems/<system>/small-bodies/<name>.yaml: a small body the game does not make yet: a comet, a centaur, a crossing asteroid, a captured moon, a dwarf planet, a belt''s largest asteroid. Seeded in the registry (tools/standards/celestial_seed.py) or written by hand.'
 type: object
 additionalProperties: false
-required: [identity, status]
+required: [identity, provenance]
 properties:
-  status: { enum: [seeded, curated, frozen], description: "seeded: made by the registry's seeding from the galaxy's seed. curated: changed by hand. frozen: not to be changed." }
+  provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
   identity:
     type: object
     additionalProperties: false

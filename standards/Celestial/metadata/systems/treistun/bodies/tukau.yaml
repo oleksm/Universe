@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Tukau, kind: asteroid, parent: Treistun}
 orbit: {semi_major_axis: 116254000.0, eccentricity: 0.1047, period: 297.933, inclination: 1.889}
 physical: {mass: 4048700000000.0, radius: 0.749029, gravity: 0.001, day: 9.5934, tilt: 153.47}

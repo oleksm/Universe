@@ -5,7 +5,7 @@
 identity:
   code: MC07-29-001
   name: "Lift"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: LaserL_Lift"
 physical:
   mass: 818

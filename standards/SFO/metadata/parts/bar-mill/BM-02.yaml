@@ -2,7 +2,7 @@
 identity:
   code: BM-02
   name: "Cooling bed"
-  status: draft
+  revision: draft
   description: "The bars lie here to cool straight."
 physical:
   mass: 400000

@@ -5,7 +5,7 @@
 identity:
   code: MC07-29-003
   name: "Head"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: LaserL_Head"
 physical:
   mass: 417

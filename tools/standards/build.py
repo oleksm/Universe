@@ -1285,11 +1285,11 @@ def write_ron():
     opt = lambda v: "None" if v is None else f"Some({v})"
     for sysm in celestial["systems"]:
         st = sysm.get("star") or {}
-        out.append(f"    (system: {ron_str(sysm['identity']['name'])}, index: {sysm['identity'].get('index', 0)}, status: {ron_str(sysm['status'])}, star: (class: {ron_str(st.get('class', ''))}, mass: {float(st.get('mass', 0))!r}, luminosity: {float(st.get('luminosity', 0))!r}), bodies: [")
+        out.append(f"    (system: {ron_str(sysm['identity']['name'])}, index: {sysm['identity'].get('index', 0)}, status: {ron_str(sysm['provenance'])}, star: (class: {ron_str(st.get('class', ''))}, mass: {float(st.get('mass', 0))!r}, luminosity: {float(st.get('luminosity', 0))!r}), bodies: [")
         for b in sysm["bodies"]:
             ph, ob, sf, at = b.get("physical") or {}, b.get("orbit") or {}, b.get("surface") or {}, b.get("atmosphere")
             col = sf.get("colour") or [0.5, 0.5, 0.5]
-            out.append(f"        (name: {ron_str(b['identity']['name'])}, status: {ron_str(b['status'])}, kind: {ron_str(b['identity']['kind'])}, parent: {ron_str(b['identity'].get('parent', ''))}, mass: {float(ph.get('mass', 0))!r}, radius: {float(ph.get('radius', 0)) * 1000!r}, day: {float(ph.get('day', 0)) * 3600!r}, "
+            out.append(f"        (name: {ron_str(b['identity']['name'])}, status: {ron_str(b['provenance'])}, kind: {ron_str(b['identity']['kind'])}, parent: {ron_str(b['identity'].get('parent', ''))}, mass: {float(ph.get('mass', 0))!r}, radius: {float(ph.get('radius', 0)) * 1000!r}, day: {float(ph.get('day', 0)) * 3600!r}, "
                        + f"semi_major_axis: {opt(repr(float(ob['semi_major_axis']) * 1000) if 'semi_major_axis' in ob else None)}, eccentricity: {opt(repr(float(ob['eccentricity'])) if 'eccentricity' in ob else None)}, "
                        + f"inclination: {opt(repr(math.radians(float(ob['inclination']))) if 'inclination' in ob else None)}, tilt: {math.radians(float(ph.get('tilt', 0)))!r}, landscape: {opt(ron_str(sf['landscape']) if 'landscape' in sf else None)}, "
                        + f"terrain: {opt(ron_str(sf['terrain']) if 'terrain' in sf else None)}, relief: {opt(repr(float(sf['relief'])) if 'relief' in sf else None)}, "
@@ -1298,7 +1298,7 @@ def write_ron():
         out.append("    ], fields: [")
         for fl in sysm["fields"]:
             rk = fl.get("rocks") or {}
-            out.append(f"        (name: {ron_str(fl['identity']['name'])}, status: {ron_str(fl['status'])}, count: {int(rk.get('count', 0))}, extent: {float(rk.get('extent', 0)) * 1000!r}, class: {ron_str(rk.get('class', ''))}),")
+            out.append(f"        (name: {ron_str(fl['identity']['name'])}, status: {ron_str(fl['provenance'])}, count: {int(rk.get('count', 0))}, extent: {float(rk.get('extent', 0)) * 1000!r}, class: {ron_str(rk.get('class', ''))}),")
         out.append("    ]),")
     out.append("]\n")
     with open(os.path.join(CONTENT, "celestial.ron"), "w", encoding="utf-8") as f:
@@ -1539,7 +1539,7 @@ for ad in administrations:
             big_loads.append((f"a day's rock for {x['name']}, flat out", r_["rate"] * 24))
 for st in structures:
     big_loads.append((f"one {st['identity']['name'].lower()}", st["parts_mass"] / 1000))
-for hl in sorted(hulls, key=lambda h_: h_["identity"].get("standing") == "outdated"):
+for hl in sorted(hulls, key=lambda h_: h_["identity"].get("revision") == "outdated"):
     ms, ds, sz = hl.get("mass") or {}, hl.get("design") or {}, hl.get("size") or {}
     frame = hl.get("parts_mass", 0) / 1000 or ms.get("frame", 0)
     fitted = hl.get("fitted_mass", 0) / 1000
@@ -1549,7 +1549,7 @@ for hl in sorted(hulls, key=lambda h_: h_["identity"].get("standing") == "outdat
     hl["budget"] = {"frame": frame, "fitted": fitted, "fuel": fuel, "hold": hold, "loaded": loaded, "fit_volume": fit_vol,
                     "payload": hold / loaded if loaded else 0, "main_g": ds.get("main_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0, "lift_g": ds.get("lift_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0,
                     "loads": [{"what": w_, "tonnes": t_, "loads": t_ / hold if hold else None} for w_, t_ in big_loads]}
-    old = hl["identity"].get("standing") == "outdated"
+    old = hl["identity"].get("revision") == "outdated"
     rows.append(row("note" if old else "ok", link(hl["identity"]["name"], "hull:" + hl["slug"]), "outdated: not to be balanced against" if old else "current", hl["identity"].get("class", ""), f"{frame:,.0f} t" + ("" if hl.get("parts_mass") else " (the game's)"), f"{loaded:,.0f} t", f"{hold:g} t ({100 * hold / loaded:.0f}%)" if loaded else "", f"{fuel:g} t",
                     f"{100 * fit_vol / sz['volume']:.1f}% of {sz['volume']:,} m3" if sz.get("volume") else "", f"{hl['budget']['main_g']:.1f} g", f"{hl['budget']['lift_g']:.2f} g",
                     "; ".join(f"{b_['loads']:,.0f} loads for {b_['what']}" for b_ in hl["budget"]["loads"] if b_["loads"])))
@@ -1899,8 +1899,8 @@ if os.path.isdir(CEL):
                 for q in props or {}:
                     if q not in known[g]["properties"]:
                         problem(full, f"{g}: unknown property '{q}'")
-        if kind != "rock-class" and rec.get("status") not in ("seeded", "curated", "frozen"):
-            problem(full, "status: one of seeded, curated, frozen")
+        if kind != "rock-class" and rec.get("provenance") not in ("seeded", "curated", "frozen"):
+            problem(full, "provenance: one of seeded, curated, frozen")
         if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str((rec.get("identity") or {}).get("name", "")).lower()).strip("-"):
             problem(full, "a celestial record's file is named after it (lower case, words joined by -)")
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
@@ -1924,8 +1924,8 @@ if os.path.isdir(CEL):
         for q in v_.get("identity") or {}:
             if q not in cschema["vocabulary"]["properties"]["identity"]["properties"]:
                 problem(vfull, f"identity: unknown property '{q}'")
-        if v_.get("game") not in ("made", "partly", "not made"):
-            problem(vfull, "game: one of made, partly, not made")
+        if v_.get("in_game") not in ("made", "partly", "not made"):
+            problem(vfull, "in_game: one of made, partly, not made")
         check_basis(v_, vfull)
         v_["slug"], v_["file"] = fn[:-5], os.path.relpath(vfull, TREE)
         celestial["vocabulary"].append(v_)
@@ -2001,7 +2001,6 @@ if os.path.isdir(CEL):
             continue
         planets = [b for b in sysm["bodies"] if b["identity"].get("parent") == sysm["identity"]["name"] and b["identity"]["kind"] != "asteroid"]
         giants = [b for b in planets if b["identity"]["kind"] in ("gas giant", "ice giant")]
-        gas = next((b for b in giants if b["identity"]["kind"] == "gas giant"), giants[0] if giants else None)
         au = lambda b: b["orbit"]["semi_major_axis"] / AU_KM
         frost = 2.7 * (sysm.get("star") or {}).get("luminosity", 1) ** 0.5
         mb, ob, tj, sz = laws.get("main_belt") or {}, laws.get("outer_belt") or {}, laws.get("trojans") or {}, laws.get("sizes") or {}
@@ -2016,7 +2015,7 @@ if os.path.isdir(CEL):
                           "over_100km": smaller(n1, 1, 100), "spacing": mb.get("spacing"), "families": round(mb.get("families", 0) * ring(lo, hi) / ring(mb["inner_edge"], mb["outer_edge"])), "family_share": mb.get("family_share"), "inside_frost": hi <= frost})
         for g_ in giants if tj else []:
             for lead in ("L4", "L5"):
-                n1 = tj["count_over_1km"] / 2
+                n1 = tj["count_over_1km"] / 2 * ((g_.get("physical") or {}).get("mass", 0) / tj["giant_mass"] if tj.get("giant_mass") else 1)
                 belts.append({"name": f"{g_['identity']['name']} {lead}", "kind": "trojan", "inner": au(g_), "outer": au(g_), "by": g_["identity"]["name"], "over_1km": n1, "over_100m": smaller(n1, 1, 0.1), "over_smallest": smaller(n1, 1, sz.get("smallest", 15) / 1000),
                               "spread": tj.get("spread"), "lead": lead, "inside_frost": au(g_) <= frost})
         if giants and ob:
@@ -2061,6 +2060,28 @@ if os.path.isdir(CEL):
             m_, a_ = (b.get("physical") or {}).get("mass"), (b.get("orbit") or {}).get("semi_major_axis")
             if big and m_ and a_ and b["identity"]["kind"] != "asteroid":
                 b["balance"] = {"reach": a_ * (m_ / (3 * big)) ** (1 / 3), "round": par["identity"]["name"] if par else sysm["identity"]["name"], "stable": big / m_ > 24.96, "ratio": big / m_}
+        # (What follows from each body's mass, size, spin and orbit: worked out, not written.)
+        lum_w = (sysm.get("star") or {}).get("luminosity", 0) * 3.828e26
+        for b in sysm["bodies"]:
+            ph, ob = b.get("physical") or {}, b.get("orbit") or {}
+            if not (ph.get("mass") and ph.get("radius")):
+                continue
+            R_, M_ = ph["radius"] * 1000, ph["mass"]
+            par = next((o for o in sysm["bodies"] if o["identity"]["name"] == b["identity"].get("parent")), None)
+            a_star = ((par or b).get("orbit") or {}).get("semi_major_axis", 0) * 1000        # (its distance from the star: its planet's, for a moon)
+            w = {"density": M_ / (4 / 3 * math.pi * R_ ** 3), "escape": (2 * 6.6743e-11 * M_ / R_) ** 0.5, "orbit_speed": (6.6743e-11 * M_ / R_) ** 0.5,
+                 "to_orbit": 6.6743e-11 * M_ / R_ / 2, "to_escape": 6.6743e-11 * M_ / R_}
+            if a_star and lum_w:
+                w["sunlight"] = lum_w / (4 * math.pi * a_star ** 2)
+                w["bare_temperature"] = (w["sunlight"] * (1 - ph.get("albedo", 0.3)) / (4 * 5.670374419e-8)) ** 0.25
+            if ph.get("day") and b["identity"]["kind"] != "asteroid":
+                sync = (6.6743e-11 * M_ * (abs(ph["day"]) * 3600 / (2 * math.pi)) ** 2) ** (1 / 3)
+                w["stationary_orbit"] = sync / 1000
+                w["stationary_holds"] = "balance" in b and sync / 1000 < b["balance"]["reach"] / 3 and sync > R_
+                w["spin_speed"] = 2 * math.pi * R_ / (abs(ph["day"]) * 3600)
+            if ob.get("semi_major_axis"):
+                w["nearest"], w["farthest"] = ob["semi_major_axis"] * (1 - ob.get("eccentricity", 0)), ob["semi_major_axis"] * (1 + ob.get("eccentricity", 0))
+            b["worked"] = w
         # (What it has of each kind in the vocabulary, counted from its records.)
         kinds = {}
         for b in sysm["bodies"]:
@@ -2129,26 +2150,26 @@ for sysm in celestial["systems"]:
         t_ = (b.get("conditions") or {}).get("tidal") or {}
         if t_.get("state", "").startswith("far more"):
             rows.append(row("gap", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), "", "", f"its planet would knead {t_['flux']:,.0f} W into each m2 of it, against about 2 for the most volcanic moon known: its orbit, as the seed makes it, is too close and too stretched to last"))
-    count = lambda st: sum(1 for r_ in recs if r_.get("status") == st)
+    count = lambda st: sum(1 for r_ in recs if r_.get("provenance") == st)
     rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), f"{len(sysm['bodies'])} bodies, {len(sysm['fields'])} fields", f"{count('seeded')} seeded, {count('curated')} curated, {count('frozen')} frozen", ""))
 # (A body a person has taken over: what follows from its mass and radius must still agree with them.
 # The game takes its mass, radius, day, orbit (size, shape, tilt), axis, rings, terrain, relief, air
 # and colour; its gravity, period and temperature it works out itself. A system taken over: its star,
 # and its planets and moons exactly as written. A field taken over: its count, extent and class.)
 for sysm in celestial["systems"]:
-    if sysm.get("status") != "seeded":
-        rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), sysm["status"], "", "its star, and its planets and moons exactly as written: one the seed makes that has no record is not there"))
+    if sysm.get("provenance") != "seeded":
+        rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), sysm["provenance"], "", "its star, and its planets and moons exactly as written: one the seed makes that has no record is not there"))
     for fl in sysm["fields"]:
-        if fl.get("status") != "seeded":
-            rows.append(row("ok", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), fl["status"], "", "taken by the game as written"))
+        if fl.get("provenance") != "seeded":
+            rows.append(row("ok", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), fl["provenance"], "", "taken by the game as written"))
     for b in sysm["bodies"]:
-        if b.get("status") == "seeded":
+        if b.get("provenance") == "seeded":
             continue
         ph = b.get("physical") or {}
         g_ = 6.6743e-11 * ph.get("mass", 0) / (ph.get("radius", 1) * 1000) ** 2
         said = ph.get("gravity")
         off = said is not None and abs(said - g_) > 0.01 * g_
-        rows.append(row("gap" if off else "ok", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), b["status"], "", f"its gravity is written as {said} and its mass and radius give {g_:.3f}: the game uses its mass and radius" if off else "taken by the game as written"))
+        rows.append(row("gap" if off else "ok", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), b["provenance"], "", f"its gravity is written as {said} and its mass and radius give {g_:.3f}: the game uses its mass and radius" if off else "taken by the game as written"))
 for ad in administrations:
     sysm = next((s for s in celestial["systems"] if s["identity"]["name"] == ad.get("name")), None)
     if sysm is None:
@@ -2188,6 +2209,18 @@ report("celestial", "Celestial: what is written out, and against Local Administr
 
 
 # ---------------------------------------------------------------- the page
+# ---------------------------------------------------------------- every record against its schema
+# Types, enums, required fields, patterns, and no field its schema does not name (see validate.py).
+# The game's loader is to be at least this strict.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import validate as _validate
+_misfits, _unheld = _validate.check_all()
+for _full, _what in _misfits:
+    problem(_full, "schema: " + _what)
+for _rel in _unheld:
+    problem(os.path.join(TREE, _rel), "no schema holds it")
+
+
 def write_html():
     data = {
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "address", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],

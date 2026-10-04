@@ -9,6 +9,6 @@ figures:
   - { what: "how stretched", value: "eccentricities as high as 0.8" }
   - { what: "how tilted", value: "as much as 40 degrees" }
 means: "Where most returning comets start from."
-game: not made
+in_game: not made
 basis:
   - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Scattered_disc" }

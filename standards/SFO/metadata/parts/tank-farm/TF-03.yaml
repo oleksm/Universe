@@ -2,7 +2,7 @@
 identity:
   code: TF-03
   name: "Pump"
-  status: draft
+  revision: draft
   description: "Moves the fluid."
 physical:
   mass: 5000

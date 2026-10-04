@@ -4,7 +4,7 @@
 identity:
   code: RING-01
   name: "Segment"
-  status: draft
+  revision: draft
   description: "A length of the ring's tube: skin panels over hoop frames. Sixty make the ring."
 physical:
   length: 157.1

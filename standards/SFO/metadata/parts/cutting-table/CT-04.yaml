@@ -2,7 +2,7 @@
 identity:
   code: CT-04
   name: "Chiller"
-  status: draft
+  revision: draft
   description: "Cools the laser."
 physical:
   mass: 1500

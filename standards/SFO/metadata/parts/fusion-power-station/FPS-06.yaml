@@ -2,7 +2,7 @@
 identity:
   code: FPS-06
   name: "Transformer"
-  status: draft
+  revision: draft
   description: "Steps the power up for the line."
 physical:
   mass: 250000

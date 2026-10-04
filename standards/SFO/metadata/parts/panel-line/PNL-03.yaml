@@ -2,7 +2,7 @@
 identity:
   code: PNL-03
   name: "Forming station"
-  status: draft
+  revision: draft
   description: "Bends the panel to its curve."
 physical:
   mass: 60000

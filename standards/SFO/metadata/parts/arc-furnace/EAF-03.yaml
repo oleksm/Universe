@@ -2,7 +2,7 @@
 identity:
   code: EAF-03
   name: "Furnace transformer"
-  status: draft
+  revision: draft
   description: "Feeds the arcs."
 physical:
   mass: 150000

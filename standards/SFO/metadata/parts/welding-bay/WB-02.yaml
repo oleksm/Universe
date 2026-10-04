@@ -2,7 +2,7 @@
 identity:
   code: WB-02
   name: "Welding gantry"
-  status: draft
+  revision: draft
   description: "Carries the welding head along the joint."
 physical:
   mass: 63000

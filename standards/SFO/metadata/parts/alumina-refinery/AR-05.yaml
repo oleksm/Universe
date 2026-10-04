@@ -2,7 +2,7 @@
 identity:
   code: AR-05
   name: "Heat exchanger"
-  status: draft
+  revision: draft
   description: "Passes heat from the liquor going out to the liquor coming in."
 physical:
   mass: 60000

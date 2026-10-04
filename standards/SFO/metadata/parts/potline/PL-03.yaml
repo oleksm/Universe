@@ -2,7 +2,7 @@
 identity:
   code: PL-03
   name: "Rectifier transformer"
-  status: draft
+  revision: draft
   description: "Turns the supply into the line's direct current."
 physical:
   mass: 400000

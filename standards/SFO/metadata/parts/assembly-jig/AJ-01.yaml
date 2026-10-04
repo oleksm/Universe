@@ -2,7 +2,7 @@
 identity:
   code: AJ-01
   name: "Jig frame"
-  status: draft
+  revision: draft
   description: "The frame that holds a segment of a ring while it is built."
 physical:
   mass: 3000000

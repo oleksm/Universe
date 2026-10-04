@@ -2,7 +2,7 @@
 identity:
   code: HRM-04
   name: "Run-out table"
-  status: draft
+  revision: draft
   description: "Rollers that carry the strip while it cools."
 physical:
   mass: 500000

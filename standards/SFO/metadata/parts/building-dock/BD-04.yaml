@@ -2,7 +2,7 @@
 identity:
   code: BD-04
   name: "Staging"
-  status: draft
+  revision: draft
   description: "Platforms round the hull for the people working on it."
 physical:
   mass: 300000

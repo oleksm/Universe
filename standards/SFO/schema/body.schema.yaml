@@ -20,17 +20,7 @@ properties:
     pattern: ^[A-Z]{2,6}$
   seat:
     type: string
-  address:
-    description: 'Where it is (SFO 9). at: <system>/<body>, by their file names in LocalAdministration; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
-    type: object
-    additionalProperties: false
-    required: [at]
-    properties:
-      at: { type: string }
-      tower: { type: string }
-      deck: { type: integer, minimum: 1 }
-      section: { type: string }
-      unit: { type: integer, minimum: 1 }
+  address: { $ref: "../../common.schema.yaml#/definitions/address" }
   kind:
     enum:
     - consortium

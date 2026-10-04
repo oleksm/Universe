@@ -2,7 +2,7 @@
 identity:
   code: LS-03
   name: "Electrode roof"
-  status: draft
+  revision: draft
   description: "A lid with electrodes that keep the steel hot while it is trimmed."
 physical:
   mass: 30000

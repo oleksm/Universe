@@ -2,7 +2,7 @@
 identity:
   code: CT-03
   name: "Laser source"
-  status: draft
+  revision: draft
   description: "Makes the beam."
 physical:
   mass: 2000

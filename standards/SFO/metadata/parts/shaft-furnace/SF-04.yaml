@@ -2,7 +2,7 @@
 identity:
   code: SF-04
   name: "Charging system"
-  status: draft
+  revision: draft
   description: "Feeds pellets in at the top through a gas seal."
 physical:
   mass: 200000

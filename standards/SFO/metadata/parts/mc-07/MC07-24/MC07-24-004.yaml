@@ -5,7 +5,7 @@
 identity:
   code: MC07-24-004
   name: "Actuator body"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_RL_ActBody"
 physical:
   mass: 127

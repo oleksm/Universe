@@ -4,7 +4,7 @@
 identity:
   code: MC07-29
   name: "Mining laser"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: LaserL_*, LaserR_*"
 physical:
   length: 6.39

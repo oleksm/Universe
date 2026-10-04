@@ -2,7 +2,7 @@
 identity:
   code: PNL-02
   name: "Cutting station"
-  status: draft
+  revision: draft
   description: "Cuts each panel's outline."
 physical:
   mass: 28500

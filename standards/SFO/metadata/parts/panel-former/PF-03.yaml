@@ -2,7 +2,7 @@
 identity:
   code: PF-03
   name: "Hydraulic drive"
-  status: draft
+  revision: draft
   description: "Turns and positions the rolls."
 physical:
   mass: 4000

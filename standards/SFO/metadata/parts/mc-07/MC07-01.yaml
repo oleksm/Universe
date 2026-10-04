@@ -5,7 +5,7 @@
 identity:
   code: MC07-01
   name: "Nose cap"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_NoseCap"
 physical:
   mass: 1488

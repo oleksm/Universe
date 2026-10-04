@@ -2,7 +2,7 @@
 identity:
   code: HRM-03
   name: "Roll"
-  status: draft
+  revision: draft
   description: "The work rolls that touch the metal and the backup rolls behind them."
 physical:
   mass: 30000

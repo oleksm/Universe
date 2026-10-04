@@ -2,7 +2,7 @@
 identity:
   code: H2-03
   name: "Gas separator"
-  status: draft
+  revision: draft
   description: "Takes the gas off the liquid and dries it."
 physical:
   mass: 15000

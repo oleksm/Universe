@@ -2,7 +2,7 @@
 identity:
   code: BD-01
   name: "Dock hall frame"
-  status: draft
+  revision: draft
   description: "The steel frame of the dock, long, wide and high enough for a hull."
 physical:
   mass: 1580000

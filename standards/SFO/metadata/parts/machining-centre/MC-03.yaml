@@ -2,7 +2,7 @@
 identity:
   code: MC-03
   name: "Pallet table"
-  status: draft
+  revision: draft
   description: "Holds the workpiece and presents it to the cutter."
 physical:
   mass: 6000

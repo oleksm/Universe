@@ -2,7 +2,7 @@
 identity:
   code: FPS-04
   name: "Generator set"
-  status: draft
+  revision: draft
   description: "Turns the reactor's heat into electric power."
 physical:
   mass: 800000

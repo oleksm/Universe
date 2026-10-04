@@ -2,7 +2,7 @@
 identity:
   code: CRM-04
   name: "Coiler"
-  status: draft
+  revision: draft
   description: "Unwinds the strip in and winds it out."
 physical:
   mass: 150000

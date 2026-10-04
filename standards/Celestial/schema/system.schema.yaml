@@ -3,9 +3,9 @@ title: System
 description: 'standards/Celestial/metadata/systems/<name>.yaml: one star system. Its bodies and asteroid fields are in the folder of the same name.'
 type: object
 additionalProperties: false
-required: [identity, status]
+required: [identity, provenance]
 properties:
-  status: { enum: [seeded, curated, frozen], description: "seeded: written out as the seed makes it, and may be written out again. curated: changed by hand; the record is the truth and the seed no longer applies. frozen: curated and not to be changed (other work is built on it)." }
+  provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
   identity:
     type: object
     additionalProperties: false

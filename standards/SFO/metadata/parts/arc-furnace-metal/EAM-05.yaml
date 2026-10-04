@@ -2,7 +2,7 @@
 identity:
   code: EAM-05
   name: "Tilting cradle"
-  status: draft
+  revision: draft
   description: "Tips the furnace to pour."
 physical:
   mass: 200000

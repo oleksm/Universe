@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/system.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
 identity: {name: Treistun, index: 31292}
 star: {class: K, mass: 0.7051, luminosity: 0.2944}
 position:

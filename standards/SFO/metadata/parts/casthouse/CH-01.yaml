@@ -2,7 +2,7 @@
 identity:
   code: CH-01
   name: "Holding furnace"
-  status: draft
+  revision: draft
   description: "Holds the liquid metal while it is alloyed."
 physical:
   mass: 200000

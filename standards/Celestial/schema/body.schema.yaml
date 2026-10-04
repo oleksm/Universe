@@ -3,9 +3,9 @@ title: Celestial body
 description: 'standards/Celestial/metadata/systems/<system>/bodies/<name>.yaml: one natural body of a system (a planet, a moon, a named asteroid). What people have built there is in Local Administration. A body uses the properties that apply to it.'
 type: object
 additionalProperties: false
-required: [identity, status]
+required: [identity, provenance]
 properties:
-  status: { enum: [seeded, curated, frozen], description: "seeded: written out as the seed makes it, and may be written out again. curated: changed by hand; the record is the truth and the seed no longer applies. frozen: curated and not to be changed (its landscape is made and other work is built on it)." }
+  provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
   identity:
     type: object
     additionalProperties: false
@@ -23,6 +23,9 @@ properties:
       eccentricity: { type: number, description: "how far from a circle (0: a circle)" }
       period: { type: number, description: "days (of 86,400 s) to go round once" }
       inclination: { type: number, description: "degrees from the system's plane" }
+      ascending_node: { type: number, description: "degrees, where its orbit rises through the system's plane" }
+      periapsis_argument: { type: number, description: "degrees from that node round to its closest point" }
+      mean_anomaly: { type: number, description: "degrees round its orbit at the world's start" }
   physical:
     type: object
     additionalProperties: false
@@ -34,6 +37,58 @@ properties:
       tilt: { type: number, description: "degrees, its axis from upright on the system's plane" }
       albedo: { type: number, description: "the share of sunlight it reflects" }
       rings: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "km, the inner and outer radius of its rings" }
+      flattening: { type: number, description: "how far its spin flattens it: the share by which its poles are closer in than its equator" }
+      age: { type: number, description: "billion years since it formed" }
+  bulk:
+    description: "What the whole body is made of, by mass. The shares add to 1."
+    type: object
+    additionalProperties: false
+    properties:
+      metal: { type: number, description: "iron and nickel" }
+      rock: { type: number, description: "silicate rock" }
+      ice: { type: number, description: "water and other ices" }
+      gas: { type: number, description: "hydrogen and helium" }
+  interior:
+    description: "Its layers, from the centre out, and the heat it gives off."
+    type: object
+    additionalProperties: false
+    properties:
+      differentiated: { type: boolean, description: "whether it once melted through and sorted itself into core, mantle and crust" }
+      core_radius: { type: number, description: "km" }
+      core_state: { enum: [solid, liquid, liquid with a solid centre], description: "A liquid core that turns over can make a magnetic field." }
+      core_made_of: { type: string }
+      mantle_made_of: { type: string }
+      crust_thickness: { type: number, description: "km, on average" }
+      heat_flow: { type: number, description: "W for each m2 of its surface, from its inside (Earth: 0.09)" }
+      heat_from: { type: array, items: { enum: [formation, radioactivity, tides, settling] }, description: "Where that heat comes from." }
+  magnetic:
+    type: object
+    additionalProperties: false
+    properties:
+      field: { type: number, description: "microtesla at its surface, at the equator (Earth: about 30)" }
+      tilt: { type: number, description: "degrees between its magnetic axis and its spin axis" }
+      from: { enum: [core dynamo, crust left magnetised, induced, none], description: "What makes it." }
+  crust:
+    description: "What its ground is, and what can be dug from it."
+    type: object
+    additionalProperties: false
+    properties:
+      rocks: { type: array, description: "The rocks its crust is made of, each with its share of the surface.", items: { type: object, additionalProperties: false, required: [rock, share], properties: { rock: { type: string }, share: { type: number } } } }
+      regolith: { type: number, description: "m of loose broken rock over its bedrock" }
+      ores: { type: array, description: "What is worth digging: each a rock of the SFO's goods, how much of the crust it is, and how deep it lies.", items: { type: object, additionalProperties: false, required: [ore], properties: { ore: { type: string }, share: { type: number, description: "share of the crust" }, depth: { type: number, description: "m to reach it" }, where: { type: string } } } }
+      tectonics: { enum: [plates, one plate, none], description: "plates: its crust is in pieces that move and are remade. one plate: a single shell, with volcanoes. none: dead." }
+      volcanism: { enum: [active, past, none, ice volcanoes] }
+      surface_age: { type: number, description: "billion years since its surface was last remade: old ground is heavily cratered" }
+  water:
+    type: object
+    additionalProperties: false
+    properties:
+      ocean_cover: { type: number, description: "the share of its surface under open water" }
+      ocean_depth: { type: number, description: "km, on average" }
+      ice_cover: { type: number, description: "the share of its surface under ice" }
+      polar_ice: { type: boolean, description: "For an airless world: ice in the craters at its poles that never see the sun." }
+      buried_sea: { type: boolean, description: "A sea under its crust, kept liquid by heat from inside." }
+      salinity: { type: number, description: "g of salt in each kg of its sea water (Earth: 35)" }
   surface:
     type: object
     additionalProperties: false
@@ -41,6 +96,10 @@ properties:
       terrain: { enum: [terran, dry, cratered], description: "terran: seas, continents, mountains. dry: rock, hills, some craters. cratered: airless and heavily cratered." }
       relief: { type: number, description: "m, how far its ground rises and falls" }
       mean_temperature: { type: number, description: "K, averaged over its surface" }
+      temperature_low: { type: number, description: "K, its coldest place and time" }
+      temperature_high: { type: number, description: "K, its hottest" }
+      highest: { type: number, description: "m above its mean level, its highest ground" }
+      lowest: { type: number, description: "m below its mean level, its lowest" }
       colour: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "red, green, blue, each 0 to 1" }
       landscape: { type: string, description: "For a frozen body: the file its made landscape is kept in." }
   atmosphere:
@@ -50,6 +109,18 @@ properties:
       surface_density: { type: number, description: "kg/m3 at its surface (Earth: 1.225)" }
       scale_height: { type: number, description: "km, the height over which the air thins by 2.7 times" }
       top: { type: number, description: "km, where it is taken to end" }
+      surface_pressure: { type: number, description: "kPa at its surface (Earth: 101.3)" }
+      made_of: { type: array, description: "Its gases, each with its share by volume.", items: { type: object, additionalProperties: false, required: [gas, share], properties: { gas: { type: string, description: "An element's symbol, or a compound's formula." }, share: { type: number } } } }
+      breathable: { type: boolean, description: "whether a person can breathe it unaided" }
+      greenhouse: { type: number, description: "K its air warms its surface by" }
+      clouds: { type: number, description: "the share of its sky under cloud" }
+      wind: { type: number, description: "m/s, typical at its surface" }
+  life:
+    type: object
+    additionalProperties: false
+    properties:
+      present: { enum: [none, microbes, plants and animals], description: "What lives there that people did not bring." }
+      soil: { enum: [none, barren, poor, fertile], description: "Whether its ground can grow crops as it is." }
   rock:
     description: For an asteroid.
     type: object

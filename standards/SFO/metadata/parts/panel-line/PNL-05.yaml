@@ -2,7 +2,7 @@
 identity:
   code: PNL-05
   name: "Conveyor"
-  status: draft
+  revision: draft
   description: "Carries the panels from station to station."
 physical:
   mass: 150000

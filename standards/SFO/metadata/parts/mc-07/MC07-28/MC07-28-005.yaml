@@ -5,7 +5,7 @@
 identity:
   code: MC07-28-005
   name: "Jaw"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: ClampFwd_Jaw0, ClampFwd_Jaw1, ClampFwd_Jaw2, ClampFwd_Jaw3"
 physical:
   mass: 10

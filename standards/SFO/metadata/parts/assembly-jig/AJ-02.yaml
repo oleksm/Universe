@@ -2,7 +2,7 @@
 identity:
   code: AJ-02
   name: "Clamp"
-  status: draft
+  revision: draft
   description: "Holds the hoop frames in place."
 physical:
   mass: 10000

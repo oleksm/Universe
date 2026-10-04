@@ -2,7 +2,7 @@
 identity:
   code: IY-01
   name: "Gantry crane"
-  status: draft
+  revision: draft
   description: "Lifts and stacks ingots."
 physical:
   mass: 200000

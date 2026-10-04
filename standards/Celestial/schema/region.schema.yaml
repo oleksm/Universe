@@ -3,9 +3,9 @@ title: Region
 description: 'standards/Celestial/metadata/systems/<system>/regions/<name>.yaml: a part of a system where many small bodies lie, that the game does not make yet: its scattered disc, its far cloud, a comet''s meteoroid stream.'
 type: object
 additionalProperties: false
-required: [identity, status]
+required: [identity, provenance]
 properties:
-  status: { enum: [seeded, curated, frozen] }
+  provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
   identity:
     type: object
     additionalProperties: false

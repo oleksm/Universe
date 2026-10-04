@@ -2,7 +2,7 @@
 identity:
   code: PL-04
   name: "Pot-tending crane"
-  status: draft
+  revision: draft
   description: "Changes anodes, breaks the crust and taps the metal."
 physical:
   mass: 120000

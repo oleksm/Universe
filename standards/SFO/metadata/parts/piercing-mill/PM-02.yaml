@@ -2,7 +2,7 @@
 identity:
   code: PM-02
   name: "Mandrel mill"
-  status: draft
+  revision: draft
   description: "Rolls the wall even over a bar inside the tube."
 physical:
   mass: 600000

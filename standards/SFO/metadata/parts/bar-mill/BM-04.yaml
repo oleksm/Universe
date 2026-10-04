@@ -2,7 +2,7 @@
 identity:
   code: BM-04
   name: "Drive motor"
-  status: draft
+  revision: draft
   description: "One to each stand."
 physical:
   mass: 12000
