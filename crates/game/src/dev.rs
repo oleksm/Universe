@@ -1257,6 +1257,10 @@ pub fn apply(app: &mut App, name: &str) {
                 Ok("stair") => crate::studio::Tool::Stair,
                 _ => crate::studio::Tool::Select,
             };
+            // (UNIVERSE_CURSOR=x,y: the mouse there, in pixels.)
+            if let Some((cx, cy)) = std::env::var("UNIVERSE_CURSOR").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f32>().ok()?, b.trim().parse::<f32>().ok()?)))) {
+                y.studio_mut().cursor = universe_engine::glam::Vec2::new(cx, cy);
+            }
             if std::env::var_os("UNIVERSE_EMPTY").is_none() {
                 let mut plan = demo_plan(app);
                 // (UNIVERSE_CARVE=x,z: deck 1's floor carved round that point instead.)

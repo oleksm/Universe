@@ -80,6 +80,35 @@ impl WalkMesh {
         self.section(1, y).into_iter().map(|[a, b]| [glam::DVec2::new(a.x, a.z), glam::DVec2::new(b.x, b.z)]).collect()
     }
 
+    /// Its side elevation: the edges seen from either side (x), on the faces seen
+    /// from outside (a ray from each to that side gets away), where it creases
+    /// (faces meeting at more than 20°) or ends; segments (z, y).
+    pub fn elevation_x(&self) -> Vec<[glam::DVec2; 2]> {
+        let key = |p: Vec3| ((p.x * 500.0).round() as i64, (p.y * 500.0).round() as i64, (p.z * 500.0).round() as i64);
+        let reach = (self.hi - self.lo).length() + 1.0;
+        let normal = |t: &[Vec3; 3]| (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+        // Each edge: the faces along it (their normals), and whether one is seen.
+        type Corner = (i64, i64, i64);
+        let mut edges: HashMap<(Corner, Corner), (Vec3, Vec3, Vec<Vec3>, bool)> = HashMap::new();
+        for t in &self.tris {
+            let n = normal(t);
+            let c = ((t[0] + t[1] + t[2]) / 3.0).as_dvec3();
+            let seen = n.x.abs() > 0.2 && {
+                let side = glam::DVec3::X * f64::from(n.x.signum());
+                self.ray(c + side * 0.01, side, reach).is_none()
+            };
+            for k in 0..3 {
+                let (a, b) = (t[k], t[(k + 1) % 3]);
+                let (ka, kb) = (key(a), key(b));
+                let e = edges.entry(if ka < kb { (ka, kb) } else { (kb, ka) }).or_insert((a, b, Vec::new(), false));
+                e.2.push(n);
+                e.3 |= seen;
+            }
+        }
+        let crease = 20f32.to_radians().cos();
+        edges.into_values().filter(|(_, _, ns, seen)| *seen && (ns.len() == 1 || ns.iter().any(|n| n.dot(ns[0]) < crease))).map(|(a, b, _, _)| [glam::DVec2::new(f64::from(a.z), f64::from(a.y)), glam::DVec2::new(f64::from(b.z), f64::from(b.y))]).collect()
+    }
+
     /// Where its surfaces cross the plane `x = side` (its frame): segments (z, y),
     /// a side section.
     pub fn section_x(&self, side: f64) -> Vec<[glam::DVec2; 2]> {

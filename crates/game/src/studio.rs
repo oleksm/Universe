@@ -50,6 +50,8 @@ enum Pick {
 #[derive(Clone, Copy, Debug, PartialEq)]
 enum Drag {
     Pan,
+    /// A deck's floor, dragged up or down in the side view.
+    Floor(usize),
     Point(Pick, usize),
     Bend(usize, usize),
 }
@@ -65,6 +67,8 @@ struct Hull {
     /// Its side view: the cut along its centre line (z, y), and the ground it
     /// stands on (its lowest point: its feet).
     profile: Vec<[DVec2; 2]>,
+    /// Its side elevation (z, y): doors, windows, the edges seen from the side.
+    elevation: Vec<[DVec2; 2]>,
     keel: f64,
     /// Its lowest floor inside (well above its feet), for a first deck.
     first_floor: f64,
@@ -85,7 +89,7 @@ pub struct Studio {
     view: Option<(DVec2, f64)>,
     hull: Option<Hull>,
     /// The cursor as input last saw it (HUD pixels): what's being drawn runs to it.
-    cursor: Vec2,
+    pub cursor: Vec2,
     /// WALK HERE pressed away from the plan: the next click on it is where.
     walk_armed: bool,
     /// A walk-through asked for: feet (the hull's frame) and facing (see `shipyard`).
@@ -212,9 +216,11 @@ impl Studio {
         }
         let section = mesh.section_y(y + 1.0);
         let sides = deckplan::deck_sides(mesh, y);
-        let profile = self.hull.as_ref().filter(|h| h.key == hull_key).map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
+        let same = self.hull.as_ref().filter(|h| h.key == hull_key);
+        let profile = same.map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
+        let elevation = same.map_or_else(|| mesh.elevation_x(), |h| h.elevation.clone());
         let first_floor = first_floor(mesh);
-        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
+        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, elevation, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
     }
 }
 
@@ -417,9 +423,16 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         } else if input.pressed(KeyCode::PageDown) {
             went = Some((studio.deck + n - 1) % n);
         } else if input.button_pressed(MouseButton::Left) && in_rect(side_r, cursor) {
-            // A deck clicked in the side view: its floor or its headroom.
+            // A deck clicked in the side view: its floor or its headroom; on its floor's
+            // line (within a few pixels), grabbed to drag up or down.
             let y = side_y(h, side_r, cursor.y);
-            went = plan.decks.iter().position(|d| y >= d.floor - 0.4 && y <= d.floor + d.headroom).or(went);
+            let near = 6.0 / side_view(h, side_r).0;
+            if let Some(k) = plan.decks.iter().position(|d| (y - d.floor).abs() <= near) {
+                went = Some(k);
+                studio.drag = Some(Drag::Floor(k));
+            } else {
+                went = plan.decks.iter().position(|d| y >= d.floor - 0.4 && y <= d.floor + d.headroom).or(went);
+            }
         }
     }
     if let Some(k) = went {
@@ -427,12 +440,23 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         studio.drawing.clear();
         studio.pick = None;
     }
+    if let Some(Drag::Floor(_)) = studio.drag
+        && !input.button_down(MouseButton::Left)
+    {
+        studio.drag = None;
+    }
     let step: f64 = if shift { 0.5 } else { 0.1 };
     let k = studio.deck;
     if k < plan.decks.len() {
         // The floor moved: the decks above with it (the stack keeps together); not
         // down into the deck below (its height and a deck's thickness kept).
         let mut lift = 0.0;
+        // Dragged in the side view: to the cursor's height (5 cm steps).
+        if studio.drag == Some(Drag::Floor(k)) {
+            let to = (side_y(h, side_r, cursor.y) / 0.05).round() * 0.05;
+            let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + deckplan::DECK);
+            lift = to.max(lowest) - plan.decks[k].floor;
+        }
         if input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) || clicked == Some(Action::Floor(0.1)) {
             lift = step;
         }
@@ -850,6 +874,10 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
     let zs = |z: f64| mid.x + ((z - (h.lo.z + h.hi.z) / 2.0) * k) as f32;
     let sy = |y: f64| mid.y - ((y - (h.lo.y + h.hi.y) / 2.0) * k) as f32;
     frame.hud_clipped(side_r.0, side_r.1, |frame| {
+        // (Its side elevation faint behind: doors, windows and frames where they are.)
+        for [a, b] in &h.elevation {
+            frame.hud_line(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.35));
+        }
         for [a, b] in &h.profile {
             frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
         }
@@ -883,6 +911,15 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
                 let mid_y = y + line / 2.0;
                 frame.hud_line(Vec2::new(end.x + 4.0, mid_y), Vec2::new(from, sy(d.floor + d.headroom / 2.0)), col.scale(0.7));
             }
+        }
+        frame.text_scaled(Vec2::new(side_r.0.x + 6.0, side_r.1.y - 12.0), "CLICK A DECK TO WORK ON IT - DRAG ITS FLOOR LINE UP OR DOWN TO MOVE IT", LABEL.scale(0.55), SCALE);
+        // The height under the cursor: a guide across, and how far up it is (from the
+        // keel), to line a deck up with a door or a window.
+        if in_rect(side_r, studio.cursor) {
+            let y = studio.cursor.y;
+            let up = side_y(h, side_r, y) - h.keel;
+            frame.hud_line(Vec2::new(from, y), Vec2::new(side_r.1.x, y), PICKED.scale(0.45));
+            frame.text_scaled(Vec2::new(studio.cursor.x + 10.0, y - 13.0), &format!("{up:.2} M UP"), PICKED, SCALE);
         }
     });
     // The tool's panel: what its kind of thing is and how it's made, where it's at,
