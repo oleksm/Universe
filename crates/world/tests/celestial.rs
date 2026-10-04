@@ -16,6 +16,13 @@ fn the_charted_world_is_as_the_registry_has_it() {
     assert_eq!((g.region, g.star_density, g.sector), (universe_world::galaxy::REGION, universe_world::galaxy::STAR_DENSITY, universe_world::galaxy::SECTOR));
     let w = World::new(g.seed);
     assert_eq!(w.system(w.home_system).name, g.home);
+    // (And the kinds of asteroid: every one the game has is written out, as the code has it.)
+    use universe_world::belt::{RockClass, Structure};
+    assert_eq!(content().rock_classes.len(), 4);
+    for r in &content().rock_classes {
+        let c = RockClass::named(&r.key).unwrap_or_else(|| panic!("the game has no rock class {}", r.key));
+        assert_eq!((c.density(Structure::Rubble), c.density(Structure::Monolith), f64::from(c.albedo())), (r.density_rubble, r.density_monolith, f64::from(r.albedo as f32)), "{}", r.key);
+    }
     let near = |a: f64, b: f64| (a - b).abs() <= 2e-3 * a.abs().max(b.abs());
     assert!(!content().celestial.is_empty(), "no systems written out");
     for rec in &content().celestial {

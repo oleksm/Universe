@@ -371,6 +371,7 @@ function rows(q) {
   if (CS.length) {
     const hitc = t => !q || q.split(/\s+/).every(w => t.toLowerCase().includes(w));
     out.push({ k: "cel", depth: 0, kind: "body", label: "Celestial Registry", n: CS.length });
+    if (open.has("cel") || q) for (const rc of (DATA.celestial.rock_classes || []).filter(rc => hitc(rc.identity.name + " rock class asteroid"))) out.push({ k: "cr:" + rc.slug, depth: 1, kind: "maker", label: rc.identity.name, ticker: "rock class", leaf: true });
     if (open.has("cel") || q) for (const s of CS) {
       const sk = "cs:" + s.slug;
       out.push({ k: sk, depth: 1, kind: "maker", label: s.identity.name, ticker: `${s.star.class} star`, leaf: false });
@@ -433,6 +434,7 @@ function reveal(k) {
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
   if (k.startsWith("rep:")) { open.add("rp0"); keepOpen(); return; }
+  if (k.startsWith("cr:")) { open.add("cel"); keepOpen(); return; }
   if (k.startsWith("cs:") || k.startsWith("cb:") || k.startsWith("cf:")) {
     open.add("cel"); const [, sy, slug] = k.split(":"); open.add("cs:" + sy);
     const s = (DATA.celestial.systems || []).find(x => x.slug === sy), b = s && k.startsWith("cb:") && s.bodies.find(x => x.slug === slug);
@@ -631,7 +633,14 @@ function detail(k) {
   if (k === "cel") { const g = DATA.celestial.galaxy || {};
     return `<h2>Celestial Registry</h2><p>The seeded world written down. The seed makes every star and system by its laws; a system or body with a record here is taken as written instead. A record is seeded (as the seed makes it), curated (changed by hand) or frozen (not to be changed).</p>`
       + `<h3>The galaxy</h3><table><tr><th>Property</th><th>Value</th></tr><tr><td>seed</td><td>${g.seed}</td></tr><tr><td>home</td><td>${esc(g.home || "")}</td></tr><tr><td>charted region</td><td>${g.region} light years a side</td></tr><tr><td>star density</td><td>${g.star_density} for each cubic light year</td></tr><tr><td>stars by class</td><td>${Object.entries(g.class_mix || {}).map(([c, v]) => `${c} ${+(v * 100).toPrecision(3)}%`).join(", ")}</td></tr></table><p class="meta">${esc(g.note || "")}</p>`
+      + `<h3>Rock classes</h3><table><tr><th>Class</th><th>Type</th><th>Density, rubble to solid</th><th>Metal</th><th>Water</th><th>Yields</th><th>Forms inside the frost line</th><th>Outside</th></tr>` + (DATA.celestial.rock_classes || []).map(rc => { const c = rc.composition || {}, pct = v => v ? `${+(v[0] * 100).toPrecision(2)} to ${+(v[1] * 100).toPrecision(2)}%` : ""; return `<tr><td><a data-k="${esc("cr:" + rc.slug)}">${esc(rc.identity.name)}</a></td><td>${esc(rc.identity.letter || "")}</td><td class="num">${rc.physical.density_rubble.toLocaleString()} to ${rc.physical.density_monolith.toLocaleString()} kg/m³</td><td class="num">${pct(c.metal)}</td><td class="num">${pct(c.water)}</td><td>${itemA(rc.mining.yields)}${rc.mining.rich_yields ? ", " + itemA(rc.mining.rich_yields) : ""}</td><td class="num">${Math.round(rc.forms.inside_frost_line * 100)}%</td><td class="num">${Math.round(rc.forms.outside_frost_line * 100)}%</td></tr>`; }).join("") + `</table>`
       + `<h3>Systems written out</h3><table><tr><th>System</th><th>Star</th><th>From home</th><th>Bodies</th><th>Fields</th><th>Status</th></tr>` + CSYS.map(s => `<tr><td><a data-k="${esc("cs:" + s.slug)}">${esc(s.identity.name)}</a></td><td>${esc(s.star.class)}, ${s.star.mass} suns</td><td class="num">${s.position.distance ? s.position.distance.toFixed(2) + " ly" : "home"}</td><td class="num">${s.bodies.length}</td><td class="num">${s.fields.length}</td><td>${esc(s.status)}</td></tr>`).join("") + `</table>`; }
+  if (kind === "cr") { const rc = (DATA.celestial.rock_classes || []).find(x => x.slug === rest[0]); if (!rc) return "";
+    const inF = CSYS.flatMap(s => s.fields.filter(f => f.rocks.class === rc.identity.key.toLowerCase()).map(f => ({ s, f })));
+    return `<h2>${esc(rc.identity.name)}</h2><div class="meta">rock class · in the <a data-k="cel">Celestial Registry</a></div>` + celGroups(rc, DATA.celestial.groups["rock-class"])
+      + `<h3>Yields</h3><p>${itemA(rc.mining.yields)}${rc.mining.rich_yields ? `, and ${itemA(rc.mining.rich_yields)} where it has over ${rc.mining.rich_above} parts per million of platinum-group metals` : ""}</p>`
+      + `<h3>Fields of this class</h3>` + (inF.length ? `<table><tr><th>Field</th><th>System</th><th>Rocks</th></tr>` + inF.map(({ s, f }) => `<tr><td><a data-k="${esc(`cf:${s.slug}:${f.slug}`)}">${esc(f.identity.name)}</a></td><td><a data-k="${esc("cs:" + s.slug)}">${esc(s.identity.name)}</a></td><td class="num">${f.rocks.count}</td></tr>`).join("") + `</table>` : `<p class="meta">None in the systems written out.</p>`)
+      + `<div class="file" style="margin-top:24px">standards/${esc(rc.file)}</div>`; }
   if (kind === "cs") { const s = CSYS.find(x => x.slug === rest[0]); if (!s) return ""; const a = DATA.administrations.find(x => x.name === s.identity.name);
     const planets = s.bodies.filter(b => b.identity.parent === s.identity.name && b.identity.kind !== "asteroid"), rocks = s.bodies.filter(b => b.identity.kind === "asteroid");
     return `<h2>${esc(s.identity.name)}</h2><div class="meta">system · ${esc(s.status)}${a ? ` · administered: <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>` : ""}</div><p class="meta">${STATUS_NOTE[s.status]}</p>` + celGroups(s, DATA.celestial.groups.system)

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/rock-class.schema.yaml
+# As the game's code has it (crates/world/src/belt.rs, mining.rs). The game does not read this
+# record yet; a test holds the two together.
+identity:
+  name: Icy
+  key: "ICY"
+  letter: comet-like
+  about: "Water ice and other frozen volatiles, with dust."
+physical:
+  density_rubble: 700
+  density_monolith: 950
+  albedo: 0.6
+  colour: [0.75, 0.88, 1.0]
+composition:
+  water: [0.4, 0.7]
+  organics: [0.03, 0.08]
+  volatiles: [0.05, 0.15]
+forms:
+  inside_frost_line: 0.0
+  outside_frost_line: 0.05
+mining:
+  cut_energy: 20000
+  yields: asteroid-water-ice

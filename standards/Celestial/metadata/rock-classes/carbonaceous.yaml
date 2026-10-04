@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/rock-class.schema.yaml
+# As the game's code has it (crates/world/src/belt.rs, mining.rs). The game does not read this
+# record yet; a test holds the two together.
+identity:
+  name: Carbonaceous
+  key: "C-TYPE CARBONACEOUS"
+  letter: C-type
+  about: "Clays with water bound in, carbon and organics. Coal-dark."
+physical:
+  density_rubble: 1300
+  density_monolith: 2100
+  albedo: 0.05
+  colour: [0.42, 0.4, 0.38]
+composition:
+  water: [0.05, 0.2]
+  organics: [0.02, 0.06]
+  metal: [0.02, 0.02]
+  pgm: [0.2, 1.0]
+forms:
+  inside_frost_line: 0.25
+  outside_frost_line: 0.7
+mining:
+  cut_energy: 30000
+  yields: carbonaceous-ore

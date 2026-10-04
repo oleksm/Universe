@@ -1299,6 +1299,12 @@ def write_ron():
     out.append("]\n")
     with open(os.path.join(CONTENT, "celestial.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
+    pair = lambda v: f"({float(v[0])!r}, {float(v[1])!r})" if v else "(0.0, 0.0)"
+    with open(os.path.join(CONTENT, "rock_classes.ron"), "w", encoding="utf-8") as f:
+        f.write(head + "// The kinds of asteroid, from the celestial registry (standards/Celestial/metadata/rock-classes). The game's are the code's\n// (crates/world/src/belt.rs, mining.rs); a test holds them to these.\n[\n" + "".join(
+            f"    (key: {ron_str(rc['identity']['key'])}, density_rubble: {float(rc['physical']['density_rubble'])!r}, density_monolith: {float(rc['physical']['density_monolith'])!r}, albedo: {float(rc['physical']['albedo'])!r}, "
+            f"water: {pair((rc.get('composition') or {}).get('water'))}, organics: {pair((rc.get('composition') or {}).get('organics'))}, metal: {pair((rc.get('composition') or {}).get('metal'))}, volatiles: {pair((rc.get('composition') or {}).get('volatiles'))}, pgm: {pair((rc.get('composition') or {}).get('pgm'))}, "
+            f"cut_energy: {float(rc['mining']['cut_energy'])!r}, yields: {ron_str(rc['mining']['yields'])}),\n" for rc in celestial["rock_classes"]) + "]\n")
     gx = celestial["galaxy"]
     with open(os.path.join(CONTENT, "galaxy.ron"), "w", encoding="utf-8") as f:
         f.write(head + "// The world as a whole, from the celestial registry (standards/Celestial/metadata/galaxy.yaml): the game takes its seed from here;\n// the laws are the code's, and a test holds them to these.\n[\n"
@@ -1816,10 +1822,10 @@ report("invented", "Confidence: the records with invented or unexplained numbers
 # fields/<name>.yaml. Each record has a status: seeded (as the seed makes it, written out by
 # tools/standards/celestial_export.py), curated (a person's; the truth) or frozen.
 CEL = os.path.join(TREE, "Celestial")
-celestial = {"galaxy": {}, "systems": [], "groups": {}}
+celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": []}
 if os.path.isdir(CEL):
-    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field")}
-    celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field")}
+    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class")}
+    celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field", "rock-class")}
 
     def cel_load(full, kind):
         rec = load(full)
@@ -1831,13 +1837,21 @@ if os.path.isdir(CEL):
                 for q in props or {}:
                     if q not in known[g]["properties"]:
                         problem(full, f"{g}: unknown property '{q}'")
-        if rec.get("status") not in ("seeded", "curated", "frozen"):
+        if kind != "rock-class" and rec.get("status") not in ("seeded", "curated", "frozen"):
             problem(full, "status: one of seeded, curated, frozen")
         if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str((rec.get("identity") or {}).get("name", "")).lower()).strip("-"):
             problem(full, "a celestial record's file is named after it (lower case, words joined by -)")
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
         return rec
 
+    # (The kinds of asteroid: each yields a rock of the SFO's goods.)
+    rdir = os.path.join(CEL, "metadata", "rock-classes")
+    celestial["rock_classes"] = [cel_load(os.path.join(rdir, fn), "rock-class") for fn in sorted(os.listdir(rdir)) if fn.endswith(".yaml")] if os.path.isdir(rdir) else []
+    for rc in celestial["rock_classes"]:
+        for q in ("yields", "rich_yields"):
+            ore_ = (rc.get("mining") or {}).get(q)
+            if ore_ is not None and next((g_ for g_ in goods if g_["slug"] == ore_), {}).get("identity", {}).get("kind") != "rock":
+                problem(os.path.join(TREE, rc["file"]), f"mining.{q}: no rock '{ore_}' among the goods")
     gpath = os.path.join(CEL, "metadata", "galaxy.yaml")
     if os.path.exists(gpath):
         celestial["galaxy"] = load(gpath)
@@ -1908,6 +1922,15 @@ for ad in administrations:
             rows.append(row("gap", link(x["name"], f"cb:{sysm['slug']}:{b['slug']}"), "", "", f"its gravity is {x['gravity']} in Local Administration and {(b.get('physical') or {}).get('gravity')} here"))
         else:
             x["celestial"] = f"cb:{sysm['slug']}:{b['slug']}"
+for where_ in ("inside_frost_line", "outside_frost_line"):
+    tot = sum((rc.get("forms") or {}).get(where_, 0) for rc in celestial["rock_classes"])
+    if celestial["rock_classes"]:
+        rows.append(row("ok" if abs(tot - 1) < 1e-6 else "gap", "Rock classes, " + where_.replace("_", " "), f"{len(celestial['rock_classes'])} classes", "", f"their shares add to {tot:g}" + ("" if abs(tot - 1) < 1e-6 else ", not 1")))
+keys_ = {rc["identity"]["key"].lower() for rc in celestial["rock_classes"]}
+for sysm in celestial["systems"]:
+    for fl in sysm["fields"]:
+        if celestial["rock_classes"] and (fl.get("rocks") or {}).get("class") not in keys_:
+            rows.append(row("gap", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), "", "", f"its class '{(fl.get('rocks') or {}).get('class')}' is no rock class written out"))
 report("celestial", "Celestial: what is written out, and against Local Administration", "Each system written out: its records by status. Each planet and moon Local Administration has: is there a celestial record of the same name, and do they agree. A gap is a body with no celestial record, or one where the two differ.", ["What", "Records", "By status", "Note"], rows)
 
 
@@ -1970,4 +1993,4 @@ if problems:
 write_ron()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
-print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/celestial.ron, content/base/galaxy.ron")
+print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/celestial.ron, content/base/galaxy.ron, content/base/rock_classes.ron")

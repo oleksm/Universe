@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/rock-class.schema.yaml
+# As the game's code has it (crates/world/src/belt.rs, mining.rs). The game does not read this
+# record yet; a test holds the two together.
+identity:
+  name: Stony
+  key: "S-TYPE STONY"
+  letter: S-type
+  about: "Silicates with nickel-iron grains."
+physical:
+  density_rubble: 2300
+  density_monolith: 3300
+  albedo: 0.22
+  colour: [0.72, 0.6, 0.45]
+composition:
+  metal: [0.1, 0.3]
+  pgm: [1.0, 6.0]
+forms:
+  inside_frost_line: 0.55
+  outside_frost_line: 0.15
+mining:
+  cut_energy: 60000
+  yields: stony-ore

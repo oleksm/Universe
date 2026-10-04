@@ -40,6 +40,28 @@ pub struct Galaxy {
     pub sector: f64,
 }
 
+/// A kind of asteroid as the registry has it (the game's are `belt::RockClass`:
+/// held to these by test, not yet made from them).
+#[derive(Clone, Debug, Deserialize)]
+pub struct RockClassRecord {
+    /// Its label in the game.
+    pub key: String,
+    pub density_rubble: f64,
+    pub density_monolith: f64,
+    pub albedo: f64,
+    /// Shares by mass, lean to rich.
+    pub water: (f64, f64),
+    pub organics: (f64, f64),
+    pub metal: (f64, f64),
+    pub volatiles: (f64, f64),
+    /// Platinum-group metals (ppm), lean to rich.
+    pub pgm: (f64, f64),
+    /// J to break a kg loose from a solid piece.
+    pub cut_energy: f64,
+    /// The good it yields.
+    pub yields: String,
+}
+
 /// A system written out, found by its number among the seed's stars.
 #[derive(Clone, Debug, Deserialize)]
 pub struct System {

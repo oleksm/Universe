@@ -1,0 +1,49 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Rock class
+description: 'standards/Celestial/metadata/rock-classes/<name>.yaml: one kind of asteroid, by what it is made of. A class uses the properties that apply to it.'
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, key]
+    properties:
+      name: { type: string }
+      key: { type: string, description: "Its label in the game." }
+      letter: { type: string, description: "Its spectral type, as astronomers class asteroids." }
+      about: { type: string }
+  physical:
+    type: object
+    additionalProperties: false
+    properties:
+      density_rubble: { type: number, description: "kg/m3 as a rubble pile (a third or more empty space)" }
+      density_monolith: { type: number, description: "kg/m3 as one solid piece" }
+      albedo: { type: number, description: "the share of light it reflects" }
+      colour: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "red, green, blue, each 0 to 1" }
+  composition:
+    description: "What it is made of, by mass: each a range, from a lean family to a rich one. The rest is silicate rock."
+    type: object
+    additionalProperties: false
+    properties:
+      water: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "share, lean to rich" }
+      organics: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "carbon and organic compounds: share, lean to rich" }
+      metal: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "nickel-iron: share, lean to rich" }
+      volatiles: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "frozen carbon dioxide, ammonia, methane: share, lean to rich" }
+      pgm: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "platinum-group metals: parts per million, lean to rich" }
+  forms:
+    description: "How often a family of asteroids is of this class, by where it formed."
+    type: object
+    additionalProperties: false
+    properties:
+      inside_frost_line: { type: number, description: "share of the families that formed inside the frost line" }
+      outside_frost_line: { type: number, description: "share of those that formed outside it" }
+  mining:
+    type: object
+    additionalProperties: false
+    properties:
+      cut_energy: { type: number, description: "J to break a kg loose from a solid piece (a rubble pile scoops up at 2,000)" }
+      yields: { type: string, description: "The rock it yields when dug (SFO 11, Goods), by file name." }
+      rich_yields: { type: string, description: "What it yields instead where it is rich enough." }
+      rich_above: { type: number, description: "parts per million of platinum-group metals above which it yields that" }

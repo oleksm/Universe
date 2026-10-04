@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/rock-class.schema.yaml
+# As the game's code has it (crates/world/src/belt.rs, mining.rs). The game does not read this
+# record yet; a test holds the two together.
+identity:
+  name: Metallic
+  key: "M-TYPE METALLIC"
+  letter: M-type
+  about: "Nickel-iron, with platinum-group metals."
+physical:
+  density_rubble: 4500
+  density_monolith: 7500
+  albedo: 0.15
+  colour: [0.7, 0.72, 0.78]
+composition:
+  metal: [0.8, 0.95]
+  pgm: [10.0, 60.0]
+forms:
+  inside_frost_line: 0.2
+  outside_frost_line: 0.1
+mining:
+  cut_energy: 400000
+  yields: nickel-iron-ore
+  rich_yields: pgm-rich-ore
+  rich_above: 30
