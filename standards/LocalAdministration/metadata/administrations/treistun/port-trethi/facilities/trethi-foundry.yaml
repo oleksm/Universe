@@ -1,4 +1,7 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# The site plan is invented. Outlines and lines are in metres east and north of Port Trethi's
+# position, like the parcel's. Material moves west to east along the middle row, then back along
+# the row below it; the road side (north) is for vehicles; the plant is along the south edge.
 name: Trethi Foundry
 kind: foundry
 parcel: 1
@@ -11,3 +14,63 @@ processes:
   - quenching-and-tempering
   - annealing
   - solution-treating-and-ageing
+parts:
+  - name: Parking
+    kind: parking
+    outline: [[620, 170], [720, 170], [720, 240], [620, 240]]
+  - name: Logistics yard
+    kind: logistics
+    does: Where loads come in from East Road and ingot goes out to the port.
+    outline: [[740, 170], [1080, 170], [1080, 240], [740, 240]]
+  - name: Charge store
+    kind: warehouse
+    does: Holds what goes into the furnaces.
+    outline: [[620, 20], [760, 20], [760, 150], [620, 150]]
+  - name: Melt shop
+    kind: module
+    does: The furnaces.
+    processes: [steelmaking, alloying-4340, alloying-304, alloying-6061]
+    outline: [[780, 20], [960, 20], [960, 150], [780, 150]]
+  - name: Casting hall
+    kind: module
+    processes: [ingot-casting]
+    outline: [[980, 20], [1080, 20], [1080, 150], [980, 150]]
+  - name: Heat treatment
+    kind: module
+    processes: [quenching-and-tempering, annealing, solution-treating-and-ageing]
+    outline: [[980, -130], [1080, -130], [1080, 0], [980, 0]]
+  - name: Ingot warehouse
+    kind: warehouse
+    does: Holds finished ingot until it ships.
+    outline: [[780, -130], [960, -130], [960, 0], [780, 0]]
+  - name: Workshop
+    kind: workshop
+    does: Keeps the plant running.
+    outline: [[620, -130], [760, -130], [760, 0], [620, 0]]
+  - name: Power plant
+    kind: module
+    outline: [[620, -230], [720, -230], [720, -150], [620, -150]]
+  - name: Gas plant
+    kind: module
+    does: Makes the process gases.
+    outline: [[740, -230], [840, -230], [840, -150], [740, -150]]
+  - name: Cooling plant
+    kind: module
+    does: Sheds the heat. Treistun f has no air, so it radiates it.
+    outline: [[860, -230], [1080, -230], [1080, -150], [860, -150]]
+pipelines:
+  - name: Process gas main
+    carries: Oxygen and argon
+    from: Gas plant
+    to: Melt shop
+    line: [[790, -150], [790, -140], [770, -140], [770, 10], [800, 10], [800, 20]]
+  - name: Coolant loop
+    carries: Coolant
+    from: Cooling plant
+    to: Melt shop
+    line: [[970, -150], [970, 10], [940, 10], [940, 20]]
+  - name: Quench line
+    carries: Coolant
+    from: Cooling plant
+    to: Heat treatment
+    line: [[1030, -150], [1030, -130]]

@@ -4,8 +4,35 @@ description: 'standards/LocalAdministration/metadata/administrations/<system>/<s
 type: object
 additionalProperties: false
 required: [name, kind, parcel]
+definitions:
+  point: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
 properties:
   name: { type: string }
   kind: { enum: [foundry, mill] }
   parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }
   processes: { type: array, items: { type: string }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
+  parts:
+    description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, kind, outline]
+      properties:
+        name: { type: string }
+        kind: { enum: [module, workshop, warehouse, logistics, parking], description: 'module: industrial plant.' }
+        does: { type: string }
+        processes: { type: array, items: { type: string }, description: 'The facility''s processes run here. Each of the facility''s processes is run in exactly one part.' }
+        outline: { type: array, minItems: 3, items: { $ref: '#/definitions/point' }, description: "Its corners, in order: metres [east, north] of the settlement's position." }
+  pipelines:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, carries, from, to, line]
+      properties:
+        name: { type: string }
+        carries: { type: string }
+        from: { type: string, description: The part it starts at, by name. }
+        to: { type: string, description: The part it ends at, by name. }
+        line: { type: array, minItems: 2, items: { $ref: '#/definitions/point' }, description: "Its run, point by point: metres [east, north] of the settlement's position." }

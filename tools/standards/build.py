@@ -192,6 +192,22 @@ def area(o):
     return abs(sum(o[i][0] * o[(i + 1) % len(o)][1] - o[(i + 1) % len(o)][0] * o[i][1] for i in range(len(o)))) / 2
 
 
+def strictly_within(c, o):
+    """Is the point c inside the outline o, not on its edge?"""
+    x, y = c
+    for i in range(len(o)):
+        (x1, y1), (x2, y2) = o[i], o[(i + 1) % len(o)]
+        if min(x1, x2) <= x <= max(x1, x2) and min(y1, y2) <= y <= max(y1, y2) and abs((x2 - x1) * (y - y1) - (y2 - y1) * (x - x1)) < 1e-9:
+            return False
+    return within(c, o)
+
+
+def overlap(p, q):
+    """Do two outlines share ground (more than an edge)? By corners and centres: enough for plain shapes."""
+    mid = lambda o: [sum(c[0] for c in o) / len(o), sum(c[1] for c in o) / len(o)]
+    return any(strictly_within(c, q) for c in p + [mid(p)]) or any(strictly_within(c, p) for c in q + [mid(q)])
+
+
 def within(c, o):
     """Is the point c inside the outline o, or on its edge?"""
     x, y = c
@@ -333,7 +349,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -346,6 +362,58 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if zone is not None and need and zone.get("use") != need:
                     problem(ffull, f"a {fc.get('kind')} needs a parcel zoned {need}; parcel {plot.get('number')} is zoned {zone.get('use')}")
                 fc["owner"] = plot.get("owner")
+                # (Its site plan: parts inside the parcel, none overlapping; each process in one part;
+                # pipelines between parts, inside the parcel.)
+                PART_KINDS = ["module", "workshop", "warehouse", "logistics", "parking"]
+                is_pts = lambda o, n: isinstance(o, list) and len(o) >= n and all(isinstance(c, list) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c) for c in o)
+                names, housed = [], []
+                for pt in fc.get("parts") or []:
+                    nm = pt.get("name")
+                    for k in pt:
+                        if k not in {"name", "kind", "does", "processes", "outline"}:
+                            problem(ffull, f"part {nm}: unknown field '{k}'")
+                    if pt.get("kind") not in PART_KINDS:
+                        problem(ffull, f"part {nm}: kind one of {', '.join(PART_KINDS)}")
+                    if nm in names:
+                        problem(ffull, f"part {nm} twice")
+                    names.append(nm)
+                    if not is_pts(pt.get("outline"), 3):
+                        problem(ffull, f"part {nm}: outline of three or more corners, each [east, north] in metres")
+                        continue
+                    if not all(within(c, plot["outline"]) for c in pt["outline"]):
+                        problem(ffull, f"part {nm}: it reaches outside parcel {plot.get('number')}")
+                    for other in fc["parts"]:
+                        if other is pt:
+                            break
+                        if is_pts(other.get("outline"), 3) and overlap(pt["outline"], other["outline"]):
+                            problem(ffull, f"part {nm}: it overlaps {other.get('name')}")
+                    pt["area"] = area(pt["outline"])
+                    housed += pt.get("processes") or []
+                if fc.get("parts"):
+                    for proc_ in fc.get("processes") or []:
+                        if housed.count(proc_) != 1:
+                            problem(ffull, f"process '{proc_}' is run in {housed.count(proc_)} parts; it needs exactly one")
+                    for proc_ in housed:
+                        if proc_ not in (fc.get("processes") or []):
+                            problem(ffull, f"a part runs '{proc_}', which the facility doesn't list")
+                for pl in fc.get("pipelines") or []:
+                    nm = pl.get("name")
+                    for k in ["name", "carries", "from", "to", "line"]:
+                        if k not in pl:
+                            problem(ffull, f"pipeline {nm}: no {k}")
+                    for k in pl:
+                        if k not in {"name", "carries", "from", "to", "line"}:
+                            problem(ffull, f"pipeline {nm}: unknown field '{k}'")
+                    for end in ("from", "to"):
+                        if pl.get(end) not in names:
+                            problem(ffull, f"pipeline {nm}: {end} '{pl.get(end)}' is no part of it")
+                    ln = pl.get("line")
+                    if not is_pts(ln, 2):
+                        problem(ffull, f"pipeline {nm}: line of two or more points, each [east, north] in metres")
+                        continue
+                    if not all(within(c, plot["outline"]) for c in ln):
+                        problem(ffull, f"pipeline {nm}: it runs outside parcel {plot.get('number')}")
+                    pl["length"] = sum(((ln[i + 1][0] - ln[i][0]) ** 2 + (ln[i + 1][1] - ln[i][1]) ** 2) ** 0.5 for i in range(len(ln) - 1))
             fc["slug"] = fn[:-5]
             fc["file"] = os.path.relpath(ffull, TREE)
             facs.append(fc)

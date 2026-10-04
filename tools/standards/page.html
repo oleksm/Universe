@@ -81,6 +81,13 @@ p { margin: 4px 0 8px; max-width: 80ch; }
 .landmap .plot { fill: var(--bg); fill-opacity: .55; stroke: var(--text); stroke-width: 6; cursor: pointer; } .landmap .plot.lit { stroke: var(--head); fill: var(--head); fill-opacity: .25; }
 .landmap .zl { fill: var(--dim); letter-spacing: .08em; } .landmap .pl { fill: var(--text); font-weight: 700; cursor: pointer; }
 .landmap .street { fill: none; stroke: var(--text); stroke-opacity: .7; stroke-width: 22; stroke-linecap: round; cursor: pointer; }
+.landmap .part { stroke: var(--text); stroke-width: 1.5; fill-opacity: .45; }
+.landmap .k-module { fill: #d98a3d; } .landmap .k-workshop { fill: #9b8cf0; } .landmap .k-warehouse { fill: #5fbf8f; } .landmap .k-logistics { fill: #4c9bd9; } .landmap .k-parking { fill: #8fa3b0; }
+.landmap .pipe { fill: none; stroke: #ff6a5a; stroke-width: 3; stroke-linejoin: round; }
+.landmap .lot { fill: none; stroke: var(--head); stroke-width: 2.5; }
+.landmap .tl { fill: var(--text); }
+.swatch { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border: 1px solid var(--text); opacity: .8; }
+.swatch.k-module { background: #d98a3d; } .swatch.k-workshop { background: #9b8cf0; } .swatch.k-warehouse { background: #5fbf8f; } .swatch.k-logistics { background: #4c9bd9; } .swatch.k-parking { background: #8fa3b0; } .swatch.pipe { background: #ff6a5a; height: 3px; vertical-align: middle; border: 0; }
 .landmap .scale { fill: none; stroke: var(--text); stroke-width: 6; }
 .row .logo { --logo-cut: var(--nav); margin-right: 6px; }
 .row.sel .logo { --logo-cut: var(--sel); }
@@ -463,6 +470,25 @@ function detail(k) {
   // (A record's properties, as written in its file.)
   const corners = o => o.map(c => `${c[0]}, ${c[1]}`).join(" · ");
   const props = rows => `<h3>Properties</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>` + rows.filter(r => r[1] !== undefined && r[1] !== "").map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${esc(r[2] || "")}</td></tr>`).join("") + `</table>`;
+  // A facility's site plan: its parcel, what stands on it, its pipelines, and the streets passing.
+  const sitePlan = (a, x, f, p) => {
+    const parts = f.parts || [], pipes = f.pipelines || []; if (!parts.length) return "";
+    const pad = 45, xs = p.outline.map(c => c[0]), ys = p.outline.map(c => c[1]);
+    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+    const path = o => o.map(c => `${c[0]},${-c[1]}`).join(" ");
+    let s = `<svg class="landmap" viewBox="${x0} ${-y1} ${x1 - x0} ${y1 - y0}" xmlns="http://www.w3.org/2000/svg">`;
+    for (const st of x.streets || []) s += `<polyline class="street" points="${path(st.line)}"/><text class="zl" x="${x1 - 8}" y="${-st.line[0][1] - 14}" font-size="9" text-anchor="end">${esc(st.name.toUpperCase())}</text>`;
+    s += `<polygon class="lot" points="${path(p.outline)}"/>`;
+    for (const pt of parts) {
+      const ex = pt.outline.map(c => c[0]), ey = pt.outline.map(c => c[1]);
+      s += `<polygon class="part k-${esc(pt.kind)}" points="${path(pt.outline)}"/><text class="tl" x="${(Math.min(...ex) + Math.max(...ex)) / 2}" y="${-(Math.min(...ey) + Math.max(...ey)) / 2 + 3.5}" font-size="10" text-anchor="middle">${esc(pt.name)}</text>`;
+    }
+    for (const pl of pipes) s += `<polyline class="pipe" points="${path(pl.line)}"/>`;
+    s += `<path class="scale" style="stroke-width:2" d="M${x0 + 12} ${-y0 - 12}h100"/><text class="zl" x="${x0 + 62}" y="${-y0 - 18}" font-size="9" text-anchor="middle">100 M</text>`;
+    s += `<path class="scale" style="stroke-width:2" d="M${x1 - 14} ${-y1 + 34}v-22m-5 7l5 -7l5 7"/><text class="zl" x="${x1 - 14}" y="${-y1 + 45}" font-size="9" text-anchor="middle">N</text>`;
+    const kinds = [...new Set(parts.map(pt => pt.kind))];
+    return `<h3>Site plan</h3>` + s + `</svg><div class="meta">${kinds.map(k => `<span class="swatch k-${esc(k)}"></span>${esc(k)}`).join(" &nbsp; ")}${pipes.length ? ` &nbsp; <span class="swatch pipe"></span>pipeline` : ""}</div>`;
+  };
   if (kind === "st") {
     const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const st = x && (x.streets || []).find(y => y.slug === rest[2]); if (!st) return "";
     const on = (x.parcels || []).filter(p => p.address && p.address.street === st.slug).sort((p, r) => p.address.number - r.address.number);
@@ -488,7 +514,10 @@ function detail(k) {
     const where = `${esc(parcelLine(x, p))}, <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
     const procs = (f.processes || []).map(s => procBySlug[s]).filter(Boolean);
     const makes = pr => ((pr.outputs || {}).products || []).map(o => o.item ? `<a data-k="${esc("mat:" + o.item)}">${esc((matBySlug[o.item] || { identity: { name: o.item } }).identity.name)}</a>${o.form ? ` <span class="meta">${esc(o.form)}</span>` : ""}` : esc(o.name || "")).join(", ");
-    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Parcel</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>Processes it runs</h3><table><tr><th>Process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(f.file)}</div>`;
+    return `<h2>${esc(f.name)}</h2><div class="meta">${esc(f.kind)}</div><h3>Address</h3><p>${where}</p><table><tr><th>Owner</th><th>Parcel</th><th>Zone</th></tr><tr><td>${ownerLink(f.owner)}</td><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td></tr></table>` + (procs.length ? `<h3>Processes it runs</h3><table><tr><th>Process</th><th>Method</th><th>Makes</th></tr>` + procs.map(pr => `<tr><td>${icon(pr.slug)} <a data-k="${esc("proc:" + pr.slug)}">${esc(pr.identity.name)}</a></td><td>${esc(pr.identity.method || "")}</td><td>${makes(pr)}</td></tr>`).join("") + `</table>` : "") + sitePlan(a, x, f, p)
+      + ((f.parts || []).length ? `<h3>Parts</h3><table><tr><th>Part</th><th>Kind</th><th>What it does</th><th>Size</th><th>Area</th></tr>` + f.parts.map(pt => `<tr><td>${esc(pt.name)}</td><td><span class="swatch k-${esc(pt.kind)}"></span>${esc(pt.kind)}</td><td>${esc(pt.does || "")}${(pt.processes || []).length ? `${pt.does ? " " : ""}Runs ` + pt.processes.map(s => procBySlug[s] ? `<a data-k="${esc("proc:" + s)}">${esc(procBySlug[s].identity.name)}</a>` : esc(s)).join(", ") + "." : ""}</td><td>${(s => s.length === 4 && s[0] === s[2] && s[1] === s[3] ? `${Math.round(s[0])} × ${Math.round(s[1])} m` : s.map(metres).join(" · "))(sides(pt.outline, true))}</td><td>${sqm(pt.area)}</td></tr>`).join("") + `<tr><th>Total built on</th><th></th><th>${(100 * total(f.parts.map(pt => pt.area)) / p.area).toLocaleString(undefined, { maximumFractionDigits: 1 })}% of parcel ${p.number}</th><th></th><th>${sqm(total(f.parts.map(pt => pt.area)))}</th></tr></table>` : "")
+      + ((f.pipelines || []).length ? `<h3>Pipelines</h3><table><tr><th>Pipeline</th><th>Carries</th><th>From</th><th>To</th><th>Length</th></tr>` + f.pipelines.map(pl => `<tr><td>${esc(pl.name)}</td><td>${esc(pl.carries)}</td><td>${esc(pl.from)}</td><td>${esc(pl.to)}</td><td>${metres(pl.length)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th></th><th>${metres(total(f.pipelines.map(pl => pl.length)))}</th></tr></table>` : "")
+      + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(f.file)}</div>`;
   }
   if (kind === "pc") {
     const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const p = x && (x.parcels || []).find(y => String(y.number) === rest[2]); if (!p) return "";
