@@ -1,7 +1,8 @@
-# yaml-language-server: $schema=../../../../schema/region.schema.yaml
+# yaml-language-server: $schema=../../../../schema/population.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the Sun's is 2,000 to 200,000 AU; this star's by the cube root of its mass, as the reach of a pull goes.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {key: region.treistun.far-cloud, name: Far cloud, kind: far cloud, about: A vast thin shell of ice bodies at the edge of the star's hold. Past it
-    is the next star's.}
+in_game: not made
+identity: {key: population.treistun.far-cloud, name: Far cloud, kind: far cloud, about: A vast thin shell of ice bodies at
+    the edge of the star's hold. Past it is the next star's.}
 extent: {inner: 1780.0, outer: 178000.0}

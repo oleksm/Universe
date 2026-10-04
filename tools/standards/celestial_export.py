@@ -20,7 +20,7 @@ raw = open(args[0]).read() if args else subprocess.run(["cargo", "run", "-q", "-
 data = json.loads(raw)
 slug = lambda name: re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 r = lambda v, n=4: float(f"{v:.{n}g}")
-NATURAL = {"rocky planet", "gas giant", "ice giant", "moon", "asteroid"}
+NATURAL = {"star", "rocky planet", "gas giant", "ice giant", "moon", "asteroid"}
 wrote = kept = 0
 seen = set()
 
@@ -45,7 +45,6 @@ for s in data["systems"]:
     put(os.path.join(OUT, slug(s["name"]) + ".yaml"), "../../schema/system.schema.yaml", {
         "provenance": "seeded",
         "identity": {"key": "system." + slug(s["name"]), "name": s["name"], "index": s["index"]},
-        "star": {"class": s["class"], "mass": r(s["mass_suns"]), "luminosity": r(s["luminosity_suns"])},
         "position": {"from_home": [round(v, 3) for v in s["from_home_ly"]], "distance": round(d, 3)},
     })
     for b in s["bodies"]:
@@ -54,6 +53,8 @@ for s in data["systems"]:
         rec = {"provenance": "seeded", "identity": {"key": f"body.{slug(s['name'])}.{slug(b['name'])}", "name": b["name"], "kind": b["kind"]}}
         if "parent" in b:
             rec["identity"]["parent"] = b["parent"]
+        if b["kind"] == "star":
+            rec["star"] = {"class": s["class"], "luminosity": r(s["luminosity_suns"])}
         if "orbit" in b:
             o = b["orbit"]
             rec["orbit"] = {"semi_major_axis": r(o["semi_major_axis"] / 1000, 6), "eccentricity": r(o["eccentricity"]), "period": r(o["period"] / 86400, 6), "inclination": round(o["inclination"], 3)}
@@ -83,9 +84,9 @@ for s in data["systems"]:
         put(os.path.join(OUT, slug(s["name"]), "bodies", slug(b["name"]) + ".yaml"), "../../../../schema/body.schema.yaml", rec)
     for f in s["fields"]:
         kind = "trojan" if f["kind"].startswith("Trojan") else f["kind"].lower()
-        put(os.path.join(OUT, slug(s["name"]), "fields", slug(f["name"]) + ".yaml"), "../../../../schema/field.schema.yaml", {
+        put(os.path.join(OUT, slug(s["name"]), "fields", slug(f["name"]) + ".yaml"), "../../../../schema/population.schema.yaml", {
             "provenance": "seeded",
-            "identity": {"key": f"field.{slug(s['name'])}.{slug(f['name'])}", "name": f["name"], "kind": kind, "anchor": f["anchor"]},
+            "identity": {"key": f"population.{slug(s['name'])}.{slug(f['name'])}", "name": f["name"], "kind": kind, "anchor": f["anchor"]},
             "rocks": {"class": f["class"].lower(), "count": f["count"], "extent": r(f["extent"] / 1000)},
         })
 gone = [os.path.relpath(os.path.join(dp, fn), ROOT) for dp, _, fns in os.walk(OUT) for fn in fns if fn.endswith(".yaml") and os.path.join(dp, fn) not in seen and os.path.basename(dp) in ("systems", "bodies", "fields")]

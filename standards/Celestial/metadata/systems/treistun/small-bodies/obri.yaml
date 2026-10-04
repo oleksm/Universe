@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {key: small-body.treistun.obri, name: Obri, kind: crossing asteroid, parent: Treistun, about: 'Knocked out of the belt. At its closest it comes
-    in to 0.42 AU, near the orbit of Treistun d.'}
-orbit: {semi_major_axis: 105326000.0, eccentricity: 0.40359317, inclination: 18.27, period: 256.97}
+in_game: not made
+identity: {key: body.treistun.obri, name: Obri, kind: crossing asteroid, parent: Treistun, about: 'Knocked out of the belt.
+    At its closest it comes in to 0.42 AU, near the orbit of Treistun d.'}
+orbit: {semi_major_axis: 105326000.0, eccentricity: 0.40359317, inclination: 18.27, period: 256.93}
 physical: {radius: 0.1301, density: 3300, mass: 30410000000.0}
 rock: {class: stony}

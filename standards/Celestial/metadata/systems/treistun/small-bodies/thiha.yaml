@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: between 0.05 and 0.47 of the giant's reach, as the Sun's giants' are.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {key: small-body.treistun.thiha, name: Thiha, kind: captured moon, parent: Treistun j, about: 'Once it went round the star; Treistun j caught it.
-    It goes round the same way as the planet turns, far out.'}
-orbit: {semi_major_axis: 75667900.0, eccentricity: 0.29574306, inclination: 26.2, period: 2484.7}
+in_game: not made
+identity: {key: body.treistun.thiha, name: Thiha, kind: captured moon, parent: Treistun j, about: 'Once it went round the
+    star; Treistun j caught it. It goes round the same way as the planet turns, far out.'}
+orbit: {semi_major_axis: 75660100.0, eccentricity: 0.29574306, inclination: 26.2, period: 2484.3}
 physical: {radius: 6.574, density: 2100, mass: 2499000000000000.0}
 rock: {class: carbonaceous}

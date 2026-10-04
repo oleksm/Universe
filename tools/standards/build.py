@@ -1911,8 +1911,8 @@ report("invented", "Confidence: the records with invented or unexplained numbers
 CEL = os.path.join(TREE, "Celestial")
 celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": [], "vocabulary": []}
 if os.path.isdir(CEL):
-    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class", "asteroids", "vocabulary", "small-body", "region", "conditions")}
-    celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field", "rock-class", "small-body", "region")}
+    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "population", "rock-class", "asteroids", "vocabulary", "conditions")}
+    celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "population", "rock-class")}
 
     def cel_load(full, kind):
         rec = load(full)
@@ -1992,9 +1992,17 @@ if os.path.isdir(CEL):
             continue
         sysm = cel_load(os.path.join(sdir, fn), "system")
         sysm["bodies"] = [cel_load(os.path.join(sdir, fn[:-5], "bodies", b), "body") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "bodies")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "bodies")) else []
-        sysm["fields"] = [cel_load(os.path.join(sdir, fn[:-5], "fields", b), "field") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "fields")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "fields")) else []
+        sysm["fields"] = [cel_load(os.path.join(sdir, fn[:-5], "fields", b), "population") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "fields")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "fields")) else []
         sub = lambda d_, k_: [cel_load(os.path.join(sdir, fn[:-5], d_, b), k_) for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], d_)))] if os.path.isdir(os.path.join(sdir, fn[:-5], d_)) else []
-        sysm["small_bodies"], sysm["regions"] = sub("small-bodies", "small-body"), sub("regions", "region")
+        sysm["small_bodies"], sysm["regions"] = sub("small-bodies", "body"), sub("regions", "population")
+        # (Its star is a body record. This build still reads it as the system's own: mass and luminosity in the Sun's.)
+        sun = next((b for b in sysm["bodies"] if b["identity"]["kind"] == "star"), None)
+        if sun is None:
+            problem(os.path.join(sdir, fn), "no star among its bodies")
+        else:
+            sysm["bodies"].remove(sun)
+            sysm["star_body"] = sun
+            sysm["star"] = {"class": (sun.get("star") or {}).get("class"), "luminosity": (sun.get("star") or {}).get("luminosity"), "mass": float(f"{(sun.get('physical') or {}).get('mass', 0) / 1.989e30:.4g}")}
         names = {b["identity"]["name"] for b in sysm["bodies"]} | {sysm["identity"]["name"]}
         for sb in sysm["small_bodies"]:
             if sb["identity"].get("parent") not in names:

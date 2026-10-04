@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the others come from the far cloud, once in thousands to millions of years.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {key: small-body.liham.mezudre, name: Mezudre, kind: comet, parent: Liham, about: A comet from the far cloud. It comes in to 0.07 AU once in a
-    very long time.}
-orbit: {semi_major_axis: 1791370000000.0, eccentricity: 0.99999431, inclination: 72.92, period: 898570000.0}
+in_game: not made
+identity: {key: body.liham.mezudre, name: Mezudre, kind: comet, parent: Liham, about: A comet from the far cloud. It comes
+    in to 0.07 AU once in a very long time.}
+orbit: {semi_major_axis: 1791520000000.0, eccentricity: 0.99999431, inclination: 72.92, period: 898570000.0}
 physical: {radius: 7.243, density: 600, mass: 954900000000000.0}
 rock: {class: icy}

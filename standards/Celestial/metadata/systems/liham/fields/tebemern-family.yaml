@@ -1,5 +1,5 @@
-# yaml-language-server: $schema=../../../../schema/field.schema.yaml
+# yaml-language-server: $schema=../../../../schema/population.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {key: field.liham.tebemern-family, name: Tebemern family, kind: family, anchor: Tebemern}
+identity: {key: population.liham.tebemern-family, name: Tebemern family, kind: family, anchor: Tebemern}
 rocks: {class: m-type metallic, count: 237, extent: 31.73}

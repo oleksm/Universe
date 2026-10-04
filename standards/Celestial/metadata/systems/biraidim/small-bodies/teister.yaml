@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {key: small-body.biraidim.teister, name: Teister, kind: crossing asteroid, parent: Biraidim, about: 'Knocked out of the belt. At its closest it comes
-    in to 0.05 AU, near the orbit of Biraidim b.'}
-orbit: {semi_major_axis: 36900500.0, eccentricity: 0.79328907, inclination: 16.64, period: 77.716}
+in_game: not made
+identity: {key: body.biraidim.teister, name: Teister, kind: crossing asteroid, parent: Biraidim, about: 'Knocked out of the
+    belt. At its closest it comes in to 0.05 AU, near the orbit of Biraidim b.'}
+orbit: {semi_major_axis: 36900500.0, eccentricity: 0.79328907, inclination: 16.64, period: 77.704}
 physical: {radius: 0.1512, density: 3300, mass: 47750000000.0}
 rock: {class: stony}

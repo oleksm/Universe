@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: between the first giant and the last.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {key: small-body.treistun.irmabro, name: Irmabro, kind: centaur, parent: Treistun, about: 'An ice body among the giants, on an orbit that will last
-    a few million years. One day a giant will throw it inward as a comet, or out.'}
-orbit: {semi_major_axis: 936985000.0, eccentricity: 0.23521884, inclination: 17.81, period: 6818.3}
+in_game: not made
+identity: {key: body.treistun.irmabro, name: Irmabro, kind: centaur, parent: Treistun, about: 'An ice body among the giants,
+    on an orbit that will last a few million years. One day a giant will throw it inward as a comet, or out.'}
+orbit: {semi_major_axis: 936985000.0, eccentricity: 0.23521884, inclination: 17.81, period: 6817.3}
 physical: {radius: 78.56, density: 950, mass: 1.929e+18}
 rock: {class: icy}

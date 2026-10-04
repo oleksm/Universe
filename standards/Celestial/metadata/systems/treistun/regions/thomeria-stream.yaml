@@ -1,7 +1,9 @@
-# yaml-language-server: $schema=../../../../schema/region.schema.yaml
+# yaml-language-server: $schema=../../../../schema/population.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: a returning comet leaves one along its orbit.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {key: region.treistun.thomeria-stream, name: Thomeria stream, kind: meteoroid stream, about: 'Grains and pebbles shed by the comet Thomeria, strung along
-    its orbit. A world whose orbit it crosses passes through it once each time round.', parent: Thomeria}
+in_game: not made
+identity: {key: population.treistun.thomeria-stream, name: Thomeria stream, kind: meteoroid stream, about: 'Grains and pebbles
+    shed by the comet Thomeria, strung along its orbit. A world whose orbit it crosses passes through it once each time round.',
+  parent: Thomeria}
 extent: {inner: 1.114, outer: 19.72}

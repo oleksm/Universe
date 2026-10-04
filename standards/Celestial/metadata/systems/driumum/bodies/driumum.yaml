@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.driumum.driumum, name: Driumum, kind: star}
+star: {class: M, luminosity: 0.01062}
+physical: {mass: 5.4282e+29, radius: 239602.0, day: 839.13, tilt: 6.77}
+surface:
+  colour: [1.0, 0.55, 0.38]

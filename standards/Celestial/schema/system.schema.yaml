@@ -1,6 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: System
-description: 'standards/Celestial/metadata/systems/<name>.yaml: one star system. Its bodies and asteroid fields are in the folder of the same name.'
+description: 'standards/Celestial/metadata/systems/<name>.yaml: one star system. Its star, its bodies and its populations of small bodies are in the folder of the same name.'
 type: object
 additionalProperties: false
 required: [identity, provenance]
@@ -15,13 +15,6 @@ properties:
       name: { type: string }
       index: { type: integer, description: "Its number among the seed's stars." }
       about: { type: string }
-  star:
-    type: object
-    additionalProperties: false
-    properties:
-      class: { type: string, description: "Its spectral class: O, B, A, F, G, K or M." }
-      mass: { type: number, description: "times the Sun's" }
-      luminosity: { type: number, description: "times the Sun's" }
   position:
     type: object
     additionalProperties: false

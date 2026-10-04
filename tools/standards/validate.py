@@ -107,7 +107,7 @@ def schema_of(rel):
         if p[2] == "vocabulary":
             return S(root, "vocabulary")
         if p[2] == "systems":
-            return S(root, "system" if len(p) == 4 else {"bodies": "body", "fields": "field", "small-bodies": "small-body", "regions": "region"}.get(p[4], ""))
+            return S(root, "system" if len(p) == 4 else {"bodies": "body", "fields": "population", "small-bodies": "body", "regions": "population"}.get(p[4], ""))
     if root == "MakerHouse":
         return ORG if p[2] == "makers" else None
     if root == "LocalAdministration":
@@ -153,7 +153,7 @@ def key_of(rel, rec):
             return {"rock-classes": "rock-class.", "vocabulary": "vocabulary."}[p[2]] + low
         if len(p) == 4:
             return "system." + low
-        return {"bodies": "body.", "fields": "field.", "small-bodies": "small-body.", "regions": "region."}[p[4]] + p[3] + "." + low
+        return {"bodies": "body.", "fields": "population.", "small-bodies": "body.", "regions": "population."}[p[4]] + p[3] + "." + low
     if root == "LocalAdministration":
         if len(p) == 4:
             return "org." + low

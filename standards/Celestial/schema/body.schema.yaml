@@ -1,11 +1,12 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Celestial body
-description: 'standards/Celestial/metadata/systems/<system>/bodies/<name>.yaml: one natural body of a system (a planet, a moon, a named asteroid). What people have built there is in Local Administration. A body uses the properties that apply to it.'
+description: 'One natural body of a system: its star, a planet, a moon, an asteroid, a dwarf planet, a comet, a centaur, a crossing asteroid, a captured moon. Filed in standards/Celestial/metadata/systems/<system>/bodies/<name>.yaml where the game''s seed makes it, and in small-bodies/ where the registry seeds it and the game does not make it yet (in_game: not made). What people have built there is in Local Administration. A body uses the properties that apply to it.'
 type: object
 additionalProperties: false
 required: [identity, provenance]
 properties:
   provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
+  in_game: { $ref: "../../common.schema.yaml#/definitions/in_game" }
   identity:
     type: object
     additionalProperties: false
@@ -13,9 +14,16 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-      kind: { enum: [rocky planet, gas giant, ice giant, moon, asteroid] }
-      parent: { type: string, description: "What it orbits, by name: the star, or a planet." }
+      kind: { enum: [star, rocky planet, gas giant, ice giant, moon, asteroid, dwarf planet, comet, centaur, crossing asteroid, captured moon] }
+      parent: { type: string, description: "What it goes round, by name: the star, a planet, or (a captured moon) a giant. A star has none." }
       about: { type: string }
+  star:
+    description: For a star.
+    type: object
+    additionalProperties: false
+    properties:
+      class: { type: string, description: "Its spectral class: O, B, A, F, G, K or M." }
+      luminosity: { type: number, description: "times the Sun's" }
   orbit:
     type: object
     additionalProperties: false
@@ -33,6 +41,7 @@ properties:
     properties:
       mass: { type: number, description: kg }
       radius: { type: number, description: km }
+      density: { type: number, description: "kg/m3, where its mass is worked out from its size and what it is made of" }
       gravity: { type: number, description: "m/s2 at its surface" }
       day: { type: number, description: "hours to turn once" }
       tilt: { type: number, description: "degrees, its axis from upright on the system's plane" }
