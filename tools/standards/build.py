@@ -541,7 +541,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -1884,6 +1884,86 @@ report("review", "To review: guesses put in so a figure is there", "Each figure 
 report("invented", "Confidence: the records with invented or unexplained numbers", "Each record that has a number that was chosen, or one it does not explain. A gap is a number not explained.", ["Record", "Kind", "Invented", "Which", "Not said", "Which"], detail)
 
 
+# ---------------------------------------------------------------- the celestial registry
+# standards/Celestial: the seeded world written down. metadata/galaxy.yaml (the seed and its laws);
+# metadata/systems/<system>.yaml, and in the folder of the same name bodies/<name>.yaml and
+# fields/<name>.yaml. Each record has a status: seeded (as the seed makes it, written out by
+# tools/standards/celestial_export.py), curated (a person's; the truth) or frozen.
+CEL = os.path.join(TREE, "Celestial")
+celestial = {"galaxy": {}, "systems": [], "groups": {}}
+if os.path.isdir(CEL):
+    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field")}
+    celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field")}
+
+    def cel_load(full, kind):
+        rec = load(full)
+        known = cschema[kind]["properties"]
+        for g, props in rec.items():
+            if g not in known:
+                problem(full, f"unknown group '{g}'")
+            elif "properties" in known[g]:
+                for q in props or {}:
+                    if q not in known[g]["properties"]:
+                        problem(full, f"{g}: unknown property '{q}'")
+        if rec.get("status") not in ("seeded", "curated", "frozen"):
+            problem(full, "status: one of seeded, curated, frozen")
+        if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str((rec.get("identity") or {}).get("name", "")).lower()).strip("-"):
+            problem(full, "a celestial record's file is named after it (lower case, words joined by -)")
+        rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
+        return rec
+
+    gpath = os.path.join(CEL, "metadata", "galaxy.yaml")
+    if os.path.exists(gpath):
+        celestial["galaxy"] = load(gpath)
+        for q in celestial["galaxy"]:
+            if q not in cschema["galaxy"]["properties"]:
+                problem(gpath, f"unknown field '{q}'")
+    sdir = os.path.join(CEL, "metadata", "systems")
+    for fn in sorted(os.listdir(sdir)) if os.path.isdir(sdir) else []:
+        if not fn.endswith(".yaml"):
+            continue
+        sysm = cel_load(os.path.join(sdir, fn), "system")
+        sysm["bodies"] = [cel_load(os.path.join(sdir, fn[:-5], "bodies", b), "body") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "bodies")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "bodies")) else []
+        sysm["fields"] = [cel_load(os.path.join(sdir, fn[:-5], "fields", b), "field") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "fields")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "fields")) else []
+        names = {b["identity"]["name"] for b in sysm["bodies"]} | {sysm["identity"]["name"]}
+        for b in sysm["bodies"]:
+            if b["identity"].get("parent") not in names:
+                problem(os.path.join(TREE, b["file"]), f"identity.parent: no body '{b['identity'].get('parent')}' in {sysm['identity']['name']}")
+        for f_ in sysm["fields"]:
+            if f_["identity"].get("anchor") not in names:
+                problem(os.path.join(TREE, f_["file"]), f"identity.anchor: no body '{f_['identity'].get('anchor')}' in {sysm['identity']['name']}")
+        # (In order out from what each goes round.)
+        sysm["bodies"].sort(key=lambda b: (b.get("orbit") or {}).get("semi_major_axis", 0))
+        celestial["systems"].append(sysm)
+    home = celestial["galaxy"].get("home")
+    celestial["systems"].sort(key=lambda s: (s["identity"]["name"] != home, (s.get("position") or {}).get("distance", 0)))
+    if home and home not in {s["identity"]["name"] for s in celestial["systems"]}:
+        problem(gpath, f"home: no system '{home}' written out")
+# The celestial report: each system's records by status, and each body Local Administration has
+# against the celestial record of the same name.
+rows = []
+for sysm in celestial["systems"]:
+    recs = [sysm] + sysm["bodies"] + sysm["fields"]
+    count = lambda st: sum(1 for r_ in recs if r_.get("status") == st)
+    rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), f"{len(sysm['bodies'])} bodies, {len(sysm['fields'])} fields", f"{count('seeded')} seeded, {count('curated')} curated, {count('frozen')} frozen", ""))
+for ad in administrations:
+    sysm = next((s for s in celestial["systems"] if s["identity"]["name"] == ad.get("name")), None)
+    if sysm is None:
+        rows.append(row("gap", ad.get("name"), "", "", "Local Administration has it; no celestial record"))
+        continue
+    for x in ad["bodies"]:
+        if x.get("kind") not in ("planet", "moon"):
+            continue
+        b = next((b for b in sysm["bodies"] if b["identity"]["name"] == x["name"]), None)
+        if b is None:
+            rows.append(row("gap", link(x["name"], f"bd:{ad['slug']}:{x['slug']}"), "", "", "Local Administration has it; no celestial record"))
+        elif "gravity" in x and abs(x["gravity"] - (b.get("physical") or {}).get("gravity", 0)) > 0.02 * x["gravity"]:
+            rows.append(row("gap", link(x["name"], f"cb:{sysm['slug']}:{b['slug']}"), "", "", f"its gravity is {x['gravity']} in Local Administration and {(b.get('physical') or {}).get('gravity')} here"))
+        else:
+            x["celestial"] = f"cb:{sysm['slug']}:{b['slug']}"
+report("celestial", "Celestial: what is written out, and against Local Administration", "Each system written out: its records by status. Each planet and moon Local Administration has: is there a celestial record of the same name, and do they agree. A gap is a body with no celestial record, or one where the two differ.", ["What", "Records", "By status", "Note"], rows)
+
+
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
@@ -1894,6 +1974,7 @@ def write_html():
         "port": PORT,
         "goods_kinds": GOODS_KINDS,
         "administrations": administrations,
+        "celestial": celestial,
         # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
         "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},
         "makers": makers,

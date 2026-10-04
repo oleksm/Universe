@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Taumeibru, kind: asteroid, parent: Biraidim}
+orbit: {semi_major_axis: 64178500.0, eccentricity: 0.06032, period: 178.23, inclination: 9.811}
+physical: {mass: 17131000000000.0, radius: 1.2115, gravity: 0.001, day: 14.239, tilt: 112.74}
+surface:
+  colour: [0.72, 0.6, 0.45]
+rock: {class: s-type stony, structure: rubble pile, density: 2300}

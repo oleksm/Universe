@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Atithas, kind: asteroid, parent: Liham}
+orbit: {semi_major_axis: 56982900.0, eccentricity: 0.1275, period: 161.189, inclination: 4.23}
+physical: {mass: 254440000000000.0, radius: 2.00821, gravity: 0.004, day: 1.9768, tilt: 53.52}
+surface:
+  colour: [0.7, 0.72, 0.78]
+rock: {class: m-type metallic, structure: monolith, density: 7500}

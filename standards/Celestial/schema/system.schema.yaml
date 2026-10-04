@@ -1,0 +1,29 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: System
+description: 'standards/Celestial/metadata/systems/<name>.yaml: one star system. Its bodies and asteroid fields are in the folder of the same name.'
+type: object
+additionalProperties: false
+required: [identity, status]
+properties:
+  status: { enum: [seeded, curated, frozen], description: "seeded: written out as the seed makes it, and may be written out again. curated: changed by hand; the record is the truth and the seed no longer applies. frozen: curated and not to be changed (other work is built on it)." }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name]
+    properties:
+      name: { type: string }
+      index: { type: integer, description: "Its number among the seed's stars." }
+      about: { type: string }
+  star:
+    type: object
+    additionalProperties: false
+    properties:
+      class: { type: string, description: "Its spectral class: O, B, A, F, G, K or M." }
+      mass: { type: number, description: "times the Sun's" }
+      luminosity: { type: number, description: "times the Sun's" }
+  position:
+    type: object
+    additionalProperties: false
+    properties:
+      from_home: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "light years from the home star, [x, y, z] in the galaxy's frame" }
+      distance: { type: number, description: "light years from the home star" }

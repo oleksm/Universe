@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Driumum b, kind: rocky planet, parent: Driumum}
+orbit: {semi_major_axis: 3720950.0, eccentricity: 0.06224, period: 2.74225, inclination: 0.272}
+physical: {mass: 2.0905e+25, radius: 9048.24, gravity: 17.042, day: 33.81, tilt: 22.99, albedo: 0.15}
+surface:
+  terrain: dry
+  relief: 6334
+  mean_temperature: 557.3
+  colour: [0.8, 0.5, 0.3]

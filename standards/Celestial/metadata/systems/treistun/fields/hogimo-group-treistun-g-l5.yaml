@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../../schema/field.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Hogimo group (Treistun g L5), kind: trojan, anchor: Hogimo}
+rocks: {class: icy, count: 187, extent: 60.0}

@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../../schema/field.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Nikreira family, kind: family, anchor: Nikreira}
+rocks: {class: s-type stony, count: 192, extent: 41.98}

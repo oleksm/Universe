@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Yavoka, kind: asteroid, parent: Biraidim}
+orbit: {semi_major_axis: 74386900.0, eccentricity: 0.03456, period: 222.403, inclination: 1.683}
+physical: {mass: 9384600000000.0, radius: 1.19893, gravity: 0.0, day: 5.5739, tilt: 22.93}
+surface:
+  colour: [0.42, 0.4, 0.38]
+rock: {class: c-type carbonaceous, structure: rubble pile, density: 1300}

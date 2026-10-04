@@ -1,0 +1,60 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Celestial body
+description: 'standards/Celestial/metadata/systems/<system>/bodies/<name>.yaml: one natural body of a system (a planet, a moon, a named asteroid). What people have built there is in Local Administration. A body uses the properties that apply to it.'
+type: object
+additionalProperties: false
+required: [identity, status]
+properties:
+  status: { enum: [seeded, curated, frozen], description: "seeded: written out as the seed makes it, and may be written out again. curated: changed by hand; the record is the truth and the seed no longer applies. frozen: curated and not to be changed (its landscape is made and other work is built on it)." }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, kind]
+    properties:
+      name: { type: string }
+      kind: { enum: [rocky planet, gas giant, ice giant, moon, asteroid] }
+      parent: { type: string, description: "What it orbits, by name: the star, or a planet." }
+      about: { type: string }
+  orbit:
+    type: object
+    additionalProperties: false
+    properties:
+      semi_major_axis: { type: number, description: "km, half the long axis of its orbit" }
+      eccentricity: { type: number, description: "how far from a circle (0: a circle)" }
+      period: { type: number, description: "days (of 86,400 s) to go round once" }
+      inclination: { type: number, description: "degrees from the system's plane" }
+  physical:
+    type: object
+    additionalProperties: false
+    properties:
+      mass: { type: number, description: kg }
+      radius: { type: number, description: km }
+      gravity: { type: number, description: "m/s2 at its surface" }
+      day: { type: number, description: "hours to turn once" }
+      tilt: { type: number, description: "degrees, its axis from upright on the system's plane" }
+      albedo: { type: number, description: "the share of sunlight it reflects" }
+      rings: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "km, the inner and outer radius of its rings" }
+  surface:
+    type: object
+    additionalProperties: false
+    properties:
+      terrain: { enum: [terran, dry, cratered], description: "terran: seas, continents, mountains. dry: rock, hills, some craters. cratered: airless and heavily cratered." }
+      relief: { type: number, description: "m, how far its ground rises and falls" }
+      mean_temperature: { type: number, description: "K, averaged over its surface" }
+      colour: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "red, green, blue, each 0 to 1" }
+      landscape: { type: string, description: "For a frozen body: the file its made landscape is kept in." }
+  atmosphere:
+    type: object
+    additionalProperties: false
+    properties:
+      surface_density: { type: number, description: "kg/m3 at its surface (Earth: 1.225)" }
+      scale_height: { type: number, description: "km, the height over which the air thins by 2.7 times" }
+      top: { type: number, description: "km, where it is taken to end" }
+  rock:
+    description: For an asteroid.
+    type: object
+    additionalProperties: false
+    properties:
+      class: { type: string, description: "What it is made of, by its spectrum." }
+      structure: { type: string, description: "How it holds together: loose rubble, or one solid piece." }
+      density: { type: number, description: kg/m3 }

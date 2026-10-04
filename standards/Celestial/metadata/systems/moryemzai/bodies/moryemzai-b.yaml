@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Moryemzai b, kind: rocky planet, parent: Moryemzai}
+orbit: {semi_major_axis: 4941490.0, eccentricity: 0.06942, period: 3.83195, inclination: 1.713}
+physical: {mass: 5.7498e+24, radius: 6303.73, gravity: 9.658, day: 12.789, tilt: 21.26, albedo: 0.15}
+surface:
+  terrain: dry
+  relief: 4413
+  mean_temperature: 572.0
+  colour: [0.8, 0.5, 0.3]

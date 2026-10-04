@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Treistun g III, kind: moon, parent: Treistun g}
+orbit: {semi_major_axis: 1061870.0, eccentricity: 0.01894, period: 15.5959, inclination: 0.521}
+physical: {mass: 7.3469e+21, radius: 836.178, gravity: 0.701, day: 374.3, tilt: 0.0, albedo: 0.12}
+surface:
+  terrain: cratered
+  relief: 1500
+  mean_temperature: 149.7
+  colour: [0.75, 0.7, 0.6]

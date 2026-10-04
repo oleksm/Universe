@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its status to curated to take it over: it is then never written again.
+status: seeded
+identity: {name: Truhora, kind: asteroid, parent: Treistun}
+orbit: {semi_major_axis: 2157540000.0, eccentricity: 0.2317, period: 23820.2, inclination: 9.628}
+physical: {mass: 81819000000000.0, radius: 3.03311, gravity: 0.001, day: 17.969, tilt: 149.77}
+surface:
+  colour: [0.75, 0.88, 1.0]
+rock: {class: icy, structure: rubble pile, density: 700}
