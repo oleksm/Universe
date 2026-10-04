@@ -1404,6 +1404,11 @@ pub fn apply(app: &mut App, name: &str) {
         }
         other => log::warn!("unknown scenario {other:?}; try one of: {SCENARIOS}"),
     }
+    // (UNIVERSE_CHASE: the chase camera, behind the ship.)
+    if std::env::var("UNIVERSE_SCENARIO").as_deref() == Ok(name) && std::env::var_os("UNIVERSE_CHASE").is_some() {
+        app.mode = Mode::Pilot;
+        app.chase_cam = true;
+    }
     // (UNIVERSE_TURN=yaw,pitch: on foot, turn the head at the end, to look round.)
     if std::env::var("UNIVERSE_SCENARIO").as_deref() == Ok(name)
         && let Some((yaw, pitch)) = std::env::var("UNIVERSE_TURN").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse().ok()?, b.trim().parse().ok()?)))) {
