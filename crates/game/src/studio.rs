@@ -90,12 +90,18 @@ pub struct Studio {
 
 /// The studio's regions on screen: the plan, the side view.
 fn regions(size: Vec2) -> ((Vec2, Vec2), (Vec2, Vec2)) {
-    // (Under the title, the toolbar and the line saying what's on.)
+    // (Under the title, the actions and the line saying what's on; right of the tools.)
     let top = 86.0;
+    let left = 12.0 + TOOLS_WIDTH + 10.0;
     let bottom = size.y - 12.0;
     let split = top + (bottom - top) * 0.62;
-    ((Vec2::new(12.0, top), Vec2::new(size.x - 12.0, split - 6.0)), (Vec2::new(12.0, split), Vec2::new(size.x - 12.0, bottom)))
+    ((Vec2::new(left, top), Vec2::new(size.x - 12.0, split - 6.0)), (Vec2::new(left, split), Vec2::new(size.x - 12.0, bottom)))
 }
+
+/// The tools' column, at the left (px).
+const TOOLS_WIDTH: f32 = 220.0;
+/// How many of `TOOLBAR` are tools (its first): in the column; the rest along the top.
+const TOOLS: usize = 6;
 
 // Blueprint colours.
 const PAPER: Color = Color([0.04, 0.14, 0.28, 1.0]);
@@ -211,11 +217,44 @@ const TOOLBAR: [(&str, &str, Action); 17] = [
     ("]", "HEIGHT +", Action::Headroom(0.1)),
 ];
 
-/// Where toolbar button `k` is on screen (two rows of nine).
+/// Where toolbar button `k` is on screen: a tool in the column at the left,
+/// an action along the top (rows of six).
 fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
-    let w = ((size.x - 24.0 - 8.0 * 4.0) / 9.0).floor();
-    let cell = Vec2::new(w, 16.0);
-    (Vec2::new(12.0 + (k % 9) as f32 * (w + 4.0), 30.0 + (k / 9) as f32 * 20.0), cell)
+    if k < TOOLS {
+        return (Vec2::new(12.0, 86.0 + k as f32 * 22.0), Vec2::new(TOOLS_WIDTH, 18.0));
+    }
+    let a = k - TOOLS;
+    let w = ((size.x - 24.0 - 5.0 * 4.0) / 6.0).floor();
+    (Vec2::new(12.0 + (a % 6) as f32 * (w + 4.0), 30.0 + (a / 6) as f32 * 20.0), Vec2::new(w, 16.0))
+}
+
+/// What the tool does and how it's used (the tools' column, under them).
+fn tool_help(tool: Tool) -> &'static str {
+    match tool {
+        Tool::Select => "PICK SOMETHING TO CHANGE OR REMOVE. CLICK A WALL, A FLOOR, A LADDER OR A STAIR. A PICKED WALL SHOWS ITS POINTS (SQUARES: DRAG TO MOVE) AND THE MIDDLE OF EACH SEGMENT (RINGS: DRAG SIDEWAYS TO BEND IT INTO AN ARC). A PICKED FLOOR SHOWS ITS CORNERS. DEL REMOVES WHAT'S PICKED.",
+        Tool::Plane => "A FLOOR ON THIS DECK. CLICK ITS CORNERS ONE BY ONE; CLICK THE FIRST AGAIN, OR ENTER, TO CLOSE IT. IT'S TRIMMED TO THE HULL: DRAW IT LARGE AND ONLY WHAT'S INSIDE IS FLOOR. BACKSPACE TAKES THE LAST CORNER BACK.",
+        Tool::Wall => "A WALL ON THIS DECK, AS TALL AS THE DECK. CLICK ITS POINTS ONE BY ONE; ENTER ENDS IT. IT STOPS WHERE IT MEETS THE HULL (BEYOND, FAINT RED). TO CURVE A SEGMENT, PICK THE WALL WITH SELECT AND DRAG THE RING AT ITS MIDDLE. BACKSPACE TAKES THE LAST POINT BACK.",
+        Tool::Door => "A DOORWAY IN A WALL, 0.9 M WIDE AND 2.1 M TALL. CLICK ON A WALL WHERE IT GOES; CLICK AN EXISTING DOOR TO REMOVE IT.",
+        Tool::Ladder => "A LADDER UP TO THE DECK ABOVE, THROUGH A 0.9 M HATCH CUT IN ITS FLOOR. CLICK WHERE IT STANDS. ABOARD: WALK INTO IT, W CLIMBS (LOOK DOWN TO CLIMB DOWN). NEEDS A DECK ABOVE.",
+        Tool::Stair => "A STAIR UP TO THE DECK ABOVE, 1 M WIDE, ITS OPENING CUT IN THAT DECK'S FLOOR. CLICK ITS FOOT, THEN ITS HEAD: THE LONGER THE RUN, THE GENTLER. ABOARD: WALK UP IT. NEEDS A DECK ABOVE.",
+    }
+}
+
+/// Where the tool is at now, if it's partway through something.
+fn tool_state(studio: &Studio) -> Option<String> {
+    let n = studio.drawing.len();
+    match studio.tool {
+        Tool::Plane if n > 0 => Some(format!("{n} CORNER{} PLACED: {}", if n == 1 { "" } else { "S" }, if n >= 3 { "CLICK THE FIRST AGAIN OR ENTER TO CLOSE" } else { "CLICK THE NEXT" })),
+        Tool::Wall if n > 0 => Some(format!("{n} POINT{} PLACED: {}", if n == 1 { "" } else { "S" }, if n >= 2 { "CLICK ON, OR ENTER TO END" } else { "CLICK THE NEXT" })),
+        Tool::Stair if n > 0 => Some("FOOT PLACED: CLICK ITS HEAD".into()),
+        Tool::Select => studio.pick.map(|p| match p {
+            Pick::Wall(_) => "A WALL PICKED: DRAG A SQUARE OR A RING, OR DEL".into(),
+            Pick::Plane(_) => "A FLOOR PICKED: DRAG A CORNER, OR DEL".into(),
+            Pick::Ladder(_) => "A LADDER PICKED: DEL REMOVES IT".into(),
+            Pick::Stair(_) => "A STAIR PICKED: DEL REMOVES IT".into(),
+        }),
+        _ => None,
+    }
 }
 
 /// The toolbar button under `q`, if any.
@@ -561,6 +600,20 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             let hover = button_at(size, studio.cursor) == Some(*action);
             let lamp = if *action == Action::Tool(studio.tool) || hover { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, key, name, lamp);
+        }
+        // Under the tools: what the one in use does, and where it's at.
+        let mut y = button(size, TOOLS - 1).0.y + 34.0;
+        let width = (TOOLS_WIDTH / 8.0) as usize;
+        if let Some(state) = tool_state(studio) {
+            for line in crate::fmt::wrap(&state, width) {
+                frame.text(Vec2::new(12.0, y), &line, PICKED);
+                y += 14.0;
+            }
+            y += 8.0;
+        }
+        for line in crate::fmt::wrap(tool_help(studio.tool), width) {
+            frame.text(Vec2::new(12.0, y), &line, LABEL.scale(0.85));
+            y += 14.0;
         }
     }
     for r in [plan_r, side_r] {
