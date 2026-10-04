@@ -7,7 +7,7 @@ identity:
   name: Scandium
   symbol: Sc
   atomic_number: 21
-  atomic_mass: 44.95591
+  atomic_mass: 7.46510448295536e-26
   group: 3
   period: 4
   block: d
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d1 4s2'
   valence_electrons: 3
-  atomic_radius: 184.0
-  covalent_radius: 170.0
-  van_der_waals_radius: 211.0
-  ionic_radius: 74.5
+  atomic_radius: 1.84e-10
+  covalent_radius: 1.7e-10
+  van_der_waals_radius: 2.11e-10
+  ionic_radius: 7.45e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 45
     abundance: 1.0
 chemical:
   electronegativity: 1.36
-  first_ionisation_energy: 633.1
-  electron_affinity: 18
+  first_ionisation_energy: 633100.0
+  electron_affinity: 18000
   oxidation_states:
   - 3
   reactivity:
@@ -42,8 +42,8 @@ physical:
   boiling_point: 3109.0
   density: 2990.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 16.0
-  heat_of_vaporisation: 318.0
+  heat_of_fusion: 16000.0
+  heat_of_vaporisation: 318000.0
   vapour_pressure: 5.6e-52
 thermal:
   specific_heat_capacity: 567.0
@@ -54,14 +54,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
   superconducting_temperature: 0.05
 mechanical:
-  youngs_modulus: 74.0
+  youngs_modulus: 74000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 673.788
-  - 673.945
-  - 681.711
-  - 681.949
-  - 683.502
-  neutron_cross_section: 27.2
+  - 6.73788e-07
+  - 6.73945e-07
+  - 6.81711e-07
+  - 6.81949e-07
+  - 6.83502e-07
+  neutron_cross_section: 2.72e-27

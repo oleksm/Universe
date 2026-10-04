@@ -5,4 +5,4 @@ provenance: seeded
 in_game: not made
 identity: {key: population.biraidim.far-cloud, name: Far cloud, kind: far cloud, about: A vast thin shell of ice bodies at
     the edge of the star's hold. Past it is the next star's.}
-extent: {inner: 1384.0, outer: 138400.0}
+extent: {inner: 207043453048800.0, outer: 2.070434530488e+16}

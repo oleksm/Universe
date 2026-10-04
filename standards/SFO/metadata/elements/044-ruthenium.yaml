@@ -7,7 +7,7 @@ identity:
   name: Ruthenium
   symbol: Ru
   atomic_number: 44
-  atomic_mass: 101.1
+  atomic_mass: 1.6788049963326e-25
   group: 8
   period: 5
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d7 5s1'
   valence_electrons: 8
-  atomic_radius: 178.0
-  covalent_radius: 146.0
-  van_der_waals_radius: 207.0
-  ionic_radius: 68.0
+  atomic_radius: 1.78e-10
+  covalent_radius: 1.46e-10
+  van_der_waals_radius: 2.07e-10
+  ionic_radius: 6.8e-11
   stable_isotopes: 7
   isotope_abundances:
   - mass_number: 96
@@ -37,8 +37,8 @@ atomic_structure:
     abundance: 0.1862
 chemical:
   electronegativity: 2.2
-  first_ionisation_energy: 710.2
-  electron_affinity: 100.96
+  first_ionisation_energy: 710200.0
+  electron_affinity: 100960.0
   oxidation_states:
   - 3
   reactivity:
@@ -54,8 +54,8 @@ physical:
   boiling_point: 4423.0
   density: 12100.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 25.7
-  heat_of_vaporisation: 580.0
+  heat_of_fusion: 25700.0
+  heat_of_vaporisation: 580000.0
   vapour_pressure: 1.5e-97
 thermal:
   specific_heat_capacity: 238.0
@@ -67,14 +67,14 @@ electrical_magnetic:
   superconducting_temperature: 0.49
 mechanical:
   hardness: 6.5
-  youngs_modulus: 447.0
+  youngs_modulus: 447000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white metallic
   emission_lines:
-  - 408.06
-  - 419.99
-  - 421.206
-  - 429.771
-  - 455.451
-  neutron_cross_section: 2.6
+  - 4.0806e-07
+  - 4.1999e-07
+  - 4.21206e-07
+  - 4.29771e-07
+  - 4.55451e-07
+  neutron_cross_section: 2.6e-28

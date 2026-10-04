@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.iunum, name: Iunum, kind: captured moon, parent: body.treistun.treistun-g, about: 'Once it went round the
-    star; Treistun g caught it. It goes round the same way as the planet turns, far out.'}
-orbit: {semi_major_axis: 4409940.0, eccentricity: 0.18855294, inclination: 49.85, period: 131.99}
-physical: {radius: 5.356}
+identity: {key: body.treistun.iunum, name: Iunum, kind: captured moon, parent: body.treistun.treistun-g, about: 'Once it went
+    round the star; Treistun g caught it. It goes round the same way as the planet turns, far out.'}
+orbit: {semi_major_axis: 4409940000.0, eccentricity: 0.18855294, inclination: 49.85, period: 11403936.0}
+physical: {radius: 5356.0}
 rock: {class: rock-class.primitive}

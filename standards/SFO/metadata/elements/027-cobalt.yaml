@@ -7,7 +7,7 @@ identity:
   name: Cobalt
   symbol: Co
   atomic_number: 27
-  atomic_mass: 58.93319
+  atomic_mass: 9.78608643143605e-26
   group: 9
   period: 4
   block: d
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d7 4s2'
   valence_electrons: 9
-  atomic_radius: 152.0
-  covalent_radius: 126.0
-  van_der_waals_radius: 192.0
-  ionic_radius: 54.5
+  atomic_radius: 1.52e-10
+  covalent_radius: 1.26e-10
+  van_der_waals_radius: 1.92e-10
+  ionic_radius: 5.45e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 59
     abundance: 1.0
 chemical:
   electronegativity: 1.88
-  first_ionisation_energy: 760.4
-  electron_affinity: 63.898
+  first_ionisation_energy: 760400.0
+  electron_affinity: 63898.0
   oxidation_states:
   - 3
   - 2
@@ -43,8 +43,8 @@ physical:
   boiling_point: 3200.0
   density: 8860.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 16.2
-  heat_of_vaporisation: 375.0
+  heat_of_fusion: 16200.0
+  heat_of_vaporisation: 375000.0
   vapour_pressure: 2.0e-58
 thermal:
   specific_heat_capacity: 421.0
@@ -55,14 +55,14 @@ electrical_magnetic:
   magnetic_ordering: ferromagnetic
 mechanical:
   hardness: 5.0
-  youngs_modulus: 209.0
+  youngs_modulus: 209000000000.0
   ductility: ductile
 optical_nuclear:
   colour: hard lustrous gray metal
   emission_lines:
-  - 384.547
-  - 387.312
-  - 389.408
-  - 399.531
-  - 412.132
-  neutron_cross_section: 37.2
+  - 3.84547e-07
+  - 3.87312e-07
+  - 3.89408e-07
+  - 3.99531e-07
+  - 4.12132e-07
+  neutron_cross_section: 3.72e-27

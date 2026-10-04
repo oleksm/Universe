@@ -8,11 +8,11 @@ made_from:
   form: plate
   temper: "T6"
 size:
-  thickness: 5
+  thickness: 0.005
 making:
   process: process.rolling
 physical:
-  shock_limit: 80
+  shock_limit: 784.532
 basis:
   - { of: [size], tier: derived, note: "The gauge the pressurised parts need: see the structure report. Other parts use it by choice." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

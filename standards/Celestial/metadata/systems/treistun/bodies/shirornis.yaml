@@ -2,8 +2,8 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.treistun.shirornis, name: Shirornis, kind: asteroid, parent: body.treistun.treistun}
-orbit: {semi_major_axis: 1575280000.0, eccentricity: 0.05993, period: 14860.9, inclination: 0.36}
-physical: {mass: 9534700000000.0, radius: 1.20529, gravity: 0.0, day: 4.6142, tilt: 129.14}
+orbit: {semi_major_axis: 1575280000000.0, eccentricity: 0.05993, period: 1283981760.0, inclination: 0.36}
+physical: {mass: 9534700000000.0, radius: 1205.29, gravity: 0.0, day: 16611.12, tilt: 129.14}
 surface:
   colour: [0.42, 0.4, 0.38]
 rock: {class: rock-class.carbonaceous, structure: rubble pile, density: 1300}

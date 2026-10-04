@@ -7,7 +7,7 @@ identity:
   name: Antimony
   symbol: Sb
   atomic_number: 51
-  atomic_mass: 121.76
+  atomic_mass: 2.02187236749216e-25
   group: 15
   period: 5
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p3'
   valence_electrons: 5
-  atomic_radius: 133.0
-  covalent_radius: 139.0
-  van_der_waals_radius: 206.0
-  ionic_radius: 60.0
+  atomic_radius: 1.33e-10
+  covalent_radius: 1.39e-10
+  van_der_waals_radius: 2.06e-10
+  ionic_radius: 6.0e-11
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 121
@@ -27,8 +27,8 @@ atomic_structure:
     abundance: 0.4279
 chemical:
   electronegativity: 2.05
-  first_ionisation_energy: 834
-  electron_affinity: 101.059
+  first_ionisation_energy: 834000
+  electron_affinity: 101059.0
   oxidation_states:
   - 5
   - 3
@@ -49,8 +49,8 @@ physical:
   - white antimony
   - yellow antimony
   - black antimony
-  heat_of_fusion: 19.7
-  heat_of_vaporisation: 67.0
+  heat_of_fusion: 19700.0
+  heat_of_vaporisation: 67000.0
   vapour_pressure: 2.2e-22
 thermal:
   specific_heat_capacity: 207.0
@@ -61,14 +61,14 @@ electrical_magnetic:
   magnetic_ordering: diamagnetic
 mechanical:
   hardness: 3.0
-  youngs_modulus: 55.0
+  youngs_modulus: 55000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery lustrous gray
   emission_lines:
-  - 403.354
-  - 555.601
-  - 560.207
-  - 563.194
-  - 573.034
-  neutron_cross_section: 5.4
+  - 4.03354e-07
+  - 5.55601e-07
+  - 5.60207e-07
+  - 5.63194e-07
+  - 5.73034e-07
+  neutron_cross_section: 5.4e-28

@@ -2,4 +2,4 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: population.liham.zoadelum-family, name: Zoadelum family, kind: family, anchor: body.liham.zoadelum}
-rocks: {class: rock-class.carbonaceous, count: 255, extent: 13.45}
+rocks: {class: rock-class.carbonaceous, count: 255, extent: 13450.0}

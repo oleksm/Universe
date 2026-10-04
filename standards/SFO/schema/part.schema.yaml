@@ -26,24 +26,24 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      mass: { type: number, description: "kg, the part as made" }
-      length: { type: number, description: m }
-      width: { type: number, description: m }
-      height: { type: number, description: m }
-      envelope: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "m, [length, width, height] of the box it ships in, where that differs from its own size" }
-      operating_min_temperature: { type: number, description: "K, the coldest it works at" }
-      operating_max_temperature: { type: number, description: "K, the hottest it works at" }
-      storage_min_temperature: { type: number, description: "K, the coldest it may be kept or carried at" }
-      storage_max_temperature: { type: number, description: "K, the hottest it may be kept or carried at" }
-      impact_resistance: { type: number, description: "J, the blow it takes without damage" }
-      shock_limit: { type: number, description: "g, the hardest jolt it takes while it is carried" }
+      mass: { type: number, x-unit: "kg", description: "kg, the part as made" }
+      length: { type: number, x-unit: "m", description: m }
+      width: { type: number, x-unit: "m", description: m }
+      height: { type: number, x-unit: "m", description: m }
+      envelope: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [length, width, height] of the box it ships in, where that differs from its own size" }
+      operating_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it works at" }
+      operating_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it works at" }
+      storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
+      storage_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it may be kept or carried at" }
+      impact_resistance: { type: number, x-unit: "J", description: "J, the blow it takes without damage" }
+      shock_limit: { type: number, x-unit: "m/s2", description: "m/s2, the hardest jolt it takes while it is carried" }
 
   made_from:
     description: "What it is cut from. (A part made of other parts has none: they are in its folder.)"
     type: object
     additionalProperties: false
     properties:
-      item: { type: string, x-ref: [stock], description: "The item of mill stock, by its code." }
+      item: { type: string, x-ref: [stock], description: "The item of mill stock, by its key." }
       quantity: { type: number, description: "How much of it one part takes, in the unit that stock is counted in (m2 of sheet, plate and film; metres of bar, tube and wire)." }
       blank: { type: string, description: "The piece cut from the stock before it is shaped: 1.2 x 0.8 m, 400 mm long." }
       grain: { type: string, description: "The direction the stock's grain or fibre runs in the part." }
@@ -53,21 +53,21 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      thickness: { type: number, description: "mm, its wall or gauge" }
-      surface_area: { type: number, description: m2 }
-      volume: { type: number, description: "m3 of material" }
-      centre_of_mass: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "m, [x, y, z] in the part's own frame" }
-      moment_of_inertia: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "kg m2, about its own x, y and z axes" }
+      thickness: { type: number, x-unit: "m", description: "m, its wall or gauge" }
+      surface_area: { type: number, x-unit: "m2", description: m2 }
+      volume: { type: number, x-unit: "m3", description: "m3 of material" }
+      centre_of_mass: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [x, y, z] in the part's own frame" }
+      moment_of_inertia: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "kg m2", description: "kg m2, about its own x, y and z axes" }
       handed: { enum: [left, right, neither] }
 
   making:
     type: object
     additionalProperties: false
     properties:
-      processes: { type: array, items: { type: string, x-ref: [process] }, description: "The processes that make it, in order, by file name." }
+      processes: { type: array, items: { type: string, x-ref: [process] }, description: "The processes that make it, in order, by its key." }
       facility: { type: string, description: The kind of facility that makes it. }
-      time: { type: number, description: "hours to make one" }
-      tolerance: { type: number, description: "mm, on its dimensions" }
+      time: { type: number, x-unit: "s", description: "s to make one" }
+      tolerance: { type: number, x-unit: "m", description: "m, on its dimensions" }
       tooling: { type: string, description: "The jig, die or mould it needs." }
       batch_size: { type: integer, minimum: 1, description: How many are made at a time. }
       yield: { type: number, minimum: 0, maximum: 1, description: "the share of those made that pass inspection" }
@@ -100,9 +100,9 @@ properties:
     additionalProperties: false
     properties:
       load_case: { enum: [pressure, landing], description: "The load its gauge is checked against: holding the cabin's air, or taking the landing." }
-      design_load: { type: number, description: "kN, the load it is built to carry" }
+      design_load: { type: number, x-unit: "N", description: "N, the load it is built to carry" }
       safety_factor: { type: number, description: "how many times its design load it takes before it breaks" }
-      pressure: { type: number, description: "kPa it holds" }
+      pressure: { type: number, x-unit: "Pa", description: "Pa it holds" }
       fatigue_life: { type: number, description: "cycles of its design load" }
       failure: { enum: [critical, degraded, cosmetic], description: "What its failing means for the ship." }
 
@@ -110,8 +110,8 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      service_life: { type: number, description: "years in use before it is replaced" }
-      inspection_interval: { type: number, description: "hours of flight between inspections" }
+      service_life: { type: number, x-unit: "s", description: "s in use before it is replaced" }
+      inspection_interval: { type: number, x-unit: "s", description: "s of flight between inspections" }
       field_replaceable: { type: boolean, description: Can be changed without a yard. }
       repairable: { type: boolean, description: Can be mended, not only replaced. }
       recoverable: { type: number, minimum: 0, maximum: 1, description: "the share of its mass got back as material when it is scrapped" }

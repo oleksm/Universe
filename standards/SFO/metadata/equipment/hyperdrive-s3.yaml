@@ -9,8 +9,8 @@ physical:
   mass: 9000
   volume: 22
 performance:
-  power_draw: 3000
+  power_draw: 3000000
   efficiency: 0.6
-  top_speed: 3000
+  top_speed: 899377374000
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

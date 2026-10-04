@@ -2,4 +2,4 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: population.liham.badalia-family, name: Badalia family, kind: family, anchor: body.liham.badalia}
-rocks: {class: rock-class.metallic, count: 197, extent: 21.38}
+rocks: {class: rock-class.metallic, count: 197, extent: 21380.0}

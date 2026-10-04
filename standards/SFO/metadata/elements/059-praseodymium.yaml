@@ -7,25 +7,25 @@ identity:
   name: Praseodymium
   symbol: Pr
   atomic_number: 59
-  atomic_mass: 140.90766
+  atomic_mass: 2.3398267421319e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f3 6s2'
   valence_electrons: 5
-  atomic_radius: 247.0
-  covalent_radius: 203.0
-  van_der_waals_radius: 239.0
-  ionic_radius: 99.0
+  atomic_radius: 2.47e-10
+  covalent_radius: 2.03e-10
+  van_der_waals_radius: 2.39e-10
+  ionic_radius: 9.9e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 141
     abundance: 1.0
 chemical:
   electronegativity: 1.13
-  first_ionisation_energy: 527
-  electron_affinity: 93
+  first_ionisation_energy: 527000
+  electron_affinity: 93000
   oxidation_states:
   - 3
   reactivity:
@@ -41,8 +41,8 @@ physical:
   boiling_point: 3793.0
   density: 6770.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 6.9
-  heat_of_vaporisation: 330.0
+  heat_of_fusion: 6900.0
+  heat_of_vaporisation: 330000.0
   vapour_pressure: 5.6e-49
 thermal:
   specific_heat_capacity: 193.0
@@ -53,14 +53,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 1.41
-  youngs_modulus: 37.0
+  youngs_modulus: 37000000000.0
   ductility: ductile
 optical_nuclear:
   colour: grayish white
   emission_lines:
-  - 469.577
-  - 493.974
-  - 495.137
-  - 504.552
-  - 513.344
-  neutron_cross_section: 11.4
+  - 4.69577e-07
+  - 4.93974e-07
+  - 4.95137e-07
+  - 5.04552e-07
+  - 5.13344e-07
+  neutron_cross_section: 1.14e-27

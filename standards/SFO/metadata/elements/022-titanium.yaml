@@ -7,7 +7,7 @@ identity:
   name: Titanium
   symbol: Ti
   atomic_number: 22
-  atomic_mass: 47.867
+  atomic_mass: 7.94850235009422e-26
   group: 4
   period: 4
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d2 4s2'
   valence_electrons: 4
-  atomic_radius: 176.0
-  covalent_radius: 160.0
-  van_der_waals_radius: 187.0
-  ionic_radius: 60.5
+  atomic_radius: 1.76e-10
+  covalent_radius: 1.6e-10
+  van_der_waals_radius: 1.87e-10
+  ionic_radius: 6.05e-11
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 46
@@ -33,8 +33,8 @@ atomic_structure:
     abundance: 0.0518
 chemical:
   electronegativity: 1.54
-  first_ionisation_energy: 658.8
-  electron_affinity: 7.289
+  first_ionisation_energy: 658800.0
+  electron_affinity: 7289.0
   oxidation_states:
   - 4
   - 3
@@ -52,8 +52,8 @@ physical:
   boiling_point: 3560.0
   density: 4500.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 18.7
-  heat_of_vaporisation: 425.0
+  heat_of_fusion: 18700.0
+  heat_of_vaporisation: 425000.0
   vapour_pressure: 1.3e-65
 thermal:
   specific_heat_capacity: 520.0
@@ -65,15 +65,15 @@ electrical_magnetic:
   superconducting_temperature: 0.4
 mechanical:
   hardness: 6.0
-  youngs_modulus: 116.0
-  tensile_strength: 308
+  youngs_modulus: 116000000000.0
+  tensile_strength: 308000000
   ductility: ductile
 optical_nuclear:
   colour: silvery grey-white metallic
   emission_lines:
-  - 503.995
-  - 506.465
-  - 517.374
-  - 519.297
-  - 521.038
-  neutron_cross_section: 6.1
+  - 5.03995e-07
+  - 5.06465e-07
+  - 5.17374e-07
+  - 5.19297e-07
+  - 5.21038e-07
+  neutron_cross_section: 6.1e-28

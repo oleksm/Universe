@@ -27,9 +27,9 @@ identity:
 mass:
   density: 7916.0
 mechanical:
-  youngs_modulus: 191.5
+  youngs_modulus: 191500000000.0
   poissons_ratio: 0.27
-  yield_strength: 207.0
+  yield_strength: 207000000.0
   elongation_at_break: 0.7
 thermal:
   melting_point: 1672.15

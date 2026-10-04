@@ -7,9 +7,9 @@ required: [key, seed, home]
 properties:
   key: { $ref: "../../common.schema.yaml#/definitions/key" }
   seed: { type: integer, description: The number the whole world is made from. }
-  home: { type: string, x-ref: [system], description: The home system, by name. }
-  region: { type: number, description: "light years, the side of the charted region (a cube round home)" }
-  star_density: { type: number, description: "stars for each cubic light year" }
-  sector: { type: number, description: "light years, the side of the cubes the stars are made in" }
+  home: { type: string, x-ref: [system], description: The home system, by its key. }
+  region: { type: number, x-unit: "m", description: "m, the side of the charted region (a cube round home)" }
+  star_density: { type: number, x-unit: "1/m3", description: "stars for each cubic metre" }
+  sector: { type: number, x-unit: "m", description: "m, the side of the cubes the stars are made in" }
   class_mix: { type: object, description: "The share of stars of each class, by number.", additionalProperties: { type: number } }
   note: { type: string }

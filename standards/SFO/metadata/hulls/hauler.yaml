@@ -12,9 +12,9 @@ identity:
 size:
   volume: 54301
 mass:
-  frame: 118
-  fuel: 80
-  hold: 150
+  frame: 118000
+  fuel: 80000
+  hold: 150000
 fit:
   - { slot: power, item: equipment.power.fusion.s3 }
   - { slot: drive, item: equipment.drive.torch.s3 }
@@ -32,8 +32,8 @@ fit:
   - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
   - { slot: avionics, item: equipment.nav.full.s1 }
 design:
-  loaded_mass: 406.04
-  main_thrust: 8
-  lift_thrust: 6.4
+  loaded_mass: 406040.0
+  main_thrust: 8000000
+  lift_thrust: 6400000.0
 basis:
   - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

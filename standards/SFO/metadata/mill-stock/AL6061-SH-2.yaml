@@ -8,11 +8,11 @@ made_from:
   form: sheet
   temper: "T6"
 size:
-  thickness: 2
+  thickness: 0.002
 making:
   process: process.rolling
 physical:
-  shock_limit: 40
+  shock_limit: 392.266
 basis:
   - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

@@ -8,12 +8,12 @@ made_from:
   form: tube
   temper: "quenched and tempered"
 size:
-  diameter: 200
-  wall: 15
+  diameter: 0.2
+  wall: 0.015
 making:
   process: process.tube-making-4340
 physical:
-  shock_limit: 150
+  shock_limit: 1470.9975
 basis:
   - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

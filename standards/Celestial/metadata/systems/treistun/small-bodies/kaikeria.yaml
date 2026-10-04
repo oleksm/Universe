@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.kaikeria, name: Kaikeria, kind: asteroid, parent: body.treistun.treistun, about: 'The largest body of the
-    main belt: over a third of all the belt''s mass. Too small to have pulled itself round.'}
-orbit: {semi_major_axis: 139464000.0, eccentricity: 0.041611104, inclination: 4.17, period: 391.47}
-physical: {radius: 219.1}
+identity: {key: body.treistun.kaikeria, name: Kaikeria, kind: asteroid, parent: body.treistun.treistun, about: 'The largest
+    body of the main belt: over a third of all the belt''s mass. Too small to have pulled itself round.'}
+orbit: {semi_major_axis: 139464000000.0, eccentricity: 0.041611104, inclination: 4.17, period: 33823008.0}
+physical: {radius: 219100.0}
 rock: {class: rock-class.stony-iron}

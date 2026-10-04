@@ -7,7 +7,7 @@ identity:
   name: Tin
   symbol: Sn
   atomic_number: 50
-  atomic_mass: 118.71
+  atomic_mass: 1.97122592596086e-25
   group: 14
   period: 5
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p2'
   valence_electrons: 4
-  atomic_radius: 145.0
-  covalent_radius: 139.0
-  van_der_waals_radius: 217.0
-  ionic_radius: 69.0
+  atomic_radius: 1.45e-10
+  covalent_radius: 1.39e-10
+  van_der_waals_radius: 2.17e-10
+  ionic_radius: 6.9e-11
   stable_isotopes: 10
   isotope_abundances:
   - mass_number: 112
@@ -43,8 +43,8 @@ atomic_structure:
     abundance: 0.0579
 chemical:
   electronegativity: 1.96
-  first_ionisation_energy: 708.6
-  electron_affinity: 107.2984
+  first_ionisation_energy: 708600.0
+  electron_affinity: 107298.4
   oxidation_states:
   - 4
   - 2
@@ -63,8 +63,8 @@ physical:
   allotropes:
   - white tin
   - gray tin
-  heat_of_fusion: 7.0
-  heat_of_vaporisation: 290.0
+  heat_of_fusion: 7000.0
+  heat_of_vaporisation: 290000.0
   vapour_pressure: 2.3e-42
 thermal:
   specific_heat_capacity: 217.0
@@ -76,15 +76,15 @@ electrical_magnetic:
   superconducting_temperature: 3.72
 mechanical:
   hardness: 1.5
-  youngs_modulus: 50.0
-  tensile_strength: 107.5
+  youngs_modulus: 50000000000.0
+  tensile_strength: 107500000.0
   ductility: very ductile
 optical_nuclear:
   colour: silvery-white (beta, β) or gray (alpha, α)
   emission_lines:
-  - 380.101
-  - 452.473
-  - 563.168
-  - 606.912
-  - 614.96
-  neutron_cross_section: 0.62
+  - 3.80101e-07
+  - 4.52473e-07
+  - 5.63168e-07
+  - 6.06912e-07
+  - 6.1496e-07
+  neutron_cross_section: 6.2e-29

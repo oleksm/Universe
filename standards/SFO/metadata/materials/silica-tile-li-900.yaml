@@ -12,9 +12,9 @@ identity:
 mass:
   density: 144.0
 mechanical:
-  youngs_modulus: 0.0483
-  tensile_strength: 0.165
-  compressive_strength: 0.193
+  youngs_modulus: 48300000.0
+  tensile_strength: 165000.0
+  compressive_strength: 193000.0
 thermal:
   max_service_temperature: 1590.0
   thermal_shock_resistance: excellent

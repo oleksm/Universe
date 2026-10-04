@@ -7,17 +7,17 @@ identity:
   name: Samarium
   symbol: Sm
   atomic_number: 62
-  atomic_mass: 150.4
+  atomic_mass: 2.4974507561664e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f6 6s2'
   valence_electrons: 8
-  atomic_radius: 238.0
-  covalent_radius: 198.0
-  van_der_waals_radius: 229.0
-  ionic_radius: 95.8
+  atomic_radius: 2.38e-10
+  covalent_radius: 1.98e-10
+  van_der_waals_radius: 2.29e-10
+  ionic_radius: 9.58e-11
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 144
@@ -36,8 +36,8 @@ atomic_structure:
     abundance: 0.2274
 chemical:
   electronegativity: 1.17
-  first_ionisation_energy: 544.5
-  electron_affinity: 15.63
+  first_ionisation_energy: 544500.0
+  electron_affinity: 15630.0
   oxidation_states:
   - 3
   - 2
@@ -54,8 +54,8 @@ physical:
   boiling_point: 2067.0
   density: 7520.0
   crystal_structure: simple trigonal
-  heat_of_fusion: 8.5
-  heat_of_vaporisation: 175.0
+  heat_of_fusion: 8500.0
+  heat_of_vaporisation: 175000.0
   vapour_pressure: 1.5e-25
 thermal:
   specific_heat_capacity: 196.0
@@ -66,14 +66,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 1.44
-  youngs_modulus: 50.0
+  youngs_modulus: 50000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 429.674
-  - 433.614
-  - 447.089
-  - 472.842
-  - 484.17
-  neutron_cross_section: 5900.0
+  - 4.29674e-07
+  - 4.33614e-07
+  - 4.47089e-07
+  - 4.72842e-07
+  - 4.8417e-07
+  neutron_cross_section: 5.9e-25

@@ -16,7 +16,7 @@ composition:
   water: [0.05, 0.2]
   organics: [0.02, 0.06]
   metal: [0.02, 0.02]
-  pgm: [0.2, 1.0]
+  pgm: [2.0e-07, 1.0e-06]
 found:
   warm: 0.12
   frost_line: 0.7

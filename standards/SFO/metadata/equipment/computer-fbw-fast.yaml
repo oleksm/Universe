@@ -9,7 +9,7 @@ physical:
   mass: 250
   volume: 0.5
 performance:
-  power_draw: 80
+  power_draw: 80000
   turn_rate: 1.8
   roll_rate: 3
 basis:

@@ -6,7 +6,7 @@ identity:
   kind: rock
   description: "Asteroid metal carrying platinum-group metals."
 physical:
-  bulk_density: 4.0
+  bulk_density: 4000.0
 source:
   occurs: asteroids
 game:

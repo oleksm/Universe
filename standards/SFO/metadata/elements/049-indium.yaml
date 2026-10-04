@@ -7,7 +7,7 @@ identity:
   name: Indium
   symbol: In
   atomic_number: 49
-  atomic_mass: 114.818
+  atomic_mass: 1.90659774548879e-25
   group: 13
   period: 5
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p1'
   valence_electrons: 3
-  atomic_radius: 156.0
-  covalent_radius: 142.0
-  van_der_waals_radius: 193.0
-  ionic_radius: 80.0
+  atomic_radius: 1.56e-10
+  covalent_radius: 1.42e-10
+  van_der_waals_radius: 1.93e-10
+  ionic_radius: 8.0e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 113
@@ -27,8 +27,8 @@ atomic_structure:
     abundance: 0.95719
 chemical:
   electronegativity: 1.78
-  first_ionisation_energy: 558.3
-  electron_affinity: 37.043
+  first_ionisation_energy: 558300.0
+  electron_affinity: 37043.0
   oxidation_states:
   - 3
   reactivity:
@@ -44,8 +44,8 @@ physical:
   boiling_point: 2345.0
   density: 7310.0
   crystal_structure: centered tetragonal
-  heat_of_fusion: 3.26
-  heat_of_vaporisation: 230.0
+  heat_of_fusion: 3260.0
+  heat_of_vaporisation: 230000.0
   vapour_pressure: 1.2e-31
 thermal:
   specific_heat_capacity: 233.0
@@ -57,13 +57,13 @@ electrical_magnetic:
   superconducting_temperature: 3.41
 mechanical:
   hardness: 1.2
-  youngs_modulus: 11.0
+  youngs_modulus: 11000000000.0
 optical_nuclear:
   colour: silvery lustrous gray
   emission_lines:
-  - 410.175
-  - 451.13
-  - 525.432
-  - 570.991
-  - 572.768
-  neutron_cross_section: 194.0
+  - 4.10175e-07
+  - 4.5113e-07
+  - 5.25432e-07
+  - 5.70991e-07
+  - 5.72768e-07
+  neutron_cross_section: 1.94e-26

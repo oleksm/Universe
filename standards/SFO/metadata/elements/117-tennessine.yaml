@@ -7,7 +7,7 @@ identity:
   name: Tennessine
   symbol: Ts
   atomic_number: 117
-  atomic_mass: 294.211
+  atomic_mass: 4.88548859323453e-25
   group: 17
   period: 7
   block: p
@@ -18,7 +18,7 @@ atomic_structure:
   stable_isotopes: 0
   half_life: 0.05
 chemical:
-  electron_affinity: 165.9
+  electron_affinity: 165900.0
   oxidation_states:
   - 5
   - 3

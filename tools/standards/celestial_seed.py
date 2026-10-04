@@ -16,8 +16,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 CEL = os.path.join(ROOT, "standards", "Celestial", "metadata")
 dry = "--dry" in sys.argv
 AU, G, SUN = 1.495978707e8, 6.6743e-11, 1.98847e30          # km, SI, kg
+SUN_W = 3.828e26
+si = lambda v: float(f"{v:.15g}")       # (records are in SI; this works in km, days and AU, and writes each value in SI)
 galaxy = yaml.safe_load(open(os.path.join(CEL, "galaxy.yaml")))
 laws = yaml.safe_load(open(os.path.join(CEL, "asteroids.yaml")))
+for _b in ("main_belt", "outer_belt"):
+    for _e in ("inner_edge", "outer_edge"):
+        laws[_b][_e] = float(f"{laws[_b][_e] / (AU * 1000):.12g}")          # (m, to AU)
 classes = {f[:-5]: yaml.safe_load(open(os.path.join(CEL, "rock-classes", f))) for f in os.listdir(os.path.join(CEL, "rock-classes"))}
 slug = lambda name: re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 r3 = lambda v, n=4: float(f"{v:.{n}g}")
@@ -69,8 +74,8 @@ def density(cls):
 
 def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu):
     rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"body.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "parent": f"body.{SYS}.{slug(parent)}", "about": about},
-           "orbit": {"semi_major_axis": r3(a_km, 6), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5)},
-           "physical": {"radius": r3(radius_km)}, "rock": {"class": "rock-class." + cls}}
+           "orbit": {"semi_major_axis": si(r3(a_km, 6) * 1000), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": si(r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5) * 86400)},
+           "physical": {"radius": si(r3(radius_km) * 1000)}, "rock": {"class": "rock-class." + cls}}
     d = laws["sizes"].get("comet_density") if kind == "comet" else density(cls)
     if d:
         rec["physical"]["density"] = d
@@ -87,8 +92,10 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     sname = sysm["identity"]["name"]
     bodies = [yaml.safe_load(open(os.path.join(sysdir, "bodies", b))) for b in sorted(os.listdir(os.path.join(sysdir, "bodies")))]
     sun = next(b for b in bodies if b["identity"]["kind"] == "star")
-    star = {"mass": sun["physical"]["mass"] / SUN, "luminosity": sun["star"]["luminosity"]}
+    star = {"mass": sun["physical"]["mass"] / SUN, "luminosity": float(f"{sun['star']['luminosity'] / SUN_W:.12g}")}
     bodies = [b for b in bodies if b["identity"]["kind"] != "star"]
+    for b in bodies:
+        b["orbit"]["semi_major_axis"] = float(f"{b['orbit']['semi_major_axis'] / 1000:.12g}")       # (m, to km)
     mu = G * star["mass"] * SUN
     used.update(b["identity"]["name"] for b in bodies)
     planets = sorted((b for b in bodies if b["identity"]["parent"] == f"body.{SYS}.{slug(sname)}" and b["identity"]["kind"] != "asteroid"), key=lambda b: b["orbit"]["semi_major_axis"])
@@ -183,7 +190,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
 
     # Regions.
     def region(kind, nm, lo, hi, about, why, parent=None):
-        rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"population.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "about": about}, "extent": {"inner": r3(lo), "outer": r3(hi)}}
+        rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"population.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "about": about}, "extent": {"inner": si(r3(lo) * AU * 1000), "outer": si(r3(hi) * AU * 1000)}}
         if parent:
             rec["identity"]["parent"] = f"body.{SYS}.{slug(parent)}"
         put(sysdir, "regions", "population", rec, why)

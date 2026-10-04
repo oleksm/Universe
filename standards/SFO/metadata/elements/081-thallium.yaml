@@ -7,7 +7,7 @@ identity:
   name: Thallium
   symbol: Tl
   atomic_number: 81
-  atomic_mass: 204.383
+  atomic_mass: 3.39385956048908e-25
   group: 13
   period: 6
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s2 6p1'
   valence_electrons: 3
-  atomic_radius: 156.0
-  covalent_radius: 145.0
-  van_der_waals_radius: 196.0
-  ionic_radius: 88.5
+  atomic_radius: 1.56e-10
+  covalent_radius: 1.45e-10
+  van_der_waals_radius: 1.96e-10
+  ionic_radius: 8.85e-11
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 203
@@ -27,8 +27,8 @@ atomic_structure:
     abundance: 0.70485
 chemical:
   electronegativity: 1.62
-  first_ionisation_energy: 589.4
-  electron_affinity: 36.4
+  first_ionisation_energy: 589400.0
+  electron_affinity: 36400.0
   oxidation_states:
   - 3
   - 1
@@ -45,8 +45,8 @@ physical:
   boiling_point: 1746.0
   density: 11800.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 4.2
-  heat_of_vaporisation: 165.0
+  heat_of_fusion: 4200.0
+  heat_of_vaporisation: 165000.0
   vapour_pressure: 7.3e-21
 thermal:
   specific_heat_capacity: 129.0
@@ -58,14 +58,14 @@ electrical_magnetic:
   superconducting_temperature: 2.38
 mechanical:
   hardness: 1.2
-  youngs_modulus: 8.0
+  youngs_modulus: 8000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 435.99
-  - 535.046
-  - 654.984
-  - 671.38
-  - 749.36
-  neutron_cross_section: 3.4
+  - 4.3599e-07
+  - 5.35046e-07
+  - 6.54984e-07
+  - 6.7138e-07
+  - 7.4936e-07
+  neutron_cross_section: 3.4e-28

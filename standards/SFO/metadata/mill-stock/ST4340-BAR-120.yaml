@@ -8,11 +8,11 @@ made_from:
   form: bar
   temper: "quenched and tempered"
 size:
-  diameter: 120
+  diameter: 0.12
 making:
   process: process.bar-rolling-4340
 physical:
-  shock_limit: 200
+  shock_limit: 1961.33
 basis:
   - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

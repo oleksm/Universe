@@ -25,11 +25,11 @@ properties:
     properties:
       class: { type: string, x-ref: [rock-class], description: "What its rocks are made of, by their spectrum." }
       count: { type: integer, description: How many rocks it has. }
-      extent: { type: number, description: "km, how far it spreads round its anchor" }
+      extent: { type: number, x-unit: "m", description: "m, how far it spreads round its anchor" }
   extent:
     description: "For a region: how far from the star it reaches."
     type: object
     additionalProperties: false
     properties:
-      inner: { type: number, description: "AU from the star, its nearest" }
-      outer: { type: number, description: "AU from the star, its farthest" }
+      inner: { type: number, x-unit: "m", description: "m from the star, its nearest" }
+      outer: { type: number, x-unit: "m", description: "m from the star, its farthest" }

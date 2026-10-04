@@ -7,17 +7,17 @@ identity:
   name: Ytterbium
   symbol: Yb
   atomic_number: 70
-  atomic_mass: 173.05
+  atomic_mass: 2.8735628547513e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f14 6s2'
   valence_electrons: 16
-  atomic_radius: 222.0
-  covalent_radius: 187.0
-  van_der_waals_radius: 242.0
-  ionic_radius: 86.8
+  atomic_radius: 2.22e-10
+  covalent_radius: 1.87e-10
+  van_der_waals_radius: 2.42e-10
+  ionic_radius: 8.68e-11
   stable_isotopes: 7
   isotope_abundances:
   - mass_number: 168
@@ -35,7 +35,7 @@ atomic_structure:
   - mass_number: 176
     abundance: 0.12995
 chemical:
-  first_ionisation_energy: 603.4
+  first_ionisation_energy: 603400.0
   oxidation_states:
   - 3
   - 2
@@ -52,8 +52,8 @@ physical:
   boiling_point: 1469.0
   density: 6900.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 7.7
-  heat_of_vaporisation: 160.0
+  heat_of_fusion: 7700.0
+  heat_of_vaporisation: 160000.0
   vapour_pressure: 3.1e-16
 thermal:
   specific_heat_capacity: 154.0
@@ -63,14 +63,14 @@ electrical_magnetic:
   electrical_conductivity: 3600000.0
   magnetic_ordering: paramagnetic
 mechanical:
-  youngs_modulus: 24.0
+  youngs_modulus: 24000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: silver
   emission_lines:
-  - 398.799
-  - 399.088
-  - 493.55
-  - 555.647
-  - 679.96
-  neutron_cross_section: 35.0
+  - 3.98799e-07
+  - 3.99088e-07
+  - 4.9355e-07
+  - 5.55647e-07
+  - 6.7996e-07
+  neutron_cross_section: 3.5e-27

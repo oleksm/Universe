@@ -7,7 +7,7 @@ identity:
   name: Osmium
   symbol: Os
   atomic_number: 76
-  atomic_mass: 190.2
+  atomic_mass: 3.1583453046732e-25
   group: 8
   period: 6
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d6 6s2'
   valence_electrons: 8
-  atomic_radius: 185.0
-  covalent_radius: 144.0
-  van_der_waals_radius: 216.0
-  ionic_radius: 63.0
+  atomic_radius: 1.85e-10
+  covalent_radius: 1.44e-10
+  van_der_waals_radius: 2.16e-10
+  ionic_radius: 6.3e-11
   stable_isotopes: 6
   isotope_abundances:
   - mass_number: 184
@@ -37,8 +37,8 @@ atomic_structure:
     abundance: 0.4078
 chemical:
   electronegativity: 2.2
-  first_ionisation_energy: 814.2
-  electron_affinity: 103.99
+  first_ionisation_energy: 814200.0
+  electron_affinity: 103990.0
   oxidation_states:
   - 4
   - 3
@@ -54,8 +54,8 @@ physical:
   boiling_point: 5285.0
   density: 22570.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 31.0
-  heat_of_vaporisation: 630.0
+  heat_of_fusion: 31000.0
+  heat_of_vaporisation: 630000.0
   vapour_pressure: 1.2e-125
 thermal:
   specific_heat_capacity: 130.0
@@ -70,9 +70,9 @@ mechanical:
 optical_nuclear:
   colour: silvery, blue cast
   emission_lines:
-  - 413.578
-  - 417.323
-  - 421.186
-  - 426.085
-  - 442.047
-  neutron_cross_section: 15.0
+  - 4.13578e-07
+  - 4.17323e-07
+  - 4.21186e-07
+  - 4.26085e-07
+  - 4.42047e-07
+  neutron_cross_section: 1.5e-27

@@ -2,4 +2,4 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: population.treistun.tukau-family, name: Tukau family, kind: family, anchor: body.treistun.tukau}
-rocks: {class: rock-class.stony, count: 208, extent: 30.83}
+rocks: {class: rock-class.stony, count: 208, extent: 30830.0}

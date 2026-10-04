@@ -7,7 +7,7 @@ identity:
   name: Palladium
   symbol: Pd
   atomic_number: 46
-  atomic_mass: 106.42
+  atomic_mass: 1.76714567467572e-25
   group: 10
   period: 5
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10'
   valence_electrons: 10
-  atomic_radius: 169.0
-  covalent_radius: 139.0
-  van_der_waals_radius: 202.0
-  ionic_radius: 76.0
+  atomic_radius: 1.69e-10
+  covalent_radius: 1.39e-10
+  van_der_waals_radius: 2.02e-10
+  ionic_radius: 7.6e-11
   stable_isotopes: 6
   isotope_abundances:
   - mass_number: 102
@@ -35,8 +35,8 @@ atomic_structure:
     abundance: 0.1172
 chemical:
   electronegativity: 2.2
-  first_ionisation_energy: 804.4
-  electron_affinity: 54.24
+  first_ionisation_energy: 804400.0
+  electron_affinity: 54240.0
   oxidation_states:
   - 3
   - 2
@@ -53,8 +53,8 @@ physical:
   boiling_point: 3236.0
   density: 12000.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 16.7
-  heat_of_vaporisation: 380.0
+  heat_of_fusion: 16700.0
+  heat_of_vaporisation: 380000.0
   vapour_pressure: 3.7e-52
 thermal:
   specific_heat_capacity: 240.0
@@ -65,14 +65,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 4.75
-  youngs_modulus: 121.0
+  youngs_modulus: 121000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 383.229
-  - 389.42
-  - 395.862
-  - 408.734
-  - 421.295
-  neutron_cross_section: 6.9
+  - 3.83229e-07
+  - 3.8942e-07
+  - 3.95862e-07
+  - 4.08734e-07
+  - 4.21295e-07
+  neutron_cross_section: 6.9e-28

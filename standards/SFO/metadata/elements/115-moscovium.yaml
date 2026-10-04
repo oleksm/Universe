@@ -7,7 +7,7 @@ identity:
   name: Moscovium
   symbol: Mc
   atomic_number: 115
-  atomic_mass: 290.196
+  atomic_mass: 4.81881794971054e-25
   group: 15
   period: 7
   block: p
@@ -19,7 +19,7 @@ atomic_structure:
   half_life: 60.0
   decay_mode: alpha
 chemical:
-  electron_affinity: 35.3
+  electron_affinity: 35300.0
   oxidation_states:
   - 3
   - 1

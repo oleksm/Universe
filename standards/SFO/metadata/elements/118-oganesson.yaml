@@ -7,7 +7,7 @@ identity:
   name: Oganesson
   symbol: Og
   atomic_number: 118
-  atomic_mass: 295.216
+  atomic_mass: 4.90217701085386e-25
   group: 18
   period: 7
   block: p
@@ -19,7 +19,7 @@ atomic_structure:
   half_life: 0.005
   decay_mode: alpha
 chemical:
-  electron_affinity: 5.40318
+  electron_affinity: 5403.18
   oxidation_states:
   - 6
   - 4

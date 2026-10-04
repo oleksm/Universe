@@ -2,7 +2,7 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.moryemzai.moryemzai, name: Moryemzai, kind: star}
-star: {class: M, luminosity: 0.02007}
-physical: {mass: 6.5111e+29, radius: 265368.0, day: 555.06, tilt: 0.02}
+star: {class: M, luminosity: 7.682796e+24}
+physical: {mass: 6.5111e+29, radius: 265368000.0, day: 1998216.0, tilt: 0.02}
 surface:
   colour: [1.0, 0.55, 0.38]

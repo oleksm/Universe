@@ -9,7 +9,7 @@ physical:
   mass: 5000
   volume: 10
 performance:
-  output: 14
+  output: 14000000
   efficiency: 0.35
   burns: good.deuterium
 basis:

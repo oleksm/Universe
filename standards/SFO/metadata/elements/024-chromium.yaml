@@ -7,7 +7,7 @@ identity:
   name: Chromium
   symbol: Cr
   atomic_number: 24
-  atomic_mass: 51.996
+  atomic_mass: 8.63413893069336e-26
   group: 6
   period: 4
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d5 4s1'
   valence_electrons: 6
-  atomic_radius: 166.0
-  covalent_radius: 139.0
-  van_der_waals_radius: 189.0
-  ionic_radius: 44.0
+  atomic_radius: 1.66e-10
+  covalent_radius: 1.39e-10
+  van_der_waals_radius: 1.89e-10
+  ionic_radius: 4.4e-11
   stable_isotopes: 4
   isotope_abundances:
   - mass_number: 50
@@ -31,8 +31,8 @@ atomic_structure:
     abundance: 0.02365
 chemical:
   electronegativity: 1.66
-  first_ionisation_energy: 652.9
-  electron_affinity: 65.21
+  first_ionisation_energy: 652900.0
+  electron_affinity: 65210.0
   oxidation_states:
   - 6
   - 3
@@ -50,8 +50,8 @@ physical:
   boiling_point: 2944.0
   density: 7150.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 20.5
-  heat_of_vaporisation: 339.0
+  heat_of_fusion: 20500.0
+  heat_of_vaporisation: 339000.0
   vapour_pressure: 3.2e-55
 thermal:
   specific_heat_capacity: 448.0
@@ -62,14 +62,14 @@ electrical_magnetic:
   magnetic_ordering: antiferromagnetic
 mechanical:
   hardness: 8.5
-  youngs_modulus: 279.0
+  youngs_modulus: 279000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery metallic
   emission_lines:
-  - 520.45
-  - 520.602
-  - 520.841
-  - 534.58
-  - 540.978
-  neutron_cross_section: 3.1
+  - 5.2045e-07
+  - 5.20602e-07
+  - 5.20841e-07
+  - 5.3458e-07
+  - 5.40978e-07
+  neutron_cross_section: 3.1e-28

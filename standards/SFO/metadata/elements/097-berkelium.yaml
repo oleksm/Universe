@@ -7,21 +7,21 @@ identity:
   name: Berkelium
   symbol: Bk
   atomic_number: 97
-  atomic_mass: 247.07031
+  atomic_mass: 4.10269901951973e-25
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f9 7s2'
   valence_electrons: 11
-  van_der_waals_radius: 244.0
-  ionic_radius: 83.0
+  van_der_waals_radius: 2.44e-10
+  ionic_radius: 8.3e-11
   stable_isotopes: 0
   half_life: 43529800000.0
   decay_mode: alpha
 chemical:
   electronegativity: 1.3
-  first_ionisation_energy: 601
+  first_ionisation_energy: 601000
   oxidation_states:
   - 4
   - 3
@@ -36,9 +36,9 @@ thermal:
 optical_nuclear:
   colour: silvery
   emission_lines:
-  - 710.785
-  - 717.622
-  - 725.25
-  - 725.721
-  - 730.694
-  neutron_cross_section: 710.0
+  - 7.10785e-07
+  - 7.17622e-07
+  - 7.2525e-07
+  - 7.25721e-07
+  - 7.30694e-07
+  neutron_cross_section: 7.1e-26

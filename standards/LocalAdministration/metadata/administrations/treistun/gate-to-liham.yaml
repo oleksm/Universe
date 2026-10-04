@@ -3,5 +3,5 @@
 key: settlement.treistun.gate-to-liham
 name: "Gate to Liham"
 kind: settlement
-gate: { ring: gate.ring.i, to: system.liham, distance: 4.88 }
+gate: { ring: gate.ring.i, to: system.liham, distance: 4.61683647061943e+16 }
 about: "The gate to Liham, 4.88 light years away: a ring 3 km across on an orbit of its own round the star, kept clear of everything else. A permanent structure with people aboard to run it, so a settlement."

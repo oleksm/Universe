@@ -12,8 +12,8 @@ identity:
 mass:
   density: 19280.0
 mechanical:
-  youngs_modulus: 78.0
-  tensile_strength: 100
+  youngs_modulus: 78000000000.0
+  tensile_strength: 100000000
   hardness: 2.5
 thermal:
   melting_point: 1337.33

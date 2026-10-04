@@ -9,10 +9,10 @@ physical:
   mass: 7000
   volume: 14
 performance:
-  power_draw: 800
+  power_draw: 800000
   efficiency: 0.3
-  thrust: 1600
-  exhaust_speed: 10000
+  thrust: 1600000
+  exhaust_speed: 10000000
   burns: good.deuterium
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

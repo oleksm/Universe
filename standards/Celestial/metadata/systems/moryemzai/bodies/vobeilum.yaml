@@ -2,8 +2,8 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.moryemzai.vobeilum, name: Vobeilum, kind: asteroid, parent: body.moryemzai.moryemzai}
-orbit: {semi_major_axis: 57092400.0, eccentricity: 0.1219, period: 150.488, inclination: 2.349}
-physical: {mass: 101830000000000.0, radius: 2.65424, gravity: 0.001, day: 16.991, tilt: 150.24}
+orbit: {semi_major_axis: 57092400000.0, eccentricity: 0.1219, period: 13002163.2, inclination: 2.349}
+physical: {mass: 101830000000000.0, radius: 2654.24, gravity: 0.001, day: 61167.6, tilt: 150.24}
 surface:
   colour: [0.42, 0.4, 0.38]
 rock: {class: rock-class.carbonaceous, structure: rubble pile, density: 1300}

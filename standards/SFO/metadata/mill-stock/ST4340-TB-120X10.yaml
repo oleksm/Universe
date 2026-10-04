@@ -8,12 +8,12 @@ made_from:
   form: tube
   temper: "quenched and tempered"
 size:
-  diameter: 120
-  wall: 10
+  diameter: 0.12
+  wall: 0.01
 making:
   process: process.tube-making-4340
 physical:
-  shock_limit: 150
+  shock_limit: 1470.9975
 basis:
   - { of: [size], tier: derived, note: "Sized for the landing: see the structure report." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

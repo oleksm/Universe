@@ -7,17 +7,17 @@ identity:
   name: Dysprosium
   symbol: Dy
   atomic_number: 66
-  atomic_mass: 162.5
+  atomic_mass: 2.698375983225e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f10 6s2'
   valence_electrons: 12
-  atomic_radius: 228.0
-  covalent_radius: 192.0
-  van_der_waals_radius: 229.0
-  ionic_radius: 91.2
+  atomic_radius: 2.28e-10
+  covalent_radius: 1.92e-10
+  van_der_waals_radius: 2.29e-10
+  ionic_radius: 9.12e-11
   stable_isotopes: 7
   isotope_abundances:
   - mass_number: 156
@@ -36,8 +36,8 @@ atomic_structure:
     abundance: 0.2826
 chemical:
   electronegativity: 1.22
-  first_ionisation_energy: 573
-  electron_affinity: 33.96
+  first_ionisation_energy: 573000
+  electron_affinity: 33960.0
   oxidation_states:
   - 3
   reactivity:
@@ -53,8 +53,8 @@ physical:
   boiling_point: 2840.0
   density: 8550.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 11.1
-  heat_of_vaporisation: 280.0
+  heat_of_fusion: 11100.0
+  heat_of_vaporisation: 280000.0
   vapour_pressure: 9.1e-39
 thermal:
   specific_heat_capacity: 167.0
@@ -65,14 +65,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 1.8
-  youngs_modulus: 61.0
+  youngs_modulus: 61000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 404.597
-  - 416.797
-  - 418.682
-  - 419.484
-  - 421.172
-  neutron_cross_section: 950.0
+  - 4.04597e-07
+  - 4.16797e-07
+  - 4.18682e-07
+  - 4.19484e-07
+  - 4.21172e-07
+  neutron_cross_section: 9.5e-26

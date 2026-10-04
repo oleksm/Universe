@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.liham.mezudre, name: Mezudre, kind: comet, parent: body.liham.liham, about: A comet from the far cloud. It comes
-    in to 0.07 AU once in a very long time.}
-orbit: {semi_major_axis: 1791520000000.0, eccentricity: 0.99999431, inclination: 72.92, period: 898570000.0}
-physical: {radius: 7.243, density: 600, mass: 954900000000000.0}
+identity: {key: body.liham.mezudre, name: Mezudre, kind: comet, parent: body.liham.liham, about: A comet from the far cloud.
+    It comes in to 0.07 AU once in a very long time.}
+orbit: {semi_major_axis: 1791520000000000.0, eccentricity: 0.99999431, inclination: 72.92, period: 77636448000000.0}
+physical: {radius: 7243.0, density: 600, mass: 954900000000000.0}
 rock: {class: rock-class.icy}

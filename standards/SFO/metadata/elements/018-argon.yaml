@@ -7,7 +7,7 @@ identity:
   name: Argon
   symbol: Ar
   atomic_number: 18
-  atomic_mass: 39.9
+  atomic_mass: 6.625550875734e-26
   group: 18
   period: 3
   block: p
@@ -15,9 +15,9 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p6'
   valence_electrons: 8
-  atomic_radius: 71.0
-  covalent_radius: 106.0
-  van_der_waals_radius: 188.0
+  atomic_radius: 7.1e-11
+  covalent_radius: 1.06e-10
+  van_der_waals_radius: 1.88e-10
   stable_isotopes: 3
   isotope_abundances:
   - mass_number: 36
@@ -27,7 +27,7 @@ atomic_structure:
   - mass_number: 40
     abundance: 0.996035
 chemical:
-  first_ionisation_energy: 1520.6
+  first_ionisation_energy: 1520600.0
   oxidation_states:
   - 0
   reactivity:
@@ -42,8 +42,8 @@ physical:
   boiling_point: 87.3
   density: 1.784
   crystal_structure: face-centered cubic
-  heat_of_fusion: 1.18
-  heat_of_vaporisation: 6.5
+  heat_of_fusion: 1180.0
+  heat_of_vaporisation: 6500.0
 thermal:
   specific_heat_capacity: 520.33
   thermal_conductivity: 0.01772
@@ -52,9 +52,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: colorless gas exhibiting a lilac/violet glow when placed in a high voltage electric field
   emission_lines:
-  - 696.543
-  - 706.722
-  - 714.704
-  - 727.294
-  - 738.398
-  neutron_cross_section: 0.66
+  - 6.96543e-07
+  - 7.06722e-07
+  - 7.14704e-07
+  - 7.27294e-07
+  - 7.38398e-07
+  neutron_cross_section: 6.6e-29

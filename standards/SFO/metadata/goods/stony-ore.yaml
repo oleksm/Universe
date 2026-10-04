@@ -6,7 +6,7 @@ identity:
   kind: rock
   description: "Common asteroid rock: silicates holding iron, magnesium and calcium as oxides."
 physical:
-  bulk_density: 1.8
+  bulk_density: 1800.0
 source:
   occurs: asteroids
 game:

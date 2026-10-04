@@ -12,7 +12,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key in Maker House." }
+      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
       class: { type: string, description: "What it is built for: mining ship, hauler, courier..." }
       revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
       description: { type: string }
@@ -20,18 +20,18 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      length: { type: number, description: m }
-      width: { type: number, description: m }
-      height: { type: number, description: m }
-      volume: { type: number, description: "m3, the space its shape takes" }
-      hold_volume: { type: number, description: "m3, the space of its hold" }
+      length: { type: number, x-unit: "m", description: m }
+      width: { type: number, x-unit: "m", description: m }
+      height: { type: number, x-unit: "m", description: m }
+      volume: { type: number, x-unit: "m3", description: "m3, the space its shape takes" }
+      hold_volume: { type: number, x-unit: "m3", description: "m3, the space of its hold" }
   mass:
     type: object
     additionalProperties: false
     properties:
-      frame: { type: number, description: "t, the bare hull with nothing fitted" }
-      fuel: { type: number, description: "t of fuel its tanks hold, as fitted" }
-      hold: { type: number, description: "t, the most cargo it is rated to carry" }
+      frame: { type: number, x-unit: "kg", description: "kg, the bare hull with nothing fitted" }
+      fuel: { type: number, x-unit: "kg", description: "kg of fuel its tanks hold, as fitted" }
+      hold: { type: number, x-unit: "kg", description: "kg, the most cargo it is rated to carry" }
   fit:
     description: The equipment it is fitted with when it is built.
     type: array
@@ -41,30 +41,30 @@ properties:
       required: [slot, item]
       properties:
         slot: { type: string, description: The slot of the hull it sits in. }
-        item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by file name." }
+        item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by its key." }
         nozzles: { type: integer, minimum: 1, description: "For a drive or lift: how many nozzles of the hull it feeds, each at full share." }
   making:
     type: object
     additionalProperties: false
     properties:
-      process: { type: string, x-ref: [process], description: "The process that assembles it from its parts, by file name." }
-      fitting_out: { type: string, x-ref: [process], description: "The process that fits it with its equipment, by file name." }
+      process: { type: string, x-ref: [process], description: "The process that assembles it from its parts, by its key." }
+      fitting_out: { type: string, x-ref: [process], description: "The process that fits it with its equipment, by its key." }
   design:
     description: What it is designed to stand. Its parts' gauges are checked against these.
     type: object
     additionalProperties: false
     properties:
       lands: { enum: [empty, loaded], description: "Whether it sets down with its hold full. empty: it unloads in orbit, and its legs and lift are for the ship without its cargo." }
-      loaded_mass: { type: number, description: "t, the ship loaded, in the game: hull, fitted modules, fuel and cargo" }
-      main_thrust: { type: number, description: "MN, of its main drive in the game" }
-      lift_thrust: { type: number, description: "MN, of its lift nozzles in the game" }
-      thrust_path: { type: array, items: { type: string, x-ref: [part] }, description: "The parts its main drive's push passes through, from the engine forward, by code. Each is checked against it." }
-      landing_speed: { type: number, description: "m/s, the touchdown its legs are designed for. What they take at most is worked out." }
-      cabin_pressure: { type: number, description: "kPa, of the air its pressurised parts hold against vacuum" }
+      loaded_mass: { type: number, x-unit: "kg", description: "kg, the ship loaded, in the game: hull, fitted modules, fuel and cargo" }
+      main_thrust: { type: number, x-unit: "N", description: "N, of its main drive in the game" }
+      lift_thrust: { type: number, x-unit: "N", description: "N, of its lift nozzles in the game" }
+      thrust_path: { type: array, items: { type: string, x-ref: [part] }, description: "The parts its main drive's push passes through, from the engine forward, by key. Each is checked against it." }
+      landing_speed: { type: number, x-unit: "m/s", description: "m/s, the touchdown its legs are designed for. What they take at most is worked out." }
+      cabin_pressure: { type: number, x-unit: "Pa", description: "Pa, of the air its pressurised parts hold against vacuum" }
       safety_factor: { type: number, description: "how many times its load a part must take before it yields" }
       pressure_factor: { type: number, description: "a further factor on cabin pressure" }
       strut_efficiency: { type: number, description: "the share of a landing leg's stroke that does work" }
-      minimum_gauge: { type: number, description: "mm, the thinnest skin used where no load says more" }
+      minimum_gauge: { type: number, x-unit: "m", description: "m, the thinnest skin used where no load says more" }
   open_questions:
     description: What is not settled about it. Kept with the hull so it is not forgotten.
     type: array

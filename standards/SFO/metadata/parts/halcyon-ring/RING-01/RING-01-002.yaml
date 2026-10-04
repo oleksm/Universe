@@ -10,7 +10,7 @@ physical:
   length: 12
   width: 0.2
   height: 0.2
-  shock_limit: 50
+  shock_limit: 490.3325
 made_from:
   item: stock.st4340-tb-200x15
   quantity: 14.4

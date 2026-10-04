@@ -2,4 +2,4 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: population.driumum.vauwaizo-family, name: Vauwaizo family, kind: family, anchor: body.driumum.vauwaizo}
-rocks: {class: rock-class.carbonaceous, count: 234, extent: 16.36}
+rocks: {class: rock-class.carbonaceous, count: 234, extent: 16360.0}

@@ -93,6 +93,21 @@ def validate(v, sch, here, at=""):
     return out
 
 
+UNIT = re.compile(r"^(deg|1/(K|s|m3)|(kg|m|s|K|W|N|J|Pa|V|S|T|Sv|mol|rad)[0-9]?([ /](\(?(kg|m|s|K|mol)[0-9]?( K)?\)?|m\^0\.5))*)$")
+
+
+def units(sch, at=""):
+    """Every x-unit of a schema that is not SI (or deg): (where, the unit)."""
+    if isinstance(sch, dict):
+        if "x-unit" in sch and not UNIT.match(str(sch["x-unit"])):
+            yield at, sch["x-unit"]
+        for k, x in sch.items():
+            yield from units(x, f"{at}.{k}" if at else str(k))
+    elif isinstance(sch, list):
+        for x in sch:
+            yield from units(x, at)
+
+
 def refs(v, sch, here, at=""):
     """Every place in `v` that names another record (its schema says `x-ref`): (holder, index, kinds, where)."""
     if not isinstance(sch, dict):
@@ -230,6 +245,9 @@ def check_all():
             else:
                 KEYS[key] = rel
             named += [(full, at, holder[i], kinds) for holder, i, kinds, at in refs(rec, schema(sp), sp)]
+    for path, sch in sorted(_schemas.items()):
+        for at, unit in units(sch):
+            found.append((path, f"{at}: x-unit {unit!r} is not an SI unit (or deg)"))
     # (What each record names: a record's key, of a kind the property takes.)
     for full, at, key, kinds in named:
         if key not in KEYS:

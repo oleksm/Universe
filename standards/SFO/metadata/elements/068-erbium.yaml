@@ -7,17 +7,17 @@ identity:
   name: Erbium
   symbol: Er
   atomic_number: 68
-  atomic_mass: 167.26
+  atomic_mass: 2.77741764279516e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f12 6s2'
   valence_electrons: 14
-  atomic_radius: 226.0
-  covalent_radius: 189.0
-  van_der_waals_radius: 235.0
-  ionic_radius: 89.0
+  atomic_radius: 2.26e-10
+  covalent_radius: 1.89e-10
+  van_der_waals_radius: 2.35e-10
+  ionic_radius: 8.9e-11
   stable_isotopes: 6
   isotope_abundances:
   - mass_number: 162
@@ -34,8 +34,8 @@ atomic_structure:
     abundance: 0.1491
 chemical:
   electronegativity: 1.24
-  first_ionisation_energy: 589.3
-  electron_affinity: 30.1
+  first_ionisation_energy: 589300.0
+  electron_affinity: 30100.0
   oxidation_states:
   - 3
   reactivity:
@@ -51,8 +51,8 @@ physical:
   boiling_point: 3141.0
   density: 9070.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 19.9
-  heat_of_vaporisation: 285.0
+  heat_of_fusion: 19900.0
+  heat_of_vaporisation: 285000.0
   vapour_pressure: 5.0e-43
 thermal:
   specific_heat_capacity: 168.0
@@ -63,14 +63,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 1.97
-  youngs_modulus: 70.0
+  youngs_modulus: 70000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 386.285
-  - 389.268
-  - 400.796
-  - 408.763
-  - 415.111
-  neutron_cross_section: 165.0
+  - 3.86285e-07
+  - 3.89268e-07
+  - 4.00796e-07
+  - 4.08763e-07
+  - 4.15111e-07
+  neutron_cross_section: 1.65e-26

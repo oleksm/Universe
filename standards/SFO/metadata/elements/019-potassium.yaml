@@ -7,7 +7,7 @@ identity:
   name: Potassium
   symbol: K
   atomic_number: 19
-  atomic_mass: 39.0983
+  atomic_mass: 6.49242545876468e-26
   group: 1
   period: 4
   block: s
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 4s1'
   valence_electrons: 1
-  atomic_radius: 243.0
-  covalent_radius: 203.0
-  van_der_waals_radius: 275.0
-  ionic_radius: 138.0
+  atomic_radius: 2.43e-10
+  covalent_radius: 2.03e-10
+  van_der_waals_radius: 2.75e-10
+  ionic_radius: 1.38e-10
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 39
@@ -29,8 +29,8 @@ atomic_structure:
     abundance: 0.067302
 chemical:
   electronegativity: 0.82
-  first_ionisation_energy: 418.8
-  electron_affinity: 48.383
+  first_ionisation_energy: 418800.0
+  electron_affinity: 48383.0
   oxidation_states:
   - 1
   reactivity:
@@ -46,8 +46,8 @@ physical:
   boiling_point: 1032.0
   density: 890.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 2.33
-  heat_of_vaporisation: 76.9
+  heat_of_fusion: 2330.0
+  heat_of_vaporisation: 76900.0
   vapour_pressure: 3.5e-06
 thermal:
   specific_heat_capacity: 757.0
@@ -61,9 +61,9 @@ mechanical:
 optical_nuclear:
   colour: silvery gray
   emission_lines:
-  - 404.414
-  - 580.175
-  - 583.189
-  - 691.108
-  - 693.877
-  neutron_cross_section: 2.1
+  - 4.04414e-07
+  - 5.80175e-07
+  - 5.83189e-07
+  - 6.91108e-07
+  - 6.93877e-07
+  neutron_cross_section: 2.1e-28

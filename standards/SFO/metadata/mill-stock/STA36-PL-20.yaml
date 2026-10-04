@@ -7,9 +7,9 @@ made_from:
   material: material.structural-steel-a36
   form: plate
 size:
-  thickness: 20
+  thickness: 0.02
 physical:
-  shock_limit: 80
+  shock_limit: 784.532
 making:
   process: process.plate-rolling-a36
 basis:

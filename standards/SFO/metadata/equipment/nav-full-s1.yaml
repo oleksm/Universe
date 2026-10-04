@@ -9,7 +9,7 @@ physical:
   mass: 150
   volume: 0.3
 performance:
-  power_draw: 20
+  power_draw: 20000
   features: ["docking", "landing", "gate", "follow", "hyperdrive", "route"]
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

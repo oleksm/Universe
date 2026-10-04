@@ -110,13 +110,55 @@ kinds and enums.
 The generated RON is byte-identical: the build turns keys back into what it worked by before as it
 reads each record (`build.py`: `old_names`, `OLD_KEY`, `game_key`).
 
+## SI: done (2026-10-04)
+
+Every value with a dimension is in SI, and its property says the unit in its schema: `x-unit: "kg"`.
+106 properties changed unit, 2,322 values in 439 records; 233 properties carry an `x-unit` in all.
+The build refuses an `x-unit` that is not SI. Angles are degrees, `x-unit: deg` (10 properties).
+A share, a ratio or a count has no `x-unit`.
+
+| Was | Now | Where |
+|---|---|---|
+| t | kg | hull masses, module batch and store, process batch |
+| t/h | kg/s | module and process throughput, handling |
+| t/m3 | kg/m3 | a good's bulk density |
+| km, mm, AU, light years, pm, nm | m | orbits, radii, belts, gauges, gate spans, the galaxy's region and sector, system positions, atomic radii |
+| hours, days, years, billion years | s | a body's day, period, age; a part's making time and service life |
+| kPa, MPa, GPa | Pa | strengths, moduli, cabin and surface pressure |
+| kW, MW | W | power draw, output, a line's capacity |
+| kN, MN | N | thrust, design load |
+| km/s, times the speed of light | m/s | exhaust speed, top speed |
+| MJ/t | J/kg | a process's energy |
+| g (jolt) | m/s2 | shock limits (by 9.80665) |
+| times the Sun's | W | a star's luminosity (by 3.828e26) |
+| Earth masses | kg | the outer belt's mass |
+| microtesla | T | a body's magnetic field |
+| rem a day | Sv/s | radiation dose |
+| stars per cubic light year | 1/m3 | the galaxy's star density |
+| u, kJ/mol, eV, barns, MV/m | kg, J/mol, J, m2, V/m | elements and materials |
+| parts per million, g per kg | share | platinum-group content, salinity |
+| messages an hour | 1/s | a relay's rate |
+
+One rename: a process's `energy.energy_per_tonne` is `energy.specific_energy` (J/kg).
+
+Left as they were, on purpose:
+- **Amounts in processes and modules** are kg per kg of product: a ratio. A power module's are per
+  MWh of its output, which is not SI and not a ratio. That goes when flows move onto modules
+  (your item 6); I have not touched it.
+- **Scales** (Mohs hardness, Pauling electronegativity) and a part's `made_from.quantity` (m2 or m,
+  by the stock's kind).
+- **Numbers inside a standard's text** (`params`, tables): documents, not data.
+
+The page and the build's reports still read in t, km, hours, AU: `tools/standards/reading_units.yaml`
+says, for each property, the unit it is read in, and the build converts as it reads a record. So the
+page is unchanged and the generated RON is byte-identical. `celestial_export.py` and
+`celestial_seed.py` write SI.
+
 ## Next on `fso`, in this order
 
-2. **SI throughout**, angles in degrees as the one exception (`x-unit: deg` on the property). The page converts for reading.
-   One kind at a time, with the RON output held identical as the check.
-3. **`physical` as one group**, and the organisation schema (company, standards body,
-   administration as one).
-4. Then your order: Dogma, the celestial consolidation, products and stock, installations, economy.
+3. **`physical` as one group** across products, stock and bodies.
+4. Then your order: Dogma, the celestial consolidation that is left (seeding records), products and
+   stock, installations, economy.
 
 ## Where I'd do it differently
 

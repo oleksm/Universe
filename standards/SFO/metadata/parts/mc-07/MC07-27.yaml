@@ -13,7 +13,7 @@ physical:
   length: 9.95
   width: 4.2
   height: 0.29
-  shock_limit: 15
+  shock_limit: 147.09975
 shape:
   surface_area: 99.2
   handed: right

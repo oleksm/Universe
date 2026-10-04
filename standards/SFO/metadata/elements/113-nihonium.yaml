@@ -7,7 +7,7 @@ identity:
   name: Nihonium
   symbol: Nh
   atomic_number: 113
-  atomic_mass: 286.182
+  atomic_mass: 4.75216391157721e-25
   group: 13
   period: 7
   block: p
@@ -19,5 +19,5 @@ atomic_structure:
   half_life: 1200.0
   decay_mode: alpha
 chemical:
-  electron_affinity: 66.6
+  electron_affinity: 66600.0
   bond_type: metallic

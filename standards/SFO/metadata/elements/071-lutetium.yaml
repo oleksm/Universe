@@ -7,17 +7,17 @@ identity:
   name: Lutetium
   symbol: Lu
   atomic_number: 71
-  atomic_mass: 174.9667
+  atomic_mass: 2.90539040704082e-25
   period: 6
   block: d
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d1 6s2'
   valence_electrons: 17
-  atomic_radius: 217.0
-  covalent_radius: 187.0
-  van_der_waals_radius: 221.0
-  ionic_radius: 86.1
+  atomic_radius: 2.17e-10
+  covalent_radius: 1.87e-10
+  van_der_waals_radius: 2.21e-10
+  ionic_radius: 8.61e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 175
@@ -26,8 +26,8 @@ atomic_structure:
     abundance: 0.02599
 chemical:
   electronegativity: 1.27
-  first_ionisation_energy: 523.5
-  electron_affinity: 33.4
+  first_ionisation_energy: 523500.0
+  electron_affinity: 33400.0
   oxidation_states:
   - 3
   reactivity:
@@ -43,8 +43,8 @@ physical:
   boiling_point: 3675.0
   density: 9840.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 22.0
-  heat_of_vaporisation: 415.0
+  heat_of_fusion: 22000.0
+  heat_of_vaporisation: 415000.0
   vapour_pressure: 2.7e-58
 thermal:
   specific_heat_capacity: 154.0
@@ -56,14 +56,14 @@ electrical_magnetic:
   superconducting_temperature: 0.1
 mechanical:
   hardness: 2.6
-  youngs_modulus: 67.0
+  youngs_modulus: 67000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 384.118
-  - 412.473
-  - 451.857
-  - 513.509
-  - 600.452
-  neutron_cross_section: 85.0
+  - 3.84118e-07
+  - 4.12473e-07
+  - 4.51857e-07
+  - 5.13509e-07
+  - 6.00452e-07
+  neutron_cross_section: 8.5e-27

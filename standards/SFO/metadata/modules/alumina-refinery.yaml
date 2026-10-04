@@ -9,7 +9,7 @@ size:
   width: 300
   height: 40
 rate:
-  throughput: 100
+  throughput: 27.7777777777778
   product: good.alumina
 inputs:
   materials:
@@ -19,7 +19,7 @@ outputs:
   by_products:
   - { item: good.red-mud, amount: 1.23 }
 needs:
-  power: 333
+  power: 333000000
 basis:
   - { of: [inputs, outputs], tier: sourced, source: "https://en.wikipedia.org/wiki/Red_mud", note: "Red mud 1.0 to 1.5 t for each tonne of alumina (1.23 on average) and caustic soda 100 kg; the bauxite is set to balance, inside the 1.9 to 3.6 t the source gives." }
   - { of: [needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Bayer_process", note: "7 to 21 GJ for each tonne, mostly heat; 12 taken. Heat is counted as power: there is no fuel to burn." }

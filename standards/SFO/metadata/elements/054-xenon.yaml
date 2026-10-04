@@ -7,7 +7,7 @@ identity:
   name: Xenon
   symbol: Xe
   atomic_number: 54
-  atomic_mass: 131.29
+  atomic_mass: 2.18012174053914e-25
   group: 18
   period: 5
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p6'
   valence_electrons: 8
-  atomic_radius: 108.0
-  covalent_radius: 140.0
-  van_der_waals_radius: 216.0
-  ionic_radius: 48.0
+  atomic_radius: 1.08e-10
+  covalent_radius: 1.4e-10
+  van_der_waals_radius: 2.16e-10
+  ionic_radius: 4.8e-11
   stable_isotopes: 9
   isotope_abundances:
   - mass_number: 124
@@ -41,7 +41,7 @@ atomic_structure:
     abundance: 0.08857
 chemical:
   electronegativity: 2.6
-  first_ionisation_energy: 1170.4
+  first_ionisation_energy: 1170400.0
   oxidation_states:
   - 0
   reactivity:
@@ -56,8 +56,8 @@ physical:
   boiling_point: 165.03
   density: 5.887
   crystal_structure: face-centered cubic
-  heat_of_fusion: 2.3
-  heat_of_vaporisation: 12.64
+  heat_of_fusion: 2300.0
+  heat_of_vaporisation: 12640.0
 thermal:
   specific_heat_capacity: 158.32
   thermal_conductivity: 0.00565
@@ -66,9 +66,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: colorless gas, exhibiting a blue glow when placed in a high voltage electric field
   emission_lines:
-  - 473.415
-  - 491.651
-  - 492.315
-  - 631.806
-  - 711.96
-  neutron_cross_section: 25.0
+  - 4.73415e-07
+  - 4.91651e-07
+  - 4.92315e-07
+  - 6.31806e-07
+  - 7.1196e-07
+  neutron_cross_section: 2.5e-27

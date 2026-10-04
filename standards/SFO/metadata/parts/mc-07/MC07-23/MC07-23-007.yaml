@@ -13,7 +13,7 @@ physical:
   length: 6.46
   width: 0.39
   height: 1.43
-  shock_limit: 15
+  shock_limit: 147.09975
 shape:
   surface_area: 22.0
 made_from:

@@ -10,8 +10,8 @@ identity:
     no air, about 420 K on average. One moon.'
   story: ['The heavy world. Setting down on c is easy and leaving it is expensive, and everything about its one port follows
       from that.']
-orbit: {semi_major_axis: 32519200.0, eccentricity: 0.01948, period: 44.0771, inclination: 2.83}
-physical: {mass: 1.9043e+25, radius: 8814.9, gravity: 16.357, day: 35.821, tilt: 17.14, albedo: 0.15}
+orbit: {semi_major_axis: 32519200000.0, eccentricity: 0.01948, period: 3808261.44, inclination: 2.83}
+physical: {mass: 1.9043e+25, radius: 8814900.0, gravity: 16.357, day: 128955.6, tilt: 17.14, albedo: 0.15}
 surface:
   terrain: dry
   relief: 6170

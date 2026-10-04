@@ -9,7 +9,7 @@ size:
   width: 60
   height: 15
 rate:
-  throughput: 40
+  throughput: 11.1111111111111
   product: good.ingot
 inputs:
   materials:
@@ -18,7 +18,7 @@ outputs:
   by_products:
   - { item: good.dross, amount: 0.02 }
 needs:
-  power: 40
+  power: 40000000
 basis:
   - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "About 73 t/h serves a smelter of two potlines; 40 for one." }
   - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,020 kg of metal from the pots for each tonne of ingot; 15 to 25 kg of dross." }

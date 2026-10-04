@@ -6,11 +6,11 @@ tidal_heating:
   volcanic_above: 1.0
   sea_above: 0.03
 radiation_belt:
-  dose: 3600
+  dose: 0.000416666666666667
   at: 5.9
   falls_as: 4.07
   giant_mass: 1.898e+27
-  deadly_above: 100
+  deadly_above: 1.15740740740741e-05
 basis:
   - { of: [tidal_heating], tier: invented, review: true, note: "A guess, to be reviewed: a value near what is reported for Io, used for every moon; and the two thresholds, set near Io's heat (about 2 W/m2) and Europa's. No source was fetched for these." }
   - { of: [radiation_belt.dose, radiation_belt.at], tier: sourced, source: "https://en.wikipedia.org/wiki/Magnetosphere_of_Jupiter", note: "3,600 rem a day at Io, which goes round Jupiter at 5.9 of its radii." }

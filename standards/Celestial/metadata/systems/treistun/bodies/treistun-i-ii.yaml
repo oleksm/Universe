@@ -10,8 +10,8 @@ identity:
     80 K on average. Its day lasts 32 hours.
   story: ['Far out and very cold. For a long time it was only a name on a chart, until someone needed a port that far from
       the star.']
-orbit: {semi_major_axis: 146732.0, eccentricity: 0.01497, period: 1.34055, inclination: 4.891}
-physical: {mass: 2.8043e+22, radius: 1306.79, gravity: 1.096, day: 32.173, tilt: 0.0, albedo: 0.12}
+orbit: {semi_major_axis: 146732000.0, eccentricity: 0.01497, period: 115823.52, inclination: 4.891}
+physical: {mass: 2.8043e+22, radius: 1306790.0, gravity: 1.096, day: 115822.8, tilt: 0.0, albedo: 0.12}
 surface:
   terrain: cratered
   relief: 1500

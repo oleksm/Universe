@@ -4,6 +4,9 @@ description: 'standards/common.schema.yaml: what every schema of the registry sh
 # A property that names another record takes that record's key, and says so with `x-ref`: the kinds
 # of record it may name (x-ref: [element, material, good]). The build checks the key is a record's,
 # and of one of those kinds.
+# A property with a dimension says its unit with `x-unit`, and its values are in that unit: SI (kg, m, s,
+# K, W, N, J, Pa and what is made of them), never t, km, hours, AU or light years. Angles are the one
+# exception: degrees, `x-unit: deg`. A share, a ratio or a count has no x-unit.
 definitions:
   key:
     description: "A record's one key, in the whole registry: <kind>.<name>, lower case, words joined by -, the kind being its schema's. The name may have more dotted parts where a record lives under another (body.treistun.treistun-f). Another record refers to it by this string."
@@ -23,7 +26,7 @@ definitions:
         note: { type: string }
         review: { type: boolean, description: "A guess put in so the figure is there: to be reviewed." }
   address:
-    description: 'Where something is (SFO 9). at: <system>/<body>, by their file names in LocalAdministration; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
+    description: 'Where something is (SFO 9). at: the settlement, by its key; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
     type: object
     additionalProperties: false
     required: [at]

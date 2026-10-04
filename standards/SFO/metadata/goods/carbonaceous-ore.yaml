@@ -6,7 +6,7 @@ identity:
   kind: rock
   description: "Dark, crumbly asteroid rock rich in carbon and bound water."
 physical:
-  bulk_density: 1.2
+  bulk_density: 1200.0
 source:
   occurs: asteroids
 game:

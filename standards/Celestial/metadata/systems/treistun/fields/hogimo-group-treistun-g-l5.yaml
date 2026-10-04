@@ -2,4 +2,4 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: population.treistun.hogimo-group-treistun-g-l5, name: Hogimo group (Treistun g L5), kind: trojan, anchor: body.treistun.hogimo}
-rocks: {class: rock-class.icy, count: 187, extent: 60.0}
+rocks: {class: rock-class.icy, count: 187, extent: 60000.0}

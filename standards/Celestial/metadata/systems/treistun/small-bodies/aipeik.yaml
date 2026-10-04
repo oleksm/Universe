@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.aipeik, name: Aipeik, kind: dwarf planet, parent: body.treistun.treistun, about: 'A world of ice in the outer
-    belt, heavy enough to have pulled itself round. One of perhaps 24.'}
-orbit: {semi_major_axis: 2248000000.0, eccentricity: 0.16680447, inclination: 24.32, period: 25334.0}
-physical: {radius: 1073.0, density: 950, mass: 4.911e+21}
+identity: {key: body.treistun.aipeik, name: Aipeik, kind: dwarf planet, parent: body.treistun.treistun, about: 'A world of
+    ice in the outer belt, heavy enough to have pulled itself round. One of perhaps 24.'}
+orbit: {semi_major_axis: 2248000000000.0, eccentricity: 0.16680447, inclination: 24.32, period: 2188857600.0}
+physical: {radius: 1073000.0, density: 950, mass: 4.911e+21}
 rock: {class: rock-class.icy}

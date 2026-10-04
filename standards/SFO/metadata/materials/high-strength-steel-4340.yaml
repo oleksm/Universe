@@ -28,9 +28,9 @@ identity:
 mass:
   density: 7850.0
 mechanical:
-  youngs_modulus: 200.0
-  yield_strength: 1300.0
-  tensile_strength: 1420.0
+  youngs_modulus: 200000000000.0
+  yield_strength: 1300000000.0
+  tensile_strength: 1420000000.0
   elongation_at_break: 0.17
-  fracture_toughness: 81.5
+  fracture_toughness: 81500000.0
   creep_resistance: good

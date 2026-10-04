@@ -7,7 +7,7 @@ identity:
   name: Technetium
   symbol: Tc
   atomic_number: 43
-  atomic_mass: 96.90636
+  atomic_mass: 1.60916796582004e-25
   group: 7
   period: 5
   block: d
@@ -15,17 +15,17 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d5 5s2'
   valence_electrons: 7
-  atomic_radius: 183.0
-  covalent_radius: 147.0
-  van_der_waals_radius: 209.0
-  ionic_radius: 56.0
+  atomic_radius: 1.83e-10
+  covalent_radius: 1.47e-10
+  van_der_waals_radius: 2.09e-10
+  ionic_radius: 5.6e-11
   stable_isotopes: 0
   half_life: 6661760000000.0
   decay_mode: beta-
 chemical:
   electronegativity: 1.9
-  first_ionisation_energy: 686.9
-  electron_affinity: 53
+  first_ionisation_energy: 686900.0
+  electron_affinity: 53000
   oxidation_states:
   - 7
   - 6
@@ -42,8 +42,8 @@ physical:
   boiling_point: 4538.0
   density: 11000.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 23.0
-  heat_of_vaporisation: 550.0
+  heat_of_fusion: 23000.0
+  heat_of_vaporisation: 550000.0
   vapour_pressure: 2.0e-73
 thermal:
   specific_heat_capacity: 63.0
@@ -55,9 +55,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: shiny gray metal
   emission_lines:
-  - 403.163
-  - 409.567
-  - 482.074
-  - 485.359
-  - 486.673
-  neutron_cross_section: 22.0
+  - 4.03163e-07
+  - 4.09567e-07
+  - 4.82074e-07
+  - 4.85359e-07
+  - 4.86673e-07
+  neutron_cross_section: 2.2e-27

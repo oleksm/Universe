@@ -7,7 +7,7 @@ identity:
   name: Cesium
   symbol: Cs
   atomic_number: 55
-  atomic_mass: 132.905452
+  atomic_mass: 2.20694695210131e-25
   group: 1
   period: 6
   block: s
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 6s1'
   valence_electrons: 1
-  atomic_radius: 298.0
-  covalent_radius: 244.0
-  van_der_waals_radius: 343.0
-  ionic_radius: 167.0
+  atomic_radius: 2.98e-10
+  covalent_radius: 2.44e-10
+  van_der_waals_radius: 3.43e-10
+  ionic_radius: 1.67e-10
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 133
     abundance: 1.0
 chemical:
   electronegativity: 0.79
-  first_ionisation_energy: 375.7
-  electron_affinity: 45.505
+  first_ionisation_energy: 375700.0
+  electron_affinity: 45505.0
   oxidation_states:
   - 1
   reactivity:
@@ -42,8 +42,8 @@ physical:
   boiling_point: 944.0
   density: 1930.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 2.09
-  heat_of_vaporisation: 64.0
+  heat_of_fusion: 2090.0
+  heat_of_vaporisation: 64000.0
   vapour_pressure: 0.0002
 thermal:
   specific_heat_capacity: 242.0
@@ -53,13 +53,13 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 0.2
-  youngs_modulus: 1.7
+  youngs_modulus: 1700000000.0
 optical_nuclear:
   colour: silvery gold
   emission_lines:
-  - 387.615
-  - 388.861
-  - 672.328
-  - 702.668
-  - 706.178
-  neutron_cross_section: 29.0
+  - 3.87615e-07
+  - 3.88861e-07
+  - 6.72328e-07
+  - 7.02668e-07
+  - 7.06178e-07
+  neutron_cross_section: 2.9e-27

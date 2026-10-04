@@ -7,16 +7,16 @@ identity:
   name: Lanthanum
   symbol: La
   atomic_number: 57
-  atomic_mass: 138.9055
+  atomic_mass: 2.30658009315606e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 5d16s2'
   valence_electrons: 3
-  covalent_radius: 207.0
-  van_der_waals_radius: 240.0
-  ionic_radius: 103.2
+  covalent_radius: 2.07e-10
+  van_der_waals_radius: 2.4e-10
+  ionic_radius: 1.032e-10
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 138
@@ -25,8 +25,8 @@ atomic_structure:
     abundance: 0.999112
 chemical:
   electronegativity: 1.1
-  first_ionisation_energy: 538.1
-  electron_affinity: 53
+  first_ionisation_energy: 538100.0
+  electron_affinity: 53000
   oxidation_states:
   - 3
   reactivity:
@@ -42,8 +42,8 @@ physical:
   boiling_point: 3737.0
   density: 6150.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 6.3
-  heat_of_vaporisation: 400.0
+  heat_of_fusion: 6300.0
+  heat_of_vaporisation: 400000.0
   vapour_pressure: 1.4e-46
 thermal:
   specific_heat_capacity: 195.0
@@ -55,14 +55,14 @@ electrical_magnetic:
   superconducting_temperature: 4.88
 mechanical:
   hardness: 2.5
-  youngs_modulus: 37.0
+  youngs_modulus: 37000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 517.731
-  - 521.186
-  - 523.427
-  - 545.515
-  - 624.993
-  neutron_cross_section: 8.98
+  - 5.17731e-07
+  - 5.21186e-07
+  - 5.23427e-07
+  - 5.45515e-07
+  - 6.24993e-07
+  neutron_cross_section: 8.98e-28

@@ -9,13 +9,13 @@ size:
   width: 140
   height: 140
 rate:
-  throughput: 10
+  throughput: 2.77777777777778
   product: good.parts
 inputs:
   materials:
   - { item: good.parts, amount: 1.0 }
 needs:
-  power: 1
+  power: 1000000
 basis:
   - { of: [rate.throughput], tier: invented, review: true, note: "A guess, to be reviewed: it sets how fast a ring can be put together." }
   - { of: [inputs, size, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

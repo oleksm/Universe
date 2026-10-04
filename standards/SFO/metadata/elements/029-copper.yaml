@@ -7,7 +7,7 @@ identity:
   name: Copper
   symbol: Cu
   atomic_number: 29
-  atomic_mass: 63.55
+  atomic_mass: 1.0552725768243e-25
   group: 11
   period: 4
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s1'
   valence_electrons: 11
-  atomic_radius: 145.0
-  covalent_radius: 132.0
-  van_der_waals_radius: 140.0
-  ionic_radius: 73.0
+  atomic_radius: 1.45e-10
+  covalent_radius: 1.32e-10
+  van_der_waals_radius: 1.4e-10
+  ionic_radius: 7.3e-11
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 63
@@ -27,8 +27,8 @@ atomic_structure:
     abundance: 0.3085
 chemical:
   electronegativity: 1.9
-  first_ionisation_energy: 745.5
-  electron_affinity: 119.235
+  first_ionisation_energy: 745500.0
+  electron_affinity: 119235.0
   oxidation_states:
   - 2
   - 1
@@ -45,8 +45,8 @@ physical:
   boiling_point: 2835.0
   density: 8933.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 13.1
-  heat_of_vaporisation: 300.0
+  heat_of_fusion: 13100.0
+  heat_of_vaporisation: 300000.0
   vapour_pressure: 4.2e-45
 thermal:
   specific_heat_capacity: 384.4
@@ -57,15 +57,15 @@ electrical_magnetic:
   magnetic_ordering: diamagnetic
 mechanical:
   hardness: 3.0
-  youngs_modulus: 130.0
-  tensile_strength: 210
+  youngs_modulus: 130000000000.0
+  tensile_strength: 210000000
   ductility: very ductile
 optical_nuclear:
   colour: red-orange metallic luster
   emission_lines:
-  - 406.264
-  - 465.112
-  - 515.323
-  - 521.82
-  - 529.252
-  neutron_cross_section: 3.78
+  - 4.06264e-07
+  - 4.65112e-07
+  - 5.15323e-07
+  - 5.2182e-07
+  - 5.29252e-07
+  neutron_cross_section: 3.78e-28

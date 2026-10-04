@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.driumum.lateiti, name: Lateiti, kind: comet, parent: body.driumum.driumum, about: A comet from the far cloud. It comes
-    in to 0.07 AU once in a very long time.}
-orbit: {semi_major_axis: 235571000000.0, eccentricity: 0.99995644, inclination: 60.68, period: 43684000.0}
-physical: {radius: 6.51, density: 600, mass: 693400000000000.0}
+identity: {key: body.driumum.lateiti, name: Lateiti, kind: comet, parent: body.driumum.driumum, about: A comet from the far
+    cloud. It comes in to 0.07 AU once in a very long time.}
+orbit: {semi_major_axis: 235571000000000.0, eccentricity: 0.99995644, inclination: 60.68, period: 3774297600000.0}
+physical: {radius: 6510.0, density: 600, mass: 693400000000000.0}
 rock: {class: rock-class.icy}

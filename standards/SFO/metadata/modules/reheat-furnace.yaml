@@ -9,13 +9,13 @@ size:
   width: 20
   height: 12
 rate:
-  throughput: 120
+  throughput: 33.3333333333333
   product: good.hot-ingot
 inputs:
   materials:
   - { item: good.ingot, amount: 1.0 }
 needs:
-  power: 45
+  power: 45000000
 basis:
   - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "100 to 420 t/h for one furnace." }
   - { of: [needs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "1,200 to 1,500 MJ of heat for each tonne at best practice; 1,350 taken. Heat is counted as power: there is no fuel to burn." }

@@ -2,8 +2,8 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.driumum.vauwaizo, name: Vauwaizo, kind: asteroid, parent: body.driumum.driumum}
-orbit: {semi_major_axis: 34151400.0, eccentricity: 0.03158, period: 76.2512, inclination: 11.097}
-physical: {mass: 7304100000000.0, radius: 1.10284, gravity: 0.0, day: 3.6215, tilt: 66.61}
+orbit: {semi_major_axis: 34151400000.0, eccentricity: 0.03158, period: 6588103.68, inclination: 11.097}
+physical: {mass: 7304100000000.0, radius: 1102.84, gravity: 0.0, day: 13037.4, tilt: 66.61}
 surface:
   colour: [0.42, 0.4, 0.38]
 rock: {class: rock-class.carbonaceous, structure: rubble pile, density: 1300}

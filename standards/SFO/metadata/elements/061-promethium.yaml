@@ -7,23 +7,23 @@ identity:
   name: Promethium
   symbol: Pm
   atomic_number: 61
-  atomic_mass: 144.91276
+  atomic_mass: 2.4063329922883e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f5 6s2'
   valence_electrons: 7
-  atomic_radius: 205.0
-  covalent_radius: 199.0
-  van_der_waals_radius: 236.0
-  ionic_radius: 97.0
+  atomic_radius: 2.05e-10
+  covalent_radius: 1.99e-10
+  van_der_waals_radius: 2.36e-10
+  ionic_radius: 9.7e-11
   stable_isotopes: 0
   half_life: 559383000.0
   decay_mode: electron capture
 chemical:
-  first_ionisation_energy: 540
-  electron_affinity: 12.45
+  first_ionisation_energy: 540000
+  electron_affinity: 12450.0
   oxidation_states:
   - 3
   reactivity:
@@ -38,22 +38,22 @@ physical:
   melting_point: 1315.0
   boiling_point: 3273.0
   density: 7260.0
-  heat_of_fusion: 7.7
-  heat_of_vaporisation: 290.0
+  heat_of_fusion: 7700.0
+  heat_of_vaporisation: 290000.0
 thermal:
   thermal_conductivity: 15.0
   thermal_expansion: 1.1e-05
 electrical_magnetic:
   electrical_conductivity: 1300000.0
 mechanical:
-  youngs_modulus: 46.0
+  youngs_modulus: 46000000000.0
   ductility: ductile
 optical_nuclear:
   colour: metallic
   emission_lines:
-  - 610.021
-  - 652.045
-  - 659.815
-  - 674.991
-  - 675.048
-  neutron_cross_section: 8400.0
+  - 6.10021e-07
+  - 6.52045e-07
+  - 6.59815e-07
+  - 6.74991e-07
+  - 6.75048e-07
+  neutron_cross_section: 8.4e-25

@@ -27,12 +27,12 @@ identity:
 mass:
   density: 2700.0
 mechanical:
-  fracture_toughness: 21
-  youngs_modulus: 68.0
+  fracture_toughness: 21000000
+  youngs_modulus: 68000000000.0
   poissons_ratio: 0.33
-  yield_strength: 270.0
-  tensile_strength: 310.0
-  fatigue_limit: 97.0
+  yield_strength: 270000000.0
+  tensile_strength: 310000000.0
+  fatigue_limit: 97000000.0
 thermal:
   melting_point: 858.15
   thermal_conductivity: 152.0

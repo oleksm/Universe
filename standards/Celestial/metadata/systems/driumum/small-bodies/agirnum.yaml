@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.driumum.agirnum, name: Agirnum, kind: asteroid, parent: body.driumum.driumum, about: 'The largest body of the main
-    belt: over a third of all the belt''s mass. Too small to have pulled itself round.'}
-orbit: {semi_major_axis: 39436700.0, eccentricity: 0.034878099, inclination: 7.99, period: 94.621}
-physical: {radius: 110.1, density: 2100, mass: 1.175e+19}
+identity: {key: body.driumum.agirnum, name: Agirnum, kind: asteroid, parent: body.driumum.driumum, about: 'The largest body
+    of the main belt: over a third of all the belt''s mass. Too small to have pulled itself round.'}
+orbit: {semi_major_axis: 39436700000.0, eccentricity: 0.034878099, inclination: 7.99, period: 8175254.4}
+physical: {radius: 110100.0, density: 2100, mass: 1.175e+19}
 rock: {class: rock-class.carbonaceous}

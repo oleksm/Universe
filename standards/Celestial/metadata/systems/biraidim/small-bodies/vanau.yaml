@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.biraidim.vanau, name: Vanau, kind: crossing asteroid, parent: body.biraidim.biraidim, about: 'Knocked out of the belt.
-    At its closest it comes in to 0.04 AU, near the orbit of Biraidim b.'}
-orbit: {semi_major_axis: 33649300.0, eccentricity: 0.81538795, inclination: 9.17, period: 67.664}
-physical: {radius: 0.1321, density: 3300, mass: 31850000000.0}
+identity: {key: body.biraidim.vanau, name: Vanau, kind: crossing asteroid, parent: body.biraidim.biraidim, about: 'Knocked
+    out of the belt. At its closest it comes in to 0.04 AU, near the orbit of Biraidim b.'}
+orbit: {semi_major_axis: 33649300000.0, eccentricity: 0.81538795, inclination: 9.17, period: 5846169.6}
+physical: {radius: 132.1, density: 3300, mass: 31850000000.0}
 rock: {class: rock-class.stony}

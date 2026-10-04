@@ -9,7 +9,7 @@ properties:
   number: { type: integer, minimum: 1, description: Its number in its settlement. }
   owner: { type: string, x-ref: [org], description: 'Who owns it (a company in Maker House, or a standards body). Left out: vacant, the land office''s to sell.' }
   address:
-    description: 'Its address (SFO 9): a number on one of its settlement''s streets, by the street''s file name. The parcel number is the land office''s, not an address.'
+    description: 'Its address (SFO 9): a number on one of its settlement''s streets, by the street''s key. The parcel number is the land office''s, not an address.'
     type: object
     additionalProperties: false
     required: [street, number]

@@ -7,7 +7,7 @@ identity:
   name: Boron
   symbol: B
   atomic_number: 5
-  atomic_mass: 10.81
+  atomic_mass: 1.7950427309946e-26
   group: 13
   period: 2
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[He] 2s2 2p1'
   valence_electrons: 3
-  atomic_radius: 87.0
-  covalent_radius: 85.0
-  van_der_waals_radius: 192.0
-  ionic_radius: 27.0
+  atomic_radius: 8.7e-11
+  covalent_radius: 8.5e-11
+  van_der_waals_radius: 1.92e-10
+  ionic_radius: 2.7e-11
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 10
@@ -27,8 +27,8 @@ atomic_structure:
     abundance: 0.8035
 chemical:
   electronegativity: 2.04
-  first_ionisation_energy: 800.6
-  electron_affinity: 26.989
+  first_ionisation_energy: 800600.0
+  electron_affinity: 26989.0
   oxidation_states:
   - 3
   reactivity:
@@ -47,8 +47,8 @@ physical:
   - alpha rhombohedral boron
   - beta rhombohedral boron
   - alpha tetragonal boron
-  heat_of_fusion: 50.0
-  heat_of_vaporisation: 507.0
+  heat_of_fusion: 50000.0
+  heat_of_vaporisation: 507000.0
   vapour_pressure: 4.9e-83
 thermal:
   specific_heat_capacity: 1030.0
@@ -62,9 +62,9 @@ mechanical:
 optical_nuclear:
   colour: black-brown
   emission_lines:
-  - 581.84
-  - 582.107
-  - 582.233
-  - 594.263
-  - 624.457
-  neutron_cross_section: 760.0
+  - 5.8184e-07
+  - 5.82107e-07
+  - 5.82233e-07
+  - 5.94263e-07
+  - 6.24457e-07
+  neutron_cross_section: 7.6e-26

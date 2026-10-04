@@ -7,7 +7,7 @@ identity:
   name: Arsenic
   symbol: As
   atomic_number: 33
-  atomic_mass: 74.92159
+  atomic_mass: 1.24410227126788e-25
   group: 15
   period: 4
   block: p
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2 4p3'
   valence_electrons: 5
-  atomic_radius: 114.0
-  covalent_radius: 119.0
-  van_der_waals_radius: 185.0
-  ionic_radius: 46.0
+  atomic_radius: 1.14e-10
+  covalent_radius: 1.19e-10
+  van_der_waals_radius: 1.85e-10
+  ionic_radius: 4.6e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 75
     abundance: 1.0
 chemical:
   electronegativity: 2.18
-  first_ionisation_energy: 947
-  electron_affinity: 77.65
+  first_ionisation_energy: 947000
+  electron_affinity: 77650.0
   oxidation_states:
   - 5
   - 3
@@ -47,8 +47,8 @@ physical:
   - yellow arsenic
   - black arsenic
   - gray arsenic
-  heat_of_fusion: 27.7
-  heat_of_vaporisation: 32.4
+  heat_of_fusion: 27700.0
+  heat_of_vaporisation: 32400.0
   vapour_pressure: 1.4e-12
 thermal:
   specific_heat_capacity: 328.0
@@ -58,13 +58,13 @@ electrical_magnetic:
   magnetic_ordering: diamagnetic
 mechanical:
   hardness: 3.5
-  youngs_modulus: 8.0
+  youngs_modulus: 8000000000.0
 optical_nuclear:
   colour: metallic grey
   emission_lines:
-  - 506.898
-  - 512.134
-  - 514.163
-  - 540.813
-  - 545.132
-  neutron_cross_section: 4.2
+  - 5.06898e-07
+  - 5.12134e-07
+  - 5.14163e-07
+  - 5.40813e-07
+  - 5.45132e-07
+  neutron_cross_section: 4.2e-28

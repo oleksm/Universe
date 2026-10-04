@@ -5,5 +5,5 @@ key: power-line.treistun.port-trethi.power-line-3
 name: Power line 3
 from: facility.treistun.port-trethi.trethi-power-station
 to: facility.treistun.port-trethi.trethi-smelter
-capacity: 850
+capacity: 850000000
 line: [[1275, -250], [1275, -450]]

@@ -9,7 +9,7 @@ size:
   width: 80
   height: 40
 rate:
-  power: 400
+  power: 400000000
 inputs:
   materials:
   - { item: good.deuterium, amount: 2.09e-08 }

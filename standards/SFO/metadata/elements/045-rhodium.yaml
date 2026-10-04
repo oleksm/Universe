@@ -7,7 +7,7 @@ identity:
   name: Rhodium
   symbol: Rh
   atomic_number: 45
-  atomic_mass: 102.9055
+  atomic_mass: 1.70878602918006e-25
   group: 9
   period: 5
   block: d
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d8 5s1'
   valence_electrons: 9
-  atomic_radius: 173.0
-  covalent_radius: 142.0
-  van_der_waals_radius: 195.0
-  ionic_radius: 66.5
+  atomic_radius: 1.73e-10
+  covalent_radius: 1.42e-10
+  van_der_waals_radius: 1.95e-10
+  ionic_radius: 6.65e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 103
     abundance: 1.0
 chemical:
   electronegativity: 2.28
-  first_ionisation_energy: 719.7
-  electron_affinity: 110.27
+  first_ionisation_energy: 719700.0
+  electron_affinity: 110270.0
   oxidation_states:
   - 3
   reactivity:
@@ -41,8 +41,8 @@ physical:
   boiling_point: 3968.0
   density: 12400.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 21.7
-  heat_of_vaporisation: 495.0
+  heat_of_fusion: 21700.0
+  heat_of_vaporisation: 495000.0
   vapour_pressure: 8.2e-81
 thermal:
   specific_heat_capacity: 240.0
@@ -53,14 +53,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 6.0
-  youngs_modulus: 275.0
+  youngs_modulus: 275000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: silvery white metallic
   emission_lines:
-  - 382.226
-  - 385.652
-  - 395.886
-  - 421.114
-  - 437.48
-  neutron_cross_section: 145.0
+  - 3.82226e-07
+  - 3.85652e-07
+  - 3.95886e-07
+  - 4.21114e-07
+  - 4.3748e-07
+  neutron_cross_section: 1.45e-26

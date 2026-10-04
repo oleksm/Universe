@@ -7,7 +7,7 @@ identity:
   name: Sodium
   symbol: Na
   atomic_number: 11
-  atomic_mass: 22.9897693
+  atomic_mass: 3.81754100547713e-26
   group: 1
   period: 3
   block: s
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s1'
   valence_electrons: 1
-  atomic_radius: 190.0
-  covalent_radius: 166.0
-  van_der_waals_radius: 227.0
-  ionic_radius: 102.0
+  atomic_radius: 1.9e-10
+  covalent_radius: 1.66e-10
+  van_der_waals_radius: 2.27e-10
+  ionic_radius: 1.02e-10
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 23
     abundance: 1.0
 chemical:
   electronegativity: 0.93
-  first_ionisation_energy: 495.8
-  electron_affinity: 52.867
+  first_ionisation_energy: 495800.0
+  electron_affinity: 52867.0
   oxidation_states:
   - 1
   reactivity:
@@ -42,8 +42,8 @@ physical:
   boiling_point: 1156.0
   density: 970.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 2.6
-  heat_of_vaporisation: 97.7
+  heat_of_fusion: 2600.0
+  heat_of_vaporisation: 97700.0
   vapour_pressure: 3.9e-09
 thermal:
   specific_heat_capacity: 1230.0
@@ -54,14 +54,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 0.5
-  youngs_modulus: 10.0
+  youngs_modulus: 10000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery white metallic
   emission_lines:
-  - 388.18
-  - 443.23
-  - 507.12
-  - 588.995
-  - 589.592
-  neutron_cross_section: 0.53
+  - 3.8818e-07
+  - 4.4323e-07
+  - 5.0712e-07
+  - 5.88995e-07
+  - 5.89592e-07
+  neutron_cross_section: 5.3e-29

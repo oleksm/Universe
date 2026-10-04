@@ -92,9 +92,44 @@ def old_name(key, rel, at):
     return stem
 
 
+# Records hold every value in SI (kg, m, s, W, N, Pa; angles in degrees), each property's unit in its
+# schema as x-unit. This build and the page still work in the units people read (t, km, hours, AU):
+# reading_units.yaml says which, for each property, and a value is turned to it as a record is read.
+READING = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "reading_units.yaml"), encoding="utf-8"))
+
+
+def reading(v, path, tab):
+    if isinstance(v, dict):
+        return {k: reading(x, f"{path}.{k}" if path else str(k), tab) for k, x in v.items()}
+    if isinstance(v, list):
+        return [reading(x, path + "[]" if isinstance(x, dict) else path, tab) for x in v]
+    if path in tab and isinstance(v, (int, float)) and not isinstance(v, bool):
+        per = tab[path]["per"]
+        r = float(f"{v / per:.12g}")
+        return int(r) if r == int(r) and abs(r) < 1e15 and (isinstance(v, int) or per < 1 or per != int(per)) else r
+    return v
+
+
+def read_schema(path):
+    """A schema, its descriptions in the units the page reads."""
+    sch = yaml.safe_load(open(path, encoding="utf-8"))
+    for at, how in (READING.get(os.path.relpath(path, TREE)) or {}).items():
+        node = sch
+        for step in at.split("."):
+            node = (node.get("properties") or {}).get(step.replace("[]", "")) if isinstance(node, dict) else None
+            if step.endswith("[]") and isinstance(node, dict):
+                node = node.get("items")
+        if isinstance(node, dict):
+            node["description"] = how["reads"]
+    return sch
+
+
 def old_names(rec, path):
     rel = os.path.relpath(os.path.abspath(path), TREE)
     sp = V.schema_of(rel) if os.sep in rel else None
+    if sp and isinstance(rec, dict) and os.path.relpath(sp, TREE) in READING:
+        for k, x in reading(rec, "", READING[os.path.relpath(sp, TREE)]).items():
+            rec[k] = x
     if sp and isinstance(rec, dict):
         for holder, i, _kinds, at in list(V.refs(rec, V.schema(sp), sp)):
             if isinstance(holder[i], str):
@@ -697,7 +732,7 @@ for name in sorted(os.listdir(TREE)):
 KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
 NESTED = {"parts"}
-SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
+SCHEMAS = {k: read_schema(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml")) for k, v in KINDS.items()}
 elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
 for s in standards:
     if "records" not in s:
@@ -1058,7 +1093,7 @@ for ad in administrations:
 # Parts: filed by hull (SFO/metadata/parts/<hull>/<code>.yaml); a part made of other parts has them
 # in the folder named after its code (parts/<hull>/<code>/<code>-NNN.yaml). All to part.schema.yaml.
 hull_of = {hl.get("slug"): hl for hl in hulls}
-PART_SCHEMA = yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", "part.schema.yaml"), encoding="utf-8"))
+PART_SCHEMA = read_schema(os.path.join(TREE, "SFO", "schema", "part.schema.yaml"))
 parts = []
 
 
@@ -1986,7 +2021,7 @@ report("invented", "Confidence: the records with invented or unexplained numbers
 CEL = os.path.join(TREE, "Celestial")
 celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": [], "vocabulary": []}
 if os.path.isdir(CEL):
-    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "population", "rock-class", "asteroids", "vocabulary", "conditions")}
+    cschema = {k: read_schema(os.path.join(CEL, "schema", f"{k}.schema.yaml")) for k in ("galaxy", "system", "body", "population", "rock-class", "asteroids", "vocabulary", "conditions")}
     celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "population", "rock-class")}
 
     def cel_load(full, kind):

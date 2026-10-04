@@ -7,17 +7,17 @@ identity:
   name: Gadolinium
   symbol: Gd
   atomic_number: 64
-  atomic_mass: 157.25
+  atomic_mass: 2.6111976822285e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f7 5d1 6s2'
   valence_electrons: 10
-  atomic_radius: 233.0
-  covalent_radius: 196.0
-  van_der_waals_radius: 237.0
-  ionic_radius: 93.8
+  atomic_radius: 2.33e-10
+  covalent_radius: 1.96e-10
+  van_der_waals_radius: 2.37e-10
+  ionic_radius: 9.38e-11
   stable_isotopes: 6
   isotope_abundances:
   - mass_number: 152
@@ -36,8 +36,8 @@ atomic_structure:
     abundance: 0.2186
 chemical:
   electronegativity: 1.2
-  first_ionisation_energy: 593.4
-  electron_affinity: 13.22
+  first_ionisation_energy: 593400.0
+  electron_affinity: 13220.0
   oxidation_states:
   - 3
   reactivity:
@@ -53,8 +53,8 @@ physical:
   boiling_point: 3546.0
   density: 7900.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 10.0
-  heat_of_vaporisation: 305.0
+  heat_of_fusion: 10000.0
+  heat_of_vaporisation: 305000.0
   vapour_pressure: 1.7e-39
 thermal:
   specific_heat_capacity: 240.0
@@ -65,14 +65,14 @@ electrical_magnetic:
   magnetic_ordering: ferromagnetic
 mechanical:
   hardness: 5.13
-  youngs_modulus: 55.0
+  youngs_modulus: 55000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 405.364
-  - 405.822
-  - 407.87
-  - 417.554
-  - 422.585
-  neutron_cross_section: 49000.0
+  - 4.05364e-07
+  - 4.05822e-07
+  - 4.0787e-07
+  - 4.17554e-07
+  - 4.22585e-07
+  neutron_cross_section: 4.9e-24

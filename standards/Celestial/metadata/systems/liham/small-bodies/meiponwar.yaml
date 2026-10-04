@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.liham.meiponwar, name: Meiponwar, kind: crossing asteroid, parent: body.liham.liham, about: 'Knocked out of the
-    belt. At its closest it comes in to 0.02 AU, near the orbit of Liham b.'}
-orbit: {semi_major_axis: 19829500.0, eccentricity: 0.85286747, inclination: 22.48, period: 33.089}
-physical: {radius: 0.1757, density: 3300, mass: 75030000000.0}
+identity: {key: body.liham.meiponwar, name: Meiponwar, kind: crossing asteroid, parent: body.liham.liham, about: 'Knocked
+    out of the belt. At its closest it comes in to 0.02 AU, near the orbit of Liham b.'}
+orbit: {semi_major_axis: 19829500000.0, eccentricity: 0.85286747, inclination: 22.48, period: 2858889.6}
+physical: {radius: 175.7, density: 3300, mass: 75030000000.0}
 rock: {class: rock-class.stony}

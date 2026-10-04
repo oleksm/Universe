@@ -18,30 +18,30 @@ properties:
     additionalProperties: false
     required: [material, form]
     properties:
-      material: { type: string, x-ref: [material], description: "The material, by file name." }
+      material: { type: string, x-ref: [material], description: "The material, by its key." }
       form: { type: string, description: "One of the forms the material comes in." }
       temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
   size:
     type: object
     additionalProperties: false
     properties:
-      thickness: { type: number, description: "mm, of sheet, plate or film" }
-      diameter: { type: number, description: "mm, of bar, wire or tube (a tube's outside)" }
-      wall: { type: number, description: "mm, of a tube" }
+      thickness: { type: number, x-unit: "m", description: "m, of sheet, plate or film" }
+      diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
+      wall: { type: number, x-unit: "m", description: "m, of a tube" }
   physical:
     description: What every physical thing has. What a ship hauling it and a warehouse holding it have to know.
     type: object
     additionalProperties: false
     properties:
-      length: { type: number, description: "m, of one piece as supplied (a sheet, a bar, a coil's wire)" }
-      width: { type: number, description: "m, of one sheet or plate as supplied" }
-      storage_min_temperature: { type: number, description: "K, the coldest it may be kept or carried at" }
-      storage_max_temperature: { type: number, description: "K, the hottest it may be kept or carried at" }
-      impact_resistance: { type: number, description: "J, the blow it takes without damage" }
-      shock_limit: { type: number, description: "g, the hardest jolt it takes while it is carried" }
+      length: { type: number, x-unit: "m", description: "m, of one piece as supplied (a sheet, a bar, a coil's wire)" }
+      width: { type: number, x-unit: "m", description: "m, of one sheet or plate as supplied" }
+      storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
+      storage_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it may be kept or carried at" }
+      impact_resistance: { type: number, x-unit: "J", description: "J, the blow it takes without damage" }
+      shock_limit: { type: number, x-unit: "m/s2", description: "m/s2, the hardest jolt it takes while it is carried" }
   making:
     type: object
     additionalProperties: false
     properties:
-      process: { type: string, x-ref: [process], description: "The process that makes it, by file name." }
+      process: { type: string, x-ref: [process], description: "The process that makes it, by its key." }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

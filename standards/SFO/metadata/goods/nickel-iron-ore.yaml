@@ -6,7 +6,7 @@ identity:
   kind: rock
   description: "Asteroid metal: iron with nickel in it, already metal and not an oxide."
 physical:
-  bulk_density: 4.5
+  bulk_density: 4500.0
 source:
   occurs: asteroids
 game:

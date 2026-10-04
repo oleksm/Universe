@@ -9,10 +9,10 @@ size:
   width: 10
   height: 6
 rate:
-  throughput: 0.5
+  throughput: 0.138888888888889
   product: good.parts
 needs:
-  power: 0.13
+  power: 130000.0
 basis:
   - { of: [needs.power], tier: sourced, source: "https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/mag3", note: "A large five-axis machining centre has a 130 kW spindle. The spindle only." }
   - { of: [size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

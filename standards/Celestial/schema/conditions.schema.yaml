@@ -12,16 +12,16 @@ properties:
     additionalProperties: false
     properties:
       love_over_q: { type: number, description: "how readily a moon's inside turns the kneading into heat (k2 over Q)" }
-      volcanic_above: { type: number, description: "W for each m2 of its surface above which it is volcanic" }
-      sea_above: { type: number, description: "W/m2 above which an icy one may keep a buried sea" }
+      volcanic_above: { type: number, x-unit: "W/m2", description: "W for each m2 of its surface above which it is volcanic" }
+      sea_above: { type: number, x-unit: "W/m2", description: "W/m2 above which an icy one may keep a buried sea" }
   radiation_belt:
     description: "The dose round a gas giant, falling off with distance."
     type: object
     additionalProperties: false
     properties:
-      dose: { type: number, description: "rem a day at the distance below, round a giant of Jupiter's mass" }
+      dose: { type: number, x-unit: "Sv/s", description: "Sv/s at the distance below, round a giant of Jupiter's mass" }
       at: { type: number, description: "that distance, in the giant's radii" }
       falls_as: { type: number, description: "the dose goes as the distance to minus this" }
-      giant_mass: { type: number, description: "kg, Jupiter's: the dose is taken to go with the giant's mass" }
-      deadly_above: { type: number, description: "rem a day above which a person unshielded dies within days" }
+      giant_mass: { type: number, x-unit: "kg", description: "kg, Jupiter's: the dose is taken to go with the giant's mass" }
+      deadly_above: { type: number, x-unit: "Sv/s", description: "Sv/s above which a person unshielded dies within days" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

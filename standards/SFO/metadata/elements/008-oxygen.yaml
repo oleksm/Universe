@@ -7,7 +7,7 @@ identity:
   name: Oxygen
   symbol: O
   atomic_number: 8
-  atomic_mass: 15.999
+  atomic_mass: 2.65669645265334e-26
   group: 16
   period: 2
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[He] 2s2 2p4'
   valence_electrons: 6
-  atomic_radius: 48.0
-  covalent_radius: 66.0
-  van_der_waals_radius: 152.0
-  ionic_radius: 140.0
+  atomic_radius: 4.8e-11
+  covalent_radius: 6.6e-11
+  van_der_waals_radius: 1.52e-10
+  ionic_radius: 1.4e-10
   stable_isotopes: 3
   isotope_abundances:
   - mass_number: 16
@@ -29,8 +29,8 @@ atomic_structure:
     abundance: 0.002045
 chemical:
   electronegativity: 3.44
-  first_ionisation_energy: 1313.9
-  electron_affinity: 140.976
+  first_ionisation_energy: 1313900.0
+  electron_affinity: 140976.0
   oxidation_states:
   - -2
   reactivity:
@@ -49,8 +49,8 @@ physical:
   - dioxygen
   - ozone
   - tetraoxygen
-  heat_of_fusion: 0.222
-  heat_of_vaporisation: 3.41
+  heat_of_fusion: 222.0
+  heat_of_vaporisation: 3410.0
 thermal:
   specific_heat_capacity: 919.0
   thermal_conductivity: 0.02658
@@ -59,9 +59,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: colorless
   emission_lines:
-  - 615.677
-  - 615.818
-  - 700.223
-  - 725.415
-  - 725.445
-  neutron_cross_section: 0.00028
+  - 6.15677e-07
+  - 6.15818e-07
+  - 7.00223e-07
+  - 7.25415e-07
+  - 7.25445e-07
+  neutron_cross_section: 2.8e-32

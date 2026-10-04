@@ -7,25 +7,25 @@ identity:
   name: Holmium
   symbol: Ho
   atomic_number: 67
-  atomic_mass: 164.93033
+  atomic_mass: 2.7387325623223e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f11 6s2'
   valence_electrons: 13
-  atomic_radius: 226.0
-  covalent_radius: 192.0
-  van_der_waals_radius: 216.0
-  ionic_radius: 90.1
+  atomic_radius: 2.26e-10
+  covalent_radius: 1.92e-10
+  van_der_waals_radius: 2.16e-10
+  ionic_radius: 9.01e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 165
     abundance: 1.0
 chemical:
   electronegativity: 1.23
-  first_ionisation_energy: 581
-  electron_affinity: 32.61
+  first_ionisation_energy: 581000
+  electron_affinity: 32610.0
   oxidation_states:
   - 3
   reactivity:
@@ -41,8 +41,8 @@ physical:
   boiling_point: 2973.0
   density: 8800.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 17.0
-  heat_of_vaporisation: 265.0
+  heat_of_fusion: 17000.0
+  heat_of_vaporisation: 265000.0
   vapour_pressure: 2.3e-40
 thermal:
   specific_heat_capacity: 165.0
@@ -53,14 +53,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 1.65
-  youngs_modulus: 64.0
+  youngs_modulus: 64000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 405.393
-  - 410.384
-  - 410.862
-  - 412.716
-  - 416.303
-  neutron_cross_section: 64.0
+  - 4.05393e-07
+  - 4.10384e-07
+  - 4.10862e-07
+  - 4.12716e-07
+  - 4.16303e-07
+  neutron_cross_section: 6.4e-27

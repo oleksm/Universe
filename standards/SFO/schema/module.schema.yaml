@@ -11,7 +11,7 @@ definitions:
       type: object
       additionalProperties: false
       properties:
-        item: { type: string, x-ref: [element, material, good], description: "An element's symbol, or a material's or a good's file name." }
+        item: { type: string, x-ref: [element, material, good], description: "An element, a material or a good, by its key." }
         amount: { type: number, description: "t per t of its product (per MWh, for one that makes power)" }
 properties:
   identity:
@@ -27,21 +27,21 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      length: { type: number, description: m }
-      width: { type: number, description: m }
-      height: { type: number, description: m }
+      length: { type: number, x-unit: "m", description: m }
+      width: { type: number, x-unit: "m", description: m }
+      height: { type: number, x-unit: "m", description: m }
   rate:
     type: object
     additionalProperties: false
     properties:
-      throughput: { type: number, description: "t/h of its product, at full rate" }
-      batch: { type: number, description: "t in one batch" }
-      holds: { type: number, description: "t it can store" }
-      volume: { type: number, description: "m3 it can store" }
+      throughput: { type: number, x-unit: "kg/s", description: "kg/s of its product, at full rate" }
+      batch: { type: number, x-unit: "kg", description: "kg in one batch" }
+      holds: { type: number, x-unit: "kg", description: "kg it can store" }
+      volume: { type: number, x-unit: "m3", description: "m3 it can store" }
       stores: { type: array, items: { type: string }, description: "The kinds of goods it stores, by the game's keys (content/base/goods.ron)." }
-      handling: { type: number, description: "t/h it can move in or out" }
-      product: { type: string, x-ref: [element, material, good], description: "What its throughput counts: an element's symbol, a material's or a good's file name." }
-      power: { type: number, description: "MW it supplies, for one that makes power" }
+      handling: { type: number, x-unit: "kg/s", description: "kg/s it can move in or out" }
+      product: { type: string, x-ref: [element, material, good], description: "What its throughput counts: an element, a material or a good, by its key." }
+      power: { type: number, x-unit: "W", description: "W it supplies, for one that makes power" }
   inputs:
     type: object
     additionalProperties: false
@@ -56,5 +56,5 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      power: { type: number, description: "MW, at full rate" }
+      power: { type: number, x-unit: "W", description: "W, at full rate" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

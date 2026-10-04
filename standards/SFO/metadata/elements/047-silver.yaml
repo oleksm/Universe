@@ -7,7 +7,7 @@ identity:
   name: Silver
   symbol: Ag
   atomic_number: 47
-  atomic_mass: 107.868
+  atomic_mass: 1.79119028036009e-25
   group: 11
   period: 5
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s1'
   valence_electrons: 11
-  atomic_radius: 165.0
-  covalent_radius: 145.0
-  van_der_waals_radius: 172.0
-  ionic_radius: 115.0
+  atomic_radius: 1.65e-10
+  covalent_radius: 1.45e-10
+  van_der_waals_radius: 1.72e-10
+  ionic_radius: 1.15e-10
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 107
@@ -27,8 +27,8 @@ atomic_structure:
     abundance: 0.48161
 chemical:
   electronegativity: 1.93
-  first_ionisation_energy: 731
-  electron_affinity: 125.862
+  first_ionisation_energy: 731000
+  electron_affinity: 125862.0
   oxidation_states:
   - 1
   reactivity:
@@ -44,8 +44,8 @@ physical:
   boiling_point: 2435.0
   density: 10500.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 11.3
-  heat_of_vaporisation: 255.0
+  heat_of_fusion: 11300.0
+  heat_of_vaporisation: 255000.0
   vapour_pressure: 1.2e-36
 thermal:
   specific_heat_capacity: 235.0
@@ -56,15 +56,15 @@ electrical_magnetic:
   magnetic_ordering: diamagnetic
 mechanical:
   hardness: 2.5
-  youngs_modulus: 85.0
-  tensile_strength: 170
+  youngs_modulus: 85000000000.0
+  tensile_strength: 170000000
   ductility: very ductile
 optical_nuclear:
   colour: lustrous white metal
   emission_lines:
-  - 381.094
-  - 405.548
-  - 421.096
-  - 520.908
-  - 546.55
-  neutron_cross_section: 63.6
+  - 3.81094e-07
+  - 4.05548e-07
+  - 4.21096e-07
+  - 5.20908e-07
+  - 5.4655e-07
+  neutron_cross_section: 6.36e-27

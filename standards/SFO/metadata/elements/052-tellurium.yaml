@@ -7,7 +7,7 @@ identity:
   name: Tellurium
   symbol: Te
   atomic_number: 52
-  atomic_mass: 127.6
+  atomic_mass: 2.1188478489816e-25
   group: 16
   period: 5
   block: p
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p4'
   valence_electrons: 6
-  atomic_radius: 123.0
-  covalent_radius: 138.0
-  van_der_waals_radius: 206.0
-  ionic_radius: 56.0
+  atomic_radius: 1.23e-10
+  covalent_radius: 1.38e-10
+  van_der_waals_radius: 2.06e-10
+  ionic_radius: 5.6e-11
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 120
@@ -39,8 +39,8 @@ atomic_structure:
     abundance: 0.3408
 chemical:
   electronegativity: 2.1
-  first_ionisation_energy: 869.3
-  electron_affinity: 190.161
+  first_ionisation_energy: 869300.0
+  electron_affinity: 190161.0
   oxidation_states:
   - 6
   - 4
@@ -58,8 +58,8 @@ physical:
   boiling_point: 1261.0
   density: 6232.0
   crystal_structure: simple trigonal
-  heat_of_fusion: 17.5
-  heat_of_vaporisation: 48.0
+  heat_of_fusion: 17500.0
+  heat_of_vaporisation: 48000.0
   vapour_pressure: 7.9e-11
 thermal:
   specific_heat_capacity: 201.0
@@ -67,17 +67,17 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 10000.0
   magnetic_ordering: diamagnetic
-  band_gap: 0.33
+  band_gap: 5.2871828922e-20
 mechanical:
   hardness: 2.25
-  youngs_modulus: 43.0
+  youngs_modulus: 43000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: silver
   emission_lines:
-  - 634.952
-  - 683.765
-  - 685.388
-  - 719.108
-  - 726.38
-  neutron_cross_section: 5.4
+  - 6.34952e-07
+  - 6.83765e-07
+  - 6.85388e-07
+  - 7.19108e-07
+  - 7.2638e-07
+  neutron_cross_section: 5.4e-28

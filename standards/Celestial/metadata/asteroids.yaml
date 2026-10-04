@@ -6,14 +6,14 @@ key: seeding.asteroids
 main_belt:
   inner_resonance: "4:1"
   outer_resonance: "2:1"
-  inner_edge: 2.06
-  outer_edge: 3.27
+  inner_edge: 308171613642.0
+  outer_edge: 489185037189.0
   no_giant_inner: 0.8
   no_giant_outer: 1.3
   count_over_1km: 1200000
   count_over_100km: 200
   mass: 2.39e+21
-  spacing: 965600
+  spacing: 965600000
   family_share: 0.34
   families: 25
 trojans:
@@ -24,16 +24,16 @@ trojans:
 outer_belt:
   inner_resonance: "3:2"
   outer_resonance: "2:1"
-  inner_edge: 39.5
-  outer_edge: 48
+  inner_edge: 5909115892650.0
+  outer_edge: 7180697793600
   count_over_100km: 100000
-  mass: 0.0197
+  mass: 1.1765234e+23
   thickness: 10
 moons:
   share: 0.02
   share_outer: 0.11
-  separation_least: 300
-  separation_most: 3000
+  separation_least: 300000
+  separation_most: 3000000
 sizes:
   exponent: 1.89
   smallest: 15

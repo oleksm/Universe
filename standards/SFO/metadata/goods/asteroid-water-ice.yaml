@@ -6,7 +6,7 @@ identity:
   kind: rock
   description: "Ice dug from an asteroid: water, frozen, with dust in it."
 physical:
-  bulk_density: 0.6
+  bulk_density: 600.0
 source:
   occurs: asteroids
 game:

@@ -9,6 +9,6 @@ physical:
   mass: 50
   volume: 0.1
 performance:
-  power_draw: 1
+  power_draw: 1000
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

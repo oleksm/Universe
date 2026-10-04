@@ -5,5 +5,5 @@ key: power-line.treistun.port-trethi.power-line-4
 name: Power line 4
 from: facility.treistun.port-trethi.trethi-power-station
 to: facility.treistun.port-trethi.trethi-yard
-capacity: 10
+capacity: 10000000
 line: [[1400, 0], [1450, 0]]

@@ -7,7 +7,7 @@ identity:
   name: Vanadium
   symbol: V
   atomic_number: 23
-  atomic_mass: 50.9415
+  atomic_mass: 8.45903508612039e-26
   group: 5
   period: 4
   block: d
@@ -15,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d3 4s2'
   valence_electrons: 5
-  atomic_radius: 171.0
-  covalent_radius: 153.0
-  van_der_waals_radius: 179.0
-  ionic_radius: 54.0
+  atomic_radius: 1.71e-10
+  covalent_radius: 1.53e-10
+  van_der_waals_radius: 1.79e-10
+  ionic_radius: 5.4e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 50
@@ -27,8 +27,8 @@ atomic_structure:
     abundance: 0.9975
 chemical:
   electronegativity: 1.63
-  first_ionisation_energy: 650.9
-  electron_affinity: 50.911
+  first_ionisation_energy: 650900.0
+  electron_affinity: 50911.0
   oxidation_states:
   - 5
   - 4
@@ -47,8 +47,8 @@ physical:
   boiling_point: 3680.0
   density: 6000.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 22.8
-  heat_of_vaporisation: 453.0
+  heat_of_fusion: 22800.0
+  heat_of_vaporisation: 453000.0
   vapour_pressure: 2.4e-74
 thermal:
   specific_heat_capacity: 489.0
@@ -60,14 +60,14 @@ electrical_magnetic:
   superconducting_temperature: 5.4
 mechanical:
   hardness: 7.0
-  youngs_modulus: 128.0
+  youngs_modulus: 128000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: blue-silver-grey metal
   emission_lines:
-  - 411.178
-  - 437.923
-  - 438.471
-  - 438.998
-  - 440.851
-  neutron_cross_section: 5.06
+  - 4.11178e-07
+  - 4.37923e-07
+  - 4.38471e-07
+  - 4.38998e-07
+  - 4.40851e-07
+  neutron_cross_section: 5.06e-28

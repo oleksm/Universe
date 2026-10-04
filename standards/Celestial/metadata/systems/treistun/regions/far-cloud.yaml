@@ -5,4 +5,4 @@ provenance: seeded
 in_game: not made
 identity: {key: population.treistun.far-cloud, name: Far cloud, kind: far cloud, about: A vast thin shell of ice bodies at
     the edge of the star's hold. Past it is the next star's.}
-extent: {inner: 1780.0, outer: 178000.0}
+extent: {inner: 266284209846000.0, outer: 2.66284209846e+16}

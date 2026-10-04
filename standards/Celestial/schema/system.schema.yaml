@@ -19,5 +19,5 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      from_home: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "light years from the home star, [x, y, z] in the galaxy's frame" }
-      distance: { type: number, description: "light years from the home star" }
+      from_home: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m from the home star, [x, y, z] in the galaxy's frame" }
+      distance: { type: number, x-unit: "m", description: "m from the home star" }

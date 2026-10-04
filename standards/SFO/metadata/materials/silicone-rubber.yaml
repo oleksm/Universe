@@ -10,7 +10,7 @@ identity:
 mass:
   density: 1075.0
 mechanical:
-  tensile_strength: 5.9
+  tensile_strength: 5900000.0
   elongation_at_break: 7.0
   wear_resistance: poor
 thermal:

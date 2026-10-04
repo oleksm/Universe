@@ -9,8 +9,8 @@ size:
   width: 40
   height: 35
 rate:
-  throughput: 96
-  batch: 80
+  throughput: 26.6666666666667
+  batch: 80000
   product: good.liquid-steel
 inputs:
   materials:
@@ -22,7 +22,7 @@ outputs:
   - { item: good.slag, amount: 0.1 }
   - { item: good.dust, amount: 0.013 }
 needs:
-  power: 42
+  power: 42000000
 basis:
   - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "80 t of steel in about 50 minutes." }
   - { of: [needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "440 kWh for each tonne of steel from a charge of scrap, which is metal already, as asteroid nickel-iron is." }

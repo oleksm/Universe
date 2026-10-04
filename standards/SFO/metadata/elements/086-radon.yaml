@@ -7,7 +7,7 @@ identity:
   name: Radon
   symbol: Rn
   atomic_number: 86
-  atomic_mass: 222.01758
+  atomic_mass: 3.68668865061991e-25
   group: 18
   period: 6
   block: p
@@ -15,14 +15,14 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s2 6p6'
   valence_electrons: 8
-  atomic_radius: 120.0
-  covalent_radius: 150.0
-  van_der_waals_radius: 220.0
+  atomic_radius: 1.2e-10
+  covalent_radius: 1.5e-10
+  van_der_waals_radius: 2.2e-10
   stable_isotopes: 0
   half_life: 330350.0
   decay_mode: alpha
 chemical:
-  first_ionisation_energy: 1037
+  first_ionisation_energy: 1037000
   oxidation_states:
   - 0
   reactivity:
@@ -36,17 +36,17 @@ physical:
   melting_point: 202.0
   boiling_point: 211.45
   density: 9.73
-  heat_of_fusion: 3.0
-  heat_of_vaporisation: 17.0
+  heat_of_fusion: 3000.0
+  heat_of_vaporisation: 17000.0
 thermal:
   specific_heat_capacity: 93.65
   thermal_conductivity: 0.00361
 optical_nuclear:
   colour: colorless gas, occasionally glows green or red in discharge tubes
   emission_lines:
-  - 430.776
-  - 434.96
-  - 705.542
-  - 726.811
-  - 745.0
-  neutron_cross_section: 0.7
+  - 4.30776e-07
+  - 4.3496e-07
+  - 7.05542e-07
+  - 7.26811e-07
+  - 7.45e-07
+  neutron_cross_section: 7.0e-29

@@ -14,7 +14,7 @@ physical:
   colour: [0.72, 0.6, 0.45]
 composition:
   metal: [0.1, 0.3]
-  pgm: [1.0, 6.0]
+  pgm: [1.0e-06, 6.0e-06]
 found:
   warm: 0.68
   frost_line: 0.15

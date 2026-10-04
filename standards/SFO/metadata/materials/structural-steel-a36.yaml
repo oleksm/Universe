@@ -21,10 +21,10 @@ identity:
 mass:
   density: 7800.0
 mechanical:
-  youngs_modulus: 200.0
-  shear_modulus: 79.3
+  youngs_modulus: 200000000000.0
+  shear_modulus: 79300000000.0
   poissons_ratio: 0.26
-  yield_strength: 250.0
-  tensile_strength: 475.0
+  yield_strength: 250000000.0
+  tensile_strength: 475000000.0
 electrical_magnetic:
   electrical_conductivity: 7000000.0

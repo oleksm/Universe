@@ -9,7 +9,7 @@ size:
   width: 60
   height: 15
 rate:
-  throughput: 37
+  throughput: 10.2777777777778
   product: good.liquid-aluminium
 inputs:
   materials:
@@ -20,7 +20,7 @@ outputs:
   by_products:
   - { item: good.carbon-dioxide, amount: 1.52 }
 needs:
-  power: 536
+  power: 536000000
 basis:
   - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_Bahrain", note: "323,000 t a year for one line of 336 pots." }
   - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1.93 t of alumina and 0.45 t of carbon anode for each tonne, giving 1.52 t of carbon dioxide. Part of the anode burns in air: that oxygen is set to balance." }

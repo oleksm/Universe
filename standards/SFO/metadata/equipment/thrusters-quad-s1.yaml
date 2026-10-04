@@ -9,9 +9,9 @@ physical:
   mass: 700
   volume: 1.5
 performance:
-  power_draw: 100
-  thrust: 120
-  exhaust_speed: 10000
+  power_draw: 100000
+  thrust: 120000
+  exhaust_speed: 10000000
   efficiency: 0.3
   burns: good.deuterium
 basis:

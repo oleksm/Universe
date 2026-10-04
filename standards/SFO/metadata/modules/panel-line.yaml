@@ -9,7 +9,7 @@ size:
   width: 40
   height: 15
 rate:
-  throughput: 20
+  throughput: 5.55555555555556
   product: good.parts
 inputs:
   materials:
@@ -18,7 +18,7 @@ outputs:
   by_products:
   - { item: good.scrap, amount: 0.15 }
 needs:
-  power: 2
+  power: 2000000
 basis:
   - { of: [rate.throughput], tier: invented, review: true, note: "A guess, to be reviewed: ten times a yard's plate work, for panels all alike. It sets how fast a gate ring's skin can be made." }
   - { of: [inputs, outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }

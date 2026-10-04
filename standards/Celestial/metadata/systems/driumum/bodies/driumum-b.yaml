@@ -2,8 +2,8 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.driumum.driumum-b, name: Driumum b, kind: rocky planet, parent: body.driumum.driumum}
-orbit: {semi_major_axis: 3720950.0, eccentricity: 0.06224, period: 2.74225, inclination: 0.272}
-physical: {mass: 2.0905e+25, radius: 9048.24, gravity: 17.042, day: 33.81, tilt: 22.99, albedo: 0.15}
+orbit: {semi_major_axis: 3720950000.0, eccentricity: 0.06224, period: 236930.4, inclination: 0.272}
+physical: {mass: 2.0905e+25, radius: 9048240.0, gravity: 17.042, day: 121716.0, tilt: 22.99, albedo: 0.15}
 surface:
   terrain: dry
   relief: 6334

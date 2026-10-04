@@ -9,7 +9,7 @@ size:
   opening: 3000
   thickness: 120
 performance:
-  span: 25
+  span: 2.3651826181452e+17
   capture_speed: 300
 built_of:
   parts: halcyon-ring

@@ -11,7 +11,7 @@ properties:
   name: { type: string }
   kind: { enum: [foundry, mill, yard, power, warehouse] }
   parcel: { type: string, x-ref: [parcel], description: The parcel of its settlement it stands on. }
-  processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
+  processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The SFO processes it runs, by its key. Each must be one for its kind of facility.' }
   lines:
     description: 'Its production lines: for each, the process it runs and the industrial modules (SFO 10) it is built of. What the line can make at most, and what it then takes in, gives off, draws and covers, are worked out from them. What it does make is the economy''s business, not recorded here.'
     type: array

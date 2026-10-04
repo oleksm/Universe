@@ -8,33 +8,33 @@ properties:
   key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   kind: { enum: [settlement, rig], description: "settlement: a permanent place with people and an administration (a port, a station, a gate). rig: a movable works (as an oil rig is), brought to a job and moved on; no ground, zoning or administration of its own." }
-  at: { type: string, x-ref: [body], description: "The planet or moon it is at, by name." }
+  at: { type: string, x-ref: [body], description: "The planet or moon it is at, by its key." }
   position:
     description: "Where on the surface of the body it is at, in degrees. Latitude from the equator toward the spin axis (north positive); longitude round the spin axis from the body frame's x axis (our convention: the game has no prime meridian)."
     type: object
     additionalProperties: false
     required: [latitude, longitude]
     properties:
-      latitude: { type: number, minimum: -90, maximum: 90 }
-      longitude: { type: number, minimum: -180, maximum: 180 }
+      latitude: { type: number, minimum: -90, maximum: 90, x-unit: "deg" }
+      longitude: { type: number, minimum: -180, maximum: 180, x-unit: "deg" }
   gate:
     description: "For a settlement that is a gate."
     type: object
     additionalProperties: false
     required: [ring, to, distance]
     properties:
-      ring: { type: string, x-ref: [gate], description: "The gate ring it is (SFO 17), by file name." }
+      ring: { type: string, x-ref: [gate], description: "The gate ring it is (SFO 17), by its key." }
       to: { type: string, x-ref: [system], description: The star it leads to. }
-      distance: { type: number, description: "light years to that star" }
+      distance: { type: number, x-unit: "m", description: "m to that star" }
   spin:
     description: "For a rig: the part of it that turns, to give weight to what needs it."
     type: object
     additionalProperties: false
     properties:
-      radius: { type: number, description: "m, from its axis to its floor" }
-      gravity: { type: number, description: "m/s2 at its floor. How fast it turns is worked out." }
+      radius: { type: number, x-unit: "m", description: "m, from its axis to its floor" }
+      gravity: { type: number, x-unit: "m/s2", description: "m/s2 at its floor. How fast it turns is worked out." }
   owner: { type: string, x-ref: [org], description: "For a rig: the company whose it is." }
-  processes: { type: array, items: { type: string, x-ref: [process] }, description: "For a rig: the SFO processes it runs, by file name." }
+  processes: { type: array, items: { type: string, x-ref: [process] }, description: "For a rig: the SFO processes it runs, by its key." }
   lines: { $ref: "facility.schema.yaml#/properties/lines" }
   modules: { $ref: "facility.schema.yaml#/properties/modules" }
   about: { type: string, description: What it is. }

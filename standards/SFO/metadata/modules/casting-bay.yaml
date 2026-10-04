@@ -9,8 +9,8 @@ size:
   width: 40
   height: 35
 rate:
-  throughput: 100
-  batch: 80
+  throughput: 27.7777777777778
+  batch: 80000
   product: good.ingot
 inputs:
   materials:
@@ -19,7 +19,7 @@ outputs:
   by_products:
   - { item: good.scrap, amount: 0.16 }
 needs:
-  power: 1
+  power: 1000000
 basis:
   - { of: [inputs, outputs], tier: sourced, source: "https://www.britannica.com/technology/steel/Casting-procedures", note: "About 86% of the liquid steel becomes sound ingot; the head of each ingot is cut off as scrap. Read from a search excerpt, not the page itself." }
   - { of: [rate, size, needs], tier: invented, note: "Not found in a source: approximate, from memory." }

@@ -9,8 +9,8 @@ size:
   width: 100
   height: 15
 rate:
-  holds: 50000
+  holds: 50000000
 needs:
-  power: 0.5
+  power: 500000.0
 basis:
   - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

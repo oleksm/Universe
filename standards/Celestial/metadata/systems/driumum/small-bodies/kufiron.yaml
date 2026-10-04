@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.driumum.kufiron, name: Kufiron, kind: crossing asteroid, parent: body.driumum.driumum, about: 'Knocked out of the
-    belt. At its closest it comes in to 0.02 AU, near the orbit of Driumum b.'}
-orbit: {semi_major_axis: 20893500.0, eccentricity: 0.86168484, inclination: 8.22, period: 36.488}
-physical: {radius: 0.8547}
+identity: {key: body.driumum.kufiron, name: Kufiron, kind: crossing asteroid, parent: body.driumum.driumum, about: 'Knocked
+    out of the belt. At its closest it comes in to 0.02 AU, near the orbit of Driumum b.'}
+orbit: {semi_major_axis: 20893500000.0, eccentricity: 0.86168484, inclination: 8.22, period: 3152563.2}
+physical: {radius: 854.7}
 rock: {class: rock-class.enstatite}

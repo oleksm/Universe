@@ -2,8 +2,8 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.driumum.condes, name: Condes, kind: asteroid, parent: body.driumum.driumum}
-orbit: {semi_major_axis: 41395300.0, eccentricity: 0.03767, period: 101.756, inclination: 6.378}
-physical: {mass: 6722100000000.0, radius: 1.07273, gravity: 0.0, day: 3.3064, tilt: 99.34}
+orbit: {semi_major_axis: 41395300000.0, eccentricity: 0.03767, period: 8791718.4, inclination: 6.378}
+physical: {mass: 6722100000000.0, radius: 1072.73, gravity: 0.0, day: 11903.04, tilt: 99.34}
 surface:
   colour: [0.42, 0.4, 0.38]
 rock: {class: rock-class.carbonaceous, structure: rubble pile, density: 1300}

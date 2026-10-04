@@ -17,12 +17,12 @@ identity:
 mass:
   density: 2203.0
 mechanical:
-  fracture_toughness: 0.75
-  youngs_modulus: 71.7
-  shear_modulus: 31.0
+  fracture_toughness: 750000.0
+  youngs_modulus: 71700000000.0
+  shear_modulus: 31000000000.0
   poissons_ratio: 0.17
-  tensile_strength: 48.3
-  compressive_strength: 1100.0
+  tensile_strength: 48300000.0
+  compressive_strength: 1100000000.0
   hardness: 5.9
 thermal:
   melting_point: 1938.15
@@ -31,4 +31,4 @@ thermal:
   thermal_shock_resistance: excellent
 electrical_magnetic:
   electrical_conductivity: 1.0e-18
-  dielectric_strength: 32.5
+  dielectric_strength: 32500000.0

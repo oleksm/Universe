@@ -7,7 +7,7 @@ identity:
   name: Aluminum
   symbol: Al
   atomic_number: 13
-  atomic_mass: 26.981538
+  atomic_mass: 4.48038979259524e-26
   group: 13
   period: 3
   block: p
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p1'
   valence_electrons: 3
-  atomic_radius: 118.0
-  covalent_radius: 121.0
-  van_der_waals_radius: 184.0
-  ionic_radius: 53.5
+  atomic_radius: 1.18e-10
+  covalent_radius: 1.21e-10
+  van_der_waals_radius: 1.84e-10
+  ionic_radius: 5.35e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 27
     abundance: 1.0
 chemical:
   electronegativity: 1.61
-  first_ionisation_energy: 577.5
-  electron_affinity: 41.762
+  first_ionisation_energy: 577500.0
+  electron_affinity: 41762.0
   oxidation_states:
   - 3
   reactivity:
@@ -42,8 +42,8 @@ physical:
   boiling_point: 2792.0
   density: 2700.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 10.7
-  heat_of_vaporisation: 293.0
+  heat_of_fusion: 10700.0
+  heat_of_vaporisation: 293000.0
   vapour_pressure: 6.3e-44
 thermal:
   specific_heat_capacity: 904.0
@@ -55,15 +55,15 @@ electrical_magnetic:
   superconducting_temperature: 1.175
 mechanical:
   hardness: 2.75
-  youngs_modulus: 70.0
-  tensile_strength: 45
+  youngs_modulus: 70000000000.0
+  tensile_strength: 45000000
   ductility: very ductile
 optical_nuclear:
   colour: silvery gray metallic
   emission_lines:
-  - 394.401
-  - 396.152
-  - 555.706
-  - 669.601
-  - 669.867
-  neutron_cross_section: 0.233
+  - 3.94401e-07
+  - 3.96152e-07
+  - 5.55706e-07
+  - 6.69601e-07
+  - 6.69867e-07
+  neutron_cross_section: 2.33e-29

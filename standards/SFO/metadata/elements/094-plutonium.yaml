@@ -7,22 +7,22 @@ identity:
   name: Plutonium
   symbol: Pu
   atomic_number: 94
-  atomic_mass: 244.0642
+  atomic_mass: 4.05278138858476e-25
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f6 7s2'
   valence_electrons: 8
-  covalent_radius: 187.0
-  van_der_waals_radius: 243.0
-  ionic_radius: 71.0
+  covalent_radius: 1.87e-10
+  van_der_waals_radius: 2.43e-10
+  ionic_radius: 7.1e-11
   stable_isotopes: 0
   half_life: 2501710000000000.0
   decay_mode: alpha
 chemical:
   electronegativity: 1.28
-  first_ionisation_energy: 584.7
+  first_ionisation_energy: 584700.0
   oxidation_states:
   - 6
   - 5
@@ -41,7 +41,7 @@ physical:
   boiling_point: 3501.0
   density: 19840.0
   crystal_structure: simple monoclinic
-  heat_of_vaporisation: 325.0
+  heat_of_vaporisation: 325000.0
   vapour_pressure: 3.4e-49
 thermal:
   specific_heat_capacity: 145.5
@@ -50,13 +50,13 @@ electrical_magnetic:
   electrical_conductivity: 670000.0
   magnetic_ordering: paramagnetic
 mechanical:
-  youngs_modulus: 96.0
+  youngs_modulus: 96000000000.0
 optical_nuclear:
   colour: silvery white, tarnishing to dark gray in air
   emission_lines:
-  - 732.223
-  - 732.597
-  - 733.181
-  - 743.118
-  - 744.799
-  neutron_cross_section: 1.7
+  - 7.32223e-07
+  - 7.32597e-07
+  - 7.33181e-07
+  - 7.43118e-07
+  - 7.44799e-07
+  neutron_cross_section: 1.7e-28

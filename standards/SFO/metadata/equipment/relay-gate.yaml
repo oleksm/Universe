@@ -9,9 +9,9 @@ physical:
   mass: 40000
   volume: 100
 performance:
-  power_draw: 2000
+  power_draw: 2000000
   lag: 1.0
-  messages: 50000
+  messages: 13.8888888888889
   cadence: 3.0
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

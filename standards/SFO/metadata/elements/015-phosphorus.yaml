@@ -7,7 +7,7 @@ identity:
   name: Phosphorus
   symbol: P
   atomic_number: 15
-  atomic_mass: 30.973762
+  atomic_mass: 5.14331418405705e-26
   group: 15
   period: 3
   block: p
@@ -15,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p3'
   valence_electrons: 5
-  atomic_radius: 98.0
-  covalent_radius: 107.0
-  van_der_waals_radius: 180.0
-  ionic_radius: 38.0
+  atomic_radius: 9.8e-11
+  covalent_radius: 1.07e-10
+  van_der_waals_radius: 1.8e-10
+  ionic_radius: 3.8e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 31
     abundance: 1.0
 chemical:
   electronegativity: 2.19
-  first_ionisation_energy: 1011.8
-  electron_affinity: 72.037
+  first_ionisation_energy: 1011800.0
+  electron_affinity: 72037.0
   oxidation_states:
   - 5
   - 3
@@ -47,8 +47,8 @@ physical:
   - white phosphorus
   - red phosphorus
   - black phosphorus
-  heat_of_fusion: 0.64
-  heat_of_vaporisation: 12.4
+  heat_of_fusion: 640.0
+  heat_of_vaporisation: 12400.0
   vapour_pressure: 2.7e-08
 thermal:
   specific_heat_capacity: 769.7
@@ -59,9 +59,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: colourless, waxy white, yellow, scarlet, red, violet, black
   emission_lines:
-  - 619.902
-  - 621.05
-  - 716.547
-  - 717.51
-  - 717.666
-  neutron_cross_section: 0.18
+  - 6.19902e-07
+  - 6.2105e-07
+  - 7.16547e-07
+  - 7.1751e-07
+  - 7.17666e-07
+  neutron_cross_section: 1.8e-29

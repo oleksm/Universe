@@ -7,7 +7,7 @@ identity:
   name: Beryllium
   symbol: Be
   atomic_number: 4
-  atomic_mass: 9.012183
+  atomic_mass: 1.49650819468484e-26
   group: 2
   period: 2
   block: s
@@ -15,17 +15,17 @@ identity:
 atomic_structure:
   electron_configuration: '[He] 2s2'
   valence_electrons: 2
-  atomic_radius: 112.0
-  covalent_radius: 96.0
-  van_der_waals_radius: 153.0
-  ionic_radius: 45.0
+  atomic_radius: 1.12e-10
+  covalent_radius: 9.6e-11
+  van_der_waals_radius: 1.53e-10
+  ionic_radius: 4.5e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 9
     abundance: 1.0
 chemical:
   electronegativity: 1.57
-  first_ionisation_energy: 899.5
+  first_ionisation_energy: 899500.0
   oxidation_states:
   - 2
   reactivity:
@@ -41,8 +41,8 @@ physical:
   boiling_point: 2744.0
   density: 1850.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 7.95
-  heat_of_vaporisation: 297.0
+  heat_of_fusion: 7950.0
+  heat_of_vaporisation: 297000.0
   vapour_pressure: 1.0e-43
 thermal:
   specific_heat_capacity: 1820.0
@@ -54,14 +54,14 @@ electrical_magnetic:
   superconducting_temperature: 0.026
 mechanical:
   hardness: 5.5
-  youngs_modulus: 287.0
+  youngs_modulus: 287000000000.0
   ductility: brittle
 optical_nuclear:
   colour: white-gray metallic
   emission_lines:
-  - 381.345
-  - 440.793
-  - 457.267
-  - 698.275
-  - 720.913
-  neutron_cross_section: 0.0092
+  - 3.81345e-07
+  - 4.40793e-07
+  - 4.57267e-07
+  - 6.98275e-07
+  - 7.20913e-07
+  neutron_cross_section: 9.2e-31

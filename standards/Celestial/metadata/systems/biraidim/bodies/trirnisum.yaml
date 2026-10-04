@@ -2,8 +2,8 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
 identity: {key: body.biraidim.trirnisum, name: Trirnisum, kind: asteroid, parent: body.biraidim.biraidim}
-orbit: {semi_major_axis: 72701900.0, eccentricity: 0.1551, period: 214.889, inclination: 9.159}
-physical: {mass: 203910000000000.0, radius: 3.34556, gravity: 0.001, day: 17.652, tilt: 51.59}
+orbit: {semi_major_axis: 72701900000.0, eccentricity: 0.1551, period: 18566409.6, inclination: 9.159}
+physical: {mass: 203910000000000.0, radius: 3345.56, gravity: 0.001, day: 63547.2, tilt: 51.59}
 surface:
   colour: [0.42, 0.4, 0.38]
 rock: {class: rock-class.carbonaceous, structure: rubble pile, density: 1300}

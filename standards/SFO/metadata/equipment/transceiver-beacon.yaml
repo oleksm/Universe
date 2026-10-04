@@ -9,10 +9,10 @@ physical:
   mass: 6000
   volume: 20
 performance:
-  power_draw: 300
-  capture: 500000
-  link: 75000000
+  power_draw: 300000
+  capture: 500000000
+  link: 75000000000
   lag: 0.05
-  messages: 20000
+  messages: 5.55555555555556
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

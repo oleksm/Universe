@@ -9,7 +9,7 @@ size:
   width: 40
   height: 15
 rate:
-  throughput: 60
+  throughput: 16.6666666666667
   product: good.cold-rolled-strip
 inputs:
   materials:
@@ -18,7 +18,7 @@ outputs:
   by_products:
   - { item: good.scrap, amount: 0.19 }
 needs:
-  power: 38
+  power: 38000000
 basis:
   - { of: [inputs, outputs, needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 640 kWh for each tonne and an 84% yield. Heat is counted as power: there is no fuel to burn." }
   - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Tandem mills average 126 t/h and reversing mills 13; 60 lies between." }

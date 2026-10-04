@@ -7,24 +7,24 @@ identity:
   name: Terbium
   symbol: Tb
   atomic_number: 65
-  atomic_mass: 158.92535
+  atomic_mass: 2.63901752348078e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f9 6s2'
   valence_electrons: 11
-  atomic_radius: 225.0
-  covalent_radius: 194.0
-  van_der_waals_radius: 221.0
-  ionic_radius: 92.3
+  atomic_radius: 2.25e-10
+  covalent_radius: 1.94e-10
+  van_der_waals_radius: 2.21e-10
+  ionic_radius: 9.23e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 159
     abundance: 1.0
 chemical:
-  first_ionisation_energy: 565.8
-  electron_affinity: 112.4
+  first_ionisation_energy: 565800.0
+  electron_affinity: 112400.0
   oxidation_states:
   - 3
   reactivity:
@@ -40,8 +40,8 @@ physical:
   boiling_point: 3503.0
   density: 8230.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 10.8
-  heat_of_vaporisation: 295.0
+  heat_of_fusion: 10800.0
+  heat_of_vaporisation: 295000.0
   vapour_pressure: 8.3e-53
 thermal:
   specific_heat_capacity: 182.0
@@ -52,14 +52,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 2.33
-  youngs_modulus: 56.0
+  youngs_modulus: 56000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 383.026
-  - 390.133
-  - 431.883
-  - 432.643
-  - 433.841
-  neutron_cross_section: 23.0
+  - 3.83026e-07
+  - 3.90133e-07
+  - 4.31883e-07
+  - 4.32643e-07
+  - 4.33841e-07
+  neutron_cross_section: 2.3e-27

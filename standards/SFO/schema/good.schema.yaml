@@ -18,9 +18,9 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      bulk_density: { type: number, description: "t/m3, as stowed broken in a hold" }
+      bulk_density: { type: number, x-unit: "kg/m3", description: "kg/m3, as stowed broken in a hold" }
   composition:
-    description: What a rock is made of, each part's share by mass. A part is an element's symbol or a good's file name.
+    description: What a rock is made of, each part's share by mass. A part is an element or a good, by its key.
     type: array
     items:
       type: object
@@ -35,7 +35,7 @@ properties:
     additionalProperties: false
     properties:
       occurs: { enum: [asteroids, rocky planets and moons, temperate planets], description: "For a rock: where in the universe it is found. Temperate planets: rocky, with air and liquid water." }
-      won_from: { type: string, x-ref: [good], description: "For a raw good: the rock it is won from, by file name." }
+      won_from: { type: string, x-ref: [good], description: "For a raw good: the rock it is won from, by its key." }
       yield: { type: number, minimum: 0, maximum: 1, description: "t of it won from each t of that rock" }
       note: { type: string }
   game:
