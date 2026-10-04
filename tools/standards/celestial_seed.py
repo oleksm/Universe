@@ -18,8 +18,8 @@ dry = "--dry" in sys.argv
 AU, G, SUN = 1.495978707e8, 6.6743e-11, 1.98847e30          # km, SI, kg
 SUN_W = 3.828e26
 si = lambda v: float(f"{v:.15g}")       # (records are in SI; this works in km, days and AU, and writes each value in SI)
-galaxy = yaml.safe_load(open(os.path.join(CEL, "galaxy.yaml")))
-laws = yaml.safe_load(open(os.path.join(CEL, "asteroids.yaml")))
+galaxy = yaml.safe_load(open(os.path.join(CEL, "seeding", "galaxy.yaml")))["galaxy"]
+laws = yaml.safe_load(open(os.path.join(CEL, "seeding", "asteroids.yaml")))
 for _b in ("main_belt", "outer_belt"):
     for _e in ("inner_edge", "outer_edge"):
         laws[_b][_e] = float(f"{laws[_b][_e] / (AU * 1000):.12g}")          # (m, to AU)

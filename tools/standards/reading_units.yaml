@@ -1,31 +1,6 @@
 # How the registry's page reads a value the records hold in SI: the unit it is shown in. For each schema
 # and property: `per`, how many of the record's unit make one of the unit read; `reads`, the property's
 # description in that unit. Used by build.py only, until the page converts for itself.
-Celestial/schema/asteroids.schema.yaml:
-  main_belt.inner_edge:
-    per: 149597870700.0
-    reads: AU, the Sun's
-  main_belt.outer_edge:
-    per: 149597870700.0
-    reads: AU, the Sun's
-  main_belt.spacing:
-    per: 1000.0
-    reads: km between one asteroid and the next, on average
-  moons.separation_least:
-    per: 1000.0
-    reads: km between the two, the least known
-  moons.separation_most:
-    per: 1000.0
-    reads: km, the most
-  outer_belt.inner_edge:
-    per: 149597870700.0
-    reads: AU, the Sun's
-  outer_belt.mass:
-    per: 5.9722e+24
-    reads: Earth masses, the Sun's
-  outer_belt.outer_edge:
-    per: 149597870700.0
-    reads: AU, the Sun's
 Celestial/schema/body.schema.yaml:
   atmosphere.scale_height:
     per: 1000.0
@@ -75,23 +50,6 @@ Celestial/schema/body.schema.yaml:
   water.salinity:
     per: 0.001
     reads: 'g of salt in each kg of its sea water (Earth: 35)'
-Celestial/schema/conditions.schema.yaml:
-  radiation_belt.deadly_above:
-    per: 1.1574074074074074e-07
-    reads: rem a day above which a person unshielded dies within days
-  radiation_belt.dose:
-    per: 1.1574074074074074e-07
-    reads: rem a day at the distance below, round a giant of Jupiter's mass
-Celestial/schema/galaxy.schema.yaml:
-  region:
-    per: 9460730472580800.0
-    reads: light years, the side of the charted region (a cube round home)
-  sector:
-    per: 9460730472580800.0
-    reads: light years, the side of the cubes the stars are made in
-  star_density:
-    per: 1.1809349884417086e-48
-    reads: stars for each cubic light year
 Celestial/schema/population.schema.yaml:
   extent.inner:
     per: 149597870700.0
@@ -109,6 +67,46 @@ Celestial/schema/rock-class.schema.yaml:
   mining.rich_above:
     per: 1.0e-06
     reads: parts per million of platinum-group metals above which it yields that
+Celestial/schema/seeding.schema.yaml:
+  galaxy.region:
+    per: 9460730472580800.0
+    reads: light years, the side of the charted region (a cube round home)
+  galaxy.sector:
+    per: 9460730472580800.0
+    reads: light years, the side of the cubes the stars are made in
+  galaxy.star_density:
+    per: 1.1809349884417086e-48
+    reads: stars for each cubic light year
+  main_belt.inner_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  main_belt.outer_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  main_belt.spacing:
+    per: 1000.0
+    reads: km between one asteroid and the next, on average
+  moons.separation_least:
+    per: 1000.0
+    reads: km between the two, the least known
+  moons.separation_most:
+    per: 1000.0
+    reads: km, the most
+  outer_belt.inner_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  outer_belt.mass:
+    per: 5.9722e+24
+    reads: Earth masses, the Sun's
+  outer_belt.outer_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  radiation_belt.deadly_above:
+    per: 1.1574074074074074e-07
+    reads: rem a day above which a person unshielded dies within days
+  radiation_belt.dose:
+    per: 1.1574074074074074e-07
+    reads: rem a day at the distance below, round a giant of Jupiter's mass
 Celestial/schema/system.schema.yaml:
   position.distance:
     per: 9460730472580800.0
@@ -204,6 +202,12 @@ SFO/schema/good.schema.yaml:
     per: 1000.0
     reads: t/m3, as stowed broken in a hold
 SFO/schema/hull.schema.yaml:
+  capacity.fuel:
+    per: 1000.0
+    reads: t of fuel its tanks hold, as fitted
+  capacity.hold:
+    per: 1000.0
+    reads: t, the most cargo it is rated to carry
   design.cabin_pressure:
     per: 1000.0
     reads: kPa, of the air its pressurised parts hold against vacuum
@@ -222,12 +226,6 @@ SFO/schema/hull.schema.yaml:
   physical.mass:
     per: 1000.0
     reads: t, the bare hull with nothing fitted
-  capacity.fuel:
-    per: 1000.0
-    reads: t of fuel its tanks hold, as fitted
-  capacity.hold:
-    per: 1000.0
-    reads: t, the most cargo it is rated to carry
 SFO/schema/material.schema.yaml:
   electrical_magnetic.dielectric_strength:
     per: 1000000.0
@@ -314,15 +312,15 @@ SFO/schema/part.schema.yaml:
     per: 0.001
     reads: mm, its wall or gauge
 SFO/schema/process.schema.yaml:
-  energy.specific_energy:
-    per: 1000.0
-    reads: MJ/t of product
   energy.peak_power:
     per: 1000.0
     reads: kW
   energy.recoverable_heat:
     per: 1000.0
     reads: MJ/t that can be reused
+  energy.specific_energy:
+    per: 1000.0
+    reads: MJ/t of product
   energy.waste_heat:
     per: 1000.0
     reads: MJ/t to reject

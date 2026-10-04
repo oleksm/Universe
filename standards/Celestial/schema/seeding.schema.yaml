@@ -1,11 +1,30 @@
 $schema: http://json-schema.org/draft-07/schema#
-title: Asteroids
-description: 'standards/Celestial/metadata/asteroids.yaml: how asteroids lie in a system, from what is known of the Sun''s. Each system''s belts are worked out from these and from its own planets. Every asteroid is on an orbit of its own: round the star, or (a few) round a larger asteroid.'
+title: Seeding
+description: 'standards/Celestial/metadata/seeding/<name>.yaml: one set of the settings the seed makes the world by: the galaxy as a whole, how asteroids lie, what a place does to what is there. Not laws of nature (those are Dogma''s): how this world is made. A record has the groups that are its own.'
 type: object
 additionalProperties: false
-required: [key]
+required: [identity]
 properties:
-  key: { $ref: "../../common.schema.yaml#/definitions/key" }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  galaxy:
+    description: "The seeded world as a whole. The seed makes every star and system by these; a system or body that has a record of its own is taken from the record."
+    type: object
+    additionalProperties: false
+    required: [seed, home]
+    properties:
+      seed: { type: integer, description: The number the whole world is made from. }
+      home: { type: string, x-ref: [system], description: The home system, by its key. }
+      region: { type: number, x-unit: "m", description: "m, the side of the charted region (a cube round home)" }
+      star_density: { type: number, x-unit: "1/m3", description: "stars for each cubic metre" }
+      sector: { type: number, x-unit: "m", description: "m, the side of the cubes the stars are made in" }
+      class_mix: { type: object, description: "The share of stars of each class, by number.", additionalProperties: { type: number } }
   main_belt:
     description: "The belt inside the first gas giant, between two of its resonances. As the Sun's."
     type: object
@@ -67,4 +86,22 @@ properties:
     properties:
       warm_to: { type: number, description: "the warm zone reaches this share of the frost line's distance" }
       frost_to: { type: number, description: "the frost-line zone from there to this share; the cold zone beyond" }
+  tidal_heating:
+    description: "Heat made inside a moon as its planet kneads it: 21/2 (k2/Q) G M^2 R^5 n e^2 / a^6."
+    type: object
+    additionalProperties: false
+    properties:
+      love_over_q: { type: number, description: "how readily a moon's inside turns the kneading into heat (k2 over Q)" }
+      volcanic_above: { type: number, x-unit: "W/m2", description: "W for each m2 of its surface above which it is volcanic" }
+      sea_above: { type: number, x-unit: "W/m2", description: "W/m2 above which an icy one may keep a buried sea" }
+  radiation_belt:
+    description: "The dose round a gas giant, falling off with distance."
+    type: object
+    additionalProperties: false
+    properties:
+      dose: { type: number, x-unit: "Sv/s", description: "Sv/s at the distance below, round a giant of Jupiter's mass" }
+      at: { type: number, description: "that distance, in the giant's radii" }
+      falls_as: { type: number, description: "the dose goes as the distance to minus this" }
+      giant_mass: { type: number, x-unit: "kg", description: "kg, Jupiter's: the dose is taken to go with the giant's mass" }
+      deadly_above: { type: number, x-unit: "Sv/s", description: "Sv/s above which a person unshielded dies within days" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -187,6 +187,12 @@ def old_names(rec, path):
         for c in (rec.get("identity") or {}).get("composition") or [] if rel.startswith(os.path.join("SFO", "metadata", "materials")) else []:
             if "name" in c and "part" not in c:
                 c["part"] = c.pop("name")
+    if rel.startswith(os.path.join("Celestial", "metadata", "seeding")) and isinstance(rec, dict):
+        # (A seeding record, as this build still takes it: its settings, with no identity; the galaxy's flat.)
+        idn = rec.pop("identity", {})
+        if "galaxy" in rec:
+            flat = {**rec.pop("galaxy"), **({"note": idn["about"]} if "about" in idn else {})}
+            rec.update(flat)
     return old_groups(rec, rel) if os.sep in rel else rec
 
 
@@ -1540,7 +1546,7 @@ def write_ron():
             f"cut_energy: {float(rc['mining']['cut_energy'])!r}, yields: {ron_str(rc['mining']['yields'])}),\n" for rc in celestial["rock_classes"] if rc["identity"].get("label")) + "]\n")
     gx = celestial["galaxy"]
     with open(os.path.join(CONTENT, "galaxy.ron"), "w", encoding="utf-8") as f:
-        f.write(head + "// The world as a whole, from the celestial registry (standards/Celestial/metadata/galaxy.yaml): the game takes its seed from here;\n// the laws are the code's, and a test holds them to these.\n[\n"
+        f.write(head + "// The world as a whole, from the celestial registry (standards/Celestial/metadata/seeding/galaxy.yaml): the game takes its seed from here;\n// the laws are the code's, and a test holds them to these.\n[\n"
                 + (f"    (seed: {int(gx['seed'])}, home: {ron_str(gx['home'])}, region: {float(gx.get('region', 0))!r}, star_density: {float(gx.get('star_density', 0))!r}, sector: {float(gx.get('sector', 0))!r}),\n" if gx else "") + "]\n")
 
 
@@ -2128,7 +2134,10 @@ report("invented", "Confidence: the records with invented or unexplained numbers
 CEL = os.path.join(TREE, "Celestial")
 celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": [], "vocabulary": []}
 if os.path.isdir(CEL):
-    cschema = {k: read_schema(os.path.join(CEL, "schema", f"{k}.schema.yaml")) for k in ("galaxy", "system", "body", "population", "rock-class", "asteroids", "vocabulary", "conditions")}
+    cschema = {k: read_schema(os.path.join(CEL, "schema", f"{k}.schema.yaml")) for k in ("system", "body", "population", "rock-class", "vocabulary", "seeding")}
+    # (The three seeding records share one schema; this build still takes each by its own name, and the galaxy's settings flat.)
+    cschema["asteroids"] = cschema["conditions"] = cschema["seeding"]
+    cschema["galaxy"] = {"properties": {**cschema["seeding"]["properties"]["galaxy"]["properties"], "note": {}}}
     celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "population", "rock-class")}
 
     def cel_load(full, kind):
@@ -2148,7 +2157,7 @@ if os.path.isdir(CEL):
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
         return rec
 
-    cpath = os.path.join(CEL, "metadata", "conditions.yaml")
+    cpath = os.path.join(CEL, "metadata", "seeding", "conditions.yaml")
     if os.path.exists(cpath):
         celestial["conditions"] = load(cpath)
         check_basis(celestial["conditions"], cpath)
@@ -2174,7 +2183,7 @@ if os.path.isdir(CEL):
     GROUPS_ = ["star", "world", "moon", "region", "small body", "place", "condition"]
     celestial["vocabulary"].sort(key=lambda v_: (GROUPS_.index(v_["identity"]["group"]) if v_["identity"].get("group") in GROUPS_ else 99, v_["identity"]["name"]))
     # (How asteroids lie: the Sun's belts, the measure for each system's.)
-    apath = os.path.join(CEL, "metadata", "asteroids.yaml")
+    apath = os.path.join(CEL, "metadata", "seeding", "asteroids.yaml")
     if os.path.exists(apath):
         laws = load(apath)
         for g_, props in laws.items():
@@ -2197,7 +2206,7 @@ if os.path.isdir(CEL):
             ore_ = (rc.get("mining") or {}).get(q)
             if ore_ is not None and next((g_ for g_ in goods if g_["slug"] == ore_), {}).get("identity", {}).get("kind") != "rock":
                 problem(os.path.join(TREE, rc["file"]), f"mining.{q}: no rock '{ore_}' among the goods")
-    gpath = os.path.join(CEL, "metadata", "galaxy.yaml")
+    gpath = os.path.join(CEL, "metadata", "seeding", "galaxy.yaml")
     if os.path.exists(gpath):
         celestial["galaxy"] = load(gpath)
         for q in celestial["galaxy"]:

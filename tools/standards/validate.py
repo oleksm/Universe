@@ -144,8 +144,10 @@ def schema_of(rel):
     if root == "Dogma":
         return S(root, "section") if len(p) == 3 else S(root, "law")
     if root == "Celestial":
+        if len(p) == 4 and p[2] == "seeding":
+            return S(root, "seeding")
         if len(p) == 3:
-            return S(root, {"galaxy.yaml": "galaxy", "asteroids.yaml": "asteroids", "conditions.yaml": "conditions"}.get(name, ""))
+            return None
         if p[2] == "rock-classes":
             return S(root, "rock-class")
         if p[2] == "vocabulary":
@@ -193,6 +195,8 @@ def key_of(rel, rec):
     if root == "Dogma":
         return ("dogma." if len(p) == 3 else "law.") + low
     if root == "Celestial":
+        if p[2] == "seeding":
+            return "seeding." + low
         if len(p) == 3:
             return "seeding." + low
         if p[2] in ("rock-classes", "vocabulary"):

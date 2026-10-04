@@ -202,9 +202,20 @@ Not moved, as you said: `sheet.ron`'s heat-skin figures, gate sizes, capsule mas
 CAPACITOR_DENSITY, GROUND_MARGIN, and the Simplified climate figures (GREENHOUSE, SWING_DAMPING,
 NIGHT_FLOOR, CONVECTION): tell me if those last four are laws to you.
 
+## Seeding: one shape (2026-10-04)
+
+`asteroids.yaml`, `conditions.yaml` and `galaxy.yaml` are now three records of one schema,
+`Celestial/schema/seeding.schema.yaml`, in `Celestial/metadata/seeding/`. Each has `identity`
+(key `seeding.<name>`, name, about), the groups that are its own, and `basis`. The galaxy's
+settings, which were flat, are its `galaxy` group (`galaxy.seed`, `galaxy.home`, ...). Nothing else
+moved. `galaxy.ron` is the same but for the path in its comment.
+
+Also: the four rock classes with no density have one, guessed and marked to review, and each
+registry-seeded small body has its own density between its class's rubble and solid figures.
+What each world is made of stays empty: the user will bring it.
+
 ## Next on `fso`, in this order
 
-5. The celestial seeding records (asteroids, conditions, galaxy) as one `seeding` shape.
 6. Products and stock, installations, economy.
 
 ## Where I'd do it differently
