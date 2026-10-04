@@ -34,8 +34,8 @@ A gate or relay holds a tube of the medium open along its route (as long as the 
 | `TUBE_GAMMA` | 0.3333333333 |  | Invented | Heavier is naturally slower, by the cube root of mass. Target: a 100 t ship under a minute through a 5 ly gate, a capital ship several minutes. |
 | `TUBE_EPS` | 2.24e-12 | J/(kg·m) | Invented | A crossing's energy scale. Target: a 100 t ship at natural speed through a 5 ly gate costs an S2 plant-hour. |
 | `TUBE_RHO` | 406 | kg | Invented | A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry. |
-| `TUBE_K` | 3 |  | Invented | A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 9 ships a day. |
-| `TUBE_HOLD` | 2.592e8 | s | Invented | Holding a tube costs its opening over this (100 months: 1% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous. |
+| `TUBE_K` | 3 |  | Invented | A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 5 ships a day. |
+| `TUBE_HOLD` | 5.184e8 | s | Invented | Holding a tube costs its opening over this (200 months: 0.5% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous. |
 
 # The base world's numbers
 
@@ -137,10 +137,10 @@ From `content/base/materials.ron`.
 | PROSPECTOR on a full tank (S drive, 0.6) | 2.5 ly slow, 1.2 ly at 1,000 c |
 | INTERCEPTOR on a full tank (S drive, 0.6) | 0.9 ly slow, 0.4 ly at 1,000 c |
 | An explorer, nine tenths tank (0.75) | 5.1 ly at 1,000 c, 5 ly in 1.8 days |
-| A gate spanning 1 ly: opened at / held at | 6.3e17 J / 2.4 GW |
-| A gate spanning 5 ly: opened at / held at | 3.2e18 J / 12.2 GW |
-| A gate spanning 10 ly: opened at / held at | 6.3e18 J / 24.4 GW |
-| A gate spanning 40 ly: opened at / held at | 2.5e19 J / 97.5 GW |
+| A gate spanning 1 ly: opened at / held at | 6.3e17 J / 1.2 GW |
+| A gate spanning 5 ly: opened at / held at | 3.2e18 J / 6.1 GW |
+| A gate spanning 10 ly: opened at / held at | 6.3e18 J / 12.2 GW |
+| A gate spanning 40 ly: opened at / held at | 2.5e19 J / 48.7 GW |
 | data (1 kg) through a 5 ly gate at natural speed | 1.0 s, 2.9e5 J |
 | a 100 t ship through a 5 ly gate at natural speed | 46.4 s, 2.9e10 J |
 | a capital ship (100 kt) through a 5 ly gate at natural speed | 464.2 s, 2.9e13 J |

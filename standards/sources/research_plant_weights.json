@@ -1,0 +1,1226 @@
+{
+  "01_bulk_ore_stockyard": {
+    "stacker_20000tph_south_flank": {
+      "value": 2000,
+      "unit": "tonnes",
+      "source": "https://www.bulkhandlingreview.com.au/delivering-some-of-the-worlds-largest-rail-mounted-machines/",
+      "quote": "Each stacker weighs about 2000 tonnes with the reclaimer weighing in at around 3000 tonnes.",
+      "verified": true,
+      "note": "thyssenkrupp rail-mounted stacker, BHP South Flank iron ore; nominal throughput 20,000 tonnes per hour (same article). Boom length not stated."
+    },
+    "bucket_wheel_reclaimer_20000tph_south_flank": {
+      "value": 3000,
+      "unit": "tonnes",
+      "source": "https://www.bulkhandlingreview.com.au/delivering-some-of-the-worlds-largest-rail-mounted-machines/",
+      "quote": "Each stacker weighs about 2000 tonnes with the reclaimer weighing in at around 3000 tonnes.",
+      "verified": true,
+      "note": "thyssenkrupp bucket wheel reclaimer, BHP South Flank iron ore; nominal throughput 20,000 tonnes per hour."
+    },
+    "stacker_reclaimer_machines_south_flank_max": {
+      "value": 2800,
+      "unit": "tonnes",
+      "source": "https://www.stattimes.com/amp/news/db-schenker-delivers-worlds-largest-rail-mounted-machine-in-australia-logistics/",
+      "quote": "Each machine measures up to 106 metres in length, 40 meters in height and weighs up to 2,800 tonnes. The buckets wheel amounts to more than 12 metres in diameter.",
+      "verified": true,
+      "note": "Same South Flank machines (2 stackers + 1 reclaimer, 20,000 t/h each), 'up to' figure from the logistics contractor; differs from the 2000/3000 t figures in the other source."
+    },
+    "takraf_bucket_wheel_reclaimer_46m_boom": {
+      "value": 885,
+      "unit": "t",
+      "source": "https://directindustry.com/prod/takraf/product-58547-505661.html",
+      "quote": "total weight of approximately 885 t, boom length of 46 m, rail gauge of 10 m, total reclaimer length of 35 m, height from upper edge of rail of 29 m",
+      "verified": false,
+      "note": "Search-result excerpt only (page returned 403). TAKRAF reclaimer with 46 m boom, 10 m rail gauge; excerpt appeared alongside TAKRAF Hs-S 9200.46 (9,200 t/h peak, iron ore, 1,600 mm belt) but the pairing of weight and model was not confirmed."
+    }
+  },
+  "02_iron_ore_pellet_plant": {
+    "pelletising_plant_structural_steelwork_2_5Mtpy": {
+      "value": 3000,
+      "unit": "tonnes",
+      "source": "https://kallanish.com/en/news/steel/market-reports/article-details/Chinese-firm-provides-steelwork-for",
+      "quote": "China Metallurgical Construction Group awarded a contract to supply 3,000 tonnes of structural steelwork for an Iranian iron ore pelletizing plant with a 2.5 million tonnes/year capacity",
+      "verified": false,
+      "note": "Search-result excerpt only (article body paywalled; only the headline 'Chinese firm provides steelwork for new Iranian iron ore pelletising plant' was seen). It is a supply contract quantity, not necessarily the plant's total steel."
+    },
+    "pelletizing_disc_scarabaeus_7500_diameter": {
+      "value": 7.5,
+      "unit": "m",
+      "source": "https://haverniagara.com/wp-content/uploads/2020/03/PM-416-E-Scarab_7500_iron-ore.pdf",
+      "quote": "Disc diameter 7,5 m ... Drive unit 200 kW ... capacity up to 150 tph per unit",
+      "verified": true,
+      "note": "DIMENSION, not a weight: Haver & Boecker Niagara Scarabaeus 7500 iron ore pelletizing disc. The brochure gives no machine weight."
+    },
+    "induration_machine_compact_plant_width": {
+      "value": 3,
+      "unit": "m",
+      "source": "https://metso.com/globalassets/events/metec/pellet-plant-3m-4763-11-24-en-met.rebranded.pdf",
+      "quote": "The plant design is based on a 3-m-wide indurating machine ... offered in sizes of 189 sq.m (1.2-1.5 Mt/y capacity), 288 sq.m (1.7-2.3 Mt/y) and 315 sq.m (2-2.6 Mt/y)",
+      "verified": false,
+      "note": "DIMENSION, not a weight; wording from search-result excerpts of Metso compact pellet plant material (the PDF was opened but contains no weights and this sentence was not grepped verbatim)."
+    }
+  },
+  "03_water_electrolysis_hydrogen_plant": {
+    "nel_a485_stack_module_operational_weight": {
+      "value": 71440,
+      "unit": "kg",
+      "source": "https://nelhydrogen.com/wp-content/uploads/2024/08/A-Series-Spec-Sheet–DOC001974_03.pdf",
+      "quote": "Weight, Operational 71,440 kg (157,498 lbs)",
+      "verified": true,
+      "note": "Nel A485 atmospheric alkaline stack module, class 2.2 MW, 485 Nm3/h (1,046 kg/24 h) H2; operational weight (filled with electrolyte). Same sheet: 'Dimensions W x D x H 14.1 m x 4.3 m x 4.3 m'. Manufacturer spec sheet DOC001974_03."
+    },
+    "nel_a485_electrolyser_dry_weight_reseller": {
+      "value": 88850,
+      "unit": "lbs",
+      "source": "https://phxequip.com/Multimedia/documents/plants/hydrogen-electrolyzers-3501.pdf",
+      "quote": "Dimensions: 38.2 ft × 6.7 ft × 7.4 ft, weighs 88,850 lbs dry and 138,670 lbs in operation.",
+      "verified": true,
+      "note": "Per NEL A485 atmospheric alkaline electrolyser (485 Nm3/hr each, listing of 38 unused units). Source is a used-equipment dealer listing (Phoenix Equipment), lower-grade than the Nel sheet; its operating figure differs from Nel's own spec sheet figure - prefer the Nel sheet for operating weight; this is the only dry weight found."
+    },
+    "nel_a485_electrolyser_operating_weight_reseller": {
+      "value": 138670,
+      "unit": "lbs",
+      "source": "https://phxequip.com/Multimedia/documents/plants/hydrogen-electrolyzers-3501.pdf",
+      "quote": "Dimensions: 38.2 ft × 6.7 ft × 7.4 ft, weighs 88,850 lbs dry and 138,670 lbs in operation.",
+      "verified": true,
+      "note": "Per NEL A485 unit, in operation; dealer listing (Phoenix Equipment). Disagrees with Nel spec sheet (71,440 kg / 157,498 lbs operational); recorded as published."
+    }
+  },
+  "04_direct_reduction_shaft_furnace": {
+    "furnace_tower_height_1_28mtpa": {
+      "value": 104,
+      "unit": "m",
+      "source": "https://www.cranestodaymagazine.com/?p=6439",
+      "quote": "104m reduction furnace tower ... The furnace uses the Direct Reduced Iron (DRI) technology of the MIDREX Process ... The DRI Plant of 1.28 million per annum capacity",
+      "verified": true,
+      "note": "Height only, not a weight: Midrex DRI plant of 1.28 Mt/yr; erection used a 600 t capacity Demag CC 2800 crawler crane. Partly seen through a page-reading tool."
+    }
+  },
+  "05_electric_arc_furnace": {
+    "transformer_rating_midsize": {
+      "value": 60,
+      "unit": "MVA",
+      "source": "https://en.wikipedia.org/wiki/Electric_arc_furnace",
+      "quote": "A mid-sized modern steelmaking furnace would have a transformer rated about 60,000,000 volt-amperes (60 MVA), with a secondary voltage between 400 and 900 volts and a secondary current in excess of 44,000 amperes. In a modern shop such a furnace would be expected to produce a quantity of 80 tonnes of liquid steel in approximately 50 minutes",
+      "verified": true,
+      "note": "Rating only, not a weight: 80 tonne heat, 60 MVA transformer."
+    },
+    "eaf_transformer_27_5mva_weight": {
+      "value": 122900,
+      "unit": "pounds",
+      "source": "https://tdigroup.machinehub.com/?p=851",
+      "quote": "A used 27.5 MVA EAF transformer had a total weight of 122,900 pounds (search-engine summary of a used-equipment listing, Ferranti)",
+      "verified": false,
+      "note": "Ferranti 27.5 MVA electric arc furnace transformer, total weight. Search summary only; the listing has since been removed."
+    },
+    "eaf_shell_plate_thickness": {
+      "value": "up to 1 1/4",
+      "unit": "inch",
+      "source": "https://repository.ui.edu.ng/server/api/core/bitstreams/2bd8bacb-e1b8-4568-b4aa-493e0b30386e/content",
+      "quote": "the steel shell varies in thickness and may range from 1/4 inch (6mm) thick for small furnaces and up to 11/4 in (32 mm) thick on 80 to 100 ton furnaces",
+      "verified": false,
+      "note": "Shell plate thickness, not a weight: 32 mm on 80 to 100 ton furnaces. Search summary only, page not opened."
+    },
+    "eaf_building_crane_girder": {
+      "value": 120,
+      "unit": "tons",
+      "source": "https://www.algoma.com/news/eaf-update-installation-of-the-last-crane-girder/",
+      "quote": "each crane girder stands at an impressive 100 feet in length, 16 feet deep, and bears the weight of 120 tons",
+      "verified": true,
+      "note": "Algoma Steel EAF melt shop building: one crane runway girder, 100 ft long, 16 ft deep (building steel, not the furnace)."
+    },
+    "eaf_transformer_20mva_weight": {
+      "value": 106200,
+      "unit": "lbs",
+      "source": "https://tdigroup.machinehub.com/?p=871",
+      "quote": "Rated Capacity 20 MVA ... Weights: Core & Coils 46,500 Lbs. Tank and Fittings 20,700 Lbs. Oil (Main Tank) 30,750 Lbs. Oil (LIC Compt) 8,250 Lbs. Total Weight 106,200 Lbs. Untanked 46,500 Lbs.",
+      "verified": true,
+      "note": "This is an EAF-type furnace transformer (20 MVA, 13,200 primary / 275 secondary), NOT a ladle furnace transformer; the only furnace-transformer weight breakdown found in the 20-27 MVA range that ladle furnaces use."
+    }
+  },
+  "06_ladle_furnace": {
+    "ladle_empty_lined_105t": {
+      "value": 55,
+      "unit": "tonnes (published as 'just over 55 tonnes')",
+      "source": "https://www.sheffieldforgemasters.com/news-and-insights/news/01/sheffield-forgemasters-enhances-ladle-fleet/",
+      "quote": "105-tonne pouring ladles fabricated in steel and lined with refractory measure 4.5 metres in height, 3.3 metres in diameter and each weigh just over 55 tonnes without any steel.",
+      "verified": false,
+      "note": "Empty weight of a refractory-lined 105-tonne pouring ladle (Sheffield Forgemasters). Search-result excerpt only; the URL now redirects to the news index so the text could not be re-read."
+    },
+    "ladle_furnace_transformer_rating": {
+      "value": 27,
+      "unit": "MVA",
+      "source": "https://www.sgb-smit.com/news/news-detail/the-so-far-largest-furnace-transformer-from-regensburg-passes-heat-run-test-sgb-shortly-before-handover-to-the-customer",
+      "quote": "At the same time, a transformer with a capacity of 27 MVA for a ladle furnace was ordered for the same plant",
+      "verified": true,
+      "note": "Ladle furnace transformer rating, ordered alongside a 124 MVA arc furnace transformer (SGB Regensburg). Heat size and transformer weight not stated."
+    },
+    "ladle_furnace_transformer_rating_45ton_shop": {
+      "value": 27,
+      "unit": "MVA",
+      "source": "https://nme.machinehub.com/listing/lectromelt-mannesmann-demag-melt-shop-2-45-ton-eaf-ladle-furnace/",
+      "quote": "-Transformer Capacity: 27 MVA.",
+      "verified": true,
+      "note": "Used-plant listing: Lectromelt / Mannesmann Demag melt shop with (2) 45 ton EAF and a Mannesmann Demag ladle furnace. The page lists 'Transformer Capacity: 27 MVA' and 'Power: 20 MVA'; which line belongs to the ladle furnace versus the EAF was not confirmed from the grep. No weight given."
+    },
+    "furnace_transformer_20mva_total_weight": {
+      "value": 106200,
+      "unit": "lbs",
+      "source": "https://tdigroup.machinehub.com/?p=871",
+      "quote": "Rated Capacity 20 MVA ... Weights: Core & Coils 46,500 Lbs. Tank and Fittings 20,700 Lbs. Oil (Main Tank) 30,750 Lbs. Oil (LIC Compt) 8,250 Lbs. Total Weight 106,200 Lbs. Untanked 46,500 Lbs.",
+      "verified": true,
+      "note": "This is an EAF-type furnace transformer (20 MVA, 13,200 primary / 275 secondary), NOT a ladle furnace transformer; the only furnace-transformer weight breakdown found in the 20-27 MVA range that ladle furnaces use."
+    },
+    "furnace_transformer_27_5mva_total_weight": {
+      "value": 122900,
+      "unit": "pounds",
+      "source": "https://tdigroup.machinehub.com/?p=851",
+      "quote": "For a 27.5 MVA EAF transformer, the total weight is 122,900 pounds",
+      "verified": false,
+      "note": "EAF-type transformer, 27.5 MVA, not a ladle furnace transformer. The page title 'Transformer, Electric Arc Furnace (EAF) Type, 27.5 MVA' was seen, but the weight figure itself is from a search-result summary only."
+    }
+  },
+  "07_ingot_casting": {
+    "mould_to_ingot_weight_ratio_cast_iron": {
+      "value": "1.5 to 2.5",
+      "unit": "times ingot weight",
+      "source": "https://patents.google.com/patent/US3635279A/en",
+      "quote": "the above-mentioned thick-walled mould made of cast iron and adapted to manufacture an iron ingot, steel ingot etc., must have such a large thickness that the weight of the mould becomes 1.5 to 2.5 times that of the ingot",
+      "verified": true,
+      "note": "General statement about conventional thick-walled cast iron ingot moulds (patent US3635279A background section)."
+    },
+    "mould_to_ingot_weight_ratio_minimum": {
+      "value": 1.3,
+      "unit": "times ingot weight (minimum)",
+      "source": "https://patents.google.com/patent/US3958620A/en",
+      "quote": "The mold is distinguished by the fact that its weight is at least 1.3 times the ingot weight. The mold weight is dependent on the ingot diameter, the mold weight to ingot weight ratio increasing with decreasing diameter to above 3.",
+      "verified": true,
+      "note": "Applies to the patent's undivided moulds of uniform cross-section, length greater than 2 m, inside diameter greater than 250 mm. The same patent gives an example of 1.84 times the ingot weight."
+    },
+    "ladle_crane_deadweight_390t": {
+      "value": 900,
+      "unit": "tonnes (published as 'over 900 tonnes')",
+      "source": "https://www.reyher.de/en/company/latest-news/detail/hv-bolts-for-a-crane-weighing-over-900-tonnes/",
+      "quote": "a ladle transport crane in two-girder design with a span of 40 m and a deadweight of over 900 tonnes. ... it will serve as a centre crane with a load capacity of up to 390 tonnes for two continuous slab casters in the casting hall \"Oxygenstahlwerk 2\" of Thyssenkrupp Stahl Gießwerk Duisburg Beeckerwerth.",
+      "verified": true,
+      "note": "Kranbau Köthen ladle transport crane, 390 tonnes load capacity, 40 m span."
+    },
+    "ladle_crane_tare_450t": {
+      "value": 700,
+      "unit": "tonnes (published as 'over 700 tonnes')",
+      "source": "https://kranbau.de/en/references/references",
+      "quote": "Kranbau Köthen GmbH delivered a new ladle crane to Avilés in Spain, which reached its destination in May 2016. With a tare weight of over 700 tonnes, the Kolos is at the cutting edge of technology. The crane can move loads of up to 450 tonnes",
+      "verified": true,
+      "note": "Kranbau Köthen ladle crane for Avilés, Spain; 450 tonnes load capacity. Span not stated."
+    },
+    "largest_forging_ingot_sheffield_forgemasters_2007": {
+      "value": 300,
+      "unit": "tonnes",
+      "source": "https://www.sheffieldforgemasters.com/news-and-insights/news/12/forgemasters-cast-biggest-ever-ingot-in-uk/",
+      "quote": "Sheffield Forgemasters has cast its first ever 300 tonne ingot using a unique new ingot mould.",
+      "verified": true,
+      "note": "Ingot weight only; the mould weight is not published. The Star (https://www.thestar.co.uk/business/big-challenge-for-steel-giants-466734) adds 'it has created moulds for ingots 3.3 metres in diameter'."
+    },
+    "largest_single_pour_sheffield_forgemasters": {
+      "value": 570,
+      "unit": "tonnes",
+      "source": "https://en.wikipedia.org/wiki/Sheffield_Forgemasters",
+      "quote": "Sheffield Forgemasters currently has the capacity for pouring the largest single casting (570 tonnes) in Europe.",
+      "verified": true,
+      "note": "Pouring capacity for a single casting, not a mould weight."
+    },
+    "largest_ingot_japan_steel_works": {
+      "value": 670,
+      "unit": "tonnes",
+      "source": "https://wnn.world-nuclear.org/articles/jsw-optimistic-over-order-book",
+      "quote": "A second 14,000 tonne hydraulic forging press commissioned at its Muroran plant in early 2010 can handle 670 tonne ingots",
+      "verified": true,
+      "note": "Largest ingot size handled at JSW Muroran; same page: 'the 500-600 tonne steel ingots needed to make the largest forgings'. Mould weight not published."
+    }
+  },
+  "08_alumina_refinery_bayer": {
+    "worsley_liquor_burning_structural_steel_supplied": {
+      "value": 1000,
+      "unit": "tonnes",
+      "source": "https://www.cloughgroup.com/projects/worsley-expansion-project",
+      "quote": "The project involved the supply, fabrication, and delivery of 1,000 tonnes of structural steelwork, the erection of 1,200 tonnes of steelwork. Installation and testing of 400 tonnes of carbon steel pipework, the installation of a 58 metre long x 4.2 metre diameter kiln and the installation of 200 pieces of mechanical equipment ranging from pumps, blowers, filters, conveyors, baghouses, and cyclones.",
+      "verified": true,
+      "note": "Applies to ONE area only: the liquor burning facility built by Clough as part of the Worsley Alumina Refinery expansion (not the whole refinery). No refinery Mt/yr capacity is stated on the page."
+    },
+    "worsley_liquor_burning_steelwork_erected": {
+      "value": 1200,
+      "unit": "tonnes",
+      "source": "https://www.cloughgroup.com/projects/worsley-expansion-project",
+      "quote": "the supply, fabrication, and delivery of 1,000 tonnes of structural steelwork, the erection of 1,200 tonnes of steelwork.",
+      "verified": true,
+      "note": "Liquor burning facility of the Worsley Alumina Refinery expansion only."
+    },
+    "worsley_liquor_burning_carbon_steel_pipework": {
+      "value": 400,
+      "unit": "tonnes",
+      "source": "https://www.cloughgroup.com/projects/worsley-expansion-project",
+      "quote": "Installation and testing of 400 tonnes of carbon steel pipework, the installation of a 58 metre long x 4.2 metre diameter kiln",
+      "verified": true,
+      "note": "Liquor burning facility of the Worsley Alumina Refinery expansion only. Kiln size on the same page: 58 metre long x 4.2 metre diameter (no kiln weight given)."
+    },
+    "nalco_precipitation_tank_size": {
+      "value": "35 x 14",
+      "unit": "m (height x diameter)",
+      "source": "https://themachinemaker.com/news/milton-roy-secures-major-agitator-deal-with-nalco/",
+      "quote": "the delivery of 24 agitators, with the majority of them being installed on towering tanks measuring approximately 35 meters in height and 14 meters in diameter.",
+      "verified": true,
+      "note": "SIZE only, no weight. Tanks of the NALCO alumina refinery expansion (Odisha, India); trade-press article on the agitator order."
+    },
+    "nalco_expansion_tank_capacity": {
+      "value": 4500,
+      "unit": "m3",
+      "source": "https://engineersindia.com/2nd-Phase-Expansion-of-Alumina-Refinery",
+      "quote": "Engineering & design of Tanks up to the capacity of 4500 M3 and 35 M in heights.",
+      "verified": true,
+      "note": "SIZE only, no weight. Engineers India Ltd project page, NALCO 2nd phase alumina refinery expansion."
+    },
+    "precipitator_tank_volume_icsoba": {
+      "value": 4500,
+      "unit": "m3",
+      "source": "https://icsoba.org/assets/files/publications/2019/AA15.pdf",
+      "quote": "agglomerators of 1200 m3 volume, followed by twelve precipitators of 4500 m3 volume",
+      "verified": true,
+      "note": "SIZE only, no weight. ICSOBA 2019 paper AA15 by Aughinish Alumina Ltd (Ireland): each of two chains has three agglomerators of 1200 m3 followed by twelve precipitators of 4500 m3."
+    }
+  },
+  "09_aluminium_potline": {
+    "potshell_each": {
+      "value": 44,
+      "unit": "tonnes",
+      "source": "https://www.gulfconstructiononline.com/Article/381041",
+      "quote": "The Bahraini group is manufacturing 427 pot shells (each weighing 44 tonnes) for the project",
+      "verified": true,
+      "note": "Alba Potline 6 (Bahrain), EGA DX+ Ultra cells (about 460 kA class; amperage not in the quote), 424 pots in the line. Steel potshell only, no lining."
+    },
+    "cathode_ring_busbar_per_pot": {
+      "value": 47,
+      "unit": "tonnes",
+      "source": "https://www.gulfconstructiononline.com/Article/381041",
+      "quote": "is manufacturing 424 cathode ring busbars (each weighing 47 tonnes)",
+      "verified": true,
+      "note": "Alba Potline 6: aluminium cathode ring busbar set, one per pot, 424 pots, potline length 2.6 km."
+    },
+    "potline_fabricated_equipment_total": {
+      "value": 50000,
+      "unit": "tonnes",
+      "source": "https://www.gulfconstructiononline.com/Article/381041",
+      "quote": "Already some 50,000 tonnes of aluminium, steel and stainless-steel equipment have been produced at the AMA facility in the past one year.",
+      "verified": true,
+      "note": "Alba Potline 6: fabricated aluminium, steel and stainless equipment from one fabricator, part-way through the project (not a final total)."
+    },
+    "pots_per_potline_360kt": {
+      "value": 360,
+      "unit": "pots",
+      "source": "https://www.industrialinfo.com/news/article/abbs-rectiformers-achieve-18-increase-in-energy-efficiency-at-sohar-and-qatalum-aluminum-smelters--149361",
+      "quote": "The Sohar aluminum smelter contains the world's longest pot line, consisting of 360 pots, and has a production capacity of 360,000 tons per year of aluminum.",
+      "verified": true,
+      "note": "Sohar Aluminium (Oman), AP35 cells; five rectiformers each 103 kA at 1,650 V DC. 360 pots for 360,000 tons per year."
+    },
+    "pots_for_585kt": {
+      "value": 704,
+      "unit": "pots",
+      "source": "https://www.industrialinfo.com/news/article/abbs-rectiformers-achieve-18-increase-in-energy-efficiency-at-sohar-and-qatalum-aluminum-smelters--149361",
+      "quote": "two pot rooms housing a total of 704 pots and a production capacity of 585,000 tons per year of aluminum",
+      "verified": true,
+      "note": "Qatalum (Qatar): 704 pots for 585,000 tons per year."
+    },
+    "rectiformer_each": {
+      "value": 400,
+      "unit": "tons",
+      "source": "https://www.industrialinfo.com/news/article/abbs-rectiformers-achieve-18-increase-in-energy-efficiency-at-sohar-and-qatalum-aluminum-smelters--149361",
+      "quote": "Each of the Sohar and Qatalum smelters is equipped with five rectiformers, weighing 400 tons each.",
+      "verified": true,
+      "note": "ABB rectiformers (rectifier + transformer units), five per potline, 103 kA each at 1,650 V DC (Sohar). The same article also says of Sohar 'Each of these rectiformers weighs more than 300 tons.'"
+    },
+    "pots_typical_smelter": {
+      "value": "300 to 720",
+      "unit": "pots",
+      "source": "https://en.wikipedia.org/wiki/Aluminium_smelting",
+      "quote": "A typical smelter contains anywhere from 300 to 720 pots, each of which produces about a ton of aluminium a day",
+      "verified": true,
+      "note": "General statement, Wikipedia. Cell current 100 to 300 kA per the Hall-Heroult article."
+    }
+  },
+  "10_aluminium_casthouse": {
+    "dc_caster_cast_load_ega_dc5": {
+      "value": 60,
+      "unit": "t per cast",
+      "source": "https://icsoba.org/assets/files/publications/2024/Papers/CH05%20-%20Increase%20Casting%20Capacity%20of%20DC-5%20Caster%20at%20EGA%20Jebel%20Ali%20.pdf",
+      "quote": "Before implementation of this project, the DC caster had a capacity of 60 t of billet per cast. ... need to increase the casting capacity to 70 t per cast.",
+      "verified": true,
+      "note": "NOT a machine weight: this is the cast (product) load carried by the platen of the DC-5 billet caster at EGA Jebel Ali, 60 t raised to 70 t per cast, 12 casts per day. No published machine mass found."
+    }
+  },
+  "11_reheat_furnace_walking_beam": {
+    "arcelormittal_wbf_4_5_brick": {
+      "value": 308,
+      "unit": "tons",
+      "source": "https://bacweb.org/bac-journal/best-refractory-project",
+      "quote": "The refractories included 308 tons of insulating and hard fire brick, 602 tons of castables, 544 fiber blanket modules and insulating boards, 2,800 pre-manufactured pipe shapes, and 260 tons of gunite.",
+      "verified": true,
+      "note": "Total for TWO walking beam reheat furnaces together (No. 4 and No. 5, ArcelorMittal 80-inch Hot Strip Mill, Northwest Indiana; 'each 210 feet in length', 'producing up to 500 tons each per hour'), and the scope also includes the waste gas duct, heat recuperators and dual 217-foot-tall refractory lined stacks. US tons assumed by source context (US union journal), not stated."
+    },
+    "arcelormittal_wbf_4_5_castables": {
+      "value": 602,
+      "unit": "tons",
+      "source": "https://bacweb.org/bac-journal/best-refractory-project",
+      "quote": "The refractories included 308 tons of insulating and hard fire brick, 602 tons of castables, 544 fiber blanket modules and insulating boards, 2,800 pre-manufactured pipe shapes, and 260 tons of gunite.",
+      "verified": true,
+      "note": "Same scope as above: two furnaces (up to 500 tons per hour each, 210 ft long each) plus ducts, recuperators and stacks."
+    },
+    "arcelormittal_wbf_4_5_gunite": {
+      "value": 260,
+      "unit": "tons",
+      "source": "https://bacweb.org/bac-journal/best-refractory-project",
+      "quote": "The refractories included 308 tons of insulating and hard fire brick, 602 tons of castables, 544 fiber blanket modules and insulating boards, 2,800 pre-manufactured pipe shapes, and 260 tons of gunite.",
+      "verified": true,
+      "note": "Same scope as above: two furnaces (up to 500 tons per hour each) plus ducts, recuperators and stacks. Fiber modules and pipe shapes are given as counts, not weights, so no total refractory tonnage is published."
+    }
+  },
+  "12_hot_strip_plate_mill": {
+    "plate_mill_stand_5m_assembled": {
+      "value": 1050,
+      "unit": "tonnes",
+      "source": "https://thestar.co.uk/business/engineering-firm-receives-overseas-lift-467492",
+      "quote": "When bolted together, the mill stand will weigh more than 1,050 tonnes and will house a five metre wide rolling mill at Hazira Plate's plant in Gujarat, which will have the capacity to produce 1.5 million tonnes of steel plate a year.",
+      "verified": true,
+      "note": "5 m wide heavy plate mill stand (DavyMarkham, for Hazira, India), plant capacity 1.5 Mt/yr. 'More than'. Stand housing assembly, bolted from cast pieces."
+    },
+    "plate_mill_stand_leg_casting": {
+      "value": 180,
+      "unit": "tonnes",
+      "source": "https://thestar.co.uk/business/engineering-firm-receives-overseas-lift-467492",
+      "quote": "Sheffield Forgemasters produced the four leg castings, each weighing around 180 tonnes, but did not have the capacity to cast the 90 tonne tie beams",
+      "verified": true,
+      "note": "Same 5 m plate mill stand: four leg castings of about 180 tonnes each plus 90 tonne tie beams."
+    },
+    "plate_mill_housing_casting_each": {
+      "value": 290,
+      "unit": "tonnes",
+      "source": "https://www.imeche.org/news/news-article/the-slow-boat-to-venezuela",
+      "quote": "At 290 tonnes each, the castings will create a largescale mill housing to roll plate steel for SMS Siemag",
+      "verified": true,
+      "note": "Two one-piece cast housings for one plate mill stand (SMS Siemag, Venezuela); mill width not stated."
+    },
+    "plate_mill_roll_each": {
+      "value": 130,
+      "unit": "tonnes",
+      "source": "https://www.imeche.org/news/news-article/the-slow-boat-to-venezuela",
+      "quote": "the first pair of rolls which will fit inside the structure, weighing 130 tonnes each",
+      "verified": true,
+      "note": "Rolls (backup rolls by size, not named as such) for the same plate mill stand."
+    },
+    "plate_mill_housing_each_danSteel": {
+      "value": 300,
+      "unit": "tons",
+      "source": "https://eu.nlmk.com/fr/media-center/news-groups/the-mill-housings-for-the-new-rolling-mill-have-arrived/",
+      "quote": "The mill housings, weighing 300 tons each, required a particularly large crane to be unloaded",
+      "verified": true,
+      "note": "NLMK DanSteel heavy plate mill (4.2 m wide per NLMK; width not in the quote). Two housings per stand."
+    },
+    "plate_mill_backup_roll_5m": {
+      "value": 265,
+      "unit": "tons",
+      "source": "https://foundry-planet.com/d/gontermann-peipers-gmbh-gp-s-heaviest-rolls-in-use-at-the-dillinger-ironworks",
+      "quote": "Casting a heavy duty roll with a finished weight of 265 tons that measures 5,230 mm in length",
+      "verified": true,
+      "note": "Backup roll for the Dillinger heavy plate mill, 5,230 mm long. Among the heaviest rolls made."
+    },
+    "hot_strip_finishing_stand_housing_each": {
+      "value": 100,
+      "unit": "metric tons",
+      "source": "https://www.aist.org/big-parts,-big-plans-equipment-deliveries-begin-for-strip-mill-upgrade",
+      "quote": "two 100-metric-ton mill housings for the first finishing mill stand arrived at the Belgium facility",
+      "verified": true,
+      "note": "NLMK La Louvière hot strip mill (Belgium), first finishing stand, housings built by Primetals. Two housings per stand. Seen through a page-reading tool, quote near-verbatim."
+    },
+    "hot_mill_backup_roll_64in": {
+      "value": 30,
+      "unit": "tons",
+      "source": "https://equipt.com/listings/22317-used-2010-mesta-slash-danieli-64-hot-4-hi-rolling-mill-4-hi-rolling-mills-in-north-carolina",
+      "quote": "A backup roll in a hot 4-hi rolling mill weighs approximately 30 tons (search-engine summary of a used-equipment listing)",
+      "verified": false,
+      "note": "Mesta/Danieli 64 inch 4-high hot mill, used-equipment listing. Search summary only; the page refused direct access."
+    }
+  },
+  "13_cold_rolling_mill_tandem": {
+    "tandem_mill_stand_total_weight": {
+      "value": 360,
+      "unit": "t",
+      "source": "https://sms-group.com/insights/all-insights/very-well-done-arcelormittal-issues-acceptance-for-pl-tcm-extension",
+      "quote": "Last, the complete new \"Mill Stand No. 0\" with a total weight of 360 t was skidded to its final position.",
+      "verified": true,
+      "note": "One complete additional mill stand added to an ArcelorMittal PL-TCM by SMS group; same page: capacity 'increased by 640,000 t/year to a total annual capacity of 2,150,000 tons'. Strip width and roll sizes not captured."
+    }
+  },
+  "14_bar_mill": {
+    "cooling_bed_length_500k_rebar_mill": {
+      "value": 84,
+      "unit": "m (length, not a weight)",
+      "source": "https://www.aist.org/primetals,-aic-win-order-for-500k-rebar-mill",
+      "quote": "The rolling line will consist of a 7-stand roughing mill and a 6-stand intermediate mill in an HV configuration. The 6-stand finishing mill will be in an H configuration. The mill also will include a hot dividing shear, an 84-meter cooling bed, a cold dividing shear, and automatic bundling and binding equipment.",
+      "verified": true,
+      "note": "Size only, no weight. Primetals/AIC rebar mill; the 500,000 t/yr capacity comes from the article title ('500K Rebar Mill') and the search excerpt (Capitol Steel, Philippines), not from the grepped sentence."
+    }
+  },
+  "15_seamless_tube_plant": {
+    "largest_cone_piercer_roll_diameter": {
+      "value": 1700,
+      "unit": "mm (roll diameter, not a weight)",
+      "source": "https://aist.org/sms-meer-delivers-pqf-seamless-tube-plant-to-china",
+      "quote": "The capacity of the new PQF plant is 500,000 tonnes of seamless tubes per year. ... For the 20-in tubes, SMS Meer has developed the world's largest cone-type piercer with a roll diameter of 1700 mm.",
+      "verified": true,
+      "note": "Size only, no weight. SMS Meer 20-inch PQF plant, Huai'an works, Jiangsu, 500,000 tonnes/year."
+    },
+    "piercer_max_shell_weight_assel_plant": {
+      "value": 6300,
+      "unit": "kg (weight of the rolled shell, not of the machine)",
+      "source": "https://www.aist.org/largest-assel-mill-commissioned-at-hubei-xin-yegang",
+      "quote": "The mill, with a capacity of 420,000 tonnes per year, is designed for the production of seamless tubes in the 219- to 500-mm diameter range ... The SMS Meer scope of supply includes a KSW 1500 VL cone-type piercer for piercing billet diameters of up to 460 mm ... Shells of up to 11.5 meters in length and with a maximum weight of 6300 kg can be rolled.",
+      "verified": true,
+      "note": "Workpiece weight, not equipment weight. Hubei Xin Yegang Assel plant, 420,000 tonnes/year, KSW 1500 VL cone-type piercer."
+    }
+  },
+  "16_forging_press": {
+    "mesta_50000_ton_press_total": {
+      "value": 8000,
+      "unit": "tons",
+      "source": "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf",
+      "quote": "The Mesta 50,000 ton \"Super-Giant\" forging press is 87 feet high, extending 36 feet below ground level and 51 feet above. The total weight of the press is approximately 8,000 tons.",
+      "verified": true,
+      "note": "Alcoa (Cleveland) Mesta 50,000-ton closed-die press, 1955. US short tons. 87 ft high, die table 26 x 12 ft."
+    },
+    "mesta_50000_ton_press_moving_weight": {
+      "value": 2100,
+      "unit": "tons",
+      "source": "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf",
+      "quote": "His slightest touch governs 2100 tons of moving weight and can apply 50,000 tons of forging force.",
+      "verified": true,
+      "note": "Same press: moving mass."
+    },
+    "mesta_50000_ton_press_moving_crosshead": {
+      "value": 1150,
+      "unit": "tons",
+      "source": "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf",
+      "quote": "The entire moving crosshead assembly — the upper jaw of the \"vise\"— consists of eight steel castings totaling almost 1150 tons.",
+      "verified": true,
+      "note": "Same press: moving crosshead assembly, eight castings."
+    },
+    "mesta_50000_ton_press_base_sections": {
+      "value": 800,
+      "unit": "tons",
+      "source": "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf",
+      "quote": "two lower base and two upper base sections, (Figure 2), weighing more than 800 tons",
+      "verified": true,
+      "note": "Same press: the four base sections together ('more than')."
+    },
+    "mesta_50000_ton_press_largest_castings": {
+      "value": 350,
+      "unit": "tons",
+      "source": "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf",
+      "quote": "Over 350 tons of steel were required to pour some of the largest castings ... There were eight other castings weighing between 215 to 240 tons each.",
+      "verified": true,
+      "note": "Same press: sixteen major castings; poured weight of the largest over 350 tons, eight others 215 to 240 tons each."
+    },
+    "mesta_50000_ton_press_column_nut": {
+      "value": 55,
+      "unit": "tons",
+      "source": "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf",
+      "quote": "The columns were finished to a diameter of 40 inches and a length of 76 feet. ... Eight of the largest nuts weigh 55 tons each!",
+      "verified": true,
+      "note": "Same press: eight forged alloy steel columns 40 in diameter x 76 ft long (column weight not given; ingots for them were up to 270 tons each); largest nuts 55 tons each."
+    },
+    "wyman_gordon_50000_ton_press_dies": {
+      "value": 50,
+      "unit": "tons per pair",
+      "source": "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/89-wyman-gordon-50000-ton-hydraulic-forging-press.pdf",
+      "quote": "The holding platens ... handle dies weighing up to 50 tons per pair. There are 25,000 individual parts to",
+      "verified": true,
+      "note": "Wyman-Gordon (North Grafton) Loewy 50,000-ton press. The ASME brochure gives no total weight for this press; this is the die weight it handles."
+    },
+    "sms_60k_press_total_steel": {
+      "value": 9000,
+      "unit": "tons",
+      "source": "https://www.sms-group.com/plants/projects/otto-fuchs",
+      "quote": "How do you erect such a colossal plant that consists of 9,000 tons of steel and weighs more than the Eiffel Tower?",
+      "verified": true,
+      "note": "SMS group 540 MN (60,000 short ton) pull-down closed-die press, Weber Metals, California, 2018. Die clamping area 6,000 x 3,000 mm, stroke 2,000 mm. 'Plant' = the press installation."
+    },
+    "sms_60k_press_main_parts": {
+      "value": "100 to 330",
+      "unit": "tons",
+      "source": "https://www.lightmetalage.com/news/industry-news/forging/weber-metals-starts-up-worlds-largest-pull-down-die-forging-press/",
+      "quote": "The huge steel components, including 34 cast and forged parts weighing between 100 and 330 tons ... In total, SMS group used about 9,000 tons of steel to build the plant",
+      "verified": true,
+      "note": "Same 540 MN press: 34 cast and forged main parts."
+    },
+    "sms_60k_press_largest_casting": {
+      "value": 350,
+      "unit": "mt",
+      "source": "https://www.newequipment.com/metal-forming/article/21923233/sms-to-build-60000-ton-press-for-weber-metals",
+      "quote": "SMS noted that steel castings produced for the four-column press will weigh up to 350 mt (386 tons.)",
+      "verified": true,
+      "note": "Same 540 MN press: heaviest steel castings (pre-build announcement)."
+    },
+    "erzhong_press_22000_ton": {
+      "value": 22000,
+      "unit": "tons",
+      "source": "https://en.wikipedia.org/wiki/China_National_Erzhong_Group",
+      "quote": "one of its unique achievements is a 22,000-ton steel hydraulic press forge that is used for production of bulkheads, landing gear, engine parts",
+      "verified": true,
+      "note": "China Erzhong 800 MN (80,000 t) die forging press, Deyang. AMBIGUOUS: Wikipedia's wording does not say whether 22,000 tons is the machine's own weight or a force; other reports (not opened here) give 22,000 t as the press's total weight. Treat as unconfirmed."
+    }
+  },
+  "17_laser_cutting_and_plate_rolls": {
+    "davi_mcb_3028_4roll_weight": {
+      "value": 8800,
+      "unit": "kg",
+      "source": "https://www.exapro.com/davi-promau-mcb-3028-p241025040/",
+      "quote": "Davi Promau MCB 3028 plate rolling machine, manufactured in 2006 ... maximum working length of 3000 mm and a maximum thickness capacity of 13 mm ... top roll with a diameter of 280 mm ... approximately 4800 mm in length, 1900 mm in width, and 1900 mm in height, with a total weight of 8800 kg.",
+      "verified": true,
+      "note": "4-roll plate roll, 3000 mm working length, 13 mm max thickness. Used-machine dealer listing (seller-stated, not a manufacturer data sheet)."
+    },
+    "davi_mcb_3037_4roll_weight": {
+      "value": 18500,
+      "unit": "kg",
+      "source": "https://www.werktuigen.com/davi-mcb+3037/wt-222-78172",
+      "quote": "Dimensions and weight / Overall weight: 18,500 kg / Total length: 5,900 mm / Total width: 2,200 mm / Total height: 2,300 mm ... Sheet thickness (max.): 25 mm ... Roller (top) diameter: 370 mm / Roller length: 3,100 mm",
+      "verified": true,
+      "note": "Davi Promau MCB-3037 4-roll plate bender, 3100 mm roll length, 25 mm max sheet thickness, 30 kW. Used-machine dealer listing."
+    },
+    "davi_mcb_3053_4roll_weight": {
+      "value": 40000,
+      "unit": "kg",
+      "source": "https://www.exapro.com/davi-mcb3060wt-p260420054/",
+      "quote": "Davi MCB3053 hydraulic 4-roll plate bending machine manufactured in 1998 ... maximum width of 3000 mm and a maximum thickness of 50 mm ... working roll width of 3100 mm, with an upper roll diameter of 530 mm ... 55 kW electric motor ... Dimension 6000x2900 x h 2900 mm weight 40000 kg",
+      "verified": true,
+      "note": "4-roll plate roll, 3000 mm plate width, 50 mm max thickness. Used-machine dealer listing; the URL slug says MCB3060WT but the listing text describes an MCB3053."
+    },
+    "davi_mcb_3060wt_4roll_weight_70mm": {
+      "value": 50000,
+      "unit": "kg",
+      "source": "https://www.exapro.com/sp/davi-mcb3060wt-18755/",
+      "quote": "Used Davi MCB3060WT Plate rolling machine - 4 rolls ... Working length 3100 mm ... Lower/lateral rolls Ø 550 mm ... weight 50000 kg / Max thickness 70 mm",
+      "verified": true,
+      "note": "4-roll plate roll, 3100 mm working length, 70 mm max thickness, upper roll 600 mm. Dealer model page; other MCB3060WT listings on the same page state 60000 kg and 65000 kg (both 70 mm)."
+    },
+    "davi_mcb_3060wt_4roll_weight_65mm": {
+      "value": 68000,
+      "unit": "kg",
+      "source": "https://www.exapro.com/sp/davi-mcb3060wt-18755/",
+      "quote": "Working length 3100 mm ... Lower/lateral rolls Ø 550 mm ... width 2950 mm / weight 68000 kg / Max thickness 65 mm",
+      "verified": true,
+      "note": "Same model (MCB3060WT), a different used listing; shows the spread of seller-stated weights (50000-68000 kg) for one model."
+    },
+    "trumpf_trulaser_3030_weight": {
+      "value": 12700,
+      "unit": "kg",
+      "source": "https://www.werktuigen.com/trumpf-trulaser+3030/wt-212-34417",
+      "quote": "Overall weight 12,700 kg; length 9400 mm, width 3000 mm, height 2400 mm; 3 kW TRUMPF TruDisk 3001; sheets up to 3000 mm x 1500 mm, max thickness 20 mm (search-result excerpt)",
+      "verified": false,
+      "note": "TruLaser 3030 with 3 kW TruDisk 3001 fibre source, 3000 x 1500 mm sheet. From search excerpt only: the listing returned a 404 page when opened. Used-machine dealer listing."
+    }
+  },
+  "18_welding_gantries_and_cranes": {
+    "esab_superstir_marine_aluminium_weight": {
+      "value": 63,
+      "unit": "tonnes",
+      "source": "https://www.offshore-mag.com/business-briefs/equipment-engineering/article/16760648/welding-aluminum-friction-stir-technique-now-operational-for-topside-structures",
+      "quote": "Marine Aluminum's steel-constructed SuperStir system weighs 63 tonnes and measures 20 x 11 metres.",
+      "verified": true,
+      "note": "ESAB SuperStir friction stir welding installation at Marine Aluminium (Norway), 20 x 11 m footprint; aluminium panel production. Trade press (Offshore magazine)."
+    },
+    "riftec_double_head_fsw_gantry_weight": {
+      "value": 60,
+      "unit": "t",
+      "source": "https://riftec.de/en/unsere-moeglichkeiten.html",
+      "quote": "Six meters wide, ten meters long, five meters high and weighing a good 60 t - that's how it stands, our new double-head gantry system. ... Now we are able to weld components up to 8 x 3.5 m",
+      "verified": true,
+      "note": "Double-head friction stir welding gantry (in service since 2021), machine 6 x 10 x 5 m, components up to 8 x 3.5 m, weld penetration up to 30 mm. Operator's own page; 'a good 60 t' is approximate as published."
+    },
+    "ap1000_polar_crane_weight": {
+      "value": 450,
+      "unit": "tonnes",
+      "source": "https://world-nuclear-news.org/Articles/Polar-crane-installed-at-Haiyang",
+      "quote": "The AP1000 polar crane is almost 38 metres long, 13.5 metres wide, and weighs more than 450 tonnes. It has a main hoist capacity of 300 tonnes and an auxiliary hoist rated at 25 tonnes. The bridge has a rated capacity of 800 tonnes to enable it to support special construction lifting equipment if necessary.",
+      "verified": true,
+      "note": "Published as 'more than 450 tonnes' (a lower bound). Main hoist 300 t, auxiliary 25 t, bridge rated 800 t, almost 38 m long. Same wording confirmed on the Sanmen article (wnn.world-nuclear.org/articles/sanmen-crane-in-place)."
+    },
+    "hinkley_point_c_polar_crane_weight": {
+      "value": 750,
+      "unit": "tonnes",
+      "source": "https://www.constructionbriefing.com/news/crane-lifts-crane-big-carl-bears-the-load/8033636.article",
+      "quote": "Big Carl was used to install a polar crane weighing 750 tonnes at the Hinkley Point C nuclear power station ... The polar crane with a rotating double girder bridge was made by APCO Technologies in Switzerland. It has hoists rated to lift 320, 35 and 5 tonnes.",
+      "verified": true,
+      "note": "EPR polar crane, hoists 320 / 35 / 5 tonnes; span not stated in the article. Trade press."
+    },
+    "akkuyu_polar_crane_completed_weight": {
+      "value": 500,
+      "unit": "tonnes",
+      "source": "https://world-nuclear-news.org/Articles/Polar-crane-lifted-into-place-at-Akkuyu-unit-1",
+      "quote": "The metal structures of the polar crane bridge - weighing 282 tonnes - have now been installed ... The completed crane will weigh around 500 tonnes.",
+      "verified": true,
+      "note": "VVER-1200 polar crane, Akkuyu unit 1; published as 'around 500 tonnes'. Lifting capacity is not stated in this article."
+    },
+    "akkuyu_polar_crane_bridge_structure_weight": {
+      "value": 282,
+      "unit": "tonnes",
+      "source": "https://world-nuclear-news.org/Articles/Polar-crane-lifted-into-place-at-Akkuyu-unit-1",
+      "quote": "The metal structures of the polar crane bridge - weighing 282 tonnes - have now been installed",
+      "verified": true,
+      "note": "Bridge metal structures only (not the complete crane), Akkuyu unit 1 polar crane; installed at an elevation of 38.5 metres."
+    },
+    "samson_goliath_loaded_weight": {
+      "value": 4000,
+      "unit": "tonnes",
+      "source": "https://theyard.info/cranes/specification.asp",
+      "quote": "Each has a span of 140m (460 feet) and a safe working load of 840 tonnes. ... The loaded weight of each crane - approximately 4000 tonnes - is taken on 64 special anti-friction bearing mounted wheels",
+      "verified": true,
+      "note": "Harland and Wolff (Belfast) Krupp gantry cranes, 840 tonnes capacity, 140 m span, 96 m and 106 m tall. 'Loaded weight' = crane plus load, so the crane itself is roughly 4,000 minus up to 840."
+    },
+    "kockums_crane_weight": {
+      "value": 7560,
+      "unit": "tonnes",
+      "source": "https://www.googlesightseeing.com/2005/07/the-worlds-largest-gantry-crane/",
+      "quote": "The 7,560 tonne world's largest gantry crane at Kockums AB shipyard in Malmö, Sweden also has the world's largest lifting capacity of 1,500 tonnes.",
+      "verified": true,
+      "note": "Kockums crane (now Hyundai, Ulsan): 1,500 tonnes capacity, 138-140 m tall, 174 m rail gauge (dimensions from Wikipedia). Weak source (a blog); Wikipedia gives capacity but not weight."
+    },
+    "honghai_crane_steel_structure": {
+      "value": 11000,
+      "unit": "tonnes",
+      "source": "https://en.wikipedia.org/wiki/Honghai_Crane",
+      "quote": "The Honghai Crane is 150m tall, has a span of 124m and the weight of the steel structure is 11,000 tonnes, excluding the spreader. ... The total weight of the crane, including the spreader, is said to be 14,800 tonnes.",
+      "verified": true,
+      "note": "Honghai gantry crane (Jiangsu, 2014), 22,000 tonnes lift capacity. 11,000 tonnes structure; 14,800 tonnes with spreader."
+    },
+    "hyundai_samho_goliath_wheel_loads": {
+      "value": 90,
+      "unit": "tons per wheel",
+      "source": "https://www.konecranes.com/discover/tripling-production-in-south-korea",
+      "quote": "The largest one is 142 meters tall, has a span of 165 meters, and a capacity of 1,650 tons. ... the crane moves along two rails carried by 96 wheels, each of which can support 90 tons.",
+      "verified": true,
+      "note": "Hyundai Samho Goliath, 1,650 tons capacity, 165 m span. Not a self-weight: 96 wheels rated 90 tons each bounds crane plus load at 8,640 tons."
+    }
+  },
+  "19_large_5_axis_machining_centre": {
+    "makino_mag3_weight": {
+      "value": 94800,
+      "unit": "lb",
+      "source": "https://machinehub.com/listings/375812-makino-mag-3",
+      "quote": "Weight: 94,800 LBS; X Axis Travel 118.1\" (2,999.7 mm), Y Axis Travel 59.1\" (1,501.1 mm), Z Axis Travel 39.4\" (1,000.8 mm); Pallet Size 118.1\" x 59.1\" (search-result excerpt)",
+      "verified": false,
+      "note": "Makino MAG3 5-axis horizontal, travels 118.1 x 59.1 x 39.4 in. From search excerpt only; the excerpt did not name which listing carried the weight. The page given here confirmed the travels when opened but the weight row was not in the fetched text. Used-machine dealer listing."
+    },
+    "dmg_mori_dmu_600_gantry_linear_weight": {
+      "value": 90000,
+      "unit": "kg",
+      "source": "https://www.werktuigen.com/dmg+mori-dmu+600+gantry+linear/wt-215-89273",
+      "quote": "Overall weight 90,000 kg; Travel distance X-axis 6,000 mm, Y-axis 4,500 mm, Z-axis 1,500 mm; Table load 30,000 kg (search-result excerpt)",
+      "verified": false,
+      "note": "DMU 600 Gantry linear, travels 6000 x 4500 x 1500 mm. From search excerpt only: the listing could not be fetched (404/blocked). Used-machine dealer listing."
+    }
+  },
+  "20_steel_framed_industrial_building": {
+    "vab_structural_steel": {
+      "value": 98590,
+      "unit": "short tons",
+      "source": "https://en.wikipedia.org/wiki/Vehicle_Assembly_Building",
+      "quote": "Construction of the VAB required 98,590 short tons (197,180,000 lb; 89,440,000 kg) of steel. ... The VAB is 526 feet (160.3 m) tall, 716 feet (218.2 m) long and 518 feet (157.9 m) wide. It covers 8 acres (32,000 m2)",
+      "verified": true,
+      "note": "NASA Vehicle Assembly Building: 160.3 m tall, 218.2 x 157.9 m, 8 acres (32,000 m2) footprint. Very tall hurricane-rated building, so far heavier per m2 than a normal hall."
+    },
+    "a380_assembly_site_steel": {
+      "value": 32000,
+      "unit": "tonnes",
+      "source": "https://www.airbus.com/en/newsroom/press-releases/2004-05-airbus-a380-assembly-site-is-opened-by-french-prime-minister",
+      "quote": "The Airbus A380 assembly building is one of the largest in the world, measuring 490m by 250 m, with a height of 46 m. It is the largest of several buildings on the site which, together, incorporate more than 32,000 tonnes of steel",
+      "verified": true,
+      "note": "Airbus A380 final assembly site, Toulouse. The 32,000 tonnes is for several buildings together; the main hall alone is 490 x 250 x 46 m."
+    },
+    "cargolifter_airship_hangar_steel": {
+      "value": 14500,
+      "unit": "t",
+      "source": "https://de.wikipedia.org/wiki/Cargolifter-Werfthalle",
+      "quote": "Länge / Breite / Höhe: 360 m / 210 m / 107 m; Brutto-Grundfläche Hangar: 66.000 m²; Umbauter Raum: 5,5 Mio. m³; Verbauter Stahl: 14.500 t",
+      "verified": true,
+      "note": "CargoLifter airship hangar (Aerium, Germany): 360 x 210 x 107 m, 66,000 m2 gross floor area, free-spanning steel arches. Doors weigh 600 tonnes each per the same article."
+    },
+    "single_storey_hall_low_eaves": {
+      "value": 35,
+      "unit": "kg/m2",
+      "source": "https://steelconstruction.info/topics/cost-of-structural-steelwork/cost-planning-industrial-buildings/",
+      "quote": "Large span single storey building with low eaves (6 - 8 m), 35kg/m2 steelwork",
+      "verified": true,
+      "note": "UK cost-planning guide (steelconstruction.info): frame steel per m2 of floor, low eaves 6-8 m."
+    },
+    "single_storey_hall_high_eaves": {
+      "value": 45,
+      "unit": "kg/m2",
+      "source": "https://steelconstruction.info/topics/cost-of-structural-steelwork/cost-planning-industrial-buildings/",
+      "quote": "Large span single storey building with high eaves (10 - 13 m), 45kg/m2 steelwork",
+      "verified": true,
+      "note": "Same guide, high eaves 10-13 m. Multi-storey frames in the same table: 55, 90 and 110 kg/m2."
+    },
+    "hangar_rule_of_thumb": {
+      "value": 45,
+      "unit": "kg/m2",
+      "source": "https://aertecsolutions.com/en/blog/hangars-are-a-matter-of-weight/",
+      "quote": "The magic number that they all reach is 45 kg/m². ... \"any\" vessel (maximum beam of 50 metres, S275 steel and possible overhead cranes supported on pillars) ... Your weight will be 45 Kg/m²",
+      "verified": true,
+      "note": "Aertec (aviation engineering firm) rule of thumb for industrial halls/hangars up to 50 m span; rises steeply beyond 40-50 m span or with cranes hung from the roof ('vessel' is a mistranslation of Spanish 'nave' = hall)."
+    },
+    "everett_factory_size": {
+      "value": 98.3,
+      "unit": "acres",
+      "source": "https://www.rhinobldg.com/blog/the-worlds-largest-steel-building-part-2-boeing-everett-plant-facts",
+      "quote": "the 5.5 million square foot Boeing Everett Plant contains more than 472 million cubic feet of space. The building covers 98.3 acres of space under one roof. The structure is 120' tall.",
+      "verified": true,
+      "note": "Size only, no steel tonnage found for Boeing Everett. Seen through a page-reading tool."
+    }
+  },
+  "21_fusion_power_plant": {
+    "iter_tokamak_total": {
+      "value": 23000,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/node/18506",
+      "quote": "The ITER machine will weigh 23,000 tonnes. ... The vacuum vessel alone, with its ports, blanket and divertor, weighs 8,000 tonnes.",
+      "verified": true,
+      "note": "ITER tokamak, 500 MW fusion power (thermal, no generator), major radius 6.2 m. Whole machine."
+    },
+    "iter_vacuum_vessel": {
+      "value": 5200,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/machine/vacuum-vessel",
+      "quote": "The ITER vacuum vessel will measure 19.4 metres across (outer diameter), 11.4 metres high, and weigh approximately 5,200 tonnes. (After the installation of the blanket and the divertor, the vacuum vessel will weigh 8,500 tonnes.)",
+      "verified": true,
+      "note": "ITER vacuum vessel, 19.4 m outer diameter, 11.4 m high. 8,500 tonnes with blanket and divertor (the Facts & Figures page says 8,000 tonnes for the same thing)."
+    },
+    "iter_vacuum_vessel_sector": {
+      "value": 450,
+      "unit": "tonnes",
+      "source": "https://en.wikipedia.org/wiki/ITER",
+      "quote": "each of the nine torus-shaped sectors will weigh approximately 450 tonnes. When all the shielding and port structures are included, this adds up to a total of 5,116 tonnes.",
+      "verified": true,
+      "note": "ITER vacuum vessel: 9 sectors, about 450 tonnes each; 5,116 tonnes total with shielding and ports (Wikipedia)."
+    },
+    "iter_toroidal_field_coil_each": {
+      "value": 330,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/machine/magnets",
+      "quote": "Weighing 330 tonnes each, and measuring 9 x 17 m, they are among the largest components of the ITER machine.",
+      "verified": true,
+      "note": "ITER has 18 toroidal field coils, each 9 x 17 m. Other ITER pages give 310 tonnes ('Every one of the ITER tokamak's 18 D-shaped toroidal field coils weighs aproximately 310 tonnes', iter.org/node/18506) and 360 tonnes (ITER Newsline, search excerpt only); the difference is likely what is counted (winding pack vs. cased coil), not stated."
+    },
+    "iter_magnet_system_total": {
+      "value": 10000,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/machine/magnets",
+      "quote": "Ten thousand tonnes of magnets, with a combined stored magnetic energy of 51 Gigajoules (GJ), will produce the magnetic fields that will initiate, confine, shape and control the ITER plasma.",
+      "verified": true,
+      "note": "All ITER superconducting magnets together (18 TF coils, 6 PF coils, central solenoid, correction coils)."
+    },
+    "iter_central_solenoid": {
+      "value": 1000,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/machine/magnets",
+      "quote": "Thirteen metres tall (18 metres, with structure), four metres wide and one thousand tonnes, the central solenoid is made of six independent coil packs wound from niobium-tin superconducting cable.",
+      "verified": true,
+      "note": "ITER central solenoid, 13 m tall (18 m with structure), 4 m wide, six modules."
+    },
+    "iter_poloidal_field_coil_heaviest": {
+      "value": 400,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/machine/magnets",
+      "quote": "The largest coil has a diameter of 24 metres; the heaviest is 400 tonnes.",
+      "verified": true,
+      "note": "ITER has six ring-shaped poloidal field coils; the figure is the heaviest one."
+    },
+    "iter_cryostat": {
+      "value": 3850,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/machine/cryostat",
+      "quote": "Manufactured from stainless steel, the cryostat weighs 3,850 tonnes. Its base section—1,250 tonnes—will be the single largest load of ITER tokamak assembly.",
+      "verified": true,
+      "note": "ITER cryostat, stainless steel, about 29 m wide and high (internal diameter 28 m)."
+    },
+    "iter_blanket_module": {
+      "value": 4.6,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/machine/blanket",
+      "quote": "Each blanket module measures 1 x 1.5 metres and weighs up to 4.6 tonnes.",
+      "verified": true,
+      "note": "One ITER blanket (shield) module, 1 x 1.5 m; ITER has 440 of them (count from the same page, not in the quote)."
+    },
+    "iter_tokamak_complex_on_basemat": {
+      "value": 400000,
+      "unit": "tonnes",
+      "source": "https://www.iter.org/node/18506",
+      "quote": "Some 400,000 tonnes will rest on the lower basemat of the Tokamak Complex, including the buildings, the 23,000-tonne machine and equipment.",
+      "verified": true,
+      "note": "ITER Tokamak Complex: buildings plus machine plus equipment (mostly concrete)."
+    },
+    "demo_japan_total": {
+      "value": 77500,
+      "unit": "tons",
+      "source": "https://www.jspf.or.jp/PFR/PDF2022/pfr2022_17-2405058.pdf",
+      "quote": "the total weight of the fusion DEMO would be about 77,500 tons and one TF coil weigh wound be about 1,200 tons.",
+      "verified": true,
+      "note": "Japanese fusion DEMO concept (16 TF coils, 8 vacuum vessel sectors); a study estimate scaled from ITER's 23,000 tons, not a built machine."
+    },
+    "demo_japan_tf_coil_each": {
+      "value": 1200,
+      "unit": "tons",
+      "source": "https://www.jspf.or.jp/PFR/PDF2022/pfr2022_17-2405058.pdf",
+      "quote": "one TF coil weighs about 1,200 tons and one VV sector is about 1,700 tons.",
+      "verified": true,
+      "note": "Japanese fusion DEMO concept: 16 TF coils at about 1,200 tons each; 8 vacuum vessel sectors at about 1,700 tons each. Study estimate."
+    },
+    "demo_japan_vacuum_vessel_sector": {
+      "value": 1700,
+      "unit": "tons",
+      "source": "https://www.jspf.or.jp/PFR/PDF2022/pfr2022_17-2405058.pdf",
+      "quote": "one TF coil weighs about 1,200 tons and one VV sector is about 1,700 tons.",
+      "verified": true,
+      "note": "Japanese fusion DEMO concept, one of 8 vacuum vessel sectors. Study estimate."
+    },
+    "arc_reactor_total": {
+      "value": 7190,
+      "unit": "tonnes",
+      "source": "https://arxiv.org/pdf/1409.3540",
+      "quote": "Grand Total 1320 m3 7190 tonnes N/A $330M − $430M $5.5B − $5.6B (Table 11: Cost/weight breakdown table for ARC reactor (excluding the balance of plant equipment).)",
+      "verified": true,
+      "note": "ARC design study (MIT, Sorbom et al.), 525 MW fusion power, about 190 MW net electric per the paper, major radius 3.3 m. Design study, not built. Excludes balance of plant."
+    },
+    "arc_magnet_structure_subtotal": {
+      "value": 5670,
+      "unit": "tonnes",
+      "source": "https://arxiv.org/pdf/1409.3540",
+      "quote": "Magnet/Structure Subtotal 704 m3 5670 tonnes (Magnet structure 544 m3 4350 tonnes SS316 LN; Magnet top ring 120 m3 959 tonnes SS316 LN; REBCO structure 40 m3 358 tonnes Copper)",
+      "verified": true,
+      "note": "ARC design study, Table 11. Magnets and their steel structure."
+    },
+    "arc_blanket_subtotal": {
+      "value": 1440,
+      "unit": "tonnes",
+      "source": "https://arxiv.org/pdf/1409.3540",
+      "quote": "Blanket Subtotal 599 m3 1440 tonnes (Blanket tank 11.8 m3 97.1 tonnes Inconel 718; TiH2 shield 101 m3 380 tonnes; Blanket tank FLiBe 241 m3 475 tonnes; Heat exchanger FLiBe 241 m3 475 tonnes)",
+      "verified": true,
+      "note": "ARC design study, Table 11. Liquid FLiBe blanket, tank and shield."
+    },
+    "arc_replaceable_vacuum_vessel": {
+      "value": 86.5,
+      "unit": "tonnes",
+      "source": "https://arxiv.org/pdf/1409.3540",
+      "quote": "Replaceable VV Subtotal 15.7 m3 86.5 Tonnes",
+      "verified": true,
+      "note": "ARC design study, Table 11. Replaceable vacuum vessel with first wall and multiplier."
+    },
+    "jt60sa_magnet_system": {
+      "value": 2600,
+      "unit": "short tons",
+      "source": "https://en.wikipedia.org/wiki/JT-60SA",
+      "quote": "Weighing roughly 2,600 short tons (2,400 t), JT-60SA's superconducting magnet system includes 18 D-shaped niobium-titanium toroidal field coils, a niobium-tin central solenoid, and 12 equilibrium field ...",
+      "verified": true,
+      "note": "JT-60SA tokamak (Japan), a smaller research machine; whole superconducting magnet system."
+    },
+    "w7x_cold_mass": {
+      "value": 425,
+      "unit": "metric tons",
+      "source": "https://en.wikipedia.org/wiki/Wendelstein_7-X",
+      "quote": "A cooling device produces enough liquid helium to cool down the magnets and their enclosure (about 425 metric tons of \"cold mass\") to superconductivity temperature (4 K).",
+      "verified": true,
+      "note": "Wendelstein 7-X stellarator: magnets and their enclosure only."
+    },
+    "generator_stator_1770mw_set": {
+      "value": 450,
+      "unit": "tonnes",
+      "source": "https://world-nuclear-news.org/articles/generator-stator-arrives-at-hinkley-point-c",
+      "quote": "The stator - measuring 12 metres in length and weighing 450 tonnes - was supplied by EDF subsidiary Arabelle Solutions.",
+      "verified": true,
+      "note": "Generator stator of one Hinkley Point C Arabelle turbine-generator (about 1,770 MW gross per unit, rating from neimagazine.com). Stator only, not the whole set."
+    },
+    "lp_turbine_rotor_1770mw_set": {
+      "value": 257,
+      "unit": "tonnes",
+      "source": "https://www.heavyliftpfi.com/projects/osprey-on-hand-for-hinkley/20670.article",
+      "quote": "transported a low-pressure rotor, weighing 257 tonnes, for the steam turbine at Hinkley Point C in Somerset.",
+      "verified": true,
+      "note": "One low-pressure rotor of a Hinkley Point C Arabelle steam turbine (each turbine has several LP rotors)."
+    },
+    "hp_ip_turbine_module_1750mw_set": {
+      "value": 600,
+      "unit": "t",
+      "source": "https://www.neimagazine.com/analysis/full-steam-ahead/",
+      "quote": "about 1100 MWe produced from a 13 stage rotor weighing just 140t, in a HP/IP module weighing around 600t",
+      "verified": true,
+      "note": "Flamanville 3 Arabelle turbine (about 1,750 MWe set): combined HP/IP module about 600 t, its rotor 140 t."
+    },
+    "generator_stator_750mw": {
+      "value": 334,
+      "unit": "tonnes",
+      "source": "https://www.csenergy.com.au/news/super-loads-arrives-at-kogan-creek-power-station",
+      "quote": "Six prime movers transported a new 334 tonne generator stator ... The generator stator, along with a smaller 90 tonne generator rotor, will be installed during a planned major overhaul",
+      "verified": true,
+      "note": "Kogan Creek power station, single 750 MW unit (unit size from Wikipedia): stator 334 tonnes, rotor 90 tonnes."
+    },
+    "hvdc_transformer_587mva": {
+      "value": 900,
+      "unit": "tons",
+      "source": "https://press.siemens.com/global/en/feature/worlds-first-1100-kv-hvdc-transformer",
+      "quote": "In operation, the transformer weighs just under 900 tons ... its transport weight of 535 tons",
+      "verified": true,
+      "note": "Siemens 1,100 kV HVDC converter transformer, 587 MVA (rating from the same page heading), 37.5 m long, 14.4 m tall, 12 m wide. Just under 900 tons in operation, 535 tons transport weight."
+    },
+    "gsu_transformer_700mva_single_phase": {
+      "value": 400,
+      "unit": "tons",
+      "source": "https://www.hitachienergy.com/about-us/customer-success-stories/successful-testing-of-the-1st-of-6-1-ph-700-mva-420-27kv-shell-gsu-transformer",
+      "quote": "Three transformers together weigh around 1.200 tons (400 tons each).",
+      "verified": false,
+      "note": "Hitachi Energy single-phase 700 MVA 420/27 kV generator step-up transformer. From a search-result excerpt; the page returned 404 when opened."
+    }
+  },
+  "22_warehouse_tanks_pumps": {
+    "asrs_stacker_crane_24m_1500kg": {
+      "value": 11500,
+      "unit": "kg",
+      "source": "https://www.inform-international.com/100-original-asrs-warehouse-panther-series-stacker-crane-inform-product",
+      "quote": "Model TMHS-P1-1500-24 ... Stacker crane net weight | About 11,500kg | 12,000kg | 11,5000kg | 12,000kg",
+      "verified": true,
+      "note": "Inform (manufacturer) Panther double-column pallet stacker crane, max height 24 m, max load 1500 kg. Columns: bracket shelf single-deep 11,500 kg / double-deep 12,000 kg; standard shelf single-deep printed as '11,5000kg' (typo on page) / double-deep 12,000 kg."
+    },
+    "asrs_stacker_crane_24m_1500kg_double_deep": {
+      "value": 12000,
+      "unit": "kg",
+      "source": "https://www.inform-international.com/100-original-asrs-warehouse-panther-series-stacker-crane-inform-product",
+      "quote": "Stacker crane net weight | About 11,500kg | 12,000kg | 11,5000kg | 12,000kg",
+      "verified": true,
+      "note": "Same table, double-deep variant; 24 m, 1500 kg load."
+    },
+    "reactor_coolant_pump_8MW": {
+      "value": 100,
+      "unit": "tonnes (more than)",
+      "source": "https://ksb.com/resource/blob/2358968/7e1e7964c93f234613f66ea9f72c478e/ksb-presseinformation_gro%C3%9Fauftrag_en.docx",
+      "quote": "The pumps, which weigh more than 100 tonnes, and each have a power rating of 8 megawatts, will be manufactured at KSB's main plant in Frankenthal.",
+      "verified": true,
+      "note": "KSB press release (docx): main reactor coolant pumps for a nuclear power plant, 8 MW each. Lower bound ('more than'); flow not stated."
+    },
+    "boiler_feed_pump_set_1700kW": {
+      "value": 13,
+      "unit": "tonnes (approximately)",
+      "source": "https://www.worldpumps.com/content/news/ksb-receives-order-for-two-large-boiler-feed-pumps",
+      "quote": "each driven by a 1,700 kW high-voltage motor ... maximum flow rate of approximately 250 m3 per hour and maximum head of approximately 1,700 m ... one complete pump set weighing approximately 13 tonnes",
+      "verified": false,
+      "note": "Search-result excerpt only (page returned 403). KSB boiler feed pump set, trade press (World Pumps)."
+    },
+    "storage_tank_5000MT_overall_weight_AMBIGUOUS": {
+      "value": 6055,
+      "unit": "MT",
+      "source": "https://eajournals.org/ijpger/tag/fixed-roof/",
+      "quote": "Since one tank is having capacity of 5000MT ... the nominal diameter is 21 m without space constraint, height is 18 m, number of course is 10, and height of each course is 1.8m. ... The overall weight of the tank is 6055 MT, which is found to be stable with an anchorage.",
+      "verified": true,
+      "note": "Journal abstract (IJPGER), API 650 MGO tank, 21 m dia x 18 m, shell 14 mm to 6 mm. CAUTION: 'overall weight' exceeds the 5000 MT contents, so it evidently includes the stored product; the abstract does not give the empty steel weight. Do not use as an empty-tank mass."
+    }
+  },
+  "23_port_cranes": {
+    "liebherr_lhm_180": {
+      "value": 165,
+      "unit": "t",
+      "source": "https://www.liebherr.com/en-hk/p/lhm420-5244437",
+      "quote": "LHM 180 Mobile Harbour Crane | Lifting capacity (max.) - 64 t | Jib length - 35 m | Total weight - 165 t",
+      "verified": true,
+      "note": "Liebherr product listing; max lift 64 t, jib 35 m."
+    },
+    "liebherr_lhm_280": {
+      "value": 241,
+      "unit": "t",
+      "source": "https://www.liebherr.com/en-hk/p/lhm420-5244437",
+      "quote": "LHM 280 Mobile Harbour Crane | Lifting capacity (max.) - 84 t | Jib length - 40 m | Total weight - 241 t",
+      "verified": true,
+      "note": "max lift 84 t, jib 40 m."
+    },
+    "liebherr_lhm_420": {
+      "value": 371,
+      "unit": "t",
+      "source": "https://www.liebherr.com/en-hk/p/lhm420-5244437",
+      "quote": "LHM 420 Mobile Harbour Crane | Lifting capacity (max.) - 124 t | Jib length - 48 m | Total weight - 371 t",
+      "verified": true,
+      "note": "max lift 124 t, jib 48 m."
+    },
+    "liebherr_lhm_550": {
+      "value": 439,
+      "unit": "t",
+      "source": "https://www.liebherr.com/en-hk/p/lhm420-5244437",
+      "quote": "LHM 550 Mobile Harbour Crane | Lifting capacity (max.) - 154 t | Jib length - 54 m | Total weight - 439 t",
+      "verified": true,
+      "note": "max lift 154 t, jib 54 m. Also shown on https://www.liebherr.com/en-hk/p/lhm550-5244439"
+    },
+    "liebherr_lhm_600": {
+      "value": 540,
+      "unit": "t",
+      "source": "https://www.liebherr.com/en-hk/p/lhm420-5244437",
+      "quote": "LHM 600 Mobile Harbour Crane | Lifting capacity (max.) - 208 t | Jib length - 61 m | Total weight - 540 t",
+      "verified": true,
+      "note": "max lift 208 t, jib 61 m."
+    },
+    "liebherr_lhm_800": {
+      "value": 742,
+      "unit": "t",
+      "source": "https://www.liebherr.com/en-hk/p/lhm420-5244437",
+      "quote": "LHM 800 Mobile Harbour Crane | Lifting capacity (max.) - 308 t | Jib length - 64 m | Total weight - 742 t",
+      "verified": true,
+      "note": "max lift 308 t, jib 64 m (product listing figure)."
+    },
+    "liebherr_lhm_800_launch_press_release": {
+      "value": 745,
+      "unit": "tonnes (approximately)",
+      "source": "https://www.liebherr.com/en-ae/n/liebherr-launches-giant-mobile-harbour-crane-lhm-800-23147-4788229",
+      "quote": "The wheelsets have been slightly adapted to ensure optimum load distribution of this new giant, which weighs approximately 745 tonnes.",
+      "verified": true,
+      "note": "Liebherr press release; lifting capacity 308 tonnes."
+    },
+    "liebherr_lhm_800_first_delivered_heavy_lift": {
+      "value": 820,
+      "unit": "tonnes",
+      "source": "https://www.liebherr.com/en-ae/n/liebherr-delivers-first-lhm-800-23424-4788229",
+      "quote": "The cranes total weight of 820 tonnes is evenly spread to the ground thanks to four double supporting pads with a total area of more than 100 square metres.",
+      "verified": true,
+      "note": "First delivered LHM 800, heavy-lift version with reinforced 64 metres boom 'with a total weight of 63 tonnes' (boom alone); max lifting capacity 308 tonnes."
+    },
+    "konecranes_gottwald_esp5": {
+      "value": 355,
+      "unit": "t (approx.)",
+      "source": "https://konecranes.com/port-equipment-services/mobile-harbor-cranes/esp5-mobile-harbor-cranes",
+      "quote": "Weight [t] (approx.) 355",
+      "verified": true,
+      "note": "ESP.5: working radius up to 46 m, lifting capacities up to 100 t."
+    },
+    "konecranes_gottwald_esp6": {
+      "value": 375,
+      "unit": "t (approx.)",
+      "source": "https://konecranes.com/port-equipment-services/mobile-harbor-cranes/esp6-mobile-harbor-cranes",
+      "quote": "Weight [t] (approx.) 375",
+      "verified": true,
+      "note": "ESP.6: working radius up to 49 m, lifting capacities up to 125 t."
+    },
+    "konecranes_gottwald_esp7": {
+      "value": 450,
+      "unit": "t (approx.)",
+      "source": "https://konecranes.com/port-equipment-services/mobile-harbor-cranes/esp7-mobile-harbor-cranes",
+      "quote": "Weight [t] (approx.) 450",
+      "verified": true,
+      "note": "ESP.7: working radius up to 51 m, lifting capacities up to 125 t."
+    },
+    "konecranes_gottwald_esp8": {
+      "value": 490,
+      "unit": "t (approx.)",
+      "source": "https://konecranes.com/port-equipment-services/mobile-harbor-cranes/esp8-mobile-harbor-cranes",
+      "quote": "Weight [t] (approx.) 490",
+      "verified": true,
+      "note": "ESP.8: working radius up to 54 m, lifting capacities up to 150 t."
+    },
+    "konecranes_gottwald_esp10": {
+      "value": 665,
+      "unit": "t (approx.)",
+      "source": "https://konecranes.com/port-equipment-services/mobile-harbor-cranes/esp10-mobile-harbor-cranes",
+      "quote": "Dimensions and weight | ESP.10 | Maximum radius 64,000 [mm] | Weight [t] (approx.) 665",
+      "verified": true,
+      "note": "ESP.10: working radius up to 64 m, lifting capacities up to 125 t. (ESP.9, up to 200 t, lists weight as 'various'.)"
+    },
+    "sts_crane_megamax_zpmc_liverpool2": {
+      "value": 1600,
+      "unit": "tonnes (around)",
+      "source": "https://www.ajot.com/news/latest-ship-to-shore-cranes-arrive-in-mersey-for-l2-terminal",
+      "quote": "Each crane measures 92 metres high to the top of the frame ... and 132 metres high when the boom is raised. Each crane weighs around 1600 tonnes.",
+      "verified": true,
+      "note": "ZPMC megamax ship-to-shore cranes for Liverpool2: outreach of 24 containers, up to 10 high on deck, safe working loads of up to 85 tonnes."
+    },
+    "sts_crane_post_panamax_range": {
+      "value": "800-900",
+      "unit": "tonnes",
+      "source": "https://en.wikipedia.org/wiki/Container_crane",
+      "quote": "Post-Panamax cranes weigh approximately 800–900 tonnes, while the newer-generation super-post-Panamax cranes can weigh 1,600–2,000 tonnes.",
+      "verified": true,
+      "note": "Generic class range, Post-Panamax STS cranes."
+    },
+    "sts_crane_super_post_panamax_range": {
+      "value": "1,600-2,000",
+      "unit": "tonnes",
+      "source": "https://en.wikipedia.org/wiki/Container_crane",
+      "quote": "Post-Panamax cranes weigh approximately 800–900 tonnes, while the newer-generation super-post-Panamax cranes can weigh 1,600–2,000 tonnes.",
+      "verified": true,
+      "note": "Generic class range; largest have outreach of 26 on-deck container stacks."
+    },
+    "sts_crane_typical_tt_club": {
+      "value": "1000-1200",
+      "unit": "tonnes",
+      "source": "https://www.ttclub.com/fileadmin/uploads/tt-club/Documents/Critical_asset_series/TT-Club-Critical-Assets-Crane-FINAL.pdf",
+      "quote": "Weight: 1000–1200 tonnes ... Lift capacity: 40–120 Tonnes",
+      "verified": true,
+      "note": "TT Club (insurer) critical-assets sheet for ship-to-shore cranes; typical range."
+    }
+  },
+  "not_found": [
+    "Fusion: turbine-generator complete set weight for 400-1000 MW (only parts found: stator, LP rotor, HP/IP module); EU DEMO component masses (only a Japanese DEMO study found); ITER blanket/shield total as a separate figure (only vessel with and without blanket: 5,200 vs 8,500 tonnes).",
+    "Fusion: conventional generator step-up transformer weight with MVA from an opened page (the Hitachi 700 MVA / 400 tons page returned 404; Siemens HVDC 587 MVA unit used instead).",
+    "Hot strip mill: total mill equipment tonnage, main drive motor weight, coiler weight, work roll weight. Tried AIST, SMS/Primetals/Danieli press releases, ABB/Converteam drive articles (they give MW, not weight).",
+    "Forging: Wyman-Gordon/Loewy 50,000-ton press total weight (ASME brochure gives none); China Erzhong 80,000 t press weight from a clear source; Aubert & Duval/Interforge 65,000 t press weight; any 10,000 t open-die press weight; forging manipulator self-weight (only carrying capacities published).",
+    "Potline: cathode lining and cathode block weight per pot, total busbar tonnage per potline (only the 47 tonne cathode ring busbar per pot), pot-tending machine weight. Search budget ran out before these were tried properly.",
+    "Electric arc furnace: shell weight, total furnace weight, refractory lining tonnage, electrode arm and roof weight, and a furnace transformer weight from an opened page. Manufacturer brochures (GE Vernova, Primetals) list MVA ratings only.",
+    "Direct-reduction shaft furnace: furnace shell weight, refractory tonnage, tower structural steel, total plant steel. Midrex and Kobelco publish diameters (5.5 to 7.5 m), capacities and tower heights (104 m; 145 m at H2 Green Steel per a search summary), not weights.",
+    "Buildings: Boeing Everett steel tonnage; Meyer Werft dock hall steel tonnage (only dimensions: 504 m dock, hall 2 at 384 x 125 x 75 m).",
+    "Shipyard cranes: Samson and Goliath self-weight stated directly (only 'loaded weight'); Kockums weight from a strong source.",
+    "NOTE: the session's web-search allowance (200 calls) ran out part-way; later work used only direct fetches of already-known pages and Wikipedia. Many 'not found' items were not searched exhaustively.",
+    "A: stacker-reclaimer weight tied to a stated boom length - only the unverified TAKRAF 885 t / 46 m excerpt; TAKRAF and Tenova product pages give capacity and boom ranges but no weights; search budget exhausted",
+    "A: belt conveyor weight per metre (belt kg/m, idler mass, installed steel per metre) - one search returned only scribd/calculator sites (rejected as not reputable); Wikipedia Conveyor_belt has no figures; search budget exhausted",
+    "B: ball mill weight at stated size/power - searches returned Metso/FLSmidth/CITIC mill sizes and powers (e.g. 22 x 41 ft 10,000 kW; 26 x 42 ft 15.6 MW) but no weights; Wikipedia Ball_mill has none; search budget exhausted",
+    "B: balling drum / pelletizing disc weight - Haver & Boecker Niagara Scarabaeus 7500 brochure gives diameter 7.5 m, 200 kW, up to 150 tph but no weight; search budget exhausted",
+    "B: travelling grate / induration machine weight - only dimensions/areas found (Metso 3 m wide, 189-315 m2; NLMK Stoilensky 6 Mt/yr at 780 t/h, no tonnage of equipment); search budget exhausted",
+    "B: total equipment tonnage of a pellet plant - only the unverified 3,000 t structural steelwork contract (kallanish, paywalled); search budget exhausted",
+    "C: pallet racking weight - Wikipedia Pallet_racking has no mass figures; no search done before search budget exhausted",
+    "C: API 650 tank EMPTY steel weight at ~5,000 m3 - search returned mostly scribd; the one journal abstract gives an 'overall weight' that includes contents; search budget exhausted",
+    "C: large industrial pump weight with both stated flow and power - KSB 8 MW pump has no flow; 13 t boiler feed pump set is unverified (403); KSB press pages returned 503; search budget exhausted",
+    "D: weight of a specific named STS crane with stated outreach in metres - only Liverpool2 ZPMC (outreach given as 24 containers) and generic ranges",
+    "D: Konecranes Gottwald ESP.9 (200 t) weight - page lists 'various'",
+    "NOTE: the session WebSearch budget ran out after about 12 searches for this part (roughly 3 per group); items below marked 'search budget exhausted' were not fully searched.",
+    "A: thyssenkrupp nucera scalum 20 MW module weight - one search; excerpt gave only dimensions '39 m x 5 m x 8 m' (not confirmed on page: the nrwglobalbusiness PDF and corporate brochure returned no extractable text); no weight published in results.",
+    "A: Siemens Silyzer 300 module array weight - one search; the Siemens Energy presentation (energyforum.in) gives 17.5 MW and 335 kg/h per full module array of 24 modules but no weight; the Siemens datasheet URL now redirects to a generic page.",
+    "A: Nel PSM/PAE 25 MW pressurised alkaline system weight - Nel datasheet (NEL-datasheet-PAE-A4-HR.pdf) gives 25 MW, 10 000 kg/day, system area 230 m2, no weight.",
+    "A: Cummins HyLYZER 1000 weight - spec sheet gives footprint only ('Electrolyzer dimensions (L x W) = 8.4 m x 2.3 m', 'Rectifier dimensions (L x W) = 4.5 x 2.5 m'), no weight.",
+    "A: Sunfire, John Cockerill DQ-1000, ITM, Plug stack weights - one search; trade-press pages (gasworld, bioenergytimes, hydrogeneurope, hydrogeninsight) contain no weights; search budget exhausted.",
+    "A: rectifier-transformer weight at stated MVA - one search; Hitachi Energy customer story confirms '10 RESIBLOC Dry-type Rectifier Transformers, each rated at 13.3 MVA' for KK Wind Solutions (each feeding two 5 MW electrolyser units) but gives no weight; search budget exhausted.",
+    "B: digester vessel weight/size - one search; ICSOBA 2025 AA02 and 2016 AA01 digestion papers and the MBP Kaiser Gramercy digester rebuild page contain no vessel weights; search budget exhausted.",
+    "B: thickener/settler size and steel weight - not found; search budget exhausted.",
+    "B: precipitator tank steel weight - only sizes found (4500 m3; approx 35 m high x 14 m diameter). A search excerpt mentioned Yarwun '42 precipitator tanks, each of 4,500 m3 nominal capacity ... approximately 14.5 meters diameter x 30 meters high' but the text could not be located on any opened page, so it is not recorded as a figure.",
+    "B: calciner (GSC / CFB) weight - one search; Metso Outotec ICSOBA 2022 AA19 paper only says qualitatively that 'specific weight to capacity ratio has been decreasing'; no tonnage; search budget exhausted.",
+    "B: whole-refinery structural steel / equipment tonnage at stated Mt/yr (Al Taweelah, Yarwun, Utkal, Lanjigarh, Alunorte, Ma'aden) - Hatch Al Taweelah and Yarwun pages and L&T pages state capacities (2 Mtpa, 1.5 MTPA) but no steel tonnage; Alcan Gove EIS PDF would not download; search budget exhausted.",
+    "C: melting/holding furnace weight at stated capacity - one search; Andritz aluminium furnaces brochure and GHI page ('Capacity Up to 100 tonnes', 'Melting rate Up to 8 tonnes/hour') give capacities only, no furnace mass; search budget exhausted.",
+    "C: DC casting machine weight, tilting furnace weight, ingot casting line weight - one search; nothing published in Mechatherm/Wagstaff/ICSOBA pages reached; search budget exhausted.",
+    "D: walking beam furnace steel structure tonnage and total weight - two searches; Tenova/AIST/SMS press items give only throughputs (e.g. 350 tonnes/hour Tata Kalinganagar, 395 metric tons/hour NLMK Sharon), no structure or total weights; search budget exhausted.",
+    "ladle_furnace: steel ladle shell-only weight (without refractory) for 80-100 t heat - one search; only the lined 105 t Forgemasters ladle surfaced (unverified); search budget exhausted",
+    "ladle_furnace: weight of an actual ladle furnace transformer - one search; SGB-SMIT and used-plant listings give MVA only; the only weights found are for EAF-type transformers (20 MVA verified, 27.5 MVA unverified); search budget exhausted",
+    "ingot_casting: specific mould weights for the largest ingots (Sheffield Forgemasters 300 t, JSW 600-670 t) - Forgemasters, The Star, WNN and Wikipedia pages give ingot weights only; theengineer.co.uk pages blocked the fetch",
+    "ingot_casting: Konecranes / Danieli / SMS ladle or teeming crane self-weight - press releases (Danieli Nucor Brandenburg 290/75/25 short tons, Jaso 500 t for Tata, Konecranes Mittal Poland) give capacities only; only Kranbau Köthen deadweights found; search budget exhausted",
+    "cold_rolling_mill_tandem: mill housing weight, work roll weight, backup roll weight, total PLTCM equipment tonnage - one search; equipt.com used-mill listings returned HTTP 403, machinehub Continental 4-stand listing has only coil weight, Tenova brochure PDF did not download; search budget exhausted",
+    "bar_mill: housingless stand / cassette weight (Danieli SHS, SMS HL, Primetals Red Ring), cooling bed weight, total bar mill equipment tonnage - one search; AIST/Primetals/Danieli press releases give stand counts and cooling bed lengths only; search budget exhausted",
+    "seamless_tube_plant: cone-type piercer weight, PQF/FQM/MPM mandrel mill weight, total plant equipment tonnage - two searches; AIST and SMS group reference pages give capacities and roll diameters only; ABM proceedings PQF paper PDF did not yield text; search budget exhausted",
+    "NOTE: the session WebSearch budget (200 calls) ran out after one search per topic (8 searches total for this part); everything below marked 'search budget exhausted' was never searched for or only searched once.",
+    "Trumpf TruLaser 3030/3040/3060/3080 fiber manufacturer data sheet weight: trumpf.com product page returned no readable text to the fetch helper; three exapro listings opened give only workpiece weight (900/920 kg), not machine weight; search budget exhausted. Only an unverified 12,700 kg dealer figure recorded.",
+    "Bystronic, Mazak, Amada laser cutting machine weights: search budget exhausted.",
+    "Faccin and Haeusler plate roll weights: search budget exhausted (only Davi found, all from used-machine listings, no manufacturer data sheet).",
+    "Makino T4 / T2 machine weight: search budget exhausted.",
+    "DMG Mori DMU 340 Gantry / DMC 340 U machine weight: us.dmgmori.com product page opened, lists only max workpiece weight (30000 kg), no machine weight; the DMG Mori Japan press PDF did not download; asset-trade PDF lists only table load (16.000 kg).",
+    "Starrag Ecospeed, Zimmermann, Waldrich Coburg, Ingersoll, MAG/Fives Cincinnati profiler weights: search budget exhausted.",
+    "Large FSW machines for SLS (Michoud Vertical Assembly Center), Ariane, rail car panels; PaR Systems, MTI, Grenzebach, Hage, ESAB LEGIO weights: search budget exhausted. TWI pages opened give down-force and working area only, no machine weight.",
+    "Pemamek / ESAB arc-welding gantry and panel line weights: search budget exhausted.",
+    "NASA VAB 325-ton crane self-weight: Wikipedia and two NASA VAB fact sheets (Mar 2019, Oct 2019) opened; they give capacities only (two 325-ton cranes), not crane weight.",
+    "Catalogue EOT crane self-weight vs capacity at stated span for approx 50 t and 100 t (Konecranes, Demag, ABUS, Street): one search returned only dealer listings without crane weight; search budget exhausted.",
+    "Powerhouse (dam) crane weights with capacity: search budget exhausted.",
+    "Kursk-II polar crane: neimagazine article opened, gives carrying capacity 390 tons only, no crane weight."
+  ]
+}

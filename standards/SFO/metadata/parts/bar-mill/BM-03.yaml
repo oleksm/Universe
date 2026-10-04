@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: BM-03
+  name: "Shear"
+  status: draft
+  description: "Crops and cuts the bar."
+physical:
+  mass: 30000
+fit:
+  count: 3
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: FPS-03
+  name: "Blanket and shielding"
+  status: draft
+  description: "Lines the vessel: takes the neutrons' energy as heat and stops the radiation."
+physical:
+  mass: 3300000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass], tier: derived, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's blanket and divertor: its vessel weighs 8,500 tonnes with them and 5,200 without." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

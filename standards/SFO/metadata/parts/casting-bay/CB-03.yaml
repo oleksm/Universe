@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: CB-03
+  name: "Mould car"
+  status: draft
+  description: "Carries a row of moulds."
+physical:
+  mass: 20000
+fit:
+  count: 10
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

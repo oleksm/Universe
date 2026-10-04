@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: HRM-02
+  name: "Finishing stand"
+  status: draft
+  description: "Stands in a row, each taking the strip thinner."
+physical:
+  mass: 700000
+fit:
+  count: 6
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: WB-04
+  name: "Overhead crane"
+  status: draft
+  description: "Lifts panels and finished parts."
+physical:
+  mass: 60000
+fit:
+  count: 2
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

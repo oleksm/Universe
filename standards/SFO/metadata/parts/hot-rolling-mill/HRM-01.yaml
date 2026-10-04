@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: HRM-01
+  name: "Roughing stand"
+  status: draft
+  description: "A reversing stand that takes the ingot down to a slab."
+physical:
+  mass: 1050000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass], tier: sourced, source: "https://thestar.co.uk/business/engineering-firm-receives-overseas-lift-467492", note: "A 5 m heavy plate mill stand, assembled: 1,050 tonnes." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

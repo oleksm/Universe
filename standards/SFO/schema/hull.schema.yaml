@@ -25,11 +25,23 @@ properties:
     additionalProperties: false
     properties:
       frame: { type: number, description: "t, the bare hull with nothing fitted" }
+  fit:
+    description: The equipment it is fitted with when it is built.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [slot, item]
+      properties:
+        slot: { type: string, description: The slot of the hull it sits in. }
+        item: { type: string, description: "The equipment (SFO 16), by file name." }
+        nozzles: { type: integer, minimum: 1, description: "For a drive or lift: how many nozzles of the hull it feeds, each at full share." }
   making:
     type: object
     additionalProperties: false
     properties:
       process: { type: string, description: "The process that assembles it from its parts, by file name." }
+      fitting_out: { type: string, description: "The process that fits it with its equipment, by file name." }
   design:
     description: What it is designed to stand. Its parts' gauges are checked against these.
     type: object

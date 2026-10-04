@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: CB-02
+  name: "Ingot mould"
+  status: draft
+  description: "A heavy iron mould the steel sets in."
+physical:
+  mass: 8000
+fit:
+  count: 80
+basis:
+  - { of: [physical.mass], tier: derived, source: "https://patents.google.com/patent/US3635279A/en", note: "An iron ingot mould weighs 1.5 to 2.5 times its ingot: twice a 4 t ingot." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

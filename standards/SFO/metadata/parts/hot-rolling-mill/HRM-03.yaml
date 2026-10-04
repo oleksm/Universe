@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: HRM-03
+  name: "Roll"
+  status: draft
+  description: "The work rolls that touch the metal and the backup rolls behind them."
+physical:
+  mass: 30000
+fit:
+  count: 28
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

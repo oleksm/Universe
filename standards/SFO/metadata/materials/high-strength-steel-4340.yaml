@@ -20,6 +20,7 @@ identity:
   - part: Mo
     share: 0.0025
   form:
+  - plate
   - bar
   - forging
   - tube

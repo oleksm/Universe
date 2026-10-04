@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: FPS-02
+  name: "Magnet coil"
+  status: draft
+  description: "Superconducting coils that hold the plasma off the walls."
+physical:
+  mass: 330000
+fit:
+  count: 18
+basis:
+  - { of: [physical.mass], tier: sourced, source: "https://www.iter.org/machine/magnets", note: "One of ITER's 18 toroidal field coils, 330 tonnes each." }
+  - { of: [fit], tier: derived, note: "ITER has 18." }

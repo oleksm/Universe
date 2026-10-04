@@ -3,6 +3,8 @@
 [
     (key: "alumina-refinery", name: "Alumina refinery", length: 450.0, width: 300.0, height: 40.0, needs: 333.0, supplies: 0.0, holds: 0.0),
     (key: "arc-furnace", name: "Electric arc furnace", length: 100.0, width: 40.0, height: 35.0, needs: 72.0, supplies: 0.0, holds: 0.0),
+    (key: "arc-furnace-metal", name: "Electric arc furnace, metal charge", length: 100.0, width: 40.0, height: 35.0, needs: 42.0, supplies: 0.0, holds: 0.0),
+    (key: "assembly-jig", name: "Assembly jig", length: 180.0, width: 140.0, height: 140.0, needs: 1.0, supplies: 0.0, holds: 0.0),
     (key: "assembly-shop", name: "Assembly shop", length: 60.0, width: 40.0, height: 20.0, needs: 0.2, supplies: 0.0, holds: 0.0),
     (key: "bar-mill", name: "Bar mill", length: 200.0, width: 30.0, height: 15.0, needs: 5.6, supplies: 0.0, holds: 0.0),
     (key: "building-dock", name: "Building dock", length: 120.0, width: 60.0, height: 35.0, needs: 1.0, supplies: 0.0, holds: 0.0),
@@ -22,6 +24,7 @@
     (key: "machining-centre", name: "Machining centre", length: 20.0, width: 10.0, height: 6.0, needs: 0.13, supplies: 0.0, holds: 0.0),
     (key: "ore-yard", name: "Ore yard", length: 200.0, width: 100.0, height: 15.0, needs: 0.5, supplies: 0.0, holds: 150000.0),
     (key: "panel-former", name: "Panel former", length: 30.0, width: 15.0, height: 8.0, needs: 0.3, supplies: 0.0, holds: 0.0),
+    (key: "panel-line", name: "Panel line", length: 300.0, width: 40.0, height: 15.0, needs: 2.0, supplies: 0.0, holds: 0.0),
     (key: "pellet-plant", name: "Pellet plant", length: 250.0, width: 100.0, height: 40.0, needs: 23.0, supplies: 0.0, holds: 0.0),
     (key: "piercing-mill", name: "Piercing mill", length: 150.0, width: 30.0, height: 15.0, needs: 4.0, supplies: 0.0, holds: 0.0),
     (key: "potline", name: "Potline", length: 1150.0, width: 60.0, height: 15.0, needs: 536.0, supplies: 0.0, holds: 0.0),

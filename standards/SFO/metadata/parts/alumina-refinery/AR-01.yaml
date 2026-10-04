@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: AR-01
+  name: "Digester"
+  status: draft
+  description: "A pressure vessel where hot caustic soda dissolves the alumina out of the bauxite."
+physical:
+  mass: 250000
+fit:
+  count: 6
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

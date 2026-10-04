@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: FP-01
+  name: "Press frame"
+  status: draft
+  description: "Columns and crossheads that take the press's force."
+physical:
+  mass: 5350000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass], tier: derived, source: "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf", note: "The Mesta 50,000-ton press weighs about 8,000 short tons, 2,100 of them moving: the 5,900 that stand still, in tonnes. A press of the largest kind built." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

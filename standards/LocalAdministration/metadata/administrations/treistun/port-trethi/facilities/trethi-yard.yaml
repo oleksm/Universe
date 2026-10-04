@@ -7,6 +7,7 @@ processes:
   - machining
   - fitting
   - hull-assembly
+  - fitting-out
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
@@ -22,5 +23,6 @@ lines:
     modules:
       - { module: assembly-shop, count: 1 }
   - process: hull-assembly
+    also: [fitting-out]
     modules:
       - { module: building-dock, count: 1 }

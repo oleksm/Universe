@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: CB-01
+  name: "Teeming crane"
+  status: draft
+  description: "Carries the full ladle over the moulds."
+physical:
+  mass: 300000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass], tier: derived, source: "https://www.reyher.de/en/company/latest-news/detail/hv-bolts-for-a-crane-weighing-over-900-tonnes/", note: "A ladle crane that lifts 390 tonnes weighs over 900. This one lifts a heat of 80 t in its ladle, about 130 t: scaled by what it lifts." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

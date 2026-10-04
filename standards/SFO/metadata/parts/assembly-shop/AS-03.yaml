@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: AS-03
+  name: "Assembly stand"
+  status: draft
+  description: "Holds an assembly while it is fitted together."
+physical:
+  mass: 5000
+fit:
+  count: 8
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Flight computer"
+  key: computer.fbw.s1
+  maker: brand.orbital
+  slot: computer
+  description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
+physical:
+  mass: 200
+  volume: 0.4
+performance:
+  power_draw: 50
+  turn_rate: 1.0
+  roll_rate: 1.8
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

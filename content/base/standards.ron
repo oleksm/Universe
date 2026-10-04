@@ -256,4 +256,38 @@
         licence: Open,
         published: 0.0,
     ),
+    (
+        key: "SFO 16",
+        body: "body.sfo",
+        branch: "all",
+        version: 1,
+        title: "SHIP EQUIPMENT",
+        scope: "",
+        status: Draft,
+        refs: [],
+        params: [
+        ],
+        requires: [
+        ],
+        text: "",
+        licence: Open,
+        published: 0.0,
+    ),
+    (
+        key: "SFO 17",
+        body: "body.sfo",
+        branch: "all",
+        version: 1,
+        title: "STARGATES",
+        scope: "",
+        status: Draft,
+        refs: [],
+        params: [
+        ],
+        requires: [
+        ],
+        text: "",
+        licence: Open,
+        published: 0.0,
+    ),
 ]

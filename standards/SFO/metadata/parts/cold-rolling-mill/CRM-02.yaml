@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: CRM-02
+  name: "Roll"
+  status: draft
+  description: "Work rolls and backup rolls."
+physical:
+  mass: 25000
+fit:
+  count: 20
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
