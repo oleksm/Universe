@@ -80,6 +80,44 @@ impl WalkMesh {
         self.section(1, y).into_iter().map(|[a, b]| [glam::DVec2::new(a.x, a.z), glam::DVec2::new(b.x, b.z)]).collect()
     }
 
+    /// Its lines: every edge where its surfaces crease (faces meeting at more than
+    /// `angle` degrees) or end, each once (its frame).
+    pub fn creases(&self, angle: f32) -> Vec<[Vec3; 2]> {
+        type Corner = (i64, i64, i64);
+        let key = |p: Vec3| ((p.x * 500.0).round() as i64, (p.y * 500.0).round() as i64, (p.z * 500.0).round() as i64);
+        let mut edges: HashMap<(Corner, Corner), (Vec3, Vec3, Vec<Vec3>)> = HashMap::new();
+        for t in &self.tris {
+            let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+            for k in 0..3 {
+                let (a, b) = (t[k], t[(k + 1) % 3]);
+                let (ka, kb) = (key(a), key(b));
+                edges.entry(if ka < kb { (ka, kb) } else { (kb, ka) }).or_insert((a, b, Vec::new())).2.push(n);
+            }
+        }
+        let crease = angle.to_radians().cos();
+        edges.into_values().filter(|(_, _, ns)| ns.len() == 1 || ns.iter().any(|n| n.dot(ns[0]) < crease)).map(|(a, b, _)| [a, b]).collect()
+    }
+
+    /// Where its surfaces bend gently (faces meeting at between `from` and `to`
+    /// degrees: round things, a strut, a mast): each edge with its two faces'
+    /// normals, for drawing its outline from wherever it's seen (where one faces
+    /// the eye and the other away).
+    pub fn bends(&self, from: f32, to: f32) -> Vec<[Vec3; 4]> {
+        type Corner = (i64, i64, i64);
+        let key = |p: Vec3| ((p.x * 500.0).round() as i64, (p.y * 500.0).round() as i64, (p.z * 500.0).round() as i64);
+        let mut edges: HashMap<(Corner, Corner), (Vec3, Vec3, Vec<Vec3>)> = HashMap::new();
+        for t in &self.tris {
+            let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+            for k in 0..3 {
+                let (a, b) = (t[k], t[(k + 1) % 3]);
+                let (ka, kb) = (key(a), key(b));
+                edges.entry(if ka < kb { (ka, kb) } else { (kb, ka) }).or_insert((a, b, Vec::new())).2.push(n);
+            }
+        }
+        let (lo, hi) = (to.to_radians().cos(), from.to_radians().cos());
+        edges.into_values().filter_map(|(a, b, ns)| (ns.len() == 2 && ns[0].dot(ns[1]) >= lo && ns[0].dot(ns[1]) < hi).then(|| [a, b, ns[0], ns[1]])).collect()
+    }
+
     /// Its elevation seen from far along `axis` (0: x, a side; 2: z, an end) on
     /// its `sign` side: where it creases (faces meeting at more than 20°), ends or
     /// turns away (its outline),

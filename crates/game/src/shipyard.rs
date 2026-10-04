@@ -1,5 +1,6 @@
-//! The shipyard: the layout studio (see `studio`), on the hull we fly. Open
-//! anywhere with the shipyard key; it or ESC (when nothing's being drawn) closes.
+//! The shipyard: the interior studio (see `interior`), on the hull we fly. Open
+//! anywhere with the shipyard key; it or ESC closes. (The deck layout studio,
+//! `studio`, is kept for its walk-through and dev scenarios.)
 
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame};
@@ -7,14 +8,34 @@ use universe_engine::{Color, Context, Frame};
 use crate::keys::Act;
 use crate::App;
 
-/// The panel: the studio.
+/// The panel: the interior studio, or the deck layout studio.
 pub struct Shipyard {
+    page: Page,
     studio: crate::studio::Studio,
+    interior: crate::interior::Interior,
+}
+
+/// Which studio is open.
+#[derive(Clone, Copy, PartialEq)]
+enum Page {
+    Interior,
+    Layout,
 }
 
 impl Shipyard {
+    /// The interior studio.
+    pub fn interior(_app: &App) -> Self {
+        Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::new() }
+    }
+
+    /// The interior studio turned to look from `yaw`, `pitch` (dev scenarios).
+    pub fn interior_turned(yaw: f32, pitch: f32) -> Self {
+        Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::turned(yaw, pitch) }
+    }
+
+    /// The deck layout studio.
     pub fn laying_out(_app: &App) -> Self {
-        Shipyard { studio: Default::default() }
+        Shipyard { page: Page::Layout, studio: Default::default(), interior: crate::interior::Interior::new() }
     }
 
     /// Its studio (for dev scenarios: a tool picked).
@@ -24,12 +45,12 @@ impl Shipyard {
 
     /// Back from a walk-through: the studio as it was left.
     pub fn back_to(studio: crate::studio::Studio) -> Self {
-        Shipyard { studio }
+        Shipyard { page: Page::Layout, studio, interior: crate::interior::Interior::new() }
     }
 }
 
 pub fn open(app: &mut App) -> Option<Shipyard> {
-    Some(Shipyard::laying_out(app))
+    Some(Shipyard::interior(app))
 }
 
 /// This frame's input. False: close it.
@@ -39,6 +60,14 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     }
     let spec = app.ship.spec();
     let Some(y) = app.shipyard.as_mut() else { return false };
+    if y.page == Page::Interior {
+        let mut interior = std::mem::take(&mut y.interior);
+        let stay = crate::interior::input(app, ctx, &mut interior);
+        if let Some(y) = app.shipyard.as_mut() {
+            y.interior = interior;
+        }
+        return stay;
+    }
     let mut studio = std::mem::take(&mut y.studio);
     let stay = crate::studio::input(app, ctx, &spec.key, spec.shape(), &mut studio);
     // A walk-through: the studio put by, the pilot on foot there, first person.
@@ -60,7 +89,10 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
     let spec = app.ship.spec();
     let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
-    crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio);
+    match y.page {
+        Page::Interior => crate::interior::draw(frame, app, &place, &y.interior),
+        Page::Layout => crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio),
+    }
 }
 
 /// The station we're docked at, if any (its name).

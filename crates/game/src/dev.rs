@@ -1250,6 +1250,17 @@ pub fn apply(app: &mut App, name: &str) {
             app.chase_cam = false;
             app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
         }
+        "interior" => {
+            // The shipyard's interior studio on our hull (UNIVERSE_TURN=yaw,pitch: looked
+            // at from there, rad).
+            apply(app, "docked");
+            mc07(app);
+            let turn: Vec<f32> = std::env::var("UNIVERSE_TURN").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
+            app.shipyard = Some(match turn[..] {
+                [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
+                _ => crate::shipyard::Shipyard::interior(app),
+            });
+        }
         "studio" => {
             // The shipyard's layout studio on our hull, with a deck laid out for a look
             // (UNIVERSE_EMPTY: none; not saved).
