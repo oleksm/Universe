@@ -1,8 +1,0 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-# Not in the game yet: added to the registry 2026-10-04 as the system's orbital production.
-name: "Trethi Orbital"
-kind: settlement
-at: Treistun f
-about: "A works in orbit round Treistun f, above Port Trethi: a deck with a foundry, a mill and a panel works on it, fed with metal from the asteroids. What it makes never has to be lifted off a world."
-story:
-  - "Built for the things too large to raise from the ground. The port below still makes ships; the works above makes what ships cannot carry up."

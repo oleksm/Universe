@@ -275,7 +275,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines"}:
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate"} | ({"owner", "processes", "lines", "modules"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -328,9 +328,8 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if not (isinstance(o, list) and len(o) >= 3 and all(isinstance(c, list) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c) for c in o)):
                     problem(ffull, "outline: three or more corners, each [east, north] in metres")
                     continue
-                # (On a world's ground, or on the deck of a settlement in orbit: metres from its centre.)
-                if x.get("kind") != "settlement":
-                    problem(ffull, "zones and parcels belong to a settlement")
+                if x.get("kind") != "settlement" or "position" not in x:
+                    problem(ffull, "zones and parcels belong to a settlement on a surface (one with a position)")
                 r["area"] = area(o)
                 r["slug"] = fn[:-5]
                 r["file"] = os.path.relpath(ffull, TREE)
@@ -495,8 +494,8 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
-        if x.get("kind") not in ("planet", "moon", "settlement"):
-            problem(full, f"body {x.get('name')}: kind one of planet, moon, settlement")
+        if x.get("kind") not in ("planet", "moon", "settlement", "rig"):
+            problem(full, f"body {x.get('name')}: kind one of planet, moon, settlement, rig")
         if names.count(x.get("name")) > 1:
             problem(full, f"body {x.get('name')} twice")
     ad["file"] = os.path.relpath(full, TREE)
@@ -707,6 +706,17 @@ materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
 # (A facility's processes: SFO processes, each one for its kind of facility.)
 by_process = {pr.get("slug"): pr for pr in processes}
+gate_of = {g["slug"]: g for g in gates}
+for ad in administrations:
+    for x in ad["bodies"]:
+        where = os.path.join(TREE, x["file"]) if "file" in x else ad["file"]
+        if x.get("kind") == "rig":
+            if x.get("owner") not in BRANDS:
+                problem(where, f"owner: no company '{x.get('owner')}' in Maker House")
+            x["facilities"] = [{"name": x["name"], "kind": "rig", "rig": True, "owner": x.get("owner"), "slug": x["slug"], "file": x["file"],
+                                "processes": x.get("processes") or [], "lines": x.get("lines") or [], "modules": x.get("modules") or []}]
+        if "gate" in x and (x["gate"] or {}).get("ring") not in gate_of:
+            problem(where, f"gate.ring: no gate ring '{(x['gate'] or {}).get('ring')}' in the SFO")
 for ad in administrations:
     for x in ad["bodies"]:
         for fc in x.get("facilities", []):
@@ -714,7 +724,7 @@ for ad in administrations:
                 pr = by_process.get(name)
                 if pr is None:
                     problem(os.path.join(TREE, fc["file"]), f"processes: no process '{name}' in the SFO")
-                elif (pr.get("equipment") or {}).get("facility") != fc.get("kind"):
+                elif (pr.get("equipment") or {}).get("facility") != fc.get("kind") and not fc.get("rig"):
                     problem(os.path.join(TREE, fc["file"]), f"processes: '{name}' is run in a {(pr.get('equipment') or {}).get('facility')}, not a {fc.get('kind')}")
 symbols = {(e.get("identity") or {}).get("symbol") for e in elements}
 slugs = {m.get("slug") for m in materials} | {g.get("slug") for g in goods}
@@ -1411,6 +1421,15 @@ for g in gates:
                                 "trips": math.ceil(st["parts_mass"] / cargo) if cargo else None, "hold": cargo}
     rows.append(row("ok" if st and st["parts_mass"] else "gap", link(g["identity"]["name"], "gate:" + g["slug"]), "", "", f"its ring weighs {tonnes(st['parts_mass'])}, of parts that are guesses" if st and st["parts_mass"] else "what the ring weighs and is made of: not yet said"))
     rows.append(row("gap", link(g["identity"]["name"], "gate:" + g["slug"]), "", "", "what in the ring holds the tube, what its power stations are made of, how it is assembled in orbit and what carries its parts there: not yet said"))
+for ad in administrations:
+    for x in ad["bodies"]:
+        g = gate_of.get((x.get("gate") or {}).get("ring"))
+        if g and "worked" in g:
+            share = x["gate"]["distance"] / g["performance"]["span"]
+            x["gate_worked"] = {"ring": g["identity"]["name"], "span": g["performance"]["span"], "hold_power": g["worked"]["hold_power"] * share, "open_energy": g["worked"]["open_energy"] * share,
+                                "stations": math.ceil(g["worked"]["stations"] * share) if g["worked"].get("stations") else None,
+                                "crossings": [{"what": c["what"], "mass": c["mass"], "time": c["time"] * share, "energy": c["energy"] * share} for c in g["worked"]["crossings"]]}
+            rows.append(row("ok" if share <= 1 else "gap", link(x["name"], f"bd:{ad['slug']}:{x['slug']}"), f"{x['gate']['distance']:g} ly", f"a {g['identity']['name']}, which spans {g['performance']['span']:g} ly", f"{x['gate_worked']['hold_power'] / 1e9:.1f} GW to hold, {x['gate_worked']['stations']} power stations" if share <= 1 else "further than its ring spans"))
 report("gates", "Stargates: each ring against the game, and what it costs to hold", "Each gate ring: its span against the game's ring of the same key, and the power its tube takes to hold, worked out from the laws. A gap is a ring that differs from the game, or something a ring does not yet say.", ["Ring", "Span", "Against the game", "Note"], rows)
 
 # 2. Mass: what a thing weighs against what it is made of.
@@ -1562,13 +1581,13 @@ for ad in administrations:
     for x in ad["bodies"]:
         facs = x.get("facilities", [])
         draw = {fc["slug"]: sum(ln["most"]["power"] for ln in fc.get("lines") or [] if "most" in ln) for fc in facs}
-        supply = sum(fc.get("capacity") or 0 for fc in facs if fc.get("kind") == "power")
+        supply = sum(fc.get("capacity") or 0 for fc in facs if fc.get("kind") in ("power", "rig"))
         if not supply and not any(draw.values()):
             continue
         total = sum(draw.values())
-        rows.append(row("ok" if supply >= total else "gap", x["name"] + ", all of it", f"{total:,.0f} MW", f"{supply:,.0f} MW", "its power stations", "enough for everything flat out at once" if supply >= total else f"{total - supply:,.0f} MW short with everything flat out at once"))
+        rows.append(row("ok" if supply >= total else "gap", x["name"] + ", all of it", f"{total:,.0f} MW", f"{supply:,.0f} MW", "its own plant" if x.get("kind") == "rig" else "its power stations", "enough for everything flat out at once" if supply >= total else f"{total - supply:,.0f} MW short with everything flat out at once"))
         for fc in facs:
-            if not draw[fc["slug"]]:
+            if not draw[fc["slug"]] or fc.get("rig"):
                 continue
             wires = [pw for pw in x.get("power_lines", []) if pw.get("to") == fc["slug"]]
             can = sum(pw["capacity"] for pw in wires)

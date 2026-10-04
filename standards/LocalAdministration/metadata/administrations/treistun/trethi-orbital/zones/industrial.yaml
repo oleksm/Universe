@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
-# Invented: the whole of the works' deck.
-name: Industrial
-use: industrial
-outline: [[0, -1000], [3000, -1000], [3000, 1000], [0, 1000]]

@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../../schema/body.schema.yaml
+# Not in the game yet: added to the registry 2026-10-04. A rig, not a settlement: equipment that is
+# brought to where something large is to be built and moved on when it is done, as an oil rig is.
+# It has no ground, no zoning and no administration of its own.
+name: "Hadley Orbital Works"
+kind: rig
+at: Treistun f
+owner: brand.hadley
+about: "A works in orbit, now round Treistun f: a foundry, a mill and a panel works on one frame with its own power plant, fed with metal from the asteroids. It is equipment, not a place. It is brought to where something too large to lift off a world is to be built, and moved on to the next when that is done."
+processes:
+  - steelmaking-asteroid
+  - plate-rolling-4340
+  - tube-making-4340
+  - panel-making
+  - machining
+# What it is built of. What it can make at most follows from this; what it does make is the
+# economy's business.
+lines:
+  - process: steelmaking-asteroid
+    modules:
+      - { module: ore-yard, count: 1 }
+      - { module: arc-furnace-metal, count: 1 }
+      - { module: ladle-station, count: 1 }
+      - { module: casting-bay, count: 1 }
+      - { module: ingot-yard, count: 1 }
+  - process: plate-rolling-4340
+    modules:
+      - { module: reheat-furnace, count: 1 }
+      - { module: hot-rolling-mill, count: 1 }
+  - process: tube-making-4340
+    modules:
+      - { module: reheat-furnace, count: 1 }
+      - { module: piercing-mill, count: 2 }
+  - process: panel-making
+    modules:
+      - { module: panel-line, count: 1 }
+  - process: machining
+    modules:
+      - { module: machining-centre, count: 20 }
+modules:
+  - { module: fusion-power-station, count: 1 }

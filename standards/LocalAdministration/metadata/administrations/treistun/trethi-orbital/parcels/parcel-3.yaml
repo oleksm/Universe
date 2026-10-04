@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
-# Invented outline.
-number: 3
-owner: brand.hadley
-address: { street: spine, number: 3 }
-outline: [[1550, -900], [2950, -900], [2950, -25], [1550, -25]]

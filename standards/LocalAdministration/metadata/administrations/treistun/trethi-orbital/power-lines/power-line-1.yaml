@@ -1,8 +1,0 @@
-# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
-# Invented: from the power station's lot along the spine.
-# What it can carry was chosen: a little over what it draws flat out.
-name: Power line 1
-from: orbital-power-station
-to: orbital-foundry
-capacity: 60
-line: [[1350, -25], [1350, -10], [600, -10], [600, -25]]

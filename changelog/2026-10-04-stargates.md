@@ -20,7 +20,10 @@
   guesses, marked to review), 72,700 t; the stock it takes, the power stations to hold its tube, the
   loads to orbit, and how long each of Treistun's lines needs for it flat out (the yard: 2.7 years).
   A chain report for the ring shows where it stops: nothing is built to assemble it in orbit.
-- **Orbital production added** (Port Trethi's industry stays): Trethi Orbital, a works in orbit round
-  Treistun f, with a foundry that melts asteroid nickel-iron into steel, a mill for steel plate and
-  tube, a panel works and a power station. The ring is now steel (108,500 t); with the works, its
+- **Orbital production added** (Port Trethi's industry stays), as a rig: the Hadley Orbital Works, a
+  movable works (as an oil rig is) now in orbit round Treistun f, with a foundry line that melts
+  asteroid nickel-iron into steel, plate and tube mills, a panel line and its own power plant. No
+  zoning or lots: it is equipment, not a place. The ring is now steel (108,500 t); with the rig its
   slowest step is 174 days (was 2.7 years at the yard). Not in the game yet.
+- **Gates are settlements:** Treistun's three gates (to Liham, Driumum and Biraidim) are settlement
+  records, each with its ring, where it leads, and what its tube takes at its own distance.
