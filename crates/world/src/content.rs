@@ -40,6 +40,7 @@ const BASE: &[(&str, &str)] = &[
     ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
     ("bodies.ron", include_str!("../../../content/base/bodies.ron")),
     ("standards.ron", include_str!("../../../content/base/standards.ron")),
+    ("settlements.ron", include_str!("../../../content/base/settlements.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether
@@ -220,6 +221,8 @@ pub struct Content {
     /// Standards bodies, and the standards in their registers.
     pub bodies: Registry<crate::standards::Body>,
     pub standards: Registry<crate::standards::Standard>,
+    /// Settlements' ground, as the registry records it (see `settlements`).
+    pub settlements: Vec<crate::settlements::Settlement>,
     /// Ship fuel: what tanks are filled with (the code's one kind of goods by name).
     pub fuel: Category,
     aliases: HashMap<String, String>,
@@ -415,9 +418,18 @@ impl Content {
                 }
             }
         }
-        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let settlements: Vec<crate::settlements::Settlement> = Self::defs(&packs, "settlements.ron")?;
+        for s in &settlements {
+            s.check()?;
+        }
+        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
+    }
+
+    /// The ground recorded for the settlement `name` on `body` in `system`, if any.
+    pub fn settlement(&self, system: &str, body: &str, name: &str) -> Option<&crate::settlements::Settlement> {
+        self.settlements.iter().find(|s| s.system.eq_ignore_ascii_case(system) && s.body.eq_ignore_ascii_case(body) && s.name.eq_ignore_ascii_case(name))
     }
 
     /// The entries in one file across the packs, in order.

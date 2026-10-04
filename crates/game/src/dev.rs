@@ -52,6 +52,20 @@ pub fn apply(app: &mut App, name: &str) {
             c.system = home;
             u.pilots()[0].avionics.route.active = false;
         }
+        "settlement" => {
+            // Our ship on a pad at a port with ground recorded (UNIVERSE_PORT, else Port
+            // Trethi), the camera over it (UNIVERSE_DIST m off, UNIVERSE_YAW, UNIVERSE_PITCH).
+            let name = std::env::var("UNIVERSE_PORT").unwrap_or_else(|_| "Port Trethi".into());
+            let Some(port) = sys.spaceports.iter().position(|p| p.name.eq_ignore_ascii_case(&name)) else { return };
+            let u = app.engine.universe();
+            u.ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 0);
+            app.mode = Mode::Observer;
+            app.observer.focus = Focus::Ship;
+            let env = |k: &str, d: f64| std::env::var(k).ok().and_then(|v| v.parse().ok()).unwrap_or(d);
+            app.observer.distance = env("UNIVERSE_DIST", 2500.0);
+            app.observer.yaw = env("UNIVERSE_YAW", 0.6);
+            app.observer.pitch = env("UNIVERSE_PITCH", 0.45);
+        }
         "system" => observe(app, 0, outer * 2.2, 0.6),
         "inner" => observe(app, 0, outer * 0.25, 0.45),
         "planet" => {
