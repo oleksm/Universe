@@ -9,5 +9,6 @@ size:
   height: 12
 rate:
   volume: 90000
+  stores: [goods.food, goods.textiles, goods.machinery, goods.electronics, goods.computers, goods.medicine, goods.biologics, goods.luxuries, goods.art, goods.weapons, goods.narcotics, goods.artifacts, goods.robots, goods.tools]
 basis:
   note: "Typical of real buildings of this kind. Approximate figures from memory, not taken from a source."

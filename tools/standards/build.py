@@ -187,6 +187,11 @@ PORT = {
 }
 
 
+# The game's kinds of goods: each one's name and how much a cubic metre of it weighs as stowed
+# (content/base/goods.ron).
+GOODS_KINDS = {k: {"name": n.title(), "density": float(d)} for k, n, d in re.findall(r'key: "(goods\.[a-z_]+)",\s*name: "([^"]*)",.*?bulk_density: ([0-9.]+)', open(os.path.join(ROOT, "content", "base", "goods.ron"), encoding="utf-8").read(), re.S)}
+
+
 def area(o):
     """An outline's area (m2)."""
     return abs(sum(o[i][0] * o[(i + 1) % len(o)][1] - o[(i + 1) % len(o)][0] * o[i][1] for i in range(len(o)))) / 2
@@ -781,6 +786,14 @@ for ad in administrations:
                 # (What it can hold and handle: a warehouse's.)
                 rate = lambda m: m.get("rate") or {}
                 fc["store"] = [{"module": m["slug"], "count": n, "holds": rate(m).get("holds", 0) * n or None, "volume": rate(m).get("volume", 0) * n or None, "handling": rate(m).get("handling", 0) * n or None} for m, n in built]
+                # (What that is of each kind of goods: the space that stores it, by its weight as stowed.)
+                per = {}
+                for m, n in built:
+                    for kind in rate(m).get("stores") or []:
+                        row = per.setdefault(kind, {"kind": kind, "tonnes": 0.0, "in": []})
+                        row["tonnes"] += n * (rate(m).get("volume", 0) * GOODS_KINDS.get(kind, {}).get("density", 0) if rate(m).get("volume") else rate(m).get("holds", 0))
+                        row["in"].append(m["slug"])
+                fc["holds_of"] = list(per.values())
                 fc["built_area"] = sum((m.get("size") or {}).get("length", 0) * (m.get("size") or {}).get("width", 0) * n for m, n in built)
                 # (What it burns flat out: its modules' fuel for each MWh, at all it can supply.)
                 burn = {}
@@ -793,6 +806,10 @@ for ad in administrations:
                 problem(where, f"exchange: no exchange '{fc['exchange']}' in Maker House")
             if plot is not None and covered > plot.get("area", 0):
                 problem(where, f"its modules cover {covered:,.0f} m2, more than parcel {plot.get('number')} ({plot.get('area', 0):,.0f} m2)")
+for m in modules:
+    for kind in (m.get("rate") or {}).get("stores") or []:
+        if kind not in GOODS_KINDS:
+            problem(os.path.join(TREE, m["file"]), f"rate.stores: the game has no kind of goods '{kind}'")
 for pr in processes + modules:
     where = os.path.join(TREE, pr["file"])
     for group in ("inputs", "outputs"):
@@ -887,6 +904,7 @@ def write_html():
         "house": house,
         "local": local,
         "port": PORT,
+        "goods_kinds": GOODS_KINDS,
         "administrations": administrations,
         # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
         "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},

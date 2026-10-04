@@ -9,5 +9,6 @@ size:
   height: 20
 rate:
   volume: 40000
+  stores: [goods.water, goods.chemicals, goods.fuel]
 basis:
   note: "Typical of real buildings of this kind. Approximate figures from memory, not taken from a source."

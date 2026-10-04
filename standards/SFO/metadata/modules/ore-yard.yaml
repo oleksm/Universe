@@ -9,6 +9,7 @@ size:
   height: 15
 rate:
   holds: 150000
+  stores: [goods.ores, goods.minerals, goods.metals]
 needs:
   power: 0.5
 basis:
