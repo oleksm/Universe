@@ -7,17 +7,17 @@ identity:
   description: "Hot steel pressed between dies into a rough shape, lining up its grain for strength."
 inputs:
   materials:
-  - item: high-strength-steel-4340
+  - item: material.high-strength-steel-4340
     amount: 1.0
   form: ingot
 outputs:
   products:
-  - item: high-strength-steel-4340
+  - item: material.high-strength-steel-4340
     form: forging
 rate:
   mode: batch
 equipment:
   facility: mill
   steps:
-  - { module: reheat-furnace, does: "The ingot is heated through to the temperature it is worked at." }
-  - { module: forging-press, does: "It is pressed between dies into the rough shape of the part." }
+  - { module: module.reheat-furnace, does: "The ingot is heated through to the temperature it is worked at." }
+  - { module: module.forging-press, does: "It is pressed between dies into the rough shape of the part." }

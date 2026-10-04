@@ -6,9 +6,9 @@ identity:
   name: Silicon carbide
   class: ceramic
   composition:
-  - part: Si
+  - part: element.si
     share: 0.7
-  - part: C
+  - part: element.c
     share: 0.3
   form:
   - plate

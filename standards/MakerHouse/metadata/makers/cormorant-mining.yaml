@@ -3,7 +3,7 @@ key: org.cormorant
 kind: company
 name: Cormorant Mining
 ticker: CMN
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 2, section: D, unit: 8 }
+address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 2, section: D, unit: 8 }
 note: "Mining gear"
 who: "A company of miners that started building its own tools and now sells them."
 what: "Makes mining gear for ships."

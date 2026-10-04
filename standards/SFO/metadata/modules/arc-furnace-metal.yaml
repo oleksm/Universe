@@ -11,16 +11,16 @@ size:
 rate:
   throughput: 96
   batch: 80
-  product: liquid-steel
+  product: good.liquid-steel
 inputs:
   materials:
-  - { item: nickel-iron-ore, amount: 1.08 }
-  - { item: lime, amount: 0.03 }
-  - { item: graphite-electrode, amount: 0.003 }
+  - { item: good.nickel-iron-ore, amount: 1.08 }
+  - { item: good.lime, amount: 0.03 }
+  - { item: good.graphite-electrode, amount: 0.003 }
 outputs:
   by_products:
-  - { item: slag, amount: 0.1 }
-  - { item: dust, amount: 0.013 }
+  - { item: good.slag, amount: 0.1 }
+  - { item: good.dust, amount: 0.013 }
 needs:
   power: 42
 basis:

@@ -5,7 +5,7 @@ identity:
   key: body.treistun.treistun-i-ii
   name: Treistun i II
   kind: moon
-  parent: Treistun i
+  parent: body.treistun.treistun-i
   about: A moon of the ice giant Treistun i, 6.2 AU from the star. 1,307 km in radius, 0.11 g at the surface, no air, about
     80 K on average. Its day lasts 32 hours.
   story: ['Far out and very cold. For a long time it was only a name on a chart, until someone needed a port that far from

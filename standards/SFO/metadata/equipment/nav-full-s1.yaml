@@ -2,7 +2,7 @@
 identity:
   key: equipment.nav.full.s1
   name: "Nav Computer"
-  maker: brand.orbital
+  maker: org.orbital
   slot: avionics
   description: "Navigation aids."
 physical:

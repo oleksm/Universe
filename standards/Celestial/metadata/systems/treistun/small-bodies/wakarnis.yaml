@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.wakarnis, name: Wakarnis, kind: crossing asteroid, parent: Treistun, about: 'Knocked out of
+identity: {key: body.treistun.wakarnis, name: Wakarnis, kind: crossing asteroid, parent: body.treistun.treistun, about: 'Knocked out of
     the belt. At its closest it comes in to 0.75 AU, near the orbit of Treistun e.'}
 orbit: {semi_major_axis: 133324000.0, eccentricity: 0.15718285, inclination: 13.35, period: 365.91}
 physical: {radius: 0.145}
-rock: {class: enstatite}
+rock: {class: rock-class.enstatite}

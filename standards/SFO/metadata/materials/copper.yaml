@@ -5,7 +5,7 @@ identity:
   name: Copper
   class: metal
   composition:
-  - part: Cu
+  - part: element.cu
     share: 1.0
   form:
   - wire

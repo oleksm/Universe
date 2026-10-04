@@ -11,11 +11,11 @@ size:
 rate:
   throughput: 150
   batch: 80
-  product: refined-steel
+  product: good.refined-steel
 inputs:
   materials:
-  - { item: liquid-steel, amount: 1.0 }
-  - { item: Ar, amount: 0.001 }
+  - { item: good.liquid-steel, amount: 1.0 }
+  - { item: element.ar, amount: 0.001 }
 needs:
   power: 7.5
 basis:

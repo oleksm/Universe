@@ -11,7 +11,7 @@ definitions:
       type: object
       additionalProperties: false
       properties:
-        item: { type: string, description: "An element's symbol, or a material's or a good's file name." }
+        item: { type: string, x-ref: [element, material, good], description: "An element's symbol, or a material's or a good's file name." }
         amount: { type: number, description: "t per t of its product (per MWh, for one that makes power)" }
 properties:
   identity:
@@ -40,7 +40,7 @@ properties:
       volume: { type: number, description: "m3 it can store" }
       stores: { type: array, items: { type: string }, description: "The kinds of goods it stores, by the game's keys (content/base/goods.ron)." }
       handling: { type: number, description: "t/h it can move in or out" }
-      product: { type: string, description: "What its throughput counts: an element's symbol, a material's or a good's file name." }
+      product: { type: string, x-ref: [element, material, good], description: "What its throughput counts: an element's symbol, a material's or a good's file name." }
       power: { type: number, description: "MW it supplies, for one that makes power" }
   inputs:
     type: object

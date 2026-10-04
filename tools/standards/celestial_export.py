@@ -19,6 +19,9 @@ dry = "--dry" in sys.argv
 raw = open(args[0]).read() if args else subprocess.run(["cargo", "run", "-q", "-p", "universe-world", "--example", "celestial_export"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
 data = json.loads(raw)
 slug = lambda name: re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+# (A field's rocks: the game names their class by its label; the record names the rock class by its key.)
+_RC = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "standards", "Celestial", "metadata", "rock-classes")
+ROCK = {i["label"].lower(): i["key"] for i in (yaml.safe_load(open(os.path.join(_RC, f)))["identity"] for f in sorted(os.listdir(_RC))) if i.get("label")}
 r = lambda v, n=4: float(f"{v:.{n}g}")
 NATURAL = {"star", "rocky planet", "gas giant", "ice giant", "moon", "asteroid"}
 wrote = kept = 0
@@ -57,7 +60,7 @@ for s in data["systems"]:
             continue
         rec = {"provenance": "seeded", "identity": {"key": f"body.{slug(s['name'])}.{slug(b['name'])}", "name": b["name"], "kind": b["kind"]}}
         if "parent" in b:
-            rec["identity"]["parent"] = b["parent"]
+            rec["identity"]["parent"] = f"body.{slug(s['name'])}.{slug(b['parent'])}"
         if b["kind"] == "star":
             rec["star"] = {"class": s["class"], "luminosity": r(s["luminosity_suns"])}
         if "orbit" in b:
@@ -85,14 +88,14 @@ for s in data["systems"]:
             rec["atmosphere"] = {"surface_density": a["surface_density"], "scale_height": r(a["scale_height"] / 1000), "top": r(a["top"] / 1000)}
         if "rock" in b:
             k = b["rock"]
-            rec["rock"] = {"class": k["class"].lower(), "structure": k["structure"].lower(), "density": round(k["density"])}
+            rec["rock"] = {"class": ROCK[k["class"].lower()], "structure": k["structure"].lower(), "density": round(k["density"])}
         put(os.path.join(OUT, slug(s["name"]), "bodies", slug(b["name"]) + ".yaml"), "../../../../schema/body.schema.yaml", rec)
     for f in s["fields"]:
         kind = "trojan" if f["kind"].startswith("Trojan") else f["kind"].lower()
         put(os.path.join(OUT, slug(s["name"]), "fields", slug(f["name"]) + ".yaml"), "../../../../schema/population.schema.yaml", {
             "provenance": "seeded",
-            "identity": {"key": f"population.{slug(s['name'])}.{slug(f['name'])}", "name": f["name"], "kind": kind, "anchor": f["anchor"]},
-            "rocks": {"class": f["class"].lower(), "count": f["count"], "extent": r(f["extent"] / 1000)},
+            "identity": {"key": f"population.{slug(s['name'])}.{slug(f['name'])}", "name": f["name"], "kind": kind, "anchor": f"body.{slug(s['name'])}.{slug(f['anchor'])}"},
+            "rocks": {"class": ROCK[f["class"].lower()], "count": f["count"], "extent": r(f["extent"] / 1000)},
         })
 gone = [os.path.relpath(os.path.join(dp, fn), ROOT) for dp, _, fns in os.walk(OUT) for fn in fns if fn.endswith(".yaml") and os.path.join(dp, fn) not in seen and os.path.basename(dp) in ("systems", "bodies", "fields")]
 print(f"{len(data['systems'])} systems from seed {data['seed']}: {wrote} records {'would be ' if dry else ''}written, {kept} kept as a person left them")

@@ -2,7 +2,7 @@
 identity:
   key: equipment.laser.pulse.s1
   name: "Pulse Laser"
-  maker: brand.garrick
+  maker: org.garrick
   slot: hardpoint
   description: "A weapon."
 physical:

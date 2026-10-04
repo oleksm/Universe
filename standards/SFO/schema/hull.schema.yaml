@@ -12,7 +12,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-      maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
+      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key in Maker House." }
       class: { type: string, description: "What it is built for: mining ship, hauler, courier..." }
       revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
       description: { type: string }
@@ -41,14 +41,14 @@ properties:
       required: [slot, item]
       properties:
         slot: { type: string, description: The slot of the hull it sits in. }
-        item: { type: string, description: "The equipment (SFO 16), by file name." }
+        item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by file name." }
         nozzles: { type: integer, minimum: 1, description: "For a drive or lift: how many nozzles of the hull it feeds, each at full share." }
   making:
     type: object
     additionalProperties: false
     properties:
-      process: { type: string, description: "The process that assembles it from its parts, by file name." }
-      fitting_out: { type: string, description: "The process that fits it with its equipment, by file name." }
+      process: { type: string, x-ref: [process], description: "The process that assembles it from its parts, by file name." }
+      fitting_out: { type: string, x-ref: [process], description: "The process that fits it with its equipment, by file name." }
   design:
     description: What it is designed to stand. Its parts' gauges are checked against these.
     type: object
@@ -58,7 +58,7 @@ properties:
       loaded_mass: { type: number, description: "t, the ship loaded, in the game: hull, fitted modules, fuel and cargo" }
       main_thrust: { type: number, description: "MN, of its main drive in the game" }
       lift_thrust: { type: number, description: "MN, of its lift nozzles in the game" }
-      thrust_path: { type: array, items: { type: string }, description: "The parts its main drive's push passes through, from the engine forward, by code. Each is checked against it." }
+      thrust_path: { type: array, items: { type: string, x-ref: [part] }, description: "The parts its main drive's push passes through, from the engine forward, by code. Each is checked against it." }
       landing_speed: { type: number, description: "m/s, the touchdown its legs are designed for. What they take at most is worked out." }
       cabin_pressure: { type: number, description: "kPa, of the air its pressurised parts hold against vacuum" }
       safety_factor: { type: number, description: "how many times its load a part must take before it yields" }

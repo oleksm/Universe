@@ -2,7 +2,7 @@
 identity:
   key: equipment.drive.torch.s1
   name: "Torch drive S1"
-  maker: brand.kestrel
+  maker: org.kestrel
   slot: drive
   description: "The main drive: a fusion torch."
 physical:
@@ -13,6 +13,6 @@ performance:
   thrust: 900
   exhaust_speed: 10000
   efficiency: 0.3
-  burns: deuterium
+  burns: good.deuterium
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

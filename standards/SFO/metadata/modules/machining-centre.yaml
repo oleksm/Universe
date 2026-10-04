@@ -10,7 +10,7 @@ size:
   height: 6
 rate:
   throughput: 0.5
-  product: parts
+  product: good.parts
 needs:
   power: 0.13
 basis:

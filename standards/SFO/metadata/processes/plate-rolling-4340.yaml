@@ -7,17 +7,17 @@ identity:
   description: "A hot steel ingot passed between rolls until it is plate."
 inputs:
   materials:
-  - item: high-strength-steel-4340
+  - item: material.high-strength-steel-4340
     amount: 1.0
   form: ingot
 outputs:
   products:
-  - item: high-strength-steel-4340
+  - item: material.high-strength-steel-4340
     form: plate
 rate:
   mode: continuous
 equipment:
   facility: mill
   steps:
-  - { module: reheat-furnace, does: "The ingot is heated through to the temperature it rolls at." }
-  - { module: hot-rolling-mill, does: "It is squeezed between rolls, pass after pass, down to plate." }
+  - { module: module.reheat-furnace, does: "The ingot is heated through to the temperature it rolls at." }
+  - { module: module.hot-rolling-mill, does: "It is squeezed between rolls, pass after pass, down to plate." }

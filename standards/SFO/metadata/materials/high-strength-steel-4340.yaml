@@ -6,19 +6,19 @@ identity:
   name: High-strength steel 4340
   class: alloy
   composition:
-  - part: Fe
+  - part: element.fe
     share: 0.957
-  - part: Ni
+  - part: element.ni
     share: 0.018
-  - part: Cr
+  - part: element.cr
     share: 0.008
-  - part: Mn
+  - part: element.mn
     share: 0.008
-  - part: C
+  - part: element.c
     share: 0.004
-  - part: Si
+  - part: element.si
     share: 0.0025
-  - part: Mo
+  - part: element.mo
     share: 0.0025
   form:
   - plate

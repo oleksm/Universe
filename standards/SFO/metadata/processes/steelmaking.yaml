@@ -7,30 +7,30 @@ identity:
   description: Iron ore is reduced to iron with hydrogen, melted in an electric furnace, refined to grade and cast as ingots.
 inputs:
   materials:
-  - item: Fe
+  - item: element.fe
     amount: 0.98
-  - item: Mn
+  - item: element.mn
     amount: 0.0103
-  - item: Si
+  - item: element.si
     amount: 0.004
-  - item: C
+  - item: element.c
     amount: 0.0026
-  - item: Cu
+  - item: element.cu
     amount: 0.002
 outputs:
   products:
-  - item: structural-steel-a36
+  - item: material.structural-steel-a36
     form: ingot
 rate:
   mode: batch
 equipment:
   facility: foundry
   steps:
-  - { module: ore-yard, does: "Ore, lime, carbon and alloying metals arrive and are stockpiled." }
-  - { module: pellet-plant, does: "The ore is crushed, ground, cleaned of waste rock and formed into pellets." }
-  - { module: hydrogen-plant, does: "Water is split to make the hydrogen for the next step, and the water that step gives off comes back here." }
-  - { module: shaft-furnace, does: "Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron." }
-  - { module: arc-furnace, does: "The sponge iron is melted. Lime forms a slag that takes up the impurities." }
-  - { module: ladle-station, does: "Carbon, manganese and silicon are trimmed to the grade, and dissolved gas is removed." }
-  - { module: casting-bay, does: "The steel is poured into moulds and stripped out as ingots." }
-  - { module: ingot-yard, does: "The ingots cool, a sample certifies the grade, and they are stacked." }
+  - { module: module.ore-yard, does: "Ore, lime, carbon and alloying metals arrive and are stockpiled." }
+  - { module: module.pellet-plant, does: "The ore is crushed, ground, cleaned of waste rock and formed into pellets." }
+  - { module: module.hydrogen-plant, does: "Water is split to make the hydrogen for the next step, and the water that step gives off comes back here." }
+  - { module: module.shaft-furnace, does: "Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron." }
+  - { module: module.arc-furnace, does: "The sponge iron is melted. Lime forms a slag that takes up the impurities." }
+  - { module: module.ladle-station, does: "Carbon, manganese and silicon are trimmed to the grade, and dissolved gas is removed." }
+  - { module: module.casting-bay, does: "The steel is poured into moulds and stripped out as ingots." }
+  - { module: module.ingot-yard, does: "The ingots cool, a sample certifies the grade, and they are stacked." }

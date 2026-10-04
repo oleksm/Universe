@@ -5,7 +5,7 @@
 identity:
   key: hull.hauler
   name: "Bulk Hauler"
-  maker: brand.tolland
+  maker: org.tolland
   class: hauler
   revision: outdated
   description: "A big hold and not much else."
@@ -16,21 +16,21 @@ mass:
   fuel: 80
   hold: 150
 fit:
-  - { slot: power, item: power-fusion-s3 }
-  - { slot: drive, item: drive-torch-s3 }
-  - { slot: thrusters, item: thrusters-quad-s3 }
-  - { slot: lift, item: lift-belly-s3 }
-  - { slot: tank, item: tank-s4 }
-  - { slot: cargo, item: rack-s4 }
-  - { slot: hyperdrive, item: hyperdrive-s3 }
-  - { slot: capacitor, item: capacitor-s2 }
-  - { slot: computer, item: computer-fbw-s1 }
-  - { slot: transponder, item: transponder-s1 }
-  - { slot: sensors, item: sensors-radar-s1 }
-  - { slot: comm, item: comm-basic-s1 }
-  - { slot: life, item: life-s2 }
-  - { slot: hardpoint_1, item: gun-mass-driver-s1 }
-  - { slot: avionics, item: nav-full-s1 }
+  - { slot: power, item: equipment.power.fusion.s3 }
+  - { slot: drive, item: equipment.drive.torch.s3 }
+  - { slot: thrusters, item: equipment.thrusters.quad.s3 }
+  - { slot: lift, item: equipment.lift.belly.s3 }
+  - { slot: tank, item: equipment.tank.s4 }
+  - { slot: cargo, item: equipment.rack.s4 }
+  - { slot: hyperdrive, item: equipment.hyperdrive.s3 }
+  - { slot: capacitor, item: equipment.capacitor.s2 }
+  - { slot: computer, item: equipment.computer.fbw.s1 }
+  - { slot: transponder, item: equipment.transponder.s1 }
+  - { slot: sensors, item: equipment.sensors.radar.s1 }
+  - { slot: comm, item: equipment.comm.basic.s1 }
+  - { slot: life, item: equipment.life.s2 }
+  - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
+  - { slot: avionics, item: equipment.nav.full.s1 }
 design:
   loaded_mass: 406.04
   main_thrust: 8

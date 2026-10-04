@@ -5,7 +5,7 @@
 identity:
   key: hull.prospector
   name: "Prospector"
-  maker: brand.cormorant
+  maker: org.cormorant
   class: mining ship
   revision: outdated
   description: "A miner: a mining rig, a big hold, sturdy."
@@ -16,23 +16,23 @@ mass:
   fuel: 30
   hold: 40
 fit:
-  - { slot: power, item: power-fusion-s2 }
-  - { slot: drive, item: drive-torch-s2 }
-  - { slot: thrusters, item: thrusters-quad-s2 }
-  - { slot: lift, item: lift-belly-s2 }
-  - { slot: tank, item: tank-s3 }
-  - { slot: cargo, item: rack-s3 }
-  - { slot: cargo_2, item: rack-s3 }
-  - { slot: hyperdrive, item: hyperdrive-s2 }
-  - { slot: capacitor, item: capacitor-s1 }
-  - { slot: computer, item: computer-fbw-s1 }
-  - { slot: transponder, item: transponder-s1 }
-  - { slot: sensors, item: sensors-radar-s1 }
-  - { slot: comm, item: comm-basic-s1 }
-  - { slot: life, item: life-s2 }
-  - { slot: hardpoint_1, item: gun-mass-driver-s1 }
-  - { slot: utility, item: mining-rig-s2 }
-  - { slot: avionics, item: nav-full-s1 }
+  - { slot: power, item: equipment.power.fusion.s2 }
+  - { slot: drive, item: equipment.drive.torch.s2 }
+  - { slot: thrusters, item: equipment.thrusters.quad.s2 }
+  - { slot: lift, item: equipment.lift.belly.s2 }
+  - { slot: tank, item: equipment.tank.s3 }
+  - { slot: cargo, item: equipment.rack.s3 }
+  - { slot: cargo_2, item: equipment.rack.s3 }
+  - { slot: hyperdrive, item: equipment.hyperdrive.s2 }
+  - { slot: capacitor, item: equipment.capacitor.s1 }
+  - { slot: computer, item: equipment.computer.fbw.s1 }
+  - { slot: transponder, item: equipment.transponder.s1 }
+  - { slot: sensors, item: equipment.sensors.radar.s1 }
+  - { slot: comm, item: equipment.comm.basic.s1 }
+  - { slot: life, item: equipment.life.s2 }
+  - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
+  - { slot: utility, item: equipment.mining.rig.s2 }
+  - { slot: avionics, item: equipment.nav.full.s1 }
 design:
   loaded_mass: 150.04
   main_thrust: 2.7

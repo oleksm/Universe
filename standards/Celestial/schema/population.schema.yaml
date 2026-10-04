@@ -15,15 +15,15 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [family, trojan, outer, scattered disc, far cloud, meteoroid stream], description: "family: a collisional family in the main belt. trojan: a group sharing a giant's orbit, ahead of it or behind. outer: a family in the icy belt past the giants. scattered disc, far cloud: ice bodies thrown far out. meteoroid stream: grains strung along a comet's orbit." }
-      anchor: { type: string, description: "For a field: the named asteroid it gathers round." }
-      parent: { type: string, description: "For a meteoroid stream: the comet that sheds it." }
+      anchor: { type: string, x-ref: [body], description: "For a field: the named asteroid it gathers round." }
+      parent: { type: string, x-ref: [body], description: "For a meteoroid stream: the comet that sheds it." }
       about: { type: string }
   rocks:
     description: For a field.
     type: object
     additionalProperties: false
     properties:
-      class: { type: string, description: "What its rocks are made of, by their spectrum." }
+      class: { type: string, x-ref: [rock-class], description: "What its rocks are made of, by their spectrum." }
       count: { type: integer, description: How many rocks it has. }
       extent: { type: number, description: "km, how far it spreads round its anchor" }
   extent:

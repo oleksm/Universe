@@ -5,7 +5,7 @@
 identity:
   key: hull.sprint
   name: "Sprint Courier"
-  maker: brand.vireo
+  maker: org.vireo
   class: courier
   revision: outdated
   description: "Small and fast, for light cargo and messages."
@@ -16,21 +16,21 @@ mass:
   fuel: 8
   hold: 4
 fit:
-  - { slot: power, item: power-fusion-s1 }
-  - { slot: drive, item: drive-torch-s1 }
-  - { slot: thrusters, item: thrusters-quad-s1 }
-  - { slot: lift, item: lift-belly-s1 }
-  - { slot: tank, item: tank-s1 }
-  - { slot: cargo, item: rack-s1 }
-  - { slot: hyperdrive, item: hyperdrive-s1 }
-  - { slot: capacitor, item: capacitor-s1 }
-  - { slot: computer, item: computer-fbw-s1 }
-  - { slot: transponder, item: transponder-s1 }
-  - { slot: sensors, item: sensors-radar-s1 }
-  - { slot: comm, item: comm-basic-s1 }
-  - { slot: life, item: life-s1 }
-  - { slot: hardpoint_1, item: gun-mass-driver-s1 }
-  - { slot: avionics, item: nav-full-s1 }
+  - { slot: power, item: equipment.power.fusion.s1 }
+  - { slot: drive, item: equipment.drive.torch.s1 }
+  - { slot: thrusters, item: equipment.thrusters.quad.s1 }
+  - { slot: lift, item: equipment.lift.belly.s1 }
+  - { slot: tank, item: equipment.tank.s1 }
+  - { slot: cargo, item: equipment.rack.s1 }
+  - { slot: hyperdrive, item: equipment.hyperdrive.s1 }
+  - { slot: capacitor, item: equipment.capacitor.s1 }
+  - { slot: computer, item: equipment.computer.fbw.s1 }
+  - { slot: transponder, item: equipment.transponder.s1 }
+  - { slot: sensors, item: equipment.sensors.radar.s1 }
+  - { slot: comm, item: equipment.comm.basic.s1 }
+  - { slot: life, item: equipment.life.s1 }
+  - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
+  - { slot: avionics, item: equipment.nav.full.s1 }
 design:
   loaded_mass: 42.89
   main_thrust: 1.8

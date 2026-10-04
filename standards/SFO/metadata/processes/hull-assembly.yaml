@@ -10,4 +10,4 @@ rate:
 equipment:
   facility: yard
   steps:
-  - { module: building-dock, does: "The parts are lifted into place and joined; the assemblies are fitted." }
+  - { module: module.building-dock, does: "The parts are lifted into place and joined; the assemblies are fitted." }

@@ -6,9 +6,9 @@ identity:
   name: Silica aerogel
   class: ceramic
   composition:
-  - part: Si
+  - part: element.si
     share: 0.467
-  - part: O
+  - part: element.o
     share: 0.533
   form:
   - foam

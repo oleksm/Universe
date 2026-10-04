@@ -2,7 +2,7 @@
 identity:
   key: equipment.relay.gate
   name: "Halcyon gate relay"
-  maker: brand.halcyon
+  maker: org.halcyon
   slot: gate
   description: "Throws and catches data capsules through the gate's tube, linking two systems' networks."
 physical:

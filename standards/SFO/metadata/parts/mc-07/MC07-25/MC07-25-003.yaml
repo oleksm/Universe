@@ -17,10 +17,10 @@ physical:
 shape:
   surface_area: 2.7
 made_from:
-  item: ST4340-BAR-120
+  item: stock.st4340-bar-120
   quantity: 3.73
 making:
-  processes: [machining]
+  processes: [process.machining]
 fit:
   count: 2
 basis:

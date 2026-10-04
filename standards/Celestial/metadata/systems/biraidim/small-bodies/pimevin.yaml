@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.biraidim.pimevin, name: Pimevin, kind: asteroid, parent: Biraidim, about: 'The largest body of the main
+identity: {key: body.biraidim.pimevin, name: Pimevin, kind: asteroid, parent: body.biraidim.biraidim, about: 'The largest body of the main
     belt: over a third of all the belt''s mass. Too small to have pulled itself round.'}
 orbit: {semi_major_axis: 62959900.0, eccentricity: 0.036444997, inclination: 3.22, period: 173.18}
 physical: {radius: 138.2, density: 2100, mass: 2.321e+19}
-rock: {class: carbonaceous}
+rock: {class: rock-class.carbonaceous}

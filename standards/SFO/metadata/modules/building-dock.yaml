@@ -10,10 +10,10 @@ size:
   height: 35
 rate:
   throughput: 0.32
-  product: hulls
+  product: good.hulls
 inputs:
   materials:
-  - { item: parts, amount: 1.0 }
+  - { item: good.parts, amount: 1.0 }
 needs:
   power: 1.0
 basis:

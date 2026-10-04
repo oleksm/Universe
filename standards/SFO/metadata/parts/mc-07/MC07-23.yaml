@@ -14,7 +14,7 @@ physical:
 shape:
   surface_area: 139.4
 making:
-  processes: [fitting]
+  processes: [process.fitting]
 fit:
   count: 2
   position: "Its centre is 9.1 m back from the nose and 0.5 m above the keel, 4.5 m either side of the centre line."

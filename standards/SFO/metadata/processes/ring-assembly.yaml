@@ -12,4 +12,4 @@ conditions:
 equipment:
   facility: rig
   steps:
-  - { module: assembly-jig, does: "A segment's hoop frames are closed, its skin panels fixed to them and its coil mounted; the segment is passed out and joined to the last." }
+  - { module: module.assembly-jig, does: "A segment's hoop frames are closed, its skin panels fixed to them and its coil mounted; the segment is passed out and joined to the last." }

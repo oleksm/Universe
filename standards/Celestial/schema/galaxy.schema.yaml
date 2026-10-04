@@ -7,7 +7,7 @@ required: [key, seed, home]
 properties:
   key: { $ref: "../../common.schema.yaml#/definitions/key" }
   seed: { type: integer, description: The number the whole world is made from. }
-  home: { type: string, description: The home system, by name. }
+  home: { type: string, x-ref: [system], description: The home system, by name. }
   region: { type: number, description: "light years, the side of the charted region (a cube round home)" }
   star_density: { type: number, description: "stars for each cubic light year" }
   sector: { type: number, description: "light years, the side of the cubes the stars are made in" }

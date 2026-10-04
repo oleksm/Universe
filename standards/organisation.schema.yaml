@@ -27,7 +27,7 @@ properties:
     additionalProperties: false
     properties:
       text: { oneOf: [{ type: string }, { type: array, items: { type: string } }] }
-  founded_by: { type: array, items: { type: string, pattern: '^brand\.[a-z0-9_]+$' }, description: "The companies that founded it." }
+  founded_by: { type: array, items: { type: string, x-ref: [org] }, description: "The companies that founded it." }
   # An administration.
   zoning:
     description: Its zoning code, what each kind of zone permits.

@@ -7,13 +7,13 @@ identity:
   description: Silicon and oxygen (as silica) melted into fused silica glass.
 inputs:
   materials:
-  - item: Si
+  - item: element.si
     amount: 0.467
-  - item: O
+  - item: element.o
     amount: 0.533
 outputs:
   products:
-  - item: fused-silica
+  - item: material.fused-silica
     form: ingot
 rate:
   mode: batch

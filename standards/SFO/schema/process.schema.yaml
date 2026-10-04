@@ -12,7 +12,7 @@ definitions:
       type: object
       additionalProperties: false
       properties:
-        item: { type: string }
+        item: { type: string, x-ref: [element, material, good] }
         name: { type: string }
         amount: { type: number, minimum: 0 }
         form: { type: string }
@@ -105,7 +105,7 @@ properties:
           additionalProperties: false
           required: [module, does]
           properties:
-            module: { type: string }
+            module: { type: string, x-ref: [module] }
             does: { type: string }
 
   people:

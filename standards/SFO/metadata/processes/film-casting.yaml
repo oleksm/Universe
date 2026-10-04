@@ -9,7 +9,7 @@ inputs:
   form: fluid
 outputs:
   products:
-  - item: polyimide-film
+  - item: material.polyimide-film
     form: film
 rate:
   mode: continuous

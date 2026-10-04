@@ -11,13 +11,13 @@ size:
 rate:
   throughput: 100
   batch: 80
-  product: ingot
+  product: good.ingot
 inputs:
   materials:
-  - { item: refined-steel, amount: 1.16 }
+  - { item: good.refined-steel, amount: 1.16 }
 outputs:
   by_products:
-  - { item: scrap, amount: 0.16 }
+  - { item: good.scrap, amount: 0.16 }
 needs:
   power: 1
 basis:

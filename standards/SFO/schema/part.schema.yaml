@@ -43,7 +43,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      item: { type: string, description: "The item of mill stock, by its code." }
+      item: { type: string, x-ref: [stock], description: "The item of mill stock, by its code." }
       quantity: { type: number, description: "How much of it one part takes, in the unit that stock is counted in (m2 of sheet, plate and film; metres of bar, tube and wire)." }
       blank: { type: string, description: "The piece cut from the stock before it is shaped: 1.2 x 0.8 m, 400 mm long." }
       grain: { type: string, description: "The direction the stock's grain or fibre runs in the part." }
@@ -64,7 +64,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      processes: { type: array, items: { type: string }, description: "The processes that make it, in order, by file name." }
+      processes: { type: array, items: { type: string, x-ref: [process] }, description: "The processes that make it, in order, by file name." }
       facility: { type: string, description: The kind of facility that makes it. }
       time: { type: number, description: "hours to make one" }
       tolerance: { type: number, description: "mm, on its dimensions" }

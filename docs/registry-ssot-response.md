@@ -76,15 +76,42 @@ Three renames to know for your side: the game's `drive.torch.s1` is `equipment.d
 So the table above now reads: `org` for all three organisations; no `la-body`, `small-body`,
 `region`, `field`, `company`, `standards-body` or `administration` kinds.
 
-**Refs are not switched yet.** Records still refer to each other by file name, code, `brand.x` and
-display name. The generated RON is byte-identical: the build maps the new keys back to the game's
-old ones as it writes (`build.py`, `REGISTRY_KEY`, `OLD_KEY`, `game_key`).
+## Refs: done (2026-10-04)
+
+Every property that names another record now holds that record's key: 1,216 refs in 501 records.
+The property says so in its schema with `x-ref: [kinds]`, and the build checks each key is a
+record's and of an allowed kind (`validate.refs`, `check_all`). A loader can walk the same marks.
+
+| Property | Names |
+|---|---|
+| a product's `identity.maker`; a parcel's or rig's `owner`; a warehouse's `exchange`; `founded_by` | `org` |
+| a process's, module's `item`, `rate.product` | `element`, `material` or `good` |
+| a material's `composition[].part` | `element` or `material` (`name` instead, for one with no record) |
+| a good's `composition[].part`, `source.won_from` | `element` or `good`; `good` |
+| mill stock's `made_from.material`, `making.process` | `material`, `process` |
+| a part's `made_from.item`, `making.processes[]` | `stock`, `process` |
+| a hull's or gate's `fit[].item`, `making.process`, `fitting_out`; a hull's `design.thrust_path[]`; a gate's `power.station` | `equipment`, `process`, `part`, `module` |
+| equipment's `performance.burns`, `holds` | `good` |
+| a process's `equipment.steps[].module`; a facility's or rig's `processes[]`, `lines[].process`, `also[]`, `modules[].module` | `module`, `process` |
+| a facility's `parcel` (was its number); a parcel's `address.street`; a power line's `from`, `to` | `parcel`, `street`, `facility` |
+| a settlement's or rig's `at`; its `gate.ring`, `gate.to` | `body`, `gate`, `system` |
+| an `address.at` (was `<system>/<settlement>`) | `settlement` |
+| a body's `identity.parent`, `rock.class`; a population's `identity.anchor`, `parent`, `rocks.class` | `body`, `rock-class` |
+| a rock class's `mining.yields`, `rich_yields` | `good` |
+| a standard's `parent` (was `SFO 2`) | `standard` |
+| the galaxy's `home` | `system` |
+
+A planet's parent is its star's body record (`body.treistun.treistun`), not the system.
+
+Not refs, left as they are: a facility line's `from`/`to` (parts of that facility, by name), a
+gate's `built_of.parts` (the folder its parts are in), a standard's `records` (a kind of record),
+kinds and enums.
+
+The generated RON is byte-identical: the build turns keys back into what it worked by before as it
+reads each record (`build.py`: `old_names`, `OLD_KEY`, `game_key`).
 
 ## Next on `fso`, in this order
 
-1. **Typed refs.** Every field that names another record takes its key. Each such property is
-   marked in its schema (`x-ref: [kinds]`), the build checks the key exists and is of an allowed
-   kind, and the RON output stays the same until you say a loader is ready.
 2. **SI throughout**, angles in degrees as the one exception (`x-unit: deg` on the property). The page converts for reading.
    One kind at a time, with the RON output held identical as the check.
 3. **`physical` as one group**, and the organisation schema (company, standards body,

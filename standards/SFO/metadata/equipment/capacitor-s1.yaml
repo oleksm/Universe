@@ -2,7 +2,7 @@
 identity:
   key: equipment.capacitor.s1
   name: "Capacitor Bank 5 GJ"
-  maker: brand.meridian
+  maker: org.meridian
   slot: capacitor
   description: "Stores energy for bursts, charged by the plant."
 physical:

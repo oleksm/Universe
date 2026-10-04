@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.driumum.vesail, name: Vesail, kind: crossing asteroid, parent: Driumum, about: 'Knocked out of the belt.
+identity: {key: body.driumum.vesail, name: Vesail, kind: crossing asteroid, parent: body.driumum.driumum, about: 'Knocked out of the belt.
     At its closest it comes in to 0.04 AU, near the orbit of Driumum c.'}
 orbit: {semi_major_axis: 29010000.0, eccentricity: 0.7713111, inclination: 13.08, period: 59.698}
 physical: {radius: 0.3624, density: 3300, mass: 657900000000.0}
-rock: {class: stony}
+rock: {class: rock-class.stony}

@@ -3,7 +3,7 @@
 # What it can carry was chosen: a little over what it draws flat out.
 key: power-line.treistun.port-trethi.power-line-4
 name: Power line 4
-from: trethi-power-station
-to: trethi-yard
+from: facility.treistun.port-trethi.trethi-power-station
+to: facility.treistun.port-trethi.trethi-yard
 capacity: 10
 line: [[1400, 0], [1450, 0]]

@@ -7,29 +7,29 @@ identity:
   description: Alumina is refined from bauxite and smelted to aluminium by electric current; the liquid metal is alloyed with magnesium and silicon and cast as ingots.
 inputs:
   materials:
-  - item: Al
+  - item: element.al
     amount: 0.972
-  - item: Mg
+  - item: element.mg
     amount: 0.01
-  - item: Si
+  - item: element.si
     amount: 0.006
-  - item: Fe
+  - item: element.fe
     amount: 0.0035
-  - item: Cu
+  - item: element.cu
     amount: 0.00275
-  - item: Cr
+  - item: element.cr
     amount: 0.00195
 outputs:
   products:
-  - item: aluminium-alloy-6061
+  - item: material.aluminium-alloy-6061
     form: ingot
 rate:
   mode: batch
 equipment:
   facility: foundry
   steps:
-  - { module: ore-yard, does: "Bauxite, caustic soda and carbon anodes arrive and are stockpiled." }
-  - { module: alumina-refinery, does: "The aluminium oxide is dissolved out of the bauxite, the residue settled out, and the oxide baked to a dry powder." }
-  - { module: potline, does: "Electric current takes the oxygen from the molten alumina, leaving liquid aluminium." }
-  - { module: casthouse, does: "Magnesium and silicon are added to the grade, the dross is skimmed and the metal is poured into ingots." }
-  - { module: ingot-yard, does: "The ingots cool, a sample certifies the grade, and they are stacked." }
+  - { module: module.ore-yard, does: "Bauxite, caustic soda and carbon anodes arrive and are stockpiled." }
+  - { module: module.alumina-refinery, does: "The aluminium oxide is dissolved out of the bauxite, the residue settled out, and the oxide baked to a dry powder." }
+  - { module: module.potline, does: "Electric current takes the oxygen from the molten alumina, leaving liquid aluminium." }
+  - { module: module.casthouse, does: "Magnesium and silicon are added to the grade, the dross is skimmed and the metal is poured into ingots." }
+  - { module: module.ingot-yard, does: "The ingots cool, a sample certifies the grade, and they are stacked." }

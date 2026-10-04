@@ -68,9 +68,9 @@ def density(cls):
 
 
 def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu):
-    rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"body.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "parent": parent, "about": about},
+    rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"body.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "parent": f"body.{SYS}.{slug(parent)}", "about": about},
            "orbit": {"semi_major_axis": r3(a_km, 6), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5)},
-           "physical": {"radius": r3(radius_km)}, "rock": {"class": cls}}
+           "physical": {"radius": r3(radius_km)}, "rock": {"class": "rock-class." + cls}}
     d = laws["sizes"].get("comet_density") if kind == "comet" else density(cls)
     if d:
         rec["physical"]["density"] = d
@@ -91,7 +91,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     bodies = [b for b in bodies if b["identity"]["kind"] != "star"]
     mu = G * star["mass"] * SUN
     used.update(b["identity"]["name"] for b in bodies)
-    planets = sorted((b for b in bodies if b["identity"]["parent"] == sname and b["identity"]["kind"] != "asteroid"), key=lambda b: b["orbit"]["semi_major_axis"])
+    planets = sorted((b for b in bodies if b["identity"]["parent"] == f"body.{SYS}.{slug(sname)}" and b["identity"]["kind"] != "asteroid"), key=lambda b: b["orbit"]["semi_major_axis"])
     au = lambda b: b["orbit"]["semi_major_axis"] / AU
     giants = [b for b in planets if b["identity"]["kind"] in ("gas giant", "ice giant")]
     rocky = [b for b in planets if b["identity"]["kind"] == "rocky planet"]
@@ -136,7 +136,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         r = rng("captured:" + g["identity"]["name"])
         reach = g["orbit"]["semi_major_axis"] * (g["physical"]["mass"] / (3 * star["mass"] * SUN)) ** (1 / 3)
         # (Outside its own moons: no closer than half again the farthest of them.)
-        least = max([0.05 * reach] + [1.5 * m["orbit"]["semi_major_axis"] for m in bodies if m["identity"]["parent"] == g["identity"]["name"]])
+        least = max([0.05 * reach] + [1.5 * m["orbit"]["semi_major_axis"] for m in bodies if m["identity"]["parent"] == g["identity"]["key"]])
         for _ in range(r.randint(2, 4) if g["identity"]["kind"] == "gas giant" else r.randint(1, 2)):
             back, e = r.random() < 0.6, r.uniform(0.1, 0.5)
             near = least / (1 - e)                       # (so that even at its closest it stays outside them)
@@ -185,7 +185,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     def region(kind, nm, lo, hi, about, why, parent=None):
         rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"population.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "about": about}, "extent": {"inner": r3(lo), "outer": r3(hi)}}
         if parent:
-            rec["identity"]["parent"] = parent
+            rec["identity"]["parent"] = f"body.{SYS}.{slug(parent)}"
         put(sysdir, "regions", "population", rec, why)
     if giants:
         region("scattered disc", "Scattered disc", au(giants[-1]), au(giants[-1]) * 100 / 30, "Ice bodies the giants threw outward, on long, tilted, stretched orbits. They come no closer than the last giant.",

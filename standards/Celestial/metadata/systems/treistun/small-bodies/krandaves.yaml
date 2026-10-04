@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.krandaves, name: Krandaves, kind: captured moon, parent: Treistun g, about: 'Once it went round
+identity: {key: body.treistun.krandaves, name: Krandaves, kind: captured moon, parent: body.treistun.treistun-g, about: 'Once it went round
     the star; Treistun g caught it. It goes round backward, far out.'}
 orbit: {semi_major_axis: 5287260.0, eccentricity: 0.30945698, inclination: 163.37, period: 173.28}
 physical: {radius: 13.17}
-rock: {class: primitive}
+rock: {class: rock-class.primitive}

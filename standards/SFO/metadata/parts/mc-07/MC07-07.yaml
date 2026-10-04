@@ -17,10 +17,10 @@ physical:
 shape:
   surface_area: 1196.3
 made_from:
-  item: AL6061-PL-5
+  item: stock.al6061-pl-5
   quantity: 1375.7
 making:
-  processes: [plate-work]
+  processes: [process.plate-work]
 fit:
   count: 1
   position: "Its centre is 18.9 m back from the nose and 8.3 m above the keel, on the centre line."

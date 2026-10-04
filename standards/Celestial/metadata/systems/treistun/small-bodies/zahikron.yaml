@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.zahikron, name: Zahikron, kind: dwarf planet, parent: Treistun, about: 'A world of ice in the
+identity: {key: body.treistun.zahikron, name: Zahikron, kind: dwarf planet, parent: body.treistun.treistun, about: 'A world of ice in the
     outer belt, heavy enough to have pulled itself round. One of perhaps 24.'}
 orbit: {semi_major_axis: 2232520000.0, eccentricity: 0.21734758, inclination: 6.13, period: 25073.0}
 physical: {radius: 778.2, density: 950, mass: 1.875e+21}
-rock: {class: icy}
+rock: {class: rock-class.icy}

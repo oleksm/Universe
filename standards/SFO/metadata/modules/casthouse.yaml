@@ -10,13 +10,13 @@ size:
   height: 15
 rate:
   throughput: 40
-  product: ingot
+  product: good.ingot
 inputs:
   materials:
-  - { item: liquid-aluminium, amount: 1.02 }
+  - { item: good.liquid-aluminium, amount: 1.02 }
 outputs:
   by_products:
-  - { item: dross, amount: 0.02 }
+  - { item: good.dross, amount: 0.02 }
 needs:
   power: 40
 basis:

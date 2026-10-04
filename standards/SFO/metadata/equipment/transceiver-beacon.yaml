@@ -2,7 +2,7 @@
 identity:
   key: equipment.transceiver.beacon
   name: "Tallis beacon transceiver"
-  maker: brand.tallis
+  maker: org.tallis
   slot: gate
   description: "What ships' comms connect to near the gate: one of the hypernet's towers."
 physical:

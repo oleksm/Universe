@@ -7,10 +7,10 @@ identity:
   description: Carbon, hydrogen, nitrogen and oxygen joined into aramid polymer, ready for spinning.
 inputs:
   materials:
-  - item: C
-  - item: H
-  - item: N
-  - item: O
+  - item: element.c
+  - item: element.h
+  - item: element.n
+  - item: element.o
 outputs:
   products:
   - name: aramid polymer

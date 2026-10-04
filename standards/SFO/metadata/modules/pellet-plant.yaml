@@ -10,11 +10,11 @@ size:
   height: 40
 rate:
   throughput: 125
-  product: iron-ore-pellets
+  product: good.iron-ore-pellets
 inputs:
   materials:
-  - { item: iron-ore, amount: 0.955 }
-  - { item: O, amount: 0.045 }
+  - { item: good.iron-ore, amount: 0.955 }
+  - { item: element.o, amount: 0.045 }
 needs:
   power: 23
 basis:

@@ -2,6 +2,6 @@
 # Invented outline.
 key: parcel.treistun.port-trethi.3
 number: 3
-owner: brand.castellan
-address: { street: dock-road, number: 1 }
+owner: org.castellan
+address: { street: street.treistun.port-trethi.dock-road, number: 1 }
 outline: [[-300, -880], [400, -880], [400, -620], [-300, -620]]

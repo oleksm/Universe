@@ -6,11 +6,11 @@ identity:
   name: Titanium alloy Ti-6Al-4V
   class: alloy
   composition:
-  - part: Ti
+  - part: element.ti
     share: 0.9
-  - part: Al
+  - part: element.al
     share: 0.06
-  - part: V
+  - part: element.v
     share: 0.04
   form:
   - sheet

@@ -10,4 +10,4 @@ rate:
 equipment:
   facility: yard
   steps:
-  - { module: panel-line, does: "Plate is fed in at one end; cut, formed and finished panels come off the other." }
+  - { module: module.panel-line, does: "Plate is fed in at one end; cut, formed and finished panels come off the other." }

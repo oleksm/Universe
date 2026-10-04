@@ -2,7 +2,7 @@
 identity:
   key: equipment.mining.rig.s2
   name: "Mining Rig"
-  maker: brand.cormorant
+  maker: org.cormorant
   slot: utility
   description: "A mining rig: digs an asteroid it is anchored to."
 physical:

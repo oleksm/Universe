@@ -5,15 +5,15 @@ identity:
   name: Structural steel A36
   class: alloy
   composition:
-  - part: Fe
+  - part: element.fe
     share: 0.98
-  - part: Mn
+  - part: element.mn
     share: 0.0103
-  - part: Si
+  - part: element.si
     share: 0.004
-  - part: C
+  - part: element.c
     share: 0.0026
-  - part: Cu
+  - part: element.cu
     share: 0.002
   form:
   - plate

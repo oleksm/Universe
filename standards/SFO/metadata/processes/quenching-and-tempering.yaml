@@ -7,11 +7,11 @@ identity:
   description: Steel heated, cooled fast to harden it, then reheated a little to take off the brittleness.
 inputs:
   materials:
-  - item: high-strength-steel-4340
+  - item: material.high-strength-steel-4340
     amount: 1.0
 outputs:
   products:
-  - item: high-strength-steel-4340
+  - item: material.high-strength-steel-4340
     grade: quenched and tempered
 rate:
   mode: batch

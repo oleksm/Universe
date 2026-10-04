@@ -7,12 +7,12 @@ identity:
   description: Silica fibres bonded by heat into a light, rigid heat-shield tile.
 inputs:
   materials:
-  - item: fused-silica
+  - item: material.fused-silica
     amount: 1.0
   form: fibre
 outputs:
   products:
-  - item: silica-tile-li-900
+  - item: material.silica-tile-li-900
     form: tile
 rate:
   mode: batch

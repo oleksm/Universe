@@ -2,7 +2,7 @@
 identity:
   key: gate.ring.iii
   name: Halcyon Ring III
-  maker: brand.halcyon
+  maker: org.halcyon
   class: 3
   description: "A gate ring, class III: the longest throat anyone builds."
 size:
@@ -14,14 +14,14 @@ performance:
 built_of:
   parts: halcyon-ring
 fit:
-  - { item: throat-coil, count: 60 }
-  - { item: relay-gate, count: 1 }
-  - { item: relay-hyper, count: 1 }
-  - { item: transceiver-beacon, count: 1 }
+  - { item: equipment.throat-coil, count: 60 }
+  - { item: equipment.relay.gate, count: 1 }
+  - { item: equipment.relay.hyper, count: 1 }
+  - { item: equipment.transceiver.beacon, count: 1 }
 power:
-  station: fusion-power-station
+  station: module.fusion-power-station
 making:
-  process: ring-assembly
+  process: process.ring-assembly
 basis:
   - { of: [fit], tier: invented, review: true, note: "The relays and the transceiver are what the game fits to a ring. The coils, one to a segment, are a guess, to be reviewed." }
   - { of: [size], tier: invented, source: "the game: content/base/sheet.ron (GATE_RADIUS, RING_TUBE)", note: "The game's figures, marked there as tuning. The opening is wide enough for capital ships, which are to come; it is not yet worked out from one." }

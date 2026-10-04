@@ -93,6 +93,33 @@ def validate(v, sch, here, at=""):
     return out
 
 
+def refs(v, sch, here, at=""):
+    """Every place in `v` that names another record (its schema says `x-ref`): (holder, index, kinds, where)."""
+    if not isinstance(sch, dict):
+        return
+    if "$ref" in sch:
+        target, path = resolve(sch["$ref"], here)
+        yield from refs(v, target, path, at)
+        return
+    if isinstance(v, list) and "items" in sch:
+        for i, x in enumerate(v):
+            if "x-ref" in (sch["items"] if isinstance(sch["items"], dict) else {}):
+                yield v, i, sch["items"]["x-ref"], f"{at}[{i}]"
+            else:
+                yield from refs(x, sch["items"], here, f"{at}[{i}]")
+    if isinstance(v, dict):
+        for k, x in v.items():
+            s = (sch.get("properties") or {}).get(k)
+            if isinstance(s, dict) and "$ref" in s:
+                s, h = resolve(s["$ref"], here)
+            else:
+                h = here
+            if isinstance(s, dict) and "x-ref" in s:
+                yield v, k, s["x-ref"], f"{at}.{k}" if at else k
+            elif s is not None:
+                yield from refs(x, s, h, f"{at}.{k}" if at else k)
+
+
 def schema_of(rel):
     """The schema a record is held to, by where it is filed (its path under standards/)."""
     p = rel.split(os.sep)
@@ -171,7 +198,8 @@ def key_in(rec):
 
 def check_all():
     """Every record against its schema: (file, what does not fit)."""
-    found, unheld = [], []
+    found, unheld, named = [], [], []
+    KEYS.clear()
     for dp, dns, fns in os.walk(TREE):
         dns[:] = [d for d in dns if d not in ("schema", "sources", "logos", "icons")]
         for fn in sorted(fns):
@@ -201,6 +229,13 @@ def check_all():
                 found.append((full, f"key: {key} is also {KEYS[key]}'s"))
             else:
                 KEYS[key] = rel
+            named += [(full, at, holder[i], kinds) for holder, i, kinds, at in refs(rec, schema(sp), sp)]
+    # (What each record names: a record's key, of a kind the property takes.)
+    for full, at, key, kinds in named:
+        if key not in KEYS:
+            found.append((full, f"{at}: {key!r} is no record's key"))
+        elif key.split(".")[0] not in kinds:
+            found.append((full, f"{at}: {key} is not {' or '.join(('an ' if k[0] in 'aeiou' else 'a ') + k for k in kinds)}"))
     return found, unheld
 
 

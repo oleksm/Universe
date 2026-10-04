@@ -10,10 +10,10 @@ size:
   height: 12
 rate:
   throughput: 120
-  product: hot-ingot
+  product: good.hot-ingot
 inputs:
   materials:
-  - { item: ingot, amount: 1.0 }
+  - { item: good.ingot, amount: 1.0 }
 needs:
   power: 45
 basis:

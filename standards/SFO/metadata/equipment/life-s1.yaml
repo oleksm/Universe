@@ -2,7 +2,7 @@
 identity:
   key: equipment.life.s1
   name: "Life support S1"
-  maker: brand.hadley
+  maker: org.hadley
   slot: life
   description: "Air, water and warmth for the crew."
 physical:

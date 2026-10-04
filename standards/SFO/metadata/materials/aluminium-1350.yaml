@@ -6,7 +6,7 @@ identity:
   name: Aluminium 1350
   class: alloy
   composition:
-  - part: Al
+  - part: element.al
     share: 0.995
   form:
   - wire

@@ -2,7 +2,7 @@
 key: settlement.treistun.port-nacaubun
 name: "Port Nacaubun"
 kind: settlement
-at: Treistun e
+at: body.treistun.treistun-e
 position: { latitude: 23.813, longitude: -79.362 }
 about: "The port on Treistun e, the home world, at 24° north. Gravity 0.98 g, with air, and cold."
 story:

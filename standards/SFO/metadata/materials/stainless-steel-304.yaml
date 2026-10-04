@@ -5,17 +5,17 @@ identity:
   name: Stainless steel 304
   class: alloy
   composition:
-  - part: Fe
+  - part: element.fe
     share: 0.68
-  - part: Cr
+  - part: element.cr
     share: 0.19
-  - part: Ni
+  - part: element.ni
     share: 0.095
-  - part: Mn
+  - part: element.mn
     share: 0.02
-  - part: Si
+  - part: element.si
     share: 0.01
-  - part: C
+  - part: element.c
     share: 0.0008
   form:
   - sheet

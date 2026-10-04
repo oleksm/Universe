@@ -5,13 +5,13 @@ identity:
   name: Bearing bronze C93200
   class: alloy
   composition:
-  - part: Cu
+  - part: element.cu
     share: 0.83
-  - part: Sn
+  - part: element.sn
     share: 0.07
-  - part: Pb
+  - part: element.pb
     share: 0.07
-  - part: Zn
+  - part: element.zn
     share: 0.03
   form:
   - casting

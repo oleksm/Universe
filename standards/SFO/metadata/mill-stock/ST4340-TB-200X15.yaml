@@ -4,14 +4,14 @@ identity:
   code: ST4340-TB-200X15
   name: "4340 tube 200 x 15 mm"
 made_from:
-  material: high-strength-steel-4340
+  material: material.high-strength-steel-4340
   form: tube
   temper: "quenched and tempered"
 size:
   diameter: 200
   wall: 15
 making:
-  process: tube-making-4340
+  process: process.tube-making-4340
 physical:
   shock_limit: 150
 basis:

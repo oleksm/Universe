@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.liham.stiunsei, name: Stiunsei, kind: asteroid, parent: Liham, about: 'The largest body of the main belt:
+identity: {key: body.liham.stiunsei, name: Stiunsei, kind: asteroid, parent: body.liham.liham, about: 'The largest body of the main belt:
     over a third of all the belt''s mass. Too small to have pulled itself round.'}
 orbit: {semi_major_axis: 43440600.0, eccentricity: 0.068394652, inclination: 6.49, period: 107.29}
 physical: {radius: 115.2, density: 2100, mass: 1.345e+19}
-rock: {class: carbonaceous}
+rock: {class: rock-class.carbonaceous}

@@ -10,8 +10,8 @@ properties:
   key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   kind: { enum: [foundry, mill, yard, power, warehouse] }
-  parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }
-  processes: { type: array, items: { type: string }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
+  parcel: { type: string, x-ref: [parcel], description: The parcel of its settlement it stands on. }
+  processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The SFO processes it runs, by file name. Each must be one for its kind of facility.' }
   lines:
     description: 'Its production lines: for each, the process it runs and the industrial modules (SFO 10) it is built of. What the line can make at most, and what it then takes in, gives off, draws and covers, are worked out from them. What it does make is the economy''s business, not recorded here.'
     type: array
@@ -20,8 +20,8 @@ properties:
       additionalProperties: false
       required: [process, modules]
       properties:
-        process: { type: string, description: 'One of its processes, one that has steps.' }
-        also: { type: array, items: { type: string }, description: 'Other processes of its the same line can run instead, on the same modules (another grade of steel). The line''s most is shared between them.' }
+        process: { type: string, x-ref: [process], description: 'One of its processes, one that has steps.' }
+        also: { type: array, items: { type: string, x-ref: [process] }, description: 'Other processes of its the same line can run instead, on the same modules (another grade of steel). The line''s most is shared between them.' }
         modules:
           type: array
           items:
@@ -29,7 +29,7 @@ properties:
             additionalProperties: false
             required: [module, count]
             properties:
-              module: { type: string, description: 'One of the modules of the process''s steps.' }
+              module: { type: string, x-ref: [module], description: 'One of the modules of the process''s steps.' }
               count: { type: integer, minimum: 1 }
   modules:
     description: 'The industrial modules (SFO 10) it is built of, where its production does not say: a power station''s.'
@@ -39,9 +39,9 @@ properties:
       additionalProperties: false
       required: [module, count]
       properties:
-        module: { type: string }
+        module: { type: string, x-ref: [module] }
         count: { type: integer, minimum: 1 }
-  exchange: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: 'For a warehouse: the exchange that has approved it, so that goods lying in it can be traded there.' }
+  exchange: { type: string, x-ref: [org], description: 'For a warehouse: the exchange that has approved it, so that goods lying in it can be traded there.' }
   parts:
     description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'
     type: array
@@ -53,7 +53,7 @@ properties:
         name: { type: string }
         kind: { enum: [module, workshop, warehouse, logistics, parking], description: 'module: industrial plant.' }
         does: { type: string }
-        processes: { type: array, items: { type: string }, description: 'The facility''s processes run here. Each of the facility''s processes is run in exactly one part.' }
+        processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The facility''s processes run here. Each of the facility''s processes is run in exactly one part.' }
         outline: { type: array, minItems: 3, items: { $ref: '#/definitions/point' }, description: "Its corners, in order: metres [east, north] of the settlement's position." }
   pipelines:
     type: array

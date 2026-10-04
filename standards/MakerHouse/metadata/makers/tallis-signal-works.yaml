@@ -3,7 +3,7 @@ key: org.tallis
 kind: company
 name: Tallis Signal Works
 ticker: TSW
-address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 38, section: B, unit: 3 }
+address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 38, section: B, unit: 3 }
 note: "Comms and relays: far-reaching, power-hungry"
 who: "A communications company whose equipment reaches further than anyone's and draws the power to do it."
 what: "Makes comms equipment and relays."

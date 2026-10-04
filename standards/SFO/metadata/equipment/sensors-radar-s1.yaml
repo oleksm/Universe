@@ -2,7 +2,7 @@
 identity:
   key: equipment.sensors.radar.s1
   name: "Radar 500 km"
-  maker: brand.orbital
+  maker: org.orbital
   slot: sensors
   description: "Radar."
 physical:

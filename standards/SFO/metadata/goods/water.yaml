@@ -7,5 +7,5 @@ identity:
 game:
   goods: goods.water
 source:
-  won_from: asteroid-water-ice
+  won_from: good.asteroid-water-ice
   note: "Melted and filtered."

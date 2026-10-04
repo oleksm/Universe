@@ -8,10 +8,10 @@ identity:
 physical:
   mass: 5000
 made_from:
-  item: ST4340-FG
+  item: stock.st4340-fg
   quantity: 7500
 making:
-  processes: [machining]
+  processes: [process.machining]
 fit:
   count: 8
 basis:

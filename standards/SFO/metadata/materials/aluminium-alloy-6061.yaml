@@ -6,17 +6,17 @@ identity:
   name: Aluminium alloy 6061
   class: alloy
   composition:
-  - part: Al
+  - part: element.al
     share: 0.972
-  - part: Mg
+  - part: element.mg
     share: 0.01
-  - part: Si
+  - part: element.si
     share: 0.006
-  - part: Fe
+  - part: element.fe
     share: 0.0035
-  - part: Cu
+  - part: element.cu
     share: 0.00275
-  - part: Cr
+  - part: element.cr
     share: 0.00195
   form:
   - sheet

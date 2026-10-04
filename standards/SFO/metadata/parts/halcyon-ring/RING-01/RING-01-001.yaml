@@ -14,10 +14,10 @@ physical:
 shape:
   surface_area: 20
 made_from:
-  item: ST4340-PL-3
+  item: stock.st4340-pl-3
   quantity: 23
 making:
-  processes: [panel-making]
+  processes: [process.panel-making]
 fit:
   count: 2961
 basis:

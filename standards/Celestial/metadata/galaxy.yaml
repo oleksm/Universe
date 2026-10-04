@@ -3,7 +3,7 @@
 # record yet: it is here so the world's laws are written down in one place.
 key: seeding.galaxy
 seed: 1984
-home: Treistun
+home: system.treistun
 region: 200
 star_density: 0.004
 sector: 100

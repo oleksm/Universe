@@ -49,6 +49,62 @@ def problem(where, what):
 REGISTRY_KEY = {}
 OLD_KEY = {"company": "brand", "standards_body": "body"}        # (an organisation's old key, by its kind)
 
+# Records name each other by key (a property marked x-ref in its schema). This build still works by
+# what they named each other by before: a file name, a part's code, an element's symbol, a body's
+# name, brand.x. So each key is turned back as a record is read. REGISTRY: every record, by its key.
+import validate as V
+REGISTRY = {}
+for _dp, _dns, _fns in os.walk(TREE):
+    _dns[:] = [d for d in _dns if d not in ("schema", "sources", "logos", "icons")]
+    for _fn in _fns:
+        _rel = os.path.relpath(os.path.join(_dp, _fn), TREE)
+        if _fn.endswith(".yaml") and os.sep in _rel and V.schema_of(_rel):
+            try:
+                _rec = yaml.safe_load(open(os.path.join(_dp, _fn), encoding="utf-8")) or {}
+            except yaml.YAMLError:
+                continue
+            if isinstance(V.key_in(_rec), str):
+                REGISTRY[V.key_in(_rec)] = (_rel, _rec)
+
+
+def old_name(key, rel, at):
+    """What a record was named by before keys, for the record at `rel` naming it at `at`."""
+    if key not in REGISTRY:
+        return key
+    krel, rec = REGISTRY[key]
+    kind, _, rest = key.partition(".")
+    idn = rec.get("identity") if isinstance(rec.get("identity"), dict) else rec
+    stem = os.path.basename(krel)[:-5]
+    if kind == "element":
+        return idn.get("symbol")
+    if kind == "org":
+        return OLD_KEY[rec["kind"]] + "." + rest.replace("-", "_") if rec.get("kind") in OLD_KEY else stem
+    if kind in ("body", "system"):
+        return idn.get("name")
+    if kind == "rock-class":
+        return (idn.get("label") or stem).lower() if at == "rocks.class" or os.sep + "bodies" + os.sep in rel else stem   # (the game's own go by its label)
+    if kind == "standard":
+        return "SFO " + rest.split(".")[-1]
+    if kind == "settlement":
+        return krel.split(os.sep)[3] + "/" + stem
+    if kind == "parcel":
+        return rec.get("number")
+    return stem
+
+
+def old_names(rec, path):
+    rel = os.path.relpath(os.path.abspath(path), TREE)
+    sp = V.schema_of(rel) if os.sep in rel else None
+    if sp and isinstance(rec, dict):
+        for holder, i, _kinds, at in list(V.refs(rec, V.schema(sp), sp)):
+            if isinstance(holder[i], str):
+                holder[i] = old_name(holder[i], rel, at)
+        # (A material's part that is no record is written `name`; this build reads `part`.)
+        for c in (rec.get("identity") or {}).get("composition") or [] if rel.startswith(os.path.join("SFO", "metadata", "materials")) else []:
+            if "name" in c and "part" not in c:
+                c["part"] = c.pop("name")
+    return rec
+
 
 def load(path):
     try:
@@ -72,7 +128,7 @@ def load(path):
                 rec["kind"] = rec.pop("form")
         else:
             del rec["key"]
-    return rec
+    return old_names(rec, path)
 
 
 def check_standard(s, ids):
@@ -515,7 +571,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     # the system of the same name, with what the celestial record says of it.)
     cel_bodies = os.path.join(TREE, "Celestial", "metadata", "systems", name[:-5], "bodies")
     for bn in sorted(os.listdir(cel_bodies)) if os.path.isdir(cel_bodies) else []:
-        cb = yaml.safe_load(open(os.path.join(cel_bodies, bn), encoding="utf-8")) or {}
+        cb = load(os.path.join(cel_bodies, bn))
         ci = cb.get("identity") or {}
         if ci.get("kind") not in ("rocky planet", "moon"):
             continue
@@ -2265,8 +2321,7 @@ report("celestial", "Celestial: what is written out, and against Local Administr
 # Types, enums, required fields, patterns, and no field its schema does not name (see validate.py).
 # The game's loader is to be at least this strict.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import validate as _validate
-_misfits, _unheld = _validate.check_all()
+_misfits, _unheld = V.check_all()
 for _full, _what in _misfits:
     problem(_full, "schema: " + _what)
 for _rel in _unheld:

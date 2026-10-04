@@ -7,12 +7,12 @@ identity:
   description: Fibre woven into fabric.
 inputs:
   materials:
-  - item: aramid-fibre
+  - item: material.aramid-fibre
     amount: 1.0
   form: fibre
 outputs:
   products:
-  - item: aramid-fibre
+  - item: material.aramid-fibre
     form: fabric
 rate:
   mode: continuous

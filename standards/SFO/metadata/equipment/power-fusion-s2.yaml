@@ -2,7 +2,7 @@
 identity:
   key: equipment.power.fusion.s2
   name: "Fusion Plant S2"
-  maker: brand.hadley
+  maker: org.hadley
   slot: power
   description: "A ship's power plant."
 physical:
@@ -11,6 +11,6 @@ physical:
 performance:
   output: 8
   efficiency: 0.35
-  burns: deuterium
+  burns: good.deuterium
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

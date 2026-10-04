@@ -2,7 +2,7 @@
 identity:
   key: equipment.thrusters.quad.s1
   name: "Thruster quads S1"
-  maker: brand.kestrel
+  maker: org.kestrel
   slot: thrusters
   description: "Manoeuvring thrusters, in clusters at nose and tail."
 physical:
@@ -13,6 +13,6 @@ performance:
   thrust: 120
   exhaust_speed: 10000
   efficiency: 0.3
-  burns: deuterium
+  burns: good.deuterium
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

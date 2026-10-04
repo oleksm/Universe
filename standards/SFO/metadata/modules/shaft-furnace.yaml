@@ -10,14 +10,14 @@ size:
   height: 137
 rate:
   throughput: 200
-  product: sponge-iron
+  product: good.sponge-iron
 inputs:
   materials:
-  - { item: iron-ore-pellets, amount: 1.43 }
-  - { item: H, amount: 0.054 }
+  - { item: good.iron-ore-pellets, amount: 1.43 }
+  - { item: element.h, amount: 0.054 }
 outputs:
   by_products:
-  - { item: water, amount: 0.484 }
+  - { item: good.water, amount: 0.484 }
 needs:
   power: 22
 basis:

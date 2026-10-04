@@ -42,7 +42,7 @@ properties:
     type: string
   parent:
     type: string
-    pattern: ^[A-Z]{2,6} [0-9]+$
+    x-ref: [standard]
     description: The record it sits under (its category).
   records:
     type: string

@@ -27,7 +27,7 @@ properties:
       additionalProperties: false
       required: [part, share]
       properties:
-        part: { type: string }
+        part: { type: string, x-ref: [element, good] }
         share: { type: number, minimum: 0, maximum: 1 }
   source:
     description: Where a rock is found, or what a raw good is won from.
@@ -35,7 +35,7 @@ properties:
     additionalProperties: false
     properties:
       occurs: { enum: [asteroids, rocky planets and moons, temperate planets], description: "For a rock: where in the universe it is found. Temperate planets: rocky, with air and liquid water." }
-      won_from: { type: string, description: "For a raw good: the rock it is won from, by file name." }
+      won_from: { type: string, x-ref: [good], description: "For a raw good: the rock it is won from, by file name." }
       yield: { type: number, minimum: 0, maximum: 1, description: "t of it won from each t of that rock" }
       note: { type: string }
   game:

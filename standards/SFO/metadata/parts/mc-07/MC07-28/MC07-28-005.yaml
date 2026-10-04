@@ -17,10 +17,10 @@ physical:
 shape:
   surface_area: 2.0
 made_from:
-  item: ST4340-FG
+  item: stock.st4340-fg
   quantity: 15
 making:
-  processes: [machining]
+  processes: [process.machining]
 fit:
   count: 4
 basis:

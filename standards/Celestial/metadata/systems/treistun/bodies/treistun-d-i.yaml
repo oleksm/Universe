@@ -5,7 +5,7 @@ identity:
   key: body.treistun.treistun-d-i
   name: Treistun d I
   kind: moon
-  parent: Treistun d
+  parent: body.treistun.treistun-d
   about: A moon of Treistun d. 1,527 km in radius, 0.13 g at the surface, no air, about 306 K on average. Its day lasts 12
     hours.
   story: ['Airless and a little cooler than d below it. It was settled as d''s yard: a place to keep ships without bringing

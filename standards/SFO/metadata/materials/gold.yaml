@@ -5,7 +5,7 @@ identity:
   name: Gold
   class: metal
   composition:
-  - part: Au
+  - part: element.au
     share: 1.0
   form:
   - film

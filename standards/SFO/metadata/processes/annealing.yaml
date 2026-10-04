@@ -7,11 +7,11 @@ identity:
   description: A metal heated and slowly cooled to soften it and relieve its stresses.
 inputs:
   materials:
-  - item: stainless-steel-304
+  - item: material.stainless-steel-304
     amount: 1.0
 outputs:
   products:
-  - item: stainless-steel-304
+  - item: material.stainless-steel-304
     grade: annealed
 rate:
   mode: batch

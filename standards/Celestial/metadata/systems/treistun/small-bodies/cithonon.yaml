@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.cithonon, name: Cithonon, kind: dwarf planet, parent: Treistun, about: 'A world of ice in the
+identity: {key: body.treistun.cithonon, name: Cithonon, kind: dwarf planet, parent: body.treistun.treistun, about: 'A world of ice in the
     outer belt, heavy enough to have pulled itself round. One of perhaps 24.'}
 orbit: {semi_major_axis: 2061920000.0, eccentricity: 0.17213908, inclination: 7.74, period: 22255.0}
 physical: {radius: 776.6, density: 950, mass: 1.864e+21}
-rock: {class: icy}
+rock: {class: rock-class.icy}

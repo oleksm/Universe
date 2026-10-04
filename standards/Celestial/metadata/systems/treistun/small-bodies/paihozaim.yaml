@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.paihozaim, name: Paihozaim, kind: captured moon, parent: Treistun j, about: 'Once it went round
+identity: {key: body.treistun.paihozaim, name: Paihozaim, kind: captured moon, parent: body.treistun.treistun-j, about: 'Once it went round
     the star; Treistun j caught it. It goes round backward, far out.'}
 orbit: {semi_major_axis: 67755200.0, eccentricity: 0.13069402, inclination: 168.94, period: 2105.3}
 physical: {radius: 1.726, density: 2100, mass: 45220000000000.0}
-rock: {class: carbonaceous}
+rock: {class: rock-class.carbonaceous}

@@ -2,7 +2,7 @@
 identity:
   key: equipment.nav.basic.s1
   name: "Nav computer (basic)"
-  maker: brand.orbital
+  maker: org.orbital
   slot: avionics
   description: "Navigation aids: docking and landing."
 physical:

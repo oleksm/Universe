@@ -10,10 +10,10 @@ size:
   height: 25
 rate:
   throughput: 1
-  product: parts
+  product: good.parts
 inputs:
   materials:
-  - { item: formed-panels, amount: 1.0 }
+  - { item: good.formed-panels, amount: 1.0 }
 needs:
   power: 0.13
 basis:

@@ -5,7 +5,7 @@ identity:
   name: Lead
   class: metal
   composition:
-  - part: Pb
+  - part: element.pb
     share: 1.0
   form:
   - sheet

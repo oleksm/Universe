@@ -3,8 +3,8 @@
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
 in_game: not made
-identity: {key: body.treistun.seibarnum, name: Seibarnum, kind: centaur, parent: Treistun, about: 'An ice body among the giants,
+identity: {key: body.treistun.seibarnum, name: Seibarnum, kind: centaur, parent: body.treistun.treistun, about: 'An ice body among the giants,
     on an orbit that will last a few million years. One day a giant will throw it inward as a comet, or out.'}
 orbit: {semi_major_axis: 932260000.0, eccentricity: 0.39298665, inclination: 15.71, period: 6765.8}
 physical: {radius: 27.45, density: 950, mass: 8.23e+16}
-rock: {class: icy}
+rock: {class: rock-class.icy}

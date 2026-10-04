@@ -7,8 +7,8 @@ required: [key, name, from, to, capacity, line]
 properties:
   key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
-  from: { type: string, description: 'The facility it starts at (one that makes power), by file name.' }
-  to: { type: string, description: 'The facility it ends at, by file name.' }
+  from: { type: string, x-ref: [facility], description: 'The facility it starts at (one that makes power), by file name.' }
+  to: { type: string, x-ref: [facility], description: 'The facility it ends at, by file name.' }
   capacity: { type: number, description: MW it can carry at most }
   line:
     description: "Its run, point by point: metres [east, north] of the settlement's position. It starts on the parcel of the one facility and ends on the parcel of the other."

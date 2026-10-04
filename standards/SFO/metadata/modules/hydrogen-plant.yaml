@@ -10,13 +10,13 @@ size:
   height: 20
 rate:
   throughput: 1.89
-  product: H
+  product: element.h
 inputs:
   materials:
-  - { item: water, amount: 9 }
+  - { item: good.water, amount: 9 }
 outputs:
   by_products:
-  - { item: O, amount: 8 }
+  - { item: element.o, amount: 8 }
 needs:
   power: 100
 basis:

@@ -10,10 +10,10 @@ size:
   height: 8
 rate:
   throughput: 2
-  product: formed-panels
+  product: good.formed-panels
 inputs:
   materials:
-  - { item: cut-blanks, amount: 1.0 }
+  - { item: good.cut-blanks, amount: 1.0 }
 needs:
   power: 0.3
 basis:

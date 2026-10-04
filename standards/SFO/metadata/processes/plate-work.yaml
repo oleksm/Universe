@@ -10,6 +10,6 @@ rate:
 equipment:
   facility: yard
   steps:
-  - { module: cutting-table, does: "Each panel's outline is cut from sheet or plate." }
-  - { module: panel-former, does: "The flat blanks are bent to their curve." }
-  - { module: welding-bay, does: "The panels are welded, in a jig, into the part." }
+  - { module: module.cutting-table, does: "Each panel's outline is cut from sheet or plate." }
+  - { module: module.panel-former, does: "The flat blanks are bent to their curve." }
+  - { module: module.welding-bay, does: "The panels are welded, in a jig, into the part." }

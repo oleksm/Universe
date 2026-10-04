@@ -13,9 +13,9 @@ game:
   goods: goods.ores
   ore: ore.nickel_iron
 composition:
-  - { part: Fe, share: 0.91 }
-  - { part: Ni, share: 0.085 }
-  - { part: Co, share: 0.005 }
+  - { part: element.fe, share: 0.91 }
+  - { part: element.ni, share: 0.085 }
+  - { part: element.co, share: 0.005 }
 basis:
   - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }
   - { of: [composition], tier: sourced, source: "https://en.wikipedia.org/wiki/Iron_meteorite", note: "Iron meteorites: iron, nickel and cobalt together over 95%; nickel 5 to 25%, 7 to 10.5% in the commonest group. The cobalt share was not found and is set." }

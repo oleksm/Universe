@@ -2,7 +2,7 @@
 identity:
   key: equipment.lift.belly.s2
   name: "Belly Lift S2"
-  maker: brand.kestrel
+  maker: org.kestrel
   slot: lift
   description: "Lift jets under the hull, to hover and set down."
 physical:
@@ -13,6 +13,6 @@ performance:
   efficiency: 0.3
   thrust: 562.5
   exhaust_speed: 10000
-  burns: deuterium
+  burns: good.deuterium
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

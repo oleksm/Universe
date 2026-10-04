@@ -2,7 +2,7 @@
 identity:
   key: equipment.rack.s3
   name: "Cargo Racks 20 T"
-  maker: brand.hadley
+  maker: org.hadley
   slot: cargo
   description: "Racks that hold cargo in the hold."
 physical:

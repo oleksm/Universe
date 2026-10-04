@@ -18,7 +18,7 @@ properties:
     additionalProperties: false
     required: [material, form]
     properties:
-      material: { type: string, description: "The material, by file name." }
+      material: { type: string, x-ref: [material], description: "The material, by file name." }
       form: { type: string, description: "One of the forms the material comes in." }
       temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
   size:
@@ -43,5 +43,5 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      process: { type: string, description: "The process that makes it, by file name." }
+      process: { type: string, x-ref: [process], description: "The process that makes it, by file name." }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

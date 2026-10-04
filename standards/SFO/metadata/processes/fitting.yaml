@@ -10,4 +10,4 @@ rate:
 equipment:
   facility: yard
   steps:
-  - { module: assembly-shop, does: "The parts are fitted together and the assembly tried." }
+  - { module: module.assembly-shop, does: "The parts are fitted together and the assembly tried." }

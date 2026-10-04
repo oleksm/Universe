@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../../../schema/population.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {key: population.driumum.lanaike-family, name: Lanaike family, kind: family, anchor: Lanaike}
-rocks: {class: c-type carbonaceous, count: 195, extent: 58.29}
+identity: {key: population.driumum.lanaike-family, name: Lanaike family, kind: family, anchor: body.driumum.lanaike}
+rocks: {class: rock-class.carbonaceous, count: 195, extent: 58.29}

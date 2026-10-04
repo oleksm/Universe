@@ -2,7 +2,7 @@
 key: settlement.treistun.port-weisonum
 name: "Port Weisonum"
 kind: settlement
-at: Treistun h II
+at: body.treistun.treistun-h-ii
 position: { latitude: 34.206, longitude: 125.66 }
 about: "The port on Treistun h II, a moon of the ice giant h, at 34° north. Gravity 0.22 g, no air, and about 106 K. It is 3.4 AU from the star."
 story:

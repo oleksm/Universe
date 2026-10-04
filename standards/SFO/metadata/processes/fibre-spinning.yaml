@@ -12,7 +12,7 @@ inputs:
   form: fluid
 outputs:
   products:
-  - item: aramid-fibre
+  - item: material.aramid-fibre
     form: fibre
 rate:
   mode: continuous

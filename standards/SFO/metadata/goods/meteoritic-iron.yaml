@@ -5,7 +5,7 @@ identity:
   kind: raw
   description: "Grains of iron-nickel metal pulled out of crushed stony ore with a magnet. Already metal: it needs melting, not reducing."
 source:
-  won_from: stony-ore
+  won_from: good.stony-ore
   yield: 0.139
   note: "Crushed and passed over a magnet. A laboratory separation of an H chondrite recovered 13.9% of the rock as clean metal, of the 18.5% that is there."
 basis:

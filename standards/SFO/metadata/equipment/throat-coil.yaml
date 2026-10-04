@@ -2,7 +2,7 @@
 identity:
   key: equipment.throat-coil
   name: "Halcyon throat coil"
-  maker: brand.halcyon
+  maker: org.halcyon
   slot: gate
   description: "What holds the tube. One stands in each segment of a ring; together, round the whole ring, they hold its tube open, and all the power that takes goes through them."
 physical:

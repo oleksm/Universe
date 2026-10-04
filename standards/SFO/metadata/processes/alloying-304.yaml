@@ -7,21 +7,21 @@ identity:
   description: Iron melted with chromium and nickel into stainless steel.
 inputs:
   materials:
-  - item: Fe
+  - item: element.fe
     amount: 0.68
-  - item: Cr
+  - item: element.cr
     amount: 0.19
-  - item: Ni
+  - item: element.ni
     amount: 0.095
-  - item: Mn
+  - item: element.mn
     amount: 0.02
-  - item: Si
+  - item: element.si
     amount: 0.01
-  - item: C
+  - item: element.c
     amount: 0.0008
 outputs:
   products:
-  - item: stainless-steel-304
+  - item: material.stainless-steel-304
     form: ingot
 rate:
   mode: batch

@@ -7,12 +7,12 @@ identity:
   description: Rod pulled through smaller and smaller dies into wire.
 inputs:
   materials:
-  - item: copper
+  - item: material.copper
     amount: 1.0
   form: rod
 outputs:
   products:
-  - item: copper
+  - item: material.copper
     form: wire
 rate:
   mode: continuous

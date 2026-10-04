@@ -2,30 +2,30 @@
 key: facility.treistun.port-trethi.trethi-mill
 name: Trethi Mill
 kind: mill
-parcel: 1
+parcel: parcel.treistun.port-trethi.1
 processes:
-  - rolling
-  - bar-rolling-4340
-  - tube-making-4340
-  - forging-4340
+  - process.rolling
+  - process.bar-rolling-4340
+  - process.tube-making-4340
+  - process.forging-4340
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: rolling
+  - process: process.rolling
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: hot-rolling-mill, count: 1 }
-      - { module: cold-rolling-mill, count: 1 }
-      - { module: finishing-line, count: 1 }
-  - process: bar-rolling-4340
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.hot-rolling-mill, count: 1 }
+      - { module: module.cold-rolling-mill, count: 1 }
+      - { module: module.finishing-line, count: 1 }
+  - process: process.bar-rolling-4340
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: bar-mill, count: 1 }
-  - process: tube-making-4340
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.bar-mill, count: 1 }
+  - process: process.tube-making-4340
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: piercing-mill, count: 1 }
-  - process: forging-4340
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.piercing-mill, count: 1 }
+  - process: process.forging-4340
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: forging-press, count: 1 }
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.forging-press, count: 1 }

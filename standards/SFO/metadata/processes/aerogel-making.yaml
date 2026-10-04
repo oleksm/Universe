@@ -7,14 +7,14 @@ identity:
   description: A silica gel dried without collapsing, leaving a solid that is mostly air.
 inputs:
   materials:
-  - item: Si
+  - item: element.si
     amount: 0.467
-  - item: O
+  - item: element.o
     amount: 0.533
   form: gel
 outputs:
   products:
-  - item: silica-aerogel
+  - item: material.silica-aerogel
     form: foam
 rate:
   mode: batch

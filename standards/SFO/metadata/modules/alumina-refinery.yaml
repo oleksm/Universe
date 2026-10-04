@@ -10,14 +10,14 @@ size:
   height: 40
 rate:
   throughput: 100
-  product: alumina
+  product: good.alumina
 inputs:
   materials:
-  - { item: bauxite, amount: 2.13 }
-  - { item: caustic-soda, amount: 0.1 }
+  - { item: good.bauxite, amount: 2.13 }
+  - { item: good.caustic-soda, amount: 0.1 }
 outputs:
   by_products:
-  - { item: red-mud, amount: 1.23 }
+  - { item: good.red-mud, amount: 1.23 }
 needs:
   power: 333
 basis:

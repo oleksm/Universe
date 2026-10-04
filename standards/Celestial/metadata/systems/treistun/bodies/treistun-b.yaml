@@ -5,7 +5,7 @@ identity:
   key: body.treistun.treistun-b
   name: Treistun b
   kind: rocky planet
-  parent: Treistun
+  parent: body.treistun.treistun
   about: 'The innermost planet, 0.13 AU from the star. Rocky, 6,194 km in radius, with a surface gravity of 0.96 g and no
     air. It is hot: about 560 K on average. Its day lasts 32 hours. One moon.'
   story: ['Nobody settled b for comfort. Port Zaudalein is there because someone decided the ground was worth the heat, and

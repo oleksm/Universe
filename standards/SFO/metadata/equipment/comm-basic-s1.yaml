@@ -2,7 +2,7 @@
 identity:
   key: equipment.comm.basic.s1
   name: "Comm"
-  maker: brand.orbital
+  maker: org.orbital
   slot: comm
   description: "The ship's radio."
 physical:

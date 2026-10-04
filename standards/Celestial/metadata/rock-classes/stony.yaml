@@ -22,7 +22,7 @@ found:
   falls: 0.8
 mining:
   cut_energy: 60000
-  yields: stony-ore
+  yields: good.stony-ore
 basis:
   - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
   - { of: [found.warm, found.frost_line, found.cold], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "A guess, to be reviewed, made to follow what is known: stony asteroids are commoner within 2.5 AU of the Sun; about 17% of all. The shares themselves are chosen." }

@@ -7,13 +7,13 @@ identity:
   description: Molybdenum and sulphur reacted into molybdenum disulphide powder.
 inputs:
   materials:
-  - item: Mo
+  - item: element.mo
     amount: 0.599
-  - item: S
+  - item: element.s
     amount: 0.401
 outputs:
   products:
-  - item: molybdenum-disulphide
+  - item: material.molybdenum-disulphide
     form: powder
 equipment:
   facility: foundry

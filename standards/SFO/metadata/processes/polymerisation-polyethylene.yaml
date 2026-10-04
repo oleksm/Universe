@@ -7,11 +7,11 @@ identity:
   description: Carbon and hydrogen (as ethylene) joined into long polyethylene chains.
 inputs:
   materials:
-  - item: C
-  - item: H
+  - item: element.c
+  - item: element.h
 outputs:
   products:
-  - item: polyethylene-uhmw
+  - item: material.polyethylene-uhmw
     form: powder
 equipment:
   facility: foundry

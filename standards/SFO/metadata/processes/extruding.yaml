@@ -7,12 +7,12 @@ identity:
   description: A billet pushed through a die to make bar, tube and frame sections.
 inputs:
   materials:
-  - item: aluminium-alloy-6061
+  - item: material.aluminium-alloy-6061
     amount: 1.0
   form: billet
 outputs:
   products:
-  - item: aluminium-alloy-6061
+  - item: material.aluminium-alloy-6061
     form: bar
 rate:
   mode: batch

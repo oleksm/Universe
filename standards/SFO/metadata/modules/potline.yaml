@@ -10,15 +10,15 @@ size:
   height: 15
 rate:
   throughput: 37
-  product: liquid-aluminium
+  product: good.liquid-aluminium
 inputs:
   materials:
-  - { item: alumina, amount: 1.93 }
-  - { item: carbon-anode, amount: 0.45 }
-  - { item: O, amount: 0.14 }
+  - { item: good.alumina, amount: 1.93 }
+  - { item: good.carbon-anode, amount: 0.45 }
+  - { item: element.o, amount: 0.14 }
 outputs:
   by_products:
-  - { item: carbon-dioxide, amount: 1.52 }
+  - { item: good.carbon-dioxide, amount: 1.52 }
 needs:
   power: 536
 basis:

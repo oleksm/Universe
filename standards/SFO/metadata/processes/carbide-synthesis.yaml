@@ -7,13 +7,13 @@ identity:
   description: Silicon and carbon reacted at high heat into silicon carbide powder.
 inputs:
   materials:
-  - item: Si
+  - item: element.si
     amount: 0.7
-  - item: C
+  - item: element.c
     amount: 0.3
 outputs:
   products:
-  - item: silicon-carbide
+  - item: material.silicon-carbide
     form: powder
 rate:
   mode: batch

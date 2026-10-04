@@ -17,10 +17,10 @@ physical:
 shape:
   surface_area: 211.1
 made_from:
-  item: AL6061-PL-5
+  item: stock.al6061-pl-5
   quantity: 242.8
 making:
-  processes: [plate-work]
+  processes: [process.plate-work]
 fit:
   count: 1
 basis:

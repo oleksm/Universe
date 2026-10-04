@@ -2,7 +2,7 @@
 identity:
   key: equipment.rack.s4
   name: "Cargo Racks 150 T"
-  maker: brand.hadley
+  maker: org.hadley
   slot: cargo
   description: "Racks that hold cargo in the hold."
 physical:

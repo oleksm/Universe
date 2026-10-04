@@ -5,9 +5,9 @@ identity:
   name: Molybdenum disulphide
   class: ceramic
   composition:
-  - part: Mo
+  - part: element.mo
     share: 0.599
-  - part: S
+  - part: element.s
     share: 0.401
   form:
   - powder

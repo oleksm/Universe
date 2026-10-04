@@ -12,7 +12,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-      maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
+      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key in Maker House." }
       class: { type: integer, description: "Its class: a higher one spans further." }
       description: { type: string }
   size:
@@ -40,16 +40,16 @@ properties:
       additionalProperties: false
       required: [item, count]
       properties:
-        item: { type: string, description: "The equipment (SFO 16), by file name." }
+        item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by file name." }
         count: { type: integer, minimum: 1 }
   power:
     type: object
     additionalProperties: false
     properties:
-      station: { type: string, description: "The industrial module (SFO 10) that powers it. How many it takes to hold its tube is worked out." }
+      station: { type: string, x-ref: [module], description: "The industrial module (SFO 10) that powers it. How many it takes to hold its tube is worked out." }
   making:
     type: object
     additionalProperties: false
     properties:
-      process: { type: string, description: "The process that assembles it where it is to stand, by file name." }
+      process: { type: string, x-ref: [process], description: "The process that assembles it where it is to stand, by file name." }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

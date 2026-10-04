@@ -7,12 +7,12 @@ identity:
   description: Hot metal pressed or hammered into a rough shape, aligning its grain for strength.
 inputs:
   materials:
-  - item: titanium-alloy-ti-6al-4v
+  - item: material.titanium-alloy-ti-6al-4v
     amount: 1.0
   form: billet
 outputs:
   products:
-  - item: titanium-alloy-ti-6al-4v
+  - item: material.titanium-alloy-ti-6al-4v
     form: forging
 rate:
   mode: batch

@@ -2,7 +2,7 @@
 identity:
   key: equipment.computer.fbw.s1
   name: "Flight computer"
-  maker: brand.orbital
+  maker: org.orbital
   slot: computer
   description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
 physical:

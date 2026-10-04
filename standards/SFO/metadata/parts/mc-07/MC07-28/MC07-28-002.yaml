@@ -17,10 +17,10 @@ physical:
 shape:
   surface_area: 11.2
 made_from:
-  item: ST4340-TB-200X15
+  item: stock.st4340-tb-200x15
   quantity: 2.28
 making:
-  processes: [machining]
+  processes: [process.machining]
 fit:
   count: 1
 basis:

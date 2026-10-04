@@ -2,7 +2,7 @@
 identity:
   key: equipment.hyperdrive.s3
   name: "Hyperdrive S3"
-  maker: brand.kestrel
+  maker: org.kestrel
   slot: hyperdrive
   description: "The drive that crosses between stars."
 physical:

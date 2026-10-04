@@ -49,7 +49,7 @@ properties:
     additionalProperties: false
     properties:
       cut_energy: { type: number, description: "J to break a kg loose from a solid piece (a rubble pile scoops up at 2,000)" }
-      yields: { type: string, description: "The rock it yields when dug (SFO 11, Goods), by file name." }
-      rich_yields: { type: string, description: "What it yields instead where it is rich enough." }
+      yields: { type: string, x-ref: [good], description: "The rock it yields when dug (SFO 11, Goods), by file name." }
+      rich_yields: { type: string, x-ref: [good], description: "What it yields instead where it is rich enough." }
       rich_above: { type: number, description: "parts per million of platinum-group metals above which it yields that" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

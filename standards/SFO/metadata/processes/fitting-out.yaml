@@ -10,4 +10,4 @@ rate:
 equipment:
   facility: yard
   steps:
-  - { module: building-dock, does: "Each piece of equipment is lifted into its slot, fixed and connected; the ship is powered up and tried." }
+  - { module: module.building-dock, does: "Each piece of equipment is lifted into its slot, fixed and connected; the ship is powered up and tried." }

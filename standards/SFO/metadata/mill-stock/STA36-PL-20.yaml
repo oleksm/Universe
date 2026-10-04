@@ -4,14 +4,14 @@ identity:
   code: STA36-PL-20
   name: "A36 plate 20 mm"
 made_from:
-  material: structural-steel-a36
+  material: material.structural-steel-a36
   form: plate
 size:
   thickness: 20
 physical:
   shock_limit: 80
 making:
-  process: plate-rolling-a36
+  process: process.plate-rolling-a36
 basis:
   - { of: [size], tier: invented, review: true, note: "A guess, to be reviewed: one gauge of structural plate standing for all that plant is built of." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

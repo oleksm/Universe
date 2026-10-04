@@ -2,7 +2,7 @@
 identity:
   key: equipment.gun.mass-driver.s1
   name: "Mass Driver"
-  maker: brand.garrick
+  maker: org.garrick
   slot: hardpoint
   description: "A weapon."
 physical:

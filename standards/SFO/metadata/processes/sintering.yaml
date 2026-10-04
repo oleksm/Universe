@@ -7,12 +7,12 @@ identity:
   description: Powder pressed and heated until its grains bond into a dense solid, without melting.
 inputs:
   materials:
-  - item: silicon-carbide
+  - item: material.silicon-carbide
     amount: 1.0
   form: powder
 outputs:
   products:
-  - item: silicon-carbide
+  - item: material.silicon-carbide
     form: plate
 rate:
   mode: batch

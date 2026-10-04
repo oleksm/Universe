@@ -2,7 +2,7 @@
 identity:
   key: equipment.transponder.s1
   name: "Transponder"
-  maker: brand.orbital
+  maker: org.orbital
   slot: transponder
   description: "Says who the ship is."
 physical:

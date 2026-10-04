@@ -10,13 +10,13 @@ size:
   height: 10
 rate:
   throughput: 60
-  product: sheet-and-plate
+  product: good.sheet-and-plate
 inputs:
   materials:
-  - { item: cold-rolled-strip, amount: 1.05 }
+  - { item: good.cold-rolled-strip, amount: 1.05 }
 outputs:
   by_products:
-  - { item: scrap, amount: 0.05 }
+  - { item: good.scrap, amount: 0.05 }
 needs:
   power: 2
 basis:

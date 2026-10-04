@@ -2,7 +2,7 @@
 identity:
   key: equipment.tank.s0
   name: "Fuel tank 4 t"
-  maker: brand.hadley
+  maker: org.hadley
   slot: tank
   description: "A fuel tank."
 physical:
@@ -10,6 +10,6 @@ physical:
   volume: 40
 performance:
   capacity: 4000
-  holds: deuterium
+  holds: good.deuterium
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

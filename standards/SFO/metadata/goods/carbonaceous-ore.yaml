@@ -13,9 +13,9 @@ game:
   goods: goods.ores
   ore: ore.carbonaceous
 composition:
-  - { part: water, share: 0.19 }
-  - { part: Fe, share: 0.19 }
-  - { part: C, share: 0.04 }
+  - { part: good.water, share: 0.19 }
+  - { part: element.fe, share: 0.19 }
+  - { part: element.c, share: 0.04 }
 basis:
   - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }
   - { of: [composition], tier: sourced, source: "https://en.wikipedia.org/wiki/CI_chondrite", note: "CI chondrites: water 18 to 20%, carbon 3 to 5%, iron 18 to 20%." }

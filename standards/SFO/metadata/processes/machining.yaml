@@ -10,4 +10,4 @@ rate:
 equipment:
   facility: yard
   steps:
-  - { module: machining-centre, does: "The stock is turned and milled to size." }
+  - { module: module.machining-centre, does: "The stock is turned and milled to size." }

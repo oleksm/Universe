@@ -7,11 +7,11 @@ identity:
   description: A thin layer of one material laid onto stock of another.
 inputs:
   materials:
-  - item: gold
+  - item: material.gold
     amount: 1.0
 outputs:
   products:
-  - item: gold
+  - item: material.gold
     form: film
 rate:
   mode: batch
