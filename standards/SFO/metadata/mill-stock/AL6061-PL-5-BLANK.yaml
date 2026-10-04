@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Cut to each panel's outline on the cutting table, not yet formed. Kept in the works' store until the panel former takes it.
+identity:
+  key: stock.al6061-pl-5-blank
+  code: AL6061-PL-5-BLANK
+  name: "6061 plate 5 mm, cut blanks"
+  form: blank
+made_from:
+  - item: material.aluminium-alloy-6061
+size:
+  thickness: 0.005
+basis:
+  - { of: [size], tier: derived, note: "The gauge of the stock it is cut from." }

@@ -26,7 +26,7 @@ definitions:
     type: object
     additionalProperties: false
     properties:
-      module: { type: string, x-ref: [module], description: "The industrial module that makes it, by its key. This is a recipe of that module's: what goes in is what the thing is made from, and what is cut away comes out as scrap of its material. The module is taken to do its own preparation (cutting, forming)." }
+      module: { type: string, x-ref: [module], description: "The industrial module that makes it, by its key. This is a recipe of that module's: what goes in is what the thing is made from, as the works has prepared it (a plate part's stock cut on the cutting table and formed on the panel former, each step's output lying in the works' store until the next takes it), and what is cut away comes out as scrap of its material." }
       fitting_out: { type: string, x-ref: [module], description: "The module that fits it with its equipment, by its key." }
       facility: { type: string, description: The kind of facility that makes it. }
       time: { type: number, x-unit: "s", description: "s to make one" }

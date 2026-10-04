@@ -61,3 +61,6 @@
 - **Power at every port.** Each of the nine ports has a fusion power station and a line to its
   warehouse; Port Trethi's warehouse has a line too. The power report now counts what a yard or a
   store draws standing by.
+- **Plate work is three steps again.** The cutting table cuts stock into blanks, the panel former
+  forms them, the welding bay makes the part. Blanks and panels are stock, kept in the yard's
+  store between steps.

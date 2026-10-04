@@ -1741,6 +1741,7 @@ for hl in built_hulls + structures:
             ("a facility is built to make it", any(q in lined for q in (ms or {}).get("routes") or [])),
             ("the ingot that stock is made from can be made", any(q["slug"] in lined for q in ingot_makers((ms or {}).get("made_from", {}).get("material")))),
             ("says how it is made from its stock", bool(how(pt)) and all(q in mod_of for q in how(pt))),
+        ] + ([("a yard is built to cut and form that stock", any(q in lined for q in stock_of[ms["slug"] + "-PANEL"].get("routes") or []))] if ms and ms["slug"] + "-PANEL" in stock_of and "welding-bay" in how(pt) else []) + [
             ("a yard is built to make it", bool(how(pt)) and all(shop_lines(q) for q in how(pt))),
         ]
         reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
@@ -2165,7 +2166,7 @@ for m in materials:
         by = makes.get((m["slug"], form), [])
         # (Or it comes out of a recipe beside what the recipe makes: scrap.)
         aside = [md for ms_ in mill_stock if (ms_.get("made_from") or {}).get("material") == m["slug"] and (ms_.get("made_from") or {}).get("form") == form
-                 for md in modules if any(x.get("item") == ms_["slug"] for rc in md.get("recipes") or [] for x in rc.get("outputs") or [])]
+                 for md in modules if any(rc.get("product") == ms_["slug"] or any(x.get("item") == ms_["slug"] for x in rc.get("outputs") or []) for rc in md.get("recipes") or [])]
         rows.append(row("ok" if by or aside else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, link(by_process[by[0]]["identity"]["name"], "proc:" + by[0]) if by else link("comes out of the " + aside[0]["identity"]["name"].lower(), "mod:" + aside[0]["slug"]) if aside else "no process makes it"))
 report("stock", "Materials: is every form made by a process", "Each material in each form it is said to come in, and the process that makes it in that form.", ["Material", "Form", "Made by"], rows)
 

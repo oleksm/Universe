@@ -116,6 +116,11 @@ to, and flows live in one place, the module's recipes.
   gives the room (`capacity.holds`, `capacity.volume`) and, as a measure, how long each works'
   room lasts flat out with nothing taken away.
 
+- **Between modules, through the store** (the user, later the same day, correcting step 3): what a
+  module makes goes to the works' storing module, and the next module takes it from there. So a
+  step's output is stock, with a record, lying in the yard between steps. The cutting table and
+  the panel former are steps again.
+
 ## Done so far
 
 **Step 1 (2026-10-04): every module's own figures are its first recipe.** `module.recipes[]`:
@@ -163,8 +168,8 @@ kept in it".
   parts: the welding bay; machined parts: the machining centre; assemblies: the assembly shop; the
   hull: the building dock, which also fits it out). That is a recipe of that module's: what goes in
   is the part's own `made_from`, what is cut away comes out as scrap of its material. The module is
-  taken to do its own preparation, so the cutting table and the panel former have no recipe now
-  (they are kept as plant a yard has, and draw nothing).
+  taken to do its own preparation. (Undone in step 5 for plate work: cutting and forming are steps
+  of their own again.)
 - *The shop modules' own recipe* is by weight: `makes: good.parts` (or `good.hulls`), a rate and a
   power, no inputs. It says how fast, not what.
 - *Scrap is a stock item of each metal:* `stock.al6061-scrap`, `stock.st4340-scrap`,
@@ -199,6 +204,16 @@ store), which it left out.
 
 How long each works' room lasts flat out, nothing taken away: the mill 12 days, the orbital works
 26, the smelter 46, the foundry 66, the yard 482.
+
+**Step 5 (2026-10-04): plate work in three steps again, through the store.** The cutting table
+has a recipe for each stock it cuts (stock in, cut blanks out, scrap of that metal), the panel
+former one for each (blanks in, formed panels out), and the welding bay makes the part from the
+panels of its stock. Six stock items more: cut blanks and formed panels of 6061 sheet 2 mm, 6061
+plate 5 mm and A36 plate 20 mm (forms `blank` and `panel`). The yard has a line that makes
+panels (cutting table, panel former) and a line that makes parts (two welding bays); the panels
+lie in its stock yard between. It takes in sheet again (2.3 t/h) and draws 2.05 MW. The cutting
+table's sourced figures are back on its recipes. A plate part's chain has a step more: a yard is
+built to cut and form its stock.
 
 ## Next
 

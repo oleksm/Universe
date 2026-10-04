@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Cut and bent to its curve, ready to be welded into a part. Kept in the works' store until the welding bay takes it.
+identity:
+  key: stock.sta36-pl-20-panel
+  code: STA36-PL-20-PANEL
+  name: "A36 plate 20 mm, formed panels"
+  form: panel
+made_from:
+  - item: material.structural-steel-a36
+size:
+  thickness: 0.02
+basis:
+  - { of: [size], tier: derived, note: "The gauge of the stock it is cut from." }

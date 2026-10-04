@@ -395,8 +395,8 @@
                 (module: "loading-dock", centre: (-115.0, -690.0), length: 100.0, width: 30.0, height: 10.0, heading: 90.0),
             ]),
             (name: "Trethi Yard", kind: "yard", parcel: 4,
-                makes: [("Parts", 2.0), ("Parts", 1.0), ("Parts", 1.0), ("Hulls", 0.32)], draws: 1.72, supplies: 0.0, holds: 50000.0,
-                takes: [("Parts", "", 1.0), ("Parts", "", 0.32)], gives: [("Parts", "", 2.0), ("Parts", "", 1.0), ("Parts", "", 1.0), ("Hulls", "", 0.32)], burns: [],
+                makes: [("6061 sheet 2 mm, formed panels", 2.0), ("Parts", 2.0), ("Parts", 1.0), ("Parts", 1.0), ("Hulls", 0.32)], draws: 2.047, supplies: 0.0, holds: 50000.0,
+                takes: [("6061 sheet 2 mm", "", 2.3), ("Parts", "", 1.0), ("Parts", "", 0.32)], gives: [("6061 sheet 2 mm, formed panels", "", 2.0), ("Parts", "", 2.0), ("Parts", "", 1.0), ("Parts", "", 1.0), ("Hulls", "", 0.32), ("6061 scrap", "", 0.3)], burns: [],
                 modules: [("cutting-table", 1), ("panel-former", 1), ("welding-bay", 2), ("machining-centre", 2), ("assembly-shop", 1), ("building-dock", 1), ("stock-yard", 1)],
                 blocks: [
                 (module: "cutting-table", centre: (1490.0, 222.5), length: 40.0, width: 15.0, height: 5.0, heading: 0.0),

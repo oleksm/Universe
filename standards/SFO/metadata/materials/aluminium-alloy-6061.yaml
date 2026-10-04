@@ -25,6 +25,8 @@ identity:
   - bar
   - tube
   - scrap
+  - blank
+  - panel
   grade: T6
 mass:
   density: 2700.0
