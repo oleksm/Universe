@@ -34,7 +34,7 @@ pub const JUMP: f64 = 3.0;
 /// How close to something you have to be to use it (m).
 pub const REACH: f64 = 1.6;
 /// What the boots hold you to a floor with, aboard in flight (m/s²: as a world's gravity).
-const BOOTS: f64 = 9.81;
+const BOOTS: f64 = crate::units::STANDARD_GRAVITY;
 /// Climbing a ladder (m/s).
 pub const CLIMB: f64 = 1.0;
 

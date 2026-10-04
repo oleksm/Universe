@@ -85,7 +85,7 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
             let r = position.length();
             let g = b.rail.mu / (r * r);
             lines.push((format!("ON FOOT - {} SURFACE", b.name.to_uppercase()), HUD));
-            lines.push((format!("GRAVITY {g:.2} M/S2 ({:.2} G)", g / 9.81), DIM));
+            lines.push((format!("GRAVITY {g:.2} M/S2 ({:.2} G)", g / universe_sim::units::STANDARD_GRAVITY), DIM));
             let ship_at = app.view.ship_pos;
             let me = app.view.positions[body] + b.rotation(app.now()) * position;
             // The ground's (or the air's) temperature here.

@@ -9,4 +9,4 @@ glam.workspace = true
 
 [build-dependencies]
 serde = { version = "1", features = ["derive"] }
-ron = "0.12"
+serde_norway = "0.9"

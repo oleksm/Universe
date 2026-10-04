@@ -5,10 +5,11 @@
 //! a near world's glow and reflection).
 
 use glam::DVec3;
-use crate::sheet::SOLAR_LUMINOSITY;
+use universe_physics::laws::SOLAR_LUMINOSITY;
 use universe_physics::laws::STEFAN_BOLTZMANN as SIGMA;
 
-use crate::sheet::{ALBEDO_CRATERED, ALBEDO_DRY, ALBEDO_GIANT, ALBEDO_TERRAN, GREENHOUSE, LAPSE_RATE, NIGHT_FLOOR, SWING_DAMPING};
+use crate::sheet::{GREENHOUSE, NIGHT_FLOOR, SWING_DAMPING};
+use universe_physics::laws::{ALBEDO_CRATERED, ALBEDO_DRY, ALBEDO_GIANT, ALBEDO_TERRAN, LAPSE_RATE};
 use crate::system::{BodyKind, StarSystem};
 use crate::terrain::TerrainKind;
 

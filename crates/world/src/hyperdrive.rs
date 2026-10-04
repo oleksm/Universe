@@ -23,7 +23,7 @@ use crate::galaxy::Galaxy;
 use crate::ship::{HyperdriveCommand, Ship};
 use crate::system::{BodyKind, StarSystem};
 use crate::units::SUN_RADIUS;
-// (Its constants are the physics sheet's: config/dogma.ron.)
+// (Its constants are the physics sheet's: the Dogma registry, standards/Dogma.)
 pub use crate::sheet::GROUND_MARGIN;
 use universe_physics::hyper::field_cost;
 

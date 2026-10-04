@@ -14,10 +14,10 @@ The one place to look a name up. Keep it current when a name is added or changed
 
 | Name | What it is | Where |
 |---|---|---|
-| **Dogma** | The core engine: the laws every world runs on (nature's constants, mechanics, orbits, contact, the hyper layer). Settled in the game; changed only by deliberate review. | `crates/physics` (`universe-physics`), its laws `config/dogma.ron` (`universe_physics::laws`, `universe_physics::hyper`) |
+| **Dogma** | The core engine: the laws every world runs on (nature's constants, mechanics, orbits, contact, the hyper layer). Settled in the game; changed only by deliberate review. | `crates/physics` (`universe-physics`), its laws the Dogma registry (`standards/Dogma`) (`universe_physics::laws`, `universe_physics::hyper`) |
 | **The world** | What's built on Dogma: a seeded instance, its initial conditions (matter, makers, products, structures, production, economy). Anyone in it can build anything Dogma allows. | `content/base/` (the base world), the world crates |
 | **The charter** | What's real, simplified and invented, and the rules of the invented. | `docs/physics.md` |
-| **The sheets** | Every constant with its unit, kind and reason: Dogma's laws, and the world's fixed numbers. | `config/dogma.ron`, `content/base/sheet.ron`; report `docs/physics-sheet.md` |
+| **The sheets** | Every constant with its unit, kind and reason: Dogma's laws, and the world's fixed numbers. | the Dogma registry (`standards/Dogma`), `content/base/sheet.ron`; report `docs/physics-sheet.md` |
 | **The dogma checks** | Tests of the charter's promises against the sheets. | `crates/world/tests/dogma.rs` |
 | **The charted region** | The cube of space play happens in: 200 ly a side, stars at real density (neighbours 4-6 ly), made from the seed. The galaxy beyond is a backdrop for now. | `universe_world::galaxy`, `docs/world/galaxy.md` |
 | **Kinds of constant** | Real, Grounded, Simplified, Invented, Tuning, Planned. | the sheets |

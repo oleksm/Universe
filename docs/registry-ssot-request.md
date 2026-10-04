@@ -482,3 +482,26 @@ Moving stock inside a facility instantly, at no energy, is coarse-first; label i
 **Suggested order for the registry:** items 1–3 of "Still to do" and problems 2–3 first. These are
 what the game's loader needs before it can read records directly. Then the product base and
 equipment, then the rest.
+
+## Landed on main
+
+**Dogma (95059b2).** The engine makes its laws from `standards/Dogma/metadata` at build time:
+- The section records and their law folders.
+- Each law as a constant under its `identity.label`, valued as the record holds it, in SI.
+
+`config/dogma.ron` is deleted. `universe_world::units` re-exports Dogma's measures. The world
+sheet's real entries (SOLAR_LUMINOSITY, AIR_CP, LAPSE_RATE, the four albedos) are gone from
+`sheet.ron`. STANDARD_GRAVITY, EARTH_AIR_DENSITY, EARTH_SCALE_HEIGHT and AIR_TOP replace the bare
+numbers.
+
+What the registry can now drop:
+- `in_game` on every law, and the Dogma report: the engine has no copy left to hold the records to.
+  The report shows 31 gaps until it goes.
+- The `as: per light year` / `as: times the speed of light` conversions: the engine works in the
+  records' SI.
+
+Needed from the registry for the loader:
+- **The section record's `order` and the law's `label` are what the engine keys on:** keep labels
+  stable.
+- **A law's `note` is optional, but the engine documents each constant with it:** please give every
+  law one.
