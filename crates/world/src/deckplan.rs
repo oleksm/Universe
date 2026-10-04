@@ -475,6 +475,32 @@ impl Ground {
                 }
             }
         }
+        // (No two cells touching only at a corner: two edges would leave one point
+        // and the loops cross. Of the pair, the one with fewer neighbours goes.)
+        loop {
+            let mut changed = false;
+            let n = |f: &[bool], k: usize| [k - 1, k + 1, k - nx, k + nx].iter().filter(|&&m| f[m]).count();
+            for j in 1..nz - 2 {
+                for i in 1..nx - 2 {
+                    let (a, b, c, d) = (j * nx + i, j * nx + i + 1, (j + 1) * nx + i, (j + 1) * nx + i + 1);
+                    let pair = if fill[a] && fill[d] && !fill[b] && !fill[c] {
+                        Some((a, d))
+                    } else if fill[b] && fill[c] && !fill[a] && !fill[d] {
+                        Some((b, c))
+                    } else {
+                        None
+                    };
+                    if let Some((p, q)) = pair {
+                        let gone = if n(&fill, p) <= n(&fill, q) { p } else { q };
+                        fill[gone] = false;
+                        changed = true;
+                    }
+                }
+            }
+            if !changed {
+                break;
+            }
+        }
         // Its edges, each cell's sides facing out, wound round it; chained into loops.
         let mut next: std::collections::HashMap<(usize, usize), (usize, usize)> = std::collections::HashMap::new();
         let filled = |i: isize, j: isize| i >= 0 && j >= 0 && (i as usize) < nx && (j as usize) < nz && fill[j as usize * nx + i as usize];
@@ -501,7 +527,8 @@ impl Ground {
         let point = |c: (usize, usize)| DVec2::new(self.x0 + (c.0 as f64 - 1.0) * CELL, self.z0 + (c.1 as f64 - 1.0) * CELL);
         let mut best: Vec<DVec2> = Vec::new();
         let mut best_area = 0.0;
-        while let Some(&first) = next.keys().next() {
+        // (From the lowest corner left, so the same cells always give the same outline.)
+        while let Some(&first) = next.keys().min() {
             let mut lp = Vec::new();
             let mut c = first;
             while let Some(n) = next.remove(&c) {
@@ -514,7 +541,7 @@ impl Ground {
                 best = lp;
             }
         }
-        (best.len() >= 3).then(|| simplify(&best, CELL * 1.8))
+        (best.len() >= 3).then(|| simplify(&best, CELL * 1.5))
     }
 }
 
@@ -561,6 +588,19 @@ pub fn roofed(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64, head: f64, solid: 
     front(DVec3::Y).is_some_and(|d| d >= head) && front(-DVec3::Y).is_some()
 }
 
+/// Is a spot (x, `y`, z) inside the hull's material: its faces met from behind
+/// above and below?
+pub fn in_material(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64) -> bool {
+    let at = DVec3::new(p.x, y, p.y);
+    let reach = (mesh.hi - mesh.lo).length() + 1.0;
+    let behind = |dir: DVec3| mesh.ray_face(at, dir, reach).is_some_and(|(_, n)| n.dot(dir) > 0.0);
+    behind(DVec3::Y) && behind(-DVec3::Y)
+}
+
+/// How far a filled floor runs on into the hull's walls (cells of `CELL`, with
+/// one more for the margin kept off its edge).
+const INTO_WALL: usize = 2;
+
 /// How far a floor runs on from where the hull closes a person in, under its roof
 /// (m): out through a doorway to its threshold.
 pub const RUN_ON: f64 = 1.5;
@@ -584,13 +624,22 @@ pub fn fill(mesh: &crate::walk::WalkMesh, floor: f64) -> Vec<Vec<DVec2>> {
     // the feet and the slab's underside: a doorway starting above the deck, a
     // window, doesn't cut the floor.)
     let levels = [(floor + 1.0, 0.9, false), (floor + 0.1, 0.0, true), (floor - DECK + 0.05, 0.0, true)];
+    // (Each spot: 2 a person stands there (head room under the roof, closed in at
+    // the feet and the slab), 3 floor but too low to stand (closed in, no head
+    // room: by a sloping wall), 1 only under the roof (a doorway), 0 none.)
     let person = |c: DVec2| -> u8 {
-        if !levels.iter().all(|&(y, head, solid)| roofed(mesh, c, y, head, solid)) {
-            0
-        } else if levels[1..].iter().all(|&(y, head, solid)| enclosed(mesh, c, y, head, solid)) {
-            2
-        } else {
-            1
+        let (waist, feet, under) = (levels[0], levels[1], levels[2]);
+        if !roofed(mesh, c, feet.0, 0.0, true) || !roofed(mesh, c, under.0, 0.0, true) {
+            return 0;
+        }
+        // (In the hollow at the feet: its inner surface all round, not inside a wall.)
+        let closed = enclosed(mesh, c, feet.0, 0.0, false) && enclosed(mesh, c, under.0, 0.0, true);
+        let head = roofed(mesh, c, waist.0, waist.1, waist.2);
+        match (closed, head) {
+            (true, true) => 2,
+            (true, false) => 3,
+            (false, true) => 1,
+            _ => 0,
         }
     };
     let mut asked: std::collections::HashMap<(i64, i64), u8> = std::collections::HashMap::new();
@@ -605,42 +654,14 @@ pub fn fill(mesh: &crate::walk::WalkMesh, floor: f64) -> Vec<Vec<DVec2>> {
     let sides = deck_sides(mesh, floor);
     let Some(mut g) = Ground::where_(&sides, &[], |p| class(p) > 0) else { return Vec::new() };
     let classes: Vec<u8> = (0..g.nx * g.nz).map(|k| if g.open[k] { class(g.centre(k % g.nx, k / g.nx)) } else { 0 }).collect();
-    // Closed in, and on from there under the roof as far as `RUN_ON`.
-    {
-        let (nx, nz) = (g.nx, g.nz);
-        let mut far = vec![usize::MAX; nx * nz];
-        let mut todo = std::collections::VecDeque::new();
-        for (k, c) in classes.iter().enumerate() {
-            if *c == 2 && g.open[k] {
-                far[k] = 0;
-                todo.push_back(k);
-            }
-        }
-        let most = (RUN_ON / CELL).round() as usize;
-        while let Some(k) = todo.pop_front() {
-            if far[k] >= most {
-                continue;
-            }
-            let (i, j) = (k % nx, k / nx);
-            for (a, b) in [(i + 1, j), (i.wrapping_sub(1), j), (i, j + 1), (i, j.wrapping_sub(1))] {
-                if a < nx && b < nz && g.open[b * nx + a] && far[b * nx + a] == usize::MAX {
-                    far[b * nx + a] = far[k] + 1;
-                    todo.push_back(b * nx + a);
-                }
-            }
-        }
-        for (o, f) in g.open.iter_mut().zip(&far) {
-            *o &= *f != usize::MAX;
-        }
-    }
-    // Where a person fits: open all round within `BODY`.
+    // Where a person fits: where they stand, open all round within `BODY`.
     let (nx, nz) = (g.nx, g.nz);
     let reach = (BODY / CELL).round() as isize;
     let disc: Vec<(isize, isize)> = (-reach..=reach).flat_map(|i| (-reach..=reach).map(move |j| (i, j))).filter(|(i, j)| i * i + j * j <= reach * reach).collect();
-    let open = g.open.clone();
-    let at = |i: isize, j: isize| i >= 0 && j >= 0 && (i as usize) < nx && (j as usize) < nz && open[j as usize * nx + i as usize];
-    let fits: Vec<bool> = (0..nz).flat_map(|j| (0..nx).map(move |i| (i as isize, j as isize))).map(|(i, j)| disc.iter().all(|(di, dj)| at(i + di, j + dj))).collect();
+    let stand = |i: isize, j: isize| i >= 0 && j >= 0 && (i as usize) < nx && (j as usize) < nz && classes[j as usize * nx + i as usize] == 2;
+    let fits: Vec<bool> = (0..nz).flat_map(|j| (0..nx).map(move |i| (i as isize, j as isize))).map(|(i, j)| disc.iter().all(|(di, dj)| stand(i + di, j + dj))).collect();
     g.open = fits.clone();
+    let most = (RUN_ON / CELL).round() as usize;
     let mut done = vec![false; nx * nz];
     let mut out = Vec::new();
     for j in 0..nz {
@@ -650,23 +671,60 @@ pub fn fill(mesh: &crate::walk::WalkMesh, floor: f64) -> Vec<Vec<DVec2>> {
             }
             let mut part = vec![false; nx * nz];
             g.flood((i, j), &mut part);
-            for (d, p) in done.iter_mut().zip(&part) {
-                *d |= *p;
+            // The floor from there: on over all the hull closes in (standing room or
+            // not, to the walls), and under its roof only as far as `RUN_ON` (out
+            // through a doorway).
+            let mut floor_at = vec![usize::MAX; nx * nz];
+            let mut todo: std::collections::VecDeque<usize> = part.iter().enumerate().filter(|(_, p)| **p).map(|(k, _)| k).collect();
+            for &k in &todo {
+                floor_at[k] = 0;
             }
-            // Grown back by a body's width less two cells, as far as the open ground
-            // goes (20 cm shy of the hull: its outline, smoothed, can't reach
-            // through it).
-            let mut grown = part.clone();
-            for (k, _) in part.iter().enumerate().filter(|(_, p)| **p) {
-                let (pi, pj) = ((k % nx) as isize, (k / nx) as isize);
-                for (di, dj) in disc.iter().filter(|(i, j)| i * i + j * j <= (reach - 2) * (reach - 2)) {
-                    if at(pi + di, pj + dj) {
-                        grown[(pj + dj) as usize * nx + (pi + di) as usize] = true;
+            while let Some(k) = todo.pop_front() {
+                let (ci, cj) = (k % nx, k / nx);
+                for (a, b) in [(ci + 1, cj), (ci.wrapping_sub(1), cj), (ci, cj + 1), (ci, cj.wrapping_sub(1))] {
+                    if a >= nx || b >= nz {
+                        continue;
+                    }
+                    let n = b * nx + a;
+                    let d = match classes[n] {
+                        2 | 3 => 0,
+                        1 => floor_at[k] + 1,
+                        _ => continue,
+                    };
+                    if d <= most && floor_at[n] == usize::MAX {
+                        floor_at[n] = d;
+                        todo.push_back(n);
                     }
                 }
             }
-            if grown.iter().filter(|g| **g).count() as f64 * CELL * CELL >= 2.0
-                && let Some(poly) = g.outline(&grown, 0)
+            let mut region: Vec<bool> = floor_at.iter().map(|d| *d != usize::MAX).collect();
+            // On into the walls round it (their material over and under the slab's
+            // top), so it meets them with no slit; not through them (this doesn't
+            // spread further).
+            let mut wall = std::collections::HashMap::new();
+            for _ in 0..INTO_WALL + 1 {
+                let was = region.clone();
+                for k in 0..nx * nz {
+                    let (ci, cj) = (k % nx, k / nx);
+                    if was[k] || ci == 0 || cj == 0 || ci + 1 >= nx || cj + 1 >= nz || !(was[k - 1] || was[k + 1] || was[k - nx] || was[k + nx]) {
+                        continue;
+                    }
+                    let c = g.centre(ci, cj);
+                    if *wall.entry(k).or_insert_with(|| in_material(mesh, c, floor + 0.02) && in_material(mesh, c, floor - DECK + 0.02)) {
+                        region[k] = true;
+                    }
+                }
+            }
+            for (d, r) in done.iter_mut().zip(&region) {
+                *d |= *r;
+            }
+            // (A cell shy of its edge: its outline, smoothed, can't reach through the hull.)
+            let shy: Vec<bool> = (0..nx * nz).map(|k| {
+                let (ci, cj) = (k % nx, k / nx);
+                region[k] && ci > 0 && cj > 0 && ci + 1 < nx && cj + 1 < nz && region[k - 1] && region[k + 1] && region[k - nx] && region[k + nx]
+            }).collect();
+            if part.iter().filter(|p| **p).count() as f64 * CELL * CELL >= 2.0
+                && let Some(poly) = g.outline(&shy, 0)
             {
                 out.push(poly);
             }
@@ -885,8 +943,9 @@ mod tests {
         let filled = fill(&mesh, 1.0);
         assert_eq!(filled.len(), 1);
         let whole: f64 = floor_strips(&filled[0], &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
-        // (20 cm shy of the hull all round: 5.6 by 9.6, its corners rounded.)
-        assert!((whole - 53.2).abs() < 1.0, "{whole}");
+        // (Its walls have no thickness to run on into: a cell shy of them all round,
+        // 5.8 by 9.8.)
+        assert!((whole - 56.8).abs() < 1.0, "{whole}");
         assert!(fill(&mesh, -3.0).is_empty());
         // A strip too narrow for a person (0.4 m): no floor.
         let (lo, hi) = (DVec3::new(-0.2, 0.0, -5.0), DVec3::new(0.2, 4.0, 5.0));
