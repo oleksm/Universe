@@ -8,6 +8,12 @@
 //! the name. A few keys are fixed (F1 help, TAB watch, SPACE gun, the
 //! F-keys for the system's switches, the flight and walking keys), and a
 //! few actions are pinned to a key of their own (`PINNED`: X cancels).
+//!
+//! At run time keys go to one layer: the world (flying, on foot, watching)
+//! is the root, and a panel open over it (the map, the market, the economy,
+//! the news, the shipyard's studio...) takes every key while it's open —
+//! nothing under it sees them (`App::top_layer`). Panels open from the world
+//! and close back to it. Only the system's keys (the F-keys) work in any layer.
 
 use std::sync::OnceLock;
 

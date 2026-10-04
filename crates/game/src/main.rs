@@ -95,6 +95,23 @@ pub struct Message {
     pub ttl: f32,
 }
 
+/// Where keys go: the world (the root), or a panel open over it. Only the
+/// top one open takes them (see `App::top_layer`); the system's keys (the
+/// F-keys) work in any.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Layer {
+    World,
+    NavMap,
+    GalaxyMap,
+    Market,
+    Economy,
+    News,
+    Shipyard,
+    Graphics,
+    Standards,
+    Passengers,
+}
+
 pub struct App {
     /// The world engine (the client sends it commands), its latest view of
     /// the world, and the galaxy's charts.
@@ -544,16 +561,67 @@ impl App {
         }
     }
 
-    fn global_keys(&mut self, ctx: &mut Context) {
-        // (The shipyard's studio takes the keys while it's open: its tools are letters.)
+    /// The layer keys go to: the top one open. The world is the root; the
+    /// panels open over it (the galaxy map over the navigation map), each
+    /// from the layer under it, and close back to it.
+    fn top_layer(&self) -> Layer {
         if self.shipyard.is_some() {
+            Layer::Shipyard
+        } else if self.market.is_some() {
+            Layer::Market
+        } else if self.economy_panel.is_some() {
+            Layer::Economy
+        } else if self.news_panel {
+            Layer::News
+        } else if self.galaxy_map.is_some() {
+            Layer::GalaxyMap
+        } else if self.nav_map.is_some() {
+            Layer::NavMap
+        } else if self.graphics_panel {
+            Layer::Graphics
+        } else if self.standards.is_some() {
+            Layer::Standards
+        } else if self.passengers.is_some() {
+            Layer::Passengers
+        } else {
+            Layer::World
+        }
+    }
+
+    /// The world's own keys, with nothing open over it: what opens a panel,
+    /// TAB (watch or fly), the time warp.
+    fn world_keys(&mut self, ctx: &mut Context) {
+        let input = &ctx.input;
+        let seated_pilot = self.mode == Mode::Pilot && self.v.crew.seated();
+        if keys::pressed(input, keys::Act::Economy) {
+            self.economy_panel = Some(Default::default());
             return;
         }
-        let input = &ctx.input;
-        // (TAB turns a panel's pages while one's open.)
-        let panel = self.shipyard.is_some() || self.market.is_some() || self.economy_panel.is_some() || self.news_panel;
+        if input.pressed(KeyCode::F11) {
+            self.news_panel = true;
+            return;
+        }
+        if graphics::opens(ctx) {
+            self.graphics_panel = true;
+            return;
+        }
+        if keys::pressed(input, keys::Act::Map) {
+            self.nav_map = Some(navmap::NavMap::open(self));
+            sound::click(ctx, 900.0);
+            return;
+        }
+        if seated_pilot && keys::pressed(input, keys::Act::Market) {
+            self.market = Some(market::MarketView::open(self));
+            sound::click(ctx, 900.0);
+            return;
+        }
+        if seated_pilot && keys::pressed(input, keys::Act::Shipyard) {
+            self.shipyard = shipyard::open(self);
+            sound::click(ctx, 900.0);
+            return;
+        }
         // TAB: the ship (the chase camera) or watching.
-        if input.pressed(KeyCode::Tab) && !panel {
+        if input.pressed(KeyCode::Tab) {
             match self.mode {
                 Mode::Observer => {
                     self.mode = Mode::Pilot;
@@ -577,6 +645,13 @@ impl App {
             self.warp_index = self.warp_index.saturating_sub(1);
             sound::click(ctx, 600.0 + 150.0 * self.warp_index as f32);
         }
+    }
+
+    /// The system's keys, in any layer: the F-keys (help, labels, the debug
+    /// overlay and observing, the grid, saving and loading, pause, the
+    /// thrusters, sound, music, a screenshot).
+    fn system_keys(&mut self, ctx: &mut Context) {
+        let input = &ctx.input;
         if input.pressed(KeyCode::F6) {
             self.paused = !self.paused;
             sound::click(ctx, 400.0);
@@ -649,20 +724,6 @@ impl App {
         }
         if ctx.input.pressed(KeyCode::Escape) {
             ctx.grab_cursor(false);
-        }
-        // The standards registry takes the keys while open (docked: the station's copy).
-        if self.standards.is_some() {
-            if !standards::input(self, ctx) || !matches!(self.v.ship.state, ShipState::Landed { .. }) {
-                self.standards = None;
-            }
-            return Controls::default();
-        }
-        // The passengers panel takes the keys while open.
-        if self.passengers.is_some() {
-            if !passengers::input(self, ctx) {
-                self.passengers = None;
-            }
-            return Controls::default();
         }
         // On foot: walking, not flying (the ship flies on as last set).
         if !self.v.crew.seated() {
@@ -1147,50 +1208,9 @@ impl Game for App {
             self.launched = true;
             sound::launch(ctx);
         }
-        self.global_keys(ctx);
-        // The economy panel (5) takes the keyboard while open.
-        let economy_was_open = self.economy_panel.is_some();
-        if economy_was_open {
-            if !economy::input(self, ctx) {
-                self.economy_panel = None;
-            }
-        } else if self.nav_map.is_none() && self.galaxy_map.is_none() && self.market.is_none() && keys::pressed(&ctx.input, keys::Act::Economy) {
-            self.economy_panel = Some(Default::default());
-        }
-        // The graphics panel: at the side, the scene live behind it.
-        if self.graphics_panel {
-            self.graphics_panel = graphics::input(self, ctx);
-        } else if graphics::opens(ctx) {
-            self.graphics_panel = true;
-        }
-        // The news panel likewise.
-        if self.news_panel {
-            self.news_panel = newspanel::input(self, ctx);
-        } else if self.nav_map.is_none() && self.galaxy_map.is_none() && self.market.is_none() && self.economy_panel.is_none() && ctx.input.pressed(KeyCode::F11) {
-            self.news_panel = true;
-        }
-        // Where we are is explored.
-        self.explored.insert(self.v.ship_system);
-        // The galaxy map, then the navigation map, take the keyboard while open.
-        let galaxy_was_open = self.galaxy_map.is_some();
-        if galaxy_was_open && !galaxymap::input(self, ctx) {
-            self.galaxy_map = None;
-        }
-        let map_was_open = self.nav_map.is_some() || galaxy_was_open;
-        if self.nav_map.is_some() && !galaxy_was_open {
-            navmap::input(self, ctx);
-        } else if keys::pressed(&ctx.input, keys::Act::Map) {
-            self.nav_map = Some(navmap::NavMap::open(self));
-            sound::click(ctx, 900.0);
-        }
-        // So does the market (G, from the pilot's seat).
-        let market_was_open = self.market.is_some();
-        if market_was_open {
-            market::input(self, ctx);
-        } else if !map_was_open && self.nav_map.is_none() && self.mode == Mode::Pilot && self.v.crew.seated() && keys::pressed(&ctx.input, keys::Act::Market) {
-            self.market = Some(market::MarketView::open(self));
-            sound::click(ctx, 900.0);
-        }
+        // Keys go to the top layer only (see `Layer`): what's open over the world
+        // takes them, and nothing under it sees them; the system's keys work in any.
+        self.system_keys(ctx);
         // Our hull's inside as laid out, to the world engine when it changes (to walk in).
         let key = &self.ship.spec().key;
         let plan = self.deckplans.iter().find(|p| &p.hull == key).cloned().unwrap_or_else(|| universe_sim::world::deckplan::DeckPlan { hull: key.clone(), decks: Vec::new() });
@@ -1198,22 +1218,53 @@ impl Game for App {
             self.engine.send(Command::Layout(plan.clone()));
             self.layout_sent = Some(plan);
         }
-        // And the shipyard (docked at a station).
-        let yard_was_open = self.shipyard.is_some();
-        // (The shipyard is worked with the mouse: the cursor free.)
-        if yard_was_open && ctx.cursor_grabbed() {
-            ctx.grab_cursor(false);
-        }
-        if yard_was_open {
-            if !shipyard::input(self, ctx) {
-                self.shipyard = None;
+        // Where we are is explored.
+        self.explored.insert(self.v.ship_system);
+        let top = self.top_layer();
+        match top {
+            Layer::Shipyard => {
+                // (Worked with the mouse: the cursor free.)
+                if ctx.cursor_grabbed() {
+                    ctx.grab_cursor(false);
+                }
+                if !shipyard::input(self, ctx) {
+                    self.shipyard = None;
+                }
             }
-        } else if !map_was_open && self.nav_map.is_none() && !market_was_open && self.market.is_none() && self.mode == Mode::Pilot && self.v.crew.seated() && keys::pressed(&ctx.input, keys::Act::Shipyard) {
-            self.shipyard = shipyard::open(self);
-            sound::click(ctx, 900.0);
+            Layer::Market => {
+                market::input(self, ctx);
+            }
+            Layer::Economy => {
+                if !economy::input(self, ctx) {
+                    self.economy_panel = None;
+                }
+            }
+            Layer::News => self.news_panel = newspanel::input(self, ctx),
+            Layer::GalaxyMap => {
+                if !galaxymap::input(self, ctx) {
+                    self.galaxy_map = None;
+                }
+            }
+            Layer::NavMap => {
+                navmap::input(self, ctx);
+            }
+            Layer::Graphics => self.graphics_panel = graphics::input(self, ctx),
+            Layer::Standards => {
+                if !standards::input(self, ctx) || !matches!(self.v.ship.state, ShipState::Landed { .. }) {
+                    self.standards = None;
+                }
+            }
+            Layer::Passengers => {
+                if !passengers::input(self, ctx) {
+                    self.passengers = None;
+                }
+            }
+            Layer::World => self.world_keys(ctx),
         }
+        // The world flies (or watches) only with nothing over it, and not the
+        // frame a panel opened from it.
         let (controls, focus_changed) = match self.mode {
-            _ if map_was_open || self.nav_map.is_some() || self.galaxy_map.is_some() || market_was_open || self.market.is_some() || economy_was_open || self.economy_panel.is_some() || self.news_panel || yard_was_open || self.shipyard.is_some() => (Controls::default(), false),
+            _ if top != Layer::World || self.top_layer() != Layer::World => (Controls::default(), false),
             Mode::Pilot => (self.pilot_input(ctx), false),
             Mode::Observer => (Controls::default(), self.observer.input(ctx, &self.v, &self.charts)),
         };
