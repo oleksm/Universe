@@ -1256,10 +1256,16 @@ pub fn apply(app: &mut App, name: &str) {
             apply(app, "docked");
             mc07(app);
             let turn: Vec<f32> = std::env::var("UNIVERSE_TURN").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
-            app.shipyard = Some(match turn[..] {
+            let mut y = match turn[..] {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
                 _ => crate::shipyard::Shipyard::interior(app),
-            });
+            };
+            // (UNIVERSE_PLAN: a sample access plan drawn.)
+            if std::env::var_os("UNIVERSE_PLAN").is_some() {
+                let spec = app.ship.spec();
+                y.interior_mut().sample(&spec.key, spec.shape());
+            }
+            app.shipyard = Some(y);
         }
         "studio" => {
             // The shipyard's layout studio on our hull, with a deck laid out for a look

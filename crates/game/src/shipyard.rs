@@ -33,6 +33,11 @@ impl Shipyard {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::turned(yaw, pitch) }
     }
 
+    /// Its interior studio (dev scenarios).
+    pub fn interior_mut(&mut self) -> &mut crate::interior::Interior {
+        &mut self.interior
+    }
+
     /// The deck layout studio.
     pub fn laying_out(_app: &App) -> Self {
         Shipyard { page: Page::Layout, studio: Default::default(), interior: crate::interior::Interior::new() }
