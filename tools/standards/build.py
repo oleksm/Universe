@@ -676,6 +676,11 @@ for s in standards:
         for group, props in e.items():
             if group in ("slug", "basis"):
                 continue
+            if kind == "goods" and group == "composition":
+                for c in props or []:
+                    if c.get("part") not in {(x.get("identity") or {}).get("symbol") for x in elements} and not os.path.exists(os.path.join(folder, str(c.get("part")) + ".yaml")):
+                        problem(full, f"composition: '{c.get('part')}' is no element's symbol and no good's file name")
+                continue
             known = SCHEMAS[kind]["properties"].get(group)
             if known is None:
                 problem(full, f"unknown group '{group}'")
@@ -1367,7 +1372,7 @@ for gd in goods:
     if kind == "raw":
         rock = next((o for o in goods if o["slug"] == (gd.get("source") or {}).get("won_from")), None)
         used = [m for m in modules if any(x.get("item") == gd["slug"] for x in (m.get("inputs") or {}).get("materials") or [])]
-        rows.append(row("ok" if rock else "gap", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ("won from " + rock["identity"]["name"]) if rock else "no rock it is won from", ", ".join(m["identity"]["name"] for m in used) or "nothing uses it"))
+        rows.append(row("ok" if rock else "gap", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ("won from " + rock["identity"]["name"] + (f", {100 * gd['source']['yield']:.3g}% of it" if "yield" in gd["source"] else ", how much not said")) if rock else "no rock it is won from", ", ".join(m["identity"]["name"] for m in used) or "nothing uses it"))
         continue
     gap = (need_made and not made) or (need_used and not used)
     rows.append(row("gap" if gap else "ok", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ", ".join(m["identity"]["name"] for m in made) or ("comes from outside" if not need_made else "nothing makes it"), ", ".join(m["identity"]["name"] for m in used) or ("goes out" if not need_used else "nothing uses it")))

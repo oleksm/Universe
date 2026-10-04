@@ -11,5 +11,14 @@ source:
 game:
   goods: goods.ores
   ore: ore.stony
+composition:
+  - { part: O, share: 0.357 }
+  - { part: Fe, share: 0.275 }
+  - { part: Si, share: 0.169 }
+  - { part: Mg, share: 0.14 }
+  - { part: Ni, share: 0.017 }
+  - { part: Ca, share: 0.0125 }
+  - { part: Al, share: 0.0113 }
 basis:
   - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }
+  - { of: [composition], tier: sourced, source: "https://arxiv.org/pdf/1802.04699", note: "The average of H ordinary chondrites that fell. Of the 27.5% iron, 16.7 is metal grains with the nickel in them, 3.4 is in iron sulphide and 7.4 is bound in the silicates as oxide." }
