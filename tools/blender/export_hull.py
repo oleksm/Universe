@@ -283,10 +283,10 @@ if bake_size:
     # One UV layout across them all, islands packed together (the same texels a metre everywhere).
     bpy.ops.object.mode_set(mode="EDIT")
     bpy.ops.mesh.select_all(action="SELECT")
-    bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=0.0015, scale_to_bounds=False)
-    bpy.ops.uv.select_all(action="SELECT")
-    bpy.ops.uv.average_islands_scale()
-    bpy.ops.uv.pack_islands(margin=0.0015, rotate=True)
+    # (Smart projection packs every mesh's islands together itself, two texels apart, about half
+    # the map covered. Packed again after, a hull this detailed (tens of thousands of islands)
+    # came out as specks: the hull sampled the black between them and looked burned.)
+    bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=2.0 / bake_size, scale_to_bounds=False)
     bpy.ops.object.mode_set(mode="OBJECT")
     area = sum(p.area for o in targets for p in o.data.polygons) * 1.0
     print("  %.0f m2 of surface: about %.1f texels a metre" % (area, bake_size / max(area, 1.0) ** 0.5 * 0.8))
@@ -356,6 +356,21 @@ if bake_size:
         o.hide_render = True
     joined.hide_render = False
     print("  joined into one object to bake (%d faces)" % len(joined.data.polygons))
+
+    # (The materials' own grime from Ambient Occlusion nodes stays out of the colour: the
+    # occlusion map carries it, once. Baked in too, against all this detail every face came
+    # out nearly black, then darkened again by the map: burned, not painted.)
+    for m in mats:
+        for n in [n for n in m.node_tree.nodes if n.type == "AMBIENT_OCCLUSION"]:
+            for sock in n.outputs:
+                for l in list(sock.links):
+                    to = l.to_socket
+                    m.node_tree.links.remove(l)
+                    if hasattr(to, "default_value"):
+                        try:
+                            to.default_value = (1.0, 1.0, 1.0, 1.0) if sock.type == "RGBA" else 1.0
+                        except (TypeError, ValueError):
+                            pass
 
     bake("base", 8, type="DIFFUSE", pass_filter={"COLOR"})
     bake("rough", 4, type="ROUGHNESS")
