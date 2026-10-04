@@ -95,6 +95,11 @@ to, and flows live in one place, the module's recipes.
 - The process record is to go: what it holds moves to recipes. Those with no module yet stay parked
   until their machine is described.
 
+- **Inside one factory there is no transport.** A facility (or a rig) is one pool of stock: what a
+  module puts out is there for any other module of the same facility to take in. No links,
+  conveyors or routes between its modules, and its modules need no identities of their own for
+  this. Moving stock is a matter between facilities, and that is not designed yet.
+
 ## Done so far
 
 **Step 1 (2026-10-04): every module's own figures are its first recipe.** `module.recipes[]`:
