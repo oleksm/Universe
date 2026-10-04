@@ -383,3 +383,102 @@ All three change the charted world and are seeding, so they move with the seedin
 5b) rather than being patched in `belt.rs` and `system.rs` now. k2/Q marked to review is fine.
 
 **RON writers:** I'll say which writer can go each time a loader lands for a kind on `main`.
+
+## Audit of the registry at 8991bed (2026-10-04)
+
+The integration session checked the work merged at 8991bed against this request and the answers
+above. The build passes, 874 records fit their schemas, the game's 85 tests pass, and the RON files
+are byte-for-byte the same, so nothing changed in play.
+
+**Done well:**
+- One key on every record. The first segment is always a kind, keys are checked unique and
+  matching their file, and no key carries an old game prefix.
+- About 1,200 references by key, each marked `x-ref` with the kinds it takes, and checked.
+- SI throughout, with angles in `deg` the one exception. Every unit is declared as `x-unit`.
+- Organisation, one body schema (the star a body, small bodies bodies) and one population schema.
+- One physical group, one `made_from`/`making`, installation, seeding.
+- Dogma as 31 laws, with the build reading its constants from them.
+- A gate's distance worked out. The zero system positions fixed.
+- No price anywhere.
+
+**Still to do, as agreed:**
+1. **An old→new key table.** The mapping exists only as code in `build.py:50,73,1779` (`OLD_KEY`,
+   `old_name`, `game_key`), about ten families of rename. `docs/registry-integration.md:211` lists
+   three. The game needs it as data to rename. Also, `game.goods`, `game.ore` and `capacity.stores`
+   still hold old game keys (9 goods records, tank farm, general warehouse): make them refs, or drop
+   them.
+2. **Standard gravity** is `kind: real` under the key `law.standard-gravity`. The law schema needs a
+   way to mark a reference value.
+3. **`rock.structure`** is still free text ("rubble pile", "monolith") at
+   `Celestial/schema/body.schema.yaml:141`. It should be an enum.
+4. **The product base:**
+   - Maker and mass on modules (0 of 32 have either). Mass on gates.
+   - The MC-07's maker and frame mass.
+   - A part's `parent`/`built_of` (the parts tree is still only folders).
+   - `gate.built_of.parts` names a folder.
+   - Structures (platform, spaceport, outpost, orbital) are not yet records.
+5. **Equipment:**
+   - The `function` union (`performance` is still 19 optional fields).
+   - `slot` as a ref.
+   - The 17 records missing from `modules.ron`.
+   - Fuels as materials: there are none yet.
+6. **Stock and goods:** `good.parts` and `good.hulls` remain, and are what the shop modules make.
+   `good.hot-ingot-6061` sits beside `stock.al6061-ingot`.
+7. **Settlements and rigs:**
+   - Their schema is still named `body` (LocalAdministration), which clashes with the celestial
+     `body`.
+   - There is no orbit or position for stations and rigs.
+   - No structure ref, no population.
+8. **Population:** no `main belt` kind, no `of` ref, two optional extents.
+
+**Problems to fix:**
+1. **The build still runs on the old shapes.** `build.py:73-288` rewrites every record back to the
+   old keys, units and shapes before using it, and flattens a module's recipes and a `made_from`
+   to their first entries. "Byte-identical RON" proves the shims, not the new schema. Retire them
+   kind by kind; I'll say when each loader lands.
+2. **Fields that change meaning, which a typed loader can't hold:**
+   - A recipe has either `makes` or `supplies` (no `oneOf`).
+   - `amounts.quantity` is kg/kg or kg/s depending on the recipe.
+   - `made_from.quantity` is m² or m depending on the stock, with no `x-unit`.
+   - Composition takes `part` or `name`.
+   - Text-or-blocks `oneOf` in standard and organisation.
+
+   Proposal: a separate power recipe, and one meaning, with one unit, per field.
+3. **The kind→schema mapping is implied** (`stock` → mill-stock, `dogma` → section,
+   `settlement`/`rig` → LocalAdministration body), found only by path rules in `validate.py`. Let each
+   schema declare its kind (`x-kind`), and move the 153 top-level keys under `identity`.
+4. **Nearly everything is optional.** Hull, equipment, part and good require only `identity`, and
+   12 groups of the body schema require nothing. Require what every record of a kind must have,
+   or the engine carries `Option` everywhere and checks by hand.
+5. **105 invented values without `review`**, including all 32 modules (`welding-bay.yaml` says no
+   source was looked up), the MC-07's cabin pressure and minimum gauge, 49 parts, gate size and
+   capture speed.
+6. **Dogma units are free text** (no `x-unit`). `law.tube-mass` says kg where `TUBE_RHO·d³` makes
+   it kg/m³. `law.air-top` has no unit. The Dogma report's 4 gaps are engine literals with no
+   name (Earth's air density, scale height, air top, 9.81 where the law is 9.80665). They are mine
+   to fix on the engine side.
+7. **Shop recipes make goods from nothing** (`makes: good.parts`, no inputs), against "every recipe
+   balances".
+8. **Seeding scripts keep their own constants:** `celestial_seed.py:18` (Sun mass 1.98847e30 against
+   Dogma's 1.989e30) and `celestial_export.py:30`. Point them at Dogma.
+9. **The Equipment report's 40 gaps are written in:** `build.py` (~1795) always passes `row("gap",
+   ...)` for "Made of: not yet said". Every mass matches. Drop the forced gap.
+10. **Small slips:**
+    - LocalAdministration geometry (`outline`, `line`, `point`) has no `x-unit`.
+    - `seeding.galaxy.class_mix` is an open object.
+    - `docs/registry-recipes.md` opens "Nothing is migrated yet".
+    - The response's "Next" still waits on answers given.
+
+**The recipes proposal** (`docs/registry-recipes.md`) is sound against the rules: a setup is game
+state chosen by an owner, so the engine holds no intentions, and players and NPCs set up modules
+alike. Two notes:
+- A facility line's `makes` and the seeded setups are a world's starting state, not the module's
+  limits. The game will load them as ordinary setups an owner can change.
+- The rules for markets, full stores and "no transport inside a facility" are economy mechanics.
+  They belong to the game, with the doc as their spec.
+
+Moving stock inside a facility instantly, at no energy, is coarse-first; label it so.
+
+**Suggested order for the registry:** items 1–3 of "Still to do" and problems 2–3 first. These are
+what the game's loader needs before it can read records directly. Then the product base and
+equipment, then the rest.
