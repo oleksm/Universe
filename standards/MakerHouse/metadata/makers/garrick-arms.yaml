@@ -1,5 +1,6 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: company.garrick
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+key: org.garrick
+kind: company
 name: Garrick Arms
 ticker: GAR
 address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 7, section: C, unit: 10 }

@@ -98,6 +98,7 @@ def schema_of(rel):
     p = rel.split(os.sep)
     root, name = p[0], p[-1]
     S = lambda r, n: os.path.join(TREE, r, "schema", n + ".schema.yaml")
+    ORG = os.path.join(TREE, "organisation.schema.yaml")              # (companies, the standards body, administrations: one schema)
     if root == "Celestial":
         if len(p) == 3:
             return S(root, {"galaxy.yaml": "galaxy", "asteroids.yaml": "asteroids", "conditions.yaml": "conditions"}.get(name, ""))
@@ -108,18 +109,18 @@ def schema_of(rel):
         if p[2] == "systems":
             return S(root, "system" if len(p) == 4 else {"bodies": "body", "fields": "field", "small-bodies": "small-body", "regions": "region"}.get(p[4], ""))
     if root == "MakerHouse":
-        return S(root, "company") if p[2] == "makers" else None
+        return ORG if p[2] == "makers" else None
     if root == "LocalAdministration":
         if p[2] != "administrations":
             return None
         if len(p) == 4:
-            return S(root, "administration")
+            return ORG
         if len(p) == 5:
             return S(root, "body")
         return S(root, {"zones": "zone", "parcels": "parcel", "streets": "street", "power-lines": "power-line", "facilities": "facility"}.get(p[5], ""))
     if root == "SFO":
         if len(p) == 3:
-            return S(root, "body") if name == "SFO.yaml" else S(root, "standard")
+            return ORG if name == "SFO.yaml" else S(root, "standard")
         kind = p[2]
         return S(root, {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate", "parts": "part"}.get(kind, ""))
     return None
@@ -136,7 +137,7 @@ def key_of(rel, rec):
     low = stem.lower()
     if root == "SFO":
         if len(p) == 3:
-            return "standards-body." + low if stem == "SFO" else "standard.sfo." + str(int(stem.split("-")[0]))
+            return "org." + low if stem == "SFO" else "standard.sfo." + str(int(stem.split("-")[0]))
         kind = p[2]
         if kind == "elements":
             return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
@@ -144,7 +145,7 @@ def key_of(rel, rec):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
         return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "parts": "part."}[kind] + low
     if root == "MakerHouse":
-        return "company."
+        return "org."
     if root == "Celestial":
         if len(p) == 3:
             return "seeding." + low
@@ -155,7 +156,7 @@ def key_of(rel, rec):
         return {"bodies": "body.", "fields": "field.", "small-bodies": "small-body.", "regions": "region."}[p[4]] + p[3] + "." + low
     if root == "LocalAdministration":
         if len(p) == 4:
-            return "administration." + low
+            return "org." + low
         if len(p) == 5:
             return {"settlement": "settlement.", "rig": "rig."}.get(rec.get("kind"), "la-body.") + p[3] + "." + low
         kind = {"zones": "zone", "parcels": "parcel", "streets": "street", "power-lines": "power-line", "facilities": "facility"}[p[5]]

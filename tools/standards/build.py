@@ -47,7 +47,7 @@ def problem(where, what):
 # key written at a record's top is taken off as it is read and kept here; a company's and the
 # standards body's stand as the game still has them (brand.x, body.x).
 REGISTRY_KEY = {}
-OLD_KEY = {"company": "brand", "standards-body": "body"}
+OLD_KEY = {"company": "brand", "standards_body": "body"}        # (an organisation's old key, by its kind)
 
 
 def load(path):
@@ -60,8 +60,16 @@ def load(path):
     if isinstance(rec, dict) and isinstance(rec.get("key"), str) and "." in rec["key"]:
         kind, _, rest = rec["key"].partition(".")
         REGISTRY_KEY[os.path.abspath(path)] = rec["key"]
-        if kind in OLD_KEY:
-            rec["key"] = OLD_KEY[kind] + "." + rest.replace("-", "_")
+        if kind == "org":
+            # (One organisation schema; this build still reads a company, the standards body and an
+            # administration each in its old shape.)
+            org = rec.pop("kind", None)
+            if org in OLD_KEY:
+                rec["key"] = OLD_KEY[org] + "." + rest.replace("-", "_")
+            else:
+                del rec["key"]
+            if "form" in rec:
+                rec["kind"] = rec.pop("form")
         else:
             del rec["key"]
     return rec

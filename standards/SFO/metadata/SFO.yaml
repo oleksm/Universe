@@ -1,10 +1,11 @@
-# yaml-language-server: $schema=../schema/body.schema.yaml
-key: standards-body.sfo
+# yaml-language-server: $schema=../../organisation.schema.yaml
+key: org.sfo
+kind: standards_body
 name: Standards Foundry Office
 prefix: SFO
 seat: home
 address: { at: treistun/treistun-e-station, tower: Civic Tower, deck: 12, section: A, unit: 1 }
-kind: independent
+form: independent
 note: The standards everyone builds to, whoever they answer to. Open to all.
 purpose: The SFO exists so that what people make fits together, whoever made it and wherever it goes.
 details:

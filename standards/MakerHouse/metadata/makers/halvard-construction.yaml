@@ -1,5 +1,6 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: company.halvard
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+key: org.halvard
+kind: company
 name: Halvard Construction
 ticker: HVC
 address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 15, section: D, unit: 7 }
