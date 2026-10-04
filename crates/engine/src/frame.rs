@@ -163,6 +163,8 @@ pub(crate) struct PbrDraw {
     /// It casts shadows; how far it reaches from its origin (metres, scaled).
     pub casts: bool,
     pub reach: f32,
+    /// The part of it drawn (0: its body).
+    pub part: u8,
 }
 
 /// Per-draw data for the mesh shader: the model's rotation × scale (columns)
@@ -606,8 +608,13 @@ impl Frame {
     /// A textured, physically based model (glTF), lit as meshes are: the
     /// sun, its shadows, the reflecting planet's light.
     pub fn model_pbr(&mut self, model: &crate::pbr::PbrModel, t: &Transform) {
+        self.model_pbr_part(model, t, 0);
+    }
+
+    /// One part of such a model (see `PbrModel::load_gltf_parts`; 0: its body), placed by `t`.
+    pub fn model_pbr_part(&mut self, model: &crate::pbr::PbrModel, t: &Transform, part: u8) {
         let inst = self.instance(t, [1.0; 4], [1.0; 4], true);
-        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach: model.radius() * t.scale as f32 });
+        self.pbr.push(PbrDraw { model: model.clone(), instance: inst, casts: self.casts, reach: model.radius() * t.scale as f32, part });
     }
 
     /// Where a draw is (camera-relative), its tints, and the light on it here.

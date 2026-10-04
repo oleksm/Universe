@@ -40,6 +40,10 @@ const HATCH_C: Color = Color::hex(0xffc040);
 pub fn ramp(frame: &mut Frame, app: &App) {
     let Place::Outside { body, .. } = app.v.crew.place else { return };
     let ship = &app.ship;
+    // (A hull with its own ramp: that, swung down, is the way.)
+    if universe_sim::world::crew::walks_out(ship) {
+        return;
+    }
     let b = &app.view.system.bodies[body];
     let center = app.view.positions[body];
     let at = |p: DVec3| app.view.ship_pos + ship.orientation * p;

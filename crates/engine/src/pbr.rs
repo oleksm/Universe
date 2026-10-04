@@ -31,6 +31,9 @@ pub struct Primitive {
     pub vertices: Vec<PbrVertex>,
     pub indices: Vec<u32>,
     pub material: usize,
+    /// Which part of the model it belongs to (0: the body; a moving part,
+    /// drawn on its own transform: see `load_gltf_parts`).
+    pub part: u8,
 }
 
 #[repr(C)]
@@ -94,6 +97,12 @@ impl PbrModel {
     /// A model from a glTF file's bytes (`.glb`, or `.gltf` with its data
     /// embedded): every mesh in the default scene, placed by its node.
     pub fn load_gltf(bytes: &[u8]) -> Result<Self, String> {
+        Self::load_gltf_parts(bytes, &[])
+    }
+
+    /// `load_gltf`, with moving parts: a node whose name holds `parts[k]` (and
+    /// what hangs from it) is part `k + 1`, drawn on its own (`Frame::model_pbr_part`).
+    pub fn load_gltf_parts(bytes: &[u8], parts: &[&str]) -> Result<Self, String> {
         let (doc, buffers, images) = gltf::import_slice(bytes).map_err(|e| e.to_string())?;
         let mut data = PbrData { images: images.iter().map(to_rgba).collect(), ..Default::default() };
         let tex = |t: Option<gltf::texture::Texture>| t.map(|t| t.source().index());
@@ -119,7 +128,7 @@ impl PbrModel {
         let fallback = data.materials.len();
         let scene = doc.default_scene().or_else(|| doc.scenes().next()).ok_or("no scene")?;
         for node in scene.nodes() {
-            walk(&node, glam::Mat4::IDENTITY, &buffers, &mut data);
+            walk(&node, glam::Mat4::IDENTITY, &buffers, parts, 0, &mut data);
         }
         // (A primitive with no material: a plain grey one.)
         if data.primitives.iter().any(|p| p.material == usize::MAX) {
@@ -137,8 +146,9 @@ impl PbrModel {
     }
 }
 
-fn walk(node: &gltf::Node, parent: glam::Mat4, buffers: &[gltf::buffer::Data], data: &mut PbrData) {
+fn walk(node: &gltf::Node, parent: glam::Mat4, buffers: &[gltf::buffer::Data], parts: &[&str], part: u8, data: &mut PbrData) {
     let m = parent * glam::Mat4::from_cols_array_2d(&node.transform().matrix());
+    let part = node.name().and_then(|n| parts.iter().position(|p| n.contains(p))).map_or(part, |k| k as u8 + 1);
     let normal_m = glam::Mat3::from_mat4(m).inverse().transpose();
     // (Collision parts, `COL_*`, are the hull's shape for physics, not drawn.)
     let hidden = node.name().is_some_and(|n| n.starts_with("COL_"));
@@ -156,11 +166,11 @@ fn walk(node: &gltf::Node, parent: glam::Mat4, buffers: &[gltf::buffer::Data], d
                 None => tangents(&pos, &normals, &uvs, &indices),
             };
             let vertices = (0..n).map(|i| PbrVertex { pos: pos[i].to_array(), normal: normals[i].to_array(), tangent: tangents[i], uv: uvs[i].to_array() }).collect();
-            data.primitives.push(Primitive { vertices, indices, material: prim.material().index().unwrap_or(usize::MAX) });
+            data.primitives.push(Primitive { vertices, indices, material: prim.material().index().unwrap_or(usize::MAX), part });
         }
     }
     for child in node.children() {
-        walk(&child, m, buffers, data);
+        walk(&child, m, buffers, parts, part, data);
     }
 }
 
@@ -252,8 +262,8 @@ struct MaterialUniform {
 
 struct GpuModel {
     /// Each primitive: vertices, indices, index count, its material's bind group,
-    /// whether it's see-through.
-    primitives: Vec<(wgpu::Buffer, wgpu::Buffer, u32, usize, bool)>,
+    /// whether it's see-through, its part.
+    primitives: Vec<(wgpu::Buffer, wgpu::Buffer, u32, usize, bool, u8)>,
     materials: Vec<wgpu::BindGroup>,
     used: u64,
 }
@@ -269,9 +279,9 @@ pub(crate) struct PbrRenderer {
     models: HashMap<u64, GpuModel>,
     instances: wgpu::Buffer,
     capacity: u64,
-    /// This frame: (model, its instance's index), and those that cast.
-    draws: Vec<(u64, u32)>,
-    casters: Vec<(u64, u32)>,
+    /// This frame: (model, its instance's index, the part drawn), and those that cast.
+    draws: Vec<(u64, u32, u8)>,
+    casters: Vec<(u64, u32, u8)>,
     frames: u64,
 }
 
@@ -395,8 +405,8 @@ impl PbrRenderer {
         if !data.is_empty() {
             queue.write_buffer(&self.instances, 0, bytemuck::cast_slice(&data));
         }
-        self.draws = draws.iter().enumerate().map(|(i, d)| (d.model.id(), i as u32)).collect();
-        self.casters = draws.iter().enumerate().filter(|(_, d)| d.casts && Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).map(|(i, d)| (d.model.id(), i as u32)).collect();
+        self.draws = draws.iter().enumerate().map(|(i, d)| (d.model.id(), i as u32, d.part)).collect();
+        self.casters = draws.iter().enumerate().filter(|(_, d)| d.casts && Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).map(|(i, d)| (d.model.id(), i as u32, d.part)).collect();
     }
 
     fn gpu_model(&self, device: &wgpu::Device, queue: &wgpu::Queue, model: &PbrModel) -> GpuModel {
@@ -442,7 +452,7 @@ impl PbrRenderer {
             .map(|p| {
                 let v = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr vertices"), contents: bytemuck::cast_slice(&p.vertices), usage: wgpu::BufferUsages::VERTEX });
                 let i = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr indices"), contents: bytemuck::cast_slice(&p.indices), usage: wgpu::BufferUsages::INDEX });
-                (v, i, p.indices.len() as u32, p.material, data.materials[p.material].blend)
+                (v, i, p.indices.len() as u32, p.material, data.materials[p.material].blend, p.part)
             })
             .collect();
         GpuModel { primitives, materials, used: 0 }
@@ -457,10 +467,10 @@ impl PbrRenderer {
         // (What's solid first, then the see-through over it.)
         for (pipe, see_through) in [(&self.pipe, false), (&self.clear_pipe, true)] {
             pass.set_pipeline(pipe);
-            for &(id, k) in &self.draws {
+            for &(id, k, part) in &self.draws {
                 let Some(m) = self.models.get(&id) else { continue };
-                for (v, i, n, mat, blend) in &m.primitives {
-                    if *blend != see_through {
+                for (v, i, n, mat, blend, p) in &m.primitives {
+                    if *blend != see_through || *p != part {
                         continue;
                     }
                     pass.set_bind_group(2, &m.materials[*mat], &[]);
@@ -479,10 +489,10 @@ impl PbrRenderer {
         }
         pass.set_pipeline(&self.shadow_pipe);
         pass.set_vertex_buffer(1, self.instances.slice(..));
-        for &(id, k) in &self.casters {
+        for &(id, k, part) in &self.casters {
             let Some(m) = self.models.get(&id) else { continue };
             // (Glass lets the sun through.)
-            for (v, i, n, _, _) in m.primitives.iter().filter(|p| !p.4) {
+            for (v, i, n, _, _, _) in m.primitives.iter().filter(|p| !p.4 && p.5 == part) {
                 pass.set_vertex_buffer(0, v.slice(..));
                 pass.set_index_buffer(i.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..*n, 0, k..k + 1);

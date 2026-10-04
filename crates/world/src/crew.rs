@@ -157,9 +157,15 @@ pub fn beside_seat(ship: &Ship) -> Option<DVec3> {
     floor_under(ship, seat.at, 30.0)
 }
 
-/// Where you stand coming in by the hatch (ship frame): the floor at its top.
-pub fn inside_hatch(ship: &Ship) -> Option<DVec3> {
-    floor_under(ship, stair(ship).0 + DVec3::Y * 0.5, 3.0)
+/// Where you stand coming in by the hatch (ship frame): the floor at its
+/// top (a ramp's: a step down it, swung as far as `ramp`).
+pub fn inside_hatch(ship: &Ship, ramp: f64) -> Option<DVec3> {
+    let (top, foot) = stair(ship);
+    let out = DVec3::new(foot.x - top.x, 0.0, foot.z - top.z).normalize_or_zero();
+    let at = top + out * if walks_out(ship) { 0.8 } else { 0.0 } + DVec3::Y * 0.5;
+    let mut colliders = Vec::new();
+    ship_colliders(ship, DVec3::ZERO, DQuat::IDENTITY, ramp, &mut colliders);
+    crate::walk::ray(&colliders, at, DVec3::NEG_Y, 3.0).filter(|&(_, n)| n.y > crate::walk::SLOPE).map(|(d, _)| at - DVec3::Y * d)
 }
 
 /// Where `ship` is in `body`'s rotating frame (its centre, its turn).
@@ -176,15 +182,41 @@ fn ramp_foot(sys: &StarSystem, ship: &Ship, body: usize, t: f64, center: DVec3) 
     dir * sys.bodies[body].surface_radius(dir)
 }
 
+/// Does `ship` have a ramp to walk down (and up), rather than a hatch you use?
+pub fn walks_out(ship: &Ship) -> bool {
+    ship.spec().shape().ramp.is_some()
+}
+
 /// Is `p` (ship frame) within `ship`'s bounds?
 fn within(ship: &Ship, p: DVec3) -> bool {
     walk_mesh(ship).is_some_and(|m| p.cmpge(m.lo).all() && p.cmple(m.hi).all())
 }
 
-/// The ship as something to walk on and bump into, placed (`at`, `rot`):
-/// its own surfaces, or failing that its convex parts.
-pub fn ship_colliders(ship: &Ship, at: DVec3, rot: DQuat, out: &mut Vec<Collider<'static>>) {
+/// How far down `ship`'s ramp is swung (rad): landed where its hatch opens,
+/// till its end meets the ground (level with its feet); else shut.
+pub fn ramp_angle(sys: &StarSystem, ship: &Ship) -> f64 {
     let shape = ship.spec().shape();
+    match &shape.ramp {
+        Some(r) if hatch_body(sys, ship).is_ok() => {
+            let ground = shape.nodes(crate::shape::Role::Gear).map(|g| g.at.y).fold(f64::INFINITY, f64::min);
+            if !ground.is_finite() || r.length <= 0.0 {
+                return 0.0;
+            }
+            ((r.hinge.y - ground) / r.length).clamp(0.0, 1.0).asin()
+        }
+        _ => 0.0,
+    }
+}
+
+/// The ship as something to walk on and bump into, placed (`at`, `rot`),
+/// its ramp swung down by `ramp` (rad): its own surfaces, or failing that
+/// its convex parts.
+pub fn ship_colliders(ship: &Ship, at: DVec3, rot: DQuat, ramp: f64, out: &mut Vec<Collider<'static>>) {
+    let shape = ship.spec().shape();
+    if let Some(r) = &shape.ramp {
+        let turn = r.turn(ramp);
+        out.push(Collider::Mesh { mesh: &r.walk, at: at + rot * (r.hinge - turn * r.hinge), rot: rot * turn });
+    }
     match walk_mesh(ship) {
         Some(mesh) => out.push(Collider::Mesh { mesh, at, rot }),
         None => {
@@ -205,7 +237,7 @@ impl Person {
         let near = |feet: DVec3, spot: Option<DVec3>| spot.is_some_and(|s| DVec3::new(feet.x - s.x, 0.0, feet.z - s.z).length() < REACH && (feet.y - s.y).abs() < 1.0);
         match self.place {
             Place::Seat => None,
-            Place::Aboard { position, .. } => near(position, beside_seat(ship)).then_some(Reach::Seat).or_else(|| near(position, inside_hatch(ship)).then_some(Reach::Hatch)),
+            Place::Aboard { position, .. } => near(position, beside_seat(ship)).then_some(Reach::Seat).or_else(|| (!walks_out(ship) && near(position, inside_hatch(ship, 0.0))).then_some(Reach::Hatch)),
             Place::Outside { body, position, .. } => {
                 if hatch_body(sys, ship) == Ok(body) {
                     // In the ship: its seat, its hatch; outside it: the foot of its stair.
@@ -214,11 +246,13 @@ impl Person {
                     if near(local, beside_seat(ship)) {
                         return Some(Reach::Seat);
                     }
-                    if near(local, inside_hatch(ship)) {
-                        return Some(Reach::Hatch);
-                    }
-                    if position.distance(ramp_foot(sys, ship, body, t, positions[body])) < REACH * 2.0 {
-                        return Some(Reach::Ramp);
+                    if !walks_out(ship) {
+                        if near(local, inside_hatch(ship, ramp_angle(sys, ship))) {
+                            return Some(Reach::Hatch);
+                        }
+                        if position.distance(ramp_foot(sys, ship, body, t, positions[body])) < REACH * 2.0 {
+                            return Some(Reach::Ramp);
+                        }
                     }
                 }
                 // A spaceport's vending machine, in the middle of its pads.
@@ -317,7 +351,7 @@ impl Person {
                 let (fwd, right) = (DVec3::new(-s, 0.0, -co), DVec3::new(co, 0.0, -s));
                 let wish = (fwd * c.forward + right * c.right).clamp_length_max(1.0) * speed;
                 let mut colliders = Vec::new();
-                ship_colliders(ship, DVec3::ZERO, DQuat::IDENTITY, &mut colliders);
+                ship_colliders(ship, DVec3::ZERO, DQuat::IDENTITY, ramp_angle(sys, ship), &mut colliders);
                 let mut w = Walker { feet: *position, velocity: *velocity };
                 w.step(&colliders, &|_| DVec3::Y, BOOTS, &Stride { wish, jump }, dt);
                 *position = w.feet;
@@ -352,7 +386,7 @@ impl Person {
                 if hatch_body(sys, ship) == Ok(*body) {
                     let (at, rot) = placed(sys, ship, *body, t, positions[*body]);
                     let mut own = Vec::new();
-                    ship_colliders(ship, at, rot, &mut own);
+                    ship_colliders(ship, at, rot, ramp_angle(sys, ship), &mut own);
                     colliders.extend(own);
                 }
                 colliders.extend(around.iter().copied());
@@ -382,7 +416,7 @@ impl Person {
                         }
                         Some(Reach::Ramp) => {
                             // In by the hatch, facing into the ship, away from the stair.
-                            if let Some(feet) = inside_hatch(ship) {
+                            if let Some(feet) = inside_hatch(ship, ramp_angle(sys, ship)) {
                                 let (top, bottom) = stair(ship);
                                 let inward = DVec3::new(top.x - bottom.x, 0.0, top.z - bottom.z);
                                 self.stand(sys, ship, t, positions, feet, f64::atan2(-inward.x, -inward.z));

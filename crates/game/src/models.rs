@@ -39,7 +39,8 @@ impl Models {
     }
 }
 
-/// An imported hull's model (its glTF file), loaded once and kept.
+/// An imported hull's model (its glTF file), loaded once and kept; its
+/// `*Ramp*` meshes part 1 (drawn swung down: see `scene::hull`).
 pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
     use std::collections::HashMap;
     use std::sync::{Mutex, OnceLock};
@@ -48,7 +49,7 @@ pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
     loaded
         .entry(path.to_string())
         .or_insert_with(|| {
-            let r = std::fs::read(path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf(&b));
+            let r = std::fs::read(path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf_parts(&b, &["Ramp"]));
             r.map_err(|e| log::warn!("model {path}: {e}")).ok()
         })
         .clone()

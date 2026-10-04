@@ -29,6 +29,8 @@ struct Read {
     visual: Vec<DVec3>,
     /// Every other mesh's triangles: what's walked on and bumped into.
     tris: Vec<[DVec3; 3]>,
+    /// A `*Ramp*` mesh's triangles (and what hangs from it): a part that swings down.
+    ramp: Vec<[DVec3; 3]>,
     /// The named empties: (name, where, which way).
     nodes: Vec<(String, DVec3, DVec3)>,
 }
@@ -71,6 +73,7 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let c = shape.made_centre;
     let tris: Vec<[DVec3; 3]> = read.tris.iter().map(|t| t.map(|p| p - c)).collect();
     shape.walk = Some(std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)));
+    shape.ramp = ramp(&shape, read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
     let (lo, hi) = shape.mesh.extent();
     let size = hi - lo;
     let frame_mass = FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0);
@@ -87,6 +90,21 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     spec.shape_own = Some(shape);
     spec.visual = Some(visual.to_string());
     Ok(spec)
+}
+
+/// A ramp hinged at the hull's `hatch` (put at the ramp's top, where it meets
+/// the belly), swinging down about the level line across it, its far end
+/// (the side its middle is on) going down. None without both.
+fn ramp(shape: &crate::shape::Shape, tris: Vec<[DVec3; 3]>) -> Option<crate::shape::Ramp> {
+    let hinge = shape.node("hatch")?.at;
+    if tris.is_empty() {
+        return None;
+    }
+    let points: Vec<DVec3> = tris.iter().flatten().copied().collect();
+    let middle = points.iter().sum::<DVec3>() / points.len() as f64;
+    let out = DVec3::new(middle.x - hinge.x, 0.0, middle.z - hinge.z).try_normalize()?;
+    let length = points.iter().map(|p| (*p - hinge).dot(out)).fold(0.0, f64::max);
+    Some(crate::shape::Ramp { hinge, axis: DVec3::Y.cross(out).normalize(), length, walk: std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)) })
 }
 
 /// Imported: a hull among the others for good (the same file, the same hull).
@@ -109,18 +127,20 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         collision: Vec::new(),
         visual: Vec::new(),
         tris: Vec::new(),
+        ramp: Vec::new(),
         nodes: Vec::new(),
     };
     for node in scene.nodes() {
-        walk(&node, DMat4::IDENTITY, blob, &mut read);
+        walk(&node, DMat4::IDENTITY, blob, false, &mut read);
     }
     Ok(read)
 }
 
-fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, read: &mut Read) {
+fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read: &mut Read) {
     let m = parent * DMat4::from_cols_array_2d(&node.transform().matrix().map(|c| c.map(f64::from)));
     // (Blender numbers repeated names: "nozzle_main.001".)
     let name = node.name().unwrap_or("").split('.').next().unwrap_or("").to_string();
+    let ramp = ramp || name.contains("Ramp");
     if let Some(mesh) = node.mesh() {
         let mut points = Vec::new();
         let mut tris = Vec::new();
@@ -143,7 +163,7 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, read: &mut Read) 
             read.collision.push((name.clone(), points));
         } else {
             read.visual.extend(points);
-            read.tris.extend(tris);
+            if ramp { read.ramp.extend(tris) } else { read.tris.extend(tris) }
         }
     } else if name == "cockpit" || name == "hatch" || ["nozzle_", "mount_", "gear_", "dock_"].iter().any(|p| name.starts_with(p)) {
         // (Blender's +Y is glTF's −Z.)
@@ -151,6 +171,6 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, read: &mut Read) 
         read.nodes.push((name.clone(), m.transform_point3(DVec3::ZERO), dir));
     }
     for child in node.children() {
-        walk(&child, m, blob, read);
+        walk(&child, m, blob, ramp, read);
     }
 }

@@ -1138,9 +1138,9 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
         }
         "boarded" => {
-            // Just in through the hatch (as boarding leaves you: facing into the cabin).
+            // Just in through the hatch, facing into the ship.
             apply(app, "touchdown");
-            at_hatch(app, 0.0);
+            at_hatch(app, std::f64::consts::PI);
         }
         "vending" | "vendingopen" => {
             // Landed at the port, on foot by its vending machine, facing it
@@ -1165,7 +1165,10 @@ pub fn apply(app: &mut App, name: &str) {
             // Set down on open ground (no port), step out, walk off a way and face the ship.
             apply(app, "landed");
             at_hatch(app, 0.0);
-            app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+            // (A hatch to use, or a ramp to walk down.)
+            if !universe_sim::world::crew::walks_out(&app.engine.universe().ship) {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+            }
             for _ in 0..250 {
                 app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
             }
@@ -1173,11 +1176,31 @@ pub fn apply(app: &mut App, name: &str) {
             let u = app.engine.universe();
             log::info!("scenario rawland: ship {:?}, crew {:?}", u.ship.state, u.crew.place);
         }
+        "rampup" => {
+            // Out and down the ramp, then back up it into the ship (where you end up: logged).
+            apply(app, "outside");
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch: -0.15, ..Default::default() }, 0.02);
+            for _ in 0..500 {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
+            }
+            let u = app.engine.universe();
+            let sys = u.ship_system();
+            if let universe_sim::world::Place::Outside { body, position, .. } = u.crew.place {
+                let mut positions = Vec::new();
+                sys.positions(u.world.time, &mut positions);
+                let inv = sys.bodies[body].rotation(u.world.time).inverse();
+                let local = (inv * u.ship.orientation).inverse() * (position - inv * (u.ship.position - positions[body]));
+                log::info!("scenario rampup: feet in the ship's frame {local:.2?}");
+            }
+        }
         "outside" => {
             // Land on the pad, step out, turn round to look at the ship.
             apply(app, "touchdown");
             at_hatch(app, 0.0);
-            app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+            // (A hatch to use, or a ramp to walk down.)
+            if !universe_sim::world::crew::walks_out(&app.engine.universe().ship) {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+            }
             // Walk away from the ship a while, then face it.
             for _ in 0..300 {
                 app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
@@ -1384,14 +1407,17 @@ pub fn sound_test(ctx: &universe_engine::Context, t: f64, last_t: f64) -> bool {
     t < 11.0
 }
 
-/// The pilot just inside the ship's hatch, facing the ship's `yaw`.
+/// The pilot just inside the ship's hatch, facing out (down its ramp) and
+/// turned `yaw` from there.
 fn at_hatch(app: &mut App, yaw: f64) {
     let u = app.engine.universe();
     let sys = u.ship_system();
     let mut positions = Vec::new();
     sys.positions(u.world.time, &mut positions);
-    if let Some(feet) = universe_sim::world::crew::inside_hatch(&u.ship) {
+    if let Some(feet) = universe_sim::world::crew::inside_hatch(&u.ship, universe_sim::world::crew::ramp_angle(&sys, &u.ship)) {
         let ship = u.ship.clone();
-        u.crew.stand(&sys, &ship, u.world.time, &positions, feet, yaw);
+        let (top, foot) = universe_sim::world::crew::stair(&ship);
+        let out = foot - top;
+        u.crew.stand(&sys, &ship, u.world.time, &positions, feet, f64::atan2(-out.x, -out.z) + yaw);
     }
 }

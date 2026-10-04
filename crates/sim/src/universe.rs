@@ -628,7 +628,8 @@ impl Universe {
         for craft in self.crafts.iter().filter(|c| c.system == self.ship_system && matches!(c.ship.state, ShipState::Landed { body: cb, .. } if cb == body)) {
             let at = inv * (craft.ship.position - center);
             if at.distance(position) < 400.0 {
-                universe_world::crew::ship_colliders(&craft.ship, at, inv * craft.ship.orientation, &mut out);
+                let ramp = universe_world::crew::ramp_angle(sys, &craft.ship);
+                universe_world::crew::ship_colliders(&craft.ship, at, inv * craft.ship.orientation, ramp, &mut out);
             }
         }
         out

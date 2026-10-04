@@ -846,8 +846,15 @@ fn nav_lights(frame: &mut Frame, lights: [DVec3; 3], pos: DVec3, turned: DQuat, 
 fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: usize, t: &Transform) {
     if let Some(m) = ship.spec().visual.as_deref().and_then(crate::models::pbr) {
         // (Its hull is centred on its centre of mass; the model is in the frame it was made in.)
-        let shift = t.rotation.as_dquat() * -ship.spec().shape().made_centre;
-        frame.model_pbr(&m, &Transform { position: t.position + shift, ..*t });
+        let shape = ship.spec().shape();
+        let (rot, c) = (t.rotation.as_dquat(), shape.made_centre);
+        frame.model_pbr(&m, &Transform { position: t.position + rot * -c, ..*t });
+        // Its ramp (part 1), swung down about its hinge as far as it is.
+        if let Some(r) = &shape.ramp {
+            let turn = r.turn(universe_sim::world::crew::ramp_angle(&app.view.system, ship));
+            let position = t.position + rot * (r.hinge - turn * (r.hinge + c));
+            frame.model_pbr_part(&m, &Transform { position, rotation: (rot * turn).as_quat(), ..*t }, 1);
+        }
         return;
     }
     hull_model(frame, app.models.painted(ship, scheme), t);
