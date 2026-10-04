@@ -6,17 +6,7 @@ additionalProperties: false
 required: [name]
 properties:
   name: { type: string, description: The settled system's name. }
-  address:
-    description: 'Where its offices are (SFO 9). at: <system>/<body>, by their file names here; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
-    type: object
-    additionalProperties: false
-    required: [at]
-    properties:
-      at: { type: string }
-      tower: { type: string }
-      deck: { type: integer, minimum: 1 }
-      section: { type: string }
-      unit: { type: integer, minimum: 1 }
+  address: { $ref: "../../common.schema.yaml#/definitions/address" }
   about: { type: string, description: What it is. }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
   zoning:

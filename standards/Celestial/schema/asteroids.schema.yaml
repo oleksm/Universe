@@ -63,15 +63,4 @@ properties:
     properties:
       warm_to: { type: number, description: "the warm zone reaches this share of the frost line's distance" }
       frost_to: { type: number, description: "the frost-line zone from there to this share; the cold zone beyond" }
-  basis:
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [of, tier]
-      properties:
-        of: { type: array, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
-        source: { type: string }
-        note: { type: string }
-        review: { type: boolean }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

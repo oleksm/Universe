@@ -29,15 +29,4 @@ properties:
   means: { type: string, description: "What it means for us: material to be had, a hazard, a place to build." }
   game: { enum: [made, partly, not made], description: "Whether the game makes it yet." }
   game_note: { type: string }
-  basis:
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [of, tier]
-      properties:
-        of: { type: array, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
-        source: { type: string }
-        note: { type: string }
-        review: { type: boolean }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

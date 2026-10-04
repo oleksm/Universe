@@ -51,15 +51,4 @@ properties:
       yields: { type: string, description: "The rock it yields when dug (SFO 11, Goods), by file name." }
       rich_yields: { type: string, description: "What it yields instead where it is rich enough." }
       rich_above: { type: number, description: "parts per million of platinum-group metals above which it yields that" }
-  basis:
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [of, tier]
-      properties:
-        of: { type: array, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
-        source: { type: string }
-        note: { type: string }
-        review: { type: boolean }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

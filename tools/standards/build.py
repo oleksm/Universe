@@ -2210,6 +2210,18 @@ report("celestial", "Celestial: what is written out, and against Local Administr
 
 
 # ---------------------------------------------------------------- the page
+# ---------------------------------------------------------------- every record against its schema
+# Types, enums, required fields, patterns, and no field its schema does not name (see validate.py).
+# The game's loader is to be at least this strict.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import validate as _validate
+_misfits, _unheld = _validate.check_all()
+for _full, _what in _misfits:
+    problem(_full, "schema: " + _what)
+for _rel in _unheld:
+    problem(os.path.join(TREE, _rel), "no schema holds it")
+
+
 def write_html():
     data = {
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "address", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
