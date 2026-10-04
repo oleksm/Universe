@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
+name: Module socket
+order: 7
+count: 16
+does: "Where a slot takes its module."

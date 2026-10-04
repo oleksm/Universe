@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
+name: Mid hull section
+order: 2
+count: 1
+does: "The middle third of the hull, with the hold."

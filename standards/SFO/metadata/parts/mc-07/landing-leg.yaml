@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
+name: Landing leg
+order: 4
+count: 4
+does: "A leg that sets the hull down and holds it up."

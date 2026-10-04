@@ -1,0 +1,11 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Part category
+description: 'standards/SFO/metadata/parts/<hull>/<name>.yaml: one assembly of a hull, as a category its parts are filed under. The folder says which hull (a hull''s file name).'
+type: object
+additionalProperties: false
+required: [name, count]
+properties:
+  name: { type: string }
+  order: { type: integer, minimum: 1, description: Where it comes in its hull's list. }
+  count: { type: integer, minimum: 1, description: How many of it one hull has. }
+  does: { type: string }

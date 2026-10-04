@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
+name: Ramp
+order: 5
+count: 1
+does: "The hatch and the ramp that lowers from it."

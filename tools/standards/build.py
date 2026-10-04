@@ -575,6 +575,8 @@ for name in sorted(os.listdir(TREE)):
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
 KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull"}
+# (Parts are filed in folders of their own: read further down.)
+NESTED = {"parts"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
 elements, materials, processes, modules, goods, hulls = [], [], [], [], [], []
 for s in standards:
@@ -583,6 +585,8 @@ for s in standards:
     kind = str(s["records"])
     prefix = s["id"].split(" ")[0]
     folder = os.path.join(TREE, prefix, "metadata", kind)
+    if kind in NESTED:
+        continue
     if kind not in KINDS:
         problem(os.path.join(TREE, s["file"]), f"records: one of {', '.join(KINDS)}")
         continue
@@ -878,29 +882,36 @@ for ad in administrations:
             if plot is not None and order:
                 street = next((st for st in x.get("streets", []) if st.get("slug") == (plot.get("address") or {}).get("street")), None)
                 fc["layout"] = lay_out(where, plot, street, order)
-# A hull's parts: each of a material, in a form that material comes in; together they weigh what
-# its frame does. And for each, the process that makes that material in that form, if there is one.
-mat_of = {m.get("slug"): m for m in materials}
-makes = {}
-for pr in processes:
-    for o in (pr.get("outputs") or {}).get("products") or []:
-        if o.get("item") and o.get("form"):
-            makes.setdefault((o["item"], o["form"]), []).append(pr.get("slug"))
-for hl in hulls:
-    where = os.path.join(TREE, hl["file"])
-    total = 0.0
-    for asm in (hl.get("structure") or {}).get("assemblies") or []:
-        for pt in asm.get("parts") or []:
-            mat = mat_of.get(pt.get("item"))
-            if mat is None:
-                problem(where, f"{asm.get('name')}, {pt.get('name')}: no material '{pt.get('item')}'")
-            elif pt.get("form") not in ((mat.get("identity") or {}).get("form") or []):
-                problem(where, f"{asm.get('name')}, {pt.get('name')}: {pt.get('item')} doesn't come as {pt.get('form')}")
-            pt["made_by"] = makes.get((pt.get("item"), pt.get("form")), [])
-            total += pt.get("mass", 0)
-    frame = (hl.get("mass") or {}).get("frame")
-    if frame and abs(total - frame) > 0.005 * frame:
-        problem(where, f"its parts weigh {total:.3f} t and its frame {frame} t")
+# Parts: filed by hull, then by the assembly (category) they go into:
+# SFO/metadata/parts/<hull>/<category>.yaml.
+hull_of = {hl.get("slug"): hl for hl in hulls}
+categories = []
+for s in standards:
+    if str(s.get("records")) != "parts":
+        continue
+    root = os.path.join(TREE, s["id"].split(" ")[0], "metadata", "parts")
+    for hull in sorted(os.listdir(root)):
+        hdir = os.path.join(root, hull)
+        if not os.path.isdir(hdir):
+            problem(hdir, "parts are filed in a folder named after their hull")
+            continue
+        if hull not in hull_of:
+            problem(hdir, f"no hull '{hull}' in the SFO")
+        for fn in sorted(os.listdir(hdir)):
+            full = os.path.join(hdir, fn)
+            if not re.fullmatch(r"[a-z0-9-]+\.yaml", fn):
+                problem(full, "a category's file is named <name>.yaml (lower case, words joined by -)")
+                continue
+            c = load(full)
+            for k in ["name", "count"]:
+                if k not in c:
+                    problem(full, f"no {k}")
+            for k in c:
+                if k not in {"name", "order", "count", "does"}:
+                    problem(full, f"unknown field '{k}'")
+            c.update({"slug": fn[:-5], "hull": hull, "under": s["id"], "file": os.path.relpath(full, TREE)})
+            categories.append(c)
+categories.sort(key=lambda c: (c["hull"], c.get("order", 999), c.get("name", "")))
 for m in modules:
     for kind in (m.get("rate") or {}).get("stores") or []:
         if kind not in GOODS_KINDS:
@@ -1044,6 +1055,7 @@ def write_html():
         "modules": modules,
         "goods": goods,
         "hulls": hulls,
+        "categories": categories,
         "hull_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["hulls"]["properties"].items()},
         "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["goods"]["properties"].items()},
         "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["modules"]["properties"].items()},

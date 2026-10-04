@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/hull.schema.yaml
-# Its size and the mass of its frame are the game's (the MC-07 model, as imported). How that mass
-# is shared out among assemblies, parts and materials is invented; it adds up to the frame's mass.
+# Its size and the mass of its frame are the game's (the MC-07 model, as imported). What it is made
+# of: its assemblies, the categories in parts/mc-07/.
 identity:
   name: MC-07
   description: A mining ship's hull. The bare hull, with nothing fitted in its slots.
@@ -11,70 +11,3 @@ size:
   volume: 23181
 mass:
   frame: 87.803
-structure:
-  assemblies:
-  - name: Frame
-    does: The skeleton that carries every load.
-    parts:
-    - { name: Ring frames and longerons, item: titanium-alloy-ti-6al-4v, form: forging, mass: 14.0 }
-    - { name: Keel and hard points, item: high-strength-steel-4340, form: bar, mass: 9.0 }
-  - name: Skin
-    does: Holds the air in and closes the hull.
-    parts:
-    - { name: Hull skin, item: aluminium-alloy-6061, form: sheet, mass: 16.48 }
-    - { name: Floors and bulkheads, item: honeycomb-sandwich-panel, form: plate, mass: 8.0 }
-  - name: Heat protection
-    does: Takes the heat of entry and keeps the cold of space out.
-    parts:
-    - { name: Belly tiles, item: silica-tile-li-900, form: tile, mass: 6.0 }
-    - { name: Leading edges, item: silicon-carbide, form: plate, mass: 1.5 }
-    - { name: Blankets, item: multi-layer-insulation, form: film, mass: 0.8 }
-    - { name: Insulation fill, item: silica-aerogel, form: foam, mass: 0.5 }
-  - name: Shielding
-    does: Stops small impacts and radiation.
-    parts:
-    - { name: Impact layers, item: aramid-fibre, form: fabric, mass: 2.5 }
-    - { name: Radiation layer, item: polyethylene-uhmw, form: sheet, mass: 4.0 }
-    - { name: Cockpit shield, item: lead, form: sheet, mass: 0.5 }
-  - name: Doors, hatches and ramp
-    does: The ways in and out.
-    parts:
-    - { name: Door and ramp panels, item: aluminium-alloy-6061, form: plate, mass: 3.0 }
-    - { name: Hinges and latches, item: stainless-steel-304, form: bar, mass: 1.0 }
-    - { name: Seals, item: silicone-rubber, form: sheet, mass: 0.3 }
-    - { name: Bushings, item: bearing-bronze-c93200, form: bar, mass: 0.2 }
-  - name: Landing gear
-    does: Four legs that set it down and hold it up.
-    parts:
-    - { name: Legs, item: high-strength-steel-4340, form: forging, mass: 5.0 }
-    - { name: Fittings, item: titanium-alloy-ti-6al-4v, form: forging, mass: 1.5 }
-    - { name: Foot pads, item: structural-steel-a36, form: plate, mass: 1.0 }
-    - { name: Bearings, item: bearing-bronze-c93200, form: bar, mass: 0.2 }
-    - { name: Strut fluid, item: hydraulic-fluid, form: fluid, mass: 0.3 }
-  - name: Sockets and hardpoints
-    does: Where the sixteen slots take their modules.
-    parts:
-    - { name: Mounts, item: high-strength-steel-4340, form: bar, mass: 2.5 }
-    - { name: Socket plates, item: stainless-steel-304, form: plate, mass: 1.0 }
-  - name: Wiring
-    does: Carries power and signals to every slot.
-    parts:
-    - { name: Signal and feed wire, item: copper, form: wire, mass: 1.8 }
-    - { name: Power bus, item: aluminium-1350, form: wire, mass: 1.2 }
-    - { name: Wire wrap, item: polyimide-film, form: film, mass: 0.15 }
-    - { name: Sleeving, item: ptfe, form: film, mass: 0.15 }
-    - { name: Connector plating, item: gold, form: film, mass: 0.003 }
-  - name: Ducts and pipes
-    does: Moves air and fluids round the hull.
-    parts:
-    - { name: Air ducts, item: aluminium-alloy-6061, form: tube, mass: 1.2 }
-    - { name: Pipes, item: stainless-steel-304, form: tube, mass: 0.6 }
-  - name: Windows
-    does: The cockpit's view.
-    parts:
-    - { name: Panes, item: fused-silica, form: sheet, mass: 0.4 }
-  - name: Fairings
-    does: The light outer shapes that carry no load.
-    parts:
-    - { name: Fairing panels, item: carbon-fibre-composite, form: sheet, mass: 3.0 }
-    - { name: Dry lubricant, item: molybdenum-disulphide, form: powder, mass: 0.02 }
