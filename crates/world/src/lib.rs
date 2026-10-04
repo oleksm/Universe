@@ -52,6 +52,7 @@ mod testkit;
 pub mod traffic;
 pub mod trim;
 pub mod turrets;
+pub mod walk;
 pub mod units;
 pub mod weapons;
 mod world;

@@ -27,6 +27,8 @@ struct Read {
     collision: Vec<(String, Vec<DVec3>)>,
     /// Every other mesh's points (for the hull when there's no collision given).
     visual: Vec<DVec3>,
+    /// Every other mesh's triangles: what's walked on and bumped into.
+    tris: Vec<[DVec3; 3]>,
     /// The named empties: (name, where, which way).
     nodes: Vec<(String, DVec3, DVec3)>,
 }
@@ -64,7 +66,11 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     if !thrusters.iter().any(|t| t.1 == "drive") {
         return Err("no main drive nozzle (an empty named nozzle_main_*)".into());
     }
-    let shape = crate::shape::ShapeDef::made(format!("shape.{key}"), body, parts, Vec::new(), read.nodes).build()?;
+    let mut shape = crate::shape::ShapeDef::made(format!("shape.{key}"), body, parts, Vec::new(), read.nodes).build()?;
+    // (Its surfaces in its frame, centred as the shape is.)
+    let c = shape.made_centre;
+    let tris: Vec<[DVec3; 3]> = read.tris.iter().map(|t| t.map(|p| p - c)).collect();
+    shape.walk = Some(std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)));
     let (lo, hi) = shape.mesh.extent();
     let size = hi - lo;
     let frame_mass = FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0);
@@ -102,6 +108,7 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         class: extras.get("freefall_class").and_then(|v| v.as_u64().or_else(|| v.as_f64().map(|f| f as u64))).map(|c| c as u8),
         collision: Vec::new(),
         visual: Vec::new(),
+        tris: Vec::new(),
         nodes: Vec::new(),
     };
     for node in scene.nodes() {
@@ -116,19 +123,27 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, read: &mut Read) 
     let name = node.name().unwrap_or("").split('.').next().unwrap_or("").to_string();
     if let Some(mesh) = node.mesh() {
         let mut points = Vec::new();
+        let mut tris = Vec::new();
         for prim in mesh.primitives() {
             let r = prim.reader(|b| match b.source() {
                 gltf::buffer::Source::Bin => blob,
                 gltf::buffer::Source::Uri(_) => None,
             });
             if let Some(pos) = r.read_positions() {
+                let base = points.len();
                 points.extend(pos.map(|p| m.transform_point3(DVec3::new(p[0] as f64, p[1] as f64, p[2] as f64))));
+                let index: Vec<usize> = match r.read_indices() {
+                    Some(i) => i.into_u32().map(|i| base + i as usize).collect(),
+                    None => (base..points.len()).collect(),
+                };
+                tris.extend(index.as_chunks::<3>().0.iter().map(|t| [points[t[0]], points[t[1]], points[t[2]]]));
             }
         }
         if name.starts_with("COL_") {
             read.collision.push((name.clone(), points));
         } else {
             read.visual.extend(points);
+            read.tris.extend(tris);
         }
     } else if name == "cockpit" || name == "hatch" || ["nozzle_", "mount_", "gear_", "dock_"].iter().any(|p| name.starts_with(p)) {
         // (Blender's +Y is glTF's −Z.)

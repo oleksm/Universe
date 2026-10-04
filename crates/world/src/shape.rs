@@ -72,6 +72,9 @@ pub struct Shape {
     /// Where its centre of mass was in the frame it was made in (it's
     /// centred on it since): a model made in that frame is drawn shifted by −this.
     pub made_centre: DVec3,
+    /// A modelled hull's own surfaces, to walk on and bump into (its frame);
+    /// none for a shape made from points.
+    pub walk: Option<std::sync::Arc<crate::walk::WalkMesh>>,
 }
 
 impl Shape {
@@ -349,6 +352,6 @@ impl ShapeDef {
                 Part { centre, radius, probes }
             })
             .collect();
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c })
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c, walk: None })
     }
 }

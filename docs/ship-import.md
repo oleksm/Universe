@@ -10,13 +10,13 @@ renders as made (textured, physically based) and flies by its physics. Example a
 |---|---|
 | Nose along **+Y**, up **+Z**, metres | the ship's frame (the exporter turns it into ours) |
 | Meshes named `COL_…` | convex collision parts (`COL_body` first); hidden in the game. None: the whole model's convex hull |
-| Every other mesh | what's drawn (glTF metallic-roughness materials: base colour, metallic/roughness, normal map, emission) |
+| Every other mesh | what's drawn (glTF metallic-roughness materials: base colour, metallic/roughness, normal map, emission), and what's walked on and bumped into on foot: its carved spaces and floors as modelled (steps up to 0.45 m, floors to 50°) |
 | Empties named `nozzle_main_…` | the main drive's nozzles (driven by its drive slot) |
 | `nozzle_lift_…` | lift jets (the lift slot) |
 | any other `nozzle_…` | manoeuvring thrusters (the thrusters slot) |
 | `gear_…` | landing contacts: put them at the bottoms of the feet. Set down, the ship stands on the lowest one (its centre that high over the ground or deck) |
-| `dock_…`, `cockpit` | docking ports, the pilot's seat |
-| `hatch` | the crew hatch; its +Y arrow down the ramp. Landed, you walk out that way to the ground (pointing straight down: aft; none: the generic port-side ramp) |
+| `dock_…`, `cockpit` | docking ports, the pilot's seat (getting up, you stand on the floor under it) |
+| `hatch` | the crew hatch; its +Y arrow down the ramp. Landed, you walk out that way to the ground (pointing straight down: aft; none: from the port side, amidships); coming in, you stand on the floor at its top |
 | `mount_hardpoint_…`, `mount_cargo…`, `mount_utility…` | one slot each (guns, racks, utility); other `mount_<slot>` set where that module sits |
 | An empty's **+Y arrow** | a nozzle's exhaust; a port's way out; the pilot's view |
 | Scene properties `freefall_name`, `freefall_class` (1-4) | its name; its size class (how big its slots are) |

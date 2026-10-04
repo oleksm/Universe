@@ -1134,14 +1134,13 @@ pub fn apply(app: &mut App, name: &str) {
         "aboard" => {
             // Out of the seat, at the back of the cabin looking forward up the corridor.
             app.mode = Mode::Pilot;
-            use universe_sim::world::crew::DECK;
-            app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: DVec3::new(0.0, DECK, 8.5), yaw: 0.0, pitch: 0.05 };
+            app.engine.universe().crew.place = universe_sim::world::Place::Seat;
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
         }
         "boarded" => {
             // Just in through the hatch (as boarding leaves you: facing into the cabin).
             apply(app, "touchdown");
-            use universe_sim::world::crew::HATCH;
-            app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: HATCH, yaw: -std::f64::consts::FRAC_PI_2, pitch: 0.0 };
+            at_hatch(app, 0.0);
         }
         "vending" | "vendingopen" => {
             // Landed at the port, on foot by its vending machine, facing it
@@ -1165,8 +1164,7 @@ pub fn apply(app: &mut App, name: &str) {
         "rawland" => {
             // Set down on open ground (no port), step out, walk off a way and face the ship.
             apply(app, "landed");
-            use universe_sim::world::crew::HATCH;
-            app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: HATCH, yaw: 0.0, pitch: 0.0 };
+            at_hatch(app, 0.0);
             app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
             for _ in 0..250 {
                 app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
@@ -1178,8 +1176,7 @@ pub fn apply(app: &mut App, name: &str) {
         "outside" => {
             // Land on the pad, step out, turn round to look at the ship.
             apply(app, "touchdown");
-            use universe_sim::world::crew::HATCH;
-            app.engine.universe().crew.place = universe_sim::world::Place::Aboard { position: HATCH, yaw: 0.0, pitch: 0.0 };
+            at_hatch(app, 0.0);
             app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
             // Walk away from the ship a while, then face it.
             for _ in 0..300 {
@@ -1385,4 +1382,16 @@ pub fn sound_test(ctx: &universe_engine::Context, t: f64, last_t: f64) -> bool {
     a.set_engine(if (6.0..8.0).contains(&t) { 1.0 } else { 0.0 });
     a.set_drone(if (8.5..10.5).contains(&t) { 0.7 } else { 0.0 }, 150.0);
     t < 11.0
+}
+
+/// The pilot just inside the ship's hatch, facing the ship's `yaw`.
+fn at_hatch(app: &mut App, yaw: f64) {
+    let u = app.engine.universe();
+    let sys = u.ship_system();
+    let mut positions = Vec::new();
+    sys.positions(u.world.time, &mut positions);
+    if let Some(feet) = universe_sim::world::crew::inside_hatch(&u.ship) {
+        let ship = u.ship.clone();
+        u.crew.stand(&sys, &ship, u.world.time, &positions, feet, yaw);
+    }
 }

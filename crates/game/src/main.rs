@@ -1385,7 +1385,8 @@ pub fn ship_visible(app: &App) -> bool {
     let view = match app.v.crew.place {
         _ if app.mode == Mode::Observer => true,
         universe_sim::world::Place::Seat => app.chase_cam,
-        universe_sim::world::Place::Aboard { .. } => false, // the interior instead
+        // (Standing in it: in its own modelled spaces.)
+        universe_sim::world::Place::Aboard { .. } => true,
         universe_sim::world::Place::Outside { .. } => true,
     };
     !matches!(app.v.ship.state, ShipState::Destroyed { .. } | ShipState::Transit { .. }) && view

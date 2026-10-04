@@ -83,9 +83,6 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if !(app.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
         universe_prof::time("draw/scene/ship", || ship(frame, app));
     }
-    if matches!(app.v.crew.place, universe_sim::world::Place::Aboard { .. }) && app.mode == Mode::Pilot {
-        crate::onfoot::interior(frame, app);
-    }
     crate::onfoot::ramp(frame, app);
     universe_prof::time("draw/scene/crafts", || crafts(frame, app));
     gate_flashes(frame, app);
