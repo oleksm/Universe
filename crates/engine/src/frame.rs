@@ -145,6 +145,8 @@ pub struct Frame {
     globe: [f32; 4],
     globe_at: [f32; 4],
     globe_micro: [f32; 4],
+    /// The air drawn over a globe (see `with_air`): its depths packed, its shell (m).
+    globe_air: [f32; 2],
 }
 
 /// One mesh draw: the mesh, and its instance data.
@@ -203,7 +205,9 @@ pub(crate) struct Instance {
 }
 // (A patch's place for its fine grain rides in the columns' spare w: its
 // origin (m, the world's own frame) wrapped to `MICRO_PERIOD`, its vertices
-// added in the shader — exact to the millimetre, and the same across patches.)
+// added in the shader — exact to the millimetre, and the same across patches.
+// A globe's air (see `Frame::with_air`) in `material`'s w (its depths, packed)
+// and `t`'s (its shell, m).)
 
 /// The fine grain on the ground repeats every this many metres (see `Instance::globe_micro`).
 pub const MICRO_PERIOD: f64 = 4096.0;
@@ -352,6 +356,7 @@ impl Frame {
             globe: [0.0; 4],
             globe_at: [0.0, 0.0, 0.0, 1.0],
             globe_micro: [0.0; 4],
+            globe_air: [0.0; 2],
         }
     }
 
@@ -461,6 +466,18 @@ impl Frame {
         self.globe = before;
         self.globe_at = before_at;
         self.globe_micro = before_micro;
+    }
+
+    /// Meshes drawn in `f` (a globe, its ground) are seen through air: `depth`
+    /// the optical depth of its column straight up, in red, green and blue
+    /// (0..2.55), `shell` how thick a layer of even density it's drawn as (m).
+    /// Seen through it, the ground fades toward the sunlit air's own light.
+    pub fn with_air(&mut self, depth: [f32; 3], shell: f32, f: impl FnOnce(&mut Frame)) {
+        // (Packed in 24 bits, a hundredth each, exact in an f32: see `air_depth` in the shader.)
+        let q = depth.map(|d| (d * 100.0).round().clamp(0.0, 255.0));
+        let before = std::mem::replace(&mut self.globe_air, [q[0] * 65536.0 + q[1] * 256.0 + q[2], shell]);
+        f(self);
+        self.globe_air = before;
     }
 
     /// Meshes drawn in `f` cast no shadows (a planet's globe: its night is
@@ -631,7 +648,7 @@ impl Frame {
             c0: m.x_axis.extend(0.0).to_array(),
             c1: m.y_axis.extend(0.0).to_array(),
             c2: m.z_axis.extend(0.0).to_array(),
-            t: at.extend(0.0).to_array(),
+            t: at.extend(self.globe_air[1]).to_array(),
             line_tint: line,
             fill_tint: fill,
             // Unlit: full brightness (ambient 1).
@@ -644,6 +661,7 @@ impl Frame {
             globe_at: self.globe_at,
         };
         (inst.c0[3], inst.c1[3], inst.c2[3]) = (self.globe_micro[0], self.globe_micro[1], self.globe_micro[2]);
+        inst.material[3] = self.globe_air[0];
         if lit && let Some(light) = self.light {
             let dir = (light.position - t.position).normalize_or_zero().as_vec3();
             // (What a planet or moon leaves of the sun here.)
