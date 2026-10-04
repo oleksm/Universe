@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut.
+# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
+# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
 identity:
   code: MC07-17
   name: "Rear module"
   status: draft
   drawing: "assets/models/mc07.glb: Hull_RearModule"
 physical:
+  mass: 5294
   length: 15.09
   width: 16.09
   height: 6.29

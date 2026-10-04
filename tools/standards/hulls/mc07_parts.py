@@ -54,3 +54,19 @@ assembly("Clamp", clamp("Fwd"), 2, f"On the centre line, on top of the spine: on
 laser = lambda p: [f"Laser{p}_{x}" for x in ("Lift", "Gimbal", "Head", "Hatch")]
 assembly("Mining laser", laser("L"), 2, where(laser("L"), True), [("Lift", ["LaserL_Lift"], 1), ("Gimbal", ["LaserL_Gimbal"], 1), ("Head", ["LaserL_Head"], 1), ("Hatch", ["LaserL_Hatch"], 1)], "LaserL_*, LaserR_*")
 print(n, "parts at the top;", sum(len(fs) for _, _, fs in os.walk(out)) - n, "under them; nose z", round(NOSE, 2), "keel y", round(KEEL, 2))
+
+# Mass, as an estimate to be balanced later: the hull's frame mass (the game's figure, kg) shared
+# over the parts that are not made of other parts, by their surface.
+import glob, re
+FRAME = 87803.0
+files = sorted(glob.glob(os.path.join(out, "**", "*.yaml"), recursive=True))
+text = {f: open(f).read() for f in files}
+num = lambda f, key: float(re.search(rf"^\s*{key}: ([0-9.]+)", text[f], re.M).group(1))
+leaf = [f for f in files if not os.path.isdir(f[:-5])]
+each = lambda f: num(f, "count") * (num(os.path.dirname(f) + ".yaml", "count") if os.path.basename(os.path.dirname(f)) != os.path.basename(out) else 1)
+per_m2 = FRAME / sum(num(f, "surface_area") * each(f) for f in leaf)
+for f in leaf:
+    t = text[f].replace("# clamps and lasers stowed, bay doors shut.\n", "# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface\n# at %.2f kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).\n" % per_m2)
+    t = t.replace("physical:\n", "physical:\n  mass: %d\n" % round(num(f, "surface_area") * per_m2))
+    open(f, "w").write(t)
+print("mass: %.2f kg for each m2, over %d parts" % (per_m2, len(leaf)))

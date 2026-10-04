@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut.
+# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
+# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
 identity:
   code: MC07-12
   name: "Main hull"
   status: draft
   drawing: "assets/models/mc07.glb: Hull_Main"
 physical:
+  mass: 18059
   length: 25.09
   width: 26.09
   height: 15.09

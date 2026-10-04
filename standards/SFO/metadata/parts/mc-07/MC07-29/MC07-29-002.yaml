@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut.
+# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
+# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
 identity:
   code: MC07-29-002
   name: "Gimbal"
   status: draft
   drawing: "assets/models/mc07.glb: LaserL_Gimbal"
 physical:
+  mass: 192
   length: 2.72
   width: 2.72
   height: 2.05

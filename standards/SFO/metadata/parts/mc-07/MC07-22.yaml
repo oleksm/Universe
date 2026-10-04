@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut.
+# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
+# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
 identity:
   code: MC07-22
   name: "Engine cowl"
   status: draft
   drawing: "assets/models/mc07.glb: Hull_EngineCowl"
 physical:
+  mass: 1873
   length: 2.09
   width: 16.5
   height: 7.88
