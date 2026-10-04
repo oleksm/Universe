@@ -21,6 +21,9 @@ const ANCHOR: Color = Color([1.0, 0.6, 0.3, 1.0]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
 const PLANE: Color = Color([0.4, 1.0, 0.75, 0.35]);
 const CLASH: Color = Color([1.0, 0.3, 0.25, 1.0]);
+/// The hull's own points: where it's serviced, where the ore comes in.
+const SERVICE: Color = Color([0.8, 0.6, 1.0, 1.0]);
+const MINING: Color = Color([1.0, 0.85, 0.3, 1.0]);
 
 /// The camera's field of view up and down (rad).
 const FOV: f32 = 0.85;
@@ -280,6 +283,36 @@ impl Interior {
         let engines: Vec<Vec3> = shape.nodes(Role::Nozzle).filter(|n| n.name.starts_with("nozzle_main")).map(|n| n.at.as_vec3()).collect();
         if !engines.is_empty() {
             points.push(Point { at: engines.iter().copied().sum::<Vec3>() / engines.len() as f32, name: Some("ENGINES".into()) });
+        }
+        // From its named parts (as the MC-07 names them; another hull gets those it
+        // names alike): where the ore comes in, and where its machinery is serviced.
+        let span = |prefix: &str| {
+            shape.pieces.iter().filter(|(n, _, _)| n.starts_with(prefix)).fold(None, |b: Option<(Vec3, Vec3)>, (_, lo, hi)| {
+                let (lo, hi) = (lo.as_vec3(), hi.as_vec3());
+                Some(b.map_or((lo, hi), |(l, h)| (l.min(lo), h.max(hi))))
+            })
+        };
+        let places: [(&str, &str, fn((Vec3, Vec3)) -> Vec3); 9] = [
+            // (The scoop's mouth: the middle of its top, where the ore drops in.)
+            ("OreScoop_", "MINING OPENING", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
+            ("Hull_EngineBlock", "SERVICE ENGINE BLOCK", |b| (b.0 + b.1) * 0.5),
+            // (A leg's strut at its top, in its bay.)
+            ("Gear_FL_Strut", "SERVICE GEAR FL", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
+            ("Gear_FR_Strut", "SERVICE GEAR FR", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
+            ("Gear_RL_Strut", "SERVICE GEAR RL", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
+            ("Gear_RR_Strut", "SERVICE GEAR RR", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
+            ("HammerL_Hatch", "SERVICE HAMMER L", |b| (b.0 + b.1) * 0.5),
+            ("HammerR_Hatch", "SERVICE HAMMER R", |b| (b.0 + b.1) * 0.5),
+            // (A clamp's mast at its foot, where it meets the hull.)
+            ("ClampFwd_", "SERVICE CLAMP FWD", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, lo.y, (lo.z + hi.z) * 0.5)),
+        ];
+        for (prefix, name, at) in places {
+            if let Some(b) = span(prefix) {
+                points.push(Point { at: at(b), name: Some(name.into()) });
+            }
+        }
+        if let Some((lo, hi)) = span("ClampAft_") {
+            points.push(Point { at: Vec3::new((lo.x + hi.x) * 0.5, lo.y, (lo.z + hi.z) * 0.5), name: Some("SERVICE CLAMP AFT".into()) });
         }
         self.plan = Plan { hull: key.into(), points, lines: Vec::new() };
     }
@@ -818,10 +851,17 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     for (k, p) in plan.points.iter().enumerate() {
         let Some((q, _)) = cam.project(p.at) else { continue };
         let lit = interior.hover == Some(Hover::Point(k)) || interior.from == Some(k) || interior.pick == Some(Hover::Point(k));
-        let col = if lit { PICKED } else if p.name.is_some() { ANCHOR } else { PATH };
+        let col = match p.name.as_deref() {
+            _ if lit => PICKED,
+            Some(n) if n.starts_with("SERVICE") => SERVICE,
+            Some(n) if n.starts_with("MINING") => MINING,
+            Some(_) => ANCHOR,
+            None => PATH,
+        };
         frame.hud_rect(q - Vec2::splat(3.0), Vec2::splat(6.0), col);
         if let Some(name) = &p.name {
-            frame.text_scaled(q + Vec2::new(6.0, -4.0), name, col, 0.7);
+            // (Dimmer unless it's under the cursor: there are many.)
+            frame.text_scaled(q + Vec2::new(6.0, -4.0), name, if lit { col } else { Color([col.0[0], col.0[1], col.0[2], 0.55]) }, 0.7);
         }
     }
     // The tool's panel: what it does and how, its actions, how much is drawn.
@@ -856,7 +896,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             None => {
                 let len: f32 = plan.lines.iter().map(|&(a, b, _)| plan.points[a].at.distance(plan.points[b].at)).sum();
                 let bad = clash.iter().filter(|c| !c.is_empty()).count();
-                format!("{} LINES {len:.0} M  {bad} CLASH", plan.lines.len())
+                format!("{} LINES {:.0} M  {bad} CLASH", plan.lines.len(), len.max(0.0))
             }
         };
         frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 126.0), &pick, PICKED.scale(0.9), 0.8);

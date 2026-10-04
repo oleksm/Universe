@@ -33,6 +33,8 @@ struct Read {
     ramp: Vec<[DVec3; 3]>,
     /// The named empties: (name, where, which way).
     nodes: Vec<(String, DVec3, DVec3)>,
+    /// Each named mesh's box: (name, least corner, most corner).
+    pieces: Vec<(String, DVec3, DVec3)>,
 }
 
 /// A hull from a glTF file's bytes (`.glb`); `visual`: the file's path, for
@@ -74,6 +76,7 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let tris: Vec<[DVec3; 3]> = read.tris.iter().map(|t| t.map(|p| p - c)).collect();
     shape.walk = Some(std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)));
     shape.ramp = ramp(&shape, read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
+    shape.pieces = read.pieces.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
     let (lo, hi) = shape.mesh.extent();
     let size = hi - lo;
     let frame_mass = FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0);
@@ -129,6 +132,7 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         tris: Vec::new(),
         ramp: Vec::new(),
         nodes: Vec::new(),
+        pieces: Vec::new(),
     };
     for node in scene.nodes() {
         walk(&node, DMat4::IDENTITY, blob, false, &mut read);
@@ -158,6 +162,9 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
                 };
                 tris.extend(index.as_chunks::<3>().0.iter().map(|t| [points[t[0]], points[t[1]], points[t[2]]]));
             }
+        }
+        if let Some((lo, hi)) = points.iter().fold(None, |b: Option<(DVec3, DVec3)>, p| Some(b.map_or((*p, *p), |(l, h)| (l.min(*p), h.max(*p))))) {
+            read.pieces.push((name.clone(), lo, hi));
         }
         if name.starts_with("COL_") {
             read.collision.push((name.clone(), points));
