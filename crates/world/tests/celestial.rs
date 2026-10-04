@@ -17,13 +17,17 @@ fn the_charted_world_is_as_the_registry_has_it() {
     let w = World::new(g.seed);
     let home = registry().system(&g.home).expect("home is a system written out");
     assert_eq!(w.system(w.home_system).name, home.identity.name);
-    // (The kinds of asteroid the game has, still the code's: as the registry has them.)
+    // (The kinds of asteroid the seed makes are described: what the game needs of them is in their records.)
     use universe_world::belt::{RockClass, Structure};
-    let known: Vec<_> = registry().rock_classes.iter().filter_map(|r| Some((r, RockClass::named(r.identity.label.as_deref()?)?))).collect();
-    assert_eq!(known.len(), 4, "the game's four rock classes, each labelled in the registry");
-    for (r, c) in known {
-        let p = r.physical.as_ref().expect("a rock class the game has is described");
-        assert_eq!((Some(c.density(Structure::Rubble)), Some(c.density(Structure::Monolith)), p.albedo.map(|a| f64::from(a as f32))), (p.density_rubble, p.density_monolith, Some(f64::from(c.albedo()))), "{}", r.identity.key);
+    for key in ["rock-class.stony", "rock-class.carbonaceous", "rock-class.metallic", "rock-class.icy"] {
+        let c = RockClass::by_key(key).unwrap_or_else(|| panic!("the registry has no {key}"));
+        assert!(c.density(Structure::Rubble) > 0.0 && c.density(Structure::Monolith) > c.density(Structure::Rubble) && c.albedo() > 0.0, "{key}");
+        let m = c.record().mining.as_ref().unwrap_or_else(|| panic!("{key} yields nothing"));
+        assert!(m.cut_energy.is_some() && m.yields.is_some(), "{key}: how it's cut and what it yields");
+        for good in m.yields.iter().chain(&m.rich_yields) {
+            let ore = registry().good(good).and_then(|g| g.game.as_ref()?.ore.clone()).unwrap_or_else(|| panic!("{key} yields {good}, no ore of the game's"));
+            assert!(universe_world::goods::Ore::from_key(&ore).is_some(), "{key}: the game has no ore {ore}");
+        }
     }
     let near = |a: f64, b: f64| (a - b).abs() <= 2e-3 * a.abs().max(b.abs());
     assert!(!content().celestial.is_empty(), "no systems written out");

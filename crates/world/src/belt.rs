@@ -41,75 +41,92 @@ const SWARM_MAX: f64 = 60_000.0;
 /// out there are stable against the star's tides).
 const SWARM_HILL: f64 = 0.3;
 
-/// What an asteroid is made of, by its spectrum.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum RockClass {
-    /// C-type: clays with water bound in, carbon and organics. Coal-dark.
-    Carbonaceous,
-    /// S-type: silicates with nickel-iron grains.
-    Stony,
-    /// M-type: nickel-iron, with platinum-group metals.
-    Metallic,
-    /// Comet-like: water ice and other frozen volatiles, with dust.
-    Icy,
+/// What an asteroid is made of, by its spectrum: one of the registry's rock
+/// classes (`rock-class.*`), whose record says what it weighs, how bright it
+/// is, what it holds and what it yields.
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub struct RockClass(u16);
+
+impl std::fmt::Debug for RockClass {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.key())
+    }
 }
 
 impl RockClass {
+    /// Its record.
+    pub fn record(self) -> &'static crate::registry::RockClass {
+        &crate::registry::registry().rock_classes[self.0 as usize]
+    }
+
+    /// Every class the registry has.
+    pub fn all() -> impl Iterator<Item = RockClass> {
+        (0..crate::registry::registry().rock_classes.len()).map(|i| RockClass(i as u16))
+    }
+
+    /// The class with this key, if the registry has it.
+    pub fn by_key(key: &str) -> Option<Self> {
+        Self::all().find(|c| c.key() == key)
+    }
+
+    /// The class with this key, which the seed's rules name: the registry must
+    /// have it.
+    pub(crate) fn of(key: &str) -> Self {
+        Self::by_key(key).unwrap_or_else(|| panic!("the registry has no {key}"))
+    }
+
+    /// Its key (`rock-class.stony`).
+    pub fn key(self) -> &'static str {
+        &self.record().identity.key
+    }
+
+    /// Its label in the game (its name, for one with no label).
     pub fn label(self) -> &'static str {
-        match self {
-            RockClass::Carbonaceous => "C-TYPE CARBONACEOUS",
-            RockClass::Stony => "S-TYPE STONY",
-            RockClass::Metallic => "M-TYPE METALLIC",
-            RockClass::Icy => "ICY",
-        }
+        let id = &self.record().identity;
+        id.label.as_deref().unwrap_or(&id.name)
     }
 
     /// The class a label names (any case), if any.
     pub fn named(label: &str) -> Option<Self> {
-        [RockClass::Carbonaceous, RockClass::Stony, RockClass::Metallic, RockClass::Icy].into_iter().find(|c| c.label().eq_ignore_ascii_case(label))
+        Self::all().find(|c| c.label().eq_ignore_ascii_case(label))
     }
 
-    /// Its kind, for lists (nine characters at most).
+    /// Its kind, for lists: its spectral type (its name, for one with none),
+    /// in capitals.
     pub fn letter(self) -> &'static str {
-        match self {
-            RockClass::Carbonaceous => "C-TYPE",
-            RockClass::Stony => "S-TYPE",
-            RockClass::Metallic => "M-TYPE",
-            RockClass::Icy => "ICY",
-        }
+        static LETTERS: std::sync::OnceLock<Vec<String>> = std::sync::OnceLock::new();
+        let letters = LETTERS.get_or_init(|| {
+            Self::all()
+                .map(|c| {
+                    let id = &c.record().identity;
+                    id.letter.as_deref().unwrap_or(&id.name).to_uppercase()
+                })
+                .collect()
+        });
+        &letters[self.0 as usize]
+    }
+
+    fn physical(self) -> &'static crate::registry::RockPhysical {
+        self.record().physical.as_ref().unwrap_or_else(|| panic!("{} isn't described (no physical)", self.key()))
     }
 
     /// Bulk density (kg/m³): a rubble pile is a third or more empty space.
     pub fn density(self, structure: Structure) -> f64 {
-        match (self, structure) {
-            (RockClass::Carbonaceous, Structure::Rubble) => 1300.0,
-            (RockClass::Carbonaceous, Structure::Monolith) => 2100.0,
-            (RockClass::Stony, Structure::Rubble) => 2300.0,
-            (RockClass::Stony, Structure::Monolith) => 3300.0,
-            (RockClass::Metallic, Structure::Rubble) => 4500.0,
-            (RockClass::Metallic, Structure::Monolith) => 7500.0,
-            (RockClass::Icy, Structure::Rubble) => 700.0,
-            (RockClass::Icy, Structure::Monolith) => 950.0,
+        let p = self.physical();
+        match structure {
+            Structure::Rubble => p.density_rubble,
+            Structure::Monolith => p.density_monolith,
         }
+        .unwrap_or_else(|| panic!("{} has no density as a {}", self.key(), structure.label()))
     }
 
     /// The share of light it reflects: C-types are coal-dark, ice bright.
     pub fn albedo(self) -> f32 {
-        match self {
-            RockClass::Carbonaceous => 0.05,
-            RockClass::Stony => 0.22,
-            RockClass::Metallic => 0.15,
-            RockClass::Icy => 0.6,
-        }
+        self.physical().albedo.unwrap_or_else(|| panic!("{} has no albedo", self.key())) as f32
     }
 
     fn color(self) -> [f32; 3] {
-        match self {
-            RockClass::Carbonaceous => [0.42, 0.4, 0.38],
-            RockClass::Stony => [0.72, 0.6, 0.45],
-            RockClass::Metallic => [0.7, 0.72, 0.78],
-            RockClass::Icy => [0.75, 0.88, 1.0],
-        }
+        self.physical().colour.unwrap_or_else(|| panic!("{} has no colour", self.key())).map(|c| c as f32)
     }
 }
 
@@ -147,16 +164,15 @@ pub struct Composition {
 }
 
 impl Composition {
-    /// A body of `class`, its family's `grade` (0..1: lean to rich) varied by `rng`.
+    /// A body of `class`, its family's `grade` (0..1: lean to rich) varied by
+    /// `rng`: each share from its class's range, lean to rich (platinum-group
+    /// metals, trace amounts spread over a factor of several, by ratio).
     fn of(class: RockClass, grade: f64, rng: &mut Rng) -> Self {
         let g = (grade + rng.range(-0.15, 0.15)).clamp(0.0, 1.0);
-        let lerp = |lo: f64, hi: f64| lo + (hi - lo) * g;
-        let (water, organics, metal, volatiles, pgm_ppm) = match class {
-            RockClass::Carbonaceous => (lerp(0.05, 0.2), lerp(0.02, 0.06), 0.02, 0.0, lerp(0.2, 1.0)),
-            RockClass::Stony => (0.0, 0.0, lerp(0.1, 0.3), 0.0, lerp(1.0, 6.0)),
-            RockClass::Metallic => (0.0, 0.0, lerp(0.8, 0.95), 0.0, 10.0 * 6f64.powf(g)),
-            RockClass::Icy => (lerp(0.4, 0.7), lerp(0.03, 0.08), 0.0, lerp(0.05, 0.15), 0.0),
-        };
+        let c = &class.record().composition;
+        let lerp = |r: Option<[f64; 2]>| r.map_or(0.0, |[lo, hi]| lo + (hi - lo) * g);
+        let (water, organics, metal, volatiles) = (lerp(c.water), lerp(c.organics), lerp(c.metal), lerp(c.volatiles));
+        let pgm_ppm = c.pgm.map_or(0.0, |[lo, hi]| lo * (hi / lo).powf(g)) * 1e6;
         let silicates = 1.0 - water - organics - metal - volatiles;
         Self { water, organics, silicates, metal, volatiles, pgm_ppm }
     }
@@ -242,14 +258,14 @@ pub struct Field {
 
 impl Field {
     pub fn class(&self, sys: &StarSystem) -> RockClass {
-        sys.bodies[self.body].rock.as_ref().map_or(RockClass::Stony, |r| r.class)
+        sys.bodies[self.body].rock.as_ref().map_or(RockClass::of("rock-class.stony"), |r| r.class)
     }
 }
 
 /// A rock of `class` and size `diameter`, its family's `grade`.
 fn rock(class: RockClass, diameter: f64, grade: f64, rng: &mut Rng) -> Rock {
     // Small ones are single stones; big ones rubble (metal ones may be solid).
-    let structure = if diameter < 200.0 || (class == RockClass::Metallic && rng.chance(0.5)) { Structure::Monolith } else { Structure::Rubble };
+    let structure = if diameter < 200.0 || (class == RockClass::of("rock-class.metallic") && rng.chance(0.5)) { Structure::Monolith } else { Structure::Rubble };
     Rock { class, structure, composition: Composition::of(class, grade, rng), density: class.density(structure), shape: RockShape::new(diameter * 0.5, rng) }
 }
 
@@ -289,15 +305,15 @@ fn body(name: String, rock: Rock, parent: usize, orbit: Orbit, attracts: bool, r
 fn family_class(a: f64, frost: f64, rng: &mut Rng) -> RockClass {
     let u = rng.f64();
     if a < 0.9 * frost {
-        if u < 0.55 { RockClass::Stony } else if u < 0.8 { RockClass::Carbonaceous } else { RockClass::Metallic }
+        if u < 0.55 { RockClass::of("rock-class.stony") } else if u < 0.8 { RockClass::of("rock-class.carbonaceous") } else { RockClass::of("rock-class.metallic") }
     } else if u < 0.7 {
-        RockClass::Carbonaceous
+        RockClass::of("rock-class.carbonaceous")
     } else if u < 0.85 {
-        RockClass::Stony
+        RockClass::of("rock-class.stony")
     } else if u < 0.95 {
-        RockClass::Metallic
+        RockClass::of("rock-class.metallic")
     } else {
-        RockClass::Icy
+        RockClass::of("rock-class.icy")
     }
 }
 
@@ -369,7 +385,7 @@ pub fn add_fields(sys: &mut StarSystem, frost: f64, seed: u64) {
             let (r, v) = orbit.state(0.0);
             let turn = DQuat::from_axis_angle(r.cross(v).normalize(), if lead { PI / 3.0 } else { -PI / 3.0 });
             let at = Orbit::from_state(turn * r, turn * v, star_mu, 0.0);
-            let class = if rng.chance(0.5) { RockClass::Carbonaceous } else { RockClass::Icy };
+            let class = if rng.chance(0.5) { RockClass::of("rock-class.carbonaceous") } else { RockClass::of("rock-class.icy") };
             wanted.push((at, FieldKind::Trojan { planet: i, lead }, class, (rng.range(2.0f64.ln(), 10.0f64.ln())).exp() * 1000.0));
         }
     }
@@ -378,7 +394,7 @@ pub fn add_fields(sys: &mut StarSystem, frost: f64, seed: u64) {
         for _ in 0..rng.int(1, 2) {
             let a = edge * rng.range(1.31, 1.6);
             let orbit = Orbit::new(a, rng.range(0.02, 0.25), rng.range(0.0, 20.0f64).to_radians(), rng.range(0.0, TAU), rng.range(0.0, TAU), rng.range(0.0, TAU), star_mu);
-            wanted.push((orbit, FieldKind::Outer, RockClass::Icy, (rng.range(2.0f64.ln(), 12.0f64.ln())).exp() * 1000.0));
+            wanted.push((orbit, FieldKind::Outer, RockClass::of("rock-class.icy"), (rng.range(2.0f64.ln(), 12.0f64.ln())).exp() * 1000.0));
         }
     }
 
@@ -510,7 +526,7 @@ mod tests {
                         // Between some giant's 4:1 and 2:1 resonances.
                         assert!(giants.iter().any(|&g| (0.39..0.64).contains(&(a(f.body) / a(g)))), "{}", f.name);
                     }
-                    FieldKind::Outer => assert_eq!(f.class(sys), RockClass::Icy),
+                    FieldKind::Outer => assert_eq!(f.class(sys), RockClass::of("rock-class.icy")),
                     _ => {}
                 }
                 // The swarm sits well inside the remnant's Hill sphere.

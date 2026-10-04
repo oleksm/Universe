@@ -24,7 +24,7 @@
 use glam::DVec3;
 use universe_physics::{Contact, RigidBody, Weld};
 
-use crate::belt::{Rock, RockClass, Structure};
+use crate::belt::{Rock, Structure};
 use crate::damage;
 use crate::events::ShipEvent;
 use crate::goods::{Ore, TONNE};
@@ -35,18 +35,17 @@ use crate::system::{Body, BodyKind, StarSystem};
 pub const EXCAVATOR_POWER: f64 = 300_000.0;
 /// ...and the most spoil it can carry off (kg/s).
 pub const EXCAVATOR_THROUGHPUT: f64 = 10.0;
-/// An M-type this rich in platinum-group metals (ppm) yields PGM-rich ore.
-const PGM_RICH: f64 = 30.0;
+/// A rubble pile, gravel held by its own weak gravity, scoops up at this
+/// (J/kg), whatever it's made of.
+const RUBBLE_ENERGY: f64 = 2_000.0;
 
-/// Energy to break a kilogram of `rock` loose (J/kg): gravel scoops up;
-/// solid ice cuts easily, stone harder, nickel-iron hardest.
+/// Energy to break a kilogram of `rock` loose (J/kg): gravel scoops up; a
+/// solid piece cuts as its class's record says (ice easily, stone harder,
+/// nickel-iron hardest).
 pub fn specific_energy(rock: &Rock) -> f64 {
-    match (rock.structure, rock.class) {
-        (Structure::Rubble, _) => 2_000.0,
-        (Structure::Monolith, RockClass::Icy) => 20_000.0,
-        (Structure::Monolith, RockClass::Carbonaceous) => 30_000.0,
-        (Structure::Monolith, RockClass::Stony) => 60_000.0,
-        (Structure::Monolith, RockClass::Metallic) => 400_000.0,
+    match rock.structure {
+        Structure::Rubble => RUBBLE_ENERGY,
+        Structure::Monolith => rock.class.record().mining.as_ref().and_then(|m| m.cut_energy).unwrap_or_else(|| panic!("{:?} has no cut energy", rock.class)),
     }
 }
 
@@ -55,15 +54,15 @@ pub fn dig_rate(rock: &Rock) -> f64 {
     (EXCAVATOR_POWER / specific_energy(rock)).min(EXCAVATOR_THROUGHPUT)
 }
 
-/// What digging `rock` yields.
+/// What digging `rock` yields: its class's rock (`yields`), or its rich rock
+/// (`rich_yields`) where it holds more platinum-group metals than
+/// `rich_above`; as the game's ore that good is.
 pub fn ore(rock: &Rock) -> Ore {
-    match rock.class {
-        RockClass::Icy => Ore::WaterIce,
-        RockClass::Carbonaceous => Ore::Carbonaceous,
-        RockClass::Stony => Ore::Stony,
-        RockClass::Metallic if rock.composition.pgm_ppm >= PGM_RICH => Ore::Pgm,
-        RockClass::Metallic => Ore::NickelIron,
-    }
+    let m = rock.class.record().mining.as_ref().unwrap_or_else(|| panic!("{:?} yields nothing", rock.class));
+    let rich = m.rich_above.is_some_and(|share| rock.composition.pgm_ppm * 1e-6 >= share);
+    let good = if rich { m.rich_yields.as_ref() } else { m.yields.as_ref() }.unwrap_or_else(|| panic!("{:?} yields nothing", rock.class));
+    let key = crate::registry::registry().good(good).and_then(|g| g.game.as_ref()?.ore.as_deref()).unwrap_or_else(|| panic!("{good} is no ore of the game's"));
+    Ore::from_key(key).unwrap_or_else(|| panic!("the game has no ore {key}"))
 }
 
 /// The anchor reaches this far from the hull (m)...

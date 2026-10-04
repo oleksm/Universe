@@ -211,6 +211,11 @@ pub const TONNE: f64 = 1000.0;
 impl Ore {
     pub const ALL: [Ore; 5] = [Ore::WaterIce, Ore::Carbonaceous, Ore::Stony, Ore::NickelIron, Ore::Pgm];
 
+    /// The ore with this content key.
+    pub fn from_key(key: &str) -> Option<Ore> {
+        Ore::ALL.into_iter().find(|o| o.key() == key)
+    }
+
     /// Its content key.
     pub fn key(self) -> &'static str {
         match self {

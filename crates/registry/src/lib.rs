@@ -22,7 +22,11 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 
 mod celestial;
+mod common;
+mod sfo;
 
+pub use common::Physical;
+pub use sfo::{Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Part};
 pub use celestial::{ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
 
 /// Where a record's figures come from (the common schema's `basis`).
@@ -69,6 +73,7 @@ pub enum Provenance {
 pub struct Registry {
     pub seeding: Seeding,
     pub rock_classes: Vec<RockClass>,
+    pub goods: Vec<Good>,
     pub systems: Vec<System>,
     /// How many records of each kind there are, the ones the game doesn't
     /// read yet included (by kind: `hull`, `part`, ...).
@@ -136,6 +141,7 @@ impl Registry {
             };
             match kind.as_str() {
                 "rock-class" => parse(&mut |t| Ok(reg.rock_classes.push(serde_norway::from_str(t)?))),
+                "good" => parse(&mut |t| Ok(reg.goods.push(serde_norway::from_str(t)?))),
                 "system" => parse(&mut |t| Ok(reg.systems.push(serde_norway::from_str(t)?))),
                 "seeding" if key == "seeding.galaxy" => parse(&mut |t| Ok(galaxy = Some(serde_norway::from_str::<GalaxySeeding>(t)?))),
                 _ => {}
@@ -168,6 +174,11 @@ impl Registry {
     /// The registry from [`Registry::encode`]'s bytes.
     pub fn decode(bytes: &[u8]) -> Registry {
         postcard::from_bytes(bytes).expect("the registry built into the game decodes")
+    }
+
+    /// The good with this key.
+    pub fn good(&self, key: &str) -> Option<&Good> {
+        self.goods.iter().find(|g| g.identity.key == key)
     }
 
     /// The system with this key.

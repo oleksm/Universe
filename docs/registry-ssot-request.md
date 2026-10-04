@@ -516,3 +516,15 @@ settings, now the game's only source of them), `rock-class.*` and `system.*` (id
 - **The loader is strict:** a record of a kind the game reads (`seeding.galaxy`, `rock-class`,
   `system`) with a field its type doesn't know fails the game's build. Tell me when a schema the
   game reads gains a property, and I'll add it in the same merge.
+
+**Rock classes (this commit).** `belt::RockClass` is now a handle on a `rock-class.*` record:
+density, albedo, colour, composition, cut energy and yields all come from it. `good.*` records
+are read as well (strictly; the `physical` group is typed for every kind that uses it).
+- **`rock-class.icy` `letter: comet-like`:** the game shows `letter` (in capitals) in tight lists
+  (asteroid lists, lock read-outs, about 9 characters). "comet-like" isn't a spectral type. Either
+  give icy a short letter, or add a short `tag` property the game shows instead.
+- **The game maps a yield to its ore through `good.*.game.ore`.** That stays until ores are
+  goods in the game (`ores.ron` moves into the registry). Don't drop `game.ore` before then.
+- **`RUBBLE_ENERGY` (2,000 J/kg) is still a code constant:** the rock-class schema's
+  `cut_energy` description names it. It belongs to the registry, either in Dogma or as a seeding
+  value. Say which, and I'll read it.
