@@ -26,6 +26,10 @@ pub struct Observer {
     pub transition: DVec3,
     #[serde(skip)]
     star_cycle: Option<(usize, usize)>, // (base system, index into its neighbour list)
+    /// The focused ship in the studio: alone, on a neutral backdrop, under
+    /// studio lights (to judge a design as in a modelling tool), not as space lights it.
+    #[serde(skip)]
+    pub studio: bool,
 }
 
 pub const MAX_DISTANCE: f64 = 6.0e21;
@@ -33,7 +37,7 @@ const SHIP_SIZE: f64 = 30.0;
 
 impl Observer {
     pub fn new() -> Self {
-        Self { focus: Focus::Ship, yaw: 0.6, pitch: 0.25, distance: 180.0, transition: DVec3::ZERO, star_cycle: None }
+        Self { focus: Focus::Ship, yaw: 0.6, pitch: 0.25, distance: 180.0, transition: DVec3::ZERO, star_cycle: None, studio: false }
     }
 
     /// The galaxy index of the system this camera is looking at.
@@ -106,6 +110,13 @@ impl Observer {
             self.focus = Focus::Craft(next);
             self.distance = 250.0;
             self.star_cycle = None;
+        }
+        // The studio: only for a ship.
+        if crate::keys::pressed(input, crate::keys::Act::Studio) {
+            self.studio = !self.studio && matches!(self.focus, Focus::Ship | Focus::Craft(_));
+        }
+        if !matches!(self.focus, Focus::Ship | Focus::Craft(_)) {
+            self.studio = false;
         }
         if crate::keys::pressed(input, crate::keys::Act::Home) {
             self.focus = Focus::Ship;

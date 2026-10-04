@@ -1828,7 +1828,8 @@ fn on_foot_cells() -> Vec<(String, String, Lamp)> {
 }
 
 fn observer_cells() -> Vec<(String, String, Lamp)> {
-    [("TAB", "PILOT"), ("WHL", "ZOOM"), ("[ ]", "BODIES"), ("N B", "STARS"), ("H", "FOCUS SHIP"), ("T", "SETTLER"), ("F1", "HELP")]
+    let studio = crate::keys::key(crate::keys::Act::Studio);
+    [("TAB", "PILOT"), ("WHL", "ZOOM"), ("[ ]", "BODIES"), ("N B", "STARS"), ("H", "FOCUS SHIP"), ("T", "SETTLER"), (studio.as_str(), "STUDIO"), ("F1", "HELP")]
         .iter()
         .map(|(k, l)| (k.to_string(), l.to_string(), Lamp::Off))
         .collect()

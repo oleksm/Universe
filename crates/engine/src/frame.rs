@@ -97,6 +97,9 @@ pub struct Frame {
     /// Spheres that can come between the light and what it lights (planets,
     /// moons: centre, radius), each hiding the share of its disc it covers.
     pub eclipsers: Vec<(DVec3, f64)>,
+    /// The light every lit face gets whatever faces it (0 to 1; `SHADE_AMBIENT`
+    /// in the world: space is dark): raised in a studio.
+    pub ambient: f32,
     /// Shadows cast by meshes on meshes, out to this far from the eye
     /// (metres; 0: none). See `no_shadow`.
     pub shadow_reach: f64,
@@ -317,6 +320,7 @@ impl Frame {
             surface: [0.0, 16.0, 0.0, 0.0],
             scene_size,
             size: hud_size,
+            ambient: SHADE_AMBIENT,
             sky: Vec::new(),
             solids: Vec::new(),
             lines: Vec::new(),
@@ -626,7 +630,7 @@ impl Frame {
             // (What a planet or moon leaves of the sun here.)
             let seen = self.sun_visible(t.position) as f32;
             let c = self.light_at(at).map(|c| c * seen);
-            inst.light_dir = dir.extend(SHADE_AMBIENT).to_array();
+            inst.light_dir = dir.extend(self.ambient).to_array();
             inst.light_color = [c[0], c[1], c[2], LINE_AMBIENT];
             if let Some((d, s, (base, c))) = self.fill_at(t.position) {
                 inst.refl_dir = d.extend(s).to_array();

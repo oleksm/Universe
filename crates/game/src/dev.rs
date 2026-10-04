@@ -84,6 +84,7 @@ pub fn apply(app: &mut App, name: &str) {
             app.observer.distance = env("UNIVERSE_DIST", 2500.0);
             app.observer.yaw = env("UNIVERSE_YAW", 0.6);
             app.observer.pitch = env("UNIVERSE_PITCH", 0.45);
+            app.observer.studio = std::env::var_os("UNIVERSE_STUDIO").is_some();
         }
         "system" => observe(app, 0, outer * 2.2, 0.6),
         "inner" => observe(app, 0, outer * 0.25, 0.45),

@@ -18,6 +18,10 @@ pub fn color(c: [f32; 3]) -> Color {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
+    if app.mode == Mode::Observer && app.observer.studio {
+        studio(frame, app);
+        return;
+    }
     let starlight = universe_prof::time("draw/scene/sky", || sky(frame, app));
     universe_prof::time("draw/scene/galaxy", || galaxy(frame, app, starlight));
     if matches!(app.ship.state, ShipState::Transit { .. }) && app.mode == Mode::Pilot {
@@ -96,6 +100,44 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.show_labels {
         universe_prof::time("draw/scene/labels", || labels(frame, app));
     }
+}
+
+/// The studio: the focused ship alone on a neutral backdrop, lit as a
+/// modelling tool lights it: a key light from above and to the left of the
+/// eye (with its shadows), a broad soft light from the opposite side (the
+/// renderer's area light, as a planet below would be, glints and all), and a
+/// raised ambient floor. The lights turn with the eye, so it's always lit.
+/// Not how space lights it: for judging a design.
+fn studio(frame: &mut Frame, app: &App) {
+    use crate::observer::Focus;
+    let (pos, turned, ship) = match app.observer.focus {
+        Focus::Craft(i) => match app.v.crafts.get(i) {
+            Some(c) => {
+                let (p, q) = app.place(crate::Who::Craft(i));
+                (p, q, &c.ship)
+            }
+            None => return,
+        },
+        _ => (app.view.ship_pos, app.place(crate::Who::Me).1, &app.ship),
+    };
+    let q = frame.camera.orientation.as_dquat();
+    let (right, up, back) = (q * DVec3::X, q * DVec3::Y, q * DVec3::Z);
+    let key = (up * 0.75 - right * 0.55 + back * 0.45).normalize();
+    // The key: a star far off along it, as bright here as the sun at a world's distance.
+    let far = 1.0e9;
+    frame.light = Some(Light { position: pos + key * far, color: [1.0, 0.98, 0.95], luminosity: 1.0, reference: far, radius: far * 0.01 });
+    frame.eclipsers = Vec::new();
+    frame.shadow_reach = SHADOW_REACH;
+    // The soft light: a lit sphere on the far side from the key, filling half the sky.
+    let size = ship.spec().shape().mesh.bound().max(10.0);
+    let radius = size * 40.0;
+    frame.reflector = Some(universe_engine::Reflector { center: pos - key * radius * std::f64::consts::SQRT_2, radius, albedo: 0.55, color: [0.92, 0.95, 1.0] });
+    frame.ambient = 0.3;
+    // The backdrop: a neutral grey sphere round it all, far enough not to crowd it.
+    let backdrop = Transform { position: pos, rotation: universe_engine::glam::Quat::IDENTITY, scale: size * 30.0 };
+    frame.no_shadow(|frame| frame.model(&app.models.star, &backdrop, Color::hex(0x2a2e33), Color::hex(0x2a2e33)));
+    let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
+    hull(frame, app, ship, livery(&app.v.crafts.get(match app.observer.focus { Focus::Craft(i) => i, _ => usize::MAX }).map_or("", |c| &c.name)), &t);
 }
 
 /// The planet or moon filling most of the sky from here: its day side lights

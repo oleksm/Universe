@@ -110,6 +110,7 @@ pub enum Act {
     PreviousStar,
     Home,
     TrackSettler,
+    Studio,
     Systems,
     Refuel,
     Repair,
@@ -153,6 +154,7 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::PreviousStar, Scope::Observer, "PREVIOUS STAR"),
     (Act::Home, Scope::Observer, "HOME SHIP"),
     (Act::TrackSettler, Scope::Observer, "TRACK SETTLER"),
+    (Act::Studio, Scope::Observer, "INSPECT IN STUDIO"),
     // (Newer ones last: the keys already learnt stay as they were.)
     (Act::Shipyard, Scope::Global, "SHIPYARD"),
     (Act::Systems, Scope::Flight, "POWER"),
