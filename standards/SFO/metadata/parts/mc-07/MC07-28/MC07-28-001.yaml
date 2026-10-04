@@ -14,5 +14,8 @@ physical:
   height: 0.41
 shape:
   surface_area: 19.1
+made_from:
+  item: ST4340-FG
+  quantity: 141
 fit:
   count: 1

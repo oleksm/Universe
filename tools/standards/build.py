@@ -1215,6 +1215,8 @@ for ad in administrations:
 lined = {ln["process"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln}
 part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "part:" + pt["slug"])
 
+# (The processes that make a material as ingot: what a mill's stock starts from.)
+ingot_makers = lambda mat: [q for q in processes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
 # 1. The chain from a hull down to rock: how far each part gets.
 for hl in hulls:
     mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
@@ -1230,10 +1232,11 @@ for hl in hulls:
             ("that stock has a process", pr is not None),
             ("the process has steps", bool(pr and (pr.get("equipment") or {}).get("steps"))),
             ("a facility is built to run it", proc in lined),
+            ("the ingot that stock is made from can be made", any(q["slug"] in lined for q in ingot_makers((ms or {}).get("made_from", {}).get("material")))),
         ]
         reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
         rows.append(row("ok" if reached == len(steps) else "gap", part_link(pt), f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
-    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "For each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, and is a facility built to run it.", ["Part", "Links made", "Where it stops"], rows)
+    report(f"chain-{hl['slug']}", f"Chain: {hl['identity']['name']} down to a factory", "For each part that is not made of other parts: does it have a mass, say what it is cut from, does a process make that stock, has the process real steps, is a facility built to run it, and can the ingot that stock starts from be made (a process with a line built for it).", ["Part", "Links made", "Where it stops"], rows)
 
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []

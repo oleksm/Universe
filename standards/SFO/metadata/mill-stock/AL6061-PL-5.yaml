@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  code: AL6061-PL-5
+  name: "6061 plate 5 mm"
+made_from:
+  material: aluminium-alloy-6061
+  form: plate
+  temper: "T6"
+size:
+  thickness: 5
+making:
+  process: rolling

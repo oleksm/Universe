@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  code: ST4340-BAR-120
+  name: "4340 bar 120 mm"
+made_from:
+  material: high-strength-steel-4340
+  form: bar
+  temper: "quenched and tempered"
+size:
+  diameter: 120
+making:
+  process: bar-rolling-4340

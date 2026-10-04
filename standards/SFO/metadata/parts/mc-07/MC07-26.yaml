@@ -1,20 +1,23 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
-# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
+# clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
+# from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
   code: MC07-26
   name: "Ore bay door, left"
   status: draft
   drawing: "assets/models/mc07.glb: OreBay_DoorL"
 physical:
-  mass: 487
+  mass: 1339
   length: 9.95
   width: 4.2
   height: 0.29
 shape:
   surface_area: 99.2
   handed: left
+made_from:
+  item: AL6061-PL-5
+  quantity: 114.1
 fit:
   count: 1
   position: "Its centre is 34.6 m back from the nose and 15.6 m above the keel, 2.1 m to the left of the centre line."

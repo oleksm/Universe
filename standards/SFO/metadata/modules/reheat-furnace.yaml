@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Reheat furnace
+  step: Heat
+  description: "Brings ingots up to the temperature they are worked at."
+size:
+  length: 60
+  width: 20
+  height: 12
+rate:
+  throughput: 120
+  product: hot-ingot
+inputs:
+  materials:
+  - { item: ingot, amount: 1.0 }
+needs:
+  power: 30
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

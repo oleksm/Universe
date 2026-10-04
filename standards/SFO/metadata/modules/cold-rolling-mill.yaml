@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Cold rolling mill
+  step: Roll cold
+  description: "Rolls the strip again cold, to its final thickness and a clean surface."
+size:
+  length: 150
+  width: 40
+  height: 15
+rate:
+  throughput: 60
+  product: cold-rolled-strip
+inputs:
+  materials:
+  - { item: hot-rolled-strip, amount: 1.0 }
+needs:
+  power: 8
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

@@ -14,5 +14,8 @@ physical:
   height: 4.65
 shape:
   surface_area: 33.9
+made_from:
+  item: ST4340-TB-200X15
+  quantity: 2.91
 fit:
   count: 1

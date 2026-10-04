@@ -22,6 +22,8 @@ identity:
   - bar
   - forging
   - tube
+mass:
+  density: 7850.0
 mechanical:
   yield_strength: 1300.0
   tensile_strength: 1420.0

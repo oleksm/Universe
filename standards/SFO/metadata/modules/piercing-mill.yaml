@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Piercing mill
+  step: Pierce to tube
+  description: "Drives a hot round over a point to open it into a tube, then rolls its wall even."
+size:
+  length: 150
+  width: 30
+  height: 15
+rate:
+  throughput: 30
+  product: tube
+inputs:
+  materials:
+  - { item: hot-ingot, amount: 1.08 }
+outputs:
+  by_products:
+  - { item: scrap, amount: 0.08 }
+needs:
+  power: 8
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

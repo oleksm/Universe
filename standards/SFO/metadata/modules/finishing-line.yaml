@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Finishing line
+  step: Cut and finish
+  description: "Levels the strip, heat-treats it to its temper and cuts it into sheets and plates."
+size:
+  length: 120
+  width: 30
+  height: 10
+rate:
+  throughput: 60
+  product: sheet-and-plate
+inputs:
+  materials:
+  - { item: cold-rolled-strip, amount: 1.05 }
+outputs:
+  by_products:
+  - { item: scrap, amount: 0.05 }
+needs:
+  power: 2
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

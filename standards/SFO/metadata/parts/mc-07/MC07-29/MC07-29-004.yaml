@@ -1,18 +1,21 @@
 # yaml-language-server: $schema=../../../../schema/part.schema.yaml
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
-# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
-# at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
+# clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
+# from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
   code: MC07-29-004
   name: "Hatch"
   status: draft
   drawing: "assets/models/mc07.glb: LaserL_Hatch"
 physical:
-  mass: 272
+  mass: 299
   length: 6.39
   width: 4.09
   height: 0.19
 shape:
   surface_area: 55.4
+made_from:
+  item: AL6061-SH-2
+  quantity: 63.7
 fit:
   count: 1

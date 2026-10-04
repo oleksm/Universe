@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  name: Bar mill
+  step: Roll to bar
+  description: "Roll stands with grooved rolls that draw a hot ingot out into round bar."
+size:
+  length: 200
+  width: 30
+  height: 15
+rate:
+  throughput: 50
+  product: bar
+inputs:
+  materials:
+  - { item: hot-ingot, amount: 1.05 }
+outputs:
+  by_products:
+  - { item: scrap, amount: 0.05 }
+needs:
+  power: 10
+basis:
+  note: "Typical of real plant of this kind. Approximate figures from memory, not taken from a source."

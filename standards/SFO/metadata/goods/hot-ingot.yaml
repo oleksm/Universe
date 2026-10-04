@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Hot ingot
+  kind: intermediate
+  description: "An ingot heated through to the temperature it is worked at."

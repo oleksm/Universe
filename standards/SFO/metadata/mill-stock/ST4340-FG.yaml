@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  code: ST4340-FG
+  name: "4340 forging"
+made_from:
+  material: high-strength-steel-4340
+  form: forging
+  temper: "quenched and tempered"
+making:
+  process: forging-4340

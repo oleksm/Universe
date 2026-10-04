@@ -14,5 +14,8 @@ physical:
   height: 3.11
 shape:
   surface_area: 2.7
+made_from:
+  item: ST4340-BAR-120
+  quantity: 0.18
 fit:
   count: 2
