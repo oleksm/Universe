@@ -44,6 +44,7 @@ struct LawIdentity {
 #[serde(rename_all = "lowercase")]
 enum LawKind {
     Real,
+    Reference,
     Simplified,
     Invented,
 }
