@@ -260,13 +260,14 @@ function rows(q) {
       for (const x of bodies.filter(x => (known(x.at) ? x.at : null) === at)) {
         const k = `bd:${a.slug}:${x.slug}`;
         const orgs = orgsAt(a.slug, x.slug);
-        const plots = x.parcels || [];
-        const has = orgs.length > 0 || plots.length > 0 || bodies.some(y => y.at === x.name);
+        const plots = x.parcels || [], zones = x.zones || [];
+        const has = orgs.length > 0 || plots.length > 0 || zones.length > 0 || bodies.some(y => y.at === x.name);
         if (q && !hit(x) && !has) continue;
         out.push({ k, depth, kind: "maker", label: x.name, ticker: x.at && !known(x.at) ? x.at : x.kind, leaf: !has });
         if (!has || !(open.has(k) || q)) continue;
         for (const o of orgs) out.push({ k: "at:" + o.key, depth: depth + 1, kind: "maker", label: o.name, ticker: o.tag, leaf: true });
-        // (Its parcels. Its zones are on its map, not in the tree.)
+        // (Its zones, then its parcels.)
+        for (const z of zones) out.push({ k: `zn:${a.slug}:${x.slug}:${z.slug}`, depth: depth + 1, kind: "maker", label: `${z.name} zone`, ticker: z.use, leaf: true });
         for (const p of plots) {
           const on = (x.facilities || []).filter(f => f.parcel === p.number);
           out.push({ k: parcelKey(a, x, p), depth: depth + 1, kind: "maker", label: `Parcel ${p.number}`, ticker: ownerOf(p.owner).name, leaf: !on.length });
@@ -304,14 +305,14 @@ function reveal(k) {
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("ad:")) { open.add("la"); keepOpen(); return; }
-  if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("pc:") || k.startsWith("fc:")) {
+  if (k.startsWith("bd:") || k.startsWith("at:") || k.startsWith("pc:") || k.startsWith("fc:") || k.startsWith("zn:")) {
     const org = k.startsWith("at:") ? ORGS.find(o => o.key === k.slice(3)) : null;
     const [sy, slug] = org ? org.address.at.split("/") : k.split(":").slice(1);
     const a = DATA.administrations.find(x => x.slug === sy); if (!a) return;
     open.add("la"); open.add("ad:" + sy);
     // (Open the bodies above it; and itself and its tower, for what has its address there.)
     let x = a.bodies.find(y => y.slug === slug);
-    if (x && (org || k.startsWith("pc:") || k.startsWith("fc:"))) open.add(`bd:${sy}:${x.slug}`);
+    if (x && (org || k.startsWith("pc:") || k.startsWith("fc:") || k.startsWith("zn:"))) open.add(`bd:${sy}:${x.slug}`);
     if (x && k.startsWith("fc:")) { const f = (x.facilities || []).find(y => y.slug === k.split(":")[3]); if (f) open.add(`pc:${sy}:${x.slug}:${f.parcel}`); }
     for (x = x && a.bodies.find(y => y.name === x.at); x; x = a.bodies.find(y => y.name === x.at)) open.add(`bd:${sy}:${x.slug}`);
     keepOpen(); return;
@@ -443,7 +444,20 @@ function detail(k) {
     const up = x.at && a.bodies.find(y => y.name === x.at);
     const here = a.bodies.filter(y => y.at === x.name);
     const orgs = orgsAt(a.slug, x.slug);
-    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + landMap(a, x) + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Permits</th><th>Area</th></tr>` + x.zones.map(z => `<tr><td>${esc(z.name)}</td><td>${esc(z.use)}</td><td>${esc(((a.zoning || []).find(c => c.use === z.use) || {}).permits || "")}</td><td>${hectares(z.area)}</td></tr>`).join("") + `</table>` : "") + ((x.facilities || []).length ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Parcel</th><th>Owner</th></tr>` + x.facilities.map(f => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${f.parcel}</td><td>${ownerLink(f.owner)}</td></tr>`).join("") + `</table>` : "") + ((x.parcels || []).length ? `<h3>Parcels</h3><table><tr><th>Parcel</th><th>Zone</th><th>Area</th><th>Owner</th></tr>` + x.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${esc(((x.zones || []).find(z => z.slug === p.zone) || {}).name || "")}</td><td>${hectares(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `</table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + landMap(a, x) + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Permits</th><th>Area</th></tr>` + x.zones.map(z => `<tr><td><a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a></td><td>${esc(z.use)}</td><td>${esc(((a.zoning || []).find(c => c.use === z.use) || {}).permits || "")}</td><td>${hectares(z.area)}</td></tr>`).join("") + `</table>` : "") + ((x.facilities || []).length ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Parcel</th><th>Owner</th></tr>` + x.facilities.map(f => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${f.parcel}</td><td>${ownerLink(f.owner)}</td></tr>`).join("") + `</table>` : "") + ((x.parcels || []).length ? `<h3>Parcels</h3><table><tr><th>Parcel</th><th>Zone</th><th>Area</th><th>Owner</th></tr>` + x.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${esc(((x.zones || []).find(z => z.slug === p.zone) || {}).name || "")}</td><td>${hectares(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `</table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+  }
+  // (A record's properties, as written in its file.)
+  const corners = o => o.map(c => `${c[0]}, ${c[1]}`).join(" · ");
+  const props = rows => `<h3>Properties</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>` + rows.filter(r => r[1] !== undefined && r[1] !== "").map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${esc(r[2] || "")}</td></tr>`).join("") + `</table>`;
+  if (kind === "zn") {
+    const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const z = x && (x.zones || []).find(y => y.slug === rest[2]); if (!z) return "";
+    const inIt = (x.parcels || []).filter(p => p.zone === z.slug);
+    const code = (a.zoning || []).find(c => c.use === z.use);
+    return `<h2>${esc(z.name)} zone</h2><div class="meta">zone · of <a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>`
+      + props([["name", esc(z.name)], ["use", esc(z.use), "port, industrial, commercial, civic or residential"], ["outline", corners(z.outline), `corners, metres east and north of ${x.name}'s position`]])
+      + `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>area</td><td>${hectares(z.area)}</td><td>its outline</td></tr><tr><td>permits</td><td>${esc(code ? code.permits : "")}</td><td>${esc(a.name)}'s zoning code, for ${esc(z.use)}</td></tr></table>`
+      + `<h3>Parcels in it</h3>` + (inIt.length ? `<table><tr><th>Parcel</th><th>Area</th><th>Owner</th></tr>` + inIt.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${hectares(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `</table>` : `<p class="meta">None yet.</p>`)
+      + landMap(a, x) + `<div class="file" style="margin-top:24px">standards/${esc(z.file)}</div>`;
   }
   if (kind === "fc") {
     const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const f = x && (x.facilities || []).find(y => y.slug === rest[2]); if (!f) return "";
@@ -457,7 +471,9 @@ function detail(k) {
     const a = DATA.administrations.find(y => y.slug === rest[0]); const x = a && a.bodies.find(y => y.slug === rest[1]); const p = x && (x.parcels || []).find(y => String(y.number) === rest[2]); if (!p) return "";
     const z = (x.zones || []).find(y => y.slug === p.zone);
     const where = `<a data-k="${esc(`bd:${a.slug}:${x.slug}`)}">${esc(x.name)}</a>${x.at ? ", " + esc(x.at) : ""}, <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a>`;
-    return `<h2>Parcel ${p.number}</h2><div class="meta">parcel</div><h3>Address</h3><p>Parcel ${p.number}, ${where}</p><table><tr><th>Owner</th><th>Zone</th><th>Area</th></tr><tr><td>${ownerLink(p.owner)}</td><td>${z ? esc(z.name) + ` <span class="meta">${esc(z.use)}</span>` : ""}</td><td>${hectares(p.area)}</td></tr></table>` + ((x.facilities || []).some(f => f.parcel === p.number) ? `<h3>On it</h3>` + x.facilities.filter(f => f.parcel === p.number).map(f => `<div><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a> <span class="meta">${esc(f.kind)}</span></div>`).join("") : "") + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
+    return `<h2>Parcel ${p.number}</h2><div class="meta">parcel</div><h3>Address</h3><p>Parcel ${p.number}, ${where}</p>`
+      + props([["number", String(p.number), "its number in its settlement"], ["owner", ownerLink(p.owner)], ["outline", corners(p.outline), `corners, metres east and north of ${x.name}'s position`]])
+      + `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>area</td><td>${hectares(p.area)}</td><td>its outline</td></tr><tr><td>zone</td><td>${z ? `<a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a> <span class="meta">${esc(z.use)}</span>` : ""}</td><td>the zone its outline lies in</td></tr></table>` + ((x.facilities || []).some(f => f.parcel === p.number) ? `<h3>On it</h3>` + x.facilities.filter(f => f.parcel === p.number).map(f => `<div><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a> <span class="meta">${esc(f.kind)}</span></div>`).join("") : "") + landMap(a, x, p.number) + `<div class="file" style="margin-top:24px">standards/${esc(p.file)}</div>`;
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
