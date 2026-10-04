@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC-04
+  name: "Tool magazine"
+  status: draft
+  description: "Holds the cutters and changes them."
+physical:
+  mass: 3000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

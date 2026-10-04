@@ -1000,8 +1000,8 @@ for s in standards:
         if not os.path.isdir(hdir):
             problem(hdir, "parts are filed in a folder named after their hull")
             continue
-        if hull not in hull_of and hull not in {(g.get("built_of") or {}).get("parts") for g in gates}:
-            problem(hdir, f"no hull '{hull}' in the SFO, and no gate built of it")
+        if hull not in hull_of and hull not in {(g.get("built_of") or {}).get("parts") for g in gates} and hull not in {m.get("slug") for m in modules}:
+            problem(hdir, f"no hull or industrial module '{hull}' in the SFO, and no gate built of it")
         for fn in sorted(os.listdir(hdir)):
             full = os.path.join(hdir, fn)
             if os.path.isdir(full):
@@ -1084,6 +1084,17 @@ for name in sorted({(g.get("built_of") or {}).get("parts") for g in gates} - {No
             c["mass"], c["mass_from"] = sum(k["mass"] * times(k) for k in kids(c)), "parts"
     structures.append({"slug": name, "key": "gate:" + of[0]["slug"], "identity": {"name": name.replace("-", " ").capitalize()}, "making": of[0].get("making") or {},
                        "parts_mass": sum(pt["mass"] * times(pt) for pt in mine if not pt.get("parent") and "mass" in pt), "gates": [g["slug"] for g in of]})
+# (An industrial module's components: each weighs what it says; the module, what they do.)
+for m in modules:
+    mine = [pt for pt in parts if pt["hull"] == m["slug"]]
+    for pt in mine:
+        if (pt.get("physical") or {}).get("mass") is not None:
+            pt["mass"], pt["mass_from"] = pt["physical"]["mass"], "said"
+    for c in mine:
+        if kids(c) and all("mass" in k for k in kids(c)):
+            c["mass"], c["mass_from"] = sum(k["mass"] * times(k) for k in kids(c)), "parts"
+    if mine:
+        m["parts_mass"] = sum(pt["mass"] * times(pt) for pt in mine if not pt.get("parent") and "mass" in pt)
 codes = {pt["slug"] for pt in parts}
 for pt in parts:
     where = os.path.join(TREE, pt["file"])
@@ -1461,6 +1472,18 @@ for ad in administrations:
             rows.append(row("ok" if share <= 1 else "gap", link(x["name"], f"bd:{ad['slug']}:{x['slug']}"), f"{x['gate']['distance']:g} ly", f"a {g['identity']['name']}, which spans {g['performance']['span']:g} ly", f"{x['gate_worked']['hold_power'] / 1e9:.1f} GW to hold, {x['gate_worked']['stations']} power stations" if share <= 1 else "further than its ring spans"))
 report("gates", "Stargates: each ring against the game, and what it costs to hold", "Each gate ring: its span against the game's ring of the same key, and the power its tube takes to hold, worked out from the laws. A gap is a ring that differs from the game, or something a ring does not yet say.", ["Ring", "Span", "Against the game", "Note"], rows)
 
+# 1d. Plant: what each industrial module is built of.
+rows = []
+for m in modules:
+    mine = [pt for pt in parts if pt["hull"] == m["slug"]]
+    tops = [pt for pt in mine if not pt.get("parent")]
+    leaves = [pt for pt in mine if not kids(pt)]
+    cut = [pt for pt in leaves if (pt.get("made_from") or {}).get("item") in stock_of]
+    size = m.get("size") or {}
+    floor = size.get("length", 0) * size.get("width", 0)
+    rows.append(row("gap" if not tops or len(cut) < len(leaves) else "ok", link(m["identity"]["name"], "mod:" + m["slug"]), len(tops) or "none listed", sum(times(pt) for pt in tops) or "", tonnes(m["parts_mass"]) if m.get("parts_mass") else "", f"{m['parts_mass'] / floor:,.0f} kg/m2" if m.get("parts_mass") and floor else "", f"{len(cut)} of {len(leaves)}" if leaves else ""))
+report("plant", "Plant: what each industrial module is built of", "Each industrial module: the kinds of component it is built of, how many pieces that is, what they weigh together, that weight over its floor, and how many of its components say what they are made from. A gap is a module with no components listed, or with components that do not yet say what they are made from.", ["Module", "Kinds of component", "Pieces", "Weight", "Over its floor", "Say what they are made from"], rows)
+
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []
 for hl in hulls:
@@ -1594,7 +1617,7 @@ n = has(materials, lambda m: (m.get("mechanical") or {}).get("fracture_toughness
 rows.append(row("ok" if n == len(materials) else "gap", "Materials with a fracture toughness", f"{n} of {len(materials)}", "how well each resists a crack running through it", ", ".join(m["identity"]["name"] for m in materials if (m.get("mechanical") or {}).get("fracture_toughness") is None) or ""))
 n = has(mill_stock, lambda s_: (s_.get("physical") or {}).get("shock_limit") is not None)
 rows.append(row("ok" if mill_stock and n == len(mill_stock) else "gap", "Mill stock with a shock limit", f"{n} of {len(mill_stock)}", "the hardest jolt each takes as cargo", "none says yet" if not n else "guesses, marked to review"))
-single = [p_ for p_ in parts if not kids(p_)]
+single = [p_ for p_ in parts if not kids(p_) and p_["hull"] not in {m["slug"] for m in modules}]
 n = has(single, lambda p_: (p_.get("physical") or {}).get("shock_limit") is not None)
 rows.append(row("ok" if single and n == len(single) else "gap", "Parts with a shock limit", f"{n} of {len(single)}", "the hardest jolt each takes, fitted or carried", "none says yet" if not n else "guesses, marked to review"))
 for hl in hulls:

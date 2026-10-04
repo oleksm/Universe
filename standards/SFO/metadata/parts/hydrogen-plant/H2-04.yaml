@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: H2-04
+  name: "Compressor"
+  status: draft
+  description: "Brings the hydrogen up to the pressure the furnace takes it at."
+physical:
+  mass: 60000
+fit:
+  count: 2
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

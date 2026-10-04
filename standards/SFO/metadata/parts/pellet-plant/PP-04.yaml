@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: PP-04
+  name: "Screen"
+  status: draft
+  description: "Sorts pellets by size; the wrong sizes go round again."
+physical:
+  mass: 20000
+fit:
+  count: 4
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

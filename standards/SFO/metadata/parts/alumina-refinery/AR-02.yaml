@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: AR-02
+  name: "Thickener"
+  status: draft
+  description: "A wide tank where the red mud settles out."
+physical:
+  mass: 400000
+fit:
+  count: 8
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

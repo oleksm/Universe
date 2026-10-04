@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: EAF-02
+  name: "Roof and electrode arms"
+  status: draft
+  description: "The lid, and the arms that hold and feed the three electrodes through it."
+physical:
+  mass: 60000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

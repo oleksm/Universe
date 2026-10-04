@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: H2-01
+  name: "Electrolyser stack"
+  status: draft
+  description: "Cells that split water into hydrogen and oxygen with electric current."
+physical:
+  mass: 40000
+fit:
+  count: 20
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

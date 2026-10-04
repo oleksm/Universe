@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: CH-03
+  name: "Homogenising furnace"
+  status: draft
+  description: "Soaks the ingots to even out the alloy."
+physical:
+  mass: 180000
+fit:
+  count: 2
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

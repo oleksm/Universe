@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: WB-03
+  name: "Welding jig"
+  status: draft
+  description: "Holds the panels in shape while they are joined."
+physical:
+  mass: 25000
+fit:
+  count: 4
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

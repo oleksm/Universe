@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: LD-01
+  name: "Dock crane"
+  status: draft
+  description: "Lifts cargo between ships and the dock."
+physical:
+  mass: 250000
+fit:
+  count: 2
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

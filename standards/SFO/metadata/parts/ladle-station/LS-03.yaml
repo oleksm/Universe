@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: LS-03
+  name: "Electrode roof"
+  status: draft
+  description: "A lid with electrodes that keep the steel hot while it is trimmed."
+physical:
+  mass: 30000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

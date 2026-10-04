@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: PM-01
+  name: "Piercer"
+  status: draft
+  description: "Skewed rolls that drive the hot round over a point, opening it."
+physical:
+  mass: 350000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }

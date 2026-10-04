@@ -197,9 +197,12 @@ const goodBySlug = Object.fromEntries(DATA.goods.map(g => [g.slug, g]));
 const topParts = hull => DATA.parts.filter(p => p.hull === hull && !p.parent);
 const subParts = code => DATA.parts.filter(p => p.parent === code);
 const partByCode = Object.fromEntries(DATA.parts.map(p => [p.slug, p]));
-const ownerName = hl => (hullBySlug[hl] || (DATA.structures.find(s => s.slug === hl) || { identity: { name: hl } })).identity.name;
-const ownerKey = hl => hullBySlug[hl] ? "hull:" + hl : (DATA.structures.find(s => s.slug === hl) || {}).key || "";
-const partHulls = id => [...new Set(DATA.parts.filter(p => p.under === id).map(p => p.hull))];
+const modOwner = hl => DATA.modules.find(m => m.slug === hl);
+const ownerName = hl => (hullBySlug[hl] || modOwner(hl) || (DATA.structures.find(s => s.slug === hl) || { identity: { name: hl } })).identity.name;
+const ownerKey = hl => hullBySlug[hl] ? "hull:" + hl : modOwner(hl) ? "mod:" + hl : (DATA.structures.find(s => s.slug === hl) || {}).key || "";
+// (An industrial module's components are listed on its own page, not under Parts in the tree.)
+const partHulls = id => partOwners(id).filter(hl => !modOwner(hl));
+const partOwners = id => [...new Set(DATA.parts.filter(p => p.under === id).map(p => p.hull))];
 // And ship equipment.
 const eqUnder = (id, q) => DATA.equipment.filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.key} ${x.identity.slot || ""}`.toLowerCase().includes(w))));
 const eqBySlug = Object.fromEntries(DATA.equipment.map(x => [x.slug, x]));
@@ -736,7 +739,7 @@ function detail(k) {
   if (kind === "pg") {
     const hl = hullBySlug[rest[0]], tops = topParts(rest[0]); if (!tops.length) return "";
     const st = DATA.structures.find(s => s.slug === rest[0]);
-    return `<h2>${esc(ownerName(rest[0]))} parts</h2><div class="meta">${hl ? `the parts of the hull <a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : st ? "the parts of the ring of " + st.gates.map(g => `<a data-k="${esc("gate:" + g)}">${esc(gateBySlug[g].identity.name)}</a>`).join(", ") : esc(rest[0])}</div>` + partsTable(tops, hl ? "In one hull" : "In one ring") + (hl && hl.estimate && hl.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(hl.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, at ${+hl.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
+    return `<h2>${esc(ownerName(rest[0]))} parts</h2><div class="meta">${hl ? `the parts of the hull <a data-k="${esc("hull:" + rest[0])}">${esc(hl.identity.name)}</a>` : modOwner(rest[0]) ? `the components of the industrial module <a data-k="${esc("mod:" + rest[0])}">${esc(ownerName(rest[0]))}</a>` : st ? "the parts of the ring of " + st.gates.map(g => `<a data-k="${esc("gate:" + g)}">${esc(gateBySlug[g].identity.name)}</a>`).join(", ") : esc(rest[0])}</div>` + partsTable(tops, hl ? "In one hull" : modOwner(rest[0]) ? "In one module" : "In one ring") + (hl && hl.estimate && hl.estimate.per_m2 ? `<p class="meta">Masses are estimates until a part says what it is cut from: the frame's ${kg(hl.mass.frame * 1000)} (the game's figure) shared over the parts by their surface, at ${+hl.estimate.per_m2.toPrecision(3)} kg for each m².</p>` : "");
   }
   if (kind === "mk") {
     const m = DATA.makers.find(x => x.key === rest.join(":")); if (!m) return "";
@@ -805,6 +808,10 @@ function detail(k) {
         + (wk.can.length || wk.cannot.length ? `<tr><td>settlements it can set down at</td><td>${esc(wk.can.join(", "))}</td><td>${wk.cannot.length ? "too heavy for: " + esc(wk.cannot.join(", ")) : "their worlds' gravity"}</td></tr>` : "")
         + (ld.designed !== undefined ? `<tr><td>landing its legs are designed for</td><td>${ld.designed} m/s, a jolt of ${ld.jolt.toFixed(2)} g aboard</td><td>its design, over a stroke of ${ld.stroke} m</td></tr><tr><td>hardest landing its legs take</td><td>${ld.hardest.toFixed(1)} m/s, a jolt of ${ld.hardest_jolt.toFixed(1)} g aboard</td><td>the weakest of its legs' parts; faster, a leg fails</td></tr>` : "")
         + `</table>`;
+    }
+    if (kind === "mod") {
+      const cs = topParts(e.slug);
+      h += `<h3>What it is built of</h3>` + (cs.length ? partsTable(cs, "In one module") + (e.parts_mass ? `<p class="meta">Together ${kg(e.parts_mass)}${e.size && e.size.length ? `, which is ${Math.round(e.parts_mass / (e.size.length * e.size.width)).toLocaleString()} kg for each m² of its floor` : ""}.</p>` : "") : `<p class="meta">Not yet said.</p>`);
     }
     if (kind === "gate" && e.worked) {
       const wk = e.worked, sci = v => { const x = Math.floor(Math.log10(v)); return `${(v / 10 ** x).toFixed(1)} × 10<sup>${x}</sup> J`; };

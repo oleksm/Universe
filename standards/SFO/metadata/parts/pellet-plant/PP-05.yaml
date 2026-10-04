@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: PP-05
+  name: "Belt conveyor"
+  status: draft
+  description: "Carries ore and pellets between the machines."
+physical:
+  mass: 60000
+fit:
+  count: 6
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
