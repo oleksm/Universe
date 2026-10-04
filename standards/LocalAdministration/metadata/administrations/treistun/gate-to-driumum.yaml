@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/body.schema.yaml
 # As the game makes it: the gate, the star it leads to, how far that is and the ring it is.
+key: settlement.treistun.gate-to-driumum
 name: "Gate to Driumum"
 kind: settlement
 gate: { ring: halcyon-ring-i, to: Driumum, distance: 3.07 }

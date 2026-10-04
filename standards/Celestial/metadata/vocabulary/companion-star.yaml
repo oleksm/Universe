@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.companion-star
   name: "Companion star"
   group: star
   known_as: "binary star"

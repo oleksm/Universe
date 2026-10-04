@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.hot-rolling-mill
   name: Hot rolling mill
   step: Roll hot
   description: "A row of roll stands that squeeze a hot ingot down to a long thick strip."

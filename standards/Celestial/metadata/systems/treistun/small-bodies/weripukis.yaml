@@ -2,7 +2,7 @@
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: between the first giant and the last.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Weripukis, kind: centaur, parent: Treistun, about: 'An ice body among the giants, on an orbit that will last
+identity: {key: small-body.treistun.weripukis, name: Weripukis, kind: centaur, parent: Treistun, about: 'An ice body among the giants, on an orbit that will last
     a few million years. One day a giant will throw it inward as a comet, or out.'}
 orbit: {semi_major_axis: 361961000.0, eccentricity: 0.43301958, inclination: 9.7, period: 1637.1}
 physical: {radius: 34.62, density: 950, mass: 1.652e+17}

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.tank.s0
   name: "Fuel tank 4 t"
-  key: tank.s0
   maker: brand.hadley
   slot: tank
   description: "A fuel tank."

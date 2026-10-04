@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.aj-01
   code: AJ-01
   name: "Jig frame"
   revision: draft

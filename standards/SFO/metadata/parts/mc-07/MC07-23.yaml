@@ -2,6 +2,7 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
+  key: part.mc07-23
   code: MC07-23
   name: "Landing leg, front"
   revision: draft

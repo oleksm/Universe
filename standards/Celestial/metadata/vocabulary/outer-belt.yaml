@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.outer-belt
   name: "Outer belt"
   group: region
   known_as: "Kuiper belt"

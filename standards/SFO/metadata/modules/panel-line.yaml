@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.panel-line
   name: Panel line
   step: Make panels
   description: "A line that cuts, forms and finishes one kind of panel without stopping. Set up for one panel, it makes nothing else until it is set up again."

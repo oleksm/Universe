@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pl-03
   code: PL-03
   name: "Rectifier transformer"
   revision: draft

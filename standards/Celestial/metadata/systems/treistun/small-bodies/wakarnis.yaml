@@ -2,7 +2,7 @@
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Wakarnis, kind: crossing asteroid, parent: Treistun, about: 'Knocked out of the belt. At its closest it comes
+identity: {key: small-body.treistun.wakarnis, name: Wakarnis, kind: crossing asteroid, parent: Treistun, about: 'Knocked out of the belt. At its closest it comes
     in to 0.75 AU, near the orbit of Treistun e.'}
 orbit: {semi_major_axis: 133324000.0, eccentricity: 0.15718285, inclination: 13.35, period: 365.97}
 physical: {radius: 0.145}

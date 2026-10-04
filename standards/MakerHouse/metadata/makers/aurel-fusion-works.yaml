@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.aurel
+key: company.aurel
 name: Aurel Fusion Works
 ticker: AFW
 address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 11, section: A, unit: 6 }

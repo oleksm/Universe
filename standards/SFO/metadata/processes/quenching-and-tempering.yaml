@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.quenching-and-tempering
   name: Quenching and tempering
   kind: thermal
   method: heat treatment

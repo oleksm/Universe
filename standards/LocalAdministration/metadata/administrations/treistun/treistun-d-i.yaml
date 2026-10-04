@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../../schema/body.schema.yaml
+key: la-body.treistun.treistun-d-i
 name: "Treistun d I"
 kind: moon
 at: Treistun d

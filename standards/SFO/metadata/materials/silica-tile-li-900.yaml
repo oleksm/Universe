@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: NASA Ames Thermal Protection Materials database (TPSX), LI-900 Rigid Tile: measured values, through the thickness; Wikipedia: LI-900 (thermal shock).
 identity:
+  key: material.silica-tile-li-900
   name: Silica tile LI-900
   class: ceramic
   composition:

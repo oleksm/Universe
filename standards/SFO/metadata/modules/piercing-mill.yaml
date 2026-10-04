@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.piercing-mill
   name: Piercing mill
   step: Pierce to tube
   description: "Drives a hot round over a point to open it into a tube, then rolls its wall even."

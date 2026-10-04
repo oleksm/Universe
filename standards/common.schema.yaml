@@ -2,6 +2,10 @@ $schema: http://json-schema.org/draft-07/schema#
 title: Common definitions
 description: 'standards/common.schema.yaml: what every schema of the registry shares. A schema refers to one of these with $ref: <path to this file>#/definitions/<name>, and does not write its own.'
 definitions:
+  key:
+    description: "A record's one key, in the whole registry: <kind>.<name>, lower case, words joined by -, the kind being its schema's. The name may have more dotted parts where a record lives under another (body.treistun.treistun-f). Another record refers to it by this string."
+    type: string
+    pattern: "^[a-z][a-z-]*(\\.[a-z0-9][a-z0-9-]*)+$"
   basis:
     description: 'Where a record''s figures come from. Each entry covers the groups (or group.property) it names. sourced: from a published source or the game, named. derived: worked out from other figures, by physics or from a model. invented: chosen, to be balanced or replaced. review: a guess put in so the figure is there, to be reviewed.'
     type: array

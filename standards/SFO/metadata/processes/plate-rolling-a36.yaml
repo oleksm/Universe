@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.plate-rolling-a36
   name: Plate rolling A36 steel
   kind: mechanical
   method: rolling

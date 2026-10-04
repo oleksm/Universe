@@ -68,7 +68,7 @@ def density(cls):
 
 
 def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu):
-    rec = {"provenance": "seeded", "identity": {"name": nm, "kind": kind, "parent": parent, "about": about},
+    rec = {"provenance": "seeded", "identity": {"key": f"small-body.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "parent": parent, "about": about},
            "orbit": {"semi_major_axis": r3(a_km, 6), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5)},
            "physical": {"radius": r3(radius_km)}, "rock": {"class": cls}}
     d = laws["sizes"].get("comet_density") if kind == "comet" else density(cls)
@@ -83,6 +83,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         continue
     sysm = yaml.safe_load(open(os.path.join(CEL, "systems", fn)))
     sysdir = os.path.join(CEL, "systems", fn[:-5])
+    SYS = fn[:-5]
     star, sname = sysm["star"], sysm["identity"]["name"]
     mu = G * star["mass"] * SUN
     bodies = [yaml.safe_load(open(os.path.join(sysdir, "bodies", b))) for b in sorted(os.listdir(os.path.join(sysdir, "bodies")))]
@@ -179,7 +180,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
 
     # Regions.
     def region(kind, nm, lo, hi, about, why, parent=None):
-        rec = {"provenance": "seeded", "identity": {"name": nm, "kind": kind, "about": about}, "extent": {"inner": r3(lo), "outer": r3(hi)}}
+        rec = {"provenance": "seeded", "identity": {"key": f"region.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "about": about}, "extent": {"inner": r3(lo), "outer": r3(hi)}}
         if parent:
             rec["identity"]["parent"] = parent
         put(sysdir, "regions", "region", rec, why)

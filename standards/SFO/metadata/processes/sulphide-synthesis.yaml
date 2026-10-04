@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.sulphide-synthesis
   name: Sulphide synthesis
   kind: chemical
   method: synthesis

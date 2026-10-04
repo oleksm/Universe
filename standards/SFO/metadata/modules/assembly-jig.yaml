@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.assembly-jig
   name: Assembly jig
   step: Assemble in orbit
   description: "A frame, carried by a rig, that holds a length of a ring while its frames are closed and its panels fixed to them, then passes it out to be joined to the last. Sized to hold one segment of a gate ring."

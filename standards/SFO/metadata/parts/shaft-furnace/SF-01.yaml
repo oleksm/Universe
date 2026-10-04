@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.sf-01
   code: SF-01
   name: "Furnace shell"
   revision: draft

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/gate.schema.yaml
 identity:
+  key: gate.ring.iii
   name: Halcyon Ring III
-  key: structure.ring.iii
   maker: brand.halcyon
   class: 3
   description: "A gate ring, class III: the longest throat anyone builds."

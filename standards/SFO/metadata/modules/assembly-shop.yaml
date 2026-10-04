@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.assembly-shop
   name: Assembly shop
   step: Fit together
   description: "A hall where parts are fitted into a working assembly (a landing leg, a ramp) and tried."

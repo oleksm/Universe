@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.tank-farm
   name: Tank farm
   step: Store
   description: "A group of tanks for liquids and gases."

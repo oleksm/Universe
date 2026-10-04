@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pl-01
   code: PL-01
   name: "Reduction cell"
   revision: draft

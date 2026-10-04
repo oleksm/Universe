@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.lift.belly.s1
   name: "Belly lift S1"
-  key: lift.belly.s1
   maker: brand.kestrel
   slot: lift
   description: "Lift jets under the hull, to hover and set down."

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.gw-02
   code: GW-02
   name: "Racking"
   revision: draft

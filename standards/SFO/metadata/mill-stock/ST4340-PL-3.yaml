@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
 identity:
+  key: stock.st4340-pl-3
   code: ST4340-PL-3
   name: "4340 plate 3 mm"
 made_from:

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.alloying-6061
   name: Alloying 6061 aluminium
   kind: chemical
   method: alloying

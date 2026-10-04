@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.fusion-power-station
   name: Fusion power station
   step: Make power
   description: "A fusion plant of industrial size. It burns deuterium and feeds a factory or a settlement."

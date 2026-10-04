@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.eam-02
   code: EAM-02
   name: "Roof and electrode arms"
   revision: draft

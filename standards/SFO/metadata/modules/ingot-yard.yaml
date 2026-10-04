@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.ingot-yard
   name: Ingot yard
   step: Check and store
   description: "Ingots cool, a sample is analysed to certify the grade, and they are stacked until shipped."

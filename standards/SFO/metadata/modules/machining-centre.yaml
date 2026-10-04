@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.machining-centre
   name: Machining centre
   step: Machine
   description: "Lathes and mills that cut tube, bar and forgings to a part's size. What it takes and cuts away depends on the part: each part's record says."

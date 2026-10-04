@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.life.s2
   name: "Life Support"
-  key: life.s2
   maker: brand.hadley
   slot: life
   description: "Air, water and warmth for the crew."

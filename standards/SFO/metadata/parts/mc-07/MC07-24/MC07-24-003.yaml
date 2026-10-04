@@ -3,6 +3,7 @@
 # clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
 # at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
 identity:
+  key: part.mc07-24-003
   code: MC07-24-003
   name: "Pad"
   revision: draft

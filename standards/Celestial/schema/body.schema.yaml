@@ -9,8 +9,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, kind]
+    required: [key, name, kind]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [rocky planet, gas giant, ice giant, moon, asteroid] }
       parent: { type: string, description: "What it orbits, by name: the star, or a planet." }

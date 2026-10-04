@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.balance-point
   name: "Balance point"
   group: place
   known_as: "Lagrange point"

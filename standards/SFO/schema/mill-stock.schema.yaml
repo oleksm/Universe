@@ -8,8 +8,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [code, name]
+    required: [key, code, name]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       code: { type: string, pattern: '^[A-Z0-9]+(-[A-Z0-9]+)+$', description: "Its code. No two alike." }
       name: { type: string }
   made_from:

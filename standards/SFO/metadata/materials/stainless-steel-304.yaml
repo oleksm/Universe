@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: SAE 304 stainless steel. A range there is given as its middle.
 identity:
+  key: material.stainless-steel-304
   name: Stainless steel 304
   class: alloy
   composition:

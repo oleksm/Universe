@@ -3,8 +3,8 @@
 # the world had physics to answer to. Kept as a record of what the game has. Do not balance against
 # it or design toward it.
 identity:
-  name: "Sprint Courier"
   key: hull.sprint
+  name: "Sprint Courier"
   maker: brand.vireo
   class: courier
   revision: outdated

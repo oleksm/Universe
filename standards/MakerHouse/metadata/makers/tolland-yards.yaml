@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.tolland
+key: company.tolland
 name: Tolland Yards
 ticker: TOL
 address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 3, section: A, unit: 2 }

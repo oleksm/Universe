@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ch-02
   code: CH-02
   name: "Casting machine"
   revision: draft

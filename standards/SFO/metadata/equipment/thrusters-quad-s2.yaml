@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.thrusters.quad.s2
   name: "Thruster Quads S2"
-  key: thrusters.quad.s2
   maker: brand.kestrel
   slot: thrusters
   description: "Manoeuvring thrusters, in clusters at nose and tail."

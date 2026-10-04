@@ -15,8 +15,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, class]
+    required: [key, name, class]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       class: { enum: [metal, alloy, ceramic, glass, polymer, composite, fluid] }
       composition:

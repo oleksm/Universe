@@ -12,8 +12,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, symbol, atomic_number]
+    required: [key, name, symbol, atomic_number]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       symbol: { type: string, pattern: "^[A-Z][a-z]?$" }
       atomic_number: { type: integer, minimum: 1, description: Protons. }

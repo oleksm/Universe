@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+key: facility.treistun.port-trethi.trethi-warehouse
 name: Trethi Warehouse
 kind: warehouse
 parcel: 3

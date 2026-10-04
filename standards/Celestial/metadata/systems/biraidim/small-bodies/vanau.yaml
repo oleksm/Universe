@@ -2,7 +2,7 @@
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Vanau, kind: crossing asteroid, parent: Biraidim, about: 'Knocked out of the belt. At its closest it comes
+identity: {key: small-body.biraidim.vanau, name: Vanau, kind: crossing asteroid, parent: Biraidim, about: 'Knocked out of the belt. At its closest it comes
     in to 0.04 AU, near the orbit of Biraidim b.'}
 orbit: {semi_major_axis: 33649300.0, eccentricity: 0.81538795, inclination: 9.17, period: 67.675}
 physical: {radius: 0.1321, density: 3300, mass: 31850000000.0}

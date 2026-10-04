@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 # The game's own ore (content/base/ores.ron): its name and how it stows are the game's.
 identity:
+  key: good.carbonaceous-ore
   name: Carbonaceous Ore
   kind: rock
   description: "Dark, crumbly asteroid rock rich in carbon and bound water."

@@ -3,6 +3,7 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.fr
   name: Francium
   symbol: Fr
   atomic_number: 87

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.h2-04
   code: H2-04
   name: "Compressor"
   revision: draft

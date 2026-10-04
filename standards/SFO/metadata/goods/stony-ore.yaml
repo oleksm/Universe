@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 # The game's own ore (content/base/ores.ron): its name and how it stows are the game's.
 identity:
+  key: good.stony-ore
   name: Stony Ore
   kind: rock
   description: "Common asteroid rock: silicates holding iron, magnesium and calcium as oxides."

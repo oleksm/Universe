@@ -3,7 +3,9 @@ title: Asteroids
 description: 'standards/Celestial/metadata/asteroids.yaml: how asteroids lie in a system, from what is known of the Sun''s. Each system''s belts are worked out from these and from its own planets. Every asteroid is on an orbit of its own: round the star, or (a few) round a larger asteroid.'
 type: object
 additionalProperties: false
+required: [key]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   main_belt:
     description: "The belt inside the first gas giant, between two of its resonances. As the Sun's."
     type: object

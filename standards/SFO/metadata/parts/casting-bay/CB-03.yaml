@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.cb-03
   code: CB-03
   name: "Mould car"
   revision: draft

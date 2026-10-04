@@ -5,7 +5,7 @@ type: object
 additionalProperties: false
 required: [key, name, ticker, note]
 properties:
-  key: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: What the game calls it. }
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: Its short trading name; no two alike. }
   business: { enum: [maker, warehousing, exchange], description: 'What kind of company it is. Left out: a maker. Only makers go to the game''s brands.' }

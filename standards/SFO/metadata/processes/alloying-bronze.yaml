@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.alloying-bronze
   name: Alloying bearing bronze
   kind: chemical
   method: alloying

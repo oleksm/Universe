@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.radiation-belt
   name: "Radiation belt"
   group: condition
   about: "Charged particles trapped by a giant's magnetic field, in belts round it."

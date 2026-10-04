@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.finishing-line
   name: Finishing line
   step: Cut and finish
   description: "Levels the strip, heat-treats it to its temper and cuts it into sheets and plates."

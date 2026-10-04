@@ -2,6 +2,7 @@
 # Not in the game yet: added to the registry 2026-10-04. A rig, not a settlement: equipment that is
 # brought to where something large is to be built and moved on when it is done, as an oil rig is.
 # It has no ground, no zoning and no administration of its own.
+key: rig.treistun.hadley-orbital-works
 name: "Hadley Orbital Works"
 kind: rig
 at: Treistun f

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.tallis
+key: company.tallis
 name: Tallis Signal Works
 ticker: TSW
 address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 38, section: B, unit: 3 }

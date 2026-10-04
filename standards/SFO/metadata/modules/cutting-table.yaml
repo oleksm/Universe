@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.cutting-table
   name: Cutting table
   step: Cut to shape
   description: "A flat bed where sheet and plate are cut to each panel's outline. What is left between the outlines is scrap."

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.forging-press
   name: Forging press
   step: Forge
   description: "Presses hot metal between dies into a rough shape, lining up its grain."

@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: List of copper alloys (C93200, SAE 660). A range there is given as its middle.
 identity:
+  key: material.bearing-bronze-c93200
   name: Bearing bronze C93200
   class: alloy
   composition:

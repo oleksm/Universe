@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.ore-yard
   name: Ore yard
   step: Receive and store
   description: "Open ground where ore, lime and carbon are stockpiled and reclaimed onto conveyors."

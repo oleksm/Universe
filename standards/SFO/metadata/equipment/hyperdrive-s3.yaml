@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.hyperdrive.s3
   name: "Hyperdrive S3"
-  key: hyperdrive.s3
   maker: brand.kestrel
   slot: hyperdrive
   description: "The drive that crosses between stars."

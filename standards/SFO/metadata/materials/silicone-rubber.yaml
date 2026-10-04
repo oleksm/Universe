@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: Silicone rubber. A range there is given as its middle.
 identity:
+  key: material.silicone-rubber
   name: Silicone rubber
   class: polymer
   form:

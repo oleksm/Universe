@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../../schema/body.schema.yaml
+key: la-body.treistun.treistun-e
 name: "Treistun e"
 kind: planet
 gravity: 9.6

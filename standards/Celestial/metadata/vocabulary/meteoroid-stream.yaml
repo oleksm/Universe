@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.meteoroid-stream
   name: "Meteoroid stream"
   group: small body
   about: "A trail of grains and pebbles shed by a comet, strung along its orbit."

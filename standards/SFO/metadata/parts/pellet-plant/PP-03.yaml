@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pp-03
   code: PP-03
   name: "Travelling grate"
   revision: draft

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ls-03
   code: LS-03
   name: "Electrode roof"
   revision: draft

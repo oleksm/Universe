@@ -3,7 +3,9 @@ title: Conditions
 description: 'standards/Celestial/metadata/conditions.yaml: what a place does to what is there, worked out for each body from these: a moon kneaded by its planet, the radiation round a giant.'
 type: object
 additionalProperties: false
+required: [key]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   tidal_heating:
     description: "Heat made inside a moon as its planet kneads it: 21/2 (k2/Q) G M^2 R^5 n e^2 / a^6."
     type: object

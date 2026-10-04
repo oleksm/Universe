@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.reheat-furnace
   name: Reheat furnace
   step: Heat
   description: "Brings ingots up to the temperature they are worked at."

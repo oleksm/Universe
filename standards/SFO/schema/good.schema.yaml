@@ -8,8 +8,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, kind]
+    required: [key, name, kind]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [rock, raw, consumable, fuel, intermediate, product, by-product], description: 'rock: dug as it lies. raw: won from a rock, what industry starts from.' }
       description: { type: string }

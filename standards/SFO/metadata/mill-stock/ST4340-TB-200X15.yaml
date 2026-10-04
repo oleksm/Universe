@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
 identity:
+  key: stock.st4340-tb-200x15
   code: ST4340-TB-200X15
   name: "4340 tube 200 x 15 mm"
 made_from:

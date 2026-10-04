@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.bd-01
   code: BD-01
   name: "Dock hall frame"
   revision: draft

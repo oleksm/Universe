@@ -3,8 +3,9 @@ title: System
 description: 'standards/LocalAdministration/metadata/administrations/<name>.yaml: one settled system''s administration. It manages the land in its system. Its bodies are the records in the folder beside it, <name>/.'
 type: object
 additionalProperties: false
-required: [name]
+required: [key, name]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string, description: The settled system's name. }
   address: { $ref: "../../common.schema.yaml#/definitions/address" }
   about: { type: string, description: What it is. }

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.gas-giant
   name: "Gas giant"
   group: world
   about: "A world mostly of hydrogen and helium, with no surface to land on."

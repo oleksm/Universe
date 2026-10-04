@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.tf-02
   code: TF-02
   name: "Pipework"
   revision: draft

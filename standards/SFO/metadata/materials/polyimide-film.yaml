@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: DuPont Kapton HN polyimide film datasheet (25 um film at 23 C).
 identity:
+  key: material.polyimide-film
   name: Polyimide film (Kapton)
   class: polymer
   form:

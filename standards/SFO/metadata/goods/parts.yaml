@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.parts
   name: Parts
   kind: product
   description: "Finished parts of a hull, and assemblies of them."

@@ -42,13 +42,29 @@ def problem(where, what):
     problems.append(f"{os.path.relpath(where, ROOT)}: {what}")
 
 
+# Every record has one key, <kind>.<name> (see validate.py and standards/common.schema.yaml). Until
+# the game loads records by it, this build still works by file names and the game's old keys, so a
+# key written at a record's top is taken off as it is read and kept here; a company's and the
+# standards body's stand as the game still has them (brand.x, body.x).
+REGISTRY_KEY = {}
+OLD_KEY = {"company": "brand", "standards-body": "body"}
+
+
 def load(path):
     try:
         with open(path, encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
+            rec = yaml.safe_load(f) or {}
     except yaml.YAMLError as e:
         problem(path, f"not valid YAML: {e}")
         return {}
+    if isinstance(rec, dict) and isinstance(rec.get("key"), str) and "." in rec["key"]:
+        kind, _, rest = rec["key"].partition(".")
+        REGISTRY_KEY[os.path.abspath(path)] = rec["key"]
+        if kind in OLD_KEY:
+            rec["key"] = OLD_KEY[kind] + "." + rest.replace("-", "_")
+        else:
+            del rec["key"]
+    return rec
 
 
 def check_standard(s, ids):
@@ -1306,9 +1322,9 @@ def write_ron():
     pair = lambda v: f"({float(v[0])!r}, {float(v[1])!r})" if v else "(0.0, 0.0)"
     with open(os.path.join(CONTENT, "rock_classes.ron"), "w", encoding="utf-8") as f:
         f.write(head + "// The kinds of asteroid, from the celestial registry (standards/Celestial/metadata/rock-classes). The game's are the code's\n// (crates/world/src/belt.rs, mining.rs); a test holds them to these.\n[\n" + "".join(
-            f"    (key: {ron_str(rc['identity']['key'])}, density_rubble: {float(rc['physical']['density_rubble'])!r}, density_monolith: {float(rc['physical']['density_monolith'])!r}, albedo: {float(rc['physical']['albedo'])!r}, "
+            f"    (key: {ron_str(rc['identity']['label'])}, density_rubble: {float(rc['physical']['density_rubble'])!r}, density_monolith: {float(rc['physical']['density_monolith'])!r}, albedo: {float(rc['physical']['albedo'])!r}, "
             f"water: {pair((rc.get('composition') or {}).get('water'))}, organics: {pair((rc.get('composition') or {}).get('organics'))}, metal: {pair((rc.get('composition') or {}).get('metal'))}, volatiles: {pair((rc.get('composition') or {}).get('volatiles'))}, pgm: {pair((rc.get('composition') or {}).get('pgm'))}, "
-            f"cut_energy: {float(rc['mining']['cut_energy'])!r}, yields: {ron_str(rc['mining']['yields'])}),\n" for rc in celestial["rock_classes"] if rc["identity"].get("key")) + "]\n")
+            f"cut_energy: {float(rc['mining']['cut_energy'])!r}, yields: {ron_str(rc['mining']['yields'])}),\n" for rc in celestial["rock_classes"] if rc["identity"].get("label")) + "]\n")
     gx = celestial["galaxy"]
     with open(os.path.join(CONTENT, "galaxy.ron"), "w", encoding="utf-8") as f:
         f.write(head + "// The world as a whole, from the celestial registry (standards/Celestial/metadata/galaxy.yaml): the game takes its seed from here;\n// the laws are the code's, and a test holds them to these.\n[\n"
@@ -1406,7 +1422,8 @@ for ad in administrations:
 # said what it is made of.
 eq_by = {e["slug"]: e for e in equipment}
 _mods = open(os.path.join(ROOT, "content", "base", "modules.ron"), encoding="utf-8").read()
-GAME_MODULES = {k: float(m) for k, m in re.findall(r'\(key: "([^"]+)",.*?mass: ([0-9.e+]+)', _mods)}
+game_key = lambda key: (key or "").partition(".")[2]           # (equipment.drive.torch.s1 is the game's drive.torch.s1)
+GAME_MODULES = {k.replace("_", "-"): float(m) for k, m in re.findall(r'\(key: "([^"]+)",.*?mass: ([0-9.e+]+)', _mods)}
 rows = []
 for hl in hulls:
     fitted = 0.0
@@ -1418,7 +1435,7 @@ for hl in hulls:
         fitted += (e.get("physical") or {}).get("mass", 0)
     hl["fitted_mass"] = fitted
 for e in equipment:
-    mass, game = (e.get("physical") or {}).get("mass"), GAME_MODULES.get(e["identity"].get("key"))
+    mass, game = (e.get("physical") or {}).get("mass"), GAME_MODULES.get(game_key(e["identity"].get("key")))
     on = [hl["identity"]["name"] for hl in hulls + gates if any(ft.get("item") == e["slug"] for ft in hl.get("fit") or [])]
     same = game is not None and mass is not None and abs(game - mass) < 0.5
     rows.append(row("gap", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
@@ -1437,7 +1454,7 @@ station = next((m for m in modules if (m.get("rate") or {}).get("power")), None)
 rows = []
 for g in gates:
     d, span = (g.get("size") or {}).get("opening"), (g.get("performance") or {}).get("span")
-    game = GAME_RINGS.get(g["identity"]["key"])
+    game = GAME_RINGS.get("structure." + game_key(g["identity"]["key"]))
     if d and span and all(k in LAW for k in ("TUBE_T_LY", "TUBE_GAMMA", "TUBE_EPS", "TUBE_RHO", "TUBE_K", "TUBE_HOLD")):
         mu = LAW["TUBE_RHO"] * d ** LAW["TUBE_K"]
         opening = tube_energy(mu, span)
@@ -2191,8 +2208,8 @@ for where_ in ("warm", "frost_line", "cold", "trojans", "outer"):
         rows.append(row("ok" if abs(tot - 1) < 1e-6 else "gap", "Rock classes found, " + where_.replace("_", " "), f"{len(celestial['rock_classes'])} classes", "", f"their shares add to {tot:g}" + ("" if abs(tot - 1) < 1e-6 else ", not 1")))
 for rc in celestial["rock_classes"]:
     lacks = [w_ for w_, has_ in (("its density", (rc.get("physical") or {}).get("density_rubble")), ("what it is made of", rc.get("composition")), ("what it yields", (rc.get("mining") or {}).get("yields"))) if not has_]
-    if lacks or not rc["identity"].get("key"):
-        rows.append(row("gap", link(rc["identity"]["name"], "cr:" + rc["slug"]), "rock class", "", "; ".join((["not in the game yet"] if not rc["identity"].get("key") else []) + (["not said: " + ", ".join(lacks)] if lacks else []))))
+    if lacks or not rc["identity"].get("label"):
+        rows.append(row("gap", link(rc["identity"]["name"], "cr:" + rc["slug"]), "rock class", "", "; ".join((["not in the game yet"] if not rc["identity"].get("label") else []) + (["not said: " + ", ".join(lacks)] if lacks else []))))
 for sysm in celestial["systems"]:
     for bl in sysm.get("belts") or []:
         if bl["kind"] != "trojan" or bl.get("fields"):
@@ -2200,7 +2217,7 @@ for sysm in celestial["systems"]:
     for fl in sysm["fields"]:
         if fl.get("in_belt") is False or "belt" not in fl:
             rows.append(row("gap", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), "", "", "it lies in no belt its system has, by the laws written out"))
-keys_ = {rc["identity"]["key"].lower() for rc in celestial["rock_classes"] if rc["identity"].get("key")}
+keys_ = {rc["identity"]["label"].lower() for rc in celestial["rock_classes"] if rc["identity"].get("label")}
 for sysm in celestial["systems"]:
     for fl in sysm["fields"]:
         if celestial["rock_classes"] and (fl.get("rocks") or {}).get("class") not in keys_:

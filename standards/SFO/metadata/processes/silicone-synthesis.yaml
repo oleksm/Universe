@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.silicone-synthesis
   name: Silicone synthesis
   kind: chemical
   method: polymerisation

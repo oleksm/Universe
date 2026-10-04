@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.loading-dock
   name: Loading dock
   step: Handle
   description: "Where goods are moved between store and vehicle or ship."

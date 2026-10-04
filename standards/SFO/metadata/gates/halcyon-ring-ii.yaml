@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/gate.schema.yaml
 identity:
+  key: gate.ring.ii
   name: Halcyon Ring II
-  key: structure.ring.ii
   maker: brand.halcyon
   class: 2
   description: "A gate ring, class II: the settled lanes' ring."

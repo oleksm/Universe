@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.tf-01
   code: TF-01
   name: "Tank"
   revision: draft

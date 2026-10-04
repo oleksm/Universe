@@ -2,6 +2,7 @@
 # Data: Wikipedia: 4340 steel. A range there is given as its middle. Its stiffness: Wikipedia, Young's
 # modulus (steel, 200 GPa); its density the usual figure for carbon and low-alloy steel.
 identity:
+  key: material.high-strength-steel-4340
   name: High-strength steel 4340
   class: alloy
   composition:

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {name: Driumum c, kind: rocky planet, parent: Driumum}
+identity: {key: body.driumum.driumum-c, name: Driumum c, kind: rocky planet, parent: Driumum}
 orbit: {semi_major_axis: 6030660.0, eccentricity: 0.0259, period: 5.65823, inclination: 0.935}
 physical: {mass: 1.3289e+24, radius: 4182.89, gravity: 5.069, day: 25.89, tilt: 7.33, albedo: 0.15}
 surface:

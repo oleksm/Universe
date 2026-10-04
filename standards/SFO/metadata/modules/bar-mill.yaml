@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.bar-mill
   name: Bar mill
   step: Roll to bar
   description: "Roll stands with grooved rolls that draw a hot ingot out into round bar."

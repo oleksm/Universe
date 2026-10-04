@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../../schema/body.schema.yaml
+key: settlement.treistun.port-sirnendis
 name: "Port Sirnendis"
 kind: settlement
 at: Treistun d I

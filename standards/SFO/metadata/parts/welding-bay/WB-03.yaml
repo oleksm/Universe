@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.wb-03
   code: WB-03
   name: "Welding jig"
   revision: draft

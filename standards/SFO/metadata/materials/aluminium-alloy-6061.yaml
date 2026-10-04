@@ -2,6 +2,7 @@
 # Fracture toughness: Wikipedia, Fracture toughness (aluminium, 14 to 28; a range as its middle).
 # Data: Wikipedia: 6061 aluminium alloy. A range there is given as its middle.
 identity:
+  key: material.aluminium-alloy-6061
   name: Aluminium alloy 6061
   class: alloy
   composition:

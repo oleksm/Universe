@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.panel-former
   name: Panel former
   step: Form
   description: "Rolls and presses that bend flat blanks to a panel's curve."

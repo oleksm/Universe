@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.sf-03
   code: SF-03
   name: "Gas heater"
   revision: draft

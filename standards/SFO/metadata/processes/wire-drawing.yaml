@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.wire-drawing
   name: Wire drawing
   kind: mechanical
   method: drawing

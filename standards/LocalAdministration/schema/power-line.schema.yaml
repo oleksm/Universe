@@ -3,8 +3,9 @@ title: Power line
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/power-lines/<name>.yaml: a power line of a settlement, from one facility to another. It says what can be carried, not what is.'
 type: object
 additionalProperties: false
-required: [name, from, to, capacity, line]
+required: [key, name, from, to, capacity, line]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   from: { type: string, description: 'The facility it starts at (one that makes power), by file name.' }
   to: { type: string, description: 'The facility it ends at, by file name.' }

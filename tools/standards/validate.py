@@ -11,6 +11,7 @@ import yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 TREE = os.path.join(ROOT, "standards")
 _schemas = {}
+KEYS = {}            # every record's key, and the file that has it (filled by check_all)
 
 
 def schema(path):
@@ -124,6 +125,49 @@ def schema_of(rel):
     return None
 
 
+KEY = re.compile(r"^[a-z][a-z-]*(\.[a-z0-9][a-z0-9-]*)+$")
+
+
+def key_of(rel, rec):
+    """The key a record must have, from where it is filed: `<kind>.<name>`, the kind being its
+    schema's. Where the name cannot be told from the path alone, the kind's prefix (ending in a dot)."""
+    p = rel.split(os.sep)
+    root, stem = p[0], p[-1][:-5]
+    low = stem.lower()
+    if root == "SFO":
+        if len(p) == 3:
+            return "standards-body." + low if stem == "SFO" else "standard.sfo." + str(int(stem.split("-")[0]))
+        kind = p[2]
+        if kind == "elements":
+            return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
+        if kind in ("equipment", "gates"):
+            return {"equipment": "equipment.", "gates": "gate."}[kind]
+        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "parts": "part."}[kind] + low
+    if root == "MakerHouse":
+        return "company."
+    if root == "Celestial":
+        if len(p) == 3:
+            return "seeding." + low
+        if p[2] in ("rock-classes", "vocabulary"):
+            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary."}[p[2]] + low
+        if len(p) == 4:
+            return "system." + low
+        return {"bodies": "body.", "fields": "field.", "small-bodies": "small-body.", "regions": "region."}[p[4]] + p[3] + "." + low
+    if root == "LocalAdministration":
+        if len(p) == 4:
+            return "administration." + low
+        if len(p) == 5:
+            return {"settlement": "settlement.", "rig": "rig."}.get(rec.get("kind"), "la-body.") + p[3] + "." + low
+        kind = {"zones": "zone", "parcels": "parcel", "streets": "street", "power-lines": "power-line", "facilities": "facility"}[p[5]]
+        return f"{kind}.{p[3]}.{p[4]}." + (low[len("parcel-"):] if kind == "parcel" else low)
+    return None
+
+
+def key_in(rec):
+    """Where a record's key is written: in its identity, or (one with no identity group) at its top."""
+    return (rec.get("identity") or {}).get("key") if isinstance(rec.get("identity"), dict) else rec.get("key")
+
+
 def check_all():
     """Every record against its schema: (file, what does not fit)."""
     found, unheld = [], []
@@ -146,6 +190,16 @@ def check_all():
                 rec = yaml.safe_load(f) or {}
             for e in validate(rec, schema(sp), sp):
                 found.append((full, e))
+            # (Its key: there, of its kind, as its file says, and no other record's.)
+            key, want = key_in(rec), key_of(rel, rec)
+            if not isinstance(key, str) or not KEY.match(key):
+                found.append((full, f"key: {key!r} is not <kind>.<name> in lower case, words joined by -"))
+            elif want and (key != want if not want.endswith(".") else not key.startswith(want)):
+                found.append((full, f"key: should be {want}{'<name>' if want.endswith('.') else ''}, is {key}"))
+            elif key in KEYS:
+                found.append((full, f"key: {key} is also {KEYS[key]}'s"))
+            else:
+                KEYS[key] = rel
     return found, unheld
 
 

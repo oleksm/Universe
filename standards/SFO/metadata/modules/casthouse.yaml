@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.casthouse
   name: Casthouse
   step: Alloy and cast
   description: "Holding furnaces where the liquid metal is alloyed, skimmed and poured into ingots."

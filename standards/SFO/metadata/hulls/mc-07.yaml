@@ -2,6 +2,7 @@
 # The spec. Its size is the model's. What it is made of, and so what it weighs: its parts, in
 # parts/mc-07/. Where this differs from what the game flies today, this is what is meant.
 identity:
+  key: hull.mc-07
   name: MC-07
   class: mining ship
   revision: draft

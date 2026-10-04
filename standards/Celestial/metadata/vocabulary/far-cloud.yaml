@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.far-cloud
   name: "Far cloud"
   group: region
   known_as: "Oort cloud"

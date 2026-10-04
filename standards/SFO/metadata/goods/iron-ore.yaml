@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.iron-ore
   name: Iron ore
   kind: rock
   description: "Rock rich enough in iron oxide to be worth working."

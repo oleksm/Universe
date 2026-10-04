@@ -2,6 +2,7 @@
 # Fracture toughness: Wikipedia, Fracture toughness (soda-lime glass, 0.7 to 0.8: another glass, the nearest the table has; a range as its middle).
 # Data: Wikipedia: Fused quartz. A range there is given as its middle.
 identity:
+  key: material.fused-silica
   name: Fused silica
   class: glass
   composition:

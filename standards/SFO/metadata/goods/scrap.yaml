@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.scrap
   name: Scrap
   kind: by-product
   description: "Metal trimmed off or spilt in casting."

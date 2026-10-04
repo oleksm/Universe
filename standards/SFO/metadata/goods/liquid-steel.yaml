@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.liquid-steel
   name: Liquid steel
   kind: intermediate
   description: "Molten steel straight from the furnace, not yet to grade."

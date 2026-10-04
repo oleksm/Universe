@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.aj-03
   code: AJ-03
   name: "Manipulator arm"
   revision: draft

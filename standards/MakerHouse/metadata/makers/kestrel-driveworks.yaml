@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.kestrel
+key: company.kestrel
 name: Kestrel Driveworks
 ticker: KDW
 address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 4, section: B, unit: 3 }

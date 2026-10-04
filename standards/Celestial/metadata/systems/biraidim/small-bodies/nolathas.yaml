@@ -2,7 +2,7 @@
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the others come from the far cloud, once in thousands to millions of years.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Nolathas, kind: comet, parent: Biraidim, about: A comet from the far cloud. It comes in to 0.17 AU once in
+identity: {key: small-body.biraidim.nolathas, name: Nolathas, kind: comet, parent: Biraidim, about: A comet from the far cloud. It comes in to 0.17 AU once in
     a very long time.}
 orbit: {semi_major_axis: 224917000000.0, eccentricity: 0.99988723, inclination: 90.16, period: 36983000.0}
 physical: {radius: 2.578, density: 600, mass: 43060000000000.0}

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.ladle-station
   name: Ladle station
   step: Refine
   description: "The melt, in its ladle, is trimmed to grade with alloying additions, stirred with argon and degassed."

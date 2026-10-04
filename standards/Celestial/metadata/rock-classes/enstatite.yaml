@@ -2,6 +2,7 @@
 # Not in the game yet. A kind of asteroid there is, recorded as far as sources go: what is not
 # written here is not known to the registry, and is not made up.
 identity:
+  key: rock-class.enstatite
   name: Enstatite
   letter: E-type
   about: "Rock that formed close to the star, with almost no oxygen to spare: its iron is metal or sulphide, not oxide. Bright."

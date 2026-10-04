@@ -2,6 +2,7 @@
 # Fracture toughness: Wikipedia, Fracture toughness (silicon carbide, 3 to 5; a range as its middle).
 # Data: Wikipedia: Silicon carbide (6H). A range there is given as its middle.
 identity:
+  key: material.silicon-carbide
   name: Silicon carbide
   class: ceramic
   composition:

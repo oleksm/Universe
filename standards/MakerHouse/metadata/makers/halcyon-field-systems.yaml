@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.halcyon
+key: company.halcyon
 name: Halcyon Field Systems
 ticker: HFS
 address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 31, section: A, unit: 1 }

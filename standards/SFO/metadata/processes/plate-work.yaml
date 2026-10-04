@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.plate-work
   name: Plate work
   kind: mechanical
   method: cutting, forming and welding

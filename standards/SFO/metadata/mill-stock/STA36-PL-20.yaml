@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
 identity:
+  key: stock.sta36-pl-20
   code: STA36-PL-20
   name: "A36 plate 20 mm"
 made_from:

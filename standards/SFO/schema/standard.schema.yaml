@@ -4,6 +4,7 @@ description: 'One SFO standard: a file NNNN-<slug>.yaml in standards/SFO/, its i
 type: object
 additionalProperties: false
 required:
+- key
 - title
 definitions:
   block:
@@ -36,6 +37,7 @@ definitions:
               items:
                 type: string
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   title:
     type: string
   parent:

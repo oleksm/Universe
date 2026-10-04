@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.asteroid
   name: "Asteroid"
   group: small body
   about: "A body of rock or metal too small to pull itself round, on an orbit of its own."

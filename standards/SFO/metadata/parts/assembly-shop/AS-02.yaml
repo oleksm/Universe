@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.as-02
   code: AS-02
   name: "Overhead crane"
   revision: draft

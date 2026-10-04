@@ -8,10 +8,10 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name]
+    required: [key, name]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-      key: { type: string, description: "Its key in the game (content/base/modules.ron). One the game does not have yet has none." }
       maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
       slot: { type: string, description: "The kind of slot it fits." }
       description: { type: string }

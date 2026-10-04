@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.ring-system
   name: "Ring system"
   group: region
   about: "Countless small bodies going round a planet close in, where its tide stops them gathering into a moon."

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.treistun_exchange
+key: company.treistun-exchange
 name: Treistun Exchange
 ticker: TEX
 business: exchange

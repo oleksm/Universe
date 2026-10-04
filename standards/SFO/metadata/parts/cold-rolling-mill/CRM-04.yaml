@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.crm-04
   code: CRM-04
   name: "Coiler"
   revision: draft

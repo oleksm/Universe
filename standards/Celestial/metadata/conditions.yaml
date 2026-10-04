@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/conditions.schema.yaml
 # What a place does to what is there. Worked out for each moon of a giant, on its page.
+key: seeding.conditions
 tidal_heating:
   love_over_q: 0.015
   volcanic_above: 1.0

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.oy-02
   code: OY-02
   name: "Belt conveyor"
   revision: draft

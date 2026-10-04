@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.welding-bay
   name: Welding bay
   step: Weld
   description: "A hall with jigs where formed panels are welded into one part of a hull. It is sized to hold the largest."

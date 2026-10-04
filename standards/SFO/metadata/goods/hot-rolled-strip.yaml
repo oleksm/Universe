@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.hot-rolled-strip
   name: Hot-rolled strip
   kind: intermediate
   description: "Metal rolled hot to a thick strip, still rough."

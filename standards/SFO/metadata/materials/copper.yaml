@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: our element record (Copper). A range there is given as its middle.
 identity:
+  key: material.copper
   name: Copper
   class: metal
   composition:

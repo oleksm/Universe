@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.hrm-04
   code: HRM-04
   name: "Run-out table"
   revision: draft

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pm-01
   code: PM-01
   name: "Piercer"
   revision: draft

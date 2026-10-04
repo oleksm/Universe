@@ -8,8 +8,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, group]
+    required: [key, name, group]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       group: { enum: [star, world, moon, small body, region, place, condition], description: "star; world (a planet); moon; small body (one rock or ice body); region (where many small bodies lie); place (a point in space set by gravity); condition (something a place does to what is there)." }
       known_as: { type: string, description: "What astronomers call it, or the Sun's own." }

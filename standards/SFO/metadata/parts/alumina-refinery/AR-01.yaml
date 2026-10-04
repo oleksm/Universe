@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ar-01
   code: AR-01
   name: "Digester"
   revision: draft

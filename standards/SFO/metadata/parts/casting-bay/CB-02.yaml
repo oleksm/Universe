@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.cb-02
   code: CB-02
   name: "Ingot mould"
   revision: draft

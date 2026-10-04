@@ -8,10 +8,11 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name]
+    required: [key, name]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      label: { type: string, description: "Its label in the game, for one the game has." }
       name: { type: string }
-      key: { type: string, description: "Its label in the game. One the game has not got has none." }
       letter: { type: string, description: "Its spectral type, as astronomers class asteroids." }
       about: { type: string }
   physical:

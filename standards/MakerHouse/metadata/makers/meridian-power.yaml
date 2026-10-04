@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.meridian
+key: company.meridian
 name: Meridian Power
 ticker: MPW
 address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 9, section: B, unit: 2 }

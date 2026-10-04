@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.mc-01
   code: MC-01
   name: "Machine bed"
   revision: draft

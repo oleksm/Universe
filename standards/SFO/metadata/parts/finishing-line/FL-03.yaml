@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fl-03
   code: FL-03
   name: "Ageing furnace"
   revision: draft

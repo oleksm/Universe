@@ -3,8 +3,9 @@ title: Street
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/streets/<name>.yaml: a street of a settlement, its administration''s. Addresses are numbers along it.'
 type: object
 additionalProperties: false
-required: [name, line]
+required: [key, name, line]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   line:
     description: "Its centre line, point by point: metres [east, north] of the settlement's position, on the ground."

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.building-dock
   name: Building dock
   step: Assemble the hull
   description: "A dock, long, wide and high enough to hold a hull, with cranes over it. The hull's parts are joined here and its assemblies fitted."

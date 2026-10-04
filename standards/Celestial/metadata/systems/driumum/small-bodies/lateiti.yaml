@@ -2,7 +2,7 @@
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the others come from the far cloud, once in thousands to millions of years.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Lateiti, kind: comet, parent: Driumum, about: A comet from the far cloud. It comes in to 0.07 AU once in
+identity: {key: small-body.driumum.lateiti, name: Lateiti, kind: comet, parent: Driumum, about: A comet from the far cloud. It comes in to 0.07 AU once in
     a very long time.}
 orbit: {semi_major_axis: 235547000000.0, eccentricity: 0.99995643, inclination: 60.68, period: 43684000.0}
 physical: {radius: 6.51, density: 600, mass: 693400000000000.0}

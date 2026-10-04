@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.meteoritic-iron
   name: Meteoritic iron
   kind: raw
   description: "Grains of iron-nickel metal pulled out of crushed stony ore with a magnet. Already metal: it needs melting, not reducing."

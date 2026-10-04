@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.steelmaking-asteroid
   name: Steelmaking from asteroid metal
   kind: chemical
   method: melting

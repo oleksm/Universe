@@ -3,10 +3,11 @@ title: Facility
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/facilities/<name>.yaml: something built on a parcel, and the work it does. It belongs to the parcel''s owner. The parcel''s zone must permit it: a foundry, a mill, a yard or a power station needs an industrial zone, a warehouse a port zone.'
 type: object
 additionalProperties: false
-required: [name, kind, parcel]
+required: [key, name, kind, parcel]
 definitions:
   point: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   kind: { enum: [foundry, mill, yard, power, warehouse] }
   parcel: { type: integer, minimum: 1, description: The parcel of its settlement it stands on. }

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.carbide-synthesis
   name: Carbide synthesis
   kind: chemical
   method: synthesis

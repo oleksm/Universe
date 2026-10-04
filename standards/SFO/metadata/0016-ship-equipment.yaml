@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+key: standard.sfo.16
 title: Ship equipment
 parent: SFO 2
 records: equipment

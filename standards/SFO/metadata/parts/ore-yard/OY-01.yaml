@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.oy-01
   code: OY-01
   name: "Stacker-reclaimer"
   revision: draft

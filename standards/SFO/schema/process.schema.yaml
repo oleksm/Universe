@@ -23,8 +23,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, kind]
+    required: [key, name, kind]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [chemical, thermal, mechanical], description: "Chemical changes what it is; thermal, its inner structure; mechanical, its shape." }
       method: { type: string, description: "smelting, rolling, sintering, spinning..." }

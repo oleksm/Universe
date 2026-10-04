@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fp-04
   code: FP-04
   name: "Manipulator"
   revision: draft

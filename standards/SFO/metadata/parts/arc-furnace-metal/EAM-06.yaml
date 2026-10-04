@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.eam-06
   code: EAM-06
   name: "Charging crane"
   revision: draft

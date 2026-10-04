@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.mc-04
   code: MC-04
   name: "Tool magazine"
   revision: draft

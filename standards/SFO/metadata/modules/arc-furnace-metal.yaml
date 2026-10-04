@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.arc-furnace-metal
   name: Electric arc furnace, metal charge
   step: Melt
   description: "Melts metal that needs no reducing (asteroid nickel-iron, scrap) with electric arcs. Lime forms a slag that takes up what is not metal."

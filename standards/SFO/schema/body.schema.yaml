@@ -10,9 +10,7 @@ required:
 - seat
 - note
 properties:
-  key:
-    type: string
-    pattern: ^body\.[a-z0-9_]+$
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name:
     type: string
   prefix:

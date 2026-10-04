@@ -2,6 +2,7 @@
 # Fracture toughness: Wikipedia, Fracture toughness (titanium alloy, 84 to 107; a range as its middle).
 # Data: Wikipedia: Ti-6Al-4V. A range there is given as its middle.
 identity:
+  key: material.titanium-alloy-ti-6al-4v
   name: Titanium alloy Ti-6Al-4V
   class: alloy
   composition:

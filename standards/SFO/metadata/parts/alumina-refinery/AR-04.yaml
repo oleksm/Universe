@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ar-04
   code: AR-04
   name: "Calciner"
   revision: draft

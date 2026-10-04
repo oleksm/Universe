@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.throat-coil
   name: "Halcyon throat coil"
   maker: brand.halcyon
   slot: gate

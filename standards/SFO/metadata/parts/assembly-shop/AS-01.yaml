@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.as-01
   code: AS-01
   name: "Hall frame"
   revision: draft

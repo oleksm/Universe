@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.cold-rolling-mill
   name: Cold rolling mill
   step: Roll cold
   description: "Rolls the strip again cold, to its final thickness and a clean surface."

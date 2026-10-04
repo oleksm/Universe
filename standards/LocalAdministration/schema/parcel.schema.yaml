@@ -3,8 +3,9 @@ title: Parcel
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/parcels/parcel-<number>.yaml: one surveyed lot of a settlement''s land, and who owns it. Its zone is the one it lies in.'
 type: object
 additionalProperties: false
-required: [number, outline]
+required: [key, number, outline]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   number: { type: integer, minimum: 1, description: Its number in its settlement. }
   owner: { type: string, pattern: '^(brand|body)\.[a-z0-9_]+$', description: 'Who owns it (a company in Maker House, or a standards body). Left out: vacant, the land office''s to sell.' }
   address:

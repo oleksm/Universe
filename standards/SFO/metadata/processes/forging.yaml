@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.forging
   name: Forging
   kind: mechanical
   method: forging

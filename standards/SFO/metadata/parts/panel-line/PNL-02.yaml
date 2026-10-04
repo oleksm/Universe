@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pnl-02
   code: PNL-02
   name: "Cutting station"
   revision: draft

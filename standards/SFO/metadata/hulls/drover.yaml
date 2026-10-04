@@ -3,8 +3,8 @@
 # the world had physics to answer to. Kept as a record of what the game has. Do not balance against
 # it or design toward it.
 identity:
-  name: "Drover"
   key: hull.drover
+  name: "Drover"
   maker: brand.tolland
   class: general freighter
   revision: outdated

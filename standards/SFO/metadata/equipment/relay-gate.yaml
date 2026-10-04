@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.relay.gate
   name: "Halcyon gate relay"
-  key: relay.gate
   maker: brand.halcyon
   slot: gate
   description: "Throws and catches data capsules through the gate's tube, linking two systems' networks."

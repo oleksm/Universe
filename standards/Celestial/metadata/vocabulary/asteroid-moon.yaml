@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.asteroid-moon
   name: "Asteroid with a moon"
   group: small body
   known_as: "binary asteroid"

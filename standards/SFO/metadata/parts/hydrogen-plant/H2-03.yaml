@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.h2-03
   code: H2-03
   name: "Gas separator"
   revision: draft

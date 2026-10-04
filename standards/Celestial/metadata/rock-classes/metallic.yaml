@@ -2,8 +2,9 @@
 # What it is and what it yields: as the game's code has it (a test holds the two together).
 # Where it is found: the spec, from what is known of the Sun's asteroids. The game's own odds differ.
 identity:
+  key: rock-class.metallic
+  label: "M-TYPE METALLIC"
   name: Metallic
-  key: "M-TYPE METALLIC"
   letter: M-type
   about: "Nickel-iron, with platinum-group metals."
 physical:

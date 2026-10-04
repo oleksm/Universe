@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.vireo
+key: company.vireo
 name: Vireo Spaceworks
 ticker: VIR
 address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 5, section: D, unit: 4 }

@@ -9,8 +9,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name]
+    required: [key, name]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       index: { type: integer, description: "Its number among the seed's stars." }
       about: { type: string }

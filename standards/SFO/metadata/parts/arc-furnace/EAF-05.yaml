@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.eaf-05
   code: EAF-05
   name: "Tilting cradle"
   revision: draft

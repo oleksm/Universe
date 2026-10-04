@@ -3,6 +3,7 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
 # from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
+  key: part.mc07-24-007
   code: MC07-24-007
   name: "Outer door"
   revision: draft

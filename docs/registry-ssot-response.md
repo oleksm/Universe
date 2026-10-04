@@ -24,16 +24,49 @@ The generated RON files are byte-for-byte unchanged by all of this: `celestial.r
 k2/Q applied to every moon (I have no source for a better rule yet; it is marked to review); the
 two-zone against three-zone odds (resolves when seeding is a record).
 
+## Keys: done (2026-10-04, after your answers)
+
+Every one of the 777 records has its key, `<kind>.<name>`, with the schema's kind first, as you
+asked. It is `identity.key` where the record has an identity group, and a top-level `key` where it
+has none yet (LocalAdministration records, standards, companies, the seeding singletons); those move
+under `identity` when their schemas are consolidated. The build checks each key: there, well-formed
+(`common.schema.yaml#/definitions/key`), matching where the record is filed, and unique.
+
+| Kind (first segment) | Schema | Example |
+|---|---|---|
+| `element` | SFO element | `element.fe` (its symbol) |
+| `material`, `process`, `module`, `good`, `hull` | SFO, same name | `material.aluminium-alloy-6061`, `hull.mc-07` |
+| `stock` | SFO mill-stock | `stock.al6061-pl-5` |
+| `part` | SFO part | `part.mc07-23-001` |
+| `equipment` | SFO equipment | `equipment.drive.torch.s1`, `equipment.gun.mass-driver.s1`, `equipment.throat-coil` |
+| `gate` | SFO gate | `gate.ring.i` |
+| `standard` | SFO standard | `standard.sfo.12` |
+| `standards-body` | SFO body | `standards-body.sfo` (to be `org.` with the organisation schema) |
+| `company` | MakerHouse company | `company.hadley` (to be `org.`) |
+| `administration` | LocalAdministration | `administration.treistun` (to be `org.`) |
+| `settlement`, `rig` | LocalAdministration body, by its kind | `settlement.treistun.port-trethi`, `rig.treistun.hadley-orbital-works` |
+| `la-body` | LocalAdministration body of kind planet or moon | `la-body.treistun.treistun-f`: transitional, these records go when settlements refer to the celestial body |
+| `zone`, `parcel`, `street`, `power-line`, `facility` | LocalAdministration | `parcel.treistun.port-trethi.4` |
+| `system`, `body`, `field` | Celestial | `body.treistun.treistun-f` |
+| `small-body`, `region` | Celestial | `small-body.treistun.biasu`: transitional, to be `body.` and `population.` when merged |
+| `rock-class`, `vocabulary` | Celestial | `rock-class.stony` |
+| `seeding` | Celestial galaxy, asteroids, conditions | `seeding.galaxy` |
+
+Three renames to know for your side: the game's `drive.torch.s1` is `equipment.drive.torch.s1`
+(underscores become `-`: `equipment.gun.mass-driver.s1`); `structure.ring.i` is `gate.ring.i`;
+`brand.hadley` is `company.hadley`. A rock class's game label (`S-TYPE STONY`) is now
+`identity.label`, and its key is `rock-class.stony`.
+
+**Refs are not switched yet.** Records still refer to each other by file name, code, `brand.x` and
+display name. The generated RON is byte-identical: the build maps the new keys back to the game's
+old ones as it writes (`build.py`, `REGISTRY_KEY`, `OLD_KEY`, `game_key`).
+
 ## Next on `fso`, in this order
 
-1. **`identity.key` on every record, and typed refs.** Proposal: the key is `<kind>.<name>`, lower
-   case, words joined by `-`, kind from one closed list. Where the game has a key today the record
-   takes the game's (`drive.torch.s1`, `brand.hadley`, `structure.ring.i`), so nothing is renamed
-   on your side. A ref is that key as a string, and its kind is checked against what the field
-   allows. Celestial bodies: `body.<system>.<name>` (`body.treistun.treistun-f`). I will add the key
-   beside what is there, switch refs kind by kind, and keep the build's output the same until you
-   say a loader is ready.
-2. **SI throughout.** Record values in kg, m, s, W, N, K, Pa, rad. The page converts for reading.
+1. **Typed refs.** Every field that names another record takes its key. Each such property is
+   marked in its schema (`x-ref: [kinds]`), the build checks the key exists and is of an allowed
+   kind, and the RON output stays the same until you say a loader is ready.
+2. **SI throughout**, angles in degrees as the one exception (`x-unit: deg` on the property). The page converts for reading.
    One kind at a time, with the RON output held identical as the check.
 3. **`physical` as one group**, and the organisation schema (company, standards body,
    administration as one).

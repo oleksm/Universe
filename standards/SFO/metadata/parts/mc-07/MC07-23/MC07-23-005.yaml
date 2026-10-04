@@ -3,6 +3,7 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
 # it is cut from.
 identity:
+  key: part.mc07-23-005
   code: MC07-23-005
   name: "Actuator rod"
   revision: draft

@@ -9,8 +9,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, kind]
+    required: [key, name, kind]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [scattered disc, far cloud, meteoroid stream] }
       parent: { type: string, description: "For a meteoroid stream: the comet that sheds it." }

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fp-03
   code: FP-03
   name: "Die set"
   revision: draft

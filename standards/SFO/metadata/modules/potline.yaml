@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.potline
   name: Potline
   step: Smelt
   description: "A long row of pots in which a strong current, carried in by carbon anodes, takes the oxygen from molten alumina and leaves liquid aluminium."

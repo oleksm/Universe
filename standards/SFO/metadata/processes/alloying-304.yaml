@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.alloying-304
   name: Alloying 304 stainless steel
   kind: chemical
   method: alloying

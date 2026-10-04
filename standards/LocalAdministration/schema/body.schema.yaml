@@ -3,8 +3,9 @@ title: Body
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<name>.yaml: one body in a system where people can live (a planet, a moon, a settlement), or a rig: equipment stationed in the system, not a place.'
 type: object
 additionalProperties: false
-required: [name, kind]
+required: [key, name, kind]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   kind: { enum: [planet, moon, settlement, rig], description: "settlement: a permanent place with people and an administration (a port, a station, a gate). rig: a movable works (as an oil rig is), brought to a job and moved on; no ground, zoning or administration of its own." }
   at: { type: string, description: "The planet or moon it is at, by name." }

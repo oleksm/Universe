@@ -3,8 +3,9 @@ title: Zone
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/zones/<name>.yaml: a district of a settlement, drawn on its ground, where its system''s zoning code allows one use.'
 type: object
 additionalProperties: false
-required: [name, use, outline]
+required: [key, name, use, outline]
 properties:
+  key: { $ref: "../../common.schema.yaml#/definitions/key" }
   name: { type: string }
   use: { enum: [port, industrial, commercial, civic, residential] }
   outline:

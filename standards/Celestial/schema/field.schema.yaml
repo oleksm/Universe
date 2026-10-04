@@ -9,8 +9,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name]
+    required: [key, name]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [family, trojan, outer], description: "family: a collisional family in the main belt. trojan: a group sharing a giant's orbit, ahead of it or behind. outer: a family in the icy belt past the giants." }
       anchor: { type: string, description: "The named asteroid it gathers round." }

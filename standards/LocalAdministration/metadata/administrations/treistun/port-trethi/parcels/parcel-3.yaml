@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
 # Invented outline.
+key: parcel.treistun.port-trethi.3
 number: 3
 owner: brand.castellan
 address: { street: dock-road, number: 1 }

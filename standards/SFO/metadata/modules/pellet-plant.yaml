@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.pellet-plant
   name: Pellet plant
   step: Prepare
   description: "Forms fine iron ore into hard pellets and fires them, so a shaft furnace can take them."

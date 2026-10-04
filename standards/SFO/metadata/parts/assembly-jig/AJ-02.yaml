@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.aj-02
   code: AJ-02
   name: "Clamp"
   revision: draft

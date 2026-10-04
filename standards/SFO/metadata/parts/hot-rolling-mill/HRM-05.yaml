@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.hrm-05
   code: HRM-05
   name: "Coiler"
   revision: draft

@@ -2,6 +2,7 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
+  key: part.mc07-28
   code: MC07-28
   name: "Clamp"
   revision: draft

@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+key: standard.sfo.17
 title: Stargates
 records: gates
 purpose: A stargate is a pair of rings, one at each of two stars, holding a tube open between them. Inside the tube a ship crosses light years in minutes. Nothing is shortened. The tube is as long as the span; the speed inside is what is extraordinary.

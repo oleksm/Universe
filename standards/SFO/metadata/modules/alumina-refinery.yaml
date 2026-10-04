@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.alumina-refinery
   name: Alumina refinery
   step: Refine the ore
   description: "Dissolves the aluminium oxide out of crushed bauxite in hot caustic soda, settles out the residue, and bakes what is left to a dry white powder."

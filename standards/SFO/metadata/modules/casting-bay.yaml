@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.casting-bay
   name: Casting bay
   step: Cast
   description: "A crane pours the ladle into moulds. The steel solidifies and is stripped out as ingots."

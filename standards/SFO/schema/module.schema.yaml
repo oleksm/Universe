@@ -17,8 +17,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, step]
+    required: [key, name, step]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       step: { type: string, description: The step it performs. }
       description: { type: string }

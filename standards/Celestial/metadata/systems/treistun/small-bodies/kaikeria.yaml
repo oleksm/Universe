@@ -2,7 +2,7 @@
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: a belt's largest body holds 39% of its mass; the belt's mass goes by the ground it covers.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Kaikeria, kind: asteroid, parent: Treistun, about: 'The largest body of the main belt: over a third of all
+identity: {key: small-body.treistun.kaikeria, name: Kaikeria, kind: asteroid, parent: Treistun, about: 'The largest body of the main belt: over a third of all
     the belt''s mass. Too small to have pulled itself round.'}
 orbit: {semi_major_axis: 139464000.0, eccentricity: 0.041611104, inclination: 4.17, period: 391.53}
 physical: {radius: 219.1}

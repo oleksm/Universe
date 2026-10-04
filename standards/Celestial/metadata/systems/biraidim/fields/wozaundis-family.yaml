@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../../../schema/field.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {name: Wozaundis family, kind: family, anchor: Wozaundis}
+identity: {key: field.biraidim.wozaundis-family, name: Wozaundis family, kind: family, anchor: Wozaundis}
 rocks: {class: s-type stony, count: 129, extent: 51.64}

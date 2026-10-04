@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.general-warehouse
   name: General warehouse
   step: Store
   description: "A covered building for goods in crates, sacks and on pallets."

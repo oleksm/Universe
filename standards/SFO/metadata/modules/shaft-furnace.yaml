@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.shaft-furnace
   name: Shaft furnace
   step: Reduce
   description: "A tall furnace where hot hydrogen strips the oxygen out of ore pellets at 800 to 1,000 °C, leaving solid sponge iron."

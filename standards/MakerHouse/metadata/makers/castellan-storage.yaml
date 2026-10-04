@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.castellan
+key: company.castellan
 name: Castellan Storage
 ticker: CST
 business: warehousing

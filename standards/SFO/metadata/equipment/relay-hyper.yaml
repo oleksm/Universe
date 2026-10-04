@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.relay.hyper
   name: "Halcyon hyper relay"
-  key: relay.hyper
   maker: brand.halcyon
   slot: gate
   description: "Links the gate to the system's other sites through hyperspace, so news crosses the system in seconds."

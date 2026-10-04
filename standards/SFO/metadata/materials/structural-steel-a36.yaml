@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: A36 steel. A range there is given as its middle.
 identity:
+  key: material.structural-steel-a36
   name: Structural steel A36
   class: alloy
   composition:

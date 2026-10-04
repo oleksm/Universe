@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../schema/galaxy.schema.yaml
 # As the game's code has it (crates/world/src/galaxy.rs, network.rs). The game does not read this
 # record yet: it is here so the world's laws are written down in one place.
+key: seeding.galaxy
 seed: 1984
 home: Treistun
 region: 200

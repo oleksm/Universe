@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pm-03
   code: PM-03
   name: "Sizing mill"
   revision: draft

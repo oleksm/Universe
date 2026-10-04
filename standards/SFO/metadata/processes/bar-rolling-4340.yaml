@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.bar-rolling-4340
   name: Bar rolling 4340 steel
   kind: mechanical
   method: rolling

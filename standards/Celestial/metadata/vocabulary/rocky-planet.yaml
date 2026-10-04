@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.rocky-planet
   name: "Rocky planet"
   group: world
   about: "A world of rock and metal with a solid surface."

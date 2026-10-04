@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.tube-making-4340
   name: Tube making 4340 steel
   kind: mechanical
   method: piercing
