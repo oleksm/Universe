@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+title: Ship equipment
+parent: SFO 2
+records: equipment
+purpose: Ship equipment is what a hull is fitted with to make it a ship that flies (a drive, lift jets, a power plant, tanks, a flight computer). Each is a maker's product. A hull says which it is fitted with.

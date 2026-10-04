@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Cargo racks 4 t"
+  key: rack.s1
+  maker: brand.hadley
+  slot: cargo
+  description: "Racks that hold cargo in the hold."
+physical:
+  mass: 350
+  volume: 6
+performance:
+  capacity: 4000
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

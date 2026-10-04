@@ -11,8 +11,23 @@ size:
   volume: 23181
 mass:
   frame: 87.803
+fit:
+  - { slot: drive, item: drive-torch-s1, nozzles: 6 }
+  - { slot: thrusters, item: thrusters-quad-s1 }
+  - { slot: lift, item: lift-belly-s1, nozzles: 6 }
+  - { slot: tank, item: tank-s0 }
+  - { slot: hyperdrive, item: hyperdrive-s1 }
+  - { slot: computer, item: computer-fbw-s1 }
+  - { slot: transponder, item: transponder-s1 }
+  - { slot: sensors, item: sensors-radar-s1 }
+  - { slot: comm, item: comm-basic-s1 }
+  - { slot: life, item: life-s1 }
+  - { slot: avionics, item: nav-basic-s1 }
+  - { slot: cargo, item: rack-s1 }
+  - { slot: power, item: power-fusion-s1 }
 making:
   process: hull-assembly
+  fitting_out: fitting-out
 design:
   loaded_mass: 107.6
   main_thrust: 5.4
@@ -24,6 +39,7 @@ design:
   strut_efficiency: 0.85
   minimum_gauge: 2
 basis:
+  - { of: [fit], tier: sourced, source: "the game: the fit it gives the MC-07 as imported", note: "The cheapest module for each of its slots. Fixed for now: the game lets them be changed." }
   - { of: [size, mass], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume, and the frame mass the game's formula gives it." }
   - { of: [design.loaded_mass, design.main_thrust, design.lift_thrust], tier: sourced, source: "the game: the MC-07 as imported, with its standard fit" }
   - { of: [design.landing_speed], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.473", note: "14 CFR 25.473: gear is designed for a descent of 10 feet a second." }

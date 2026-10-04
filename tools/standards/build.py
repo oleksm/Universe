@@ -595,11 +595,11 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment"}
 # (Parts are filed in folders of their own: read further down.)
 NESTED = {"parts"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials, processes, modules, goods, hulls, mill_stock = [], [], [], [], [], [], []
+elements, materials, processes, modules, goods, hulls, mill_stock, equipment = [], [], [], [], [], [], [], []
 for s in standards:
     if "records" not in s:
         continue
@@ -640,6 +640,14 @@ for s in standards:
                 problem(full, "an item of mill stock is filed as <its code>.yaml")
             key = ident.get("code")
             e["slug"] = name[:-5]
+        elif kind == "equipment":
+            for k in ("name", "key"):
+                if not ident.get(k):
+                    problem(full, f"identity: no {k}")
+            if ident.get("maker") is not None and ident["maker"] not in BRANDS:
+                problem(full, f"identity.maker: no maker '{ident['maker']}' in Maker House")
+            key = ident.get("name")
+            e["slug"] = name[:-5]
         elif kind == "hulls":
             if not ident.get("name"):
                 problem(full, "identity: no name")
@@ -676,6 +684,8 @@ for s in standards:
         for group, props in e.items():
             if group in ("slug", "basis"):
                 continue
+            if kind == "hulls" and group == "fit":
+                continue
             if kind == "goods" and group == "composition":
                 for c in props or []:
                     if c.get("part") not in {(x.get("identity") or {}).get("symbol") for x in elements} and not os.path.exists(os.path.join(folder, str(c.get("part")) + ".yaml")):
@@ -690,7 +700,7 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock}[kind].append(e)
+        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls, "mill-stock": mill_stock, "equipment": equipment}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
@@ -1260,6 +1270,7 @@ part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "p
 # (The processes that make a material as ingot: what a mill's stock starts from.)
 ingot_makers = lambda mat: [q for q in processes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
 # 1. The chain from a hull down to rock: how far each part gets.
+eq_of = {e["slug"]: e for e in equipment}
 for hl in hulls:
     mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
     leaves = [pt for pt in mine if not kids(pt)]
@@ -1268,6 +1279,9 @@ for hl in hulls:
     # (The hull itself, and each part made of parts: is it said how it is put together, and is a yard built to do it?)
     for name, key, procs in [(hl["identity"]["name"] + " (hull)", link(hl["identity"]["name"] + " (hull)", "hull:" + hl["slug"]), [q for q in [(hl.get("making") or {}).get("process")] if q])] + [(None, part_link(pt), how(pt)) for pt in mine if kids(pt)]:
         steps = [("says how it is put together", bool(procs) and all(q in by_process for q in procs)), ("a yard is built to do it", bool(procs) and all(q in lined for q in procs))]
+        if name and hl.get("fit"):
+            out = (hl.get("making") or {}).get("fitting_out")
+            steps += [("says how it is fitted out", out in by_process), ("a yard is built to fit it out", out in lined)]
         reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
         rows.append(row("ok" if reached == len(steps) else "gap", key, f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
     for pt in leaves:
@@ -1294,8 +1308,33 @@ for hl in hulls:
             for fc in x.get("facilities", []):
                 for ln in fc.get("lines") or []:
                     if "most" in ln and ln["process"] == (hl.get("making") or {}).get("process") and ln["most"]["output"] and hl.get("parts_mass"):
-                        built.append({"at": fc["name"], "settlement": x["name"], "days": hl["parts_mass"] / 1000 / ln["most"]["output"] / 24})
+                        # (Fitted out on the same line, where it can be: its equipment goes through the dock too.)
+                        fits = (hl.get("making") or {}).get("fitting_out") in (ln.get("also") or [])
+                        through = hl["parts_mass"] + (sum((eq_of.get(ft.get("item"), {}).get("physical") or {}).get("mass", 0) for ft in hl.get("fit") or []) if fits else 0)
+                        built.append({"at": fc["name"], "settlement": x["name"], "days": through / 1000 / ln["most"]["output"] / 24, "fitted": fits})
     hl["built"] = built
+
+# 1b. Equipment: what each hull is fitted with, each against the game's module, and whether it is
+# said what it is made of.
+eq_by = {e["slug"]: e for e in equipment}
+_mods = open(os.path.join(ROOT, "content", "base", "modules.ron"), encoding="utf-8").read()
+GAME_MODULES = {k: float(m) for k, m in re.findall(r'\(key: "([^"]+)",.*?mass: ([0-9.e+]+)', _mods)}
+rows = []
+for hl in hulls:
+    fitted = 0.0
+    for ft in hl.get("fit") or []:
+        e = eq_by.get(ft.get("item"))
+        if e is None:
+            problem(os.path.join(TREE, hl["file"]), f"fit: no equipment '{ft.get('item')}' in the SFO")
+            continue
+        fitted += (e.get("physical") or {}).get("mass", 0)
+    hl["fitted_mass"] = fitted
+for e in equipment:
+    mass, game = (e.get("physical") or {}).get("mass"), GAME_MODULES.get(e["identity"]["key"])
+    on = [hl["identity"]["name"] for hl in hulls if any(ft.get("item") == e["slug"] for ft in hl.get("fit") or [])]
+    same = game is not None and mass is not None and abs(game - mass) < 0.5
+    rows.append(row("gap", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
+report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game, or does not yet say what it is made of.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
 
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []
@@ -1540,8 +1579,8 @@ report("goods", "Goods: where each comes from and goes", "Each good: where it co
 # (Elements and materials are from published sources, named in their files; a process's amounts are
 # its material's composition. Other records say for themselves, in `basis`; one that doesn't is a gap.)
 DEFAULT_TIER = {"elements": "sourced", "materials": "sourced", "processes": "derived"}
-KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts"}
-KEY_OF = {"elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
+KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts", "equipment": "Ship equipment"}
+KEY_OF = {"equipment": lambda e: "eq:" + e["slug"], "elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
 
 
 def numbers(d, path=()):
@@ -1566,7 +1605,7 @@ def tier_of(kind, raw, group, prop, review=False):
 
 
 rows, detail, reviews = [], [], []
-for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts)):
+for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts), ("equipment", equipment)):
     tally = {"sourced": 0, "derived": 0, "invented": 0, "unsaid": 0}
     to_review = 0
     for e in recs:
@@ -1614,6 +1653,8 @@ def write_html():
         "goods": goods,
         "hulls": hulls,
         "mill_stock": mill_stock,
+        "equipment": equipment,
+        "equipment_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["equipment"]["properties"].items() if "properties" in d},
         "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["mill-stock"]["properties"].items() if "properties" in d},
         "parts": parts,
         "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in PART_SCHEMA["properties"].items() if "properties" in d},
