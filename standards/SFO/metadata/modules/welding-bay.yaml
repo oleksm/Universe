@@ -8,11 +8,9 @@ physical:
   length: 60
   width: 40
   height: 25
-recipes:
-  - makes: good.parts
-    does: "Whatever part it is given to make: what goes in is the part's own: the formed panels of the stock it is made from, taken from the works' store."
-    rate: 0.277777777777778
-    power: 130000.0
+throughput:
+  rate: 0.277777777777778
+  power: 130000.0
 basis:
-  - { of: [recipes.power], tier: sourced, source: "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf", note: "A moving-gantry friction stir welding machine has a spindle of up to 130 kW. The spindle only." }
-  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [throughput.power], tier: sourced, source: "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf", note: "A moving-gantry friction stir welding machine has a spindle of up to 130 kW. The spindle only." }
+  - { of: [physical, throughput.rate, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

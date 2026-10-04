@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-key: facility.treistun.port-trethi.trethi-yard
-name: Trethi Yard
+identity:
+  key: facility.treistun.port-trethi.trethi-yard
+  name: Trethi Yard
 kind: yard
 parcel: parcel.treistun.port-trethi.4
 # What it is built of. What it can make at most follows from this; what it does make is the
@@ -11,17 +12,13 @@ lines:
     modules:
       - { module: module.cutting-table, count: 1 }
       - { module: module.panel-former, count: 1 }
-  - makes: good.parts
-    modules:
+  - modules:
       - { module: module.welding-bay, count: 2 }
-  - makes: good.parts
-    modules:
+  - modules:
       - { module: module.machining-centre, count: 2 }
-  - makes: good.parts
-    modules:
+  - modules:
       - { module: module.assembly-shop, count: 1 }
-  - makes: good.hulls
-    modules:
+  - modules:
       - { module: module.building-dock, count: 1 }
 # Where its stock is kept.
 modules:

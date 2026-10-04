@@ -64,3 +64,10 @@
 - **Plate work is three steps again.** The cutting table cuts stock into blanks, the panel former
   forms them, the welding bay makes the part. Blanks and panels are stock, kept in the yard's
   store between steps.
+- **From the integrator's audit:** each schema names its kind; every key sits under `identity`; a
+  field means one thing (a power station has its own group and is no recipe; what a part takes of
+  its stock is in kg); a law can be a reference value; the registry writes a table of its keys
+  against the game's for the game to rename by; guesses with no source are marked to review.
+- **Nothing is made of nothing.** A recipe must say what goes in. The shop modules, which had a
+  recipe that made "parts" by the tonne from nothing, now have only a rate; what they make are the
+  parts that name them, each from its own stock. "Parts" and "hulls" as goods are gone.

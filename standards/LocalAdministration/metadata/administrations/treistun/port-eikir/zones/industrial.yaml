@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
 # Invented: east of the port, 100 m clear of it, as at Port Trethi. Nothing stands on it yet: it is
 # land the administration has set aside for works, to be sold lot by lot.
-key: zone.treistun.port-eikir.industrial
-name: Industrial
+identity:
+  key: zone.treistun.port-eikir.industrial
+  name: Industrial
 use: industrial
 outline: [[500, -1000], [2500, -1000], [2500, 1000], [500, 1000]]

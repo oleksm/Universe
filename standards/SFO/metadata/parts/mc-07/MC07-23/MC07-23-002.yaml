@@ -18,7 +18,7 @@ shape:
   surface_area: 9.7
 made_from:
   - item: stock.st4340-tb-120x10
-    quantity: 4.1
+    quantity: 111.2233755
 making:
   module: module.machining-centre
 fit:

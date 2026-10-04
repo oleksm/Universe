@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-key: org.halcyon
+identity:
+  key: org.halcyon
+  name: Halcyon Field Systems
 kind: company
-name: Halcyon Field Systems
 ticker: HFS
 address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 31, section: A, unit: 1 }
 note: "Hyperdrives and gate rings: clean fields, dear"

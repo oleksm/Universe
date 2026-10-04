@@ -8,11 +8,8 @@ physical:
   length: 60
   width: 40
   height: 20
-recipes:
-  - makes: good.parts
-    inputs:
-      - { item: good.parts, quantity: 1.0 }
-    rate: 0.277777777777778
-    power: 200000.0
+throughput:
+  rate: 0.277777777777778
+  power: 200000.0
 basis:
-  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [physical, throughput.rate, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

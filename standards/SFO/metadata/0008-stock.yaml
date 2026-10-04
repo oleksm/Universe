@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.8
+identity:
+  key: standard.sfo.8
 title: Stock
 purpose: Stock is anything made, given a code and held to be used or sold. Every item of stock is made from items of the level below it, and can sit on a shelf, be counted and change hands.
 details:

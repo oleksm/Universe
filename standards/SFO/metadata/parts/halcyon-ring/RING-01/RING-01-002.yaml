@@ -13,7 +13,7 @@ physical:
   shock_limit: 490.3325
 made_from:
   - item: stock.st4340-tb-200x15
-    quantity: 14.4
+    quantity: 985.4736331
 making:
   module: module.machining-centre
 fit:

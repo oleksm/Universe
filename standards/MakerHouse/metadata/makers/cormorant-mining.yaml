@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-key: org.cormorant
+identity:
+  key: org.cormorant
+  name: Cormorant Mining
 kind: company
-name: Cormorant Mining
 ticker: CMN
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 2, section: D, unit: 8 }
 note: "Mining gear"

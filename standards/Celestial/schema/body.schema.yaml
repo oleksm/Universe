@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Celestial body
+x-kind: [body]
 description: 'One natural body of a system: its star, a planet, a moon, an asteroid, a dwarf planet, a comet, a centaur, a crossing asteroid, a captured moon. Filed in standards/Celestial/metadata/systems/<system>/bodies/<name>.yaml where the game''s seed makes it, and in small-bodies/ where the registry seeds it and the game does not make it yet (in_game: not made). What people have built there is in Local Administration. A body uses the properties that apply to it.'
 type: object
 additionalProperties: false
@@ -138,5 +139,5 @@ properties:
     additionalProperties: false
     properties:
       class: { type: string, x-ref: [rock-class], description: "What it is made of, by its spectrum." }
-      structure: { type: string, description: "How it holds together: loose rubble, or one solid piece." }
+      structure: { enum: [rubble pile, monolith], description: "How it holds together: loose rubble, or one solid piece." }
       density: { type: number, x-unit: "kg/m3", description: kg/m3 }

@@ -142,9 +142,10 @@ def read_schema(path):
         props["made_from"] = one
     # (And a module's one recipe as its own figures, as they were before recipes: rate, inputs, outputs, needs.)
     if kind == "module" and "recipes" in props:
+        props.pop("throughput", None)
         R, cap = props.pop("recipes")["items"]["properties"], props.pop("capacity")["properties"]
         group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
-        was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": R["supplies"]}),
+        was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": props.pop("generation")["properties"]["supplies"]}),
                "inputs": group({"materials": {**R["inputs"], "description": "What goes in, t per t of its product."}}),
                "outputs": group({"by_products": {**R["outputs"], "description": "What else comes out, t per t of its product."}}),
                "needs": group({"power": R["power"]})}
@@ -221,6 +222,21 @@ def old_names(rec, path):
             flat = {**rec.pop("galaxy"), **({"note": idn["about"]} if "about" in idn else {})}
             rec.update(flat)
     kind = rel.split(os.sep)[2] if rel.count(os.sep) >= 3 else ""
+    if isinstance(rec, dict) and kind == "modules" and "generation" in rec:
+        # (One that makes power, as this build still takes it: a recipe that supplies, its fuel as inputs.)
+        gen = rec.pop("generation")
+        rec = {**{k: v for k, v in rec.items() if k != "basis"}, "recipes": [{"supplies": gen["supplies"], "inputs": [{"item": b["item"], "quantity": b["rate"]} for b in gen.get("burns") or []]}], **({"basis": rec["basis"]} if "basis" in rec else {})}
+        for b in rec.get("basis") or []:
+            if isinstance(b, dict) and isinstance(b.get("of"), list):
+                b["of"] = [{"generation": "recipes", "generation.supplies": "recipes.supplies", "generation.burns": "recipes.inputs"}.get(x, x) for x in b["of"]]
+    if isinstance(rec, dict) and kind == "modules" and "throughput" in rec:
+        # (A shop module, as this build still takes it: one recipe by weight, for parts (or hulls) as a whole.)
+        tp = rec.pop("throughput")
+        what = "hulls" if "hull" in str((rec.get("identity") or {}).get("step", "")).lower() else "parts"
+        rec = {**{k: v for k, v in rec.items() if k != "basis"}, "recipes": [{"makes": what, "rate": tp["rate"], **({"power": tp["power"]} if "power" in tp else {})}], **({"basis": rec["basis"]} if "basis" in rec else {})}
+        for b in rec.get("basis") or []:
+            if isinstance(b, dict) and isinstance(b.get("of"), list):
+                b["of"] = [y for x in b["of"] for y in {"throughput": ["recipes.rate", "recipes.power"], "throughput.rate": ["recipes.rate"], "throughput.power": ["recipes.power"]}.get(x, [x])]
     if isinstance(rec, dict) and kind == "modules" and ("recipes" in rec or "capacity" in rec):
         # (A module's recipe, as this build still takes it: the module's own rate, inputs, outputs and power.
         # It takes the first; none has more than one yet.)
@@ -269,6 +285,11 @@ def load(path):
     except yaml.YAMLError as e:
         problem(path, f"not valid YAML: {e}")
         return {}
+    # (A record whose key and name were at its top until they moved into `identity`: this build still
+    # takes them there. Local Administration's, a standard, an organisation.)
+    idn = rec.get("identity") if isinstance(rec, dict) else None
+    if isinstance(idn, dict) and str(idn.get("key", "")).split(".")[0] in ("settlement", "rig", "zone", "parcel", "street", "power-line", "facility", "standard", "org"):
+        rec = {**idn, **{k: v for k, v in rec.items() if k != "identity"}}
     if isinstance(rec, dict) and isinstance(rec.get("key"), str) and "." in rec["key"]:
         kind, _, rest = rec["key"].partition(".")
         REGISTRY_KEY[os.path.abspath(path)] = rec["key"]
@@ -379,25 +400,10 @@ def check_standard(s, ids):
 # Maker House: the makers, one file each (MakerHouse/metadata/makers/<name>.yaml), to
 # MakerHouse/schema/company.schema.yaml. The game's
 # brands.ron is written from them.
-# 0. Dogma: the laws everything runs on (standards/Dogma). Each law against the engine's own copy,
-# where it has one; and the constants this build works things out with are these, by name.
+# 0. Dogma: the laws everything runs on (standards/Dogma). The engine makes its constants from these
+# records when it is built; the constants this build works things out with are these too, by name.
 dogma = []
 _ddir = os.path.join(TREE, "Dogma", "metadata")
-_engine = {}
-
-
-def engine_value(file, constant):
-    """A constant as the engine's file has it today, or None."""
-    if file not in _engine:
-        try:
-            _engine[file] = open(os.path.join(ROOT, file), encoding="utf-8").read()
-        except OSError:
-            _engine[file] = ""
-    m = re.search(rf'name: "{constant}", value: ([0-9.eE+-]+)', _engine[file]) or re.search(rf"const {constant}: f64 = ([0-9._eE+-]+(?: \* DAY)?);", _engine[file])
-    if not m:
-        return None
-    v = m.group(1).replace("_", "")
-    return float(v[:-6]) * 86400 if v.endswith(" * DAY") else float(v)
 
 
 for _fn in sorted(os.listdir(_ddir)) if os.path.isdir(_ddir) else []:
@@ -417,13 +423,6 @@ _law = {l["slug"]: l["value"] for s_ in dogma for l in s_["laws"]}
 C_LIGHT, SIGMA, G_N = _law["speed-of-light"], _law["stefan-boltzmann"], _law["gravitation"]
 G0, AU_M, LY, DAY_S, YEAR_S = _law["standard-gravity"], _law["astronomical-unit"], _law["light-year"], _law["day"], _law["year"]
 SUN_KG, SUN_W = _law["sun-mass"], _law["sun-luminosity"]
-for s_ in dogma:
-    for l in s_["laws"]:
-        # (What the engine holds it as: per light year, or times the speed of light, where it says so.)
-        how = (l.get("in_game") or {}).get("as")
-        l["engine_value"] = float(f"{l['value'] * LY if how == 'per light year' else l['value'] / C_LIGHT if how == 'times the speed of light' else l['value']:.12g}")
-        if (l.get("in_game") or {}).get("file") and l["identity"].get("label"):
-            l["engine_has"] = engine_value(l["in_game"]["file"], l["identity"]["label"])
 
 HOUSE = "MakerHouse"
 house = load(os.path.join(TREE, HOUSE, "metadata", HOUSE + ".yaml"))
@@ -1055,7 +1054,7 @@ def set_to(pr, s):
 # comes out), which is what the rest of this build and the page read; `route` holds the recipe each
 # module is set to. Two lines that make the same thing by different modules are two routes.
 routes = []
-item_name = lambda t: next((x["identity"]["name"] for x in mill_stock + goods + materials if x.get("slug") == t), el_name.get(t, t))
+item_name = lambda t: next((x["identity"]["name"] for x in mill_stock + goods + materials if x.get("slug") == t), el_name.get(t, {"parts": "Parts", "hulls": "Hulls"}.get(t, t)))
 
 
 def route_for(where, fc, ln, target):
@@ -1211,6 +1210,11 @@ for ad in administrations:
             plot = next((r for r in x.get("parcels", []) if r.get("number") == fc.get("parcel")), None)
             covered = 0
             for ln in fc.get("lines") or []:
+                if "makes" not in ln and "process" not in ln:
+                    # (A line of shop modules: it makes whatever parts name them. Worked here by weight, as parts or hulls.)
+                    last = next((mod_of[im["module"]] for im in reversed(ln.get("modules") or []) if im.get("module") in mod_of and mod_of[im["module"]].get("recipes")), None)
+                    if last is not None:
+                        ln["makes"] = last["recipes"][0]["product"]
                 if "makes" in ln:
                     made_by = [route_for(where, fc, ln, t) for t in [ln.pop("makes")] + (ln.get("also") or [])]
                     if None in made_by:
@@ -1476,7 +1480,9 @@ for pt in parts:
     if "item" in mf and ms is None:
         problem(where, f"made_from.item: no mill stock '{mf['item']}'")
     elif ms is not None and "quantity" in mf:
-        pt["stock_mass"] = mf["quantity"] * ms["weight"]
+        # (The record says kg. The page still shows it as the stock is counted: m2 of sheet, m of bar.)
+        pt["stock_mass"] = mf["quantity"]
+        mf["quantity"] = float(f"{mf['quantity'] / ms['weight']:.10g}")
         pt["stock_unit"] = ms["unit"]
     made_in = (pt.get("making") or {}).get("module")
     if made_in is not None and made_in not in mod_of:
@@ -1614,7 +1620,7 @@ def write_ron():
                 makes = [(ln["most"]["product"], ln["most"]["output"]) for ln in fc.get("lines") or [] if ln.get("most")]
                 draws = sum(ln["most"]["power"] for ln in fc.get("lines") or [] if ln.get("most"))
                 holds = sum(st.get("holds") or 0 for st in fc.get("store") or [])
-                name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods + elements + mill_stock if r.get("slug") == slug or (r.get("identity") or {}).get("symbol") == slug), slug)
+                name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods + elements + mill_stock if r.get("slug") == slug or (r.get("identity") or {}).get("symbol") == slug), {"parts": "Parts", "hulls": "Hulls"}.get(slug, slug))
                 out.append(f"            (name: {ron_str(fc['name'])}, kind: {ron_str(fc['kind'])}, parcel: {fc['parcel']},")
                 out.append("                makes: [" + ", ".join(f"({ron_str(name_of(p))}, {float(o)!r})" for p, o in makes) + f"], draws: {float(draws)!r}, supplies: {float(fc.get('capacity') or 0)!r}, holds: {float(holds)!r},")
                 listed = [(r["module"], r["count"]) for ln in fc.get("lines") or [] for r in (ln.get("most") or {}).get("modules", []) if r["count"]] + [(im["module"], im["count"]) for im in fc.get("modules") or []]
@@ -1711,6 +1717,10 @@ lined = {name for ad in administrations for x in ad["bodies"] for fc in x.get("f
 part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "part:" + pt["slug"])
 
 # (The processes that make a material as ingot: what a mill's stock starts from.)
+# (Nothing is made of nothing: a part a module makes has something going in, its stock or its own parts.)
+for pt in parts:
+    if (pt.get("making") or {}).get("module") and not (pt.get("made_from") or {}).get("item") and not kids(pt):
+        problem(os.path.join(TREE, pt["file"]), "making.module: it is made in a module and nothing goes in: it needs what it is made from, or parts of its own")
 # (The lines built with a module that makes something: where a part made in that module can be made.)
 shop_lines = lambda mod: [ln for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and any(r["module"] == mod and r["can"] for r in ln["most"]["modules"])]
 makers_of = lambda item: [m for m in modules if any(r.get("product") == item for r in m.get("recipes") or [])]
@@ -1792,29 +1802,15 @@ for e in equipment:
     mass, game = (e.get("physical") or {}).get("mass"), GAME_MODULES.get(game_key(e["identity"].get("key")))
     on = [hl["identity"]["name"] for hl in hulls + gates if any(ft.get("item") == e["slug"] for ft in hl.get("fit") or [])]
     same = game is not None and mass is not None and abs(game - mass) < 0.5
-    rows.append(row("gap", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
-report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game, or does not yet say what it is made of.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
+    rows.append(row("gap" if game is not None and not same else "note", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
+report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game. None says yet what it is made of: that waits for more hulls.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
 
 # 1c. Stargates: what opening and holding each ring's tube costs, by the laws (Dogma's Tube; the
 # same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
-LAW = {l["identity"]["label"]: l["engine_value"] for s_ in dogma for l in s_["laws"] if l["identity"].get("label")}
-rows = []
-for s_ in dogma:
-    for l in s_["laws"]:
-        where, has = (l.get("in_game") or {}).get("file"), l.get("engine_has")
-        shown = f"{l['value']:g}" + (" " + l["unit"] if l.get("unit") else "")
-        if not where:
-            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], "nowhere", f"the engine has no {l['identity']['label']}: it writes the number where it needs it"))
-        elif has is None:
-            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"no constant named {l['identity']['label']} there: the number is written where it is needed"))
-        else:
-            same = abs(has - l["engine_value"]) <= 1e-9 * max(abs(has), abs(l["engine_value"]))
-            rows.append(row("ok" if same else "gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"{l['identity']['label']}: the same" if same else f"{l['identity']['label']} is {has:g} there, {l['engine_value']:g} here"))
-report("dogma", "Dogma: the laws against the engine's", "Each law of Dogma, and the engine's own copy of it today. Until the engine reads the registry, the two are held together here: a gap is a law the engine has differently, or has no name for.",
-       ["Law", "Section", "Value", "Kind", "In the engine", "State"], rows)
+LAW = {l["identity"]["label"]: l["value"] for s_ in dogma for l in s_["laws"]}
 _structs = open(os.path.join(ROOT, "content", "base", "structures.ron"), encoding="utf-8").read()
 GAME_RINGS = {k: float(v) for k, v in re.findall(r'key: "([^"]+)",[^\n]*?span_ly: ([0-9.]+)', _structs)}
-tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * m ** LAW["TUBE_GAMMA"]
+tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * LY * m ** LAW["TUBE_GAMMA"]      # (the law is for each metre)
 tube_energy = lambda m, span_ly: LAW["TUBE_EPS"] * m * span_ly * LY * math.e      # (at its natural time)
 station = next((m for m in modules if (m.get("rate") or {}).get("power")), None)
 rows = []
@@ -2626,6 +2622,49 @@ for _rel in _unheld:
     problem(os.path.join(TREE, _rel), "no schema holds it")
 
 
+def write_game_keys():
+    """standards/game-keys.yaml: for every record the game knows today by another key or by its name, the
+    two side by side. Data for the game to rename by; it goes when the game loads by the registry's keys."""
+    game_mods = {k for k in re.findall(r'\(key: "([^"]+)"', _mods)}
+    game_hulls = set(re.findall(r'key: "(hull\.[a-z_0-9.-]+)"', open(os.path.join(CONTENT, "hulls.ron"), encoding="utf-8").read()))
+    rows = []
+    for key, (rel, rec) in sorted(REGISTRY.items()):
+        kind, _, rest = key.partition(".")
+        idn = rec.get("identity") if isinstance(rec.get("identity"), dict) else rec
+        was, where = None, None
+        if kind == "org" and rec.get("kind") in OLD_KEY:
+            was, where = OLD_KEY[rec["kind"]] + "." + rest.replace("-", "_"), "brands.ron" if rec["kind"] == "company" else "bodies.ron"
+        elif kind == "equipment" and rest.replace("-", "_") in game_mods:
+            was, where = rest.replace("-", "_"), "modules.ron"
+        elif kind == "gate":
+            was, where = "structure." + rest, "structures.ron"
+        elif kind == "hull" and key.replace("-", "_") in game_hulls:
+            was, where = key.replace("-", "_"), "hulls.ron"
+        elif kind == "module":
+            was, where = rest, "industry.ron, settlements.ron"
+        elif kind in ("rock-class", "law") and idn.get("label"):
+            if kind == "law":
+                continue                    # (the engine makes its constant under the law's label: nothing to rename)
+            was, where = idn["label"], "belt.rs"
+        elif kind in ("system", "body", "population") and rec.get("in_game") != "not made":
+            was, where = idn.get("name"), "by name: celestial.ron, the seed"
+        elif kind == "settlement":
+            was, where = idn.get("name"), "by name: settlements.ron, places.ron"
+        elif kind == "standard":
+            was, where = "SFO " + rest.split(".")[-1], "standards.ron"
+        elif kind == "good" and rec.get("game"):
+            was, where = ", ".join(str(v) for v in rec["game"].values()), "goods.ron, ores.ron (what it is traded and dug as; not the same thing)"
+        if was is not None and was != key:
+            rows.append((key, was, where))
+    with open(os.path.join(TREE, "game-keys.yaml"), "w", encoding="utf-8") as f:
+        f.write("# GENERATED by tools/standards/build.py: do not edit. Every record the game knows today by another key, or by\n"
+                "# its name: the registry's key, what the game has, and where. For the game to rename by. A record not\n"
+                "# here is either not in the game or has the same key there.\n")
+        for key, was, where in rows:
+            f.write(f"- {{ key: {key}, game: {json.dumps(was)}, in: {json.dumps(where)} }}\n")
+    return len(rows)
+
+
 def write_html():
     data = {
         "bodies": [{k: b[k] for k in ("key", "name", "prefix", "seat", "address", "note", "kind", "purpose", "details", "founded_by", "about") if k in b} for b in bodies],
@@ -2684,6 +2723,7 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
+_renames = write_game_keys()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/celestial.ron, content/base/galaxy.ron, content/base/rock_classes.ron")

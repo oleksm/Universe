@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
-key: org.treistun-exchange
+identity:
+  key: org.treistun-exchange
+  name: Treistun Exchange
 kind: company
-name: Treistun Exchange
 ticker: TEX
 business: exchange
 note: "The market: where goods in store change hands"

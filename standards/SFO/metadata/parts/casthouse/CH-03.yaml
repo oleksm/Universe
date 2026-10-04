@@ -9,7 +9,7 @@ physical:
   mass: 180000
 made_from:
   - item: stock.sta36-pl-20
-    quantity: 1326.9
+    quantity: 206996.4
 making:
   module: module.welding-bay
 fit:

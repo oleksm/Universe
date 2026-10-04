@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
 # Invented: the port's warehouse, built as Port Trethi's is. What lies on the market here lies in it.
-key: facility.treistun.port-lisaur.lisaur-warehouse
-name: Lisaur Warehouse
+identity:
+  key: facility.treistun.port-lisaur.lisaur-warehouse
+  name: Lisaur Warehouse
 kind: warehouse
 parcel: parcel.treistun.port-lisaur.1
 exchange: org.treistun-exchange

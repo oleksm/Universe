@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.12
+identity:
+  key: standard.sfo.12
 title: Parts
 parent: standard.sfo.8
 records: parts

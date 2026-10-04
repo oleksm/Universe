@@ -1,14 +1,20 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Facility
+x-kind: [facility]
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/facilities/<name>.yaml: something built on a parcel, and the work it does. It belongs to the parcel''s owner. The parcel''s zone must permit it: a foundry, a mill, a yard or a power station needs an industrial zone, a warehouse a port zone.'
 type: object
 additionalProperties: false
-required: [key, name, kind, parcel]
+required: [identity, kind, parcel]
 definitions:
-  point: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+  point: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m" }
 properties:
-  key: { $ref: "../../common.schema.yaml#/definitions/key" }
-  name: { type: string }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
   kind: { enum: [foundry, mill, yard, power, warehouse] }
   parcel: { type: string, x-ref: [parcel], description: The parcel of its settlement it stands on. }
   processes: { $ref: "installation.schema.yaml#/definitions/processes" }

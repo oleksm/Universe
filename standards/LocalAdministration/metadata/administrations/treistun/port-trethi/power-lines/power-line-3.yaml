@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
 # Invented: from the power station's parcel south across South Road to the smelter.
 # What it can carry was chosen: a little over what it draws flat out.
-key: power-line.treistun.port-trethi.power-line-3
-name: Power line 3
+identity:
+  key: power-line.treistun.port-trethi.power-line-3
+  name: Power line 3
 from: facility.treistun.port-trethi.trethi-power-station
 to: facility.treistun.port-trethi.trethi-smelter
 capacity: 850000000

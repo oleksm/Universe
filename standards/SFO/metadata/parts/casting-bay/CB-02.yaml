@@ -9,7 +9,7 @@ physical:
   mass: 8000
 made_from:
   - item: stock.st4340-fg
-    quantity: 12000
+    quantity: 12000.0
 making:
   module: module.machining-centre
 fit:

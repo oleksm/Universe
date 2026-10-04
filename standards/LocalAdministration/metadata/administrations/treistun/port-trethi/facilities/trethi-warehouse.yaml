@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-key: facility.treistun.port-trethi.trethi-warehouse
-name: Trethi Warehouse
+identity:
+  key: facility.treistun.port-trethi.trethi-warehouse
+  name: Trethi Warehouse
 kind: warehouse
 parcel: parcel.treistun.port-trethi.3
 exchange: org.treistun-exchange

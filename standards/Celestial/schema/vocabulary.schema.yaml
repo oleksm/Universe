@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Celestial vocabulary
+x-kind: [vocabulary]
 description: 'standards/Celestial/metadata/vocabulary/<name>.yaml: one kind of thing a star system has. What it is, where it lies, what is known of the Sun''s, what it means for people who work in space, and whether the game makes it yet.'
 type: object
 additionalProperties: false

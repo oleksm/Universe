@@ -37,4 +37,4 @@ basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each stock it cuts: a guess, to be reviewed. A thinner one goes through slower." }
   - { of: [recipes.power], tier: sourced, source: "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/", note: "A laser cutting machine with a 24 kW laser draws 27 kW on average; its largest bed is 8 by 2.5 m." }
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
-  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

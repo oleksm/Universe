@@ -23,4 +23,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "From the chemistry (iron oxide and hydrogen to iron and water), taking the pellets as pure iron oxide. The source gives the same 54 kg of hydrogen for each tonne." }
   - { of: [recipes.power], tier: sourced, source: "https://www.midrex.com/tech-article/midrex-direct-reduction-plants-2021-operations-summary/", note: "82 to 135 kWh for each tonne; 110 taken. It leaves out heating the gas." }
   - { of: [physical.height], tier: sourced, source: "https://www.primetals.com/en/metals-magazine/voestalpine-taking-a-large-step-into-the-usa", note: "137 m for a plant of 2 Mt a year." }
-  - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }

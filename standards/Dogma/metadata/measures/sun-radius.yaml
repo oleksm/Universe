@@ -9,6 +9,5 @@ value: 695700000
 unit: "m"
 kind: real
 note: "What a star's radius is read in."
-in_game: { file: crates/world/src/units.rs }
 basis:
   - { of: [value], tier: sourced, source: "IAU 2015 Resolution B3: the nominal solar radius" }

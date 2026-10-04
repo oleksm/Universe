@@ -1,16 +1,22 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Organisation
+x-kind: [org]
 description: 'One organisation: a company (standards/MakerHouse/metadata/makers/<name>.yaml), a standards body (standards/SFO/metadata/SFO.yaml) or a system''s administration (standards/LocalAdministration/metadata/administrations/<name>.yaml). One kind of thing: it has a name and an address, owns things, and is referred to by its key.'
 type: object
 additionalProperties: false
-required: [key, name, kind]
+required: [identity, kind]
 properties:
-  key: { $ref: "common.schema.yaml#/definitions/key" }
-  name: { type: string }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "common.schema.yaml#/definitions/key" }
+      name: { type: string }
   kind: { enum: [company, standards_body, administration], description: "company: it makes, stores or trades. standards_body: it publishes standards. administration: it manages the land of a settled system." }
   address: { $ref: "common.schema.yaml#/definitions/address" }
   note: { type: string, description: One line, as the game shows it. }
-  about: { description: What it is., oneOf: [{ type: string }, { type: array, items: { type: string } }] }
+  about: { type: array, items: { type: string }, description: 'What it is, in paragraphs.' }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
   # A company.
   ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: "A company's short trading name; no two alike." }
@@ -26,7 +32,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      text: { oneOf: [{ type: string }, { type: array, items: { type: string } }] }
+      text: { type: array, items: { type: string } }
   founded_by: { type: array, items: { type: string, x-ref: [org] }, description: "The companies that founded it." }
   # An administration.
   zoning:

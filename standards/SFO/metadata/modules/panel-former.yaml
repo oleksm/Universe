@@ -29,4 +29,4 @@ recipes:
     power: 300000.0
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each stock it forms: a guess, to be reviewed." }
-  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

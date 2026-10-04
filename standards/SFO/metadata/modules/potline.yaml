@@ -24,4 +24,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1.93 t of alumina and 0.45 t of carbon anode for each tonne, giving 1.52 t of carbon dioxide. Part of the anode burns in air: that oxygen is set to balance." }
   - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_smelting", note: "13 to 16 MWh for each tonne; 14.5 taken." }
   - { of: [physical.length], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "A potroom 1,150 m long." }
-  - { of: [physical], tier: invented, note: "Its width and height were not found in a source." }
+  - { of: [physical], tier: invented, review: true, note: "Its width and height were not found in a source." }

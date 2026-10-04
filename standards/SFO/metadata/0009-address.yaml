@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.9
+identity:
+  key: standard.sfo.9
 title: Address
 purpose: An address says where a place is, so that anyone can find it, deliver to it and record who is there. It follows how the place is physically built, from the largest part down to the single unit.
 details:

@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Stargate
+x-kind: [gate]
 description: One gate ring, a maker's product. A pair of them holds a tube open between two stars. What opening and holding the tube costs is worked out from the laws (config/dogma.ron, Tube).
 type: object
 additionalProperties: false

@@ -162,7 +162,7 @@ def schema_of(rel):
         if len(p) == 4:
             return ORG
         if len(p) == 5:
-            return S(root, "body")
+            return S(root, "settlement")
         return S(root, {"zones": "zone", "parcels": "parcel", "streets": "street", "power-lines": "power-line", "facilities": "facility"}.get(p[5], ""))
     if root == "SFO":
         if len(p) == 3:
@@ -248,6 +248,8 @@ def check_all():
                 found.append((full, f"key: {key!r} is not <kind>.<name> in lower case, words joined by -"))
             elif want and (key != want if not want.endswith(".") else not key.startswith(want)):
                 found.append((full, f"key: should be {want}{'<name>' if want.endswith('.') else ''}, is {key}"))
+            elif key.split(".")[0] not in (schema(sp).get("x-kind") or []):
+                found.append((full, f"key: {key} is not of its schema's kind ({', '.join(schema(sp).get('x-kind') or ['none said'])})"))
             elif key in KEYS:
                 found.append((full, f"key: {key} is also {KEYS[key]}'s"))
             else:

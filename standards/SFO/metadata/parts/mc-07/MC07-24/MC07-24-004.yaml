@@ -18,7 +18,7 @@ shape:
   surface_area: 4.5
 made_from:
   - item: stock.st4340-tb-200x15
-    quantity: 2.22
+    quantity: 151.9271851
 making:
   module: module.machining-centre
 fit:

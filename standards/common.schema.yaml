@@ -7,6 +7,9 @@ description: 'standards/common.schema.yaml: what every schema of the registry sh
 # A property with a dimension says its unit with `x-unit`, and its values are in that unit: SI (kg, m, s,
 # K, W, N, J, Pa and what is made of them), never t, km, hours, AU or light years. Angles are the one
 # exception: degrees, `x-unit: deg`. A share, a ratio or a count has no x-unit.
+# A schema says which kind of record it holds with `x-kind`: the first part of those records' keys
+# (x-kind: [hull]; a settlement's schema holds two, [settlement, rig]). The build checks each record's
+# key against it.
 definitions:
   made_from:
     description: "What a made thing is made from: each a material, an item of stock or a part, by its key, and how much of it one takes. (A thing put together from parts of its own has none: they are in its folder.)"
@@ -17,7 +20,7 @@ definitions:
       required: [item]
       properties:
         item: { type: string, x-ref: [material, stock, part], description: "What it is made from, by its key." }
-        quantity: { type: number, description: "How much of it one takes, in the unit it is counted in (m2 of sheet, plate and film; metres of bar, tube and wire)." }
+        quantity: { type: number, x-unit: "kg", description: "kg of it one takes: the piece as cut from the stock, before it is shaped. What is cut away is the difference from the thing's own mass, and is scrap." }
         blank: { type: string, description: "The piece cut from the stock before it is shaped: 1.2 x 0.8 m, 400 mm long." }
         grain: { type: string, description: "The direction the stock's grain or fibre runs in it." }
         finish: { type: string, description: "Its surface: bare, anodised, plated, painted." }

@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Population
+x-kind: [population]
 description: 'A population of many small bodies in a system. Filed in standards/Celestial/metadata/systems/<system>/fields/<name>.yaml where the game''s seed makes it (a field: one remnant and its swarm), and in regions/ where the registry seeds it and the game does not make it yet (the scattered disc, the far cloud, a comet''s meteoroid stream).'
 type: object
 additionalProperties: false

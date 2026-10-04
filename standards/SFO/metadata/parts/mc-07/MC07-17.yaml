@@ -18,7 +18,7 @@ shape:
   surface_area: 1079.0
 made_from:
   - item: stock.al6061-sh-2
-    quantity: 1240.8
+    quantity: 6700.32
 making:
   module: module.welding-bay
 fit:

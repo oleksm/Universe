@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
-key: standard.sfo.11
+identity:
+  key: standard.sfo.11
 title: Goods
 records: goods
 purpose: A good is something that moves in bulk through industry and is neither an element nor a finished material (ore, lime, sponge iron, slag). Naming them lets every tonne that goes into a factory or comes out of it be followed to where it came from and where it goes.

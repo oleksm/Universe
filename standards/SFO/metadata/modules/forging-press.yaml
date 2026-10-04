@@ -18,5 +18,5 @@ recipes:
     rate: 2.77777777777778
     power: 6000000
 basis:
-  - { of: [recipes.inputs, recipes.outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }
+  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

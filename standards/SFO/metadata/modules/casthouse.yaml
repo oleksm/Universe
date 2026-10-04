@@ -27,4 +27,4 @@ basis:
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "About 73 t/h serves a smelter of two potlines; 40 for one." }
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,020 kg of metal from the pots for each tonne of ingot; 15 to 25 kg of dross." }
   - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,010 kWh for each tonne of ingot, a fifth of it electricity. Heat is counted as power: there is no fuel to burn." }
-  - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }

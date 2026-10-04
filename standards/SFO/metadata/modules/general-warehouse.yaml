@@ -12,4 +12,4 @@ capacity:
   volume: 90000
   stores: [goods.food, goods.textiles, goods.machinery, goods.electronics, goods.computers, goods.medicine, goods.biologics, goods.luxuries, goods.art, goods.weapons, goods.narcotics, goods.artifacts, goods.robots, goods.tools]
 basis:
-  - { of: [physical, capacity], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [physical, capacity], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

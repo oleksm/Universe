@@ -8,12 +8,9 @@ physical:
   length: 300
   width: 40
   height: 15
-recipes:
-  - makes: good.parts
-    does: "Whatever part it is given to make: what goes in is the part's own (what it is made from), and what is cut away comes out as scrap of that metal."
-    rate: 5.55555555555556
-    power: 2000000
+throughput:
+  rate: 5.55555555555556
+  power: 2000000
 basis:
-  - { of: [recipes.rate], tier: invented, review: true, note: "A guess, to be reviewed: ten times a yard's plate work, for panels all alike. It sets how fast a gate ring's skin can be made." }
-  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
-  - { of: [physical, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [throughput.rate], tier: invented, review: true, note: "A guess, to be reviewed: ten times a yard's plate work, for panels all alike. It sets how fast a gate ring's skin can be made." }
+  - { of: [physical, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

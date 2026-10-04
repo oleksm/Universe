@@ -15,7 +15,7 @@ shape:
   surface_area: 20
 made_from:
   - item: stock.st4340-pl-3
-    quantity: 23
+    quantity: 541.65
 making:
   module: module.panel-line
 fit:

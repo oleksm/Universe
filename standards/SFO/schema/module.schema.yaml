@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Industrial module
+x-kind: [module]
 description: One standard piece of industrial plant. It performs one step of a process. Any one module uses only some of these properties.
 type: object
 additionalProperties: false
@@ -12,7 +13,7 @@ definitions:
       additionalProperties: false
       properties:
         item: { type: string, x-ref: [element, material, good, stock, part], description: "What it is, by its key." }
-        quantity: { type: number, description: "kg of it for each kg of what the recipe makes. For a recipe that supplies power: kg/s of it at full output." }
+        quantity: { type: number, description: "kg of it for each kg of what the recipe makes" }
 properties:
   identity:
     type: object
@@ -39,11 +40,11 @@ properties:
     items:
       type: object
       additionalProperties: false
+      required: [makes, inputs]
       properties:
         makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
         does: { type: string, description: "What happens in it, set to this." }
-        supplies: { type: number, x-unit: "W", description: "W it supplies, for one that makes power (in place of `makes`)" }
-        inputs: { $ref: "#/definitions/amounts", description: "What goes in." }
+        inputs: { $ref: "#/definitions/amounts", description: "What goes in. Nothing is made of nothing: a recipe has at least one." }
         outputs: { $ref: "#/definitions/amounts", description: "What else comes out." }
         rate: { type: number, x-unit: "kg/s", description: "kg/s of what it makes, at full rate, set to this" }
         batch: { type: number, x-unit: "kg", description: "kg in one batch" }
@@ -55,6 +56,31 @@ properties:
           properties:
             time: { type: number, x-unit: "s", description: "s it stands while it is changed over" }
             loss: { type: number, x-unit: "kg", description: "kg of its first output lost" }
+  throughput:
+    description: "For a shop module (one that cuts, machines, welds or assembles whatever it is given): how much it can put through. It has no recipes of its own. Its recipes are the parts, hulls and gates that name it as the module that makes them: what goes in is what each is made from."
+    type: object
+    additionalProperties: false
+    required: [rate]
+    properties:
+      rate: { type: number, x-unit: "kg/s", description: "kg/s of what it is making, at full rate" }
+      power: { type: number, x-unit: "W", description: "W it draws at full rate" }
+  generation:
+    description: "For one that makes power: what it supplies and what it burns to do it. It makes no item, so it is not a recipe."
+    type: object
+    additionalProperties: false
+    required: [supplies]
+    properties:
+      supplies: { type: number, x-unit: "W", description: "W it supplies at full output" }
+      burns:
+        description: "What it burns at full output."
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [item, rate]
+          properties:
+            item: { type: string, x-ref: [element, material, good], description: "What it burns, by its key." }
+            rate: { type: number, x-unit: "kg/s", description: "kg/s of it at full output" }
   needs:
     description: "For one with no recipe: what it draws all the time."
     type: object

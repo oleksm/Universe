@@ -18,7 +18,7 @@ shape:
   surface_area: 19.1
 made_from:
   - item: stock.st4340-fg
-    quantity: 141
+    quantity: 141.0
 making:
   module: module.machining-centre
 fit:

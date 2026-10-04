@@ -9,6 +9,5 @@ value: 2.11400166804923e-17
 unit: "s/m"
 kind: invented
 note: "Natural crossing for a 1 kg payload: 0.2 s for each light year. Target: data crosses at 200 ms per ly; faster gets punishing."
-in_game: { file: config/dogma.ron, as: per light year }
 basis:
   - { of: [value], tier: invented, note: "Chosen to meet its target." }

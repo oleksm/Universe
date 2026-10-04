@@ -18,7 +18,7 @@ shape:
   surface_area: 33.9
 made_from:
   - item: stock.st4340-tb-150x10
-    quantity: 5.58
+    quantity: 192.6556562
 making:
   module: module.machining-centre
 fit:

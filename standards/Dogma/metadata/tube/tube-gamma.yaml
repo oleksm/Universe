@@ -8,6 +8,5 @@ identity:
 value: 0.3333333333
 kind: invented
 note: "Heavier is naturally slower, by the cube root of mass. Target: a 100 t ship under a minute through a 5 ly gate, a capital ship several minutes."
-in_game: { file: config/dogma.ron }
 basis:
   - { of: [value], tier: invented, note: "Chosen to meet its target." }

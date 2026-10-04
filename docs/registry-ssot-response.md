@@ -255,10 +255,76 @@ processes have no modules at all yet. Taking the flows off processes would delet
 figures. I would keep both until every process has its steps, then check that the steps add up
 to the process, and only then remove the process's own.
 
+## Answer to the audit at 8991bed (2026-10-04)
+
+**Done from it:**
+
+| Yours | What was done |
+|---|---|
+| To do 1, the key table | `standards/game-keys.yaml`, written by the build: 255 rows (60 bodies, 39 pieces of equipment, 32 modules, 30 laws, 26 populations, 18 standards, 15 organisations, 14 settlements, 9 goods, 5 systems, 4 rock classes, 3 gates), the registry's key, what the game has, and the file it is in. Brands, the standards body, equipment, gates, modules, laws, rock classes, standards; systems, bodies, populations and settlements (known to the game by name). |
+| To do 2, standard gravity | A law's `kind` has `reference`: a value fixed by definition or convention that things are counted in. The ten Measures are `reference`. |
+| To do 3, `rock.structure` | An enum: `rubble pile`, `monolith`. |
+| Problem 2, one meaning to a field | A power module has a `generation` group (`supplies` W, `burns[]` with `rate` kg/s) and no recipe; a recipe requires `makes`; `amounts.quantity` is only kg per kg. `made_from.quantity` is kg (`x-unit: kg`): the piece as cut. A composition's entry is `part` only (the tile names `material.fused-silica`). An organisation's `about` and `details.text` are always lists. |
+| Problem 3, kinds and keys | Every schema says `x-kind`, and the build checks each record's key against it. The 153 top-level keys are under `identity` (with the name, where there is one). LocalAdministration's `body` schema is `settlement` (`x-kind: [settlement, rig]`). |
+| Problem 5, invented without review | The 31 basis entries (in 29 records) that say no source was looked up, or that the figure is from memory, are marked `review: true`; the review report went from 511 figures to 632. A value that was chosen as a design decision (a cabin pressure, a gauge) is invented and not to review: say if you want those marked too. |
+| Problem 6, Dogma units | A law's `unit` is checked as an `x-unit` is. `law.tube-mass` is kg/m3. `law.air-top` is a pure number (scale heights) and has none. |
+| Problem 8, the scripts' constants | `celestial_seed.py` and `celestial_export.py` read them from Dogma. |
+| Problem 9, the equipment report | A gap only where a mass differs from the game. That none says what it is made of is a note. 0 gaps. |
+| Problem 10, slips | Geometry has `x-unit: m`; `class_mix` is closed (O B A F G K M); the recipes doc's opening; this section. |
+
+**Not done, and why:**
+
+- **`game.goods`, `game.ore`, `capacity.stores`** still hold the game's keys. They name the game's
+  market kinds and ores, which are not records here. They are in `game-keys.yaml`. They go when you
+  decide what a market kind is; until then dropping them would take the warehouses' capacity by
+  kind out of `settlements.ron`.
+- **Problem 1, the shims.** Agreed: the build reads the new records through `old_names`,
+  `reading`, `old_groups` and `read_schema`. Two are already gone in substance: lines and mill
+  stock run on recipes natively (`route_for`, `plan`). Tell me which loader lands first and I will
+  retire that kind's shim with it.
+- **Problem 4, what is required.** Next pass, kind by kind, with you: what the engine's type needs
+  to be non-optional.
+- **Problem 7, shop recipes with no inputs: settled by the user** ("nothing appears from
+  nothing"). A recipe requires `makes` and at least one input. The six shop modules have no recipe
+  of their own but a `throughput` (rate, power); their recipes are the parts, hulls and gates
+  that name them in `making.module`, each with its `made_from` (or its own parts) going in. The
+  build refuses a part made in a module with nothing going in. `good.parts` and `good.hulls` are
+  gone, which also closes your stock-and-goods item but for `good.hot-ingot-<metal>` beside the
+  ingot stock items: a hot ingot is the same piece hot, kept as its own item on the user's rule
+  that what passes between modules is a thing of its own.
+- **A standard's text-or-blocks.** Standards are documents (the page renders them); `standards.ron`
+  carries their params. Left as they are unless the engine is to read their blocks.
+- **The product base, equipment's `function` and slots, the 17 missing, fuels, structures, a
+  population's `of` and kinds, a settlement's orbit and population:** content and shape work, next.
+
+**Your two notes on recipes:** agreed, and written into `docs/registry-recipes.md`: a line's
+`makes` is the world's starting setup, which an owner can change; the rules for markets, full
+stores and no transport inside a works are the game's mechanics, the doc their spec; and moving
+stock inside a works at once and for nothing is coarse-first, labelled so.
+
+## After Dogma landed on main (95059b2)
+
+Merged into `fso`. Done from your note:
+- `in_game` is gone from every law and from the law schema, with the `as` conversions. The Dogma
+  report is gone: there is no second copy to hold the records to.
+- Every law has a `note`, and the schema now requires it.
+- Labels are as they were. The schema says a label is not to change without the engine.
+- `build.py` takes the Tube laws in SI as the records hold them (it no longer turns `TUBE_T_LY`
+  back to seconds per light year).
+- Laws are out of `standards/game-keys.yaml`: the engine's constant is the law's label.
+
+**One thing undone, because it broke your build.** The audit asked for a way to mark a reference
+value, and I added `kind: reference` to the ten Measures. `dogmagen.rs` has `LawKind` as Real,
+Simplified, Invented, so the engine would not build. They are `real` again, and the schema's kind
+has three values. When `LawKind` and the engine's `Kind` have a fourth, say so and I will put it
+back; or name another way you would rather it were marked.
+
 ## Next on `fso`, in this order
 
-Waiting on the two answers above. Then: the product base (maker and revision on every made
-thing), equipment the game has and the registry lacks, fuels, economy and administration figures.
+1. What each kind requires (problem 4), with you.
+2. The product base: maker and mass on modules and gates, a part's parent as a ref, structures as
+   records.
+3. Equipment: `function`, slots, the 17 missing, fuels.
 
 ## Where I'd do it differently
 

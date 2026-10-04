@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
 # Invented: from the power station's parcel south, then west to the warehouse's. What it can carry
 # was chosen: twice what the warehouse's yard draws.
-key: power-line.treistun.port-aipika.power-line-1
-name: Power line 1
+identity:
+  key: power-line.treistun.port-aipika.power-line-1
+  name: Power line 1
 from: facility.treistun.port-aipika.aipika-power-station
 to: facility.treistun.port-aipika.aipika-warehouse
 capacity: 1000000

@@ -5,7 +5,7 @@ identity:
   name: Silica tile LI-900
   class: ceramic
   composition:
-  - name: Fused silica
+  - part: material.fused-silica
     share: 1.0
   form:
   - tile

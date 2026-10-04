@@ -1,15 +1,21 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Zone
+x-kind: [zone]
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<settlement>/zones/<name>.yaml: a district of a settlement, drawn on its ground, where its system''s zoning code allows one use.'
 type: object
 additionalProperties: false
-required: [key, name, use, outline]
+required: [identity, use, outline]
 properties:
-  key: { $ref: "../../common.schema.yaml#/definitions/key" }
-  name: { type: string }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
   use: { enum: [port, industrial, commercial, civic, residential] }
   outline:
     description: "Its corners, in order: metres [east, north] of the settlement's position, on the ground."
     type: array
     minItems: 3
-    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+    items: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m" }
