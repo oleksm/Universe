@@ -3,7 +3,7 @@ identity:
   key: law.light-year
   name: "Light year"
   symbol: "ly"
-  constant: LIGHT_YEAR
+  label: LIGHT_YEAR
   section: dogma.measures
 value: 9460730472580800
 unit: "m"

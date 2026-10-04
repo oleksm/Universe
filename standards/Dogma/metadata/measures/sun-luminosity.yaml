@@ -3,7 +3,7 @@ identity:
   key: law.sun-luminosity
   name: "Luminosity of the Sun"
   symbol: "L_sun"
-  constant: SOLAR_LUMINOSITY
+  label: SOLAR_LUMINOSITY
   section: dogma.measures
 value: 3.828e+26
 unit: "W"

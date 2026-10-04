@@ -2,7 +2,7 @@
 identity:
   key: law.lapse-rate
   name: "Lapse rate"
-  constant: LAPSE_RATE
+  label: LAPSE_RATE
   section: dogma.air
 value: 0.0065
 unit: "K/m"

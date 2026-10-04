@@ -3,7 +3,7 @@ identity:
   key: law.sun-mass
   name: "Mass of the Sun"
   symbol: "M_sun"
-  constant: SUN_MASS
+  label: SUN_MASS
   section: dogma.measures
 value: 1.989e+30
 unit: "kg"

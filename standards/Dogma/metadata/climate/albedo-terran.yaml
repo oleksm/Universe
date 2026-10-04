@@ -2,7 +2,7 @@
 identity:
   key: law.albedo-terran
   name: "Albedo of an Earth-like world"
-  constant: ALBEDO_TERRAN
+  label: ALBEDO_TERRAN
   section: dogma.climate
 value: 0.3
 kind: real

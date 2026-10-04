@@ -2,7 +2,7 @@
 identity:
   key: law.albedo-giant
   name: "Albedo of a giant's cloud tops"
-  constant: ALBEDO_GIANT
+  label: ALBEDO_GIANT
   section: dogma.climate
 value: 0.5
 kind: real

@@ -2,7 +2,7 @@
 identity:
   key: law.albedo-cratered
   name: "Albedo of a cratered moon"
-  constant: ALBEDO_CRATERED
+  label: ALBEDO_CRATERED
   section: dogma.climate
 value: 0.12
 kind: real

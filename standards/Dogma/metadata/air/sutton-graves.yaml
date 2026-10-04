@@ -3,7 +3,7 @@ identity:
   key: law.sutton-graves
   name: "Sutton-Graves constant"
   symbol: "k"
-  constant: SUTTON_GRAVES
+  label: SUTTON_GRAVES
   section: dogma.air
 value: 0.00017415
 unit: "kg^0.5/m"

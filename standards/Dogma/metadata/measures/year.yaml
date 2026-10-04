@@ -3,7 +3,7 @@ identity:
   key: law.year
   name: "Year"
   symbol: "yr"
-  constant: YEAR
+  label: YEAR
   section: dogma.measures
 value: 31557600
 unit: "s"

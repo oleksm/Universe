@@ -2,7 +2,7 @@
 identity:
   key: law.albedo-dry
   name: "Albedo of a dry rocky world"
-  constant: ALBEDO_DRY
+  label: ALBEDO_DRY
   section: dogma.climate
 value: 0.15
 kind: real

@@ -3,7 +3,7 @@ identity:
   key: law.field-cost
   name: "Field cost"
   symbol: "E0"
-  constant: FIELD_COST
+  label: FIELD_COST
   section: dogma.field
 value: 0.002391
 unit: "J/(kg m)"

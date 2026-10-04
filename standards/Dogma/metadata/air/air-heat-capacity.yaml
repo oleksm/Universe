@@ -3,7 +3,7 @@ identity:
   key: law.air-heat-capacity
   name: "Air's heat capacity"
   symbol: "cp"
-  constant: AIR_CP
+  label: AIR_CP
   section: dogma.air
 value: 1005.0
 unit: "J/(kg K)"

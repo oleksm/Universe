@@ -350,8 +350,8 @@ for s_ in dogma:
         # (What the engine holds it as: per light year, or times the speed of light, where it says so.)
         how = (l.get("in_game") or {}).get("as")
         l["engine_value"] = float(f"{l['value'] * LY if how == 'per light year' else l['value'] / C_LIGHT if how == 'times the speed of light' else l['value']:.12g}")
-        if (l.get("in_game") or {}).get("file") and l["identity"].get("constant"):
-            l["engine_has"] = engine_value(l["in_game"]["file"], l["identity"]["constant"])
+        if (l.get("in_game") or {}).get("file") and l["identity"].get("label"):
+            l["engine_has"] = engine_value(l["in_game"]["file"], l["identity"]["label"])
 
 HOUSE = "MakerHouse"
 house = load(os.path.join(TREE, HOUSE, "metadata", HOUSE + ".yaml"))
@@ -1656,21 +1656,19 @@ report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship
 
 # 1c. Stargates: what opening and holding each ring's tube costs, by the laws (Dogma's Tube; the
 # same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
-LAW = {l["identity"]["constant"]: l["engine_value"] for s_ in dogma for l in s_["laws"] if l["identity"].get("constant")}
+LAW = {l["identity"]["label"]: l["engine_value"] for s_ in dogma for l in s_["laws"] if l["identity"].get("label")}
 rows = []
 for s_ in dogma:
     for l in s_["laws"]:
         where, has = (l.get("in_game") or {}).get("file"), l.get("engine_has")
         shown = f"{l['value']:g}" + (" " + l["unit"] if l.get("unit") else "")
         if not where:
-            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], "nowhere", "the engine has no such constant: it writes the number where it needs it"))
-        elif not l["identity"].get("constant"):
-            rows.append(row("note", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, "a number written in the code there, with no name"))
+            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], "nowhere", f"the engine has no {l['identity']['label']}: it writes the number where it needs it"))
         elif has is None:
-            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"{l['identity']['constant']} is not found there"))
+            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"no constant named {l['identity']['label']} there: the number is written where it is needed"))
         else:
             same = abs(has - l["engine_value"]) <= 1e-9 * max(abs(has), abs(l["engine_value"]))
-            rows.append(row("ok" if same else "gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"{l['identity']['constant']}: the same" if same else f"{l['identity']['constant']} is {has:g} there, {l['engine_value']:g} here"))
+            rows.append(row("ok" if same else "gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"{l['identity']['label']}: the same" if same else f"{l['identity']['label']} is {has:g} there, {l['engine_value']:g} here"))
 report("dogma", "Dogma: the laws against the engine's", "Each law of Dogma, and the engine's own copy of it today. Until the engine reads the registry, the two are held together here: a gap is a law the engine has differently, or has no name for.",
        ["Law", "Section", "Value", "Kind", "In the engine", "State"], rows)
 _structs = open(os.path.join(ROOT, "content", "base", "structures.ron"), encoding="utf-8").read()

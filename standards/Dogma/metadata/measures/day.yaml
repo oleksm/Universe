@@ -3,7 +3,7 @@ identity:
   key: law.day
   name: "Day"
   symbol: "d"
-  constant: DAY
+  label: DAY
   section: dogma.measures
 value: 86400
 unit: "s"

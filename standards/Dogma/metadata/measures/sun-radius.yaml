@@ -3,7 +3,7 @@ identity:
   key: law.sun-radius
   name: "Radius of the Sun"
   symbol: "R_sun"
-  constant: SUN_RADIUS
+  label: SUN_RADIUS
   section: dogma.measures
 value: 695700000
 unit: "m"

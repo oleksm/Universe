@@ -176,8 +176,8 @@ mill stock's `size` (thickness, diameter, wall: its section), a part's `shape`, 
 `standards/Dogma/`: 31 laws in six sections, one record each, values in SI.
 
 - **Schemas:** `section` (key `dogma.<name>`: name, order, about with its formula, where it is
-  written up) and `law` (key `law.<name>`: `identity.name`, `symbol`, `constant` (the engine's name
-  today), `section`; `value`; `unit`; `kind` real, simplified or invented; `note`; `in_game.file`
+  written up) and `law` (key `law.<name>`: `identity.name`, `symbol`, `label` (the constant's name, as code writes it: the engine's
+  where it has one), `section`; `value`; `unit`; `kind` real, simplified or invented; `note`; `in_game.file`
   and `in_game.as`; `basis`).
 - **Sections:** Nature (c, sigma, G), Measures (standard gravity, AU, light year, day, year, the
   Sun's mass, radius and luminosity, the Earth's mass and radius), Field, Tube, Air (Sutton-Graves,
@@ -189,9 +189,10 @@ mill stock's `size` (thickness, diameter, wall: its section), a part's `shape`, 
   (the engine: 0.2 s per light year) and `law.best-speed` is m/s (the engine: 1,000 c).
   `in_game.as` says which, and the report converts.
 - **The Dogma report** holds each law to the engine's copy (`config/dogma.ron`, `sheet.ron`,
-  `world/src/units.rs`, `physics/src/atmosphere.rs`): 27 the same, 3 are bare numbers in
-  `atmosphere.rs` with no name, and standard gravity has no constant in the engine at all (9.81 is
-  written where it is needed). That last is the one gap.
+  `world/src/units.rs`, `physics/src/atmosphere.rs`): 27 the same; four gaps, each a number the engine writes
+  without a name: `EARTH_AIR_DENSITY`, `EARTH_SCALE_HEIGHT` and `AIR_TOP` in `atmosphere.rs`, and
+  `STANDARD_GRAVITY` (9.81 written where it is needed). Every law has a label, so those four are
+  the names to give them.
 - **`build.py` reads its constants from Dogma** by name: c, sigma, G, standard gravity, AU, light
   year, the Sun's mass and luminosity, and the Tube laws (it no longer parses `dogma.ron`). Its
   worked figures moved in the fourth digit or later (sigma was 5.670374419e-8, g was 9.81).

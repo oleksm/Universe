@@ -3,7 +3,7 @@ identity:
   key: law.tube-gamma
   name: "Mass exponent"
   symbol: "gamma"
-  constant: TUBE_GAMMA
+  label: TUBE_GAMMA
   section: dogma.tube
 value: 0.3333333333
 kind: invented

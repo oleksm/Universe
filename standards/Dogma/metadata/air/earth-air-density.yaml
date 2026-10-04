@@ -2,6 +2,7 @@
 identity:
   key: law.earth-air-density
   name: "Earth's air at sea level"
+  label: EARTH_AIR_DENSITY
   section: dogma.air
 value: 1.225
 unit: "kg/m3"

@@ -217,7 +217,7 @@ def key_in(rec):
 
 def check_all():
     """Every record against its schema: (file, what does not fit)."""
-    found, unheld, named = [], [], []
+    found, unheld, named, labels = [], [], [], {}
     KEYS.clear()
     for dp, dns, fns in os.walk(TREE):
         dns[:] = [d for d in dns if d not in ("schema", "sources", "logos", "icons")]
@@ -249,6 +249,10 @@ def check_all():
             else:
                 KEYS[key] = rel
             named += [(full, at, holder[i], kinds) for holder, i, kinds, at in refs(rec, schema(sp), sp)]
+            if rel.startswith("Dogma") and (rec.get("identity") or {}).get("label"):
+                if rec["identity"]["label"] in labels:
+                    found.append((full, f"label: {rec['identity']['label']} is also {labels[rec['identity']['label']]}'s"))
+                labels[rec["identity"]["label"]] = rel
             if rel.startswith("Dogma") and "unit" in rec and not UNIT.match(str(rec["unit"])):
                 found.append((full, f"unit: {rec['unit']!r} is not an SI unit"))
     for path, sch in sorted(_schemas.items()):

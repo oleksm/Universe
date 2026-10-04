@@ -3,6 +3,7 @@ identity:
   key: law.earth-scale-height
   name: "Earth's scale height"
   symbol: "H"
+  label: EARTH_SCALE_HEIGHT
   section: dogma.air
 value: 8500
 unit: "m"

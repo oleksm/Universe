@@ -2,6 +2,7 @@
 identity:
   key: law.air-top
   name: "Top of the air"
+  label: AIR_TOP
   section: dogma.air
 value: 14
 kind: simplified

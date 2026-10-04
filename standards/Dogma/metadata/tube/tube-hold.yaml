@@ -2,7 +2,7 @@
 identity:
   key: law.tube-hold
   name: "Holding time"
-  constant: TUBE_HOLD
+  label: TUBE_HOLD
   section: dogma.tube
 value: 518400000.0
 unit: "s"

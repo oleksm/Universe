@@ -3,7 +3,7 @@ identity:
   key: law.astronomical-unit
   name: "Astronomical unit"
   symbol: "AU"
-  constant: AU
+  label: AU
   section: dogma.measures
 value: 149597870700
 unit: "m"

@@ -8,12 +8,12 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [key, name, section]
+    required: [key, name, label, section]
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       symbol: { type: string, description: "The letter it goes by in a formula." }
-      constant: { type: string, pattern: "^[A-Z][A-Z0-9_]*$", description: "Its name in the engine today." }
+      label: { type: string, pattern: "^[A-Z][A-Z0-9_]*$", description: "Its label: the constant's name, as code and formulas write it (SPEED_OF_LIGHT). No two alike. The engine's name for it, where the engine has one." }
       section: { type: string, x-ref: [dogma] }
   value: { type: number }
   unit: { type: string, description: "Its unit, in SI. Left out: a pure number." }

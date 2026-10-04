@@ -3,7 +3,7 @@ identity:
   key: law.tube-time
   name: "Natural crossing time"
   symbol: "T"
-  constant: TUBE_T_LY
+  label: TUBE_T_LY
   section: dogma.tube
 value: 2.11400166804923e-17
 unit: "s/m"

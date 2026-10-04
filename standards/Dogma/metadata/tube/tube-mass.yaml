@@ -3,7 +3,7 @@ identity:
   key: law.tube-mass
   name: "Tube mass"
   symbol: "rho"
-  constant: TUBE_RHO
+  label: TUBE_RHO
   section: dogma.tube
 value: 406.0
 unit: "kg"

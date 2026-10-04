@@ -3,6 +3,7 @@ identity:
   key: law.standard-gravity
   name: "Standard gravity"
   symbol: "g0"
+  label: STANDARD_GRAVITY
   section: dogma.measures
 value: 9.80665
 unit: "m/s2"

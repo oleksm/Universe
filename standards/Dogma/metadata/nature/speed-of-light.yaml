@@ -3,7 +3,7 @@ identity:
   key: law.speed-of-light
   name: "Speed of light"
   symbol: "c"
-  constant: SPEED_OF_LIGHT
+  label: SPEED_OF_LIGHT
   section: dogma.nature
 value: 299792458
 unit: "m/s"

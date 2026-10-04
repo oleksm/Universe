@@ -3,7 +3,7 @@ identity:
   key: law.gravitation
   name: "Constant of gravitation"
   symbol: "G"
-  constant: G
+  label: G
   section: dogma.nature
 value: 6.6743e-11
 unit: "m3/(kg s2)"

@@ -3,7 +3,7 @@ identity:
   key: law.best-speed
   name: "Best speed"
   symbol: "v*"
-  constant: V_BEST_C
+  label: V_BEST_C
   section: dogma.field
 value: 299792458000.0
 unit: "m/s"

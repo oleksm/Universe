@@ -3,7 +3,7 @@ identity:
   key: law.earth-mass
   name: "Mass of the Earth"
   symbol: "M_earth"
-  constant: EARTH_MASS
+  label: EARTH_MASS
   section: dogma.measures
 value: 5.972e+24
 unit: "kg"

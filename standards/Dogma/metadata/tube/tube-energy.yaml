@@ -3,7 +3,7 @@ identity:
   key: law.tube-energy
   name: "Crossing energy scale"
   symbol: "eps"
-  constant: TUBE_EPS
+  label: TUBE_EPS
   section: dogma.tube
 value: 2.24e-12
 unit: "J/(kg m)"
