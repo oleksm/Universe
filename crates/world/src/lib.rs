@@ -15,6 +15,7 @@ pub mod climate;
 pub mod collisions;
 pub mod content;
 pub mod crew;
+pub mod deckplan;
 pub mod damage;
 pub mod design;
 pub mod events;

@@ -22,6 +22,7 @@ mod rocks;
 mod save;
 mod scene;
 mod shipyard;
+mod studio;
 mod standards;
 mod sound;
 mod terrain_lod;
@@ -184,6 +185,8 @@ pub struct App {
     pub vending: Option<usize>,
     /// Ship plans kept (in the save).
     pub plans: Vec<shipyard::SavedPlan>,
+    /// Ships' insides as laid out in the shipyard's studio, one per hull (kept in the save).
+    pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The hull being designed, and those commissioned (in the save).
     pub design: universe_sim::world::design::Design,
     pub designs: Vec<universe_sim::world::design::Design>,
@@ -342,6 +345,7 @@ impl App {
             market: None,
             shipyard: None,
             plans: Vec::new(),
+            deckplans: Vec::new(),
             vending: None,
             design: Default::default(),
             designs: Vec::new(),
@@ -1192,6 +1196,10 @@ impl Game for App {
         }
         // And the shipyard (docked at a station).
         let yard_was_open = self.shipyard.is_some();
+        // (The shipyard is worked with the mouse: the cursor free.)
+        if yard_was_open && ctx.cursor_grabbed() {
+            ctx.grab_cursor(false);
+        }
         if yard_was_open {
             if !shipyard::input(self, ctx) {
                 self.shipyard = None;

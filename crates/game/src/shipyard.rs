@@ -69,6 +69,7 @@ enum Page {
     Plans,
     Design,
     Balance,
+    Layout,
 }
 
 /// The panel: the plan being worked on, and the cursors.
@@ -92,6 +93,8 @@ pub struct Shipyard {
     /// The balance page: the trim worked on, and its row.
     trim: universe_sim::world::trim::Trim,
     trim_row: usize,
+    /// The layout page: the studio (see `studio`).
+    studio: crate::studio::Studio,
 }
 
 /// How this station stands to module `m`: carried, at what price, and
@@ -149,7 +152,7 @@ fn with(fit: &Fit, slot: &Slot, module: Option<Handle<Module>>) -> Fit {
 impl Shipyard {
     /// The plan: the ship flown now.
     fn new(app: &App) -> Self {
-        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false, knob: 0, naming: false, held_side: 0.0, trim: app.ship.trim.clone(), trim_row: 0 };
+        let mut y = Shipyard { page: Page::Plan, hull: app.ship.class, fit: fit_of(app), slot: 0, choice: 0, held: 0.0, hull_pick: 0, plan_pick: 0, armed: false, knob: 0, naming: false, held_side: 0.0, trim: app.ship.trim.clone(), trim_row: 0, studio: Default::default() };
         y.choice = y.current_choice(0);
         y
     }
@@ -189,6 +192,11 @@ impl Shipyard {
     }
 
     /// Open on the balance page, at row `row`.
+    /// Opened on the layout studio.
+    pub fn laying_out(app: &App) -> Self {
+        Shipyard { page: Page::Layout, ..Shipyard::new(app) }
+    }
+
     pub fn balancing(app: &App, row: usize) -> Self {
         Shipyard { page: Page::Balance, trim_row: row, ..Shipyard::new(app) }
     }
@@ -296,6 +304,16 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         }
         return true;
     }
+    // The layout studio takes the mouse and its keys (ESC stops what it's drawing first).
+    if let Some(y) = app.shipyard.as_mut().filter(|y| y.page == Page::Layout && !input.pressed(KeyCode::Tab)) {
+        let spec = content().get(y.hull);
+        let mut studio = std::mem::take(&mut y.studio);
+        let stay = crate::studio::input(app, ctx, &spec.key, spec.shape(), &mut studio);
+        if let Some(y) = app.shipyard.as_mut() {
+            y.studio = studio;
+        }
+        return stay && !crate::keys::pressed(input, Act::Shipyard);
+    }
     if crate::keys::pressed(input, Act::Shipyard) || input.pressed(KeyCode::Escape) {
         return false;
     }
@@ -309,7 +327,8 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             Page::Hulls => Page::Design,
             Page::Design => Page::Plans,
             Page::Plans => Page::Balance,
-            Page::Balance => Page::Plan,
+            Page::Balance => Page::Layout,
+            Page::Layout => Page::Plan,
         };
         y.armed = false;
         return true;
@@ -323,6 +342,8 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         }
     };
     match y.page {
+        // (Taken by the studio, above.)
+        Page::Layout => {}
         Page::Balance => {
             use universe_sim::world::trim;
             let ship = &app.ship;
@@ -875,6 +896,27 @@ fn actions(frame: &mut Frame, app: &App, y: &Shipyard) {
                     cell("LT RT", "SET IT", can(y.trim_row < 3 + mains)),
                     cell("SHIFT", "SET x5", can(y.trim_row < 3 + mains)),
                     cell("ENTER", if y.trim_row == 4 + mains { "TRIM THE SHIP" } else { "AUTO-BALANCE" }, can(y.trim_row == 3 + mains || (y.trim_row == 4 + mains && docked))),
+                    cell("TAB", "LAYOUT", Lamp::Off),
+                    close,
+                ],
+            )
+        }
+        Page::Layout => {
+            use crate::studio::Tool;
+            let on = |t: Tool| if y.studio.tool == t { Lamp::On } else { Lamp::Off };
+            (
+                "LAYOUT",
+                vec![
+                    cell("S", "SELECT", on(Tool::Select)),
+                    cell("P", "PLANE", on(Tool::Plane)),
+                    cell("W", "WALL", on(Tool::Wall)),
+                    cell("D", "DOOR", on(Tool::Door)),
+                    cell("PG", "DECK", Lamp::Off),
+                    cell("N", "NEW DECK", Lamp::Off),
+                    cell("+ -", "FLOOR", Lamp::Off),
+                    cell("[ ]", "HEADROOM", Lamp::Off),
+                    cell("ENTER", "FINISH", Lamp::Off),
+                    cell("DEL", "REMOVE", Lamp::Off),
                     cell("TAB", "PLAN", Lamp::Off),
                     close,
                 ],
@@ -901,7 +943,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     frame.text(Vec2::new(12.0, 12.0), &format!("{title}   {:.0} CR", app.v.credits), TEXT);
     // The pages, as tabs (TAB moves on).
     use crate::hud::{draw_cell, Lamp};
-    let tabs = [(Page::Plan, "PLAN"), (Page::Hulls, "HULLS"), (Page::Design, "DESIGN"), (Page::Plans, "PLANS"), (Page::Balance, "BALANCE")];
+    let tabs = [(Page::Plan, "PLAN"), (Page::Hulls, "HULLS"), (Page::Design, "DESIGN"), (Page::Plans, "PLANS"), (Page::Balance, "BALANCE"), (Page::Layout, "LAYOUT")];
     let tab = Vec2::new(86.0, 14.0);
     let x0 = size.x - tabs.len() as f32 * (tab.x + 2.0) - 8.0;
     let now = tabs.iter().position(|(p, _)| *p == y.page).unwrap_or(0);
@@ -915,6 +957,10 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         Page::Plans => return draw_plans(frame, app, y),
         Page::Design => return draw_design(frame, app, y),
         Page::Balance => return draw_balance(frame, app, y),
+        Page::Layout => {
+            let spec = y.spec();
+            return crate::studio::draw(frame, app, &spec.key, &spec.name, &y.studio);
+        }
         Page::Plan => {}
     }
     let spec = y.spec();

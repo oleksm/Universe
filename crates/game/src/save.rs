@@ -19,6 +19,9 @@ struct GameSave {
     /// Ship plans kept.
     #[serde(default)]
     plans: Vec<crate::shipyard::SavedPlan>,
+    /// Ships' insides as laid out (the shipyard's studio).
+    #[serde(default)]
+    deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// Hulls designed and commissioned, and the one on the board.
     #[serde(default)]
     designs: Vec<universe_sim::world::design::Design>,
@@ -51,6 +54,7 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
         observer: app.observer.clone(),
         explored: app.explored.iter().copied().collect(),
         plans: app.plans.clone(),
+        deckplans: app.deckplans.clone(),
         designs: app.designs.clone(),
         design: app.design.clone(),
     };
@@ -94,6 +98,7 @@ pub fn load(app: &mut App) -> Result<(), String> {
     app.observer = save.observer;
     app.explored.extend(save.explored);
     app.plans = save.plans;
+    app.deckplans = save.deckplans;
     app.designs = save.designs;
     app.design = save.design;
     Ok(())

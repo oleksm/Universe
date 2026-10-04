@@ -1205,6 +1205,33 @@ pub fn apply(app: &mut App, name: &str) {
                 *pitch = d.dot(up).clamp(-1.0, 1.0).asin().clamp(-1.4, 1.4);
             }
         }
+        "studio" => {
+            // The shipyard's layout studio on our hull, with a deck laid out for a look:
+            // a floor across the hold, a wall with a door, a curved one (not saved).
+            use universe_sim::world::deckplan::{Deck, DeckPlan, Door, Wall};
+            use universe_engine::glam::DVec2;
+            apply(app, "docked");
+            // (Our hull the MC-07, as the game flies it by default.)
+            if let Ok(h) = std::fs::read("assets/models/mc07.glb").map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, "assets/models/mc07.glb")) {
+                let u = app.engine.universe();
+                u.ship.class = h;
+                u.ship.refresh();
+                app.ship = app.engine.universe().ship.clone();
+            }
+            let key = app.ship.spec().key.clone();
+            app.deckplans.retain(|p| p.hull != key);
+            let y = crate::shipyard::Shipyard::laying_out(app);
+            if std::env::var_os("UNIVERSE_EMPTY").is_none() {
+                // (Its first floor as the studio finds it, from its model.)
+                let floor = app.ship.spec().shape().walk.as_ref().map_or(-7.7, |m| m.lo.y + 5.1);
+                let mut deck = Deck::at(floor);
+                deck.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
+                deck.walls.push(Wall { points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { at: 14.0, width: 0.9, height: 2.1 }] });
+                deck.walls.push(Wall { points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![] });
+                app.deckplans.push(DeckPlan { hull: key, decks: vec![deck] });
+            }
+            app.shipyard = Some(y);
+        }
         "rampup" => {
             // Out and down the ramp, then back up it into the ship (where you end up: logged).
             apply(app, "outside");

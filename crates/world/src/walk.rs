@@ -74,6 +74,39 @@ impl WalkMesh {
         WalkMesh { tris, grid, lo: lo.as_dvec3(), hi: hi.as_dvec3() }
     }
 
+    /// Where its surfaces cross the level plane `y` (its frame): line segments
+    /// (x, z) — a cross-section, as a deck plan draws the hull.
+    pub fn section_y(&self, y: f64) -> Vec<[glam::DVec2; 2]> {
+        self.section(1, y).into_iter().map(|[a, b]| [glam::DVec2::new(a.x, a.z), glam::DVec2::new(b.x, b.z)]).collect()
+    }
+
+    /// Where its surfaces cross the plane `x = side` (its frame): segments (z, y),
+    /// a side section.
+    pub fn section_x(&self, side: f64) -> Vec<[glam::DVec2; 2]> {
+        self.section(0, side).into_iter().map(|[a, b]| [glam::DVec2::new(a.z, a.y), glam::DVec2::new(b.z, b.y)]).collect()
+    }
+
+    /// The segments where its triangles cross the plane where coordinate `axis` is `at`.
+    fn section(&self, axis: usize, at: f64) -> Vec<[DVec3; 2]> {
+        let mut out = Vec::new();
+        for t in &self.tris {
+            let p = t.map(|v| v.as_dvec3());
+            let d = p.map(|v| v[axis] - at);
+            let mut hits = Vec::with_capacity(2);
+            for i in 0..3 {
+                let (a, b) = (i, (i + 1) % 3);
+                if (d[a] < 0.0) != (d[b] < 0.0) {
+                    let s = d[a] / (d[a] - d[b]);
+                    hits.push(p[a] + (p[b] - p[a]) * s);
+                }
+            }
+            if hits.len() == 2 {
+                out.push([hits[0], hits[1]]);
+            }
+        }
+        out
+    }
+
     pub fn len(&self) -> usize {
         self.tris.len()
     }

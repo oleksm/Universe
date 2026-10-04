@@ -1,0 +1,559 @@
+//! The shipyard's layout studio: a ship's inside drawn as a blueprint. The
+//! plan of one deck (the hull's cross-section at its height, a grid, the
+//! floors and walls), and below it the ship from the side with its decks.
+//! Floors and walls are trimmed to the hull, so they follow its curves; a
+//! wall's segments can be bent into arcs. Plans are kept (in the save), one
+//! per hull; see `world::deckplan`.
+//!
+//! Tools: S select (drag a point; drag a segment's middle to bend it), P
+//! plane (click its corners; the first again or ENTER closes it), W wall
+//! (click its points; ENTER ends it), D door (click a wall; again removes
+//! it). DELETE removes what's selected; BACKSPACE the last point placed; ESC
+//! stops drawing. PGUP/PGDN deck, N a new deck above, +/- its floor (SHIFT:
+//! more), [ ] its headroom, CTRL+DELETE removes it. Wheel zooms, right drag
+//! pans, HOME fits. Points snap to a quarter metre (ALT: free).
+
+use universe_engine::glam::{DVec2, Vec2};
+use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
+use universe_sim::world::deckplan::{self, Deck, DeckPlan, Door, Sides, Wall};
+
+use crate::App;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub enum Tool {
+    #[default]
+    Select,
+    Plane,
+    Wall,
+    Door,
+}
+
+/// What's picked: a wall or a plane of the current deck.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Pick {
+    Wall(usize),
+    Plane(usize),
+}
+
+/// What a drag moves.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Drag {
+    Pan,
+    Point(Pick, usize),
+    Bend(usize, usize),
+}
+
+/// The hull as the studio draws it, worked out once per hull and deck.
+#[derive(Default)]
+struct Hull {
+    key: String,
+    /// The deck height it's cut at (m), and the cut.
+    y: f64,
+    section: Vec<[DVec2; 2]>,
+    sides: Sides,
+    /// Its side view: the cut along its centre line (z, y), and the ground it
+    /// stands on (its lowest point: its feet).
+    profile: Vec<[DVec2; 2]>,
+    keel: f64,
+    /// Its lowest floor inside (well above its feet), for a first deck.
+    first_floor: f64,
+    /// Its extent in plan (x, z) and in height.
+    lo: universe_engine::glam::DVec3,
+    hi: universe_engine::glam::DVec3,
+}
+
+#[derive(Default)]
+pub struct Studio {
+    deck: usize,
+    pub tool: Tool,
+    /// Points placed so far (a plane's corners or a wall's points).
+    drawing: Vec<DVec2>,
+    pick: Option<Pick>,
+    drag: Option<Drag>,
+    /// The view: the plan point at the middle and pixels a metre (none: fit it).
+    view: Option<(DVec2, f64)>,
+    hull: Option<Hull>,
+    /// The cursor as input last saw it (HUD pixels): what's being drawn runs to it.
+    cursor: Vec2,
+}
+
+/// The studio's regions on screen: the plan, the side view.
+fn regions(size: Vec2) -> ((Vec2, Vec2), (Vec2, Vec2)) {
+    let top = 52.0;
+    // (Above the shipyard's panel of actions.)
+    let bottom = size.y - 104.0;
+    let split = top + (bottom - top) * 0.62;
+    ((Vec2::new(12.0, top), Vec2::new(size.x - 12.0, split - 6.0)), (Vec2::new(12.0, split), Vec2::new(size.x - 12.0, bottom)))
+}
+
+// Blueprint colours.
+const PAPER: Color = Color([0.04, 0.14, 0.28, 1.0]);
+const GRID: Color = Color([0.35, 0.6, 0.9, 0.18]);
+const GRID5: Color = Color([0.45, 0.7, 1.0, 0.35]);
+const HULL: Color = Color([0.75, 0.88, 1.0, 0.8]);
+const INK: Color = Color([0.95, 0.98, 1.0, 1.0]);
+const FLOOR: Color = Color([0.55, 0.78, 1.0, 0.22]);
+const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
+const OUT: Color = Color([1.0, 0.45, 0.4, 0.55]);
+const LABEL: Color = Color([0.7, 0.85, 1.0, 1.0]);
+
+impl Studio {
+    /// The plan for `hull` (made when first drawn on).
+    fn plan<'a>(app: &'a mut App, hull: &str) -> &'a mut DeckPlan {
+        if let Some(k) = app.deckplans.iter().position(|p| p.hull == hull) {
+            return &mut app.deckplans[k];
+        }
+        app.deckplans.push(DeckPlan { hull: hull.into(), decks: Vec::new() });
+        app.deckplans.last_mut().expect("just added")
+    }
+
+    fn plan_of<'a>(app: &'a App, hull: &str) -> Option<&'a DeckPlan> {
+        app.deckplans.iter().find(|p| p.hull == hull)
+    }
+
+    /// Plan point ↔ screen, in the plan region (nose to the left, starboard up).
+    fn to_screen(&self, region: (Vec2, Vec2), p: DVec2) -> Vec2 {
+        let (c, s) = self.view.unwrap_or((DVec2::ZERO, 10.0));
+        let mid = (region.0 + region.1) * 0.5;
+        Vec2::new(mid.x + ((p.y - c.y) * s) as f32, mid.y - ((p.x - c.x) * s) as f32)
+    }
+
+    fn to_plan(&self, region: (Vec2, Vec2), q: Vec2) -> DVec2 {
+        let (c, s) = self.view.unwrap_or((DVec2::ZERO, 10.0));
+        let mid = (region.0 + region.1) * 0.5;
+        DVec2::new(c.x - (q.y - mid.y) as f64 / s, c.y + (q.x - mid.x) as f64 / s)
+    }
+
+    /// The hull cut at the current deck (worked out again when the hull or deck changes).
+    fn refresh(&mut self, app: &App, hull_key: &str, shape: &universe_sim::world::shape::Shape) {
+        let Some(mesh) = shape.walk.as_ref() else {
+            self.hull = None;
+            return;
+        };
+        let decks = Self::plan_of(app, hull_key).map(|p| p.decks.clone()).unwrap_or_default();
+        let y = decks.get(self.deck).map_or_else(|| first_floor(mesh), |d| d.floor);
+        // (Cut a metre over the floor: the hull's sides at a person's waist.)
+        if self.hull.as_ref().is_some_and(|h| h.key == hull_key && (h.y - y).abs() < 1e-9) {
+            return;
+        }
+        let section = mesh.section_y(y + 1.0);
+        let sides = Sides::of(&section);
+        let profile = self.hull.as_ref().filter(|h| h.key == hull_key).map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
+        let first_floor = first_floor(mesh);
+        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
+    }
+}
+
+/// A hull's lowest floor inside: looking down its centre line, the lowest
+/// level surface more than 3 m over its feet (below that, its legs).
+fn first_floor(mesh: &universe_sim::world::walk::WalkMesh) -> f64 {
+    use universe_sim::world::walk::{ray, Collider};
+    let cols = [Collider::Mesh { mesh, at: universe_engine::glam::DVec3::ZERO, rot: universe_engine::glam::DQuat::IDENTITY }];
+    let mut best: Option<f64> = None;
+    for k in 1..8 {
+        let z = mesh.lo.z + (mesh.hi.z - mesh.lo.z) * k as f64 / 8.0;
+        let mut y = mesh.hi.y;
+        // (Down through every surface in turn.)
+        while let Some((d, n)) = ray(&cols, universe_engine::glam::DVec3::new(0.0, y, z), universe_engine::glam::DVec3::NEG_Y, y - mesh.lo.y) {
+            y -= d + 0.01;
+            if n.y > 0.9 && y > mesh.lo.y + 3.0 {
+                best = Some(best.map_or(y, |b: f64| b.min(y)));
+            }
+        }
+    }
+    best.unwrap_or(mesh.lo.y + 1.0)
+}
+
+/// Snapped to a quarter metre (ALT: as it is).
+fn snap(p: DVec2, free: bool) -> DVec2 {
+    if free { p } else { (p * 4.0).round() / 4.0 }
+}
+
+/// The studio's input (the shipyard's layout page). False: ESC with nothing to stop (leave).
+pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim::world::shape::Shape, studio: &mut Studio) -> bool {
+    let input = &ctx.input;
+    let size = ctx.hud_size.as_vec2();
+    let (plan_r, _side_r) = regions(size);
+    studio.refresh(app, hull_key, shape);
+    let Some(h) = studio.hull.as_ref() else {
+        return !input.pressed(KeyCode::Escape);
+    };
+    // Fit the view to the hull.
+    if studio.view.is_none() || input.pressed(KeyCode::Home) {
+        let span = (plan_r.1 - plan_r.0).as_dvec2();
+        let s = (span.x / (h.hi.z - h.lo.z)).min(span.y / (h.hi.x - h.lo.x)) * 0.92;
+        studio.view = Some((DVec2::new((h.lo.x + h.hi.x) / 2.0, (h.lo.z + h.hi.z) / 2.0), s));
+    }
+    let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+    let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
+    let alt = input.down(KeyCode::AltLeft) || input.down(KeyCode::AltRight);
+    let cursor = input.cursor;
+    studio.cursor = cursor;
+    let over = cursor.x >= plan_r.0.x && cursor.x <= plan_r.1.x && cursor.y >= plan_r.0.y && cursor.y <= plan_r.1.y;
+    let at = studio.to_plan(plan_r, cursor);
+    let px = studio.view.map_or(10.0, |v| v.1);
+    // ESC: stop drawing, drop the pick, else leave.
+    if input.pressed(KeyCode::Escape) {
+        if !studio.drawing.is_empty() || studio.pick.is_some() {
+            studio.drawing.clear();
+            studio.pick = None;
+            return true;
+        }
+        return false;
+    }
+    // Tools.
+    for (k, t) in [(KeyCode::KeyS, Tool::Select), (KeyCode::KeyP, Tool::Plane), (KeyCode::KeyW, Tool::Wall), (KeyCode::KeyD, Tool::Door)] {
+        if input.pressed(k) {
+            studio.tool = t;
+            studio.drawing.clear();
+        }
+    }
+    // Decks.
+    let first_floor = h.first_floor;
+    let plan = Studio::plan(app, hull_key);
+    let n = plan.decks.len();
+    if input.pressed(KeyCode::KeyN) {
+        let floor = plan.decks.iter().map(|d| d.floor + d.headroom + 0.3).fold(first_floor, f64::max);
+        plan.decks.push(Deck::at(if n == 0 { first_floor } else { floor }));
+        plan.decks.sort_by(|a, b| a.floor.total_cmp(&b.floor));
+        studio.deck = plan.decks.iter().position(|d| (d.floor - floor).abs() < 1e-9 || n == 0).unwrap_or(0);
+        studio.drawing.clear();
+        studio.pick = None;
+    }
+    if input.pressed(KeyCode::PageUp) && studio.deck + 1 < plan.decks.len() {
+        studio.deck += 1;
+        studio.drawing.clear();
+        studio.pick = None;
+    }
+    if input.pressed(KeyCode::PageDown) && studio.deck > 0 {
+        studio.deck -= 1;
+        studio.drawing.clear();
+        studio.pick = None;
+    }
+    let step = if shift { 0.5 } else { 0.1 };
+    if let Some(deck) = plan.decks.get_mut(studio.deck) {
+        if input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) {
+            deck.floor += step;
+        }
+        if input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) {
+            deck.floor -= step;
+        }
+        if input.pressed(KeyCode::BracketRight) {
+            deck.headroom += step;
+        }
+        if input.pressed(KeyCode::BracketLeft) {
+            deck.headroom = (deck.headroom - step).max(1.0);
+        }
+    }
+    if ctrl && input.pressed(KeyCode::Delete) && studio.deck < plan.decks.len() {
+        plan.decks.remove(studio.deck);
+        studio.deck = studio.deck.min(plan.decks.len().saturating_sub(1));
+        studio.pick = None;
+        return true;
+    }
+    // Zoom (about the cursor) and pan.
+    if over && input.scroll != 0.0
+        && let Some((c, s)) = studio.view
+    {
+        let k = 1.15f64.powf(input.scroll as f64);
+        let ns = (s * k).clamp(2.0, 400.0);
+        // (The point under the cursor stays under it.)
+        studio.view = Some((at + (c - at) * (s / ns), ns));
+    }
+    if over && (input.button_pressed(MouseButton::Right) || input.button_pressed(MouseButton::Middle)) {
+        studio.drag = Some(Drag::Pan);
+    }
+    if studio.drag == Some(Drag::Pan) {
+        if input.button_down(MouseButton::Right) || input.button_down(MouseButton::Middle) {
+            if let Some((c, s)) = studio.view {
+                let d = input.mouse_delta.as_dvec2();
+                studio.view = Some((c + DVec2::new(d.y, -d.x) / s, s));
+            }
+        } else {
+            studio.drag = None;
+        }
+    }
+    let Some(deck) = plan.decks.get_mut(studio.deck) else { return true };
+    let p = snap(at, alt);
+    let near = |q: DVec2| q.distance(at) * px < 8.0;
+    match studio.tool {
+        Tool::Plane | Tool::Wall => {
+            if over && input.button_pressed(MouseButton::Left) {
+                // (A plane closes on its first corner again.)
+                if studio.tool == Tool::Plane && studio.drawing.len() >= 3 && near(studio.drawing[0]) {
+                    deck.planes.push(std::mem::take(&mut studio.drawing));
+                } else {
+                    studio.drawing.push(p);
+                }
+            }
+            if input.pressed(KeyCode::Backspace) {
+                studio.drawing.pop();
+            }
+            if input.pressed(KeyCode::Enter) {
+                if studio.tool == Tool::Plane && studio.drawing.len() >= 3 {
+                    deck.planes.push(std::mem::take(&mut studio.drawing));
+                } else if studio.tool == Tool::Wall && studio.drawing.len() >= 2 {
+                    let points = std::mem::take(&mut studio.drawing);
+                    let bulges = vec![0.0; points.len() - 1];
+                    deck.walls.push(Wall { points, bulges, doors: Vec::new() });
+                }
+            }
+        }
+        Tool::Door => {
+            if over && input.button_pressed(MouseButton::Left) {
+                // On the wall nearest the click (within a few pixels): a door there, or the one there removed.
+                let hit = deck.walls.iter().enumerate().filter_map(|(k, w)| w.nearest(at).map(|(along, off)| (k, along, off))).filter(|h| h.2 * px < 10.0).min_by(|a, b| a.2.total_cmp(&b.2));
+                if let Some((k, along, _)) = hit {
+                    let w = &mut deck.walls[k];
+                    if let Some(d) = w.doors.iter().position(|d| (d.at - along).abs() <= d.width / 2.0) {
+                        w.doors.remove(d);
+                    } else {
+                        let len = w.length();
+                        let half = deckplan::DOOR_WIDTH / 2.0;
+                        w.doors.push(Door { at: along.clamp(half.min(len / 2.0), (len - half).max(len / 2.0)), width: deckplan::DOOR_WIDTH, height: deckplan::DOOR_HEIGHT });
+                    }
+                }
+            }
+        }
+        Tool::Select => {
+            if over && input.button_pressed(MouseButton::Left) {
+                // A handle of what's picked first (its points, its segments' middles), else pick anew.
+                let mut grabbed = None;
+                if let Some(Pick::Wall(k)) = studio.pick
+                    && let Some(w) = deck.walls.get(k)
+                {
+                    if let Some(i) = w.points.iter().position(|q| near(*q)) {
+                        grabbed = Some(Drag::Point(Pick::Wall(k), i));
+                    } else if let Some(i) = (0..w.points.len().saturating_sub(1)).find(|&i| near(bend_handle(w, i))) {
+                        grabbed = Some(Drag::Bend(k, i));
+                    }
+                }
+                if let Some(Pick::Plane(k)) = studio.pick
+                    && let Some(poly) = deck.planes.get(k)
+                    && let Some(i) = poly.iter().position(|q| near(*q))
+                {
+                    grabbed = Some(Drag::Point(Pick::Plane(k), i));
+                }
+                if grabbed.is_none() {
+                    let wall = deck.walls.iter().enumerate().filter_map(|(k, w)| w.nearest(at).map(|(_, off)| (k, off))).filter(|h| h.1 * px < 8.0).min_by(|a, b| a.1.total_cmp(&b.1)).map(|h| Pick::Wall(h.0));
+                    let plane = || deck.planes.iter().position(|poly| inside(poly, at)).map(Pick::Plane);
+                    studio.pick = wall.or_else(plane);
+                }
+                studio.drag = grabbed;
+            }
+            match studio.drag {
+                Some(Drag::Point(pick, i)) if input.button_down(MouseButton::Left) => match pick {
+                    Pick::Wall(k) => {
+                        if let Some(q) = deck.walls.get_mut(k).and_then(|w| w.points.get_mut(i)) {
+                            *q = p;
+                        }
+                    }
+                    Pick::Plane(k) => {
+                        if let Some(q) = deck.planes.get_mut(k).and_then(|poly| poly.get_mut(i)) {
+                            *q = p;
+                        }
+                    }
+                },
+                Some(Drag::Bend(k, i)) if input.button_down(MouseButton::Left) => {
+                    // The arc's middle under the cursor: its bulge, how far that is off the chord.
+                    if let Some(w) = deck.walls.get_mut(k) {
+                        let (a, b) = (w.points[i], w.points[i + 1]);
+                        let chord = (b - a).normalize_or_zero();
+                        let left = DVec2::new(-chord.y, chord.x);
+                        let bulge = (at - (a + b) * 0.5).dot(left);
+                        w.bulges.resize(w.points.len() - 1, 0.0);
+                        w.bulges[i] = if bulge.abs() < 0.05 { 0.0 } else { bulge };
+                    }
+                }
+                Some(Drag::Point(..) | Drag::Bend(..)) => studio.drag = None,
+                _ => {}
+            }
+            if input.pressed(KeyCode::Delete) && !ctrl {
+                match studio.pick.take() {
+                    Some(Pick::Wall(k)) if k < deck.walls.len() => {
+                        deck.walls.remove(k);
+                    }
+                    Some(Pick::Plane(k)) if k < deck.planes.len() => {
+                        deck.planes.remove(k);
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+    true
+}
+
+/// Where segment `i` of wall `w` is bent from: the middle of its arc.
+fn bend_handle(w: &Wall, i: usize) -> DVec2 {
+    let (a, b) = (w.points[i], w.points[i + 1]);
+    let chord = (b - a).normalize_or_zero();
+    (a + b) * 0.5 + DVec2::new(-chord.y, chord.x) * w.bulge(i)
+}
+
+/// Is `p` inside outline `poly`?
+fn inside(poly: &[DVec2], p: DVec2) -> bool {
+    let mut odd = false;
+    for i in 0..poly.len() {
+        let (a, b) = (poly[i], poly[(i + 1) % poly.len()]);
+        if (a.y > p.y) != (b.y > p.y) && p.x < a.x + (b.x - a.x) * (p.y - a.y) / (b.y - a.y) {
+            odd = !odd;
+        }
+    }
+    odd
+}
+
+/// The studio drawn (the shipyard's layout page).
+pub fn draw(frame: &mut Frame, app: &App, hull_key: &str, hull_name: &str, studio: &Studio) {
+    let size = frame.size();
+    let (plan_r, side_r) = regions(size);
+    for r in [plan_r, side_r] {
+        frame.hud_rect(r.0, r.1 - r.0, PAPER);
+    }
+    let Some(h) = studio.hull.as_ref() else {
+        frame.text(plan_r.0 + Vec2::new(16.0, 16.0), &format!("{hull_name} HAS NO MODEL TO LAY OUT: THE STUDIO NEEDS A MODELLED HULL"), LABEL);
+        return;
+    };
+    let plan = Studio::plan_of(app, hull_key);
+    let decks: &[Deck] = plan.map_or(&[], |p| &p.decks);
+    let deck = decks.get(studio.deck);
+    let px = studio.view.map_or(10.0, |v| v.1);
+    let to = |p: DVec2| studio.to_screen(plan_r, p);
+    frame.hud_clipped(plan_r.0, plan_r.1, |frame| {
+        // The grid: a metre, every fifth brighter.
+        let (lo, hi) = (studio.to_plan(plan_r, Vec2::new(plan_r.0.x, plan_r.1.y)), studio.to_plan(plan_r, Vec2::new(plan_r.1.x, plan_r.0.y)));
+        if px > 4.0 {
+            for z in (lo.y.floor() as i64)..=(hi.y.ceil() as i64) {
+                let x = to(DVec2::new(0.0, z as f64)).x;
+                frame.hud_line(Vec2::new(x, plan_r.0.y), Vec2::new(x, plan_r.1.y), if z % 5 == 0 { GRID5 } else { GRID });
+            }
+            for xx in (lo.x.floor() as i64)..=(hi.x.ceil() as i64) {
+                let y = to(DVec2::new(xx as f64, 0.0)).y;
+                frame.hud_line(Vec2::new(plan_r.0.x, y), Vec2::new(plan_r.1.x, y), if xx % 5 == 0 { GRID5 } else { GRID });
+            }
+        }
+        // The hull, cut at this deck.
+        for [a, b] in &h.section {
+            frame.hud_line_smooth(to(*a), to(*b), HULL);
+        }
+        let Some(deck) = deck else { return };
+        // Floors: trimmed to the hull (filled), their outlines as drawn.
+        for (k, poly) in deck.planes.iter().enumerate() {
+            for (z0, z1, x0, x1) in deckplan::floor_strips(poly, &h.sides) {
+                let (a, b) = (to(DVec2::new(x1, z0)), to(DVec2::new(x0, z1)));
+                frame.hud_rect(a.min(b), (a - b).abs(), FLOOR);
+            }
+            let col = if studio.pick == Some(Pick::Plane(k)) { PICKED } else { INK.scale(0.8) };
+            for i in 0..poly.len() {
+                frame.hud_line_smooth(to(poly[i]), to(poly[(i + 1) % poly.len()]), col);
+            }
+            if studio.pick == Some(Pick::Plane(k)) {
+                for q in poly {
+                    handle(frame, to(*q), PICKED, false);
+                }
+            }
+        }
+        // Walls: where they're inside the hull in ink (thick), beyond it faint red; doors as gaps with a swing.
+        for (k, w) in deck.walls.iter().enumerate() {
+            let picked = studio.pick == Some(Pick::Wall(k));
+            let path = w.path();
+            for s in path.windows(2) {
+                frame.hud_line(to(s[0].0), to(s[1].0), OUT);
+            }
+            let col = if picked { PICKED } else { INK };
+            let half = ((deckplan::WALL / 2.0) * px).max(1.0) as f32;
+            for run in deckplan::wall_runs(w, &h.sides) {
+                for s in run.windows(2) {
+                    let ((a, sa), (b, sb)) = (s[0], s[1]);
+                    if w.doors.iter().any(|d| ((sa + sb) / 2.0 - d.at).abs() <= d.width / 2.0) {
+                        continue;
+                    }
+                    let (pa, pb) = (to(a), to(b));
+                    let n = (pb - pa).perp().normalize_or_zero() * half;
+                    frame.hud_line_smooth(pa + n, pb + n, col);
+                    frame.hud_line_smooth(pa - n, pb - n, col);
+                }
+            }
+            for d in &w.doors {
+                if let (Some(a), Some(b)) = (w.point_at(d.at - d.width / 2.0), w.point_at(d.at + d.width / 2.0)) {
+                    // (A door's leaf, open, and its swing.)
+                    let (pa, pb) = (to(a), to(b));
+                    let leaf = (pb - pa).perp();
+                    frame.hud_line_smooth(pa, pa + leaf, LABEL);
+                    let r = leaf.length();
+                    let a0 = leaf.y.atan2(leaf.x);
+                    let a1 = (pb - pa).y.atan2((pb - pa).x);
+                    let mut da = a1 - a0;
+                    if da > std::f32::consts::PI {
+                        da -= std::f32::consts::TAU;
+                    } else if da < -std::f32::consts::PI {
+                        da += std::f32::consts::TAU;
+                    }
+                    for i in 0..8 {
+                        let (t0, t1) = (a0 + da * i as f32 / 8.0, a0 + da * (i + 1) as f32 / 8.0);
+                        frame.hud_line_smooth(pa + Vec2::from_angle(t0) * r, pa + Vec2::from_angle(t1) * r, LABEL.scale(0.6));
+                    }
+                }
+            }
+            if picked {
+                for q in &w.points {
+                    handle(frame, to(*q), PICKED, false);
+                }
+                for i in 0..w.points.len().saturating_sub(1) {
+                    handle(frame, to(bend_handle(w, i)), PICKED, true);
+                }
+            }
+        }
+        // What's being drawn, to the cursor.
+        if !studio.drawing.is_empty() {
+            let cursor = to(snap(studio.to_plan(plan_r, studio.cursor), false));
+            let pts: Vec<Vec2> = studio.drawing.iter().map(|q| to(*q)).collect();
+            for s in pts.windows(2) {
+                frame.hud_line_smooth(s[0], s[1], PICKED);
+            }
+            frame.hud_line_smooth(*pts.last().expect("a point"), cursor, PICKED.scale(0.6));
+            for q in &pts {
+                handle(frame, *q, PICKED, false);
+            }
+        }
+    });
+    // The side view: the hull along its centre line, and the decks (this one bright), to scale.
+    let (w, ht) = (side_r.1 - side_r.0).as_dvec2().into();
+    let k = (w / (h.hi.z - h.lo.z)).min(ht / (h.hi.y - h.lo.y)) * 0.9;
+    let mid = (side_r.0 + side_r.1) * 0.5;
+    let zs = |z: f64| mid.x + ((z - (h.lo.z + h.hi.z) / 2.0) * k) as f32;
+    let sy = |y: f64| mid.y - ((y - (h.lo.y + h.hi.y) / 2.0) * k) as f32;
+    frame.hud_clipped(side_r.0, side_r.1, |frame| {
+        for [a, b] in &h.profile {
+            frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
+        }
+        for (k, d) in decks.iter().enumerate() {
+            let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
+            frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor)), Vec2::new(side_r.1.x, sy(d.floor)), col);
+            frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor + d.headroom)), Vec2::new(side_r.1.x, sy(d.floor + d.headroom)), col.scale(0.4));
+            frame.text(Vec2::new(side_r.0.x + 6.0, sy(d.floor) - 14.0), &format!("DECK {}  {:.1} M", k + 1, d.floor - h.keel), col);
+        }
+    });
+    // What's on: the deck, the tool.
+    let tool = match studio.tool {
+        Tool::Select => "SELECT",
+        Tool::Plane => "PLANE",
+        Tool::Wall => "WALL",
+        Tool::Door => "DOOR",
+    };
+    let deck_line = match deck {
+        Some(d) => format!("DECK {} OF {}   FLOOR {:.1} M UP   HEADROOM {:.1} M", studio.deck + 1, decks.len(), d.floor - h.keel, d.headroom),
+        None => "NO DECKS YET: N ADDS ONE".into(),
+    };
+    frame.text(Vec2::new(plan_r.0.x, plan_r.0.y - 16.0), &format!("LAYOUT STUDIO - {hull_name}   {deck_line}   TOOL: {tool}"), LABEL);
+}
+
+/// A drag handle: a square (a point) or a ring (a bend).
+fn handle(frame: &mut Frame, at: Vec2, col: Color, ring: bool) {
+    if ring {
+        frame.hud_ellipse(at, Vec2::splat(5.0), 12, col);
+    } else {
+        frame.hud_box(at - Vec2::splat(4.0), Vec2::splat(8.0), col);
+    }
+}
+
