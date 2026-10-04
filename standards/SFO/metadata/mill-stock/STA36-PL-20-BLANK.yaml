@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Cut to each panel's outline on the cutting table, not yet formed. Kept in the works' store until the panel former takes it.
+identity:
+  key: stock.sta36-pl-20-blank
+  code: STA36-PL-20-BLANK
+  name: "A36 plate 20 mm, cut blanks"
+  form: blank
+made_from:
+  - item: material.structural-steel-a36
+size:
+  thickness: 0.02
+basis:
+  - { of: [size], tier: derived, note: "The gauge of the stock it is cut from." }

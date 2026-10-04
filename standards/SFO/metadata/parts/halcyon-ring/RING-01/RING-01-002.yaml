@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/part.schema.yaml
 identity:
+  key: part.ring-01-002
   code: RING-01-002
   name: "Frame tube"
   revision: draft
@@ -9,12 +10,12 @@ physical:
   length: 12
   width: 0.2
   height: 0.2
-  shock_limit: 50
+  shock_limit: 490.3325
 made_from:
-  item: ST4340-TB-200X15
-  quantity: 14.4
+  - item: stock.st4340-tb-200x15
+    quantity: 14.4
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 503
 basis:

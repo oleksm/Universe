@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ct-03
   code: CT-03
   name: "Laser source"
   revision: draft

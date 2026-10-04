@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.h2-04
   code: H2-04
   name: "Compressor"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 60000
 made_from:
-  item: ST4340-FG
-  quantity: 90000
+  - item: stock.st4340-fg
+    quantity: 90000
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 2
 basis:

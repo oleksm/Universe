@@ -2,6 +2,7 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
+  key: part.mc07-25
   code: MC07-25
   name: "Cargo ramp"
   revision: draft
@@ -13,7 +14,7 @@ physical:
 shape:
   surface_area: 227.1
 making:
-  processes: [fitting]
+  module: module.assembly-shop
 fit:
   count: 1
   position: "Its centre is 34.2 m back from the nose and -0.1 m above the keel, on the centre line."

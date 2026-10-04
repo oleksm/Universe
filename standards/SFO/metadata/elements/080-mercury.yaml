@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.hg
   name: Mercury
   symbol: Hg
   atomic_number: 80
-  atomic_mass: 200.59
+  atomic_mass: 3.33087531369294e-25
   group: 12
   period: 6
   block: d
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s2'
   valence_electrons: 12
-  atomic_radius: 171.0
-  covalent_radius: 132.0
-  van_der_waals_radius: 209.0
-  ionic_radius: 102.0
+  atomic_radius: 1.71e-10
+  covalent_radius: 1.32e-10
+  van_der_waals_radius: 2.09e-10
+  ionic_radius: 1.02e-10
   stable_isotopes: 7
   isotope_abundances:
   - mass_number: 196
@@ -36,7 +37,7 @@ atomic_structure:
     abundance: 0.0682
 chemical:
   electronegativity: 2.0
-  first_ionisation_energy: 1007.1
+  first_ionisation_energy: 1007100.0
   oxidation_states:
   - 2
   - 1
@@ -53,8 +54,8 @@ physical:
   boiling_point: 629.88
   density: 13530.0
   crystal_structure: simple trigonal
-  heat_of_fusion: 2.29
-  heat_of_vaporisation: 59.2
+  heat_of_fusion: 2290.0
+  heat_of_vaporisation: 59200.0
   vapour_pressure: 0.27
 thermal:
   specific_heat_capacity: 139.5
@@ -67,9 +68,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: silvery
   emission_lines:
-  - 404.656
-  - 435.834
-  - 546.075
-  - 690.746
-  - 708.19
-  neutron_cross_section: 374.0
+  - 4.04656e-07
+  - 4.35834e-07
+  - 5.46075e-07
+  - 6.90746e-07
+  - 7.0819e-07
+  neutron_cross_section: 3.74e-26

@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.sr
   name: Strontium
   symbol: Sr
   atomic_number: 38
-  atomic_mass: 87.62
+  atomic_mass: 1.45496433015492e-25
   group: 2
   period: 5
   block: s
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 5s2'
   valence_electrons: 2
-  atomic_radius: 219.0
-  covalent_radius: 195.0
-  van_der_waals_radius: 249.0
-  ionic_radius: 118.0
+  atomic_radius: 2.19e-10
+  covalent_radius: 1.95e-10
+  van_der_waals_radius: 2.49e-10
+  ionic_radius: 1.18e-10
   stable_isotopes: 4
   isotope_abundances:
   - mass_number: 84
@@ -30,8 +31,8 @@ atomic_structure:
     abundance: 0.8258
 chemical:
   electronegativity: 0.95
-  first_ionisation_energy: 549.5
-  electron_affinity: 5.023
+  first_ionisation_energy: 549500.0
+  electron_affinity: 5023.0
   oxidation_states:
   - 2
   reactivity:
@@ -47,8 +48,8 @@ physical:
   boiling_point: 1655.0
   density: 2640.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 8.0
-  heat_of_vaporisation: 137.0
+  heat_of_fusion: 8000.0
+  heat_of_vaporisation: 137000.0
   vapour_pressure: 7.5e-18
 thermal:
   specific_heat_capacity: 300.0
@@ -62,9 +63,9 @@ mechanical:
 optical_nuclear:
   colour: silver
   emission_lines:
-  - 460.733
-  - 525.69
-  - 679.102
-  - 687.831
-  - 707.007
-  neutron_cross_section: 1.2
+  - 4.60733e-07
+  - 5.2569e-07
+  - 6.79102e-07
+  - 6.87831e-07
+  - 7.07007e-07
+  neutron_cross_section: 1.2e-28

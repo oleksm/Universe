@@ -2,12 +2,17 @@
 # Not in the game yet. A kind of asteroid there is, recorded as far as sources go: what is not
 # written here is not known to the registry, and is not made up.
 identity:
+  key: rock-class.stony-iron
   name: Stony-iron
   about: "The boundary of a broken body's core and mantle: green olivine crystals set in iron-nickel. Very rare."
+physical:
+  density_rubble: 3400
+  density_monolith: 4700
 found:
   warm: 0.02
   frost_line: 0.0
   falls: 0.01
 basis:
+  - { of: [physical.density_rubble, physical.density_monolith], tier: invented, review: true, note: "A guess, to be reviewed. Half rock, half nickel-iron: between stony and metallic." }
   - { of: [found.warm], tier: invented, review: true, note: "A guess, to be reviewed: as rare among asteroids as among falls." }
   - { of: [found.falls], tier: sourced, source: "https://en.wikipedia.org/wiki/Meteorite_fall_statistics", note: "Stony-iron meteorites: 1.0% of classified falls. How much of one is metal was not found in a source." }

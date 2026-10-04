@@ -45,20 +45,6 @@
         (name: "Tukau family", status: "seeded", count: 208, extent: 30830.0, class: "s-type stony"),
         (name: "Ugaula group (Treistun i L5)", status: "seeded", count: 208, extent: 60000.0, class: "c-type carbonaceous"),
     ]),
-    (system: "Biraidim", index: 21300, status: "seeded", star: (class: "M", mass: 0.3315, luminosity: 0.02098), bodies: [
-        (name: "Biraidim b", status: "seeded", kind: "rocky planet", parent: "Biraidim", mass: 3.471e+23, radius: 2872240.0, day: 51584.4, semi_major_axis: Some(6763750000.0), eccentricity: Some(0.01768), inclination: Some(0.024085543677521744), tilt: 0.22218041377887815, landscape: None, terrain: Some("dry"), relief: Some(2011.0), atmosphere: None, colour: (0.65, 0.65, 0.65), rings: None),
-        (name: "Wozaundis", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 52681000000000.0, radius: 1761.76, day: 8527.679999999998, semi_major_axis: Some(60624700000.0), eccentricity: Some(0.04916), inclination: Some(0.14023720539774437), tilt: 1.4376277048677293, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.72, 0.6, 0.45), rings: None),
-        (name: "Taumeibru", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 17131000000000.0, radius: 1211.5, day: 51260.4, semi_major_axis: Some(64178500000.0), eccentricity: Some(0.06032), inclination: Some(0.17123425291316366), tilt: 1.967684198698407, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.72, 0.6, 0.45), rings: None),
-        (name: "Shikra", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 22496000000000.0, radius: 1604.58, day: 96480.0, semi_major_axis: Some(72339400000.0), eccentricity: Some(0.0696), inclination: Some(0.15760323145508795), tilt: 0.8768534162019512, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.42, 0.4, 0.38), rings: None),
-        (name: "Trirnisum", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 203910000000000.0, radius: 3345.56, day: 63547.200000000004, semi_major_axis: Some(72701900000.0), eccentricity: Some(0.1551), inclination: Some(0.15985470619016065), tilt: 0.9004153611038747, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.42, 0.4, 0.38), rings: None),
-        (name: "Yavoka", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 9384600000000.0, radius: 1198.93, day: 20066.04, semi_major_axis: Some(74386900000.0), eccentricity: Some(0.03456), inclination: Some(0.029373891311064566), tilt: 0.40020399748229973, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.42, 0.4, 0.38), rings: None),
-    ], fields: [
-        (name: "Shikra family", status: "seeded", count: 205, extent: 45410.0, class: "c-type carbonaceous"),
-        (name: "Taumeibru family", status: "seeded", count: 171, extent: 37150.0, class: "s-type stony"),
-        (name: "Trirnisum family", status: "seeded", count: 250, extent: 60000.0, class: "c-type carbonaceous"),
-        (name: "Wozaundis family", status: "seeded", count: 129, extent: 51640.0, class: "s-type stony"),
-        (name: "Yavoka family", status: "seeded", count: 190, extent: 36200.0, class: "c-type carbonaceous"),
-    ]),
     (system: "Driumum", index: 30264, status: "seeded", star: (class: "M", mass: 0.2729, luminosity: 0.01062), bodies: [
         (name: "Driumum b", status: "seeded", kind: "rocky planet", parent: "Driumum", mass: 2.0905e+25, radius: 9048240.0, day: 121716.00000000001, semi_major_axis: Some(3720950000.0), eccentricity: Some(0.06224), inclination: Some(0.004747295565424576), tilt: 0.4012511950334963, landscape: None, terrain: Some("dry"), relief: Some(6334.0), atmosphere: None, colour: (0.8, 0.5, 0.3), rings: None),
         (name: "Driumum c", status: "seeded", kind: "rocky planet", parent: "Driumum", mass: 1.3289e+24, radius: 4182890.0000000005, day: 93204.0, semi_major_axis: Some(6030660000.0), eccentricity: Some(0.0259), inclination: Some(0.016318828506146982), tilt: 0.12793263417118436, landscape: None, terrain: Some("dry"), relief: Some(2928.0), atmosphere: None, colour: (0.8, 0.5, 0.3), rings: None),
@@ -85,6 +71,20 @@
         (name: "Badalia family", status: "seeded", count: 197, extent: 21380.0, class: "m-type metallic"),
         (name: "Tebemern family", status: "seeded", count: 237, extent: 31730.0, class: "m-type metallic"),
         (name: "Zoadelum family", status: "seeded", count: 255, extent: 13450.0, class: "c-type carbonaceous"),
+    ]),
+    (system: "Biraidim", index: 21300, status: "seeded", star: (class: "M", mass: 0.3315, luminosity: 0.02098), bodies: [
+        (name: "Biraidim b", status: "seeded", kind: "rocky planet", parent: "Biraidim", mass: 3.471e+23, radius: 2872240.0, day: 51584.4, semi_major_axis: Some(6763750000.0), eccentricity: Some(0.01768), inclination: Some(0.024085543677521744), tilt: 0.22218041377887815, landscape: None, terrain: Some("dry"), relief: Some(2011.0), atmosphere: None, colour: (0.65, 0.65, 0.65), rings: None),
+        (name: "Wozaundis", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 52681000000000.0, radius: 1761.76, day: 8527.679999999998, semi_major_axis: Some(60624700000.0), eccentricity: Some(0.04916), inclination: Some(0.14023720539774437), tilt: 1.4376277048677293, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.72, 0.6, 0.45), rings: None),
+        (name: "Taumeibru", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 17131000000000.0, radius: 1211.5, day: 51260.4, semi_major_axis: Some(64178500000.0), eccentricity: Some(0.06032), inclination: Some(0.17123425291316366), tilt: 1.967684198698407, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.72, 0.6, 0.45), rings: None),
+        (name: "Shikra", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 22496000000000.0, radius: 1604.58, day: 96480.0, semi_major_axis: Some(72339400000.0), eccentricity: Some(0.0696), inclination: Some(0.15760323145508795), tilt: 0.8768534162019512, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.42, 0.4, 0.38), rings: None),
+        (name: "Trirnisum", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 203910000000000.0, radius: 3345.56, day: 63547.200000000004, semi_major_axis: Some(72701900000.0), eccentricity: Some(0.1551), inclination: Some(0.15985470619016065), tilt: 0.9004153611038747, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.42, 0.4, 0.38), rings: None),
+        (name: "Yavoka", status: "seeded", kind: "asteroid", parent: "Biraidim", mass: 9384600000000.0, radius: 1198.93, day: 20066.04, semi_major_axis: Some(74386900000.0), eccentricity: Some(0.03456), inclination: Some(0.029373891311064566), tilt: 0.40020399748229973, landscape: None, terrain: None, relief: None, atmosphere: None, colour: (0.42, 0.4, 0.38), rings: None),
+    ], fields: [
+        (name: "Shikra family", status: "seeded", count: 205, extent: 45410.0, class: "c-type carbonaceous"),
+        (name: "Taumeibru family", status: "seeded", count: 171, extent: 37150.0, class: "s-type stony"),
+        (name: "Trirnisum family", status: "seeded", count: 250, extent: 60000.0, class: "c-type carbonaceous"),
+        (name: "Wozaundis family", status: "seeded", count: 129, extent: 51640.0, class: "s-type stony"),
+        (name: "Yavoka family", status: "seeded", count: 190, extent: 36200.0, class: "c-type carbonaceous"),
     ]),
     (system: "Moryemzai", index: 30710, status: "seeded", star: (class: "M", mass: 0.3274, luminosity: 0.02007), bodies: [
         (name: "Moryemzai b", status: "seeded", kind: "rocky planet", parent: "Moryemzai", mass: 5.7498e+24, radius: 6303730.0, day: 46040.4, semi_major_axis: Some(4941490000.0), eccentricity: Some(0.06942), inclination: Some(0.029897490086662867), tilt: 0.37105699897399447, landscape: None, terrain: Some("dry"), relief: Some(4413.0), atmosphere: None, colour: (0.8, 0.5, 0.3), rings: None),

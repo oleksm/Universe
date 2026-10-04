@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: the port's warehouse, built as Port Trethi's is. What lies on the market here lies in it.
+key: facility.treistun.port-seiwiti.seiwiti-warehouse
+name: Seiwiti Warehouse
+kind: warehouse
+parcel: parcel.treistun.port-seiwiti.1
+exchange: org.treistun-exchange
+modules:
+  - { module: module.general-warehouse, count: 2 }
+  - { module: module.tank-farm, count: 2 }
+  - { module: module.ore-yard, count: 1 }
+  - { module: module.loading-dock, count: 2 }

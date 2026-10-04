@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pl-01
   code: PL-01
   name: "Reduction cell"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 44000
 made_from:
-  item: STA36-PL-20
-  quantity: 324.4
+  - item: stock.sta36-pl-20
+    quantity: 324.4
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 324
 basis:

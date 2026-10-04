@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.earth-air-density
+  name: "Earth's air at sea level"
+  label: EARTH_AIR_DENSITY
+  section: dogma.air
+value: 1.225
+unit: "kg/m3"
+kind: real
+note: "The measure a world's air is set against."
+in_game: { file: crates/physics/src/atmosphere.rs }
+basis:
+  - { of: [value], tier: sourced, source: "US Standard Atmosphere 1976: 1.225 kg/m3 at sea level", note: "A literal in the engine, with no name." }

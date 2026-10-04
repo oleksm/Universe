@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.tidal-heating
   name: "Tidal heating"
   group: condition
   about: "A moon kneaded by its planet's pull as it goes round a stretched orbit, warmed from inside."

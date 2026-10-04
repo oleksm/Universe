@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.i
   name: Iodine
   symbol: I
   atomic_number: 53
-  atomic_mass: 126.9045
+  atomic_mass: 2.1072987997734e-25
   group: 17
   period: 5
   block: p
@@ -14,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2 5p5'
   valence_electrons: 7
-  atomic_radius: 115.0
-  covalent_radius: 139.0
-  van_der_waals_radius: 198.0
-  ionic_radius: 220.0
+  atomic_radius: 1.15e-10
+  covalent_radius: 1.39e-10
+  van_der_waals_radius: 1.98e-10
+  ionic_radius: 2.2e-10
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 127
     abundance: 1.0
 chemical:
   electronegativity: 2.66
-  first_ionisation_energy: 1008.4
-  electron_affinity: 295.1531
+  first_ionisation_energy: 1008400.0
+  electron_affinity: 295153.1
   oxidation_states:
   - 7
   - 5
@@ -46,8 +47,8 @@ physical:
   crystal_structure: base orthorhombic
   allotropes:
   - diiodine
-  heat_of_fusion: 7.76
-  heat_of_vaporisation: 20.9
+  heat_of_fusion: 7760.0
+  heat_of_vaporisation: 20900.0
   vapour_pressure: 44.0
 thermal:
   specific_heat_capacity: 214.0
@@ -58,9 +59,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: lustrous metallic gray, violet as a gas
   emission_lines:
-  - 511.928
-  - 661.964
-  - 723.675
-  - 740.204
-  - 746.899
-  neutron_cross_section: 6.3
+  - 5.11928e-07
+  - 6.61964e-07
+  - 7.23675e-07
+  - 7.40204e-07
+  - 7.46899e-07
+  neutron_cross_section: 6.3e-28

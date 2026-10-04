@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.rf
   name: Rutherfordium
   symbol: Rf
   atomic_number: 104
-  atomic_mass: 267.122
+  atomic_mass: 4.43566516548325e-25
   group: 4
   period: 7
   block: d
@@ -18,7 +19,7 @@ atomic_structure:
   half_life: 47000.0
   decay_mode: alpha
 chemical:
-  first_ionisation_energy: 580
+  first_ionisation_energy: 580000
   oxidation_states:
   - 4
   bond_type: metallic

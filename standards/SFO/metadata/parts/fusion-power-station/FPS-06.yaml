@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fps-06
   code: FPS-06
   name: "Transformer"
   revision: draft

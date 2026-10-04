@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.at
   name: Astatine
   symbol: At
   atomic_number: 85
-  atomic_mass: 209.98715
+  atomic_mass: 3.48691866058994e-25
   group: 17
   period: 6
   block: p
@@ -14,17 +15,17 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s2 6p5'
   valence_electrons: 7
-  atomic_radius: 127.0
-  covalent_radius: 150.0
-  van_der_waals_radius: 202.0
-  ionic_radius: 62.0
+  atomic_radius: 1.27e-10
+  covalent_radius: 1.5e-10
+  van_der_waals_radius: 2.02e-10
+  ionic_radius: 6.2e-11
   stable_isotopes: 0
   half_life: 29000.0
   decay_mode: beta+
 chemical:
   electronegativity: 2.2
-  first_ionisation_energy: 899.003
-  electron_affinity: 233
+  first_ionisation_energy: 899003.0
+  electron_affinity: 233000
   oxidation_states:
   - 7
   - 5
@@ -36,8 +37,8 @@ physical:
   phase: solid
   melting_point: 575.0
   density: 7000.0
-  heat_of_fusion: 6.0
-  heat_of_vaporisation: 40.0
+  heat_of_fusion: 6000.0
+  heat_of_vaporisation: 40000.0
   vapour_pressure: 0.0022
 thermal:
   thermal_conductivity: 2.0

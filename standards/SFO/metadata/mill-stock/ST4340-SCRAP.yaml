@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is trimmed off, cut away or spilt where this metal is worked: kept apart by metal, so it can be melted again.
+identity:
+  key: stock.st4340-scrap
+  code: ST4340-SCRAP
+  name: "4340 steel scrap"
+  form: scrap
+made_from:
+  - item: material.high-strength-steel-4340

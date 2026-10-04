@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.hrm-06
   code: HRM-06
   name: "Main drive motor"
   revision: draft

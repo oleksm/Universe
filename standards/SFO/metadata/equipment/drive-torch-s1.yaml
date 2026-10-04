@@ -1,18 +1,18 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.drive.torch.s1
   name: "Torch drive S1"
-  key: drive.torch.s1
-  maker: brand.kestrel
+  maker: org.kestrel
   slot: drive
   description: "The main drive: a fusion torch."
 physical:
   mass: 3500
   volume: 8
 performance:
-  power_draw: 700
-  thrust: 900
-  exhaust_speed: 10000
+  power_draw: 700000
+  thrust: 900000
+  exhaust_speed: 10000000
   efficiency: 0.3
-  burns: deuterium
+  burns: good.deuterium
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

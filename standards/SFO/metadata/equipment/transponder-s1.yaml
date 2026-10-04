@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.transponder.s1
   name: "Transponder"
-  key: transponder.s1
-  maker: brand.orbital
+  maker: org.orbital
   slot: transponder
   description: "Says who the ship is."
 physical:
   mass: 50
   volume: 0.1
 performance:
-  power_draw: 1
+  power_draw: 1000
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

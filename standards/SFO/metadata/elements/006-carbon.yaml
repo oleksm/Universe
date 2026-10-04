@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.c
   name: Carbon
   symbol: C
   atomic_number: 6
-  atomic_mass: 12.011
+  atomic_mass: 1.99447347289326e-26
   group: 14
   period: 2
   block: p
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[He] 2s2 2p2'
   valence_electrons: 4
-  atomic_radius: 67.0
-  covalent_radius: 76.0
-  van_der_waals_radius: 170.0
-  ionic_radius: 16.0
+  atomic_radius: 6.7e-11
+  covalent_radius: 7.6e-11
+  van_der_waals_radius: 1.7e-10
+  ionic_radius: 1.6e-11
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 12
@@ -26,8 +27,8 @@ atomic_structure:
     abundance: 0.0106
 chemical:
   electronegativity: 2.55
-  first_ionisation_energy: 1086.5
-  electron_affinity: 121.7763
+  first_ionisation_energy: 1086500.0
+  electron_affinity: 121776.3
   oxidation_states:
   - 4
   - 2
@@ -52,8 +53,8 @@ physical:
   - fullerene
   - carbon nanotube
   - graphene
-  heat_of_fusion: 105.0
-  heat_of_vaporisation: 715.0
+  heat_of_fusion: 105000.0
+  heat_of_vaporisation: 715000.0
   vapour_pressure: 5.2e-124
 thermal:
   specific_heat_capacity: 710.0
@@ -62,15 +63,15 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 100000.0
   magnetic_ordering: diamagnetic
-  band_gap: 5.47
+  band_gap: 8.76390618798e-19
 mechanical:
   hardness: 0.5
 optical_nuclear:
   colour: black
   emission_lines:
-  - 505.215
-  - 538.033
-  - 601.322
-  - 711.318
-  - 711.519
-  neutron_cross_section: 0.0035
+  - 5.05215e-07
+  - 5.38033e-07
+  - 6.01322e-07
+  - 7.11318e-07
+  - 7.11519e-07
+  neutron_cross_section: 3.5e-31

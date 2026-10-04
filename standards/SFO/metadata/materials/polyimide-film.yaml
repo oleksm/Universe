@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: DuPont Kapton HN polyimide film datasheet (25 um film at 23 C).
 identity:
+  key: material.polyimide-film
   name: Polyimide film (Kapton)
   class: polymer
   form:
@@ -9,10 +10,10 @@ identity:
 mass:
   density: 1420.0
 mechanical:
-  youngs_modulus: 2.5
+  youngs_modulus: 2500000000.0
   poissons_ratio: 0.34
-  yield_strength: 69.0
-  tensile_strength: 231.0
+  yield_strength: 69000000.0
+  tensile_strength: 231000000.0
   elongation_at_break: 0.72
   friction_coefficient: 0.48
 thermal:
@@ -22,6 +23,6 @@ thermal:
   specific_heat_capacity: 1090.0
   thermal_expansion: 2.0e-05
 electrical_magnetic:
-  dielectric_strength: 303.0
+  dielectric_strength: 303000000.0
 optical:
   refractive_index: 1.7

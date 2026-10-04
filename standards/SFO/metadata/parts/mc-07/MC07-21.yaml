@@ -3,6 +3,7 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
 # from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
+  key: part.mc07-21
   code: MC07-21
   name: "Engine block"
   revision: draft
@@ -12,14 +13,14 @@ physical:
   length: 2.69
   width: 18.09
   height: 8.07
-  shock_limit: 20
+  shock_limit: 196.133
 shape:
   surface_area: 403.8
 made_from:
-  item: AL6061-PL-5
-  quantity: 464.4
+  - item: stock.al6061-pl-5
+    quantity: 464.4
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
   position: "Its centre is 65.4 m back from the nose and 7.5 m above the keel, on the centre line."

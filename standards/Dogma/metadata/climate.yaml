@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../schema/section.schema.yaml
+identity:
+  key: dogma.climate
+  name: Climate
+  order: 6
+  about: "What a world's surface reflects, by its kind: the measure its temperature is worked out from."

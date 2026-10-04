@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ls-02
   code: LS-02
   name: "Ladle car"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 50000
 made_from:
-  item: STA36-PL-20
-  quantity: 368.6
+  - item: stock.sta36-pl-20
+    quantity: 368.6
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

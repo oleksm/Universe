@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.centaur
   name: "Centaur"
   group: small body
   about: "An ice body wandering among the giants on an orbit that will not last."

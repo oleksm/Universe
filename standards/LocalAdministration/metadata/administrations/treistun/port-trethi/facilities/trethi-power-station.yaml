@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+key: facility.treistun.port-trethi.trethi-power-station
 name: Trethi Power Station
 kind: power
-parcel: 2
+parcel: parcel.treistun.port-trethi.2
 modules:
-  - { module: fusion-power-station, count: 4 }
+  - { module: module.fusion-power-station, count: 4 }

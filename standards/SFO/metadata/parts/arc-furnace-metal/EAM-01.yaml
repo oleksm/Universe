@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.eam-01
   code: EAM-01
   name: "Furnace shell"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 120000
 made_from:
-  item: STA36-PL-20
-  quantity: 884.6
+  - item: stock.sta36-pl-20
+    quantity: 884.6
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

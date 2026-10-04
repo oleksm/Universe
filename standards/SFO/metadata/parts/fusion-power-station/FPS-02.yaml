@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fps-02
   code: FPS-02
   name: "Magnet coil"
   revision: draft

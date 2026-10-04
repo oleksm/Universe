@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.ca
   name: Calcium
   symbol: Ca
   atomic_number: 20
-  atomic_mass: 40.08
+  atomic_mass: 6.6554405789328e-26
   group: 2
   period: 4
   block: s
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 4s2'
   valence_electrons: 2
-  atomic_radius: 194.0
-  covalent_radius: 176.0
-  van_der_waals_radius: 231.0
-  ionic_radius: 100.0
+  atomic_radius: 1.94e-10
+  covalent_radius: 1.76e-10
+  van_der_waals_radius: 2.31e-10
+  ionic_radius: 1.0e-10
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 40
@@ -34,8 +35,8 @@ atomic_structure:
     abundance: 0.00187
 chemical:
   electronegativity: 1.0
-  first_ionisation_energy: 589.8
-  electron_affinity: 2.37
+  first_ionisation_energy: 589800.0
+  electron_affinity: 2370.0
   oxidation_states:
   - 2
   reactivity:
@@ -51,8 +52,8 @@ physical:
   boiling_point: 1757.0
   density: 1540.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 8.54
-  heat_of_vaporisation: 155.0
+  heat_of_fusion: 8540.0
+  heat_of_vaporisation: 155000.0
   vapour_pressure: 1.9e-20
 thermal:
   specific_heat_capacity: 631.0
@@ -63,14 +64,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 1.75
-  youngs_modulus: 20.0
+  youngs_modulus: 20000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silver
   emission_lines:
-  - 422.673
-  - 643.907
-  - 646.257
-  - 714.815
-  - 732.615
-  neutron_cross_section: 0.43
+  - 4.22673e-07
+  - 6.43907e-07
+  - 6.46257e-07
+  - 7.14815e-07
+  - 7.32615e-07
+  neutron_cross_section: 4.3e-29

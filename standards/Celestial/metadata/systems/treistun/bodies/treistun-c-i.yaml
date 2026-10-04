@@ -1,9 +1,17 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {name: Treistun c I, kind: moon, parent: Treistun c}
-orbit: {semi_major_axis: 45208.9, eccentricity: 0.009422, period: 0.619585, inclination: 1.295}
-physical: {mass: 2.9408e+22, radius: 1327.66, gravity: 1.113, day: 14.87, tilt: 0.0, albedo: 0.12}
+identity:
+  key: body.treistun.treistun-c-i
+  name: Treistun c I
+  kind: moon
+  parent: body.treistun.treistun-c
+  about: A moon of Treistun c. 1,328 km in radius, 0.11 g at the surface, no air, about 425 K on average. Its day lasts 15
+    hours.
+  story: ['Small, hot and light. It matters because of what it orbits: it is the nearest place to c where a ship can land
+      and lift cheaply.']
+orbit: {semi_major_axis: 45208900.0, eccentricity: 0.009422, period: 53532.144, inclination: 1.295}
+physical: {mass: 2.9408e+22, radius: 1327660.0, gravity: 1.113, day: 53532.0, tilt: 0.0, albedo: 0.12}
 surface:
   terrain: cratered
   relief: 1500

@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.f
   name: Fluorine
   symbol: F
   atomic_number: 9
-  atomic_mass: 18.99840316
+  atomic_mass: 3.15475906501969e-26
   group: 17
   period: 2
   block: p
@@ -14,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[He] 2s2 2p5'
   valence_electrons: 7
-  atomic_radius: 42.0
-  covalent_radius: 57.0
-  van_der_waals_radius: 135.0
-  ionic_radius: 133.0
+  atomic_radius: 4.2e-11
+  covalent_radius: 5.7e-11
+  van_der_waals_radius: 1.35e-10
+  ionic_radius: 1.33e-10
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 19
     abundance: 1.0
 chemical:
   electronegativity: 3.98
-  first_ionisation_energy: 1681
-  electron_affinity: 328.1649
+  first_ionisation_energy: 1681000
+  electron_affinity: 328164.9
   oxidation_states:
   - -1
   reactivity:
@@ -43,17 +44,17 @@ physical:
   crystal_structure: base-centered monoclinic
   allotropes:
   - difluorine
-  heat_of_fusion: 0.26
-  heat_of_vaporisation: 3.27
+  heat_of_fusion: 260.0
+  heat_of_vaporisation: 3270.0
 thermal:
   specific_heat_capacity: 824.0
   thermal_conductivity: 0.0277
 optical_nuclear:
   colour: colorless
   emission_lines:
-  - 685.603
-  - 703.747
-  - 712.789
-  - 720.236
-  - 731.102
-  neutron_cross_section: 0.0096
+  - 6.85603e-07
+  - 7.03747e-07
+  - 7.12789e-07
+  - 7.20236e-07
+  - 7.31102e-07
+  neutron_cross_section: 9.6e-31

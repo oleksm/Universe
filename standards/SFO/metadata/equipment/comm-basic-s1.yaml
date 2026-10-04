@@ -1,18 +1,18 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.comm.basic.s1
   name: "Comm"
-  key: comm.basic.s1
-  maker: brand.orbital
+  maker: org.orbital
   slot: comm
   description: "The ship's radio."
 physical:
   mass: 40
   volume: 0.1
 performance:
-  power_draw: 2
-  capture: 50000
-  link: 7500000
+  power_draw: 2000
+  capture: 50000000
+  link: 7500000000
   lag: 0.05
-  messages: 600
+  messages: 0.166666666666667
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

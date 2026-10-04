@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.refined-steel-4340
+  name: "Refined steel, 4340"
+  kind: intermediate
+  description: "Molten steel brought to the 4340 grade and degassed, ready to cast."

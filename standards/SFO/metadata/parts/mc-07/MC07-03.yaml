@@ -3,6 +3,7 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
 # from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
+  key: part.mc07-03
   code: MC07-03
   name: "Cockpit skirt"
   revision: draft
@@ -12,14 +13,14 @@ physical:
   length: 8.8
   width: 21.69
   height: 3.36
-  shock_limit: 10
+  shock_limit: 98.0665
 shape:
   surface_area: 160.2
 made_from:
-  item: AL6061-SH-2
-  quantity: 184.2
+  - item: stock.al6061-sh-2
+    quantity: 184.2
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
   position: "Its centre is 9.0 m back from the nose and 6.6 m above the keel, on the centre line."

@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.rack.s1
   name: "Cargo racks 4 t"
-  key: rack.s1
-  maker: brand.hadley
+  maker: org.hadley
   slot: cargo
   description: "Racks that hold cargo in the hold."
 physical:

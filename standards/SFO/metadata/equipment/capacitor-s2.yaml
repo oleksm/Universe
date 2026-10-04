@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.capacitor.s2
   name: "Capacitor Bank 15 GJ"
-  key: capacitor.s2
-  maker: brand.meridian
+  maker: org.meridian
   slot: capacitor
   description: "Stores energy for bursts, charged by the plant."
 physical:

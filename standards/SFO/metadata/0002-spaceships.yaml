@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+key: standard.sfo.2
 title: Spaceships
 records: hulls
 purpose: Ships exist because what people need and where it is are in different places, and space is in between.

@@ -1,8 +1,9 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.tolland
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+key: org.tolland
+kind: company
 name: Tolland Yards
 ticker: TOL
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 3, section: A, unit: 2 }
+address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 3, section: A, unit: 2 }
 note: "Hulls: workhorses and haulers"
 who: "A shipyard for working ships, built for people who earn a living with them. One of the founders of the SFO."
 what: "Builds hulls: workhorses and haulers."

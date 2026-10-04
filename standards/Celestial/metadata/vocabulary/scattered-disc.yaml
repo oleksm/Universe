@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.scattered-disc
   name: "Scattered disc"
   group: region
   about: "Ice bodies thrown outward by the giants onto long, tilted, stretched orbits."

@@ -3,6 +3,7 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
 # from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
+  key: part.mc07-13
   code: MC07-13
   name: "Keel"
   revision: draft
@@ -12,14 +13,14 @@ physical:
   length: 16.63
   width: 18.8
   height: 0.64
-  shock_limit: 20
+  shock_limit: 196.133
 shape:
   surface_area: 537.0
 made_from:
-  item: AL6061-PL-5
-  quantity: 617.5
+  - item: stock.al6061-pl-5
+    quantity: 617.5
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
   position: "Its centre is 36.1 m back from the nose and 0.3 m above the keel, on the centre line."

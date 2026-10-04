@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.captured-moon
   name: "Captured moon"
   group: moon
   known_as: "irregular satellite"

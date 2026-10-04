@@ -1,9 +1,11 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {name: Treistun g III, kind: moon, parent: Treistun g}
-orbit: {semi_major_axis: 1061870.0, eccentricity: 0.01894, period: 15.5959, inclination: 0.521}
-physical: {mass: 7.3469e+21, radius: 836.178, gravity: 0.701, day: 374.3, tilt: 0.0, albedo: 0.12}
+identity: {key: body.treistun.treistun-g-iii, name: Treistun g III, kind: moon, parent: body.treistun.treistun-g, about: 'A
+    moon of the gas giant Treistun g, 1.78 AU from the star. 836 km in radius, 0.07 g at the surface, no air, about 150 K
+    on average. Its day lasts 374 hours.'}
+orbit: {semi_major_axis: 1061870000.0, eccentricity: 0.01894, period: 1347485.76, inclination: 0.521}
+physical: {mass: 7.3469e+21, radius: 836178.0, gravity: 0.701, day: 1347480.0, tilt: 0.0, albedo: 0.12}
 surface:
   terrain: cratered
   relief: 1500

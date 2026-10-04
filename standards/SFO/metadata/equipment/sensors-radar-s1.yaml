@@ -1,15 +1,15 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.sensors.radar.s1
   name: "Radar 500 km"
-  key: sensors.radar.s1
-  maker: brand.orbital
+  maker: org.orbital
   slot: sensors
   description: "Radar."
 physical:
   mass: 300
   volume: 0.8
 performance:
-  power_draw: 100
-  range: 500
+  power_draw: 100000
+  range: 500000
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

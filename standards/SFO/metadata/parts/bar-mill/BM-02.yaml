@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.bm-02
   code: BM-02
   name: "Cooling bed"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 400000
 made_from:
-  item: STA36-PL-20
-  quantity: 2948.7
+  - item: stock.sta36-pl-20
+    quantity: 2948.7
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

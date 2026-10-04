@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Thethe, kind: crossing asteroid, parent: Moryemzai, about: 'Knocked out of the belt. At its closest it comes
-    in to 0.04 AU, near the orbit of Moryemzai b.'}
-orbit: {semi_major_axis: 32176100.0, eccentricity: 0.83171487, inclination: 22.06, period: 63.674}
-physical: {radius: 1.31, density: 3300, mass: 31110000000000.0}
-rock: {class: stony}
+in_game: not made
+identity: {key: body.moryemzai.thethe, name: Thethe, kind: crossing asteroid, parent: body.moryemzai.moryemzai, about: 'Knocked
+    out of the belt. At its closest it comes in to 0.04 AU, near the orbit of Moryemzai b.'}
+orbit: {semi_major_axis: 32176100000.0, eccentricity: 0.83171487, inclination: 22.06, period: 5501088.0}
+physical: {radius: 1310.0, density: 2900.0, mass: 27340000000000.0}
+rock: {class: rock-class.stony}

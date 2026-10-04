@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.eaf-02
   code: EAF-02
   name: "Roof and electrode arms"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 60000
 made_from:
-  item: STA36-PL-20
-  quantity: 442.3
+  - item: stock.sta36-pl-20
+    quantity: 442.3
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

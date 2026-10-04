@@ -1,18 +1,17 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
 identity:
+  key: stock.st4340-tb-200x15
   code: ST4340-TB-200X15
   name: "4340 tube 200 x 15 mm"
-made_from:
-  material: high-strength-steel-4340
   form: tube
   temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
 size:
-  diameter: 200
-  wall: 15
-making:
-  process: tube-making-4340
+  diameter: 0.2
+  wall: 0.015
 physical:
-  shock_limit: 150
+  shock_limit: 1470.9975
 basis:
   - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

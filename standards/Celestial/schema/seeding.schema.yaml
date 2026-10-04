@@ -1,0 +1,107 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Seeding
+description: 'standards/Celestial/metadata/seeding/<name>.yaml: one set of the settings the seed makes the world by: the galaxy as a whole, how asteroids lie, what a place does to what is there. Not laws of nature (those are Dogma''s): how this world is made. A record has the groups that are its own.'
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  galaxy:
+    description: "The seeded world as a whole. The seed makes every star and system by these; a system or body that has a record of its own is taken from the record."
+    type: object
+    additionalProperties: false
+    required: [seed, home]
+    properties:
+      seed: { type: integer, description: The number the whole world is made from. }
+      home: { type: string, x-ref: [system], description: The home system, by its key. }
+      region: { type: number, x-unit: "m", description: "m, the side of the charted region (a cube round home)" }
+      star_density: { type: number, x-unit: "1/m3", description: "stars for each cubic metre" }
+      sector: { type: number, x-unit: "m", description: "m, the side of the cubes the stars are made in" }
+      class_mix: { type: object, description: "The share of stars of each class, by number.", additionalProperties: { type: number } }
+  main_belt:
+    description: "The belt inside the first gas giant, between two of its resonances. As the Sun's."
+    type: object
+    additionalProperties: false
+    properties:
+      inner_resonance: { type: string, description: "The resonance with the giant at its inner edge (asteroid's turns to the giant's)." }
+      outer_resonance: { type: string, description: "And at its outer edge." }
+      inner_edge: { type: number, x-unit: "m", description: "m, the Sun's" }
+      outer_edge: { type: number, x-unit: "m", description: "m, the Sun's" }
+      no_giant_inner: { type: number, description: "with no giant: its inner edge, as a share of the frost line's distance" }
+      no_giant_outer: { type: number, description: "with no giant: its outer edge, as a share of the frost line's distance" }
+      count_over_1km: { type: number, description: "asteroids over 1 km across, the Sun's" }
+      count_over_100km: { type: number, description: "over 100 km across, the Sun's" }
+      mass: { type: number, x-unit: "kg", description: "kg, all of it, the Sun's" }
+      spacing: { type: number, x-unit: "m", description: "m between one asteroid and the next, on average" }
+      family_share: { type: number, description: "the share of asteroids that belong to a family (the pieces of one broken body)" }
+      families: { type: number, description: "families in the belt" }
+  trojans:
+    description: "The two swarms that share a giant's orbit, 60 degrees ahead of it and behind."
+    type: object
+    additionalProperties: false
+    properties:
+      count_over_1km: { type: number, description: "asteroids over 1 km across in a giant's two swarms, Jupiter's" }
+      spread: { type: number, x-unit: "deg", description: "degrees along the orbit each swarm stretches" }
+      mass_share: { type: number, description: "their mass as a share of the main belt's" }
+      giant_mass: { type: number, x-unit: "kg", description: "kg, Jupiter's: a giant's swarms are taken to hold as many as its mass against this" }
+  outer_belt:
+    description: "The icy belt past the outermost giant, between two of its resonances."
+    type: object
+    additionalProperties: false
+    properties:
+      inner_resonance: { type: string }
+      outer_resonance: { type: string }
+      inner_edge: { type: number, x-unit: "m", description: "m, the Sun's" }
+      outer_edge: { type: number, x-unit: "m", description: "m, the Sun's" }
+      count_over_100km: { type: number, description: "objects over 100 km across, the Sun's" }
+      mass: { type: number, x-unit: "kg", description: "kg, the Sun's" }
+      thickness: { type: number, x-unit: "deg", description: "degrees either side of the system's plane" }
+  moons:
+    description: "Asteroids that have another going round them."
+    type: object
+    additionalProperties: false
+    properties:
+      share: { type: number, description: "the share of asteroids that have a moon" }
+      share_outer: { type: number, description: "the share in the outer belt" }
+      separation_least: { type: number, x-unit: "m", description: "m between the two, the least known" }
+      separation_most: { type: number, x-unit: "m", description: "m, the most" }
+  sizes:
+    type: object
+    additionalProperties: false
+    properties:
+      exponent: { type: number, description: "how fast their number rises as their size falls: the number over a size goes as the size to minus this" }
+      smallest: { type: number, x-unit: "m", description: "m, the smallest the game makes" }
+      comet_density: { type: number, x-unit: "kg/m3", description: "kg/m3, a comet's solid part: ice full of holes" }
+  zones:
+    description: "Where a body formed, by its distance against the frost line's. What it is made of goes by this."
+    type: object
+    additionalProperties: false
+    properties:
+      warm_to: { type: number, description: "the warm zone reaches this share of the frost line's distance" }
+      frost_to: { type: number, description: "the frost-line zone from there to this share; the cold zone beyond" }
+  tidal_heating:
+    description: "Heat made inside a moon as its planet kneads it: 21/2 (k2/Q) G M^2 R^5 n e^2 / a^6."
+    type: object
+    additionalProperties: false
+    properties:
+      love_over_q: { type: number, description: "how readily a moon's inside turns the kneading into heat (k2 over Q)" }
+      volcanic_above: { type: number, x-unit: "W/m2", description: "W for each m2 of its surface above which it is volcanic" }
+      sea_above: { type: number, x-unit: "W/m2", description: "W/m2 above which an icy one may keep a buried sea" }
+  radiation_belt:
+    description: "The dose round a gas giant, falling off with distance."
+    type: object
+    additionalProperties: false
+    properties:
+      dose: { type: number, x-unit: "Sv/s", description: "Sv/s at the distance below, round a giant of Jupiter's mass" }
+      at: { type: number, description: "that distance, in the giant's radii" }
+      falls_as: { type: number, description: "the dose goes as the distance to minus this" }
+      giant_mass: { type: number, x-unit: "kg", description: "kg, Jupiter's: the dose is taken to go with the giant's mass" }
+      deadly_above: { type: number, x-unit: "Sv/s", description: "Sv/s above which a person unshielded dies within days" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

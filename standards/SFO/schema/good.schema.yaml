@@ -8,25 +8,22 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, kind]
+    required: [key, name, kind]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [rock, raw, consumable, fuel, intermediate, product, by-product], description: 'rock: dug as it lies. raw: won from a rock, what industry starts from.' }
       description: { type: string }
-  physical:
-    type: object
-    additionalProperties: false
-    properties:
-      bulk_density: { type: number, description: "t/m3, as stowed broken in a hold" }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   composition:
-    description: What a rock is made of, each part's share by mass. A part is an element's symbol or a good's file name.
+    description: What a rock is made of, each part's share by mass. A part is an element or a good, by its key.
     type: array
     items:
       type: object
       additionalProperties: false
       required: [part, share]
       properties:
-        part: { type: string }
+        part: { type: string, x-ref: [element, good] }
         share: { type: number, minimum: 0, maximum: 1 }
   source:
     description: Where a rock is found, or what a raw good is won from.
@@ -34,7 +31,7 @@ properties:
     additionalProperties: false
     properties:
       occurs: { enum: [asteroids, rocky planets and moons, temperate planets], description: "For a rock: where in the universe it is found. Temperate planets: rocky, with air and liquid water." }
-      won_from: { type: string, description: "For a raw good: the rock it is won from, by file name." }
+      won_from: { type: string, x-ref: [good], description: "For a raw good: the rock it is won from, by its key." }
       yield: { type: number, minimum: 0, maximum: 1, description: "t of it won from each t of that rock" }
       note: { type: string }
   game:

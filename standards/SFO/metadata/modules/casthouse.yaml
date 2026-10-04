@@ -1,25 +1,30 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.casthouse
   name: Casthouse
   step: Alloy and cast
   description: "Holding furnaces where the liquid metal is alloyed, skimmed and poured into ingots."
-size:
+physical:
   length: 150
   width: 60
   height: 15
-rate:
-  throughput: 40
-  product: ingot
-inputs:
-  materials:
-  - { item: liquid-aluminium, amount: 1.02 }
-outputs:
-  by_products:
-  - { item: dross, amount: 0.02 }
-needs:
-  power: 40
+recipes:
+  - makes: stock.al6061-ingot
+    does: "Magnesium and silicon are added to the grade, the dross is skimmed and the metal is poured into ingots."
+    inputs:
+      - { item: good.liquid-aluminium, quantity: 0.9914 }
+      - { item: element.mg, quantity: 0.0102 }
+      - { item: element.si, quantity: 0.0061 }
+      - { item: element.fe, quantity: 0.0036 }
+      - { item: element.cu, quantity: 0.0028 }
+      - { item: element.cr, quantity: 0.002 }
+    outputs:
+      - { item: good.dross, quantity: 0.02 }
+    rate: 11.1111111111111
+    power: 40000000
 basis:
-  - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "About 73 t/h serves a smelter of two potlines; 40 for one." }
-  - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,020 kg of metal from the pots for each tonne of ingot; 15 to 25 kg of dross." }
-  - { of: [needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,010 kWh for each tonne of ingot, a fifth of it electricity. Heat is counted as power: there is no fuel to burn." }
-  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [recipes.inputs], tier: derived, note: "The liquid metal and what is added to it, in the shares of the grade it makes (its material's composition); the loss is the module's." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "About 73 t/h serves a smelter of two potlines; 40 for one." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,020 kg of metal from the pots for each tonne of ingot; 15 to 25 kg of dross." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,010 kWh for each tonne of ingot, a fifth of it electricity. Heat is counted as power: there is no fuel to burn." }
+  - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

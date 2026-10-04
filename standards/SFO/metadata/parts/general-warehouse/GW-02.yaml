@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.gw-02
   code: GW-02
   name: "Racking"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 1200000
 made_from:
-  item: STA36-PL-20
-  quantity: 8846.2
+  - item: stock.sta36-pl-20
+    quantity: 8846.2
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

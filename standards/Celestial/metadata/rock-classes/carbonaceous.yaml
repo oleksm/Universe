@@ -2,8 +2,9 @@
 # What it is and what it yields: as the game's code has it (a test holds the two together).
 # Where it is found: the spec, from what is known of the Sun's asteroids. The game's own odds differ.
 identity:
+  key: rock-class.carbonaceous
+  label: "C-TYPE CARBONACEOUS"
   name: Carbonaceous
-  key: "C-TYPE CARBONACEOUS"
   letter: C-type
   about: "Clays with water bound in, carbon and organics. Coal-dark."
 physical:
@@ -15,7 +16,7 @@ composition:
   water: [0.05, 0.2]
   organics: [0.02, 0.06]
   metal: [0.02, 0.02]
-  pgm: [0.2, 1.0]
+  pgm: [2.0e-07, 1.0e-06]
 found:
   warm: 0.12
   frost_line: 0.7
@@ -24,7 +25,7 @@ found:
   falls: 0.044
 mining:
   cut_energy: 30000
-  yields: carbonaceous-ore
+  yields: good.carbonaceous-ore
 basis:
   - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
   - { of: [found.warm, found.frost_line, found.cold], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "A guess, to be reviewed, made to follow what is known: carbonaceous asteroids dominate the belt's outer regions and are rare in the inner belt; over 75% of those seen. The shares themselves are chosen." }

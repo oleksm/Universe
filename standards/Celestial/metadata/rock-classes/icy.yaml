@@ -2,8 +2,9 @@
 # What it is and what it yields: as the game's code has it (a test holds the two together).
 # Where it is found: the spec, from what is known of the Sun's asteroids. The game's own odds differ.
 identity:
+  key: rock-class.icy
+  label: "ICY"
   name: Icy
-  key: "ICY"
   letter: comet-like
   about: "Water ice and other frozen volatiles, with dust."
 physical:
@@ -21,7 +22,7 @@ found:
   outer: 1.0
 mining:
   cut_energy: 20000
-  yields: asteroid-water-ice
+  yields: good.asteroid-water-ice
 basis:
   - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
   - { of: [found.outer], tier: sourced, source: "https://en.wikipedia.org/wiki/Kuiper_belt", note: "Most objects of the outer belt are largely frozen volatiles: methane, ammonia and water." }

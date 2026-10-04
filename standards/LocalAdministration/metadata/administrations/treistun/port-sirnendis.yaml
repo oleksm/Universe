@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=../../../schema/body.schema.yaml
+key: settlement.treistun.port-sirnendis
 name: "Port Sirnendis"
 kind: settlement
-at: Treistun d I
+at: body.treistun.treistun-d-i
 position: { latitude: -32.137, longitude: -88.842 }
 about: "The port on Treistun d I, the moon of d, at 32° south. Gravity 0.13 g, no air."
 story:

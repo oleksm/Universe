@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the outer belt's largest: round above about 400 km in radius.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Aipeik, kind: dwarf planet, parent: Treistun, about: 'A world of ice in the outer belt, heavy enough to have
-    pulled itself round. One of perhaps 24.'}
-orbit: {semi_major_axis: 2248000000.0, eccentricity: 0.16680447, inclination: 24.32, period: 25338.0}
-physical: {radius: 1073.0, density: 950, mass: 4.911e+21}
-rock: {class: icy}
+in_game: not made
+identity: {key: body.treistun.aipeik, name: Aipeik, kind: dwarf planet, parent: body.treistun.treistun, about: 'A world of
+    ice in the outer belt, heavy enough to have pulled itself round. One of perhaps 24.'}
+orbit: {semi_major_axis: 2248000000000.0, eccentricity: 0.16680447, inclination: 24.32, period: 2188857600.0}
+physical: {radius: 1073000.0, density: 950, mass: 4.911e+21}
+rock: {class: rock-class.icy}

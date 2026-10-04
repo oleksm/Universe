@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.dwarf-planet
   name: "Dwarf planet"
   group: small body
   about: "A body heavy enough to pull itself round, but not to clear its orbit of others."

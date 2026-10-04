@@ -2,20 +2,21 @@
 # Fracture toughness: Wikipedia, Fracture toughness (silica aerogels, 0.0008 to 0.0048; a range as its middle).
 # Data: NASA Ames Thermal Protection Materials database (TPSX), Silica Aerogel (density, modulus); Wikipedia: Aerogel (melting point, thermal conductivity at 1 atm).
 identity:
+  key: material.silica-aerogel
   name: Silica aerogel
   class: ceramic
   composition:
-  - part: Si
+  - part: element.si
     share: 0.467
-  - part: O
+  - part: element.o
     share: 0.533
   form:
   - foam
 mass:
   density: 100.0
 mechanical:
-  fracture_toughness: 0.0028
-  youngs_modulus: 0.001
+  fracture_toughness: 2800.0
+  youngs_modulus: 1000000.0
 thermal:
   melting_point: 1473.0
   thermal_conductivity: 0.0093

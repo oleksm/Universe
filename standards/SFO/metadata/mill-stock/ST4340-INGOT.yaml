@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What a foundry ships and a mill starts from. Its size is not settled, so it has none here.
+identity:
+  key: stock.st4340-ingot
+  code: ST4340-INGOT
+  name: "4340 steel ingot"
+  form: ingot
+made_from:
+  - item: material.high-strength-steel-4340

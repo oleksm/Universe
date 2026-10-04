@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Cut and bent to its curve, ready to be welded into a part. Kept in the works' store until the welding bay takes it.
+identity:
+  key: stock.al6061-pl-5-panel
+  code: AL6061-PL-5-PANEL
+  name: "6061 plate 5 mm, formed panels"
+  form: panel
+made_from:
+  - item: material.aluminium-alloy-6061
+size:
+  thickness: 0.005
+basis:
+  - { of: [size], tier: derived, note: "The gauge of the stock it is cut from." }

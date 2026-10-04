@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.re
   name: Rhenium
   symbol: Re
   atomic_number: 75
-  atomic_mass: 186.207
+  atomic_mass: 3.09203997974386e-25
   group: 7
   period: 6
   block: d
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d5 6s2'
   valence_electrons: 7
-  atomic_radius: 188.0
-  covalent_radius: 151.0
-  van_der_waals_radius: 217.0
-  ionic_radius: 53.0
+  atomic_radius: 1.88e-10
+  covalent_radius: 1.51e-10
+  van_der_waals_radius: 2.17e-10
+  ionic_radius: 5.3e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 185
@@ -26,8 +27,8 @@ atomic_structure:
     abundance: 0.626
 chemical:
   electronegativity: 1.9
-  first_ionisation_energy: 760
-  electron_affinity: 5.8273
+  first_ionisation_energy: 760000
+  electron_affinity: 5827.3
   oxidation_states:
   - 7
   - 6
@@ -45,8 +46,8 @@ physical:
   boiling_point: 5869.0
   density: 20800.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 33.0
-  heat_of_vaporisation: 705.0
+  heat_of_fusion: 33000.0
+  heat_of_vaporisation: 705000.0
   vapour_pressure: 7.7e-118
 thermal:
   specific_heat_capacity: 137.0
@@ -58,14 +59,14 @@ electrical_magnetic:
   superconducting_temperature: 1.7
 mechanical:
   hardness: 7.0
-  youngs_modulus: 463.0
+  youngs_modulus: 463000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery-grayish
   emission_lines:
-  - 413.645
-  - 422.746
-  - 451.331
-  - 488.914
-  - 527.556
-  neutron_cross_section: 90.0
+  - 4.13645e-07
+  - 4.22746e-07
+  - 4.51331e-07
+  - 4.88914e-07
+  - 5.27556e-07
+  neutron_cross_section: 9.0e-27

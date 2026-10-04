@@ -24,20 +24,241 @@ The generated RON files are byte-for-byte unchanged by all of this: `celestial.r
 k2/Q applied to every moon (I have no source for a better rule yet; it is marked to review); the
 two-zone against three-zone odds (resolves when seeding is a record).
 
+## Keys: done (2026-10-04, after your answers)
+
+Every one of the 777 records has its key, `<kind>.<name>`, with the schema's kind first, as you
+asked. It is `identity.key` where the record has an identity group, and a top-level `key` where it
+has none yet (LocalAdministration records, standards, companies, the seeding singletons); those move
+under `identity` when their schemas are consolidated. The build checks each key: there, well-formed
+(`common.schema.yaml#/definitions/key`), matching where the record is filed, and unique.
+
+| Kind (first segment) | Schema | Example |
+|---|---|---|
+| `element` | SFO element | `element.fe` (its symbol) |
+| `material`, `process`, `module`, `good`, `hull` | SFO, same name | `material.aluminium-alloy-6061`, `hull.mc-07` |
+| `stock` | SFO mill-stock | `stock.al6061-pl-5` |
+| `part` | SFO part | `part.mc07-23-001` |
+| `equipment` | SFO equipment | `equipment.drive.torch.s1`, `equipment.gun.mass-driver.s1`, `equipment.throat-coil` |
+| `gate` | SFO gate | `gate.ring.i` |
+| `standard` | SFO standard | `standard.sfo.12` |
+| `standards-body` | SFO body | `standards-body.sfo` (to be `org.` with the organisation schema) |
+| `company` | MakerHouse company | `company.hadley` (to be `org.`) |
+| `administration` | LocalAdministration | `administration.treistun` (to be `org.`) |
+| `settlement`, `rig` | LocalAdministration body, by its kind | `settlement.treistun.port-trethi`, `rig.treistun.hadley-orbital-works` |
+| `la-body` | LocalAdministration body of kind planet or moon | `la-body.treistun.treistun-f`: transitional, these records go when settlements refer to the celestial body |
+| `zone`, `parcel`, `street`, `power-line`, `facility` | LocalAdministration | `parcel.treistun.port-trethi.4` |
+| `system`, `body`, `field` | Celestial | `body.treistun.treistun-f` |
+| `small-body`, `region` | Celestial | `small-body.treistun.biasu`: transitional, to be `body.` and `population.` when merged |
+| `rock-class`, `vocabulary` | Celestial | `rock-class.stony` |
+| `seeding` | Celestial galaxy, asteroids, conditions | `seeding.galaxy` |
+
+Three renames to know for your side: the game's `drive.torch.s1` is `equipment.drive.torch.s1`
+(underscores become `-`: `equipment.gun.mass-driver.s1`); `structure.ring.i` is `gate.ring.i`;
+`brand.hadley` is `company.hadley`. A rock class's game label (`S-TYPE STONY`) is now
+`identity.label`, and its key is `rock-class.stony`.
+
+**Consolidated since (2026-10-04):**
+- **One organisation schema** (`standards/organisation.schema.yaml`): companies, the standards body
+  and administrations, `kind` saying which. Keys are `org.hadley`, `org.sfo`, `org.treistun`. The
+  standards body's old `kind` (independent, consortium...) is now `form`.
+- **One body schema.** The star is a body record (`body.treistun.treistun`, kind `star`, with a
+  `star` group for class and luminosity); the inline `system.star` is gone. Small bodies are bodies
+  with `in_game: not made`, keys `body.<system>.<name>`. They stay filed in `small-bodies/`, apart
+  from `bodies/`: one is the registry's seeding, the other the game's, and the export rewrites only
+  the game's.
+- **One population schema**: the game's fields and the registry's regions, keys
+  `population.<system>.<name>`. Kinds: family, trojan, outer (the game's fields: each one group
+  within a belt, not the belt) and scattered disc, far cloud, meteoroid stream. Filed in `fields/`
+  and `regions/` for the same reason.
+- **LocalAdministration's planets and moons are gone.** What they said (about, story) is on the
+  celestial body. A settlement or rig is `at` a celestial body. Kinds left there: settlement, rig.
+
+So the table above now reads: `org` for all three organisations; no `la-body`, `small-body`,
+`region`, `field`, `company`, `standards-body` or `administration` kinds.
+
+## Refs: done (2026-10-04)
+
+Every property that names another record now holds that record's key: 1,216 refs in 501 records.
+The property says so in its schema with `x-ref: [kinds]`, and the build checks each key is a
+record's and of an allowed kind (`validate.refs`, `check_all`). A loader can walk the same marks.
+
+| Property | Names |
+|---|---|
+| a product's `identity.maker`; a parcel's or rig's `owner`; a warehouse's `exchange`; `founded_by` | `org` |
+| a process's, module's `item`, `rate.product` | `element`, `material` or `good` |
+| a material's `composition[].part` | `element` or `material` (`name` instead, for one with no record) |
+| a good's `composition[].part`, `source.won_from` | `element` or `good`; `good` |
+| mill stock's `made_from.material`, `making.process` | `material`, `process` |
+| a part's `made_from.item`, `making.processes[]` | `stock`, `process` |
+| a hull's or gate's `fit[].item`, `making.process`, `fitting_out`; a hull's `design.thrust_path[]`; a gate's `power.station` | `equipment`, `process`, `part`, `module` |
+| equipment's `performance.burns`, `holds` | `good` |
+| a process's `equipment.steps[].module`; a facility's or rig's `processes[]`, `lines[].process`, `also[]`, `modules[].module` | `module`, `process` |
+| a facility's `parcel` (was its number); a parcel's `address.street`; a power line's `from`, `to` | `parcel`, `street`, `facility` |
+| a settlement's or rig's `at`; its `gate.ring`, `gate.to` | `body`, `gate`, `system` |
+| an `address.at` (was `<system>/<settlement>`) | `settlement` |
+| a body's `identity.parent`, `rock.class`; a population's `identity.anchor`, `parent`, `rocks.class` | `body`, `rock-class` |
+| a rock class's `mining.yields`, `rich_yields` | `good` |
+| a standard's `parent` (was `SFO 2`) | `standard` |
+| the galaxy's `home` | `system` |
+
+A planet's parent is its star's body record (`body.treistun.treistun`), not the system.
+
+Not refs, left as they are: a facility line's `from`/`to` (parts of that facility, by name), a
+gate's `built_of.parts` (the folder its parts are in), a standard's `records` (a kind of record),
+kinds and enums.
+
+The generated RON is byte-identical: the build turns keys back into what it worked by before as it
+reads each record (`build.py`: `old_names`, `OLD_KEY`, `game_key`).
+
+## SI: done (2026-10-04)
+
+Every value with a dimension is in SI, and its property says the unit in its schema: `x-unit: "kg"`.
+106 properties changed unit, 2,322 values in 439 records; 210 properties carry an `x-unit` in all.
+The build refuses an `x-unit` that is not SI. Angles are degrees, `x-unit: deg` (10 properties).
+A share, a ratio or a count has no `x-unit`.
+
+| Was | Now | Where |
+|---|---|---|
+| t | kg | hull masses, module batch and store, process batch |
+| t/h | kg/s | module and process throughput, handling |
+| t/m3 | kg/m3 | a good's bulk density |
+| km, mm, AU, light years, pm, nm | m | orbits, radii, belts, gauges, gate spans, the galaxy's region and sector, system positions, atomic radii |
+| hours, days, years, billion years | s | a body's day, period, age; a part's making time and service life |
+| kPa, MPa, GPa | Pa | strengths, moduli, cabin and surface pressure |
+| kW, MW | W | power draw, output, a line's capacity |
+| kN, MN | N | thrust, design load |
+| km/s, times the speed of light | m/s | exhaust speed, top speed |
+| MJ/t | J/kg | a process's energy |
+| g (jolt) | m/s2 | shock limits (by 9.80665) |
+| times the Sun's | W | a star's luminosity (by 3.828e26) |
+| Earth masses | kg | the outer belt's mass |
+| microtesla | T | a body's magnetic field |
+| rem a day | Sv/s | radiation dose |
+| stars per cubic light year | 1/m3 | the galaxy's star density |
+| u, kJ/mol, eV, barns, MV/m | kg, J/mol, J, m2, V/m | elements and materials |
+| parts per million, g per kg | share | platinum-group content, salinity |
+| messages an hour | 1/s | a relay's rate |
+
+One rename: a process's `energy.energy_per_tonne` is `energy.specific_energy` (J/kg).
+
+Left as they were, on purpose:
+- **Amounts in processes and modules** are kg per kg of product: a ratio. A power module's are per
+  MWh of its output, which is not SI and not a ratio. That goes when flows move onto modules
+  (your item 6); I have not touched it.
+- **Scales** (Mohs hardness, Pauling electronegativity) and a part's `made_from.quantity` (m2 or m,
+  by the stock's kind).
+- **Numbers inside a standard's text** (`params`, tables): documents, not data.
+
+The page and the build's reports still read in t, km, hours, AU: `tools/standards/reading_units.yaml`
+says, for each property, the unit it is read in, and the build converts as it reads a record. So the
+page is unchanged and the generated RON is byte-identical. `celestial_export.py` and
+`celestial_seed.py` write SI.
+
+## One `physical` group: done (2026-10-04)
+
+`common.schema.yaml#/definitions/physical` is the one group: mass, length, width, height, envelope,
+volume, bulk_density, operating and storage temperature range, impact_resistance, shock_limit. Part,
+mill stock, equipment, good, hull and industrial module all take it by `$ref`; a record uses the
+properties that apply.
+
+- **Hull:** `size.length/width/height/volume` are `physical.*`; `mass.frame` is `physical.mass`.
+  What it can take aboard is a new group, `capacity`: `hold_volume`, `hold` (kg), `fuel` (kg).
+  `size` and `mass` are gone.
+- **Industrial module:** `size` is `physical`.
+- **`basis.of`** paths follow (`physical.length`, `capacity.hold`).
+
+Left as their own groups, because they say what the thing is rather than what a carrier must know:
+mill stock's `size` (thickness, diameter, wall: its section), a part's `shape`, a gate's `size`
+(opening, thickness), a material's `mass.density`, and a celestial body's `physical`.
+
+## Dogma registry: done (2026-10-04)
+
+`standards/Dogma/`: 31 laws in six sections, one record each, values in SI.
+
+- **Schemas:** `section` (key `dogma.<name>`: name, order, about with its formula, where it is
+  written up) and `law` (key `law.<name>`: `identity.name`, `symbol`, `label` (the constant's name, as code writes it: the engine's
+  where it has one), `section`; `value`; `unit`; `kind` real, simplified or invented; `note`; `in_game.file`
+  and `in_game.as`; `basis`).
+- **Sections:** Nature (c, sigma, G), Measures (standard gravity, AU, light year, day, year, the
+  Sun's mass, radius and luminosity, the Earth's mass and radius), Field, Tube, Air (Sutton-Graves,
+  Earth's air density and scale height, top of the air, air's heat capacity, lapse rate), Climate
+  (the four reference albedos).
+- **Values are the engine's as they stand**, so nothing changes when you load them. Where the
+  engine's is a rounding of the source's (sigma, the Sun's and Earth's mass), the basis says so.
+- **Two are held in other units by the engine**, and the record is SI: `law.tube-time` is s/m
+  (the engine: 0.2 s per light year) and `law.best-speed` is m/s (the engine: 1,000 c).
+  `in_game.as` says which, and the report converts.
+- **The Dogma report** holds each law to the engine's copy (`config/dogma.ron`, `sheet.ron`,
+  `world/src/units.rs`, `physics/src/atmosphere.rs`): 27 the same; four gaps, each a number the engine writes
+  without a name: `EARTH_AIR_DENSITY`, `EARTH_SCALE_HEIGHT` and `AIR_TOP` in `atmosphere.rs`, and
+  `STANDARD_GRAVITY` (9.81 written where it is needed). Every law has a label, so those four are
+  the names to give them.
+- **`build.py` reads its constants from Dogma** by name: c, sigma, G, standard gravity, AU, light
+  year, the Sun's mass and luminosity, and the Tube laws (it no longer parses `dogma.ron`). Its
+  worked figures moved in the fourth digit or later (sigma was 5.670374419e-8, g was 9.81).
+  Still with their own copies: `celestial_seed.py` and `celestial_export.py`.
+
+Not moved, as you said: `sheet.ron`'s heat-skin figures, gate sizes, capsule masses,
+CAPACITOR_DENSITY, GROUND_MARGIN, and the Simplified climate figures (GREENHOUSE, SWING_DAMPING,
+NIGHT_FLOOR, CONVECTION): tell me if those last four are laws to you.
+
+## Seeding: one shape (2026-10-04)
+
+`asteroids.yaml`, `conditions.yaml` and `galaxy.yaml` are now three records of one schema,
+`Celestial/schema/seeding.schema.yaml`, in `Celestial/metadata/seeding/`. Each has `identity`
+(key `seeding.<name>`, name, about), the groups that are its own, and `basis`. The galaxy's
+settings, which were flat, are its `galaxy` group (`galaxy.seed`, `galaxy.home`, ...). Nothing else
+moved. `galaxy.ron` is the same but for the path in its comment.
+
+Also: the four rock classes with no density have one, guessed and marked to review, and each
+registry-seeded small body has its own density between its class's rubble and solid figures.
+What each world is made of stays empty: the user will bring it.
+
+## Installations, made things, gates (2026-10-04)
+
+- **One installation definition** (`LocalAdministration/schema/installation.schema.yaml`:
+  `processes`, `lines`, `modules`), taken by `$ref` by a facility and by a rig. A rig's lines and
+  modules are typed now.
+- **One `made_from` and one `making`** in `common.schema.yaml`, used by part, mill stock, hull and
+  gate. `made_from` is a list: each entry an `item` (a material, a stock item or a part, by key)
+  and its `quantity` (a part also has `blank`, `grain`, `finish` there). `making.processes` is a
+  list everywhere (`making.process` is gone); a hull keeps `making.fitting_out`. A mill stock's
+  `form` and `temper` are in its `identity`.
+- **A gate's distance is worked out**, not written: `gate.distance` is gone from the settlement;
+  it is the distance between the two systems' `position.from_home`.
+- **System positions were wrong and are fixed.** Every system's `position` was zero: the export
+  (`crates/world/examples/celestial_export.rs`) divided a position already in light years by a
+  light year. One line, in the registry's own exporter; no engine code. `celestial.ron` now lists
+  the systems in order of distance from home, which is the only change in it.
+
+## Items 6 and 7, answered by recipes (2026-10-04)
+
+The user settled both: `docs/registry-recipes.md`. A recipe is an industrial module's: what it can
+be set to make, with its inputs, outputs, rate and power. Which recipe a module runs is its setup,
+the game's state. Inside one facility stock is one pool; between facilities the market is the
+join. The mill side is done; shop work (parts, hulls) is next. Read that file for what changed in
+`settlements.ron` (names only).
+
+## Two of your items as I first answered them (superseded by the above)
+
+**Item 6, a module's output as a stock item.** A rolling mill does not make one stock item: it
+makes plate, of any gauge and any metal. `rate.product` can not name `stock.al6061-pl-5`. What it
+makes is a **form** (plate, tube, bar, forging, panel, part, hull). So I would drop the nine goods
+that are forms of stock, and let a module's product be either a good (bulk matter by the tonne:
+liquid steel, sponge iron, alumina) or a form from the one form list. Tell me if that is what you
+want before I take the goods out: the chain reports walk them.
+
+**Item 7, flows on the module only.** A process record here is not only a list of steps. It
+holds what is known of the chemistry as sourced figures: its inputs per tonne of product, its
+yield, energy, temperature. A module holds one step's. They overlap but are not copies: 26
+processes have no modules at all yet. Taking the flows off processes would delete sourced
+figures. I would keep both until every process has its steps, then check that the steps add up
+to the process, and only then remove the process's own.
+
 ## Next on `fso`, in this order
 
-1. **`identity.key` on every record, and typed refs.** Proposal: the key is `<kind>.<name>`, lower
-   case, words joined by `-`, kind from one closed list. Where the game has a key today the record
-   takes the game's (`drive.torch.s1`, `brand.hadley`, `structure.ring.i`), so nothing is renamed
-   on your side. A ref is that key as a string, and its kind is checked against what the field
-   allows. Celestial bodies: `body.<system>.<name>` (`body.treistun.treistun-f`). I will add the key
-   beside what is there, switch refs kind by kind, and keep the build's output the same until you
-   say a loader is ready.
-2. **SI throughout.** Record values in kg, m, s, W, N, K, Pa, rad. The page converts for reading.
-   One kind at a time, with the RON output held identical as the check.
-3. **`physical` as one group**, and the organisation schema (company, standards body,
-   administration as one).
-4. Then your order: Dogma, the celestial consolidation, products and stock, installations, economy.
+Waiting on the two answers above. Then: the product base (maker and revision on every made
+thing), equipment the game has and the registry lacks, fuels, economy and administration figures.
 
 ## Where I'd do it differently
 

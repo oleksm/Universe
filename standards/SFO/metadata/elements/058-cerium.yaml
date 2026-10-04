@@ -3,19 +3,20 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.ce
   name: Cerium
   symbol: Ce
   atomic_number: 58
-  atomic_mass: 140.116
+  atomic_mass: 2.32668091855726e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f1 5d1 6s2'
   valence_electrons: 4
-  covalent_radius: 204.0
-  van_der_waals_radius: 235.0
-  ionic_radius: 87.0
+  covalent_radius: 2.04e-10
+  van_der_waals_radius: 2.35e-10
+  ionic_radius: 8.7e-11
   stable_isotopes: 4
   isotope_abundances:
   - mass_number: 136
@@ -28,8 +29,8 @@ atomic_structure:
     abundance: 0.11114
 chemical:
   electronegativity: 1.12
-  first_ionisation_energy: 534.4
-  electron_affinity: 55
+  first_ionisation_energy: 534400.0
+  electron_affinity: 55000
   oxidation_states:
   - 4
   - 3
@@ -46,8 +47,8 @@ physical:
   boiling_point: 3697.0
   density: 6770.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 5.5
-  heat_of_vaporisation: 350.0
+  heat_of_fusion: 5500.0
+  heat_of_vaporisation: 350000.0
   vapour_pressure: 2.0e-62
 thermal:
   specific_heat_capacity: 192.0
@@ -59,14 +60,14 @@ electrical_magnetic:
   superconducting_temperature: 0.022
 mechanical:
   hardness: 2.5
-  youngs_modulus: 34.0
+  youngs_modulus: 34000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 515.969
-  - 516.148
-  - 524.592
-  - 569.699
-  - 569.923
-  neutron_cross_section: 0.6
+  - 5.15969e-07
+  - 5.16148e-07
+  - 5.24592e-07
+  - 5.69699e-07
+  - 5.69923e-07
+  neutron_cross_section: 6.0e-29

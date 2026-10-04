@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.bd-01
   code: BD-01
   name: "Dock hall frame"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 1580000
 made_from:
-  item: STA36-PL-20
-  quantity: 11647.4
+  - item: stock.sta36-pl-20
+    quantity: 11647.4
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

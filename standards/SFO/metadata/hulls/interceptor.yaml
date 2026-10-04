@@ -3,38 +3,38 @@
 # the world had physics to answer to. Kept as a record of what the game has. Do not balance against
 # it or design toward it.
 identity:
-  name: "Interceptor"
   key: hull.interceptor
-  maker: brand.vireo
+  name: "Interceptor"
+  maker: org.vireo
   class: interceptor
   revision: outdated
   description: "A small fast warship."
-size:
+physical:
   volume: 497
-mass:
-  frame: 19
-  fuel: 4
-  hold: 4
+  mass: 19000
+capacity:
+  fuel: 4000
+  hold: 4000
 fit:
-  - { slot: power, item: power-fusion-s2 }
-  - { slot: drive, item: drive-torch-s2 }
-  - { slot: thrusters, item: thrusters-quad-s2 }
-  - { slot: lift, item: lift-belly-s1 }
-  - { slot: tank, item: tank-s0 }
-  - { slot: cargo, item: rack-s1 }
-  - { slot: hyperdrive, item: hyperdrive-s1 }
-  - { slot: capacitor, item: capacitor-s1 }
-  - { slot: computer, item: computer-fbw-fast }
-  - { slot: transponder, item: transponder-s1 }
-  - { slot: sensors, item: sensors-radar-s1 }
-  - { slot: comm, item: comm-basic-s1 }
-  - { slot: life, item: life-s1 }
-  - { slot: hardpoint_1, item: gun-mass-driver-s1 }
-  - { slot: hardpoint_2, item: laser-pulse-s1 }
-  - { slot: avionics, item: nav-full-s1 }
+  - { slot: power, item: equipment.power.fusion.s2 }
+  - { slot: drive, item: equipment.drive.torch.s2 }
+  - { slot: thrusters, item: equipment.thrusters.quad.s2 }
+  - { slot: lift, item: equipment.lift.belly.s1 }
+  - { slot: tank, item: equipment.tank.s0 }
+  - { slot: cargo, item: equipment.rack.s1 }
+  - { slot: hyperdrive, item: equipment.hyperdrive.s1 }
+  - { slot: capacitor, item: equipment.capacitor.s1 }
+  - { slot: computer, item: equipment.computer.fbw.fast }
+  - { slot: transponder, item: equipment.transponder.s1 }
+  - { slot: sensors, item: equipment.sensors.radar.s1 }
+  - { slot: comm, item: equipment.comm.basic.s1 }
+  - { slot: life, item: equipment.life.s1 }
+  - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
+  - { slot: hardpoint_2, item: equipment.laser.pulse.s1 }
+  - { slot: avionics, item: equipment.nav.full.s1 }
 design:
-  loaded_mass: 45.89
-  main_thrust: 2.7
-  lift_thrust: 0.88
+  loaded_mass: 45890.0
+  main_thrust: 2700000.0
+  lift_thrust: 880000.0
 basis:
-  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

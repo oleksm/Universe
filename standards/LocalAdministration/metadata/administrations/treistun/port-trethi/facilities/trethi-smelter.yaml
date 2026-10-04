@@ -1,16 +1,15 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+key: facility.treistun.port-trethi.trethi-smelter
 name: Trethi Smelter
 kind: foundry
-parcel: 7
-processes:
-  - alloying-6061
+parcel: parcel.treistun.port-trethi.7
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: alloying-6061
+  - makes: stock.al6061-ingot
     modules:
-      - { module: ore-yard, count: 1 }
-      - { module: alumina-refinery, count: 1 }
-      - { module: potline, count: 1 }
-      - { module: casthouse, count: 1 }
-      - { module: ingot-yard, count: 1 }
+      - { module: module.ore-yard, count: 1 }
+      - { module: module.alumina-refinery, count: 1 }
+      - { module: module.potline, count: 1 }
+      - { module: module.casthouse, count: 1 }
+      - { module: module.ingot-yard, count: 1 }

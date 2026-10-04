@@ -1,20 +1,21 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: SAE 304 stainless steel. A range there is given as its middle.
 identity:
+  key: material.stainless-steel-304
   name: Stainless steel 304
   class: alloy
   composition:
-  - part: Fe
+  - part: element.fe
     share: 0.68
-  - part: Cr
+  - part: element.cr
     share: 0.19
-  - part: Ni
+  - part: element.ni
     share: 0.095
-  - part: Mn
+  - part: element.mn
     share: 0.02
-  - part: Si
+  - part: element.si
     share: 0.01
-  - part: C
+  - part: element.c
     share: 0.0008
   form:
   - sheet
@@ -26,9 +27,9 @@ identity:
 mass:
   density: 7916.0
 mechanical:
-  youngs_modulus: 191.5
+  youngs_modulus: 191500000000.0
   poissons_ratio: 0.27
-  yield_strength: 207.0
+  yield_strength: 207000000.0
   elongation_at_break: 0.7
 thermal:
   melting_point: 1672.15

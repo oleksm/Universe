@@ -2,34 +2,37 @@
 # Data: Wikipedia: 4340 steel. A range there is given as its middle. Its stiffness: Wikipedia, Young's
 # modulus (steel, 200 GPa); its density the usual figure for carbon and low-alloy steel.
 identity:
+  key: material.high-strength-steel-4340
   name: High-strength steel 4340
   class: alloy
   composition:
-  - part: Fe
+  - part: element.fe
     share: 0.957
-  - part: Ni
+  - part: element.ni
     share: 0.018
-  - part: Cr
+  - part: element.cr
     share: 0.008
-  - part: Mn
+  - part: element.mn
     share: 0.008
-  - part: C
+  - part: element.c
     share: 0.004
-  - part: Si
+  - part: element.si
     share: 0.0025
-  - part: Mo
+  - part: element.mo
     share: 0.0025
   form:
+  - ingot
   - plate
   - bar
   - forging
   - tube
+  - scrap
 mass:
   density: 7850.0
 mechanical:
-  youngs_modulus: 200.0
-  yield_strength: 1300.0
-  tensile_strength: 1420.0
+  youngs_modulus: 200000000000.0
+  yield_strength: 1300000000.0
+  tensile_strength: 1420000000.0
   elongation_at_break: 0.17
-  fracture_toughness: 81.5
+  fracture_toughness: 81500000.0
   creep_resistance: good

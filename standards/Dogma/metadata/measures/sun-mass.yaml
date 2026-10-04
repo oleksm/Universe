@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.sun-mass
+  name: "Mass of the Sun"
+  symbol: "M_sun"
+  label: SUN_MASS
+  section: dogma.measures
+value: 1.989e+30
+unit: "kg"
+kind: real
+note: "What a star's mass is read in."
+in_game: { file: crates/world/src/units.rs }
+basis:
+  - { of: [value], tier: sourced, source: "IAU 2015 Resolution B3 with CODATA's G: 1.98847e30", note: "The engine's is rounded to four figures." }

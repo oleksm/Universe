@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.stellar-wind
   name: "Stellar wind"
   group: condition
   known_as: "solar wind"

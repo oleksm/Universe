@@ -3,26 +3,27 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.ac
   name: Actinium
   symbol: Ac
   atomic_number: 89
-  atomic_mass: 227.02775
+  atomic_mass: 3.76988448077298e-25
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 6d1 7s2'
   valence_electrons: 3
-  covalent_radius: 215.0
-  van_der_waals_radius: 260.0
-  ionic_radius: 112.0
+  covalent_radius: 2.15e-10
+  van_der_waals_radius: 2.6e-10
+  ionic_radius: 1.12e-10
   stable_isotopes: 0
   half_life: 687531000.0
   decay_mode: beta-
 chemical:
   electronegativity: 1.1
-  first_ionisation_energy: 519.1
-  electron_affinity: 33.77
+  first_ionisation_energy: 519100.0
+  electron_affinity: 33770.0
   oxidation_states:
   - 3
   reactivity:
@@ -38,17 +39,17 @@ physical:
   boiling_point: 3471.0
   density: 10070.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 14.0
-  heat_of_vaporisation: 400.0
+  heat_of_fusion: 14000.0
+  heat_of_vaporisation: 400000.0
 thermal:
   specific_heat_capacity: 120.0
   thermal_conductivity: 12.0
 optical_nuclear:
   colour: silver
   emission_lines:
-  - 388.556
-  - 417.998
-  - 446.273
-  - 471.658
-  - 525.824
-  neutron_cross_section: 880.0
+  - 3.88556e-07
+  - 4.17998e-07
+  - 4.46273e-07
+  - 4.71658e-07
+  - 5.25824e-07
+  neutron_cross_section: 8.8e-26

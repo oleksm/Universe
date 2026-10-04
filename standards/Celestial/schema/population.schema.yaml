@@ -1,0 +1,35 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Population
+description: 'A population of many small bodies in a system. Filed in standards/Celestial/metadata/systems/<system>/fields/<name>.yaml where the game''s seed makes it (a field: one remnant and its swarm), and in regions/ where the registry seeds it and the game does not make it yet (the scattered disc, the far cloud, a comet''s meteoroid stream).'
+type: object
+additionalProperties: false
+required: [identity, provenance]
+properties:
+  provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
+  in_game: { $ref: "../../common.schema.yaml#/definitions/in_game" }
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, kind]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      kind: { enum: [family, trojan, outer, scattered disc, far cloud, meteoroid stream], description: "family: a collisional family in the main belt. trojan: a group sharing a giant's orbit, ahead of it or behind. outer: a family in the icy belt past the giants. scattered disc, far cloud: ice bodies thrown far out. meteoroid stream: grains strung along a comet's orbit." }
+      anchor: { type: string, x-ref: [body], description: "For a field: the named asteroid it gathers round." }
+      parent: { type: string, x-ref: [body], description: "For a meteoroid stream: the comet that sheds it." }
+      about: { type: string }
+  rocks:
+    description: For a field.
+    type: object
+    additionalProperties: false
+    properties:
+      class: { type: string, x-ref: [rock-class], description: "What its rocks are made of, by their spectrum." }
+      count: { type: integer, description: How many rocks it has. }
+      extent: { type: number, x-unit: "m", description: "m, how far it spreads round its anchor" }
+  extent:
+    description: "For a region: how far from the star it reaches."
+    type: object
+    additionalProperties: false
+    properties:
+      inner: { type: number, x-unit: "m", description: "m from the star, its nearest" }
+      outer: { type: number, x-unit: "m", description: "m from the star, its farthest" }

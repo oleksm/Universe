@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.day
+  name: "Day"
+  symbol: "d"
+  label: DAY
+  section: dogma.measures
+value: 86400
+unit: "s"
+kind: real
+note: "What times are read in."
+in_game: { file: crates/world/src/units.rs }
+basis:
+  - { of: [value], tier: sourced, source: "SI: a day of 86,400 s" }

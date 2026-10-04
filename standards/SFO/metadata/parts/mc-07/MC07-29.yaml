@@ -2,6 +2,7 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
+  key: part.mc07-29
   code: MC07-29
   name: "Mining laser"
   revision: draft
@@ -13,7 +14,7 @@ physical:
 shape:
   surface_area: 206.6
 making:
-  processes: [fitting]
+  module: module.assembly-shop
 fit:
   count: 2
   position: "Its centre is 34.6 m back from the nose and 13.0 m above the keel, 7.4 m either side of the centre line."

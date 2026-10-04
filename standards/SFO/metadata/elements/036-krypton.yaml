@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.kr
   name: Krypton
   symbol: Kr
   atomic_number: 36
-  atomic_mass: 83.8
+  atomic_mass: 1.3915317378108e-25
   group: 18
   period: 4
   block: p
@@ -14,9 +15,9 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2 4p6'
   valence_electrons: 8
-  atomic_radius: 87.0
-  covalent_radius: 116.0
-  van_der_waals_radius: 202.0
+  atomic_radius: 8.7e-11
+  covalent_radius: 1.16e-10
+  van_der_waals_radius: 2.02e-10
   stable_isotopes: 6
   isotope_abundances:
   - mass_number: 78
@@ -33,7 +34,7 @@ atomic_structure:
     abundance: 0.17279
 chemical:
   electronegativity: 3.0
-  first_ionisation_energy: 1350.8
+  first_ionisation_energy: 1350800.0
   oxidation_states:
   - 0
   reactivity:
@@ -48,8 +49,8 @@ physical:
   boiling_point: 119.93
   density: 3.733
   crystal_structure: face-centered cubic
-  heat_of_fusion: 1.64
-  heat_of_vaporisation: 9.02
+  heat_of_fusion: 1640.0
+  heat_of_vaporisation: 9020.0
 thermal:
   specific_heat_capacity: 248.05
   thermal_conductivity: 0.00943
@@ -58,9 +59,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: colorless gas, exhibiting a whitish glow in a high electric field
   emission_lines:
-  - 427.397
-  - 431.958
-  - 446.369
-  - 557.029
-  - 587.092
-  neutron_cross_section: 25.0
+  - 4.27397e-07
+  - 4.31958e-07
+  - 4.46369e-07
+  - 5.57029e-07
+  - 5.87092e-07
+  neutron_cross_section: 2.5e-27

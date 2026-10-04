@@ -1,20 +1,21 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 # The game's own ore (content/base/ores.ron): its name and how it stows are the game's.
 identity:
+  key: good.carbonaceous-ore
   name: Carbonaceous Ore
   kind: rock
   description: "Dark, crumbly asteroid rock rich in carbon and bound water."
 physical:
-  bulk_density: 1.2
+  bulk_density: 1200.0
 source:
   occurs: asteroids
 game:
   goods: goods.ores
   ore: ore.carbonaceous
 composition:
-  - { part: water, share: 0.19 }
-  - { part: Fe, share: 0.19 }
-  - { part: C, share: 0.04 }
+  - { part: good.water, share: 0.19 }
+  - { part: element.fe, share: 0.19 }
+  - { part: element.c, share: 0.04 }
 basis:
   - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }
   - { of: [composition], tier: sourced, source: "https://en.wikipedia.org/wiki/CI_chondrite", note: "CI chondrites: water 18 to 20%, carbon 3 to 5%, iron 18 to 20%." }

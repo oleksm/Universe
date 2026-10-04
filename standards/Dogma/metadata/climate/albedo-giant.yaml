@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.albedo-giant
+  name: "Albedo of a giant's cloud tops"
+  label: ALBEDO_GIANT
+  section: dogma.climate
+value: 0.5
+kind: real
+note: "The share of sunlight it reflects."
+in_game: { file: content/base/sheet.ron }
+basis:
+  - { of: [value], tier: sourced, source: "Jupiter: 0.5" }

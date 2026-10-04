@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.sf-05
   code: SF-05
   name: "Tower"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 3000000
 made_from:
-  item: STA36-PL-20
-  quantity: 22115.4
+  - item: stock.sta36-pl-20
+    quantity: 22115.4
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: a belt's largest body holds 39% of its mass; the belt's mass goes by the ground it covers.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Gilunis, kind: asteroid, parent: Moryemzai, about: 'The largest body of the main belt: over a third of all
-    the belt''s mass. Too small to have pulled itself round.'}
-orbit: {semi_major_axis: 65184100.0, eccentricity: 0.085927732, inclination: 7.01, period: 183.6}
-physical: {radius: 128.5}
-rock: {class: enstatite}
+in_game: not made
+identity: {key: body.moryemzai.gilunis, name: Gilunis, kind: asteroid, parent: body.moryemzai.moryemzai, about: 'The largest
+    body of the main belt: over a third of all the belt''s mass. Too small to have pulled itself round.'}
+orbit: {semi_major_axis: 65184100000.0, eccentricity: 0.085927732, inclination: 7.01, period: 15862176.0}
+physical: {radius: 113800.0, density: 3600, mass: 2.22e+19}
+rock: {class: rock-class.enstatite}

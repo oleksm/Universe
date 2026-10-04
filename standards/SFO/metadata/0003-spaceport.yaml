@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+key: standard.sfo.3
 title: Spaceport
 purpose: Ships exist because what people need is somewhere else, and a spaceport is where "somewhere else" meets the ground. A world's goods and people are on its surface, and the port is the door.
 details:

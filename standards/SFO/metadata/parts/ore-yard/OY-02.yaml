@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.oy-02
   code: OY-02
   name: "Belt conveyor"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 80000
 made_from:
-  item: STA36-PL-20
-  quantity: 589.7
+  - item: stock.sta36-pl-20
+    quantity: 589.7
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 4
 basis:

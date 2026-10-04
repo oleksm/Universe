@@ -1,20 +1,18 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.welding-bay
   name: Welding bay
   step: Weld
   description: "A hall with jigs where formed panels are welded into one part of a hull. It is sized to hold the largest."
-size:
+physical:
   length: 60
   width: 40
   height: 25
-rate:
-  throughput: 1
-  product: parts
-inputs:
-  materials:
-  - { item: formed-panels, amount: 1.0 }
-needs:
-  power: 0.13
+recipes:
+  - makes: good.parts
+    does: "Whatever part it is given to make: what goes in is the part's own: the formed panels of the stock it is made from, taken from the works' store."
+    rate: 0.277777777777778
+    power: 130000.0
 basis:
-  - { of: [needs.power], tier: sourced, source: "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf", note: "A moving-gantry friction stir welding machine has a spindle of up to 130 kW. The spindle only." }
-  - { of: [inputs, size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf", note: "A moving-gantry friction stir welding machine has a spindle of up to 130 kW. The spindle only." }
+  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

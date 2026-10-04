@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+key: standard.sfo.18
 title: Hauler
-parent: SFO 2
+parent: standard.sfo.2
 purpose: To move bulk from where it is dug or made to where it is used, cheaply, again and again.
 sections:
   - text: >-

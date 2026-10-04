@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.db
   name: Dubnium
   symbol: Db
   atomic_number: 105
-  atomic_mass: 268.126
+  atomic_mass: 4.45233697771192e-25
   group: 5
   period: 7
   block: d

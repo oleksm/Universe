@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.bauxite
   name: Bauxite
   kind: rock
   description: "The ore of aluminium: rock rich in aluminium oxide, left where warm rain has leached the ground for a very long time."

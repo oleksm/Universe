@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.aj-03
   code: AJ-03
   name: "Manipulator arm"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 40000
 made_from:
-  item: STA36-PL-20
-  quantity: 294.9
+  - item: stock.sta36-pl-20
+    quantity: 294.9
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 8
 basis:

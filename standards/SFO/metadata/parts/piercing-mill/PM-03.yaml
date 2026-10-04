@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pm-03
   code: PM-03
   name: "Sizing mill"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 250000
 made_from:
-  item: ST4340-FG
-  quantity: 375000
+  - item: stock.st4340-fg
+    quantity: 375000
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 1
 basis:

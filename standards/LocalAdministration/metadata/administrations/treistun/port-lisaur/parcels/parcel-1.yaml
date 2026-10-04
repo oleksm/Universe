@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the ground south of the hangar, and Castellan as its owner, as at Port Trethi.
+key: parcel.treistun.port-lisaur.1
+number: 1
+owner: org.castellan
+address: { street: street.treistun.port-lisaur.dock-road, number: 1 }
+outline: [[-300, -880], [400, -880], [400, -620], [-300, -620]]

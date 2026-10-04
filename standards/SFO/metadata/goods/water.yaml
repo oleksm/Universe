@@ -1,10 +1,11 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.water
   name: Water
   kind: raw
   description: "Water, as ice or liquid."
 game:
   goods: goods.water
 source:
-  won_from: asteroid-water-ice
+  won_from: good.asteroid-water-ice
   note: "Melted and filtered."

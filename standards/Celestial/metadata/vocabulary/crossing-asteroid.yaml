@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.crossing-asteroid
   name: "Crossing asteroid"
   group: small body
   known_as: "near-Earth object"

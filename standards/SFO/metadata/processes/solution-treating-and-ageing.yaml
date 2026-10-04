@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.solution-treating-and-ageing
   name: Solution treating and ageing
   kind: thermal
   method: heat treatment
@@ -7,11 +8,11 @@ identity:
     6061-T6.'
 inputs:
   materials:
-  - item: aluminium-alloy-6061
+  - item: material.aluminium-alloy-6061
     amount: 1.0
 outputs:
   products:
-  - item: aluminium-alloy-6061
+  - item: material.aluminium-alloy-6061
     grade: T6
 rate:
   mode: batch

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.mc-02
   code: MC-02
   name: "Spindle head"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 5000
 made_from:
-  item: ST4340-FG
-  quantity: 7500
+  - item: stock.st4340-fg
+    quantity: 7500
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 1
 basis:

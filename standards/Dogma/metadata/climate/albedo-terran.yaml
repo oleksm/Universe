@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.albedo-terran
+  name: "Albedo of an Earth-like world"
+  label: ALBEDO_TERRAN
+  section: dogma.climate
+value: 0.3
+kind: real
+note: "The share of sunlight it reflects."
+in_game: { file: content/base/sheet.ron }
+basis:
+  - { of: [value], tier: sourced, source: "Earth's Bond albedo: 0.3" }

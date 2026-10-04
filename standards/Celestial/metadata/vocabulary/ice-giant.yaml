@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.ice-giant
   name: "Ice giant"
   group: world
   about: "A smaller giant, mostly of water, ammonia and methane under a deep atmosphere."

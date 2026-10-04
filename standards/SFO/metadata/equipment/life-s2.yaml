@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.life.s2
   name: "Life Support"
-  key: life.s2
-  maker: brand.hadley
+  maker: org.hadley
   slot: life
   description: "Air, water and warmth for the crew."
 physical:
   mass: 1500
   volume: 8
 performance:
-  power_draw: 200
+  power_draw: 200000
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

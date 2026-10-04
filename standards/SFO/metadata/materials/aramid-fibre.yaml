@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: Kevlar. A range there is given as its middle.
 identity:
+  key: material.aramid-fibre
   name: Aramid fibre (Kevlar)
   class: polymer
   form:
@@ -9,7 +10,7 @@ identity:
 mass:
   density: 1440.0
 mechanical:
-  tensile_strength: 3000.0
+  tensile_strength: 3000000000.0
 thermal:
   min_service_temperature: 77.15
 environment:

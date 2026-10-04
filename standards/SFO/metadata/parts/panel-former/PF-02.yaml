@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pf-02
   code: PF-02
   name: "Roll"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 6000
 made_from:
-  item: ST4340-FG
-  quantity: 9000
+  - item: stock.st4340-fg
+    quantity: 9000
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 4
 basis:

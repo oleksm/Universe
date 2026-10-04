@@ -1,15 +1,15 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.computer.fbw.fast
   name: "Flight Computer (COMBAT)"
-  key: computer.fbw.fast
-  maker: brand.orbital
+  maker: org.orbital
   slot: computer
   description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
 physical:
   mass: 250
   volume: 0.5
 performance:
-  power_draw: 80
+  power_draw: 80000
   turn_rate: 1.8
   roll_rate: 3
 basis:

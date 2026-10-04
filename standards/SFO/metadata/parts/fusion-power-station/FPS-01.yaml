@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fps-01
   code: FPS-01
   name: "Reactor vessel"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 5200000
 made_from:
-  item: STA36-PL-20
-  quantity: 38333.3
+  - item: stock.sta36-pl-20
+    quantity: 38333.3
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.deuterium
   name: Deuterium
   kind: fuel
   description: "Heavy hydrogen, the fuel of fusion plants."

@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.cd
   name: Cadmium
   symbol: Cd
   atomic_number: 48
-  atomic_mass: 112.41
+  atomic_mass: 1.86661196476506e-25
   group: 12
   period: 5
   block: d
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d10 5s2'
   valence_electrons: 12
-  atomic_radius: 161.0
-  covalent_radius: 144.0
-  van_der_waals_radius: 158.0
-  ionic_radius: 95.0
+  atomic_radius: 1.61e-10
+  covalent_radius: 1.44e-10
+  van_der_waals_radius: 1.58e-10
+  ionic_radius: 9.5e-11
   stable_isotopes: 6
   isotope_abundances:
   - mass_number: 106
@@ -38,7 +39,7 @@ atomic_structure:
     abundance: 0.07512
 chemical:
   electronegativity: 1.69
-  first_ionisation_energy: 867.8
+  first_ionisation_energy: 867800.0
   oxidation_states:
   - 2
   reactivity:
@@ -54,8 +55,8 @@ physical:
   boiling_point: 1040.0
   density: 8690.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 6.3
-  heat_of_vaporisation: 100.0
+  heat_of_fusion: 6300.0
+  heat_of_vaporisation: 100000.0
   vapour_pressure: 2.8e-09
 thermal:
   specific_heat_capacity: 230.0
@@ -67,14 +68,14 @@ electrical_magnetic:
   superconducting_temperature: 0.517
 mechanical:
   hardness: 2.0
-  youngs_modulus: 50.0
+  youngs_modulus: 50000000000.0
   ductility: ductile
 optical_nuclear:
   colour: silvery bluish-gray metallic
   emission_lines:
-  - 479.991
-  - 508.582
-  - 609.914
-  - 643.847
-  - 734.567
-  neutron_cross_section: 2450.0
+  - 4.79991e-07
+  - 5.08582e-07
+  - 6.09914e-07
+  - 6.43847e-07
+  - 7.34567e-07
+  neutron_cross_section: 2.45e-25

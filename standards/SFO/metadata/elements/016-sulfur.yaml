@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.s
   name: Sulfur
   symbol: S
   atomic_number: 16
-  atomic_mass: 32.07
+  atomic_mass: 5.3253487865862e-26
   group: 16
   period: 3
   block: p
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p4'
   valence_electrons: 6
-  atomic_radius: 87.0
-  covalent_radius: 105.0
-  van_der_waals_radius: 180.0
-  ionic_radius: 184.0
+  atomic_radius: 8.7e-11
+  covalent_radius: 1.05e-10
+  van_der_waals_radius: 1.8e-10
+  ionic_radius: 1.84e-10
   stable_isotopes: 4
   isotope_abundances:
   - mass_number: 32
@@ -30,8 +31,8 @@ atomic_structure:
     abundance: 0.000158
 chemical:
   electronegativity: 2.58
-  first_ionisation_energy: 999.6
-  electron_affinity: 200.4101
+  first_ionisation_energy: 999600.0
+  electron_affinity: 200410.1
   oxidation_states:
   - 6
   - 4
@@ -52,8 +53,8 @@ physical:
   - rhombic sulphur
   - monoclinic sulphur
   - amorphous sulphur
-  heat_of_fusion: 1.73
-  heat_of_vaporisation: 9.8
+  heat_of_fusion: 1730.0
+  heat_of_vaporisation: 9800.0
   vapour_pressure: 0.00065
 thermal:
   specific_heat_capacity: 705.0
@@ -61,15 +62,15 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 1.0e-15
   magnetic_ordering: diamagnetic
-  band_gap: 2.6
+  band_gap: 4.1656592484e-19
 mechanical:
   hardness: 2.0
 optical_nuclear:
   colour: lemon yellow sintered microcrystals
   emission_lines:
-  - 469.413
-  - 570.611
-  - 605.266
-  - 674.879
-  - 675.716
-  neutron_cross_section: 0.52
+  - 4.69413e-07
+  - 5.70611e-07
+  - 6.05266e-07
+  - 6.74879e-07
+  - 6.75716e-07
+  neutron_cross_section: 5.2e-29

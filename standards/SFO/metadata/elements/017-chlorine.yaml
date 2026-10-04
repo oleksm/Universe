@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.cl
   name: Chlorine
   symbol: Cl
   atomic_number: 17
-  atomic_mass: 35.45
+  atomic_mass: 5.886610991097e-26
   group: 17
   period: 3
   block: p
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p5'
   valence_electrons: 7
-  atomic_radius: 79.0
-  covalent_radius: 102.0
-  van_der_waals_radius: 175.0
-  ionic_radius: 181.0
+  atomic_radius: 7.9e-11
+  covalent_radius: 1.02e-10
+  van_der_waals_radius: 1.75e-10
+  ionic_radius: 1.81e-10
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 35
@@ -26,8 +27,8 @@ atomic_structure:
     abundance: 0.242
 chemical:
   electronegativity: 3.16
-  first_ionisation_energy: 1251.2
-  electron_affinity: 348.575
+  first_ionisation_energy: 1251200.0
+  electron_affinity: 348575.0
   oxidation_states:
   - 7
   - 5
@@ -48,8 +49,8 @@ physical:
   crystal_structure: base orthorhombic
   allotropes:
   - dichlorine
-  heat_of_fusion: 3.2
-  heat_of_vaporisation: 10.2
+  heat_of_fusion: 3200.0
+  heat_of_vaporisation: 10200.0
 thermal:
   specific_heat_capacity: 478.2
   thermal_conductivity: 0.0089
@@ -59,9 +60,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: pale yellow-green gas
   emission_lines:
-  - 708.681
-  - 725.662
-  - 741.411
-  - 748.947
-  - 749.212
-  neutron_cross_section: 35.3
+  - 7.08681e-07
+  - 7.25662e-07
+  - 7.41411e-07
+  - 7.48947e-07
+  - 7.49212e-07
+  neutron_cross_section: 3.53e-27

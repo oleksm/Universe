@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.tube-mass
+  name: "Tube mass"
+  symbol: "rho"
+  label: TUBE_RHO
+  section: dogma.tube
+value: 406.0
+unit: "kg"
+kind: invented
+note: "A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry."
+in_game: { file: config/dogma.ron }
+basis:
+  - { of: [value], tier: invented, note: "Chosen to meet its target." }

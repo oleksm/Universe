@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../../../schema/street.schema.yaml
+# Invented: between the port and the industrial zone, as at Port Trethi.
+key: street.treistun.port-fabindum.dock-road
+name: Dock Road
+line: [[450, 275], [450, -750]]

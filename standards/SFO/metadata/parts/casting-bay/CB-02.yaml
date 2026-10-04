@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.cb-02
   code: CB-02
   name: "Ingot mould"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 8000
 made_from:
-  item: ST4340-FG
-  quantity: 12000
+  - item: stock.st4340-fg
+    quantity: 12000
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 80
 basis:

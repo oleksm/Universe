@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.mc-01
   code: MC-01
   name: "Machine bed"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 30000
 made_from:
-  item: STA36-PL-20
-  quantity: 221.2
+  - item: stock.sta36-pl-20
+    quantity: 221.2
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

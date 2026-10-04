@@ -2,12 +2,17 @@
 # Not in the game yet. A kind of asteroid there is, recorded as far as sources go: what is not
 # written here is not known to the registry, and is not made up.
 identity:
+  key: rock-class.basaltic
   name: Basaltic
   letter: V-type
   about: "Pieces of the crust of a body that once melted through: rock like the lava of a world, rich in calcium and aluminium. Rare: most of what should be there is missing."
+physical:
+  density_rubble: 2400
+  density_monolith: 3200
 found:
   warm: 0.07
   falls: 0.05
 basis:
+  - { of: [physical.density_rubble, physical.density_monolith], tier: invented, review: true, note: "A guess, to be reviewed. Lava rock of a body that melted: basalt meteorites are about 2,900 to 3,200 solid." }
   - { of: [found.warm], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "A guess, to be reviewed, made to follow what is known: basaltic asteroids are mostly the pieces of one body, Vesta, in the inner belt. The shares themselves are chosen." }
   - { of: [found.falls], tier: sourced, source: "https://en.wikipedia.org/wiki/HED_meteorite", note: "The meteorites from Vesta's crust are about 5% of all falls. They closely resemble igneous rocks of a world." }

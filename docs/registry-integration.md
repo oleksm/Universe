@@ -1,8 +1,10 @@
 # Integrating the game with Freefall Facts
 
-*For an agent working on the game. Written 2026-10-04 from branch `fso`; update it when the
-contract changes. The short form, with what is waiting to be built, is the `freefall-integration`
-skill.*
+*For an agent working on the game. Written 2026-10-04 from branch `fso`, and brought up to date
+that evening after the registry was made the single source (keys, refs, SI, Dogma, recipes). The
+short form, with what is waiting to be built, is the `freefall-integration` skill. The detail of
+that work: `docs/registry-ssot-response.md` (keys, refs, units, merged schemas) and
+`docs/registry-recipes.md` (how things are made).*
 
 Freefall Facts is the registry the game is to be sourced from: YAML records under `standards/`,
 built into a browsable page and into RON files the game loads. This says what the game can rely
@@ -53,8 +55,20 @@ Everything else in `content/base` (hulls, modules, goods, ores, recipes, places,
 structures, shapes, materials) is still hand-written game content. The registry mirrors some of it
 (see "Mirrors" below) but does not write it.
 
-Units in the RON files are SI: kg, m, s, rad, W unless a comment says otherwise. In the YAML they
-are whatever reads well (t, km, hours, degrees); each schema property states its unit.
+Units in the RON files are SI: kg, m, s, rad, W unless a comment says otherwise (a few are still
+t, MW and t/h, as the game's structs have them: `settlements.ron`, `industry.ron`). The YAML is SI
+throughout, each property's unit in its schema as `x-unit`; angles are degrees.
+
+**Changed in the generated files on 2026-10-04**, all the same shape as before:
+- `settlements.ron`: nine settlements more (every ground port of Treistun has zones, two lots, a
+  warehouse, a power station and a line); a works' `makes`, `takes` and `gives` name items ("6061
+  plate 5 mm", "A36 steel ingot", "6061 scrap") where they named kinds ("Sheet and plate",
+  "Ingot", "Scrap"); the foundry and smelter take in their alloying metals; the mill and the yard
+  have a stock yard; the yard `makes` formed panels as well as parts (its cutting table and panel
+  former are a line of their own, the welding bays another).
+- `industry.ron`: the stock yard added.
+- `celestial.ron`: the systems in order of distance from home (their positions were all zero).
+- `galaxy.ron`: the path in its comment.
 
 ## The celestial contract
 
@@ -93,7 +107,7 @@ leaves curated and frozen ones alone) and say so in the changelog.
 
 ## Asteroid belts: what the engine is to support
 
-`standards/Celestial/metadata/asteroids.yaml` holds how asteroids lie, from the Sun's belts
+`standards/Celestial/metadata/seeding/asteroids.yaml` holds how asteroids lie, from the Sun's belts
 (sourced), and the build works each charted system's belts out from it and that system's planets
 (shown on each system's page; in `standards/index.html` data as `celestial.systems[].belts`).
 
@@ -125,8 +139,8 @@ writes over a record) for each system written out, and **not** in any RON file y
   inclination, period), a radius, and a rock class.
 - `systems/<system>/regions/`: scattered disc, far cloud, a meteoroid stream for each returning comet.
 - Worked out by the build per moon of a giant: tidal heat (W/m2) and its planet's radiation dose
-  (rem a day), from `metadata/conditions.yaml`.
-- `metadata/vocabulary/`: every kind of thing a system has, with `game: made | partly | not made`.
+  (rem a day), from `metadata/seeding/conditions.yaml`.
+- `metadata/vocabulary/`: every kind of thing a system has, with `in_game: made | partly | not made`.
 
 They are kept apart from `bodies/` and `fields/` (the game's own, held by the guard test). When the
 engine can make one of these kinds, ask for it to be exported; the natural shape is a second list
@@ -163,7 +177,16 @@ limits are guesses marked to review. The game has no breaking mechanics yet.
 - The yard, mill, smelter and orbital production chain as facilities' lines with maxima.
 
 **Marked outdated.** The five stock hulls (Drover, Sprint, Hauler, Prospector, Interceptor) are
-`standing: outdated` on `fso`: early guesses, kept as a record. Don't balance against them.
+`identity.revision: outdated`: early guesses, kept as a record. Don't balance against them.
+
+**How things are made** (`docs/registry-recipes.md`): an industrial module lists its recipes; a
+setup (a module set to one recipe) is game state; a works is one pool of stock kept in its storing
+modules, and full storage stops what fills it; between works the market is the join, and what is
+on the market lies in an exchange's warehouse. Processes no longer describe production. The
+game's `recipes.ron` is still hand-written and is to be generated from the modules' recipes.
+
+**Dogma** (`standards/Dogma`): the laws as records, in SI, each held to the engine's copy by the
+Dogma report. The engine still reads `config/dogma.ron`.
 
 ## Mirrors: game content the registry copies
 
@@ -182,15 +205,20 @@ Two game values were changed from the registry side at the user's request and ar
 
 ## Keys and names
 
-- A record's file name is its key inside the registry (`fusion-power-station`, `MC07-23-001`).
-- A record that mirrors a game entry carries the game's key in `identity.key`
-  (`drive.torch.s1`, `structure.ring.i`, `hull.drover`).
-- Makers are `brand.<name>`, the same keys as the game's brands.
-- Settlements are matched to the game by system, body and name; celestial systems by their index
-  among the seed's stars, bodies by name.
-- Page keys, for linking into `standards/index.html#<key>`: `hull:`, `part:`, `pg:`, `stock:`,
-  `mod:`, `proc:`, `good:`, `eq:`, `gate:`, `mk:`, `bd:`, `fc:`, `pc:`, `cs:`, `cb:`, `cf:`, `cr:`,
-  `rep:`.
+- Every record has one key, `<kind>.<name>`, the kind being its schema's: `hull.mc-07`,
+  `part.mc07-23-001`, `stock.al6061-pl-5`, `equipment.drive.torch.s1`, `gate.ring.i`,
+  `module.arc-furnace`, `good.stony-ore`, `org.hadley`, `settlement.treistun.port-trethi`,
+  `body.treistun.treistun-f`, `law.tube-hold`. The whole table, and the three renames against the
+  game's keys (`equipment.` in front; `structure.ring.i` is `gate.ring.i`; `brand.x` is `org.x`):
+  `docs/registry-ssot-response.md`.
+- A record names another by that key; the property is marked `x-ref` in its schema.
+- The generated RON still carries the game's old keys (`brand.hadley`, bodies and systems by
+  name): the build turns them back as it writes. That stops when the game loads by key.
+- A rock class's and a law's `identity.label` is the game's name for it (`S-TYPE STONY`,
+  `SPEED_OF_LIGHT`).
+- Page keys, for linking into `standards/index.html#<key>`: `hull:`, `part:`, `stock:`, `mod:`,
+  `proc:`, `good:`, `eq:`, `gate:`, `mk:`, `bd:`, `fc:`, `pc:`, `cs:`, `cb:`, `cf:`, `cr:`, `dg`,
+  `dl:`, `rep:`.
 
 ## Asking for a registry change
 

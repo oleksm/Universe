@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../schema/section.schema.yaml
+identity:
+  key: dogma.field
+  name: Field
+  order: 3
+  about: "A hyper-field's cost, drawn from the tank: dE/dx = m E0 (1 + (v/v*)^2) / eta, eta the device's. The same everywhere (how fast a drive can go, and its governor near bodies, are its products' specs): what limits a ship is the fuel it carries."
+  see: [docs/world/hyperspace.md, tools/experiments/hyper_fuel.py]

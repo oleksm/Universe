@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pnl-02
   code: PNL-02
   name: "Cutting station"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 28500
 made_from:
-  item: STA36-PL-20
-  quantity: 210.1
+  - item: stock.sta36-pl-20
+    quantity: 210.1
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 2
 basis:

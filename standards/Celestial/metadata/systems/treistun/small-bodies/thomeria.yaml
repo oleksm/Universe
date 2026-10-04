@@ -1,9 +1,10 @@
-# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: returning comets come round in under 200 years, thrown in from the outer belt and scattered disc.
 # The game does not make it yet. Change its provenance to curated to take it over.
 provenance: seeded
-identity: {name: Thomeria, kind: comet, parent: Treistun, about: 'A returning comet. It comes in to 1.11 AU, where it boils
-    and grows a tail, and goes out to 19.7 AU.'}
-orbit: {semi_major_axis: 1558080000.0, eccentricity: 0.89307755, inclination: 6.64, period: 14621.0}
-physical: {radius: 0.8308, density: 600, mass: 1441000000000.0}
-rock: {class: icy}
+in_game: not made
+identity: {key: body.treistun.thomeria, name: Thomeria, kind: comet, parent: body.treistun.treistun, about: 'A returning comet.
+    It comes in to 1.11 AU, where it boils and grows a tail, and goes out to 19.7 AU.'}
+orbit: {semi_major_axis: 1558080000000.0, eccentricity: 0.89307755, inclination: 6.64, period: 1262995200.0}
+physical: {radius: 830.8, density: 600, mass: 1441000000000.0}
+rock: {class: rock-class.icy}

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.film-casting
   name: Film casting
   kind: mechanical
   method: casting
@@ -8,7 +9,7 @@ inputs:
   form: fluid
 outputs:
   products:
-  - item: polyimide-film
+  - item: material.polyimide-film
     form: film
 rate:
   mode: continuous

@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.sg
   name: Seaborgium
   symbol: Sg
   atomic_number: 106
-  atomic_mass: 269.128
+  atomic_mass: 4.46897557915925e-25
   group: 6
   period: 7
   block: d

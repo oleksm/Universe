@@ -8,39 +8,34 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name]
+    required: [key, name]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-      key: { type: string, description: "Its key in the game (content/base/modules.ron). One the game does not have yet has none." }
-      maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
+      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
       slot: { type: string, description: "The kind of slot it fits." }
       description: { type: string }
-  physical:
-    type: object
-    additionalProperties: false
-    properties:
-      mass: { type: number, description: kg }
-      volume: { type: number, description: m3 }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   performance:
     type: object
     additionalProperties: false
     properties:
-      power_draw: { type: number, description: "kW, working" }
-      output: { type: number, description: "MW it supplies" }
+      power_draw: { type: number, x-unit: "W", description: "W, working" }
+      output: { type: number, x-unit: "W", description: "W it supplies" }
       efficiency: { type: number, description: "the share of its fuel's or its draw's energy it turns to use" }
-      thrust: { type: number, description: "kN, of one nozzle at full share" }
-      exhaust_speed: { type: number, description: km/s }
-      burns: { type: string, description: What it burns. }
-      capacity: { type: number, description: "kg it holds" }
-      holds: { type: string, description: What it holds. }
-      top_speed: { type: number, description: "times the speed of light" }
-      turn_rate: { type: number, description: "rad/s it can turn the ship at" }
-      roll_rate: { type: number, description: "rad/s it can roll the ship at" }
-      range: { type: number, description: km }
-      capture: { type: number, description: "km, how far it hears" }
-      link: { type: number, description: "km, how far it reaches another" }
-      lag: { type: number, description: "s to pass a message on" }
-      messages: { type: number, description: "messages an hour" }
+      thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
+      exhaust_speed: { type: number, x-unit: "m/s", description: m/s }
+      burns: { type: string, x-ref: [good], description: What it burns. }
+      capacity: { type: number, x-unit: "kg", description: "kg it holds" }
+      holds: { type: string, x-ref: [good], description: What it holds. }
+      top_speed: { type: number, x-unit: "m/s", description: "m/s" }
+      turn_rate: { type: number, x-unit: "rad/s", description: "rad/s it can turn the ship at" }
+      roll_rate: { type: number, x-unit: "rad/s", description: "rad/s it can roll the ship at" }
+      range: { type: number, x-unit: "m", description: m }
+      capture: { type: number, x-unit: "m", description: "m, how far it hears" }
+      link: { type: number, x-unit: "m", description: "m, how far it reaches another" }
+      lag: { type: number, x-unit: "s", description: "s to pass a message on" }
+      messages: { type: number, x-unit: "1/s", description: "messages a second" }
       features: { type: array, items: { type: string }, description: What it can do. }
-      cadence: { type: number, description: "s between its throws" }
+      cadence: { type: number, x-unit: "s", description: "s between its throws" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

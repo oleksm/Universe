@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.w
   name: Tungsten
   symbol: W
   atomic_number: 74
-  atomic_mass: 183.84
+  atomic_mass: 3.05273502003744e-25
   group: 6
   period: 6
   block: d
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d4 6s2'
   valence_electrons: 6
-  atomic_radius: 193.0
-  covalent_radius: 162.0
-  van_der_waals_radius: 210.0
-  ionic_radius: 60.0
+  atomic_radius: 1.93e-10
+  covalent_radius: 1.62e-10
+  van_der_waals_radius: 2.1e-10
+  ionic_radius: 6.0e-11
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 180
@@ -32,8 +33,8 @@ atomic_structure:
     abundance: 0.2843
 chemical:
   electronegativity: 2.36
-  first_ionisation_energy: 758.8
-  electron_affinity: 78.76
+  first_ionisation_energy: 758800.0
+  electron_affinity: 78760.0
   oxidation_states:
   - 6
   reactivity:
@@ -48,8 +49,8 @@ physical:
   boiling_point: 5828.0
   density: 19300.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 35.0
-  heat_of_vaporisation: 800.0
+  heat_of_fusion: 35000.0
+  heat_of_vaporisation: 800000.0
   vapour_pressure: 1.2e-136
 thermal:
   specific_heat_capacity: 132.0
@@ -61,15 +62,15 @@ electrical_magnetic:
   superconducting_temperature: 0.015
 mechanical:
   hardness: 7.5
-  youngs_modulus: 411.0
-  tensile_strength: 585
+  youngs_modulus: 411000000000.0
+  tensile_strength: 585000000
   ductility: ductile
 optical_nuclear:
   colour: grayish white, lustrous
   emission_lines:
-  - 386.799
-  - 400.875
-  - 407.436
-  - 429.461
-  - 505.328
-  neutron_cross_section: 18.4
+  - 3.86799e-07
+  - 4.00875e-07
+  - 4.07436e-07
+  - 4.29461e-07
+  - 5.05328e-07
+  neutron_cross_section: 1.84e-27

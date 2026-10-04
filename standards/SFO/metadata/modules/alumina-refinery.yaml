@@ -1,25 +1,24 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.alumina-refinery
   name: Alumina refinery
   step: Refine the ore
   description: "Dissolves the aluminium oxide out of crushed bauxite in hot caustic soda, settles out the residue, and bakes what is left to a dry white powder."
-size:
+physical:
   length: 450
   width: 300
   height: 40
-rate:
-  throughput: 100
-  product: alumina
-inputs:
-  materials:
-  - { item: bauxite, amount: 2.13 }
-  - { item: caustic-soda, amount: 0.1 }
-outputs:
-  by_products:
-  - { item: red-mud, amount: 1.23 }
-needs:
-  power: 333
+recipes:
+  - makes: good.alumina
+    does: "The aluminium oxide is dissolved out of the bauxite, the residue settled out, and the oxide baked to a dry powder."
+    inputs:
+      - { item: good.bauxite, quantity: 2.13 }
+      - { item: good.caustic-soda, quantity: 0.1 }
+    outputs:
+      - { item: good.red-mud, quantity: 1.23 }
+    rate: 27.7777777777778
+    power: 333000000
 basis:
-  - { of: [inputs, outputs], tier: sourced, source: "https://en.wikipedia.org/wiki/Red_mud", note: "Red mud 1.0 to 1.5 t for each tonne of alumina (1.23 on average) and caustic soda 100 kg; the bauxite is set to balance, inside the 1.9 to 3.6 t the source gives." }
-  - { of: [needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Bayer_process", note: "7 to 21 GJ for each tonne, mostly heat; 12 taken. Heat is counted as power: there is no fuel to burn." }
-  - { of: [rate, size], tier: invented, note: "100 t/h is a small refinery (large ones make 4 Mt a year). Its footprint follows an unverified 20 hectares for each Mt a year." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://en.wikipedia.org/wiki/Red_mud", note: "Red mud 1.0 to 1.5 t for each tonne of alumina (1.23 on average) and caustic soda 100 kg; the bauxite is set to balance, inside the 1.9 to 3.6 t the source gives." }
+  - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Bayer_process", note: "7 to 21 GJ for each tonne, mostly heat; 12 taken. Heat is counted as power: there is no fuel to burn." }
+  - { of: [recipes.makes, recipes.rate, physical], tier: invented, note: "100 t/h is a small refinery (large ones make 4 Mt a year). Its footprint follows an unverified 20 hectares for each Mt a year." }

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.visitor
   name: "Visitor from another star"
   group: small body
   known_as: "interstellar object"

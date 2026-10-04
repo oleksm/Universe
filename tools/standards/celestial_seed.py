@@ -16,8 +16,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 CEL = os.path.join(ROOT, "standards", "Celestial", "metadata")
 dry = "--dry" in sys.argv
 AU, G, SUN = 1.495978707e8, 6.6743e-11, 1.98847e30          # km, SI, kg
-galaxy = yaml.safe_load(open(os.path.join(CEL, "galaxy.yaml")))
-laws = yaml.safe_load(open(os.path.join(CEL, "asteroids.yaml")))
+SUN_W = 3.828e26
+si = lambda v: float(f"{v:.15g}")       # (records are in SI; this works in km, days and AU, and writes each value in SI)
+galaxy = yaml.safe_load(open(os.path.join(CEL, "seeding", "galaxy.yaml")))["galaxy"]
+laws = yaml.safe_load(open(os.path.join(CEL, "seeding", "asteroids.yaml")))
+for _b in ("main_belt", "outer_belt"):
+    for _e in ("inner_edge", "outer_edge"):
+        laws[_b][_e] = float(f"{laws[_b][_e] / (AU * 1000):.12g}")          # (m, to AU)
 classes = {f[:-5]: yaml.safe_load(open(os.path.join(CEL, "rock-classes", f))) for f in os.listdir(os.path.join(CEL, "rock-classes"))}
 slug = lambda name: re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 r3 = lambda v, n=4: float(f"{v:.{n}g}")
@@ -67,11 +72,21 @@ def density(cls):
     return ((classes.get(cls) or {}).get("physical") or {}).get("density_monolith")
 
 
-def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu):
-    rec = {"provenance": "seeded", "identity": {"name": nm, "kind": kind, "parent": parent, "about": about},
-           "orbit": {"semi_major_axis": r3(a_km, 6), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5)},
-           "physical": {"radius": r3(radius_km)}, "rock": {"class": cls}}
-    d = laws["sizes"].get("comet_density") if kind == "comet" else density(cls)
+def own_density(cls, nm, radius_km):
+    """A body's own density: each its own, between its class's as a rubble pile and as one solid piece
+    (drawn from the galaxy's seed and its name); one over 200 km in radius has pulled itself solid."""
+    ph = (classes.get(cls) or {}).get("physical") or {}
+    lo, hi = ph.get("density_rubble"), ph.get("density_monolith")
+    if not hi or not lo or radius_km >= 200:
+        return hi
+    return round(random.Random(f"{galaxy['seed']}:density:{nm}").uniform(lo, hi), -1)
+
+
+def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu, d=None):
+    rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"body.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "parent": f"body.{SYS}.{slug(parent)}", "about": about},
+           "orbit": {"semi_major_axis": si(r3(a_km, 6) * 1000), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": si(r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5) * 86400)},
+           "physical": {"radius": si(r3(radius_km) * 1000)}, "rock": {"class": "rock-class." + cls}}
+    d = d or (laws["sizes"].get("comet_density") if kind == "comet" else own_density(cls, nm, radius_km))
     if d:
         rec["physical"]["density"] = d
         rec["physical"]["mass"] = r3(d * 4 / 3 * math.pi * (radius_km * 1000) ** 3)
@@ -83,11 +98,17 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         continue
     sysm = yaml.safe_load(open(os.path.join(CEL, "systems", fn)))
     sysdir = os.path.join(CEL, "systems", fn[:-5])
-    star, sname = sysm["star"], sysm["identity"]["name"]
-    mu = G * star["mass"] * SUN
+    SYS = fn[:-5]
+    sname = sysm["identity"]["name"]
     bodies = [yaml.safe_load(open(os.path.join(sysdir, "bodies", b))) for b in sorted(os.listdir(os.path.join(sysdir, "bodies")))]
+    sun = next(b for b in bodies if b["identity"]["kind"] == "star")
+    star = {"mass": sun["physical"]["mass"] / SUN, "luminosity": float(f"{sun['star']['luminosity'] / SUN_W:.12g}")}
+    bodies = [b for b in bodies if b["identity"]["kind"] != "star"]
+    for b in bodies:
+        b["orbit"]["semi_major_axis"] = float(f"{b['orbit']['semi_major_axis'] / 1000:.12g}")       # (m, to km)
+    mu = G * star["mass"] * SUN
     used.update(b["identity"]["name"] for b in bodies)
-    planets = sorted((b for b in bodies if b["identity"]["parent"] == sname and b["identity"]["kind"] != "asteroid"), key=lambda b: b["orbit"]["semi_major_axis"])
+    planets = sorted((b for b in bodies if b["identity"]["parent"] == f"body.{SYS}.{slug(sname)}" and b["identity"]["kind"] != "asteroid"), key=lambda b: b["orbit"]["semi_major_axis"])
     au = lambda b: b["orbit"]["semi_major_axis"] / AU
     giants = [b for b in planets if b["identity"]["kind"] in ("gas giant", "ice giant")]
     rocky = [b for b in planets if b["identity"]["kind"] == "rocky planet"]
@@ -110,8 +131,8 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     d = density(cls) or 2500
     rad = (3 * 0.39 * mb["mass"] * share / (4 * math.pi * d)) ** (1 / 3) / 1000
     a = r.uniform(belt[0] + 0.25 * (belt[1] - belt[0]), belt[1] - 0.25 * (belt[1] - belt[0]))
-    put(sysdir, "small-bodies", "small-body", body("dwarf planet" if rad >= 400 else "asteroid", name(r), sname, a * AU, r.uniform(0.03, 0.12), r.uniform(1, 11), rad, cls,
-        "The largest body of the main belt: over a third of all the belt's mass." + ("" if rad >= 400 else " Too small to have pulled itself round."), mu),
+    put(sysdir, "small-bodies", "body", body("dwarf planet" if rad >= 400 else "asteroid", name(r), sname, a * AU, r.uniform(0.03, 0.12), r.uniform(1, 11), rad, cls,
+        "The largest body of the main belt: over a third of all the belt's mass." + ("" if rad >= 400 else " Too small to have pulled itself round."), mu, d),
         "a belt's largest body holds 39% of its mass; the belt's mass goes by the ground it covers.")
 
     # Crossing asteroids: knocked out of the belt onto orbits that come in among the rocky planets.
@@ -123,7 +144,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         if far <= q:
             far = q * r.uniform(1.3, 2.2)
         a, e = (q + far) / 2, (far - q) / (far + q)
-        put(sysdir, "small-bodies", "small-body", body("crossing asteroid", name(r), sname, a * AU, e, r.uniform(1, 25), math.exp(r.uniform(math.log(0.1), math.log(1.5))), pick(r, "warm"),
+        put(sysdir, "small-bodies", "body", body("crossing asteroid", name(r), sname, a * AU, e, r.uniform(1, 25), math.exp(r.uniform(math.log(0.1), math.log(1.5))), pick(r, "warm"),
             f"Knocked out of the belt. At its closest it comes in to {q:.2f} AU, near the orbit of {target['identity']['name']}.", mu),
             "about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.")
 
@@ -132,13 +153,13 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         r = rng("captured:" + g["identity"]["name"])
         reach = g["orbit"]["semi_major_axis"] * (g["physical"]["mass"] / (3 * star["mass"] * SUN)) ** (1 / 3)
         # (Outside its own moons: no closer than half again the farthest of them.)
-        least = max([0.05 * reach] + [1.5 * m["orbit"]["semi_major_axis"] for m in bodies if m["identity"]["parent"] == g["identity"]["name"]])
+        least = max([0.05 * reach] + [1.5 * m["orbit"]["semi_major_axis"] for m in bodies if m["identity"]["parent"] == g["identity"]["key"]])
         for _ in range(r.randint(2, 4) if g["identity"]["kind"] == "gas giant" else r.randint(1, 2)):
             back, e = r.random() < 0.6, r.uniform(0.1, 0.5)
             near = least / (1 - e)                       # (so that even at its closest it stays outside them)
             if near >= 0.47 * reach:                     # (no room between its own moons and the limit of what it can hold)
                 continue
-            put(sysdir, "small-bodies", "small-body", body("captured moon", name(r), g["identity"]["name"], r.uniform(near, 0.47 * reach), e, r.uniform(140, 175) if back else r.uniform(25, 55),
+            put(sysdir, "small-bodies", "body", body("captured moon", name(r), g["identity"]["name"], r.uniform(near, 0.47 * reach), e, r.uniform(140, 175) if back else r.uniform(25, 55),
                 math.exp(r.uniform(math.log(1), math.log(60))), r.choices(["primitive", "carbonaceous"], [0.7, 0.3])[0],
                 f"Once it went round the star; {g['identity']['name']} caught it. It goes round {'backward' if back else 'the same way as the planet turns'}, far out.", G * g["physical"]["mass"]),
                 "between 0.05 and 0.47 of the giant's reach, as the Sun's giants' are.")
@@ -147,7 +168,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     r = rng("centaurs")
     for _ in range(3 if len(giants) >= 2 else 0):
         a = r.uniform(au(giants[0]) * 1.15, au(giants[-1]) * 0.9)
-        put(sysdir, "small-bodies", "small-body", body("centaur", name(r), sname, a * AU, r.uniform(0.1, 0.5), r.uniform(2, 25), math.exp(r.uniform(math.log(10), math.log(120))), "icy",
+        put(sysdir, "small-bodies", "body", body("centaur", name(r), sname, a * AU, r.uniform(0.1, 0.5), r.uniform(2, 25), math.exp(r.uniform(math.log(10), math.log(120))), "icy",
             "An ice body among the giants, on an orbit that will last a few million years. One day a giant will throw it inward as a comet, or out.", mu),
             "between the first giant and the last.")
 
@@ -157,7 +178,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         expect = 200 * ring(lo, hi) / ring(ob["inner_edge"], ob["outer_edge"])
         r = rng("dwarfs")
         for _ in range(min(3, round(expect))):
-            put(sysdir, "small-bodies", "small-body", body("dwarf planet", name(r), sname, r.uniform(lo, hi) * AU, r.uniform(0.03, 0.25), r.uniform(1, 28), r.uniform(450, 1200), "icy",
+            put(sysdir, "small-bodies", "body", body("dwarf planet", name(r), sname, r.uniform(lo, hi) * AU, r.uniform(0.03, 0.25), r.uniform(1, 28), r.uniform(450, 1200), "icy",
                 f"A world of ice in the outer belt, heavy enough to have pulled itself round. One of perhaps {round(expect)}.", mu),
                 "the outer belt's largest: round above about 400 km in radius.")
 
@@ -169,20 +190,20 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
         a, e = (q + far) / 2, (far - q) / (far + q)
         nm = name(r)
         comets.append((nm, q, far))
-        put(sysdir, "small-bodies", "small-body", body("comet", nm, sname, a * AU, e, r.uniform(2, 35), r.uniform(0.75, 2.5), "icy",
+        put(sysdir, "small-bodies", "body", body("comet", nm, sname, a * AU, e, r.uniform(2, 35), r.uniform(0.75, 2.5), "icy",
             f"A returning comet. It comes in to {q:.2f} AU, where it boils and grows a tail, and goes out to {far:.1f} AU.", mu),
             "returning comets come round in under 200 years, thrown in from the outer belt and scattered disc.")
     q, a = warm * r.uniform(0.3, 2.5), r.uniform(2000, 20000) * (star["mass"]) ** (1 / 3)
-    put(sysdir, "small-bodies", "small-body", body("comet", name(r), sname, a * AU, 1 - q / a, r.uniform(0, 180), r.uniform(2, 10), "icy",
+    put(sysdir, "small-bodies", "body", body("comet", name(r), sname, a * AU, 1 - q / a, r.uniform(0, 180), r.uniform(2, 10), "icy",
         f"A comet from the far cloud. It comes in to {q:.2f} AU once in a very long time.", mu),
         "the others come from the far cloud, once in thousands to millions of years.")
 
     # Regions.
     def region(kind, nm, lo, hi, about, why, parent=None):
-        rec = {"provenance": "seeded", "identity": {"name": nm, "kind": kind, "about": about}, "extent": {"inner": r3(lo), "outer": r3(hi)}}
+        rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"population.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "about": about}, "extent": {"inner": si(r3(lo) * AU * 1000), "outer": si(r3(hi) * AU * 1000)}}
         if parent:
-            rec["identity"]["parent"] = parent
-        put(sysdir, "regions", "region", rec, why)
+            rec["identity"]["parent"] = f"body.{SYS}.{slug(parent)}"
+        put(sysdir, "regions", "population", rec, why)
     if giants:
         region("scattered disc", "Scattered disc", au(giants[-1]), au(giants[-1]) * 100 / 30, "Ice bodies the giants threw outward, on long, tilted, stretched orbits. They come no closer than the last giant.",
                "the Sun's: no closer than its last giant at 30 AU, reaching past 100.")

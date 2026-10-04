@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: Polytetrafluoroethylene. A range there is given as its middle.
 identity:
+  key: material.ptfe
   name: PTFE
   class: polymer
   form:
@@ -11,12 +12,12 @@ identity:
 mass:
   density: 2200.0
 mechanical:
-  youngs_modulus: 0.5
-  yield_strength: 23.0
+  youngs_modulus: 500000000.0
+  yield_strength: 23000000.0
   friction_coefficient: 0.075
 thermal:
   melting_point: 600.0
   thermal_conductivity: 0.25
   thermal_expansion: 0.0001185
 electrical_magnetic:
-  dielectric_strength: 60.0
+  dielectric_strength: 60000000.0

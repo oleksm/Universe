@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.po
   name: Polonium
   symbol: Po
   atomic_number: 84
-  atomic_mass: 208.98243
+  atomic_mass: 3.47023489248e-25
   group: 16
   period: 6
   block: p
@@ -14,17 +15,17 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s2 6p4'
   valence_electrons: 6
-  atomic_radius: 135.0
-  covalent_radius: 140.0
-  van_der_waals_radius: 197.0
-  ionic_radius: 94.0
+  atomic_radius: 1.35e-10
+  covalent_radius: 1.4e-10
+  van_der_waals_radius: 1.97e-10
+  ionic_radius: 9.4e-11
   stable_isotopes: 0
   half_life: 3222210000.0
   decay_mode: alpha
 chemical:
   electronegativity: 2.0
-  first_ionisation_energy: 812.1
-  electron_affinity: 136
+  first_ionisation_energy: 812100.0
+  electron_affinity: 136000
   oxidation_states:
   - 4
   - 2
@@ -44,8 +45,8 @@ physical:
   allotropes:
   - alpha polonium
   - beta polonium
-  heat_of_fusion: 13.0
-  heat_of_vaporisation: 100.0
+  heat_of_fusion: 13000.0
+  heat_of_vaporisation: 100000.0
   vapour_pressure: 2.9e-09
 thermal:
   specific_heat_capacity: 126.3
@@ -54,9 +55,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: silvery
   emission_lines:
-  - 386.193
-  - 417.052
-  - 449.321
-  - 487.624
-  - 532.323
-  neutron_cross_section: 0.5
+  - 3.86193e-07
+  - 4.17052e-07
+  - 4.49321e-07
+  - 4.87624e-07
+  - 5.32323e-07
+  neutron_cross_section: 5.0e-29

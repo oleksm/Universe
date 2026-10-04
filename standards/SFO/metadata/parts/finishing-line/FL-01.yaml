@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fl-01
   code: FL-01
   name: "Leveller"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 150000
 made_from:
-  item: STA36-PL-20
-  quantity: 1105.8
+  - item: stock.sta36-pl-20
+    quantity: 1105.8
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

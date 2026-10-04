@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.biraidim.biraidim, name: Biraidim, kind: star}
+star: {class: M, luminosity: 8.031144e+24}
+physical: {mass: 6.5938e+29, radius: 266119000.0, day: 1971900.0, tilt: 5.63}
+surface:
+  colour: [1.0, 0.55, 0.38]

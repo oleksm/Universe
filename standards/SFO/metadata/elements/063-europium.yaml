@@ -3,20 +3,21 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.eu
   name: Europium
   symbol: Eu
   atomic_number: 63
-  atomic_mass: 151.964
+  atomic_mass: 2.52342158716802e-25
   period: 6
   block: f
   category: lanthanide
 atomic_structure:
   electron_configuration: '[Xe] 4f7 6s2'
   valence_electrons: 9
-  atomic_radius: 231.0
-  covalent_radius: 198.0
-  van_der_waals_radius: 233.0
-  ionic_radius: 94.7
+  atomic_radius: 2.31e-10
+  covalent_radius: 1.98e-10
+  van_der_waals_radius: 2.33e-10
+  ionic_radius: 9.47e-11
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 151
@@ -24,8 +25,8 @@ atomic_structure:
   - mass_number: 153
     abundance: 0.5219
 chemical:
-  first_ionisation_energy: 547.1
-  electron_affinity: 11.2
+  first_ionisation_energy: 547100.0
+  electron_affinity: 11200.0
   oxidation_states:
   - 3
   - 2
@@ -42,8 +43,8 @@ physical:
   boiling_point: 1802.0
   density: 5240.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 9.3
-  heat_of_vaporisation: 175.0
+  heat_of_fusion: 9300.0
+  heat_of_vaporisation: 175000.0
   vapour_pressure: 5.2e-20
 thermal:
   specific_heat_capacity: 182.0
@@ -55,14 +56,14 @@ electrical_magnetic:
   superconducting_temperature: 1.8
 mechanical:
   hardness: 3.07
-  youngs_modulus: 18.0
+  youngs_modulus: 18000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silver
   emission_lines:
-  - 459.403
-  - 462.722
-  - 466.188
-  - 521.51
-  - 583.098
-  neutron_cross_section: 4570.0
+  - 4.59403e-07
+  - 4.62722e-07
+  - 4.66188e-07
+  - 5.2151e-07
+  - 5.83098e-07
+  neutron_cross_section: 4.57e-25

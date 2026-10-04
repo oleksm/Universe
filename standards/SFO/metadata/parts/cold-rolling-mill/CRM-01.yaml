@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.crm-01
   code: CRM-01
   name: "Mill stand"
   revision: draft
@@ -7,10 +8,10 @@ identity:
 physical:
   mass: 360000
 made_from:
-  item: ST4340-FG
-  quantity: 540000
+  - item: stock.st4340-fg
+    quantity: 540000
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 5
 basis:

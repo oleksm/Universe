@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+key: standard.sfo.12
 title: Parts
-parent: SFO 8
+parent: standard.sfo.8
 records: parts
 purpose: A part is one made thing that a hull is built of. A simple part is cut from mill stock; a larger one is made of other parts. Parts are filed by the hull they belong to.

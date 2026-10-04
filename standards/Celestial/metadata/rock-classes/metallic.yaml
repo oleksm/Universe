@@ -2,8 +2,9 @@
 # What it is and what it yields: as the game's code has it (a test holds the two together).
 # Where it is found: the spec, from what is known of the Sun's asteroids. The game's own odds differ.
 identity:
+  key: rock-class.metallic
+  label: "M-TYPE METALLIC"
   name: Metallic
-  key: "M-TYPE METALLIC"
   letter: M-type
   about: "Nickel-iron, with platinum-group metals."
 physical:
@@ -13,7 +14,7 @@ physical:
   colour: [0.7, 0.72, 0.78]
 composition:
   metal: [0.8, 0.95]
-  pgm: [10.0, 60.0]
+  pgm: [1.0e-05, 6.0e-05]
 found:
   warm: 0.06
   frost_line: 0.15
@@ -21,9 +22,9 @@ found:
   falls: 0.046
 mining:
   cut_energy: 400000
-  yields: nickel-iron-ore
-  rich_yields: pgm-rich-ore
-  rich_above: 30
+  yields: good.nickel-iron-ore
+  rich_yields: good.pgm-rich-ore
+  rich_above: 3.0e-05
 basis:
   - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
   - { of: [found.warm, found.frost_line, found.cold], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "A guess, to be reviewed, made to follow what is known: metal-rich asteroids are typically in the middle of the belt, and make up much of what is neither stony nor carbonaceous. The shares themselves are chosen." }

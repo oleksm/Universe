@@ -1,7 +1,0 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-name: "Treistun f"
-kind: planet
-gravity: 4.06
-about: "The fifth planet, 1.13 AU out, and the last rocky one. Small: 3,634 km in radius, 0.41 g, no air, about 190 K on average. Its day lasts under 11 hours. No moon."
-story:
-  - "The easy one to leave. With less than half the gravity of the inner worlds, f became the place to stop on the way to the giants."

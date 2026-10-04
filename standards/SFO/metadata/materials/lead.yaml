@@ -1,18 +1,19 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: our element record (Lead). A range there is given as its middle.
 identity:
+  key: material.lead
   name: Lead
   class: metal
   composition:
-  - part: Pb
+  - part: element.pb
     share: 1.0
   form:
   - sheet
 mass:
   density: 11340.0
 mechanical:
-  youngs_modulus: 16.0
-  tensile_strength: 12
+  youngs_modulus: 16000000000.0
+  tensile_strength: 12000000
   hardness: 1.5
 thermal:
   melting_point: 600.61

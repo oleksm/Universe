@@ -1,24 +1,23 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.cold-rolling-mill
   name: Cold rolling mill
   step: Roll cold
   description: "Rolls the strip again cold, to its final thickness and a clean surface."
-size:
+physical:
   length: 150
   width: 40
   height: 15
-rate:
-  throughput: 60
-  product: cold-rolled-strip
-inputs:
-  materials:
-  - { item: hot-rolled-strip, amount: 1.19 }
-outputs:
-  by_products:
-  - { item: scrap, amount: 0.19 }
-needs:
-  power: 38
+recipes:
+  - makes: good.cold-rolled-strip-6061
+    does: "The strip is rolled again cold, to its final thickness."
+    inputs:
+      - { item: good.hot-rolled-strip-6061, quantity: 1.19 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.19 }
+    rate: 16.6666666666667
+    power: 38000000
 basis:
-  - { of: [inputs, outputs, needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 640 kWh for each tonne and an 84% yield. Heat is counted as power: there is no fuel to burn." }
-  - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Tandem mills average 126 t/h and reversing mills 13; 60 lies between." }
-  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 640 kWh for each tonne and an 84% yield. Heat is counted as power: there is no fuel to burn." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Tandem mills average 126 t/h and reversing mills 13; 60 lies between." }
+  - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

@@ -3,26 +3,27 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.np
   name: Neptunium
   symbol: Np
   atomic_number: 93
-  atomic_mass: 237.048172
+  atomic_mass: 3.93627750272116e-25
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f4 6d1 7s2'
   valence_electrons: 7
-  covalent_radius: 190.0
-  van_der_waals_radius: 221.0
-  ionic_radius: 72.0
+  covalent_radius: 1.9e-10
+  van_der_waals_radius: 2.21e-10
+  ionic_radius: 7.2e-11
   stable_isotopes: 0
   half_life: 67706300000000.0
   decay_mode: alpha
 chemical:
   electronegativity: 1.36
-  first_ionisation_energy: 604.5
-  electron_affinity: 45.85
+  first_ionisation_energy: 604500.0
+  electron_affinity: 45850.0
   oxidation_states:
   - 6
   - 5
@@ -41,8 +42,8 @@ physical:
   boiling_point: 4175.0
   density: 20250.0
   crystal_structure: simple orthorhombic
-  heat_of_fusion: 10.0
-  heat_of_vaporisation: 335.0
+  heat_of_fusion: 10000.0
+  heat_of_vaporisation: 335000.0
   vapour_pressure: 1.7e-64
 thermal:
   specific_heat_capacity: 124.3
@@ -52,9 +53,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: silvery metallic
   emission_lines:
-  - 693.031
-  - 697.209
-  - 738.103
-  - 738.165
-  - 740.27
-  neutron_cross_section: 180.0
+  - 6.93031e-07
+  - 6.97209e-07
+  - 7.38103e-07
+  - 7.38165e-07
+  - 7.4027e-07
+  neutron_cross_section: 1.8e-26

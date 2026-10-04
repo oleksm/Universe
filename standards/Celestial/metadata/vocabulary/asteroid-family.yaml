@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.asteroid-family
   name: "Asteroid family"
   group: small body
   about: "The pieces of one body broken in a collision. They share its orbit, and spread all the way round it."

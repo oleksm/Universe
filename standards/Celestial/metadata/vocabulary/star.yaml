@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.star
   name: "Star"
   group: star
   about: "The body a system goes round. Its mass sets every orbit; its light sets where water is ice."

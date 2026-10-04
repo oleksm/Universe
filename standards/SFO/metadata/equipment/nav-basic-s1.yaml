@@ -1,15 +1,15 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.nav.basic.s1
   name: "Nav computer (basic)"
-  key: nav.basic.s1
-  maker: brand.orbital
+  maker: org.orbital
   slot: avionics
   description: "Navigation aids: docking and landing."
 physical:
   mass: 100
   volume: 0.2
 performance:
-  power_draw: 10
+  power_draw: 10000
   features: ["docking", "landing"]
 basis:
   - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

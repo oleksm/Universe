@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
 identity:
+  key: vocabulary.comet
   name: "Comet"
   group: small body
   about: "An ice body on a long stretched orbit. Near the star it warms, gives off gas and dust, and grows a cloud and a tail."

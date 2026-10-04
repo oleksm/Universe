@@ -3,6 +3,7 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
 # it is cut from.
 identity:
+  key: part.mc07-23-001
   code: MC07-23-001
   name: "Strut"
   revision: draft
@@ -12,14 +13,14 @@ physical:
   length: 1.38
   width: 1.3
   height: 4.65
-  shock_limit: 50
+  shock_limit: 490.3325
 shape:
   surface_area: 33.9
 made_from:
-  item: ST4340-TB-150X10
-  quantity: 5.58
+  - item: stock.st4340-tb-150x10
+    quantity: 5.58
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 1
 limits:

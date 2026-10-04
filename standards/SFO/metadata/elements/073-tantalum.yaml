@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.ta
   name: Tantalum
   symbol: Ta
   atomic_number: 73
-  atomic_mass: 180.9479
+  atomic_mass: 3.0047105696923e-25
   group: 5
   period: 6
   block: d
@@ -14,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d3 6s2'
   valence_electrons: 5
-  atomic_radius: 200.0
-  covalent_radius: 170.0
-  van_der_waals_radius: 217.0
-  ionic_radius: 64.0
+  atomic_radius: 2.0e-10
+  covalent_radius: 1.7e-10
+  van_der_waals_radius: 2.17e-10
+  ionic_radius: 6.4e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 181
     abundance: 0.99988
 chemical:
   electronegativity: 1.5
-  first_ionisation_energy: 728.4
-  electron_affinity: 31
+  first_ionisation_energy: 728400.0
+  electron_affinity: 31000
   oxidation_states:
   - 5
   reactivity:
@@ -41,8 +42,8 @@ physical:
   boiling_point: 5731.0
   density: 16400.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 36.0
-  heat_of_vaporisation: 736.0
+  heat_of_fusion: 36000.0
+  heat_of_vaporisation: 736000.0
   vapour_pressure: 2.5e-121
 thermal:
   specific_heat_capacity: 140.0
@@ -54,15 +55,15 @@ electrical_magnetic:
   superconducting_temperature: 4.47
 mechanical:
   hardness: 6.5
-  youngs_modulus: 186.0
-  tensile_strength: 200
+  youngs_modulus: 186000000000.0
+  tensile_strength: 200000000
   ductility: very ductile
 optical_nuclear:
   colour: gray blue
   emission_lines:
-  - 406.14
-  - 451.098
-  - 457.431
-  - 468.188
-  - 648.537
-  neutron_cross_section: 20.5
+  - 4.0614e-07
+  - 4.51098e-07
+  - 4.57431e-07
+  - 4.68188e-07
+  - 6.48537e-07
+  neutron_cross_section: 2.05e-27
