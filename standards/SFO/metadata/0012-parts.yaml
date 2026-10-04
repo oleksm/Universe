@@ -2,4 +2,4 @@
 title: Parts
 parent: SFO 8
 records: parts
-purpose: A part is one made thing, cut from mill stock, that an assembly is built of. Parts are filed by the hull they belong to, and under it by the assembly they go into.
+purpose: A part is one made thing that a hull is built of. A simple part is cut from mill stock; a larger one is made of other parts. Parts are filed by the hull they belong to.

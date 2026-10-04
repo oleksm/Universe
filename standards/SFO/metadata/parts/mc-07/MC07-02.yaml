@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC07-02
+  name: Mid hull section
+  description: "The middle third of the hull, which holds the cargo bay and carries the ramp in its belly. The widest and heaviest of the three sections, and the one the other two are joined to."
+fit:
+  count: 1

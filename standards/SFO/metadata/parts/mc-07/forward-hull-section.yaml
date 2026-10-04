@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
-code: MC07-01
-name: Forward hull section
-count: 1
-description: "The front third of the hull: the nose and the cockpit behind it, about 22 m of the hull's 66 m. A closed shell of frames and skin, built as one piece and joined to the mid section."

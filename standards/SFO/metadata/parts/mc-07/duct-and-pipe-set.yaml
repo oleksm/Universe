@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
-code: MC07-10
-name: Duct and pipe set
-count: 1
-description: "The air ducts and pipes through the hull, made up as one set: air from the life support slot to the cockpit and the bay, and fluid lines to the legs and the ramp."

@@ -892,11 +892,42 @@ for ad in administrations:
             if plot is not None and order:
                 street = next((st for st in x.get("streets", []) if st.get("slug") == (plot.get("address") or {}).get("street")), None)
                 fc["layout"] = lay_out(where, plot, street, order)
-# Parts: filed by hull, then by the assembly (category) they go into:
-# SFO/metadata/parts/<hull>/<category>.yaml.
+# Parts: filed by hull (SFO/metadata/parts/<hull>/<code>.yaml); a part made of other parts has them
+# in the folder named after its code (parts/<hull>/<code>/<code>-NNN.yaml). All to part.schema.yaml.
 hull_of = {hl.get("slug"): hl for hl in hulls}
 PART_SCHEMA = yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", "part.schema.yaml"), encoding="utf-8"))
-categories, parts = [], []
+parts = []
+
+
+def read_part(full, hull, parent, under):
+    pt = load(full)
+    ident = pt.get("identity") or {}
+    code = str(ident.get("code", ""))
+    if os.path.basename(full) != code + ".yaml":
+        problem(full, "a part's file is named <its code>.yaml")
+    if parent is None and not re.fullmatch(r"[A-Z0-9]+-[0-9]{2}", code):
+        problem(full, "identity.code: the hull's code, a dash, two digits (MC07-04)")
+    if parent is not None and not re.fullmatch(re.escape(parent) + r"-[0-9]{3}", code):
+        problem(full, f"identity.code: {parent}, a dash, three digits")
+    if not ident.get("name"):
+        problem(full, "identity: no name")
+    if any(o["slug"] == code for o in parts):
+        problem(full, f"code {code} twice")
+    for group, props in pt.items():
+        known = PART_SCHEMA["properties"].get(group)
+        if known is None:
+            problem(full, f"unknown group '{group}'")
+            continue
+        for k in props or {}:
+            if k not in known["properties"]:
+                problem(full, f"{group}: unknown property '{k}'")
+    pt.update({"slug": code, "hull": hull, "under": under, "file": os.path.relpath(full, TREE)})
+    if parent is not None:
+        pt["parent"] = parent
+    parts.append(pt)
+    return code
+
+
 for s in standards:
     if str(s.get("records")) != "parts":
         continue
@@ -911,50 +942,13 @@ for s in standards:
         for fn in sorted(os.listdir(hdir)):
             full = os.path.join(hdir, fn)
             if os.path.isdir(full):
-                # (A category's parts: read with it, below.)
+                if not os.path.exists(full + ".yaml"):
+                    problem(full, "a folder of parts is named after the part they make up")
                 continue
-            if not re.fullmatch(r"[a-z0-9-]+\.yaml", fn):
-                problem(full, "a category's file is named <name>.yaml (lower case, words joined by -)")
-                continue
-            c = load(full)
-            for k in ["code", "name", "count"]:
-                if k not in c:
-                    problem(full, f"no {k}")
-            for k in c:
-                if k not in {"code", "name", "count", "description", "physical"}:
-                    problem(full, f"unknown field '{k}'")
-            if not re.fullmatch(r"[A-Z0-9]+-[0-9]{2}", str(c.get("code", ""))):
-                problem(full, "code: the hull's code, a dash, two digits (MC07-04)")
-            if any(o.get("code") == c.get("code") for o in categories):
-                problem(full, f"code {c.get('code')} twice")
-            c.update({"slug": fn[:-5], "hull": hull, "under": s["id"], "file": os.path.relpath(full, TREE)})
-            categories.append(c)
-            # (Its parts: one file each in the folder named after it, to part.schema.yaml.)
-            pdir = full[:-5]
-            for pn in sorted(os.listdir(pdir)) if os.path.isdir(pdir) else []:
-                pfull = os.path.join(pdir, pn)
-                pt = load(pfull)
-                ident = pt.get("identity") or {}
-                code = str(ident.get("code", ""))
-                if pn != code + ".yaml":
-                    problem(pfull, "a part's file is named <its code>.yaml")
-                if not re.fullmatch(re.escape(str(c.get("code", ""))) + r"-[0-9]{3}", code):
-                    problem(pfull, f"identity.code: {c.get('code')}, a dash, three digits")
-                if not ident.get("name"):
-                    problem(pfull, "identity: no name")
-                if any(o["identity"].get("code") == code for o in parts):
-                    problem(pfull, f"code {code} twice")
-                for group, props in pt.items():
-                    known = PART_SCHEMA["properties"].get(group)
-                    if known is None:
-                        problem(pfull, f"unknown group '{group}'")
-                        continue
-                    for k in props or {}:
-                        if k not in known["properties"]:
-                            problem(pfull, f"{group}: unknown property '{k}'")
-                pt.update({"slug": code, "hull": hull, "category": c["slug"], "under": s["id"], "file": os.path.relpath(pfull, TREE)})
-                parts.append(pt)
-categories.sort(key=lambda c: (c["hull"], str(c.get("code", "")), c.get("name", "")))
+            code = read_part(full, hull, None, s["id"])
+            sub = full[:-5]
+            for pn in sorted(os.listdir(sub)) if os.path.isdir(sub) else []:
+                read_part(os.path.join(sub, pn), hull, code, s["id"])
 # Mill stock: its material in that form; what a unit of it weighs, from the material's density and
 # its size (kg per m2 of sheet, plate and film; kg per metre of bar, wire and tube).
 import math
@@ -990,8 +984,9 @@ for ms in mill_stock:
 # (What a part names must be there: its mill stock, its processes, its designer, the standards it is
 # built to, the parts it joins or stands in for. What its stock weighs follows from the quantity.)
 codes = {pt["slug"] for pt in parts}
-for c in categories:
-    mine = [pt for pt in parts if pt["hull"] == c["hull"] and pt["category"] == c["slug"]]
+# (A part made of parts: its mass is theirs, each as many times as it has them.)
+for c in parts:
+    mine = [pt for pt in parts if pt.get("parent") == c["slug"]]
     known = [pt for pt in mine if (pt.get("physical") or {}).get("mass") is not None]
     if mine:
         c["parts_mass"] = sum(pt["physical"]["mass"] * (pt.get("fit") or {}).get("count", 1) for pt in known)
@@ -1186,8 +1181,6 @@ def write_html():
         "hulls": hulls,
         "mill_stock": mill_stock,
         "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["mill-stock"]["properties"].items()},
-        "category_groups": {"physical": {k: v.get("description", "") for k, v in yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", "part-category.schema.yaml"), encoding="utf-8"))["properties"]["physical"]["properties"].items()}},
-        "categories": categories,
         "parts": parts,
         "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in PART_SCHEMA["properties"].items()},
         "hull_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["hulls"]["properties"].items()},

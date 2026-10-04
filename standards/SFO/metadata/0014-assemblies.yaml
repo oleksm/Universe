@@ -1,4 +1,4 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
 title: Assemblies
 parent: SFO 8
-purpose: An assembly is parts joined into one thing that is fitted to a hull whole (a landing leg, a ramp, a hull section). The assemblies of a hull are the categories its parts are filed under.
+purpose: An assembly is a part made of other parts, fitted to a hull whole (a landing leg, a ramp, a hull section).

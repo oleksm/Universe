@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC07-07
+  name: Module socket
+  description: "The fitting where one of the hull's sixteen slots takes its module: a mount to bolt to, and the power and signal connections the module plugs into."
+fit:
+  count: 16

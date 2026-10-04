@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC07-08
+  name: Heat shield
+  description: "The covering over the belly and the leading edges that takes the heat of coming down through air. Made of many small tiles so that one can be replaced without the rest."
+fit:
+  count: 1

@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
-code: MC07-05
-name: Ramp
-count: 1
-description: "The hatch in the belly and the ramp that lowers from it to the ground, sloping down toward the nose. The way in and out for crew and cargo when landed."

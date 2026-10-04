@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../../schema/part-category.schema.yaml
-code: MC07-06
-name: Cockpit canopy
-count: 1
-description: "The cockpit's windows and the frame that holds them, at the nose. It keeps the air in and gives the pilot a view forward."

@@ -1,6 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
-title: Assembly part
-description: 'standards/SFO/metadata/parts/<hull>/<category>/<code>.yaml: the full specification of one part an assembly is built of. Its folders say which hull and which assembly (category) it belongs to. Any one part uses only some of these properties.'
+title: Part
+description: 'standards/SFO/metadata/parts/<hull>/<code>.yaml: the full specification of one part of a hull. A part made of other parts has them in the folder named after its code: parts/<hull>/<code>/<code>-NNN.yaml. Any one part uses only some of these properties.'
 type: object
 additionalProperties: false
 required: [identity]
@@ -10,7 +10,7 @@ properties:
     additionalProperties: false
     required: [code, name]
     properties:
-      code: { type: string, pattern: '^[A-Z0-9]+-[0-9]{2}-[0-9]{3}$', description: "Its category's code, then its number in the category (MC07-04-001). No two alike." }
+      code: { type: string, pattern: '^[A-Z0-9]+-[0-9]{2}(-[0-9]{3})?$', description: "The hull's code and its number among the hull's parts (MC07-04); for a part of a part, that part's code and its number in it (MC07-04-001). No two alike." }
       name: { type: string }
       description: { type: string }
       revision: { type: string, description: "A, B, C... as its design changes." }
@@ -38,7 +38,7 @@ properties:
       shock_limit: { type: number, description: "g, the hardest jolt it takes while it is carried" }
 
   made_from:
-    description: What it is cut from.
+    description: "What it is cut from. (A part made of other parts has none: they are in its folder.)"
     type: object
     additionalProperties: false
     properties:
@@ -73,11 +73,11 @@ properties:
       inspection: { type: string, description: "How it is checked: measured, X-rayed, pressure-tested." }
 
   fit:
-    description: How it goes into its assembly.
+    description: How it goes into the hull, or into the part it is a part of.
     type: object
     additionalProperties: false
     properties:
-      count: { type: integer, minimum: 1, description: How many of it one assembly has. }
+      count: { type: integer, minimum: 1, description: "How many of it there are: in one hull, or in the part it is a part of." }
       position: { type: string, description: Where in the assembly it sits. }
       order: { type: integer, minimum: 1, description: When it goes on, as the assembly is built. }
       joins_to: { type: array, items: { type: string }, description: The codes of the parts it is joined to. }

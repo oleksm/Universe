@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../schema/hull.schema.yaml
 # Its size and the mass of its frame are the game's (the MC-07 model, as imported). What it is made
-# of: its assemblies, the categories in parts/mc-07/.
+# of: its parts, in parts/mc-07/.
 identity:
   name: MC-07
   description: A mining ship's hull. The bare hull, with nothing fitted in its slots.

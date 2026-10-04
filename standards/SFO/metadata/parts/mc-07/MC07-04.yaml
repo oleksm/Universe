@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  code: MC07-04
+  name: Landing leg
+  description: "One of the four legs the hull stands on: two under the nose, 9 m apart, and two under the rear, 11.6 m apart. Each folds into the belly and carries a quarter of the ship on the ground."
+fit:
+  count: 4
