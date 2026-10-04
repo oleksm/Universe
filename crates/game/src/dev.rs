@@ -63,7 +63,13 @@ pub fn apply(app: &mut App, name: &str) {
                 app.economy_panel = None;
             }
             let u = app.engine.universe();
-            u.ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 0);
+            // (Our own hull, standing on its own feet.)
+            let class = u.ship.class;
+            let mut ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 0);
+            ship.class = class;
+            ship.refresh();
+            u.world.resettle(home, &mut ship);
+            u.ship = ship;
             app.mode = Mode::Observer;
             app.observer.focus = Focus::Ship;
             let env = |k: &str, d: f64| std::env::var(k).ok().and_then(|v| v.parse().ok()).unwrap_or(d);

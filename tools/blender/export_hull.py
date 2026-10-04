@@ -268,6 +268,8 @@ def glowing(m):
 
 if bake_size:
     import time
+    # (Each step's line as it happens, not when Blender quits.)
+    sys.stdout.reconfigure(line_buffering=True)
     started = time.time()
     targets = [o for o in scene.objects if o.type == "MESH" and shown(o) and any(procedural(slot.material) for slot in o.material_slots)]
     print("baking %d meshes into %d px maps" % (len(targets), bake_size))
@@ -340,6 +342,21 @@ if bake_size:
         bpy.ops.object.bake(**kw)
         print("  %s: %.0f s" % (kind, time.time() - t))
 
+    # All of them as one object to bake: baked one by one, Blender sets the whole scene up again
+    # for each (on the CPU, the GPU idle meanwhile), every pass. The originals out of the light
+    # while it bakes, or the copy and they would shut each other in.
+    bpy.ops.object.select_all(action="DESELECT")
+    for o in targets:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = targets[0]
+    bpy.ops.object.duplicate()
+    bpy.ops.object.join()
+    joined = bpy.context.view_layer.objects.active
+    for o in targets:
+        o.hide_render = True
+    joined.hide_render = False
+    print("  joined into one object to bake (%d faces)" % len(joined.data.polygons))
+
     bake("base", 8, type="DIFFUSE", pass_filter={"COLOR"})
     bake("rough", 4, type="ROUGHNESS")
     bake("normal", 4, type="NORMAL", normal_space="TANGENT")
@@ -354,6 +371,9 @@ if bake_size:
             m.node_tree.links.remove(l)
         b.inputs["Base Color"].default_value = (v, v, v, 1.0)
     bake("metal", 1, type="DIFFUSE", pass_filter={"COLOR"})
+    bpy.data.objects.remove(joined, do_unlink=True)
+    for o in targets:
+        o.hide_render = False
 
     # The baked material, for every face not lit of itself (lamps, glows and glass keep theirs).
     baked = bpy.data.materials.new("Hull_Baked")
