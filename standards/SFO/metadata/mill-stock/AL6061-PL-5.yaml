@@ -10,3 +10,5 @@ size:
   thickness: 5
 making:
   process: rolling
+basis:
+  - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }

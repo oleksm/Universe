@@ -19,3 +19,7 @@ made_from:
   quantity: 0.18
 fit:
   count: 2
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: invented, note: "An estimate: its surface at 4.91 kg for each m2." }
+  - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }

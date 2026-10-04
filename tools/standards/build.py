@@ -194,6 +194,26 @@ ORES = set(re.findall(r'key: "(ore\.[a-z_]+)"', open(os.path.join(ROOT, "content
 GOODS_KINDS = {k: {"name": n.title(), "density": float(d)} for k, n, d in re.findall(r'key: "(goods\.[a-z_]+)",\s*name: "([^"]*)",.*?bulk_density: ([0-9.]+)', open(os.path.join(ROOT, "content", "base", "goods.ron"), encoding="utf-8").read(), re.S)}
 
 
+TIERS = ["sourced", "derived", "invented"]
+
+
+def check_basis(rec, where):
+    """A record's `basis`: entries of what they cover, a tier, and for a sourced one its source."""
+    bs = rec.get("basis")
+    if bs is None:
+        return
+    if not isinstance(bs, list):
+        problem(where, "basis: a list of entries (of, tier, source, note)")
+        return
+    for en in bs:
+        if not isinstance(en, dict) or not isinstance(en.get("of"), list) or en.get("tier") not in TIERS:
+            problem(where, f"basis: each entry names what it is of and a tier ({', '.join(TIERS)})")
+        elif set(en) - {"of", "tier", "source", "note"}:
+            problem(where, "basis: unknown field")
+        elif en["tier"] == "sourced" and not en.get("source"):
+            problem(where, "basis: a sourced entry names its source")
+
+
 def area(o):
     """An outline's area (m2)."""
     return abs(sum(o[i][0] * o[(i + 1) % len(o)][1] - o[(i + 1) % len(o)][0] * o[i][1] for i in range(len(o)))) / 2
@@ -652,8 +672,9 @@ for s in standards:
         if key in seen:
             problem(full, f"{key} twice (also {seen[key]})")
         seen[key] = name
+        check_basis(e, full)
         for group, props in e.items():
-            if group == "slug":
+            if group in ("slug", "basis"):
                 continue
             known = SCHEMAS[kind]["properties"].get(group)
             if known is None:
@@ -926,7 +947,10 @@ def read_part(full, hull, parent, under):
         problem(full, "identity: no name")
     if any(o["slug"] == code for o in parts):
         problem(full, f"code {code} twice")
+    check_basis(pt, full)
     for group, props in pt.items():
+        if group == "basis":
+            continue
         known = PART_SCHEMA["properties"].get(group)
         if known is None:
             problem(full, f"unknown group '{group}'")
@@ -1350,6 +1374,59 @@ for gd in goods:
 report("goods", "Goods: where each comes from and goes", "Each good: where it comes from and where it goes. A rock is dug; a raw good is won from a rock; consumables and fuel come from outside; the rest come out of one module and go into another, or out.", ["Good", "Kind", "Comes out of", "Goes into"], rows)
 
 
+# 8. Confidence: where every number comes from.
+# (Elements and materials are from published sources, named in their files; a process's amounts are
+# its material's composition. Other records say for themselves, in `basis`; one that doesn't is a gap.)
+DEFAULT_TIER = {"elements": "sourced", "materials": "sourced", "processes": "derived"}
+KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts"}
+KEY_OF = {"elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
+
+
+def numbers(d, path=()):
+    """The numbers in a record as it is written: (group, property) for each."""
+    if isinstance(d, bool):
+        return []
+    if isinstance(d, (int, float)):
+        return [path[:2]] if path and path[0] not in ("basis",) else []
+    if isinstance(d, dict):
+        return [n for k, v in d.items() for n in numbers(v, path + (k,))]
+    if isinstance(d, list):
+        return [n for v in d for n in numbers(v, path)]
+    return []
+
+
+def tier_of(kind, raw, group, prop):
+    for exact in (True, False):
+        for en in raw.get("basis") or []:
+            if (f"{group}.{prop}" in en["of"]) if exact else (group in en["of"]):
+                return en["tier"]
+    return DEFAULT_TIER.get(kind, "unsaid")
+
+
+rows, detail = [], []
+for kind, recs in (("elements", elements), ("materials", materials), ("processes", processes), ("modules", modules), ("goods", goods), ("hulls", hulls), ("mill-stock", mill_stock), ("parts", parts)):
+    tally = {"sourced": 0, "derived": 0, "invented": 0, "unsaid": 0}
+    for e in recs:
+        raw = load(os.path.join(TREE, e["file"]))
+        mine = {"sourced": [], "derived": [], "invented": [], "unsaid": []}
+        for path in numbers(raw):
+            group, prop = path[0], path[1] if len(path) > 1 else ""
+            if group == "identity" and kind not in ("elements",):
+                continue
+            mine[tier_of(kind, raw, group, prop)].append(f"{group}.{prop}".replace("_", " "))
+        for t in tally:
+            tally[t] += len(mine[t])
+        if mine["invented"] or mine["unsaid"]:
+            name = (e.get("identity") or {}).get("name", e.get("slug"))
+            detail.append(row("gap" if mine["unsaid"] else "note", link(name, KEY_OF[kind](e)), KIND_NAME[kind], len(mine["invented"]), ", ".join(sorted(set(mine["invented"]))), len(mine["unsaid"]), ", ".join(sorted(set(mine["unsaid"])))))
+    total = sum(tally.values())
+    if total:
+        share = lambda t: f"{tally[t]:,} ({100 * tally[t] / total:.0f}%)" if tally[t] else ""
+        rows.append(row("gap" if tally["unsaid"] else "note" if tally["invented"] else "ok", KIND_NAME[kind], len(recs), f"{total:,}", share("sourced"), share("derived"), share("invented"), share("unsaid")))
+report("confidence", "Confidence: where the numbers come from", "Every number in the registry, by where it comes from. Sourced: from a published source or the game. Derived: worked out from other figures. Invented: chosen, to be balanced or replaced. A gap is a number whose record does not say.", ["Kind of record", "Records", "Numbers", "Sourced", "Derived", "Invented", "Not said"], rows)
+report("invented", "Confidence: the records with invented or unexplained numbers", "Each record that has a number that was chosen, or one it does not explain. A gap is a number not explained.", ["Record", "Kind", "Invented", "Which", "Not said", "Which"], detail)
+
+
 # ---------------------------------------------------------------- the page
 def write_html():
     data = {
@@ -1370,18 +1447,18 @@ def write_html():
         "goods": goods,
         "hulls": hulls,
         "mill_stock": mill_stock,
-        "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["mill-stock"]["properties"].items()},
+        "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["mill-stock"]["properties"].items() if "properties" in d},
         "parts": parts,
-        "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in PART_SCHEMA["properties"].items()},
-        "hull_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["hulls"]["properties"].items()},
-        "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["goods"]["properties"].items()},
-        "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["modules"]["properties"].items()},
+        "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in PART_SCHEMA["properties"].items() if "properties" in d},
+        "hull_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["hulls"]["properties"].items() if "properties" in d},
+        "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["goods"]["properties"].items() if "properties" in d},
+        "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["modules"]["properties"].items() if "properties" in d},
         # (Icons: SFO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
         "icons": {f[:-4]: open(os.path.join(TREE, "SFO", "icons", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, "SFO", "icons"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, "SFO", "icons")) else {},
-        "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["processes"]["properties"].items()},
+        "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["processes"]["properties"].items() if "properties" in d},
         # (Each property's unit or note, from the schemas.)
-        "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["elements"]["properties"].items()},
-        "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["materials"]["properties"].items()},
+        "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
+        "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,

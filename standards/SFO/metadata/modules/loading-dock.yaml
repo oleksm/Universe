@@ -10,4 +10,4 @@ size:
 rate:
   handling: 500
 basis:
-  note: "Typical of real buildings of this kind. Approximate figures from memory, not taken from a source."
+  - { of: [size, rate], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

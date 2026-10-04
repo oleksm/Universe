@@ -20,4 +20,5 @@ outputs:
 needs:
   power: 490
 basis:
-  note: "What goes in and comes out follows from the chemistry (alumina and carbon to aluminium and carbon dioxide); real pots burn a quarter more carbon. Its power is about 14 MWh for each tonne. Its size, rate and power are typical of real plant of this kind: approximate figures from memory, not taken from a source."
+  - { of: [inputs, outputs], tier: derived, note: "From the chemistry." }
+  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

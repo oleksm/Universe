@@ -21,3 +21,7 @@ made_from:
 fit:
   count: 1
   position: "Its centre is 34.6 m back from the nose and 15.6 m above the keel, 2.1 m to the left of the centre line."
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
+  - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }

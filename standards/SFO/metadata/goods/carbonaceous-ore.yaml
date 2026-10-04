@@ -11,3 +11,5 @@ source:
 game:
   goods: goods.ores
   ore: ore.carbonaceous
+basis:
+  - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }

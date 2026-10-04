@@ -113,3 +113,15 @@ properties:
       field_replaceable: { type: boolean, description: Can be changed without a yard. }
       repairable: { type: boolean, description: Can be mended, not only replaced. }
       recoverable: { type: number, minimum: 0, maximum: 1, description: "the share of its mass got back as material when it is scrapped" }
+  basis:
+    description: 'Where its figures come from. Each entry covers the groups (or group.property) it names. sourced: from a published source or the game, named. derived: worked out from other figures, by physics or from the model. invented: chosen, to be balanced or replaced.'
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [of, tier]
+      properties:
+        of: { type: array, items: { type: string } }
+        tier: { enum: [sourced, derived, invented] }
+        source: { type: string }
+        note: { type: string }

@@ -11,3 +11,5 @@ size:
   volume: 23181
 mass:
   frame: 87.803
+basis:
+  - { of: [size, mass], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume, and the frame mass the game's formula gives it." }

@@ -19,4 +19,5 @@ outputs:
 needs:
   power: 3
 basis:
-  note: "Its size, rate and power are typical of real plant of this kind: approximate figures from memory, not taken from a source."
+  - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
+  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

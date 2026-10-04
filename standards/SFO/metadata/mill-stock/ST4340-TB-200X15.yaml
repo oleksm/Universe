@@ -11,3 +11,5 @@ size:
   wall: 15
 making:
   process: tube-making-4340
+basis:
+  - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
