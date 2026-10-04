@@ -58,3 +58,6 @@
   Port Trethi's is. What is on the market at a port lies in its warehouse.
 - **Full storage stops production.** Each works' page says how long its yards last flat out with
   nothing taken away (the mill 12 days, the foundry 66). The rule itself is the game's to run.
+- **Power at every port.** Each of the nine ports has a fusion power station and a line to its
+  warehouse; Port Trethi's warehouse has a line too. The power report now counts what a yard or a
+  store draws standing by.

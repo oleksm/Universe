@@ -13,13 +13,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Aipika Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Aipika Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -45,13 +55,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Eikir Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Eikir Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -77,13 +97,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Fabindum Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Fabindum Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -109,13 +139,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Lisaur Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Lisaur Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -141,13 +181,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Nacaubun Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Nacaubun Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -173,13 +223,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Seiwiti Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Seiwiti Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -205,13 +265,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Sirnendis Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Sirnendis Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -254,6 +324,7 @@
             (name: "Power line 2", capacity: 150.0, line: [(1275.0, 250.0), (1275.0, 262.0), (800.0, 262.0), (800.0, 250.0)]),
             (name: "Power line 3", capacity: 850.0, line: [(1275.0, -250.0), (1275.0, -450.0)]),
             (name: "Power line 4", capacity: 10.0, line: [(1400.0, 0.0), (1450.0, 0.0)]),
+            (name: "Power line 5", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
             (name: "Trethi Foundry", kind: "foundry", parcel: 1,
@@ -350,13 +421,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Weisonum Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Weisonum Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],
@@ -382,13 +463,23 @@
         ],
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
+            (name: "East Road", line: [(400.0, 275.0), (2500.0, 275.0)]),
         ],
         power_lines: [
+            (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
         ],
         facilities: [
+            (name: "Zaudalein Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
             (name: "Zaudalein Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
                 takes: [], gives: [], burns: [],

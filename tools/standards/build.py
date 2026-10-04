@@ -2114,12 +2114,14 @@ rows = []
 for ad in administrations:
     for x in ad["bodies"]:
         facs = x.get("facilities", [])
-        draw = {fc["slug"]: sum(ln["most"]["power"] for ln in fc.get("lines") or [] if "most" in ln) for fc in facs}
+        # (What each draws flat out: its lines, and what stands beside them and draws all the time: a yard, a store.)
+        idle = lambda fc: sum(((mod_of[im["module"]].get("needs") or {}).get("power") or 0) * im.get("count", 0) for im in fc.get("modules") or [] if im.get("module") in mod_of and not mod_of[im["module"]].get("recipes"))
+        draw = {fc["slug"]: sum(ln["most"]["power"] for ln in fc.get("lines") or [] if "most" in ln) + idle(fc) for fc in facs}
         supply = sum(fc.get("capacity") or 0 for fc in facs if fc.get("kind") in ("power", "rig"))
         if not supply and not any(draw.values()):
             continue
         total = sum(draw.values())
-        rows.append(row("ok" if supply >= total else "gap", x["name"] + ", all of it", f"{total:,.0f} MW", f"{supply:,.0f} MW", "its own plant" if x.get("kind") == "rig" else "its power stations", "enough for everything flat out at once" if supply >= total else f"{total - supply:,.0f} MW short with everything flat out at once"))
+        rows.append(row("ok" if supply >= total else "gap", x["name"] + ", all of it", f"{total:,.0f} MW" if total >= 10 else f"{total:,.1f} MW", f"{supply:,.0f} MW", "its own plant" if x.get("kind") == "rig" else "its power stations", "enough for everything flat out at once" if supply >= total else f"{total - supply:,.0f} MW short with everything flat out at once"))
         for fc in facs:
             if not draw[fc["slug"]] or fc.get("rig"):
                 continue

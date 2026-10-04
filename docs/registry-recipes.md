@@ -190,6 +190,13 @@ in each record. What lies on the market at a port lies in its warehouse. The sta
 three gates have none: they are not ground, and wait for stations to be described as structures.
 `settlements.ron` has nine settlements more (288 lines).
 
+Each of those nine ports also has a power station (one fusion station, on a second lot owned by
+Aurel on East Road) and a power line from it to the warehouse; Port Trethi has a fifth line, to
+its warehouse, which had none. One fusion station (400 MW) is the smallest there is a record of
+and far more than a warehouse's yard draws (0.5 MW): what a port itself draws is not described.
+The power report now counts what stands beside a works' lines and draws all the time (a yard, a
+store), which it left out.
+
 How long each works' room lasts flat out, nothing taken away: the mill 12 days, the orbital works
 26, the smelter 46, the foundry 66, the yard 482.
 

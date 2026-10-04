@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: the port's power station. One fusion station is the smallest there is a record of, and far
+# more than the warehouse draws; what the port itself draws (its pads, its hangar, its people) is not
+# described yet.
+key: facility.treistun.port-fabindum.fabindum-power-station
+name: Fabindum Power Station
+kind: power
+parcel: parcel.treistun.port-fabindum.2
+modules:
+  - { module: module.fusion-power-station, count: 1 }
