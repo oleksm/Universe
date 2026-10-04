@@ -35,6 +35,8 @@ pub const JUMP: f64 = 3.0;
 pub const REACH: f64 = 1.6;
 /// What the boots hold you to a floor with, aboard in flight (m/s²: as a world's gravity).
 const BOOTS: f64 = 9.81;
+/// Climbing a ladder (m/s).
+pub const CLIMB: f64 = 1.0;
 
 /// Where a person is.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
@@ -302,9 +304,10 @@ impl Person {
     /// One frame of `dt` real seconds: walk, turn, jump, and use what's in
     /// reach. The ship is where the world has just put it; `around` is what
     /// else stands near it (buildings, other ships: the body's frame);
-    /// `layout` its inside as laid out (its frame), if it has one.
+    /// `layout` its inside as laid out (its frame), if it has one: walked on,
+    /// its ladders climbed.
     #[allow(clippy::too_many_arguments)]
-    pub fn step(&mut self, sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], around: &[Collider], layout: Option<&crate::walk::WalkMesh>, c: &WalkCommands, dt: f64, events: &mut Vec<CrewEvent>) {
+    pub fn step(&mut self, sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], around: &[Collider], layout: Option<&crate::deckplan::Walkable>, c: &WalkCommands, dt: f64, events: &mut Vec<CrewEvent>) {
         // A ship landed on a world is part of its ground (walked about in its
         // frame); one taking off carries whoever stands in it (its frame), as
         // does one docked on a station's deck. (Nobody stands outside on a
@@ -334,6 +337,9 @@ impl Person {
         let reach = self.reach(sys, ship, t, positions);
         let speed = if c.run { RUN } else { WALK };
         let jump = if c.jump { JUMP } else { 0.0 };
+        // On a ladder, forward climbs: up looking level or up, down looking down.
+        let looking_down = matches!(self.place, Place::Aboard { pitch, .. } | Place::Outside { pitch, .. } if pitch < -0.35);
+        let climb = c.forward * CLIMB * if looking_down { -1.0 } else { 1.0 };
         match &mut self.place {
             Place::Seat => {
                 if c.interact {
@@ -361,11 +367,12 @@ impl Person {
                 let wish = (fwd * c.forward + right * c.right).clamp_length_max(1.0) * speed;
                 let mut colliders: Vec<Collider> = Vec::new();
                 ship_colliders(ship, DVec3::ZERO, DQuat::IDENTITY, ramp_angle(sys, ship), &mut colliders);
-                if let Some(mesh) = layout {
-                    colliders.push(Collider::Mesh { mesh, at: DVec3::ZERO, rot: DQuat::IDENTITY });
+                if let Some(l) = layout {
+                    colliders.push(Collider::Mesh { mesh: &l.mesh, at: DVec3::ZERO, rot: DQuat::IDENTITY });
                 }
                 let mut w = Walker { feet: *position, velocity: *velocity };
-                w.step(&colliders, &|_| DVec3::Y, BOOTS, &Stride { wish, jump }, dt);
+                let climbable = |p: DVec3| layout.is_some_and(|l| l.climbing(p));
+                w.step(&colliders, &|_| DVec3::Y, BOOTS, &climbable, &Stride { wish, jump, climb }, dt);
                 *position = w.feet;
                 *velocity = w.velocity;
                 if c.interact {
@@ -400,8 +407,8 @@ impl Person {
                     let mut own = Vec::new();
                     ship_colliders(ship, at, rot, ramp_angle(sys, ship), &mut own);
                     colliders.extend(own);
-                    if let Some(mesh) = layout {
-                        colliders.push(Collider::Mesh { mesh, at, rot });
+                    if let Some(l) = layout {
+                        colliders.push(Collider::Mesh { mesh: &l.mesh, at, rot });
                     }
                 }
                 colliders.extend(around.iter().copied());
@@ -409,7 +416,11 @@ impl Person {
                 let g = b.rail.mu / (r * r);
                 let before = *position;
                 let mut w = Walker { feet: *position, velocity: *velocity };
-                w.step(&colliders, &|p: DVec3| p.normalize(), g, &Stride { wish, jump }, dt);
+                // (The ship's ladders, where it rests: in its frame.)
+                let (ship_at, ship_rot) = placed(sys, ship, *body, t, positions[*body]);
+                let landed_here = hatch_body(sys, ship) == Ok(*body);
+                let climbable = |p: DVec3| landed_here && layout.is_some_and(|l| l.climbing(ship_rot.inverse() * (p - ship_at)));
+                w.step(&colliders, &|p: DVec3| p.normalize(), g, &climbable, &Stride { wish, jump, climb }, dt);
                 // Not into the sea.
                 if b.terrain.as_ref().is_some_and(|tr| universe_physics::Surface::liquid(tr, w.feet.normalize())) {
                     let up2 = w.feet.normalize();

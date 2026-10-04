@@ -407,10 +407,12 @@ pub struct Walker {
 }
 
 /// What it does: the speed it would walk at along the ground (m/s, its frame),
-/// and a jump's take-off speed (0: none).
+/// a jump's take-off speed (0: none), and how fast it would climb (m/s, up
+/// positive) where there's something to climb.
 pub struct Stride {
     pub wish: DVec3,
     pub jump: f64,
+    pub climb: f64,
 }
 
 impl Walker {
@@ -420,18 +422,27 @@ impl Walker {
     }
 
     /// One step of `dt` s, `up` the way up at a point and `g` gravity there
-    /// (m/s²). Whether it stands on something after.
-    pub fn step(&mut self, colliders: &[Collider], up_at: &dyn Fn(DVec3) -> DVec3, g: f64, stride: &Stride, dt: f64) -> bool {
+    /// (m/s²); `climbable` says where there's something to climb (a ladder):
+    /// there it holds on, going up or down as it would climb, not falling.
+    /// Whether it stands on something after.
+    pub fn step(&mut self, colliders: &[Collider], up_at: &dyn Fn(DVec3) -> DVec3, g: f64, climbable: &dyn Fn(DVec3) -> bool, stride: &Stride, dt: f64) -> bool {
         let up = up_at(self.feet);
         let mut v_up = self.velocity.dot(up);
         let mut v_side = self.velocity - up * v_up;
         let was_grounded = v_up <= 0.0 && self.grounded(colliders, up);
-        if was_grounded {
+        let climbing = climbable(self.feet + up * 0.9);
+        if climbing {
+            // On a ladder: hands on it, it goes where it climbs and steps.
+            v_side = stride.wish - up * stride.wish.dot(up);
+            v_up = stride.climb;
+        } else if was_grounded {
             // Feet on the floor steer; in the air, what it had carries.
             v_side = stride.wish - up * stride.wish.dot(up);
             v_up = if stride.jump > 0.0 { stride.jump } else { 0.0 };
         }
-        v_up -= g * dt;
+        if !climbing {
+            v_up -= g * dt;
+        }
         let motion = (v_side + up * v_up) * dt;
         let n = (motion.length() / SUBSTEP).ceil().max(1.0) as usize;
         let mut grounded = false;
@@ -478,7 +489,7 @@ impl Walker {
             // The feet down on what's below: up a step, down one, or falling.
             grounded = false;
             if v_up <= 0.0
-                && let Some(d) = floor(colliders, self.feet, up, if was_grounded { SNAP } else { 0.02 })
+                && let Some(d) = floor(colliders, self.feet, up, if was_grounded && !climbing { SNAP } else { 0.02 })
             {
                 self.feet += up * (STEP - d);
                 v_up = 0.0;
@@ -517,7 +528,7 @@ mod tests {
         let colliders = [Collider::Mesh { mesh, at: DVec3::ZERO, rot: DQuat::IDENTITY }];
         let mut w = Walker { feet: from, velocity: DVec3::ZERO };
         for _ in 0..(secs * 60.0) as usize {
-            w.step(&colliders, &|_| DVec3::Y, 9.81, &Stride { wish, jump: 0.0 }, 1.0 / 60.0);
+            w.step(&colliders, &|_| DVec3::Y, 9.81, &|_| false, &Stride { wish, jump: 0.0, climb: 0.0 }, 1.0 / 60.0);
         }
         w
     }

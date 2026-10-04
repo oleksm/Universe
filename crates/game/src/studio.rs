@@ -11,7 +11,8 @@
 //! Tools: S select (drag a point; drag a segment's middle to bend it), P
 //! plane (click its corners; the first again or ENTER closes it), W wall
 //! (click its points; ENTER ends it), D door (click a wall; again removes
-//! it). DELETE removes what's selected; BACKSPACE the last point placed; ESC
+//! it), L ladder (click: up to the deck above, through a hatch), T stair
+//! (click its foot, then its head: up to the deck above). DELETE removes what's selected; BACKSPACE the last point placed; ESC
 //! stops drawing. PGUP/PGDN deck, N a new deck above, +/- its floor (SHIFT:
 //! more), [ ] its headroom, CTRL+DELETE removes it. Wheel zooms, right drag
 //! pans, HOME fits. Points snap to a quarter metre (ALT: free).
@@ -29,6 +30,8 @@ pub enum Tool {
     Plane,
     Wall,
     Door,
+    Ladder,
+    Stair,
 }
 
 /// What's picked: a wall or a plane of the current deck.
@@ -36,6 +39,8 @@ pub enum Tool {
 enum Pick {
     Wall(usize),
     Plane(usize),
+    Ladder(usize),
+    Stair(usize),
 }
 
 /// What a drag moves.
@@ -184,11 +189,13 @@ enum Action {
 }
 
 /// The toolbar: each button's key, name and what it does.
-const TOOLBAR: [(&str, &str, Action); 16] = [
+const TOOLBAR: [(&str, &str, Action); 18] = [
     ("S", "SELECT", Action::Tool(Tool::Select)),
     ("P", "PLANE", Action::Tool(Tool::Plane)),
     ("W", "WALL", Action::Tool(Tool::Wall)),
     ("D", "DOOR", Action::Tool(Tool::Door)),
+    ("L", "LADDER", Action::Tool(Tool::Ladder)),
+    ("T", "STAIR", Action::Tool(Tool::Stair)),
     ("ENT", "FINISH", Action::Finish),
     ("DEL", "REMOVE", Action::Remove),
     ("HOME", "FIT VIEW", Action::Fit),
@@ -203,11 +210,11 @@ const TOOLBAR: [(&str, &str, Action); 16] = [
     ("]", "HEADROOM +", Action::Headroom(0.1)),
 ];
 
-/// Where toolbar button `k` is on screen (two rows of eight).
+/// Where toolbar button `k` is on screen (two rows of nine).
 fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
-    let w = ((size.x - 24.0 - 7.0 * 4.0) / 8.0).floor();
+    let w = ((size.x - 24.0 - 8.0 * 4.0) / 9.0).floor();
     let cell = Vec2::new(w, 16.0);
-    (Vec2::new(12.0 + (k % 8) as f32 * (w + 4.0), 30.0 + (k / 8) as f32 * 20.0), cell)
+    (Vec2::new(12.0 + (k % 9) as f32 * (w + 4.0), 30.0 + (k / 9) as f32 * 20.0), cell)
 }
 
 /// The toolbar button under `q`, if any.
@@ -261,7 +268,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         return false;
     }
     // Tools.
-    for (k, t) in [(KeyCode::KeyS, Tool::Select), (KeyCode::KeyP, Tool::Plane), (KeyCode::KeyW, Tool::Wall), (KeyCode::KeyD, Tool::Door)] {
+    for (k, t) in [(KeyCode::KeyS, Tool::Select), (KeyCode::KeyP, Tool::Plane), (KeyCode::KeyW, Tool::Wall), (KeyCode::KeyD, Tool::Door), (KeyCode::KeyL, Tool::Ladder), (KeyCode::KeyT, Tool::Stair)] {
         if input.pressed(k) || clicked == Some(Action::Tool(t)) {
             studio.tool = t;
             studio.drawing.clear();
@@ -360,6 +367,24 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                 }
             }
         }
+        Tool::Ladder => {
+            if over && input.button_pressed(MouseButton::Left) {
+                deck.ladders.push(deckplan::Ladder { at: p });
+            }
+        }
+        Tool::Stair => {
+            if over && input.button_pressed(MouseButton::Left) {
+                // Its foot, then its head.
+                if let Some(&from) = studio.drawing.first() {
+                    if from.distance(p) >= 0.5 {
+                        deck.stairs.push(deckplan::Stair { from, to: p, width: deckplan::STAIR_WIDTH });
+                    }
+                    studio.drawing.clear();
+                } else {
+                    studio.drawing.push(p);
+                }
+            }
+        }
         Tool::Door => {
             if over && input.button_pressed(MouseButton::Left) {
                 // On the wall nearest the click (within a few pixels): a door there, or the one there removed.
@@ -398,7 +423,9 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                 if grabbed.is_none() {
                     let wall = deck.walls.iter().enumerate().filter_map(|(k, w)| w.nearest(at).map(|(_, off)| (k, off))).filter(|h| h.1 * px < 8.0).min_by(|a, b| a.1.total_cmp(&b.1)).map(|h| Pick::Wall(h.0));
                     let plane = || deck.planes.iter().position(|poly| inside(poly, at)).map(Pick::Plane);
-                    studio.pick = wall.or_else(plane);
+                    let ladder = || deck.ladders.iter().position(|l| inside(&l.outline(), at)).map(Pick::Ladder);
+                    let stair = || deck.stairs.iter().position(|st| inside(&st.outline(), at)).map(Pick::Stair);
+                    studio.pick = ladder().or_else(stair).or(wall).or_else(plane);
                 }
                 studio.drag = grabbed;
             }
@@ -414,6 +441,8 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                             *q = p;
                         }
                     }
+                    // (Ladders and stairs: placed anew, not dragged.)
+                    Pick::Ladder(_) | Pick::Stair(_) => {}
                 },
                 Some(Drag::Bend(k, i)) if input.button_down(MouseButton::Left) => {
                     // The arc's middle under the cursor: its bulge, how far that is off the chord.
@@ -436,6 +465,12 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                     }
                     Some(Pick::Plane(k)) if k < deck.planes.len() => {
                         deck.planes.remove(k);
+                    }
+                    Some(Pick::Ladder(k)) if k < deck.ladders.len() => {
+                        deck.ladders.remove(k);
+                    }
+                    Some(Pick::Stair(k)) if k < deck.stairs.len() => {
+                        deck.stairs.remove(k);
                     }
                     _ => {}
                 }
@@ -509,9 +544,15 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             frame.hud_line_smooth(to(*a), to(*b), HULL);
         }
         let Some(deck) = deck else { return };
-        // Floors: trimmed to the hull (filled), their outlines as drawn.
+        // Floors: trimmed to the hull (filled), the openings from the deck below cut out, their outlines as drawn.
+        let holes = plan.map(|p| deckplan::openings(p, studio.deck)).unwrap_or_default();
+        for hole in &holes {
+            for i in 0..hole.len() {
+                dashed(frame, to(hole[i]), to(hole[(i + 1) % hole.len()]), LABEL);
+            }
+        }
         for (k, poly) in deck.planes.iter().enumerate() {
-            for (z0, z1, x0, x1) in deckplan::floor_strips(poly, &h.sides) {
+            for (z0, z1, x0, x1) in deckplan::floor_strips(poly, &h.sides, &holes) {
                 let (a, b) = (to(DVec2::new(x1, z0)), to(DVec2::new(x0, z1)));
                 frame.hud_rect(a.min(b), (a - b).abs(), FLOOR);
             }
@@ -576,6 +617,42 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
                 }
             }
         }
+        // Ladders and stairs, up to the deck above (none there: in red, going nowhere).
+        let up = decks.get(studio.deck + 1).is_some();
+        for (k, l) in deck.ladders.iter().enumerate() {
+            let col = if studio.pick == Some(Pick::Ladder(k)) { PICKED } else if up { INK } else { OUT };
+            let o = l.outline();
+            for i in 0..4 {
+                frame.hud_line_smooth(to(o[i]), to(o[(i + 1) % 4]), col);
+            }
+            // (Its rungs.)
+            for j in 1..4 {
+                let f = j as f64 / 4.0;
+                frame.hud_line(to(o[0].lerp(o[3], f)), to(o[1].lerp(o[2], f)), col.scale(0.7));
+            }
+            if !up {
+                frame.text(to(o[2]) + Vec2::new(4.0, -6.0), "NO DECK ABOVE", OUT);
+            }
+        }
+        for (k, st) in deck.stairs.iter().enumerate() {
+            let col = if studio.pick == Some(Pick::Stair(k)) { PICKED } else if up { INK } else { OUT };
+            let o = st.outline();
+            for i in 0..4 {
+                frame.hud_line_smooth(to(o[i]), to(o[(i + 1) % 4]), col);
+            }
+            // (Its treads, and an arrow up its run.)
+            let n = ((st.to - st.from).length() / 0.28).round().max(2.0) as usize;
+            for j in 1..n {
+                let f = j as f64 / n as f64;
+                frame.hud_line(to(o[0].lerp(o[1], f)), to(o[3].lerp(o[2], f)), col.scale(0.6));
+            }
+            let (a, b) = (to(st.from), to(st.to));
+            frame.hud_line_smooth(a, b, col);
+            let d = (b - a).normalize_or_zero() * 8.0;
+            frame.hud_line_smooth(b, b - d + d.perp() * 0.6, col);
+            frame.hud_line_smooth(b, b - d - d.perp() * 0.6, col);
+            frame.text(a + Vec2::new(4.0, 4.0), if up { "UP" } else { "NO DECK ABOVE" }, col);
+        }
         // What's being drawn, to the cursor.
         if !studio.drawing.is_empty() {
             let cursor = to(snap(studio.to_plan(plan_r, studio.cursor), false));
@@ -612,12 +689,22 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         Tool::Plane => "PLANE",
         Tool::Wall => "WALL",
         Tool::Door => "DOOR",
+        Tool::Ladder => "LADDER",
+        Tool::Stair => "STAIR",
     };
     let deck_line = match deck {
         Some(d) => format!("DECK {} OF {}   FLOOR {:.1} M UP   HEADROOM {:.1} M", studio.deck + 1, decks.len(), d.floor - h.keel, d.headroom),
         None => "NO DECKS YET: N ADDS ONE".into(),
     };
     frame.text(Vec2::new(plan_r.0.x, plan_r.0.y - 16.0), &format!("{deck_line}   TOOL: {tool}"), LABEL);
+}
+
+/// A dashed line (an opening in the floor, from the deck below).
+fn dashed(frame: &mut Frame, a: Vec2, b: Vec2, col: Color) {
+    let n = ((b - a).length() / 6.0).ceil().max(1.0) as usize;
+    for i in (0..n).step_by(2) {
+        frame.hud_line(a.lerp(b, i as f32 / n as f32), a.lerp(b, ((i + 1) as f32 / n as f32).min(1.0)), col);
+    }
 }
 
 /// A drag handle: a square (a point) or a ring (a bend).

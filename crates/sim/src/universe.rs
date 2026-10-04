@@ -63,7 +63,7 @@ pub struct Universe {
     /// The pilot: in the seat, or on foot.
     pub crew: Person,
     /// Hulls' insides as laid out (by hull key): built, to walk in.
-    pub layouts: std::collections::HashMap<String, Arc<universe_world::walk::WalkMesh>>,
+    pub layouts: std::collections::HashMap<String, Arc<universe_world::deckplan::Walkable>>,
     /// The flight recorder: every ship's last seconds, and the wrecks filed (see `recorder`).
     pub recorder: crate::recorder::Recorder,
     /// What happened, kept: kills (with causes), trades, traffic totals.
@@ -603,11 +603,11 @@ impl Universe {
         let Some(h) = universe_world::content::content().handle::<universe_world::ship::ClassSpec>(&plan.hull) else { return };
         let Some(mesh) = universe_world::content::content().get(h).shape().walk.clone() else { return };
         let sides: Vec<_> = plan.decks.iter().map(|d| universe_world::deckplan::Sides::of(&mesh.section_y(d.floor + 1.0))).collect();
-        let tris = universe_world::deckplan::build(plan, &sides).triangles();
-        if tris.is_empty() {
+        let built = universe_world::deckplan::build(plan, &sides);
+        if built.panels.is_empty() {
             self.layouts.remove(&plan.hull);
         } else {
-            self.layouts.insert(plan.hull.clone(), Arc::new(universe_world::walk::WalkMesh::new(&tris)));
+            self.layouts.insert(plan.hull.clone(), Arc::new(universe_world::deckplan::Walkable::from(&built)));
         }
     }
 

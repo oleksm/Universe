@@ -1457,5 +1457,10 @@ fn demo_plan(app: &App) -> universe_sim::world::deckplan::DeckPlan {
     deck.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
     deck.walls.push(Wall { points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { at: 14.0, width: 0.9, height: 2.1 }] });
     deck.walls.push(Wall { points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![] });
-    DeckPlan { hull: app.ship.spec().key.clone(), decks: vec![deck] }
+    // A stair and a ladder up to a deck above it.
+    deck.stairs.push(universe_sim::world::deckplan::Stair { from: DVec2::new(9.0, 6.0), to: DVec2::new(9.0, 0.0), width: 1.0 });
+    deck.ladders.push(universe_sim::world::deckplan::Ladder { at: DVec2::new(-10.0, 3.0) });
+    let mut upper = Deck::at(floor + 3.8);
+    upper.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
+    DeckPlan { hull: app.ship.spec().key.clone(), decks: vec![deck, upper] }
 }
