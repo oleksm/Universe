@@ -12,9 +12,9 @@
             (name: "Port", use: "port", outline: [(-400.0, -900.0), (400.0, -900.0), (400.0, 400.0), (-400.0, 400.0)]),
         ],
         parcels: [
-            (number: 1, owner: "brand.hadley", outline: [(600.0, -400.0), (1100.0, -400.0), (1100.0, 250.0), (600.0, 250.0)]),
-            (number: 2, owner: "brand.aurel", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
-            (number: 3, owner: "brand.castellan", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
+            (number: 1, owner: "brand.hadley", owner_name: "Hadley Heavy Industries", outline: [(600.0, -400.0), (1100.0, -400.0), (1100.0, 250.0), (600.0, 250.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
+            (number: 3, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
@@ -24,7 +24,9 @@
             (name: "Power line 1", capacity: 400.0, line: [(1275.0, 250.0), (1275.0, 256.0), (850.0, 256.0), (850.0, 250.0)]),
         ],
         facilities: [
-            (name: "Trethi Foundry", kind: "foundry", parcel: 1, blocks: [
+            (name: "Trethi Foundry", kind: "foundry", parcel: 1,
+                makes: [("Ingot", 79.5772854596384)], draws: 320.11589133260964, supplies: 0.0, holds: 0.0,
+                blocks: [
                 (module: "ore-yard", centre: (720.0, 180.0), length: 200.0, width: 100.0, height: 15.0, heading: 0.0),
                 (module: "pellet-plant", centre: (745.0, 60.0), length: 250.0, width: 100.0, height: 40.0, heading: 0.0),
                 (module: "hydrogen-plant", centre: (965.0, 60.0), length: 150.0, width: 100.0, height: 20.0, heading: 0.0),
@@ -36,10 +38,14 @@
                 (module: "casting-bay", centre: (1020.0, -150.0), length: 100.0, width: 40.0, height: 35.0, heading: 0.0),
                 (module: "ingot-yard", centre: (695.0, -300.0), length: 150.0, width: 100.0, height: 15.0, heading: 0.0),
             ]),
-            (name: "Trethi Power Station", kind: "power", parcel: 2, blocks: [
+            (name: "Trethi Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
             ]),
-            (name: "Trethi Warehouse", kind: "warehouse", parcel: 3, blocks: [
+            (name: "Trethi Warehouse", kind: "warehouse", parcel: 3,
+                makes: [], draws: 0.0, supplies: 0.0, holds: 150000.0,
+                blocks: [
                 (module: "general-warehouse", centre: (330.0, -785.0), length: 150.0, width: 100.0, height: 12.0, heading: 90.0),
                 (module: "general-warehouse", centre: (210.0, -785.0), length: 150.0, width: 100.0, height: 12.0, heading: 90.0),
                 (module: "tank-farm", centre: (90.0, -810.0), length: 100.0, width: 100.0, height: 20.0, heading: 90.0),
