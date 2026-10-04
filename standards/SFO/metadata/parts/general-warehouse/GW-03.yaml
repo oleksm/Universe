@@ -9,5 +9,5 @@ physical:
 fit:
   count: 6
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://www.inform-international.com/100-original-asrs-warehouse-panther-series-stacker-crane-inform-product", note: "A pallet stacker crane 24 m high: 12 t." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://www.inform-international.com/100-original-asrs-warehouse-panther-series-stacker-crane-inform-product", note: "A pallet stacker crane 24 m high: 12 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

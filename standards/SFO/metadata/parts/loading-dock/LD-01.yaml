@@ -9,5 +9,5 @@ physical:
 fit:
   count: 2
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://www.liebherr.com/en-hk/p/lhm420-5244437", note: "A Liebherr LHM 280 mobile harbour crane, which lifts 84 t: 241 t." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://www.liebherr.com/en-hk/p/lhm420-5244437", note: "A Liebherr LHM 280 mobile harbour crane, which lifts 84 t: 241 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

@@ -9,5 +9,5 @@ physical:
 fit:
   count: 5
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://sms-group.com/insights/all-insights/very-well-done-arcelormittal-issues-acceptance-for-pl-tcm-extension", note: "One complete stand of a tandem cold mill: 360 t." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://sms-group.com/insights/all-insights/very-well-done-arcelormittal-issues-acceptance-for-pl-tcm-extension", note: "One complete stand of a tandem cold mill: 360 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

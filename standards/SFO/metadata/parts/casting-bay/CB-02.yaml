@@ -9,5 +9,5 @@ physical:
 fit:
   count: 80
 basis:
-  - { of: [physical.mass], tier: derived, source: "https://patents.google.com/patent/US3635279A/en", note: "An iron ingot mould weighs 1.5 to 2.5 times its ingot: twice a 4 t ingot." }
+  - { of: [physical.mass], tier: derived, review: true, source: "https://patents.google.com/patent/US3635279A/en", note: "An iron ingot mould weighs 1.5 to 2.5 times its ingot: twice a 4 t ingot." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

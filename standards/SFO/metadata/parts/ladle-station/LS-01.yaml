@@ -9,5 +9,5 @@ physical:
 fit:
   count: 3
 basis:
-  - { of: [physical.mass], tier: derived, source: "https://www.sheffieldforgemasters.com/news-and-insights/news/01/sheffield-forgemasters-enhances-ladle-fleet/", note: "A lined ladle for 105 t of steel weighs about 55 t empty: scaled to an 80 t heat. Seen only as a search excerpt, not on the page." }
+  - { of: [physical.mass], tier: derived, review: true, source: "https://www.sheffieldforgemasters.com/news-and-insights/news/01/sheffield-forgemasters-enhances-ladle-fleet/", note: "A lined ladle for 105 t of steel weighs about 55 t empty: scaled to an 80 t heat. Seen only as a search excerpt, not on the page." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

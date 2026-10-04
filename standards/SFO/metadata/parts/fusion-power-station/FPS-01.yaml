@@ -9,5 +9,5 @@ physical:
 fit:
   count: 1
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's vacuum vessel, 5,200 tonnes. ITER makes 500 MW of fusion power and no electricity; this station's size against it is not worked out." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's vacuum vessel, 5,200 tonnes. ITER makes 500 MW of fusion power and no electricity; this station's size against it is not worked out." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

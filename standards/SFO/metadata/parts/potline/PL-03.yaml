@@ -9,5 +9,5 @@ physical:
 fit:
   count: 5
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://www.industrialinfo.com/news/article/abbs-rectiformers-achieve-18-increase-in-energy-efficiency-at-sohar-and-qatalum-aluminum-smelters--149361", note: "A rectifier and its transformer for a potline: 400 tons each." }
-  - { of: [fit], tier: derived, note: "Five to a potline, at the same source." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://www.industrialinfo.com/news/article/abbs-rectiformers-achieve-18-increase-in-energy-efficiency-at-sohar-and-qatalum-aluminum-smelters--149361", note: "A rectifier and its transformer for a potline: 400 tons each." }
+  - { of: [fit], tier: derived, review: true, note: "Five to a potline, at the same source." }

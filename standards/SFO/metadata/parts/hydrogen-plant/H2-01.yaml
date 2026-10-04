@@ -9,5 +9,5 @@ physical:
 fit:
   count: 44
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://nelhydrogen.com/wp-content/uploads/2024/08/A-Series-Spec-Sheet\u2013DOC001974_03.pdf", note: "A Nel A485 alkaline stack module in operation: 71,440 kg, making 485 normal m3 of hydrogen an hour." }
-  - { of: [fit], tier: derived, note: "This plant's 1.89 t of hydrogen an hour is 21,000 normal m3, at 485 a stack." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://nelhydrogen.com/wp-content/uploads/2024/08/A-Series-Spec-Sheet\u2013DOC001974_03.pdf", note: "A Nel A485 alkaline stack module in operation: 71,440 kg, making 485 normal m3 of hydrogen an hour." }
+  - { of: [fit], tier: derived, review: true, note: "This plant's 1.89 t of hydrogen an hour is 21,000 normal m3, at 485 a stack." }

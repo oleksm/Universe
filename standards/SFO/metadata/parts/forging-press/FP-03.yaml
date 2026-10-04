@@ -9,5 +9,5 @@ physical:
 fit:
   count: 4
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/89-wyman-gordon-50000-ton-hydraulic-forging-press.pdf", note: "Dies for a 50,000-ton press weigh about 50 short tons a pair." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/89-wyman-gordon-50000-ton-hydraulic-forging-press.pdf", note: "Dies for a 50,000-ton press weigh about 50 short tons a pair." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

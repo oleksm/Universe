@@ -9,5 +9,5 @@ physical:
 fit:
   count: 18
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://www.iter.org/machine/magnets", note: "One of ITER's 18 toroidal field coils, 330 tonnes each." }
-  - { of: [fit], tier: derived, note: "ITER has 18." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://www.iter.org/machine/magnets", note: "One of ITER's 18 toroidal field coils, 330 tonnes each." }
+  - { of: [fit], tier: derived, review: true, note: "ITER has 18." }

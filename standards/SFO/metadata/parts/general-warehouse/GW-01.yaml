@@ -9,5 +9,5 @@ physical:
 fit:
   count: 1
 basis:
-  - { of: [physical.mass], tier: derived, source: "https://steelconstruction.info/topics/cost-of-structural-steelwork/cost-planning-industrial-buildings/", note: "A single-storey steel hall with high eaves takes about 45 kg of frame for each m2 of floor: over this one's 15,000 m2." }
+  - { of: [physical.mass], tier: derived, review: true, source: "https://steelconstruction.info/topics/cost-of-structural-steelwork/cost-planning-industrial-buildings/", note: "A single-storey steel hall with high eaves takes about 45 kg of frame for each m2 of floor: over this one's 15,000 m2." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

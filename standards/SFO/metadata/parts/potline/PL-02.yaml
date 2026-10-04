@@ -9,5 +9,5 @@ physical:
 fit:
   count: 324
 basis:
-  - { of: [physical.mass], tier: sourced, source: "https://www.gulfconstructiononline.com/Article/381041", note: "The aluminium busbar round one cell, 47 tonnes (Alba line 6)." }
-  - { of: [fit], tier: derived, note: "One to each cell." }
+  - { of: [physical.mass], tier: sourced, review: true, source: "https://www.gulfconstructiononline.com/Article/381041", note: "The aluminium busbar round one cell, 47 tonnes (Alba line 6)." }
+  - { of: [fit], tier: derived, review: true, note: "One to each cell." }
