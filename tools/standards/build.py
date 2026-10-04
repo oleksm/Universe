@@ -400,25 +400,10 @@ def check_standard(s, ids):
 # Maker House: the makers, one file each (MakerHouse/metadata/makers/<name>.yaml), to
 # MakerHouse/schema/company.schema.yaml. The game's
 # brands.ron is written from them.
-# 0. Dogma: the laws everything runs on (standards/Dogma). Each law against the engine's own copy,
-# where it has one; and the constants this build works things out with are these, by name.
+# 0. Dogma: the laws everything runs on (standards/Dogma). The engine makes its constants from these
+# records when it is built; the constants this build works things out with are these too, by name.
 dogma = []
 _ddir = os.path.join(TREE, "Dogma", "metadata")
-_engine = {}
-
-
-def engine_value(file, constant):
-    """A constant as the engine's file has it today, or None."""
-    if file not in _engine:
-        try:
-            _engine[file] = open(os.path.join(ROOT, file), encoding="utf-8").read()
-        except OSError:
-            _engine[file] = ""
-    m = re.search(rf'name: "{constant}", value: ([0-9.eE+-]+)', _engine[file]) or re.search(rf"const {constant}: f64 = ([0-9._eE+-]+(?: \* DAY)?);", _engine[file])
-    if not m:
-        return None
-    v = m.group(1).replace("_", "")
-    return float(v[:-6]) * 86400 if v.endswith(" * DAY") else float(v)
 
 
 for _fn in sorted(os.listdir(_ddir)) if os.path.isdir(_ddir) else []:
@@ -438,13 +423,6 @@ _law = {l["slug"]: l["value"] for s_ in dogma for l in s_["laws"]}
 C_LIGHT, SIGMA, G_N = _law["speed-of-light"], _law["stefan-boltzmann"], _law["gravitation"]
 G0, AU_M, LY, DAY_S, YEAR_S = _law["standard-gravity"], _law["astronomical-unit"], _law["light-year"], _law["day"], _law["year"]
 SUN_KG, SUN_W = _law["sun-mass"], _law["sun-luminosity"]
-for s_ in dogma:
-    for l in s_["laws"]:
-        # (What the engine holds it as: per light year, or times the speed of light, where it says so.)
-        how = (l.get("in_game") or {}).get("as")
-        l["engine_value"] = float(f"{l['value'] * LY if how == 'per light year' else l['value'] / C_LIGHT if how == 'times the speed of light' else l['value']:.12g}")
-        if (l.get("in_game") or {}).get("file") and l["identity"].get("label"):
-            l["engine_has"] = engine_value(l["in_game"]["file"], l["identity"]["label"])
 
 HOUSE = "MakerHouse"
 house = load(os.path.join(TREE, HOUSE, "metadata", HOUSE + ".yaml"))
@@ -1829,24 +1807,10 @@ report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship
 
 # 1c. Stargates: what opening and holding each ring's tube costs, by the laws (Dogma's Tube; the
 # same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
-LAW = {l["identity"]["label"]: l["engine_value"] for s_ in dogma for l in s_["laws"] if l["identity"].get("label")}
-rows = []
-for s_ in dogma:
-    for l in s_["laws"]:
-        where, has = (l.get("in_game") or {}).get("file"), l.get("engine_has")
-        shown = f"{l['value']:g}" + (" " + l["unit"] if l.get("unit") else "")
-        if not where:
-            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], "nowhere", f"the engine has no {l['identity']['label']}: it writes the number where it needs it"))
-        elif has is None:
-            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"no constant named {l['identity']['label']} there: the number is written where it is needed"))
-        else:
-            same = abs(has - l["engine_value"]) <= 1e-9 * max(abs(has), abs(l["engine_value"]))
-            rows.append(row("ok" if same else "gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"{l['identity']['label']}: the same" if same else f"{l['identity']['label']} is {has:g} there, {l['engine_value']:g} here"))
-report("dogma", "Dogma: the laws against the engine's", "Each law of Dogma, and the engine's own copy of it today. Until the engine reads the registry, the two are held together here: a gap is a law the engine has differently, or has no name for.",
-       ["Law", "Section", "Value", "Kind", "In the engine", "State"], rows)
+LAW = {l["identity"]["label"]: l["value"] for s_ in dogma for l in s_["laws"]}
 _structs = open(os.path.join(ROOT, "content", "base", "structures.ron"), encoding="utf-8").read()
 GAME_RINGS = {k: float(v) for k, v in re.findall(r'key: "([^"]+)",[^\n]*?span_ly: ([0-9.]+)', _structs)}
-tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * m ** LAW["TUBE_GAMMA"]
+tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * LY * m ** LAW["TUBE_GAMMA"]      # (the law is for each metre)
 tube_energy = lambda m, span_ly: LAW["TUBE_EPS"] * m * span_ly * LY * math.e      # (at its natural time)
 station = next((m for m in modules if (m.get("rate") or {}).get("power")), None)
 rows = []
@@ -2679,9 +2643,9 @@ def write_game_keys():
         elif kind == "module":
             was, where = rest, "industry.ron, settlements.ron"
         elif kind in ("rock-class", "law") and idn.get("label"):
-            was, where = idn["label"], "belt.rs" if kind == "rock-class" else (rec.get("in_game") or {}).get("file")
-            if where is None:
-                continue
+            if kind == "law":
+                continue                    # (the engine makes its constant under the law's label: nothing to rename)
+            was, where = idn["label"], "belt.rs"
         elif kind in ("system", "body", "population") and rec.get("in_game") != "not made":
             was, where = idn.get("name"), "by name: celestial.ron, the seed"
         elif kind == "settlement":

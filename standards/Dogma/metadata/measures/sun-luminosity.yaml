@@ -7,8 +7,7 @@ identity:
   section: dogma.measures
 value: 3.828e+26
 unit: "W"
-kind: reference
+kind: real
 note: "What a star's light is read in."
-in_game: { file: content/base/sheet.ron }
 basis:
   - { of: [value], tier: sourced, source: "IAU 2015 Resolution B3: the nominal solar luminosity" }

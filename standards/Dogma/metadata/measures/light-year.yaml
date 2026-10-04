@@ -7,8 +7,7 @@ identity:
   section: dogma.measures
 value: 9460730472580800
 unit: "m"
-kind: reference
+kind: real
 note: "What light crosses in a year of 365.25 days: what distances between stars are read in."
-in_game: { file: crates/world/src/units.rs }
 basis:
   - { of: [value], tier: sourced, source: "IAU: c times a Julian year, exact" }

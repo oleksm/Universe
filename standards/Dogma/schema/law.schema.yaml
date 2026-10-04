@@ -4,7 +4,7 @@ x-kind: [law]
 description: 'standards/Dogma/metadata/<section>/<name>.yaml: one law of Dogma: a constant of nature, a named reference value, or a constant of a law the world runs on. The same everywhere; nothing here is a device''s, a material''s or a design''s.'
 type: object
 additionalProperties: false
-required: [identity, value, kind]
+required: [identity, value, kind, note]
 properties:
   identity:
     type: object
@@ -14,18 +14,10 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       symbol: { type: string, description: "The letter it goes by in a formula." }
-      label: { type: string, pattern: "^[A-Z][A-Z0-9_]*$", description: "Its label: the constant's name, as code and formulas write it (SPEED_OF_LIGHT). No two alike. The engine's name for it, where the engine has one." }
+      label: { type: string, pattern: "^[A-Z][A-Z0-9_]*$", description: "Its label: the constant's name, as code and formulas write it (SPEED_OF_LIGHT). No two alike. The engine makes its constant under this name: do not change one without the engine." }
       section: { type: string, x-ref: [dogma] }
   value: { type: number }
   unit: { type: string, description: "Its unit, in SI: checked by the build as an x-unit is. Left out: a pure number (an exponent, a share, a count of scale heights)." }
-  kind: { enum: [real, reference, simplified, invented], description: "real: measured nature. reference: a value fixed by definition or convention, that other things are counted in (a light year, a standard gravity, the Sun's mass): not a law of nature. simplified: an approximation of the real, to refine. invented: this world's own (the hyper layer), by written rule." }
+  kind: { enum: [real, simplified, invented], description: "real: measured nature, or a value fixed by definition or convention (the Measures: a light year, a standard gravity). simplified: an approximation of the real, to refine. invented: this world's own (the hyper layer), by written rule." }
   note: { type: string, description: "What it is for; for an invented one, the target it was chosen to meet." }
-  in_game:
-    description: "Where the engine has it today, for the build to hold the two together."
-    type: object
-    additionalProperties: false
-    required: [file]
-    properties:
-      file: { type: string, description: "The file, from the repository's root." }
-      as: { type: string, description: "The unit the engine holds it in, where that is not the record's: per light year, times the speed of light." }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -7,8 +7,7 @@ identity:
   section: dogma.measures
 value: 6371000
 unit: "m"
-kind: reference
+kind: real
 note: "What a planet's radius is read in."
-in_game: { file: crates/world/src/units.rs }
 basis:
   - { of: [value], tier: sourced, source: "IUGG: the Earth's mean radius, 6,371.0 km" }

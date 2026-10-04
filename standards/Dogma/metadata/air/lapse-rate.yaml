@@ -8,6 +8,5 @@ value: 0.0065
 unit: "K/m"
 kind: real
 note: "Air cooling with height."
-in_game: { file: content/base/sheet.ron }
 basis:
   - { of: [value], tier: sourced, source: "US Standard Atmosphere 1976: 6.5 K per km in the troposphere" }

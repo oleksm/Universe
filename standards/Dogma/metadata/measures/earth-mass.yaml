@@ -7,8 +7,7 @@ identity:
   section: dogma.measures
 value: 5.972e+24
 unit: "kg"
-kind: reference
+kind: real
 note: "What a planet's mass is read in."
-in_game: { file: crates/world/src/units.rs }
 basis:
   - { of: [value], tier: sourced, source: "IAU 2015 Resolution B3 with CODATA's G: 5.9722e24", note: "The engine's is rounded to four figures." }

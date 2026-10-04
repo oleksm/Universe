@@ -9,6 +9,5 @@ value: 6.6743e-11
 unit: "m3/(kg s2)"
 kind: real
 note: "The pull between two masses: G m1 m2 / r^2."
-in_game: { file: crates/world/src/units.rs }
 basis:
   - { of: [value], tier: sourced, source: "CODATA 2018: 6.67430e-11" }

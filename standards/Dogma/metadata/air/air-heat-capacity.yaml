@@ -9,6 +9,5 @@ value: 1005.0
 unit: "J/(kg K)"
 kind: real
 note: "Earth-like air's specific heat at constant pressure."
-in_game: { file: content/base/sheet.ron }
 basis:
   - { of: [value], tier: sourced, source: "Dry air at 300 K: 1,005 J/(kg K)" }

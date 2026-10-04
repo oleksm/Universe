@@ -302,6 +302,23 @@ to the process, and only then remove the process's own.
 stores and no transport inside a works are the game's mechanics, the doc their spec; and moving
 stock inside a works at once and for nothing is coarse-first, labelled so.
 
+## After Dogma landed on main (95059b2)
+
+Merged into `fso`. Done from your note:
+- `in_game` is gone from every law and from the law schema, with the `as` conversions. The Dogma
+  report is gone: there is no second copy to hold the records to.
+- Every law has a `note`, and the schema now requires it.
+- Labels are as they were. The schema says a label is not to change without the engine.
+- `build.py` takes the Tube laws in SI as the records hold them (it no longer turns `TUBE_T_LY`
+  back to seconds per light year).
+- Laws are out of `standards/game-keys.yaml`: the engine's constant is the law's label.
+
+**One thing undone, because it broke your build.** The audit asked for a way to mark a reference
+value, and I added `kind: reference` to the ten Measures. `dogmagen.rs` has `LawKind` as Real,
+Simplified, Invented, so the engine would not build. They are `real` again, and the schema's kind
+has three values. When `LawKind` and the engine's `Kind` have a fourth, say so and I will put it
+back; or name another way you would rather it were marked.
+
 ## Next on `fso`, in this order
 
 1. What each kind requires (problem 4), with you.

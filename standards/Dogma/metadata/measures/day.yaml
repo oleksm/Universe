@@ -7,8 +7,7 @@ identity:
   section: dogma.measures
 value: 86400
 unit: "s"
-kind: reference
+kind: real
 note: "What times are read in."
-in_game: { file: crates/world/src/units.rs }
 basis:
   - { of: [value], tier: sourced, source: "SI: a day of 86,400 s" }
