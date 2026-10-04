@@ -230,6 +230,25 @@ impl Sides {
     pub fn rows(&self) -> impl Iterator<Item = (f64, f64, f64)> + '_ {
         self.rows.iter().enumerate().filter_map(|(r, s)| s.map(|(a, b)| (self.z0 + r as f64 * STEP, a, b)))
     }
+
+    /// Where both are: each row the narrower of the two.
+    pub fn and(&self, other: &Sides) -> Sides {
+        let rows = self.rows.iter().enumerate().map(|(r, s)| {
+            let (a, b) = (*s)?;
+            let (c, d) = other.span(self.z0 + r as f64 * STEP)?;
+            let (lo, hi) = (a.max(c), b.min(d));
+            (lo < hi).then_some((lo, hi))
+        }).collect();
+        Sides { z0: self.z0, rows }
+    }
+}
+
+/// A deck's sides: the hull's, cut at the slab's underside, the floor and a
+/// person's waist, the narrowest of them (so a floor never pokes out through a
+/// hull that slopes in under it).
+pub fn deck_sides(mesh: &crate::walk::WalkMesh, floor: f64) -> Sides {
+    let cut = |y: f64| Sides::of(&mesh.section_y(y));
+    cut(floor + 1.0).and(&cut(floor + 0.02)).and(&cut(floor - DECK + 0.02))
 }
 
 /// Where outline `poly` (x, z) is crossed at `z`: its spans inside (pairs of x).
@@ -379,10 +398,10 @@ impl Ground {
 
     /// The outline of the cells marked in `fill`, run on two cells (under the
     /// walls, so floors either side of one meet), smoothed: its outer edge.
-    fn outline(&self, fill: &[bool]) -> Option<Vec<DVec2>> {
+    fn outline(&self, fill: &[bool], grow: usize) -> Option<Vec<DVec2>> {
         let (nx, nz) = (self.nx, self.nz);
         let mut fill = fill.to_vec();
-        for _ in 0..2 {
+        for _ in 0..grow {
             let was = fill.clone();
             for j in 1..nz - 1 {
                 for i in 1..nx - 1 {
@@ -444,21 +463,24 @@ pub fn carve(sides: &Sides, walls: &[Wall], at: DVec2) -> Option<Vec<DVec2>> {
     let start = g.cell(at).filter(|&(i, j)| g.open[j * g.nx + i])?;
     let mut fill = vec![false; g.nx * g.nz];
     g.flood(start, &mut fill);
-    g.outline(&fill)
+    g.outline(&fill, 2)
 }
 
-/// Is a spot (x, `y`, z: a person's waist) in the hull's hollow, closed in by
-/// it: its inner surface (met from in front, as the model's faces are wound)
-/// overhead with room for their head (0.9 m) and underfoot, and round it in at
+/// Is a spot (x, `y`, z) in the hull's hollow, closed in by it: its inner
+/// surface (met from in front, as the model's faces are wound) overhead, at
+/// least `head` up, and underfoot, and round it in at
 /// least seven of eight directions across (so one opening, a hatch, doesn't
 /// leave it out)? Not under the hull (nothing underfoot), between its parts,
 /// outside its skin, inside a solid part (its faces met from behind), or where
 /// the ceiling is too low to stand.
-pub fn enclosed(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64) -> bool {
+///
+/// `solid` lets it be inside a solid part too (the hull's own floor, round a
+/// slab): any surface met counts, just not open to the outside.
+pub fn enclosed(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64, head: f64, solid: bool) -> bool {
     let at = DVec3::new(p.x, y, p.y);
     let reach = (mesh.hi - mesh.lo).length() + 1.0;
-    let front = |dir: DVec3| mesh.ray_face(at, dir, reach).filter(|(_, n)| n.dot(dir) < 0.0).map(|(d, _)| d);
-    if !front(DVec3::Y).is_some_and(|d| d >= 0.9) || front(-DVec3::Y).is_none() {
+    let front = |dir: DVec3| mesh.ray_face(at, dir, reach).filter(|(_, n)| solid || n.dot(dir) < 0.0).map(|(d, _)| d);
+    if !front(DVec3::Y).is_some_and(|d| d >= head) || front(-DVec3::Y).is_none() {
         return false;
     }
     let d = std::f64::consts::FRAC_1_SQRT_2;
@@ -466,33 +488,65 @@ pub fn enclosed(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64) -> bool {
     round.iter().filter(|(x, z)| front(DVec3::new(*x, 0.0, *z)).is_some()).count() >= 7
 }
 
-/// Floors filling the whole deck at `floor`: where the hull closes in a person
-/// standing on it (`enclosed`, at their waist), one floor for each part of it
-/// there (a hull can be in pieces at a height), leaving out scraps under 2 m².
-/// Walls aren't kept clear of: they stand on the floor.
-pub fn fill(mesh: &crate::walk::WalkMesh, sides: &Sides, floor: f64) -> Vec<Vec<DVec2>> {
-    // (Asked on a coarser grid, 25 cm, each answer kept.)
+/// Half a person's width (m): a floor is only where they fit.
+pub const BODY: f64 = 0.3;
+
+/// Floors filling the whole deck at `floor`, where a person can be: the hull
+/// closes them in (`enclosed`) at the slab's underside, their feet and their
+/// waist with their head clear (1.9 m), and there's room for them (`BODY` each
+/// way: narrower strips and pockets left out, what's left grown back to 10 cm
+/// shy of the hull). One floor for each part of it there (a hull can be in pieces at a
+/// height), leaving out scraps under 2 m². Walls aren't kept clear of: they
+/// stand on the floor.
+pub fn fill(mesh: &crate::walk::WalkMesh, floor: f64) -> Vec<Vec<DVec2>> {
+    // (Asked on a coarser grid, 25 cm, each answer kept; near an edge, where the
+    // answers round about differ, asked again at the spot itself.)
     const COARSE: f64 = 0.25;
+    let person = |c: DVec2| enclosed(mesh, c, floor + 1.0, 0.9, false) && enclosed(mesh, c, floor + 0.1, 0.0, true) && enclosed(mesh, c, floor - DECK + 0.05, 0.0, true);
     let mut asked: std::collections::HashMap<(i64, i64), bool> = std::collections::HashMap::new();
-    let keep = |p: DVec2| *asked.entry(((p.x / COARSE).floor() as i64, (p.y / COARSE).floor() as i64)).or_insert_with(|| {
-        let c = DVec2::new(((p.x / COARSE).floor() + 0.5) * COARSE, ((p.y / COARSE).floor() + 0.5) * COARSE);
-        enclosed(mesh, c, floor + 1.0)
-    });
-    let Some(g) = Ground::where_(sides, &[], keep) else { return Vec::new() };
-    let mut done = vec![false; g.nx * g.nz];
+    let keep = |p: DVec2| {
+        let (i, j) = ((p.x / COARSE).floor() as i64, (p.y / COARSE).floor() as i64);
+        let mut coarse = |i: i64, j: i64| *asked.entry((i, j)).or_insert_with(|| person(DVec2::new((i as f64 + 0.5) * COARSE, (j as f64 + 0.5) * COARSE)));
+        let here = coarse(i, j);
+        let edge = [(1, 0), (-1, 0), (0, 1), (0, -1)].iter().any(|(di, dj)| coarse(i + di, j + dj) != here);
+        if edge { person(p) } else { here }
+    };
+    let sides = deck_sides(mesh, floor);
+    let Some(mut g) = Ground::where_(&sides, &[], keep) else { return Vec::new() };
+    // Where a person fits: open all round within `BODY`.
+    let (nx, nz) = (g.nx, g.nz);
+    let reach = (BODY / CELL).round() as isize;
+    let disc: Vec<(isize, isize)> = (-reach..=reach).flat_map(|i| (-reach..=reach).map(move |j| (i, j))).filter(|(i, j)| i * i + j * j <= reach * reach).collect();
+    let open = g.open.clone();
+    let at = |i: isize, j: isize| i >= 0 && j >= 0 && (i as usize) < nx && (j as usize) < nz && open[j as usize * nx + i as usize];
+    let fits: Vec<bool> = (0..nz).flat_map(|j| (0..nx).map(move |i| (i as isize, j as isize))).map(|(i, j)| disc.iter().all(|(di, dj)| at(i + di, j + dj))).collect();
+    g.open = fits.clone();
+    let mut done = vec![false; nx * nz];
     let mut out = Vec::new();
-    for j in 0..g.nz {
-        for i in 0..g.nx {
-            if !g.open[j * g.nx + i] || done[j * g.nx + i] {
+    for j in 0..nz {
+        for i in 0..nx {
+            if !fits[j * nx + i] || done[j * nx + i] {
                 continue;
             }
-            let mut part = vec![false; g.nx * g.nz];
-            let n = g.flood((i, j), &mut part);
+            let mut part = vec![false; nx * nz];
+            g.flood((i, j), &mut part);
             for (d, p) in done.iter_mut().zip(&part) {
                 *d |= *p;
             }
-            if n as f64 * CELL * CELL >= 2.0
-                && let Some(poly) = g.outline(&part)
+            // Grown back by a body's width less a cell, as far as the open ground
+            // goes (a hand's width shy of the hull: its outline, smoothed, can't
+            // reach through it).
+            let mut grown = part.clone();
+            for (k, _) in part.iter().enumerate().filter(|(_, p)| **p) {
+                let (pi, pj) = ((k % nx) as isize, (k / nx) as isize);
+                for (di, dj) in disc.iter().filter(|(i, j)| i * i + j * j <= (reach - 1) * (reach - 1)) {
+                    if at(pi + di, pj + dj) {
+                        grown[(pj + dj) as usize * nx + (pi + di) as usize] = true;
+                    }
+                }
+            }
+            if grown.iter().filter(|g| **g).count() as f64 * CELL * CELL >= 2.0
+                && let Some(poly) = g.outline(&grown, 0)
             {
                 out.push(poly);
             }
@@ -708,11 +762,26 @@ mod tests {
         let centre = (lo + hi) / 2.0;
         let tris: Vec<[DVec3; 3]> = tris.into_iter().map(|t| if (t[1] - t[0]).cross(t[2] - t[0]).dot(centre - t[0]) < 0.0 { [t[0], t[2], t[1]] } else { t }).collect();
         let mesh = crate::walk::WalkMesh::new(&tris);
-        let filled = fill(&mesh, &sides, 1.0);
+        let filled = fill(&mesh, 1.0);
         assert_eq!(filled.len(), 1);
         let whole: f64 = floor_strips(&filled[0], &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
-        assert!((whole - 60.0).abs() < 1.5, "{whole}");
-        assert!(fill(&mesh, &sides, -3.0).is_empty());
+        // (10 cm shy of the hull all round: 5.8 by 9.8.)
+        assert!((whole - 56.8).abs() < 1.0, "{whole}");
+        assert!(fill(&mesh, -3.0).is_empty());
+        // A strip too narrow for a person (0.4 m): no floor.
+        let (lo, hi) = (DVec3::new(-0.2, 0.0, -5.0), DVec3::new(0.2, 4.0, 5.0));
+        let v = |x: usize, y: usize, z: usize| DVec3::new([lo.x, hi.x][x], [lo.y, hi.y][y], [lo.z, hi.z][z]);
+        let narrow: Vec<[DVec3; 3]> = [
+            quad(v(0, 0, 0), v(1, 0, 0), v(1, 0, 1), v(0, 0, 1)),
+            quad(v(0, 1, 0), v(1, 1, 0), v(1, 1, 1), v(0, 1, 1)),
+            quad(v(0, 0, 0), v(1, 0, 0), v(1, 1, 0), v(0, 1, 0)),
+            quad(v(0, 0, 1), v(1, 0, 1), v(1, 1, 1), v(0, 1, 1)),
+            quad(v(0, 0, 0), v(0, 0, 1), v(0, 1, 1), v(0, 1, 0)),
+            quad(v(1, 0, 0), v(1, 0, 1), v(1, 1, 1), v(1, 1, 0)),
+        ].concat();
+        let centre = (lo + hi) / 2.0;
+        let narrow: Vec<[DVec3; 3]> = narrow.into_iter().map(|t| if (t[1] - t[0]).cross(t[2] - t[0]).dot(centre - t[0]) < 0.0 { [t[0], t[2], t[1]] } else { t }).collect();
+        assert!(fill(&crate::walk::WalkMesh::new(&narrow), 1.0).is_empty());
         // A wall across, 10 m: kept inside, 6 m of it.
         let wall = Wall { points: vec![DVec2::new(-5.0, 0.0), DVec2::new(5.0, 0.0)], ..Default::default() };
         let runs = wall_runs(&wall, &sides);

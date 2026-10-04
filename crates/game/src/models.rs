@@ -54,7 +54,7 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
         return Some(m.clone());
     }
     let walk = shape.walk.as_ref()?;
-    let sides: Vec<_> = plan.decks.iter().map(|d| deckplan::Sides::of(&walk.section_y(d.floor + 1.0))).collect();
+    let sides: Vec<_> = plan.decks.iter().map(|d| deckplan::deck_sides(walk, d.floor)).collect();
     let b = deckplan::build(plan, &sides);
     let mut m = WireModel::default();
     for (quad, floor) in &b.panels {

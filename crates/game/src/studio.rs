@@ -211,7 +211,7 @@ impl Studio {
             return;
         }
         let section = mesh.section_y(y + 1.0);
-        let sides = Sides::of(&section);
+        let sides = deckplan::deck_sides(mesh, y);
         let profile = self.hull.as_ref().filter(|h| h.key == hull_key).map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
         let first_floor = first_floor(mesh);
         self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
@@ -621,10 +621,8 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     }
     // The floors' panel's FILL: floors over the whole deck, now.
     if auto_shown(studio) && input.button_pressed(MouseButton::Left) && in_rect({ let (p, c) = auto_button(studio); (p, p + c) }, cursor) {
-        if let Some(h) = studio.hull.as_ref() {
-            if let Some(mesh) = shape.walk.as_ref() {
-                deck.planes.extend(deckplan::fill(mesh, &h.sides, deck.floor));
-            }
+        if let Some(mesh) = shape.walk.as_ref() {
+            deck.planes.extend(deckplan::fill(mesh, deck.floor));
             studio.pick = deck.planes.len().checked_sub(1).map(Pick::Plane);
         }
         return true;

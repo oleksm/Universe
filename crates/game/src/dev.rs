@@ -1173,6 +1173,54 @@ pub fn apply(app: &mut App, name: &str) {
                 log::info!("scenario studiowalk: feet in the ship's frame {local:.2?}");
             }
         }
+        "layoutlook" => {
+            // Six decks (5.6 m up from the keel, 2.9 m apart), each filled, then down the
+            // ramp, out and off to the side (UNIVERSE_SIDE m), looking back up at the ship.
+            apply(app, "touchdown");
+            mc07(app);
+            let Some(mesh) = app.ship.spec().shape().walk.clone() else { return };
+            let mut plan = demo_plan(app);
+            plan.decks = (0..6).map(|k| {
+                let mut d = universe_sim::world::deckplan::Deck::at(mesh.lo.y + 5.6 + 2.9 * k as f64);
+                if std::env::var_os("UNIVERSE_EMPTY").is_none() {
+                    d.planes = universe_sim::world::deckplan::fill(&mesh, d.floor);
+                }
+                d
+            }).collect();
+            for d in &plan.decks {
+                let sides = universe_sim::world::deckplan::deck_sides(&mesh, d.floor);
+                let areas: Vec<String> = d.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
+                log::info!("scenario layoutlook: deck at {:.1} m up, floors m2 {}", d.floor - mesh.lo.y, areas.join(" "));
+                // (Any slab corner out in the open: a floor poking through the hull.)
+                let mut out = 0;
+                let mut all = 0;
+                for p in &d.planes {
+                    for (z0, z1, x0, x1) in universe_sim::world::deckplan::floor_strips(p, &sides, &[]) {
+                        for (x, z) in [(x0 + 0.05, z0 + 0.02), (x1 - 0.05, z0 + 0.02), (x0 + 0.05, z1 - 0.02), (x1 - 0.05, z1 - 0.02)] {
+                            for y in [d.floor - universe_sim::world::deckplan::DECK + 0.02, d.floor - 0.02] {
+                                all += 1;
+                                if !universe_sim::world::deckplan::enclosed(&mesh, universe_engine::glam::DVec2::new(x, z), y, 0.0, true) {
+                                    out += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                log::info!("scenario layoutlook:   slab corners out in the open: {out} of {all}");
+            }
+            app.engine.universe().set_layout(&plan);
+            app.deckplans.retain(|p| p.hull != plan.hull);
+            app.deckplans.push(plan);
+            at_hatch(app, 0.0);
+            for _ in 0..900 {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
+            }
+            let side: f64 = std::env::var("UNIVERSE_SIDE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+            for _ in 0..(side.abs() / 1.6 / 0.02) as usize {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { right: side.signum(), ..Default::default() }, 0.02);
+            }
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { yaw: std::f64::consts::PI - side.signum() * 0.9, pitch: 0.2, ..Default::default() }, 0.02);
+        }
         "studiopreview" => {
             // The studio's walk-through on the demo plan: on foot in the hold, facing the wall and its door.
             apply(app, "studio");
@@ -1216,7 +1264,7 @@ pub fn apply(app: &mut App, name: &str) {
                     && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
                 {
                     let deck = &mut plan.decks[0];
-                    let sides = universe_sim::world::deckplan::Sides::of(&mesh.section_y(deck.floor + 1.0));
+                    let sides = universe_sim::world::deckplan::deck_sides(mesh, deck.floor);
                     deck.planes = universe_sim::world::deckplan::carve(&sides, &deck.walls, universe_engine::glam::DVec2::new(x, z)).into_iter().collect();
                     if let Some(poly) = deck.planes.first() {
                         let (lo, hi) = poly.iter().fold((universe_engine::glam::DVec2::MAX, universe_engine::glam::DVec2::MIN), |m, p| (m.0.min(*p), m.1.max(*p)));
@@ -1236,8 +1284,8 @@ pub fn apply(app: &mut App, name: &str) {
                     && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
                 {
                     let deck = &mut plan.decks[0];
-                    let sides = universe_sim::world::deckplan::Sides::of(&mesh.section_y(deck.floor + 1.0));
-                    deck.planes = universe_sim::world::deckplan::fill(mesh, &sides, deck.floor);
+                    let sides = universe_sim::world::deckplan::deck_sides(mesh, deck.floor);
+                    deck.planes = universe_sim::world::deckplan::fill(mesh, deck.floor);
                     let areas: Vec<String> = deck.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
                     log::info!("scenario studio: filled {} floors, m2 {}", deck.planes.len(), areas.join(" "));
                 }
