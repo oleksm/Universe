@@ -1884,9 +1884,9 @@ report("invented", "Confidence: the records with invented or unexplained numbers
 # fields/<name>.yaml. Each record has a status: seeded (as the seed makes it, written out by
 # tools/standards/celestial_export.py), curated (a person's; the truth) or frozen.
 CEL = os.path.join(TREE, "Celestial")
-celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": []}
+celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": [], "vocabulary": []}
 if os.path.isdir(CEL):
-    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class", "asteroids")}
+    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class", "asteroids", "vocabulary")}
     celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field", "rock-class")}
 
     def cel_load(full, kind):
@@ -1906,6 +1906,27 @@ if os.path.isdir(CEL):
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
         return rec
 
+    # (The vocabulary: each kind of thing a system has.)
+    vdir = os.path.join(CEL, "metadata", "vocabulary")
+    celestial["vocabulary"] = []
+    for fn in sorted(os.listdir(vdir)) if os.path.isdir(vdir) else []:
+        if not fn.endswith(".yaml"):
+            continue
+        vfull = os.path.join(vdir, fn)
+        v_ = load(vfull)
+        for g_ in v_:
+            if g_ not in cschema["vocabulary"]["properties"]:
+                problem(vfull, f"unknown field '{g_}'")
+        for q in v_.get("identity") or {}:
+            if q not in cschema["vocabulary"]["properties"]["identity"]["properties"]:
+                problem(vfull, f"identity: unknown property '{q}'")
+        if v_.get("game") not in ("made", "partly", "not made"):
+            problem(vfull, "game: one of made, partly, not made")
+        check_basis(v_, vfull)
+        v_["slug"], v_["file"] = fn[:-5], os.path.relpath(vfull, TREE)
+        celestial["vocabulary"].append(v_)
+    GROUPS_ = ["star", "world", "moon", "region", "small body", "place", "condition"]
+    celestial["vocabulary"].sort(key=lambda v_: (GROUPS_.index(v_["identity"]["group"]) if v_["identity"].get("group") in GROUPS_ else 99, v_["identity"]["name"]))
     # (How asteroids lie: the Sun's belts, the measure for each system's.)
     apath = os.path.join(CEL, "metadata", "asteroids.yaml")
     if os.path.exists(apath):
@@ -2022,6 +2043,28 @@ if os.path.isdir(CEL):
             return {"zones": [{"zone": z_, "share": w_} for z_, w_ in parts_], "classes": sorted(({"class": k_, "share": v_} for k_, v_ in out_.items()), key=lambda c_: -c_["share"])}
         for bl in belts:
             bl["mix"] = mix_of(bl)
+        star_kg = (sysm.get("star") or {}).get("mass", 0) * 1.98847e30
+        for b in sysm["bodies"]:
+            par = next((o for o in sysm["bodies"] if o["identity"]["name"] == b["identity"].get("parent")), None)
+            big = (par.get("physical") or {}).get("mass") if par else star_kg
+            m_, a_ = (b.get("physical") or {}).get("mass"), (b.get("orbit") or {}).get("semi_major_axis")
+            if big and m_ and a_ and b["identity"]["kind"] != "asteroid":
+                b["balance"] = {"reach": a_ * (m_ / (3 * big)) ** (1 / 3), "round": par["identity"]["name"] if par else sysm["identity"]["name"], "stable": big / m_ > 24.96, "ratio": big / m_}
+        # (What it has of each kind in the vocabulary, counted from its records.)
+        kinds = {}
+        for b in sysm["bodies"]:
+            k_ = {"rocky planet": "rocky-planet", "gas giant": "gas-giant", "ice giant": "ice-giant", "moon": "moon", "asteroid": "asteroid"}.get(b["identity"]["kind"])
+            kinds[k_] = kinds.get(k_, 0) + 1
+            if (b.get("physical") or {}).get("rings"):
+                kinds["ring-system"] = kinds.get("ring-system", 0) + 1
+        kinds["star"] = 1
+        for bl in belts:
+            k_ = {"main": "main-belt", "trojan": "trojan-swarm", "outer": "outer-belt"}[bl["kind"]]
+            kinds[k_] = kinds.get(k_, 0) + 1
+        kinds["asteroid-family"] = sum(bl.get("families") or 0 for bl in belts)
+        kinds["asteroid-moon"] = len(sysm["fields"])
+        kinds["balance-point"] = 5 * sum(1 for b in sysm["bodies"] if "balance" in b)
+        sysm["has"] = kinds
         sysm["belts"] = belts
         sysm["frost_line"] = frost
     home = celestial["galaxy"].get("home")

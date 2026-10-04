@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Asteroid family"
+  group: small body
+  about: "The pieces of one body broken in a collision. They share its orbit, and spread all the way round it."
+lies: "In the main belt."
+made_of: "All of one class: their parent's."
+figures:
+  - { what: "share of asteroids in one", value: "33 to 35%" }
+  - { what: "how many", value: "20 to 30 well recognised" }
+  - { what: "how long one lasts", value: "about a billion years" }
+means: "Find one piece and you know what the rest are made of."
+game: partly
+game_note: "Made as one place, not spread round its orbit."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_family" }

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Stellar wind"
+  group: condition
+  known_as: "solar wind"
+  about: "A steady stream of charged particles from the star, with sudden outbursts."
+lies: "Everywhere in the system, thinning outward."
+made_of: "Electrons, protons and helium nuclei."
+figures:
+  - { what: "how fast", value: "300 to 750 km/s" }
+  - { what: "how thick, at the Earth", value: "3 to 10 particles in each cm3" }
+  - { what: "the Sun loses", value: "1.3 to 1.9 million tonnes a second" }
+  - { what: "where it ends", value: "about 120 AU" }
+means: "The system's weather. An outburst is a storm for anything unshielded."
+game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Solar_wind" }

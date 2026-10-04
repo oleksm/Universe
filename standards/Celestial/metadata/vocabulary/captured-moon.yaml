@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Captured moon"
+  group: moon
+  known_as: "irregular satellite"
+  about: "A small body that once went round the star and was caught by a giant. Its orbit is distant, tilted, stretched and often backward."
+lies: "Far out from a giant, between a twentieth and about half of the reach of its pull."
+made_of: "As asteroids and comets: it was one."
+figures:
+  - { what: "known", value: "383, round all four of the Sun's giants" }
+  - { what: "how far out", value: "from 0.05 of the planet's reach, none past 0.47" }
+  - { what: "Jupiter's, over 400 m", value: "possibly hundreds more" }
+means: "Asteroid rock already parked at a giant, in almost no well at all."
+game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Irregular_moon", note: "As of April 2026." }

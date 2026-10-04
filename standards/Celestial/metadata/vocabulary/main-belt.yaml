@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Main belt"
+  group: region
+  known_as: "asteroid belt"
+  about: "The ring of rocks between the rocky planets and the first giant, which stopped them gathering into a planet."
+lies: "Between two resonances with the first gas giant."
+made_of: "Stony close in, metal-rich in the middle, carbonaceous farther out."
+figures:
+  - { what: "over 1 km across", value: "0.7 to 1.7 million" }
+  - { what: "all of it together", value: "3% of the Moon's mass" }
+  - { what: "from one to the next", value: "965,600 km on average" }
+means: "Ore in no well at all. Nearly empty: a rock is a place to go to, not a field to fly through."
+game: partly
+game_note: "Made as two to five fields a system; see the note on fields."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_belt" }

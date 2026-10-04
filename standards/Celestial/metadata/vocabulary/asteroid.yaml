@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Asteroid"
+  group: small body
+  about: "A body of rock or metal too small to pull itself round, on an orbit of its own."
+lies: "Mostly in the main belt and the swarms."
+made_of: "By where it formed: see the rock classes."
+means: "What is mined."
+game: made
+game_note: "As a field's remnant and its fragments."

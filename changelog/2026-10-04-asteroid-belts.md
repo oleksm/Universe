@@ -15,3 +15,10 @@
   is by where a body formed against the frost line. Each belt's mix is worked out from the zones it
   covers: Treistun's main belt, wholly inside its frost line, is 68% stony, 12% carbonaceous, 7%
   basaltic, 6% metallic; its trojans mostly primitive; its outer belt ice.
+- **A celestial vocabulary**: 26 kinds of thing a star system has, from stars and worlds to comets,
+  centaurs, crossing asteroids, captured moons, rings, the scattered disc and far cloud, balance
+  points, tidal heating, radiation belts, stellar wind and visitors from other stars. Each says what
+  it is, where it lies, what is known of the Sun's (sourced), what it means for people working in
+  space, and whether the game makes it: 7 made, 8 partly, 11 not yet.
+- **Each system's page** counts what it has of each kind; **each planet's and moon's page** works
+  out its five balance points and how far its pull reaches.

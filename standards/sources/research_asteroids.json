@@ -208,7 +208,7 @@
    "verified": true
   }
  },
- "note": "Fetched 2026-10-04. Each quote is as a page-reading tool returned it; the figures were not checked against the pages by eye.",
+ "note": "Fetched 2026-10-04. Each quote is as a page-reading tool returned it; the figures were not checked against the pages by eye. The vocabulary's figures (comets, centaurs, crossing asteroids, far cloud, scattered disc, dwarf planets, rings, captured moons, balance points, tidal heating, radiation belts, stellar wind, meteoroids, companion stars, visitors, a giant's air) were fetched the same day from the pages named in vocabulary_sources.",
  "classes": {
   "trend_by_distance": {
    "value": "S, C, P, D",
@@ -287,5 +287,28 @@
    "quote": "centimetre-sized olivine crystals of peridot quality in an iron-nickel matrix ... mantle and core material from differentiated planetesimals. No proportions are given.",
    "verified": true
   }
+ },
+ "vocabulary_sources": {
+  "gas-giant": "https://en.wikipedia.org/wiki/Atmosphere_of_Jupiter",
+  "captured-moon": "https://en.wikipedia.org/wiki/Irregular_moon",
+  "ring-system": "https://en.wikipedia.org/wiki/Ring_system",
+  "main-belt": "https://en.wikipedia.org/wiki/Asteroid_belt",
+  "trojan-swarm": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+  "outer-belt": "https://en.wikipedia.org/wiki/Kuiper_belt",
+  "scattered-disc": "https://en.wikipedia.org/wiki/Scattered_disc",
+  "far-cloud": "https://en.wikipedia.org/wiki/Oort_cloud",
+  "asteroid-family": "https://en.wikipedia.org/wiki/Asteroid_family",
+  "asteroid-moon": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+  "crossing-asteroid": "https://en.wikipedia.org/wiki/Near-Earth_object",
+  "comet": "https://en.wikipedia.org/wiki/Comet",
+  "centaur": "https://en.wikipedia.org/wiki/Centaur_(small_Solar_System_body)",
+  "dwarf-planet": "https://en.wikipedia.org/wiki/Dwarf_planet",
+  "meteoroid-stream": "https://en.wikipedia.org/wiki/Meteoroid",
+  "visitor": "https://en.wikipedia.org/wiki/Interstellar_object",
+  "balance-point": "https://en.wikipedia.org/wiki/Lagrange_point",
+  "tidal-heating": "https://en.wikipedia.org/wiki/Tidal_heating",
+  "radiation-belt": "https://en.wikipedia.org/wiki/Magnetosphere_of_Jupiter",
+  "stellar-wind": "https://en.wikipedia.org/wiki/Solar_wind",
+  "companion-star": "https://en.wikipedia.org/wiki/Binary_star"
  }
 }

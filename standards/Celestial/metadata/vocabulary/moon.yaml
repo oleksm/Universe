@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  name: "Moon"
+  group: moon
+  known_as: "regular satellite"
+  about: "A body that formed round its planet and goes round it on a near-circular orbit in its equator's plane."
+lies: "Close to its planet."
+made_of: "Rock, or rock and ice."
+means: "A shallow well next to a deep one: the place to work from. A moon the size of ours has a crust rich in aluminium."
+game: made
