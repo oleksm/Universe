@@ -64,7 +64,8 @@ throughout, each property's unit in its schema as `x-unit`; angles are degrees.
   warehouse, a power station and a line); a works' `makes`, `takes` and `gives` name items ("6061
   plate 5 mm", "A36 steel ingot", "6061 scrap") where they named kinds ("Sheet and plate",
   "Ingot", "Scrap"); the foundry and smelter take in their alloying metals; the mill and the yard
-  have a stock yard; the yard no longer `takes` sheet.
+  have a stock yard; the yard `makes` formed panels as well as parts (its cutting table and panel
+  former are a line of their own, the welding bays another).
 - `industry.ron`: the stock yard added.
 - `celestial.ron`: the systems in order of distance from home (their positions were all zero).
 - `galaxy.ron`: the path in its comment.
