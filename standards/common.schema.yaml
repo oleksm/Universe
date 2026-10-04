@@ -20,7 +20,7 @@ definitions:
       required: [item]
       properties:
         item: { type: string, x-ref: [material, stock, part], description: "What it is made from, by its key." }
-        quantity: { type: number, description: "How much of it one takes, in the unit it is counted in (m2 of sheet, plate and film; metres of bar, tube and wire)." }
+        quantity: { type: number, x-unit: "kg", description: "kg of it one takes: the piece as cut from the stock, before it is shaped. What is cut away is the difference from the thing's own mass, and is scrap." }
         blank: { type: string, description: "The piece cut from the stock before it is shaped: 1.2 x 0.8 m, 400 mm long." }
         grain: { type: string, description: "The direction the stock's grain or fibre runs in it." }
         finish: { type: string, description: "Its surface: bare, anodised, plated, painted." }

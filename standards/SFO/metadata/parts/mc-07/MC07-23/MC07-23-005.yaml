@@ -18,7 +18,7 @@ shape:
   surface_area: 2.8
 made_from:
   - item: stock.st4340-bar-120
-    quantity: 2.59
+    quantity: 229.9438477
 making:
   module: module.machining-centre
 fit:

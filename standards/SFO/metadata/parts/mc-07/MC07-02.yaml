@@ -18,7 +18,7 @@ shape:
   surface_area: 1674.8
 made_from:
   - item: stock.al6061-pl-5
-    quantity: 1926.0
+    quantity: 26001.0
 making:
   module: module.welding-bay
 fit:

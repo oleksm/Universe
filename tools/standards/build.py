@@ -144,7 +144,7 @@ def read_schema(path):
     if kind == "module" and "recipes" in props:
         R, cap = props.pop("recipes")["items"]["properties"], props.pop("capacity")["properties"]
         group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
-        was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": R["supplies"]}),
+        was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": props.pop("generation")["properties"]["supplies"]}),
                "inputs": group({"materials": {**R["inputs"], "description": "What goes in, t per t of its product."}}),
                "outputs": group({"by_products": {**R["outputs"], "description": "What else comes out, t per t of its product."}}),
                "needs": group({"power": R["power"]})}
@@ -221,6 +221,13 @@ def old_names(rec, path):
             flat = {**rec.pop("galaxy"), **({"note": idn["about"]} if "about" in idn else {})}
             rec.update(flat)
     kind = rel.split(os.sep)[2] if rel.count(os.sep) >= 3 else ""
+    if isinstance(rec, dict) and kind == "modules" and "generation" in rec:
+        # (One that makes power, as this build still takes it: a recipe that supplies, its fuel as inputs.)
+        gen = rec.pop("generation")
+        rec = {**{k: v for k, v in rec.items() if k != "basis"}, "recipes": [{"supplies": gen["supplies"], "inputs": [{"item": b["item"], "quantity": b["rate"]} for b in gen.get("burns") or []]}], **({"basis": rec["basis"]} if "basis" in rec else {})}
+        for b in rec.get("basis") or []:
+            if isinstance(b, dict) and isinstance(b.get("of"), list):
+                b["of"] = [{"generation": "recipes", "generation.supplies": "recipes.supplies", "generation.burns": "recipes.inputs"}.get(x, x) for x in b["of"]]
     if isinstance(rec, dict) and kind == "modules" and ("recipes" in rec or "capacity" in rec):
         # (A module's recipe, as this build still takes it: the module's own rate, inputs, outputs and power.
         # It takes the first; none has more than one yet.)
@@ -1481,7 +1488,9 @@ for pt in parts:
     if "item" in mf and ms is None:
         problem(where, f"made_from.item: no mill stock '{mf['item']}'")
     elif ms is not None and "quantity" in mf:
-        pt["stock_mass"] = mf["quantity"] * ms["weight"]
+        # (The record says kg. The page still shows it as the stock is counted: m2 of sheet, m of bar.)
+        pt["stock_mass"] = mf["quantity"]
+        mf["quantity"] = float(f"{mf['quantity'] / ms['weight']:.10g}")
         pt["stock_unit"] = ms["unit"]
     made_in = (pt.get("making") or {}).get("module")
     if made_in is not None and made_in not in mod_of:

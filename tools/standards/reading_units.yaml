@@ -270,6 +270,9 @@ SFO/schema/module.schema.yaml:
   capacity.holds:
     per: 1000.0
     reads: t it can store
+  generation.supplies:
+    per: 1000000.0
+    reads: MW it supplies, for one that makes power
   needs.power:
     per: 1000000.0
     reads: MW, at full rate
@@ -282,9 +285,6 @@ SFO/schema/module.schema.yaml:
   recipes[].rate:
     per: 0.2777777777777778
     reads: t/h of its product, at full rate
-  recipes[].supplies:
-    per: 1000000.0
-    reads: MW it supplies, for one that makes power
 SFO/schema/part.schema.yaml:
   life.inspection_interval:
     per: 3600.0
