@@ -14,9 +14,28 @@ properties:
       name: { type: string }
       description: { type: string }
       revision: { type: string, description: "A, B, C... as its design changes." }
+      status: { enum: [draft, released, superseded] }
       designer: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: The company that designed it. }
       standards: { type: array, items: { type: string }, description: "The standards it is built to, by id (SFO 9)." }
       interchangeable_with: { type: array, items: { type: string }, description: Other parts' codes that fit in its place. }
+      drawing: { type: string, description: The drawing or model file that defines it. }
+
+  physical:
+    description: What every physical thing has. What a ship hauling it and a warehouse holding it have to know.
+    type: object
+    additionalProperties: false
+    properties:
+      mass: { type: number, description: "kg, the part as made" }
+      length: { type: number, description: m }
+      width: { type: number, description: m }
+      height: { type: number, description: m }
+      envelope: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "m, [length, width, height] of the box it ships in, where that differs from its own size" }
+      operating_min_temperature: { type: number, description: "K, the coldest it works at" }
+      operating_max_temperature: { type: number, description: "K, the hottest it works at" }
+      storage_min_temperature: { type: number, description: "K, the coldest it may be kept or carried at" }
+      storage_max_temperature: { type: number, description: "K, the hottest it may be kept or carried at" }
+      impact_resistance: { type: number, description: "J, the blow it takes without damage" }
+      shock_limit: { type: number, description: "g, the hardest jolt it takes while it is carried" }
 
   made_from:
     description: What it is cut from.
@@ -25,20 +44,19 @@ properties:
     properties:
       item: { type: string, description: "The item of mill stock, by its code." }
       quantity: { type: number, description: "How much of it one part takes, in the unit that stock is counted in (m2 of sheet, plate and film; metres of bar, tube and wire)." }
-      finished_mass: { type: number, description: "kg, the part as made" }
+      blank: { type: string, description: "The piece cut from the stock before it is shaped: 1.2 x 0.8 m, 400 mm long." }
+      grain: { type: string, description: "The direction the stock's grain or fibre runs in the part." }
       finish: { type: string, description: "Its surface: bare, anodised, plated, painted." }
 
   shape:
     type: object
     additionalProperties: false
     properties:
-      length: { type: number, description: m }
-      width: { type: number, description: m }
-      height: { type: number, description: m }
       thickness: { type: number, description: "mm, its wall or gauge" }
       surface_area: { type: number, description: m2 }
       volume: { type: number, description: "m3 of material" }
       centre_of_mass: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "m, [x, y, z] in the part's own frame" }
+      moment_of_inertia: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "kg m2, about its own x, y and z axes" }
       handed: { enum: [left, right, neither] }
 
   making:
@@ -47,9 +65,12 @@ properties:
     properties:
       processes: { type: array, items: { type: string }, description: "The processes that make it, in order, by file name." }
       facility: { type: string, description: The kind of facility that makes it. }
+      time: { type: number, description: "hours to make one" }
       tolerance: { type: number, description: "mm, on its dimensions" }
       tooling: { type: string, description: "The jig, die or mould it needs." }
       batch_size: { type: integer, minimum: 1, description: How many are made at a time. }
+      yield: { type: number, minimum: 0, maximum: 1, description: "the share of those made that pass inspection" }
+      inspection: { type: string, description: "How it is checked: measured, X-rayed, pressure-tested." }
 
   fit:
     description: How it goes into its assembly.
@@ -57,8 +78,20 @@ properties:
     additionalProperties: false
     properties:
       count: { type: integer, minimum: 1, description: How many of it one assembly has. }
+      position: { type: string, description: Where in the assembly it sits. }
+      order: { type: integer, minimum: 1, description: When it goes on, as the assembly is built. }
       joins_to: { type: array, items: { type: string }, description: The codes of the parts it is joined to. }
       joining: { type: array, items: { enum: [welded, brazed, bonded, bolted, riveted, sewn] }, description: How it is joined. }
+      fasteners:
+        description: What holds it, and how many.
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [kind, count]
+          properties:
+            kind: { type: string }
+            count: { type: integer, minimum: 1 }
       connections: { type: array, items: { enum: [power, signal, fluid, air] }, description: What it carries across its joints. }
 
   limits:
@@ -66,10 +99,10 @@ properties:
     additionalProperties: false
     properties:
       design_load: { type: number, description: "kN, the load it is built to carry" }
-      min_temperature: { type: number, description: K }
-      max_temperature: { type: number, description: K }
+      safety_factor: { type: number, description: "how many times its design load it takes before it breaks" }
       pressure: { type: number, description: "kPa it holds" }
       fatigue_life: { type: number, description: "cycles of its design load" }
+      failure: { enum: [critical, degraded, cosmetic], description: "What its failing means for the ship." }
 
   life:
     type: object
@@ -78,3 +111,5 @@ properties:
       service_life: { type: number, description: "years in use before it is replaced" }
       inspection_interval: { type: number, description: "hours of flight between inspections" }
       field_replaceable: { type: boolean, description: Can be changed without a yard. }
+      repairable: { type: boolean, description: Can be mended, not only replaced. }
+      recoverable: { type: number, minimum: 0, maximum: 1, description: "the share of its mass got back as material when it is scrapped" }

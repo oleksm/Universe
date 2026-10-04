@@ -921,7 +921,7 @@ for s in standards:
                 if k not in c:
                     problem(full, f"no {k}")
             for k in c:
-                if k not in {"code", "name", "count", "description"}:
+                if k not in {"code", "name", "count", "description", "physical"}:
                     problem(full, f"unknown field '{k}'")
             if not re.fullmatch(r"[A-Z0-9]+-[0-9]{2}", str(c.get("code", ""))):
                 problem(full, "code: the hull's code, a dash, two digits (MC07-04)")
@@ -981,10 +981,21 @@ for ms in mill_stock:
         ms["unit"], ms["weight"] = "m", density * math.pi * d ** 2 / 4e6
     else:
         ms["unit"], ms["weight"] = "kg", 1.0
+    ph = ms.get("physical") or {}
+    if ms["unit"] == "m2" and ph.get("length") and ph.get("width"):
+        ms["piece_mass"] = ms["weight"] * ph["length"] * ph["width"]
+    elif ms["unit"] == "m" and ph.get("length"):
+        ms["piece_mass"] = ms["weight"] * ph["length"]
     stock_of[ms["slug"]] = ms
 # (What a part names must be there: its mill stock, its processes, its designer, the standards it is
 # built to, the parts it joins or stands in for. What its stock weighs follows from the quantity.)
 codes = {pt["slug"] for pt in parts}
+for c in categories:
+    mine = [pt for pt in parts if pt["hull"] == c["hull"] and pt["category"] == c["slug"]]
+    known = [pt for pt in mine if (pt.get("physical") or {}).get("mass") is not None]
+    if mine:
+        c["parts_mass"] = sum(pt["physical"]["mass"] * (pt.get("fit") or {}).get("count", 1) for pt in known)
+        c["parts_weighed"] = [len(known), len(mine)]
 for pt in parts:
     where = os.path.join(TREE, pt["file"])
     mf, ident = pt.get("made_from") or {}, pt.get("identity") or {}
@@ -997,6 +1008,10 @@ for pt in parts:
     for name in (pt.get("making") or {}).get("processes") or []:
         if name not in by_process:
             problem(where, f"making.processes: no process '{name}' in the SFO")
+    ph = pt.get("physical") or {}
+    for lo, hi in (("operating_min_temperature", "operating_max_temperature"), ("storage_min_temperature", "storage_max_temperature")):
+        if lo in ph and hi in ph and ph[lo] > ph[hi]:
+            problem(where, f"physical: {lo.replace('_', ' ')} is above {hi.replace('_', ' ')}")
     if "designer" in ident and ident["designer"] not in BRANDS:
         problem(where, f"identity.designer: no company '{ident['designer']}' in Maker House")
     for sid in ident.get("standards") or []:
@@ -1171,6 +1186,7 @@ def write_html():
         "hulls": hulls,
         "mill_stock": mill_stock,
         "mill_stock_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["mill-stock"]["properties"].items()},
+        "category_groups": {"physical": {k: v.get("description", "") for k, v in yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", "part-category.schema.yaml"), encoding="utf-8"))["properties"]["physical"]["properties"].items()}},
         "categories": categories,
         "parts": parts,
         "part_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in PART_SCHEMA["properties"].items()},
