@@ -34,3 +34,7 @@
 - **Fixed: every charted system's position was zero** in the registry (the export divided light
   years by a light year). Liham is 4.877 light years from home, Driumum 3.073, Biraidim 5.247,
   Moryemzai 7.015. The generated celestial file lists the systems in that order now.
+- **Recipes:** an industrial module now lists what it can be set to make. Each recipe says what it
+  makes, what goes in and comes out for each kg, its rate and the power it draws. Every module's
+  existing figures became its first recipe; none changed. Which recipe a module is running is the
+  game's state, chosen by its owner. The model is written up in `docs/registry-recipes.md`.

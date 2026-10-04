@@ -8,14 +8,12 @@ physical:
   length: 180
   width: 140
   height: 140
-rate:
-  throughput: 2.77777777777778
-  product: good.parts
-inputs:
-  materials:
-  - { item: good.parts, amount: 1.0 }
-needs:
-  power: 1000000
+recipes:
+  - makes: good.parts
+    inputs:
+      - { item: good.parts, quantity: 1.0 }
+    rate: 2.77777777777778
+    power: 1000000
 basis:
-  - { of: [rate.throughput], tier: invented, review: true, note: "A guess, to be reviewed: it sets how fast a ring can be put together." }
-  - { of: [inputs, physical, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [recipes.rate], tier: invented, review: true, note: "A guess, to be reviewed: it sets how fast a ring can be put together." }
+  - { of: [recipes.inputs, physical, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

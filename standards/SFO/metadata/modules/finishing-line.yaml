@@ -8,17 +8,14 @@ physical:
   length: 120
   width: 30
   height: 10
-rate:
-  throughput: 16.6666666666667
-  product: good.sheet-and-plate
-inputs:
-  materials:
-  - { item: good.cold-rolled-strip, amount: 1.05 }
-outputs:
-  by_products:
-  - { item: good.scrap, amount: 0.05 }
-needs:
-  power: 2000000
+recipes:
+  - makes: good.sheet-and-plate
+    inputs:
+      - { item: good.cold-rolled-strip, quantity: 1.05 }
+    outputs:
+      - { item: good.scrap, quantity: 0.05 }
+    rate: 16.6666666666667
+    power: 2000000
 basis:
-  - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [physical, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [recipes.inputs, recipes.outputs], tier: invented, note: "Approximate, from memory." }
+  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

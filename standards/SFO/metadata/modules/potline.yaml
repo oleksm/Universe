@@ -8,22 +8,19 @@ physical:
   length: 1150
   width: 60
   height: 15
-rate:
-  throughput: 10.2777777777778
-  product: good.liquid-aluminium
-inputs:
-  materials:
-  - { item: good.alumina, amount: 1.93 }
-  - { item: good.carbon-anode, amount: 0.45 }
-  - { item: element.o, amount: 0.14 }
-outputs:
-  by_products:
-  - { item: good.carbon-dioxide, amount: 1.52 }
-needs:
-  power: 536000000
+recipes:
+  - makes: good.liquid-aluminium
+    inputs:
+      - { item: good.alumina, quantity: 1.93 }
+      - { item: good.carbon-anode, quantity: 0.45 }
+      - { item: element.o, quantity: 0.14 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 1.52 }
+    rate: 10.2777777777778
+    power: 536000000
 basis:
-  - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_Bahrain", note: "323,000 t a year for one line of 336 pots." }
-  - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1.93 t of alumina and 0.45 t of carbon anode for each tonne, giving 1.52 t of carbon dioxide. Part of the anode burns in air: that oxygen is set to balance." }
-  - { of: [needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_smelting", note: "13 to 16 MWh for each tonne; 14.5 taken." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_Bahrain", note: "323,000 t a year for one line of 336 pots." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1.93 t of alumina and 0.45 t of carbon anode for each tonne, giving 1.52 t of carbon dioxide. Part of the anode burns in air: that oxygen is set to balance." }
+  - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_smelting", note: "13 to 16 MWh for each tonne; 14.5 taken." }
   - { of: [physical.length], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "A potroom 1,150 m long." }
   - { of: [physical], tier: invented, note: "Its width and height were not found in a source." }

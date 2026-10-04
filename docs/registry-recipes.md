@@ -85,6 +85,33 @@ starting setups are seed state, written with the facility that has the module.
 This answers items 6 and 7 of the SSOT request: a module's output is whatever recipe it is set
 to, and flows live in one place, the module's recipes.
 
+## Decided (user, 2026-10-04)
+
+- A recipe belongs to the module. A setup (game state) is a module set to one of its recipes.
+- How many recipes a module has is the module's own business, as in life. A module that can make
+  only one thing has one recipe, and it needs no choosing.
+- What passes between modules is a different item for each metal: hot strip of steel and hot strip
+  of aluminium are two things.
+- The process record is to go: what it holds moves to recipes. Those with no module yet stay parked
+  until their machine is described.
+
+## Done so far
+
+**Step 1 (2026-10-04): every module's own figures are its first recipe.** `module.recipes[]`:
+`makes` (or `supplies`, W, for one that makes power), `inputs` and `outputs` (`item`, `quantity`
+per kg of what it makes), `rate` (kg/s), `batch`, `power` (W drawn), `changeover` (empty: no
+figures yet). What a store or a dock can hold and move is `capacity`. `rate`, `inputs`,
+`outputs` and `needs.power` on a producing module are gone. The power station's fuel was per MWh
+and is now kg/s at full output, so the last non-SI figure is gone. 31 modules, no figure changed.
+
+## Next
+
+2. An item for each metal where one passes between modules, and the recipes that make them.
+3. Mill stock's, parts', hulls' and gates' `made_from` and `making` as recipes on the modules that
+   make them.
+4. The processes that have modules dissolved into those recipes; the chain reports as the check.
+5. The nine goods that are forms of stock removed.
+
 ## Open
 
 1. **How many recipes a module carries.** A recipe for each stock item is exact; a finishing line

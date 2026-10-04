@@ -12,7 +12,7 @@ definitions:
       additionalProperties: false
       properties:
         item: { type: string, x-ref: [element, material, good], description: "An element, a material or a good, by its key." }
-        amount: { type: number, description: "t per t of its product (per MWh, for one that makes power)" }
+        quantity: { type: number, description: "kg of it for each kg of what the recipe makes. For a recipe that supplies power: kg/s of it at full output." }
 properties:
   identity:
     type: object
@@ -24,31 +24,40 @@ properties:
       step: { type: string, description: The step it performs. }
       description: { type: string }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
-  rate:
+  capacity:
+    description: "For one that stores or handles: what it can hold and move."
     type: object
     additionalProperties: false
     properties:
-      throughput: { type: number, x-unit: "kg/s", description: "kg/s of its product, at full rate" }
-      batch: { type: number, x-unit: "kg", description: "kg in one batch" }
       holds: { type: number, x-unit: "kg", description: "kg it can store" }
       volume: { type: number, x-unit: "m3", description: "m3 it can store" }
       stores: { type: array, items: { type: string }, description: "The kinds of goods it stores, by the game's keys (content/base/goods.ron)." }
       handling: { type: number, x-unit: "kg/s", description: "kg/s it can move in or out" }
-      product: { type: string, x-ref: [element, material, good], description: "What its throughput counts: an element, a material or a good, by its key." }
-      power: { type: number, x-unit: "W", description: "W it supplies, for one that makes power" }
-  inputs:
-    type: object
-    additionalProperties: false
-    properties:
-      materials: { $ref: "#/definitions/amounts", description: "What goes in, t per t of its product." }
-  outputs:
-    type: object
-    additionalProperties: false
-    properties:
-      by_products: { $ref: "#/definitions/amounts", description: "What else comes out, t per t of its product." }
+  recipes:
+    description: "What it can be set to make: each one thing, with what that takes. A module with one recipe makes one thing and needs no choosing; one with several is set to one of them at a time (its setup, which is the game's state, not written here)."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
+        supplies: { type: number, x-unit: "W", description: "W it supplies, for one that makes power (in place of `makes`)" }
+        inputs: { $ref: "#/definitions/amounts", description: "What goes in." }
+        outputs: { $ref: "#/definitions/amounts", description: "What else comes out." }
+        rate: { type: number, x-unit: "kg/s", description: "kg/s of what it makes, at full rate, set to this" }
+        batch: { type: number, x-unit: "kg", description: "kg in one batch" }
+        power: { type: number, x-unit: "W", description: "W it draws at full rate, set to this" }
+        changeover:
+          description: "What it costs to set it to this from another of its recipes."
+          type: object
+          additionalProperties: false
+          properties:
+            time: { type: number, x-unit: "s", description: "s it stands while it is changed over" }
+            loss: { type: number, x-unit: "kg", description: "kg of its first output lost" }
   needs:
+    description: "For one with no recipe: what it draws all the time."
     type: object
     additionalProperties: false
     properties:
-      power: { type: number, x-unit: "W", description: "W, at full rate" }
+      power: { type: number, x-unit: "W", description: "W" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

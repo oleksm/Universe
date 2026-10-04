@@ -8,19 +8,16 @@ physical:
   length: 150
   width: 30
   height: 15
-rate:
-  throughput: 5.55555555555556
-  product: good.tube
-inputs:
-  materials:
-  - { item: good.hot-ingot, amount: 1.085 }
-outputs:
-  by_products:
-  - { item: good.scrap, amount: 0.085 }
-needs:
-  power: 4000000
+recipes:
+  - makes: good.tube
+    inputs:
+      - { item: good.hot-ingot, quantity: 1.085 }
+    outputs:
+      - { item: good.scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
 basis:
-  - { of: [inputs, outputs], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "8.5% of the metal is lost from billet to pipe." }
-  - { of: [needs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "200 to 1,200 MJ for each tonne for rolling and heating between passes; about 200 kWh taken (the first heating is the reheat furnace's). Heat is counted as power: there is no fuel to burn." }
-  - { of: [rate], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "A medium mill makes 100,000 to 200,000 t a year, 12 to 25 t/h. Read from a search excerpt, not the page itself." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "8.5% of the metal is lost from billet to pipe." }
+  - { of: [recipes.power], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "200 to 1,200 MJ for each tonne for rolling and heating between passes; about 200 kWh taken (the first heating is the reheat furnace's). Heat is counted as power: there is no fuel to burn." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "A medium mill makes 100,000 to 200,000 t a year, 12 to 25 t/h. Read from a search excerpt, not the page itself." }
   - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

@@ -8,19 +8,16 @@ physical:
   length: 200
   width: 30
   height: 15
-rate:
-  throughput: 13.8888888888889
-  product: good.bar
-inputs:
-  materials:
-  - { item: good.hot-ingot, amount: 1.1 }
-outputs:
-  by_products:
-  - { item: good.scrap, amount: 0.1 }
-needs:
-  power: 5600000.0
+recipes:
+  - makes: good.bar
+    inputs:
+      - { item: good.hot-ingot, quantity: 1.1 }
+    outputs:
+      - { item: good.scrap, quantity: 0.1 }
+    rate: 13.8888888888889
+    power: 5600000.0
 basis:
-  - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Bar mills average 39 t/h, medium section mills 53." }
-  - { of: [inputs, outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "7 to 15% is lost as scrap in hot rolling; 10 taken." }
-  - { of: [needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf", note: "111 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Bar mills average 39 t/h, medium section mills 53." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "7 to 15% is lost as scrap in hot rolling; 10 taken." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf", note: "111 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
   - { of: [physical], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

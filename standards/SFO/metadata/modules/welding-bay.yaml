@@ -8,14 +8,12 @@ physical:
   length: 60
   width: 40
   height: 25
-rate:
-  throughput: 0.277777777777778
-  product: good.parts
-inputs:
-  materials:
-  - { item: good.formed-panels, amount: 1.0 }
-needs:
-  power: 130000.0
+recipes:
+  - makes: good.parts
+    inputs:
+      - { item: good.formed-panels, quantity: 1.0 }
+    rate: 0.277777777777778
+    power: 130000.0
 basis:
-  - { of: [needs.power], tier: sourced, source: "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf", note: "A moving-gantry friction stir welding machine has a spindle of up to 130 kW. The spindle only." }
-  - { of: [inputs, physical, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.holroyd.com/wp-content/uploads/powerstir-brochure.pdf", note: "A moving-gantry friction stir welding machine has a spindle of up to 130 kW. The spindle only." }
+  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

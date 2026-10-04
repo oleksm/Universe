@@ -8,19 +8,16 @@ physical:
   length: 450
   width: 300
   height: 40
-rate:
-  throughput: 27.7777777777778
-  product: good.alumina
-inputs:
-  materials:
-  - { item: good.bauxite, amount: 2.13 }
-  - { item: good.caustic-soda, amount: 0.1 }
-outputs:
-  by_products:
-  - { item: good.red-mud, amount: 1.23 }
-needs:
-  power: 333000000
+recipes:
+  - makes: good.alumina
+    inputs:
+      - { item: good.bauxite, quantity: 2.13 }
+      - { item: good.caustic-soda, quantity: 0.1 }
+    outputs:
+      - { item: good.red-mud, quantity: 1.23 }
+    rate: 27.7777777777778
+    power: 333000000
 basis:
-  - { of: [inputs, outputs], tier: sourced, source: "https://en.wikipedia.org/wiki/Red_mud", note: "Red mud 1.0 to 1.5 t for each tonne of alumina (1.23 on average) and caustic soda 100 kg; the bauxite is set to balance, inside the 1.9 to 3.6 t the source gives." }
-  - { of: [needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Bayer_process", note: "7 to 21 GJ for each tonne, mostly heat; 12 taken. Heat is counted as power: there is no fuel to burn." }
-  - { of: [rate, physical], tier: invented, note: "100 t/h is a small refinery (large ones make 4 Mt a year). Its footprint follows an unverified 20 hectares for each Mt a year." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://en.wikipedia.org/wiki/Red_mud", note: "Red mud 1.0 to 1.5 t for each tonne of alumina (1.23 on average) and caustic soda 100 kg; the bauxite is set to balance, inside the 1.9 to 3.6 t the source gives." }
+  - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Bayer_process", note: "7 to 21 GJ for each tonne, mostly heat; 12 taken. Heat is counted as power: there is no fuel to burn." }
+  - { of: [recipes.makes, recipes.rate, physical], tier: invented, note: "100 t/h is a small refinery (large ones make 4 Mt a year). Its footprint follows an unverified 20 hectares for each Mt a year." }

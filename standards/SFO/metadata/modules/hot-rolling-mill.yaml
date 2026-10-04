@@ -8,18 +8,15 @@ physical:
   length: 300
   width: 40
   height: 20
-rate:
-  throughput: 27.7777777777778
-  product: good.hot-rolled-strip
-inputs:
-  materials:
-  - { item: good.hot-ingot, amount: 1.22 }
-outputs:
-  by_products:
-  - { item: good.scrap, amount: 0.22 }
-needs:
-  power: 26500000.0
+recipes:
+  - makes: good.hot-rolled-strip
+    inputs:
+      - { item: good.hot-ingot, quantity: 1.22 }
+    outputs:
+      - { item: good.scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
 basis:
-  - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 1,221 kg of ingot for each tonne rolled, an 82% yield. Steel loses 7 to 15%." }
-  - { of: [needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 265 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
-  - { of: [rate, physical], tier: invented, note: "Steel strip mills average 306 t/h and run 700 m long for 5 Mt a year; a mill of this size for aluminium was not found in a source." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 1,221 kg of ingot for each tonne rolled, an 82% yield. Steel loses 7 to 15%." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 265 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
+  - { of: [recipes.makes, recipes.rate, physical], tier: invented, note: "Steel strip mills average 306 t/h and run 700 m long for 5 Mt a year; a mill of this size for aluminium was not found in a source." }

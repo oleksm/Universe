@@ -143,6 +143,21 @@ def read_schema(path):
     if "making" in props and kind in ("mill-stock", "hull", "gate"):
         mk = props["making"]["properties"]
         props["making"]["properties"] = {"process": {**mk["processes"]["items"], "description": "The process that makes it, by its key."}, **({"fitting_out": mk["fitting_out"]} if kind == "hull" else {})}
+    # (And a module's one recipe as its own figures, as they were before recipes: rate, inputs, outputs, needs.)
+    if kind == "module" and "recipes" in props:
+        R, cap = props.pop("recipes")["items"]["properties"], props.pop("capacity")["properties"]
+        group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
+        was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": R["supplies"]}),
+               "inputs": group({"materials": {**R["inputs"], "description": "What goes in, t per t of its product."}}),
+               "outputs": group({"by_products": {**R["outputs"], "description": "What else comes out, t per t of its product."}}),
+               "needs": group({"power": R["power"]})}
+        new = {}
+        for k, v in props.items():
+            if k == "needs":
+                new.update(was)
+            else:
+                new[k] = v
+        sch["properties"] = props = new
     # (And a hull's and a module's size and mass as they were grouped before: `size`, and a hull's `mass`.)
     if kind in ("hull", "module") and "physical" in props:
         ph, cap = props["physical"]["properties"], (props.get("capacity") or {}).get("properties") or {}
@@ -209,6 +224,31 @@ def old_names(rec, path):
             flat = {**rec.pop("galaxy"), **({"note": idn["about"]} if "about" in idn else {})}
             rec.update(flat)
     kind = rel.split(os.sep)[2] if rel.count(os.sep) >= 3 else ""
+    if isinstance(rec, dict) and kind == "modules" and ("recipes" in rec or "capacity" in rec):
+        # (A module's recipe, as this build still takes it: the module's own rate, inputs, outputs and power.
+        # It takes the first; none has more than one yet.)
+        r = (rec.get("recipes") or [{}])[0]
+        k_ = 3.6e9 / 1000 / (r["supplies"] * 1e6) if "supplies" in r else 1          # (kg/s at full output, back to t per MWh; its power is read in MW by now)
+        amt = lambda xs: [{"item": x["item"], "amount": float(f"{x['quantity'] * k_:.12g}") if "supplies" in r else x["quantity"]} for x in xs]
+        rate = {**({"throughput": r["rate"]} if "rate" in r else {}), **({"batch": r["batch"]} if "batch" in r else {}), **(rec.get("capacity") or {}),
+                **({"product": r["makes"]} if "makes" in r else {}), **({"power": r["supplies"]} if "supplies" in r else {})}
+        was = {"rate": rate, "inputs": {"materials": amt(r["inputs"])} if "inputs" in r else None, "outputs": {"by_products": amt(r["outputs"])} if "outputs" in r else None,
+               "needs": {"power": r["power"]} if "power" in r else rec.get("needs")}
+        new, done = {}, False
+        for k, v in rec.items():
+            if k in ("capacity", "recipes", "needs"):
+                if not done:
+                    new.update({a: b for a, b in was.items() if b})
+                    done = True
+            else:
+                new[k] = v
+        back = {"capacity": "rate", "recipes.rate": "rate.throughput", "recipes.batch": "rate.batch", "recipes.makes": "rate.product", "recipes.supplies": "rate.power",
+                "recipes.inputs": "inputs", "recipes.outputs": "outputs", "recipes.power": "needs"}
+        for b in new.get("basis") or []:
+            if isinstance(b, dict) and isinstance(b.get("of"), list):
+                b["of"] = [back.get(x, x) for x in b["of"]]
+        rec.clear()
+        rec.update(new)
     if isinstance(rec, dict) and kind in ("parts", "mill-stock", "hulls", "gates"):
         # (What it is made from, and how, as this build still takes them.)
         if isinstance(rec.get("made_from"), list) and rec["made_from"]:

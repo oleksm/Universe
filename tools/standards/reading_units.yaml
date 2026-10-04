@@ -264,24 +264,27 @@ SFO/schema/mill-stock.schema.yaml:
     per: 0.001
     reads: mm, of a tube
 SFO/schema/module.schema.yaml:
+  capacity.handling:
+    per: 0.2777777777777778
+    reads: t/h it can move in or out
+  capacity.holds:
+    per: 1000.0
+    reads: t it can store
   needs.power:
     per: 1000000.0
     reads: MW, at full rate
-  rate.batch:
+  recipes[].batch:
     per: 1000.0
     reads: t in one batch
-  rate.handling:
-    per: 0.2777777777777778
-    reads: t/h it can move in or out
-  rate.holds:
-    per: 1000.0
-    reads: t it can store
-  rate.power:
+  recipes[].power:
     per: 1000000.0
-    reads: MW it supplies, for one that makes power
-  rate.throughput:
+    reads: MW, at full rate
+  recipes[].rate:
     per: 0.2777777777777778
     reads: t/h of its product, at full rate
+  recipes[].supplies:
+    per: 1000000.0
+    reads: MW it supplies, for one that makes power
 SFO/schema/part.schema.yaml:
   life.inspection_interval:
     per: 3600.0
