@@ -327,11 +327,14 @@ As each step lands on `fso` and the user has it merged, I switch the game to loa
 directly, delete the RON file or Rust constants it replaces, and say which `build.py` writer or
 mirror can then go.
 
-## Open questions for the user
+## Answered by the user (2026-10-04)
 
-- **Prices.** No schema has a price. Under "platform, not outcomes", is a price a spec (a maker's
-  list price, a land office's rate) or always the economy's result? The game holds both kinds today:
-  `goods.ron` price ranges, module and hull prices, land prices.
-- **The playable fleet.** The five stock hulls are outdated and the MC-07 is the only current hull.
-  Do the outdated ones stay loadable until replacements exist?
-- **Ship model nodes** (nozzles, mounts, gear, dock): in the hull record, or with the model?
+- **Prices are volatile data, not spec.** No price goes into the registry. Prices will come from a
+  stock exchange and a mechanism of their own, to be designed. So: drop price from every request
+  above, `goods.ron` price ranges and the module, hull and land prices stay game-side until that
+  exists, and no schema gains a price field.
+- **The playable fleet is outdated, with no future.** No decision to make on it: the five stock
+  hulls are not to be preserved. If moving to the registry breaks them, it breaks them. Don't add
+  fields or records to keep them working.
+- **Ship model nodes** (nozzles, mounts, gear, dock) are the spaceship engineer's work on `ships`,
+  not finished yet. Leave them out of the hull schema until that work says what it needs.
