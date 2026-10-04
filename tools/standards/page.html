@@ -794,7 +794,7 @@ function detail(k) {
         + `<tr><td>the tube's weight</td><td>${(wk.tube_mass / 1e9).toLocaleString(undefined, { maximumFractionDigits: 0 })} million tonnes, as a mass crossing</td><td>its diameter cubed</td></tr>`
         + `<tr><td>to open it</td><td>${sci(wk.open_energy)}, over ${dur(wk.open_time)}</td><td>a crossing by that weight, at its natural time</td></tr>`
         + `<tr><td>to open it, as power for a year</td><td>${pw(wk.open_energy / 31557600)}</td><td>the same energy spread over a year</td></tr>`
-        + `<tr><td>to hold it open</td><td>${pw(wk.hold_power)}, all the time</td><td>its opening over 100 months</td></tr>`
+        + `<tr><td>to hold it open</td><td>${pw(wk.hold_power)}, all the time</td><td>its opening over ${Math.round(wk.hold_months)} months</td></tr>`
         + (wk.stations ? `<tr><td>power stations to hold it</td><td>${Math.ceil(wk.stations)} of the <a data-k="${esc("mod:" + wk.station)}">${esc(modBySlug[wk.station].identity.name)}</a> module (${modBySlug[wk.station].rate.power} MW each)</td><td>its holding power</td></tr>` : "")
         + `</table><h3>Worked out: crossing it, at the natural time</h3><table><tr><th>What crosses</th><th>Mass</th><th>Takes</th><th>Costs</th><th>As power while crossing</th></tr>`
         + wk.crossings.map(c => `<tr><td>${esc(c.what)}</td><td class="num">${kg(c.mass)}</td><td class="num">${dur(c.time)}</td><td class="num">${sci(c.energy)}</td><td class="num">${pw(c.energy / c.time)}</td></tr>`).join("") + `</table><p class="meta">Crossing faster costs steeply more: twice as fast 2.7 times, three times as fast 7 times, five times as fast 55 times.</p>`;

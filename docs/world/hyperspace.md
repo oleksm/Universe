@@ -131,20 +131,20 @@ costs its opening over `TUBE_HOLD` (it leaks, topped up continuously).
 
     μ(d)    = ρ × (d / 1 m)^3,                 ρ = 406 kg
     E_open  = ε × μ × S × e^(t_nat(μ,S) / t)   (natural pace: t = t_nat)
-    P_hold  = E_open,natural / TUBE_HOLD,      TUBE_HOLD = 100 months (1% a month)
+    P_hold  = E_open,natural / TUBE_HOLD,      TUBE_HOLD = 200 months (0.5% a month)
 
 | | Kind | Value | From the target |
 |---|---|---|---|
-| Diameter exponent | Invented constant | K = 3 | **opening a tube sized for one ship (100 m) just for one pass costs thousands of passes through a held gate; a held gate pays once about 9 ships a day use it** (K = 2 tried: holding always pays, at 0.3 ships a day) |
+| Diameter exponent | Invented constant | K = 3 | **opening a tube sized for one ship (100 m) just for one pass costs thousands of passes through a held gate; a held gate pays once about 5 ships a day use it** (K = 2 tried: holding always pays, at 0.15 ships a day) |
 | ρ | Invented constant | 406 kg | **opening a typical gate (a 3 km ring, 5 ly) costs about a year of a 100 GW industry** |
-| TUBE_HOLD | Invented constant | 2.59×10⁸ s | **holding costs about 1% of the opening a month: small next to opening, big in absolute terms; a lapse (re-opening) is ruinous** |
+| TUBE_HOLD | Invented constant | 5.18×10⁸ s | **holding costs about 0.5% of the opening a month (halved 2026-10-04, to ease upkeep): small next to opening, big in absolute terms; a lapse (re-opening) is ruinous** |
 
 | Tube | Opening (natural pace) | Takes | Holding |
 |---|---|---|---|
-| Gate 3 km, 1 ly | 6.3×10¹⁷ J | 74 min | 2.4 GW |
-| **Gate 3 km, 5 ly** | **3.2×10¹⁸ J** | 6 h | **12 GW** (about 1,500 S2 plants) |
-| Gate 3 km, 10 ly | 6.3×10¹⁸ J | | 24 GW |
-| One-ship tube 100 m, 5 ly | 1.2×10¹⁴ J (4,000 passes) | 12 min | 0.5 MW |
+| Gate 3 km, 1 ly | 6.3×10¹⁷ J | 74 min | 1.2 GW |
+| **Gate 3 km, 5 ly** | **3.2×10¹⁸ J** | 6 h | **6.1 GW** (about 760 S2 plants) |
+| Gate 3 km, 10 ly | 6.3×10¹⁸ J | | 12 GW |
+| One-ship tube 100 m, 5 ly | 1.2×10¹⁴ J (4,000 passes) | 12 min | 0.2 MW |
 | Relay tube 1 cm | next to nothing | | microwatts |
 
 (`tools/experiments/tube_holding.py`.) *Open for one pass* is a comparison, not a thing ships do:
@@ -188,5 +188,5 @@ cross in capsules at their relays' cadence; the Dogma checks test the targets ab
 | A 100 t ship through a 5 ly gate, natural | 46 s, an S2 plant-hour |
 | A capital ship (100 kt) through a 5 ly gate | 7.7 min |
 | Rushing 2× / 3× / 10× | 2.7× / 7× / 8,000× the cost |
-| Opening / holding a 5 ly gate | 3.2×10¹⁸ J / 12 GW |
+| Opening / holding a 5 ly gate | 3.2×10¹⁸ J / 6.1 GW |
 | A relay hop in a system | about 1.5 s |

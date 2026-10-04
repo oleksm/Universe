@@ -16,7 +16,7 @@ from gate_transit import EPS, LY, t_nat, energy, when
 
 S5 = 5 * LY
 OPEN_TARGET = 100e9 * 3.156e7           # A: a year of 100 GW
-TAU_HOLD = 100 * 30 * 86400             # B: 1% a month -> drains in 100 months
+TAU_HOLD = 200 * 30 * 86400             # B: 0.5% a month -> drains in 200 months
 
 for K in (2, 3):
     # RHO so a 3 km, 5 ly tube opened at natural pace costs the target (solved numerically:

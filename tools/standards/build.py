@@ -1355,7 +1355,7 @@ for g in gates:
         opening = tube_energy(mu, span)
         ships = [("A ship of 100 t", 1e5)] + [(hl["identity"]["name"] + ", loaded", hl.get("parts_mass", 0) + max(0.0, (hl.get("design") or {}).get("loaded_mass", 0) * 1000 - ((hl.get("mass") or {}).get("frame") or 0) * 1000)) for hl in hulls if hl.get("parts_mass")] + [("A hauler of 1,000 t", 1e6), ("A capital ship of 100,000 t", 1e8)]
         g["worked"] = {
-            "tube_mass": mu, "open_energy": opening, "open_time": tube_time(mu, span), "hold_power": opening / LAW["TUBE_HOLD"],
+            "tube_mass": mu, "open_energy": opening, "open_time": tube_time(mu, span), "hold_power": opening / LAW["TUBE_HOLD"], "hold_months": LAW["TUBE_HOLD"] / (30 * 86400),
             "stations": (opening / LAW["TUBE_HOLD"] / 1e6 / station["rate"]["power"]) if station else None, "station": station["slug"] if station else None,
             "crossings": [{"what": w, "mass": m, "time": tube_time(m, span), "energy": tube_energy(m, span)} for w, m in ships],
         }
