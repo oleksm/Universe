@@ -2061,6 +2061,28 @@ if os.path.isdir(CEL):
             m_, a_ = (b.get("physical") or {}).get("mass"), (b.get("orbit") or {}).get("semi_major_axis")
             if big and m_ and a_ and b["identity"]["kind"] != "asteroid":
                 b["balance"] = {"reach": a_ * (m_ / (3 * big)) ** (1 / 3), "round": par["identity"]["name"] if par else sysm["identity"]["name"], "stable": big / m_ > 24.96, "ratio": big / m_}
+        # (What follows from each body's mass, size, spin and orbit: worked out, not written.)
+        lum_w = (sysm.get("star") or {}).get("luminosity", 0) * 3.828e26
+        for b in sysm["bodies"]:
+            ph, ob = b.get("physical") or {}, b.get("orbit") or {}
+            if not (ph.get("mass") and ph.get("radius")):
+                continue
+            R_, M_ = ph["radius"] * 1000, ph["mass"]
+            par = next((o for o in sysm["bodies"] if o["identity"]["name"] == b["identity"].get("parent")), None)
+            a_star = ((par or b).get("orbit") or {}).get("semi_major_axis", 0) * 1000        # (its distance from the star: its planet's, for a moon)
+            w = {"density": M_ / (4 / 3 * math.pi * R_ ** 3), "escape": (2 * 6.6743e-11 * M_ / R_) ** 0.5, "orbit_speed": (6.6743e-11 * M_ / R_) ** 0.5,
+                 "to_orbit": 6.6743e-11 * M_ / R_ / 2, "to_escape": 6.6743e-11 * M_ / R_}
+            if a_star and lum_w:
+                w["sunlight"] = lum_w / (4 * math.pi * a_star ** 2)
+                w["bare_temperature"] = (w["sunlight"] * (1 - ph.get("albedo", 0.3)) / (4 * 5.670374419e-8)) ** 0.25
+            if ph.get("day") and b["identity"]["kind"] != "asteroid":
+                sync = (6.6743e-11 * M_ * (abs(ph["day"]) * 3600 / (2 * math.pi)) ** 2) ** (1 / 3)
+                w["stationary_orbit"] = sync / 1000
+                w["stationary_holds"] = "balance" in b and sync / 1000 < b["balance"]["reach"] / 3 and sync > R_
+                w["spin_speed"] = 2 * math.pi * R_ / (abs(ph["day"]) * 3600)
+            if ob.get("semi_major_axis"):
+                w["nearest"], w["farthest"] = ob["semi_major_axis"] * (1 - ob.get("eccentricity", 0)), ob["semi_major_axis"] * (1 + ob.get("eccentricity", 0))
+            b["worked"] = w
         # (What it has of each kind in the vocabulary, counted from its records.)
         kinds = {}
         for b in sysm["bodies"]:

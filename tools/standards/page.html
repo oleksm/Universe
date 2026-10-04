@@ -690,6 +690,16 @@ function detail(k) {
     const up = s.bodies.find(x => x.identity.name === b.identity.parent), moons = s.bodies.filter(x => x.identity.parent === b.identity.name);
     const a = DATA.administrations.find(x => x.name === s.identity.name), la = a && a.bodies.find(x => x.name === b.identity.name), here = a ? a.bodies.filter(x => x.at === b.identity.name) : [];
     return `<h2>${esc(b.identity.name)}</h2><div class="meta">${esc(b.identity.kind)} · ${esc(b.status)} · round ${up ? `<a data-k="${esc(`cb:${s.slug}:${up.slug}`)}">${esc(up.identity.name)}</a>` : esc(b.identity.parent)} · in <a data-k="${esc("cs:" + s.slug)}">${esc(s.identity.name)}</a></div><p class="meta">${STATUS_NOTE[b.status]}</p>` + celGroups(b, DATA.celestial.groups.body)
+      + (b.worked ? (() => { const w = b.worked, r = (v, n = 3) => (+v.toPrecision(n)).toLocaleString();
+          return `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>`
+            + `<tr><td>density</td><td>${r(w.density)} kg/m³</td><td>its mass and size${w.density > 4500 ? ": rock with much metal" : w.density > 2800 ? ": rock" : w.density > 1500 ? ": rock and ice" : w.density > 900 ? ": mostly ice, or gas squeezed by its own weight" : ": gas"}</td></tr>`
+            + (w.nearest ? `<tr><td>nearest and farthest</td><td>${au(w.nearest)} and ${au(w.farthest)}</td><td>how stretched its orbit is</td></tr>` : "")
+            + (w.sunlight ? `<tr><td>sunlight</td><td>${r(w.sunlight)} W on each m²</td><td>its star's light at its distance (Earth: 1,361)</td></tr><tr><td>temperature with no air</td><td>${Math.round(w.bare_temperature)} K</td><td>that sunlight, less what it reflects</td></tr>` : "")
+            + `<tr><td>to leave its surface for low orbit</td><td>${r(w.orbit_speed / 1000)} km/s; ${r(w.to_orbit / 1e6)} GJ for each tonne</td><td>its mass and size</td></tr>`
+            + `<tr><td>to leave it altogether</td><td>${r(w.escape / 1000)} km/s; ${r(w.to_escape / 1e6)} GJ for each tonne</td><td>its mass and size</td></tr>`
+            + (w.spin_speed ? `<tr><td>its ground moves at</td><td>${r(w.spin_speed)} m/s at the equator</td><td>its size and its day</td></tr>` : "")
+            + (w.stationary_orbit ? `<tr><td>orbit that keeps over one spot</td><td>${r(w.stationary_orbit)} km from its centre${w.stationary_holds ? "" : " (not one that holds: it lies outside what its pull keeps, or inside its ground)"}</td><td>its mass and its day</td></tr>` : "")
+            + `</table>`; })() : "")
       + (b.balance ? `<h3>Its balance points</h3><table><tr><th>Point</th><th>Where</th><th>Holds by itself</th></tr>`
           + `<tr><td>L1</td><td>${Math.round(b.balance.reach).toLocaleString()} km from it, toward ${esc(b.balance.round)}</td><td>no: a thing there needs holding</td></tr>`
           + `<tr><td>L2</td><td>${Math.round(b.balance.reach).toLocaleString()} km from it, away from ${esc(b.balance.round)}</td><td>no</td></tr>`
