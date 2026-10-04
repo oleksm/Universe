@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Mining Rig"
+  key: mining.rig.s2
+  maker: brand.cormorant
+  slot: utility
+  description: "A mining rig: digs an asteroid it is anchored to."
+physical:
+  mass: 2500
+  volume: 6
+performance:
+  power_draw: 500
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Fusion Plant S3"
+  key: power.fusion.s3
+  maker: brand.hadley
+  slot: power
+  description: "A ship's power plant."
+physical:
+  mass: 5000
+  volume: 10
+performance:
+  output: 14
+  efficiency: 0.35
+  burns: deuterium
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

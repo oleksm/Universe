@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Hyperdrive S2"
+  key: hyperdrive.s2
+  maker: brand.kestrel
+  slot: hyperdrive
+  description: "The drive that crosses between stars."
+physical:
+  mass: 4000
+  volume: 10
+performance:
+  power_draw: 1500
+  efficiency: 0.6
+  top_speed: 3000
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

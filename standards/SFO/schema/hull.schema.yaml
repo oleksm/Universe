@@ -11,6 +11,9 @@ properties:
     required: [name]
     properties:
       name: { type: string }
+      key: { type: string, description: "Its key in the game (content/base/hulls.ron), for one the game has as a stock hull." }
+      maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
+      class: { type: string, description: "What it is built for: mining ship, hauler, courier..." }
       description: { type: string }
   size:
     type: object
@@ -25,6 +28,8 @@ properties:
     additionalProperties: false
     properties:
       frame: { type: number, description: "t, the bare hull with nothing fitted" }
+      fuel: { type: number, description: "t of fuel its tanks hold, as fitted" }
+      hold: { type: number, description: "t of cargo its racks hold, as fitted" }
   fit:
     description: The equipment it is fitted with when it is built.
     type: array

@@ -649,6 +649,8 @@ for s in standards:
             key = ident.get("name")
             e["slug"] = name[:-5]
         elif kind == "hulls":
+            if ident.get("maker") is not None and ident["maker"] not in BRANDS:
+                problem(full, f"identity.maker: no maker '{ident['maker']}' in Maker House")
             if not ident.get("name"):
                 problem(full, "identity: no name")
             key = ident.get("name")
@@ -1341,7 +1343,9 @@ part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "p
 ingot_makers = lambda mat: [q for q in processes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
 # 1. The chain from a hull down to rock: how far each part gets.
 eq_of = {e["slug"]: e for e in equipment}
-for hl in hulls + structures:
+# (The hulls whose parts are listed: the others are coarse, in the Hulls report.)
+built_hulls = [hl for hl in hulls if hl.get("parts_mass")]
+for hl in built_hulls + structures:
     mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
     leaves = [pt for pt in mine if not kids(pt)]
     rows = []
@@ -1523,9 +1527,34 @@ for m in modules:
     rows.append(row("gap" if not tops or len(cut) < len(leaves) else "ok", link(m["identity"]["name"], "mod:" + m["slug"]), len(tops) or "none listed", sum(times(pt) for pt in tops) or "", tonnes(m["parts_mass"]) if m.get("parts_mass") else "", f"{m['parts_mass'] / floor:,.0f} kg/m2" if m.get("parts_mass") and floor else "", f"{len(cut)} of {len(leaves)}" if leaves else "", ", ".join(f"{v:,.0f} t of {stock_of[k]['identity']['name']}" for k, v in need.items())))
 report("plant", "Plant: what each industrial module is built of", "Each industrial module: the kinds of component it is built of, how many pieces that is, what they weigh together, that weight over its floor, and how many of its components say what they are made from. A gap is a module with no components listed, or with components that do not yet say what they are made from.", ["Module", "Kinds of component", "Pieces", "Weight", "Over its floor", "Say what they are made from", "Stock they take"], rows)
 
+# 1e. Hulls: each hull's budget (what it weighs, what it carries, what its equipment takes of its
+# space, how hard it can push), and the loads the registry has to move as loads of its hold.
+rows = []
+big_loads = []
+for ad in administrations:
+    for x in ad["bodies"]:
+        for r_ in x.get("feed") or []:
+            big_loads.append((f"a day's rock for {x['name']}, flat out", r_["rate"] * 24))
+for st in structures:
+    big_loads.append((f"one {st['identity']['name'].lower()}", st["parts_mass"] / 1000))
+for hl in hulls:
+    ms, ds, sz = hl.get("mass") or {}, hl.get("design") or {}, hl.get("size") or {}
+    frame = hl.get("parts_mass", 0) / 1000 or ms.get("frame", 0)
+    fitted = hl.get("fitted_mass", 0) / 1000
+    fuel, hold = ms.get("fuel", 0), ms.get("hold", 0)
+    loaded = frame + fitted + fuel + hold
+    fit_vol = sum((eq_by.get(ft.get("item"), {}).get("physical") or {}).get("volume", 0) for ft in hl.get("fit") or [])
+    hl["budget"] = {"frame": frame, "fitted": fitted, "fuel": fuel, "hold": hold, "loaded": loaded, "fit_volume": fit_vol,
+                    "payload": hold / loaded if loaded else 0, "main_g": ds.get("main_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0, "lift_g": ds.get("lift_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0,
+                    "loads": [{"what": w_, "tonnes": t_, "loads": t_ / hold if hold else None} for w_, t_ in big_loads]}
+    rows.append(row("note", link(hl["identity"]["name"], "hull:" + hl["slug"]), hl["identity"].get("class", ""), f"{frame:,.0f} t" + ("" if hl.get("parts_mass") else " (the game's)"), f"{loaded:,.0f} t", f"{hold:g} t ({100 * hold / loaded:.0f}%)" if loaded else "", f"{fuel:g} t",
+                    f"{100 * fit_vol / sz['volume']:.1f}% of {sz['volume']:,} m3" if sz.get("volume") else "", f"{hl['budget']['main_g']:.1f} g", f"{hl['budget']['lift_g']:.2f} g",
+                    "; ".join(f"{b_['loads']:,.0f} loads for {b_['what']}" for b_ in hl["budget"]["loads"] if b_["loads"])))
+report("hulls", "Hulls: each one's budget, and the loads to be moved", "Each hull: what it weighs bare and loaded, what it carries and what share of its loaded weight that is, its fuel, what its equipment takes of its space, how hard its main drive and its lift push it loaded, and how many loads of its hold the registry's big loads are. Nothing here is a gap: it is for comparing hulls.", ["Hull", "Class", "Bare", "Loaded", "Carries", "Fuel", "Equipment takes", "Main drive", "Lift", "Loads"], rows)
+
 # 2. Mass: what a thing weighs against what it is made of.
 rows = []
-for hl in hulls:
+for hl in built_hulls:
     frame = ((hl.get("mass") or {}).get("frame") or 0) * 1000
     got = hl.get("parts_mass", 0)
     if frame:
@@ -1552,7 +1581,7 @@ _src_path = os.path.join(TREE, "sources", "research_rock_structure.json")
 BENCH = json.load(open(_src_path, encoding="utf-8")) if os.path.exists(_src_path) else {}
 bench = lambda topic, fig: (BENCH.get(topic) or {}).get(fig) or {}
 mat_by = {m.get("slug"): m for m in materials}
-for hl in hulls:
+for hl in built_hulls:
     ds = hl.get("design") or {}
     if not ds:
         continue
@@ -1687,7 +1716,7 @@ report("power", "Power: what is supplied against what is drawn", "In each settle
 
 # 3. Volume: a hull's parts' boxes against the space the hull takes.
 rows = []
-for hl in hulls:
+for hl in built_hulls:
     vol = (hl.get("size") or {}).get("volume")
     boxes = sum((pt.get("physical") or {}).get("length", 0) * (pt.get("physical") or {}).get("width", 0) * (pt.get("physical") or {}).get("height", 0) * times(pt) for pt in parts if pt["hull"] == hl["slug"] and not pt.get("parent"))
     unsized = [pt for pt in parts if pt["hull"] == hl["slug"] and not pt.get("parent") and not (pt.get("physical") or {}).get("length")]

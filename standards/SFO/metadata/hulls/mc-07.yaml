@@ -3,6 +3,7 @@
 # of: its parts, in parts/mc-07/.
 identity:
   name: MC-07
+  class: mining ship
   description: A mining ship's hull. The bare hull, with nothing fitted in its slots.
 size:
   length: 66.1
@@ -11,6 +12,8 @@ size:
   volume: 23181
 mass:
   frame: 87.803
+  fuel: 4
+  hold: 4
 fit:
   - { slot: drive, item: drive-torch-s1, nozzles: 6 }
   - { slot: thrusters, item: thrusters-quad-s1 }

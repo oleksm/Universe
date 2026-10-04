@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Belly Lift S3"
+  key: lift.belly.s3
+  maker: brand.kestrel
+  slot: lift
+  description: "Lift jets under the hull, to hover and set down."
+physical:
+  mass: 7000
+  volume: 14
+performance:
+  power_draw: 800
+  efficiency: 0.3
+  thrust: 1600
+  exhaust_speed: 10000
+  burns: deuterium
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

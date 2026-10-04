@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/hull.schema.yaml
+# One of the game's stock hulls (content/base/hulls.ron): a made shape, not a modelled one. Coarse:
+# what the game has of it. Its parts are not listed.
+identity:
+  name: "Interceptor"
+  key: hull.interceptor
+  maker: brand.vireo
+  class: interceptor
+  description: "A small fast warship."
+size:
+  volume: 497
+mass:
+  frame: 19
+  fuel: 4
+  hold: 4
+fit:
+  - { slot: power, item: power-fusion-s2 }
+  - { slot: drive, item: drive-torch-s2 }
+  - { slot: thrusters, item: thrusters-quad-s2 }
+  - { slot: lift, item: lift-belly-s1 }
+  - { slot: tank, item: tank-s0 }
+  - { slot: cargo, item: rack-s1 }
+  - { slot: hyperdrive, item: hyperdrive-s1 }
+  - { slot: capacitor, item: capacitor-s1 }
+  - { slot: computer, item: computer-fbw-fast }
+  - { slot: transponder, item: transponder-s1 }
+  - { slot: sensors, item: sensors-radar-s1 }
+  - { slot: comm, item: comm-basic-s1 }
+  - { slot: life, item: life-s1 }
+  - { slot: hardpoint_1, item: gun-mass-driver-s1 }
+  - { slot: hardpoint_2, item: laser-pulse-s1 }
+  - { slot: avionics, item: nav-full-s1 }
+design:
+  loaded_mass: 45.89
+  main_thrust: 2.7
+  lift_thrust: 0.88
+basis:
+  - { of: [size, mass, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
