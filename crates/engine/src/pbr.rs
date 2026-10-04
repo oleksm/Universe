@@ -352,7 +352,7 @@ impl PbrRenderer {
             mag_filter: wgpu::FilterMode::Linear,
             min_filter: wgpu::FilterMode::Linear,
             mipmap_filter: wgpu::MipmapFilterMode::Linear,
-            anisotropy_clamp: 8,
+            anisotropy_clamp: 16,
             ..Default::default()
         });
         let instances = device.create_buffer(&wgpu::BufferDescriptor { label: Some("pbr instances"), size: 64 * size_of::<crate::frame::Instance>() as u64, usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
@@ -527,7 +527,9 @@ fn upload_compressed(device: &wgpu::Device, queue: &wgpu::Queue, img: &Image, le
         usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
         view_formats: &[],
     });
-    let params = texpresso::Params { algorithm: texpresso::Algorithm::ClusterFit, ..Default::default() };
+    // (Colour fitted carefully; occlusion, roughness and metalness, smooth fields, the fast way.)
+    let algorithm = if kind == Kind::Data { texpresso::Algorithm::RangeFit } else { texpresso::Algorithm::ClusterFit };
+    let params = texpresso::Params { algorithm, ..Default::default() };
     let block = if codec == texpresso::Format::Bc1 { 8 } else { 16 };
     for (level, (w, h, px)) in levels.iter().enumerate() {
         let (bw, bh) = (w.div_ceil(4), h.div_ceil(4));

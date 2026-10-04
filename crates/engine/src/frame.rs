@@ -103,6 +103,8 @@ pub struct Frame {
     /// How far off what the eye is looking at is (m; 0: nothing in
     /// particular): a tight shadow cascade is drawn round it.
     pub shadow_focus: f64,
+    /// The environment is a studio's (soft boxes), not space round the eye.
+    pub studio: bool,
     /// Shadows cast by meshes on meshes, out to this far from the eye
     /// (metres; 0: none). See `no_shadow`.
     pub shadow_reach: f64,
@@ -323,6 +325,7 @@ impl Frame {
             surface: [0.0, 16.0, 0.0, 0.0],
             scene_size,
             size: hud_size,
+            studio: false,
             shadow_focus: 0.0,
             ambient: SHADE_AMBIENT,
             sky: Vec::new(),

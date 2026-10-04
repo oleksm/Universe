@@ -149,6 +149,8 @@ fn studio(frame: &mut Frame, app: &App) {
     let radius = size * 40.0;
     frame.reflector = Some(universe_engine::Reflector { center: pos - key * radius * std::f64::consts::SQRT_2, radius, albedo: 0.55, color: [0.92, 0.95, 1.0] });
     frame.ambient = 0.3;
+    // (What polished metal mirrors: the studio's soft boxes, see the engine's `env.rs`.)
+    frame.studio = true;
     // The backdrop: a neutral grey sphere round it all, far enough not to crowd it.
     let backdrop = Transform { position: pos, rotation: universe_engine::glam::Quat::IDENTITY, scale: size * 30.0 };
     frame.no_shadow(|frame| frame.model(&app.models.star, &backdrop, Color::hex(0x2a2e33), Color::hex(0x2a2e33)));

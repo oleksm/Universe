@@ -8,6 +8,7 @@ pub mod app;
 pub mod audio;
 pub mod font;
 pub mod camera;
+mod env;
 pub mod frame;
 pub mod gpu;
 pub mod input;
