@@ -574,9 +574,9 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials, processes, modules, goods = [], [], [], [], []
+elements, materials, processes, modules, goods, hulls = [], [], [], [], [], []
 for s in standards:
     if "records" not in s:
         continue
@@ -605,6 +605,11 @@ for s in standards:
             if ident.get("atomic_number") != int(name[:3]):
                 problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
             key = ident.get("symbol")
+        elif kind == "hulls":
+            if not ident.get("name"):
+                problem(full, "identity: no name")
+            key = ident.get("name")
+            e["slug"] = name[:-5]
         elif kind == "goods":
             for k in ("name", "kind"):
                 if not ident.get(k):
@@ -644,7 +649,7 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods}[kind].append(e)
+        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods, "hulls": hulls}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
@@ -873,6 +878,29 @@ for ad in administrations:
             if plot is not None and order:
                 street = next((st for st in x.get("streets", []) if st.get("slug") == (plot.get("address") or {}).get("street")), None)
                 fc["layout"] = lay_out(where, plot, street, order)
+# A hull's parts: each of a material, in a form that material comes in; together they weigh what
+# its frame does. And for each, the process that makes that material in that form, if there is one.
+mat_of = {m.get("slug"): m for m in materials}
+makes = {}
+for pr in processes:
+    for o in (pr.get("outputs") or {}).get("products") or []:
+        if o.get("item") and o.get("form"):
+            makes.setdefault((o["item"], o["form"]), []).append(pr.get("slug"))
+for hl in hulls:
+    where = os.path.join(TREE, hl["file"])
+    total = 0.0
+    for asm in (hl.get("structure") or {}).get("assemblies") or []:
+        for pt in asm.get("parts") or []:
+            mat = mat_of.get(pt.get("item"))
+            if mat is None:
+                problem(where, f"{asm.get('name')}, {pt.get('name')}: no material '{pt.get('item')}'")
+            elif pt.get("form") not in ((mat.get("identity") or {}).get("form") or []):
+                problem(where, f"{asm.get('name')}, {pt.get('name')}: {pt.get('item')} doesn't come as {pt.get('form')}")
+            pt["made_by"] = makes.get((pt.get("item"), pt.get("form")), [])
+            total += pt.get("mass", 0)
+    frame = (hl.get("mass") or {}).get("frame")
+    if frame and abs(total - frame) > 0.005 * frame:
+        problem(where, f"its parts weigh {total:.3f} t and its frame {frame} t")
 for m in modules:
     for kind in (m.get("rate") or {}).get("stores") or []:
         if kind not in GOODS_KINDS:
@@ -1015,6 +1043,8 @@ def write_html():
         "processes": processes,
         "modules": modules,
         "goods": goods,
+        "hulls": hulls,
+        "hull_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["hulls"]["properties"].items()},
         "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["goods"]["properties"].items()},
         "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["modules"]["properties"].items()},
         # (Icons: SFO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
@@ -1041,5 +1071,5 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
-print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods")
+print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron")

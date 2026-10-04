@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
 title: Mining ship
 parent: SFO 2
+records: hulls
 purpose: To turn rock somewhere far away into value at a market, and bring its crew home.
 sections:
   - text: >-

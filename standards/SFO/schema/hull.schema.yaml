@@ -1,0 +1,52 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Hull
+description: One hull, and what it is made of. Its parts' masses add up to its frame's.
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name]
+    properties:
+      name: { type: string }
+      description: { type: string }
+  size:
+    type: object
+    additionalProperties: false
+    properties:
+      length: { type: number, description: m }
+      width: { type: number, description: m }
+      height: { type: number, description: m }
+      volume: { type: number, description: "m3, the space its shape takes" }
+  mass:
+    type: object
+    additionalProperties: false
+    properties:
+      frame: { type: number, description: "t, the bare hull with nothing fitted" }
+  structure:
+    type: object
+    additionalProperties: false
+    properties:
+      assemblies:
+        description: Its assemblies, and the parts each is made of.
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [name, parts]
+          properties:
+            name: { type: string }
+            does: { type: string }
+            parts:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                required: [name, item, form, mass]
+                properties:
+                  name: { type: string }
+                  item: { type: string, description: "The material it is made of, by file name." }
+                  form: { type: string, description: "The stock it is cut from: one of the forms its material comes in." }
+                  mass: { type: number, description: t }
