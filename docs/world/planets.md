@@ -48,8 +48,9 @@ star stripped the air away.
 3. **One surface.** Height, rock and crust age, water, ice and climate over the whole world.
    It is coarse globally and refined toward the eye without ever contradicting itself. The
    renderer, the physics and the economy all read it.
-4. **Determinism.** The same seed and the same physics give the same world on every machine,
-   every time. A world is evolved once, then kept.
+4. **Made once, for everyone.** The game is one shared world: the service evolves each world
+   once, keeps it, and serves the same world to every player. It is never re-made on players'
+   machines.
 5. **Explained outcomes.** Each world can say why it is the way it is: "plates stopped 1.2
    billion years ago", "lost its ocean when its dynamo died". That history is content the game
    can show.
