@@ -93,19 +93,61 @@ pub struct Studio {
 }
 
 /// The studio's regions on screen: the plan, the side view.
-fn regions(size: Vec2) -> ((Vec2, Vec2), (Vec2, Vec2)) {
-    // (Under the title, the actions and the line saying what's on; right of the tools.)
+fn regions(size: Vec2, panel: bool) -> ((Vec2, Vec2), (Vec2, Vec2)) {
+    // (Under the title, the toolbar and the line saying what's on; the plan right of
+    // the tool's panel when it's open, the side view always the full width.)
     let top = 86.0;
-    let left = 12.0 + TOOLS_WIDTH + 10.0;
+    let left = if panel { 12.0 + PANEL_WIDTH + 10.0 } else { 12.0 };
     let bottom = size.y - 12.0;
     let split = top + (bottom - top) * 0.62;
-    ((Vec2::new(left, top), Vec2::new(size.x - 12.0, split - 6.0)), (Vec2::new(left, split), Vec2::new(size.x - 12.0, bottom)))
+    ((Vec2::new(left, top), Vec2::new(size.x - 12.0, split - 6.0)), (Vec2::new(12.0, split), Vec2::new(size.x - 12.0, bottom)))
 }
 
-/// The tools' column, at the left (px).
-const TOOLS_WIDTH: f32 = 220.0;
-/// How many of `TOOLBAR` are tools (its first): in the column; the rest along the top.
-const TOOLS: usize = 6;
+/// The tool's panel, at the left of the plan (px).
+const PANEL_WIDTH: f32 = 240.0;
+/// A row of the panel's list (px).
+const ROW: f32 = 16.0;
+
+/// Is the tool's panel open: a tool that makes things, or something picked?
+fn panel_open(studio: &Studio) -> bool {
+    studio.tool != Tool::Select || studio.pick.is_some()
+}
+
+/// The kind of thing the panel is about: the tool's, or what's picked.
+fn panel_kind(studio: &Studio) -> Tool {
+    match (studio.tool, studio.pick) {
+        (Tool::Select, Some(Pick::Wall(_))) => Tool::Wall,
+        (Tool::Select, Some(Pick::Plane(_))) => Tool::Plane,
+        (Tool::Select, Some(Pick::Ladder(_))) => Tool::Ladder,
+        (Tool::Select, Some(Pick::Stair(_))) => Tool::Stair,
+        (t, _) => t,
+    }
+}
+
+/// Where the panel's list starts (y): under its title, where the tool is at, and its help.
+fn panel_list_top(studio: &Studio) -> f32 {
+    let width = (PANEL_WIDTH / 8.0) as usize - 2;
+    let state = tool_state(studio).map_or(0, |s| crate::fmt::wrap(&s, width).len() + 1);
+    let help = crate::fmt::wrap(tool_help(panel_kind(studio)), width).len();
+    86.0 + 8.0 + 22.0 + (state + help) as f32 * 14.0 + 12.0 + 18.0
+}
+
+/// The panel's list: the things of its kind on this deck, each a row (what it is, what's picked).
+fn panel_list(studio: &Studio, deck: &Deck, sides: Option<&Sides>, holes: &[Vec<DVec2>]) -> Vec<(Pick, String)> {
+    match panel_kind(studio) {
+        Tool::Plane => deck.planes.iter().enumerate().map(|(k, poly)| {
+            let area: f64 = sides.map_or(0.0, |sd| deckplan::floor_strips(poly, sd, holes).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum());
+            (Pick::Plane(k), format!("FLOOR {}  {:.0} M2", k + 1, area))
+        }).collect(),
+        Tool::Wall | Tool::Door => deck.walls.iter().enumerate().map(|(k, w)| {
+            let doors = match w.doors.len() { 0 => String::new(), 1 => "  1 DOOR".into(), n => format!("  {n} DOORS") };
+            (Pick::Wall(k), format!("WALL {}  {:.1} M{doors}", k + 1, w.length()))
+        }).collect(),
+        Tool::Ladder => deck.ladders.iter().enumerate().map(|(k, _)| (Pick::Ladder(k), format!("LADDER {}", k + 1))).collect(),
+        Tool::Stair => deck.stairs.iter().enumerate().map(|(k, st)| (Pick::Stair(k), format!("STAIR {}  {:.1} M RUN", k + 1, (st.to - st.from).length()))).collect(),
+        Tool::Select => Vec::new(),
+    }
+}
 
 // Blueprint colours.
 const PAPER: Color = Color([0.04, 0.14, 0.28, 1.0]);
@@ -223,15 +265,10 @@ const TOOLBAR: [(&str, &str, Action); 18] = [
     ("]", "HEIGHT +", Action::Headroom(0.1)),
 ];
 
-/// Where toolbar button `k` is on screen: a tool in the column at the left,
-/// an action along the top (rows of six).
+/// Where toolbar button `k` is on screen (two rows of nine along the top).
 fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
-    if k < TOOLS {
-        return (Vec2::new(12.0, 86.0 + k as f32 * 22.0), Vec2::new(TOOLS_WIDTH, 18.0));
-    }
-    let a = k - TOOLS;
-    let w = ((size.x - 24.0 - 5.0 * 4.0) / 6.0).floor();
-    (Vec2::new(12.0 + (a % 6) as f32 * (w + 4.0), 30.0 + (a / 6) as f32 * 20.0), Vec2::new(w, 16.0))
+    let w = ((size.x - 24.0 - 8.0 * 4.0) / 9.0).floor();
+    (Vec2::new(12.0 + (k % 9) as f32 * (w + 4.0), 30.0 + (k / 9) as f32 * 20.0), Vec2::new(w, 16.0))
 }
 
 /// What the tool does and how it's used (the tools' column, under them).
@@ -309,7 +346,7 @@ fn snap(p: DVec2, free: bool) -> DVec2 {
 pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim::world::shape::Shape, studio: &mut Studio) -> bool {
     let input = &ctx.input;
     let size = ctx.hud_size.as_vec2();
-    let (plan_r, side_r) = regions(size);
+    let (plan_r, side_r) = regions(size, panel_open(studio));
     studio.refresh(app, hull_key, shape);
     let Some(h) = studio.hull.as_ref() else {
         return !input.pressed(KeyCode::Escape);
@@ -572,23 +609,35 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                 Some(Drag::Point(..) | Drag::Bend(..)) => studio.drag = None,
                 _ => {}
             }
-            if remove {
-                match studio.pick.take() {
-                    Some(Pick::Wall(k)) if k < deck.walls.len() => {
-                        deck.walls.remove(k);
-                    }
-                    Some(Pick::Plane(k)) if k < deck.planes.len() => {
-                        deck.planes.remove(k);
-                    }
-                    Some(Pick::Ladder(k)) if k < deck.ladders.len() => {
-                        deck.ladders.remove(k);
-                    }
-                    Some(Pick::Stair(k)) if k < deck.stairs.len() => {
-                        deck.stairs.remove(k);
-                    }
-                    _ => {}
-                }
+        }
+    }
+    // The panel's list: a row clicked picks that thing (REMOVE then takes it out).
+    if panel_open(studio) && input.button_pressed(MouseButton::Left) && cursor.x >= 12.0 && cursor.x <= 12.0 + PANEL_WIDTH {
+        let top = panel_list_top(studio);
+        let list = panel_list(studio, deck, None, &[]);
+        let row = ((cursor.y - top) / ROW).floor();
+        if row >= 0.0
+            && let Some((pick, _)) = list.get(row as usize)
+        {
+            studio.pick = Some(*pick);
+        }
+    }
+    // What's picked removed (with any tool).
+    if remove {
+        match studio.pick.take() {
+            Some(Pick::Wall(k)) if k < deck.walls.len() => {
+                deck.walls.remove(k);
             }
+            Some(Pick::Plane(k)) if k < deck.planes.len() => {
+                deck.planes.remove(k);
+            }
+            Some(Pick::Ladder(k)) if k < deck.ladders.len() => {
+                deck.ladders.remove(k);
+            }
+            Some(Pick::Stair(k)) if k < deck.stairs.len() => {
+                deck.stairs.remove(k);
+            }
+            _ => {}
         }
     }
     true
@@ -616,7 +665,7 @@ fn inside(poly: &[DVec2], p: DVec2) -> bool {
 /// The studio drawn (the shipyard's layout page).
 pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio) {
     let size = frame.size();
-    let (plan_r, side_r) = regions(size);
+    let (plan_r, side_r) = regions(size, panel_open(studio));
     frame.text(Vec2::new(12.0, 10.0), &format!("{place}   LAYOUT STUDIO - {hull_name}   {:.0} CR", app.v.credits), LABEL);
     // The toolbar: the tool in use lit, the button under the cursor brighter.
     {
@@ -626,20 +675,6 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             let hover = button_at(size, studio.cursor) == Some(*action);
             let lamp = if *action == Action::Tool(studio.tool) || hover { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, key, name, lamp);
-        }
-        // Under the tools: what the one in use does, and where it's at.
-        let mut y = button(size, TOOLS - 1).0.y + 34.0;
-        let width = (TOOLS_WIDTH / 8.0) as usize;
-        if let Some(state) = tool_state(studio) {
-            for line in crate::fmt::wrap(&state, width) {
-                frame.text(Vec2::new(12.0, y), &line, PICKED);
-                y += 14.0;
-            }
-            y += 8.0;
-        }
-        for line in crate::fmt::wrap(tool_help(studio.tool), width) {
-            frame.text(Vec2::new(12.0, y), &line, LABEL.scale(0.85));
-            y += 14.0;
         }
     }
     for r in [plan_r, side_r] {
@@ -809,6 +844,61 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             frame.text(Vec2::new(side_r.0.x + 6.0, sy(d.floor) - 14.0), &format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom), col);
         }
     });
+    // The tool's panel: what its kind of thing is and how it's made, where it's at,
+    // and the ones on this deck (a row clicked picks it).
+    if panel_open(studio) {
+        let bottom = plan_r.1.y;
+        frame.hud_rect(Vec2::new(12.0, 86.0), Vec2::new(PANEL_WIDTH, bottom - 86.0), Color([0.03, 0.09, 0.17, 1.0]));
+        frame.hud_box(Vec2::new(12.0, 86.0), Vec2::new(PANEL_WIDTH, bottom - 86.0), GRID5);
+        let kind = panel_kind(studio);
+        let name = match kind {
+            Tool::Select => "SELECT",
+            Tool::Plane => "FLOORS",
+            Tool::Wall => "WALLS",
+            Tool::Door => "DOORS",
+            Tool::Ladder => "LADDERS",
+            Tool::Stair => "STAIRS",
+        };
+        let x = 20.0;
+        let mut y = 86.0 + 8.0;
+        frame.text(Vec2::new(x, y), name, INK);
+        y += 22.0;
+        let width = (PANEL_WIDTH / 8.0) as usize - 2;
+        if let Some(state) = tool_state(studio) {
+            for line in crate::fmt::wrap(&state, width) {
+                frame.text(Vec2::new(x, y), &line, PICKED);
+                y += 14.0;
+            }
+            y += 14.0;
+        }
+        for line in crate::fmt::wrap(tool_help(kind), width) {
+            frame.text(Vec2::new(x, y), &line, LABEL.scale(0.85));
+            y += 14.0;
+        }
+        y += 12.0;
+        frame.text(Vec2::new(x, y), "ON THIS DECK", INK.scale(0.8));
+        let top = panel_list_top(studio);
+        let holes = plan.map(|p| deckplan::openings(p, studio.deck)).unwrap_or_default();
+        let list = deck.map(|d| panel_list(studio, d, Some(&h.sides), &holes)).unwrap_or_default();
+        if list.is_empty() {
+            frame.text(Vec2::new(x, top), "NONE YET", LABEL.scale(0.6));
+        }
+        for (k, (pick, text)) in list.iter().enumerate() {
+            let ry = top + k as f32 * ROW;
+            if ry + ROW > bottom {
+                break;
+            }
+            let picked = studio.pick == Some(*pick);
+            let hover = studio.cursor.x >= 12.0 && studio.cursor.x <= 12.0 + PANEL_WIDTH && studio.cursor.y >= ry && studio.cursor.y < ry + ROW;
+            if picked || hover {
+                frame.hud_rect(Vec2::new(14.0, ry - 1.0), Vec2::new(PANEL_WIDTH - 4.0, ROW), if picked { PICKED.scale(0.25) } else { GRID });
+            }
+            frame.text(Vec2::new(x, ry + 1.0), text, if picked { PICKED } else { LABEL });
+        }
+        if studio.pick.is_some() {
+            frame.text(Vec2::new(x, bottom - 18.0), "DEL OR REMOVE: TAKE IT OUT", LABEL.scale(0.7));
+        }
+    }
     // What's on: the deck, the tool.
     let tool = match studio.tool {
         Tool::Select => "SELECT",

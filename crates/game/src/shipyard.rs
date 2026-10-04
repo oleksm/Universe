@@ -17,6 +17,11 @@ impl Shipyard {
         Shipyard { studio: Default::default() }
     }
 
+    /// Its studio (for dev scenarios: a tool picked).
+    pub fn studio_mut(&mut self) -> &mut crate::studio::Studio {
+        &mut self.studio
+    }
+
     /// Back from a walk-through: the studio as it was left.
     pub fn back_to(studio: crate::studio::Studio) -> Self {
         Shipyard { studio }

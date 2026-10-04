@@ -1193,7 +1193,16 @@ pub fn apply(app: &mut App, name: &str) {
             mc07(app);
             let key = app.ship.spec().key.clone();
             app.deckplans.retain(|p| p.hull != key);
-            let y = crate::shipyard::Shipyard::laying_out(app);
+            let mut y = crate::shipyard::Shipyard::laying_out(app);
+            // (UNIVERSE_TOOL: plane, wall, door, ladder or stair in hand.)
+            y.studio_mut().tool = match std::env::var("UNIVERSE_TOOL").as_deref() {
+                Ok("plane") => crate::studio::Tool::Plane,
+                Ok("wall") => crate::studio::Tool::Wall,
+                Ok("door") => crate::studio::Tool::Door,
+                Ok("ladder") => crate::studio::Tool::Ladder,
+                Ok("stair") => crate::studio::Tool::Stair,
+                _ => crate::studio::Tool::Select,
+            };
             if std::env::var_os("UNIVERSE_EMPTY").is_none() {
                 app.deckplans.push(demo_plan(app));
             }
