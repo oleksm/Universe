@@ -1,0 +1,870 @@
+{
+ "iron ore pellet plant": {
+  "throughput_single_line": {
+   "value": [
+    0.6,
+    9
+   ],
+   "unit": "Mt pellets/year per straight-grate system",
+   "source": "https://www.metso.com/globalassets/saleshub/documents---episerver/straight-grate--grate-kiln-brochure-2019-en.pdf",
+   "quote": "Straight grate: 'Capacities ranging from 0.6 MTPA to 9 MTPA in a single system'; grate-kiln: 'Capacities ranging from 3 MTPA to 7 MTPA in a single system'",
+   "agrees_with_guess": true,
+   "note": "Guess 125 t/h = about 1.0 Mt/yr at 8000 h, i.e. a small single line; typical modern lines are 3-7 Mt/yr (375-875 t/h)."
+  },
+  "electricity_vendor": {
+   "value": [
+    42,
+    50
+   ],
+   "unit": "kWh electric per t pellets",
+   "source": "https://www.metso.com/globalassets/saleshub/documents---episerver/straight-grate--grate-kiln-brochure-2019-en.pdf",
+   "quote": "'Approx. 50 kWh/ton power consumption' (straight grate column) and 'Approx. 42 kWh/ton power consumption' (grate-kiln column)",
+   "agrees_with_guess": false,
+   "note": "Guess 8 MW / 125 t/h = 64 kWh/t; about 30-50 % above the vendor figure. Column assignment read from PDF layout."
+  },
+  "electricity_EU_plants": {
+   "value": [
+    54,
+    99
+   ],
+   "unit": "MJ electric per t pellets (= 15-27.5 kWh/t)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 4.1 'Input/output data from three pellet plant sites in the EU-25': Electricity MJ/t 54 - 99",
+   "agrees_with_guess": false,
+   "note": "Guess of 64 kWh/t is 2-4x the EU plant range."
+  },
+  "ore_per_t_pellets": {
+   "value": [
+    935,
+    965
+   ],
+   "unit": "kg iron ore (concentrate) per t pellets",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 4.1: Iron ore kg/t 935 - 965; Pellets kg/t 1000",
+   "agrees_with_guess": false,
+   "note": "Guess 1.5 t ore per t pellets is wrong by about +55 %; pelletizing gains mass by binder/flux and (for magnetite) oxidation. 1.5 would only apply if 'ore' means run-of-mine before beneficiation, which is a different plant."
+  },
+  "bentonite": {
+   "value": [
+    4.1,
+    6.8
+   ],
+   "unit": "kg per t pellets",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 4.1: Bentonite kg/t 4.1 - 6.8",
+   "agrees_with_guess": null,
+   "note": "Other fluxes: olivine 0-27.6, limestone 0-5, dolomite 0-13.5 kg/t."
+  },
+  "heat_fuel": {
+   "value": [
+    0.27,
+    0.7
+   ],
+   "unit": "GJ fuel per t pellets",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "'Gross energy consumption of the above-mentioned pelletisation plant is approximately 1.4 GJ/t pellet ... About 0.7 GJ/t pellet is supplied by means of heat recuperation, whereas approximately 0.7 GJ/t pellet is introduced by means of fuel.' Table 4.1 Swedish magnetite plants: Coal 223 MJ/t, Oil 43 - 186 MJ/t",
+   "agrees_with_guess": null,
+   "note": "Low end = magnetite (exothermic oxidation), high end = hematite. Registry guess had no heat term."
+  },
+  "footprint": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No citable site dimensions found for a stated capacity."
+  }
+ },
+ "hydrogen direct-reduction shaft furnace": {
+  "throughput": {
+   "value": 200,
+   "unit": "t DRI/h for a 1.6 Mt/yr module",
+   "source": "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf",
+   "quote": "'Rough calculations for Cleveland-Cliffs: 1.6 MTPA (200 ton/h)'",
+   "agrees_with_guess": true,
+   "note": "Guess 125 t/h = 1.0 Mt/yr is a valid smaller module. Wikipedia 'Direct reduction' (IEA ETSAP 2010 table) gives Midrex capacity 400 to 1700 kt/year; Midrex 2021 operations summary reports 114 t/h (OEMK module 1) and 226 t/h (Jindal Shadeed)."
+  },
+  "hydrogen_consumption": {
+   "value": 54,
+   "unit": "kg H2 per t DRI (650 Nm3/t)",
+   "source": "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf",
+   "quote": "'Hydrogen consumption is approx. 650 Nm3/t DRI (54kg/t)'",
+   "agrees_with_guess": true,
+   "note": "Exact match. Vogl et al. 2018 model: '51 kg of hydrogen is needed per tonne of steel output' without losses (https://xylenepower.com/Assessment%20of%20hydrogen%20direct%20reduction%20for%20fossil-free%20steelmaking.pdf)."
+  },
+  "pellets_per_t_liquid_steel": {
+   "value": 1504,
+   "unit": "kg iron ore pellets per t liquid steel (100 % HBI charge to EAF)",
+   "source": "https://xylenepower.com/Assessment%20of%20hydrogen%20direct%20reduction%20for%20fossil-free%20steelmaking.pdf",
+   "quote": "'For continuous operation on 100% HBI, the production of one tonne of steel requires 1504 kg of iron ore pellets.'",
+   "agrees_with_guess": null,
+   "note": "This is per tonne of STEEL, not per tonne of sponge iron. A sourced pellets-per-tonne-DRI ratio (the 1.43 guess) was NOT found; 1.43 is consistent with Fe2O3 stoichiometry but unsourced."
+  },
+  "electricity": {
+   "value": [
+    82,
+    135
+   ],
+   "unit": "kWh electric per t DRI (natural-gas Midrex, excludes hydrogen production and gas heating)",
+   "source": "https://www.midrex.com/tech-article/midrex-direct-reduction-plants-2021-operations-summary/",
+   "quote": "ArcelorMittal Hamburg: 'Its annual average electricity consumption was the lowest of all MIDREX Plants at 82 kWh per ton.' Wikipedia 'Direct reduction' table (IEA ETSAP 2010): Midrex 'Electricity requirement (kWh/t)' 135.4 (https://en.wikipedia.org/wiki/Direct_reduction)",
+   "agrees_with_guess": true,
+   "note": "Guess 12 MW / 125 t/h = 96 kWh/t sits inside the range. An all-electric H2 gas heater would add to this; not separately sourced."
+  },
+  "system_energy_H2_route": {
+   "value": 3.48,
+   "unit": "MWh electric per t liquid steel (electrolyser + shaft + EAF)",
+   "source": "https://xylenepower.com/Assessment%20of%20hydrogen%20direct%20reduction%20for%20fossil-free%20steelmaking.pdf",
+   "quote": "'hydrogen direct reduction steelmaking needs 3.48 MWh of electricity per tonne of liquid steel, mainly for the electrolyser hydrogen production'",
+   "agrees_with_guess": null,
+   "note": "Whole-route check value."
+  },
+  "tower_height": {
+   "value": 137,
+   "unit": "m, for a 2 Mt/yr plant",
+   "source": "https://www.primetals.com/en/metals-magazine/voestalpine-taking-a-large-step-into-the-usa",
+   "quote": "'capable of producing two million tons of hot-briquetted iron per year ... its 137-meter-high reduction tower'",
+   "agrees_with_guess": true,
+   "note": "Guess 120 m is close (-12 %), and that for a plant twice the guessed capacity. Furnace inner diameter 7.15 m per search summary of the same Primetals pages (not re-read)."
+  },
+  "footprint": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No citable plot dimensions found."
+  }
+ },
+ "water electrolysis hydrogen plant": {
+  "specific_electricity": {
+   "value": 53,
+   "unit": "kWh electric per kg H2",
+   "source": "https://en.wikipedia.org/wiki/Electrolysis_of_water",
+   "quote": "'As of 2022, commercial electrolysis requires around 53 kWh of electricity to produce one kg of hydrogen'",
+   "agrees_with_guess": true,
+   "note": "100 MW / 53 kWh/kg = 1.89 t H2/h; guess 1.9 t/h confirmed."
+  },
+  "water_stoichiometric": {
+   "value": 9,
+   "unit": "L water per kg H2",
+   "source": "https://www.rmi.org/hydrogen-reality-check-distilling-green-hydrogens-water-consumption/",
+   "quote": "'Per chemistry fundamentals, 9 liters (L) of water are required to produce 1 kilogram (kg) of hydrogen via electrolysis.'",
+   "agrees_with_guess": true,
+   "note": ""
+  },
+  "water_total": {
+   "value": [
+    20,
+    30
+   ],
+   "unit": "L water per kg H2 including purification and cooling",
+   "source": "https://www.rmi.org/hydrogen-reality-check-distilling-green-hydrogens-water-consumption/",
+   "quote": "'an additional ~10-20 L/kg is needed ... Green hydrogen's cumulative 20-30 L/kg of water consumption'",
+   "agrees_with_guess": false,
+   "note": "Guess of 9 t/t is the reaction minimum only; real raw-water intake is 2-3x that."
+  },
+  "footprint": {
+   "value": [
+    8,
+    17
+   ],
+   "unit": "hectares per 1 GW plant (= 0.8-1.7 ha per 100 MW)",
+   "source": "https://ispt.eu/news/gigawatt-large-potential-for-production-of-green-hydrogen-in-five-dutch-industrial-regions/",
+   "quote": "'a gigawatt hydrogen plant requires about 8 to 17 hectares, depending on the applied technology (alkaline or PEM) and the plot plan for the plant'",
+   "agrees_with_guess": true,
+   "note": "Guess 150x100 m = 1.5 ha per 100 MW is inside the range (linear scaling from GW size is my assumption)."
+  },
+  "largest_plant": {
+   "value": 150,
+   "unit": "MW (up to 23,000 t H2/year)",
+   "source": "https://en.wikipedia.org/wiki/Electrolysis_of_water",
+   "quote": "'the largest is a 150 MW alkaline facility in Ningxia, China, with a capacity up to 23,000 tonnes per year'",
+   "agrees_with_guess": null,
+   "note": ""
+  }
+ },
+ "electric arc furnace": {
+  "heat_size_and_rate": {
+   "value": 80,
+   "unit": "t liquid steel per ~50 min (about 96 t/h)",
+   "source": "https://en.wikipedia.org/wiki/Electric_arc_furnace",
+   "quote": "'In a modern shop such a furnace would be expected to produce a quantity of 80 tonnes of liquid steel in approximately 50 minutes from charging with cold scrap to tapping the furnace.' Also: 'For a 90-tonne, medium-power furnace, the whole process will usually take about 60-70 minutes ... (the tap-to-tap time)' and 'transformer rated about ... (60 MVA)'",
+   "agrees_with_guess": true,
+   "note": "Guess 100 t heat, 100 t/h confirmed as mid-size."
+  },
+  "electricity_scrap": {
+   "value": 440,
+   "unit": "kWh electric per t steel (scrap charge)",
+   "source": "https://en.wikipedia.org/wiki/Electric_arc_furnace",
+   "quote": "'requires approximately 400 kilowatt-hours ... per short ton or about 440 kWh (1.6 GJ) per tonne' ; 'theoretical minimum ... to melt a tonne of scrap steel is 300 kWh'",
+   "agrees_with_guess": null,
+   "note": "EU survey range: Electricity 404 - 748 kWh/t LS (BREF Table 8.1, https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf)."
+  },
+  "electricity_DRI_charge": {
+   "value": [
+    530,
+    753
+   ],
+   "unit": "kWh electric per t liquid steel",
+   "source": "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf",
+   "quote": "'The best practice DRI-scrap-fed EAF consumes a mix of 60% DRI and 40% scrap. It consumes 530 kWh/t ... liquid steel for the EAF'; Vogl et al.: 'producing steel in the EAF from scrap requires less energy (0.667 MWh/tLS) than from pure DRI (0.753 MWh/tLS)' (https://xylenepower.com/Assessment%20of%20hydrogen%20direct%20reduction%20for%20fossil-free%20steelmaking.pdf)",
+   "agrees_with_guess": false,
+   "note": "Guess 500 kWh/t with DRI charge is low: 530 is best practice at 60 % DRI, about 750 for 100 % cold DRI/HBI (model value). LBNL also: DRI raises EAF electricity 'by 40-120 kWh/t liquid steel'."
+  },
+  "lime": {
+   "value": [
+    25,
+    140
+   ],
+   "unit": "kg lime/dolomite per t liquid steel",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 8.1 'Input/output data for electric arc furnaces within the EU': Lime/dolomite kg/t LS 25 - 140",
+   "agrees_with_guess": true,
+   "note": "Guess 50 in range."
+  },
+  "carbon": {
+   "value": [
+    3,
+    28
+   ],
+   "unit": "kg coal/anthracite/coke per t liquid steel",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 8.1: Coal (including anthracite and coke) kg/t LS 3 - 28",
+   "agrees_with_guess": true,
+   "note": "Guess 15 in range. LBNL best practice: 8 kg/t."
+  },
+  "electrode": {
+   "value": [
+    2,
+    6
+   ],
+   "unit": "kg graphite electrode per t liquid steel",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 8.1: Graphite electrodes kg/t LS 2 - 6",
+   "agrees_with_guess": false,
+   "note": "Guess 1.5 is just below the EU survey range; NPTEL course notes say it 'has decreased from around 6.2 kg/ton to as low as 1.2 kg/ton' (https://archive.nptel.ac.in/content/storage2/courses/113104059/lecture16/16_2.htm), so 1.5 is a best-practice value, not typical."
+  },
+  "slag": {
+   "value": [
+    60,
+    270
+   ],
+   "unit": "kg furnace slag per t liquid steel (plus 10-80 ladle slag)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 8.1: Slag from furnace kg/t LS 60 - 270; Slag from ladle kg/t LS 10 - 80",
+   "agrees_with_guess": true,
+   "note": "Guess 150 in range."
+  },
+  "dust": {
+   "value": [
+    10,
+    30
+   ],
+   "unit": "kg dust per t liquid steel",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 8.1: Dusts kg/t LS 10 - 30",
+   "agrees_with_guess": true,
+   "note": "Guess 15 in range."
+  },
+  "oxygen": {
+   "value": [
+    5,
+    65
+   ],
+   "unit": "m3 per t liquid steel",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 8.1: Oxygen m3/t LS 5 - 65",
+   "agrees_with_guess": null,
+   "note": "Not in the registry guess."
+  },
+  "bay_footprint": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No citable melt-shop bay dimensions found."
+  }
+ },
+ "ladle furnace": {
+  "electricity_ladle_refining_plus_gas_cleaning": {
+   "value": 65,
+   "unit": "kWh electric per t liquid steel (gas cleaning AND ladle refining together)",
+   "source": "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf",
+   "quote": "'65 kWh/t (8 kgce/t) liquid steel for gas cleaning and ladle refining'",
+   "agrees_with_guess": null,
+   "note": "Upper bound for the ladle furnace alone; guess 35 kWh/t is compatible but not directly confirmed."
+  },
+  "electricity_ladle_furnace_only": {
+   "value": [
+    11,
+    51
+   ],
+   "unit": "kWh electric per t steel",
+   "source": "https://link.springer.com/article/10.1007/s42243-024-01320-4",
+   "quote": "Search summary: power consumption per ton in a 120-t ladle furnace ranged from 10.96 kWh/t to 51.28 kWh/t",
+   "agrees_with_guess": true,
+   "note": "UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing. Abstract was readable but does not contain these numbers. Guess 35 kWh/t falls inside."
+  },
+  "argon": {
+   "value": [
+    0.3,
+    1.45
+   ],
+   "unit": "m3 argon per t liquid steel (whole EAF shop incl. secondary metallurgy)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "Table 8.1: Argon m3/t LS 0.3 - 1.45",
+   "agrees_with_guess": false,
+   "note": "At 1.78 kg/m3 (my conversion) this is about 0.5-2.6 kg/t; guess 0.2 kg/t is low by roughly 2.5-13x. Figure is for the whole shop, not the ladle furnace alone."
+  }
+ },
+ "ingot casting / teeming": {
+  "aluminium_primary_ingot_yield": {
+   "value": [
+    88,
+    98
+   ],
+   "unit": "% metal yield",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'Primary ingot casting has typical metal yields from 88 to 98 percent and requires about 1.01(1.46tf) kWh/kg of cast ingot product'",
+   "agrees_with_guess": true,
+   "note": "Guess 2 % loss = best case (table E.3 uses 98 %)."
+  },
+  "aluminium_DC_ingot_rejects": {
+   "value": 5,
+   "unit": "% of ingots scrapped",
+   "source": "https://en.wikipedia.org/wiki/Ingot",
+   "quote": "'A total of 5 percent of ingots must be scrapped because of stress induced cracks and butt deformation.'",
+   "agrees_with_guess": false,
+   "note": "Aluminium direct-chill ingots."
+  },
+  "steel_continuous_casting_yield": {
+   "value": 95,
+   "unit": "% (in excess of)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "quote": "'Continuous casting offers ... high yield rates, in excess of 95 %'",
+   "agrees_with_guess": null,
+   "note": "Benchmark only; ingot casting is worse."
+  },
+  "steel_ingot_route_yield": {
+   "value": 86,
+   "unit": "% liquid steel to acceptable product; sinkhead loss 10-20 %",
+   "source": "https://www.britannica.com/technology/steel/Casting-procedures",
+   "quote": "Search summary: 'In ingot-casting operations that use a blooming or slabbing mill, the yield ... is approximately 86 percent'; killed-steel ingots lose 10 to 20 percent when the sinkhead is removed",
+   "agrees_with_guess": false,
+   "note": "UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing. If right, the 2 % guess is far too optimistic for STEEL ingots (about 14 % loss)."
+  }
+ },
+ "alumina refinery (Bayer)": {
+  "bauxite_per_t_alumina": {
+   "value": [
+    1.9,
+    3.6
+   ],
+   "unit": "t bauxite per t alumina",
+   "source": "https://en.wikipedia.org/wiki/Bayer_process",
+   "quote": "'1.7-3.3 tonnes ... of bauxite ... is required to produce 0.91 tonnes (2,000 lb) of aluminium oxide.' (rescaled by me to per tonne)",
+   "agrees_with_guess": true,
+   "note": "Guess 2.3 is inside the range but below averages: IAI 'Bauxite ~ 3,000' kg per tonne of alumina (https://alustory.international-aluminium.org/?p=1919); DOE: '5,100 kg of bauxite, which is refined into 1,930 kg of alumina' = 2.64 (https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf)."
+  },
+  "caustic_soda": {
+   "value": 100,
+   "unit": "kg per t alumina",
+   "source": "https://alustory.international-aluminium.org/?p=1919",
+   "quote": "'The global average consumption of these inputs is as follows: Raw Material kg per tonne of alumina Bauxite ~ 3,000 Caustic soda ~ 100 Calcined lime ~ 50'",
+   "agrees_with_guess": true,
+   "note": "Exact match. Lime 50 kg/t and fresh water 2.6 m3/t are missing from the guess."
+  },
+  "red_mud": {
+   "value": [
+    1.0,
+    1.5
+   ],
+   "unit": "t red mud per t alumina (global average 1.23)",
+   "source": "https://en.wikipedia.org/wiki/Red_mud",
+   "quote": "'for every tonne of alumina produced, approximately 1 to 1.5 tonnes of red mud are also produced; the global average is 1.23'",
+   "agrees_with_guess": true,
+   "note": "Guess 1.4 in range, slightly above average."
+  },
+  "energy": {
+   "value": [
+    7,
+    21
+   ],
+   "unit": "GJ per t alumina, mostly heat (= 1.9-5.8 MWh/t)",
+   "source": "https://en.wikipedia.org/wiki/Bayer_process",
+   "quote": "'Energy consumption is between 7 to 21 gigajoules per tonne ... (depending on process), of which most is thermal energy.'",
+   "agrees_with_guess": true,
+   "note": "Guess about 3 MWh/t = 10.8 GJ/t. DOE: 'most recent available refining data lists 3.76 kWh/kg of alumina for 1995' (https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf)."
+  },
+  "footprint_QAL": {
+   "value": 80,
+   "unit": "hectares refinery footprint (Queensland Alumina, Gladstone)",
+   "source": "https://en.wikipedia.org/wiki/South_Trees,_Queensland",
+   "quote": "'the Queensland Alumina Limited refinery with a footprint of 80 hectares of a 3,050-hectare site'",
+   "agrees_with_guess": false,
+   "note": "QAL capacity about 3.95 Mt/yr (alcircle.com, UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing.) gives about 20 ha per Mt/yr. Guess 400x250 m = 10 ha for 0.88 Mt/yr (100 t/h) is about half that; excludes red-mud ponds, which are far larger."
+  },
+  "throughput": {
+   "value": [
+    3.95,
+    4.6
+   ],
+   "unit": "Mt alumina/year per large refinery",
+   "source": "https://www.alcircle.com/news/top-five-alumina-refineries-in-the-world-by-capacity-39754",
+   "quote": "Search summary: QAL 3.95 million tonnes/yr; Worsley 4.6 million tonnes/yr on a 100 ha refinery site",
+   "agrees_with_guess": null,
+   "note": "UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing. Guess 100 t/h = 0.88 Mt/yr is a small refinery."
+  }
+ },
+ "aluminium potline (Hall-Heroult)": {
+  "potline_capacity": {
+   "value": 323000,
+   "unit": "t Al/year for one potline of 336 pots (Alba line 5)",
+   "source": "https://en.wikipedia.org/wiki/Aluminium_Bahrain",
+   "quote": "Table 'First 5 potlines in 2010': potline 5, 2005, AP-30, 336 pots, 345 kA, 12,990 kwh/ton, 323,000 tpa",
+   "agrees_with_guess": true,
+   "note": "Guess 300,000 t/yr (35 t/h) confirmed. Rule of thumb: 'each of which produces about a ton of aluminium a day' (https://en.wikipedia.org/wiki/Aluminium_smelting); DOE modern cell 2,475 kg Al/pot-day at 300-325 kA."
+  },
+  "electricity": {
+   "value": [
+    13,
+    16
+   ],
+   "unit": "MWh electric per t Al",
+   "source": "https://en.wikipedia.org/wiki/Aluminium_smelting",
+   "quote": "'from 14 - 16 MWh of electrical energy is needed to produce one tonne of aluminium from about two tonnes of alumina'; Alba line 5: 12,990 kWh/t; Hall-Heroult article: 'commonly requires 15.37 kWh' per kg (https://en.wikipedia.org/wiki/Hall%E2%80%93H%C3%A9roult_process); DOE modern cell 12.9 - 13.5 DC kWh/kg",
+   "agrees_with_guess": true,
+   "note": "Guess 14 MWh/t is a fair modern figure."
+  },
+  "alumina_per_t_Al": {
+   "value": 1.93,
+   "unit": "t alumina per t Al",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'On average, 1.93 kg of alumina are consumed to make one kilogram of aluminum.'",
+   "agrees_with_guess": false,
+   "note": "Guess 1.89 is the stoichiometric minimum; real is 1.93 (IAI: 'Alumina ~ 2,000' kg per tonne). Off by about 2 %."
+  },
+  "carbon_anode_net": {
+   "value": [
+    0.446,
+    0.45
+   ],
+   "unit": "t carbon anode per t Al",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'The 1,930 kg of alumina are electrolytically processed with 446 kg of carbon to produce one metric ton'; 'theoretical minimum anode consumption is 0.33 kg of carbon per kilogram aluminum'; IAI: 'Baked anodes ~ 450' kg per tonne of primary aluminium (https://alustory.international-aluminium.org/?p=1919)",
+   "agrees_with_guess": false,
+   "note": "Guess 0.334 is the theoretical figure; real net consumption is about 0.45, i.e. the guess is about 25 % low."
+  },
+  "CO2": {
+   "value": 1.52,
+   "unit": "t CO2 per t Al from the cell (1.22 reaction + 0.30 anode air-burn)",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'this reaction produces 1.22 kg of carbon dioxide equivalents for each kilogram of aluminum produced'; 'Air Burning ... produces 0.30 kg of CO2 for each kilogram of aluminum produced'",
+   "agrees_with_guess": false,
+   "note": "Guess 1.22 matches the reaction term exactly but omits 0.30 air-burn (and PFCs/anode baking)."
+  },
+  "other_inputs": {
+   "value": 20,
+   "unit": "kg aluminium fluoride per t Al (upper bound)",
+   "source": "https://alustory.international-aluminium.org/?p=1919",
+   "quote": "'Aluminium fluoride < 20, Cathode carbon < 10, Refractory materials < 10, Steel < 5' kg per tonne of primary aluminium",
+   "agrees_with_guess": null,
+   "note": "Not in the guess."
+  },
+  "potroom_length": {
+   "value": 1150,
+   "unit": "m per potline (Qatalum, 704 pots in two potlines, 585,000 t/yr rated)",
+   "source": "https://en.wikipedia.org/wiki/Qatalum",
+   "quote": "'Quatalum's smelter consisted of 704 pots in two potlines, each 1,150 meters long.' ; 'rated at 585,000mtpa'",
+   "agrees_with_guess": true,
+   "note": "About 290,000 t/yr per 1,150 m line; guess 1000 m for 300,000 t/yr confirmed. Width (60 m guess) not found; note a potline is normally two parallel potrooms."
+  }
+ },
+ "aluminium casthouse": {
+  "capacity": {
+   "value": 640000,
+   "unit": "t/year (= about 73 t/h) for a 585,000 t/yr smelter",
+   "source": "https://en.wikipedia.org/wiki/Qatalum",
+   "quote": "'the casthouse could handle 640,000 mtpa'",
+   "agrees_with_guess": true,
+   "note": "Guess 40 t/h suits a 300,000 t/yr potline."
+  },
+  "dross": {
+   "value": [
+    15,
+    25
+   ],
+   "unit": "kg dross per t molten aluminium (1.5-2.5 %)",
+   "source": "https://icsoba.org/assets/files/publications/2023/Shorts/CH04S - Initiatives to Minimize Dross Generation in Casthouse.pdf",
+   "quote": "'typically 15-25 kg of dross is produced per metric tonne of molten aluminium'; 'Dross generation is reduced from 1.5 % to 1.03 % over a period of two years'",
+   "agrees_with_guess": true,
+   "note": "Guess 2 % confirmed."
+  },
+  "energy": {
+   "value": 1.01,
+   "unit": "kWh total per kg cast ingot = 1010 kWh/t, of which 21 % electric (211 kWh/t) and 79 % fuel",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'Primary ingot casting ... requires about 1.01(1.46tf) kWh/kg of cast ingot product'; Table 9.1: Fossil-Thermal 79 %, Electrical 21 %; Table E.3: Electric 211 kWh and natural gas 51.8 m3 per 1,000 kg",
+   "agrees_with_guess": false,
+   "note": "Guess 3 MW / 40 t/h = 75 kWh/t electric is about 1/3 of the 211 kWh/t electric and ignores about 800 kWh/t of furnace fuel."
+  },
+  "inputs": {
+   "value": 1020,
+   "unit": "kg electrolysis metal per t ingot (98 % yield)",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "Table E.3: Electrolysis Metal kg 1,020; Product kg 1,000; Yield 98%",
+   "agrees_with_guess": true,
+   "note": ""
+  }
+ },
+ "reheat furnace": {
+  "throughput": {
+   "value": [
+    100,
+    420
+   ],
+   "unit": "t/h per furnace",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "'The largest currently in operation are walking beam furnaces at Voestalpine Linz of 180 MWth and 420 t/h'; examples: 'each with a capacity of 100 t/h', 'The 110 t/h capacity furnace', 'furnaces have capacities of 300 t/h'",
+   "agrees_with_guess": true,
+   "note": "Guess 120 t/h is a normal smaller furnace."
+  },
+  "heat_BAT": {
+   "value": [
+    1200,
+    1500
+   ],
+   "unit": "MJ fuel per t (hot strip) = 333-417 kWh/t heat",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 9.1 BAT-AEPLs for specific energy consumption for feedstock heating in hot rolling: Hot rolled coils (strips) 1 200-1 500 MJ/t; Heavy plates 1 400-2 000; Bars, rods 600-1 900; Beams, billets, rails, tubes 1 400-2 200",
+   "agrees_with_guess": false,
+   "note": "Guess 250 kWh/t = 900 MJ/t is 25-40 % below even the BAT range for strip."
+  },
+  "heat_US_typical": {
+   "value": 2.96,
+   "unit": "GJ natural gas per t (hot strip and plate mills, current typical); state of the art 1.38",
+   "source": "https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf",
+   "quote": "Table A3-9 Hot Strip and Plate Mills: Natural Gas 2.96 GJ/MT; Table A3-19 Hot Strip Mill: Natural Gas 1.38 GJ/MT",
+   "agrees_with_guess": false,
+   "note": "= 822 kWh/t typical, 383 kWh/t state of the art; guess 250 kWh/t is low."
+  },
+  "soaking_pit": {
+   "value": 10.7,
+   "unit": "t/h, 9.5 MW thermal, 50-170 t pit capacity",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "'The typical soaking pit capacity is 50-170 tonnes with a thermal input of 9.5 MW (Th) and a heating rate of 10.7 t/h.'",
+   "agrees_with_guess": null,
+   "note": "Relevant for ingot reheating."
+  }
+ },
+ "hot rolling mill (strip/plate)": {
+  "steel_hot_strip_throughput": {
+   "value": 306,
+   "unit": "t/h average nominal (39 EU+UK hot strip mills, combined 11,949 t/h); 1.5-5.5 Mt/yr",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 2.3: Hot strip mill combined nominal capacity 11 949 t/h, number of installations 39; 'the range of production is from 1.5 Mt/year up to 5.5 Mt/year'",
+   "agrees_with_guess": false,
+   "note": "Average is my division. Guess 100 t/h is about 1/3 of a typical steel hot strip mill; it fits a plate mill (35 mills, 2,077 t/h = 59 t/h average)."
+  },
+  "steel_rolling_electricity": {
+   "value": [
+    100,
+    400
+   ],
+   "unit": "MJ per t = 28-111 kWh/t (rolling only, excludes reheating)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 9.22 BAT-AEPLs for specific energy consumption in rolling: Hot rolled coils (strips), heavy plates 100-400 MJ/t",
+   "agrees_with_guess": false,
+   "note": "Guess 200 kWh/t is about 2x the top of BAT range; DOE current typical electricity 0.47 GJ/t = 131 kWh/t, state of the art 0.28 GJ/t = 78 kWh/t (https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf)."
+  },
+  "steel_scrap": {
+   "value": [
+    70,
+    150
+   ],
+   "unit": "kg metallic scrap per t (7-15 %)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "'In hot rolling, the amounts of metallic scrap generated range between 70 kg/t and 150 kg/t of steel produced.'",
+   "agrees_with_guess": false,
+   "note": "Guess 3 % is 2-5x too low."
+  },
+  "aluminium_hot_rolling_energy": {
+   "value": 0.62,
+   "unit": "kWh total per kg = 620 kWh/t (57 % fuel, 43 % electric; 265 kWh/t electric)",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'Hot rolling has typical yields of about 82 percent and requires about 0.62(1.16tf) kWh/kg of rolled product.' Table E.3: Electric 265 kWh per 1,000 kg",
+   "agrees_with_guess": true,
+   "note": "Guess 200 kWh/t is close to the 265 kWh/t electric part for aluminium, but leaves out about 350 kWh/t fuel."
+  },
+  "aluminium_hot_rolling_yield": {
+   "value": 82,
+   "unit": "% yield (18 % recycled scrap); 1,221 kg ingot in per t out",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'Hot rolling has typical yields of about 82 percent'; Table E.3: Primary Ingot 498 kg + Secondary Ingot 723 kg per 1,000 kg product",
+   "agrees_with_guess": false,
+   "note": "Guess 3 % scrap is 6x too low for aluminium."
+  },
+  "line_length": {
+   "value": 700,
+   "unit": "m for a 5 Mt/yr steel hot strip mill",
+   "source": "https://www.thyssenkrupp-steel.com/en/newsroom/press-releases/hot-strip-mill-2-reaches-250-million-ton-mark-%E2%80%93-high-tech-for-premium-steel.html",
+   "quote": "'Measuring around 700 meters, the mill ranks among Germany's largest industrial facilities' ; 'annual capacity of around 5 million tons'",
+   "agrees_with_guess": false,
+   "note": "Guess 300 m is low. California Steel: 'With an annual capacity of more than two million tons, the rolling mill is more than a half-mile long' (https://www.californiasteel.com/hot-strip-mill). Width not found."
+  }
+ },
+ "cold rolling mill": {
+  "throughput_tandem": {
+   "value": 126,
+   "unit": "t/h average nominal (49 EU tandem mills, 6,155 t/h); reversing mills average 13 t/h (96 mills, 1,266 t/h)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 3.2 'Number and nominal capacity of CR mills in the EU (reversing/tandem mills)': Reversing 1266 t/h, 96 installations; Tandem 6155 t/h, 49 installations",
+   "agrees_with_guess": false,
+   "note": "Averages are my division. Guess 60 t/h is between the two types: half a typical tandem mill, 4-5x a typical reversing mill."
+  },
+  "steel_rolling_energy_BAT": {
+   "value": [
+    100,
+    300
+   ],
+   "unit": "MJ per t = 28-83 kWh/t (rolling only)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 9.24 BAT-AEPLs for specific energy consumption in rolling: Cold rolled coils 100-300 MJ/t",
+   "agrees_with_guess": false,
+   "note": "Guess 130 kWh/t is above BAT for the rolling step alone."
+  },
+  "steel_cold_mill_complex_electricity": {
+   "value": [
+    0.48,
+    1.22
+   ],
+   "unit": "GJ electric per t = 133-339 kWh/t (incl. pickling, annealing)",
+   "source": "https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf",
+   "quote": "Table A3-18 state of the art cold rolling mill: Electricity 0.48 GJ/MT (total 1.65); Table A3-10 current typical: Electricity 1.22 GJ/MT (total 4.05)",
+   "agrees_with_guess": true,
+   "note": "Guess 130 kWh/t matches the state-of-the-art electricity for the whole cold mill complex; add 0.8-1.8 GJ/t fuel plus steam for annealing."
+  },
+  "aluminium_cold_rolling": {
+   "value": 0.64,
+   "unit": "kWh total per kg = 640 kWh/t (349 kWh/t electric), yield 84 %",
+   "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf",
+   "quote": "'Cold rolling has typical yields of about 84 percent and requires about 0.64(1.35tf) kWh/kg of rolled product.' Table E.3: Electric 349 kWh per 1,000 kg",
+   "agrees_with_guess": false,
+   "note": "For aluminium the guess of 130 kWh/t is about 2.7x too low on electricity; no scrap figure in guess (real 16 %)."
+  }
+ },
+ "bar / section mill": {
+  "throughput": {
+   "value": 39,
+   "unit": "t/h average nominal (122 light section/bar mills, 4,725 t/h); medium section 53 t/h; heavy section 60 t/h",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 2.3: Light section / bar mill 4 725 t/h, 122 installations; Medium section mill 1 275 t/h, 24; Heavy section mill 1 027 t/h, 17",
+   "agrees_with_guess": true,
+   "note": "Averages are my division. Guess 50 t/h confirmed."
+  },
+  "rolling_energy_BAT": {
+   "value": [
+    100,
+    500
+   ],
+   "unit": "MJ per t = 28-139 kWh/t (rolling only)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 9.22: Bars, rods 100-500 MJ/t; Beams, billets, rails, tubes 100-300 MJ/t",
+   "agrees_with_guess": false,
+   "note": "Guess 200 kWh/t exceeds the rolling-only range."
+  },
+  "total_energy_US": {
+   "value": 2.51,
+   "unit": "GJ per t total (2.08 gas + 0.40 electricity + 0.03 utilities) = 697 kWh/t, of which 111 kWh/t electric",
+   "source": "https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf",
+   "quote": "Table A3-9 Section Mills: Natural Gas 2.08, Plant Utilities 0.03, Electricity 0.40, Total 2.51 GJ/MT. State of the art medium section (bar) mill: 1.66 gas + 0.29 electricity = 1.95",
+   "agrees_with_guess": false,
+   "note": "Guess 200 kWh/t is neither the electric part (80-111) nor the total (540-700)."
+  },
+  "scrap": {
+   "value": [
+    70,
+    150
+   ],
+   "unit": "kg per t (7-15 %), all hot rolling",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "'In hot rolling, the amounts of metallic scrap generated range between 70 kg/t and 150 kg/t of steel produced.'",
+   "agrees_with_guess": false,
+   "note": "Guess 5 % slightly below range; figure is not bar-specific."
+  }
+ },
+ "seamless tube piercing mill": {
+  "throughput": {
+   "value": [
+    100,
+    200
+   ],
+   "unit": "kt pipe/year for a medium-scale cross-roll piercing (CPE) mill = about 12-25 t/h",
+   "source": "https://steelonthenet.com/cost-seamless-tube.html",
+   "quote": "'The mill type assumed is a CPE-type mill (cross-roll, pierce, elongate) of medium scale (i.e. 100-200 kt/year pipe capacity).'",
+   "agrees_with_guess": true,
+   "note": "t/h is my conversion at 8000 h. Guess 30 t/h slightly above medium scale. Large PQF plants 400-600 kt/yr per SMS group press releases (UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing.)."
+  },
+  "yield_loss": {
+   "value": 8.5,
+   "unit": "% metal loss billet to green pipe",
+   "source": "https://steelonthenet.com/cost-seamless-tube.html",
+   "quote": "'Yield performance may also be better than the 8.5% figure shown.'",
+   "agrees_with_guess": true,
+   "note": "Guess 8 % confirmed."
+  },
+  "energy_BAT": {
+   "value": [
+    1600,
+    3400
+   ],
+   "unit": "MJ per t total = 440-940 kWh/t (reheating 1400-2200 + intermediate heating 100-900 + rolling 100-300)",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "Table 9.1: Beams, billets, rails, tubes 1 400-2 200 MJ/t (reheating); Bars, rods, tubes 100-900 MJ/t (intermediate heating); Table 9.22: Beams, billets, rails, tubes 100-300 MJ/t (rolling)",
+   "agrees_with_guess": false,
+   "note": "Sum is mine. Guess 270 kWh/t (970 MJ/t) is about 40-70 % low as a total; rolling electricity alone is only 28-83 kWh/t. No seamless-specific measured figure found."
+  },
+  "market_share": {
+   "value": 30,
+   "unit": "% of tubes are seamless; 30 hot-finished seamless mills in the EU",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf",
+   "quote": "'About 30 % of the tubes produced are seamless tubes'; 'a total of 30 mills operating in 10 countries'",
+   "agrees_with_guess": null,
+   "note": ""
+  }
+ },
+ "forging press": {
+  "throughput": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No citable t/h figure for an open- or closed-die press found."
+  },
+  "energy": {
+   "value": 160,
+   "unit": "kWh electric per t product plus furnace fuel (one Indian forging unit)",
+   "source": "https://beeindia.gov.in/sites/default/files/Forging_Sector_Energy_Mapping_Report.pdf",
+   "quote": "Search summary: electrical specific energy consumption 0.16 kWh/kg of product, thermal 0.12 L fuel oil per kg (1224 kcal/kg = about 1420 kWh/t)",
+   "agrees_with_guess": null,
+   "note": "UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing. Attribution to this exact BEE document is uncertain. Guess 600 kWh/t not confirmed."
+  },
+  "scrap_flash": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No sourced flash/yield percentage found; guess 15 % unconfirmed."
+  },
+  "buy_to_fly_titanium_forgings": {
+   "value": [
+    9,
+    12
+   ],
+   "unit": "kg bought per kg flown (standard forging); near-net-shape 3.5-4.2",
+   "source": "https://www.forcebeyond.com/near-net-shape-titanium-forging",
+   "quote": "Search summary: standard forging buy-to-fly 9:1 - 12:1, near-net-shape 3.5:1 - 4.2:1; 'ratios can vary from 1.5:1 for turbine blades to over 22:1 for structural members'",
+   "agrees_with_guess": null,
+   "note": "UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing. Vendor page, weak source."
+  }
+ },
+ "bulk ore stockyard": {
+  "example_capacity": {
+   "value": 1000000,
+   "unit": "t live stockyard (Roy Hill mine, 55 Mt/yr); reclaim 14,000 t/h",
+   "source": "https://www.e-mj.com/leading-developments/roy-hill-ramping-up-production-to-55m-mt-y-of-iron-ore/",
+   "quote": "'Live ore stockyard capacity of lump and fines totals more than 1 million mt. Lump and fines are reclaimed by a bucket wheel reclaimer at a maximum rate of 14,000 mt/h.'",
+   "agrees_with_guess": null,
+   "note": "No dimensions given."
+  },
+  "capacity_per_area": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No citable length x width x tonnage found; guess 200x100 m = 150,000 t (7.5 t/m2) unconfirmed."
+  }
+ },
+ "warehouse, tank farm, cargo handling": {
+  "warehouse_usable_volume": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No citable usable-volume fraction or clear height found. Only: 'less than half of U.S. warehouses today are larger than 100,000 square feet (9290 m2)' (https://en.wikipedia.org/wiki/Warehouse), so the guessed 15,000 m2 is a large one."
+  },
+  "tank_farm_volume_per_area": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No citable volume per site area found. Only: 'Crude oil tank farms around Cushing have over 90 million barrels of storage capacity' (https://en.wikipedia.org/wiki/Cushing,_Oklahoma), no area."
+  },
+  "bulk_loading_rate_conveyor": {
+   "value": [
+    100,
+    700
+   ],
+   "unit": "t/h standard conveyor loading (advanced ports up to 16,000)",
+   "source": "https://en.wikipedia.org/wiki/Bulk_carrier",
+   "quote": "'Conveyor belts offer a very efficient method of loading, with standard loading rates varying between 100 and 700 tons per hour, although the most advanced ports can offer rates of 16,000 tons per hour.'",
+   "agrees_with_guess": true,
+   "note": "Guess 500 t/h in the standard range."
+  },
+  "bulk_loading_rate_crane": {
+   "value": [
+    1000,
+    2000
+   ],
+   "unit": "t/h",
+   "source": "https://en.wikipedia.org/wiki/Bulk_carrier",
+   "quote": "'Double-articulation cranes, which can load at a rate of 1,000 tons per hour ... shore-based gantry cranes, reaching 2,000 tons per hour'; 'Self-discharging ships use conveyor belts with load rates of around 1,000 tons per hour.'",
+   "agrees_with_guess": false,
+   "note": "Guess 500 t/h is low for a dedicated bulk berth."
+  }
+ },
+ "sheet nesting and machining allowance": {
+  "sheet_utilisation_target": {
+   "value": 90,
+   "unit": "% of sheet used (design target, 10 % scrap)",
+   "source": "https://www.thefabricator.com/article/cadcamsoftware/are-you-maximizing-your-nesting-effortsr",
+   "quote": "'expert designers ... generally ensure that their designs produce minimal scrap and achieve 90 percent-plus material utilization'; 'engineers need to design parts or assemblies so that at least 90 percent of the sheet is used'",
+   "agrees_with_guess": true,
+   "note": "General sheet metal, not aircraft-specific. Guess 15 % lost sits between this target and the 30 % below."
+  },
+  "sheet_utilisation_typical": {
+   "value": 70,
+   "unit": "% (30 % scrap) typical industry nest",
+   "source": "https://shop.machinemfg.com/nesting-files-for-sheet-cutting-an-ultimate-guide",
+   "quote": "Search summary: 'A typical industry nest may result in 70% material utilization with 30% scrap'",
+   "agrees_with_guess": false,
+   "note": "UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing. Source page attribution uncertain."
+  },
+  "aircraft_sheet_specific": {
+   "value": null,
+   "unit": "",
+   "source": "",
+   "quote": "not found",
+   "agrees_with_guess": null,
+   "note": "No aircraft-specific sheet nesting yield found."
+  },
+  "machined_plate_buy_to_fly": {
+   "value": [
+    10,
+    20
+   ],
+   "unit": "kg bought per kg flown (aluminium parts machined from plate; 90-95 % becomes chips)",
+   "source": "https://www.aerospacemanufacturinganddesign.com/article/strategy-for-improving-buy-to-fly-ratio-of-aerospace-aluminum",
+   "quote": "Search summary: 'For parts machined directly from plate, buy-to-fly ratios of 20:1 are not unusual'; 'In aerospace, this ratio often exceeds 10:1'",
+   "agrees_with_guess": false,
+   "note": "UNVERIFIED: taken from a search-engine summary; the page itself could not be opened (blocked or search quota exhausted). Re-check before citing. If right, a 20 % machining allowance is far too low for aerospace parts hogged from plate; it may still be fair for simple turned bar/tube parts, for which nothing was found."
+  }
+ }
+}

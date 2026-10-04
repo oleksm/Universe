@@ -14,7 +14,8 @@ inputs:
   materials:
   - { item: ingot, amount: 1.0 }
 needs:
-  power: 30
+  power: 45
 basis:
-  - { of: [inputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "100 to 420 t/h for one furnace." }
+  - { of: [needs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "1,200 to 1,500 MJ of heat for each tonne at best practice; 1,350 taken. Heat is counted as power: there is no fuel to burn." }
+  - { of: [inputs, size], tier: invented, note: "No loss in heating is counted. Its footprint was not found in a source: approximate, from memory." }

@@ -8,21 +8,23 @@ size:
   width: 40
   height: 35
 rate:
-  throughput: 100
-  batch: 100
+  throughput: 96
+  batch: 80
   product: liquid-steel
 inputs:
   materials:
   - { item: sponge-iron, amount: 1.1 }
   - { item: lime, amount: 0.05 }
   - { item: C, amount: 0.015 }
-  - { item: graphite-electrode, amount: 0.0015 }
+  - { item: graphite-electrode, amount: 0.003 }
 outputs:
   by_products:
   - { item: slag, amount: 0.15 }
   - { item: dust, amount: 0.015 }
 needs:
-  power: 50
+  power: 72
 basis:
-  - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "80 t of steel in about 50 minutes." }
+  - { of: [inputs, outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "Inside the ranges the source gives for each tonne of steel: lime 25 to 140 kg, carbon 3 to 28, electrode 2 to 6, slag 60 to 270, dust 10 to 30. The sponge iron is set to balance." }
+  - { of: [needs], tier: sourced, source: "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf", note: "530 to 753 kWh for each tonne when charged with sponge iron; 750 taken for a full charge of it." }
+  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

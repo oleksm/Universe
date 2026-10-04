@@ -9,14 +9,15 @@ size:
   height: 35
 rate:
   throughput: 150
-  batch: 100
+  batch: 80
   product: refined-steel
 inputs:
   materials:
   - { item: liquid-steel, amount: 1.0 }
-  - { item: Ar, amount: 0.0002 }
+  - { item: Ar, amount: 0.001 }
 needs:
-  power: 5
+  power: 7.5
 basis:
-  - { of: [inputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [inputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "0.3 to 1.45 m3 of argon for each tonne, about 0.5 to 2.6 kg; 1 kg taken." }
+  - { of: [needs], tier: sourced, source: "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf", note: "65 kWh for each tonne for ladle refining and gas cleaning together; 50 taken for the ladle alone." }
+  - { of: [rate, size], tier: invented, note: "Its rate and footprint were not found in a source: approximate, from memory." }

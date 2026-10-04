@@ -3,4 +3,4 @@
 number: 7
 owner: brand.hadley
 address: { street: south-road, number: 1 }
-outline: [[1150, -990], [2450, -990], [2450, -460], [1150, -460]]
+outline: [[1150, -1000], [2450, -1000], [2450, -450], [1150, -450]]

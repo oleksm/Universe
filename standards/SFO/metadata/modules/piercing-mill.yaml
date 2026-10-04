@@ -8,16 +8,18 @@ size:
   width: 30
   height: 15
 rate:
-  throughput: 30
+  throughput: 20
   product: tube
 inputs:
   materials:
-  - { item: hot-ingot, amount: 1.08 }
+  - { item: hot-ingot, amount: 1.085 }
 outputs:
   by_products:
-  - { item: scrap, amount: 0.08 }
+  - { item: scrap, amount: 0.085 }
 needs:
-  power: 8
+  power: 4
 basis:
-  - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [inputs, outputs], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "8.5% of the metal is lost from billet to pipe." }
+  - { of: [needs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "200 to 1,200 MJ for each tonne for rolling and heating between passes; about 200 kWh taken (the first heating is the reheat furnace's). Heat is counted as power: there is no fuel to burn." }
+  - { of: [rate], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "A medium mill makes 100,000 to 200,000 t a year, 12 to 25 t/h. Read from a search excerpt, not the page itself." }
+  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }

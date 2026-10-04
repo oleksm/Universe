@@ -2,7 +2,7 @@
 identity:
   name: Pellet plant
   step: Prepare
-  description: "Crushes and grinds ore, separates the waste rock, and forms the rest into hard pellets."
+  description: "Forms fine iron ore into hard pellets and fires them, so a shaft furnace can take them."
 size:
   length: 250
   width: 100
@@ -12,12 +12,12 @@ rate:
   product: iron-ore-pellets
 inputs:
   materials:
-  - { item: iron-ore, amount: 1.5 }
-outputs:
-  by_products:
-  - { item: tailings, amount: 0.5 }
+  - { item: iron-ore, amount: 0.955 }
+  - { item: O, amount: 0.045 }
 needs:
-  power: 8
+  power: 23
 basis:
-  - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [rate], tier: sourced, source: "https://www.metso.com/globalassets/saleshub/documents---episerver/straight-grate--grate-kiln-brochure-2019-en.pdf", note: "A single line makes 0.6 to 9 Mt a year; 125 t/h is a small one." }
+  - { of: [inputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "935 to 965 kg of ore for each tonne of pellets; the rest is the oxygen the ore takes up as it is fired, set to balance." }
+  - { of: [needs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "About 45 kWh of electricity and 0.5 GJ of heat for each tonne (ranges 15 to 50 kWh and 0.27 to 0.7 GJ). Heat is counted as power: there is no fuel to burn." }
+  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
