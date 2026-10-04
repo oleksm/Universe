@@ -232,12 +232,37 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels", "facilities"}:
+            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels", "facilities", "streets"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
         # (Its zones and parcels: <settlement>/zones/<name>.yaml and <settlement>/parcels/parcel-<n>.yaml,
         # each an outline in metres east and north of the settlement's position.)
+        # (Its streets: <settlement>/streets/<name>.yaml, a line on the same ground.)
+        streets = []
+        st_dir = os.path.join(bfull[:-5], "streets")
+        for fn in sorted(os.listdir(st_dir)) if os.path.isdir(st_dir) else []:
+            ffull = os.path.join(st_dir, fn)
+            if not re.fullmatch(r"[a-z0-9-]+\.yaml", fn):
+                problem(ffull, "a street's file is named <name>.yaml (lower case, words joined by -)")
+                continue
+            st = load(ffull)
+            for k in ["name", "line"]:
+                if k not in st:
+                    problem(ffull, f"no {k}")
+            for k in st:
+                if k not in {"name", "line"}:
+                    problem(ffull, f"unknown field '{k}'")
+            ln = st.get("line")
+            if not (isinstance(ln, list) and len(ln) >= 2 and all(isinstance(c, list) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c) for c in ln)):
+                problem(ffull, "line: two or more points, each [east, north] in metres")
+                continue
+            st["length"] = sum(((ln[i + 1][0] - ln[i][0]) ** 2 + (ln[i + 1][1] - ln[i][1]) ** 2) ** 0.5 for i in range(len(ln) - 1))
+            st["slug"] = fn[:-5]
+            st["file"] = os.path.relpath(ffull, TREE)
+            streets.append(st)
+        if streets:
+            x["streets"] = streets
         zones, plots = [], []
         for sub, into in (("zones", zones), ("parcels", plots)):
             sub_dir = os.path.join(bfull[:-5], sub)
@@ -245,6 +270,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 ffull = os.path.join(sub_dir, fn)
                 r = load(ffull)
                 need, pattern = (["name", "use", "outline"], r"[a-z0-9-]+\.yaml") if sub == "zones" else (["number", "owner", "outline"], r"parcel-([0-9]+)\.yaml")
+                allowed = need + (["address"] if sub == "parcels" else [])
                 m = re.fullmatch(pattern, fn)
                 if not m:
                     problem(ffull, "a zone's file is named <name>.yaml" if sub == "zones" else "a parcel's file is named parcel-<number>.yaml")
@@ -253,7 +279,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                     if k not in r:
                         problem(ffull, f"no {k}")
                 for k in r:
-                    if k not in need:
+                    if k not in allowed:
                         problem(ffull, f"unknown field '{k}'")
                 o = r.get("outline")
                 if not (isinstance(o, list) and len(o) >= 3 and all(isinstance(c, list) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c) for c in o)):
@@ -271,6 +297,14 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                         problem(ffull, f"number {r.get('number')} in a file numbered {m.group(1)}")
                     if "owner" in r and r["owner"] not in BRANDS and not str(r["owner"]).startswith("body."):
                         problem(ffull, f"owner: no maker '{r['owner']}' in Maker House")
+                    ad_ = r.get("address")
+                    if ad_ is not None:
+                        if not (isinstance(ad_, dict) and set(ad_) == {"street", "number"} and isinstance(ad_["number"], int)):
+                            problem(ffull, "address: street (a street's file name) and number")
+                        elif not any(st["slug"] == ad_["street"] for st in streets):
+                            problem(ffull, f"address: {x.get('name')} has no street '{ad_['street']}'")
+                        elif any(o_.get("address") == ad_ for o_ in plots):
+                            problem(ffull, "address: another parcel has it")
                     # (Its zone: the one all its corners lie in.)
                     inn = [zn for zn in zones if all(within(c, zn["outline"]) for c in o)]
                     if len(inn) != 1:

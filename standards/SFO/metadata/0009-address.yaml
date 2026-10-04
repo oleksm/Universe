@@ -11,7 +11,8 @@ details:
       - [Section, "A named or lettered area of a deck.", "Section C"]
       - [Deck, "A numbered level.", "Deck 7"]
       - [Tower, "A major part of the structure (a tower, a ring, an arm), usually with one main purpose.", "Habitation Tower"]
-      - [Parcel, "A numbered lot of a settlement's land.", "Parcel 1"]
+      - [Number, "On the ground: its number along its street.", "1"]
+      - [Street, "On the ground: a named street of the settlement.", "East Road"]
       - [Settlement, "The station, port or outpost.", "Treistun e Station"]
       - [Body, "The planet or moon the settlement is at. On a surface, with latitude and longitude.", "Treistun e"]
       - [System, "The star system.", "Treistun"]
@@ -20,4 +21,6 @@ sections:
     text:
       - "A small outpost uses fewer levels: a few modules with units in them have no towers or decks."
       - "An address never changes: when a structure grows, the new part gets new addresses and nothing is renumbered."
-      - "The settlement is the unit of administration. Inside it, tower, deck, section and unit are the settlement's own business."
+      - "On the ground an address is a number on a street. In a structure it is unit, section, deck and tower."
+      - "A parcel number is not an address: it is the land office's name for a lot. Nor is a zone: it says what may be done there."
+      - "The settlement is the unit of administration. Inside a structure, tower, deck, section and unit are the settlement's own business."
