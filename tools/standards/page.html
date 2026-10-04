@@ -206,8 +206,6 @@ const partOwners = id => [...new Set(DATA.parts.filter(p => p.under === id).map(
 // And ship equipment.
 const eqUnder = (id, q) => DATA.equipment.filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.key} ${x.identity.slot || ""}`.toLowerCase().includes(w))));
 const eqBySlug = Object.fromEntries(DATA.equipment.map(x => [x.slug, x]));
-const layUnder = (id, q) => (DATA.layouts || []).filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.hull} ${x.compartments.map(c => c.name).join(" ")}`.toLowerCase().includes(w))));
-const layBySlug = Object.fromEntries((DATA.layouts || []).map(x => [x.slug, x]));
 // And stargates.
 const gatesUnder = (id, q) => DATA.gates.filter(x => x.under === id && (!q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.key} gate ring`.toLowerCase().includes(w))));
 const gateBySlug = Object.fromEntries(DATA.gates.map(x => [x.slug, x]));
@@ -224,7 +222,7 @@ const partsTable = (ps, countHead) => { const size = p => { const f = p.physical
 const hullMatches = (x, q) => !q || q.split(/\s+/).every(w => `${x.identity.name} ${x.identity.description || ""}`.toLowerCase().includes(w));
 const hullsUnder = (id, q) => DATA.hulls.filter(x => x.under === id && hullMatches(x, q));
 const hullBySlug = Object.fromEntries(DATA.hulls.map(x => [x.slug, x]));
-const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length + hullsUnder(id, "").length + partHulls(id).length + stockUnder(id, "").length + eqUnder(id, "").length + gatesUnder(id, "").length + layUnder(id, "").length;
+const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length + hullsUnder(id, "").length + partHulls(id).length + stockUnder(id, "").length + eqUnder(id, "").length + gatesUnder(id, "").length;
 // Anything that flows, by its element symbol or its material's or good's file name: its name, and a link to it.
 const itemKey = i => elBySymbol[i] ? "el:" + i : matBySlug[i] ? "mat:" + i : goodBySlug[i] ? "good:" + i : null;
 const itemName = i => (elBySymbol[i] || matBySlug[i] || goodBySlug[i] || { identity: { name: i } }).identity.name;
@@ -292,7 +290,7 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0 || hullsUnder(s.id, q).length > 0 || stockUnder(s.id, q).length > 0 || eqUnder(s.id, q).length > 0 || gatesUnder(s.id, q).length > 0 || layUnder(s.id, q).length > 0));
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0 || hullsUnder(s.id, q).length > 0 || stockUnder(s.id, q).length > 0 || eqUnder(s.id, q).length > 0 || gatesUnder(s.id, q).length > 0));
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
@@ -309,7 +307,6 @@ function rows(q) {
           for (const x of stockUnder(s.id, q)) out.push({ k: "stock:" + x.slug, depth: depth + 1, kind: "maker", label: `${x.identity.code} ${x.identity.name}`, leaf: true });
           for (const x of gatesUnder(s.id, q)) out.push({ k: "gate:" + x.slug, depth: depth + 1, kind: "maker", label: x.identity.name, ticker: `${x.performance.span} ly`, leaf: true });
           for (const x of eqUnder(s.id, q)) out.push({ k: "eq:" + x.slug, depth: depth + 1, kind: "maker", label: x.identity.name, ticker: x.identity.slot, leaf: true });
-          for (const x of layUnder(s.id, q)) out.push({ k: "lay:" + x.slug, depth: depth + 1, kind: "maker", label: x.identity.hull.toUpperCase(), ticker: `${x.compartments.length} compartments`, leaf: true });
           for (const hl of partHulls(s.id)) {
             const hk = "pg:" + hl, hit = p => !q || q.split(/\s+/).every(w => `${p.identity.code} ${p.identity.name} ${p.identity.description || ""}`.toLowerCase().includes(w));
             const tops = topParts(hl).filter(p => hit(p) || subParts(p.slug).some(hit));
@@ -416,14 +413,6 @@ let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
-  if (k.startsWith("lay:")) {
-    const e = layBySlug[k.slice(4)]; if (!e) return;
-    open.add("x:" + e.under);
-    const up = byId[e.under]; if (up) open.add("b:" + up.body);
-    for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
-    keepOpen();
-    return;
-  }
   if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:") || k.startsWith("good:") || k.startsWith("hull:") || k.startsWith("stock:") || k.startsWith("eq:") || k.startsWith("gate:")) {
     const e = k.startsWith("gate:") ? gateBySlug[k.slice(5)] : k.startsWith("eq:") ? eqBySlug[k.slice(3)] : k.startsWith("stock:") ? stockByCode[k.slice(6)] : k.startsWith("hull:") ? hullBySlug[k.slice(5)] : k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : k.startsWith("good:") ? goodBySlug[k.slice(5)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
@@ -534,26 +523,6 @@ function detail(k) {
   const [kind, ...rest] = k.split(":");
   const list = stds => stds.map(s => `<div><a data-k="${esc("s:" + s.id)}">${esc(s.id)}</a> ${esc(s.title)} </div>`).join("") || `<p class="meta">None yet.</p>`;
   if (kind === "rp") return detail("pc:" + rest.join(":"));
-  if (kind === "lay") {
-    const e = layBySlug[rest.join(":")]; if (!e) return `<p class="meta">No layout ${esc(rest.join(":"))}.</p>`;
-    const hull = hullBySlug[e.identity.hull], w = e.worked;
-    const m3 = v => `${(+v).toLocaleString(undefined, { maximumFractionDigits: 1 })} m³`, m2 = v => `${(+v).toLocaleString(undefined, { maximumFractionDigits: 1 })} m²`;
-    let h = `<h2>${esc(e.identity.hull.toUpperCase())}: layout</h2><p>${esc(e.identity.description || "")}</p>`
-      + `<p>Of ${hull ? `<a data-k="${esc("hull:" + hull.slug)}">${esc(hull.identity.name)}</a>` : esc(e.identity.hull)}. Positions are metres back from the nose, above the keel and from the centre line (starboard positive). A box is aft from, aft to, up from, up to, side from, side to.</p>`
-      + `<table><tr><th>Compartments</th><th>Openings</th><th>Space</th><th>Sealed</th><th>Floor</th></tr><tr><td class="num">${e.compartments.length}</td><td class="num">${(e.openings || []).length}</td><td class="num">${m3(w.volume)}</td><td class="num">${m3(w.sealed)}</td><td class="num">${m2(w.floor_area)}</td></tr></table>`;
-    for (const d of [...(e.decks || [])].sort((a, b) => b.number - a.number)) {
-      const cs = e.compartments.filter(c => c.address.deck === d.number);
-      if (!cs.length) continue;
-      h += `<h3>Deck ${d.number}${d.name ? ": " + esc(d.name) : ""}</h3><table><tr><th>Compartment</th><th>Function</th><th>Address</th><th>Sealed</th><th>Volume</th><th>Floor</th><th>Boxes</th></tr>`
-        + cs.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.function)}</td><td>Unit ${c.address.unit}, Section ${esc(c.address.section)}, Deck ${c.address.deck}</td><td>${c.pressurised ? "yes" : "no"}</td><td class="num">${m3(c.volume)}</td><td class="num">${m2(c.floor_area)}</td><td>${c.boxes.map(b => b.join(", ")).join("<br>")}</td></tr>`).join("")
-        + `<tr><th>Total</th><th></th><th></th><th></th><th class="num">${m3(cs.reduce((n, c) => n + c.volume, 0))}</th><th class="num">${m2(cs.reduce((n, c) => n + c.floor_area, 0))}</th><th></th></tr></table>`;
-    }
-    h += `<h3>Openings</h3><table><tr><th>Kind</th><th>Between</th><th>At</th><th>Width</th><th>Height</th><th>Seals</th></tr>`
-      + (e.openings || []).map(o => `<tr><td>${esc(o.kind)}</td><td>${o.between.map(esc).join(" – ")}</td><td>${o.at.join(", ")}</td><td class="num">${o.width} m</td><td class="num">${o.height} m</td><td>${o.seals ? "yes" : "no"}</td></tr>`).join("") + `</table>`;
-    if (w.unreached.length) h += `<p>No way in from outside: ${w.unreached.map(esc).join(", ")}.</p>`;
-    if (Array.isArray(e.basis) && e.basis.length) h += `<h3>Where its figures come from</h3><table><tr><th>Figures</th><th>How</th><th>Source or note</th></tr>` + e.basis.map(bs => `<tr class="${bs.tier === "invented" ? "gap" : ""}"><td>${esc(bs.of.join(", ").replace(/_/g, " "))}</td><td>${esc(bs.tier)}${bs.review ? ` · <b style="color:var(--bad)">to review</b>` : ""}</td><td>${bs.source ? `<b>${esc(bs.source)}</b>${bs.note ? ". " : ""}` : ""}${esc(bs.note || "")}</td></tr>`).join("") + `</table>`;
-    return h;
-  }
   const metres = m => `${Math.round(m).toLocaleString()} m`;
   const sqm = m2 => `${Math.round(m2).toLocaleString()} m² <span class="meta">(${(m2 / 1e4).toLocaleString(undefined, { maximumFractionDigits: 1 })} ha)</span>`;
   // (An outline's sides in order, closing back to the first corner; a line's stretches.)
@@ -1025,7 +994,7 @@ document.addEventListener("click", e => {
   if (badge) { kindShown = badge.dataset.kind; render(); return; }
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:") && !k.startsWith("hull:") && !k.startsWith("stock:") && !k.startsWith("eq:") && !k.startsWith("gate:") && !k.startsWith("lay:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:") && !k.startsWith("hull:") && !k.startsWith("stock:") && !k.startsWith("eq:") && !k.startsWith("gate:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
     keepOpen();
   }
