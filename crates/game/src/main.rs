@@ -201,7 +201,8 @@ pub struct App {
     /// At a vending machine, its panel open: the item picked.
     pub vending: Option<usize>,
     /// Ship plans kept (in the save).
-    /// Ships' insides as laid out in the shipyard's studio, one per hull (kept in the save).
+    /// Ships' insides as laid out in the shipyard's studio, one per hull: for this
+    /// session only (not saved); a layout we're happy with is made content.
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
     pub layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,

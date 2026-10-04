@@ -16,9 +16,6 @@ struct GameSave {
     /// The star systems we've been to.
     #[serde(default)]
     explored: Vec<usize>,
-    /// Ships' insides as laid out (the shipyard's studio).
-    #[serde(default)]
-    deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
 }
 
 pub fn data_dir() -> PathBuf {
@@ -45,7 +42,6 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
         chase_cam: app.chase_cam,
         observer: app.observer.clone(),
         explored: app.explored.iter().copied().collect(),
-        deckplans: app.deckplans.clone(),
     };
     let path = path();
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
@@ -79,6 +75,5 @@ pub fn load(app: &mut App) -> Result<(), String> {
     app.chase_cam = true;
     app.observer = save.observer;
     app.explored.extend(save.explored);
-    app.deckplans = save.deckplans;
     Ok(())
 }
