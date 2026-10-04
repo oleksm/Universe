@@ -81,13 +81,18 @@ If the known worlds come out right, the unknown ones are believable by construct
 - **Not a replacement for the world's other physics.** Orbits, flight and air drag stay as they
   are; the evolved world feeds them better data (its real surface, its real atmosphere).
 
-## Open questions (to settle before or during the design)
+## Decided
 
-- **Planet type: a result or an input?** Today worlds are seeded as a type (temperate, barren
-  and so on), and content and the economy rely on it. With evolution, the type is what comes
-  out. Do we let it emerge (checking the galaxy's mix stays sensible), or steer the seeded
-  facts so each world reaches its assigned type?
+- **A world's type is a result, not an input.** Temperate, barren, ocean or anything else is
+  what a world's history makes of it. For the settled region we evolve worlds and keep a
+  collection of baked ones, choosing from it the worlds we want where we want them. Out in the
+  wild, a world is simply what it turned out to be.
+- **Civilisation follows the ground.** Ports, settlements and landing places are placed on a
+  world after it is baked, on ground that suits them (the registry records them). Nothing
+  already built is carried over: settled worlds are re-settled on their evolved surfaces, and
+  new ports go where the land allows.
+
+## Open questions
+
 - **Time and space budget.** How long a world may take to evolve (and on what), and how much
   of it is kept on disk.
-- **What exists today.** Things on the ground now (ports, landing places) have to stand on the
-  new surface.
