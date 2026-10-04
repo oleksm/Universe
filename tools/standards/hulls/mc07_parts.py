@@ -1,4 +1,7 @@
-"""Write the MC-07's parts from its model's own objects, each measured (mc07.json from measure.py)."""
+"""Write the MC-07's parts from its model's own objects, each measured (mc07.json from measure.py).
+
+It only adds: a part whose record is already in the registry is left exactly as it is (the registry
+is the source once a record exists; edit it there)."""
 import json, os, shutil, sys
 r = json.load(open(sys.argv[1])); out = sys.argv[2]
 hull = {k: v for k, v in r.items() if k.startswith("Hull_")}
@@ -13,7 +16,8 @@ def where(names, both=False):
     lo, hi = box(names); c = [(a + b) / 2 for a, b in zip(lo, hi)]
     side = "on the centre line" if abs(c[0]) < 0.05 else f"{abs(c[0]):.1f} m either side of the centre line" if both else f"{abs(c[0]):.1f} m to the {'left' if c[0] < 0 else 'right'} of the centre line"
     return f"Its centre is {c[2] - NOSE:.1f} m back from the nose and {c[1] - KEEL:.1f} m above the keel, {side}."
-shutil.rmtree(out, ignore_errors=True); os.makedirs(out)
+os.makedirs(out, exist_ok=True)
+NEW = []
 def write(path, code, name, objs, count, position=None, handed=None, obj_label=None):
     l, w, h = dims(objs)
     t = ["# yaml-language-server: $schema=" + ("../" * (path.count("/") + 3)) + "schema/part.schema.yaml",
@@ -23,8 +27,11 @@ def write(path, code, name, objs, count, position=None, handed=None, obj_label=N
     if handed: t.append(f"  handed: {handed}")
     t += ["fit:", f"  count: {count}"]
     if position: t.append(f"  position: {json.dumps(position)}")
+    if os.path.exists(os.path.join(out, path)):
+        return
     os.makedirs(os.path.dirname(os.path.join(out, path)), exist_ok=True)
     open(os.path.join(out, path), "w").write("\n".join(t) + "\n")
+    NEW.append(os.path.join(out, path))
 NAMES = {"NoseCap": "Nose cap", "Cockpit": "Cockpit", "CockpitSkirt": "Cockpit skirt", "Cheek_L": "Cheek, left", "Cheek_R": "Cheek, right", "Neck": "Neck", "Shoulder": "Shoulder", "SpineFwd": "Spine, forward",
          "SpineMidA": "Spine, mid A", "SpineMidB": "Spine, mid B", "Main": "Main hull", "MainArmor": "Main armour", "MainArmorTier": "Main armour tier", "MainSponson": "Main sponson", "Keel": "Keel",
          "Connector": "Connector", "RearPod": "Rear pod", "RearModule": "Rear module", "PodArmor": "Pod armour", "PodSponson": "Pod sponson", "EngineBlock": "Engine block", "EngineCowl": "Engine cowl"}
@@ -66,7 +73,9 @@ leaf = [f for f in files if not os.path.isdir(f[:-5])]
 each = lambda f: num(f, "count") * (num(os.path.dirname(f) + ".yaml", "count") if os.path.basename(os.path.dirname(f)) != os.path.basename(out) else 1)
 per_m2 = FRAME / sum(num(f, "surface_area") * each(f) for f in leaf)
 for f in leaf:
+    if f not in NEW:
+        continue
     t = text[f].replace("# clamps and lasers stowed, bay doors shut.\n", "# clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface\n# at %.2f kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).\n" % per_m2)
     t = t.replace("physical:\n", "physical:\n  mass: %d\n" % round(num(f, "surface_area") * per_m2))
     open(f, "w").write(t)
-print("mass: %.2f kg for each m2, over %d parts" % (per_m2, len(leaf)))
+print("%d new records written; %d already in the registry, left as they are" % (len(NEW), len(files) - len(NEW)))
