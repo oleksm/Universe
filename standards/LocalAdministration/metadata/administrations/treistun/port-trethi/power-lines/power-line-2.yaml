@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station's parcel along the south side of East Road, beside power line 1, to the mill.
+# What it can carry was chosen: a little over what it draws flat out.
+name: Power line 2
+from: trethi-power-station
+to: trethi-mill
+capacity: 150
+line: [[1275, 250], [1275, 262], [800, 262], [800, 250]]

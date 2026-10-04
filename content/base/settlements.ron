@@ -27,6 +27,9 @@
         ],
         power_lines: [
             (name: "Power line 1", capacity: 400.0, line: [(1275.0, 250.0), (1275.0, 256.0), (850.0, 256.0), (850.0, 250.0)]),
+            (name: "Power line 2", capacity: 150.0, line: [(1275.0, 250.0), (1275.0, 262.0), (800.0, 262.0), (800.0, 250.0)]),
+            (name: "Power line 3", capacity: 850.0, line: [(1275.0, -250.0), (1275.0, -450.0)]),
+            (name: "Power line 4", capacity: 10.0, line: [(1400.0, 0.0), (1450.0, 0.0)]),
         ],
         facilities: [
             (name: "Trethi Foundry", kind: "foundry", parcel: 1,
@@ -62,11 +65,14 @@
                 (module: "forging-press", centre: (730.0, 40.0), length: 60.0, width: 40.0, height: 25.0, heading: 0.0),
             ]),
             (name: "Trethi Power Station", kind: "power", parcel: 2,
-                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
-                modules: [("fusion-power-station", 1)],
+                makes: [], draws: 0.0, supplies: 1600.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 3.344e-05)],
+                modules: [("fusion-power-station", 4)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+                (module: "fusion-power-station", centre: (1230.0, 90.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+                (module: "fusion-power-station", centre: (1230.0, -10.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+                (module: "fusion-power-station", centre: (1230.0, -110.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
             ]),
             (name: "Trethi Smelter", kind: "foundry", parcel: 7,
                 makes: [("Ingot", 36.27450980392157)], draws: 811.0698098039215, supplies: 0.0, holds: 0.0,

@@ -1439,6 +1439,26 @@ for hl in hulls:
         rows.append(row("ok", link(hl["identity"]["name"], "hull:" + hl["slug"]), f"{ld['hardest']:.1f} m/s", "the hardest landing its legs take", f"a jolt of {ld['hardest_jolt']:.1f} g aboard; designed for {ld['designed']:g} m/s, {ld['jolt']:.2f} g"))
 report("shock", "Shock: what breaking is worked out from", "What a ship's landing does to what is aboard, and whether each material, item of stock and part says what it can take (SFO 15). A gap is a kind of record that does not yet say.", ["What", "How many", "Meaning", "Note"], rows)
 
+# 2d. Power: in each settlement, what its stations can supply against what its facilities draw
+# flat out, and whether a line reaches each that draws.
+rows = []
+for ad in administrations:
+    for x in ad["bodies"]:
+        facs = x.get("facilities", [])
+        draw = {fc["slug"]: sum(ln["most"]["power"] for ln in fc.get("lines") or [] if "most" in ln) for fc in facs}
+        supply = sum(fc.get("capacity") or 0 for fc in facs if fc.get("kind") == "power")
+        if not supply and not any(draw.values()):
+            continue
+        total = sum(draw.values())
+        rows.append(row("ok" if supply >= total else "gap", x["name"] + ", all of it", f"{total:,.0f} MW", f"{supply:,.0f} MW", "its power stations", "enough for everything flat out at once" if supply >= total else f"{total - supply:,.0f} MW short with everything flat out at once"))
+        for fc in facs:
+            if not draw[fc["slug"]]:
+                continue
+            wires = [pw for pw in x.get("power_lines", []) if pw.get("to") == fc["slug"]]
+            can = sum(pw["capacity"] for pw in wires)
+            rows.append(row("ok" if can >= draw[fc["slug"]] else "gap", fc["name"], f"{draw[fc['slug']]:,.1f} MW", f"{can:,.0f} MW" if wires else "", ", ".join(pw["name"] for pw in wires) or "no line reaches it", "" if can >= draw[fc["slug"]] else ("its lines carry less than it draws" if wires else "")))
+report("power", "Power: what is supplied against what is drawn", "In each settlement: what its power stations can supply against what its facilities draw with every line flat out, and for each facility the lines that reach it against what it draws. A gap is a shortfall, or a facility no line reaches.", ["What", "Draws flat out", "Can get", "From", "Note"], rows)
+
 # 3. Volume: a hull's parts' boxes against the space the hull takes.
 rows = []
 for hl in hulls:

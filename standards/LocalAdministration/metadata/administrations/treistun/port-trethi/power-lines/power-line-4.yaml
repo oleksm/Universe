@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station's parcel east across the gap between the parcels to the yard.
+# What it can carry was chosen: a little over what it draws flat out.
+name: Power line 4
+from: trethi-power-station
+to: trethi-yard
+capacity: 10
+line: [[1400, 0], [1450, 0]]
