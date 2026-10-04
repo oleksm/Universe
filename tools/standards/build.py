@@ -176,7 +176,7 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 LOCAL = "LocalAdministration"
 ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
 # What zone each kind of facility needs.
-FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial"}
+FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "power": "industrial"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -349,7 +349,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "production"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "production", "modules", "power", "flows"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -533,9 +533,9 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module"}
+KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good"}
 SCHEMAS = {k: yaml.safe_load(open(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml"), encoding="utf-8")) for k, v in KINDS.items()}
-elements, materials, processes, modules = [], [], [], []
+elements, materials, processes, modules, goods = [], [], [], [], []
 for s in standards:
     if "records" not in s:
         continue
@@ -564,6 +564,12 @@ for s in standards:
             if ident.get("atomic_number") != int(name[:3]):
                 problem(full, f"atomic number {ident.get('atomic_number')} in a file numbered {name[:3]}")
             key = ident.get("symbol")
+        elif kind == "goods":
+            for k in ("name", "kind"):
+                if not ident.get(k):
+                    problem(full, f"identity: no {k}")
+            key = ident.get("name")
+            e["slug"] = name[:-5]
         elif kind == "modules":
             for k in ("name", "step"):
                 if not ident.get(k):
@@ -597,7 +603,7 @@ for s in standards:
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
-        {"elements": elements, "materials": materials, "processes": processes, "modules": modules}[kind].append(e)
+        {"elements": elements, "materials": materials, "processes": processes, "modules": modules, "goods": goods}[kind].append(e)
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
@@ -613,7 +619,7 @@ for ad in administrations:
                 elif (pr.get("equipment") or {}).get("facility") != fc.get("kind"):
                     problem(os.path.join(TREE, fc["file"]), f"processes: '{name}' is run in a {(pr.get('equipment') or {}).get('facility')}, not a {fc.get('kind')}")
 symbols = {(e.get("identity") or {}).get("symbol") for e in elements}
-slugs = {m.get("slug") for m in materials}
+slugs = {m.get("slug") for m in materials} | {g.get("slug") for g in goods}
 # (A process's steps: each in an industrial module.)
 by_module = {m.get("slug") for m in modules}
 for pr in processes:
@@ -631,9 +637,8 @@ def plan(pr, output):
     for st in (pr.get("equipment") or {}).get("steps") or []:
         if st.get("module") in mod_of and st["module"] not in steps:
             steps.append(st["module"])
-    label = lambda x: el_name.get(x.get("item")) or x.get("name") or x.get("item") or ""
-    made = {str((mod_of[s].get("rate") or {}).get("product", "")).lower(): s for s in steps if (mod_of[s].get("rate") or {}).get("throughput")}
     making = [s for s in steps if (mod_of[s].get("rate") or {}).get("throughput")]
+    made = {(mod_of[s].get("rate") or {}).get("product"): s for s in making}
     demand = {s: 0.0 for s in steps}
     if making:
         demand[making[-1]] = float(output)
@@ -641,13 +646,13 @@ def plan(pr, output):
     for s in reversed(steps):
         m, d = mod_of[s], demand[s]
         for x in (m.get("inputs") or {}).get("materials") or []:
-            src = made.get(label(x).lower())
+            src = made.get(x.get("item"))
             if src and src != s and steps.index(src) < steps.index(s):
                 demand[src] += d * x.get("amount", 0)
             else:
-                supplies[label(x)] = supplies.get(label(x), 0) + d * x.get("amount", 0)
+                supplies[x.get("item")] = supplies.get(x.get("item"), 0) + d * x.get("amount", 0)
         for x in (m.get("outputs") or {}).get("by_products") or []:
-            by[label(x)] = by.get(label(x), 0) + d * x.get("amount", 0)
+            by[x.get("item")] = by.get(x.get("item"), 0) + d * x.get("amount", 0)
     # (What is given off and needed on the same site is used again.)
     reused = {k: min(supplies[k], by[k]) for k in supplies if k in by}
     for k, v in reused.items():
@@ -665,11 +670,12 @@ def plan(pr, output):
             "area": count * size.get("length", 0) * size.get("width", 0),
             "power": ((m.get("needs") or {}).get("power", 0)) * (demand[s] / through if through else 1),
         })
+    product = (mod_of[making[-1]].get("rate") or {}).get("product", "") if making else ""
     return {
-        "modules": rows, "product": (mod_of[making[-1]].get("rate") or {}).get("product", "") if making else "",
-        "supplies": [{"name": k, "rate": v} for k, v in supplies.items() if v > 1e-9],
-        "by_products": [{"name": k, "rate": v} for k, v in by.items() if v > 1e-9],
-        "reused": [{"name": k, "rate": v} for k, v in reused.items() if v > 1e-9],
+        "modules": rows, "product": product,
+        "supplies": [{"item": k, "rate": v} for k, v in supplies.items() if v > 1e-9],
+        "by_products": [{"item": k, "rate": v} for k, v in by.items() if v > 1e-9],
+        "reused": [{"item": k, "rate": v} for k, v in reused.items() if v > 1e-9],
         "area": sum(r["area"] for r in rows), "power": sum(r["power"] for r in rows),
     }
 
@@ -689,9 +695,62 @@ for ad in administrations:
                     problem(where, f"production: '{ln['process']}' has no steps to build a line from")
                 else:
                     ln["plan"] = plan(pr, ln["output"])
-            covered = sum(ln["plan"]["area"] for ln in fc.get("production") or [] if "plan" in ln)
+            # (The modules it says it is built of: a power station's.)
+            for im in fc.get("modules") or []:
+                if im.get("module") not in mod_of or not isinstance(im.get("count"), int):
+                    problem(where, f"modules: no module '{im.get('module')}' in the SFO, or no count")
+            built = [(mod_of[im["module"]], im["count"]) for im in fc.get("modules") or [] if im.get("module") in mod_of and isinstance(im.get("count"), int)]
+            fc["capacity"] = sum(((m.get("rate") or {}).get("power") or 0) * n for m, n in built)
+            fc["built_area"] = sum((m.get("size") or {}).get("length", 0) * (m.get("size") or {}).get("width", 0) * n for m, n in built)
+            fc["demand"] = sum(ln["plan"]["power"] for ln in fc.get("production") or [] if "plan" in ln)
+            covered = sum(ln["plan"]["area"] for ln in fc.get("production") or [] if "plan" in ln) + fc["built_area"]
             if plot is not None and covered > plot.get("area", 0):
                 problem(where, f"production: its modules cover {covered:,.0f} m2, more than parcel {plot.get('number')} ({plot.get('area', 0):,.0f} m2)")
+# Power: each facility that needs it names the station it draws from; a station must cover what is
+# drawn, and burns fuel for it. Flows: everything a facility takes or gives has somewhere it comes
+# from or goes: the port, or another facility of the settlement.
+for ad in administrations:
+    for x in ad["bodies"]:
+        facs = x.get("facilities", [])
+        by_slug = {fc["slug"]: fc for fc in facs}
+        for fc in facs:
+            where = os.path.join(TREE, fc["file"])
+            if "power" in fc:
+                st = by_slug.get(fc["power"])
+                if st is None or st.get("kind") != "power":
+                    problem(where, f"power: {x.get('name')} has no power station '{fc['power']}'")
+                else:
+                    st.setdefault("feeds", []).append({"facility": fc["slug"], "power": fc.get("demand", 0)})
+            elif fc.get("demand", 0) > 0:
+                problem(where, f"power: it needs {fc['demand']:.0f} MW and names no power station")
+        for fc in facs:
+            where = os.path.join(TREE, fc["file"])
+            if fc.get("kind") == "power":
+                drawn = sum(f["power"] for f in fc.get("feeds", []))
+                fc["drawn"] = drawn
+                if drawn > fc.get("capacity", 0):
+                    problem(where, f"it is asked for {drawn:.0f} MW and can supply {fc.get('capacity', 0):.0f} MW")
+                # (Its fuel: what its modules burn for each MWh, for what is drawn.)
+                burn = {}
+                for im in fc.get("modules") or []:
+                    for i in ((mod_of.get(im.get("module")) or {}).get("inputs") or {}).get("materials") or []:
+                        burn[i.get("item")] = i.get("amount", 0)
+                fc["needs"] = [{"item": k, "rate": v * drawn} for k, v in burn.items()]
+                fc["gives"] = []
+            else:
+                plans = [ln["plan"] for ln in fc.get("production") or [] if "plan" in ln]
+                tot = lambda key: [{"item": k, "rate": sum(i["rate"] for pl in plans for i in pl[key] if i["item"] == k)} for k in dict.fromkeys(i["item"] for pl in plans for i in pl[key])]
+                fc["needs"] = tot("supplies")
+                fc["gives"] = tot("by_products") + [{"item": pl["product"], "rate": ln["output"]} for ln, pl in ((ln, ln["plan"]) for ln in fc.get("production") or [] if "plan" in ln)]
+            ends = {"from": {i["item"] for i in fc["needs"]}, "to": {i["item"] for i in fc["gives"]}}
+            for fl in fc.get("flows") or []:
+                way = "from" if "from" in fl else "to" if "to" in fl else None
+                if way is None or set(fl) != {"item", way}:
+                    problem(where, "flows: each is an item and where it comes from, or where it goes to")
+                elif fl["item"] not in ends[way]:
+                    problem(where, f"flows: it does not {'take' if way == 'from' else 'give'} '{fl['item']}'")
+                elif fl[way] != "port" and fl[way] not in by_slug:
+                    problem(where, f"flows: {x.get('name')} has no facility '{fl[way]}' (or say port)")
 for pr in processes + modules:
     where = os.path.join(TREE, pr["file"])
     for group in ("inputs", "outputs"):
@@ -701,7 +760,7 @@ for pr in processes + modules:
                 if item is None and not x.get("name"):
                     problem(where, f"{group}.{listed}: an entry needs item or name")
                 elif item is not None and item not in symbols and item not in slugs:
-                    problem(where, f"{group}.{listed}: '{item}' is no element's symbol and no material's file name")
+                    problem(where, f"{group}.{listed}: '{item}' is no element's symbol and no material's or good's file name")
 
 ids = {s["id"] for s in standards}
 for s in standards:
@@ -792,6 +851,8 @@ def write_html():
         "materials": materials,
         "processes": processes,
         "modules": modules,
+        "goods": goods,
+        "good_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["goods"]["properties"].items()},
         "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items()} for g, d in SCHEMAS["modules"]["properties"].items()},
         # (Icons: SFO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
         "icons": {f[:-4]: open(os.path.join(TREE, "SFO", "icons", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, "SFO", "icons"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, "SFO", "icons")) else {},
@@ -817,5 +878,5 @@ if problems:
     print("standards/index.html written (it lists them too); the game's content NOT updated", file=sys.stderr)
     sys.exit(1)
 write_ron()
-print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules")
+print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods")
 print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron")

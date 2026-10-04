@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Iron ore pellets
+  kind: intermediate
+  description: "Cleaned ore formed into hard balls a furnace can take."

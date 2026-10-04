@@ -9,10 +9,10 @@ size:
   height: 20
 rate:
   throughput: 1.9
-  product: hydrogen
+  product: H
 inputs:
   materials:
-  - { name: "Water", amount: 9 }
+  - { item: water, amount: 9 }
 outputs:
   by_products:
   - { item: O, amount: 8 }

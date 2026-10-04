@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Ingot
+  kind: product
+  description: "Metal cast into a block: the form a foundry ships."

@@ -10,10 +10,10 @@ size:
 rate:
   throughput: 150
   batch: 100
-  product: liquid steel, to grade
+  product: refined-steel
 inputs:
   materials:
-  - { name: "Liquid steel", amount: 1.0 }
+  - { item: liquid-steel, amount: 1.0 }
   - { item: Ar, amount: 0.0002 }
 needs:
   power: 5

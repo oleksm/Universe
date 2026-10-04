@@ -10,17 +10,17 @@ size:
 rate:
   throughput: 100
   batch: 100
-  product: liquid steel
+  product: liquid-steel
 inputs:
   materials:
-  - { name: "Sponge iron", amount: 1.1 }
-  - { name: "Lime", amount: 0.05 }
+  - { item: sponge-iron, amount: 1.1 }
+  - { item: lime, amount: 0.05 }
   - { item: C, amount: 0.015 }
-  - { name: "Graphite electrode", amount: 0.0015 }
+  - { item: graphite-electrode, amount: 0.0015 }
 outputs:
   by_products:
-  - { name: "Slag", amount: 0.15 }
-  - { name: "Dust", amount: 0.015 }
+  - { item: slag, amount: 0.15 }
+  - { item: dust, amount: 0.015 }
 needs:
   power: 50
 basis:

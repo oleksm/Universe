@@ -13,10 +13,10 @@ rate:
   product: ingot
 inputs:
   materials:
-  - { name: "Liquid steel, to grade", amount: 1.02 }
+  - { item: refined-steel, amount: 1.02 }
 outputs:
   by_products:
-  - { name: "Scrap", amount: 0.02 }
+  - { item: scrap, amount: 0.02 }
 needs:
   power: 1
 basis:

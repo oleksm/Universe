@@ -11,9 +11,8 @@ definitions:
       type: object
       additionalProperties: false
       properties:
-        item: { type: string, description: "An element's symbol or a material's file name." }
-        name: { type: string, description: What it is, where the registry has no record of it. }
-        amount: { type: number, description: "t per t of its product" }
+        item: { type: string, description: "An element's symbol, or a material's or a good's file name." }
+        amount: { type: number, description: "t per t of its product (per MWh, for one that makes power)" }
 properties:
   identity:
     type: object
@@ -37,7 +36,8 @@ properties:
       throughput: { type: number, description: "t/h of its product, at full rate" }
       batch: { type: number, description: "t in one batch" }
       holds: { type: number, description: "t it can store" }
-      product: { type: string, description: What its throughput counts. }
+      product: { type: string, description: "What its throughput counts: an element's symbol, a material's or a good's file name." }
+      power: { type: number, description: "MW it supplies, for one that makes power" }
   inputs:
     type: object
     additionalProperties: false

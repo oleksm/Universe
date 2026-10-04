@@ -15,3 +15,15 @@ processes:
 # is enough, all but the hydrogen plant.
 production:
   - { process: steelmaking, output: 75 }
+power: trethi-power-station
+# Where each thing it takes comes from, and where each thing it gives goes. Through the port:
+# brought or taken by ship.
+flows:
+  - { item: iron-ore, from: port }
+  - { item: lime, from: port }
+  - { item: C, from: port }
+  - { item: graphite-electrode, from: port }
+  - { item: Ar, from: port }
+  - { item: water, from: port }
+  - { item: ingot, to: port }
+  - { item: O, to: port }

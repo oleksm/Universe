@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Slag
+  kind: by-product
+  description: "The glassy crust of lime and impurities skimmed off molten metal."

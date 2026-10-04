@@ -9,14 +9,14 @@ size:
   height: 120
 rate:
   throughput: 125
-  product: sponge iron
+  product: sponge-iron
 inputs:
   materials:
-  - { name: "Iron ore pellets", amount: 1.4 }
+  - { item: iron-ore-pellets, amount: 1.4 }
   - { item: H, amount: 0.055 }
 outputs:
   by_products:
-  - { name: "Water", amount: 0.49 }
+  - { item: water, amount: 0.49 }
 needs:
   power: 12
 basis:

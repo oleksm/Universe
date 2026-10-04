@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  name: Water
+  kind: raw
+  description: "Water, as ice or liquid."
+game:
+  goods: goods.water

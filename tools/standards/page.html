@@ -175,7 +175,15 @@ const procBySlug = Object.fromEntries(DATA.processes.map(p => [p.slug, p]));
 const modMatches = (m, q) => !q || q.split(/\s+/).every(w => `${m.identity.name} ${m.identity.step} ${m.identity.description || ""}`.toLowerCase().includes(w));
 const modulesUnder = (id, q) => DATA.modules.filter(m => m.under === id && modMatches(m, q));
 const modBySlug = Object.fromEntries(DATA.modules.map(m => [m.slug, m]));
-const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length;
+// And the goods.
+const goodMatches = (g, q) => !q || q.split(/\s+/).every(w => `${g.identity.name} ${g.identity.kind} ${g.identity.description || ""}`.toLowerCase().includes(w));
+const goodsUnder = (id, q) => DATA.goods.filter(g => g.under === id && goodMatches(g, q));
+const goodBySlug = Object.fromEntries(DATA.goods.map(g => [g.slug, g]));
+const recordsUnder = id => elementsUnder(id, "").length + materialsUnder(id, "").length + processesUnder(id, "").length + modulesUnder(id, "").length + goodsUnder(id, "").length;
+// Anything that flows, by its element symbol or its material's or good's file name: its name, and a link to it.
+const itemKey = i => elBySymbol[i] ? "el:" + i : matBySlug[i] ? "mat:" + i : goodBySlug[i] ? "good:" + i : null;
+const itemName = i => (elBySymbol[i] || matBySlug[i] || goodBySlug[i] || { identity: { name: i } }).identity.name;
+const itemA = i => itemKey(i) ? `<a data-k="${esc(itemKey(i))}">${esc(itemName(i))}</a>` : esc(itemName(i));
 // An element or material named in a process: a link to it.
 const elTile = (e, small) => { const i = e.identity; const c = "c-" + (i.category || "unknown").replace(/[^a-z]+/g, "-"); return small ? `<span class="tile small ${c}"><span class="sy">${esc(i.symbol)}</span></span>` : `<span class="tile ${c}"><span class="z">${i.atomic_number}</span><span class="sy">${esc(i.symbol)}</span></span>`; };
 const logo = (slug, cls) => DATA.logos[slug] ? `<span class="logo ${cls || ""}">${DATA.logos[slug]}</span>` : "";
@@ -183,9 +191,9 @@ const icon = (slug, cls) => DATA.icons[slug] ? `<span class="ico ${cls || ""} ${
 // The kind of process shown in a record's gallery and table (all, or one kind).
 let kindShown = "all";
 const itemLink = x => {
-  const e = elBySymbol[x.item], m = matBySlug[x.item];
+  const e = elBySymbol[x.item], m = matBySlug[x.item] || goodBySlug[x.item];
   const label = e ? e.identity.name : m ? m.identity.name : (x.name || x.item);
-  const k = e ? "el:" + x.item : m ? "mat:" + x.item : null;
+  const k = itemKey(x.item);
   const extra = [x.amount !== undefined ? `${x.amount} t/t` : "", x.form || "", x.grade || ""].filter(Boolean).join(", ");
   return (k ? `<a data-k="${esc(k)}">${esc(label)}</a>` : esc(label)) + (extra ? ` <span class="meta">${esc(extra)}</span>` : "");
 };
@@ -238,7 +246,7 @@ function rows(q) {
     const all = ofBody(body, "");
     const shown = new Set(ofBody(body, q).map(s => s.id));
     const kids = id => all.filter(s => (s.parent || null) === id);
-    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0));
+    const visible = s => shown.has(s.id) || kids(s.id).some(visible) || (q && (elementsUnder(s.id, q).length > 0 || materialsUnder(s.id, q).length > 0 || processesUnder(s.id, q).length > 0 || modulesUnder(s.id, q).length > 0 || goodsUnder(s.id, q).length > 0));
     const walk = (id, depth) => {
       for (const s of kids(id)) {
         if (q && !visible(s)) continue;
@@ -252,6 +260,7 @@ function rows(q) {
           for (const m of materialsUnder(s.id, q)) out.push({ k: "mat:" + m.slug, depth: depth + 1, kind: "mat", mat: m });
           for (const p of processesUnder(s.id, q)) out.push({ k: "proc:" + p.slug, depth: depth + 1, kind: "proc", proc: p });
           for (const m of modulesUnder(s.id, q)) out.push({ k: "mod:" + m.slug, depth: depth + 1, kind: "maker", label: m.identity.name, ticker: m.identity.step, leaf: true });
+          for (const g of goodsUnder(s.id, q)) out.push({ k: "good:" + g.slug, depth: depth + 1, kind: "maker", label: g.identity.name, ticker: g.identity.kind, leaf: true });
         }
       }
     };
@@ -323,8 +332,8 @@ let current = decodeURIComponent(location.hash.slice(1));
 const stdOf = k => k.startsWith("s:") ? byId[k.slice(2).split("@")[0]] : null;
 // (Open the way to a standard: its body.)
 function reveal(k) {
-  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:")) {
-    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : procBySlug[k.slice(5)]; if (!e) return;
+  if (k.startsWith("el:") || k.startsWith("mat:") || k.startsWith("proc:") || k.startsWith("mod:") || k.startsWith("good:")) {
+    const e = k.startsWith("el:") ? elBySymbol[k.slice(3)] : k.startsWith("mat:") ? matBySlug[k.slice(4)] : k.startsWith("mod:") ? modBySlug[k.slice(4)] : k.startsWith("good:") ? goodBySlug[k.slice(5)] : procBySlug[k.slice(5)]; if (!e) return;
     open.add("x:" + e.under);
     const up = byId[e.under]; if (up) open.add("b:" + up.body);
     for (let s = up; s && s.parent; s = byId[s.parent]) open.add("x:" + s.parent);
@@ -384,7 +393,7 @@ function render() {
   }
   document.getElementById("tree").innerHTML = html;
   const topics = new Set(DATA.standards.flatMap(s => s.topics || []));
-  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "") + (DATA.modules.length ? ` · ${DATA.modules.length} modules` : "");
+  document.getElementById("count").textContent = `${DATA.standards.length} standards` + (DATA.elements.length ? ` · ${DATA.elements.length} elements` : "") + (DATA.materials.length ? ` · ${DATA.materials.length} materials` : "") + (DATA.processes.length ? ` · ${DATA.processes.length} processes` : "") + (DATA.modules.length ? ` · ${DATA.modules.length} modules` : "") + (DATA.goods.length ? ` · ${DATA.goods.length} goods` : "");
   document.getElementById("detail").innerHTML = detail(current);
 }
 
@@ -425,6 +434,13 @@ function detail(k) {
   const total = a => a.reduce((s, v) => s + v, 0);
   const measures = o => `<tr><td>sides</td><td>${sides(o, true).map(metres).join(" · ")}</td><td>its outline, corner to corner</td></tr><tr><td>perimeter</td><td>${metres(total(sides(o, true)))}</td><td>its sides together</td></tr><tr><td>area</td><td>${sqm(area(o))}</td><td>its outline</td></tr>`;
   const area = o => Math.abs(o.reduce((s, c, i) => s + c[0] * o[(i + 1) % o.length][1] - o[(i + 1) % o.length][0] * c[1], 0)) / 2;
+  const tph = v => `${+v.toPrecision(3)} t/h`, day = v => v * 24 < 1 ? `${+(v * 24000).toPrecision(3)} kg` : `${(+(v * 24).toPrecision(3)).toLocaleString()} t`;
+  // What its facilities bring in and send out through the port, by ship.
+  const portFlows = (a, x) => {
+    const way = (w, key) => { const m = {}; for (const f of x.facilities || []) for (const i of f[key] || []) if ((f.flows || []).some(fl => fl.item === i.item && fl[w] === "port")) (m[i.item] = m[i.item] || { item: i.item, rate: 0, by: [] }, m[i.item].rate += i.rate, m[i.item].by.push(f)); return Object.values(m).sort((p, r) => r.rate - p.rate); };
+    const table = (title, rows, col) => rows.length ? `<h3>${title}</h3><table><tr><th>What</th><th>Each day</th><th>${col}</th></tr>` + rows.map(r => `<tr><td>${itemA(r.item)}</td><td>${day(r.rate)}</td><td>${r.by.map(f => `<a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a>`).join(", ")}</td></tr>`).join("") + `<tr><th>Total</th><th>${day(total(rows.map(r => r.rate)))}</th><th></th></tr></table>` : "";
+    return table("Comes in through the port", way("from", "needs"), "For") + table("Goes out through the port", way("to", "gives"), "From");
+  };
   const hectares = m2 => `${(m2 / 1e4).toLocaleString(undefined, { maximumFractionDigits: 1 })} ha`;
   // A settlement's ground: its zones and parcels (outlines in metres east and north of its position),
   // and the port as the game has it (its pads, its landing area, its hangar to the south).
@@ -485,22 +501,29 @@ function detail(k) {
     const up = x.at && a.bodies.find(y => y.name === x.at);
     const here = a.bodies.filter(y => y.at === x.name);
     const orgs = orgsAt(a.slug, x.slug);
-    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + landMap(a, x) + ((x.streets || []).length ? `<h3>Streets</h3><table><tr><th>Street</th><th>Length</th><th>Addresses</th></tr>` + x.streets.map(st => `<tr><td><a data-k="${esc(`st:${a.slug}:${x.slug}:${st.slug}`)}">${esc(st.name)}</a></td><td>${Math.round(st.length).toLocaleString()} m</td><td>${(x.parcels || []).filter(p => p.address && p.address.street === st.slug).length || ""}</td></tr>`).join("") + `<tr><th>Total</th><th>${metres(total(x.streets.map(st => st.length)))}</th><th></th></tr></table>` : "") + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Permits</th><th>Area</th></tr>` + x.zones.map(z => `<tr><td><a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a></td><td>${esc(z.use)}</td><td>${esc(((a.zoning || []).find(c => c.use === z.use) || {}).permits || "")}</td><td>${sqm(z.area)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th>${sqm(total(x.zones.map(z => z.area)))}</th></tr></table>` : "") + ((x.facilities || []).length ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Parcel</th><th>Owner</th></tr>` + x.facilities.map(f => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${f.parcel}</td><td>${ownerLink(f.owner)}</td></tr>`).join("") + `</table>` : "") + ((x.parcels || []).length ? `<h3>Parcels</h3><table><tr><th>Parcel</th><th>Address</th><th>Zone</th><th>Area</th><th>Owner</th></tr>` + x.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${streetOf(x, p) ? esc(parcelLine(x, p)) : ""}</td><td>${esc(((x.zones || []).find(z => z.slug === p.zone) || {}).name || "")}</td><td>${sqm(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th>${sqm(total(x.parcels.map(p => p.area)))}</th><th></th></tr></table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
+    return `<h2>${esc(x.name)}</h2><div class="meta">${esc(x.kind)}${up ? ` · at ${link(up)}` : x.at ? ` · at ${esc(x.at)}` : ""}${x.position ? ` · ${pos(x.position)}` : ""} · in <a data-k="${esc("ad:" + a.slug)}">${esc(a.name)}</a></div>` + aboutStory(x) + landMap(a, x) + ((x.streets || []).length ? `<h3>Streets</h3><table><tr><th>Street</th><th>Length</th><th>Addresses</th></tr>` + x.streets.map(st => `<tr><td><a data-k="${esc(`st:${a.slug}:${x.slug}:${st.slug}`)}">${esc(st.name)}</a></td><td>${Math.round(st.length).toLocaleString()} m</td><td>${(x.parcels || []).filter(p => p.address && p.address.street === st.slug).length || ""}</td></tr>`).join("") + `<tr><th>Total</th><th>${metres(total(x.streets.map(st => st.length)))}</th><th></th></tr></table>` : "") + ((x.zones || []).length ? `<h3>Zones</h3><table><tr><th>Zone</th><th>Use</th><th>Permits</th><th>Area</th></tr>` + x.zones.map(z => `<tr><td><a data-k="${esc(`zn:${a.slug}:${x.slug}:${z.slug}`)}">${esc(z.name)}</a></td><td>${esc(z.use)}</td><td>${esc(((a.zoning || []).find(c => c.use === z.use) || {}).permits || "")}</td><td>${sqm(z.area)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th>${sqm(total(x.zones.map(z => z.area)))}</th></tr></table>` : "") + portFlows(a, x) + ((x.facilities || []).length ? `<h3>Facilities</h3><table><tr><th>Facility</th><th>Kind</th><th>Parcel</th><th>Owner</th></tr>` + x.facilities.map(f => `<tr><td><a data-k="${esc(facKey(a, x, f))}">${esc(f.name)}</a></td><td>${esc(f.kind)}</td><td>${f.parcel}</td><td>${ownerLink(f.owner)}</td></tr>`).join("") + `</table>` : "") + ((x.parcels || []).length ? `<h3>Parcels</h3><table><tr><th>Parcel</th><th>Address</th><th>Zone</th><th>Area</th><th>Owner</th></tr>` + x.parcels.map(p => `<tr><td><a data-k="${esc(parcelKey(a, x, p))}">Parcel ${p.number}</a></td><td>${streetOf(x, p) ? esc(parcelLine(x, p)) : ""}</td><td>${esc(((x.zones || []).find(z => z.slug === p.zone) || {}).name || "")}</td><td>${sqm(p.area)}</td><td>${ownerLink(p.owner)}</td></tr>`).join("") + `<tr><th>Total</th><th></th><th></th><th>${sqm(total(x.parcels.map(p => p.area)))}</th><th></th></tr></table>` : "") + (here.length ? `<h3>At it</h3><table><tr><th>Body</th><th>Kind</th></tr>` + here.map(y => `<tr><td>${link(y)}</td><td>${esc(y.kind)}</td></tr>`).join("") + `</table>` : "") + (orgs.length ? `<h3>Here</h3><table><tr><th>Who</th><th>Address</th></tr>` + orgs.map(o => `<tr><td><a data-k="${esc(o.to)}">${esc(o.name)}</a></td><td>${esc(inside(o.address).join(", "))}</td></tr>`).join("") + `</table>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(x.file)}</div>`;
   }
   // (A record's properties, as written in its file.)
   const corners = o => o.map(c => `${c[0]}, ${c[1]}`).join(" · ");
   const props = rows => `<h3>Properties</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>` + rows.filter(r => r[1] !== undefined && r[1] !== "").map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${esc(r[2] || "")}</td></tr>`).join("") + `</table>`;
   // What a facility is to make, and what follows from it (worked out by the build from its
   // processes' modules).
+  // (Where a thing a facility takes comes from, or one it gives goes to: its `flows`.)
+  const flowEnd = (a, x, f, item, way) => { const fl = (f.flows || []).find(y => y.item === item && y[way]); if (!fl) return `<span class="meta">${way === "from" ? "no source yet" : "nowhere yet"}</span>`; if (fl[way] === "port") return `the port <span class="meta">by ship</span>`; const o = (x.facilities || []).find(y => y.slug === fl[way]); return o ? `<a data-k="${esc(facKey(a, x, o))}">${esc(o.name)}</a>` : esc(fl[way]); };
+  const flowTable = (a, x, f, title, rows, way, note) => rows.length ? `<h3>${title}</h3>${note ? `<p class="meta">${note}</p>` : ""}<table><tr><th>What</th><th>Each hour</th><th>Each day</th>${way ? `<th>${way === "from" ? "From" : "To"}</th>` : ""}</tr>` + rows.map(s => `<tr><td>${itemA(s.item)}</td><td>${tph(s.rate)}</td><td>${day(s.rate)}</td>${way ? `<td>${flowEnd(a, x, f, s.item, way)}</td>` : ""}</tr>`).join("") + `</table>` : "";
   const production = (a, x, f, p) => producing().filter(r => r.f === f).map(r => {
-    const pl = r.ln.plan, tph = v => `${+v.toPrecision(3)} t/h`, day = v => `${(+(v * 24).toPrecision(3)).toLocaleString()} t`;
-    const flows = (title, rows, note) => rows.length ? `<h3>${title}</h3>${note ? `<p class="meta">${note}</p>` : ""}<table><tr><th>What</th><th>Each hour</th><th>Each day</th></tr>` + rows.map(s => `<tr><td>${esc(s.name)}</td><td>${tph(s.rate)}</td><td>${day(s.rate)}</td></tr>`).join("") + `</table>` : "";
-    return `<h3>Production</h3><table><tr><th>Process</th><th>Makes</th><th>Each hour</th><th>Each day</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(r.ln.output)}</td><td>${day(r.ln.output)}</td></tr></table>`
+    const pl = r.ln.plan, station = (x.facilities || []).find(y => y.slug === f.power);
+    return `<h3>Production</h3><table><tr><th>Process</th><th>Makes</th><th>Each hour</th><th>Each day</th><th>To</th></tr><tr><td>${icon(r.pr.slug)} <a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${tph(r.ln.output)}</td><td>${day(r.ln.output)}</td><td>${flowEnd(a, x, f, pl.product, "to")}</td></tr></table>`
       + `<h3>Modules it needs</h3><p class="meta">Worked out from the output: each module's share of the line, how many that takes, and how hard they run.</p><table><tr><th>Module</th><th>Has to put through</th><th>Number</th><th>Running at</th><th>Ground</th><th>Power</th></tr>`
-      + pl.modules.map(m => `<tr><td><a data-k="${esc("mod:" + m.module)}">${esc(modBySlug[m.module].identity.name)}</a></td><td>${m.demand === null ? "" : `${tph(m.demand)} ${esc((modBySlug[m.module].rate || {}).product || "")}`}</td><td>${m.count}</td><td>${m.use === null ? "" : Math.round(m.use * 100) + "%"}</td><td>${Math.round(m.area).toLocaleString()} m²</td><td>${+m.power.toPrecision(3)} MW</td></tr>`).join("")
+      + pl.modules.map(m => `<tr><td><a data-k="${esc("mod:" + m.module)}">${esc(modBySlug[m.module].identity.name)}</a></td><td>${m.demand === null ? "" : `${tph(m.demand)} ${esc(itemName((modBySlug[m.module].rate || {}).product || "").toLowerCase())}`}</td><td>${m.count}</td><td>${m.use === null ? "" : Math.round(m.use * 100) + "%"}</td><td>${Math.round(m.area).toLocaleString()} m²</td><td>${+m.power.toPrecision(3)} MW</td></tr>`).join("")
       + `<tr><th>Total</th><th></th><th>${pl.modules.reduce((s, m) => s + m.count, 0)}</th><th></th><th>${Math.round(pl.area).toLocaleString()} m² · ${(100 * pl.area / p.area).toFixed(0)}% of parcel ${p.number}</th><th>${Math.round(pl.power)} MW</th></tr></table>`
-      + flows("Supplies it needs", pl.supplies) + flows("What else comes out", pl.by_products) + flows("Used again on site", pl.reused, "Given off by one module and taken in by another.");
-  }).join("");
+      + `<h3>Power</h3><p>${Math.round(pl.power)} MW, from ${station ? `<a data-k="${esc(facKey(a, x, station))}">${esc(station.name)}</a>` : `<span class="meta">no power station yet</span>`}.</p>`
+      + flowTable(a, x, f, "Supplies it needs", pl.supplies, "from") + flowTable(a, x, f, "What else comes out", pl.by_products, "to") + flowTable(a, x, f, "Used again on site", pl.reused, null, "Given off by one module and taken in by another.");
+  }).join("") + (f.kind === "power" ? powerStation(a, x, f, p) : "");
+  // A power station: what it is built of, what is drawn from it, and what it burns for that.
+  const powerStation = (a, x, f, p) => `<h3>Built of</h3><table><tr><th>Module</th><th>Number</th><th>Supplies</th><th>Ground</th></tr>` + (f.modules || []).map(im => { const m = modBySlug[im.module]; return `<tr><td><a data-k="${esc("mod:" + im.module)}">${esc(m.identity.name)}</a></td><td>${im.count}</td><td>${im.count * ((m.rate || {}).power || 0)} MW</td><td>${(im.count * m.size.length * m.size.width).toLocaleString()} m²</td></tr>`; }).join("") + `<tr><th>Total</th><th></th><th>${f.capacity} MW</th><th>${Math.round(f.built_area).toLocaleString()} m² · ${(100 * f.built_area / p.area).toFixed(0)}% of parcel ${p.number}</th></tr></table>`
+    + `<h3>Power it supplies</h3><table><tr><th>To</th><th>Power</th></tr>` + (f.feeds || []).map(fd => { const o = x.facilities.find(y => y.slug === fd.facility); return `<tr><td><a data-k="${esc(facKey(a, x, o))}">${esc(o.name)}</a></td><td>${Math.round(fd.power)} MW</td></tr>`; }).join("") + `<tr><th>Drawn</th><th>${Math.round(f.drawn || 0)} MW · ${Math.round(100 * (f.drawn || 0) / f.capacity)}% of what it can supply</th></tr></table>`
+    + flowTable(a, x, f, "Fuel it burns", f.needs || [], "from", "For the power drawn from it.");
   // A facility's site plan: its parcel, what stands on it, its pipelines, and the streets passing.
   const sitePlan = (a, x, f, p) => {
     const parts = f.parts || [], pipes = f.pipelines || []; if (!parts.length) return "";
@@ -576,13 +599,13 @@ function detail(k) {
     if (near.length) h += `<h3>Tagged with it too</h3>` + near.map(x => `<a data-k="${esc(`t:${b.key}:${x}`)}">${esc(x)}</a>`).join(" · ");
     return h;
   }
-  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod") {
-    const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
+  if (kind === "el" || kind === "mat" || kind === "proc" || kind === "mod" || kind === "good") {
+    const e = kind === "el" ? elBySymbol[rest[0]] : kind === "mat" ? matBySlug[rest.join(":")] : kind === "mod" ? modBySlug[rest.join(":")] : kind === "good" ? goodBySlug[rest.join(":")] : procBySlug[rest.join(":")]; if (!e) return "";
     const i = e.identity, up = byId[e.under];
     let h = kind === "el" ? `<h2>${elTile(e)}${esc(i.name)}</h2>` : `<h2>${icon(e.slug, "big")} ${esc(i.name)}</h2>`;
     if (up) h += `<div class="meta">in <a data-k="${esc("s:" + up.id)}">${esc(up.title)}</a></div>`;
     const show = v => v === null ? "–" : Array.isArray(v) && !v.length ? "–" : Array.isArray(v) && v[0] && v[0].mass_number ? v.map(x => `${x.mass_number}: ${+(x.abundance * 100).toPrecision(5)}%`).join(", ") : Array.isArray(v) && v[0] && v[0].part ? v.map(x => `${x.part} ${+(x.share * 100).toPrecision(3)}%`).join(", ") : Array.isArray(v) ? v.map(x => typeof x === "object" ? Object.entries(x).map(([a, b]) => `${a} ${b}`).join(", ") : x).join(v.some(x => typeof x === "object") ? "; " : ", ") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${a}: ${b}`).join(", ") : v;
-    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : DATA.process_groups)) {
+    for (const [g, props] of Object.entries(kind === "el" ? DATA.element_groups : kind === "mat" ? DATA.material_groups : kind === "mod" ? DATA.module_groups : kind === "good" ? DATA.good_groups : DATA.process_groups)) {
       if (!e[g]) continue;
       h += `<h3>${esc(g.replace(/_/g, " "))}</h3><table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>`;
       for (const [key, note] of Object.entries(props)) if (key in e[g] && key !== "steps") h += `<tr><td>${esc(key.replace(/_/g, " "))}</td><td>${Array.isArray(e[g][key]) && e[g][key][0] && (e[g][key][0].item || e[g][key][0].name) ? e[g][key].map(itemLink).join("<br>") : esc(show(e[g][key]))}</td><td class="meta">${esc(note)}</td></tr>`;
@@ -594,6 +617,13 @@ function detail(k) {
       const steps = e.equipment.steps.map(st => ({ ...st, m: modBySlug[st.module] })).filter(st => st.m);
       h += `<h3>Steps</h3><table><tr><th>Step</th><th>Module</th><th>What happens</th><th>Footprint</th><th>Rate</th><th>Power</th></tr>` + steps.map((st, n) => `<tr><td>${n + 1}. ${esc(st.m.identity.step)}</td><td><a data-k="${esc("mod:" + st.module)}">${esc(st.m.identity.name)}</a></td><td>${esc(st.does)}</td><td>${footprint(st.m)}</td><td>${(st.m.rate || {}).throughput !== undefined ? `${st.m.rate.throughput} t/h` : (st.m.rate || {}).holds !== undefined ? `holds ${st.m.rate.holds.toLocaleString()} t` : ""}</td><td>${(st.m.needs || {}).power !== undefined ? `${st.m.needs.power} MW` : ""}</td></tr>`).join("")
         + `<tr><th>One of each</th><th></th><th></th><th>${steps.reduce((s, st) => s + (st.m.size ? st.m.size.length * st.m.size.width : 0), 0).toLocaleString()} m²</th><th></th><th>${+steps.reduce((s, st) => s + ((st.m.needs || {}).power || 0), 0).toFixed(1)} MW</th></tr></table>`;
+    }
+    if (kind === "good" || kind === "el" || kind === "mat") {
+      const id = kind === "el" ? e.identity.symbol : e.slug;
+      const into = DATA.modules.filter(m => ((m.inputs || {}).materials || []).some(x => x.item === id));
+      const outOf = DATA.modules.filter(m => (m.rate || {}).product === id || ((m.outputs || {}).by_products || []).some(x => x.item === id));
+      const list = ms => ms.map(m => `<a data-k="${esc("mod:" + m.slug)}">${esc(m.identity.name)}</a>`).join(", ");
+      if (into.length || outOf.length) h += `<h3>In industry</h3><table><tr><th>Comes out of</th><th>Goes into</th></tr><tr><td>${list(outOf)}</td><td>${list(into)}</td></tr></table>`;
     }
     if (kind === "mod") {
       const used = DATA.processes.filter(p => ((p.equipment || {}).steps || []).some(st => st.module === e.slug));
@@ -621,8 +651,10 @@ function detail(k) {
   if (els.length) h += periodicTable(els);
   const mats = materialsUnder(s.id, "");
   if (mats.length) h += `<h3>Materials</h3><table><tr><th>Material</th><th>Class</th><th>Density (kg/m3)</th><th>Made of</th></tr>${mats.map(m => `<tr><td>${icon(m.slug)} <a data-k="${esc("mat:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.class)}</td><td class="num">${(m.mass || {}).density ?? ""}</td><td>${esc((m.identity.composition || []).slice(0, 3).map(x => x.part).join(", "))}</td></tr>`).join("")}</table>`;
+  const gds = goodsUnder(s.id, "");
+  if (gds.length) h += `<h3>Goods</h3><table><tr><th>Good</th><th>Kind</th><th>What it is</th></tr>` + gds.map(g => `<tr><td><a data-k="${esc("good:" + g.slug)}">${esc(g.identity.name)}</a></td><td>${esc(g.identity.kind)}</td><td>${esc(g.identity.description || "")}</td></tr>`).join("") + `</table>`;
   const mods = modulesUnder(s.id, "");
-  if (mods.length) h += `<h3>Modules</h3><table><tr><th>Module</th><th>Step</th><th>Footprint</th><th>Height</th><th>Rate</th><th>Power</th></tr>` + mods.map(m => `<tr><td><a data-k="${esc("mod:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.step)}</td><td>${m.size ? `${m.size.length} × ${m.size.width} m` : ""}</td><td>${m.size ? `${m.size.height} m` : ""}</td><td>${(m.rate || {}).throughput !== undefined ? `${m.rate.throughput} t/h ${esc(m.rate.product || "")}` : (m.rate || {}).holds !== undefined ? `holds ${m.rate.holds.toLocaleString()} t` : ""}</td><td>${(m.needs || {}).power !== undefined ? `${m.needs.power} MW` : ""}</td></tr>`).join("") + `</table>`;
+  if (mods.length) h += `<h3>Modules</h3><table><tr><th>Module</th><th>Step</th><th>Footprint</th><th>Height</th><th>Rate</th><th>Power</th></tr>` + mods.map(m => `<tr><td><a data-k="${esc("mod:" + m.slug)}">${esc(m.identity.name)}</a></td><td>${esc(m.identity.step)}</td><td>${m.size ? `${m.size.length} × ${m.size.width} m` : ""}</td><td>${m.size ? `${m.size.height} m` : ""}</td><td>${(m.rate || {}).throughput !== undefined ? `${m.rate.throughput} t/h ${esc(itemName(m.rate.product || "").toLowerCase())}` : (m.rate || {}).holds !== undefined ? `holds ${m.rate.holds.toLocaleString()} t` : (m.rate || {}).power !== undefined ? `supplies ${m.rate.power} MW` : ""}</td><td>${(m.needs || {}).power !== undefined ? `${m.needs.power} MW` : ""}</td></tr>`).join("") + `</table>`;
   const allProcs = processesUnder(s.id, "");
   const procs = allProcs.filter(p => kindShown === "all" || p.identity.kind === kindShown);
   if (allProcs.length) {
@@ -665,7 +697,7 @@ document.addEventListener("click", e => {
   if (badge) { kindShown = badge.dataset.kind; render(); return; }
   const el = e.target.closest("[data-k]"); if (!el) return;
   const k = el.dataset.k;
-  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:")) {
+  if (el.classList.contains("row") && !k.startsWith("s:") && !k.startsWith("el:") && !k.startsWith("mat:") && !k.startsWith("proc:") && !k.startsWith("mod:") && !k.startsWith("good:")) {
     if (open.has(k) && k === current) open.delete(k); else open.add(k);
     keepOpen();
   }

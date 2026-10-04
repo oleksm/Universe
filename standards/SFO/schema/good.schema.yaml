@@ -1,0 +1,20 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Good
+description: Something that moves in bulk through industry and is neither an element nor a finished material. Raw matter, what is used up, what one step hands to the next, what comes out besides the product.
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [name, kind]
+    properties:
+      name: { type: string }
+      kind: { enum: [raw, consumable, fuel, intermediate, product, by-product] }
+      description: { type: string }
+  game:
+    type: object
+    additionalProperties: false
+    properties:
+      goods: { type: string, description: "The kind of goods it is in the game's markets (content/base/goods.ron)." }
