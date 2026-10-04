@@ -206,6 +206,8 @@ pub struct App {
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
     pub layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
+    /// Walking through the plan from the studio: the studio as it was left (ESC goes back to it).
+    pub preview: Option<studio::Studio>,
     /// The hull being designed, and those commissioned (in the save).
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
@@ -363,6 +365,7 @@ impl App {
             shipyard: None,
             deckplans: Vec::new(),
             layout_sent: None,
+            preview: None,
             vending: None,
             docked_market: false,
             nav_marker: None,
@@ -593,6 +596,15 @@ impl App {
     /// TAB (watch or fly), the time warp.
     fn world_keys(&mut self, ctx: &mut Context) {
         let input = &ctx.input;
+        // Walking through the plan: ESC (or the shipyard key) back to the studio, seated.
+        if self.preview.is_some() && (input.pressed(KeyCode::Escape) || keys::pressed(input, keys::Act::Shipyard)) {
+            self.engine.send(Command::Preview(None));
+            if let Some(s) = self.preview.take() {
+                self.shipyard = Some(shipyard::Shipyard::back_to(s));
+            }
+            ctx.grab_cursor(false);
+            return;
+        }
         let seated_pilot = self.mode == Mode::Pilot && self.v.crew.seated();
         if keys::pressed(input, keys::Act::Economy) {
             self.economy_panel = Some(Default::default());

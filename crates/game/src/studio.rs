@@ -86,6 +86,10 @@ pub struct Studio {
     hull: Option<Hull>,
     /// The cursor as input last saw it (HUD pixels): what's being drawn runs to it.
     cursor: Vec2,
+    /// WALK HERE pressed away from the plan: the next click on it is where.
+    walk_armed: bool,
+    /// A walk-through asked for: feet (the hull's frame) and facing (see `shipyard`).
+    pub walk: Option<(universe_engine::glam::DVec3, f64)>,
 }
 
 /// The studio's regions on screen: the plan, the side view.
@@ -194,10 +198,11 @@ enum Action {
     Remove,
     Fit,
     Close,
+    Walk,
 }
 
 /// The toolbar: each button's key, name and what it does.
-const TOOLBAR: [(&str, &str, Action); 17] = [
+const TOOLBAR: [(&str, &str, Action); 18] = [
     ("S", "SELECT", Action::Tool(Tool::Select)),
     ("P", "PLANE", Action::Tool(Tool::Plane)),
     ("W", "WALL", Action::Tool(Tool::Wall)),
@@ -207,6 +212,7 @@ const TOOLBAR: [(&str, &str, Action); 17] = [
     ("ENT", "FINISH", Action::Finish),
     ("DEL", "REMOVE", Action::Remove),
     ("HOME", "FIT VIEW", Action::Fit),
+    ("F", "WALK HERE", Action::Walk),
     ("ESC", "CLOSE", Action::Close),
     ("N", "NEXT DECK", Action::NextDeck),
     ("S+N", "ADD DECK", Action::AddDeck),
@@ -242,6 +248,9 @@ fn tool_help(tool: Tool) -> &'static str {
 
 /// Where the tool is at now, if it's partway through something.
 fn tool_state(studio: &Studio) -> Option<String> {
+    if studio.walk_armed {
+        return Some("WALK HERE: CLICK A SPOT ON THE PLAN".into());
+    }
     let n = studio.drawing.len();
     match studio.tool {
         Tool::Plane if n > 0 => Some(format!("{n} CORNER{} PLACED: {}", if n == 1 { "" } else { "S" }, if n >= 3 { "CLICK THE FIRST AGAIN OR ENTER TO CLOSE" } else { "CLICK THE NEXT" })),
@@ -428,6 +437,23 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         }
     }
     let Some(deck) = plan.decks.get_mut(studio.deck) else { return true };
+    // A walk-through: F over the plan, there; WALK HERE (or F off it), then a click on it.
+    let walk_key = input.pressed(KeyCode::KeyF) || clicked == Some(Action::Walk);
+    if walk_key && over {
+        studio.walk = Some((universe_engine::glam::DVec3::new(at.x, deck.floor + 0.05, at.y), 0.0));
+        return true;
+    }
+    if walk_key {
+        studio.walk_armed = true;
+        return true;
+    }
+    if studio.walk_armed && input.button_pressed(MouseButton::Left) {
+        studio.walk_armed = false;
+        if over {
+            studio.walk = Some((universe_engine::glam::DVec3::new(at.x, deck.floor + 0.05, at.y), 0.0));
+            return true;
+        }
+    }
     let finish = input.pressed(KeyCode::Enter) || clicked == Some(Action::Finish);
     let remove = (input.pressed(KeyCode::Delete) && !ctrl) || clicked == Some(Action::Remove);
     let p = snap(at, alt);

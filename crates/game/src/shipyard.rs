@@ -16,6 +16,11 @@ impl Shipyard {
     pub fn laying_out(_app: &App) -> Self {
         Shipyard { studio: Default::default() }
     }
+
+    /// Back from a walk-through: the studio as it was left.
+    pub fn back_to(studio: crate::studio::Studio) -> Self {
+        Shipyard { studio }
+    }
 }
 
 pub fn open(app: &mut App) -> Option<Shipyard> {
@@ -31,6 +36,14 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     let Some(y) = app.shipyard.as_mut() else { return false };
     let mut studio = std::mem::take(&mut y.studio);
     let stay = crate::studio::input(app, ctx, &spec.key, spec.shape(), &mut studio);
+    // A walk-through: the studio put by, the pilot on foot there, first person.
+    if let Some(at) = studio.walk.take() {
+        app.engine.send(universe_sim::Command::Preview(Some(at)));
+        app.preview = Some(studio);
+        app.mode = crate::Mode::Pilot;
+        app.chase_cam = false;
+        return false;
+    }
     if let Some(y) = app.shipyard.as_mut() {
         y.studio = studio;
     }

@@ -599,6 +599,20 @@ impl Universe {
 
     /// A hull's inside as laid out: built (each deck trimmed to the hull as it
     /// is at that height) and kept, to walk in; nothing laid out, none.
+    /// The studio's walk-through: the pilot on foot at `feet` (ship frame) facing
+    /// `yaw` (aboard, or on the ground the ship rests on), or (None) back in the seat.
+    pub fn preview(&mut self, at: Option<(DVec3, f64)>) {
+        match at {
+            Some((feet, yaw)) => {
+                let sys = self.ship_system();
+                sys.positions(self.world.time, &mut self.positions);
+                let ship = self.ship.clone();
+                self.crew.stand(&sys, &ship, self.world.time, &self.positions, feet, yaw);
+            }
+            None => self.crew.place = universe_world::Place::Seat,
+        }
+    }
+
     pub fn set_layout(&mut self, plan: &universe_world::deckplan::DeckPlan) {
         let Some(h) = universe_world::content::content().handle::<universe_world::ship::ClassSpec>(&plan.hull) else { return };
         let Some(mesh) = universe_world::content::content().get(h).shape().walk.clone() else { return };

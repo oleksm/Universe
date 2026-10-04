@@ -1173,6 +1173,19 @@ pub fn apply(app: &mut App, name: &str) {
                 log::info!("scenario studiowalk: feet in the ship's frame {local:.2?}");
             }
         }
+        "studiopreview" => {
+            // The studio's walk-through on the demo plan: on foot in the hold, facing the wall and its door.
+            apply(app, "studio");
+            let floor = demo_plan(app).decks[0].floor;
+            let at = (universe_engine::glam::DVec3::new(0.0, floor + 0.05, 4.0), 0.0);
+            let plan = demo_plan(app);
+            app.engine.universe().set_layout(&plan);
+            app.engine.universe().preview(Some(at));
+            app.preview = app.shipyard.take().map(|_| Default::default());
+            app.mode = Mode::Pilot;
+            app.chase_cam = false;
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch: 0.05, ..Default::default() }, 0.02);
+        }
         "studio" => {
             // The shipyard's layout studio on our hull, with a deck laid out for a look
             // (UNIVERSE_EMPTY: none; not saved).
