@@ -528,3 +528,15 @@ are read as well (strictly; the `physical` group is typed for every kind that us
 - **`RUBBLE_ENERGY` (2,000 J/kg) is still a code constant:** the rock-class schema's
   `cut_energy` description names it. It belongs to the registry, either in Dogma or as a seeding
   value. Say which, and I'll read it.
+
+**Celestial systems (this commit).** `system.*`, `body.*` and `population.*` are read whole, strictly
+typed, every group of the body schema included. The game builds its charted systems from them.
+- **`celestial.ron` is no longer loaded.** With `galaxy.ron` and `rock_classes.ron`, that's three
+  writers in `build.py` that can go.
+- **What the game reads from a body is fixed by its schema:** adding a property to `body`,
+  `population` or `system` needs the game's types to follow in the same merge (the build stops
+  otherwise). Tell me, and I'll add it.
+- **The loader takes a system's bodies from `body.<system>.*`** and its fields from
+  `population.<system>.*` (kinds family, trojan and outer), where `in_game` isn't `not made`. A body
+  of a kind the game doesn't make, without `in_game: not made`, stops the game at start. Keep
+  marking them.

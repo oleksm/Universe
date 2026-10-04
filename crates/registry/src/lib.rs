@@ -27,7 +27,7 @@ mod sfo;
 
 pub use common::Physical;
 pub use sfo::{Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Part};
-pub use celestial::{ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
+pub use celestial::{Atmosphere, Body, BodyIdentity, BodyKind, BodyOrbit, BodyPhysical, BodyRock, InGame, Population, PopulationIdentity, PopulationKind, PopulationRocks, RockStructure, Star, Surface, Terrain, ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
 
 /// Where a record's figures come from (the common schema's `basis`).
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -75,6 +75,10 @@ pub struct Registry {
     pub rock_classes: Vec<RockClass>,
     pub goods: Vec<Good>,
     pub systems: Vec<System>,
+    /// Stars, planets, moons and small bodies, of every system written out.
+    pub bodies: Vec<Body>,
+    /// Fields of asteroids and regions of small bodies.
+    pub populations: Vec<Population>,
     /// How many records of each kind there are, the ones the game doesn't
     /// read yet included (by kind: `hull`, `part`, ...).
     pub counts: BTreeMap<String, usize>,
@@ -142,6 +146,8 @@ impl Registry {
             match kind.as_str() {
                 "rock-class" => parse(&mut |t| Ok(reg.rock_classes.push(serde_norway::from_str(t)?))),
                 "good" => parse(&mut |t| Ok(reg.goods.push(serde_norway::from_str(t)?))),
+                "body" => parse(&mut |t| Ok(reg.bodies.push(serde_norway::from_str(t)?))),
+                "population" => parse(&mut |t| Ok(reg.populations.push(serde_norway::from_str(t)?))),
                 "system" => parse(&mut |t| Ok(reg.systems.push(serde_norway::from_str(t)?))),
                 "seeding" if key == "seeding.galaxy" => parse(&mut |t| Ok(galaxy = Some(serde_norway::from_str::<GalaxySeeding>(t)?))),
                 _ => {}
@@ -155,6 +161,22 @@ impl Registry {
         let has = |k: &str| keys.contains_key(k);
         if !has(&reg.seeding.galaxy.galaxy.home) || !reg.seeding.galaxy.galaxy.home.starts_with("system.") {
             problems.push(Problem { file: keys.get("seeding.galaxy").cloned().unwrap_or_default(), what: format!("home {} is no system", reg.seeding.galaxy.galaxy.home) });
+        }
+        let kind_of = |k: &str, kind: &str| has(k) && k.split('.').next() == Some(kind);
+        for b in &reg.bodies {
+            if let Some(p) = &b.identity.parent && !kind_of(p, "body") {
+                problems.push(Problem { file: keys[&b.identity.key].clone(), what: format!("its parent {p} is no body") });
+            }
+            if let Some(c) = b.rock.as_ref().and_then(|r| r.class.as_ref()) && !kind_of(c, "rock-class") {
+                problems.push(Problem { file: keys[&b.identity.key].clone(), what: format!("its rock class {c} is none") });
+            }
+        }
+        for p in &reg.populations {
+            for (what, r, kind) in [("anchor", &p.identity.anchor, "body"), ("parent", &p.identity.parent, "body"), ("class", &p.rocks.as_ref().and_then(|r| r.class.clone()), "rock-class")] {
+                if let Some(r) = r && !kind_of(r, kind) {
+                    problems.push(Problem { file: keys[&p.identity.key].clone(), what: format!("its {what} {r} is no {kind}") });
+                }
+            }
         }
         for r in &reg.rock_classes {
             for y in [r.mining.as_ref().and_then(|m| m.yields.as_ref()), r.mining.as_ref().and_then(|m| m.rich_yields.as_ref())].into_iter().flatten() {
