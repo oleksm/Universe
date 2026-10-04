@@ -1,7 +1,8 @@
 # Integrating the game with Freefall Facts
 
 *For an agent working on the game. Written 2026-10-04 from branch `fso`; update it when the
-contract changes.*
+contract changes. The short form, with what is waiting to be built, is the `freefall-integration`
+skill.*
 
 Freefall Facts is the registry the game is to be sourced from: YAML records under `standards/`,
 built into a browsable page and into RON files the game loads. This says what the game can rely
@@ -113,6 +114,23 @@ is right for a small share of them (a remnant with a moon or two), not for every
 
 This is a spec, not yet a plan: how mining then plays (rocks hours apart, not a cloud) is the
 user's call. Do not start it without them.
+
+## Small bodies, regions and conditions
+
+Seeded in the registry (`python3 tools/standards/celestial_seed.py`, from the galaxy's seed; it never
+writes over a record) for each system written out, and **not** in any RON file yet:
+
+- `systems/<system>/small-bodies/`: comets, centaurs, crossing asteroids, captured moons, dwarf
+  planets, the main belt's largest body. Each has an orbit (semi-major axis, eccentricity,
+  inclination, period), a radius, and a rock class.
+- `systems/<system>/regions/`: scattered disc, far cloud, a meteoroid stream for each returning comet.
+- Worked out by the build per moon of a giant: tidal heat (W/m2) and its planet's radiation dose
+  (rem a day), from `metadata/conditions.yaml`.
+- `metadata/vocabulary/`: every kind of thing a system has, with `game: made | partly | not made`.
+
+They are kept apart from `bodies/` and `fields/` (the game's own, held by the guard test). When the
+engine can make one of these kinds, ask for it to be exported; the natural shape is a second list
+beside `bodies` in `celestial.ron`.
 
 ## Where the spec is ahead of the game
 
