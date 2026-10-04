@@ -1,4 +1,4 @@
-use universe_engine::glam::{DQuat, DVec3, Vec2};
+use universe_engine::glam::{DMat3, DQuat, DVec3, Vec2};
 use universe_engine::{text_size, Color, Frame, Light, Transform};
 use universe_sim::names::star_name;
 use universe_sim::units::LIGHT_YEAR;
@@ -1302,6 +1302,55 @@ fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
     }
 }
 
+/// Spaceport `port`'s settlement ground, if the registry records any (see
+/// `world::settlements`): its facilities' modules, solid and lit; its streets
+/// as paving on the ground; its power lines on poles.
+fn settlement_ground(frame: &mut Frame, app: &App, port: usize, t: f64) {
+    let sys = &app.view.system;
+    let sp = &sys.spaceports[port];
+    let b = &sys.bodies[sp.body];
+    let Some(s) = universe_sim::world::content::content().settlement(&sys.name, &b.name, &sp.name) else { return };
+    let rot = b.rotation(t);
+    let center = app.view.positions[sp.body];
+    let up = rot * sp.direction;
+    let east = rot * universe_sim::world::spaceport::tangent(sp.direction).1;
+    // (The ground there: flat round the port, at its surface radius.)
+    let r = b.surface_radius_at(center, center + up * b.rail.radius, t);
+    let origin = center + up * r;
+    let basis = DMat3::from_cols(east, up, east.cross(up));
+    let mesh = crate::models::settlement(s, r);
+    let tr = Transform { position: origin, rotation: DQuat::from_mat3(&basis).as_quat(), scale: 1.0 };
+    frame.with_surface(0.15, 16.0, 0.0, |frame| frame.model_shaded(&mesh, &tr, Color::hex(0x3a3f45), Color::hex(0x8c9196)));
+    // A point on the ground `(east, north)` metres from the port, `h` above it.
+    let ground = |p: (f64, f64), h: f64| {
+        let d = universe_sim::world::settlements::direction(sp.direction, r, p);
+        center + rot * d * (r + h)
+    };
+    // Streets: paving 20 m wide, just proud of the ground.
+    let paving = Color::hex(0x2c2f33);
+    for st in &s.streets {
+        for w in st.line.windows(2) {
+            let (a, z) = (w[0], w[1]);
+            let (dx, dy) = (z.0 - a.0, z.1 - a.1);
+            let len = (dx * dx + dy * dy).sqrt().max(1e-6);
+            let (sx, sy) = (-dy / len * 10.0, dx / len * 10.0);
+            let q = [ground((a.0 + sx, a.1 + sy), 0.3), ground((z.0 + sx, z.1 + sy), 0.3), ground((z.0 - sx, z.1 - sy), 0.3), ground((a.0 - sx, a.1 - sy), 0.3)];
+            frame.triangle(q[0], q[1], q[2], paving);
+            frame.triangle(q[0], q[2], q[3], paving);
+        }
+    }
+    // Power lines: a pole at each bend, 25 m tall, the cable between their tops.
+    let (pole, cable) = (Color::hex(0x6a6e73), Color::hex(0x9aa0a6));
+    for pw in &s.power_lines {
+        for p in &pw.line {
+            frame.line(ground(*p, 0.0), ground(*p, 25.0), pole);
+        }
+        for w in pw.line.windows(2) {
+            frame.line(ground(w[0], 25.0), ground(w[1], 25.0), cable);
+        }
+    }
+}
+
 /// Landing pads: a marked square on the ground, a local grid for judging
 /// height, and a light beam, drawn when we're close enough to see them.
 fn spaceports(frame: &mut Frame, app: &App) {
@@ -1379,6 +1428,10 @@ fn spaceports(frame: &mut Frame, app: &App) {
                 frame.line(at - v * 0.6, at + v * 0.6, pc);
                 frame.line(at, at + d * 1500.0, pc.scale(0.8));
             }
+        }
+        // Its ground as the registry records it: facilities, streets, power lines.
+        if dist < 60_000.0 {
+            settlement_ground(frame, app, i, t);
         }
         // Beacon.
         frame.line(pad, pad + up * 3000.0, c.scale(if targeted { 0.9 } else { 0.4 }));
