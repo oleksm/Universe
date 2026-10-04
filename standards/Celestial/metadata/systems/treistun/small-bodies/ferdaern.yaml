@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.ferdaern, name: Ferdaern, kind: captured moon, parent: body.treistun.treistun-h, about: 'Once
     it went round the star; Treistun h caught it. It goes round backward, far out.'}
 orbit: {semi_major_axis: 6068730000.0, eccentricity: 0.24324916, inclination: 151.23, period: 34562592.0}
-physical: {radius: 19390.0}
+physical: {radius: 19390.0, density: 1420.0, mass: 4.339e+16}
 rock: {class: rock-class.primitive}

@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.irmabro, name: Irmabro, kind: centaur, parent: body.treistun.treistun, about: 'An ice body among
     the giants, on an orbit that will last a few million years. One day a giant will throw it inward as a comet, or out.'}
 orbit: {semi_major_axis: 936985000000.0, eccentricity: 0.23521884, inclination: 17.81, period: 589014720.0}
-physical: {radius: 78560.0, density: 950, mass: 1.929e+18}
+physical: {radius: 78560.0, density: 850.0, mass: 1.726e+18}
 rock: {class: rock-class.icy}

@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.leszonia, name: Leszonia, kind: captured moon, parent: body.treistun.treistun-i, about: 'Once
     it went round the star; Treistun i caught it. It goes round the same way as the planet turns, far out.'}
 orbit: {semi_major_axis: 7353210000.0, eccentricity: 0.2377069, inclination: 36.81, period: 41092704.0}
-physical: {radius: 2815.0}
+physical: {radius: 2815.0, density: 920.0, mass: 85990000000000.0}
 rock: {class: rock-class.primitive}

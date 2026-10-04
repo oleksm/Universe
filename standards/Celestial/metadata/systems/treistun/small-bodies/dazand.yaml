@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.dazand, name: Dazand, kind: captured moon, parent: body.treistun.treistun-g, about: 'Once it
     went round the star; Treistun g caught it. It goes round backward, far out.'}
 orbit: {semi_major_axis: 5077940000.0, eccentricity: 0.20422839, inclination: 148.25, period: 14090976.0}
-physical: {radius: 16240.0}
+physical: {radius: 16240.0, density: 1190.0, mass: 2.136e+16}
 rock: {class: rock-class.primitive}

@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.shenai, name: Shenai, kind: captured moon, parent: body.treistun.treistun-g, about: 'Once it
     went round the star; Treistun g caught it. It goes round the same way as the planet turns, far out.'}
 orbit: {semi_major_axis: 5499200000.0, eccentricity: 0.32200264, inclination: 48.24, period: 15881184.0}
-physical: {radius: 5472.0}
+physical: {radius: 5472.0, density: 1620.0, mass: 1112000000000000.0}
 rock: {class: rock-class.primitive}

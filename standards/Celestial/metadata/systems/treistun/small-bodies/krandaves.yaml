@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.krandaves, name: Krandaves, kind: captured moon, parent: body.treistun.treistun-g, about: 'Once
     it went round the star; Treistun g caught it. It goes round backward, far out.'}
 orbit: {semi_major_axis: 5287260000.0, eccentricity: 0.30945698, inclination: 163.37, period: 14971392.0}
-physical: {radius: 13170.0}
+physical: {radius: 13170.0, density: 1580.0, mass: 1.512e+16}
 rock: {class: rock-class.primitive}

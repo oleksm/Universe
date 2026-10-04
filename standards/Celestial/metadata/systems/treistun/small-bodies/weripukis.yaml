@@ -7,5 +7,5 @@ identity: {key: body.treistun.weripukis, name: Weripukis, kind: centaur, parent:
     among the giants, on an orbit that will last a few million years. One day a giant will throw it inward as a comet, or
     out.'}
 orbit: {semi_major_axis: 361961000000.0, eccentricity: 0.43301958, inclination: 9.7, period: 141419520.0}
-physical: {radius: 34620.0, density: 950, mass: 1.652e+17}
+physical: {radius: 34620.0, density: 700.0, mass: 1.217e+17}
 rock: {class: rock-class.icy}

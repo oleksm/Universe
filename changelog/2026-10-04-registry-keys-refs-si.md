@@ -23,3 +23,7 @@
   or invented, and where its figure comes from. A new report holds each against the engine's own
   copy. Standard gravity (9.80665) is now a named measure; the engine has no name for it yet.
   The registry's own sums now use these, so some worked figures moved in the fourth digit.
+- **Densities guessed for the four new rock classes** (primitive, basaltic, enstatite, stony-iron),
+  each as a rubble pile and as one solid piece, marked to review. Each seeded small body now has
+  its own density, drawn between its class's two (one over 200 km in radius is solid), so the 14
+  that had no mass have one. What each world is made of stays empty until it is brought in.

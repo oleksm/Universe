@@ -72,11 +72,21 @@ def density(cls):
     return ((classes.get(cls) or {}).get("physical") or {}).get("density_monolith")
 
 
-def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu):
+def own_density(cls, nm, radius_km):
+    """A body's own density: each its own, between its class's as a rubble pile and as one solid piece
+    (drawn from the galaxy's seed and its name); one over 200 km in radius has pulled itself solid."""
+    ph = (classes.get(cls) or {}).get("physical") or {}
+    lo, hi = ph.get("density_rubble"), ph.get("density_monolith")
+    if not hi or not lo or radius_km >= 200:
+        return hi
+    return round(random.Random(f"{galaxy['seed']}:density:{nm}").uniform(lo, hi), -1)
+
+
+def body(kind, nm, parent, a_km, e, incl, radius_km, cls, about, mu, d=None):
     rec = {"provenance": "seeded", "in_game": "not made", "identity": {"key": f"body.{SYS}.{slug(nm)}", "name": nm, "kind": kind, "parent": f"body.{SYS}.{slug(parent)}", "about": about},
            "orbit": {"semi_major_axis": si(r3(a_km, 6) * 1000), "eccentricity": r3(e, 8), "inclination": round(incl, 2), "period": si(r3(2 * math.pi * math.sqrt((a_km * 1000) ** 3 / mu) / 86400, 5) * 86400)},
            "physical": {"radius": si(r3(radius_km) * 1000)}, "rock": {"class": "rock-class." + cls}}
-    d = laws["sizes"].get("comet_density") if kind == "comet" else density(cls)
+    d = d or (laws["sizes"].get("comet_density") if kind == "comet" else own_density(cls, nm, radius_km))
     if d:
         rec["physical"]["density"] = d
         rec["physical"]["mass"] = r3(d * 4 / 3 * math.pi * (radius_km * 1000) ** 3)
@@ -122,7 +132,7 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     rad = (3 * 0.39 * mb["mass"] * share / (4 * math.pi * d)) ** (1 / 3) / 1000
     a = r.uniform(belt[0] + 0.25 * (belt[1] - belt[0]), belt[1] - 0.25 * (belt[1] - belt[0]))
     put(sysdir, "small-bodies", "body", body("dwarf planet" if rad >= 400 else "asteroid", name(r), sname, a * AU, r.uniform(0.03, 0.12), r.uniform(1, 11), rad, cls,
-        "The largest body of the main belt: over a third of all the belt's mass." + ("" if rad >= 400 else " Too small to have pulled itself round."), mu),
+        "The largest body of the main belt: over a third of all the belt's mass." + ("" if rad >= 400 else " Too small to have pulled itself round."), mu, d),
         "a belt's largest body holds 39% of its mass; the belt's mass goes by the ground it covers.")
 
     # Crossing asteroids: knocked out of the belt onto orbits that come in among the rocky planets.

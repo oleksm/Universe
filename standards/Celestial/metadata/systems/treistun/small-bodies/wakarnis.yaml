@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.wakarnis, name: Wakarnis, kind: crossing asteroid, parent: body.treistun.treistun, about: 'Knocked
     out of the belt. At its closest it comes in to 0.75 AU, near the orbit of Treistun e.'}
 orbit: {semi_major_axis: 133324000000.0, eccentricity: 0.15718285, inclination: 13.35, period: 31614624.0}
-physical: {radius: 145.0}
+physical: {radius: 145.0, density: 3380.0, mass: 43160000000.0}
 rock: {class: rock-class.enstatite}

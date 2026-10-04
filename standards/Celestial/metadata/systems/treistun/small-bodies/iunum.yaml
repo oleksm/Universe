@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.iunum, name: Iunum, kind: captured moon, parent: body.treistun.treistun-g, about: 'Once it went
     round the star; Treistun g caught it. It goes round the same way as the planet turns, far out.'}
 orbit: {semi_major_axis: 4409940000.0, eccentricity: 0.18855294, inclination: 49.85, period: 11403936.0}
-physical: {radius: 5356.0}
+physical: {radius: 5356.0, density: 1590.0, mass: 1024000000000000.0}
 rock: {class: rock-class.primitive}

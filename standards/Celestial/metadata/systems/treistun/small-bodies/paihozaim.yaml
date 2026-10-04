@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.paihozaim, name: Paihozaim, kind: captured moon, parent: body.treistun.treistun-j, about: 'Once
     it went round the star; Treistun j caught it. It goes round backward, far out.'}
 orbit: {semi_major_axis: 67755200000.0, eccentricity: 0.13069402, inclination: 168.94, period: 181897920.0}
-physical: {radius: 1726.0, density: 2100, mass: 45220000000000.0}
+physical: {radius: 1726.0, density: 1310.0, mass: 28210000000000.0}
 rock: {class: rock-class.carbonaceous}

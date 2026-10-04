@@ -6,5 +6,5 @@ in_game: not made
 identity: {key: body.treistun.thiha, name: Thiha, kind: captured moon, parent: body.treistun.treistun-j, about: 'Once it went
     round the star; Treistun j caught it. It goes round the same way as the planet turns, far out.'}
 orbit: {semi_major_axis: 75660100000.0, eccentricity: 0.29574306, inclination: 26.2, period: 214643520.0}
-physical: {radius: 6574.0, density: 2100, mass: 2499000000000000.0}
+physical: {radius: 6574.0, density: 1310.0, mass: 1559000000000000.0}
 rock: {class: rock-class.carbonaceous}
