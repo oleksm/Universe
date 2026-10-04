@@ -14,7 +14,7 @@ recipes:
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.15 }
     outputs:
-      - { item: good.scrap, quantity: 0.15 }
+      - { item: stock.st4340-scrap, quantity: 0.15 }
     rate: 2.77777777777778
     power: 6000000
 basis:

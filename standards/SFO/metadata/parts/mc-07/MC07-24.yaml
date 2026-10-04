@@ -14,7 +14,7 @@ physical:
 shape:
   surface_area: 131.7
 making:
-  processes: [process.fitting]
+  module: module.assembly-shop
 fit:
   count: 2
   position: "Its centre is 55.6 m back from the nose and -0.3 m above the keel, 5.8 m either side of the centre line."

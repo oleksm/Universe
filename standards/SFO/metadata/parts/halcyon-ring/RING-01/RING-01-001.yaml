@@ -17,7 +17,7 @@ made_from:
   - item: stock.st4340-pl-3
     quantity: 23
 making:
-  processes: [process.panel-making]
+  module: module.panel-line
 fit:
   count: 2961
 basis:

@@ -21,7 +21,7 @@ made_from:
   - item: stock.al6061-pl-5
     quantity: 114.1
 making:
-  processes: [process.plate-work]
+  module: module.welding-bay
 fit:
   count: 1
   position: "Its centre is 34.6 m back from the nose and 15.6 m above the keel, 2.1 m to the left of the centre line."

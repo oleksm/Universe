@@ -14,7 +14,7 @@ recipes:
     inputs:
       - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
     outputs:
-      - { item: good.scrap, quantity: 0.05 }
+      - { item: stock.al6061-scrap, quantity: 0.05 }
     rate: 16.6666666666667
     power: 2000000
   - makes: stock.al6061-sh-2
@@ -22,7 +22,7 @@ recipes:
     inputs:
       - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
     outputs:
-      - { item: good.scrap, quantity: 0.05 }
+      - { item: stock.al6061-scrap, quantity: 0.05 }
     rate: 16.6666666666667
     power: 2000000
 basis:

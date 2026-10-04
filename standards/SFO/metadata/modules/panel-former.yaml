@@ -1,4 +1,6 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
+# Its work is taken as part of the module that makes the part (cutting and forming are that module's
+# preparation), so it has no recipe of its own. Kept: it is plant a yard has.
 identity:
   key: module.panel-former
   name: Panel former
@@ -8,11 +10,5 @@ physical:
   length: 30
   width: 15
   height: 8
-recipes:
-  - makes: good.formed-panels
-    inputs:
-      - { item: good.cut-blanks, quantity: 1.0 }
-    rate: 0.555555555555556
-    power: 300000.0
 basis:
-  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [physical], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }

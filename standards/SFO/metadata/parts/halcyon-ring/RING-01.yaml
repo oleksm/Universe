@@ -14,7 +14,7 @@ physical:
 shape:
   surface_area: 59218
 making:
-  processes: [process.ring-assembly]
+  module: module.assembly-jig
 fit:
   count: 60
 basis:

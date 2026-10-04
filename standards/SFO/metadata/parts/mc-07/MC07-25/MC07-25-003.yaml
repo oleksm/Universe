@@ -20,7 +20,7 @@ made_from:
   - item: stock.st4340-bar-120
     quantity: 3.73
 making:
-  processes: [process.machining]
+  module: module.machining-centre
 fit:
   count: 2
 basis:

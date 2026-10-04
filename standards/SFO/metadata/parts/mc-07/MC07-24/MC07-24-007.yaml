@@ -20,7 +20,7 @@ made_from:
   - item: stock.al6061-sh-2
     quantity: 24.0
 making:
-  processes: [process.plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

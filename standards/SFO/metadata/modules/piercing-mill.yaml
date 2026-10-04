@@ -14,7 +14,7 @@ recipes:
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
-      - { item: good.scrap, quantity: 0.085 }
+      - { item: stock.st4340-scrap, quantity: 0.085 }
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-150x10
@@ -22,7 +22,7 @@ recipes:
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
-      - { item: good.scrap, quantity: 0.085 }
+      - { item: stock.st4340-scrap, quantity: 0.085 }
     rate: 5.55555555555556
     power: 4000000
   - makes: stock.st4340-tb-200x15
@@ -30,7 +30,7 @@ recipes:
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.085 }
     outputs:
-      - { item: good.scrap, quantity: 0.085 }
+      - { item: stock.st4340-scrap, quantity: 0.085 }
     rate: 5.55555555555556
     power: 4000000
 basis:

@@ -11,7 +11,7 @@ made_from:
   - item: stock.sta36-pl-20
     quantity: 110.6
 making:
-  processes: [process.plate-work]
+  module: module.welding-bay
 fit:
   count: 20
 basis:

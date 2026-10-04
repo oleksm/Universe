@@ -20,7 +20,7 @@ made_from:
   - item: stock.st4340-fg
     quantity: 15
 making:
-  processes: [process.machining]
+  module: module.machining-centre
 fit:
   count: 4
 basis:

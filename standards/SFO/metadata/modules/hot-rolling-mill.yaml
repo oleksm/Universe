@@ -14,7 +14,7 @@ recipes:
     inputs:
       - { item: good.hot-ingot-6061, quantity: 1.22 }
     outputs:
-      - { item: good.scrap, quantity: 0.22 }
+      - { item: stock.al6061-scrap, quantity: 0.22 }
     rate: 27.7777777777778
     power: 26500000.0
   - makes: stock.st4340-pl-3
@@ -22,7 +22,7 @@ recipes:
     inputs:
       - { item: good.hot-ingot-4340, quantity: 1.22 }
     outputs:
-      - { item: good.scrap, quantity: 0.22 }
+      - { item: stock.st4340-scrap, quantity: 0.22 }
     rate: 27.7777777777778
     power: 26500000.0
   - makes: stock.sta36-pl-20
@@ -30,7 +30,7 @@ recipes:
     inputs:
       - { item: good.hot-ingot-a36, quantity: 1.22 }
     outputs:
-      - { item: good.scrap, quantity: 0.22 }
+      - { item: stock.sta36-scrap, quantity: 0.22 }
     rate: 27.7777777777778
     power: 26500000.0
 basis:

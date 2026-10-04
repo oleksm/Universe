@@ -14,7 +14,7 @@ recipes:
     inputs:
       - { item: good.refined-steel-a36, quantity: 1.16 }
     outputs:
-      - { item: good.scrap, quantity: 0.16 }
+      - { item: stock.sta36-scrap, quantity: 0.16 }
     rate: 27.7777777777778
     batch: 80000
     power: 1000000
@@ -23,7 +23,7 @@ recipes:
     inputs:
       - { item: good.refined-steel-4340, quantity: 1.16 }
     outputs:
-      - { item: good.scrap, quantity: 0.16 }
+      - { item: stock.st4340-scrap, quantity: 0.16 }
     rate: 27.7777777777778
     batch: 80000
     power: 1000000

@@ -10,8 +10,7 @@ physical:
   height: 25
 recipes:
   - makes: good.parts
-    inputs:
-      - { item: good.formed-panels, quantity: 1.0 }
+    does: "Whatever part it is given to make: what goes in is the part's own (what it is made from), and what is cut away comes out as scrap of that metal."
     rate: 0.277777777777778
     power: 130000.0
 basis:

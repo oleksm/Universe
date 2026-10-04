@@ -3,27 +3,23 @@ key: facility.treistun.port-trethi.trethi-yard
 name: Trethi Yard
 kind: yard
 parcel: parcel.treistun.port-trethi.4
-processes:
-  - process.plate-work
-  - process.machining
-  - process.fitting
-  - process.hull-assembly
-  - process.fitting-out
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: process.plate-work
+  - makes: good.parts
     modules:
       - { module: module.cutting-table, count: 1 }
       - { module: module.panel-former, count: 1 }
       - { module: module.welding-bay, count: 2 }
-  - process: process.machining
+  - makes: good.parts
     modules:
       - { module: module.machining-centre, count: 2 }
-  - process: process.fitting
+  - makes: good.parts
     modules:
       - { module: module.assembly-shop, count: 1 }
-  - process: process.hull-assembly
-    also: [process.fitting-out]
+  - makes: good.hulls
     modules:
       - { module: module.building-dock, count: 1 }
+# Where its stock is kept.
+modules:
+  - { module: module.stock-yard, count: 1 }

@@ -12,8 +12,7 @@ definitions:
         required: [modules]
         properties:
           makes: { type: string, x-ref: [good, stock, part, hull, gate], description: "What the line is built to make, by its key: its modules have the recipes that lead to it." }
-          process: { type: string, x-ref: [process], description: "For a line of shop work (cutting, machining, fitting, assembly): the process it runs. Shop work is not described by recipes yet." }
-          also: { type: array, items: { type: string, x-ref: [good, stock, part, hull, gate, process] }, description: "What else the same modules can be set to make (or, for shop work, run)." }
+          also: { type: array, items: { type: string, x-ref: [good, stock, part, hull, gate] }, description: "What else the same modules can be set to make." }
           modules:
             type: array
             items:

@@ -26,8 +26,8 @@ definitions:
     type: object
     additionalProperties: false
     properties:
-      processes: { type: array, items: { type: string, x-ref: [process] }, description: "The processes that make it, in order, by key." }
-      fitting_out: { type: string, x-ref: [process], description: "The process that fits it with its equipment, by its key." }
+      module: { type: string, x-ref: [module], description: "The industrial module that makes it, by its key. This is a recipe of that module's: what goes in is what the thing is made from, and what is cut away comes out as scrap of its material. The module is taken to do its own preparation (cutting, forming)." }
+      fitting_out: { type: string, x-ref: [module], description: "The module that fits it with its equipment, by its key." }
       facility: { type: string, description: The kind of facility that makes it. }
       time: { type: number, x-unit: "s", description: "s to make one" }
       tolerance: { type: number, x-unit: "m", description: "m, on its dimensions" }

@@ -14,7 +14,7 @@ recipes:
     inputs:
       - { item: good.hot-rolled-strip-6061, quantity: 1.19 }
     outputs:
-      - { item: good.scrap, quantity: 0.19 }
+      - { item: stock.al6061-scrap, quantity: 0.19 }
     rate: 16.6666666666667
     power: 38000000
 basis:

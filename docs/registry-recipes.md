@@ -144,15 +144,38 @@ and is now kg/s at full output, so the last non-SI figure is gone. 31 modules, n
 plate"` and `"Ingot"`, and the foundry's and smelter's `takes` list the alloying metals. Nothing
 else changed. The world's tests pass with it.
 
+**Step 3 (2026-10-04): shop work, scrap, storage.** The user: "assume preparation by factory
+module", "scrap as its own stock output", "a storage module on the factory so all the stock is
+kept in it".
+
+- *A part is made in one module.* `making.module` on a part, a hull and a gate names it (plate
+  parts: the welding bay; machined parts: the machining centre; assemblies: the assembly shop; the
+  hull: the building dock, which also fits it out). That is a recipe of that module's: what goes in
+  is the part's own `made_from`, what is cut away comes out as scrap of its material. The module is
+  taken to do its own preparation, so the cutting table and the panel former have no recipe now
+  (they are kept as plant a yard has, and draw nothing).
+- *The shop modules' own recipe* is by weight: `makes: good.parts` (or `good.hulls`), a rate and a
+  power, no inputs. It says how fast, not what.
+- *Scrap is a stock item of each metal:* `stock.al6061-scrap`, `stock.st4340-scrap`,
+  `stock.sta36-scrap`. The good `scrap` is gone, with `cut-blanks` and `formed-panels`.
+- *The last seven processes with modules are gone* (plate work, machining, fitting, fitting out,
+  hull assembly, panel making, ring assembly). `making.processes` is gone from every record. A
+  line no longer names a process at all: it says what it makes.
+- *Storage.* A works that makes things must have a module that stores, or the build refuses it. A
+  new module, the stock yard (the ingot yard's figures, to review), stands at the mill and the
+  yard, which had none.
+- *Check:* both chains complete as before; the MC-07 is built in 21.6 days at the yard, as before.
+
+**What the game loads, since step 2.** `settlements.ron`: the mill and the yard have a stock
+yard (a block more each, `holds: 50000.0`); the yard no longer `takes` sheet (what a shop takes is
+its parts' own, which depends on what it is set to make) and draws 1.72 MW, not 2.05 (its cutting
+table and panel former stand idle). `industry.ron`: the stock yard added.
+
 ## Next
 
-3. **Shop work** (stock into parts, parts into hulls): still by process (`plate-work`,
-   `machining`, `fitting`, `hull-assembly`, `fitting-out`, `panel-making`, `ring-assembly`), with
-   the goods `cut-blanks`, `formed-panels`, `parts` and `hulls` as what flows. It needs its own
-   answer: a part goes through three modules (cut, form, weld), and 185 parts with a recipe on
-   each would be several hundred recipes. Proposal: a part keeps its bill (`made_from`) and lists
-   the modules it passes through; the shop modules keep one recipe each, by weight.
 4. The 26 processes with no module: parked as they are until their machines are described.
+5. What a shop takes in at most, for the game: today nothing says it, since it depends on the
+   parts it is set to make.
 
 ## Open
 

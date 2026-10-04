@@ -10,10 +10,6 @@ owner: org.hadley
 # Its furnaces and casting need weight. Invented: the part of it that carries them turns.
 spin: { radius: 150, gravity: 3.0 }
 about: "A works in orbit, now round Treistun f: a foundry, a mill and a panel works on one frame with its own power plant, fed with metal from the asteroids. The part that melts and casts turns, to give the metal weight; the rest is in free fall. It is equipment, not a place. It is brought to where something too large to lift off a world is to be built, and moved on to the next when that is done."
-processes:
-  - process.panel-making
-  - process.machining
-  - process.ring-assembly
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
@@ -34,13 +30,13 @@ lines:
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.piercing-mill, count: 2 }
-  - process: process.panel-making
+  - makes: good.parts
     modules:
       - { module: module.panel-line, count: 1 }
-  - process: process.machining
+  - makes: good.parts
     modules:
       - { module: module.machining-centre, count: 20 }
-  - process: process.ring-assembly
+  - makes: good.parts
     modules:
       - { module: module.assembly-jig, count: 2 }
 modules:

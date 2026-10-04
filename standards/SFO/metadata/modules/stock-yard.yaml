@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.stock-yard
+  name: Stock yard
+  step: Store
+  description: "Racks and bays where a works keeps its stock: what it has taken in and not used yet, and what it has made and not sent out."
+physical:
+  length: 150
+  width: 100
+  height: 15
+capacity:
+  holds: 50000000
+needs:
+  power: 500000.0
+basis:
+  - { of: [physical, capacity, needs], tier: invented, review: true, note: "A guess, to be reviewed: the ingot yard's figures, used again." }

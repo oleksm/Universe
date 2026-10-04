@@ -140,9 +140,6 @@ def read_schema(path):
             idn = props["identity"]["properties"]
             one["properties"] = {"material": one["properties"]["item"], "form": idn.pop("form"), "temper": idn.pop("temper")}
         props["made_from"] = one
-    if "making" in props and kind in ("mill-stock", "hull", "gate"):
-        mk = props["making"]["properties"]
-        props["making"]["properties"] = {"process": {**mk["processes"]["items"], "description": "The process that makes it, by its key."}, **({"fitting_out": mk["fitting_out"]} if kind == "hull" else {})}
     # (And a module's one recipe as its own figures, as they were before recipes: rate, inputs, outputs, needs.)
     if kind == "module" and "recipes" in props:
         R, cap = props.pop("recipes")["items"]["properties"], props.pop("capacity")["properties"]
@@ -262,9 +259,6 @@ def old_names(rec, path):
                 idn = rec.get("identity") or {}
                 one = {"material": one.get("item"), **{k: idn.pop(k) for k in ("form", "temper") if k in idn}}
             rec["made_from"] = one
-        mk = rec.get("making")
-        if kind != "parts" and isinstance(mk, dict) and "processes" in mk:
-            rec["making"] = {("process" if k == "processes" else k): (v[0] if k == "processes" else v) for k, v in mk.items()}
     return old_groups(rec, rel) if os.sep in rel else rec
 
 
@@ -1081,11 +1075,14 @@ def route_for(where, fc, ln, target):
     steps = [{"module": s, "does": (chosen.get(s) or {}).get("does") or mod_of[s]["identity"].get("description", "")} for s in order]
     ms = next((x for x in mill_stock if x.get("slug") == target), None)
     slug = "make-" + target.lower()
-    same = next((r for r in routes if r["slug"].startswith(slug) and [st["module"] for st in r["equipment"]["steps"]] == order), None)
+    same = next((r for r in routes if r["makes"] == target and [st["module"] for st in r["equipment"]["steps"]] == order), None)
     if same:
         return same["slug"]
-    if slug in by_process:
-        slug += "-at-" + fc["slug"]
+    maker = next(s for s in reversed(order) if (chosen.get(s) or {}).get("product") == target)
+    for more in ("", "-in-" + maker, "-in-" + maker + "-at-" + fc["slug"], "-in-" + maker + "-at-" + fc["slug"] + f"-{len(routes)}"):
+        if slug + more not in by_process:
+            slug += more
+            break
     pr = {"slug": slug, "derived": True, "makes": target, "route": chosen, "file": fc["file"],
           "identity": {"name": item_name(target), "kind": "mechanical", "description": f"How {item_name(target)} is made at {fc['name']}: the recipes its modules are set to, one after another."},
           "outputs": {"products": [{"item": (ms.get("made_from") or {}).get("material"), "form": (ms.get("made_from") or {}).get("form")}] if ms else []},
@@ -1307,6 +1304,12 @@ for ad in administrations:
                         burn[i.get("item")] = burn.get(i.get("item"), 0) + i.get("amount", 0) * ((m.get("rate") or {}).get("power") or 0) * n
                 fc["burns"] = [{"item": k, "rate": v} for k, v in burn.items()]
                 covered += fc["built_area"]
+            # (A works is one pool of stock: it needs somewhere to keep it.)
+            if any("most" in ln for ln in fc.get("lines") or []):
+                every = [im.get("module") for ln in fc.get("lines") or [] for im in ln.get("modules") or []] + [im.get("module") for im in fc.get("modules") or []]
+                fc["stock_room"] = [m for m in every if m in mod_of and ((mod_of[m].get("rate") or {}).get("holds") or (mod_of[m].get("rate") or {}).get("volume"))]
+                if not fc["stock_room"]:
+                    problem(where, "it makes things and has nowhere to keep them: a works needs a module that stores (a yard, a warehouse)")
             if "exchange" in fc and (fc["exchange"] not in BRANDS or next((m for m in makers if m["key"] == fc["exchange"]), {}).get("business") != "exchange"):
                 problem(where, f"exchange: no exchange '{fc['exchange']}' in Maker House")
             if plot is not None and covered > plot.get("area", 0):
@@ -1391,9 +1394,6 @@ for ms in mill_stock:
         continue
     if mf.get("form") not in ((mat.get("identity") or {}).get("form") or []):
         problem(where, f"made_from.form: {mf.get('material')} doesn't come as {mf.get('form')}")
-    proc = (ms.get("making") or {}).get("process")
-    if proc is not None and proc not in by_process:
-        problem(where, f"making.process: no process '{proc}' in the SFO")
     density = (mat.get("mass") or {}).get("density")
     t, d, w = size.get("thickness"), size.get("diameter"), size.get("wall")
     if density and t and not d:
@@ -1471,9 +1471,9 @@ for pt in parts:
     elif ms is not None and "quantity" in mf:
         pt["stock_mass"] = mf["quantity"] * ms["weight"]
         pt["stock_unit"] = ms["unit"]
-    for name in (pt.get("making") or {}).get("processes") or []:
-        if name not in by_process:
-            problem(where, f"making.processes: no process '{name}' in the SFO")
+    made_in = (pt.get("making") or {}).get("module")
+    if made_in is not None and made_in not in mod_of:
+        problem(where, f"making.module: no module '{made_in}' in the SFO")
     ph = pt.get("physical") or {}
     for lo, hi in (("operating_min_temperature", "operating_max_temperature"), ("storage_min_temperature", "storage_max_temperature")):
         if lo in ph and hi in ph and ph[lo] > ph[hi]:
@@ -1704,6 +1704,8 @@ lined = {name for ad in administrations for x in ad["bodies"] for fc in x.get("f
 part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "part:" + pt["slug"])
 
 # (The processes that make a material as ingot: what a mill's stock starts from.)
+# (The lines built with a module that makes something: where a part made in that module can be made.)
+shop_lines = lambda mod: [ln for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and any(r["module"] == mod and r["can"] for r in ln["most"]["modules"])]
 makers_of = lambda item: [m for m in modules if any(r.get("product") == item for r in m.get("recipes") or [])]
 ingot_makers = lambda mat: [q for q in processes + routes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
 # 1. The chain from a hull down to rock: how far each part gets.
@@ -1714,13 +1716,13 @@ for hl in built_hulls + structures:
     mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
     leaves = [pt for pt in mine if not kids(pt)]
     rows = []
-    how = lambda pt: (pt.get("making") or {}).get("processes") or []
+    how = lambda pt: [q for q in [(pt.get("making") or {}).get("module")] if q]
     # (The hull itself, and each part made of parts: is it said how it is put together, and is a yard built to do it?)
-    for name, key, procs in [(hl["identity"]["name"] + " (hull)", link(hl["identity"]["name"] + ("" if "key" in hl else " (hull)"), hl.get("key", "hull:" + hl["slug"])), [q for q in [(hl.get("making") or {}).get("process")] if q])] + [(None, part_link(pt), how(pt)) for pt in mine if kids(pt)]:
-        steps = [("says how it is put together", bool(procs) and all(q in by_process for q in procs)), ("somewhere is built to do it", bool(procs) and all(q in lined for q in procs))]
+    for name, key, procs in [(hl["identity"]["name"] + " (hull)", link(hl["identity"]["name"] + ("" if "key" in hl else " (hull)"), hl.get("key", "hull:" + hl["slug"])), [q for q in [(hl.get("making") or {}).get("module")] if q])] + [(None, part_link(pt), how(pt)) for pt in mine if kids(pt)]:
+        steps = [("says how it is put together", bool(procs) and all(q in mod_of for q in procs)), ("somewhere is built to do it", bool(procs) and all(shop_lines(q) for q in procs))]
         if name and hl.get("fit"):
             out = (hl.get("making") or {}).get("fitting_out")
-            steps += [("says how it is fitted out", out in by_process), ("a yard is built to fit it out", out in lined)]
+            steps += [("says how it is fitted out", out in mod_of), ("a yard is built to fit it out", bool(shop_lines(out)))]
         reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
         rows.append(row("ok" if reached == len(steps) else "gap", key, f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
     for pt in leaves:
@@ -1731,8 +1733,8 @@ for hl in built_hulls + structures:
             ("a module has a recipe that makes that stock", bool(ms and makers_of(ms["slug"]))),
             ("a facility is built to make it", any(q in lined for q in (ms or {}).get("routes") or [])),
             ("the ingot that stock is made from can be made", any(q["slug"] in lined for q in ingot_makers((ms or {}).get("made_from", {}).get("material")))),
-            ("says how it is made from its stock", bool(how(pt)) and all(q in by_process for q in how(pt))),
-            ("a yard is built to make it", bool(how(pt)) and all(q in lined for q in how(pt))),
+            ("says how it is made from its stock", bool(how(pt)) and all(q in mod_of for q in how(pt))),
+            ("a yard is built to make it", bool(how(pt)) and all(shop_lines(q) for q in how(pt))),
         ]
         reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
         rows.append(row("ok" if reached == len(steps) else "gap", part_link(pt), f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
@@ -1743,9 +1745,9 @@ for hl in built_hulls + structures:
         for x in ad["bodies"]:
             for fc in x.get("facilities", []):
                 for ln in fc.get("lines") or []:
-                    if "most" in ln and ln["process"] == (hl.get("making") or {}).get("process") and ln["most"]["output"] and hl.get("parts_mass"):
+                    if "most" in ln and any(r["module"] == (hl.get("making") or {}).get("module") and r["can"] for r in ln["most"]["modules"]) and ln["most"]["output"] and hl.get("parts_mass"):
                         # (Fitted out on the same line, where it can be: its equipment goes through the dock too.)
-                        fits = (hl.get("making") or {}).get("fitting_out") in (ln.get("also") or [])
+                        fits = any(r["module"] == (hl.get("making") or {}).get("fitting_out") for r in ln["most"]["modules"])
                         through = hl["parts_mass"] + (sum((eq_of.get(ft.get("item"), {}).get("physical") or {}).get("mass", 0) for ft in hl.get("fit") or []) if fits else 0)
                         built.append({"at": fc["name"], "settlement": x["name"], "days": through / 1000 / ln["most"]["output"] / 24, "fitted": fits})
     hl["built"] = built
@@ -1828,22 +1830,22 @@ for g in gates:
     if st and "worked" in g:
         mine = [pt for pt in parts if pt["hull"] == st["slug"]]
         each = lambda pt: times(pt) * (times(next(o for o in mine if o["slug"] == pt["parent"])) if pt.get("parent") else 1)
-        can = lambda proc: sum(ln["most"]["output"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and proc in [ln["process"]] + (ln.get("also") or []))
-        run_in = lambda proc: ", ".join(sorted({fc["name"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and proc in [ln["process"]] + (ln.get("also") or [])}))
+        can = lambda proc: sum(ln["most"]["output"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and (proc in [ln["process"]] + (ln.get("also") or []) or any(r["module"] == proc and r["can"] for r in ln["most"]["modules"])))
+        run_in = lambda proc: ", ".join(sorted({fc["name"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and (proc in [ln["process"]] + (ln.get("also") or []) or any(r["module"] == proc and r["can"] for r in ln["most"]["modules"]))}))
         steps, stock_t, ingot_t, made_t = [], {}, {}, {}
         for pt in [pt for pt in mine if not kids(pt)]:
             ms = stock_of.get((pt.get("made_from") or {}).get("item"))
             if ms is None:
                 continue
             stock_t[ms["slug"]] = stock_t.get(ms["slug"], 0) + pt.get("stock_mass", 0) * each(pt) / 1000
-            for q in (pt.get("making") or {}).get("processes") or []:
+            for q in [q for q in [(pt.get("making") or {}).get("module")] if q]:
                 made_t[q] = made_t.get(q, 0) + pt.get("mass", 0) * each(pt) / 1000
         def step(what, tonnes_, procs):
             procs = [q for q in ([procs] if isinstance(procs, str) else procs or []) if q]
             rate = sum(can(q) for q in procs)
             steps.append({"what": what, "tonnes": tonnes_, "at": ", ".join(sorted({n_ for q in procs for n_ in run_in(q).split(", ") if n_})), "rate": rate, "days": tonnes_ / rate / 24 if rate else None})
         for q, t_ in made_t.items():
-            step(f"{by_process[q]['identity']['name']}: its parts made from stock", t_, q)
+            step(f"{mod_of[q]['identity']['name']}: its parts made from stock", t_, q)
         for code, t_ in stock_t.items():
             ms = stock_of[code]
             step(f"{ms['identity']['name']} rolled or drawn", t_, ms.get("routes") or [])
@@ -1854,8 +1856,8 @@ for g in gates:
             step(f"{next(m_ for m_ in materials if m_.get('slug') == mat)['identity']['name']} cast as ingot (at least: the mills' own losses come on top)", t_, casts)
         cargo = max([(ft_.get("performance") or {}).get("capacity", 0) for ft_ in equipment if (ft_.get("identity") or {}).get("slot") == "cargo"] or [0])
         for c in [c for c in mine if kids(c)]:
-            for q_ in (c.get("making") or {}).get("processes") or []:
-                step(f"{by_process[q_]['identity']['name']}: its {c['identity']['name'].lower()}s put together", c.get("mass", 0) * each(c) / 1000, q_)
+            for q_ in [q for q in [(c.get("making") or {}).get("module")] if q]:
+                step(f"{mod_of[q_]['identity']['name']}: its {c['identity']['name'].lower()}s put together", c.get("mass", 0) * each(c) / 1000, q_)
         fit_mass = 0.0
         for ft in g.get("fit") or []:
             if ft.get("item") not in eq_by:
@@ -2152,7 +2154,10 @@ for pr in processes + routes:
 for m in materials:
     for form in (m.get("identity") or {}).get("form") or []:
         by = makes.get((m["slug"], form), [])
-        rows.append(row("ok" if by else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, link(by_process[by[0]]["identity"]["name"], "proc:" + by[0]) if by else "no process makes it"))
+        # (Or it comes out of a recipe beside what the recipe makes: scrap.)
+        aside = [md for ms_ in mill_stock if (ms_.get("made_from") or {}).get("material") == m["slug"] and (ms_.get("made_from") or {}).get("form") == form
+                 for md in modules if any(x.get("item") == ms_["slug"] for rc in md.get("recipes") or [] for x in rc.get("outputs") or [])]
+        rows.append(row("ok" if by or aside else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, link(by_process[by[0]]["identity"]["name"], "proc:" + by[0]) if by else link("comes out of the " + aside[0]["identity"]["name"].lower(), "mod:" + aside[0]["slug"]) if aside else "no process makes it"))
 report("stock", "Materials: is every form made by a process", "Each material in each form it is said to come in, and the process that makes it in that form.", ["Material", "Form", "Made by"], rows)
 
 # 6. Each process: has it real steps, and is it run anywhere?

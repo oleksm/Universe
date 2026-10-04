@@ -47,3 +47,9 @@
   items ("6061 plate 5 mm") where they were kinds ("Sheet and plate").
 - **Logistics** is noted in the backlog to describe properly later: for now a factory is one pool
   of stock, and between factories the market is the join.
+- **Shop work on recipes too.** A part, a hull and a gate ring each name the one module that makes
+  them; that module is taken to cut and form what it needs itself. What is cut away is scrap, now
+  a stock item of each metal. The last processes that had modules are gone: nothing names a process
+  any more.
+- **Every works keeps its stock somewhere.** A new stock yard stands at the Trethi mill and yard;
+  a works that makes things with nowhere to store them is refused.

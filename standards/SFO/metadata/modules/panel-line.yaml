@@ -10,10 +10,7 @@ physical:
   height: 15
 recipes:
   - makes: good.parts
-    inputs:
-      - { item: stock.st4340-pl-3, quantity: 1.15 }
-    outputs:
-      - { item: good.scrap, quantity: 0.15 }
+    does: "Whatever part it is given to make: what goes in is the part's own (what it is made from), and what is cut away comes out as scrap of that metal."
     rate: 5.55555555555556
     power: 2000000
 basis:

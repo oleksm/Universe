@@ -20,7 +20,7 @@ made_from:
   - item: stock.al6061-sh-2
     quantity: 171.1
 making:
-  processes: [process.plate-work]
+  module: module.welding-bay
 fit:
   count: 1
   position: "Its centre is 26.3 m back from the nose and 16.3 m above the keel, on the centre line."

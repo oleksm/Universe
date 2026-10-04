@@ -20,7 +20,7 @@ made_from:
   - item: stock.al6061-pl-5
     quantity: 242.8
 making:
-  processes: [process.plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

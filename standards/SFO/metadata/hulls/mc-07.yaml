@@ -30,8 +30,8 @@ fit:
   - { slot: avionics, item: equipment.nav.basic.s1 }
   - { slot: power, item: equipment.power.fusion.s1 }
 making:
-  processes: [process.hull-assembly]
-  fitting_out: process.fitting-out
+  module: module.building-dock
+  fitting_out: module.building-dock
 design:
   lands: empty
   thrust_path: [part.mc07-21, part.mc07-19, part.mc07-16, part.mc07-12, part.mc07-07, part.mc07-02]
