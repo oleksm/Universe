@@ -90,6 +90,9 @@ pub struct Studio {
     hull: Option<Hull>,
     /// The cursor as input last saw it (HUD pixels): what's being drawn runs to it.
     pub cursor: Vec2,
+    /// A repeating step held (floor up/down, height +/-: its number), how long it's
+    /// been held and when it steps next (s).
+    held: Option<(usize, f32, f32)>,
     /// WALK HERE pressed away from the plan: the next click on it is where.
     walk_armed: bool,
     /// A walk-through asked for: feet (the hull's frame) and facing (see `shipyard`).
@@ -450,6 +453,35 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     if k < plan.decks.len() {
         // The floor moved: the decks above with it (the stack keeps together); not
         // down into the deck below (its height and a deck's thickness kept).
+        // The steps that repeat while held (key or button): once at the press, then
+        // after a pause, over and over.
+        let steps = [
+            ([KeyCode::Equal, KeyCode::NumpadAdd], Action::Floor(0.1)),
+            ([KeyCode::Minus, KeyCode::NumpadSubtract], Action::Floor(-0.1)),
+            ([KeyCode::BracketRight, KeyCode::BracketRight], Action::Headroom(0.1)),
+            ([KeyCode::BracketLeft, KeyCode::BracketLeft], Action::Headroom(-0.1)),
+        ];
+        let mut fire = [false; 4];
+        for (n, (keys, action)) in steps.iter().enumerate() {
+            let start = keys.iter().any(|k| input.pressed(*k)) || clicked == Some(*action);
+            let down = keys.iter().any(|k| input.down(*k)) || (input.button_down(MouseButton::Left) && button_at(size, cursor) == Some(*action));
+            if start {
+                studio.held = Some((n, 0.0, 0.4));
+                fire[n] = true;
+            } else if let Some((h, t, next)) = studio.held.as_mut()
+                && *h == n
+            {
+                if !down {
+                    studio.held = None;
+                } else {
+                    *t += ctx.dt;
+                    if *t >= *next {
+                        *next += 0.06;
+                        fire[n] = true;
+                    }
+                }
+            }
+        }
         let mut lift = 0.0;
         // Dragged in the side view: to the cursor's height (5 cm steps).
         if studio.drag == Some(Drag::Floor(k)) {
@@ -457,19 +489,19 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + deckplan::DECK);
             lift = to.max(lowest) - plan.decks[k].floor;
         }
-        if input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) || clicked == Some(Action::Floor(0.1)) {
+        if fire[0] {
             lift = step;
         }
-        if input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) || clicked == Some(Action::Floor(-0.1)) {
+        if fire[1] {
             let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + deckplan::DECK);
             lift = -step.min(plan.decks[k].floor - lowest).max(0.0);
         }
         // Its height changed: the decks above moved by as much.
         let mut taller = 0.0;
-        if input.pressed(KeyCode::BracketRight) || clicked == Some(Action::Headroom(0.1)) {
+        if fire[2] {
             taller = step;
         }
-        if input.pressed(KeyCode::BracketLeft) || clicked == Some(Action::Headroom(-0.1)) {
+        if fire[3] {
             taller = -step.min(plan.decks[k].headroom - 1.0).max(0.0);
         }
         plan.decks[k].headroom += taller;
