@@ -1096,7 +1096,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         dimension(frame, Vec2::new(z1 + 12.0, sy(h.lo.y)), Vec2::new(z1 + 12.0, sy(h.hi.y)), h.hi.y - h.lo.y);
         // The hull's sheet: its measures and its mass.
         let sheet = format!("{}   L {:.1} M   B {:.1} M   H {:.1} M   DRY MASS {:.1} T", h.name, h.hi.z - h.lo.z, h.hi.x - h.lo.x, h.hi.y - h.lo.y, h.dry_mass / 1000.0);
-        frame.text_scaled(Vec2::new(side_r.0.x + 6.0, side_r.0.y + 22.0), &sheet, INK.scale(0.8), SCALE);
+        frame.text_scaled(Vec2::new(side_r.0.x + 6.0, side_r.0.y + 8.0), &sheet, INK.scale(0.8), SCALE);
         // The decks' lines, from just right of their labels (so they don't run through them).
         let label = |k: usize, d: &Deck| format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom);
         let labels_w = decks.iter().enumerate().map(|(k, d)| label(k, d).chars().count()).max().unwrap_or(0) as f32 * universe_engine::frame::GLYPH * SCALE;
@@ -1127,7 +1127,6 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
                 frame.hud_line(Vec2::new(end.x + 4.0, mid_y), Vec2::new(from, sy(d.floor + d.headroom / 2.0)), col.scale(0.7));
             }
         }
-        frame.text_scaled(Vec2::new(side_r.0.x + 6.0, side_r.0.y + 8.0), "CLICK A DECK TO PICK IT - DRAG ITS FLOOR LINE TO MOVE IT - RIGHT-DRAG PANS", LABEL.scale(0.55), SCALE);
         // The height under the cursor: a guide across, and how far up it is (from the
         // keel), to line a deck up with a door or a window.
         if in_rect(side_r, studio.cursor) {
