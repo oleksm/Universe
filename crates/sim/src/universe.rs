@@ -501,7 +501,7 @@ impl Universe {
             .par_iter()
             .filter_map(|&(id, system, pos, landed, clearance)| {
                 let (sys, positions, ports) = &systems[&system];
-                let mut p = universe_services::Presence { ship: id, system, ..Default::default() };
+                let mut p = universe_services::Presence { ship: id, system, landed, ..Default::default() };
                 // Pads: on one, or in the column over it.
                 for sp in ports {
                     let off = pos - sp.center;
@@ -514,16 +514,19 @@ impl Universe {
                     if !near {
                         continue;
                     }
+                    // (In a pad's own column, not merely nearer it than the others: a ship
+                    // coming in over the field, nearest one pad then the next, had "been and
+                    // gone" from its own and freed it for the next in line while still on its
+                    // way down to it.)
                     let flat = |v: DVec3, up: DVec3| v - up * v.dot(up);
-                    let nearest = (0..universe_world::spaceport::PADS).min_by(|&a, &b| {
-                        let d = |k| {
-                            let pad = universe_world::port::pad(sys, sp.port, k, universe_world::ship::SHIP_RADIUS);
-                            let up = universe_world::port::up(sp.port, pad);
-                            flat(local - pad, up).length()
-                        };
-                        d(a).total_cmp(&d(b))
-                    });
-                    p.pad = nearest.map(|k| (sp.port, k));
+                    let off_pad = |k| {
+                        let pad = universe_world::port::pad(sys, sp.port, k, universe_world::ship::SHIP_RADIUS);
+                        let up = universe_world::port::up(sp.port, pad);
+                        flat(local - pad, up).length()
+                    };
+                    if let Some(k) = (0..universe_world::spaceport::PADS).find(|&k| off_pad(k) < universe_world::spaceport::PAD_SIZE) {
+                        p.pad = Some((sp.port, k));
+                    }
                 }
                 // Corridors it holds and is done with.
                 for &(s, b) in held.get(&id).map_or(&[][..], |v| &v[..]) {

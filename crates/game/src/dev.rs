@@ -1367,6 +1367,11 @@ pub fn apply(app: &mut App, name: &str) {
     app.messages.clear();
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
+    if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
+        for c in u.atc.journal.iter().filter(|c| c.ship == 0) {
+            log::info!("atc: {c:?}");
+        }
+    }
 
     // Optional camera override: UNIVERSE_CAM=cockpit | map (observer watching the ship from afar).
     match std::env::var("UNIVERSE_CAM").as_deref() {

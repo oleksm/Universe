@@ -4,8 +4,8 @@
 //!
 //! - **Pads**: a ship cleared to land is given a pad of its own
 //!   (`request_pad`); when they're all taken it's queued (it holds, see
-//!   avionics) and asks again. The pad is its until it's been there and gone
-//!   (physically: see `presence`), or it's released (`release`: its
+//!   avionics) and asks again. The pad is its until it's landed there and
+//!   gone (physically: see `presence`), or it's released (`release`: its
 //!   clearance ended, it was wrecked, it left the system).
 //!   A port is a spaceport or a station's deck (`Facility`).
 //! - **Corridors**: a gate's run takes one ship
@@ -95,6 +95,8 @@ pub struct Presence {
     pub system: usize,
     /// On a pad, or in the column over it: (port, pad).
     pub pad: Option<(Facility, usize)>,
+    /// Resting there (landed), not flying over it.
+    pub landed: bool,
     /// Corridors (station or gate bodies) it's done with: through or clear of.
     pub clear_of: Vec<usize>,
 }
@@ -287,14 +289,20 @@ impl TrafficControl {
         }
     }
 
-    /// This frame's physical facts: a pad's ship on it (or in its column)
-    /// has arrived; one that has arrived and is gone frees it; a ship on a
-    /// pad nobody holds occupies it. Corridors are freed by ships done with them.
+    /// This frame's physical facts: a pad's ship landed on it has arrived;
+    /// one that has arrived and is gone (out of its column) frees it; a ship
+    /// landed on a pad nobody holds occupies it. Flying through a pad's column
+    /// is neither: a ship coming in over the field doesn't free its own pad
+    /// behind it, or take another's. Corridors are freed by ships done with them.
     pub fn presence(&mut self, present: &[Presence]) {
         let mut at: HashMap<usize, (usize, Facility, usize)> = HashMap::new();
+        let mut landed: std::collections::HashSet<usize> = std::collections::HashSet::new();
         for p in present {
             if let Some((port, pad)) = p.pad {
                 at.insert(p.ship, (p.system, port, pad));
+                if p.landed {
+                    landed.insert(p.ship);
+                }
             }
             for &body in &p.clear_of {
                 self.release_corridor(p.system, body, p.ship);
@@ -305,7 +313,7 @@ impl TrafficControl {
             for (k, o) in p.owners.iter_mut().enumerate() {
                 if let Some(owner) = o {
                     if at.get(&owner.ship) == Some(&(*system, *port, k)) {
-                        owner.arrived = true;
+                        owner.arrived |= landed.contains(&owner.ship);
                     } else if owner.arrived {
                         changes.push((owner.ship, What::PadFreed { system: *system, port: *port, pad: k }));
                         *o = None;
@@ -313,7 +321,7 @@ impl TrafficControl {
                 }
             }
         }
-        let mut squatters: Vec<_> = at.into_iter().collect();
+        let mut squatters: Vec<_> = at.into_iter().filter(|(ship, _)| landed.contains(ship)).collect();
         squatters.sort();
         for (ship, (system, port, k)) in squatters {
             let p = self.ports.entry((system, port)).or_default();
@@ -419,12 +427,32 @@ mod tests {
     }
 
     #[test]
+    fn a_pad_is_freed_once_its_ship_has_landed_there_and_left_not_by_flying_over() {
+        let port = Facility::Spaceport(0);
+        let mut tc = TrafficControl::default();
+        let PadGrant::Pad(k) = tc.request_pad(1, port, 7, 0.0) else { panic!("a pad") };
+        let at = |pad: Option<usize>, landed: bool| [Presence { ship: 7, system: 1, pad: pad.map(|p| (port, p)), landed, clear_of: vec![] }];
+        // Coming in: through its column, out over the next pad, back: still its.
+        tc.presence(&at(Some(k), false));
+        tc.presence(&at(Some((k + 1) % PADS), false));
+        tc.presence(&at(None, false));
+        assert_eq!(tc.owners(1, port)[k], Some(7), "flying through isn't arriving");
+        assert_eq!(tc.owners(1, port)[(k + 1) % PADS], None, "nor is flying over a free pad taking it");
+        // Landed, then gone: free.
+        tc.presence(&at(Some(k), true));
+        tc.presence(&at(Some(k), false));
+        assert_eq!(tc.owners(1, port)[k], Some(7), "lifting off in its column: still its");
+        tc.presence(&at(None, false));
+        assert_eq!(tc.owners(1, port)[k], None);
+    }
+
+    #[test]
     fn a_corridor_takes_one_ship_until_it_is_done_and_waits_for_traffic_coming_out() {
         let mut tc = TrafficControl::default();
         assert_eq!(tc.request_corridor(1, 5, 1, 0.0), None);
         assert_eq!(tc.request_corridor(1, 5, 2, 0.0), Some(1), "taken: one ahead");
         assert_eq!(tc.request_corridor(1, 5, 3, 0.0), Some(2), "and two for the next");
-        tc.presence(&[Presence { ship: 1, system: 1, pad: None, clear_of: vec![5] }]);
+        tc.presence(&[Presence { ship: 1, system: 1, pad: None, landed: false, clear_of: vec![5] }]);
         assert_eq!(tc.request_corridor(1, 5, 3, 1.0), Some(1), "not its turn yet: 2 was first");
         assert_eq!(tc.request_corridor(1, 5, 2, 1.0), None, "free once it's through, and 2's turn");
         tc.release(2);
