@@ -234,7 +234,7 @@ const addressHtml = o => { const p = placeOf(o); if (!p) return ""; const ad = o
 const orgsAt = (sy, at) => ORGS.filter(o => o.address.at === `${sy}/${at}`).sort((p, r) => String(p.address.tower || "").localeCompare(String(r.address.tower || "")) || (p.address.deck || 0) - (r.address.deck || 0) || String(p.address.section || "").localeCompare(String(r.address.section || "")) || (p.address.unit || 0) - (r.address.unit || 0));
 
 // A parcel's owner, and its address: parcel, zone, settlement, what that is at, system.
-const ownerOf = k => ORGS_ALL.find(o => o.key === k) || { name: k, to: "" };
+const ownerOf = k => k === undefined ? { name: "vacant", to: "" } : ORGS_ALL.find(o => o.key === k) || { name: k, to: "" };
 const ownerLink = k => { const o = ownerOf(k); return o.to ? `<a data-k="${esc(o.to)}">${esc(o.name)}</a>` : esc(o.name); };
 const parcelKey = (a, x, p) => `pc:${a.slug}:${x.slug}:${p.number}`;
 // (A parcel's address: its number on its street. One with none yet is known by its lot number.)
