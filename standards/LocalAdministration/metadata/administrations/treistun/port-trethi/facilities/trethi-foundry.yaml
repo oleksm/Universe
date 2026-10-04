@@ -15,6 +15,7 @@ processes:
 # economy's business.
 lines:
   - process: steelmaking
+    also: [alloying-4340]
     modules:
       - { module: ore-yard, count: 1 }
       - { module: pellet-plant, count: 1 }

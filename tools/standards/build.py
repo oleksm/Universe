@@ -810,7 +810,7 @@ for ad in administrations:
             covered = 0
             for ln in fc.get("lines") or []:
                 pr = by_process.get(ln.get("process"))
-                if set(ln) != {"process", "modules"}:
+                if set(ln) - {"also"} != {"process", "modules"}:
                     problem(where, "lines: each is a process and the modules it is built of")
                     continue
                 if ln["process"] not in (fc.get("processes") or []):
@@ -832,6 +832,18 @@ for ad in administrations:
                 for m in has:
                     if m not in [r["module"] for r in unit["modules"]]:
                         problem(where, f"lines: '{m}' is no step of {ln['process']}")
+                # (What else the same line can run: each a process of the facility, whose steps are
+                # all in modules the line has.)
+                for other in ln.get("also") or []:
+                    opr = by_process.get(other)
+                    if other not in (fc.get("processes") or []):
+                        problem(where, f"lines: also '{other}' is not one of its processes")
+                    elif opr is None or not (opr.get("equipment") or {}).get("steps"):
+                        problem(where, f"lines: also '{other}' has no steps")
+                    else:
+                        for st in opr["equipment"]["steps"]:
+                            if st.get("module") not in has:
+                                problem(where, f"lines: also '{other}' needs a {st.get('module')}, and the line has none")
                 # (The most the line can make: the least any of its modules lets through.)
                 limits = [(has[r["module"]] * mod_of[r["module"]]["rate"]["throughput"] / r["demand"], r["module"]) for r in unit["modules"] if r["demand"] and r["module"] in has]
                 if not limits:
@@ -1212,7 +1224,7 @@ for ad in administrations:
         for fc in x.get("facilities", []):
             for name in fc.get("processes") or []:
                 run_at.setdefault(name, []).append(fc)
-lined = {ln["process"] for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln}
+lined = {name for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln for name in [ln["process"]] + (ln.get("also") or [])}
 part_link = lambda pt: link(f"{pt['slug']} {pt['identity'].get('name', '')}", "part:" + pt["slug"])
 
 # (The processes that make a material as ingot: what a mill's stock starts from.)

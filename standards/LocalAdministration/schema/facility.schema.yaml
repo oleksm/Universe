@@ -20,6 +20,7 @@ properties:
       required: [process, modules]
       properties:
         process: { type: string, description: 'One of its processes, one that has steps.' }
+        also: { type: array, items: { type: string }, description: 'Other processes of its the same line can run instead, on the same modules (another grade of steel). The line''s most is shared between them.' }
         modules:
           type: array
           items:
