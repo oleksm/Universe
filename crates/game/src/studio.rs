@@ -5,6 +5,9 @@
 //! wall's segments can be bent into arcs. Plans are kept (in the save), one
 //! per hull; see `world::deckplan`.
 //!
+//! Worked with the mouse: the toolbar along the top (each button's key too),
+//! drawing and picking on the plan.
+//!
 //! Tools: S select (drag a point; drag a segment's middle to bend it), P
 //! plane (click its corners; the first again or ENTER closes it), W wall
 //! (click its points; ENTER ends it), D door (click a wall; again removes
@@ -79,9 +82,9 @@ pub struct Studio {
 
 /// The studio's regions on screen: the plan, the side view.
 fn regions(size: Vec2) -> ((Vec2, Vec2), (Vec2, Vec2)) {
-    let top = 52.0;
-    // (Above the shipyard's panel of actions.)
-    let bottom = size.y - 104.0;
+    // (Under the title, the toolbar and the line saying what's on.)
+    let top = 86.0;
+    let bottom = size.y - 12.0;
     let split = top + (bottom - top) * 0.62;
     ((Vec2::new(12.0, top), Vec2::new(size.x - 12.0, split - 6.0)), (Vec2::new(12.0, split), Vec2::new(size.x - 12.0, bottom)))
 }
@@ -164,6 +167,57 @@ fn first_floor(mesh: &universe_sim::world::walk::WalkMesh) -> f64 {
     best.unwrap_or(mesh.lo.y + 1.0)
 }
 
+/// What a toolbar button (or its key) does.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Action {
+    Tool(Tool),
+    DeckDown,
+    DeckUp,
+    NewDeck,
+    DropDeck,
+    Floor(f64),
+    Headroom(f64),
+    Finish,
+    Remove,
+    Fit,
+    Close,
+}
+
+/// The toolbar: each button's key, name and what it does.
+const TOOLBAR: [(&str, &str, Action); 16] = [
+    ("S", "SELECT", Action::Tool(Tool::Select)),
+    ("P", "PLANE", Action::Tool(Tool::Plane)),
+    ("W", "WALL", Action::Tool(Tool::Wall)),
+    ("D", "DOOR", Action::Tool(Tool::Door)),
+    ("ENT", "FINISH", Action::Finish),
+    ("DEL", "REMOVE", Action::Remove),
+    ("HOME", "FIT VIEW", Action::Fit),
+    ("ESC", "CLOSE", Action::Close),
+    ("PGDN", "DECK DOWN", Action::DeckDown),
+    ("PGUP", "DECK UP", Action::DeckUp),
+    ("N", "NEW DECK", Action::NewDeck),
+    ("^DEL", "DROP DECK", Action::DropDeck),
+    ("-", "FLOOR DOWN", Action::Floor(-0.1)),
+    ("+", "FLOOR UP", Action::Floor(0.1)),
+    ("[", "HEADROOM -", Action::Headroom(-0.1)),
+    ("]", "HEADROOM +", Action::Headroom(0.1)),
+];
+
+/// Where toolbar button `k` is on screen (two rows of eight).
+fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
+    let w = ((size.x - 24.0 - 7.0 * 4.0) / 8.0).floor();
+    let cell = Vec2::new(w, 16.0);
+    (Vec2::new(12.0 + (k % 8) as f32 * (w + 4.0), 30.0 + (k / 8) as f32 * 20.0), cell)
+}
+
+/// The toolbar button under `q`, if any.
+fn button_at(size: Vec2, q: Vec2) -> Option<Action> {
+    (0..TOOLBAR.len()).find(|&k| {
+        let (p, c) = button(size, k);
+        q.x >= p.x && q.x <= p.x + c.x && q.y >= p.y && q.y <= p.y + c.y
+    }).map(|k| TOOLBAR[k].2)
+}
+
 /// Snapped to a quarter metre (ALT: as it is).
 fn snap(p: DVec2, free: bool) -> DVec2 {
     if free { p } else { (p * 4.0).round() / 4.0 }
@@ -178,8 +232,10 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     let Some(h) = studio.hull.as_ref() else {
         return !input.pressed(KeyCode::Escape);
     };
+    // A toolbar button clicked: as its key.
+    let clicked = if input.button_pressed(MouseButton::Left) { button_at(size, input.cursor) } else { None };
     // Fit the view to the hull.
-    if studio.view.is_none() || input.pressed(KeyCode::Home) {
+    if studio.view.is_none() || input.pressed(KeyCode::Home) || clicked == Some(Action::Fit) {
         let span = (plan_r.1 - plan_r.0).as_dvec2();
         let s = (span.x / (h.hi.z - h.lo.z)).min(span.y / (h.hi.x - h.lo.x)) * 0.92;
         studio.view = Some((DVec2::new((h.lo.x + h.hi.x) / 2.0, (h.lo.z + h.hi.z) / 2.0), s));
@@ -192,6 +248,9 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     let over = cursor.x >= plan_r.0.x && cursor.x <= plan_r.1.x && cursor.y >= plan_r.0.y && cursor.y <= plan_r.1.y;
     let at = studio.to_plan(plan_r, cursor);
     let px = studio.view.map_or(10.0, |v| v.1);
+    if clicked == Some(Action::Close) {
+        return false;
+    }
     // ESC: stop drawing, drop the pick, else leave.
     if input.pressed(KeyCode::Escape) {
         if !studio.drawing.is_empty() || studio.pick.is_some() {
@@ -203,7 +262,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     }
     // Tools.
     for (k, t) in [(KeyCode::KeyS, Tool::Select), (KeyCode::KeyP, Tool::Plane), (KeyCode::KeyW, Tool::Wall), (KeyCode::KeyD, Tool::Door)] {
-        if input.pressed(k) {
+        if input.pressed(k) || clicked == Some(Action::Tool(t)) {
             studio.tool = t;
             studio.drawing.clear();
         }
@@ -212,7 +271,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     let first_floor = h.first_floor;
     let plan = Studio::plan(app, hull_key);
     let n = plan.decks.len();
-    if input.pressed(KeyCode::KeyN) {
+    if input.pressed(KeyCode::KeyN) || clicked == Some(Action::NewDeck) {
         let floor = plan.decks.iter().map(|d| d.floor + d.headroom + 0.3).fold(first_floor, f64::max);
         plan.decks.push(Deck::at(if n == 0 { first_floor } else { floor }));
         plan.decks.sort_by(|a, b| a.floor.total_cmp(&b.floor));
@@ -220,32 +279,32 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         studio.drawing.clear();
         studio.pick = None;
     }
-    if input.pressed(KeyCode::PageUp) && studio.deck + 1 < plan.decks.len() {
+    if (input.pressed(KeyCode::PageUp) || clicked == Some(Action::DeckUp)) && studio.deck + 1 < plan.decks.len() {
         studio.deck += 1;
         studio.drawing.clear();
         studio.pick = None;
     }
-    if input.pressed(KeyCode::PageDown) && studio.deck > 0 {
+    if (input.pressed(KeyCode::PageDown) || clicked == Some(Action::DeckDown)) && studio.deck > 0 {
         studio.deck -= 1;
         studio.drawing.clear();
         studio.pick = None;
     }
     let step = if shift { 0.5 } else { 0.1 };
     if let Some(deck) = plan.decks.get_mut(studio.deck) {
-        if input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) {
+        if input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) || clicked == Some(Action::Floor(0.1)) {
             deck.floor += step;
         }
-        if input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) {
+        if input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) || clicked == Some(Action::Floor(-0.1)) {
             deck.floor -= step;
         }
-        if input.pressed(KeyCode::BracketRight) {
+        if input.pressed(KeyCode::BracketRight) || clicked == Some(Action::Headroom(0.1)) {
             deck.headroom += step;
         }
-        if input.pressed(KeyCode::BracketLeft) {
+        if input.pressed(KeyCode::BracketLeft) || clicked == Some(Action::Headroom(-0.1)) {
             deck.headroom = (deck.headroom - step).max(1.0);
         }
     }
-    if ctrl && input.pressed(KeyCode::Delete) && studio.deck < plan.decks.len() {
+    if ((ctrl && input.pressed(KeyCode::Delete)) || clicked == Some(Action::DropDeck)) && studio.deck < plan.decks.len() {
         plan.decks.remove(studio.deck);
         studio.deck = studio.deck.min(plan.decks.len().saturating_sub(1));
         studio.pick = None;
@@ -274,6 +333,8 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         }
     }
     let Some(deck) = plan.decks.get_mut(studio.deck) else { return true };
+    let finish = input.pressed(KeyCode::Enter) || clicked == Some(Action::Finish);
+    let remove = (input.pressed(KeyCode::Delete) && !ctrl) || clicked == Some(Action::Remove);
     let p = snap(at, alt);
     let near = |q: DVec2| q.distance(at) * px < 8.0;
     match studio.tool {
@@ -289,7 +350,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             if input.pressed(KeyCode::Backspace) {
                 studio.drawing.pop();
             }
-            if input.pressed(KeyCode::Enter) {
+            if finish {
                 if studio.tool == Tool::Plane && studio.drawing.len() >= 3 {
                     deck.planes.push(std::mem::take(&mut studio.drawing));
                 } else if studio.tool == Tool::Wall && studio.drawing.len() >= 2 {
@@ -368,7 +429,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                 Some(Drag::Point(..) | Drag::Bend(..)) => studio.drag = None,
                 _ => {}
             }
-            if input.pressed(KeyCode::Delete) && !ctrl {
+            if remove {
                 match studio.pick.take() {
                     Some(Pick::Wall(k)) if k < deck.walls.len() => {
                         deck.walls.remove(k);
@@ -404,9 +465,20 @@ fn inside(poly: &[DVec2], p: DVec2) -> bool {
 }
 
 /// The studio drawn (the shipyard's layout page).
-pub fn draw(frame: &mut Frame, app: &App, hull_key: &str, hull_name: &str, studio: &Studio) {
+pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio) {
     let size = frame.size();
     let (plan_r, side_r) = regions(size);
+    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   LAYOUT STUDIO - {hull_name}   {:.0} CR", app.v.credits), LABEL);
+    // The toolbar: the tool in use lit, the button under the cursor brighter.
+    {
+        use crate::hud::{draw_cell, Lamp};
+        for (k, (key, name, action)) in TOOLBAR.iter().enumerate() {
+            let (p, c) = button(size, k);
+            let hover = button_at(size, studio.cursor) == Some(*action);
+            let lamp = if *action == Action::Tool(studio.tool) || hover { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, c, key, name, lamp);
+        }
+    }
     for r in [plan_r, side_r] {
         frame.hud_rect(r.0, r.1 - r.0, PAPER);
     }
@@ -545,7 +617,7 @@ pub fn draw(frame: &mut Frame, app: &App, hull_key: &str, hull_name: &str, studi
         Some(d) => format!("DECK {} OF {}   FLOOR {:.1} M UP   HEADROOM {:.1} M", studio.deck + 1, decks.len(), d.floor - h.keel, d.headroom),
         None => "NO DECKS YET: N ADDS ONE".into(),
     };
-    frame.text(Vec2::new(plan_r.0.x, plan_r.0.y - 16.0), &format!("LAYOUT STUDIO - {hull_name}   {deck_line}   TOOL: {tool}"), LABEL);
+    frame.text(Vec2::new(plan_r.0.x, plan_r.0.y - 16.0), &format!("{deck_line}   TOOL: {tool}"), LABEL);
 }
 
 /// A drag handle: a square (a point) or a ring (a bend).

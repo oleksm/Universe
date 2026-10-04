@@ -259,7 +259,7 @@ fn standard_lines(s: &Standard, width: usize, out: &mut Vec<(String, Color)>) {
     };
     out.push((format!("{status}   LICENCE {licence}   BY {}", body.map_or("?", |b| b.name.as_str())), DIM));
     out.push((String::new(), TEXT));
-    for l in crate::shipyard::wrap(&s.scope, width) {
+    for l in crate::fmt::wrap(&s.scope, width) {
         out.push((l, TEXT));
     }
     if !s.refs.is_empty() {
@@ -317,7 +317,7 @@ fn standard_lines(s: &Standard, width: usize, out: &mut Vec<(String, Color)>) {
         out.push((String::new(), TEXT));
         out.push(("NOTES".into(), DIM));
         for p in notes {
-            for l in crate::shipyard::wrap(&format!("{}: {}", p.key.to_uppercase(), p.note), width) {
+            for l in crate::fmt::wrap(&format!("{}: {}", p.key.to_uppercase(), p.note), width) {
                 out.push((l, DIM));
             }
         }
@@ -337,7 +337,7 @@ fn standard_lines(s: &Standard, width: usize, out: &mut Vec<(String, Color)>) {
         }
     }
     out.push((String::new(), TEXT));
-    for l in crate::shipyard::wrap(&s.text, width) {
+    for l in crate::fmt::wrap(&s.text, width) {
         out.push((l, TEXT));
     }
     out.push((String::new(), TEXT));

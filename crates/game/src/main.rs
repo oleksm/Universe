@@ -184,14 +184,11 @@ pub struct App {
     /// At a vending machine, its panel open: the item picked.
     pub vending: Option<usize>,
     /// Ship plans kept (in the save).
-    pub plans: Vec<shipyard::SavedPlan>,
     /// Ships' insides as laid out in the shipyard's studio, one per hull (kept in the save).
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
     pub layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
     /// The hull being designed, and those commissioned (in the save).
-    pub design: universe_sim::world::design::Design,
-    pub designs: Vec<universe_sim::world::design::Design>,
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
     pub nav_marker: Option<(String, DVec3)>,
@@ -346,12 +343,9 @@ impl App {
             explored: Default::default(),
             market: None,
             shipyard: None,
-            plans: Vec::new(),
             deckplans: Vec::new(),
             layout_sent: None,
             vending: None,
-            design: Default::default(),
-            designs: Vec::new(),
             docked_market: false,
             nav_marker: None,
             contacts: Vec::new(),
@@ -551,8 +545,8 @@ impl App {
     }
 
     fn global_keys(&mut self, ctx: &mut Context) {
-        // Typing a name: the keys are letters, nothing else.
-        if self.shipyard.as_ref().is_some_and(|y| y.naming()) {
+        // (The shipyard's studio takes the keys while it's open: its tools are letters.)
+        if self.shipyard.is_some() {
             return;
         }
         let input = &ctx.input;

@@ -16,17 +16,9 @@ struct GameSave {
     /// The star systems we've been to.
     #[serde(default)]
     explored: Vec<usize>,
-    /// Ship plans kept.
-    #[serde(default)]
-    plans: Vec<crate::shipyard::SavedPlan>,
     /// Ships' insides as laid out (the shipyard's studio).
     #[serde(default)]
     deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
-    /// Hulls designed and commissioned, and the one on the board.
-    #[serde(default)]
-    designs: Vec<universe_sim::world::design::Design>,
-    #[serde(default)]
-    design: universe_sim::world::design::Design,
 }
 
 pub fn data_dir() -> PathBuf {
@@ -53,10 +45,7 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
         chase_cam: app.chase_cam,
         observer: app.observer.clone(),
         explored: app.explored.iter().copied().collect(),
-        plans: app.plans.clone(),
         deckplans: app.deckplans.clone(),
-        designs: app.designs.clone(),
-        design: app.design.clone(),
     };
     let path = path();
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
@@ -68,13 +57,6 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
 pub fn load(app: &mut App) -> Result<(), String> {
     let json = std::fs::read_to_string(path()).or_else(|_| std::fs::read_to_string(old_path())).map_err(|e| e.to_string())?;
     let mut value: serde_json::Value = serde_json::from_str(&json).map_err(|e| e.to_string())?;
-    // The hulls designed first: a ship built to one is loaded as that hull.
-    if let Some(list) = value.get("designs").cloned() {
-        let designs: Vec<universe_sim::world::design::Design> = serde_json::from_value(list).unwrap_or_default();
-        for d in &designs {
-            let _ = d.commission();
-        }
-    }
     if let Some(u) = value.get_mut("universe") {
         universe_sim::save::forget_missing(u);
     }
@@ -97,9 +79,6 @@ pub fn load(app: &mut App) -> Result<(), String> {
     app.chase_cam = true;
     app.observer = save.observer;
     app.explored.extend(save.explored);
-    app.plans = save.plans;
     app.deckplans = save.deckplans;
-    app.designs = save.designs;
-    app.design = save.design;
     Ok(())
 }

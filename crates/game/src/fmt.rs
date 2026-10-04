@@ -91,3 +91,18 @@ pub fn countdown(s: f64) -> String {
 pub fn temperature(kelvin: f64) -> String {
     format!("{:.0} °C", kelvin - 273.15)
 }
+
+/// `text` in lines of at most `width` characters, broken between words.
+pub(crate) fn wrap(text: &str, width: usize) -> Vec<String> {
+    let mut lines: Vec<String> = Vec::new();
+    for word in text.split_whitespace() {
+        match lines.last_mut() {
+            Some(l) if l.len() + 1 + word.len() <= width => {
+                l.push(' ');
+                l.push_str(word);
+            }
+            _ => lines.push(word.to_string()),
+        }
+    }
+    lines
+}

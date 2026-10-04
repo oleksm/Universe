@@ -224,49 +224,6 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
-        "shipyard" | "shipyarddrive" | "shipyardhulls" => {
-            // Docked at the home station, the shipyard open on the cargo
-            // slot with the smaller racks picked.
-            app.mode = Mode::Pilot;
-            let station = sys.station().unwrap();
-            let u = app.engine.universe();
-            u.ship = u.world.ship_on(home, universe_sim::world::Facility::Station(station), 0);
-            let k = u.ship.spec().slots.iter().position(|s| s.name == if name == "shipyard" { "cargo" } else { "drive" }).unwrap();
-            let y = if name == "shipyardhulls" { crate::shipyard::Shipyard::showing_hulls(app, 2) } else { crate::shipyard::Shipyard::showing(app, k, 1) };
-            app.shipyard = Some(y);
-        }
-        "shipyardbuild" => {
-            // Docked at the home station with credits to spare: a plan for a
-            // courier with the smaller tank, built.
-            app.mode = Mode::Pilot;
-            let station = sys.station().unwrap();
-            {
-                let u = app.engine.universe();
-                u.ship = u.world.ship_on(home, universe_sim::world::Facility::Station(station), 0);
-                let me = universe_sim::services::Party::Pilot(universe_sim::PLAYER);
-                let tick = u.tick;
-                u.ledger.settle(me, universe_sim::services::Asset::Credits, 2_000_000.0, tick, universe_sim::protocol::Cause::Rules);
-            }
-            // (The commands reach the engine with the next frame.)
-            app.shipyard = crate::shipyard::Shipyard::planning(app, "hull.sprint", "tank", "tank.s1");
-            crate::shipyard::build(app);
-        }
-        "designcopy" => {
-            // The starting hull copied onto the design board.
-            app.mode = Mode::Pilot;
-            app.design = universe_sim::world::design::Design::after(universe_sim::world::ship::starter());
-            let y = crate::shipyard::Shipyard::designing(app, 0);
-            app.shipyard = Some(y);
-        }
-        "designer" | "designerbad" => {
-            // The design page ("designerbad": the heavy things all aft, the thrusters forward).
-            app.mode = Mode::Pilot;
-            if name == "designerbad" {
-                app.design = universe_sim::world::design::Design { engines_at: 0.46, tank_at: 0.46, hold_at: 0.46, quads_at: -0.3, lift_at: -0.3, ..Default::default() };
-            }
-            let y = crate::shipyard::Shipyard::designing(app, 15);
-            app.shipyard = Some(y);
-        }
         "passengers" => {
             // Docked at the home station, hungry, a thousand waiting to leave;
             // a passenger cabin fitted; the passengers panel open.
@@ -282,27 +239,6 @@ pub fn apply(app: &mut App, name: &str) {
             app.engine.refresh();
             app.v = app.engine.view();
             app.passengers = Some(0);
-        }
-        "balance" | "balanced" => {
-            // Docked at the home station, the shipyard's balance page
-            // ("balanced": auto-balanced, the trim worked out but not yet done).
-            apply(app, "docked");
-            app.engine.refresh();
-            app.v = app.engine.view();
-            app.ship = app.v.ship.clone();
-            let mains = app.ship.spec().thrusters.iter().filter(|t| t.role == universe_sim::world::ship::ThrusterRole::Main).count();
-            let mut y = crate::shipyard::Shipyard::balancing(app, if name == "balanced" { 3 + mains } else { 0 });
-            if name == "balanced" {
-                y.auto_balance(app);
-            }
-            app.shipyard = Some(y);
-        }
-        "planner" => {
-            // In flight: the ship planner, on the drive slot with another drive picked.
-            app.mode = Mode::Pilot;
-            let k = app.ship.spec().slots.iter().position(|s| s.name == "drive").unwrap_or(0);
-            let y = crate::shipyard::Shipyard::showing(app, k, 0);
-            app.shipyard = Some(y);
         }
         "cleared" => {
             // The spawn point, with docking clearance granted.
