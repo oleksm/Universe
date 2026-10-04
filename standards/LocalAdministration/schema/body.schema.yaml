@@ -26,6 +26,13 @@ properties:
       ring: { type: string, description: "The gate ring it is (SFO 17), by file name." }
       to: { type: string, description: The star it leads to. }
       distance: { type: number, description: "light years to that star" }
+  spin:
+    description: "For a rig: the part of it that turns, to give weight to what needs it."
+    type: object
+    additionalProperties: false
+    properties:
+      radius: { type: number, description: "m, from its axis to its floor" }
+      gravity: { type: number, description: "m/s2 at its floor. How fast it turns is worked out." }
   owner: { type: string, pattern: '^brand\.[a-z0-9_]+$', description: "For a rig: the company whose it is." }
   processes: { type: array, items: { type: string }, description: "For a rig: the SFO processes it runs, by file name." }
   lines: { type: array, description: "For a rig: its production lines, as a facility's (facility.schema.yaml)." }

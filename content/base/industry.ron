@@ -4,6 +4,7 @@
     (key: "alumina-refinery", name: "Alumina refinery", length: 450.0, width: 300.0, height: 40.0, needs: 333.0, supplies: 0.0, holds: 0.0),
     (key: "arc-furnace", name: "Electric arc furnace", length: 100.0, width: 40.0, height: 35.0, needs: 72.0, supplies: 0.0, holds: 0.0),
     (key: "arc-furnace-metal", name: "Electric arc furnace, metal charge", length: 100.0, width: 40.0, height: 35.0, needs: 42.0, supplies: 0.0, holds: 0.0),
+    (key: "assembly-jig", name: "Assembly jig", length: 180.0, width: 140.0, height: 140.0, needs: 1.0, supplies: 0.0, holds: 0.0),
     (key: "assembly-shop", name: "Assembly shop", length: 60.0, width: 40.0, height: 20.0, needs: 0.2, supplies: 0.0, holds: 0.0),
     (key: "bar-mill", name: "Bar mill", length: 200.0, width: 30.0, height: 15.0, needs: 5.6, supplies: 0.0, holds: 0.0),
     (key: "building-dock", name: "Building dock", length: 120.0, width: 60.0, height: 35.0, needs: 1.0, supplies: 0.0, holds: 0.0),

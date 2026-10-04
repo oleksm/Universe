@@ -275,7 +275,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate"} | ({"owner", "processes", "lines", "modules"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -641,7 +641,7 @@ for s in standards:
             key = ident.get("code")
             e["slug"] = name[:-5]
         elif kind in ("equipment", "gates"):
-            for k in ("name", "key"):
+            for k in ("name",) if kind == "equipment" else ("name", "key"):
                 if not ident.get(k):
                     problem(full, f"identity: no {k}")
             if ident.get("maker") is not None and ident["maker"] not in BRANDS:
@@ -684,7 +684,7 @@ for s in standards:
         for group, props in e.items():
             if group in ("slug", "basis"):
                 continue
-            if kind == "hulls" and group == "fit":
+            if kind in ("hulls", "gates") and group == "fit":
                 continue
             if kind == "goods" and group == "composition":
                 for c in props or []:
@@ -1338,6 +1338,18 @@ for hl in hulls + structures:
                         built.append({"at": fc["name"], "settlement": x["name"], "days": through / 1000 / ln["most"]["output"] / 24, "fitted": fits})
     hl["built"] = built
 
+# (A rig's turning part: how fast, for the weight it gives. And what it eats flat out.)
+for ad in administrations:
+    for x in ad["bodies"]:
+        if x.get("kind") != "rig":
+            continue
+        sp = x.get("spin") or {}
+        if sp.get("radius") and sp.get("gravity"):
+            w_ = (sp["gravity"] / sp["radius"]) ** 0.5
+            x["spin_worked"] = {"rate": w_, "rpm": w_ * 60 / (2 * math.pi), "g": sp["gravity"] / 9.81}
+        cargo_ = max([(e_.get("performance") or {}).get("capacity", 0) for e_ in equipment if (e_.get("identity") or {}).get("slot") == "cargo"] or [0])
+        x["feed"] = [{"item": i["item"], "rate": i["rate"], "loads": i["rate"] * 24 * 1000 / cargo_ if cargo_ else None, "hold": cargo_} for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln for i in ln["most"]["supplies"] if next((g_ for g_ in goods if g_["slug"] == i["item"]), {}).get("identity", {}).get("kind") == "rock"]
+
 # 1b. Equipment: what each hull is fitted with, each against the game's module, and whether it is
 # said what it is made of.
 eq_by = {e["slug"]: e for e in equipment}
@@ -1354,8 +1366,8 @@ for hl in hulls:
         fitted += (e.get("physical") or {}).get("mass", 0)
     hl["fitted_mass"] = fitted
 for e in equipment:
-    mass, game = (e.get("physical") or {}).get("mass"), GAME_MODULES.get(e["identity"]["key"])
-    on = [hl["identity"]["name"] for hl in hulls if any(ft.get("item") == e["slug"] for ft in hl.get("fit") or [])]
+    mass, game = (e.get("physical") or {}).get("mass"), GAME_MODULES.get(e["identity"].get("key"))
+    on = [hl["identity"]["name"] for hl in hulls + gates if any(ft.get("item") == e["slug"] for ft in hl.get("fit") or [])]
     same = game is not None and mass is not None and abs(game - mass) < 0.5
     rows.append(row("gap", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
 report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game, or does not yet say what it is made of.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
@@ -1416,6 +1428,23 @@ for g in gates:
             casts = [q["slug"] for q in ingot_makers(mat) if q["slug"] in lined]
             step(f"{next(m_ for m_ in materials if m_.get('slug') == mat)['identity']['name']} cast as ingot (at least: the mills' own losses come on top)", t_, casts)
         cargo = max([(ft_.get("performance") or {}).get("capacity", 0) for ft_ in equipment if (ft_.get("identity") or {}).get("slot") == "cargo"] or [0])
+        for c in [c for c in mine if kids(c)]:
+            for q_ in (c.get("making") or {}).get("processes") or []:
+                step(f"{by_process[q_]['identity']['name']}: its {c['identity']['name'].lower()}s put together", c.get("mass", 0) * each(c) / 1000, q_)
+        fit_mass = 0.0
+        for ft in g.get("fit") or []:
+            if ft.get("item") not in eq_by:
+                problem(os.path.join(TREE, g["file"]), f"fit: no equipment '{ft.get('item')}' in the SFO")
+            else:
+                fit_mass += (eq_by[ft["item"]].get("physical") or {}).get("mass", 0) * ft.get("count", 1)
+        coils = sum(ft.get("count", 1) for ft in g.get("fit") or [] if ft.get("item") == "throat-coil")
+        # (Its heat: a fusion plant turns half its fuel's energy into power, so as much again is
+        # heat to shed. Shed from the ring's own skin, which then runs at T: P = e * sigma * A * T^4.)
+        skin = sum((pt.get("shape") or {}).get("surface_area", 0) * times(pt) for pt in mine if not pt.get("parent"))
+        SIGMA, EMISS = 5.670374419e-8, 0.9
+        g["worked"]["fit_mass"] = fit_mass
+        g["worked"]["coil_power"] = g["worked"]["hold_power"] / coils if coils else None
+        g["worked"]["skin"] = {"area": skin, "heat": g["worked"]["hold_power"], "temperature": (g["worked"]["hold_power"] / (EMISS * SIGMA * skin)) ** 0.25, "emissivity": EMISS} if skin else None
         g["worked"]["build"] = {"structure": st["slug"], "mass": st["parts_mass"], "stock": [{"item": k, "tonnes": v} for k, v in stock_t.items()], "steps": steps,
                                 "stations": math.ceil(g["worked"]["stations"]) if g["worked"].get("stations") else None,
                                 "trips": math.ceil(st["parts_mass"] / cargo) if cargo else None, "hold": cargo}

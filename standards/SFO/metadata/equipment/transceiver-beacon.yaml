@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  name: "Tallis beacon transceiver"
+  key: transceiver.beacon
+  maker: brand.tallis
+  slot: gate
+  description: "What ships' comms connect to near the gate: one of the hypernet's towers."
+physical:
+  mass: 6000
+  volume: 20
+performance:
+  power_draw: 300
+  capture: 500000
+  link: 75000000
+  lag: 0.05
+  messages: 20000
+basis:
+  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }

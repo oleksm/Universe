@@ -8,10 +8,10 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, key]
+    required: [name]
     properties:
       name: { type: string }
-      key: { type: string, description: "Its key in the game (content/base/modules.ron)." }
+      key: { type: string, description: "Its key in the game (content/base/modules.ron). One the game does not have yet has none." }
       maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
       slot: { type: string, description: "The kind of slot it fits." }
       description: { type: string }
@@ -42,6 +42,7 @@ properties:
       lag: { type: number, description: "s to pass a message on" }
       messages: { type: number, description: "messages an hour" }
       features: { type: array, items: { type: string }, description: What it can do. }
+      cadence: { type: number, description: "s between its throws" }
   basis:
     description: 'Where its figures come from. Each entry covers the groups (or group.property) it names. sourced: from a published source or the game, named. derived: worked out from other figures. invented: chosen, to be balanced or replaced.'
     type: array

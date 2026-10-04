@@ -32,6 +32,16 @@ properties:
     additionalProperties: false
     properties:
       parts: { type: string, description: "The folder of parts (SFO 12) its structure is built of." }
+  fit:
+    description: The equipment mounted on it.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [item, count]
+      properties:
+        item: { type: string, description: "The equipment (SFO 16), by file name." }
+        count: { type: integer, minimum: 1 }
   power:
     type: object
     additionalProperties: false

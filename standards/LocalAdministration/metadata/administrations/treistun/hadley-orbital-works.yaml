@@ -6,13 +6,16 @@ name: "Hadley Orbital Works"
 kind: rig
 at: Treistun f
 owner: brand.hadley
-about: "A works in orbit, now round Treistun f: a foundry, a mill and a panel works on one frame with its own power plant, fed with metal from the asteroids. It is equipment, not a place. It is brought to where something too large to lift off a world is to be built, and moved on to the next when that is done."
+# Its furnaces and casting need weight. Invented: the part of it that carries them turns.
+spin: { radius: 150, gravity: 3.0 }
+about: "A works in orbit, now round Treistun f: a foundry, a mill and a panel works on one frame with its own power plant, fed with metal from the asteroids. The part that melts and casts turns, to give the metal weight; the rest is in free fall. It is equipment, not a place. It is brought to where something too large to lift off a world is to be built, and moved on to the next when that is done."
 processes:
   - steelmaking-asteroid
   - plate-rolling-4340
   - tube-making-4340
   - panel-making
   - machining
+  - ring-assembly
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
@@ -37,5 +40,8 @@ lines:
   - process: machining
     modules:
       - { module: machining-centre, count: 20 }
+  - process: ring-assembly
+    modules:
+      - { module: assembly-jig, count: 2 }
 modules:
   - { module: fusion-power-station, count: 1 }

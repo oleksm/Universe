@@ -6,3 +6,9 @@ identity:
   description: "A gate ring put together where it is to stand, in orbit: panels and frames joined into segments, segments into the ring, its power stations mounted on it."
 rate:
   mode: batch
+conditions:
+  gravity: needs free fall
+equipment:
+  facility: rig
+  steps:
+  - { module: assembly-jig, does: "A segment's hoop frames are closed, its skin panels fixed to them and its coil mounted; the segment is passed out and joined to the last." }

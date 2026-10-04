@@ -27,3 +27,9 @@
   slowest step is 174 days (was 2.7 years at the yard). Not in the game yet.
 - **Gates are settlements:** Treistun's three gates (to Liham, Driumum and Biraidim) are settlement
   records, each with its ring, where it leads, and what its tube takes at its own distance.
+- **The gate broken down** (invented, marked to review): sixty throat coils, one to a segment, hold
+  the tube (a Halcyon product, 150 t each); the game's three relays are mounted with them. The ring's
+  skin is its radiator: holding at full span it runs at 428 K (Ring I), 509 K (II), 640 K (III).
+  The rig carries assembly jigs that put the ring together in orbit (226 days), and a turning part
+  that gives its furnaces weight (150 m radius, 0.31 g, 1.35 turns a minute). Flat out the rig eats
+  2,490 t of nickel-iron ore a day. The ring's chain report is complete.
