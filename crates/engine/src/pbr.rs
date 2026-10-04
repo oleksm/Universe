@@ -62,6 +62,9 @@ pub struct Material {
     /// glTF's alpha mask: below this, the pixel isn't drawn (decals,
     /// grilles cut from a texture); None: opaque.
     pub alpha_cutoff: Option<f32>,
+    /// glTF's alpha blend: see-through by its base colour's alpha (glass),
+    /// drawn after what's solid.
+    pub blend: bool,
 }
 
 /// An image, RGBA8 rows top down.
@@ -110,6 +113,7 @@ impl PbrModel {
                 occlusion_tex: tex(m.occlusion_texture().map(|o| o.texture())),
                 occlusion_strength: m.occlusion_texture().map_or(1.0, |o| o.strength()),
                 alpha_cutoff: (m.alpha_mode() == gltf::material::AlphaMode::Mask).then(|| m.alpha_cutoff().unwrap_or(0.5)),
+                blend: m.alpha_mode() == gltf::material::AlphaMode::Blend,
             });
         }
         let fallback = data.materials.len();
@@ -119,7 +123,7 @@ impl PbrModel {
         }
         // (A primitive with no material: a plain grey one.)
         if data.primitives.iter().any(|p| p.material == usize::MAX) {
-            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None, occlusion_tex: None, occlusion_strength: 1.0, alpha_cutoff: None });
+            data.materials.push(Material { base_color: [0.6, 0.6, 0.6, 1.0], metallic: 0.0, roughness: 0.6, emissive: [0.0; 3], normal_scale: 1.0, base_tex: None, mr_tex: None, normal_tex: None, emissive_tex: None, occlusion_tex: None, occlusion_strength: 1.0, alpha_cutoff: None, blend: false });
             for p in &mut data.primitives {
                 if p.material == usize::MAX {
                     p.material = fallback;
@@ -242,13 +246,14 @@ struct MaterialUniform {
     /// x metallic, y roughness, z normal scale, w alpha cutoff (0: opaque).
     params: [f32; 4],
     emissive: [f32; 4],
-    /// x occlusion strength.
+    /// x occlusion strength, y 1: see-through (blended).
     extra: [f32; 4],
 }
 
 struct GpuModel {
-    /// Each primitive: vertices, indices, index count, its material's bind group.
-    primitives: Vec<(wgpu::Buffer, wgpu::Buffer, u32, usize)>,
+    /// Each primitive: vertices, indices, index count, its material's bind group,
+    /// whether it's see-through.
+    primitives: Vec<(wgpu::Buffer, wgpu::Buffer, u32, usize, bool)>,
     materials: Vec<wgpu::BindGroup>,
     used: u64,
 }
@@ -256,6 +261,8 @@ struct GpuModel {
 /// The renderer's side: the pipelines, models on the GPU, this frame's draws.
 pub(crate) struct PbrRenderer {
     pipe: wgpu::RenderPipeline,
+    /// The see-through (glass): blended over what's behind, not hiding it.
+    clear_pipe: wgpu::RenderPipeline,
     shadow_pipe: wgpu::RenderPipeline,
     material_layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
@@ -315,17 +322,23 @@ impl PbrRenderer {
             Some(wgpu::VertexBufferLayout { array_stride: size_of::<crate::frame::Instance>() as u64, step_mode: wgpu::VertexStepMode::Instance, attributes: &INSTANCE_ATTRS }),
         ];
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("pbr"), bind_group_layouts: &[Some(globals), Some(shadows), Some(&material_layout)], immediate_size: 0 });
-        let pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("pbr"),
-            layout: Some(&layout),
-            vertex: wgpu::VertexState { module: &shader, entry_point: Some("vs_pbr"), compilation_options: Default::default(), buffers: &buffers },
-            primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, cull_mode: Some(wgpu::Face::Back), ..Default::default() },
-            depth_stencil: Some(wgpu::DepthStencilState { format: depth_format, depth_write_enabled: Some(true), depth_compare: Some(wgpu::CompareFunction::Greater), stencil: Default::default(), bias: Default::default() }),
-            multisample: wgpu::MultisampleState { count: samples, ..Default::default() },
-            fragment: Some(wgpu::FragmentState { module: &shader, entry_point: Some("fs_pbr"), compilation_options: Default::default(), targets: &[Some(wgpu::ColorTargetState { format: scene_format, blend: None, write_mask: wgpu::ColorWrites::ALL })] }),
-            multiview_mask: None,
-            cache: None,
-        });
+        // (Glass: its colour already weighed by its alpha in the shader, what it mirrors
+        // not; what's behind shows through by the rest. It doesn't hide what's behind it.)
+        let make = |label, see_through: bool| {
+            let blend = see_through.then_some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING);
+            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: Some(label),
+                layout: Some(&layout),
+                vertex: wgpu::VertexState { module: &shader, entry_point: Some("vs_pbr"), compilation_options: Default::default(), buffers: &buffers },
+                primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, cull_mode: Some(wgpu::Face::Back), ..Default::default() },
+                depth_stencil: Some(wgpu::DepthStencilState { format: depth_format, depth_write_enabled: Some(!see_through), depth_compare: Some(wgpu::CompareFunction::Greater), stencil: Default::default(), bias: Default::default() }),
+                multisample: wgpu::MultisampleState { count: samples, ..Default::default() },
+                fragment: Some(wgpu::FragmentState { module: &shader, entry_point: Some("fs_pbr"), compilation_options: Default::default(), targets: &[Some(wgpu::ColorTargetState { format: scene_format, blend, write_mask: wgpu::ColorWrites::ALL })] }),
+                multiview_mask: None,
+                cache: None,
+            })
+        };
+        let (pipe, clear_pipe) = (make("pbr", false), make("pbr see-through", true));
         let shadow_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/pbr_shadow.wgsl"));
         let shadow_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("pbr shadow"), bind_group_layouts: &[Some(light)], immediate_size: 0 });
         let shadow_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -356,7 +369,7 @@ impl PbrRenderer {
             ..Default::default()
         });
         let instances = device.create_buffer(&wgpu::BufferDescriptor { label: Some("pbr instances"), size: 64 * size_of::<crate::frame::Instance>() as u64, usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
-        PbrRenderer { pipe, shadow_pipe, material_layout, sampler, models: HashMap::new(), instances, capacity: 64, draws: Vec::new(), casters: Vec::new(), frames: 0 }
+        PbrRenderer { pipe, clear_pipe, shadow_pipe, material_layout, sampler, models: HashMap::new(), instances, capacity: 64, draws: Vec::new(), casters: Vec::new(), frames: 0 }
     }
 
     /// This frame's models up (new ones uploaded, old ones dropped), their
@@ -400,7 +413,7 @@ impl PbrRenderer {
             .materials
             .iter()
             .map(|m| {
-                let uniform = MaterialUniform { base_color: m.base_color, params: [m.metallic, m.roughness, m.normal_scale, m.alpha_cutoff.unwrap_or(0.0)], emissive: [m.emissive[0], m.emissive[1], m.emissive[2], 0.0], extra: [m.occlusion_strength, 0.0, 0.0, 0.0] };
+                let uniform = MaterialUniform { base_color: m.base_color, params: [m.metallic, m.roughness, m.normal_scale, m.alpha_cutoff.unwrap_or(0.0)], emissive: [m.emissive[0], m.emissive[1], m.emissive[2], 0.0], extra: [m.occlusion_strength, if m.blend { 1.0 } else { 0.0 }, 0.0, 0.0] };
                 let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr material"), contents: bytemuck::bytes_of(&uniform), usage: wgpu::BufferUsages::UNIFORM });
                 let base = m.base_tex.map_or_else(|| white_srgb.clone(), |i| texture(i, Kind::Colour));
                 let mr = m.mr_tex.map_or_else(|| white.clone(), |i| texture(i, Kind::Data));
@@ -429,7 +442,7 @@ impl PbrRenderer {
             .map(|p| {
                 let v = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr vertices"), contents: bytemuck::cast_slice(&p.vertices), usage: wgpu::BufferUsages::VERTEX });
                 let i = device.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: Some("pbr indices"), contents: bytemuck::cast_slice(&p.indices), usage: wgpu::BufferUsages::INDEX });
-                (v, i, p.indices.len() as u32, p.material)
+                (v, i, p.indices.len() as u32, p.material, data.materials[p.material].blend)
             })
             .collect();
         GpuModel { primitives, materials, used: 0 }
@@ -440,15 +453,21 @@ impl PbrRenderer {
         if self.draws.is_empty() {
             return;
         }
-        pass.set_pipeline(&self.pipe);
         pass.set_vertex_buffer(1, self.instances.slice(..));
-        for &(id, k) in &self.draws {
-            let Some(m) = self.models.get(&id) else { continue };
-            for (v, i, n, mat) in &m.primitives {
-                pass.set_bind_group(2, &m.materials[*mat], &[]);
-                pass.set_vertex_buffer(0, v.slice(..));
-                pass.set_index_buffer(i.slice(..), wgpu::IndexFormat::Uint32);
-                pass.draw_indexed(0..*n, 0, k..k + 1);
+        // (What's solid first, then the see-through over it.)
+        for (pipe, see_through) in [(&self.pipe, false), (&self.clear_pipe, true)] {
+            pass.set_pipeline(pipe);
+            for &(id, k) in &self.draws {
+                let Some(m) = self.models.get(&id) else { continue };
+                for (v, i, n, mat, blend) in &m.primitives {
+                    if *blend != see_through {
+                        continue;
+                    }
+                    pass.set_bind_group(2, &m.materials[*mat], &[]);
+                    pass.set_vertex_buffer(0, v.slice(..));
+                    pass.set_index_buffer(i.slice(..), wgpu::IndexFormat::Uint32);
+                    pass.draw_indexed(0..*n, 0, k..k + 1);
+                }
             }
         }
     }
@@ -462,7 +481,8 @@ impl PbrRenderer {
         pass.set_vertex_buffer(1, self.instances.slice(..));
         for &(id, k) in &self.casters {
             let Some(m) = self.models.get(&id) else { continue };
-            for (v, i, n, _) in &m.primitives {
+            // (Glass lets the sun through.)
+            for (v, i, n, _, _) in m.primitives.iter().filter(|p| !p.4) {
                 pass.set_vertex_buffer(0, v.slice(..));
                 pass.set_index_buffer(i.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..*n, 0, k..k + 1);

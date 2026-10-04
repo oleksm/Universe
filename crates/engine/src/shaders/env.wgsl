@@ -25,6 +25,8 @@ struct Globals {
     env_world_color: vec4<f32>,
     // x: 0 space, 1 studio; y: the stars' glow.
     env_mode: vec4<f32>,
+    // The sky's colour in an atmosphere (black in space).
+    env_sky: vec4<f32>,
 };
 
 // Which face, which roughness, specular (0) or diffuse (1).
@@ -75,7 +77,8 @@ fn sky(d: vec3<f32>) -> vec3<f32> {
         let grey = 0.18 + 0.22 * (k * 0.5 + 0.5);
         return vec3<f32>(grey + box_key + box_fill);
     }
-    var c = vec3<f32>(g.env_mode.y);
+    // (Under an atmosphere, the sky's colour, as it's drawn behind everything.)
+    var c = max(vec3<f32>(g.env_mode.y), g.env_sky.rgb);
     if (g.env_world_color.w > 0.0) {
         let pc = g.env_world.xyz;
         let r = g.env_world.w;

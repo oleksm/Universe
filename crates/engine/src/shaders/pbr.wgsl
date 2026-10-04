@@ -215,7 +215,10 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     }
     // The body (what isn't metal) takes all of it; metal only reflects.
     let body = base.rgb * (1.0 - metallic);
-    var c = body * (vec3<f32>(ambient) + (1.0 - ambient) * (sun * (vec3<f32>(1.0) - f) + fill));
+    // (See-through, glass: its body by its alpha, what's behind by the rest (blended,
+    // premultiplied); what it mirrors in full, as glass does.)
+    let alpha = select(1.0, base.a, mat.extra.y > 0.5);
+    var c = body * (vec3<f32>(ambient) + (1.0 - ambient) * (sun * (vec3<f32>(1.0) - f) + fill)) * alpha;
     c += spec * PI * sun * g.look2.x;
     // What the surface mirrors of its surroundings (the environment, see env.rs),
     // as blurred as it is rough (the split sum: Karis's fit of its reflectance):
@@ -224,5 +227,5 @@ fn fs_pbr(in: Out) -> @location(0) vec4<f32> {
     let mirrored = textureSampleLevel(env_spec, env_sampler, r, roughness * 7.0).rgb;
     c += mirrored * env_brdf(f0, roughness, nv) * occ * g.look2.x;
     c += select(vec4<f32>(1.0), textureSample(emissive_tex, tex_sampler, in.uv), textured).rgb * mat.emissive.rgb * g.look.w;
-    return vec4<f32>(c, 1.0);
+    return vec4<f32>(c, alpha);
 }

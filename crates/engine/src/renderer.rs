@@ -39,11 +39,13 @@ struct Globals {
     /// The environment (see `env.rs`): the sun's direction from the eye and
     /// its light here (w); the world nearest's centre from the eye and radius;
     /// its colour and albedo (w; 0: none); the mode
-    /// (x: 0 space, 1 studio) and the stars' glow (y).
+    /// (x: 0 space, 1 studio) and the stars' glow (y); the sky's colour in
+    /// an atmosphere (as drawn behind everything).
     env_sun: [f32; 4],
     env_world: [f32; 4],
     env_world_color: [f32; 4],
     env_mode: [f32; 4],
+    env_sky: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -998,6 +1000,7 @@ impl Renderer {
             env_world_color: frame.reflector.filter(|_| gr.planet_light).map_or([0.0; 4], |w| [w.color[0], w.color[1], w.color[2], w.albedo]),
             // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
+            env_sky: frame.clear.0,
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));

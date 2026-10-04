@@ -258,6 +258,11 @@ print("ship %s: %.1f x %.1f x %.1f m" % (scene.get("freefall_name", "?"), hi.x -
 bake_size = int(opt.get("--bake", "4096"))
 # How many atlases the hull is baked into (each `bake_size`): more, sharper, more memory.
 atlases = max(1, int(opt.get("--atlases", "1")))
+# Texels between islands, each island's own edge colour carried out into half of it (the bake's
+# margin): an edge's texels (a texel's colour is its centre's) all its own, read blended with
+# the next texel out. A texel apart, and the space left black, a slanting edge read as a
+# staircase of paint and black: a sawtooth.
+GAP = 4
 
 
 def procedural(m):
@@ -309,10 +314,10 @@ if bake_size:
         bpy.context.view_layer.objects.active = g[0]
         bpy.ops.object.mode_set(mode="EDIT")
         bpy.ops.mesh.select_all(action="SELECT")
-        # (Smart projection packs the meshes' islands together itself, a texel apart. Packed again
-        # after, a hull this detailed (tens of thousands of islands) came out as specks: the hull
-        # sampled the black between them and looked burned.)
-        bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=1.0 / bake_size, scale_to_bounds=False)
+        # (Smart projection packs the meshes' islands together itself, `GAP` texels apart. Packed
+        # again after, a hull this detailed (tens of thousands of islands) came out as specks: the
+        # hull sampled the black between them and looked burned.)
+        bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=GAP / bake_size, scale_to_bounds=False)
         bpy.ops.object.mode_set(mode="OBJECT")
         print("  atlas %d: %d meshes, %.0f m2: about %.1f texels a metre" % (k, len(g), loads[k], bake_size / max(loads[k], 1.0) ** 0.5 * 0.65))
 
@@ -338,7 +343,10 @@ if bake_size:
                 break
     except Exception as e:
         print("  on the CPU (%s)" % e)
-    scene.render.bake.margin = 4
+    scene.render.bake.margin = GAP // 2
+    # (Each island's own colour, not the face across the edge's: a hull's plates have open edges,
+    # nothing across them, and a dark inside face across a bright one's would show on its edge.)
+    scene.render.bake.margin_type = "EXTEND"
     scene.render.bake.use_clear = True
     if scene.world is None:
         scene.world = bpy.data.worlds.new("bake")
@@ -405,20 +413,39 @@ if bake_size:
                         except (TypeError, ValueError):
                             pass
 
+    # Each material's metalness and base colour as they are (value, what feeds it), to put back.
+    kept = {}
+    for m in mats:
+        b = principled(m)
+        if b is not None:
+            kept[m] = {k: (tuple(b.inputs[k].default_value) if k == "Base Color" else b.inputs[k].default_value, [l.from_socket for l in b.inputs[k].links]) for k in ("Base Color", "Metallic")}
+
+    def set_input(m, k, value):
+        b = principled(m)
+        for l in list(b.inputs[k].links):
+            m.node_tree.links.remove(l)
+        b.inputs[k].default_value = value
+
+    # (The colour baked as if nothing were metal: Cycles' diffuse colour of a metal is black (it
+    # has no diffuse part), and metal painted black in the atlas reflected nothing: pitch black.)
+    for m in kept:
+        set_input(m, "Metallic", 0.0)
     bake("base", 8, type="DIFFUSE", pass_filter={"COLOR"})
     bake("rough", 4, type="ROUGHNESS")
     bake("normal", 4, type="NORMAL", normal_space="TANGENT")
     bake("ao", 32, type="AO")
     # (Metalness has no pass of its own: baked as a colour, each material's base colour its metalness.)
-    for m in mats:
-        b = principled(m)
-        if b is None:
-            continue
-        v = b.inputs["Metallic"].default_value
-        for l in list(b.inputs["Base Color"].links):
-            m.node_tree.links.remove(l)
-        b.inputs["Base Color"].default_value = (v, v, v, 1.0)
+    for m, k in kept.items():
+        v = k["Metallic"][0]
+        set_input(m, "Base Color", (v, v, v, 1.0))
     bake("metal", 1, type="DIFFUSE", pass_filter={"COLOR"})
+    # Every material as it was (those not baked are exported as they are).
+    for m, k in kept.items():
+        b = principled(m)
+        for name, (value, sources) in k.items():
+            set_input(m, name, value)
+            for src in sources:
+                m.node_tree.links.new(src, b.inputs[name])
     for j in joined:
         bpy.data.objects.remove(j, do_unlink=True)
     for o in targets:
