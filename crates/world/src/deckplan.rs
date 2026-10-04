@@ -822,8 +822,8 @@ mod tests {
         let filled = fill(&mesh, 1.0);
         assert_eq!(filled.len(), 1);
         let whole: f64 = floor_strips(&filled[0], &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
-        // (10 cm shy of the hull all round: 5.8 by 9.8.)
-        assert!((whole - 56.8).abs() < 1.0, "{whole}");
+        // (20 cm shy of the hull all round: 5.6 by 9.6, its corners rounded.)
+        assert!((whole - 53.2).abs() < 1.0, "{whole}");
         assert!(fill(&mesh, -3.0).is_empty());
         // A strip too narrow for a person (0.4 m): no floor.
         let (lo, hi) = (DVec3::new(-0.2, 0.0, -5.0), DVec3::new(0.2, 4.0, 5.0));
