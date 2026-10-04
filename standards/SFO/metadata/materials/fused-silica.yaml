@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
+# Fracture toughness: Wikipedia, Fracture toughness (soda-lime glass, 0.7 to 0.8: another glass, the nearest the table has; a range as its middle).
 # Data: Wikipedia: Fused quartz. A range there is given as its middle.
 identity:
   name: Fused silica
@@ -15,6 +16,7 @@ identity:
 mass:
   density: 2203.0
 mechanical:
+  fracture_toughness: 0.75
   youngs_modulus: 71.7
   shear_modulus: 31.0
   poissons_ratio: 0.17

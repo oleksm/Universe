@@ -33,8 +33,7 @@ properties:
       loaded_mass: { type: number, description: "t, the ship loaded, in the game: hull, fitted modules, fuel and cargo" }
       main_thrust: { type: number, description: "MN, of its main drive in the game" }
       lift_thrust: { type: number, description: "MN, of its lift nozzles in the game" }
-      landing_speed: { type: number, description: "m/s, the fastest touchdown the game counts as a landing" }
-      gravity: { type: number, description: "m/s2, the heaviest world it is to stand on" }
+      landing_speed: { type: number, description: "m/s, the touchdown its legs are designed for. What they take at most is worked out." }
       cabin_pressure: { type: number, description: "kPa, of the air its pressurised parts hold against vacuum" }
       safety_factor: { type: number, description: "how many times its load a part must take before it yields" }
       pressure_factor: { type: number, description: "a further factor on cabin pressure" }

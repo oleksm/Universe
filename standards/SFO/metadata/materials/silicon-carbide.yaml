@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
+# Fracture toughness: Wikipedia, Fracture toughness (silicon carbide, 3 to 5; a range as its middle).
 # Data: Wikipedia: Silicon carbide (6H). A range there is given as its middle.
 identity:
   name: Silicon carbide
@@ -14,6 +15,7 @@ identity:
 mass:
   density: 3210.0
 mechanical:
+  fracture_toughness: 4
   hardness: 9.25
 thermal:
   melting_point: 3103.15

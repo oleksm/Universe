@@ -275,7 +275,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines"}:
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines"}:
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -1337,17 +1337,21 @@ for hl in hulls:
     below = [pt for pt in thin if stock(pt)["size"]["thickness"] < ds.get("minimum_gauge", 0)]
     if thin:
         rows.append(row("gap" if below else "note", f"{len(thin)} skin and plate parts with no load case", "none set", f"{ds.get('minimum_gauge'):g} mm at least", f"{min(stock(pt)['size']['thickness'] for pt in thin):g} mm the thinnest", "", "their gauge was chosen; nothing checks them against thrust, bending or buckling" if not below else f"{len(below)} are below the least gauge"))
-    # (Taking the landing.)
+    # (Where it can hover and set down: where gravity is no more than its lift holds.)
+    hover = ds.get("lift_thrust", 0) * 1e6 / ship if ship else 0
+    # (Taking the landing: on the heaviest ground it can hover over.)
     legs = {}
     for pt in [pt for pt in leaves if case(pt) == "landing"]:
         legs.setdefault(pt.get("parent"), []).append(pt)
     count = sum(times(next(o for o in mine if o["slug"] == k)) for k in legs if k)
-    energy = 0.5 * ship * ds.get("landing_speed", 0) ** 2
-    worst_g = 0
+    v = ds.get("landing_speed", 0)
+    energy = 0.5 * ship * v ** 2
+    most = None            # (the least, over the legs' parts, of the force a leg takes before it fails)
+    strokes = []
     for parent, pts in legs.items():
         stroke = min(longest(pt) for pt in pts)
-        force = (energy / (stroke * eta) + ship * ds.get("gravity", 0)) / max(count, 1)
-        worst_g = max(worst_g, energy / (stroke * eta) / ship / 9.81)
+        strokes.append(stroke)
+        force = (energy / (stroke * eta) + ship * hover) / max(count, 1)
         for pt in pts:
             ms = stock(pt)
             size, mc = (ms or {}).get("size") or {}, mech(ms or {})
@@ -1357,9 +1361,23 @@ for hl in hulls:
                 continue
             di = d - 2 * w if w else 0
             a_, i_ = math.pi * (d ** 2 - di ** 2) / 4e6, math.pi * (d ** 4 - di ** 4) / 64e12
+            takes = min(sy * 1e6 * a_, math.pi ** 2 * em * 1e9 * i_ / longest(pt) ** 2)
+            most = takes if most is None else min(most, takes)
             strength = sy * 1e6 * a_ / (force * SF)
             buckling = math.pi ** 2 * em * 1e9 * i_ / longest(pt) ** 2 / (force * SF)
-            rows.append(row("ok" if min(strength, buckling) >= 1 else "gap", part_link(pt), f"{force / 1e6:.1f} MN on each of {count} legs", f"{force * SF / 1e6:.1f} MN with its factor", ms["identity"]["name"], f"strength {strength:.2f} times, buckling {buckling:.2f} times", f"a column {longest(pt):.2f} m long, stopping {ship / 1000:.0f} t from {ds.get('landing_speed'):g} m/s in {stroke:.2f} m"))
+            rows.append(row("ok" if min(strength, buckling) >= 1 else "gap", part_link(pt), f"{force / 1e6:.2f} MN on each of {count} legs", f"{force * SF / 1e6:.2f} MN with its factor", ms["identity"]["name"], f"strength {strength:.2f} times, buckling {buckling:.2f} times", f"a column {longest(pt):.2f} m long, stopping {ship / 1000:.0f} t from {v:g} m/s in {stroke:.2f} m, on ground of {hover / 9.81:.2f} g"))
+    # (What follows for everything aboard: the jolt of the designed landing, and the hardest landing
+    # the legs take before one fails, with its jolt.)
+    landing = {}
+    if legs and ship and strokes:
+        s_ = min(strokes)
+        jolt = v ** 2 / (2 * s_ * eta) / 9.81
+        spare = (most or 0) * count - ship * hover
+        vmax = (2 * spare * s_ * eta / ship) ** 0.5 if spare > 0 else 0
+        jmax = vmax ** 2 / (2 * s_ * eta) / 9.81
+        landing = {"designed": v, "jolt": jolt, "hardest": vmax, "hardest_jolt": jmax, "stroke": s_}
+        rows.append(row("note", "The landing its legs are designed for", f"{v:g} m/s", "", f"a jolt of {jolt:.2f} g aboard", "", (bench("landing_gear", "design_sink_speed_landing_weight").get("source") or "") + ": 14 CFR 25.473"))
+        rows.append(row("note", "The hardest landing its legs take", "until one yields or buckles", "", f"{vmax:.1f} m/s", f"a jolt of {jmax:.1f} g aboard", "faster than this a leg fails; the jolt is what everything aboard must take, people and cargo"))
     # (Against real vehicles and the game's own engines.)
     sz = hl.get("size") or {}
     if all(k in sz for k in ("length", "width", "height")) and hl.get("parts_mass"):
@@ -1368,18 +1386,40 @@ for hl in hulls:
         rows.append(row("note", "The hull's parts over its outer box", f"{box:,.0f} m2 of box", "about 24 kg/m2 for an airliner's fuselage" if ref else "", f"{hl['parts_mass'] / box:.1f} kg/m2", f"{hl['parts_mass'] / box / 24:.2f} times", (ref.get("source") or "") + ": a weight formula for pressurised fuselages, by wetted area"))
     gear = sum(o.get("mass", 0) * times(o) for o in mine if o["slug"] in legs)
     if gear and ship:
-        lo, hi = 3, 6
-        share = 100 * gear / ship
-        rows.append(row("ok" if lo <= share <= hi else "gap", "The landing legs' share of the ship", f"{ship / 1000:,.0f} t loaded", f"{lo} to {hi}% in transport aircraft", f"{share:.1f}% ({gear / 1000:.1f} t)", "", (bench("weight_fractions", "landing_gear_share_MTOW_VT").get("source") or "")))
-    if ds.get("lift_thrust") and ship:
-        hold = ds["lift_thrust"] * 1e6 / 9.81
-        rows.append(row("ok" if hold >= ship else "gap", "Lift against the ship's weight", f"{ship / 1000:,.0f} t loaded, at 1 g", f"{ship * 9.81 / 1e6:.2f} MN to hover", f"{ds['lift_thrust']:g} MN of lift", f"{hold / ship:.2f} times", f"the lift nozzles hold {hold / 1000:,.0f} t at 1 g, {ds['lift_thrust'] * 1e6 / ds.get('gravity', 9.81) / 1000:,.0f} t on its heaviest world"))
+        rows.append(row("note", "The landing legs' share of the ship", f"{ship / 1000:,.0f} t loaded", "3 to 6% in transport aircraft, with wheels and brakes, for 1 g", f"{100 * gear / ship:.1f}% ({gear / 1000:.1f} t)", "", (bench("weight_fractions", "landing_gear_share_MTOW_VT").get("source") or "")))
+    can, cannot = [], []
+    if hover:
+        for ad in administrations:
+            for x in ad["bodies"]:
+                if x.get("kind") != "settlement":
+                    continue
+                at = next((y for y in ad["bodies"] if y.get("name") == x.get("at")), None)
+                if "position" not in x:
+                    can.append(f"{x['name']} (in orbit)")
+                elif at is not None and "gravity" in at:
+                    (can if at["gravity"] <= hover else cannot).append(f"{x['name']} ({at['gravity'] / 9.81:.2f} g)")
+        rows.append(row("note", "Where it can hover and set down", f"{ship / 1000:,.0f} t loaded", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {hover / 9.81:.2f} g", "", f"its lift nozzles hold it where gravity is no more than {hover:.2f} m/s2. Not every ship has to land on a planet."))
+        if can or cannot:
+            rows.append(row("note", "Settlements it can set down at", f"{len(can)} of {len(can) + len(cannot)}", "", ", ".join(can), "", ("Too heavy for: " + ", ".join(cannot)) if cannot else ""))
     if ds.get("main_thrust") and ship:
         rows.append(row("note", "Main drive", f"{ship / 1000:,.0f} t loaded", "", f"{ds['main_thrust']:g} MN", f"{ds['main_thrust'] * 1e6 / ship / 9.81:.1f} g", "its acceleration flat out; nothing checks the hull against it"))
-    if legs:
-        sink = bench("landing_gear", "design_sink_speed_landing_weight")
-        rows.append(row("note", "The landing the game allows", f"{ds.get('landing_speed'):g} m/s", "3.05 m/s is what aircraft gear is designed for", f"{worst_g:.0f} g on the crew", f"{ds.get('landing_speed', 0) / 3.05:.0f} times the speed, {(ds.get('landing_speed', 0) / 3.05) ** 2:.0f} times the energy", (sink.get("source") or "") + ": 14 CFR 25.473"))
+    hl["worked"] = {"ship": ship, "hover": hover, "landing": landing, "can": can, "cannot": cannot}
     report(f"structure-{hl['slug']}", f"Structure: {hl['identity']['name']} against its loads", "Each part that has a load case, against that load, by first-order sizing; and the hull against real vehicles and its own engines. A gap is a part too weak for its load, or a figure outside what real vehicles show.", ["What", "Load", "Needs", "Has", "Margin", "Note or source"], rows)
+
+# 2c. Shock: what breaking will be worked out from, and how much of it is there.
+rows = []
+has = lambda recs, f: sum(1 for e in recs if f(e))
+n = has(materials, lambda m: (m.get("mechanical") or {}).get("fracture_toughness") is not None)
+rows.append(row("ok" if n == len(materials) else "gap", "Materials with a fracture toughness", f"{n} of {len(materials)}", "how well each resists a crack running through it", ", ".join(m["identity"]["name"] for m in materials if (m.get("mechanical") or {}).get("fracture_toughness") is None) or ""))
+n = has(mill_stock, lambda s_: (s_.get("physical") or {}).get("shock_limit") is not None)
+rows.append(row("ok" if mill_stock and n == len(mill_stock) else "gap", "Mill stock with a shock limit", f"{n} of {len(mill_stock)}", "the hardest jolt each takes as cargo", "none says yet" if not n else ""))
+n = has(parts, lambda p_: (p_.get("physical") or {}).get("shock_limit") is not None)
+rows.append(row("ok" if parts and n == len(parts) else "gap", "Parts with a shock limit", f"{n} of {len(parts)}", "the hardest jolt each takes, fitted or carried", "none says yet" if not n else ""))
+for hl in hulls:
+    ld = (hl.get("worked") or {}).get("landing") or {}
+    if ld:
+        rows.append(row("ok", link(hl["identity"]["name"], "hull:" + hl["slug"]), f"{ld['hardest']:.1f} m/s", "the hardest landing its legs take", f"a jolt of {ld['hardest_jolt']:.1f} g aboard; designed for {ld['designed']:g} m/s, {ld['jolt']:.2f} g"))
+report("shock", "Shock: what breaking is worked out from", "What a ship's landing does to what is aboard, and whether each material, item of stock and part says what it can take (SFO 15). A gap is a kind of record that does not yet say.", ["What", "How many", "Meaning", "Note"], rows)
 
 # 3. Volume: a hull's parts' boxes against the space the hull takes.
 rows = []

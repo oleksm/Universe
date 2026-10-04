@@ -766,6 +766,15 @@ function detail(k) {
       const from = { said: e.identity.status === "draft" ? "its own record: a draft figure, to be balanced" : "its own record", parts: "its parts, each as many times as it has them", share: `an estimate: its surface, at ${+(est.per_m2 || 0).toPrecision(3)} kg for each m² (the hull's frame mass in the game, shared over all its parts' surface)` }[e.mass_from];
       if (e.mass !== undefined) h = h.replace(`<h3>Made of</h3>`, `<h3>Mass</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr><tr><td>mass of one</td><td>${kg(e.mass)}</td><td>${esc(from)}</td></tr>${n > 1 ? `<tr><td>mass of all ${n}</td><td>${kg(e.mass * n)}</td><td>${n} of it</td></tr>` : ""}</table><h3>Made of</h3>`);
     }
+    if (kind === "hull" && e.worked && e.worked.ship) {
+      const wk = e.worked, ld = wk.landing || {};
+      h += `<h3>Worked out</h3><table><tr><th>What</th><th>Value</th><th>From</th></tr>`
+        + `<tr><td>mass, loaded</td><td>${kg(wk.ship)}</td><td>its parts, and what the game fits and loads into it</td></tr>`
+        + (wk.hover ? `<tr><td>can hover and set down on</td><td>ground of up to ${(wk.hover / 9.81).toFixed(2)} g</td><td>its lift against its weight</td></tr>` : "")
+        + (wk.can.length || wk.cannot.length ? `<tr><td>settlements it can set down at</td><td>${esc(wk.can.join(", "))}</td><td>${wk.cannot.length ? "too heavy for: " + esc(wk.cannot.join(", ")) : "their worlds' gravity"}</td></tr>` : "")
+        + (ld.designed !== undefined ? `<tr><td>landing its legs are designed for</td><td>${ld.designed} m/s, a jolt of ${ld.jolt.toFixed(2)} g aboard</td><td>its design, over a stroke of ${ld.stroke} m</td></tr><tr><td>hardest landing its legs take</td><td>${ld.hardest.toFixed(1)} m/s, a jolt of ${ld.hardest_jolt.toFixed(1)} g aboard</td><td>the weakest of its legs' parts; faster, a leg fails</td></tr>` : "")
+        + `</table>`;
+    }
     if (kind === "hull") {
       // What it is made of: its parts.
       const cs = topParts(e.slug);

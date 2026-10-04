@@ -8,14 +8,14 @@ identity:
   status: draft
   drawing: "assets/models/mc07.glb: Gear_RL_Piston"
 physical:
-  mass: 343
+  mass: 82
   length: 0.7
   width: 0.7
   height: 3.02
 shape:
   surface_area: 8.9
 made_from:
-  item: ST4340-TB-250X20
+  item: ST4340-TB-120X10
   quantity: 3.62
 fit:
   count: 1
