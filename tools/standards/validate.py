@@ -93,7 +93,7 @@ def validate(v, sch, here, at=""):
     return out
 
 
-UNIT = re.compile(r"^(deg|1/(K|s|m3)|(kg|m|s|K|W|N|J|Pa|V|S|T|Sv|mol|rad)[0-9]?([ /](\(?(kg|m|s|K|mol)[0-9]?( K)?\)?|m\^0\.5))*)$")
+UNIT = re.compile(r"^(deg|[(/ ]*((kg|mol|rad|Pa|Sv|m|s|K|W|N|J|V|S|T|1)(\^0\.5|[0-9])?[()/ ]*)+)$")
 
 
 def units(sch, at=""):
@@ -141,6 +141,8 @@ def schema_of(rel):
     root, name = p[0], p[-1]
     S = lambda r, n: os.path.join(TREE, r, "schema", n + ".schema.yaml")
     ORG = os.path.join(TREE, "organisation.schema.yaml")              # (companies, the standards body, administrations: one schema)
+    if root == "Dogma":
+        return S(root, "section") if len(p) == 3 else S(root, "law")
     if root == "Celestial":
         if len(p) == 3:
             return S(root, {"galaxy.yaml": "galaxy", "asteroids.yaml": "asteroids", "conditions.yaml": "conditions"}.get(name, ""))
@@ -188,6 +190,8 @@ def key_of(rel, rec):
         return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "parts": "part."}[kind] + low
     if root == "MakerHouse":
         return "org."
+    if root == "Dogma":
+        return ("dogma." if len(p) == 3 else "law.") + low
     if root == "Celestial":
         if len(p) == 3:
             return "seeding." + low
@@ -245,6 +249,8 @@ def check_all():
             else:
                 KEYS[key] = rel
             named += [(full, at, holder[i], kinds) for holder, i, kinds, at in refs(rec, schema(sp), sp)]
+            if rel.startswith("Dogma") and "unit" in rec and not UNIT.match(str(rec["unit"])):
+                found.append((full, f"unit: {rec['unit']!r} is not an SI unit"))
     for path, sch in sorted(_schemas.items()):
         for at, unit in units(sch):
             found.append((path, f"{at}: x-unit {unit!r} is not an SI unit (or deg)"))

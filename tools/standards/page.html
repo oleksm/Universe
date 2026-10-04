@@ -366,6 +366,18 @@ function rows(q) {
   }
   // Reports: where the registry does not yet join up (worked out by the build).
   const gapsAll = DATA.reports.reduce((s, r) => s + r.gaps, 0);
+  // Dogma: the laws everything runs on, by section.
+  const DG = DATA.dogma || [];
+  if (DG.length) {
+    const hitd = t => !q || q.split(/\s+/).every(w => t.toLowerCase().includes(w));
+    out.push({ k: "dg", depth: 0, kind: "body", label: "Dogma", n: DG.reduce((n, s) => n + s.laws.length, 0) });
+    if (open.has("dg") || q) for (const s of DG) {
+      const ls = s.laws.filter(l => hitd(`${l.identity.name} ${l.identity.constant || ""} ${s.identity.name} law`));
+      if (q && !ls.length) continue;
+      out.push({ k: "ds:" + s.slug, depth: 1, kind: "maker", label: s.identity.name, ticker: `${s.laws.length} laws`, leaf: false });
+      if (open.has("ds:" + s.slug) || q) for (const l of ls) out.push({ k: "dl:" + l.slug, depth: 2, kind: "maker", label: l.identity.name, ticker: l.kind, leaf: true });
+    }
+  }
   // The celestial registry: systems; under each its planets (their moons under them), then its fields.
   const CS = DATA.celestial.systems || [];
   if (CS.length) {
@@ -442,6 +454,8 @@ function reveal(k) {
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
   if (k.startsWith("rep:")) { open.add("rp0"); keepOpen(); return; }
+  if (k.startsWith("ds:")) { open.add("dg"); keepOpen(); return; }
+  if (k.startsWith("dl:")) { open.add("dg"); const s = (DATA.dogma || []).find(s => s.laws.some(l => "dl:" + l.slug === k)); if (s) open.add("ds:" + s.slug); keepOpen(); return; }
   if (k.startsWith("cr:") || k === "cvoc") { open.add("cel"); keepOpen(); return; }
   if (k.startsWith("cv:")) { open.add("cel"); open.add("cvoc"); keepOpen(); return; }
   if (k.startsWith("cs:") || k.startsWith("cb:") || k.startsWith("cf:") || k.startsWith("cx:") || k.startsWith("cg:")) {
@@ -643,6 +657,21 @@ function detail(k) {
   const smallRows = (s, xs) => `<table><tr><th>Body</th><th>Kind</th><th>Goes round</th><th>Nearest</th><th>Farthest</th><th>Goes round in</th><th>Tilt</th><th>Radius</th><th>Class</th><th>Status</th></tr>` + xs.map(x => { const o = x.orbit || {}, yrs = o.period / 365.25; const pb = s.bodies.find(b => b.identity.name === x.identity.parent); return `<tr><td><a data-k="${esc(`cx:${s.slug}:${x.slug}`)}">${esc(x.identity.name)}</a></td><td>${esc(x.identity.kind)}</td><td>${pb ? `<a data-k="${esc(`cb:${s.slug}:${pb.slug}`)}">${esc(pb.identity.name)}</a>` : esc(x.identity.parent)}</td><td class="num">${x.nearest !== undefined ? x.nearest.toFixed(2) + " AU" : Math.round(o.semi_major_axis * (1 - o.eccentricity)).toLocaleString() + " km"}</td><td class="num">${x.farthest !== undefined ? (x.farthest > 100 ? Math.round(x.farthest).toLocaleString() : x.farthest.toFixed(2)) + " AU" : Math.round(o.semi_major_axis * (1 + o.eccentricity)).toLocaleString() + " km"}</td><td class="num">${yrs >= 2 ? (+yrs.toPrecision(3)).toLocaleString() + " years" : Math.round(o.period).toLocaleString() + " days"}</td><td class="num">${o.inclination}°${o.inclination > 90 ? " (backward)" : ""}</td><td class="num">${(+x.physical.radius.toPrecision(3)).toLocaleString()} km</td><td>${(x.rock || {}).class ? `<a data-k="${esc("cr:" + x.rock.class)}">${esc(x.rock.class)}</a>` : ""}</td><td>${esc(x.provenance)}</td></tr>`; }).join("") + `</table>`;
   const NOT_MADE = `<p class="meta">Seeded in the registry from the galaxy's seed, by what is known of the Sun's. The game does not make it yet.</p>`;
   const regionRows = (s, rs) => `<table><tr><th>Region</th><th>Kind</th><th>From</th><th>To</th><th>Note</th></tr>` + rs.map(r => `<tr><td><a data-k="${esc(`cg:${s.slug}:${r.slug}`)}">${esc(r.identity.name)}</a></td><td>${esc(r.identity.kind)}</td><td class="num">${(+r.extent.inner.toPrecision(3)).toLocaleString()} AU</td><td class="num">${(+r.extent.outer.toPrecision(3)).toLocaleString()} AU</td><td>${r.crosses ? (r.crosses.length ? "reaches from inside to outside the orbits of " + esc(r.crosses.join(", ")) + ": it meets a world only where the two orbits cross" : "reaches no planet's orbit") : ""}</td></tr>`).join("") + `</table>`;
+  // Dogma.
+  const lawValue = l => `${(+l.value.toPrecision(12)).toLocaleString("en", { maximumSignificantDigits: 12 }).length > 15 || Math.abs(l.value) < 1e-3 ? l.value.toExponential().replace(/e\+?/, " × 10^") : l.value.toLocaleString("en", { maximumSignificantDigits: 12 })}`;
+  const lawRows = ls => `<table><tr><th>Law</th><th>Symbol</th><th>Value</th><th>Unit</th><th>Kind</th><th>What it is</th></tr>` + ls.map(l => `<tr><td><a data-k="${esc("dl:" + l.slug)}">${esc(l.identity.name)}</a></td><td>${esc(l.identity.symbol || "")}</td><td class="num">${esc(lawValue(l))}</td><td>${esc(l.unit || "")}</td><td>${esc(l.kind)}</td><td>${esc(l.note || "")}</td></tr>`).join("") + `</table>`;
+  if (k === "dg") { const DG = DATA.dogma || [];
+    return `<h2>Dogma</h2><div class="meta">the laws everything runs on</div><p>The same everywhere, whatever is built: the constants of nature, the named measures things are counted in, and the constants of the laws this world runs on. Nothing here is a device's, a material's or a design's. Each is real (measured nature, or fixed by definition), simplified (an approximation of the real, to refine) or invented (this world's own, by written rule). Values are in SI. Each law against the engine's own copy: the <a data-k="rep:dogma">Dogma report</a>.</p>`
+      + DG.map(s => `<h3><a data-k="${esc("ds:" + s.slug)}">${esc(s.identity.name)}</a></h3><p class="meta">${esc(s.identity.about)}</p>` + lawRows(s.laws)).join(""); }
+  if (kind === "ds") { const s = (DATA.dogma || []).find(x => x.slug === rest[0]); if (!s) return "";
+    return `<h2>${esc(s.identity.name)}</h2><div class="meta">a section of <a data-k="dg">Dogma</a></div><p>${esc(s.identity.about)}</p>` + lawRows(s.laws)
+      + ((s.identity.see || []).length ? `<p class="meta">Written up in: ${s.identity.see.map(esc).join(", ")}</p>` : "") + `<div class="file" style="margin-top:24px">standards/${esc(s.file)}</div>`; }
+  if (kind === "dl") { const s = (DATA.dogma || []).find(s => s.laws.some(l => l.slug === rest[0])); if (!s) return ""; const l = s.laws.find(l => l.slug === rest[0]);
+    const eng = !l.in_game ? "nowhere: it writes the number where it needs it" : !l.identity.constant ? `a number written in ${l.in_game.file}, with no name` : `${l.identity.constant} in ${l.in_game.file}${l.in_game.as ? `, held ${l.in_game.as}: ${l.engine_value}` : ""}${l.engine_has == null ? " (not found there)" : l.engine_has === l.engine_value ? "" : Math.abs(l.engine_has - l.engine_value) <= 1e-9 * Math.abs(l.engine_value) ? "" : `: it has ${l.engine_has}`}`;
+    return `<h2>${esc(l.identity.name)}</h2><div class="meta">${esc(l.kind)} · in <a data-k="${esc("ds:" + s.slug)}">${esc(s.identity.name)}</a> · <a data-k="dg">Dogma</a></div><p>${esc(l.note || "")}</p>`
+      + `<table><tr><th>Property</th><th>Value</th></tr><tr><td>key</td><td>${esc(l.identity.key)}</td></tr>${l.identity.symbol ? `<tr><td>symbol</td><td>${esc(l.identity.symbol)}</td></tr>` : ""}<tr><td>value</td><td>${esc(lawValue(l))}${l.unit ? " " + esc(l.unit) : ""}</td></tr><tr><td>kind</td><td>${esc(l.kind)}</td></tr><tr><td>in the engine</td><td>${esc(eng)}</td></tr></table>`
+      + ((l.basis || []).length ? `<h3>Where its figure comes from</h3><table><tr><th>How</th><th>Source or note</th></tr>` + l.basis.map(b => `<tr><td>${esc(b.tier)}</td><td>${esc([b.source, b.note].filter(Boolean).join(". "))}</td></tr>`).join("") + `</table>` : "")
+      + `<div class="file" style="margin-top:24px">standards/${esc(l.file)}</div>`; }
   if (k === "cel") { const g = DATA.celestial.galaxy || {};
     return `<h2>Celestial Registry</h2><p>The seeded world written down. The seed makes every star and system by its laws; a system or body with a record here is taken as written instead. A record is seeded (as the seed makes it), curated (changed by hand) or frozen (not to be changed).</p>`
       + `<h3>The galaxy</h3><table><tr><th>Property</th><th>Value</th></tr><tr><td>seed</td><td>${g.seed}</td></tr><tr><td>home</td><td>${esc(g.home || "")}</td></tr><tr><td>charted region</td><td>${g.region} light years a side</td></tr><tr><td>star density</td><td>${g.star_density} for each cubic light year</td></tr><tr><td>stars by class</td><td>${Object.entries(g.class_mix || {}).map(([c, v]) => `${c} ${+(v * 100).toPrecision(3)}%`).join(", ")}</td></tr></table><p class="meta">${esc(g.note || "")}</p>`

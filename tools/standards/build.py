@@ -307,6 +307,52 @@ def check_standard(s, ids):
 # Maker House: the makers, one file each (MakerHouse/metadata/makers/<name>.yaml), to
 # MakerHouse/schema/company.schema.yaml. The game's
 # brands.ron is written from them.
+# 0. Dogma: the laws everything runs on (standards/Dogma). Each law against the engine's own copy,
+# where it has one; and the constants this build works things out with are these, by name.
+dogma = []
+_ddir = os.path.join(TREE, "Dogma", "metadata")
+_engine = {}
+
+
+def engine_value(file, constant):
+    """A constant as the engine's file has it today, or None."""
+    if file not in _engine:
+        try:
+            _engine[file] = open(os.path.join(ROOT, file), encoding="utf-8").read()
+        except OSError:
+            _engine[file] = ""
+    m = re.search(rf'name: "{constant}", value: ([0-9.eE+-]+)', _engine[file]) or re.search(rf"const {constant}: f64 = ([0-9._eE+-]+(?: \* DAY)?);", _engine[file])
+    if not m:
+        return None
+    v = m.group(1).replace("_", "")
+    return float(v[:-6]) * 86400 if v.endswith(" * DAY") else float(v)
+
+
+for _fn in sorted(os.listdir(_ddir)) if os.path.isdir(_ddir) else []:
+    if not _fn.endswith(".yaml"):
+        continue
+    sec = load(os.path.join(_ddir, _fn))
+    sec["slug"], sec["file"], sec["laws"] = _fn[:-5], os.path.relpath(os.path.join(_ddir, _fn), TREE), []
+    for _ln in sorted(os.listdir(os.path.join(_ddir, _fn[:-5]))) if os.path.isdir(os.path.join(_ddir, _fn[:-5])) else []:
+        law = load(os.path.join(_ddir, _fn[:-5], _ln))
+        law["slug"], law["file"] = _ln[:-5], os.path.relpath(os.path.join(_ddir, _fn[:-5], _ln), TREE)
+        dogma.append(sec) if sec not in dogma else None
+        sec["laws"].append(law)
+    if sec not in dogma:
+        dogma.append(sec)
+dogma.sort(key=lambda s_: (s_["identity"].get("order", 99), s_["slug"]))
+_law = {l["slug"]: l["value"] for s_ in dogma for l in s_["laws"]}
+C_LIGHT, SIGMA, G_N = _law["speed-of-light"], _law["stefan-boltzmann"], _law["gravitation"]
+G0, AU_M, LY, DAY_S, YEAR_S = _law["standard-gravity"], _law["astronomical-unit"], _law["light-year"], _law["day"], _law["year"]
+SUN_KG, SUN_W = _law["sun-mass"], _law["sun-luminosity"]
+for s_ in dogma:
+    for l in s_["laws"]:
+        # (What the engine holds it as: per light year, or times the speed of light, where it says so.)
+        how = (l.get("in_game") or {}).get("as")
+        l["engine_value"] = float(f"{l['value'] * LY if how == 'per light year' else l['value'] / C_LIGHT if how == 'times the speed of light' else l['value']:.12g}")
+        if (l.get("in_game") or {}).get("file") and l["identity"].get("constant"):
+            l["engine_has"] = engine_value(l["in_game"]["file"], l["identity"]["constant"])
+
 HOUSE = "MakerHouse"
 house = load(os.path.join(TREE, HOUSE, "metadata", HOUSE + ".yaml"))
 makers = []
@@ -724,7 +770,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial"):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -1581,7 +1627,7 @@ for ad in administrations:
         sp = x.get("spin") or {}
         if sp.get("radius") and sp.get("gravity"):
             w_ = (sp["gravity"] / sp["radius"]) ** 0.5
-            x["spin_worked"] = {"rate": w_, "rpm": w_ * 60 / (2 * math.pi), "g": sp["gravity"] / 9.81}
+            x["spin_worked"] = {"rate": w_, "rpm": w_ * 60 / (2 * math.pi), "g": sp["gravity"] / G0}
         cargo_ = max([(e_.get("performance") or {}).get("capacity", 0) for e_ in equipment if (e_.get("identity") or {}).get("slot") == "cargo"] or [0])
         x["feed"] = [{"item": i["item"], "rate": i["rate"], "loads": i["rate"] * 24 * 1000 / cargo_ if cargo_ else None, "hold": cargo_} for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln for i in ln["most"]["supplies"] if next((g_ for g_ in goods if g_["slug"] == i["item"]), {}).get("identity", {}).get("kind") == "rock"]
 
@@ -1608,11 +1654,25 @@ for e in equipment:
     rows.append(row("gap", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
 report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game, or does not yet say what it is made of.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
 
-# 1c. Stargates: what opening and holding each ring's tube costs, by the laws (config/dogma.ron,
-# Tube; the same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
-_dogma = open(os.path.join(ROOT, "config", "dogma.ron"), encoding="utf-8").read()
-LAW = {k: float(v) for k, v in re.findall(r'name: "(TUBE_[A-Z_]+)", value: ([0-9.e+-]+)', _dogma)}
-LY = 9.4607304725808e15
+# 1c. Stargates: what opening and holding each ring's tube costs, by the laws (Dogma's Tube; the
+# same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
+LAW = {l["identity"]["constant"]: l["engine_value"] for s_ in dogma for l in s_["laws"] if l["identity"].get("constant")}
+rows = []
+for s_ in dogma:
+    for l in s_["laws"]:
+        where, has = (l.get("in_game") or {}).get("file"), l.get("engine_has")
+        shown = f"{l['value']:g}" + (" " + l["unit"] if l.get("unit") else "")
+        if not where:
+            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], "nowhere", "the engine has no such constant: it writes the number where it needs it"))
+        elif not l["identity"].get("constant"):
+            rows.append(row("note", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, "a number written in the code there, with no name"))
+        elif has is None:
+            rows.append(row("gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"{l['identity']['constant']} is not found there"))
+        else:
+            same = abs(has - l["engine_value"]) <= 1e-9 * max(abs(has), abs(l["engine_value"]))
+            rows.append(row("ok" if same else "gap", link(l["identity"]["name"], "dl:" + l["slug"]), s_["identity"]["name"], shown, l["kind"], where, f"{l['identity']['constant']}: the same" if same else f"{l['identity']['constant']} is {has:g} there, {l['engine_value']:g} here"))
+report("dogma", "Dogma: the laws against the engine's", "Each law of Dogma, and the engine's own copy of it today. Until the engine reads the registry, the two are held together here: a gap is a law the engine has differently, or has no name for.",
+       ["Law", "Section", "Value", "Kind", "In the engine", "State"], rows)
 _structs = open(os.path.join(ROOT, "content", "base", "structures.ron"), encoding="utf-8").read()
 GAME_RINGS = {k: float(v) for k, v in re.findall(r'key: "([^"]+)",[^\n]*?span_ly: ([0-9.]+)', _structs)}
 tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * m ** LAW["TUBE_GAMMA"]
@@ -1677,7 +1737,7 @@ for g in gates:
         # (Its heat: a fusion plant turns half its fuel's energy into power, so as much again is
         # heat to shed. Shed from the ring's own skin, which then runs at T: P = e * sigma * A * T^4.)
         skin = sum((pt.get("shape") or {}).get("surface_area", 0) * times(pt) for pt in mine if not pt.get("parent"))
-        SIGMA, EMISS = 5.670374419e-8, 0.9
+        EMISS = 0.9
         g["worked"]["fit_mass"] = fit_mass
         g["worked"]["coil_power"] = g["worked"]["hold_power"] / coils if coils else None
         g["worked"]["skin"] = {"area": skin, "heat": g["worked"]["hold_power"], "temperature": (g["worked"]["hold_power"] / (EMISS * SIGMA * skin)) ** 0.25, "emissivity": EMISS} if skin else None
@@ -1731,7 +1791,7 @@ for hl in sorted(hulls, key=lambda h_: h_["identity"].get("revision") == "outdat
     loaded = frame + fitted + fuel + hold
     fit_vol = sum((eq_by.get(ft.get("item"), {}).get("physical") or {}).get("volume", 0) for ft in hl.get("fit") or [])
     hl["budget"] = {"frame": frame, "fitted": fitted, "fuel": fuel, "hold": hold, "loaded": loaded, "fit_volume": fit_vol,
-                    "payload": hold / loaded if loaded else 0, "main_g": ds.get("main_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0, "lift_g": ds.get("lift_thrust", 0) * 1e6 / (loaded * 1000) / 9.81 if loaded else 0,
+                    "payload": hold / loaded if loaded else 0, "main_g": ds.get("main_thrust", 0) * 1e6 / (loaded * 1000) / G0 if loaded else 0, "lift_g": ds.get("lift_thrust", 0) * 1e6 / (loaded * 1000) / G0 if loaded else 0,
                     "loads": [{"what": w_, "tonnes": t_, "loads": t_ / hold if hold else None} for w_, t_ in big_loads]}
     old = hl["identity"].get("revision") == "outdated"
     rows.append(row("note" if old else "ok", link(hl["identity"]["name"], "hull:" + hl["slug"]), "outdated: not to be balanced against" if old else "current", hl["identity"].get("class", ""), f"{frame:,.0f} t" + ("" if hl.get("parts_mass") else " (the game's)"), f"{loaded:,.0f} t", f"{hold:g} t ({100 * hold / loaded:.0f}%)" if loaded else "", f"{fuel:g} t",
@@ -1828,16 +1888,16 @@ for hl in built_hulls:
             most = takes if most is None else min(most, takes)
             strength = sy * 1e6 * a_ / (force * SF)
             buckling = math.pi ** 2 * em * 1e9 * i_ / longest(pt) ** 2 / (force * SF)
-            rows.append(row("ok" if min(strength, buckling) >= 1 else "gap", part_link(pt), f"{force / 1e6:.2f} MN on each of {count} legs", f"{force * SF / 1e6:.2f} MN with its factor", ms["identity"]["name"], f"strength {strength:.2f} times, buckling {buckling:.2f} times", f"a column {longest(pt):.2f} m long, stopping {ship / 1000:.0f} t from {v:g} m/s in {stroke:.2f} m, on ground of {hover / 9.81:.2f} g"))
+            rows.append(row("ok" if min(strength, buckling) >= 1 else "gap", part_link(pt), f"{force / 1e6:.2f} MN on each of {count} legs", f"{force * SF / 1e6:.2f} MN with its factor", ms["identity"]["name"], f"strength {strength:.2f} times, buckling {buckling:.2f} times", f"a column {longest(pt):.2f} m long, stopping {ship / 1000:.0f} t from {v:g} m/s in {stroke:.2f} m, on ground of {hover / G0:.2f} g"))
     # (What follows for everything aboard: the jolt of the designed landing, and the hardest landing
     # the legs take before one fails, with its jolt.)
     landing = {}
     if legs and ship and strokes:
         s_ = min(strokes)
-        jolt = v ** 2 / (2 * s_ * eta) / 9.81
+        jolt = v ** 2 / (2 * s_ * eta) / G0
         spare = (most or 0) * count - ship * hover
         vmax = (2 * spare * s_ * eta / ship) ** 0.5 if spare > 0 else 0
-        jmax = vmax ** 2 / (2 * s_ * eta) / 9.81
+        jmax = vmax ** 2 / (2 * s_ * eta) / G0
         landing = {"designed": v, "jolt": jolt, "hardest": vmax, "hardest_jolt": jmax, "stroke": s_}
         rows.append(row("note", "The landing its legs are designed for", f"{v:g} m/s", "", f"a jolt of {jolt:.2f} g aboard", "", (bench("landing_gear", "design_sink_speed_landing_weight").get("source") or "") + ": 14 CFR 25.473"))
         rows.append(row("note", "The hardest landing its legs take", "until one yields or buckles", "", f"{vmax:.1f} m/s", f"a jolt of {jmax:.1f} g aboard", "faster than this a leg fails; the jolt is what everything aboard must take, people and cargo"))
@@ -1860,14 +1920,14 @@ for hl in built_hulls:
                 if "position" not in x:
                     can.append(f"{x['name']} (in orbit)")
                 elif at is not None and "gravity" in at:
-                    (can if at["gravity"] <= hover else cannot).append(f"{x['name']} ({at['gravity'] / 9.81:.2f} g)")
-        rows.append(row("note", "Where it can hover and set down", f"{ship / 1000:,.0f} t {as_lands}", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {hover / 9.81:.2f} g", "", f"its lift nozzles hold it where gravity is no more than {hover:.2f} m/s2. Not every ship has to land on a planet."))
+                    (can if at["gravity"] <= hover else cannot).append(f"{x['name']} ({at['gravity'] / G0:.2f} g)")
+        rows.append(row("note", "Where it can hover and set down", f"{ship / 1000:,.0f} t {as_lands}", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {hover / G0:.2f} g", "", f"its lift nozzles hold it where gravity is no more than {hover:.2f} m/s2. Not every ship has to land on a planet."))
         if full > ship:
-            rows.append(row("note", "With its hold full", f"{full / 1000:,.0f} t", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {ds['lift_thrust'] * 1e6 / full / 9.81:.2f} g", "", "loaded, it unloads in orbit: it is not built to set down full"))
+            rows.append(row("note", "With its hold full", f"{full / 1000:,.0f} t", f"{ds['lift_thrust']:g} MN of lift", f"ground of up to {ds['lift_thrust'] * 1e6 / full / G0:.2f} g", "", "loaded, it unloads in orbit: it is not built to set down full"))
         if can or cannot:
             rows.append(row("note", "Settlements it can set down at", f"{len(can)} of {len(can) + len(cannot)}", "", ", ".join(can), "", ("Too heavy for: " + ", ".join(cannot)) if cannot else ""))
     if ds.get("main_thrust") and ship:
-        rows.append(row("note", "Main drive", f"{light / 1000:,.0f} t empty of cargo, {full / 1000:,.0f} t full", "", f"{ds['main_thrust']:g} MN", f"{ds['main_thrust'] * 1e6 / light / 9.81:.1f} g empty, {ds['main_thrust'] * 1e6 / full / 9.81:.2f} g full", "its acceleration flat out"))
+        rows.append(row("note", "Main drive", f"{light / 1000:,.0f} t empty of cargo, {full / 1000:,.0f} t full", "", f"{ds['main_thrust']:g} MN", f"{ds['main_thrust'] * 1e6 / light / G0:.1f} g empty, {ds['main_thrust'] * 1e6 / full / G0:.2f} g full", "its acceleration flat out"))
     # (The main drive's push through the hull: each part on its path as a thin-walled box of its
     # stock's gauge. Strength: the push, with its factor, over the wall's section. Buckling: a flat
     # panel between stiffeners b apart holds 4 pi^2 E / (12 (1 - nu^2)) (t / b)^2 before it buckles,
@@ -2161,7 +2221,7 @@ if os.path.isdir(CEL):
         else:
             sysm["bodies"].remove(sun)
             sysm["star_body"] = sun
-            sysm["star"] = {"class": (sun.get("star") or {}).get("class"), "luminosity": (sun.get("star") or {}).get("luminosity"), "mass": float(f"{(sun.get('physical') or {}).get('mass', 0) / 1.989e30:.4g}")}
+            sysm["star"] = {"class": (sun.get("star") or {}).get("class"), "luminosity": (sun.get("star") or {}).get("luminosity"), "mass": float(f"{(sun.get('physical') or {}).get('mass', 0) / SUN_KG:.4g}")}
         names = {b["identity"]["name"] for b in sysm["bodies"]} | {sysm["identity"]["name"]}
         for sb in sysm["small_bodies"]:
             if sb["identity"].get("parent") not in names:
@@ -2185,7 +2245,7 @@ if os.path.isdir(CEL):
     # outermost giant. How many: the Sun's, by the ground each covers (the same number for each
     # square AU), and by size as the size law says.
     laws = celestial.get("asteroids") or {}
-    AU_KM = 1.495978707e8
+    AU_KM = AU_M / 1000
     res = lambda r_: (lambda a_, b_: (b_ / a_) ** (2 / 3))(*[float(v) for v in r_.split(":")])
     for sysm in celestial["systems"]:
         belts = []
@@ -2245,7 +2305,7 @@ if os.path.isdir(CEL):
             return {"zones": [{"zone": z_, "share": w_} for z_, w_ in parts_], "classes": sorted(({"class": k_, "share": v_} for k_, v_ in out_.items()), key=lambda c_: -c_["share"])}
         for bl in belts:
             bl["mix"] = mix_of(bl)
-        star_kg = (sysm.get("star") or {}).get("mass", 0) * 1.98847e30
+        star_kg = (sysm.get("star") or {}).get("mass", 0) * SUN_KG
         for b in sysm["bodies"]:
             par = next((o for o in sysm["bodies"] if o["identity"]["name"] == b["identity"].get("parent")), None)
             big = (par.get("physical") or {}).get("mass") if par else star_kg
@@ -2253,7 +2313,7 @@ if os.path.isdir(CEL):
             if big and m_ and a_ and b["identity"]["kind"] != "asteroid":
                 b["balance"] = {"reach": a_ * (m_ / (3 * big)) ** (1 / 3), "round": par["identity"]["name"] if par else sysm["identity"]["name"], "stable": big / m_ > 24.96, "ratio": big / m_}
         # (What follows from each body's mass, size, spin and orbit: worked out, not written.)
-        lum_w = (sysm.get("star") or {}).get("luminosity", 0) * 3.828e26
+        lum_w = (sysm.get("star") or {}).get("luminosity", 0) * SUN_W
         for b in sysm["bodies"]:
             ph, ob = b.get("physical") or {}, b.get("orbit") or {}
             if not (ph.get("mass") and ph.get("radius")):
@@ -2261,13 +2321,13 @@ if os.path.isdir(CEL):
             R_, M_ = ph["radius"] * 1000, ph["mass"]
             par = next((o for o in sysm["bodies"] if o["identity"]["name"] == b["identity"].get("parent")), None)
             a_star = ((par or b).get("orbit") or {}).get("semi_major_axis", 0) * 1000        # (its distance from the star: its planet's, for a moon)
-            w = {"density": M_ / (4 / 3 * math.pi * R_ ** 3), "escape": (2 * 6.6743e-11 * M_ / R_) ** 0.5, "orbit_speed": (6.6743e-11 * M_ / R_) ** 0.5,
-                 "to_orbit": 6.6743e-11 * M_ / R_ / 2, "to_escape": 6.6743e-11 * M_ / R_}
+            w = {"density": M_ / (4 / 3 * math.pi * R_ ** 3), "escape": (2 * G_N * M_ / R_) ** 0.5, "orbit_speed": (G_N * M_ / R_) ** 0.5,
+                 "to_orbit": G_N * M_ / R_ / 2, "to_escape": G_N * M_ / R_}
             if a_star and lum_w:
                 w["sunlight"] = lum_w / (4 * math.pi * a_star ** 2)
-                w["bare_temperature"] = (w["sunlight"] * (1 - ph.get("albedo", 0.3)) / (4 * 5.670374419e-8)) ** 0.25
+                w["bare_temperature"] = (w["sunlight"] * (1 - ph.get("albedo", 0.3)) / (4 * SIGMA)) ** 0.25
             if ph.get("day") and b["identity"]["kind"] != "asteroid":
-                sync = (6.6743e-11 * M_ * (abs(ph["day"]) * 3600 / (2 * math.pi)) ** 2) ** (1 / 3)
+                sync = (G_N * M_ * (abs(ph["day"]) * 3600 / (2 * math.pi)) ** 2) ** (1 / 3)
                 w["stationary_orbit"] = sync / 1000
                 w["stationary_holds"] = "balance" in b and sync / 1000 < b["balance"]["reach"] / 3 and sync > R_
                 w["spin_speed"] = 2 * math.pi * R_ / (abs(ph["day"]) * 3600)
@@ -2311,8 +2371,8 @@ if os.path.isdir(CEL):
             M_, R_, a_m, e_ = par["physical"]["mass"], b["physical"]["radius"] * 1000, b["orbit"]["semi_major_axis"] * 1000, b["orbit"].get("eccentricity", 0)
             cond = {}
             if th:
-                n_ = (6.6743e-11 * M_ / a_m ** 3) ** 0.5
-                heat = 10.5 * th.get("love_over_q", 0) * 6.6743e-11 * M_ ** 2 * R_ ** 5 * n_ * e_ ** 2 / a_m ** 6
+                n_ = (G_N * M_ / a_m ** 3) ** 0.5
+                heat = 10.5 * th.get("love_over_q", 0) * G_N * M_ ** 2 * R_ ** 5 * n_ * e_ ** 2 / a_m ** 6
                 flux = heat / (4 * math.pi * R_ ** 2)
                 cond["tidal"] = {"heat": heat, "flux": flux, "state": "far more than any moon known: an orbit this close and this stretched would long since have been made round. Its orbit as seeded is not one that lasts" if flux >= 20 * th.get("volcanic_above", 1) else "volcanic" if flux >= th.get("volcanic_above", 1) else "warm inside: an icy one may keep a buried sea" if flux >= th.get("sea_above", 0.03) else "slight"}
                 if flux >= th.get("sea_above", 0.03):
@@ -2358,7 +2418,7 @@ for sysm in celestial["systems"]:
         if b.get("provenance") == "seeded":
             continue
         ph = b.get("physical") or {}
-        g_ = 6.6743e-11 * ph.get("mass", 0) / (ph.get("radius", 1) * 1000) ** 2
+        g_ = G_N * ph.get("mass", 0) / (ph.get("radius", 1) * 1000) ** 2
         said = ph.get("gravity")
         off = said is not None and abs(said - g_) > 0.01 * g_
         rows.append(row("gap" if off else "ok", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), b["provenance"], "", f"its gravity is written as {said} and its mass and radius give {g_:.3f}: the game uses its mass and radius" if off else "taken by the game as written"))
@@ -2422,6 +2482,7 @@ def write_html():
         "goods_kinds": GOODS_KINDS,
         "administrations": administrations,
         "celestial": celestial,
+        "dogma": dogma,
         # (Logos: MakerHouse/logos/<a maker's file name>.svg, drawn inline.)
         "logos": {f[:-4]: open(os.path.join(TREE, HOUSE, "logos", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, HOUSE, "logos"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, HOUSE, "logos")) else {},
         "makers": makers,

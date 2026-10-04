@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.field-cost
+  name: "Field cost"
+  symbol: "E0"
+  constant: FIELD_COST
+  section: dogma.field
+value: 0.002391
+unit: "J/(kg m)"
+kind: invented
+note: "The energy per kg per metre, going slow. Target: a normal ship (a Drover's tank, an S2 drive) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star; an explorer that's mostly tank about 5 ly."
+in_game: { file: config/dogma.ron }
+basis:
+  - { of: [value], tier: invented, note: "Chosen to meet its target." }

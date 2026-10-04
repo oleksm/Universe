@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.speed-of-light
+  name: "Speed of light"
+  symbol: "c"
+  constant: SPEED_OF_LIGHT
+  section: dogma.nature
+value: 299792458
+unit: "m/s"
+kind: real
+note: "Light, radio, radar, and every capture of an event."
+in_game: { file: config/dogma.ron }
+basis:
+  - { of: [value], tier: sourced, source: "SI: exact by definition (2019)" }

@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.best-speed
+  name: "Best speed"
+  symbol: "v*"
+  constant: V_BEST_C
+  section: dogma.field
+value: 299792458000.0
+unit: "m/s"
+kind: invented
+note: "At this speed the cost is double the slow cost (it grows with the square of speed). 1,000 times the speed of light."
+in_game: { file: config/dogma.ron, as: times the speed of light }
+basis:
+  - { of: [value], tier: invented, note: "Chosen." }

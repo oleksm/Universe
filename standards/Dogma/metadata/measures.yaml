@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../schema/section.schema.yaml
+identity:
+  key: dogma.measures
+  name: Measures
+  order: 2
+  about: "Named reference values: what a light year, an astronomical unit, a day, the Sun's mass and one standard gravity are. Fixed by definition or by convention, so that everything that says 'a g' or 'a solar mass' means the same thing. Not laws of nature: the pull of gravity on any one world is worked out."

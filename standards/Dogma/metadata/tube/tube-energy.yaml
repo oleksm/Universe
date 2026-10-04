@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.tube-energy
+  name: "Crossing energy scale"
+  symbol: "eps"
+  constant: TUBE_EPS
+  section: dogma.tube
+value: 2.24e-12
+unit: "J/(kg m)"
+kind: invented
+note: "A crossing's energy scale. Target: a 100 t ship at natural speed through a 5 ly gate costs an S2 plant-hour."
+in_game: { file: config/dogma.ron }
+basis:
+  - { of: [value], tier: invented, note: "Chosen to meet its target." }

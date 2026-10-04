@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.stefan-boltzmann
+  name: "Stefan-Boltzmann constant"
+  symbol: "sigma"
+  constant: STEFAN_BOLTZMANN
+  section: dogma.nature
+value: 5.670374e-08
+unit: "W/(m2 K4)"
+kind: real
+note: "How a body radiates heat: sigma e A T^4."
+in_game: { file: config/dogma.ron }
+basis:
+  - { of: [value], tier: sourced, source: "CODATA 2018: 5.670374419e-8, exact", note: "The engine's is rounded to seven figures." }

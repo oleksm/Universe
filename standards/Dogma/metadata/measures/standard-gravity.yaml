@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.standard-gravity
+  name: "Standard gravity"
+  symbol: "g0"
+  section: dogma.measures
+value: 9.80665
+unit: "m/s2"
+kind: real
+note: "One g: what a load, a jolt or a thrust is counted in. Not the pull on any world: that is worked out from its mass and size."
+basis:
+  - { of: [value], tier: sourced, source: "CGPM 1901: exact by definition", note: "The engine has no name for it yet: it writes 9.81 where it needs it." }

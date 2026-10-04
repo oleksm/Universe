@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.sutton-graves
+  name: "Sutton-Graves constant"
+  symbol: "k"
+  constant: SUTTON_GRAVES
+  section: dogma.air
+value: 0.00017415
+unit: "kg^0.5/m"
+kind: real
+note: "Entry heating at the nose: q = k (density / nose radius)^0.5 v^3, for air-like gases."
+in_game: { file: crates/physics/src/atmosphere.rs }
+basis:
+  - { of: [value], tier: sourced, source: "Sutton and Graves, NASA TR R-376 (1971): 1.7415e-4 for Earth's air" }

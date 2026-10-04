@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.tube-hold
+  name: "Holding time"
+  constant: TUBE_HOLD
+  section: dogma.tube
+value: 518400000.0
+unit: "s"
+kind: invented
+note: "Holding a tube costs its opening over this (200 months: 0.5% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous."
+in_game: { file: config/dogma.ron }
+basis:
+  - { of: [value], tier: invented, note: "Chosen to meet its target." }

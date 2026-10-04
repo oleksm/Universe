@@ -1,0 +1,30 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Law
+description: 'standards/Dogma/metadata/<section>/<name>.yaml: one law of Dogma: a constant of nature, a named reference value, or a constant of a law the world runs on. The same everywhere; nothing here is a device''s, a material''s or a design''s.'
+type: object
+additionalProperties: false
+required: [identity, value, kind]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, section]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      symbol: { type: string, description: "The letter it goes by in a formula." }
+      constant: { type: string, pattern: "^[A-Z][A-Z0-9_]*$", description: "Its name in the engine today." }
+      section: { type: string, x-ref: [dogma] }
+  value: { type: number }
+  unit: { type: string, description: "Its unit, in SI. Left out: a pure number." }
+  kind: { enum: [real, simplified, invented], description: "real: measured nature, or a value fixed by definition. simplified: an approximation of the real, to refine. invented: this world's own (the hyper layer), by written rule." }
+  note: { type: string, description: "What it is for; for an invented one, the target it was chosen to meet." }
+  in_game:
+    description: "Where the engine has it today, for the build to hold the two together."
+    type: object
+    additionalProperties: false
+    required: [file]
+    properties:
+      file: { type: string, description: "The file, from the repository's root." }
+      as: { type: string, description: "The unit the engine holds it in, where that is not the record's: per light year, times the speed of light." }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -18,3 +18,8 @@
 - **One `physical` group** for every physical thing (mass, size, shipping box, volume, temperature
   ranges, what blow and jolt it takes), shared by parts, mill stock, equipment, goods, hulls and
   industrial modules. A hull's hold and tanks are its `capacity`.
+- **Dogma is in the registry:** the laws everything runs on, 31 of them in six sections (Nature,
+  Measures, Field, Tube, Air, Climate), each with its value in SI, whether it is real, simplified
+  or invented, and where its figure comes from. A new report holds each against the engine's own
+  copy. Standard gravity (9.80665) is now a named measure; the engine has no name for it yet.
+  The registry's own sums now use these, so some worked figures moved in the fourth digit.
