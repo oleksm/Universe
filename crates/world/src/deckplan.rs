@@ -272,11 +272,23 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
         }
         for wall in &deck.walls {
             for run in wall_runs(wall, sd) {
+                // Its pieces (a doorway: the wall only above it), those running on
+                // straight and alike as one.
+                let mut pieces: Vec<(DVec2, DVec2, f64)> = Vec::new();
                 for w in run.windows(2) {
                     let ((a, sa), (c, sc)) = (w[0], w[1]);
-                    // A doorway here: the wall only above it.
                     let mid = (sa + sc) / 2.0;
                     let bottom = wall.doors.iter().find(|dr| (mid - dr.at).abs() <= dr.width / 2.0).map_or(0.0, |dr| dr.height.min(deck.headroom));
+                    if let Some(last) = pieces.last_mut()
+                        && last.2 == bottom
+                        && (last.1 - last.0).normalize_or_zero().dot((c - a).normalize_or_zero()) > 0.99995
+                    {
+                        last.1 = c;
+                        continue;
+                    }
+                    pieces.push((a, c, bottom));
+                }
+                for (a, c, bottom) in pieces {
                     let dir = (c - a).normalize_or_zero();
                     let off = DVec2::new(-dir.y, dir.x) * (WALL / 2.0);
                     for side in [off, -off] {

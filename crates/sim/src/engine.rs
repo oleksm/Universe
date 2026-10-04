@@ -49,6 +49,8 @@ pub enum Command {
     Warp(f64),
     /// On foot, for `dt` real seconds.
     Walk(WalkCommands, f64),
+    /// A hull's inside as laid out (the shipyard's studio): built, walked in.
+    Layout(universe_world::deckplan::DeckPlan),
     ToggleHyperdrive,
     SetNavTarget(Option<NavTarget>),
     RequestClearance,
@@ -274,6 +276,7 @@ impl Engine {
             Command::Stick(c) => self.stick = c,
             Command::Warp(w) => self.warp = w,
             Command::Walk(c, dt) => u.walk(&c, dt),
+            Command::Layout(plan) => u.set_layout(&plan),
             Command::ToggleHyperdrive => u.toggle_hyperdrive(),
             Command::SetNavTarget(t) => u.set_nav_target(t),
             Command::RequestClearance => {

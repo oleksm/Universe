@@ -1205,30 +1205,48 @@ pub fn apply(app: &mut App, name: &str) {
                 *pitch = d.dot(up).clamp(-1.0, 1.0).asin().clamp(-1.4, 1.4);
             }
         }
-        "studio" => {
-            // The shipyard's layout studio on our hull, with a deck laid out for a look:
-            // a floor across the hold, a wall with a door, a curved one (not saved).
-            use universe_sim::world::deckplan::{Deck, DeckPlan, Door, Wall};
-            use universe_engine::glam::DVec2;
-            apply(app, "docked");
-            // (Our hull the MC-07, as the game flies it by default.)
-            if let Ok(h) = std::fs::read("assets/models/mc07.glb").map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, "assets/models/mc07.glb")) {
-                let u = app.engine.universe();
-                u.ship.class = h;
-                u.ship.refresh();
-                app.ship = app.engine.universe().ship.clone();
+        "studiowalk" => {
+            // The demo layout walked: up the ramp (UNIVERSE_SIDE m off the centre line)
+            // and on forward, through the wall's door or into it (where you end: logged).
+            apply(app, "touchdown");
+            mc07(app);
+            let plan = demo_plan(app);
+            app.engine.universe().set_layout(&plan);
+            app.deckplans.retain(|p| p.hull != plan.hull);
+            app.deckplans.push(plan);
+            at_hatch(app, 0.0);
+            let side: f64 = std::env::var("UNIVERSE_SIDE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+            // Down the ramp and out, then back up it, forward (and off to the side first).
+            for _ in 0..300 {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
             }
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { yaw: std::f64::consts::PI, ..Default::default() }, 0.02);
+            for _ in 0..(side.abs() / 1.6 / 0.02) as usize {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { right: side.signum(), ..Default::default() }, 0.02);
+            }
+            for _ in 0..900 {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
+            }
+            let u = app.engine.universe();
+            let sys = u.ship_system();
+            if let universe_sim::world::Place::Outside { body, position, .. } = u.crew.place {
+                let mut positions = Vec::new();
+                sys.positions(u.world.time, &mut positions);
+                let inv = sys.bodies[body].rotation(u.world.time).inverse();
+                let local = (inv * u.ship.orientation).inverse() * (position - inv * (u.ship.position - positions[body]));
+                log::info!("scenario studiowalk: feet in the ship's frame {local:.2?}");
+            }
+        }
+        "studio" => {
+            // The shipyard's layout studio on our hull, with a deck laid out for a look
+            // (UNIVERSE_EMPTY: none; not saved).
+            apply(app, "docked");
+            mc07(app);
             let key = app.ship.spec().key.clone();
             app.deckplans.retain(|p| p.hull != key);
             let y = crate::shipyard::Shipyard::laying_out(app);
             if std::env::var_os("UNIVERSE_EMPTY").is_none() {
-                // (Its first floor as the studio finds it, from its model.)
-                let floor = app.ship.spec().shape().walk.as_ref().map_or(-7.7, |m| m.lo.y + 5.1);
-                let mut deck = Deck::at(floor);
-                deck.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
-                deck.walls.push(Wall { points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { at: 14.0, width: 0.9, height: 2.1 }] });
-                deck.walls.push(Wall { points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![] });
-                app.deckplans.push(DeckPlan { hull: key, decks: vec![deck] });
+                app.deckplans.push(demo_plan(app));
             }
             app.shipyard = Some(y);
         }
@@ -1481,4 +1499,27 @@ fn at_hatch(app: &mut App, yaw: f64) {
         let out = foot - top;
         u.crew.stand(&sys, &ship, u.world.time, &positions, feet, f64::atan2(-out.x, -out.z) + yaw);
     }
+}
+
+/// Our hull the MC-07, as the game flies it by default.
+fn mc07(app: &mut App) {
+    if let Ok(h) = std::fs::read("assets/models/mc07.glb").map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, "assets/models/mc07.glb")) {
+        let u = app.engine.universe();
+        u.ship.class = h;
+        u.ship.refresh();
+        app.ship = app.engine.universe().ship.clone();
+    }
+}
+
+/// A deck laid out for a look: a floor across the hold, a wall across it with a
+/// door in the middle, a curved wall (on our hull, on the hold's floor).
+fn demo_plan(app: &App) -> universe_sim::world::deckplan::DeckPlan {
+    use universe_engine::glam::DVec2;
+    use universe_sim::world::deckplan::{Deck, DeckPlan, Door, Wall};
+    let floor = app.ship.spec().shape().walk.as_ref().map_or(-7.7, |m| m.lo.y + 5.1);
+    let mut deck = Deck::at(floor);
+    deck.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
+    deck.walls.push(Wall { points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { at: 14.0, width: 0.9, height: 2.1 }] });
+    deck.walls.push(Wall { points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![] });
+    DeckPlan { hull: app.ship.spec().key.clone(), decks: vec![deck] }
 }

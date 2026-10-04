@@ -187,6 +187,8 @@ pub struct App {
     pub plans: Vec<shipyard::SavedPlan>,
     /// Ships' insides as laid out in the shipyard's studio, one per hull (kept in the save).
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
+    /// The layout last sent to the world engine for our hull (sent again when it changes).
+    pub layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
     /// The hull being designed, and those commissioned (in the save).
     pub design: universe_sim::world::design::Design,
     pub designs: Vec<universe_sim::world::design::Design>,
@@ -346,6 +348,7 @@ impl App {
             shipyard: None,
             plans: Vec::new(),
             deckplans: Vec::new(),
+            layout_sent: None,
             vending: None,
             design: Default::default(),
             designs: Vec::new(),
@@ -1193,6 +1196,13 @@ impl Game for App {
         } else if !map_was_open && self.nav_map.is_none() && self.mode == Mode::Pilot && self.v.crew.seated() && keys::pressed(&ctx.input, keys::Act::Market) {
             self.market = Some(market::MarketView::open(self));
             sound::click(ctx, 900.0);
+        }
+        // Our hull's inside as laid out, to the world engine when it changes (to walk in).
+        let key = &self.ship.spec().key;
+        let plan = self.deckplans.iter().find(|p| &p.hull == key).cloned().unwrap_or_else(|| universe_sim::world::deckplan::DeckPlan { hull: key.clone(), decks: Vec::new() });
+        if self.layout_sent.as_ref() != Some(&plan) {
+            self.engine.send(Command::Layout(plan.clone()));
+            self.layout_sent = Some(plan);
         }
         // And the shipyard (docked at a station).
         let yard_was_open = self.shipyard.is_some();

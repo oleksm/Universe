@@ -849,6 +849,15 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         let shape = ship.spec().shape();
         let (rot, c) = (t.rotation.as_dquat(), shape.made_centre);
         frame.model_pbr(&m, &Transform { position: t.position + rot * -c, ..*t });
+        // Its inside as we've laid it out (our own ship; close by): in the scene even in
+        // the chase view's front layer, so the hull hides it.
+        if std::ptr::eq(ship, &app.ship)
+            && frame.camera.position.distance(t.position) < 400.0
+            && let Some(plan) = app.deckplans.iter().find(|p| p.hull == ship.spec().key && !p.decks.is_empty())
+            && let Some(mesh) = crate::models::layout(plan, shape)
+        {
+            frame.in_scene(|frame| frame.model_colored(&mesh, t, 2.2, 1.0));
+        }
         // Its ramp (part 1), swung down about its hinge as far as it is.
         if let Some(r) = &shape.ramp {
             let turn = r.turn(universe_sim::world::crew::ramp_angle(&app.view.system, ship));

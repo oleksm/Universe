@@ -211,7 +211,7 @@ pub fn ramp_angle(sys: &StarSystem, ship: &Ship) -> f64 {
 /// The ship as something to walk on and bump into, placed (`at`, `rot`),
 /// its ramp swung down by `ramp` (rad): its own surfaces, or failing that
 /// its convex parts.
-pub fn ship_colliders(ship: &Ship, at: DVec3, rot: DQuat, ramp: f64, out: &mut Vec<Collider<'static>>) {
+pub fn ship_colliders(ship: &Ship, at: DVec3, rot: DQuat, ramp: f64, out: &mut Vec<Collider<'_>>) {
     let shape = ship.spec().shape();
     if let Some(r) = &shape.ramp {
         let turn = r.turn(ramp);
@@ -301,9 +301,10 @@ impl Person {
 
     /// One frame of `dt` real seconds: walk, turn, jump, and use what's in
     /// reach. The ship is where the world has just put it; `around` is what
-    /// else stands near it (buildings, other ships: the body's frame).
+    /// else stands near it (buildings, other ships: the body's frame);
+    /// `layout` its inside as laid out (its frame), if it has one.
     #[allow(clippy::too_many_arguments)]
-    pub fn step(&mut self, sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], around: &[Collider], c: &WalkCommands, dt: f64, events: &mut Vec<CrewEvent>) {
+    pub fn step(&mut self, sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3], around: &[Collider], layout: Option<&crate::walk::WalkMesh>, c: &WalkCommands, dt: f64, events: &mut Vec<CrewEvent>) {
         // A ship landed on a world is part of its ground (walked about in its
         // frame); one taking off carries whoever stands in it (its frame), as
         // does one docked on a station's deck. (Nobody stands outside on a
@@ -358,8 +359,11 @@ impl Person {
                 let (s, co) = yaw.sin_cos();
                 let (fwd, right) = (DVec3::new(-s, 0.0, -co), DVec3::new(co, 0.0, -s));
                 let wish = (fwd * c.forward + right * c.right).clamp_length_max(1.0) * speed;
-                let mut colliders = Vec::new();
+                let mut colliders: Vec<Collider> = Vec::new();
                 ship_colliders(ship, DVec3::ZERO, DQuat::IDENTITY, ramp_angle(sys, ship), &mut colliders);
+                if let Some(mesh) = layout {
+                    colliders.push(Collider::Mesh { mesh, at: DVec3::ZERO, rot: DQuat::IDENTITY });
+                }
                 let mut w = Walker { feet: *position, velocity: *velocity };
                 w.step(&colliders, &|_| DVec3::Y, BOOTS, &Stride { wish, jump }, dt);
                 *position = w.feet;
@@ -396,6 +400,9 @@ impl Person {
                     let mut own = Vec::new();
                     ship_colliders(ship, at, rot, ramp_angle(sys, ship), &mut own);
                     colliders.extend(own);
+                    if let Some(mesh) = layout {
+                        colliders.push(Collider::Mesh { mesh, at, rot });
+                    }
                 }
                 colliders.extend(around.iter().copied());
                 let r = position.length();

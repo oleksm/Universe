@@ -39,6 +39,46 @@ impl Models {
     }
 }
 
+/// A hull's inside as laid out (the shipyard's studio), as one mesh in its
+/// frame: floors and walls (trimmed to the hull) in flat shades, edges drawn.
+/// Unlit: inside the hull it's in the hull's shadow, and there are no lamps
+/// yet. Made again when the plan changes.
+pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_sim::world::shape::Shape) -> Option<Mesh> {
+    use std::sync::Mutex;
+    use universe_sim::world::deckplan;
+    static BUILT: Mutex<Option<(deckplan::DeckPlan, Mesh)>> = Mutex::new(None);
+    let mut built = BUILT.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some((p, m)) = built.as_ref()
+        && p == plan
+    {
+        return Some(m.clone());
+    }
+    let walk = shape.walk.as_ref()?;
+    let sides: Vec<_> = plan.decks.iter().map(|d| deckplan::Sides::of(&walk.section_y(d.floor + 1.0))).collect();
+    let b = deckplan::build(plan, &sides);
+    let mut m = WireModel::default();
+    for (quad, floor) in &b.panels {
+        // (Walls across the ship a shade lighter than those along it: the room reads.)
+        let across = (quad[1] - quad[0]).cross(quad[2] - quad[0]).normalize_or_zero().z.abs() > 0.5;
+        let shade = if *floor { 0.44 } else if across { 0.34 } else { 0.28 };
+        let c = [shade * 0.95, shade, shade * 1.08, 1.0];
+        let base = m.positions.len() as u32;
+        m.positions.extend(quad.iter().map(|p| p.as_vec3()));
+        m.colors.extend([c; 4]);
+        m.faces.push([base, base + 1, base + 2]);
+        m.faces.push([base, base + 2, base + 3]);
+        // (Floors in strips: edges only on walls, or the floor's a mesh of lines.)
+        if !*floor {
+            for k in 0..4u32 {
+                m.edges.push([base + k, base + (k + 1) % 4]);
+            }
+        }
+    }
+    let mesh = Mesh::new(m);
+    *built = Some((plan.clone(), mesh.clone()));
+    Some(mesh)
+}
+
 /// An imported hull's model (its glTF file), loaded once and kept; its
 /// `*Ramp*` meshes part 1 (drawn swung down: see `scene::hull`).
 pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
