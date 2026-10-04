@@ -151,7 +151,13 @@ impl WalkMesh {
     /// (The grid's cells walked in the ray's order, from where it enters the
     /// bounds to where it leaves them or meets something: a long sight line
     /// through the model costs what it crosses.)
-    fn ray(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
+    pub fn ray(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
+        self.ray_face(from, dir, max).map(|(d, n)| (d, if n.dot(dir) > 0.0 { -n } else { n }))
+    }
+
+    /// `ray`, with the surface's own normal (out of its front, as it's wound):
+    /// facing the ray if it's met from in front.
+    pub fn ray_face(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
         // The part of the ray within the bounds.
         let (lo, hi) = (self.lo - DVec3::splat(0.01), self.hi + DVec3::splat(0.01));
         let (mut t0, mut t1) = (0.0f64, max);
@@ -199,7 +205,7 @@ impl WalkMesh {
                         && best.is_none_or(|b| d < b.0)
                     {
                         let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize();
-                        best = Some((d, if n.dot(dir) > 0.0 { -n } else { n }));
+                        best = Some((d, n));
                     }
                 }
             }

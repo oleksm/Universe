@@ -1177,14 +1177,20 @@ pub fn apply(app: &mut App, name: &str) {
             // The studio's walk-through on the demo plan: on foot in the hold, facing the wall and its door.
             apply(app, "studio");
             let floor = demo_plan(app).decks[0].floor;
-            let at = (universe_engine::glam::DVec3::new(0.0, floor + 0.05, 4.0), 0.0);
+            // (UNIVERSE_AT=x,z,yaw,pitch: stood there instead, looking that way.)
+            let look: Vec<f64> = std::env::var("UNIVERSE_AT").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
+            let (x, z, yaw, pitch) = match look[..] {
+                [x, z, yaw, pitch] => (x, z, yaw, pitch),
+                _ => (0.0, 4.0, 0.0, 0.05),
+            };
+            let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
             let plan = demo_plan(app);
             app.engine.universe().set_layout(&plan);
             app.engine.universe().preview(Some(at));
             app.preview = app.shipyard.take().map(|_| Default::default());
             app.mode = Mode::Pilot;
             app.chase_cam = false;
-            app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch: 0.05, ..Default::default() }, 0.02);
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
         }
         "studio" => {
             // The shipyard's layout studio on our hull, with a deck laid out for a look
@@ -1231,7 +1237,7 @@ pub fn apply(app: &mut App, name: &str) {
                 {
                     let deck = &mut plan.decks[0];
                     let sides = universe_sim::world::deckplan::Sides::of(&mesh.section_y(deck.floor + 1.0));
-                    deck.planes = universe_sim::world::deckplan::fill(&sides);
+                    deck.planes = universe_sim::world::deckplan::fill(mesh, &sides, deck.floor);
                     let areas: Vec<String> = deck.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
                     log::info!("scenario studio: filled {} floors, m2 {}", deck.planes.len(), areas.join(" "));
                 }

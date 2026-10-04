@@ -17,6 +17,9 @@ pub const DOOR_WIDTH: f64 = 0.9;
 pub const DOOR_HEIGHT: f64 = 2.1;
 /// A new deck's headroom (m).
 pub const HEADROOM: f64 = 2.6;
+/// A deck's thickness: its floor a slab this deep, under its top (m); the ceiling
+/// of the deck below.
+pub const DECK: f64 = 0.3;
 /// A ladder's hatch, square (m).
 pub const HATCH: f64 = 0.9;
 /// A stair's width (m), and the most its steps rise (m).
@@ -316,6 +319,11 @@ const CELL: f64 = 0.1;
 
 impl Ground {
     fn of(sides: &Sides, walls: &[Wall]) -> Option<Self> {
+        Self::where_(sides, walls, |_| true)
+    }
+
+    /// `of`, keeping only where `keep` says.
+    fn where_(sides: &Sides, walls: &[Wall], mut keep: impl FnMut(DVec2) -> bool) -> Option<Self> {
         let rows: Vec<(f64, f64, f64)> = sides.rows().collect();
         let (z0, z1) = (rows.first()?.0, rows.last()?.0);
         let (x0, x1) = rows.iter().fold((f64::MAX, f64::MIN), |m, r| (m.0.min(r.1), m.1.max(r.2)));
@@ -331,7 +339,7 @@ impl Ground {
         let mut g = Ground { nx, nz, x0, z0, open: Vec::new() };
         g.open = (0..nz).flat_map(|j| (0..nx).map(move |i| (i, j))).map(|(i, j)| {
             let p = g.centre(i, j);
-            sides.contains(p) && !near_wall(p)
+            sides.contains(p) && !near_wall(p) && keep(p)
         }).collect();
         Some(g)
     }
@@ -439,11 +447,38 @@ pub fn carve(sides: &Sides, walls: &[Wall], at: DVec2) -> Option<Vec<DVec2>> {
     g.outline(&fill)
 }
 
-/// Floors filling the whole deck: the hull's inside at its height, one for each
-/// part of it there (a hull can be in pieces at a height), leaving out scraps
-/// under 2 m². Walls aren't kept clear of: they stand on the floor.
-pub fn fill(sides: &Sides) -> Vec<Vec<DVec2>> {
-    let Some(g) = Ground::of(sides, &[]) else { return Vec::new() };
+/// Is a spot (x, `y`, z: a person's waist) in the hull's hollow, closed in by
+/// it: its inner surface (met from in front, as the model's faces are wound)
+/// overhead with room for their head (0.9 m) and underfoot, and round it in at
+/// least seven of eight directions across (so one opening, a hatch, doesn't
+/// leave it out)? Not under the hull (nothing underfoot), between its parts,
+/// outside its skin, inside a solid part (its faces met from behind), or where
+/// the ceiling is too low to stand.
+pub fn enclosed(mesh: &crate::walk::WalkMesh, p: DVec2, y: f64) -> bool {
+    let at = DVec3::new(p.x, y, p.y);
+    let reach = (mesh.hi - mesh.lo).length() + 1.0;
+    let front = |dir: DVec3| mesh.ray_face(at, dir, reach).filter(|(_, n)| n.dot(dir) < 0.0).map(|(d, _)| d);
+    if !front(DVec3::Y).is_some_and(|d| d >= 0.9) || front(-DVec3::Y).is_none() {
+        return false;
+    }
+    let d = std::f64::consts::FRAC_1_SQRT_2;
+    let round = [(1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0), (d, d), (d, -d), (-d, d), (-d, -d)];
+    round.iter().filter(|(x, z)| front(DVec3::new(*x, 0.0, *z)).is_some()).count() >= 7
+}
+
+/// Floors filling the whole deck at `floor`: where the hull closes in a person
+/// standing on it (`enclosed`, at their waist), one floor for each part of it
+/// there (a hull can be in pieces at a height), leaving out scraps under 2 m².
+/// Walls aren't kept clear of: they stand on the floor.
+pub fn fill(mesh: &crate::walk::WalkMesh, sides: &Sides, floor: f64) -> Vec<Vec<DVec2>> {
+    // (Asked on a coarser grid, 25 cm, each answer kept.)
+    const COARSE: f64 = 0.25;
+    let mut asked: std::collections::HashMap<(i64, i64), bool> = std::collections::HashMap::new();
+    let keep = |p: DVec2| *asked.entry(((p.x / COARSE).floor() as i64, (p.y / COARSE).floor() as i64)).or_insert_with(|| {
+        let c = DVec2::new(((p.x / COARSE).floor() + 0.5) * COARSE, ((p.y / COARSE).floor() + 0.5) * COARSE);
+        enclosed(mesh, c, floor + 1.0)
+    });
+    let Some(g) = Ground::where_(sides, &[], keep) else { return Vec::new() };
     let mut done = vec![false; g.nx * g.nz];
     let mut out = Vec::new();
     for j in 0..g.nz {
@@ -500,10 +535,13 @@ fn simplify(lp: &[DVec2], tolerance: f64) -> Vec<DVec2> {
 
 /// What a plan builds: for walking on (triangles) and drawing (each a
 /// rectangle, its corners in order, and whether it's floor (or tread) or
-/// wall), and where one climbs (ladders: boxes, low and high corners).
+/// wall), the floors' slabs under them (undersides and edges: drawn, not yet
+/// walked against: a floor over the ramp's well would stop a walker coming up
+/// it), and where one climbs (ladders: boxes, low and high corners).
 #[derive(Clone, Debug, Default)]
 pub struct Built {
     pub panels: Vec<([DVec3; 4], bool)>,
+    pub slabs: Vec<[DVec3; 4]>,
     pub climbs: Vec<(DVec3, DVec3)>,
 }
 
@@ -541,8 +579,17 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
         let y = deck.floor;
         let holes = openings(plan, d);
         for poly in &deck.planes {
+            // A slab, `DECK` deep: its top (the floor), underside and edges.
+            let u = y - DECK;
             for (z0, z1, x0, x1) in floor_strips(poly, sd, &holes) {
                 b.panels.push(([DVec3::new(x0, y, z0), DVec3::new(x1, y, z0), DVec3::new(x1, y, z1), DVec3::new(x0, y, z1)], true));
+                b.slabs.extend([
+                    [DVec3::new(x0, u, z0), DVec3::new(x0, u, z1), DVec3::new(x1, u, z1), DVec3::new(x1, u, z0)],
+                    [DVec3::new(x0, u, z0), DVec3::new(x0, y, z0), DVec3::new(x0, y, z1), DVec3::new(x0, u, z1)],
+                    [DVec3::new(x1, u, z0), DVec3::new(x1, u, z1), DVec3::new(x1, y, z1), DVec3::new(x1, y, z0)],
+                    [DVec3::new(x0, u, z0), DVec3::new(x1, u, z0), DVec3::new(x1, y, z0), DVec3::new(x0, y, z0)],
+                    [DVec3::new(x0, u, z1), DVec3::new(x0, y, z1), DVec3::new(x1, y, z1), DVec3::new(x1, u, z1)],
+                ]);
             }
         }
         for wall in &deck.walls {
@@ -644,10 +691,28 @@ mod tests {
         let half = carved(&[across], DVec2::new(0.0, 3.0));
         assert!((half - 30.0).abs() < 1.5, "{half}");
         // The whole deck filled: one floor, the hull's inside.
-        let filled = fill(&sides);
+        // The hull as a hollow box (4 m high): the whole deck filled at 1 m is one
+        // floor, its inside; under it (where only legs would be) nothing.
+        let (lo, hi) = (DVec3::new(-3.0, 0.0, -5.0), DVec3::new(3.0, 4.0, 5.0));
+        let v = |x: usize, y: usize, z: usize| DVec3::new([lo.x, hi.x][x], [lo.y, hi.y][y], [lo.z, hi.z][z]);
+        let quad = |a: DVec3, b: DVec3, c: DVec3, d: DVec3| [[a, b, c], [a, c, d]];
+        let tris: Vec<[DVec3; 3]> = [
+            quad(v(0, 0, 0), v(1, 0, 0), v(1, 0, 1), v(0, 0, 1)),
+            quad(v(0, 1, 0), v(1, 1, 0), v(1, 1, 1), v(0, 1, 1)),
+            quad(v(0, 0, 0), v(1, 0, 0), v(1, 1, 0), v(0, 1, 0)),
+            quad(v(0, 0, 1), v(1, 0, 1), v(1, 1, 1), v(0, 1, 1)),
+            quad(v(0, 0, 0), v(0, 0, 1), v(0, 1, 1), v(0, 1, 0)),
+            quad(v(1, 0, 0), v(1, 0, 1), v(1, 1, 1), v(1, 1, 0)),
+        ].concat();
+        // (Its faces turned inward: a hollow, seen from inside.)
+        let centre = (lo + hi) / 2.0;
+        let tris: Vec<[DVec3; 3]> = tris.into_iter().map(|t| if (t[1] - t[0]).cross(t[2] - t[0]).dot(centre - t[0]) < 0.0 { [t[0], t[2], t[1]] } else { t }).collect();
+        let mesh = crate::walk::WalkMesh::new(&tris);
+        let filled = fill(&mesh, &sides, 1.0);
         assert_eq!(filled.len(), 1);
         let whole: f64 = floor_strips(&filled[0], &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
         assert!((whole - 60.0).abs() < 1.5, "{whole}");
+        assert!(fill(&mesh, &sides, -3.0).is_empty());
         // A wall across, 10 m: kept inside, 6 m of it.
         let wall = Wall { points: vec![DVec2::new(-5.0, 0.0), DVec2::new(5.0, 0.0)], ..Default::default() };
         let runs = wall_runs(&wall, &sides);

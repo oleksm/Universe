@@ -322,9 +322,6 @@ fn button_at(size: Vec2, q: Vec2) -> Option<Action> {
     }).map(|k| TOOLBAR[k].2)
 }
 
-/// Between one deck's ceiling and the next one's floor (m): the deck itself.
-const DECK_THICKNESS: f64 = 0.3;
-
 /// Is there room for a deck between these sides: at least 3 m across, for at
 /// least 3 m of the ship's length (not just its masts and fittings)?
 fn roomy(sides: &Sides) -> bool {
@@ -405,7 +402,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     // and a deck's thickness between (not past the hull's top).
     let mut went: Option<usize> = None;
     if (shift && input.pressed(KeyCode::KeyN)) || clicked == Some(Action::AddDeck) {
-        let floor = if n == 0 { first_floor } else { plan.decks.iter().map(|d| d.floor + d.headroom + DECK_THICKNESS).fold(first_floor, f64::max) };
+        let floor = if n == 0 { first_floor } else { plan.decks.iter().map(|d| d.floor + d.headroom + deckplan::DECK).fold(first_floor, f64::max) };
         // (Only where there's hull round it, at a person's waist and under its ceiling.)
         let room = |y: f64| shape.walk.as_ref().is_some_and(|m| roomy(&Sides::of(&m.section_y(y))));
         if room(floor + 1.0) && room(floor + deckplan::HEADROOM - 0.2) {
@@ -440,7 +437,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             lift = step;
         }
         if input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) || clicked == Some(Action::Floor(-0.1)) {
-            let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + DECK_THICKNESS);
+            let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + deckplan::DECK);
             lift = -step.min(plan.decks[k].floor - lowest).max(0.0);
         }
         // Its height changed: the decks above moved by as much.
@@ -625,7 +622,9 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     // The floors' panel's FILL: floors over the whole deck, now.
     if auto_shown(studio) && input.button_pressed(MouseButton::Left) && in_rect({ let (p, c) = auto_button(studio); (p, p + c) }, cursor) {
         if let Some(h) = studio.hull.as_ref() {
-            deck.planes.extend(deckplan::fill(&h.sides));
+            if let Some(mesh) = shape.walk.as_ref() {
+                deck.planes.extend(deckplan::fill(mesh, &h.sides, deck.floor));
+            }
             studio.pick = deck.planes.len().checked_sub(1).map(Pick::Plane);
         }
         return true;
@@ -864,6 +863,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for (k, d) in decks.iter().enumerate() {
             let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
             frame.hud_line(Vec2::new(from, sy(d.floor)), Vec2::new(side_r.1.x, sy(d.floor)), col);
+            // (The deck's slab under its floor.)
+            frame.hud_line(Vec2::new(from, sy(d.floor - deckplan::DECK)), Vec2::new(side_r.1.x, sy(d.floor - deckplan::DECK)), col.scale(0.5));
             frame.hud_line(Vec2::new(from, sy(d.floor + d.headroom)), Vec2::new(side_r.1.x, sy(d.floor + d.headroom)), col.scale(0.4));
         }
         // Their labels, small, each level with the middle of its deck; where decks are
