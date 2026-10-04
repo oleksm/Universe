@@ -56,11 +56,15 @@ pub struct Interior {
     hover: Option<Hover>,
     pick: Option<Hover>,
     cursor: Vec2,
+    /// The plan as it was before each change (UNDO goes back one), and the ones
+    /// undone (REDO).
+    undo: Vec<Plan>,
+    redo: Vec<Plan>,
 }
 
 /// Points and the lines between them: where access must reach, and the ways it
 /// goes, first as lines (their room comes later).
-#[derive(Default)]
+#[derive(Clone, Default, PartialEq)]
 struct Plan {
     /// For which hull (its fixed points are taken from it).
     hull: String,
@@ -70,6 +74,7 @@ struct Plan {
 
 /// A point of the plan: where it is (the hull's frame), and the model's name for
 /// it if it's one of the hull's own (the hatch, the cockpit...: those stay).
+#[derive(Clone, PartialEq)]
 struct Point {
     at: Vec3,
     name: Option<String>,
@@ -230,6 +235,13 @@ fn button_at(q: Vec2) -> Option<Tool> {
     (0..TOOLBAR.len()).find(|&k| inside(button(k), q)).map(|k| TOOLBAR[k].2)
 }
 
+/// UNDO and REDO, after the tools (key, name, which: false undo, true redo).
+const HISTORY: [(&str, &str, bool); 2] = [("^Z", "UNDO", false), ("^Y", "REDO", true)];
+
+fn history_button(k: usize) -> (Vec2, Vec2) {
+    button(TOOLBAR.len() + k)
+}
+
 fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
     q.x >= p.x && q.x <= p.x + c.x && q.y >= p.y && q.y <= p.y + c.y
 }
@@ -260,12 +272,16 @@ fn panel_button_at(tool: Tool, q: Vec2) -> Option<Action> {
     panel_buttons(tool).into_iter().find(|(r, _, _)| inside(*r, q)).map(|(_, _, a)| a)
 }
 
-/// The work plane's handle: its corner farthest from the camera, by the walls (its
-/// frame; always in view).
+/// The work plane's handle: the middle of its edge nearest the camera that's on
+/// screen (its frame).
 fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
-    let x = if cam.eye.x > (h.lo.x + h.hi.x) * 0.5 { h.lo.x } else { h.hi.x };
-    let z = if cam.eye.z > (h.lo.z + h.hi.z) * 0.5 { h.lo.z } else { h.hi.z };
-    Vec3::new(x, plane, z)
+    let (lo, hi, m) = (h.lo, h.hi, (h.lo + h.hi) * 0.5);
+    let edges = [Vec3::new(lo.x, plane, m.z), Vec3::new(hi.x, plane, m.z), Vec3::new(m.x, plane, lo.z), Vec3::new(m.x, plane, hi.z)];
+    let size = cam.centre * 2.0;
+    let seen = |p: &Vec3| cam.project(*p).is_some_and(|(q, _)| q.x > 20.0 && q.y > 60.0 && q.x < size.x - 20.0 && q.y < size.y - 30.0);
+    let mut by_near = edges;
+    by_near.sort_by(|a, b| a.distance(cam.eye).total_cmp(&b.distance(cam.eye)));
+    by_near.iter().copied().find(seen).unwrap_or(by_near[0])
 }
 
 /// The work plane's height (its frame): as set, or the hatch's (where the crew come in).
@@ -289,8 +305,34 @@ fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
     }).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(k, _)| Hover::Line(k))
 }
 
-/// This frame's input. False: close it.
+/// This frame's input. False: close it. (A change to the plan is kept for UNDO.)
 pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
+    let input = &ctx.input;
+    let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
+    let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+    let click = |k: usize| input.button_pressed(MouseButton::Left) && inside(history_button(k), input.cursor);
+    let undo = (ctrl && !shift && input.pressed(KeyCode::KeyZ)) || click(0);
+    let redo = (ctrl && (input.pressed(KeyCode::KeyY) || (shift && input.pressed(KeyCode::KeyZ)))) || click(1);
+    if undo || redo {
+        let (from, to) = if undo { (&mut interior.undo, &mut interior.redo) } else { (&mut interior.redo, &mut interior.undo) };
+        if let Some(plan) = from.pop() {
+            to.push(std::mem::replace(&mut interior.plan, plan));
+            interior.from = None;
+            interior.pick = None;
+            interior.hover = None;
+        }
+        return true;
+    }
+    let before = interior.plan.clone();
+    let stay = input_plan(app, ctx, interior);
+    if interior.plan != before && interior.plan.hull == before.hull {
+        interior.undo.push(before);
+        interior.redo.clear();
+    }
+    stay
+}
+
+fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let input = &ctx.input;
     let spec = app.ship.spec();
     interior.spin += ctx.dt;
@@ -451,6 +493,12 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             let lamp = if *tool == interior.tool || button_at(interior.cursor) == Some(*tool) { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, key, name, lamp);
         }
+        for (k, (key, name, redo)) in HISTORY.iter().enumerate() {
+            let (p, c) = history_button(k);
+            let some = if *redo { !interior.redo.is_empty() } else { !interior.undo.is_empty() };
+            let lamp = if !some { Lamp::Unavailable } else if inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, c, key, name, lamp);
+        }
     }
     let Some(h) = interior.hull(&spec.key) else {
         if spec.shape().walk.is_none() {
@@ -584,14 +632,17 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let handle = plane_handle(&cam, &h, plane);
         if let Some((q, _)) = cam.project(handle) {
             let held = interior.lifting || q.distance(interior.cursor) < 10.0;
+            // (A grip, not a square: a bar across with arrows up and down.)
             let col = if held { PICKED } else { PATH };
-            frame.hud_rect(q - Vec2::splat(5.0), Vec2::splat(10.0), col);
+            for dy in [-1.5f32, 0.0, 1.5] {
+                frame.hud_line(q + Vec2::new(-12.0, dy), q + Vec2::new(12.0, dy), col);
+            }
             frame.hud_line(q - Vec2::new(0.0, 14.0), q + Vec2::new(0.0, 14.0), col);
             for dy in [-14.0f32, 14.0] {
                 frame.hud_line(q + Vec2::new(0.0, dy), q + Vec2::new(-4.0, dy - 4.0 * dy.signum()), col);
                 frame.hud_line(q + Vec2::new(0.0, dy), q + Vec2::new(4.0, dy - 4.0 * dy.signum()), col);
             }
-            frame.text_scaled(q + Vec2::new(10.0, -4.0), &format!("PLANE {:.1} M", plane - lo.y), col, 0.7);
+            frame.text_scaled(q + Vec2::new(16.0, -4.0), &format!("PLANE {:.1} M", plane - lo.y), col, 0.7);
         }
         // Where a click would put a point (not over one: that joins to it).
         let ray = cam.ray(interior.cursor);
@@ -636,7 +687,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         frame.hud_box(p, c, PLANE.scale(1.5));
         let (title, help) = match interior.tool {
             Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT, WHEEL FOR NEARER OR FARTHER. CLICK A POINT OR A LINE TO PICK IT. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
-            Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO JOIN TO IT AND GO ON FROM IT. RIGHT-CLICK STOPS. DRAG THE PLANE'S HANDLE (ITS FAR CORNER) UP OR DOWN."),
+            Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO JOIN TO IT AND GO ON FROM IT. RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ON ITS NEAR EDGE) UP OR DOWN."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
