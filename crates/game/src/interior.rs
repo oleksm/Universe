@@ -292,7 +292,8 @@ impl Interior {
                 Some(b.map_or((lo, hi), |(l, h)| (l.min(lo), h.max(hi))))
             })
         };
-        let places: [(&str, &str, fn((Vec3, Vec3)) -> Vec3); 9] = [
+        type At = fn((Vec3, Vec3)) -> Vec3;
+        let places: [(&str, &str, At); 9] = [
             // (The scoop's mouth: the middle of its top, where the ore drops in.)
             ("OreScoop_", "MINING OPENING", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
             ("Hull_EngineBlock", "SERVICE ENGINE BLOCK", |b| (b.0 + b.1) * 0.5),
