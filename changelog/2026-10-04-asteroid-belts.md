@@ -22,3 +22,11 @@
   space, and whether the game makes it: 5 made, 8 partly, 13 not yet.
 - **Each system's page** counts what it has of each kind; **each planet's and moon's page** works
   out its five balance points and how far its pull reaches.
+- **Seeded in the registry**, what the game does not make yet, for the five systems written out (65
+  records; `python3 tools/standards/celestial_seed.py`, from the galaxy's seed, never writing over
+  what is there): comets, centaurs, crossing asteroids, captured moons, dwarf planets and each main
+  belt's largest body; the scattered disc, the far cloud, and a meteoroid stream for each returning
+  comet. Treistun: 27 small bodies and 6 regions.
+- **What a giant does to its moons**, worked out on each moon's page: the heat its kneading makes,
+  and the dose of its radiation belt. Four of Treistun's fifteen moons come out far hotter than any
+  moon known: their orbits, as the seed makes them, are too close and too stretched to last.

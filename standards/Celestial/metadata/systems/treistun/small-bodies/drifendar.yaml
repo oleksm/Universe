@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
+# The game does not make it yet. Change its status to curated to take it over.
+status: seeded
+identity: {name: Drifendar, kind: crossing asteroid, parent: Treistun, about: 'Knocked out of the belt. At its closest it
+    comes in to 0.44 AU, near the orbit of Treistun e.'}
+orbit: {semi_major_axis: 88589900.0, eccentricity: 0.25036682, inclination: 8.53, period: 198.22}
+physical: {radius: 0.3787, density: 3300, mass: 751000000000.0}
+rock: {class: stony}

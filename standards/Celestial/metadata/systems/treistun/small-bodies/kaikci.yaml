@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../schema/small-body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: between 0.05 and 0.47 of the giant's reach, as the Sun's giants' are.
+# The game does not make it yet. Change its status to curated to take it over.
+status: seeded
+identity: {name: Kaikci, kind: captured moon, parent: Treistun j, about: 'Once it went round the star; Treistun j caught it.
+    It goes round the same way as the planet turns, far out.'}
+orbit: {semi_major_axis: 65542100.0, eccentricity: 0.16913914, inclination: 46.67, period: 2003.0}
+physical: {radius: 17.29}
+rock: {class: primitive}

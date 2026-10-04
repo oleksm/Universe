@@ -1886,8 +1886,8 @@ report("invented", "Confidence: the records with invented or unexplained numbers
 CEL = os.path.join(TREE, "Celestial")
 celestial = {"galaxy": {}, "systems": [], "groups": {}, "rock_classes": [], "vocabulary": []}
 if os.path.isdir(CEL):
-    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class", "asteroids", "vocabulary")}
-    celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field", "rock-class")}
+    cschema = {k: yaml.safe_load(open(os.path.join(CEL, "schema", f"{k}.schema.yaml"), encoding="utf-8")) for k in ("galaxy", "system", "body", "field", "rock-class", "asteroids", "vocabulary", "small-body", "region", "conditions")}
+    celestial["groups"] = {k: {g: {q: v.get("description", "") for q, v in d["properties"].items()} for g, d in cschema[k]["properties"].items() if "properties" in d} for k in ("system", "body", "field", "rock-class", "small-body", "region")}
 
     def cel_load(full, kind):
         rec = load(full)
@@ -1906,6 +1906,10 @@ if os.path.isdir(CEL):
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
         return rec
 
+    cpath = os.path.join(CEL, "metadata", "conditions.yaml")
+    if os.path.exists(cpath):
+        celestial["conditions"] = load(cpath)
+        check_basis(celestial["conditions"], cpath)
     # (The vocabulary: each kind of thing a system has.)
     vdir = os.path.join(CEL, "metadata", "vocabulary")
     celestial["vocabulary"] = []
@@ -1964,7 +1968,14 @@ if os.path.isdir(CEL):
         sysm = cel_load(os.path.join(sdir, fn), "system")
         sysm["bodies"] = [cel_load(os.path.join(sdir, fn[:-5], "bodies", b), "body") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "bodies")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "bodies")) else []
         sysm["fields"] = [cel_load(os.path.join(sdir, fn[:-5], "fields", b), "field") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "fields")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "fields")) else []
+        sub = lambda d_, k_: [cel_load(os.path.join(sdir, fn[:-5], d_, b), k_) for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], d_)))] if os.path.isdir(os.path.join(sdir, fn[:-5], d_)) else []
+        sysm["small_bodies"], sysm["regions"] = sub("small-bodies", "small-body"), sub("regions", "region")
         names = {b["identity"]["name"] for b in sysm["bodies"]} | {sysm["identity"]["name"]}
+        for sb in sysm["small_bodies"]:
+            if sb["identity"].get("parent") not in names:
+                problem(os.path.join(TREE, sb["file"]), f"identity.parent: no body '{sb['identity'].get('parent')}' in {sysm['identity']['name']}")
+            if (sb.get("rock") or {}).get("class") and not os.path.exists(os.path.join(CEL, "metadata", "rock-classes", sb["rock"]["class"] + ".yaml")):
+                problem(os.path.join(TREE, sb["file"]), f"rock.class: no rock class '{sb['rock']['class']}'")
         for b in sysm["bodies"]:
             scape = (b.get("surface") or {}).get("landscape")
             if scape is not None and not os.path.exists(os.path.join(ROOT, scape)):
@@ -2064,6 +2075,42 @@ if os.path.isdir(CEL):
         kinds["asteroid-family"] = sum(bl.get("families") or 0 for bl in belts)
         kinds["asteroid-moon"] = len(sysm["fields"])
         kinds["balance-point"] = 5 * sum(1 for b in sysm["bodies"] if "balance" in b)
+        # (What the registry has seeded of what the game does not make.)
+        for sb in sysm.get("small_bodies") or []:
+            k_ = {"comet": "comet", "centaur": "centaur", "crossing asteroid": "crossing-asteroid", "captured moon": "captured-moon", "dwarf planet": "dwarf-planet", "asteroid": "asteroid"}[sb["identity"]["kind"]]
+            kinds[k_] = kinds.get(k_, 0) + 1
+            o_ = sb.get("orbit") or {}
+            if "semi_major_axis" in o_ and sb["identity"].get("parent") == sysm["identity"]["name"]:
+                sb["nearest"], sb["farthest"] = o_["semi_major_axis"] * (1 - o_.get("eccentricity", 0)) / AU_KM, o_["semi_major_axis"] * (1 + o_.get("eccentricity", 0)) / AU_KM
+        for rg in sysm.get("regions") or []:
+            k_ = {"scattered disc": "scattered-disc", "far cloud": "far-cloud", "meteoroid stream": "meteoroid-stream"}[rg["identity"]["kind"]]
+            kinds[k_] = kinds.get(k_, 0) + 1
+            if rg["identity"]["kind"] == "meteoroid stream":
+                ex = rg.get("extent") or {}
+                rg["crosses"] = [b["identity"]["name"] for b in planets if ex.get("inner", 0) <= au(b) <= ex.get("outer", 0)]
+        # (What each giant does to its moons: the heat its kneading makes in them, and the dose of its belt.)
+        cn = celestial.get("conditions") or {}
+        th, rb = cn.get("tidal_heating") or {}, cn.get("radiation_belt") or {}
+        for b in sysm["bodies"]:
+            par = next((o for o in giants if o["identity"]["name"] == b["identity"].get("parent")), None)
+            if par is None or b["identity"]["kind"] != "moon":
+                continue
+            M_, R_, a_m, e_ = par["physical"]["mass"], b["physical"]["radius"] * 1000, b["orbit"]["semi_major_axis"] * 1000, b["orbit"].get("eccentricity", 0)
+            cond = {}
+            if th:
+                n_ = (6.6743e-11 * M_ / a_m ** 3) ** 0.5
+                heat = 10.5 * th.get("love_over_q", 0) * 6.6743e-11 * M_ ** 2 * R_ ** 5 * n_ * e_ ** 2 / a_m ** 6
+                flux = heat / (4 * math.pi * R_ ** 2)
+                cond["tidal"] = {"heat": heat, "flux": flux, "state": "far more than any moon known: an orbit this close and this stretched would long since have been made round. Its orbit as seeded is not one that lasts" if flux >= 20 * th.get("volcanic_above", 1) else "volcanic" if flux >= th.get("volcanic_above", 1) else "warm inside: an icy one may keep a buried sea" if flux >= th.get("sea_above", 0.03) else "slight"}
+                if flux >= th.get("sea_above", 0.03):
+                    kinds["tidal-heating"] = kinds.get("tidal-heating", 0) + 1
+            if rb and par["identity"]["kind"] == "gas giant":
+                radii = a_m / (par["physical"]["radius"] * 1000)
+                dose = rb["dose"] * (radii / rb["at"]) ** -rb["falls_as"] * par["physical"]["mass"] / rb["giant_mass"]
+                cond["radiation"] = {"radii": radii, "dose": dose, "deadly": dose >= rb.get("deadly_above", 100)}
+                if dose >= rb.get("deadly_above", 100):
+                    kinds["radiation-belt"] = kinds.get("radiation-belt", 0) + 1
+            b["conditions"] = cond
         sysm["has"] = kinds
         sysm["belts"] = belts
         sysm["frost_line"] = frost
@@ -2076,6 +2123,12 @@ if os.path.isdir(CEL):
 rows = []
 for sysm in celestial["systems"]:
     recs = [sysm] + sysm["bodies"] + sysm["fields"]
+    if sysm.get("small_bodies") or sysm.get("regions"):
+        rows.append(row("note", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), f"{len(sysm.get('small_bodies') or [])} small bodies, {len(sysm.get('regions') or [])} regions", "seeded in the registry", "the game does not make these yet"))
+    for b in sysm["bodies"]:
+        t_ = (b.get("conditions") or {}).get("tidal") or {}
+        if t_.get("state", "").startswith("far more"):
+            rows.append(row("gap", link(b["identity"]["name"], f"cb:{sysm['slug']}:{b['slug']}"), "", "", f"its planet would knead {t_['flux']:,.0f} W into each m2 of it, against about 2 for the most volcanic moon known: its orbit, as the seed makes it, is too close and too stretched to last"))
     count = lambda st: sum(1 for r_ in recs if r_.get("status") == st)
     rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), f"{len(sysm['bodies'])} bodies, {len(sysm['fields'])} fields", f"{count('seeded')} seeded, {count('curated')} curated, {count('frozen')} frozen", ""))
 # (A body a person has taken over: what follows from its mass and radius must still agree with them.

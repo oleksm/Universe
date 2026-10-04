@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../schema/region.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the Sun's: no closer than its last giant at 30 AU, reaching past 100.
+# The game does not make it yet. Change its status to curated to take it over.
+status: seeded
+identity: {name: Scattered disc, kind: scattered disc, about: 'Ice bodies the giants threw outward, on long, tilted, stretched
+    orbits. They come no closer than the last giant.'}
+extent: {inner: 10.49, outer: 34.97}

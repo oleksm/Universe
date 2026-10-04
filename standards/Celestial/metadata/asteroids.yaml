@@ -11,7 +11,7 @@ main_belt:
   no_giant_outer: 1.3
   count_over_1km: 1200000
   count_over_100km: 200
-  mass: 2.39e21
+  mass: 2.39e+21
   spacing: 965600
   family_share: 0.34
   families: 25
