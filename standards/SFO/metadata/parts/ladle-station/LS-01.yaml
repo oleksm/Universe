@@ -5,8 +5,9 @@ identity:
   status: draft
   description: "A lined bucket that carries a heat of liquid steel."
 physical:
-  mass: 40000
+  mass: 42000
 fit:
   count: 3
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.mass], tier: derived, source: "https://www.sheffieldforgemasters.com/news-and-insights/news/01/sheffield-forgemasters-enhances-ladle-fleet/", note: "A lined ladle for 105 t of steel weighs about 55 t empty: scaled to an 80 t heat. Seen only as a search excerpt, not on the page." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

@@ -5,8 +5,9 @@ identity:
   status: draft
   description: "Lifts cargo between ships and the dock."
 physical:
-  mass: 250000
+  mass: 241000
 fit:
   count: 2
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.mass], tier: sourced, source: "https://www.liebherr.com/en-hk/p/lhm420-5244437", note: "A Liebherr LHM 280 mobile harbour crane, which lifts 84 t: 241 t." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

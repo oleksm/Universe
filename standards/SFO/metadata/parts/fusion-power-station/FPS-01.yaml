@@ -5,8 +5,9 @@ identity:
   status: draft
   description: "The vacuum vessel the burning plasma is held in."
 physical:
-  mass: 5000000
+  mass: 5200000
 fit:
   count: 1
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.mass], tier: sourced, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's vacuum vessel, 5,200 tonnes. ITER makes 500 MW of fusion power and no electricity; this station's size against it is not worked out." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

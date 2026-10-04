@@ -5,8 +5,9 @@ identity:
   status: draft
   description: "A bucket wheel on a long boom that travels the yard, stacking what arrives and reclaiming it for the plant."
 physical:
-  mass: 600000
+  mass: 885000
 fit:
   count: 1
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.mass], tier: sourced, source: "https://directindustry.com/prod/takraf/product-58547-505661.html", note: "A TAKRAF bucket wheel reclaimer with a 46 m boom: 885 t. Seen only as a search excerpt, not on the page. The largest, at 20,000 t an hour, weigh 2,000 to 3,000 t." }
+  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }

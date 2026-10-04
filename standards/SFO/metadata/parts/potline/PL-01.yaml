@@ -5,8 +5,9 @@ identity:
   status: draft
   description: "A steel pot lined with carbon, where current through molten salt turns alumina into aluminium."
 physical:
-  mass: 60000
+  mass: 44000
 fit:
-  count: 300
+  count: 324
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.mass], tier: sourced, source: "https://www.gulfconstructiononline.com/Article/381041", note: "The steel potshell of one cell, 44 tonnes (Alba line 6). Its carbon lining's weight was not found and is not counted." }
+  - { of: [fit], tier: derived, note: "360 pots make 360,000 t a year (Sohar): a thousand tonnes a pot, so 324 for this line's 37 t an hour." }

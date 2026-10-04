@@ -5,8 +5,9 @@ identity:
   status: draft
   description: "Turns the supply into the line's direct current."
 physical:
-  mass: 300000
+  mass: 400000
 fit:
-  count: 6
+  count: 5
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.mass], tier: sourced, source: "https://www.industrialinfo.com/news/article/abbs-rectiformers-achieve-18-increase-in-energy-efficiency-at-sohar-and-qatalum-aluminum-smelters--149361", note: "A rectifier and its transformer for a potline: 400 tons each." }
+  - { of: [fit], tier: derived, note: "Five to a potline, at the same source." }
