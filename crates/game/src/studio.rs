@@ -213,11 +213,11 @@ impl Studio {
         };
         let decks = Self::plan_of(app, hull_key).map(|p| p.decks.clone()).unwrap_or_default();
         let y = decks.get(self.deck).map_or_else(|| first_floor(mesh), |d| d.floor);
-        // (Cut a metre over the floor: the hull's sides at a person's waist.)
+        // (Cut just over the floor: the hull as it is at the deck, its walls solid under a doorway that starts higher.)
         if self.hull.as_ref().is_some_and(|h| h.key == hull_key && (h.y - y).abs() < 1e-9) {
             return;
         }
-        let section = mesh.section_y(y + 1.0);
+        let section = mesh.section_y(y + 0.05);
         let sides = deckplan::deck_sides(mesh, y);
         let same = self.hull.as_ref().filter(|h| h.key == hull_key);
         let profile = same.map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
