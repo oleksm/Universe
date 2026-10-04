@@ -41,6 +41,7 @@ const BASE: &[(&str, &str)] = &[
     ("bodies.ron", include_str!("../../../content/base/bodies.ron")),
     ("standards.ron", include_str!("../../../content/base/standards.ron")),
     ("settlements.ron", include_str!("../../../content/base/settlements.ron")),
+    ("industry.ron", include_str!("../../../content/base/industry.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether
@@ -223,6 +224,8 @@ pub struct Content {
     pub standards: Registry<crate::standards::Standard>,
     /// Settlements' ground, as the registry records it (see `settlements`).
     pub settlements: Vec<crate::settlements::Settlement>,
+    /// The industrial modules facilities are built of (see `settlements`).
+    pub industry: Vec<crate::settlements::IndustrialModule>,
     /// Ship fuel: what tanks are filled with (the code's one kind of goods by name).
     pub fuel: Category,
     aliases: HashMap<String, String>,
@@ -422,9 +425,22 @@ impl Content {
         for s in &settlements {
             s.check()?;
         }
-        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+        let industry: Vec<crate::settlements::IndustrialModule> = Self::defs(&packs, "industry.ron")?;
+        for s in &settlements {
+            for (m, _) in s.facilities.iter().flat_map(|f| &f.modules) {
+                if !industry.iter().any(|i| &i.key == m) {
+                    return Err(format!("settlements.ron '{}': no industrial module '{m}'", s.name));
+                }
+            }
+        }
+        let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
+    }
+
+    /// The industrial module `key`, if there is one.
+    pub fn industrial(&self, key: &str) -> Option<&crate::settlements::IndustrialModule> {
+        self.industry.iter().find(|m| m.key == key)
     }
 
     /// The ground recorded for the settlement `name` on `body` in `system`, if any.

@@ -291,8 +291,8 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             for fn in sorted(os.listdir(sub_dir)) if os.path.isdir(sub_dir) else []:
                 ffull = os.path.join(sub_dir, fn)
                 r = load(ffull)
-                need, pattern = (["name", "use", "outline"], r"[a-z0-9-]+\.yaml") if sub == "zones" else (["number", "owner", "outline"], r"parcel-([0-9]+)\.yaml")
-                allowed = need + (["address"] if sub == "parcels" else [])
+                need, pattern = (["name", "use", "outline"], r"[a-z0-9-]+\.yaml") if sub == "zones" else (["number", "outline"], r"parcel-([0-9]+)\.yaml")
+                allowed = need + (["address", "owner"] if sub == "parcels" else [])
                 m = re.fullmatch(pattern, fn)
                 if not m:
                     problem(ffull, "a zone's file is named <name>.yaml" if sub == "zones" else "a parcel's file is named parcel-<number>.yaml")
@@ -978,8 +978,9 @@ def write_ron():
                 out.append(f"            (name: {ron_str(zn['name'])}, use: {ron_str(zn['use'])}, outline: {pts(zn['outline'])}),")
             out.append("        ],\n        parcels: [")
             for pc in x.get("parcels", []):
-                owner = next((m["name"] for m in makers if m["key"] == pc["owner"]), pc["owner"])
-                out.append(f"            (number: {pc['number']}, owner: {ron_str(pc['owner'])}, owner_name: {ron_str(owner)}, outline: {pts(pc['outline'])}),")
+                # (No owner: vacant, the land office's to sell.)
+                owner = next((m["name"] for m in makers if m["key"] == pc.get("owner")), pc.get("owner", ""))
+                out.append(f"            (number: {pc['number']}, owner: {ron_str(pc.get('owner', ''))}, owner_name: {ron_str(owner)}, outline: {pts(pc['outline'])}),")
             out.append("        ],\n        streets: [")
             for st in x.get("streets", []):
                 out.append(f"            (name: {ron_str(st['name'])}, line: {pts(st['line'])}),")
@@ -996,6 +997,8 @@ def write_ron():
                 name_of = lambda slug: next((r["identity"]["name"] for r in materials + goods if r.get("slug") == slug), slug)
                 out.append(f"            (name: {ron_str(fc['name'])}, kind: {ron_str(fc['kind'])}, parcel: {fc['parcel']},")
                 out.append("                makes: [" + ", ".join(f"({ron_str(name_of(p))}, {float(o)!r})" for p, o in makes) + f"], draws: {float(draws)!r}, supplies: {float(fc.get('capacity') or 0)!r}, holds: {float(holds)!r},")
+                listed = [(r["module"], r["count"]) for ln in fc.get("lines") or [] for r in (ln.get("most") or {}).get("modules", []) if r["count"]] + [(im["module"], im["count"]) for im in fc.get("modules") or []]
+                out.append("                modules: [" + ", ".join(f"({ron_str(m)}, {n})" for m, n in listed) + "],")
                 out.append("                blocks: [")
                 for bl in fc.get("layout", []):
                     out.append(f"                (module: {ron_str(bl['module'])}, centre: ({float(bl['centre'][0])!r}, {float(bl['centre'][1])!r}), length: {float(bl['length'])!r}, width: {float(bl['width'])!r}, height: {float(bl['height'])!r}, heading: {float(bl['heading'])!r}),")
@@ -1003,6 +1006,15 @@ def write_ron():
             out.append("        ],\n    ),")
     out.append("]\n")
     with open(os.path.join(CONTENT, "settlements.ron"), "w", encoding="utf-8") as f:
+        f.write("\n".join(out))
+    # The industrial modules (SFO 10), what the game builds facilities of: each one's size, the
+    # power it needs and supplies (MW), and what it holds (t).
+    out = [head + "// Industrial modules from the SFO (SFO 10): name, size (m), power needed and supplied (MW), holds (t).\n["]
+    for m in sorted(modules, key=lambda m: m["slug"]):
+        size, rate = m.get("size") or {}, m.get("rate") or {}
+        out.append(f"    (key: {ron_str(m['slug'])}, name: {ron_str(m['identity']['name'])}, length: {float(size.get('length', 0))!r}, width: {float(size.get('width', 0))!r}, height: {float(size.get('height', 0))!r}, needs: {float((m.get('needs') or {}).get('power') or 0)!r}, supplies: {float(rate.get('power') or 0)!r}, holds: {float(rate.get('holds') or 0)!r}),")
+    out.append("]\n")
+    with open(os.path.join(CONTENT, "industry.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
 
 
@@ -1051,4 +1063,4 @@ if problems:
     sys.exit(1)
 write_ron()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods")
-print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron")
+print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron")

@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented outline. Vacant: the land office's to sell.
+number: 5
+address: { street: east-road, number: 4 }
+outline: [[2000, -250], [2450, -250], [2450, 250], [2000, 250]]

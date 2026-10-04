@@ -33,7 +33,8 @@ pub struct Zone {
     pub outline: Vec<(f64, f64)>,
 }
 
-/// A lot of land and who owns it (a Maker House company's key).
+/// A lot of land and who owns it (a Maker House company's key; empty:
+/// vacant, the land office's to sell).
 #[derive(Clone, Debug, Deserialize)]
 pub struct Parcel {
     pub number: u32,
@@ -69,6 +70,8 @@ pub struct Facility {
     pub draws: f64,
     pub supplies: f64,
     pub holds: f64,
+    /// What it's built of: (industrial module, how many), in the order laid out.
+    pub modules: Vec<(String, u32)>,
     pub blocks: Vec<Block>,
 }
 
@@ -128,4 +131,20 @@ pub fn inside(outline: &[(f64, f64)], p: (f64, f64)) -> bool {
 /// An outline's area (m², shoelace).
 pub fn area(outline: &[(f64, f64)]) -> f64 {
     (0..outline.len()).map(|k| { let (a, b) = (outline[k], outline[(k + 1) % outline.len()]); a.0 * b.1 - b.0 * a.1 }).sum::<f64>().abs() / 2.0
+}
+
+/// An industrial module (the SFO's, SFO 10): what facilities are built of.
+#[derive(Clone, Debug, Deserialize)]
+pub struct IndustrialModule {
+    pub key: String,
+    pub name: String,
+    /// Its footprint and height (m).
+    pub length: f64,
+    pub width: f64,
+    pub height: f64,
+    /// Power it needs, and supplies (MW).
+    pub needs: f64,
+    pub supplies: f64,
+    /// What it holds (t).
+    pub holds: f64,
 }
