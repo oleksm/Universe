@@ -67,6 +67,22 @@ impl Orbit {
         Self { semi_major_axis: a, eccentricity: e, mu, mean_anomaly_epoch: self.mean_anomaly_epoch, basis: self.basis, mean_motion: (mu / (a * a * a)).sqrt() }
     }
 
+    /// How far its plane is tilted from the reference plane (rad).
+    pub fn inclination(&self) -> f64 {
+        self.normal().y.clamp(-1.0, 1.0).acos()
+    }
+
+    /// This orbit tilted to `inclination` (rad) about its own line of nodes:
+    /// the same size and shape, the same nodes.
+    pub fn inclined(&self, inclination: f64) -> Self {
+        let n = self.normal();
+        let node = DVec3::Y.cross(n);
+        let axis = if node.length_squared() > 1e-24 { node.normalize() } else { self.basis.x_axis };
+        let mut o = self.clone();
+        o.basis = DMat3::from_axis_angle(axis, inclination - self.inclination()) * self.basis;
+        o
+    }
+
     /// The orbit's normal (unit): the way its angular momentum points.
     pub fn normal(&self) -> DVec3 {
         (self.basis * DVec3::Z).normalize()

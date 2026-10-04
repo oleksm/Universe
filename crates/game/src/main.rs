@@ -43,7 +43,10 @@ use universe_sim::{Approach, ClearanceKind, Command, Controls, EngineHandle, Eve
 use models::Models;
 use observer::{Focus, Observer};
 
-const SEED: u64 = 1984;
+/// The world's seed: the celestial registry's (`content/base/galaxy.ron`).
+fn seed() -> u64 {
+    universe_sim::world::content::content().galaxy.as_ref().map_or(1984, |g| g.seed)
+}
 const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
 /// Where a hit landed, shown as a spark for a moment.
 pub struct Spark {
@@ -266,7 +269,7 @@ pub struct App {
 
 impl App {
     fn new() -> Self {
-        let mut u = Universe::new(SEED);
+        let mut u = Universe::new(seed());
         // UNIVERSE_RECORD=path: record the session from its start, saved there
         // on exit (replay it: `cargo run -p universe-sim --release --example replay -- path`).
         if std::env::var_os("UNIVERSE_RECORD").is_some() {
@@ -274,7 +277,7 @@ impl App {
         }
         // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 1,000).
         let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(1_000);
-        u.spawn_settlers(settlers, SEED);
+        u.spawn_settlers(settlers, seed());
         let engine = EngineHandle::new(u);
         let (v, charts) = (engine.view(), engine.charts());
         let origin = v.ship_system;

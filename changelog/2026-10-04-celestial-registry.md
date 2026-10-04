@@ -27,3 +27,16 @@ The seeded world written down, so it can be curated and not only seeded.
 - `content/base/celestial.ron` is written by the registry build; `crates/world/src/celestial.rs`.
 - Not yet taken from records: the star itself, inclination and tilt, asteroid fields, bodies added or
   removed, and the laws.
+
+## All of it hooked up (the same day)
+
+- **A body taken over** also takes its orbit's inclination and its axial tilt from its record.
+- **A system taken over** (its own record curated or frozen): its star (class, mass, luminosity) is as
+  written, and its planets and moons are exactly those written. One the seed makes that has no
+  record is not there (nor its moons); one written that the seed doesn't make is added.
+- **A field taken over**: its number of rocks, how far they spread, and their class (its remnant is
+  remade of that class).
+- **The game's seed** comes from the galaxy record (`content/base/galaxy.ron`).
+- **The laws** (region, density, sector) stay the code's: changing them would make another galaxy. The
+  test holds the code to the record, so a change to either is seen.
+- **A frozen body's landscape file** is carried to the game and checked to exist; nothing reads it yet.

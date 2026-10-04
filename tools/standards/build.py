@@ -1288,19 +1288,29 @@ def write_ron():
     out = [head + "// Celestial bodies from the registry (standards/Celestial): mass (kg), radius (m), day (s), orbit (m), relief (m),\n// atmosphere (surface density kg/m3, scale height m, top m), rings (inner, outer m).\n["]
     opt = lambda v: "None" if v is None else f"Some({v})"
     for sysm in celestial["systems"]:
-        out.append(f"    (system: {ron_str(sysm['identity']['name'])}, index: {sysm['identity'].get('index', 0)}, bodies: [")
+        st = sysm.get("star") or {}
+        out.append(f"    (system: {ron_str(sysm['identity']['name'])}, index: {sysm['identity'].get('index', 0)}, status: {ron_str(sysm['status'])}, star: (class: {ron_str(st.get('class', ''))}, mass: {float(st.get('mass', 0))!r}, luminosity: {float(st.get('luminosity', 0))!r}), bodies: [")
         for b in sysm["bodies"]:
             ph, ob, sf, at = b.get("physical") or {}, b.get("orbit") or {}, b.get("surface") or {}, b.get("atmosphere")
             col = sf.get("colour") or [0.5, 0.5, 0.5]
-            out.append(f"        (name: {ron_str(b['identity']['name'])}, status: {ron_str(b['status'])}, kind: {ron_str(b['identity']['kind'])}, mass: {float(ph.get('mass', 0))!r}, radius: {float(ph.get('radius', 0)) * 1000!r}, day: {float(ph.get('day', 0)) * 3600!r}, "
+            out.append(f"        (name: {ron_str(b['identity']['name'])}, status: {ron_str(b['status'])}, kind: {ron_str(b['identity']['kind'])}, parent: {ron_str(b['identity'].get('parent', ''))}, mass: {float(ph.get('mass', 0))!r}, radius: {float(ph.get('radius', 0)) * 1000!r}, day: {float(ph.get('day', 0)) * 3600!r}, "
                        + f"semi_major_axis: {opt(repr(float(ob['semi_major_axis']) * 1000) if 'semi_major_axis' in ob else None)}, eccentricity: {opt(repr(float(ob['eccentricity'])) if 'eccentricity' in ob else None)}, "
+                       + f"inclination: {opt(repr(math.radians(float(ob['inclination']))) if 'inclination' in ob else None)}, tilt: {math.radians(float(ph.get('tilt', 0)))!r}, landscape: {opt(ron_str(sf['landscape']) if 'landscape' in sf else None)}, "
                        + f"terrain: {opt(ron_str(sf['terrain']) if 'terrain' in sf else None)}, relief: {opt(repr(float(sf['relief'])) if 'relief' in sf else None)}, "
                        + f"atmosphere: {opt('(' + ', '.join(repr(float(v)) for v in (at['surface_density'], at['scale_height'] * 1000, at['top'] * 1000)) + ')' if at else None)}, "
                        + f"colour: ({float(col[0])!r}, {float(col[1])!r}, {float(col[2])!r}), rings: {opt('(' + repr(float(ph['rings'][0]) * 1000) + ', ' + repr(float(ph['rings'][1]) * 1000) + ')' if 'rings' in ph else None)}),")
+        out.append("    ], fields: [")
+        for fl in sysm["fields"]:
+            rk = fl.get("rocks") or {}
+            out.append(f"        (name: {ron_str(fl['identity']['name'])}, status: {ron_str(fl['status'])}, count: {int(rk.get('count', 0))}, extent: {float(rk.get('extent', 0)) * 1000!r}, class: {ron_str(rk.get('class', ''))}),")
         out.append("    ]),")
     out.append("]\n")
     with open(os.path.join(CONTENT, "celestial.ron"), "w", encoding="utf-8") as f:
         f.write("\n".join(out))
+    gx = celestial["galaxy"]
+    with open(os.path.join(CONTENT, "galaxy.ron"), "w", encoding="utf-8") as f:
+        f.write(head + "// The world as a whole, from the celestial registry (standards/Celestial/metadata/galaxy.yaml): the game takes its seed from here;\n// the laws are the code's, and a test holds them to these.\n[\n"
+                + (f"    (seed: {int(gx['seed'])}, home: {ron_str(gx['home'])}, region: {float(gx.get('region', 0))!r}, star_density: {float(gx.get('star_density', 0))!r}, sector: {float(gx.get('sector', 0))!r}),\n" if gx else "") + "]\n")
     # Ship layouts (SFO 18), what the game builds hulls' insides from: compartments (boxes in
     # metres back from the nose, above the keel, from the centre line) and the openings between them.
     out = [head + "// Ship layouts from the SFO (SFO 18): each hull's compartments and openings. Boxes: (aft from, aft to, up from, up to, side from, side to), m.\n["]
@@ -1946,6 +1956,9 @@ if os.path.isdir(CEL):
         sysm["fields"] = [cel_load(os.path.join(sdir, fn[:-5], "fields", b), "field") for b in sorted(os.listdir(os.path.join(sdir, fn[:-5], "fields")))] if os.path.isdir(os.path.join(sdir, fn[:-5], "fields")) else []
         names = {b["identity"]["name"] for b in sysm["bodies"]} | {sysm["identity"]["name"]}
         for b in sysm["bodies"]:
+            scape = (b.get("surface") or {}).get("landscape")
+            if scape is not None and not os.path.exists(os.path.join(ROOT, scape)):
+                problem(os.path.join(TREE, b["file"]), f"surface.landscape: no file '{scape}'")
             if b["identity"].get("parent") not in names:
                 problem(os.path.join(TREE, b["file"]), f"identity.parent: no body '{b['identity'].get('parent')}' in {sysm['identity']['name']}")
         for f_ in sysm["fields"]:
@@ -1966,9 +1979,15 @@ for sysm in celestial["systems"]:
     count = lambda st: sum(1 for r_ in recs if r_.get("status") == st)
     rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), f"{len(sysm['bodies'])} bodies, {len(sysm['fields'])} fields", f"{count('seeded')} seeded, {count('curated')} curated, {count('frozen')} frozen", ""))
 # (A body a person has taken over: what follows from its mass and radius must still agree with them.
-# The game takes its mass, radius, day, orbit size and shape, rings, terrain, relief, air and colour;
-# its gravity, period and temperature it works out itself.)
+# The game takes its mass, radius, day, orbit (size, shape, tilt), axis, rings, terrain, relief, air
+# and colour; its gravity, period and temperature it works out itself. A system taken over: its star,
+# and its planets and moons exactly as written. A field taken over: its count, extent and class.)
 for sysm in celestial["systems"]:
+    if sysm.get("status") != "seeded":
+        rows.append(row("ok", link(sysm["identity"]["name"], "cs:" + sysm["slug"]), sysm["status"], "", "its star, and its planets and moons exactly as written: one the seed makes that has no record is not there"))
+    for fl in sysm["fields"]:
+        if fl.get("status") != "seeded":
+            rows.append(row("ok", link(fl["identity"]["name"], f"cf:{sysm['slug']}:{fl['slug']}"), fl["status"], "", "taken by the game as written"))
     for b in sysm["bodies"]:
         if b.get("status") == "seeded":
             continue
@@ -2055,4 +2074,4 @@ if problems:
 write_ron()
 print(f"{len(makers)} makers, {len(bodies)} bodies, {len(standards)} standards, {len(elements)} elements, {len(materials)} materials, {len(processes)} processes, {len(modules)} modules, {len(goods)} goods, {len(hulls)} hulls")
 print(f"  reports: " + ", ".join(f"{r['key']} {r['gaps']} gaps" for r in reports))
-print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/layouts.ron, content/base/celestial.ron")
+print(f"  standards/index.html\n  content/base/bodies.ron, content/base/standards.ron, content/base/brands.ron, content/base/settlements.ron, content/base/industry.ron, content/base/layouts.ron, content/base/celestial.ron, content/base/galaxy.ron")

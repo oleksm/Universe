@@ -64,6 +64,11 @@ impl RockClass {
         }
     }
 
+    /// The class a label names (any case), if any.
+    pub fn named(label: &str) -> Option<Self> {
+        [RockClass::Carbonaceous, RockClass::Stony, RockClass::Metallic, RockClass::Icy].into_iter().find(|c| c.label().eq_ignore_ascii_case(label))
+    }
+
     /// Its kind, for lists (nine characters at most).
     pub fn letter(self) -> &'static str {
         match self {
@@ -293,6 +298,25 @@ fn family_class(a: f64, frost: f64, rng: &mut Rng) -> RockClass {
         RockClass::Metallic
     } else {
         RockClass::Icy
+    }
+}
+
+/// The field `name` of `sys` as the registry has it: how many rocks, how far
+/// they spread (m), and what they are made of. A changed class remakes its
+/// remnant of that class at the same size (its swarm follows it).
+pub(crate) fn curate(sys: &mut StarSystem, name: &str, count: usize, extent: f64, class: Option<RockClass>, seed: u64) {
+    let Some(f) = sys.fields.iter().position(|f| f.name == name) else { return };
+    sys.fields[f].count = count;
+    sys.fields[f].extent = extent;
+    let (body, grade) = (sys.fields[f].body, sys.fields[f].grade);
+    if let Some(class) = class.filter(|&c| c != sys.fields[f].class(sys)) {
+        let b = &mut sys.bodies[body];
+        let made = rock(class, b.rail.radius * 2.0, grade, &mut Rng::new(mix(seed, 0x6375_7261 + body as u64)));
+        b.mass = made.density * made.shape.volume();
+        b.rail.mu = G * b.mass;
+        b.rail.radius = made.shape.radius;
+        b.color = made.class.color();
+        b.rock = Some(Arc::new(made));
     }
 }
 

@@ -158,6 +158,22 @@ const GAS_COLORS: [[f32; 3]; 3] = [[0.9, 0.7, 0.45], [0.85, 0.6, 0.4], [0.8, 0.7
 const ICE_COLORS: [[f32; 3]; 2] = [[0.5, 0.85, 1.0], [0.4, 0.55, 1.0]];
 const MOON_COLORS: [[f32; 3]; 3] = [[0.7, 0.7, 0.7], [0.6, 0.58, 0.55], [0.75, 0.7, 0.6]];
 
+/// A planet or moon as given, with nothing made for it yet (terrain and air come after).
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn natural(name: String, kind: BodyKind, mass: f64, radius: f64, day: f64, color: [f32; 3], rings: Option<(f64, f64)>, parent: usize, orbit: Orbit, tilt: DQuat) -> Body {
+    Body {
+        name,
+        kind,
+        mass,
+        color,
+        rings,
+        link: None,
+        terrain: None,
+        rail: RailBody { parent: Some(parent), orbit: Some(orbit), mu: G * mass, attracts: kind.massive(), radius, day, tilt, collider: kind.collider(), atmosphere: None, pulled_by: Vec::new() },
+        rock: None,
+    }
+}
+
 fn random_tilt(rng: &mut Rng, max_degrees: f64) -> DQuat {
     DQuat::from_rotation_y(rng.range(0.0, TAU)) * DQuat::from_rotation_x(rng.range(0.0, max_degrees).to_radians())
 }
@@ -324,7 +340,10 @@ impl StarSystem {
 
         let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new() };
         // (What the registry has curated or frozen stands in place of what the seed made: see `celestial`.)
-        crate::celestial::apply(&mut system, crate::celestial::Stage::Bodies, star.seed);
+        // (A body taken off the system's roster there takes the others' numbers with it.)
+        if let Some(moved) = crate::celestial::apply(&mut system, crate::celestial::Stage::Bodies, star.seed) {
+            station_parent = station_parent.and_then(|(p, c)| moved[p].map(|n| (n, c)));
+        }
         if let Some((planet, _)) = station_parent {
             system.add_station(planet, &mut rng);
         }
