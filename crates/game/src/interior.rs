@@ -14,6 +14,7 @@ const PAPER: Color = Color([0.02, 0.07, 0.15, 1.0]);
 const LINE: [f32; 3] = [0.55, 0.8, 1.0];
 const GROUND: Color = Color([0.35, 0.6, 0.9, 0.12]);
 const LABEL: Color = Color([0.7, 0.85, 1.0, 1.0]);
+const DIMENSION: Color = Color([0.75, 0.88, 1.0, 0.75]);
 
 /// The camera's field of view up and down (rad).
 const FOV: f32 = 0.85;
@@ -193,6 +194,55 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.hud_line(a, b, GROUND);
         }
     }
+    // Walls of the same grid on its two far sides (from the camera), up past its top:
+    // a corner to read its height against.
+    let (gx0, gx1, gz0, gz1) = (x0 as f32 * step, x1 as f32 * step, z0 as f32 * step, z1 as f32 * step);
+    let top = lo.y + ((hi.y - lo.y + pad.y) / step).ceil() * step;
+    let far_x = if cam.eye.x > (lo.x + hi.x) * 0.5 { gx0 } else { gx1 };
+    let far_z = if cam.eye.z > (lo.z + hi.z) * 0.5 { gz0 } else { gz1 };
+    let seg = |frame: &mut Frame, a: Vec3, b: Vec3, c: Color| {
+        if let (Some((pa, _)), Some((pb, _))) = (cam.project(a), cam.project(b)) {
+            frame.hud_line(pa, pb, c);
+        }
+    };
+    let rows = ((top - lo.y) / step).round() as i32;
+    for k in 0..=rows {
+        let y = lo.y + k as f32 * step;
+        seg(frame, Vec3::new(far_x, y, gz0), Vec3::new(far_x, y, gz1), GROUND);
+        seg(frame, Vec3::new(gx0, y, far_z), Vec3::new(gx1, y, far_z), GROUND);
+    }
+    for i in z0..=z1 {
+        let z = i as f32 * step;
+        seg(frame, Vec3::new(far_x, lo.y, z), Vec3::new(far_x, top, z), GROUND);
+    }
+    for i in x0..=x1 {
+        let x = i as f32 * step;
+        seg(frame, Vec3::new(x, lo.y, far_z), Vec3::new(x, top, far_z), GROUND);
+    }
+    // Its measures: its length along the ground on the near side, its beam across
+    // the far end, its height up the far corner (against the walls); ticks at their
+    // ends, the measure by their middles.
+    {
+        let near_x = if cam.eye.x > (lo.x + hi.x) * 0.5 { hi.x + 2.0 } else { lo.x - 2.0 };
+        let far_x = if cam.eye.x > (lo.x + hi.x) * 0.5 { lo.x - 2.0 } else { hi.x + 2.0 };
+        let far_z = if cam.eye.z > (lo.z + hi.z) * 0.5 { lo.z - 2.0 } else { hi.z + 2.0 };
+        let dims = [
+            (Vec3::new(near_x, lo.y, lo.z), Vec3::new(near_x, lo.y, hi.z), Vec3::X, hi.z - lo.z),
+            (Vec3::new(lo.x, lo.y, far_z), Vec3::new(hi.x, lo.y, far_z), Vec3::Z, hi.x - lo.x),
+            (Vec3::new(far_x, lo.y, far_z), Vec3::new(far_x, hi.y, far_z), Vec3::X, hi.y - lo.y),
+        ];
+        for (a, b, across, metres) in dims {
+            seg(frame, a, b, DIMENSION);
+            for p in [a, b] {
+                seg(frame, p - across * 0.6, p + across * 0.6, DIMENSION);
+            }
+            if let Some((m, _)) = cam.project((a + b) * 0.5) {
+                let text = format!("{metres:.1} M");
+                let w = text.chars().count() as f32 * universe_engine::frame::GLYPH * 0.8;
+                frame.text_scaled(m + Vec2::new(-w / 2.0, -14.0), &text, LABEL, 0.8);
+            }
+        }
+    }
     // The hull: every line thin and see-through, fainter the farther it is (so its
     // depth reads through it).
     let middle = (cam.eye - (lo + hi) * 0.5).length();
@@ -200,7 +250,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let line = |frame: &mut Frame, a: Vec3, b: Vec3| {
         let (Some((pa, za)), Some((pb, zb))) = (cam.project(a), cam.project(b)) else { return };
         let near = (((middle + radius) - (za + zb) * 0.5) / (2.0 * radius)).clamp(0.0, 1.0);
-        let alpha = 0.10 + 0.32 * near;
+        let alpha = 0.05 + 0.17 * near;
         frame.hud_line(pa, pb, Color([LINE[0], LINE[1], LINE[2], alpha]));
     };
     for [a, b] in &h.lines {
