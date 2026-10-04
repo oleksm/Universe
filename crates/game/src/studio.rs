@@ -13,8 +13,10 @@
 //! (click its points; ENTER ends it), D door (click a wall; again removes
 //! it), L ladder (click: up to the deck above, through a hatch), T stair
 //! (click its foot, then its head: up to the deck above). DELETE removes what's selected; BACKSPACE the last point placed; ESC
-//! stops drawing. PGUP/PGDN deck, N a new deck above, +/- its floor (SHIFT:
-//! more), [ ] its headroom, CTRL+DELETE removes it. Wheel zooms, right drag
+//! stops drawing. N the next deck (round from the top to the bottom), PGUP/
+//! PGDN up and down (round too), a click on a deck in the side view picks it,
+//! SHIFT+N adds a deck above the top one (if the hull has room), +/- its floor, [ ] its height (SHIFT:
+//! more), CTRL+DELETE removes it. Wheel zooms, right drag
 //! pans, HOME fits. Points snap to a quarter metre (ALT: free).
 
 use universe_engine::glam::{DVec2, Vec2};
@@ -176,9 +178,8 @@ fn first_floor(mesh: &universe_sim::world::walk::WalkMesh) -> f64 {
 #[derive(Clone, Copy, Debug, PartialEq)]
 enum Action {
     Tool(Tool),
-    DeckDown,
-    DeckUp,
-    NewDeck,
+    NextDeck,
+    AddDeck,
     DropDeck,
     Floor(f64),
     Headroom(f64),
@@ -189,7 +190,7 @@ enum Action {
 }
 
 /// The toolbar: each button's key, name and what it does.
-const TOOLBAR: [(&str, &str, Action); 18] = [
+const TOOLBAR: [(&str, &str, Action); 17] = [
     ("S", "SELECT", Action::Tool(Tool::Select)),
     ("P", "PLANE", Action::Tool(Tool::Plane)),
     ("W", "WALL", Action::Tool(Tool::Wall)),
@@ -200,14 +201,13 @@ const TOOLBAR: [(&str, &str, Action); 18] = [
     ("DEL", "REMOVE", Action::Remove),
     ("HOME", "FIT VIEW", Action::Fit),
     ("ESC", "CLOSE", Action::Close),
-    ("PGDN", "DECK DOWN", Action::DeckDown),
-    ("PGUP", "DECK UP", Action::DeckUp),
-    ("N", "NEW DECK", Action::NewDeck),
+    ("N", "NEXT DECK", Action::NextDeck),
+    ("S+N", "ADD DECK", Action::AddDeck),
     ("^DEL", "DROP DECK", Action::DropDeck),
     ("-", "FLOOR DOWN", Action::Floor(-0.1)),
     ("+", "FLOOR UP", Action::Floor(0.1)),
-    ("[", "HEADROOM -", Action::Headroom(-0.1)),
-    ("]", "HEADROOM +", Action::Headroom(0.1)),
+    ("[", "HEIGHT -", Action::Headroom(-0.1)),
+    ("]", "HEIGHT +", Action::Headroom(0.1)),
 ];
 
 /// Where toolbar button `k` is on screen (two rows of nine).
@@ -225,6 +225,29 @@ fn button_at(size: Vec2, q: Vec2) -> Option<Action> {
     }).map(|k| TOOLBAR[k].2)
 }
 
+/// Is there room for a deck between these sides: at least 3 m across, for at
+/// least 3 m of the ship's length (not just its masts and fittings)?
+fn roomy(sides: &Sides) -> bool {
+    sides.rows().filter(|(_, a, b)| b - a >= 3.0).count() as f64 * 0.1 >= 3.0
+}
+
+/// Is `q` in region `r`?
+fn in_rect(r: (Vec2, Vec2), q: Vec2) -> bool {
+    q.x >= r.0.x && q.x <= r.1.x && q.y >= r.0.y && q.y <= r.1.y
+}
+
+/// The side view's scale (pixels a metre) and middle, for the hull in region `r`.
+fn side_view(h: &Hull, r: (Vec2, Vec2)) -> (f64, Vec2) {
+    let (w, ht) = (r.1 - r.0).as_dvec2().into();
+    ((w / (h.hi.z - h.lo.z)).min(ht / (h.hi.y - h.lo.y)) * 0.9, (r.0 + r.1) * 0.5)
+}
+
+/// The height (hull frame) at screen row `y` of the side view.
+fn side_y(h: &Hull, r: (Vec2, Vec2), y: f32) -> f64 {
+    let (k, mid) = side_view(h, r);
+    (h.lo.y + h.hi.y) / 2.0 - (y - mid.y) as f64 / k
+}
+
 /// Snapped to a quarter metre (ALT: as it is).
 fn snap(p: DVec2, free: bool) -> DVec2 {
     if free { p } else { (p * 4.0).round() / 4.0 }
@@ -234,7 +257,7 @@ fn snap(p: DVec2, free: bool) -> DVec2 {
 pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim::world::shape::Shape, studio: &mut Studio) -> bool {
     let input = &ctx.input;
     let size = ctx.hud_size.as_vec2();
-    let (plan_r, _side_r) = regions(size);
+    let (plan_r, side_r) = regions(size);
     studio.refresh(app, hull_key, shape);
     let Some(h) = studio.hull.as_ref() else {
         return !input.pressed(KeyCode::Escape);
@@ -278,21 +301,32 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     let first_floor = h.first_floor;
     let plan = Studio::plan(app, hull_key);
     let n = plan.decks.len();
-    if input.pressed(KeyCode::KeyN) || clicked == Some(Action::NewDeck) {
-        let floor = plan.decks.iter().map(|d| d.floor + d.headroom + 0.3).fold(first_floor, f64::max);
-        plan.decks.push(Deck::at(if n == 0 { first_floor } else { floor }));
-        plan.decks.sort_by(|a, b| a.floor.total_cmp(&b.floor));
-        studio.deck = plan.decks.iter().position(|d| (d.floor - floor).abs() < 1e-9 || n == 0).unwrap_or(0);
-        studio.drawing.clear();
-        studio.pick = None;
+    // Another deck: on the first floor, or above the top one with its headroom
+    // and a deck's thickness between (not past the hull's top).
+    let mut went: Option<usize> = None;
+    if (shift && input.pressed(KeyCode::KeyN)) || clicked == Some(Action::AddDeck) {
+        let floor = if n == 0 { first_floor } else { plan.decks.iter().map(|d| d.floor + d.headroom + 0.3).fold(first_floor, f64::max) };
+        // (Only where there's hull round it, at a person's waist and under its ceiling.)
+        let room = |y: f64| shape.walk.as_ref().is_some_and(|m| roomy(&Sides::of(&m.section_y(y))));
+        if room(floor + 1.0) && room(floor + deckplan::HEADROOM - 0.2) {
+            plan.decks.push(Deck::at(floor));
+            plan.decks.sort_by(|a, b| a.floor.total_cmp(&b.floor));
+            went = plan.decks.iter().position(|d| (d.floor - floor).abs() < 1e-9);
+        }
+    } else if n > 0 {
+        // The next deck, up or down: round from one end to the other.
+        if (input.pressed(KeyCode::KeyN) && !shift) || clicked == Some(Action::NextDeck) || input.pressed(KeyCode::PageUp) {
+            went = Some((studio.deck + 1) % n);
+        } else if input.pressed(KeyCode::PageDown) {
+            went = Some((studio.deck + n - 1) % n);
+        } else if input.button_pressed(MouseButton::Left) && in_rect(side_r, cursor) {
+            // A deck clicked in the side view: its floor or its headroom.
+            let y = side_y(h, side_r, cursor.y);
+            went = plan.decks.iter().position(|d| y >= d.floor - 0.4 && y <= d.floor + d.headroom).or(went);
+        }
     }
-    if (input.pressed(KeyCode::PageUp) || clicked == Some(Action::DeckUp)) && studio.deck + 1 < plan.decks.len() {
-        studio.deck += 1;
-        studio.drawing.clear();
-        studio.pick = None;
-    }
-    if (input.pressed(KeyCode::PageDown) || clicked == Some(Action::DeckDown)) && studio.deck > 0 {
-        studio.deck -= 1;
+    if let Some(k) = went {
+        studio.deck = k;
         studio.drawing.clear();
         studio.pick = None;
     }
@@ -667,9 +701,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         }
     });
     // The side view: the hull along its centre line, and the decks (this one bright), to scale.
-    let (w, ht) = (side_r.1 - side_r.0).as_dvec2().into();
-    let k = (w / (h.hi.z - h.lo.z)).min(ht / (h.hi.y - h.lo.y)) * 0.9;
-    let mid = (side_r.0 + side_r.1) * 0.5;
+    let (k, mid) = side_view(h, side_r);
     let zs = |z: f64| mid.x + ((z - (h.lo.z + h.hi.z) / 2.0) * k) as f32;
     let sy = |y: f64| mid.y - ((y - (h.lo.y + h.hi.y) / 2.0) * k) as f32;
     frame.hud_clipped(side_r.0, side_r.1, |frame| {
@@ -680,7 +712,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
             frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor)), Vec2::new(side_r.1.x, sy(d.floor)), col);
             frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor + d.headroom)), Vec2::new(side_r.1.x, sy(d.floor + d.headroom)), col.scale(0.4));
-            frame.text(Vec2::new(side_r.0.x + 6.0, sy(d.floor) - 14.0), &format!("DECK {}  {:.1} M", k + 1, d.floor - h.keel), col);
+            frame.text(Vec2::new(side_r.0.x + 6.0, sy(d.floor) - 14.0), &format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom), col);
         }
     });
     // What's on: the deck, the tool.
@@ -693,7 +725,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         Tool::Stair => "STAIR",
     };
     let deck_line = match deck {
-        Some(d) => format!("DECK {} OF {}   FLOOR {:.1} M UP   HEADROOM {:.1} M", studio.deck + 1, decks.len(), d.floor - h.keel, d.headroom),
+        Some(d) => format!("DECK {} OF {}   FLOOR {:.1} M UP   HEIGHT {:.1} M", studio.deck + 1, decks.len(), d.floor - h.keel, d.headroom),
         None => "NO DECKS YET: N ADDS ONE".into(),
     };
     frame.text(Vec2::new(plan_r.0.x, plan_r.0.y - 16.0), &format!("{deck_line}   TOOL: {tool}"), LABEL);
