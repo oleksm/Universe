@@ -3,5 +3,5 @@
 key: settlement.treistun.gate-to-biraidim
 name: "Gate to Biraidim"
 kind: settlement
-gate: { ring: gate.ring.ii, to: system.biraidim, distance: 4.96688349810492e+16 }
+gate: { ring: gate.ring.ii, to: system.biraidim }
 about: "The gate to Biraidim, 5.25 light years away: a ring 3 km across on an orbit of its own round the star, kept clear of everything else. A permanent structure with people aboard to run it, so a settlement."

@@ -67,6 +67,9 @@ for _dp, _dns, _fns in os.walk(TREE):
                 REGISTRY[V.key_in(_rec)] = (_rel, _rec)
 
 
+REGISTRY_SYSTEM = {rec["identity"]["name"]: key for key, (_r, rec) in REGISTRY.items() if key.startswith("system.")}
+
+
 def old_name(key, rel, at):
     """What a record was named by before keys, for the record at `rel` naming it at `at`."""
     if key not in REGISTRY:
@@ -1778,6 +1781,9 @@ for ad in administrations:
     for x in ad["bodies"]:
         g = gate_of.get((x.get("gate") or {}).get("ring"))
         if g and "worked" in g:
+            # (How far the gate reaches: from where the two stars are, in the celestial registry.)
+            here_, there_ = (yaml.safe_load(open(os.path.join(TREE, "Celestial", "metadata", "systems", s_ + ".yaml"), encoding="utf-8")) for s_ in (ad["slug"], REGISTRY[REGISTRY_SYSTEM[x["gate"]["to"]]][0].split(os.sep)[-1][:-5]))
+            x["gate"]["distance"] = float(f"{sum((a - b) ** 2 for a, b in zip(here_['position']['from_home'], there_['position']['from_home'])) ** 0.5 / LY:.4g}")
             share = x["gate"]["distance"] / g["performance"]["span"]
             x["gate_worked"] = {"ring": g["identity"]["name"], "span": g["performance"]["span"], "hold_power": g["worked"]["hold_power"] * share, "open_energy": g["worked"]["open_energy"] * share,
                                 "stations": math.ceil(g["worked"]["stations"] * share) if g["worked"].get("stations") else None,

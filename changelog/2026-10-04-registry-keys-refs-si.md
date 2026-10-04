@@ -27,3 +27,10 @@
   each as a rubble pile and as one solid piece, marked to review. Each seeded small body now has
   its own density, drawn between its class's two (one over 200 km in radius is solid), so the 14
   that had no mass have one. What each world is made of stays empty until it is brought in.
+- **Shared shapes for made things:** what a thing is made from is a list (each entry by key, with
+  its quantity), and how it is made lists its processes, the same for parts, mill stock, hulls and
+  gates. A facility and a rig share one definition of their lines and modules.
+- **A gate's distance is worked out** from where the two stars are, not written on the gate.
+- **Fixed: every charted system's position was zero** in the registry (the export divided light
+  years by a light year). Liham is 4.877 light years from home, Driumum 3.073, Biraidim 5.247,
+  Moryemzai 7.015. The generated celestial file lists the systems in that order now.

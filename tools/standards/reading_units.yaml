@@ -114,10 +114,6 @@ Celestial/schema/system.schema.yaml:
   position.from_home:
     per: 9460730472580800.0
     reads: light years from the home star, [x, y, z] in the galaxy's frame
-LocalAdministration/schema/body.schema.yaml:
-  gate.distance:
-    per: 9460730472580800.0
-    reads: light years to that star
 LocalAdministration/schema/power-line.schema.yaml:
   capacity:
     per: 1000000.0

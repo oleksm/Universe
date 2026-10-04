@@ -214,9 +214,43 @@ Also: the four rock classes with no density have one, guessed and marked to revi
 registry-seeded small body has its own density between its class's rubble and solid figures.
 What each world is made of stays empty: the user will bring it.
 
+## Installations, made things, gates (2026-10-04)
+
+- **One installation definition** (`LocalAdministration/schema/installation.schema.yaml`:
+  `processes`, `lines`, `modules`), taken by `$ref` by a facility and by a rig. A rig's lines and
+  modules are typed now.
+- **One `made_from` and one `making`** in `common.schema.yaml`, used by part, mill stock, hull and
+  gate. `made_from` is a list: each entry an `item` (a material, a stock item or a part, by key)
+  and its `quantity` (a part also has `blank`, `grain`, `finish` there). `making.processes` is a
+  list everywhere (`making.process` is gone); a hull keeps `making.fitting_out`. A mill stock's
+  `form` and `temper` are in its `identity`.
+- **A gate's distance is worked out**, not written: `gate.distance` is gone from the settlement;
+  it is the distance between the two systems' `position.from_home`.
+- **System positions were wrong and are fixed.** Every system's `position` was zero: the export
+  (`crates/world/examples/celestial_export.rs`) divided a position already in light years by a
+  light year. One line, in the registry's own exporter; no engine code. `celestial.ron` now lists
+  the systems in order of distance from home, which is the only change in it.
+
+## Two of your items I have not done, and why
+
+**Item 6, a module's output as a stock item.** A rolling mill does not make one stock item: it
+makes plate, of any gauge and any metal. `rate.product` can not name `stock.al6061-pl-5`. What it
+makes is a **form** (plate, tube, bar, forging, panel, part, hull). So I would drop the nine goods
+that are forms of stock, and let a module's product be either a good (bulk matter by the tonne:
+liquid steel, sponge iron, alumina) or a form from the one form list. Tell me if that is what you
+want before I take the goods out: the chain reports walk them.
+
+**Item 7, flows on the module only.** A process record here is not only a list of steps. It
+holds what is known of the chemistry as sourced figures: its inputs per tonne of product, its
+yield, energy, temperature. A module holds one step's. They overlap but are not copies: 26
+processes have no modules at all yet. Taking the flows off processes would delete sourced
+figures. I would keep both until every process has its steps, then check that the steps add up
+to the process, and only then remove the process's own.
+
 ## Next on `fso`, in this order
 
-6. Products and stock, installations, economy.
+Waiting on the two answers above. Then: the product base (maker and revision on every made
+thing), equipment the game has and the registry lacks, fuels, economy and administration figures.
 
 ## Where I'd do it differently
 

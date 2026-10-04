@@ -18,14 +18,13 @@ properties:
       latitude: { type: number, minimum: -90, maximum: 90, x-unit: "deg" }
       longitude: { type: number, minimum: -180, maximum: 180, x-unit: "deg" }
   gate:
-    description: "For a settlement that is a gate."
+    description: "For a settlement that is a gate. How far it reaches is worked out from where the two stars are."
     type: object
     additionalProperties: false
-    required: [ring, to, distance]
+    required: [ring, to]
     properties:
       ring: { type: string, x-ref: [gate], description: "The gate ring it is (SFO 17), by its key." }
       to: { type: string, x-ref: [system], description: The star it leads to. }
-      distance: { type: number, x-unit: "m", description: "m to that star" }
   spin:
     description: "For a rig: the part of it that turns, to give weight to what needs it."
     type: object

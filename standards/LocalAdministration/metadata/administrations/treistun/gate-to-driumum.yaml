@@ -3,5 +3,5 @@
 key: settlement.treistun.gate-to-driumum
 name: "Gate to Driumum"
 kind: settlement
-gate: { ring: gate.ring.i, to: system.driumum, distance: 2.90444425508231e+16 }
+gate: { ring: gate.ring.i, to: system.driumum }
 about: "The gate to Driumum, 3.07 light years away: a ring 3 km across on an orbit of its own round the star, kept clear of everything else. A permanent structure with people aboard to run it, so a settlement."
