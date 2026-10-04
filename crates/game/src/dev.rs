@@ -1190,7 +1190,7 @@ pub fn apply(app: &mut App, name: &str) {
             for d in &plan.decks {
                 let sides = universe_sim::world::deckplan::deck_sides(&mesh, d.floor);
                 let areas: Vec<String> = d.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
-                log::info!("scenario layoutlook: deck at {:.1} m up, floors m2 {}", d.floor - mesh.lo.y, areas.join(" "));
+                log::info!("scenario layoutlook: deck at {:.1} m up, floors m2 {}, corners {:?}", d.floor - mesh.lo.y, areas.join(" "), d.planes.iter().map(|p| p.len()).collect::<Vec<_>>());
                 // (Any slab corner not under the hull and over it: a floor poking out through it.)
                 let mut out = 0;
                 let mut all = 0;

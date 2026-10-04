@@ -243,12 +243,13 @@ impl Sides {
     }
 }
 
-/// A deck's sides: the hull's, cut at the slab's underside, the floor and a
-/// person's waist, the narrowest of them (so a floor never pokes out through a
-/// hull that slopes in under it).
+/// A deck's sides: the hull's where its slab is, cut at the slab's underside and
+/// at the floor, the narrower of them (so a floor never pokes out through a hull
+/// that slopes in under it; what's above, a doorway starting over the deck, has
+/// no say).
 pub fn deck_sides(mesh: &crate::walk::WalkMesh, floor: f64) -> Sides {
     let cut = |y: f64| Sides::of(&mesh.section_y(y));
-    cut(floor + 1.0).and(&cut(floor + 0.02)).and(&cut(floor - DECK + 0.02))
+    cut(floor + 0.02).and(&cut(floor - DECK + 0.02))
 }
 
 /// Where outline `poly` (x, z) is crossed at `z`: its spans inside (pairs of x).
@@ -450,7 +451,7 @@ impl Ground {
                 best = lp;
             }
         }
-        (best.len() >= 3).then(|| simplify(&best, CELL * 0.8))
+        (best.len() >= 3).then(|| simplify(&best, CELL * 1.8))
     }
 }
 
@@ -507,7 +508,7 @@ pub const BODY: f64 = 0.3;
 /// Floors filling the whole deck at `floor`, where a person can be: the hull
 /// closes them in (`enclosed`) at the slab's underside, their feet and their
 /// waist with their head clear (1.9 m), and there's room for them (`BODY` each
-/// way: narrower strips and pockets left out, what's left grown back to 10 cm
+/// way: narrower strips and pockets left out, what's left grown back to 20 cm
 /// shy of the hull). One floor for each part of it there (a hull can be in pieces at a
 /// height), leaving out scraps under 2 m². Walls aren't kept clear of: they
 /// stand on the floor.
@@ -516,11 +517,14 @@ pub fn fill(mesh: &crate::walk::WalkMesh, floor: f64) -> Vec<Vec<DVec2>> {
     // answers round about differ, asked again at the spot itself.)
     // (Each spot: 2 closed in, 1 only under the roof, 0 neither.)
     const COARSE: f64 = 0.25;
+    // (At the waist, room for the head under the hull's roof; closed in all round at
+    // the feet and the slab's underside: a doorway starting above the deck, a
+    // window, doesn't cut the floor.)
     let levels = [(floor + 1.0, 0.9, false), (floor + 0.1, 0.0, true), (floor - DECK + 0.05, 0.0, true)];
     let person = |c: DVec2| -> u8 {
         if !levels.iter().all(|&(y, head, solid)| roofed(mesh, c, y, head, solid)) {
             0
-        } else if levels.iter().all(|&(y, head, solid)| enclosed(mesh, c, y, head, solid)) {
+        } else if levels[1..].iter().all(|&(y, head, solid)| enclosed(mesh, c, y, head, solid)) {
             2
         } else {
             1
@@ -586,13 +590,13 @@ pub fn fill(mesh: &crate::walk::WalkMesh, floor: f64) -> Vec<Vec<DVec2>> {
             for (d, p) in done.iter_mut().zip(&part) {
                 *d |= *p;
             }
-            // Grown back by a body's width less a cell, as far as the open ground
-            // goes (a hand's width shy of the hull: its outline, smoothed, can't
-            // reach through it).
+            // Grown back by a body's width less two cells, as far as the open ground
+            // goes (20 cm shy of the hull: its outline, smoothed, can't reach
+            // through it).
             let mut grown = part.clone();
             for (k, _) in part.iter().enumerate().filter(|(_, p)| **p) {
                 let (pi, pj) = ((k % nx) as isize, (k / nx) as isize);
-                for (di, dj) in disc.iter().filter(|(i, j)| i * i + j * j <= (reach - 1) * (reach - 1)) {
+                for (di, dj) in disc.iter().filter(|(i, j)| i * i + j * j <= (reach - 2) * (reach - 2)) {
                     if at(pi + di, pj + dj) {
                         grown[(pj + dj) as usize * nx + (pi + di) as usize] = true;
                     }
