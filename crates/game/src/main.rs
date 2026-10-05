@@ -1010,6 +1010,7 @@ impl App {
                     format!("TRANSIT GRANTED - {target}\nFLY THROUGH THE RING UNDER 300 M/S, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
                 }
                 Event::Ship(ShipEvent::GateEntered { to }) => format!("GATE TRANSIT TO {to}"),
+                Event::Ship(ShipEvent::TubeToll { credits }) => format!("THE CROSSING: {credits:.0} CR"),
                 Event::Ship(ShipEvent::GateArrived { system }) => format!("WELCOME TO THE {system} SYSTEM"),
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),

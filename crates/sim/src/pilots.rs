@@ -194,6 +194,17 @@ impl Bus for PoolLink<'_> {
         if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
             return Err(format!("REFUSED - {} TREATS YOU AS AN ENEMY", self.sys.name.to_uppercase()));
         }
+        // A gate: its crossing paid for, or no clearance.
+        if let Some(NavTarget::Gate(g)) = target
+            && let Some(to) = self.sys.bodies.get(g).and_then(|b| b.link)
+        {
+            let span = self.view.charts.distance_ly(self.system, to) * universe_physics::laws::LIGHT_YEAR;
+            let toll = universe_world::gate::crossing_toll(self.ship.mass(), span);
+            let credits = self.view.credits.get(&self.id).copied().unwrap_or(0.0);
+            if credits < toll {
+                return Err(format!("REFUSED - THE CROSSING COSTS {toll:.0} CR, YOU HAVE {credits:.0}"));
+            }
+        }
         universe_services::atc::request(&self.sys, &self.ship, target, self.view.time, &positions)
     }
 

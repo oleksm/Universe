@@ -156,6 +156,17 @@ impl Universe {
         }
     }
 
+    /// Ship `id`'s tube crossings this tick, paid to the system's
+    /// administration (cleared only if it could pay; what it has, if less now).
+    pub(crate) fn book_tolls(&mut self, id: usize, events: &[crate::Event]) {
+        for e in events {
+            let crate::Event::Ship(universe_world::ShipEvent::TubeToll { credits }) = e else { continue };
+            let Some((_, system, _)) = self.ship_by_id(id) else { return };
+            let pay = credits.min(self.ledger.credits(Party::Pilot(id)).max(0.0));
+            let _ = self.ledger.transfer(Party::Pilot(id), Party::Administration(system), universe_services::ledger::Asset::Credits, pay, self.tick, universe_protocol::Cause::Rules);
+        }
+    }
+
     /// Ship `id`'s hold after its jolts this tick (a hard landing's): what takes
     /// less than the jolt breaks, and is written off (SFO 15).
     pub fn book_jolts(&mut self, id: usize, events: &[crate::Event]) -> Vec<universe_world::ShipEvent> {

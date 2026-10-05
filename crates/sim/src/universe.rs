@@ -220,6 +220,7 @@ impl Universe {
         self.log_events(crate::combat::PLAYER, &fresh);
         self.traffic_events(crate::combat::PLAYER, &fresh);
         self.book_mined(crate::combat::PLAYER, &fresh);
+        self.book_tolls(crate::combat::PLAYER, &fresh);
         for e in self.book_jolts(crate::combat::PLAYER, &fresh) {
             self.events.push(Event::Ship(e));
         }

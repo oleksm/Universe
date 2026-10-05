@@ -194,8 +194,9 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             // Relative to the structure's pose and drift (it doesn't spin), kept for the other side.
             let frame = Frame { angular_velocity: DVec3::ZERO, ..Frame::of(&sys.bodies, body, t, positions) };
             let local = Relative::of(&frame, &ship.rigid());
-            // Through the tube at its natural pace for the ship's mass.
+            // Through the tube at its natural pace for the ship's mass, for its toll.
             let duration = universe_physics::hyper::tube_natural_time(ship.mass(), *span);
+            events.push(ShipEvent::TubeToll { credits: crate::gate::crossing_toll(ship.mass(), *span) });
             ship.state = ShipState::Transit {
                 to: *to,
                 from: system,

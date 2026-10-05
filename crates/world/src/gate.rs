@@ -21,6 +21,14 @@ fn size() -> (f64, f64) {
     })
 }
 
+/// What crossing a tube `span` m long costs a ship of `mass` kg at its
+/// natural pace (credits): the energy it takes (Dogma's Tube law), at the
+/// power price, paid to the gate's administration.
+pub fn crossing_toll(mass: f64, span: f64) -> f64 {
+    let energy = universe_physics::hyper::tube_crossing_energy(mass, span, universe_physics::hyper::tube_natural_time(mass, span));
+    energy / 3.6e9 * crate::goods::POWER_PRICE
+}
+
 /// A ring's centreline radius (m).
 pub fn gate_radius() -> f64 {
     size().0
@@ -155,6 +163,9 @@ mod tests {
         }
         let d = duration.unwrap_or_else(|| panic!("into the tube; events {:?}", p.events));
         assert!((d - expected).abs() < 1e-6 * expected, "{d} s against {expected} s");
+        // Its crossing asked for: the Tube law's energy for its mass and the span, at the power price.
+        let toll = crossing_toll(p.ship.mass(), span);
+        assert!(toll > 0.0 && p.events.iter().any(|e| matches!(e, crate::events::ShipEvent::TubeToll { credits } if (credits - toll).abs() < 1e-6 * toll)), "{toll} CR; events {:?}", p.events);
         for _ in 0..(d / (100.0 / 60.0)) as usize + 20 {
             p.step(1.0 / 60.0, 100.0);
         }

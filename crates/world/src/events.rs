@@ -74,6 +74,8 @@ pub enum ShipEvent {
     HyperdriveDisengaged,
     /// Entered a gate, heading for another system.
     GateEntered { to: String },
+    /// Into a tube: what the crossing costs (credits; its energy, at the power price).
+    TubeToll { credits: f64 },
     /// Came out of the paired gate.
     GateArrived { system: String },
     /// Went through a gate faster than it can take.
