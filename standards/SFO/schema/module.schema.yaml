@@ -4,13 +4,14 @@ x-kind: [module]
 description: One standard piece of industrial plant. It performs one step of a process. Any one module uses only some of these properties.
 type: object
 additionalProperties: false
-required: [identity]
+required: [identity, physical]
 definitions:
   amounts:
     type: array
     items:
       type: object
       additionalProperties: false
+      required: [item, quantity]
       properties:
         item: { type: string, x-ref: [element, material, good, stock, part], description: "What it is, by its key." }
         quantity: { type: number, x-unit: "1", description: "kg of it for each kg of what the recipe makes" }
@@ -49,7 +50,7 @@ properties:
     items:
       type: object
       additionalProperties: false
-      required: [makes, inputs]
+      required: [makes, inputs, rate, power]
       properties:
         makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
         does: { type: string, description: "What happens in it, set to this." }

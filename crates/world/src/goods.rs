@@ -109,7 +109,7 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
         }
     }
     let mut keys: Vec<String> = reg.goods.iter().map(|g| g.identity.key.clone()).chain(reg.stock.iter().map(|s| s.identity.key.clone())).collect();
-    let named = reg.modules.iter().flat_map(|m| m.recipes.iter().flat_map(|r| r.inputs.iter().chain(&r.outputs).filter_map(|a| a.item.clone()).chain([r.makes.clone()])).chain(m.generation.iter().flat_map(|g| g.burns.iter().map(|b| b.item.clone()))));
+    let named = reg.modules.iter().flat_map(|m| m.recipes.iter().flat_map(|r| r.inputs.iter().chain(&r.outputs).map(|a| a.item.clone()).chain([r.makes.clone()])).chain(m.generation.iter().flat_map(|g| g.burns.iter().map(|b| b.item.clone()))));
     keys.extend(named.filter(|k| k.starts_with("element.") || k.starts_with("material.") || k.starts_with("good.") || k.starts_with("stock.")));
     keys.sort();
     keys.dedup();
@@ -125,15 +125,12 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
         done.insert(key.to_string(), None);
         let made = recipes.get(key).into_iter().flatten().filter_map(|r| {
             let mut cost = 0.0;
-            for a in &r.inputs {
-                let (Some(item), Some(q)) = (a.item.as_deref(), a.quantity) else { continue };
-                cost += q * price(item, recipes, priced, fallback, done)?;
+            // (What's drawn where it stands, the air, rain or ground water, costs nothing.)
+            for a in r.inputs.iter().filter(|a| !from_place(a)) {
+                cost += a.quantity * price(&a.item, recipes, priced, fallback, done)?;
             }
             // (Power: J a kg, so MWh a tonne.)
-            let power = match (r.power, r.rate) {
-                (Some(w), Some(rate)) if rate > 0.0 => w / rate * 1000.0 / 3.6e9 * POWER_PRICE,
-                _ => 0.0,
-            };
+            let power = if r.rate > 0.0 { r.power / r.rate * 1000.0 / 3.6e9 * POWER_PRICE } else { 0.0 };
             Some((cost + power) * MARGIN)
         });
         let p = made.fold(None, |a: Option<f64>, b| Some(a.map_or(b, |a| a.min(b)))).unwrap_or_else(|| fallback(key));
@@ -157,6 +154,12 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
             Item { id, key: key.clone(), name: reg.name(key).unwrap_or(key).to_string(), category: c, price: (p * 10.0).round() / 10.0, mass: TONNE, bulk_density: bulk }
         })
         .collect()
+}
+
+/// Is `a` drawn where the module stands (the world's air, rain or ground
+/// water), not taken from stock?
+pub fn from_place(a: &crate::registry::Amount) -> bool {
+    a.from == Some(crate::registry::AmountFrom::Place)
 }
 
 /// The stock catalogue.

@@ -830,3 +830,13 @@ engine's design. What the game now needs from the registry, most wanted first:
    exchange like anything else. Should waste be marked (to be disposed of, at a cost), or stored?
 6. The market categories' `names` (adjectives and nouns for invented goods) and `basket` are no
    longer read: the needs records replace the basket.
+
+**Done for you (2026-10-05).** (1) Ores' category is read from `traded_as`: `game.goods` can go,
+property and records. (2) The generator now gives each kind of a tagged choice its own struct, and
+the handler takes it whole: add the equipment figures (`resolves`, `survey_range`, the gun's,
+laser's and mining rig's) to `equipment.function` on `fso` freely; nothing breaks, and I wire each
+to its constant as it lands. (3) The required marks you listed are flipped in the schemas, with the
+code: equipment figures, hull slots/thrusters/flight, module physical, recipe rate and power,
+amount item and quantity. (4) `from: place` inputs are handled: not taken from store, not bought,
+free in prices. Item 4 of the list (meteoroid streams, scattered disc, far cloud) waits on small
+bodies from the engine's export, so the streams' comets are the engine's.

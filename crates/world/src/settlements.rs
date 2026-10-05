@@ -246,7 +246,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
         .iter()
         .map(|m| {
             let p = &m.physical;
-            let needs = m.needs.power.or_else(|| m.recipes.first().and_then(|r| r.power)).or_else(|| m.throughput.as_ref().and_then(|t| t.power)).unwrap_or(0.0);
+            let needs = m.needs.power.or_else(|| m.recipes.first().map(|r| r.power)).or_else(|| m.throughput.as_ref().and_then(|t| t.power)).unwrap_or(0.0);
             IndustrialModule {
                 key: m.identity.key.clone(),
                 name: m.identity.name.clone(),
@@ -378,7 +378,7 @@ pub fn route(reg: &crate::registry::Registry, steps: &[&str], target: &str) -> R
         let Some(m) = reg.module(s) else { return Err(s.to_string()) };
         match m.recipes.iter().position(|r| need.contains(&r.makes.as_str())) {
             Some(k) => {
-                need.extend(m.recipes[k].inputs.iter().filter_map(|x| x.item.as_deref()));
+                need.extend(m.recipes[k].inputs.iter().map(|x| x.item.as_str()));
                 chosen[i] = Some(k);
             }
             None if !m.recipes.is_empty() => return Err(m.identity.name.clone()),
@@ -428,7 +428,7 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
     };
     let chosen: Vec<Option<&crate::registry::ModuleRecipe>> = route(reg, &steps, target).unwrap_or_else(|m| panic!("{facility}: {m} has no recipe that leads to {target}")).into_iter().zip(&steps).map(|(r, s)| r.map(|r| &module(s).recipes[r])).collect();
     let plan = |output: f64| {
-        let making: Vec<usize> = (0..steps.len()).filter(|&i| chosen[i].is_some_and(|r| r.rate.is_some())).collect();
+        let making: Vec<usize> = (0..steps.len()).filter(|&i| chosen[i].is_some()).collect();
         let made_by = |item: &str| making.iter().copied().find(|&i| chosen[i].is_some_and(|r| r.makes == item));
         let mut demand = vec![0.0; steps.len()];
         if let Some(&last) = making.last() {
@@ -442,16 +442,16 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
         for i in (0..steps.len()).rev() {
             let Some(r) = chosen[i] else { continue };
             let d = demand[i];
-            for x in &r.inputs {
-                let (Some(item), q) = (x.item.as_deref(), x.quantity.unwrap_or(0.0)) else { continue };
+            // (What's drawn where it stands is no supply: the world gives it.)
+            for x in r.inputs.iter().filter(|x| !crate::goods::from_place(x)) {
+                let (item, q) = (x.item.as_str(), x.quantity);
                 match made_by(item) {
                     Some(src) if src < i => demand[src] += d * q,
                     _ => add(&mut supplies, item, d * q),
                 }
             }
             for x in &r.outputs {
-                let (Some(item), q) = (x.item.as_deref(), x.quantity.unwrap_or(0.0)) else { continue };
-                add(&mut by, item, d * q);
+                add(&mut by, &x.item, d * x.quantity);
             }
         }
         // (What is given off and needed on the same site is used again.)
@@ -466,7 +466,7 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
         }
         let powers: Vec<f64> = (0..steps.len())
             .map(|i| match chosen[i] {
-                Some(r) if r.rate.is_some() => r.power.unwrap_or(0.0) * demand[i] / r.rate.unwrap(),
+                Some(r) if r.rate > 0.0 => r.power * demand[i] / r.rate,
                 _ => module(steps[i]).needs.power.unwrap_or(0.0),
             })
             .collect();
@@ -475,7 +475,7 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
     let has = |s: &str| line.modules.iter().filter(|m| m.module == s).map(|m| m.count).sum::<u32>() as f64;
     let (unit, ..) = plan(1.0);
     let (most, tightest) = (0..steps.len())
-        .filter_map(|i| Some((chosen[i]?.rate?, unit[i], i)).filter(|(_, d, _)| *d > 0.0).map(|(rate, d, i)| (has(steps[i]) * rate / d, Some(steps[i].to_string()))))
+        .filter_map(|i| Some((chosen[i]?.rate, unit[i], i)).filter(|(_, d, _)| *d > 0.0).map(|(rate, d, i)| (has(steps[i]) * rate / d, Some(steps[i].to_string()))))
         .fold((f64::INFINITY, None), |a, b| if b.0 < a.0 { b } else { a });
     let most = if most.is_finite() { most } else { 0.0 };
     let (demand, supplies, by, powers, reused) = plan(most);
@@ -484,7 +484,7 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
         .enumerate()
         .map(|(i, s)| {
             let n = has(s);
-            let can = chosen[i].and_then(|r| r.rate).map(|rate| rate * n);
+            let can = chosen[i].map(|r| r.rate * n);
             let at_full = can.map(|_| demand[i]);
             LineRow { module: s.to_string(), count: n as u32, can, at_full, used: can.zip(at_full).map(|(c, a)| if c > 0.0 { a / c } else { 0.0 }), area: footprint(module(s)) * n, power: powers[i] }
         })

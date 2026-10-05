@@ -310,64 +310,60 @@ impl Module {
 }
 
 /// What the engine makes of each kind of device in the registry (one method a
-/// kind, generated from the schema: a new kind there is a method to write here).
+/// kind, generated from the schema: a new kind there is a method to write here;
+/// a figure added to a kind changes nothing until the method reads it).
 struct Kinds;
 
-fn n(v: &Option<f64>) -> f64 {
-    v.unwrap_or(0.0)
-}
-
-fn text(v: &Option<String>) -> String {
-    v.clone().unwrap_or_default()
-}
+use crate::registry as r;
 
 impl crate::registry::EquipmentFunctionHandler for Kinds {
     type Out = Option<Does>;
-    fn power_plant(&mut self, output: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
-        Some(Does::PowerPlant { output: n(output), efficiency: n(efficiency), burns: text(burns) })
+    fn power_plant(&mut self, it: &r::EquipmentFunctionPowerPlant) -> Self::Out {
+        Some(Does::PowerPlant { output: it.output, efficiency: it.efficiency, burns: it.burns.clone() })
     }
-    fn drive(&mut self, thrust: &Option<f64>, exhaust: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
-        Some(Does::Drive { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) })
+    fn drive(&mut self, it: &r::EquipmentFunctionDrive) -> Self::Out {
+        Some(Does::Drive { thrust: it.thrust, exhaust: it.exhaust, efficiency: it.efficiency, burns: it.burns.clone() })
     }
-    fn thrusters(&mut self, thrust: &Option<f64>, exhaust: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
-        Some(Does::Thrusters { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) })
+    fn thrusters(&mut self, it: &r::EquipmentFunctionThrusters) -> Self::Out {
+        Some(Does::Thrusters { thrust: it.thrust, exhaust: it.exhaust, efficiency: it.efficiency, burns: it.burns.clone() })
     }
-    fn lift(&mut self, thrust: &Option<f64>, exhaust: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
-        Some(Does::Lift { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) })
+    fn lift(&mut self, it: &r::EquipmentFunctionLift) -> Self::Out {
+        Some(Does::Lift { thrust: it.thrust, exhaust: it.exhaust, efficiency: it.efficiency, burns: it.burns.clone() })
     }
-    fn tank(&mut self, capacity: &Option<f64>, holds: &Option<String>) -> Self::Out {
-        Some(Does::Tank { capacity: n(capacity), holds: text(holds) })
+    fn tank(&mut self, it: &r::EquipmentFunctionTank) -> Self::Out {
+        Some(Does::Tank { capacity: it.capacity, holds: it.holds.clone() })
     }
-    fn capacitor(&mut self, capacity: &Option<f64>, rate: &Option<f64>) -> Self::Out {
-        Some(Does::Capacitor { capacity: n(capacity), rate: n(rate) })
+    fn capacitor(&mut self, it: &r::EquipmentFunctionCapacitor) -> Self::Out {
+        Some(Does::Capacitor { capacity: it.capacity, rate: it.rate })
     }
-    fn rack(&mut self, capacity: &Option<f64>) -> Self::Out {
-        Some(Does::Rack { capacity: n(capacity) })
+    fn rack(&mut self, it: &r::EquipmentFunctionRack) -> Self::Out {
+        Some(Does::Rack { capacity: it.capacity })
     }
-    fn cabin(&mut self, seats: &Option<i64>) -> Self::Out {
-        Some(Does::Cabin { seats: seats.unwrap_or(0) as u32 })
+    fn cabin(&mut self, it: &r::EquipmentFunctionCabin) -> Self::Out {
+        Some(Does::Cabin { seats: it.seats as u32 })
     }
-    fn hyperdrive(&mut self, efficiency: &Option<f64>, top_speed: &Option<f64>) -> Self::Out {
-        Some(Does::Hyperdrive { efficiency: n(efficiency), top_speed: n(top_speed) })
+    fn hyperdrive(&mut self, it: &r::EquipmentFunctionHyperdrive) -> Self::Out {
+        Some(Does::Hyperdrive { efficiency: it.efficiency, top_speed: it.top_speed })
     }
-    fn flight_computer(&mut self, turn_rate: &Option<f64>, roll_rate: &Option<f64>) -> Self::Out {
-        Some(Does::FlightComputer { turn_rate: n(turn_rate), roll_rate: n(roll_rate) })
+    fn flight_computer(&mut self, it: &r::EquipmentFunctionFlightComputer) -> Self::Out {
+        Some(Does::FlightComputer { turn_rate: it.turn_rate, roll_rate: it.roll_rate })
     }
-    fn sensors(&mut self, range: &Option<f64>) -> Self::Out {
-        Some(Does::Sensors { range: n(range) })
+    fn sensors(&mut self, it: &r::EquipmentFunctionSensors) -> Self::Out {
+        Some(Does::Sensors { range: it.range })
     }
-    fn comm(&mut self, capture: &Option<f64>, link: &Option<f64>, lag: &Option<f64>, capacity: &Option<f64>) -> Self::Out {
-        Some(Does::Comm { capture: n(capture), link: n(link), lag: n(lag), capacity: n(capacity) })
+    fn comm(&mut self, it: &r::EquipmentFunctionComm) -> Self::Out {
+        Some(Does::Comm { capture: it.capture, link: it.link, lag: it.lag, capacity: it.capacity })
     }
-    fn gate_relay(&mut self, lag: &Option<f64>, capacity: &Option<f64>, cadence: &Option<f64>) -> Self::Out {
-        Some(Does::GateRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) })
+    fn gate_relay(&mut self, it: &r::EquipmentFunctionGateRelay) -> Self::Out {
+        Some(Does::GateRelay { lag: it.lag, capacity: it.capacity, cadence: it.cadence })
     }
-    fn hyper_relay(&mut self, lag: &Option<f64>, capacity: &Option<f64>, cadence: &Option<f64>) -> Self::Out {
-        Some(Does::HyperRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) })
+    fn hyper_relay(&mut self, it: &r::EquipmentFunctionHyperRelay) -> Self::Out {
+        Some(Does::HyperRelay { lag: it.lag, capacity: it.capacity, cadence: it.cadence })
     }
-    fn nav_computer(&mut self, features: &Vec<crate::registry::EquipmentFunctionNavComputerFeature>, interlock: &Option<f64>, governor: &Option<f64>) -> Self::Out {
+    fn nav_computer(&mut self, it: &r::EquipmentFunctionNavComputer) -> Self::Out {
         use crate::registry::EquipmentFunctionNavComputerFeature as N;
-        let features = features
+        let features = it
+            .features
             .iter()
             .map(|f| match f {
                 N::Docking => Feature::Docking,
@@ -378,25 +374,25 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
                 N::Route => Feature::Route,
             })
             .collect();
-        Some(Does::NavComputer { features, interlock: n(interlock), governor: n(governor) })
+        Some(Does::NavComputer { features, interlock: it.interlock, governor: it.governor })
     }
-    fn transponder(&mut self) -> Self::Out {
+    fn transponder(&mut self, _: &r::EquipmentFunctionTransponder) -> Self::Out {
         Some(Does::Transponder)
     }
-    fn life_support(&mut self) -> Self::Out {
+    fn life_support(&mut self, _: &r::EquipmentFunctionLifeSupport) -> Self::Out {
         Some(Does::LifeSupport)
     }
-    fn gun(&mut self) -> Self::Out {
+    fn gun(&mut self, _: &r::EquipmentFunctionGun) -> Self::Out {
         Some(Does::Gun)
     }
-    fn laser(&mut self) -> Self::Out {
+    fn laser(&mut self, _: &r::EquipmentFunctionLaser) -> Self::Out {
         Some(Does::Laser)
     }
-    fn mining_rig(&mut self) -> Self::Out {
+    fn mining_rig(&mut self, _: &r::EquipmentFunctionMiningRig) -> Self::Out {
         Some(Does::MiningRig)
     }
     /// A gate's throat coil: not made yet (the schema is to say so: `x-in-game: not made`).
-    fn throat_coil(&mut self) -> Self::Out {
+    fn throat_coil(&mut self, _: &r::EquipmentFunctionThroatCoil) -> Self::Out {
         None
     }
 }

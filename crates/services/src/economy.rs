@@ -144,12 +144,10 @@ impl Works {
         };
         for s in &self.setups {
             if let Some(r) = s.recipe() {
-                let rate = r.rate.unwrap_or(0.0) * s.count as f64;
-                for a in &r.inputs {
-                    if let (Some(k), Some(q)) = (a.item.as_deref(), a.quantity)
-                        && let Some(i) = universe_world::goods::item(k)
-                    {
-                        add(i, rate * q);
+                let rate = r.rate * s.count as f64;
+                for a in r.inputs.iter().filter(|a| !universe_world::goods::from_place(a)) {
+                    if let Some(i) = universe_world::goods::item(&a.item) {
+                        add(i, rate * a.quantity);
                     }
                 }
             }
@@ -186,7 +184,7 @@ impl Works {
 
     /// The power it draws at full rate (W).
     fn draws(&self) -> f64 {
-        self.setups.iter().map(|s| s.recipe().and_then(|r| r.power).or(s.module.needs.power).unwrap_or(0.0) * s.count as f64).sum()
+        self.setups.iter().map(|s| s.recipe().map(|r| r.power).or(s.module.needs.power).unwrap_or(0.0) * s.count as f64).sum()
     }
 }
 
@@ -431,14 +429,15 @@ impl Economy {
                     drawn[n] += setup.module.needs.power.unwrap_or(0.0) * setup.count as f64 * share;
                     continue;
                 };
-                let rate = r.rate.unwrap_or(0.0) * setup.count as f64;
+                let rate = r.rate * setup.count as f64;
                 if rate <= 0.0 {
                     continue;
                 }
                 let full = rate * dt;
                 let mut k = share;
                 let mut why = (share < 1.0).then(|| "POWER".to_string());
-                let input = |a: &universe_world::registry::Amount| Some((universe_world::goods::item(a.item.as_deref()?)?, a.quantity?));
+                // (What's drawn where it stands, the world gives: it isn't in the pool.)
+                let input = |a: &universe_world::registry::Amount| Some((universe_world::goods::item(&a.item)?, a.quantity)).filter(|_| !universe_world::goods::from_place(a));
                 for (i, q) in r.inputs.iter().filter_map(input) {
                     let can = w.pool.of(i) / (q * full).max(1e-12);
                     if can < k {
@@ -465,7 +464,7 @@ impl Economy {
                     w.pool.put(i, q * full * k);
                     *made.entry(i).or_default() += q * full * k;
                 }
-                drawn[n] += r.power.unwrap_or(0.0) * setup.count as f64 * k;
+                drawn[n] += r.power * setup.count as f64 * k;
                 most += 1.0;
                 ran += k;
                 if k < 1.0 && held.is_none() {
