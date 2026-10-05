@@ -115,6 +115,12 @@ pub struct Interior {
     /// The deck studio's decks as last drawn here: the plan, and its floors and
     /// walls (each a flat outline, the hull's frame; floor or wall).
     decks: Option<(universe_sim::world::deckplan::DeckPlan, Vec<DeckShape>)>,
+    /// The hull's deck plan as last saved or opened (none: none; not yet looked
+    /// for: none at all), as it is now (none: no decks), and one opened to be put in
+    /// the deck studio.
+    saved_decks: Option<Option<universe_sim::world::deckplan::DeckPlan>>,
+    decks_now: Option<universe_sim::world::deckplan::DeckPlan>,
+    load_decks: Option<universe_sim::world::deckplan::DeckPlan>,
     /// The plan as last saved or opened; closing with unsaved changes asked
     /// (`confirm`); a message for a while (s).
     saved: Option<Plan>,
@@ -780,6 +786,44 @@ impl Interior {
         crate::save::data_dir().join("freefall").join("interiors").join(format!("{key}.json"))
     }
 
+    /// Where its deck plan (the deck studio's) is saved, beside it.
+    fn deck_file(key: &str) -> std::path::PathBuf {
+        crate::save::data_dir().join("freefall").join("interiors").join(format!("{key}.decks.json"))
+    }
+
+    /// The deck plan saved for this plan's hull, if there is one (with decks).
+    fn read_decks(&self) -> Option<universe_sim::world::deckplan::DeckPlan> {
+        let text = std::fs::read_to_string(Self::deck_file(&self.plan.hull)).ok()?;
+        let mut decks: universe_sim::world::deckplan::DeckPlan = serde_json::from_str(&text).map_err(|e| log::warn!("deck plan unreadable: {e}")).ok()?;
+        decks.hull = self.plan.hull.clone();
+        (!decks.decks.is_empty()).then_some(decks)
+    }
+
+    /// Kept in step with the shipyard: its plan seeded (and the saved deck plan put in
+    /// the deck studio, the first time, and when opened), the deck studio's decks as
+    /// they are now (their floors and walls worked out again when they change).
+    pub fn sync(&mut self, key: &str, shape: &universe_sim::world::shape::Shape, deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, dt: f32) {
+        self.seed(key, shape);
+        if let Some((_, t)) = self.message.as_mut() {
+            *t -= dt;
+            if *t <= 0.0 {
+                self.message = None;
+            }
+        }
+        if let Some(d) = self.load_decks.take() {
+            deckplans.retain(|p| p.hull != key);
+            deckplans.push(d);
+        }
+        let now = deckplans.iter().find(|p| p.hull == key && !p.decks.is_empty()).cloned();
+        if self.decks.as_ref().map(|d| &d.0) != now.as_ref() {
+            self.decks = match (&now, shape.walk.as_ref()) {
+                (Some(plan), Some(mesh)) => Some((plan.clone(), deck_shapes(plan, mesh))),
+                _ => None,
+            };
+        }
+        self.decks_now = now;
+    }
+
     /// The plan saved for this plan's hull, its hull's own points moved to where the
     /// model has them now (by name).
     fn read_saved(&self) -> Option<Plan> {
@@ -794,15 +838,26 @@ impl Interior {
         Some(plan)
     }
 
-    /// The plan written to its file (a message says how it went).
-    fn save(&mut self) {
+    /// The plan written to its file, and the deck studio's decks to theirs (none:
+    /// that file gone); a message says how it went.
+    pub fn save(&mut self) {
         let path = Self::file(&self.plan.hull);
-        let done = std::fs::create_dir_all(path.parent().expect("a folder")).and_then(|_| std::fs::write(&path, serde_json::to_string_pretty(&self.plan).unwrap_or_default()));
+        let decks = Self::deck_file(&self.plan.hull);
+        let done = std::fs::create_dir_all(path.parent().expect("a folder"))
+            .and_then(|_| std::fs::write(&path, serde_json::to_string_pretty(&self.plan).unwrap_or_default()))
+            .and_then(|_| match &self.decks_now {
+                Some(d) => std::fs::write(&decks, serde_json::to_string_pretty(d).unwrap_or_default()),
+                None => match std::fs::remove_file(&decks) {
+                    Err(e) if e.kind() != std::io::ErrorKind::NotFound => Err(e),
+                    _ => Ok(()),
+                },
+            });
         self.message = Some((
             match done {
                 Ok(()) => {
                     self.saved = Some(self.plan.clone());
-                    "SAVED: THIS HULL'S PLAN".to_string()
+                    self.saved_decks = Some(self.decks_now.clone());
+                    if self.decks_now.is_some() { "SAVED: THIS HULL'S PLAN AND DECKS" } else { "SAVED: THIS HULL'S PLAN" }.to_string()
                 }
                 Err(e) => format!("NOT SAVED: {e}").to_uppercase(),
             },
@@ -812,6 +867,11 @@ impl Interior {
 
     /// The saved plan opened over this one (an undo step: UNDO brings this back).
     fn open(&mut self) {
+        // (Its decks too, put in the deck studio when next in step.)
+        if let Some(d) = self.read_decks() {
+            self.saved_decks = Some(Some(d.clone()));
+            self.load_decks = Some(d);
+        }
         match self.read_saved() {
             Some(plan) => {
                 self.undo.push(std::mem::replace(&mut self.plan, plan));
@@ -840,6 +900,11 @@ impl Interior {
         }
     }
 
+    /// What it has to say for a while (saved, opened), if anything.
+    pub fn message(&self) -> Option<&str> {
+        self.message.as_ref().map(|m| m.0.as_str())
+    }
+
     /// Where the cursor was last seen (HUD pixels).
     pub fn cursor(&self) -> Vec2 {
         self.cursor
@@ -847,7 +912,7 @@ impl Interior {
 
     /// Changed since it was last saved or opened?
     pub fn unsaved(&self) -> bool {
-        self.saved.as_ref().is_some_and(|s| *s != self.plan)
+        self.saved.as_ref().is_some_and(|s| *s != self.plan) || self.saved_decks.as_ref().is_some_and(|d| *d != self.decks_now)
     }
 
     /// Asked to close (ESC, the shipyard key): true if it can go now; with unsaved
@@ -946,6 +1011,10 @@ impl Interior {
             self.plan = saved;
         }
         self.saved = Some(self.plan.clone());
+        // Its saved decks put in the deck studio (none saved: what's there is new).
+        let decks = self.read_decks();
+        self.saved_decks = Some(decks.clone());
+        self.load_decks = decks;
     }
 
     fn hull(&self, key: &str) -> Option<Arc<Hull>> {
@@ -1225,25 +1294,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let spec = app.ship.spec();
     interior.spin += ctx.dt;
     interior.refresh(&spec.key, spec.shape());
-    interior.seed(&spec.key, spec.shape());
-    // The deck studio's decks, worked out again when they change: their floors and
-    // walls, to show here.
-    let decks = app.deckplans.iter().find(|p| p.hull == spec.key).cloned();
-    if interior.decks.as_ref().map(|d| &d.0) != decks.as_ref() {
-        interior.decks = match (decks, spec.shape().walk.as_ref()) {
-            (Some(plan), Some(mesh)) => {
-                let shapes = deck_shapes(&plan, mesh);
-                Some((plan, shapes))
-            }
-            _ => None,
-        };
-    }
-    if let Some((_, t)) = interior.message.as_mut() {
-        *t -= ctx.dt;
-        if *t <= 0.0 {
-            interior.message = None;
-        }
-    }
+    interior.sync(&spec.key, spec.shape(), &mut app.deckplans, 0.0);
     // Closing with unsaved changes: SAVE AND CLOSE (S, ENTER), DISCARD (D), or keep
     // working (ESC); nothing else meanwhile.
     if interior.confirm {

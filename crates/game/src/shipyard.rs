@@ -92,6 +92,14 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     }
     let spec = app.ship.spec();
     let Some(y) = app.shipyard.as_mut() else { return false };
+    // (The interior studio kept in step either way: its plan, the decks, saving.)
+    y.interior.sync(&spec.key, spec.shape(), &mut app.deckplans, ctx.dt);
+    // CTRL+S in the deck studio: saved with the interior's plan.
+    let ctrl = ctx.input.down(universe_engine::KeyCode::ControlLeft) || ctx.input.down(universe_engine::KeyCode::ControlRight);
+    if y.page == Page::Layout && ctrl && ctx.input.pressed(universe_engine::KeyCode::KeyS) {
+        y.interior.save();
+        return true;
+    }
     // The two studios: the 3D interior and the 2D deck layout, switched any time
     // (their tabs at the top right, or TAB), each as it was left.
     let input = &ctx.input;
@@ -167,6 +175,12 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     match y.page {
         Page::Interior => crate::interior::draw(frame, app, &place, &y.interior),
         Page::Layout => crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio, &y.interior.access()),
+    }
+    // In the deck studio: how it's saved (with the 3D plan), what was said.
+    if y.page == Page::Layout {
+        let note = y.interior.message().map_or_else(|| format!("CTRL+S SAVES{}", if y.interior.unsaved() { " *" } else { "" }), str::to_string);
+        let w = note.chars().count() as f32 * universe_engine::frame::GLYPH * 0.7;
+        frame.text_scaled(Vec2::new(tab_rect(size, 0).0.x - w - 12.0, 10.0), &note, Color([1.0, 0.85, 0.35, 1.0]), 0.7);
     }
     // The studios' tabs (the one open lit).
     use crate::hud::{draw_cell, Lamp};
