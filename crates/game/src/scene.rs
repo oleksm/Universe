@@ -400,7 +400,7 @@ fn gate_flashes(frame: &mut Frame, app: &App) {
             // In through the ring, and the plasma it pushed goes out the far side:
             // the ring flaring, then a pulse shooting off along the axis the way
             // the tube runs, quickening, narrowing, a trail of the ring behind it.
-            let ring = universe_sim::world::gate::GATE_RADIUS;
+            let ring = universe_sim::world::gate::gate_radius();
             let flare = (1.0 - k * 3.0).max(0.0) as f32;
             if flare > 0.0 {
                 frame.circle(f.center, axis, ring, 64, Color::hex(0x9fe8ff).scale(flare * 1.5));
@@ -812,16 +812,16 @@ fn station_lights(frame: &mut Frame, app: &App, body: usize, center: DVec3, rot:
 /// A gate's running lights: the side it's entered from steady white, the
 /// side it leaves by green, a pulse chasing round it (the way through).
 fn gate_lights(frame: &mut Frame, center: DVec3, rot: DQuat, now: f64) {
-    use universe_sim::world::gate::{GATE_RADIUS, RING_TUBE};
+    use universe_sim::world::gate::{gate_radius, ring_tube};
     let n = 32;
     for k in 0..n {
         let a = k as f64 / n as f64 * std::f64::consts::TAU;
-        let dir = DVec3::new(a.cos(), 0.0, a.sin()) * GATE_RADIUS;
+        let dir = DVec3::new(a.cos(), 0.0, a.sin()) * gate_radius();
         // (The gate's axis, +Y, faces where it goes.)
-        frame.glow(center + rot * (dir - DVec3::Y * RING_TUBE * 1.05), 14.0, [3.5, 3.5, 3.8], 2.2);
+        frame.glow(center + rot * (dir - DVec3::Y * ring_tube() * 1.05), 14.0, [3.5, 3.5, 3.8], 2.2);
         let chase = ((k as f64 / n as f64 - now * 0.25).rem_euclid(1.0) * 8.0).fract();
         let lit = if chase < 0.25 { 6.0 } else { 1.2 };
-        frame.glow(center + rot * (dir + DVec3::Y * RING_TUBE * 1.05), 14.0, [0.15 * lit, 1.0 * lit, 0.4 * lit], 2.2);
+        frame.glow(center + rot * (dir + DVec3::Y * ring_tube() * 1.05), 14.0, [0.15 * lit, 1.0 * lit, 0.4 * lit], 2.2);
     }
 }
 
