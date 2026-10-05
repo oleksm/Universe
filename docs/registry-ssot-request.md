@@ -665,3 +665,8 @@ Prices live game-side in `content/base/prices.ron` (items and category ranges), 
 - **Still hand-written in the game:** `places.ron`, `recipes.ron` (waiting on the user: what a
   place makes), `markets.ron` (the bans, above), `sheet.ron` and the Rust world data (your item 8:
   I'll send the list by file), `shapes.ron` and `aliases.ron` (staying), `prices.ron` (staying).
+- **`build.py` patched on main (two lines):** `ORES` and `GOODS_KINDS` read the game's `ores.ron` and
+  `goods.ron`, which are gone. They now come from the goods records (`game.ore`) and the market
+  records, under the same names. Replace them properly when you drop `game.*`.
+- **Food (merged):** the 75 goods, 18 modules and nine companies read cleanly under the strict
+  types. No facility uses them yet, so nothing changes in play until farms are placed.
