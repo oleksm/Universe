@@ -55,7 +55,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         return;
     }
     if let Some(y) = &app.shipyard {
-        crate::shipyard::draw(frame, app, y);
+        universe_prof::time("draw/studio", || crate::shipyard::draw(frame, app, y));
         return;
     }
     // The thrusters panel: a screen of its own (in the pilot's seat).

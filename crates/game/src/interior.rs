@@ -20,6 +20,11 @@ const PATH: Color = Color([0.4, 1.0, 0.75, 0.95]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
 const PLANE: Color = Color([0.4, 1.0, 0.75, 0.35]);
 const CLASH: Color = Color([1.0, 0.3, 0.25, 1.0]);
+/// A doorway's frame.
+const DOOR_FRAME: Color = Color([1.0, 0.65, 0.2, 1.0]);
+/// The deck studio's floors and walls, shown here.
+const DECK_FLOOR: Color = Color([1.0, 0.8, 0.5, 0.16]);
+const DECK_WALL: Color = Color([1.0, 0.8, 0.5, 0.55]);
 /// A walled group's walls (see-through panels).
 const WALL: Color = Color([0.75, 0.9, 1.0, 0.28]);
 
@@ -37,7 +42,13 @@ const SORTS: [(&str, Color); 7] = [
 
 /// A point's kind (its colour, its name in the legend), by its name.
 fn sort(name: Option<&str>) -> (Color, &'static str) {
-    let k = match name {
+    let k = sort_index(name);
+    (SORTS[k].1, SORTS[k].0)
+}
+
+/// A point's kind, its number in `SORTS`.
+fn sort_index(name: Option<&str>) -> usize {
+    match name {
         None => 6,
         Some(n) if n == "HATCH" || n.starts_with("DOOR") => 0,
         Some(n) if n.starts_with("DASH") => 1,
@@ -45,8 +56,50 @@ fn sort(name: Option<&str>) -> (Color, &'static str) {
         Some(n) if n.starts_with("SERVICE") => 3,
         Some(n) if n.starts_with("MINING") => 4,
         Some(_) => 5,
-    };
-    (SORTS[k].1, SORTS[k].0)
+    }
+}
+
+/// The layers, each shown or hidden: (name, the layer it's under, its colour).
+/// Points' kinds are 3.. in `SORTS`' order.
+const LAYERS: [(&str, Option<usize>, Option<Color>); 22] = [
+    ("HULL", None, Some(Color([0.55, 0.8, 1.0, 0.8]))),
+    ("GRID, MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
+    ("POINTS", None, None),
+    ("ENTRY", Some(2), Some(SORTS[0].1)),
+    ("DASH", Some(2), Some(SORTS[1].1)),
+    ("WINDOWS", Some(2), Some(SORTS[2].1)),
+    ("SERVICE", Some(2), Some(SORTS[3].1)),
+    ("MINING", Some(2), Some(SORTS[4].1)),
+    ("MOUNTS, ENGINES", Some(2), Some(SORTS[5].1)),
+    ("LAID", Some(2), Some(SORTS[6].1)),
+    ("NAMES", Some(2), None),
+    ("ACCESS", None, None),
+    ("LINES", Some(11), Some(PATH)),
+    ("OUTLINES", Some(11), Some(Color([0.4, 1.0, 0.75, 0.45]))),
+    ("WALLS", Some(11), Some(Color([0.75, 0.9, 1.0, 0.6]))),
+    ("HATCHES", Some(11), Some(Color([1.0, 0.65, 0.2, 1.0]))),
+    ("CLASHES", Some(11), Some(Color([1.0, 0.3, 0.25, 1.0]))),
+    ("DECKS (2D)", None, None),
+    ("FLOORS", Some(17), Some(Color([1.0, 0.8, 0.5, 0.6]))),
+    ("WALLS", Some(17), Some(Color([1.0, 0.8, 0.5, 0.9]))),
+    ("HOLLOW MAP", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
+    ("REACH", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
+];
+
+/// The layers by name, for the drawing (both studios).
+pub mod layer {
+    pub const HULL: usize = 0;
+    pub const GRID: usize = 1;
+    pub const NAMES: usize = 10;
+    pub const LINES: usize = 12;
+    pub const ROOMS: usize = 13;
+    pub const WALLS: usize = 14;
+    pub const HATCHES: usize = 15;
+    pub const CLASHES: usize = 16;
+    pub const DECK_FLOORS: usize = 18;
+    pub const DECK_WALLS: usize = 19;
+    pub const HOLLOW: usize = 20;
+    pub const REACH: usize = 21;
 }
 
 /// The camera's field of view up and down (rad).
@@ -95,6 +148,18 @@ pub struct Interior {
     /// The cross-section new lines get; the slider held (its width 0, height 1).
     profile: Profile,
     slider: Option<usize>,
+    /// Points laid dropped to the hull's floor under the work plane.
+    snap_floor: bool,
+    /// The hatch new doorways get (the DOOR tool's shape, size and slide).
+    hatch: Hatch,
+    /// The layers hidden (by number in `LAYERS`); the panel folded up; groups folded.
+    hidden: [bool; LAYERS.len()],
+    layers_folded: bool,
+    group_folded: [bool; LAYERS.len()],
+    /// The hull at the work plane's height: for which height, each metre cell's
+    /// middle and what's there (hollow, solid); and being worked out, for which.
+    hollow: Option<(f32, Arc<Vec<Cell>>)>,
+    hollow_job: Option<(f32, mpsc::Receiver<Vec<Cell>>)>,
     /// A slide under way has its undo step already; SHIFT held (squaring a path).
     sliding: bool,
     shift: bool,
@@ -107,6 +172,18 @@ pub struct Interior {
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
     /// The plan as its walls were last worked out, and their panels.
     panelled: Option<(Plan, Vec<Panel>)>,
+    /// The deck studio's decks as last drawn here: the plan, and its floors and
+    /// walls (each a flat outline, the hull's frame; floor or wall).
+    decks: Option<(universe_sim::world::deckplan::DeckPlan, Vec<DeckShape>)>,
+    /// The hull's deck plan as last saved or opened (none: none; not yet looked
+    /// for: none at all), as it is now (none: no decks), and one opened to be put in
+    /// the deck studio.
+    saved_decks: Option<Option<universe_sim::world::deckplan::DeckPlan>>,
+    decks_now: Option<universe_sim::world::deckplan::DeckPlan>,
+    load_decks: Option<universe_sim::world::deckplan::DeckPlan>,
+    /// The reach check's findings, for which plan; and being worked out.
+    reach: Option<(Plan, Arc<Reach>)>,
+    reach_job: Option<(Plan, mpsc::Receiver<Reach>)>,
     /// The plan as last saved or opened; closing with unsaved changes asked
     /// (`confirm`); a message for a while (s).
     saved: Option<Plan>,
@@ -162,8 +239,9 @@ fn room(a: Vec3, b: Vec3, p: Profile) -> (Vec<[Vec3; 2]>, Vec<Vec3>) {
 fn clashes(mesh: &universe_sim::world::walk::WalkMesh, plan: &Plan) -> Vec<Vec<Vec3>> {
     use universe_sim::world::deckplan::in_material;
     use universe_engine::glam::DVec2;
-    plan.lines.iter().map(|&(a, b, profile)| {
-        room(plan.points[a].at, plan.points[b].at, profile).1.into_iter().filter(|p| in_material(mesh, DVec2::new(p.x as f64, p.z as f64), p.y as f64)).collect()
+    plan.lines.iter().enumerate().map(|(k, &(_, _, profile))| {
+        let (pa, pb) = plan.axis(k);
+        room(pa, pb, profile).1.into_iter().filter(|p| in_material(mesh, DVec2::new(p.x as f64, p.z as f64), p.y as f64)).collect()
     }).collect()
 }
 
@@ -177,9 +255,87 @@ struct Plan {
     /// Each line: its two points and its cross-section.
     lines: Vec<(usize, usize, Profile)>,
     /// Lines grouped (each a group's lines), and whether it's walled off: walls
-    /// along its tubes' sides, their ends open.
+    /// along its tubes' sides, and across their free ends.
     groups: Vec<Group>,
+    /// Walled tubes' free ends set apart from what they'd be (closed; open near an
+    /// entry): (line, end 0 or 1, how).
+    #[serde(default)]
+    ends: Vec<EndSet>,
+    /// Doorways in walled tubes' sides: (line, how far along it 0-1, on its right?,
+    /// its hatch).
+    #[serde(default)]
+    doors: Vec<SideDoor>,
 }
+
+/// A doorway in a walled tube's side: its line, how far along it (0-1), on its
+/// right?, its hatch.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct SideDoor(usize, f32, bool, #[serde(default)] Hatch);
+
+/// A walled tube's free end set: its line, which end, how it is, its hatch (if a
+/// doorway).
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct EndSet(usize, usize, End, #[serde(default)] Hatch);
+
+/// A hatch: its doorway's shape and size (standing on the floor), and how its leaf
+/// moves (none: an open doorway).
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct Hatch {
+    section: Section,
+    width: f32,
+    height: f32,
+    slide: Slide,
+}
+
+impl Default for Hatch {
+    fn default() -> Self {
+        Hatch { section: Section::Square, width: DOORWAY.0, height: DOORWAY.1, slide: Slide::Side }
+    }
+}
+
+/// How a hatch's leaf opens: none (no leaf), sliding up, sliding aside.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+enum Slide {
+    None,
+    Up,
+    Side,
+}
+
+impl Hatch {
+    /// Its outline's corners round its middle (across, up), anticlockwise.
+    fn corners(&self) -> Vec<Vec2> {
+        let section = if self.section == Section::Line { Section::Square } else { self.section };
+        Profile { section, width: self.width, height: self.height, stand: false }.corners()
+    }
+
+    /// Its window's corners round its middle: the same shape, small, high in the leaf.
+    fn window(&self) -> Vec<Vec2> {
+        let (w, h) = ((self.width * 0.35).min(0.35), (self.height * 0.2).min(0.4));
+        let section = if self.section == Section::Line { Section::Square } else { self.section };
+        let lift = self.height * 0.22;
+        Profile { section, width: w, height: h, stand: false }.corners().into_iter().map(|c| c + Vec2::new(0.0, lift)).collect()
+    }
+}
+
+/// A hatch as placed: its leaf's outline and window (closed, the hull's frame), the
+/// way it slides fully open, and its middle (who's near opens it).
+pub struct Leaf {
+    pub outline: Vec<Vec3>,
+    pub window: Vec<Vec3>,
+    pub open: Vec3,
+    pub middle: Vec3,
+}
+
+/// How a walled tube's free end is: walled across, a doorway in that wall, or open.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+enum End {
+    Closed,
+    Door,
+    Open,
+}
+
+/// A doorway's width and height (m).
+const DOORWAY: (f32, f32) = (0.9, 2.1);
 
 #[derive(Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 struct Group {
@@ -221,6 +377,50 @@ fn outside(poly: Vec<Vec3>, planes: &[(Vec3, f32)]) -> Vec<Vec<Vec3>> {
         }
     }
     out
+}
+
+/// A deck plan's floors and walls as flat outlines (the hull's frame): its floors'
+/// pieces at their levels, its walls' runs from floor to ceiling.
+fn deck_shapes(plan: &universe_sim::world::deckplan::DeckPlan, mesh: &universe_sim::world::walk::WalkMesh) -> Vec<DeckShape> {
+    use universe_sim::world::deckplan;
+    let mut out = Vec::new();
+    for (d, deck) in plan.decks.iter().enumerate() {
+        let sides = deckplan::deck_sides(mesh, deck.floor);
+        let holes = deckplan::openings(plan, d);
+        let (y0, y1) = (deck.floor as f32, (deck.floor + deck.headroom) as f32);
+        for poly in &deck.planes {
+            for q in deckplan::floor_pieces(poly, &sides, &holes) {
+                out.push((q.iter().map(|p| Vec3::new(p.x as f32, y0, p.y as f32)).collect(), true));
+            }
+        }
+        for wall in &deck.walls {
+            for run in deckplan::wall_runs(wall, &sides) {
+                for w in run.windows(2) {
+                    let (a, b) = (w[0].0.as_vec2(), w[1].0.as_vec2());
+                    out.push((vec![Vec3::new(a.x, y0, a.y), Vec3::new(b.x, y0, b.y), Vec3::new(b.x, y1, b.y), Vec3::new(a.x, y1, a.y)], false));
+                }
+            }
+        }
+    }
+    out
+}
+
+/// A cell of the hollow map: its middle (x, z) and whether it's hollow (else solid).
+type Cell = (Vec2, bool);
+
+/// A deck's floor piece or wall run, flat (its outline) and which.
+type DeckShape = (Vec<Vec3>, bool);
+
+/// A tunnel as the deck studio shows it: from, to, its room across and up, walled?
+pub type Tunnel = (Vec3, Vec3, Option<(f32, f32)>, bool);
+
+/// The access plan as the deck studio shows it: tunnels (from, to, their room
+/// across and up if any, walled?) and points (where, their colour), the hull's frame.
+pub struct Access {
+    pub tunnels: Vec<Tunnel>,
+    pub points: Vec<(Vec3, Color)>,
+    /// Each layer shown or not (by number in `LAYERS`: see `layer`).
+    pub layers: [bool; LAYERS.len()],
 }
 
 /// A wall triangle to draw: its corners (the hull's frame), its colour, which of
@@ -272,6 +472,10 @@ struct Tube {
     /// Its walls' ends: square across it, or (where it meets one other tube) on the
     /// plane halfway between their ways (a mitre): that plane's normal, at the end.
     mitres: [Option<Vec3>; 2],
+    /// Its line, and how each of its ends is (none: joined to another tube there).
+    line: usize,
+    ends: [Option<End>; 2],
+    hatches: [Hatch; 2],
 }
 
 impl Tube {
@@ -293,6 +497,82 @@ impl Tube {
         planes.push((-self.d, -self.d.dot(self.a)));
         planes.push((self.d, self.d.dot(self.a) + self.len));
         planes
+    }
+
+    /// Its level way along (its direction with the climb taken out).
+    fn level(&self) -> Vec3 {
+        Vec3::new(self.d.x, 0.0, self.d.z).try_normalize().unwrap_or(Vec3::Z)
+    }
+
+    /// Where a doorway stands: in its side (`s` along it, on its right?) or in an
+    /// end's wall (`s` its end): its middle (standing on the floor there), the way
+    /// across its face, and the way through it.
+    fn door_frame(&self, s: f32, side: Option<bool>, h: &Hatch) -> (Vec3, Vec3, Vec3) {
+        let (floor, _) = self.floor_and_half();
+        let middle = self.at(s, Vec2::new(0.0, floor)) + Vec3::Y * (h.height * 0.5);
+        match side {
+            Some(_) => (middle, self.level(), self.u),
+            None => (middle, self.u, self.level()),
+        }
+    }
+
+    /// A doorway through it as planes: its hatch's outline standing plumb on the
+    /// floor (`s` along it), through its wall on that side (side doors), or through
+    /// its end's wall, as deep as that leans (end doors).
+    fn door_cut(&self, s: f32, side: Option<bool>, h: &Hatch) -> Vec<(Vec3, f32)> {
+        let (c, across, through) = self.door_frame(s, side, h);
+        let corners = h.corners();
+        let n = corners.len();
+        let mut planes: Vec<(Vec3, f32)> = (0..n).map(|k| {
+            let (p0, p1) = (corners[k], corners[(k + 1) % n]);
+            let e = p1 - p0;
+            let normal = across * e.y - Vec3::Y * e.x;
+            (normal, normal.dot(c + across * p0.x + Vec3::Y * p0.y))
+        }).collect();
+        let (floor, half) = self.floor_and_half();
+        // (Never below its own floor: a sloping tube's floor runs on under its door.)
+        planes.push((-self.v, -(self.v.dot(self.a) + floor)));
+        match side {
+            Some(right) => {
+                let (lo, hi) = if right { (0.0, half + 0.5) } else { (-half - 0.5, 0.0) };
+                planes.push((-through, -(through.dot(self.a) + lo)));
+                planes.push((through, through.dot(self.a) + hi));
+            }
+            None => {
+                let lean = self.d.y.abs() / Vec2::new(self.d.x, self.d.z).length().max(0.1);
+                let tall = self.corners.iter().map(|q| q.y).fold(f32::MIN, f32::max) - self.corners.iter().map(|q| q.y).fold(f32::MAX, f32::min);
+                let deep = 0.5 + tall * lean;
+                planes.push((-through, -(through.dot(c) - deep)));
+                planes.push((through, through.dot(c) + deep));
+            }
+        }
+        planes
+    }
+
+    /// Its hatch's leaf there, closed: in its wall (side doors) or across its end.
+    fn leaf(&self, s: f32, side: Option<bool>, h: &Hatch) -> Option<Leaf> {
+        if h.slide == Slide::None {
+            return None;
+        }
+        let (c, across, _) = self.door_frame(s, side, h);
+        let (_, half) = self.floor_and_half();
+        let out = match side {
+            Some(right) => self.u * if right { half } else { -half },
+            None => Vec3::ZERO,
+        };
+        let place = |q: Vec2| c + out + across * q.x + Vec3::Y * q.y;
+        let open = match h.slide {
+            Slide::Up => Vec3::Y * h.height,
+            _ => across * h.width,
+        };
+        Some(Leaf { outline: h.corners().into_iter().map(place).collect(), window: h.window().into_iter().map(place).collect(), open, middle: c + out })
+    }
+
+    /// Its floor's height round its axis, and its half width (m).
+    fn floor_and_half(&self) -> (f32, f32) {
+        let lo = self.corners.iter().map(|c| c.y).fold(f32::MAX, f32::min);
+        let half = self.corners.iter().map(|c| c.x.abs()).fold(0.0, f32::max);
+        (lo, half)
     }
 
     /// Where along it its side line through corner `c` ends at its start (0) or its
@@ -327,7 +607,7 @@ impl Plan {
         };
         walled.iter().map(|&k| {
             let (a, b, profile) = self.lines[k];
-            let (pa, pb) = (self.points[a].at, self.points[b].at);
+            let (pa, pb) = self.axis(k);
             let len = pa.distance(pb);
             let d = (pb - pa) / len;
             let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
@@ -341,7 +621,8 @@ impl Plan {
                 (n.dot(into) < 0.999).then_some(n)
             };
             let mitres = [mitre(a, -d).map(|n| -n), mitre(b, d)];
-            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres }
+            let ends = [self.free_end(k, a).then(|| self.end_of(k, 0)), self.free_end(k, b).then(|| self.end_of(k, 1))];
+            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends, hatches: [self.end_hatch(k, 0), self.end_hatch(k, 1)] }
         }).collect()
     }
 
@@ -352,6 +633,21 @@ impl Plan {
     fn wall_panels(&self) -> Vec<Panel> {
         let tubes = self.tubes();
         let rooms: Vec<Vec<(Vec3, f32)>> = tubes.iter().map(Tube::planes).collect();
+        // Doorways: boxes cutting a tube's wall, from its floor up (in a side, at a way
+        // along; in an end's wall, at its middle).
+        let mut doorways: Vec<Vec<(Vec3, f32)>> = Vec::new();
+        for t in &tubes {
+            for &SideDoor(k, at, right, h) in &self.doors {
+                if k == t.line {
+                    doorways.push(t.door_cut(at * t.len, Some(right), &h));
+                }
+            }
+            for (e, how) in t.ends.iter().enumerate() {
+                if *how == Some(End::Door) {
+                    doorways.push(t.door_cut(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
+                }
+            }
+        }
         let mut out = Vec::new();
         for (i, t) in tubes.iter().enumerate() {
             let n = t.corners.len();
@@ -380,8 +676,33 @@ impl Plan {
                             pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
                         }
                     }
+                    for door in &doorways {
+                        pieces = pieces.into_iter().flat_map(|p| outside(p, door)).collect();
+                    }
                     out.extend(pieces.into_iter().map(|outline| Panel { outline, part, band: k.rem_euclid(2) == 1 }));
                 }
+            }
+            // Its free ends walled across (not where they're open), less what's inside
+            // another tube (one coming through) or a doorway.
+            for (e, how) in t.ends.iter().enumerate() {
+                if !matches!(how, Some(End::Closed | End::Door)) {
+                    continue;
+                }
+                let s = if e == 0 { 0.0 } else { t.len };
+                let mut cap: Vec<Vec3> = t.corners.iter().map(|c| t.at(s, *c)).collect();
+                if e == 1 {
+                    cap.reverse();
+                }
+                let mut pieces = vec![cap];
+                for (o, room) in rooms.iter().enumerate() {
+                    if o != i {
+                        pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                    }
+                }
+                for door in &doorways {
+                    pieces = pieces.into_iter().flat_map(|p| outside(p, door)).collect();
+                }
+                out.extend(pieces.into_iter().map(|outline| Panel { outline, part: Part::Wall, band: false }));
             }
         }
         out
@@ -403,6 +724,56 @@ impl Plan {
             g.lines = g.lines.iter().filter_map(|&k| to.get(k).copied().flatten()).collect();
         }
         self.groups.retain(|g| !g.lines.is_empty());
+        self.ends = self.ends.iter().filter_map(|&EndSet(k, e, how, h)| Some(EndSet(to.get(k).copied().flatten()?, e, how, h))).collect();
+        self.doors = self.doors.iter().filter_map(|&SideDoor(k, t, right, h)| Some(SideDoor(to.get(k).copied().flatten()?, t, right, h))).collect();
+    }
+
+    /// How line `k`'s end `e` is: as set, else open if it's within 2 m of an entry
+    /// (the hatch, a crew door), else closed. (Only a free end has a wall to be.)
+    fn end_of(&self, k: usize, e: usize) -> End {
+        if let Some(&EndSet(_, _, how, _)) = self.ends.iter().find(|&&EndSet(j, f, _, _)| j == k && f == e) {
+            return how;
+        }
+        let p = if e == 0 { self.lines[k].0 } else { self.lines[k].1 };
+        let at = self.points[p].at;
+        let entry = self.points.iter().any(|q| q.name.as_deref().is_some_and(|n| n == "HATCH" || n.starts_with("DOOR")) && q.at.distance(at) < 2.0);
+        if entry { End::Open } else { End::Closed }
+    }
+
+    /// Its hatches' leaves, closed, each where it stands.
+    fn leaves(&self) -> Vec<Leaf> {
+        let mut out = Vec::new();
+        for t in self.tubes() {
+            for &SideDoor(k, at, right, h) in &self.doors {
+                if k == t.line {
+                    out.extend(t.leaf(at * t.len, Some(right), &h));
+                }
+            }
+            for (e, how) in t.ends.iter().enumerate() {
+                if *how == Some(End::Door) {
+                    out.extend(t.leaf(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
+                }
+            }
+        }
+        out
+    }
+
+    /// Line `k`'s end `e`'s hatch (as set; else the usual one).
+    fn end_hatch(&self, k: usize, e: usize) -> Hatch {
+        self.ends.iter().find(|&&EndSet(j, f, _, _)| j == k && f == e).map_or_else(Hatch::default, |s| s.3)
+    }
+
+    /// Is point `p` an end of walled line `k` that no other walled line shares?
+    fn free_end(&self, k: usize, p: usize) -> bool {
+        !self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter()).any(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p))
+    }
+
+    /// Line `k`'s axis, its ends: its points, or (standing on its line) half its
+    /// height over them.
+    fn axis(&self, k: usize) -> (Vec3, Vec3) {
+        let (a, b, p) = self.lines[k];
+        let up = if p.stand && p.section != Section::Line { Vec3::Y * (p.height * 0.5) } else { Vec3::ZERO };
+        (self.points[a].at + up, self.points[b].at + up)
     }
 
     /// The group line `k` is in, if any.
@@ -418,11 +789,14 @@ struct Profile {
     section: Section,
     width: f32,
     height: f32,
+    /// Stands on its line (the line its floor), rather than round it (its axis).
+    #[serde(default)]
+    stand: bool,
 }
 
 impl Default for Profile {
     fn default() -> Self {
-        Profile { section: Section::Line, width: 1.5, height: 2.0 }
+        Profile { section: Section::Line, width: 1.5, height: 2.0, stand: true }
     }
 }
 
@@ -431,7 +805,7 @@ const ROOM_MIN: f32 = 0.3;
 const ROOM_MAX: f32 = 6.0;
 
 /// The shape of a line's cross-section.
-#[derive(Clone, Copy, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 enum Section {
     /// None: a bare line.
     #[default]
@@ -497,6 +871,9 @@ enum Tool {
     /// Laying paths: a click on the work plane puts a point there, joined to the last;
     /// a click on a point joins to it and runs on from it.
     Path,
+    /// Doorways: a click on a tube's end cycles it closed, a doorway, open; on its
+    /// side, a doorway there in the wall facing you (again: gone).
+    Door,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -507,6 +884,8 @@ enum Hover {
 
 /// The hull as the studio draws it: its lines and its bounds (its frame, m).
 pub struct Hull {
+    /// Its surfaces (to find floors by).
+    mesh: Arc<universe_sim::world::walk::WalkMesh>,
     lines: Vec<[Vec3; 2]>,
     /// Where it bends gently (round things): edges with their faces' normals, drawn
     /// where they're its outline from the camera.
@@ -516,8 +895,13 @@ pub struct Hull {
 }
 
 impl Interior {
+    /// Is layer `k` shown (and the layer it's under)?
+    fn shown(&self, k: usize) -> bool {
+        !self.hidden[k] && LAYERS[k].1.is_none_or(|p| self.shown(p))
+    }
+
     pub fn new() -> Self {
-        Interior { yaw: 0.9, pitch: 0.35, ..Default::default() }
+        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, ..Default::default() }
     }
 
     /// A sample plan for a look (dev scenarios): from the hatch, a run of points on
@@ -536,7 +920,7 @@ impl Interior {
         let a = add(Vec3::new(h.x, h.y + 1.0, (h.z + c.z) * 0.5), &mut self.plan);
         let b = add(Vec3::new(c.x, h.y + 1.0, c.z), &mut self.plan);
         let d = add(Vec3::new(e.x, h.y, (h.z + e.z) * 0.5), &mut self.plan);
-        let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0 }, Profile { section: Section::Hex, width: 0.9, height: 0.9 });
+        let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0, stand: false }, Profile { section: Section::Hex, width: 0.9, height: 0.9, stand: false });
         self.plan.lines.extend([(hatch, a, round), (a, b, round), (b, cockpit, round), (hatch, d, hex), (d, engines, hex)]);
         // (The corridor walled off, a group.)
         self.plan.groups.push(Group { lines: vec![0, 1, 2, 3, 4], walled: true });
@@ -577,7 +961,7 @@ impl Interior {
         let (a, b, profile) = self.plan.lines[k];
         let d = (self.plan.points[b].at - self.plan.points[a].at).normalize_or_zero();
         let walled = self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled) && profile.section != Section::Line;
-        let floor = if walled { at - Vec3::Y * (profile.height * 0.5) } else { at };
+        let floor = if walled && !profile.stand { at - Vec3::Y * (profile.height * 0.5) } else { at };
         ((floor + Vec3::Y * 0.05).as_dvec3(), f64::from(d.x).atan2(f64::from(d.z)))
     }
 
@@ -594,6 +978,43 @@ impl Interior {
     }
 
     /// The hull's lines, asked for once a hull and picked up when they're done.
+    /// The hull at the work plane's height `y`, worked out again (on a thread) when
+    /// it's moved: a metre grid over it, each cell hollow (closed in) or solid.
+    fn map_hollow(&mut self, y: f32) {
+        if let Some((at, rx)) = &self.hollow_job
+            && let Ok(cells) = rx.try_recv()
+        {
+            self.hollow = Some((*at, Arc::new(cells)));
+            self.hollow_job = None;
+        }
+        let Some((_, h)) = &self.lines else { return };
+        if self.hollow_job.is_some() || self.hollow.as_ref().is_some_and(|(at, _)| (at - y).abs() < 0.05) {
+            return;
+        }
+        let (tx, rx) = mpsc::channel();
+        let (mesh, lo, hi) = (h.mesh.clone(), h.lo, h.hi);
+        job("studio-hollow", move || {
+            use universe_sim::world::deckplan::{enclosed, in_material};
+            let mut cells = Vec::new();
+            let mut z = lo.z.floor() + 0.5;
+            while z < hi.z {
+                let mut x = lo.x.floor() + 0.5;
+                while x < hi.x {
+                    let p = universe_engine::glam::DVec2::new(f64::from(x), f64::from(z));
+                    if in_material(&mesh, p, f64::from(y)) {
+                        cells.push((Vec2::new(x, z), false));
+                    } else if enclosed(&mesh, p, f64::from(y), 0.0, false) {
+                        cells.push((Vec2::new(x, z), true));
+                    }
+                    x += 1.0;
+                }
+                z += 1.0;
+            }
+            tx.send(cells).ok();
+        });
+        self.hollow_job = Some((y, rx));
+    }
+
     fn refresh(&mut self, key: &str, shape: &universe_sim::world::shape::Shape) {
         if let Some((k, rx)) = &self.job
             && let Ok(h) = rx.try_recv()
@@ -605,11 +1026,11 @@ impl Interior {
         if self.lines.as_ref().is_none_or(|(k, _)| k != key) && self.job.as_ref().is_none_or(|(k, _)| k != key) {
             let (tx, rx) = mpsc::channel();
             let mesh = mesh.clone();
-            std::thread::spawn(move || {
+            job("studio-lines", move || {
                 // (Its creases of 30° or more, less the tiniest bevels: the shape, not its
                 // grain.)
                 let lines = mesh.creases(30.0).into_iter().filter(|[a, b]| a.distance(*b) >= 0.02).collect();
-                tx.send(Hull { lines, bends: mesh.bends(2.0, 30.0), lo: mesh.lo.as_vec3(), hi: mesh.hi.as_vec3() }).ok();
+                tx.send(Hull { mesh: mesh.clone(), lines, bends: mesh.bends(2.0, 30.0), lo: mesh.lo.as_vec3(), hi: mesh.hi.as_vec3() }).ok();
             });
             self.job = Some((key.into(), rx));
         }
@@ -620,6 +1041,44 @@ impl Interior {
     /// Where a hull's plan is saved.
     fn file(key: &str) -> std::path::PathBuf {
         crate::save::data_dir().join("freefall").join("interiors").join(format!("{key}.json"))
+    }
+
+    /// Where its deck plan (the deck studio's) is saved, beside it.
+    fn deck_file(key: &str) -> std::path::PathBuf {
+        crate::save::data_dir().join("freefall").join("interiors").join(format!("{key}.decks.json"))
+    }
+
+    /// The deck plan saved for this plan's hull, if there is one (with decks).
+    fn read_decks(&self) -> Option<universe_sim::world::deckplan::DeckPlan> {
+        let text = std::fs::read_to_string(Self::deck_file(&self.plan.hull)).ok()?;
+        let mut decks: universe_sim::world::deckplan::DeckPlan = serde_json::from_str(&text).map_err(|e| log::warn!("deck plan unreadable: {e}")).ok()?;
+        decks.hull = self.plan.hull.clone();
+        (!decks.decks.is_empty()).then_some(decks)
+    }
+
+    /// Kept in step with the shipyard: its plan seeded (and the saved deck plan put in
+    /// the deck studio, the first time, and when opened), the deck studio's decks as
+    /// they are now (their floors and walls worked out again when they change).
+    pub fn sync(&mut self, key: &str, shape: &universe_sim::world::shape::Shape, deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, dt: f32) {
+        self.seed(key, shape);
+        if let Some((_, t)) = self.message.as_mut() {
+            *t -= dt;
+            if *t <= 0.0 {
+                self.message = None;
+            }
+        }
+        if let Some(d) = self.load_decks.take() {
+            deckplans.retain(|p| p.hull != key);
+            deckplans.push(d);
+        }
+        let now = deckplans.iter().find(|p| p.hull == key && !p.decks.is_empty()).cloned();
+        if self.decks.as_ref().map(|d| &d.0) != now.as_ref() {
+            self.decks = match (&now, shape.walk.as_ref()) {
+                (Some(plan), Some(mesh)) => Some((plan.clone(), deck_shapes(plan, mesh))),
+                _ => None,
+            };
+        }
+        self.decks_now = now;
     }
 
     /// The plan saved for this plan's hull, its hull's own points moved to where the
@@ -636,15 +1095,26 @@ impl Interior {
         Some(plan)
     }
 
-    /// The plan written to its file (a message says how it went).
-    fn save(&mut self) {
+    /// The plan written to its file, and the deck studio's decks to theirs (none:
+    /// that file gone); a message says how it went.
+    pub fn save(&mut self) {
         let path = Self::file(&self.plan.hull);
-        let done = std::fs::create_dir_all(path.parent().expect("a folder")).and_then(|_| std::fs::write(&path, serde_json::to_string_pretty(&self.plan).unwrap_or_default()));
+        let decks = Self::deck_file(&self.plan.hull);
+        let done = std::fs::create_dir_all(path.parent().expect("a folder"))
+            .and_then(|_| std::fs::write(&path, serde_json::to_string_pretty(&self.plan).unwrap_or_default()))
+            .and_then(|_| match &self.decks_now {
+                Some(d) => std::fs::write(&decks, serde_json::to_string_pretty(d).unwrap_or_default()),
+                None => match std::fs::remove_file(&decks) {
+                    Err(e) if e.kind() != std::io::ErrorKind::NotFound => Err(e),
+                    _ => Ok(()),
+                },
+            });
         self.message = Some((
             match done {
                 Ok(()) => {
                     self.saved = Some(self.plan.clone());
-                    "SAVED: THIS HULL'S PLAN".to_string()
+                    self.saved_decks = Some(self.decks_now.clone());
+                    if self.decks_now.is_some() { "SAVED: THIS HULL'S PLAN AND DECKS" } else { "SAVED: THIS HULL'S PLAN" }.to_string()
                 }
                 Err(e) => format!("NOT SAVED: {e}").to_uppercase(),
             },
@@ -654,6 +1124,11 @@ impl Interior {
 
     /// The saved plan opened over this one (an undo step: UNDO brings this back).
     fn open(&mut self) {
+        // (Its decks too, put in the deck studio when next in step.)
+        if let Some(d) = self.read_decks() {
+            self.saved_decks = Some(Some(d.clone()));
+            self.load_decks = Some(d);
+        }
         match self.read_saved() {
             Some(plan) => {
                 self.undo.push(std::mem::replace(&mut self.plan, plan));
@@ -668,9 +1143,48 @@ impl Interior {
         }
     }
 
+    /// The access plan for the deck studio to show: each tunnel (its line, its
+    /// cross-section's width and height, none for a bare line; walled?) and each
+    /// point (where, its kind's colour).
+    pub fn access(&self) -> Access {
+        let plan = &self.plan;
+        Access {
+            tunnels: plan.lines.iter().enumerate().map(|(k, &(_, _, p))| {
+                let room = (p.section != Section::Line).then_some((p.width, p.height));
+                let (pa, pb) = plan.axis(k);
+                (pa, pb, room, plan.group_of(k).is_some_and(|g| plan.groups[g].walled))
+            }).collect(),
+            // (Only the kinds of points shown.)
+            points: plan.points.iter().filter(|p| self.shown(3 + sort_index(p.name.as_deref()))).map(|p| (p.at, sort(p.name.as_deref()).0)).collect(),
+            layers: std::array::from_fn(|k| self.shown(k)),
+        }
+    }
+
+    /// What it has to say for a while (saved, opened), if anything.
+    pub fn message(&self) -> Option<&str> {
+        self.message.as_ref().map(|m| m.0.as_str())
+    }
+
+    /// Layer `k` hidden (dev scenarios).
+    pub fn hide(&mut self, k: usize) {
+        if let Some(h) = self.hidden.get_mut(k) {
+            *h = true;
+        }
+    }
+
+    /// Its hatches' leaves, closed (the walk-through slides them open).
+    pub fn leaves(&self) -> Vec<Leaf> {
+        self.plan.leaves()
+    }
+
+    /// Where the cursor was last seen (HUD pixels).
+    pub fn cursor(&self) -> Vec2 {
+        self.cursor
+    }
+
     /// Changed since it was last saved or opened?
     pub fn unsaved(&self) -> bool {
-        self.saved.as_ref().is_some_and(|s| *s != self.plan)
+        self.saved.as_ref().is_some_and(|s| *s != self.plan) || self.saved_decks.as_ref().is_some_and(|d| *d != self.decks_now)
     }
 
     /// Asked to close (ESC, the shipyard key): true if it can go now; with unsaved
@@ -762,13 +1276,17 @@ impl Interior {
         for (k, at) in panes("DashScreen").into_iter().map(|(lo, hi)| (lo + hi) * 0.5).enumerate() {
             points.push(Point { at, name: Some(format!("DASH {}", k + 1)) });
         }
-        self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new() };
+        self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new() };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {
             self.plan = saved;
         }
         self.saved = Some(self.plan.clone());
+        // Its saved decks put in the deck studio (none saved: what's there is new).
+        let decks = self.read_decks();
+        self.saved_decks = Some(decks.clone());
+        self.load_decks = decks;
     }
 
     fn hull(&self, key: &str) -> Option<Arc<Hull>> {
@@ -818,11 +1336,11 @@ impl Camera {
 }
 
 /// The toolbar: the tools (key, name).
-const TOOLBAR: [(&str, &str, Tool); 2] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path)];
+const TOOLBAR: [(&str, &str, Tool); 3] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door)];
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
-    (Vec2::new(12.0 + k as f32 * 124.0, 30.0), Vec2::new(120.0, 16.0))
+    (Vec2::new(12.0 + k as f32 * 104.0, 30.0), Vec2::new(100.0, 16.0))
 }
 
 fn button_at(q: Vec2) -> Option<Tool> {
@@ -846,6 +1364,101 @@ fn file_button(k: usize) -> (Vec2, Vec2) {
     button(TOOLBAR.len() + HISTORY.len() + 1 + k)
 }
 
+/// REACH, after SAVE and OPEN.
+fn reach_button() -> (Vec2, Vec2) {
+    button(TOOLBAR.len() + HISTORY.len() + 3)
+}
+
+/// What the reach check found: the floor a walker gets to from the hatch (spots
+/// on it), where the floor drops away, and, of the plan, what it gets to.
+pub struct Reach {
+    floor: Vec<Vec3>,
+    drops: Vec<Vec3>,
+    /// Each walled tube's line and whether it's got to; each deck and whether;
+    /// the named points looked for (service, dash, doors) and whether.
+    tubes: Vec<(usize, bool)>,
+    decks: Vec<(usize, bool)>,
+    points: Vec<(String, bool)>,
+}
+
+/// The reach check: from the hatch, every way a walker can go over the hull's
+/// floors, the decks and the walled tubes (a step 40 cm at a time: up or down no
+/// more than 0.5 m, head room 1.75 m, nothing in the way over a step's height or at
+/// the chest); where the floor drops more than that, a drop. Then what of the plan it
+/// gets to.
+fn reach(hull: &universe_sim::world::walk::WalkMesh, walls: &[[universe_engine::glam::DVec3; 3]], decks: Option<&universe_sim::world::deckplan::DeckPlan>, plan: &Plan) -> Reach {
+    use universe_engine::glam::DVec3;
+    use universe_sim::world::walk::WalkMesh;
+    let walls = (!walls.is_empty()).then(|| WalkMesh::new(walls));
+    let built = decks.map(|d| {
+        let sides: Vec<_> = d.decks.iter().map(|k| universe_sim::world::deckplan::deck_sides(hull, k.floor)).collect();
+        universe_sim::world::deckplan::Walkable::from(&universe_sim::world::deckplan::build(d, &sides))
+    });
+    let meshes: Vec<&WalkMesh> = std::iter::once(hull).chain(walls.as_ref()).chain(built.as_ref().map(|b| &b.mesh)).collect();
+    let ray = |from: DVec3, dir: DVec3, max: f64| meshes.iter().filter_map(|m| m.ray(from, dir, max)).min_by(|a, b| a.0.total_cmp(&b.0));
+    // The floor under `p` from `p.y`, within `max` (a surface facing up).
+    let floor = |p: DVec3, max: f64| ray(p, DVec3::NEG_Y, max).and_then(|(d, n)| (n.y > 0.6).then_some(p.y - d));
+    const STEP: f64 = 0.4;
+    let key = |p: DVec3| ((p.x / STEP).round() as i64, (p.z / STEP).round() as i64, (p.y / 0.25).round() as i64);
+    let mut out = Reach { floor: Vec::new(), drops: Vec::new(), tubes: Vec::new(), decks: Vec::new(), points: Vec::new() };
+    let Some(hatch) = plan.points.iter().find(|p| p.name.as_deref() == Some("HATCH")).map(|p| p.at.as_dvec3()) else { return out };
+    let Some(y0) = floor(hatch + DVec3::Y * 0.5, 2.0) else { return out };
+    let start = DVec3::new(hatch.x, y0, hatch.z);
+    let mut seen = std::collections::HashSet::new();
+    let mut todo = std::collections::VecDeque::from([start]);
+    seen.insert(key(start));
+    while let Some(p) = todo.pop_front() {
+        out.floor.push(p.as_vec3());
+        if out.floor.len() > 80_000 {
+            break;
+        }
+        for d in [DVec3::X, -DVec3::X, DVec3::Z, -DVec3::Z] {
+            // (Nothing in the way at the knee and the chest, a body's width on.)
+            if [0.65, 1.4].iter().any(|h| ray(p + DVec3::Y * h, d, STEP + 0.2).is_some()) {
+                continue;
+            }
+            let q = p + d * STEP;
+            match floor(q + DVec3::Y * 0.55, 1.1) {
+                Some(y) => {
+                    let to = DVec3::new(q.x, y, q.z);
+                    // (Head room there.)
+                    if ray(to + DVec3::Y * 0.05, DVec3::Y, 1.7).is_some() || !seen.insert(key(to)) {
+                        continue;
+                    }
+                    todo.push_back(to);
+                }
+                None => out.drops.push(q.as_vec3()),
+            }
+        }
+    }
+    // What of the plan's got to: a walled tube with floor reached inside it; a deck
+    // with floor reached on it; a point with floor reached within 2.5 m.
+    let tubes = plan.tubes();
+    let inside = |t: &Tube, p: Vec3| t.planes().iter().all(|&(n, c)| n.dot(p + Vec3::Y * 0.3) < c);
+    out.tubes = tubes.iter().map(|t| (t.line, out.floor.iter().any(|p| inside(t, *p)))).collect();
+    if let Some(d) = decks {
+        // (On its floor: at its height and inside one of its floor's outlines.)
+        let within = |poly: &[universe_engine::glam::DVec2], x: f64, z: f64| {
+            let mut odd = false;
+            for k in 0..poly.len() {
+                let (a, b) = (poly[k], poly[(k + 1) % poly.len()]);
+                if (a.y > z) != (b.y > z) && x < a.x + (b.x - a.x) * (z - a.y) / (b.y - a.y) {
+                    odd = !odd;
+                }
+            }
+            odd
+        };
+        out.decks = d.decks.iter().enumerate().map(|(k, deck)| {
+            (k, out.floor.iter().any(|p| (f64::from(p.y) - deck.floor).abs() < 0.3 && deck.planes.iter().any(|poly| within(poly, f64::from(p.x), f64::from(p.z)))))
+        }).collect();
+    }
+    out.points = plan.points.iter().filter_map(|p| {
+        let name = p.name.as_deref()?;
+        (name.starts_with("SERVICE") || name.starts_with("DASH") || name.starts_with("DOOR")).then(|| (name.to_string(), out.floor.iter().any(|f| f.distance(p.at) < 2.5)))
+    }).collect();
+    out
+}
+
 /// The close dialog: where it is, and its buttons (SAVE AND CLOSE, DISCARD, KEEP
 /// WORKING).
 fn confirm_box(size: Vec2) -> ((Vec2, Vec2), [(Vec2, Vec2); 3]) {
@@ -861,7 +1474,17 @@ fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
 }
 
 /// The tool's panel, at the left: where it is and its size.
-const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 294.0));
+const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 356.0));
+
+/// Room presets for new lines: name, cross-section, and whether their free ends get
+/// doorways (a room's) rather than walls.
+const PRESETS: [(&str, Profile, bool); 5] = [
+    ("CORRIDOR", Profile { section: Section::Square, width: 1.6, height: 2.4, stand: true }, false),
+    ("CRAWLWAY", Profile { section: Section::Hex, width: 1.0, height: 1.0, stand: true }, false),
+    ("CABIN", Profile { section: Section::Square, width: 2.6, height: 2.6, stand: true }, true),
+    ("GALLEY", Profile { section: Section::Oct, width: 5.0, height: 3.0, stand: true }, true),
+    ("BRIDGE", Profile { section: Section::Oct, width: 10.0, height: 4.0, stand: true }, true),
+];
 
 /// The panel's actions: the work plane down and up, what's picked out.
 #[derive(Clone, Copy, PartialEq)]
@@ -871,6 +1494,14 @@ enum Action {
     Remove,
     /// The cross-section's shape: for new lines (laying paths), or the picked line's.
     Section(Section),
+    /// A room preset for new lines (its number in `PRESETS`).
+    Preset(usize),
+    /// Standing on its line, or round it (new lines', or the picked ones').
+    Stand,
+    /// Points laid dropped to the floor, or not.
+    SnapFloor,
+    /// How new hatches slide.
+    Slide(Slide),
     /// The picked lines made a group; their groups broken up; walled off (or open).
     Group,
     Ungroup,
@@ -902,10 +1533,22 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     }).collect();
     let shapes = shapes.into_iter();
     match tool {
-        Tool::Path => shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
+        Tool::Door => {
+            // (A hatch's shape: not NONE; how it slides.)
+            let w3 = (c.x - 16.0 - 12.0) / 3.0;
+            shapes.filter(|b| b.2 != Action::Section(Section::Line)).chain([(at(246.0, 0.0, w3), "SLIDE UP", Action::Slide(Slide::Up)), (at(246.0, w3 + 6.0, w3), "SLIDE SIDE", Action::Slide(Slide::Side)), (at(246.0, 2.0 * (w3 + 6.0), w3), "NO LEAF", Action::Slide(Slide::None))]).collect()
+        }
+        Tool::Path => {
+            // (Presets in two rows: two, then three.)
+            let w3 = (c.x - 16.0 - 12.0) / 3.0;
+            let presets = PRESETS.iter().enumerate().map(|(k, (name, _, _))| {
+                if k < 2 { (at(308.0, k as f32 * (w + 6.0), w), *name, Action::Preset(k)) } else { (at(330.0, (k - 2) as f32 * (w3 + 6.0), w3), *name, Action::Preset(k)) }
+            });
+            shapes.chain([(at(246.0, 0.0, w3), "PLANE -", Action::PlaneDown), (at(246.0, w3 + 6.0, w3), "PLANE +", Action::PlaneUp), (at(246.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand)]).chain(presets).collect()
+        }
         Tool::Look => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
-            shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect()
+            shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand)]).collect()
         }
     }
 }
@@ -935,10 +1578,123 @@ fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
 
 /// The legend, at the bottom right: where it is and its size.
 fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
-    let (w, line) = (230.0, 14.0);
-    let height = (SORTS.len() + 2) as f32 * line + line * 0.5 + 10.0;
-    (Vec2::new(size.x - w - 12.0, size.y - 30.0 - height), Vec2::new(w, height))
+    layers_rect(layers_corner(size), LAYERS.len())
 }
+
+/// The studios' work done aside: on a thread of its own, named (so it can be
+/// told apart from the world's, in the observer and in `top -H`).
+pub fn job(name: &str, work: impl FnOnce() + Send + 'static) {
+    std::thread::Builder::new().name(name.into()).spawn(work).ok();
+}
+
+/// Where the layers panel's bottom right corner is in this studio.
+fn layers_corner(size: Vec2) -> Vec2 {
+    Vec2::new(size.x - 12.0, size.y - 26.0)
+}
+
+/// The layers panel with `rows` rows under its header, its bottom right at
+/// `corner`: where it is and its size.
+fn layers_rect(corner: Vec2, rows: usize) -> (Vec2, Vec2) {
+    let height = LAYER_ROW * (rows + 1) as f32 + 8.0;
+    (Vec2::new(corner.x - LAYERS_WIDTH, corner.y - height), Vec2::new(LAYERS_WIDTH, height))
+}
+
+/// The layers panel: its width and a row's height (px).
+const LAYERS_WIDTH: f32 = 140.0;
+const LAYER_ROW: f32 = 11.0;
+
+/// The layers panel's rows shown: none folded up (the panel), a group's folded
+/// (its own row only).
+fn layer_rows(i: &Interior) -> Vec<usize> {
+    if i.layers_folded {
+        return Vec::new();
+    }
+    (0..LAYERS.len()).filter(|&k| LAYERS[k].1.is_none_or(|p| !i.group_folded[p])).collect()
+}
+
+/// The layers panel's header (a click folds it up, or out), and the place of the
+/// `n`th of `rows` rows under it.
+fn layers_header(corner: Vec2, rows: usize) -> (Vec2, Vec2) {
+    let (p, c) = layers_rect(corner, rows);
+    (Vec2::new(p.x + 2.0, p.y + 2.0), Vec2::new(c.x - 4.0, LAYER_ROW))
+}
+
+fn layer_row(corner: Vec2, rows: usize, n: usize) -> (Vec2, Vec2) {
+    let (p, c) = layers_rect(corner, rows);
+    (Vec2::new(p.x + 4.0, p.y + 4.0 + LAYER_ROW * (n + 1) as f32), Vec2::new(c.x - 8.0, LAYER_ROW))
+}
+
+/// The layers panel drawn, its bottom right at `corner` (`cursor` lights what's
+/// under it).
+pub fn draw_layers(frame: &mut Frame, interior: &Interior, corner: Vec2, cursor: Vec2) {
+    // The layers: a header (folds the panel), then a row each: a group's arrow (folds
+    // its rows), a checkbox (ticked: shown), its key's colour, its name (under
+    // another, set in; not shown, dim).
+    {
+        let rows = layer_rows(interior);
+        let (p, c) = layers_rect(corner, rows.len());
+        frame.hud_rect(p, c, LAYERS_BACK);
+        frame.hud_box(p, c, LAYERS_EDGE);
+        let (hp, hc) = layers_header(corner, rows.len());
+        let fold = if interior.layers_folded { "+" } else { "-" };
+        let head = if inside((hp, hc), cursor) { PICKED } else { LAYERS_HEAD };
+        frame.text_scaled(hp + Vec2::new(3.0, 1.5), &format!("{fold} LAYERS"), head, 0.62);
+        for (n, &k) in rows.iter().enumerate() {
+            let (name, parent, colour) = LAYERS[k];
+            let (q, qc) = layer_row(corner, rows.len(), n);
+            let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
+            let on = interior.shown(k);
+            let x = q.x + if parent.is_some() { 10.0 } else { 0.0 };
+            if group {
+                let arrow = if interior.group_folded[k] { ">" } else { "v" };
+                frame.text_scaled(Vec2::new(q.x - 1.0, q.y + 1.5), arrow, LAYERS_HEAD.scale(0.8), 0.55);
+            }
+            // (The checkbox: a box, ticked when it's on.)
+            let b = Vec2::new(x + 8.0, q.y + 2.0);
+            let box_col = if on { LAYERS_TICK } else { LAYERS_TEXT.scale(0.45) };
+            frame.hud_box(b, Vec2::splat(7.0), box_col);
+            if !interior.hidden[k] {
+                frame.hud_line(b + Vec2::new(1.5, 3.5), b + Vec2::new(3.0, 5.5), box_col);
+                frame.hud_line(b + Vec2::new(3.0, 5.5), b + Vec2::new(6.0, 1.0), box_col);
+            }
+            if let Some(col) = colour {
+                frame.hud_rect(Vec2::new(b.x + 10.0, q.y + 4.5), Vec2::new(6.0, 2.0), if on { col } else { col.scale(0.35) });
+            }
+            let text = if inside((q, qc), cursor) { PICKED } else if on { LAYERS_TEXT } else { LAYERS_TEXT.scale(0.4) };
+            frame.text_scaled(Vec2::new(b.x + 19.0, q.y + 1.5), name, text, 0.58);
+        }
+    }
+}
+
+/// A click at `cursor` on the layers panel (its bottom right at `corner`): the
+/// header folds it, a group's arrow folds its rows, a row shows or hides its layer.
+/// True if it was on the panel.
+pub fn layers_click(interior: &mut Interior, corner: Vec2, cursor: Vec2) -> bool {
+    let rows = layer_rows(interior);
+    if inside(layers_header(corner, rows.len()), cursor) {
+        interior.layers_folded = !interior.layers_folded;
+        return true;
+    }
+    if let Some(n) = (0..rows.len()).find(|&n| inside(layer_row(corner, rows.len(), n), cursor)) {
+        let k = rows[n];
+        let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
+        if group && cursor.x < layer_row(corner, rows.len(), n).0.x + 10.0 {
+            interior.group_folded[k] = !interior.group_folded[k];
+        } else {
+            interior.hidden[k] = !interior.hidden[k];
+        }
+        return true;
+    }
+    inside(layers_rect(corner, rows.len()), cursor)
+}
+
+/// The layers panel's own colours: slate, a muted amber edge and heading, soft ticks
+/// (apart from the blueprint, quiet).
+const LAYERS_BACK: Color = Color([0.06, 0.07, 0.09, 0.62]);
+const LAYERS_EDGE: Color = Color([0.85, 0.7, 0.45, 0.35]);
+const LAYERS_HEAD: Color = Color([0.9, 0.78, 0.55, 0.85]);
+const LAYERS_TEXT: Color = Color([0.82, 0.84, 0.86, 0.85]);
+const LAYERS_TICK: Color = Color([0.65, 0.9, 0.75, 0.9]);
 
 /// The globe at the top right: its middle and radius (px).
 fn globe(size: Vec2) -> (Vec2, f32) {
@@ -1019,15 +1775,37 @@ fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Opt
             at.x = from.x;
         }
     }
+    // SNAP FLOOR: down to the hull's floor under it (the first surface below, if it
+    // faces up; within 8 m).
+    if i.snap_floor
+        && let Some((_, h)) = &i.lines
+    {
+        let from = universe_engine::glam::DVec3::new(f64::from(at.x), f64::from(plane) + 0.05, f64::from(at.z));
+        if let Some((d, n)) = h.mesh.ray(from, universe_engine::glam::DVec3::NEG_Y, 8.0)
+            && n.y > 0.6
+        {
+            at.y = (from.y - d) as f32;
+        }
+    }
     Some(at)
+}
+
+/// A run's length (m) and its slope from level (degrees).
+fn slope_of(a: Vec3, b: Vec3) -> (f32, f32) {
+    let d = b - a;
+    (d.length(), d.y.abs().atan2(Vec2::new(d.x, d.z).length()).to_degrees())
 }
 
 /// What's under the cursor: a point (within 8 px), or else a line (within 5 px).
 fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
-    let screen: Vec<Option<Vec2>> = i.plan.points.iter().map(|p| cam.project(p.at).map(|s| s.0)).collect();
+    // (What's hidden isn't under the cursor.)
+    let screen: Vec<Option<Vec2>> = i.plan.points.iter().map(|p| if i.shown(3 + sort_index(p.name.as_deref())) { cam.project(p.at).map(|s| s.0) } else { None }).collect();
     let near = screen.iter().enumerate().filter_map(|(k, s)| s.map(|s| (k, s.distance(q)))).filter(|(_, d)| *d < 8.0).min_by(|a, b| a.1.total_cmp(&b.1));
     if let Some((k, _)) = near {
         return Some(Hover::Point(k));
+    }
+    if !(i.shown(layer::LINES) || i.shown(layer::ROOMS) || i.shown(layer::WALLS)) {
+        return None;
     }
     i.plan.lines.iter().enumerate().filter_map(|(k, &(a, b, _))| {
         let (pa, pb) = (screen[a]?, screen[b]?);
@@ -1047,13 +1825,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let spec = app.ship.spec();
     interior.spin += ctx.dt;
     interior.refresh(&spec.key, spec.shape());
-    interior.seed(&spec.key, spec.shape());
-    if let Some((_, t)) = interior.message.as_mut() {
-        *t -= ctx.dt;
-        if *t <= 0.0 {
-            interior.message = None;
-        }
-    }
+    interior.sync(&spec.key, spec.shape(), &mut app.deckplans, 0.0);
     // Closing with unsaved changes: SAVE AND CLOSE (S, ENTER), DISCARD (D), or keep
     // working (ESC); nothing else meanwhile.
     if interior.confirm {
@@ -1085,6 +1857,25 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     if (ctrl && input.pressed(KeyCode::KeyO)) || clicked(file_button(1)) {
         interior.open();
+        return true;
+    }
+    // REACH: the check run (on a thread); its findings picked up when done.
+    if let Some((plan, rx)) = &interior.reach_job
+        && let Ok(found) = rx.try_recv()
+    {
+        interior.reach = Some((plan.clone(), Arc::new(found)));
+        interior.reach_job = None;
+    }
+    if clicked(reach_button()) && interior.reach_job.is_none() {
+        if let Some((_, h)) = &interior.lines {
+            let (mesh, walls, decks, plan) = (h.mesh.clone(), interior.walls(), interior.decks_now.clone(), interior.plan.clone());
+            let (tx, rx) = mpsc::channel();
+            let snapshot = plan.clone();
+            job("studio-reach", move || {
+                tx.send(reach(&mesh, &walls, decks.as_ref(), &plan)).ok();
+            });
+            interior.reach_job = Some((snapshot, rx));
+        }
         return true;
     }
     let click = |k: usize| input.button_pressed(MouseButton::Left) && inside(history_button(k), input.cursor);
@@ -1133,6 +1924,10 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     interior.shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
     let d = input.mouse_delta;
     let pressed = input.button_pressed(MouseButton::Left);
+    // A layer's row clicked: shown or hidden.
+    if pressed && layers_click(interior, layers_corner(size), cursor) {
+        return true;
+    }
     // The globe: an axis clicked undoes the view's turn about that axis only. X:
     // levelled (no tilt up or down), its turn round the ship kept. Y: its turn round
     // the ship squared to the nearest quarter, its tilt kept. (Z would be a roll,
@@ -1150,7 +1945,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The tools (toolbar or key); the panel's actions.
     let tool = if pressed { button_at(cursor) } else { None };
-    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path)] {
+    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path), (KeyCode::KeyD, Tool::Door)] {
         if input.pressed(key) || tool == Some(t) {
             interior.tool = t;
             interior.from = None;
@@ -1167,6 +1962,9 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     if lift != 0.0 {
         interior.plane = Some((plane_of(interior, &h) + lift).clamp(h.lo.y, h.hi.y));
     }
+    if action == Some(Action::SnapFloor) {
+        interior.snap_floor = !interior.snap_floor;
+    }
     // A cross-section, its shape (a button) or its width or height (a slider, held
     // and slid): for new lines; picked in LOOK, that line's.
     if pressed {
@@ -1178,6 +1976,12 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     // (In LOOK, every line picked; laying paths, the new lines'.)
     let picked = picked_lines(interior);
     let set = |p: &mut Profile| {
+        if let Some(Action::Preset(k)) = action {
+            *p = PRESETS[k].1;
+        }
+        if action == Some(Action::Stand) {
+            p.stand = !p.stand;
+        }
         if let Some(Action::Section(s)) = action {
             p.section = s;
         }
@@ -1187,12 +1991,26 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             *(if k == 0 { &mut p.width } else { &mut p.height }) = (v * 10.0).round() / 10.0;
         }
     };
-    if interior.tool == Tool::Look {
-        for &k in &picked {
-            set(&mut interior.plan.lines[k].2);
+    match interior.tool {
+        Tool::Look => {
+            for &k in &picked {
+                set(&mut interior.plan.lines[k].2);
+            }
         }
-    } else {
-        set(&mut interior.profile);
+        Tool::Path => set(&mut interior.profile),
+        // (The hatch new doorways get: its shape and size as a cross-section's.)
+        Tool::Door => {
+            let h = &mut interior.hatch;
+            let mut p = Profile { section: h.section, width: h.width, height: h.height, stand: false };
+            set(&mut p);
+            if p.section != Section::Line {
+                h.section = p.section;
+            }
+            (h.width, h.height) = (p.width, p.height);
+            if let Some(Action::Slide(slide)) = action {
+                h.slide = slide;
+            }
+        }
     }
     // Groups: the picked lines one (out of any other); their groups broken up; walled
     // off or opened up (lines in no group made one first).
@@ -1291,6 +2109,9 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The plane's handle (laying paths): held, it goes up and down with the mouse.
     let plane = plane_of(interior, &h);
+    if interior.tool == Tool::Path {
+        interior.map_hollow(plane);
+    }
     if pressed && interior.tool == Tool::Path && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
         interior.lifting = true;
     }
@@ -1363,6 +2184,11 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                         && !interior.plan.lines.iter().any(|&(p, q, _)| (p, q) == (a, k) || (p, q) == (k, a))
                     {
                         interior.plan.lines.push((a, k, interior.profile));
+                        // (A room preset's: its free ends doorways.)
+                        if PRESETS.iter().any(|(_, p, doors)| *doors && *p == interior.profile) {
+                            let new = interior.plan.lines.len() - 1;
+                            interior.plan.ends.extend([EndSet(new, 0, End::Door, interior.hatch), EndSet(new, 1, End::Door, interior.hatch)]);
+                        }
                         // (Joined to a point already there: that tunnel done, picked to
                         // be worked on, the path tool put down.)
                         if onto {
@@ -1377,6 +2203,45 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             }
             // A click picks what's under the cursor (a line in a group: with the rest
             // of it); with SHIFT, a line added to the picked ones, or taken out.
+            // A doorway: at a tube's end (within 30 px of it on screen), that end
+            // cycled; along it, one in the wall facing the camera (or that one gone).
+            Tool::Door => {
+                if let Some(Hover::Line(k)) = interior.hover {
+                    let (a, b, _) = interior.plan.lines[k];
+                    let (pa, pb) = (interior.plan.points[a].at, interior.plan.points[b].at);
+                    let near_end = [pa, pb].iter().position(|p| cam.project(*p).is_some_and(|(q, _)| q.distance(cursor) < 30.0));
+                    match near_end {
+                        Some(e) => {
+                            let next = match interior.plan.end_of(k, e) {
+                                End::Closed => End::Door,
+                                End::Door => End::Open,
+                                End::Open => End::Closed,
+                            };
+                            interior.plan.ends.retain(|&EndSet(j, f, _, _)| !(j == k && f == e));
+                            interior.plan.ends.push(EndSet(k, e, next, interior.hatch));
+                            if !interior.plan.free_end(k, [a, b][e]) {
+                                interior.message = Some(("THAT END JOINS ANOTHER TUBE: IT'S A WAY THROUGH ALREADY".into(), 3.0));
+                            }
+                        }
+                        None => {
+                            if let Some((at, _)) = on_line(interior, &cam, cursor, k) {
+                                let len = pa.distance(pb).max(1e-3);
+                                let d = (pb - pa) / len;
+                                let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+                                let right = u.dot(cam.eye - at) > 0.0;
+                                let t = ((at - pa).dot(d) / len).clamp(0.0, 1.0);
+                                let near = interior.plan.doors.iter().position(|&SideDoor(j, s, r, _)| j == k && r == right && (s - t).abs() * len < 1.0);
+                                match near {
+                                    Some(n) => {
+                                        interior.plan.doors.remove(n);
+                                    }
+                                    None => interior.plan.doors.push(SideDoor(k, t, right, interior.hatch)),
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             Tool::Look => match (interior.hover, interior.shift) {
                 (Some(Hover::Line(k)), true) => {
                     let mut lines = picked_lines(interior);
@@ -1436,6 +2301,11 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             let lamp = if interior.walk_armed || inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, "F", "WALK HERE", lamp);
         }
+        {
+            let (p, c) = reach_button();
+            let lamp = if interior.reach_job.is_some() { Lamp::Busy } else if inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, c, "", if interior.reach_job.is_some() { "CHECKING" } else { "REACH" }, lamp);
+        }
         for (k, (key, name)) in [("^S", if interior.unsaved() { "SAVE *" } else { "SAVE" }), ("^O", "OPEN")].into_iter().enumerate() {
             let (p, c) = file_button(k);
             let lamp = if inside((p, c), interior.cursor) { Lamp::On } else if k == 0 && interior.unsaved() { Lamp::Busy } else { Lamp::Off };
@@ -1472,13 +2342,14 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let (x0, x1) = (((lo.x - pad.x) / step).floor() as i32, ((hi.x + pad.x) / step).ceil() as i32);
     let (z0, z1) = (((lo.z - pad.z) / step).floor() as i32, ((hi.z + pad.z) / step).ceil() as i32);
     let ground = |x: f32, z: f32| Vec3::new(x, lo.y, z);
-    for i in x0..=x1 {
+    let grid = interior.shown(layer::GRID);
+    for i in (x0..=x1).filter(|_| grid) {
         let x = i as f32 * step;
         if let (Some((a, _)), Some((b, _))) = (cam.project(ground(x, z0 as f32 * step)), cam.project(ground(x, z1 as f32 * step))) {
             frame.hud_line(a, b, GROUND);
         }
     }
-    for i in z0..=z1 {
+    for i in (z0..=z1).filter(|_| grid) {
         let z = i as f32 * step;
         if let (Some((a, _)), Some((b, _))) = (cam.project(ground(x0 as f32 * step, z)), cam.project(ground(x1 as f32 * step, z))) {
             frame.hud_line(a, b, GROUND);
@@ -1495,24 +2366,24 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.hud_line(pa, pb, c);
         }
     };
-    let rows = ((top - lo.y) / step).round() as i32;
+    let rows = if grid { ((top - lo.y) / step).round() as i32 } else { -1 };
     for k in 0..=rows {
         let y = lo.y + k as f32 * step;
         seg(frame, Vec3::new(far_x, y, gz0), Vec3::new(far_x, y, gz1), GROUND);
         seg(frame, Vec3::new(gx0, y, far_z), Vec3::new(gx1, y, far_z), GROUND);
     }
-    for i in z0..=z1 {
+    for i in (z0..=z1).filter(|_| grid) {
         let z = i as f32 * step;
         seg(frame, Vec3::new(far_x, lo.y, z), Vec3::new(far_x, top, z), GROUND);
     }
-    for i in x0..=x1 {
+    for i in (x0..=x1).filter(|_| grid) {
         let x = i as f32 * step;
         seg(frame, Vec3::new(x, lo.y, far_z), Vec3::new(x, top, far_z), GROUND);
     }
     // Its measures: its length along the ground on the near side, its beam across
     // the far end, its height up the far corner (against the walls); ticks at their
     // ends, the measure by their middles.
-    {
+    if grid {
         let near_x = if cam.eye.x > (lo.x + hi.x) * 0.5 { hi.x + 2.0 } else { lo.x - 2.0 };
         let far_x = if cam.eye.x > (lo.x + hi.x) * 0.5 { lo.x - 2.0 } else { hi.x + 2.0 };
         let far_z = if cam.eye.z > (lo.z + hi.z) * 0.5 { lo.z - 2.0 } else { hi.z + 2.0 };
@@ -1543,11 +2414,12 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let alpha = 0.05 + 0.17 * near;
         frame.hud_line(pa, pb, Color([LINE[0], LINE[1], LINE[2], alpha]));
     };
-    for [a, b] in &h.lines {
+    let hull_shown = interior.shown(layer::HULL);
+    for [a, b] in h.lines.iter().filter(|_| hull_shown) {
         line(frame, *a, *b);
     }
     // (Round things' outlines from here: one face toward the camera, one away.)
-    for [a, b, n1, n2] in &h.bends {
+    for [a, b, n1, n2] in h.bends.iter().filter(|_| hull_shown) {
         let to_eye = cam.eye - *a;
         if n1.dot(to_eye) * n2.dot(to_eye) < 0.0 {
             line(frame, *a, *b);
@@ -1557,6 +2429,18 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let plane = plane_of(interior, &h);
     if interior.tool == Tool::Path {
         let c = [Vec3::new(lo.x, plane, lo.z), Vec3::new(hi.x, plane, lo.z), Vec3::new(hi.x, plane, hi.z), Vec3::new(lo.x, plane, hi.z)];
+        // The hull at this height: hollow cells green, solid red (where there's room).
+        if let Some((at, cells)) = interior.hollow.as_ref().filter(|_| interior.shown(layer::HOLLOW)) {
+            let y = *at;
+            for (c, hollow) in cells.iter() {
+                let q = [Vec3::new(c.x - 0.48, y, c.y - 0.48), Vec3::new(c.x + 0.48, y, c.y - 0.48), Vec3::new(c.x + 0.48, y, c.y + 0.48), Vec3::new(c.x - 0.48, y, c.y + 0.48)];
+                if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = q.map(|p| cam.project(p)) {
+                    let fill = [if *hollow { Color([0.4, 1.0, 0.55, 0.13]) } else { Color([1.0, 0.35, 0.3, 0.16]) }; 3];
+                    frame.hud_triangle_colored([a, b, cc], fill);
+                    frame.hud_triangle_colored([a, cc, d], fill);
+                }
+            }
+        }
         // (A light sheet, so it reads among the hull's lines.)
         if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
             let fill = [Color([0.4, 1.0, 0.75, 0.06]); 3];
@@ -1626,6 +2510,25 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
         }
     }
+    // The deck studio's decks: their floors faintly filled, their walls outlined.
+    if let Some((_, shapes)) = &interior.decks {
+        for (outline, floor) in shapes {
+            if !interior.shown(if *floor { layer::DECK_FLOORS } else { layer::DECK_WALLS }) {
+                continue;
+            }
+            let on: Option<Vec<Vec2>> = outline.iter().map(|p| cam.project(*p).map(|s| s.0)).collect();
+            let Some(on) = on else { continue };
+            if *floor {
+                for k in 1..on.len().saturating_sub(1) {
+                    frame.hud_triangle_colored([on[0], on[k], on[k + 1]], [DECK_FLOOR; 3]);
+                }
+            } else {
+                for k in 0..on.len() {
+                    frame.hud_line(on[k], on[(k + 1) % on.len()], DECK_WALL);
+                }
+            }
+        }
+    }
     // The access plan: its lines bright, its points small squares (the hull's own,
     // named); what's under the cursor and a line's first point lit.
     let plan = &interior.plan;
@@ -1634,7 +2537,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let clash = interior.checked.as_ref().filter(|(p, _)| p == plan).map(|(_, c)| c.as_slice()).unwrap_or(&[]);
     let picked = picked_lines(interior);
     // Walled groups: their tubes' walls (cut away inside one another, their ends open).
-    for q in interior.panels().iter() {
+    for q in interior.panels().iter().filter(|_| interior.shown(layer::WALLS)) {
         let on: Option<Vec<Vec2>> = q.outline.iter().map(|p| cam.project(*p).map(|s| s.0)).collect();
         if let Some(on) = on {
             for k in 1..on.len().saturating_sub(1) {
@@ -1642,13 +2545,33 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
         }
     }
+    // Hatches, closed: each leaf filled, its outline and its window (an open
+    // doorway: just the hole).
+    for leaf in plan.leaves().into_iter().filter(|_| interior.shown(layer::HATCHES)) {
+        let on: Option<Vec<Vec2>> = leaf.outline.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
+        let glass: Option<Vec<Vec2>> = leaf.window.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
+        let (Some(on), Some(glass)) = (on, glass) else { continue };
+        for k in 1..on.len().saturating_sub(1) {
+            frame.hud_triangle_colored([on[0], on[k], on[k + 1]], [Color([1.0, 0.65, 0.2, 0.18]); 3]);
+        }
+        for k in 0..on.len() {
+            frame.hud_line(on[k], on[(k + 1) % on.len()], DOOR_FRAME);
+        }
+        for k in 0..glass.len() {
+            frame.hud_line(glass[k], glass[(k + 1) % glass.len()], Color([0.45, 0.9, 1.0, 1.0]));
+        }
+    }
     for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
         let lit = interior.hover == Some(Hover::Line(k)) || picked.contains(&k);
         let hits = clash.get(k).map_or(&[][..], |c| c.as_slice());
+        let hits = if interior.shown(layer::CLASHES) { hits } else { &[] };
         let col = if lit { PICKED } else if hits.is_empty() { PATH } else { CLASH };
-        seg(frame, plan.points[a].at, plan.points[b].at, col);
+        if interior.shown(layer::LINES) {
+            seg(frame, plan.points[a].at, plan.points[b].at, col);
+        }
         let edge = Color([col.0[0], col.0[1], col.0[2], 0.45]);
-        for [p, q] in room(plan.points[a].at, plan.points[b].at, profile).0 {
+        let (pa, pb) = plan.axis(k);
+        for [p, q] in room(pa, pb, profile).0.into_iter().filter(|_| interior.shown(layer::ROOMS)) {
             seg(frame, p, q, edge);
         }
         for p in hits {
@@ -1669,13 +2592,24 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         };
         let end = to.and_then(|p| cam.project(p)).map_or(interior.cursor, |(q, _)| q);
         frame.hud_line(pa, end, PICKED.scale(0.6));
+        // Its length and its slope (amber past a comfortable 35°, red past the walker's
+        // 50°: too steep to walk).
+        if let Some(b) = to {
+            let (len, slope) = slope_of(plan.points[a].at, b);
+            let col = if slope > 50.0 { CLASH } else if slope > 35.0 { Color([1.0, 0.65, 0.2, 1.0]) } else { PICKED };
+            let what = if slope > 50.0 { "  TOO STEEP TO WALK" } else if slope > 2.0 { "  RAMP" } else { "" };
+            frame.text_scaled(end + Vec2::new(12.0, 8.0), &format!("{len:.1} M  {slope:.0}°{what}"), col, 0.75);
+        }
     }
     for (k, p) in plan.points.iter().enumerate() {
+        if !interior.shown(3 + sort_index(p.name.as_deref())) {
+            continue;
+        }
         let Some((q, _)) = cam.project(p.at) else { continue };
         let lit = interior.hover == Some(Hover::Point(k)) || interior.from == Some(k) || interior.pick == Some(Hover::Point(k));
         let col = if lit { PICKED } else { sort(p.name.as_deref()).0 };
         frame.hud_rect(q - Vec2::splat(3.0), Vec2::splat(6.0), col);
-        if let Some(name) = &p.name {
+        if let Some(name) = p.name.as_ref().filter(|_| interior.shown(layer::NAMES)) {
             // (Dimmer unless it's under the cursor: there are many.)
             frame.text_scaled(q + Vec2::new(6.0, -4.0), name, if lit { col } else { Color([col.0[0], col.0[1], col.0[2], 0.55]) }, 0.7);
         }
@@ -1702,31 +2636,49 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
         }
     }
-    // The legend: what each colour is, points and ways.
-    {
-        let line = 14.0;
-        let (p, dims) = legend_rect(size);
-        frame.hud_rect(p, dims, Color([0.02, 0.06, 0.13, 0.85]));
-        frame.hud_box(p, dims, PLANE.scale(1.5));
-        // (Points a square, ways a stroke.)
-        let row = |frame: &mut Frame, y: f32, col: Color, text: &str, square: bool| {
-            if square {
-                frame.hud_rect(Vec2::new(p.x + 8.0, y + 2.0), Vec2::splat(6.0), col);
-            } else {
-                frame.hud_rect(Vec2::new(p.x + 6.0, y + 4.0), Vec2::new(12.0, 2.0), col);
+    // The reach check's findings: the floor got to (dots), where it drops away, and
+    // a report (out of date once the plan's changed).
+    if let Some((checked, found)) = interior.reach.as_ref().filter(|_| interior.shown(layer::REACH)) {
+        let fresh = *checked == interior.plan;
+        if fresh {
+            for p in &found.floor {
+                if let Some((q, _)) = cam.project(*p) {
+                    frame.hud_rect(q - Vec2::splat(0.75), Vec2::splat(1.5), Color([0.4, 1.0, 0.55, 0.5]));
+                }
             }
-            frame.text_scaled(Vec2::new(p.x + 24.0, y), text, LABEL.scale(0.85), 0.7);
-        };
-        let mut y = p.y + 6.0;
-        for (name, col) in SORTS {
-            row(frame, y, col, name, true);
-            y += line;
+            for p in &found.drops {
+                if let Some((q, _)) = cam.project(*p) {
+                    frame.hud_line(q - Vec2::splat(2.5), q + Vec2::splat(2.5), Color([1.0, 0.65, 0.2, 0.8]));
+                    frame.hud_line(q + Vec2::new(-2.5, 2.5), q + Vec2::new(2.5, -2.5), Color([1.0, 0.65, 0.2, 0.8]));
+                }
+            }
         }
-        y += line * 0.5;
-        row(frame, y, PATH, "LINE, ITS ROOM", false);
-        y += line;
-        row(frame, y, CLASH, "CLASH: CUTS THE HULL", false);
+        let count = |v: &[(usize, bool)]| (v.iter().filter(|x| x.1).count(), v.len());
+        let (t_ok, t_all) = count(&found.tubes);
+        let (d_ok, d_all) = count(&found.decks);
+        let p_ok = found.points.iter().filter(|x| x.1).count();
+        let mut lines = vec![
+            if fresh { "REACH FROM THE HATCH".to_string() } else { "REACH: OUT OF DATE (RUN AGAIN)".to_string() },
+            format!("WALLED TUBES {t_ok} OF {t_all}"),
+            format!("DECKS {d_ok} OF {d_all}"),
+            format!("SERVICE, DASH, DOORS {p_ok} OF {}", found.points.len()),
+            format!("DROPS {}", found.drops.len()),
+        ];
+        let missed: Vec<String> = found.tubes.iter().filter(|x| !x.1).map(|x| format!("TUBE {}", x.0 + 1)).chain(found.points.iter().filter(|x| !x.1).map(|x| x.0.clone())).collect();
+        if !missed.is_empty() {
+            lines.push("NOT GOT TO:".into());
+            lines.extend(missed.into_iter().take(10));
+        }
+        let (w, line) = (260.0, 13.0);
+        let at = Vec2::new(size.x - 12.0 - LAYERS_WIDTH - 8.0 - w, size.y - 26.0 - (lines.len() as f32 * line + 10.0));
+        frame.hud_rect(at, Vec2::new(w, lines.len() as f32 * line + 10.0), Color([0.02, 0.06, 0.13, 0.85]));
+        frame.hud_box(at, Vec2::new(w, lines.len() as f32 * line + 10.0), PLANE.scale(1.5));
+        for (k, l) in lines.iter().enumerate() {
+            let col = if k == 0 { if fresh { PATH } else { PICKED } } else { LABEL };
+            frame.text_scaled(at + Vec2::new(6.0, 5.0 + k as f32 * line), l, col, 0.7);
+        }
     }
+    draw_layers(frame, interior, layers_corner(size), interior.cursor);
     // The tool's panel: what it does and how, its actions, how much is drawn.
     {
         use crate::hud::{draw_cell, Lamp};
@@ -1736,6 +2688,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let (title, help) = match interior.tool {
             Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT. CLICK A POINT OR A TUBE TO PICK IT (A TUBE IN A GROUP: THE GROUP); SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
+            Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
@@ -1760,7 +2713,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 let (a, b, profile) = plan.lines[k];
                 let len = plan.points[a].at.distance(plan.points[b].at);
                 let hits = clash.get(k).map_or(0, |c| c.len());
-                format!("A LINE {len:.1} M{}", if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1}X{:.1}", profile.section.name(), profile.width, profile.height) }
+                let slope = slope_of(plan.points[a].at, plan.points[b].at).1;
+                format!("A LINE {len:.1} M {slope:.0}°{}{}", if slope > 50.0 { " TOO STEEP" } else { "" }, if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1}X{:.1}", profile.section.name(), profile.width, profile.height) }
             }
             None => {
                 let len: f32 = plan.lines.iter().map(|&(a, b, _)| plan.points[a].at.distance(plan.points[b].at)).sum();
@@ -1773,13 +2727,22 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 138.0), &format!("PLANE {:.1} M UP", plane - lo.y), PATH, 0.8);
         }
         // (The cross-section lit: the picked line's in LOOK, else the one new lines get.)
+        let h = interior.hatch;
         let now = match (interior.tool, interior.pick) {
             (Tool::Look, Some(Hover::Line(k))) => Some(plan.lines[k].2),
             (Tool::Look, _) => None,
+            (Tool::Door, _) => Some(Profile { section: h.section, width: h.width, height: h.height, stand: false }),
             _ => Some(interior.profile),
         };
-        let what = if interior.tool == Tool::Look { "THE PICKED LINE'S CROSS-SECTION" } else { "NEW LINES' CROSS-SECTION" };
+        let what = match interior.tool {
+            Tool::Look => "THE PICKED LINE'S CROSS-SECTION",
+            Tool::Door => "NEW HATCHES: SHAPE, SIZE, SLIDE",
+            Tool::Path => "NEW LINES' CROSS-SECTION",
+        };
         frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), what, LABEL.scale(0.8), 0.7);
+        if interior.tool == Tool::Path {
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 295.0), "ROOM PRESETS (ROOMS: DOORWAYS AT THEIR ENDS)", LABEL.scale(0.8), 0.7);
+        }
         // Its width and height: a slider each, its knob where it is.
         for (k, (at, len)) in sliders().into_iter().enumerate() {
             let value = now.map(|q| if k == 0 { q.width } else { q.height });
@@ -1795,15 +2758,27 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let walled = !picked.is_empty() && picked.iter().all(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled));
         let grouped = picked.iter().any(|&k| plan.group_of(k).is_some());
         for (r, name, a) in panel_buttons(interior.tool) {
-            let lamp = if inside(r, interior.cursor) || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s)) { Lamp::On } else { Lamp::Off };
+            let lamp = if inside(r, interior.cursor)
+                || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s))
+                || matches!(a, Action::Preset(k) if now == Some(PRESETS[k].1))
+                || (a == Action::Stand && now.is_some_and(|p| p.stand))
+                || (a == Action::SnapFloor && interior.snap_floor)
+                || matches!(a, Action::Slide(sl) if interior.tool == Tool::Door && h.slide == sl)
+            {
+                Lamp::On
+            } else {
+                Lamp::Off
+            };
             let off = match a {
                 Action::Remove => interior.pick.is_none(),
-                Action::Section(_) => now.is_none(),
+                Action::Section(_) | Action::Stand => now.is_none(),
                 Action::Group | Action::Wall => picked.is_empty(),
                 Action::Ungroup => !grouped,
                 _ => false,
             };
             let name = if a == Action::Wall && walled { "OPEN UP" } else { name };
+            // (Standing on its line: the line its floor; else its axis.)
+            let name = if a == Action::Stand { if now.is_some_and(|p| !p.stand) { "AXIS ON LINE" } else { "FLOOR ON LINE" } } else { name };
             draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
         }
     }

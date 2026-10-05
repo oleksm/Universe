@@ -1351,10 +1351,28 @@ pub fn apply(app: &mut App, name: &str) {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
                 _ => crate::shipyard::Shipyard::interior(app),
             };
+            // (UNIVERSE_DECKS: the deck studio open instead.)
+            if std::env::var_os("UNIVERSE_DECKS").is_some() {
+                y.open_decks();
+            }
+            // (UNIVERSE_HIDE=k,k,...: those layers hidden.)
+            for k in std::env::var("UNIVERSE_HIDE").unwrap_or_default().split(',').filter_map(|n| n.trim().parse().ok()) {
+                y.interior_mut().hide(k);
+            }
+            // (UNIVERSE_WALKAT=x,y,z,yaw: a walk-through there, as WALK HERE.)
+            if let Some(v) = std::env::var("UNIVERSE_WALKAT").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse::<f64>().ok()).collect::<Vec<_>>())
+                && v.len() == 4
+            {
+                y.interior_mut().walk = Some((universe_engine::glam::DVec3::new(v[0], v[1], v[2]), v[3]));
+            }
             // (UNIVERSE_PLAN: a sample access plan drawn.)
             if std::env::var_os("UNIVERSE_PLAN").is_some() {
                 let spec = app.ship.spec();
                 y.interior_mut().sample(&spec.key, spec.shape());
+                // (And the deck studio's demo decks, to be seen here too.)
+                let decks = demo_plan(app);
+                app.deckplans.retain(|p| p.hull != decks.hull);
+                app.deckplans.push(decks);
                 // (UNIVERSE_WALK=k: walked in the middle of line k, as WALK HERE.)
                 if let Some(k) = std::env::var("UNIVERSE_WALK").ok().and_then(|v| v.parse().ok()) {
                     y.interior_mut().walk_line(k);
@@ -1370,6 +1388,11 @@ pub fn apply(app: &mut App, name: &str) {
             let key = app.ship.spec().key.clone();
             app.deckplans.retain(|p| p.hull != key);
             let mut y = crate::shipyard::Shipyard::laying_out(app);
+            // (UNIVERSE_PLAN: the 3D studio's sample access plan, to be seen here.)
+            if std::env::var_os("UNIVERSE_PLAN").is_some() {
+                let spec = app.ship.spec();
+                y.interior_mut().sample(&spec.key, spec.shape());
+            }
             // (UNIVERSE_TOOL: plane, wall, door, ladder or stair in hand.)
             y.studio_mut().tool = match std::env::var("UNIVERSE_TOOL").as_deref() {
                 Ok("plane") => crate::studio::Tool::Plane,
@@ -1702,8 +1725,8 @@ fn demo_plan(app: &App) -> universe_sim::world::deckplan::DeckPlan {
     let floor = app.ship.spec().shape().walk.as_ref().map_or(-7.7, |m| m.lo.y + 5.1);
     let mut deck = Deck::at(floor);
     deck.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
-    deck.walls.push(Wall { points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { at: 14.0, width: 0.9, height: 2.1 }] });
-    deck.walls.push(Wall { points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![] });
+    deck.walls.push(Wall { points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { at: 14.0, width: 0.9, height: 2.1 }], rail: false });
+    deck.walls.push(Wall { points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![], rail: false });
     // A stair and a ladder up to a deck above it.
     deck.stairs.push(universe_sim::world::deckplan::Stair { from: DVec2::new(9.0, 6.0), to: DVec2::new(9.0, 0.0), width: 1.0 });
     deck.ladders.push(universe_sim::world::deckplan::Ladder { at: DVec2::new(-10.0, 3.0) });

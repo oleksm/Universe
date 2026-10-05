@@ -150,7 +150,57 @@ fn status(app: &App, ctx: &Context) -> Value {
         "graphics": app.graphics,
         "debug": app.debug,
         "recording": app.recording.as_ref().map(|r| r.dir.display().to_string()),
+        "cpu": cpu(),
     })
+}
+
+/// The game's CPU by kind of thread since the last ask (% of one core): the
+/// world's crowd ("crowd"), the main thread ("freefall"), the studios' work
+/// ("studio-*"), the rest by name; Linux only (null elsewhere, and on the first ask).
+fn cpu() -> Value {
+    use std::collections::HashMap;
+    use std::sync::Mutex;
+    // (Each thread's name and CPU ticks, by its id, when last asked.)
+    type Sample = (std::time::Instant, HashMap<String, (String, u64)>);
+    static LAST: Mutex<Option<Sample>> = Mutex::new(None);
+    let Ok(tasks) = std::fs::read_dir("/proc/self/task") else { return Value::Null };
+    let mut now = HashMap::new();
+    for t in tasks.flatten() {
+        let dir = t.path();
+        let (Ok(name), Ok(stat)) = (std::fs::read_to_string(dir.join("comm")), std::fs::read_to_string(dir.join("stat"))) else { continue };
+        // (Its user and system ticks: the 12th and 13th fields after the name's ")".)
+        let Some(rest) = stat.rsplit_once(')').map(|r| r.1) else { continue };
+        let f: Vec<&str> = rest.split_whitespace().collect();
+        let ticks = f.get(11).and_then(|u| u.parse::<u64>().ok()).unwrap_or(0) + f.get(12).and_then(|s| s.parse::<u64>().ok()).unwrap_or(0);
+        // (Grouped by name, its number dropped: "crowd 3" is "crowd".)
+        let group = name.trim().trim_end_matches(|c: char| c.is_ascii_digit() || c == ' ').to_string();
+        now.insert(t.file_name().to_string_lossy().into_owned(), (group, ticks));
+    }
+    let at = std::time::Instant::now();
+    let Ok(mut last) = LAST.lock() else { return Value::Null };
+    let out = last.as_ref().map(|(then, before)| {
+        let secs = at.duration_since(*then).as_secs_f64().max(1e-3);
+        let mut groups: HashMap<&str, (f64, usize)> = HashMap::new();
+        for (tid, (group, ticks)) in &now {
+            let was = before.get(tid).map_or(0, |b| b.1);
+            // (Linux's clock ticks: 100 a second.)
+            let pct = ticks.saturating_sub(was) as f64 / 100.0 / secs * 100.0;
+            let g = groups.entry(group.as_str()).or_default();
+            g.0 += pct;
+            g.1 += 1;
+        }
+        let total: f64 = groups.values().map(|g| g.0).sum();
+        let mut by: Vec<_> = groups.into_iter().collect();
+        by.sort_by(|a, b| b.1.0.total_cmp(&a.1.0));
+        json!({
+            "seconds": secs,
+            "total_pct_of_a_core": total.round(),
+            "cores": std::thread::available_parallelism().map_or(0, |n| n.get()),
+            "by_thread": by.into_iter().map(|(g, (pct, n))| json!({ "name": g, "threads": n, "pct_of_a_core": pct.round() })).collect::<Vec<_>>(),
+        })
+    });
+    *last = Some((at, now));
+    out.unwrap_or(Value::Null)
 }
 
 fn perf(ctx: &Context) -> Value {

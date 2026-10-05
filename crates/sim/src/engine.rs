@@ -836,12 +836,26 @@ impl Drop for EngineHandle {
     }
 }
 
+/// The most cores the game uses (UNIVERSE_CORES: another number).
+pub const CORES: usize = 5;
+
+/// The cores the game may use: its budget, or fewer if the machine has fewer.
+pub fn cores() -> usize {
+    let budget = std::env::var("UNIVERSE_CORES").ok().and_then(|n| n.parse().ok()).filter(|&n: &usize| n > 0).unwrap_or(CORES);
+    std::thread::available_parallelism().map_or(4, |n| n.get()).min(budget)
+}
+
 /// How the cores are shared: (the crowd's step, the pilots' thinking).
-/// Three are left to the main, render and world threads (else, with every
-/// core busy stepping crafts and thinking, they're starved now and then: the
-/// frame rate dips in a beat); the rest split between the two pools.
+/// Held to a budget of cores (the game kept to them, see `cores`): the crowd one
+/// short of them all, the pilots half, the OS sharing them out with the main,
+/// render and world threads. The whole machine: three left to those (else, with
+/// every core busy stepping crafts and thinking, they're starved now and then:
+/// the frame rate dips in a beat), the rest split between the two pools.
 pub fn thread_budget() -> (usize, usize) {
-    let cores = std::thread::available_parallelism().map_or(4, |n| n.get());
+    let cores = cores();
+    if cores < std::thread::available_parallelism().map_or(4, |n| n.get()) {
+        return ((cores - 1).max(1), (cores / 2).max(1));
+    }
     let workers = cores.saturating_sub(3).max(2);
     let crowd = (workers / 2).max(1);
     (crowd, (workers - crowd).max(1))
