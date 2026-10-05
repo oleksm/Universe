@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.driver
+  name: "Driver"
+  about: "Drives what moves on the ground."
+training:
+  learned: on the job
+  time: 31557600
+basis:
+  - { of: [training], tier: invented, review: true, note: "1 year: chosen, of the size such a trade takes on Earth. To be reviewed." }

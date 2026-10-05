@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.schooling
+  name: "Schooling"
+  rung: better
+  about: "Children taught to read, reckon and reason; the young taught a trade."
+served_by:
+  - { profession: profession.teacher, serves: 100 }
+unmet: "The next generation can do less than this one."
+basis:
+  - { of: [served_by], tier: invented, review: true, note: "A teacher to 20 pupils, and a fifth of the people of an age to be taught. From memory; to be reviewed." }

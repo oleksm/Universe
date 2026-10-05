@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.wandering
+  name: "Travel for its own sake"
+  rung: to matter
+  about: "To go somewhere only to see it."
+unmet: "Nobody knows what lies past the next port."

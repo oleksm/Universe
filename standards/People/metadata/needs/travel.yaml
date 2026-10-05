@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.travel
+  name: "A way to travel"
+  rung: better
+  about: "To be able to go elsewhere: to trade, to work, to see family."
+served_by:
+  - { profession: profession.pilot, serves: 2000 }
+unmet: "A place becomes a prison, however comfortable."
+basis:
+  - { of: [served_by], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

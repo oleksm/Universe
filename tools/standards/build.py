@@ -905,7 +905,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma"):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -2216,6 +2216,40 @@ for hl in built_hulls:
     for pt in unsized:
         rows.append(row("gap", part_link(pt), "", "", "", "no size"))
 report("volume", "Volume: a hull against its parts' boxes", "The space the hull's shape takes in the game, against the boxes of its parts added up. A gap is a part with no size.", ["What", "Hull's volume", "Parts' boxes", "Ratio", "Note"], rows)
+
+# 3b. People: what a person needs, rung by rung, and whether what meets each need is described.
+# (standards/People: needs and professions.)
+_pdir = os.path.join(TREE, "People", "metadata")
+needs = [dict(load(os.path.join(_pdir, "needs", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "needs")))] if os.path.isdir(_pdir) else []
+professions = [dict(load(os.path.join(_pdir, "professions", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "professions")))] if os.path.isdir(_pdir) else []
+_made = {rc.get("product") for m in modules for rc in m.get("recipes") or []} | {x.get("item") for m in modules for rc in m.get("recipes") or [] for x in rc.get("outputs") or []}
+_markets = {(g.get("game") or {}).get("goods", "").replace("goods.", "") for g in goods if any(g["slug"] == pr for pr in _made)}
+RUNGS = ["alive", "together", "better", "to matter"]
+rows = []
+for nd in sorted(needs, key=lambda n: (RUNGS.index(n["identity"]["rung"]), n["identity"]["name"])):
+    lacks, how = [], []
+    for t_ in nd.get("takes") or []:
+        it = t_["item"]
+        how.append(f"{item_name(it)} {t_['rate'] * 86400:.3g} kg a day")
+        if it not in _made and it not in _markets and it not in ("water", "O"):
+            lacks.append(f"nothing described makes {item_name(it).lower()}")
+    if "space" in nd:
+        how.append(f"{nd['space']:g} m2")
+        lacks.append("no building is described that gives the floor")
+    if "power" in nd:
+        how.append(f"{nd['power']:g} W")
+    for s_ in nd.get("served_by") or []:
+        how.append(f"a {s_['profession']} to {s_.get('serves', 0):,.0f}")
+        lacks.append(f"nowhere is described for a {s_['profession']} to work")
+    if not how:
+        lacks.append("nothing says yet what meets it")
+    rows.append(row("gap" if lacks else "ok", nd["identity"]["name"], nd["identity"]["rung"], "; ".join(how), "; ".join(dict.fromkeys(lacks)) or "met by what is described"))
+report("needs", "Needs: what a person needs, and whether it is described", "The ladder: each thing a person needs, what meets it for one person, and whether the registry describes something that makes or gives it. A gap is a need nothing described can meet yet.", ["Need", "Rung", "What meets it, for one person", "State"], rows)
+rows = []
+for pf in professions:
+    yrs = ((pf.get("training") or {}).get("time") or 0) / YEAR_S
+    rows.append(row("note", pf["identity"]["name"], (pf.get("training") or {}).get("learned", ""), f"{yrs:.0f} years" if yrs else "", ", ".join(n["identity"]["name"].lower() for n in needs if any(s_["profession"] == pf["slug"] for s_ in n.get("served_by") or [])), "no works says yet how many it takes"))
+report("work", "Work: the trades", "Each trade: how it is learned, how long that takes, and which needs its people meet. No works says yet how many of which trade it takes to run: that waits on the engine's type for a module.", ["Trade", "Learned", "Takes", "Meets", "Works"], rows)
 
 # 4. What goes in against what comes out, for each industrial module.
 rows = []

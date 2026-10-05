@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.work
+  name: "Work"
+  rung: together
+  about: "Something to do that others will pay for."
+unmet: "Idleness and want; the able leave."

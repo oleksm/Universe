@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.food
+  name: "Food"
+  rung: alive
+  about: "Enough to eat, of any kind."
+takes:
+  - { item: market.food, rate: 1.736e-05 }
+lasts: 1814400
+unmet: "Hunger, then weakness, then death in weeks."
+basis:
+  - { of: [takes, lasts], tier: invented, review: true, note: "1.5 kg of food as eaten a day: the game's figure, and a fair one." }

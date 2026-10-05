@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.company
+  name: "Drink and company"
+  rung: to matter
+  about: "Somewhere to meet, eat and drink with others."
+takes:
+  - { item: good.beer, rate: 3.472e-07 }
+  - { item: good.wine, rate: 1.157e-07 }
+space: 1
+served_by:
+  - { profession: profession.innkeeper, serves: 250 }
+unmet: "Loneliness; people keep to themselves."
+basis:
+  - { of: [takes, space, served_by], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.water
+  name: "Water to drink"
+  rung: alive
+  about: "Water to drink and cook with."
+takes:
+  - { item: good.water, rate: 4.051e-05 }
+lasts: 259200
+unmet: "Death in days."
+basis:
+  - { of: [takes, lasts], tier: invented, review: true, note: "3.5 kg a day to drink and prepare food, a spacecraft's allowance. From memory; to be reviewed." }

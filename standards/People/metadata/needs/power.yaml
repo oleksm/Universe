@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.power
+  name: "Power and light"
+  rung: together
+  about: "Light after dark, and power for what a household runs."
+power: 400
+lasts: 604800
+unmet: "Dark, cold food, no news."
+basis:
+  - { of: [power, lasts], tier: invented, review: true, note: "About 3,500 kWh a person a year, the Earth's average use of electricity. From memory; to be reviewed." }

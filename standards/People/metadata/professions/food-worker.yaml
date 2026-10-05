@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.food-worker
+  name: "Food worker"
+  about: "Mills, bakes, brews, butchers and packs."
+training:
+  learned: on the job
+  time: 31557600
+basis:
+  - { of: [training], tier: invented, review: true, note: "1 year: chosen, of the size such a trade takes on Earth. To be reviewed." }

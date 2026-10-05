@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.docker
+  name: "Docker"
+  about: "Loads and unloads, and keeps the stores."
+training:
+  learned: on the job
+  time: 31557600
+basis:
+  - { of: [training], tier: invented, review: true, note: "1 year: chosen, of the size such a trade takes on Earth. To be reviewed." }

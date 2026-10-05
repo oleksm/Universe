@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.builder
+  name: "Builder"
+  about: "Builds what stands: houses, works, roads."
+training:
+  learned: apprenticeship
+  time: 94672800
+basis:
+  - { of: [training], tier: invented, review: true, note: "3 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

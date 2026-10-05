@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.art
+  name: "Art"
+  rung: to matter
+  about: "Things made to be looked at, read, heard and worn for their own sake."
+takes:
+  - { item: market.art, rate: 1.157e-08 }
+served_by:
+  - { profession: profession.artist, serves: 1000 }
+unmet: "A place where nobody would choose to live."
+basis:
+  - { of: [takes, served_by], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

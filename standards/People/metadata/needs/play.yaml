@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.play
+  name: "Play and sport"
+  rung: to matter
+  about: "Games, contests and shows: something to do and to watch that is not work."
+space: 2
+served_by:
+  - { profession: profession.performer, serves: 1000 }
+unmet: "Dullness, and worse ways found of passing the time."
+basis:
+  - { of: [space, served_by], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

@@ -185,11 +185,17 @@ New kinds (`need`, `profession`) the engine ignores until it reads them: they ca
 
 Each part: describe, look up the figures, mark the guesses, run its report.
 
-## For the user to decide
+## Decided (the user, 2026-10-04)
 
-- **How far down each trade goes.** One "farmer", or ploughman, herdsman, orchardman? Proposal:
-  about 35 trades, broad.
-- **Worship and lore.** Whether the world has faiths, and whose they are to write.
-- **Wear.** Whether everything made has a life (the proposal), or only what matters to play.
-- **Where part 4's hulls come from:** designed in Blender one at a time as the MC-07 was, or
-  described first and modelled after.
+- Trades are broad: a farmer, not a ploughman.
+- Everything made has a life.
+- Worship: to come back to. Hulls: skipped for now.
+
+## Done
+
+**1. Needs and professions (2026-10-04).** A new root, `standards/People/`: 20 needs on the four
+rungs (each with what a person uses and gives off a day, the floor and power it takes, whose work
+meets it, how long one can go without) and 36 trades (each with how it is learned and how long
+that takes). Two reports: **Needs** (6 of 20 are met by something described: air, water, food,
+warmth, power; the other 14 are the work ahead) and **Work**. Every figure is from memory and
+marked to review; they are being looked up.

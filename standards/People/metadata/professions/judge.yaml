@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.judge
+  name: "Judge"
+  about: "Decides what the law says happened, and what follows."
+training:
+  learned: college
+  time: 378691200
+basis:
+  - { of: [training], tier: invented, review: true, note: "12 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

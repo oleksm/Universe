@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.home
+  name: "A home of one's own"
+  rung: together
+  about: "A place that is one's own to keep, not only a bed: space for a household, and the right to stay."
+space: 15
+unmet: "People do not settle; they leave when they can."
+basis:
+  - { of: [space], tier: invented, review: true, note: "15 m2 more a person than bare shelter: a guess. To be reviewed." }

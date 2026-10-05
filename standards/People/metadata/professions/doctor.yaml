@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.doctor
+  name: "Doctor"
+  about: "Treats the sick and the hurt."
+training:
+  learned: college
+  time: 315576000
+basis:
+  - { of: [training], tier: invented, review: true, note: "10 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

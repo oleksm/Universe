@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.news
+  name: "News"
+  rung: together
+  about: "To know what is happening, here and elsewhere."
+served_by:
+  - { profession: profession.reporter, serves: 5000 }
+unmet: "Rumour takes its place."
+basis:
+  - { of: [served_by], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

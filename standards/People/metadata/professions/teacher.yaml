@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.teacher
+  name: "Teacher"
+  about: "Teaches children and trades."
+training:
+  learned: college
+  time: 126230400
+basis:
+  - { of: [training], tier: invented, review: true, note: "4 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

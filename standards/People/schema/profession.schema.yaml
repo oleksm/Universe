@@ -1,0 +1,23 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Profession
+x-kind: [profession]
+description: "standards/People/metadata/professions/<name>.yaml: one trade: what its people do, and what it takes to become one. A works says how many of which trade it takes to run; a need says whose work meets it. Broad on purpose: a farmer, not a ploughman."
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  training:
+    type: object
+    additionalProperties: false
+    properties:
+      learned: { enum: [on the job, apprenticeship, school, college], description: "Where it is learned. on the job: beside someone who does it, earning. apprenticeship: bound to a master for a term. school: a trade school. college: years of study first." }
+      time: { type: number, x-unit: "s", description: "s to learn it, from nothing to working alone" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

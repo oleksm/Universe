@@ -1,0 +1,52 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Need
+x-kind: [need]
+description: "standards/People/metadata/needs/<name>.yaml: one thing a person needs, and what meets it. A person cares about a rung of the ladder only once the one below is safe. This is the measure a settlement is held to: is each need of its people met by something made there or brought there? What a person then does about a need that is not met is the game's."
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, rung, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      rung: { enum: [alive, together, better, to matter], description: "alive: to stay alive. together: to live with others. better: to get better. to matter: to matter." }
+      about: { type: string }
+  takes:
+    description: "What a person uses up to meet it, each day and every day."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [item, rate]
+      properties:
+        item: { type: string, x-ref: [element, good, stock, material, market], description: "What is used, by its key. A market category where any of its goods will do (any food)." }
+        rate: { type: number, x-unit: "kg/s", description: "kg of it a person uses each second" }
+  gives:
+    description: "What a person gives off in meeting it."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [item, rate]
+      properties:
+        item: { type: string, x-ref: [element, good, stock, material], description: "What is given off, by its key." }
+        rate: { type: number, x-unit: "kg/s", description: "kg of it a person gives off each second" }
+  space: { type: number, x-unit: "m2", description: "m2 of floor a person needs for it" }
+  power: { type: number, x-unit: "W", description: "W a person draws for it, on average" }
+  served_by:
+    description: "Whose work meets it, where it is met by people and not by things."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [profession]
+      properties:
+        profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
+        serves: { type: number, x-unit: "1", description: "how many people one of that trade serves" }
+  lasts: { type: number, x-unit: "s", description: "s a person can go without it before it harms them" }
+  unmet: { type: string, description: "What going without it does." }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

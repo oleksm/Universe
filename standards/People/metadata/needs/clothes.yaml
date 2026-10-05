@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.clothes
+  name: "Clothes"
+  rung: together
+  about: "Something to wear, and to work in."
+takes:
+  - { item: market.textiles, rate: 4.051e-07 }
+lasts: 31557600
+unmet: "Discomfort and shame; in the cold, harm."
+basis:
+  - { of: [takes, lasts], tier: invented, review: true, note: "About 13 kg of cloth a person a year. From memory; to be reviewed." }

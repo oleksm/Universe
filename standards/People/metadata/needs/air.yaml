@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.air
+  name: "Air"
+  rung: alive
+  about: "Oxygen to breathe, and the carbon dioxide breathed out taken away. On a world with air it is free; in a sealed place it is made and cleaned."
+takes:
+  - { item: element.o, rate: 9.722e-06 }
+gives:
+  - { item: good.carbon-dioxide, rate: 1.157e-05 }
+lasts: 180
+unmet: "Death in minutes."
+basis:
+  - { of: [takes, gives, lasts], tier: invented, review: true, note: "0.84 kg of oxygen in and 1.0 kg of carbon dioxide out a day, the figures spacecraft are designed to. From memory; to be reviewed." }

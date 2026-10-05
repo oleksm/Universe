@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.shelter
+  name: "Shelter"
+  rung: alive
+  about: "A roof and walls: somewhere to sleep, out of the weather, or out of the vacuum."
+space: 20
+lasts: 604800
+unmet: "Exposure; in a sealed place, nowhere to be at all."
+basis:
+  - { of: [space, lasts], tier: invented, review: true, note: "20 m2 of floor a person: a guess between a crowded city's and a comfortable one's. To be reviewed." }

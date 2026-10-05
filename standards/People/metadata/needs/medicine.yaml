@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.medicine
+  name: "Medicine"
+  rung: alive
+  about: "Someone to treat sickness and injury, and what they treat it with."
+takes:
+  - { item: market.medicine, rate: 5.787e-08 }
+served_by:
+  - { profession: profession.doctor, serves: 400 }
+  - { profession: profession.nurse, serves: 150 }
+lasts: 7776000
+unmet: "The sick and the hurt die who need not have."
+basis:
+  - { of: [takes, served_by, lasts], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }
