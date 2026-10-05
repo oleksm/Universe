@@ -198,6 +198,8 @@ const HULL: Color = Color([0.75, 0.88, 1.0, 0.8]);
 const INK: Color = Color([0.95, 0.98, 1.0, 1.0]);
 const FLOOR: Color = Color([0.55, 0.78, 1.0, 0.22]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
+/// The 3D studio's tunnels, shown here.
+const TUNNEL: Color = Color([0.4, 1.0, 0.75, 0.95]);
 const OUT: Color = Color([1.0, 0.45, 0.4, 0.55]);
 const LABEL: Color = Color([0.7, 0.85, 1.0, 1.0]);
 
@@ -416,6 +418,29 @@ fn end_view(h: &Hull, r: (Vec2, Vec2), pan: Vec2) -> (f64, Vec2) {
 fn side_y(h: &Hull, r: (Vec2, Vec2), pan: Vec2, y: f32) -> f64 {
     let (k, mid) = side_view(h, r, pan);
     (h.lo.y + h.hi.y) / 2.0 - (y - mid.y) as f64 / k
+}
+
+/// The 3D studio's tunnels and points in a side or end view (`at`: where a point
+/// is on screen; `k`: pixels a metre): each tunnel's line and the band of its room
+/// round it, each point.
+fn access_side(frame: &mut Frame, access: &crate::interior::Access, at: impl Fn(universe_engine::glam::Vec3) -> Vec2, k: f32) {
+    for &(a, b, room, walled) in &access.tunnels {
+        let (pa, pb) = (at(a), at(b));
+        frame.hud_line(pa, pb, TUNNEL);
+        if let Some((w, h)) = room {
+            let along = (pb - pa).normalize_or_zero();
+            // (Across the line on screen: its height if it runs level, its width if
+            // it climbs.)
+            let level = (b - a).y.abs() < universe_engine::glam::Vec2::new((b - a).x, (b - a).z).length();
+            let side = Vec2::new(-along.y, along.x) * if level { h } else { w } * 0.5 * k;
+            let edge = Color([TUNNEL.0[0], TUNNEL.0[1], TUNNEL.0[2], if walled { 0.8 } else { 0.4 }]);
+            frame.hud_line(pa + side, pb + side, edge);
+            frame.hud_line(pa - side, pb - side, edge);
+        }
+    }
+    for &(p, c) in &access.points {
+        frame.hud_rect(at(p) - Vec2::splat(2.0), Vec2::splat(4.0), c);
+    }
 }
 
 /// A dimension: a line from `a` to `b` with ticks across its ends, and its
@@ -873,7 +898,7 @@ fn inside(poly: &[DVec2], p: DVec2) -> bool {
 }
 
 /// The studio drawn (the shipyard's layout page).
-pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio) {
+pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio, access: &crate::interior::Access) {
     let size = frame.size();
     let (plan_r, low_r) = regions(size, panel_open(studio));
     let (side_r, end_r) = split_views(low_r);
@@ -916,6 +941,43 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         // The hull, cut at this deck.
         for [a, b] in &h.section {
             frame.hud_line_smooth(to(*a), to(*b), HULL);
+        }
+        // The 3D studio's access plan, seen from above: each tunnel's line and its
+        // sides (its width), each point; bright where it passes this deck, faint
+        // elsewhere.
+        if let Some(d) = deck {
+            let (y0, y1) = (d.floor as f32, (d.floor + d.headroom) as f32);
+            for &(a, b, room, walled) in &access.tunnels {
+                let half = room.map_or(0.0, |r| r.1 * 0.5);
+                let here = a.y.min(b.y) - half <= y1 && a.y.max(b.y) + half >= y0;
+                let col = Color([TUNNEL.0[0], TUNNEL.0[1], TUNNEL.0[2], if here { 0.95 } else { 0.25 }]);
+                let flat = |p: universe_engine::glam::Vec3| to(DVec2::new(f64::from(p.x), f64::from(p.z)));
+                let (pa, pb) = (flat(a), flat(b));
+                frame.hud_line(pa, pb, col);
+                if let Some((w, _)) = room {
+                    let along = DVec2::new(f64::from(b.x - a.x), f64::from(b.z - a.z));
+                    if along.length() > 0.2 {
+                        let side = DVec2::new(-along.y, along.x).normalize() * f64::from(w) * 0.5;
+                        let (a2, b2) = (DVec2::new(f64::from(a.x), f64::from(a.z)), DVec2::new(f64::from(b.x), f64::from(b.z)));
+                        let edge = Color([col.0[0], col.0[1], col.0[2], col.0[3] * if walled { 0.9 } else { 0.5 }]);
+                        frame.hud_line(to(a2 + side), to(b2 + side), edge);
+                        frame.hud_line(to(a2 - side), to(b2 - side), edge);
+                    } else {
+                        // (Upright: a shaft, its square seen from above.)
+                        let r = f64::from(w) * 0.5;
+                        let c = DVec2::new(f64::from(a.x), f64::from(a.z));
+                        let q = [c + DVec2::new(-r, -r), c + DVec2::new(r, -r), c + DVec2::new(r, r), c + DVec2::new(-r, r)].map(to);
+                        for k in 0..4 {
+                            frame.hud_line(q[k], q[(k + 1) % 4], col);
+                        }
+                    }
+                }
+            }
+            for &(p, c) in &access.points {
+                let here = p.y >= y0 - 0.5 && p.y <= y1 + 0.5;
+                let q = to(DVec2::new(f64::from(p.x), f64::from(p.z)));
+                frame.hud_rect(q - Vec2::splat(2.5), Vec2::splat(5.0), Color([c.0[0], c.0[1], c.0[2], if here { 1.0 } else { 0.3 }]));
+            }
         }
         // Its length along its foot, its beam beside it (the whole hull's).
         {
@@ -1090,6 +1152,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for [a, b] in &h.profile {
             frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
         }
+        // The 3D studio's access plan from the side.
+        access_side(frame, access, |p| Vec2::new(zs(f64::from(p.z)), sy(f64::from(p.y))), k as f32);
         // Its length under it, its height beside it.
         let (z0, z1) = (zs(h.lo.z).min(zs(h.hi.z)), zs(h.lo.z).max(zs(h.hi.z)));
         dimension(frame, Vec2::new(z0, sy(h.lo.y) + 10.0), Vec2::new(z1, sy(h.lo.y) + 10.0), h.hi.z - h.lo.z);
@@ -1159,6 +1223,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             }
             None => spinner(frame, end_r),
         }
+        access_side(frame, access, |p| Vec2::new(xs(f64::from(p.x)), ey(f64::from(p.y))), k as f32);
         for (k, d) in decks.iter().enumerate() {
             let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
             frame.hud_line(Vec2::new(end_r.0.x, ey(d.floor)), Vec2::new(end_r.1.x, ey(d.floor)), col);

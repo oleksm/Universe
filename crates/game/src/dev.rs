@@ -1264,6 +1264,10 @@ pub fn apply(app: &mut App, name: &str) {
             if std::env::var_os("UNIVERSE_PLAN").is_some() {
                 let spec = app.ship.spec();
                 y.interior_mut().sample(&spec.key, spec.shape());
+                // (And the deck studio's demo decks, to be seen here too.)
+                let decks = demo_plan(app);
+                app.deckplans.retain(|p| p.hull != decks.hull);
+                app.deckplans.push(decks);
                 // (UNIVERSE_WALK=k: walked in the middle of line k, as WALK HERE.)
                 if let Some(k) = std::env::var("UNIVERSE_WALK").ok().and_then(|v| v.parse().ok()) {
                     y.interior_mut().walk_line(k);
@@ -1279,6 +1283,11 @@ pub fn apply(app: &mut App, name: &str) {
             let key = app.ship.spec().key.clone();
             app.deckplans.retain(|p| p.hull != key);
             let mut y = crate::shipyard::Shipyard::laying_out(app);
+            // (UNIVERSE_PLAN: the 3D studio's sample access plan, to be seen here.)
+            if std::env::var_os("UNIVERSE_PLAN").is_some() {
+                let spec = app.ship.spec();
+                y.interior_mut().sample(&spec.key, spec.shape());
+            }
             // (UNIVERSE_TOOL: plane, wall, door, ladder or stair in hand.)
             y.studio_mut().tool = match std::env::var("UNIVERSE_TOOL").as_deref() {
                 Ok("plane") => crate::studio::Tool::Plane,

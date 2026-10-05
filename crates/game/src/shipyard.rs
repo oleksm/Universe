@@ -163,7 +163,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
     match y.page {
         Page::Interior => crate::interior::draw(frame, app, &place, &y.interior),
-        Page::Layout => crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio),
+        Page::Layout => crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio, &y.interior.access()),
     }
     // The studios' tabs (the one open lit).
     use crate::hud::{draw_cell, Lamp};

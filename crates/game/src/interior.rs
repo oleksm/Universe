@@ -20,6 +20,9 @@ const PATH: Color = Color([0.4, 1.0, 0.75, 0.95]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
 const PLANE: Color = Color([0.4, 1.0, 0.75, 0.35]);
 const CLASH: Color = Color([1.0, 0.3, 0.25, 1.0]);
+/// The deck studio's floors and walls, shown here.
+const DECK_FLOOR: Color = Color([1.0, 0.8, 0.5, 0.16]);
+const DECK_WALL: Color = Color([1.0, 0.8, 0.5, 0.55]);
 /// A walled group's walls (see-through panels).
 const WALL: Color = Color([0.75, 0.9, 1.0, 0.28]);
 
@@ -107,6 +110,9 @@ pub struct Interior {
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
     /// The plan as its walls were last worked out, and their panels.
     panelled: Option<(Plan, Vec<Panel>)>,
+    /// The deck studio's decks as last drawn here: the plan, and its floors and
+    /// walls (each a flat outline, the hull's frame; floor or wall).
+    decks: Option<(universe_sim::world::deckplan::DeckPlan, Vec<(Vec<Vec3>, bool)>)>,
     /// The plan as last saved or opened; closing with unsaved changes asked
     /// (`confirm`); a message for a while (s).
     saved: Option<Plan>,
@@ -221,6 +227,39 @@ fn outside(poly: Vec<Vec3>, planes: &[(Vec3, f32)]) -> Vec<Vec<Vec3>> {
         }
     }
     out
+}
+
+/// A deck plan's floors and walls as flat outlines (the hull's frame): its floors'
+/// pieces at their levels, its walls' runs from floor to ceiling.
+fn deck_shapes(plan: &universe_sim::world::deckplan::DeckPlan, mesh: &universe_sim::world::walk::WalkMesh) -> Vec<(Vec<Vec3>, bool)> {
+    use universe_sim::world::deckplan;
+    let mut out = Vec::new();
+    for (d, deck) in plan.decks.iter().enumerate() {
+        let sides = deckplan::deck_sides(mesh, deck.floor);
+        let holes = deckplan::openings(plan, d);
+        let (y0, y1) = (deck.floor as f32, (deck.floor + deck.headroom) as f32);
+        for poly in &deck.planes {
+            for q in deckplan::floor_pieces(poly, &sides, &holes) {
+                out.push((q.iter().map(|p| Vec3::new(p.x as f32, y0, p.y as f32)).collect(), true));
+            }
+        }
+        for wall in &deck.walls {
+            for run in deckplan::wall_runs(wall, &sides) {
+                for w in run.windows(2) {
+                    let (a, b) = (w[0].0.as_vec2(), w[1].0.as_vec2());
+                    out.push((vec![Vec3::new(a.x, y0, a.y), Vec3::new(b.x, y0, b.y), Vec3::new(b.x, y1, b.y), Vec3::new(a.x, y1, a.y)], false));
+                }
+            }
+        }
+    }
+    out
+}
+
+/// The access plan as the deck studio shows it: tunnels (from, to, their room
+/// across and up if any, walled?) and points (where, their colour), the hull's frame.
+pub struct Access {
+    pub tunnels: Vec<(Vec3, Vec3, Option<(f32, f32)>, bool)>,
+    pub points: Vec<(Vec3, Color)>,
 }
 
 /// A wall triangle to draw: its corners (the hull's frame), its colour, which of
@@ -668,6 +707,20 @@ impl Interior {
         }
     }
 
+    /// The access plan for the deck studio to show: each tunnel (its line, its
+    /// cross-section's width and height, none for a bare line; walled?) and each
+    /// point (where, its kind's colour).
+    pub fn access(&self) -> Access {
+        let plan = &self.plan;
+        Access {
+            tunnels: plan.lines.iter().enumerate().map(|(k, &(a, b, p))| {
+                let room = (p.section != Section::Line).then_some((p.width, p.height));
+                (plan.points[a].at, plan.points[b].at, room, plan.group_of(k).is_some_and(|g| plan.groups[g].walled))
+            }).collect(),
+            points: plan.points.iter().map(|p| (p.at, sort(p.name.as_deref()).0)).collect(),
+        }
+    }
+
     /// Where the cursor was last seen (HUD pixels).
     pub fn cursor(&self) -> Vec2 {
         self.cursor
@@ -941,7 +994,7 @@ fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
 /// The legend, at the bottom right: where it is and its size.
 fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
     let (w, line) = (230.0, 14.0);
-    let height = (SORTS.len() + 2) as f32 * line + line * 0.5 + 10.0;
+    let height = (SORTS.len() + 3) as f32 * line + line * 0.5 + 10.0;
     (Vec2::new(size.x - w - 12.0, size.y - 30.0 - height), Vec2::new(w, height))
 }
 
@@ -1053,6 +1106,18 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     interior.spin += ctx.dt;
     interior.refresh(&spec.key, spec.shape());
     interior.seed(&spec.key, spec.shape());
+    // The deck studio's decks, worked out again when they change: their floors and
+    // walls, to show here.
+    let decks = app.deckplans.iter().find(|p| p.hull == spec.key).cloned();
+    if interior.decks.as_ref().map(|d| &d.0) != decks.as_ref() {
+        interior.decks = match (decks, spec.shape().walk.as_ref()) {
+            (Some(plan), Some(mesh)) => {
+                let shapes = deck_shapes(&plan, mesh);
+                Some((plan, shapes))
+            }
+            _ => None,
+        };
+    }
     if let Some((_, t)) = interior.message.as_mut() {
         *t -= ctx.dt;
         if *t <= 0.0 {
@@ -1631,6 +1696,22 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
         }
     }
+    // The deck studio's decks: their floors faintly filled, their walls outlined.
+    if let Some((_, shapes)) = &interior.decks {
+        for (outline, floor) in shapes {
+            let on: Option<Vec<Vec2>> = outline.iter().map(|p| cam.project(*p).map(|s| s.0)).collect();
+            let Some(on) = on else { continue };
+            if *floor {
+                for k in 1..on.len().saturating_sub(1) {
+                    frame.hud_triangle_colored([on[0], on[k], on[k + 1]], [DECK_FLOOR; 3]);
+                }
+            } else {
+                for k in 0..on.len() {
+                    frame.hud_line(on[k], on[(k + 1) % on.len()], DECK_WALL);
+                }
+            }
+        }
+    }
     // The access plan: its lines bright, its points small squares (the hull's own,
     // named); what's under the cursor and a line's first point lit.
     let plan = &interior.plan;
@@ -1729,6 +1810,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         }
         y += line * 0.5;
         row(frame, y, PATH, "LINE, ITS ROOM", false);
+        y += line;
+        row(frame, y, DECK_WALL, "DECKS (2D STUDIO)", false);
         y += line;
         row(frame, y, CLASH, "CLASH: CUTS THE HULL", false);
     }
