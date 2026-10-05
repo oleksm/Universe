@@ -789,8 +789,9 @@ on the user.
 **Moons on orbits that last (user, 2026-10-04).** The seed now holds a moon's eccentricity to what
 heats it no more than 2 W/m² (twice your volcanic threshold, about Io's). Treistun's five worst are
 Io-like and volcanic now, not impossible. I ran `celestial_export.py`: 12 moons' records were
-rewritten (eccentricity, mean temperature). Descriptions to update by hand: **Treistun j I says
-"about 60 K", now 83.5 K; Treistun j II says "about 50 K", now 83.0 K.** Also, one line in
+rewritten (eccentricity, mean temperature). Descriptions to update by hand (their tidal heat warms them now): **Treistun h I and h II say
+"about 106 K", now about 112 K; i I and i II say "about 80 K", now 93.5 K; j I and j II say "about
+60 K", now 83.5 K.** Also, one line in
 `celestial_export.py`: it skips bodies the export marks `small` (else the belt's largest body, an
 `asteroid`, would land in `bodies/`). Tidal heat now counts for every moon, a rocky planet's too:
 your page's "moons of a giant" can widen to all moons.
