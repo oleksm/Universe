@@ -4,8 +4,9 @@ identity:
   name: "Shelter"
   rung: alive
   about: "A roof and walls: somewhere to sleep, out of the weather, or out of the vacuum."
-space: 20
+space: 15
 lasts: 604800
 unmet: "Exposure; in a sealed place, nowhere to be at all."
 basis:
-  - { of: [space, lasts], tier: invented, review: true, note: "20 m2 of floor a person: a guess between a crowded city's and a comfortable one's. To be reviewed." }
+  - { of: [space], tier: sourced, source: "standards/sources/research_people_needs.json", note: "15 m2 of floor a person: Hong Kong's, about the least a city lives on." }
+  - { of: [lasts], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

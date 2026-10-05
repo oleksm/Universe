@@ -2224,6 +2224,9 @@ needs = [dict(load(os.path.join(_pdir, "needs", f)), slug=f[:-5]) for f in sorte
 professions = [dict(load(os.path.join(_pdir, "professions", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "professions")))] if os.path.isdir(_pdir) else []
 _made = {rc.get("product") for m in modules for rc in m.get("recipes") or []} | {x.get("item") for m in modules for rc in m.get("recipes") or [] for x in rc.get("outputs") or []}
 _markets = {(g.get("game") or {}).get("goods", "").replace("goods.", "") for g in goods if any(g["slug"] == pr for pr in _made)}
+_bdir = os.path.join(TREE, "SFO", "metadata", "buildings")
+buildings = [dict(load(os.path.join(_bdir, f)), slug=f[:-5]) for f in sorted(os.listdir(_bdir))] if os.path.isdir(_bdir) else []
+tail = lambda k: str(k).split(".")[-1]
 RUNGS = ["alive", "together", "better", "to matter"]
 rows = []
 for nd in sorted(needs, key=lambda n: (RUNGS.index(n["identity"]["rung"]), n["identity"]["name"])):
@@ -2233,23 +2236,56 @@ for nd in sorted(needs, key=lambda n: (RUNGS.index(n["identity"]["rung"]), n["id
         how.append(f"{item_name(it)} {t_['rate'] * 86400:.3g} kg a day")
         if it not in _made and it not in _markets and it not in ("water", "O"):
             lacks.append(f"nothing described makes {item_name(it).lower()}")
+    housed = [b_ for b_ in buildings if any(tail(m_["need"]) == nd["slug"] for m_ in b_.get("meets") or [])]
     if "space" in nd:
         how.append(f"{nd['space']:g} m2")
-        lacks.append("no building is described that gives the floor")
+        if not housed:
+            lacks.append("no building is described that gives the floor")
     if "power" in nd:
         how.append(f"{nd['power']:g} W")
     for s_ in nd.get("served_by") or []:
-        how.append(f"a {s_['profession']} to {s_.get('serves', 0):,.0f}")
-        lacks.append(f"nowhere is described for a {s_['profession']} to work")
+        how.append(f"one {tail(s_['profession'])} to {s_.get('serves', 0):,.0f}")
+        if not any(tail(x_["profession"]) == tail(s_["profession"]) for b_ in buildings for x_ in b_.get("staff") or []):
+            lacks.append(f"nowhere is described for a {tail(s_['profession'])} to work")
     if not how:
         lacks.append("nothing says yet what meets it")
-    rows.append(row("gap" if lacks else "ok", nd["identity"]["name"], nd["identity"]["rung"], "; ".join(how), "; ".join(dict.fromkeys(lacks)) or "met by what is described"))
+    rows.append(row("gap" if lacks else "ok", nd["identity"]["name"], nd["identity"]["rung"], "; ".join(how), "; ".join(dict.fromkeys(lacks)) or "met by what is described" + (": " + ", ".join(b_["identity"]["name"].lower() for b_ in housed) if housed else "")))
 report("needs", "Needs: what a person needs, and whether it is described", "The ladder: each thing a person needs, what meets it for one person, and whether the registry describes something that makes or gives it. A gap is a need nothing described can meet yet.", ["Need", "Rung", "What meets it, for one person", "State"], rows)
 rows = []
 for pf in professions:
     yrs = ((pf.get("training") or {}).get("time") or 0) / YEAR_S
     rows.append(row("note", pf["identity"]["name"], (pf.get("training") or {}).get("learned", ""), f"{yrs:.0f} years" if yrs else "", ", ".join(n["identity"]["name"].lower() for n in needs if any(s_["profession"] == pf["slug"] for s_ in n.get("served_by") or [])), "no works says yet how many it takes"))
 report("work", "Work: the trades", "Each trade: how it is learned, how long that takes, and which needs its people meet. No works says yet how many of which trade it takes to run: that waits on the engine's type for a module.", ["Trade", "Learned", "Takes", "Meets", "Works"], rows)
+
+rows = []
+for b_ in buildings:
+    ppl = max((m_["people"] for m_ in b_.get("meets") or []), default=0)
+    rows.append(row("note", b_["identity"]["name"], ", ".join(f"{tail(m_['need'])} for {m_['people']:,.0f}" for m_ in b_.get("meets") or []), f"{b_.get('floor', 0):,.0f} m2", f"{b_.get('storeys', 0):g}",
+                    tonnes((b_.get("physical") or {}).get("mass", 0)), ", ".join(f"{x_['count']:,.0f} {tail(x_['profession'])}" for x_ in b_.get("staff") or []) or "none", f"{b_.get('life', 0) / YEAR_S:.0f} years"))
+report("buildings", "Buildings: where people live and are served", "Each building that is not a works: which needs it meets and of how many people, its floor, its weight (all materials; nothing yet says how concrete is made), who works in it, and how long it is built to stand.", ["Building", "Meets", "Floor", "Storeys", "Weight", "Staff", "Built to stand"], rows)
+
+# 3c. Takers: is each thing given off taken by something? (The matter loop: nothing made is nothing's to take.)
+_ins = {}
+for m in modules:
+    for rc in m.get("recipes") or []:
+        for x in rc.get("inputs") or []:
+            _ins.setdefault(x.get("item"), []).append(m["identity"]["name"])
+for nd in needs:
+    for t_ in nd.get("takes") or []:
+        _ins.setdefault(t_["item"], []).append("people")
+_outs = {}
+for m in modules:
+    for rc in m.get("recipes") or []:
+        for x in rc.get("outputs") or []:
+            _outs.setdefault(x.get("item"), []).append(m["identity"]["name"])
+for nd in needs:
+    for g_ in nd.get("gives") or []:
+        _outs.setdefault(g_["item"], []).append("people")
+rows = []
+for it in sorted(_outs, key=lambda i: item_name(i).lower()):
+    takers = list(dict.fromkeys(_ins.get(it) or []))
+    rows.append(row("ok" if takers else "gap", item_name(it), ", ".join(list(dict.fromkeys(_outs[it]))[:6]) + (" and others" if len(set(_outs[it])) > 6 else ""), ", ".join(takers[:6]) + (" and others" if len(takers) > 6 else "") or "nothing takes it"))
+report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed.", ["Given off", "By", "Taken by"], rows)
 
 # 4. What goes in against what comes out, for each industrial module.
 rows = []
@@ -2299,6 +2335,7 @@ for gd in goods:
 rows = []
 for gd in goods:
     made = [m for m in modules if any(rc.get("product") == gd["slug"] or any(x.get("item") == gd["slug"] for x in rc.get("outputs") or []) for rc in m.get("recipes") or [])]
+    made += [{"identity": {"name": "People"}, "slug": ""}] if any(g_["item"] == gd["slug"] for nd in needs for g_ in nd.get("gives") or []) else []
     uses = lambda slug: [m for m in modules if any(x.get("item") == slug for rc in m.get("recipes") or [] for x in rc.get("inputs") or [])]
     used = uses(gd["slug"])
     kind = (gd.get("identity") or {}).get("kind")

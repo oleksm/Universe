@@ -7,9 +7,10 @@ identity:
 takes:
   - { item: market.medicine, rate: 5.787e-08 }
 served_by:
-  - { profession: profession.doctor, serves: 400 }
-  - { profession: profession.nurse, serves: 150 }
+  - { profession: profession.doctor, serves: 290 }
+  - { profession: profession.nurse, serves: 106 }
 lasts: 7776000
 unmet: "The sick and the hurt die who need not have."
 basis:
-  - { of: [takes, served_by, lasts], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }
+  - { of: [served_by], tier: sourced, source: "standards/sources/research_people_needs.json", note: "3.43 doctors and 9.47 nurses to a thousand people: the average of the rich countries (the world's is 1.86 and 3.93)." }
+  - { of: [takes, lasts], tier: invented, review: true, note: "No figure for the weight of medicines a person uses was found. A figure from memory, of the right size: no source was looked up. To be reviewed." }

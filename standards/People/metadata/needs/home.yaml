@@ -4,7 +4,7 @@ identity:
   name: "A home of one's own"
   rung: together
   about: "A place that is one's own to keep, not only a bed: space for a household, and the right to stay."
-space: 15
+space: 20
 unmet: "People do not settle; they leave when they can."
 basis:
-  - { of: [space], tier: invented, review: true, note: "15 m2 more a person than bare shelter: a guess. To be reviewed." }
+  - { of: [space], tier: sourced, source: "standards/sources/research_people_needs.json", note: "20 m2 more than bare shelter, 35 in all: West Germany's in 1990 (34.8). Germany now has 47.7, Britain's least for a family of four was 18 each." }

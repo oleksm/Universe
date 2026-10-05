@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.meat-and-bone-meal
+  name: "Meat and bone meal"
+  kind: by-product
+  description: "The dried, ground solids left from rendering: half protein, a third ash."
+physical:
+  bulk_density: 650
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

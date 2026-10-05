@@ -1,0 +1,911 @@
+{
+ "oxygen_per_person": {
+  "value": 0.895,
+  "unit": "kg/person/day",
+  "what": "Oxygen consumed per crew member per day, nominal (82 kg crew member, respiratory quotient 0.860), NASA BVAD Rev2 2022 Table 3-31",
+  "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "quote": "Oxygen Consumed  kg/CM-d  0.895 (1),(3)",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.84,
+    "unit": "kg/person/day",
+    "what": "Oxygen consumed per crew member per day (typical size, standard activities)",
+    "source": "https://en.wikipedia.org/wiki/Life-support_system",
+    "quote": "The mass breakdown of these metabolic parameters is as follows: 0.84 kg of oxygen, 0.62 kg of food, and 3.54 kg of water consumed, converted through the body's physiological processes to 0.11 kg of solid wastes, 3.89 kg of liquid wastes, and 1.00 kg of carbon dioxide produced.",
+    "verified": true
+   }
+  ]
+ },
+ "co2_per_person": {
+  "value": 1.085,
+  "unit": "kg/person/day",
+  "what": "Carbon dioxide load produced per crew member per day, nominal, NASA BVAD Rev2 2022 Table 3-31",
+  "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "quote": "Carbon Dioxide Load  kg/CM-d  1.085 (1),(3)",
+  "verified": true,
+  "more": [
+   {
+    "value": 1.0,
+    "unit": "kg/person/day",
+    "what": "Carbon dioxide produced per crew member per day",
+    "source": "https://en.wikipedia.org/wiki/Life-support_system",
+    "quote": "The mass breakdown of these metabolic parameters is as follows: 0.84 kg of oxygen, 0.62 kg of food, and 3.54 kg of water consumed, converted through the body's physiological processes to 0.11 kg of solid wastes, 3.89 kg of liquid wastes, and 1.00 kg of carbon dioxide produced.",
+    "verified": true
+   }
+  ]
+ },
+ "drinking_water_per_person": {
+  "value": 2.5,
+  "unit": "kg/person/day",
+  "what": "Total human consumption water on ISS / transit vehicle / planetary base = drinking water 2.00 + food rehydration water 0.50 (NASA BVAD Rev2 Table 4-20)",
+  "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "quote": "Drinking Water kg/CM-d 2.59 2.00 (2) 2.00 (2) 2.00 (2) 2.00 (2); Food Rehydration Water kg/CM-d 1.03 0.50 (2) 0.50 (2) 0.50 (2) 0.50 (2); Total Human Consumption kg/CM-d 3.62 2.50 2.50 2.50 2.50",
+  "verified": true,
+  "more": [
+   {
+    "value": 3.217,
+    "unit": "kg/person/day",
+    "what": "Potable water content consumed per crew member per day (metabolic balance, BVAD Table 3-31); plus 0.760 kg/day water in food prior to rehydration",
+    "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+    "quote": "Potable Water Content kg/CM-d 3.217 (1),(2); Water in Food Prior to Rehydration kg/CM-d 0.760 (1),(2)",
+    "verified": true
+   },
+   {
+    "value": 3.54,
+    "unit": "kg/person/day",
+    "what": "Water consumed per crew member per day (metabolic need only)",
+    "source": "https://en.wikipedia.org/wiki/Life-support_system",
+    "quote": "The mass breakdown of these metabolic parameters is as follows: 0.84 kg of oxygen, 0.62 kg of food, and 3.54 kg of water consumed, converted through the body's physiological processes to 0.11 kg of solid wastes, 3.89 kg of liquid wastes, and 1.00 kg of carbon dioxide produced.",
+    "verified": true
+   },
+   {
+    "value": [
+     2.5,
+     3
+    ],
+    "unit": "L/person/day",
+    "what": "Survival water need for drinking and food, emergencies (WHO technical note 9, adapted from Sphere)",
+    "source": "https://cdn.who.int/media/docs/default-source/wash-documents/who-tn-09-how-much-water-is-needed.pdf",
+    "quote": "Survival (drinking and food) 2.5 to 3 lpd Depends on climate and individual physiology",
+    "verified": true
+   },
+   {
+    "value": 5.3,
+    "unit": "L/person/day",
+    "what": "WHO minimum drinking-water (hydration) volume based on the most vulnerable (lactating women doing physical activity in heat)",
+    "source": "https://web.archive.org/web/2021id_/https://apps.who.int/iris/bitstream/handle/10665/338044/9789240015241-eng.pdf",
+    "quote": "5.3 L/person/day, based on the needs of the most vulnerable (lactating women undertaking physical",
+    "verified": true
+   }
+  ]
+ },
+ "hygiene_water_per_person": {
+  "value": 0.7,
+  "unit": "kg/person/day",
+  "what": "Total hygiene water per crew member per day on the ISS and a transit vehicle (urinal flush 0.30 + personal hygiene 0.4); BVAD Table 4-20. Same table: early planetary base 1.98, mature planetary base 6.62 (with shower 1.08, laundry 1.1, dish wash 3.54), Devon Island Mars analog study 7.80",
+  "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "quote": "Total Hygiene kg/CM-d 7.80 0.7 0.7 1.98 6.62",
+  "verified": true,
+  "more": [
+   {
+    "value": 1.08,
+    "unit": "kg/person/day",
+    "what": "Shower water per crew member per day (planetary base assumption; Devon Island analog measured)",
+    "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+    "quote": "Shower kg/CM-d 1.08 n/a n/a 1.08 (6) 1.08 (6)",
+    "verified": true
+   },
+   {
+    "value": 15,
+    "unit": "L/person/day",
+    "what": "Earth: recommended minimum basic water requirement for bathing (Gleick), range 5-70; sanitation services minimum 20 (range 20-75); cooking and kitchen 10 (10-50); drinking 5 (2-5)",
+    "source": "https://en.wikipedia.org/wiki/Water_supply",
+    "quote": "|Bathing |15 |5–70 ; |Sanitation Services |20 |20–75 ; |Cooking and Kitchen |10 |10–50 ; |Drinking Water |5 |2–5",
+    "verified": true
+   },
+   {
+    "value": [
+     2,
+     6
+    ],
+    "unit": "L/person/day",
+    "what": "Earth emergency minimum for basic hygiene practices (WHO technical note 9, adapted from Sphere); total survival allocation 7.5-15 L/day",
+    "source": "https://cdn.who.int/media/docs/default-source/wash-documents/who-tn-09-how-much-water-is-needed.pdf",
+    "quote": "Basic hygiene practices 2 to 6 lpd Depends on social and cultural norms ... Total 7.5 to 15 lpd",
+    "verified": true
+   }
+  ]
+ },
+ "food_per_person": {
+  "value": 0.8,
+  "unit": "kg/person/day (dry mass)",
+  "what": "Food solids consumed per crew member per day, DRY mass without packaging (BVAD Table 3-31). As eaten: 1.56 kg/day at 48.7% hydration. Food energy 12.778 MJ/day",
+  "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "quote": "Food Solids; Mass (without packaging) kg/CM-d 0.800 (1) ... A total of 1.56 kg of food at 48.7% hydration is consumed (not including the 0.5 kg of water needed for hydration). ... 1.56 kg × (1-0.487) = 0.8 kg/CM-d (dry)",
+  "verified": true,
+  "more": [
+   {
+    "value": 1.56,
+    "unit": "kg/person/day (as eaten, 48.7% water)",
+    "what": "Food consumed per crew member per day as eaten (hydrated), ISS-type food system",
+    "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+    "quote": "A total of 1.56 kg of food at 48.7% hydration is consumed (not including the 0.5 kg of water needed for hydration).",
+    "verified": true
+   },
+   {
+    "value": 0.62,
+    "unit": "kg/person/day",
+    "what": "Food consumed per crew member per day (dry basis implied; page does not say)",
+    "source": "https://en.wikipedia.org/wiki/Life-support_system",
+    "quote": "The mass breakdown of these metabolic parameters is as follows: 0.84 kg of oxygen, 0.62 kg of food, and 3.54 kg of water consumed, converted through the body's physiological processes to 0.11 kg of solid wastes, 3.89 kg of liquid wastes, and 1.00 kg of carbon dioxide produced.",
+    "verified": true
+   }
+  ]
+ },
+ "metabolic_heat_per_person": {
+  "value": 12.426,
+  "unit": "MJ/person/day",
+  "what": "Total metabolic heat load per crew member per day, daily average incl. exercise (sensible 6.308 + latent 6.118); 12.426 MJ/day is an average of about 144 W (unit conversion, not in source)",
+  "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "quote": "Total Metabolic Heat Load MJ/CM-d 12.426 (1),(3); Sensible Metabolic Heat Load MJ/CM-d 6.308 (1),(3); Latent Metabolic Heat Load MJ/CM-d 6.118 (1),(3)",
+  "verified": true,
+  "more": [
+   {
+    "value": 80,
+    "unit": "W",
+    "what": "Heat produced by normal human metabolism at basal metabolic rate (at rest)",
+    "source": "https://en.wikipedia.org/wiki/Human_power",
+    "quote": "Normal human metabolism produces heat at a basal metabolic rate of around 80 watts (0.1 Hp).",
+    "verified": true
+   }
+  ]
+ },
+ "survival_times": {
+  "value": [
+   3,
+   3,
+   3
+  ],
+  "unit": "[minutes without air, days without water, weeks without food]",
+  "what": "Rule of threes (survival rule of thumb, explicitly a generalization, not scientifically accurate); also three hours without shelter in a harsh environment",
+  "source": "https://en.wikipedia.org/wiki/Rule_of_threes_(survival)",
+  "quote": "One can survive three minutes without breathable air (unconsciousness). One can survive three hours without shelter in a harsh environment (i.e. extreme heat or cold). One can survive three days without drinkable water. One can survive three weeks without food.",
+  "verified": true,
+  "more": [
+   {
+    "value": 382,
+    "unit": "days",
+    "what": "Longest recorded survival without food, under medical supervision (Angus Barbieri's fast)",
+    "source": "https://en.wikipedia.org/wiki/Starvation",
+    "quote": "There was a case when someone survived over a year (382 days) under medical supervision.",
+    "verified": true
+   },
+   {
+    "value": 18,
+    "unit": "% of body mass",
+    "what": "Body mass loss a lean person can usually survive in starvation (obese: possibly over 20%)",
+    "source": "https://en.wikipedia.org/wiki/Starvation",
+    "quote": "Lean people can usually survive with a loss of up to 18% of their body mass; obese people can tolerate more, possibly over 20%.",
+    "verified": true
+   }
+  ]
+ },
+ "electrolysis_energy": {
+  "value": 53,
+  "unit": "kWh per kg H2",
+  "what": "Electricity used by commercial water electrolysis per kg hydrogen (2022); the hydrogen holds 39.4 kWh/kg (HHV), which is also the consumption of a 100%-efficient electrolyser. Per kg of oxygen: no figure stated on the page",
+  "source": "https://en.wikipedia.org/wiki/Electrolysis_of_water",
+  "quote": "As of 2022, commercial electrolysis requires around 53 kWh of electricity to produce one kg of hydrogen, which holds 39.4 kWh (HHV) of energy.",
+  "verified": true,
+  "more": [
+   {
+    "value": 39.4,
+    "unit": "kWh per kg H2",
+    "what": "Theoretical minimum: consumption of a 100%-efficient electrolyser (higher heating value of hydrogen)",
+    "source": "https://en.wikipedia.org/wiki/Electrolysis_of_water",
+    "quote": "a 100%-efficient electrolyser would consume 39.4 kW.h/kg (higher heating value) of hydrogen",
+    "verified": true
+   },
+   {
+    "value": [
+     50,
+     55
+    ],
+    "unit": "kWh per kg H2",
+    "what": "Electricity to produce 1 kg hydrogen in practice",
+    "source": "https://en.wikipedia.org/wiki/Electrolysis_of_water",
+    "quote": "producing 1 kg of hydrogen (which has a specific energy of 143 MJ/kg) requires 50–55 kW.h of electricity.",
+    "verified": true
+   },
+   {
+    "value": 41.5,
+    "unit": "kWh per kg H2",
+    "what": "Claimed consumption of a capillary-fed electrolyser (Hysata, 95% efficiency vs HHV)",
+    "source": "https://en.wikipedia.org/wiki/Electrolysis_of_water",
+    "quote": "Conventional systems consume 52.5 kWh to produce hydrogen that can store 39.4 kWh of energy (1 kg). Its technology requires only 41.5 kWh to produce 1 kg.",
+    "verified": true
+   }
+  ]
+ },
+ "co2_scrubbing": {
+  "value": 50,
+  "unit": "% of CO2 converted",
+  "what": "ISS Advanced Closed Loop System (ESA): CO2 removed by an amine scrubber, half of it reacted with electrolysis hydrogen in a Sabatier reactor to methane and water; water electrolysed to oxygen; methane and remaining CO2 vented. Makes oxygen for three astronauts, saves 400 L water resupply per year",
+  "source": "https://en.wikipedia.org/wiki/ISS_ECLSS",
+  "quote": "The CO2 is removed from the station air by an amine scrubber, then removed from the scrubber by steam. 50% of the CO2 is converted to methane and water by a Sabatier reaction. The other 50% of carbon dioxide is jettisoned from the ISS along with the methane that is generated. The water is recycled by electrolysis, producing hydrogen (used in the Sabatier reactor) and oxygen. ... This water-saving capability reduced the needed water in cargo resupply by 400 liters per year. By itself it can regenerate enough oxygen for three astronauts.",
+  "verified": true,
+  "more": [
+   {
+    "value": 50,
+    "unit": "% of water needed for oxygen production",
+    "what": "ESA ACLS facts: share of the Station's oxygen-production water it can generate; rack volume 1.57 m3",
+    "source": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Research/Advanced_Closed_Loop_System",
+    "quote": "Methane is vented into space together with excess carbon dioxide, which explains why only 50% of the recovered CO2 is actually recovered. Facts ... Can generate about 50% of the water needed for oxygen production on the Space Station",
+    "verified": true
+   },
+   {
+    "value": 9,
+    "unit": "kg/day",
+    "what": "Design load of the ISS Urine Processor Assembly, for a 6-person crew (design recovery 85% of water content)",
+    "source": "https://en.wikipedia.org/wiki/ISS_ECLSS",
+    "quote": "The Urine Processor Assembly is designed to handle a load of 9 kg/day, corresponding to the needs of a 6-person crew.",
+    "verified": true
+   },
+   {
+    "value": 17,
+    "unit": "kWh per kg of O2:CH4 propellant",
+    "what": "Sabatier + electrolysis prototype for Mars propellant (not ISS): projected 50 kg system producing 1 kg/day of O2:CH4 propellant at 700 W continuous",
+    "source": "https://en.wikipedia.org/wiki/Sabatier_reaction",
+    "quote": "An optimised system of this design massing 50 kg \"is projected to produce 1 kg/day of O2:CH4 propellant ... with a methane purity of 98+% while consuming ~17 kWh per day of electrical power (at a continuous power of 700 W). Overall unit conversion rate expected from the optimised system is one tonne of propellant per 17 MWh energy input.",
+    "verified": true
+   },
+   {
+    "value": "half of input hydrogen lost as methane",
+    "unit": "text",
+    "what": "ISS Sabatier system: water recovered from CO2 and electrolysis hydrogen; methane vented",
+    "source": "https://en.wikipedia.org/wiki/Sabatier_reaction",
+    "quote": "The other resulting chemical, methane, is released into space. As half of the input hydrogen becomes wasted as methane, additional hydrogen is supplied from Earth to make up the difference.",
+    "verified": true
+   }
+  ]
+ },
+ "domestic_water_per_person": {
+  "value": [
+   20,
+   50,
+   100
+  ],
+  "unit": "L/person/day [basic, intermediate, optimal access]",
+  "what": "WHO 'Domestic water quantity, service level and health' 2nd ed. (2020), Table S1: typical volumes of water used in the home by access level; inadequate access = can be below 5.3",
+  "source": "https://web.archive.org/web/2021id_/https://apps.who.int/iris/bitstream/handle/10665/338044/9789240015241-eng.pdf",
+  "quote": "Inadequate access (quantity collected can be below 5.3 L/person/day); Basic access (average quantity unlikely to exceed 20 L/person/day); Intermediate access (average quantity about 50 L/person/day); Optimal access (average quantity more than 100 L/person/day)",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     50,
+     100
+    ],
+    "unit": "L/person/day",
+    "what": "UN General Assembly 2010 recognition of the human right to water: sufficient water for personal and domestic uses",
+    "source": "https://en.wikipedia.org/wiki/Human_right_to_water_and_sanitation",
+    "quote": "It recognized the right of every human being to have access to sufficient water for personal and domestic uses (between 50 and 100 liters of water per person per day)",
+    "verified": true
+   },
+   {
+    "value": 197,
+    "unit": "L/person/day",
+    "what": "Average INDOOR residential water use per person, North American sample (52.1 gallons per capita per day)",
+    "source": "https://en.wikipedia.org/wiki/Residential_water_use_in_the_U.S._and_Canada",
+    "quote": "The equivalent average use per person is 52.1 gpcd (gallons per capita per day) or 197 liters per capita per day.",
+    "verified": true
+   },
+   {
+    "value": 89,
+    "unit": "US gal/person/day (about 337 L)",
+    "what": "US average domestic water deliveries by public suppliers, indoor and outdoor, 2010 (USGS)",
+    "source": "https://en.wikipedia.org/wiki/Residential_water_use_in_the_U.S._and_Canada",
+    "quote": "average domestic water deliveries (for both indoor and outdoor purposes) by public water suppliers to single-family and multifamily dwellings were about 89 US gallons per person per day in 2010",
+    "verified": true
+   },
+   {
+    "value": 121,
+    "unit": "L/person/day",
+    "what": "Germany per capita water use 2010 (145 in 1990)",
+    "source": "https://en.wikipedia.org/wiki/Water_supply_and_sanitation_in_Germany",
+    "quote": "use actually declined from 145 liter/capita/day in 1990 to only 121 liter/capita/day in 2010.",
+    "verified": true
+   },
+   {
+    "value": 155,
+    "unit": "L/person/day",
+    "what": "Average water use when piped inside the home, Jinja, Uganda study (50 when supplied to a yard), cited by WHO",
+    "source": "https://web.archive.org/web/2021id_/https://apps.who.int/iris/bitstream/handle/10665/338044/9789240015241-eng.pdf",
+    "quote": "average use of water when it is piped inside the home is relatively high (155 L/person/day), but 50 L/person/day is used when water is supplied to a yard.",
+    "verified": true
+   }
+  ]
+ },
+ "living_space_per_person": {
+  "value": 47.7,
+  "unit": "m2/person",
+  "what": "Germany: average dwelling floor area (Wohnfläche) per inhabitant, 2021 (Destatis)",
+  "source": "https://de.wikipedia.org/wiki/Wohnfl%C3%A4che",
+  "quote": "In Deutschland stehen (Stand 2021) durchschnittlich 47,7 m² Wohnfläche je Einwohner zur Verfügung",
+  "verified": true,
+  "more": [
+   {
+    "value": 46.6,
+    "unit": "m2/person",
+    "what": "Switzerland: average dwelling floor area per resident, 2021 (Bundesamt für Statistik)",
+    "source": "https://de.wikipedia.org/wiki/Wohnfl%C3%A4che",
+    "quote": "46,6 m² betrug die durchschnittliche Wohnfläche pro Bewohner in der Schweiz im Jahr 2021",
+    "verified": true
+   },
+   {
+    "value": [
+     28.2,
+     34.8
+    ],
+    "unit": "m2/person",
+    "what": "Germany 1990: East 28.2, West 34.8; also 22.3 in 1965, 26.4 in 1972, 38 in 1998",
+    "source": "https://de.wikipedia.org/wiki/Wohnfl%C3%A4che",
+    "quote": "Im Jahre 1990 standen in Ostdeutschland 28,2 m² pro Person zur Verfügung, in Westdeutschland 34,8 m².",
+    "verified": true
+   },
+   {
+    "value": 160,
+    "unit": "sq ft/person (about 15 m2)",
+    "what": "Hong Kong: floor area per capita, 2016 (median household floor area 430 sq ft)",
+    "source": "https://en.wikipedia.org/wiki/Housing_in_Hong_Kong",
+    "quote": "The median floor area of households as of 2016 is 430 sqft, while the floor area per capita is 160 sqft.",
+    "verified": true
+   },
+   {
+    "value": 15,
+    "unit": "m2/person",
+    "what": "Hong Kong floor space per person; a quarter of the Australian or American average (new homes)",
+    "source": "https://shrinkthatfootprint.com/how-big-is-a-house/",
+    "quote": "At just 15 m2 (161 ft2) a person in Hong Kong has just a quarter of the floor space of the average Australian or American.",
+    "verified": false
+   },
+   {
+    "value": 72,
+    "unit": "m2 per 4-person dwelling (18 m2/person)",
+    "what": "UK Parker Morris minimum standard: net floor area of a semi-detached or end-terrace house for 4 people",
+    "source": "https://en.wikipedia.org/wiki/Parker_Morris_Committee",
+    "quote": "A semi-detached or end-of-terrace house for 4 people should have a net floor area of 72 m2.",
+    "verified": true
+   },
+   {
+    "value": 10,
+    "unit": "m2 per additional person",
+    "what": "London Housing Design Guide minimum: gross internal area added per person beyond 6 persons",
+    "source": "https://en.wikipedia.org/wiki/Parker_Morris_Committee",
+    "quote": "For dwellings designed for more than 6 persons, at least 10 m2 gross internal area should be added per person.",
+    "verified": true
+   },
+   {
+    "value": 94.85,
+    "unit": "m2 per dwelling",
+    "what": "Japan: average total floor area per housing unit (4.77 rooms, 0.56 people per room); not per person",
+    "source": "https://en.wikipedia.org/wiki/Housing_in_Japan",
+    "quote": "The average number of rooms per unit of housing was 4.77, the average total floor area was 94.85 m2 and the average number of people per room was 0.56.",
+    "verified": true
+   },
+   {
+    "value": 95,
+    "unit": "m2 per dwelling",
+    "what": "England: mean dwelling floor area; not per person",
+    "source": "https://en.wikipedia.org/wiki/Housing_in_the_United_Kingdom",
+    "quote": "The mean floor area is 95 square metres.",
+    "verified": true
+   }
+  ]
+ },
+ "electricity_per_person": {
+  "value": 3558.5,
+  "unit": "kWh/person/year",
+  "what": "World: electric power consumption per capita, 2023 (World Bank EG.USE.ELEC.KH.PC); OECD members 7670.3 (2024); high income 8837.8 (2024)",
+  "source": "https://api.worldbank.org/v2/country/WLD;OED;HIC/indicator/EG.USE.ELEC.KH.PC?format=json&per_page=300&date=2005:2024",
+  "quote": "Electric power consumption (kWh per capita): World 2023 = 3558.49780542321; OECD members 2024 = 7670.3126680718; High income 2024 = 8837.81310830149",
+  "verified": true,
+  "more": [
+   {
+    "value": 3.86,
+    "unit": "MWh/person/year",
+    "what": "World electricity consumption per capita, 2025 (Ember); total 31,746.92 TWh",
+    "source": "https://en.wikipedia.org/wiki/List_of_countries_by_electricity_consumption",
+    "quote": "World || 31,746.92 || 3.86 || 2025",
+    "verified": true
+   },
+   {
+    "value": 10791,
+    "unit": "kWh per household per year",
+    "what": "Household-only, USA 2022: average electricity sold to a residential utility customer (about 899 kWh/month) (US EIA)",
+    "source": "https://en.wikipedia.org/wiki/Domestic_energy_consumption",
+    "quote": "as of 2022, the average annual amount of electricity sold to a U.S. residential electric-utility customer was 10,791 kilowatt-hours (kWh), or an average of about 899 kWh per month.",
+    "verified": true
+   }
+  ]
+ },
+ "household_energy_heating": {
+  "value": 15,
+  "unit": "kWh/m2/year",
+  "what": "Passive House (PHI) criterion: maximum annual space heating demand (or peak heat load <= 10 W/m2)",
+  "source": "https://en.wikipedia.org/wiki/Passive_house",
+  "quote": "Annual space heating (and, in suitable climates, cooling) demand ≤ 15 kWh/m2/a or peak heat load ≤ 10 W/m2, as calculated with the Passive House Planning Package (PHPP), using local climate data.",
+  "verified": true,
+  "more": [
+   {
+    "value": 300,
+    "unit": "kWh/m2/year",
+    "what": "Germany: heating energy demand of an unrenovated residential building built 1960-1980 (comparison value)",
+    "source": "https://de.wikipedia.org/wiki/Energiestandard",
+    "quote": "Nicht saniertes Wohnhaus, Baujahr 1960–1980 || 300 kWh/(m²·a)",
+    "verified": true
+   },
+   {
+    "value": 160,
+    "unit": "kWh/m2/year",
+    "what": "Germany: average of building stock, 2002",
+    "source": "https://de.wikipedia.org/wiki/Energiestandard",
+    "quote": "Durchschnitt Deutschland 2002 || 160 kWh/(m²·a)",
+    "verified": true
+   },
+   {
+    "value": [
+     250,
+     150,
+     100
+    ],
+    "unit": "kWh/m2/year",
+    "what": "German thermal insulation ordinances, maximum for new buildings: WSVO 1977, 1982, 1995",
+    "source": "https://de.wikipedia.org/wiki/Energiestandard",
+    "quote": "Wärmeschutzverordnung (WSVO 77) || ≤ 250 kWh/(m²·a); Wärmeschutzverordnung (WSVO 82) || ≤ 150 kWh/(m²·a); Wärmeschutzverordnung (WSVO 95) || ≤ 100 kWh/(m²·a)",
+    "verified": true
+   },
+   {
+    "value": 70,
+    "unit": "kWh/m2/year",
+    "what": "German low-energy house (Niedrigenergiehaus, EnEV 2002) maximum",
+    "source": "https://de.wikipedia.org/wiki/Energiestandard",
+    "quote": "Niedrigenergiehaus || ≤ 70 kWh/(m²·a)",
+    "verified": true
+   },
+   {
+    "value": 12000,
+    "unit": "kWh per household per year",
+    "what": "USA: average household energy for heating (60% of household energy); hot water 3000",
+    "source": "https://en.wikipedia.org/wiki/Domestic_energy_consumption",
+    "quote": "Heating|blue|60.0|12000 kWh/yr (1400 watts); Hot water|blue|15.0|3000 kWh/yr (340 watts)",
+    "verified": true
+   }
+  ]
+ },
+ "doctors_per_1000": {
+  "value": 1.86,
+  "unit": "physicians per 1,000 people",
+  "what": "World, 2022 (World Bank SH.MED.PHYS.ZS); OECD members 3.43 (2022); high income 3.78 (2022)",
+  "source": "https://api.worldbank.org/v2/country/WLD;OED;HIC/indicator/SH.MED.PHYS.ZS?format=json&per_page=300&date=2005:2024",
+  "quote": "Physicians (per 1,000 people): World 2022 = 1.86093113170155; OECD members 2022 = 3.42957557843441; High income 2022 = 3.78178487887827",
+  "verified": true
+ },
+ "nurses_per_1000": {
+  "value": 3.93,
+  "unit": "nurses and midwives per 1,000 people",
+  "what": "World, 2022 (World Bank SH.MED.NUMW.P3); OECD members 9.47 (2022); high income 10.24 (2022)",
+  "source": "https://api.worldbank.org/v2/country/WLD;OED;HIC/indicator/SH.MED.NUMW.P3?format=json&per_page=300&date=2005:2024",
+  "quote": "Nurses and midwives (per 1,000 people): World 2022 = 3.92873185311013; OECD members 2022 = 9.4714821685659; High income 2022 = 10.2448229031474",
+  "verified": true
+ },
+ "hospital_beds_per_1000": {
+  "value": 3.29,
+  "unit": "hospital beds per 1,000 people",
+  "what": "World, 2021 (World Bank SH.MED.BEDS.ZS); OECD members 4.62 (2022); high income 5.24 (2022)",
+  "source": "https://api.worldbank.org/v2/country/WLD;OED;HIC/indicator/SH.MED.BEDS.ZS?format=json&per_page=300&date=2005:2024",
+  "quote": "Hospital beds (per 1,000 people): World 2021 = 3.29430541419327; OECD members 2022 = 4.61986205556494; High income 2022 = 5.24441846229626",
+  "verified": true
+ },
+ "teachers_ratio": {
+  "value": 23.45,
+  "unit": "pupils per teacher (primary)",
+  "what": "World, 2018 (World Bank SE.PRM.ENRL.TC.ZS); OECD members 15.32; high income 14.04",
+  "source": "https://api.worldbank.org/v2/country/WLD;OED;HIC/indicator/SE.PRM.ENRL.TC.ZS?format=json&per_page=300&date=2005:2024",
+  "quote": "Pupil-teacher ratio, primary: World 2018 = 23.44631; OECD members 2018 = 15.32034; High income 2018 = 14.03652",
+  "verified": true,
+  "more": [
+   {
+    "value": 17.0,
+    "unit": "pupils per teacher (secondary)",
+    "what": "World, 2018 (World Bank SE.SEC.ENRL.TC.ZS); OECD members 13.68; high income 12.63",
+    "source": "https://api.worldbank.org/v2/country/WLD;OED;HIC/indicator/SE.SEC.ENRL.TC.ZS?format=json&per_page=300&date=2005:2024",
+    "quote": "Pupil-teacher ratio, secondary: World 2018 = 16.9982; OECD members 2018 = 13.67666; High income 2018 = 12.63098",
+    "verified": true
+   },
+   {
+    "value": 24.73,
+    "unit": "% of total population",
+    "what": "Population aged 0-14 (proxy for school-age share; NOT enrolment), World 2024; OECD members 16.69; high income 15.68",
+    "source": "https://api.worldbank.org/v2/country/WLD;OED;HIC/indicator/SP.POP.0014.TO.ZS?format=json&per_page=300&date=2005:2024",
+    "quote": "Population ages 0-14 (% of total population): World 2024 = 24.7257206805965; OECD members 2024 = 16.6914076057563; High income 2024 = 15.6765211307363",
+    "verified": true
+   }
+  ]
+ },
+ "police_per_100k": {
+  "value": 300,
+  "unit": "police officers per 100,000 inhabitants",
+  "what": "Approximate world median, UN analysis 2006; highest regional median about 400 (West Asia, Eastern and Southern Europe); only nine countries below 100",
+  "source": "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_number_of_police_officers",
+  "quote": "In 2006, an analysis by the United Nations indicates an approximate median of 300 police officers per 100,000 inhabitants. Only nine countries disclosed values lower than 100 officers per 100,000 inhabitants. The highest median of police officers – around 400 – was observed in West Asia, Eastern and Southern Europe.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "DE_2024": 320.38,
+     "FR_2022": 361.25,
+     "PL_2024": 265.54,
+     "ES_2024": 378.97,
+     "SE_2024": 225.97,
+     "NL_2024": 290.75
+    },
+    "unit": "police officers per 100,000 inhabitants",
+    "what": "Eurostat crim_just_job, ISCO OC5412 police officers, unit P_HTHAB, by country (latest year available)",
+    "source": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/crim_just_job?format=JSON&unit=P_HTHAB&sex=T&geo=DE&isco08=OC5412&sinceTimePeriod=2021",
+    "quote": "DE {'2021': 306.83, '2022': 311.06, '2023': 316.98, '2024': 320.38}; FR {'2021': 359.99, '2022': 361.25}; PL {'2024': 265.54}; ES {'2024': 378.97}; SE {'2024': 225.97}; NL {'2024': 290.75} (same query with geo=FR, PL, ES, SE, NL)",
+    "verified": true
+   },
+   {
+    "value": 1551663,
+    "unit": "police officers (absolute, EU total 2024)",
+    "what": "EU total police officers 2024; also 70 348 professional judges and 267 682 adult-prison employees (no per-capita on the page)",
+    "source": "https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Police,_court_and_prison_personnel_statistics",
+    "quote": "In 2024, there were 1 551 663 police officers, 70 348 professional judges and 267 682 employees in adult prisons in the EU.",
+    "verified": true
+   }
+  ]
+ },
+ "judges_per_100k": {
+  "value": {
+   "DE_2024": 26.3,
+   "FR_2024": 11.15,
+   "PL_2024": 8.01,
+   "IT_2024": 7.86,
+   "ES_2024": 6.18,
+   "SE_2024": 9.04,
+   "NL_2024": 15.08
+  },
+  "unit": "professional judges per 100,000 inhabitants",
+  "what": "Eurostat crim_just_job, ISCO OC2612A professional judges, unit P_HTHAB, 2024, selected EU countries. No world or EU average per 100k found",
+  "source": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/crim_just_job?format=JSON&unit=P_HTHAB&sex=T&geo=DE&isco08=OC2612A&sinceTimePeriod=2021",
+  "quote": "DE {'2022': 26.44, '2024': 26.3}; FR {'2024': 11.15}; PL {'2024': 8.01}; IT {'2024': 7.86}; ES {'2024': 6.18}; SE {'2024': 9.04}; NL {'2024': 15.08} (same query with geo=FR, PL, IT, ES, SE, NL)",
+  "verified": true
+ },
+ "textile_fibre_per_person": {
+  "value": 14.3,
+  "unit": "kg/person/year",
+  "what": "Global fibre PRODUCTION per person, 2021 (8.4 kg in 1975); total 113 million tons in 2021 (cites Textile Exchange). Production, used as proxy for consumption",
+  "source": "https://en.wikipedia.org/wiki/Textile",
+  "quote": "Global fibre production per person has increased from 8.4 kilograms in 1975 to 14.3 kilograms in 2021. After a modest drop due to COVID-19 pandemic in 2020, global fibre output rebounded to 113 million tons in 2021.",
+  "verified": true
+ },
+ "municipal_waste_per_person": {
+  "value": 0.74,
+  "unit": "kg/person/day",
+  "what": "World average municipal solid waste generated per person per day (World Bank What a Waste 2.0, 2018); country range 0.11-4.54. High-income countries: 16% of population, 34% of waste (683 Mt) - per-capita figure for high income not stated on the page",
+  "source": "https://web.archive.org/web/2023id_/https://datatopics.worldbank.org/what-a-waste/trends_in_solid_waste_management.html",
+  "quote": "Worldwide, waste generated per person per day averages 0.74 kilogram but ranges widely, from 0.11 to 4.54 kilograms. Though they only account for 16 percent of the world’s population, high-income countries generate about 34 percent, or 683 million tonnes, of the world’s waste.",
+  "verified": true,
+  "more": [
+   {
+    "value": 4.9,
+    "unit": "lb/person/day (about 2.2 kg)",
+    "what": "USA municipal waste generated per person per day (EPA; 292.4 million short tons total)",
+    "source": "https://en.wikipedia.org/wiki/Waste",
+    "quote": "292.4 million U.S. short tons (2,000 lbs) of municipal waste was generated which equated to about 4.9 pounds per day per person.",
+    "verified": true
+   },
+   {
+    "value": 2.56,
+    "unit": "billion tonnes/year (world total, 2022)",
+    "what": "World municipal solid waste generated in 2022 (What a Waste 3.0); 3.86 billion tonnes by 2050 business-as-usual",
+    "source": "https://datatopics.worldbank.org/what-a-waste/trends_in_solid_waste_management.html",
+    "quote": "2.56 billion tonnes were produced in 2022, a figure the 2018 edition had not expected to be reached until 2030.",
+    "verified": true
+   }
+  ]
+ },
+ "sewage_per_person": {
+  "value": 200,
+  "unit": "L/person/day",
+  "what": "Sewage flow per person per day commonly used as an estimate in high-income countries. Energy to treat conventional municipal wastewater in kWh/m3: not found (see not_found); related figures in 'more'",
+  "source": "https://en.wikipedia.org/wiki/Sewage",
+  "quote": "A flowrate value of 200 l of sewage per person per day is often used as an estimate in high income countries",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     35,
+     90
+    ],
+    "unit": "L/person/day",
+    "what": "Water consumption design figure regarded as 'world average' (1992 data), to which sewage production generally corresponds; China 80, Africa 15-35, Latin America and Caribbean 70-190",
+    "source": "https://en.wikipedia.org/wiki/Sewage",
+    "quote": "With regards to water consumption, a design figure that can be regarded as \"world average\" is 35–90 l per person per day (data from 1992).",
+    "verified": true
+   },
+   {
+    "value": 1.42,
+    "unit": "L/person/day",
+    "what": "Median urine generation per person (global literature review)",
+    "source": "https://en.wikipedia.org/wiki/Sewage",
+    "quote": "The median urine generation rate is about 1.42 L/person/day, as was determined by a global literature review.",
+    "verified": true
+   },
+   {
+    "value": 60,
+    "unit": "g BOD/person/day",
+    "what": "Per-person organic load in sewage in high-income countries (population equivalent)",
+    "source": "https://en.wikipedia.org/wiki/Sewage",
+    "quote": "For high income countries, the \"per person organic matter load\" has been found to be approximately 60 gram of BOD per person per day.",
+    "verified": true
+   },
+   {
+    "value": 0.3,
+    "unit": "kWh/m3",
+    "what": "Energy use of modern low-energy membrane bioreactor wastewater treatment ('as low as'); first-generation MBRs were of the order 10 kWh/m3",
+    "source": "https://en.wikipedia.org/wiki/Membrane_bioreactor",
+    "quote": "enable sustainable operation at energy usage as low as 0.3 kWh/m3 of product.",
+    "verified": true
+   },
+   {
+    "value": [
+     1.2,
+     2.1
+    ],
+    "unit": "kWh/m3",
+    "what": "Energy consumption of potable water reuse (reclaimed water) schemes",
+    "source": "https://en.wikipedia.org/wiki/Reclaimed_water",
+    "quote": "reduced energy consumption associated with production, treatment, and distribution of water (1.2 to 2.1 kWh/m3) compared to using deep groundwater resources, water importation or desalination",
+    "verified": true
+   },
+   {
+    "value": 30,
+    "unit": "% of annual operating cost",
+    "what": "Share of operating costs spent on energy at US activated sludge treatment plants",
+    "source": "https://en.wikipedia.org/wiki/Sewage_treatment",
+    "quote": "For activated sludge treatment plants in the United States, around 30 percent of the annual operating costs is usually required for energy.",
+    "verified": true
+   }
+  ]
+ },
+ "water_treatment_energy": {
+  "value": 0.2,
+  "unit": "kWh/m3",
+  "what": "Energy use of local fresh water supplies (upper bound, 'or less'), cited to EPRI",
+  "source": "https://en.wikipedia.org/wiki/Desalination",
+  "quote": "but much higher than local fresh water supplies that use 0.2 kWh/m3 or less.",
+  "verified": true,
+  "more": [
+   {
+    "value": 3,
+    "unit": "kWh/m3",
+    "what": "Global energy intensity of seawater desalination, 2018 (20-30 kWh/m3 in 1970)",
+    "source": "https://en.wikipedia.org/wiki/Desalination",
+    "quote": "The energy intensity of seawater desalination has improved: It is now about 3 kWh/m3 (in 2018), down by a factor of 10 from 20-30 kWh/m3 in 1970.",
+    "verified": true
+   },
+   {
+    "value": [
+     3,
+     5.5
+    ],
+    "unit": "kWh/m3",
+    "what": "Reverse osmosis seawater desalination, electrical energy (no thermal energy); MSF total equivalent 13.5-25.5, MED 6.5-11, MVC 7-12",
+    "source": "https://en.wikipedia.org/wiki/Desalination",
+    "quote": "Electrical energy || 4–6 || 1.5–2.5 || 7–12 || 3–5.5 (columns MSF, MED, MVC, RO); Total equivalent electrical energy || 13.5–25.5 || 6.5–11 || 7–12 || 3–5.5",
+    "verified": true
+   },
+   {
+    "value": 1,
+    "unit": "kWh/m3",
+    "what": "Theoretical minimum energy for seawater desalination (excluding prefiltering and intake/outfall pumping); under 2 kWh/m3 achieved with RO",
+    "source": "https://en.wikipedia.org/wiki/Desalination",
+    "quote": "A minimum energy consumption for seawater desalination of around 1 kWh/m3 has been determined, excluding prefiltering and intake/outfall pumping. Under 2 kWh/m3 has been achieved with reverse osmosis membrane technology",
+    "verified": true
+   },
+   {
+    "value": 4,
+    "unit": "% of global electricity consumption",
+    "what": "Water sector's share of global electricity consumption (IEA WEO-2016), stays around 4% to 2040",
+    "source": "https://web.archive.org/web/2024id_/https://www.iea.org/reports/water-energy-nexus",
+    "quote": "The water sector’s share of global electricity consumption remains around 4% by 2040, according to WEO-2016",
+    "verified": true
+   }
+  ]
+ },
+ "beer_wine_per_person": {
+  "value": {
+   "CZE_2024": 126.0,
+   "DEU_2019": 99.0,
+   "USA_2019": 72.7,
+   "JPN_2019": 38.4,
+   "CHN_2018": 29
+  },
+  "unit": "litres of beer per person per year",
+  "what": "Beer consumption per capita by country (Kirin report and national sources). No world-average per-capita figure found",
+  "source": "https://en.wikipedia.org/wiki/List_of_countries_by_beer_consumption_per_capita",
+  "quote": "CZE || 126.0 || 1,375 || 2024; DEU || 99.0 || 8,160 || 2019; USA || 72.7 || 23,920 || 2019; JPN || 38.4 || 4,869 || 2019; CHN || 29 || 43,266 || 2018",
+  "verified": true,
+  "more": [
+   {
+    "value": 46.8,
+    "unit": "litres of wine per person per year",
+    "what": "Italy: wine consumption per capita (2021, Statista), third in the world",
+    "source": "https://en.wikipedia.org/wiki/Italian_wine",
+    "quote": "Italian wine is also popular domestically among Italians, who consume a yearly average of 46.8 litres per capita, ranking third in world wine consumption.",
+    "verified": true
+   },
+   {
+    "value": 40,
+    "unit": "litres of wine per person per year",
+    "what": "France: wine consumption per capita (after long decline; source circa 2004)",
+    "source": "https://en.wikipedia.org/wiki/French_wine",
+    "quote": "has contributed to a decline in the domestic and international consumption of French wine to 40 liters per capita.",
+    "verified": true
+   },
+   {
+    "value": 214.2,
+    "unit": "million hectolitres/year (world total)",
+    "what": "World wine consumption 2024 (OIV), lowest since 1961; world total, not per person",
+    "source": "https://www.oiv.int/sites/default/files/2025-04/OIV-State_of_the_World_Vine-and-Wine-Sector-in-2024.pdf",
+    "quote": "World wine consumption in 2024 is estimated at 214.2 mhl, marking a decrease of 3.3% compared to 2023.",
+    "verified": true
+   }
+  ]
+ },
+ "ice_melting_energy": {
+  "value": 333.55,
+  "unit": "kJ/kg",
+  "what": "Latent heat (specific enthalpy) of fusion of water ice at 0 °C",
+  "source": "https://en.wikipedia.org/wiki/Properties_of_water",
+  "quote": "The specific enthalpy of fusion (more commonly known as latent heat) of water is 333.55 kJ/kg at 0 °C",
+  "verified": true,
+  "more": [
+   {
+    "value": 2030,
+    "unit": "J/(kg·K)",
+    "what": "Specific heat capacity of ice at −10 °C",
+    "source": "https://en.wikipedia.org/wiki/Properties_of_water",
+    "quote": "The specific heat capacity of ice at −10 °C is 2030 J/(kg·K) and the heat capacity of steam at 100 °C is 2080 J/(kg·K).",
+    "verified": true
+   },
+   {
+    "value": 4184,
+    "unit": "J/(kg·K)",
+    "what": "Specific heat capacity of liquid water at 20 °C (4182 at 25 °C); heat of vaporization 2257 kJ/kg",
+    "source": "https://en.wikipedia.org/wiki/Properties_of_water",
+    "quote": "Water has a very high specific heat capacity of 4184 J/(kg·K) at 20 °C (4182 J/(kg·K) at 25 °C) ... as well as a high heat of vaporization (40.65 kJ/mol or 2257 kJ/kg at the normal boiling",
+    "verified": true
+   },
+   {
+    "value": 417.15,
+    "unit": "kJ/kg",
+    "what": "Worked example: energy to take 1 kg of ice at 0 °C to water at 20 °C",
+    "source": "https://en.wikipedia.org/wiki/Enthalpy_of_fusion",
+    "quote": "333.55 kJ + 83.6 kJ = 417.15 kJ for 1 kg of ice to increase in temperature by 20 °C",
+    "verified": true
+   }
+  ]
+ },
+ "deuterium_abundance": {
+  "value": 155.76,
+  "unit": "ppm (D atoms per million hydrogen atoms)",
+  "what": "Mean deuterium abundance in ocean water (VSMOW), ±0.1; about 1 atom in 6420; about 0.015% of hydrogen atoms. Mass of D or D2O per tonne of water: no figure stated on the pages read",
+  "source": "https://en.wikipedia.org/wiki/Deuterium",
+  "quote": "Mean abundance in ocean water (from VSMOW) 155.76 ± 0.1 atoms of deuterium per million atoms of all isotopes of hydrogen (about 1 atom of in 6420); that is, about 0.015% of all atoms of hydrogen (any isotope)",
+  "verified": true,
+  "more": [
+   {
+    "value": 155.76,
+    "unit": "ppm",
+    "what": "VSMOW 2H/1H ratio, ±0.05 ppm",
+    "source": "https://en.wikipedia.org/wiki/Vienna_Standard_Mean_Ocean_Water",
+    "quote": "Deuterium (2H / 1H) – 155.76 ± 0.05 ppm, about 1 in 6420 hydrogen atoms",
+    "verified": true
+   },
+   {
+    "value": 3200,
+    "unit": "water molecules per HDO molecule",
+    "what": "In normal water about 1 molecule in 3,200 is HDO; D2O about 1 molecule in 41 million",
+    "source": "https://en.wikipedia.org/wiki/Heavy_water",
+    "quote": "In normal water, about 1 molecule in 3,200 is HDO (one hydrogen in 6,400 is 2H), and heavy water molecules (D2O) only occur in a proportion of about 1 molecule in 41 million (i.e. one in 6,400^2)",
+    "verified": true
+   },
+   {
+    "value": 2.9411764705882355,
+    "unit": "g D2O recovered per tonne of feed water (about 2.9; derived from the 340,000:1 ratio)",
+    "what": "Recovered heavy water per tonne of feed at Bruce (Girdler sulfide) - derived by division from the quoted ratio",
+    "source": "https://en.wikipedia.org/wiki/Girdler_sulfide_process",
+    "quote": "required by mass 340000 units of feed water to produce 1 unit of heavy water.",
+    "verified": true
+   }
+  ]
+ },
+ "heavy_water_energy": {
+  "value": 2.8,
+  "unit": "MWh per kg D2O",
+  "what": "Energy consumption of heavy water production by H2S-H2O dual-temperature chemical exchange (Girdler sulfide type; Aleksin, USSR, 1947; T1 303 K, T2 403 K). Table in Wikipedia cites a Russian (MSU) presentation",
+  "source": "https://en.wikipedia.org/wiki/Heavy_water",
+  "quote": "Aleksin, Soviet Union | 1947 | H2S-H2O | T1 | 303 | 2.34 | 2.8 ; T2 | 403 | 1.82 (column: Energy consumption (MWh/kg))",
+  "verified": true,
+  "more": [
+   {
+    "value": 340,
+    "unit": "tonnes of feed water per kg D2O",
+    "what": "Bruce Heavy Water Plant (Girdler sulfide process): 340,000 tonnes feed water per tonne heavy water",
+    "source": "https://en.wikipedia.org/wiki/Heavy_water",
+    "quote": "It used the Girdler sulfide process to produce heavy water, and required 340,000 tonnes of feed water to produce one tonne of heavy water.",
+    "verified": true
+   },
+   {
+    "value": [
+     120,
+     150
+    ],
+    "unit": "MWh per kg D2O",
+    "what": "Heavy water by water electrolysis (Vemork, Norway, 1934)",
+    "source": "https://en.wikipedia.org/wiki/Heavy_water",
+    "quote": "Electrolysis | Vemork, Norway | 1934 | H2O | 360–370 | 5–7 | 120–150",
+    "verified": true
+   },
+   {
+    "value": 40,
+    "unit": "MWh per kg D2O",
+    "what": "Heavy water by water rectification/distillation (Morgantown Ordnance Works, USA, 1943); NH3 rectification 8; H2 cryogenic rectification 4-5",
+    "source": "https://en.wikipedia.org/wiki/Heavy_water",
+    "quote": "Rectification | Morgantown Ordnance Works, United States | 1943 | H2O | 353–373 | 1.043–1.026 | 40 ; Norilsk, Soviet Union | 1955 | NH3 | 283–293 | 1.024–1.020 | 8 ; ?, Soviet Union | 1958 | H2 | 22–23 | 1.47–1.52 | 4–5",
+    "verified": true
+   },
+   {
+    "value": 1.0,
+    "unit": "MWh per kg D2O",
+    "what": "Dual-temperature H2-H2O and H2-NH3 chemical exchange (lowest in table); monothermal H2-NH3 3.0; monothermal H2-H2O 65-70",
+    "source": "https://en.wikipedia.org/wiki/Heavy_water",
+    "quote": "H2-H2O | T1 | 223 | 7.9 | 1.0 ; H2-NH3 | T1 | 248 | 5.3 | 1.0 ; H2-NH3 | 248 | 5.3 | 3.0 ; H2-H2O | 333 | 3.14 | 65–70",
+    "verified": true
+   },
+   {
+    "value": [
+     15,
+     20
+    ],
+    "unit": "% D2O",
+    "what": "Girdler sulfide process output enrichment before final distillation to >99%; equilibrium constant 2.33 at 30 °C, 1.82 at 130 °C",
+    "source": "https://en.wikipedia.org/wiki/Girdler_sulfide_process",
+    "quote": "Normally in this process, water is enriched to 15–20% D2O. Further enrichment to \"reactor-grade\" heavy water (> 99% D2O) is done in another process, e.g. distillation.",
+    "verified": true
+   }
+  ]
+ },
+ "not_found": [
+  "electrolysis_energy: kWh per kg of OXYGEN (only per kg hydrogen stated)",
+  "co2_scrubbing: power draw or energy per kg CO2 of the ISS CDRA / Sabatier assembly",
+  "living_space_per_person: a UN minimum standard; a multi-country table of m2 per person (only DE, CH, HK found per person)",
+  "electricity_per_person: world household-only electricity per person (only a US per-household figure)",
+  "household_energy_heating: figures for climates other than Germany",
+  "teachers_ratio: share of population actually in education (only age 0-14 share given)",
+  "police_per_100k: verified per-100k for non-EU countries (US, Japan, India rows on Wikipedia are computed by template, not stated)",
+  "judges_per_100k: world or OECD/EU average per 100k (only individual EU countries and the EU absolute total)",
+  "textile_fibre_per_person: a consumption (not production) figure",
+  "municipal_waste_per_person: high-income average in kg/person/day (only share of world waste and a US figure)",
+  "sewage_per_person: energy to treat conventional municipal wastewater in kWh/m3",
+  "water_treatment_energy: kWh/m3 for conventional drinking-water treatment and supply beyond the '0.2 kWh/m3 or less' statement",
+  "beer_wine_per_person: world average litres per person for beer and for wine; wine per person beyond Italy and France",
+  "deuterium_abundance: kg of D or of heavy water per tonne of water as a stated figure",
+  "heavy_water_energy: an energy figure for the Canadian (Bruce) Girdler sulfide plants"
+ ],
+ "_notes": "Wikipedia sources were read as raw wikitext (index.php?title=PAGE&action=raw); quotes have wiki markup and convert-templates flattened. World Bank and Eurostat figures were read from the API JSON; the 'quote' is the returned series/values. NASA BVAD = NASA/TP-2015-218570 Rev2 (Feb 2022); CM-d = crew-member-day. The shrinkthatfootprint entry was read through a summarising fetch tool, so it is marked verified=false."
+}

@@ -79,8 +79,11 @@
 - { key: good.cheese, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.chicken, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.chickpeas, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.clothes, game: "goods.textiles", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.cocoa, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.coffee, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.compost, game: "goods.chemicals", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.cotton-cloth, game: "goods.textiles", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.cucumbers, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.eggs, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.fertiliser, game: "goods.chemicals", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
@@ -93,6 +96,8 @@
 - { key: good.lemons, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.lentils, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.lettuce, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.linen-cloth, game: "goods.textiles", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.linens, game: "goods.textiles", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.maize, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.mangoes, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.milk, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
@@ -127,6 +132,9 @@
 - { key: good.watermelons, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.wheat, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.wine, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.woollen-cloth, game: "goods.textiles", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.woollens, game: "goods.textiles", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: module.air-plant, game: "air-plant", in: "industry.ron, settlements.ron" }
 - { key: module.alumina-refinery, game: "alumina-refinery", in: "industry.ron, settlements.ron" }
 - { key: module.arc-furnace, game: "arc-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.arc-furnace-metal, game: "arc-furnace-metal", in: "industry.ron, settlements.ron" }
@@ -138,10 +146,13 @@
 - { key: module.building-dock, game: "building-dock", in: "industry.ron, settlements.ron" }
 - { key: module.casthouse, game: "casthouse", in: "industry.ron, settlements.ron" }
 - { key: module.casting-bay, game: "casting-bay", in: "industry.ron, settlements.ron" }
+- { key: module.clothing-works, game: "clothing-works", in: "industry.ron, settlements.ron" }
 - { key: module.cold-rolling-mill, game: "cold-rolling-mill", in: "industry.ron, settlements.ron" }
 - { key: module.cold-store, game: "cold-store", in: "industry.ron, settlements.ron" }
+- { key: module.compost-works, game: "compost-works", in: "industry.ron, settlements.ron" }
 - { key: module.cutting-table, game: "cutting-table", in: "industry.ron, settlements.ron" }
 - { key: module.dairy, game: "dairy", in: "industry.ron, settlements.ron" }
+- { key: module.deuterium-plant, game: "deuterium-plant", in: "industry.ron, settlements.ron" }
 - { key: module.feed-mill, game: "feed-mill", in: "industry.ron, settlements.ron" }
 - { key: module.fertiliser-works, game: "fertiliser-works", in: "industry.ron, settlements.ron" }
 - { key: module.field, game: "field", in: "industry.ron, settlements.ron" }
@@ -155,6 +166,7 @@
 - { key: module.grow-hall, game: "grow-hall", in: "industry.ron, settlements.ron" }
 - { key: module.hot-rolling-mill, game: "hot-rolling-mill", in: "industry.ron, settlements.ron" }
 - { key: module.hydrogen-plant, game: "hydrogen-plant", in: "industry.ron, settlements.ron" }
+- { key: module.ice-melter, game: "ice-melter", in: "industry.ron, settlements.ron" }
 - { key: module.ingot-yard, game: "ingot-yard", in: "industry.ron, settlements.ron" }
 - { key: module.ladle-station, game: "ladle-station", in: "industry.ron, settlements.ron" }
 - { key: module.livestock-barn, game: "livestock-barn", in: "industry.ron, settlements.ron" }
@@ -171,10 +183,13 @@
 - { key: module.piercing-mill, game: "piercing-mill", in: "industry.ron, settlements.ron" }
 - { key: module.potline, game: "potline", in: "industry.ron, settlements.ron" }
 - { key: module.reheat-furnace, game: "reheat-furnace", in: "industry.ron, settlements.ron" }
+- { key: module.rendering-works, game: "rendering-works", in: "industry.ron, settlements.ron" }
 - { key: module.shaft-furnace, game: "shaft-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.stock-yard, game: "stock-yard", in: "industry.ron, settlements.ron" }
 - { key: module.sugar-works, game: "sugar-works", in: "industry.ron, settlements.ron" }
 - { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
+- { key: module.textile-mill, game: "textile-mill", in: "industry.ron, settlements.ron" }
+- { key: module.water-works, game: "water-works", in: "industry.ron, settlements.ron" }
 - { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
 - { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }
 - { key: org.aurel, game: "brand.aurel", in: "brands.ron" }

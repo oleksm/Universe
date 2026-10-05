@@ -3,9 +3,10 @@ identity:
   key: need.power
   name: "Power and light"
   rung: together
-  about: "Light after dark, and power for what a household runs."
-power: 400
+  about: "Light after dark, and power for what a household and its town run."
+power: 406
 lasts: 604800
 unmet: "Dark, cold food, no news."
 basis:
-  - { of: [power, lasts], tier: invented, review: true, note: "About 3,500 kWh a person a year, the Earth's average use of electricity. From memory; to be reviewed." }
+  - { of: [power], tier: sourced, source: "standards/sources/research_people_needs.json", note: "3,558 kWh a person a year: the world's use of electricity in 2023, all uses (the rich countries use 7,670)." }
+  - { of: [lasts], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

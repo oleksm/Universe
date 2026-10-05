@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.woollens
+  name: "Woollens"
+  kind: product
+  description: "Coats, jumpers, blankets: warm things, of wool."
+physical:
+  bulk_density: 200
+game:
+  goods: goods.textiles
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

@@ -5,7 +5,7 @@ identity:
   rung: better
   about: "Children taught to read, reckon and reason; the young taught a trade."
 served_by:
-  - { profession: profession.teacher, serves: 100 }
+  - { profession: profession.teacher, serves: 92 }
 unmet: "The next generation can do less than this one."
 basis:
-  - { of: [served_by], tier: invented, review: true, note: "A teacher to 20 pupils, and a fifth of the people of an age to be taught. From memory; to be reviewed." }
+  - { of: [served_by], tier: derived, source: "standards/sources/research_people_needs.json", note: "15.3 pupils to a teacher and 16.7% of people under fifteen: the rich countries' figures (the world's are 23.5 and 24.7%). Those under fifteen stand for those at school." }

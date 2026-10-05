@@ -10,3 +10,16 @@
   and whose work meets it.
 - **36 trades,** from farmer to judge, each with how it is learned and how long that takes.
 - **Two reports:** which needs something described can meet (6 of 20 so far), and the trades.
+
+## Body: what keeps people alive
+
+- **The needs are sourced:** 12 of 20 rest on a published figure. A person takes in 4.9 kg a day
+  and gives 4.9 kg back.
+- **Water:** an ice melter and a water works that cleans used water for drinking again.
+- **Air:** an air plant that gets the oxygen back out of breathed carbon dioxide.
+- **Fuel:** a deuterium plant. A kilogram of deuterium takes 5 kg of water and 13.9 MWh.
+- **Homes and health:** a new kind of record, the building: bunkhouse, dwelling block, clinic,
+  hospital.
+- **Clothes:** cotton, flax and wool; a textile mill and a clothing works.
+- **Waste:** a compost works and a rendering works.
+- **A new report, Takers:** of 30 things given off, 20 have nothing to take them yet.

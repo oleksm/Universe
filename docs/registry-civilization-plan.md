@@ -197,5 +197,38 @@ Each part: describe, look up the figures, mark the guesses, run its report.
 rungs (each with what a person uses and gives off a day, the floor and power it takes, whose work
 meets it, how long one can go without) and 36 trades (each with how it is learned and how long
 that takes). Two reports: **Needs** (6 of 20 are met by something described: air, water, food,
-warmth, power; the other 14 are the work ahead) and **Work**. Every figure is from memory and
-marked to review; they are being looked up.
+warmth, power; the other 14 are the work ahead) and **Work**. Sourced since (`standards/sources/research_people_needs.json`): 12 of the 20 needs
+rest on a published figure (NASA's for a crew, the WHO's, the World Bank's); art, play, news, tools,
+travel and the weight of medicines are still guesses. A person balances: 4.9 kg a day in (oxygen,
+water, food), 4.9 out (carbon dioxide, waste water).
+
+**2. Body (2026-10-04).** 12 of 20 needs are now met by something described (11 of the 13 on the
+first two rungs; medicines and somewhere for a constable and a judge are what is left there).
+
+| What | Records |
+|---|---|
+| Water | Ice melter (asteroid ice to water, 776 kJ a kg), water works (waste water back to drinking water, 2.1 kWh a m3) |
+| Air | Air plant (carbon dioxide and hydrogen to water and methane); with the hydrogen plant it closes breath without plants. Halls close it with them |
+| Fuel | Deuterium plant: 4.97 kg of water and 13.9 MWh for each kg of deuterium. One feeds twenty power stations |
+| Homes | A new kind, `building`: bunkhouse (240 people), dwelling block (2,000), each with floor, weight, life and the needs it meets |
+| Health | Clinic and hospital, with their staff by trade. Nothing makes medicines yet: that waits on chemicals |
+| Clothes | Seed cotton and flax in the field, wool in the barn; textile mill (three cloths), clothing works (clothes, woollens, linens) |
+| Waste | Compost works (compost; growing medium for the halls, new and cleaned), rendering works (tallow, meat and bone meal) |
+| Food | The hydroponic hall: `docs/registry-food.md` |
+
+A new report, **Takers**: of 30 things given off, 10 are taken by something. The 20 that are not
+(scrap of three metals, slag, dross, red mud, methane, compost, sewage sludge, cottonseed, whey,
+pomace and others) are the recycling work of part 3.
+
+**Left open in Body, and why:**
+
+- **Wells, and mines on the ground.** A recipe needs an input, and the ground's is what the world
+  is made of, which the user is bringing later. Until then water comes from asteroid ice and from
+  cleaning what has been used.
+- **Medicines.** No figure for what a person uses was found, and what they are made from is
+  chemicals, part 3.
+- **Power smaller than 400 MW.** Not described.
+- **How long clothes last** (3.3 years, found) has nowhere to go: a good has no life yet. With
+  wear, part 3.
+- **Homes in vacuum.** A building does not say whether it holds air.
+- **A building's draw on a hot or cold world:** as the hall's, asked of the engine.

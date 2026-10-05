@@ -492,6 +492,18 @@ recipe draws; you then add |heat| x (outside - inside) / (inside x efficiency) w
 hotter, and next to nothing where it is colder. Figures and a table by settlement:
 `docs/registry-food.md`, "The hydroponic hall". Say if you want the field, and its name.
 
+**People and Body (2026-10-04), nothing you must do yet.** Two new roots of records the engine
+does not read: `standards/People/` (kinds `need`, `profession`) and `SFO/metadata/buildings/` (kind
+`building`: floor, weight, life, the needs it meets for how many, its staff by trade). 8 new
+modules and 20 new goods in the kinds you do read, with no new fields: ice melter, water works, air
+plant, deuterium plant (it makes `stock.deuterium-liq`), compost works, rendering works, textile
+mill, clothing works. Two of them have two recipes making the same thing from different inputs
+(compost works: growing medium). When you come to them: a need is the source for the household
+basket (`takes`, kg a second a person; `gives` is what a person puts back, and it balances); a
+module's crew wants a field on a module (`crew: [{profession, count}]`, proposed); a made thing's
+life wants a field on goods, parts and modules (`life`, s; the user has decided everything made
+wears out).
+
 **Asked of you:** a zone `use` of `agricultural` and a facility `kind` for a farm (and food works,
 and a store), so the farms can be placed; and how a module says it stands under an open sky, where
 a crop's carbon dioxide and water are the world's own.

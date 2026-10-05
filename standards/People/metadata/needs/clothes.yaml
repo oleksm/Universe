@@ -5,8 +5,9 @@ identity:
   rung: together
   about: "Something to wear, and to work in."
 takes:
-  - { item: market.textiles, rate: 4.051e-07 }
+  - { item: market.textiles, rate: 4.531e-07 }
 lasts: 31557600
 unmet: "Discomfort and shame; in the cold, harm."
 basis:
-  - { of: [takes, lasts], tier: invented, review: true, note: "About 13 kg of cloth a person a year. From memory; to be reviewed." }
+  - { of: [takes], tier: sourced, source: "standards/sources/research_people_needs.json", note: "14.3 kg of fibre a person a year: what the world made in 2021 (what it made, taken for what it wore)." }
+  - { of: [lasts], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

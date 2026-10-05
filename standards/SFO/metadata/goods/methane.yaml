@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.methane
+  name: "Methane"
+  kind: by-product
+  description: "A light gas that burns: what is left when carbon dioxide is joined to hydrogen to get its oxygen back as water."
+physical:
+  bulk_density: 0.72
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

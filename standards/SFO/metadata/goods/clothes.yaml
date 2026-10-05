@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.clothes
+  name: "Clothes"
+  kind: product
+  description: "Shirts, trousers, dresses, work clothes: cut and sewn of cotton."
+physical:
+  bulk_density: 200
+game:
+  goods: goods.textiles
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

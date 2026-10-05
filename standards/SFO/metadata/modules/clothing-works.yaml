@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.clothing-works
+  name: "Clothing works"
+  step: "Cut and sew"
+  description: "Cuts cloth to pattern and sews it."
+physical:
+  length: 80
+  width: 40
+  height: 8
+recipes:
+  - makes: good.clothes
+    does: "Cotton cloth is cut and sewn into clothes."
+    inputs:
+      - { item: good.cotton-cloth, quantity: 1.111 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.1111 }
+    rate: 0.1
+    power: 200000
+  - makes: good.woollens
+    does: "Woollen cloth is cut and sewn into coats and blankets."
+    inputs:
+      - { item: good.woollen-cloth, quantity: 1.111 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.1111 }
+    rate: 0.1
+    power: 200000
+  - makes: good.linens
+    does: "Linen is cut and hemmed."
+    inputs:
+      - { item: good.linen-cloth, quantity: 1.111 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.1111 }
+    rate: 0.1
+    power: 200000
+basis:
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_people_plant.json", note: "A tenth of the cloth is lost in cutting (a study of a cotton T-shirt); taken for all three." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
