@@ -5,6 +5,9 @@ description: Something that moves in bulk through industry and is neither an ele
 type: object
 additionalProperties: false
 required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [bulk_density] } } }
 properties:
   identity:
     type: object
@@ -40,7 +43,6 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      goods: { type: string, description: "Going: a good's market category is identity.traded_as. Still said, beside it, on the rocks the game digs, until the engine stops reading it for ores." }
       ore: { type: string, description: "For a rock: the game's ore it is (content/base/ores.ron), dug from asteroids by mining ships." }
   life: { type: number, x-unit: "s", description: "s a made thing lasts in use before it is worn out and must be made again" }
   revision:

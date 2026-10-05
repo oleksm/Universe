@@ -2,6 +2,7 @@
 identity:
   key: good.meat-and-bone-meal
   name: "Meat and bone meal"
+  traded_as: market.biologics
   kind: by-product
   description: "The dried, ground solids left from rendering: half protein, a third ash."
 physical:

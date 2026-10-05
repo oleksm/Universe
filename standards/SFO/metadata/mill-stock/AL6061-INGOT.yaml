@@ -4,6 +4,7 @@ identity:
   key: stock.al6061-ingot
   code: AL6061-INGOT
   name: "6061 ingot"
+  traded_as: market.metals
   form: ingot
 made_from:
   - item: material.aluminium-alloy-6061

@@ -3,6 +3,7 @@ identity:
   key: stock.mli-fl
   code: MLI-FL
   name: "Multi-layer insulation blanket"
+  traded_as: market.chemicals
   form: film
 made_from:
   - item: material.multi-layer-insulation

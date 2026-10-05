@@ -3,6 +3,7 @@ identity:
   key: stock.st304-ingot
   code: ST304-INGOT
   name: "304 stainless ingot"
+  traded_as: market.metals
   form: ingot
 made_from:
   - item: material.stainless-steel-304

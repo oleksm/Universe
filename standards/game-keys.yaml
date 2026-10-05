@@ -61,11 +61,11 @@
 - { key: body.treistun.truhora, game: "Truhora", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.tukau, game: "Tukau", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.ugaula, game: "Ugaula", in: "by name: celestial.ron, the seed" }
-- { key: good.asteroid-water-ice, game: "goods.water, ore.water_ice", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.carbonaceous-ore, game: "goods.ores, ore.carbonaceous", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.nickel-iron-ore, game: "goods.ores, ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.pgm-rich-ore, game: "goods.ores, ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.stony-ore, game: "goods.ores, ore.stony", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.asteroid-water-ice, game: "ore.water_ice", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.carbonaceous-ore, game: "ore.carbonaceous", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.nickel-iron-ore, game: "ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.pgm-rich-ore, game: "ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.stony-ore, game: "ore.stony", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: module.acid-plant, game: "acid-plant", in: "industry.ron, settlements.ron" }
 - { key: module.air-plant, game: "air-plant", in: "industry.ron, settlements.ron" }
 - { key: module.alumina-refinery, game: "alumina-refinery", in: "industry.ron, settlements.ron" }
@@ -90,13 +90,16 @@
 - { key: module.cold-store, game: "cold-store", in: "industry.ron, settlements.ron" }
 - { key: module.composites-works, game: "composites-works", in: "industry.ron, settlements.ron" }
 - { key: module.compost-works, game: "compost-works", in: "industry.ron, settlements.ron" }
+- { key: module.concentrator, game: "concentrator", in: "industry.ron, settlements.ron" }
 - { key: module.concrete-plant, game: "concrete-plant", in: "industry.ron, settlements.ron" }
+- { key: module.copper-smelter, game: "copper-smelter", in: "industry.ron, settlements.ron" }
 - { key: module.crushing-plant, game: "crushing-plant", in: "industry.ron, settlements.ron" }
 - { key: module.cutting-table, game: "cutting-table", in: "industry.ron, settlements.ron" }
 - { key: module.dairy, game: "dairy", in: "industry.ron, settlements.ron" }
 - { key: module.deuterium-plant, game: "deuterium-plant", in: "industry.ron, settlements.ron" }
 - { key: module.electronics-works, game: "electronics-works", in: "industry.ron, settlements.ron" }
 - { key: module.feed-mill, game: "feed-mill", in: "industry.ron, settlements.ron" }
+- { key: module.ferroalloy-furnace, game: "ferroalloy-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.fertiliser-works, game: "fertiliser-works", in: "industry.ron, settlements.ron" }
 - { key: module.field, game: "field", in: "industry.ron, settlements.ron" }
 - { key: module.film-works, game: "film-works", in: "industry.ron, settlements.ron" }
@@ -108,6 +111,7 @@
 - { key: module.fusion-power-station, game: "fusion-power-station", in: "industry.ron, settlements.ron" }
 - { key: module.general-warehouse, game: "general-warehouse", in: "industry.ron, settlements.ron" }
 - { key: module.glassworks, game: "glassworks", in: "industry.ron, settlements.ron" }
+- { key: module.gold-works, game: "gold-works", in: "industry.ron, settlements.ron" }
 - { key: module.grain-silo, game: "grain-silo", in: "industry.ron, settlements.ron" }
 - { key: module.grow-hall, game: "grow-hall", in: "industry.ron, settlements.ron" }
 - { key: module.hot-rolling-mill, game: "hot-rolling-mill", in: "industry.ron, settlements.ron" }
@@ -122,6 +126,8 @@
 - { key: module.machining-centre, game: "machining-centre", in: "industry.ron, settlements.ron" }
 - { key: module.market-garden, game: "market-garden", in: "industry.ron, settlements.ron" }
 - { key: module.meat-works, game: "meat-works", in: "industry.ron, settlements.ron" }
+- { key: module.mine, game: "mine", in: "industry.ron, settlements.ron" }
+- { key: module.nickel-smelter, game: "nickel-smelter", in: "industry.ron, settlements.ron" }
 - { key: module.oil-press, game: "oil-press", in: "industry.ron, settlements.ron" }
 - { key: module.orchard, game: "orchard", in: "industry.ron, settlements.ron" }
 - { key: module.ore-yard, game: "ore-yard", in: "industry.ron, settlements.ron" }
@@ -143,11 +149,14 @@
 - { key: module.synthesis-plant, game: "synthesis-plant", in: "industry.ron, settlements.ron" }
 - { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
 - { key: module.textile-mill, game: "textile-mill", in: "industry.ron, settlements.ron" }
+- { key: module.tin-smelter, game: "tin-smelter", in: "industry.ron, settlements.ron" }
+- { key: module.titanium-works, game: "titanium-works", in: "industry.ron, settlements.ron" }
 - { key: module.vacuum-furnace, game: "vacuum-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.water-works, game: "water-works", in: "industry.ron, settlements.ron" }
 - { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
 - { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }
 - { key: module.wire-mill, game: "wire-mill", in: "industry.ron, settlements.ron" }
+- { key: module.zinc-works, game: "zinc-works", in: "industry.ron, settlements.ron" }
 - { key: org.aurel, game: "brand.aurel", in: "brands.ron" }
 - { key: org.brightwater-dairy, game: "brand.brightwater_dairy", in: "brands.ron" }
 - { key: org.castellan, game: "brand.castellan", in: "brands.ron" }

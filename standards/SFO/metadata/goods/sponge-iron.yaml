@@ -2,5 +2,10 @@
 identity:
   key: good.sponge-iron
   name: Sponge iron
+  traded_as: market.metals
   kind: intermediate
   description: "Solid iron left when the oxygen is taken out of ore without melting it."
+physical:
+  bulk_density: 1800
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

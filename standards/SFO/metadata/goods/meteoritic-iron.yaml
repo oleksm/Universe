@@ -2,11 +2,15 @@
 identity:
   key: good.meteoritic-iron
   name: Meteoritic iron
+  traded_as: market.metals
   kind: raw
   description: "Grains of iron-nickel metal pulled out of crushed stony ore with a magnet. Already metal: it needs melting, not reducing."
+physical:
+  bulk_density: 4800
 source:
   won_from: good.stony-ore
   yield: 0.139
   note: "Crushed and passed over a magnet. A laboratory separation of an H chondrite recovered 13.9% of the rock as clean metal, of the 18.5% that is there."
 basis:
   - { of: [source], tier: sourced, source: "https://arxiv.org/pdf/2409.10382" }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

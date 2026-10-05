@@ -1,0 +1,64 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Deposit type
+x-kind: [deposit-type]
+description: "standards/Celestial/metadata/deposit-types/<name>.yaml: one kind of ore deposit, as the planet simulation makes it: what event forms it, what it carries and how rich, how big, how its deposits cluster, and what a survey sees of it. The shared word: each deposit on a world (where, how much) is the simulation's, not the registry's."
+type: object
+additionalProperties: false
+required: [identity, formed_by, carries]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  formed_by: { $ref: "../../dictionary.schema.yaml#/definitions/geological_event" }
+  carries:
+    description: "What it is mined for, and a typical grade of each."
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [item, grade]
+      properties:
+        item: { type: string, x-ref: [element, good], description: "What is won from it, by its key." }
+        grade: { type: number, x-unit: "1", description: "kg of it in each kg of ore, typically" }
+        said_as: { type: string, description: "The simulation's own name and unit for it (Cu %, Au g/t), where ours differs." }
+  ore: { type: string, x-ref: [good], description: "The good its ore is, as dug, by its key." }
+  size:
+    type: object
+    additionalProperties: false
+    properties:
+      median: { type: number, x-unit: "kg", description: "kg of ore in a deposit of middling size" }
+  cluster:
+    description: "How its deposits group into a district, stretched along the grain of the belt."
+    type: object
+    additionalProperties: false
+    properties:
+      deposits: { type: number, x-unit: "1", description: "deposits in a district, typically" }
+      along: { type: number, x-unit: "m", description: "m they spread along the grain" }
+      across: { type: number, x-unit: "m", description: "m they spread across it" }
+  seen_by:
+    description: "The survey methods that respond to it, each down to its reach."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [method, reach]
+      properties:
+        method: { $ref: "../../dictionary.schema.yaml#/definitions/survey_method" }
+        reach: { type: number, x-unit: "m", description: "m below the ground it still shows" }
+  counted:
+    description: "How many the simulation's test world has, against how many are known on Earth: a check on the simulation, not a rule."
+    type: object
+    additionalProperties: false
+    properties:
+      test_world: { type: number, x-unit: "1", description: "deposits in test world 4" }
+      earth: { type: number, x-unit: "1", description: "about how many are known on Earth" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "The simulation's deposit types as of its first brief: the kinds and the record's fields are stable, the counts and sizes are from one test world and will move.", ask: docs/geology-registry-note.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

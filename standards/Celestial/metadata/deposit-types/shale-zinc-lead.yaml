@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+identity:
+  key: deposit-type.shale-zinc-lead
+  name: "Shale-hosted zinc-lead"
+  about: "Laid down with the mud of a rift's sea."
+formed_by: rift
+carries:
+  - { item: element.zn, grade: 0.056, said_as: "Zn %" }
+  - { item: element.pb, grade: 0.028, said_as: "Pb %" }
+  - { item: element.ag, grade: 5.0e-05, said_as: "Ag g/t" }
+ore: good.shale-zinc-ore
+size:
+  median: 21300000000
+cluster:
+  deposits: 2
+  along: 15000
+  across: 5000
+seen_by:
+  - { method: geochemistry, reach: 50 }
+  - { method: electromagnetics, reach: 300 }
+  - { method: gravity, reach: 800 }
+counted:
+  test_world: 108
+  earth: 70
+basis:
+  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it: grades and sizes from its models of each type (the United States Geological Survey's), counts from one test world. Geochemistry is said to answer to almost every metal deposit near the surface: it is put on all, which may be one too many." }

@@ -5,6 +5,9 @@ description: "One piece of equipment a hull or a structure is fitted with. A mak
 type: object
 additionalProperties: false
 required: [identity, function, physical]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [mass, volume] } } }
 properties:
   identity:
     type: object
@@ -126,6 +129,8 @@ properties:
         required: [kind, range]
         properties:
           kind: { const: sensors }
+          resolves: { type: number, x-unit: "1", description: "for a survey: it makes out a rock at this many times the rock's size" }
+          survey_range: { type: number, x-unit: "m", description: "m, the farthest a survey reaches" }
           range: { type: number, x-unit: "m", description: "m, how far it sees a ship" }
       - description: "A comm of the hypernet: a ship's, or a transceiver or terminal others connect to."
         type: object
@@ -182,18 +187,31 @@ properties:
         required: [kind]
         properties:
           kind: { const: gun }
+          muzzle_speed: { type: number, x-unit: "m/s", description: "m/s its slug leaves at, against the ship" }
+          rate: { type: number, x-unit: "1/s", description: "rounds a second, the trigger held" }
+          slug_mass: { type: number, x-unit: "kg", description: "kg, one slug" }
+          magazine: { type: integer, description: "rounds in a full magazine" }
       - description: "A laser. Its figures are still in the engine's code."
         type: object
         additionalProperties: false
         required: [kind]
         properties:
           kind: { const: laser }
+          beam_power: { type: number, x-unit: "W", description: "W on the target, within its focus" }
+          focus: { type: number, x-unit: "m", description: "m within which the beam holds together; past it, its power falls as the square of the distance" }
+          range: { type: number, x-unit: "m", description: "m, the farthest it reaches" }
+          burn: { type: number, x-unit: "s", description: "s of firing from cold to too hot" }
+          cool: { type: number, x-unit: "s", description: "s to cool again" }
       - description: "The anchor and excavator. Their figures are still in the engine's code."
         type: object
         additionalProperties: false
         required: [kind]
         properties:
           kind: { const: mining_rig }
+          excavator_power: { type: number, x-unit: "W", description: "W its excavator cuts with" }
+          throughput: { type: number, x-unit: "kg/s", description: "kg/s of spoil it can carry off, at most" }
+          anchor_reach: { type: number, x-unit: "m", description: "m its anchor reaches from the hull" }
+          anchor_speed: { type: number, x-unit: "m/s", description: "m/s: it holds if the ship drifts slower than this against the surface" }
       - description: "Holds a gate's tube: one to a segment of a ring. Not in the game yet."
         type: object
         additionalProperties: false

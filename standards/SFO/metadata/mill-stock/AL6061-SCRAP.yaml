@@ -4,6 +4,7 @@ identity:
   key: stock.al6061-scrap
   code: AL6061-SCRAP
   name: "6061 scrap"
+  traded_as: market.metals
   form: scrap
 made_from:
   - item: material.aluminium-alloy-6061

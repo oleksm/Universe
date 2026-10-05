@@ -64,6 +64,8 @@ def validate(v, sch, here, at=""):
     if isinstance(v, (int, float)) and not isinstance(v, bool):
         if "minimum" in sch and v < sch["minimum"]:
             out.append(f"{where}: {v} is below {sch['minimum']}")
+        if "exclusiveMinimum" in sch and v <= sch["exclusiveMinimum"]:
+            out.append(f"{where}: {v} is not above {sch['exclusiveMinimum']}")
         if "maximum" in sch and v > sch["maximum"]:
             out.append(f"{where}: {v} is above {sch['maximum']}")
     if isinstance(v, list):
@@ -90,6 +92,8 @@ def validate(v, sch, here, at=""):
     for key in ("anyOf", "oneOf"):
         if key in sch and not any(not validate(v, s, here, at) for s in sch[key]):
             out.append(f"{where}: fits none of its alternatives")
+    for s in sch.get("allOf") or []:        # (what it derives from: it must fit each)
+        out += validate(v, s, here, at)
     return out
 
 
@@ -174,43 +178,14 @@ def refs(v, sch, here, at=""):
                 yield from refs(x, s, h, f"{at}.{k}" if at else k)
 
 
-def schema_of(rel):
-    """The schema a record is held to, by where it is filed (its path under standards/)."""
-    p = rel.split(os.sep)
-    root, name = p[0], p[-1]
-    S = lambda r, n: os.path.join(TREE, r, "schema", n + ".schema.yaml")
-    ORG = os.path.join(TREE, "organisation.schema.yaml")              # (companies, the standards body, administrations: one schema)
-    if root == "People":
-        return S(root, {"needs": "need", "professions": "profession"}.get(p[2], "")) if len(p) == 4 else None
-    if root == "Dogma":
-        return S(root, "section") if len(p) == 3 else S(root, "law")
-    if root == "Celestial":
-        if len(p) == 4 and p[2] == "seeding":
-            return S(root, "seeding")
-        if len(p) == 3:
-            return None
-        if p[2] == "rock-classes":
-            return S(root, "rock-class")
-        if p[2] == "vocabulary":
-            return S(root, "vocabulary")
-        if p[2] == "systems":
-            return S(root, "system" if len(p) == 4 else {"bodies": "body", "fields": "population", "small-bodies": "body", "regions": "population"}.get(p[4], ""))
-    if root == "MakerHouse":
-        return ORG if p[2] == "makers" else None
-    if root == "LocalAdministration":
-        if p[2] != "administrations":
-            return None
-        if len(p) == 4:
-            return ORG
-        if len(p) == 5:
-            return S(root, "settlement")
-        return S(root, {"zones": "zone", "parcels": "parcel", "streets": "street", "power-lines": "power-line", "facilities": "facility"}.get(p[5], ""))
-    if root == "SFO":
-        if len(p) == 3:
-            return ORG if name == "SFO.yaml" else S(root, "standard")
-        kind = p[2]
-        return S(root, {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate", "parts": "part", "structures": "structure", "markets": "market", "buildings": "building"}.get(kind, ""))
-    return None
+NAMED = re.compile(r"# yaml-language-server: \$schema=(\S+)")
+
+
+def schema_named(full):
+    """The schema a record is held to: the one its first line names. None: it names none."""
+    with open(full, encoding="utf-8") as f:
+        m = NAMED.match(f.readline())
+    return os.path.normpath(os.path.join(os.path.dirname(full), m.group(1))) if m else None
 
 
 KEY = re.compile(r"^[a-z][a-z-]*(\.[a-z0-9][a-z0-9-]*)+$")
@@ -222,6 +197,8 @@ def key_of(rel, rec):
     p = rel.split(os.sep)
     root, stem = p[0], p[-1][:-5]
     low = stem.lower()
+    if len(p) == 3 and p[1] == "metadata" and stem == root and root != "SFO":       # (a root's own record; the SFO's is the body itself, an organisation)
+        return "root."
     if root == "SFO":
         if len(p) == 3:
             return "org." + low if stem == "SFO" else "standard.sfo." + str(int(stem.split("-")[0]))
@@ -242,8 +219,8 @@ def key_of(rel, rec):
             return "seeding." + low
         if len(p) == 3:
             return "seeding." + low
-        if p[2] in ("rock-classes", "vocabulary"):
-            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary."}[p[2]] + low
+        if p[2] in ("rock-classes", "vocabulary", "rock-units", "deposit-types"):
+            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary.", "rock-units": "rock-unit.", "deposit-types": "deposit-type."}[p[2]] + low
         if len(p) == 4:
             return "system." + low
         return {"bodies": "body.", "fields": "population.", "small-bodies": "body.", "regions": "population."}[p[4]] + p[3] + "." + low
@@ -279,10 +256,9 @@ def check_all():
             rel = os.path.relpath(full, TREE)
             if os.sep not in rel or fn.endswith(".schema.yaml"):
                 continue
-            sp = schema_of(rel)
-            if sp is None:
-                continue
-            if not os.path.exists(sp):
+            # (No record without a schema, ever: it names its own on its first line.)
+            sp = schema_named(full)
+            if sp is None or not os.path.exists(sp):
                 unheld.append(rel)
                 continue
             with open(full, encoding="utf-8") as f:

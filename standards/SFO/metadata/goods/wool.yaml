@@ -2,6 +2,7 @@
 identity:
   key: good.wool
   name: "Wool"
+  traded_as: market.textiles
   kind: intermediate
   description: "Wool as shorn: greasy, with dirt in it. About half of it is clean fibre."
 physical:

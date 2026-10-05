@@ -37,3 +37,5 @@ fixes go straight in; this is for what needs deciding or building.
    physics terrain, fine grain), the sun's glare, the galaxy map, the gate's push. Left: the
    gate's own redesign, the sprint and interceptor shapes, atmosphere haze and the sky's fade
    with height, the sun's corona, a cockpit frame (optional).
+
+- **Geological data for bodies: how it fits and where it belongs** (the user, 2026-10-05: "we will later need to figure out"). The questions are in `docs/geology-registry-note.md`, "Open".

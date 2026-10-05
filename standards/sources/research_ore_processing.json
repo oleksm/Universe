@@ -1,0 +1,1795 @@
+{
+ "comminution_energy": {
+  "value": 57900,
+  "unit": "Btu per short ton of material handled",
+  "what": "Current energy requirement of grinding in US metal mining (DOE Mining Energy Bandwidth Study 2007, Exhibit 24, App. B p.32); crushing is a separate 1,900 Btu/ton",
+  "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+  "quote": "Grinding 57,900 [Current Energy Requirements (Btu/ton)] 1% 1% 49,200 3% 16,800 600; Crushing 1,900 50% 80% 1,200 92% 1,000 900",
+  "verified": true,
+  "more": [
+   {
+    "value": 18.7,
+    "unit": "kWh per tonne",
+    "what": "DERIVED: 57,900 Btu/short ton x 1055.06 J/Btu / 3.6 MJ per kWh / 0.907185 t per short ton",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+    "quote": "Grinding 57,900 (Btu/ton)",
+    "verified": true
+   },
+   {
+    "value": 40,
+    "unit": "% of US mining industry energy",
+    "what": "Share of total US mining energy used by grinding; materials handling is 17% (Exhibit 17, p.21)",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+    "quote": "The largest energy consuming equipment types are grinding (40%) and materials handling (17%).",
+    "verified": true
+   },
+   {
+    "value": [
+     1.43,
+     134.5
+    ],
+    "unit": "kWh per short ton",
+    "what": "Range of (Bond) work indices of mined commodities",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+    "quote": "the work indices (a measure of energy required to grind rock) of mined commodities vary from 1.43 kWh/ton for calcined clay to 134.5 kWh/ton for mica.",
+    "verified": true
+   },
+   {
+    "value": 92400,
+    "unit": "Btu per short ton of copper ore",
+    "what": "Energy of one SAG mill per ton of copper ore in a model mine (DOE Energy and Environmental Profile of the US Mining Industry, ch.5 Copper); DERIVED = 29.9 kWh/t",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "SAG mills are by far the most energy intensive equipment in processing requiring 92,400 Btu each per ton of copper ore mined. Crushing and grinding overall account for 84 percent of the total energy consumed per ton for processing.",
+    "verified": true
+   },
+   {
+    "value": 32,
+    "unit": "kWh per tonne ore",
+    "what": "Total stationary electricity of copper ore extraction and concentration used as model parameter (attributed to Norgate and Haque) at 0.60% head grade",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13401005/fullTextXML",
+    "quote": "Head grade (ore) % 0.60 Norgate and Haque; Concentrate grade % 30 Norgate and Haque; Cu recovery (flotation) % 87.5 Norgate and Haque; Stationary electricity (total) kWh/t-ore 32 Norgate and Haque",
+    "verified": true
+   },
+   {
+    "value": {
+     "autogenous_mill": 18.2,
+     "ball_mill": 14.3
+    },
+    "unit": "kWh per tonne",
+    "what": "Grinding power of a copper-slag concentrator (Aurubis Pirdop), NFM BREF 2017 p.285",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "power consumption for grinding: autogenous mill ~ 18.2 kWh/t; ball mill ~ 14.3 kWh/t.",
+    "verified": true
+   },
+   {
+    "value": 45,
+    "unit": "% of processing energy",
+    "what": "Share of copper processing energy used by grinding and concentration",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "In processing, grinding and concentration consume about 45 percent of the energy used, with grinding accounting for the majority of the energy consumed.",
+    "verified": true
+   }
+  ]
+ },
+ "flotation": {
+  "value": 87.5,
+  "unit": "% copper recovery to concentrate",
+  "what": "Average copper recovery in flotation concentrate assumed by US Bureau of Mines / DOE profile at a mill-head grade of 0.55% Cu",
+  "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+  "quote": "Assuming a mill-head grade of 0.55 percent copper and an average copper recovery of 87.5 percent in concentrates and 98.7 percent in conventional smelting",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "xanthate": 240,
+     "frother": 7.5
+    },
+    "unit": "g per tonne of feed",
+    "what": "Flotation reagent consumption of a copper-slag concentrator, NFM BREF 2017 p.285",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "consumption of reagents: xanthate ~ 240 g/t; frother ~ 7.5 g/t;",
+    "verified": true
+   },
+   {
+    "value": 900,
+    "unit": "Btu per short ton of material",
+    "what": "Current energy requirement of flotation in US metal mining (Exhibit 24); DERIVED = about 0.29 kWh/t",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+    "quote": "Flotation 900 64% 79% 700 86% 600 600",
+    "verified": true
+   },
+   {
+    "value": "MIBC frother; sodium xanthate, fuel oil collectors; lime for pH",
+    "unit": "reagents",
+    "what": "Typical copper flotation reagents",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "Methylisobutyl carbonal (MIBC) is a typical frothing agent, and sodium xanthate, fuel oil, and VS M8 (a proprietary formulation) are typical collector agents.",
+    "verified": true
+   }
+  ]
+ },
+ "open_pit_mining_energy": {
+  "value": 74900,
+  "unit": "Btu per short ton of material handled",
+  "what": "Current energy requirement of diesel materials-handling equipment in US metal mining (Exhibit 24); DERIVED = 87 MJ per tonne. Other extraction steps in same table: drilling 1,800, blasting 9,900, digging 6,000, ventilation 4,700, dewatering 600 Btu/ton",
+  "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+  "quote": "Diesel Equipment 74,900 30% 45% 50,000 63% 35,700 22,500",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "underground": 25000,
+     "open_pit": 1000
+    },
+    "unit": "Btu per short ton",
+    "what": "Average energy requirement of 10 underground and 7 open-pit Canadian mines (CIPEC 2005 benchmark as quoted by DOE); std dev 11,000 and 700",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+    "quote": "The average energy requirement of the underground mines was 25,000 Btu/ton, with a standard deviation of 11,000 Btu/ton, while the average energy requirement of the open pit mines was 1,000 Btu/ton with a standard deviation of 700 Btu/ton (CIPEC, 2005).",
+    "verified": true
+   },
+   {
+    "value": 54,
+    "unit": "% of mining energy",
+    "what": "Share of copper open-pit mining energy used by truck haulage",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "Of these, hauling by truck consumes 54 percent of the total energy required in mining.",
+    "verified": true
+   },
+   {
+    "value": {
+     "ore_Mt": 691,
+     "waste_Mt": 573
+    },
+    "unit": "million short tons, US copper 1998",
+    "what": "Waste rock versus crude ore in US copper mining; DERIVED strip ratio = 0.83 t waste per t ore",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "In 1998 the amount of copper crude ore produced was 691 million tons and the amount of waste produced was 573 million tons.",
+    "verified": true
+   },
+   {
+    "value": {
+     "surface_waste_pct": 71,
+     "underground_waste_pct": 20
+    },
+    "unit": "% of material handled that is waste",
+    "what": "Gold/silver mines; DERIVED strip ratio surface = 71/29 = 2.4",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/gold-silver.pdf",
+    "quote": "At surface mines, 71 percent of all material handled is discarded as waste. At underground mines, 20 percent is discarded as waste.",
+    "verified": true
+   },
+   {
+    "value": 4.5,
+    "unit": "% (metal product / material mined)",
+    "what": "Average recovery ratio of US metal mining: 22 t mined per t metal product; by commodity: iron 19%, copper 0.16%, lead & zinc 8%, gold & silver 0.001%",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+    "quote": "the recovery ratio for metals averages only about 4.5% (Exhibit 5). This means ... 22 tons of material must be mined for every 1 ton of metal product.",
+    "verified": true
+   }
+  ]
+ },
+ "tailings": {
+  "value": [
+   90,
+   98
+  ],
+  "unit": "% of ore mass",
+  "what": "Fraction of copper ore that ends as tailings",
+  "source": "https://en.wikipedia.org/w/index.php?title=Tailings&action=raw",
+  "quote": "The fraction of tailings to ore can range from 90 to 98% for some copper ores to 20–50% of the other (less valuable) minerals.",
+  "verified": true,
+  "more": [
+   {
+    "value": 187,
+    "unit": "t tailings per t copper",
+    "what": "DERIVED: 1/(0.0060 head grade x 0.875 recovery) = 190.5 t ore per t Cu, minus 3.3 t of 30% concentrate",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13401005/fullTextXML",
+    "quote": "Head grade (ore) % 0.60; Concentrate grade % 30; Cu recovery (flotation) % 87.5",
+    "verified": true
+   },
+   {
+    "value": {
+     "sulphide_Ni_Co": [
+      1100,
+      1500
+     ],
+     "laterite": 4500
+    },
+    "unit": "litres water per tonne ore",
+    "what": "Water needed for extraction and beneficiation of nickel/cobalt ores (review, D. Raabe, Chem. Rev. 2023)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9999434/fullTextXML",
+    "quote": "cobalt and nickel sulfide minerals require for extraction and benefication about 1,100–1,500 liter of water per tonne of ore and laterite ores need even up to 4,500 liter of water per tonne of ore",
+    "verified": true
+   },
+   {
+    "value": 3000000.0,
+    "unit": "t rock per t metal",
+    "what": "Global rock-to-metal ratio (ore + waste rock per unit refined metal) of gold, the highest of 25 commodities; silicon lowest at 3; cobalt 859; 90% of copper production has RMR <= 1.5e3",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9118561/fullTextXML",
+    "quote": "Global RMRs across all commodities ranged by almost exactly 6 orders of magnitude from 3 for Si to 3 × 10^6 for gold",
+    "verified": true
+   }
+  ]
+ },
+ "copper": {
+  "value": [
+   14,
+   20
+  ],
+  "unit": "GJ per tonne copper cathode",
+  "what": "Net production energy from copper concentrate to cathode (smelting, converting, refining), NFM BREF 2017 section 3.2.1 p.220",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "The production energy (net) requirement for a number of processes using copper concentrate is in the range of 14–20 GJ/t of copper cathode [ 206, Traulsen, H. 1999 ].",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     0.2,
+     2
+    ],
+    "unit": "% Cu in ore",
+    "what": "Ore grade feeding flotation; sulphidic concentrates are 15–45% Cu (BREF p.195)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "sulphidic concentrates (15–45 % Cu) are the most important raw materials for the pyrometallurgical primary copper route ... they are derived by flotation from ores that contain 0.2–2 % copper.",
+    "verified": true
+   },
+   {
+    "value": [
+     27,
+     29
+    ],
+    "unit": "% Cu in concentrate",
+    "what": "Concentrate grade from chalcopyrite flotation (37–40% from chalcocite)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Copper_extraction&action=raw",
+    "quote": "The process can produce concentrates with 27–29% and 37–40% copper contents from [[chalcopyrite]] and [[chalcocite]], respectively.",
+    "verified": true
+   },
+   {
+    "value": 0.6,
+    "unit": "% Cu",
+    "what": "Average copper ore grade, 21st century",
+    "source": "https://en.wikipedia.org/w/index.php?title=Copper_extraction&action=raw",
+    "quote": "The average grade of copper ores in the 21st century is below 0.6% copper",
+    "verified": true
+   },
+   {
+    "value": [
+     300,
+     400
+    ],
+    "unit": "kWh per tonne copper",
+    "what": "Electrorefining energy (BREF p.221); Table 3.28 p.242 gives 360–380 kWh/t cathode, anode slime 5–12 kg/t",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "The energy consumed by the electrorefining stage of copper production is reported to be 300–400 kWh per tonne of copper",
+    "verified": true
+   },
+   {
+    "value": {
+     "mining": 20.13,
+     "milling": 42.57,
+     "smelting": [
+      30.92,
+      40
+     ]
+    },
+    "unit": "million Btu per short ton cathode copper",
+    "what": "Theoretical energy by stage at 0.55% head grade (US Bureau of Mines 1985 via DOE); DERIVED x1.163 = 23.4 / 49.5 / 36.0–46.5 GJ per tonne",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "the theoretical energy requirement for mining is 20.13 million British thermal units (Btu) per ton; for milling, 42.57 million Btu per ton; and for conventional smelting, 30.92 to nearly 40 million Btu per ton of cathode copper recovered.",
+    "verified": true
+   },
+   {
+    "value": 18.92,
+    "unit": "million Btu per short ton cathode copper",
+    "what": "Outokumpu flash smelting route energy; DERIVED = 22.0 GJ/t. Others: Inco flash 21.25, Noranda 24, Mitsubishi 19.16, oxy-fuel reverberatory 26.62",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "Outokempu flash smelting (18.92 million Btu), Inco flash smelting (21.25 million Btu), Noranda continuous smelting (24 million Btu), Mitsubishi continuous smelting (19.16 million Btu), and Oxy Fuel Reverberatory smelting (26.62 million Btu).",
+    "verified": true
+   },
+   {
+    "value": 2.98,
+    "unit": "t sulphuric acid per t primary cathode",
+    "what": "DERIVED: 656,000 t/yr acid / 220,000 t/yr primary cathode at a complex flash smelter (BREF Table 3.25 p.240); the acid plant may also take some gas from the co-located secondary plant",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Primary plant: Annual cathode production: primary copper 220 000 t/yr ... Sulphuric acid plant Sulphuric acid 656 000 By-product for sale",
+    "verified": true
+   },
+   {
+    "value": 1.82,
+    "unit": "t final slag per t primary cathode",
+    "what": "DERIVED: 400,000 t/yr electric-furnace slag / 220,000 t/yr cathode (BREF Table 3.25 p.240)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Electric furnace ... Slag 400 000 External use as construction material",
+    "verified": true
+   },
+   {
+    "value": 20,
+    "unit": "% of primary copper",
+    "what": "Share produced by direct leaching of ores (hydrometallurgical / SX-EW route)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Approximately 20 % of primary copper is produced by the direct leaching of ores (hydrometallurgical route).",
+    "verified": true
+   },
+   {
+    "value": {
+     "pyrometallurgy": 33,
+     "hydrometallurgy": 64
+    },
+    "unit": "MJ per kg copper",
+    "what": "Life-cycle total energy incl. mining, black-coal electricity (Norgate & Rankin, reproduced in Raabe 2023 Table 5): matte smelting/converting/electrorefining of 3.0% Cu sulphide ore vs heap leach SX-EW of 2.0% Cu ore",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9999434/fullTextXML",
+    "quote": "Copper Pyrometallurgy 33 3.3 0.04; Hydrometallurgy 64 6.2 0.05",
+    "verified": true
+   },
+   {
+    "value": [
+     30,
+     70
+    ],
+    "unit": "% Cu in matte",
+    "what": "Matte grade from smelting",
+    "source": "https://en.wikipedia.org/w/index.php?title=Copper_extraction&action=raw",
+    "quote": "The matte, which is produced in the smelter, contains 30–70% copper",
+    "verified": true
+   }
+  ]
+ },
+ "nickel_sulphide": {
+  "value": [
+   25,
+   65
+  ],
+  "unit": "GJ per tonne nickel",
+  "what": "Energy to produce matte from sulphidic concentrates containing 4–15% Ni; refining adds 17–20 GJ/t Ni (NFM BREF 2017 section 9.2.1 p.913)",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "The energy consumed for the production of matte from sulphidic concentrates is reported to be in the range 25–65 GJ per tonne of nickel for concentrates that contain 4–15 % nickel. The energy consumed in the various refining stages is reported to be 17–20 GJ per tonne of nickel.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     17,
+     20
+    ],
+    "unit": "GJ per tonne nickel",
+    "what": "Refining stages energy (matte to metal)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "The energy consumed in the various refining stages is reported to be 17–20 GJ per tonne of nickel.",
+    "verified": true
+   },
+   {
+    "value": {
+     "electricity_kWh": [
+      1400,
+      1800
+     ],
+     "fuel_oil_kg": [
+      300,
+      400
+     ],
+     "coke_kg": [
+      200,
+      250
+     ]
+    },
+    "unit": "per tonne metal",
+    "what": "Direct consumption of a nickel flash smelter (Plant A), BREF p.952; refinery Plant C: electricity 3000–4000 kWh/t Ni plus heat 7000–9000 kWh/t Ni",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Plant A: The direct electricity consumption of the nickel smelter is 1400–1800 kWh/t of metal produced ... The fuel oil consumption in the smelter is 300–400 kg/t of metal produced ... The coke consumption in the nickel smelter is 200–250 kg/t ... Plant C: The refinery electricity consumption is 3000–4000 kWh/t of nickel produced. Heat consumption is 7 000–9 000 kWh/t of nickel produced.",
+    "verified": true
+   },
+   {
+    "value": 16,
+    "unit": "% Ni in concentrate",
+    "what": "Nickel sulphide concentrate grade used in ecoinvent (Raglan mine); Voisey's Bay concentrate 19% Ni",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12133587/fullTextXML",
+    "quote": "The corresponding inventory for mining and beneficiation of nickel concentrate (16% Ni) is based on the 2010 impact assessment study for Raglan mine ... Voisey Bay's mine and beneficiation operations ... which concentrate (19% Ni)",
+    "verified": true
+   },
+   {
+    "value": 114,
+    "unit": "MJ per kg nickel",
+    "what": "Life-cycle total energy, flash smelting + Sherritt-Gordon refining of 2.3% Ni sulphide ore (Norgate & Rankin via Raabe 2023 Table 5); a 2025 LCI study reports 89 MJ/kg Ni excluding embodied energy of materials",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9999434/fullTextXML",
+    "quote": "Nickel Pyrometallurgy 114 11.4 0.13 ... Flash furnace smelting and Sherritt–Gordon refining (sulfide ore, 2.3% Ni, underground mine).",
+    "verified": true
+   },
+   {
+    "value": "pentlandite, with pyrrhotite and pyrite; associated Cu, Co, PGM",
+    "unit": "ore minerals",
+    "what": "Sulphide nickel deposits occur with recoverable copper, cobalt, gold, silver, PGM (BREF p.37)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Nickel sulphides often occur together with economically recoverable amounts of copper, cobalt, gold, silver, platinum group metals and several other metals.",
+    "verified": true
+   }
+  ]
+ },
+ "nickel_laterite": {
+  "value": 467,
+  "unit": "GJ per tonne nickel",
+  "what": "Energy demand of the RKEF (rotary kiln - electric furnace) ferronickel route, from an energy flow analysis (Liu et al.) as cited",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13249918/fullTextXML",
+  "quote": "in comparison to the demand for RKEF of 467 GJ/t Ni, the latter estimated from an energy flow analysis (Liu et al. ).",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "ferronickel_35pctNi_RKEF": 460,
+     "NPI_10pctNi_blast_furnace": 598
+    },
+    "unit": "MJ per kg contained nickel",
+    "what": "Energy of laterite pyrometallurgy with coal-based electricity (previous study cited in Nature Sci Data-style LCI paper)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12133587/fullTextXML",
+    "quote": "460 MJ are required per kg contained nickel in ferronickel (35% Ni) via RKEF in a coal-based electricity mix or 598 MJ per kg contained nickel in NPI (10% Ni) via the blast fu[rnace]",
+    "verified": true
+   },
+   {
+    "value": {
+     "ore_t": 20,
+     "coke_or_coal_t": 4,
+     "electrode_t": 0.048,
+     "electricity_MWh": 10
+    },
+    "unit": "per tonne FeNi alloy (~20% Ni)",
+    "what": "Ferronickel consumption data, Greek plant (NFM BREF 2017 Table 8.9 p.823); DERIVED per tonne contained Ni: 100 t ore, 20 t coal, 50 MWh electricity",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "FeNi alloy (~ 20 % Ni): Ore (t/t) 20; Coke or coal (t/t) 4; ... Electrode (t/t) 0.048; ... Electricity (MWh/t) 10. Source: [ 406, Greece 2013 ]",
+    "verified": true
+   },
+   {
+    "value": [
+     600,
+     900
+    ],
+    "unit": "kg acid per tonne ore",
+    "what": "Acid consumption of high-pressure acid leaching as stated in a 2025 research paper comparison table (HPAL at 245–260 C, 4–5 MPa). Note: secondary statement; no primary plant data found",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12376892/fullTextXML",
+    "quote": "High-pressure acid leaching (HPAL) | 245–260 °C; 4–5 MPa | High, requires high-pressure equipment and has high energy consumption for equipment operation and heating | 600–900 kg t−1 of ore",
+    "verified": true
+   },
+   {
+    "value": {
+     "common": 500,
+     "max": 1000
+    },
+    "unit": "kg sulphuric acid per tonne ore",
+    "what": "Acid use in heap leaching of nickel laterite ore",
+    "source": "https://en.wikipedia.org/w/index.php?title=Heap_leaching&action=raw",
+    "quote": "The amount of sulfuric acid required is much higher than for copper ores, as high as 1,000 kg of acid per tonne of ore, but 500 kg is more common.",
+    "verified": true
+   },
+   {
+    "value": {
+     "limonite": [
+      0.8,
+      1.5
+     ],
+     "saprolite": [
+      1.5,
+      3
+     ]
+    },
+    "unit": "% Ni in ore",
+    "what": "Laterite ore grades by type",
+    "source": "https://en.wikipedia.org/w/index.php?title=Lateritic_nickel_ore_deposits&action=raw",
+    "quote": "'''Limonite type''' laterites ... contain 0.8–1.5% nickel incorporated in goethite ... '''Silicate type''' (or saprolite type) ... contains generally 1.5–3% nickel",
+    "verified": true
+   },
+   {
+    "value": {
+     "sulphide": 2.5,
+     "laterite": 8
+    },
+    "unit": "GJ per tonne ore (upper values)",
+    "what": "Processing energy per tonne of ore",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9999434/fullTextXML",
+    "quote": "sulfidic ores require up to 2.5 GJ energy per tonne of ore and lateritic ores require up to 8 GJ energy per tonne of ore",
+    "verified": true
+   },
+   {
+    "value": "no beneficiation possible; whole ore goes to the metallurgical plant",
+    "unit": "process note",
+    "what": "Why laterite energy per tonne Ni is high (BREF p.37)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Laterite ores, in contrast, are amenable to only limited beneficiation by physical methods ... and therefore almost the entire volume of ore must go directly to metallurgical plants.",
+    "verified": true
+   }
+  ]
+ },
+ "zinc": {
+  "value": [
+   3850,
+   4905
+  ],
+  "unit": "kWh electricity per tonne SHG zinc",
+  "what": "Roast-leach-electrowin (RLE) electrical energy; plus 0.48 GJ/t other energy; total 13.86–20.00 GJ/t without energy credits (NFM BREF 2017 Table 6.8 p.637)",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "RLE (1) SHG zinc 3850–4905 [Electrical kWh per t]; 0.48 GJ/t average for other energy ... (1) Total energy: 13.86–20.00 GJ/t without energy credits.",
+  "verified": true,
+  "more": [
+   {
+    "value": 3900,
+    "unit": "kWh per tonne zinc",
+    "what": "Electrowinning electric power",
+    "source": "https://en.wikipedia.org/w/index.php?title=Zinc_smelting&action=raw",
+    "quote": "In either of the electrolytic processes, each metric ton of zinc production expends about {{convert|3900|kW·h| GJ|abbr=on|lk=on}} of electric power.",
+    "verified": true
+   },
+   {
+    "value": {
+     "concentrate_t": [
+      1.3,
+      1.8
+     ],
+     "concentrate_pct_Zn": [
+      47,
+      56
+     ],
+     "sulphuric_acid_96pct_t": [
+      1.23,
+      1.68
+     ],
+     "goethite_or_jarosite_t": [
+      0.3,
+      0.8
+     ],
+     "cadmium_kg": [
+      3,
+      4
+     ]
+    },
+    "unit": "per tonne SHG zinc",
+    "what": "Input/output balance of a German RLE plant (BREF Table 6.2 p.634)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Concentrates (47–56 % Zn) 1.3–1.8 t/t SHG Zn ... Cadmium 3–4 kg/t SHG Zn; Sulphuric acid, e.g. 96 % 1.23–1.68 t/t SHG Zn; Goethite or jarosite 0.3–0.8 t/t SHG Zn",
+    "verified": true
+   },
+   {
+    "value": {
+     "Zn": 54,
+     "Fe": 6.7,
+     "Pb": 2.1,
+     "S": 32,
+     "Cu": 0.4,
+     "Cd": 0.2,
+     "Ag": 0.01
+    },
+    "unit": "% in zinc concentrate",
+    "what": "Typical zinc concentrate composition (BREF Table 6.3 p.635)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Zn 54 ... Fe 6.7 ... Pb 2.1 ... S 32 ... Cu 0.4 ... Cd 0.2 ... Ag 0.01 [Zn concentrate column]",
+    "verified": true
+   },
+   {
+    "value": [
+     50,
+     60
+    ],
+    "unit": "% Zn in concentrate",
+    "what": "US flotation concentrate grade; sphalerite gives about 90% of zinc",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/lead_zinc.pdf",
+    "quote": "Beneficiation ... consists of crushing, grinding, and flotation to produce concentrates of 50 to 60 percent zinc.",
+    "verified": true
+   },
+   {
+    "value": {
+     "electricity_kWh": [
+      750,
+      1050
+     ],
+     "coke_kg": [
+      785,
+      1100
+     ],
+     "natural_gas_Nm3": [
+      160,
+      220
+     ]
+    },
+    "unit": "per tonne zinc metal",
+    "what": "Imperial Smelting Furnace + New Jersey distillation route (BREF Table 6.8)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "ISF & NJ distillation Zinc metal 1050 1100 220 / 750 785 160",
+    "verified": true
+   },
+   {
+    "value": 48,
+    "unit": "MJ per kg zinc",
+    "what": "Life-cycle total energy, roasting & electrolysis of 8.6% Zn ore (Norgate & Rankin via Raabe 2023 Table 5); ISF route 36",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9999434/fullTextXML",
+    "quote": "Zinc Electrolytic 48 4.6 0.06; ISF 36 3.3 0.03",
+    "verified": true
+   },
+   {
+    "value": [
+     0.3,
+     0.5
+    ],
+    "unit": "t iron-based residue per t zinc",
+    "what": "Leach residue sludge from hydrometallurgical zinc",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "approximately 0.3–0.5 tonnes of iron-based solids per tonne of zinc depending on the quality of the concentrate",
+    "verified": true
+   }
+  ]
+ },
+ "lead": {
+  "value": {
+   "electricity_kWh": 70,
+   "coal_kg": 110,
+   "natural_gas_Nm3": 25,
+   "oxygen_Nm3": 370
+  },
+  "unit": "per tonne lead",
+  "what": "Energy requirement of QSL primary direct smelting, excluding energy content of feed (NFM BREF 2017 Table 5.9 p.516); DERIVED total about 70 + 900 (coal) + 275 (gas) = 1245 kWh/t Pb = 4.5 GJ/t",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "QSL (3) 70 Coal: 110 900 25 275 370 ... (3) Primary furnaces.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "electricity_kWh": 360,
+     "coke_kg": 40,
+     "natural_gas_Nm3": 102,
+     "oxygen_Nm3": 120
+    },
+    "unit": "per tonne lead",
+    "what": "Ausmelt/ISASMELT with refinery and other operations (Table 5.9)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Ausmelt/ISASMELT with refinery and other operations (3) 360 40 350 102 1120 120",
+    "verified": true
+   },
+   {
+    "value": {
+     "Pb": [
+      35,
+      90
+     ],
+     "Zn": [
+      0,
+      15
+     ],
+     "S": [
+      0,
+      35
+     ],
+     "FeO": [
+      0,
+      30
+     ]
+    },
+    "unit": "% in lead concentrate",
+    "what": "Composition ranges of lead (galena) concentrate (BREF Table 5.1 p.503)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Pb 35–90; Zn 0–15; S 0–35; SiO2 0–10; CaO 0–20; FeO 0–30",
+    "verified": true
+   },
+   {
+    "value": {
+     "concentrate_t": 145000,
+     "secondary_t": 100000,
+     "coal_t": 15000,
+     "bullion_t": 135000,
+     "sulphuric_acid_t": 100000,
+     "slag_t": 75000,
+     "silver_t": [
+      260,
+      300
+     ]
+    },
+    "unit": "t per year (QSL plant)",
+    "what": "Input-output of a QSL plant (BREF Table 5.6 p.514); DERIVED 0.74 t acid and 0.56 t slag per t bullion",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Lead concentrates 145 000; Lead bullion 135 000; Secondary materials 100 000; Sulphuric acid 100 000; Fluxes 8000; Slag 75 000; Coal 15 000 ... Silver 260–300",
+    "verified": true
+   },
+   {
+    "value": 29.5,
+    "unit": "million Btu per 1.10 short tons refined lead",
+    "what": "Total energy mine to refined lead (US DOI 1985 via DOE); DERIVED = 31.2 GJ per tonne; about one third is mining and beneficiation",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/lead_zinc.pdf",
+    "quote": "approximately 29.5 million Btu is required to produce 1.10 tons of refined lead, which is about 25 percent of that required for copper, and less than 50 percent that required for zinc. About one-third of the energy consumed for lead is in mining and beneficiation.",
+    "verified": true
+   },
+   {
+    "value": {
+     "blast_furnace": 20,
+     "ISF": 32
+    },
+    "unit": "MJ per kg lead",
+    "what": "Life-cycle total energy from 5.5% Pb ore (Norgate & Rankin via Raabe 2023 Table 5)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9999434/fullTextXML",
+    "quote": "Lead BF 20 2.1 0.02; ISF 32 3.2 0.02",
+    "verified": true
+   }
+  ]
+ },
+ "tin": {
+  "value": [
+   60,
+   70
+  ],
+  "unit": "% (cassiterite mineral concentration in concentrate)",
+  "what": "Grade reached by gravity separation and flotation of cassiterite ore; an example concentrate assays 75.85 wt% SnO2",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11243683/fullTextXML",
+  "quote": "gravity separation and flotation to achieve a concentration of the mineral of about 60 to 70% ... Egyptian cassiterite concentrate containing 76 wt% of SnO2",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "first_stage_C": 1200,
+     "second_stage_C": 1400,
+     "first_slag_pct_Sn": [
+      10,
+      25
+     ],
+     "crude_metal_pct_Sn": 98,
+     "final_slag_pct_Sn": [
+      1,
+      2
+     ]
+    },
+    "unit": "process conditions",
+    "what": "Two-stage carbothermic smelting of cassiterite: first stage gives 98% Sn crude metal and a 10–25% Sn slag; slag is re-smelted under harsher reduction to an Fe-Sn 'hardhead'",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11243683/fullTextXML",
+    "quote": "The corrosive Sn-rich slag produced (contains 10 to 25% Sn) from the primary smelter moves to the second stage ... a secondary slag which contains a small quantity of Sn (1 to 2%)",
+    "verified": true
+   },
+   {
+    "value": "reduction of oxide ore with carbon or coke",
+    "unit": "route",
+    "what": "Primary tin smelting route (BREF section 5.1.2 p.505); cassiterite is the only important tin mineral; tin slag is the main source of tantalum and niobium",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Primary tin is produced using pyrometallurgical processes, by the reduction of the oxidic ore with carbon or coke.",
+    "verified": true
+   },
+   {
+    "value": 1,
+    "unit": "% tin oxide",
+    "what": "Typical tin content of tin-bearing granite-associated rock",
+    "source": "https://en.wikipedia.org/w/index.php?title=Tin&action=raw",
+    "quote": "Minerals with tin are almost always associated with [[granite]] rock, usually at a level of 1% tin oxide content.",
+    "verified": true
+   }
+  ]
+ },
+ "tungsten": {
+  "value": 65,
+  "unit": "% WO3 in concentrate",
+  "what": "Concentrate grade required by tungsten extractive metallurgy; ores at most about 2% WO3; scheelite 70% / wolframite 30% of world resources",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11857719/fullTextXML",
+  "quote": "Scheelite and wolframite account for 70% and 30% of the world resources, respectively. In general, most deposits have low WO3 content, which can, at most, reach 2% WO3 for richer W-ores; however, the extractive metallurgy of tungsten requires concentrates with around 65% WO3 content.",
+  "verified": true,
+  "more": [
+   {
+    "value": "soda / caustic soda pressure digestion (main route); HCl digestion at about 90 C for high-grade scheelite; then ammonia to APT",
+    "unit": "route",
+    "what": "APT (ammonium paratungstate) route",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11857719/fullTextXML",
+    "quote": "The hydrochloric acid digestion around 90 °C is industrially employed, mainly for the high-grade scheelite concentrates, producing pure tungstic acid ... The most current commercial process by soda/caustic soda digestion (high-pressure and high-temperature processes mainly applied)",
+    "verified": true
+   }
+  ]
+ },
+ "gold": {
+  "value": {
+   "open_pit": [
+    1,
+    5
+   ],
+   "underground_min": 3,
+   "economic_min": 0.5
+  },
+  "unit": "ppm (g/t) Au",
+  "what": "Typical gold ore grades",
+  "source": "https://en.wikipedia.org/w/index.php?title=Gold&action=raw",
+  "quote": "Ore grades as little as 0.5 parts per million (ppm) can be economical. Typical ore grades in open-pit mines are 1–5 ppm; ore grades in underground or hard rock mines are usually at least 3 ppm.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     0.5,
+     1.0
+    ],
+    "unit": "lb sodium cyanide per short ton of leach solution",
+    "what": "Cyanide strength of heap-leach solution (= 0.25–0.5 kg NaCN per tonne of solution, DERIVED). This is per tonne of solution, not per tonne of ore",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/gold-silver.pdf",
+    "quote": "The solution generally has a concentration of 0.5 to 1 pound of sodium cyanide per ton of solution.",
+    "verified": true
+   },
+   {
+    "value": 0.3,
+    "unit": "% cyanide solution",
+    "what": "Strength of cyanide wash solution",
+    "source": "https://en.wikipedia.org/w/index.php?title=Gold_extraction&action=raw",
+    "quote": "The crude ore is washed with a c. 0.3% solution of cyanide in air, often repeatedly",
+    "verified": true
+   },
+   {
+    "value": [
+     60,
+     70
+    ],
+    "unit": "% recovery",
+    "what": "Normal recovery of heap leaching; up to over 90% for easily leached oxide gold ores",
+    "source": "https://en.wikipedia.org/w/index.php?title=Heap_leaching&action=raw",
+    "quote": "Although heap leaching is a low cost-process, it normally has recovery rates of 60-70%. ... to over 90% for the ores that are easiest to leach, some oxide gold ores.",
+    "verified": true
+   },
+   {
+    "value": 472400,
+    "unit": "Btu per short ton of ore",
+    "what": "Total energy to mine and process gold ore in DOE model mine (88% mining, 12% processing); DERIVED = 549 MJ per tonne ore",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/gold-silver.pdf",
+    "quote": "The total energy required to mine and process gold is 472,400 Btu per ton. Mining requires 88 percent of the total energy consumed per ton while processing uses the remaining 12 percent.",
+    "verified": true
+   },
+   {
+    "value": {
+     "heap_leach": 55,
+     "vat_leach": 25
+    },
+    "unit": "% of US gold production (2000)",
+    "what": "Share by leaching method",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/gold-silver.pdf",
+    "quote": "In 2000, heap leaching accounted for 55 percent of gold ... In 2000, vat leaching accounted for 25 percent of",
+    "verified": true
+   },
+   {
+    "value": [
+     4000,
+     8000
+    ],
+    "unit": "g Au per tonne carbon",
+    "what": "Loading of activated carbon in carbon-in-pulp",
+    "source": "https://en.wikipedia.org/w/index.php?title=Carbon_in_pulp&action=raw",
+    "quote": "Typically concentrations as high as 4000 to 8000 grams of gold per tonne of carbon (g/t Au) can be achieved on the final loaded carbon",
+    "verified": true
+   },
+   {
+    "value": 90,
+    "unit": "% of gold production",
+    "what": "Share of gold production that uses cyanide",
+    "source": "https://en.wikipedia.org/w/index.php?title=Gold_cyanidation&action=raw",
+    "quote": "Despite being used in 90% of gold production",
+    "verified": true
+   },
+   {
+    "value": 99.5,
+    "unit": "% Au",
+    "what": "Purity after Miller (chlorine) parting",
+    "source": "https://en.wikipedia.org/w/index.php?title=Gold_extraction&action=raw",
+    "quote": "Parting is a process by which gold is purified to a commercially-tradeable standard, typically ≥99.5% ... The standard procedure is based on the [[Miller process]].",
+    "verified": true
+   }
+  ]
+ },
+ "silver": {
+  "value": "by-product of lead-zinc, copper and gold mines (in descending order)",
+  "unit": "source",
+  "what": "Where silver comes from; polymetallic deposits hold more than two-thirds of resources (USGS MCS 2024)",
+  "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+  "quote": "silver was primarily obtained as a byproduct from lead-zinc, copper, and gold mines, in descending order of silver production. The polymetallic ore deposits from which silver was recovered account for more than two-thirds of U.S. and world resources of silver.",
+  "verified": true,
+  "more": [
+   {
+    "value": "copper anode slime; Parkes process on lead bullion",
+    "unit": "refining route",
+    "what": "How silver is separated",
+    "source": "https://en.wikipedia.org/w/index.php?title=Silver&action=raw",
+    "quote": "silver metal is primarily produced as a secondary byproduct of electrolytic refining of copper, lead and zinc, and by application of the [[Parkes process]] on lead bullion from ore that also contains silver.",
+    "verified": true
+   },
+   {
+    "value": [
+     5,
+     12
+    ],
+    "unit": "kg anode slime per tonne copper cathode",
+    "what": "Yield of precious-metal-bearing anode slime in copper electrorefining (BREF Table 3.28 p.242)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Anode slime yield kg/t copper cathode 5–12",
+    "verified": true
+   },
+   {
+    "value": [
+     260,
+     300
+    ],
+    "unit": "t silver per year from 135,000 t lead bullion",
+    "what": "Silver output of a QSL lead smelter (BREF Table 5.6); DERIVED about 2 kg Ag per t lead",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Lead bullion 135 000 ... Silver 260–300",
+    "verified": true
+   },
+   {
+    "value": 0.01,
+    "unit": "% Ag in zinc concentrate",
+    "what": "Silver in typical zinc concentrate (100 g/t)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Ag 0.01 [Zn concentrate]",
+    "verified": true
+   }
+  ]
+ },
+ "molybdenum": {
+  "value": "molybdenite (MoS2) from primary porphyry Mo deposits and as by-product of porphyry copper; roasted in air to MoO3",
+  "unit": "source and route",
+  "what": "US 2023: 2 primary mines, 6 by-product operations, 3 roasting plants (USGS MCS 2024)",
+  "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+  "quote": "Molybdenum occurs as the principal metal sulfide in large low-grade porphyry molybdenum deposits and as an associated metal sulfide in low-grade porphyry copper deposits.",
+  "verified": true,
+  "more": [
+   {
+    "value": 700,
+    "unit": "degrees C",
+    "what": "Roasting temperature of molybdenite in air: 2 MoS2 + 7 O2 -> 2 MoO3 + 4 SO2",
+    "source": "https://en.wikipedia.org/w/index.php?title=Molybdenum&action=raw",
+    "quote": "In molybdenite processing, the ore is first roasted in air at {{convert|700|°C|°F}}. The process gives gaseous sulfur dioxide and the molybdenum(VI) oxide",
+    "verified": true
+   },
+   {
+    "value": "exothermic; multiple hearth furnace; gas only for drying/ignition; SO2 to sulphuric acid",
+    "unit": "energy note",
+    "what": "Molybdenite roasting needs electricity only for mechanical drives (NFM BREF 2017 p.801, p.823)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "The process of roasting molybdenite concentrates is an exothermic process as the oxidation reaction is ignited. External energy in the form of electricity will therefore only be needed for the mechanical operation of the multiple hearth furnaces.",
+    "verified": true
+   },
+   {
+    "value": {
+     "electricity_kWh": [
+      160,
+      405
+     ],
+     "gas_MJ": [
+      148,
+      155
+     ]
+    },
+    "unit": "per tonne molybdenum",
+    "what": "Ferro-molybdenum production consumption (BREF Table 8.10 p.823)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "FeMo (1): Electricity (kWh/t) 160–405; Gas 148–155 MJ/t ... (1) The consumption data for the production of FeMo are based on one tonne of molybdenum.",
+    "verified": true
+   },
+   {
+    "value": 30,
+    "unit": "% Cu in concentrate; Mo recovered from it",
+    "what": "Copper concentrate may carry recoverable molybdenum sent to a moly plant",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/copper.pdf",
+    "quote": "The concentrate resulting from the flotation circuit contains approximately 30 percent copper and, in some instances, may also contain significant recoverable concentrations of molybdenum.",
+    "verified": true
+   }
+  ]
+ },
+ "chromium": {
+  "value": [
+   3800,
+   4500
+  ],
+  "unit": "kWh electricity per tonne HC FeCr",
+  "what": "High-carbon ferrochrome in a conventional open submerged arc furnace, lumpy/fine ore without preheating; total energy incl. coke 8035–9890 kWh/t (NFM BREF 2017 Table 8.5 p.820)",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "Chromite (kg/t) 2400–3000 (1) ... Reducing agent (kg/t) 550–700 (1) ... Fluxes (kg/t) 100–400 (1) ... Electricity (kWh/t) 3800–4500 (1) ... Total energy input (kWh/t) 8035–9890 (1) ... (1) Consumption data of a conventional open submerged arc furnace",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "chromite_kg": [
+      2400,
+      3000
+     ],
+     "reductant_kg": [
+      550,
+      700
+     ],
+     "fluxes_kg": [
+      100,
+      400
+     ],
+     "electrode_kg": [
+      8,
+      25
+     ]
+    },
+    "unit": "per tonne HC FeCr",
+    "what": "Raw materials, conventional open SAF (Table 8.5)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Chromite (kg/t) 2400–3000; Reducing agent (kg/t) 550–700; Fluxes (kg/t) 100–400; Electrode 8–25",
+    "verified": true
+   },
+   {
+    "value": {
+     "preheated_pellets_kWh": [
+      3100,
+      3500
+     ],
+     "prereduced_pellets_kWh": [
+      2600,
+      3100
+     ],
+     "DC_furnace_kWh": 4500
+    },
+    "unit": "kWh electricity per tonne HC FeCr",
+    "what": "Other furnace practices (Table 8.5)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "3100–3500 (2) 2600–3100 (3) 4500 (4) ... (2) preheated pellets ... (3) pre-reduced pellets ... (4) DC furnace without pre-reduction process.",
+    "verified": true
+   },
+   {
+    "value": [
+     50,
+     70
+    ],
+    "unit": "% Cr in ferrochrome",
+    "what": "Ferrochrome composition",
+    "source": "https://en.wikipedia.org/w/index.php?title=Ferrochrome&action=raw",
+    "quote": "generally containing 50 to 70% chromium by weight",
+    "verified": true
+   },
+   {
+    "value": 45,
+    "unit": "% Cr2O3",
+    "what": "Shipping-grade chromite ore normalisation used by USGS",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+    "quote": "Units are thousand metric tons of shipping-grade chromite ore, which is deposit quantity and grade normalized to 45% Cr2O3",
+    "verified": true
+   }
+  ]
+ },
+ "iron_ore_beneficiation": {
+  "value": [
+   186,
+   662
+  ],
+  "unit": "MJ per tonne pellets",
+  "what": "Specific energy consumption of iron ore pelletising plants in 2005 (Iron and Steel BREF 2013, section 4.2.2.4 p.191)",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+  "quote": "In 2005 the specific energy consumption was in the range of 186 to 662 MJ/t of pellets.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     25,
+     30
+    ],
+    "unit": "% Fe",
+    "what": "Taconite (banded iron formation) crude ore grade; iron as magnetite and hematite in silica",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/iron.pdf",
+    "quote": "Taconite ... containing about 25 - 30 percent iron. The iron in taconite occurs principally as magnetite and hematite and finely dispersed with silica",
+    "verified": true
+   },
+   {
+    "value": 65,
+    "unit": "% Fe in pellets",
+    "what": "Pellet grade from taconite concentrate (magnetic separation, bentonite binder, about 10 mm)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Taconite&action=raw",
+    "quote": "it is rolled into pellets about 10 millimeters in diameter that contain about 65% iron.",
+    "verified": true
+   },
+   {
+    "value": {
+     "electricity_kWh_per_short_ton": [
+      100,
+      150
+     ],
+     "induration_Btu_magnetite": [
+      300000,
+      450000
+     ],
+     "induration_Btu_hematite": 750000
+    },
+    "unit": "per short ton pellets",
+    "what": "US pelletising energy; DERIVED induration = 0.35–0.52 GJ/t (magnetite), 0.87 GJ/t (hematite)",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/iron.pdf",
+    "quote": "operations range between 100 and 150-kilowatt hours per ton of pellets produced ... reduced requirements over 40 percent to an estimated 300,000 to 450,000 Btu for magnetite and about 20 percent to 750,000 Btu for hematite.",
+    "verified": true
+   },
+   {
+    "value": 94400,
+    "unit": "Btu per short ton",
+    "what": "Total energy to extract and process iron ore in DOE model mine; DERIVED = 110 MJ/t",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/iron.pdf",
+    "quote": "The total energy required to extract and process iron is 94,400 Btu per ton.",
+    "verified": true
+   }
+  ]
+ },
+ "pge": {
+  "value": [
+   18.9,
+   254.9
+  ],
+  "unit": "GJ per kg PGM",
+  "what": "Energy consumption of primary PGM production (range from literature compiled in a 2026 review, Table 5); water 100–1200 m3/kg PGM; ore processed 150 t per kg Pt; GHG about 13,500 kg CO2-eq per kg Pt; solid waste about 400 t per kg Pt",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13514571/fullTextXML",
+  "quote": "Primary Production (per kg Pt) ... Ore/waste processed 150 Mg ore ... GHG emissions ~13,500 kg CO2-eq ... Water consumption 100–1200 m3/kg PGM ... Energy consumption 18.9–254.9 GJ/kg PGM ... Solid waste generation ~400 Mg/kg Pt",
+  "verified": true,
+  "more": [
+   {
+    "value": 10,
+    "unit": "ppm (g/t) PGM",
+    "what": "Average grade of the Merensky Reef, Bushveld Complex, hosted in pyrrhotite, pentlandite, pyrite; Merensky + UG2 hold about 90% of world PGM",
+    "source": "https://en.wikipedia.org/w/index.php?title=Bushveld_Igneous_Complex&action=raw",
+    "quote": "The ''Reef'' contains an average of 10 ppm platinum group metals in [[pyrrhotite]], [[pentlandite]], and [[pyrite]] ... The Merensky and UG2 reefs contain approximately 90% of the world",
+    "verified": true
+   },
+   {
+    "value": [
+     20,
+     25
+    ],
+    "unit": "ppm Pt+Pd",
+    "what": "Grade of the J-M Reef, Stillwater Complex (Pd/Pt about 3.6)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Stillwater_igneous_complex&action=raw",
+    "quote": "Overall the reef contains an average of 20-25 ppm platinum plus palladium in an average two meter thickness.",
+    "verified": true
+   },
+   {
+    "value": 0.5,
+    "unit": "ppm Pt",
+    "what": "Platinum in Sudbury nickel ore (by-product)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Platinum&action=raw",
+    "quote": "In the Sudbury Basin, the huge quantities of nickel ore processed make up for the fact platinum is present as only 0.5 ppm in the ore.",
+    "verified": true
+   },
+   {
+    "value": 6.7,
+    "unit": "g Pt per tonne ore",
+    "what": "DERIVED from '150 Mg ore per kg Pt' = 1000 g / 150 t",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13514571/fullTextXML",
+    "quote": "Ore/waste processed 150 Mg ore [per kg Pt]",
+    "verified": true
+   }
+  ]
+ },
+ "cobalt": {
+  "value": "by-product of copper and nickel mining and processing",
+  "unit": "source",
+  "what": "Cobalt source (NFM BREF 2017 section 1.8.2.2); recovered after nickel by solvent extraction, then electrowon (sulphate or chloride) or hydrogen-reduced to powder",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "Cobalt is produced mainly as a by-product of the mining and processing of copper and nickel ores.",
+  "verified": true,
+  "more": [
+   {
+    "value": "sediment-hosted stratiform copper (Congo, Zambia); nickel laterites; magmatic Ni-Cu sulphides",
+    "unit": "deposit types",
+    "what": "World terrestrial cobalt resources about 25 Mt (USGS MCS 2024)",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+    "quote": "Identified world terrestrial cobalt resources are about 25 million tons. The vast majority are in sediment-hosted stratiform copper deposits in Congo (Kinshasa) and Zambia; nickel-bearing laterite deposits in Australia and nearby island countries and Cuba; and magmatic nickel-copper sulfide deposits",
+    "verified": true
+   },
+   {
+    "value": "SX separation then electrowinning or hydrogen reduction",
+    "unit": "refining route",
+    "what": "Cobalt refining (BREF section 9.1.2)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Cobalt is produced during the recovery of nickel after separation by solvent extraction (SX) ... Cobalt can be electrowon from the solution to produce saleable cathodes using diaphragm cells ... Cobalt can also be recovered from the solution as a powder by hydrogen reduction.",
+    "verified": true
+   },
+   {
+    "value": 5,
+    "unit": "MWh per tonne of Ni+Cu+Co",
+    "what": "Refinery electricity of a chlorine-leach nickel/copper/cobalt refinery (Plant E, BREF p.952)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Plant E: The refinery electricity consumption is about 5 MWh/t of nickel, copper and cobalt produced.",
+    "verified": true
+   },
+   {
+    "value": 859,
+    "unit": "t rock per t cobalt",
+    "what": "Global rock-to-metal ratio of cobalt (interquartile 465–2157)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9118561/fullTextXML",
+    "quote": "The interquartile range of RMRs for individual cobalt operations, for example, varies from 465 to 2157, with a global RMR of 859.",
+    "verified": true
+   }
+  ]
+ },
+ "titanium_ore": {
+  "value": {
+   "chlorine_kg": {
+    "mean": 201,
+    "max": 300,
+    "min": 114
+   },
+   "coke_kg": {
+    "mean": 366,
+    "max": 429,
+    "min": 285
+   },
+   "ore_feed_kg_TiO2_content": {
+    "mean": 1075,
+    "max": 1145,
+    "min": 975
+   }
+  },
+  "unit": "kg per tonne TiO2 pigment",
+  "what": "Chloride process consumption (chlorination to TiCl4 at 1000 C, then oxidation with chlorine recycle): make-up chlorine, coke, and feedstock; ore consumption 1060–1189 kg/t pigment (LVIC-S BREF 2007, Tables 3.8–3.10, pp.114–115)",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+  "quote": "Feed 1075 1145 975 [kg/t TiO2] ... Chlorine 201 300 114 ... Coke 366 429 285 ... the range of ore consumption is 1060 – 1189 kg/tonne pigment",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "natural_rutile": [
+      95,
+      96
+     ],
+     "slag": [
+      86,
+      87
+     ],
+     "synthetic_rutile": [
+      90,
+      93
+     ]
+    },
+    "unit": "% TiO2",
+    "what": "Feedstocks of the chloride route (LVIC-S BREF Table 3.7)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+    "quote": "Mineral rutile TiO2 95 – 96; Slag TiO2 86 – 87; Synthetic rutile TiO2 90 – 93",
+    "verified": true
+   },
+   {
+    "value": {
+     "ilmenite": [
+      40,
+      65
+     ],
+     "rutile": [
+      93,
+      96
+     ]
+    },
+    "unit": "% TiO2",
+    "what": "Mineral grades; ilmenite mainly from heavy mineral sands (alluvial) but also hard rock; 92% of titanium mineral production",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10847874/fullTextXML",
+    "quote": "The main sources of ilmenite are heavy mineral sands (alluvial deposits) however, it is also found in hard rock. Ilmenite currently accounts for 92 % of global titanium mineral production. Rutile (TiO2) contains 93–96 % titanium dioxide",
+    "verified": true
+   },
+   {
+    "value": [
+     75,
+     85
+    ],
+    "unit": "% TiO2 in titanium slag",
+    "what": "Ilmenite smelting gives titanium slag plus pig iron",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10847874/fullTextXML",
+    "quote": "titanium slag, contains 75–85 % TiO2. Pig iron is the second most common product",
+    "verified": true
+   },
+   {
+    "value": {
+     "lime_kg": {
+      "mean": 137,
+      "max": 220,
+      "min": 91
+     }
+    },
+    "unit": "kg per tonne TiO2",
+    "what": "Lime to neutralise waste metal chlorides (LVIC-S Table 3.11)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+    "quote": "Lime 137 220 91",
+    "verified": true
+   },
+   {
+    "value": "2 FeTiO3 + 7 Cl2 + 6 C -> 2 TiCl4 + 2 FeCl3 + 6 CO at 1000 C",
+    "unit": "reaction",
+    "what": "Carbochlorination of ilmenite",
+    "source": "https://en.wikipedia.org/w/index.php?title=Chloride_process&action=raw",
+    "quote": "the feedstock is treated at 1000 °C with [[carbon]] and [[chlorine]] gas, giving [[titanium tetrachloride]]",
+    "verified": true
+   }
+  ]
+ },
+ "manganese": {
+  "value": [
+   2200,
+   3200
+  ],
+  "unit": "kWh electricity per tonne HC FeMn",
+  "what": "High-carbon ferromanganese in electric arc furnace; total energy incl. coke 6000–7300 kWh/t (NFM BREF 2017 Table 8.8 p.822)",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "HC FeMn EAF: Ore (kg/t) 1900–2400; Coke or coal (kg/t) 410–500; Electrode (kg/t) 8–30; Electricity (kWh/t) 2200–3200; Total energy input (kWh/t) 6000–7300",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "electricity_kWh": [
+      3800,
+      6000
+     ],
+     "ore_kg": [
+      500,
+      2000
+     ],
+     "coke_kg": [
+      400,
+      700
+     ],
+     "FeMn_slag_kg": [
+      400,
+      2500
+     ],
+     "total_energy_kWh": [
+      6900,
+      11000
+     ]
+    },
+    "unit": "per tonne SiMn",
+    "what": "Silicomanganese (standard and LC) consumption (Table 8.8)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "SiMn: Ore 500–2000; Coke or coal 400–700; Electrode 10–50; FeMn slag 400–2500; Electricity 3800–6000; Total energy input 6900–11 000",
+    "verified": true
+   },
+   {
+    "value": {
+     "ore_kg": [
+      1900,
+      2400
+     ],
+     "coke_kg": [
+      410,
+      500
+     ],
+     "electrode_kg": [
+      8,
+      30
+     ]
+    },
+    "unit": "per tonne HC FeMn",
+    "what": "Raw materials (Table 8.8)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Ore (1) (kg/t) 1900–2400; Coke or coal (kg/t) 410–500; Electrode (kg/t) 8–30",
+    "verified": true
+   },
+   {
+    "value": 80,
+    "unit": "% Mn in ferromanganese",
+    "what": "Typical ferromanganese grade",
+    "source": "https://en.wikipedia.org/w/index.php?title=Manganese&action=raw",
+    "quote": "Often ferromanganese (usually about 80% manganese) is the intermediate in modern processes.",
+    "verified": true
+   },
+   {
+    "value": 70,
+    "unit": "% of world Mn resources in South Africa",
+    "what": "Resource distribution",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+    "quote": "South Africa accounts for an estimated 70% of the world's manganese resources.",
+    "verified": true
+   }
+  ]
+ },
+ "vanadium": {
+  "value": "titaniferous magnetite (via steel-smelter slag), phosphate rock, uraniferous sandstone; by-product or co-product",
+  "unit": "source",
+  "what": "Vanadium is less than 2% of host rock (USGS MCS 2024)",
+  "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+  "quote": "Vanadium occurs in deposits of phosphate rock, titaniferous magnetite, and uraniferous sandstone and siltstone, in which it constitutes less than 2% of the host rock ... Because vanadium is typically recovered as a byproduct or coproduct",
+  "verified": true,
+  "more": [
+   {
+    "value": 25,
+    "unit": "% vanadium in slag (up to)",
+    "what": "Vanadium reports to pig iron from V-bearing magnetite and then to converter slag; China and Russia produce it from steel smelter slag",
+    "source": "https://en.wikipedia.org/w/index.php?title=Vanadium&action=raw",
+    "quote": "The vanadium ends up in [[pig iron]] produced from vanadium-bearing magnetite. Depending on the ore used, the slag contains up to 25% of vanadium.",
+    "verified": true
+   },
+   {
+    "value": {
+     "metal_oxides_kg": [
+      1100,
+      2000
+     ],
+     "electricity_kWh": [
+      2200,
+      2800
+     ]
+    },
+    "unit": "per tonne ferro-vanadium",
+    "what": "FeV production (aluminothermic / electric furnace), NFM BREF 2017 Table 8.10 p.823",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "FeV: Metal oxides (kg/t) 1100–2000 (2); Electricity (kWh/t) 2200–2800 ... (2) The data presented contain the amount of V2O3 and V2O5.",
+    "verified": true
+   },
+   {
+    "value": 85,
+    "unit": "% of vanadium used as ferrovanadium / steel additive",
+    "what": "Use",
+    "source": "https://en.wikipedia.org/w/index.php?title=Vanadium&action=raw",
+    "quote": "Approximately 85% of the vanadium produced is used as [[ferrovanadium]] or as a [[steel]] additive.",
+    "verified": true
+   }
+  ]
+ },
+ "magnesium": {
+  "value": {
+   "dolomite_t_max": 10.5,
+   "ferrosilicon_75pctSi_t_max": 1.05,
+   "energy_tce_max": 4.5,
+   "fresh_water_t_max": 10
+  },
+  "unit": "per tonne magnesium (Pidgeon process, Chinese industry control limits)",
+  "what": "Pidgeon (silicothermic) process consumption; DERIVED energy = 4.5 tce x 29.3 GJ/tce = about 132 GJ per tonne Mg (thermal, mostly coal/gas for calcining and retorts)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10179423/fullTextXML",
+  "quote": "the comprehensive energy consumption per ton of magnesium in magnesium smelting enterprises is controlled below 4.5 t standard coal. The consumption of dolomite is less than 10.5 t, the consumption of ferrosilicon (Si > 75%) is less than 1.05 t and the consumption of fresh water is less than 10 t",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     18,
+     19
+    ],
+    "unit": "kWh per kg magnesium",
+    "what": "Electrolysis of MgCl2 from seawater (Dow process): electrolytic cell energy; graphite 100 g/kg; = 18,000–19,000 kWh per tonne",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10179423/fullTextXML",
+    "quote": "Electrolytic cell electrolytic dehydration Electrolytic efficiency 18~19 kWh/kg; graphite consumption 100 g/kg",
+    "verified": true
+   },
+   {
+    "value": {
+     "standard_coal_t": 5,
+     "CO2_t": [
+      22,
+      23
+     ],
+     "reduction_cycle_h": [
+      10,
+      14
+     ]
+    },
+    "unit": "per tonne magnesium",
+    "what": "Typical current Pidgeon figures quoted for comparison",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10179423/fullTextXML",
+    "quote": "reduction per ton of magnesium metal consumption of standard coal from 5 t to 3~3.5 t and CO2 emission reduction from 23 t to 11~13 t ... reduction cycle shortened from 10~14 h when using the Pidgeon method",
+    "verified": true
+   },
+   {
+    "value": [
+     17,
+     20
+    ],
+    "unit": "kWh per kg magnesium",
+    "what": "Energy of Pidgeon process around 2000 as stated on Wikipedia (cites Environment Canada)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Pidgeon_process&action=raw",
+    "quote": "By 2000, it took between 17 and 20 kilowatt-hours per kilogram of magnesium produced by the Pidgeon process.",
+    "verified": true
+   },
+   {
+    "value": 85,
+    "unit": "% reduction rate",
+    "what": "Pidgeon reaction 2(MgO.CaO) + Si -> 2Mg + 2CaO.SiO2 at 1473 K with 75% FeSi; energy 4.549 tce/t",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10179423/fullTextXML",
+    "quote": "75% SiFe(s) 2(MgO·CaO)(S) + Si(s) = 2Mg(g) + 2CaO·SiO2(S) 1473 K 85% 4.549 11.339",
+    "verified": true
+   }
+  ]
+ },
+ "sulphur": {
+  "value": "recovered elemental sulphur from petroleum refineries, natural-gas processing and coking plants (Claus); by-product sulphuric acid from non-ferrous smelters about 7% (US 2023)",
+  "unit": "sources and share (United States)",
+  "what": "US sulphur production 2023 by source; elemental 8.0 Mt (USGS MCS 2024). World shares by source were not found",
+  "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+  "quote": "Elemental sulfur was recovered, in descending order of tonnage, at petroleum refineries, natural-gas-processing plants, and coking plants ... Byproduct sulfuric acid, representing about 7% of production of sulfur in all forms, was recovered at five nonferrous-metal smelters",
+  "verified": true,
+  "more": [
+   {
+    "value": "Frasch (native) mining now only at one Polish mine; pyrites minor",
+    "unit": "sources (world)",
+    "what": "USGS Minerals Yearbook 2019 Sulfur",
+    "source": "https://pubs.usgs.gov/myb/vol1/2019/myb1-2019-sulfur.pdf",
+    "quote": "Native sulfur production, including production of Frasch sulfur at Poland's last operating mine, was estimated to be slightly lower than that in 2018.",
+    "verified": true
+   },
+   {
+    "value": 99.5,
+    "unit": "% purity",
+    "what": "Frasch-process sulphur purity",
+    "source": "https://en.wikipedia.org/w/index.php?title=Sulfur&action=raw",
+    "quote": "superheated water was pumped into a native sulfur deposit to melt the sulfur, and then compressed air returned the 99.5% pure melted product to the",
+    "verified": true
+   },
+   {
+    "value": 50,
+    "unit": "% of world sulphuric acid used for fertilisers",
+    "what": "Use; sulphuric acid is almost exclusively a by-product of gas and oil production",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11789991/fullTextXML",
+    "quote": "About 50 % of the sulfuric acid produced worldwide is used for fertilizers ... The latter is almost exclusively a by‐product of gas and oil production",
+    "verified": true
+   },
+   {
+    "value": [
+     75,
+     80
+    ],
+    "unit": "kWh per tonne acid",
+    "what": "Electricity use of two example double-contact sulphuric acid plants at copper smelters (4-pass plant 75–80; 5-pass plant 55–60 kWh/t acid), NFM BREF 2017 Table 13.34",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Electricity 75–80 kWh/t acid 55–60 kWh/t acid",
+    "verified": true
+   }
+  ]
+ },
+ "diamonds": {
+  "value": [
+   1,
+   6
+  ],
+  "unit": "carats per ton of ore (from less than 1 to about 6)",
+  "what": "Diamond content of most diamond ore bodies (USGS MCS 2024, Gemstones)",
+  "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+  "quote": "Most diamond ore bodies have a diamond content that ranges from less than 1 carat to about 6 carats per ton of ore.",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.2,
+    "unit": "g per carat",
+    "what": "Metric carat = 200 mg",
+    "source": "https://en.wikipedia.org/w/index.php?title=Carat_(mass)&action=raw",
+    "quote": "A metric carat of 200 milligrams is exactly one-fifth of a gram",
+    "verified": true
+   },
+   {
+    "value": [
+     0.3,
+     1.0
+    ],
+    "unit": "carats per tonne",
+    "what": "Average grade of most commercial diamond mines; Argyle unusually high at 2.5–6.8 ct/t",
+    "source": "https://en.wikipedia.org/w/index.php?title=Argyle_diamond_mine&action=raw",
+    "quote": "The ore grades at the Argyle mine are unusually high, with most commercial diamond mines averaging grades of {{cvt|0.3|to|1.0|carat|mg}} per metric ton.",
+    "verified": true
+   },
+   {
+    "value": 0.87,
+    "unit": "carats per tonne",
+    "what": "Recoverable ore grade at Orapa (kimberlite, Botswana)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Orapa_diamond_mine&action=raw",
+    "quote": "The recoverable [[ore grade]] at the mine is about {{convert|0.87|carat|g}} per tonne.",
+    "verified": true
+   },
+   {
+    "value": {
+     "rock_mined_Mt_2021": 107,
+     "carats_2023_million": 13.3
+    },
+    "unit": "Jwaneng mine",
+    "what": "Scale of the richest diamond mine (different years, not a grade)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Jwaneng_diamond_mine&action=raw",
+    "quote": "In 2021, around 107 million tonnes of rock were mined. In 2023, it produced 13.3 million carats of diamonds.",
+    "verified": true
+   }
+  ]
+ },
+ "phosphate_potash": {
+  "value": [
+   22,
+   28
+  ],
+  "unit": "% P2O5",
+  "what": "Average grade of mineable western US phosphate rock beds",
+  "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/phosphate.pdf",
+  "quote": "The mineable beds range from one to three meters in thickness and have an average grade of 22-28 percent phosphorus pentoxide (P2O5).",
+  "verified": true,
+  "more": [
+   {
+    "value": 70670,
+    "unit": "Btu per short ton",
+    "what": "Total energy to mine and process phosphate rock (98% mining, 2% beneficiation; flotation is 65% of processing energy); DERIVED = 82 MJ/t",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/phosphate.pdf",
+    "quote": "The total energy required to both mine and process phosphate was 70,670 Btu per ton. Mining requires 98 percent of the total energy needed, while beneficiation uses the remaining two percent.",
+    "verified": true
+   },
+   {
+    "value": "washing, screening, deliming, magnetic separation or flotation",
+    "unit": "beneficiation",
+    "what": "Phosphate rock beneficiation methods",
+    "source": "https://en.wikipedia.org/w/index.php?title=Phosphorite&action=raw",
+    "quote": "This occurs through washing, screening, deliming, magnetic separation or flotation.",
+    "verified": true
+   },
+   {
+    "value": [
+     3.3,
+     7.0
+    ],
+    "unit": "t phosphogypsum per t phosphoric acid",
+    "what": "By-product of wet-process phosphoric acid",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11789991/fullTextXML",
+    "quote": "Each ton of phosphoric acid produces 3.3–7.0 t of PG",
+    "verified": true
+   },
+   {
+    "value": 4.2,
+    "unit": "million Btu per short ton K2O",
+    "what": "Energy of North American muriate of potash production, 1979 survey (2.2 million Btu per short ton product; about half gas, half electricity); DERIVED = 4.9 GJ per tonne K2O",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/potash_soda_borate.pdf",
+    "quote": "the average energy consumption was 2.2 million Btu per short ton of product, equivalent to about 4.2 million Btu per short ton of K2O ... This was comprised of about 1 million Btu of natural gas, 1 million Btu of electricity",
+    "verified": true
+   },
+   {
+    "value": 21.5,
+    "unit": "% recovery ratio (product / material mined)",
+    "what": "Potash recovery ratio, US 2000",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/potash_soda_borate.pdf",
+    "quote": "With recovery ratios of potash at 21.5 percent and borates at 50 percent",
+    "verified": true
+   },
+   {
+    "value": "sylvinite (sylvite KCl + halite NaCl): flotation, dissolution-recrystallisation, heavy-media separation, solar evaporation; deep-well solution mining",
+    "unit": "ore and processing",
+    "what": "US potash processing (USGS MCS 2024)",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+    "quote": "Sylvinite and langbeinite ores in New Mexico were beneficiated by flotation, dissolution-recrystallization, heavy-media separation, solar evaporation ... One company extracted underground sylvinite ore by deep-well solution mining.",
+    "verified": true
+   },
+   {
+    "value": 63.17,
+    "unit": "% K2O equivalent in pure KCl",
+    "what": "Conversion basis",
+    "source": "https://en.wikipedia.org/w/index.php?title=Potash&action=raw",
+    "quote": "Chemically pure KCl (96% of world potash capacity) contains 63.17% K2O equivalent",
+    "verified": true
+   }
+  ]
+ },
+ "lithium": {
+  "value": {
+   "hard_rock_Australia": 49,
+   "hard_rock_China": 17,
+   "brine_Chile": 22,
+   "brine_Argentina": 8
+  },
+  "unit": "% of world lithium production by source",
+  "what": "Split between hard-rock (spodumene) and brine supply as reported by World Nuclear Association citing USGS. No sourced energy or reagent figures per tonne LCE were found",
+  "source": "https://world-nuclear.org/information-library/current-and-future-generation/lithium",
+  "quote": "the majority of lithium is produced through hard rock mining in Australia and China, producing 49% and 17% of global lithium resources respectively. The remaining lithium is produced through brines in Chile and Argentina, providing 22% and 8% respectively.",
+  "verified": true,
+  "more": [
+   {
+    "value": 2,
+    "unit": "years (up to)",
+    "what": "Duration of solar evaporation of brine",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12257466/fullTextXML",
+    "quote": "Extraction of lithium from brines relies on evaporitic technology, which pumps the saltwater from underground aquifers to the surface and relies on open-air evaporation to concentrate the brine. This process takes up to two years",
+    "verified": true
+   },
+   {
+    "value": 1.65,
+    "unit": "% Li2O",
+    "what": "Grade of a high-grade spodumene pegmatite resource (Manono, DRC)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Spodumene&action=raw",
+    "quote": "a resource size estimate of 400 million tonnes of high-grade low-impurity ore at 1.65% [[lithium oxide]]",
+    "verified": true
+   }
+  ]
+ },
+ "uranium": {
+  "value": {
+   "typical_min": 0.1,
+   "low": 0.02,
+   "high_Canada": 20
+  },
+  "unit": "% U in ore",
+  "what": "Uranium ore grades: most operating mines exceed 0.10% U; some Canadian mines up to 20% U; operable down to about 0.02% U (World Nuclear Association)",
+  "source": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/uranium-mining-overview",
+  "quote": "Most of the uranium ore deposits at present supporting these mines have average grades in excess of 0.10% of uranium ... some Canadian mines have huge amounts of ore up to 20% U average grade. Other mines however can operate successfully with very low grade ores, down to about 0.02% U.",
+  "verified": true,
+  "more": [
+   {
+    "value": 40,
+    "unit": "kg sulphuric acid per kg U",
+    "what": "Acid consumption of Kazakh in-situ leach mines (up to twice that quoted); Beverley, Australia 7.7 kg/kgU in 2007",
+    "source": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/in-situ-leach-mining-of-uranium",
+    "quote": "A general figure for Kazakh ISL production is about 40 kg acid per kgU, though other figures of up to twice that are quoted and some mines are a bit lower. Beverley in Australia in 2007 was 7.7 kg/kgU.",
+    "verified": true
+   },
+   {
+    "value": 19,
+    "unit": "kWh per kg U",
+    "what": "Unit power consumption of ISL (16 kWh/kg U3O8), Australia",
+    "source": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/in-situ-leach-mining-of-uranium",
+    "quote": "Unit power consumption is about 19 kWh/kgU (16 kWh/kg U 3 O 8 ) in Australi[a]",
+    "verified": true
+   },
+   {
+    "value": {
+     "acid": [
+      70,
+      90
+     ],
+     "alkaline": [
+      60,
+      70
+     ]
+    },
+    "unit": "% uranium recovery (ISL)",
+    "what": "Leach recovery",
+    "source": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/in-situ-leach-mining-of-uranium",
+    "quote": "Acid leaching gives higher uranium recovery – 70-90% – compared with 60-70% for alkaline leach",
+    "verified": true
+   },
+   {
+    "value": 85,
+    "unit": "% U by mass in U3O8 concentrate",
+    "what": "Yellowcake (uranium oxide concentrate) grade; conventional mill = crush, grind, sulphuric acid tank leach, IX/SX",
+    "source": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/uranium-mining-overview",
+    "quote": "uranium oxide concentrate – U 3 O 8 – about 85% uranium by mass. This is sometimes referred to as yellowcake",
+    "verified": true
+   },
+   {
+    "value": 56,
+    "unit": "% of world uranium mined by ISL (2022)",
+    "what": "Mining method share",
+    "source": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/in-situ-leach-mining-of-uranium",
+    "quote": "In 2022, 56% of world uranium mined was from by in situ leach",
+    "verified": true
+   },
+   {
+    "value": 1,
+    "unit": "kg U per tonne ore",
+    "what": "DERIVED: ore at 0.10% U contains 1 kg U per tonne (about 1.18 kg U3O8 before mill losses)",
+    "source": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/uranium-mining-overview",
+    "quote": "average grades in excess of 0.10% of uranium – that is, greater than 1000 parts per million",
+    "verified": true
+   },
+   {
+    "value": [
+     0.05,
+     0.4
+    ],
+    "unit": "% U3O8",
+    "what": "Grade of sandstone-hosted uranium deposits",
+    "source": "https://en.wikipedia.org/w/index.php?title=Uranium_ore&action=raw",
+    "quote": "Orebodies of this type are commonly low to medium grade (0.05–0.4% U3O8)",
+    "verified": true
+   }
+  ]
+ },
+ "not_found": [
+  "comminution_energy: a sourced typical SAG/ball-mill circuit figure in kWh/t beyond the DOE averages (e.g. Ballantyne & Powell benchmark) and the 'comminution = ~3% of world electricity' statement",
+  "flotation: general reagent dosages for sulphide ore flotation (only a slag concentrator figure found)",
+  "tailings: directly stated tonnes of tailings per tonne of copper (only derived); general process-water use per tonne of ore for copper concentrators",
+  "copper: SX-EW electrowinning energy in kWh per tonne cathode (about 2,000 kWh/t expected) - no usable source reached",
+  "nickel_laterite: HPAL energy per tonne Ni from a primary source (Norgate's 194 GJ/t not readable in any reached page); HPAL acid per tonne ore from plant data",
+  "tin: smelting energy per tonne tin and carbon/coal use per tonne; ore grade of hard-rock and alluvial tin deposits",
+  "tungsten: energy and reagent use of the APT route; scheelite/wolframite recovery in the mill",
+  "gold: cyanide consumption per tonne of ore; CIL/CIP recovery %; energy per kg or per oz of gold (Norgate & Haque figures not reachable)",
+  "silver: refining energy; silver grade of primary silver ores",
+  "molybdenum: concentrate grade (% MoS2 or % Mo), mill recovery, roasting fuel per tonne",
+  "chromium: chromite ore/concentrate Cr2O3 grade statistics beyond the USGS 45% normalisation; slag per tonne FeCr",
+  "pge: PGM flotation concentrate grade (g/t), smelter/converter matte grade, energy split by stage",
+  "cobalt: refining energy per tonne cobalt; share of cobalt that is by-product (%)",
+  "titanium_ore: heavy-mineral-sand ore grade (% heavy minerals); anorthosite hard-rock ilmenite grades",
+  "manganese: typical manganese ore grade (% Mn); electrolytic manganese metal kWh per tonne",
+  "vanadium: share of world supply from slag vs primary vs secondary; roast-leach reagent/energy per tonne V2O5",
+  "sulphur: world share by source (Claus from oil and gas, smelter acid, pyrite, native/Frasch)",
+  "diamonds: energy and water per tonne of kimberlite processed",
+  "phosphate_potash: potash ore grade (% KCl or % K2O); solution-mining energy; phosphate flotation concentrate grade and recovery",
+  "lithium: energy, water and reagents (soda ash, sulphuric acid, lime) per tonne LCE for brine and spodumene routes; spodumene concentrate grade (6% Li2O); calcination temperature",
+  "uranium: sulphuric acid per tonne of ore in conventional mills; mill recovery %",
+  "EU tailings BREFs (MTWR 2009 / MWEI 2018) could not be downloaded (server rejected the request); web search tool was out of budget, so only direct URL fetches and Europe PMC search were used"
+ ],
+ "notes": {
+  "sources_used": {
+   "NFM BREF 2017 (JRC107041)": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+   "DOE Mining Industry Energy Bandwidth Study 2007": "https://www.energy.gov/sites/prod/files/2013/11/f4/mining_bandwidth.pdf",
+   "DOE Energy and Environmental Profile of the US Mining Industry (chapters)": "https://www.energy.gov/sites/prod/files/2013/11/f4/<chapter>.pdf",
+   "USGS Mineral Commodity Summaries 2024": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024.pdf",
+   "LVIC-S BREF 2007": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+   "Iron and Steel BREF 2013": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+   "Europe PMC full text": "https://www.ebi.ac.uk/europepmc/webservices/rest/<PMCID>/fullTextXML",
+   "Wikipedia raw wikitext": "https://en.wikipedia.org/w/index.php?title=<Page>&action=raw",
+   "World Nuclear Association": "https://world-nuclear.org/information-library/nuclear-fuel-cycle/mining-of-uranium/uranium-mining-overview"
+  },
+  "conventions": "Btu figures are per US short ton as printed; DERIVED conversions use 1 Btu = 1055.06 J and 1 short ton = 0.907185 t. tce = tonne of standard coal equivalent taken as 29.3 GJ. PDF page numbers are the printed page numbers. All 'verified': true entries were read in the fetched text of the cited URL; DERIVED entries quote the inputs read there.",
+  "cautions": [
+   "Raabe 2023 Table 5 (Norgate & Rankin) figures are life-cycle totals with black-coal electricity, not plant energy.",
+   "The HPAL 600–900 kg/t acid figure comes from a comparison table in a research paper and is higher than figures usually quoted for operating plants; treat as low confidence.",
+   "The PGM row in PMC13514571 mixes 'per kg Pt' and 'per kg PGM' bases as printed.",
+   "DOE 'Energy and Environmental Profile' model-mine tables (SHERPA) give equipment energy per ton of material; the Table 5-4 electrowinning value (5.80 Btu/ton) is clearly not a real SX-EW energy and was not used.",
+   "Wikipedia's Pidgeon 17–20 kWh/kg statement conflicts in kind with the thermal (coal) basis of the Chinese figures; kept in 'more' only."
+  ]
+ }
+}

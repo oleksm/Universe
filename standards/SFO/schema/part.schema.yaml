@@ -5,6 +5,8 @@ description: 'standards/SFO/metadata/parts/<hull>/<code>.yaml: the full specific
 type: object
 additionalProperties: false
 required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
 properties:
   identity:
     type: object

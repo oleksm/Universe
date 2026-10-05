@@ -2,5 +2,10 @@
 identity:
   key: good.carbon-dioxide
   name: Carbon dioxide
+  traded_as: market.chemicals
   kind: by-product
   description: "The gas breath, rot and burning give off, and smelting too. Plants are made of it."
+physical:
+  bulk_density: 770
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "As a liquid under pressure, from memory: as a gas it is 1.8. To be reviewed." }

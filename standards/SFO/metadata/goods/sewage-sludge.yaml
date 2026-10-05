@@ -2,6 +2,7 @@
 identity:
   key: good.sewage-sludge
   name: "Sewage sludge"
+  traded_as: market.biologics
   kind: by-product
   description: "What is taken out of waste water: wet solids."
 physical:

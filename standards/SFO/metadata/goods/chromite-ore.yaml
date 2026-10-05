@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.chromite-ore
+  name: "Chromite ore"
+  traded_as: market.ores
+  kind: rock
+  description: "Pods of nearly pure chromite."
+physical:
+  bulk_density: 2600
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.chromite). The game has no ore for it yet."
+composition:
+  - { part: element.cr, share: 0.3079 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/chromite.yaml", note: "The typical grade of its deposit type, from the planet simulation's brief of 2026-10-05; the rest is rock." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

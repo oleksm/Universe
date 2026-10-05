@@ -2,6 +2,7 @@
 identity:
   key: good.bagasse
   name: "Bagasse"
+  traded_as: market.biologics
   kind: by-product
   description: "The crushed stalks of sugarcane, with their water."
 physical:

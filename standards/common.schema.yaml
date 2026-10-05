@@ -44,13 +44,13 @@ definitions:
     type: object
     additionalProperties: false
     properties:
-      mass: { type: number, x-unit: "kg", description: "kg, the thing as made, with nothing fitted to it or carried in it" }
-      length: { type: number, x-unit: "m", description: m }
-      width: { type: number, x-unit: "m", description: m }
-      height: { type: number, x-unit: "m", description: m }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg, the thing as made, with nothing fitted to it or carried in it" }
+      length: { type: number, exclusiveMinimum: 0, x-unit: "m", description: m }
+      width: { type: number, exclusiveMinimum: 0, x-unit: "m", description: m }
+      height: { type: number, exclusiveMinimum: 0, x-unit: "m", description: m }
       envelope: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [length, width, height] of the box it ships in, where that differs from its own size" }
-      volume: { type: number, x-unit: "m3", description: "m3, the space its shape takes" }
-      bulk_density: { type: number, x-unit: "kg/m3", description: "kg/m3, as stowed broken in a hold, for what is carried in bulk" }
+      volume: { type: number, exclusiveMinimum: 0, x-unit: "m3", description: "m3, the space its shape takes" }
+      bulk_density: { type: number, exclusiveMinimum: 0, x-unit: "kg/m3", description: "kg/m3, as stowed broken in a hold, for what is carried in bulk" }
       operating_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it works at" }
       operating_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it works at" }
       storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
@@ -101,3 +101,6 @@ definitions:
       fixed: { type: array, items: { type: string }, description: "The groups or figures that will not change, where the rest may." }
       because: { type: string, description: "Why it stands where it does: what it rests on, or what waits on it." }
       ask: { type: string, description: "Where a proposal to change it goes: a file of the repository." }
+  physical_object:
+    description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."
+    required: [physical]

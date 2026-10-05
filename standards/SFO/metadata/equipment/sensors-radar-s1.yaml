@@ -19,6 +19,9 @@ making:
 function:
   kind: sensors
   range: 500000
+  resolves: 10000000
+  survey_range: 20000000000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a flat array of transmit-receive modules on an aluminium frame, as a radar satellite's. Sentinel-1's antenna is 880 of its instrument's 945 kg." }
+  - { of: [function.resolves, function.survey_range], tier: sourced, review: true, source: "the game: crates/world/src/belts.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }

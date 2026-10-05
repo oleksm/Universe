@@ -18,6 +18,12 @@ making:
   module: module.assembly-shop
 function:
   kind: laser
+  beam_power: 2000000
+  focus: 2000
+  range: 30000
+  burn: 8
+  cool: 4
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: banks of laser modules, a mirror to point the beam, and above all cooling. Real ones turn a quarter to a third of their power into light and aim for 5 kg for each kW of beam; this is 0.6 kg a kW at four fifths." }
+  - { of: [function.beam_power, function.focus, function.range, function.burn, function.cool], tier: sourced, review: true, source: "the game: crates/world/src/weapons.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }

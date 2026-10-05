@@ -2,5 +2,10 @@
 identity:
   key: good.dust
   name: Furnace dust
+  traded_as: market.minerals
   kind: by-product
   description: "Fine metal oxides carried off in a furnace's fumes and caught in its filters."
+physical:
+  bulk_density: 1000
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

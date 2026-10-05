@@ -3,6 +3,7 @@ identity:
   key: stock.st304-scrap
   code: ST304-SCRAP
   name: "304 stainless scrap"
+  traded_as: market.metals
   form: scrap
 made_from:
   - item: material.stainless-steel-304

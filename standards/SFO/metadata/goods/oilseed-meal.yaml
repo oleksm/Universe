@@ -2,6 +2,7 @@
 identity:
   key: good.oilseed-meal
   name: "Oilseed meal"
+  traded_as: market.biologics
   kind: by-product
   description: "What is left of oilseeds when the oil is pressed out: rich in protein, fed to animals."
 physical:

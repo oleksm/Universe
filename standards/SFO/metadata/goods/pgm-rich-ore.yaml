@@ -11,7 +11,6 @@ physical:
 source:
   occurs: asteroids
 game:
-  goods: goods.ores
   ore: ore.pgm
 basis:
   - { of: [physical], tier: sourced, source: "the game: content/base/ores.ron" }

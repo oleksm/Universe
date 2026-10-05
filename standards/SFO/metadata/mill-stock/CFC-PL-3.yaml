@@ -3,6 +3,7 @@ identity:
   key: stock.cfc-pl-3
   code: CFC-PL-3
   name: "Carbon fibre composite plate 3 mm"
+  traded_as: market.chemicals
   form: plate
 made_from:
   - item: material.carbon-fibre-composite

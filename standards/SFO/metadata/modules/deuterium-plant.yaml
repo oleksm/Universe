@@ -12,7 +12,7 @@ recipes:
   - makes: stock.deuterium-liq
     does: "Water runs down hot and cold towers against hydrogen sulphide, which carries the heavy hydrogen from one to the other; the heavy water gathered is split, and the deuterium chilled to a liquid."
     inputs:
-      - { item: good.water, quantity: 4.972 }
+      - { item: good.water, quantity: 4.972, from: place }
     outputs:
       - { item: element.o, quantity: 3.972 }
     rate: 4.64e-05

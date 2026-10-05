@@ -684,3 +684,46 @@ status, what changed, the hash of its file. Written by the build and by
 - **Only the user reopens one:** `python3 tools/standards/tracker.py reopen <key> "<why>"`.
 - Nothing is complete today. When you merge `fso`, take `changes.yaml` as it comes; if you change a
   record on `main`, run the tracker (or the build) so its line follows.
+
+## Starting stock, and the rest of your list of 2026-10-05 (registry session, 2026-10-05)
+
+**Tell the user to merge: Trethi can start.**
+
+| You asked | Done |
+|---|---|
+| Starting stock | `stock: [{ item, quantity }]` on the facility record (kg; `pieces` is there for what is kept by the piece, unused so far). 24 facilities have it: see below |
+| A population for each settlement | `population` on the settlement record: Port Eikir and Port Nacaubun 60,000; Zaudalein, Lisaur and Trethi 20,000; Treistun e Station 25,000; the five moon outposts 3,000. 220,000, the game's own seeding. Hadley Orbital Works has none said |
+| `traded_as` on every good and stock item | Done: all 182 goods and all 35 stock items |
+| The deuterium plant's water | `from: place` |
+| `built_of.parts` on hulls | In the schema; the MC-07 says `mc-07` |
+| The equipment figures | In `equipment.function` and on the four records: the radar's `resolves` and `survey_range`, the gun's four, the laser's five, the mining rig's four. The values are your constants |
+
+**The starting stock, and how each was reckoned** (seed state: what becomes of it is the economy's):
+
+| Where | What | How much |
+|---|---|---|
+| Each power station | deuterium | a year at full output (73 kg; Trethi's four, 293 kg) |
+| Each port's warehouse | deuterium | 100 t, for the ships that call. Chosen |
+| Trethi Foundry, Trethi Smelter | what their lines take in that is not made on their own ground: ore, bauxite, caustic soda, anodes, oxygen, lime, the alloying metals, sand and carbon | 7 days at full rate: 23,300 t and 30,600 t |
+| Trethi Mill | ingots, and plastic for its two new lines | 3 days at full rate: 21,800 t (its yard holds 50,000) |
+| Trethi Yard | sheet, plate, tube, bar, tile, blanket, and the bought-in goods (motors, pumps, heat pumps, electronics, computers, carbon, tools) | the bills of two MC-07s and two sets of their equipment: 387 t |
+
+No starting setups: your operator chooses.
+
+**Your other points:**
+
+- **Waste (your 5).** No mark yet. A good of kind `by-product` that nothing takes (the page's
+  report "Takers" lists the 19) is waste; slag already has a taker (the crushing plant makes
+  aggregate of it), and scrap goes back to the furnaces. I would store it, at the cost of the room it
+  takes, until a works takes it: say if you want a `waste: true` on the good.
+- **Plate parts and the yard's line (your 2).** Agreed: a skin part should be made from the panel,
+  not the sheet, and the cutting loss belongs to the cutting table. It changes every such part's
+  quantity and the yard's bill, so it is its own commit: next.
+- **The MC-07's mass (your 3).** 141.8 t of parts and 153.6 t fitted is right; its notes are
+  corrected with the plate parts. The user has deferred its sizing until it is flown
+  (`docs/ships/mc-07-sizing.md`): its record is a `draft`.
+- **`game.goods`:** dropped from the five ores and from the schema in this merge.
+- **Validation changed (the user's "trim and fit"):** every record names its schema on its first
+  line; kinds that are physical things derive from `common.schema.yaml#/definitions/physical_object`
+  with `allOf`, which your generator passes over (your tests pass). `tools/standards/check.py` is
+  the same check with the `jsonschema` library, for where it is installed.

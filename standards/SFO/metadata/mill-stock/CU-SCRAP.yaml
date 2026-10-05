@@ -3,6 +3,7 @@ identity:
   key: stock.cu-scrap
   code: CU-SCRAP
   name: "Copper scrap"
+  traded_as: market.metals
   form: scrap
 made_from:
   - item: material.copper

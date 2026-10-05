@@ -1,2 +1,5 @@
-name: Local Administration
+# yaml-language-server: $schema=../../root.schema.yaml
+identity:
+  key: root.local-administration
+  name: Local Administration
 note: "Each settled system's administration manages the land in its system. It zones land, grants building permits and collects property tax. Land is filed by system, then by body: a planet, moon or settlement where people can live. Its zoning code says what each kind of zone permits; a settlement's zones are drawn on its ground, and its land is surveyed into parcels, each with an owner. It lays out the settlement's streets, and addresses are numbers along them. Asteroids are not land; claiming one is like claiming the ocean. Unsettled systems have none."

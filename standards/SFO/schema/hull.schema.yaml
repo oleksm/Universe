@@ -5,6 +5,9 @@ description: 'One hull. What it is made of: its parts, in parts/<its file name>/
 type: object
 additionalProperties: false
 required: [identity, slots, thrusters, flight]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [volume] } } }
 properties:
   identity:
     type: object
@@ -60,6 +63,12 @@ properties:
       drag_area: { type: number, x-unit: "m2", description: "m2, its drag coefficient times its frontal area" }
       hull_strength: { type: number, x-unit: "J", description: "J that wreck it" }
       frame_material: { type: string, x-ref: [material], description: "What its frame is made of, by its key: what its strength is to be worked out from, where no figure is given." }
+  built_of:
+    description: "What it is built of."
+    type: object
+    additionalProperties: false
+    properties:
+      parts: { type: string, description: "The folder of parts (SFO 12) it is built of: SFO/metadata/parts/<folder>." }
   fit:
     description: The equipment it is fitted with when it is built.
     type: array

@@ -5,6 +5,7 @@ identity:
 kind: settlement
 at: body.treistun.treistun-d
 position: { latitude: 45.649, longitude: 165.925 }
+population: 60000
 about: "The port on Treistun d, at 46° north. Gravity 1.07 g, with air, and warm."
 story:
   - "Put far to the north on purpose, out of the worst of d's heat. It is the one port besides Nacaubun where people can stand outside under a sky."

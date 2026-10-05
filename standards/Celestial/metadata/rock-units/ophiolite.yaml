@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
+identity:
+  key: rock-unit.ophiolite
+  name: "Ophiolite"
+  about: "Ocean floor thrust onto land."
+made_by: [collision front]
+physical:
+  density: 3100
+  magnetic_susceptibility: 0.05
+  erodibility: 0.7
+also:
+  - "olivine (40 to 49% magnesia)"
+  - "serpentine as a source of magnesium"
+basis:
+  - { of: [made_by, physical], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it." }
+  - { of: [also], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4, v0.1 (bulk_rock.json)", note: "As the simulation has it." }

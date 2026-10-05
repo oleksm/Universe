@@ -321,3 +321,11 @@ doctor, a lamp and a motor.
 
 **Next (the user, 2026-10-04):** spaceship modules: engines, miners, sensors, everything. The 57
 equipment records are the starting point.
+
+**3. Making, fifth step: ore to metal (2026-10-05).** What the worlds are made of has begun to
+arrive (the planet simulation's brief; `docs/geology-registry-note.md`). So: 13 ores as goods, a
+mine that takes its ore from where it stands, a concentrator, and works that win copper, zinc,
+nickel, chromium, tin, gold and titanium. Those seven no longer come from nowhere. Still bare
+elements: manganese, vanadium, magnesium, molybdenum, silicon as an alloying addition, tungsten,
+lead, silver, and the rest. No mine is placed on any world: where ore lies is the simulation's.
+Figures: `standards/sources/research_ore_processing.json`.

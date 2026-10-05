@@ -2,6 +2,7 @@
 identity:
   key: good.manure
   name: "Manure"
+  traded_as: market.biologics
   kind: by-product
   description: "Dung, urine and bedding from animals, wet. It goes back on the ground."
 physical:

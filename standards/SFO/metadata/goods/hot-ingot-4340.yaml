@@ -2,5 +2,10 @@
 identity:
   key: good.hot-ingot-4340
   name: "Hot ingot, 4340 steel"
+  traded_as: market.metals
   kind: intermediate
   description: "An ingot of 4340 steel heated through to the temperature it is worked at."
+physical:
+  bulk_density: 5500
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

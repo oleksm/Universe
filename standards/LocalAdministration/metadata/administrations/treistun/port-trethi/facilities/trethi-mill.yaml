@@ -44,3 +44,11 @@ lines:
 # Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }
+# What lies in its store at day 0 (seed state: what happens to it after is the economy's). 3 days of what its lines take in at full rate, of what is not made on its own ground.
+stock:
+  - { item: good.polyethylene, quantity: 33500.0 }
+  - { item: stock.al6061-ingot, quantity: 6270000.0 }
+  - { item: stock.al6061-sh-2, quantity: 402.0 }
+  - { item: stock.cu-ingot, quantity: 529000.0 }
+  - { item: stock.st304-ingot, quantity: 8640000.0 }
+  - { item: stock.st4340-ingot, quantity: 6350000.0 }

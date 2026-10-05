@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+identity:
+  key: deposit-type.carbonate-zinc-lead
+  name: "Carbonate-hosted zinc-lead"
+  about: "In limestone, from brines that moved through a basin."
+formed_by: sea
+carries:
+  - { item: element.zn, grade: 0.035, said_as: "Zn %" }
+  - { item: element.pb, grade: 0.012, said_as: "Pb %" }
+ore: good.carbonate-zinc-ore
+size:
+  median: 7230000000
+cluster:
+  deposits: 6
+  along: 20000
+  across: 10000
+seen_by:
+  - { method: geochemistry, reach: 50 }
+  - { method: induced polarisation, reach: 500 }
+counted:
+  test_world: 114
+  earth: 120
+basis:
+  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it: grades and sizes from its models of each type (the United States Geological Survey's), counts from one test world. Geochemistry is said to answer to almost every metal deposit near the surface: it is put on all, which may be one too many." }

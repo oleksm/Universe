@@ -4,6 +4,7 @@ identity:
   key: stock.st4340-scrap
   code: ST4340-SCRAP
   name: "4340 steel scrap"
+  traded_as: market.metals
   form: scrap
 made_from:
   - item: material.high-strength-steel-4340

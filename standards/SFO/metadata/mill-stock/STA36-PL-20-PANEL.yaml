@@ -4,6 +4,7 @@ identity:
   key: stock.sta36-pl-20-panel
   code: STA36-PL-20-PANEL
   name: "A36 plate 20 mm, formed panels"
+  traded_as: market.metals
   form: panel
 made_from:
   - item: material.structural-steel-a36

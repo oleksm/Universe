@@ -11,7 +11,6 @@ physical:
 source:
   occurs: asteroids
 game:
-  goods: goods.ores
   ore: ore.stony
 composition:
   - { part: element.o, share: 0.357 }

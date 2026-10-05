@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.waste-rock
+  name: "Waste rock"
+  traded_as: market.minerals
+  kind: by-product
+  description: "The barren rock moved to reach ore."
+physical:
+  bulk_density: 1700
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

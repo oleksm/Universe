@@ -2,5 +2,10 @@
 identity:
   key: good.hot-ingot-304
   name: "Hot ingot, 304 stainless"
+  traded_as: market.metals
   kind: intermediate
   description: "An ingot of 304 stainless steel heated through to the temperature it is worked at."
+physical:
+  bulk_density: 5500
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

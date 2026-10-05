@@ -3,6 +3,7 @@ identity:
   key: stock.sic-tl-10
   code: SIC-TL-10
   name: "Silicon carbide tile 10 mm"
+  traded_as: market.minerals
   form: tile
 made_from:
   - item: material.silicon-carbide

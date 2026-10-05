@@ -5,6 +5,9 @@ description: "standards/SFO/metadata/buildings/<name>.yaml: a building people li
 type: object
 additionalProperties: false
 required: [identity, floor, meets]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [mass, length, width, height] } } }
 properties:
   identity:
     type: object

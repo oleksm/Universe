@@ -4,6 +4,7 @@ identity:
   key: stock.al6061-pl-5-blank
   code: AL6061-PL-5-BLANK
   name: "6061 plate 5 mm, cut blanks"
+  traded_as: market.metals
   form: blank
 made_from:
   - item: material.aluminium-alloy-6061
