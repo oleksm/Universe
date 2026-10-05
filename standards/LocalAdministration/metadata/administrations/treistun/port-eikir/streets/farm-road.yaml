@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../../../../schema/street.schema.yaml
+# Invented: East Road carried on through the farmland.
+identity:
+  key: street.treistun.port-eikir.farm-road
+  name: Farm Road
+line: [[2500, 275], [17000, 275]]

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station along East Road. What it can carry is a fifth over what the works draws flat out.
+identity:
+  key: power-line.treistun.port-eikir.power-line-4
+  name: Power line 4
+from: facility.treistun.port-eikir.eikir-power-station
+to: facility.treistun.port-eikir.eikir-food-works
+capacity: 150000000
+line: [[1400, 0], [1500, 0]]

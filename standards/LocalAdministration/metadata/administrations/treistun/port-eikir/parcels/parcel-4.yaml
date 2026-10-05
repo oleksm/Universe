@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: a lot in the industrial zone for the works that mill, press, bake and brew, and Halloran Mills as its owner.
+identity:
+  key: parcel.treistun.port-eikir.4
+number: 4
+owner: org.halloran-mills
+address: { street: street.treistun.port-eikir.east-road, number: 4 }
+outline: [[1500, -900], [2400, -900], [2400, 200], [1500, 200]]

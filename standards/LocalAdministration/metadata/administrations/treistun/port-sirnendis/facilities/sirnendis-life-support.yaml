@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: what a sealed settlement breathes and drinks by, on the power station's ground. The oxygen plant splits water; the air plant takes back a little over half the carbon dioxide breathed out, with the hydrogen that leaves; the water works cleans what has been used.
+identity:
+  key: facility.treistun.port-sirnendis.sirnendis-life-support
+  name: Sirnendis Life Support
+kind: utility
+parcel: parcel.treistun.port-sirnendis.2
+lines:
+  - makes: element.o
+    modules:
+      - { module: module.oxygen-plant, count: 1 }
+  - makes: good.water
+    modules:
+      - { module: module.air-plant, count: 1 }
+  - makes: good.water
+    modules:
+      - { module: module.water-works, count: 1 }
+modules:
+  - { module: module.tank-farm, count: 1 }
+# What lies in its store at day 0 (seed state). Thirty days of oxygen and a week of water for its people. Chosen.
+stock:
+  - { item: element.o, quantity: 80600.0 }
+  - { item: good.water, quantity: 1050000.0 }

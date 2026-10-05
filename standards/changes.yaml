@@ -88,9 +88,9 @@
 - { record: body.treistun.treistun-b-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dc10a02d7b6a9d7c" }
 - { record: body.treistun.treistun-c, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8aca743293380697" }
 - { record: body.treistun.treistun-c-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8649784f3a822498" }
-- { record: body.treistun.treistun-d, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "5c937da15992a8d0" }
+- { record: body.treistun.treistun-d, at: "2026-10-05T22:01:13Z", status: "", summary: "changed: provenance, atmosphere", sha: "e80f0e82c1a2b02d" }
 - { record: body.treistun.treistun-d-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "068e295ea6b5bf5a" }
-- { record: body.treistun.treistun-e, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "fbd70ede577d5ed5" }
+- { record: body.treistun.treistun-e, at: "2026-10-05T22:01:13Z", status: "", summary: "changed: provenance, atmosphere", sha: "5fc9c58192576e29" }
 - { record: body.treistun.treistun-f, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "95c0135bd17f51fe" }
 - { record: body.treistun.treistun-g, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e2c2e01762ca08c2" }
 - { record: body.treistun.treistun-g-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b8c7e7aa8d58fb0c" }
@@ -330,30 +330,51 @@
 - { record: equipment.transceiver.beacon, at: "2026-10-05T21:30:06Z", status: draft, summary: "changed: physical, basis", sha: "afe0d38e6f281e88" }
 - { record: equipment.transceiver.station, at: "2026-10-05T21:30:06Z", status: draft, summary: "changed: physical, basis", sha: "1fceab1a209d1e4b" }
 - { record: equipment.transponder.s1, at: "2026-10-05T21:30:06Z", status: draft, summary: "changed: physical, basis", sha: "86402489bdb41734" }
+- { record: facility.treistun.port-aipika.aipika-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "5a7d4ce777ce3d59" }
+- { record: facility.treistun.port-aipika.aipika-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "14668bc22fc9e0c0" }
 - { record: facility.treistun.port-aipika.aipika-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "5ddbb312cc7e5287" }
-- { record: facility.treistun.port-aipika.aipika-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "2ac70c3ced66980c" }
+- { record: facility.treistun.port-aipika.aipika-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "53fe6aee6f21e15c" }
+- { record: facility.treistun.port-eikir.eikir-farms, at: "2026-10-05T22:01:57Z", status: "", summary: "first tracked", sha: "ca4a1980a230ab12" }
+- { record: facility.treistun.port-eikir.eikir-food-works, at: "2026-10-05T22:01:57Z", status: "", summary: "first tracked", sha: "7f10f50554ac8bf5" }
 - { record: facility.treistun.port-eikir.eikir-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "c97019fa61f1cea1" }
-- { record: facility.treistun.port-eikir.eikir-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "3e2c04ca777fbc44" }
+- { record: facility.treistun.port-eikir.eikir-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "a7727fa5017dda49" }
+- { record: facility.treistun.port-eikir.eikir-water-works, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "56ded39234cdc482" }
+- { record: facility.treistun.port-fabindum.fabindum-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "f522a4ae749a7727" }
+- { record: facility.treistun.port-fabindum.fabindum-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "19a0fa1158b3db17" }
 - { record: facility.treistun.port-fabindum.fabindum-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "e88fbfe5c67471aa" }
-- { record: facility.treistun.port-fabindum.fabindum-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "8dbb3d8cd7fa4cc1" }
+- { record: facility.treistun.port-fabindum.fabindum-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "cd69eec68a4b8180" }
+- { record: facility.treistun.port-lisaur.lisaur-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "e3128b238b47b96c" }
+- { record: facility.treistun.port-lisaur.lisaur-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "2c0c8d24295af6a5" }
 - { record: facility.treistun.port-lisaur.lisaur-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "dfc52d1c8a948719" }
-- { record: facility.treistun.port-lisaur.lisaur-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "c282eff2462080f5" }
+- { record: facility.treistun.port-lisaur.lisaur-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "187418937c1c039d" }
+- { record: facility.treistun.port-nacaubun.nacaubun-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "faf3a34ee1667d53" }
 - { record: facility.treistun.port-nacaubun.nacaubun-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "91b9375d7ce4ead6" }
-- { record: facility.treistun.port-nacaubun.nacaubun-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "379d6ed5c4410be9" }
+- { record: facility.treistun.port-nacaubun.nacaubun-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "06e2d36999f15f37" }
+- { record: facility.treistun.port-nacaubun.nacaubun-water-works, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "a95af60a7e1ab9e6" }
+- { record: facility.treistun.port-seiwiti.seiwiti-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "67b5ccc572acb37e" }
+- { record: facility.treistun.port-seiwiti.seiwiti-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "08d7267099f744db" }
 - { record: facility.treistun.port-seiwiti.seiwiti-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "5db094f35f4fb718" }
-- { record: facility.treistun.port-seiwiti.seiwiti-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "e286ceff5d4ff412" }
+- { record: facility.treistun.port-seiwiti.seiwiti-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "6a51f93cf1caedf9" }
+- { record: facility.treistun.port-sirnendis.sirnendis-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "95c125c5a5ea12c0" }
+- { record: facility.treistun.port-sirnendis.sirnendis-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "a94145de3e666bd0" }
 - { record: facility.treistun.port-sirnendis.sirnendis-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "3882cae39230d2f9" }
-- { record: facility.treistun.port-sirnendis.sirnendis-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "e851bf3370ba072c" }
+- { record: facility.treistun.port-sirnendis.sirnendis-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "94b2a49b1a5c38a8" }
 - { record: facility.treistun.port-trethi.trethi-foundry, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "be5d8fd20283e85f" }
+- { record: facility.treistun.port-trethi.trethi-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "457659c2302eeaef" }
+- { record: facility.treistun.port-trethi.trethi-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "20bc6eb10d26153f" }
 - { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "3178cfd7b3327473" }
 - { record: facility.treistun.port-trethi.trethi-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "b02941881f765a35" }
 - { record: facility.treistun.port-trethi.trethi-smelter, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "24ef6e22e88cb38b" }
-- { record: facility.treistun.port-trethi.trethi-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "0e9365e63ecc2f93" }
+- { record: facility.treistun.port-trethi.trethi-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "7be7638b4192e38f" }
 - { record: facility.treistun.port-trethi.trethi-yard, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "1217332dd23e30b6" }
+- { record: facility.treistun.port-weisonum.weisonum-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "ba4e9b3eaf1e30a2" }
+- { record: facility.treistun.port-weisonum.weisonum-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "25cd4bdb39b962ab" }
 - { record: facility.treistun.port-weisonum.weisonum-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "dc80b4bc42b9bdf3" }
-- { record: facility.treistun.port-weisonum.weisonum-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "8f09ec384b474602" }
+- { record: facility.treistun.port-weisonum.weisonum-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "3e88b30f478d5115" }
+- { record: facility.treistun.port-zaudalein.zaudalein-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "af24b9ad33ea612f" }
+- { record: facility.treistun.port-zaudalein.zaudalein-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "7f0db9c024d800ea" }
 - { record: facility.treistun.port-zaudalein.zaudalein-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "8a6463d5769ed94e" }
-- { record: facility.treistun.port-zaudalein.zaudalein-warehouse, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "df904d159e52f6e0" }
+- { record: facility.treistun.port-zaudalein.zaudalein-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "3d3e2bb4bf564f01" }
 - { record: gate.ring.i, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6a1ec2077ef93824" }
 - { record: gate.ring.ii, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "766a5587223eafd5" }
 - { record: gate.ring.iii, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "084debfe9c5ac98b" }
@@ -715,6 +736,7 @@
 - { record: module.oil-press, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "bf67b0e7c9041155" }
 - { record: module.orchard, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b6ff51fc9314269f" }
 - { record: module.ore-yard, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "aabf995c6ecb9a67" }
+- { record: module.oxygen-plant, at: "2026-10-05T22:01:13Z", status: review, summary: "first tracked", sha: "ae1e142cb4298b78" }
 - { record: module.panel-former, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6eb483bdf81f45ae" }
 - { record: module.panel-line, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0fbe5e85cc500ec9" }
 - { record: module.pellet-plant, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cc7c2441cd8e27ec" }
@@ -739,7 +761,7 @@
 - { record: module.titanium-works, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "0b88c2242c7a1d44" }
 - { record: module.tungsten-works, at: "2026-10-05T19:01:44Z", status: review, summary: "first tracked", sha: "e5616dfc3d8c2842" }
 - { record: module.vacuum-furnace, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1d5f2213106ad4c3" }
-- { record: module.water-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5193f8997feb1161" }
+- { record: module.water-works, at: "2026-10-05T22:01:13Z", status: review, summary: "changed: recipes, basis", sha: "6d2d5c58db92dac2" }
 - { record: module.welding-bay, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "54895caef569a2de" }
 - { record: module.winery, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "2edf2e70f40e0472" }
 - { record: module.wire-mill, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6294a04a59450cbe" }
@@ -793,6 +815,8 @@
 - { record: parcel.treistun.port-aipika.2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d59237d0effd6ca9" }
 - { record: parcel.treistun.port-eikir.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d3df3552c89591d0" }
 - { record: parcel.treistun.port-eikir.2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1410971358098c99" }
+- { record: parcel.treistun.port-eikir.3, at: "2026-10-05T22:02:10Z", status: "", summary: "changed", sha: "c1e3712fd88b1128" }
+- { record: parcel.treistun.port-eikir.4, at: "2026-10-05T22:01:57Z", status: "", summary: "first tracked", sha: "b7f80f35ae7add8f" }
 - { record: parcel.treistun.port-fabindum.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f6032716128f02d3" }
 - { record: parcel.treistun.port-fabindum.2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ee9cdfb368afab7b" }
 - { record: parcel.treistun.port-lisaur.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d044d1a56893b5c5" }
@@ -1446,19 +1470,40 @@
 - { record: population.treistun.tukau-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c5d4e30bf2ae5b89" }
 - { record: population.treistun.ugaula-group-treistun-i-l5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c5dccf8aa5e0766d" }
 - { record: power-line.treistun.port-aipika.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9e9bf4b47fa9c783" }
+- { record: power-line.treistun.port-aipika.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "652346af1d759ce1" }
+- { record: power-line.treistun.port-aipika.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "e9fed84a4260c3b5" }
 - { record: power-line.treistun.port-eikir.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "aae64d8d66c10814" }
+- { record: power-line.treistun.port-eikir.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "4ef879bae623afbd" }
+- { record: power-line.treistun.port-eikir.power-line-3, at: "2026-10-05T22:01:57Z", status: "", summary: "first tracked", sha: "e9e029e1614d8cd7" }
+- { record: power-line.treistun.port-eikir.power-line-4, at: "2026-10-05T22:01:57Z", status: "", summary: "first tracked", sha: "224a5aab389dc809" }
 - { record: power-line.treistun.port-fabindum.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "964c024923c5bab8" }
+- { record: power-line.treistun.port-fabindum.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "a2715cc5d2498ce7" }
+- { record: power-line.treistun.port-fabindum.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "5459e943348f5439" }
 - { record: power-line.treistun.port-lisaur.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3980d02493a0894f" }
+- { record: power-line.treistun.port-lisaur.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "5e8c373e1d55e78b" }
+- { record: power-line.treistun.port-lisaur.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "b31d021fab0e0c2e" }
 - { record: power-line.treistun.port-nacaubun.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "242b5a39a1adb573" }
+- { record: power-line.treistun.port-nacaubun.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "4eea946b00c0a3e5" }
+- { record: power-line.treistun.port-nacaubun.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "2e3d77d14c551787" }
 - { record: power-line.treistun.port-seiwiti.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "90e8e5e8da2005d8" }
+- { record: power-line.treistun.port-seiwiti.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "e4481eb7e84c24f9" }
+- { record: power-line.treistun.port-seiwiti.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "f97a170ed42ca5be" }
 - { record: power-line.treistun.port-sirnendis.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f443043f5f42ed48" }
+- { record: power-line.treistun.port-sirnendis.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "2d8578bc39e5a95b" }
+- { record: power-line.treistun.port-sirnendis.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "1335cbf5bfb9815f" }
 - { record: power-line.treistun.port-trethi.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9b57a6f35554ba54" }
 - { record: power-line.treistun.port-trethi.power-line-2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "82ebbbfbba4b4181" }
 - { record: power-line.treistun.port-trethi.power-line-3, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3ff3abf29c997b83" }
 - { record: power-line.treistun.port-trethi.power-line-4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4b3066cf5d9bb8bc" }
 - { record: power-line.treistun.port-trethi.power-line-5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f04209a3c5420d3d" }
+- { record: power-line.treistun.port-trethi.power-line-6, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "48c9ad11de8aebf2" }
+- { record: power-line.treistun.port-trethi.power-line-7, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "6d993beebd78734a" }
 - { record: power-line.treistun.port-weisonum.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ba9688e07560e05a" }
+- { record: power-line.treistun.port-weisonum.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "c80366fbf3d1af67" }
+- { record: power-line.treistun.port-weisonum.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "9ffd23ae7af0bee1" }
 - { record: power-line.treistun.port-zaudalein.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c4544ac9c8e7de99" }
+- { record: power-line.treistun.port-zaudalein.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "0d22d1f11938651c" }
+- { record: power-line.treistun.port-zaudalein.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "de292ec6696eae47" }
 - { record: process.aerogel-making, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c136475d7a73d8a1" }
 - { record: process.alloying-304, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "93db219f1892e46d" }
 - { record: process.alloying-bronze, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9fccdfd612f16944" }
@@ -1527,7 +1572,7 @@
 - { record: rock-class.enstatite, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "829ba2f8cecdc5e4" }
 - { record: rock-class.icy, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "8c0cc07eed7fdfbc" }
 - { record: rock-class.metallic, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "2e8a72eea9faf614" }
-- { record: rock-class.olivine, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, found, basis", sha: "219dee8e889c0b31" }
+- { record: rock-class.olivine, at: "2026-10-05T22:02:37Z", status: "", summary: "changed: found, basis", sha: "29d9892577d73ee5" }
 - { record: rock-class.primitive, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "6244e99a969e0517" }
 - { record: rock-class.stony, at: "2026-10-05T20:20:57Z", status: "", summary: "changed: composition, basis", sha: "515719ecac4b5bcd" }
 - { record: rock-class.stony-iron, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "8cfb2c2f3a8f1e89" }
@@ -1822,6 +1867,7 @@
 - { record: street.treistun.port-aipika.east-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f9a84412691cf955" }
 - { record: street.treistun.port-eikir.dock-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "0baee1cdb2fcbcaf" }
 - { record: street.treistun.port-eikir.east-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "cfca362407b9d52e" }
+- { record: street.treistun.port-eikir.farm-road, at: "2026-10-05T22:01:57Z", status: "", summary: "first tracked", sha: "a8d05e0b30742b8e" }
 - { record: street.treistun.port-fabindum.dock-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "70810ce02e623b6d" }
 - { record: street.treistun.port-fabindum.east-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "38ff63c204ae595a" }
 - { record: street.treistun.port-lisaur.dock-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "be4256cf6d50e6ca" }
@@ -1876,6 +1922,7 @@
 - { record: vocabulary.visitor, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a463d3a60b6fabb9" }
 - { record: zone.treistun.port-aipika.industrial, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a15a4e42e0e70f15" }
 - { record: zone.treistun.port-aipika.port, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd999b4780e9d9df" }
+- { record: zone.treistun.port-eikir.agricultural, at: "2026-10-05T22:02:10Z", status: "", summary: "changed", sha: "88f3a8d89626d6f9" }
 - { record: zone.treistun.port-eikir.industrial, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7134cd7d9e2a785f" }
 - { record: zone.treistun.port-eikir.port, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6eaf02b3d17757d7" }
 - { record: zone.treistun.port-fabindum.industrial, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "bafa66c598d0b0de" }

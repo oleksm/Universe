@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
+# Invented: the farmland east of the town, past the works: 14 km by 17 km, 238 km2. The temperate band's
+# share of what feeds Treistun (docs/registry-food.md): 170 fields, 40 market gardens, 8 orchards, the barns and the ponds.
+identity:
+  key: zone.treistun.port-eikir.agricultural
+  name: Farmland
+use: agricultural
+outline: [[3000, -8500], [17000, -8500], [17000, 8500], [3000, 8500]]

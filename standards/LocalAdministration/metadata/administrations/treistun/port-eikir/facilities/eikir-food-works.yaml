@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: one each of the works that turn the farms' crops and animals into food, and the fertiliser works that feeds the fields, with the hydrogen plant it needs.
+identity:
+  key: facility.treistun.port-eikir.eikir-food-works
+  name: Eikir Food Works
+kind: food works
+parcel: parcel.treistun.port-eikir.4
+lines:
+  - makes: good.flour
+    modules:
+      - { module: module.flour-mill, count: 1 }
+  - makes: good.bread
+    modules:
+      - { module: module.bakery, count: 1 }
+  - makes: good.animal-feed
+    modules:
+      - { module: module.feed-mill, count: 1 }
+  - makes: good.vegetable-oil
+    modules:
+      - { module: module.oil-press, count: 1 }
+  - makes: good.sugar
+    modules:
+      - { module: module.sugar-works, count: 1 }
+  - makes: good.cheese
+    also: [good.butter]
+    modules:
+      - { module: module.dairy, count: 1 }
+  - makes: good.beef
+    also: [good.pork, good.mutton, good.chicken, good.fish]
+    modules:
+      - { module: module.meat-works, count: 1 }
+  - makes: good.beer
+    modules:
+      - { module: module.brewery, count: 1 }
+  - makes: good.wine
+    modules:
+      - { module: module.winery, count: 1 }
+  - makes: good.fertiliser
+    modules:
+      - { module: module.hydrogen-plant, count: 1 }
+      - { module: module.fertiliser-works, count: 1 }
+modules:
+  - { module: module.grain-silo, count: 1 }
+  - { module: module.cold-store, count: 2 }

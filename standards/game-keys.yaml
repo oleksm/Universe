@@ -188,6 +188,7 @@
 - { key: module.oil-press, game: "oil-press", in: "industry.ron, settlements.ron" }
 - { key: module.orchard, game: "orchard", in: "industry.ron, settlements.ron" }
 - { key: module.ore-yard, game: "ore-yard", in: "industry.ron, settlements.ron" }
+- { key: module.oxygen-plant, game: "oxygen-plant", in: "industry.ron, settlements.ron" }
 - { key: module.panel-former, game: "panel-former", in: "industry.ron, settlements.ron" }
 - { key: module.panel-line, game: "panel-line", in: "industry.ron, settlements.ron" }
 - { key: module.pellet-plant, game: "pellet-plant", in: "industry.ron, settlements.ron" }
