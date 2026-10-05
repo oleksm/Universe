@@ -19,3 +19,6 @@
   sand are won.
 - **For worlds without plates:** an olivine rock class, and four more composition ranges a rock
   class can carry (sulphide, titanium, KREEP, helium-3).
+- **The simulation's vocabulary is imported, not copied by hand:** a tool reads its file and
+  writes the deposit types and rock units, each with the simulation's own key and code. Three more
+  rock units; the platinum metals split by metal.

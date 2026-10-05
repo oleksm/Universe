@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
 # Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
 identity:
-  key: rock-unit.gneiss-basement
-  name: "Gneiss basement"
-  about: "The old, hard floor of the continents."
-sim: { key: basement }
-made_by: [craton]
+  key: rock-unit.iron-formation
+  name: "Banded iron formation"
+  about: "Banded iron laid down in seas before the air held oxygen."
+sim: { key: iron_formation }
+made_by: [sea]
 physical:
-  density: 2750.0
-  magnetic_susceptibility: 0.001
-  erodibility: 0.35
+  density: 3300.0
+  magnetic_susceptibility: 1.0
+  erodibility: 0.25
 yields:
-  - { item: good.aggregate, quality: "120 to 220 strength MPa" }
+  - { item: good.aggregate, quality: "3200 to 3600 density kg/m3" }
 basis:
   - { of: [sim, physical, yields], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }

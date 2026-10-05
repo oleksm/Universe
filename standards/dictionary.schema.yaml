@@ -86,3 +86,13 @@ definitions:
       magnetics: "The ground's magnetism, from the air or orbit."
       gravity: "The ground's pull: finds what is dense."
       sonar: "Sound off the sea bed: finds what lies on it."
+  deposit_shape:
+    description: "The shape an ore body takes."
+    enum: [stock, veins, lens, strata, pipe, blanket]
+    x-values:
+      stock: "A broad, steep mass."
+      veins: "Thin sheets filling cracks."
+      lens: "A pod, thick in the middle."
+      strata: "A layer among layers."
+      pipe: "A steep chimney."
+      blanket: "A flat sheet at or near the surface."

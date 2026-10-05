@@ -9,6 +9,6 @@ physical:
   bulk_density: 1200
 source:
   occurs: temperate planets
-  note: "Laid down where seas have dried. Crystals of it have been found in meteorites (Monahans, Zag) and salts on Ceres, so some small bodies hold a little. The game has no ore for it yet."
+  note: "Laid down where seas have dried. Crystals of it have been found in meteorites (Monahans, Zag) and salts on Ceres, so some small bodies hold a little. The game has no ore for it yet. The planet simulation adds: a world that was once wet keeps salts in its old basins, and an icy moon brings its ocean's salts up along cracks."
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

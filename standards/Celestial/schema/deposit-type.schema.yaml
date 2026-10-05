@@ -14,6 +14,13 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       about: { type: string }
+  sim:
+    description: "The planet simulation's own words for it: they are added to, never renamed."
+    type: object
+    additionalProperties: false
+    properties:
+      key: { type: string, description: "Its key there." }
+      code: { type: string, description: "Its short code there, as in a deposit's id (PCU)." }
   formed_by: { $ref: "../../dictionary.schema.yaml#/definitions/geological_event" }
   carries:
     description: "What it is mined for, and a typical grade of each."
@@ -34,6 +41,17 @@ properties:
     additionalProperties: false
     properties:
       median: { type: number, x-unit: "kg", description: "kg of ore in a deposit of middling size" }
+      spread: { type: number, x-unit: "1", description: "how widely sizes spread about that: the standard deviation of the natural logarithm of size" }
+      cap: { type: number, x-unit: "kg", description: "kg, the most a deposit of the type holds: about the largest known on Earth" }
+  shape: { $ref: "../../dictionary.schema.yaml#/definitions/deposit_shape" }
+  footprint:
+    description: "How big a middling one is on the ground."
+    type: object
+    additionalProperties: false
+    properties:
+      length: { type: number, x-unit: "m", description: "m along its strike" }
+      width: { type: number, x-unit: "m", description: "m across it" }
+  forms_at: { type: number, x-unit: "m", description: "m below the ground it forms at; erosion brings it up" }
   cluster:
     description: "How its deposits group into a district, stretched along the grain of the belt."
     type: object

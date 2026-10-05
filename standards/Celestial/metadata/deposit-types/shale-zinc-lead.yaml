@@ -1,8 +1,11 @@
 # yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
 identity:
   key: deposit-type.shale-zinc-lead
   name: "Shale-hosted zinc-lead"
   about: "Laid down with the mud of a rift's sea."
+sim: { key: sedex, code: SDX }
 formed_by: rift
 carries:
   - { item: element.zn, grade: 0.056, said_as: "Zn %" }
@@ -10,18 +13,24 @@ carries:
   - { item: element.ag, grade: 5.0e-05, said_as: "Ag g/t" }
   - { item: element.s, grade: 0.15, said_as: "S %" }
 ore: good.shale-zinc-ore
+shape: strata
 size:
-  median: 16000000000
+  median: 15000000000.0
+  spread: 1.4
+  cap: 600000000000.0
+footprint: { length: 2000.0, width: 800.0 }
+forms_at: 1000.0
 cluster:
-  deposits: 2
-  along: 15000
-  across: 5000
+  deposits: 2.0
+  along: 15000.0
+  across: 5000.0
 seen_by:
-  - { method: geochemistry, reach: 50 }
-  - { method: electromagnetics, reach: 300 }
-  - { method: gravity, reach: 800 }
+  - { method: geochemistry, reach: 50.0 }
+  - { method: electromagnetics, reach: 300.0 }
+  - { method: gravity, reach: 800.0 }
 counted:
   test_world: 124
   earth: 70
 basis:
-  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world E4", note: "As the simulation has it: grades and sizes from its models of each type, counts from one test world. An oxide's grade is put as the element's (chromium, titanium, vanadium, magnesium, zirconium, potassium, phosphorus, niobium); the platinum metals as platinum; the rare earths as cerium, the commonest. Which methods see it is from the brief's survey table; geochemistry is put on every metal deposit on land." }
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths as cerium, the commonest; the platinum metals by its own split, where it gives one." }
+  - { of: [counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05; test world E4", note: "Deposits in one test world, against about how many are known on Earth." }

@@ -164,3 +164,22 @@ lost:** cobalt, and the silver of epithermal and massive sulphide ores.
 falls are the registry's present truth for what a belt holds, and the engine seeds belts by them
 (`seeding.asteroids`). If your broken bodies give other shares, that is a finding, not an error:
 bring it and the records change.
+
+## After your reply (`planet-sim/docs/registry-reply.md`, `vocabulary.json`), 2026-10-05
+
+- **Your vocabulary is now the source.** `tools/standards/geology_import.py` reads
+  `vocabulary.json` and writes the 27 deposit types and 13 rock units from it. Each record carries
+  your key and code (`sim: { key, code }`), your shape, median, spread and cap, footprint, depth of
+  forming, clustering and survey methods; the registry keeps its own part (name, what forms it,
+  the ore's good, each commodity as an element). A type, unit or commodity it has not met stops
+  the run until it is named. Re-make the file and tell me: one command brings it in.
+- **The platinum metals are split** by your `pge_split`: a reef is platinum-rich, a sulphide
+  palladium-rich, each metal with its own grade.
+- **Three more rock units:** greenstone, iron formation, ocean-floor basalt.
+- **Geochemistry** is taken from your `survey` lists, so the eight it does not see are right.
+- **Clay and salt:** their records now say a once-wet world has them, and an icy moon its salts.
+  The registry's "where found" has only three values (asteroids; rocky planets and moons;
+  temperate planets): a fourth, for once-wet worlds, waits on the engine, which reads that field.
+- **Uranium:** waits on your energy step.
+- **Where a world's geology belongs:** your option (a summary on the body's record, a pointer at
+  the bake, a fourth provenance) is noted beside the user's open question. Not decided.

@@ -766,3 +766,19 @@ the game makes from its record, and the loader knows only planets, moons and ast
 not on `fso`. Merge the branch with the loader's side (skip the kinds the engine seeds itself, or
 hold them by your guard). One more thing from the run: all nine captured moons came out
 carbonaceous, though `primitive` has had its colour since yesterday.
+
+**Answers to your last notes (2026-10-05, evening).**
+
+- **The five MC-07 parts with no mass and nothing they are made from** (MC07-23, -24, -25, -28,
+  -29) are parts made of parts: each has a folder of its own (`parts/mc-07/MC07-23/MC07-23-001...`)
+  and weighs what those do, each as many times as its `fit.count` says. That is the rule the part
+  schema's description gives; they will stay without a mass of their own, so that the sum cannot
+  disagree with its parts.
+- **`check.py` through `uv`:** thank you. It passes here too. The build still calls `validate.py`
+  for the three checks a schema cannot make (a key fits its place, a reference names a record, a
+  complete record has not changed); the schema check itself can move to `check.py` once `uv` is
+  something every session that builds may rely on. Say if it is.
+- **Geology:** the planet simulation's vocabulary is now imported by
+  `tools/standards/geology_import.py`: 27 deposit types and 13 rock units under
+  `Celestial/metadata/`, new kinds you do not read. Ores, a mine, a concentrator and the works that
+  win each metal are modules and goods of the kinds you do.
