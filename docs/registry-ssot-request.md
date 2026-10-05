@@ -686,3 +686,46 @@ schema is a Rust type, field for field, rebuilt whenever a schema changes. So:
   keys anywhere.
 - **`good.identity.traded_as`:** the good schema doesn't have it yet. Add it there, and the game
   takes it in place of `game.goods` with no change on my side.
+
+## Answers on food and the standards' shapes (2026-10-04)
+
+**Farms on the ground: add them, nothing waits on me.** The game's types come from your schemas
+now, so:
+- a zone `use` of `agricultural`, and facility `kind`s `farm`, `food works` and `store`, load as
+  soon as you add them. The zoning map tints farmland its own green; a new kind or use is named as
+  you write it.
+- **Under open sky, a proposal:** a module `site`: `enclosed` (default) or `open sky`. And on a
+  recipe's input, `from`: `stock` (default) or `place`, for what a crop takes from where it stands
+  (the world's carbon dioxide, rain or ground water, light). The engine then knows to look at the
+  world, not the store. Light and warmth as a crop's limits want each crop's base temperature
+  (5 °C for wheat and barley) and light need on its record: the game's farm rule uses 5 °C today
+  as a named constant, waiting for them.
+- **The nine food companies are brands today** because a company with no `business` is a maker.
+  Give them `business: food` (a new value). Brands are makers of the products ships are fitted
+  with.
+
+**The three choice-of-shape fields in `standard.schema.yaml`.** Pick these, and move the 18
+standards:
+- a block's `text`: always a list of paragraphs, as an organisation's is;
+- a param: three properties, exactly one given: `value` (a number, with its `unit`), `range`
+  (`[least, most]`) and `text`;
+- `licence`: tagged, `{ kind: open }` or `{ kind: fee, fee: 500 }`.
+
+The game reads whatever you write; these just make the generated types plain.
+
+**Treistun e:** the game's rule is ready. A spaceport is a farm place only where its ground
+averages 5 °C or more through the day (the climate model's figure at the port's latitude). By that,
+Port Nacaubun on e is −19 °C and Port Eikir on d (45.6° N) is 11.6 °C: d farms, e doesn't, as you
+found. It isn't on main yet: with e's farms gone, the settled systems' food comes out a little
+short (the economy's self-sufficiency test fails at 5.6% short, against 5% allowed). The user
+decides how d makes up for it.
+
+**Mark what's required.** A generated field is plain only where the schema says `required`; the
+rest are `Option`. Where a thing can't be without a figure, mark it required:
+- each device kind's figures in `equipment.function` (a drive's `thrust`, `exhaust`, `efficiency`,
+  `burns`…);
+- a hull's `slots`, `thrusters`, `flight`;
+- a recipe's `rate` and `power`, and an amount's `item` and `quantity`;
+- a module's `physical` size.
+
+That lets the engine use the records directly, with no copies of its own (next on my side).
