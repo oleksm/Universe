@@ -1,0 +1,86 @@
+# The registry made solid: keys, refs, SI
+
+*Registry only (`fso`). Nothing the game loads has changed: the generated files are byte-identical.*
+
+- **One key on every record:** `<kind>.<name>`, the kind being its schema's (`hull.mc-07`,
+  `equipment.drive.torch.s1`, `gate.ring.i`, `body.treistun.treistun-f`, `org.hadley`). The build
+  checks each is there, well-formed, matches its file and is no other record's.
+- **Schemas merged:** one organisation schema for companies, the standards body and
+  administrations; one body schema (a star is a body; comets, centaurs and the like are bodies the
+  game does not make yet); one population schema for asteroid fields and far regions. Local
+  Administration no longer keeps its own copy of planets and moons: a settlement is at a celestial
+  body.
+- **Records name each other by key:** 1,216 references. Each such property says in its schema which
+  kinds it may name, and the build checks every one.
+- **SI throughout:** every value with a dimension is in kg, m, s, K, W, N, J, Pa (angles in
+  degrees), and its property says its unit. 2,322 values converted. The registry page still reads
+  in tonnes, km, hours and AU.
+- **One `physical` group** for every physical thing (mass, size, shipping box, volume, temperature
+  ranges, what blow and jolt it takes), shared by parts, mill stock, equipment, goods, hulls and
+  industrial modules. A hull's hold and tanks are its `capacity`.
+- **Dogma is in the registry:** the laws everything runs on, 31 of them in six sections (Nature,
+  Measures, Field, Tube, Air, Climate), each with its value in SI, whether it is real, simplified
+  or invented, and where its figure comes from. A new report holds each against the engine's own
+  copy. Standard gravity (9.80665) is now a named measure; the engine has no name for it yet.
+  The registry's own sums now use these, so some worked figures moved in the fourth digit.
+- **Densities guessed for the four new rock classes** (primitive, basaltic, enstatite, stony-iron),
+  each as a rubble pile and as one solid piece, marked to review. Each seeded small body now has
+  its own density, drawn between its class's two (one over 200 km in radius is solid), so the 14
+  that had no mass have one. What each world is made of stays empty until it is brought in.
+- **Shared shapes for made things:** what a thing is made from is a list (each entry by key, with
+  its quantity), and how it is made lists its processes, the same for parts, mill stock, hulls and
+  gates. A facility and a rig share one definition of their lines and modules.
+- **A gate's distance is worked out** from where the two stars are, not written on the gate.
+- **Fixed: every charted system's position was zero** in the registry (the export divided light
+  years by a light year). Liham is 4.877 light years from home, Driumum 3.073, Biraidim 5.247,
+  Moryemzai 7.015. The generated celestial file lists the systems in that order now.
+- **Recipes:** an industrial module now lists what it can be set to make. Each recipe says what it
+  makes, what goes in and comes out for each kg, its rate and the power it draws. Every module's
+  existing figures became its first recipe; none changed. Which recipe a module is running is the
+  game's state, chosen by its owner. The model is written up in `docs/registry-recipes.md`.
+- **The mill side runs on recipes.** Ingot, strip and refined steel are a different item for each
+  metal; ingots are stock items. The furnaces and mills have a recipe for each thing they can be
+  set to make (the reheat furnace three, the hot rolling mill three, the piercing mill three...).
+  A facility's line says what it is built to make, and the build finds the way to it through its
+  modules' recipes. Ten processes that only said this are gone. The foundry and the smelter now
+  take in their alloying metals. In the game's settlement file a works' products are named as
+  items ("6061 plate 5 mm") where they were kinds ("Sheet and plate").
+- **Logistics** is noted in the backlog to describe properly later: for now a factory is one pool
+  of stock, and between factories the market is the join.
+- **Shop work on recipes too.** A part, a hull and a gate ring each name the one module that makes
+  them; that module is taken to cut and form what it needs itself. What is cut away is scrap, now
+  a stock item of each metal. The last processes that had modules are gone: nothing names a process
+  any more.
+- **Every works keeps its stock somewhere.** A new stock yard stands at the Trethi mill and yard;
+  a works that makes things with nowhere to store them is refused.
+- **A warehouse at every port.** Treistun's other nine ports each have a port zone, an industrial
+  zone still empty, a road, a lot and a warehouse approved by the Treistun Exchange, laid out as
+  Port Trethi's is. What is on the market at a port lies in its warehouse.
+- **Full storage stops production.** Each works' page says how long its yards last flat out with
+  nothing taken away (the mill 12 days, the foundry 66). The rule itself is the game's to run.
+- **Power at every port.** Each of the nine ports has a fusion power station and a line to its
+  warehouse; Port Trethi's warehouse has a line too. The power report now counts what a yard or a
+  store draws standing by.
+- **Plate work is three steps again.** The cutting table cuts stock into blanks, the panel former
+  forms them, the welding bay makes the part. Blanks and panels are stock, kept in the yard's
+  store between steps.
+- **From the integrator's audit:** each schema names its kind; every key sits under `identity`; a
+  field means one thing (a power station has its own group and is no recipe; what a part takes of
+  its stock is in kg); a law can be a reference value; the registry writes a table of its keys
+  against the game's for the game to rename by; guesses with no source are marked to review.
+- **Nothing is made of nothing.** A recipe must say what goes in. The shop modules, which had a
+  recipe that made "parts" by the tonne from nothing, now have only a rate; what they make are the
+  parts that name them, each from its own stock. "Parts" and "hulls" as goods are gone.
+- **All ship equipment is in the registry:** the game's 56 pieces (17 were missing) and the throat
+  coil, each saying what kind of device it is and only that kind's figures. It is the game's early
+  list, marked outdated and to be reviewed. **Fuels are materials:** nine of them, each with how it
+  gives up its energy and how much.
+- **Hulls say what the engine needs of them:** their model, their slots, which nozzle each slot's
+  equipment drives, their radius and drag. The registry checks that what is fitted fits its slot.
+- **Structures are records:** the station platform, the spaceport, the outpost and the orbital
+  site, each with its maker and what is fitted to it.
+- **Deuterium is one record,** a material, where it was also a good. The fusion power station burns
+  that one. (The game needs a small change to find its market kind there.)
+- **Anything physical can be traded.** The market's twenty categories (food, fuel, ores, metals...)
+  are records, and any physical thing can say which it is traded as. Deuterium, a material, is
+  traded as fuel.

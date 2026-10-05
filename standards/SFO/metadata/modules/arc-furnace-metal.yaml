@@ -1,29 +1,28 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.arc-furnace-metal
   name: Electric arc furnace, metal charge
   step: Melt
   description: "Melts metal that needs no reducing (asteroid nickel-iron, scrap) with electric arcs. Lime forms a slag that takes up what is not metal."
-size:
+physical:
   length: 100
   width: 40
   height: 35
-rate:
-  throughput: 96
-  batch: 80
-  product: liquid-steel
-inputs:
-  materials:
-  - { item: nickel-iron-ore, amount: 1.08 }
-  - { item: lime, amount: 0.03 }
-  - { item: graphite-electrode, amount: 0.003 }
-outputs:
-  by_products:
-  - { item: slag, amount: 0.1 }
-  - { item: dust, amount: 0.013 }
-needs:
-  power: 42
+recipes:
+  - makes: good.liquid-steel
+    does: "The metal is melted. Lime forms a slag that takes up the rock that came with it."
+    inputs:
+      - { item: good.nickel-iron-ore, quantity: 1.08 }
+      - { item: good.lime, quantity: 0.03 }
+      - { item: good.graphite-electrode, quantity: 0.003 }
+    outputs:
+      - { item: good.slag, quantity: 0.1 }
+      - { item: good.dust, quantity: 0.013 }
+    rate: 26.6666666666667
+    batch: 80000
+    power: 42000000
 basis:
-  - { of: [rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "80 t of steel in about 50 minutes." }
-  - { of: [needs], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "440 kWh for each tonne of steel from a charge of scrap, which is metal already, as asteroid nickel-iron is." }
-  - { of: [inputs, outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "Inside the ranges the source gives for each tonne of steel: lime 25 to 140 kg, electrode 2 to 6, slag 60 to 270, dust 10 to 30. The metal charged is set to balance." }
-  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [recipes.makes, recipes.rate, recipes.batch], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "80 t of steel in about 50 minutes." }
+  - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "440 kWh for each tonne of steel from a charge of scrap, which is metal already, as asteroid nickel-iron is." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "Inside the ranges the source gives for each tonne of steel: lime 25 to 140 kg, electrode 2 to 6, slag 60 to 270, dust 10 to 30. The metal charged is set to balance." }
+  - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }

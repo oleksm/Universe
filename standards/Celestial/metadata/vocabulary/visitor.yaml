@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.visitor
+  name: "Visitor from another star"
+  group: small body
+  known_as: "interstellar object"
+  about: "A body not bound to this star, passing through once."
+lies: "Anywhere, on an open path."
+made_of: "Rock or ice from another system."
+figures:
+  - { what: "seen", value: "three: in 2017, 2019 and 2025" }
+  - { what: "how fast", value: "26 to 58 km/s" }
+  - { what: "inside the last giant's orbit on any day", value: "about 10,000" }
+means: "Something that formed round another star, within reach for a short while."
+in_game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Interstellar_object" }

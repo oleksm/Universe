@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.zn
   name: Zinc
   symbol: Zn
   atomic_number: 30
-  atomic_mass: 65.4
+  atomic_mass: 1.0859925495564e-25
   group: 12
   period: 4
   block: d
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2'
   valence_electrons: 12
-  atomic_radius: 142.0
-  covalent_radius: 122.0
-  van_der_waals_radius: 139.0
-  ionic_radius: 74.0
+  atomic_radius: 1.42e-10
+  covalent_radius: 1.22e-10
+  van_der_waals_radius: 1.39e-10
+  ionic_radius: 7.4e-11
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 64
@@ -32,7 +33,7 @@ atomic_structure:
     abundance: 0.0061
 chemical:
   electronegativity: 1.65
-  first_ionisation_energy: 906.4
+  first_ionisation_energy: 906400.0
   oxidation_states:
   - 2
   reactivity:
@@ -48,8 +49,8 @@ physical:
   boiling_point: 1180.0
   density: 7134.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 7.35
-  heat_of_vaporisation: 119.0
+  heat_of_fusion: 7350.0
+  heat_of_vaporisation: 119000.0
   vapour_pressure: 2.1e-12
 thermal:
   specific_heat_capacity: 388.0
@@ -61,15 +62,15 @@ electrical_magnetic:
   superconducting_temperature: 0.85
 mechanical:
   hardness: 2.5
-  youngs_modulus: 108.0
-  tensile_strength: 300
+  youngs_modulus: 108000000000.0
+  tensile_strength: 300000000
   ductility: brittle
 optical_nuclear:
   colour: silver-gray
   emission_lines:
-  - 462.981
-  - 468.014
-  - 472.216
-  - 481.053
-  - 577.21
-  neutron_cross_section: 1.1
+  - 4.62981e-07
+  - 4.68014e-07
+  - 4.72216e-07
+  - 4.81053e-07
+  - 5.7721e-07
+  neutron_cross_section: 1.1e-28

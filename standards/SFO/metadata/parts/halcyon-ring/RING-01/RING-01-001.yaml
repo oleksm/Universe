@@ -1,22 +1,23 @@
 # yaml-language-server: $schema=../../../../schema/part.schema.yaml
 identity:
+  key: part.ring-01-001
   code: RING-01-001
   name: "Skin panel"
-  status: draft
+  revision: draft
   description: "A plate panel of the segment's skin."
 physical:
   mass: 471
   length: 8
   width: 2.5
   height: 0.003
-  shock_limit: 10
+  shock_limit: 98.0665
 shape:
   surface_area: 20
 made_from:
-  item: ST4340-PL-3
-  quantity: 23
+  - item: stock.st4340-pl-3
+    quantity: 541.65
 making:
-  processes: [panel-making]
+  module: module.panel-line
 fit:
   count: 2961
 basis:

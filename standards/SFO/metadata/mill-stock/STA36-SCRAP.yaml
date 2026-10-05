@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is trimmed off, cut away or spilt where this metal is worked: kept apart by metal, so it can be melted again.
+identity:
+  key: stock.sta36-scrap
+  code: STA36-SCRAP
+  name: "A36 steel scrap"
+  form: scrap
+made_from:
+  - item: material.structural-steel-a36

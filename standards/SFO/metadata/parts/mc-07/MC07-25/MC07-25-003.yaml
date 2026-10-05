@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
 # it is cut from.
 identity:
+  key: part.mc07-25-003
   code: MC07-25-003
   name: "Ram rod"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: CargoRam_L_Rod, CargoRam_R_Rod"
 physical:
   mass: 276
   length: 1.02
   width: 0.4
   height: 3.11
-  shock_limit: 50
+  shock_limit: 490.3325
 shape:
   surface_area: 2.7
 made_from:
-  item: ST4340-BAR-120
-  quantity: 3.73
+  - item: stock.st4340-bar-120
+    quantity: 331.1546533
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 2
 basis:

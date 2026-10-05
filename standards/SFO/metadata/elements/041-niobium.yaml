@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.nb
   name: Niobium
   symbol: Nb
   atomic_number: 41
-  atomic_mass: 92.90637
+  atomic_mass: 1.54274656920994e-25
   group: 5
   period: 5
   block: d
@@ -14,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d4 5s1'
   valence_electrons: 5
-  atomic_radius: 198.0
-  covalent_radius: 164.0
-  van_der_waals_radius: 207.0
-  ionic_radius: 64.0
+  atomic_radius: 1.98e-10
+  covalent_radius: 1.64e-10
+  van_der_waals_radius: 2.07e-10
+  ionic_radius: 6.4e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 93
     abundance: 1.0
 chemical:
   electronegativity: 1.6
-  first_ionisation_energy: 652.1
-  electron_affinity: 88.516
+  first_ionisation_energy: 652100.0
+  electron_affinity: 88516.0
   oxidation_states:
   - 5
   - 3
@@ -42,8 +43,8 @@ physical:
   boiling_point: 5017.0
   density: 8570.0
   crystal_structure: body-centered cubic
-  heat_of_fusion: 26.8
-  heat_of_vaporisation: 690.0
+  heat_of_fusion: 26800.0
+  heat_of_vaporisation: 690000.0
   vapour_pressure: 4.9e-108
 thermal:
   specific_heat_capacity: 265.0
@@ -55,14 +56,14 @@ electrical_magnetic:
   superconducting_temperature: 9.25
 mechanical:
   hardness: 6.0
-  youngs_modulus: 105.0
+  youngs_modulus: 105000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: gray metallic, bluish when oxidized
   emission_lines:
-  - 405.894
-  - 407.973
-  - 410.092
-  - 412.381
-  - 416.366
-  neutron_cross_section: 1.15
+  - 4.05894e-07
+  - 4.07973e-07
+  - 4.10092e-07
+  - 4.12381e-07
+  - 4.16366e-07
+  neutron_cross_section: 1.15e-28

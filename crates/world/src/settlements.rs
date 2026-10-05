@@ -1,5 +1,5 @@
-//! Settlements' ground, as the registry records it (Local Administration,
-//! generated into `content/base/settlements.ron` by `tools/standards/build.py`):
+//! Settlements' ground, as the registry records it (Local Administration, read
+//! from `crate::registry`; see [`from_registry`]):
 //! zones, parcels, streets, power lines, and facilities with their modules laid
 //! out on their parcels. Facts only: the world holds what stands where; what is
 //! made there is the economy's.
@@ -8,11 +8,10 @@
 //! its spaceport's pad grid centre (the game's own `Spaceport::direction`).
 
 use glam::DVec3;
-use serde::Deserialize;
 
 /// A settlement with ground recorded, found by its system, body and name
 /// (the spaceport's).
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Settlement {
     pub system: String,
     pub body: String,
@@ -25,17 +24,16 @@ pub struct Settlement {
 }
 
 /// Ground set aside for a use (port, industrial, commercial, civic, residential).
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Zone {
     pub name: String,
-    #[serde(rename = "use")]
     pub use_: String,
     pub outline: Vec<(f64, f64)>,
 }
 
 /// A lot of land and who owns it (a Maker House company's key; empty:
 /// vacant, the land office's to sell).
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Parcel {
     pub number: u32,
     pub owner: String,
@@ -43,14 +41,14 @@ pub struct Parcel {
     pub outline: Vec<(f64, f64)>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Street {
     pub name: String,
     pub line: Vec<(f64, f64)>,
 }
 
 /// A power line and the most it can carry (MW).
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct PowerLine {
     pub name: String,
     pub capacity: f64,
@@ -58,7 +56,7 @@ pub struct PowerLine {
 }
 
 /// A facility on a parcel: what kind, and its modules where they stand.
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Facility {
     pub name: String,
     pub kind: String,
@@ -83,7 +81,7 @@ pub struct Facility {
 /// One industrial module standing on the ground: its centre, its footprint
 /// (length and width, m), its height, and which way its length runs (0 east,
 /// 90 north).
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Block {
     pub module: String,
     pub centre: (f64, f64),
@@ -105,8 +103,11 @@ impl Settlement {
     /// game has as brands: not checked here.)
     pub fn check(&self) -> Result<(), String> {
         for f in &self.facilities {
+            if let Some((what, ..)) = f.burns.iter().find(|(_, kind, _)| kind.is_empty()) {
+                return Err(format!("{}: {} burns {what}, which nothing is traded as", self.name, f.name));
+            }
             if !self.parcels.iter().any(|p| p.number == f.parcel) {
-                return Err(format!("settlements.ron '{}': {} stands on no parcel {}", self.name, f.name, f.parcel));
+                return Err(format!("{}: {} stands on no parcel {}", self.name, f.name, f.parcel));
             }
         }
         Ok(())
@@ -139,7 +140,7 @@ pub fn area(outline: &[(f64, f64)]) -> f64 {
 }
 
 /// An industrial module (the SFO's, SFO 10): what facilities are built of.
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct IndustrialModule {
     pub key: String,
     pub name: String,
@@ -228,4 +229,204 @@ pub fn rects_overlap(a: &[(f64, f64)], b: &[(f64, f64)]) -> bool {
     let bounds = |o: &[(f64, f64)]| o.iter().fold((f64::MAX, f64::MAX, f64::MIN, f64::MIN), |m, p| (m.0.min(p.0), m.1.min(p.1), m.2.max(p.0), m.3.max(p.1)));
     let (a, b) = (bounds(a), bounds(b));
     a.0 < b.2 && b.0 < a.2 && a.1 < b.3 && b.1 < a.3
+}
+
+/// kg/s in t/h, the unit the game's facility figures are in.
+const T_PER_H: f64 = 3.6;
+
+/// The settlements with ground and the industrial modules, from the registry:
+/// each settlement's zones, parcels, streets, power lines and facilities (its
+/// records filed under its key), and what each facility can do at most,
+/// worked out here from its modules (see [`line_most`]). Its modules laid out
+/// on its parcel by [`lay_out`].
+pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<IndustrialModule>) {
+    let industry: Vec<IndustrialModule> = reg
+        .modules
+        .iter()
+        .map(|m| {
+            let p = &m.physical;
+            let needs = m.needs.as_ref().and_then(|n| n.power).or_else(|| m.recipes.first().and_then(|r| r.power)).or_else(|| m.throughput.as_ref().and_then(|t| t.power)).unwrap_or(0.0);
+            IndustrialModule {
+                key: m.identity.key.clone(),
+                name: m.identity.name.clone(),
+                length: p.length.unwrap_or(0.0),
+                width: p.width.unwrap_or(0.0),
+                height: p.height.unwrap_or(0.0),
+                needs: needs / 1e6,
+                supplies: m.generation.as_ref().map_or(0.0, |g| g.supplies) / 1e6,
+                holds: m.capacity.as_ref().and_then(|c| c.holds).unwrap_or(0.0) / 1e3,
+            }
+        })
+        .collect();
+    let module_of = |k: &str| reg.module(k).unwrap_or_else(|| panic!("no {k}"));
+    let industrial = |k: &str| industry.iter().find(|m| m.key == k).unwrap_or_else(|| panic!("no {k}"));
+    let name = |k: &str| reg.name(k).unwrap_or(k).to_string();
+    let kind_of = |item: &str| reg.traded_as(item).unwrap_or_default();
+    // Records filed under a settlement: `zone.treistun.port-trethi.x` is Port Trethi's.
+    let under = |key: &str, s: &str| key.split_once('.').is_some_and(|(_, rest)| rest.strip_prefix(s).is_some_and(|r| r.starts_with('.')));
+    let pt = |p: &[f64; 2]| (p[0], p[1]);
+    let mut out = Vec::new();
+    for s in reg.settlements.iter().filter(|s| s.kind == crate::registry::SettlementKind::Settlement) {
+        let place = s.identity.key.split_once('.').map_or("", |(_, r)| r);
+        let parcels: Vec<_> = reg.parcels.iter().filter(|p| under(&p.identity.key, place)).collect();
+        let zones: Vec<_> = reg.zones.iter().filter(|z| under(&z.identity.key, place)).collect();
+        if parcels.is_empty() && zones.is_empty() {
+            continue;
+        }
+        let at = s.at.as_deref().unwrap_or_else(|| panic!("{}: at no body", s.identity.key));
+        let system = at.split('.').nth(1).map(|sys| name(&format!("system.{sys}"))).unwrap_or_default();
+        let streets: Vec<Street> = reg.streets.iter().filter(|r| under(&r.identity.key, place)).map(|r| Street { name: r.identity.name.clone(), line: r.line.iter().map(pt).collect() }).collect();
+        let parcel_of = |key: &str| parcels.iter().find(|p| p.identity.key == key).unwrap_or_else(|| panic!("no parcel {key}"));
+        let facilities = reg
+            .facilities
+            .iter()
+            .filter(|f| under(&f.identity.key, place))
+            .map(|f| {
+                let lines: Vec<LineMost> = f.lines.iter().map(|ln| line_most(reg, &f.identity.key, ln)).collect();
+                let built: Vec<(&crate::registry::Module, u32)> = f.modules.iter().map(|m| (module_of(&m.module), m.count)).collect();
+                let flow = |(item, rate): &(String, f64)| (name(item), kind_of(item), rate * T_PER_H);
+                let listed: Vec<(String, u32)> = lines.iter().flat_map(|l| l.modules.clone()).chain(f.modules.iter().map(|m| (m.module.clone(), m.count))).collect();
+                let parcel = parcel_of(&f.parcel);
+                let street: Vec<Street> = parcel.address.as_ref().and_then(|a| reg.streets.iter().find(|r| r.identity.key == a.street)).map(|r| Street { name: r.identity.name.clone(), line: r.line.iter().map(pt).collect() }).into_iter().collect();
+                let order: Vec<(&IndustrialModule, u32)> = listed.iter().map(|(m, n)| (industrial(m), *n)).collect();
+                let blocks = lay_out(&parcel.outline.iter().map(pt).collect::<Vec<_>>(), &street, &order).unwrap_or_else(|e| panic!("{}: {e}", f.identity.key));
+                Facility {
+                    name: f.identity.name.clone(),
+                    kind: format!("{:?}", f.kind).to_lowercase(),
+                    parcel: parcel.number,
+                    makes: lines.iter().map(|l| (l.product.clone(), l.output * T_PER_H)).collect(),
+                    draws: lines.iter().map(|l| l.power).sum::<f64>() / 1e6,
+                    supplies: built.iter().map(|(m, n)| m.generation.as_ref().map_or(0.0, |g| g.supplies) * *n as f64).sum::<f64>() / 1e6,
+                    holds: built.iter().map(|(m, n)| m.capacity.as_ref().and_then(|c| c.holds).unwrap_or(0.0) * *n as f64).sum::<f64>() / 1e3,
+                    modules: listed,
+                    takes: lines.iter().flat_map(|l| &l.supplies).map(flow).collect(),
+                    gives: lines.iter().flat_map(|l| &l.made).chain(lines.iter().flat_map(|l| &l.by_products)).map(flow).collect(),
+                    burns: built.iter().flat_map(|(m, n)| m.generation.iter().flat_map(|g| &g.burns).map(move |b| (b.item.clone(), b.rate * *n as f64))).map(|b| flow(&b)).collect(),
+                    blocks,
+                }
+            })
+            .collect();
+        out.push(Settlement {
+            system,
+            body: name(at),
+            name: s.identity.name.clone(),
+            zones: zones.iter().map(|z| Zone { name: z.identity.name.clone(), use_: format!("{:?}", z.zone).to_lowercase(), outline: z.outline.iter().map(pt).collect() }).collect(),
+            parcels: parcels
+                .iter()
+                .map(|p| Parcel { number: p.number, owner: p.owner.clone().unwrap_or_default(), owner_name: p.owner.as_deref().map(name).unwrap_or_default(), outline: p.outline.iter().map(pt).collect() })
+                .collect(),
+            streets,
+            power_lines: reg.power_lines.iter().filter(|l| under(&l.identity.key, place)).map(|l| PowerLine { name: l.identity.name.clone(), capacity: l.capacity / 1e6, line: l.line.iter().map(pt).collect() }).collect(),
+            facilities,
+        });
+    }
+    (out, industry)
+}
+
+/// The most a line can do, flat out (kg/s, W): what it makes, at what rate,
+/// what it then takes in and gives off, the power it draws, and its modules.
+#[derive(Clone, Debug)]
+pub struct LineMost {
+    /// What it makes, by name (a shop line: the module's name: it works whatever it's given).
+    pub product: String,
+    pub output: f64,
+    /// (item key, kg/s).
+    pub made: Vec<(String, f64)>,
+    pub supplies: Vec<(String, f64)>,
+    pub by_products: Vec<(String, f64)>,
+    pub power: f64,
+    /// (module key, how many), in its order.
+    pub modules: Vec<(String, u32)>,
+}
+
+/// A line of `facility` at its most. A line that says what it makes: back
+/// from that item through its modules' recipes, each module set to the
+/// recipe that makes what the next one needs (a module with recipes and none
+/// that leads there is a fault in the records); then forward, each module's
+/// share of the work by what the next one takes, the line held to what its
+/// tightest module lets through. What one step gives off and another takes
+/// on the same site is used again. A line of shop modules (no recipes: they
+/// work whatever they're given) does what its modules put through.
+pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::registry::Line) -> LineMost {
+    let module = |k: &str| reg.module(k).unwrap_or_else(|| panic!("{facility}: no {k}"));
+    let modules: Vec<(String, u32)> = line.modules.iter().map(|m| (m.module.clone(), m.count)).collect();
+    let Some(target) = &line.makes else {
+        let rate: f64 = line.modules.iter().map(|m| module(&m.module).throughput.as_ref().map_or(0.0, |t| t.rate) * m.count as f64).sum();
+        let power: f64 = line.modules.iter().map(|m| module(&m.module).throughput.as_ref().and_then(|t| t.power).unwrap_or(0.0) * m.count as f64).sum();
+        let product = line.modules.iter().map(|m| module(&m.module).identity.name.clone()).collect::<Vec<_>>().join(", ");
+        return LineMost { product, output: rate, made: Vec::new(), supplies: Vec::new(), by_products: Vec::new(), power, modules };
+    };
+    // Back from what it makes: the recipe each module is set to.
+    let steps: Vec<&str> = {
+        let mut s: Vec<&str> = Vec::new();
+        for m in &line.modules {
+            if !s.contains(&m.module.as_str()) {
+                s.push(&m.module);
+            }
+        }
+        s
+    };
+    let mut need: Vec<&str> = vec![target];
+    let mut chosen: Vec<Option<&crate::registry::Recipe>> = vec![None; steps.len()];
+    for (i, s) in steps.iter().enumerate().rev() {
+        let m = module(s);
+        match m.recipes.iter().find(|r| need.contains(&r.makes.as_str())) {
+            Some(r) => {
+                need.extend(r.inputs.iter().map(|x| x.item.as_str()));
+                chosen[i] = Some(r);
+            }
+            None if !m.recipes.is_empty() => panic!("{facility}: {} has no recipe that leads to {target}", m.identity.name),
+            None => {}
+        }
+    }
+    let plan = |output: f64| {
+        let making: Vec<usize> = (0..steps.len()).filter(|&i| chosen[i].is_some_and(|r| r.rate.is_some())).collect();
+        let made_by = |item: &str| making.iter().copied().find(|&i| chosen[i].is_some_and(|r| r.makes == item));
+        let mut demand = vec![0.0; steps.len()];
+        if let Some(&last) = making.last() {
+            demand[last] = output;
+        }
+        let (mut supplies, mut by): (Vec<(String, f64)>, Vec<(String, f64)>) = (Vec::new(), Vec::new());
+        let add = |list: &mut Vec<(String, f64)>, item: &str, v: f64| match list.iter_mut().find(|(k, _)| k == item) {
+            Some(e) => e.1 += v,
+            None => list.push((item.to_string(), v)),
+        };
+        for i in (0..steps.len()).rev() {
+            let Some(r) = chosen[i] else { continue };
+            let d = demand[i];
+            for x in &r.inputs {
+                match made_by(&x.item) {
+                    Some(src) if src < i => demand[src] += d * x.quantity,
+                    _ => add(&mut supplies, &x.item, d * x.quantity),
+                }
+            }
+            for x in &r.outputs {
+                add(&mut by, &x.item, d * x.quantity);
+            }
+        }
+        // (What is given off and needed on the same site is used again.)
+        for (item, v) in supplies.iter_mut() {
+            if let Some(b) = by.iter_mut().find(|(k, _)| k == item) {
+                let used = v.min(b.1);
+                *v -= used;
+                b.1 -= used;
+            }
+        }
+        let power: f64 = (0..steps.len())
+            .map(|i| match chosen[i] {
+                Some(r) if r.rate.is_some() => r.power.unwrap_or(0.0) * demand[i] / r.rate.unwrap(),
+                _ => module(steps[i]).needs.as_ref().and_then(|n| n.power).unwrap_or(0.0),
+            })
+            .sum();
+        (demand, supplies, by, power)
+    };
+    let has = |s: &str| line.modules.iter().filter(|m| m.module == s).map(|m| m.count).sum::<u32>() as f64;
+    let (unit, ..) = plan(1.0);
+    let most = (0..steps.len())
+        .filter_map(|i| Some((chosen[i]?.rate?, unit[i])).filter(|(_, d)| *d > 0.0).map(|(rate, d)| has(steps[i]) * rate / d))
+        .fold(f64::INFINITY, f64::min);
+    let most = if most.is_finite() { most } else { 0.0 };
+    let (_, supplies, by, power) = plan(most);
+    let keep = |l: Vec<(String, f64)>| l.into_iter().filter(|(_, v)| *v > 1e-9).collect::<Vec<_>>();
+    LineMost { product: reg.name(target).unwrap_or(target).to_string(), output: most, made: vec![(target.clone(), most)], supplies: keep(supplies), by_products: keep(by), power, modules }
 }

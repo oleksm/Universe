@@ -1,17 +1,21 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.relay.gate
   name: "Halcyon gate relay"
-  key: relay.gate
-  maker: brand.halcyon
+  maker: org.halcyon
+  revision: outdated
   slot: gate
   description: "Throws and catches data capsules through the gate's tube, linking two systems' networks."
+size_class: 4
 physical:
   mass: 40000
   volume: 100
-performance:
-  power_draw: 2000
-  lag: 1.0
-  messages: 50000
-  cadence: 3.0
+needs:
+  power: 2000000
+function:
+  kind: gate_relay
+  lag: 1
+  capacity: 13.8888888889
+  cadence: 3
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

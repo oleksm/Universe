@@ -1,18 +1,19 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Material process
+x-kind: [process]
 description: One process of material processing (elements into materials, materials into stock). Any one process uses only some of these; a property with no value is left out.
 type: object
 additionalProperties: false
 required: [identity]
 definitions:
   amount_list:
-    description: Things with amounts. `item` is an element's symbol or a material's file name; `name` is for what isn't in the registry yet. `amount` is tonnes per tonne of product.
+    description: Things with amounts. `item` is an element, a material or a good, by its key; `name` is for what isn't in the registry yet. `amount` is kg per kg of product.
     type: array
     items:
       type: object
       additionalProperties: false
       properties:
-        item: { type: string }
+        item: { type: string, x-ref: [element, material, good] }
         name: { type: string }
         amount: { type: number, minimum: 0 }
         form: { type: string }
@@ -23,8 +24,9 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, kind]
+    required: [key, name, kind]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       kind: { enum: [chemical, thermal, mechanical], description: "Chemical changes what it is; thermal, its inner structure; mechanical, its shape." }
       method: { type: string, description: "smelting, rolling, sintering, spinning..." }
@@ -58,24 +60,24 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      temperature: { type: number, description: K }
-      pressure: { type: number, description: "Pa (0: vacuum)" }
+      temperature: { type: number, x-unit: "K", description: K }
+      pressure: { type: number, x-unit: "Pa", description: "Pa (0: vacuum)" }
       atmosphere: { enum: [air, inert, vacuum, reducing, oxidising] }
       gravity: { enum: [needs gravity, needs free fall, either] }
       cleanliness: { enum: [ordinary, clean room] }
-      hold_time: { type: number, description: "s, at condition (soak time)" }
-      heating_rate: { type: number, description: K/s }
-      cooling_rate: { type: number, description: "K/s (it decides the grade, as in quenching)" }
+      hold_time: { type: number, x-unit: "s", description: "s, at condition (soak time)" }
+      heating_rate: { type: number, x-unit: "K/s", description: K/s }
+      cooling_rate: { type: number, x-unit: "K/s", description: "K/s (it decides the grade, as in quenching)" }
 
   energy:
     type: object
     additionalProperties: false
     properties:
-      energy_per_tonne: { type: number, description: MJ/t of product }
-      peak_power: { type: number, description: kW }
+      specific_energy: { type: number, x-unit: "J/kg", description: J/kg of product }
+      peak_power: { type: number, x-unit: "W", description: W }
       energy_type: { enum: [electric, thermal, chemical] }
-      waste_heat: { type: number, description: MJ/t to reject }
-      recoverable_heat: { type: number, description: MJ/t that can be reused }
+      waste_heat: { type: number, x-unit: "J/kg", description: J/kg to reject }
+      recoverable_heat: { type: number, x-unit: "J/kg", description: J/kg that can be reused }
 
   rate:
     description: Time and rate.
@@ -83,10 +85,10 @@ properties:
     additionalProperties: false
     properties:
       mode: { enum: [batch, continuous] }
-      batch_size: { type: number, description: t }
-      cycle_time: { type: number, description: s per batch }
-      throughput: { type: number, description: t/h }
-      startup_time: { type: number, description: "s, to start up or shut down" }
+      batch_size: { type: number, x-unit: "kg", description: kg }
+      cycle_time: { type: number, x-unit: "s", description: s per batch }
+      throughput: { type: number, x-unit: "kg/s", description: kg/s }
+      startup_time: { type: number, x-unit: "s", description: "s, to start up or shut down" }
 
   equipment:
     type: object
@@ -95,16 +97,16 @@ properties:
       facility: { type: string, description: "The kind of facility that can run it: foundry, mill..." }
       machine: { type: string, description: "arc furnace, rolling stand, autoclave..." }
       tooling: { type: string, description: "Dies, rolls, moulds, and their life." }
-      minimum_scale: { type: number, description: "t/h, the smallest plant that makes sense" }
+      minimum_scale: { type: number, x-unit: "kg/s", description: "kg/s, the smallest plant that makes sense" }
       steps:
-        description: "Its steps in order, each done in one industrial module (SFO 10), by the module's file name."
+        description: "Its steps in order, each done in one industrial module (SFO 10), by the module's key."
         type: array
         items:
           type: object
           additionalProperties: false
           required: [module, does]
           properties:
-            module: { type: string }
+            module: { type: string, x-ref: [module] }
             does: { type: string }
 
   people:
@@ -120,7 +122,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      tolerance: { type: number, description: "mm, on dimensions" }
+      tolerance: { type: number, x-unit: "m", description: "m, on dimensions" }
       defect_rate: { type: number, minimum: 0, maximum: 1 }
       property_change: { type: string, description: "What it does to the material: more strength, less ductility." }
       inspection: { type: string, description: How the result is checked. }
@@ -131,8 +133,8 @@ properties:
     additionalProperties: false
     properties:
       wear_parts: { type: string, description: "What wears and how often it's replaced: furnace lining, rolls." }
-      maintenance_interval: { type: number, description: "s between maintenance" }
-      maintenance_downtime: { type: number, description: s }
+      maintenance_interval: { type: number, x-unit: "s", description: "s between maintenance" }
+      maintenance_downtime: { type: number, x-unit: "s", description: s }
       consumable_use: { type: number, description: "t of consumables per t of product" }
 
   hazards:

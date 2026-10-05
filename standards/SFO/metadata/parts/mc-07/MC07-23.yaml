@@ -2,9 +2,10 @@
 # Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
 # clamps and lasers stowed, bay doors shut.
 identity:
+  key: part.mc07-23
   code: MC07-23
   name: "Landing leg, front"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_FL_*, Gear_FR_*"
 physical:
   length: 7.28
@@ -13,7 +14,7 @@ physical:
 shape:
   surface_area: 139.4
 making:
-  processes: [fitting]
+  module: module.assembly-shop
 fit:
   count: 2
   position: "Its centre is 9.1 m back from the nose and 0.5 m above the keel, 4.5 m either side of the centre line."

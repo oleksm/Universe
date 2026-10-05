@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Nikreira, kind: asteroid, parent: Moryemzai}
-orbit: {semi_major_axis: 46495300.0, eccentricity: 0.1285, period: 110.598, inclination: 1.701}
-physical: {mass: 80438000000000.0, radius: 2.02868, gravity: 0.001, day: 19.868, tilt: 62.31}
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.moryemzai.nikreira, name: Nikreira, kind: asteroid, parent: body.moryemzai.moryemzai}
+orbit: {semi_major_axis: 46495300000.0, eccentricity: 0.1285, period: 9555667.2, inclination: 1.701}
+physical: {mass: 80438000000000.0, radius: 2028.68, gravity: 0.001, day: 71524.8, tilt: 62.31}
 surface:
   colour: [0.72, 0.6, 0.45]
-rock: {class: s-type stony, structure: rubble pile, density: 2300}
+rock: {class: rock-class.stony, structure: rubble pile, density: 2300}

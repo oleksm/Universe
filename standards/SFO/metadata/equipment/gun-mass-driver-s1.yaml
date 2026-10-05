@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.gun.mass-driver.s1
+  name: "Mass Driver"
+  maker: org.garrick
+  revision: outdated
+  slot: hardpoint
+  description: "A weapon."
+size_class: 1
+physical:
+  mass: 800
+  volume: 1.5
+needs:
+  power: 50000
+function:
+  kind: gun
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

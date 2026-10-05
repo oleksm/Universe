@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.dwarf-planet
+  name: "Dwarf planet"
+  group: small body
+  about: "A body heavy enough to pull itself round, but not to clear its orbit of others."
+lies: "The largest body of a belt."
+made_of: "Rock in the main belt; ice in the outer."
+figures:
+  - { what: "recognised", value: "nine" }
+  - { what: "in the outer belt", value: "perhaps 200, and thousands beyond" }
+  - { what: "round above about", value: "400 km in radius" }
+  - { what: "the main belt's", value: "holds 39% of its mass" }
+means: "A small world in a belt: ground to build on with hardly any well."
+in_game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Dwarf_planet" }

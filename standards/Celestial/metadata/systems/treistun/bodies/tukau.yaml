@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Tukau, kind: asteroid, parent: Treistun}
-orbit: {semi_major_axis: 116254000.0, eccentricity: 0.1047, period: 297.933, inclination: 1.889}
-physical: {mass: 4048700000000.0, radius: 0.749029, gravity: 0.001, day: 9.5934, tilt: 153.47}
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.treistun.tukau, name: Tukau, kind: asteroid, parent: body.treistun.treistun}
+orbit: {semi_major_axis: 116254000000.0, eccentricity: 0.1047, period: 25741411.2, inclination: 1.889}
+physical: {mass: 4048700000000.0, radius: 749.029, gravity: 0.001, day: 34536.24, tilt: 153.47}
 surface:
   colour: [0.72, 0.6, 0.45]
-rock: {class: s-type stony, structure: rubble pile, density: 2300}
+rock: {class: rock-class.stony, structure: rubble pile, density: 2300}

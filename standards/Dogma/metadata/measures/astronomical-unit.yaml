@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.astronomical-unit
+  name: "Astronomical unit"
+  symbol: "AU"
+  label: AU
+  section: dogma.measures
+value: 149597870700
+unit: "m"
+kind: real
+note: "The Earth's distance from the Sun: what distances in a star system are read in."
+basis:
+  - { of: [value], tier: sourced, source: "IAU 2012 Resolution B2: exact by definition" }

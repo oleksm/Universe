@@ -1,27 +1,26 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.shaft-furnace
   name: Shaft furnace
   step: Reduce
   description: "A tall furnace where hot hydrogen strips the oxygen out of ore pellets at 800 to 1,000 °C, leaving solid sponge iron."
-size:
+physical:
   length: 150
   width: 100
   height: 137
-rate:
-  throughput: 200
-  product: sponge-iron
-inputs:
-  materials:
-  - { item: iron-ore-pellets, amount: 1.43 }
-  - { item: H, amount: 0.054 }
-outputs:
-  by_products:
-  - { item: water, amount: 0.484 }
-needs:
-  power: 22
+recipes:
+  - makes: good.sponge-iron
+    does: "Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron."
+    inputs:
+      - { item: good.iron-ore-pellets, quantity: 1.43 }
+      - { item: element.h, quantity: 0.054 }
+    outputs:
+      - { item: good.water, quantity: 0.484 }
+    rate: 55.5555555555556
+    power: 22000000
 basis:
-  - { of: [rate], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "200 t/h for a module of 1.6 Mt a year." }
-  - { of: [inputs, outputs], tier: derived, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "From the chemistry (iron oxide and hydrogen to iron and water), taking the pellets as pure iron oxide. The source gives the same 54 kg of hydrogen for each tonne." }
-  - { of: [needs], tier: sourced, source: "https://www.midrex.com/tech-article/midrex-direct-reduction-plants-2021-operations-summary/", note: "82 to 135 kWh for each tonne; 110 taken. It leaves out heating the gas." }
-  - { of: [size.height], tier: sourced, source: "https://www.primetals.com/en/metals-magazine/voestalpine-taking-a-large-step-into-the-usa", note: "137 m for a plant of 2 Mt a year." }
-  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "200 t/h for a module of 1.6 Mt a year." }
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "From the chemistry (iron oxide and hydrogen to iron and water), taking the pellets as pure iron oxide. The source gives the same 54 kg of hydrogen for each tonne." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.midrex.com/tech-article/midrex-direct-reduction-plants-2021-operations-summary/", note: "82 to 135 kWh for each tonne; 110 taken. It leaves out heating the gas." }
+  - { of: [physical.height], tier: sourced, source: "https://www.primetals.com/en/metals-magazine/voestalpine-taking-a-large-step-into-the-usa", note: "137 m for a plant of 2 Mt a year." }
+  - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }

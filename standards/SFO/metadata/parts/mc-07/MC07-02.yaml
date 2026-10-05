@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
 # from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
+  key: part.mc07-02
   code: MC07-02
   name: "Cockpit"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Hull_Cockpit"
 physical:
   mass: 22610
   length: 11.2
   width: 20.09
   height: 11.59
-  shock_limit: 8
+  shock_limit: 78.4532
 shape:
   surface_area: 1674.8
 made_from:
-  item: AL6061-PL-5
-  quantity: 1926.0
+  - item: stock.al6061-pl-5
+    quantity: 26001.0
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
   position: "Its centre is 8.1 m back from the nose and 8.8 m above the keel, on the centre line."

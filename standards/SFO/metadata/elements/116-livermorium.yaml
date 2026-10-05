@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.lv
   name: Livermorium
   symbol: Lv
   atomic_number: 116
-  atomic_mass: 293.205
+  atomic_mass: 4.86878357022453e-25
   group: 16
   period: 7
   block: p
@@ -18,7 +19,7 @@ atomic_structure:
   half_life: 0.12
   decay_mode: alpha
 chemical:
-  electron_affinity: 74.9
+  electron_affinity: 74900.0
   oxidation_states:
   - 4
   - 2

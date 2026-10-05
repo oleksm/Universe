@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../schema/section.schema.yaml
+identity:
+  key: dogma.air
+  name: Air
+  order: 5
+  about: "Air round a world, and flying through it: Earth's standard air as the measure, and the heating of a body entering it (Sutton and Graves)."

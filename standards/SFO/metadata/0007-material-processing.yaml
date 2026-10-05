@@ -1,4 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.7
 title: Material Processing
 records: processes
 purpose: Material Processing is the first stage of making materials (turning raw matter into materials and stock that things can be built from). It takes elements in and gives out named, graded materials in usable forms like sheet, bar and wire.

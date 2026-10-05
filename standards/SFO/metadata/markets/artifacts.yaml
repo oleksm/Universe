@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.artifacts
+  name: "Artifacts"
+unit_mass: 25
+bulk_density: 1000
+names:
+  adjectives: ["Alien", "Ancient", "Precursor", "Relic", "Unknown", "Fossil", "Buried", "Glowing", "Broken"]
+  nouns: ["Shards", "Tablets", "Idols", "Devices", "Bones", "Spheres", "Keys", "Glyphs", "Engines"]
+basis:
+  - { of: [unit_mass, bulk_density], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

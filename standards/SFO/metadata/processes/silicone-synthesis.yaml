@@ -1,15 +1,16 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.silicone-synthesis
   name: Silicone synthesis
   kind: chemical
   method: polymerisation
   description: Silicon, oxygen, carbon and hydrogen joined into silicone, uncured.
 inputs:
   materials:
-  - item: Si
-  - item: O
-  - item: C
-  - item: H
+  - item: element.si
+  - item: element.o
+  - item: element.c
+  - item: element.h
 outputs:
   products:
   - name: uncured silicone

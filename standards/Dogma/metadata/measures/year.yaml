@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.year
+  name: "Year"
+  symbol: "yr"
+  label: YEAR
+  section: dogma.measures
+value: 31557600
+unit: "s"
+kind: real
+note: "A year of 365.25 days."
+basis:
+  - { of: [value], tier: sourced, source: "IAU: the Julian year, 365.25 days" }

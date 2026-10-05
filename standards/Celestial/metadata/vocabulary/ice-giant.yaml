@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.ice-giant
+  name: "Ice giant"
+  group: world
+  about: "A smaller giant, mostly of water, ammonia and methane under a deep atmosphere."
+lies: "The outer system."
+made_of: "Ices under hydrogen and helium."
+means: "As a gas giant: it holds swarms and moons. The outermost one sets where the outer belt begins."
+in_game: made

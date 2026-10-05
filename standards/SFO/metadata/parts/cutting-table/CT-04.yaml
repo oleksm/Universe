@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ct-04
   code: CT-04
   name: "Chiller"
-  status: draft
+  revision: draft
   description: "Cools the laser."
 physical:
   mass: 1500

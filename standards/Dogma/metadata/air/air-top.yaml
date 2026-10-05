@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.air-top
+  name: "Top of the air"
+  label: AIR_TOP
+  section: dogma.air
+value: 14
+kind: simplified
+note: "Where a world's air is taken to end, in scale heights: there it is a millionth as dense as at the ground."
+basis:
+  - { of: [value], tier: invented, note: "Chosen: e^-14 is under a millionth. A literal in the engine, with no name." }

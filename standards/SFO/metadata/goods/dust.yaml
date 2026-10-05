@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/good.schema.yaml
 identity:
+  key: good.dust
   name: Furnace dust
   kind: by-product
   description: "Fine metal oxides carried off in a furnace's fumes and caught in its filters."

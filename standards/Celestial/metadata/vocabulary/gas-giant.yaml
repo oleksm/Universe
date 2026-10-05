@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.gas-giant
+  name: "Gas giant"
+  group: world
+  about: "A world mostly of hydrogen and helium, with no surface to land on."
+lies: "Beyond the frost line."
+made_of: "Hydrogen and helium in about the star's own proportions, with a little methane, ammonia and water."
+figures:
+  - { what: "helium for each hydrogen molecule, Jupiter's", value: "0.157 by number" }
+  - { what: "helium-3 for each helium-4, Jupiter's", value: "1.66 in 10,000" }
+  - { what: "its surface", value: "none: its air thickens into its fluid inside" }
+means: "It shapes the belts and holds the swarms on its orbit. Its air is fusion fuel, if anything can lift it out."
+in_game: partly
+in_game_note: "Made as a body with moons and rings; its air is not something that can be taken."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Atmosphere_of_Jupiter", note: "Jupiter's atmosphere." }

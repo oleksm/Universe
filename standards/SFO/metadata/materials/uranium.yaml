@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# A fuel, as the game has it (content/base/materials.ron).
+identity:
+  key: material.uranium
+  name: "Enriched uranium"
+  class: metal
+  description: "U-235 fission."
+fuel:
+  release: fission
+  energy: 82000000000000
+mass:
+  density: 19000
+basis:
+  - { of: [fuel, mass], tier: invented, review: true, note: "The game's figures (content/base/materials.ron), with no source looked up: to be reviewed. Its density is as it is stored (liquid, or solid)." }

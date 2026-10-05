@@ -5,7 +5,7 @@
 > deliberate review, out of the game: edit the sheet, and the dogma checks say which promises break.
 >
 > **Dogma and the world.** The core engine is Dogma; the world is built on it (see
-> `docs/architecture.md`). **Dogma's laws** are `config/dogma.ron` (nature's constants, the
+> `docs/architecture.md`). **Dogma's laws** are the Dogma registry (`standards/Dogma`) (nature's constants, the
 > hyper layer's laws: `universe_physics::laws`, `universe_physics::hyper`): no materials, devices
 > or designs. **The base world** (`content/base/`) brings its matter (`materials.ron`: real
 > substances at real properties), its devices (`modules.ron`: a plant says what it burns and how

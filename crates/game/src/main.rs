@@ -47,7 +47,7 @@ use observer::{Focus, Observer};
 
 /// The world's seed: the celestial registry's (`content/base/galaxy.ron`).
 fn seed() -> u64 {
-    universe_sim::world::content::content().galaxy.as_ref().map_or(1984, |g| g.seed)
+    universe_sim::world::registry::registry().seeding.galaxy.galaxy.seed
 }
 const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
 /// Where a hit landed, shown as a spark for a moment.

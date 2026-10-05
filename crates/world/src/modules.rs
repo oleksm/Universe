@@ -190,14 +190,29 @@ impl Comm {
     }
 }
 
-/// A maker of modules (content: `brands.ron`).
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+/// A maker of modules: one of the registry's makers (`org.*`).
+#[derive(Clone, Debug, PartialEq)]
 pub struct Brand {
     pub key: String,
     pub name: String,
     /// What it's known for.
     pub note: String,
+    /// The system it's based in (its index among the galaxy's stars): where
+    /// its address is.
+    pub home: Option<usize>,
+}
+
+impl Brand {
+    /// From the registry's record of the maker: its home where its address
+    /// is (the settlement's body's system).
+    pub fn from_record(reg: &crate::registry::Registry, o: &crate::registry::Organisation) -> Self {
+        let home = o.address.as_ref().and_then(|a| {
+            let body = reg.settlements.iter().find(|s| s.identity.key == a.at)?.at.as_deref()?;
+            let system = body.split('.').nth(1)?;
+            reg.system(&format!("system.{system}"))?.identity.index.map(|i| i as usize)
+        });
+        Brand { key: o.identity.key.clone(), name: crate::standards::caps(&o.identity.name), note: crate::standards::caps(o.note.as_deref().unwrap_or_default()), home }
+    }
 }
 
 /// A module of the loaded content.

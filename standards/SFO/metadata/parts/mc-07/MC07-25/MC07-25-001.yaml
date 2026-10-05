@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
 # from; the stock it takes is that surface and 15% more, lost in cutting (an invented allowance).
 identity:
+  key: part.mc07-25-001
   code: MC07-25-001
   name: "Ramp"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: CargoRamp"
 physical:
   mass: 2850
   length: 8.49
   width: 7.5
   height: 4.55
-  shock_limit: 20
+  shock_limit: 196.133
 shape:
   surface_area: 211.1
 made_from:
-  item: AL6061-PL-5
-  quantity: 242.8
+  - item: stock.al6061-pl-5
+    quantity: 3277.8
 making:
-  processes: [plate-work]
+  module: module.welding-bay
 fit:
   count: 1
 basis:

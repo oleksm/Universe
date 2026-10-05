@@ -1,10 +1,11 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: our element record (Copper). A range there is given as its middle.
 identity:
+  key: material.copper
   name: Copper
   class: metal
   composition:
-  - part: Cu
+  - part: element.cu
     share: 1.0
   form:
   - wire
@@ -13,8 +14,8 @@ identity:
 mass:
   density: 8933.0
 mechanical:
-  youngs_modulus: 130.0
-  tensile_strength: 210
+  youngs_modulus: 130000000000.0
+  tensile_strength: 210000000
   hardness: 3.0
 thermal:
   melting_point: 1357.77

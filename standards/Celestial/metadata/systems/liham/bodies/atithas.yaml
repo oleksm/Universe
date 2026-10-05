@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Atithas, kind: asteroid, parent: Liham}
-orbit: {semi_major_axis: 56982900.0, eccentricity: 0.1275, period: 161.189, inclination: 4.23}
-physical: {mass: 254440000000000.0, radius: 2.00821, gravity: 0.004, day: 1.9768, tilt: 53.52}
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.liham.atithas, name: Atithas, kind: asteroid, parent: body.liham.liham}
+orbit: {semi_major_axis: 56982900000.0, eccentricity: 0.1275, period: 13926729.6, inclination: 4.23}
+physical: {mass: 254440000000000.0, radius: 2008.21, gravity: 0.004, day: 7116.48, tilt: 53.52}
 surface:
   colour: [0.7, 0.72, 0.78]
-rock: {class: m-type metallic, structure: monolith, density: 7500}
+rock: {class: rock-class.metallic, structure: monolith, density: 7500}

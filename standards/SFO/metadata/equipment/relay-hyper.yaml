@@ -1,17 +1,21 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.relay.hyper
   name: "Halcyon hyper relay"
-  key: relay.hyper
-  maker: brand.halcyon
+  maker: org.halcyon
+  revision: outdated
   slot: gate
   description: "Links the gate to the system's other sites through hyperspace, so news crosses the system in seconds."
+size_class: 4
 physical:
   mass: 15000
   volume: 40
-performance:
-  power_draw: 1500
+needs:
+  power: 1500000
+function:
+  kind: hyper_relay
   lag: 0.1
-  messages: 100000
-  cadence: 3.0
+  capacity: 27.7777777778
+  cadence: 3
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

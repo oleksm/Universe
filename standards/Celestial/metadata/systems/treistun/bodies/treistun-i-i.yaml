@@ -1,9 +1,11 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Treistun i I, kind: moon, parent: Treistun i}
-orbit: {semi_major_axis: 83670.1, eccentricity: 0.01421, period: 0.577252, inclination: 4.221}
-physical: {mass: 1.9478e+22, radius: 1157.3, gravity: 0.971, day: 13.854, tilt: 0.0, albedo: 0.12}
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.treistun.treistun-i-i, name: Treistun i I, kind: moon, parent: body.treistun.treistun-i, about: 'A moon
+    of the ice giant Treistun i, 6.2 AU from the star. 1,157 km in radius, 0.10 g at the surface, no air, about 80 K on average.
+    Its day lasts 14 hours.'}
+orbit: {semi_major_axis: 83670100.0, eccentricity: 0.01421, period: 49874.5728, inclination: 4.221}
+physical: {mass: 1.9478e+22, radius: 1157300.0, gravity: 0.971, day: 49874.4, tilt: 0.0, albedo: 0.12}
 surface:
   terrain: cratered
   relief: 1500

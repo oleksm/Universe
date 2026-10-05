@@ -14,7 +14,8 @@ use glam::DVec3;
 use crate::damage::destroy;
 use crate::events::ShipEvent;
 use crate::ship::Ship;
-use crate::sheet::{AIR_CP, CONVECTION, HULL_ABSORPTIVITY, INTERNAL_LEAK};
+use crate::sheet::{CONVECTION, HULL_ABSORPTIVITY, INTERNAL_LEAK};
+use universe_physics::laws::AIR_CP;
 use universe_physics::laws::STEFAN_BOLTZMANN as SIGMA;
 // (Its constants are the world's sheet's: content/base/sheet.ron; σ is Dogma's.)
 pub use crate::sheet::{AMBIENT, EMISSIVITY, HEATED_AREA, NOSE_RADIUS, RADIATING_AREA, SKIN_CAPACITY, SKIN_LIMIT};
@@ -96,7 +97,7 @@ mod tests {
 
     #[test]
     fn a_shallow_entry_stays_cool_enough_a_steep_one_burns() {
-        let air = universe_physics::Atmosphere::earthlike(9.81);
+        let air = universe_physics::Atmosphere::earthlike(crate::units::STANDARD_GRAVITY);
         // Orbital speed high up (~80 km): hot, but within the limit.
         let high = soak(7_800.0, air.density(80_000.0), 120.0);
         assert!(high.skin_temp > 600.0 && high.skin_temp < SKIN_LIMIT && high.hull == 1.0, "{} K", high.skin_temp);

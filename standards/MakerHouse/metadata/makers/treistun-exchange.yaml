@@ -1,6 +1,8 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.treistun_exchange
-name: Treistun Exchange
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+identity:
+  key: org.treistun-exchange
+  name: Treistun Exchange
+kind: company
 ticker: TEX
 business: exchange
 note: "The market: where goods in store change hands"

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
+in_game: not made
+identity: {key: body.driumum.vesail, name: Vesail, kind: crossing asteroid, parent: body.driumum.driumum, about: 'Knocked
+    out of the belt. At its closest it comes in to 0.04 AU, near the orbit of Driumum c.'}
+orbit: {semi_major_axis: 29010000000.0, eccentricity: 0.7713111, inclination: 13.08, period: 5157907.2}
+physical: {radius: 362.4, density: 3060.0, mass: 610100000000.0}
+rock: {class: rock-class.stony}

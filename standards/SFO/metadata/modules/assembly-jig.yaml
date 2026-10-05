@@ -1,20 +1,16 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.assembly-jig
   name: Assembly jig
   step: Assemble in orbit
   description: "A frame, carried by a rig, that holds a length of a ring while its frames are closed and its panels fixed to them, then passes it out to be joined to the last. Sized to hold one segment of a gate ring."
-size:
+physical:
   length: 180
   width: 140
   height: 140
-rate:
-  throughput: 10
-  product: parts
-inputs:
-  materials:
-  - { item: parts, amount: 1.0 }
-needs:
-  power: 1
+throughput:
+  rate: 2.77777777777778
+  power: 1000000
 basis:
-  - { of: [rate.throughput], tier: invented, review: true, note: "A guess, to be reviewed: it sets how fast a ring can be put together." }
-  - { of: [inputs, size, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [throughput.rate], tier: invented, review: true, note: "A guess, to be reviewed: it sets how fast a ring can be put together." }
+  - { of: [physical, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

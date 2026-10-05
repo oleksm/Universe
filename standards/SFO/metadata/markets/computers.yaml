@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.computers
+  name: "Computers"
+unit_mass: 30
+bulk_density: 400
+basket: 5.78703703704e-08
+names:
+  adjectives: ["Personal", "Navigation", "Neural", "Rack", "Embedded", "Rugged", "Archive", "Tactical", "Cold"]
+  nouns: ["Terminals", "Processors", "Cores", "Memory Cubes", "Nav Units", "Servers", "Tablets", "Controllers", "Logic Arrays"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

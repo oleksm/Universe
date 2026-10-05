@@ -1,8 +1,10 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.hadley
-name: Hadley Heavy Industries
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+identity:
+  key: org.hadley
+  name: Hadley Heavy Industries
+kind: company
 ticker: HHI
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 1, section: A, unit: 1 }
+address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 1, section: A, unit: 1 }
 note: "Plants, tanks and racks: rugged and cheap"
 who: "A big, plain industrial company that sells on price and on things not breaking. One of the founders of the SFO."
 what: "Builds power plants, tanks and cargo racks: heavy, rugged and cheap."

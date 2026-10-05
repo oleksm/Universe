@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.comet
+  name: "Comet"
+  group: small body
+  about: "An ice body on a long stretched orbit. Near the star it warms, gives off gas and dust, and grows a cloud and a tail."
+lies: "Passing through, from the outer belt, the scattered disc or the far cloud."
+made_of: "Rock, dust and ices: water, carbon dioxide, carbon monoxide, methane, ammonia."
+figures:
+  - { what: "its solid part", value: "a few hundred metres to tens of km across" }
+  - { what: "returning ones", value: "come round in under 200 years, from the outer belt and scattered disc" }
+  - { what: "the others", value: "200 years to millions, from the far cloud" }
+  - { what: "its cloud and tail", value: "up to 15 Earths wide, and longer than 1 AU" }
+  - { what: "how dark", value: "reflects 3 to 4% of light" }
+  - { what: "how dense", value: "about 600 kg/m3: highly porous" }
+  - { what: "known", value: "4,584" }
+means: "Water and volatiles that bring themselves into the inner system. Fast, and gone again."
+in_game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Comet", note: "As of November 2021." }

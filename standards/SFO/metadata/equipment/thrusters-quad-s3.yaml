@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thrusters.quad.s3
+  name: "Thruster Quads S3"
+  maker: org.kestrel
+  revision: outdated
+  slot: thrusters
+  description: "Manoeuvring thrusters, in clusters at nose and tail."
+size_class: 3
+physical:
+  mass: 4500
+  volume: 9
+needs:
+  power: 500000
+function:
+  kind: thrusters
+  thrust: 900000
+  exhaust: 10000000
+  efficiency: 0.3
+  burns: material.deuterium
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

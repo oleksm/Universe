@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.sun-radius
+  name: "Radius of the Sun"
+  symbol: "R_sun"
+  label: SUN_RADIUS
+  section: dogma.measures
+value: 695700000
+unit: "m"
+kind: real
+note: "What a star's radius is read in."
+basis:
+  - { of: [value], tier: sourced, source: "IAU 2015 Resolution B3: the nominal solar radius" }

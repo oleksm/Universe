@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.machinery
+  name: "Machinery"
+unit_mass: 900
+bulk_density: 1200
+basket: 5.78703703704e-07
+names:
+  adjectives: ["Heavy", "Mining", "Farm", "Precision", "Surplus", "Rebuilt", "Modular", "Hydraulic", "Autonomous"]
+  nouns: ["Drills", "Pumps", "Presses", "Turbines", "Excavators", "Harvesters", "Compressors", "Lathes", "Cranes"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

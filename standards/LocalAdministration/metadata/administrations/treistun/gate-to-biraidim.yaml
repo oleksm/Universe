@@ -1,6 +1,8 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
 # As the game makes it: the gate, the star it leads to, how far that is and the ring it is.
-name: "Gate to Biraidim"
+identity:
+  key: settlement.treistun.gate-to-biraidim
+  name: "Gate to Biraidim"
 kind: settlement
-gate: { ring: halcyon-ring-ii, to: Biraidim, distance: 5.25 }
+gate: { ring: gate.ring.ii, to: system.biraidim }
 about: "The gate to Biraidim, 5.25 light years away: a ring 3 km across on an orbit of its own round the star, kept clear of everything else. A permanent structure with people aboard to run it, so a settlement."

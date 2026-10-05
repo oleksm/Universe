@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the lot and Aurel as its owner, as at Port Trethi.
+identity:
+  key: parcel.treistun.port-zaudalein.2
+number: 2
+owner: org.aurel
+address: { street: street.treistun.port-zaudalein.east-road, number: 2 }
+outline: [[1150, -250], [1400, -250], [1400, 250], [1150, 250]]

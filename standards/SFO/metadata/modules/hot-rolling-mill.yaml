@@ -1,24 +1,40 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.hot-rolling-mill
   name: Hot rolling mill
   step: Roll hot
   description: "A row of roll stands that squeeze a hot ingot down to a long thick strip."
-size:
+physical:
   length: 300
   width: 40
   height: 20
-rate:
-  throughput: 100
-  product: hot-rolled-strip
-inputs:
-  materials:
-  - { item: hot-ingot, amount: 1.22 }
-outputs:
-  by_products:
-  - { item: scrap, amount: 0.22 }
-needs:
-  power: 26.5
+recipes:
+  - makes: good.hot-rolled-strip-6061
+    does: "It is squeezed between rolls, pass after pass, into a long thick strip."
+    inputs:
+      - { item: good.hot-ingot-6061, quantity: 1.22 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
+  - makes: stock.st4340-pl-3
+    does: "A hot steel ingot passed between rolls until it is plate."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.22 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
+  - makes: stock.sta36-pl-20
+    does: "A hot ingot of structural steel passed between rolls until it is plate."
+    inputs:
+      - { item: good.hot-ingot-a36, quantity: 1.22 }
+    outputs:
+      - { item: stock.sta36-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
 basis:
-  - { of: [inputs, outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 1,221 kg of ingot for each tonne rolled, an 82% yield. Steel loses 7 to 15%." }
-  - { of: [needs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 265 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
-  - { of: [rate, size], tier: invented, note: "Steel strip mills average 306 t/h and run 700 m long for 5 Mt a year; a mill of this size for aluminium was not found in a source." }
+  - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, power, what is lost), used for each metal it works: a guess, to be reviewed. Each metal has its own." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 1,221 kg of ingot for each tonne rolled, an 82% yield. Steel loses 7 to 15%." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 265 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
+  - { of: [recipes.makes, recipes.rate, physical], tier: invented, review: true, note: "Steel strip mills average 306 t/h and run 700 m long for 5 Mt a year; a mill of this size for aluminium was not found in a source." }

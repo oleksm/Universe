@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fps-03
   code: FPS-03
   name: "Blanket and shielding"
-  status: draft
+  revision: draft
   description: "Lines the vessel: takes the neutrons' energy as heat and stops the radiation."
 physical:
   mass: 3300000

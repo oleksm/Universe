@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.y
   name: Yttrium
   symbol: Y
   atomic_number: 39
-  atomic_mass: 88.90584
+  atomic_mass: 1.47631620568889e-25
   group: 3
   period: 5
   block: d
@@ -14,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Kr] 4d1 5s2'
   valence_electrons: 3
-  atomic_radius: 212.0
-  covalent_radius: 190.0
-  van_der_waals_radius: 219.0
-  ionic_radius: 90.0
+  atomic_radius: 2.12e-10
+  covalent_radius: 1.9e-10
+  van_der_waals_radius: 2.19e-10
+  ionic_radius: 9.0e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 89
     abundance: 1.0
 chemical:
   electronegativity: 1.22
-  first_ionisation_energy: 600
-  electron_affinity: 29.6
+  first_ionisation_energy: 600000
+  electron_affinity: 29600.0
   oxidation_states:
   - 3
   reactivity:
@@ -41,8 +42,8 @@ physical:
   boiling_point: 3618.0
   density: 4470.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 11.4
-  heat_of_vaporisation: 380.0
+  heat_of_fusion: 11400.0
+  heat_of_vaporisation: 380000.0
   vapour_pressure: 3.6e-58
 thermal:
   specific_heat_capacity: 298.0
@@ -53,14 +54,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
   superconducting_temperature: 1.3
 mechanical:
-  youngs_modulus: 64.0
+  youngs_modulus: 64000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 407.736
-  - 410.236
-  - 412.83
-  - 414.284
-  - 416.751
-  neutron_cross_section: 1.28
+  - 4.07736e-07
+  - 4.10236e-07
+  - 4.1283e-07
+  - 4.14284e-07
+  - 4.16751e-07
+  neutron_cross_section: 1.28e-28

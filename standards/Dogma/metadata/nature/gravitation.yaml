@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.gravitation
+  name: "Constant of gravitation"
+  symbol: "G"
+  label: G
+  section: dogma.nature
+value: 6.6743e-11
+unit: "m3/(kg s2)"
+kind: real
+note: "The pull between two masses: G m1 m2 / r^2."
+basis:
+  - { of: [value], tier: sourced, source: "CODATA 2018: 6.67430e-11" }

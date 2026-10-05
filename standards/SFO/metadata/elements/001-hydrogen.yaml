@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.h
   name: Hydrogen
   symbol: H
   atomic_number: 1
-  atomic_mass: 1.008
+  atomic_mass: 1.6738233791328e-27
   group: 1
   period: 1
   block: s
@@ -14,9 +15,9 @@ identity:
 atomic_structure:
   electron_configuration: 1s1
   valence_electrons: 1
-  atomic_radius: 53.0
-  covalent_radius: 31.0
-  van_der_waals_radius: 120.0
+  atomic_radius: 5.3e-11
+  covalent_radius: 3.1e-11
+  van_der_waals_radius: 1.2e-10
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 1
@@ -25,8 +26,8 @@ atomic_structure:
     abundance: 0.000145
 chemical:
   electronegativity: 2.2
-  first_ionisation_energy: 1312
-  electron_affinity: 72.769
+  first_ionisation_energy: 1312000
+  electron_affinity: 72769.0
   oxidation_states:
   - 1
   - -1
@@ -45,8 +46,8 @@ physical:
   crystal_structure: simple hexagonal
   allotropes:
   - dihydrogen
-  heat_of_fusion: 0.0585
-  heat_of_vaporisation: 0.452
+  heat_of_fusion: 58.5
+  heat_of_vaporisation: 452.0
 thermal:
   specific_heat_capacity: 14300.0
   thermal_conductivity: 0.1805
@@ -55,9 +56,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: colorless gas
   emission_lines:
-  - 388.906
-  - 410.173
-  - 434.047
-  - 486.135
-  - 656.279
-  neutron_cross_section: 0.332
+  - 3.88906e-07
+  - 4.10173e-07
+  - 4.34047e-07
+  - 4.86135e-07
+  - 6.56279e-07
+  neutron_cross_section: 3.32e-29

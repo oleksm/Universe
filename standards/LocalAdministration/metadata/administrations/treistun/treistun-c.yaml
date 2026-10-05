@@ -1,7 +1,0 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-name: "Treistun c"
-kind: planet
-gravity: 16.36
-about: "The second planet, 0.22 AU out, and the largest rocky world in the system: 8,815 km in radius, 1.67 g at the surface, no air, about 420 K on average. One moon."
-story:
-  - "The heavy world. Setting down on c is easy and leaving it is expensive, and everything about its one port follows from that."

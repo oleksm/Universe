@@ -2,12 +2,13 @@
 # Fracture toughness: Wikipedia, Fracture toughness (silicon carbide, 3 to 5; a range as its middle).
 # Data: Wikipedia: Silicon carbide (6H). A range there is given as its middle.
 identity:
+  key: material.silicon-carbide
   name: Silicon carbide
   class: ceramic
   composition:
-  - part: Si
+  - part: element.si
     share: 0.7
-  - part: C
+  - part: element.c
     share: 0.3
   form:
   - plate
@@ -15,7 +16,7 @@ identity:
 mass:
   density: 3210.0
 mechanical:
-  fracture_toughness: 4
+  fracture_toughness: 4000000
   hardness: 9.25
 thermal:
   melting_point: 3103.15

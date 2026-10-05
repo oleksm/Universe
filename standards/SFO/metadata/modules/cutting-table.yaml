@@ -1,24 +1,40 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.cutting-table
   name: Cutting table
   step: Cut to shape
   description: "A flat bed where sheet and plate are cut to each panel's outline. What is left between the outlines is scrap."
-size:
+physical:
   length: 40
   width: 15
   height: 5
-rate:
-  throughput: 2
-  product: cut-blanks
-inputs:
-  materials:
-  - { item: sheet-and-plate, amount: 1.15 }
-outputs:
-  by_products:
-  - { item: scrap, amount: 0.15 }
-needs:
-  power: 0.027
+recipes:
+  - makes: stock.al6061-sh-2-blank
+    does: "6061 sheet 2 mm is cut to each panel's outline; what is left between the outlines is scrap."
+    inputs:
+      - { item: stock.al6061-sh-2, quantity: 1.15 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.15 }
+    rate: 0.555555555555556
+    power: 27000.0
+  - makes: stock.al6061-pl-5-blank
+    does: "6061 plate 5 mm is cut to each panel's outline; what is left between the outlines is scrap."
+    inputs:
+      - { item: stock.al6061-pl-5, quantity: 1.15 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.15 }
+    rate: 0.555555555555556
+    power: 27000.0
+  - makes: stock.sta36-pl-20-blank
+    does: "A36 plate 20 mm is cut to each panel's outline; what is left between the outlines is scrap."
+    inputs:
+      - { item: stock.sta36-pl-20, quantity: 1.15 }
+    outputs:
+      - { item: stock.sta36-scrap, quantity: 0.15 }
+    rate: 0.555555555555556
+    power: 27000.0
 basis:
-  - { of: [needs.power], tier: sourced, source: "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/", note: "A laser cutting machine with a 24 kW laser draws 27 kW on average; its largest bed is 8 by 2.5 m." }
-  - { of: [inputs, outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
-  - { of: [size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each stock it cuts: a guess, to be reviewed. A thinner one goes through slower." }
+  - { of: [recipes.power], tier: sourced, source: "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/", note: "A laser cutting machine with a 24 kW laser draws 27 kW on average; its largest bed is 8 by 2.5 m." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
+  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

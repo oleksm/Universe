@@ -1,14 +1,13 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
 identity:
+  key: stock.st4340-fg
   code: ST4340-FG
   name: "4340 forging"
-made_from:
-  material: high-strength-steel-4340
   form: forging
   temper: "quenched and tempered"
-making:
-  process: forging-4340
+made_from:
+  - item: material.high-strength-steel-4340
 physical:
-  shock_limit: 200
+  shock_limit: 1961.33
 basis:
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

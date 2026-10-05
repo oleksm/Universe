@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.mg
   name: Magnesium
   symbol: Mg
   atomic_number: 12
-  atomic_mass: 24.305
+  atomic_mass: 4.0359402013713e-26
   group: 2
   period: 3
   block: s
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s2'
   valence_electrons: 2
-  atomic_radius: 145.0
-  covalent_radius: 141.0
-  van_der_waals_radius: 173.0
-  ionic_radius: 72.0
+  atomic_radius: 1.45e-10
+  covalent_radius: 1.41e-10
+  van_der_waals_radius: 1.73e-10
+  ionic_radius: 7.2e-11
   stable_isotopes: 3
   isotope_abundances:
   - mass_number: 24
@@ -28,7 +29,7 @@ atomic_structure:
     abundance: 0.11025
 chemical:
   electronegativity: 1.31
-  first_ionisation_energy: 737.7
+  first_ionisation_energy: 737700.0
   oxidation_states:
   - 2
   reactivity:
@@ -44,8 +45,8 @@ physical:
   boiling_point: 1363.0
   density: 1740.0
   crystal_structure: simple hexagonal
-  heat_of_fusion: 8.7
-  heat_of_vaporisation: 128.0
+  heat_of_fusion: 8700.0
+  heat_of_vaporisation: 128000.0
   vapour_pressure: 3.1e-15
 thermal:
   specific_heat_capacity: 1020.0
@@ -56,14 +57,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 2.5
-  youngs_modulus: 45.0
+  youngs_modulus: 45000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: shiny grey solid
   emission_lines:
-  - 383.829
-  - 516.732
-  - 517.268
-  - 518.36
-  - 552.84
-  neutron_cross_section: 0.063
+  - 3.83829e-07
+  - 5.16732e-07
+  - 5.17268e-07
+  - 5.1836e-07
+  - 5.5284e-07
+  neutron_cross_section: 6.3e-30

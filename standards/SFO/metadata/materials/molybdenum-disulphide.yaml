@@ -1,12 +1,13 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: Molybdenum disulfide. A range there is given as its middle.
 identity:
+  key: material.molybdenum-disulphide
   name: Molybdenum disulphide
   class: ceramic
   composition:
-  - part: Mo
+  - part: element.mo
     share: 0.599
-  - part: S
+  - part: element.s
     share: 0.401
   form:
   - powder

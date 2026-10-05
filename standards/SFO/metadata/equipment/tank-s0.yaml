@@ -1,15 +1,18 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.tank.s0
   name: "Fuel tank 4 t"
-  key: tank.s0
-  maker: brand.hadley
+  maker: org.hadley
+  revision: outdated
   slot: tank
   description: "A fuel tank."
+size_class: 1
 physical:
   mass: 350
   volume: 40
-performance:
+function:
+  kind: tank
   capacity: 4000
-  holds: deuterium
+  holds: material.deuterium
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

@@ -1,6 +1,8 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
 # As the game makes it: the gate, the star it leads to, how far that is and the ring it is.
-name: "Gate to Driumum"
+identity:
+  key: settlement.treistun.gate-to-driumum
+  name: "Gate to Driumum"
 kind: settlement
-gate: { ring: halcyon-ring-i, to: Driumum, distance: 3.07 }
+gate: { ring: gate.ring.i, to: system.driumum }
 about: "The gate to Driumum, 3.07 light years away: a ring 3 km across on an orbit of its own round the star, kept clear of everything else. A permanent structure with people aboard to run it, so a settlement."

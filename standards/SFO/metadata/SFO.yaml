@@ -1,10 +1,12 @@
-# yaml-language-server: $schema=../schema/body.schema.yaml
-key: body.sfo
-name: Standards Foundry Office
+# yaml-language-server: $schema=../../organisation.schema.yaml
+identity:
+  key: org.sfo
+  name: Standards Foundry Office
+kind: standards_body
 prefix: SFO
 seat: home
-address: { at: treistun/treistun-e-station, tower: Civic Tower, deck: 12, section: A, unit: 1 }
-kind: independent
+address: { at: settlement.treistun.treistun-e-station, tower: Civic Tower, deck: 12, section: A, unit: 1 }
+form: independent
 note: The standards everyone builds to, whoever they answer to. Open to all.
 purpose: The SFO exists so that what people make fits together, whoever made it and wherever it goes.
 details:
@@ -15,12 +17,12 @@ details:
     - "- Safety: common signals, lights and distress codes, so strangers can avoid harm and help each other."
     - "- Lower cost: makers build once for everyone instead of for each customer."
 founded_by:
-  - brand.tolland
-  - brand.vireo
-  - brand.kestrel
-  - brand.hadley
-  - brand.orbital
-  - brand.halvard
+  - org.tolland
+  - org.vireo
+  - org.kestrel
+  - org.hadley
+  - org.orbital
+  - org.halvard
 about:
   - >
     The Standards Foundry Office is independent and international: no government owns it and it

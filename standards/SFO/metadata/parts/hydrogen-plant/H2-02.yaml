@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.h2-02
   code: H2-02
   name: "Rectifier transformer"
-  status: draft
+  revision: draft
   description: "Turns the supply into the steady current the stacks take."
 physical:
   mass: 120000

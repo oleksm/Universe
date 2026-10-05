@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Material
+x-kind: [material]
 description: One material (what things are made of) and its properties. Any one material uses only some of them.
 type: object
 additionalProperties: false
@@ -15,45 +16,56 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, class]
+    required: [key, name, class]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       name: { type: string }
+      description: { type: string, description: "What it is, in a sentence." }
       class: { enum: [metal, alloy, ceramic, glass, polymer, composite, fluid] }
       composition:
-        description: What it's made of, each part's share by mass (0 to 1). A part is an element's symbol or another material's name.
+        description: What it's made of, each part's share by mass (0 to 1). A part is an element or another material, by its key.
         type: array
         items:
           type: object
           additionalProperties: false
           required: [part, share]
           properties:
-            part: { type: string }
+            part: { type: string, x-ref: [element, material] }
             share: { type: number, minimum: 0, maximum: 1 }
-      form: { type: array, items: { enum: [sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid] }, description: The forms it comes in. }
+      form: { type: array, items: { enum: [ingot, sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid, scrap, blank, panel] }, description: The forms it comes in. }
       grade: { type: [string, "null"], description: "Its grade or temper: how it was treated (annealed, hardened...)." }
 
+  fuel:
+    description: "For one that is burnt for its energy, or thrown as reaction mass."
+    type: object
+    additionalProperties: false
+    required: [release]
+    properties:
+      release: { enum: [fusion, fission, chemical, none], description: "How it gives up its energy. chemical: burnt with the oxidiser it carries. none: inert, or reaction mass." }
+      energy: { type: number, x-unit: "J/kg", description: "J/kg it gives up" }
   mass:
     type: object
     additionalProperties: false
     properties:
-      density: { $ref: "#/definitions/number_or_null", description: kg/m3 }
+      density: { $ref: "#/definitions/number_or_null", x-unit: "kg/m3", description: kg/m3 }
 
   mechanical:
     type: object
     additionalProperties: false
     properties:
-      youngs_modulus: { $ref: "#/definitions/number_or_null", description: "GPa; stiffness" }
-      shear_modulus: { $ref: "#/definitions/number_or_null", description: GPa }
+      youngs_modulus: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; stiffness" }
+      shear_modulus: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: Pa }
       poissons_ratio: { $ref: "#/definitions/number_or_null" }
-      yield_strength: { $ref: "#/definitions/number_or_null", description: "MPa; where it starts to bend for good" }
-      tensile_strength: { $ref: "#/definitions/number_or_null", description: "MPa; where it breaks, pulled" }
-      compressive_strength: { $ref: "#/definitions/number_or_null", description: "MPa; where it breaks, pressed" }
-      shear_strength: { $ref: "#/definitions/number_or_null", description: MPa }
+      yield_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; where it starts to bend for good" }
+      tensile_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; where it breaks, pulled" }
+      compressive_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; where it breaks, pressed" }
+      shear_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: Pa }
       elongation_at_break: { $ref: "#/definitions/number_or_null", description: "share of its length (0.2: 20%); ductility" }
       hardness: { $ref: "#/definitions/number_or_null", description: Mohs scale }
-      fracture_toughness: { $ref: "#/definitions/number_or_null", description: "MPa m^0.5; resistance to cracks growing" }
-      impact_toughness: { $ref: "#/definitions/number_or_null", description: "J (Charpy); resistance to sudden blows" }
-      fatigue_limit: { $ref: "#/definitions/number_or_null", description: "MPa; the load it survives over many cycles" }
+      fracture_toughness: { $ref: "#/definitions/number_or_null", x-unit: "Pa m^0.5", description: "Pa m^0.5; resistance to cracks growing" }
+      impact_toughness: { $ref: "#/definitions/number_or_null", x-unit: "J", description: "J (Charpy); resistance to sudden blows" }
+      fatigue_limit: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; the load it survives over many cycles" }
       creep_resistance: { $ref: "#/definitions/rating", description: "Against slow sagging under long load, hot above all." }
       wear_resistance: { $ref: "#/definitions/rating" }
       friction_coefficient: { $ref: "#/definitions/number_or_null", description: "against steel, dry" }
@@ -62,12 +74,12 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      melting_point: { $ref: "#/definitions/number_or_null", description: "K; or where it softens or decomposes" }
-      max_service_temperature: { $ref: "#/definitions/number_or_null", description: K }
-      min_service_temperature: { $ref: "#/definitions/number_or_null", description: "K; below it, brittle" }
-      thermal_conductivity: { $ref: "#/definitions/number_or_null", description: W/(m K) }
-      specific_heat_capacity: { $ref: "#/definitions/number_or_null", description: J/(kg K) }
-      thermal_expansion: { $ref: "#/definitions/number_or_null", description: "1/K, linear" }
+      melting_point: { $ref: "#/definitions/number_or_null", x-unit: "K", description: "K; or where it softens or decomposes" }
+      max_service_temperature: { $ref: "#/definitions/number_or_null", x-unit: "K", description: K }
+      min_service_temperature: { $ref: "#/definitions/number_or_null", x-unit: "K", description: "K; below it, brittle" }
+      thermal_conductivity: { $ref: "#/definitions/number_or_null", x-unit: "W/(m K)", description: W/(m K) }
+      specific_heat_capacity: { $ref: "#/definitions/number_or_null", x-unit: "J/(kg K)", description: J/(kg K) }
+      thermal_expansion: { $ref: "#/definitions/number_or_null", x-unit: "1/K", description: "1/K, linear" }
       thermal_shock_resistance: { $ref: "#/definitions/rating" }
       emissivity: { $ref: "#/definitions/number_or_null", description: "0 to 1; how well it radiates heat" }
       absorptivity: { $ref: "#/definitions/number_or_null", description: "0 to 1; how much sunlight it soaks up" }
@@ -76,10 +88,10 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      electrical_conductivity: { $ref: "#/definitions/number_or_null", description: S/m }
-      dielectric_strength: { $ref: "#/definitions/number_or_null", description: "MV/m; the field an insulator withstands" }
+      electrical_conductivity: { $ref: "#/definitions/number_or_null", x-unit: "S/m", description: S/m }
+      dielectric_strength: { $ref: "#/definitions/number_or_null", x-unit: "V/m", description: "V/m; the field an insulator withstands" }
       magnetic: { enum: [ferromagnetic, paramagnetic, diamagnetic, null] }
-      superconducting_temperature: { $ref: "#/definitions/number_or_null", description: "K; null if none" }
+      superconducting_temperature: { $ref: "#/definitions/number_or_null", x-unit: "K", description: "K; null if none" }
 
   optical:
     type: object
@@ -118,3 +130,4 @@ properties:
       castability: { $ref: "#/definitions/rating", description: "Cast or printed." }
       repairability: { $ref: "#/definitions/rating" }
       recyclability: { $ref: "#/definitions/rating" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

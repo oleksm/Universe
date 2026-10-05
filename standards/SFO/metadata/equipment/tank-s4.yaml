@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.s4
+  name: "Fuel Tank 80 T"
+  maker: org.hadley
+  revision: outdated
+  slot: tank
+  description: "A fuel tank."
+size_class: 4
+physical:
+  mass: 5000
+  volume: 800
+function:
+  kind: tank
+  capacity: 80000
+  holds: material.deuterium
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

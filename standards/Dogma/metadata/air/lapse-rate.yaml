@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.lapse-rate
+  name: "Lapse rate"
+  label: LAPSE_RATE
+  section: dogma.air
+value: 0.0065
+unit: "K/m"
+kind: real
+note: "Air cooling with height."
+basis:
+  - { of: [value], tier: sourced, source: "US Standard Atmosphere 1976: 6.5 K per km in the troposphere" }

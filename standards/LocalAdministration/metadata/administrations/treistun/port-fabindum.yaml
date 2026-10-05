@@ -1,7 +1,9 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-name: "Port Fabindum"
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
+identity:
+  key: settlement.treistun.port-fabindum
+  name: "Port Fabindum"
 kind: settlement
-at: Treistun c I
+at: body.treistun.treistun-c-i
 position: { latitude: -43.742, longitude: -87.965 }
 about: "The port on Treistun c I, the moon of c, at 44° south. Gravity 0.11 g, no air."
 story:

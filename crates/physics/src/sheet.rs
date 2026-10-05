@@ -6,6 +6,8 @@
 pub enum Kind {
     /// Measured nature (a constant, a real material's property).
     Real,
+    /// A value fixed by definition or convention (a light year, one g): a measure, not nature.
+    Reference,
     /// Real physics, speculative engineering.
     Grounded,
     /// An approximation of the real, to refine.

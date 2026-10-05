@@ -1,16 +1,20 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.computer.fbw.s1
   name: "Flight computer"
-  key: computer.fbw.s1
-  maker: brand.orbital
+  maker: org.orbital
+  revision: outdated
   slot: computer
   description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
+size_class: 1
 physical:
   mass: 200
   volume: 0.4
-performance:
-  power_draw: 50
-  turn_rate: 1.0
+needs:
+  power: 50000
+function:
+  kind: flight_computer
+  turn_rate: 1
   roll_rate: 1.8
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

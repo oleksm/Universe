@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.terminal.ground
+  name: "Tallis ground terminal"
+  maker: org.tallis
+  revision: outdated
+  slot: gate
+size_class: 3
+physical:
+  mass: 3000
+  volume: 10
+needs:
+  power: 100000
+function:
+  kind: comm
+  capture: 100000000
+  link: 1000000000
+  lag: 0.02
+  capacity: 13.8888888889
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

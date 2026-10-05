@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../schema/good.schema.yaml
-identity:
-  name: Refined steel
-  kind: intermediate
-  description: "Molten steel trimmed to its grade and degassed, ready to cast."

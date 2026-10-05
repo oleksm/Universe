@@ -1,24 +1,16 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.panel-line
   name: Panel line
   step: Make panels
   description: "A line that cuts, forms and finishes one kind of panel without stopping. Set up for one panel, it makes nothing else until it is set up again."
-size:
+physical:
   length: 300
   width: 40
   height: 15
-rate:
-  throughput: 20
-  product: parts
-inputs:
-  materials:
-  - { item: hot-rolled-strip, amount: 1.15 }
-outputs:
-  by_products:
-  - { item: scrap, amount: 0.15 }
-needs:
-  power: 2
+throughput:
+  rate: 5.55555555555556
+  power: 2000000
 basis:
-  - { of: [rate.throughput], tier: invented, review: true, note: "A guess, to be reviewed: ten times a yard's plate work, for panels all alike. It sets how fast a gate ring's skin can be made." }
-  - { of: [inputs, outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
-  - { of: [size, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [throughput.rate], tier: invented, review: true, note: "A guess, to be reviewed: ten times a yard's plate work, for panels all alike. It sets how fast a gate ring's skin can be made." }
+  - { of: [physical, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

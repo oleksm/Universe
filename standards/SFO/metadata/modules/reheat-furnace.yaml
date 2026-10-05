@@ -1,21 +1,34 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.reheat-furnace
   name: Reheat furnace
   step: Heat
   description: "Brings ingots up to the temperature they are worked at."
-size:
+physical:
   length: 60
   width: 20
   height: 12
-rate:
-  throughput: 120
-  product: hot-ingot
-inputs:
-  materials:
-  - { item: ingot, amount: 1.0 }
-needs:
-  power: 45
+recipes:
+  - makes: good.hot-ingot-6061
+    does: "The ingot is heated through to the temperature it rolls at."
+    inputs:
+      - { item: stock.al6061-ingot, quantity: 1.0 }
+    rate: 33.3333333333333
+    power: 45000000
+  - makes: good.hot-ingot-4340
+    does: "The ingot is heated through to the temperature it rolls at."
+    inputs:
+      - { item: stock.st4340-ingot, quantity: 1.0 }
+    rate: 33.3333333333333
+    power: 45000000
+  - makes: good.hot-ingot-a36
+    does: "The ingot is heated through to the temperature it rolls at."
+    inputs:
+      - { item: stock.sta36-ingot, quantity: 1.0 }
+    rate: 33.3333333333333
+    power: 45000000
 basis:
-  - { of: [rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "100 to 420 t/h for one furnace." }
-  - { of: [needs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "1,200 to 1,500 MJ of heat for each tonne at best practice; 1,350 taken. Heat is counted as power: there is no fuel to burn." }
-  - { of: [inputs, size], tier: invented, note: "No loss in heating is counted. Its footprint was not found in a source: approximate, from memory." }
+  - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, power, what is lost), used for each metal it works: a guess, to be reviewed. Each metal has its own." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "100 to 420 t/h for one furnace." }
+  - { of: [recipes.power], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "1,200 to 1,500 MJ of heat for each tonne at best practice; 1,350 taken. Heat is counted as power: there is no fuel to burn." }
+  - { of: [recipes.inputs, physical], tier: invented, review: true, note: "No loss in heating is counted. Its footprint was not found in a source: approximate, from memory." }

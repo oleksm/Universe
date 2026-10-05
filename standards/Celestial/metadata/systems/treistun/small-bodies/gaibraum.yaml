@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: the others come from the far cloud, once in thousands to millions of years.
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
+in_game: not made
+identity: {key: body.treistun.gaibraum, name: Gaibraum, kind: comet, parent: body.treistun.treistun, about: A comet from the
+    far cloud. It comes in to 0.18 AU once in a very long time.}
+orbit: {semi_major_axis: 915700000000000.0, eccentricity: 0.99997082, inclination: 153.95, period: 17995392000000.0}
+physical: {radius: 8296.0, density: 600, mass: 1435000000000000.0}
+rock: {class: rock-class.icy}

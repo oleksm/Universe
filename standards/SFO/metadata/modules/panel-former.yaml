@@ -1,19 +1,32 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.panel-former
   name: Panel former
   step: Form
   description: "Rolls and presses that bend flat blanks to a panel's curve."
-size:
+physical:
   length: 30
   width: 15
   height: 8
-rate:
-  throughput: 2
-  product: formed-panels
-inputs:
-  materials:
-  - { item: cut-blanks, amount: 1.0 }
-needs:
-  power: 0.3
+recipes:
+  - makes: stock.al6061-sh-2-panel
+    does: "Each cut blank is pressed or rolled to its curve."
+    inputs:
+      - { item: stock.al6061-sh-2-blank, quantity: 1.0 }
+    rate: 0.555555555555556
+    power: 300000.0
+  - makes: stock.al6061-pl-5-panel
+    does: "Each cut blank is pressed or rolled to its curve."
+    inputs:
+      - { item: stock.al6061-pl-5-blank, quantity: 1.0 }
+    rate: 0.555555555555556
+    power: 300000.0
+  - makes: stock.sta36-pl-20-panel
+    does: "Each cut blank is pressed or rolled to its curve."
+    inputs:
+      - { item: stock.sta36-pl-20-blank, quantity: 1.0 }
+    rate: 0.555555555555556
+    power: 300000.0
 basis:
-  - { of: [inputs, size, rate, needs], tier: invented, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each stock it forms: a guess, to be reviewed." }
+  - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }

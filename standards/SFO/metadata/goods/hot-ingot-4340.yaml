@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.hot-ingot-4340
+  name: "Hot ingot, 4340 steel"
+  kind: intermediate
+  description: "An ingot of 4340 steel heated through to the temperature it is worked at."

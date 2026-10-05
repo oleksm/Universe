@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.hyperdrive.s3
+  name: "Hyperdrive S3"
+  maker: org.kestrel
+  revision: outdated
+  slot: hyperdrive
+  description: "The drive that crosses between stars."
+size_class: 3
+physical:
+  mass: 9000
+  volume: 22
+needs:
+  power: 3000000
+function:
+  kind: hyperdrive
+  efficiency: 0.6
+  top_speed: 899377374000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

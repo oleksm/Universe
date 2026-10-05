@@ -1,5 +1,5 @@
-# yaml-language-server: $schema=../../../../schema/field.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Nikreira family, kind: family, anchor: Nikreira}
-rocks: {class: s-type stony, count: 192, extent: 41.98}
+# yaml-language-server: $schema=../../../../schema/population.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: population.moryemzai.nikreira-family, name: Nikreira family, kind: family, anchor: body.moryemzai.nikreira}
+rocks: {class: rock-class.stony, count: 192, extent: 41980.0}

@@ -1,7 +1,9 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-name: "Port Eikir"
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
+identity:
+  key: settlement.treistun.port-eikir
+  name: "Port Eikir"
 kind: settlement
-at: Treistun d
+at: body.treistun.treistun-d
 position: { latitude: 45.649, longitude: 165.925 }
 about: "The port on Treistun d, at 46° north. Gravity 1.07 g, with air, and warm."
 story:

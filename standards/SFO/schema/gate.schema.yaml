@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Stargate
+x-kind: [gate]
 description: One gate ring, a maker's product. A pair of them holds a tube open between two stars. What opening and holding the tube costs is worked out from the laws (config/dogma.ron, Tube).
 type: object
 additionalProperties: false
@@ -10,23 +11,24 @@ properties:
     additionalProperties: false
     required: [name, key]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       name: { type: string }
-      key: { type: string, description: "Its key in the game (content/base/structures.ron)." }
-      maker: { type: string, description: "The maker whose product it is, by its key in Maker House." }
+      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
       class: { type: integer, description: "Its class: a higher one spans further." }
       description: { type: string }
   size:
     type: object
     additionalProperties: false
     properties:
-      opening: { type: number, description: "m, the diameter of the ring, and of the tube it holds" }
-      thickness: { type: number, description: "m, how thick the ring's structure is" }
+      opening: { type: number, x-unit: "m", description: "m, the diameter of the ring, and of the tube it holds" }
+      thickness: { type: number, x-unit: "m", description: "m, how thick the ring's structure is" }
   performance:
     type: object
     additionalProperties: false
     properties:
-      span: { type: number, description: "light years, the longest tube it can hold" }
-      capture_speed: { type: number, description: "m/s, the fastest a ship may enter it" }
+      span: { type: number, x-unit: "m", description: "m, the longest tube it can hold" }
+      capture_speed: { type: number, x-unit: "m/s", description: "m/s, the fastest a ship may enter it" }
   built_of:
     type: object
     additionalProperties: false
@@ -40,28 +42,12 @@ properties:
       additionalProperties: false
       required: [item, count]
       properties:
-        item: { type: string, description: "The equipment (SFO 16), by file name." }
+        item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by its key." }
         count: { type: integer, minimum: 1 }
   power:
     type: object
     additionalProperties: false
     properties:
-      station: { type: string, description: "The industrial module (SFO 10) that powers it. How many it takes to hold its tube is worked out." }
-  making:
-    type: object
-    additionalProperties: false
-    properties:
-      process: { type: string, description: "The process that assembles it where it is to stand, by file name." }
-  basis:
-    description: 'Where its figures come from. Each entry covers the groups (or group.property) it names. sourced: from a published source or the game, named. derived: worked out from other figures. invented: chosen, to be balanced or replaced.'
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [of, tier]
-      properties:
-        of: { type: array, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
-        source: { type: string }
-        note: { type: string }
-        review: { type: boolean, description: "A guess put in so the figure is there: to be reviewed." }
+      station: { type: string, x-ref: [module], description: "The industrial module (SFO 10) that powers it. How many it takes to hold its tube is worked out." }
+  making: { $ref: "../../common.schema.yaml#/definitions/making" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

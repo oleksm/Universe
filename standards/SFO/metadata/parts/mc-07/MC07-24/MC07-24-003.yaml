@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is an estimate, to be balanced: its surface
 # at 4.91 kg for each m2 (the hull's frame mass in the game shared over all the parts' surface).
 identity:
+  key: part.mc07-24-003
   code: MC07-24-003
   name: "Pad"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_RL_Pad"
 physical:
   mass: 216
   length: 2.8
   width: 2.5
   height: 1.64
-  shock_limit: 100
+  shock_limit: 980.665
 shape:
   surface_area: 44.1
 made_from:
-  item: ST4340-FG
-  quantity: 324
+  - item: stock.st4340-fg
+    quantity: 324.0
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 1
 basis:

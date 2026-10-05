@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.albedo-dry
+  name: "Albedo of a dry rocky world"
+  label: ALBEDO_DRY
+  section: dogma.climate
+value: 0.15
+kind: real
+note: "The share of sunlight it reflects."
+basis:
+  - { of: [value], tier: sourced, source: "Mars: 0.17", note: "Rounded down from Mars's." }

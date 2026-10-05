@@ -9,7 +9,8 @@ use crate::rails::OnRails;
 
 /// Sutton–Graves constant for air-like gases (kg^0.5 / m), with the heat flux
 /// in W/m² from density in kg/m³, nose radius in m and speed in m/s.
-pub const SUTTON_GRAVES: f64 = 1.7415e-4;
+pub use crate::laws::SUTTON_GRAVES;
+use crate::laws::{AIR_TOP, EARTH_AIR_DENSITY, EARTH_SCALE_HEIGHT, STANDARD_GRAVITY};
 
 /// Air around a body: density at the base radius (kg/m³), the height it
 /// falls by a factor e over (m), and where it's taken to end (m above the
@@ -26,8 +27,8 @@ impl Atmosphere {
     /// with surface gravity `g` (m/s²) the same air stands taller or
     /// shorter in proportion (the scale height is kT/mg).
     pub fn earthlike(g: f64) -> Self {
-        let scale_height = 8_500.0 * 9.81 / g.max(0.5);
-        Atmosphere { surface_density: 1.225, scale_height, top: scale_height * 14.0 }
+        let scale_height = EARTH_SCALE_HEIGHT * STANDARD_GRAVITY / g.max(0.5);
+        Atmosphere { surface_density: EARTH_AIR_DENSITY, scale_height, top: scale_height * AIR_TOP }
     }
 
     /// Density at `altitude` above the base radius (kg/m³); none above the top.
@@ -76,7 +77,7 @@ mod tests {
     #[test]
     fn a_falling_body_reaches_its_terminal_velocity() {
         // 1500 kg/m² in sea-level air under 9.81: v = sqrt(2βg/ρ) ≈ 155 m/s.
-        let (beta, rho, g) = (1500.0, 1.225, 9.81);
+        let (beta, rho, g) = (1500.0, EARTH_AIR_DENSITY, STANDARD_GRAVITY);
         let mut v = DVec3::ZERO;
         for _ in 0..6000 {
             v += DVec3::NEG_Y * g * 0.05;

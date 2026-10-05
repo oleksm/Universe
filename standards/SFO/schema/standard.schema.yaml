@@ -1,9 +1,11 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Standard
+x-kind: [standard]
 description: 'One SFO standard: a file NNNN-<slug>.yaml in standards/SFO/, its id SFO <NNNN>.'
 type: object
 additionalProperties: false
 required:
+- identity
 - title
 definitions:
   block:
@@ -36,11 +38,17 @@ definitions:
               items:
                 type: string
 properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
   title:
     type: string
   parent:
     type: string
-    pattern: ^[A-Z]{2,6} [0-9]+$
+    x-ref: [standard]
     description: The record it sits under (its category).
   records:
     type: string

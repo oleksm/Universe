@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../schema/good.schema.yaml
-identity:
-  name: Tube
-  kind: product
-  description: "Hollow stock: what a piercing mill ships."

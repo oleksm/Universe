@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.si
   name: Silicon
   symbol: Si
   atomic_number: 14
-  atomic_mass: 28.085
+  atomic_mass: 4.6636239685461e-26
   group: 14
   period: 3
   block: p
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ne] 3s2 3p2'
   valence_electrons: 4
-  atomic_radius: 111.0
-  covalent_radius: 111.0
-  van_der_waals_radius: 210.0
-  ionic_radius: 40.0
+  atomic_radius: 1.11e-10
+  covalent_radius: 1.11e-10
+  van_der_waals_radius: 2.1e-10
+  ionic_radius: 4.0e-11
   stable_isotopes: 3
   isotope_abundances:
   - mass_number: 28
@@ -28,8 +29,8 @@ atomic_structure:
     abundance: 0.030735
 chemical:
   electronegativity: 1.9
-  first_ionisation_energy: 786.5
-  electron_affinity: 134.0684
+  first_ionisation_energy: 786500.0
+  electron_affinity: 134068.4
   oxidation_states:
   - 4
   - 2
@@ -46,8 +47,8 @@ physical:
   boiling_point: 3538.0
   density: 2330.0
   crystal_structure: tetrahedral packing
-  heat_of_fusion: 50.2
-  heat_of_vaporisation: 359.0
+  heat_of_fusion: 50200.0
+  heat_of_vaporisation: 359000.0
   vapour_pressure: 3.1e-59
 thermal:
   specific_heat_capacity: 710.0
@@ -56,17 +57,17 @@ thermal:
 electrical_magnetic:
   electrical_conductivity: 1000.0
   magnetic_ordering: diamagnetic
-  band_gap: 1.12
+  band_gap: 1.79443783008e-19
 mechanical:
   hardness: 6.5
-  youngs_modulus: 47.0
-  tensile_strength: 7000
+  youngs_modulus: 47000000000.0
+  tensile_strength: 7000000000
 optical_nuclear:
   colour: crystalline, reflective with bluish-tinged faces
   emission_lines:
-  - 390.552
-  - 728.917
-  - 740.577
-  - 741.595
-  - 742.35
-  neutron_cross_section: 0.166
+  - 3.90552e-07
+  - 7.28917e-07
+  - 7.40577e-07
+  - 7.41595e-07
+  - 7.4235e-07
+  neutron_cross_section: 1.66e-29

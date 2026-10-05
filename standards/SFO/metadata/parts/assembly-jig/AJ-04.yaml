@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.aj-04
   code: AJ-04
   name: "Welding head"
-  status: draft
+  revision: draft
   description: "Joins them."
 physical:
   mass: 5000

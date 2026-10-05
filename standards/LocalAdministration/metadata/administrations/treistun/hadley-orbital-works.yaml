@@ -1,47 +1,41 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
 # Not in the game yet: added to the registry 2026-10-04. A rig, not a settlement: equipment that is
 # brought to where something large is to be built and moved on when it is done, as an oil rig is.
 # It has no ground, no zoning and no administration of its own.
-name: "Hadley Orbital Works"
+identity:
+  key: rig.treistun.hadley-orbital-works
+  name: "Hadley Orbital Works"
 kind: rig
-at: Treistun f
-owner: brand.hadley
+at: body.treistun.treistun-f
+owner: org.hadley
 # Its furnaces and casting need weight. Invented: the part of it that carries them turns.
 spin: { radius: 150, gravity: 3.0 }
 about: "A works in orbit, now round Treistun f: a foundry, a mill and a panel works on one frame with its own power plant, fed with metal from the asteroids. The part that melts and casts turns, to give the metal weight; the rest is in free fall. It is equipment, not a place. It is brought to where something too large to lift off a world is to be built, and moved on to the next when that is done."
-processes:
-  - steelmaking-asteroid
-  - plate-rolling-4340
-  - tube-making-4340
-  - panel-making
-  - machining
-  - ring-assembly
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: steelmaking-asteroid
+  - makes: stock.st4340-ingot
     modules:
-      - { module: ore-yard, count: 1 }
-      - { module: arc-furnace-metal, count: 1 }
-      - { module: ladle-station, count: 1 }
-      - { module: casting-bay, count: 1 }
-      - { module: ingot-yard, count: 1 }
-  - process: plate-rolling-4340
+      - { module: module.ore-yard, count: 1 }
+      - { module: module.arc-furnace-metal, count: 1 }
+      - { module: module.ladle-station, count: 1 }
+      - { module: module.casting-bay, count: 1 }
+      - { module: module.ingot-yard, count: 1 }
+  - makes: stock.st4340-pl-3
+    also: [stock.sta36-pl-20]
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: hot-rolling-mill, count: 1 }
-  - process: tube-making-4340
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.hot-rolling-mill, count: 1 }
+  - makes: stock.st4340-tb-120x10
+    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15]
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: piercing-mill, count: 2 }
-  - process: panel-making
-    modules:
-      - { module: panel-line, count: 1 }
-  - process: machining
-    modules:
-      - { module: machining-centre, count: 20 }
-  - process: ring-assembly
-    modules:
-      - { module: assembly-jig, count: 2 }
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.piercing-mill, count: 2 }
+  - modules:
+      - { module: module.panel-line, count: 1 }
+  - modules:
+      - { module: module.machining-centre, count: 20 }
+  - modules:
+      - { module: module.assembly-jig, count: 2 }
 modules:
-  - { module: fusion-power-station, count: 1 }
+  - { module: module.fusion-power-station, count: 1 }

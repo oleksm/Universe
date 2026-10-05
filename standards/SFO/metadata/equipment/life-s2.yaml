@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.life.s2
+  name: "Life Support"
+  maker: org.hadley
+  revision: outdated
+  slot: life_support
+  description: "Air, water and warmth for the crew."
+size_class: 2
+physical:
+  mass: 1500
+  volume: 8
+needs:
+  power: 200000
+function:
+  kind: life_support
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

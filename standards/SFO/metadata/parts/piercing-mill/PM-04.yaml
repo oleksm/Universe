@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pm-04
   code: PM-04
   name: "Drive motor"
-  status: draft
+  revision: draft
   description: "Drive the rolls."
 physical:
   mass: 40000

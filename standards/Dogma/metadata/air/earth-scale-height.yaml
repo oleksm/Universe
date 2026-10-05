@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.earth-scale-height
+  name: "Earth's scale height"
+  symbol: "H"
+  label: EARTH_SCALE_HEIGHT
+  section: dogma.air
+value: 8500
+unit: "m"
+kind: simplified
+note: "The height over which Earth's air thins by 2.7 times; on another world the same air stands taller or shorter as its gravity is weaker or stronger."
+basis:
+  - { of: [value], tier: sourced, source: "US Standard Atmosphere 1976: about 8.5 km near the ground (it varies with temperature)", note: "A literal in the engine, with no name." }

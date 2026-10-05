@@ -1,23 +1,22 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.forging-press
   name: Forging press
   step: Forge
   description: "Presses hot metal between dies into a rough shape, lining up its grain."
-size:
+physical:
   length: 60
   width: 40
   height: 25
-rate:
-  throughput: 10
-  product: forgings
-inputs:
-  materials:
-  - { item: hot-ingot, amount: 1.15 }
-outputs:
-  by_products:
-  - { item: scrap, amount: 0.15 }
-needs:
-  power: 6
+recipes:
+  - makes: stock.st4340-fg
+    does: "Hot steel pressed between dies into a rough shape, lining up its grain for strength."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.15 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.15 }
+    rate: 2.77777777777778
+    power: 6000000
 basis:
-  - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }
+  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

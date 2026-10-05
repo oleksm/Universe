@@ -1,13 +1,20 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.bd-01
   code: BD-01
   name: "Dock hall frame"
-  status: draft
+  revision: draft
   description: "The steel frame of the dock, long, wide and high enough for a hull."
 physical:
   mass: 1580000
+made_from:
+  - item: stock.sta36-pl-20
+    quantity: 1816994.4
+making:
+  module: module.welding-bay
 fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: derived, review: true, source: "https://de.wikipedia.org/wiki/Cargolifter-Werfthalle", note: "A very high, wide-span hall: the CargoLifter airship hangar has 14,500 t of steel over 66,000 m2, 220 kg for each m2: over this dock's 7,200 m2." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }

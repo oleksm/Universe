@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.tube-mass
+  name: "Tube mass"
+  symbol: "rho"
+  label: TUBE_RHO
+  section: dogma.tube
+value: 406.0
+unit: "kg/m3"
+kind: invented
+note: "A tube's equivalent mass for each cubic metre of its diameter cubed (mu = rho d^3): a 1 m tube's is 406 kg. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry."
+basis:
+  - { of: [value], tier: invented, note: "Chosen to meet its target." }

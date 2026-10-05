@@ -1,23 +1,31 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.finishing-line
   name: Finishing line
   step: Cut and finish
   description: "Levels the strip, heat-treats it to its temper and cuts it into sheets and plates."
-size:
+physical:
   length: 120
   width: 30
   height: 10
-rate:
-  throughput: 60
-  product: sheet-and-plate
-inputs:
-  materials:
-  - { item: cold-rolled-strip, amount: 1.05 }
-outputs:
-  by_products:
-  - { item: scrap, amount: 0.05 }
-needs:
-  power: 2
+recipes:
+  - makes: stock.al6061-pl-5
+    does: "It is levelled, brought to its temper and cut into sheets and plates."
+    inputs:
+      - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.05 }
+    rate: 16.6666666666667
+    power: 2000000
+  - makes: stock.al6061-sh-2
+    does: "It is levelled, brought to its temper and cut into sheets and plates."
+    inputs:
+      - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.05 }
+    rate: 16.6666666666667
+    power: 2000000
 basis:
-  - { of: [inputs, outputs], tier: invented, note: "Approximate, from memory." }
-  - { of: [size, rate, needs], tier: invented, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each gauge: a guess, to be reviewed. A thinner or smaller one goes through slower." }
+  - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }
+  - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }

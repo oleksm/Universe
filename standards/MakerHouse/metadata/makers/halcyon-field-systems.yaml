@@ -1,8 +1,10 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.halcyon
-name: Halcyon Field Systems
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+identity:
+  key: org.halcyon
+  name: Halcyon Field Systems
+kind: company
 ticker: HFS
-address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 31, section: A, unit: 1 }
+address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 31, section: A, unit: 1 }
 note: "Hyperdrives and gate rings: clean fields, dear"
 who: "A field-engineering company working on the hardest part of travel: the jump."
 what: "Builds hyperdrives and gate rings, known for clean fields and high prices."

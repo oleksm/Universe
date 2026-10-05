@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.electronics
+  name: "Electronics"
+unit_mass: 50
+bulk_density: 500
+basket: 2.31481481481e-07
+names:
+  adjectives: ["Consumer", "Hardened", "Surplus", "Salvaged", "Precision", "Optical", "Quantum", "Flexible", "Military-Spec"]
+  nouns: ["Circuits", "Sensors", "Displays", "Batteries", "Transceivers", "Capacitors", "Emitters", "Relays", "Lasers"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

@@ -1,25 +1,41 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
 identity:
+  key: module.piercing-mill
   name: Piercing mill
   step: Pierce to tube
   description: "Drives a hot round over a point to open it into a tube, then rolls its wall even."
-size:
+physical:
   length: 150
   width: 30
   height: 15
-rate:
-  throughput: 20
-  product: tube
-inputs:
-  materials:
-  - { item: hot-ingot, amount: 1.085 }
-outputs:
-  by_products:
-  - { item: scrap, amount: 0.085 }
-needs:
-  power: 4
+recipes:
+  - makes: stock.st4340-tb-120x10
+    does: "A hot round driven over a point to open it into a tube."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-150x10
+    does: "A hot round driven over a point to open it into a tube."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-200x15
+    does: "A hot round driven over a point to open it into a tube."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
 basis:
-  - { of: [inputs, outputs], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "8.5% of the metal is lost from billet to pipe." }
-  - { of: [needs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "200 to 1,200 MJ for each tonne for rolling and heating between passes; about 200 kWh taken (the first heating is the reheat furnace's). Heat is counted as power: there is no fuel to burn." }
-  - { of: [rate], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "A medium mill makes 100,000 to 200,000 t a year, 12 to 25 t/h. Read from a search excerpt, not the page itself." }
-  - { of: [size], tier: invented, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each size: a guess, to be reviewed. A thinner or smaller one goes through slower." }
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "8.5% of the metal is lost from billet to pipe." }
+  - { of: [recipes.power], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "200 to 1,200 MJ for each tonne for rolling and heating between passes; about 200 kWh taken (the first heating is the reheat furnace's). Heat is counted as power: there is no fuel to burn." }
+  - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "A medium mill makes 100,000 to 200,000 t a year, 12 to 25 t/h. Read from a search excerpt, not the page itself." }
+  - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }

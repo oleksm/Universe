@@ -4,38 +4,80 @@ Generated (run `cargo run -p universe-world --example physics_sheet`): edit the 
 
 # Dogma's laws
 
-From `config/dogma.ron`.
+From `standards/Dogma`.
 
 ## Nature
 
-Constants of physics.
+Constants of physics, as measured.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `SPEED_OF_LIGHT` | 2.99792458e8 | m/s | Real | c: light, radio, radar, and every capture of an event. |
-| `STEFAN_BOLTZMANN` | 5.670374e-8 | W/(m²·K⁴) | Real | σ: how a body radiates heat: σ·ε·A·T⁴. |
+| `G` | 6.6743e-11 | m3/(kg s2) | Real | Constant of gravitation: The pull between two masses: G m1 m2 / r^2. |
+| `SPEED_OF_LIGHT` | 2.99792458e8 | m/s | Real | Speed of light: Light, radio, radar, and every capture of an event. |
+| `STEFAN_BOLTZMANN` | 5.670374e-8 | W/(m2 K4) | Real | Stefan-Boltzmann constant: How a body radiates heat: sigma e A T^4. |
+
+## Measures
+
+Named reference values: what a light year, an astronomical unit, a day, the Sun's mass and one standard gravity are. Fixed by definition or by convention, so that everything that says 'a g' or 'a solar mass' means the same thing. Not laws of nature: the pull of gravity on any one world is worked out.
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `AU` | 1.495978707e11 | m | Real | Astronomical unit: The Earth's distance from the Sun: what distances in a star system are read in. |
+| `DAY` | 86400 | s | Real | Day: What times are read in. |
+| `EARTH_MASS` | 5.972e24 | kg | Real | Mass of the Earth: What a planet's mass is read in. |
+| `EARTH_RADIUS` | 6.371e6 | m | Real | Radius of the Earth: What a planet's radius is read in. |
+| `LIGHT_YEAR` | 9.4607304725808e15 | m | Real | Light year: What light crosses in a year of 365.25 days: what distances between stars are read in. |
+| `STANDARD_GRAVITY` | 9.80665 | m/s2 | Real | Standard gravity: One g: what a load, a jolt or a thrust is counted in. Not the pull on any world: that is worked out from its mass and size. |
+| `SOLAR_LUMINOSITY` | 3.828e26 | W | Real | Luminosity of the Sun: What a star's light is read in. |
+| `SUN_MASS` | 1.989e30 | kg | Real | Mass of the Sun: What a star's mass is read in. |
+| `SUN_RADIUS` | 6.957e8 | m | Real | Radius of the Sun: What a star's radius is read in. |
+| `YEAR` | 3.15576e7 | s | Real | Year: A year of 365.25 days. |
 
 ## Field
 
-A hyper-field's cost, drawn from the tank: dE/dx = m·E0·(1 + (v/v*)²) / η, η the device's. The same everywhere (how fast a drive can go, and its governor near bodies, are its products' specs): what limits a ship is the fuel it carries. See docs/world/hyperspace.md; tools/experiments/hyper_fuel.py.
+A hyper-field's cost, drawn from the tank: dE/dx = m E0 (1 + (v/v*)^2) / eta, eta the device's. The same everywhere (how fast a drive can go, and its governor near bodies, are its products' specs): what limits a ship is the fuel it carries.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `FIELD_COST` | 0.002391 | J/(kg·m) | Invented | E0: the energy per kg per metre, going slow. Target: a normal ship (a Drover's tank, an S2 drive) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star; an explorer that's mostly tank about 5 ly. |
-| `V_BEST_C` | 1000 | c | Invented | v*: at this speed the cost is double the slow cost (it grows with the square of speed). |
+| `V_BEST_C` | 2.99792458e11 | m/s | Invented | Best speed: At this speed the cost is double the slow cost (it grows with the square of speed). 1,000 times the speed of light. |
+| `FIELD_COST` | 0.002391 | J/(kg m) | Invented | Field cost: The energy per kg per metre, going slow. Target: a normal ship (a Drover's tank, an S2 drive) goes about 1.5 ly on a full tank at v*: never the 4-7 ly to the next star; an explorer that's mostly tank about 5 ly. |
 
 ## Tube
 
-A gate or relay holds a tube of the medium open along its route (as long as the span; millions of c inside). Crossing in time t: E = eps·m·S·e^(t_nat/t), t_nat = T_LY·(S/1 ly)·(m/1 kg)^GAMMA. A tube of diameter d weighs as mu(d) = RHO·(d/1 m)^K: opening it is the same formula, holding it a share of that. See docs/world/hyperspace.md; tools/experiments/.
+A gate or relay holds a tube of the medium open along its route (as long as the span; millions of c inside). Crossing a span S with a mass m in time t: E = eps m S e^(t_nat/t), t_nat = T S (m / 1 kg)^gamma. A tube of diameter d weighs as mu(d) = rho (d / 1 m)^k: opening it is the same formula, holding it a share of that.
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `TUBE_T_LY` | 0.2 | s/ly | Invented | Natural crossing per light year for a 1 kg payload. Target: data crosses at 200 ms per ly; faster gets punishing. |
-| `TUBE_GAMMA` | 0.3333333333 |  | Invented | Heavier is naturally slower, by the cube root of mass. Target: a 100 t ship under a minute through a 5 ly gate, a capital ship several minutes. |
-| `TUBE_EPS` | 2.24e-12 | J/(kg·m) | Invented | A crossing's energy scale. Target: a 100 t ship at natural speed through a 5 ly gate costs an S2 plant-hour. |
-| `TUBE_RHO` | 406 | kg | Invented | A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry. |
-| `TUBE_K` | 3 |  | Invented | A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 5 ships a day. |
-| `TUBE_HOLD` | 5.184e8 | s | Invented | Holding a tube costs its opening over this (200 months: 0.5% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous. |
+| `TUBE_K` | 3 |  | Invented | Diameter exponent: A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 5 ships a day. |
+| `TUBE_EPS` | 2.24e-12 | J/(kg m) | Invented | Crossing energy scale: A crossing's energy scale. Target: a 100 t ship at natural speed through a 5 ly gate costs an S2 plant-hour. |
+| `TUBE_GAMMA` | 0.3333333333 |  | Invented | Mass exponent: Heavier is naturally slower, by the cube root of mass. Target: a 100 t ship under a minute through a 5 ly gate, a capital ship several minutes. |
+| `TUBE_HOLD` | 5.184e8 | s | Invented | Holding time: Holding a tube costs its opening over this (200 months: 0.5% a month). Target: small next to opening, big in absolute terms: a lapse is ruinous. |
+| `TUBE_RHO` | 406 | kg | Invented | Tube mass: A 1 m tube's equivalent mass. Target: opening a 3 km, 5 ly gate costs a year of a 100 GW industry. |
+| `TUBE_T_LY` | 2.11400166804923e-17 | s/m | Invented | Natural crossing time: Natural crossing for a 1 kg payload: 0.2 s for each light year. Target: data crosses at 200 ms per ly; faster gets punishing. |
+
+## Air
+
+Air round a world, and flying through it: Earth's standard air as the measure, and the heating of a body entering it (Sutton and Graves).
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `AIR_CP` | 1005 | J/(kg K) | Real | Air's heat capacity: Earth-like air's specific heat at constant pressure. |
+| `AIR_TOP` | 14 |  | Simplified | Top of the air: Where a world's air is taken to end, in scale heights: there it is a millionth as dense as at the ground. |
+| `EARTH_AIR_DENSITY` | 1.225 | kg/m3 | Real | Earth's air at sea level: The measure a world's air is set against. |
+| `EARTH_SCALE_HEIGHT` | 8500 | m | Simplified | Earth's scale height: The height over which Earth's air thins by 2.7 times; on another world the same air stands taller or shorter as its gravity is weaker or stronger. |
+| `LAPSE_RATE` | 0.0065 | K/m | Real | Lapse rate: Air cooling with height. |
+| `SUTTON_GRAVES` | 1.7415e-4 | kg^0.5/m | Real | Sutton-Graves constant: Entry heating at the nose: q = k (density / nose radius)^0.5 v^3, for air-like gases. |
+
+## Climate
+
+What a world's surface reflects, by its kind: the measure its temperature is worked out from.
+
+| Name | Value | Unit | Kind | Why |
+|---|---|---|---|---|
+| `ALBEDO_CRATERED` | 0.12 |  | Real | Albedo of a cratered moon: The share of sunlight it reflects. |
+| `ALBEDO_DRY` | 0.15 |  | Real | Albedo of a dry rocky world: The share of sunlight it reflects. |
+| `ALBEDO_GIANT` | 0.5 |  | Real | Albedo of a giant's cloud tops: The share of sunlight it reflects. |
+| `ALBEDO_TERRAN` | 0.3 |  | Real | Albedo of an Earth-like world: The share of sunlight it reflects. |
 
 # The base world's numbers
 
@@ -47,7 +89,6 @@ The world's drives as built today (each engine's exhaust and efficiency are its 
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `SOLAR_LUMINOSITY` | 3.828e26 | W | Real | The Sun's power: the unit stars' luminosities are given in (each star's its own, seeded round its class's). |
 | `GROUND_MARGIN` | 20000 | m | Tuning | Flying along the nose at a world, a hyperdrive drops out this far above its ground (or its air's top). |
 
 ## Gates
@@ -83,7 +124,6 @@ The hull's skin in air: Sutton–Graves heating in, Stefan–Boltzmann radiation
 | `SKIN_CAPACITY` | 3e6 | J/K | Simplified | The skin's heat capacity: about 3 t of metal. |
 | `SKIN_LIMIT` | 1500 | K | Real | Beyond it the hull burns (refractory alloys). |
 | `AMBIENT` | 290 | K | Simplified | What the skin settles to with nothing heating it: to be replaced by the energy balance (sunlight, night). |
-| `AIR_CP` | 1005 | J/(kg·K) | Real | Earth-like air's specific heat at constant pressure. |
 | `HULL_ABSORPTIVITY` | 0.3 |  | Real | How much sunlight a hull's paint takes in (white paint about 0.25–0.35). |
 | `INTERNAL_LEAK` | 0.01 |  | Simplified | The share of a ship's power use that reaches its skin as heat; the rest goes to its radiators (built in for now: radiators come as modules). |
 | `CONVECTION` | 25 | W/(m²·K) | Simplified | Heat exchange between a hull and Earth-like air at sea level (scaling with the air's density to the half power). |
@@ -94,13 +134,8 @@ Worlds' surface temperatures: radiative equilibrium from their star, their albed
 
 | Name | Value | Unit | Kind | Why |
 |---|---|---|---|---|
-| `ALBEDO_TERRAN` | 0.3 |  | Real | An Earth-like world's albedo (Earth's: 0.3). |
-| `ALBEDO_DRY` | 0.15 |  | Real | A dry rocky world's (Mars: 0.17). |
-| `ALBEDO_CRATERED` | 0.12 |  | Real | A cratered moon's (the Moon: 0.12). |
-| `ALBEDO_GIANT` | 0.5 |  | Real | A gas or ice giant's cloud tops (Jupiter: 0.5). |
 | `GREENHOUSE` | 33 | K | Simplified | What Earth-like air at sea level adds to a world's mean (Earth's: 33 K); grows with the air's density to the 0.6. |
 | `SWING_DAMPING` | 0.05 | kg/m³ | Simplified | Air this dense halves a world's day–night swing; Earth-like air (1.2) all but flattens it. |
-| `LAPSE_RATE` | 0.0065 | K/m | Real | Air cooling with height (Earth's standard atmosphere). |
 | `NIGHT_FLOOR` | 0.35 |  | Simplified | An airless world's night, as a share of its mean (the Moon: about 100 K of 270). |
 
 ## References

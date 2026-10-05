@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../schema/section.schema.yaml
+identity:
+  key: dogma.tube
+  name: Tube
+  order: 4
+  about: "A gate or relay holds a tube of the medium open along its route (as long as the span; millions of c inside). Crossing a span S with a mass m in time t: E = eps m S e^(t_nat/t), t_nat = T S (m / 1 kg)^gamma. A tube of diameter d weighs as mu(d) = rho (d / 1 m)^k: opening it is the same formula, holding it a share of that."
+  see: [docs/world/hyperspace.md, tools/experiments]

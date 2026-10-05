@@ -1,5 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Mill stock
+x-kind: [stock]
 description: 'standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. What a unit of it weighs is worked out from its material''s density.'
 type: object
 additionalProperties: false
@@ -8,51 +9,21 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [code, name]
+    required: [key, code, name, form]
     properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       code: { type: string, pattern: '^[A-Z0-9]+(-[A-Z0-9]+)+$', description: "Its code. No two alike." }
       name: { type: string }
-  made_from:
-    type: object
-    additionalProperties: false
-    required: [material, form]
-    properties:
-      material: { type: string, description: "The material, by file name." }
-      form: { type: string, description: "One of the forms the material comes in." }
+      form: { type: string, description: "The form it comes in: one of its material's." }
       temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
+  made_from: { $ref: "../../common.schema.yaml#/definitions/made_from" }
   size:
     type: object
     additionalProperties: false
     properties:
-      thickness: { type: number, description: "mm, of sheet, plate or film" }
-      diameter: { type: number, description: "mm, of bar, wire or tube (a tube's outside)" }
-      wall: { type: number, description: "mm, of a tube" }
-  physical:
-    description: What every physical thing has. What a ship hauling it and a warehouse holding it have to know.
-    type: object
-    additionalProperties: false
-    properties:
-      length: { type: number, description: "m, of one piece as supplied (a sheet, a bar, a coil's wire)" }
-      width: { type: number, description: "m, of one sheet or plate as supplied" }
-      storage_min_temperature: { type: number, description: "K, the coldest it may be kept or carried at" }
-      storage_max_temperature: { type: number, description: "K, the hottest it may be kept or carried at" }
-      impact_resistance: { type: number, description: "J, the blow it takes without damage" }
-      shock_limit: { type: number, description: "g, the hardest jolt it takes while it is carried" }
-  making:
-    type: object
-    additionalProperties: false
-    properties:
-      process: { type: string, description: "The process that makes it, by file name." }
-  basis:
-    description: 'Where its figures come from. Each entry covers the groups (or group.property) it names. sourced: from a published source or the game, named. derived: worked out from other figures, by physics or from the model. invented: chosen, to be balanced or replaced.'
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [of, tier]
-      properties:
-        of: { type: array, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
-        source: { type: string }
-        note: { type: string }
-        review: { type: boolean, description: "A guess put in so the figure is there: to be reviewed." }
+      thickness: { type: number, x-unit: "m", description: "m, of sheet, plate or film" }
+      diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
+      wall: { type: number, x-unit: "m", description: "m, of a tube" }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -1,0 +1,315 @@
+# How the registry's page reads a value the records hold in SI: the unit it is shown in. For each schema
+# and property: `per`, how many of the record's unit make one of the unit read; `reads`, the property's
+# description in that unit. Used by build.py only, until the page converts for itself.
+Celestial/schema/body.schema.yaml:
+  atmosphere.scale_height:
+    per: 1000.0
+    reads: km, the height over which the air thins by 2.7 times
+  atmosphere.surface_pressure:
+    per: 1000.0
+    reads: 'kPa at its surface (Earth: 101.3)'
+  atmosphere.top:
+    per: 1000.0
+    reads: km, where it is taken to end
+  crust.surface_age:
+    per: 3.15576e+16
+    reads: 'billion years since its surface was last remade: old ground is heavily cratered'
+  interior.core_radius:
+    per: 1000.0
+    reads: km
+  interior.crust_thickness:
+    per: 1000.0
+    reads: km, on average
+  magnetic.field:
+    per: 1.0e-06
+    reads: 'microtesla at its surface, at the equator (Earth: about 30)'
+  orbit.period:
+    per: 86400.0
+    reads: days (of 86,400 s) to go round once
+  orbit.semi_major_axis:
+    per: 1000.0
+    reads: km, half the long axis of its orbit
+  physical.age:
+    per: 3.15576e+16
+    reads: billion years since it formed
+  physical.day:
+    per: 3600.0
+    reads: hours to turn once
+  physical.radius:
+    per: 1000.0
+    reads: km
+  physical.rings:
+    per: 1000.0
+    reads: km, the inner and outer radius of its rings
+  star.luminosity:
+    per: 3.828e+26
+    reads: times the Sun's
+  water.ocean_depth:
+    per: 1000.0
+    reads: km, on average
+  water.salinity:
+    per: 0.001
+    reads: 'g of salt in each kg of its sea water (Earth: 35)'
+Celestial/schema/population.schema.yaml:
+  extent.inner:
+    per: 149597870700.0
+    reads: AU from the star, its nearest
+  extent.outer:
+    per: 149597870700.0
+    reads: AU from the star, its farthest
+  rocks.extent:
+    per: 1000.0
+    reads: km, how far it spreads round its anchor
+Celestial/schema/rock-class.schema.yaml:
+  composition.pgm:
+    per: 1.0e-06
+    reads: 'platinum-group metals: parts per million, lean to rich'
+  mining.rich_above:
+    per: 1.0e-06
+    reads: parts per million of platinum-group metals above which it yields that
+Celestial/schema/seeding.schema.yaml:
+  galaxy.region:
+    per: 9460730472580800.0
+    reads: light years, the side of the charted region (a cube round home)
+  galaxy.sector:
+    per: 9460730472580800.0
+    reads: light years, the side of the cubes the stars are made in
+  galaxy.star_density:
+    per: 1.1809349884417086e-48
+    reads: stars for each cubic light year
+  main_belt.inner_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  main_belt.outer_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  main_belt.spacing:
+    per: 1000.0
+    reads: km between one asteroid and the next, on average
+  moons.separation_least:
+    per: 1000.0
+    reads: km between the two, the least known
+  moons.separation_most:
+    per: 1000.0
+    reads: km, the most
+  outer_belt.inner_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  outer_belt.mass:
+    per: 5.9722e+24
+    reads: Earth masses, the Sun's
+  outer_belt.outer_edge:
+    per: 149597870700.0
+    reads: AU, the Sun's
+  radiation_belt.deadly_above:
+    per: 1.1574074074074074e-07
+    reads: rem a day above which a person unshielded dies within days
+  radiation_belt.dose:
+    per: 1.1574074074074074e-07
+    reads: rem a day at the distance below, round a giant of Jupiter's mass
+Celestial/schema/system.schema.yaml:
+  position.distance:
+    per: 9460730472580800.0
+    reads: light years from the home star
+  position.from_home:
+    per: 9460730472580800.0
+    reads: light years from the home star, [x, y, z] in the galaxy's frame
+LocalAdministration/schema/power-line.schema.yaml:
+  capacity:
+    per: 1000000.0
+    reads: MW it can carry at most
+SFO/schema/element.schema.yaml:
+  atomic_structure.atomic_radius:
+    per: 1.0e-12
+    reads: pm, calculated
+  atomic_structure.covalent_radius:
+    per: 1.0e-12
+    reads: pm
+  atomic_structure.ionic_radius:
+    per: 1.0e-12
+    reads: pm, for its commonest ion
+  atomic_structure.van_der_waals_radius:
+    per: 1.0e-12
+    reads: pm
+  chemical.electron_affinity:
+    per: 1000.0
+    reads: kJ/mol; left out where no stable negative ion forms
+  chemical.first_ionisation_energy:
+    per: 1000.0
+    reads: kJ/mol
+  electrical_magnetic.band_gap:
+    per: 1.602176634e-19
+    reads: eV; null if not a semiconductor or insulator
+  identity.atomic_mass:
+    per: 1.6605390666e-27
+    reads: u
+  mechanical.tensile_strength:
+    per: 1000000.0
+    reads: MPa, annealed
+  mechanical.youngs_modulus:
+    per: 1000000000.0
+    reads: GPa
+  optical_nuclear.emission_lines:
+    per: 1.0e-09
+    reads: nm, the five strongest visible lines of the neutral atom
+  optical_nuclear.neutron_cross_section:
+    per: 1.0e-28
+    reads: barns, thermal neutron absorption
+  physical.heat_of_fusion:
+    per: 1000.0
+    reads: kJ per mole of atoms
+  physical.heat_of_vaporisation:
+    per: 1000.0
+    reads: kJ per mole of atoms
+SFO/schema/gate.schema.yaml:
+  performance.span:
+    per: 9460730472580800.0
+    reads: light years, the longest tube it can hold
+SFO/schema/good.schema.yaml:
+  physical.bulk_density:
+    per: 1000.0
+    reads: t/m3, as stowed broken in a hold
+SFO/schema/hull.schema.yaml:
+  capacity.fuel:
+    per: 1000.0
+    reads: t of fuel its tanks hold, as fitted
+  capacity.hold:
+    per: 1000.0
+    reads: t, the most cargo it is rated to carry
+  design.cabin_pressure:
+    per: 1000.0
+    reads: kPa, of the air its pressurised parts hold against vacuum
+  design.lift_thrust:
+    per: 1000000.0
+    reads: MN, of its lift nozzles in the game
+  design.loaded_mass:
+    per: 1000.0
+    reads: 't, the ship loaded, in the game: hull, fitted modules, fuel and cargo'
+  design.main_thrust:
+    per: 1000000.0
+    reads: MN, of its main drive in the game
+  design.minimum_gauge:
+    per: 0.001
+    reads: mm, the thinnest skin used where no load says more
+  physical.mass:
+    per: 1000.0
+    reads: t, the bare hull with nothing fitted
+SFO/schema/material.schema.yaml:
+  electrical_magnetic.dielectric_strength:
+    per: 1000000.0
+    reads: MV/m; the field an insulator withstands
+  mechanical.compressive_strength:
+    per: 1000000.0
+    reads: MPa; where it breaks, pressed
+  mechanical.fatigue_limit:
+    per: 1000000.0
+    reads: MPa; the load it survives over many cycles
+  mechanical.fracture_toughness:
+    per: 1000000.0
+    reads: MPa m^0.5; resistance to cracks growing
+  mechanical.shear_modulus:
+    per: 1000000000.0
+    reads: GPa
+  mechanical.shear_strength:
+    per: 1000000.0
+    reads: MPa
+  mechanical.tensile_strength:
+    per: 1000000.0
+    reads: MPa; where it breaks, pulled
+  mechanical.yield_strength:
+    per: 1000000.0
+    reads: MPa; where it starts to bend for good
+  mechanical.youngs_modulus:
+    per: 1000000000.0
+    reads: GPa; stiffness
+SFO/schema/mill-stock.schema.yaml:
+  physical.shock_limit:
+    per: 9.80665
+    reads: g, the hardest jolt it takes while it is carried
+  size.diameter:
+    per: 0.001
+    reads: mm, of bar, wire or tube (a tube's outside)
+  size.thickness:
+    per: 0.001
+    reads: mm, of sheet, plate or film
+  size.wall:
+    per: 0.001
+    reads: mm, of a tube
+SFO/schema/module.schema.yaml:
+  capacity.handling:
+    per: 0.2777777777777778
+    reads: t/h it can move in or out
+  capacity.holds:
+    per: 1000.0
+    reads: t it can store
+  generation.supplies:
+    per: 1000000.0
+    reads: MW it supplies, for one that makes power
+  needs.power:
+    per: 1000000.0
+    reads: MW, at full rate
+  recipes[].batch:
+    per: 1000.0
+    reads: t in one batch
+  recipes[].power:
+    per: 1000000.0
+    reads: MW, at full rate
+  recipes[].rate:
+    per: 0.2777777777777778
+    reads: t/h of its product, at full rate
+  throughput.power:
+    per: 1000000.0
+    reads: MW, at full rate
+  throughput.rate:
+    per: 0.2777777777777778
+    reads: t/h of its product, at full rate
+SFO/schema/part.schema.yaml:
+  life.inspection_interval:
+    per: 3600.0
+    reads: hours of flight between inspections
+  life.service_life:
+    per: 31557600.0
+    reads: years in use before it is replaced
+  limits.design_load:
+    per: 1000.0
+    reads: kN, the load it is built to carry
+  limits.pressure:
+    per: 1000.0
+    reads: kPa it holds
+  making.time:
+    per: 3600.0
+    reads: hours to make one
+  making.tolerance:
+    per: 0.001
+    reads: mm, on its dimensions
+  physical.shock_limit:
+    per: 9.80665
+    reads: g, the hardest jolt it takes while it is carried
+  shape.thickness:
+    per: 0.001
+    reads: mm, its wall or gauge
+SFO/schema/process.schema.yaml:
+  energy.peak_power:
+    per: 1000.0
+    reads: kW
+  energy.recoverable_heat:
+    per: 1000.0
+    reads: MJ/t that can be reused
+  energy.specific_energy:
+    per: 1000.0
+    reads: MJ/t of product
+  energy.waste_heat:
+    per: 1000.0
+    reads: MJ/t to reject
+  equipment.minimum_scale:
+    per: 0.2777777777777778
+    reads: t/h, the smallest plant that makes sense
+  quality.tolerance:
+    per: 0.001
+    reads: mm, on dimensions
+  rate.batch_size:
+    per: 1000.0
+    reads: t
+  rate.throughput:
+    per: 0.2777777777777778
+    reads: t/h

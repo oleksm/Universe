@@ -1,4 +1,4 @@
-//! The dogma's claims: Dogma's laws (`config/dogma.ron`) checked against the
+//! The dogma's claims: Dogma's laws (the Dogma registry (`standards/Dogma`)) checked against the
 //! base world built on them (`content/base/`). The charter: `docs/physics.md`.
 //! Change a law or the world, and these say which promise it breaks.
 
@@ -6,7 +6,7 @@ use universe_world::content::content;
 use universe_world::modules::Does;
 use universe_physics::laws::*;
 use universe_world::sheet::*;
-use universe_world::units::{AU, LIGHT_YEAR};
+use universe_world::units::{AU, DAY, LIGHT_YEAR};
 
 /// A field's efficiency, the best drive there is.
 fn best_drive() -> f64 {
@@ -24,7 +24,7 @@ fn range_ly(mass: f64, fuel: f64, speed: f64, eta: f64) -> f64 {
 fn a_normal_ship_cannot_reach_the_next_star_on_its_tank() {
     // Neighbours are 4-7 ly apart (docs/world/galaxy.md). Every hull on its own full tank, with
     // the best drive, going slow (its cheapest): short of 4 ly. Fuel's what holds it, nothing else.
-    let v_star = V_BEST_C * SPEED_OF_LIGHT;
+    let v_star = V_BEST_C;
     for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.")) {
         let mass = h.dry_mass + h.fuel_capacity;
         let slow = range_ly(mass, h.fuel_capacity, 0.0, best_drive());
@@ -36,10 +36,10 @@ fn a_normal_ship_cannot_reach_the_next_star_on_its_tank() {
 #[test]
 fn an_explorer_that_is_mostly_tank_reaches_the_next_star() {
     // Nine tenths of it fuel, the best drive: about 5 ly at v*, in a couple of days.
-    let v_star = V_BEST_C * SPEED_OF_LIGHT;
+    let v_star = V_BEST_C;
     let r = range_ly(1.0e5, 0.9e5, v_star, best_drive());
     assert!((4.0..8.0).contains(&r), "an explorer goes {r:.1} ly");
-    let days = 5.0 * LIGHT_YEAR / v_star / 86_400.0;
+    let days = 5.0 * LIGHT_YEAR / v_star / DAY;
     assert!((1.0..3.0).contains(&days), "5 ly takes {days:.1} days");
 }
 
@@ -47,7 +47,7 @@ fn an_explorer_that_is_mostly_tank_reaches_the_next_star() {
 fn hopping_round_a_system_costs_little() {
     // 40 AU at a third of v*: a sliver of a Drover's tank.
     let per_kg = universe_world::materials::material("material.deuterium").map(|m| m.energy).unwrap();
-    let kg = universe_physics::hyper::field_cost(91_500.0, V_BEST_C * SPEED_OF_LIGHT / 3.0, 0.6) * 40.0 * AU / per_kg;
+    let kg = universe_physics::hyper::field_cost(91_500.0, V_BEST_C / 3.0, 0.6) * 40.0 * AU / per_kg;
     assert!(kg < 30.0, "{kg:.1} kg for 40 AU");
     // Data across a relay's tube in a system (the relay's cadence its own): a second or two.
     let cadence = universe_world::hypernet::relay_lag("relay.hyper").map(|r| r.1).unwrap();
@@ -77,14 +77,14 @@ fn gates_are_justified_and_limited() {
     let gate = 2.0 * GATE_RADIUS;
     let own = tube_open_energy(100.0, s5);
     assert!(own > 1e3 * at(ship), "own tube {own:e} against a pass {:e}", at(ship));
-    let day = tube_hold_power(gate, s5) * 86_400.0;
+    let day = tube_hold_power(gate, s5) * DAY;
     assert!((1.0..50.0).contains(&(day / own)), "a held gate's day is {} own tubes", day / own);
     assert!((1e18..1e19).contains(&tube_open_energy(gate, s5)));
     // Relays' thin tubes are next to free to hold.
     assert!(tube_hold_power(RELAY_TUBE, 2.0 * AU) < 1.0);
     // Freight by gate beats a field's crossing per kg by far (and any ship can take it).
     let by_gate = tube_crossing_energy(1e5, 40.0 * LIGHT_YEAR, tube_natural_time(1e5, 40.0 * LIGHT_YEAR)) / 1e5;
-    let by_field = universe_physics::hyper::field_cost(1e5, V_BEST_C * SPEED_OF_LIGHT, best_drive()) * 40.0 * LIGHT_YEAR / 1e5;
+    let by_field = universe_physics::hyper::field_cost(1e5, V_BEST_C, best_drive()) * 40.0 * LIGHT_YEAR / 1e5;
     assert!(by_gate * 1e6 < by_field, "gate {by_gate:e} J/kg against a field's {by_field:e}");
 }
 

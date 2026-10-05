@@ -1,18 +1,22 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.lift.belly.s1
   name: "Belly lift S1"
-  key: lift.belly.s1
-  maker: brand.kestrel
+  maker: org.kestrel
+  revision: outdated
   slot: lift
   description: "Lift jets under the hull, to hover and set down."
+size_class: 1
 physical:
   mass: 1100
   volume: 2.5
-performance:
-  power_draw: 150
-  thrust: 220
-  exhaust_speed: 10000
+needs:
+  power: 150000
+function:
+  kind: lift
+  thrust: 220000
+  exhaust: 10000000
   efficiency: 0.3
-  burns: deuterium
+  burns: material.deuterium
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

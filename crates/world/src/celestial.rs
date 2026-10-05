@@ -1,6 +1,5 @@
 //! The charted world, as the celestial registry has it (Freefall Facts'
-//! `standards/Celestial`, generated into `content/base/galaxy.ron` and
-//! `content/base/celestial.ron` by `tools/standards/build.py`).
+//! `standards/Celestial`, read from `crate::registry`).
 //!
 //! The seed makes every system. What the registry has as **curated** or
 //! **frozen** is then taken as its record says, in place of what the seed
@@ -17,57 +16,45 @@
 //! can't change unnoticed when the code does.
 
 use glam::{DQuat, DVec3};
-use serde::Deserialize;
 use universe_physics::Orbit;
 
+use crate::belt::RockClass;
 use crate::galaxy::StarClass;
+use crate::registry::{Body as RegBody, BodyKind as RegKind, InGame, PopulationKind, Provenance, Registry, Terrain as RegTerrain};
 use crate::system::{BodyKind, StarSystem};
 use crate::terrain::{Terrain, TerrainKind};
 use crate::units::{G, SUN_MASS};
 
-/// The world as a whole: its seed and the laws it is made by. The seed is
-/// the game's; the laws are the code's (`galaxy`), written here so a change
-/// to either is seen (see the test).
-#[derive(Clone, Debug, Deserialize)]
-pub struct Galaxy {
-    pub seed: u64,
-    pub home: String,
-    /// The charted region's side (ly).
-    pub region: f64,
-    /// Stars for each cubic light year.
-    pub star_density: f64,
-    /// The side of the cubes stars are made in (ly).
-    pub sector: f64,
-}
-
-/// A system written out, found by its number among the seed's stars.
-#[derive(Clone, Debug, Deserialize)]
+/// A system written out, found by its number among the seed's stars: the
+/// registry's records of it, in the game's terms (a body's parent by name,
+/// angles in radians, a star's mass and light in Suns).
+#[derive(Clone, Debug)]
 pub struct System {
     pub system: String,
     pub index: usize,
-    /// "seeded", "curated" or "frozen".
-    pub status: String,
+    pub status: Provenance,
     pub star: Star,
     pub bodies: Vec<Body>,
     pub fields: Vec<Field>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Star {
     /// O, B, A, F, G, K or M.
     pub class: String,
     /// Times the Sun's.
     pub mass: f64,
+    /// Times the Sun's.
     pub luminosity: f64,
 }
 
 /// One natural body as its record says (kg, m, s, rad).
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Body {
     pub name: String,
-    /// "seeded", "curated" or "frozen".
-    pub status: String,
-    pub kind: String,
+    pub status: Provenance,
+    pub kind: BodyKind,
+    /// What it goes round, by name.
     pub parent: String,
     pub mass: f64,
     pub radius: f64,
@@ -76,8 +63,7 @@ pub struct Body {
     pub eccentricity: Option<f64>,
     pub inclination: Option<f64>,
     pub tilt: f64,
-    /// "terran", "dry" or "cratered".
-    pub terrain: Option<String>,
+    pub terrain: Option<TerrainKind>,
     pub relief: Option<f64>,
     /// Surface density (kg/m³), scale height (m), top (m).
     pub atmosphere: Option<(f64, f64, f64)>,
@@ -89,18 +75,18 @@ pub struct Body {
 }
 
 /// A field of asteroids as its record says.
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug)]
 pub struct Field {
     pub name: String,
-    pub status: String,
+    pub status: Provenance,
     pub count: usize,
     /// How far it spreads round its remnant (m).
     pub extent: f64,
-    pub class: String,
+    pub class: RockClass,
 }
 
-fn taken_over(status: &str) -> bool {
-    status != "seeded"
+fn taken_over(status: Provenance) -> bool {
+    status != Provenance::Seeded
 }
 
 fn star_class(letter: &str) -> Option<StarClass> {
@@ -110,51 +96,99 @@ fn star_class(letter: &str) -> Option<StarClass> {
 impl Body {
     /// Whether the record stands in place of the seed's body.
     pub fn overrides(&self) -> bool {
-        taken_over(&self.status)
-    }
-
-    fn terrain_kind(&self) -> Result<Option<TerrainKind>, String> {
-        Ok(match self.terrain.as_deref() {
-            None => None,
-            Some("terran") => Some(TerrainKind::Terran),
-            Some("dry") => Some(TerrainKind::Dry),
-            Some("cratered") => Some(TerrainKind::Cratered),
-            Some(k) => return Err(format!("celestial.ron '{}': no terrain '{k}'", self.name)),
-        })
-    }
-
-    fn body_kind(&self) -> Option<BodyKind> {
-        [BodyKind::Rocky, BodyKind::GasGiant, BodyKind::IceGiant, BodyKind::Moon, BodyKind::Asteroid].into_iter().find(|k| k.label() == self.kind)
+        taken_over(self.status)
     }
 }
 
-impl System {
-    pub fn check(&self) -> Result<(), String> {
-        let known = |s: &str| ["seeded", "curated", "frozen"].contains(&s);
-        if !known(&self.status) {
-            return Err(format!("celestial.ron '{}': no status '{}'", self.system, self.status));
-        }
-        if star_class(&self.star.class).is_none() {
-            return Err(format!("celestial.ron '{}': no star class '{}'", self.system, self.star.class));
-        }
-        for b in &self.bodies {
-            if !known(&b.status) {
-                return Err(format!("celestial.ron '{}': no status '{}'", b.name, b.status));
-            }
-            if !(b.mass > 0.0 && b.radius > 0.0 && b.day != 0.0) {
-                return Err(format!("celestial.ron '{}': its mass, radius and day must be given", b.name));
-            }
-            if b.body_kind().is_none() {
-                return Err(format!("celestial.ron '{}': no kind '{}'", b.name, b.kind));
-            }
-            b.terrain_kind()?;
-        }
-        for f in &self.fields {
-            if !known(&f.status) || crate::belt::RockClass::named(&f.class).is_none() {
-                return Err(format!("celestial.ron '{}': its status or its class is not one there is", f.name));
-            }
-        }
-        Ok(())
+/// The systems the registry writes out, each with its star, the bodies and
+/// fields of asteroids the game makes (not the small bodies and regions it
+/// doesn't make yet). Made once from the records.
+pub fn systems() -> &'static [System] {
+    static SYSTEMS: std::sync::OnceLock<Vec<System>> = std::sync::OnceLock::new();
+    SYSTEMS.get_or_init(|| {
+        let reg = crate::registry::registry();
+        reg.systems.iter().map(|s| system(reg, s)).collect()
+    })
+}
+
+/// The part of a key after its kind and its system: `body.treistun.x` is in `treistun`.
+fn in_system<'a>(key: &'a str, kind: &str, system: &str) -> bool {
+    key.strip_prefix(kind).and_then(|k| k.strip_prefix('.')).and_then(|k| k.strip_prefix(system)).is_some_and(|k| k.starts_with('.'))
+}
+
+fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System {
+    let name = s.identity.key.strip_prefix("system.").unwrap_or_else(|| panic!("{} isn't a system's key", s.identity.key));
+    let made = |g: Option<InGame>| g != Some(InGame::NotMade);
+    let bodies: Vec<&RegBody> = reg.bodies.iter().filter(|b| in_system(&b.identity.key, "body", name) && made(b.in_game)).collect();
+    let need = |what: &str, key: &str, v: Option<f64>| v.unwrap_or_else(|| panic!("{key}: no {what}"));
+    let star = bodies.iter().find(|b| b.identity.kind == RegKind::Star).unwrap_or_else(|| panic!("{}: no star", s.identity.key));
+    let named = |key: &str| reg.bodies.iter().find(|b| b.identity.key == key).map_or_else(|| panic!("no {key}"), |b| b.identity.name.clone());
+    System {
+        system: s.identity.name.clone(),
+        index: s.identity.index.unwrap_or_else(|| panic!("{}: no index among the seed's stars", s.identity.key)) as usize,
+        status: s.provenance,
+        star: Star {
+            class: star.star.as_ref().and_then(|st| st.class.clone()).unwrap_or_else(|| panic!("{}: no class", star.identity.key)),
+            mass: need("mass", &star.identity.key, star.physical.mass) / SUN_MASS,
+            luminosity: need("luminosity", &star.identity.key, star.star.as_ref().and_then(|st| st.luminosity)) / universe_physics::laws::SOLAR_LUMINOSITY,
+        },
+        bodies: bodies
+            .iter()
+            .filter(|b| b.identity.kind != RegKind::Star)
+            .map(|b| {
+                let key = &b.identity.key;
+                let kind = match b.identity.kind {
+                    RegKind::RockyPlanet => BodyKind::Rocky,
+                    RegKind::GasGiant => BodyKind::GasGiant,
+                    RegKind::IceGiant => BodyKind::IceGiant,
+                    RegKind::Moon => BodyKind::Moon,
+                    RegKind::Asteroid => BodyKind::Asteroid,
+                    k => panic!("{key}: the game makes no {k:?}"),
+                };
+                let (o, p, f) = (b.orbit.clone().unwrap_or_default(), &b.physical, &b.surface);
+                let colour = f.colour.unwrap_or([0.5; 3]);
+                Body {
+                    name: b.identity.name.clone(),
+                    status: b.provenance,
+                    kind,
+                    parent: named(b.identity.parent.as_deref().unwrap_or_else(|| panic!("{key}: goes round nothing"))),
+                    mass: need("mass", key, p.mass),
+                    radius: need("radius", key, p.radius),
+                    day: need("day", key, p.day),
+                    semi_major_axis: o.semi_major_axis,
+                    eccentricity: o.eccentricity,
+                    inclination: o.inclination.map(f64::to_radians),
+                    tilt: p.tilt.unwrap_or(0.0).to_radians(),
+                    terrain: f.terrain.map(|t| match t {
+                        RegTerrain::Terran => TerrainKind::Terran,
+                        RegTerrain::Dry => TerrainKind::Dry,
+                        RegTerrain::Cratered => TerrainKind::Cratered,
+                    }),
+                    relief: f.relief,
+                    atmosphere: b.atmosphere.as_ref().map(|a| (need("air density", key, a.surface_density), need("scale height", key, a.scale_height), need("air's top", key, a.top))),
+                    colour: (colour[0] as f32, colour[1] as f32, colour[2] as f32),
+                    rings: p.rings.map(|[inner, outer]| (inner, outer)),
+                    landscape: f.landscape.clone(),
+                }
+            })
+            .collect(),
+        fields: reg
+            .populations
+            .iter()
+            .filter(|p| in_system(&p.identity.key, "population", name) && made(p.in_game) && matches!(p.identity.kind, PopulationKind::Family | PopulationKind::Trojan | PopulationKind::Outer))
+            .map(|p| {
+                let key = &p.identity.key;
+                let rocks = p.rocks.as_ref().unwrap_or_else(|| panic!("{key}: no rocks"));
+                let class = rocks.class.as_deref().unwrap_or_else(|| panic!("{key}: no class"));
+                Field {
+                    name: p.identity.name.clone(),
+                    status: p.provenance,
+                    count: rocks.count.unwrap_or_else(|| panic!("{key}: no count")) as usize,
+                    extent: need("extent", key, rocks.extent),
+                    class: RockClass::by_key(class).unwrap_or_else(|| panic!("{key}: no {class}")),
+                }
+            })
+            .collect(),
     }
 }
 
@@ -174,7 +208,7 @@ pub enum Stage {
 /// making. `seed`: the star's (what is made anew is made from it). Where
 /// bodies were taken off its roster: each old number's new one.
 pub fn apply(sys: &mut StarSystem, stage: Stage, seed: u64) -> Option<Vec<Option<usize>>> {
-    let rec = crate::content::content().celestial.iter().find(|s| s.index == sys.index)?;
+    let rec = systems().iter().find(|s| s.index == sys.index)?;
     apply_records(sys, rec, stage, seed)
 }
 
@@ -204,7 +238,7 @@ fn leaning(as_was: DQuat, angle: f64) -> DQuat {
 /// As `apply`, with the records given.
 pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64) -> Option<Vec<Option<usize>>> {
     let mut moved = None;
-    if stage == Stage::Bodies && taken_over(&rec.status) {
+    if stage == Stage::Bodies && taken_over(rec.status) {
         // The star.
         if let Some(class) = star_class(&rec.star.class) {
             sys.class = class;
@@ -233,7 +267,7 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
         // And those written that the seed doesn't make are added, each once what it goes round is there.
         loop {
             let Some((r, parent, kind)) = rec.bodies.iter().find_map(|r| {
-                let kind = r.body_kind().filter(|k| *k != BodyKind::Asteroid)?;
+                let kind = Some(r.kind).filter(|k| *k != BodyKind::Asteroid)?;
                 if sys.bodies.iter().any(|b| b.name == r.name) {
                     return None;
                 }
@@ -264,7 +298,7 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
             Stage::Surfaces if !rock => {
                 let b = &mut sys.bodies[i];
                 b.color = [r.colour.0, r.colour.1, r.colour.2];
-                if let Ok(Some(kind)) = r.terrain_kind() {
+                if let Some(kind) = r.terrain {
                     if b.terrain.as_ref().is_none_or(|t| t.kind != kind) {
                         b.terrain = Some(Terrain::new(kind, b.rail.radius, crate::rng::mix(seed, 0x7465_7272 + i as u64)));
                     }
@@ -278,8 +312,8 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
         }
     }
     if stage == Stage::Rocks {
-        for f in rec.fields.iter().filter(|f| taken_over(&f.status)) {
-            crate::belt::curate(sys, &f.name, f.count, f.extent, crate::belt::RockClass::named(&f.class), seed);
+        for f in rec.fields.iter().filter(|f| taken_over(f.status)) {
+            crate::belt::curate(sys, &f.name, f.count, f.extent, Some(f.class), seed);
         }
     }
     moved

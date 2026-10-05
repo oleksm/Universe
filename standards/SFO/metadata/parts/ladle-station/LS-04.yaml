@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.ls-04
   code: LS-04
   name: "Transformer"
-  status: draft
+  revision: draft
   description: "Feeds its electrodes."
 physical:
   mass: 60000

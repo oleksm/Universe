@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# A fuel, as the game has it (content/base/materials.ron).
+identity:
+  key: material.deuterium
+  name: "Deuterium"
+  class: fluid
+  form:
+  - fluid
+  description: "Heavy hydrogen, the fuel of fusion plants. Catalysed D–D fusion (the tritium and helium-3 it makes burnt too). A tonne in about 31,000 t of water."
+fuel:
+  release: fusion
+  energy: 345000000000000
+mass:
+  density: 163
+basis:
+  - { of: [fuel, mass], tier: invented, review: true, note: "The game's figures (content/base/materials.ron), with no source looked up: to be reviewed. Its density is as it is stored (liquid, or solid)." }

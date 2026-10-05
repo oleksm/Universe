@@ -1,7 +1,7 @@
 # Hyperspace
 
 *A world article: how the hyper layer works in the universe, all in one place. The laws are
-Dogma's (`config/dogma.ron`, every constant marked Invented); the reasons and the rules of the
+Dogma's (the Dogma registry (`standards/Dogma`), every constant marked Invented); the reasons and the rules of the
 invented are in the charter (`docs/physics.md`). Kept current as the hyper layer changes.*
 
 ## In one breath
@@ -173,7 +173,7 @@ Drover crosses in 37-63 s.
 3. **Gate economics in play:** owners paying to open and hold, fees by mass and speed, ships
    choosing their crossing speed (today every crossing is at natural speed, unpaid).
 
-*In code (2026-10-02):* Dogma's Tube laws (`config/dogma.ron`), `hyper::tube_*`; gate transits
+*In code (2026-10-02):* Dogma's Tube laws (the Dogma registry (`standards/Dogma`)), `hyper::tube_*`; gate transits
 take the natural time for the ship's mass and the lane; the hypernet's relay hops and gate data
 cross in capsules at their relays' cadence; the Dogma checks test the targets above.
 

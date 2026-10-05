@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.tidal-heating
+  name: "Tidal heating"
+  group: condition
+  about: "A moon kneaded by its planet's pull as it goes round a stretched orbit, warmed from inside."
+lies: "Moons close to a giant, kept on stretched orbits by the others' pull."
+figures:
+  - { what: "the most volcanic body known", value: "Io, round Jupiter" }
+  - { what: "buried seas", value: "Europa and Enceladus, under their ice" }
+  - { what: "the Earth's own", value: "3.7 TW" }
+means: "Heat and liquid water far from the star."
+in_game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Tidal_heating" }

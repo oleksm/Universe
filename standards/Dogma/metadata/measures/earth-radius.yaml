@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.earth-radius
+  name: "Radius of the Earth"
+  symbol: "R_earth"
+  label: EARTH_RADIUS
+  section: dogma.measures
+value: 6371000
+unit: "m"
+kind: real
+note: "What a planet's radius is read in."
+basis:
+  - { of: [value], tier: sourced, source: "IUGG: the Earth's mean radius, 6,371.0 km" }

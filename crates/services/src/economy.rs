@@ -45,7 +45,7 @@ pub const WAITING_MOST: f64 = 0.33;
 pub const DEATH: f64 = 0.01;
 /// How long being fed or hungry takes to tell (days).
 const FED_DAYS: f64 = 3.0;
-const DAY: f64 = 86_400.0;
+use universe_world::units::DAY;
 
 fn line(c: Category) -> usize {
     c.index()

@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: Silicone rubber. A range there is given as its middle.
 identity:
+  key: material.silicone-rubber
   name: Silicone rubber
   class: polymer
   form:
@@ -9,7 +10,7 @@ identity:
 mass:
   density: 1075.0
 mechanical:
-  tensile_strength: 5.9
+  tensile_strength: 5900000.0
   elongation_at_break: 7.0
   wear_resistance: poor
 thermal:

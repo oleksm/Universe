@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
 # it is cut from.
 identity:
+  key: part.mc07-23-004
   code: MC07-23-004
   name: "Actuator body"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_FL_ActBody"
 physical:
   mass: 148
   length: 2.16
   width: 0.52
   height: 1.52
-  shock_limit: 50
+  shock_limit: 490.3325
 shape:
   surface_area: 5.0
 made_from:
-  item: ST4340-TB-200X15
-  quantity: 2.59
+  - item: stock.st4340-tb-200x15
+    quantity: 177.2483826
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 1
 basis:

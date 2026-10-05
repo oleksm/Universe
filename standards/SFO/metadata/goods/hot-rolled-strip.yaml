@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../schema/good.schema.yaml
-identity:
-  name: Hot-rolled strip
-  kind: intermediate
-  description: "Metal rolled hot to a thick strip, still rough."

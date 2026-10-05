@@ -1,12 +1,19 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.pf-01
   code: PF-01
   name: "Roll frame"
-  status: draft
+  revision: draft
   description: "The frame that holds the rolls."
 physical:
   mass: 30000
+made_from:
+  - item: stock.st4340-fg
+    quantity: 45000.0
+making:
+  module: module.machining-centre
 fit:
   count: 1
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../schema/section.schema.yaml
+identity:
+  key: dogma.nature
+  name: Nature
+  order: 1
+  about: "Constants of physics, as measured."
+  see: [docs/physics.md]

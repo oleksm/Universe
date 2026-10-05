@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.ring-system
+  name: "Ring system"
+  group: region
+  about: "Countless small bodies going round a planet close in, where its tide stops them gathering into a moon."
+lies: "Round a giant, inside the distance at which a moon would be pulled apart."
+made_of: "Saturn's: mostly water ice with a trace of rock, in pieces from dust to metres."
+figures:
+  - { what: "which planets", value: "all four of the Sun's giants" }
+  - { what: "also round", value: "a few small bodies: Chariklo, Chiron, Haumea, Quaoar" }
+means: "Ice by the tonne, already in orbit, in pieces small enough to scoop."
+in_game: partly
+in_game_note: "Giants have rings, drawn; nothing can be taken from them."
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Ring_system" }

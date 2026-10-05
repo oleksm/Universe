@@ -1,19 +1,20 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: NASA Ames Thermal Protection Materials database (TPSX), LI-900 Rigid Tile: measured values, through the thickness; Wikipedia: LI-900 (thermal shock).
 identity:
+  key: material.silica-tile-li-900
   name: Silica tile LI-900
   class: ceramic
   composition:
-  - part: Fused silica
+  - part: material.fused-silica
     share: 1.0
   form:
   - tile
 mass:
   density: 144.0
 mechanical:
-  youngs_modulus: 0.0483
-  tensile_strength: 0.165
-  compressive_strength: 0.193
+  youngs_modulus: 48300000.0
+  tensile_strength: 165000.0
+  compressive_strength: 193000.0
 thermal:
   max_service_temperature: 1590.0
   thermal_shock_resistance: excellent

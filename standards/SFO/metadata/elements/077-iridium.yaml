@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.ir
   name: Iridium
   symbol: Ir
   atomic_number: 77
-  atomic_mass: 192.22
+  atomic_mass: 3.19188819381852e-25
   group: 9
   period: 6
   block: d
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d7 6s2'
   valence_electrons: 9
-  atomic_radius: 180.0
-  covalent_radius: 141.0
-  van_der_waals_radius: 202.0
-  ionic_radius: 62.5
+  atomic_radius: 1.8e-10
+  covalent_radius: 1.41e-10
+  van_der_waals_radius: 2.02e-10
+  ionic_radius: 6.25e-11
   stable_isotopes: 2
   isotope_abundances:
   - mass_number: 191
@@ -26,8 +27,8 @@ atomic_structure:
     abundance: 0.627
 chemical:
   electronegativity: 2.2
-  first_ionisation_energy: 865.2
-  electron_affinity: 150.94
+  first_ionisation_energy: 865200.0
+  electron_affinity: 150940.0
   oxidation_states:
   - 4
   - 3
@@ -43,8 +44,8 @@ physical:
   boiling_point: 4701.0
   density: 22420.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 26.0
-  heat_of_vaporisation: 560.0
+  heat_of_fusion: 26000.0
+  heat_of_vaporisation: 560000.0
   vapour_pressure: 7.0e-99
 thermal:
   specific_heat_capacity: 131.0
@@ -56,14 +57,14 @@ electrical_magnetic:
   superconducting_temperature: 0.11
 mechanical:
   hardness: 6.5
-  youngs_modulus: 528.0
+  youngs_modulus: 528000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 380.012
-  - 390.251
-  - 391.538
-  - 397.631
-  - 399.212
-  neutron_cross_section: 425.0
+  - 3.80012e-07
+  - 3.90251e-07
+  - 3.91538e-07
+  - 3.97631e-07
+  - 3.99212e-07
+  neutron_cross_section: 4.25e-26

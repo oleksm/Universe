@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.eaf-04
   code: EAF-04
   name: "Refractory lining"
-  status: draft
+  revision: draft
   description: "Brick between the melt and the shell."
 physical:
   mass: 100000

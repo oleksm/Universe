@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.scattered-disc
+  name: "Scattered disc"
+  group: region
+  about: "Ice bodies thrown outward by the giants onto long, tilted, stretched orbits."
+lies: "Its bodies come no closer than the last giant and reach well past three times that."
+made_of: "Ice."
+figures:
+  - { what: "how stretched", value: "eccentricities as high as 0.8" }
+  - { what: "how tilted", value: "as much as 40 degrees" }
+means: "Where most returning comets start from."
+in_game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Scattered_disc" }

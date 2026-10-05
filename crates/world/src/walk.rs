@@ -666,7 +666,7 @@ mod tests {
         let colliders = [Collider::Mesh { mesh, at: DVec3::ZERO, rot: DQuat::IDENTITY }];
         let mut w = Walker { feet: from, velocity: DVec3::ZERO };
         for _ in 0..(secs * 60.0) as usize {
-            w.step(&colliders, &|_| DVec3::Y, 9.81, &|_| false, &Stride { wish, jump: 0.0, climb: 0.0 }, 1.0 / 60.0);
+            w.step(&colliders, &|_| DVec3::Y, crate::units::STANDARD_GRAVITY, &|_| false, &Stride { wish, jump: 0.0, climb: 0.0 }, 1.0 / 60.0);
         }
         w
     }

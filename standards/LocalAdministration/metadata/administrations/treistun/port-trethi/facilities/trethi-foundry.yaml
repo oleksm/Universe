@@ -1,27 +1,26 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-name: Trethi Foundry
+identity:
+  key: facility.treistun.port-trethi.trethi-foundry
+  name: Trethi Foundry
 kind: foundry
-parcel: 1
+parcel: parcel.treistun.port-trethi.1
 processes:
-  - steelmaking
-  - alloying-4340
-  - alloying-304
-  - alloying-6061
-  - ingot-casting
-  - quenching-and-tempering
-  - annealing
-  - solution-treating-and-ageing
+  - process.alloying-304
+  - process.ingot-casting
+  - process.quenching-and-tempering
+  - process.annealing
+  - process.solution-treating-and-ageing
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: steelmaking
-    also: [alloying-4340]
+  - makes: stock.sta36-ingot
+    also: [stock.st4340-ingot]
     modules:
-      - { module: ore-yard, count: 1 }
-      - { module: pellet-plant, count: 1 }
-      - { module: hydrogen-plant, count: 3 }
-      - { module: shaft-furnace, count: 1 }
-      - { module: arc-furnace, count: 1 }
-      - { module: ladle-station, count: 1 }
-      - { module: casting-bay, count: 1 }
-      - { module: ingot-yard, count: 1 }
+      - { module: module.ore-yard, count: 1 }
+      - { module: module.pellet-plant, count: 1 }
+      - { module: module.hydrogen-plant, count: 3 }
+      - { module: module.shaft-furnace, count: 1 }
+      - { module: module.arc-furnace, count: 1 }
+      - { module: module.ladle-station, count: 1 }
+      - { module: module.casting-bay, count: 1 }
+      - { module: module.ingot-yard, count: 1 }

@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.albedo-cratered
+  name: "Albedo of a cratered moon"
+  label: ALBEDO_CRATERED
+  section: dogma.climate
+value: 0.12
+kind: real
+note: "The share of sunlight it reflects."
+basis:
+  - { of: [value], tier: sourced, source: "The Moon: 0.12" }

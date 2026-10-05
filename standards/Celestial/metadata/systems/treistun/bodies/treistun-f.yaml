@@ -1,9 +1,17 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Treistun f, kind: rocky planet, parent: Treistun}
-orbit: {semi_major_axis: 169625000.0, eccentricity: 0.04618, period: 525.098, inclination: 1.141}
-physical: {mass: 8.0412e+23, radius: 3634.0, gravity: 4.064, day: 10.562, tilt: 1.51, albedo: 0.15}
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity:
+  key: body.treistun.treistun-f
+  name: Treistun f
+  kind: rocky planet
+  parent: body.treistun.treistun
+  about: 'The fifth planet, 1.13 AU out, and the last rocky one. Small: 3,634 km in radius, 0.41 g, no air, about 190 K on
+    average. Its day lasts under 11 hours. No moon.'
+  story: ['The easy one to leave. With less than half the gravity of the inner worlds, f became the place to stop on the way
+      to the giants.']
+orbit: {semi_major_axis: 169625000000.0, eccentricity: 0.04618, period: 45368467.2, inclination: 1.141}
+physical: {mass: 8.0412e+23, radius: 3634000.0, gravity: 4.064, day: 38023.2, tilt: 1.51, albedo: 0.15}
 surface:
   terrain: dry
   relief: 2544

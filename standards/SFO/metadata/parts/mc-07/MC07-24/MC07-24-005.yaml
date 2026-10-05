@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
 # it is cut from.
 identity:
+  key: part.mc07-24-005
   code: MC07-24-005
   name: "Actuator rod"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_RL_ActRod"
 physical:
   mass: 161
   length: 1.81
   width: 0.4
   height: 1.28
-  shock_limit: 50
+  shock_limit: 490.3325
 shape:
   surface_area: 2.5
 made_from:
-  item: ST4340-BAR-120
-  quantity: 2.17
+  - item: stock.st4340-bar-120
+    quantity: 192.6556562
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 1
 basis:

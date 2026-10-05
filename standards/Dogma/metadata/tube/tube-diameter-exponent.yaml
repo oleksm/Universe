@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/law.schema.yaml
+identity:
+  key: law.tube-diameter-exponent
+  name: "Diameter exponent"
+  symbol: "k"
+  label: TUBE_K
+  section: dogma.tube
+value: 3.0
+kind: invented
+note: "A tube weighs by its diameter cubed. Target: opening a one-ship tube for one pass costs thousands of passes through a held gate; a gate pays at about 5 ships a day."
+basis:
+  - { of: [value], tier: invented, note: "Chosen to meet its target." }

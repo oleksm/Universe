@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.18
+title: Hauler
+parent: standard.sfo.2
+purpose: To move bulk from where it is dug or made to where it is used, cheaply, again and again.
+sections:
+  - text: >-
+      A hauler exists because what is dug in one place is used in another, by the thousand tonnes. Its
+      forces are the miner's with the digging taken out and the load put first:
+    table:
+      columns: [Force (what the world imposes), What it demands, What answers it]
+      rows:
+        - ["Mass: the load is most of the ship", "a hold that is most of the hull, and a frame that carries it", "holds, racks, a spine"]
+        - ["Distance: the same run, over and over", "cheap propellant for each tonne moved, not speed", "an efficient drive, big tanks"]
+        - ["Gravity: bulk is loaded where it is and landed where it is wanted", "lift for its full weight, or a tender that lifts for it", "lift jets sized for the load, or none and a dock"]
+        - ["Time: a ship earning nothing while it loads", "load and unload fast", "wide doors, conveyors, standard containers"]
+        - ["Size: what must be carried in one piece", "a hold as long and wide as its largest load", "the hold's clear opening"]
+  - title: What the registry asks of one
+    text:
+      - "Worked out from what is recorded. These are the loads; the economy decides how many ships carry them."
+      - "The figures are on the Hulls report: what a rig eats flat out, what a gate ring weighs, and how many loads of each hull's hold that is."

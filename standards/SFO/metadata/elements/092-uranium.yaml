@@ -3,19 +3,20 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.u
   name: Uranium
   symbol: U
   atomic_number: 92
-  atomic_mass: 238.0289
+  atomic_mass: 3.95256287429825e-25
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f3 6d1 7s2'
   valence_electrons: 6
-  covalent_radius: 196.0
-  van_der_waals_radius: 240.0
-  ionic_radius: 73.0
+  covalent_radius: 1.96e-10
+  van_der_waals_radius: 2.4e-10
+  ionic_radius: 7.3e-11
   stable_isotopes: 0
   isotope_abundances:
   - mass_number: 234
@@ -28,8 +29,8 @@ atomic_structure:
   decay_mode: alpha
 chemical:
   electronegativity: 1.38
-  first_ionisation_energy: 597.6
-  electron_affinity: 50.94
+  first_ionisation_energy: 597600.0
+  electron_affinity: 50940.0
   oxidation_states:
   - 6
   - 5
@@ -48,8 +49,8 @@ physical:
   boiling_point: 4404.0
   density: 18950.0
   crystal_structure: base orthorhombic
-  heat_of_fusion: 14.0
-  heat_of_vaporisation: 420.0
+  heat_of_fusion: 14000.0
+  heat_of_vaporisation: 420000.0
   vapour_pressure: 1.2e-73
 thermal:
   specific_heat_capacity: 116.0
@@ -61,14 +62,14 @@ electrical_magnetic:
   superconducting_temperature: 0.69
 mechanical:
   hardness: 6.0
-  youngs_modulus: 208.0
+  youngs_modulus: 208000000000.0
   ductility: brittle
 optical_nuclear:
   colour: silver
   emission_lines:
-  - 381.199
-  - 383.963
-  - 387.103
-  - 394.382
-  - 404.275
-  neutron_cross_section: 7.57
+  - 3.81199e-07
+  - 3.83963e-07
+  - 3.87103e-07
+  - 3.94382e-07
+  - 4.04275e-07
+  neutron_cross_section: 7.57e-28

@@ -1,18 +1,17 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
 identity:
+  key: stock.st4340-tb-120x10
   code: ST4340-TB-120X10
   name: "4340 tube 120 x 10 mm"
-made_from:
-  material: high-strength-steel-4340
   form: tube
   temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
 size:
-  diameter: 120
-  wall: 10
-making:
-  process: tube-making-4340
+  diameter: 0.12
+  wall: 0.01
 physical:
-  shock_limit: 150
+  shock_limit: 1470.9975
 basis:
   - { of: [size], tier: derived, note: "Sized for the landing: see the structure report." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

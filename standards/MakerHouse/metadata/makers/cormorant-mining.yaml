@@ -1,8 +1,10 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.cormorant
-name: Cormorant Mining
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+identity:
+  key: org.cormorant
+  name: Cormorant Mining
+kind: company
 ticker: CMN
-address: { at: treistun/treistun-e-station, tower: Works Tower, deck: 2, section: D, unit: 8 }
+address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 2, section: D, unit: 8 }
 note: "Mining gear"
 who: "A company of miners that started building its own tools and now sells them."
 what: "Makes mining gear for ships."

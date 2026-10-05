@@ -13,7 +13,7 @@ pub fn find_home(galaxy: &Galaxy, seed: u64) -> usize {
     for _ in 0..100_000 {
         let i = (rng.next_u64() % n as u64) as usize;
         let s = &galaxy.stars[i];
-        if !matches!(s.class, StarClass::G | StarClass::K) || s.position.distance(crate::galaxy::REGION_CENTRE) > crate::galaxy::REGION * 0.15 {
+        if !matches!(s.class, StarClass::G | StarClass::K) || s.position.distance(crate::galaxy::REGION_CENTRE) > crate::galaxy::charted().region * 0.15 {
             continue;
         }
         let sys = StarSystem::generate(i, s);

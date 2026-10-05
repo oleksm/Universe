@@ -1,7 +1,9 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-name: "Port Lisaur"
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
+identity:
+  key: settlement.treistun.port-lisaur
+  name: "Port Lisaur"
 kind: settlement
-at: Treistun c
+at: body.treistun.treistun-c
 position: { latitude: -6.649, longitude: -44.994 }
 about: "The port on Treistun c, close to the equator at 7° south. Gravity 1.67 g, the highest of any port, and no air."
 story:

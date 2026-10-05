@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/vocabulary.schema.yaml
+identity:
+  key: vocabulary.centaur
+  name: "Centaur"
+  group: small body
+  about: "An ice body wandering among the giants on an orbit that will not last."
+lies: "Between the first giant and the last."
+made_of: "Ice: water ice has been seen on several."
+figures:
+  - { what: "over 1 km across", value: "44,000 to over 10 million" }
+  - { what: "how long an orbit lasts", value: "a few million years" }
+means: "A comet on its way in. Ice among the giants, not at the edge."
+in_game: not made
+basis:
+  - { of: [figures], tier: sourced, source: "https://en.wikipedia.org/wiki/Centaur_(small_Solar_System_body)" }

@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.fibre-spinning
   name: Fibre spinning
   kind: mechanical
   method: spinning
@@ -11,7 +12,7 @@ inputs:
   form: fluid
 outputs:
   products:
-  - item: aramid-fibre
+  - item: material.aramid-fibre
     form: fibre
 rate:
   mode: continuous

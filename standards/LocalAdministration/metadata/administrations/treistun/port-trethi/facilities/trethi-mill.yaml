@@ -1,30 +1,32 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-name: Trethi Mill
+identity:
+  key: facility.treistun.port-trethi.trethi-mill
+  name: Trethi Mill
 kind: mill
-parcel: 1
-processes:
-  - rolling
-  - bar-rolling-4340
-  - tube-making-4340
-  - forging-4340
+parcel: parcel.treistun.port-trethi.1
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: rolling
+  - makes: stock.al6061-pl-5
+    also: [stock.al6061-sh-2]
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: hot-rolling-mill, count: 1 }
-      - { module: cold-rolling-mill, count: 1 }
-      - { module: finishing-line, count: 1 }
-  - process: bar-rolling-4340
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.hot-rolling-mill, count: 1 }
+      - { module: module.cold-rolling-mill, count: 1 }
+      - { module: module.finishing-line, count: 1 }
+  - makes: stock.st4340-bar-120
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: bar-mill, count: 1 }
-  - process: tube-making-4340
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.bar-mill, count: 1 }
+  - makes: stock.st4340-tb-120x10
+    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15]
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: piercing-mill, count: 1 }
-  - process: forging-4340
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.piercing-mill, count: 1 }
+  - makes: stock.st4340-fg
     modules:
-      - { module: reheat-furnace, count: 1 }
-      - { module: forging-press, count: 1 }
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.forging-press, count: 1 }
+# Where its stock is kept.
+modules:
+  - { module: module.stock-yard, count: 1 }

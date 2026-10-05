@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
+in_game: not made
+identity: {key: body.treistun.eipelis, name: Eipelis, kind: crossing asteroid, parent: body.treistun.treistun, about: 'Knocked
+    out of the belt. At its closest it comes in to 0.13 AU, near the orbit of Treistun b.'}
+orbit: {semi_major_axis: 72632200000.0, eccentricity: 0.72468232, inclination: 5.13, period: 12712032.0}
+physical: {radius: 740.7, density: 2520.0, mass: 4289000000000.0}
+rock: {class: rock-class.stony}

@@ -1,6 +1,8 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.13
 title: Mill stock
-parent: SFO 8
+parent: standard.sfo.8
 records: mill-stock
 purpose: Mill stock is a material in a standard, usable form and size (sheet, plate, bar, tube, wire, fibre or film). It's what material processing delivers and what part-making starts from, the form a material is stored, traded and shipped in.
 details:

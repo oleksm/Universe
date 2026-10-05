@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.sf-03
   code: SF-03
   name: "Gas heater"
-  status: draft
+  revision: draft
   description: "Heats the hydrogen before it enters the furnace."
 physical:
   mass: 800000

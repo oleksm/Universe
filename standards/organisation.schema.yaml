@@ -1,0 +1,47 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Organisation
+x-kind: [org]
+description: 'One organisation: a company (standards/MakerHouse/metadata/makers/<name>.yaml), a standards body (standards/SFO/metadata/SFO.yaml) or a system''s administration (standards/LocalAdministration/metadata/administrations/<name>.yaml). One kind of thing: it has a name and an address, owns things, and is referred to by its key.'
+type: object
+additionalProperties: false
+required: [identity, kind]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "common.schema.yaml#/definitions/key" }
+      name: { type: string }
+  kind: { enum: [company, standards_body, administration], description: "company: it makes, stores or trades. standards_body: it publishes standards. administration: it manages the land of a settled system." }
+  address: { $ref: "common.schema.yaml#/definitions/address" }
+  note: { type: string, description: One line, as the game shows it. }
+  about: { type: array, items: { type: string }, description: 'What it is, in paragraphs.' }
+  story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
+  # A company.
+  ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: "A company's short trading name; no two alike." }
+  business: { enum: [maker, warehousing, exchange], description: "What kind of company it is. Left out: a maker. Only makers go to the game's brands." }
+  who: { type: string, description: Who they are. }
+  what: { type: string, description: What they do. }
+  # A standards body.
+  prefix: { type: string, pattern: '^[A-Z]{2,6}$', description: "A standards body's letters, before each of its standards' numbers." }
+  seat: { type: string }
+  form: { enum: [consortium, independent, authority, corporation, players], description: "What a standards body is, and so whom it answers to." }
+  purpose: { type: string }
+  details:
+    type: object
+    additionalProperties: false
+    properties:
+      text: { type: array, items: { type: string } }
+  founded_by: { type: array, items: { type: string, x-ref: [org] }, description: "The companies that founded it." }
+  # An administration.
+  zoning:
+    description: Its zoning code, what each kind of zone permits.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [use, permits]
+      properties:
+        use: { enum: [port, industrial, commercial, civic, residential] }
+        permits: { type: string }

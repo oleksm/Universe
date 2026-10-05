@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
 # Data: Wikipedia: Multi-layer insulation (no figures given there). A range there is given as its middle.
 identity:
+  key: material.multi-layer-insulation
   name: Multi-layer insulation
   class: composite
   form:

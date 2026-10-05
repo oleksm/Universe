@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.weapons
+  name: "Weapons"
+unit_mass: 60
+bulk_density: 900
+basket: 5.78703703704e-08
+names:
+  adjectives: ["Small", "Heavy", "Surplus", "Hand", "Automatic", "Pulse", "Ceremonial", "Military", "Hunting"]
+  nouns: ["Arms", "Rifles", "Pistols", "Charges", "Grenades", "Blades", "Ammunition", "Launchers", "Mines"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

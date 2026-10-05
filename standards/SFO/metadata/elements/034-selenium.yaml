@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.se
   name: Selenium
   symbol: Se
   atomic_number: 34
-  atomic_mass: 78.97
+  atomic_mass: 1.31132770089402e-25
   group: 16
   period: 4
   block: p
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Ar] 3d10 4s2 4p4'
   valence_electrons: 6
-  atomic_radius: 103.0
-  covalent_radius: 120.0
-  van_der_waals_radius: 190.0
-  ionic_radius: 198.0
+  atomic_radius: 1.03e-10
+  covalent_radius: 1.2e-10
+  van_der_waals_radius: 1.9e-10
+  ionic_radius: 1.98e-10
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 74
@@ -34,8 +35,8 @@ atomic_structure:
     abundance: 0.0882
 chemical:
   electronegativity: 2.55
-  first_ionisation_energy: 941
-  electron_affinity: 194.9587
+  first_ionisation_energy: 941000
+  electron_affinity: 194958.7
   oxidation_states:
   - 6
   - 4
@@ -57,24 +58,24 @@ physical:
   - amorphous black selenium
   - monoclinic selenium
   - hexagonal selenium
-  heat_of_fusion: 5.4
-  heat_of_vaporisation: 26.0
+  heat_of_fusion: 5400.0
+  heat_of_vaporisation: 26000.0
   vapour_pressure: 6.5e-08
 thermal:
   specific_heat_capacity: 321.2
   thermal_conductivity: 0.52
 electrical_magnetic:
   magnetic_ordering: diamagnetic
-  band_gap: 1.83
+  band_gap: 2.93198324022e-19
 mechanical:
   hardness: 2.0
-  youngs_modulus: 10.0
+  youngs_modulus: 10000000000.0
 optical_nuclear:
   colour: black, red, and gray (not pictured) allotropes
   emission_lines:
-  - 473.08
-  - 473.9
-  - 474.22
-  - 701.081
-  - 706.207
-  neutron_cross_section: 11.7
+  - 4.7308e-07
+  - 4.739e-07
+  - 4.7422e-07
+  - 7.01081e-07
+  - 7.06207e-07
+  neutron_cross_section: 1.17e-27

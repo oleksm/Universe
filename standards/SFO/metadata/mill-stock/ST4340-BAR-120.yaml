@@ -1,17 +1,16 @@
 # yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
 identity:
+  key: stock.st4340-bar-120
   code: ST4340-BAR-120
   name: "4340 bar 120 mm"
-made_from:
-  material: high-strength-steel-4340
   form: bar
   temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
 size:
-  diameter: 120
-making:
-  process: bar-rolling-4340
+  diameter: 0.12
 physical:
-  shock_limit: 200
+  shock_limit: 1961.33
 basis:
   - { of: [size], tier: invented, note: "The gauge was chosen, not worked out from a load." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

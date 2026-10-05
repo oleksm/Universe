@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.refined-steel-a36
+  name: "Refined steel, A36"
+  kind: intermediate
+  description: "Molten steel trimmed to the A36 grade and degassed, ready to cast."

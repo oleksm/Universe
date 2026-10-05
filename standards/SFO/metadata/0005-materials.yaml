@@ -1,4 +1,6 @@
 # yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.5
 title: Materials
 records: materials
 purpose: Materials are what everything is made of (hulls, engines, stations, tools, fuel). Every made thing starts as matter taken from somewhere and changed into something useful.

@@ -1,16 +1,17 @@
 # yaml-language-server: $schema=../../schema/process.schema.yaml
 identity:
+  key: process.fluoropolymer-synthesis
   name: Fluoropolymer synthesis
   kind: chemical
   method: polymerisation
   description: Carbon and fluorine joined into PTFE.
 inputs:
   materials:
-  - item: C
-  - item: F
+  - item: element.c
+  - item: element.f
 outputs:
   products:
-  - item: ptfe
+  - item: material.ptfe
     form: powder
 equipment:
   facility: foundry

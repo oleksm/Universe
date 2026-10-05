@@ -2,8 +2,8 @@
 //! price, and what fitting one takes from the place's stock. All from the
 //! seed and the charts (local knowledge, worked out the same by anyone):
 //!
-//! - a brand's **home** is a settled system with a station, picked by its key
-//!   and the galaxy's seed; there, its whole range is carried;
+//! - a brand's **home** is the system its address is in (the registry's);
+//!   there, its whole range is carried;
 //! - farther off (in gate hops), a module is carried less often
 //!   (`CARRIED_PER_HOP` a hop, down to `CARRIED_FAR`) and costs more
 //!   (`MARKUP_PER_HOP` a hop: shipping); unbranded modules are made anywhere;
@@ -28,10 +28,10 @@ fn hash(s: &str) -> u64 {
     s.bytes().fold(0xcbf2_9ce4_8422_2325, |h, b| (h ^ b as u64).wrapping_mul(0x100_0000_01b3))
 }
 
-/// Brand `brand`'s home among the settled systems with a station (`settled`,
-/// sorted), for the galaxy `seed`.
-pub fn brand_home(seed: u64, brand: &str, settled: &[usize]) -> Option<usize> {
-    (!settled.is_empty()).then(|| settled[(mix(seed, hash(brand)) % settled.len() as u64) as usize])
+/// Brand `brand`'s home: the system its address is in, as the registry has it.
+pub fn brand_home(brand: &str) -> Option<usize> {
+    let c = universe_world::content::content();
+    c.handle::<universe_world::modules::Brand>(brand).and_then(|h| c.get(h).home)
 }
 
 /// Gate hops from `from` to `to` (None: not linked).
@@ -72,8 +72,8 @@ pub struct Offer {
 }
 
 /// Module `m` at station `station` of system `system`.
-pub fn offer(seed: u64, links: &[(usize, usize)], settled: &[usize], system: usize, station: Facility, m: &Module) -> Offer {
-    let hops = if m.brand.is_empty() { 0 } else { brand_home(seed, &m.brand, settled).and_then(|home| hops(links, home, system)).unwrap_or(12) };
+pub fn offer(seed: u64, links: &[(usize, usize)], system: usize, station: Facility, m: &Module) -> Offer {
+    let hops = if m.brand.is_empty() { 0 } else { brand_home(&m.brand).and_then(|home| hops(links, home, system)).unwrap_or(12) };
     let chance = if hops == 0 { 1.0 } else { CARRIED_PER_HOP.powi(hops as i32).max(CARRIED_FAR) };
     let key = match station {
         Facility::Station(i) | Facility::Spaceport(i) | Facility::Gate(i) | Facility::Asteroid(i) => i as u64,
@@ -87,12 +87,4 @@ pub fn materials(m: &Module) -> (Category, f64) {
     let electronic = matches!(m.does.slot(), SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Comm | SlotKind::Avionics);
     let kind = if electronic { "goods.electronics" } else { "goods.machinery" };
     (Category::of(kind).expect("machinery and electronics are kinds of goods"), m.mass / 1000.0)
-}
-
-/// The settled systems with a station, sorted (where brands make their home).
-pub fn settled(places: &[crate::economy::Place]) -> Vec<usize> {
-    let mut s: Vec<usize> = places.iter().filter(|p| matches!(p.facility, Facility::Station(_))).map(|p| p.system).collect();
-    s.sort_unstable();
-    s.dedup();
-    s
 }

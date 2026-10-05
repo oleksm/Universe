@@ -1,8 +1,11 @@
-//! The charted world against the celestial registry (`content/base/galaxy.ron`,
-//! `content/base/celestial.ron`).
+//! The charted world against the celestial registry (the seed's settings and
+//! rock classes and the systems, all from `universe_world::registry`).
 
-use universe_world::celestial::{apply_records, Stage};
-use universe_world::content::content;
+use universe_world::belt::RockClass;
+use universe_world::celestial::{apply_records, systems, Stage};
+use universe_world::registry::Provenance;
+use universe_world::system::BodyKind;
+use universe_world::registry::registry;
 use universe_world::system::StarSystem;
 use universe_world::World;
 
@@ -11,14 +14,25 @@ use universe_world::World;
 /// And what the registry has taken over is as its record says.
 #[test]
 fn the_charted_world_is_as_the_registry_has_it() {
-    let g = content().galaxy.as_ref().expect("the galaxy is written out");
-    // (The laws are the code's: written down, they must be the same.)
-    assert_eq!((g.region, g.star_density, g.sector), (universe_world::galaxy::REGION, universe_world::galaxy::STAR_DENSITY, universe_world::galaxy::SECTOR));
+    let g = &registry().seeding.galaxy.galaxy;
     let w = World::new(g.seed);
-    assert_eq!(w.system(w.home_system).name, g.home);
+    let home = registry().system(&g.home).expect("home is a system written out");
+    assert_eq!(w.system(w.home_system).name, home.identity.name);
+    // (The kinds of asteroid the seed makes are described: what the game needs of them is in their records.)
+    use universe_world::belt::Structure;
+    for key in ["rock-class.stony", "rock-class.carbonaceous", "rock-class.metallic", "rock-class.icy"] {
+        let c = RockClass::by_key(key).unwrap_or_else(|| panic!("the registry has no {key}"));
+        assert!(c.density(Structure::Rubble) > 0.0 && c.density(Structure::Monolith) > c.density(Structure::Rubble) && c.albedo() > 0.0, "{key}");
+        let m = c.record().mining.as_ref().unwrap_or_else(|| panic!("{key} yields nothing"));
+        assert!(m.cut_energy.is_some() && m.yields.is_some(), "{key}: how it's cut and what it yields");
+        for good in m.yields.iter().chain(&m.rich_yields) {
+            let ore = registry().good(good).and_then(|g| g.game.as_ref()?.ore.clone()).unwrap_or_else(|| panic!("{key} yields {good}, no ore of the game's"));
+            assert!(universe_world::goods::Ore::from_key(&ore).is_some(), "{key}: the game has no ore {ore}");
+        }
+    }
     let near = |a: f64, b: f64| (a - b).abs() <= 2e-3 * a.abs().max(b.abs());
-    assert!(!content().celestial.is_empty(), "no systems written out");
-    for rec in &content().celestial {
+    assert!(!systems().is_empty(), "no systems written out");
+    for rec in systems() {
         let sys = w.system(rec.index);
         assert_eq!(sys.name, rec.system, "the star numbered {} has another name", rec.index);
         assert_eq!(sys.class.letter().to_string(), rec.star.class);
@@ -29,25 +43,25 @@ fn the_charted_world_is_as_the_registry_has_it() {
             let b = sys.bodies.iter().find(|b| b.name == r.name).unwrap_or_else(|| panic!("{}: the game has no {}", rec.system, r.name));
             let o = b.rail.orbit.as_ref();
             for (what, made, written) in [("mass", b.mass, r.mass), ("radius", b.rail.radius, r.radius), ("day", b.rail.day, r.day), ("orbit", o.map_or(0.0, |o| o.semi_major_axis), r.semi_major_axis.unwrap_or(0.0)), ("eccentricity", o.map_or(0.0, |o| o.eccentricity), r.eccentricity.unwrap_or(0.0))] {
-                assert!(near(made, written), "{} ({}): its {what} is {made} in the game and {written} in the registry", r.name, r.status);
+                assert!(near(made, written), "{} ({:?}): its {what} is {made} in the game and {written} in the registry", r.name, r.status);
             }
         }
         assert_eq!(sys.fields.len(), rec.fields.len(), "{}: its fields", rec.system);
         for f in &rec.fields {
             let made = sys.fields.iter().find(|m| m.name == f.name).unwrap_or_else(|| panic!("{}: the game has no field {}", rec.system, f.name));
-            assert!(made.count == f.count && near(made.extent, f.extent) && made.class(&sys).label().eq_ignore_ascii_case(&f.class), "{}: the field differs", f.name);
+            assert!(made.count == f.count && near(made.extent, f.extent) && made.class(&sys) == f.class, "{}: the field differs", f.name);
         }
     }
     // What is taken over stands in place of the seed's. A planet: its mass and size as written, its
     // moons following its new pull, its orbit tilted as written.
-    let rec = &content().celestial[0];
+    let rec = systems().iter().find(|s| s.system == home.identity.name).expect("home is written out");
     let fresh = || StarSystem::generate(rec.index, &w.galaxy.stars[rec.index]);
     let mut sys = fresh();
     let mut mine = rec.clone();
-    let p = mine.bodies.iter().position(|b| b.kind == "rocky planet" && rec.bodies.iter().any(|m| m.parent == b.name)).unwrap();
+    let p = mine.bodies.iter().position(|b| b.kind == BodyKind::Rocky && rec.bodies.iter().any(|m| m.parent == b.name)).unwrap();
     let i = sys.bodies.iter().position(|b| b.name == mine.bodies[p].name).unwrap();
     let (mu, before): (f64, Vec<(String, f64)>) = (sys.bodies[i].rail.mu, sys.bodies.iter().filter(|m| m.rail.parent == Some(i)).map(|m| (m.name.clone(), m.rail.orbit.as_ref().unwrap().mu)).collect());
-    mine.bodies[p].status = "curated".into();
+    mine.bodies[p].status = Provenance::Curated;
     mine.bodies[p].mass *= 2.0;
     mine.bodies[p].radius *= 1.5;
     mine.bodies[p].inclination = Some(0.2);
@@ -62,7 +76,7 @@ fn the_charted_world_is_as_the_registry_has_it() {
     // renumbered; one written that the seed doesn't make added.
     let mut sys = fresh();
     let mut mine = rec.clone();
-    mine.status = "curated".into();
+    mine.status = Provenance::Curated;
     mine.star.mass *= 1.1;
     let gone = mine.bodies[p].name.clone();
     let mut added = mine.bodies[p].clone();
@@ -79,10 +93,11 @@ fn the_charted_world_is_as_the_registry_has_it() {
     // A field: its count, spread and class as written.
     let mut sys = fresh();
     let mut mine = rec.clone();
-    mine.fields[0].status = "curated".into();
+    mine.fields[0].status = Provenance::Curated;
     mine.fields[0].count += 7;
-    mine.fields[0].class = if mine.fields[0].class.eq_ignore_ascii_case("icy") { "S-TYPE STONY".into() } else { "ICY".into() };
+    let (icy, stony) = (RockClass::by_key("rock-class.icy").unwrap(), RockClass::by_key("rock-class.stony").unwrap());
+    mine.fields[0].class = if mine.fields[0].class == icy { stony } else { icy };
     apply_records(&mut sys, &mine, Stage::Rocks, 0);
     let f = sys.fields.iter().find(|f| f.name == mine.fields[0].name).unwrap();
-    assert!(f.count == mine.fields[0].count && f.class(&sys).label().eq_ignore_ascii_case(&mine.fields[0].class));
+    assert!(f.count == mine.fields[0].count && f.class(&sys) == mine.fields[0].class);
 }

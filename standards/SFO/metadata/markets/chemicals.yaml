@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.chemicals
+  name: "Chemicals"
+unit_mass: 600
+bulk_density: 1000
+basket: 1.15740740741e-06
+names:
+  adjectives: ["Industrial", "Reagent", "Bulk", "Stabilised", "Chilled", "Pressurised", "Catalytic", "Pure", "Crude"]
+  nouns: ["Solvents", "Acids", "Polymers", "Resins", "Salts", "Catalysts", "Reagents", "Monomers", "Lubricants"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

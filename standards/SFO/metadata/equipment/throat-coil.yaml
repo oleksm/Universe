@@ -1,10 +1,13 @@
 # yaml-language-server: $schema=../../schema/equipment.schema.yaml
 identity:
+  key: equipment.throat-coil
   name: "Halcyon throat coil"
-  maker: brand.halcyon
+  maker: org.halcyon
   slot: gate
   description: "What holds the tube. One stands in each segment of a ring; together, round the whole ring, they hold its tube open, and all the power that takes goes through them."
 physical:
   mass: 150000
+function:
+  kind: throat_coil
 basis:
   - { of: [physical], tier: invented, review: true, note: "A guess, to be reviewed: nothing says what holds a tube or what it weighs. Not in the game yet." }

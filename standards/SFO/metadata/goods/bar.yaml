@@ -1,5 +1,0 @@
-# yaml-language-server: $schema=../../schema/good.schema.yaml
-identity:
-  name: Bar
-  kind: product
-  description: "Solid stock of round section: what a bar mill ships."

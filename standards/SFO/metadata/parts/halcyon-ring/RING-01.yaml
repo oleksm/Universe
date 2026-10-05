@@ -2,9 +2,10 @@
 # One sixtieth of the ring: a length of its tube, 120 m across, of skin panels over frames.
 # Not from a model: chosen, to be reviewed.
 identity:
+  key: part.ring-01
   code: RING-01
   name: "Segment"
-  status: draft
+  revision: draft
   description: "A length of the ring's tube: skin panels over hoop frames. Sixty make the ring."
 physical:
   length: 157.1
@@ -13,7 +14,7 @@ physical:
 shape:
   surface_area: 59218
 making:
-  processes: [ring-assembly]
+  module: module.assembly-jig
 fit:
   count: 60
 basis:

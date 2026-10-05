@@ -4,7 +4,6 @@
 //! Run: `cargo run -q -p universe-world --example celestial_export [seed]`.
 
 use universe_world::system::BodyKind;
-use universe_world::units::LIGHT_YEAR;
 use universe_world::World;
 
 fn s(t: &str) -> String {
@@ -28,7 +27,7 @@ fn main() {
     for (n, &i) in systems.iter().enumerate() {
         let sys = w.system(i);
         let star = &w.galaxy.stars[i];
-        let off = (star.position - w.galaxy.stars[home].position) / LIGHT_YEAR;
+        let off = star.position - w.galaxy.stars[home].position;      // (a star's position is in light years already)
         let mut positions = Vec::new();
         sys.positions(0.0, &mut positions);
         out.push(format!(
@@ -70,7 +69,7 @@ fn main() {
             }
             if let Some(to) = b.link {
                 f.push(format!("\"gate_to\": {}", s(&name_of(to))));
-                f.push(format!("\"gate_distance_ly\": {:.3}", w.galaxy.stars[i].position.distance(w.galaxy.stars[to].position) / LIGHT_YEAR));
+                f.push(format!("\"gate_distance_ly\": {:.3}", w.galaxy.stars[i].position.distance(w.galaxy.stars[to].position)));
                 f.push(format!("\"ring\": {}", s(&universe_world::hypernet::gate_ring(&w.galaxy, &sys, bi).key)));
             }
             if let Some(rock) = &b.rock {

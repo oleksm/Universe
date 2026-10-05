@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=../../schema/hull.schema.yaml
+# OUTDATED. One of the game's early stock hulls (content/base/hulls.ron): a rough guess from before
+# the world had physics to answer to. Kept as a record of what the game has. Do not balance against
+# it or design toward it.
+identity:
+  key: hull.hauler
+  name: "Bulk Hauler"
+  maker: org.tolland
+  class: hauler
+  revision: outdated
+  description: "A big hold and not much else."
+physical:
+  volume: 54301
+  mass: 118000
+capacity:
+  fuel: 80000
+  hold: 150000
+shape: shape.hauler
+slots:
+  - { name: power, kind: power, size: 3 }
+  - { name: drive, kind: drive, size: 3 }
+  - { name: thrusters, kind: thrusters, size: 3 }
+  - { name: lift, kind: lift, size: 3 }
+  - { name: tank, kind: tank, size: 4 }
+  - { name: cargo, kind: cargo, size: 4 }
+  - { name: hyperdrive, kind: hyperdrive, size: 3 }
+  - { name: capacitor, kind: capacitor, size: 2 }
+  - { name: computer, kind: computer, size: 1 }
+  - { name: transponder, kind: transponder, size: 1 }
+  - { name: sensors, kind: sensors, size: 1 }
+  - { name: comm, kind: comm, size: 1 }
+  - { name: life, kind: life_support, size: 2 }
+  - { name: hardpoint_1, kind: hardpoint, size: 1 }
+  - { name: avionics, kind: avionics, size: 1 }
+thrusters:
+  - { nozzle: nozzle_main_0, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_1, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_2, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_3, slot: drive, share: 1 }
+  - { nozzle: nozzle_nose_left_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_nose_left_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_left_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_nose_right_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_tail_left_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_tail_right_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_lift_nose_left, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_nose_right, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_tail_left, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_tail_right, slot: lift, share: 1 }
+flight:
+  radius: 30
+  drag_area: 400
+  hull_strength: 60000000
+fit:
+  - { slot: power, item: equipment.power.fusion.s3 }
+  - { slot: drive, item: equipment.drive.torch.s3 }
+  - { slot: thrusters, item: equipment.thrusters.quad.s3 }
+  - { slot: lift, item: equipment.lift.belly.s3 }
+  - { slot: tank, item: equipment.tank.s4 }
+  - { slot: cargo, item: equipment.rack.s4 }
+  - { slot: hyperdrive, item: equipment.hyperdrive.s3 }
+  - { slot: capacitor, item: equipment.capacitor.s2 }
+  - { slot: computer, item: equipment.computer.fbw.s1 }
+  - { slot: transponder, item: equipment.transponder.s1 }
+  - { slot: sensors, item: equipment.sensors.radar.s1 }
+  - { slot: comm, item: equipment.comm.basic.s1 }
+  - { slot: life, item: equipment.life.s2 }
+  - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
+  - { slot: avionics, item: equipment.nav.full.s1 }
+design:
+  loaded_mass: 406040.0
+  main_thrust: 8000000
+  lift_thrust: 6400000.0
+basis:
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design, slots, thrusters, flight], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

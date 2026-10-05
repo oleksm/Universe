@@ -1,28 +1,25 @@
 # yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
-name: Trethi Yard
+identity:
+  key: facility.treistun.port-trethi.trethi-yard
+  name: Trethi Yard
 kind: yard
-parcel: 4
-processes:
-  - plate-work
-  - machining
-  - fitting
-  - hull-assembly
-  - fitting-out
+parcel: parcel.treistun.port-trethi.4
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
-  - process: plate-work
+  - makes: stock.al6061-sh-2-panel
+    also: [stock.al6061-pl-5-panel, stock.sta36-pl-20-panel]
     modules:
-      - { module: cutting-table, count: 1 }
-      - { module: panel-former, count: 1 }
-      - { module: welding-bay, count: 2 }
-  - process: machining
-    modules:
-      - { module: machining-centre, count: 2 }
-  - process: fitting
-    modules:
-      - { module: assembly-shop, count: 1 }
-  - process: hull-assembly
-    also: [fitting-out]
-    modules:
-      - { module: building-dock, count: 1 }
+      - { module: module.cutting-table, count: 1 }
+      - { module: module.panel-former, count: 1 }
+  - modules:
+      - { module: module.welding-bay, count: 2 }
+  - modules:
+      - { module: module.machining-centre, count: 2 }
+  - modules:
+      - { module: module.assembly-shop, count: 1 }
+  - modules:
+      - { module: module.building-dock, count: 1 }
+# Where its stock is kept.
+modules:
+  - { module: module.stock-yard, count: 1 }

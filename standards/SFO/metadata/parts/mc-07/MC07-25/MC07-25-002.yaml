@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
 # it is cut from.
 identity:
+  key: part.mc07-25-002
   code: MC07-25-002
   name: "Ram body"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: CargoRam_L_Body, CargoRam_R_Body"
 physical:
   mass: 233
   length: 1.24
   width: 0.4
   height: 3.4
-  shock_limit: 50
+  shock_limit: 490.3325
 shape:
   surface_area: 5.3
 made_from:
-  item: ST4340-TB-200X15
-  quantity: 4.08
+  - item: stock.st4340-tb-200x15
+    quantity: 279.2175294
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 2
 basis:

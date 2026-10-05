@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.rf-04
   code: RF-04
   name: "Heating elements"
-  status: draft
+  revision: draft
   description: "Heat the furnace."
 physical:
   mass: 50000

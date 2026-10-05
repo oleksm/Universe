@@ -1,6 +1,6 @@
 use universe_sim::units::{AU, DAY, LIGHT_YEAR};
 
-const C: f64 = 299_792_458.0;
+use universe_sim::physics::laws::SPEED_OF_LIGHT as C;
 
 pub fn distance(m: f64) -> String {
     let a = m.abs();

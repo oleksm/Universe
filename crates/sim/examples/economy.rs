@@ -13,7 +13,7 @@ use universe_services::economy::{Economy, PlaceKind, STEP};
 use universe_sim::world::goods::Category;
 use universe_sim::Universe;
 
-const DAY: f64 = 86_400.0;
+use universe_world::units::DAY;
 
 fn main() {
     let days: f64 = std::env::args().nth(1).and_then(|a| a.parse().ok()).unwrap_or(60.0);

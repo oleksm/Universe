@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=../../../schema/body.schema.yaml
-name: "Treistun g II"
-kind: moon
-at: Treistun g
-gravity: 1.01
-about: "A moon of the gas giant Treistun g, 1.78 AU from the star. 1,199 km in radius, 0.10 g at the surface, no air, about 150 K on average. Its day lasts 183 hours."

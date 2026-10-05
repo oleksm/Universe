@@ -1,8 +1,7 @@
 # yaml-language-server: $schema=../../schema/system.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Biraidim, index: 21300}
-star: {class: M, mass: 0.3315, luminosity: 0.02098}
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: system.biraidim, name: Biraidim, index: 21300}
 position:
-  from_home: [0.0, -0.0, -0.0]
-  distance: 0.0
+  from_home: [1.64427495613454e+16, -3.68968488430651e+16, -2.88552279413714e+16]
+  distance: 4.96404527896315e+16

@@ -3,24 +3,25 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.cf
   name: Californium
   symbol: Cf
   atomic_number: 98
-  atomic_mass: 251.07959
+  atomic_mass: 4.16927468020911e-25
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f10 7s2'
   valence_electrons: 12
-  van_der_waals_radius: 245.0
-  ionic_radius: 95.0
+  van_der_waals_radius: 2.45e-10
+  ionic_radius: 9.5e-11
   stable_isotopes: 0
   half_life: 28419500000.0
   decay_mode: alpha
 chemical:
   electronegativity: 1.3
-  first_ionisation_energy: 608
+  first_ionisation_energy: 608000
   oxidation_states:
   - 3
   bond_type: metallic
@@ -32,9 +33,9 @@ physical:
 optical_nuclear:
   colour: silvery
   emission_lines:
-  - 663.126
-  - 667.79
-  - 689.459
-  - 707.452
-  - 730.79
-  neutron_cross_section: 2900.0
+  - 6.63126e-07
+  - 6.6779e-07
+  - 6.89459e-07
+  - 7.07452e-07
+  - 7.3079e-07
+  neutron_cross_section: 2.9e-25

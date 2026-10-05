@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.pt
   name: Platinum
   symbol: Pt
   atomic_number: 78
-  atomic_mass: 195.08
+  atomic_mass: 3.23937961112328e-25
   group: 10
   period: 6
   block: d
@@ -14,10 +15,10 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d9 6s1'
   valence_electrons: 10
-  atomic_radius: 177.0
-  covalent_radius: 136.0
-  van_der_waals_radius: 209.0
-  ionic_radius: 62.5
+  atomic_radius: 1.77e-10
+  covalent_radius: 1.36e-10
+  van_der_waals_radius: 2.09e-10
+  ionic_radius: 6.25e-11
   stable_isotopes: 5
   isotope_abundances:
   - mass_number: 190
@@ -34,8 +35,8 @@ atomic_structure:
     abundance: 0.07356
 chemical:
   electronegativity: 2.28
-  first_ionisation_energy: 870
-  electron_affinity: 205.041
+  first_ionisation_energy: 870000
+  electron_affinity: 205041.0
   oxidation_states:
   - 4
   - 2
@@ -52,8 +53,8 @@ physical:
   boiling_point: 4098.0
   density: 21460.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 20.0
-  heat_of_vaporisation: 490.0
+  heat_of_fusion: 20000.0
+  heat_of_vaporisation: 490000.0
   vapour_pressure: 7.8e-80
 thermal:
   specific_heat_capacity: 133.0
@@ -64,14 +65,14 @@ electrical_magnetic:
   magnetic_ordering: paramagnetic
 mechanical:
   hardness: 3.5
-  youngs_modulus: 168.0
+  youngs_modulus: 168000000000.0
   ductility: very ductile
 optical_nuclear:
   colour: silvery white
   emission_lines:
-  - 381.869
-  - 396.636
-  - 443.019
-  - 530.101
-  - 676.0
-  neutron_cross_section: 10.0
+  - 3.81869e-07
+  - 3.96636e-07
+  - 4.43019e-07
+  - 5.30101e-07
+  - 6.76e-07
+  neutron_cross_section: 1.0e-27

@@ -28,7 +28,6 @@ use crate::ship::ClassSpec;
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("materials.ron", include_str!("../../../content/base/materials.ron")),
-    ("brands.ron", include_str!("../../../content/base/brands.ron")),
     ("structures.ron", include_str!("../../../content/base/structures.ron")),
     ("modules.ron", include_str!("../../../content/base/modules.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
@@ -38,12 +37,6 @@ const BASE: &[(&str, &str)] = &[
     ("places.ron", include_str!("../../../content/base/places.ron")),
     ("markets.ron", include_str!("../../../content/base/markets.ron")),
     ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
-    ("bodies.ron", include_str!("../../../content/base/bodies.ron")),
-    ("standards.ron", include_str!("../../../content/base/standards.ron")),
-    ("settlements.ron", include_str!("../../../content/base/settlements.ron")),
-    ("industry.ron", include_str!("../../../content/base/industry.ron")),
-    ("celestial.ron", include_str!("../../../content/base/celestial.ron")),
-    ("galaxy.ron", include_str!("../../../content/base/galaxy.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether
@@ -228,10 +221,6 @@ pub struct Content {
     pub settlements: Vec<crate::settlements::Settlement>,
     /// The industrial modules facilities are built of (see `settlements`).
     pub industry: Vec<crate::settlements::IndustrialModule>,
-    /// Charted systems' bodies, as the celestial registry has them (see `celestial`).
-    pub celestial: Vec<crate::celestial::System>,
-    /// The world as a whole: its seed and laws, as the celestial registry has them.
-    pub galaxy: Option<crate::celestial::Galaxy>,
     /// Ship fuel: what tanks are filled with (the code's one kind of goods by name).
     pub fuel: Category,
     aliases: HashMap<String, String>,
@@ -294,6 +283,8 @@ impl Content {
                 }
             }
         }
+        // The registry the game was built with is part of what it's made of.
+        fnv(&mut hash, crate::registry::ENCODED);
         let mut aliases = HashMap::new();
         for p in &packs {
             if let Some(s) = p.source("aliases.ron") {
@@ -307,7 +298,15 @@ impl Content {
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
         let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
-        let brands: Registry<crate::modules::Brand> = Registry::build(Self::defs(&packs, "brands.ron")?)?;
+        // Brands: the registry's makers (the companies whose business is making things).
+        let brands: Registry<crate::modules::Brand> = Registry::build(
+            crate::registry::registry()
+                .organisations
+                .iter()
+                .filter(|o| o.is_maker())
+                .map(|o| crate::modules::Brand::from_record(crate::registry::registry(), o))
+                .collect(),
+        )?;
         let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
         let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
         for (_, s) in structures.iter() {
@@ -412,8 +411,8 @@ impl Content {
         let tank_fuel = &hulls.get(starter).fuel;
         let fuel_goods = resolve(&materials, &aliases, tank_fuel).map(|h| materials.get(h).goods.clone()).unwrap_or_default();
         let fuel = kind(&fuel_goods, &format!("the starting hull's fuel '{tank_fuel}'"))?;
-        let bodies: Registry<crate::standards::Body> = Registry::build(Self::defs(&packs, "bodies.ron")?)?;
-        let standards: Registry<crate::standards::Standard> = Registry::build(Self::defs(&packs, "standards.ron")?)?;
+        let (bodies, standards) = crate::standards::from_registry(crate::registry::registry());
+        let (bodies, standards): (Registry<crate::standards::Body>, Registry<crate::standards::Standard>) = (Registry::build(bodies)?, Registry::build(standards)?);
         for (_, s) in standards.iter() {
             let Some(b) = resolve(&bodies, &aliases, &s.body) else {
                 return Err(format!("standards.ron '{}': no body '{}'", s.key, s.body));
@@ -427,24 +426,12 @@ impl Content {
                 }
             }
         }
-        let settlements: Vec<crate::settlements::Settlement> = Self::defs(&packs, "settlements.ron")?;
+        // Settlements' ground and the industrial modules: the registry's (Local Administration, SFO 10).
+        let (settlements, industry) = crate::settlements::from_registry(crate::registry::registry());
         for s in &settlements {
             s.check()?;
         }
-        let industry: Vec<crate::settlements::IndustrialModule> = Self::defs(&packs, "industry.ron")?;
-        for s in &settlements {
-            for (m, _) in s.facilities.iter().flat_map(|f| &f.modules) {
-                if !industry.iter().any(|i| &i.key == m) {
-                    return Err(format!("settlements.ron '{}': no industrial module '{m}'", s.name));
-                }
-            }
-        }
-        let celestial: Vec<crate::celestial::System> = Self::defs(&packs, "celestial.ron")?;
-        for s in &celestial {
-            s.check()?;
-        }
-        let galaxy = Self::defs::<crate::celestial::Galaxy>(&packs, "galaxy.ron")?.into_iter().next();
-        let c = Content { celestial, galaxy, shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }

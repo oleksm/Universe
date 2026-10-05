@@ -1,8 +1,10 @@
-# yaml-language-server: $schema=../../schema/company.schema.yaml
-key: brand.halvard
-name: Halvard Construction
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+identity:
+  key: org.halvard
+  name: Halvard Construction
+kind: company
 ticker: HVC
-address: { at: treistun/treistun-e-station, tower: Trade Tower, deck: 15, section: D, unit: 7 }
+address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 15, section: D, unit: 7 }
 note: "Stations, spaceports and outposts"
 who: "A construction company that builds the places ships go to. One of the founders of the SFO."
 what: "Builds stations, spaceports and outposts."

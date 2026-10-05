@@ -1,0 +1,314 @@
+{
+ "main_belt": {
+  "total_mass": {
+   "value": 2.39e+21,
+   "unit": "kg",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "The total mass of the asteroid belt is estimated to be 2.39×10^21 kg, which is 3% of the mass of the Moon.",
+   "verified": true
+  },
+  "mass_in_four_largest": {
+   "value": 62,
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "The four largest objects, Ceres, Vesta, Pallas, and Hygiea, contain an estimated 62% of the belt's total mass, with 39% accounted for by Ceres alone.",
+   "verified": true
+  },
+  "count_over_1km": {
+   "value": [
+    700000,
+    1700000
+   ],
+   "unit": "asteroids",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "the asteroid belt has between 700,000 and 1.7 million asteroids with a diameter of 1 km or more.",
+   "verified": true
+  },
+  "count_over_100km": {
+   "value": 200,
+   "unit": "asteroids",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Over 200 asteroids are larger than 100 km",
+   "verified": true
+  },
+  "average_spacing": {
+   "value": 965600,
+   "unit": "km",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "On average the distance between the asteroids is about 965,600 km (600,000 miles).",
+   "verified": true
+  },
+  "edges": {
+   "value": {
+    "4:1": 2.06,
+    "2:1": 3.27
+   },
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "The 4:1 orbital resonance at 2.06 AU marks the inner boundary; 2:1 at 3.27 AU.",
+   "verified": true
+  },
+  "class_shares": {
+   "value": {
+    "C": 75,
+    "S": 17
+   },
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Carbonaceous asteroids comprise over 75% of the visible asteroids; S-type asteroids form about 17% of the total asteroid population; M-types most of the remainder.",
+   "verified": true
+  },
+  "family_share": {
+   "value": [
+    33,
+    35
+   ],
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_family",
+   "quote": "About 33% to 35% of asteroids in the main belt are family members.",
+   "verified": true
+  },
+  "families": {
+   "value": [
+    20,
+    30
+   ],
+   "unit": "families",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_family",
+   "quote": "There are about 20 to 30 reliably recognized families, with several tens of less certain groupings.",
+   "verified": true
+  },
+  "family_lifetime": {
+   "value": 1000000000.0,
+   "unit": "years",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_family",
+   "quote": "Asteroid families are thought to have lifetimes of the order of a billion years",
+   "verified": true
+  }
+ },
+ "trojans": {
+  "count_over_1km": {
+   "value": 1000000,
+   "unit": "asteroids",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The total number of Jupiter trojans larger than 1 km in diameter is believed to be about 1 million.",
+   "verified": true
+  },
+  "spread": {
+   "value": 26,
+   "unit": "degrees along the orbit, each swarm",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "Each swarm stretches for about 26° along the orbit of Jupiter, amounting to a total distance of about 2.5 AU.",
+   "verified": true
+  },
+  "mass": {
+   "value": 0.2,
+   "unit": "of the asteroid belt's mass",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The total mass of the Jupiter trojans is estimated at 0.0001 of the mass of Earth or one-fifth of the mass of the asteroid belt.",
+   "verified": true
+  },
+  "class": {
+   "value": "D-type",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The Jupiter trojans mostly are D-type asteroids",
+   "verified": true
+  },
+  "albedo": {
+   "value": 0.056,
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "The average value is 0.056 ± 0.003 for the objects larger than 57 km.",
+   "verified": true
+  },
+  "density": {
+   "value": [
+    800,
+    2500
+   ],
+   "unit": "kg/m3",
+   "source": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+   "quote": "densities vary from 0.8 to 2.5 g·cm−3",
+   "verified": true
+  }
+ },
+ "outer_belt": {
+  "edges": {
+   "value": {
+    "3:2": 39.5,
+    "2:1": 48
+   },
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "The main body of the belt is generally accepted to extend from the 2:3 mean-motion resonance at 39.5 AU to the 1:2 resonance at roughly 48 AU.",
+   "verified": true
+  },
+  "count_over_100km": {
+   "value": 100000,
+   "unit": "objects",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "more than 100000 KBOs over 100 km (62 mi) in diameter are thought to exist.",
+   "verified": true
+  },
+  "mass": {
+   "value": 0.0197,
+   "unit": "Earth masses",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "The most recent estimate (2018) puts the total mass of the Kuiper belt at (1.97±0.30)×10−2 Earth masses.",
+   "verified": true
+  },
+  "thickness": {
+   "value": 10,
+   "unit": "degrees either side of the plane",
+   "source": "https://en.wikipedia.org/wiki/Kuiper_belt",
+   "quote": "The Kuiper belt is quite thick, with the main concentration extending as much as ten degrees outside the ecliptic plane",
+   "verified": true
+  }
+ },
+ "moons": {
+  "share_asteroids": {
+   "value": 2,
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+   "quote": "Among asteroids, an estimated 2% would have satellites.",
+   "verified": true
+  },
+  "share_outer": {
+   "value": 11,
+   "unit": "%",
+   "source": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+   "quote": "Among trans-Neptunian objects (TNOs), an estimated 11% are thought to be binary or multiple objects.",
+   "verified": true
+  },
+  "separation": {
+   "value": [
+    300,
+    3000
+   ],
+   "unit": "km",
+   "source": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+   "quote": "The distances of the components for the known binaries vary from a few hundreds of kilometres to more than 3000 km for the asteroids.",
+   "verified": true
+  }
+ },
+ "meteorite_falls": {
+  "by_type": {
+   "value": {
+    "ordinary chondrites": 80.0,
+    "carbonaceous chondrites": 4.4,
+    "enstatite chondrites": 1.6,
+    "achondrites": 8.2,
+    "stony-iron": 1.0,
+    "iron": 4.6
+   },
+   "unit": "% of 1,062 classified falls",
+   "source": "https://en.wikipedia.org/wiki/Meteorite_fall_statistics",
+   "quote": "Chondrites 86.2% (ordinary 80.0%, carbonaceous 4.4%, enstatite 1.6%); achondrites 8.2%; stony-iron 1.0%; iron 4.6%.",
+   "verified": true
+  }
+ },
+ "note": "Fetched 2026-10-04. Each quote is as a page-reading tool returned it; the figures were not checked against the pages by eye. The vocabulary's figures (comets, centaurs, crossing asteroids, far cloud, scattered disc, dwarf planets, rings, captured moons, balance points, tidal heating, radiation belts, stellar wind, meteoroids, companion stars, visitors, a giant's air) were fetched the same day from the pages named in vocabulary_sources.",
+ "classes": {
+  "trend_by_distance": {
+   "value": "S, C, P, D",
+   "unit": "order of types by increasing distance",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "There is a compositional trend of asteroid types by increasing distance from the Sun, in the order of S, C, P, and the spectrally-featureless D-types.",
+   "verified": true
+  },
+  "s_inner": {
+   "value": 2.5,
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "S-type (silicate-rich) asteroids are more common toward the inner region of the belt, within 2.5 AU of the Sun.",
+   "verified": true
+  },
+  "m_middle": {
+   "value": "middle",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "M-type (metal-rich) asteroids are typically found in the middle of the main belt, and they make up much of the remainder of the total population.",
+   "verified": true
+  },
+  "c_outer": {
+   "value": 75,
+   "unit": "% of visible asteroids",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Carbonaceous asteroids dominate the asteroid belt's outer regions, and are rare in the inner belt. Together they comprise over 75% of the visible asteroids.",
+   "verified": true
+  },
+  "snow_line": {
+   "value": 2.7,
+   "unit": "AU",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_belt",
+   "quote": "Planetesimals formed beyond this radius were able to accumulate ice (the 2.7 AU snow line).",
+   "verified": true
+  },
+  "e_type": {
+   "value": "innermost",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_spectral_types",
+   "quote": "E-types found in the innermost region of the asteroid belt among Hungaria family members.",
+   "verified": true
+  },
+  "d_type": {
+   "value": "outer belt and trojans",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_spectral_types",
+   "quote": "D-types typically seen in the outer asteroid belt and among the Jupiter trojans.",
+   "verified": true
+  },
+  "v_type": {
+   "value": "Vesta family",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Asteroid_spectral_types",
+   "quote": "V-type: most common among the members of the large Vesta family; thought to correlate with HED meteorites.",
+   "verified": true
+  },
+  "hed": {
+   "value": 5,
+   "unit": "% of all falls",
+   "source": "https://en.wikipedia.org/wiki/HED_meteorite",
+   "quote": "The HED meteorites account for about 5% of all falls, which is about 60% of all achondrites. All these types of meteorite are thought to have originated in the crust of the asteroid Vesta. They closely resemble terrestrial igneous rocks.",
+   "verified": true
+  },
+  "enstatite": {
+   "value": 2,
+   "unit": "% of the chondrites that fall",
+   "source": "https://en.wikipedia.org/wiki/Enstatite_chondrite",
+   "quote": "rich in the mineral enstatite ... abundant grains of metal and sulfide minerals ... most of their iron taking the form of metal or sulfide rather than an oxide ... formed near the center of the solar nebula, possibly within the orbit of Mercury.",
+   "verified": true
+  },
+  "pallasite": {
+   "value": "olivine in iron-nickel",
+   "unit": "",
+   "source": "https://en.wikipedia.org/wiki/Pallasite",
+   "quote": "centimetre-sized olivine crystals of peridot quality in an iron-nickel matrix ... mantle and core material from differentiated planetesimals. No proportions are given.",
+   "verified": true
+  }
+ },
+ "vocabulary_sources": {
+  "gas-giant": "https://en.wikipedia.org/wiki/Atmosphere_of_Jupiter",
+  "captured-moon": "https://en.wikipedia.org/wiki/Irregular_moon",
+  "ring-system": "https://en.wikipedia.org/wiki/Ring_system",
+  "main-belt": "https://en.wikipedia.org/wiki/Asteroid_belt",
+  "trojan-swarm": "https://en.wikipedia.org/wiki/Jupiter_trojan",
+  "outer-belt": "https://en.wikipedia.org/wiki/Kuiper_belt",
+  "scattered-disc": "https://en.wikipedia.org/wiki/Scattered_disc",
+  "far-cloud": "https://en.wikipedia.org/wiki/Oort_cloud",
+  "asteroid-family": "https://en.wikipedia.org/wiki/Asteroid_family",
+  "asteroid-moon": "https://en.wikipedia.org/wiki/Minor-planet_moon",
+  "crossing-asteroid": "https://en.wikipedia.org/wiki/Near-Earth_object",
+  "comet": "https://en.wikipedia.org/wiki/Comet",
+  "centaur": "https://en.wikipedia.org/wiki/Centaur_(small_Solar_System_body)",
+  "dwarf-planet": "https://en.wikipedia.org/wiki/Dwarf_planet",
+  "meteoroid-stream": "https://en.wikipedia.org/wiki/Meteoroid",
+  "visitor": "https://en.wikipedia.org/wiki/Interstellar_object",
+  "balance-point": "https://en.wikipedia.org/wiki/Lagrange_point",
+  "tidal-heating": "https://en.wikipedia.org/wiki/Tidal_heating",
+  "radiation-belt": "https://en.wikipedia.org/wiki/Magnetosphere_of_Jupiter",
+  "stellar-wind": "https://en.wikipedia.org/wiki/Solar_wind",
+  "companion-star": "https://en.wikipedia.org/wiki/Binary_star"
+ }
+}

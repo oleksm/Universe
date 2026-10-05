@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.capacitor.s1
+  name: "Capacitor Bank 5 GJ"
+  maker: org.meridian
+  revision: outdated
+  slot: capacitor
+  description: "Stores energy for bursts, charged by the plant."
+size_class: 1
+physical:
+  mass: 500
+  volume: 1.5
+function:
+  kind: capacitor
+  capacity: 5000000000
+  rate: 20000000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

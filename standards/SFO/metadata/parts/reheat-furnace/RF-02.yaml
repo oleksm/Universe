@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.rf-02
   code: RF-02
   name: "Refractory lining"
-  status: draft
+  revision: draft
   description: "Brick that keeps the heat in."
 physical:
   mass: 900000

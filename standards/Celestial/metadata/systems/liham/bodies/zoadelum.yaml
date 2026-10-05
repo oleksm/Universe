@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its status to curated to take it over: it is then never written again.
-status: seeded
-identity: {name: Zoadelum, kind: asteroid, parent: Liham}
-orbit: {semi_major_axis: 43957800.0, eccentricity: 0.02874, period: 109.212, inclination: 1.686}
-physical: {mass: 1961700000000.0, radius: 0.711547, gravity: 0.0, day: 2.8097, tilt: 98.56}
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.liham.zoadelum, name: Zoadelum, kind: asteroid, parent: body.liham.liham}
+orbit: {semi_major_axis: 43957800000.0, eccentricity: 0.02874, period: 9435916.8, inclination: 1.686}
+physical: {mass: 1961700000000.0, radius: 711.547, gravity: 0.0, day: 10114.92, tilt: 98.56}
 surface:
   colour: [0.42, 0.4, 0.38]
-rock: {class: c-type carbonaceous, structure: rubble pile, density: 1300}
+rock: {class: rock-class.carbonaceous, structure: rubble pile, density: 1300}

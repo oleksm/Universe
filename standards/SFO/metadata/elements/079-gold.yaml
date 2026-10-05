@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.au
   name: Gold
   symbol: Au
   atomic_number: 79
-  atomic_mass: 196.96657
+  atomic_mass: 3.27070684299204e-25
   group: 11
   period: 6
   block: d
@@ -14,18 +15,18 @@ identity:
 atomic_structure:
   electron_configuration: '[Xe] 4f14 5d10 6s1'
   valence_electrons: 11
-  atomic_radius: 174.0
-  covalent_radius: 136.0
-  van_der_waals_radius: 166.0
-  ionic_radius: 85.0
+  atomic_radius: 1.74e-10
+  covalent_radius: 1.36e-10
+  van_der_waals_radius: 1.66e-10
+  ionic_radius: 8.5e-11
   stable_isotopes: 1
   isotope_abundances:
   - mass_number: 197
     abundance: 1.0
 chemical:
   electronegativity: 2.54
-  first_ionisation_energy: 890.1
-  electron_affinity: 222.747
+  first_ionisation_energy: 890100.0
+  electron_affinity: 222747.0
   oxidation_states:
   - 3
   - 1
@@ -42,8 +43,8 @@ physical:
   boiling_point: 3129.0
   density: 19280.0
   crystal_structure: face-centered cubic
-  heat_of_fusion: 12.5
-  heat_of_vaporisation: 330.0
+  heat_of_fusion: 12500.0
+  heat_of_vaporisation: 330000.0
   vapour_pressure: 1.5e-49
 thermal:
   specific_heat_capacity: 129.1
@@ -54,15 +55,15 @@ electrical_magnetic:
   magnetic_ordering: diamagnetic
 mechanical:
   hardness: 2.5
-  youngs_modulus: 78.0
-  tensile_strength: 100
+  youngs_modulus: 78000000000.0
+  tensile_strength: 100000000
   ductility: very ductile
 optical_nuclear:
   colour: metallic yellow
   emission_lines:
-  - 404.093
-  - 406.507
-  - 460.751
-  - 479.258
-  - 627.817
-  neutron_cross_section: 98.7
+  - 4.04093e-07
+  - 4.06507e-07
+  - 4.60751e-07
+  - 4.79258e-07
+  - 6.27817e-07
+  neutron_cross_section: 9.87e-27

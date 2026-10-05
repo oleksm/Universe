@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.fps-02
   code: FPS-02
   name: "Magnet coil"
-  status: draft
+  revision: draft
   description: "Superconducting coils that hold the plasma off the walls."
 physical:
   mass: 330000

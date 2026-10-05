@@ -1,13 +1,20 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.wb-02
   code: WB-02
   name: "Welding gantry"
-  status: draft
+  revision: draft
   description: "Carries the welding head along the joint."
 physical:
   mass: 63000
+made_from:
+  - item: stock.sta36-pl-20
+    quantity: 72446.4
+making:
+  module: module.welding-bay
 fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.offshore-mag.com/business-briefs/equipment-engineering/article/16760648/welding-aluminum-friction-stir-technique-now-operational-for-topside-structures", note: "An ESAB SuperStir friction stir welding installation: 63 tonnes." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }

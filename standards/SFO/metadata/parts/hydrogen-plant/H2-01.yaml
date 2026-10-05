@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.h2-01
   code: H2-01
   name: "Electrolyser stack"
-  status: draft
+  revision: draft
   description: "Cells that split water into hydrogen and oxygen with electric current."
 physical:
   mass: 71440

@@ -3,10 +3,11 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.mt
   name: Meitnerium
   symbol: Mt
   atomic_number: 109
-  atomic_mass: 277.154
+  atomic_mass: 4.60225044464456e-25
   group: 9
   period: 7
   block: d

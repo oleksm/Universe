@@ -3,23 +3,24 @@
 # clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
 # it is cut from.
 identity:
+  key: part.mc07-24-002
   code: MC07-24-002
   name: "Piston"
-  status: draft
+  revision: draft
   drawing: "assets/models/mc07.glb: Gear_RL_Piston"
 physical:
   mass: 82
   length: 0.7
   width: 0.7
   height: 3.02
-  shock_limit: 50
+  shock_limit: 490.3325
 shape:
   surface_area: 8.9
 made_from:
-  item: ST4340-TB-120X10
-  quantity: 3.62
+  - item: stock.st4340-tb-120x10
+    quantity: 98.20210228
 making:
-  processes: [machining]
+  module: module.machining-centre
 fit:
   count: 1
 limits:

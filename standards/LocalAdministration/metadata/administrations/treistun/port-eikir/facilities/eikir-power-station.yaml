@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: the port's power station. One fusion station is the smallest there is a record of, and far
+# more than the warehouse draws; what the port itself draws (its pads, its hangar, its people) is not
+# described yet.
+identity:
+  key: facility.treistun.port-eikir.eikir-power-station
+  name: Eikir Power Station
+kind: power
+parcel: parcel.treistun.port-eikir.2
+modules:
+  - { module: module.fusion-power-station, count: 1 }

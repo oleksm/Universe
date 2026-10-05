@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.medicine
+  name: "Medicine"
+unit_mass: 20
+bulk_density: 500
+basket: 2.31481481481e-07
+names:
+  adjectives: ["Generic", "Sterile", "Antiviral", "Trauma", "Radiation", "Gene", "Field", "Cryo", "Pediatric"]
+  nouns: ["Antibiotics", "Vaccines", "Kits", "Serum", "Bandages", "Stims", "Therapies", "Plasma", "Implants"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

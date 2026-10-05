@@ -3,19 +3,20 @@
 # isotopes), NIST ASD (emission lines), Wikipedia data pages (vapour pressure, electrode potentials, tensile
 # strength, band gaps). reactivity and flammable: rated by hand. See schema for the rest.
 identity:
+  key: element.pa
   name: Protactinium
   symbol: Pa
   atomic_number: 91
-  atomic_mass: 231.03588
+  atomic_mass: 3.8364410452631e-25
   period: 7
   block: f
   category: actinide
 atomic_structure:
   electron_configuration: '[Rn] 5f2 6d1 7s2'
   valence_electrons: 5
-  covalent_radius: 200.0
-  van_der_waals_radius: 243.0
-  ionic_radius: 78.0
+  covalent_radius: 2.0e-10
+  van_der_waals_radius: 2.43e-10
+  ionic_radius: 7.8e-11
   stable_isotopes: 0
   isotope_abundances:
   - mass_number: 231
@@ -24,8 +25,8 @@ atomic_structure:
   decay_mode: alpha
 chemical:
   electronegativity: 1.5
-  first_ionisation_energy: 568
-  electron_affinity: 53.03
+  first_ionisation_energy: 568000
+  electron_affinity: 53030.0
   oxidation_states:
   - 5
   - 4
@@ -41,8 +42,8 @@ physical:
   boiling_point: 4273.0
   density: 15370.0
   crystal_structure: centered tetragonal
-  heat_of_fusion: 15.0
-  heat_of_vaporisation: 470.0
+  heat_of_fusion: 15000.0
+  heat_of_vaporisation: 470000.0
 thermal:
   specific_heat_capacity: 99.1
   thermal_conductivity: 47.0
@@ -53,9 +54,9 @@ electrical_magnetic:
 optical_nuclear:
   colour: bright, silvery metallic luster
   emission_lines:
-  - 398.223
-  - 694.572
-  - 711.489
-  - 736.825
-  - 749.315
-  neutron_cross_section: 200.0
+  - 3.98223e-07
+  - 6.94572e-07
+  - 7.11489e-07
+  - 7.36825e-07
+  - 7.49315e-07
+  neutron_cross_section: 2.0e-26

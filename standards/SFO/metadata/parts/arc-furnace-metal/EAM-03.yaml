@@ -1,8 +1,9 @@
 # yaml-language-server: $schema=../../../schema/part.schema.yaml
 identity:
+  key: part.eam-03
   code: EAM-03
   name: "Furnace transformer"
-  status: draft
+  revision: draft
   description: "Feeds the arcs."
 physical:
   mass: 100000
