@@ -326,8 +326,9 @@ impl Interior {
             plan.points.push(Point { at: p, name: None });
             plan.points.len() - 1
         };
-        let a = add(Vec3::new(h.x, h.y, (h.z + c.z) * 0.5), &mut self.plan);
-        let b = add(Vec3::new(c.x, h.y, c.z), &mut self.plan);
+        // (The corridor's axis 1 m over the hatch's floor: its 2 m tube stands on it.)
+        let a = add(Vec3::new(h.x, h.y + 1.0, (h.z + c.z) * 0.5), &mut self.plan);
+        let b = add(Vec3::new(c.x, h.y + 1.0, c.z), &mut self.plan);
         let d = add(Vec3::new(e.x, h.y, (h.z + e.z) * 0.5), &mut self.plan);
         let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0 }, Profile { section: Section::Hex, width: 0.9, height: 0.9 });
         self.plan.lines.extend([(hatch, a, round), (a, b, round), (b, cockpit, round), (hatch, d, hex), (d, engines, hex)]);
@@ -362,15 +363,15 @@ impl Interior {
     }
 
     /// Where one starts at `at` on line `k` (none: a point off any), facing along it:
-    /// there, to settle onto whatever's under it (a walled tube's floor, or the
-    /// hull's if that's higher).
+    /// in a walled tube, on its floor (half its height under its axis: inside it,
+    /// not poking out of its top); else there, to settle onto what's under it.
     fn feet(&self, at: Vec3, k: Option<usize>) -> (universe_engine::glam::DVec3, f64) {
-        let yaw = k.map_or(0.0, |k| {
-            let (a, b, _) = self.plan.lines[k];
-            let d = (self.plan.points[b].at - self.plan.points[a].at).normalize_or_zero();
-            f64::from(d.x).atan2(f64::from(d.z))
-        });
-        ((at + Vec3::Y * 0.05).as_dvec3(), yaw)
+        let Some(k) = k else { return ((at + Vec3::Y * 0.05).as_dvec3(), 0.0) };
+        let (a, b, profile) = self.plan.lines[k];
+        let d = (self.plan.points[b].at - self.plan.points[a].at).normalize_or_zero();
+        let walled = self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled) && profile.section != Section::Line;
+        let floor = if walled { at - Vec3::Y * (profile.height * 0.5) } else { at };
+        ((floor + Vec3::Y * 0.05).as_dvec3(), f64::from(d.x).atan2(f64::from(d.z)))
     }
 
     /// A walk asked for in the middle of line `k` (dev scenarios), as WALK HERE.
