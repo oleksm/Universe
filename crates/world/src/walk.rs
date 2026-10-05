@@ -80,6 +80,138 @@ impl WalkMesh {
         self.section(1, y).into_iter().map(|[a, b]| [glam::DVec2::new(a.x, a.z), glam::DVec2::new(b.x, b.z)]).collect()
     }
 
+    /// Its lines: every edge where its surfaces crease (faces meeting at more than
+    /// `angle` degrees) or end, each once (its frame).
+    pub fn creases(&self, angle: f32) -> Vec<[Vec3; 2]> {
+        type Corner = (i64, i64, i64);
+        let key = |p: Vec3| ((p.x * 500.0).round() as i64, (p.y * 500.0).round() as i64, (p.z * 500.0).round() as i64);
+        let mut edges: HashMap<(Corner, Corner), (Vec3, Vec3, Vec<Vec3>)> = HashMap::new();
+        for t in &self.tris {
+            let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+            for k in 0..3 {
+                let (a, b) = (t[k], t[(k + 1) % 3]);
+                let (ka, kb) = (key(a), key(b));
+                edges.entry(if ka < kb { (ka, kb) } else { (kb, ka) }).or_insert((a, b, Vec::new())).2.push(n);
+            }
+        }
+        let crease = angle.to_radians().cos();
+        edges.into_values().filter(|(_, _, ns)| ns.len() == 1 || ns.iter().any(|n| n.dot(ns[0]) < crease)).map(|(a, b, _)| [a, b]).collect()
+    }
+
+    /// Where its surfaces bend gently (faces meeting at between `from` and `to`
+    /// degrees: round things, a strut, a mast): each edge with its two faces'
+    /// normals, for drawing its outline from wherever it's seen (where one faces
+    /// the eye and the other away).
+    pub fn bends(&self, from: f32, to: f32) -> Vec<[Vec3; 4]> {
+        type Corner = (i64, i64, i64);
+        let key = |p: Vec3| ((p.x * 500.0).round() as i64, (p.y * 500.0).round() as i64, (p.z * 500.0).round() as i64);
+        let mut edges: HashMap<(Corner, Corner), (Vec3, Vec3, Vec<Vec3>)> = HashMap::new();
+        for t in &self.tris {
+            let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+            for k in 0..3 {
+                let (a, b) = (t[k], t[(k + 1) % 3]);
+                let (ka, kb) = (key(a), key(b));
+                edges.entry(if ka < kb { (ka, kb) } else { (kb, ka) }).or_insert((a, b, Vec::new())).2.push(n);
+            }
+        }
+        let (lo, hi) = (to.to_radians().cos(), from.to_radians().cos());
+        edges.into_values().filter_map(|(a, b, ns)| (ns.len() == 2 && ns[0].dot(ns[1]) >= lo && ns[0].dot(ns[1]) < hi).then(|| [a, b, ns[0], ns[1]])).collect()
+    }
+
+    /// Its elevation seen from far along `axis` (0: x, a side; 2: z, an end) on
+    /// its `sign` side: where it creases (faces meeting at more than 20°), ends or
+    /// turns away (its outline),
+    /// as far as they're seen from there (every surface drawn into a depth picture
+    /// of 5 cm cells; an edge kept where nothing is nearer the eye); segments in
+    /// the view's plane (side: z, y; end: x, y).
+    pub fn elevation(&self, axis: usize, sign: f64) -> Vec<[glam::DVec2; 2]> {
+        type Corner = (i64, i64, i64);
+        type Edge = (Vec3, Vec3, Vec<Vec3>);
+        const PIXEL: f32 = 0.05;
+        let key = |p: Vec3| ((p.x * 500.0).round() as i64, (p.y * 500.0).round() as i64, (p.z * 500.0).round() as i64);
+        // The view's plane (u across, v up) and depth (toward the eye).
+        let u_of = |p: Vec3| if axis == 0 { p.z } else { p.x };
+        let toward = |p: Vec3| (if axis == 0 { p.x } else { p.z }) * sign as f32;
+        let (lo, hi) = (self.lo.as_vec3(), self.hi.as_vec3());
+        let (u0, v0) = (u_of(lo) - 0.5, lo.y - 0.5);
+        let (w, h) = (((u_of(hi) + 0.5 - u0) / PIXEL).ceil() as usize, ((hi.y + 0.5 - v0) / PIXEL).ceil() as usize);
+        let mut depth = vec![f32::MIN; w * h];
+        for t in &self.tris {
+            let q = t.map(|p| (((u_of(p) - u0) / PIXEL), ((p.y - v0) / PIXEL), toward(p)));
+            let (min_x, max_x) = (q.iter().map(|p| p.0).fold(f32::MAX, f32::min).floor().max(0.0) as usize, q.iter().map(|p| p.0).fold(f32::MIN, f32::max).ceil().min(w as f32 - 1.0) as usize);
+            let (min_y, max_y) = (q.iter().map(|p| p.1).fold(f32::MAX, f32::min).floor().max(0.0) as usize, q.iter().map(|p| p.1).fold(f32::MIN, f32::max).ceil().min(h as f32 - 1.0) as usize);
+            let area = (q[1].0 - q[0].0) * (q[2].1 - q[0].1) - (q[2].0 - q[0].0) * (q[1].1 - q[0].1);
+            if area.abs() < 1e-6 {
+                continue;
+            }
+            for y in min_y..=max_y {
+                for x in min_x..=max_x {
+                    let (px, py) = (x as f32 + 0.5, y as f32 + 0.5);
+                    let w0 = ((q[1].0 - px) * (q[2].1 - py) - (q[2].0 - px) * (q[1].1 - py)) / area;
+                    let w1 = ((q[2].0 - px) * (q[0].1 - py) - (q[0].0 - px) * (q[2].1 - py)) / area;
+                    let w2 = 1.0 - w0 - w1;
+                    if w0 < -1e-4 || w1 < -1e-4 || w2 < -1e-4 {
+                        continue;
+                    }
+                    let d = w0 * q[0].2 + w1 * q[1].2 + w2 * q[2].2;
+                    let c = &mut depth[y * w + x];
+                    *c = c.max(d);
+                }
+            }
+        }
+        // Seen: nothing nearer the eye there (within a hair, and a cell round it).
+        let seen = |p: Vec3| {
+            let (x, y) = (((u_of(p) - u0) / PIXEL) as isize, ((p.y - v0) / PIXEL) as isize);
+            let d = toward(p);
+            (-1..=1).any(|dy| (-1..=1).any(|dx| {
+                let (cx, cy) = (x + dx, y + dy);
+                cx < 0 || cy < 0 || cx as usize >= w || cy as usize >= h || depth[cy as usize * w + cx as usize] <= d + 0.03
+            }))
+        };
+        let mut edges: HashMap<(Corner, Corner), Edge> = HashMap::new();
+        let normal = |t: &[Vec3; 3]| (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+        for t in &self.tris {
+            let n = normal(t);
+            for k in 0..3 {
+                let (a, b) = (t[k], t[(k + 1) % 3]);
+                let (ka, kb) = (key(a), key(b));
+                edges.entry(if ka < kb { (ka, kb) } else { (kb, ka) }).or_insert((a, b, Vec::new())).2.push(n);
+            }
+        }
+        let crease = 20f32.to_radians().cos();
+        let flat = |p: Vec3| glam::DVec2::new(f64::from(u_of(p)), f64::from(p.y));
+        let mut out = Vec::new();
+        for (a, b, ns) in edges.into_values() {
+            // (Its outline too: where the faces turn from facing the eye to facing
+            // away, a round strut's sides.)
+            let eye = { let mut e = Vec3::ZERO; e[axis] = sign as f32; e };
+            let outline = ns.iter().any(|n| n.dot(eye) > 0.0) && ns.iter().any(|n| n.dot(eye) <= 0.0);
+            if !(ns.len() == 1 || outline || ns.iter().any(|n| n.dot(ns[0]) < crease)) {
+                continue;
+            }
+            // (Along it every 10 cm: the stretches seen.)
+            let n = ((a.distance(b) / 0.1).ceil() as usize).max(1);
+            let mut run: Option<Vec3> = None;
+            for i in 0..=n {
+                let p = a.lerp(b, i as f32 / n as f32);
+                match (seen(p), run) {
+                    (true, None) => run = Some(p),
+                    (false, Some(s)) => {
+                        out.push([flat(s), flat(p)]);
+                        run = None;
+                    }
+                    _ => {}
+                }
+            }
+            if let Some(s) = run
+                && s != b
+            {
+                out.push([flat(s), flat(b)]);
+            }
+        }
+        out
+    }
+
     /// Where its surfaces cross the plane `x = side` (its frame): segments (z, y),
     /// a side section.
     pub fn section_x(&self, side: f64) -> Vec<[glam::DVec2; 2]> {
@@ -151,7 +283,13 @@ impl WalkMesh {
     /// (The grid's cells walked in the ray's order, from where it enters the
     /// bounds to where it leaves them or meets something: a long sight line
     /// through the model costs what it crosses.)
-    fn ray(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
+    pub fn ray(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
+        self.ray_face(from, dir, max).map(|(d, n)| (d, if n.dot(dir) > 0.0 { -n } else { n }))
+    }
+
+    /// `ray`, with the surface's own normal (out of its front, as it's wound):
+    /// facing the ray if it's met from in front.
+    pub fn ray_face(&self, from: DVec3, dir: DVec3, max: f64) -> Option<(f64, DVec3)> {
         // The part of the ray within the bounds.
         let (lo, hi) = (self.lo - DVec3::splat(0.01), self.hi + DVec3::splat(0.01));
         let (mut t0, mut t1) = (0.0f64, max);
@@ -199,7 +337,7 @@ impl WalkMesh {
                         && best.is_none_or(|b| d < b.0)
                     {
                         let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize();
-                        best = Some((d, if n.dot(dir) > 0.0 { -n } else { n }));
+                        best = Some((d, n));
                     }
                 }
             }

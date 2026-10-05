@@ -21,6 +21,7 @@ mod rig;
 mod rocks;
 mod save;
 mod scene;
+mod interior;
 mod shipyard;
 mod studio;
 mod standards;

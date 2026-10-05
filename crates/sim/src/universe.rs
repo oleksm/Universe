@@ -616,7 +616,7 @@ impl Universe {
     pub fn set_layout(&mut self, plan: &universe_world::deckplan::DeckPlan) {
         let Some(h) = universe_world::content::content().handle::<universe_world::ship::ClassSpec>(&plan.hull) else { return };
         let Some(mesh) = universe_world::content::content().get(h).shape().walk.clone() else { return };
-        let sides: Vec<_> = plan.decks.iter().map(|d| universe_world::deckplan::Sides::of(&mesh.section_y(d.floor + 1.0))).collect();
+        let sides: Vec<_> = plan.decks.iter().map(|d| universe_world::deckplan::deck_sides(&mesh, d.floor)).collect();
         let built = universe_world::deckplan::build(plan, &sides);
         if built.panels.is_empty() {
             self.layouts.remove(&plan.hull);

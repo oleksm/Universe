@@ -54,7 +54,7 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
         return Some(m.clone());
     }
     let walk = shape.walk.as_ref()?;
-    let sides: Vec<_> = plan.decks.iter().map(|d| deckplan::Sides::of(&walk.section_y(d.floor + 1.0))).collect();
+    let sides: Vec<_> = plan.decks.iter().map(|d| deckplan::deck_sides(walk, d.floor)).collect();
     let b = deckplan::build(plan, &sides);
     let mut m = WireModel::default();
     for (quad, floor) in &b.panels {
@@ -73,6 +73,15 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
                 m.edges.push([base + k, base + (k + 1) % 4]);
             }
         }
+    }
+    // The floors' slabs: their undersides and edges, a shade under the floor, unlined.
+    for quad in &b.slabs {
+        let c = [0.36 * 0.95, 0.36, 0.36 * 1.08, 1.0];
+        let base = m.positions.len() as u32;
+        m.positions.extend(quad.iter().map(|p| p.as_vec3()));
+        m.colors.extend([c; 4]);
+        m.faces.push([base, base + 1, base + 2]);
+        m.faces.push([base, base + 2, base + 3]);
     }
     let mesh = Mesh::new(m);
     *built = Some((plan.clone(), mesh.clone()));

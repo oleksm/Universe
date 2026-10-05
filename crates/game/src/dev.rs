@@ -1173,18 +1173,99 @@ pub fn apply(app: &mut App, name: &str) {
                 log::info!("scenario studiowalk: feet in the ship's frame {local:.2?}");
             }
         }
+        "layoutlook" => {
+            // Six decks (5.6 m up from the keel, 2.9 m apart), each filled, then down the
+            // ramp, out and off to the side (UNIVERSE_SIDE m), looking back up at the ship.
+            apply(app, "touchdown");
+            mc07(app);
+            let Some(mesh) = app.ship.spec().shape().walk.clone() else { return };
+            let mut plan = demo_plan(app);
+            plan.decks = (0..6).map(|k| {
+                let mut d = universe_sim::world::deckplan::Deck::at(mesh.lo.y + 5.6 + 2.9 * k as f64);
+                if std::env::var_os("UNIVERSE_EMPTY").is_none() {
+                    d.planes = universe_sim::world::deckplan::fill(&mesh, d.floor);
+                }
+                d
+            }).collect();
+            for d in &plan.decks {
+                let sides = universe_sim::world::deckplan::deck_sides(&mesh, d.floor);
+                let areas: Vec<String> = d.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
+                log::info!("scenario layoutlook: deck at {:.1} m up, floors m2 {}, corners {:?}", d.floor - mesh.lo.y, areas.join(" "), d.planes.iter().map(|p| p.len()).collect::<Vec<_>>());
+                // (Any slab corner not under the hull and over it: a floor poking out through it.)
+                let mut out = 0;
+                let mut all = 0;
+                for p in &d.planes {
+                    for (z0, z1, x0, x1) in universe_sim::world::deckplan::floor_strips(p, &sides, &[]) {
+                        for (x, z) in [(x0 + 0.05, z0 + 0.02), (x1 - 0.05, z0 + 0.02), (x0 + 0.05, z1 - 0.02), (x1 - 0.05, z1 - 0.02)] {
+                            for y in [d.floor - universe_sim::world::deckplan::DECK + 0.02, d.floor - 0.02] {
+                                all += 1;
+                                if !universe_sim::world::deckplan::roofed(&mesh, universe_engine::glam::DVec2::new(x, z), y, 0.0, true) {
+                                    out += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                log::info!("scenario layoutlook:   slab corners out from under the hull: {out} of {all}");
+            }
+            app.engine.universe().set_layout(&plan);
+            app.deckplans.retain(|p| p.hull != plan.hull);
+            app.deckplans.push(plan);
+            at_hatch(app, 0.0);
+            for _ in 0..900 {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
+            }
+            let side: f64 = std::env::var("UNIVERSE_SIDE").ok().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+            for _ in 0..(side.abs() / 1.6 / 0.02) as usize {
+                app.engine.universe().walk(&universe_sim::world::WalkCommands { right: side.signum(), ..Default::default() }, 0.02);
+            }
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { yaw: std::f64::consts::PI - side.signum() * 0.9, pitch: 0.2, ..Default::default() }, 0.02);
+        }
         "studiopreview" => {
             // The studio's walk-through on the demo plan: on foot in the hold, facing the wall and its door.
             apply(app, "studio");
             let floor = demo_plan(app).decks[0].floor;
-            let at = (universe_engine::glam::DVec3::new(0.0, floor + 0.05, 4.0), 0.0);
-            let plan = demo_plan(app);
+            // (UNIVERSE_AT=x,z,yaw,pitch: stood there instead, looking that way.)
+            let look: Vec<f64> = std::env::var("UNIVERSE_AT").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
+            let (x, z, yaw, pitch) = match look[..] {
+                [x, z, yaw, pitch] => (x, z, yaw, pitch),
+                _ => (0.0, 4.0, 0.0, 0.05),
+            };
+            // (UNIVERSE_FLOOR=m: one deck that far up from the keel, filled, instead.)
+            let mut plan = demo_plan(app);
+            let mut floor = floor;
+            if let Some(up) = std::env::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
+                && let Some(mesh) = app.ship.spec().shape().walk.clone()
+            {
+                floor = mesh.lo.y + up;
+                let mut d = universe_sim::world::deckplan::Deck::at(floor);
+                d.planes = universe_sim::world::deckplan::fill(&mesh, floor);
+                plan.decks = vec![d];
+            }
+            let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
             app.engine.universe().set_layout(&plan);
             app.engine.universe().preview(Some(at));
             app.preview = app.shipyard.take().map(|_| Default::default());
             app.mode = Mode::Pilot;
             app.chase_cam = false;
-            app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch: 0.05, ..Default::default() }, 0.02);
+            app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
+        }
+        "interior" => {
+            // The shipyard's interior studio on our hull (UNIVERSE_TURN=yaw,pitch: looked
+            // at from there, rad).
+            apply(app, "docked");
+            mc07(app);
+            let turn: Vec<f32> = std::env::var("UNIVERSE_TURN").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
+            let mut y = match turn[..] {
+                [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
+                _ => crate::shipyard::Shipyard::interior(app),
+            };
+            // (UNIVERSE_PLAN: a sample access plan drawn.)
+            if std::env::var_os("UNIVERSE_PLAN").is_some() {
+                let spec = app.ship.spec();
+                y.interior_mut().sample(&spec.key, spec.shape());
+            }
+            app.shipyard = Some(y);
         }
         "studio" => {
             // The shipyard's layout studio on our hull, with a deck laid out for a look
@@ -1203,6 +1284,14 @@ pub fn apply(app: &mut App, name: &str) {
                 Ok("stair") => crate::studio::Tool::Stair,
                 _ => crate::studio::Tool::Select,
             };
+            // (UNIVERSE_FLIP=side,end: those views flipped.)
+            let flip = std::env::var("UNIVERSE_FLIP").unwrap_or_default();
+            y.studio_mut().side_flip = flip.contains("side");
+            y.studio_mut().end_flip = flip.contains("end");
+            // (UNIVERSE_CURSOR=x,y: the mouse there, in pixels.)
+            if let Some((cx, cy)) = std::env::var("UNIVERSE_CURSOR").ok().and_then(|v| v.split_once(',').and_then(|(a, b)| Some((a.trim().parse::<f32>().ok()?, b.trim().parse::<f32>().ok()?)))) {
+                y.studio_mut().cursor = universe_engine::glam::Vec2::new(cx, cy);
+            }
             if std::env::var_os("UNIVERSE_EMPTY").is_none() {
                 let mut plan = demo_plan(app);
                 // (UNIVERSE_CARVE=x,z: deck 1's floor carved round that point instead.)
@@ -1210,13 +1299,36 @@ pub fn apply(app: &mut App, name: &str) {
                     && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
                 {
                     let deck = &mut plan.decks[0];
-                    let sides = universe_sim::world::deckplan::Sides::of(&mesh.section_y(deck.floor + 1.0));
+                    let sides = universe_sim::world::deckplan::deck_sides(mesh, deck.floor);
                     deck.planes = universe_sim::world::deckplan::carve(&sides, &deck.walls, universe_engine::glam::DVec2::new(x, z)).into_iter().collect();
                     if let Some(poly) = deck.planes.first() {
                         let (lo, hi) = poly.iter().fold((universe_engine::glam::DVec2::MAX, universe_engine::glam::DVec2::MIN), |m, p| (m.0.min(*p), m.1.max(*p)));
                         let area: f64 = universe_sim::world::deckplan::floor_strips(poly, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
                         log::info!("scenario studio: carved a floor of {} points, x {:.1}..{:.1} z {:.1}..{:.1}, {area:.0} m2", poly.len(), lo.x, hi.x, lo.y, hi.y);
                     }
+                }
+                // (UNIVERSE_DECKS=n: decks stacked up to n, each 2.9 m over the last.)
+                let n: usize = std::env::var("UNIVERSE_DECKS").ok().and_then(|v| v.parse().ok()).unwrap_or(0);
+                while plan.decks.len() < n {
+                    let last = plan.decks.last().expect("a deck");
+                    let deck = universe_sim::world::deckplan::Deck { floor: last.floor + 2.9, headroom: last.headroom, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() };
+                    plan.decks.push(deck);
+                }
+                // (UNIVERSE_FLOOR=m: deck 1 that far up from the keel, alone.)
+                if let Some(up) = std::env::var("UNIVERSE_FLOOR").ok().and_then(|v| v.parse::<f64>().ok())
+                    && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
+                {
+                    plan.decks = vec![universe_sim::world::deckplan::Deck::at(mesh.lo.y + up)];
+                }
+                // (UNIVERSE_FILL: deck 1 filled, as the floors' FILL button does.)
+                if std::env::var_os("UNIVERSE_FILL").is_some()
+                    && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
+                {
+                    let deck = &mut plan.decks[0];
+                    let sides = universe_sim::world::deckplan::deck_sides(mesh, deck.floor);
+                    deck.planes = universe_sim::world::deckplan::fill(mesh, deck.floor);
+                    let areas: Vec<String> = deck.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
+                    log::info!("scenario studio: filled {} floors, m2 {}", deck.planes.len(), areas.join(" "));
                 }
                 app.deckplans.push(plan);
             }

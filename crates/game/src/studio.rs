@@ -50,6 +50,10 @@ enum Pick {
 #[derive(Clone, Copy, Debug, PartialEq)]
 enum Drag {
     Pan,
+    /// A deck's floor, dragged up or down in the side view.
+    Floor(usize),
+    /// The side view (0) or the end view (1), moved.
+    View(u8),
     Point(Pick, usize),
     Bend(usize, usize),
 }
@@ -65,12 +69,24 @@ struct Hull {
     /// Its side view: the cut along its centre line (z, y), and the ground it
     /// stands on (its lowest point: its feet).
     profile: Vec<[DVec2; 2]>,
+    /// Which way its nose is along z (+1 or -1: where its cockpit is).
+    nose: f64,
+    /// Its name, and its mass as built (kg: its frame and what's fitted, dry).
+    name: String,
+    dry_mass: f64,
     keel: f64,
     /// Its lowest floor inside (well above its feet), for a first deck.
     first_floor: f64,
     /// Its extent in plan (x, z) and in height.
     lo: universe_engine::glam::DVec3,
     hi: universe_engine::glam::DVec3,
+}
+
+/// A hull's elevations (the edges seen from outside): from either side (z, y:
+/// from -x, from +x) and either end (x, y: from its nose, from its tail).
+pub struct Elevations {
+    side: [Vec<[DVec2; 2]>; 2],
+    end: [Vec<[DVec2; 2]>; 2],
 }
 
 #[derive(Default)]
@@ -85,11 +101,23 @@ pub struct Studio {
     view: Option<(DVec2, f64)>,
     hull: Option<Hull>,
     /// The cursor as input last saw it (HUD pixels): what's being drawn runs to it.
-    cursor: Vec2,
+    pub cursor: Vec2,
+    /// A repeating step held (floor up/down, height +/-: its number), how long it's
+    /// been held and when it steps next (s).
+    held: Option<(usize, f32, f32)>,
     /// WALK HERE pressed away from the plan: the next click on it is where.
     walk_armed: bool,
-    /// AUTO FILL pressed (the floors' panel): the next click on the plan carves a floor.
-    fill_armed: bool,
+    /// The hull's elevations, for which hull; and being worked out (away from the
+    /// frame: they take a moment), for which.
+    elev: Option<(String, std::sync::Arc<Elevations>)>,
+    elev_job: Option<(String, std::sync::mpsc::Receiver<Elevations>)>,
+    /// The side and end views: seen from the other side or end, and moved (pixels).
+    pub(crate) side_flip: bool,
+    pub(crate) end_flip: bool,
+    side_pan: Vec2,
+    end_pan: Vec2,
+    /// Time, for the spinner while the elevations are worked out (s).
+    spin: f32,
     /// A walk-through asked for: feet (the hull's frame) and facing (see `shipyard`).
     pub walk: Option<(universe_engine::glam::DVec3, f64)>,
 }
@@ -134,12 +162,12 @@ fn panel_list_top(studio: &Studio) -> f32 {
     86.0 + 8.0 + 22.0 + state as f32 * 14.0 + if auto_shown(studio) { AUTO_ROW } else { 0.0 } + 18.0
 }
 
-/// Is the floors' AUTO FILL button shown (the plane tool in hand)?
+/// Is the floors' FILL button shown (the plane tool in hand)?
 fn auto_shown(studio: &Studio) -> bool {
     studio.tool == Tool::Plane
 }
 
-/// The floors' panel's AUTO FILL button: its place (above the list), and the room it takes.
+/// The floors' panel's FILL button: its place (above the list), and the room it takes.
 const AUTO_ROW: f32 = 28.0;
 fn auto_button(studio: &Studio) -> (Vec2, Vec2) {
     (Vec2::new(20.0, panel_list_top(studio) - 18.0 - AUTO_ROW + 2.0), Vec2::new(PANEL_WIDTH - 16.0, 18.0))
@@ -206,17 +234,34 @@ impl Studio {
             self.hull = None;
             return;
         };
+        // The elevations: asked for once a hull, worked out on a thread of their own.
+        if let Some((key, rx)) = &self.elev_job
+            && let Ok(e) = rx.try_recv()
+        {
+            self.elev = Some((key.clone(), std::sync::Arc::new(e)));
+            self.elev_job = None;
+        }
+        if self.elev.as_ref().is_none_or(|(k, _)| k != hull_key) && self.elev_job.as_ref().is_none_or(|(k, _)| k != hull_key) {
+            let (tx, rx) = std::sync::mpsc::channel();
+            let (mesh, nose) = (mesh.clone(), nose_of(shape));
+            std::thread::spawn(move || {
+                let e = Elevations { side: [mesh.elevation(0, -1.0), mesh.elevation(0, 1.0)], end: [mesh.elevation(2, nose), mesh.elevation(2, -nose)] };
+                tx.send(e).ok();
+            });
+            self.elev_job = Some((hull_key.into(), rx));
+        }
         let decks = Self::plan_of(app, hull_key).map(|p| p.decks.clone()).unwrap_or_default();
         let y = decks.get(self.deck).map_or_else(|| first_floor(mesh), |d| d.floor);
-        // (Cut a metre over the floor: the hull's sides at a person's waist.)
+        // (Cut just over the floor: the hull as it is at the deck, its walls solid under a doorway that starts higher.)
         if self.hull.as_ref().is_some_and(|h| h.key == hull_key && (h.y - y).abs() < 1e-9) {
             return;
         }
-        let section = mesh.section_y(y + 1.0);
-        let sides = Sides::of(&section);
-        let profile = self.hull.as_ref().filter(|h| h.key == hull_key).map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
+        let section = mesh.section_y(y + 0.05);
+        let sides = deckplan::deck_sides(mesh, y);
+        let same = self.hull.as_ref().filter(|h| h.key == hull_key);
+        let profile = same.map_or_else(|| mesh.section_x(0.0), |h| h.profile.clone());
         let first_floor = first_floor(mesh);
-        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
+        self.hull = Some(Hull { key: hull_key.into(), y, section, sides, profile, nose: nose_of(shape), name: app.ship.spec().name.clone(), dry_mass: app.ship.spec().dry_mass, keel: mesh.lo.y, first_floor, lo: mesh.lo, hi: mesh.hi });
     }
 }
 
@@ -288,7 +333,7 @@ fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
 fn tool_help(tool: Tool) -> &'static str {
     match tool {
         Tool::Select => "PICK SOMETHING TO CHANGE OR REMOVE. CLICK A WALL, A FLOOR, A LADDER OR A STAIR. A PICKED WALL SHOWS ITS POINTS (SQUARES: DRAG TO MOVE) AND THE MIDDLE OF EACH SEGMENT (RINGS: DRAG SIDEWAYS TO BEND IT INTO AN ARC). A PICKED FLOOR SHOWS ITS CORNERS. DEL REMOVES WHAT'S PICKED.",
-        Tool::Plane => "A FLOOR ON THIS DECK. CLICK ITS CORNERS ONE BY ONE; CLICK THE FIRST AGAIN, OR ENTER, TO CLOSE IT. IT'S TRIMMED TO THE HULL: DRAW IT LARGE AND ONLY WHAT'S INSIDE IS FLOOR. BACKSPACE TAKES THE LAST CORNER BACK. AUTO: SHIFT+CLICK (OR AUTO FILL, THEN A CLICK) INSIDE A SPACE FILLS IT, UP TO THE HULL AND THE WALLS ROUND IT.",
+        Tool::Plane => "A FLOOR ON THIS DECK. CLICK ITS CORNERS ONE BY ONE; CLICK THE FIRST AGAIN, OR ENTER, TO CLOSE IT. IT'S TRIMMED TO THE HULL: DRAW IT LARGE AND ONLY WHAT'S INSIDE IS FLOOR. BACKSPACE TAKES THE LAST CORNER BACK. FILL: A FLOOR OVER THE WHOLE DECK AT ONCE, FOLLOWING THE HULL (ONE FOR EACH PART OF IT AT THIS HEIGHT).",
         Tool::Wall => "A WALL ON THIS DECK, AS TALL AS THE DECK. CLICK ITS POINTS ONE BY ONE; ENTER ENDS IT. IT STOPS WHERE IT MEETS THE HULL (BEYOND, FAINT RED). TO CURVE A SEGMENT, PICK THE WALL WITH SELECT AND DRAG THE RING AT ITS MIDDLE. BACKSPACE TAKES THE LAST POINT BACK.",
         Tool::Door => "A DOORWAY IN A WALL, 0.9 M WIDE AND 2.1 M TALL. CLICK ON A WALL WHERE IT GOES; CLICK AN EXISTING DOOR TO REMOVE IT.",
         Tool::Ladder => "A LADDER UP TO THE DECK ABOVE, THROUGH A 0.9 M HATCH CUT IN ITS FLOOR. CLICK WHERE IT STANDS. ABOARD: WALK INTO IT, W CLIMBS (LOOK DOWN TO CLIMB DOWN). NEEDS A DECK ABOVE.",
@@ -300,9 +345,6 @@ fn tool_help(tool: Tool) -> &'static str {
 fn tool_state(studio: &Studio) -> Option<String> {
     if studio.walk_armed {
         return Some("WALK HERE: CLICK A SPOT ON THE PLAN".into());
-    }
-    if studio.fill_armed {
-        return Some("AUTO FILL: CLICK INSIDE A SPACE".into());
     }
     let n = studio.drawing.len();
     match studio.tool {
@@ -327,9 +369,6 @@ fn button_at(size: Vec2, q: Vec2) -> Option<Action> {
     }).map(|k| TOOLBAR[k].2)
 }
 
-/// Between one deck's ceiling and the next one's floor (m): the deck itself.
-const DECK_THICKNESS: f64 = 0.3;
-
 /// Is there room for a deck between these sides: at least 3 m across, for at
 /// least 3 m of the ship's length (not just its masts and fittings)?
 fn roomy(sides: &Sides) -> bool {
@@ -341,16 +380,83 @@ fn in_rect(r: (Vec2, Vec2), q: Vec2) -> bool {
     q.x >= r.0.x && q.x <= r.1.x && q.y >= r.0.y && q.y <= r.1.y
 }
 
-/// The side view's scale (pixels a metre) and middle, for the hull in region `r`.
-fn side_view(h: &Hull, r: (Vec2, Vec2)) -> (f64, Vec2) {
-    let (w, ht) = (r.1 - r.0).as_dvec2().into();
-    ((w / (h.hi.z - h.lo.z)).min(ht / (h.hi.y - h.lo.y)) * 0.9, (r.0 + r.1) * 0.5)
+/// Which way a hull's nose is along z: where its cockpit is (+z if it has none).
+fn nose_of(shape: &universe_sim::world::shape::Shape) -> f64 {
+    shape.nodes.iter().find(|n| n.role == universe_sim::world::shape::Role::Cockpit).map_or(1.0, |n| if n.at.z < 0.0 { -1.0 } else { 1.0 })
+}
+
+/// The strip under the plan, shared: the side view at the left, the end view at
+/// the right.
+fn split_views(r: (Vec2, Vec2)) -> ((Vec2, Vec2), (Vec2, Vec2)) {
+    let split = r.0.x + (r.1.x - r.0.x) * 0.7;
+    ((r.0, Vec2::new(split - 5.0, r.1.y)), (Vec2::new(split + 5.0, r.0.y), r.1))
+}
+
+/// The side and end views' scale (pixels a metre, one for both, so their decks
+/// line up), for the hull in the strip `r`.
+fn views_scale(h: &Hull, r: (Vec2, Vec2)) -> f64 {
+    let (side, end) = split_views(r);
+    let (ws, we, ht) = ((side.1.x - side.0.x) as f64, (end.1.x - end.0.x) as f64, (r.1.y - r.0.y) as f64);
+    (ws / (h.hi.z - h.lo.z)).min(we / (h.hi.x - h.lo.x)).min(ht / (h.hi.y - h.lo.y)) * 0.8
+}
+
+/// The side view's scale and middle (moved by `pan`), for the hull in the strip `r`.
+fn side_view(h: &Hull, r: (Vec2, Vec2), pan: Vec2) -> (f64, Vec2) {
+    let side = split_views(r).0;
+    (views_scale(h, r), (side.0 + side.1) * 0.5 + pan)
+}
+
+/// The end view's scale and middle (moved by `pan`).
+fn end_view(h: &Hull, r: (Vec2, Vec2), pan: Vec2) -> (f64, Vec2) {
+    let end = split_views(r).1;
+    (views_scale(h, r), (end.0 + end.1) * 0.5 + pan)
 }
 
 /// The height (hull frame) at screen row `y` of the side view.
-fn side_y(h: &Hull, r: (Vec2, Vec2), y: f32) -> f64 {
-    let (k, mid) = side_view(h, r);
+fn side_y(h: &Hull, r: (Vec2, Vec2), pan: Vec2, y: f32) -> f64 {
+    let (k, mid) = side_view(h, r, pan);
     (h.lo.y + h.hi.y) / 2.0 - (y - mid.y) as f64 / k
+}
+
+/// A dimension: a line from `a` to `b` with ticks across its ends, and its
+/// measure beside its middle (over it if it runs across, right of it if up).
+fn dimension(frame: &mut Frame, a: Vec2, b: Vec2, metres: f64) {
+    let along = (b - a).normalize_or_zero();
+    let across = Vec2::new(-along.y, along.x) * 4.0;
+    frame.hud_line(a, b, LABEL.scale(0.8));
+    for p in [a, b] {
+        frame.hud_line(p - across, p + across, LABEL.scale(0.8));
+    }
+    let text = format!("{metres:.1} M");
+    let w = text.chars().count() as f32 * universe_engine::frame::GLYPH * 0.7;
+    let mid = (a + b) * 0.5;
+    let at = if along.x.abs() > along.y.abs() { mid + Vec2::new(-w / 2.0, -12.0) } else { mid + Vec2::new(6.0, -4.0) };
+    frame.text_scaled(at, &text, LABEL, 0.7);
+}
+
+/// A view's grid: a metre (every fifth brighter) across `r`, `to_u`/`to_v` the
+/// screen x of an across measure and the screen y of a height over the keel.
+fn view_grid(frame: &mut Frame, r: (Vec2, Vec2), k: f64, to_u: impl Fn(f64) -> f32, to_v: impl Fn(f64) -> f32, u: (f64, f64), v: (f64, f64)) {
+    if k < 4.0 {
+        return;
+    }
+    for i in (u.0.floor() as i64)..=(u.1.ceil() as i64) {
+        let x = to_u(i as f64);
+        if x >= r.0.x && x <= r.1.x {
+            frame.hud_line(Vec2::new(x, r.0.y), Vec2::new(x, r.1.y), if i % 5 == 0 { GRID5 } else { GRID });
+        }
+    }
+    for i in (v.0.floor() as i64)..=(v.1.ceil() as i64) {
+        let y = to_v(i as f64);
+        if y >= r.0.y && y <= r.1.y {
+            frame.hud_line(Vec2::new(r.0.x, y), Vec2::new(r.1.x, y), if i % 5 == 0 { GRID5 } else { GRID });
+        }
+    }
+}
+
+/// A view's FLIP button: at its top right.
+fn flip_button(r: (Vec2, Vec2)) -> (Vec2, Vec2) {
+    (Vec2::new(r.1.x - 42.0, r.0.y + 4.0), Vec2::new(r.1.x - 4.0, r.0.y + 18.0))
 }
 
 /// Snapped to a quarter metre (ALT: as it is).
@@ -362,7 +468,9 @@ fn snap(p: DVec2, free: bool) -> DVec2 {
 pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim::world::shape::Shape, studio: &mut Studio) -> bool {
     let input = &ctx.input;
     let size = ctx.hud_size.as_vec2();
-    let (plan_r, side_r) = regions(size, panel_open(studio));
+    let (plan_r, low_r) = regions(size, panel_open(studio));
+    let (side_r, end_r) = split_views(low_r);
+    studio.spin += ctx.dt;
     studio.refresh(app, hull_key, shape);
     let Some(h) = studio.hull.as_ref() else {
         return !input.pressed(KeyCode::Escape);
@@ -370,6 +478,10 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     // A toolbar button clicked: as its key.
     let clicked = if input.button_pressed(MouseButton::Left) { button_at(size, input.cursor) } else { None };
     // Fit the view to the hull.
+    if input.pressed(KeyCode::Home) || clicked == Some(Action::Fit) {
+        studio.side_pan = Vec2::ZERO;
+        studio.end_pan = Vec2::ZERO;
+    }
     if studio.view.is_none() || input.pressed(KeyCode::Home) || clicked == Some(Action::Fit) {
         let span = (plan_r.1 - plan_r.0).as_dvec2();
         let s = (span.x / (h.hi.z - h.lo.z)).min(span.y / (h.hi.x - h.lo.x)) * 0.92;
@@ -410,7 +522,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     // and a deck's thickness between (not past the hull's top).
     let mut went: Option<usize> = None;
     if (shift && input.pressed(KeyCode::KeyN)) || clicked == Some(Action::AddDeck) {
-        let floor = if n == 0 { first_floor } else { plan.decks.iter().map(|d| d.floor + d.headroom + DECK_THICKNESS).fold(first_floor, f64::max) };
+        let floor = if n == 0 { first_floor } else { plan.decks.iter().map(|d| d.floor + d.headroom + deckplan::DECK).fold(first_floor, f64::max) };
         // (Only where there's hull round it, at a person's waist and under its ceiling.)
         let room = |y: f64| shape.walk.as_ref().is_some_and(|m| roomy(&Sides::of(&m.section_y(y))));
         if room(floor + 1.0) && room(floor + deckplan::HEADROOM - 0.2) {
@@ -424,10 +536,17 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             went = Some((studio.deck + 1) % n);
         } else if input.pressed(KeyCode::PageDown) {
             went = Some((studio.deck + n - 1) % n);
-        } else if input.button_pressed(MouseButton::Left) && in_rect(side_r, cursor) {
-            // A deck clicked in the side view: its floor or its headroom.
-            let y = side_y(h, side_r, cursor.y);
-            went = plan.decks.iter().position(|d| y >= d.floor - 0.4 && y <= d.floor + d.headroom).or(went);
+        } else if input.button_pressed(MouseButton::Left) && in_rect(side_r, cursor) && !in_rect(flip_button(side_r), cursor) {
+            // A deck clicked in the side view: its floor or its headroom; on its floor's
+            // line (within a few pixels), grabbed to drag up or down.
+            let y = side_y(h, low_r, studio.side_pan, cursor.y);
+            let near = 6.0 / side_view(h, low_r, studio.side_pan).0;
+            if let Some(k) = plan.decks.iter().position(|d| (y - d.floor).abs() <= near) {
+                went = Some(k);
+                studio.drag = Some(Drag::Floor(k));
+            } else {
+                went = plan.decks.iter().position(|d| y >= d.floor - 0.4 && y <= d.floor + d.headroom).or(went);
+            }
         }
     }
     if let Some(k) = went {
@@ -435,25 +554,65 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         studio.drawing.clear();
         studio.pick = None;
     }
+    if let Some(Drag::Floor(_)) = studio.drag
+        && !input.button_down(MouseButton::Left)
+    {
+        studio.drag = None;
+    }
     let step: f64 = if shift { 0.5 } else { 0.1 };
     let k = studio.deck;
     if k < plan.decks.len() {
         // The floor moved: the decks above with it (the stack keeps together); not
         // down into the deck below (its height and a deck's thickness kept).
+        // The steps that repeat while held (key or button): once at the press, then
+        // after a pause, over and over.
+        let steps = [
+            ([KeyCode::Equal, KeyCode::NumpadAdd], Action::Floor(0.1)),
+            ([KeyCode::Minus, KeyCode::NumpadSubtract], Action::Floor(-0.1)),
+            ([KeyCode::BracketRight, KeyCode::BracketRight], Action::Headroom(0.1)),
+            ([KeyCode::BracketLeft, KeyCode::BracketLeft], Action::Headroom(-0.1)),
+        ];
+        let mut fire = [false; 4];
+        for (n, (keys, action)) in steps.iter().enumerate() {
+            let start = keys.iter().any(|k| input.pressed(*k)) || clicked == Some(*action);
+            let down = keys.iter().any(|k| input.down(*k)) || (input.button_down(MouseButton::Left) && button_at(size, cursor) == Some(*action));
+            if start {
+                studio.held = Some((n, 0.0, 0.4));
+                fire[n] = true;
+            } else if let Some((h, t, next)) = studio.held.as_mut()
+                && *h == n
+            {
+                if !down {
+                    studio.held = None;
+                } else {
+                    *t += ctx.dt;
+                    if *t >= *next {
+                        *next += 0.06;
+                        fire[n] = true;
+                    }
+                }
+            }
+        }
         let mut lift = 0.0;
-        if input.pressed(KeyCode::Equal) || input.pressed(KeyCode::NumpadAdd) || clicked == Some(Action::Floor(0.1)) {
+        // Dragged in the side view: to the cursor's height (5 cm steps).
+        if studio.drag == Some(Drag::Floor(k)) {
+            let to = (side_y(h, low_r, studio.side_pan, cursor.y) / 0.05).round() * 0.05;
+            let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + deckplan::DECK);
+            lift = to.max(lowest) - plan.decks[k].floor;
+        }
+        if fire[0] {
             lift = step;
         }
-        if input.pressed(KeyCode::Minus) || input.pressed(KeyCode::NumpadSubtract) || clicked == Some(Action::Floor(-0.1)) {
-            let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + DECK_THICKNESS);
+        if fire[1] {
+            let lowest = k.checked_sub(1).map_or(f64::MIN, |b| plan.decks[b].floor + plan.decks[b].headroom + deckplan::DECK);
             lift = -step.min(plan.decks[k].floor - lowest).max(0.0);
         }
         // Its height changed: the decks above moved by as much.
         let mut taller = 0.0;
-        if input.pressed(KeyCode::BracketRight) || clicked == Some(Action::Headroom(0.1)) {
+        if fire[2] {
             taller = step;
         }
-        if input.pressed(KeyCode::BracketLeft) || clicked == Some(Action::Headroom(-0.1)) {
+        if fire[3] {
             taller = -step.min(plan.decks[k].headroom - 1.0).max(0.0);
         }
         plan.decks[k].headroom += taller;
@@ -489,6 +648,33 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             studio.drag = None;
         }
     }
+    // The side and end views: dragged with the right (or middle) button; FLIP
+    // shows the other side, the other end.
+    let grab = input.button_pressed(MouseButton::Right) || input.button_pressed(MouseButton::Middle);
+    let held = input.button_down(MouseButton::Right) || input.button_down(MouseButton::Middle);
+    if grab && in_rect(side_r, cursor) {
+        studio.drag = Some(Drag::View(0));
+    } else if grab && in_rect(end_r, cursor) {
+        studio.drag = Some(Drag::View(1));
+    }
+    if let Some(Drag::View(w)) = studio.drag {
+        if held {
+            *(if w == 0 { &mut studio.side_pan } else { &mut studio.end_pan }) += input.mouse_delta;
+        } else {
+            studio.drag = None;
+        }
+    }
+    if input.button_pressed(MouseButton::Left) {
+        let flip = |r: (Vec2, Vec2)| { let b = flip_button(r); in_rect(b, cursor) };
+        if flip(side_r) {
+            studio.side_flip = !studio.side_flip;
+            return true;
+        }
+        if flip(end_r) {
+            studio.end_flip = !studio.end_flip;
+            return true;
+        }
+    }
     let Some(deck) = plan.decks.get_mut(studio.deck) else { return true };
     // A walk-through: F over the plan, there; WALK HERE (or F off it), then a click on it.
     let walk_key = input.pressed(KeyCode::KeyF) || clicked == Some(Action::Walk);
@@ -512,16 +698,6 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     let p = snap(at, alt);
     let near = |q: DVec2| q.distance(at) * px < 8.0;
     match studio.tool {
-        // A floor carved round the click: SHIFT+click, or AUTO FILL armed.
-        Tool::Plane if over && input.button_pressed(MouseButton::Left) && (shift || studio.fill_armed) && studio.drawing.is_empty() => {
-            studio.fill_armed = false;
-            if let Some(h) = studio.hull.as_ref()
-                && let Some(poly) = deckplan::carve(&h.sides, &deck.walls, at)
-            {
-                deck.planes.push(poly);
-                studio.pick = Some(Pick::Plane(deck.planes.len() - 1));
-            }
-        }
         Tool::Plane | Tool::Wall => {
             if over && input.button_pressed(MouseButton::Left) {
                 // (A plane closes on its first corner again.)
@@ -637,9 +813,12 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             }
         }
     }
-    // The floors' panel's AUTO FILL: the next click on the plan carves a floor.
+    // The floors' panel's FILL: floors over the whole deck, now.
     if auto_shown(studio) && input.button_pressed(MouseButton::Left) && in_rect({ let (p, c) = auto_button(studio); (p, p + c) }, cursor) {
-        studio.fill_armed = !studio.fill_armed;
+        if let Some(mesh) = shape.walk.as_ref() {
+            deck.planes.extend(deckplan::fill(mesh, deck.floor));
+            studio.pick = deck.planes.len().checked_sub(1).map(Pick::Plane);
+        }
         return true;
     }
     // The panel's list: a row clicked picks that thing (REMOVE then takes it out).
@@ -696,7 +875,8 @@ fn inside(poly: &[DVec2], p: DVec2) -> bool {
 /// The studio drawn (the shipyard's layout page).
 pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio) {
     let size = frame.size();
-    let (plan_r, side_r) = regions(size, panel_open(studio));
+    let (plan_r, low_r) = regions(size, panel_open(studio));
+    let (side_r, end_r) = split_views(low_r);
     frame.text(Vec2::new(12.0, 10.0), &format!("{place}   LAYOUT STUDIO - {hull_name}   {:.0} CR", app.v.credits), LABEL);
     // The toolbar: the tool in use lit, the button under the cursor brighter.
     {
@@ -708,7 +888,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             draw_cell(frame, p, c, key, name, lamp);
         }
     }
-    for r in [plan_r, side_r] {
+    for r in [plan_r, side_r, end_r] {
         frame.hud_rect(r.0, r.1 - r.0, PAPER);
     }
     let Some(h) = studio.hull.as_ref() else {
@@ -737,6 +917,13 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for [a, b] in &h.section {
             frame.hud_line_smooth(to(*a), to(*b), HULL);
         }
+        // Its length along its foot, its beam beside it (the whole hull's).
+        {
+            let corners = [to(DVec2::new(h.lo.x, h.lo.z)), to(DVec2::new(h.hi.x, h.hi.z))];
+            let (lo, hi) = (corners[0].min(corners[1]), corners[0].max(corners[1]));
+            dimension(frame, Vec2::new(lo.x, hi.y - 6.0), Vec2::new(hi.x, hi.y - 6.0), h.hi.z - h.lo.z);
+            dimension(frame, Vec2::new(hi.x + 12.0, hi.y), Vec2::new(hi.x + 12.0, lo.y), h.hi.x - h.lo.x);
+        }
         let Some(deck) = deck else { return };
         // Floors: trimmed to the hull (filled), the openings from the deck below cut out, their outlines as drawn.
         let holes = plan.map(|p| deckplan::openings(p, studio.deck)).unwrap_or_default();
@@ -746,9 +933,10 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             }
         }
         for (k, poly) in deck.planes.iter().enumerate() {
-            for (z0, z1, x0, x1) in deckplan::floor_strips(poly, &h.sides, &holes) {
-                let (a, b) = (to(DVec2::new(x1, z0)), to(DVec2::new(x0, z1)));
-                frame.hud_rect(a.min(b), (a - b).abs(), FLOOR);
+            for q in deckplan::floor_pieces(poly, &h.sides, &holes) {
+                let q = q.map(to);
+                frame.hud_triangle_colored([q[0], q[1], q[2]], [FLOOR; 3]);
+                frame.hud_triangle_colored([q[0], q[2], q[3]], [FLOOR; 3]);
             }
             let col = if studio.pick == Some(Pick::Plane(k)) { PICKED } else { INK.scale(0.8) };
             for i in 0..poly.len() {
@@ -860,21 +1048,144 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             }
         }
     });
-    // The side view: the hull along its centre line, and the decks (this one bright), to scale.
-    let (k, mid) = side_view(h, side_r);
-    let zs = |z: f64| mid.x + ((z - (h.lo.z + h.hi.z) / 2.0) * k) as f32;
-    let sy = |y: f64| mid.y - ((y - (h.lo.y + h.hi.y) / 2.0) * k) as f32;
+    // The side view: the hull seen from a side (its edges, faint: doors, windows,
+    // frames) and cut along its centre line, and the decks (this one bright), to
+    // scale; the end view beside it, at the same scale.
+    let elev = studio.elev.as_ref().filter(|(k, _)| k == hull_key).map(|(_, e)| e.clone());
+    let (zc, xc, yc) = ((h.lo.z + h.hi.z) / 2.0, (h.lo.x + h.hi.x) / 2.0, (h.lo.y + h.hi.y) / 2.0);
+    let (k, mid) = side_view(h, low_r, studio.side_pan);
+    // (Seen from -x, the nose... to the right if it's +z; flipped, from +x.)
+    let sdir = if studio.side_flip { -1.0 } else { 1.0 };
+    let zs = |z: f64| mid.x + ((z - zc) * k * sdir) as f32;
+    let sy = |y: f64| mid.y - ((y - yc) * k) as f32;
+    const SCALE: f32 = 0.7;
+    // While the elevations are worked out: a spinner, and what's happening.
+    let spinner = |frame: &mut Frame, r: (Vec2, Vec2)| {
+        let c = (r.0 + r.1) * 0.5;
+        for i in 0..12 {
+            let a = i as f32 / 12.0 * std::f32::consts::TAU + studio.spin * 6.0;
+            let lit = ((i as f32 / 12.0 + studio.spin) % 1.0).max(0.15);
+            let d = Vec2::new(a.cos(), a.sin());
+            frame.hud_line(c + d * 9.0, c + d * 16.0, INK.scale(lit));
+        }
+        frame.text_scaled(c + Vec2::new(-60.0, 24.0), "DRAWING THE HULL", LABEL.scale(0.8), SCALE);
+    };
+    // (What the screen spans in metres, for the grids: across and up from the keel.)
+    let span = |c: f32, m: f32| ((c - m) as f64 / k, 0.0);
     frame.hud_clipped(side_r.0, side_r.1, |frame| {
+        {
+            let (a, b) = (span(side_r.0.x, mid.x).0 * sdir + zc, span(side_r.1.x, mid.x).0 * sdir + zc);
+            let top = yc + (mid.y - side_r.0.y) as f64 / k - h.keel;
+            let bottom = yc - (side_r.1.y - mid.y) as f64 / k - h.keel;
+            view_grid(frame, side_r, k, zs, |v| sy(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+        }
+        match &elev {
+            Some(e) => {
+                for [a, b] in &e.side[studio.side_flip as usize] {
+                    frame.hud_line(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.35));
+                }
+            }
+            None => spinner(frame, side_r),
+        }
         for [a, b] in &h.profile {
             frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
         }
+        // Its length under it, its height beside it.
+        let (z0, z1) = (zs(h.lo.z).min(zs(h.hi.z)), zs(h.lo.z).max(zs(h.hi.z)));
+        dimension(frame, Vec2::new(z0, sy(h.lo.y) + 10.0), Vec2::new(z1, sy(h.lo.y) + 10.0), h.hi.z - h.lo.z);
+        dimension(frame, Vec2::new(z1 + 12.0, sy(h.lo.y)), Vec2::new(z1 + 12.0, sy(h.hi.y)), h.hi.y - h.lo.y);
+        // The hull's sheet: its measures and its mass.
+        let sheet = format!("{}   L {:.1} M   B {:.1} M   H {:.1} M   DRY MASS {:.1} T", h.name, h.hi.z - h.lo.z, h.hi.x - h.lo.x, h.hi.y - h.lo.y, h.dry_mass / 1000.0);
+        frame.text_scaled(Vec2::new(side_r.0.x + 6.0, side_r.0.y + 8.0), &sheet, INK.scale(0.8), SCALE);
+        // The decks' lines, from just right of their labels (so they don't run through them).
+        let label = |k: usize, d: &Deck| format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom);
+        let labels_w = decks.iter().enumerate().map(|(k, d)| label(k, d).chars().count()).max().unwrap_or(0) as f32 * universe_engine::frame::GLYPH * SCALE;
+        let from = side_r.0.x + 6.0 + labels_w + 20.0;
         for (k, d) in decks.iter().enumerate() {
             let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
-            frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor)), Vec2::new(side_r.1.x, sy(d.floor)), col);
-            frame.hud_line(Vec2::new(side_r.0.x, sy(d.floor + d.headroom)), Vec2::new(side_r.1.x, sy(d.floor + d.headroom)), col.scale(0.4));
-            frame.text(Vec2::new(side_r.0.x + 6.0, sy(d.floor) - 14.0), &format!("DECK {}  {:.1} M UP  {:.1} M HIGH", k + 1, d.floor - h.keel, d.headroom), col);
+            frame.hud_line(Vec2::new(from, sy(d.floor)), Vec2::new(side_r.1.x, sy(d.floor)), col);
+            // (The deck's slab under its floor.)
+            frame.hud_line(Vec2::new(from, sy(d.floor - deckplan::DECK)), Vec2::new(side_r.1.x, sy(d.floor - deckplan::DECK)), col.scale(0.5));
+            frame.hud_line(Vec2::new(from, sy(d.floor + d.headroom)), Vec2::new(side_r.1.x, sy(d.floor + d.headroom)), col.scale(0.4));
+        }
+        // Their labels, small, each level with the middle of its deck; where decks are
+        // closer than a line, pushed apart (top down) with a leader to the deck.
+        let line = 18.0 * SCALE;
+        let mut order: Vec<usize> = (0..decks.len()).collect();
+        order.sort_by(|&a, &b| decks[b].floor.total_cmp(&decks[a].floor));
+        let mut next_free = f32::MIN;
+        for k in order {
+            let d = &decks[k];
+            let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
+            let want = sy(d.floor + d.headroom / 2.0) - line / 2.0;
+            let y = want.max(next_free);
+            next_free = y + line;
+            let text = label(k, d);
+            let end = frame.text_scaled(Vec2::new(side_r.0.x + 6.0, y), &text, col, SCALE);
+            if (y - want).abs() > 1.0 {
+                let mid_y = y + line / 2.0;
+                frame.hud_line(Vec2::new(end.x + 4.0, mid_y), Vec2::new(from, sy(d.floor + d.headroom / 2.0)), col.scale(0.7));
+            }
+        }
+        // The height under the cursor: a guide across, and how far up it is (from the
+        // keel), to line a deck up with a door or a window.
+        if in_rect(side_r, studio.cursor) {
+            let y = studio.cursor.y;
+            let up = side_y(h, low_r, studio.side_pan, y) - h.keel;
+            frame.hud_line(Vec2::new(from, y), Vec2::new(side_r.1.x, y), PICKED.scale(0.45));
+            frame.text_scaled(Vec2::new(studio.cursor.x + 10.0, y - 13.0), &format!("{up:.2} M UP"), PICKED, SCALE);
         }
     });
+    // The end view: from the nose (its right to the right) or, flipped, the tail.
+    let (_, emid) = end_view(h, low_r, studio.end_pan);
+    let edir = h.nose * if studio.end_flip { -1.0 } else { 1.0 };
+    let xs = |x: f64| emid.x + ((x - xc) * k * edir) as f32;
+    let ey = |y: f64| emid.y - ((y - yc) * k) as f32;
+    frame.hud_clipped(end_r.0, end_r.1, |frame| {
+        {
+            let (a, b) = (span(end_r.0.x, emid.x).0 * edir + xc, span(end_r.1.x, emid.x).0 * edir + xc);
+            let top = yc + (emid.y - end_r.0.y) as f64 / k - h.keel;
+            let bottom = yc - (end_r.1.y - emid.y) as f64 / k - h.keel;
+            view_grid(frame, end_r, k, xs, |v| ey(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+            let (x0, x1) = (xs(h.lo.x).min(xs(h.hi.x)), xs(h.lo.x).max(xs(h.hi.x)));
+            dimension(frame, Vec2::new(x0, ey(h.lo.y) + 10.0), Vec2::new(x1, ey(h.lo.y) + 10.0), h.hi.x - h.lo.x);
+            dimension(frame, Vec2::new(x1 + 12.0, ey(h.lo.y)), Vec2::new(x1 + 12.0, ey(h.hi.y)), h.hi.y - h.lo.y);
+        }
+        match &elev {
+            Some(e) => {
+                for [a, b] in &e.end[studio.end_flip as usize] {
+                    frame.hud_line(Vec2::new(xs(a.x), ey(a.y)), Vec2::new(xs(b.x), ey(b.y)), HULL.scale(0.5));
+                }
+            }
+            None => spinner(frame, end_r),
+        }
+        for (k, d) in decks.iter().enumerate() {
+            let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
+            frame.hud_line(Vec2::new(end_r.0.x, ey(d.floor)), Vec2::new(end_r.1.x, ey(d.floor)), col);
+            frame.hud_line(Vec2::new(end_r.0.x, ey(d.floor - deckplan::DECK)), Vec2::new(end_r.1.x, ey(d.floor - deckplan::DECK)), col.scale(0.5));
+            frame.hud_line(Vec2::new(end_r.0.x, ey(d.floor + d.headroom)), Vec2::new(end_r.1.x, ey(d.floor + d.headroom)), col.scale(0.4));
+        }
+        if in_rect(end_r, studio.cursor) {
+            let y = studio.cursor.y;
+            let up = yc - (y - emid.y) as f64 / k - h.keel;
+            frame.hud_line(Vec2::new(end_r.0.x, y), Vec2::new(end_r.1.x, y), PICKED.scale(0.45));
+            frame.text_scaled(Vec2::new(studio.cursor.x + 10.0, y - 13.0), &format!("{up:.2} M UP"), PICKED, SCALE);
+        }
+    });
+    // The views' FLIP buttons: which side, which end, is shown.
+    {
+        use crate::hud::{draw_cell, Lamp};
+        // (Seen from -x with the nose at +z: its starboard side.)
+        let starboard = (if studio.side_flip { 1.0 } else { -1.0 }) == -h.nose;
+        let views = [(side_r, if starboard { "STARBOARD SIDE" } else { "PORT SIDE" }), (end_r, if studio.end_flip { "FROM THE TAIL" } else { "FROM THE NOSE" })];
+        for (r, what) in views {
+            let (p, q) = flip_button(r);
+            let lamp = if in_rect((p, q), studio.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, q - p, "", "FLIP", lamp);
+            let w = what.chars().count() as f32 * universe_engine::frame::GLYPH * 0.7;
+            frame.text_scaled(Vec2::new(p.x - w - 5.0, p.y + 3.0), what, LABEL.scale(0.8), 0.7);
+        }
+    }
     // The tool's panel: what its kind of thing is and how it's made, where it's at,
     // and the ones on this deck (a row clicked picks it).
     if panel_open(studio) {
@@ -904,7 +1215,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         if auto_shown(studio) {
             let (p, c) = auto_button(studio);
             let hover = in_rect((p, p + c), studio.cursor);
-            crate::hud::draw_cell(frame, p, c, "S+CLK", "AUTO FILL", if studio.fill_armed || hover { crate::hud::Lamp::On } else { crate::hud::Lamp::Off });
+            crate::hud::draw_cell(frame, p, c, "", "FILL THE DECK", if hover { crate::hud::Lamp::On } else { crate::hud::Lamp::Off });
         }
         let top = panel_list_top(studio);
         frame.text(Vec2::new(x, top - 18.0), "ON THIS DECK", INK.scale(0.8));
