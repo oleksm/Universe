@@ -95,7 +95,7 @@ pub fn rows(app: &App) -> Vec<Row> {
             let (at, _) = sys.field_body_state(field, body, t);
             let ore = &app.charts.goods[mining::ore(r).item()];
             let solid = if r.structure == universe_sim::world::belt::Structure::Rubble { "RUBBLE" } else { "SOLID" };
-            let detail = format!("{:<7}{:>6} {solid:<6} {:<10}{:>4.1}KG/S", r.class.letter(), fmt::distance(b.rail.radius * 2.0), ore_short(&ore.name), mining::dig_rate(r));
+            let detail = format!("{:<7}{:>6} {solid:<6} {:<13}{:>4.1}KG/S", r.class.letter(), fmt::distance(b.rail.radius * 2.0), ore_short(&ore.name), mining::dig_rate(r));
             Some(Row { field, body, name: b.name.to_uppercase(), detail, distance: at.distance(ship) - b.rail.radius, at, color: b.color })
         })
         .collect();

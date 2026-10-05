@@ -219,7 +219,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let line = 12.0;
     let shown = 20usize;
     let first = app.picker.index.saturating_sub(shown - 1);
-    let row = |k: usize, c: &Candidate, mark: &str| format!("{mark}{:>2} {:<12} {} {:>7}", k + 1, truncate(&c.name, 12), truncate(&c.detail, 40), fmt::distance(c.distance.max(0.0)));
+    let row = |k: usize, c: &Candidate, mark: &str| format!("{mark}{:>2} {:<12} {:<46} {:>10}", k + 1, truncate(&c.name, 12), truncate(&c.detail, 46), fmt::distance(c.distance.max(0.0)));
     let width = list.iter().enumerate().skip(first).take(shown).map(|(k, c)| universe_engine::text_size(&row(k, c, " ")).x).fold(360.0, f32::max);
     let pos = Vec2::new(size.x - width - 12.0, 230.0);
     let rows = list.len().clamp(1, shown) as f32;
@@ -235,6 +235,13 @@ pub fn draw(frame: &mut Frame, app: &App) {
         frame.text(pos + Vec2::new(0.0, 2.0 * line), &if app.mining.on { format!("NOTHING PROSPECTED - {} TO PROSPECT", key(Act::Prospect)) } else { "NOTHING IN REACH".into() }, LIST.scale(0.6));
         return;
     }
+    // Its columns, as the rows lay them out.
+    let detail = match crate::hud::active_mode(app) {
+        crate::hud::ShipMode::Mining => format!("{:<7}{:>6} {:<6} {:<13}{:>8}", "CLASS", "SIZE", "BUILD", "ORE", "DIG"),
+        _ => "WHAT".to_string(),
+    };
+    let header = format!(" {:>2} {:<12} {:<46} {:>10}", "", "NAME", detail, "RANGE");
+    frame.text(Vec2::new(pos.x, pos.y + line), &header, LIST.scale(0.45));
     let now = locked(app);
     for (k, c) in list.iter().enumerate().skip(first).take(shown) {
         let y = pos.y + (2 + k - first) as f32 * line;

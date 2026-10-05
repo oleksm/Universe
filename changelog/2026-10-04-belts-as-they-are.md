@@ -36,3 +36,14 @@
   belt.
 - **NPC miners keep to the fields for now.** The fields of fragments round a remnant stay as they
   were: recent break-ups, the one place rocks are close together.
+
+## Belt rocks seen on screen (2026-10-05)
+
+- **Seen in the running game:** the survey, the list, a locked belt rock at 300 m, anchored at
+  15 m. Three dev scenarios to look again: `beltpick`, `beltrock`, `beltmining`.
+- **The star wobbles:** a ship right by a belt rock couldn't anchor, because the physics looked for
+  belt rocks round the system's middle instead of round the star. Fixed.
+- **Belt rocks are catalogued by five letters and digits** (`MB BS25R`), not by ring and number,
+  which ran past the list's column and repeated.
+- **The lock list has a header row** (NAME, CLASS, SIZE, BUILD, ORE, DIG, RANGE), and its columns line up
+  for long ore names and ranges of hundreds of thousands of km.

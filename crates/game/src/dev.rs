@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system showcase watch rawland inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam";
+pub const SCENARIOS: &str = "system showcase watch rawland inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam beltpick beltrock beltmining";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -421,6 +421,55 @@ pub fn apply(app: &mut App, name: &str) {
                 let u = app.engine.universe();
                 u.follow(universe_sim::FollowKind::Orbit, (name == "orbitrock1k").then_some(1_000.0));
                 for _ in 0..60 * 60 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+            }
+        }
+        "beltpick" | "beltrock" | "beltmining" => {
+            // In the home system's main belt, as it is (see `belts`): "beltpick" surveyed with the
+            // list held up; "beltrock" 300 m off the nearest rock the survey found, locked;
+            // "beltmining" anchored to it and digging for half a minute.
+            app.mode = Mode::Pilot;
+            let t = app.engine.universe().world.time;
+            let main = sys.belts.iter().find(|b| b.kind == universe_sim::world::belts::BeltKind::Main).expect("a main belt");
+            let from = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
+            let star = positions[0];
+            let found = universe_sim::world::belts::survey(&sys, from, t);
+            let f = found.iter().find(|f| f.diameter > 30.0).expect("a belt rock in sight").clone();
+            let bodies = sys.field_bodies(f.field);
+            let mut pos = Vec::new();
+            universe_sim::world::physics::positions(&bodies[..], t, &mut pos);
+            let i = f.body;
+            let b = &bodies[i];
+            let sun = (star - pos[i]).normalize();
+            let up = (sun + sun.any_orthonormal_vector() * 0.8).normalize();
+            let gap = if name == "beltmining" { 15.0 } else { 300.0 };
+            let near = pos[i] + up * (b.surface_radius(b.rotation(t).inverse() * up) + SHIP_RADIUS + gap);
+            let u = app.engine.universe();
+            if name == "beltpick" {
+                u.ship.position = star + from;
+                u.ship.velocity = universe_sim::world::physics::velocity(&bodies[..], 0, t) + DVec3::new(0.0, 0.0, -(universe_sim::units::G * sys.bodies[0].mass / from.length()).sqrt());
+            } else {
+                u.ship.position = near;
+                u.ship.velocity = universe_sim::world::physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(near - pos[i]);
+                u.ship.orientation = universe_sim::ship::facing(up.any_orthonormal_vector(), -up);
+            }
+            u.ship.angular_velocity = DVec3::ZERO;
+            app.mining.on = true;
+            crate::mining::prospect_for_show(app, 5.0);
+            if name == "beltpick" {
+                app.picker.hold_for_show();
+            } else {
+                app.engine.universe().cockpit().lock_rock(Some((f.field, i)));
+            }
+            if name == "beltmining" {
+                let u = app.engine.universe();
+                u.command(&ShipCommands { anchor: Some(true), ..u.ship.holding() });
+                for _ in 0..10 {
+                    u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+                }
+                u.command(&ShipCommands { excavate: Some(true), ..u.ship.holding() });
+                for _ in 0..60 * 30 {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 }
             }

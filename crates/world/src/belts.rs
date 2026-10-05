@@ -423,7 +423,8 @@ pub fn rock_body(sys: &StarSystem, patch: Patch, k: usize, rock: &BeltRock) -> c
     let mass = density * shape.volume();
     let day = (rng.range(2.3f64.ln(), 30.0f64.ln())).exp() * crate::units::HOUR;
     let tilt = glam::DQuat::from_rotation_arc(DVec3::Y, rng.unit_vector());
-    let name = format!("{}-{}{}", belt_name(&sys.belts[patch.belt as usize]), patch.ring, k);
+    let _ = k;
+    let name = format!("{} {}", belt_name(&sys.belts[patch.belt as usize]), designation(rock.seed));
     let mut b = crate::system::natural(name, BodyKind::Asteroid, mass, shape.radius, day, rock.class.color(), None, 0, rock.orbit.clone(), tilt);
     b.rail.attracts = false;
     b.rock = Some(std::sync::Arc::new(crate::belt::Rock { class: rock.class, structure, composition, density, shape }));
@@ -438,4 +439,18 @@ pub fn belt_name(b: &Belt) -> &'static str {
         BeltKind::Trojan { lead: false, .. } => "TT",
         BeltKind::Outer => "OB",
     }
+}
+
+/// A rock's designation: five letters and digits from its seed, as a survey
+/// catalogues it (`4F2A1`).
+pub fn designation(seed: u64) -> String {
+    const DIGITS: &[u8] = b"0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+    let mut n = seed;
+    (0..5)
+        .map(|_| {
+            let c = DIGITS[(n % DIGITS.len() as u64) as usize] as char;
+            n /= DIGITS.len() as u64;
+            c
+        })
+        .collect()
 }
