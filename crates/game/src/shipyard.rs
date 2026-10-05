@@ -65,6 +65,18 @@ impl Shipyard {
     }
 }
 
+impl Shipyard {
+    /// Asked to close: true if it can; the interior studio's unsaved plan asked
+    /// about first (that studio shown, its question up).
+    fn may_close(&mut self) -> bool {
+        if self.interior.close() {
+            return true;
+        }
+        self.page = Page::Interior;
+        false
+    }
+}
+
 pub fn open(app: &mut App) -> Option<Shipyard> {
     Some(Shipyard::interior(app))
 }
@@ -74,12 +86,26 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     // The shipyard key closes it (the interior studio asks first if its plan is unsaved).
     if crate::keys::pressed(&ctx.input, Act::Shipyard) {
         return match app.shipyard.as_mut() {
-            Some(y) if y.page == Page::Interior => !y.interior.close(),
-            _ => false,
+            Some(y) => y.may_close(),
+            None => false,
         };
     }
     let spec = app.ship.spec();
     let Some(y) = app.shipyard.as_mut() else { return false };
+    // The two studios: the 3D interior and the 2D deck layout, switched any time
+    // (their tabs at the top right, or TAB), each as it was left.
+    let input = &ctx.input;
+    let size = ctx.hud_size.as_vec2();
+    let tab = (input.button_pressed(universe_engine::MouseButton::Left)).then(|| (0..2).find(|&k| inside(tab_rect(size, k), input.cursor))).flatten();
+    if input.pressed(universe_engine::KeyCode::Tab) || tab.is_some() {
+        y.page = match (tab, y.page) {
+            (Some(0), _) => Page::Interior,
+            (Some(_), _) => Page::Layout,
+            (None, Page::Interior) => Page::Layout,
+            (None, Page::Layout) => Page::Interior,
+        };
+        return true;
+    }
     if y.page == Page::Interior {
         let mut interior = std::mem::take(&mut y.interior);
         let stay = crate::interior::input(app, ctx, &mut interior);
@@ -106,15 +132,28 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     // A walk-through: the studio put by, the pilot on foot there, first person.
     if let Some(at) = studio.walk.take() {
         app.engine.send(universe_sim::Command::Preview(Some(at)));
-        app.preview = Some(Shipyard::back_to(studio));
+        app.preview = app.shipyard.take().map(|mut y| {
+            y.studio = studio;
+            y
+        });
         app.mode = crate::Mode::Pilot;
         app.chase_cam = false;
         return false;
     }
-    if let Some(y) = app.shipyard.as_mut() {
-        y.studio = studio;
-    }
-    stay
+    let Some(y) = app.shipyard.as_mut() else { return false };
+    y.studio = studio;
+    // Closed from the deck studio: the interior's plan asked about first (shown there).
+    stay || y.may_close()
+}
+
+/// The studios' tabs at the top right: the 3D interior (0), the 2D decks (1).
+fn tab_rect(size: Vec2, k: usize) -> (Vec2, Vec2) {
+    let w = 120.0;
+    (Vec2::new(size.x - 12.0 - (2 - k) as f32 * (w + 4.0) + 4.0, 6.0), Vec2::new(w, 16.0))
+}
+
+fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
+    q.x >= p.x && q.x <= p.x + c.x && q.y >= p.y && q.y <= p.y + c.y
 }
 
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
@@ -125,6 +164,14 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     match y.page {
         Page::Interior => crate::interior::draw(frame, app, &place, &y.interior),
         Page::Layout => crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio),
+    }
+    // The studios' tabs (the one open lit).
+    use crate::hud::{draw_cell, Lamp};
+    let cursor = if y.page == Page::Interior { y.interior.cursor() } else { y.studio.cursor };
+    for (k, (page, name)) in [(Page::Interior, "3D INTERIOR"), (Page::Layout, "2D DECKS")].into_iter().enumerate() {
+        let (p, c) = tab_rect(size, k);
+        let lamp = if y.page == page || inside((p, c), cursor) { Lamp::On } else { Lamp::Off };
+        draw_cell(frame, p, c, "TAB", name, lamp);
     }
 }
 

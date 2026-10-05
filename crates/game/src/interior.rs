@@ -668,6 +668,11 @@ impl Interior {
         }
     }
 
+    /// Where the cursor was last seen (HUD pixels).
+    pub fn cursor(&self) -> Vec2 {
+        self.cursor
+    }
+
     /// Changed since it was last saved or opened?
     pub fn unsaved(&self) -> bool {
         self.saved.as_ref().is_some_and(|s| *s != self.plan)
