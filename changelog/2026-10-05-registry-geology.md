@@ -10,3 +10,6 @@
 - **Ore to metal:** an ore for each deposit type, a mine, a concentrator, and works for copper,
   zinc, nickel, chromium, tin, gold and titanium. A tonne of copper takes 190 t of porphyry ore;
   a tonne of gold, over a hundred thousand tonnes of rock.
+- **The metals an ore carries beside its main one are won:** molybdenum, lead, silver, gold,
+  tungsten, platinum, diamonds, and nickel from laterite. Three new works (lead smelter,
+  molybdenum works, tungsten works).

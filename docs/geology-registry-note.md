@@ -92,8 +92,12 @@ Not settled, and not started. The questions as the registry sees them:
 - **Works:** copper smelter, zinc works, nickel smelter, ferroalloy furnace (chromium), tin smelter,
   gold works, titanium works. Each balances by mass; the sulphur of the sulphide ores is caught.
 
-**Not yet won, though your deposits carry them:** molybdenum, silver, lead, tungsten, cobalt, the
-platinum metals, diamonds, and laterite nickel. They go to tailings or slag for now.
+**Won beside the main metal (2026-10-05, later):** molybdenum (off a porphyry, to a molybdenum
+works), lead (beside zinc, to a lead smelter, which also gives silver), copper (beside zinc and
+nickel), tungsten (beside tin, to a tungsten works), gold and silver (from the copper smelter's
+tank slime), the platinum metals (from the nickel smelter, as platinum), diamonds (from kimberlite,
+in the concentrator), and laterite nickel (in the ferroalloy furnace, as ferronickel). **Still
+lost:** cobalt, and the silver of epithermal and massive sulphide ores.
 
 ## After the brief's v0.1 (2026-10-05, later)
 

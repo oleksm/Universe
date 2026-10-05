@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.lead-concentrate
+  name: "Lead concentrate"
+  traded_as: market.ores
+  kind: intermediate
+  description: "Ground ore floated until it is 60% lead: mostly galena."
+physical:
+  bulk_density: 2600
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

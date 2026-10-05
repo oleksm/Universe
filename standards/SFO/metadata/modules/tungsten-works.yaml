@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.tungsten-works
+  name: "Tungsten works"
+  step: "Win tungsten"
+  description: "Pressure vessels that dissolve the ore in soda, crystallisers, and furnaces where hydrogen reduces the oxide to a grey powder: tungsten is never melted."
+physical:
+  length: 100
+  width: 50
+  height: 20
+recipes:
+  - makes: element.w
+    does: "Concentrate is dissolved in soda, purified and crystallised, then reduced with hydrogen to metal powder."
+    inputs:
+      - { item: good.tungsten-concentrate, quantity: 2.044 }
+      - { item: element.h, quantity: 0.0329 }
+    outputs:
+      - { item: good.water, quantity: 0.294 }
+      - { item: good.chemical-waste, quantity: 0.7829 }
+    rate: 0.1
+    power: 2000000
+basis:
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "Concentrate of 65% tungsten oxide (sourced), 95% won (a guess); the hydrogen and the water it makes are the chemistry's. The soda is not counted." }
+  - { of: [recipes.power], tier: invented, review: true, note: "20 MJ a kg: no figure was found. To be reviewed." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

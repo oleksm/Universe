@@ -2325,10 +2325,13 @@ for nd in needs:
     for g_ in nd.get("gives") or []:
         _outs.setdefault(g_["item"], []).append("people")
 rows = []
+_elements = {(e_.get("identity") or {}).get("symbol") for e_ in elements}
 for it in sorted(_outs, key=lambda i: item_name(i).lower()):
+    if it in _elements:       # (a metal won beside the main one is a product, not a waste)
+        continue
     takers = list(dict.fromkeys(_ins.get(it) or []))
     rows.append(row("ok" if takers else "gap", item_name(it), ", ".join(list(dict.fromkeys(_outs[it]))[:6]) + (" and others" if len(set(_outs[it])) > 6 else ""), ", ".join(takers[:6]) + (" and others" if len(takers) > 6 else "") or "nothing takes it"))
-report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed.", ["Given off", "By", "Taken by"], rows)
+report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed. Elements are left out: a metal won beside the main one is a product.", ["Given off", "By", "Taken by"], rows)
 
 # 3d. The dictionary: the registry's shared words, and what each value means (standards/dictionary.schema.yaml).
 _dict = load(os.path.join(TREE, "dictionary.schema.yaml")).get("definitions") or {}

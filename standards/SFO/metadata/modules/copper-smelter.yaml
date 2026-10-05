@@ -3,23 +3,25 @@ identity:
   key: module.copper-smelter
   name: "Copper smelter"
   step: "Smelt copper"
-  description: "A flash furnace that burns the sulphur out of concentrate, converters that blow the matte to metal, and tanks where the metal is refined by current."
+  description: "A flash furnace that burns the sulphur out of concentrate, converters that blow the matte to metal, and tanks where the metal is refined by current. The gold and silver the ore carried settle out of the refining tanks as a slime."
 physical:
   length: 400
   width: 200
   height: 40
 recipes:
   - makes: element.cu
-    does: "Concentrate is flashed with oxygen to matte, blown to blister copper, cast as anodes and refined by current. The sulphur is caught."
+    does: "Concentrate is flashed with oxygen to matte, blown to blister copper, cast as anodes and refined by current. The sulphur is caught, and the gold and silver are taken from the tank slime."
     inputs:
       - { item: good.copper-concentrate, quantity: 3.682 }
       - { item: element.o, quantity: 0.2848 }
     outputs:
       - { item: element.s, quantity: 1.178 }
+      - { item: element.au, quantity: 2.1e-05 }
+      - { item: element.ag, quantity: 0.00045 }
       - { item: good.slag, quantity: 1.788 }
     rate: 7.0
     power: 119000000
 basis:
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "17 GJ a tonne of cathode from concentrate (14 to 20), smelting, converting and refining." }
-  - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "Chalcopyrite concentrate taken as 28% copper, 32% sulphur, 27% iron; 97% of the copper won (a guess). The iron leaves as oxide in the slag; the sulphur is caught, as real smelters catch it for acid (3 t of acid a tonne of copper)." }
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "Chalcopyrite concentrate taken as 28% copper, 32% sulphur, 27% iron; 97% of the copper won (a guess). The iron leaves as oxide in the slag; the sulphur is caught (3 t of acid a tonne of copper, in a real smelter). Gold and silver: what a porphyry's gold (0.1 g a tonne of ore) and half a sediment ore's silver would bring, four fifths of it won: a concentrate does not say which ore it came from, so one figure stands for both." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

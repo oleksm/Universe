@@ -3,18 +3,19 @@ identity:
   key: module.concentrator
   name: "Concentrator"
   step: "Grind and float"
-  description: "Crushers, mills that grind the ore to powder, and cells where the ore mineral floats off on froth. Nine tenths and more of what goes in leaves as tailings."
+  description: "Crushers, mills that grind the ore to powder, and cells where each ore mineral floats off on its own froth. Nine tenths and more of what goes in leaves as tailings."
 physical:
   length: 300
   width: 150
   height: 30
 recipes:
   - makes: good.copper-concentrate
-    does: "Porphyry copper ore is crushed, ground to powder and floated; what does not float is tailings."
+    does: "Porphyry copper ore is crushed, ground to powder and floated; what does not float is tailings. With it comes molybdenum concentrate."
     inputs:
       - { item: good.porphyry-copper-ore, quantity: 72.73 }
     outputs:
-      - { item: good.tailings, quantity: 71.73 }
+      - { item: good.molybdenum-concentrate, quantity: 0.01309 }
+      - { item: good.tailings, quantity: 71.71 }
     rate: 6.875
     power: 57600000
   - makes: good.copper-concentrate
@@ -26,46 +27,59 @@ recipes:
     rate: 32.81
     power: 57600000
   - makes: good.zinc-concentrate
-    does: "Carbonate zinc ore is crushed, ground to powder and floated; what does not float is tailings."
+    does: "Carbonate zinc ore is crushed, ground to powder and floated; what does not float is tailings. With it comes lead concentrate."
     inputs:
       - { item: good.carbonate-zinc-ore, quantity: 17.63 }
     outputs:
-      - { item: good.tailings, quantity: 16.63 }
+      - { item: good.lead-concentrate, quantity: 0.3086 }
+      - { item: good.tailings, quantity: 16.32 }
     rate: 28.36
     power: 57600000
   - makes: good.zinc-concentrate
-    does: "Shale zinc ore is crushed, ground to powder and floated; what does not float is tailings."
+    does: "Shale zinc ore is crushed, ground to powder and floated; what does not float is tailings. With it comes lead concentrate."
     inputs:
       - { item: good.shale-zinc-ore, quantity: 11.02 }
     outputs:
-      - { item: good.tailings, quantity: 10.02 }
+      - { item: good.lead-concentrate, quantity: 0.45 }
+      - { item: good.tailings, quantity: 9.57 }
     rate: 45.37
     power: 57600000
   - makes: good.zinc-concentrate
-    does: "Massive sulphide ore is crushed, ground to powder and floated; what does not float is tailings."
+    does: "Massive sulphide ore is crushed, ground to powder and floated; what does not float is tailings. With it comes copper concentrate."
     inputs:
       - { item: good.massive-sulphide-ore, quantity: 30.86 }
     outputs:
-      - { item: good.tailings, quantity: 29.86 }
+      - { item: good.copper-concentrate, quantity: 1.254 }
+      - { item: good.tailings, quantity: 28.6 }
     rate: 16.2
     power: 57600000
   - makes: good.nickel-concentrate
-    does: "Nickel sulphide ore is crushed, ground to powder and floated; what does not float is tailings."
+    does: "Nickel sulphide ore is crushed, ground to powder and floated; what does not float is tailings. With it comes copper concentrate."
     inputs:
       - { item: good.nickel-sulphide-ore, quantity: 22.86 }
     outputs:
-      - { item: good.tailings, quantity: 21.86 }
+      - { item: good.copper-concentrate, quantity: 0.3571 }
+      - { item: good.tailings, quantity: 21.5 }
     rate: 21.88
     power: 57600000
   - makes: good.tin-concentrate
-    does: "Tin tungsten ore is crushed, ground to powder and floated; what does not float is tailings."
+    does: "Tin tungsten ore is crushed, ground to powder and floated; what does not float is tailings. With it comes tungsten concentrate."
     inputs:
       - { item: good.tin-tungsten-ore, quantity: 209.0 }
     outputs:
-      - { item: good.tailings, quantity: 208.0 }
+      - { item: good.tungsten-concentrate, quantity: 0.3551 }
+      - { item: good.tailings, quantity: 207.6 }
     rate: 2.393
     power: 57600000
+  - makes: good.diamonds
+    does: "Kimberlite is crushed and washed, and the diamonds picked from the heavy part by their glow under X-rays."
+    inputs:
+      - { item: good.kimberlite, quantity: 10000000.0 }
+    outputs:
+      - { item: good.tailings, quantity: 10000000.0 }
+    rate: 5.0e-05
+    power: 57600000
 basis:
-  - { of: [recipes, recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "From each ore's grade (its deposit type's) and the concentrate's: copper 27 to 29%, zinc 47 to 56%, nickel 16%, tin 60 to 70% cassiterite. 87.5% of the metal is caught, the figure for copper, taken for all. The other metals an ore carries (the molybdenum and gold of a porphyry, the lead beside zinc, the tungsten beside tin) go to tailings here: to be put right." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "From each ore's grades (its deposit type's) and each concentrate's: copper 27 to 29%, zinc 47 to 56%, lead 35 to 90% (60 taken), nickel 16%, tin 60 to 70% cassiterite, tungsten 65% oxide; molybdenum's 50% is from memory. 87.5% of each metal is caught, the figure for copper, taken for all but molybdenum (60%, a guess). Gold, silver and the platinum metals stay in the concentrate and are parted at the smelter. Diamonds: half a carat a tonne, all of it found." }
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "32 kWh a tonne of ore, for crushing, grinding and floating (grinding alone is 18.7)." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

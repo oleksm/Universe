@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.tungsten-concentrate
+  name: "Tungsten concentrate"
+  traded_as: market.ores
+  kind: intermediate
+  description: "Scheelite and wolframite washed to 65% tungsten oxide."
+physical:
+  bulk_density: 2800
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

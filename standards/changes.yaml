@@ -425,6 +425,7 @@
 - { record: good.kimberlite, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "019f86594c17a268" }
 - { record: good.lamps, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "01ca998635898adf" }
 - { record: good.laterite-nickel-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "bd2987f961e7ca6a" }
+- { record: good.lead-concentrate, at: "2026-10-05T19:01:44Z", status: review, summary: "first tracked", sha: "f3bff74d78acb714" }
 - { record: good.lemons, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0fb4351aebbe17e1" }
 - { record: good.lentils, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ab69c9d2e5042588" }
 - { record: good.lettuce, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "83b449f5e0001ea6" }
@@ -450,6 +451,7 @@
 - { record: good.methane, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "4b87b93935ba8259" }
 - { record: good.methanol, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "326c56762a94f360" }
 - { record: good.milk, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e56917c30649c7e5" }
+- { record: good.molybdenum-concentrate, at: "2026-10-05T19:01:44Z", status: review, summary: "first tracked", sha: "0a7d9bde29f88355" }
 - { record: good.mutton, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ea63322ec34c2f5f" }
 - { record: good.nickel-concentrate, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "0f3f94169b662923" }
 - { record: good.nickel-iron-ore, at: "2026-10-05T18:47:07Z", status: review, summary: "changed: game", sha: "bd5b371be33be36c" }
@@ -513,6 +515,7 @@
 - { record: good.tin-tungsten-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "988171c992b37343" }
 - { record: good.tomatoes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "75675465e53ecdda" }
 - { record: good.tools, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "dcaa62947c3b718c" }
+- { record: good.tungsten-concentrate, at: "2026-10-05T19:01:44Z", status: review, summary: "first tracked", sha: "9708240f2e74ab44" }
 - { record: good.vegetable-oil, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "92695105cca8b5ff" }
 - { record: good.wafers, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "d4cce2ff37be4d52" }
 - { record: good.waste-rock, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "b3e8be3880ba3bd8" }
@@ -641,16 +644,16 @@
 - { record: module.cold-store, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "46d43cd06e226556" }
 - { record: module.composites-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "2a0c442619b90b68" }
 - { record: module.compost-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9376e17ce0accb67" }
-- { record: module.concentrator, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "21fa712a8367e010" }
+- { record: module.concentrator, at: "2026-10-05T19:01:44Z", status: review, summary: "changed: identity, recipes, basis", sha: "cac7241bd121436e" }
 - { record: module.concrete-plant, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "264d6779e50aa55e" }
-- { record: module.copper-smelter, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "8e2fa0512ac1b8a9" }
+- { record: module.copper-smelter, at: "2026-10-05T19:01:44Z", status: review, summary: "changed: identity, recipes, basis", sha: "155e4d09fc0f0706" }
 - { record: module.crushing-plant, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "bf0d4711e382dc1e" }
 - { record: module.cutting-table, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "968bcdff11e198ab" }
 - { record: module.dairy, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "79b8e97c77695e47" }
 - { record: module.deuterium-plant, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: recipes", sha: "19a38a19c658177f" }
 - { record: module.electronics-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "12652c575c0ee9ac" }
 - { record: module.feed-mill, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "f4d7fd79ae4c5725" }
-- { record: module.ferroalloy-furnace, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "36b3df55a5090d30" }
+- { record: module.ferroalloy-furnace, at: "2026-10-05T19:01:44Z", status: review, summary: "changed: recipes, basis", sha: "733dcc65db02b371" }
 - { record: module.fertiliser-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "091e6df0626708e3" }
 - { record: module.field, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "d796edc8d32f30a5" }
 - { record: module.film-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "42017090b5470338" }
@@ -670,6 +673,7 @@
 - { record: module.ice-melter, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "84af142fe20e7ed5" }
 - { record: module.ingot-yard, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "003163bb06124167" }
 - { record: module.ladle-station, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "32956a810c28a2af" }
+- { record: module.lead-smelter, at: "2026-10-05T19:01:44Z", status: review, summary: "first tracked", sha: "2812018f05c64184" }
 - { record: module.lime-kiln, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "97d03c070a0815cc" }
 - { record: module.livestock-barn, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "401763ae7d03b35a" }
 - { record: module.loading-dock, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ce83d8d92cd49af7" }
@@ -678,7 +682,8 @@
 - { record: module.market-garden, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3b465c148099beb2" }
 - { record: module.meat-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c244506b83d5e90e" }
 - { record: module.mine, at: "2026-10-05T17:30:42Z", status: review, summary: "changed: recipes", sha: "67c0a4439088b670" }
-- { record: module.nickel-smelter, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "a328c85f0e1d24f1" }
+- { record: module.molybdenum-works, at: "2026-10-05T19:01:44Z", status: review, summary: "first tracked", sha: "605bcc2e3e260647" }
+- { record: module.nickel-smelter, at: "2026-10-05T19:01:44Z", status: review, summary: "changed: identity, recipes, basis", sha: "4295259260e0ff80" }
 - { record: module.oil-press, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "bf67b0e7c9041155" }
 - { record: module.orchard, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b6ff51fc9314269f" }
 - { record: module.ore-yard, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "aabf995c6ecb9a67" }
@@ -702,6 +707,7 @@
 - { record: module.textile-mill, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "dd755221ea0dbdfb" }
 - { record: module.tin-smelter, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "e9c2d8c9dfcfd2af" }
 - { record: module.titanium-works, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "0b88c2242c7a1d44" }
+- { record: module.tungsten-works, at: "2026-10-05T19:01:44Z", status: review, summary: "first tracked", sha: "e5616dfc3d8c2842" }
 - { record: module.vacuum-furnace, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1d5f2213106ad4c3" }
 - { record: module.water-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5193f8997feb1161" }
 - { record: module.welding-bay, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "54895caef569a2de" }

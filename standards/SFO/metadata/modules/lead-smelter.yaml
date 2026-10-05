@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.lead-smelter
+  name: "Lead smelter"
+  step: "Smelt lead"
+  description: "A bath furnace that burns the sulphur from galena and reduces the lead in one vessel, and kettles where the silver is skimmed off the bullion."
+physical:
+  length: 200
+  width: 100
+  height: 30
+recipes:
+  - makes: element.pb
+    does: "Concentrate is smelted in a bath with oxygen and coal; the bullion is refined and its silver skimmed off with zinc."
+    inputs:
+      - { item: good.lead-concentrate, quantity: 1.718 }
+      - { item: good.carbon, quantity: 0.11 }
+      - { item: element.o, quantity: 0.2931 }
+    outputs:
+      - { item: element.s, quantity: 0.1598 }
+      - { item: element.ag, quantity: 0.002 }
+      - { item: good.carbon-dioxide, quantity: 0.4031 }
+      - { item: good.slag, quantity: 0.5564 }
+    rate: 4.0
+    power: 17600000
+basis:
+  - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "A direct smelter (QSL) takes 70 kWh, 110 kg of coal and 25 m3 of gas a tonne of lead: 4.4 GJ. It gives 0.56 t of slag and about 2 kg of silver a tonne of bullion. Concentrate taken as 60% lead (35 to 90) and 9% sulphur; 97% won, a guess." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
