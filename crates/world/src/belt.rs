@@ -542,6 +542,17 @@ mod tests {
             }
         }
         assert!(fields > 120, "{fields} fields in 120 systems");
+        // And the belts as they are: a rock found near a point is found again a year on where its
+        // orbit takes it (its ring turns as one), and none is made from nothing (each patch the same).
+        let sys = systems.iter().find(|s| s.belts.iter().any(|b| b.kind == crate::belts::BeltKind::Main)).expect("a system with a main belt");
+        let main = sys.belts.iter().find(|b| b.kind == crate::belts::BeltKind::Main).unwrap();
+        let p = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
+        let near = crate::belts::rocks_near(sys, &sys.belts, sys.belt_seed, p, 0.0, 5.0e8, 0.0);
+        assert!(!near.is_empty(), "rocks in the main belt");
+        let (patch, k, rock, _) = &near[0];
+        let year = 3.156e7;
+        let again = crate::belts::rocks_near(sys, &sys.belts, sys.belt_seed, rock.orbit.position(year), year, 1.0e7, 0.0);
+        assert!(again.iter().any(|(q, j, _, _)| q == patch && j == k), "the same rock, a year on");
     }
 
 }

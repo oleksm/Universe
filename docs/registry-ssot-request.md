@@ -795,3 +795,12 @@ rewritten (eccentricity, mean temperature). Descriptions to update by hand (thei
 `celestial_export.py`: it skips bodies the export marks `small` (else the belt's largest body, an
 `asteroid`, would land in `bodies/`). Tidal heat now counts for every moon, a rocky planet's too:
 your page's "moons of a giant" can widen to all moons.
+
+**Belts as they are (2026-10-04, the engine's part).** `belts.rs` makes every system's main belt
+(Kirkwood gaps left empty), both trojan swarms of each giant, and outer belt, by
+`seeding.asteroids`: every rock on its own orbit, made only where something looks.
+`registry-figures` writes each charted system's counts under `belts` (Treistun's main belt:
+141,764 over 1 km). Simplifications to know (stated in `belts.rs`): small rocks' orbits nearly
+round; a trojan swarm is rings within 5% of its giant's orbit. Its own figures to move to a seeding
+record: the main belt's typical tilt (9°), the trojans' (10°), the swarm's 5% width, 64 rocks a
+patch.

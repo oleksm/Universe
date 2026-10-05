@@ -5,7 +5,7 @@ use universe_physics::{Collider, Ephemeris, OnRails, Orbit, RailBody, Surface};
 
 use crate::galaxy::{GalaxyStar, StarClass};
 use crate::names;
-use crate::rng::Rng;
+use crate::rng::{mix, Rng};
 use crate::terrain::{Terrain, TerrainKind};
 use crate::units::*;
 
@@ -174,6 +174,10 @@ pub struct StarSystem {
     pub fields: Vec<crate::belt::Field>,
     /// Which of `bodies` are its small bodies (see `small_bodies`): the last ones made.
     pub small: std::ops::Range<usize>,
+    /// Its belts as they are, every rock on its own orbit (see `belts`), and
+    /// the seed their rocks are made from.
+    pub belts: Vec<crate::belts::Belt>,
+    pub belt_seed: u64,
 }
 
 const ROCKY_COLORS: [[f32; 3]; 4] = [[0.8, 0.5, 0.3], [0.65, 0.65, 0.65], [0.85, 0.75, 0.5], [0.75, 0.4, 0.35]];
@@ -357,7 +361,7 @@ impl StarSystem {
             a *= rng.range(1.5, 2.1);
         }
 
-        let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new(), small: 0..0 };
+        let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new(), small: 0..0, belts: Vec::new(), belt_seed: mix(star.seed, 0xbe175) };
         // (What the registry has curated or frozen stands in place of what the seed made: see `celestial`.)
         // (A body taken off the system's roster there takes the others' numbers with it.)
         if let Some(moved) = crate::celestial::apply(&mut system, crate::celestial::Stage::Bodies, star.seed) {
@@ -371,6 +375,7 @@ impl StarSystem {
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);
         crate::small_bodies::add(&mut system, frost_line, star.seed);
+        system.belts = crate::belts::belts(&system, frost_line);
         crate::celestial::apply(&mut system, crate::celestial::Stage::Rocks, star.seed);
         system.settle();
         system

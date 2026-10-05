@@ -10,6 +10,7 @@
 //! Deterministic and headless; knows nothing about rendering.
 
 pub mod belt;
+pub mod belts;
 pub mod charts;
 pub mod climate;
 pub mod collisions;
