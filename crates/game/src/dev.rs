@@ -326,26 +326,23 @@ pub fn apply(app: &mut App, name: &str) {
                 app.engine.refresh();
                 app.v = app.engine.view();
             }
-            // Port Trethi's works given a day of what they take, run twenty minutes.
-            trethi_stocked(app);
+            // From the registry's day 0, the economy run (alone: no ships flown) for
+            // UNIVERSE_DAYS days (22: an MC-07 off Trethi Yard's dock), its companies seeing
+            // to their works each step.
+            let days: f64 = std::env::var("UNIVERSE_DAYS").ok().and_then(|d| d.parse().ok()).unwrap_or(22.0);
             let u = app.engine.universe();
-            let e = &mut u.markets.economy;
-            let ground = e.places.iter().find(|p| p.name == "Port Trethi").map(|p| p.ground);
-            let takes: Vec<(usize, f64)> = e.works.iter().filter(|x| Some(x.ground) == ground).flat_map(|x| x.takes()).collect();
-            for x in e.works.iter_mut().filter(|x| Some(x.ground) == ground && !x.exchange) {
-                for &(i, r) in &takes {
-                    if x.takes().iter().any(|t| t.0 == i) {
-                        let room = x.pool.free();
-                        x.pool.put(i, (r * 86_400.0).min(room));
-                    }
-                }
+            let step = universe_sim::services::economy::STEP;
+            let end = u.world.time + days * 86_400.0;
+            let mut t = u.markets.economy.stepped_to;
+            while t + step <= end {
+                t += step;
+                u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
+                universe_sim::company::run(u);
             }
-            let u = app.engine.universe();
-            let now = u.world.time + 1200.0;
-            u.markets.step(now, &mut u.land, &mut u.ledger, u.tick);
             app.engine.refresh();
             app.v = app.engine.view();
             let at = app.v.economy.iter().position(|p| p.name == "Port Trethi").unwrap_or(0);
+            let ground = app.v.economy.get(at).map(|p| p.ground);
             let mut panel: crate::economy::EconomyPanel = Default::default();
             panel.selected = at;
             if name == "economymodules" {
