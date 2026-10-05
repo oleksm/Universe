@@ -1262,7 +1262,7 @@ pub fn apply(app: &mut App, name: &str) {
             };
             // (UNIVERSE_DECKS: the deck studio open instead.)
             if std::env::var_os("UNIVERSE_DECKS").is_some() {
-                y.to_decks();
+                y.open_decks();
             }
             // (UNIVERSE_HIDE=k,k,...: those layers hidden.)
             for k in std::env::var("UNIVERSE_HIDE").unwrap_or_default().split(',').filter_map(|n| n.trim().parse().ok()) {

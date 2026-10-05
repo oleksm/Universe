@@ -51,7 +51,7 @@ impl Shipyard {
 
     /// Its interior studio (dev scenarios).
     /// The deck studio open (dev scenarios).
-    pub fn to_decks(&mut self) {
+    pub fn open_decks(&mut self) {
         self.page = Page::Layout;
     }
 
