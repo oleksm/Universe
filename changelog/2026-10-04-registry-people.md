@@ -31,3 +31,11 @@
 - **Buildings say what they are built of:** concrete and steel, by floor area.
 - **Scrap is melted again:** steel in the arc furnace, aluminium in the casthouse. Slag is crushed
   for aggregate.
+
+## Chemicals
+
+- **Seven chemical works:** soda ash, caustic soda and chlorine, sulphuric and nitric acid,
+  methanol, polyethylene and PVC, carbon and electrodes, soap, medicines.
+- **Plastic without oil:** made from carbon dioxide and hydrogen by way of methanol.
+- **The air plant's methane has a use:** it is split into hydrogen and the carbon that furnace
+  electrodes are baked from.

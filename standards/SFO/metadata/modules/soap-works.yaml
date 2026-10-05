@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.soap-works
+  name: "Soap works"
+  step: "Boil soap"
+  description: "Kettles where fat is boiled with caustic soda."
+physical:
+  length: 50
+  width: 30
+  height: 12
+recipes:
+  - makes: good.soap
+    does: "Tallow and caustic soda are boiled together; the soap is salted out and the glycerine run off."
+    inputs:
+      - { item: good.tallow, quantity: 0.9697 }
+      - { item: good.caustic-soda, quantity: 0.1305 }
+    outputs:
+      - { item: good.glycerine, quantity: 0.1002 }
+    rate: 0.5
+    power: 500000
+basis:
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "standards/sources/research_chemicals.json", note: "From the chemistry, the fat taken as the commonest in tallow (tristearin): 135 g of caustic soda a kg of fat. Lard is reported to take 137 to 145." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }

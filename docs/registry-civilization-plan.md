@@ -246,3 +246,23 @@ Takers: 14 of 30 now have one. **What this shows:** cement, glass and brick need
 a wet world has. A station or an airless port must ship them in, or build of something else
 (steel, or rock melted or sintered, which is not described). Soda ash for glass has no maker yet:
 chemicals, next.
+
+**3. Making, second step: chemicals (2026-10-04).** Figures: `standards/sources/research_chemicals.json`.
+
+| Works | Makes | From |
+|---|---|---|
+| Soda works | Soda ash | Salt and limestone |
+| Chlor-alkali plant | Caustic soda, with chlorine and hydrogen | Salt and water |
+| Acid plant | Sulphuric acid; nitric acid | Sulphur; ammonia |
+| Synthesis plant | Methanol; polyethylene; PVC | Carbon dioxide and hydrogen; methanol; methanol and chlorine |
+| Carbon works | Carbon; carbon anodes; graphite electrodes | Methane (the air plant's) |
+| Soap works | Soap, with glycerine | Tallow and caustic soda |
+| Pharma works | Medicines | Sugar, methanol, acid, alkali, water: a guess, at 50 kg of waste a kg |
+
+With no oil, carbon chemistry starts from carbon dioxide and hydrogen: plastic is made of breath
+and water, at a price in power. Medicine is now met: 13 of 20 needs. Salt, like limestone, is a
+wet world's rock. The fertiliser works' power is now worked out (15.8 MW) and not a guess.
+
+**Left for later in Making:** the food by-products as feed (their protein is found; the feed
+mill's mix is still a guess); phosphate and potash fertiliser; paper; the other metals (the 26
+parked processes); electronics and machines; the works that build works; wear.

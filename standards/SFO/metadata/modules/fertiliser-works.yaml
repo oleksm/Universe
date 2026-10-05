@@ -15,7 +15,8 @@ recipes:
       - { item: element.n, quantity: 0.82 }
       - { item: element.h, quantity: 0.18 }
     rate: 5.556
-    power: 12000000
+    power: 15800000
 basis:
   - { of: [recipes.inputs], tier: derived, note: "Ammonia is 14 parts nitrogen to 3 of hydrogen by weight." }
-  - { of: [physical, recipes, recipes.rate, recipes.power], tier: invented, review: true, source: "standards/sources/research_food_livestock.json", note: "Chosen. Making ammonia from natural gas takes 28 to 41 GJ a tonne, most of it for the hydrogen; what joining them takes when the hydrogen is brought was not found. To be reviewed." }
+  - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_chemicals.json", note: "Making ammonia from power takes 38 GJ a tonne in all, of which the hydrogen is 90 to 95%; the rest, 7.5% taken, is this works' share: joining them and taking the nitrogen from the air." }
+  - { of: [physical, recipes, recipes.rate], tier: invented, review: true, note: "Its size and rate are chosen. To be reviewed." }

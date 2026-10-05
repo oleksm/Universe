@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.pharma-works
+  name: "Pharma works"
+  step: "Make medicines"
+  description: "Fermenters, reactors and clean rooms. It makes little, by weight, and leaves fifty times as much behind."
+physical:
+  length: 100
+  width: 60
+  height: 15
+recipes:
+  - makes: good.medicines
+    does: "Grown in broth or built up step by step in solvents, then purified again and again."
+    inputs:
+      - { item: good.sugar, quantity: 10.0 }
+      - { item: good.methanol, quantity: 10.0 }
+      - { item: good.sulphuric-acid, quantity: 2.0 }
+      - { item: good.caustic-soda, quantity: 2.0 }
+      - { item: good.water, quantity: 27.0 }
+    outputs:
+      - { item: good.chemical-waste, quantity: 50.0 }
+    rate: 0.002
+    power: 2000000
+basis:
+  - { of: [recipes.outputs], tier: sourced, source: "standards/sources/research_chemicals.json", note: "Making medicines leaves 25 to more than 100 kg of waste for each kg made (Sheldon's E-factor); 50 taken." }
+  - { of: [physical, recipes, recipes.inputs, recipes.rate, recipes.power], tier: invented, review: true, note: "What the 51 kg going in are is a guess: sugar for the broth, a solvent, acid and alkali, water. To be reviewed." }

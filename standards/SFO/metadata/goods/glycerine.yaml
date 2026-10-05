@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.glycerine
+  name: "Glycerine"
+  kind: by-product
+  description: "The sweet, thick liquid left when fat is made into soap."
+physical:
+  bulk_density: 1260
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
