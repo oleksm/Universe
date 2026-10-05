@@ -50,6 +50,11 @@ impl Shipyard {
     }
 
     /// Its interior studio (dev scenarios).
+    /// The deck studio open (dev scenarios).
+    pub fn to_decks(&mut self) {
+        self.page = Page::Layout;
+    }
+
     pub fn interior_mut(&mut self) -> &mut crate::interior::Interior {
         &mut self.interior
     }
@@ -140,6 +145,12 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         }
         return stay;
     }
+    // The layers panel (as the 3D studio's, the same layers): a click there is its own.
+    if input.button_pressed(universe_engine::MouseButton::Left)
+        && crate::interior::layers_click(&mut y.interior, crate::studio::layers_corner(size, &y.studio), input.cursor)
+    {
+        return true;
+    }
     let mut studio = std::mem::take(&mut y.studio);
     let stay = crate::studio::input(app, ctx, &spec.key, spec.shape(), &mut studio);
     // A walk-through: the studio put by, the pilot on foot there, first person.
@@ -181,8 +192,10 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
         Page::Interior => crate::interior::draw(frame, app, &place, &y.interior),
         Page::Layout => crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio, &y.interior.access()),
     }
-    // In the deck studio: how it's saved (with the 3D plan), what was said.
+    // In the deck studio: how it's saved (with the 3D plan), what was said; the
+    // layers (the 3D studio's).
     if y.page == Page::Layout {
+        crate::interior::draw_layers(frame, &y.interior, crate::studio::layers_corner(size, &y.studio), y.studio.cursor);
         let note = y.interior.message().map_or_else(|| format!("CTRL+S SAVES{}", if y.interior.unsaved() { " *" } else { "" }), str::to_string);
         let w = note.chars().count() as f32 * universe_engine::frame::GLYPH * 0.7;
         frame.text_scaled(Vec2::new(tab_rect(size, 0).0.x - w - 12.0, 10.0), &note, Color([1.0, 0.85, 0.35, 1.0]), 0.7);

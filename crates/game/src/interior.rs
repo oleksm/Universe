@@ -86,8 +86,8 @@ const LAYERS: [(&str, Option<usize>, Option<Color>); 22] = [
     ("REACH", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
 ];
 
-/// The layers by name, for the drawing.
-mod layer {
+/// The layers by name, for the drawing (both studios).
+pub mod layer {
     pub const HULL: usize = 0;
     pub const GRID: usize = 1;
     pub const NAMES: usize = 10;
@@ -419,6 +419,8 @@ pub type Tunnel = (Vec3, Vec3, Option<(f32, f32)>, bool);
 pub struct Access {
     pub tunnels: Vec<Tunnel>,
     pub points: Vec<(Vec3, Color)>,
+    /// Each layer shown or not (by number in `LAYERS`: see `layer`).
+    pub layers: [bool; LAYERS.len()],
 }
 
 /// A wall triangle to draw: its corners (the hull's frame), its colour, which of
@@ -1152,7 +1154,9 @@ impl Interior {
                 let (pa, pb) = plan.axis(k);
                 (pa, pb, room, plan.group_of(k).is_some_and(|g| plan.groups[g].walled))
             }).collect(),
-            points: plan.points.iter().map(|p| (p.at, sort(p.name.as_deref()).0)).collect(),
+            // (Only the kinds of points shown.)
+            points: plan.points.iter().filter(|p| self.shown(3 + sort_index(p.name.as_deref()))).map(|p| (p.at, sort(p.name.as_deref()).0)).collect(),
+            layers: std::array::from_fn(|k| self.shown(k)),
         }
     }
 
@@ -1574,13 +1578,19 @@ fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
 
 /// The legend, at the bottom right: where it is and its size.
 fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
-    layers_rect(size, LAYERS.len())
+    layers_rect(layers_corner(size), LAYERS.len())
 }
 
-/// The layers panel with `rows` rows under its header: where it is and its size.
-fn layers_rect(size: Vec2, rows: usize) -> (Vec2, Vec2) {
+/// Where the layers panel's bottom right corner is in this studio.
+fn layers_corner(size: Vec2) -> Vec2 {
+    Vec2::new(size.x - 12.0, size.y - 26.0)
+}
+
+/// The layers panel with `rows` rows under its header, its bottom right at
+/// `corner`: where it is and its size.
+fn layers_rect(corner: Vec2, rows: usize) -> (Vec2, Vec2) {
     let height = LAYER_ROW * (rows + 1) as f32 + 8.0;
-    (Vec2::new(size.x - LAYERS_WIDTH - 12.0, size.y - 26.0 - height), Vec2::new(LAYERS_WIDTH, height))
+    (Vec2::new(corner.x - LAYERS_WIDTH, corner.y - height), Vec2::new(LAYERS_WIDTH, height))
 }
 
 /// The layers panel: its width and a row's height (px).
@@ -1598,14 +1608,78 @@ fn layer_rows(i: &Interior) -> Vec<usize> {
 
 /// The layers panel's header (a click folds it up, or out), and the place of the
 /// `n`th of `rows` rows under it.
-fn layers_header(size: Vec2, rows: usize) -> (Vec2, Vec2) {
-    let (p, c) = layers_rect(size, rows);
+fn layers_header(corner: Vec2, rows: usize) -> (Vec2, Vec2) {
+    let (p, c) = layers_rect(corner, rows);
     (Vec2::new(p.x + 2.0, p.y + 2.0), Vec2::new(c.x - 4.0, LAYER_ROW))
 }
 
-fn layer_row(size: Vec2, rows: usize, n: usize) -> (Vec2, Vec2) {
-    let (p, c) = layers_rect(size, rows);
+fn layer_row(corner: Vec2, rows: usize, n: usize) -> (Vec2, Vec2) {
+    let (p, c) = layers_rect(corner, rows);
     (Vec2::new(p.x + 4.0, p.y + 4.0 + LAYER_ROW * (n + 1) as f32), Vec2::new(c.x - 8.0, LAYER_ROW))
+}
+
+/// The layers panel drawn, its bottom right at `corner` (`cursor` lights what's
+/// under it).
+pub fn draw_layers(frame: &mut Frame, interior: &Interior, corner: Vec2, cursor: Vec2) {
+    // The layers: a header (folds the panel), then a row each: a group's arrow (folds
+    // its rows), a checkbox (ticked: shown), its key's colour, its name (under
+    // another, set in; not shown, dim).
+    {
+        let rows = layer_rows(interior);
+        let (p, c) = layers_rect(corner, rows.len());
+        frame.hud_rect(p, c, LAYERS_BACK);
+        frame.hud_box(p, c, LAYERS_EDGE);
+        let (hp, hc) = layers_header(corner, rows.len());
+        let fold = if interior.layers_folded { "+" } else { "-" };
+        let head = if inside((hp, hc), cursor) { PICKED } else { LAYERS_HEAD };
+        frame.text_scaled(hp + Vec2::new(3.0, 1.5), &format!("{fold} LAYERS"), head, 0.62);
+        for (n, &k) in rows.iter().enumerate() {
+            let (name, parent, colour) = LAYERS[k];
+            let (q, qc) = layer_row(corner, rows.len(), n);
+            let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
+            let on = interior.shown(k);
+            let x = q.x + if parent.is_some() { 10.0 } else { 0.0 };
+            if group {
+                let arrow = if interior.group_folded[k] { ">" } else { "v" };
+                frame.text_scaled(Vec2::new(q.x - 1.0, q.y + 1.5), arrow, LAYERS_HEAD.scale(0.8), 0.55);
+            }
+            // (The checkbox: a box, ticked when it's on.)
+            let b = Vec2::new(x + 8.0, q.y + 2.0);
+            let box_col = if on { LAYERS_TICK } else { LAYERS_TEXT.scale(0.45) };
+            frame.hud_box(b, Vec2::splat(7.0), box_col);
+            if !interior.hidden[k] {
+                frame.hud_line(b + Vec2::new(1.5, 3.5), b + Vec2::new(3.0, 5.5), box_col);
+                frame.hud_line(b + Vec2::new(3.0, 5.5), b + Vec2::new(6.0, 1.0), box_col);
+            }
+            if let Some(col) = colour {
+                frame.hud_rect(Vec2::new(b.x + 10.0, q.y + 4.5), Vec2::new(6.0, 2.0), if on { col } else { col.scale(0.35) });
+            }
+            let text = if inside((q, qc), cursor) { PICKED } else if on { LAYERS_TEXT } else { LAYERS_TEXT.scale(0.4) };
+            frame.text_scaled(Vec2::new(b.x + 19.0, q.y + 1.5), name, text, 0.58);
+        }
+    }
+}
+
+/// A click at `cursor` on the layers panel (its bottom right at `corner`): the
+/// header folds it, a group's arrow folds its rows, a row shows or hides its layer.
+/// True if it was on the panel.
+pub fn layers_click(interior: &mut Interior, corner: Vec2, cursor: Vec2) -> bool {
+    let rows = layer_rows(interior);
+    if inside(layers_header(corner, rows.len()), cursor) {
+        interior.layers_folded = !interior.layers_folded;
+        return true;
+    }
+    if let Some(n) = (0..rows.len()).find(|&n| inside(layer_row(corner, rows.len(), n), cursor)) {
+        let k = rows[n];
+        let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
+        if group && cursor.x < layer_row(corner, rows.len(), n).0.x + 10.0 {
+            interior.group_folded[k] = !interior.group_folded[k];
+        } else {
+            interior.hidden[k] = !interior.hidden[k];
+        }
+        return true;
+    }
+    inside(layers_rect(corner, rows.len()), cursor)
 }
 
 /// The layers panel's own colours: slate, a muted amber edge and heading, soft ticks
@@ -1845,26 +1919,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let d = input.mouse_delta;
     let pressed = input.button_pressed(MouseButton::Left);
     // A layer's row clicked: shown or hidden.
-    // (The header: the panel folded up or out. A group's arrow: its rows folded; a
-    // row: shown or hidden.)
-    let rows = layer_rows(interior);
-    if pressed && inside(layers_header(size, rows.len()), cursor) {
-        interior.layers_folded = !interior.layers_folded;
-        return true;
-    }
-    if pressed
-        && let Some(n) = (0..rows.len()).find(|&n| inside(layer_row(size, rows.len(), n), cursor))
-    {
-        let k = rows[n];
-        let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
-        if group && cursor.x < layer_row(size, rows.len(), n).0.x + 10.0 {
-            interior.group_folded[k] = !interior.group_folded[k];
-        } else {
-            interior.hidden[k] = !interior.hidden[k];
-        }
-        return true;
-    }
-    if pressed && inside(layers_rect(size, rows.len()), cursor) {
+    if pressed && layers_click(interior, layers_corner(size), cursor) {
         return true;
     }
     // The globe: an axis clicked undoes the view's turn about that axis only. X:
@@ -2617,43 +2672,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(at + Vec2::new(6.0, 5.0 + k as f32 * line), l, col, 0.7);
         }
     }
-    // The layers: a header (folds the panel), then a row each: a group's arrow (folds
-    // its rows), a checkbox (ticked: shown), its key's colour, its name (under
-    // another, set in; not shown, dim).
-    {
-        let rows = layer_rows(interior);
-        let (p, c) = layers_rect(size, rows.len());
-        frame.hud_rect(p, c, LAYERS_BACK);
-        frame.hud_box(p, c, LAYERS_EDGE);
-        let (hp, hc) = layers_header(size, rows.len());
-        let fold = if interior.layers_folded { "+" } else { "-" };
-        let head = if inside((hp, hc), interior.cursor) { PICKED } else { LAYERS_HEAD };
-        frame.text_scaled(hp + Vec2::new(3.0, 1.5), &format!("{fold} LAYERS"), head, 0.62);
-        for (n, &k) in rows.iter().enumerate() {
-            let (name, parent, colour) = LAYERS[k];
-            let (q, qc) = layer_row(size, rows.len(), n);
-            let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
-            let on = interior.shown(k);
-            let x = q.x + if parent.is_some() { 10.0 } else { 0.0 };
-            if group {
-                let arrow = if interior.group_folded[k] { ">" } else { "v" };
-                frame.text_scaled(Vec2::new(q.x - 1.0, q.y + 1.5), arrow, LAYERS_HEAD.scale(0.8), 0.55);
-            }
-            // (The checkbox: a box, ticked when it's on.)
-            let b = Vec2::new(x + 8.0, q.y + 2.0);
-            let box_col = if on { LAYERS_TICK } else { LAYERS_TEXT.scale(0.45) };
-            frame.hud_box(b, Vec2::splat(7.0), box_col);
-            if !interior.hidden[k] {
-                frame.hud_line(b + Vec2::new(1.5, 3.5), b + Vec2::new(3.0, 5.5), box_col);
-                frame.hud_line(b + Vec2::new(3.0, 5.5), b + Vec2::new(6.0, 1.0), box_col);
-            }
-            if let Some(col) = colour {
-                frame.hud_rect(Vec2::new(b.x + 10.0, q.y + 4.5), Vec2::new(6.0, 2.0), if on { col } else { col.scale(0.35) });
-            }
-            let text = if inside((q, qc), interior.cursor) { PICKED } else if on { LAYERS_TEXT } else { LAYERS_TEXT.scale(0.4) };
-            frame.text_scaled(Vec2::new(b.x + 19.0, q.y + 1.5), name, text, 0.58);
-        }
-    }
+    draw_layers(frame, interior, layers_corner(size), interior.cursor);
     // The tool's panel: what it does and how, its actions, how much is drawn.
     {
         use crate::hud::{draw_cell, Lamp};
