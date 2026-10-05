@@ -17,6 +17,7 @@ renders as made (textured, physically based) and flies by its physics. Example a
 | `gear_…` | landing contacts: put them at the bottoms of the feet. Set down, the ship stands on the lowest one (its centre that high over the ground or deck) |
 | `dock_…`, `cockpit` | docking ports, the pilot's seat (getting up, you stand on the floor under it) |
 | `hatch` | the crew hatch; its +Y arrow down the ramp. Landed, you walk out that way to the ground (pointing straight down: aft; none: from the port side, amidships); coming in, you stand on the floor at its top |
+| `door_…` | the middle of a doorway (a crew door's, shut): the interior studio's door points |
 | `mount_hardpoint_…`, `mount_cargo…`, `mount_utility…` | one slot each (guns, racks, utility); other `mount_<slot>` set where that module sits |
 | An empty's **+Y arrow** | a nozzle's exhaust; a port's way out; the pilot's view |
 | Scene properties `freefall_name`, `freefall_class` (1-4) | its name; its size class (how big its slots are) |

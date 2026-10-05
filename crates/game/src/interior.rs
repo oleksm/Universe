@@ -536,12 +536,10 @@ impl Interior {
                 points.push(Point { at: Vec3::new(c.x, level, c.z), name: Some("MINING OPENING".into()) });
             }
         }
-        // Its crew doors; every window (each pane of its glass, less the doors'); and
+        // Its doorways (marked in the model: `door_*`); every window (each pane of its glass, less the doors'); and
         // its dash, a point at each screen.
-        for (prefix, name) in [("CrewDoor_L", "DOOR L"), ("CrewDoor_R", "DOOR R")] {
-            if let Some((lo, hi)) = span(prefix) {
-                points.push(Point { at: (lo + hi) * 0.5, name: Some(name.into()) });
-            }
+        for n in shape.nodes(Role::Door) {
+            points.push(Point { at: n.at.as_vec3(), name: Some(n.name.to_uppercase().replace('_', " ")) });
         }
         let panes = |what: &str| -> Vec<(Vec3, Vec3)> { shape.islands.iter().filter(|(n, _, _)| n.contains(what) && !n.starts_with("CrewDoor")).map(|(_, lo, hi)| (lo.as_vec3(), hi.as_vec3())).collect() };
         // (A window a pane of a square metre or more: smaller glass is a lens or a
