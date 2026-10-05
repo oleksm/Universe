@@ -112,7 +112,7 @@ pub struct Interior {
     panelled: Option<(Plan, Vec<Panel>)>,
     /// The deck studio's decks as last drawn here: the plan, and its floors and
     /// walls (each a flat outline, the hull's frame; floor or wall).
-    decks: Option<(universe_sim::world::deckplan::DeckPlan, Vec<(Vec<Vec3>, bool)>)>,
+    decks: Option<(universe_sim::world::deckplan::DeckPlan, Vec<DeckShape>)>,
     /// The plan as last saved or opened; closing with unsaved changes asked
     /// (`confirm`); a message for a while (s).
     saved: Option<Plan>,
@@ -231,7 +231,7 @@ fn outside(poly: Vec<Vec3>, planes: &[(Vec3, f32)]) -> Vec<Vec<Vec3>> {
 
 /// A deck plan's floors and walls as flat outlines (the hull's frame): its floors'
 /// pieces at their levels, its walls' runs from floor to ceiling.
-fn deck_shapes(plan: &universe_sim::world::deckplan::DeckPlan, mesh: &universe_sim::world::walk::WalkMesh) -> Vec<(Vec<Vec3>, bool)> {
+fn deck_shapes(plan: &universe_sim::world::deckplan::DeckPlan, mesh: &universe_sim::world::walk::WalkMesh) -> Vec<DeckShape> {
     use universe_sim::world::deckplan;
     let mut out = Vec::new();
     for (d, deck) in plan.decks.iter().enumerate() {
@@ -255,10 +255,16 @@ fn deck_shapes(plan: &universe_sim::world::deckplan::DeckPlan, mesh: &universe_s
     out
 }
 
+/// A deck's floor piece or wall run, flat (its outline) and which.
+type DeckShape = (Vec<Vec3>, bool);
+
+/// A tunnel as the deck studio shows it: from, to, its room across and up, walled?
+pub type Tunnel = (Vec3, Vec3, Option<(f32, f32)>, bool);
+
 /// The access plan as the deck studio shows it: tunnels (from, to, their room
 /// across and up if any, walled?) and points (where, their colour), the hull's frame.
 pub struct Access {
-    pub tunnels: Vec<(Vec3, Vec3, Option<(f32, f32)>, bool)>,
+    pub tunnels: Vec<Tunnel>,
     pub points: Vec<(Vec3, Color)>,
 }
 
