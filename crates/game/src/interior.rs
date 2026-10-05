@@ -20,6 +20,8 @@ const PATH: Color = Color([0.4, 1.0, 0.75, 0.95]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
 const PLANE: Color = Color([0.4, 1.0, 0.75, 0.35]);
 const CLASH: Color = Color([1.0, 0.3, 0.25, 1.0]);
+/// A walled group's walls (see-through panels).
+const WALL: Color = Color([0.75, 0.9, 1.0, 0.28]);
 
 /// The kinds of point, by their colour (the legend's, in its order): the hull's
 /// own (named) by what they are, and the ones laid.
@@ -83,6 +85,8 @@ pub struct Interior {
     /// takes it out); the cursor (HUD pixels).
     hover: Option<Hover>,
     pick: Option<Hover>,
+    /// More lines picked with it (SHIFT, or the rest of a picked line's group).
+    more: Vec<usize>,
     cursor: Vec2,
     /// The plan as it was before each change (UNDO goes back one), and the ones
     /// undone (REDO).
@@ -161,6 +165,40 @@ struct Plan {
     points: Vec<Point>,
     /// Each line: its two points and its cross-section.
     lines: Vec<(usize, usize, Profile)>,
+    /// Lines grouped (each a group's lines), and whether it's walled off: walls
+    /// along its tubes' sides, their ends open.
+    groups: Vec<Group>,
+}
+
+#[derive(Clone, Default, PartialEq)]
+struct Group {
+    lines: Vec<usize>,
+    walled: bool,
+}
+
+impl Plan {
+    /// Its lines that `keep` says stay, the others gone (the groups' kept in step;
+    /// a group left with none, gone).
+    fn keep_lines(&mut self, keep: impl Fn(usize, &(usize, usize, Profile)) -> bool) {
+        let mut to = vec![None; self.lines.len()];
+        let mut kept = Vec::new();
+        for (k, l) in self.lines.iter().enumerate() {
+            if keep(k, l) {
+                to[k] = Some(kept.len());
+                kept.push(*l);
+            }
+        }
+        self.lines = kept;
+        for g in &mut self.groups {
+            g.lines = g.lines.iter().filter_map(|&k| to.get(k).copied().flatten()).collect();
+        }
+        self.groups.retain(|g| !g.lines.is_empty());
+    }
+
+    /// The group line `k` is in, if any.
+    fn group_of(&self, k: usize) -> Option<usize> {
+        self.groups.iter().position(|g| g.lines.contains(&k))
+    }
 }
 
 /// A line's cross-section: its shape, its width and its height (m), laid round the
@@ -289,6 +327,8 @@ impl Interior {
         let d = add(Vec3::new(e.x, h.y, (h.z + e.z) * 0.5), &mut self.plan);
         let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0 }, Profile { section: Section::Hex, width: 0.9, height: 0.9 });
         self.plan.lines.extend([(hatch, a, round), (a, b, round), (b, cockpit, round), (hatch, d, hex), (d, engines, hex)]);
+        // (The corridor walled off, a group.)
+        self.plan.groups.push(Group { lines: vec![0, 1, 2], walled: true });
         self.tool = Tool::Path;
     }
 
@@ -401,7 +441,7 @@ impl Interior {
         for (k, at) in panes("DashScreen").into_iter().map(|(lo, hi)| (lo + hi) * 0.5).enumerate() {
             points.push(Point { at, name: Some(format!("DASH {}", k + 1)) });
         }
-        self.plan = Plan { hull: key.into(), points, lines: Vec::new() };
+        self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new() };
     }
 
     fn hull(&self, key: &str) -> Option<Arc<Hull>> {
@@ -484,6 +524,10 @@ enum Action {
     Remove,
     /// The cross-section's shape: for new lines (laying paths), or the picked line's.
     Section(Section),
+    /// The picked lines made a group; their groups broken up; walled off (or open).
+    Group,
+    Ungroup,
+    Wall,
 }
 
 /// The panel's sliders: the cross-section's width (0) and height (1), each its
@@ -512,7 +556,10 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     let shapes = shapes.into_iter();
     match tool {
         Tool::Path => shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
-        Tool::Look => shapes.chain([(at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
+        Tool::Look => {
+            let w3 = (c.x - 16.0 - 12.0) / 3.0;
+            shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect()
+        }
     }
 }
 
@@ -559,6 +606,18 @@ fn globe_ends(cam: &Camera, size: Vec2) -> Vec<(Vec3, Vec2, f32)> {
         .into_iter()
         .map(|a| (a, c + Vec2::new(a.dot(cam.right), -a.dot(cam.up)) * r * 0.8, -a.dot(cam.forward)))
         .collect()
+}
+
+/// The lines picked: the one picked and those with it.
+fn picked_lines(i: &Interior) -> Vec<usize> {
+    let mut lines: Vec<usize> = i.more.clone();
+    if let Some(Hover::Line(k)) = i.pick
+        && !lines.contains(&k)
+    {
+        lines.insert(0, k);
+    }
+    lines.retain(|&k| k < i.plan.lines.len());
+    lines
 }
 
 /// The selected point's level: the one picked, or the one a path runs on from.
@@ -727,12 +786,9 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     if !input.button_down(MouseButton::Left) {
         interior.slider = None;
     }
-    let profile = match (interior.tool, interior.pick) {
-        (Tool::Look, Some(Hover::Line(k))) => Some(&mut interior.plan.lines[k].2),
-        (Tool::Look, _) => None,
-        _ => Some(&mut interior.profile),
-    };
-    if let Some(p) = profile {
+    // (In LOOK, every line picked; laying paths, the new lines'.)
+    let picked = picked_lines(interior);
+    let set = |p: &mut Profile| {
         if let Some(Action::Section(s)) = action {
             p.section = s;
         }
@@ -741,6 +797,44 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             let v = ROOM_MIN + ((cursor.x - at.x) / len.x).clamp(0.0, 1.0) * (ROOM_MAX - ROOM_MIN);
             *(if k == 0 { &mut p.width } else { &mut p.height }) = (v * 10.0).round() / 10.0;
         }
+    };
+    if interior.tool == Tool::Look {
+        for &k in &picked {
+            set(&mut interior.plan.lines[k].2);
+        }
+    } else {
+        set(&mut interior.profile);
+    }
+    // Groups: the picked lines one (out of any other); their groups broken up; walled
+    // off or opened up (lines in no group made one first).
+    match action {
+        Some(Action::Group) if !picked.is_empty() => {
+            for g in &mut interior.plan.groups {
+                g.lines.retain(|k| !picked.contains(k));
+            }
+            interior.plan.groups.retain(|g| !g.lines.is_empty());
+            interior.plan.groups.push(Group { lines: picked.clone(), walled: false });
+        }
+        Some(Action::Ungroup) => {
+            interior.plan.groups.retain(|g| !g.lines.iter().any(|k| picked.contains(k)));
+        }
+        Some(Action::Wall) if !picked.is_empty() => {
+            if picked.iter().any(|&k| interior.plan.group_of(k).is_none()) {
+                for g in &mut interior.plan.groups {
+                    g.lines.retain(|k| !picked.contains(k));
+                }
+                interior.plan.groups.retain(|g| !g.lines.is_empty());
+                interior.plan.groups.push(Group { lines: picked.clone(), walled: true });
+            } else {
+                let wall = !picked.iter().all(|&k| interior.plan.group_of(k).is_some_and(|g| interior.plan.groups[g].walled));
+                for &k in &picked {
+                    if let Some(g) = interior.plan.group_of(k) {
+                        interior.plan.groups[g].walled = wall;
+                    }
+                }
+            }
+        }
+        _ => {}
     }
     if interior.slider.is_some() {
         return true;
@@ -752,17 +846,21 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     match gone {
         Some(Hover::Point(k)) if interior.plan.points[k].name.is_none() => {
             interior.plan.points.remove(k);
-            interior.plan.lines.retain(|&(a, b, _)| a != k && b != k);
+            interior.plan.keep_lines(|_, &(a, b, _)| a != k && b != k);
             for l in &mut interior.plan.lines {
                 l.0 -= usize::from(l.0 > k);
                 l.1 -= usize::from(l.1 > k);
             }
             interior.from = None;
             interior.pick = None;
+            interior.more.clear();
         }
         Some(Hover::Line(k)) => {
-            interior.plan.lines.remove(k);
+            // (REMOVE: every line picked; DEL over a line: that one.)
+            let lines = if action == Some(Action::Remove) { picked_lines(interior) } else { vec![k] };
+            interior.plan.keep_lines(|j, _| !lines.contains(&j));
             interior.pick = None;
+            interior.more.clear();
         }
         _ => {}
     }
@@ -836,6 +934,10 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                         let n = interior.plan.points.len() - 1;
                         interior.plan.lines[k] = (a, n, profile);
                         interior.plan.lines.push((n, b, profile));
+                        let new = interior.plan.lines.len() - 1;
+                        if let Some(g) = interior.plan.group_of(k) {
+                            interior.plan.groups[g].lines.push(new);
+                        }
                         n
                     }),
                     None => on_plane(interior, &cam, plane, cursor, interior.shift).map(|at| {
@@ -862,7 +964,28 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                     interior.from = Some(k);
                 }
             }
-            Tool::Look => interior.pick = interior.hover,
+            // A click picks what's under the cursor (a line in a group: with the rest
+            // of it); with SHIFT, a line added to the picked ones, or taken out.
+            Tool::Look => match (interior.hover, interior.shift) {
+                (Some(Hover::Line(k)), true) => {
+                    let mut lines = picked_lines(interior);
+                    if let Some(at) = lines.iter().position(|&j| j == k) {
+                        lines.remove(at);
+                    } else {
+                        lines.push(k);
+                    }
+                    interior.pick = lines.first().map(|&j| Hover::Line(j));
+                    interior.more = lines.into_iter().skip(1).collect();
+                }
+                (Some(Hover::Line(k)), false) => {
+                    interior.pick = Some(Hover::Line(k));
+                    interior.more = interior.plan.group_of(k).map_or_else(Vec::new, |g| interior.plan.groups[g].lines.iter().copied().filter(|&j| j != k).collect());
+                }
+                (other, _) => {
+                    interior.pick = other;
+                    interior.more.clear();
+                }
+            },
         }
     }
     let radius = (h.hi - h.lo).length() * 0.5;
@@ -1088,8 +1211,31 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     // Each line, and its room round it: its cross-section along it (red where it
     // clashes with the hull, its clashes marked).
     let clash = interior.checked.as_ref().filter(|(p, _)| p == plan).map(|(_, c)| c.as_slice()).unwrap_or(&[]);
+    let picked = picked_lines(interior);
+    // Walled groups: their tubes' sides as walls, panels between the corners along
+    // each (their ends open).
+    for g in plan.groups.iter().filter(|g| g.walled) {
+        for &k in &g.lines {
+            let (a, b, profile) = plan.lines[k];
+            let (pa, pb) = (plan.points[a].at, plan.points[b].at);
+            let corners = profile.corners();
+            let n = corners.len();
+            let d = (pb - pa).normalize_or_zero();
+            let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+            let v = u.cross(d);
+            let at = |o: Vec3, c: Vec2| o + u * c.x + v * c.y;
+            for j in 0..n {
+                let (c0, c1) = (corners[j], corners[(j + 1) % n]);
+                if let [Some((q0, _)), Some((q1, _)), Some((q2, _)), Some((q3, _))] = [at(pa, c0), at(pa, c1), at(pb, c1), at(pb, c0)].map(|p| cam.project(p)) {
+                    let fill = [WALL; 3];
+                    frame.hud_triangle_colored([q0, q1, q2], fill);
+                    frame.hud_triangle_colored([q0, q2, q3], fill);
+                }
+            }
+        }
+    }
     for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
-        let lit = interior.hover == Some(Hover::Line(k)) || interior.pick == Some(Hover::Line(k));
+        let lit = interior.hover == Some(Hover::Line(k)) || picked.contains(&k);
         let hits = clash.get(k).map_or(&[][..], |c| c.as_slice());
         let col = if lit { PICKED } else if hits.is_empty() { PATH } else { CLASH };
         seg(frame, plan.points[a].at, plan.points[b].at, col);
@@ -1180,7 +1326,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
         frame.hud_box(p, c, PLANE.scale(1.5));
         let (title, help) = match interior.tool {
-            Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT, WHEEL FOR NEARER OR FARTHER. CLICK A POINT OR A LINE TO PICK IT. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
+            Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT. CLICK A POINT OR A TUBE TO PICK IT (A TUBE IN A GROUP: THE GROUP); SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
@@ -1194,6 +1340,14 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 Some(n) => format!("PICKED: {n} (THE HULL'S: STAYS)"),
                 None => format!("PICKED: A POINT {:.1} M UP", plan.points[k].at.y - lo.y),
             },
+            Some(Hover::Line(_)) if picked.len() > 1 => {
+                let len: f32 = picked.iter().map(|&k| plan.points[plan.lines[k].0].at.distance(plan.points[plan.lines[k].1].at)).sum();
+                let group = plan.group_of(picked[0]).filter(|&g| plan.groups[g].lines.len() == picked.len() && picked.iter().all(|&k| plan.group_of(k) == Some(g)));
+                match group {
+                    Some(g) => format!("A GROUP OF {} {len:.0} M{}", picked.len(), if plan.groups[g].walled { "  WALLED" } else { "" }),
+                    None => format!("{} LINES PICKED {len:.0} M", picked.len()),
+                }
+            }
             Some(Hover::Line(k)) => {
                 let (a, b, profile) = plan.lines[k];
                 let len = plan.points[a].at.distance(plan.points[b].at);
@@ -1230,9 +1384,18 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 frame.hud_rect(Vec2::new(x - 3.0, at.y - 2.0), Vec2::new(6.0, len.y + 4.0), col);
             }
         }
+        let walled = !picked.is_empty() && picked.iter().all(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled));
+        let grouped = picked.iter().any(|&k| plan.group_of(k).is_some());
         for (r, name, a) in panel_buttons(interior.tool) {
             let lamp = if inside(r, interior.cursor) || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s)) { Lamp::On } else { Lamp::Off };
-            let off = (a == Action::Remove && interior.pick.is_none()) || (matches!(a, Action::Section(_)) && now.is_none());
+            let off = match a {
+                Action::Remove => interior.pick.is_none(),
+                Action::Section(_) => now.is_none(),
+                Action::Group | Action::Wall => picked.is_empty(),
+                Action::Ungroup => !grouped,
+                _ => false,
+            };
+            let name = if a == Action::Wall && walled { "OPEN UP" } else { name };
             draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
         }
     }
