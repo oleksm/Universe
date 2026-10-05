@@ -16,6 +16,7 @@ recipes:
     outputs:
       - { item: stock.cu-scrap, quantity: 0.02 }
     rate: 2.0
-    power: 2160000
+    power: 14200000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "0.3 kWh a kg and 2% lost: guesses, from memory. To be reviewed." }
+  - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "7.1 MJ a kg to turn copper into wire (Argonne's model of vehicle making)." }
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Its size and rate are chosen; the 2% lost is a guess. To be reviewed." }

@@ -16,12 +16,13 @@ recipes:
     outputs:
       - { item: good.tailings, quantity: 0.02 }
     rate: 50.0
-    power: 540000
+    power: 351000
   - makes: good.aggregate
     does: "Furnace slag, cooled, is crushed and screened like rock."
     inputs:
       - { item: good.slag, quantity: 1.0 }
     rate: 50.0
-    power: 540000
+    power: 351000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "Chosen: 3 kWh a tonne and 2% lost as fines are guesses. To be reviewed." }
+  - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "1.95 kWh a tonne: a crushed-stone quarry takes 1.7 to 2.2 (US Department of Energy)." }
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Its size and rate are chosen; the 2% lost as fines is a guess. To be reviewed." }

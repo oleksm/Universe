@@ -16,7 +16,7 @@ recipes:
     outputs:
       - { item: good.dross, quantity: 0.02 }
     rate: 2.0
-    power: 2050000
+    power: 2500000
   - makes: stock.cu-ingot
     does: "Copper scrap is melted again and cast into ingots."
     inputs:
@@ -24,7 +24,7 @@ recipes:
     outputs:
       - { item: good.dross, quantity: 0.02 }
     rate: 2.0
-    power: 2050000
+    power: 2500000
   - makes: stock.brz932-bar-50
     does: "Copper is melted with tin, lead and zinc and cast as bar."
     inputs:
@@ -35,8 +35,8 @@ recipes:
     outputs:
       - { item: good.dross, quantity: 0.02 }
     rate: 2.0
-    power: 2050000
+    power: 2500000
 basis:
   - { of: [recipes, recipes.inputs], tier: derived, review: true, note: "The metals in the shares of the grade (its material's composition), with 2% lost as dross, a guess." }
-  - { of: [recipes.power], tier: derived, review: true, note: "To heat copper from 20 C to its melting point (384 J/kg/K over 1,065 K) and melt it (205 kJ/kg, from memory), in a furnace that puts 60% of its power into the metal (a guess): 1.02 MJ a kg. Bronze is taken the same." }
+  - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "1.25 MJ a kg: electric crucible induction furnaces melting copper alloys take 900 to 1,600 MJ a tonne. (The heat itself is 0.62: 384 J/kg/K over 1,065 K, and 209 kJ/kg to melt.)" }
   - { of: [physical, recipes.rate, recipes.outputs], tier: invented, review: true, note: "Chosen. To be reviewed." }

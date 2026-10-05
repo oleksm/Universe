@@ -1,0 +1,1200 @@
+{
+ "metallurgical_silicon": {
+  "value": {
+   "quartzite_kg_per_t": 2700,
+   "reducing_agent_kg_per_t": [
+    1150,
+    1500
+   ],
+   "electrode_kg_per_t": 100,
+   "woodchips_kg_per_t": [
+    1000,
+    2000
+   ],
+   "electricity_kWh_per_t": [
+    10800,
+    12000
+   ],
+   "total_energy_kWh_per_t": [
+    20920,
+    25200
+   ]
+  },
+  "unit": "kg/t and kWh/t of silicon metal",
+  "what": "Specific inputs per tonne of silicon metal tapped from a submerged arc furnace (EU Non-Ferrous Metals BREF 2017, Table 8.7); electricity is furnace process only; total energy includes the energy content of the coal reductant",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "Table 8.7 (Silicon metal column): Quartzite (kg/t) 2700 | Reducing agent (kg/t) 1150-1500 | Electrode (kg/t) 100 | Woodchips (kg/t) 1000-2000 | Electricity (kWh/t) 10 800-12 000 | Potential energy assuming coke or coal is used (kWh/t) 10 120-13 200 (coal) | Total energy input (kWh/t) 20 920-25 200. Footnote 2: The ideal energy consumption for the production of silicon metal is 10 100 kWh/t",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "silica_sand_kg": 2.7,
+     "petroleum_coke_kg": 0.5,
+     "charcoal_kg": 0.17,
+     "graphite_electrode_kg": 0.1,
+     "hard_coal_coke_MJ": 23.1,
+     "electricity_kWh": 11.0
+    },
+    "unit": "per kg MG-silicon",
+    "what": "Unit process inventory for 1 kg metallurgical-grade silicon at plant (IEA PVPS Task 12 LCI report 2020, Table 6)",
+    "source": "https://iea-pvps.org/wp-content/uploads/2020/12/IEA-PVPS-LCI-report-2020.pdf",
+    "quote": "Table 6: silica sand, at plant kg 2.70E+0 | petroleum coke, at refinery kg 5.00E-1 | charcoal, at plant kg 1.70E-1 | graphite, at plant kg 1.00E-1 | hard coal coke, at plant MJ 2.31E+1 | electricity, medium voltage, at grid kWh 1.10E+1",
+    "verified": true
+   },
+   {
+    "value": [
+     14,
+     16
+    ],
+    "unit": "kWh/kg",
+    "what": "Energy cost of metallurgical silicon as stated by PVEducation",
+    "source": "https://www.pveducation.org/pvcdrom/manufacturing-si-cells/refining-silicon",
+    "quote": "Metallurgical (MG) silicon is produced at the rate of millions of tons/year at a low economic cost of few $/kg and an energy cost of 14-16 kWh/kg. As such, it is 98-99% pure",
+    "verified": true
+   }
+  ]
+ },
+ "polysilicon": {
+  "value": {
+   "electricity_kWh_per_kg": 49,
+   "heat_kWh_per_kg": 8,
+   "mg_silicon_kg_per_kg": 1.13
+  },
+  "unit": "per kg solar-grade polysilicon",
+  "what": "Modified Siemens process, solar-grade silicon: electricity and thermal energy demand and metallurgical-silicon input per kg product (IEA PVPS Task 12 LCI report 2020, Table 7 and text; 49 kWh is the CN/APAC value, Europe sums to about 31.6 kWh grid+hydro plus cogeneration)",
+  "source": "https://iea-pvps.org/wp-content/uploads/2020/12/IEA-PVPS-LCI-report-2020.pdf",
+  "quote": "The thermal energy demand is 8 kWh and the electricity demand is 49 kWh per kg [2]. / Table 7: MG-silicon, at plant kg 1.13E+0 ; electricity, medium voltage, at grid CN kWh 4.90E+1",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "trichlorosilane_to_polysilicon_kWh_per_kg": 250,
+     "yield_percent": 42,
+     "silicon_to_trichlorosilane_kWh_per_kg": 50,
+     "yield_tcs_percent": 90
+    },
+    "unit": "kWh/kg and % silicon yield",
+    "what": "Electronics-grade chain, 1990s data (Williams, Ayres, Heller 2002, Table 3): electricity per kg of silicon out and silicon yield of each step",
+    "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+    "quote": "Table 3: quartz + carbon -> silicon 13 kWh 90 | silicon -> trichlorosilane 50 kWh 90 | trichlorosilane -> polysilicon 250 kWh 42 | polysilicon -> single crystal ingot 250 kWh 50 | single-crystal ingot -> silicon wafer 240 kWh 56 | process chain to produce wafer 2130 kWh 9.5",
+    "verified": true
+   },
+   {
+    "value": 85,
+    "unit": "kWh/kg",
+    "what": "Electrical power consumption for polysilicon assumed in a comparative LCA (Mendez et al., arXiv 2102.11571)",
+    "source": "https://arxiv.org/pdf/2102.11571",
+    "quote": "related to a higher electrical power consumption (85 kWh/kg for polysilicon and 26.5 kWh/kg for Ferrosolar UMG considered process)",
+    "verified": true
+   }
+  ]
+ },
+ "silicon_wafer": {
+  "value": 125,
+  "unit": "g",
+  "what": "Weight of one 300 mm silicon wafer, 775 um thick (Wikipedia wafer size table, citing wafercare.com)",
+  "source": "https://en.wikipedia.org/w/index.php?title=Wafer_(electronics)&action=raw",
+  "quote": "| 300 mm (11.8 inch, usually referred to as \"12 inch\") | 775 um | 1999 | 125 grams | 640",
+  "verified": true,
+  "more": [
+   {
+    "value": 9.4,
+    "unit": "kg raw (metallurgical) silicon per kg finished wafer",
+    "what": "Silicon losses along the electronics-grade chain; overall silicon yield 9.5 %, polysilicon->ingot yield 50 %, ingot->wafer yield 56 % (Williams et al. 2002)",
+    "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+    "quote": "significant silicon losses along the chain suggest that 9.4 kg of raw silicon are needed per kg of final wafer ... The main result is that 2130 kWh per kilogram is used in the production chain for silicon wafers",
+    "verified": true
+   },
+   {
+    "value": 3.57,
+    "unit": "kg polysilicon per kg finished wafer",
+    "what": "DERIVED: 1/(0.50 x 0.56) from Williams Table 3 yields polysilicon->ingot 50 % and ingot->wafer 56 %",
+    "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+    "quote": "polysilicon -> single crystal ingot 250 kWh 50 | single-crystal ingot -> silicon wafer 240 kWh 56",
+    "verified": true
+   },
+   {
+    "value": {
+     "silicon_content_g_per_m2": 396.1,
+     "silicon_losses_g_per_m2": 199.1,
+     "total_silicon_demand_g_per_m2": 595.2,
+     "thickness_um": 170,
+     "kerf_um": 65
+    },
+    "unit": "g/m2 of wafer",
+    "what": "Solar mono-Si wafer (diamond wire sawing): silicon in the wafer versus ingot silicon consumed, i.e. 1.50 kg ingot per kg wafer; CZ ingot takes 1.00 kg polysilicon per kg (IEA PVPS LCI 2020)",
+    "source": "https://iea-pvps.org/wp-content/uploads/2020/12/IEA-PVPS-LCI-report-2020.pdf",
+    "quote": "mono-Si: Thickness um 170 | Kerf loss um 65 | Additional losses um 20.5 | Silicon content g/m2 396.1 | Silicon losses g/m2 199.1 | Total silicon demand g/m2 595.2",
+    "verified": true
+   },
+   {
+    "value": 0.34,
+    "unit": "kWh/cm2",
+    "what": "Electricity to produce one cm2 of silicon wafer from quartz (Williams et al. 2002)",
+    "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+    "quote": "Electricity consumption to produce one square cm of wafer is 0.34 kWh, nearly one-fourth that of the 1.5 kWh needed for fabrication",
+    "verified": true
+   }
+  ]
+ },
+ "chip_fab_energy": {
+  "value": {
+   "electricity_kWh_per_cm2": 1.5,
+   "fossil_fuel_MJ_per_cm2": 1.0,
+   "chemicals_g_per_cm2": 45,
+   "elemental_gases_g_per_cm2": 445,
+   "water_L_per_cm2_typical": 17,
+   "water_L_per_cm2_range": [
+    5,
+    29
+   ]
+  },
+  "unit": "per cm2 of silicon wafer processed",
+  "what": "Wafer fabrication inputs per cm2 of wafer, late-1990s/2000 data (Williams, Ayres, Heller, 'The 1.7 kilogram microchip', Environ. Sci. Technol. 2002)",
+  "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+  "quote": "We take the figure of 1.5 kWh/cm2 for electricity consumption and 1 MJ/cm2 for fossil fuels as a base for further calculation. / we assume that the anonymous firm data indicating consumption of 45 g per cm2 as the baseline. Expressed in different units, this corresponds to 280 kg of chemicals per kilogram of input silicon. / water usage at U.S. chip manufacturing facilities varied from 5 to 29 L per square centimeter, with a typical figure being 17 L per square centimeter / aggregate use of elemental gases is reported at 445 g/cm2 of silicon input.",
+  "verified": true,
+  "more": [
+   {
+    "value": 10600,
+    "unit": "L per 150 mm wafer",
+    "what": "Water used in fabricating integrated circuits on one 150 mm wafer (1993 MCC study cited by Williams et al. 2002)",
+    "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+    "quote": "The 1993 MCC study indicates that 10 600 L of water are used in fabrication of integrated circuits on one 150 mm wafer (10). This corresponds to a requirement of 58 L per cm2",
+    "verified": true
+   }
+  ]
+ },
+ "electronics_composition": {
+  "value": {
+   "total_g": 1350,
+   "aluminum_g": 545,
+   "battery_g": 305,
+   "display_g": 195,
+   "circuit_boards_g": 115,
+   "keyboard_trackpad_g": 105,
+   "other_metals_g": 40,
+   "plastics_g": 30,
+   "solid_state_drive_g": 15
+  },
+  "unit": "g per unit",
+  "what": "Material use of a laptop: 13-inch MacBook Air (Apple environmental report, June 2017). Total is DERIVED as the sum of the listed parts (1350 g). Values are read from the chart, whose text extraction lists labels and values offset by one position; mapping taken as largest value = aluminum enclosure, in chart order",
+  "source": "https://www.apple.com/environment/pdf/products/notebooks/13-inch_MacBookAir_PER_June2017.pdf",
+  "quote": "Material Use for 13-inch MacBook Air: Aluminum 545g; Battery 305g; Display 195g; Circuit boards 115g; Keyboard and trackpad 105g; Other metals 40g; Plastics 30g; Solid-state drive 15g",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "total_g": 138,
+     "battery_g": 26,
+     "display_g": 25,
+     "aluminum_g": 24,
+     "stainless_steel_g": 23,
+     "glass_g": 16,
+     "circuit_boards_g": 11,
+     "plastic_g": 7,
+     "other_g": 6
+    },
+    "unit": "g per unit",
+    "what": "Material use of a smartphone: iPhone 7 (Apple environmental report, September 2016). Total is DERIVED as the sum (138 g)",
+    "source": "https://www.apple.com/environment/pdf/products/iphone/iPhone_7_PER_sept2016.pdf",
+    "quote": "Material Use for iPhone 7: 26g Battery; 25g Display; 24g Aluminum; 23g Stainless steel; 16g Glass; 11g Circuit boards; 7g Plastic; 6g Other",
+    "verified": true
+   },
+   {
+    "value": {
+     "total_g": 5540,
+     "aluminum_and_steel_g": 2271,
+     "display_g": 1485,
+     "glass_g": 555,
+     "power_supply_g": 290,
+     "circuit_boards_g": 264,
+     "speakers_g": 262,
+     "plastics_g": 213,
+     "hard_drive_g": 100,
+     "other_g": 100
+    },
+    "unit": "g per unit",
+    "what": "Material use of an all-in-one desktop computer: 21.5-inch iMac (Apple environmental report, June 2017). Total is DERIVED as the sum (5540 g). Chart text extraction offsets labels and values by one position; mapping taken in chart order with largest value = aluminum and steel",
+    "source": "https://www.apple.com/environment/pdf/products/desktops/21.5-inch_iMac_PER_June2017.pdf",
+    "quote": "Material Use for 21.5-inch iMac: Aluminum and steel 2271g; Display 1485g; Glass 555g; Power supply 290g; Circuit boards 264g; Speakers 262g; Plastics 213g; Hard drive 100g; Other 100g",
+    "verified": true
+   },
+   {
+    "value": {
+     "total_g_excl_packaging": 2800,
+     "bulk_plastics_g": 265,
+     "technical_plastics_g": 587,
+     "ferrous_g": 489,
+     "non_ferrous_g": 235,
+     "electronics_g": 914,
+     "misc_incl_cardboard_and_LCD_glass_g": 1284,
+     "detail": {
+      "ABS_g": 142,
+      "PA6_g": 281,
+      "PC_g": 267,
+      "steel_sheet_g": 489,
+      "Al_g": 38,
+      "Cu_wire_g": 60,
+      "Cu_sheet_g": 15,
+      "MgZn5_cast_g": 122,
+      "big_caps_coils_g": 501,
+      "slots_ports_g": 133,
+      "ICs_g": 78,
+      "SMD_LED_g": 50,
+      "PWB_g": 82,
+      "solder_g": 7,
+      "glass_for_LCD_g": 362,
+      "cardboard_packaging_g": 921
+     }
+    },
+    "unit": "g per unit",
+    "what": "Average best-selling 15-inch laptop of 2005 incl. external power supply: bill of materials (EU EuP Lot 3 preparatory study, Tables 60, 61, 91). Category totals include 921 g cardboard packaging (grand total 3779 g); average laptop weight 2.5 kg office / 2.9 kg home",
+    "source": "https://web.archive.org/web/20090205122623id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/EuP_Lot3_PC_FinalReport.pdf",
+    "quote": "The bill of materials represents an average of the best-selling laptop computers in 2005 fitted with a 15\" LCD-screen and sums up to 2.8 kilograms excluding packaging. / Table 91: Bulk Plastics g 265 | TecPlastics g 587 | Ferro g 489 | Non-ferro g 235 | Coating g 5 | Electronics g 914 | Misc. g 1284 | Total weight g 3779 / Table 61: ABS 142; PA 6 281; PC 267; Steel sheet galvanized 489; Al sheet/extrusion 38; Cu wire 60; Cu tube/sheet 15; MgZn5 cast 122; Big caps & coils 501; Slots/ext. Ports 133; Integrated Circuits, 5% Silicon, Au 47; Integrated Circuits, 1% Silicon 31; SMD & LEDs avg 50; PWB 1/2 lay 5; PWB 6 lay 77; Solder 7; Cardboard 921; Glass for LCD 362",
+    "verified": true
+   }
+  ]
+ },
+ "led_lamp": {
+  "value": {
+   "power_W": 12.5,
+   "lumen_output_lm": 812,
+   "efficacy_lm_per_W": 65,
+   "lifetime_h": 25000,
+   "lamp_mass_g": 178,
+   "aluminum_heat_sink_g": 68.2,
+   "printed_wiring_board_g": 15.0,
+   "plastic_phosphor_host_g": 11.1,
+   "copper_g": 5.0,
+   "resin_glue_g": 4.5,
+   "cast_iron_g": 4.0,
+   "ic_chip_g": 2.0,
+   "brass_g": 1.65,
+   "remote_phosphor_g": 1.0,
+   "led_packages": 12,
+   "assembly_electricity_MJ": 5.0
+  },
+  "unit": "per lamp",
+  "what": "12.5 W A19 LED replacement lamp (2012): performance and life-cycle inventory bill of materials (US DOE, LED LCA Part 2, Tables 5-1 and 5-9). Lamp mass 178 g is the 'Manufacturing ... assembly' line; lifetime is rated lamp life, not specifically L70. The 2017 projection is 6.1 W, 824 lm, 134 lm/W, 40,000 h",
+  "source": "https://www1.eere.energy.gov/buildings/publications/pdfs/ssl/2012_led_lca-pt2.pdf",
+  "quote": "Table 5-1: Power Consumption 12.5 watts | Lumen Output 812 lumens | Efficacy 65 lm/W | Lamp Lifetime 25,000 hours (LED lamp 2012); 6.1 watts | 824 lumens | 134 lm/W | 40,000 hours (LED lamp 2017). Table 5-9: LEDs (blue light) 12 units; Remote phosphor 1.0g; Plastic phosphor host 11.1g; Aluminum heat sink 68.2g; Copper 5.0g; Brass 1.65g; Cast iron 4.0g; IC chip 2.0g; Printed Wiring Board 15.0g; Resin Glue 4.5g; Solder paste 0.3g; Production Power 5.0 MJ; Production Manufacturing 178g",
+  "verified": true,
+  "more": [
+   {
+    "value": 200,
+    "unit": "lm/W",
+    "what": "Efficacy of the most efficient commercially available LED lamps (Wikipedia, LED lamp)",
+    "source": "https://en.wikipedia.org/w/index.php?title=LED_lamp&action=raw",
+    "quote": "The most efficient commercially available LED lamps have efficiencies exceeding 200 lumens per watt (lm/W) and convert more than half the input power into light.",
+    "verified": true
+   }
+  ]
+ },
+ "per_capita_materials": {
+  "value": 219,
+  "unit": "kg steel per person per year",
+  "what": "World apparent steel use (finished steel) per capita, 2023 (worldsteel, World Steel in Figures 2024)",
+  "source": "https://worldsteel.org/data/world-steel-in-figures-2024/",
+  "quote": "Apparent steel use per capita: Globally, 219 kg of steel was used in new products per person in 2023.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "world_production_kt": 4100000,
+     "per_capita_kg": 512
+    },
+    "unit": "thousand tonnes; kg/person/yr",
+    "what": "World cement production 2023 (USGS Mineral Commodity Summaries 2024). per_capita is DERIVED: 4,100 Mt / 8.0 billion people; world population about 8.0 billion (Wikipedia World_population: 'exceeded 8 billion (8,000,000,000) on November 15, 2022')",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024-cement.pdf",
+    "quote": "(Data in thousand metric tons) Cement production 2022 | 2023: World total (rounded) 4,100,000 4,100,000",
+    "verified": true
+   },
+   {
+    "value": {
+     "world_refinery_production_kt": 27000,
+     "world_mine_production_kt": 22000,
+     "per_capita_kg": 3.4
+    },
+    "unit": "thousand tonnes copper; kg/person/yr",
+    "what": "World refined copper production 2023 (includes secondary) and mine production (USGS MCS 2024). per_capita is DERIVED: 27 Mt / 8.0 billion; world population about 8.0 billion (Wikipedia World_population: 'exceeded 8 billion (8,000,000,000) on November 15, 2022')",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024-copper.pdf",
+    "quote": "(Data in thousand metric tons, copper content) Mine production 2022 | 2023e ; Refinery production 2022 | 2023e: World total (rounded) 21,900 22,000 25,900 27,000",
+    "verified": true
+   },
+   {
+    "value": {
+     "world_smelter_production_kt": 70000,
+     "per_capita_kg": 8.75
+    },
+    "unit": "thousand tonnes primary aluminium; kg/person/yr",
+    "what": "World primary aluminium smelter production 2023 (USGS MCS 2024), excludes recycled metal. per_capita is DERIVED: 70 Mt / 8.0 billion; world population about 8.0 billion (Wikipedia World_population: 'exceeded 8 billion (8,000,000,000) on November 15, 2022')",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024-aluminum.pdf",
+    "quote": "(Data in thousand metric tons) Smelter production 2022 | 2023e: World total (rounded) 68,400 70,000",
+    "verified": true
+   },
+   {
+    "value": {
+     "world_production_Mt": 450,
+     "per_capita_kg": 56
+    },
+    "unit": "Mt; kg/person/yr",
+    "what": "World plastics production (Our World in Data). per_capita is DERIVED: 450 Mt / 8.0 billion; world population about 8.0 billion (Wikipedia World_population: 'exceeded 8 billion (8,000,000,000) on November 15, 2022')",
+    "source": "https://ourworldindata.org/plastic-pollution",
+    "quote": "In 1950, the world produced just two million tonnes. It now produces over 450 million tonnes.",
+    "verified": true
+   },
+   {
+    "value": {
+     "world_ewaste_Mt": 62,
+     "per_capita_kg": 7.75
+    },
+    "unit": "Mt; kg/person/yr",
+    "what": "E-waste generated worldwide in 2022 (Global E-waste Monitor 2024 press release). per_capita is DERIVED: 62 Mt / 8.0 billion; world population about 8.0 billion (Wikipedia World_population: 'exceeded 8 billion (8,000,000,000) on November 15, 2022')",
+    "source": "https://ewastemonitor.info/the-global-e-waste-monitor-2024/",
+    "quote": "A record 62 million tonnes (Mt) of e-waste was produced in 2022, Up 82% from 2010; On track to rise another 32%, to 82 million tonnes, in 2030",
+    "verified": true
+   },
+   {
+    "value": 52,
+    "unit": "Mt flat glass (2009)",
+    "what": "World demand for flat glass in 2009 (Wikipedia Glass production; weakly sourced there); flat glass only, not all glass",
+    "source": "https://en.wikipedia.org/w/index.php?title=Glass_production&action=raw",
+    "quote": "World demand for flat glass was approximately 52 million tonnes in 2009.",
+    "verified": true
+   }
+  ]
+ },
+ "copper_melting": {
+  "value": 13.26,
+  "unit": "kJ/mol",
+  "what": "Heat of fusion of copper (Wikipedia, Heats of fusion of the elements: value in use 13.26, CRC 12.93, LNG 13.26, WEL 13.1 kJ/mol). DERIVED: 13.26 kJ/mol / 63.546 g/mol = 208.7 kJ/kg",
+  "source": "https://en.wikipedia.org/w/index.php?title=Heats_of_fusion_of_the_elements&action=raw",
+  "quote": "29 Cu copper | use || 13.26 | CRC || 12.93 | LNG || 13.26 | WEL || 13.1",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     900,
+     1600
+    ],
+    "unit": "MJ/t",
+    "what": "Specific energy consumption of electric crucible induction furnaces melting copper alloys, 1050-1300 C (NFM BREF 2017, Table 3.35). DERIVED: 250-444 kWh/t",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Table 3.35: Operating data for crucible induction furnaces for the production of copper alloys: Melting temperature °C 1050-1300 | Type of heating Electrical | Specific energy consumption MJ/t 900-1600",
+    "verified": true
+   },
+   {
+    "value": 1290,
+    "unit": "MJ/t",
+    "what": "Specific energy consumption of electric channel induction furnaces for copper alloys (NFM BREF 2017, Table 3.36). DERIVED: 358 kWh/t",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Table 3.36: Operating data for channel induction furnaces for the production of copper alloys: Type of heating Electrical | Specific energy consumption MJ/t 1290",
+    "verified": true
+   },
+   {
+    "value": [
+     1000,
+     1050
+    ],
+    "unit": "MJ/t",
+    "what": "Natural-gas shaft furnace melting copper cathodes in a cast-and-rolled wire installation, 50-60 t/h (NFM BREF 2017, Table 3.34). DERIVED: 278-292 kWh/t (thermal)",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Table 3.34: Operating data for a shaft furnace of a cast-and-rolled wire installation: Charge materials Electrolytic copper (copper cathodes and own scrap) | Melting capacity t/h 50-60 | Type of heating Fuel-heated (natural gas) | Specific energy consumption MJ/t 1000-1050",
+    "verified": true
+   }
+  ]
+ },
+ "copper_smelting": {
+  "value": {
+   "energy_GJ_per_t_cathode": [
+    14,
+    20
+   ],
+   "electrorefining_kWh_per_t": [
+    300,
+    400
+   ],
+   "concentrate_grade_pct_Cu": [
+    15,
+    45
+   ],
+   "ore_grade_pct_Cu": [
+    0.2,
+    2
+   ]
+  },
+  "unit": "GJ/t copper cathode; kWh/t; % Cu",
+  "what": "Net production energy from copper concentrate to cathode (smelting, converting, refining; excludes mining and concentrating), electrorefining electricity, concentrate and ore grades (EU NFM BREF 2017, sections 3.2.1-3.2.2). DERIVED: 14-20 GJ/t = 3,900-5,600 kWh/t",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "The production energy (net) requirement for a number of processes using copper concentrate is in the range of 14-20 GJ/t of copper cathode. / The energy consumed by the electrorefining stage of copper production is reported to be 300-400 kWh per tonne of copper / sulphidic concentrates (15-45 % Cu) are the most important raw materials for the pyrometallurgical primary copper route ... they are derived by flotation from ores that contain 0.2-2 % copper.",
+  "verified": true
+ },
+ "titanium_kroll": {
+  "value": {
+   "energy_kWh_per_t_sponge": 21500,
+   "mg_electrolysis_kWh_per_t_Mg": 13200,
+   "TiCl4_kg_per_kg_raw_sponge": 3.95,
+   "Mg_kg_per_kg_Ti_stoichiometric": 1.02,
+   "usable_sponge_fraction": 0.76
+  },
+  "unit": "kWh/t; kg/kg",
+  "what": "Kroll process: energy to make 1 t of usable titanium sponge from TiCl4 including magnesium recovery by MgCl2 electrolysis (ORNL/TM-2012/510, Peter & Yamamoto 2013). DERIVED ratios: 15,000 kg TiCl4 / 3,800 kg raw sponge = 3.95; 48.6 g Mg / 47.55 g Ti = 1.02 (magnesium is recycled); 2,900/3,800 = 0.76 usable",
+  "source": "https://www.osti.gov/servlets/purl/1079276",
+  "quote": "The energy required for the Kroll process to make 2,200 pounds (1 MT) of usable titanium sponge from TiCl4, recover the magnesium from the reaction by-product MgCl2, and cull the sponge to remove low purity undesirable sponge portions is estimated at 74MBtu (21,500 kWh). From the Kroll reaction one mole of titanium (47.55 g) is produced along with two moles of MgCl2 (95.2 g), consuming 2 moles of Mg (48.6 g). The electrolytic recovery of Mg from MgCl2 ... is estimated at 20,500 Btu/ lb magnesium (13,200 kWh / MT of Mg). To produce 1MT of CP-Ti bar it is necessary to process approximately 33,100 pounds (15,000 kg) of TiCl4 to yield 8,400 pounds (3,800kg) of raw metallic titanium sponge of which 6,380 pounds (2,900 kg) has acceptable purity",
+  "verified": true,
+  "more": [
+   {
+    "value": 71.61,
+    "unit": "kWh/kg",
+    "what": "Energy consumption attributed to the Kroll process in a review (Low-Cost Preparation Technologies for Titanium Alloys, IntechOpen 2022); much higher than the ORNL figure, boundary not stated in the sentence (probably ore to sponge)",
+    "source": "https://www.intechopen.com/citation-pdf-url/83625",
+    "quote": "the disadvantages of Kroll process, including the expensive reducing agent Mg, long process route, low production efficiency, and high energy consumption (71.61 kWh/kg), resulted in a high price of $7.4-$10.3 per kg for titanium",
+    "verified": true
+   },
+   {
+    "value": 70400,
+    "unit": "kWh/t CP-Ti bar",
+    "what": "Energy to produce 1 t of commercially pure titanium bar from TiCl4 via Kroll sponge, double VAR, forging/hot rolling (ORNL/TM-2012/510); includes yield loss 2.9 t sponge per t bar",
+    "source": "https://www.osti.gov/servlets/purl/1079276",
+    "quote": "The 6,380 pounds (2,900 kg) are pressed into an electrode, melt processed via double vacuum arc remelting (VAR) followed by forging /hot rolling, annealing and surface conditioning to yield a clean 2,200 pound (1000 kg) bar. The energy required to produce 2,200 pounds (1 MT) of CP-Ti bar is estimated at 240 MBtu (70,400 kWh).",
+    "verified": true
+   }
+  ]
+ },
+ "lime_calcination": {
+  "value": {
+   "heat_of_dissociation_GJ_per_t_lime": 3.2,
+   "kiln_heat_GJ_per_t": {
+    "long_rotary": [
+     6.0,
+     9.2
+    ],
+    "rotary_with_preheater": [
+     5.1,
+     7.8
+    ],
+    "parallel_flow_regenerative": [
+     3.2,
+     4.2
+    ],
+    "annular_shaft": [
+     3.3,
+     4.9
+    ],
+    "mixed_feed_shaft": [
+     3.4,
+     4.7
+    ]
+   },
+   "kiln_electricity_kWh_per_t": [
+    5,
+    45
+   ]
+  },
+  "unit": "GJ/t lime; kWh/t lime",
+  "what": "Theoretical heat of dissociation of limestone per tonne of quicklime and practical kiln heat and electricity use by kiln type, EU-27 (CLM BREF 2013, section 2.3.2, Table 2.23)",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/CLM_Published_def_0.pdf",
+  "quote": "The heat of dissociation of calcium limestone is 3.2 GJ/tonne for lime (about 9 % less for dolime). / Table 2.23: Long rotary kilns (LRK) 6.0-9.2 GJ/tonne, 18-25 kWh/tonne | Rotary kilns with preheater (PRK) 5.1-7.8, 17-45 | Parallel flow regenerative kilns (PFRK) 3.2-4.2, 20-40 | Annular shaft kilns (ASK) 3.3-4.9, 18-35 | Mixed feed shaft kilns (MFSK) 3.4-4.7, 5-15 | Other kilns (OK) 3.5-7.0, 20-40",
+  "verified": true,
+  "more": [
+   {
+    "value": 178,
+    "unit": "kJ/mol",
+    "what": "Reaction enthalpy of CaCO3 -> CaO + CO2 (Wikipedia, Calcium carbonate). DERIVED: 178 kJ/mol / 56.08 g/mol CaO = 3.17 MJ/kg CaO",
+    "source": "https://en.wikipedia.org/w/index.php?title=Calcium_carbonate&action=raw",
+    "quote": "to form calcium oxide, CaO, commonly called quicklime, with reaction enthalpy 178 kJ/mol: CaCO3(s) -> CaO(s) + CO2(g)",
+    "verified": true
+   }
+  ]
+ },
+ "rock_crushing": {
+  "value": [
+   1.7,
+   2.2
+  ],
+  "unit": "kWh/t",
+  "what": "Electricity consumed by a typical crushed-stone quarry per tonne of product (US DOE report 'Mine-to-Mill Optimization of Aggregate Production', 2006, citing Smith 2003)",
+  "source": "https://www.osti.gov/servlets/purl/889024",
+  "quote": "Since a typical crushed stone quarry can consume between 1.7 - 2.2 kWh/t (Smith, 2003), over 2.5 billion kWh of electrical energy are consumed per year by crushed stone production.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "primary_kWh_per_t": [
+      0.03,
+      0.1
+     ],
+     "secondary_kWh_per_t": 0.204,
+     "tertiary_kWh_per_t": 0.87
+    },
+    "unit": "kWh/t",
+    "what": "Measured crusher-stage specific energies in plant surveys of the same report (examples: primary 1386 tph F80 178 mm to P80 113 mm at 0.03 kWh/t; a secondary circuit 143 mm to 58 mm at 0.204 kWh/t; a tertiary survey 0.87 kWh/t)",
+    "source": "https://www.osti.gov/servlets/purl/889024",
+    "quote": "LS 1386 tph, F80=178 mm, P80=113 mm (46% -38 mm), 0.03 kWh/t; 3M 882 tph, F80=341 mm, P80=151 mm (34% -38 mm), 0.10 kWh/t / 633 tph, F80=143 mm, P80=58 mm (Figure 9), 0.204 kWh/t, crusher recycle=46% / Table 2. Summary of Tertiary Plant Survey Results ... 0.87",
+    "verified": true
+   }
+  ]
+ },
+ "chip_fab_size": {
+  "value": {
+   "fab": "GlobalFoundries Fab 1, Dresden",
+   "plant_area_m2": 364512,
+   "capacity_300mm_wafers_per_month": 80000
+  },
+  "unit": "m2; wafers/month",
+  "what": "Named 300 mm fab: plant area and maximum full capacity (Wikipedia, GlobalFoundries). Power draw (MW) for a named fab was NOT found",
+  "source": "https://en.wikipedia.org/w/index.php?title=GlobalFoundries&action=raw",
+  "quote": "Fab 1, located in Dresden, Germany, is a 364,512 m2 plant which was transferred to GlobalFoundries on its inception ... Each module can produce 25,000 300 mm diameter wafers per month. / Together with other clean room extensions like the Annex they have a maximum full capacity of 80,000 of 300 mm wafers/month (180,000 200 mm wafers/month equivalent)",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "fab": "TSMC Fab 18 (P1-P3), Southern Taiwan Science Park",
+     "capacity_wafers_per_month": 120000,
+     "cost_billion_USD": 17.08,
+     "wafer_mm": 300,
+     "node_nm": 5
+    },
+    "unit": "wafers/month",
+    "what": "Row of the Wikipedia list of semiconductor fabrication plants",
+    "source": "https://en.wikipedia.org/w/index.php?title=List_of_semiconductor_fabrication_plants&action=raw",
+    "quote": "|TSMC |Fab 18 (P1-P3) | Taiwan, Southern Taiwan Science Park |17.08 |2020 (P7 under construction) |300 |5 |120,000 |Foundry",
+    "verified": true
+   },
+   {
+    "value": 150000,
+    "unit": "tonnes of water per day",
+    "what": "Water consumed by TSMC in Hsinchu City (all its fabs there), 2024 (Wikipedia, TSMC)",
+    "source": "https://en.wikipedia.org/w/index.php?title=TSMC&action=raw",
+    "quote": "In 2024, TSMC reportedly consumed over 150,000 tons of water per day in Hsinchu City, approximately 10% of the city's water supply.",
+    "verified": true
+   },
+   {
+    "value": {
+     "fab": "TSMC Arizona (Fab 21) phase 1",
+     "wafers_per_month_initial": 10000,
+     "wafers_per_month_planned": 30000
+    },
+    "unit": "wafers/month",
+    "what": "Start-up and planned rate of TSMC Arizona (Wikipedia, TSMC Arizona)",
+    "source": "https://en.wikipedia.org/w/index.php?title=TSMC_Arizona&action=raw",
+    "quote": "at a rate of 10,000 wafers per month with a plan to scale up to 30,000 wafers per month.",
+    "verified": true
+   },
+   {
+    "value": {
+     "fab": "typical 6-inch fab (1990s)",
+     "wafers_per_month": 40000,
+     "water_million_gallons_per_day": [
+      2,
+      3
+     ]
+    },
+    "unit": "wafers/month; million US gallons/day",
+    "what": "Water use of a typical 150 mm fab (Williams et al. 2002)",
+    "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+    "quote": "A typical 6-in. wafer fabrication plant processing 40 000 wafers per month reportedly consumes 2-3 millions of gallons per day, which corresponds to 18-27 L per square centimeter of silicon",
+    "verified": true
+   }
+  ]
+ },
+ "pcb": {
+  "value": {
+   "metallic_fraction_pct": 30,
+   "non_metallic_fraction_pct": 70
+  },
+  "unit": "% by mass",
+  "what": "Composition of waste printed circuit boards (populated boards): metals vs non-metals (review, Polymers 2023, PMC10489137)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10489137/fullTextXML",
+  "quote": "WPCB includes an approximately 30% metallic fraction (e.g., copper, iron, nickel, antimony, lead, and gold) and a 70% non-metallic component (e.g., thermosetting resins, glass fibers, etc.)",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "glass_fibre_pct": 65,
+     "cured_epoxy_resin_pct": 32,
+     "copper_pct_max": 3,
+     "solder_pct_max": 0.1
+    },
+    "unit": "wt % of the non-metallic fraction",
+    "what": "Composition of the non-metallic fraction of waste PCBs after metal separation (review, ACS Omega 2020, PMC7391248); the same review states non-metals are 60-70 wt % of WPCBs",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7391248/fullTextXML",
+    "quote": "In a former study, the glass fiber and cured epoxy resin accounted for 65 and 32 wt %, and the impurities of copper and solder were less than 3 and 0.1 wt %, respectively. / nonmetallic materials ... account for 60-70 wt % of the WPCBs",
+    "verified": true
+   },
+   {
+    "value": {
+     "metals_pct": 40,
+     "ceramics_pct": 30,
+     "plastics_pct": 30
+    },
+    "unit": "% by mass",
+    "what": "Composition of mobile-phone printed circuit boards (PMC10779704)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10779704/fullTextXML",
+    "quote": "Metals account for 40% of the statistical weight of mobile phone PCBs, ceramics 30% and plastics 30%.",
+    "verified": true
+   },
+   {
+    "value": {
+     "pwb_half_layer_kg_per_m2": 3.75,
+     "pwb_6_layer_kg_per_m2": 4.5
+    },
+    "unit": "kg/m2",
+    "what": "Areal mass of bare printed wiring boards as defined in the EU MEEuP ecodesign material categories (EuP Lot 3 PC study, Table 61)",
+    "source": "https://web.archive.org/web/20090205122623id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/EuP_Lot3_PC_FinalReport.pdf",
+    "quote": "26 PWB 1/2 lay 3.75 kg/m2 ... 27 PWB 6 lay 4.5 kg/m2",
+    "verified": true
+   },
+   {
+    "value": 1.85,
+    "unit": "g/cm3",
+    "what": "Density of FR-4 glass-epoxy laminate (Wikipedia FR-4). DERIVED: a 1.6 mm board is 2.96 kg/m2 before copper",
+    "source": "https://en.wikipedia.org/w/index.php?title=FR-4&action=raw",
+    "quote": "Specific gravity/density || 1.850 g/cm3",
+    "verified": true
+   },
+   {
+    "value": 300,
+    "unit": "g/m2 per copper layer",
+    "what": "Copper foil areal mass at the common 1 oz/ft2 (about 34-35 um) (Wikipedia Printed circuit board)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Printed_circuit_board&action=raw",
+    "quote": "Common thicknesses are 1/2 oz/ft2 (150 g/m2), 1 oz/ft2 (300 g/m2), ...",
+    "verified": true
+   }
+  ]
+ },
+ "electronics_assembly_energy": {
+  "value": {
+   "production_total_MJ": 1266,
+   "materials_MJ": 1118,
+   "manufacturing_MJ": 148,
+   "use_phase_MJ": 5832,
+   "life_cycle_total_MJ": 7200
+  },
+  "unit": "MJ primary energy (GER) per laptop",
+  "what": "Gross energy requirement of producing one average 2005 laptop (2.8 kg) per the EU MEEuP method (EuP Lot 3 PC study, Table 91, office use). Process-based and known to be low compared with hybrid LCAs. The share due to chips was NOT found",
+  "source": "https://web.archive.org/web/20090205122623id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/EuP_Lot3_PC_FinalReport.pdf",
+  "quote": "Table 91 Environmental impacts overview for a laptop used in an office: 8 Total Energy (GER) MJ | Material 1118 | Manuf. 148 | Total 1266 | Distribution 122 | Use 5832 | ... | Total 7200",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "production_total_MJ": 2259,
+     "materials_MJ": 1917,
+     "manufacturing_MJ": 341
+    },
+    "unit": "MJ primary energy (GER) per desktop PC",
+    "what": "Same method, office desktop PC without display (EuP Lot 3, environmental impacts overview table for the office desktop PC)",
+    "source": "https://web.archive.org/web/20090205122623id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/EuP_Lot3_PC_FinalReport.pdf",
+    "quote": "EuP Lot 3 prep study: Office desktop PC: 8 Total Energy (GER) MJ 1917 341 2259 368 13571 ... 16165",
+    "verified": true
+   },
+   {
+    "value": {
+     "production_energy_MJ": 6400,
+     "fossil_fuel_kg": 260,
+     "production_share_of_life_cycle_pct": 81
+    },
+    "unit": "MJ per desktop computer with 17-inch CRT monitor",
+    "what": "Hybrid (process + input-output) estimate of the energy to produce a desktop computer with CRT monitor (Williams 2004, Environ. Sci. Technol., abstract as served by the OpenAlex API)",
+    "source": "https://api.openalex.org/works/doi:10.1021/es035152j",
+    "quote": "The total energy and fossil fuels used in producing a desktop computer with 17-in. CRT monitor are estimated at 6400 megajoules (MJ) and 260 kg, respectively. ... life cycle energy use of a computer is dominated by production (81%) as opposed to operation (19%).",
+    "verified": true
+   },
+   {
+    "value": {
+     "fab_electricity_kWh_per_cm2": 1.5,
+     "wafer_electricity_kWh_per_cm2": 0.34,
+     "packaging_kWh_per_cm2": 0.34
+    },
+    "unit": "kWh per cm2 of silicon",
+    "what": "Chip-related electricity per cm2 of silicon: fabrication, wafer production, packaging (Williams et al. 2002); usable to estimate the chip share from die area",
+    "source": "https://web.archive.org/web/2020id_/https://pages.jh.edu/aandreo1/495/Archives/Bibliography/Processing/EnergyCosts/EnergyAndMaterialsUseInMicrochips_EST.pdf",
+    "quote": "Electricity consumption to produce one square cm of wafer is 0.34 kWh, nearly one-fourth that of the 1.5 kWh needed for fabrication / use in the packaging stage is 0.34 kWh per cm2 of silicon",
+    "verified": true
+   }
+  ]
+ },
+ "electric_motor": {
+  "value": {
+   "rated_kW": 11,
+   "electrical_steel_kg_per_kW": 3.6,
+   "other_steel_kg_per_kW": 0.95,
+   "cast_iron_kg_per_kW": 1.3,
+   "cast_iron_range": [
+    0.0,
+    2.0
+   ],
+   "aluminium_kg_per_kW": 0.9,
+   "aluminium_range": [
+    0.2,
+    1.5
+   ],
+   "copper_kg_per_kW": 0.64,
+   "insulation_kg_per_kW": 0.02,
+   "impregnation_resin_kg_per_kW": 0.1,
+   "paint_kg_per_kW": 0.05,
+   "packing_kg_per_kW": 0.9,
+   "total_kg_per_kW_excl_packing": 7.56,
+   "lifetime_years": 15,
+   "operating_hours_per_year": 3000
+  },
+  "unit": "kg/kW",
+  "what": "Bill of materials of a standard-efficiency (IE1/EFF2) 4-pole 11 kW three-phase induction motor and assumed lifetime (EuP Lot 11 Motors final report, Univ. Coimbra 2008, Table 4-1). total_kg_per_kW is DERIVED (sum without packing). Cast iron and aluminium are alternative frame materials",
+  "source": "https://web.archive.org/web/20221005193142id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/Lot11_Motors_FinalReport.pdf",
+  "quote": "Table 4-1 Bill-of-Materials for EFF2 motors (materials average values), 1,1 kW | 11 kW | 110 kW: Electrical steel (kg/kW) 5,40 3,60 3,10 | Other steel (kg/kW) 1,50 0,95 0,67 | Cast iron (kg/kW) 2,5 (0,0 - 5,0) 1,3 (0,0 - 2,0) 3,00 | Aluminium (kg/kW) 1,7 (0,5 - 2,5) 0,9 (0,2 - 1,5) 0,18 | Copper (kg/kW) 1,24 0,64 0,54 | Insulation material 0,05 0,02 0,01 | Packing material 1,00 0,90 0,50 | Impregnation resin 0,30 0,10 0,05 | Paint 0,10 0,05 0,01. / Lifecycle impact of 11 kW motor (IE1), Lifetime 15 years, 3000 hour/year",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "1.1kW": {
+      "electrical_steel": 5.4,
+      "other_steel": 1.5,
+      "cast_iron": 2.5,
+      "aluminium": 1.7,
+      "copper": 1.24,
+      "lifetime_years": 12
+     },
+     "110kW": {
+      "electrical_steel": 3.1,
+      "other_steel": 0.67,
+      "cast_iron": 3.0,
+      "aluminium": 0.18,
+      "copper": 0.54,
+      "lifetime_years": 20
+     }
+    },
+    "unit": "kg/kW",
+    "what": "Same table, 1.1 kW and 110 kW IE1 motors; lifetimes 12 years (2250 h/yr) and 20 years (6000 h/yr)",
+    "source": "https://web.archive.org/web/20221005193142id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/Lot11_Motors_FinalReport.pdf",
+    "quote": "Table 4-1 (as above) / Table 5-3 Lifecycle impact of 1.1 kW motor (IE1), Lifetime 12 years, 2250 hour/year / Table 5-5 ... 110 kW motor (IE1), Lifetime 20 years, 6000 hour/year",
+    "verified": true
+   },
+   {
+    "value": {
+     "1.1kW": {
+      "electrical_steel": 8,
+      "other_steel": 1.6,
+      "copper": 1.9
+     },
+     "11kW": {
+      "electrical_steel": 4.8,
+      "other_steel": 1.0,
+      "cast_iron": 1,
+      "copper": 0.9
+     },
+     "110kW": {
+      "electrical_steel": 3.6,
+      "other_steel": 0.7,
+      "cast_iron": 3,
+      "aluminium": 0.2,
+      "copper": 0.6
+     }
+    },
+    "unit": "kg/kW",
+    "what": "Higher-efficiency (IE2/EFF1) motors, same report Table 4-2",
+    "source": "https://web.archive.org/web/20221005193142id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/Lot11_Motors_FinalReport.pdf",
+    "quote": "Table 4-2 Bill-of-Materials for EFF1 motors: Electrical steel (kg/kW) 8 4,8 3,6 | Other steel 1,6 1 0,7 | Cast iron 2,5 (0,0 - 5,0) 1 (0,0 - 2,0) 3 | Aluminium 0,5 - 4,0 0,25 - 1,8 0,2 | Copper 1,9 0,9 0,6",
+    "verified": true
+   }
+  ]
+ },
+ "heat_pump": {
+  "value": {
+   "size_kW": 10,
+   "steel_kg": 128.85,
+   "aluminium_kg": 47.16,
+   "copper_kg": 39.17,
+   "refrigerant_kg": 6.4,
+   "lubricant_oil_kg": 1.6,
+   "others_kg": 4.2,
+   "total_kg": 227.38,
+   "kg_per_kW": 22.7,
+   "lifespan_years": 15,
+   "manufacturing_natural_gas_m3": 1400,
+   "manufacturing_electricity_kWh": 140
+  },
+  "unit": "kg per unit; years",
+  "what": "Manufacturing inventory of a 10 kW domestic dual-source (air/ground) heat pump unit, excluding boreholes (Data in Brief 2020, PMC7327801, Table 1). total_kg and kg_per_kW are DERIVED (sum / 10 kW)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7327801/fullTextXML",
+  "quote": "Table 1 Inventory for the DSHP manufacturing: Size | kW | 10 | Steel (unalloyed and low alloyed) [kg] | 128.85 | Aluminium [kg] | 47.16 | Copper [kg] | 39.17 | Refrigerant [kg] | 6.40 | Lubricant oil [kg] | 1.60 | Others (rubber, tin, etc.) [kg] | 4.20 | Water [m3] | 0.70 | Natural gas [m3] | 1400 | Electricity, medium voltage [kWh] | 140 | Lifespan | Years | 15",
+  "verified": true,
+  "more": [
+   {
+    "value": 4,
+    "unit": "COP",
+    "what": "Typical coefficient of performance of an air-source heat pump at 30-40 C flow temperature; in mild weather COP 2-5, below about -8 C COP 1-4 (Wikipedia, Air source heat pump)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Air_source_heat_pump&action=raw",
+    "quote": "An ASHP can typically gain 4 kWh thermal energy from 1 kWh electric energy, thus its coefficient of performance or COP is 4. / In mild weather, coefficient of performance (COP) may be between 2 and 5, while at temperatures below around -8 C an air-source heat pump may still achieve a COP of 1 to 4.",
+    "verified": true
+   },
+   {
+    "value": [
+     10,
+     15
+    ],
+    "unit": "years",
+    "what": "Predicted life expectancy of a home heat pump (InterNACHI life expectancy chart)",
+    "source": "https://www.nachi.org/life-expectancy.htm",
+    "quote": "Heat Pump | 10 to 15",
+    "verified": true
+   },
+   {
+    "value": 4.0,
+    "unit": "COP",
+    "what": "Vapor-compression chillers with evaporative heat rejection (Wikipedia, Chiller)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Chiller&action=raw",
+    "quote": "With evaporative cooling heat rejection, their coefficients of performance (COPs) are very high; typically 4.0 or more.",
+    "verified": true
+   }
+  ]
+ },
+ "pump": {
+  "value": {
+   "duty": "25 m3/h at 25 m head",
+   "cast_iron_kg": 14.0,
+   "stainless_steel_kg": 1.0,
+   "paint_kg": 0.1,
+   "pump_mass_kg": 15.1,
+   "hydraulic_power_kW": 1.7,
+   "kg_per_hydraulic_kW": 8.9,
+   "product_life_years": 11
+  },
+  "unit": "kg per pump; years",
+  "what": "Base-case small single-stage end-suction close-coupled centrifugal water pump, pump end only (motor counted separately): bill of materials and product life (EuP Lot 11 Water Pumps report, AEA 2008, Figure 4-1). DERIVED: hydraulic power = 1000 kg/m3 x 9.81 x (25/3600 m3/s) x 25 m = 1.70 kW; mass per hydraulic kW",
+  "source": "https://web.archive.org/web/20220119101021id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/Lot11_Pumps_FinalReport.pdf",
+  "quote": "Figure 4-1 BOM ESCC Small (25m3/h, 25m): 1 Impeller 2000.0 g Cast iron | 2 Casing 8000.0 Cast iron | 3 Adapter/bearing housing/feet 4000.0 Cast iron | 4 Shaft (part of motor) 0.0 | 5 Metal fixings, seals, bearings 1000.0 Stainless 18/8 | 6 Paint 100.0 / INPUTS FOR EU-Totals & economic Life Cycle Costs: A Product Life 11 years",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "duty": "125 m3/h at 25 m head",
+     "cast_iron_kg": 102.0,
+     "stainless_steel_kg": 6.0,
+     "pump_mass_kg": 108.2,
+     "hydraulic_power_kW": 8.5,
+     "kg_per_hydraulic_kW": 12.7
+    },
+    "unit": "kg per pump",
+    "what": "Base-case large end-suction close-coupled pump, same report Figure 4-2. DERIVED hydraulic power and ratio as above",
+    "source": "https://web.archive.org/web/20220119101021id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/Lot11_Pumps_FinalReport.pdf",
+    "quote": "Figure 4-2 BOM ESCC Large (125m3/h, 25m): 1 Impeller 12000.0 Cast iron | 2 Casing 55000.0 Cast iron | 3 Adapter/bearing housing/feet 35000.0 Cast iron | 4 Shaft 4000.0 Stainless 18/8 | 5 Metal fixings, seals, bearings 2000.0 Stainless 18/8 | 6 Paint 200.0",
+    "verified": true
+   }
+  ]
+ },
+ "machine_tool": {
+  "value": {
+   "model": "Haas VF-2 vertical machining centre",
+   "machine_weight_kg": 3539,
+   "spindle_power_kW": 22.4,
+   "travels_mm": [
+    762,
+    406,
+    508
+   ],
+   "max_spindle_rpm": 8100,
+   "full_load_amps_at_220V_3ph": 70,
+   "coolant_capacity_L": 208
+  },
+  "unit": "kg; kW",
+  "what": "Mass and spindle power of a named CNC vertical machining centre (Haas VF-2 product page, archived copy). DERIVED: 158 kg per spindle kW. Cast-iron share and service life were NOT found",
+  "source": "https://web.archive.org/web/2022/https://www.haascnc.com/machines/vertical-mills/vf-series/models/small/vf-2.html",
+  "quote": "Travels: X Axis 30.0 in 762 mm, Y Axis 16.0 in 406 mm, Z Axis 20.0 in 508 mm | Spindle Max Rating 30.0 hp 22.4 kW, Max Speed 8100 rpm | Coolant Capacity 55 gal 208 L | Dimensions - Shipping ... Weight 7800 lb 3539.0 kg | Full Load Amps (3 Phase) - Low 70 A",
+  "verified": true
+ },
+ "cutting_tools": {
+  "value": {
+   "tungsten_carbide_pct": 90,
+   "cobalt_pct": 10
+  },
+  "unit": "% by mass",
+  "what": "Composition of a classic cemented carbide cutting-tool grade ('Pobedit'); Wikipedia also cites cemented carbides with 5.9 % and 13 % cobalt binder",
+  "source": "https://en.wikipedia.org/w/index.php?title=Cemented_carbide&action=raw",
+  "quote": "Pobedit is a sintered carbide alloy of about 90% tungsten carbide as a hard phase, and about 10% cobalt (Co) as a binder phase, with a small amount of additional carbon. / For 5.9% cobalt samples, a coefficient of 4.4 um/(m.K) was measured, whereas 13% cobalt samples have a coefficient of around 5.0",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "M2": {
+      "C": 0.85,
+      "Cr": 4,
+      "Mo": 5,
+      "W": 6.0,
+      "V": 2.0
+     },
+     "T1": {
+      "C": [
+       0.65,
+       0.8
+      ],
+      "Cr": 4.0,
+      "W": 18,
+      "V": 1
+     }
+    },
+    "unit": "% by mass, balance iron",
+    "what": "Composition of common high-speed steels M2 and T1 (Wikipedia, High-speed steel table)",
+    "source": "https://en.wikipedia.org/w/index.php?title=High-speed_steel&action=raw",
+    "quote": "Grade | C | Cr | Mo | W | V | Co | Mn | Si: M2 | 0.85 | 4 | 5 | 6.0 | 2.0 | - ; T1 | 0.65-0.80 | 4.00 | - | 18 | 1 | - | 0.1-0.4 | 0.2-0.4",
+    "verified": true
+   },
+   {
+    "value": {
+     "world_tungsten_mine_production_t_2023": 78000,
+     "world_2022": 79800,
+     "us_share_to_cemented_carbide_pct": 60
+    },
+    "unit": "tonnes tungsten content",
+    "what": "World tungsten mine production and share used in cemented carbide parts in the US (USGS Mineral Commodity Summaries 2024). World tonnage of cutting tools as such was not found",
+    "source": "https://pubs.usgs.gov/periodicals/mcs2024/mcs2024-tungsten.pdf",
+    "quote": "(Data in metric tons, tungsten content) World total (rounded) 79,800 78,000 / An estimated 60% of the tungsten consumed in the United States was used in cemented carbide parts for cutting and wear-resistant applications",
+    "verified": true
+   },
+   {
+    "value": [
+     60,
+     70
+    ],
+    "unit": "% of global tungsten use",
+    "what": "Share of tungsten going into tungsten carbide and cemented carbides (Wikipedia, Tungsten)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Tungsten&action=raw",
+    "quote": "Tungsten carbide and other cemented tungsten carbides make up 60 to 70 % of global tungsten usage, and steels and other alloys make up roughly 20 to 30 %.",
+    "verified": true
+   }
+  ]
+ },
+ "vehicle_plant_energy": {
+  "value": {
+   "electricity_kWh_per_car_1995": 860,
+   "fuel_MBtu_per_car_1994": 6.5,
+   "primary_energy_MBtu_per_car_1994": 14.3,
+   "final_energy_MWh_per_car": 2.77,
+   "electricity_end_use_kWh_per_car": {
+    "paint_systems": 260,
+    "HVAC": 160,
+    "lighting": 130,
+    "compressed_air": 120,
+    "welding": 80,
+    "materials_handling_tools": 60,
+    "metal_forming": 30,
+    "misc": 20
+   }
+  },
+  "unit": "kWh, MBtu and MWh per vehicle",
+  "what": "Energy used in US vehicle assembly plants per car (LBNL-50939 rev., Galitsky & Worrell 2008). final_energy_MWh_per_car is DERIVED: 6.5 MBtu x 0.2931 MWh/MBtu + 0.86 MWh = 2.77 MWh",
+  "source": "https://www.osti.gov/servlets/purl/927881",
+  "quote": "the average specific electricity consumption per car has decreased from almost 1000 kWh/car in 1987 to 860 kWh/car in 1995 (DOC, 2000). / On a final energy basis, fuels represent 72% of the energy use ... In 1994, the specific fuel consumption is estimated at 6.5 MBtu/car, while the primary specific energy consumption is estimated at 14.3 MBtu/car / Table 2 (kWh/car applied): HVAC 160; Paint systems 260; Lighting 130; Compressed air 120; Materials handling/tools 60; Metal forming 30; Welding 80; Miscellaneous 20",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "plant": "Tesla Fremont Factory",
+     "vehicles_2023": 560000,
+     "employees": 20000,
+     "site_area_sq_mi": 0.68,
+     "site_acres_purchased": 210,
+     "building_floor_area_million_sq_ft": 5.5
+    },
+    "unit": "vehicles/yr; people; area",
+    "what": "Size of a named car plant (Wikipedia, Tesla Fremont Factory). 0.68 sq mi = 1.76 km2 (DERIVED conversion)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Tesla_Fremont_Factory&action=raw",
+    "quote": "In 2023, the Fremont Factory produced nearly 560,000 vehicles and employed over 20,000 people. / area = 0.68 sqmi / Tesla is buying 210 acres, a parcel that contains several buildings that have approximately 5.5 million square feet",
+    "verified": true
+   },
+   {
+    "value": {
+     "plant": "Toyota Motor Manufacturing Kentucky",
+     "annual_capacity_vehicles": 550000,
+     "annual_capacity_engines": 600000,
+     "employees": 10000
+    },
+    "unit": "vehicles/yr; people",
+    "what": "Size of a named car plant (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Toyota_Motor_Manufacturing_Kentucky&action=raw",
+    "quote": "The plant has three automobile assembly lines ... with an annual capacity of 550,000 vehicles, and an engine shop with an annual capacity of 600,000 engines. / num_employees = 10,000",
+    "verified": true
+   },
+   {
+    "value": 34,
+    "unit": "GJ per vehicle",
+    "what": "Cumulative energy of part manufacturing plus vehicle assembly (material transformation, not material production) for a conventional 1532 kg car (ANL/ESD/10-6, Sullivan, Burnham, Wang 2010). DERIVED: 9.4 MWh/vehicle",
+    "source": "https://web.archive.org/web/2020id_/https://publications.anl.gov/anlpubs/2010/10/68288.pdf",
+    "quote": "When the model was applied to conventional vehicles, reliable estimates of cumulative energy consumption (34 GJ/vehicle) and CO2 emission (2 tonnes/vehicle) were computed for the VMA life-cycle stage.",
+    "verified": true
+   }
+  ]
+ },
+ "product_lifetimes": {
+  "value": {
+   "laptop": 5,
+   "desktop_pc": 6,
+   "lcd_display": 6,
+   "laptop_incl_second_life": 5.6,
+   "desktop_incl_second_life": 6.6
+  },
+  "unit": "years",
+  "what": "Average economic lifetime of computers in the EU (EuP Lot 3 PC preparatory study, Tables 54-55)",
+  "source": "https://web.archive.org/web/20090205122623id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/EuP_Lot3_PC_FinalReport.pdf",
+  "quote": "Table 54 Average economic lifetimes, of first life: Desktop 6 | Laptop 5 | CRT 6 | LCD 6 / Table 55 Average total lifetime ... including second life: Desktop 6,6 | Laptop 5,6 | CRT 6,6",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "refrigerator": [
+      9,
+      13
+     ],
+     "washing_machine": [
+      5,
+      15
+     ],
+     "freezer": [
+      10,
+      20
+     ],
+     "dishwasher": 9,
+     "clothes_dryer": 13
+    },
+    "unit": "years",
+    "what": "Predicted life expectancy of household appliances (InterNACHI Standard Estimated Life Expectancy Chart for Homes)",
+    "source": "https://www.nachi.org/life-expectancy.htm",
+    "quote": "Refrigerator | 9 to 13 ; Washing Machine | 5 to 15 ; Freezer | 10 to 20 ; Dishwasher | 9 ; Dryer (clothes) | 13",
+    "verified": true
+   },
+   {
+    "value": {
+     "car_years": 16.58,
+     "car_miles": 156470
+    },
+    "unit": "years; miles",
+    "what": "Average life of a vehicle in the USA (Wikipedia, Car longevity, citing a scrapyard company's study - weak source)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Car_longevity&action=raw",
+    "quote": "According to a recent study by Junk Car Medics the average vehicle in the USA last 16.58 years and 156,470 miles.",
+    "verified": true
+   },
+   {
+    "value": [
+     25,
+     30
+    ],
+    "unit": "years",
+    "what": "Service life of a modern ship (Wikipedia, Ship breaking)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Ship_breaking&action=raw",
+    "quote": "Modern ships have a lifespan of 25 to 30 years before corrosion, metal fatigue and a lack of parts render them uneconomical to operate.",
+    "verified": true
+   },
+   {
+    "value": {
+     "1.1kW": 12,
+     "11kW": 15,
+     "110kW": 20
+    },
+    "unit": "years",
+    "what": "Electric motor lifetimes assumed in the EU ecodesign study by size (EuP Lot 11 Motors)",
+    "source": "https://web.archive.org/web/20221005193142id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/Lot11_Motors_FinalReport.pdf",
+    "quote": "Lifecycle impact of 1.1 kW motor (IE1), Lifetime 12 years, 2250 hour/year / 11 kW motor (IE1), Lifetime 15 years, 3000 hour/year / 110 kW motor (IE1), Lifetime 20 years, 6000 hour/year",
+    "verified": true
+   },
+   {
+    "value": 24,
+    "unit": "months",
+    "what": "Time an average user keeps a mobile phone (Wikipedia, Mobile phone recycling; first-use period, not technical life)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Mobile_phone_recycling&action=raw",
+    "quote": "A cell phone's shelf life is only about 24 months for the average user.",
+    "verified": true
+   },
+   {
+    "value": 3,
+    "unit": "years",
+    "what": "First-owner use period Apple assumes for an iPhone (4 years for Mac computers) in its environmental reports",
+    "source": "https://www.apple.com/environment/pdf/products/iphone/iPhone_7_PER_sept2016.pdf",
+    "quote": "Customer use: Apple conservatively assumes a three-year period for power use by first owners.",
+    "verified": true
+   },
+   {
+    "value": 11,
+    "unit": "years",
+    "what": "Product life of commercial water pumps (EuP Lot 11 Pumps)",
+    "source": "https://web.archive.org/web/20220119101021id_/https://www.eup-network.de/fileadmin/user_upload/Produktgruppen/Lots/Final_Documents/Lot11_Pumps_FinalReport.pdf",
+    "quote": "A Product Life 11 years",
+    "verified": true
+   }
+  ]
+ },
+ "copper_wire_drawing": {
+  "value": 7.1,
+  "unit": "MJ/kg",
+  "what": "Energy consumption of 'copper wire production' (transforming copper into wire) as used in Argonne's vehicle-manufacturing model, with CO2 0.43 kg/kg; single value taken from Boustead & Hancock 1979 (ANL/ESD/10-6, Table 2). DERIVED: 1,970 kWh/t. Whether rod rolling is included is not stated; a split into rod rolling and drawing was NOT found",
+  "source": "https://web.archive.org/web/2020id_/https://publications.anl.gov/anlpubs/2010/10/68288.pdf",
+  "quote": "TABLE 2 Material Transformation and Vehicle Assembly Process Data - Energy consumption (MJ/kg) Ave | CO2 emission (kg/kg) Ave | Source: Copper wire production 7.1 0.43 1 value (Boustead and Hancock, 1979, Appendix, Copper Wire, pg. 332, footnote 561)",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     1000,
+     1050
+    ],
+    "unit": "MJ/t",
+    "what": "Natural gas used by the shaft furnace that melts cathodes ahead of continuous casting and rolling of wire rod, 50-60 t/h (NFM BREF 2017, Table 3.34); melting only, excludes the rolling mill drive",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Table 3.34: Operating data for a shaft furnace of a cast-and-rolled wire installation: Melting capacity t/h 50-60 | Specific energy consumption MJ/t 1000-1050",
+    "verified": true
+   }
+  ]
+ },
+ "stainless_aod": {
+  "value": 50,
+  "unit": "% scrap in stainless steel production (global average, up to)",
+  "what": "Scrap share of the metallic input in stainless steel production; regionally up to 90 % (Raabe, 'The Materials Science behind Sustainable Metals and Alloys', Chem. Rev. 2023, PMC9999434). AOD-specific argon consumption and AOD energy were NOT found",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9999434/fullTextXML",
+  "quote": "such stainless steels are now produced from very high proportions of scrap, with a global average of up to 50%, and regionally even up to 90% scrap input.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "electricity_kWh_per_t_LS": [
+      404,
+      748
+     ],
+     "argon_m3_per_t_LS": [
+      0.3,
+      1.45
+     ],
+     "oxygen_m3_per_t_LS": [
+      5,
+      65
+     ],
+     "alloys_high_alloy_and_stainless_kg_per_t_LS": [
+      23,
+      363
+     ],
+     "scrap_kg_per_t_LS": [
+      1039,
+      1232
+     ]
+    },
+    "unit": "per tonne liquid steel",
+    "what": "Input ranges of EU electric arc furnace plants in general, carbon and high-alloy/stainless together (Iron and Steel BREF 2013, Table 8.1); this is the EAF melt shop, not the AOD converter alone",
+    "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf",
+    "quote": "Table 8.1: Input/output data for electric arc furnaces within the EU: Scrap kg/t LS 1039-1232 | Alloys: Carbon steel kg/t LS 11-40; High alloy and stainless steel kg/t LS 23-363 | Oxygen m3/t LS 5-65 | Argon m3/t LS 0.3-1.45 | Electricity kWh/t LS 404-748 (MJ/t LS 1454-2693) | Fuels MJ/t LS 50-1500",
+    "verified": true
+   }
+  ]
+ },
+ "not_found": [
+  "titanium_var: no published figure for vacuum arc remelting energy (kWh per kg or tonne of titanium or steel) could be opened; only the whole-route figure 70,400 kWh/t CP-Ti bar (sponge + double VAR + forging), see titanium_kroll.more",
+  "chip_fab_size: power draw (MW) of a named fab",
+  "chip_fab_energy: figures are from Williams et al. 2002 (1990s-2000 fabs); no modern per-300-mm-wafer figure was opened",
+  "electronics_assembly_energy: share of laptop manufacturing energy due to chips; hybrid-LCA laptop figure (Deng, Babbitt, Williams 2011) could not be opened (paywall)",
+  "machine_tool: share of cast iron in machine mass; service life of an industrial machine tool",
+  "product_lifetimes: industrial machine tool",
+  "per_capita_materials: paper per person; all glass per person (only flat glass 2009 found); published per-capita figures other than steel (cement, copper, aluminium, plastics, e-waste values are DERIVED from world totals / 8.0 billion)",
+  "copper_wire_drawing: separate figures for rod rolling and for drawing",
+  "stainless_aod: argon consumption and energy of the AOD converter itself",
+  "pump: lifetime and mass for large industrial process pumps (figures are for commercial water pumps, pump end only)",
+  "led_lamp: horticultural LED fixture mass per kW; explicit L70 rating",
+  "cutting_tools: world production tonnage of cutting tools / cemented carbide"
+ ]
+}

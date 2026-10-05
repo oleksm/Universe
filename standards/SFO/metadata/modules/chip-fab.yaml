@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.chip-fab
+  name: "Chip fab"
+  step: "Make chips"
+  description: "A clean room the size of a town square, where circuits are printed on wafers a layer at a time, hundreds of steps over months. It makes a few tonnes a year and drinks like a city."
+physical:
+  length: 600
+  width: 600
+  height: 30
+recipes:
+  - makes: good.chips
+    does: "Wafers are coated, exposed, etched and washed, layer after layer, then cut into chips."
+    inputs:
+      - { item: good.wafers, quantity: 1.2 }
+      - { item: good.sulphuric-acid, quantity: 101.8 }
+      - { item: good.caustic-soda, quantity: 50.89 }
+      - { item: good.methanol, quantity: 101.8 }
+      - { item: good.water, quantity: 96130.0 }
+    outputs:
+      - { item: good.chemical-waste, quantity: 254.7 }
+      - { item: good.waste-water, quantity: 96130.0 }
+    rate: 0.0039
+    power: 119100000.0
+basis:
+  - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "For each cm2 of wafer: 1.5 kWh, 45 g of chemicals, 17 litres of water (fabs of the late 1990s: 'The 1.7 kilogram microchip'; nothing newer was found). A kg of wafers is 5,650 cm2. The 445 g of gases, mostly nitrogen from the air and back to it, are left out." }
+  - { of: [recipes.inputs], tier: invented, review: true, note: "Which chemicals, and that a sixth of the wafer is lost: guesses. To be reviewed." }
+  - { of: [physical, recipes.rate], tier: sourced, source: "standards/sources/research_machines.json", note: "GlobalFoundries' Fab 1 at Dresden: 80,000 wafers a month on 36 hectares." }

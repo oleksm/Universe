@@ -44,3 +44,12 @@
 
 - **Stainless steel, copper, bronze and titanium alloy** can be made: to ingot, and to one worked
   form each (plate, wire, bar, plate). Three new works: a foundry, a vacuum arc furnace, a wire mill.
+
+## Electronics and machines
+
+- **Silicon to chips:** a silicon furnace, a refinery that makes wafers, and a chip fab. A kilogram
+  of chips takes 96 tonnes of water and a 119 MW fab makes four grams a second.
+- **An electronics works** (circuit boards, electronics, computers, lamps) and **a machine works**
+  (motors, pumps, heat pumps, machine tools, tools).
+- **Four guessed figures replaced** by found ones: foundry, wire mill, lime kiln, crushing plant.
+- 11 of 20 needs are now met by something described.
