@@ -504,7 +504,7 @@ impl ClassSpec {
         let hold_volume: f64 = modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum();
         let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output, .. } = m.does { Some(output) } else { None }).sum();
         let hyper_efficiency = modules().filter_map(|m| if let Does::Hyperdrive { efficiency, .. } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max);
-        let hyper_top = modules().filter_map(|m| if let Does::Hyperdrive { top_c, .. } = m.does { Some(top_c * universe_physics::laws::SPEED_OF_LIGHT) } else { None }).fold(0.0, f64::max);
+        let hyper_top = modules().filter_map(|m| if let Does::Hyperdrive { top_speed, .. } = m.does { Some(top_speed) } else { None }).fold(0.0, f64::max);
         let plant_efficiency = modules().filter_map(|m| if let Does::PowerPlant { output, efficiency, .. } = m.does { Some(output * efficiency) } else { None }).sum::<f64>() / power_output.max(1e-9);
         let power_draw: f64 = modules().map(|m| m.power).sum();
         if power_draw > power_output {

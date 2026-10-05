@@ -30,8 +30,8 @@ pub enum Does {
     /// A passenger cabin: seats, with their life support (in a cargo slot).
     Cabin { seats: u32 },
     /// The hyperdrive: its field's `efficiency` (the share of the fuel's energy
-    /// that goes into the field; the rest is heat), and its top speed (`top_c`, c).
-    Hyperdrive { efficiency: f64, top_c: f64 },
+    /// that goes into the field; the rest is heat), and its top speed (m/s).
+    Hyperdrive { efficiency: f64, top_speed: f64 },
     /// Flies the ship by wire: how fast it lets it turn (rad/s): pitch and yaw, roll.
     FlightComputer { turn_rate: f64, roll_rate: f64 },
     Transponder,
@@ -40,16 +40,16 @@ pub enum Does {
     /// A comm (the hypernet, `docs/hypernet.md`): it hears what happens within
     /// `capture` (m), links to another comm within `link` (m; the shorter of
     /// the two decides), passes a message on after `lag` (s), and handles
-    /// `capacity` messages an hour.
+    /// `capacity` messages a second.
     Comm { capture: f64, link: f64, lag: f64, capacity: f64 },
     /// A gate relay (fitted to a gate ring): links its system's net to its
     /// twin's through the lane's tube (in capsules: `hypernet::capsule_time`), handling a message
-    /// in `lag` (s) more, `capacity` messages an hour, throwing a batch every
+    /// in `lag` (s) more, `capacity` messages a second, throwing a batch every
     /// `cadence` s (capsules can't pass each other in the flow: they go by turns).
     GateRelay { lag: f64, capacity: f64, cadence: f64 },
     /// A hyper relay (space structures): links its site to others through
     /// hyperspace (Dogma's hyper-signal), handling a message in `lag` (s),
-    /// `capacity` messages an hour, throwing a batch every `cadence` s.
+    /// `capacity` messages a second, throwing a batch every `cadence` s.
     HyperRelay { lag: f64, capacity: f64, cadence: f64 },
     LifeSupport,
     Gun,
@@ -277,7 +277,7 @@ impl Module {
             Does::Sensors { range } => positive("range", *range),
             Does::Comm { capture, link, lag, capacity } => positive("capture", *capture).and(positive("link", *link)).and(positive("capacity", *capacity)).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
             Does::GateRelay { lag, capacity, .. } | Does::HyperRelay { lag, capacity, .. } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
-            Does::Hyperdrive { efficiency, top_c } => positive("top_c", *top_c).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
+            Does::Hyperdrive { efficiency, top_speed } => positive("top_speed", *top_speed).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
             // (Storage can't beat the physics sheet's density.)
             Does::Capacitor { capacity, rate } => positive("capacity", *capacity).and(positive("rate", *rate)).and(if *capacity <= crate::sheet::CAPACITOR_DENSITY * self.mass * 1.001 {
                 Ok(())
@@ -295,7 +295,6 @@ impl Module {
     /// game doesn't make yet (a gate's throat coil).
     pub fn from_record(e: &crate::registry::Equipment, price: f64) -> Option<Self> {
         use crate::registry::{EquipmentFunction as F, EquipmentFunctionNavComputerFeature as N};
-        let c = universe_physics::laws::SPEED_OF_LIGHT;
         let n = |v: &Option<f64>| v.unwrap_or(0.0);
         let text = |v: &Option<String>| v.clone().unwrap_or_default();
         let does = match &e.function {
@@ -307,13 +306,12 @@ impl Module {
             F::Capacitor { capacity, rate } => Does::Capacitor { capacity: n(capacity), rate: n(rate) },
             F::Rack { capacity } => Does::Rack { capacity: n(capacity) },
             F::Cabin { seats } => Does::Cabin { seats: seats.unwrap_or(0) as u32 },
-            F::Hyperdrive { efficiency, top_speed } => Does::Hyperdrive { efficiency: n(efficiency), top_c: n(top_speed) / c },
+            F::Hyperdrive { efficiency, top_speed } => Does::Hyperdrive { efficiency: n(efficiency), top_speed: n(top_speed) },
             F::FlightComputer { turn_rate, roll_rate } => Does::FlightComputer { turn_rate: n(turn_rate), roll_rate: n(roll_rate) },
             F::Sensors { range } => Does::Sensors { range: n(range) },
-            // (The game counts messages an hour.)
-            F::Comm { capture, link, lag, capacity } => Does::Comm { capture: n(capture), link: n(link), lag: n(lag), capacity: n(capacity) * 3600.0 },
-            F::GateRelay { lag, capacity, cadence } => Does::GateRelay { lag: n(lag), capacity: n(capacity) * 3600.0, cadence: n(cadence) },
-            F::HyperRelay { lag, capacity, cadence } => Does::HyperRelay { lag: n(lag), capacity: n(capacity) * 3600.0, cadence: n(cadence) },
+            F::Comm { capture, link, lag, capacity } => Does::Comm { capture: n(capture), link: n(link), lag: n(lag), capacity: n(capacity) },
+            F::GateRelay { lag, capacity, cadence } => Does::GateRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) },
+            F::HyperRelay { lag, capacity, cadence } => Does::HyperRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) },
             F::NavComputer { features, interlock, governor } => Does::NavComputer {
                 features: features
                     .iter()
