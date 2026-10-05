@@ -102,6 +102,10 @@ pub struct Interior {
     slider: Option<usize>,
     /// Points laid dropped to the hull's floor under the work plane.
     snap_floor: bool,
+    /// The hull at the work plane's height: for which height, each metre cell's
+    /// middle and what's there (hollow, solid); and being worked out, for which.
+    hollow: Option<(f32, Arc<Vec<(Vec2, bool)>>)>,
+    hollow_job: Option<(f32, mpsc::Receiver<Vec<(Vec2, bool)>>)>,
     /// A slide under way has its undo step already; SHIFT held (squaring a path).
     sliding: bool,
     shift: bool,
@@ -774,6 +778,43 @@ impl Interior {
     }
 
     /// The hull's lines, asked for once a hull and picked up when they're done.
+    /// The hull at the work plane's height `y`, worked out again (on a thread) when
+    /// it's moved: a metre grid over it, each cell hollow (closed in) or solid.
+    fn map_hollow(&mut self, y: f32) {
+        if let Some((at, rx)) = &self.hollow_job
+            && let Ok(cells) = rx.try_recv()
+        {
+            self.hollow = Some((*at, Arc::new(cells)));
+            self.hollow_job = None;
+        }
+        let Some((_, h)) = &self.lines else { return };
+        if self.hollow_job.is_some() || self.hollow.as_ref().is_some_and(|(at, _)| (at - y).abs() < 0.05) {
+            return;
+        }
+        let (tx, rx) = mpsc::channel();
+        let (mesh, lo, hi) = (h.mesh.clone(), h.lo, h.hi);
+        std::thread::spawn(move || {
+            use universe_sim::world::deckplan::{enclosed, in_material};
+            let mut cells = Vec::new();
+            let mut z = lo.z.floor() + 0.5;
+            while z < hi.z {
+                let mut x = lo.x.floor() + 0.5;
+                while x < hi.x {
+                    let p = universe_engine::glam::DVec2::new(f64::from(x), f64::from(z));
+                    if in_material(&mesh, p, f64::from(y)) {
+                        cells.push((Vec2::new(x, z), false));
+                    } else if enclosed(&mesh, p, f64::from(y), 0.0, false) {
+                        cells.push((Vec2::new(x, z), true));
+                    }
+                    x += 1.0;
+                }
+                z += 1.0;
+            }
+            tx.send(cells).ok();
+        });
+        self.hollow_job = Some((y, rx));
+    }
+
     fn refresh(&mut self, key: &str, shape: &universe_sim::world::shape::Shape) {
         if let Some((k, rx)) = &self.job
             && let Ok(h) = rx.try_recv()
@@ -1188,7 +1229,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
             let presets = PRESETS.iter().enumerate().map(|(k, (name, _, _))| {
                 if k < 2 { (at(308.0, k as f32 * (w + 6.0), w), *name, Action::Preset(k)) } else { (at(330.0, (k - 2) as f32 * (w3 + 6.0), w3), *name, Action::Preset(k)) }
             });
-            shapes.chain([(at(246.0, 0.0, w3), "PLANE DOWN", Action::PlaneDown), (at(246.0, w3 + 6.0, w3), "PLANE UP", Action::PlaneUp), (at(246.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand)]).chain(presets).collect()
+            shapes.chain([(at(246.0, 0.0, w3), "PLANE -", Action::PlaneDown), (at(246.0, w3 + 6.0, w3), "PLANE +", Action::PlaneUp), (at(246.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand)]).chain(presets).collect()
         }
         Tool::Look => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -1223,7 +1264,7 @@ fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
 /// The legend, at the bottom right: where it is and its size.
 fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
     let (w, line) = (230.0, 14.0);
-    let height = (SORTS.len() + 3) as f32 * line + line * 0.5 + 10.0;
+    let height = (SORTS.len() + 4) as f32 * line + line * 0.5 + 10.0;
     (Vec2::new(size.x - w - 12.0, size.y - 30.0 - height), Vec2::new(w, height))
 }
 
@@ -1601,6 +1642,9 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The plane's handle (laying paths): held, it goes up and down with the mouse.
     let plane = plane_of(interior, &h);
+    if interior.tool == Tool::Path {
+        interior.map_hollow(plane);
+    }
     if pressed && interior.tool == Tool::Path && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
         interior.lifting = true;
     }
@@ -1911,6 +1955,18 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let plane = plane_of(interior, &h);
     if interior.tool == Tool::Path {
         let c = [Vec3::new(lo.x, plane, lo.z), Vec3::new(hi.x, plane, lo.z), Vec3::new(hi.x, plane, hi.z), Vec3::new(lo.x, plane, hi.z)];
+        // The hull at this height: hollow cells green, solid red (where there's room).
+        if let Some((at, cells)) = &interior.hollow {
+            let y = *at;
+            for (c, hollow) in cells.iter() {
+                let q = [Vec3::new(c.x - 0.48, y, c.y - 0.48), Vec3::new(c.x + 0.48, y, c.y - 0.48), Vec3::new(c.x + 0.48, y, c.y + 0.48), Vec3::new(c.x - 0.48, y, c.y + 0.48)];
+                if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = q.map(|p| cam.project(p)) {
+                    let fill = [if *hollow { Color([0.4, 1.0, 0.55, 0.13]) } else { Color([1.0, 0.35, 0.3, 0.16]) }; 3];
+                    frame.hud_triangle_colored([a, b, cc], fill);
+                    frame.hud_triangle_colored([a, cc, d], fill);
+                }
+            }
+        }
         // (A light sheet, so it reads among the hull's lines.)
         if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
             let fill = [Color([0.4, 1.0, 0.75, 0.06]); 3];
@@ -2133,6 +2189,9 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         row(frame, y, PATH, "LINE, ITS ROOM", false);
         y += line;
         row(frame, y, DECK_WALL, "DECKS (2D STUDIO)", false);
+        y += line;
+        row(frame, y, Color([0.4, 1.0, 0.55, 0.8]), "PLANE: HOLLOW / SOLID", true);
+        frame.hud_rect(Vec2::new(p.x + 15.0, y + 2.0), Vec2::splat(6.0), Color([1.0, 0.35, 0.3, 0.8]));
         y += line;
         row(frame, y, CLASH, "CLASH: CUTS THE HULL", false);
     }
