@@ -34,10 +34,9 @@ food): 330 t a day.
   - animals: livestock barn (pigs, chickens, eggs, milk, cattle, sheep), fish farm
   - works: feed mill, flour mill, oil press, sugar works, dairy, meat works, bakery, brewery, winery, fertiliser works
   - storage: grain silo, cold store
-- **9 companies** (`MakerHouse/metadata/makers/`): Eikir Growers, Nacaubun Cold Country Farms,
+- **9 companies** (`MakerHouse/metadata/makers/`): Eikir Growers, Sunward Planters,
   Verdance Orchards, Halloran Mills, Brightwater Dairy, Marrow & Pike, Lantern Halls, Greenfall
-  Agrochemical, Cellar & Vat. Invented, each with its trade; homes at Port Eikir, Port Nacaubun
-  and the station.
+  Agrochemical, Cellar & Vat. Invented, each with its trade; homes at Port Eikir and the station.
 
 ## Nothing from nothing
 
@@ -167,9 +166,10 @@ peppers, which do not ship) and buys the rest:
 | The station (25,000) | 3 | 4 MW |
 | Port Nacaubun on Treistun e (60,000) | 5 | 9 MW |
 
-Port Nacaubun's 60,000 people are fed from Treistun d like everyone else. It was the first port
-and the story says its farms fed the system; by the climate the game gives its world, they could
-not have. Either the story or the world's warmth has to give: the user's to say.
+Port Nacaubun's 60,000 people are fed from Treistun d like everyone else. **The story follows the
+physics** (the user, 2026-10-04: "what is possible is possible"): e is a cold world with air, ice
+and water, settled first and never able to farm; d's fields feed the system. The records say so
+now (the two worlds' stories, the two ports', the food companies').
 
 ## What waits on the engine
 
