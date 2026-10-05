@@ -486,8 +486,11 @@ let c = Content { shapes, materials, brands, structures, modules, hulls, goods, 
             }
         }
         for ore in crate::goods::Ore::ALL {
-            if !self.stock_index.contains_key(ore.key()) {
+            let Some(&i) = self.stock_index.get(ore.key()) else {
                 return Err(format!("no ore '{}' (asteroids are made of it)", ore.key()));
+            };
+            if self.stock[i].category.is_none() {
+                return Err(format!("ore '{}' is traded as nothing (its traded_as)", ore.key()));
             }
         }
         if self.hulls.find(crate::ship::STARTING_HULL).is_none() {

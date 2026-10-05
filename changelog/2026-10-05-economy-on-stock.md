@@ -27,3 +27,5 @@ registry is to give starting stock. Design: `docs/economy-stock.md`.
   lists stock by the tonne: kind, sells or buys, ask, bid, stock or room, held.
 - Dev scenarios `market`, `marketnear`, `marketfar` and `economy` stock Port Trethi's warehouse
   first (none is seeded yet); `economy` gives its works a day of what they take.
+- **Goods' categories from their `traded_as`** (merged from the registry the same day): the game
+  read the old `game.goods`; content loading now refuses an ore traded as nothing.
