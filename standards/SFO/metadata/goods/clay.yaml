@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.clay
+  name: "Clay"
+  kind: rock
+  description: "Fine, sticky earth, made where water has worn rock down: the stuff of brick, and a part of cement."
+physical:
+  bulk_density: 1700
+game:
+  goods: goods.minerals
+source:
+  occurs: temperate planets
+  note: "It forms only where there has been liquid water for a very long time. The game has no ore for it yet."
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

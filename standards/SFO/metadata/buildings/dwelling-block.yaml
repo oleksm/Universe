@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.dwelling-block
+  name: "Dwelling block"
+  description: "A tower of flats: homes for two thousand, each with its own door."
+physical:
+  length: 50
+  width: 40
+  height: 105
+  mass: 77210000
+floor: 70000
+storeys: 35
+meets:
+  - { need: need.shelter, people: 2000 }
+  - { need: need.warmth, people: 2000 }
+  - { need: need.home, people: 2000 }
+built_of:
+  - { item: good.concrete, quantity: 72772000 }
+  - { item: material.structural-steel-a36, quantity: 4053000 }
+life: 1577880000
+basis:
+  - { of: [storeys, meets], tier: sourced, source: "standards/sources/research_people_plant.json", note: "Hong Kong's standard Trident block: 35 storeys, 1,224 flats; such blocks house about 2,000 each (Kin Ming Estate: 19,889 people in ten)." }
+  - { of: [physical, floor], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "35 m2 of floor a person, the two needs it meets together (West Germany's in 1990), so 70,000 m2, on 35 floors of 2,000 m2. A storey taken as 3 m." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China. Glass, brick, pipes and wire are not counted: no figures were found." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials: the average of 18 mid- and high-rise buildings, mostly in Toronto. Of a residential building's weight about 1,040 kg a m2 is concrete and 58 steel (538 buildings in China)." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }

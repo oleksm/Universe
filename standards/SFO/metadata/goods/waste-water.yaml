@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.waste-water
+  name: "Waste water"
+  kind: by-product
+  description: "Water that has been used: washed in, flushed, passed through a body. Nearly all of it is still water."
+physical:
+  bulk_density: 1000
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

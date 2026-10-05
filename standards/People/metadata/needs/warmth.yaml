@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.warmth
+  name: "Warmth"
+  rung: alive
+  about: "Air about one at a temperature a body can live in."
+power: 280
+lasts: 10800
+unmet: "Death by cold or heat, in hours to days by how far off it is."
+basis:
+  - { of: [power], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "A well-built house takes 70 kWh a year to heat each m2 (Germany's low-energy standard; its old stock takes 160, a passive house 15). Over a person's 35 m2 that is 280 W. On Earth, in Germany's weather: what it is elsewhere follows from the place." }
+  - { of: [lasts], tier: sourced, source: "standards/sources/research_people_needs.json", note: "The rule of threes: three hours without shelter in harsh weather. A rule of thumb, not a measurement." }

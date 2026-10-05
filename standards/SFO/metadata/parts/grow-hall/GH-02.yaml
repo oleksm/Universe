@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.gh-02
+  code: GH-02
+  name: "Lining and insulation panels"
+  revision: draft
+  description: "The inner skin, with its insulation behind: what keeps the hall's warmth from the shell."
+physical:
+  mass: 86000
+made_from:
+  - item: stock.al6061-sh-2
+    quantity: 98900.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. 16,000 m2 of 2 mm sheet; the insulation behind it is not counted. Taken as cut from plate with 15% lost; a real one is of many materials." }

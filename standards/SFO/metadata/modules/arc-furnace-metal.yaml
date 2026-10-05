@@ -21,8 +21,33 @@ recipes:
     rate: 26.6666666666667
     batch: 80000
     power: 42000000
+  - makes: good.liquid-steel
+    does: "Scrap of structural steel is melted again. Lime forms a slag that takes up the scale and dirt."
+    inputs:
+      - { item: stock.sta36-scrap, quantity: 1.05 }
+      - { item: good.lime, quantity: 0.03 }
+      - { item: good.graphite-electrode, quantity: 0.003 }
+    outputs:
+      - { item: good.slag, quantity: 0.07 }
+      - { item: good.dust, quantity: 0.013 }
+    rate: 26.6666666666667
+    batch: 80000
+    power: 42000000
+  - makes: good.liquid-steel
+    does: "Scrap of 4340 steel is melted again. Lime forms a slag that takes up the scale and dirt."
+    inputs:
+      - { item: stock.st4340-scrap, quantity: 1.05 }
+      - { item: good.lime, quantity: 0.03 }
+      - { item: good.graphite-electrode, quantity: 0.003 }
+    outputs:
+      - { item: good.slag, quantity: 0.07 }
+      - { item: good.dust, quantity: 0.013 }
+    rate: 26.6666666666667
+    batch: 80000
+    power: 42000000
 basis:
   - { of: [recipes.makes, recipes.rate, recipes.batch], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "80 t of steel in about 50 minutes." }
   - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Electric_arc_furnace", note: "440 kWh for each tonne of steel from a charge of scrap, which is metal already, as asteroid nickel-iron is." }
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "Inside the ranges the source gives for each tonne of steel: lime 25 to 140 kg, electrode 2 to 6, slag 60 to 270, dust 10 to 30. The metal charged is set to balance." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [recipes], tier: invented, review: true, note: "The two scrap charges: as the nickel-iron charge, with 5% of the scrap lost to slag as scale and dirt, a guess. The steel a scrap melts to is taken as one liquid steel, whatever grade it was. To be reviewed." }

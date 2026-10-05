@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.washing
+  name: "Water to wash"
+  rung: alive
+  about: "Water to wash, clean and carry waste away. Nearly all of it can be cleaned and used again."
+takes:
+  - { item: good.water, rate: 0.0005498 }
+gives:
+  - { item: good.waste-water, rate: 0.0005498 }
+lasts: 1209600
+unmet: "Sickness spreads."
+basis:
+  - { of: [takes, gives], tier: sourced, source: "standards/sources/research_people_needs.json", note: "50 litres a day in all with drinking: what a household uses with a tap in the yard (WHO's 'intermediate access'; 20 with a walk to fetch it, 100 and more piped indoors; Germany uses 121)." }
+  - { of: [lasts], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

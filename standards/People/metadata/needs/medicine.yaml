@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.medicine
+  name: "Medicine"
+  rung: alive
+  about: "Someone to treat sickness and injury, and what they treat it with."
+takes:
+  - { item: market.medicine, rate: 5.787e-08 }
+served_by:
+  - { profession: profession.doctor, serves: 290 }
+  - { profession: profession.nurse, serves: 106 }
+lasts: 7776000
+unmet: "The sick and the hurt die who need not have."
+basis:
+  - { of: [served_by], tier: sourced, source: "standards/sources/research_people_needs.json", note: "3.43 doctors and 9.47 nurses to a thousand people: the average of the rich countries (the world's is 1.86 and 3.93)." }
+  - { of: [takes, lasts], tier: invented, review: true, note: "No figure for the weight of medicines a person uses was found. A figure from memory, of the right size: no source was looked up. To be reviewed." }

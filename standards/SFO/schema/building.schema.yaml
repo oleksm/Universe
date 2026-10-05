@@ -1,0 +1,52 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Building
+x-kind: [building]
+description: "standards/SFO/metadata/buildings/<name>.yaml: a building people live in or are served in, and not a works: a dwelling block, a clinic, a school. What it is, how much floor it gives, which needs of how many people it meets, and who works in it. What it is built of is its weight for now; where one stands is a settlement's to say."
+type: object
+additionalProperties: false
+required: [identity, floor, meets]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, description]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
+  floor: { type: number, x-unit: "m2", description: "m2 of floor, all storeys together" }
+  storeys: { type: number, x-unit: "1", description: "how many floors" }
+  meets:
+    description: "The needs it meets, and of how many people at once."
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [need, people]
+      properties:
+        need: { type: string, x-ref: [need], description: "The need, by its key." }
+        people: { type: number, x-unit: "1", description: "how many people's need it meets" }
+  staff:
+    description: "Who works in it."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [profession, count]
+      properties:
+        profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
+        count: { type: number, x-unit: "1", description: "how many of that trade" }
+  built_of:
+    description: "What it is built of, as far as is known."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [item, quantity]
+      properties:
+        item: { type: string, x-ref: [good, stock, material], description: "What goes into it, by its key." }
+        quantity: { type: number, x-unit: "kg", description: "kg of it in the whole building" }
+  life: { type: number, x-unit: "s", description: "s it is built to stand before it must be rebuilt" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

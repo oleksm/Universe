@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.water-works
+  name: "Water works"
+  step: "Clean water"
+  description: "Settles, filters and disinfects used water until it can be drunk again. A sealed place lives on it; an open one spares its wells with it."
+physical:
+  length: 80
+  width: 50
+  height: 10
+recipes:
+  - makes: good.water
+    does: "Used water is settled, passed through membranes and disinfected; the solids come out as sludge."
+    inputs:
+      - { item: good.waste-water, quantity: 1.001 }
+    outputs:
+      - { item: good.sewage-sludge, quantity: 0.001 }
+    rate: 100.0
+    power: 756000
+basis:
+  - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_needs.json", note: "2.1 kWh for each m3: the top of what plants that turn waste water back into drinking water use (1.2 to 2.1)." }
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_people_plant.json", note: "A kilogram of wet sludge from each m3: sewage gives 0.11 to 0.17 kg of dry solids a m3 at the first settling, taken as a fifth of the wet sludge's weight (that fifth is a guess)." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. Blue Plains in Washington cleans 16,800 kg a second on 62 hectares; this is that, scaled down. To be reviewed." }

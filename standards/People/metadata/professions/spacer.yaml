@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.spacer
+  name: "Spacer"
+  about: "Crews a ship: its engines, its cargo, its decks."
+training:
+  learned: on the job
+  time: 63115200
+basis:
+  - { of: [training], tier: invented, review: true, note: "2 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

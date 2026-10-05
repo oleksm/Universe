@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.hospital
+  name: "Hospital"
+  description: "Wards, theatres and laboratories: where the badly sick and hurt are kept until they are neither."
+physical:
+  length: 300
+  width: 100
+  height: 20
+  mass: 165450000
+floor: 150000
+storeys: 5
+meets:
+  - { need: need.medicine, people: 169500 }
+staff:
+  - { profession: profession.doctor, count: 600 }
+  - { profession: profession.nurse, count: 2400 }
+  - { profession: profession.technician, count: 600 }
+  - { profession: profession.clerk, count: 600 }
+built_of:
+  - { item: good.concrete, quantity: 155940000 }
+  - { item: material.structural-steel-a36, quantity: 8685000 }
+life: 1577880000
+basis:
+  - { of: [floor, meets], tier: sourced, source: "standards/sources/research_people_plant.json", note: "Fiona Stanley Hospital, Perth: 783 beds in 150,000 m2. At 4.62 beds to a thousand people, the rich countries' average, that is beds for 169,500." }
+  - { of: [staff], tier: invented, review: true, source: "standards/sources/research_people_plant.json", note: "A hospital of 800 beds has about 6,000 staff (Royal Adelaide). How they divide by trade is a guess, and only four trades are counted. To be reviewed." }
+  - { of: [physical, storeys], tier: invented, review: true, note: "Chosen to give the floor. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China. Glass, brick, pipes and wire are not counted: no figures were found." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials: the average of 18 mid- and high-rise buildings, mostly in Toronto. Of a residential building's weight about 1,040 kg a m2 is concrete and 58 steel (538 buildings in China)." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }

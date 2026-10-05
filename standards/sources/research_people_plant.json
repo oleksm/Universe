@@ -1,0 +1,725 @@
+{
+ "concrete_per_m2_floor": {
+  "value": 1039.6,
+  "unit": "kg/m2",
+  "what": "Mean concrete mass per m2 of floor area, sample of 538 residential buildings in China (low-rise, multi-storey and high-rise); range 382.6-1927.0, median 1034.9",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13434136/fullTextXML",
+  "quote": "Table 1 Statistics of building material intensities for the 538 residential buildings (kg/m 2 ). No. Material Range Mean Median Standard deviation 1 Steel (ST) 17.6–115.8 57.9 56.3 15.1 2 Concrete (CC) 382.6–1927.0 1039.6 1034.9 233.6",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     480.6,
+     1114.5
+    ],
+    "unit": "kg/m2",
+    "what": "Concrete intensity, 25th-75th percentile (median 807.6), RASMI dataset: Brazil, single-family residential, reinforced-concrete structure (not multi-storey)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11039455/fullTextXML",
+    "quote": "Concrete 480.6 807.6 1,114.5 × 120 m 2 = 57,672 96,907 133,741 Steel 15.6 21.2 35.3 1,872 2,544 4,232",
+    "verified": true
+   }
+  ]
+ },
+ "steel_per_m2_floor": {
+  "value": 57.9,
+  "unit": "kg/m2",
+  "what": "Mean steel mass per m2 of floor area, same sample of 538 residential buildings in China; range 17.6-115.8, median 56.3",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13434136/fullTextXML",
+  "quote": "1 Steel (ST) 17.6–115.8 57.9 56.3 15.1",
+  "verified": true
+ },
+ "building_mass_per_m2": {
+  "value": 1103,
+  "unit": "kg/m2",
+  "what": "Average total material intensity (all materials, per m2 gross floor area) of 18 mid- to high-rise buildings, mostly Toronto, built 1988-2020 (SD 281); includes multi-level concrete basements",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8828772/fullTextXML",
+  "quote": "The studied mid to high-rise buildings have the highest average total material intensity at 1,103 kg/m 2 ( SD = 281). The newly constructed single-family dwellings have an MI of 699 kg/m 2 ( SD = 96)",
+  "verified": true,
+  "more": [
+   {
+    "value": 654,
+    "unit": "kg/m2",
+    "what": "Median structural material quantity per floor area, 'Residential' category (n=124) of the deQo database, as cited by Heeren & Fishman 2019; range 98-1882",
+    "source": "https://www.nature.com/articles/s41597-019-0021-x",
+    "quote": "the boxplots in deQo’s “Residential” category (n = 124) cover a range from 98 to 1882 kg/m 2 , with the median being 654 kg/m 2 .",
+    "verified": true
+   }
+  ]
+ },
+ "apartment_block_size": {
+  "value": {
+   "storeys": 35,
+   "dwellings_per_floor": 36,
+   "dwellings": 1224
+  },
+  "unit": "storeys / dwellings",
+  "what": "Hong Kong public housing standard 'Trident 1' (Y1) block: Y-shaped, three wings of 12 units; residents and metric dimensions not stated on the page (units mostly for 3 or fewer people)",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Trident_Block",
+  "quote": "Trident 1 blocks are 35 stories tall and have 36 units per floor. Most units could only accommodate 3 or fewer people. [...] Trident 1 blocks have 12 units per wing. It has 36 units per floor. A typical Trident 1 block has 1,224 units, but some can have up to more than 1,300.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "dwellings": 337,
+     "storeys": 12
+    },
+    "unit": "dwellings / storeys",
+    "what": "Unité d'habitation, Marseille (Le Corbusier)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Unit%C3%A9_d%27habitation",
+    "quote": "The Marseille building [...] comprises 337 apartments of 23 different layouts across 12 storeys, and all supported by large pilotis.",
+    "verified": true
+   },
+   {
+    "value": {
+     "storeys": 5,
+     "sections_typical": 4
+    },
+    "unit": "storeys / sections",
+    "what": "Soviet large-panel series 1-464 (khrushchevka): usually 5 storeys (often 9 from 1966), most often 4 sections; floor slabs 10 cm solid reinforced concrete",
+    "source": "https://ru.wikipedia.org/w/index.php?action=raw&title=1-464",
+    "quote": "Дома многосекционного типа, наиболее часто встречаются 4-секционные. [...] Высота дома 5 этажей, нередко — 9 этажей (с 1966 года), реже 3 или 4 этажа.",
+    "verified": true
+   },
+   {
+    "value": 19889,
+    "unit": "residents",
+    "what": "Kin Ming Estate, Hong Kong: ten public housing blocks (2003), population at 2016 by-census (about 2,000 residents per block, derived)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Kin_Ming_Estate",
+    "quote": "consists of ten housing blocks completed in 2003. [...] According to the 2016 by-census, Kin Ming Estate had a population of 19,889.",
+    "verified": true
+   }
+  ]
+ },
+ "building_service_life": {
+  "value": 50,
+  "unit": "years",
+  "what": "EN 1990 (Eurocode 0) indicative design working life, category 4: building structures and other common structures (category 5 monumental buildings/bridges: 100; category 3 agricultural: 15-30)",
+  "source": "https://www.designingbuildings.co.uk/wiki/Design_life",
+  "quote": "Category 3: Agricultural and similar buildings – 15 to 30 years. Category 4: Building structures and other common structures – 50 years. Category 5: Monumental building structures , bridges and other civil engineering structures – 100 years.",
+  "verified": true
+ },
+ "cement_recipe": {
+  "value": {
+   "raw_materials_t_per_t_clinker": 1.7,
+   "limestone_t_per_t_clinker": 1.5
+  },
+  "unit": "t per t clinker",
+  "what": "Non-fuel raw materials needed per tonne of Portland cement clinker, of which limestone or similar calcareous rock (the remaining ~0.2 t is clay/shale/sand/iron ore etc.)",
+  "source": "https://pubs.usgs.gov/of/2005/1152/2005-1152.pdf",
+  "quote": "Typically, about 1.7 t of nonfuel raw materials (about 1.5 t of which will be limestone or similar calcareous rocks) are required to make 1 t of clinker (table 5).",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.94,
+    "unit": "t CO2 per t clinker",
+    "what": "Total CO2 per tonne clinker, US: calcination 0.51 + fuel combustion 0.43",
+    "source": "https://pubs.usgs.gov/of/2005/1152/2005-1152.pdf",
+    "quote": "Calcination emissions (about 0.51 t per ton of clinker—more or less worldwide), and combustion emissions (current U.S. level about 0.43 t per ton of clinker) noted above, sum to a total of about 0.94 t CO2/t clinker.",
+    "verified": true
+   },
+   {
+    "value": 0.8,
+    "unit": "kg CO2 per kg cement",
+    "what": "Typical total CO2 per kg finished Portland cement (decarbonation ~0.50 typical)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Portland_cement",
+    "quote": "Typical total CO2 is around 0.80 kg CO2 per kg finished cement.",
+    "verified": true
+   },
+   {
+    "value": [
+     3,
+     6
+    ],
+    "unit": "GJ per t clinker",
+    "what": "Fuel consumed per tonne of clinker",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Cement",
+    "quote": "A cement plant consumes 3 to 6 GJ of fuel per tonne of clinker produced, depending on the raw materials and the process used.",
+    "verified": true
+   },
+   {
+    "value": 4.7,
+    "unit": "million Btu per t clinker",
+    "what": "US average kiln heat per metric ton clinker (about 5.0 GJ, derived); electricity 143.9 kWh per t cement",
+    "source": "https://pubs.usgs.gov/of/2005/1152/2005-1152.pdf",
+    "quote": "Average unit consumption of energy 2/: Electricity 143.9 kilowatt hours per metric ton of cement. Heat 4.7 million Btu (7/) per metric ton of clinker.",
+    "verified": true
+   },
+   {
+    "value": 1.65,
+    "unit": "t raw feed per t clinker",
+    "what": "Conversion factors used by US EPA: raw feed per clinker, clinker per cement",
+    "source": "https://www.epa.gov/sites/default/files/2015-12/documents/cement.pdf",
+    "quote": "1.65 tons of raw feed/ton of clinker, 0.92 tons of clinker/ton of cement, and 1.52 tons of raw feed/ton of cement.",
+    "verified": true
+   }
+  ]
+ },
+ "concrete_mix": {
+  "value": {
+   "cement": 1,
+   "sand": 2,
+   "stone": 3,
+   "water": 0.5
+  },
+  "unit": "parts by weight",
+  "what": "Typical regular concrete batch proportions by weight; worked example 22 lb cement, 10 lb water, 41 lb sand, 70 lb stone per cubic foot weighing 143 lb (about 2290 kg/m3, derived)",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Types_of_concrete",
+  "quote": "Typically, a batch of concrete can be made by using 1 part Portland cement, 2 parts dry sand, 3 parts dry stone, 1/2 part water. The parts are in terms of weight – not volume. For example, 1 cuft of concrete would be made using 22 lb cement, 10 lb water, 41 lb dry sand, 70 lb dry stone (1/2\" to 3/4\" stone). This would make 1 cuft of concrete and would weigh about 143 lb.",
+  "verified": true,
+  "more": [
+   {
+    "value": 2400,
+    "unit": "kg/m3",
+    "what": "Density of regular concrete",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Types_of_concrete",
+    "quote": "The variable density is normally described in kg per m3, where regular concrete is 2400 kg/m3.",
+    "verified": true
+   },
+   {
+    "value": "1:2:4",
+    "unit": "nominal mix ratio cement:sand:aggregate",
+    "what": "Nominal mix for M15 grade concrete (15 MPa); M20 is 1:1.5:3",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Concrete",
+    "quote": "|M15 |1:2:4 |15 MPa |- |M20 |1:1.5:3 |20 MPa",
+    "verified": true
+   }
+  ]
+ },
+ "glass_recipe": {
+  "value": {
+   "SiO2": 71,
+   "Na2O": 14,
+   "CaO": 9,
+   "MgO": 4,
+   "Al2O3": [
+    0,
+    3
+   ]
+  },
+  "unit": "% by weight of finished glass",
+  "what": "Typical float (soda-lime) glass oxide composition and the raw material supplying each oxide; NOT raw-material mass per tonne (batch masses per tonne of glass were not found stated)",
+  "source": "https://www.pilkington.com/en/global/about/education/the-float-process/the-float-process",
+  "quote": "the composition of float glass is typically: Material % by weight Source Silica, SiO 2 71 Sand Soda, Na 2 O 14 Soda ash, feldspar, salt cake Lime, CaO 9 Dolomite and limestone Magnesia, MgO 4 Dolomite Alumina, Al 2 O 3 0-3 Sand, feldspar",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     3,
+     16
+    ],
+    "unit": "million Btu per short ton glass",
+    "what": "Melting energy per net ton of glass, US industry range (about 3.5-18.6 GJ/tonne, derived); container glass large regenerative furnace average 7.8, flat glass regenerative side-port average 8.8",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/glass2002profile.pdf",
+    "quote": "Summary of Key Energy and Environmental Facts - Melting [...] Energy use per net ton of glass: 3 - 16 10^6 Btu/ton [...] Flat Glass • Regenerative Side-Port 6.5 - 11.0 8.8 2-5 [...] Container Glass • Large Regenerative 5.0 - 10.5 7.8 3-5",
+    "verified": true
+   },
+   {
+    "value": 2.2,
+    "unit": "million Btu per short ton glass",
+    "what": "Theoretical minimum energy to melt glass (0.6 chemical + 1.6 sensible heat to 2800 F); about 2.6 GJ/tonne derived",
+    "source": "https://www.energy.gov/sites/prod/files/2013/11/f4/glass2002profile.pdf",
+    "quote": "Theoretical Energy Requirements for Glass [...] Stoichiometric Chemical Requirements 0.6 10^6 Btu/ton [...] Sensible Heat - Bringing Batch to 2800F 1.6 10^6 Btu/ton [...] TOTAL 2.2 10^6 Btu/ton",
+    "verified": true
+   },
+   {
+    "value": 15,
+    "unit": "MJ/kg",
+    "what": "Embodied energy of glass (ICE database table)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Embodied_energy",
+    "quote": "| Glass || 15 || 0.85 || 2500",
+    "verified": true
+   }
+  ]
+ },
+ "brick_energy": {
+  "value": 2.22,
+  "unit": "MJ/kg",
+  "what": "Global average energy use per kg of fired clay brick (FCB) production, back-calculated in a 2025 global study; standard FCB size 240 x 115 x 55 mm. Mass of a single brick not stated.",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11800390/fullTextXML",
+  "quote": "The global average value for energy use per unit mass of FCB production was back calculated using the same method, resulting in an estimate of 2.22 MJ/kg FCB.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     240,
+     115,
+     55
+    ],
+    "unit": "mm",
+    "what": "Standard fired clay brick size used in that study; ~1800 kg of brick per m3 of wall",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11800390/fullTextXML",
+    "quote": "The standard size for an FCB is 240 × 115 × 55 mm, while that of an HCB is 390 × 190 × 190 mm; so, we define a comparable unit of a m 3 of wall for which ∼1800 kg of FCB or ∼1100 kg of HCB would be required.",
+    "verified": true
+   },
+   {
+    "value": 3,
+    "unit": "MJ/kg",
+    "what": "Embodied energy of common bricks (ICE database), density 1700 kg/m3",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Embodied_energy",
+    "quote": "| Bricks (common) || 3 || 0.24 || 1700",
+    "verified": true
+   },
+   {
+    "value": [
+     215,
+     102.5,
+     65
+    ],
+    "unit": "mm",
+    "what": "UK standard face brick size; solid clay brick density about 2000 kg/m3",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Brick",
+    "quote": "|UK || 215 × 102.5 × 65 mm [...] The density of solid clay bricks is around 2000 kg/m3",
+    "verified": true
+   }
+  ]
+ },
+ "cotton_lint_yield": {
+  "value": 867,
+  "unit": "kg lint per hectare",
+  "what": "World average cotton (lint) yield 2024/25, USDA FAS; 894 in 2025/26 (prelim.), 30.02 million ha",
+  "source": "https://apps.fas.usda.gov/psdonline/circulars/cotton.pdf",
+  "quote": "Table 04 Cotton Area, Yield, and Production Area Yield Production [...] (Million hectares) (Kilograms per hectare) (Million 480 lb. bales) [...] World 30.02 29.69 29.60 29.67 867 894 865 861 119.53 121.95",
+  "verified": true,
+  "more": [
+   {
+    "value": 33,
+    "unit": "% of seed cotton",
+    "what": "Share of the harvested crop that is usable lint",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Textile_manufacturing",
+    "quote": "The ginned cotton fibre, known as lint, is then compressed into bales which are about 1.5 m tall and weigh almost 220 kg. Only 33% of the crop is usable lint.",
+    "verified": true
+   },
+   {
+    "value": 2.362,
+    "unit": "t seed cotton per hectare",
+    "what": "World yield of unginned (seed) cotton, 2024, FAO data via Our World in Data",
+    "source": "https://ourworldindata.org/grapher/cotton-yield.csv",
+    "quote": "World,OWID_WRL,2024,2.3620002",
+    "verified": true
+   },
+   {
+    "value": 0.667,
+    "unit": "fraction seed",
+    "what": "Seed share of harvested crop (National Cotton Council); a bale weighs about 500 pounds",
+    "source": "https://www.cotton.org/edu/faq/",
+    "quote": "About two thirds of the harvested crop is composed of the seed [...] A bale of cotton weighs about 500 pounds.",
+    "verified": true
+   }
+  ]
+ },
+ "wool_per_sheep": {
+  "value": [
+   3,
+   6
+  ],
+  "unit": "kg greasy wool per sheep per year",
+  "what": "Saxon Merino annual greasy fleece (good Peppin Merino ram up to 18 kg)",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Merino",
+  "quote": "A Saxon Merino can produce 3–6 kg of greasy wool a year, while a good quality Peppin Merino ram produces up to 18 kg.",
+  "verified": true,
+  "more": [
+   {
+    "value": 7.1,
+    "unit": "lb per fleece",
+    "what": "US average shorn fleece weight 2024 (3.2 kg, derived)",
+    "source": "https://www.nass.usda.gov/Publications/Todays_Reports/reports/shep0125.pdf",
+    "quote": "Sheep shorn (1,000 head) Weight per fleece (pounds) Shorn wool production (1,000 pounds) [...] 2024 ... 3,170 7.1 22,480",
+    "verified": true
+   },
+   {
+    "value": [
+     40,
+     50
+    ],
+    "unit": "% impurities in raw wool",
+    "what": "Impurities removed by scouring, i.e. clean yield about 50-60% (derived); lanolin 5-25% of raw wool",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Scouring_(textiles)",
+    "quote": "The impurities in different natural fibers [...] Wool || 40-50 [...] Cotton || 10 [...] Lanolin is the major component (5-25%) of raw wool",
+    "verified": true
+   },
+   {
+    "value": [
+     72.1,
+     74.5
+    ],
+    "unit": "% clean yield",
+    "what": "Tested yield of two record superfine Australian wool bales (individual lots, not an average)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Wool",
+    "quote": "This fleece wool tested with an average yield of 74.5% [...] This bale [...] measured 11.6 microns, 72.1% yield",
+    "verified": true
+   }
+  ]
+ },
+ "flax_fibre_yield": {
+  "value": 600,
+  "unit": "kg fibre per hectare",
+  "what": "HISTORICAL figure only: fibre yield of flax in France at its early-modern peak (300,000 ha), per French Wikipedia; a modern scutched-fibre yield was not found",
+  "source": "https://fr.wikipedia.org/w/index.php?title=Lin_cultiv%C3%A9&action=raw",
+  "quote": "Les surfaces cultivées ont atteint 300000 ha, avec un rendement de 600 kg de fibres par hectare.",
+  "verified": true
+ },
+ "spinning_energy": {
+  "value": 1.36,
+  "unit": "kWh/kg yarn",
+  "what": "Specific energy of the ring spinning machine alone for 20 tex combed cotton yarn (calculated, Koç & Kaplan 2007, quoted in LBNL guidebook). The guidebook's Table 2 for whole yarn manufacture prints 138-681 under a kWh/kg heading for 37-12 tex, apparently with the decimal point lost (i.e. 1.38-6.81 kWh/kg); treat that reading as unconfirmed.",
+  "source": "https://www.energystar.gov/sites/default/files/buildings/tools/EE_Guidebook_for_Textile_industry.pdf",
+  "quote": "The production parameters assumed for 20 tex combed yarn are n = 17500 r.p.m.; αtext = 3828; and Dr = 0.04 m. If these parameters are used in the equation above, the specific energy consumption of ring machines is found as 1.36 kWh/kg.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     138,
+     681
+    ],
+    "unit": "as printed under 'kWh/kg'",
+    "what": "Table 2 typical specific energy consumption for yarns, 37 tex to 12 tex, combed/carded, knitting/weaving (values as printed; probable missing decimal)",
+    "source": "https://www.energystar.gov/sites/default/files/buildings/tools/EE_Guidebook_for_Textile_industry.pdf",
+    "quote": "Table 2. Typical Specific Energy Consumption (kWh/kg) for Yarns with Different Yarn Counts and Final Use [...] 37 138 163 134 162 [...] 20 306 364 296 357 [...] 12 552 681 552 672",
+    "verified": true
+   }
+  ]
+ },
+ "fabric_from_fibre": {
+  "value": {
+   "fabric_manufacturing_efficiency": [
+    0.96,
+    0.99
+   ],
+   "garment_cutting_efficiency": 0.9
+  },
+  "unit": "mass fraction retained",
+  "what": "Material efficiency of fabric manufacturing (yarn to fabric) and of T-shirt making (fabric to garment) used in a 2026 cotton T-shirt carbon study; fibre-to-yarn spinning loss not found",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12936201/fullTextXML",
+  "quote": "T-shirt production was assumed to have a material efficiency of 90 % 19 , while fabric manufacturing efficiencies reported in the literature range from 96 % to 99 % 23 – 29 . For this study, a midpoint value of 97.5 % was adopted.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     5,
+     8
+    ],
+    "unit": "% weight loss",
+    "what": "Yarn weight lost when gassed (singed)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Textile_manufacturing",
+    "quote": "The thread loses around 5-8% of its weight if it's gassed.",
+    "verified": true
+   }
+  ]
+ },
+ "garment_mass": {
+  "value": 0.15,
+  "unit": "kg",
+  "what": "Average mass of a 100% cotton T-shirt (functional unit of an LCA study). Jeans and coat masses not found.",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12936201/fullTextXML",
+  "quote": "The functional unit is a 100 % cotton T-shirt with an average mass of 150 g 17 .",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     11,
+     14
+    ],
+    "unit": "oz per yard of denim fabric",
+    "what": "Typical denim fabric weight (range 9-32 oz); fabric weight, not garment mass",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Denim",
+    "quote": "The weight of denim can vary greatly, with a yard of fabric weighing anywhere from 9 to 32 oz, with 11 to 14 oz being typical.",
+    "verified": true
+   }
+  ]
+ },
+ "clothing_lifetime": {
+  "value": 3.3,
+  "unit": "years",
+  "what": "Average time UK clothing lasts before being discarded or passed on (WRAP 2017 survey); by item: coat 4.58, dress 3.62, jumper 3.46, jeans 3.40, T-shirt 2.78; earlier WRAP assumption 2.2 years",
+  "source": "https://www.wrap.ngo/sites/default/files/2020-10/WRAP-valuing-our-clothes-the-cost-of-uk-fashion_WRAP.pdf",
+  "quote": "on average, clothing lasts for 3.3 years before it is discarded or passed on. [...] Coat (547) 4.58 [...] Dress (528) 3.62 [...] Jumper (551) 3.46 [...] Jeans (546) 3.40 [...] T-shirt (554) 2.78 [...] Average 3.3025",
+  "verified": true
+ },
+ "water_works_size": {
+  "value": 1400000000.0,
+  "unit": "US gallons per day",
+  "what": "Jardine Water Purification Plant, Chicago: purification capacity (about 5.3 million m3/day, derived). With the Sawyer plant it supplies about 3 million households in Chicago and 118 suburbs; Jardine serves two thirds of city consumers. Footprint not stated.",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Jardine_Water_Purification_Plant",
+  "quote": "is the world’s largest water filtration plant, purifying 1.4 billion gallons per day. [...] Together the two plants supply water to about 3 million households in the city and 118 suburbs.",
+  "verified": true,
+  "more": [
+   {
+    "value": 560,
+    "unit": "Ml per day",
+    "what": "Coppermills Water Treatment Works, London: normal throughput (560,000 m3/day)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Coppermills_Water_Treatment_Works",
+    "quote": "this reduces the capacity of the plant from its normal throughput of 560 million litres per day to 380 Ml/d.",
+    "verified": true
+   }
+  ]
+ },
+ "sewage_works_size": {
+  "value": {
+   "capacity_mgd": 384,
+   "capacity_litres_per_day": 1450000000.0,
+   "area_acres": 153,
+   "customers": 1600000.0
+  },
+  "unit": "mixed",
+  "what": "Blue Plains Advanced Wastewater Treatment Plant, Washington DC: treatment capacity, site area (about 62 ha, derived) and customers served",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Blue_Plains_Advanced_Wastewater_Treatment_Plant",
+  "quote": "The plant has a treatment capacity of 384 million gallons per day (mgd) or 1.45 billion liters per day, with a peak capacity (partial treatment during large storms) of over 1 billion gallons per day (3.8 billion liters/day). The plant occupies 153 acre in the southwest quadrant of Washington, D.C., and discharges to the Potomac River. It serves over 1.6 million customers",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     10,
+     15
+    ],
+    "unit": "kg dry solids per equivalent inhabitant per year",
+    "what": "Typical per-capita sewage sludge production, Piemonte (Italy) survey, in line with European averages (about 27-41 g dry solids per person per day, derived)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8036911/fullTextXML",
+    "quote": "it can be observed that values of per capita sludge production were in the order of 10–15 kg d.s./e.i.∙y and were in line with the average values found in European WWTPs and reported in the literature",
+    "verified": true
+   },
+   {
+    "value": [
+     110,
+     170
+    ],
+    "unit": "kg dry solids per ML wastewater",
+    "what": "Primary sludge from primary sedimentation (0.11-0.17 kg/m3; typical 150 kg/ML); excludes secondary sludge",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Sewage_sludge",
+    "quote": "For example, primary sedimentation produces about 110–170 kg/ML of so-called primary sludge, with a value of 150 kg/ML regarded as being typical for municipal wastewater in the U.S. or Europe.",
+    "verified": true
+   },
+   {
+    "value": 100,
+    "unit": "hectares",
+    "what": "Beckton Sewage Treatment Works, London: site area",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Beckton_Sewage_Treatment_Works",
+    "quote": "now covers over 100 ha – what is claimed to be the largest sewage treatment works in Europe",
+    "verified": true
+   }
+  ]
+ },
+ "composting": {
+  "value": 48,
+  "unit": "% of incoming feedstock mass",
+  "what": "Mass lost (degraded or evaporated) during composting of food waste, default with range 22-70% (US life-cycle inventory dataset); compost yield is therefore about 0.52 t per t input (derived)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11664002/fullTextXML",
+  "quote": "Mass loss, during composting Percent of incoming mass degraded or evaporated 48 % (22–70 %) % of incoming feedstock mass",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     10,
+     60
+    ],
+    "unit": "% dry-basis mass loss",
+    "what": "Range of reported mass loss during composting, dry basis",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9933540/fullTextXML",
+    "quote": "Most reported values for mass loss during composting on a dry basis fall in the range of 10–60%.",
+    "verified": true
+   },
+   {
+    "value": [
+     50,
+     65
+    ],
+    "unit": "% reduction",
+    "what": "Reduction in volume and density of manure by composting (NDSU Extension)",
+    "source": "https://www.ndsu.edu/agriculture/extension/publications/composting-animal-manures-guide-process-and-management-animal-manure-compost",
+    "quote": "Composting reduces the volume and density of manure approximately 50-65% (Figures 1 and 2).",
+    "verified": true
+   },
+   {
+    "value": [
+     10,
+     14
+    ],
+    "unit": "weeks",
+    "what": "Time to produce farm compost by static windrow or pile",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9377972/fullTextXML",
+    "quote": "After 10–14 weeks, the farm compost was produced at the mass level through a static windrow or pile method.",
+    "verified": true
+   }
+  ]
+ },
+ "rendering": {
+  "value": {
+   "steer_offal_and_bone": {
+    "tallow": [
+     30,
+     35
+    ],
+    "protein_solids": [
+     15,
+     20
+    ],
+    "moisture": [
+     45,
+     55
+    ]
+   },
+   "dead_cattle": {
+    "tallow": 12,
+    "protein_solids": 25,
+    "moisture": 63
+   },
+   "hog_offal": {
+    "tallow": [
+     25,
+     30
+    ],
+    "protein_solids": [
+     10,
+     15
+    ],
+    "moisture": [
+     55,
+     65
+    ]
+   },
+   "butcher_shop_fat_and_bone": {
+    "tallow": 31,
+    "protein_solids": 32,
+    "moisture": 37
+   }
+  },
+  "unit": "wt % of raw material",
+  "what": "Composition of inedible rendering raw materials = recoverable tallow/grease and protein solids (meat-and-bone meal basis) per unit raw material, EPA AP-42 Table 9.5.3-1",
+  "source": "https://www.epa.gov/sites/default/files/2020-10/documents/c9s05-3.pdf",
+  "quote": "Table 9.5.3-1. COMPOSITION OF RAW MATERIALS FOR INEDIBLE RENDERING: Tallow/Grease, wt % | Protein Solids, wt % | Moisture, wt % — Packing house offal and bone: Steers 30-35 15-20 45-55; Hogs 25-30 10-15 55-65 — Dead stock (whole animals): Cattle 12 25 63 — Butcher shop fat and bone 31 32 37",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.38095238095238093,
+    "unit": "t products per t raw material (derived ratio)",
+    "what": "US rendering: over 8 million t of products (2004) from more than 21 million t raw material per year; the ratio is derived from the two stated totals",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Rendering_(animal_products)",
+    "quote": "the United States annually recycles more than 21 million metric tons of highly perishable and noxious organic matter. In 2004, U.S. industry produced over 8 million metric tons of products",
+    "verified": true
+   },
+   {
+    "value": {
+     "protein": [
+      48,
+      52
+     ],
+     "ash": [
+      33,
+      35
+     ],
+     "fat": [
+      8,
+      12
+     ],
+     "water": [
+      4,
+      7
+     ]
+    },
+    "unit": "%",
+    "what": "Composition of meat and bone meal",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Meat_and_bone_meal",
+    "quote": "It is typically about 48–52% protein, 33–35% ash, 8–12% fat, and 4–7% water.",
+    "verified": true
+   }
+  ]
+ },
+ "scrap_melting": {
+  "value": 5,
+  "unit": "% of primary energy",
+  "what": "Energy to recycle scrap aluminium relative to making new aluminium from ore",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Aluminium_recycling",
+  "quote": "Recycling scrap aluminium requires only 5% of the energy used to make new aluminium from the raw ore.",
+  "verified": true,
+  "more": [
+   {
+    "value": 15.37,
+    "unit": "kWh per kg Al",
+    "what": "Typical electrolysis energy of primary aluminium (Hall-Heroult); theoretical minimum 6.23 (i.e. 15,370 kWh/t)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Hall%E2%80%93H%C3%A9roult_process",
+    "quote": "The theoretical minimum energy requirement for this process is 6.23 kWh/(kg of Al), but it commonly requires 15.37 kWh.",
+    "verified": true
+   },
+   {
+    "value": 440,
+    "unit": "kWh per tonne steel",
+    "what": "Electric arc furnace electricity to make steel from scrap; theoretical minimum to melt scrap 300 kWh/t",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Electric_arc_furnace",
+    "quote": "To produce a ton of steel in an electric arc furnace requires approximately 400 kilowatt-hours (1.44 gigajoules) per short ton or about 440 kWh (1.6 GJ) per tonne. The theoretical minimum amount of energy required to melt a tonne of scrap steel is 300 kWh (1.09 GJ)",
+    "verified": true
+   }
+  ]
+ },
+ "anaerobic_digestion": {
+  "value": [
+   20,
+   30
+  ],
+  "unit": "m3 gas per tonne manure",
+  "what": "Biogas yield of animal manure; fats and food waste up to 800 m3 per tonne dry matter",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Biogas",
+  "quote": "fats and food waste can produce up to 800 m³ of gas per tonne of dry matter, while animal manure yields approximately 20-30 m³ per tonne, though it offers greater process stability",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     50,
+     75
+    ],
+    "unit": "% methane",
+    "what": "Methane content of biogas (US EPA AgSTAR)",
+    "source": "https://www.epa.gov/agstar/how-does-anaerobic-digestion-work",
+    "quote": "Biogas is composed of methane (CH4), which is the primary component of natural gas, at a relatively high percentage (50 to 75 percent), carbon dioxide (CO2), hydrogen sulfide (H2S), water vapor, and trace amounts of other gases.",
+    "verified": true
+   }
+  ]
+ },
+ "hospital_size": {
+  "value": {
+   "beds": 783,
+   "floor_area_m2": 150000
+  },
+  "unit": "beds / m2",
+  "what": "Fiona Stanley Hospital, Perth: beds and total floor area (about 190 m2 per bed, derived; whole campus incl. rehabilitation, pathology, admin). Staff not stated.",
+  "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Fiona_Stanley_Hospital",
+  "quote": "| beds = 783 [...] The total floor area is 150000 m2. Most of the 640 patient bedrooms in the hospital are single-bed en-suite facilities",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "beds": 924,
+     "floor_area_m2": 170000
+    },
+    "unit": "beds / m2",
+    "what": "Gold Coast University Hospital: beds (infobox) and floor space excl. car parks",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Gold_Coast_University_Hospital",
+    "quote": "| beds = 924 [...] The hospital has seven main buildings, with a total floor space of approximately 170000 m2 (excluding car parks).",
+    "verified": true
+   },
+   {
+    "value": {
+     "beds": 800,
+     "staff": 6000
+    },
+    "unit": "beds / staff",
+    "what": "Royal Adelaide Hospital (new building): beds and expected staff (7.5 staff per bed, derived)",
+    "source": "https://en.wikipedia.org/w/index.php?action=raw&title=Royal_Adelaide_Hospital",
+    "quote": "| beds = 800 [...] More than 6,000 staff are expected to work at the hospital",
+    "verified": true
+   }
+  ]
+ },
+ "not_found": [
+  "weaving_energy (no kWh per kg of fabric found; LBNL guidebook only gives shares: spinning 41% and weaving 18% of electricity in a composite plant)",
+  "pharma_consumption (no per-person mass or dose count found; only a global total projection: IQVIA says usage will 'approach 4 trillion defined daily doses' by 2030, https://www.iqvia.com/insights/the-iqvia-institute/reports-and-publications/reports/the-global-use-of-medicines-2024-outlook-to-2028)",
+  "flax_fibre_yield: modern yield (only a historical 600 kg/ha recorded)",
+  "glass_recipe: kg of sand / soda ash / limestone per tonne of glass (only oxide composition and melting energy recorded)",
+  "brick_energy: mass of one brick (sizes and densities recorded)",
+  "garment_mass: jeans and coat (T-shirt only)",
+  "fabric_from_fibre: fibre-to-yarn spinning waste %",
+  "wool_per_sheep: world-average clean yield % (impurity range and single-lot yields recorded)",
+  "apartment_block_size: metric dimensions and residents of a single block",
+  "hospital_size: floor area, beds and staff all for the same hospital",
+  "sewage/water works: footprint of the Jardine plant"
+ ],
+ "notes": "Web search tool was unavailable (budget exhausted); all figures were read from pages fetched directly by URL (Wikipedia raw wikitext, agency PDFs converted with pdftotext, Europe PMC open-access full text). Quotes have wiki/HTML markup stripped and '[...]' marks omitted text; 'derived' in a 'what' field marks arithmetic done by the researcher, not stated by the source. EN 1990 was read via designingbuildings.co.uk (the standard's own PDF scan was OCR-garbled)."
+}

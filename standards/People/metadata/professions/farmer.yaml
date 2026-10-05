@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.farmer
+  name: "Farmer"
+  about: "Grows crops and keeps animals."
+training:
+  learned: on the job
+  time: 94672800
+basis:
+  - { of: [training], tier: invented, review: true, note: "3 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

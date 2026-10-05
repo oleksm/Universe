@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.lawyer
+  name: "Lawyer"
+  about: "Argues the law for those it touches."
+training:
+  learned: college
+  time: 189345600
+basis:
+  - { of: [training], tier: invented, review: true, note: "6 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

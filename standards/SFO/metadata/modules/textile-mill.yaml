@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.textile-mill
+  name: "Textile mill"
+  step: "Spin and weave"
+  description: "Cleans fibre, spins it to yarn and weaves the yarn to cloth. Set to one fibre at a time."
+physical:
+  length: 150
+  width: 80
+  height: 12
+recipes:
+  - makes: good.cotton-cloth
+    does: "The lint is pulled from the seed, carded, spun and woven."
+    inputs:
+      - { item: good.seed-cotton, quantity: 3.656 }
+    outputs:
+      - { item: good.cottonseed, quantity: 2.45 }
+      - { item: good.textile-waste, quantity: 0.2066 }
+    rate: 0.1
+    power: 1800000
+  - makes: good.woollen-cloth
+    does: "The wool is washed of its grease and dirt, carded, spun and woven."
+    inputs:
+      - { item: good.wool, quantity: 2.194 }
+    outputs:
+      - { item: good.wool-scourings, quantity: 0.9872 }
+      - { item: good.textile-waste, quantity: 0.2066 }
+    rate: 0.1
+    power: 1800000
+  - makes: good.linen-cloth
+    does: "The flax is combed, spun wet and woven."
+    inputs:
+      - { item: good.flax, quantity: 1.207 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.2066 }
+    rate: 0.1
+    power: 1800000
+basis:
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "A third of seed cotton is lint; washing takes 40 to 50% off raw wool (45% taken); weaving keeps 96 to 99% of the yarn. What spinning loses (15% taken) was not found and is a guess." }
+  - { of: [recipes.power], tier: invented, review: true, source: "standards/sources/research_people_plant.json", note: "5 kWh for each kg of cloth: a guess. The spinning frame alone takes 1.36 kWh a kg of yarn; no sound figure for the whole mill was found. To be reviewed." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. At a tenth of a kg a second it clothes about 220,000 people. To be reviewed." }

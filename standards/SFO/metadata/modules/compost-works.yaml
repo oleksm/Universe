@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.compost-works
+  name: "Compost works"
+  step: "Rot down"
+  description: "Rows of heaped dung, stalks and sludge, turned by machine as they rot. It also makes roots' growing medium, from straw and from medium that has been used."
+physical:
+  length: 200
+  width: 100
+  height: 5
+recipes:
+  - makes: good.compost
+    does: "Heaped, turned and left ten to fourteen weeks. About half the weight goes: some rots away to carbon dioxide and water, more dries off."
+    inputs:
+      - { item: good.manure, quantity: 1.923 }
+      - { item: element.o, quantity: 0.3077 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 0.4231 }
+      - { item: good.water, quantity: 0.8077 }
+    rate: 1.0
+    power: 100000
+  - makes: good.growing-medium
+    does: "Used medium is steamed clean and the old roots sieved out."
+    inputs:
+      - { item: good.spent-medium, quantity: 1.1 }
+    outputs:
+      - { item: good.compost, quantity: 0.1 }
+    rate: 0.2
+    power: 100000
+  - makes: good.growing-medium
+    does: "Straw is shredded, heated and pressed into slabs."
+    inputs:
+      - { item: good.crop-residue, quantity: 1.25 }
+    outputs:
+      - { item: good.water, quantity: 0.25 }
+    rate: 0.2
+    power: 100000
+basis:
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "Compost: 48% of what goes in is lost (22 to 70%), in 10 to 14 weeks. How that loss is split between rotting and drying is a guess, as is everything about the growing medium." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }

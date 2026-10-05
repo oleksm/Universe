@@ -180,6 +180,8 @@ def schema_of(rel):
     root, name = p[0], p[-1]
     S = lambda r, n: os.path.join(TREE, r, "schema", n + ".schema.yaml")
     ORG = os.path.join(TREE, "organisation.schema.yaml")              # (companies, the standards body, administrations: one schema)
+    if root == "People":
+        return S(root, {"needs": "need", "professions": "profession"}.get(p[2], "")) if len(p) == 4 else None
     if root == "Dogma":
         return S(root, "section") if len(p) == 3 else S(root, "law")
     if root == "Celestial":
@@ -207,7 +209,7 @@ def schema_of(rel):
         if len(p) == 3:
             return ORG if name == "SFO.yaml" else S(root, "standard")
         kind = p[2]
-        return S(root, {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate", "parts": "part", "structures": "structure", "markets": "market"}.get(kind, ""))
+        return S(root, {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate", "parts": "part", "structures": "structure", "markets": "market", "buildings": "building"}.get(kind, ""))
     return None
 
 
@@ -228,9 +230,11 @@ def key_of(rel, rec):
             return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
         if kind in ("equipment", "gates"):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
-        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "parts": "part.", "structures": "structure.", "markets": "market."}[kind] + low
+        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building."}[kind] + low
     if root == "MakerHouse":
         return "org."
+    if root == "People":
+        return {"needs": "need.", "professions": "profession."}[p[2]] + low
     if root == "Dogma":
         return ("dogma." if len(p) == 3 else "law.") + low
     if root == "Celestial":

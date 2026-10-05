@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.artist
+  name: "Artist"
+  about: "Makes what is looked at, read and worn for its own sake."
+training:
+  learned: apprenticeship
+  time: 157788000
+basis:
+  - { of: [training], tier: invented, review: true, note: "5 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

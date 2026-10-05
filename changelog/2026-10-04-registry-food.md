@@ -22,3 +22,9 @@
   usable light and farms between 25 and 50 degrees of latitude; Treistun e, by the game's own
   climate, never thaws, and grows nothing in the open. Feeding everyone from d takes about
   270 km2.
+- **The hydroponic hall:** the grow hall is now an airtight hall that can stand on any world and
+  grow every annual crop, 30 of them, from carbon dioxide, water, nutrients, a growing medium and
+  light. Lettuce costs 10 kWh a kg, wheat 830. Feeding everyone from halls alone would take 3.2 GW
+  for a plain diet and 6.4 GW with meat, against 12 MW from Treistun d's fields. It is built of
+  eight components, about 3,100 t. What shedding its heat costs on a hot world is worked out, and
+  asked of the engine.

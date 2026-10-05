@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.deuterium-plant
+  name: "Deuterium plant"
+  step: "Win deuterium"
+  description: "Towers that sift ordinary water for the one hydrogen atom in 6,420 that is heavy, and split the heavy water they gather. Wherever there is water and power, there is fuel."
+physical:
+  length: 200
+  width: 100
+  height: 60
+recipes:
+  - makes: stock.deuterium-liq
+    does: "Water runs down hot and cold towers against hydrogen sulphide, which carries the heavy hydrogen from one to the other; the heavy water gathered is split, and the deuterium chilled to a liquid."
+    inputs:
+      - { item: good.water, quantity: 4.972 }
+    outputs:
+      - { item: element.o, quantity: 3.972 }
+    rate: 4.64e-05
+    power: 2330000.0
+basis:
+  - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_needs.json", note: "2.8 MWh for each kg of heavy water by exchange with hydrogen sulphide (a Soviet plant; other ways take 1 to 150), so 13.9 MWh for each kg of deuterium. Splitting the heavy water and chilling the gas are not counted." }
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "The water used up, not the water put through: 4.97 kg of heavy water hold 1 kg of deuterium and 3.97 of oxygen. 1.7 million kg of water pass through for each kg won (340,000 to one of heavy water, at Bruce in Canada) and go back a little lighter. That the same water could be sifted for ever is not held against it here: to be put right when water carries what it is made of." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. It feeds twenty 400 MW power stations. To be reviewed." }

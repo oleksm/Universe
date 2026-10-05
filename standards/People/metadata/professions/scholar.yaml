@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.scholar
+  name: "Scholar"
+  about: "Finds out what is not known, and keeps what is."
+training:
+  learned: college
+  time: 252460800
+basis:
+  - { of: [training], tier: invented, review: true, note: "8 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.miner
+  name: "Miner"
+  about: "Digs rock and ice, on the ground and from ships."
+training:
+  learned: on the job
+  time: 63115200
+basis:
+  - { of: [training], tier: invented, review: true, note: "2 years: chosen, of the size such a trade takes on Earth. To be reviewed." }

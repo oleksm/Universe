@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.innkeeper
+  name: "Innkeeper"
+  about: "Feeds, lodges and gives drink to those away from home, and those glad to be."
+training:
+  learned: on the job
+  time: 31557600
+basis:
+  - { of: [training], tier: invented, review: true, note: "1 year: chosen, of the size such a trade takes on Earth. To be reviewed." }

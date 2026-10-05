@@ -78,6 +78,17 @@ recipes:
       - { item: good.manure, quantity: 18.68 }
     rate: 0.004753
     power: 50000
+  - makes: good.wool
+    does: "About 2,000 sheep kept for their fleece: 4.5 kg of greasy wool a head a year (3 to 6 for a Merino), on about 1.2 kg of hay a day each. The hay and water are guesses."
+    inputs:
+      - { item: good.hay, quantity: 100.0 }
+      - { item: good.water, quantity: 320.0 }
+      - { item: element.o, quantity: 40.0 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 55.0 }
+      - { item: good.manure, quantity: 404.0 }
+    rate: 0.0002852
+    power: 50000
 basis:
   - { of: [recipes, recipes.rate, recipes.inputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "Feed for each kg, water a head, eggs a hen, milk a cow, weights at slaughter: the file named. The herd and flock sizes, and so the barn's rate, are chosen. Sheep's water for each kg gained is worked out from a guess at how fast they gain." }
   - { of: [recipes.outputs], tier: derived, review: true, note: "By balance: what goes in and does not leave as the animal or its breath is manure. Breath is taken as 0.55 kg of carbon dioxide for each kg of feed, a guess." }

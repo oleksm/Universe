@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.seed-cotton
+  name: "Seed cotton"
+  kind: intermediate
+  description: "Cotton as picked: the lint still on the seed. A third of its weight is lint."
+physical:
+  bulk_density: 200
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

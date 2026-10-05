@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.safety
+  name: "Safety"
+  rung: together
+  about: "Not to be robbed or hurt, and somewhere to turn if one is."
+served_by:
+  - { profession: profession.constable, serves: 333 }
+  - { profession: profession.judge, serves: 11000 }
+unmet: "People arm themselves, trust no one, and deal only with those they know."
+basis:
+  - { of: [served_by], tier: sourced, source: "standards/sources/research_people_needs.json", note: "300 police to 100,000 people, the world's median; 9 judges to 100,000, the middle of seven European countries (6 to 26)." }

@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.gh-01
+  code: GH-01
+  name: "Pressure shell"
+  revision: draft
+  description: "The airtight skin of the hall: it holds a full atmosphere against whatever is outside, down to none."
+physical:
+  mass: 2500000
+made_from:
+  - item: stock.sta36-pl-20
+    quantity: 2875000.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. 16,000 m2 of wall, roof and floor in 20 mm plate. Taken as cut from plate with 15% lost; a real one is of many materials." }

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.aggregate
+  name: "Aggregate"
+  kind: intermediate
+  description: "Crushed rock and sand, graded by size: the bulk of concrete, and what roads are laid on."
+physical:
+  bulk_density: 1600
+game:
+  goods: goods.minerals
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

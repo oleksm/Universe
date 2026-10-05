@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.clinic
+  name: "Clinic"
+  description: "A few doctors and nurses, a dispensary and a room to stitch in: where most sickness is seen and most of it ends."
+physical:
+  length: 30
+  width: 20
+  height: 4
+  mass: 661800
+floor: 600
+storeys: 1
+meets:
+  - { need: need.medicine, people: 1160 }
+staff:
+  - { profession: profession.doctor, count: 4 }
+  - { profession: profession.nurse, count: 11 }
+  - { profession: profession.clerk, count: 2 }
+built_of:
+  - { item: good.concrete, quantity: 623760 }
+  - { item: material.structural-steel-a36, quantity: 34740 }
+life: 1577880000
+basis:
+  - { of: [meets, staff], tier: derived, source: "standards/sources/research_people_needs.json", note: "Four doctors at one to 290 people, with nurses in the same measure (one to 106): the rich countries' average." }
+  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China. Glass, brick, pipes and wire are not counted: no figures were found." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials: the average of 18 mid- and high-rise buildings, mostly in Toronto. Of a residential building's weight about 1,040 kg a m2 is concrete and 58 steel (538 buildings in China)." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }

@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.air
+  name: "Air"
+  rung: alive
+  about: "Oxygen to breathe, and the carbon dioxide breathed out taken away. On a world with air it is free; in a sealed place it is made and cleaned."
+takes:
+  - { item: element.o, rate: 1.036e-05 }
+gives:
+  - { item: good.carbon-dioxide, rate: 1.256e-05 }
+lasts: 180
+unmet: "Death in minutes."
+basis:
+  - { of: [takes, gives], tier: sourced, source: "standards/sources/research_people_needs.json", note: "0.895 kg of oxygen in and 1.085 kg of carbon dioxide out a day: NASA's design figures for a crew member of 82 kg (Baseline Values and Assumptions, 2022)." }
+  - { of: [lasts], tier: sourced, source: "standards/sources/research_people_needs.json", note: "The rule of threes: three minutes without air. A rule of thumb, not a measurement." }

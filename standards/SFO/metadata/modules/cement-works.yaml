@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.cement-works
+  name: "Cement works"
+  step: "Burn cement"
+  description: "A long kiln that burns limestone and clay to clinker, and mills that grind it."
+physical:
+  length: 300
+  width: 100
+  height: 60
+recipes:
+  - makes: good.cement
+    does: "Limestone and clay are ground, burnt at 1,450 C to clinker, and the clinker ground fine."
+    inputs:
+      - { item: good.limestone, quantity: 1.5 }
+      - { item: good.clay, quantity: 0.2 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 0.51 }
+      - { item: good.water, quantity: 0.19 }
+    rate: 10.0
+    power: 55200000
+basis:
+  - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "1.7 t of rock for each tonne of clinker, 1.5 of it limestone; 0.51 t of carbon dioxide driven out of the stone; 5.0 GJ of heat and 144 kWh of power a tonne (United States averages). The heat is taken as electric, so no fuel is burnt; what else is lost is taken as water; the gypsum ground in at the end is left out." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

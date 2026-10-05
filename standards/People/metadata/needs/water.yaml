@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.water
+  name: "Water to drink"
+  rung: alive
+  about: "Water to drink and cook with."
+takes:
+  - { item: good.water, rate: 2.894e-05 }
+gives:
+  - { item: good.waste-water, rate: 2.894e-05 }
+lasts: 259200
+unmet: "Death in days."
+basis:
+  - { of: [takes], tier: sourced, source: "standards/sources/research_people_needs.json", note: "2.5 kg a day: 2.0 to drink and 0.5 in preparing food, NASA's figure for a station or a base. The least for survival on Earth is 2.5 to 3 litres (WHO)." }
+  - { of: [gives], tier: derived, review: true, note: "What is drunk comes out again. Breath and sweat are counted with it, though in truth they go to the air." }
+  - { of: [lasts], tier: sourced, source: "standards/sources/research_people_needs.json", note: "The rule of threes: three days without water. A rule of thumb, not a measurement." }

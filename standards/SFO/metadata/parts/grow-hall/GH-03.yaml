@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.gh-03
+  code: GH-03
+  name: "Growing racks and troughs"
+  revision: draft
+  description: "Tiers of troughs the crop stands in, a hectare of them."
+physical:
+  mass: 135000
+made_from:
+  - item: stock.al6061-pl-5
+    quantity: 155250.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. 10,000 m2 of trough in 5 mm plate. Taken as cut from plate with 15% lost; a real one is of many materials." }

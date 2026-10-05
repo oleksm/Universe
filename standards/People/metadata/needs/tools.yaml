@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/need.schema.yaml
+identity:
+  key: need.tools
+  name: "Tools of a trade"
+  rung: better
+  about: "The tools one's work is done with, kept sharp and replaced."
+takes:
+  - { item: market.tools, rate: 1.157e-07 }
+unmet: "Work is slow, or cannot be done."
+basis:
+  - { of: [takes], tier: invented, review: true, note: "A figure from memory, of the right size: no source was looked up. To be reviewed." }

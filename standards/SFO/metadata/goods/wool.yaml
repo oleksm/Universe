@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.wool
+  name: "Wool"
+  kind: intermediate
+  description: "Wool as shorn: greasy, with dirt in it. About half of it is clean fibre."
+physical:
+  bulk_density: 250
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

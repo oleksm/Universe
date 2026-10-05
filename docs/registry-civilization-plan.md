@@ -185,11 +185,64 @@ New kinds (`need`, `profession`) the engine ignores until it reads them: they ca
 
 Each part: describe, look up the figures, mark the guesses, run its report.
 
-## For the user to decide
+## Decided (the user, 2026-10-04)
 
-- **How far down each trade goes.** One "farmer", or ploughman, herdsman, orchardman? Proposal:
-  about 35 trades, broad.
-- **Worship and lore.** Whether the world has faiths, and whose they are to write.
-- **Wear.** Whether everything made has a life (the proposal), or only what matters to play.
-- **Where part 4's hulls come from:** designed in Blender one at a time as the MC-07 was, or
-  described first and modelled after.
+- Trades are broad: a farmer, not a ploughman.
+- Everything made has a life.
+- Worship: to come back to. Hulls: skipped for now.
+
+## Done
+
+**1. Needs and professions (2026-10-04).** A new root, `standards/People/`: 20 needs on the four
+rungs (each with what a person uses and gives off a day, the floor and power it takes, whose work
+meets it, how long one can go without) and 36 trades (each with how it is learned and how long
+that takes). Two reports: **Needs** (6 of 20 are met by something described: air, water, food,
+warmth, power; the other 14 are the work ahead) and **Work**. Sourced since (`standards/sources/research_people_needs.json`): 12 of the 20 needs
+rest on a published figure (NASA's for a crew, the WHO's, the World Bank's); art, play, news, tools,
+travel and the weight of medicines are still guesses. A person balances: 4.9 kg a day in (oxygen,
+water, food), 4.9 out (carbon dioxide, waste water).
+
+**2. Body (2026-10-04).** 12 of 20 needs are now met by something described (11 of the 13 on the
+first two rungs; medicines and somewhere for a constable and a judge are what is left there).
+
+| What | Records |
+|---|---|
+| Water | Ice melter (asteroid ice to water, 776 kJ a kg), water works (waste water back to drinking water, 2.1 kWh a m3) |
+| Air | Air plant (carbon dioxide and hydrogen to water and methane); with the hydrogen plant it closes breath without plants. Halls close it with them |
+| Fuel | Deuterium plant: 4.97 kg of water and 13.9 MWh for each kg of deuterium. One feeds twenty power stations |
+| Homes | A new kind, `building`: bunkhouse (240 people), dwelling block (2,000), each with floor, weight, life and the needs it meets |
+| Health | Clinic and hospital, with their staff by trade. Nothing makes medicines yet: that waits on chemicals |
+| Clothes | Seed cotton and flax in the field, wool in the barn; textile mill (three cloths), clothing works (clothes, woollens, linens) |
+| Waste | Compost works (compost; growing medium for the halls, new and cleaned), rendering works (tallow, meat and bone meal) |
+| Food | The hydroponic hall: `docs/registry-food.md` |
+
+A new report, **Takers**: of 30 things given off, 10 are taken by something. The 20 that are not
+(scrap of three metals, slag, dross, red mud, methane, compost, sewage sludge, cottonseed, whey,
+pomace and others) are the recycling work of part 3.
+
+**Left open in Body, and why:**
+
+- **Wells, and mines on the ground.** A recipe needs an input, and the ground's is what the world
+  is made of, which the user is bringing later. Until then water comes from asteroid ice and from
+  cleaning what has been used.
+- **Medicines.** No figure for what a person uses was found, and what they are made from is
+  chemicals, part 3.
+- **Power smaller than 400 MW.** Not described.
+- **How long clothes last** (3.3 years, found) has nowhere to go: a good has no life yet. With
+  wear, part 3.
+- **Homes in vacuum.** A building does not say whether it holds air.
+- **A building's draw on a hot or cold world:** as the hall's, asked of the engine.
+
+**3. Making, first step: building materials and scrap (2026-10-04).**
+
+| What | Records |
+|---|---|
+| Rock | Limestone, clay and silica sand: found only on worlds that have had liquid water (as bauxite). Aggregate is crushed from asteroid rock or from furnace slag |
+| Works | Crushing plant, lime kiln (lime had no maker), cement works, concrete plant, glassworks, brickworks |
+| Buildings | Each now says what it is built of: 1,040 kg of concrete and 58 kg of steel for each m2 of floor |
+| Scrap | Steel scrap goes back into the arc furnace, aluminium scrap into the casthouse (5% of the energy of new metal) |
+
+Takers: 14 of 30 now have one. **What this shows:** cement, glass and brick need rock that only
+a wet world has. A station or an airless port must ship them in, or build of something else
+(steel, or rock melted or sintered, which is not described). Soda ash for glass has no maker yet:
+chemicals, next.
