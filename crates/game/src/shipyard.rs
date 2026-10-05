@@ -71,8 +71,12 @@ pub fn open(app: &mut App) -> Option<Shipyard> {
 
 /// This frame's input. False: close it.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
+    // The shipyard key closes it (the interior studio asks first if its plan is unsaved).
     if crate::keys::pressed(&ctx.input, Act::Shipyard) {
-        return false;
+        return match app.shipyard.as_mut() {
+            Some(y) if y.page == Page::Interior => !y.interior.close(),
+            _ => false,
+        };
     }
     let spec = app.ship.spec();
     let Some(y) = app.shipyard.as_mut() else { return false };

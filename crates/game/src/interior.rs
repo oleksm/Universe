@@ -107,6 +107,11 @@ pub struct Interior {
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
     /// The plan as its walls were last worked out, and their panels.
     panelled: Option<(Plan, Vec<Panel>)>,
+    /// The plan as last saved or opened; closing with unsaved changes asked
+    /// (`confirm`); a message for a while (s).
+    saved: Option<Plan>,
+    confirm: bool,
+    message: Option<(String, f32)>,
 }
 
 /// A line's room, its cross-section along it round it (the line its axis): the
@@ -164,7 +169,7 @@ fn clashes(mesh: &universe_sim::world::walk::WalkMesh, plan: &Plan) -> Vec<Vec<V
 
 /// Points and the lines between them: where access must reach, and the ways it
 /// goes, first as lines (their room comes later).
-#[derive(Clone, Default, PartialEq)]
+#[derive(Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 struct Plan {
     /// For which hull (its fixed points are taken from it).
     hull: String,
@@ -176,7 +181,7 @@ struct Plan {
     groups: Vec<Group>,
 }
 
-#[derive(Clone, Default, PartialEq)]
+#[derive(Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 struct Group {
     lines: Vec<usize>,
     walled: bool,
@@ -408,7 +413,7 @@ impl Plan {
 
 /// A line's cross-section: its shape, its width and its height (m), laid round the
 /// line.
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize)]
 struct Profile {
     section: Section,
     width: f32,
@@ -426,7 +431,7 @@ const ROOM_MIN: f32 = 0.3;
 const ROOM_MAX: f32 = 6.0;
 
 /// The shape of a line's cross-section.
-#[derive(Clone, Copy, Default, PartialEq)]
+#[derive(Clone, Copy, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 enum Section {
     /// None: a bare line.
     #[default]
@@ -478,7 +483,7 @@ impl Profile {
 
 /// A point of the plan: where it is (the hull's frame), and the model's name for
 /// it if it's one of the hull's own (the hatch, the cockpit...: those stay).
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 struct Point {
     at: Vec3,
     name: Option<String>,
@@ -612,6 +617,73 @@ impl Interior {
 
     /// The plan's points from the hull's own places, once a hull: its hatch, its
     /// cockpit, its mounts and docks, its main engines (their middle).
+    /// Where a hull's plan is saved.
+    fn file(key: &str) -> std::path::PathBuf {
+        crate::save::data_dir().join("freefall").join("interiors").join(format!("{key}.json"))
+    }
+
+    /// The plan saved for this plan's hull, its hull's own points moved to where the
+    /// model has them now (by name).
+    fn read_saved(&self) -> Option<Plan> {
+        let text = std::fs::read_to_string(Self::file(&self.plan.hull)).ok()?;
+        let mut plan: Plan = serde_json::from_str(&text).map_err(|e| log::warn!("interior plan unreadable: {e}")).ok()?;
+        plan.hull = self.plan.hull.clone();
+        for p in plan.points.iter_mut() {
+            if let Some(fresh) = self.plan.points.iter().find(|q| q.name.is_some() && q.name == p.name) {
+                p.at = fresh.at;
+            }
+        }
+        Some(plan)
+    }
+
+    /// The plan written to its file (a message says how it went).
+    fn save(&mut self) {
+        let path = Self::file(&self.plan.hull);
+        let done = std::fs::create_dir_all(path.parent().expect("a folder")).and_then(|_| std::fs::write(&path, serde_json::to_string_pretty(&self.plan).unwrap_or_default()));
+        self.message = Some((
+            match done {
+                Ok(()) => {
+                    self.saved = Some(self.plan.clone());
+                    "SAVED: THIS HULL'S PLAN".to_string()
+                }
+                Err(e) => format!("NOT SAVED: {e}").to_uppercase(),
+            },
+            4.0,
+        ));
+    }
+
+    /// The saved plan opened over this one (an undo step: UNDO brings this back).
+    fn open(&mut self) {
+        match self.read_saved() {
+            Some(plan) => {
+                self.undo.push(std::mem::replace(&mut self.plan, plan));
+                self.redo.clear();
+                self.saved = Some(self.plan.clone());
+                self.pick = None;
+                self.more.clear();
+                self.from = None;
+                self.message = Some(("OPENED THE SAVED PLAN (UNDO TO GO BACK)".into(), 4.0));
+            }
+            None => self.message = Some(("NO SAVED PLAN FOR THIS HULL YET".into(), 4.0)),
+        }
+    }
+
+    /// Changed since it was last saved or opened?
+    pub fn unsaved(&self) -> bool {
+        self.saved.as_ref().is_some_and(|s| *s != self.plan)
+    }
+
+    /// Asked to close (ESC, the shipyard key): true if it can go now; with unsaved
+    /// changes, it asks first (SAVE, DISCARD or keep working).
+    pub fn close(&mut self) -> bool {
+        if self.unsaved() {
+            self.confirm = true;
+            false
+        } else {
+            true
+        }
+    }
+
     fn seed(&mut self, key: &str, shape: &universe_sim::world::shape::Shape) {
         if self.plan.hull == key {
             return;
@@ -691,6 +763,12 @@ impl Interior {
             points.push(Point { at, name: Some(format!("DASH {}", k + 1)) });
         }
         self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new() };
+        // The plan saved for this hull, if there is one (its hull's own points where
+        // the model has them now).
+        if let Some(saved) = self.read_saved() {
+            self.plan = saved;
+        }
+        self.saved = Some(self.plan.clone());
     }
 
     fn hull(&self, key: &str) -> Option<Arc<Hull>> {
@@ -761,6 +839,21 @@ fn history_button(k: usize) -> (Vec2, Vec2) {
 /// WALK HERE, after UNDO and REDO.
 fn walk_button() -> (Vec2, Vec2) {
     button(TOOLBAR.len() + HISTORY.len())
+}
+
+/// SAVE (0) and OPEN (1), after WALK HERE.
+fn file_button(k: usize) -> (Vec2, Vec2) {
+    button(TOOLBAR.len() + HISTORY.len() + 1 + k)
+}
+
+/// The close dialog: where it is, and its buttons (SAVE AND CLOSE, DISCARD, KEEP
+/// WORKING).
+fn confirm_box(size: Vec2) -> ((Vec2, Vec2), [(Vec2, Vec2); 3]) {
+    let (w, h) = (460.0, 96.0);
+    let p = Vec2::new((size.x - w) * 0.5, (size.y - h) * 0.5);
+    let bw = (w - 16.0 - 12.0) / 3.0;
+    let b = |k: f32| (Vec2::new(p.x + 8.0 + k * (bw + 6.0), p.y + h - 26.0), Vec2::new(bw, 18.0));
+    ((p, Vec2::new(w, h)), [b(0.0), b(1.0), b(2.0)])
 }
 
 fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
@@ -950,6 +1043,50 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let input = &ctx.input;
     let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
     let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+    // (The hull's lines picked up, its plan seeded, whatever else is going on.)
+    let spec = app.ship.spec();
+    interior.spin += ctx.dt;
+    interior.refresh(&spec.key, spec.shape());
+    interior.seed(&spec.key, spec.shape());
+    if let Some((_, t)) = interior.message.as_mut() {
+        *t -= ctx.dt;
+        if *t <= 0.0 {
+            interior.message = None;
+        }
+    }
+    // Closing with unsaved changes: SAVE AND CLOSE (S, ENTER), DISCARD (D), or keep
+    // working (ESC); nothing else meanwhile.
+    if interior.confirm {
+        let size = ctx.hud_size.as_vec2();
+        let (_, buttons) = confirm_box(size);
+        let click = |k: usize| input.button_pressed(MouseButton::Left) && inside(buttons[k], input.cursor);
+        if input.pressed(KeyCode::KeyS) || input.pressed(KeyCode::Enter) || click(0) {
+            interior.save();
+            interior.confirm = false;
+            return !interior.saved.as_ref().is_some_and(|s| *s == interior.plan);
+        }
+        if input.pressed(KeyCode::KeyD) || click(1) {
+            interior.confirm = false;
+            return false;
+        }
+        if input.pressed(KeyCode::Escape) || click(2) {
+            interior.confirm = false;
+        }
+        return true;
+    }
+    if input.pressed(KeyCode::Escape) {
+        return !interior.close();
+    }
+    // SAVE (CTRL+S) and OPEN (CTRL+O).
+    let clicked = |b: (Vec2, Vec2)| input.button_pressed(MouseButton::Left) && inside(b, input.cursor);
+    if (ctrl && input.pressed(KeyCode::KeyS)) || clicked(file_button(0)) {
+        interior.save();
+        return true;
+    }
+    if (ctrl && input.pressed(KeyCode::KeyO)) || clicked(file_button(1)) {
+        interior.open();
+        return true;
+    }
     let click = |k: usize| input.button_pressed(MouseButton::Left) && inside(history_button(k), input.cursor);
     let undo = (ctrl && !shift && input.pressed(KeyCode::KeyZ)) || click(0);
     let redo = (ctrl && (input.pressed(KeyCode::KeyY) || (shift && input.pressed(KeyCode::KeyZ)))) || click(1);
@@ -988,12 +1125,6 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
 fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let input = &ctx.input;
     let spec = app.ship.spec();
-    interior.spin += ctx.dt;
-    interior.refresh(&spec.key, spec.shape());
-    interior.seed(&spec.key, spec.shape());
-    if input.pressed(KeyCode::Escape) {
-        return false;
-    }
     let Some(h) = interior.hull(&spec.key) else { return true };
     let size = ctx.hud_size.as_vec2();
     let cam = Camera::of(interior, &h, size);
@@ -1304,6 +1435,11 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             let (p, c) = walk_button();
             let lamp = if interior.walk_armed || inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, "F", "WALK HERE", lamp);
+        }
+        for (k, (key, name)) in [("^S", if interior.unsaved() { "SAVE *" } else { "SAVE" }), ("^O", "OPEN")].into_iter().enumerate() {
+            let (p, c) = file_button(k);
+            let lamp = if inside((p, c), interior.cursor) { Lamp::On } else if k == 0 && interior.unsaved() { Lamp::Busy } else { Lamp::Off };
+            draw_cell(frame, p, c, key, name, lamp);
         }
         for (k, (key, name, redo)) in HISTORY.iter().enumerate() {
             let (p, c) = history_button(k);
@@ -1669,6 +1805,24 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             };
             let name = if a == Action::Wall && walled { "OPEN UP" } else { name };
             draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
+        }
+    }
+    // A message for a while (saved, opened), under the toolbar.
+    if let Some((text, _)) = &interior.message {
+        frame.text_scaled(Vec2::new(button(2).0.x, 52.0), text, PICKED, 0.7);
+    }
+    // Closing with unsaved changes: asked first.
+    if interior.confirm {
+        use crate::hud::{draw_cell, Lamp};
+        let ((p, c), buttons) = confirm_box(size);
+        frame.hud_rect(Vec2::ZERO, size, Color([0.0, 0.0, 0.0, 0.45]));
+        frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.98]));
+        frame.hud_box(p, c, PICKED);
+        frame.text(p + Vec2::new(10.0, 10.0), "UNSAVED CHANGES", PICKED);
+        frame.text_scaled(p + Vec2::new(10.0, 32.0), "CLOSE THE STUDIO WITHOUT SAVING THIS PLAN?", LABEL, 0.8);
+        for (k, (key, name)) in [("S", "SAVE AND CLOSE"), ("D", "DISCARD"), ("ESC", "KEEP WORKING")].into_iter().enumerate() {
+            let (bp, bc) = buttons[k];
+            draw_cell(frame, bp, bc, key, name, if inside((bp, bc), interior.cursor) { Lamp::On } else { Lamp::Off });
         }
     }
 }
