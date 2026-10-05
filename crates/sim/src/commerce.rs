@@ -398,11 +398,10 @@ impl crate::universe::Universe {
         // What this station's shipyard asks for it (if it carries it), and
         // what building it takes from the place's stock.
         use universe_services::outfitter;
-        let settled = outfitter::settled(&self.markets.economy.places);
         let here = Facility::Station(station);
         let price = match module {
             Some(m) => {
-                let o = outfitter::offer(self.world.galaxy.seed, &self.world.gate_links, &settled, system, here, c.get(m));
+                let o = outfitter::offer(self.world.galaxy.seed, &self.world.gate_links, system, here, c.get(m));
                 if !o.carried {
                     return Err("NOT CARRIED HERE".into());
                 }
@@ -462,9 +461,8 @@ impl crate::universe::Universe {
         let sys = self.world.system(system);
         let Some(here @ Facility::Station(_)) = universe_world::traffic::docked_at(&sys, ship) else { return Err("BUY A SHIP DOCKED AT A STATION".into()) };
         let c = universe_world::content::content();
-        let settled = outfitter::settled(&self.markets.economy.places);
         let spec = c.get(hull);
-        let price = spec.frame.price + spec.fit.iter().map(|(_, m)| outfitter::offer(self.world.galaxy.seed, &self.world.gate_links, &settled, system, here, c.get(*m)).price).sum::<f64>();
+        let price = spec.frame.price + spec.fit.iter().map(|(_, m)| outfitter::offer(self.world.galaxy.seed, &self.world.gate_links, system, here, c.get(*m)).price).sum::<f64>();
         let old = ship.spec();
         let trade_in = BUYBACK * (old.frame.price + old.fit.iter().map(|(_, m)| c.get(*m).price).sum::<f64>());
         Ok((price, trade_in))

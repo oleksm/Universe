@@ -304,7 +304,7 @@ impl Content {
                 .organisations
                 .iter()
                 .filter(|o| o.is_maker())
-                .map(|o| crate::modules::Brand { key: o.identity.key.clone(), name: crate::standards::caps(&o.identity.name), note: crate::standards::caps(o.note.as_deref().unwrap_or_default()) })
+                .map(|o| crate::modules::Brand::from_record(crate::registry::registry(), o))
                 .collect(),
         )?;
         let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;

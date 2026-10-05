@@ -289,8 +289,7 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     // from the station's machinery.
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
-    let settled = outfitter::settled(&u.markets.economy.places);
-    let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, &settled, home, here, content().get(m("rack.s2")));
+    let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("rack.s2")));
     let machinery = |u: &Universe| u.markets.economy.place(home, here).unwrap().stock_of(universe_sim::world::goods::Category::of("goods.machinery").unwrap());
     let before = machinery(&u);
     let cost = u.refit("cargo", Some(m("rack.s2"))).unwrap();

@@ -18,3 +18,7 @@
   and the maker's key, and the keys changed with the last step (`brand.hadley` is `org.hadley`), so
   the draw came out differently. A new world has its makers' homes in other settled systems than
   before.
+- **A maker's home is where its record says it is**, not a draw from the seed. Its address names a
+  settlement, the settlement its body, the body its system. All twelve makers are at Treistun e
+  station today, so each one's whole range is carried at Treistun, and less of it, dearer, the
+  farther a station is in gate hops.
