@@ -235,7 +235,7 @@ pub fn apply(app: &mut App, name: &str) {
                 p.fed = 0.6;
                 p.waiting = 1.0;
             }
-            let _ = u.refit("cargo", universe_sim::world::content::content().handle("cabin.s3"));
+            let _ = u.refit("cargo", universe_sim::world::content::content().handle("equipment.cabin.s3"));
             app.engine.refresh();
             app.v = app.engine.view();
             app.passengers = Some(0);

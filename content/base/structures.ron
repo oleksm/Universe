@@ -5,18 +5,18 @@
 // structure has a comm (a transceiver in space, a ground terminal on a world); those in
 // space a hyper relay; a gate ring may carry a gate relay.
 [
-    (key: "structure.platform", brand: "org.halvard", name: "HALVARD PLATFORM", kind: Station, fit: ["transceiver.station", "relay.hyper"],
+    (key: "structure.platform", brand: "org.halvard", name: "HALVARD PLATFORM", kind: Station, fit: ["equipment.transceiver.station", "equipment.relay.hyper"],
         note: "An orbital platform: a deck of 16 pads, the main structure on one edge, its hangar inside."),
-    (key: "structure.spaceport", brand: "org.halvard", name: "HALVARD SPACEPORT", kind: Spaceport, fit: ["terminal.ground"],
+    (key: "structure.spaceport", brand: "org.halvard", name: "HALVARD SPACEPORT", kind: Spaceport, fit: ["equipment.terminal.ground"],
         note: "A port on a world's ground: 16 pads on a cleared plain."),
-    (key: "structure.outpost", brand: "org.halvard", name: "HALVARD OUTPOST", kind: Outpost, fit: ["terminal.ground"],
+    (key: "structure.outpost", brand: "org.halvard", name: "HALVARD OUTPOST", kind: Outpost, fit: ["equipment.terminal.ground"],
         note: "A small settlement's port: pads, a works, a few thousand people."),
-    (key: "structure.orbital", brand: "org.tallis", name: "TALLIS ORBITAL SITE", kind: Orbital, fit: ["transceiver.beacon", "relay.hyper"],
+    (key: "structure.orbital", brand: "org.tallis", name: "TALLIS ORBITAL SITE", kind: Orbital, fit: ["equipment.transceiver.beacon", "equipment.relay.hyper"],
         note: "A transceiver and a hyper relay in orbit round a planet or moon (a few satellites: one is always in sight)."),
-    (key: "structure.ring.i", brand: "org.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 5.0, capture: 300.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
+    (key: "structure.ring.i", brand: "org.halcyon", name: "HALCYON RING I", kind: GateRing(class: 1, span_ly: 5.0, capture: 300.0), fit: ["equipment.transceiver.beacon", "equipment.relay.hyper", "equipment.relay.gate"],
         note: "A gate ring, class I: the shortest throats."),
-    (key: "structure.ring.ii", brand: "org.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 10.0, capture: 300.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
+    (key: "structure.ring.ii", brand: "org.halcyon", name: "HALCYON RING II", kind: GateRing(class: 2, span_ly: 10.0, capture: 300.0), fit: ["equipment.transceiver.beacon", "equipment.relay.hyper", "equipment.relay.gate"],
         note: "A gate ring, class II: the settled lanes' ring."),
-    (key: "structure.ring.iii", brand: "org.halcyon", name: "HALCYON RING III", kind: GateRing(class: 3, span_ly: 25.0, capture: 300.0), fit: ["transceiver.beacon", "relay.hyper", "relay.gate"],
+    (key: "structure.ring.iii", brand: "org.halcyon", name: "HALCYON RING III", kind: GateRing(class: 3, span_ly: 25.0, capture: 300.0), fit: ["equipment.transceiver.beacon", "equipment.relay.hyper", "equipment.relay.gate"],
         note: "A gate ring, class III: the longest throat anyone builds."),
 ]

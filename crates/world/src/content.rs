@@ -29,7 +29,7 @@ const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("materials.ron", include_str!("../../../content/base/materials.ron")),
     ("structures.ron", include_str!("../../../content/base/structures.ron")),
-    ("modules.ron", include_str!("../../../content/base/modules.ron")),
+    ("prices.ron", include_str!("../../../content/base/prices.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
     ("ores.ron", include_str!("../../../content/base/ores.ron")),
@@ -307,7 +307,24 @@ impl Content {
                 .map(|o| crate::modules::Brand::from_record(crate::registry::registry(), o))
                 .collect(),
         )?;
-        let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
+        // Prices: the game's own (volatile; not the registry's), by registry key.
+        let mut prices: HashMap<String, f64> = HashMap::new();
+        for p in &packs {
+            if let Some(s) = p.source("prices.ron") {
+                let more: HashMap<String, f64> = ron::from_str(s).map_err(|e| format!("{} prices.ron: {e}", p.name))?;
+                prices.extend(more);
+            }
+        }
+        let price = |key: &str| prices.get(key).copied().ok_or_else(|| format!("prices.ron: no price for {key}"));
+        // Modules: the registry's ship equipment, at the game's prices.
+        let modules: Registry<crate::modules::Module> = Registry::build(
+            crate::registry::registry()
+                .equipment
+                .iter()
+                .filter_map(|e| Some((e, crate::modules::Module::from_record(e, 0.0)?)))
+                .map(|(e, m)| Ok(crate::modules::Module { price: price(&e.identity.key)?, ..m }))
+                .collect::<Result<Vec<_>, String>>()?,
+        )?;
         let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
         for (_, s) in structures.iter() {
             if resolve(&brands, &aliases, &s.brand).is_none() {
@@ -571,10 +588,10 @@ entry!(GoodsKind, "goods.ron", goods, |k| {
 });
 entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
-entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
-entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
-entry!(crate::standards::Body, "bodies.ron", bodies, |b| b.check());
-entry!(crate::standards::Standard, "standards.ron", standards, |s| s.check());
+entry!(crate::modules::Module, "the registry's equipment", modules, |m| m.check());
+entry!(crate::modules::Brand, "the registry's makers", brands, |_b| Ok(()));
+entry!(crate::standards::Body, "the registry's standards bodies", bodies, |b| b.check());
+entry!(crate::standards::Standard, "the registry's standards", standards, |s| s.check());
 entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
 entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {

@@ -426,3 +426,191 @@ pub struct StockSize {
     #[serde(default)]
     pub wall: Option<f64>,
 }
+
+/// `equipment.*`: a piece of equipment a hull or a structure is fitted with,
+/// a maker's product. What it does is its `function`.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Equipment {
+    pub identity: EquipmentIdentity,
+    /// 1 to 4: it fits a slot at least as big.
+    #[serde(default)]
+    pub size_class: Option<u8>,
+    pub physical: Physical,
+    #[serde(default)]
+    pub needs: Option<Needs>,
+    pub function: Function,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EquipmentIdentity {
+    pub key: String,
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub name: String,
+    /// The maker whose product it is, by key.
+    pub maker: String,
+    #[serde(default)]
+    pub revision: Option<Revision>,
+    #[serde(default)]
+    pub slot: Option<SlotKind>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+/// Where a designed thing stands.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum Revision {
+    Draft,
+    Released,
+    Superseded,
+    Outdated,
+}
+
+/// A kind of slot, and so the kind of equipment that fits it.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SlotKind {
+    Power,
+    Drive,
+    Thrusters,
+    Lift,
+    Tank,
+    Cargo,
+    Hyperdrive,
+    Capacitor,
+    Computer,
+    Transponder,
+    Sensors,
+    Comm,
+    LifeSupport,
+    Hardpoint,
+    Utility,
+    Avionics,
+    Gate,
+}
+
+/// What a piece of equipment does: one kind of device, with that kind's
+/// figures (SI). A figure left out is none.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+pub enum Function {
+    PowerPlant {
+        #[serde(default)]
+        output: f64,
+        #[serde(default)]
+        efficiency: f64,
+        #[serde(default)]
+        burns: String,
+    },
+    Drive(Engine),
+    Thrusters(Engine),
+    Lift(Engine),
+    Tank {
+        #[serde(default)]
+        capacity: f64,
+        #[serde(default)]
+        holds: String,
+    },
+    Capacitor {
+        #[serde(default)]
+        capacity: f64,
+        #[serde(default)]
+        rate: f64,
+    },
+    Rack {
+        #[serde(default)]
+        capacity: f64,
+    },
+    Cabin {
+        #[serde(default)]
+        seats: u32,
+    },
+    Hyperdrive {
+        #[serde(default)]
+        efficiency: f64,
+        /// m/s.
+        #[serde(default)]
+        top_speed: f64,
+    },
+    FlightComputer {
+        #[serde(default)]
+        turn_rate: f64,
+        #[serde(default)]
+        roll_rate: f64,
+    },
+    Sensors {
+        #[serde(default)]
+        range: f64,
+    },
+    Comm {
+        #[serde(default)]
+        capture: f64,
+        #[serde(default)]
+        link: f64,
+        #[serde(default)]
+        lag: f64,
+        /// Messages a second.
+        #[serde(default)]
+        capacity: f64,
+    },
+    GateRelay(Relay),
+    HyperRelay(Relay),
+    NavComputer {
+        #[serde(default)]
+        features: Vec<NavFeature>,
+        #[serde(default)]
+        interlock: f64,
+        #[serde(default)]
+        governor: f64,
+    },
+    Transponder,
+    LifeSupport,
+    Gun,
+    Laser,
+    MiningRig,
+    ThroatCoil,
+}
+
+/// A drive's, thrusters' or lift's figures: a full-share nozzle's thrust (N),
+/// its exhaust speed (m/s), the share of its fuel's energy in the exhaust, and
+/// the fuel it burns (a material's key).
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Engine {
+    #[serde(default)]
+    pub thrust: f64,
+    #[serde(default)]
+    pub exhaust: f64,
+    #[serde(default)]
+    pub efficiency: f64,
+    #[serde(default)]
+    pub burns: String,
+}
+
+/// A relay's figures: lag (s), messages a second, a batch every `cadence` s.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Relay {
+    #[serde(default)]
+    pub lag: f64,
+    #[serde(default)]
+    pub capacity: f64,
+    #[serde(default)]
+    pub cadence: f64,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum NavFeature {
+    Docking,
+    Landing,
+    Gate,
+    Follow,
+    Hyperdrive,
+    Route,
+}

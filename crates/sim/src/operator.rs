@@ -130,7 +130,7 @@ pub fn settlers(charts: &Charts, seed: u64, count: usize, first: usize, now: f64
             "hull.drover"
         };
         // (A shuttle's cargo slot a passenger cabin.)
-        let fit = if shuttle { vec![("cargo".to_string(), "cabin.s3".to_string())] } else { Vec::new() };
+        let fit = if shuttle { vec![("cargo".to_string(), "equipment.cabin.s3".to_string())] } else { Vec::new() };
         out.push((Registration { name, at, pad: (route_seed % universe_world::spaceport::PADS as u64) as usize, hull: hull.into(), fit }, pilot));
     }
     out

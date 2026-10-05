@@ -281,7 +281,7 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     let station = u.ship_system().station().unwrap();
     let m = |k: &str| content().handle::<universe_sim::world::modules::Module>(k).unwrap();
     // Not docked: refused.
-    assert!(u.refit("cargo", Some(m("rack.s2"))).is_err());
+    assert!(u.refit("cargo", Some(m("equipment.rack.s2"))).is_err());
     u.ship = u.world.ship_on(home, Facility::Station(station), 0);
     let credits = u.credits();
     // Smaller racks: lighter, a smaller hold, and the old racks sold back;
@@ -289,10 +289,10 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     // from the station's machinery.
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
-    let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("rack.s2")));
+    let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.rack.s2")));
     let machinery = |u: &Universe| u.markets.economy.place(home, here).unwrap().stock_of(universe_sim::world::goods::Category::of("goods.machinery").unwrap());
     let before = machinery(&u);
-    let cost = u.refit("cargo", Some(m("rack.s2"))).unwrap();
+    let cost = u.refit("cargo", Some(m("equipment.rack.s2"))).unwrap();
     assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
     assert!((machinery(&u) - (before - 0.8 + 0.75)).abs() < 1e-6, "0.8 t built, half the old 1.5 t back");
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
@@ -305,13 +305,13 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     let e = u.refit("power", None).unwrap_err();
     assert!(e.contains("Power"), "{e}");
     // A basic nav computer: it docks and lands, but runs no route.
-    u.refit("avionics", Some(m("nav.basic.s1"))).unwrap();
+    u.refit("avionics", Some(m("equipment.nav.basic.s1"))).unwrap();
     assert!(u.ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.ship.spec().runs(universe_sim::world::modules::Feature::Route));
     // Unwelcome here.
     u.standings.set(universe_sim::PLAYER, home, -20.0);
     // Saved and loaded, the fit stays, and the standing.
     let json = serde_json::to_string(&u.save()).unwrap();
-    assert!(json.contains("nav.basic.s1"));
+    assert!(json.contains("equipment.nav.basic.s1"));
     let mut back = bench(0);
     back.load(serde_json::from_str(&json).unwrap());
     assert_eq!(back.ship.spec().hold_capacity, 10_000.0);
