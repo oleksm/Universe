@@ -31,3 +31,6 @@ lines:
     also: [stock.brz932-bar-50]
     modules:
       - { module: module.foundry, count: 1 }
+  - makes: stock.sic-tl-10
+    modules:
+      - { module: module.carbide-furnace, count: 1 }

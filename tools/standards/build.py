@@ -1869,7 +1869,7 @@ for hl in built_hulls + structures + built_equipment:
             ("says what it is cut from", ms is not None),
             ("a module has a recipe that makes that stock", bool(ms and makers_of(ms["slug"]))),
             ("a facility is built to make it", any(q in lined for q in (ms or {}).get("routes") or [])),
-            ("the ingot that stock is made from can be made", any(q["slug"] in lined for q in ingot_makers((ms or {}).get("made_from", {}).get("material")))),
+            ("the ingot that stock is made from can be made", any(q["slug"] in lined for q in ingot_makers((ms or {}).get("made_from", {}).get("material"))) or (ms is not None and "ingot" not in ((next((m_ for m_ in materials if m_.get("slug") == ms.get("made_from", {}).get("material")), {}).get("identity") or {}).get("form") or []))),   # (what is not a metal starts from no ingot)
             ("says how it is made from its stock", bool(how(pt)) and all(q in mod_of for q in how(pt))),
         ] + ([("a yard is built to cut and form that stock", any(q in lined for q in stock_of[ms["slug"] + "-PANEL"].get("routes") or []))] if ms and ms["slug"] + "-PANEL" in stock_of and "welding-bay" in how(pt) else []) + [
             ("a yard is built to make it", bool(how(pt)) and all(shop_lines(q) for q in how(pt))),

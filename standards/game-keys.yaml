@@ -78,6 +78,7 @@
 - { key: module.brewery, game: "brewery", in: "industry.ron, settlements.ron" }
 - { key: module.brickworks, game: "brickworks", in: "industry.ron, settlements.ron" }
 - { key: module.building-dock, game: "building-dock", in: "industry.ron, settlements.ron" }
+- { key: module.carbide-furnace, game: "carbide-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.carbon-works, game: "carbon-works", in: "industry.ron, settlements.ron" }
 - { key: module.casthouse, game: "casthouse", in: "industry.ron, settlements.ron" }
 - { key: module.casting-bay, game: "casting-bay", in: "industry.ron, settlements.ron" }
@@ -87,6 +88,7 @@
 - { key: module.clothing-works, game: "clothing-works", in: "industry.ron, settlements.ron" }
 - { key: module.cold-rolling-mill, game: "cold-rolling-mill", in: "industry.ron, settlements.ron" }
 - { key: module.cold-store, game: "cold-store", in: "industry.ron, settlements.ron" }
+- { key: module.composites-works, game: "composites-works", in: "industry.ron, settlements.ron" }
 - { key: module.compost-works, game: "compost-works", in: "industry.ron, settlements.ron" }
 - { key: module.concrete-plant, game: "concrete-plant", in: "industry.ron, settlements.ron" }
 - { key: module.crushing-plant, game: "crushing-plant", in: "industry.ron, settlements.ron" }
@@ -97,6 +99,7 @@
 - { key: module.feed-mill, game: "feed-mill", in: "industry.ron, settlements.ron" }
 - { key: module.fertiliser-works, game: "fertiliser-works", in: "industry.ron, settlements.ron" }
 - { key: module.field, game: "field", in: "industry.ron, settlements.ron" }
+- { key: module.film-works, game: "film-works", in: "industry.ron, settlements.ron" }
 - { key: module.finishing-line, game: "finishing-line", in: "industry.ron, settlements.ron" }
 - { key: module.fish-farm, game: "fish-farm", in: "industry.ron, settlements.ron" }
 - { key: module.flour-mill, game: "flour-mill", in: "industry.ron, settlements.ron" }

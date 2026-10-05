@@ -10,3 +10,6 @@
 - **A report follows each product back to a works.** 71 of 107 lines are complete. The rest wait on
   a titanium, stainless and copper works being placed, and on three materials nothing makes yet.
 - A review of all 57 equipment records: `docs/ships/equipment-review.md`.
+- **Later the same day: all 107 lines complete.** Port Trethi's foundry and mill gained lines for
+  stainless, titanium, copper, bronze, silicon carbide tile, insulation blanket and carbon
+  composite plate; three new works make the last three.

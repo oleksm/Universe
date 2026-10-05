@@ -1,0 +1,640 @@
+{
+ "silicon_carbide_acheson": {
+  "value": {
+   "electricity_MWh_per_t_SiC": [
+    6.2,
+    8
+   ],
+   "raw_material_kg_per_kg_SiC": [
+    2.8,
+    2.9
+   ],
+   "stoichiometric_raw_material_kg_per_kg_SiC": 2.4,
+   "furnace_temperature_C": [
+    1700,
+    2700
+   ],
+   "core_temperature_C": 2400,
+   "cycle_days": [
+    2,
+    20
+   ],
+   "ingot_SiC_content_pct": [
+    80,
+    100
+   ]
+  },
+  "unit": "mixed (see keys)",
+  "what": "Acheson electric resistance furnace: electricity per tonne of 100 % SiC, total raw material (silica sand + petroleum coke) per kg SiC, furnace temperature, batch duration, SiC content of the ingot. EU BREF Large Volume Inorganic Chemicals - Solids and Others (2007), section 7.9.2, printed p. 460",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+  "quote": "The process carried out in electric resistor furnaces operated batch wise is highly energy intensive (typically 6.2 – 8 MWh/t 100 % SiC). [...] The reaction requires 2.8 – 2.9 kg of raw material for 1 kg SiC. The stochiometric consumption is 2.4 kg of raw materials. The balance is mostly moisture, volatiles and sulphur. [...] The electric current passing through the resistance core generates a temperature of about 2400 ºC. In 2 – 20 days time, depending on the size of the furnace and the transformer, the chemical reaction of silica and carbon is complete. Once the furnace cycle is completed, the result is a silicon carbide ingot consisting of 80 – 100 % SiC. [Figure 7.33: T: 1700 – 2700 °C]",
+  "verified": true
+ },
+ "silicon_carbide_sintering": {
+  "value": {
+   "hot_press_temperature_C": 2200,
+   "hot_press_pressure_MPa": 40,
+   "density_g_cm3": 3.151,
+   "relative_density_pct": 98.46
+  },
+  "unit": "mixed (see keys)",
+  "what": "Hot-pressing sintering of high-purity SiC ceramic (one lab study, 15 wt% nano-SiC addition): temperature, pressure, resulting density. Materials (Basel) 2025, PMC12156879",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12156879/fullTextXML",
+  "quote": "Thus, the SiC ceramics sintered at 2200 °C with 15 wt% nano-SiC addition exhibit the highest density and relative density, which were 3.151 g/cm3 and 98.46%, respectively, with a purity of 99.967%. [...] a sintering temperature of 2200 °C, and a pressure of 40 MPa",
+  "verified": true
+ },
+ "carbon_fibre_from_pan": {
+  "value": {
+   "kg_PAN_fibre_per_kg_carbon_fibre": 1.95,
+   "mass_loss_pct": 49,
+   "process_energy_MJ_per_kg_CF": 170,
+   "stabilisation_C": [
+    200,
+    300
+   ],
+   "stabilisation_hours": [
+    1,
+    2
+   ],
+   "low_temp_carbonisation_C": 1000,
+   "high_temp_carbonisation_C": [
+    1500,
+    1800
+   ]
+  },
+  "unit": "mixed (see keys)",
+  "what": "PAN-based carbon fibre: precursor mass per kg carbon fibre, process energy (electric + thermal) of the stabilisation/carbonisation line per kg carbon fibre as modelled in an LCA, and step temperatures. Polymers (Basel) 2023/2024, PMC10780919 (text and Table 1)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10780919/fullTextXML",
+  "quote": "For modelling the emissions resulting from fiber stabilization and carbonization, the mass loss is assumed to be roughly 49%, which equals the needs of 1.95 kg PAN fiber to produce 1 kg of carbon fiber. | Process energy (electric and thermal) 170 [MJ/kg CF] | the precursor is cautiously exposed to temperatures around 200 to 300 °C under air in a continuous oxidizing furnace for one to two hours while being under constant tension | The first stage is performed at about 1000 °C in a low-temperature furnace [...] Subsequently, the fibers are heated up until they reach 1500 to 1800 °C in an ensuing high-temperature graphite furnace",
+  "verified": true
+ },
+ "pan_precursor": {
+  "value": {
+   "propylene_t_per_t_acrylonitrile": [
+    1.03,
+    1.15
+   ],
+   "ammonia_t_per_t_acrylonitrile": [
+    0.45,
+    0.55
+   ],
+   "makeup_catalyst_kg_per_t": [
+    0.3,
+    0.7
+   ],
+   "theoretical_minimum_propylene_t": 0.78,
+   "theoretical_minimum_ammonia_t": 0.33
+  },
+  "unit": "t per t acrylonitrile",
+  "what": "SOHIO propylene ammoxidation: raw material consumption per tonne acrylonitrile (in-tank values incl. losses). EU BREF Large Volume Organic Chemicals (Feb 2003), chapter 11 Acrylonitrile, Table 11.3, printed p. 274",
+  "source": "http://web.archive.org/web/20190922202906/https://eippcb.jrc.ec.europa.eu/reference/BREF/lvo_bref_0203.pdf",
+  "quote": "The theoretical minimum consumptions (of the main reaction only with 100 % yield) which would be 0.78 t propylene and 0.33 t ammonia / tonne of acrylonitrile product. However, in practice 85 % of the propylene feed is converted to saleable products (acrylonitrile, acetonitrile, hydrogen cyanide). | Propylene consumption 1.03 - 1.15 t C3H6 / t Acrylonitrile | Ammonia consumption 0.45 - 0.55 t NH3 / t Acrylonitrile | Make-up catalyst consumption 0.3 - 0.7 kg catalyst / t Acrylonitrile",
+  "verified": true
+ },
+ "carbon_composite": {
+  "value": {
+   "fibre_volume_pct": 57.42,
+   "laminate_density_g_cm3": 1.58,
+   "fibre_density_g_cm3": 1.79,
+   "resin_density_g_cm3": 1.3,
+   "resin": "epoxy",
+   "cure_temperature_C": 180,
+   "cure_hold_min": 120,
+   "autoclave_pressure_bar_gauge": 7,
+   "intermediate_hold": "110 C for 60 min"
+  },
+  "unit": "mixed (see keys)",
+  "what": "Aerospace carbon/epoxy unidirectional prepreg (HexPly 8552 with AS4 fibre, first column of the UD table): nominal fibre volume, laminate density, autoclave cure cycle. Hexcel HexPly 8552 product data sheet (archived copy)",
+  "source": "https://web.archive.org/web/20220321015650/https://www.hexcel.com/user_area/content_media/raw/HexPly_8552_eu_DataSheet.pdf",
+  "quote": "Epoxy matrix (180°C/356°F curing matrix) | Fibre Density g/cm3 1.79 | Resin density g/cm3 1.30 | Nominal Fibre Volume % 57.42 | Nominal Laminate Density g/cm3 1.58 | Cure cycle for monolithic components: 2. Apply 7 bar gauge autoclave pressure. [...] 5. Hold at 110°C ± 5°C for 60 minutes ± 5 minutes. 6. Heat at 1-3°C/min to 180°C ± 5°C 7. Hold at 180°C ± 5°C (356°F ± 9°F) for 120 minutes ± 5 minutes.",
+  "verified": true
+ },
+ "epoxy_resin": {
+  "value": {
+   "bisphenol_A_t": 0.671,
+   "epichlorohydrin_t": 0.544,
+   "sodium_hydroxide_t": 0.235
+  },
+  "unit": "t per t of pure bisphenol A diglycidyl ether",
+  "what": "DERIVED: stoichiometric (100 % yield) raw materials per tonne of pure DGEBA from the reaction bisphenol A + 2 epichlorohydrin + 2 NaOH -> DGEBA + 2 NaCl + 2 H2O, using molar masses 228.29 / 92.52 / 40.00 / 340.41 g/mol (molar masses are my own inputs, not from the page). The page states only the reaction, no per-tonne figure. No published per-tonne consumption was found.",
+  "source": "https://en.wikipedia.org/w/index.php?title=Epoxy&action=raw",
+  "quote": "The most common epoxy resins are based on reacting epichlorohydrin (ECH) with bisphenol A, resulting in a different chemical substance known as bisphenol A diglycidyl ether (commonly known as BADGE or DGEBA). [...] In this two-stage reaction, epichlorohydrin is first added to bisphenol A (bis(3-chloro-2-hydroxy-propoxy)bisphenol A is formed), then a bisepoxide is formed in a condensation reaction with a stoichiometric amount of sodium hydroxide.",
+  "verified": false
+ },
+ "mli_blanket": {
+  "value": {
+   "reflector_layers_typical": [
+    15,
+    20
+   ],
+   "reflector_film_thickness_mm": [
+    0.0051,
+    0.127
+   ],
+   "aluminium_coating_angstrom": 1000,
+   "areal_mass_g_per_cm2_of_0.0064mm_aluminised_Mylar_layer": 0.00093,
+   "areal_mass_g_per_cm2_of_0.0076mm_aluminised_Kapton_layer": 0.0011,
+   "infrared_emittance_of_aluminised_surface_max_typ": [
+    0.05,
+    0.03
+   ]
+  },
+  "unit": "mixed (see keys)",
+  "what": "Spacecraft MLI: typical number of reflector layers (LEO), reflector film thickness range (aluminised Mylar), vapour-deposited aluminium thickness, areal mass of ONE reflector layer (not a whole blanket), infrared emittance of the aluminised surface (surface emittance, not blanket effective emittance). NASA/TP-1999-209263 'Multilayer Insulation Material Guidelines', section 4.1.2 and Table 2 (text is OCR; column alignment of the table read with care)",
+  "source": "https://ntrs.nasa.gov/api/citations/19990047691/downloads/19990047691.pdf",
+  "quote": "Long-term low-Earth orbit (LEO) spacecraft generally use 15 to 20 reflector layers. | Table 2. Reflector layers. Material: Aluminized Kapton / Goldized Kapton / Aluminized Mylar ... Thickness, mm (mil) 0.0076-0.127 (0.3-5.0) | 0.0076-0.127 (0.3-5.0) | 0.0051-0.127 (0.2-5) ; metal, Å 1,000 | 750 | 1,000 ; Weight, gm/cm2 (oz/yd2): 0.0064 mm (0.25 mil) 0.00093 (0.017); 0.0076 mm (0.3 mil) 0.0011 (0.020) ; Infrared emittance, e 0.05; 0.03",
+  "verified": true
+ },
+ "polyimide_kapton": {
+  "value": {
+   "density_g_cm3": 1.42,
+   "temperature_range_C": [
+    -269,
+    400
+   ],
+   "film_thicknesses_um": [
+    7.5,
+    12.5,
+    25,
+    50,
+    75,
+    125
+   ],
+   "monomers": [
+    "pyromellitic dianhydride (PMDA)",
+    "4,4'-oxydianiline (ODA)"
+   ]
+  },
+  "unit": "mixed (see keys)",
+  "what": "Kapton HN polyimide film: density (ASTM D-1505), service temperature range, available gauges - DuPont 'Kapton Summary of Properties' EI-10142 (archived). Monomer names are from Wikipedia 'Kapton' (the DuPont sheet says only 'an aromatic dianhydride and an aromatic diamine').",
+  "source": "https://web.archive.org/web/2022/https://www.dupont.com/content/dam/dupont/amer/us/en/products/ei-transformation/documents/EI-10142_Kapton-Summary-of-Properties.pdf",
+  "quote": "Kapton® Type HN, all-polyimide film, has been used successfully in applications at temperatures as low as -269°C (-452°F) and as high as 400°C (752°F). [...] It is available as 7.5 µm (0.3 mil), 12.5 µm (0.5 mil), 25 µm (1 mil), 50 µm (2 mil), 75 µm (3 mil), and 125 µm (5 mil) films. | Density, g/cc or g/mL 1.42 ASTM D-1505 | [Wikipedia Kapton:] It is produced from the condensation of pyromellitic dianhydride (PMDA) and 4,4'-oxydiphenylamine (ODA).",
+  "verified": true
+ },
+ "pet_mylar": {
+  "value": {
+   "terephthalic_acid_t_per_t": [
+    0.825,
+    0.87
+   ],
+   "ethylene_glycol_t_per_t": [
+    0.32,
+    0.355
+   ],
+   "total_energy_MJ_per_t": [
+    2087,
+    4500
+   ],
+   "catalyst_g_per_t": [
+    270,
+    615
+   ],
+   "density_g_cm3": 1.38
+  },
+  "unit": "mixed (see keys)",
+  "what": "PET by continuous polycondensation, TPA process: raw materials and total energy per tonne of product. EU BREF Polymers (Aug 2007), section 10.3.1 consumption table, 'TPA process' column. Density from Wikipedia 'Polyethylene terephthalate' infobox (1.38 g/cm3 at 20 C, citing GESTIS).",
+  "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/pol_bref_0807.pdf",
+  "quote": "10.3.1 Continuous polycondensation based on DMT, TPA and batch DMT-BPU processes | [columns: DMT process | TPA process | DMT-BPU process] Total energy (MJ/t) 2513 - 7410 | 2087 - 4500 (18500 1) | 5100 - 11942 ; DMT/TPA (t/t) 1.02 | 0.825 - 0.87 | 1.01 - 1.04 ; EG (t/t) 0.35 - 0.38 | 0.32 - 0.355 | 0.338 - 0.380 ; Catalyst (g/t) 589 - 1150 | 270 - 615 | 332 - 1323",
+  "verified": true
+ },
+ "vacuum_metallising": {
+  "value": {
+   "coating_thickness_angstrom": 1000,
+   "coating_thickness_nm_DERIVED": 100,
+   "aluminium_g_per_m2_per_coated_side_DERIVED": 0.27
+  },
+  "unit": "mixed (see keys)",
+  "what": "Vacuum-deposited aluminium on MLI reflector film: coating thickness 1,000 Å (read on page; Dunmore 356 Å). DERIVED: 1,000 Å = 100 nm; aluminium deposited per m2 per coated side = 100e-9 m x 2700 kg/m3 = 0.27 g/m2 (aluminium density 2700 kg/m3 is my input; deposited mass only, excludes evaporation losses in the chamber). NASA/TP-1999-209263 Table 2 and following table note",
+  "source": "https://ntrs.nasa.gov/api/citations/19990047691/downloads/19990047691.pdf",
+  "quote": "The metallized coating shall be 99.99 percent pure metal, vacuum-deposited onto the polymer film substrate with satisfactory adhesion. | metal, Å 1,000 | 750 | 1,000 | * Aluminum coatings are 356 Å for Dunmore, 1,000 Å for Sheldahl",
+  "verified": true
+ },
+ "tungsten_production": {
+  "value": {
+   "melting_point_C": 3422,
+   "density_g_cm3": 19.25,
+   "hydrogen_reduction_temperature_C": [
+    700,
+    1000
+   ],
+   "carburisation_temperature_C": [
+    1300,
+    2200
+   ]
+  },
+  "unit": "mixed (see keys)",
+  "what": "Tungsten metal: melting point, density; tungsten oxide (from APT) reduced to metal powder by hydrogen in pusher or rotary furnaces - temperature; WC powder carburisation temperature. International Tungsten Industry Association (ITIA) web page",
+  "source": "https://www.itia.info/tungsten-properties.html",
+  "quote": "Tungsten has the highest melting point of all metals (3,422 ± 15°C). [...] With its density of 19.25g/cm3, tungsten is also among the heaviest metals. | Tungsten Metal Powder: Yellow or blue tungsten oxide is reduced to tungsten metal powder, W, by hydrogen. The reduction is carried out either in pusher furnaces, in which the powder passes through the furnace in boats, or in rotary furnaces, at 700-1,000 oC. | Tungsten metal powder, W, is mixed with carbon black, C, and treated at temperatures between 1,300 up to 2,200 oC in hydrogen atmosphere to produce tungsten carbide powder, WC.",
+  "verified": true
+ },
+ "lithium_hydride_boron_carbide": {
+  "value": {
+   "density_g_cm3": 2.5,
+   "reaction": "2 B2O3 + 7 C -> B4C + 6 CO",
+   "stoichiometric_B2O3_t_per_t_B4C_DERIVED": 2.52,
+   "stoichiometric_C_t_per_t_B4C_DERIVED": 1.52
+  },
+  "unit": "mixed (see keys)",
+  "what": "Boron carbide: density (infobox) and preparation route (boron trioxide + carbon in an electric arc furnace). DERIVED: stoichiometric feed per tonne B4C from the quoted reaction with molar masses B2O3 69.62, C 12.011, B4C 55.25 g/mol (my inputs): 139.24/55.25 = 2.52 t B2O3, 84.08/55.25 = 1.52 t C. No published industrial consumption or energy figure found. Wikipedia 'Boron carbide'",
+  "source": "https://en.wikipedia.org/w/index.php?title=Boron_carbide&action=raw",
+  "quote": "| Density = 2.50 g/cm3, solid. | Boron carbide was first synthesized by Henri Moissan in 1894 by reduction of boron trioxide either with carbon or magnesium in presence of carbon in an electric arc furnace. In the case of carbon, the reaction occurs at temperatures above the melting point of B4C and is accompanied by liberation of large amount of carbon monoxide: 2 B2O3 + 7 C → B4C + 6 CO",
+  "verified": true
+ },
+ "superconductor_tape_manufacture": {
+  "value": {
+   "substrate": "Hastelloy",
+   "substrate_thickness_um": [
+    30,
+    50
+   ],
+   "widths_mm": [
+    2,
+    3,
+    4,
+    6,
+    12
+   ],
+   "piece_length_m": [
+    200,
+    500
+   ],
+   "copper_stabiliser_total_um": [
+    10,
+    110
+   ],
+   "copper_per_side_um": [
+    5,
+    55
+   ],
+   "Ic_77K_self_field_A_per_4mm_AP": [
+    120,
+    160
+   ],
+   "polyimide_insulation_um": 25,
+   "buffer_layers": 5,
+   "REBCO_deposition": "MOCVD"
+  },
+  "unit": "mixed (see keys)",
+  "what": "SuperPower 2G HTS (REBCO) wire: layer thicknesses and piece length from the manufacturer's specification page; process (electropolished Hastelloy, five buffer layers by sputtering/IBAD-MgO, MOCVD REBCO, sputtered silver, electroplated copper) from its technology page https://www.superpower-inc.com/Technology.aspx",
+  "source": "https://www.superpower-inc.com/specification.aspx",
+  "quote": "Substrate thickness 50 µm, or 30 µm | Width 12, 6, 4, 3, or 2 mm | Piece length 200 m to 500 m (up to more than 900 m), depending on spec | Stabilizer Ag only – Type SF (Stabilizer Free), or Ag plus electroplated Cu – Type SCS (Surround Cu Stabilizer) | Electroplated Cu stabilizer thickness 10 µm to 110 µm total (5 µm to 55 µm per side) | Ic (77K, self-field) 120~160 A/4mm for AP tapes, 80~120 A/4mm for HM tapes | Insulation Wrapped 25 µm thick polyimide tape | [Technology page:] After electropolishing, five buffer layers are deposited sequentially [...] Four of the five buffer layers are deposited using magnetron sputtering. The preferential texture is achieved using ion beam assisted deposition (IBAD) on the third MgO buffer layer.",
+  "verified": true
+ },
+ "niobium_titanium_wire": {
+  "value": {
+   "composition": "Nb-47wt%Ti",
+   "Tc_K": 9.2,
+   "upper_critical_field_T": 15.3,
+   "copper_to_superconductor_ratio_SSC_inner": 1.3,
+   "copper_to_superconductor_ratio_SSC_outer": 1.8,
+   "process": "extrusion of billets then cold drawing, cm-size rods to micron-size filaments"
+  },
+  "unit": "mixed (see keys)",
+  "what": "NbTi wire: Cu:SC ratio for SSC dipole inner/outer layer coils and fabrication route - R. Scanlan, 'Survey of high field superconducting material for accelerator magnets', LBL 1986 (OSTI 5746671; scanned text). Alloy composition Nb-47wt%Ti with Tc and Hc2 from Materials (Basel) 2024, PMC11643743 (https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11643743/fullTextXML)",
+  "source": "https://www.osti.gov/servlets/purl/5746671",
+  "quote": "NbTi is a ductile alloy which can be processed from cm-size rods to micron-size filaments by standard extrusion and cold drawing techniques. | The ratio is 1.3:1 for inner layer Design 0 [sic, OCR of scan] magnet coils and 1.8:1 for outer layer coils; these values are found to be adequate for NbTi. | [PMC11643743:] ...those determined for Nb-47wt%Ti alloy (Tc = 9.2(1) K, μ0Hc2 = 15.3(3) T [15]).",
+  "verified": true
+ },
+ "cemented_carbide_picks": {
+  "value": {
+   "pick_consumption_picks_per_m3_test": [
+    0.037,
+    0.054
+   ],
+   "pick_consumption_picks_per_m3_some_rock": 0.2,
+   "pick_consumption_picks_per_m3_hard_abrasive_rock": 1.0
+  },
+  "unit": "picks per m3 of rock cut",
+  "what": "Roadheader conical pick consumption per cubic metre of rock cut: values in an artificial rock wall test with an optimised pick arrangement, and literature values the paper cites for harder/abrasive rock. PLoS One 2021, PMC8598057",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8598057/fullTextXML",
+  "quote": "The artificial rock wall cutting test results show that [...] the pick consumption in this test is only 0.037–0.054 picks/m3. | In some cases of rock cutting, pick consumption more than 0.2 picks per cubic meter; for some rocks with higher uniaxial compressive strength and CERCHAR abrasivity index, it can even reach 1.0 picks per cubic meter, which seriously affects the working performance of the roadheader [18, 19].",
+  "verified": true
+ },
+ "more": [
+  {
+   "value": [
+    7,
+    8
+   ],
+   "unit": "MWh per tonne 100 % SiC",
+   "what": "Specific electricity of traditional Acheson furnace installations; Norwegian plants ~7.5; freiland furnaces 6.2-7.2; with process-gas energy recovery (Delfzijl) 5.2-6.2. BREF LVIC-S section 7.9.3.5, printed p. 465",
+   "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+   "quote": "The specific energy consumption of traditional furnace installations varies between 7 to 8 MWh per tonne 100 % SiC. The Norwegian plants report consuming around 7.5 MWh per tonne 100 % SiC. [...] The specific energy consumption in the Dutch plants amounts to 6.2 - 7.2 MWh per tonne 100 % SiC. [...] In this installation, energy consumption amounts to 5.2 - 6.2 MWh per tonne 100 % SiC.",
+   "verified": true
+  },
+  {
+   "value": {
+    "silica_t": 1.498,
+    "carbon_t": 0.899
+   },
+   "unit": "t per t SiC",
+   "what": "silicon_carbide_acheson - DERIVED: stoichiometric split of the BREF's 2.4 kg/kg for SiO2 + 3 C -> SiC + 2 CO with molar masses 60.08 / 12.011 / 40.10 g/mol (my inputs). The BREF gives no sand/coke split of the practical 2.8-2.9 kg/kg.",
+   "source": "https://eippcb.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+   "quote": "SiO2 + 3 C → SiC + 2 CO [...] The stochiometric consumption is 2.4 kg of raw materials.",
+   "verified": false
+  },
+  {
+   "value": 625.1,
+   "unit": "kJ per mol SiC",
+   "what": "silicon_carbide_acheson: reaction enthalpy of the net Acheson reaction; furnace 1700-2500 C. Wikipedia 'Acheson process'",
+   "source": "https://en.wikipedia.org/w/index.php?title=Acheson_process&action=raw",
+   "quote": "An electric current is passed through the graphite rods which heats the mixture to 1700–2500 °C. [...] SiO2 + 3 C + 625.1 kJ → α-SiC + 2 CO",
+   "verified": true
+  },
+  {
+   "value": 3.16,
+   "unit": "g/cm3",
+   "what": "silicon_carbide: crystal density (hexagonal) from infobox; sublimes near 2,700 C. Wikipedia 'Silicon carbide'",
+   "source": "https://en.wikipedia.org/w/index.php?title=Silicon_carbide&action=raw",
+   "quote": "| Density = 3.16 g⋅cm−3 (hex.) | Silicon carbide does not melt but begins to sublimate near 2,700 °C like graphite",
+   "verified": true
+  },
+  {
+   "value": {
+    "pressureless_sintering_C": [
+     1950,
+     2000
+    ],
+    "boron_wt_pct": 0.5,
+    "carbon_wt_pct": 3.0,
+    "density_range_g_cm3": [
+     3.0,
+     3.2
+    ]
+   },
+   "unit": "mixed",
+   "what": "silicon_carbide_sintering: pressureless (PLS) sintering temperatures reported in a review, usual B and C sintering additives, density range of SiC armour ceramics; hot-pressing examples 1850-2000 C. Materials (Basel) 2026 review, PMC13075016",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13075016/fullTextXML",
+   "quote": "Silicon carbide (SiC) ceramics [...] combine low density (3.0–3.2 g/cm3) [...] | Boron and carbon are typically introduced in the amounts of 0.5 and 3.0 wt% [...], respectively | conducted PLS sintering at 1950 °C for 1 h under an argon atmosphere | 1.5 wt% B4C + 3.5 wt% C PLS, 2000 °C | hot-pressing (730 MPa at 2000 °C in 30 min)",
+   "verified": true
+  },
+  {
+   "value": 0.513,
+   "unit": "kg carbon fibre per kg PAN precursor fibre",
+   "what": "carbon_fibre_from_pan - DERIVED: 1 / 1.95 from the quoted LCA assumption",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10780919/fullTextXML",
+   "quote": "the mass loss is assumed to be roughly 49%, which equals the needs of 1.95 kg PAN fiber to produce 1 kg of carbon fiber.",
+   "verified": false
+  },
+  {
+   "value": 47.2,
+   "unit": "kWh per kg carbon fibre",
+   "what": "carbon_fibre_from_pan - DERIVED: 170 MJ/kg / 3.6 (process energy, electric and thermal combined)",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10780919/fullTextXML",
+   "quote": "Process energy (electric and thermal) 170 [MJ/kg CF]",
+   "verified": false
+  },
+  {
+   "value": [
+    262.3,
+    497.9
+   ],
+   "unit": "MJ per kg carbon fibre",
+   "what": "carbon_fibre_from_pan: cradle-to-gate fossil resource use of carbon fibre across LCA scenarios (includes precursor production, not just the furnaces)",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10780919/fullTextXML",
+   "quote": "climate change ranges from 13.0 to 34.1 kg CO2 eq./kg CF and resource use from 262.3 to 497.9 MJ/kg CF.",
+   "verified": true
+  },
+  {
+   "value": {
+    "C": [
+     68,
+     ">95"
+    ],
+    "N": [
+     26,
+     4.5
+    ],
+    "H": [
+     6,
+     0.3
+    ]
+   },
+   "unit": "wt% (PAN fibre -> carbon fibre ~1500 C)",
+   "what": "carbon_fibre_from_pan: elemental composition of PAN fibre and of PAN-based carbon fibre",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10780919/fullTextXML",
+   "quote": "Constituents [wt.%] C N H O | PAN fiber 68 26 6 - | Stabilized PAN fiber 65 12 5 8 | [...] | PAN-based carbon fiber (~1500 °C) >95 4.5 0.3 0.2",
+   "verified": true
+  },
+  {
+   "value": {
+    "oxidation_C": 230,
+    "carbonisation_above_C": 1000,
+    "density_g_cm3": 1.184
+   },
+   "unit": "mixed",
+   "what": "pan_precursor / carbon fibre: PAN density and step temperatures as stated on Wikipedia 'Polyacrylonitrile'",
+   "source": "https://en.wikipedia.org/w/index.php?title=Polyacrylonitrile&action=raw",
+   "quote": "| Density = 1.184 g/cm3 | PAN is first thermally oxidized in air at 230 °C to form an oxidized PAN fiber and then carbonized above 1000 °C in inert atmosphere to make carbon fibers",
+   "verified": true
+  },
+  {
+   "value": {
+    "propylene_t": 1.05,
+    "ammonia_t": 0.5,
+    "sulphuric_acid_t": 0.1,
+    "ammonium_sulphate_coproduct_t": 0.13,
+    "HCN_coproduct_t": 0.11
+   },
+   "unit": "t per t acrylonitrile",
+   "what": "pan_precursor: approximate raw material usage and co-products assumed for a typical 200 kt/yr acrylonitrile plant (production-cost basis). BREF LVOC 2003 chapter 11 (production costs paragraph, a few pages before Table 11.3)",
+   "source": "http://web.archive.org/web/20190922202906/https://eippcb.jrc.ec.europa.eu/reference/BREF/lvo_bref_0203.pdf",
+   "quote": "1.05 tonnes propylene / tonne acrylonitrile @ 290 Euro/t | 0.5 tonnes ammonia / tonne acrylonitrile @ 140 Euro/t | 0.1 tonnes sulphuric acid / tonne acrylonitrile @ 45 Euro/t | 0.13 tonnes ammonium sulphate / tonne acrylonitrile @ 60 Euro/t | 0.11 tonnes hydrogen cyanide(HCN) produced / tonne acrylonitrile",
+   "verified": true
+  },
+  {
+   "value": {
+    "reactor_C": [
+     400,
+     500
+    ],
+    "pressure_kPa": [
+     150,
+     250
+    ],
+    "reaction_enthalpy_kJ_per_mol": -515,
+    "reaction_water_t_per_t": 1.5
+   },
+   "unit": "mixed",
+   "what": "pan_precursor: SOHIO ammoxidation reactor conditions and reaction water. BREF LVOC 2017, section 2.1.4.5.1, printed p. 40",
+   "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/JRC109279_LVOC_Bref.pdf",
+   "quote": "C3H6 + NH3 + 1.5 O2 → C3H3N + 3 H2O -515 kJ/mol C3H3N [...] The conversion to acrylonitrile requires operating temperatures of 400–500 °C, pressures of 150–250 kPa and a residence time of a few seconds. [...] The reaction also produces a large volume of reaction water – in total about 1.5 tonnes per tonne of acrylonitrile",
+   "verified": true
+  },
+  {
+   "value": {
+    "density_g_cm3": [
+     1.6,
+     1.98
+    ],
+    "use_above_C": 2000
+   },
+   "unit": "mixed",
+   "what": "carbon_composite (carbon-carbon): how made (lay-up with organic binder, pyrolysis, then densification with carbon-forming gas over several days) and density. Wikipedia 'Reinforced carbon-carbon'",
+   "source": "https://en.wikipedia.org/w/index.php?title=Reinforced_carbon%E2%80%93carbon&action=raw",
+   "quote": "First, material is laid up in its intended final shape, with carbon filament and/or cloth surrounded by an organic binder such as plastic or pitch. [...] Second, the lay-up is heated, so that pyrolysis transforms the binder to relatively pure carbon. [...] Third, the voids are gradually filled by forcing a carbon-forming gas such as acetylene through the material at a high temperature, over the course of several days. [...] The material has a density between 1.6 and 1.98 g/cm3.",
+   "verified": true
+  },
+  {
+   "value": {
+    "cure_press_C": 180,
+    "carbonisation_C": 1000,
+    "carbonisation_hold_min": 120,
+    "heating_rate_C_per_min": 3
+   },
+   "unit": "mixed",
+   "what": "carbon_composite (carbon-carbon, liquid route): one lab study's impregnation-carbonisation cycle with phenolic resin; multiple densification cycles. Materials (Basel) 2023, PMC10574273",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10574273/fullTextXML",
+   "quote": "liquid-phase phenolic resin [...] was used as the impregnation solution to carry out multiple densification (impregnation–carbonization) cycles | These as-cured specimens were then carbonized in the furnace with a heating rate of 3 °C/min to a temperature of 1000 °C and held at this temperature for 120 min under a nitrogen atmosphere to make porous preforms.",
+   "verified": true
+  },
+  {
+   "value": {
+    "inner_layer_film_um": 6,
+    "blanket_layers": 40,
+    "blanket_thickness_mm": 20,
+    "blanket_mass_kg_per_m2": 1.2
+   },
+   "unit": "mixed",
+   "what": "mli_blanket: inner layer film thickness and mass of a 40-layer blanket as stated on Wikipedia 'Multi-layer insulation' (wikitext writes the mass as '1,2', read as 1.2 kg/m2; secondary source)",
+   "source": "https://en.wikipedia.org/w/index.php?title=Multi-layer_insulation&action=raw",
+   "quote": "these internal layers are usually made of very thin plastic, about {{cvt|6|um|mil|frac=4}} thick, such as Mylar or Kapton, coated on one or both sides with a thin layer of metal, typically silver or aluminium. [...] A blanket composed of 40 layers of MLI has thickness of about {{cvt|20|mm}} and weight of approximately {{cvt|1,2|kg/m2}}.",
+   "verified": true
+  },
+  {
+   "value": 9.3,
+   "unit": "g/m2 per reflector layer",
+   "what": "mli_blanket - DERIVED: 0.00093 g/cm2 x 10^4 for one 0.0064 mm (0.25 mil) aluminised Mylar layer; separators, covers and thread not included",
+   "source": "https://ntrs.nasa.gov/api/citations/19990047691/downloads/19990047691.pdf",
+   "quote": "0.0064 mm (0.25 mil) 0.00093 (0.017)",
+   "verified": false
+  },
+  {
+   "value": 0.5,
+   "unit": "micrometre",
+   "what": "vacuum_metallising: coating thickness of packaging-type metallized film as stated on Wikipedia 'Metallized film' (uncited there; much thicker than the 1,000 Å NASA MLI figure - treat with caution)",
+   "source": "https://en.wikipedia.org/w/index.php?title=Metallized_film&action=raw",
+   "quote": "The metal is heated and evaporated under vacuum. [...] This coating is much thinner than a metal foil could be made, in the range of 0.5 micrometres.",
+   "verified": true
+  },
+  {
+   "value": "divertor / first wall plasma-facing material",
+   "unit": "-",
+   "what": "tungsten_production: use as fusion plasma-facing material (ITER and DEMO divertor; first wall). Materials (Basel) 2024 review, PMC11084790",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11084790/fullTextXML",
+   "quote": "W is noteworthy as a potential PFM for both the International Thermonuclear Experimental Reactor (ITER) and the demonstration power plant (DEMO), proposed for divertor applications [7]. W is deemed as a suitable PFM candidate due to its sputtering behaviors, having a high threshold energy for sputtering (i.e., ~200 eV for D) and a low sputtering yield [...] such as in the first wall (the inner reactor wall) and divertor",
+   "verified": true
+  },
+  {
+   "value": "APT -> WO3 / blue oxide -> H2 reduction -> press, sinter, roll, swage, draw",
+   "unit": "-",
+   "what": "tungsten_production: process chain for tungsten wire. Materials (Basel) 2023, PMC10221409",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10221409/fullTextXML",
+   "quote": "Ammonium paratungstate (APT) is an important raw material in the production of tungsten in its industry; it is roasted to obtain WO3 (yellow tungsten oxide) and also reduced to obtain blue tungsten (blue tungsten oxide). | At present, the manufacturing processes of tungsten alloy wires are mainly powder manufacturing, pressing and sintering processes, rolling and spin-forging processes and wire drawing processes.",
+   "verified": true
+  },
+  {
+   "value": 0.78,
+   "unit": "g/cm3",
+   "what": "lithium_hydride: density (infobox); used as reactor shielding, can be cast. Wikipedia 'Lithium hydride'",
+   "source": "https://en.wikipedia.org/w/index.php?title=Lithium_hydride&action=raw",
+   "quote": "| Density = 0.78 g/cm3 | Lithium hydride (LiH) is sometimes a desirable material for the shielding of nuclear reactors, with the isotope lithium-6 (Li-6), and it can be fabricated by casting.",
+   "verified": true
+  },
+  {
+   "value": {
+    "tape_speed_m_per_h": 100,
+    "daily_output_m": 800,
+    "REBCO_layer_um_commercial": 1.5
+   },
+   "unit": "mixed",
+   "what": "superconductor_tape_manufacture: reported PLD tape speed and daily output (Materials 2025 review, PMC12610847); typical commercial MOCVD REBCO layer thickness ~1.5 um (Sci Rep 2017, PMC5537340, https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5537340/fullTextXML)",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12610847/fullTextXML",
+   "quote": "has reported peak deposition rates exceeding 100 nm·s−1, with tape speeds greater than 100 m/h [60], enabling daily outputs of more than 800 m of REBCO tapes [61] | [PMC5537340:] limits the commercial REBCO coated conductors thickness at about ∼1.5 μm",
+   "verified": true
+  },
+  {
+   "value": {
+    "current_cost": ">=100",
+    "target_cost": [
+     25,
+     50
+    ]
+   },
+   "unit": "as printed: $/km (probably meant $/kA·m - unit unclear in source)",
+   "what": "superconductor_tape_manufacture: manufacturing cost statement in the PMC12610847 review; the unit is printed as $/km, which is implausible per km of tape, so treat as unverified until the cited refs are checked",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12610847/fullTextXML",
+   "quote": "a manufacturing cost that remains considerably higher than that of low-temperature superconductors and conventional copper wires (≥100 $/km) [1, 63]. To achieve large-scale commercialization, the production cost must be reduced to approximately 25–50 $/km",
+   "verified": true
+  },
+  {
+   "value": 9.6,
+   "unit": "g per metre of 12 mm tape",
+   "what": "superconductor_tape_manufacture - DERIVED: 50 um Hastelloy x 12 mm x 8.89 g/cm3 = 5.33 g/m plus 40 um total copper x 12 mm x 8.96 g/cm3 = 4.30 g/m; densities are my inputs (not from the page); silver, buffer, REBCO and edge copper neglected. Thicknesses from SuperPower spec page",
+   "source": "https://www.superpower-inc.com/specification.aspx",
+   "quote": "Substrate thickness 50 µm, or 30 µm | 550 MPa for tapes on 50 µm thick substrate with total 40 µm Cu stabilizer",
+   "verified": false
+  },
+  {
+   "value": {
+    "NbTi_cable_t": 1200,
+    "NbTi_alloy_t": 470
+   },
+   "unit": "tonnes",
+   "what": "niobium_titanium_wire: LHC magnets - cable mass and NbTi content, implying Cu:NbTi about 1.55:1 by mass (DERIVED ratio: (1200-470)/470). Wikipedia 'Niobium-titanium'",
+   "source": "https://en.wikipedia.org/w/index.php?title=Niobium%E2%80%93titanium&action=raw",
+   "quote": "In the Large Hadron Collider particle accelerator, the magnets contain 1,200 tonnes of Nb-Ti cable, of which 470 tons are Nb-Ti and the rest copper",
+   "verified": true
+  },
+  {
+   "value": {
+    "final_sinter_C": 1450,
+    "hold_h": 1
+   },
+   "unit": "mixed",
+   "what": "cemented_carbide_picks: sintering schedule for coarse-grained WC-Co (rock cutting/mining grade) in one study. Materials (Basel) 2023, PMC10455982",
+   "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10455982/fullTextXML",
+   "quote": "...then raised to 1250 °C at a rate of 7 °C/min, held for 30 min, and finally raised to 1450 °C at 2.5 °C/min, and held for 1 h [25]. | coarse-grained cemented carbide occupies a prominent position in rock cutting and mining because of its high hardness and good impact toughness",
+   "verified": true
+  },
+  {
+   "value": {
+    "WC_pct": 90,
+    "Co_pct": 10,
+    "WC_density_g_cm3": 15.6
+   },
+   "unit": "mixed",
+   "what": "cemented_carbide_picks: example composition (Pobedit: ~90 % WC, ~10 % Co) from Wikipedia 'Cemented carbide'; WC density 15.6 g/cm3 and 'WC powder mixed with cobalt binder' from Wikipedia 'Tungsten carbide'",
+   "source": "https://en.wikipedia.org/w/index.php?title=Cemented_carbide&action=raw",
+   "quote": "Pobedit is a sintered carbide alloy of about 90% tungsten carbide as a hard phase, and about 10% cobalt (Co) as a binder phase, with a small amount of additional carbon. | [Tungsten carbide:] | Density = 15.6 g/cm3 | Powdered tungsten carbide is mixed with another powdered metal, usually cobalt [...] which acts as a binder.",
+   "verified": true
+  },
+  {
+   "value": {
+    "fibre_volume_pct": 57.7,
+    "laminate_density_g_cm3": 1.57,
+    "fibre_density_g_cm3": 1.77
+   },
+   "unit": "mixed",
+   "what": "carbon_composite: same data sheet, second UD column (IM7 fibre); woven grades at 37 % resin content give 55.29-55.57 % fibre volume, 1.56-1.57 g/cm3",
+   "source": "https://web.archive.org/web/20220321015650/https://www.hexcel.com/user_area/content_media/raw/HexPly_8552_eu_DataSheet.pdf",
+   "quote": "Fibre Density g/cm3 1.79 | 1.77 ; Nominal Fibre Volume % 57.42 | 57.70 ; Nominal Laminate Density g/cm3 1.58 | 1.57 ; @ 37% resin content Nominal Fibre Volume % 55.29",
+   "verified": true
+  }
+ ],
+ "not_found": [
+  "silicon_carbide_acheson: published split of silica sand vs petroleum coke per tonne SiC (BREF gives only the 2.8-2.9 kg/kg total; split is DERIVED stoichiometry)",
+  "silicon_carbide_sintering: energy per kg/tonne for sintering or hot-pressing; an industrial (non-lab) pressureless-sintering datasheet figure",
+  "carbon_fibre_from_pan: US DOE 2017 CFRP bandwidth study (energy.gov PDF not retrievable, no archive copy) - only one LCA paper's energy figure is recorded",
+  "carbon_composite: autoclave cure energy per kg; number of pyrolysis/CVI cycles and CVI duration for carbon-carbon from a primary source",
+  "epoxy_resin: published bisphenol A / epichlorohydrin consumption per tonne of resin (only DERIVED stoichiometry recorded)",
+  "mli_blanket: blanket-level effective emittance (e*) figure; areal mass of a complete blanket from a primary source (only Wikipedia's 40-layer figure)",
+  "vacuum_metallising: published aluminium consumption per m2 (only DERIVED from 1,000 A thickness)",
+  "tungsten_production: energy per tonne for the APT / hydrogen-reduction / powder-metallurgy route",
+  "lithium_hydride_boron_carbide: industrial raw material consumption and electricity per tonne of boron carbide; lithium hydride production figures",
+  "superconductor_tape_manufacture: silver layer and individual buffer layer thicknesses; a clear price per kA·m; published mass per metre of 12 mm tape (only DERIVED)",
+  "niobium_titanium_wire: LHC strand Cu/SC ratios (1.65 / 1.95) from a CERN page - CERN pages did not load; SSC ratios from Scanlan 1986 recorded instead",
+  "cemented_carbide_picks: mass of a pick or of its carbide insert; cobalt % range for mining grades from a manufacturer; tonnes cut per pick"
+ ]
+}

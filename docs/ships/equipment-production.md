@@ -75,3 +75,23 @@ much. Everything else is within reach of what has been built.
   new kind of device, which the engine must be told of (`x-in-game: "not made"` until it is).
 - **Wear:** a part has no life yet. The cutter's picks are the obvious first.
 - **Parts of parts:** a coil case is one line. The MC-07's hull went three levels down.
+
+## Closed (2026-10-05, later)
+
+All 107 lines are complete: every product the MC-07 carries can be followed, part by part, to a
+works that stands at Port Trethi.
+
+- **Trethi Foundry** gained stainless ingot, titanium ingot (a vacuum arc furnace), copper ingot and
+  bronze bar (a foundry), and silicon carbide tile (a carbide furnace).
+- **Trethi Mill** gained stainless and titanium plate, copper wire (a wire mill), insulation
+  blanket (a film works) and carbon composite plate (a composites works). Its power line went from
+  150 to 250 MW.
+- **Three new works** for the three materials: carbide furnace, film works, composites works.
+  Figures: `standards/sources/research_ship_materials.json`.
+
+**What "complete" does not mean.** A chain is complete when each step is described and somewhere
+is built to do it. It does not check that the works' own inputs can be had there: quartz sand,
+salt and limestone are a wet world's rock, and Port Trethi stands on an airless one; the metals
+other than iron and aluminium still come as elements. And three stand-ins are in the recipes,
+each said in its record: the registry's one plastic stands for polyester film, for the
+polyacrylonitrile that carbon fibre is baked from, and for epoxy resin.

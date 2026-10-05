@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.composites-works
+  name: "Composites works"
+  step: "Make carbon composite"
+  description: "Ovens that bake plastic fibre to carbon, looms that lay it up with resin, and autoclaves that cure the sheets under heat and pressure."
+physical:
+  length: 200
+  width: 60
+  height: 15
+recipes:
+  - makes: stock.cfc-pl-3
+    does: "Plastic fibre is held at 300 C, then baked to carbon at up to 1,800 C, losing half its weight; the fibre is laid in resin and cured at 180 C under pressure."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.05
+    power: 5500000
+basis:
+  - { of: [recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "1.95 kg of fibre for each kg of carbon fibre; a laminate is 57% fibre by volume, 65% by weight, the rest resin (Hexcel's aerospace sheet). Real fibre is polyacrylonitrile and the resin epoxy, neither of which the registry can make yet: both are taken as its one plastic, and what bakes off as gas." }
+  - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "170 MJ for each kg of carbon fibre, so 110 for each kg of sheet. Curing is not counted: no figure was found." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
