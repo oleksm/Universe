@@ -8,8 +8,8 @@ identity:
 physical:
   mass: 15
 made_from:
-  - item: stock.al6061-sh-2
-    quantity: 17.2
+  - item: stock.al6061-sh-2-panel
+    quantity: 15
 making:
   module: module.welding-bay
 fit:
