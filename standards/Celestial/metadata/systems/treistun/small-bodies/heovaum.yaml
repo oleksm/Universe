@@ -1,7 +1,0 @@
-# yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
-identity: {key: body.treistun.heovaum, name: Heovaum, kind: dwarf planet, parent: body.treistun.treistun, about: A world heavy
-    enough to have pulled itself round.}
-orbit: {semi_major_axis: 2235220000000.0, eccentricity: 0.1362, period: 2170195200.0, inclination: 5.232}
-physical: {mass: 4.1495e+21, radius: 1014060.0, density: 950, day: 92937.6}

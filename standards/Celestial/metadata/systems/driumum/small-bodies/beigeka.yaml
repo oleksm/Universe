@@ -1,8 +1,0 @@
-# yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
-identity: {key: body.driumum.beigeka, name: Beigeka, kind: comet, parent: body.driumum.driumum, about: 'A comet from the far
-    cloud: it comes in once in a very long time.'}
-orbit: {semi_major_axis: 477030000000000.0, eccentricity: 1.0, period: 10875945600000.0, inclination: 160.897}
-physical: {mass: 2224800000000000.0, radius: 9601.77, density: 600, day: 9594.36}
-rock: {class: rock-class.icy, structure: rubble pile}

@@ -33,7 +33,7 @@ def law(name):
     return float(yaml.safe_load(open(_g.glob(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "standards", "Dogma", "metadata", "*", name + ".yaml"))[0]))["value"])
 
 
-LY, SUN_W, AU_M = law("light-year"), law("sun-luminosity"), law("astronomical-unit")
+LY, SUN_W = law("light-year"), law("sun-luminosity")
 si = lambda v: float(f"{v:.15g}")
 
 
@@ -65,23 +65,8 @@ for s in data["systems"]:
         "position": {"from_home": [si(round(v, 3) * LY) for v in s["from_home_ly"]], "distance": si(round(d, 3) * LY)},
     })
     for b in s["bodies"]:
-        # (Small bodies, marked by the export, go to small-bodies/: the engine seeds them, so they are the game's own.)
-        if b.get("small"):
-            o = b["orbit"]
-            back = o["inclination"] > 90
-            about = {"asteroid": "The largest body of the main belt.", "dwarf planet": "A world heavy enough to have pulled itself round.",
-                     "crossing asteroid": "Knocked out of the belt onto an orbit that comes in among the rocky planets.",
-                     "captured moon": "A small body its giant caught: far out, on a tilted and stretched orbit" + (", going round backward." if back else "."),
-                     "centaur": "An ice body wandering among the giants.",
-                     "comet": "A comet from the far cloud: it comes in once in a very long time." if o["semi_major_axis"] > 1000 * AU_M else "A returning comet: it boils and grows a tail as it comes in."}.get(b["kind"], "")
-            rec = {"provenance": "seeded", "identity": {"key": f"body.{slug(s['name'])}.{slug(b['name'])}", "name": b["name"], "kind": b["kind"], "parent": f"body.{slug(s['name'])}.{slug(b['parent'])}", "about": about},
-                   "orbit": {"semi_major_axis": si(r(o["semi_major_axis"] / 1000, 6) * 1000), "eccentricity": r(o["eccentricity"]), "period": si(r(o["period"] / 86400, 6) * 86400), "inclination": round(o["inclination"], 3)},
-                   "physical": {"mass": r(b["mass"], 5), "radius": si(r(b["radius"] / 1000, 6) * 1000), "density": round(b["rock"]["density"]) if "rock" in b else round(b["mass"] / (4.18879 * b["radius"] ** 3)), "day": si(r(b["day"] / 3600, 5) * 3600)}}
-            if "rock" in b:      # (a round one is not of a rock class: its density is its mass over its size)
-                rec["rock"] = {"class": ROCK[b["rock"]["class"].lower()], "structure": b["rock"]["structure"].lower()}
-            put(os.path.join(OUT, slug(s["name"]), "small-bodies", slug(b["name"]) + ".yaml"), "../../../../schema/body.schema.yaml", rec)
-            continue
-        if b["kind"] not in NATURAL:
+        # (Small bodies, marked by the export, go to small-bodies/: not written here yet.)
+        if b["kind"] not in NATURAL or b.get("small"):
             continue
         rec = {"provenance": "seeded", "identity": {"key": f"body.{slug(s['name'])}.{slug(b['name'])}", "name": b["name"], "kind": b["kind"]}}
         if "parent" in b:
@@ -122,15 +107,6 @@ for s in data["systems"]:
             "identity": {"key": f"population.{slug(s['name'])}.{slug(f['name'])}", "name": f["name"], "kind": kind, "anchor": f"body.{slug(s['name'])}.{slug(f['anchor'])}"},
             "rocks": {"class": ROCK[f["class"].lower()], "count": f["count"], "extent": si(r(f["extent"] / 1000) * 1000)},
         })
-# (A small body the seed no longer makes goes, unless a person has taken it over: the engine's are the game's own.)
-for dp, _, fns in os.walk(OUT):
-    if os.path.basename(dp) == "small-bodies":
-        for fn in fns:
-            full = os.path.join(dp, fn)
-            if fn.endswith(".yaml") and full not in seen and (yaml.safe_load(open(full)) or {}).get("provenance") not in ("curated", "frozen"):
-                print(f"  gone: {os.path.relpath(full, ROOT)}")
-                if not dry:
-                    os.remove(full)
 gone = [os.path.relpath(os.path.join(dp, fn), ROOT) for dp, _, fns in os.walk(OUT) for fn in fns if fn.endswith(".yaml") and os.path.join(dp, fn) not in seen and os.path.basename(dp) in ("systems", "bodies", "fields")]
 print(f"{len(data['systems'])} systems from seed {data['seed']}: {wrote} records {'would be ' if dry else ''}written, {kept} kept as a person left them")
 for g in gone:

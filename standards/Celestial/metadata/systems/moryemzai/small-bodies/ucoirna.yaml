@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# Seeded in the registry (tools/standards/celestial_seed.py), from the galaxy's seed: about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.
+# The game does not make it yet. Change its provenance to curated to take it over.
+provenance: seeded
+in_game: not made
+identity: {key: body.moryemzai.ucoirna, name: Ucoirna, kind: crossing asteroid, parent: body.moryemzai.moryemzai, about: 'Knocked
+    out of the belt. At its closest it comes in to 0.03 AU, near the orbit of Moryemzai b.'}
+orbit: {semi_major_axis: 36835400000.0, eccentricity: 0.88084542, inclination: 22.84, period: 6738249.6}
+physical: {radius: 558.9, density: 2630.0, mass: 1923000000000.0}
+rock: {class: rock-class.stony}

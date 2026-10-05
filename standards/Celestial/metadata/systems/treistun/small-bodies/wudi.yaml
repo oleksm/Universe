@@ -1,8 +1,0 @@
-# yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
-identity: {key: body.treistun.wudi, name: Wudi, kind: asteroid, parent: body.treistun.treistun, about: The largest body of
-    the main belt.}
-orbit: {semi_major_axis: 124276000000.0, eccentricity: 0.08999, period: 28451260.8, inclination: 8.419}
-physical: {mass: 1.1011e+20, radius: 199717.0, density: 3300, day: 105015.6}
-rock: {class: rock-class.stony, structure: rubble pile}

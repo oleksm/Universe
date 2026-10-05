@@ -1,8 +1,0 @@
-# yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
-identity: {key: body.treistun.gaomum, name: Gaomum, kind: captured moon, parent: body.treistun.treistun-g, about: 'A small
-    body its giant caught: far out, on a tilted and stretched orbit, going round backward.'}
-orbit: {semi_major_axis: 5658020000.0, eccentricity: 0.4152, period: 16573593.6, inclination: 171.258}
-physical: {mass: 5890400000000.0, radius: 1004.53, density: 1387, day: 79358.4}
-rock: {class: rock-class.carbonaceous, structure: rubble pile}
