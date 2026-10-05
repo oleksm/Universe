@@ -106,7 +106,7 @@ pub struct Interior {
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
     /// The plan as its walls were last worked out, and their panels.
-    panelled: Option<(Plan, Vec<[Vec3; 4]>)>,
+    panelled: Option<(Plan, Vec<Vec<Vec3>>)>,
 }
 
 /// A line's room, its cross-section along it round it (the line its axis): the
@@ -182,6 +182,42 @@ struct Group {
     walled: bool,
 }
 
+/// Outline `poly` (flat, convex) cut by a plane, the part where `n·p < c` kept.
+fn clip(poly: &[Vec3], n: Vec3, c: f32) -> Vec<Vec3> {
+    let mut out = Vec::new();
+    for k in 0..poly.len() {
+        let (p, q) = (poly[k], poly[(k + 1) % poly.len()]);
+        let (dp, dq) = (n.dot(p) - c, n.dot(q) - c);
+        if dp < 0.0 {
+            out.push(p);
+        }
+        if (dp < 0.0) != (dq < 0.0) {
+            out.push(p.lerp(q, dp / (dp - dq)));
+        }
+    }
+    out
+}
+
+/// Outline `poly` less what's inside the room `planes` (inside all of them, a hair
+/// in: what lies on its surface stays): the pieces left, each flat and convex.
+fn outside(poly: Vec<Vec3>, planes: &[(Vec3, f32)]) -> Vec<Vec<Vec3>> {
+    const HAIR: f32 = 1e-3;
+    let mut out = Vec::new();
+    let mut rest = poly;
+    for &(n, c) in planes {
+        // (Beyond this plane: out of the room, kept; within it, on to the next.)
+        let beyond = clip(&rest, -n, -(c - HAIR));
+        if beyond.len() >= 3 {
+            out.push(beyond);
+        }
+        rest = clip(&rest, n, c - HAIR);
+        if rest.len() < 3 {
+            return out;
+        }
+    }
+    out
+}
+
 /// A walled tube: its axis (from `a`, along `d`, `len` long), across it (`u`
 /// level, `v` up) and its outline's corners round the axis.
 struct Tube {
@@ -191,6 +227,9 @@ struct Tube {
     u: Vec3,
     v: Vec3,
     corners: Vec<Vec2>,
+    /// Its walls' ends: square across it, or (where it meets one other tube) on the
+    /// plane halfway between their ways (a mitre): that plane's normal, at the end.
+    mitres: [Option<Vec3>; 2],
 }
 
 impl Tube {
@@ -198,60 +237,92 @@ impl Tube {
         self.a + self.d * s + self.u * c.x + self.v * c.y
     }
 
-    /// Is `p` inside it (a hair in from its sides and ends)? (Its outline convex, its
-    /// corners round it anticlockwise.)
-    fn holds(&self, p: Vec3) -> bool {
-        let r = p - self.a;
-        let s = r.dot(self.d);
-        if s < 1e-3 || s > self.len - 1e-3 {
-            return false;
-        }
-        let q = Vec2::new(r.dot(self.u), r.dot(self.v));
+    /// Its room as planes (normal, offset: inside where `n·p < c`): its sides, and its
+    /// ends square across it.
+    fn planes(&self) -> Vec<(Vec3, f32)> {
         let n = self.corners.len();
-        (0..n).all(|k| {
+        let mut planes: Vec<(Vec3, f32)> = (0..n).map(|k| {
             let (c0, c1) = (self.corners[k], self.corners[(k + 1) % n]);
-            (c1 - c0).perp_dot(q - c0) > 1e-3
-        })
+            let e = (c1 - c0).normalize_or_zero();
+            // (Out of an anticlockwise outline: its edge turned right.)
+            let normal = self.u * e.y - self.v * e.x;
+            (normal, normal.dot(self.at(0.0, c0)))
+        }).collect();
+        planes.push((-self.d, -self.d.dot(self.a)));
+        planes.push((self.d, self.d.dot(self.a) + self.len));
+        planes
     }
+
+    /// Where along it its side line through corner `c` ends at its start (0) or its
+    /// end (1): on its mitre plane if it has one, else square across.
+    fn reach(&self, end: usize, c: Vec2) -> f32 {
+        let s = if end == 0 { 0.0 } else { self.len };
+        let Some(n) = self.mitres[end] else { return s };
+        let joint = self.a + self.d * s;
+        let off = self.u * c.x + self.v * c.y;
+        let along = n.dot(self.d);
+        if along.abs() < 1e-3 {
+            return s;
+        }
+        // (n·(a + d t + off − joint) = 0.)
+        (n.dot(joint - self.a - off) / along).clamp(s - self.len, s + self.len)
+    }
+
 }
 
 impl Plan {
     /// Its walled tubes: the lines of its walled groups that have a cross-section.
     fn tubes(&self) -> Vec<Tube> {
-        self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter()).filter_map(|&k| {
+        let walled: Vec<usize> = self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter().copied()).filter(|&k| {
+            let (a, b, profile) = self.lines[k];
+            profile.section != Section::Line && self.points[a].at.distance(self.points[b].at) > 1e-3
+        }).collect();
+        // (The way along a walled line, out of point `p`.)
+        let out_of = |k: usize, p: usize| {
+            let (a, b, _) = self.lines[k];
+            let (from, to) = if a == p { (a, b) } else { (b, a) };
+            (self.points[to].at - self.points[from].at).normalize_or_zero()
+        };
+        walled.iter().map(|&k| {
             let (a, b, profile) = self.lines[k];
             let (pa, pb) = (self.points[a].at, self.points[b].at);
             let len = pa.distance(pb);
-            (profile.section != Section::Line && len > 1e-3).then(|| {
-                let d = (pb - pa) / len;
-                let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
-                Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners() }
-            })
+            let d = (pb - pa) / len;
+            let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+            // At each end, met by just one other walled tube (and not straight on): the
+            // plane halfway between their ways.
+            let mitre = |p: usize, into: Vec3| {
+                let others: Vec<usize> = walled.iter().copied().filter(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p)).collect();
+                let [j] = others[..] else { return None };
+                let on = out_of(j, p);
+                let n = (into + on).try_normalize()?;
+                (n.dot(into) < 0.999).then_some(n)
+            };
+            let mitres = [mitre(a, -d).map(|n| -n), mitre(b, d)];
+            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres }
         }).collect()
     }
 
-    /// Its walls: its walled tubes' sides in panels about 25 cm along and two across
-    /// each side, less those inside another walled tube (where tubes cross or meet,
-    /// the way through opens); their ends open.
-    fn wall_panels(&self) -> Vec<[Vec3; 4]> {
+    /// Its walls: each walled tube's sides (ending square, or mitred where it meets
+    /// one other tube), less what's inside another walled tube, cut exactly along its
+    /// surface (where tubes cross or meet, the way through opens); their ends open.
+    /// Each piece a flat convex outline.
+    fn wall_panels(&self) -> Vec<Vec<Vec3>> {
         let tubes = self.tubes();
+        let rooms: Vec<Vec<(Vec3, f32)>> = tubes.iter().map(Tube::planes).collect();
         let mut out = Vec::new();
         for (i, t) in tubes.iter().enumerate() {
-            let steps = (t.len / 0.25).ceil().max(1.0) as usize;
             let n = t.corners.len();
             for j in 0..n {
                 let (c0, c1) = (t.corners[j], t.corners[(j + 1) % n]);
-                for k in 0..steps {
-                    let (s0, s1) = (t.len * k as f32 / steps as f32, t.len * (k + 1) as f32 / steps as f32);
-                    for half in 0..2 {
-                        let (e0, e1) = (c0.lerp(c1, half as f32 * 0.5), c0.lerp(c1, (half + 1) as f32 * 0.5));
-                        let q = [t.at(s0, e0), t.at(s0, e1), t.at(s1, e1), t.at(s1, e0)];
-                        let middle = (q[0] + q[1] + q[2] + q[3]) * 0.25;
-                        if !tubes.iter().enumerate().any(|(o, other)| o != i && other.holds(middle)) {
-                            out.push(q);
-                        }
+                let side = vec![t.at(t.reach(0, c0), c0), t.at(t.reach(0, c1), c1), t.at(t.reach(1, c1), c1), t.at(t.reach(1, c0), c0)];
+                let mut pieces = vec![side];
+                for (o, room) in rooms.iter().enumerate() {
+                    if o != i {
+                        pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
                     }
                 }
+                out.extend(pieces);
             }
         }
         out
@@ -416,14 +487,11 @@ impl Interior {
     /// Its walled groups as walls: each tube's sides, two triangles a panel (the
     /// hull's frame), to walk in and bump into.
     pub fn walls(&self) -> Vec<[universe_engine::glam::DVec3; 3]> {
-        self.panels().iter().flat_map(|q| {
-            let q = q.map(|p| p.as_dvec3());
-            [[q[0], q[1], q[2]], [q[0], q[2], q[3]]]
-        }).collect()
+        self.panels().iter().flat_map(|q| (1..q.len().saturating_sub(1)).map(move |k| [q[0].as_dvec3(), q[k].as_dvec3(), q[k + 1].as_dvec3()])).collect()
     }
 
     /// Its walls' panels: as last worked out for this plan, or worked out now.
-    fn panels(&self) -> std::borrow::Cow<'_, [[Vec3; 4]]> {
+    fn panels(&self) -> std::borrow::Cow<'_, [Vec<Vec3>]> {
         match &self.panelled {
             Some((p, panels)) if *p == self.plan => std::borrow::Cow::Borrowed(panels.as_slice()),
             _ => std::borrow::Cow::Owned(self.plan.wall_panels()),
@@ -1365,10 +1433,11 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let picked = picked_lines(interior);
     // Walled groups: their tubes' walls (cut away inside one another, their ends open).
     for q in interior.panels().iter() {
-        if let [Some((q0, _)), Some((q1, _)), Some((q2, _)), Some((q3, _))] = q.map(|p| cam.project(p)) {
-            let fill = [WALL; 3];
-            frame.hud_triangle_colored([q0, q1, q2], fill);
-            frame.hud_triangle_colored([q0, q2, q3], fill);
+        let on: Option<Vec<Vec2>> = q.iter().map(|p| cam.project(*p).map(|s| s.0)).collect();
+        if let Some(on) = on {
+            for k in 1..on.len().saturating_sub(1) {
+                frame.hud_triangle_colored([on[0], on[k], on[k + 1]], [WALL; 3]);
+            }
         }
     }
     for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
