@@ -1,0 +1,31 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Structure
+x-kind: [structure]
+description: "One kind of structure a settlement is: a station, a spaceport, an outpost, an orbital site. A maker's product, as a hull or a gate ring is (a gate ring has its own schema). What it is built of is not said yet."
+type: object
+additionalProperties: false
+required: [identity, fit]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, maker, kind]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
+      name: { type: string }
+      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
+      kind: { enum: [station, spaceport, outpost, orbital], description: "station: in orbit, with pads. spaceport: on a world's ground. outpost: a small settlement's port. orbital: a transceiver and a relay in orbit, no pads." }
+      revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
+      description: { type: string }
+  fit:
+    description: The equipment installed in it.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [item]
+      properties:
+        item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by its key." }
+        count: { type: integer, minimum: 1 }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

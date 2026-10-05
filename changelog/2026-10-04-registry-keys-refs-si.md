@@ -71,3 +71,16 @@
 - **Nothing is made of nothing.** A recipe must say what goes in. The shop modules, which had a
   recipe that made "parts" by the tonne from nothing, now have only a rate; what they make are the
   parts that name them, each from its own stock. "Parts" and "hulls" as goods are gone.
+- **All ship equipment is in the registry:** the game's 56 pieces (17 were missing) and the throat
+  coil, each saying what kind of device it is and only that kind's figures. It is the game's early
+  list, marked outdated and to be reviewed. **Fuels are materials:** nine of them, each with how it
+  gives up its energy and how much.
+- **Hulls say what the engine needs of them:** their model, their slots, which nozzle each slot's
+  equipment drives, their radius and drag. The registry checks that what is fitted fits its slot.
+- **Structures are records:** the station platform, the spaceport, the outpost and the orbital
+  site, each with its maker and what is fitted to it.
+- **Deuterium is one record,** a material, where it was also a good. The fusion power station burns
+  that one. (The game needs a small change to find its market kind there.)
+- **Anything physical can be traded.** The market's twenty categories (food, fuel, ores, metals...)
+  are records, and any physical thing can say which it is traded as. Deuterium, a material, is
+  traded as fuel.

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/structure.schema.yaml
+identity:
+  key: structure.spaceport
+  name: "Halvard spaceport"
+  maker: org.halvard
+  kind: spaceport
+  revision: outdated
+  description: "A port on a world's ground: 16 pads on a cleared plain."
+fit:
+  - { item: equipment.terminal.ground, count: 1 }
+basis:
+  - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }

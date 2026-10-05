@@ -12,6 +12,7 @@ properties:
     required: [key, code, name, form]
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       code: { type: string, pattern: '^[A-Z0-9]+(-[A-Z0-9]+)+$', description: "Its code. No two alike." }
       name: { type: string }
       form: { type: string, description: "The form it comes in: one of its material's." }

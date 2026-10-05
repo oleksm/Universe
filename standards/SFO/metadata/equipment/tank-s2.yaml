@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.s2
+  name: "Fuel tank 15 T"
+  maker: org.hadley
+  revision: outdated
+  slot: tank
+size_class: 2
+physical:
+  mass: 1100
+  volume: 150
+function:
+  kind: tank
+  capacity: 15000
+  holds: material.deuterium
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

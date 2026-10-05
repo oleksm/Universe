@@ -61,15 +61,25 @@
 - { key: body.treistun.truhora, game: "Truhora", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.tukau, game: "Tukau", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.ugaula, game: "Ugaula", in: "by name: celestial.ron, the seed" }
+- { key: equipment.cabin.s1, game: "cabin.s1", in: "modules.ron" }
+- { key: equipment.cabin.s2, game: "cabin.s2", in: "modules.ron" }
+- { key: equipment.cabin.s3, game: "cabin.s3", in: "modules.ron" }
+- { key: equipment.cabin.s4, game: "cabin.s4", in: "modules.ron" }
 - { key: equipment.capacitor.s1, game: "capacitor.s1", in: "modules.ron" }
 - { key: equipment.capacitor.s2, game: "capacitor.s2", in: "modules.ron" }
+- { key: equipment.capacitor.s3, game: "capacitor.s3", in: "modules.ron" }
 - { key: equipment.comm.basic.s1, game: "comm.basic.s1", in: "modules.ron" }
+- { key: equipment.comm.long.s1, game: "comm.long.s1", in: "modules.ron" }
 - { key: equipment.computer.fbw.fast, game: "computer.fbw.fast", in: "modules.ron" }
 - { key: equipment.computer.fbw.s1, game: "computer.fbw.s1", in: "modules.ron" }
+- { key: equipment.drive.kestrel.k2, game: "drive.kestrel.k2", in: "modules.ron" }
 - { key: equipment.drive.torch.s1, game: "drive.torch.s1", in: "modules.ron" }
 - { key: equipment.drive.torch.s2, game: "drive.torch.s2", in: "modules.ron" }
 - { key: equipment.drive.torch.s3, game: "drive.torch.s3", in: "modules.ron" }
 - { key: equipment.gun.mass-driver.s1, game: "gun.mass_driver.s1", in: "modules.ron" }
+- { key: equipment.hyperdrive.halcyon.s1, game: "hyperdrive.halcyon.s1", in: "modules.ron" }
+- { key: equipment.hyperdrive.halcyon.s2, game: "hyperdrive.halcyon.s2", in: "modules.ron" }
+- { key: equipment.hyperdrive.halcyon.s3, game: "hyperdrive.halcyon.s3", in: "modules.ron" }
 - { key: equipment.hyperdrive.s1, game: "hyperdrive.s1", in: "modules.ron" }
 - { key: equipment.hyperdrive.s2, game: "hyperdrive.s2", in: "modules.ron" }
 - { key: equipment.hyperdrive.s3, game: "hyperdrive.s3", in: "modules.ron" }
@@ -82,10 +92,14 @@
 - { key: equipment.mining.rig.s2, game: "mining.rig.s2", in: "modules.ron" }
 - { key: equipment.nav.basic.s1, game: "nav.basic.s1", in: "modules.ron" }
 - { key: equipment.nav.full.s1, game: "nav.full.s1", in: "modules.ron" }
+- { key: equipment.power.aurel.s1, game: "power.aurel.s1", in: "modules.ron" }
+- { key: equipment.power.aurel.s2, game: "power.aurel.s2", in: "modules.ron" }
+- { key: equipment.power.aurel.s3, game: "power.aurel.s3", in: "modules.ron" }
 - { key: equipment.power.fusion.s1, game: "power.fusion.s1", in: "modules.ron" }
 - { key: equipment.power.fusion.s2, game: "power.fusion.s2", in: "modules.ron" }
 - { key: equipment.power.fusion.s3, game: "power.fusion.s3", in: "modules.ron" }
 - { key: equipment.rack.s1, game: "rack.s1", in: "modules.ron" }
+- { key: equipment.rack.s2, game: "rack.s2", in: "modules.ron" }
 - { key: equipment.rack.s3, game: "rack.s3", in: "modules.ron" }
 - { key: equipment.rack.s4, game: "rack.s4", in: "modules.ron" }
 - { key: equipment.relay.gate, game: "relay.gate", in: "modules.ron" }
@@ -93,12 +107,15 @@
 - { key: equipment.sensors.radar.s1, game: "sensors.radar.s1", in: "modules.ron" }
 - { key: equipment.tank.s0, game: "tank.s0", in: "modules.ron" }
 - { key: equipment.tank.s1, game: "tank.s1", in: "modules.ron" }
+- { key: equipment.tank.s2, game: "tank.s2", in: "modules.ron" }
 - { key: equipment.tank.s3, game: "tank.s3", in: "modules.ron" }
 - { key: equipment.tank.s4, game: "tank.s4", in: "modules.ron" }
+- { key: equipment.terminal.ground, game: "terminal.ground", in: "modules.ron" }
 - { key: equipment.thrusters.quad.s1, game: "thrusters.quad.s1", in: "modules.ron" }
 - { key: equipment.thrusters.quad.s2, game: "thrusters.quad.s2", in: "modules.ron" }
 - { key: equipment.thrusters.quad.s3, game: "thrusters.quad.s3", in: "modules.ron" }
 - { key: equipment.transceiver.beacon, game: "transceiver.beacon", in: "modules.ron" }
+- { key: equipment.transceiver.station, game: "transceiver.station", in: "modules.ron" }
 - { key: equipment.transponder.s1, game: "transponder.s1", in: "modules.ron" }
 - { key: gate.ring.i, game: "structure.ring.i", in: "structures.ron" }
 - { key: gate.ring.ii, game: "structure.ring.ii", in: "structures.ron" }
@@ -106,7 +123,6 @@
 - { key: good.asteroid-water-ice, game: "goods.water, ore.water_ice", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.bauxite, game: "goods.ores", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.carbonaceous-ore, game: "goods.ores, ore.carbonaceous", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.deuterium, game: "goods.fuel", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.iron-ore, game: "goods.ores", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.nickel-iron-ore, game: "goods.ores, ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.pgm-rich-ore, game: "goods.ores, ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }

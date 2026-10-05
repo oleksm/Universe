@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.ores
+  name: "Ores"
+unit_mass: 1000
+bulk_density: 2200
+names:
+  adjectives: ["Raw", "Crushed", "Magnetic", "Banded", "Rich", "Lean", "Oxidised", "Sulphide", "Placer"]
+  nouns: ["Iron Ore", "Copper Ore", "Bauxite", "Nickel Ore", "Cobalt Ore", "Tin Ore", "Zinc Ore", "Lead Ore", "Chromite"]
+basis:
+  - { of: [unit_mass, bulk_density], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

@@ -161,34 +161,6 @@ SFO/schema/element.schema.yaml:
   physical.heat_of_vaporisation:
     per: 1000.0
     reads: kJ per mole of atoms
-SFO/schema/equipment.schema.yaml:
-  performance.capture:
-    per: 1000.0
-    reads: km, how far it hears
-  performance.exhaust_speed:
-    per: 1000.0
-    reads: km/s
-  performance.link:
-    per: 1000.0
-    reads: km, how far it reaches another
-  performance.messages:
-    per: 0.0002777777777777778
-    reads: messages an hour
-  performance.output:
-    per: 1000000.0
-    reads: MW it supplies
-  performance.power_draw:
-    per: 1000.0
-    reads: kW, working
-  performance.range:
-    per: 1000.0
-    reads: km
-  performance.thrust:
-    per: 1000.0
-    reads: kN, of one nozzle at full share
-  performance.top_speed:
-    per: 299792458.0
-    reads: times the speed of light
 SFO/schema/gate.schema.yaml:
   performance.span:
     per: 9460730472580800.0

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.food
+  name: "Food"
+unit_mass: 500
+bulk_density: 600
+basket: 1.73611111111e-05
+names:
+  adjectives: ["Hydroponic", "Freeze-Dried", "Synthetic", "Orbital", "Tinned", "Smoked", "Organic", "Vat-Grown", "Pickled"]
+  nouns: ["Kelp", "Protein Bars", "Grain", "Fruit", "Fungi", "Algae Cakes", "Tubers", "Beans", "Cheese"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

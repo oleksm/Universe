@@ -3,16 +3,20 @@ identity:
   key: equipment.comm.basic.s1
   name: "Comm"
   maker: org.orbital
+  revision: outdated
   slot: comm
   description: "The ship's radio."
+size_class: 1
 physical:
   mass: 40
   volume: 0.1
-performance:
-  power_draw: 2000
+needs:
+  power: 2000
+function:
+  kind: comm
   capture: 50000000
   link: 7500000000
   lag: 0.05
-  messages: 0.166666666666667
+  capacity: 0.166666666667
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

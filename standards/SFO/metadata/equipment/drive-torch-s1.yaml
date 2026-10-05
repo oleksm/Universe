@@ -3,16 +3,20 @@ identity:
   key: equipment.drive.torch.s1
   name: "Torch drive S1"
   maker: org.kestrel
+  revision: outdated
   slot: drive
   description: "The main drive: a fusion torch."
+size_class: 1
 physical:
   mass: 3500
   volume: 8
-performance:
-  power_draw: 700000
+needs:
+  power: 700000
+function:
+  kind: drive
   thrust: 900000
-  exhaust_speed: 10000000
+  exhaust: 10000000
   efficiency: 0.3
-  burns: good.deuterium
+  burns: material.deuterium
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

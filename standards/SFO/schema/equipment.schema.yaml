@@ -1,42 +1,196 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Ship equipment
 x-kind: [equipment]
-description: One piece of equipment a hull is fitted with. A maker's product. Any one uses only some of these properties; one that does not apply is left out.
+description: "One piece of equipment a hull or a structure is fitted with. A maker's product. What it does is its `function`: the kind of device it is, and only that kind's figures."
 type: object
 additionalProperties: false
-required: [identity]
+required: [identity, function, physical]
 properties:
   identity:
     type: object
     additionalProperties: false
-    required: [key, name]
+    required: [key, name, maker]
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       name: { type: string }
       maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
-      slot: { type: string, description: "The kind of slot it fits." }
+      revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
+      slot: { $ref: "../../common.schema.yaml#/definitions/slot_kind" }
       description: { type: string }
+  size_class: { type: integer, minimum: 1, maximum: 4, description: "Its size class, 1 to 4: it fits a slot at least as big." }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
-  performance:
+  needs:
     type: object
     additionalProperties: false
     properties:
-      power_draw: { type: number, x-unit: "W", description: "W, working" }
-      output: { type: number, x-unit: "W", description: "W it supplies" }
-      efficiency: { type: number, description: "the share of its fuel's or its draw's energy it turns to use" }
-      thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
-      exhaust_speed: { type: number, x-unit: "m/s", description: m/s }
-      burns: { type: string, x-ref: [good], description: What it burns. }
-      capacity: { type: number, x-unit: "kg", description: "kg it holds" }
-      holds: { type: string, x-ref: [good], description: What it holds. }
-      top_speed: { type: number, x-unit: "m/s", description: "m/s" }
-      turn_rate: { type: number, x-unit: "rad/s", description: "rad/s it can turn the ship at" }
-      roll_rate: { type: number, x-unit: "rad/s", description: "rad/s it can roll the ship at" }
-      range: { type: number, x-unit: "m", description: m }
-      capture: { type: number, x-unit: "m", description: "m, how far it hears" }
-      link: { type: number, x-unit: "m", description: "m, how far it reaches another" }
-      lag: { type: number, x-unit: "s", description: "s to pass a message on" }
-      messages: { type: number, x-unit: "1/s", description: "messages a second" }
-      features: { type: array, items: { type: string }, description: What it can do. }
-      cadence: { type: number, x-unit: "s", description: "s between its throws" }
+      power: { type: number, x-unit: "W", description: "W it draws, working" }
+  function:
+    description: "What it does: one kind of device, with that kind's figures. All in SI."
+    oneOf:
+      - description: "Makes power from the fuel it burns."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: power_plant }
+          output: { type: number, x-unit: "W", description: "W it supplies" }
+          efficiency: { type: number, description: "the share of its fuel's energy it turns to power; the rest is heat" }
+          burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
+      - description: "The main drive."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: drive }
+          thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
+          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
+          efficiency: { type: number, description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
+          burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
+      - description: "Translation and attitude thrusters."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: thrusters }
+          thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
+          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
+          efficiency: { type: number, description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
+          burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
+      - description: "The belly lift."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: lift }
+          thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
+          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
+          efficiency: { type: number, description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
+          burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
+      - description: "Holds fuel."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: tank }
+          capacity: { type: number, x-unit: "kg", description: "kg it holds" }
+          holds: { type: string, x-ref: [material], description: "What it holds, by its key." }
+      - description: "Stores energy for bursts."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: capacitor }
+          capacity: { type: number, x-unit: "J", description: "J it stores" }
+          rate: { type: number, x-unit: "W", description: "W it can take in or give out at most" }
+      - description: "Holds cargo."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: rack }
+          capacity: { type: number, x-unit: "kg", description: "kg it holds" }
+      - description: "Seats for passengers, with their life support. It goes in a cargo slot."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: cabin }
+          seats: { type: integer, description: "how many it seats" }
+      - description: "Holds a hyper-field round the ship."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: hyperdrive }
+          efficiency: { type: number, description: "the share of its draw that goes into the field; the rest is heat" }
+          top_speed: { type: number, x-unit: "m/s", description: "m/s, the fastest it can go" }
+      - description: "Flies the ship by wire."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: flight_computer }
+          turn_rate: { type: number, x-unit: "rad/s", description: "rad/s it lets the ship pitch and yaw at" }
+          roll_rate: { type: number, x-unit: "rad/s", description: "rad/s it lets the ship roll at" }
+      - description: "Sees other ships."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: sensors }
+          range: { type: number, x-unit: "m", description: "m, how far it sees a ship" }
+      - description: "A comm of the hypernet: a ship's, or a transceiver or terminal others connect to."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: comm }
+          capture: { type: number, x-unit: "m", description: "m, how far it hears what happens" }
+          link: { type: number, x-unit: "m", description: "m, how far it reaches another (the shorter of the two decides)" }
+          lag: { type: number, x-unit: "s", description: "s to pass a message on" }
+          capacity: { type: number, x-unit: "1/s", description: "messages a second" }
+      - description: "Fitted to a gate ring: links its system's net to its twin's through the tube."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: gate_relay }
+          lag: { type: number, x-unit: "s", description: "s to handle a message" }
+          capacity: { type: number, x-unit: "1/s", description: "messages a second" }
+          cadence: { type: number, x-unit: "s", description: "s between its throws: capsules go by turns" }
+      - description: "Links its site to others through hyperspace."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: hyper_relay }
+          lag: { type: number, x-unit: "s", description: "s to handle a message" }
+          capacity: { type: number, x-unit: "1/s", description: "messages a second" }
+          cadence: { type: number, x-unit: "s", description: "s between its throws: capsules go by turns" }
+      - description: "Runs autopilots."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: nav_computer }
+          features: { type: array, items: { enum: [docking, landing, gate, follow, hyperdrive, route] }, description: "The autopilots it runs." }
+          interlock: { type: number, x-unit: "m", description: "m: its hyperdrive interlock holds the ship no closer than this to a body's highest ground (0: none)" }
+          governor: { type: number, x-unit: "1/s", description: "its hyperdrive governor: the ship's speed is held to this times the distance to the nearest surface (0: none)" }
+      - description: "Says who the ship is."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: transponder }
+      - description: "Air, water and warmth for the crew."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: life_support }
+      - description: "A gun. Its figures are still in the engine's code."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: gun }
+      - description: "A laser. Its figures are still in the engine's code."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: laser }
+      - description: "The anchor and excavator. Their figures are still in the engine's code."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: mining_rig }
+      - description: "Holds a gate's tube: one to a segment of a ring. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: throat_coil }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

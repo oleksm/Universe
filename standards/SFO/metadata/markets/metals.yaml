@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.metals
+  name: "Metals"
+unit_mass: 800
+bulk_density: 3500
+names:
+  adjectives: ["Refined", "Cast", "Rolled", "Forged", "Sintered", "Alloyed", "Vacuum-Cast", "Drawn", "Plated"]
+  nouns: ["Titanium", "Aluminium", "Steel", "Copper", "Nickel", "Tungsten", "Magnesium", "Iridium", "Chromium"]
+basis:
+  - { of: [unit_mass, bulk_density], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

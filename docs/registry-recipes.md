@@ -130,6 +130,11 @@ to, and flows live in one place, the module's recipes.
   step's output is stock, with a record, lying in the yard between steps. The cutting table and
   the panel former are steps again.
 
+- **What is moved, kept and sold is stock; what burns it does not care.** Fuel on a ship, in a
+  warehouse or on the market is a stock item (`stock.deuterium-liq`, traded as `market.fuel`). A power
+  plant, a drive or a tank names the material (`material.deuterium`) and takes whatever stock of
+  that material there is. The same holds for anything that names a material where stock lies.
+
 ## Done so far
 
 **Step 1 (2026-10-04): every module's own figures are its first recipe.** `module.recipes[]`:

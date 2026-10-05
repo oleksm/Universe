@@ -3,16 +3,20 @@ identity:
   key: equipment.thrusters.quad.s2
   name: "Thruster Quads S2"
   maker: org.kestrel
+  revision: outdated
   slot: thrusters
   description: "Manoeuvring thrusters, in clusters at nose and tail."
+size_class: 2
 physical:
   mass: 1500
   volume: 3
-performance:
-  power_draw: 200000
-  efficiency: 0.3
+needs:
+  power: 200000
+function:
+  kind: thrusters
   thrust: 270000
-  exhaust_speed: 10000000
-  burns: good.deuterium
+  exhaust: 10000000
+  efficiency: 0.3
+  burns: material.deuterium
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

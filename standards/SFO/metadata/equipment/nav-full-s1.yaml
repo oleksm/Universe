@@ -3,13 +3,19 @@ identity:
   key: equipment.nav.full.s1
   name: "Nav Computer"
   maker: org.orbital
+  revision: outdated
   slot: avionics
   description: "Navigation aids."
+size_class: 1
 physical:
   mass: 150
   volume: 0.3
-performance:
-  power_draw: 20000
-  features: ["docking", "landing", "gate", "follow", "hyperdrive", "route"]
+needs:
+  power: 20000
+function:
+  kind: nav_computer
+  features: [docking, landing, gate, follow, hyperdrive, route]
+  interlock: 1000
+  governor: 2
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

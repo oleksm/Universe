@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.capacitor.s3
+  name: "Capacitor bank 40 GJ"
+  maker: org.meridian
+  revision: outdated
+  slot: capacitor
+size_class: 3
+physical:
+  mass: 4000
+  volume: 10
+function:
+  kind: capacitor
+  capacity: 40000000000
+  rate: 150000000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

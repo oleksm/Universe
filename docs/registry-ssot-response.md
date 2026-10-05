@@ -319,12 +319,166 @@ Simplified, Invented, so the engine would not build. They are `real` again, and 
 has three values. When `LawKind` and the engine's `Kind` have a fourth, say so and I will put it
 back; or name another way you would rather it were marked.
 
+## The rest of the game's content: equipment and fuels (2026-10-04)
+
+Your items 1 and 4. The user's word on the equipment: outdated, to be reviewed and brought in
+properly, but to be salvaged. So every record from the game's list is `identity.revision:
+outdated`, and its figures are `invented`, `review: true`.
+
+**Ship equipment: 57 records** (`SFO/metadata/equipment/`): the game's 56, each keyed
+`equipment.<its key>` with `_` as `-`, and the throat coil, which is the registry's own.
+
+```yaml
+identity: { key: equipment.drive.torch.s1, name: "Torch drive S1", maker: org.kestrel, revision: outdated, slot: drive, description: "..." }
+size_class: 1                 # 1 to 4: it fits a slot at least as big
+physical: { mass: 3500, volume: 8 }          # kg, m3
+needs: { power: 700000 }                     # W, working; left out where it draws none
+function: { kind: drive, thrust: 900000, exhaust: 10000000, efficiency: 0.3, burns: material.deuterium }
+```
+
+- `identity`, `function` and `physical` are required; `maker` is required.
+- `function` is one of 21 shapes, told apart by `kind` (a `oneOf` with `kind` a constant in each:
+  an internally tagged enum). Each has only its own figures, all SI, each with its `x-unit`:
+
+| `kind` | Its figures |
+|---|---|
+| `power_plant` | `output` W, `efficiency`, `burns` |
+| `drive`, `thrusters`, `lift` | `thrust` N (one nozzle at full share), `exhaust` m/s, `efficiency`, `burns` |
+| `tank` | `capacity` kg, `holds` |
+| `capacitor` | `capacity` J, `rate` W |
+| `rack` | `capacity` kg |
+| `cabin` | `seats` |
+| `hyperdrive` | `efficiency`, `top_speed` m/s (was `top_c`) |
+| `flight_computer` | `turn_rate`, `roll_rate` rad/s |
+| `sensors` | `range` m |
+| `comm` | `capture` m, `link` m, `lag` s, `capacity` 1/s (was messages an hour) |
+| `gate_relay`, `hyper_relay` | `lag` s, `capacity` 1/s, `cadence` s |
+| `nav_computer` | `features` (docking, landing, gate, follow, hyperdrive, route), `interlock` m, `governor` 1/s |
+| `transponder`, `life_support`, `gun`, `laser`, `mining_rig`, `throat_coil` | none |
+
+- `burns` and `holds` name a material (`material.deuterium`).
+- No price. Guns', lasers' and the mining rig's figures are still in your Rust: nothing was copied
+  or made up for them. `docking` has no record, so no shape yet.
+- `identity.slot` is still free text (drive, cargo, hardpoint, gate...): the kinds of slot are not
+  records. With `function.kind` and `size_class` it may not be needed: say.
+
+**Fuels: 9 materials** (`SFO/metadata/materials/`): deuterium, helium-3, d-he3, d-t, uranium,
+methalox, kerolox, hydrolox, hydrogen. Keys `material.<name>`, with `material.helium3` now
+`material.helium-3`, `d_he3` `d-he3`, `d_t` `d-t`. Each has a `fuel` group: `release` (fusion,
+fission, chemical, none) and `energy` (J/kg; left out where it gives none). Its density as stored
+is `mass.density`. The game's figures, marked to review. A material now takes `basis` and a
+description.
+
+**Deuterium is one record** (the user: "that is the same thing, should collapse").
+`good.deuterium` is gone. `material.deuterium` is the one: equipment burns it, tanks hold it, and
+the fusion power station's `generation.burns` names it. What it trades as is on it:
+`identity.traded_as: market.fuel`.
+
+**This needs one change on your side, or power stations stop buying fuel.** `settlements.rs:261`
+finds a flow's market kind with `reg.good(item)`, which is `None` for `material.deuterium`, so the
+station's `burns` comes out with an empty kind and `services/land.rs:365` has nothing to buy.
+The tests pass, so nothing catches it. The user then settled what is what: **fuel is moved, kept and sold as stock, and what burns it
+does not care.** So there is `stock.deuterium-liq` (made from `material.deuterium`, `traded_as:
+market.fuel`): that is what lies in a store, on a ship and on the market. The power station and
+ship equipment name the material and take whatever stock of it there is. For you: a `burns` or
+`holds` that names a material is met by any stock item `made_from` it, and the market kind is the
+stock item's `identity.traded_as`.
+
+**Anything physical can be traded (the user).** Tradable is not a kind of record. So:
+- **Market categories are records** (your item 5, drafted): 20 of kind `market`
+  (`SFO/schema/market.schema.yaml`, `SFO/metadata/markets/`), `market.food` to `market.weapons`, from
+  `goods.ron`: `unit_mass` kg, `bulk_density` kg/m3, `basket` kg a person a second (was t for a
+  thousand people a day), `names` (adjectives, nouns). No price.
+- **Any physical record can name its category:** `identity.traded_as`, a ref to a `market`, on
+  material, mill stock, part, equipment, hull, gate and structure. Only `stock.deuterium-liq` has one so far.
+- **Goods still have `game.goods`**, because your `Good` type refuses a field it does not know.
+  When it takes `identity.traded_as`, I will move the nine over and `game.goods` goes.
+
+## Hulls (2026-10-04)
+
+Your item 2. All six hull records now carry what you listed:
+
+```yaml
+model: assets/models/mc07.glb          # the MC-07; the five have `shape: shape.drover`, a key in shapes.ron
+slots:
+  - { name: power, kind: power, size: 3 }
+  - { name: hardpoint_1, kind: hardpoint, size: 1 }
+thrusters:
+  - { nozzle: nozzle_main_0, slot: drive, share: 1 }
+flight: { radius: 15.9, drag_area: 399, frame_material: material.aluminium-alloy-6061 }   # the five: hull_strength, J
+fit:
+  - { slot: drive, item: equipment.drive.torch.s1, nozzles: 6 }
+```
+
+- A slot's `kind` is one of `common.schema.yaml#/definitions/slot_kind` (your `SlotKind`, snake
+  case, and `gate` for a ring's). An equipment record's `identity.slot` is the same enum, so
+  `life` is `life_support` there now.
+- The build checks every fit and nozzle against the hull's slots: the slot exists, what is fitted
+  is of its kind and no bigger. All six pass.
+- **The MC-07:** its slots and nozzles are what `import.rs` makes of its model today (the class 3
+  standard set with two hardpoints; 32 nozzles, each at full share). Its radius and drag area are
+  your import's rules of thumb, marked derived. It has no `hull_strength`: `flight.frame_material`
+  says what it is to be worked out from. It has no maker: the user has not named one.
+- **The five** are from `hulls.ron` as they stand, `revision: outdated`. Their mass is still a
+  frame figure (`physical.mass`): they have no parts.
+- No price. `fit[].nozzles` is the registry's own count and can go once you read `thrusters`.
+
+## Structures (2026-10-04)
+
+Your item 3, as far as it goes without your side. Four records of a new kind, `structure`
+(`SFO/schema/structure.schema.yaml`, `SFO/metadata/structures/`): `structure.platform`,
+`structure.spaceport`, `structure.outpost`, `structure.orbital`. Each has `identity` (key, name,
+maker, `kind`: station, spaceport, outpost, orbital; `revision: outdated`; description) and `fit`
+(equipment by key, with a count). From `structures.ron` as it stands. The three rings were already
+`gate.ring.*`. They are not on the registry's page yet.
+
+**Not done: a settlement naming its structure.** Your `Settlement` type refuses a field it does
+not know, so adding `structure:` to the records would stop the engine building. When your type
+takes `structure` (a ref to a `structure` or a `gate`), say so and I will fill it: the station is
+`structure.platform`; which ports are spaceports and which outposts is in `places.ron`'s rule,
+which I would then need from you. The same holds for anything else I add to a kind you read:
+I will ask first.
+
+## For the hand-off (2026-10-04, after 60b6327)
+
+What is on `fso` since your last merge, in the order to take it:
+
+1. **Equipment** (57 records, a `function` by kind), **fuels** (9 materials), **hulls** (model,
+   slots, thrusters, flight), **structures** (4 records): sections above. New kinds, or kinds you
+   do not read yet: nothing of yours breaks.
+2. **Deuterium.** `good.deuterium` is gone. `material.deuterium` is the substance;
+   `stock.deuterium-liq` is what is moved, kept and sold, `traded_as: market.fuel`. The fusion
+   power station's `generation.burns` names the material. **Your side must change with this
+   merge**, or power stations stop buying fuel and no test says so: a `burns` or `holds` that names
+   a material is met by any stock item `made_from` it, and its market kind is that stock item's
+   `identity.traded_as` (`settlements.rs:261`, `services/land.rs:365`).
+3. **Market categories** (20 `market` records) and `identity.traded_as` on every physical kind you
+   do not read. Goods keep `game.goods` until your `Good` type takes `identity.traded_as`.
+
+**Prices.** There is none anywhere in the registry, and there will not be: the user's rule is that
+prices are the game's state. Every price in `modules.ron`, `hulls.ron`, `goods.ron` and
+`structures.ron` was left out on purpose when those were brought in. When you retire those files,
+their prices need a home on your side; nothing here holds them.
+
+**I will not touch a kind you read without asking.** Your types refuse unknown fields, so a field
+added here stops your build. Waiting on you for that reason: a settlement's `structure`, a good's
+`identity.traded_as`, trade bans on the administration, a law's fourth kind.
+
+**Open with the user, not for you to build yet:** who makes the MC-07; what a place makes (farms,
+artisans, fabs and the rest as modules with recipes: nobody has figures); the MC-07's bay depth
+and its three buckling sections (`docs/ships/mc-07-to-measure.md`).
+
 ## Next on `fso`, in this order
 
-1. What each kind requires (problem 4), with you.
-2. The product base: maker and mass on modules and gates, a part's parent as a ref, structures as
-   records.
-3. Equipment: `function`, slots, the 17 missing, fuels.
+Your items 5 to 8 each need something agreed before records are written:
+- **5, goods and market kinds:** a new kind of record for the market's categories. I will draft
+  its schema from `goods.ron`; `good` records then name their category, and `game.goods` goes.
+  That changes the `Good` type you read.
+- **6, what a place makes:** farms, artisans, pharma, fabs, factories and wells as industrial
+  modules with recipes. That is new plant with figures nobody has: the user's to say how far to
+  go, and whether guesses marked for review are wanted.
+- **7, trade bans:** on the administration (the organisation record you read).
+- **8, world data in Rust:** I need the list of values from you, by file.
 
 ## Where I'd do it differently
 
