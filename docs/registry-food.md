@@ -79,6 +79,40 @@ in the open and worked back through the recipes:
 times and averages 322 K. Yields there will not be Earth's. The recipes are Earth's until someone
 works out what those worlds do to a crop.
 
+## A start (the user: "put something for start, the market will balance later")
+
+A starting state, not a plan anyone is held to. Yields are taken as Earth's.
+
+**What is made in a place goes on that place's market.** A farm or a works sells into the market
+of the settlement it stands at; the other settlements buy what ships bring. Nothing in the registry
+says who feeds whom.
+
+**Each world grows what suits it.**
+
+| | Port Eikir, Treistun d (hot, bright) | Port Nacaubun, Treistun e (cold, dim) |
+|---|---|---|
+| Grows | rice, maize, soybeans, sunflower, groundnuts, chickpeas, lentils, cassava, sweet potatoes, sugarcane; the heat-loving vegetables; nearly all the fruit, olives, nuts, coffee, tea, cocoa | wheat, barley, oats, potatoes, rapeseed, sugar beet, peas, beans, hay; cabbage, carrots, onions, garlic; apples and strawberries |
+| Keeps | pigs, poultry, laying hens, fish | dairy herds, beef cattle, sheep |
+| Fields | 86 | 210 |
+| Orchards | 39 | 2 |
+| Market gardens | 44 | 67 |
+| Livestock barns | 20 | 41 |
+| Fish farms | 11 | none |
+| Works | oil press, meat works, winery, fertiliser works | flour mill, feed mill, sugar works, dairy, meat works, bakery, brewery |
+| Ground | 130 km2 | 220 km2 |
+
+The cold world carries more ground because bread, potatoes, milk and beef, and the hay behind
+them, are the bulk of the diet.
+
+**The airless settlements grow their own leaf and salad under lamps**, because it does not ship:
+lettuce, spinach, tomatoes and peppers. Everything else they buy.
+
+| Settlement | Grow halls | Power |
+|---|---|---|
+| A moon outpost (3,000) | 1 | 3 MW (it needs under half of one) |
+| An airless planet's port (20,000) | 3 | 9 MW |
+| The station (25,000) | 4 | 12 MW |
+
 ## What waits on the engine
 
 Placing any of this on the ground needs two values the engine's types do not have, and a type that
@@ -94,9 +128,3 @@ a grow hall at each airless settlement and the station for the fresh food that d
 
 A module and a good have no maker in the engine's types either, so the companies own nothing
 yet: they will own the lots.
-
-## What the user has still to say
-
-- How the food is shared between d and e, and how much the airless settlements grow for
-  themselves under lamps.
-- Whether the yields are to be worked out for d's and e's light and warmth, or taken as Earth's.
