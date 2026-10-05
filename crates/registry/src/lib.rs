@@ -265,17 +265,21 @@ impl Registry {
         self.names.get(key).map(String::as_str)
     }
 
-    /// What `item` (a good, a stock item or a material) is traded as: the
-    /// game's kind of goods (`goods.fuel`). A material is traded as the stock
-    /// made from it is: what burns or holds a material takes any stock of it.
+    /// What `item` (a good, a stock item or a material) is traded as: a
+    /// market category, by key (`market.fuel`). A material is traded as the
+    /// stock made from it is: what burns or holds a material takes any stock
+    /// of it. (A good without `traded_as` yet: its `game.goods`, the game's
+    /// old name for the category.)
     pub fn traded_as(&self, item: &str) -> Option<String> {
-        let market = match item.split('.').next() {
-            Some("good") => return self.good(item)?.game.as_ref()?.goods.clone(),
+        match item.split('.').next() {
+            Some("good") => {
+                let g = self.good(item)?;
+                g.identity.traded_as.clone().or_else(|| Some(format!("market.{}", g.game.as_ref()?.goods.as_deref()?.strip_prefix("goods.")?.replace('_', "-"))))
+            }
             Some("stock") => self.stock.iter().find(|s| s.identity.key == item)?.identity.traded_as.clone(),
             Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
             _ => None,
-        }?;
-        Some(format!("goods.{}", market.strip_prefix("market.")?.replace('-', "_")))
+        }
     }
 
     /// The module with this key.

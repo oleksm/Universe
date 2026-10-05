@@ -252,7 +252,7 @@ mod tests {
         let save = u.save();
         assert_eq!((save.version, save.content), (SAVE_VERSION, universe_world::content::content().hash()));
         let json = serde_json::to_string(&save).unwrap();
-        assert!(json.contains("\"ore.stony\"") && json.contains("\"hull.drover\""), "content by key: {json}");
+        assert!(json.contains("\"good.stony-ore\"") && json.contains("\"hull.drover\""), "content by key: {json}");
         let mut restored = Universe::new(7);
         restored.load(serde_json::from_str(&json).unwrap());
         assert_eq!(restored.world.time, u.world.time);

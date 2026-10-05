@@ -1,7 +1,7 @@
 //! Goods: the catalogue of everything that's bought and sold, generated from
-//! the galaxy's seed from the kinds of goods in the content (`goods.ron`):
+//! the galaxy's seed from the kinds of goods (the registry's market categories):
 //! `PER_KIND` of each, with a name, a base price and a mass per unit; then
-//! the ores dug out of asteroids (`ores.ron`). Same seed and content, same
+//! the ores dug out of asteroids (the registry's rock goods). Same seed and content, same
 //! goods. Also the economy's other content: recipes, kinds of place, and
 //! how markets are made up.
 
@@ -13,7 +13,7 @@ use crate::rng::{mix, Rng};
 /// Goods of each kind in the catalogue.
 pub const PER_KIND: usize = 50;
 
-/// A kind of goods (content: `goods.ron`).
+/// A kind of goods: one of the registry's market categories.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GoodsKind {
@@ -79,19 +79,6 @@ pub fn kinds() -> usize {
 /// How many goods are generated (the ores come after).
 pub fn catalog_size() -> usize {
     kinds() * PER_KIND
-}
-
-/// An ore as `ores.ron` has it: its kind of goods by key.
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(crate) struct OreDef {
-    pub key: String,
-    pub name: String,
-    pub kind: String,
-    pub price: f64,
-    /// As stowed, broken, in a hold (t/m³); missing (0): its kind's.
-    #[serde(default)]
-    pub bulk_density: f64,
 }
 
 /// An ore of the loaded content: the goods an excavator fills a hold
@@ -190,7 +177,7 @@ pub struct Item {
 /// Raw materials dug out of asteroids (see `mining`): what an excavator
 /// fills a hold with, by the tonne. In the catalogue after its generated
 /// goods, the same in every galaxy; their names and prices are content
-/// (`ores.ron`, by key).
+/// (the registry's rock goods, by key).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Ore {
     /// Icy bodies: water ice with frozen volatiles.
@@ -219,11 +206,11 @@ impl Ore {
     /// Its content key.
     pub fn key(self) -> &'static str {
         match self {
-            Ore::WaterIce => "ore.water_ice",
-            Ore::Carbonaceous => "ore.carbonaceous",
-            Ore::Stony => "ore.stony",
-            Ore::NickelIron => "ore.nickel_iron",
-            Ore::Pgm => "ore.pgm",
+            Ore::WaterIce => "good.asteroid-water-ice",
+            Ore::Carbonaceous => "good.carbonaceous-ore",
+            Ore::Stony => "good.stony-ore",
+            Ore::NickelIron => "good.nickel-iron-ore",
+            Ore::Pgm => "good.pgm-rich-ore",
         }
     }
 
@@ -233,7 +220,7 @@ impl Ore {
         c.get(c.handle::<OreEntry>(self.key()).expect("every ore is in the content (checked at load)")).bulk_density
     }
 
-    /// Its goods item: after the generated goods, in `ores.ron`'s order.
+    /// Its goods item: after the generated goods, in `Ore::ALL`'s order.
     pub fn item(self) -> usize {
         let h: Handle<OreEntry> = content().handle(self.key()).expect("every ore is in the content (checked at load)");
         catalog_size() + h.index()
@@ -242,12 +229,13 @@ impl Ore {
 
 /// The catalog of goods for a galaxy `seed`: `PER_KIND` of each kind of
 /// goods, with distinct names; then the ores. (A kind's goods are drawn by
-/// its place in the content: new kinds go after the existing ones.)
+/// its key.)
 pub fn catalog(seed: u64) -> Vec<Item> {
     let per = PER_KIND;
     let mut items = Vec::with_capacity(catalog_size() + content().ores.len());
-    for (k, (category, kind)) in content().goods.iter().enumerate() {
-        let mut rng = Rng::new(mix(seed, 0x6000_d500 + k as u64));
+    for (category, kind) in content().goods.iter() {
+        // (Drawn by its key, not its place: a category added changes no other's goods.)
+        let mut rng = Rng::new(mix(seed, kind.key.bytes().fold(0x6000_d500u64, |h, b| (h ^ b as u64).wrapping_mul(0x100_0000_01b3))));
         // Every adjective–noun pair, shuffled; the first `per` of them.
         let mut names: Vec<(usize, usize)> = (0..kind.adjectives.len()).flat_map(|a| (0..kind.nouns.len()).map(move |n| (a, n))).collect();
         for i in (1..names.len()).rev() {

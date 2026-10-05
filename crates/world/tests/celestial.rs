@@ -26,8 +26,7 @@ fn the_charted_world_is_as_the_registry_has_it() {
         let m = c.record().mining.as_ref().unwrap_or_else(|| panic!("{key} yields nothing"));
         assert!(m.cut_energy.is_some() && m.yields.is_some(), "{key}: how it's cut and what it yields");
         for good in m.yields.iter().chain(&m.rich_yields) {
-            let ore = registry().good(good).and_then(|g| g.game.as_ref()?.ore.clone()).unwrap_or_else(|| panic!("{key} yields {good}, no ore of the game's"));
-            assert!(universe_world::goods::Ore::from_key(&ore).is_some(), "{key}: the game has no ore {ore}");
+            assert!(universe_world::goods::Ore::from_key(good).is_some(), "{key} yields {good}, which the game's excavators don't dig");
         }
     }
     let near = |a: f64, b: f64| (a - b).abs() <= 2e-3 * a.abs().max(b.abs());

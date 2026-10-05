@@ -1,5 +1,5 @@
 // How markets are made up. bans: what a market may refuse to trade, and how
 // likely it is to (rolled in this order, vice first).
 (
-    bans: [("goods.narcotics", 0.7), ("goods.weapons", 0.4), ("goods.artifacts", 0.25), ("goods.biologics", 0.1), ("goods.robots", 0.1)],
+    bans: [("market.narcotics", 0.7), ("market.weapons", 0.4), ("market.artifacts", 0.25), ("market.biologics", 0.1), ("market.robots", 0.1)],
 )

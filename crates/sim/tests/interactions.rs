@@ -290,7 +290,7 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
     let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.rack.s2")));
-    let machinery = |u: &Universe| u.markets.economy.place(home, here).unwrap().stock_of(universe_sim::world::goods::Category::of("goods.machinery").unwrap());
+    let machinery = |u: &Universe| u.markets.economy.place(home, here).unwrap().stock_of(universe_sim::world::goods::Category::of("market.machinery").unwrap());
     let before = machinery(&u);
     let cost = u.refit("cargo", Some(m("equipment.rack.s2"))).unwrap();
     assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
@@ -332,7 +332,7 @@ fn a_ship_is_bought_at_a_station_trading_in_the_old_one() {
     u.ledger.settle(Party::Pilot(universe_sim::PLAYER), Asset::Credits, 500_000.0, u.tick, universe_sim::protocol::Cause::Rules);
     u.ship.cargo = 3_000.0;
     let (price, trade_in) = u.hull_offer(universe_sim::PLAYER, hauler).unwrap();
-    let metals = |u: &Universe| u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::of("goods.metals").unwrap());
+    let metals = |u: &Universe| u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::of("market.metals").unwrap());
     let before = metals(&u);
     let cost = u.buy_hull(hauler).unwrap();
     assert!((cost - (price - trade_in)).abs() < 1e-6 && trade_in > 0.0, "{cost} = {price} - {trade_in}");

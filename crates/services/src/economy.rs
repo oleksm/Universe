@@ -248,7 +248,7 @@ impl Place {
         }
         // Its people's needs; the food and water of them, how well met.
         let (mut wanted, mut had) = (0.0, 0.0);
-        let essential = [Category::of("goods.food"), Category::of("goods.water")];
+        let essential = [Category::of("market.food"), Category::of("market.water")];
         for c in Category::all() {
             let want = c.basket() * self.population * days;
             if want <= 0.0 {

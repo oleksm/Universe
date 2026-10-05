@@ -487,7 +487,7 @@ impl crate::universe::Universe {
             return Err(format!("ITS HOLD TAKES {:.0} T, THERE'S {:.1} T IN YOURS", spec.hold_capacity / 1000.0, (ship.cargo + ship.hopper) / 1000.0));
         }
         // What building it takes from the station's stock.
-        let metals = universe_world::goods::Category::of("goods.metals").expect("metals are a kind of goods");
+        let metals = universe_world::goods::Category::of("market.metals").expect("metals are a kind of goods");
         let mut needs: Vec<(universe_world::goods::Category, f64)> = vec![(metals, spec.frame.frame_mass / 1000.0)];
         needs.extend(spec.fit.iter().map(|(_, m)| outfitter::materials(c.get(*m))));
         if let Some(place) = self.markets.economy.place(system, here) {
@@ -561,7 +561,7 @@ impl crate::universe::Universe {
         }
         let spec = ship.spec();
         let (full_price, full_metals) = (spec.frame.price * REPAIR_PRICE, spec.frame.frame_mass / 1000.0 * REPAIR_METALS);
-        let metals = universe_world::goods::Category::of("goods.metals").expect("metals are a kind of goods");
+        let metals = universe_world::goods::Category::of("market.metals").expect("metals are a kind of goods");
         // As much as the credits, and the station's metals, allow.
         let credits = self.ledger.credits(Party::Pilot(id)).max(0.0);
         let stock = self.markets.economy.place(system, here).map_or(f64::INFINITY, |p| p.stock_of(metals));

@@ -23,3 +23,13 @@
   same as before. `hulls.ron` is gone; their prices are in `prices.ron`. The MC-07 is still built
   from its model by the importer: moving it to its record changes how it flies (its mass from its
   parts, its ore bay), and that waits on the user.
+- **Goods are the registry's market categories** (`market.*`): name, unit mass, bulk density,
+  household basket and the words their goods are named from, as before. The game's kinds of goods
+  are keyed by them now (`market.food`, not `goods.food`). Their price ranges are in `prices.ron`.
+  `goods.ron` is gone.
+- **The generated catalogue is drawn by each category's key, not its place in a list**, so adding
+  a category changes no other's goods. A new world has different goods names and prices than
+  before.
+- **Ores are the registry's rock goods** (`good.stony-ore` and the rest): name and bulk density
+  from their records, prices in `prices.ron`. `ores.ron` is gone. What a rock class yields names
+  the ore directly.

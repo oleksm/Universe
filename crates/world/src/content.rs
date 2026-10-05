@@ -28,8 +28,6 @@ use crate::ship::ClassSpec;
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("prices.ron", include_str!("../../../content/base/prices.ron")),
-    ("goods.ron", include_str!("../../../content/base/goods.ron")),
-    ("ores.ron", include_str!("../../../content/base/ores.ron")),
     ("recipes.ron", include_str!("../../../content/base/recipes.ron")),
     ("places.ron", include_str!("../../../content/base/places.ron")),
     ("markets.ron", include_str!("../../../content/base/markets.ron")),
@@ -309,11 +307,18 @@ impl Content {
                 .collect(),
         )?;
         // Prices: the game's own (volatile; not the registry's), by registry key.
-        let mut prices: HashMap<String, f64> = HashMap::new();
+        #[derive(Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Prices {
+            items: HashMap<String, f64>,
+            ranges: HashMap<String, (f64, f64)>,
+        }
+        let (mut prices, mut ranges) = (HashMap::new(), HashMap::new());
         for p in &packs {
             if let Some(s) = p.source("prices.ron") {
-                let more: HashMap<String, f64> = ron::from_str(s).map_err(|e| format!("{} prices.ron: {e}", p.name))?;
-                prices.extend(more);
+                let more: Prices = ron::from_str(s).map_err(|e| format!("{} prices.ron: {e}", p.name))?;
+                prices.extend(more.items);
+                ranges.extend(more.ranges);
             }
         }
         let price = |key: &str| prices.get(key).copied().ok_or_else(|| format!("prices.ron: no price for {key}"));
@@ -402,14 +407,38 @@ impl Content {
                 })
                 .collect::<Result<_, String>>()?,
         )?;
-        let goods: Registry<GoodsKind> = Registry::build(Self::defs(&packs, "goods.ron")?)?;
+        // Kinds of goods: the registry's market categories, at the game's price ranges.
+        let reg = crate::registry::registry();
+        let goods: Registry<GoodsKind> = Registry::build(
+            reg.markets
+                .iter()
+                .map(|m| {
+                    let key = &m.identity.key;
+                    let names = m.names.clone().unwrap_or(crate::registry::MarketNames { adjectives: Vec::new(), nouns: Vec::new() });
+                    Ok(GoodsKind {
+                        key: key.clone(),
+                        name: crate::standards::caps(&m.identity.name),
+                        price: *ranges.get(key).ok_or_else(|| format!("prices.ron: no range for {key}"))?,
+                        mass: m.unit_mass.unwrap_or(0.0),
+                        // (The game holds t/m³, and a thousand people's day in t.)
+                        bulk_density: m.bulk_density.unwrap_or(0.0) / 1000.0,
+                        basket: m.basket.unwrap_or(0.0) * crate::units::DAY,
+                        adjectives: names.adjectives,
+                        nouns: names.nouns,
+                    })
+                })
+                .collect::<Result<Vec<_>, String>>()?,
+        )?;
         let kind = |key: &str, whose: &str| resolve(&goods, &aliases, key).ok_or_else(|| format!("{whose}: no kind of goods '{key}'"));
         let ores = Registry::build(
-            Self::defs::<crate::goods::OreDef>(&packs, "ores.ron")?
-                .into_iter()
-                .map(|d| {
-                    let k = kind(&d.kind, &d.key)?;
-                    Ok(OreEntry { bulk_density: if d.bulk_density > 0.0 { d.bulk_density } else { k.bulk_density() }, kind: k, key: d.key, name: d.name, price: d.price })
+            // Ores: the registry's rock goods the game's excavators dig (`goods::Ore`), at the game's prices.
+            crate::goods::Ore::ALL
+                .iter()
+                .map(|o| {
+                    let g = reg.good(o.key()).ok_or_else(|| format!("the registry has no {}", o.key()))?;
+                    let k = kind(&reg.traded_as(o.key()).unwrap_or_default(), o.key())?;
+                    let bulk = g.physical.bulk_density.map_or(goods.get(k).bulk_density, |d| d / 1000.0);
+                    Ok(OreEntry { bulk_density: bulk, kind: k, key: o.key().to_string(), name: g.identity.name.clone(), price: price(o.key())? })
                 })
                 .collect::<Result<_, String>>()?,
         )?;
@@ -580,7 +609,7 @@ fn positive(what: &str, v: f64) -> Result<(), String> {
     if v.is_finite() && v > 0.0 { Ok(()) } else { Err(format!("{what} must be positive ({v})")) }
 }
 
-entry!(GoodsKind, "goods.ron", goods, |k| {
+entry!(GoodsKind, "the registry's market categories", goods, |k| {
     positive("mass", k.mass)?;
     positive("bulk_density", k.bulk_density)?;
     positive("the lower price", k.price.0)?;
@@ -595,7 +624,7 @@ entry!(GoodsKind, "goods.ron", goods, |k| {
     }
     Ok(())
 });
-entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
+entry!(OreEntry, "the registry's ores", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "the registry's equipment", modules, |m| m.check());
 entry!(crate::modules::Brand, "the registry's makers", brands, |_b| Ok(()));

@@ -61,8 +61,7 @@ pub fn ore(rock: &Rock) -> Ore {
     let m = rock.class.record().mining.as_ref().unwrap_or_else(|| panic!("{:?} yields nothing", rock.class));
     let rich = m.rich_above.is_some_and(|share| rock.composition.pgm_ppm * 1e-6 >= share);
     let good = if rich { m.rich_yields.as_ref() } else { m.yields.as_ref() }.unwrap_or_else(|| panic!("{:?} yields nothing", rock.class));
-    let key = crate::registry::registry().good(good).and_then(|g| g.game.as_ref()?.ore.as_deref()).unwrap_or_else(|| panic!("{good} is no ore of the game's"));
-    Ore::from_key(key).unwrap_or_else(|| panic!("the game has no ore {key}"))
+    Ore::from_key(good).unwrap_or_else(|| panic!("{good} is no ore the game's excavators dig"))
 }
 
 /// The anchor reaches this far from the hull (m)...

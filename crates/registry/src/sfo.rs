@@ -29,6 +29,9 @@ pub struct Good {
 #[serde(deny_unknown_fields)]
 pub struct GoodIdentity {
     pub key: String,
+    /// The market category it's traded as, by key.
+    #[serde(default)]
+    pub traded_as: Option<String>,
     pub name: String,
     pub kind: GoodKind,
     #[serde(default)]
