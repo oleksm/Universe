@@ -86,51 +86,53 @@ pub struct Interior {
     /// undone (REDO).
     undo: Vec<Plan>,
     redo: Vec<Plan>,
-    /// The kind of way new lines are.
-    kind: Kind,
+    /// The cross-section new lines get.
+    profile: Profile,
     /// The plan as last checked against the hull, and each line's clashes: where
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
 }
 
-/// A line's room: its eight corners (bottom along it then top, or for a shaft its
-/// four round the first point then the second) and the points through it tested
-/// against the hull.
-fn room(a: Vec3, b: Vec3, kind: Kind) -> ([Vec3; 8], Vec<Vec3>) {
-    let (w, h, _, steep) = kind.room(a, b);
+/// A line's room, its cross-section along it round it (the line its axis): the
+/// edges to draw (each end's outline and the lines between their corners), and the
+/// points through it tested against the hull. None for a bare line.
+fn room(a: Vec3, b: Vec3, p: Profile) -> (Vec<[Vec3; 2]>, Vec<Vec3>) {
+    let corners = p.corners();
+    if corners.is_empty() {
+        return (Vec::new(), Vec::new());
+    }
     let along = b - a;
-    let (s1, s2, base) = if steep {
-        let up = along.normalize_or_zero();
-        let s1 = up.cross(Vec3::X).try_normalize().unwrap_or(Vec3::Z);
-        (s1, up.cross(s1), -0.5)
-    } else {
-        (along.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X), Vec3::Y, 0.0)
-    };
-    let (u2, v0, v1) = (w * 0.5, base * w, if steep { 0.5 * w } else { h });
-    let corner = |p: Vec3, u: f32, v: f32| p + s1 * u + s2 * v;
-    let c = [corner(a, -u2, v0), corner(b, -u2, v0), corner(b, u2, v0), corner(a, u2, v0), corner(a, -u2, v1), corner(b, -u2, v1), corner(b, u2, v1), corner(a, u2, v1)];
-    // (Through it every 25 cm along, on a 3 by 3 grid across, a hand in from its
-    // sides and its top, and from 30 cm over its floor (a step's worth: a floor a
-    // little over the line is still walked); its ends left, where it meets a point.)
     let len = along.length();
+    // (Across it: level, and up, as far as the line allows; a vertical line, x and z.)
+    let d = along / len.max(1e-6);
+    let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+    let v = u.cross(d);
+    let at = |o: Vec3, c: Vec2| o + u * c.x + v * c.y;
+    let mut edges = Vec::new();
+    let n = corners.len();
+    for k in 0..n {
+        let (c0, c1) = (corners[k], corners[(k + 1) % n]);
+        edges.push([at(a, c0), at(a, c1)]);
+        edges.push([at(b, c0), at(b, c1)]);
+        edges.push([at(a, c0), at(b, c0)]);
+    }
+    // (Through it every 25 cm along, at its middle and its corners pulled in a
+    // hand's width; its ends left, where it meets a point.)
     let mut samples = Vec::new();
-    let n = (len / 0.25).floor() as usize;
-    for i in 1..n {
+    let steps = (len / 0.25).floor() as usize;
+    for i in 1..steps {
         let t = i as f32 * 0.25;
         if t < 0.4 || t > len - 0.4 {
             continue;
         }
-        let p = a + along * (t / len);
-        for fu in [-1.0f32, 0.0, 1.0] {
-            for fv in [0.0f32, 0.5, 1.0] {
-                let u = fu * (u2 - 0.1);
-                let floor = if steep { 0.1 } else { 0.3 };
-                let v = v0 + floor + fv * (v1 - v0 - floor - 0.1);
-                samples.push(corner(p, u, v));
-            }
+        let o = a + d * t;
+        samples.push(o);
+        for c in &corners {
+            let r = c.length();
+            samples.push(at(o, *c * ((r - 0.1).max(0.0) / r.max(1e-6))));
         }
     }
-    (c, samples)
+    (edges, samples)
 }
 
 /// Where each line's room clashes with the hull: cuts into its material (its
@@ -139,8 +141,8 @@ fn room(a: Vec3, b: Vec3, kind: Kind) -> ([Vec3; 8], Vec<Vec3>) {
 fn clashes(mesh: &universe_sim::world::walk::WalkMesh, plan: &Plan) -> Vec<Vec<Vec3>> {
     use universe_sim::world::deckplan::in_material;
     use universe_engine::glam::DVec2;
-    plan.lines.iter().map(|&(a, b, kind)| {
-        room(plan.points[a].at, plan.points[b].at, kind).1.into_iter().filter(|p| in_material(mesh, DVec2::new(p.x as f64, p.z as f64), p.y as f64)).collect()
+    plan.lines.iter().map(|&(a, b, profile)| {
+        room(plan.points[a].at, plan.points[b].at, profile).1.into_iter().filter(|p| in_material(mesh, DVec2::new(p.x as f64, p.z as f64), p.y as f64)).collect()
     }).collect()
 }
 
@@ -151,54 +153,61 @@ struct Plan {
     /// For which hull (its fixed points are taken from it).
     hull: String,
     points: Vec<Point>,
-    /// Each line: its two points and what kind of way it is.
-    lines: Vec<(usize, usize, Kind)>,
+    /// Each line: its two points and its cross-section.
+    lines: Vec<(usize, usize, Profile)>,
 }
 
-/// What kind of way a line is, and so the room it takes.
+/// A line's cross-section: its shape and its size across (m), laid round the line.
+#[derive(Clone, Copy, PartialEq)]
+struct Profile {
+    section: Section,
+    size: f32,
+}
+
+impl Default for Profile {
+    fn default() -> Self {
+        Profile { section: Section::Line, size: 1.2 }
+    }
+}
+
+/// The shape of a line's cross-section.
 #[derive(Clone, Copy, Default, PartialEq)]
-enum Kind {
-    /// Walked: 1.1 m wide, 2.1 m high (a ladder shaft where it's steep).
+enum Section {
+    /// None: a bare line.
     #[default]
-    Corridor,
-    /// Crawled, for service: 0.8 m by 0.8 m.
-    Crawlway,
-    /// Cargo moved along it: 2.0 m wide, 2.2 m high (invented, until a cargo unit
-    /// is settled).
-    Cargo,
+    Line,
+    Round,
+    Square,
+    /// Six-sided, its size across its flats.
+    Hex,
 }
 
-impl Kind {
-    const ALL: [Kind; 3] = [Kind::Corridor, Kind::Crawlway, Kind::Cargo];
+impl Section {
+    const ALL: [Section; 4] = [Section::Line, Section::Round, Section::Square, Section::Hex];
 
     fn name(self) -> &'static str {
         match self {
-            Kind::Corridor => "CORRIDOR",
-            Kind::Crawlway => "CRAWLWAY",
-            Kind::Cargo => "CARGO",
+            Section::Line => "NONE",
+            Section::Round => "ROUND",
+            Section::Square => "SQUARE",
+            Section::Hex => "HEX",
         }
     }
+}
 
-    /// Its room across and up (m), and how fast it's gone along (m/s), for a line
-    /// running from `a` to `b`: steeper than 45°, a shaft (climbed, 0.9 m square;
-    /// cargo, its own size, lifted).
-    fn room(self, a: Vec3, b: Vec3) -> (f32, f32, f32, bool) {
-        let d = b - a;
-        let steep = d.y.abs() > Vec2::new(d.x, d.z).length();
-        match (self, steep) {
-            (Kind::Cargo, true) => (2.0, 2.2, 0.5, true),
-            (Kind::Cargo, false) => (2.0, 2.2, 1.0, false),
-            (Kind::Crawlway, s) => (0.8, 0.8, if s { 0.3 } else { 0.5 }, s),
-            (Kind::Corridor, true) => (0.9, 0.9, 0.4, true),
-            (Kind::Corridor, false) => (1.1, 2.1, 1.4, false),
-        }
-    }
-
-    fn colour(self) -> Color {
-        match self {
-            Kind::Corridor => PATH,
-            Kind::Crawlway => Color([1.0, 0.5, 0.8, 0.95]),
-            Kind::Cargo => Color([1.0, 0.72, 0.2, 0.95]),
+impl Profile {
+    /// Its outline's corners round the line (across, up; m): a round one as 16.
+    fn corners(self) -> Vec<Vec2> {
+        let r = self.size * 0.5;
+        let ring = |n: usize, radius: f32, turn: f32| (0..n).map(|k| {
+            let a = turn + k as f32 / n as f32 * std::f32::consts::TAU;
+            Vec2::new(a.cos(), a.sin()) * radius
+        }).collect();
+        match self.section {
+            Section::Line => Vec::new(),
+            Section::Round => ring(16, r, 0.0),
+            Section::Square => ring(4, r * std::f32::consts::SQRT_2, std::f32::consts::FRAC_PI_4),
+            Section::Hex => ring(6, r / (std::f32::consts::PI / 6.0).cos(), 0.0),
         }
     }
 }
@@ -257,8 +266,8 @@ impl Interior {
         let a = add(Vec3::new(h.x, h.y, (h.z + c.z) * 0.5), &mut self.plan);
         let b = add(Vec3::new(c.x, h.y, c.z), &mut self.plan);
         let d = add(Vec3::new(e.x, h.y, (h.z + e.z) * 0.5), &mut self.plan);
-        let k = Kind::Corridor;
-        self.plan.lines.extend([(hatch, a, k), (a, b, k), (b, cockpit, k), (hatch, d, Kind::Crawlway), (d, engines, Kind::Crawlway)]);
+        let (round, hex) = (Profile { section: Section::Round, size: 1.6 }, Profile { section: Section::Hex, size: 0.9 });
+        self.plan.lines.extend([(hatch, a, round), (a, b, round), (b, cockpit, round), (hatch, d, hex), (d, engines, hex)]);
         self.tool = Tool::Path;
     }
 
@@ -424,7 +433,7 @@ fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
 }
 
 /// The tool's panel, at the left: where it is and its size.
-const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 246.0));
+const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 270.0));
 
 /// The panel's actions: the work plane down and up, what's picked out.
 #[derive(Clone, Copy, PartialEq)]
@@ -432,8 +441,10 @@ enum Action {
     PlaneDown,
     PlaneUp,
     Remove,
-    /// The kind of way: for new lines (laying paths), or the picked line's.
-    Kind(Kind),
+    /// The cross-section's shape, and its size smaller or bigger: for new lines
+    /// (laying paths), or the picked line's.
+    Section(Section),
+    Size(f32),
 }
 
 /// The panel's buttons for the tool in hand (where, its label, what it does).
@@ -441,11 +452,12 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     let (p, c) = PANEL;
     let at = |row: f32, col: f32, w: f32| (Vec2::new(p.x + 8.0 + col, p.y + row), Vec2::new(w, 16.0));
     let w = (c.x - 16.0 - 6.0) / 2.0;
-    let w3 = (c.x - 16.0 - 12.0) / 3.0;
-    let kinds = Kind::ALL.iter().enumerate().map(|(k, kind)| (at(174.0, k as f32 * (w3 + 6.0), w3), kind.name(), Action::Kind(*kind)));
+    let w4 = (c.x - 16.0 - 18.0) / 4.0;
+    let shapes = Section::ALL.iter().enumerate().map(|(k, s)| (at(174.0, k as f32 * (w4 + 6.0), w4), s.name(), Action::Section(*s)));
+    let size = [(at(198.0, 0.0, w), "SIZE -", Action::Size(-0.1)), (at(198.0, w + 6.0, w), "SIZE +", Action::Size(0.1))];
     match tool {
-        Tool::Path => kinds.chain([(at(198.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(198.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(222.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
-        Tool::Look => kinds.chain([(at(222.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
+        Tool::Path => shapes.chain(size).chain([(at(222.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(222.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(246.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
+        Tool::Look => shapes.chain(size).chain([(at(246.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
     }
 }
 
@@ -554,11 +566,19 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     if lift != 0.0 {
         interior.plane = Some((plane_of(interior, &h) + lift).clamp(h.lo.y, h.hi.y));
     }
-    // A kind: for new lines; picked in LOOK, that line's.
-    if let Some(Action::Kind(kind)) = action {
-        match (interior.tool, interior.pick) {
-            (Tool::Look, Some(Hover::Line(k))) => interior.plan.lines[k].2 = kind,
-            _ => interior.kind = kind,
+    // A cross-section, its shape or size: for new lines; picked in LOOK, that line's.
+    if let Some(a @ (Action::Section(_) | Action::Size(_))) = action {
+        let profile = match (interior.tool, interior.pick) {
+            (Tool::Look, Some(Hover::Line(k))) => Some(&mut interior.plan.lines[k].2),
+            (Tool::Look, _) => None,
+            _ => Some(&mut interior.profile),
+        };
+        if let Some(p) = profile {
+            match a {
+                Action::Section(s) => p.section = s,
+                Action::Size(d) => p.size = ((p.size + d) * 10.0).round().clamp(3.0, 60.0) / 10.0,
+                _ => {}
+            }
         }
     }
     interior.hover = hover_at(interior, &cam, cursor);
@@ -647,7 +667,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                         && a != k
                         && !interior.plan.lines.iter().any(|&(p, q, _)| (p, q) == (a, k) || (p, q) == (k, a))
                     {
-                        interior.plan.lines.push((a, k, interior.kind));
+                        interior.plan.lines.push((a, k, interior.profile));
                     }
                     interior.from = Some(k);
                 }
@@ -854,24 +874,17 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     // The access plan: its lines bright, its points small squares (the hull's own,
     // named); what's under the cursor and a line's first point lit.
     let plan = &interior.plan;
-    // Each line, and its room round it: a box of its kind's size (red where it
+    // Each line, and its room round it: its cross-section along it (red where it
     // clashes with the hull, its clashes marked).
     let clash = interior.checked.as_ref().filter(|(p, _)| p == plan).map(|(_, c)| c.as_slice()).unwrap_or(&[]);
-    for (k, &(a, b, kind)) in plan.lines.iter().enumerate() {
+    for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
         let lit = interior.hover == Some(Hover::Line(k)) || interior.pick == Some(Hover::Line(k));
         let hits = clash.get(k).map_or(&[][..], |c| c.as_slice());
-        let col = if lit { PICKED } else if hits.is_empty() { kind.colour() } else { CLASH };
+        let col = if lit { PICKED } else if hits.is_empty() { PATH } else { CLASH };
         seg(frame, plan.points[a].at, plan.points[b].at, col);
-        let (c, _) = room(plan.points[a].at, plan.points[b].at, kind);
         let edge = Color([col.0[0], col.0[1], col.0[2], 0.45]);
-        for (i, j) in [(0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4), (0, 4), (1, 5), (2, 6), (3, 7)] {
-            seg(frame, c[i], c[j], edge);
-        }
-        // (Its floor, faintly filled.)
-        if let [Some((p0, _)), Some((p1, _)), Some((p2, _)), Some((p3, _))] = [c[0], c[1], c[2], c[3]].map(|p| cam.project(p)) {
-            let fill = [Color([col.0[0], col.0[1], col.0[2], 0.07]); 3];
-            frame.hud_triangle_colored([p0, p1, p2], fill);
-            frame.hud_triangle_colored([p0, p2, p3], fill);
+        for [p, q] in room(plan.points[a].at, plan.points[b].at, profile).0 {
+            seg(frame, p, q, edge);
         }
         for p in hits {
             if let Some((q, _)) = cam.project(*p) {
@@ -898,7 +911,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     // The legend: what each colour is, points and ways.
     {
         let (w, line) = (230.0, 14.0);
-        let height = (SORTS.len() + Kind::ALL.len() + 1) as f32 * line + line * 0.5 + 10.0;
+        let height = (SORTS.len() + 2) as f32 * line + line * 0.5 + 10.0;
         let p = Vec2::new(size.x - w - 12.0, size.y - 30.0 - height);
         frame.hud_rect(p, Vec2::new(w, height), Color([0.02, 0.06, 0.13, 0.85]));
         frame.hud_box(p, Vec2::new(w, height), PLANE.scale(1.5));
@@ -917,10 +930,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             y += line;
         }
         y += line * 0.5;
-        for kind in Kind::ALL {
-            row(frame, y, kind.colour(), kind.name(), false);
-            y += line;
-        }
+        row(frame, y, PATH, "LINE, ITS ROOM", false);
+        y += line;
         row(frame, y, CLASH, "CLASH: CUTS THE HULL", false);
     }
     // The tool's panel: what it does and how, its actions, how much is drawn.
@@ -945,12 +956,10 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 None => format!("PICKED: A POINT {:.1} M UP", plan.points[k].at.y - lo.y),
             },
             Some(Hover::Line(k)) => {
-                let (a, b, kind) = plan.lines[k];
-                let (pa, pb) = (plan.points[a].at, plan.points[b].at);
-                let (_, _, speed, steep) = kind.room(pa, pb);
-                let len = pa.distance(pb);
+                let (a, b, profile) = plan.lines[k];
+                let len = plan.points[a].at.distance(plan.points[b].at);
                 let hits = clash.get(k).map_or(0, |c| c.len());
-                format!("{}{} {len:.1} M  {:.0} S{}", kind.name(), if steep { " SHAFT" } else { "" }, len / speed, if hits > 0 { "  CLASHES" } else { "" })
+                format!("A LINE {len:.1} M{}", if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1} M", profile.section.name(), profile.size) }
             }
             None => {
                 let len: f32 = plan.lines.iter().map(|&(a, b, _)| plan.points[a].at.distance(plan.points[b].at)).sum();
@@ -962,16 +971,18 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         if interior.tool == Tool::Path {
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 138.0), &format!("PLANE {:.1} M UP", plane - lo.y), PATH, 0.8);
         }
-        // (The kind lit: the picked line's in LOOK, else the one new lines get.)
-        let kind_now = match (interior.tool, interior.pick) {
+        // (The cross-section lit: the picked line's in LOOK, else the one new lines get.)
+        let now = match (interior.tool, interior.pick) {
             (Tool::Look, Some(Hover::Line(k))) => Some(plan.lines[k].2),
             (Tool::Look, _) => None,
-            _ => Some(interior.kind),
+            _ => Some(interior.profile),
         };
-        frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), if interior.tool == Tool::Look { "THE PICKED LINE IS A" } else { "NEW LINES ARE" }, LABEL.scale(0.8), 0.7);
+        let what = if interior.tool == Tool::Look { "THE PICKED LINE'S CROSS-SECTION" } else { "NEW LINES' CROSS-SECTION" };
+        let size = now.map_or(String::new(), |p| format!("   {:.1} M ACROSS", p.size));
+        frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), &format!("{what}{size}"), LABEL.scale(0.8), 0.7);
         for (r, name, a) in panel_buttons(interior.tool) {
-            let lamp = if inside(r, interior.cursor) || matches!(a, Action::Kind(k) if Some(k) == kind_now) { Lamp::On } else { Lamp::Off };
-            let off = (a == Action::Remove && interior.pick.is_none()) || (matches!(a, Action::Kind(_)) && kind_now.is_none());
+            let lamp = if inside(r, interior.cursor) || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s)) { Lamp::On } else { Lamp::Off };
+            let off = (a == Action::Remove && interior.pick.is_none()) || (matches!(a, Action::Section(_) | Action::Size(_)) && now.is_none());
             draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
         }
     }
