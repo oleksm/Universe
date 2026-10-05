@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.chemical-waste
+  name: "Chemical waste"
+  kind: by-product
+  description: "Spent solvents, salts and broth: what fine chemistry leaves, many times the weight of what it makes."
+physical:
+  bulk_density: 1100
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

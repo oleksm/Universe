@@ -1,0 +1,1153 @@
+{
+ "solvay_soda_ash": {
+  "value": {
+   "limestone_kg": [
+    1050,
+    1600
+   ],
+   "NaCl_kg": [
+    1530,
+    1800
+   ],
+   "NH3_makeup_kg": [
+    0.8,
+    2.1
+   ]
+  },
+  "unit": "kg per tonne soda ash",
+  "what": "Solvay process main raw material inputs per tonne of soda ash (limestone at lime-kiln inlet; NaCl in raw brine); indicative EU annual-average ranges",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+  "quote": "Limestone 1050 – 1600 (inlet lime kiln) 1090 – 1820 (inlet plant) | Raw brine NaCl (1530 – 1800) + water (4500 – 5200) | NH3 make up 0.8 – 2.1 [Table 2.11: Soda ash process major input/output levels]",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "lime_kiln_fuel_GJ": [
+      2.2,
+      2.8
+     ],
+     "soda_ash_fuels_incl_electricity_GJ": [
+      7.5,
+      10.8
+     ],
+     "electricity_kWh": [
+      50,
+      130
+     ]
+    },
+    "unit": "per tonne dense soda ash",
+    "what": "Energy input per tonne of dense soda ash (Table 2.11)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+    "quote": "Energy GJ/t soda ash (dense) | Fuels (lime kiln) 2.2 - 2.8 | Fuels (soda ash)(2), 7.5 – 10.8, including electricity 0.18 – 0.47 (50 – 130 kWh/t soda ash)",
+    "verified": true
+   },
+   {
+    "value": {
+     "Cl_kg": [
+      850,
+      1100
+     ],
+     "Ca_kg": [
+      340,
+      400
+     ],
+     "Na_kg": [
+      160,
+      220
+     ],
+     "suspended_solids_kg": [
+      90,
+      700
+     ],
+     "CO2_kg": [
+      200,
+      400
+     ]
+    },
+    "unit": "kg per tonne soda ash",
+    "what": "By-product/effluent ions leaving distillation (the calcium chloride stream, given as ions) and CO2 emission per tonne soda ash (Table 2.11)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+    "quote": "CO2 200 – 400 ... Liquid emissions (outlet distillation) kg/t soda ash | Cl- 850 – 1100 | Ca2+ 340 – 400 | Na+ 160 – 220 ... Suspended solids 90 – 700",
+    "verified": true
+   },
+   {
+    "value": {
+     "limestone_t": 1.4,
+     "salt_t": 1.66,
+     "effluent_m3": 10
+    },
+    "unit": "per tonne soda ash",
+    "what": "Illustrative factors for a medium-sized 500 kt/year soda ash plant (Table 2.12)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+    "quote": "Illustrative plant capacity (medium sized plant) 500000 t/year 1400 t/day | Limestone usage (at the plant inlet) t/t soda ash 1.40 | Salt usage (NaCl in crude brine) t/t soda ash 1.66 | Liquid effluent volume m3/t soda ash 10",
+    "verified": true
+   },
+   {
+    "value": {
+     "Dombasle_FR": 700,
+     "Rheinberg_DE": 600,
+     "Torrelavega_ES": 950
+    },
+    "unit": "kt/year",
+    "what": "Soda ash capacity of named Solvay-process plants (site area not given)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic-s_bref_0907.pdf",
+    "quote": "Producer A France – Dombasle 700 1874 | Germany – Rheinberg 600 1903 | Spain – Torrelavega 950 1908 [columns: Capacity (kt/year), Plant start-up]",
+    "verified": true
+   }
+  ]
+ },
+ "chlor_alkali": {
+  "value": {
+   "range": [
+    2300,
+    3000
+   ],
+   "median": 2600
+  },
+  "unit": "AC kWh per tonne Cl2",
+  "what": "Electricity consumed by membrane-cell electrolysers per tonne of chlorine (EU-27/EFTA plants); electrolysis cells only",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/CAK_BREF_102014.pdf",
+  "quote": "The electrical energy consumption of membrane cells ranges from approximately 2 300 to 3 000 AC kWh/t Cl2 produced, the median being approximately 2 600 AC kWh/t Cl2 produced, with current densities ranging from 1.0 to 6.5 kA/m2",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "NaOH_kg": [
+      1070,
+      1128
+     ],
+     "H2_kg": 28
+    },
+    "unit": "kg per tonne Cl2",
+    "what": "Co-products per tonne of chlorine (the electrochemical unit)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/CAK_BREF_102014.pdf",
+    "quote": "The products of the electrolysis are formed in a fixed ratio, which is 1 070–1 128 kg of NaOH (100 wt-%) and approximately 28 kg of H2 per tonne of Cl2 produced.",
+    "verified": true
+   },
+   {
+    "value": 1.65,
+    "unit": "t NaCl per tonne Cl2",
+    "what": "Stoichiometric salt consumption",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/CAK_BREF_102014.pdf",
+    "quote": "stoichiometric salt consumption is 1.65 tonnes per tonne of chlorine produced for the electrolysis of NaCl",
+    "verified": true
+   },
+   {
+    "value": {
+     "cells_kWh": 2600,
+     "other_electrical_kWh": 200,
+     "total_kWh": 2800,
+     "steam_t_per_t_NaOH50": 0.7,
+     "primary_energy_GJ": 27.4
+    },
+    "unit": "per tonne Cl2",
+    "what": "Total energy of membrane-cell plants, median values, incl. caustic concentration to 50 wt-% (Table 3.13); chlorine liquefaction excluded",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/CAK_BREF_102014.pdf",
+    "quote": "Membrane cell technique | Electricity AC kWh/t Cl2 produced 2 600 200 NA 2 800 | Steam t/t NaOH (50 wt-%) produced NA NA 0.70 0.70 | Primary energy GJ/t Cl2 produced 23.4 1.8 2.2 27.4",
+    "verified": true
+   },
+   {
+    "value": 1585,
+    "unit": "kt Cl2/year",
+    "what": "Chlorine capacity of one named plant: Dow, Stade (Germany) (site area not given)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/CAK_BREF_102014.pdf",
+    "quote": "Dow in Stade (Germany), chlorine capacity 1 585 kt/yr;",
+    "verified": true
+   }
+  ]
+ },
+ "sulphuric_acid": {
+  "value": 6,
+  "unit": "GJ exported per tonne H2SO4",
+  "what": "Heat a modern double-contact sulphur-burning plant can export",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+  "quote": "a modern double contact plant (sulphur burning) can export about 6 GJ/ tonne H2SO4",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     35,
+     50
+    ],
+    "unit": "kWh per tonne H2SO4",
+    "what": "Electrical power input",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+    "quote": "input of electrical power: 35 – 50 kWh/tonne H2SO4",
+    "verified": true
+   },
+   {
+    "value": 0.327,
+    "unit": "t sulphur per tonne H2SO4 (100 %)",
+    "what": "DERIVED: stoichiometric sulphur demand, 32.06/98.08, from S + 1.5 O2 + H2O -> H2SO4; no published per-tonne figure was found. Quote gives the reaction steps only.",
+    "source": "https://www.epa.gov/sites/default/files/2020-09/documents/8.10_sulfuric_acid.pdf",
+    "quote": "First, the sulfur in the feedstock is oxidized (burned) to sulfur dioxide (SO2) ... catalytically oxidized to sulfur trioxide (SO3) ... Finally, the sulfur trioxide is absorbed in a strong 98 percent sulfuric acid solution: SO3 + H2O -> H2SO4",
+    "verified": true
+   },
+   {
+    "value": [
+     95,
+     98
+    ],
+    "unit": "% SO2 converted to SO3 (per pass description)",
+    "what": "Converter conversion in elemental-sulphur burning plants",
+    "source": "https://www.epa.gov/sites/default/files/2020-09/documents/8.10_sulfuric_acid.pdf",
+    "quote": "Usually, 95 to 98 percent of the sulfur dioxide from the combustion chamber is converted to sulfur trioxide, with an accompanying large evolution of heat.",
+    "verified": true
+   }
+  ]
+ },
+ "nitric_acid": {
+  "value": {
+   "M/M": 286,
+   "H/H": 290,
+   "M/H": 283
+  },
+  "unit": "kg NH3 per tonne 100 % HNO3",
+  "what": "Ammonia consumption of Ostwald-process plants by pressure type (mono medium, mono high, dual medium/high)",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+  "quote": "Ammonia 286 290 283 kg/tonne 100 % HNO3 [columns M/M, H/H, M/H]",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "M/M": 9,
+     "H/H": 13,
+     "M/H": 8.5
+    },
+    "unit": "kWh per tonne 100 % HNO3",
+    "what": "Electrical power consumption",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+    "quote": "Electrical power 9 13 8.5 kWh/tonne 100 % HNO3",
+    "verified": true
+   },
+   {
+    "value": {
+     "modern_M/H_plant": 2.4,
+     "average_European": 1.6,
+     "theoretical_release": 6.3
+    },
+    "unit": "GJ per tonne 100 % HNO3",
+    "what": "Net energy export (as HP steam) of nitric acid plants; theoretical heat of reaction",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+    "quote": "The reaction from NH3 to HNO3 theoretically releases 6.3 GJ/tonne 100 % HNO3. ... Modern M/H plant 2.4 As HP steam | Average net export of European plants 1.6 | Best plants 30 years ago 1.1",
+    "verified": true
+   },
+   {
+    "value": {
+     "M/M": 0.75,
+     "H/H": 0.58,
+     "M/H": 0.65
+    },
+    "unit": "t steam (40 bar, 450 C) per tonne 100 % HNO3",
+    "what": "Excess steam exported",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+    "quote": "Excess steam, 40 bar, 450 ºC 0.75 0.58 0.65 tonnes/tonne 100 % HNO3",
+    "verified": true
+   }
+  ]
+ },
+ "ammonia_synthesis_loop": {
+  "value": [
+   8.6,
+   13.1
+  ],
+  "unit": "MWh electricity per tonne NH3",
+  "what": "TOTAL electricity of electrolysis-based (green) ammonia incl. electrolysis. The loop + air-separation share excluding electrolysis was NOT found as a published figure (see not_found).",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12185339/fullTextXML",
+  "quote": "However, this pathway is highly energy-intensive (8.6–13.1 MWh e (t NH 3 ) −1 ) and requires gigawatt-scale installations for effective operation",
+  "verified": true,
+  "more": [
+   {
+    "value": 38,
+    "unit": "GJ per tonne NH3",
+    "what": "Total energy of electrolysis-based Haber-Bosch in practice (= 10.6 MWh/t, conversion derived)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13112091/fullTextXML",
+    "quote": "While the current electrolysis-based Haber–Bosch process consumes around 38 GJ per t NH 3 in practice, the theoretical minimum energy required for NH 3 synthesis itself is approximately 21 GJ per t NH 3 .",
+    "verified": true
+   },
+   {
+    "value": [
+     33,
+     36
+    ],
+    "unit": "GJ per tonne NH3",
+    "what": "Energy consumption of renewable ammonia with alkaline or PEM electrolysis (26-30 with solid oxide electrolysis)",
+    "source": "https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2022/May/IRENA_Innovation_Outlook_Ammonia_2022.pdf",
+    "quote": "Hydrogen production technology Alkaline or PEM electrolysis | Solid oxide electrolysis (SOE) | Energy consumption 33-36 26-30 (GJ/t ammonia)",
+    "verified": true
+   },
+   {
+    "value": [
+     90,
+     95
+    ],
+    "unit": "% of plant energy",
+    "what": "Share of an ammonia plant's total energy taken by hydrogen production (leaves 5-10 % for loop, nitrogen and the rest)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12185339/fullTextXML",
+    "quote": "The substantial energy requirement is primarily due to the hydrogen production process, which accounts for 90–95% of the total energy consumed by an ammonia plant",
+    "verified": true
+   },
+   {
+    "value": 220,
+    "unit": "kWh per tonne O2",
+    "what": "Specific power of a cryogenic air separation unit (range 200-400), for sizing the nitrogen supply",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12780061/fullTextXML",
+    "quote": "an on-site air separation unit (ASU) sensitivity is provided in the SI using a cryogenic specific power of 220 kWh per ton O₂ (200–400 kWh per ton O₂)",
+    "verified": true
+   }
+  ]
+ },
+ "methanol_from_co2": {
+  "value": {
+   "CO2_t": 150000,
+   "H2_t": 20000,
+   "methanol_t": 100000
+  },
+  "unit": "tonnes per year",
+  "what": "Feed and output of the CRI Sailboat CO2-to-methanol plant (Lianyungang, China): i.e. 1.5 t CO2 and 0.2 t H2 per t methanol (ratios derived)",
+  "source": "https://en.wikipedia.org/w/index.php?title=Carbon_Recycling_International&action=raw",
+  "quote": "The plant recycles approximately 150,000 tons of carbon dioxide and 20,000 tons of hydrogen from waste streams at the nearby petrochemical complex, producing 100,000 tons of low-carbon methanol annually.",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.1875,
+    "unit": "t H2 per tonne methanol",
+    "what": "Stoichiometric hydrogen demand of CO2 + 3 H2 -> CH3OH + H2O",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12828461/fullTextXML",
+    "quote": "Methanol is synthesized by the reaction CO 2 + 3 H 2 ⇆ CH 3 OH + H 2 O Thus, for each ton of methanol produced, 0.1875 tons of hydrogen are required.",
+    "verified": true
+   },
+   {
+    "value": {
+     "methanol_t_per_year": 4000,
+     "CO2_recycled_t_per_year": 5500
+    },
+    "unit": "tonnes per year",
+    "what": "Capacity of the George Olah plant, Svartsengi, Iceland, after expansion (1.375 t CO2 per t methanol, derived). Site area and electricity not given.",
+    "source": "https://carbonrecycling.com/projects/george-olah",
+    "quote": "production capacity was scaled from 1300 to 4000 tons per year which translates into recycling of 5500 tons of carbon dioxide emissions.",
+    "verified": true
+   },
+   {
+    "value": {
+     "methanol_t_per_year": 110000,
+     "CO2_t_per_year": 160000
+    },
+    "unit": "tonnes per year",
+    "what": "Capacity of the CRI Shunli plant, Anyang, China",
+    "source": "https://en.wikipedia.org/w/index.php?title=Carbon_Recycling_International&action=raw",
+    "quote": "The plant has an annual production capacity of 110,000 tons of low-carbon intensity methanol, recycling approximately 160,000 tons of CO2 per year.",
+    "verified": true
+   }
+  ]
+ },
+ "methanol_to_olefins": {
+  "value": 2.28,
+  "unit": "t methanol per tonne olefins",
+  "what": "Stoichiometric methanol demand of MTO (2 CH3OH -> C2H4 + 2 H2O); a practical plant figure (about 3 t/t for DMTO is often cited) was not found in a page I could open",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12828461/fullTextXML",
+  "quote": "In a simplified consideration just of ethylene, the MTO reaction proceeds as follows: 2 CH 3 OH ⇆ C 2 H 4 + 2 H 2 O for which each ton of olefins requires 2.28 tons of methanol",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "ethylene_t": 1,
+     "propylene_t": 1.09
+    },
+    "unit": "t",
+    "what": "Product split of an MTO process as used in a Chinese plant inventory",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12998512/fullTextXML",
+    "quote": "in the MTO process that coproduces 1 tonne of ethylene and 1.09 tonnes of propylene ( M i = 2.09)",
+    "verified": true
+   }
+  ]
+ },
+ "polyethylene": {
+  "value": {
+   "LDPE_european_average": 1018,
+   "LDPE_top_50pct": 1005,
+   "LLDPE_european_average": 1026
+  },
+  "unit": "kg ethylene (monomer) per tonne polymer",
+  "what": "Monomer consumption, European benchmark 1999",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/pol_bref_0807.pdf",
+  "quote": "LDPE benchmark 1999 | European average / Average top 50 % / 3rd quartile / 4th quartile | Monomer consumption 1018 1005 1018 1044 ; LLDPE: Monomer consumption 1026 1015 1031 1043",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "LDPE_direct": 1075,
+     "LDPE_primary": 2600,
+     "LLDPE_direct": 680,
+     "LLDPE_primary": 1150
+    },
+    "unit": "kWh per tonne polymer",
+    "what": "Direct (as delivered) and primary energy consumption, European average 1999",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/pol_bref_0807.pdf",
+    "quote": "LDPE: Direct energy consumption 1075 720 1225 1650 | Primary energy consumption 2600 2070 2750 3500 ; LLDPE: Direct energy consumption 680 580 655 890 | Primary energy consumption 1150 810 1250 1720 [Direct energy in kWh per tonne of product (kWh/t)]",
+    "verified": true
+   },
+   {
+    "value": {
+     "LDPE": 166,
+     "LLDPE": 200
+    },
+    "unit": "kt/year",
+    "what": "Average plant capacity of reporting European plants, 1999 (no single named plant or site area)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/pol_bref_0807.pdf",
+    "quote": "levels from 27 plants that reported their data. The average age of these plants is 25 years and their average capacity in 1999 was 166 kt per year. ... [LLDPE] eight plants ... their average capacity in 1999 was 200 kt per year.",
+    "verified": true
+   }
+  ]
+ },
+ "pvc": {
+  "value": 57,
+  "unit": "% of PVC mass that is chlorine",
+  "what": "Chlorine content of PVC; i.e. about 0.57 t Cl per t PVC (derived), balance from ethylene",
+  "source": "https://en.wikipedia.org/w/index.php?title=Polyvinyl_chloride&action=raw",
+  "quote": "About 57% of the mass of PVC is [[chlorine]].",
+  "verified": true,
+  "more": [
+   {
+    "value": 43,
+    "unit": "% of PVC mass from crude oil (ethylene)",
+    "what": "Hydrocarbon share of PVC; ethylene need about 0.45 t per t PVC is DERIVED (28.05/62.50)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/pol_bref_0807.pdf",
+    "quote": "The chlorine used in the manufacture of EDC is derived from common salt (NaCl) by electrolysis, so 43 % by weight of PVC originates from crude oil.",
+    "verified": true
+   },
+   {
+    "value": {
+     "S-PVC_thermal": [
+      2,
+      3
+     ],
+     "S-PVC_electrical": [
+      0.7,
+      1.1
+     ],
+     "E-PVC_thermal": [
+      6,
+      9
+     ],
+     "E-PVC_electrical": [
+      1.4,
+      2.2
+     ]
+    },
+    "unit": "GJ per tonne PVC",
+    "what": "Typical energy consumption of the polymerisation step (Table 5.9)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/pol_bref_0807.pdf",
+    "quote": "Thermal energy (GJ/t of PVC) 2-3 6-9 | Electrical energy (GJ/t of PVC) 0.7 - 1.1 1.4 - 2.2 [columns S-PVC, E-PVC]",
+    "verified": true
+   }
+  ]
+ },
+ "steam_methane_reforming": {
+  "value": {
+   "feed_Mg_per_day": 392,
+   "fuel_Mg_per_day": 43,
+   "H2_Nm3_per_day": 1500000
+  },
+  "unit": "plant totals at 100 % capacity",
+  "what": "Natural gas consumed by a 1.5 million Nm3/day SMR hydrogen plant; = about 3.2 kg natural gas per kg H2 (DERIVED with 0.0899 kg/Nm3)",
+  "source": "https://www.osti.gov/servlets/purl/764485",
+  "quote": "Plant size (hydrogen production capacity) 1.5 million Nm3/day (57 million scfd) | Natural gas consumed @ 100% operating capacity 392 Mg/day (feed) 43 Mg/day (fuel) | Hydrogen plant energy efficiency (higher heating value (HHV) basis) 89%",
+  "verified": true,
+  "more": [
+   {
+    "value": 3642.3,
+    "unit": "g natural gas (in ground) per kg H2",
+    "what": "Life-cycle natural gas resource consumption (Table 9)",
+    "source": "https://www.osti.gov/servlets/purl/764485",
+    "quote": "Natural gas (in ground) 3,642.3 94.5%",
+    "verified": true
+   },
+   {
+    "value": 10621,
+    "unit": "g CO2 per kg H2",
+    "what": "Life-cycle CO2 emission of SMR hydrogen; total GWP 11,888 g CO2-eq/kg",
+    "source": "https://www.osti.gov/servlets/purl/764485",
+    "quote": "The overall GWP of the system is 11,888 g CO2-equivalent/kg of hydrogen produced ... CO2 10,621 99.4 1 10,621 89.3",
+    "verified": true
+   },
+   {
+    "value": {
+     "SMR_ATR_no_capture": [
+      8.6,
+      8.7
+     ],
+     "with_capture": [
+      1.2,
+      3.4
+     ]
+    },
+    "unit": "kg CO2 per kg H2",
+    "what": "Carbon footprint of SMR/ATR hydrogen without and with carbon capture",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12930395/fullTextXML",
+    "quote": "SMR and ATR emit roughly 8.6–8.7 kg CO 2 kg H 2 −1 and 1.2–3.4 kg CO 2 kg H 2 −1 , without and with carbon capture, respectively.",
+    "verified": true
+   },
+   {
+    "value": 5.5,
+    "unit": "kg CO2 per kg H2",
+    "what": "Stoichiometric CO2 of SMR + water-gas shift (reported total process emissions 9-12)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12183648/fullTextXML",
+    "quote": "process emissions in the range of 9–12 kg CO 2 per kg H 2 . ... results in the stoichiometric emissions of 5.5 kg CO 2 per kg H 2",
+    "verified": true
+   },
+   {
+    "value": 4.2,
+    "unit": "kWh per Nm3 H2",
+    "what": "Energy need of SMR (about 47 kWh per kg H2, derived)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Hydrogen_production&action=raw",
+    "quote": "SMR needs 4,2 kWh/Nm3 H2, eSMR 3,6 kWh/Nm3 H2 (2,6 kWh natural gas and 1.0 kWh electricity).",
+    "verified": true
+   },
+   {
+    "value": [
+     65,
+     75
+    ],
+    "unit": "% efficiency",
+    "what": "Efficiency of natural gas steam reforming",
+    "source": "https://en.wikipedia.org/w/index.php?title=Steam_reforming&action=raw",
+    "quote": "Steam reforming of natural gas is 65–75% efficient.",
+    "verified": true
+   }
+  ]
+ },
+ "methane_pyrolysis": {
+  "value": 37,
+  "unit": "kJ per mol H2",
+  "what": "Reaction enthalpy of CH4 -> C + 2 H2 (74.6 kJ per mol CH4); = about 5.1 kWh per kg H2 thermodynamic minimum (derived)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12183648/fullTextXML",
+  "quote": "Methane pyrolysis (MP) (CH 4 ⇌ 2H 2 + C, Δ H rxn,298K = 37 kJ per mol H 2 ) has been proposed as a cost-competitive route to produce CO 2 -free hydrogen with zero direct carbon emissions.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     10,
+     30
+    ],
+    "unit": "kWh per kg H2",
+    "what": "Practical energy requirement with plasma-based pyrolysis",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12930395/fullTextXML",
+    "quote": "As energy requirements ranging between approximately 10 and 30 kWh kg H 2 −1 are feasible when plasma-based technologies are employed",
+    "verified": true
+   },
+   {
+    "value": 25,
+    "unit": "kWh per kg H2",
+    "what": "Thermal plasma process (Fulcheri et al.) versus 60 for electrolysis",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12513321/fullTextXML",
+    "quote": "offering potential energy savings at 25 kWh per kg of hydrogen compared to water electrolysis at 60 kWh per kg",
+    "verified": true
+   },
+   {
+    "value": 2.98,
+    "unit": "kg solid carbon per kg H2",
+    "what": "DERIVED from stoichiometry CH4 -> C + 2 H2 (12.011 / 4.032); no published sentence found",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12513321/fullTextXML",
+    "quote": "CH 4 → C + 2 H 2 ( Δ H ° = 74.6 kJ / mol )",
+    "verified": true
+   }
+  ]
+ },
+ "graphite_electrode": {
+  "value": [
+   9,
+   20
+  ],
+  "unit": "GJ per tonne",
+  "what": "Energy use of graphitising (= 2,500-5,560 kWh/t, conversion derived); baking beforehand up to 11 GJ/t",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+  "quote": "Energy use in baking is up to 11 GJ/t (including the abatement equipment's energy consumption; furnaces are usually fired with gas or oil), and in graphitising it is 9–20 GJ/t.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "pitch_wt_pct_green_paste": [
+      14,
+      18
+     ],
+     "baking_weight_loss_pct": 5,
+     "packing_coke_kg_per_t": 14
+    },
+    "unit": "mixed",
+    "what": "Carbon/graphite electrode recipe facts: binder pitch share of green paste, baking weight loss, packing coke consumed",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Coke or coal (anthracite) is usually bound with pitch (14–18 wt-%) to produce a green paste. ... The baking process results in a loss in weight of ~ 5 % of the mass of the material. Packing coke is used in certain furnaces and in these cases is consumed at the rate of ~ 14 kg per tonne of product.",
+    "verified": true
+   },
+   {
+    "value": "needle coke + coal-tar pitch",
+    "unit": "qualitative",
+    "what": "Raw materials of steel-furnace graphite electrodes (no kg-per-tonne figure found)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7662887/fullTextXML",
+    "quote": "the steel industry makes its steels in the furnace heated using the graphite electrode, made from premium-quality delayed coke (needle coke) and coal-tar pitch.",
+    "verified": true
+   }
+  ]
+ },
+ "carbon_anode": {
+  "value": {
+   "petroleum_coke": [
+    60,
+    70
+   ],
+   "coal_tar_pitch": [
+    14,
+    17
+   ],
+   "anode_scrap_butts": [
+    15,
+    20
+   ]
+  },
+  "unit": "wt %",
+  "what": "Composition of prebaked anodes for aluminium smelting",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7662887/fullTextXML",
+  "quote": "Components of high quality for the production of anodes are petroleum coke (60–70 wt.%), coal tar pitch (14–17 wt.%), and anode scrap (15–20 wt.%).",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     13,
+     18
+    ],
+    "unit": "% coal tar pitch",
+    "what": "Pitch share in prebaked anodes",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "These anodes are manufactured from a mixture of petroleum coke and 13–18 % coal tar pitch and residual material from anode butts",
+    "verified": true
+   },
+   {
+    "value": 11,
+    "unit": "GJ per tonne (upper bound)",
+    "what": "Baking energy",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "Energy use in baking is up to 11 GJ/t (including the abatement equipment's energy consumption; furnaces are usually fired with gas or oil)",
+    "verified": true
+   },
+   {
+    "value": {
+     "baking_temp_C": 1100,
+     "weight_loss_pct": [
+      5,
+      10
+     ],
+     "days": [
+      14,
+      21
+     ],
+     "packing_coke_kg_per_t": [
+      12,
+      18
+     ]
+    },
+    "unit": "mixed",
+    "what": "Anode baking conditions",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "the anodes are baked at 1100 °C in the absence of air. ... There is approximately a 5–10 % loss in weight during baking ... and the baking process takes approximately 14 to 21 days. ... This coke is partially consumed during the heating and cooling cycle at a rate of 12–18 kg per tonne of anode",
+    "verified": true
+   },
+   {
+    "value": 20,
+    "unit": "% of original anode weight",
+    "what": "Butts returned to anode production",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "The butts (20 % of the original anode weight) are reused for anode production after residual electrolyte has been removed.",
+    "verified": true
+   },
+   {
+    "value": 0.43,
+    "unit": "t anode per tonne aluminium",
+    "what": "Net anode consumption in smelting",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2020-01/JRC107041_NFM_bref2017.pdf",
+    "quote": "net anode consumption of 0.43 t/t Al",
+    "verified": true
+   }
+  ]
+ },
+ "soap": {
+  "value": [
+   192,
+   203
+  ],
+  "unit": "mg KOH per g fat (saponification value of lard)",
+  "what": "Alkali needed to saponify an animal fat (lard; tallow row not present on the page). DERIVED: /1.403 = 137-145 g NaOH per kg fat. Soap yield per kg fat and glycerol per tonne fat were not found (see not_found).",
+  "source": "https://en.wikipedia.org/w/index.php?title=Saponification_value&action=raw",
+  "quote": "|[[Lard]] |192 – 203 ... KOH values of SV can be converted to NaOH values by dividing KOH values by the ratio of the molecular weights of KOH and NaOH (1.403).",
+  "verified": true
+ },
+ "pharma_e_factor": {
+  "value": {
+   "oil_refining": "<0.1",
+   "bulk_chemicals": "<1 to 5",
+   "fine_chemicals": "5 to >50",
+   "pharmaceuticals": "25 to >100"
+  },
+  "unit": "kg waste per kg product",
+  "what": "Sheldon E-factors by industry sector",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6272361/fullTextXML",
+  "quote": "Industry Sector Product Tonnage E-Factor (kg Waste/kg Product) Oil refining 10 6 –10 8 <0.1 Bulk chemicals 10 4 –10 6 <1.0 to 5.0 Fine chemicals industry 10 2 –10 4 5.0 to > 50 Pharmaceutical industry 10–10 3 25 to > 100",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "oil_refining": "ca. 0.1",
+     "bulk_chemicals": "<1-5",
+     "fine_chemicals": "5-50",
+     "pharmaceuticals": "25-100"
+    },
+    "unit": "kg waste per kg product",
+    "what": "Same table as given on Wikipedia",
+    "source": "https://en.wikipedia.org/w/index.php?title=Green_chemistry_metrics&action=raw",
+    "quote": "| Oil refining | 10^6 – 10^8 | Ca. 0.1 ... | Bulk chemicals | 10^4 – 10^6 | < 1 – 5 ... | Fine chemicals | 10^2 – 10^4 | 5 – 50 ... | Pharmaceuticals | 10 – 10^3 | 25 – 100",
+    "verified": true
+   }
+  ]
+ },
+ "penicillin_fermentation": {
+  "value": 50,
+  "unit": "g penicillin per litre broth (over)",
+  "what": "Current industrial fermentation titre, versus 0.001 g/L in 1939. Yield per kg sugar not found.",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10451904/fullTextXML",
+  "quote": "This increased the concentration of penicillin obtained in the broth from 0.001 g/L in the year 1939 to the current concentrations of over 50 g/L",
+  "verified": true
+ },
+ "paper": {
+  "value": [
+   3,
+   6
+  ],
+  "unit": "m3 wood per tonne chemical (kraft) pulp",
+  "what": "Pulpwood needed per tonne of chemical pulp",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/PP_revised_BREF_2015.pdf",
+  "quote": "The wood required for manufacturing 1 tonne of chemical pulp is normally between 3 m3 and 6 m3.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "groundwood": [
+      2.4,
+      2.6
+     ]
+    },
+    "unit": "m3 wood per air-dry tonne pulp",
+    "what": "Wood use for mechanical (groundwood) pulp",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/PP_revised_BREF_2015.pdf",
+    "quote": "The use of wood is normally between 2.4 m3/ADt and 2.6 m3/ADt for groundwood",
+    "verified": true
+   },
+   {
+    "value": {
+     "paper_mill_heat_GJ": 6.0,
+     "paper_mill_power_kWh": 650,
+     "pulp_mill_heat_GJ_per_t_pulp": 8.5,
+     "pulp_mill_power_kWh_per_t_pulp": 550
+    },
+    "unit": "per tonne",
+    "what": "Heat and power consumption in a fully integrated kraft pulp and paper mill (Table 3.5)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/PP_revised_BREF_2015.pdf",
+    "quote": "Pulp mill process GJ/t pulp 11.0 8.5 | Paper mill process GJ/t paper - 6.0 ... Pulp mill process kWh/t pulp 700 550 | Paper process kWh/t paper - 650",
+    "verified": true
+   },
+   {
+    "value": {
+     "non_integrated_paper_mills": [
+      3.5,
+      20
+     ],
+     "bleached_kraft_pulp": [
+      25,
+      50
+     ]
+    },
+    "unit": "m3 water per tonne",
+    "what": "BAT-associated waste water flow",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/PP_revised_BREF_2015.pdf",
+    "quote": "Bleached kraft 25 – 50 m3/ADt ... Non-integrated paper mills 3.5 – 20 m3/t",
+    "verified": true
+   }
+  ]
+ },
+ "ethanol_fermentation": {
+  "value": 0.511,
+  "unit": "g ethanol per g glucose (theoretical maximum)",
+  "what": "Theoretical ethanol yield on hexose; 0.538 on sucrose",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13599774/fullTextXML",
+  "quote": "The theoretical maximum ethanol yields were taken as 0.511 g ethanol g⁻¹ fermentable hexose (glucose and fructose) and 0.538 g ethanol g⁻¹ sucrose.",
+  "verified": true,
+  "more": [
+   {
+    "value": 90,
+    "unit": "% of theoretical (exceeding)",
+    "what": "Practical industrial yield with S. cerevisiae; = >0.46 g/g (derived)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11461319/fullTextXML",
+    "quote": "In the realm of industrial-scale ethanol production, S. cerevisiae consistently attains a yield exceeding 90% of the theoretical maximum",
+    "verified": true
+   },
+   {
+    "value": 0.42,
+    "unit": "litre ethanol per kg corn",
+    "what": "Corn-to-ethanol yield",
+    "source": "https://en.wikipedia.org/w/index.php?title=Ethanol_fermentation&action=raw",
+    "quote": "Approximately 2.8 gallons of ethanol are produced from one bushel of corn (0.42 liter per kilogram).",
+    "verified": true
+   }
+  ]
+ },
+ "salt_occurrence": {
+  "value": "halite (NaCl) with sylvite (KCl), brine fluid inclusions",
+  "unit": "qualitative",
+  "what": "Salt found in the H-chondrite regolith breccias Monahans (1998) (H5) and Zag (H3-6): blue to purple halite crystals up to 1 cm, about 4.5 billion years old",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11794400/fullTextXML",
+  "quote": "Two H chondrites, Monahans (1998) (hereafter Monahans) (H5) and Zag (H3-6) are regolith breccias and have clasts consisting of blue to purple halite (NaCl) crystals up to 1 cm in size (mostly a few mm in Monahans and a few hundred μm in Zag). ... The Monahans halite contains inclusions of sylvite (KCl)",
+  "verified": true,
+  "more": [
+   {
+    "value": "brine-bearing halite and sylvite",
+    "unit": "qualitative",
+    "what": "Same finds; possible source body Ceres",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5770164/fullTextXML",
+    "quote": "[Monahans (1998) (H5) ... and Zag (H3-6)], which were found to contain brine-bearing halite (NaCl) and sylvite (KCl) crystals ... Our study suggests that the asteroidal parent body where the halite precipitated, potentially asteroid 1 Ceres",
+    "verified": true
+   },
+   {
+    "value": "sodium carbonate, ammonium chloride or bicarbonate",
+    "unit": "qualitative",
+    "what": "Ceres bright spots (Occator crater) composition from Dawn spectra",
+    "source": "https://en.wikipedia.org/w/index.php?title=Bright_spots_on_Ceres&action=raw",
+    "quote": "Near-infrared spectra of these bright areas are consistent with a large amount of [[sodium carbonate]], (Na2CO3) and smaller amounts of [[ammonium chloride]] (NH4Cl) or [[ammonium bicarbonate]] (NH4HCO3).",
+    "verified": true
+   }
+  ]
+ },
+ "sulphur_in_chondrites": {
+  "value": 53500,
+  "unit": "ppm by mass (= 5.35 wt %)",
+  "what": "Sulphur in CI carbonaceous chondrites (Lodders, Palme & Gail 2009, Table of CI abundances; +/- 2700)",
+  "source": "https://arxiv.org/pdf/1010.2746",
+  "quote": "16 S 53500 2700 4.38E+05 2.2E+04 [columns: Z, element, ppm, +/-, atoms per Si=10^6]",
+  "verified": true,
+  "more": [
+   {
+    "value": 5,
+    "unit": "% troilite (FeS)",
+    "what": "Troilite content of H ordinary chondrites; = about 1.8 wt % S (DERIVED, FeS is 36.5 % S). A directly published bulk S wt % for ordinary chondrites was not found.",
+    "source": "https://en.wikipedia.org/w/index.php?title=H_chondrite&action=raw",
+    "quote": "They contain also 15–19% of [[nickel-iron]] metal and about 5% of [[troilite]].",
+    "verified": true
+   },
+   {
+    "value": 36,
+    "unit": "wt % S",
+    "what": "Sulphur content of pure troilite",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12605634/fullTextXML",
+    "quote": "Pure troilite was not sampled (36 wt.% S)",
+    "verified": true
+   },
+   {
+    "value": [
+     2,
+     5.6
+    ],
+    "unit": "wt % S",
+    "what": "Enstatite chondrites, for comparison",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12605634/fullTextXML",
+    "quote": "like the enstatite chondrites with 2-5.6 wt.% S (Mason 1966 ; Lodders and Fegley 1998 )",
+    "verified": true
+   }
+  ]
+ },
+ "phosphate_fertiliser": {
+  "value": [
+   2.6,
+   3.5
+  ],
+  "unit": "t phosphate rock per tonne P2O5",
+  "what": "Rock consumption of wet-process phosphoric acid",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+  "quote": "Phosphate rock 2.6 – 3.5 tonnes Depending on the rock composition [31, EFMA, 2000] [Consumption of ... Per tonne P2O5]",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "H2SO4_t": [
+      2.4,
+      2.9
+     ],
+     "gypsum_t": [
+      4,
+      5
+     ]
+    },
+    "unit": "t per tonne P2O5",
+    "what": "Sulphuric acid consumed and phosphogypsum co-produced",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/lvic_aaf.pdf",
+    "quote": "H2SO4 2.4 – 2.9 tonnes Plant: Nilefos. ... for every tonne of phosphoric acid (P2O5) around 4 – 5 tonnes of gypsum is produced.",
+    "verified": true
+   },
+   {
+    "value": {
+     "P2O5_2023": 25.61,
+     "P2O5_2022": 26.33,
+     "P2O5_2021": 28.33
+    },
+    "unit": "kg P2O5 per hectare of cropland",
+    "what": "World average phosphate fertiliser use (FAO via Our World in Data)",
+    "source": "https://ourworldindata.org/grapher/phosphate-application-per-hectare-of-cropland.csv",
+    "quote": "World,OWID_WRL,2021,28.33 / World,OWID_WRL,2022,26.33 / World,OWID_WRL,2023,25.61",
+    "verified": true
+   },
+   {
+    "value": {
+     "K2O_2023": 23.1,
+     "K2O_2022": 22.1,
+     "K2O_2021": 24.46
+    },
+    "unit": "kg K2O per hectare of cropland",
+    "what": "World average potash fertiliser use (FAO via Our World in Data)",
+    "source": "https://ourworldindata.org/grapher/potash-fertilizer-application-per-hectare-of-cropland.csv",
+    "quote": "World,OWID_WRL,2021,24.46 / World,OWID_WRL,2022,22.1 / World,OWID_WRL,2023,23.1",
+    "verified": true
+   },
+   {
+    "value": 137.6,
+    "unit": "kg fertiliser nutrients (N+P2O5+K2O) per hectare of arable land",
+    "what": "World total fertiliser consumption 2023 (World Bank AG.CON.FERT.ZS)",
+    "source": "https://api.worldbank.org/v2/country/WLD/indicator/AG.CON.FERT.ZS?format=json&date=2015:2023",
+    "quote": "\"Fertilizer consumption (kilograms per hectare of arable land)\" ... \"date\":\"2023\",\"value\":137.649070523514",
+    "verified": true
+   }
+  ]
+ },
+ "rock_wool": {
+  "value": [
+   7,
+   14
+  ],
+  "unit": "GJ per tonne finished product",
+  "what": "Total energy use of stone/slag wool production (melting 60-80 % of it)",
+  "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/GLS_Adopted_03_2012.pdf",
+  "quote": "Stone/slag wool GJ/tonne finished product | Total energy consumption 9 – 20 7 – 14 | Melting 20 – 45 60 – 80 [columns glass wool, stone/slag wool]",
+  "verified": true,
+  "more": [
+   {
+    "value": "basalt + limestone or dolomite, sometimes blast furnace slag; coke-fired cupola",
+    "unit": "qualitative",
+    "what": "Raw materials and melting technique of stone wool (no kg-per-tonne recipe found; coke share 10-13 % of charge quoted in an emissions model)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/GLS_Adopted_03_2012.pdf",
+    "quote": "The most common melting technique for the production of traditional stone wool is the coke-fired hot blast cupola ... This technique melts a combination of alumino-silicate rock (usually basalt) with limestone or dolomite and, sometimes, with blast furnace slag.",
+    "verified": true
+   },
+   {
+    "value": [
+     2.7,
+     5.5
+    ],
+    "unit": "GJ per tonne finished product",
+    "what": "Direct energy for electrical melting (mineral wool sector)",
+    "source": "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/GLS_Adopted_03_2012.pdf",
+    "quote": "Direct energy consumption for electrical melting is in the range of 2.7 to 5.5 GJ/tonne finished product.",
+    "verified": true
+   }
+  ]
+ },
+ "biogas_energy": {
+  "value": {
+   "farm_scale_AD": 23,
+   "centralised_AD": 23,
+   "landfill_gas": 16,
+   "sewage": 22,
+   "biomethane": [
+    31,
+    40
+   ]
+  },
+  "unit": "MJ per Nm3 (lower heating value)",
+  "what": "LHV of raw biogas by source (methane 55-70 % vol.)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9589174/fullTextXML",
+  "quote": "Parameter Farm-scale AD plant Centralized AD plant Landfill gas Sewage treatment Natural gas (Holland) Biomethane | Methane (% vol.) 55–60 60–70 30–65 60–65 ... Lower heating value, (MJ/Nm 3 ) 23 23 16 22 31–40",
+  "verified": true,
+  "more": [
+   {
+    "value": 50.009,
+    "unit": "MJ per kg",
+    "what": "Lower heating value of methane (802.34 kJ/mol)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Heat_of_combustion&action=raw",
+    "quote": "| [[Methane]] | 50.009 | 6.9 | 21,504 | 802.34 [LHV table: MJ/kg, MJ/L, BTU/lb, kJ/mol]",
+    "verified": true
+   },
+   {
+    "value": {
+     "70pct_CH4": 21.5,
+     "100pct_CH4": 35.8
+    },
+    "unit": "MJ per Nm3",
+    "what": "Calorific value of biogas by methane content",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9589174/fullTextXML",
+    "quote": "the calorific value of biogas with 70% and 100% methane and biomethane content yields 21.5 and 35.8 MJ/Nm 3 , respectively",
+    "verified": true
+   },
+   {
+    "value": [
+     20,
+     25
+    ],
+    "unit": "MJ per m3",
+    "what": "Calorific value of raw biogas",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13203769/fullTextXML",
+    "quote": "it has relatively low calorific value of about 20–25 MJ/m 3 compared to natural gas",
+    "verified": true
+   }
+  ]
+ },
+ "animal_feed_byproducts": {
+  "value": {
+   "dry_matter_pct_as_fed": 24.9,
+   "crude_protein_pct_DM": 25.9
+  },
+  "unit": "%",
+  "what": "Brewers' spent grain, fresh (dehydrated: DM 91.0, CP 25.8)",
+  "source": "https://www.feedipedia.org/node/74",
+  "quote": "Brewers grains, fresh Main analysis Unit Avg SD Min Max Nb Dry matter % as fed 24.9 2.3 21.7 28.9 18 Crude protein % DM 25.9 2.8 20.3 30.6 29 ; Brewers grains, dehydrated ... Dry matter % as fed 91.0 2.5 84.1 95.3 53 Crude protein % DM 25.8 3.1 19.5 31.9 101",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "dry_matter_pct_as_fed": 97.0,
+     "crude_protein_pct_DM": 12.5
+    },
+    "unit": "%",
+    "what": "Whey, sweet, dehydrated, skimmed (acid whey: DM 97.1, CP 9.3)",
+    "source": "https://www.feedipedia.org/node/730",
+    "quote": "Whey, sweet, dehydrated, skimmed Main analysis Unit Avg SD Min Max Nb Dry matter % as fed 97.0 1.2 93.7 98.4 98 Crude protein % DM 12.5 0.9 11.1 15.1 95 ; Whey, acid, dehydrated, skimmed ... Dry matter % as fed 97.1 ... Crude protein % DM 9.3",
+    "verified": true
+   },
+   {
+    "value": {
+     "water_pct": 93,
+     "protein_pct": 0.8,
+     "carbohydrate_pct": 5.1
+    },
+    "unit": "% by mass",
+    "what": "Liquid whey composition",
+    "source": "https://en.wikipedia.org/w/index.php?title=Whey&action=raw",
+    "quote": "By mass both contain 93% water, about 0.8% [[protein]], and about 5.1% [[Carbohydrate|carbohydrates]].",
+    "verified": true
+   },
+   {
+    "value": {
+     "dry_matter_pct_as_fed": 88.8,
+     "crude_protein_pct_DM": 8.9
+    },
+    "unit": "%",
+    "what": "Sugar beet pulp, dehydrated",
+    "source": "https://www.feedipedia.org/node/24378",
+    "quote": "Beet pulp, dehydrated Main analysis Unit Avg SD Min Max Nb Dry matter % as fed 88.8 1.1 83.8 95.5 4209 Crude protein % DM 8.9 0.6 6.7 13.9 2976",
+    "verified": true
+   },
+   {
+    "value": {
+     "dry_matter_pct_as_fed": 24.3,
+     "crude_protein_pct_DM": 8.7
+    },
+    "unit": "%",
+    "what": "Sugar beet pulp, pressed",
+    "source": "https://www.feedipedia.org/node/710",
+    "quote": "Beet pulp, pressed Main analysis Unit Avg SD Min Max Nb Dry matter % as fed 24.3 3 15 35.1 110 Crude protein % DM 8.7 0.7 6.7 12.3 679",
+    "verified": true
+   },
+   {
+    "value": {
+     "dry_matter_pct_as_fed": 90.2,
+     "crude_protein_pct_DM": 40.0
+    },
+    "unit": "%",
+    "what": "Cottonseed meal, no or limited dehulling, solvent extracted (dehulled solvent-extracted: DM 90.9, CP 47.3)",
+    "source": "https://www.feedipedia.org/node/550",
+    "quote": "process involving no or limited dehulling and solvent extraction Main analysis Unit Avg SD Min Max Nb Dry matter % as fed 90.2 0.9 88.4 93.1 255 Crude protein % DM 40.0 3.1 34.8 46.5 274 ; ... dehulling and solvent extraction ... Dry matter % as fed 90.9 ... Crude protein % DM 47.3",
+    "verified": true
+   },
+   {
+    "value": {
+     "dry_matter_pct_as_fed": 95.8,
+     "crude_protein_pct_DM": 54.9
+    },
+    "unit": "%",
+    "what": "Meat and bone meal, high-fat (low-fat: DM 93.2, CP 62.0)",
+    "source": "https://www.feedipedia.org/node/222",
+    "quote": "Meat and bone meal, high-fat Main analysis Unit Avg SD Min Max Nb Dry matter % as fed 95.8 1.5 90.1 98.8 5635 Crude protein % DM 54.9 3.4 45.6 68.6 5661 ; Meat and bone meal, low-fat ... 93.2 ... Crude protein % DM 62.0",
+    "verified": true
+   },
+   {
+    "value": {
+     "protein": [
+      48,
+      52
+     ],
+     "ash": [
+      33,
+      35
+     ],
+     "fat": [
+      8,
+      12
+     ],
+     "water": [
+      4,
+      7
+     ]
+    },
+    "unit": "%",
+    "what": "Meat and bone meal typical composition",
+    "source": "https://en.wikipedia.org/w/index.php?title=Meat_and_bone_meal&action=raw",
+    "quote": "It is typically about 48–52% [[protein (nutrient)|protein]], 33–35% [[ash (analytical chemistry)|ash]], 8–12% [[fat]], and 4–7% [[water]].",
+    "verified": true
+   },
+   {
+    "value": {
+     "dairy_cattle_pct_of_diet_DM": [
+      15,
+      20
+     ],
+     "growing_pigs_pct_of_diet": [
+      5,
+      10
+     ]
+    },
+    "unit": "% inclusion",
+    "what": "Recommended inclusion of brewers grains (read through a fetch-and-summarise tool, not from the raw page text)",
+    "source": "https://www.feedipedia.org/node/74",
+    "quote": "up to 20-25% of the concentrate DM, and up to 15-20% of the total dietary DM ... inclusion rates up to 5-10% of the diet are considered acceptable",
+    "verified": false
+   }
+  ]
+ },
+ "not_found": [
+  "ammonia_synthesis_loop: electricity for synthesis loop + air separation only (excluding electrolysis), kWh/t NH3 - no published figure in a page I could open; only totals and the 90-95 % hydrogen share",
+  "methanol_to_olefins: practical (plant) methanol per tonne ethylene+propylene - only the stoichiometric 2.28 t/t found",
+  "methanol_from_co2: electricity per tonne methanol and site area of the George Olah plant",
+  "sulphuric_acid: published sulphur per tonne acid (only derived stoichiometry given); named plant capacity and site area",
+  "nitric_acid: named plant capacity and site area",
+  "graphite_electrode: kg needle coke and kg pitch per tonne of finished electrode",
+  "soap: kg tallow and kg NaOH per kg soap as a published recipe; glycerol by-product per tonne of fat; saponification value of tallow itself (lard used)",
+  "penicillin_fermentation: yield per kg of sugar",
+  "ethanol_fermentation: distillation energy per litre or kg ethanol",
+  "sulphur_in_chondrites: directly published bulk S wt % for ordinary chondrites (only troilite % found) and for CM/CV carbonaceous groups",
+  "rock_wool: kg basalt (and coke) per tonne of stone wool",
+  "pvc: published tonnes ethylene per tonne PVC (only mass shares found)",
+  "methane_pyrolysis: published kg solid carbon per kg H2 (derived from stoichiometry)",
+  "site area (hectares) of any named plant, for every process",
+  "paper: tonnes of dry fibre per tonne of paper (only m3 wood per tonne pulp found)"
+ ],
+ "notes": [
+  "BREF documents are EU JRC Best Available Techniques reference documents, read as pdftotext output of the PDFs at the given URLs (eippcb.jrc.ec.europa.eu redirects there).",
+  "Europe PMC quotes are from the fullTextXML with tags stripped, so sub/superscripts appear spaced (e.g. 'kg H 2 −1').",
+  "Wikipedia quotes are raw wikitext. Wikipedia pages for Zag and Monahans meteorites could not be fetched (rate limit); journal sources used instead.",
+  "anaerobic_digestate / biogas_energy is stored under the single key biogas_energy."
+ ]
+}

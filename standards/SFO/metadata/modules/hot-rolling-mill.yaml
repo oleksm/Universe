@@ -33,6 +33,22 @@ recipes:
       - { item: stock.sta36-scrap, quantity: 0.22 }
     rate: 27.7777777777778
     power: 26500000.0
+  - makes: stock.st304-pl-3
+    does: "A hot ingot of stainless steel passed between rolls until it is plate."
+    inputs:
+      - { item: good.hot-ingot-304, quantity: 1.22 }
+    outputs:
+      - { item: stock.st304-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
+  - makes: stock.ti64-pl-5
+    does: "A hot ingot of titanium alloy passed between rolls until it is plate."
+    inputs:
+      - { item: good.hot-ingot-ti64, quantity: 1.22 }
+    outputs:
+      - { item: stock.ti64-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, power, what is lost), used for each metal it works: a guess, to be reviewed. Each metal has its own." }
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 1,221 kg of ingot for each tonne rolled, an 82% yield. Steel loses 7 to 15%." }

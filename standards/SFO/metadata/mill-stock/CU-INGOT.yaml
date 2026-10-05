@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.cu-ingot
+  code: CU-INGOT
+  name: "Copper ingot"
+  form: ingot
+made_from:
+  - item: material.copper

@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.vacuum-furnace
+  name: "Vacuum arc furnace"
+  step: "Melt in vacuum"
+  description: "Titanium takes up air the moment it melts, so it is melted by an arc in a vacuum, in a copper crucible cooled by water, and melted twice."
+physical:
+  length: 40
+  width: 30
+  height: 25
+recipes:
+  - makes: stock.ti64-ingot
+    does: "Titanium, aluminium and vanadium are pressed into an electrode and melted by arc in vacuum, twice."
+    inputs:
+      - { item: element.ti, quantity: 0.927 }
+      - { item: element.al, quantity: 0.0618 }
+      - { item: element.v, quantity: 0.0412 }
+    outputs:
+      - { item: stock.ti64-scrap, quantity: 0.03 }
+    rate: 0.5
+    power: 1800000
+  - makes: stock.ti64-ingot
+    does: "Titanium alloy scrap is cleaned, pressed into an electrode and melted again in vacuum."
+    inputs:
+      - { item: stock.ti64-scrap, quantity: 1.03 }
+    outputs:
+      - { item: good.dross, quantity: 0.03 }
+    rate: 0.5
+    power: 1800000
+basis:
+  - { of: [recipes, recipes.inputs], tier: derived, review: true, note: "The metals in the shares of the grade: 90 titanium, 6 aluminium, 4 vanadium. The 3% lost is a guess." }
+  - { of: [physical, recipes.rate, recipes.outputs, recipes.power], tier: invented, review: true, note: "1 kWh a kg, from memory: no source was looked up. To be reviewed." }

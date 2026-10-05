@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.solvay-waste
+  name: "Soda works waste"
+  kind: by-product
+  description: "What a soda works runs off: calcium chloride, salt that did not react, and spent lime, in water."
+physical:
+  bulk_density: 1300
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

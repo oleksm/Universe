@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.foundry
+  name: "Foundry"
+  step: "Melt and cast"
+  description: "Induction furnaces and moulds for the metals that are not steel or aluminium: copper and its alloys. The metal comes as it was won, pure; the foundry melts it, mixes the grade and casts it."
+physical:
+  length: 80
+  width: 40
+  height: 15
+recipes:
+  - makes: stock.cu-ingot
+    does: "Copper is melted and cast into ingots."
+    inputs:
+      - { item: element.cu, quantity: 1.02 }
+    outputs:
+      - { item: good.dross, quantity: 0.02 }
+    rate: 2.0
+    power: 2050000
+  - makes: stock.cu-ingot
+    does: "Copper scrap is melted again and cast into ingots."
+    inputs:
+      - { item: stock.cu-scrap, quantity: 1.02 }
+    outputs:
+      - { item: good.dross, quantity: 0.02 }
+    rate: 2.0
+    power: 2050000
+  - makes: stock.brz932-bar-50
+    does: "Copper is melted with tin, lead and zinc and cast as bar."
+    inputs:
+      - { item: element.cu, quantity: 0.8466 }
+      - { item: element.sn, quantity: 0.0714 }
+      - { item: element.pb, quantity: 0.0714 }
+      - { item: element.zn, quantity: 0.0306 }
+    outputs:
+      - { item: good.dross, quantity: 0.02 }
+    rate: 2.0
+    power: 2050000
+basis:
+  - { of: [recipes, recipes.inputs], tier: derived, review: true, note: "The metals in the shares of the grade (its material's composition), with 2% lost as dross, a guess." }
+  - { of: [recipes.power], tier: derived, review: true, note: "To heat copper from 20 C to its melting point (384 J/kg/K over 1,065 K) and melt it (205 kJ/kg, from memory), in a furnace that puts 60% of its power into the metal (a guess): 1.02 MJ a kg. Bronze is taken the same." }
+  - { of: [physical, recipes.rate, recipes.outputs], tier: invented, review: true, note: "Chosen. To be reviewed." }

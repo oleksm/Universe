@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.ti64-ingot
+  code: TI64-INGOT
+  name: "Ti-6Al-4V ingot"
+  form: ingot
+made_from:
+  - item: material.titanium-alloy-ti-6al-4v

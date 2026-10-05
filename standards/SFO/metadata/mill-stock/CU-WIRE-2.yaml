@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.cu-wire-2
+  code: CU-WIRE-2
+  name: "Copper wire 2 mm"
+  form: wire
+made_from:
+  - item: material.copper
+size:
+  diameter: 0.002
+basis:
+  - { of: [size], tier: invented, review: true, note: "The gauge was chosen: one size standing for all." }
