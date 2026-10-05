@@ -199,6 +199,8 @@ pub struct App {
     pub market: Option<market::MarketView>,
     /// The ship planner (the shipyard, docked at a station), while open.
     pub shipyard: Option<shipyard::Shipyard>,
+    /// The game held to the shipyard studio's budget of cores (see `hold_to_cores`).
+    held_to_cores: bool,
     /// At a vending machine, its panel open: the item picked.
     pub vending: Option<usize>,
     /// Ship plans kept (in the save).
@@ -375,6 +377,7 @@ impl App {
             explored: Default::default(),
             market: None,
             shipyard: None,
+            held_to_cores: false,
             deckplans: Vec::new(),
             layout_sent: None,
             preview: None,
@@ -1219,6 +1222,11 @@ impl App {
 impl Game for App {
     fn update(&mut self, ctx: &mut Context) {
         let dt = ctx.dt as f64;
+        // (In the shipyard studio, the game kept to a few cores; out of it, all of them.)
+        if self.shipyard.is_some() != self.held_to_cores {
+            self.held_to_cores = self.shipyard.is_some();
+            hold_to_cores(self.held_to_cores.then(universe_sim::engine::cores));
+        }
         // The observer: the live port's questions answered; a recording's frame kept.
         observe::answer(self, ctx);
         observe::frame(self, ctx);
@@ -1484,26 +1492,35 @@ pub fn ship_visible(app: &App) -> bool {
 /// The galaxy's stars seen from a system: the system, and each star's direction and colour.
 pub type SkyCache = (usize, Vec<(universe_engine::glam::Vec3, universe_engine::Color)>);
 
-/// The whole game kept to `n` cores (Linux: its threads, now and later, may run
-/// on those only; elsewhere its thread pools are sized to them, no more).
-fn hold_to_cores(n: usize) {
+/// The game kept to `n` cores while the shipyard studio is open (Linux: its
+/// threads, now and later, may run on those only), or (None) let go to every
+/// core it was allowed at the start. Elsewhere, nothing.
+fn hold_to_cores(n: Option<usize>) {
     #[cfg(target_os = "linux")]
-    // SAFETY: a cpu_set_t made empty, filled with CPUs we're allowed, and handed to
-    // the kernel for this process; nothing else touches it.
+    // SAFETY: cpu_set_t values made empty, filled with CPUs we're allowed, and handed
+    // to the kernel for this process's threads; nothing else touches them.
     unsafe {
-        let mut allowed: libc::cpu_set_t = std::mem::zeroed();
-        if libc::sched_getaffinity(0, std::mem::size_of::<libc::cpu_set_t>(), &mut allowed) != 0 {
-            return;
-        }
-        let mut set: libc::cpu_set_t = std::mem::zeroed();
-        let mut taken = 0;
-        for cpu in 0..libc::CPU_SETSIZE as usize {
-            if taken < n && libc::CPU_ISSET(cpu, &allowed) {
-                libc::CPU_SET(cpu, &mut set);
-                taken += 1;
+        static ALLOWED: std::sync::OnceLock<libc::cpu_set_t> = std::sync::OnceLock::new();
+        let allowed = *ALLOWED.get_or_init(|| {
+            let mut allowed: libc::cpu_set_t = std::mem::zeroed();
+            libc::sched_getaffinity(0, std::mem::size_of::<libc::cpu_set_t>(), &mut allowed);
+            allowed
+        });
+        let set = match n {
+            Some(n) => {
+                let mut set: libc::cpu_set_t = std::mem::zeroed();
+                let mut taken = 0;
+                for cpu in 0..libc::CPU_SETSIZE as usize {
+                    if taken < n && libc::CPU_ISSET(cpu, &allowed) {
+                        libc::CPU_SET(cpu, &mut set);
+                        taken += 1;
+                    }
+                }
+                set
             }
-        }
-        // (Every thread: rayon's and the engine's, made before this, one by one.)
+            None => allowed,
+        };
+        // (Every thread: rayon's and the engine's, one by one.)
         if let Ok(tasks) = std::fs::read_dir("/proc/self/task") {
             for t in tasks.flatten() {
                 if let Ok(tid) = t.file_name().to_string_lossy().parse::<libc::pid_t>() {
@@ -1520,9 +1537,9 @@ fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
         .init();
     // (The cores shared out before anything starts using them: see `thread_budget`;
-    // and the game held to its budget of them, however busy it is.)
+    // what the game may use at all, noted before the shipyard holds it to fewer.)
     universe_sim::engine::size_thread_pools();
-    hold_to_cores(universe_sim::engine::cores());
+    hold_to_cores(None);
     // (Slow frames written down beside the quicksave: hitches.log.)
     let hitch_log = Some(save::data_dir().join("freefall").join("hitches.log"));
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {

@@ -37,7 +37,7 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
     let n = MAP_SIZE as usize;
     let amp = terrain.amplitude.max(1.0);
     let mut texels = vec![[0.0f32; 2]; 6 * n * n];
-    let threads = universe_sim::engine::cores().max(1);
+    let threads = std::thread::available_parallelism().map_or(4, |c| c.get()).max(1);
     let rows = (6 * n).div_ceil(threads);
     std::thread::scope(|s| {
         for (k, chunk) in texels.chunks_mut(rows * n).enumerate() {
