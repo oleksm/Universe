@@ -10,9 +10,14 @@ size_class: 1
 physical:
   mass: 500
   volume: 1.5
+built_of:
+  parts: capacitor-s1
+making:
+  module: module.assembly-shop
 function:
   kind: capacitor
   capacity: 5000000000
   rate: 20000000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a store of energy as current in a superconducting coil. A real one holds 4 to 40 kJ for each kg, and the largest magnets built (ITER's) 5; this is asked for 10,000." }

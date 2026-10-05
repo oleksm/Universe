@@ -12,6 +12,10 @@ physical:
   volume: 9
 needs:
   power: 500000
+built_of:
+  parts: thrusters-quad-s3
+making:
+  module: module.assembly-shop
 function:
   kind: thrusters
   thrust: 900000
@@ -20,3 +24,4 @@ function:
   burns: material.deuterium
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design of a thruster block (a small torch of the same kind): the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }

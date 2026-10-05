@@ -10,8 +10,13 @@ size_class: 3
 physical:
   mass: 1500
   volume: 30
+built_of:
+  parts: rack-s3
+making:
+  module: module.assembly-shop
 function:
   kind: rack
   capacity: 20000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }

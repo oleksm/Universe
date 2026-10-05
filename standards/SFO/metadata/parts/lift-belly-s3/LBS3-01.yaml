@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.lbs3-01
+  code: LBS3-01
+  name: "First wall"
+  revision: draft
+  description: "The lining that faces the burning plasma."
+physical:
+  mass: 289
+made_from:
+  - item: stock.sic-tl-10
+    quantity: 332.3
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of the engine, as in NASA's Discovery II fusion engine (2005), brought to this product's weight." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

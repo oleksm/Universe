@@ -10,9 +10,14 @@ size_class: 4
 physical:
   mass: 5000
   volume: 800
+built_of:
+  parts: tank-s4
+making:
+  module: module.assembly-shop
 function:
   kind: tank
   capacity: 80000
   holds: material.deuterium
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: the 4 t tank's, larger. A real tank's wall grows with its surface and its fuel with its volume, so a larger one should be lighter for what it holds: these are, a little (7.5 to 6.3% of the fuel's weight)." }

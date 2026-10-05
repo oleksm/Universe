@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.pas3-10
+  code: PAS3-10
+  name: "Frame"
+  revision: draft
+  description: "Carries the set."
+physical:
+  mass: 22
+made_from:
+  - item: stock.al6061-pl-5
+    quantity: 25.3
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of reactor and power conversion, as in NASA's Discovery II (2005), brought to this product's weight." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

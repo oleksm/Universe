@@ -13,3 +13,6 @@
 - **Later the same day: all 107 lines complete.** Port Trethi's foundry and mill gained lines for
   stainless, titanium, copper, bronze, silicon carbide tile, insulation blanket and carbon
   composite plate; three new works make the last three.
+- **All 57 equipment products have parts:** 402 parts, each chain complete. Larger sizes follow
+  their smaller kin's shares; racks, cabins, capacitors, relays, the gun and the laser have first
+  designs of their own.

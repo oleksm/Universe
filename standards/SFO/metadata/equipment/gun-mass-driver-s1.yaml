@@ -12,7 +12,12 @@ physical:
   volume: 1.5
 needs:
   power: 50000
+built_of:
+  parts: gun-mass-driver-s1
+making:
+  module: module.assembly-shop
 function:
   kind: gun
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a rail gun. Two rails in a strong tube, a store of pulsed power, a magazine and loader, a mount. The Navy's fired 10 kg at 2.5 km/s from a bank holding 9 to 32 MJ at about a quarter efficiency; this fires 0.5 kg at 3 km/s ten times a second, and its draw on record does not yet pay for that." }

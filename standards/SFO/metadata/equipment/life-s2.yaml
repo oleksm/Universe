@@ -12,7 +12,12 @@ physical:
   volume: 8
 needs:
   power: 200000
+built_of:
+  parts: life-s2
+making:
+  module: module.assembly-shop
 function:
   kind: life_support
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, by the space station's plant. By the station's weights (293 kg a head for water and oxygen) 1,500 kg keeps about five people." }

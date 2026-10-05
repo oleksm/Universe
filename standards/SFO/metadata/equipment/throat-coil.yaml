@@ -7,7 +7,12 @@ identity:
   description: "What holds the tube. One stands in each segment of a ring; together, round the whole ring, they hold its tube open, and all the power that takes goes through them."
 physical:
   mass: 150000
+built_of:
+  parts: throat-coil
+making:
+  module: module.assembly-shop
 function:
   kind: throat_coil
 basis:
   - { of: [physical], tier: invented, review: true, note: "A guess, to be reviewed: nothing says what holds a tube or what it weighs. Not in the game yet." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: one great coil of a gate ring, in its case, with its cold plant. ITER's eighteen coils weigh 330 t each; this is 150 t." }

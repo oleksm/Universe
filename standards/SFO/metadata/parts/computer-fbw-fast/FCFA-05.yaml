@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.fcfa-05
+  code: FCFA-05
+  name: "Harness"
+  revision: draft
+  description: "The wiring to every nozzle."
+physical:
+  mass: 23
+made_from:
+  - item: stock.cu-wire-2
+    quantity: 26.4
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

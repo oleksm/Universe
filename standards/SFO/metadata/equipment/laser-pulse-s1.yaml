@@ -12,7 +12,12 @@ physical:
   volume: 2
 needs:
   power: 2500000
+built_of:
+  parts: laser-pulse-s1
+making:
+  module: module.assembly-shop
 function:
   kind: laser
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: banks of laser modules, a mirror to point the beam, and above all cooling. Real ones turn a quarter to a third of their power into light and aim for 5 kg for each kW of beam; this is 0.6 kg a kW at four fifths." }

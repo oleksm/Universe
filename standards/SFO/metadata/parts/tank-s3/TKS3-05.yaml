@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.tks3-05
+  code: TKS3-05
+  name: "Mountings"
+  revision: draft
+  description: "The struts that hold it to the hull and let little heat through."
+physical:
+  mass: 114
+made_from:
+  - item: stock.ti64-pl-5
+    quantity: 131.1
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "The 4 t tank's shares, brought to this product's weight." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

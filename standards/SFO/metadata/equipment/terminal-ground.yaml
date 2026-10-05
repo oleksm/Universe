@@ -11,6 +11,10 @@ physical:
   volume: 10
 needs:
   power: 100000
+built_of:
+  parts: terminal-ground
+making:
+  module: module.assembly-shop
 function:
   kind: comm
   capture: 100000000
@@ -19,3 +23,4 @@ function:
   capacity: 13.8888888889
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }

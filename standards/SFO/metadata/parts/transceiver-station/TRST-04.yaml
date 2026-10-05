@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.trst-04
+  code: TRST-04
+  name: "Waveguide"
+  revision: draft
+  description: ""
+physical:
+  mass: 1758
+made_from:
+  - item: stock.cu-wire-2
+    quantity: 2021.7
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

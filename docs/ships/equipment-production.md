@@ -95,3 +95,38 @@ salt and limestone are a wet world's rock, and Port Trethi stands on an airless 
 other than iron and aluminium still come as elements. And three stand-ins are in the recipes,
 each said in its record: the registry's one plastic stands for polyester film, for the
 polyacrylonitrile that carbon fibre is baked from, and for epoxy resin.
+
+## All 57 products (2026-10-05, later still)
+
+Every equipment record has parts: 57 products, 402 parts, 459 chain lines, all complete; each
+product's parts sum to its weight.
+
+| Group | Products | How |
+|---|---|---|
+| Larger and second-maker drives, thrusters, lifts | 7 | the torch's shares |
+| Larger and Aurel's plants | 5 | the plant's shares |
+| Tanks 8 to 80 t | 4 | the 4 t tank's shares |
+| Larger and Halcyon's hyperdrives | 5 | the hyperdrive's (invented) |
+| Fast flight computer, full nav computer, larger life support | 3 | their smaller kin's |
+| Long comm, ground terminal, beacon and station transceivers | 4 | the Mars orbiter's radio |
+| Gate relay, hyper relay, throat coil | 3 | invented: coils, cold plant, computers |
+| Cargo racks | 4 | chosen: tube frame, decking, locks |
+| Cabins | 4 | chosen: shell, seats, air plant, cooler |
+| Capacitors | 3 | invented: a superconducting coil that holds current |
+| Mass driver | 1 | a rail gun: rails, barrel tube, pulse store, loader, mount |
+| Pulse laser | 1 | laser modules, beam director, drives, cooler |
+
+**What this pass does not do.** A larger size is the smaller one's shares at a larger weight: no
+product has yet been sized from what it must do. And one maker's product differs from another's
+only in its figures, not its parts: why Aurel's plant is lighter than Hadley's is not yet matter.
+Both are the next depth.
+
+**More that the real things say:**
+
+| Product | A real one | Ours |
+|---|---|---|
+| Capacitor | 4 to 40 kJ a kg (superconducting stores) | 10,000 kJ a kg |
+| Laser | a quarter to a third efficient; 5 kg a kW of beam is the aim | four fifths; 0.6 kg a kW |
+| Gun | 10 kg at 2.5 km/s, six a minute, at about a quarter efficiency | 0.5 kg at 3 km/s, ten a second, from a 50 kW draw |
+| Cabin | 10 kg a seat (the seat alone) | 130 to 150 kg a place, with shell and air |
+| Throat coil | 330 t (one of ITER's) | 150 t |

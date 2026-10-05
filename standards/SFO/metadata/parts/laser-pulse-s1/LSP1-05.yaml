@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.lsp1-05
+  code: LSP1-05
+  name: "Frame"
+  revision: draft
+  description: ""
+physical:
+  mass: 156
+made_from:
+  - item: stock.al6061-pl-5
+    quantity: 179.4
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A fibre laser weapon is a quarter efficient, and its cooling load three times its beam." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

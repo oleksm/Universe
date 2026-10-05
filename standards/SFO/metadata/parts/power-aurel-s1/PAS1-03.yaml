@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.pas1-03
+  code: PAS1-03
+  name: "Field coil windings"
+  revision: draft
+  description: "The superconducting windings."
+physical:
+  mass: 6
+made_from:
+  - item: stock.cu-wire-2
+    quantity: 6.9
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of reactor and power conversion, as in NASA's Discovery II (2005), brought to this product's weight." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

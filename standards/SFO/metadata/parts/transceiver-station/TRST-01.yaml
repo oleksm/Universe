@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.trst-01
+  code: TRST-01
+  name: "Transponder and amplifiers"
+  revision: draft
+  description: ""
+physical:
+  mass: 3919
+made_from:
+  - item: good.electronics
+    quantity: 3919
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

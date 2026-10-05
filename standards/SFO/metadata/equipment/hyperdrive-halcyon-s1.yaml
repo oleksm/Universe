@@ -11,9 +11,14 @@ physical:
   volume: 6
 needs:
   power: 900000
+built_of:
+  parts: hyperdrive-halcyon-s1
+making:
+  module: module.assembly-shop
 function:
   kind: hyperdrive
   efficiency: 0.75
   top_speed: 1049273603000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and all invented: nothing real holds a hyper-field. Taken as coils in strong cases, the power gear that feeds them, and cooling." }

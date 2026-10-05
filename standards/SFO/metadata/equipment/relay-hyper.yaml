@@ -12,6 +12,10 @@ physical:
   volume: 40
 needs:
   power: 1500000
+built_of:
+  parts: relay-hyper
+making:
+  module: module.assembly-shop
 function:
   kind: hyper_relay
   lag: 0.1
@@ -19,3 +23,4 @@ function:
   cadence: 3
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a hyperdrive's coils turned to carrying messages, with the computers that sort them." }

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.lbs2-04
+  code: LBS2-04
+  name: "Shaping coils and bracing"
+  revision: draft
+  description: "The coils that shape and hold the plasma, and the bracing between them."
+physical:
+  mass: 567
+made_from:
+  - item: stock.ti64-pl-5
+    quantity: 652.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of the engine, as in NASA's Discovery II fusion engine (2005), brought to this product's weight." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

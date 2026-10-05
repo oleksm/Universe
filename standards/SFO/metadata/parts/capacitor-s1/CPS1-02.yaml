@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.cps1-02
+  code: CPS1-02
+  name: "Winding"
+  revision: draft
+  description: "Superconducting cable."
+physical:
+  mass: 40
+made_from:
+  - item: stock.cu-wire-2
+    quantity: 46.0
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
