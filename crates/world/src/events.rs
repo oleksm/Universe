@@ -12,6 +12,9 @@ pub enum ShipEvent {
     /// Set down harder than its legs are designed for (`sink`, m/s): the jolt
     /// everything aboard took (g).
     HardLanding { sink: f64, jolt: f64 },
+    /// What was in the hold of `item` (`units` of it) broke under a jolt
+    /// harder than it takes.
+    CargoBroken { item: usize, units: u32 },
     /// Came to rest on a spaceport's pad.
     LandedAtPort { port: String },
     /// Moved off the pad into the port's hangar, or out of it onto pad `pad`.

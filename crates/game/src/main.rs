@@ -1071,6 +1071,7 @@ impl App {
                 }
                 Event::Ship(ShipEvent::StruckRock { speed, .. }) => format!("ROCK STRIKE AT {speed:.1} M/S"),
                 Event::Ship(ShipEvent::HardLanding { sink, jolt }) => format!("HARD LANDING: {sink:.1} M/S DOWN, {jolt:.1} G ABOARD"),
+                Event::Ship(ShipEvent::CargoBroken { item, units }) => format!("BROKEN IN THE JOLT: {units} OF {}", self.charts.goods[item].name.to_uppercase()),
                 // Anything else says nothing (add a line here for a new event that should).
                 _ => continue,
             };

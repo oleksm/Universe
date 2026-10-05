@@ -168,6 +168,13 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     assert!(legs.iter().any(|e| e.asset == Asset::Credits && e.from == Party::Pilot(0)));
     assert!(legs.iter().any(|e| e.asset == Asset::Goods(item) && e.to == Party::Pilot(0)));
     assert!(u.ledger.balanced(), "nothing made or lost");
+    // A jolt harder than a part takes (SFO 15) breaks it in the hold; ore takes any jolt.
+    let part = u.world.goods.iter().find(|g| g.shock_limit.is_some_and(|l| l < 15.0 * 9.80665)).map(|g| g.id).expect("a part that takes under 15 g");
+    u.ledger.settle(Party::Pilot(0), Asset::Goods(part), 2.0, u.tick, universe_sim::protocol::Cause::Rules);
+    let broken = u.book_jolts(0, &[universe_sim::Event::Ship(universe_sim::world::ShipEvent::HardLanding { sink: 9.0, jolt: 15.0 })]);
+    assert!(broken.iter().any(|e| matches!(e, universe_sim::world::ShipEvent::CargoBroken { item, units: 2 } if *item == part)), "{broken:?}");
+    assert!(u.hold().iter().all(|(i, _)| *i != part) && u.hold().iter().any(|(i, _)| *i == item), "the part broke, the plate held: {:?}", u.hold());
+    assert!(u.ledger.balanced());
     // Undocked, the market won't trade.
     let far = u.ship.position + DVec3::X * 50_000.0;
     place_player(&mut u, far);

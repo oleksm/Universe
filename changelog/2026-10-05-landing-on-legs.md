@@ -17,3 +17,12 @@ The registry's design (SFO 15, the MC-07's `design`): legs built for a 3.05 m/s 
 - Hulls without legs in the registry (the five outdated stock hulls) land as before (the pad's
   30 m/s, the deck's 10).
 - The landing test now also sets an MC-07 down: under its design, hard, and past its legs.
+
+## Shock: what a jolt breaks
+
+- **Every stock item and part carries its shock limit** (SFO 15: the hardest jolt it takes while
+  carried; 9 of 35 mill stock items and 52 parts say, the rest none: they take any jolt).
+- **A hard landing's jolt breaks what in the hold takes less:** it's written off, the hold weighs
+  what's left, and the pilot is told (BROKEN IN THE JOLT: 2 OF ...). NPC ships alike.
+- Even the hardest landing an MC-07's legs survive puts about 2 g aboard, and the lowest limit is
+  10 g: the legs keep the cargo whole. Harder jolts (a collision's) are next.

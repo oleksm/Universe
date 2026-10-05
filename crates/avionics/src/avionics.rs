@@ -133,6 +133,7 @@ impl Avionics {
             | ShipEvent::Bumped
             | ShipEvent::StruckRock { .. }
             | ShipEvent::HardLanding { .. }
+            | ShipEvent::CargoBroken { .. }
             | ShipEvent::AnchorFailed { .. }
             | ShipEvent::AnchorReleased
             | ShipEvent::Mined { .. }
