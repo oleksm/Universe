@@ -171,6 +171,9 @@ pub(crate) struct HullDef {
     radius: f64,
     drag_area: f64,
     hull_strength: f64,
+    /// A hold built into the frame (kg, m³): an ore bay, beside any racks.
+    #[serde(default)]
+    bay: (f64, f64),
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
@@ -194,7 +197,13 @@ impl HullDef {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn made(key: String, name: String, shape: String, frame_mass: f64, price: f64, slots: Vec<(String, crate::modules::SlotKind, u8)>, fit: Vec<(String, String)>, thrusters: Vec<(String, String, f64)>, radius: f64, drag_area: f64, hull_strength: f64) -> Self {
         let thrusters = thrusters.into_iter().map(|(nozzle, slot, share)| ThrusterDef { nozzle, slot, share }).collect();
-        HullDef { key, name, brand: String::new(), shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength }
+        HullDef { key, name, brand: String::new(), shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength, bay: (0.0, 0.0) }
+    }
+
+    /// With a hold of its own built into the frame (kg, m³).
+    pub(crate) fn with_bay(mut self, kg: f64, m3: f64) -> Self {
+        self.bay = (kg, m3);
+        self
     }
 
     pub(crate) fn key(&self) -> &str {
@@ -241,6 +250,7 @@ impl HullDef {
             radius: flight.radius.unwrap_or(0.0),
             drag_area: flight.drag_area.unwrap_or(0.0),
             hull_strength: flight.hull_strength.unwrap_or(0.0),
+            bay: (0.0, 0.0),
         })
     }
 
@@ -283,7 +293,7 @@ impl HullDef {
             found.insert(h, m);
             fit.push((slot.clone(), h));
         }
-        let frame = HullFrame { frame_mass: self.frame_mass, price: self.price, slots, nozzles, radius: self.radius, drag_area: self.drag_area, hull_strength: self.hull_strength };
+        let frame = HullFrame { frame_mass: self.frame_mass, price: self.price, slots, nozzles, radius: self.radius, drag_area: self.drag_area, hull_strength: self.hull_strength, bay: self.bay };
         let brand = self.brand.clone();
         ClassSpec::assemble(self.key, self.name, self.shape, shape_ref, shape, frame, fit, |h| found[&h]).map(|mut s| {
             s.brand = brand;
@@ -314,6 +324,8 @@ pub struct HullFrame {
     pub radius: f64,
     pub drag_area: f64,
     pub hull_strength: f64,
+    /// A hold built into it (kg, m³), beside any racks fitted.
+    pub bay: (f64, f64),
 }
 
 /// A fit: a module in each of its slots (by name).
@@ -498,10 +510,10 @@ impl ClassSpec {
         if let Some(other) = held.iter().map(|s| s.as_str()).chain(burnt.iter().copied()).find(|k| *k != fuel) {
             return Err(format!("its tanks and plants must hold and burn one fuel ({fuel} and {other})"));
         }
-        let hold_capacity: f64 = modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum();
+        let hold_capacity: f64 = frame.bay.0 + modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum::<f64>();
         let (capacitor_capacity, capacitor_rate) = modules().filter_map(|m| if let Does::Capacitor { capacity, rate } = m.does { Some((capacity, rate)) } else { None }).fold((0.0, 0.0), |(c, r), (a, b)| (c + a, r + b));
         let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
-        let hold_volume: f64 = modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum();
+        let hold_volume: f64 = frame.bay.1 + modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum::<f64>();
         let power_output: f64 = modules().filter_map(|m| if let Does::PowerPlant { output, .. } = m.does { Some(output) } else { None }).sum();
         let hyper_efficiency = modules().filter_map(|m| if let Does::Hyperdrive { efficiency, .. } = m.does { Some(efficiency) } else { None }).fold(0.0, f64::max);
         let hyper_top = modules().filter_map(|m| if let Does::Hyperdrive { top_speed, .. } = m.does { Some(top_speed) } else { None }).fold(0.0, f64::max);

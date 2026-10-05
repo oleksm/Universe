@@ -84,14 +84,21 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let size = hi - lo;
     // (A hull the registry describes by this model weighs what its parts do, at its price;
     // any other, by its size.)
-    let recorded = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual)).and_then(|h| crate::goods::item(&h.identity.key)).map(|i| &content().stock[i]);
+    let record = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual));
+    let recorded = record.and_then(|h| crate::goods::item(&h.identity.key)).map(|i| &content().stock[i]);
     let frame_mass = recorded.map_or(FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0), |h| h.mass);
     let price = recorded.map_or(PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>(), |h| h.price);
-    let fit = stock_fit(&slots)?;
+    // (Fitted as its record says, with its own hold, where the registry describes it: an
+    // ore bay, not racks. Any other: the cheapest that fits each slot.)
+    let fit = match record {
+        Some(h) if !h.fit.is_empty() => h.fit.iter().filter(|f| slots.iter().any(|s| s.0 == f.slot)).map(|f| (f.slot.clone(), f.item.clone())).collect(),
+        _ => stock_fit(&slots)?,
+    };
+    let bay = record.filter(|h| !h.fit.iter().any(|f| f.slot == "cargo")).map_or((0.0, 0.0), |h| (h.capacity.hold.unwrap_or(0.0), h.capacity.hold_volume.unwrap_or(0.0)));
     let radius = 0.3 * size.max_element() * 0.5 + 6.0;
     let drag = size.x * size.y * 0.6;
     let name = read.name.unwrap_or_else(|| stem.to_uppercase());
-    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, STRENGTH_PER_KG * frame_mass);
+    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, STRENGTH_PER_KG * frame_mass).with_bay(bay.0, bay.1);
     let shape: &'static crate::shape::Shape = Box::leak(Box::new(shape));
     let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
     let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
