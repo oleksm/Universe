@@ -28,6 +28,17 @@ impl Shipyard {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::new() }
     }
 
+    /// The walls being walked through: the interior studio's walled tubes (none from
+    /// the deck studio).
+    pub fn walls(&self) -> Option<Vec<[universe_engine::glam::DVec3; 3]>> {
+        (self.page == Page::Interior).then(|| self.interior.walls())
+    }
+
+    /// Those walls to draw: each triangle with its colour.
+    pub fn wall_faces(&self) -> Option<Vec<crate::interior::WallFace>> {
+        (self.page == Page::Interior).then(|| self.interior.wall_faces())
+    }
+
     /// The interior studio turned to look from `yaw`, `pitch` (dev scenarios).
     pub fn interior_turned(yaw: f32, pitch: f32) -> Self {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::turned(yaw, pitch) }
@@ -60,14 +71,31 @@ pub fn open(app: &mut App) -> Option<Shipyard> {
 
 /// This frame's input. False: close it.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
+    // The shipyard key closes it (the interior studio asks first if its plan is unsaved).
     if crate::keys::pressed(&ctx.input, Act::Shipyard) {
-        return false;
+        return match app.shipyard.as_mut() {
+            Some(y) if y.page == Page::Interior => !y.interior.close(),
+            _ => false,
+        };
     }
     let spec = app.ship.spec();
     let Some(y) = app.shipyard.as_mut() else { return false };
     if y.page == Page::Interior {
         let mut interior = std::mem::take(&mut y.interior);
         let stay = crate::interior::input(app, ctx, &mut interior);
+        // A walk-through: its walled tubes the hull's walls, the shipyard put by, the
+        // pilot on foot there, first person.
+        if let Some(at) = interior.walk.take() {
+            app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls: interior.walls() });
+            app.engine.send(universe_sim::Command::Preview(Some(at)));
+            app.preview = app.shipyard.take().map(|mut y| {
+                y.interior = interior;
+                y
+            });
+            app.mode = crate::Mode::Pilot;
+            app.chase_cam = false;
+            return false;
+        }
         if let Some(y) = app.shipyard.as_mut() {
             y.interior = interior;
         }
@@ -78,7 +106,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     // A walk-through: the studio put by, the pilot on foot there, first person.
     if let Some(at) = studio.walk.take() {
         app.engine.send(universe_sim::Command::Preview(Some(at)));
-        app.preview = Some(studio);
+        app.preview = Some(Shipyard::back_to(studio));
         app.mode = crate::Mode::Pilot;
         app.chase_cam = false;
         return false;

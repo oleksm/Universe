@@ -1245,7 +1245,7 @@ pub fn apply(app: &mut App, name: &str) {
             let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
             app.engine.universe().set_layout(&plan);
             app.engine.universe().preview(Some(at));
-            app.preview = app.shipyard.take().map(|_| Default::default());
+            app.preview = app.shipyard.take();
             app.mode = Mode::Pilot;
             app.chase_cam = false;
             app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
@@ -1264,6 +1264,10 @@ pub fn apply(app: &mut App, name: &str) {
             if std::env::var_os("UNIVERSE_PLAN").is_some() {
                 let spec = app.ship.spec();
                 y.interior_mut().sample(&spec.key, spec.shape());
+                // (UNIVERSE_WALK=k: walked in the middle of line k, as WALK HERE.)
+                if let Some(k) = std::env::var("UNIVERSE_WALK").ok().and_then(|v| v.parse().ok()) {
+                    y.interior_mut().walk_line(k);
+                }
             }
             app.shipyard = Some(y);
         }

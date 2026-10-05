@@ -8,6 +8,8 @@ Run it again whenever the design changes. The .blend isn't changed (nothing is s
 
 - **The pose:** the scene at `--frame` as Blender has it there (its rig's state: gear down,
   doors shut, say). `-y` lets a rig's Python drivers run, as they do in the open file.
+- **Doorways** (`--doorway door_l=CrewDoor_L@crew_door=0`, as many as wanted): an empty named
+  `door_l` where the door is with that control set (shut: in its doorway); the control put back.
 - **Rig controls** (`--prop name=value`, as many as wanted): set on whatever holds that custom
   property before exporting, the file left as it is: the game wants its hull as built, with the
   parts it moves itself at rest (the MC-07's `cargo_ramp=0`: the game lowers the ramp).
@@ -95,6 +97,36 @@ if props:
         o.update_tag()
     scene.frame_set(scene.frame_current)
     bpy.context.view_layer.update()
+# Doorways marked (`--doorway door_l=CrewDoor_L@crew_door=0`): the control set as
+# asked, where the door then is (shut: in its doorway) marked by an empty of that
+# name, the control put back (the doors stay as the file has them).
+for spec in [argv[i + 1] for i in range(1, len(argv) - 1) if argv[i] == "--doorway"]:
+    mark, rest = spec.split("=", 1)
+    objects, control = rest.split("@", 1)
+    name, value = control.split("=", 1)
+    held = [o for o in bpy.data.objects if name in o.keys()]
+    was = [o[name] for o in held]
+    def settle():
+        # (Its drivers run again: tagged, then a frame set.)
+        for o in bpy.data.objects:
+            o.update_tag()
+        scene.frame_set(scene.frame_current)
+        bpy.context.view_layer.update()
+    for o in held:
+        o[name] = type(o[name])(float(value))
+    settle()
+    corners = [o.matrix_world @ Vector(c) for n in objects.split(",") if (o := bpy.data.objects.get(n)) for c in o.bound_box]
+    for o, v in zip(held, was):
+        o[name] = v
+    settle()
+    if not corners:
+        print(f"doorway {mark}: no object {objects}")
+        continue
+    middle = sum(corners, Vector()) / len(corners)
+    empty = bpy.data.objects.new(mark, None)
+    empty.location = middle
+    scene.collection.objects.link(empty)
+    print(f"doorway {mark} at {tuple(round(c, 2) for c in middle)}")
 if "--name" in opt:
     scene["freefall_name"] = opt["--name"]
 if "--class" in opt:
