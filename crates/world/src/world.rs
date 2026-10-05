@@ -269,7 +269,7 @@ impl World {
         let p = p - star;
         // (Most ships are nowhere near a belt: by their distance from the star alone.)
         let r = p.length();
-        if !sys.belts.iter().any(|b| r + close >= b.inner * (1.0 - crate::belts::MOST_ECCENTRIC) && r - close <= b.outer * (1.0 + crate::belts::MOST_ECCENTRIC)) {
+        if !sys.belts.iter().any(|b| r + close >= b.inner * (1.0 - crate::belts::rocks().most_eccentric) && r - close <= b.outer * (1.0 + crate::belts::rocks().most_eccentric)) {
             return None;
         }
         let n = sys.bodies.len();

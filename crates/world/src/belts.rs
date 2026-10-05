@@ -30,12 +30,44 @@ use crate::rng::{mix, Rng};
 use crate::system::{BodyKind, StarSystem};
 use crate::units::{AU, G};
 
-/// The rocks a patch holds, about.
-pub const PER_PATCH: f64 = 64.0;
-/// The size classes: each a decade, from the smallest up (m across); the last open, to this.
-pub const LARGEST: f64 = 200_000.0;
-/// The most any belt rock's orbit is stretched.
-pub const MOST_ECCENTRIC: f64 = 0.2;
+/// How belt rocks are seeded, as the registry has it (`seeding.small-bodies`,
+/// `belt_rocks`): the rocks a patch holds, about; the size classes (each a
+/// decade, from the smallest up, m across; the last open, to `largest`); the
+/// most any belt rock's orbit is stretched; the main belt's and the trojan
+/// swarms' tilt (rad); a swarm's width (a share of its giant's orbit); and
+/// the radius above which a rock is a rubble pile (m).
+pub struct BeltRocks {
+    pub per_patch: f64,
+    pub largest: f64,
+    pub most_eccentric: f64,
+    pub main_tilt: f64,
+    pub trojan_tilt: f64,
+    pub trojan_width: f64,
+    pub rubble_above: f64,
+}
+
+/// The seeding of belt rocks (see `BeltRocks`).
+pub fn rocks() -> &'static BeltRocks {
+    static ROCKS: std::sync::OnceLock<BeltRocks> = std::sync::OnceLock::new();
+    ROCKS.get_or_init(|| {
+        let s = &small_bodies_record().belt_rocks;
+        let need = |v: Option<f64>, what: &str| v.unwrap_or_else(|| panic!("seeding.small-bodies: no belt_rocks.{what}"));
+        BeltRocks {
+            per_patch: need(s.per_patch, "per_patch"),
+            largest: need(s.largest, "largest"),
+            most_eccentric: need(s.most_eccentric, "most_eccentric"),
+            main_tilt: s.main_tilt.unwrap_or_else(|| panic!("seeding.small-bodies: no belt_rocks.main_tilt")).rad(),
+            trojan_tilt: s.trojan_tilt.unwrap_or_else(|| panic!("seeding.small-bodies: no belt_rocks.trojan_tilt")).rad(),
+            trojan_width: need(s.trojan_width, "trojan_width"),
+            rubble_above: need(s.rubble_above, "rubble_above"),
+        }
+    })
+}
+
+/// The registry's record of how small bodies are seeded.
+pub fn small_bodies_record() -> &'static crate::registry::Seeding {
+    crate::registry::registry().seeding.iter().find(|s| s.identity.key == "seeding.small-bodies").expect("the registry has seeding.small-bodies")
+}
 
 /// What kind of belt.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -132,20 +164,21 @@ pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
     giants.sort_by(|&a, &b| a_of(a).total_cmp(&a_of(b)));
     let ring_area = |lo: f64, hi: f64| PI * (hi * hi - lo * lo);
     // (A belt's size classes over `lo` to `hi` (its ground: `arc` of a turn), `over_1km` rocks a km
-    // or more, none within `width` of a gap: each decade's rings spaced so a patch holds `PER_PATCH`.)
+    // or more, none within `width` of a gap: each decade's rings spaced so a patch holds `per_patch`.)
     let classes = |lo: f64, hi: f64, arc: f64, over_1km: f64, gaps: &[f64], width: f64| -> Vec<SizeClass> {
         let ground = arc / 2.0 * (hi * hi - lo * lo);
         let count = |d: f64| over_1km * (d / 1000.0).powf(-slope);
         let mut out = Vec::new();
         let mut d = smallest;
-        while d < LARGEST {
-            let top = (d * 10.0).min(LARGEST);
-            let top = if top * 10.0 > LARGEST { LARGEST } else { top };
+        let br = rocks();
+        while d < br.largest {
+            let top = (d * 10.0).min(br.largest);
+            let top = if top * 10.0 > br.largest { br.largest } else { top };
             let n = count(d) - count(top);
-            let spacing = (PER_PATCH * ground / n.max(1e-9)).sqrt().clamp(1.0e6, ((hi - lo) / 2.0).max(1.0e6));
+            let spacing = (br.per_patch * ground / n.max(1e-9)).sqrt().clamp(1.0e6, ((hi - lo) / 2.0).max(1.0e6));
             let k = ((hi - lo) / spacing).floor().max(1.0) as usize;
             let rings = (0..k).map(|j| lo + (j as f64 + 0.5) * (hi - lo) / k as f64).filter(|a| !gaps.iter().any(|g| (a - g).abs() < width)).collect();
-            out.push(SizeClass { lo: d, hi: top, count: n, spacing, rings, eccentric: (spacing / lo.max(1.0)).min(MOST_ECCENTRIC) });
+            out.push(SizeClass { lo: d, hi: top, count: n, spacing, rings, eccentric: (spacing / lo.max(1.0)).min(br.most_eccentric) });
             d = top;
         }
         out
@@ -166,7 +199,7 @@ pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
     if outer > inner {
         let sun = ring_area(mb.inner_edge.unwrap_or(3.08e11), mb.outer_edge.unwrap_or(4.89e11));
         let over_1km = mb.count_over_1km.unwrap_or(1.2e6) * ring_area(inner, outer) / sun;
-        out.push(Belt { kind: BeltKind::Main, inner, outer, classes: classes(inner, outer, TAU, over_1km, &gaps, width), spread: 0.0, centre: 0.0, mu: star_mu, tilt: 9f64.to_radians(), over_1km, slope, smallest });
+        out.push(Belt { kind: BeltKind::Main, inner, outer, classes: classes(inner, outer, TAU, over_1km, &gaps, width), spread: 0.0, centre: 0.0, mu: star_mu, tilt: rocks().main_tilt, over_1km, slope, smallest });
     }
     // Each giant's two swarms, ahead and behind, as many as its mass to Jupiter's.
     for &g in &giants {
@@ -177,9 +210,10 @@ pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
         let at = longitude(orbit.position(0.0));
         for lead in [true, false] {
             let centre = at + if lead { PI / 3.0 } else { -PI / 3.0 };
-            // (A swarm is a cloud round its point: rings within 5% of the giant's orbit.)
-            let (inner, outer) = (a * 0.95, a * 1.05);
-            out.push(Belt { kind: BeltKind::Trojan { giant: g, lead }, inner, outer, classes: classes(inner, outer, 2.0 * spread, per_swarm, &[], 0.0), spread, centre, mu: orbit.mu, tilt: 10f64.to_radians(), over_1km: per_swarm, slope, smallest });
+            // (A swarm is a cloud round its point: rings within its width of the giant's orbit.)
+            let w = rocks().trojan_width;
+            let (inner, outer) = (a * (1.0 - w), a * (1.0 + w));
+            out.push(Belt { kind: BeltKind::Trojan { giant: g, lead }, inner, outer, classes: classes(inner, outer, 2.0 * spread, per_swarm, &[], 0.0), spread, centre, mu: orbit.mu, tilt: rocks().trojan_tilt, over_1km: per_swarm, slope, smallest });
         }
     }
     // The outer belt: between the outermost giant's resonances.
@@ -276,11 +310,11 @@ pub fn patches_near(belts: &[Belt], p: DVec3, t: f64, reach: f64, smallest: f64)
     let angle = longitude(p);
     let mut out = Vec::new();
     for (b, belt) in belts.iter().enumerate() {
-        if r + reach < belt.inner * (1.0 - MOST_ECCENTRIC) || r - reach > belt.outer * (1.0 + MOST_ECCENTRIC) {
+        if r + reach < belt.inner * (1.0 - rocks().most_eccentric) || r - reach > belt.outer * (1.0 + rocks().most_eccentric) {
             continue;
         }
         // (None of its rocks rises higher over the plane than its steepest tilt takes it.)
-        if p.y.abs() - reach > belt.outer * (1.0 + MOST_ECCENTRIC) * (belt.tilt * 3.0).sin() {
+        if p.y.abs() - reach > belt.outer * (1.0 + rocks().most_eccentric) * (belt.tilt * 3.0).sin() {
             continue;
         }
         for (c, class) in belt.classes.iter().enumerate() {
@@ -345,7 +379,7 @@ pub fn rocks_near(sys: &StarSystem, belts: &[Belt], seed: u64, p: DVec3, t: f64,
 
 /// A belt rock's density (kg/m³), as its class says for its size.
 pub fn density(rock: &BeltRock) -> f64 {
-    rock.class.density(if rock.diameter < 200.0 { Structure::Monolith } else { Structure::Rubble })
+    rock.class.density(if rock.diameter < 2.0 * rocks().rubble_above { Structure::Monolith } else { Structure::Rubble })
 }
 
 /// Field numbers from here up are belt patches (see `patch_field`): a patch
@@ -444,7 +478,7 @@ pub fn survey(sys: &StarSystem, p: DVec3, t: f64, sensor: Survey) -> Vec<Found> 
 /// seed, its orbit round the star.
 pub fn rock_body(sys: &StarSystem, patch: Patch, k: usize, rock: &BeltRock) -> crate::system::Body {
     let mut rng = Rng::new(rock.seed);
-    let structure = if rock.diameter < 200.0 { Structure::Monolith } else { Structure::Rubble };
+    let structure = if rock.diameter < 2.0 * rocks().rubble_above { Structure::Monolith } else { Structure::Rubble };
     let shape = crate::belt::RockShape::new(rock.diameter / 2.0, &mut rng);
     let composition = crate::belt::Composition::of(rock.class, rng.f64(), &mut rng);
     let density = density(rock);
