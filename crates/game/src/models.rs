@@ -91,11 +91,20 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
     let sides: Vec<_> = plan.decks.iter().map(|d| deckplan::deck_sides(walk, d.floor)).collect();
     let b = deckplan::build(plan, &sides);
     let mut m = WireModel::default();
+    // (As the interior studio's tunnels: floors a dark deck shade in plates 1.2 m
+    // along, every other a shade apart; walls grey-blue, those across the ship a
+    // shade lighter so the room reads; the slabs' undersides the ceiling below.)
     for (quad, floor) in &b.panels {
-        // (Walls across the ship a shade lighter than those along it: the room reads.)
         let across = (quad[1] - quad[0]).cross(quad[2] - quad[0]).normalize_or_zero().z.abs() > 0.5;
-        let shade = if *floor { 0.44 } else if across { 0.34 } else { 0.28 };
-        let c = [shade * 0.95, shade, shade * 1.08, 1.0];
+        let c = if *floor {
+            let z = (quad[0].z + quad[2].z) * 0.5;
+            let k = if ((z / 1.2).floor() as i64).rem_euclid(2) == 1 { -0.025 } else { 0.0 };
+            [0.17 + k, 0.16 + k, 0.14 + k, 1.0]
+        } else if across {
+            [0.40, 0.44, 0.50, 1.0]
+        } else {
+            [0.36, 0.40, 0.46, 1.0]
+        };
         let base = m.positions.len() as u32;
         m.positions.extend(quad.iter().map(|p| p.as_vec3()));
         m.colors.extend([c; 4]);
@@ -110,7 +119,8 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
     }
     // The floors' slabs: their undersides and edges, a shade under the floor, unlined.
     for quad in &b.slabs {
-        let c = [0.36 * 0.95, 0.36, 0.36 * 1.08, 1.0];
+        let under = (quad[1] - quad[0]).cross(quad[2] - quad[0]).normalize_or_zero().y.abs() > 0.5;
+        let c = if under { [0.58, 0.60, 0.62, 1.0] } else { [0.30, 0.31, 0.32, 1.0] };
         let base = m.positions.len() as u32;
         m.positions.extend(quad.iter().map(|p| p.as_vec3()));
         m.colors.extend([c; 4]);

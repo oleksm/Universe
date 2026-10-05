@@ -28,15 +28,15 @@ impl Shipyard {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::new() }
     }
 
-    /// The walls being walked through: the interior studio's walled tubes (none from
-    /// the deck studio).
+    /// The walls being walked through: the interior studio's walled tubes (from
+    /// either studio).
     pub fn walls(&self) -> Option<Vec<[universe_engine::glam::DVec3; 3]>> {
-        (self.page == Page::Interior).then(|| self.interior.walls())
+        Some(self.interior.walls())
     }
 
     /// Those walls to draw: each triangle with its colour.
     pub fn wall_faces(&self) -> Option<Vec<crate::interior::WallFace>> {
-        (self.page == Page::Interior).then(|| self.interior.wall_faces())
+        Some(self.interior.wall_faces())
     }
 
     /// The interior studio turned to look from `yaw`, `pitch` (dev scenarios).
@@ -131,6 +131,9 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     let stay = crate::studio::input(app, ctx, &spec.key, spec.shape(), &mut studio);
     // A walk-through: the studio put by, the pilot on foot there, first person.
     if let Some(at) = studio.walk.take() {
+        // (The interior studio's walled tubes walked in too.)
+        let walls = app.shipyard.as_ref().map(|y| y.interior.walls()).unwrap_or_default();
+        app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls });
         app.engine.send(universe_sim::Command::Preview(Some(at)));
         app.preview = app.shipyard.take().map(|mut y| {
             y.studio = studio;

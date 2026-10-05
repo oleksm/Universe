@@ -856,7 +856,7 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
             && let Some(plan) = app.deckplans.iter().find(|p| p.hull == ship.spec().key && !p.decks.is_empty())
             && let Some(mesh) = crate::models::layout(plan, shape)
         {
-            frame.in_scene(|frame| frame.model_colored(&mesh, t, 2.2, 1.0));
+            frame.in_scene(|frame| frame.model_colored(&mesh, t, 0.55, 1.0));
         }
         // The interior studio's walled tubes, walked through.
         if std::ptr::eq(ship, &app.ship)

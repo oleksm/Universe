@@ -64,6 +64,9 @@ pub struct Universe {
     pub crew: Person,
     /// Hulls' insides as laid out (by hull key): built, to walk in.
     pub layouts: std::collections::HashMap<String, Arc<universe_world::deckplan::Walkable>>,
+    /// What each hull's inside is made of: its decks as built, the interior studio's
+    /// walls (walked in together, as `layouts`).
+    inside: std::collections::HashMap<String, (universe_world::deckplan::Built, Vec<[DVec3; 3]>)>,
     /// The flight recorder: every ship's last seconds, and the wrecks filed (see `recorder`).
     pub recorder: crate::recorder::Recorder,
     /// What happened, kept: kills (with causes), trades, traffic totals.
@@ -135,6 +138,7 @@ impl Universe {
             crash_log: Vec::new(),
             crew: Person::default(),
             layouts: Default::default(),
+            inside: Default::default(),
             recorder: Default::default(),
             records: Default::default(),
             aggressors: Vec::new(),
@@ -614,11 +618,21 @@ impl Universe {
     }
 
     /// A hull's inside as walls (its frame's triangles): walked in and bumped into.
+    /// (Kept beside its decks: both walked in together.)
     pub fn set_walls(&mut self, hull: &str, walls: &[[DVec3; 3]]) {
-        if walls.is_empty() {
+        self.inside.entry(hull.to_string()).or_default().1 = walls.to_vec();
+        self.rebuild_inside(hull);
+    }
+
+    /// A hull's walked-in inside made again from its decks and its walls.
+    fn rebuild_inside(&mut self, hull: &str) {
+        let Some((built, walls)) = self.inside.get(hull) else { return };
+        let mut tris = built.triangles();
+        tris.extend_from_slice(walls);
+        if tris.is_empty() {
             self.layouts.remove(hull);
         } else {
-            self.layouts.insert(hull.to_string(), Arc::new(universe_world::deckplan::Walkable { mesh: universe_world::walk::WalkMesh::new(walls), climbs: Vec::new() }));
+            self.layouts.insert(hull.to_string(), Arc::new(universe_world::deckplan::Walkable { mesh: universe_world::walk::WalkMesh::new(&tris), climbs: built.climbs.clone() }));
         }
     }
 
@@ -627,11 +641,8 @@ impl Universe {
         let Some(mesh) = universe_world::content::content().get(h).shape().walk.clone() else { return };
         let sides: Vec<_> = plan.decks.iter().map(|d| universe_world::deckplan::deck_sides(&mesh, d.floor)).collect();
         let built = universe_world::deckplan::build(plan, &sides);
-        if built.panels.is_empty() {
-            self.layouts.remove(&plan.hull);
-        } else {
-            self.layouts.insert(plan.hull.clone(), Arc::new(universe_world::deckplan::Walkable::from(&built)));
-        }
+        self.inside.entry(plan.hull.clone()).or_default().0 = built;
+        self.rebuild_inside(&plan.hull);
     }
 
     /// What stands near the pilot on a body, to walk on and bump into (its
